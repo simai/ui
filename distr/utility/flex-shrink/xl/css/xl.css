@@ -1,1 +1,1 @@
-@media(min-width: 1140px){.xl\:shrink{flex-shrink:1}.xl\:shrink-none{flex-shrink:0}}
+@media(min-width: 1140px){.xl\:shrink{-ms-flex-negative:1;flex-shrink:1}.xl\:shrink-none{-ms-flex-negative:0;flex-shrink:0}}

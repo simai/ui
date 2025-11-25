@@ -1,1 +1,1 @@
-@media(min-width: 1140px){.xl\:flex-wrap{flex-wrap:wrap}.xl\:flex-wrap-reverse{flex-wrap:wrap-reverse}.xl\:flex-nowrap{flex-wrap:nowrap}}
+@media(min-width: 1140px){.xl\:flex-wrap{-ms-flex-wrap:wrap;flex-wrap:wrap}.xl\:flex-wrap-reverse{-ms-flex-wrap:wrap-reverse;flex-wrap:wrap-reverse}.xl\:flex-nowrap{-ms-flex-wrap:nowrap;flex-wrap:nowrap}}

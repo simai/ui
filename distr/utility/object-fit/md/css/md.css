@@ -1,1 +1,1 @@
-@media(min-width: 720px){.md\:object-contain{object-fit:contain}.md\:object-cover{object-fit:cover}.md\:object-fill{object-fit:fill}.md\:object-none{object-fit:none}.md\:object-scale-down{object-fit:scale-down}}
+@media(min-width: 720px){.md\:object-contain{-o-object-fit:contain;object-fit:contain}.md\:object-cover{-o-object-fit:cover;object-fit:cover}.md\:object-fill{-o-object-fit:fill;object-fit:fill}.md\:object-none{-o-object-fit:none;object-fit:none}.md\:object-scale-down{-o-object-fit:scale-down;object-fit:scale-down}}

@@ -1,1 +1,1 @@
-@media(min-width: 1140px){.xl\:auto-cols{grid-auto-columns:auto}.xl\:auto-cols-min{grid-auto-columns:min-content}.xl\:auto-cols-max{grid-auto-columns:max-content}.xl\:auto-cols-fr{grid-auto-columns:minmax(0, 1fr)}}
+@media(min-width: 1140px){.xl\:auto-cols{grid-auto-columns:auto}.xl\:auto-cols-min{grid-auto-columns:-webkit-min-content;grid-auto-columns:min-content}.xl\:auto-cols-max{grid-auto-columns:-webkit-max-content;grid-auto-columns:max-content}.xl\:auto-cols-fr{grid-auto-columns:minmax(0, 1fr)}}

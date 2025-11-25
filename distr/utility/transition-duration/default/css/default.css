@@ -1,1 +1,1 @@
-.fast{transition-duration:var(--sf-duration-fast)}.duration-normal{transition-duration:var(--sf-duration-normal)}.slow{transition-duration:var(--sf-duration-slow)}
+.fast{-webkit-transition-duration:var(--sf-duration-fast);transition-duration:var(--sf-duration-fast)}.duration-normal{-webkit-transition-duration:var(--sf-duration-normal);transition-duration:var(--sf-duration-normal)}.slow{-webkit-transition-duration:var(--sf-duration-slow);transition-duration:var(--sf-duration-slow)}

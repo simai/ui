@@ -1,1 +1,1 @@
-.flex-wrap{flex-wrap:wrap}.flex-wrap-reverse{flex-wrap:wrap-reverse}.flex-nowrap{flex-wrap:nowrap}
+.flex-wrap{-ms-flex-wrap:wrap;flex-wrap:wrap}.flex-wrap-reverse{-ms-flex-wrap:wrap-reverse;flex-wrap:wrap-reverse}.flex-nowrap{-ms-flex-wrap:nowrap;flex-wrap:nowrap}

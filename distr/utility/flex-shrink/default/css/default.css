@@ -1,1 +1,1 @@
-.shrink{flex-shrink:1}.shrink-none{flex-shrink:0}
+.shrink{-ms-flex-negative:1;flex-shrink:1}.shrink-none{-ms-flex-negative:0;flex-shrink:0}
