@@ -29,10 +29,10 @@
     "--sf-space-6": "var(--sf-d2)",
     "--sf-space-7": "var(--sf-d6)",
     "--sf-space-8": "var(--sf-e0)",
-    "--sf-ui-blur-small": "blur(var(--sf-blur-small))",
-    "--sf-ui-blur-medium": "blur(var(--sf-blur-medium))",
-    "--sf-ui-blur-large": "blur(var(--sf-blur-large))",
-    "--sf-ui-focus": "0px 0px 0px var(--sf-focus-outline-width) var(--sf-focus)",
+    "--sf-ui-blur-small": "blur(var(--sf-blur--small))",
+    "--sf-ui-blur-medium": "blur(var(--sf-blur--medium))",
+    "--sf-ui-blur-large": "blur(var(--sf-blur--large))",
+    "--sf-ui-focus": "0px 0px 0px var(--sf-focus--outline-width) var(--sf-focus)",
     "--sf-ui-shadow-1": "0px 2px 4px 1px var(--sf-shadow--color-shading), 0px 1px 3px 0px var(--sf-shadow--color-outline), 0px 2px 2px -1px var(--sf-shadow--color-fill)",
     "--sf-ui-shadow-2": "0px 4px 8px 2px var(--sf-shadow--color-shading), 0px 2px 6px 0px var(--sf-shadow--color-outline), 0px 4px 4px -2px var(--sf-shadow--color-fill)",
     "--sf-ui-shadow-3": "0px 8px 16px 4px var(--sf-shadow--color-shading), 0px 4px 12px 0px var(--sf-shadow--color-outline), 0px 8px 8px -4px var(--sf-shadow--color-fill)",
@@ -532,7 +532,7 @@
     "--sf-display--family": "\"Inter\", sans-serif",
     "--sf-text--family": "\"Inter\", sans-serif",
     "--sf-heading--margin": "var(--sf-b6)",
-    "--sf-text--margin": "var(--sf-space-1)",
+    "--sf-text--margin": "var(--sf-space--1)",
     "--sf-text--weight": "400",
     "--sf-heading--weight": "700",
     "--sf-display--weight": "300",
@@ -7690,54 +7690,54 @@
       "--sf-input-field--background-color": "var(--sf-error-container)"
     },
     ".sf-input--size-1 .sf-input-field": {
-      "--sf-input-field--padding-bottom": "var(--sf-ui-1-space-y)",
-      "--sf-input-field--padding-left": "var(--sf-ui-1-space-x)",
-      "--sf-input-field--padding-right": "var(--sf-ui-1-space-x)",
-      "--sf-input-field--padding-top": "var(--sf-ui-1-space-y)"
+      "--sf-input-field--padding-bottom": "var(--sf-ui--1-space-y)",
+      "--sf-input-field--padding-left": "var(--sf-ui--1-space-x)",
+      "--sf-input-field--padding-right": "var(--sf-ui--1-space-x)",
+      "--sf-input-field--padding-top": "var(--sf-ui--1-space-y)"
     },
     ".sf-input--size-1 .sf-input-text-container": {
-      "--sf-input-text-container--padding-left": "var(--sf-ui-1-text-space-x)",
-      "--sf-input-text-container--padding-right": "var(--sf-ui-1-text-space-x)"
+      "--sf-input-text-container--padding-left": "var(--sf-ui--1-text-space-x)",
+      "--sf-input-text-container--padding-right": "var(--sf-ui--1-text-space-x)"
     },
     ".sf-input--size-2 .sf-input-field": {
-      "--sf-input-field--padding-bottom": "var(--sf-ui-2-space-y)",
-      "--sf-input-field--padding-left": "var(--sf-ui-2-space-x)",
-      "--sf-input-field--padding-right": "var(--sf-ui-2-space-x)",
-      "--sf-input-field--padding-top": "var(--sf-ui-2-space-y)"
+      "--sf-input-field--padding-bottom": "var(--sf-ui--2-space-y)",
+      "--sf-input-field--padding-left": "var(--sf-ui--2-space-x)",
+      "--sf-input-field--padding-right": "var(--sf-ui--2-space-x)",
+      "--sf-input-field--padding-top": "var(--sf-ui--2-space-y)"
     },
     ".sf-input--size-2 .sf-input-text-container": {
-      "--sf-input-text-container--padding-left": "var(--sf-ui-2-text-space-x)",
-      "--sf-input-text-container--padding-right": "var(--sf-ui-2-text-space-x)"
+      "--sf-input-text-container--padding-left": "var(--sf-ui--2-text-space-x)",
+      "--sf-input-text-container--padding-right": "var(--sf-ui--2-text-space-x)"
     },
     ".sf-input--size-3 .sf-input-field": {
-      "--sf-input-field--padding-bottom": "var(--sf-ui-3-space-y)",
-      "--sf-input-field--padding-left": "var(--sf-ui-3-space-x)",
-      "--sf-input-field--padding-right": "var(--sf-ui-3-space-x)",
-      "--sf-input-field--padding-top": "var(--sf-ui-3-space-y)"
+      "--sf-input-field--padding-bottom": "var(--sf-ui--3-space-y)",
+      "--sf-input-field--padding-left": "var(--sf-ui--3-space-x)",
+      "--sf-input-field--padding-right": "var(--sf-ui--3-space-x)",
+      "--sf-input-field--padding-top": "var(--sf-ui--3-space-y)"
     },
     ".sf-input--size-3 .sf-input-text-container": {
-      "--sf-input-text-container--padding-left": "var(--sf-ui-3-text-space-x)",
-      "--sf-input-text-container--padding-right": "var(--sf-ui-3-text-space-x)"
+      "--sf-input-text-container--padding-left": "var(--sf-ui--3-text-space-x)",
+      "--sf-input-text-container--padding-right": "var(--sf-ui--3-text-space-x)"
     },
     ".sf-input--size-1\\/2 .sf-input-field": {
-      "--sf-input-field--padding-bottom": "var(--sf-ui-1\\/2-space-y)",
-      "--sf-input-field--padding-left": "var(--sf-ui-1\\/2-space-x)",
-      "--sf-input-field--padding-right": "var(--sf-ui-1\\/2-space-x)",
-      "--sf-input-field--padding-top": "var(--sf-ui-1\\/2-space-y)"
+      "--sf-input-field--padding-bottom": "var(--sf-ui--1\\/2-space-y)",
+      "--sf-input-field--padding-left": "var(--sf-ui--1\\/2-space-x)",
+      "--sf-input-field--padding-right": "var(--sf-ui--1\\/2-space-x)",
+      "--sf-input-field--padding-top": "var(--sf-ui--1\\/2-space-y)"
     },
     ".sf-input--size-1\\/2 .sf-input-text-container": {
-      "--sf-input-text-container--padding-left": "var(--sf-ui-1\\/2-text-space-x)",
-      "--sf-input-text-container--padding-right": "var(--sf-ui-1\\/2-text-space-x)"
+      "--sf-input-text-container--padding-left": "var(--sf-ui--1\\/2-text-space-x)",
+      "--sf-input-text-container--padding-right": "var(--sf-ui--1\\/2-text-space-x)"
     },
     ".sf-input--size-1\\/3 .sf-input-field": {
-      "--sf-input-field--padding-bottom": "var(--sf-ui-1\\/3-space-y)",
-      "--sf-input-field--padding-left": "var(--sf-ui-1\\/3-space-x)",
-      "--sf-input-field--padding-right": "var(--sf-ui-1\\/3-space-x)",
-      "--sf-input-field--padding-top": "var(--sf-ui-1\\/3-space-y)"
+      "--sf-input-field--padding-bottom": "var(--sf-ui--1\\/3-space-y)",
+      "--sf-input-field--padding-left": "var(--sf-ui--1\\/3-space-x)",
+      "--sf-input-field--padding-right": "var(--sf-ui--1\\/3-space-x)",
+      "--sf-input-field--padding-top": "var(--sf-ui--1\\/3-space-y)"
     },
     ".sf-input--size-1\\/3 .sf-input-text-container": {
-      "--sf-input-text-container--padding-left": "var(--sf-ui-1\\/3-text-space-x)",
-      "--sf-input-text-container--padding-right": "var(--sf-ui-1\\/3-text-space-x)"
+      "--sf-input-text-container--padding-left": "var(--sf-ui--1\\/3-text-space-x)",
+      "--sf-input-text-container--padding-right": "var(--sf-ui--1\\/3-text-space-x)"
     },
     ".sf-input--state-hover .sf-input-field": {
       "--sf-input-field--border-color": "var(--sf-primary-hover)"
@@ -7904,8 +7904,8 @@
       "--sf-input--margin-bottom": "var(--sf-text--margin)"
     },
     ".sf-input--size-1 .sf-input-text": {
-      "--sf-input-text--font-size": "var(--sf-text-size-1)",
-      "--sf-input-text--line-height": "var(--sf-text-height-1)",
+      "--sf-input-text--font-size": "var(--sf-text--size-1)",
+      "--sf-input-text--line-height": "var(--sf-text--height-1)",
       "--sf-input-text--margin-bottom": "var(--sf-text--margin)"
     },
     ".sf-input--size-2": {
@@ -7914,8 +7914,8 @@
       "--sf-input--margin-bottom": "var(--sf-space-1)"
     },
     ".sf-input--size-2 .sf-input-text": {
-      "--sf-input-text--font-size": "var(--sf-text-size-2)",
-      "--sf-input-text--line-height": "var(--sf-text-height-2)",
+      "--sf-input-text--font-size": "var(--sf-text--size-2)",
+      "--sf-input-text--line-height": "var(--sf-text--height-2)",
       "--sf-input-text--margin-bottom": "var(--sf-space-1)"
     },
     ".sf-input--size-3": {
@@ -7924,8 +7924,8 @@
       "--sf-input--margin-bottom": "var(--sf-text--margin)"
     },
     ".sf-input--size-3 .sf-input-text": {
-      "--sf-input-text--font-size": "var(--sf-text-size-3)",
-      "--sf-input-text--line-height": "var(--sf-text-height-3)",
+      "--sf-input-text--font-size": "var(--sf-text--size-3)",
+      "--sf-input-text--line-height": "var(--sf-text--height-3)",
       "--sf-input-text--margin-bottom": "var(--sf-text--margin)"
     },
     ".sf-input--size-1\\/2": {
@@ -7934,8 +7934,8 @@
       "--sf-input--margin-bottom": "var(--sf-text--margin)"
     },
     ".sf-input--size-1\\/2 .sf-input-text": {
-      "--sf-input-text--font-size": "var(--sf-text-size-1\\/2)",
-      "--sf-input-text--line-height": "var(--sf-text-height-1\\/2)",
+      "--sf-input-text--font-size": "var(--sf-text--size-1\\/2)",
+      "--sf-input-text--line-height": "var(--sf-text--height-1\\/2)",
       "--sf-input-text--margin-bottom": "var(--sf-text--margin)"
     },
     ".sf-input--size-1\\/3": {
@@ -7944,8 +7944,8 @@
       "--sf-input--margin-bottom": "var(--sf-text--margin)"
     },
     ".sf-input--size-1\\/3 .sf-input-text": {
-      "--sf-input-text--font-size": "var(--sf-text-size-1\\/3)",
-      "--sf-input-text--line-height": "var(--sf-text-height-1\\/3)",
+      "--sf-input-text--font-size": "var(--sf-text--size-1\\/3)",
+      "--sf-input-text--line-height": "var(--sf-text--height-1\\/3)",
       "--sf-input-text--margin-bottom": "var(--sf-text--margin)"
     },
     ".sf-input--state-default": {
@@ -9110,9 +9110,9 @@
       "--sf-icon--width": "var(--sf-text-height-1\\/3)"
     },
     ".sf-input--size-1 .sf-icon": {
-      "--sf-icon--font-size": "var(--sf-text-height-1)",
-      "--sf-icon--height": "var(--sf-text-height-1)",
-      "--sf-icon--width": "var(--sf-text-height-1)"
+      "--sf-icon--font-size": "var(--sf-text--height-1)",
+      "--sf-icon--height": "var(--sf-text--height-1)",
+      "--sf-icon--width": "var(--sf-text--height-1)"
     },
     ".sf-input:has(input:default) .sf-icon": {
       "--sf-icon--color": "var(--sf-on-surface-variant)"
@@ -9251,24 +9251,24 @@
       "--sf-icon--color": "var(--sf-on-surface-variant)"
     },
     ".sf-input--size-2 .sf-icon": {
-      "--sf-icon--font-size": "var(--sf-text-height-2)",
-      "--sf-icon--height": "var(--sf-text-height-2)",
-      "--sf-icon--width": "var(--sf-text-height-2)"
+      "--sf-icon--font-size": "var(--sf-text--height-2)",
+      "--sf-icon--height": "var(--sf-text--height-2)",
+      "--sf-icon--width": "var(--sf-text--height-2)"
     },
     ".sf-input--size-3 .sf-icon": {
-      "--sf-icon--font-size": "var(--sf-text-height-3)",
-      "--sf-icon--height": "var(--sf-text-height-3)",
-      "--sf-icon--width": "var(--sf-text-height-3)"
+      "--sf-icon--font-size": "var(--sf-text--height-3)",
+      "--sf-icon--height": "var(--sf-text--height-3)",
+      "--sf-icon--width": "var(--sf-text--height-3)"
     },
     ".sf-input--size-1\\/2 .sf-icon": {
-      "--sf-icon--font-size": "var(--sf-text-height-1\\/2)",
-      "--sf-icon--height": "var(--sf-text-height-1\\/2)",
-      "--sf-icon--width": "var(--sf-text-height-1\\/2)"
+      "--sf-icon--font-size": "var(--sf-text--height-1\\/2)",
+      "--sf-icon--height": "var(--sf-text--height-1\\/2)",
+      "--sf-icon--width": "var(--sf-text--height-1\\/2)"
     },
     ".sf-input--size-1\\/3 .sf-icon": {
-      "--sf-icon--font-size": "var(--sf-text-height-1\\/3)",
-      "--sf-icon--height": "var(--sf-text-height-1\\/3)",
-      "--sf-icon--width": "var(--sf-text-height-1\\/3)"
+      "--sf-icon--font-size": "var(--sf-text--height-1\\/3)",
+      "--sf-icon--height": "var(--sf-text--height-1\\/3)",
+      "--sf-icon--width": "var(--sf-text--height-1\\/3)"
     },
     ".sf-input.sf-input--size-1.sf-input:has(input:enabled:focus).sf-input--decoration-bordered .sf-input-field": {
       "--sf-input-field--background-color": "var(--sf-transparent-for-focus)"
@@ -10968,24 +10968,24 @@
       "--sf-input-label--color": "var(--sf-on-surface-variant)"
     },
     ".sf-input--size-1 .sf-input-text-alt": {
-      "--sf-input-text-alt--font-size": "var(--sf-text-size-1)",
-      "--sf-input-text-alt--line-height": "var(--sf-text-height-1)"
+      "--sf-input-text-alt--font-size": "var(--sf-text--size-1)",
+      "--sf-input-text-alt--line-height": "var(--sf-text--height-1)"
     },
     ".sf-input--size-2 .sf-input-text-alt": {
-      "--sf-input-text-alt--font-size": "var(--sf-text-size-2)",
-      "--sf-input-text-alt--line-height": "var(--sf-text-height-2)"
+      "--sf-input-text-alt--font-size": "var(--sf-text--size-2)",
+      "--sf-input-text-alt--line-height": "var(--sf-text--height-2)"
     },
     ".sf-input--size-3 .sf-input-text-alt": {
-      "--sf-input-text-alt--font-size": "var(--sf-text-size-3)",
-      "--sf-input-text-alt--line-height": "var(--sf-text-height-3)"
+      "--sf-input-text-alt--font-size": "var(--sf-text--size-3)",
+      "--sf-input-text-alt--line-height": "var(--sf-text--height-3)"
     },
     ".sf-input--size-1\\/2 .sf-input-text-alt": {
-      "--sf-input-text-alt--font-size": "var(--sf-text-size-1\\/2)",
-      "--sf-input-text-alt--line-height": "var(--sf-text-height-1\\/2)"
+      "--sf-input-text-alt--font-size": "var(--sf-text--size-1\\/2)",
+      "--sf-input-text-alt--line-height": "var(--sf-text--height-1\\/2)"
     },
     ".sf-input--size-1\\/3 .sf-input-text-alt": {
-      "--sf-input-text-alt--font-size": "var(--sf-text-size-1\\/3)",
-      "--sf-input-text-alt--line-height": "var(--sf-text-height-1\\/3)"
+      "--sf-input-text-alt--font-size": "var(--sf-text--size-1\\/3)",
+      "--sf-input-text-alt--line-height": "var(--sf-text--height-1\\/3)"
     },
     ".sf-input:has(input:enabled) .sf-input-text-alt": {
       "--sf-input-text-alt--color": "var(--sf-on-surface-muted)"
@@ -11024,24 +11024,24 @@
       "--sf-input-text-alt--color": "var(--sf-on-surface-muted)"
     },
     ".sf-input--size-1 .sf-input-hint-text": {
-      "--sf-input-hint-text--font-size": "var(--sf-text-size-1\\/2)",
-      "--sf-input-hint-text--line-height": "var(--sf-text-height-1\\/2)"
+      "--sf-input-hint-text--font-size": "var(--sf-text--size-1\\/2)",
+      "--sf-input-hint-text--line-height": "var(--sf-text--height-1\\/2)"
     },
     ".sf-input--size-2 .sf-input-hint-text": {
-      "--sf-input-hint-text--font-size": "var(--sf-text-size-1)",
-      "--sf-input-hint-text--line-height": "var(--sf-text-height-1)"
+      "--sf-input-hint-text--font-size": "var(--sf-text--size-1)",
+      "--sf-input-hint-text--line-height": "var(--sf-text--height-1)"
     },
     ".sf-input--size-3 .sf-input-hint-text": {
-      "--sf-input-hint-text--font-size": "var(--sf-text-size-2)",
-      "--sf-input-hint-text--line-height": "var(--sf-text-height-2)"
+      "--sf-input-hint-text--font-size": "var(--sf-text--size-2)",
+      "--sf-input-hint-text--line-height": "var(--sf-text--height-2)"
     },
     ".sf-input--size-1\\/2 .sf-input-hint-text": {
-      "--sf-input-hint-text--font-size": "var(--sf-text-size-1\\/3)",
-      "--sf-input-hint-text--line-height": "var(--sf-text-height-1\\/3)"
+      "--sf-input-hint-text--font-size": "var(--sf-text--size-1\\/3)",
+      "--sf-input-hint-text--line-height": "var(--sf-text--height-1\\/3)"
     },
     ".sf-input--size-1\\/3 .sf-input-hint-text": {
-      "--sf-input-hint-text--font-size": "var(--sf-text-size-1\\/4)",
-      "--sf-input-hint-text--line-height": "var(--sf-text-height-1\\/4)"
+      "--sf-input-hint-text--font-size": "var(--sf-text--size-1\\/4)",
+      "--sf-input-hint-text--line-height": "var(--sf-text--height-1\\/4)"
     },
     ".sf-input:has(input:enabled) .sf-input-hint-text": {
       "--sf-input-hint-text--color": "var(--sf-on-surface-muted)"
@@ -11180,49 +11180,49 @@
       "--sf-input-field--padding-top": "var(--sf-floating-active-1\\/3-space-y)"
     },
     ".sf-input--size-1 .sf-input-text-container-alt": {
-      "--sf-input-text-container-alt--padding-left": "var(--sf-ui-1-text-space-x)",
-      "--sf-input-text-container-alt--padding-right": "var(--sf-ui-1-text-space-x)"
+      "--sf-input-text-container-alt--padding-left": "var(--sf-ui--1-text-space-x)",
+      "--sf-input-text-container-alt--padding-right": "var(--sf-ui--1-text-space-x)"
     },
     ".sf-input--size-1 .sf-icon-alt": {
-      "--sf-icon-alt--font-size": "var(--sf-text-height-1)",
-      "--sf-icon-alt--height": "var(--sf-text-height-1)",
-      "--sf-icon-alt--width": "var(--sf-text-height-1)"
+      "--sf-icon-alt--font-size": "var(--sf-text--height-1)",
+      "--sf-icon-alt--height": "var(--sf-text--height-1)",
+      "--sf-icon-alt--width": "var(--sf-text--height-1)"
     },
     ".sf-input--size-2 .sf-input-text-container-alt": {
-      "--sf-input-text-container-alt--padding-left": "var(--sf-ui-2-text-space-x)",
-      "--sf-input-text-container-alt--padding-right": "var(--sf-ui-2-text-space-x)"
+      "--sf-input-text-container-alt--padding-left": "var(--sf-ui--2-text-space-x)",
+      "--sf-input-text-container-alt--padding-right": "var(--sf-ui--2-text-space-x)"
     },
     ".sf-input--size-2 .sf-icon-alt": {
-      "--sf-icon-alt--font-size": "var(--sf-text-height-2)",
-      "--sf-icon-alt--height": "var(--sf-text-height-2)",
-      "--sf-icon-alt--width": "var(--sf-text-height-2)"
+      "--sf-icon-alt--font-size": "var(--sf-text--height-2)",
+      "--sf-icon-alt--height": "var(--sf-text--height-2)",
+      "--sf-icon-alt--width": "var(--sf-text--height-2)"
     },
     ".sf-input--size-3 .sf-input-text-container-alt": {
-      "--sf-input-text-container-alt--padding-left": "var(--sf-ui-3-text-space-x)",
-      "--sf-input-text-container-alt--padding-right": "var(--sf-ui-3-text-space-x)"
+      "--sf-input-text-container-alt--padding-left": "var(--sf-ui--3-text-space-x)",
+      "--sf-input-text-container-alt--padding-right": "var(--sf-ui--3-text-space-x)"
     },
     ".sf-input--size-3 .sf-icon-alt": {
-      "--sf-icon-alt--font-size": "var(--sf-text-height-3)",
-      "--sf-icon-alt--height": "var(--sf-text-height-3)",
-      "--sf-icon-alt--width": "var(--sf-text-height-3)"
+      "--sf-icon-alt--font-size": "var(--sf-text--height-3)",
+      "--sf-icon-alt--height": "var(--sf-text--height-3)",
+      "--sf-icon-alt--width": "var(--sf-text--height-3)"
     },
     ".sf-input--size-1\\/2 .sf-input-text-container-alt": {
-      "--sf-input-text-container-alt--padding-left": "var(--sf-ui-1\\/2-text-space-x)",
-      "--sf-input-text-container-alt--padding-right": "var(--sf-ui-1\\/2-text-space-x)"
+      "--sf-input-text-container-alt--padding-left": "var(--sf-ui--1\\/2-text-space-x)",
+      "--sf-input-text-container-alt--padding-right": "var(--sf-ui--1\\/2-text-space-x)"
     },
     ".sf-input--size-1\\/2 .sf-icon-alt": {
-      "--sf-icon-alt--font-size": "var(--sf-text-height-1\\/2)",
-      "--sf-icon-alt--height": "var(--sf-text-height-1\\/2)",
-      "--sf-icon-alt--width": "var(--sf-text-height-1\\/2)"
+      "--sf-icon-alt--font-size": "var(--sf-text--height-1\\/2)",
+      "--sf-icon-alt--height": "var(--sf-text--height-1\\/2)",
+      "--sf-icon-alt--width": "var(--sf-text--height-1\\/2)"
     },
     ".sf-input--size-1\\/3 .sf-input-text-container-alt": {
-      "--sf-input-text-container-alt--padding-left": "var(--sf-ui-1\\/3-text-space-x)",
-      "--sf-input-text-container-alt--padding-right": "var(--sf-ui-1\\/3-text-space-x)"
+      "--sf-input-text-container-alt--padding-left": "var(--sf-ui--1\\/3-text-space-x)",
+      "--sf-input-text-container-alt--padding-right": "var(--sf-ui--1\\/3-text-space-x)"
     },
     ".sf-input--size-1\\/3 .sf-icon-alt": {
-      "--sf-icon-alt--font-size": "var(--sf-text-height-1\\/3)",
-      "--sf-icon-alt--height": "var(--sf-text-height-1\\/3)",
-      "--sf-icon-alt--width": "var(--sf-text-height-1\\/3)"
+      "--sf-icon-alt--font-size": "var(--sf-text--height-1\\/3)",
+      "--sf-icon-alt--height": "var(--sf-text--height-1\\/3)",
+      "--sf-icon-alt--width": "var(--sf-text--height-1\\/3)"
     },
     ".sf-input:has(input:enabled) .sf-icon-alt": {
       "--sf-icon-alt--color": "var(--sf-on-surface-muted)"
