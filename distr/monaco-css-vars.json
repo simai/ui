@@ -11904,6 +11904,67 @@
     },
     ".sf-input[\\:has\\(input.error\\)] .sf-input-field .sf-icon": {
       "--sf-icon--color": "var(--sf-on-surface-variant)"
+    },
+    ".sf-input--size-1 .sf-input-field>.sf-icon": {
+      "--sf-icon--font-size": "var(--sf-text-height-1)",
+      "--sf-icon--height": "var(--sf-text-height-1)",
+      "--sf-icon--width": "var(--sf-text-height-1)"
+    },
+    ".sf-input--size-2 .sf-input-field>.sf-icon": {
+      "--sf-icon--font-size": "var(--sf-text-height-2)",
+      "--sf-icon--height": "var(--sf-text-height-2)",
+      "--sf-icon--width": "var(--sf-text-height-2)"
+    },
+    ".sf-input--size-3 .sf-input-field>.sf-icon": {
+      "--sf-icon--font-size": "var(--sf-text-height-3)",
+      "--sf-icon--height": "var(--sf-text-height-3)",
+      "--sf-icon--width": "var(--sf-text-height-3)"
+    },
+    ".sf-input--size-1\\/2 .sf-input-field>.sf-icon": {
+      "--sf-icon--font-size": "var(--sf-text-height-1\\/2)",
+      "--sf-icon--height": "var(--sf-text-height-1\\/2)",
+      "--sf-icon--width": "var(--sf-text-height-1\\/2)"
+    },
+    ".sf-input--size-1\\/3 .sf-input-field>.sf-icon": {
+      "--sf-icon--font-size": "var(--sf-text-height-1\\/3)",
+      "--sf-icon--height": "var(--sf-text-height-1\\/3)",
+      "--sf-icon--width": "var(--sf-text-height-1\\/3)"
+    },
+    ".sf-input:has(input:enabled) .sf-input-field>.sf-icon": {
+      "--sf-icon--color": "var(--sf-on-surface-variant)"
+    },
+    ".sf-input:has(input:disabled) .sf-input-field>.sf-icon": {
+      "--sf-icon--color": "var(--sf-on-disable)"
+    },
+    ".sf-input:has(input:hover) .sf-input-field>.sf-icon": {
+      "--sf-icon--color": "var(--sf-on-surface-variant)"
+    },
+    ".sf-input:has(input:active) .sf-input-field>.sf-icon": {
+      "--sf-icon--color": "var(--sf-on-surface-variant)"
+    },
+    ".sf-input:has(input:focus) .sf-input-field>.sf-icon": {
+      "--sf-icon--color": "var(--sf-on-surface-variant)"
+    },
+    ".sf-input:has(input.error) .sf-input-field>.sf-icon": {
+      "--sf-icon--color": "var(--sf-on-surface-variant)"
+    },
+    ".sf-input[\\:has\\(input\\:enabled\\)] .sf-input-field>.sf-icon": {
+      "--sf-icon--color": "var(--sf-on-surface-variant)"
+    },
+    ".sf-input[\\:has\\(input\\:disabled\\)] .sf-input-field>.sf-icon": {
+      "--sf-icon--color": "var(--sf-on-disable)"
+    },
+    ".sf-input[\\:has\\(input\\:hover\\)] .sf-input-field>.sf-icon": {
+      "--sf-icon--color": "var(--sf-on-surface-variant)"
+    },
+    ".sf-input[\\:has\\(input\\:active\\)] .sf-input-field>.sf-icon": {
+      "--sf-icon--color": "var(--sf-on-surface-variant)"
+    },
+    ".sf-input[\\:has\\(input\\:focus\\)] .sf-input-field>.sf-icon": {
+      "--sf-icon--color": "var(--sf-on-surface-variant)"
+    },
+    ".sf-input[\\:has\\(input.error\\)] .sf-input-field>.sf-icon": {
+      "--sf-icon--color": "var(--sf-on-surface-variant)"
     }
   },
   "all-classes": [
