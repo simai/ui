@@ -5808,6 +5808,9 @@
     ".sf-icon-button:focus": {
       "--sf-icon-button--box-shadow": "var(--sf-ui-focus)"
     },
+    ".sf-icon-filled": {
+      "--sf-icon--fill": "1"
+    },
     ".sf-icon-light": {
       "--sf-icon--weight": "var(--sf-text--font-weight-3)"
     },
@@ -5821,7 +5824,6 @@
       "--sf-icon--font-family": "\"Material Symbols Rounded\""
     },
     ".sf-icon-sharp": {
-      "--sf-icon--fill": "1",
       "--sf-icon--font-family": "\"Material Symbols Sharp\""
     },
     ".sf-icon-solid": {
@@ -15101,6 +15103,7 @@
     ".sf-icon-button--size-2",
     ".sf-icon-button--size-3",
     ".sf-icon-button--tonal",
+    ".sf-icon-filled",
     ".sf-icon-light",
     ".sf-icon-medium",
     ".sf-icon-regular",
