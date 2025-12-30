@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunk=self.webpackChunk||[]).push([[6031],{6031:(e,t,a)=>{function s(e){return{name:"Plain text",aliases:["text","txt"],disableAutodetect:!0}}a.r(t),a.d(t,{default:()=>s})}}]);
