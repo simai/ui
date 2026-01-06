@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkSimaiHighlight=self.webpackChunkSimaiHighlight||[]).push([[3302],{3302:(a,s,t)=>{function e(a){return{aliases:["pycon"],contains:[{className:"meta.prompt",starts:{end:/ |$/,starts:{end:"$",subLanguage:"python"}},variants:[{begin:/^>>>(?=[ ]|$)/},{begin:/^\.\.\.(?=[ ]|$)/}]}]}}t.r(s),t.d(s,{default:()=>e})}}]);

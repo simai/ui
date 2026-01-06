@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkSimaiHighlight=self.webpackChunkSimaiHighlight||[]).push([[9273],{9273:(t,e,i)=>{function a(t){return{name:"Plain text",aliases:["text","txt"],disableAutodetect:!0}}i.r(e),i.d(e,{default:()=>a})}}]);
