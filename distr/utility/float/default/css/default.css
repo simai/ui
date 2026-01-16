@@ -1,1 +1,1 @@
-.float-right{float:right}.float-left{float:left}.float-none{float:none}
+[dir="ltr"] .float-inline-end{float:right}[dir="rtl"] .float-inline-end{float:left}[dir="ltr"] .float-inline-start{float:left}[dir="rtl"] .float-inline-start{float:right}.float-none{float:none}

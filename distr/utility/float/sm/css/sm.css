@@ -1,1 +1,1 @@
-@media(min-width: 520px){.sm\:float-right{float:right}.sm\:float-left{float:left}.sm\:float-none{float:none}}
+@media(min-width: 520px){[dir="ltr"] .sm\:float-inline-end{float:right}[dir="rtl"] .sm\:float-inline-end{float:left}[dir="ltr"] .sm\:float-inline-start{float:left}[dir="rtl"] .sm\:float-inline-start{float:right}.sm\:float-none{float:none}}

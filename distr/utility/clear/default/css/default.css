@@ -1,1 +1,1 @@
-.clear-left{clear:left}.clear-right{clear:right}.clear-both{clear:both}.clear-none{clear:none}
+[dir="ltr"] .clear-inline-start{clear:left}[dir="rtl"] .clear-inline-start{clear:right}[dir="ltr"] .clear-inline-end{clear:right}[dir="rtl"] .clear-inline-end{clear:left}.clear-both{clear:both}.clear-none{clear:none}

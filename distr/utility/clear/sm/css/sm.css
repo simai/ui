@@ -1,1 +1,1 @@
-@media(min-width: 520px){.sm\:clear-left{clear:left}.sm\:clear-right{clear:right}.sm\:clear-both{clear:both}.sm\:clear-none{clear:none}}
+@media(min-width: 520px){[dir="ltr"] .sm\:clear-inline-start{clear:left}[dir="rtl"] .sm\:clear-inline-start{clear:right}[dir="ltr"] .sm\:clear-inline-end{clear:right}[dir="rtl"] .sm\:clear-inline-end{clear:left}.sm\:clear-both{clear:both}.sm\:clear-none{clear:none}}

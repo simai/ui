@@ -1,1 +1,5 @@
-.container{width:var(--sf-breakpoint-sm);padding-left:var(--sf-space-2);padding-right:var(--sf-space-2)}
+[dir="ltr"] .container{padding-left:var(--sf-space-2)}
+[dir="rtl"] .container{padding-right:var(--sf-space-2)}
+[dir="ltr"] .container{padding-right:var(--sf-space-2)}
+[dir="rtl"] .container{padding-left:var(--sf-space-2)}
+.container{width:var(--sf-breakpoint-sm)}
