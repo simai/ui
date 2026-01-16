@@ -1,1 +1,1 @@
-@media(min-width: 1140px){[dir="ltr"] .xl\:clear-inline-start{clear:left}[dir="rtl"] .xl\:clear-inline-start{clear:right}[dir="ltr"] .xl\:clear-inline-end{clear:right}[dir="rtl"] .xl\:clear-inline-end{clear:left}.xl\:clear-both{clear:both}.xl\:clear-none{clear:none}}
+@media(min-width: 1140px){.xl\:clear-inline-start{clear:left}.xl\:clear-inline-end{clear:right}.xl\:clear-both{clear:both}.xl\:clear-none{clear:none}}

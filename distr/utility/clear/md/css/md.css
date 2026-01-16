@@ -1,1 +1,1 @@
-@media(min-width: 720px){[dir="ltr"] .md\:clear-inline-start{clear:left}[dir="rtl"] .md\:clear-inline-start{clear:right}[dir="ltr"] .md\:clear-inline-end{clear:right}[dir="rtl"] .md\:clear-inline-end{clear:left}.md\:clear-both{clear:both}.md\:clear-none{clear:none}}
+@media(min-width: 720px){.md\:clear-inline-start{clear:left}.md\:clear-inline-end{clear:right}.md\:clear-both{clear:both}.md\:clear-none{clear:none}}
