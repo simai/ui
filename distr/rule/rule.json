@@ -1,0 +1,2940 @@
+[
+  {
+    "name": "accent-color/default",
+    "regex": "/accent-(transparent|current|on-surface|primary|secondary|tertiary|success|warning|error)/"
+  },
+  {
+    "name": "accent-color/hover",
+    "regex": "/hover\\:accent-(transparent|current|on-surface|primary|secondary|tertiary|success|warning|error)/"
+  },
+  {
+    "name": "align-content/default",
+    "regex": "/content-cross-/"
+  },
+  {
+    "name": "align-content/lg",
+    "regex": "/lg\\:content-cross-/"
+  },
+  {
+    "name": "align-content/md",
+    "regex": "/md\\:content-cross-/"
+  },
+  {
+    "name": "align-content/sm",
+    "regex": "/sm\\:content-cross-/"
+  },
+  {
+    "name": "align-content/xl",
+    "regex": "/xl\\:content-cross-/"
+  },
+  {
+    "name": "align-items/default",
+    "regex": "/items-cross-/"
+  },
+  {
+    "name": "align-items/lg",
+    "regex": "/lg\\:items-cross-/"
+  },
+  {
+    "name": "align-items/md",
+    "regex": "/md\\:items-cross-/"
+  },
+  {
+    "name": "align-items/sm",
+    "regex": "/sm\\:items-cross-/"
+  },
+  {
+    "name": "align-items/xl",
+    "regex": "/xl\\:items-cross-/"
+  },
+  {
+    "name": "align-self/default",
+    "regex": "/self-cross-/"
+  },
+  {
+    "name": "align-self/lg",
+    "regex": "/lg\\:self-cross-/"
+  },
+  {
+    "name": "align-self/md",
+    "regex": "/md\\:self-cross-/"
+  },
+  {
+    "name": "align-self/sm",
+    "regex": "/sm\\:self-cross-/"
+  },
+  {
+    "name": "align-self/xl",
+    "regex": "/xl\\:self-cross-/"
+  },
+  {
+    "name": "appearance/default",
+    "regex": "/appearance-none/"
+  },
+  {
+    "name": "aspect-ratio/default",
+    "regex": "/aspect-/"
+  },
+  {
+    "name": "aspect-ratio/lg",
+    "regex": "/lg\\:aspect-/"
+  },
+  {
+    "name": "aspect-ratio/md",
+    "regex": "/md\\:aspect-/"
+  },
+  {
+    "name": "aspect-ratio/sm",
+    "regex": "/sm\\:aspect-/"
+  },
+  {
+    "name": "aspect-ratio/xl",
+    "regex": "/xl\\:aspect-/"
+  },
+  {
+    "name": "backdrop-filer-hue-rotate/default",
+    "regex": "/backdrop-hue-rotate/"
+  },
+  {
+    "name": "backdrop-filer-hue-rotate/hover",
+    "regex": "/hover\\:backdrop-hue-rotate/"
+  },
+  {
+    "name": "backdrop-filter-blur/default",
+    "regex": "/backdrop-blur/"
+  },
+  {
+    "name": "backdrop-filter-blur/hover",
+    "regex": "/hover\\:backdrop-blur/"
+  },
+  {
+    "name": "backdrop-filter-brightness/default",
+    "regex": "/backdrop-brightness-/"
+  },
+  {
+    "name": "backdrop-filter-brightness/hover",
+    "regex": "/hover\\:backdrop-brightness-/"
+  },
+  {
+    "name": "backdrop-filter-contrast/default",
+    "regex": "/backdrop-contrast-/"
+  },
+  {
+    "name": "backdrop-filter-contrast/hover",
+    "regex": "/hover\\:backdrop-contrast/"
+  },
+  {
+    "name": "backdrop-filter-grayscale/default",
+    "regex": "/backdrop-(grayscale|grayscale-none)/"
+  },
+  {
+    "name": "backdrop-filter-grayscale/hover",
+    "regex": "/hover\\:backdrop-(grayscale|grayscale-none)/"
+  },
+  {
+    "name": "backdrop-filter-invert/default",
+    "regex": "/backdrop-(invert|invert-none)/"
+  },
+  {
+    "name": "backdrop-filter-invert/hover",
+    "regex": "/hover\\:backdrop-(invert|invert-none)/"
+  },
+  {
+    "name": "backdrop-filter-opacity/default",
+    "regex": "/backdrop-opacity-([0-9]|full)/"
+  },
+  {
+    "name": "backdrop-filter-opacity/hover",
+    "regex": "/hover\\:backdrop-opacity-([0-9]|full)/"
+  },
+  {
+    "name": "backdrop-filter-saturate/default",
+    "regex": "/backdrop-saturate-/"
+  },
+  {
+    "name": "backdrop-filter-saturate/hover",
+    "regex": "/hover\\:backdrop-saturate-/"
+  },
+  {
+    "name": "backdrop-filter-sepia/default",
+    "regex": "/backdrop-(sepia|sepia-none)/"
+  },
+  {
+    "name": "backdrop-filter-sepia/hover",
+    "regex": "/hover\\:backdrop-(sepia|sepia-none)/"
+  },
+  {
+    "name": "background-attachment/default",
+    "regex": "/bg-(fixed|local|scroll)/"
+  },
+  {
+    "name": "background-attachment/lg",
+    "regex": "/lg\\:bg-(fixed|local|scroll)/"
+  },
+  {
+    "name": "background-attachment/md",
+    "regex": "/md\\:bg-(fixed|local|scroll)/"
+  },
+  {
+    "name": "background-attachment/sm",
+    "regex": "/sm\\:bg-(fixed|local|scroll)/"
+  },
+  {
+    "name": "background-attachment/xl",
+    "regex": "/xl\\:bg-(fixed|local|scroll)/"
+  },
+  {
+    "name": "background-clip/default",
+    "regex": "/bg-clip-(border|padding|content|text)/"
+  },
+  {
+    "name": "background-clip/lg",
+    "regex": "/lg\\:bg-clip-(border|padding|content|text)/"
+  },
+  {
+    "name": "background-clip/md",
+    "regex": "/md\\:bg-clip-(border|padding|content|text)/"
+  },
+  {
+    "name": "background-clip/sm",
+    "regex": "/sm\\:bg-clip-(border|padding|content|text)/"
+  },
+  {
+    "name": "background-clip/xl",
+    "regex": "/xl\\:bg-clip-(border|padding|content|text)/"
+  },
+  {
+    "name": "background-color/default",
+    "regex": "/bg-(transparent|current|surface|on-surface|primary|secondary|tertiary|disable|success|warning|error|white|black|(?:gray|red|blue|green|yellow|orange|purple|pink)(?:-\\d+)?)/"
+  },
+  {
+    "name": "background-color-brand/default",
+    "regex": "/bg-(fb|fb-messenger|youtube|whatsapp|instagram|wechat|tiktok|sinaweibo|qq|telegram|snapchat|kuaishou|qzone|pinterest|twitter|reddit|quora|skype|msteams|linkedin|vk|viber|vimeo|ok|tumblr|behance|soundcloud)/"
+  },
+  {
+    "name": "background-color-brand/hover",
+    "regex": "/hover\\:bg-(fb|fb-messenger|youtube|whatsapp|instagram|wechat|tiktok|sinaweibo|qq|telegram|snapchat|kuaishou|qzone|pinterest|twitter|reddit|quora|skype|msteams|linkedin|vk|viber|vimeo|ok|tumblr|behance|soundcloud)/"
+  },
+  {
+    "name": "background-fake/default",
+    "regex": "/bg-fake/"
+  },
+  {
+    "name": "background-origin/default",
+    "regex": "/bg-origin-(border|padding|content)/"
+  },
+  {
+    "name": "background-origin/lg",
+    "regex": "/lg\\:bg-origin-(border|padding|content)/"
+  },
+  {
+    "name": "background-origin/md",
+    "regex": "/md\\:bg-origin-(border|padding|content)/"
+  },
+  {
+    "name": "background-origin/sm",
+    "regex": "/sm\\:bg-origin-(border|padding|content)/"
+  },
+  {
+    "name": "background-origin/xl",
+    "regex": "/xl\\:bg-origin-(border|padding|content)/"
+  },
+  {
+    "name": "background-position/default",
+    "regex": "/(bg-(top|bottom|center|inline-(start|end))|(bg-(top|bottom|center|inline-(start|end))-(top|bottom|center|inline-(start|end))))/"
+  },
+  {
+    "name": "background-position/lg",
+    "regex": "/lg\\:(bg-(top|bottom|center|inline-(start|end))|(bg-(top|bottom|center|inline-(start|end))-(top|bottom|center|inline-(start|end))))/"
+  },
+  {
+    "name": "background-position/md",
+    "regex": "/md\\:(bg-(top|bottom|center|inline-(start|end))|(bg-(top|bottom|center|inline-(start|end))-(top|bottom|center|inline-(start|end))))/"
+  },
+  {
+    "name": "background-position/sm",
+    "regex": "/sm\\:(bg-(top|bottom|center|inline-(start|end))|(bg-(top|bottom|center|inline-(start|end))-(top|bottom|center|inline-(start|end))))/"
+  },
+  {
+    "name": "background-position/xl",
+    "regex": "/xl\\:(bg-(top|bottom|center|inline-(start|end))|(bg-(top|bottom|center|inline-(start|end))-(top|bottom|center|inline-(start|end))))/"
+  },
+  {
+    "name": "background-repeat/default",
+    "regex": "/(bg-repeat|(bg-repeat-(none|x|y|round|space)))/"
+  },
+  {
+    "name": "background-repeat/lg",
+    "regex": "/lg\\:(bg-repeat|(bg-repeat-(none|x|y|round|space)))/"
+  },
+  {
+    "name": "background-repeat/md",
+    "regex": "/md\\:(bg-repeat|(bg-repeat-(none|x|y|round|space)))/"
+  },
+  {
+    "name": "background-repeat/sm",
+    "regex": "/sm\\:(bg-repeat|(bg-repeat-(none|x|y|round|space)))/"
+  },
+  {
+    "name": "background-repeat/xl",
+    "regex": "/xl\\:(bg-repeat|(bg-repeat-(none|x|y|round|space)))/"
+  },
+  {
+    "name": "background-size/default",
+    "regex": "/bg-(auto|cover|contain)/"
+  },
+  {
+    "name": "background-size/lg",
+    "regex": "/lg\\:bg-(auto|cover|contain)/"
+  },
+  {
+    "name": "background-size/md",
+    "regex": "/md\\:bg-(auto|cover|contain)/"
+  },
+  {
+    "name": "background-size/sm",
+    "regex": "/sm\\:bg-(auto|cover|contain)/"
+  },
+  {
+    "name": "background-size/xl",
+    "regex": "/xl\\:bg-(auto|cover|contain)/"
+  },
+  {
+    "name": "background-gradient/default",
+    "regex": "/(bg-none|bg-gradient-to-(t|tr|r|br|b|bl|l|tl))/"
+  },
+  {
+    "name": "border-color/active",
+    "regex": "/active\\:border-(primary|secondary|tertiary|info|success|warning|transparent|current|outline|error)/"
+  },
+  {
+    "name": "border-color/default",
+    "regex": "/border-(primary|secondary|tertiary|info|success|warning|transparent|current|outline|outline-variant|error|white|black|(?:gray|red|blue|green|yellow|orange|purple|pink)(?:-\\d+)?)/"
+  },
+  {
+    "name": "border-color/focus",
+    "regex": "/focus\\:border-(primary|secondary|tertiary|info|success|warning|transparent|current|outline|error)/"
+  },
+  {
+    "name": "border-color/hover",
+    "regex": "/hover\\:border-(primary|secondary|tertiary|info|success|warning|transparent|current|outline|error)/"
+  },
+  {
+    "name": "border-radius/default",
+    "regex": "/radius-/"
+  },
+  {
+    "name": "border-radius/lg",
+    "regex": "/lg\\:radius-/"
+  },
+  {
+    "name": "border-radius/md",
+    "regex": "/md\\:radius-/"
+  },
+  {
+    "name": "border-radius/sm",
+    "regex": "/sm\\:radius-/"
+  },
+  {
+    "name": "border-radius/xl",
+    "regex": "/xl\\:radius-/"
+  },
+  {
+    "name": "border-style/default",
+    "regex": "/border-((dotted|dashed|solid|double|hidden|inset|none)|((x|y|top|bottom|inline-(start|end))-(dotted|dashed|solid|double|hidden|inset|none)))/"
+  },
+  {
+    "name": "border-width/default",
+    "regex": "/border-([0-4]|((top|bottom|inline-(start|end))-[0-4])|((x|y)-[0-4]))/"
+  },
+  {
+    "name": "border-width/lg",
+    "regex": "/lg\\:border-([0-4]|((top|bottom|inline-(start|end))-[0-4])|((x|y)-[0-4]))/"
+  },
+  {
+    "name": "border-width/md",
+    "regex": "/md\\:border-([0-4]|((top|bottom|inline-(start|end))-[0-4])|((x|y)-[0-4]))/"
+  },
+  {
+    "name": "border-width/sm",
+    "regex": "/sm\\:border-([0-4]|((top|bottom|inline-(start|end))-[0-4])|((x|y)-[0-4]))/"
+  },
+  {
+    "name": "border-width/xl",
+    "regex": "/xl\\:border-([0-4]|((top|bottom|inline-(start|end))-[0-4])|((x|y)-[0-4]))/"
+  },
+  {
+    "name": "border-spacing/default",
+    "regex": "/border-spacing(-(x|y))?-/"
+  },
+  {
+    "name": "border-collapse/default",
+    "regex": "/border-(collapse|separate)/"
+  },
+  {
+    "name": "box-decoration-break/default",
+    "regex": "/box-(slice|clone)/"
+  },
+  {
+    "name": "box-shadow/default",
+    "regex": "/shadow-[0-5]/"
+  },
+  {
+    "name": "box-shadow/hover",
+    "regex": "/hover\\:shadow-[0-5]/"
+  },
+  {
+    "name": "box-shadow-color/default",
+    "regex": "/shadow-(surface|on-surface|primary|secondary|tertiary|success|warning)/"
+  },
+  {
+    "name": "box-sizing/default",
+    "regex": "/box-(border|content)/"
+  },
+  {
+    "name": "break-after/default",
+    "regex": "/break-after-/"
+  },
+  {
+    "name": "break-after/lg",
+    "regex": "/lg\\:break-after-/"
+  },
+  {
+    "name": "break-after/md",
+    "regex": "/md\\:break-after-/"
+  },
+  {
+    "name": "break-after/sm",
+    "regex": "/sm\\:break-after-/"
+  },
+  {
+    "name": "break-after/xl",
+    "regex": "/xl\\:break-after-/"
+  },
+  {
+    "name": "break-before/default",
+    "regex": "/break-before-/"
+  },
+  {
+    "name": "break-before/lg",
+    "regex": "/lg\\:break-before-/"
+  },
+  {
+    "name": "break-before/md",
+    "regex": "/md\\:break-before-/"
+  },
+  {
+    "name": "break-before/sm",
+    "regex": "/sm\\:break-before-/"
+  },
+  {
+    "name": "break-before/xl",
+    "regex": "/xl\\:break-before-/"
+  },
+  {
+    "name": "break-inside/default",
+    "regex": "/break-inside-/"
+  },
+  {
+    "name": "break-inside/lg",
+    "regex": "/lg\\:break-inside-/"
+  },
+  {
+    "name": "break-inside/md",
+    "regex": "/md\\:break-inside-/"
+  },
+  {
+    "name": "break-inside/sm",
+    "regex": "/sm\\:break-inside-/"
+  },
+  {
+    "name": "break-inside/xl",
+    "regex": "/xl\\:break-inside-/"
+  },
+  {
+    "name": "caret-color/default",
+    "regex": "/caret-(transparent|current|on-surface|primary|secondary|tertiary|success|warning|error)/"
+  },
+  {
+    "name": "clear/default",
+    "regex": "/clear-/"
+  },
+  {
+    "name": "clear/lg",
+    "regex": "/lg\\:clear-/"
+  },
+  {
+    "name": "clear/md",
+    "regex": "/md\\:clear-/"
+  },
+  {
+    "name": "clear/sm",
+    "regex": "/sm\\:clear-/"
+  },
+  {
+    "name": "clear/xl",
+    "regex": "/xl\\:clear-/"
+  },
+  {
+    "name": "column/default",
+    "regex": "/layout-col-/"
+  },
+  {
+    "name": "column/lg",
+    "regex": "/lg\\:layout-col-/"
+  },
+  {
+    "name": "column/md",
+    "regex": "/md\\:layout-col-/"
+  },
+  {
+    "name": "column/sm",
+    "regex": "/sm\\:layout-col-/"
+  },
+  {
+    "name": "column/xl",
+    "regex": "/xl\\:layout-col-/"
+  },
+  {
+    "name": "container/default",
+    "regex": "/container/"
+  },
+  {
+    "name": "container/lg",
+    "regex": "/lg\\:container/"
+  },
+  {
+    "name": "container/md",
+    "regex": "/md\\:container/"
+  },
+  {
+    "name": "container/sm",
+    "regex": "/sm\\:container/"
+  },
+  {
+    "name": "container/xl",
+    "regex": "/xl\\:container/"
+  },
+  {
+    "name": "content/default",
+    "regex": "/(after|before)-(empty|none)/"
+  },
+  {
+    "name": "cursor/default",
+    "regex": "/cursor-/"
+  },
+  {
+    "name": "display/default",
+    "regex": "/(block|inline-block|inline|flex|inline-flex|table|inline-table|table-caption|table-cell|table-column|table-column-group|table-footer-group|table-header-group|table-row-group|table-row|flow-root|grid|inline-grid|content|list-item|hidden)/"
+  },
+  {
+    "name": "display/lg",
+    "regex": "/lg\\:(block|inline-block|inline|flex|inline-flex|table|inline-table|table-caption|table-cell|table-column|table-column-group|table-footer-group|table-header-group|table-row-group|table-row|flow-root|grid|inline-grid|content|list-item|hidden)/"
+  },
+  {
+    "name": "display/md",
+    "regex": "/md\\:(block|inline-block|inline|flex|inline-flex|table|inline-table|table-caption|table-cell|table-column|table-column-group|table-footer-group|table-header-group|table-row-group|table-row|flow-root|grid|inline-grid|content|list-item|hidden)/"
+  },
+  {
+    "name": "display/sm",
+    "regex": "/sm\\:(block|inline-block|inline|flex|inline-flex|table|inline-table|table-caption|table-cell|table-column|table-column-group|table-footer-group|table-header-group|table-row-group|table-row|flow-root|grid|inline-grid|content|list-item|hidden)/"
+  },
+  {
+    "name": "display/xl",
+    "regex": "/xl\\:(block|inline-block|inline|flex|inline-flex|table|inline-table|table-caption|table-cell|table-column|table-column-group|table-footer-group|table-header-group|table-row-group|table-row|flow-root|grid|inline-grid|content|list-item|hidden)/"
+  },
+  {
+    "name": "display-print/default",
+    "regex": "/print-(block|inline-block|inline|flex|inline-flex|table)/"
+  },
+  {
+    "name": "divider-color/default",
+    "regex": "/(divider|divide)-(primary|secondary|tertiary|success|warning|error|transparent|current)/"
+  },
+  {
+    "name": "divider-color/hover",
+    "regex": "/hover\\:divider-(primary|secondary|tertiary|success|warning|error|outline|transparent|current)/"
+  },
+  {
+    "name": "divider-style/default",
+    "regex": "/(divider|divide)-(dotted|dashed|solid|double|hidden|none)/"
+  },
+  {
+    "name": "divider-width/default",
+    "regex": "/(divider|divide)-(x|y)-([0-4]|reverse)/"
+  },
+  {
+    "name": "divider-opacity/default",
+    "regex": "/(divider|divide)-opacity-([0-9]|full)/"
+  },
+  {
+    "name": "drop-shadow/default",
+    "regex": "/drop-shadow-[0-6]/"
+  },
+  {
+    "name": "drop-shadow/hover",
+    "regex": "/hover\\:drop-shadow-[0-6]/"
+  },
+  {
+    "name": "drop-shadow-color/default",
+    "regex": "/drop-shadow-(surface|on-surface|primary|secondary|tertiary|success|warning)/"
+  },
+  {
+    "name": "element-position/default",
+    "regex": "/(inset|top|bottom|inline-(start|end))-/"
+  },
+  {
+    "name": "element-position/lg",
+    "regex": "/lg\\:(inset|top|bottom|inline-(start|end))-/"
+  },
+  {
+    "name": "element-position/md",
+    "regex": "/md\\:(inset|top|bottom|inline-(start|end))-/"
+  },
+  {
+    "name": "element-position/sm",
+    "regex": "/sm\\:(inset|top|bottom|inline-(start|end))-/"
+  },
+  {
+    "name": "element-position/xl",
+    "regex": "/xl\\:(inset|top|bottom|inline-(start|end))-/"
+  },
+  {
+    "name": "element-position-ext/default",
+    "regex": "/((top|bottom|block-(start|end)|inline-(start|end))|(-(top|bottom|block-(start|end)|inline-(start|end))))-([a-i]{1}[1-9]{1})/"
+  },
+  {
+    "name": "element-position-ext/lg",
+    "regex": "/lg\\:((top|bottom|block-(start|end)|inline-(start|end))|(-(top|bottom|block-(start|end)|inline-(start|end))))-([a-i]{1}[1-9]{1})/"
+  },
+  {
+    "name": "element-position-ext/md",
+    "regex": "/md\\:((top|bottom|block-(start|end)|inline-(start|end))|(-(top|bottom|block-(start|end)|inline-(start|end))))-([a-i]{1}[1-9]{1})/"
+  },
+  {
+    "name": "element-position-ext/sm",
+    "regex": "/sm\\:((top|bottom|block-(start|end)|inline-(start|end))|(-(top|bottom|block-(start|end)|inline-(start|end))))-([a-i]{1}[1-9]{1})/"
+  },
+  {
+    "name": "element-position-ext/xl",
+    "regex": "/xl\\:((top|bottom|block-(start|end)|inline-(start|end))|(-(top|bottom|block-(start|end)|inline-(start|end))))-([a-i]{1}[1-9]{1})/"
+  },
+  {
+    "name": "fill/default",
+    "regex": "/fill-(transparent|inherit|current|main|subordinate|additional|inverse|primary|secondary|tertiary|info|success|warning|danger)/"
+  },
+  {
+    "name": "fill-brand/default",
+    "regex": "/fill-(fb|fb-messenger|youtube|whatsapp|instagram|wechat|tiktok|sinaweibo|qq|telegram|snapchat|kuaishou|qzone|pinterest|twitter|reddit|quora|skype|msteams|linkedin|vk|viber|vimeo|ok|tumblr|behance|soundcloud)/"
+  },
+  {
+    "name": "fill-brand/hover",
+    "regex": "/hover\\:fill-(fb|fb-messenger|youtube|whatsapp|instagram|wechat|tiktok|sinaweibo|qq|telegram|snapchat|kuaishou|qzone|pinterest|twitter|reddit|quora|skype|msteams|linkedin|vk|viber|vimeo|ok|tumblr|behance|soundcloud)/"
+  },
+  {
+    "name": "fill-rule/default",
+    "regex": "/fill-(nonzero|evenodd)/"
+  },
+  {
+    "name": "filter-blur/default",
+    "regex": "/blur/"
+  },
+  {
+    "name": "filter-blur/hover",
+    "regex": "/hover\\:blur/"
+  },
+  {
+    "name": "filter-brightness/default",
+    "regex": "/brightness-/"
+  },
+  {
+    "name": "filter-brightness/hover",
+    "regex": "/hover\\:brightness-/"
+  },
+  {
+    "name": "filter-contrast/default",
+    "regex": "/contrast-/"
+  },
+  {
+    "name": "filter-contrast/hover",
+    "regex": "/hover\\:contrast-/"
+  },
+  {
+    "name": "filter-grayscale/default",
+    "regex": "/grayscale|grayscale-none/"
+  },
+  {
+    "name": "filter-grayscale/hover",
+    "regex": "/hover\\:(grayscale|grayscale-none)/"
+  },
+  {
+    "name": "filter-hue-rotate/default",
+    "regex": "/hue-rotate-/"
+  },
+  {
+    "name": "filer-hue-rotate/hover",
+    "regex": "/hover\\:hue-rotate-/"
+  },
+  {
+    "name": "filter-invert/default",
+    "regex": "/invert|invert-none/"
+  },
+  {
+    "name": "filter-invert/hover",
+    "regex": "/hover\\:(invert|invert-none)/"
+  },
+  {
+    "name": "filter-opacity/default",
+    "regex": "/filter-opacity-([0-9]|full)/"
+  },
+  {
+    "name": "filter-opacity/hover",
+    "regex": "/hover\\:filter-opacity-([0-9]|full)/"
+  },
+  {
+    "name": "opacity/default",
+    "regex": "/opacity-([0-9]|full)/"
+  },
+  {
+    "name": "opacity/hover",
+    "regex": "/hover\\:opacity-([0-9]|full)/"
+  },
+  {
+    "name": "filter-saturate/default",
+    "regex": "/saturate-/"
+  },
+  {
+    "name": "filter-saturate/hover",
+    "regex": "/hover\\:saturate-/"
+  },
+  {
+    "name": "filter-sepia/default",
+    "regex": "/(sepia|sepia-none)/"
+  },
+  {
+    "name": "filter-sepia/hover",
+    "regex": "/hover\\:(sepia|sepia-none)/"
+  },
+  {
+    "name": "flex/default",
+    "regex": "/flex-/"
+  },
+  {
+    "name": "flex/lg",
+    "regex": "/lg\\:flex-/"
+  },
+  {
+    "name": "flex/md",
+    "regex": "/md\\:flex-/"
+  },
+  {
+    "name": "flex/sm",
+    "regex": "/sm\\:flex-/"
+  },
+  {
+    "name": "flex/xl",
+    "regex": "/xl\\:flex-/"
+  },
+  {
+    "name": "flex-align/default",
+    "regex": "/(start|center|end)-(start|center|end)/"
+  },
+  {
+    "name": "flex-align/lg",
+    "regex": "/lg\\:(start|center|end)-(start|center|end)/"
+  },
+  {
+    "name": "flex-align/md",
+    "regex": "/md\\:(start|center|end)-(start|center|end)/"
+  },
+  {
+    "name": "flex-align/sm",
+    "regex": "/sm\\:(start|center|end)-(start|center|end)/"
+  },
+  {
+    "name": "flex-align/xl",
+    "regex": "/xl\\:(start|center|end)-(start|center|end)/"
+  },
+  {
+    "name": "flex-basis/default",
+    "regex": "/basis-/"
+  },
+  {
+    "name": "flex-basis/lg",
+    "regex": "/lg\\:basis-/"
+  },
+  {
+    "name": "flex-basis/md",
+    "regex": "/md\\:basis-/"
+  },
+  {
+    "name": "flex-basis/sm",
+    "regex": "/sm\\:basis-/"
+  },
+  {
+    "name": "flex-basis/xl",
+    "regex": "/xl\\:basis-/"
+  },
+  {
+    "name": "flex-basis-ext/default",
+    "regex": "/basis-(([0-9]{1})|([0-9]{2})|([0-9]{3}))/"
+  },
+  {
+    "name": "flex-basis-ext/lg",
+    "regex": "/lg\\:basis-(([0-9]{1})|([0-9]{2})|([0-9]{3}))/"
+  },
+  {
+    "name": "flex-basis-ext/md",
+    "regex": "/md\\:basis-(([0-9]{1})|([0-9]{2})|([0-9]{3}))/"
+  },
+  {
+    "name": "flex-basis-ext/sm",
+    "regex": "/sm\\:basis-(([0-9]{1})|([0-9]{2})|([0-9]{3}))/"
+  },
+  {
+    "name": "flex-basis-ext/xl",
+    "regex": "/xl\\:basis-(([0-9]{1})|([0-9]{2})|([0-9]{3}))/"
+  },
+  {
+    "name": "flex-direction/default",
+    "regex": "/flex-/"
+  },
+  {
+    "name": "flex-direction/lg",
+    "regex": "/lg\\:flex-/"
+  },
+  {
+    "name": "flex-direction/md",
+    "regex": "/md\\:flex-/"
+  },
+  {
+    "name": "flex-direction/sm",
+    "regex": "/sm\\:flex-/"
+  },
+  {
+    "name": "flex-direction/xl",
+    "regex": "/xl\\:flex-/"
+  },
+  {
+    "name": "flex-grow/default",
+    "regex": "/grow/"
+  },
+  {
+    "name": "flex-grow/lg",
+    "regex": "/lg\\:grow/"
+  },
+  {
+    "name": "flex-grow/md",
+    "regex": "/md\\:grow/"
+  },
+  {
+    "name": "flex-grow/sm",
+    "regex": "/sm\\:grow/"
+  },
+  {
+    "name": "flex-grow/xl",
+    "regex": "/xl\\:grow/"
+  },
+  {
+    "name": "flex-shrink/default",
+    "regex": "/shrink-/"
+  },
+  {
+    "name": "flex-shrink/lg",
+    "regex": "/lg\\:shrink-/"
+  },
+  {
+    "name": "flex-shrink/md",
+    "regex": "/md\\:shrink-/"
+  },
+  {
+    "name": "flex-shrink/sm",
+    "regex": "/sm\\:shrink-/"
+  },
+  {
+    "name": "flex-shrink/xl",
+    "regex": "/xl\\:shrink-/"
+  },
+  {
+    "name": "flex-wrap/default",
+    "regex": "/flex-/"
+  },
+  {
+    "name": "flex-wrap/lg",
+    "regex": "/lg\\:flex-/"
+  },
+  {
+    "name": "flex-wrap/md",
+    "regex": "/md\\:flex-/"
+  },
+  {
+    "name": "flex-wrap/sm",
+    "regex": "/sm\\:flex-/"
+  },
+  {
+    "name": "flex-wrap/xl",
+    "regex": "/xl\\:flex-/"
+  },
+  {
+    "name": "float/default",
+    "regex": "/float-/"
+  },
+  {
+    "name": "float/lg",
+    "regex": "/lg\\:float-/"
+  },
+  {
+    "name": "float/md",
+    "regex": "/md\\:float-/"
+  },
+  {
+    "name": "float/sm",
+    "regex": "/sm\\:float-/"
+  },
+  {
+    "name": "float/xl",
+    "regex": "/xl\\:float-/"
+  },
+  {
+    "name": "font-family/default",
+    "regex": "/sans|serif|mono/"
+  },
+  {
+    "name": "font-size/default",
+    "regex": "/text-(([1-9]{1}|[0-9]{2})|(([0-9]{1}|[0-9]{2})\\/([0-9]{1}|[0-9]{2})))/"
+  },
+  {
+    "name": "font-size-ext/default",
+    "regex": "/text-([a-i]{1}[0-9]{1})/"
+  },
+  {
+    "name": "font-size-ext/lg",
+    "regex": "/lg\\:text-([a-i]{1}[0-9]{1})/"
+  },
+  {
+    "name": "font-size-ext/md",
+    "regex": "/md\\:text-([a-i]{1}[0-9]{1})/"
+  },
+  {
+    "name": "font-size-ext/sm",
+    "regex": "/sm\\:text-([a-i]{1}[0-9]{1})/"
+  },
+  {
+    "name": "font-size-ext/xl",
+    "regex": "/xl\\:text-([a-i]{1}[0-9]{1})/"
+  },
+  {
+    "name": "font-smoothing/default",
+    "regex": "/(antialiased|smoothing)/"
+  },
+  {
+    "name": "font-style/default",
+    "regex": "/(italic|italic-none)/"
+  },
+  {
+    "name": "font-transform/default",
+    "regex": "/(lowercase|uppercase|capitalize|normalcase)/"
+  },
+  {
+    "name": "font-variant/default",
+    "regex": "/small-(caps|caps-none)/"
+  },
+  {
+    "name": "font-variant-numeric/default",
+    "regex": "/num-/"
+  },
+  {
+    "name": "font-weight/default",
+    "regex": "/(regular|bold|lighter|bolder|(weight-[1-9]))/"
+  },
+  {
+    "name": "font-weight/hover",
+    "regex": "/hover\\:(regular|bold|lighter|bolder|(weight-[1-9]{1}))/"
+  },
+  {
+    "name": "font-weight/lg",
+    "regex": "/lg\\:(regular|bold|lighter|bolder|(weight-[1-9]{1}))/"
+  },
+  {
+    "name": "font-weight/md",
+    "regex": "/md\\:(regular|bold|lighter|bolder|(weight-[1-9]{1}))/"
+  },
+  {
+    "name": "font-weight/sm",
+    "regex": "/sm\\:(regular|bold|lighter|bolder|(weight-[1-9]{1}))/"
+  },
+  {
+    "name": "font-weight/xl",
+    "regex": "/xl\\:(regular|bold|lighter|bolder|(weight-[1-9]{1}))/"
+  },
+  {
+    "name": "gap/default",
+    "regex": "/(?:^|\\s)(?:gap|g)-/"
+  },
+  {
+    "name": "gap/lg",
+    "regex": "/lg:(?:gap|g)-/"
+  },
+  {
+    "name": "gap/md",
+    "regex": "/md:(?:gap|g)-/"
+  },
+  {
+    "name": "gap/sm",
+    "regex": "/sm:(?:gap|g)-/"
+  },
+  {
+    "name": "gap/xl",
+    "regex": "/xl:(?:gap|g)-/"
+  },
+  {
+    "name": "gradient-color/default",
+    "regex": "/gr[1-3]-(transparent|current|surface|on-surface|primary|secondary|tertiary|disable|success|warning|error)/"
+  },
+  {
+    "name": "gradient-type/default",
+    "regex": "/gr-(line|conic)-[2-3]/",
+    "mode": "utility",
+    "css": true,
+    "relation": [
+      {
+        "name": "gradient-color-ext/default",
+        "mode": "utility",
+        "css": true
+      }
+    ]
+  },
+  {
+    "name": "gradient-stops/default",
+    "regex": "/(from|via|to)-/"
+  },
+  {
+    "name": "gradient-type/lg",
+    "regex": "/lg\\:gr-(line|conic)-[2-3]/"
+  },
+  {
+    "name": "gradient-type/md",
+    "regex": "/md\\:gr-(line|conic)-[2-3]/"
+  },
+  {
+    "name": "gradient-type/sm",
+    "regex": "/sm\\:gr-(line|conic)-[2-3]/"
+  },
+  {
+    "name": "gradient-type/xl",
+    "regex": "/xl\\:gr-(line|conic)-[2-3]/"
+  },
+  {
+    "name": "grid-auto-columns/default",
+    "regex": "/auto-cols/"
+  },
+  {
+    "name": "grid-auto-columns/lg",
+    "regex": "/lg\\:auto-cols/"
+  },
+  {
+    "name": "grid-auto-columns/md",
+    "regex": "/md\\:auto-cols/"
+  },
+  {
+    "name": "grid-auto-columns/sm",
+    "regex": "/sm\\:auto-cols/"
+  },
+  {
+    "name": "grid-auto-columns/xl",
+    "regex": "/xl\\:auto-cols/"
+  },
+  {
+    "name": "grid-auto-flow/default",
+    "regex": "/grid-flow-(row|col)/"
+  },
+  {
+    "name": "grid-auto-flow/lg",
+    "regex": "/lg\\:grid-flow-(row|col)/"
+  },
+  {
+    "name": "grid-auto-flow/md",
+    "regex": "/md\\:grid-flow-(row|col)/"
+  },
+  {
+    "name": "grid-auto-flow/sm",
+    "regex": "/sm\\:grid-flow-(row|col)/"
+  },
+  {
+    "name": "grid-auto-flow/xl",
+    "regex": "/xl\\:grid-flow-(row|col)/"
+  },
+  {
+    "name": "grid-auto-rows/default",
+    "regex": "/auto-rows/"
+  },
+  {
+    "name": "grid-auto-rows/lg",
+    "regex": "/lg\\:auto-rows/"
+  },
+  {
+    "name": "grid-auto-rows/md",
+    "regex": "/md\\:auto-rows/"
+  },
+  {
+    "name": "grid-auto-rows/sm",
+    "regex": "/sm\\:auto-rows/"
+  },
+  {
+    "name": "grid-auto-rows/xl",
+    "regex": "/xl\\:auto-rows/"
+  },
+  {
+    "name": "grid-column/default",
+    "regex": "/col-(auto|span)-/"
+  },
+  {
+    "name": "grid-column/lg",
+    "regex": "/lg\\:col-(auto|span)-/"
+  },
+  {
+    "name": "grid-column/md",
+    "regex": "/md\\:col-(auto|span)-/"
+  },
+  {
+    "name": "grid-column/sm",
+    "regex": "/sm\\:col-(auto|span)-/"
+  },
+  {
+    "name": "grid-column/xl",
+    "regex": "/xl\\:col-(auto|span)-/"
+  },
+  {
+    "name": "grid-column-end/default",
+    "regex": "/col-end-/"
+  },
+  {
+    "name": "grid-column-end/lg",
+    "regex": "/lg\\:col-end-/"
+  },
+  {
+    "name": "grid-column-end/md",
+    "regex": "/md\\:col-end-/"
+  },
+  {
+    "name": "grid-column-end/sm",
+    "regex": "/sm\\:col-end-/"
+  },
+  {
+    "name": "grid-column-end/xl",
+    "regex": "/xl\\:col-end-/"
+  },
+  {
+    "name": "grid-column-start/default",
+    "regex": "/col-start-/"
+  },
+  {
+    "name": "grid-column-start/lg",
+    "regex": "/lg\\:col-start-/"
+  },
+  {
+    "name": "grid-column-start/md",
+    "regex": "/md\\:col-start-/"
+  },
+  {
+    "name": "grid-column-start/sm",
+    "regex": "/sm\\:col-start-/"
+  },
+  {
+    "name": "grid-column-start/xl",
+    "regex": "/xl\\:col-start-/"
+  },
+  {
+    "name": "grid-row/default",
+    "regex": "/grid-row-(auto|span)/"
+  },
+  {
+    "name": "grid-row/lg",
+    "regex": "/lg\\:grid-row-(auto|span)/"
+  },
+  {
+    "name": "grid-row/md",
+    "regex": "/md\\:grid-row-(auto|span)/"
+  },
+  {
+    "name": "grid-row/sm",
+    "regex": "/sm\\:grid-row-(auto|span)/"
+  },
+  {
+    "name": "grid-row/xl",
+    "regex": "/xl\\:grid-row-(auto|span)/"
+  },
+  {
+    "name": "grid-row-end/default",
+    "regex": "/grid-row-end-/"
+  },
+  {
+    "name": "grid-row-end/lg",
+    "regex": "/lg\\:grid-row-end-/"
+  },
+  {
+    "name": "grid-row-end/md",
+    "regex": "/md\\:grid-row-end-/"
+  },
+  {
+    "name": "grid-row-end/sm",
+    "regex": "/sm\\:grid-row-end-/"
+  },
+  {
+    "name": "grid-row-end/xl",
+    "regex": "/xl\\:grid-row-end-/"
+  },
+  {
+    "name": "grid-row-start/default",
+    "regex": "/grid-row-start-/"
+  },
+  {
+    "name": "grid-row-start/lg",
+    "regex": "/lg\\:grid-row-start-/"
+  },
+  {
+    "name": "grid-row-start/md",
+    "regex": "/md\\:grid-row-start-/"
+  },
+  {
+    "name": "grid-row-start/sm",
+    "regex": "/sm\\:grid-row-start-/"
+  },
+  {
+    "name": "grid-row-start/xl",
+    "regex": "/xl\\:grid-row-start-/"
+  },
+  {
+    "name": "grid-template-columns/default",
+    "regex": "/grid-col-/"
+  },
+  {
+    "name": "grid-template-columns/lg",
+    "regex": "/lg\\:grid-col-/"
+  },
+  {
+    "name": "grid-template-columns/md",
+    "regex": "/md\\:grid-col-/"
+  },
+  {
+    "name": "grid-template-columns/sm",
+    "regex": "/sm\\:grid-col-/"
+  },
+  {
+    "name": "grid-template-columns/xl",
+    "regex": "/xl\\:grid-col-/"
+  },
+  {
+    "name": "grid-template-rows/default",
+    "regex": "/grid-row-/"
+  },
+  {
+    "name": "grid-template-rows/lg",
+    "regex": "/lg\\:grid-row-/"
+  },
+  {
+    "name": "grid-template-rows/md",
+    "regex": "/md\\:grid-row-/"
+  },
+  {
+    "name": "grid-template-rows/sm",
+    "regex": "/sm\\:grid-row-/"
+  },
+  {
+    "name": "grid-template-rows/xl",
+    "regex": "/xl\\:grid-row-/"
+  },
+  {
+    "name": "height/default",
+    "regex": "/h-((([1-9]{1}|[1-9]{2})\\/([1-9]{1}|[1-9]{2}))|auto|full|screen|min|max|fit|px|0)/"
+  },
+  {
+    "name": "height/lg",
+    "regex": "/lg\\:h-((([1-9]{1}|[1-9]{2})\\/([1-9]{1}|[1-9]{2}))|auto|full|screen|min|max|fit|px|0)/"
+  },
+  {
+    "name": "height/md",
+    "regex": "/md\\:h-((([1-9]{1}|[1-9]{2})\\/([1-9]{1}|[1-9]{2}))|auto|full|screen|min|max|fit|px|0)/"
+  },
+  {
+    "name": "height/sm",
+    "regex": "/sm\\:h-((([1-9]{1}|[1-9]{2})\\/([1-9]{1}|[1-9]{2}))|auto|full|screen|min|max|fit|px|0)/"
+  },
+  {
+    "name": "height/xl",
+    "regex": "/xl\\:h-((([1-9]{1}|[1-9]{2})\\/([1-9]{1}|[1-9]{2}))|auto|full|screen|min|max|fit|px|0)/"
+  },
+  {
+    "name": "height-ext/default",
+    "regex": "/h-(([a-i]{1}[0-9]{1})|(([1-9]{1})|([0-9]{2})|([0-9]{3})))/"
+  },
+  {
+    "name": "height-ext/lg",
+    "regex": "/lg\\:h-(([a-i]{1}[0-9]{1})|(([1-9]{1})|([0-9]{2})|([0-9]{3})))/"
+  },
+  {
+    "name": "height-ext/md",
+    "regex": "/md\\:h-(([a-i]{1}[0-9]{1})|(([1-9]{1})|([0-9]{2})|([0-9]{3})))/"
+  },
+  {
+    "name": "height-ext/sm",
+    "regex": "/sm\\:h-(([a-i]{1}[0-9]{1})|(([1-9]{1})|([0-9]{2})|([0-9]{3})))/"
+  },
+  {
+    "name": "height-ext/xl",
+    "regex": "/xl\\:h-(([a-i]{1}[0-9]{1})|(([1-9]{1})|([0-9]{2})|([0-9]{3})))/"
+  },
+  {
+    "name": "isolate/default",
+    "regex": "/isolate/"
+  },
+  {
+    "name": "isolate/lg",
+    "regex": "/lg\\:isolate/"
+  },
+  {
+    "name": "isolate/md",
+    "regex": "/md\\:isolate/"
+  },
+  {
+    "name": "isolate/sm",
+    "regex": "/sm\\:isolate/"
+  },
+  {
+    "name": "isolate/xl",
+    "regex": "/xl\\:isolate/"
+  },
+  {
+    "name": "justify-content/default",
+    "regex": "/content-main-/"
+  },
+  {
+    "name": "justify-content/lg",
+    "regex": "/lg\\:content-main-/"
+  },
+  {
+    "name": "justify-content/md",
+    "regex": "/md\\:content-main-/"
+  },
+  {
+    "name": "justify-content/sm",
+    "regex": "/sm\\:content-main-/"
+  },
+  {
+    "name": "justify-content/xl",
+    "regex": "/xl\\:content-main-/"
+  },
+  {
+    "name": "justify-items/default",
+    "regex": "/items-main-/"
+  },
+  {
+    "name": "justify-items/lg",
+    "regex": "/lg\\:items-main-/"
+  },
+  {
+    "name": "justify-items/md",
+    "regex": "/md\\:items-main-/"
+  },
+  {
+    "name": "justify-items/sm",
+    "regex": "/sm\\:items-main-/"
+  },
+  {
+    "name": "justify-items/xl",
+    "regex": "/xl\\:items-main-/"
+  },
+  {
+    "name": "justify-self/default",
+    "regex": "/self-main-/"
+  },
+  {
+    "name": "justify-self/lg",
+    "regex": "/lg\\:self-main-/"
+  },
+  {
+    "name": "justify-self/md",
+    "regex": "/md\\:self-main-/"
+  },
+  {
+    "name": "justify-self/sm",
+    "regex": "/sm\\:self-main-/"
+  },
+  {
+    "name": "justify-self/xl",
+    "regex": "/xl\\:self-main-/"
+  },
+  {
+    "name": "letter-spacing/default",
+    "regex": "/tracking-/"
+  },
+  {
+    "name": "line-height/default",
+    "regex": "/line-/"
+  },
+  {
+    "name": "line-height/lg",
+    "regex": "/lg\\:line-/"
+  },
+  {
+    "name": "line-height/md",
+    "regex": "/md\\:line-/"
+  },
+  {
+    "name": "line-height/sm",
+    "regex": "/sm\\:line-/"
+  },
+  {
+    "name": "line-height/xl",
+    "regex": "/xl\\:line-/"
+  },
+  {
+    "name": "line-clamp/default",
+    "regex": "/line-clamp-/"
+  },
+  {
+    "name": "list-style-position/default",
+    "regex": "/list-(inside|outside)/"
+  },
+  {
+    "name": "list-style-type/default",
+    "regex": "/list-(none|disc|decimal)/"
+  },
+  {
+    "name": "margin/default",
+    "regex": "/(m-([0-9]{1}|((top|bottom|inline-(start|end))-([0-9]{1}|auto))|auto)|-m-([0-9]{1}|((top|bottom|inline-(start|end))-[0-9]{1})))/"
+  },
+  {
+    "name": "margin/lg",
+    "regex": "/lg\\:(m-([0-9]{1}|((top|bottom|inline-(start|end))-[0-9]{1}))|-m-([0-9]{1}|((top|bottom|inline-(start|end))-[0-9]{1})))/"
+  },
+  {
+    "name": "margin/md",
+    "regex": "/md\\:(m-([0-9]{1}|((top|bottom|inline-(start|end))-[0-9]{1}))|-m-([0-9]{1}|((top|bottom|inline-(start|end))-[0-9]{1})))/"
+  },
+  {
+    "name": "margin/sm",
+    "regex": "/sm\\:(m-([0-9]{1}|((top|bottom|inline-(start|end))-[0-9]{1}))|-m-([0-9]{1}|((top|bottom|inline-(start|end))-[0-9]{1})))/"
+  },
+  {
+    "name": "margin/xl",
+    "regex": "/xl\\:(m-([0-9]{1}|((top|bottom|inline-(start|end))-[0-9]{1}))|-m-([0-9]{1}|((top|bottom|inline-(start|end))-[0-9]{1})))/"
+  },
+  {
+    "name": "margin-ext/default",
+    "regex": "/(m-(([a-i][0-9])|((top|bottom|inline-(start|end))-([a-i][0-9])))|-m-(([a-i][0-9])|((top|bottom|inline-(start|end))-([a-i][0-9]))))/"
+  },
+  {
+    "name": "margin-ext/lg",
+    "regex": "/lg\\:(m-(([a-i][0-9])|((top|bottom|inline-(start|end))-([a-i][0-9])))|-m-(([a-i][0-9])|((top|bottom|inline-(start|end))-([a-i][0-9]))))/"
+  },
+  {
+    "name": "margin-ext/md",
+    "regex": "/md\\:(m-(([a-i][0-9])|((top|bottom|inline-(start|end))-([a-i][0-9])))|-m-(([a-i][0-9])|((top|bottom|inline-(start|end))-([a-i][0-9]))))/"
+  },
+  {
+    "name": "margin-ext/sm",
+    "regex": "/sm\\:(m-(([a-i][0-9])|((top|bottom|inline-(start|end))-([a-i][0-9])))|-m-(([a-i][0-9])|((top|bottom|inline-(start|end))-([a-i][0-9]))))/"
+  },
+  {
+    "name": "margin-ext/xl",
+    "regex": "/xl\\:(m-(([a-i][0-9])|((top|bottom|inline-(start|end))-([a-i][0-9])))|-m-(([a-i][0-9])|((top|bottom|inline-(start|end))-([a-i][0-9]))))/"
+  },
+  {
+    "name": "mask-clip/default",
+    "regex": "/mask-(content|padding|margin|border|fill|stroke|viewbox|text|none)/"
+  },
+  {
+    "name": "mask-composite/default",
+    "regex": "/mask-(add|subtract|intersect|exclude)/"
+  },
+  {
+    "name": "mask-mode/default",
+    "regex": "/mask-(alpha|luminance|source)/"
+  },
+  {
+    "name": "mask-origin/default",
+    "regex": "/mask-origin-(content|padding|margin|border|fill|stroke|viewbox)/"
+  },
+  {
+    "name": "mask-position/default",
+    "regex": "/mask-((inline-(start|end)(-(top|bottom))?)|top|bottom|center)/"
+  },
+  {
+    "name": "mask-repeat/default",
+    "regex": "/mask-repeat/"
+  },
+  {
+    "name": "mask-size/default",
+    "regex": "/mask-(auto|cover|contain|full)/"
+  },
+  {
+    "name": "mask-type/default",
+    "regex": "/mask-type-(luminance|alpha)/"
+  },
+  {
+    "name": "max-container/default",
+    "regex": "/max-container-/"
+  },
+  {
+    "name": "max-height/default",
+    "regex": "/max-h-(full|screen|min|max|fit|prose|none|0|sm|md|lg|xl)/"
+  },
+  {
+    "name": "max-height/lg",
+    "regex": "/lg\\:max-h-(full|screen|min|max|fit|prose|none|0|sm|md|lg|xl)/"
+  },
+  {
+    "name": "max-height/md",
+    "regex": "/md\\:max-h-(full|screen|min|max|fit|prose|none|0|sm|md|lg|xl)/"
+  },
+  {
+    "name": "max-height/sm",
+    "regex": "/sm\\:max-h-(full|screen|min|max|fit|prose|none|0|sm|md|lg|xl)/"
+  },
+  {
+    "name": "max-height/xl",
+    "regex": "/xl\\:max-h-(full|screen|min|max|fit|prose|none|0|sm|md|lg|xl)/"
+  },
+  {
+    "name": "max-height-ext/default",
+    "regex": "/max-h-([a-i]{1}[0-9]{1})/"
+  },
+  {
+    "name": "max-height-ext/lg",
+    "regex": "/lg\\:max-h-([a-i]{1}[0-9]{1})/"
+  },
+  {
+    "name": "max-height-ext/md",
+    "regex": "/md\\:max-h-([a-i]{1}[0-9]{1})/"
+  },
+  {
+    "name": "max-height-ext/sm",
+    "regex": "/sm\\:max-h-([a-i]{1}[0-9]{1})/"
+  },
+  {
+    "name": "max-height-ext/xl",
+    "regex": "/xl\\:max-h-([a-i]{1}[0-9]{1})/"
+  },
+  {
+    "name": "max-width/default",
+    "regex": "/max-w-(full|screen|min|max|fit|prose|none|0|sm|md|lg|xl)/"
+  },
+  {
+    "name": "max-width/lg",
+    "regex": "/lg\\:max-w-(full|screen|min|max|fit|prose|none|0|sm|md|lg|xl)/"
+  },
+  {
+    "name": "max-width/md",
+    "regex": "/md\\:max-w-(full|screen|min|max|fit|prose|none|0|sm|md|lg|xl)/"
+  },
+  {
+    "name": "max-width/sm",
+    "regex": "/sm\\:max-w-(full|screen|min|max|fit|prose|none|0|sm|md|lg|xl)/"
+  },
+  {
+    "name": "max-width/xl",
+    "regex": "/xl\\:max-w-(full|screen|min|max|fit|prose|none|0|sm|md|lg|xl)/"
+  },
+  {
+    "name": "max-width-ext/default",
+    "regex": "/max-w-([a-i]{1}[0-9]{1})/"
+  },
+  {
+    "name": "max-width-ext/lg",
+    "regex": "/lg\\:max-w-([a-i]{1}[0-9]{1})/"
+  },
+  {
+    "name": "max-width-ext/md",
+    "regex": "/md\\:max-w-([a-i]{1}[0-9]{1})/"
+  },
+  {
+    "name": "max-width-ext/sm",
+    "regex": "/sm\\:max-w-([a-i]{1}[0-9]{1})/"
+  },
+  {
+    "name": "max-width-ext/xl",
+    "regex": "/xl\\:max-w-([a-i]{1}[0-9]{1})/"
+  },
+  {
+    "name": "min-height/default",
+    "regex": "/min-h-(min|max|fit|full|0)/"
+  },
+  {
+    "name": "min-height/lg",
+    "regex": "/lg\\:min-h-(min|max|fit|full|0)/"
+  },
+  {
+    "name": "min-height/md",
+    "regex": "/md\\:min-h-(min|max|fit|full|0)/"
+  },
+  {
+    "name": "min-height/sm",
+    "regex": "/sm\\:min-h-(min|max|fit|full|0)/"
+  },
+  {
+    "name": "min-height/xl",
+    "regex": "/xl\\:min-h-(min|max|fit|full|0)/"
+  },
+  {
+    "name": "min-width/default",
+    "regex": "/min-w-(min|max|fit|full|0)/"
+  },
+  {
+    "name": "min-width/lg",
+    "regex": "/lg\\:min-w-(min|max|fit|full|0)/"
+  },
+  {
+    "name": "min-width/md",
+    "regex": "/md\\:min-w-(min|max|fit|full|0)/"
+  },
+  {
+    "name": "min-width/sm",
+    "regex": "/sm\\:min-w-(min|max|fit|full|0)/"
+  },
+  {
+    "name": "min-width/xl",
+    "regex": "/xl\\:min-w-(min|max|fit|full|0)/"
+  },
+  {
+    "name": "mix-blend-mode/default",
+    "regex": "/mix-blend-/"
+  },
+  {
+    "name": "object-fit/default",
+    "regex": "/object-(contain|cover|fill|none|scale)/"
+  },
+  {
+    "name": "object-fit/lg",
+    "regex": "/lg\\:object-(contain|cover|fill|none|scale)/"
+  },
+  {
+    "name": "object-fit/md",
+    "regex": "/md\\:object-(contain|cover|fill|none|scale)/"
+  },
+  {
+    "name": "object-fit/sm",
+    "regex": "/sm\\:object-(contain|cover|fill|none|scale)/"
+  },
+  {
+    "name": "object-fit/xl",
+    "regex": "/xl\\:object-(contain|cover|fill|none|scale)/"
+  },
+  {
+    "name": "object-position/default",
+    "regex": "/object-((inline-(start|end)(-(top|bottom))?)|bottom|top|center)/"
+  },
+  {
+    "name": "object-position/lg",
+    "regex": "/lg\\:object-((inline-(start|end)(-(top|bottom))?)|bottom|top|center)/"
+  },
+  {
+    "name": "object-position/md",
+    "regex": "/md\\:object-((inline-(start|end)(-(top|bottom))?)|bottom|top|center)/"
+  },
+  {
+    "name": "object-position/sm",
+    "regex": "/sm\\:object-((inline-(start|end)(-(top|bottom))?)|bottom|top|center)/"
+  },
+  {
+    "name": "object-position/xl",
+    "regex": "/xl\\:object-((inline-(start|end)(-(top|bottom))?)|bottom|top|center)/"
+  },
+  {
+    "name": "offset/default",
+    "regex": "/offset-((([1-9]{1}|[1-9]{2})\\/([1-9]{1}|[1-9]{2})))/"
+  },
+  {
+    "name": "offset/lg",
+    "regex": "/lg\\:offset-((([1-9]{1}|[1-9]{2})\\/([1-9]{1}|[1-9]{2})))/"
+  },
+  {
+    "name": "offset/md",
+    "regex": "/md\\:offset-((([1-9]{1}|[1-9]{2})\\/([1-9]{1}|[1-9]{2})))/"
+  },
+  {
+    "name": "offset/sm",
+    "regex": "/sm\\:offset-((([1-9]{1}|[1-9]{2})\\/([1-9]{1}|[1-9]{2})))/"
+  },
+  {
+    "name": "offset/xl",
+    "regex": "/xl\\:offset-((([1-9]{1}|[1-9]{2})\\/([1-9]{1}|[1-9]{2})))/"
+  },
+  {
+    "name": "order/default",
+    "regex": "/order-/"
+  },
+  {
+    "name": "order/lg",
+    "regex": "/lg\\:order-/"
+  },
+  {
+    "name": "order/md",
+    "regex": "/md\\:order-/"
+  },
+  {
+    "name": "order/sm",
+    "regex": "/sm\\:order-/"
+  },
+  {
+    "name": "order/xl",
+    "regex": "/xl\\:order-/"
+  },
+  {
+    "name": "outline-color/active",
+    "regex": "/active\\:outline-(primary|secondary|tertiary|success|warning|error|outline|transparent|current)/"
+  },
+  {
+    "name": "outline-color/default",
+    "regex": "/outline-(primary|secondary|tertiary|success|warning|error|outline|transparent|current)/"
+  },
+  {
+    "name": "outline-color/focus",
+    "regex": "/focus\\:outline-(primary|secondary|tertiary|success|warning|error|outline|transparent|current)/"
+  },
+  {
+    "name": "outline-color/hover",
+    "regex": "/hover\\:outline-(primary|secondary|tertiary|success|warning|error|outline|transparent|current)/"
+  },
+  {
+    "name": "outline-offset/default",
+    "regex": "/outline-offset-[0-4]/"
+  },
+  {
+    "name": "outline-style/default",
+    "regex": "/outline-(solid|none|outline|dotted|dashed|double|hidden)/"
+  },
+  {
+    "name": "outline-width/default",
+    "regex": "/outline-[0-4]/"
+  },
+  {
+    "name": "outline-width/focus",
+    "regex": "/focus\\:outline-[0-4]/"
+  },
+  {
+    "name": "ring-inset/default",
+    "regex": "/ring-inset/"
+  },
+  {
+    "name": "ring-inset/hover",
+    "regex": "/hover\\:ring-inset/"
+  },
+  {
+    "name": "ring-inset/focus",
+    "regex": "/focus\\:ring-inset/"
+  },
+  {
+    "name": "ring-width/default",
+    "regex": "/ring-([0-4])/"
+  },
+  {
+    "name": "ring-width/hover",
+    "regex": "/hover\\:ring-([0-4])/"
+  },
+  {
+    "name": "ring-width/focus",
+    "regex": "/focus\\:ring-([0-4])/"
+  },
+  {
+    "name": "ring-color/default",
+    "regex": "/ring-(transparent|current|outline|outline-variant|primary|secondary|tertiary|error|warning|success)/"
+  },
+  {
+    "name": "ring-color/hover",
+    "regex": "/hover\\:ring-(transparent|current|outline|outline-variant|primary|secondary|tertiary|error|warning|success)/"
+  },
+  {
+    "name": "ring-color/focus",
+    "regex": "/focus\\:ring-(transparent|current|outline|outline-variant|primary|secondary|tertiary|error|warning|success)/"
+  },
+  {
+    "name": "ring-offset-width/default",
+    "regex": "/ring-offset-([0-4])/"
+  },
+  {
+    "name": "ring-offset-width/hover",
+    "regex": "/hover\\:ring-offset-([0-4])/"
+  },
+  {
+    "name": "ring-offset-width/focus",
+    "regex": "/focus\\:ring-offset-([0-4])/"
+  },
+  {
+    "name": "ring-offset-color/default",
+    "regex": "/ring-offset-(transparent|current|outline|outline-variant|primary|secondary|tertiary|error|warning|success)/"
+  },
+  {
+    "name": "ring-offset-color/hover",
+    "regex": "/hover\\:ring-offset-(transparent|current|outline|outline-variant|primary|secondary|tertiary|error|warning|success)/"
+  },
+  {
+    "name": "ring-offset-color/focus",
+    "regex": "/focus\\:ring-offset-(transparent|current|outline|outline-variant|primary|secondary|tertiary|error|warning|success)/"
+  },
+  {
+    "name": "ring-opacity/default",
+    "regex": "/ring-opacity-([0-9]|full)/"
+  },
+  {
+    "name": "ring-opacity/hover",
+    "regex": "/hover\\:ring-opacity-([0-9]|full)/"
+  },
+  {
+    "name": "ring-opacity/focus",
+    "regex": "/focus\\:ring-opacity-([0-9]|full)/"
+  },
+  {
+    "name": "overflow/default",
+    "regex": "/overflow-/"
+  },
+  {
+    "name": "overflow/lg",
+    "regex": "/lg\\:overflow-/"
+  },
+  {
+    "name": "overflow/md",
+    "regex": "/md\\:overflow-/"
+  },
+  {
+    "name": "overflow/sm",
+    "regex": "/sm\\:overflow-/"
+  },
+  {
+    "name": "overflow/xl",
+    "regex": "/xl\\:overflow-/"
+  },
+  {
+    "name": "overscroll-behavior/default",
+    "regex": "/scroll-over-((x|y|auto|contain|none)|((x|y|auto|contain|none)-(x|y|auto|contain|none)))/"
+  },
+  {
+    "name": "padding/default",
+    "regex": "/p-([0-9]{1}|((top|bottom|inline-(start|end)|x|y)-[0-9]{1}))/"
+  },
+  {
+    "name": "padding/lg",
+    "regex": "/lg\\:p-(?:(top|bottom|inline-(start|end)|x|y)-)?([0-9]{1})/"
+  },
+  {
+    "name": "padding/md",
+    "regex": "/md\\:p-([0-9]{1}|((top|bottom|inline-(start|end)|x|y)-[0-9]{1}))/"
+  },
+  {
+    "name": "padding/sm",
+    "regex": "/sm\\:p-([0-9]{1}|((top|bottom|inline-(start|end)|x|y)-[0-9]{1}))/"
+  },
+  {
+    "name": "padding/xl",
+    "regex": "/xl\\:p-([0-9]{1}|((top|bottom|inline-(start|end)|x|y)-[0-9]{1}))/"
+  },
+  {
+    "name": "padding-ext/default",
+    "regex": "/p-(([a-i][0-9])|((top|bottom|inline-(start|end))-([a-i][0-9])))/"
+  },
+  {
+    "name": "padding-ext/lg",
+    "regex": "/lg\\:p-(([a-i][0-9])|((top|bottom|inline-(start|end))-([a-i][0-9])))/"
+  },
+  {
+    "name": "padding-ext/md",
+    "regex": "/md\\:p-(([a-i][0-9])|((top|bottom|inline-(start|end))-([a-i][0-9])))/"
+  },
+  {
+    "name": "padding-ext/sm",
+    "regex": "/sm\\:p-(([a-i][0-9])|((top|bottom|inline-(start|end))-([a-i][0-9])))/"
+  },
+  {
+    "name": "padding-ext/xl",
+    "regex": "/xl\\:p-(([a-i][0-9])|((top|bottom|inline-(start|end))-([a-i][0-9])))/"
+  },
+  {
+    "name": "pattern/default",
+    "regex": "/pattern-([0-9]|[0-9]{2})/"
+  },
+  {
+    "name": "pattern/lg",
+    "regex": "/lg\\:pattern-([0-9]|[0-9]{2})/"
+  },
+  {
+    "name": "pattern/md",
+    "regex": "/md\\:pattern-([0-9]|[0-9]{2})/"
+  },
+  {
+    "name": "pattern/sm",
+    "regex": "/sm\\:pattern-([0-9]|[0-9]{2})/"
+  },
+  {
+    "name": "pattern/xl",
+    "regex": "/xl\\:pattern-([0-9]|[0-9]{2})/"
+  },
+  {
+    "name": "place-content/default",
+    "regex": "/content-/"
+  },
+  {
+    "name": "place-content/lg",
+    "regex": "/lg\\:content-/"
+  },
+  {
+    "name": "place-content/md",
+    "regex": "/md\\:content-/"
+  },
+  {
+    "name": "place-content/sm",
+    "regex": "/sm\\:content-/"
+  },
+  {
+    "name": "place-content/xl",
+    "regex": "/xl\\:content-/"
+  },
+  {
+    "name": "place-items/default",
+    "regex": "/items-/"
+  },
+  {
+    "name": "place-items/lg",
+    "regex": "/lg\\:items-/"
+  },
+  {
+    "name": "place-items/md",
+    "regex": "/md\\:items-/"
+  },
+  {
+    "name": "place-items/sm",
+    "regex": "/sm\\:items-/"
+  },
+  {
+    "name": "place-items/xl",
+    "regex": "/xl\\:items-/"
+  },
+  {
+    "name": "place-self/default",
+    "regex": "/self-/"
+  },
+  {
+    "name": "place-self/lg",
+    "regex": "/lg\\:self-/"
+  },
+  {
+    "name": "place-self/md",
+    "regex": "/md\\:self-/"
+  },
+  {
+    "name": "place-self/sm",
+    "regex": "/sm\\:self-/"
+  },
+  {
+    "name": "place-self/xl",
+    "regex": "/xl\\:self-/"
+  },
+  {
+    "name": "pointer-events/default",
+    "regex": "/pointer-event-(none|auto)/"
+  },
+  {
+    "name": "position/default",
+    "regex": "/(static|relative|absolute|fixed|sticky)/"
+  },
+  {
+    "name": "position/lg",
+    "regex": "/lg\\:(static|relative|absolute|fixed|sticky)/"
+  },
+  {
+    "name": "position/md",
+    "regex": "/md\\:(static|relative|absolute|fixed|sticky)/"
+  },
+  {
+    "name": "position/sm",
+    "regex": "/sm\\:(static|relative|absolute|fixed|sticky)/"
+  },
+  {
+    "name": "position/xl",
+    "regex": "/xl\\:(static|relative|absolute|fixed|sticky)/"
+  },
+  {
+    "name": "resize/default",
+    "regex": "/resize|(resize-(none|x|y))/"
+  },
+  {
+    "name": "scroll-backdrop-color/default",
+    "regex": "/scroll-bg-(surface|primary|secondary|tertiary|transparent|current)/"
+  },
+  {
+    "name": "scroll-backdrop-radius/default",
+    "regex": "/scroll-bg-radius-[0-4]/"
+  },
+  {
+    "name": "scroll-backdrop-width/default",
+    "regex": "/scroll-bg-[1-4]/"
+  },
+  {
+    "name": "scroll-behavior/default",
+    "regex": "/scroll-(smooth|auto)/"
+  },
+  {
+    "name": "scroll-margin/default",
+    "regex": "/scroll-m/"
+  },
+  {
+    "name": "scroll-margin-ext/default",
+    "regex": "/(scroll-m-((inline-(start|end)|t|b)-)?([a-i][0-9])|-scroll-m-((inline-(start|end)|t|b)-)?([a-i][0-9]))/"
+  },
+  {
+    "name": "scroll-padding/default",
+    "regex": "/scroll-p/"
+  },
+  {
+    "name": "scroll-padding-ext/default",
+    "regex": "/(scroll-p-((inline-(start|end)|t|b)-)?([a-i][0-9])|-scroll-p-((inline-(start|end)|t|b)-)?([a-i][0-9]))/"
+  },
+  {
+    "name": "scroll-slider-color/default",
+    "regex": "/scroll-(surface|primary|secondary|tertiary|transparent|current)/"
+  },
+  {
+    "name": "scroll-slider-radius/default",
+    "regex": "/scroll-radius-[1-4]/"
+  },
+  {
+    "name": "scroll-slider-width/default",
+    "regex": "/scroll-[1-4]/"
+  },
+  {
+    "name": "scroll-snap-align/default",
+    "regex": "/snap-(start|end|center|(align-none))/"
+  },
+  {
+    "name": "scroll-snap-stop/default",
+    "regex": "/snap-(normal|always)/"
+  },
+  {
+    "name": "scroll-snap-type/default",
+    "regex": "/snap-(none|x|y|both|mandatory|proximity)/"
+  },
+  {
+    "name": "space/default",
+    "regex": "/space-(x|y)-([0-9]{1}|reverse)/"
+  },
+  {
+    "name": "space/lg",
+    "regex": "/lg\\:space-(x|y)-([0-9]{1}|reverse)/"
+  },
+  {
+    "name": "space/md",
+    "regex": "/md\\:space-(x|y)-([0-9]{1}|reverse)/"
+  },
+  {
+    "name": "space/sm",
+    "regex": "/sm\\:space-(x|y)-([0-9]{1}|reverse)/"
+  },
+  {
+    "name": "space/xl",
+    "regex": "/xl\\:space-(x|y)-([0-9]{1}|reverse)/"
+  },
+  {
+    "name": "stripe/default",
+    "regex": "/stripe-[1-4]/"
+  },
+  {
+    "name": "stripe/lg",
+    "regex": "/lg\\:stripe-[1-4]/"
+  },
+  {
+    "name": "stripe/md",
+    "regex": "/md\\:stripe-[1-4]/"
+  },
+  {
+    "name": "stripe/sm",
+    "regex": "/sm\\:stripe-[1-4]/"
+  },
+  {
+    "name": "stripe/xl",
+    "regex": "/xl\\:stripe-[1-4]/"
+  },
+  {
+    "name": "stripe-color/default",
+    "regex": "/stripe-(transparent|current|surface|on-surface|primary|secondary|tertiary)/"
+  },
+  {
+    "name": "stripe-width/default",
+    "regex": "/stripe-size-[1-4]/"
+  },
+  {
+    "name": "stripe-width/lg",
+    "regex": "/lg\\:stripe-size-[1-4]/"
+  },
+  {
+    "name": "stripe-width/md",
+    "regex": "/md\\:stripe-size-[1-4]/"
+  },
+  {
+    "name": "stripe-width/sm",
+    "regex": "/sm\\:stripe-size-[1-4]/"
+  },
+  {
+    "name": "stripe-width/xl",
+    "regex": "/xl\\:stripe-size-[1-4]/"
+  },
+  {
+    "name": "stroke-color/default",
+    "regex": "/stroke/"
+  },
+  {
+    "name": "stroke-color/hover",
+    "regex": "/hover\\:stroke/"
+  },
+  {
+    "name": "stroke-linecap/default",
+    "regex": "/linecap-/"
+  },
+  {
+    "name": "stroke-linejoin/default",
+    "regex": "/linejoin-/"
+  },
+  {
+    "name": "stroke-width/default",
+    "regex": "/stroke-[0-4]/"
+  },
+  {
+    "name": "stroke-width/lg",
+    "regex": "/lg\\:stroke-[0-4]/"
+  },
+  {
+    "name": "stroke-width/md",
+    "regex": "/md\\:stroke-[0-4]/"
+  },
+  {
+    "name": "stroke-width/sm",
+    "regex": "/sm\\:stroke-[0-4]/"
+  },
+  {
+    "name": "stroke-width/xl",
+    "regex": "/xl\\:stroke-[0-4]/"
+  },
+  {
+    "name": "svg-size/default",
+    "regex": "/svg-/"
+  },
+  {
+    "name": "svg-size/lg",
+    "regex": "/lg\\:svg-/"
+  },
+  {
+    "name": "svg-size/md",
+    "regex": "/md\\:svg-/"
+  },
+  {
+    "name": "svg-size/sm",
+    "regex": "/sm\\:svg-/"
+  },
+  {
+    "name": "svg-size/xl",
+    "regex": "/xl\\:svg-/"
+  },
+  {
+    "name": "table/default",
+    "regex": "/table|table-small/"
+  },
+  {
+    "name": "table-active/default",
+    "regex": "/table-active/"
+  },
+  {
+    "name": "table-border/default",
+    "regex": "/table-border/"
+  },
+  {
+    "name": "table-hover/default",
+    "regex": "/table-hover/"
+  },
+  {
+    "name": "table-layout/default",
+    "regex": "/table-(auto|fixed)/"
+  },
+  {
+    "name": "table-stripe/default",
+    "regex": "/table-stripe/"
+  },
+  {
+    "name": "text-align/default",
+    "regex": "/text-(start|center|end|justify)/"
+  },
+  {
+    "name": "text-align/lg",
+    "regex": "/lg\\:text-(start|center|end|justify)/"
+  },
+  {
+    "name": "text-align/md",
+    "regex": "/md\\:text-(start|center|end|justify)/"
+  },
+  {
+    "name": "text-align/sm",
+    "regex": "/sm\\:text-(start|center|end|justify)/"
+  },
+  {
+    "name": "text-align/xl",
+    "regex": "/xl\\:text-(start|center|end|justify)/"
+  },
+  {
+    "name": "text-color/active",
+    "regex": "/active\\:color-/"
+  },
+  {
+    "name": "text-color/default",
+    "regex": "/color-/"
+  },
+  {
+    "name": "text-color/focus",
+    "regex": "/focus\\:color-/"
+  },
+  {
+    "name": "text-color/hover",
+    "regex": "/hover\\:color-/"
+  },
+  {
+    "name": "placeholder-color/default",
+    "regex": "/placeholder-/"
+  },
+  {
+    "name": "placeholder-color/hover",
+    "regex": "/hover\\:placeholder-/"
+  },
+  {
+    "name": "placeholder-color/focus",
+    "regex": "/focus\\:placeholder-/"
+  },
+  {
+    "name": "placeholder-opacity/default",
+    "regex": "/placeholder-opacity-([0-9]|full)/"
+  },
+  {
+    "name": "placeholder-opacity/hover",
+    "regex": "/hover\\:placeholder-opacity-([0-9]|full)/"
+  },
+  {
+    "name": "placeholder-opacity/focus",
+    "regex": "/focus\\:placeholder-opacity-([0-9]|full)/"
+  },
+  {
+    "name": "text-decoration/active",
+    "regex": "/active\\:(underline|overline|line-through|decoration-none)/"
+  },
+  {
+    "name": "text-decoration/default",
+    "regex": "/(underline|overline|line-through|decoration-none)/"
+  },
+  {
+    "name": "text-decoration/focus",
+    "regex": "/focus\\:(underline|overline|line-through|decoration-none)/"
+  },
+  {
+    "name": "text-decoration/hover",
+    "regex": "/hover\\:(underline|overline|line-through|decoration-none)/"
+  },
+  {
+    "name": "text-decoration-color/active",
+    "regex": "/active\\:decoration-(transparent|inherit|current|outline-primary|outline-secondary|outline-tertiary|outline-error|outline-warning|outline-success)/"
+  },
+  {
+    "name": "text-decoration-color/default",
+    "regex": "/decoration-(transparent|inherit|current|outline-primary|outline-secondary|outline-tertiary|outline-error|outline-warning|outline-success)/"
+  },
+  {
+    "name": "text-decoration-color/focus",
+    "regex": "/focus\\:decoration-(transparent|inherit|current|outline-primary|outline-secondary|outline-tertiary|outline-error|outline-warning|outline-success)/"
+  },
+  {
+    "name": "text-decoration-color/hover",
+    "regex": "/hover\\:decoration-(transparent|inherit|current|outline-primary|outline-secondary|outline-tertiary|outline-error|outline-warning|outline-success)/"
+  },
+  {
+    "name": "text-decoration-offset/default",
+    "regex": "/decoration-offset-(auto|[0-4])/"
+  },
+  {
+    "name": "text-decoration-style/default",
+    "regex": "/decoration-(solid|dotted|double|dashed|wavy)/"
+  },
+  {
+    "name": "text-decoration-thickness/default",
+    "regex": "/decoration-(auto|font|[0-4])/"
+  },
+  {
+    "name": "text-indent/default",
+    "regex": "/indent-(px|[0-9]{1}|[0-9]{2})/"
+  },
+  {
+    "name": "text-max-width/default",
+    "regex": "/(measure|(measure-(wide|narrow)))/"
+  },
+  {
+    "name": "text-max-width/lg",
+    "regex": "/lg\\:(measure|(measure-(wide|narrow)))/"
+  },
+  {
+    "name": "text-max-width/md",
+    "regex": "/md\\:(measure|(measure-(wide|narrow)))/"
+  },
+  {
+    "name": "text-max-width/sm",
+    "regex": "/sm\\:(measure|(measure-(wide|narrow)))/"
+  },
+  {
+    "name": "text-max-width/xl",
+    "regex": "/xl\\:(measure|(measure-(wide|narrow)))/"
+  },
+  {
+    "name": "text-overflow/default",
+    "regex": "/(truncate|(t-(ellipsis|clip)))/"
+  },
+  {
+    "name": "title/default",
+    "regex": "/title-([1-9]{1}|[0-9]{2})/"
+  },
+  {
+    "name": "touch-action/default",
+    "regex": "/touch-/"
+  },
+  {
+    "name": "transform-origin/default",
+    "regex": "/origin-((center|top|bottom|inline-(start|end)|top-inline-(start|end)|bottom-inline-(start|end))|((center|top|bottom|inline-(start|end)|top-inline-(start|end)|bottom-inline-(start|end))-(center|top|bottom|inline-(start|end)|top-inline-(start|end)|bottom-inline-(start|end))))/"
+  },
+  {
+    "name": "transform-rotate/default",
+    "regex": "/rotate-/"
+  },
+  {
+    "name": "transform-rotate/hover",
+    "regex": "/hover\\:rotate-/"
+  },
+  {
+    "name": "transform-scale/default",
+    "regex": "/scale-/"
+  },
+  {
+    "name": "transform-scale/hover",
+    "regex": "/hover\\:scale-/"
+  },
+  {
+    "name": "transform-skew/default",
+    "regex": "/skew-/"
+  },
+  {
+    "name": "transform-skew/hover",
+    "regex": "/hover\\:skew-/"
+  },
+  {
+    "name": "transform-translate/default",
+    "regex": "/(translate-(x|y)-[0-9])|(-translate-(x|y)-[0-9])/"
+  },
+  {
+    "name": "transform-translate/hover",
+    "regex": "/hover\\:(translate-(x|y)-[0-9])|(-translate-(x|y)-[0-9])/"
+  },
+  {
+    "name": "transform-translate-ext/default",
+    "regex": "/(translate-(x|y)-[a-i][0-9])|(-translate-(x|y)-[a-i][0-9])/"
+  },
+  {
+    "name": "transform-translate-ext/hover",
+    "regex": "/hover\\:(translate-(x|y)-[a-i][0-9])|(-translate-(x|y)-[a-i][0-9])/"
+  },
+  {
+    "name": "transition-delay/default",
+    "regex": "/delay-[0-9]/"
+  },
+  {
+    "name": "transition-delay/lg",
+    "regex": "/lg\\:delay-[0-9]/"
+  },
+  {
+    "name": "transition-delay/md",
+    "regex": "/md\\:delay-[0-9]/"
+  },
+  {
+    "name": "transition-delay/sm",
+    "regex": "/sm\\:delay-[0-9]/"
+  },
+  {
+    "name": "transition-delay/xl",
+    "regex": "/xl\\:delay-[0-9]/"
+  },
+  {
+    "name": "transition-duration/default",
+    "regex": "/duration-/"
+  },
+  {
+    "name": "transition-property/default",
+    "regex": "/transition|(transition-(none|all|color|opacity|shadow|transform))/"
+  },
+  {
+    "name": "transition-property/lg",
+    "regex": "/lg\\:transition|(transition-(none|all|color|opacity|shadow|transform))/"
+  },
+  {
+    "name": "transition-property/md",
+    "regex": "/md\\:transition|(transition-(none|all|color|opacity|shadow|transform))/"
+  },
+  {
+    "name": "transition-property/sm",
+    "regex": "/sm\\:transition|(transition-(none|all|color|opacity|shadow|transform))/"
+  },
+  {
+    "name": "transition-property/xl",
+    "regex": "/xl\\:transition|(transition-(none|all|color|opacity|shadow|transform))/"
+  },
+  {
+    "name": "transition-timing-function/default",
+    "regex": "/ease-(linear|in|out|in-out)/"
+  },
+  {
+    "name": "user-select/default",
+    "regex": "/select-(none|text|all|auto|contain)/"
+  },
+  {
+    "name": "sr-only/default",
+    "regex": "/(sr-only|not-sr-only)/"
+  },
+  {
+    "name": "vertical-align/default",
+    "regex": "/text-(baseline|top|middle|bottom|sup|sub)/"
+  },
+  {
+    "name": "visibility/default",
+    "regex": "/visible/"
+  },
+  {
+    "name": "visibility/lg",
+    "regex": "/lg\\:visible/"
+  },
+  {
+    "name": "visibility/md",
+    "regex": "/md\\:visible/"
+  },
+  {
+    "name": "visibility/sm",
+    "regex": "/sm\\:visible/"
+  },
+  {
+    "name": "visibility/xl",
+    "regex": "/xl\\:visible/"
+  },
+  {
+    "name": "white-space/default",
+    "regex": "/(nowrap|pre|pre-line|pre-wrap|whitespace-normal|wrap-none)/"
+  },
+  {
+    "name": "width/default",
+    "regex": "/w-((([1-9]{1}|[1-9]{2})\\/([1-9]{1}|[1-9]{2}))|auto|full|screen|min|max|fit|px|0)/"
+  },
+  {
+    "name": "width/lg",
+    "regex": "/lg\\:w-((([1-9]{1}|[1-9]{2})\\/([1-9]{1}|[1-9]{2}))|auto|full|screen|min|max|fit|px|0)/"
+  },
+  {
+    "name": "width/md",
+    "regex": "/md:w-((([1-9]{1}|[1-9]{2})\\/([1-9]{1}|[1-9]{2}))|auto|full|screen|min|max|fit|px|0)/"
+  },
+  {
+    "name": "width/sm",
+    "regex": "/sm\\:w-((([1-9]{1}|[1-9]{2})\\/([1-9]{1}|[1-9]{2}))|auto|full|screen|min|max|fit|px|0)/"
+  },
+  {
+    "name": "width/xl",
+    "regex": "/xl\\:w-((([1-9]{1}|[1-9]{2})\\/([1-9]{1}|[1-9]{2}))|auto|full|screen|min|max|fit|px|0)/"
+  },
+  {
+    "name": "width-ext/default",
+    "regex": "/w-(([a-i]{1}[0-9]{1})|(([1-9]{1})|([0-9]{2})|([0-9]{3})))/"
+  },
+  {
+    "name": "width-ext/lg",
+    "regex": "/lg\\:w-(([a-i]{1}[0-9]{1})|(([1-9]{1})|([0-9]{2})|([0-9]{3})))/"
+  },
+  {
+    "name": "width-ext/md",
+    "regex": "/md\\:w-(([a-i]{1}[0-9]{1})|(([1-9]{1})|([0-9]{2})|([0-9]{3})))/"
+  },
+  {
+    "name": "width-ext/sm",
+    "regex": "/sm\\:w-(([a-i]{1}[0-9]{1})|(([1-9]{1})|([0-9]{2})|([0-9]{3})))/"
+  },
+  {
+    "name": "width-ext/xl",
+    "regex": "/xl\\:w-(([a-i]{1}[0-9]{1})|(([1-9]{1})|([0-9]{2})|([0-9]{3})))/"
+  },
+  {
+    "name": "will-change/default",
+    "regex": "/will-change-/"
+  },
+  {
+    "name": "word-break/default",
+    "regex": "/text-break-(normal|word|all)/"
+  },
+  {
+    "name": "z-index/default",
+    "regex": "/z-([1-9]{1}|auto|-1)/"
+  },
+  {
+    "name": "z-index/lg",
+    "regex": "/lg\\:z-([1-9]{1}|auto|-1)/"
+  },
+  {
+    "name": "z-index/md",
+    "regex": "/md\\:z-([1-9]{1}|auto|-1)/"
+  },
+  {
+    "name": "z-index/sm",
+    "regex": "/sm\\:z-([1-9]{1}|auto|-1)/"
+  },
+  {
+    "name": "z-index/xl",
+    "regex": "/xl\\:z-([1-9]{1}|auto|-1)/"
+  },
+  {
+    "name": "cl-accordion",
+    "regex": "/sf-code=\"accordion\"/",
+    "type": "smart",
+    "mode": "smart",
+    "js": true
+  },
+  {
+    "name": "cl-sfAccordion",
+    "regex": "/sf-code=\"sfAccordion\"/",
+    "type": "smart",
+    "mode": "smart",
+    "js": true
+  },
+  {
+    "name": "cl-ajax",
+    "regex": "/sf-code=\"ajax\"/",
+    "type": "smart",
+    "mode": "smart",
+    "js": true
+  },
+  {
+    "name": "cl-button",
+    "regex": "/sf-code=\"button\"/",
+    "type": "smart",
+    "mode": "smart",
+    "js": true
+  },
+  {
+    "name": "cl-buttons",
+    "regex": "/sf-code=\"buttons\"/",
+    "type": "smart",
+    "mode": "smart",
+    "js": true
+  },
+  {
+    "name": "cl-cards",
+    "regex": "/sf-code=\"cards\"/",
+    "type": "smart",
+    "mode": "smart",
+    "js": true
+  },
+  {
+    "name": "cl-debug",
+    "regex": "/sf-code=\"debug\"/",
+    "type": "smart",
+    "mode": "smart",
+    "js": true
+  },
+  {
+    "name": "cl-edit",
+    "regex": "/sf-code=\"edit\"/",
+    "type": "smart",
+    "mode": "smart",
+    "js": true
+  },
+  {
+    "name": "cl-list",
+    "regex": "/sf-code=\"list\"/",
+    "type": "smart",
+    "mode": "smart",
+    "js": true
+  },
+  {
+    "name": "cl-news",
+    "regex": "/sf-code=\"news\"/",
+    "type": "smart",
+    "mode": "smart",
+    "js": true
+  },
+  {
+    "name": "cl-pagination",
+    "regex": "/sf-code=\"pagination\"/",
+    "type": "smart",
+    "mode": "smart",
+    "js": true
+  },
+  {
+    "name": "cl-search",
+    "regex": "/sf-code=\"search\"/",
+    "type": "smart",
+    "mode": "smart",
+    "js": true
+  },
+  {
+    "name": "cl-select",
+    "regex": "/sf-code=\"select\"/",
+    "type": "smart",
+    "mode": "smart",
+    "js": true
+  },
+  {
+    "name": "cl-span",
+    "regex": "/sf-code=\"span\"/",
+    "type": "smart",
+    "mode": "smart",
+    "js": true
+  },
+  {
+    "name": "cl-table",
+    "regex": "/sf-code=\"table\"/",
+    "type": "smart",
+    "mode": "smart",
+    "js": true
+  },
+  {
+    "name": "cl-tabs",
+    "regex": "/sf-code=\"tabs\"/",
+    "type": "smart",
+    "mode": "smart",
+    "js": true
+  },
+  {
+    "name": "cl-text",
+    "regex": "/sf-code=\"text\"/",
+    "type": "smart",
+    "mode": "smart",
+    "js": true
+  },
+  {
+    "name": "cl-textarea",
+    "regex": "/sf-code=\"textarea\"/",
+    "type": "smart",
+    "mode": "smart",
+    "js": true
+  },
+  {
+    "name": "cl-tags",
+    "regex": "/sf-code=\"tags\"/",
+    "type": "smart",
+    "mode": "smart",
+    "js": true
+  },
+  {
+    "name": "cl-icons",
+    "regex": "/sf-code=\"icons\"/",
+    "type": "smart",
+    "mode": "smart",
+    "js": true
+  },
+  {
+    "name": "cl-inputs",
+    "regex": "/sf-code=\"inputs\"/",
+    "type": "smart",
+    "mode": "smart",
+    "js": true
+  },
+  {
+    "name": "cl-dropdown",
+    "regex": "/sf-code=\"dropdown\"/",
+    "type": "smart",
+    "mode": "smart",
+    "js": true
+  },
+  {
+    "name": "cl-close",
+    "regex": "/sf-code=\"close\"/",
+    "type": "smart",
+    "mode": "smart",
+    "js": true
+  },
+  {
+    "name": "cl-contentDivider",
+    "regex": "/sf-code=\"contentDivider\"/",
+    "type": "smart",
+    "mode": "smart",
+    "js": true
+  },
+  {
+    "name": "clipboard",
+    "regex": "/(btn-clipboard|source)/",
+    "type": "component",
+    "js": true,
+    "css": true
+  },
+  {
+    "name": "theme",
+    "regex": "/sf-theme/",
+    "type": "component",
+    "css": false,
+    "js": true
+  },
+  {
+    "name": "close",
+    "regex": "/sf-close/",
+    "type": "component",
+    "css": true
+  },
+  {
+    "name": "carousel",
+    "regex": "/sf-carousel/",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
+    "name": "doc",
+    "regex": "/(language-|block--start|btn-clipboard|bd-example-indeterminate|bd-content|example)/",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
+    "name": "dropdown",
+    "regex": "/sf-dropdown/",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
+    "name": "fancybox",
+    "regex": "/data-fancybox/",
+    "type": "attribute",
+    "mode": "component",
+    "js": true,
+    "css": true,
+    "relation": [
+      {
+        "name": "jquery",
+        "mode": "component",
+        "js": true
+      }
+    ]
+  },
+  {
+    "name": "hideShow",
+    "regex": "/sf-hide-show/",
+    "type": "component",
+    "css": false,
+    "js": true
+  },
+  {
+    "name": "highlight",
+    "regex": "/(?:class\\s*=\\s*[\"'][^\"']*language-[^\"']*[\"']|<pre\\b[^>]*>\\s*<code\\b[^>]*>)/i",
+    "type": "component",
+    "js": true
+  },
+  {
+    "name": "progress",
+    "regex": "/sf-progress/",
+    "type": "component",
+    "css": true
+  },
+  {
+    "name": "sf-system",
+    "regex": "/sf-modal|sf-gallery|sf-overbox/",
+    "type": "attribute",
+    "js": true
+  },
+  {
+    "name": "special",
+    "regex": "/sf-special/",
+    "type": "attribute",
+    "js": true,
+    "css": true
+  },
+  {
+    "name": "swiper",
+    "regex": "/swiper/",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
+    "name": "tab",
+    "regex": "/sf-tab/",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
+    "name": "tooltip",
+    "regex": "/sf-tooltip/",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
+    "name": "alerts",
+    "regex": "/sf-alert/",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
+    "name": "accordion",
+    "regex": "/sf-accordion/",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
+    "name": "checkbox",
+    "regex": "/sf-checkbox/",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
+    "name": "avatars",
+    "regex": "/sf-avatar/",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
+    "name": "tags",
+    "regex": "/sf-tag/",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
+    "name": "monaco",
+    "regex": "/sf-monaco/",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
+    "name": "icons",
+    "regex": "/sf-icon/",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
+    "name": "progressbar",
+    "regex": "/sf-progress-bar/",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
+    "name": "badges",
+    "regex": "/sf-badge/",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
+    "name": "inputs",
+    "regex": "/sf-input/",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
+    "name": "slider",
+    "regex": "/sf-slider/",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
+    "name": "breadcrumbs",
+    "regex": "/sf-breadcrumb/",
+    "type": "component",
+    "css": true,
+    "js": false
+  },
+  {
+    "name": "buttons",
+    "regex": "/sf-button/",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
+    "name": "emoji",
+    "regex": "/sf-emoji/",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
+    "name": "skeleton",
+    "regex": "/sf-skeleton/",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
+    "name": "icon-buttons",
+    "regex": "/sf-icon-button/",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
+    "name": "contentDivider",
+    "regex": "/sf-divider/",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
+    "name": "spinner",
+    "regex": "/sf-loader/",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
+    "name": "fileUpload",
+    "regex": "/sf-file-upload/",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
+    "name": "fab",
+    "regex": "/sf-fab/",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
+    "name": "switch",
+    "regex": "/sf-switch/",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
+    "name": "radio",
+    "regex": "/sf-radio/",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
+    "name": "dot",
+    "regex": "/sf-dot/",
+    "type": "component",
+    "css": true,
+    "js": false
+  },
+  {
+    "name": "theme-builder",
+    "regex": "/sf-theme-builder/",
+    "type": "component",
+    "css": true,
+    "js": true
+  }
+]
