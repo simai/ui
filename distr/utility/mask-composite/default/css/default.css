@@ -1,0 +1,1 @@
+.mask-add{-webkit-mask-composite:source-over;mask-composite:add}.mask-subtract{-webkit-mask-composite:source-out;mask-composite:subtract}.mask-intersect{-webkit-mask-composite:source-in, xor;mask-composite:intersect}.mask-exclude{-webkit-mask-composite:xor;mask-composite:exclude}

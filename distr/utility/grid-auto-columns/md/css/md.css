@@ -1,0 +1,1 @@
+@media(min-width: 720px){.md\:auto-cols{grid-auto-columns:auto}.md\:auto-cols-min{grid-auto-columns:-webkit-min-content;grid-auto-columns:min-content}.md\:auto-cols-max{grid-auto-columns:-webkit-max-content;grid-auto-columns:max-content}.md\:auto-cols-fr{grid-auto-columns:minmax(0, 1fr)}}

@@ -1,0 +1,1 @@
+.table-border>:not(caption)>*{border-width:var(--sf-px) var(--sf-0)}.table-border>:not(caption)>*>*{border-width:var(--sf-0) var(--sf-px)}

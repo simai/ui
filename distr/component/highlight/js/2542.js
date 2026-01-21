@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkSimaiHighlight=self.webpackChunkSimaiHighlight||[]).push([[2542],{2542:(e,a,i)=>{function s(e){return{name:"Clojure REPL",contains:[{className:"meta.prompt",begin:/^([\w.-]+|\s*#_)?=>/,starts:{end:/$/,subLanguage:"clojure"}}]}}i.r(a),i.d(a,{default:()=>s})}}]);

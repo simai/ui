@@ -1,0 +1,1 @@
+.table-hover>tbody>tr:hover>*{--sf-table-accent-bg:var(--sf-table-hover-bg);color:var(--sf-table-hover-color)}
