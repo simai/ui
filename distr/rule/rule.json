@@ -2739,6 +2739,7 @@
     "name": "sf-system",
     "regex": "/sf-modal|sf-gallery|sf-overbox/",
     "type": "attribute",
+    "css": false,
     "js": true
   },
   {

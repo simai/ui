@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkSimaiCore=self.webpackChunkSimaiCore||[]).push([[2179],{92179:(e,n,u)=>{function a(e){return{name:"ERB",subLanguage:"xml",contains:[e.COMMENT("<%#","%>"),{begin:"<%[%=-]?",end:"[%-]?%>",subLanguage:"ruby",excludeBegin:!0,excludeEnd:!0}]}}u.r(n),u.d(n,{default:()=>a})}}]);

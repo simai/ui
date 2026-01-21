@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkSimaiCore=self.webpackChunkSimaiCore||[]).push([[1179],{31179:(e,n,a)=>{function i(e){return{name:"VBScript in HTML",subLanguage:"xml",contains:[{begin:"<%",end:"%>",subLanguage:"vbscript"}]}}a.r(n),a.d(n,{default:()=>i})}}]);
