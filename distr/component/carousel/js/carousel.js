@@ -1,1 +1,0 @@
-(()=>{var e={2237:()=>{window.addEventListener("sf-loader-ready",()=>{new Swiper(".swiper",{navigation:{nextEl:".sf-carousel-switch--right",prevEl:".sf-carousel-switch--left"},pagination:{el:".sf-carousel-pagination"}})})}},r={};function t(i){var s=r[i];if(void 0!==s)return s.exports;var a=r[i]={exports:{}};return e[i](a,a.exports,t),a.exports}(()=>{"use strict";t(2237)})()})();
