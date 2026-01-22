@@ -2727,7 +2727,8 @@
     "name": "highlight",
     "regex": "/(?:class\\s*=\\s*[\"'][^\"']*language-[^\"']*[\"']|<pre\\b[^>]*>\\s*<code\\b[^>]*>)/i",
     "type": "component",
-    "js": true
+    "js": true,
+    "css": true
   },
   {
     "name": "progress",
