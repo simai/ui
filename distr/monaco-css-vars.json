@@ -17418,6 +17418,8 @@
     ".tracking-wide",
     ".tracking-wider",
     ".tracking-widest",
+    ".transform-x-half",
+    ".transform-y-half",
     ".transition",
     ".transition-all",
     ".transition-colors",

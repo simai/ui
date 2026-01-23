@@ -2326,11 +2326,11 @@
   },
   {
     "name": "transform-translate/default",
-    "regex": "/(translate-(x|y)-[0-9])|(-translate-(x|y)-[0-9])/"
+    "regex": "/(translate-(x|y)-(half|[0-9]))|(-translate-(x|y)-[0-9])/"
   },
   {
     "name": "transform-translate/hover",
-    "regex": "/hover\\:(translate-(x|y)-[0-9])|(-translate-(x|y)-[0-9])/"
+    "regex": "/hover\\:(translate-(x|y)-(half|[0-9]))|(-translate-(x|y)-[0-9])/"
   },
   {
     "name": "transform-translate-ext/default",
