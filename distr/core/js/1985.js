@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkSimaiCore=self.webpackChunkSimaiCore||[]).push([[1985],{11985:(a,e,t)=>{function c(a){return{name:"LDIF",contains:[{className:"attribute",match:"^dn(?=:)",relevance:10},{className:"attribute",match:"^\\w+(?=:)"},{className:"literal",match:"^-"},a.HASH_COMMENT_MODE]}}t.r(e),t.d(e,{default:()=>c})}}]);

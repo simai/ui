@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkSimaiCore=self.webpackChunkSimaiCore||[]).push([[2294],{52294:(a,e,s)=>{function n(a){return{name:"Node REPL",contains:[{className:"meta.prompt",starts:{end:/ |$/,starts:{end:"$",subLanguage:"javascript"}},variants:[{begin:/^>(?=[ ]|$)/},{begin:/^\.\.\.(?=[ ]|$)/}]}]}}s.r(e),s.d(e,{default:()=>n})}}]);

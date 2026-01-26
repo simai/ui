@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkSimaiCore=self.webpackChunkSimaiCore||[]).push([[7667],{7667:(e,a,s)=>{function i(e){return{name:"Julia REPL",contains:[{className:"meta.prompt",begin:/^julia>/,relevance:10,starts:{end:/^(?![ ]{6})/,subLanguage:"julia"}}],aliases:["jldoctest"]}}s.r(a),s.d(a,{default:()=>i})}}]);
