@@ -2640,13 +2640,6 @@
     "js": true
   },
   {
-    "name": "cl-dropdown",
-    "regex": "/sf-code=\"dropdown\"/",
-    "type": "smart",
-    "mode": "smart",
-    "js": true
-  },
-  {
     "name": "cl-close",
     "regex": "/sf-code=\"close\"/",
     "type": "smart",
@@ -2690,13 +2683,6 @@
   {
     "name": "doc",
     "regex": "/(language-|block--start|btn-clipboard|bd-example-indeterminate|bd-content|example)/",
-    "type": "component",
-    "css": true,
-    "js": true
-  },
-  {
-    "name": "dropdown",
-    "regex": "/sf-dropdown/",
     "type": "component",
     "css": true,
     "js": true
@@ -2893,13 +2879,6 @@
   {
     "name": "spinner",
     "regex": "/sf-loader/",
-    "type": "component",
-    "css": true,
-    "js": true
-  },
-  {
-    "name": "fileUpload",
-    "regex": "/sf-file-upload/",
     "type": "component",
     "css": true,
     "js": true
