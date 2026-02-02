@@ -393,7 +393,7 @@
     "--sf-space-auto": "auto",
     "--sf-stripe--alfa": "1",
     "--sf-stripe--color": "var(--sf-color--surface-inverse)",
-    "--sf-stripe--size": "2px",
+    "--sf-stripe--size": "var(--sf-a1, 1px)",
     "--sf-success-10": "#002203",
     "--sf-success-15": "#002d05",
     "--sf-success-20": "#003908",
@@ -6056,52 +6056,52 @@
       "--sf-emoji--line-height": "var(--sf-text-height-3)"
     },
     ".sf-fab--on-surface": {
-      "--sf-fab--border-bottom-left-radius": "var(--sf-radius-circle)",
-      "--sf-fab--border-bottom-right-radius": "var(--sf-radius-circle)",
-      "--sf-fab--border-top-left-radius": "var(--sf-radius-circle)",
-      "--sf-fab--border-top-right-radius": "var(--sf-radius-circle)"
+      "--sf-fab--border-end-end-radius": "var(--sf-radius-circle)",
+      "--sf-fab--border-end-start-radius": "var(--sf-radius-circle)",
+      "--sf-fab--border-start-end-radius": "var(--sf-radius-circle)",
+      "--sf-fab--border-start-start-radius": "var(--sf-radius-circle)"
     },
     ".sf-fab--primary": {
-      "--sf-fab--border-bottom-left-radius": "var(--sf-radius-rounded)",
-      "--sf-fab--border-bottom-right-radius": "var(--sf-radius-rounded)",
-      "--sf-fab--border-top-left-radius": "var(--sf-radius-rounded)",
-      "--sf-fab--border-top-right-radius": "var(--sf-radius-rounded)"
+      "--sf-fab--border-end-end-radius": "var(--sf-radius-rounded)",
+      "--sf-fab--border-end-start-radius": "var(--sf-radius-rounded)",
+      "--sf-fab--border-start-end-radius": "var(--sf-radius-rounded)",
+      "--sf-fab--border-start-start-radius": "var(--sf-radius-rounded)"
     },
     ".sf-fab--secondary": {
-      "--sf-fab--border-bottom-left-radius": "var(--sf-radius-rounded)",
-      "--sf-fab--border-bottom-right-radius": "var(--sf-radius-rounded)",
-      "--sf-fab--border-top-left-radius": "var(--sf-radius-rounded)",
-      "--sf-fab--border-top-right-radius": "var(--sf-radius-rounded)"
+      "--sf-fab--border-end-end-radius": "var(--sf-radius-rounded)",
+      "--sf-fab--border-end-start-radius": "var(--sf-radius-rounded)",
+      "--sf-fab--border-start-end-radius": "var(--sf-radius-rounded)",
+      "--sf-fab--border-start-start-radius": "var(--sf-radius-rounded)"
     },
     ".sf-fab--size-1": {
       "--sf-fab--padding-bottom": "var(--sf-ui-1--space-y-tightness-default)",
-      "--sf-fab--padding-left": "var(--sf-ui-1--space-y-tightness-default)",
-      "--sf-fab--padding-right": "var(--sf-ui-1--space-y-tightness-default)",
+      "--sf-fab--padding-inline-end": "var(--sf-ui-1--space-y-tightness-default)",
+      "--sf-fab--padding-inline-start": "var(--sf-ui-1--space-y-tightness-default)",
       "--sf-fab--padding-top": "var(--sf-ui-1--space-y-tightness-default)"
     },
-    ".sf-fab--size-1 .sf-icon": {
+    ".sf-fab--size-1>.sf-icon": {
       "--sf-icon--font-size": "var(--sf-text-height-1)",
       "--sf-icon--height": "var(--sf-text-height-1)",
       "--sf-icon--width": "var(--sf-text-height-1)"
     },
     ".sf-fab--size-2": {
       "--sf-fab--padding-bottom": "var(--sf-ui-2--space-y-tightness-default)",
-      "--sf-fab--padding-left": "var(--sf-ui-2--space-y-tightness-default)",
-      "--sf-fab--padding-right": "var(--sf-ui-2--space-y-tightness-default)",
+      "--sf-fab--padding-inline-end": "var(--sf-ui-2--space-y-tightness-default)",
+      "--sf-fab--padding-inline-start": "var(--sf-ui-2--space-y-tightness-default)",
       "--sf-fab--padding-top": "var(--sf-ui-2--space-y-tightness-default)"
     },
-    ".sf-fab--size-2 .sf-icon": {
+    ".sf-fab--size-2>.sf-icon": {
       "--sf-icon--font-size": "var(--sf-text-height-2)",
       "--sf-icon--height": "var(--sf-text-height-2)",
       "--sf-icon--width": "var(--sf-text-height-2)"
     },
     ".sf-fab--size-3": {
       "--sf-fab--padding-bottom": "var(--sf-ui-3--space-y-tightness-default)",
-      "--sf-fab--padding-left": "var(--sf-ui-3--space-y-tightness-default)",
-      "--sf-fab--padding-right": "var(--sf-ui-3--space-y-tightness-default)",
+      "--sf-fab--padding-inline-end": "var(--sf-ui-3--space-y-tightness-default)",
+      "--sf-fab--padding-inline-start": "var(--sf-ui-3--space-y-tightness-default)",
       "--sf-fab--padding-top": "var(--sf-ui-3--space-y-tightness-default)"
     },
-    ".sf-fab--size-3 .sf-icon": {
+    ".sf-fab--size-3>.sf-icon": {
       "--sf-icon--font-size": "var(--sf-text-height-3)",
       "--sf-icon--height": "var(--sf-text-height-3)",
       "--sf-icon--width": "var(--sf-text-height-3)"
@@ -6109,103 +6109,103 @@
     ".sf-fab.sf-fab--default.sf-fab--on-surface": {
       "--sf-fab--background-color": "var(--sf-on-surface)"
     },
-    ".sf-fab.sf-fab--default.sf-fab--on-surface .sf-icon": {
-      "--sf-icon--color": "var(--sf-on-surface-inverse)"
-    },
     ".sf-fab.sf-fab--default.sf-fab--on-surface:enabled:active": {
       "--sf-fab--background-color": "var(--sf-on-surface-active)"
     },
-    ".sf-fab.sf-fab--default.sf-fab--on-surface:enabled:active .sf-icon": {
+    ".sf-fab.sf-fab--default.sf-fab--on-surface:enabled:active>.sf-icon": {
       "--sf-icon--color": "var(--sf-on-surface-inverse)"
     },
     ".sf-fab.sf-fab--default.sf-fab--on-surface:enabled:focus": {
       "--sf-fab--background-color": "var(--sf-on-surface)"
     },
-    ".sf-fab.sf-fab--default.sf-fab--on-surface:enabled:focus .sf-icon": {
+    ".sf-fab.sf-fab--default.sf-fab--on-surface:enabled:focus>.sf-icon": {
       "--sf-icon--color": "var(--sf-on-surface-inverse)"
     },
     ".sf-fab.sf-fab--default.sf-fab--on-surface:enabled:hover": {
       "--sf-fab--background-color": "var(--sf-on-surface-hover)"
     },
-    ".sf-fab.sf-fab--default.sf-fab--on-surface:enabled:hover .sf-icon": {
+    ".sf-fab.sf-fab--default.sf-fab--on-surface:enabled:hover>.sf-icon": {
+      "--sf-icon--color": "var(--sf-on-surface-inverse)"
+    },
+    ".sf-fab.sf-fab--default.sf-fab--on-surface>.sf-icon": {
       "--sf-icon--color": "var(--sf-on-surface-inverse)"
     },
     ".sf-fab.sf-fab--default.sf-fab--primary": {
       "--sf-fab--background-color": "var(--sf-primary)"
     },
-    ".sf-fab.sf-fab--default.sf-fab--primary .sf-icon": {
-      "--sf-icon--color": "var(--sf-on-primary)"
-    },
     ".sf-fab.sf-fab--default.sf-fab--primary:enabled:active": {
       "--sf-fab--background-color": "var(--sf-primary-hover)"
     },
-    ".sf-fab.sf-fab--default.sf-fab--primary:enabled:active .sf-icon": {
+    ".sf-fab.sf-fab--default.sf-fab--primary:enabled:active>.sf-icon": {
       "--sf-icon--color": "var(--sf-on-primary)"
     },
     ".sf-fab.sf-fab--default.sf-fab--primary:enabled:focus": {
       "--sf-fab--background-color": "var(--sf-primary)"
     },
-    ".sf-fab.sf-fab--default.sf-fab--primary:enabled:focus .sf-icon": {
+    ".sf-fab.sf-fab--default.sf-fab--primary:enabled:focus>.sf-icon": {
       "--sf-icon--color": "var(--sf-on-primary)"
     },
     ".sf-fab.sf-fab--default.sf-fab--primary:enabled:hover": {
       "--sf-fab--background-color": "var(--sf-primary-hover)"
     },
-    ".sf-fab.sf-fab--default.sf-fab--primary:enabled:hover .sf-icon": {
+    ".sf-fab.sf-fab--default.sf-fab--primary:enabled:hover>.sf-icon": {
+      "--sf-icon--color": "var(--sf-on-primary)"
+    },
+    ".sf-fab.sf-fab--default.sf-fab--primary>.sf-icon": {
       "--sf-icon--color": "var(--sf-on-primary)"
     },
     ".sf-fab.sf-fab--tonal.sf-fab--on-surface": {
       "--sf-fab--background-color": "var(--sf-surface-container)"
     },
-    ".sf-fab.sf-fab--tonal.sf-fab--on-surface .sf-icon": {
-      "--sf-icon--color": "var(--sf-on-surface)"
-    },
     ".sf-fab.sf-fab--tonal.sf-fab--on-surface:enabled:active": {
       "--sf-fab--background-color": "var(--sf-surface-container-active)"
     },
-    ".sf-fab.sf-fab--tonal.sf-fab--on-surface:enabled:active .sf-icon": {
+    ".sf-fab.sf-fab--tonal.sf-fab--on-surface:enabled:active>.sf-icon": {
       "--sf-icon--color": "var(--sf-on-surface-active)"
     },
     ".sf-fab.sf-fab--tonal.sf-fab--on-surface:enabled:focus": {
       "--sf-fab--background-color": "var(--sf-surface-container)"
     },
-    ".sf-fab.sf-fab--tonal.sf-fab--on-surface:enabled:focus .sf-icon": {
+    ".sf-fab.sf-fab--tonal.sf-fab--on-surface:enabled:focus>.sf-icon": {
       "--sf-icon--color": "var(--sf-on-surface)"
     },
     ".sf-fab.sf-fab--tonal.sf-fab--on-surface:enabled:hover": {
       "--sf-fab--background-color": "var(--sf-surface-container-hover)"
     },
-    ".sf-fab.sf-fab--tonal.sf-fab--on-surface:enabled:hover .sf-icon": {
+    ".sf-fab.sf-fab--tonal.sf-fab--on-surface:enabled:hover>.sf-icon": {
       "--sf-icon--color": "var(--sf-on-surface-hover)"
+    },
+    ".sf-fab.sf-fab--tonal.sf-fab--on-surface>.sf-icon": {
+      "--sf-icon--color": "var(--sf-on-surface)"
     },
     ".sf-fab.sf-fab--tonal.sf-fab--secondary": {
       "--sf-fab--background-color": "var(--sf-secondary-container)"
     },
-    ".sf-fab.sf-fab--tonal.sf-fab--secondary .sf-icon": {
-      "--sf-icon--color": "var(--sf-on-secondary-container)"
-    },
     ".sf-fab.sf-fab--tonal.sf-fab--secondary:enabled:active": {
       "--sf-fab--background-color": "var(--sf-secondary-container-active)"
     },
-    ".sf-fab.sf-fab--tonal.sf-fab--secondary:enabled:active .sf-icon": {
+    ".sf-fab.sf-fab--tonal.sf-fab--secondary:enabled:active>.sf-icon": {
       "--sf-icon--color": "var(--sf-on-secondary-container)"
     },
     ".sf-fab.sf-fab--tonal.sf-fab--secondary:enabled:focus": {
       "--sf-fab--background-color": "var(--sf-secondary-container)"
     },
-    ".sf-fab.sf-fab--tonal.sf-fab--secondary:enabled:focus .sf-icon": {
+    ".sf-fab.sf-fab--tonal.sf-fab--secondary:enabled:focus>.sf-icon": {
       "--sf-icon--color": "var(--sf-on-secondary-container)"
     },
     ".sf-fab.sf-fab--tonal.sf-fab--secondary:enabled:hover": {
       "--sf-fab--background-color": "var(--sf-secondary-container-hover)"
     },
-    ".sf-fab.sf-fab--tonal.sf-fab--secondary:enabled:hover .sf-icon": {
+    ".sf-fab.sf-fab--tonal.sf-fab--secondary:enabled:hover>.sf-icon": {
+      "--sf-icon--color": "var(--sf-on-secondary-container)"
+    },
+    ".sf-fab.sf-fab--tonal.sf-fab--secondary>.sf-icon": {
       "--sf-icon--color": "var(--sf-on-secondary-container)"
     },
     ".sf-fab:disabled": {
       "--sf-fab--background-color": "var(--sf-disable)"
     },
-    ".sf-fab:disabled .sf-icon": {
+    ".sf-fab:disabled>.sf-icon": {
       "--sf-icon--color": "var(--sf-on-disable)"
     },
     ".sf-fab:focus": {
@@ -7498,7 +7498,7 @@
       "--sf-switch-after-size": "var(--sf-b4)",
       "--sf-switch-description-height": "var(--sf-c0)",
       "--sf-switch-description-size": "var(--sf-b4)",
-      "--sf-switch-padding": "5px",
+      "--sf-switch-padding": "var(--sf-a3, 6px)",
       "--sf-switch-size-height": "var(--sf-c2)",
       "--sf-switch-size-width": "var(--sf-d2)",
       "--sf-switch-title-height": "var(--sf-c2)",
@@ -7508,7 +7508,7 @@
       "--sf-switch-after-size": "var(--sf-a9)",
       "--sf-switch-description-height": "var(--sf-b2)",
       "--sf-switch-description-size": "var(--sf-b0)",
-      "--sf-switch-padding": "4px",
+      "--sf-switch-padding": "var(--sf-a2, 4px)",
       "--sf-switch-size-height": "var(--sf-b6)",
       "--sf-switch-size-width": "var(--sf-c6)",
       "--sf-switch-title-height": "var(--sf-b6)",
@@ -12109,24 +12109,44 @@
     ".currentFindMatch",
     ".currentMove",
     ".cursor",
+    ".cursor-alias",
+    ".cursor-all-scroll",
     ".cursor-auto",
     ".cursor-block-outline-style",
+    ".cursor-cell",
+    ".cursor-col-resize",
+    ".cursor-context-menu",
+    ".cursor-copy",
+    ".cursor-crosshair",
     ".cursor-default",
+    ".cursor-e-resize",
+    ".cursor-ew-resize",
     ".cursor-expand",
-    ".cursor-grap",
+    ".cursor-grab",
+    ".cursor-grabbing",
     ".cursor-help",
     ".cursor-move",
+    ".cursor-n-resize",
+    ".cursor-nesw-resize",
+    ".cursor-no-drop",
     ".cursor-not-allowed",
+    ".cursor-ns-resize",
+    ".cursor-nwse-resize",
     ".cursor-phase",
     ".cursor-pointer",
     ".cursor-progress",
+    ".cursor-row-resize",
+    ".cursor-s-resize",
     ".cursor-smooth",
     ".cursor-smooth-caret-animation",
     ".cursor-text",
     ".cursor-underline-style",
     ".cursor-underline-thin-style",
+    ".cursor-vertical-text",
     ".cursor-w-resize",
     ".cursor-wait",
+    ".cursor-zoom-in",
+    ".cursor-zoom-out",
     ".cursors-layer",
     ".custom-icon",
     ".customcolor",
@@ -16801,7 +16821,6 @@
     ".sf-special-yellow",
     ".sf-switch-1",
     ".sf-switch-description",
-    ".sf-switch-right",
     ".sf-switch-title",
     ".sf-switch-wrap",
     ".sf-tab",
