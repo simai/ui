@@ -72,6 +72,14 @@
     "regex": "/appearance-none/"
   },
   {
+    "name": "animation/default",
+    "regex": "/animation-from-|(?:^|[\\s\"])(?:animation|infinite)(?=[\\s\"]|$)/"
+  },
+  {
+    "name": "animation-duration/default",
+    "regex": "/animation-duration-/"
+  },
+  {
     "name": "aspect-ratio/default",
     "regex": "/aspect-/"
   },
@@ -205,7 +213,7 @@
   },
   {
     "name": "background-color/default",
-    "regex": "/bg-(transparent|current|surface|on-surface|primary|secondary|tertiary|disable|success|warning|error|white|black|(?:gray|red|blue|green|yellow|orange|purple|pink)(?:-\\d+)?)/"
+    "regex": "/(hover:|active:)?bg-[\\w-]+/"
   },
   {
     "name": "background-color-brand/default",
@@ -241,23 +249,23 @@
   },
   {
     "name": "background-position/default",
-    "regex": "/(bg-(top|bottom|center|inline-(start|end))|(bg-(top|bottom|center|inline-(start|end))-(top|bottom|center|inline-(start|end))))/"
+    "regex": "/\\b(?:[a-z]{2,3}:)?bg-(?:top|bottom|center|left|right|inline-(?:start|end))(?:-(?:top|bottom|center|left|right|inline-(?:start|end)))?\\b/"
   },
   {
     "name": "background-position/lg",
-    "regex": "/lg\\:(bg-(top|bottom|center|inline-(start|end))|(bg-(top|bottom|center|inline-(start|end))-(top|bottom|center|inline-(start|end))))/"
+    "regex": "/\\blg:bg-(?:top|bottom|center|left|right|inline-(?:start|end))(?:-(?:top|bottom|center|left|right|inline-(?:start|end)))?\\b/"
   },
   {
     "name": "background-position/md",
-    "regex": "/md\\:(bg-(top|bottom|center|inline-(start|end))|(bg-(top|bottom|center|inline-(start|end))-(top|bottom|center|inline-(start|end))))/"
+    "regex": "/\\bmd:bg-(?:top|bottom|center|left|right|inline-(?:start|end))(?:-(?:top|bottom|center|left|right|inline-(?:start|end)))?\\b/"
   },
   {
     "name": "background-position/sm",
-    "regex": "/sm\\:(bg-(top|bottom|center|inline-(start|end))|(bg-(top|bottom|center|inline-(start|end))-(top|bottom|center|inline-(start|end))))/"
+    "regex": "/\\bsm:bg-(?:top|bottom|center|left|right|inline-(?:start|end))(?:-(?:top|bottom|center|left|right|inline-(?:start|end)))?\\b/"
   },
   {
     "name": "background-position/xl",
-    "regex": "/xl\\:(bg-(top|bottom|center|inline-(start|end))|(bg-(top|bottom|center|inline-(start|end))-(top|bottom|center|inline-(start|end))))/"
+    "regex": "/\\bxl:bg-(?:top|bottom|center|left|right|inline-(?:start|end))(?:-(?:top|bottom|center|left|right|inline-(?:start|end)))?\\b/"
   },
   {
     "name": "background-repeat/default",
@@ -284,20 +292,40 @@
     "regex": "/bg-(auto|cover|contain)/"
   },
   {
+    "name": "background-size-ext/default",
+    "regex": "/bg-size-(([a-i]{1}[0-9]{1})|(100|[0-9]{1,2}))/"
+  },
+  {
     "name": "background-size/lg",
     "regex": "/lg\\:bg-(auto|cover|contain)/"
+  },
+  {
+    "name": "background-size-ext/lg",
+    "regex": "/lg\\:bg-size-(([a-i]{1}[0-9]{1})|(100|[0-9]{1,2}))/"
   },
   {
     "name": "background-size/md",
     "regex": "/md\\:bg-(auto|cover|contain)/"
   },
   {
+    "name": "background-size-ext/md",
+    "regex": "/md\\:bg-size-(([a-i]{1}[0-9]{1})|(100|[0-9]{1,2}))/"
+  },
+  {
     "name": "background-size/sm",
     "regex": "/sm\\:bg-(auto|cover|contain)/"
   },
   {
+    "name": "background-size-ext/sm",
+    "regex": "/sm\\:bg-size-(([a-i]{1}[0-9]{1})|(100|[0-9]{1,2}))/"
+  },
+  {
     "name": "background-size/xl",
     "regex": "/xl\\:bg-(auto|cover|contain)/"
+  },
+  {
+    "name": "background-size-ext/xl",
+    "regex": "/xl\\:bg-size-(([a-i]{1}[0-9]{1})|(100|[0-9]{1,2}))/"
   },
   {
     "name": "background-gradient/default",
@@ -305,7 +333,7 @@
   },
   {
     "name": "border-color/active",
-    "regex": "/active\\:border-(primary|secondary|tertiary|info|success|warning|transparent|current|outline|error)/"
+    "regex": "/active:border-(transparent|current|outline|outline-variant|primary|secondary|tertiary|success|warning|error)/"
   },
   {
     "name": "border-color/default",
@@ -317,7 +345,7 @@
   },
   {
     "name": "border-color/hover",
-    "regex": "/hover\\:border-(primary|secondary|tertiary|info|success|warning|transparent|current|outline|error)/"
+    "regex": "/hover:border-(transparent|current|outline|outline-variant|primary|secondary|tertiary|success|warning|error)/"
   },
   {
     "name": "border-radius/default",
@@ -345,23 +373,23 @@
   },
   {
     "name": "border-width/default",
-    "regex": "/border-([0-4]|((top|bottom|inline-(start|end))-[0-4])|((x|y)-[0-4]))/"
+    "regex": "/border-((10|[0-9])|((top|bottom|inline-(start|end))-(10|[0-9]))|((x|y)-(10|[0-9])))/"
   },
   {
     "name": "border-width/lg",
-    "regex": "/lg\\:border-([0-4]|((top|bottom|inline-(start|end))-[0-4])|((x|y)-[0-4]))/"
+    "regex": "/lg\\:border-((10|[0-9])|((top|bottom|inline-(start|end))-(10|[0-9]))|((x|y)-(10|[0-9])))/"
   },
   {
     "name": "border-width/md",
-    "regex": "/md\\:border-([0-4]|((top|bottom|inline-(start|end))-[0-4])|((x|y)-[0-4]))/"
+    "regex": "/md\\:border-((10|[0-9])|((top|bottom|inline-(start|end))-(10|[0-9]))|((x|y)-(10|[0-9])))/"
   },
   {
     "name": "border-width/sm",
-    "regex": "/sm\\:border-([0-4]|((top|bottom|inline-(start|end))-[0-4])|((x|y)-[0-4]))/"
+    "regex": "/sm\\:border-((10|[0-9])|((top|bottom|inline-(start|end))-(10|[0-9]))|((x|y)-(10|[0-9])))/"
   },
   {
     "name": "border-width/xl",
-    "regex": "/xl\\:border-([0-4]|((top|bottom|inline-(start|end))-[0-4])|((x|y)-[0-4]))/"
+    "regex": "/xl\\:border-((10|[0-9])|((top|bottom|inline-(start|end))-(10|[0-9]))|((x|y)-(10|[0-9])))/"
   },
   {
     "name": "border-spacing/default",
@@ -385,7 +413,15 @@
   },
   {
     "name": "box-shadow-color/default",
-    "regex": "/shadow-(surface|on-surface|primary|secondary|tertiary|success|warning)/"
+    "regex": "/shadow-(on-surface|primary|secondary|tertiary|error|success|warning)/"
+  },
+  {
+    "name": "box-shadow-color/hover",
+    "regex": "/hover\\:shadow-(on-surface|primary|secondary|tertiary|error|success|warning)/"
+  },
+  {
+    "name": "box-shadow-color/active",
+    "regex": "/active\\:shadow-(on-surface|primary|secondary|tertiary|error|success|warning)/"
   },
   {
     "name": "box-sizing/default",
@@ -545,11 +581,11 @@
   },
   {
     "name": "display-print/default",
-    "regex": "/print-(block|inline-block|inline|flex|inline-flex|table)/"
+    "regex": "/print-(block|inline-block|inline|flex|inline-flex|table|hidden|visible|visible-none)/"
   },
   {
     "name": "divider-color/default",
-    "regex": "/(divider|divide)-(primary|secondary|tertiary|success|warning|error|transparent|current)/"
+    "regex": "/(divider|divide)-(outline|primary|secondary|tertiary|success|warning|error|transparent|current)/"
   },
   {
     "name": "divider-color/hover",
@@ -569,15 +605,19 @@
   },
   {
     "name": "drop-shadow/default",
-    "regex": "/drop-shadow-[0-6]/"
+    "regex": "/drop-shadow-[0-5]/"
   },
   {
     "name": "drop-shadow/hover",
-    "regex": "/hover\\:drop-shadow-[0-6]/"
+    "regex": "/hover\\:drop-shadow-[0-5]/"
   },
   {
     "name": "drop-shadow-color/default",
-    "regex": "/drop-shadow-(surface|on-surface|primary|secondary|tertiary|success|warning)/"
+    "regex": "/drop-shadow-(transparent|current|surface|surface-0|surface-1|surface-2|surface-3|surface-4|surface-container|surface-inverse|surface-inverse-fixed|on-surface|on-surface-variant|primary|primary-container|primary-transparent-select|primary-transparent-overlay|secondary|secondary-container|secondary-transparent-select|secondary-transparent-overlay|tertiary|tertiary-container|tertiary-transparent-select|tertiary-transparent-overlay|error|error-container|error-transparent-select|error-transparent-overlay|warning|warning-container|warning-transparent-select|warning-transparent-overlay|success|success-container|success-transparent-select|success-transparent-overlay)/"
+  },
+  {
+    "name": "drop-shadow-color/hover",
+    "regex": "/hover\\:drop-shadow-(transparent|current|surface|surface-0|surface-1|surface-2|surface-3|surface-4|surface-container|surface-inverse|surface-inverse-fixed|on-surface|on-surface-variant|primary|primary-container|primary-transparent-select|primary-transparent-overlay|secondary|secondary-container|secondary-transparent-select|secondary-transparent-overlay|tertiary|tertiary-container|tertiary-transparent-select|tertiary-transparent-overlay|error|error-container|error-transparent-select|error-transparent-overlay|warning|warning-container|warning-transparent-select|warning-transparent-overlay|success|success-container|success-transparent-select|success-transparent-overlay)/"
   },
   {
     "name": "element-position/default",
@@ -621,7 +661,7 @@
   },
   {
     "name": "fill/default",
-    "regex": "/fill-(transparent|inherit|current|main|subordinate|additional|inverse|primary|secondary|tertiary|info|success|warning|danger)/"
+    "regex": "/((hover\\\\:)?fill-(transparent|current|surface-0|surface-1|surface-2|surface-3|surface-4|surface|surface-inverse|surface-inverse-fixed|surface-container|on-surface|on-surface-variant|surface-transparent-select|surface-transparent-overlay|disable|primary|primary-container|primary-transparent-select|primary-transparent-overlay|secondary|secondary-container|secondary-transparent-select|secondary-transparent-overlay|tertiary|tertiary-container|tertiary-transparent-select|tertiary-transparent-overlay|error|error-container|error-transparent-select|error-transparent-overlay|warning|warning-container|warning-transparent-select|warning-transparent-overlay|success|success-container|success-transparent-select|success-transparent-overlay|surface-transparent|primary-transparent|secondary-transparent|tertiary-transparent|error-transparent|warning-transparent|success-transparent))/"
   },
   {
     "name": "fill-brand/default",
@@ -989,7 +1029,7 @@
   },
   {
     "name": "column-gap/default",
-    "regex": "/(?:^|\\\\s)col-gap-/"
+    "regex": "/(?:^|\\s)col-gap-/"
   },
   {
     "name": "column-gap/lg",
@@ -1622,23 +1662,23 @@
   },
   {
     "name": "object-fit/default",
-    "regex": "/object-(contain|cover|fill|none|scale)/"
+    "regex": "/object-(contain|cover|fill|none|scale-down)/"
   },
   {
     "name": "object-fit/lg",
-    "regex": "/lg\\:object-(contain|cover|fill|none|scale)/"
+    "regex": "/lg:object-(contain|cover|fill|none|scale-down)/"
   },
   {
     "name": "object-fit/md",
-    "regex": "/md\\:object-(contain|cover|fill|none|scale)/"
+    "regex": "/md:object-(contain|cover|fill|none|scale-down)/"
   },
   {
     "name": "object-fit/sm",
-    "regex": "/sm\\:object-(contain|cover|fill|none|scale)/"
+    "regex": "/sm:object-(contain|cover|fill|none|scale-down)/"
   },
   {
     "name": "object-fit/xl",
-    "regex": "/xl\\:object-(contain|cover|fill|none|scale)/"
+    "regex": "/xl:object-(contain|cover|fill|none|scale-down)/"
   },
   {
     "name": "object-position/default",
@@ -1702,19 +1742,19 @@
   },
   {
     "name": "outline-color/active",
-    "regex": "/active\\:outline-(primary|secondary|tertiary|success|warning|error|outline|transparent|current)/"
+    "regex": "/active\\:outline-(primary|secondary|tertiary|success|warning|error|outline|outline-variant|transparent|current)/"
   },
   {
     "name": "outline-color/default",
-    "regex": "/outline-(primary|secondary|tertiary|success|warning|error|outline|transparent|current)/"
+    "regex": "/outline-(primary|secondary|tertiary|success|warning|error|outline|outline-variant|transparent|current)/"
   },
   {
     "name": "outline-color/focus",
-    "regex": "/focus\\:outline-(primary|secondary|tertiary|success|warning|error|outline|transparent|current)/"
+    "regex": "/focus\\:outline-(primary|secondary|tertiary|success|warning|error|outline|outline-variant|transparent|current)/"
   },
   {
     "name": "outline-color/hover",
-    "regex": "/hover\\:outline-(primary|secondary|tertiary|success|warning|error|outline|transparent|current)/"
+    "regex": "/hover\\:outline-(primary|secondary|tertiary|success|warning|error|outline|outline-variant|transparent|current)/"
   },
   {
     "name": "outline-offset/default",
@@ -1722,7 +1762,7 @@
   },
   {
     "name": "outline-style/default",
-    "regex": "/outline-(solid|none|outline|dotted|dashed|double|hidden)/"
+    "regex": "/outline-(solid|none|dotted|dashed|double|hidden)/"
   },
   {
     "name": "outline-width/default",
@@ -1978,7 +2018,7 @@
   },
   {
     "name": "scroll-backdrop-color/default",
-    "regex": "/scroll-bg-(surface|primary|secondary|tertiary|transparent|current)/"
+    "regex": "/scroll-bg-(surface|primary|secondary|tertiary|error|warning|success|transparent|current)/"
   },
   {
     "name": "scroll-backdrop-radius/default",
@@ -1991,6 +2031,10 @@
   {
     "name": "scroll-behavior/default",
     "regex": "/scroll-(smooth|auto)/"
+  },
+  {
+    "name": "scroll-hover/default",
+    "regex": "/scroll-hover/"
   },
   {
     "name": "scroll-margin/default",
@@ -2010,15 +2054,15 @@
   },
   {
     "name": "scroll-slider-color/default",
-    "regex": "/scroll-(surface|primary|secondary|tertiary|transparent|current)/"
+    "regex": "/(?:scroll|scroll-thumb)-(surface|primary|secondary|tertiary|transparent|current)/"
   },
   {
     "name": "scroll-slider-radius/default",
-    "regex": "/scroll-radius-[1-4]/"
+    "regex": "/(scroll-radius|scroll-thumb-radius)-[1-4]/"
   },
   {
     "name": "scroll-slider-width/default",
-    "regex": "/scroll-[1-4]/"
+    "regex": "/(?:scroll|scroll-thumb)-[1-4]/"
   },
   {
     "name": "scroll-snap-align/default",
@@ -2114,7 +2158,7 @@
   },
   {
     "name": "stroke-width/default",
-    "regex": "/stroke-[0-4]/"
+    "regex": "/stroke-(0|[1-9]|10)/"
   },
   {
     "name": "stroke-width/lg",
@@ -2258,7 +2302,7 @@
   },
   {
     "name": "text-decoration-color/default",
-    "regex": "/decoration-(transparent|inherit|current|outline-primary|outline-secondary|outline-tertiary|outline-error|outline-warning|outline-success)/"
+    "regex": "/decoration-(transparent|inherit|current|primary|secondary|tertiary|error|warning|success)/"
   },
   {
     "name": "text-decoration-color/focus",
@@ -2282,7 +2326,7 @@
   },
   {
     "name": "text-indent/default",
-    "regex": "/indent-(px|[0-9]{1}|[0-9]{2})/"
+    "regex": "/indent-([0-5])/"
   },
   {
     "name": "text-max-width/default",
@@ -2442,7 +2486,7 @@
   },
   {
     "name": "white-space/default",
-    "regex": "/(nowrap|pre|pre-line|pre-wrap|whitespace-normal|wrap-none)/"
+    "regex": "/(pre|pre-line|pre-wrap|whitespace-normal|wrap-none)/"
   },
   {
     "name": "width/default",
