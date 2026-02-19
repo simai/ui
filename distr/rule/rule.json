@@ -333,19 +333,19 @@
   },
   {
     "name": "border-color/active",
-    "regex": "/active:border-(transparent|current|outline|outline-variant|primary|secondary|tertiary|success|warning|error)/"
+    "regex": "/active:border-(transparent|current|outline|outline-variant|surface|surface-0|surface-1|surface-container|surface-overlay|surface-transparent-overlay|surface-inverse|on-surface|on-surface-variant|primary|primary-container|primary-transparent-overlay|secondary|secondary-container|secondary-transparent-overlay|tertiary|tertiary-container|tertiary-transparent-overlay|info|info-container|success|success-container|success-transparent-overlay|warning|warning-container|warning-transparent-overlay|error|error-container|error-transparent-overlay)/"
   },
   {
     "name": "border-color/default",
-    "regex": "/border-(primary|secondary|tertiary|info|success|warning|transparent|current|outline|outline-variant|error|white|black|(?:gray|red|blue|green|yellow|orange|purple|pink)(?:-\\d+)?)/"
+    "regex": "/border-(primary|primary-container|primary-transparent-overlay|secondary|secondary-container|secondary-transparent-overlay|tertiary|tertiary-container|tertiary-transparent-overlay|info|info-container|success|success-container|success-transparent-overlay|warning|warning-container|warning-transparent-overlay|error|error-container|error-transparent-overlay|transparent|current|outline|outline-variant|surface|surface-0|surface-1|surface-container|surface-overlay|surface-transparent-overlay|surface-inverse|on-surface|on-surface-variant|white|black|(?:gray|red|blue|green|yellow|orange|purple|pink)(?:-\\d+)?)/"
   },
   {
     "name": "border-color/focus",
-    "regex": "/focus\\:border-(primary|secondary|tertiary|info|success|warning|transparent|current|outline|error)/"
+    "regex": "/focus\\:border-(primary|primary-container|primary-transparent-overlay|secondary|secondary-container|secondary-transparent-overlay|tertiary|tertiary-container|tertiary-transparent-overlay|info|info-container|success|success-container|success-transparent-overlay|warning|warning-container|warning-transparent-overlay|error|error-container|error-transparent-overlay|transparent|current|outline|outline-variant|surface|surface-0|surface-1|surface-container|surface-overlay|surface-transparent-overlay|surface-inverse|on-surface|on-surface-variant)/"
   },
   {
     "name": "border-color/hover",
-    "regex": "/hover:border-(transparent|current|outline|outline-variant|primary|secondary|tertiary|success|warning|error)/"
+    "regex": "/hover:border-(transparent|current|outline|outline-variant|surface|surface-0|surface-1|surface-container|surface-overlay|surface-transparent-overlay|surface-inverse|on-surface|on-surface-variant|primary|primary-container|primary-transparent-overlay|secondary|secondary-container|secondary-transparent-overlay|tertiary|tertiary-container|tertiary-transparent-overlay|info|info-container|success|success-container|success-transparent-overlay|warning|warning-container|warning-transparent-overlay|error|error-container|error-transparent-overlay)/"
   },
   {
     "name": "border-radius/default",
@@ -2725,13 +2725,6 @@
     "css": true
   },
   {
-    "name": "theme",
-    "regex": "/sf-theme/",
-    "type": "component",
-    "css": false,
-    "js": true
-  },
-  {
     "name": "close",
     "regex": "/sf-close/",
     "type": "component",
@@ -2788,7 +2781,7 @@
   },
   {
     "name": "sf-system",
-    "regex": "/sf-modal|sf-gallery|sf-overbox/",
+    "regex": "/sf-gallery|sf-overbox/",
     "type": "attribute",
     "css": false,
     "js": true
@@ -2845,6 +2838,20 @@
   {
     "name": "avatars",
     "regex": "/sf-avatar/",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
+    "name": "theme",
+    "regex": "/sf-theme/",
+    "type": "component",
+    "css": false,
+    "js": true
+  },
+  {
+    "name": "avatars-group",
+    "regex": "/sf-avatar-group/",
     "type": "component",
     "css": true,
     "js": true
@@ -2931,6 +2938,13 @@
     "regex": "/sf-icon-button/",
     "type": "component",
     "css": true,
+    "js": true
+  },
+  {
+    "name": "modal",
+    "regex": "/(data-sf-modal-(open|close)|sf-modal)/",
+    "type": "component",
+    "css": false,
     "js": true
   },
   {

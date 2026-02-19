@@ -1,5 +1,1 @@
-[dir="ltr"] .container{padding-left:var(--sf-space-4)}
-[dir="rtl"] .container{padding-right:var(--sf-space-4)}
-[dir="ltr"] .container{padding-right:var(--sf-space-4)}
-[dir="rtl"] .container{padding-left:var(--sf-space-4)}
-.container{width:var(--sf-breakpoint-lg)}
+@media(min-width: 960px){[dir="ltr"] .lg\:container{padding-left:var(--sf-space-4)}[dir="rtl"] .lg\:container{padding-right:var(--sf-space-4)}[dir="ltr"] .lg\:container{padding-right:var(--sf-space-4)}[dir="rtl"] .lg\:container{padding-left:var(--sf-space-4)}.lg\:container{width:var(--sf-breakpoint-lg)}}

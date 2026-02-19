@@ -1,1 +1,1 @@
-[dir="ltr"] .text-start{text-align:left}[dir="rtl"] .text-start{text-align:right}.text-center{text-align:center}[dir="ltr"] .text-end{text-align:right}[dir="rtl"] .text-end{text-align:left}.text-justify{text-align:justify}
+@media(min-width: 960px){[dir="ltr"] .lg\:text-start{text-align:left}[dir="rtl"] .lg\:text-start{text-align:right}.lg\:text-center{text-align:center}[dir="ltr"] .lg\:text-end{text-align:right}[dir="rtl"] .lg\:text-end{text-align:left}.lg\:text-justify{text-align:justify}}

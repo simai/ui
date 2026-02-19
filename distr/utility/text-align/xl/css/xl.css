@@ -1,1 +1,1 @@
-[dir="ltr"] .text-start{text-align:left}[dir="rtl"] .text-start{text-align:right}.text-center{text-align:center}[dir="ltr"] .text-end{text-align:right}[dir="rtl"] .text-end{text-align:left}.text-justify{text-align:justify}
+@media(min-width: 1140px){[dir="ltr"] .xl\:text-start{text-align:left}[dir="rtl"] .xl\:text-start{text-align:right}.xl\:text-center{text-align:center}[dir="ltr"] .xl\:text-end{text-align:right}[dir="rtl"] .xl\:text-end{text-align:left}.xl\:text-justify{text-align:justify}}

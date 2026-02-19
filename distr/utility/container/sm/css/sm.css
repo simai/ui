@@ -1,5 +1,1 @@
-[dir="ltr"] .container{padding-left:var(--sf-space-2)}
-[dir="rtl"] .container{padding-right:var(--sf-space-2)}
-[dir="ltr"] .container{padding-right:var(--sf-space-2)}
-[dir="rtl"] .container{padding-left:var(--sf-space-2)}
-.container{width:var(--sf-breakpoint-sm)}
+@media(min-width: 520px){[dir="ltr"] .sm\:container{padding-left:var(--sf-space-2)}[dir="rtl"] .sm\:container{padding-right:var(--sf-space-2)}[dir="ltr"] .sm\:container{padding-right:var(--sf-space-2)}[dir="rtl"] .sm\:container{padding-left:var(--sf-space-2)}.sm\:container{width:var(--sf-breakpoint-sm)}}
