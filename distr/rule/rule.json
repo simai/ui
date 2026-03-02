@@ -2857,6 +2857,13 @@
     "js": true
   },
   {
+    "name": "contextMenu",
+    "regex": "/sf-context-menu/",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
     "name": "tags",
     "regex": "/sf-tag/",
     "type": "component",
