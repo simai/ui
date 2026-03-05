@@ -2857,7 +2857,7 @@
     "js": true
   },
   {
-    "name": "contextMenu",
+    "name": "context-menu",
     "regex": "/sf-context-menu/",
     "type": "component",
     "css": true,
@@ -2901,6 +2901,27 @@
   {
     "name": "inputs",
     "regex": "/sf-input/",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
+    "name": "textarea",
+    "regex": "/sf-textarea/",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
+    "name": "quantity",
+    "regex": "/sf-quantity/",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
+    "name": "country-code",
+    "regex": "/sf-country-code/",
     "type": "component",
     "css": true,
     "js": true
