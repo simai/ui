@@ -2557,165 +2557,116 @@
     "regex": "/xl\\:z-([1-9]{1}|auto|-1)/"
   },
   {
-    "name": "cl-accordion",
-    "regex": "/sf-code=\"accordion\"/",
+    "name": "cl-avatar",
+    "tags": [
+      "sf-avatar"
+    ],
     "type": "smart",
     "mode": "smart",
-    "js": true
+    "js": true,
+    "relation": [
+      {
+        "name": "avatars"
+      }
+    ]
   },
   {
-    "name": "cl-sfAccordion",
-    "regex": "/sf-code=\"sfAccordion\"/",
+    "name": "cl-country-code",
+    "tags": [
+      "sf-country-code"
+    ],
     "type": "smart",
     "mode": "smart",
-    "js": true
-  },
-  {
-    "name": "cl-ajax",
-    "regex": "/sf-code=\"ajax\"/",
-    "type": "smart",
-    "mode": "smart",
-    "js": true
-  },
-  {
-    "name": "cl-button",
-    "regex": "/sf-code=\"button\"/",
-    "type": "smart",
-    "mode": "smart",
-    "js": true
-  },
-  {
-    "name": "cl-buttons",
-    "regex": "/sf-code=\"buttons\"/",
-    "type": "smart",
-    "mode": "smart",
-    "js": true
-  },
-  {
-    "name": "cl-cards",
-    "regex": "/sf-code=\"cards\"/",
-    "type": "smart",
-    "mode": "smart",
-    "js": true
-  },
-  {
-    "name": "cl-debug",
-    "regex": "/sf-code=\"debug\"/",
-    "type": "smart",
-    "mode": "smart",
-    "js": true
-  },
-  {
-    "name": "cl-edit",
-    "regex": "/sf-code=\"edit\"/",
-    "type": "smart",
-    "mode": "smart",
-    "js": true
-  },
-  {
-    "name": "cl-list",
-    "regex": "/sf-code=\"list\"/",
-    "type": "smart",
-    "mode": "smart",
-    "js": true
-  },
-  {
-    "name": "cl-news",
-    "regex": "/sf-code=\"news\"/",
-    "type": "smart",
-    "mode": "smart",
-    "js": true
-  },
-  {
-    "name": "cl-pagination",
-    "regex": "/sf-code=\"pagination\"/",
-    "type": "smart",
-    "mode": "smart",
-    "js": true
-  },
-  {
-    "name": "cl-search",
-    "regex": "/sf-code=\"search\"/",
-    "type": "smart",
-    "mode": "smart",
-    "js": true
-  },
-  {
-    "name": "cl-select",
-    "regex": "/sf-code=\"select\"/",
-    "type": "smart",
-    "mode": "smart",
-    "js": true
-  },
-  {
-    "name": "cl-span",
-    "regex": "/sf-code=\"span\"/",
-    "type": "smart",
-    "mode": "smart",
-    "js": true
-  },
-  {
-    "name": "cl-table",
-    "regex": "/sf-code=\"table\"/",
-    "type": "smart",
-    "mode": "smart",
-    "js": true
-  },
-  {
-    "name": "cl-tabs",
-    "regex": "/sf-code=\"tabs\"/",
-    "type": "smart",
-    "mode": "smart",
-    "js": true
-  },
-  {
-    "name": "cl-text",
-    "regex": "/sf-code=\"text\"/",
-    "type": "smart",
-    "mode": "smart",
-    "js": true
-  },
-  {
-    "name": "cl-textarea",
-    "regex": "/sf-code=\"textarea\"/",
-    "type": "smart",
-    "mode": "smart",
-    "js": true
-  },
-  {
-    "name": "cl-tags",
-    "regex": "/sf-code=\"tags\"/",
-    "type": "smart",
-    "mode": "smart",
-    "js": true
-  },
-  {
-    "name": "cl-icons",
-    "regex": "/sf-code=\"icons\"/",
-    "type": "smart",
-    "mode": "smart",
-    "js": true
+    "js": true,
+    "relation": [
+      {
+        "name": "country-code"
+      }
+    ]
   },
   {
     "name": "cl-inputs",
-    "regex": "/sf-code=\"inputs\"/",
+    "tags": [
+      "sf-input"
+    ],
     "type": "smart",
     "mode": "smart",
-    "js": true
+    "js": true,
+    "relation": [
+      {
+        "name": "inputs"
+      }
+    ]
   },
   {
-    "name": "cl-close",
-    "regex": "/sf-code=\"close\"/",
+    "name": "cl-textarea",
+    "tags": [
+      "sf-textarea"
+    ],
     "type": "smart",
     "mode": "smart",
-    "js": true
+    "js": true,
+    "relation": [
+      {
+        "name": "textarea"
+      }
+    ]
   },
   {
-    "name": "cl-contentDivider",
-    "regex": "/sf-code=\"contentDivider\"/",
+    "name": "cl-buttons",
+    "tags": [
+      "sf-button"
+    ],
     "type": "smart",
     "mode": "smart",
-    "js": true
+    "js": true,
+    "relation": [
+      {
+        "name": "buttons"
+      }
+    ]
+  },
+  {
+    "name": "cl-icon-buttons",
+    "tags": [
+      "sf-icon-button"
+    ],
+    "type": "smart",
+    "mode": "smart",
+    "js": true,
+    "relation": [
+      {
+        "name": "icon-buttons"
+      }
+    ]
+  },
+  {
+    "name": "cl-badges",
+    "tags": [
+      "sf-badge"
+    ],
+    "type": "smart",
+    "mode": "smart",
+    "js": true,
+    "relation": [
+      {
+        "name": "badges"
+      }
+    ]
+  },
+  {
+    "name": "cl-tooltip",
+    "tags": [
+      "sf-tooltip"
+    ],
+    "type": "smart",
+    "mode": "smart",
+    "js": true,
+    "relation": [
+      {
+        "name": "tooltip"
+      }
+    ]
   },
   {
     "name": "clipboard",
@@ -2809,7 +2760,7 @@
   },
   {
     "name": "tooltip",
-    "regex": "/sf-tooltip/",
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-tooltip\\b/i",
     "type": "component",
     "css": true,
     "js": true
@@ -2837,7 +2788,7 @@
   },
   {
     "name": "avatars",
-    "regex": "/sf-avatar/",
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-avatar\\b/i",
     "type": "component",
     "css": true,
     "js": true
@@ -2847,13 +2798,6 @@
     "regex": "/sf-theme/",
     "type": "component",
     "css": false,
-    "js": true
-  },
-  {
-    "name": "avatars-group",
-    "regex": "/sf-avatar-group/",
-    "type": "component",
-    "css": true,
     "js": true
   },
   {
@@ -2893,14 +2837,14 @@
   },
   {
     "name": "badges",
-    "regex": "/sf-badge/",
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-badge\\b/i",
     "type": "component",
     "css": true,
     "js": true
   },
   {
     "name": "inputs",
-    "regex": "/sf-input/",
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-input\\b/i",
     "type": "component",
     "css": true,
     "js": true
@@ -2921,7 +2865,14 @@
   },
   {
     "name": "country-code",
-    "regex": "/sf-country-code/",
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-country-code\\b/i",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
+    "name": "verification",
+    "regex": "/sf-verification/",
     "type": "component",
     "css": true,
     "js": true
@@ -2942,7 +2893,7 @@
   },
   {
     "name": "buttons",
-    "regex": "/sf-button/",
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-button\\b/i",
     "type": "component",
     "css": true,
     "js": true
@@ -2963,7 +2914,7 @@
   },
   {
     "name": "icon-buttons",
-    "regex": "/sf-icon-button/",
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-icon-button\\b/i",
     "type": "component",
     "css": true,
     "js": true
