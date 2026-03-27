@@ -2669,6 +2669,164 @@
     ]
   },
   {
+    "name": "cl-tags",
+    "tags": [
+      "sf-tag"
+    ],
+    "type": "smart",
+    "mode": "smart",
+    "js": true,
+    "relation": [
+      {
+        "name": "tags"
+      },
+      {
+        "name": "checkbox"
+      },
+      {
+        "name": "icon-buttons"
+      },
+      {
+        "name": "avatars"
+      },
+      {
+        "name": "dot"
+      }
+    ]
+  },
+  {
+    "name": "cl-dropdown",
+    "tags": [
+      "sf-dropdown"
+    ],
+    "type": "smart",
+    "mode": "smart",
+    "js": true,
+    "relation": [
+      {
+        "name": "dropdown"
+      },
+      {
+        "name": "inputs"
+      },
+      {
+        "name": "icon-buttons"
+      }
+    ]
+  },
+  {
+    "name": "cl-list-item",
+    "tags": [
+      "sf-list-item"
+    ],
+    "type": "smart",
+    "mode": "smart",
+    "js": true,
+    "relation": [
+      {
+        "name": "dropdown"
+      },
+      {
+        "name": "checkbox"
+      },
+      {
+        "name": "avatars"
+      },
+      {
+        "name": "tags"
+      }
+    ]
+  },
+  {
+    "name": "cl-download-file",
+    "tags": [
+      "sf-download-file"
+    ],
+    "type": "smart",
+    "mode": "smart",
+    "js": true,
+    "relation": [
+      {
+        "name": "download-file"
+      }
+    ]
+  },
+  {
+    "name": "cl-progress-bar",
+    "tags": [
+      "sf-progress-bar"
+    ],
+    "type": "smart",
+    "mode": "smart",
+    "js": true,
+    "relation": [
+      {
+        "name": "progress-bar"
+      }
+    ]
+  },
+  {
+    "name": "cl-progress-scale",
+    "tags": [
+      "sf-progress-scale"
+    ],
+    "type": "smart",
+    "mode": "smart",
+    "js": true,
+    "relation": [
+      {
+        "name": "progress-scale"
+      }
+    ]
+  },
+  {
+    "name": "cl-file-upload",
+    "tags": [
+      "sf-file-upload"
+    ],
+    "type": "smart",
+    "mode": "smart",
+    "js": true,
+    "relation": [
+      {
+        "name": "file-upload"
+      },
+      {
+        "name": "featured-icon"
+      },
+      {
+        "name": "cl-progress-bar"
+      },
+      {
+        "name": "icon-buttons"
+      }
+    ]
+  },
+  {
+    "name": "cl-modal",
+    "tags": [
+      "sf-modal"
+    ],
+    "type": "smart",
+    "mode": "smart",
+    "js": true,
+    "relation": [
+      {
+        "name": "modal"
+      },
+      {
+        "name": "icon-buttons"
+      }
+    ]
+  },
+  {
+    "name": "dropdown",
+    "regex": "/sf-dropdown|sf-list-item/",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
     "name": "clipboard",
     "regex": "/(btn-clipboard|source)/",
     "type": "component",
@@ -2722,12 +2880,6 @@
     "regex": "/(?:class\\s*=\\s*[\"'][^\"']*language-[^\"']*[\"']|<pre\\b[^>]*>\\s*<code\\b[^>]*>)/i",
     "type": "component",
     "js": true,
-    "css": true
-  },
-  {
-    "name": "progress",
-    "regex": "/sf-progress/",
-    "type": "component",
     "css": true
   },
   {
@@ -2809,7 +2961,7 @@
   },
   {
     "name": "tags",
-    "regex": "/sf-tag/",
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-tag\\b/i",
     "type": "component",
     "css": true,
     "js": true
@@ -2829,8 +2981,15 @@
     "js": true
   },
   {
-    "name": "progressbar",
-    "regex": "/sf-progress-bar/",
+    "name": "progress-bar",
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-progress-bar\\b/i",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
+    "name": "progress-scale",
+    "regex": "/sf-progress-scale/",
     "type": "component",
     "css": true,
     "js": true
@@ -2923,7 +3082,7 @@
     "name": "modal",
     "regex": "/(data-sf-modal-(open|close)|sf-modal)/",
     "type": "component",
-    "css": false,
+    "css": true,
     "js": true
   },
   {
@@ -2971,6 +3130,27 @@
   {
     "name": "theme-builder",
     "regex": "/sf-theme-builder/",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
+    "name": "download-file",
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-download-file\\b/i",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
+    "name": "featured-icon",
+    "regex": "/sf-featured-icon/",
+    "type": "component",
+    "css": true,
+    "js": false
+  },
+  {
+    "name": "file-upload",
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-file-upload\\b/i",
     "type": "component",
     "css": true,
     "js": true
