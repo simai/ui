@@ -52,7 +52,7 @@
     "justify-content/flex-start (.justify-start)",
     "align-items/center (.items-center)"
   ],
-  ".sf-country-code.active .sf-country-code-list": [
+  ".sf-country-code.open .sf-country-code-list": [
     "flex/1 (.flex-1)",
     "display/flex (.flex)",
     "flex-direction/row (.flex-row)",
@@ -60,7 +60,7 @@
     "justify-content/flex-start (.justify-start)",
     "align-items/flex-start (.items-start)"
   ],
-  ".sf-country-code.active .sf-country-code-items": [
+  ".sf-country-code.open .sf-country-code-items": [
     "flex/1 (.flex-1)",
     "display/flex (.flex)",
     "flex-direction/column (.flex-col)",
@@ -68,7 +68,7 @@
     "justify-content/flex-start (.justify-start)",
     "align-items/flex-start (.items-start)"
   ],
-  ".sf-country-code.sf-country-code--size-1.active .sf-country-code-list": [
+  ".sf-country-code.sf-country-code--size-1.open .sf-country-code-list": [
     "flex/1 (.flex-1)",
     "display/flex (.flex)",
     "flex-direction/row (.flex-row)",
@@ -76,7 +76,7 @@
     "justify-content/flex-start (.justify-start)",
     "align-items/flex-start (.items-start)"
   ],
-  ".sf-country-code.sf-country-code--size-1.active .sf-country-code-items": [
+  ".sf-country-code.sf-country-code--size-1.open .sf-country-code-items": [
     "flex/1 (.flex-1)",
     "display/flex (.flex)",
     "flex-direction/column (.flex-col)",
@@ -84,7 +84,7 @@
     "justify-content/flex-start (.justify-start)",
     "align-items/flex-start (.items-start)"
   ],
-  ".sf-country-code.sf-country-code--size-2.active .sf-country-code-list": [
+  ".sf-country-code.sf-country-code--size-2.open .sf-country-code-list": [
     "flex/1 (.flex-1)",
     "display/flex (.flex)",
     "flex-direction/row (.flex-row)",
@@ -92,7 +92,7 @@
     "justify-content/flex-start (.justify-start)",
     "align-items/flex-start (.items-start)"
   ],
-  ".sf-country-code.sf-country-code--size-2.active .sf-country-code-items": [
+  ".sf-country-code.sf-country-code--size-2.open .sf-country-code-items": [
     "flex/1 (.flex-1)",
     "display/flex (.flex)",
     "flex-direction/column (.flex-col)",
@@ -100,7 +100,7 @@
     "justify-content/flex-start (.justify-start)",
     "align-items/flex-start (.items-start)"
   ],
-  ".sf-country-code.sf-country-code--size-3.active .sf-country-code-list": [
+  ".sf-country-code.sf-country-code--size-3.open .sf-country-code-list": [
     "flex/1 (.flex-1)",
     "display/flex (.flex)",
     "flex-direction/row (.flex-row)",
@@ -108,7 +108,7 @@
     "justify-content/flex-start (.justify-start)",
     "align-items/flex-start (.items-start)"
   ],
-  ".sf-country-code.sf-country-code--size-3.active .sf-country-code-items": [
+  ".sf-country-code.sf-country-code--size-3.open .sf-country-code-items": [
     "flex/1 (.flex-1)",
     "display/flex (.flex)",
     "flex-direction/column (.flex-col)",
@@ -116,7 +116,7 @@
     "justify-content/flex-start (.justify-start)",
     "align-items/flex-start (.items-start)"
   ],
-  ".sf-country-code.sf-country-code--size-1\\/3.active .sf-country-code-list": [
+  ".sf-country-code.sf-country-code--size-1\\/3.open .sf-country-code-list": [
     "flex/1 (.flex-1)",
     "display/flex (.flex)",
     "flex-direction/row (.flex-row)",
@@ -124,7 +124,7 @@
     "justify-content/flex-start (.justify-start)",
     "align-items/flex-start (.items-start)"
   ],
-  ".sf-country-code.sf-country-code--size-1\\/3.active .sf-country-code-items": [
+  ".sf-country-code.sf-country-code--size-1\\/3.open .sf-country-code-items": [
     "flex/1 (.flex-1)",
     "display/flex (.flex)",
     "flex-direction/column (.flex-col)",
@@ -132,7 +132,7 @@
     "justify-content/flex-start (.justify-start)",
     "align-items/flex-start (.items-start)"
   ],
-  ".sf-country-code.sf-country-code--size-1\\/2.active .sf-country-code-list": [
+  ".sf-country-code.sf-country-code--size-1\\/2.open .sf-country-code-list": [
     "flex/1 (.flex-1)",
     "display/flex (.flex)",
     "flex-direction/row (.flex-row)",
@@ -140,7 +140,7 @@
     "justify-content/flex-start (.justify-start)",
     "align-items/flex-start (.items-start)"
   ],
-  ".sf-country-code.sf-country-code--size-1\\/2.active .sf-country-code-items": [
+  ".sf-country-code.sf-country-code--size-1\\/2.open .sf-country-code-items": [
     "flex/1 (.flex-1)",
     "display/flex (.flex)",
     "flex-direction/column (.flex-col)",

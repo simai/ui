@@ -68,16 +68,16 @@
     "regex": "/xl\\:self-cross-/"
   },
   {
-    "name": "appearance/default",
-    "regex": "/appearance-none/"
-  },
-  {
     "name": "animation/default",
     "regex": "/animation-from-|(?:^|[\\s\"])(?:animation|infinite)(?=[\\s\"]|$)/"
   },
   {
     "name": "animation-duration/default",
     "regex": "/animation-duration-/"
+  },
+  {
+    "name": "appearance/default",
+    "regex": "/appearance-none/"
   },
   {
     "name": "aspect-ratio/default",
@@ -228,6 +228,10 @@
     "regex": "/bg-fake/"
   },
   {
+    "name": "background-gradient/default",
+    "regex": "/(bg-none|bg-gradient-to-(t|tr|r|br|b|bl|l|tl))/"
+  },
+  {
     "name": "background-origin/default",
     "regex": "/bg-origin-(border|padding|content)/"
   },
@@ -292,44 +296,44 @@
     "regex": "/bg-(auto|cover|contain)/"
   },
   {
-    "name": "background-size-ext/default",
-    "regex": "/bg-size-(([a-i]{1}[0-9]{1})|(100|[0-9]{1,2}))/"
-  },
-  {
     "name": "background-size/lg",
     "regex": "/lg\\:bg-(auto|cover|contain)/"
-  },
-  {
-    "name": "background-size-ext/lg",
-    "regex": "/lg\\:bg-size-(([a-i]{1}[0-9]{1})|(100|[0-9]{1,2}))/"
   },
   {
     "name": "background-size/md",
     "regex": "/md\\:bg-(auto|cover|contain)/"
   },
   {
-    "name": "background-size-ext/md",
-    "regex": "/md\\:bg-size-(([a-i]{1}[0-9]{1})|(100|[0-9]{1,2}))/"
-  },
-  {
     "name": "background-size/sm",
     "regex": "/sm\\:bg-(auto|cover|contain)/"
-  },
-  {
-    "name": "background-size-ext/sm",
-    "regex": "/sm\\:bg-size-(([a-i]{1}[0-9]{1})|(100|[0-9]{1,2}))/"
   },
   {
     "name": "background-size/xl",
     "regex": "/xl\\:bg-(auto|cover|contain)/"
   },
   {
+    "name": "background-size-ext/default",
+    "regex": "/bg-size-(([a-i]{1}[0-9]{1})|(100|[0-9]{1,2}))/"
+  },
+  {
+    "name": "background-size-ext/lg",
+    "regex": "/lg\\:bg-size-(([a-i]{1}[0-9]{1})|(100|[0-9]{1,2}))/"
+  },
+  {
+    "name": "background-size-ext/md",
+    "regex": "/md\\:bg-size-(([a-i]{1}[0-9]{1})|(100|[0-9]{1,2}))/"
+  },
+  {
+    "name": "background-size-ext/sm",
+    "regex": "/sm\\:bg-size-(([a-i]{1}[0-9]{1})|(100|[0-9]{1,2}))/"
+  },
+  {
     "name": "background-size-ext/xl",
     "regex": "/xl\\:bg-size-(([a-i]{1}[0-9]{1})|(100|[0-9]{1,2}))/"
   },
   {
-    "name": "background-gradient/default",
-    "regex": "/(bg-none|bg-gradient-to-(t|tr|r|br|b|bl|l|tl))/"
+    "name": "border-collapse/default",
+    "regex": "/border-(collapse|separate)/"
   },
   {
     "name": "border-color/active",
@@ -368,6 +372,10 @@
     "regex": "/xl\\:radius-/"
   },
   {
+    "name": "border-spacing/default",
+    "regex": "/border-spacing(-(x|y))?-/"
+  },
+  {
     "name": "border-style/default",
     "regex": "/border-((dotted|dashed|solid|double|hidden|inset|none)|((x|y|top|bottom|inline-(start|end))-(dotted|dashed|solid|double|hidden|inset|none)))/"
   },
@@ -392,14 +400,6 @@
     "regex": "/xl\\:border-((10|[0-9])|((top|bottom|inline-(start|end))-(10|[0-9]))|((x|y)-(10|[0-9])))/"
   },
   {
-    "name": "border-spacing/default",
-    "regex": "/border-spacing(-(x|y))?-/"
-  },
-  {
-    "name": "border-collapse/default",
-    "regex": "/border-(collapse|separate)/"
-  },
-  {
     "name": "box-decoration-break/default",
     "regex": "/box-(slice|clone)/"
   },
@@ -412,16 +412,16 @@
     "regex": "/hover\\:shadow-[0-5]/"
   },
   {
+    "name": "box-shadow-color/active",
+    "regex": "/active\\:shadow-(on-surface|primary|secondary|tertiary|error|success|warning)/"
+  },
+  {
     "name": "box-shadow-color/default",
     "regex": "/shadow-(on-surface|primary|secondary|tertiary|error|success|warning)/"
   },
   {
     "name": "box-shadow-color/hover",
     "regex": "/hover\\:shadow-(on-surface|primary|secondary|tertiary|error|success|warning)/"
-  },
-  {
-    "name": "box-shadow-color/active",
-    "regex": "/active\\:shadow-(on-surface|primary|secondary|tertiary|error|success|warning)/"
   },
   {
     "name": "box-sizing/default",
@@ -532,6 +532,26 @@
     "regex": "/xl\\:layout-col-/"
   },
   {
+    "name": "column-gap/default",
+    "regex": "/(?:^|\\s)col-gap-/"
+  },
+  {
+    "name": "column-gap/lg",
+    "regex": "/lg:col-gap-/"
+  },
+  {
+    "name": "column-gap/md",
+    "regex": "/md:col-gap-/"
+  },
+  {
+    "name": "column-gap/sm",
+    "regex": "/sm:col-gap-/"
+  },
+  {
+    "name": "column-gap/xl",
+    "regex": "/xl:col-gap-/"
+  },
+  {
     "name": "container/default",
     "regex": "/container/"
   },
@@ -592,16 +612,16 @@
     "regex": "/hover\\:divider-(primary|secondary|tertiary|success|warning|error|outline|transparent|current)/"
   },
   {
+    "name": "divider-opacity/default",
+    "regex": "/(divider|divide)-opacity-([0-9]|full)/"
+  },
+  {
     "name": "divider-style/default",
     "regex": "/(divider|divide)-(dotted|dashed|solid|double|hidden|none)/"
   },
   {
     "name": "divider-width/default",
     "regex": "/(divider|divide)-(x|y)-([0-4]|reverse)/"
-  },
-  {
-    "name": "divider-opacity/default",
-    "regex": "/(divider|divide)-opacity-([0-9]|full)/"
   },
   {
     "name": "drop-shadow/default",
@@ -730,14 +750,6 @@
   {
     "name": "filter-opacity/hover",
     "regex": "/hover\\:filter-opacity-([0-9]|full)/"
-  },
-  {
-    "name": "opacity/default",
-    "regex": "/opacity-([0-9]|full)/"
-  },
-  {
-    "name": "opacity/hover",
-    "regex": "/hover\\:opacity-([0-9]|full)/"
   },
   {
     "name": "filter-saturate/default",
@@ -1028,28 +1040,12 @@
     "regex": "/xl:(?:gap|g)-/"
   },
   {
-    "name": "column-gap/default",
-    "regex": "/(?:^|\\s)col-gap-/"
-  },
-  {
-    "name": "column-gap/lg",
-    "regex": "/lg:col-gap-/"
-  },
-  {
-    "name": "column-gap/md",
-    "regex": "/md:col-gap-/"
-  },
-  {
-    "name": "column-gap/sm",
-    "regex": "/sm:col-gap-/"
-  },
-  {
-    "name": "column-gap/xl",
-    "regex": "/xl:col-gap-/"
-  },
-  {
     "name": "gradient-color/default",
     "regex": "/gr[1-3]-(transparent|current|surface|on-surface|primary|secondary|tertiary|disable|success|warning|error)/"
+  },
+  {
+    "name": "gradient-stops/default",
+    "regex": "/(from|via|to)-/"
   },
   {
     "name": "gradient-type/default",
@@ -1063,10 +1059,6 @@
         "css": true
       }
     ]
-  },
-  {
-    "name": "gradient-stops/default",
-    "regex": "/(from|via|to)-/"
   },
   {
     "name": "gradient-type/lg",
@@ -1305,6 +1297,10 @@
     "regex": "/xl\\:grid-row-/"
   },
   {
+    "name": "headers/default",
+    "regex": "/(h1|h2|h3|h4|h5|h6)/"
+  },
+  {
     "name": "height/default",
     "regex": "/h-((([1-9]{1}|[1-9]{2})\\/([1-9]{1}|[1-9]{2}))|auto|full|screen|min|max|fit|px|0)/"
   },
@@ -1429,6 +1425,10 @@
     "regex": "/tracking-/"
   },
   {
+    "name": "line-clamp/default",
+    "regex": "/line-clamp-/"
+  },
+  {
     "name": "line-height/default",
     "regex": "/line-/"
   },
@@ -1447,10 +1447,6 @@
   {
     "name": "line-height/xl",
     "regex": "/xl\\:line-/"
-  },
-  {
-    "name": "line-clamp/default",
-    "regex": "/line-clamp-/"
   },
   {
     "name": "list-style-position/default",
@@ -1721,6 +1717,14 @@
     "regex": "/xl\\:offset-((([1-9]{1}|[1-9]{2})\\/([1-9]{1}|[1-9]{2})))/"
   },
   {
+    "name": "opacity/default",
+    "regex": "/opacity-([0-9]|full)/"
+  },
+  {
+    "name": "opacity/hover",
+    "regex": "/hover\\:opacity-([0-9]|full)/"
+  },
+  {
     "name": "order/default",
     "regex": "/order-/"
   },
@@ -1771,78 +1775,6 @@
   {
     "name": "outline-width/focus",
     "regex": "/focus\\:outline-[0-4]/"
-  },
-  {
-    "name": "ring-inset/default",
-    "regex": "/ring-inset/"
-  },
-  {
-    "name": "ring-inset/hover",
-    "regex": "/hover\\:ring-inset/"
-  },
-  {
-    "name": "ring-inset/focus",
-    "regex": "/focus\\:ring-inset/"
-  },
-  {
-    "name": "ring-width/default",
-    "regex": "/ring-([0-4])/"
-  },
-  {
-    "name": "ring-width/hover",
-    "regex": "/hover\\:ring-([0-4])/"
-  },
-  {
-    "name": "ring-width/focus",
-    "regex": "/focus\\:ring-([0-4])/"
-  },
-  {
-    "name": "ring-color/default",
-    "regex": "/ring-(transparent|current|outline|outline-variant|primary|secondary|tertiary|error|warning|success)/"
-  },
-  {
-    "name": "ring-color/hover",
-    "regex": "/hover\\:ring-(transparent|current|outline|outline-variant|primary|secondary|tertiary|error|warning|success)/"
-  },
-  {
-    "name": "ring-color/focus",
-    "regex": "/focus\\:ring-(transparent|current|outline|outline-variant|primary|secondary|tertiary|error|warning|success)/"
-  },
-  {
-    "name": "ring-offset-width/default",
-    "regex": "/ring-offset-([0-4])/"
-  },
-  {
-    "name": "ring-offset-width/hover",
-    "regex": "/hover\\:ring-offset-([0-4])/"
-  },
-  {
-    "name": "ring-offset-width/focus",
-    "regex": "/focus\\:ring-offset-([0-4])/"
-  },
-  {
-    "name": "ring-offset-color/default",
-    "regex": "/ring-offset-(transparent|current|outline|outline-variant|primary|secondary|tertiary|error|warning|success)/"
-  },
-  {
-    "name": "ring-offset-color/hover",
-    "regex": "/hover\\:ring-offset-(transparent|current|outline|outline-variant|primary|secondary|tertiary|error|warning|success)/"
-  },
-  {
-    "name": "ring-offset-color/focus",
-    "regex": "/focus\\:ring-offset-(transparent|current|outline|outline-variant|primary|secondary|tertiary|error|warning|success)/"
-  },
-  {
-    "name": "ring-opacity/default",
-    "regex": "/ring-opacity-([0-9]|full)/"
-  },
-  {
-    "name": "ring-opacity/hover",
-    "regex": "/hover\\:ring-opacity-([0-9]|full)/"
-  },
-  {
-    "name": "ring-opacity/focus",
-    "regex": "/focus\\:ring-opacity-([0-9]|full)/"
   },
   {
     "name": "overflow/default",
@@ -1989,6 +1921,30 @@
     "regex": "/xl\\:self-/"
   },
   {
+    "name": "placeholder-color/default",
+    "regex": "/placeholder-/"
+  },
+  {
+    "name": "placeholder-color/focus",
+    "regex": "/focus\\:placeholder-/"
+  },
+  {
+    "name": "placeholder-color/hover",
+    "regex": "/hover\\:placeholder-/"
+  },
+  {
+    "name": "placeholder-opacity/default",
+    "regex": "/placeholder-opacity-([0-9]|full)/"
+  },
+  {
+    "name": "placeholder-opacity/focus",
+    "regex": "/focus\\:placeholder-opacity-([0-9]|full)/"
+  },
+  {
+    "name": "placeholder-opacity/hover",
+    "regex": "/hover\\:placeholder-opacity-([0-9]|full)/"
+  },
+  {
     "name": "pointer-events/default",
     "regex": "/pointer-event-(none|auto)/"
   },
@@ -2015,6 +1971,78 @@
   {
     "name": "resize/default",
     "regex": "/resize|(resize-(none|x|y))/"
+  },
+  {
+    "name": "ring-color/default",
+    "regex": "/ring-(transparent|current|outline|outline-variant|primary|secondary|tertiary|error|warning|success)/"
+  },
+  {
+    "name": "ring-color/focus",
+    "regex": "/focus\\:ring-(transparent|current|outline|outline-variant|primary|secondary|tertiary|error|warning|success)/"
+  },
+  {
+    "name": "ring-color/hover",
+    "regex": "/hover\\:ring-(transparent|current|outline|outline-variant|primary|secondary|tertiary|error|warning|success)/"
+  },
+  {
+    "name": "ring-inset/default",
+    "regex": "/ring-inset/"
+  },
+  {
+    "name": "ring-inset/focus",
+    "regex": "/focus\\:ring-inset/"
+  },
+  {
+    "name": "ring-inset/hover",
+    "regex": "/hover\\:ring-inset/"
+  },
+  {
+    "name": "ring-offset-color/default",
+    "regex": "/ring-offset-(transparent|current|outline|outline-variant|primary|secondary|tertiary|error|warning|success)/"
+  },
+  {
+    "name": "ring-offset-color/focus",
+    "regex": "/focus\\:ring-offset-(transparent|current|outline|outline-variant|primary|secondary|tertiary|error|warning|success)/"
+  },
+  {
+    "name": "ring-offset-color/hover",
+    "regex": "/hover\\:ring-offset-(transparent|current|outline|outline-variant|primary|secondary|tertiary|error|warning|success)/"
+  },
+  {
+    "name": "ring-offset-width/default",
+    "regex": "/ring-offset-([0-4])/"
+  },
+  {
+    "name": "ring-offset-width/focus",
+    "regex": "/focus\\:ring-offset-([0-4])/"
+  },
+  {
+    "name": "ring-offset-width/hover",
+    "regex": "/hover\\:ring-offset-([0-4])/"
+  },
+  {
+    "name": "ring-opacity/default",
+    "regex": "/ring-opacity-([0-9]|full)/"
+  },
+  {
+    "name": "ring-opacity/focus",
+    "regex": "/focus\\:ring-opacity-([0-9]|full)/"
+  },
+  {
+    "name": "ring-opacity/hover",
+    "regex": "/hover\\:ring-opacity-([0-9]|full)/"
+  },
+  {
+    "name": "ring-width/default",
+    "regex": "/ring-([0-4])/"
+  },
+  {
+    "name": "ring-width/focus",
+    "regex": "/focus\\:ring-([0-4])/"
+  },
+  {
+    "name": "ring-width/hover",
+    "regex": "/hover\\:ring-([0-4])/"
   },
   {
     "name": "scroll-backdrop-color/default",
@@ -2095,6 +2123,10 @@
   {
     "name": "space/xl",
     "regex": "/xl\\:space-(x|y)-([0-9]{1}|reverse)/"
+  },
+  {
+    "name": "sr-only/default",
+    "regex": "/(sr-only|not-sr-only)/"
   },
   {
     "name": "stripe/default",
@@ -2257,30 +2289,6 @@
     "regex": "/hover\\:color-/"
   },
   {
-    "name": "placeholder-color/default",
-    "regex": "/placeholder-/"
-  },
-  {
-    "name": "placeholder-color/hover",
-    "regex": "/hover\\:placeholder-/"
-  },
-  {
-    "name": "placeholder-color/focus",
-    "regex": "/focus\\:placeholder-/"
-  },
-  {
-    "name": "placeholder-opacity/default",
-    "regex": "/placeholder-opacity-([0-9]|full)/"
-  },
-  {
-    "name": "placeholder-opacity/hover",
-    "regex": "/hover\\:placeholder-opacity-([0-9]|full)/"
-  },
-  {
-    "name": "placeholder-opacity/focus",
-    "regex": "/focus\\:placeholder-opacity-([0-9]|full)/"
-  },
-  {
     "name": "text-decoration/active",
     "regex": "/active\\:(underline|overline|line-through|decoration-none)/"
   },
@@ -2351,6 +2359,10 @@
   {
     "name": "text-overflow/default",
     "regex": "/(truncate|(t-(ellipsis|clip)))/"
+  },
+  {
+    "name": "theme/default",
+    "regex": "/theme-(light|light-dim|dark|dark-dim|yellow|blue|green)/"
   },
   {
     "name": "title/default",
@@ -2457,10 +2469,6 @@
     "regex": "/select-(none|text|all|auto|contain)/"
   },
   {
-    "name": "sr-only/default",
-    "regex": "/(sr-only|not-sr-only)/"
-  },
-  {
     "name": "vertical-align/default",
     "regex": "/text-(baseline|top|middle|bottom|sup|sub)/"
   },
@@ -2557,6 +2565,43 @@
     "regex": "/xl\\:z-([1-9]{1}|auto|-1)/"
   },
   {
+    "name": "cl-accordion",
+    "regex": "/sf-code=\"accordion\"/",
+    "type": "smart",
+    "mode": "smart",
+    "js": true
+  },
+  {
+    "name": "cl-ajax",
+    "regex": "/sf-code=\"ajax\"/",
+    "type": "smart",
+    "mode": "smart",
+    "js": true
+  },
+  {
+    "name": "cl-alert",
+    "tags": [
+      "sf-alert"
+    ],
+    "type": "smart",
+    "mode": "smart",
+    "js": true,
+    "relation": [
+      {
+        "name": "alerts"
+      },
+      {
+        "name": "buttons"
+      },
+      {
+        "name": "icon-buttons"
+      },
+      {
+        "name": "icons"
+      }
+    ]
+  },
+  {
     "name": "cl-avatar",
     "tags": [
       "sf-avatar"
@@ -2571,44 +2616,23 @@
     ]
   },
   {
-    "name": "cl-country-code",
-    "tags": [
-      "sf-country-code"
-    ],
+    "name": "cl-avatars",
+    "regex": "/sf-code=\"avatars\"/",
     "type": "smart",
     "mode": "smart",
-    "js": true,
-    "relation": [
-      {
-        "name": "country-code"
-      }
-    ]
+    "js": true
   },
   {
-    "name": "cl-inputs",
+    "name": "cl-badges",
     "tags": [
-      "sf-input"
+      "sf-badge"
     ],
     "type": "smart",
     "mode": "smart",
     "js": true,
     "relation": [
       {
-        "name": "inputs"
-      }
-    ]
-  },
-  {
-    "name": "cl-textarea",
-    "tags": [
-      "sf-textarea"
-    ],
-    "type": "smart",
-    "mode": "smart",
-    "js": true,
-    "relation": [
-      {
-        "name": "textarea"
+        "name": "badges"
       }
     ]
   },
@@ -2627,70 +2651,82 @@
     ]
   },
   {
-    "name": "cl-icon-buttons",
-    "tags": [
-      "sf-icon-button"
-    ],
+    "name": "cl-cards",
+    "regex": "/sf-code=\"cards\"/",
     "type": "smart",
     "mode": "smart",
-    "js": true,
-    "relation": [
-      {
-        "name": "icon-buttons"
-      }
-    ]
+    "js": true
   },
   {
-    "name": "cl-badges",
-    "tags": [
-      "sf-badge"
-    ],
+    "name": "cl-carousel",
+    "regex": "/sf-code=\"carousel\"/",
     "type": "smart",
     "mode": "smart",
-    "js": true,
-    "relation": [
-      {
-        "name": "badges"
-      }
-    ]
+    "js": true
   },
   {
-    "name": "cl-tooltip",
+    "name": "cl-checkbox",
     "tags": [
-      "sf-tooltip"
+      "sf-checkbox"
     ],
     "type": "smart",
     "mode": "smart",
     "js": true,
     "relation": [
-      {
-        "name": "tooltip"
-      }
-    ]
-  },
-  {
-    "name": "cl-tags",
-    "tags": [
-      "sf-tag"
-    ],
-    "type": "smart",
-    "mode": "smart",
-    "js": true,
-    "relation": [
-      {
-        "name": "tags"
-      },
       {
         "name": "checkbox"
       },
       {
-        "name": "icon-buttons"
-      },
+        "name": "icons"
+      }
+    ]
+  },
+  {
+    "name": "cl-close",
+    "regex": "/sf-code=\"close\"/",
+    "type": "smart",
+    "mode": "smart",
+    "js": true
+  },
+  {
+    "name": "cl-contentDivider",
+    "regex": "/sf-code=\"contentDivider\"/",
+    "type": "smart",
+    "mode": "smart",
+    "js": true
+  },
+  {
+    "name": "cl-country-code",
+    "tags": [
+      "sf-country-code"
+    ],
+    "type": "smart",
+    "mode": "smart",
+    "js": true,
+    "relation": [
       {
-        "name": "avatars"
-      },
+        "name": "country-code"
+      }
+    ]
+  },
+  {
+    "name": "cl-debug",
+    "regex": "/sf-code=\"debug\"/",
+    "type": "smart",
+    "mode": "smart",
+    "js": true
+  },
+  {
+    "name": "cl-download-file",
+    "tags": [
+      "sf-download-file"
+    ],
+    "type": "smart",
+    "mode": "smart",
+    "js": true,
+    "relation": [
       {
-        "name": "dot"
+        "name": "download-file"
       }
     ]
   },
@@ -2713,6 +2749,78 @@
         "name": "icon-buttons"
       }
     ]
+  },
+  {
+    "name": "cl-edit",
+    "regex": "/sf-code=\"edit\"/",
+    "type": "smart",
+    "mode": "smart",
+    "js": true
+  },
+  {
+    "name": "cl-file-upload",
+    "tags": [
+      "sf-file-upload"
+    ],
+    "type": "smart",
+    "mode": "smart",
+    "js": true,
+    "relation": [
+      {
+        "name": "file-upload"
+      },
+      {
+        "name": "featured-icon"
+      },
+      {
+        "name": "cl-progress-bar"
+      },
+      {
+        "name": "icon-buttons"
+      }
+    ]
+  },
+  {
+    "name": "cl-icon-buttons",
+    "tags": [
+      "sf-icon-button"
+    ],
+    "type": "smart",
+    "mode": "smart",
+    "js": true,
+    "relation": [
+      {
+        "name": "icon-buttons"
+      }
+    ]
+  },
+  {
+    "name": "cl-icons",
+    "regex": "/sf-code=\"icons\"/",
+    "type": "smart",
+    "mode": "smart",
+    "js": true
+  },
+  {
+    "name": "cl-inputs",
+    "tags": [
+      "sf-input"
+    ],
+    "type": "smart",
+    "mode": "smart",
+    "js": true,
+    "relation": [
+      {
+        "name": "inputs"
+      }
+    ]
+  },
+  {
+    "name": "cl-list",
+    "regex": "/sf-code=\"list\"/",
+    "type": "smart",
+    "mode": "smart",
+    "js": true
   },
   {
     "name": "cl-list-item",
@@ -2738,16 +2846,40 @@
     ]
   },
   {
-    "name": "cl-download-file",
+    "name": "cl-modal",
     "tags": [
-      "sf-download-file"
+      "sf-modal"
     ],
     "type": "smart",
     "mode": "smart",
     "js": true,
     "relation": [
       {
-        "name": "download-file"
+        "name": "modal"
+      },
+      {
+        "name": "icon-buttons"
+      }
+    ]
+  },
+  {
+    "name": "cl-news",
+    "regex": "/sf-code=\"news\"/",
+    "type": "smart",
+    "mode": "smart",
+    "js": true
+  },
+  {
+    "name": "cl-pagination",
+    "tags": [
+      "sf-pagination"
+    ],
+    "type": "smart",
+    "mode": "smart",
+    "js": true,
+    "relation": [
+      {
+        "name": "pagination"
       }
     ]
   },
@@ -2780,48 +2912,340 @@
     ]
   },
   {
-    "name": "cl-file-upload",
+    "name": "cl-radio",
     "tags": [
-      "sf-file-upload"
+      "sf-radio"
     ],
     "type": "smart",
     "mode": "smart",
     "js": true,
     "relation": [
       {
-        "name": "file-upload"
+        "name": "radio"
       },
       {
-        "name": "featured-icon"
-      },
-      {
-        "name": "cl-progress-bar"
-      },
-      {
-        "name": "icon-buttons"
+        "name": "icons"
       }
     ]
   },
   {
-    "name": "cl-modal",
+    "name": "cl-range-slider",
     "tags": [
-      "sf-modal"
+      "sf-range-slider"
     ],
     "type": "smart",
     "mode": "smart",
     "js": true,
     "relation": [
       {
-        "name": "modal"
-      },
-      {
-        "name": "icon-buttons"
+        "name": "range-slider"
       }
     ]
   },
   {
-    "name": "dropdown",
-    "regex": "/sf-dropdown|sf-list-item/",
+    "name": "cl-reference-link",
+    "tags": [
+      "sf-reference-link"
+    ],
+    "type": "smart",
+    "mode": "smart",
+    "js": true,
+    "relation": [
+      {
+        "name": "reference-link"
+      },
+      {
+        "name": "icons"
+      }
+    ]
+  },
+  {
+    "name": "cl-search",
+    "regex": "/sf-code=\"search\"/",
+    "type": "smart",
+    "mode": "smart",
+    "js": true
+  },
+  {
+    "name": "cl-select",
+    "regex": "/sf-code=\"select\"/",
+    "type": "smart",
+    "mode": "smart",
+    "js": true
+  },
+  {
+    "name": "cl-sfAccordion",
+    "regex": "/sf-code=\"sfAccordion\"/",
+    "type": "smart",
+    "mode": "smart",
+    "js": true
+  },
+  {
+    "name": "cl-sfTabs",
+    "regex": "/sf-code=\"sf-tab\"/",
+    "type": "smart",
+    "mode": "smart",
+    "js": true
+  },
+  {
+    "name": "cl-skeleton",
+    "tags": [
+      "sf-skeleton"
+    ],
+    "type": "smart",
+    "mode": "smart",
+    "js": true,
+    "relation": [
+      {
+        "name": "skeleton"
+      }
+    ]
+  },
+  {
+    "name": "cl-slider",
+    "tags": [
+      "sf-slider"
+    ],
+    "type": "smart",
+    "mode": "smart",
+    "js": true,
+    "relation": [
+      {
+        "name": "slider"
+      },
+      {
+        "name": "icon-buttons"
+      },
+      {
+        "name": "icons"
+      }
+    ]
+  },
+  {
+    "name": "cl-span",
+    "regex": "/sf-code=\"span\"/",
+    "type": "smart",
+    "mode": "smart",
+    "js": true
+  },
+  {
+    "name": "cl-spinner",
+    "tags": [
+      "sf-spinner"
+    ],
+    "type": "smart",
+    "mode": "smart",
+    "js": true,
+    "relation": [
+      {
+        "name": "spinner"
+      }
+    ]
+  },
+  {
+    "name": "cl-toast",
+    "tags": [
+      "sf-toast"
+    ],
+    "type": "smart",
+    "mode": "smart",
+    "js": true,
+    "relation": [
+      {
+        "name": "toast"
+      },
+      {
+        "name": "buttons"
+      },
+      {
+        "name": "icon-buttons"
+      },
+      {
+        "name": "icons"
+      },
+      {
+        "name": "close"
+      }
+    ]
+  },
+  {
+    "name": "cl-steps",
+    "tags": [
+      "sf-steps"
+    ],
+    "type": "smart",
+    "mode": "smart",
+    "js": true,
+    "relation": [
+      {
+        "name": "step"
+      },
+      {
+        "name": "icons"
+      }
+    ]
+  },
+  {
+    "name": "cl-switch",
+    "tags": [
+      "sf-switch"
+    ],
+    "type": "smart",
+    "mode": "smart",
+    "js": true,
+    "relation": [
+      {
+        "name": "switch"
+      },
+      {
+        "name": "icons"
+      }
+    ]
+  },
+  {
+    "name": "cl-table",
+    "regex": "/sf-code=\"table\"/",
+    "type": "smart",
+    "mode": "smart",
+    "js": true
+  },
+  {
+    "name": "cl-tabs",
+    "regex": "/sf-code=\"tabs\"/",
+    "type": "smart",
+    "mode": "smart",
+    "js": true
+  },
+  {
+    "name": "cl-tags",
+    "tags": [
+      "sf-tag"
+    ],
+    "type": "smart",
+    "mode": "smart",
+    "js": true,
+    "relation": [
+      {
+        "name": "tags"
+      },
+      {
+        "name": "checkbox"
+      },
+      {
+        "name": "icon-buttons"
+      },
+      {
+        "name": "avatars"
+      },
+      {
+        "name": "dot"
+      }
+    ]
+  },
+  {
+    "name": "cl-text",
+    "regex": "/sf-code=\"text\"/",
+    "type": "smart",
+    "mode": "smart",
+    "js": true
+  },
+  {
+    "name": "cl-textarea",
+    "tags": [
+      "sf-textarea"
+    ],
+    "type": "smart",
+    "mode": "smart",
+    "js": true,
+    "relation": [
+      {
+        "name": "textarea"
+      }
+    ]
+  },
+  {
+    "name": "cl-toggle",
+    "tags": [
+      "sf-toggle"
+    ],
+    "type": "smart",
+    "mode": "smart",
+    "js": true,
+    "relation": [
+      {
+        "name": "toggle"
+      },
+      {
+        "name": "icons"
+      }
+    ]
+  },
+  {
+    "name": "cl-tooltip",
+    "tags": [
+      "sf-tooltip"
+    ],
+    "type": "smart",
+    "mode": "smart",
+    "js": true,
+    "relation": [
+      {
+        "name": "tooltip"
+      }
+    ]
+  },
+  {
+    "name": "accordion",
+    "regex": "/sf-accordion/",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
+    "name": "alerts",
+    "regex": "/sf-alert/",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
+    "name": "avatars",
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-avatar\\b/i",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
+    "name": "badges",
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-badge\\b/i",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
+    "name": "breadcrumbs",
+    "regex": "/sf-breadcrumb/",
+    "type": "component",
+    "css": true,
+    "js": false
+  },
+  {
+    "name": "buttons",
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-button\\b/i",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
+    "name": "carousel",
+    "regex": "/sf-carousel/",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
+    "name": "checkbox",
+    "regex": "/sf-checkbox/",
     "type": "component",
     "css": true,
     "js": true
@@ -2840,8 +3264,22 @@
     "css": true
   },
   {
-    "name": "carousel",
-    "regex": "/sf-carousel/",
+    "name": "contentDivider",
+    "regex": "/sf-divider/",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
+    "name": "context-menu",
+    "regex": "/sf-context-menu/",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
+    "name": "country-code",
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-country-code\\b/i",
     "type": "component",
     "css": true,
     "js": true
@@ -2849,6 +3287,46 @@
   {
     "name": "doc",
     "regex": "/(language-|block--start|btn-clipboard|bd-example-indeterminate|bd-content|example)/",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
+    "name": "dot",
+    "regex": "/sf-dot/",
+    "type": "component",
+    "css": true,
+    "js": false
+  },
+  {
+    "name": "download-file",
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-download-file\\b/i",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
+    "name": "dropdown",
+    "regex": "/sf-dropdown|sf-list-item/",
+    "type": "component",
+    "css": true,
+    "js": true,
+    "relation": [
+      {
+        "name": "icon-buttons"
+      }
+    ]
+  },
+  {
+    "name": "emoji",
+    "regex": "/sf-emoji/",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
+    "name": "fab",
+    "regex": "/sf-fab/",
     "type": "component",
     "css": true,
     "js": true
@@ -2869,6 +3347,20 @@
     ]
   },
   {
+    "name": "featured-icon",
+    "regex": "/sf-featured-icon/",
+    "type": "component",
+    "css": true,
+    "js": false
+  },
+  {
+    "name": "file-upload",
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-file-upload\\b/i",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
     "name": "hideShow",
     "regex": "/sf-hide-show/",
     "type": "component",
@@ -2883,88 +3375,52 @@
     "css": true
   },
   {
-    "name": "sf-system",
-    "regex": "/sf-gallery|sf-overbox/",
-    "type": "attribute",
-    "css": false,
+    "name": "icon-buttons",
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-icon-button\\b/i",
+    "type": "component",
+    "css": true,
     "js": true
   },
   {
-    "name": "special",
-    "regex": "/sf-special/",
-    "type": "attribute",
+    "name": "icons",
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-icon\\b[^\"']*[\"']|<\\s*i[^>]*class\\s*=\\s*[\"'][^\"']*\\bsf-icon\\b[^\"']*[\"']/i",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
+    "name": "inputs",
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-input\\b/i",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
+    "name": "menu",
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-menu\\b/i",
+    "type": "component",
+    "css": true,
     "js": true,
-    "css": true
+    "relation": [
+      {
+        "name": "icons"
+      },
+      {
+        "name": "icon-buttons"
+      }
+    ]
   },
   {
-    "name": "swiper",
-    "regex": "/swiper/",
+    "name": "modal",
+    "regex": "/(data-sf-modal-(open|close)|sf-modal)/",
     "type": "component",
     "css": true,
-    "js": true
-  },
-  {
-    "name": "tab",
-    "regex": "/sf-tab/",
-    "type": "component",
-    "css": true,
-    "js": true
-  },
-  {
-    "name": "tooltip",
-    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-tooltip\\b/i",
-    "type": "component",
-    "css": true,
-    "js": true
-  },
-  {
-    "name": "alerts",
-    "regex": "/sf-alert/",
-    "type": "component",
-    "css": true,
-    "js": true
-  },
-  {
-    "name": "accordion",
-    "regex": "/sf-accordion/",
-    "type": "component",
-    "css": true,
-    "js": true
-  },
-  {
-    "name": "checkbox",
-    "regex": "/sf-checkbox/",
-    "type": "component",
-    "css": true,
-    "js": true
-  },
-  {
-    "name": "avatars",
-    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-avatar\\b/i",
-    "type": "component",
-    "css": true,
-    "js": true
-  },
-  {
-    "name": "theme",
-    "regex": "/sf-theme/",
-    "type": "component",
-    "css": false,
-    "js": true
-  },
-  {
-    "name": "context-menu",
-    "regex": "/sf-context-menu/",
-    "type": "component",
-    "css": true,
-    "js": true
-  },
-  {
-    "name": "tags",
-    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-tag\\b/i",
-    "type": "component",
-    "css": true,
-    "js": true
+    "js": true,
+    "relation": [
+      {
+        "name": "backdrop-filter-blur/default"
+      }
+    ]
   },
   {
     "name": "monaco",
@@ -2974,11 +3430,18 @@
     "js": true
   },
   {
-    "name": "icons",
-    "regex": "/sf-icon/",
+    "name": "pagination",
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\b(?:sf-pagination|sf-page-number)\\b/i",
     "type": "component",
     "css": true,
     "js": true
+  },
+  {
+    "name": "placeholder",
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\b(?:sf-placeholder)\\b/i",
+    "type": "component",
+    "css": true,
+    "js": false
   },
   {
     "name": "progress-bar",
@@ -2995,27 +3458,6 @@
     "js": true
   },
   {
-    "name": "badges",
-    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-badge\\b/i",
-    "type": "component",
-    "css": true,
-    "js": true
-  },
-  {
-    "name": "inputs",
-    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-input\\b/i",
-    "type": "component",
-    "css": true,
-    "js": true
-  },
-  {
-    "name": "textarea",
-    "regex": "/sf-textarea/",
-    "type": "component",
-    "css": true,
-    "js": true
-  },
-  {
     "name": "quantity",
     "regex": "/sf-quantity/",
     "type": "component",
@@ -3023,45 +3465,38 @@
     "js": true
   },
   {
-    "name": "country-code",
-    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-country-code\\b/i",
+    "name": "radio",
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-radio\\b/i",
     "type": "component",
     "css": true,
     "js": true
   },
   {
-    "name": "verification",
-    "regex": "/sf-verification/",
+    "name": "range-slider",
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-range-slider\\b/i",
     "type": "component",
     "css": true,
     "js": true
   },
   {
-    "name": "slider",
-    "regex": "/sf-slider/",
+    "name": "reference-link",
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-reference-link\\b/i",
     "type": "component",
     "css": true,
     "js": true
   },
   {
-    "name": "breadcrumbs",
-    "regex": "/sf-breadcrumb/",
-    "type": "component",
-    "css": true,
-    "js": false
-  },
-  {
-    "name": "buttons",
-    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-button\\b/i",
+    "name": "scrollbar",
+    "regex": "/\"scrollbar\"/",
     "type": "component",
     "css": true,
     "js": true
   },
   {
-    "name": "emoji",
-    "regex": "/sf-emoji/",
-    "type": "component",
-    "css": true,
+    "name": "sf-system",
+    "regex": "/sf-gallery|sf-overbox/",
+    "type": "attribute",
+    "css": false,
     "js": true
   },
   {
@@ -3072,25 +3507,23 @@
     "js": true
   },
   {
-    "name": "icon-buttons",
-    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-icon-button\\b/i",
+    "name": "slider",
+    "regex": "/sf-slider/",
     "type": "component",
     "css": true,
-    "js": true
+    "js": true,
+    "relation": [
+      {
+        "name": "swiper"
+      }
+    ]
   },
   {
-    "name": "modal",
-    "regex": "/(data-sf-modal-(open|close)|sf-modal)/",
-    "type": "component",
-    "css": true,
-    "js": true
-  },
-  {
-    "name": "contentDivider",
-    "regex": "/sf-divider/",
-    "type": "component",
-    "css": true,
-    "js": true
+    "name": "special",
+    "regex": "/sf-special/",
+    "type": "attribute",
+    "js": true,
+    "css": true
   },
   {
     "name": "spinner",
@@ -3100,8 +3533,15 @@
     "js": true
   },
   {
-    "name": "fab",
-    "regex": "/sf-fab/",
+    "name": "step",
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-step\\b/i",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
+    "name": "swiper",
+    "regex": "/swiper/",
     "type": "component",
     "css": true,
     "js": true
@@ -3114,18 +3554,39 @@
     "js": true
   },
   {
-    "name": "radio",
-    "regex": "/sf-radio/",
+    "name": "tab",
+    "regex": "/sf-tab/",
     "type": "component",
     "css": true,
     "js": true
   },
   {
-    "name": "dot",
-    "regex": "/sf-dot/",
+    "name": "tabs",
+    "regex": "/\"tabs\"/",
     "type": "component",
     "css": true,
-    "js": false
+    "js": true
+  },
+  {
+    "name": "tags",
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-tag\\b/i",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
+    "name": "textarea",
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-textarea\\b/i",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
+    "name": "theme",
+    "regex": "/sf-theme/",
+    "type": "component",
+    "css": false,
+    "js": true
   },
   {
     "name": "theme-builder",
@@ -3135,22 +3596,29 @@
     "js": true
   },
   {
-    "name": "download-file",
-    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-download-file\\b/i",
+    "name": "toast",
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-toast\\b/i",
     "type": "component",
     "css": true,
     "js": true
   },
   {
-    "name": "featured-icon",
-    "regex": "/sf-featured-icon/",
+    "name": "toggle",
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-toggle\\b/i",
     "type": "component",
     "css": true,
-    "js": false
+    "js": true
   },
   {
-    "name": "file-upload",
-    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-file-upload\\b/i",
+    "name": "tooltip",
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-tooltip\\b/i",
+    "type": "component",
+    "css": true,
+    "js": true
+  },
+  {
+    "name": "verification",
+    "regex": "/sf-verification/",
     "type": "component",
     "css": true,
     "js": true
