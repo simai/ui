@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-13T08:48:26.848Z",
+  "generatedAt": "2026-04-30T08:20:37.184Z",
   "sourceRoot": "src/smart",
   "tags": [
     "sf-button",
@@ -8,7 +8,7 @@
   "components": {
     "sf-button": {
       "tag": "sf-button",
-      "source": "src/smart/buttons/meta.js",
+      "source": "src/smart/buttons/meta.mjs",
       "attributes": {
         "template": {
           "kind": "custom",
@@ -146,13 +146,22 @@
     },
     "sf-icon-button": {
       "tag": "sf-icon-button",
-      "source": "src/smart/icon-buttons/meta.js",
+      "source": "src/smart/icon-buttons/meta.mjs",
       "attributes": {
         "template": {
           "kind": "custom",
           "valueType": "string",
           "default": "default",
           "description": "Template variant name for SfBaseElement external templates."
+        },
+        "variant": {
+          "kind": "enum",
+          "values": [
+            "icon",
+            "close"
+          ],
+          "default": "icon",
+          "description": "Rendered inner content variant."
         },
         "size": {
           "kind": "enum",
