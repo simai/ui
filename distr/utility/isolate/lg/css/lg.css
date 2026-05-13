@@ -1,1 +1,1 @@
-@media(min-width: 960px){.lg\:isolate{isolation:isolate}.lg\:auto{isolation:auto}}
+@layer sf.utilities{@media(min-width: 960px){.lg\:isolate{isolation:isolate}.lg\:auto{isolation:auto}}}

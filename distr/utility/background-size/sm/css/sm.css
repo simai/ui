@@ -1,1 +1,1 @@
-@media(min-width: 520px){.sm\:bg-auto{background-size:auto}.sm\:bg-cover{background-size:cover}.sm\:bg-contain{background-size:contain}}
+@layer sf.utilities{@media(min-width: 520px){.sm\:bg-auto{background-size:auto}.sm\:bg-cover{background-size:cover}.sm\:bg-contain{background-size:contain}}}

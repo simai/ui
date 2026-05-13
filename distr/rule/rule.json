@@ -3383,7 +3383,7 @@
   },
   {
     "name": "breadcrumbs",
-    "regex": "/sf-breadcrumb/",
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-breadcrumbs\\b/i",
     "type": "component",
     "css": true,
     "js": false

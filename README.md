@@ -1,99 +1,104 @@
-# SFLoader StandAlone
+# SIMAI UI Core
 
-**SFLoader** is a modular JavaScript/CSS component loader designed for standalone integration of UI blocks without server involvement.
+SIMAI UI Core - статический дистрибутив SIMAI Framework UI для standalone-подключения без серверной сборки.
 
-This version operates in `standAlone` mode, without Ajax requests and server-side asset generation. Everything is loaded directly from a CDN/static storage.
+Репозиторий содержит уже собранные JS/CSS/JSON/font-артефакты в каталоге `distr/`. Рекомендуемый способ использования в проектах - подключать фиксированную версию по git tag, а не ветку `main`.
 
----
+## Текущая версия
 
-## 🚀 Quick Start
+Текущая релизная версия: `5.0.0`.
 
-1. Set the `window.sfPath` variable to the path of the components directory:
+См. также:
 
-```html
-<script>
-  window.sfPath = 'https://cdn.jsdelivr.net/gh/simai/ui@main/distr/';
-</script>
-```
+- [CHANGELOG.md](CHANGELOG.md)
+- [docs/releases/5.0.0.md](docs/releases/5.0.0.md)
 
-> You can use a relative path, for example:  
-> `window.sfPath = '/distr/'`
-
-2. Include the core loader in the `<head>`:
-
-```html
-<script src="https://cdn.jsdelivr.net/gh/simai/ui@main/distr/core/js/core.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/simai/ui@main/distr/core/css/core.css" />
-```
-
-3. The loader will start working automatically:
+## Установка через CDN
 
 ```html
 <script>
-    window.sfLoader = new SFLoaderPlugin(props)
+  window.sfPath = 'https://cdn.jsdelivr.net/gh/simai/ui-core@v5.0.0/distr';
+</script>
+
+<script src="https://cdn.jsdelivr.net/gh/simai/ui-core@v5.0.0/distr/core/js/core.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/simai/ui-core@v5.0.0/distr/core/css/core.css">
+```
+
+Если используются smart-компоненты из отдельного пути, можно явно указать `window.sfSmartPath`:
+
+```html
+<script>
+  window.sfPath = 'https://cdn.jsdelivr.net/gh/simai/ui-core@v5.0.0/distr';
+  window.sfSmartPath = 'https://cdn.jsdelivr.net/gh/simai/ui-core@v5.0.0/distr';
 </script>
 ```
 
----
+## Локальная установка
 
-## 🧩 How It Works
-
-- The loader searches for components in the DOM (by attributes);
-- It determines the necessary JS/CSS;
-- It loads them from `sfPath`;
-- It initializes the components automatically.
-
----
-
-## 📁 Example Structure
-
-```
-distr/
-├── core/
-│   ├── js/core.js
-│   └── css/core.css
-├── component/
-│   └── modal/
-│       ├── js/modal.js
-│       └── css/modal.css
-├── utility/
-│   └── accent-color/
-│       ├── default/
-│       │     ├── js/default.js
-│       │     └── css/default.css
-│       └── hover/
-│           ├── js/hover.js
-│           └── css/hover.css
-```
-
----
-
-## ⚙️ Example Components in HTML
+1. Скопируйте каталог `distr/` в публичную директорию проекта.
+2. Укажите базовый путь до дистрибутива.
+3. Подключите core JS и core CSS.
 
 ```html
-<div sf-asset="modal"></div>
-<div class="col-span-full lg:col-start-4 lg:col-span-9 xl:col-span-7 order-first md:order-2 p-top-3 p-right-1 p-left-1 lg:p-left-3 lg:p-right-3 xl:p-right-4 xl:p-left-4 md:col-start-6 md:col-span-7"></div>
-<div data-fancybox></div>
+<script>
+  window.sfPath = '/distr';
+</script>
+
+<script src="/distr/core/js/core.js"></script>
+<link rel="stylesheet" href="/distr/core/css/core.css">
 ```
 
----
+## Что входит в дистрибутив
 
-## 📦 Used Parameters
+Основные директории:
 
-| Parameter        | Description                              |
-|------------------|------------------------------------------|
-| `window.sfPath`  | Base path to assets                     |
+- `distr/core/` - базовый runtime, loader, core CSS.
+- `distr/component/` - обычные UI-компоненты.
+- `distr/smart/` - smart-компоненты.
+- `distr/utility/` - utility CSS/JS модули.
+- `distr/rule/` - правила загрузчика.
+- `distr/fonts/` - шрифты и font assets.
+- `distr/source/` - служебные source/meta assets.
+- `distr/ai/` и `distr/stats/` - вспомогательные артефакты сборки.
 
----
+Состав релиза `5.0.0`:
 
-## ✅ Support
+- всего файлов: `2823`;
+- CSS-файлов: `743`;
+- JS-файлов: `992`;
+- gzip-артефактов: `703`;
+- JSON-файлов: `27`;
+- общий размер: около `293.63 MB`.
 
-- No server dependency;
-- Can be used with CDN, GitHub Pages, Vercel, and others;
-- Suitable for projects without backend builds.
+## Пример HTML
 
----
+```html
+<nav class="sf-breadcrumbs flex">
+  <a class="sf-breadcrumbs-item sf-breadcrumbs-item--text flex items-center" href="/">
+    Главная
+  </a>
+</nav>
 
-## 📜 License
+<sf-button type="default" scheme="primary" text="Сохранить"></sf-button>
+```
 
-MIT
+Loader автоматически находит используемые компоненты и utility-классы в DOM, загружает нужные JS/CSS-файлы из `window.sfPath` и инициализирует компоненты.
+
+## CSS cascade layers
+
+Utility-стили дистрибутива размещаются в слое `sf.utilities`. Это нужно, чтобы utility-классы участвовали в общей системе CSS cascade layers SF и не перекрывали компонентные стили вне ожидаемого порядка.
+
+Рекомендуемый порядок слоев для проектов:
+
+```css
+@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.states;
+```
+
+Если проект добавляет свои слои, их нужно объявлять осознанно относительно слоев SF, чтобы сохранить предсказуемый приоритет utilities, components и states.
+
+## Рекомендации для проектов
+
+- Используйте pinned tag: `@v5.0.0`.
+- Не подключайте `@main` в production, чтобы избежать непредсказуемых обновлений.
+- При обновлении версии очищайте кеш CDN/браузера, если проект использует долгоживущий cache.
+- Для локальной поставки храните структуру `distr/` без переименования внутренних директорий.

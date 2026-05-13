@@ -1,1 +1,1 @@
-@media(min-width: 520px){.sm\:static{position:static}.sm\:fixed{position:fixed}.sm\:absolute{position:absolute}.sm\:relative{position:relative}.sm\:sticky{position:sticky}}
+@layer sf.utilities{@media(min-width: 520px){.sm\:static{position:static}.sm\:fixed{position:fixed}.sm\:absolute{position:absolute}.sm\:relative{position:relative}.sm\:sticky{position:sticky}}}

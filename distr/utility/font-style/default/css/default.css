@@ -1,1 +1,1 @@
-.italic{font-style:italic}.italic-none{font-style:normal}
+@layer sf.utilities{.italic{font-style:italic}.italic-none{font-style:normal}}

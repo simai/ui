@@ -1,1 +1,1 @@
-.hover\:ring-inset:hover{--sf-ring-inset: inset}
+@layer sf.utilities{.hover\:ring-inset:hover{--sf-ring-inset: inset}}

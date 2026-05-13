@@ -1,1 +1,1 @@
-.small-caps{-webkit-font-feature-settings:"smcp";font-feature-settings:"smcp";font-variant:small-caps}.small-caps-none{-webkit-font-feature-settings:"kern" off;font-feature-settings:"kern" off;font-variant:none}
+@layer sf.utilities{.small-caps{-webkit-font-feature-settings:"smcp";font-feature-settings:"smcp";font-variant:small-caps}.small-caps-none{-webkit-font-feature-settings:"kern" off;font-feature-settings:"kern" off;font-variant:none}}

@@ -1,1 +1,1 @@
-@media(min-width: 520px){.sm\:clear-inline-start{clear:left}.sm\:clear-inline-end{clear:right}.sm\:clear-both{clear:both}.sm\:clear-none{clear:none}}
+@layer sf.utilities{@media(min-width: 520px){.sm\:clear-inline-start{clear:left}.sm\:clear-inline-end{clear:right}.sm\:clear-both{clear:both}.sm\:clear-none{clear:none}}}

@@ -1,1 +1,1 @@
-@media(min-width: 520px){[dir="ltr"] .sm\:text-start{text-align:left}[dir="rtl"] .sm\:text-start{text-align:right}.sm\:text-center{text-align:center}[dir="ltr"] .sm\:text-end{text-align:right}[dir="rtl"] .sm\:text-end{text-align:left}.sm\:text-justify{text-align:justify}}
+@layer sf.utilities{@media(min-width: 520px){[dir="ltr"] .sm\:text-start{text-align:left}[dir="rtl"] .sm\:text-start{text-align:right}.sm\:text-center{text-align:center}[dir="ltr"] .sm\:text-end{text-align:right}[dir="rtl"] .sm\:text-end{text-align:left}.sm\:text-justify{text-align:justify}}}

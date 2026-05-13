@@ -1,1 +1,1 @@
-.visible{visibility:visible}.invisible{visibility:hidden}
+@layer sf.utilities{.visible{visibility:visible}.invisible{visibility:hidden}}
