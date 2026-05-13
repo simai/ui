@@ -3103,6 +3103,23 @@
     ]
   },
   {
+    "name": "cl-tabs",
+    "tags": [
+      "sf-tabs"
+    ],
+    "type": "smart",
+    "mode": "smart",
+    "js": true,
+    "relation": [
+      {
+        "name": "tabs"
+      },
+      {
+        "name": "cl-buttons"
+      }
+    ]
+  },
+  {
     "name": "cl-icons",
     "tags": [
       "sf-icon"
@@ -3141,6 +3158,13 @@
         "name": "icon-buttons"
       }
     ]
+  },
+  {
+    "name": "tabs",
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-tabs\\b/i",
+    "type": "component",
+    "css": true,
+    "js": true
   },
   {
     "name": "clipboard",
@@ -3215,13 +3239,6 @@
   {
     "name": "swiper",
     "regex": "/swiper/",
-    "type": "component",
-    "css": true,
-    "js": true
-  },
-  {
-    "name": "tab",
-    "regex": "/sf-tab/",
     "type": "component",
     "css": true,
     "js": true
