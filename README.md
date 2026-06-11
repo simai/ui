@@ -6,30 +6,30 @@ SIMAI UI Core - статический дистрибутив SIMAI Framework UI
 
 ## Текущая версия
 
-Текущая релизная версия: `5.0.0`.
+Текущая релизная версия: `5.1.0`.
 
 См. также:
 
 - [CHANGELOG.md](CHANGELOG.md)
-- [docs/releases/5.0.0.md](docs/releases/5.0.0.md)
+- [docs/releases/5.1.0.md](docs/releases/5.1.0.md)
 
 ## Установка через CDN
 
 ```html
 <script>
-  window.sfPath = 'https://cdn.jsdelivr.net/gh/simai/ui-core@v5.0.0/distr';
+  window.sfPath = 'https://cdn.jsdelivr.net/gh/simai/ui-core@v5.1.0/distr';
 </script>
 
-<script src="https://cdn.jsdelivr.net/gh/simai/ui-core@v5.0.0/distr/core/js/core.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/simai/ui-core@v5.0.0/distr/core/css/core.css">
+<script src="https://cdn.jsdelivr.net/gh/simai/ui-core@v5.1.0/distr/core/js/core.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/simai/ui-core@v5.1.0/distr/core/css/core.css">
 ```
 
 Если используются smart-компоненты из отдельного пути, можно явно указать `window.sfSmartPath`:
 
 ```html
 <script>
-  window.sfPath = 'https://cdn.jsdelivr.net/gh/simai/ui-core@v5.0.0/distr';
-  window.sfSmartPath = 'https://cdn.jsdelivr.net/gh/simai/ui-core@v5.0.0/distr';
+  window.sfPath = 'https://cdn.jsdelivr.net/gh/simai/ui-core@v5.1.0/distr';
+  window.sfSmartPath = 'https://cdn.jsdelivr.net/gh/simai/ui-core@v5.1.0/distr';
 </script>
 ```
 
@@ -52,23 +52,23 @@ SIMAI UI Core - статический дистрибутив SIMAI Framework UI
 
 Основные директории:
 
-- `distr/core/` - базовый runtime, loader, core CSS.
-- `distr/component/` - обычные UI-компоненты.
-- `distr/smart/` - smart-компоненты.
+- `distr/core/` - базовый runtime, loader, core CSS и smart runtime assets.
+- `distr/component/` - обычные UI-компоненты и component assets, включая компоненты, используемые smart-слоем.
 - `distr/utility/` - utility CSS/JS модули.
 - `distr/rule/` - правила загрузчика.
 - `distr/fonts/` - шрифты и font assets.
 - `distr/source/` - служебные source/meta assets.
-- `distr/ai/` и `distr/stats/` - вспомогательные артефакты сборки.
 
-Состав релиза `5.0.0`:
+Smart-компоненты поставляются через `distr/smart-component-meta.json`, `distr/rule/` и core runtime assets.
 
-- всего файлов: `2823`;
-- CSS-файлов: `743`;
-- JS-файлов: `992`;
-- gzip-артефактов: `703`;
-- JSON-файлов: `27`;
-- общий размер: около `293.63 MB`.
+Состав релиза `5.1.0`:
+
+- всего файлов: `2583`;
+- CSS-файлов: `711`;
+- JS-файлов: `939`;
+- gzip-артефактов: `630`;
+- JSON-файлов: `18`;
+- общий размер: около `39.34 MB`.
 
 ## Пример HTML
 
@@ -96,9 +96,15 @@ Utility-стили дистрибутива размещаются в слое `
 
 Если проект добавляет свои слои, их нужно объявлять осознанно относительно слоев SF, чтобы сохранить предсказуемый приоритет utilities, components и states.
 
+## Изменения 5.1.0
+
+- Добавлены собранные компоненты `admin-menu`, `datepicker`, `tree`, `tree-item`.
+- Обновлены smart metadata, loader/runtime assets и правила загрузчика.
+- Расширены utility-модули `flex`, `align-content`, `headers`, `transform-translate`, `transform-translate-ext`, `transition-property`.
+
 ## Рекомендации для проектов
 
-- Используйте pinned tag: `@v5.0.0`.
+- Используйте pinned tag: `@v5.1.0`.
 - Не подключайте `@main` в production, чтобы избежать непредсказуемых обновлений.
 - При обновлении версии очищайте кеш CDN/браузера, если проект использует долгоживущий cache.
 - Для локальной поставки храните структуру `distr/` без переименования внутренних директорий.

@@ -4,6 +4,45 @@
 
 Формат версий: `major.minor.patch`. Для ветки SIMAI Framework 5 мажорная версия начинается с `5`.
 
+## [5.1.0] - 2026-06-11
+
+Minor-релиз SIMAI UI Core с новыми smart/component assets, обновленным loader/runtime и расширенными utility-модулями.
+
+### Добавлено
+
+- Зафиксирована релизная версия `5.1.0`.
+- Добавлены собранные компоненты `admin-menu`, `datepicker`, `tree`, `tree-item`.
+- Добавлены новые core chunks: `distr/core/js/358.js`, `distr/core/js/438.js`, `distr/core/js/904.js`.
+- Обновлены smart metadata и runtime assets: `distr/smart-component-meta.json`, `distr/core/js/smart-base.js`, `distr/core/js/core-loader.js`, `distr/core/js/core-rules.js`.
+- Добавлены release notes: [docs/releases/5.1.0.md](docs/releases/5.1.0.md).
+
+### Изменено
+
+- Обновлены собранные CSS/JS обычных компонентов, включая buttons, checkbox, context-menu, dropdown, inputs, modal, pagination, range-slider, slider, tabs и tags.
+- Расширены utility-модули `flex`, `align-content`, `headers`, `transform-translate`, `transform-translate-ext`, `transition-property`.
+- Обновлены `distr/core/css/core.css`, `distr/core/css/utility.full.css`, `distr/rule/rule.json`, `distr/monaco-css-vars.json`.
+
+### Собранные файлы
+
+- `distr/core/` - core runtime, loader, smart runtime assets и базовые стили.
+- `distr/component/` - обычные UI-компоненты и component assets, включая компоненты, используемые smart-слоем.
+- `distr/utility/` - utility CSS/JS модули.
+- `distr/rule/` - правила загрузчика.
+- `distr/fonts/` - шрифты и font assets.
+- `distr/source/` - служебные source/meta assets.
+
+Состав релиза: `2583` файлов, `711` CSS, `939` JS, `630` gzip-артефактов, `18` JSON, около `39.34 MB`.
+
+### Установка
+
+```html
+<script>
+  window.sfPath = 'https://cdn.jsdelivr.net/gh/simai/ui-core@v5.1.0/distr';
+</script>
+
+<script src="https://cdn.jsdelivr.net/gh/simai/ui-core@v5.1.0/distr/core/js/core.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/simai/ui-core@v5.1.0/distr/core/css/core.css">
+```
 ## [5.0.0] - 2026-05-13
 
 Первый формальный релиз SIMAI UI Core как статического дистрибутива.
