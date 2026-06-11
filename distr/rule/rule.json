@@ -3118,6 +3118,9 @@
     "js": true,
     "relation": [
       {
+        "name": "table"
+      },
+      {
         "name": "checkbox"
       },
       {
@@ -3141,8 +3144,7 @@
       {
         "name": "cl-datepicker"
       }
-    ],
-    "css": true
+    ]
   },
   {
     "name": "cl-tabs",
