@@ -6,30 +6,30 @@ SIMAI UI Core - статический дистрибутив SIMAI Framework UI
 
 ## Текущая версия
 
-Текущая релизная версия: `5.1.0`.
+Текущая релизная версия: `5.1.1`.
 
 См. также:
 
 - [CHANGELOG.md](CHANGELOG.md)
-- [docs/releases/5.1.0.md](docs/releases/5.1.0.md)
+- [docs/releases/5.1.1.md](docs/releases/5.1.1.md)
 
 ## Установка через CDN
 
 ```html
 <script>
-  window.sfPath = 'https://cdn.jsdelivr.net/gh/simai/ui-core@v5.1.0/distr';
+  window.sfPath = 'https://cdn.jsdelivr.net/gh/simai/ui@v5.1.1/distr';
 </script>
 
-<script src="https://cdn.jsdelivr.net/gh/simai/ui-core@v5.1.0/distr/core/js/core.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/simai/ui-core@v5.1.0/distr/core/css/core.css">
+<script src="https://cdn.jsdelivr.net/gh/simai/ui@v5.1.1/distr/core/js/core.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/simai/ui@v5.1.1/distr/core/css/core.css">
 ```
 
 Если используются smart-компоненты из отдельного пути, можно явно указать `window.sfSmartPath`:
 
 ```html
 <script>
-  window.sfPath = 'https://cdn.jsdelivr.net/gh/simai/ui-core@v5.1.0/distr';
-  window.sfSmartPath = 'https://cdn.jsdelivr.net/gh/simai/ui-core@v5.1.0/distr';
+  window.sfPath = 'https://cdn.jsdelivr.net/gh/simai/ui@v5.1.1/distr';
+  window.sfSmartPath = 'https://cdn.jsdelivr.net/gh/simai/ui-smart@v5.1.0';
 </script>
 ```
 
@@ -61,7 +61,7 @@ SIMAI UI Core - статический дистрибутив SIMAI Framework UI
 
 Smart-компоненты поставляются через `distr/smart-component-meta.json`, `distr/rule/` и core runtime assets.
 
-Состав релиза `5.1.0`:
+Состав релиза `5.1.1`:
 
 - всего файлов: `2583`;
 - CSS-файлов: `711`;
@@ -96,6 +96,11 @@ Utility-стили дистрибутива размещаются в слое `
 
 Если проект добавляет свои слои, их нужно объявлять осознанно относительно слоев SF, чтобы сохранить предсказуемый приоритет utilities, components и states.
 
+## Изменения 5.1.1
+
+- Исправлена загрузка CSS для smart-компонентов в standalone loader.
+- Для `type: "smart"` и `mode: "smart"` CSS теперь загружается только при явном `css: true`.
+- Убраны лишние 404-запросы к `/smart/<component>/css/<component>.css` для smart-компонентов без собственного CSS.
 ## Изменения 5.1.0
 
 - Добавлены собранные компоненты `admin-menu`, `datepicker`, `tree`, `tree-item`.
@@ -104,7 +109,7 @@ Utility-стили дистрибутива размещаются в слое `
 
 ## Рекомендации для проектов
 
-- Используйте pinned tag: `@v5.1.0`.
+- Используйте pinned tag: `@v5.1.1`.
 - Не подключайте `@main` в production, чтобы избежать непредсказуемых обновлений.
 - При обновлении версии очищайте кеш CDN/браузера, если проект использует долгоживущий cache.
 - Для локальной поставки храните структуру `distr/` без переименования внутренних директорий.

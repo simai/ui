@@ -4,6 +4,31 @@
 
 Формат версий: `major.minor.patch`. Для ветки SIMAI Framework 5 мажорная версия начинается с `5`.
 
+## [5.1.1] - 2026-06-11
+
+Patch-релиз SIMAI UI Core с исправлением загрузки CSS для smart-компонентов в standalone loader.
+
+### Исправлено
+
+- Для `type: "smart"` и `mode: "smart"` CSS больше не грузится по умолчанию.
+- Smart CSS теперь загружается только при явном `css: true` в rule/module metadata.
+- Исправлены лишние 404-запросы к `/smart/<component>/css/<component>.css` и `/smart/<component>/css/<component>.min.css` для smart-компонентов, у которых CSS находится в обычном component layer.
+
+### Собранные файлы
+
+- Обновлены `distr/core/js/core-loader.js` и `distr/core/js/core-loader.js.gz`.
+- Состав дистрибутива не изменился: `2583` файлов, `711` CSS, `939` JS, `630` gzip-артефактов, `18` JSON, около `39.34 MB`.
+
+### Установка
+
+```html
+<script>
+  window.sfPath = 'https://cdn.jsdelivr.net/gh/simai/ui@v5.1.1/distr';
+</script>
+
+<script src="https://cdn.jsdelivr.net/gh/simai/ui@v5.1.1/distr/core/js/core.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/simai/ui@v5.1.1/distr/core/css/core.css">
+```
 ## [5.1.0] - 2026-06-11
 
 Minor-релиз SIMAI UI Core с новыми smart/component assets, обновленным loader/runtime и расширенными utility-модулями.
@@ -42,7 +67,8 @@ Minor-релиз SIMAI UI Core с новыми smart/component assets, обно�
 
 <script src="https://cdn.jsdelivr.net/gh/simai/ui-core@v5.1.0/distr/core/js/core.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/simai/ui-core@v5.1.0/distr/core/css/core.css">
-```
+`
+
 ## [5.0.0] - 2026-05-13
 
 Первый формальный релиз SIMAI UI Core как статического дистрибутива.
