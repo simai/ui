@@ -4,6 +4,31 @@
 
 Формат версий: `major.minor.patch`. Для ветки SIMAI Framework 5 мажорная версия начинается с `5`.
 
+## [5.1.2] - 2026-06-11
+
+Patch-релиз SIMAI UI Core с исправлением правила загрузки smart-компонента таблицы.
+
+### Исправлено
+
+- У `cl-table` удалена ошибочная relation на несуществующий обычный компонент `table`.
+- Для `cl-table` включен явный `css: true`, чтобы CSS таблицы загружался из smart-слоя.
+- Исправлен лишний запрос к `distr/component/table/css/table.css` при использовании `sf-table`.
+
+### Собранные файлы
+
+- Обновлены `distr/rule/rule.json`, `distr/rule/js/rule.js` и `distr/rule/js/rule.js.gz`.
+
+### Установка
+
+```html
+<script>
+  window.sfPath = 'https://cdn.jsdelivr.net/gh/simai/ui@v5.1.2/distr';
+</script>
+
+<script src="https://cdn.jsdelivr.net/gh/simai/ui@v5.1.2/distr/core/js/core.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/simai/ui@v5.1.2/distr/core/css/core.css">
+```
+
 ## [5.1.1] - 2026-06-11
 
 Patch-релиз SIMAI UI Core с исправлением загрузки CSS для smart-компонентов в standalone loader.
