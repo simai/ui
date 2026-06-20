@@ -1,9 +1,46 @@
-# Changelog
+﻿# Changelog
 
 Все заметные изменения SIMAI UI Core фиксируются в этом файле.
 
 Формат версий: `major.minor.patch`. Для ветки SIMAI Framework 5 мажорная версия начинается с `5`.
 
+## [5.2.0] - 2026-06-20
+
+Minor-релиз SIMAI UI Core с обновлением собранного SF5-дистрибутива из `sf5.webpack`.
+
+### Добавлено
+
+- Добавлены новые runtime chunks и обновленные smart/component assets для текущей ветки SF5.
+- Добавлена поставка smart-editor/editor assets и обновленные assets для textarea/editor сценариев.
+- Обновлены metadata и правила загрузчика для smart-компонентов, включая `sf-table`, `sf-datepicker`, `sf-dropdown`, `sf-list-item`, `sf-range-slider` и связанные зависимости.
+
+### Изменено
+
+- Обновлены собранные CSS/JS core, component, smart-component и utility assets.
+- Обновлены стили и поведение модальных окон, dropdown/context-menu portal-сценариев, таблицы, datepicker, range-slider, avatar/list-item/checkbox цепочки и theme-builder.
+- Обновлены utility-правила и CSS assets, включая transition/translate/position/neutral/theme-related изменения.
+- Обновлен `distr/monaco-css-vars.json`.
+
+### Исправлено
+
+- Сохранено корректное правило `cl-table`: smart-компонент `sf-table` грузит CSS из smart-слоя и не содержит relation на несуществующий обычный компонент `table`.
+- Обновленные правила загрузчика не должны возвращать лишний запрос к `distr/component/table/css/table.css`.
+
+### Собранные файлы
+
+- Состав дистрибутива: `2693` файлов, `712` CSS, `989` JS, `682` gzip-артефактов, `18` JSON, около `49 MB`.
+- Добавлены/обновлены файлы в `distr/core/`, `distr/component/`, `distr/utility/`, `distr/rule/`, `distr/fonts/`, `distr/source/`.
+
+### Установка
+
+```html
+<script>
+  window.sfPath = 'https://cdn.jsdelivr.net/gh/simai/ui@v5.2.0/distr';
+</script>
+
+<script src="https://cdn.jsdelivr.net/gh/simai/ui@v5.2.0/distr/core/js/core.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/simai/ui@v5.2.0/distr/core/css/core.css">
+```
 ## [5.1.2] - 2026-06-11
 
 Patch-релиз SIMAI UI Core с исправлением правила загрузки smart-компонента таблицы.
@@ -42,7 +79,7 @@ Patch-релиз SIMAI UI Core с исправлением загрузки CSS 
 ### Собранные файлы
 
 - Обновлены `distr/core/js/core-loader.js` и `distr/core/js/core-loader.js.gz`.
-- Состав дистрибутива не изменился: `2583` файлов, `711` CSS, `939` JS, `630` gzip-артефактов, `18` JSON, около `39.34 MB`.
+- Состав дистрибутива не изменился: `2693` файлов, `712` CSS, `989` JS, `682` gzip-артефактов, `18` JSON, около `49 MB`.
 
 ### Установка
 
@@ -81,7 +118,7 @@ Minor-релиз SIMAI UI Core с новыми smart/component assets, обно�
 - `distr/fonts/` - шрифты и font assets.
 - `distr/source/` - служебные source/meta assets.
 
-Состав релиза: `2583` файлов, `711` CSS, `939` JS, `630` gzip-артефактов, `18` JSON, около `39.34 MB`.
+Состав релиза: `2693` файлов, `712` CSS, `989` JS, `682` gzip-артефактов, `18` JSON, около `49 MB`.
 
 ### Установка
 
@@ -127,3 +164,5 @@ Minor-релиз SIMAI UI Core с новыми smart/component assets, обно�
 <script src="https://cdn.jsdelivr.net/gh/simai/ui-core@v5.0.0/distr/core/js/core.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/simai/ui-core@v5.0.0/distr/core/css/core.css">
 ```
+
+

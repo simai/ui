@@ -1,1 +1,1 @@
-@layer sf.utilities{@media(min-width: 1140px){[dir="ltr"] .xl\:float-inline-end{float:right}[dir="rtl"] .xl\:float-inline-end{float:left}[dir="ltr"] .xl\:float-inline-start{float:left}[dir="rtl"] .xl\:float-inline-start{float:right}.xl\:float-none{float:none}}}
+@layer sf.utilities{@media(min-width: 1140px){.xl\:float-inline-end{float:right}.xl\:float-inline-start{float:left}.xl\:float-none{float:none}}}

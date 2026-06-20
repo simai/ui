@@ -2806,6 +2806,24 @@
     ]
   },
   {
+    "name": "cl-editor",
+    "tags": [
+      "sf-editor"
+    ],
+    "type": "smart",
+    "mode": "smart",
+    "js": true,
+    "css": true,
+    "relation": [
+      {
+        "name": "textarea"
+      },
+      {
+        "name": "cl-icon-buttons"
+      }
+    ]
+  },
+  {
     "name": "cl-file-upload",
     "tags": [
       "sf-file-upload"
@@ -3116,10 +3134,8 @@
     "type": "smart",
     "mode": "smart",
     "js": true,
+    "css": true,
     "relation": [
-      {
-        "name": "table"
-      },
       {
         "name": "checkbox"
       },

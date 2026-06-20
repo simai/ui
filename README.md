@@ -1,4 +1,4 @@
-# SIMAI UI Core
+﻿# SIMAI UI Core
 
 SIMAI UI Core - статический дистрибутив SIMAI Framework UI для standalone-подключения без серверной сборки.
 
@@ -6,29 +6,29 @@ SIMAI UI Core - статический дистрибутив SIMAI Framework UI
 
 ## Текущая версия
 
-Текущая релизная версия: `5.1.2`.
+Текущая релизная версия: `5.2.0`.
 
 См. также:
 
 - [CHANGELOG.md](CHANGELOG.md)
-- [docs/releases/5.1.2.md](docs/releases/5.1.2.md)
+- [docs/releases/5.2.0.md](docs/releases/5.2.0.md)
 
 ## Установка через CDN
 
 ```html
 <script>
-  window.sfPath = 'https://cdn.jsdelivr.net/gh/simai/ui@v5.1.2/distr';
+  window.sfPath = 'https://cdn.jsdelivr.net/gh/simai/ui@v5.2.0/distr';
 </script>
 
-<script src="https://cdn.jsdelivr.net/gh/simai/ui@v5.1.2/distr/core/js/core.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/simai/ui@v5.1.2/distr/core/css/core.css">
+<script src="https://cdn.jsdelivr.net/gh/simai/ui@v5.2.0/distr/core/js/core.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/simai/ui@v5.2.0/distr/core/css/core.css">
 ```
 
 Если используются smart-компоненты из отдельного пути, можно явно указать `window.sfSmartPath`:
 
 ```html
 <script>
-  window.sfPath = 'https://cdn.jsdelivr.net/gh/simai/ui@v5.1.2/distr';
+  window.sfPath = 'https://cdn.jsdelivr.net/gh/simai/ui@v5.2.0/distr';
   window.sfSmartPath = 'https://cdn.jsdelivr.net/gh/simai/ui-smart@v5.1.0';
 </script>
 ```
@@ -61,14 +61,14 @@ SIMAI UI Core - статический дистрибутив SIMAI Framework UI
 
 Smart-компоненты поставляются через `distr/smart-component-meta.json`, `distr/rule/` и core runtime assets.
 
-Состав релиза `5.1.2`:
+Состав релиза `5.2.0`:
 
-- всего файлов: `2583`;
-- CSS-файлов: `711`;
-- JS-файлов: `939`;
-- gzip-артефактов: `630`;
+- всего файлов: `2693`;
+- CSS-файлов: `712`;
+- JS-файлов: `989`;
+- gzip-артефактов: `682`;
 - JSON-файлов: `18`;
-- общий размер: около `39.34 MB`.
+- общий размер: около `49 MB`.
 
 ## Пример HTML
 
@@ -96,11 +96,17 @@ Utility-стили дистрибутива размещаются в слое `
 
 Если проект добавляет свои слои, их нужно объявлять осознанно относительно слоев SF, чтобы сохранить предсказуемый приоритет utilities, components и states.
 
+## Изменения 5.2.0
+
+- Обновлен собранный SF5-дистрибутив из sf5.webpack.
+- Обновлены core/component/smart/utility assets и правила загрузчика.
+- Сохранен фикс cl-table: без relation на несуществующий обычный 	able, CSS грузится из smart-слоя.
+
 ## Изменения 5.1.2
 
-- Исправлено правило загрузки `cl-table`.
-- Убрана relation на несуществующий обычный компонент `table`.
-- CSS для `sf-table` теперь грузится через smart-правило `cl-table`.
+- Исправлено правило загрузки cl-table.
+- Убрана relation на несуществующий обычный компонент 	able.
+- CSS для sf-table теперь грузится через smart-правило cl-table.
 
 ## Изменения 5.1.0
 
@@ -110,8 +116,11 @@ Utility-стили дистрибутива размещаются в слое `
 
 ## Рекомендации для проектов
 
-- Используйте pinned tag: `@v5.1.2`.
+- Используйте pinned tag: `@v5.2.0`.
 - Не подключайте `@main` в production, чтобы избежать непредсказуемых обновлений.
 - При обновлении версии очищайте кеш CDN/браузера, если проект использует долгоживущий cache.
 - Для локальной поставки храните структуру `distr/` без переименования внутренних директорий.
+
+
+
 
