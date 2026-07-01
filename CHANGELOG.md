@@ -4,6 +4,39 @@
 
 Формат версий: `major.minor.patch`. Для ветки SIMAI Framework 5 мажорная версия начинается с `5`.
 
+## [5.3.0] - 2026-07-01
+
+Minor-релиз SIMAI UI Core с обновлением собранного SF5-дистрибутива из `sf5.webpack`.
+
+### Добавлено
+
+- Добавлены component assets для `file-preview`.
+- Добавлены component assets для `link`.
+- Добавлен новый core runtime chunk `distr/core/js/556.js`.
+
+### Изменено
+
+- Обновлены core runtime assets: `core.js`, `core-loader.js`, `core-rules.js`, `smart-base.js`.
+- Обновлены правила загрузчика: `distr/rule/rule.json`, `distr/rule/js/rule.js`.
+- Обновлены component assets для `avatars`, `country-code`, `dropdown`, `featured-icon`, `file-upload`, `inputs`, `toggle`.
+- Обновлен `distr/monaco-css-vars.json`.
+
+### Собранные файлы
+
+- Состав дистрибутива: `2725` файлов, `714` CSS, `995` JS, `689` gzip-артефактов, `27` JSON, около `379 MB`.
+- Добавлены/обновлены файлы в `distr/core/`, `distr/component/`, `distr/rule/`.
+
+### Установка
+
+```html
+<script>
+  window.sfPath = 'https://cdn.jsdelivr.net/gh/simai/ui@v5.3.0/distr';
+</script>
+
+<script src="https://cdn.jsdelivr.net/gh/simai/ui@v5.3.0/distr/core/js/core.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/simai/ui@v5.3.0/distr/core/css/core.css">
+```
+
 ## [5.2.0] - 2026-06-20
 
 Minor-релиз SIMAI UI Core с обновлением собранного SF5-дистрибутива из `sf5.webpack`.

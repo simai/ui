@@ -6,29 +6,29 @@ SIMAI UI Core - статический дистрибутив SIMAI Framework UI
 
 ## Текущая версия
 
-Текущая релизная версия: `5.2.0`.
+Текущая релизная версия: `5.3.0`.
 
 См. также:
 
 - [CHANGELOG.md](CHANGELOG.md)
-- [docs/releases/5.2.0.md](docs/releases/5.2.0.md)
+- [docs/releases/5.3.0.md](docs/releases/5.3.0.md)
 
 ## Установка через CDN
 
 ```html
 <script>
-  window.sfPath = 'https://cdn.jsdelivr.net/gh/simai/ui@v5.2.0/distr';
+  window.sfPath = 'https://cdn.jsdelivr.net/gh/simai/ui@v5.3.0/distr';
 </script>
 
-<script src="https://cdn.jsdelivr.net/gh/simai/ui@v5.2.0/distr/core/js/core.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/simai/ui@v5.2.0/distr/core/css/core.css">
+<script src="https://cdn.jsdelivr.net/gh/simai/ui@v5.3.0/distr/core/js/core.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/simai/ui@v5.3.0/distr/core/css/core.css">
 ```
 
 Если используются smart-компоненты из отдельного пути, можно явно указать `window.sfSmartPath`:
 
 ```html
 <script>
-  window.sfPath = 'https://cdn.jsdelivr.net/gh/simai/ui@v5.2.0/distr';
+  window.sfPath = 'https://cdn.jsdelivr.net/gh/simai/ui@v5.3.0/distr';
   window.sfSmartPath = 'https://cdn.jsdelivr.net/gh/simai/ui-smart@v5.1.0';
 </script>
 ```
@@ -61,14 +61,14 @@ SIMAI UI Core - статический дистрибутив SIMAI Framework UI
 
 Smart-компоненты поставляются через `distr/smart-component-meta.json`, `distr/rule/` и core runtime assets.
 
-Состав релиза `5.2.0`:
+Состав релиза `5.3.0`:
 
-- всего файлов: `2693`;
-- CSS-файлов: `712`;
-- JS-файлов: `989`;
-- gzip-артефактов: `682`;
-- JSON-файлов: `18`;
-- общий размер: около `49 MB`.
+- всего файлов: `2725`;
+- CSS-файлов: `714`;
+- JS-файлов: `995`;
+- gzip-артефактов: `689`;
+- JSON-файлов: `27`;
+- общий размер: около `379 MB`.
 
 ## Пример HTML
 
@@ -96,6 +96,14 @@ Utility-стили дистрибутива размещаются в слое `
 
 Если проект добавляет свои слои, их нужно объявлять осознанно относительно слоев SF, чтобы сохранить предсказуемый приоритет utilities, components и states.
 
+## Изменения 5.3.0
+
+- Обновлен собранный SF5-дистрибутив из sf5.webpack.
+- Добавлены component assets для `file-preview` и `link`.
+- Добавлен новый core runtime chunk `556`.
+- Обновлены core loader/rules/runtime assets, правила загрузчика и metadata.
+- Обновлены component assets для `avatars`, `country-code`, `dropdown`, `featured-icon`, `file-upload`, `inputs`, `toggle`.
+
 ## Изменения 5.2.0
 
 - Обновлен собранный SF5-дистрибутив из sf5.webpack.
@@ -116,7 +124,7 @@ Utility-стили дистрибутива размещаются в слое `
 
 ## Рекомендации для проектов
 
-- Используйте pinned tag: `@v5.2.0`.
+- Используйте pinned tag: `@v5.3.0`.
 - Не подключайте `@main` в production, чтобы избежать непредсказуемых обновлений.
 - При обновлении версии очищайте кеш CDN/браузера, если проект использует долгоживущий cache.
 - Для локальной поставки храните структуру `distr/` без переименования внутренних директорий.

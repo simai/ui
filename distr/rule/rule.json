@@ -2798,6 +2798,9 @@
         "name": "dropdown"
       },
       {
+        "name": "cl-list"
+      },
+      {
         "name": "inputs"
       },
       {
@@ -2824,6 +2827,26 @@
     ]
   },
   {
+    "name": "cl-file-preview",
+    "tags": [
+      "sf-file-preview"
+    ],
+    "type": "smart",
+    "mode": "smart",
+    "js": true,
+    "relation": [
+      {
+        "name": "file-preview"
+      },
+      {
+        "name": "cl-avatar"
+      },
+      {
+        "name": "icon-buttons"
+      }
+    ]
+  },
+  {
     "name": "cl-file-upload",
     "tags": [
       "sf-file-upload"
@@ -2831,6 +2854,7 @@
     "type": "smart",
     "mode": "smart",
     "js": true,
+    "css": true,
     "relation": [
       {
         "name": "file-upload"
@@ -2840,6 +2864,9 @@
       },
       {
         "name": "cl-progress-bar"
+      },
+      {
+        "name": "cl-file-preview"
       },
       {
         "name": "icon-buttons"
@@ -2908,6 +2935,37 @@
     "relation": [
       {
         "name": "inputs"
+      }
+    ]
+  },
+  {
+    "name": "cl-link",
+    "tags": [
+      "sf-link"
+    ],
+    "type": "smart",
+    "mode": "smart",
+    "js": true,
+    "relation": [
+      {
+        "name": "link"
+      }
+    ]
+  },
+  {
+    "name": "cl-list",
+    "tags": [
+      "sf-list"
+    ],
+    "type": "smart",
+    "mode": "smart",
+    "js": true,
+    "relation": [
+      {
+        "name": "cl-list-item"
+      },
+      {
+        "name": "cl-inputs"
       }
     ]
   },
@@ -3152,6 +3210,9 @@
         "name": "inputs"
       },
       {
+        "name": "cl-list"
+      },
+      {
         "name": "tags"
       },
       {
@@ -3259,7 +3320,7 @@
         "name": "toggle"
       },
       {
-        "name": "icons"
+        "name": "cl-icons"
       }
     ]
   },
@@ -3486,6 +3547,12 @@
     "js": false
   },
   {
+    "name": "file-preview",
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-file-preview\\b/i",
+    "type": "component",
+    "css": true
+  },
+  {
     "name": "file-upload",
     "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-file-upload\\b/i",
     "type": "component",
@@ -3526,6 +3593,13 @@
     "type": "component",
     "css": true,
     "js": true
+  },
+  {
+    "name": "link",
+    "regex": "/sf-link/",
+    "type": "component",
+    "css": true,
+    "js": false
   },
   {
     "name": "menu",
