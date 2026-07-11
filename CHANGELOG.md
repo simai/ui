@@ -4,6 +4,28 @@
 
 Формат версий: `major.minor.patch`. Для ветки SIMAI Framework 5 мажорная версия начинается с `5`.
 
+## [5.3.2] - 2026-07-11
+
+Patch-релиз локальной и детерминированной поставки шрифтов.
+
+### Исправлено
+
+- Удалён внешний `@import` Google Fonts из `component/doc/css/doc.css`.
+- Документация и source-примеры используют локальный SF5 token
+  `--sf-mono`, поставляемый вместе с runtime.
+- SF5 больше не выполняет внешний запрос к `fonts.googleapis.com` при
+  загрузке компонента `doc`.
+
+### Собранные файлы
+
+- Обновлены `distr/component/doc/css/doc.css` и воспроизводимый
+  `distr/component/doc/css/doc.css.gz`.
+
+### Совместимость
+
+- Публичные CSS-классы и пути не изменены.
+- Совместим с `simai/ui-smart` `v5.3.0`.
+
 ## [5.3.1] - 2026-07-11
 
 Patch-релиз SFLoader для конкурентной загрузки зависимостей smart-компонентов.
@@ -219,4 +241,3 @@ Minor-релиз SIMAI UI Core с новыми smart/component assets, обно�
 <script src="https://cdn.jsdelivr.net/gh/simai/ui-core@v5.0.0/distr/core/js/core.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/simai/ui-core@v5.0.0/distr/core/css/core.css">
 ```
-
