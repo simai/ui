@@ -17,19 +17,19 @@ SIMAI UI Core - статический дистрибутив SIMAI Framework UI
 
 ```html
 <script>
-  window.sfPath = 'https://cdn.jsdelivr.net/gh/simai/ui@v5.3.0/distr';
+  window.sfPath = 'https://cdn.jsdelivr.net/gh/simai/ui@<release-tag>/distr';
 </script>
 
-<script src="https://cdn.jsdelivr.net/gh/simai/ui@v5.3.0/distr/core/js/core.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/simai/ui@v5.3.0/distr/core/css/core.css">
+<script src="https://cdn.jsdelivr.net/gh/simai/ui@<release-tag>/distr/core/js/core.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/simai/ui@<release-tag>/distr/core/css/core.css">
 ```
 
 Если используются smart-компоненты из отдельного пути, можно явно указать `window.sfSmartPath`:
 
 ```html
 <script>
-  window.sfPath = 'https://cdn.jsdelivr.net/gh/simai/ui@v5.3.0/distr';
-  window.sfSmartPath = 'https://cdn.jsdelivr.net/gh/simai/ui-smart@v5.1.0';
+  window.sfPath = 'https://cdn.jsdelivr.net/gh/simai/ui@<ui-release-tag>/distr';
+  window.sfSmartPath = 'https://cdn.jsdelivr.net/gh/simai/ui-smart@<smart-release-tag>';
 </script>
 ```
 
@@ -124,11 +124,10 @@ Utility-стили дистрибутива размещаются в слое `
 
 ## Рекомендации для проектов
 
-- Используйте pinned tag: `@v5.3.0`.
+- Используйте конкретный pinned tag из соответствующего release note.
 - Не подключайте `@main` в production, чтобы избежать непредсказуемых обновлений.
 - При обновлении версии очищайте кеш CDN/браузера, если проект использует долгоживущий cache.
 - Для локальной поставки храните структуру `distr/` без переименования внутренних директорий.
-
 
 
 

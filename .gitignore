@@ -1,5 +1,15 @@
 .idea
 .node_modules
+.env
+.env.*
+!.env.example
+source/
+output/
+codex-local-check*
+*.bak
+*.bak_*
+*.bak-*
+*.codex-bak-*
 smart/
 stats/
 ai/
