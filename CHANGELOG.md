@@ -4,6 +4,28 @@
 
 Формат версий: `major.minor.patch`. Для ветки SIMAI Framework 5 мажорная версия начинается с `5`.
 
+## [5.3.1] - 2026-07-11
+
+Patch-релиз SFLoader для конкурентной загрузки зависимостей smart-компонентов.
+
+### Исправлено
+
+- `addScript()` и `addStyle()` возвращают одну общую promise для одинакового
+  versioned URL вместо повторного добавления DOM-узла.
+- Ошибка загрузки очищает promise-карту и не блокирует последующий retry.
+- `sf-table` с параллельными relation-цепочками не создаёт дублирующиеся
+  `script[src]` и `link[href]`.
+
+### Собранные файлы
+
+- Обновлены `distr/core/js/core-loader.js` и
+  `distr/core/js/core-loader.js.gz`.
+
+### Совместимость
+
+- Совместим с `simai/ui-smart` `v5.3.0`.
+- API и структура public paths не изменены.
+
 ## [5.3.0] - 2026-07-01
 
 Minor-релиз SIMAI UI Core с обновлением собранного SF5-дистрибутива из `sf5.webpack`.
@@ -197,5 +219,4 @@ Minor-релиз SIMAI UI Core с новыми smart/component assets, обно�
 <script src="https://cdn.jsdelivr.net/gh/simai/ui-core@v5.0.0/distr/core/js/core.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/simai/ui-core@v5.0.0/distr/core/css/core.css">
 ```
-
 
