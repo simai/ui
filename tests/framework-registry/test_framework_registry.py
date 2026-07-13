@@ -238,6 +238,23 @@ class FrameworkContractRegistryTest(unittest.TestCase):
                     ROOT, SMART_MANIFEST, utility_manifest_path=wrong_id_path
                 )
 
+            versioned_id = copy.deepcopy(utility)
+            legacy_version_token = "".join(("s", "f", "5"))
+            versioned_id["entries"][0]["id"] = f"utility.{legacy_version_token}-layout"
+            versioned_id_path = self.write_json(directory, "versioned-id.json", versioned_id)
+            with self.assertRaisesRegex(BUILDER.ContractError, "public_id_version_marker_forbidden"):
+                BUILDER.build_registry(
+                    ROOT, SMART_MANIFEST, utility_manifest_path=versioned_id_path
+                )
+
+            version_segment = copy.deepcopy(utility)
+            version_segment["entries"][0]["id"] = "utility.v5"
+            version_segment_path = self.write_json(directory, "version-segment.json", version_segment)
+            with self.assertRaisesRegex(BUILDER.ContractError, "public_id_version_segment_forbidden"):
+                BUILDER.build_registry(
+                    ROOT, SMART_MANIFEST, utility_manifest_path=version_segment_path
+                )
+
             wrong_relation = copy.deepcopy(recipe)
             wrong_relation["entries"][0]["requires"].append("component.unknown")
             wrong_relation_path = self.write_json(

@@ -42,6 +42,7 @@ PUBLIC_ID = re.compile(
     r"(?:\.[a-z][a-z0-9]*(?:-[a-z0-9]+)*)*$"
 )
 VERSION_SEGMENT = re.compile(r"^v[0-9]+$")
+LEGACY_VERSION_TOKEN = "".join(("s", "f", "5"))
 FORBIDDEN_REF_PARTS = tuple(
     "/" + segment + "/" for segment in ("Users", "home", "private")
 ) + ("file:" + "//", "../")
@@ -96,6 +97,8 @@ def validate_public_id(public_id: str, expected_kind: str | None = None) -> None
         raise ContractError(f"public_id_invalid:{public_id}")
     if "_" in public_id:
         raise ContractError(f"public_id_underscore_forbidden:{public_id}")
+    if LEGACY_VERSION_TOKEN in public_id.lower():
+        raise ContractError(f"public_id_version_marker_forbidden:{public_id}")
     if any(VERSION_SEGMENT.fullmatch(segment) for segment in public_id.split(".")):
         raise ContractError(f"public_id_version_segment_forbidden:{public_id}")
     prefix = "smart" if expected_kind == "smart-component" else expected_kind
