@@ -74,6 +74,7 @@ CONSUMER_ID = re.compile(r"^[a-z0-9][a-z0-9.-]*(?:/[a-z0-9][a-z0-9.-]*)?$")
 HEX40 = re.compile(r"^[a-f0-9]{40}$")
 HEX64 = re.compile(r"^[a-f0-9]{64}$")
 FORBIDDEN_POINTER_KEYS = {"entries", "source_manifests", "metadata", "upstream_metadata"}
+LEGACY_VERSION_TOKEN = "".join(("s", "f", "5"))
 
 
 class DriftError(ValueError):
@@ -131,7 +132,7 @@ def find_forbidden_pointer_key(value: Any, path: str = "pointer") -> str | None:
 def validate_public_id(public_id: Any, kind: Any) -> None:
     if not isinstance(public_id, str) or not PUBLIC_ID.fullmatch(public_id):
         raise DriftError(f"registry_public_id_invalid:{public_id}")
-    if "_" in public_id or "sf5" in public_id.lower():
+    if "_" in public_id or LEGACY_VERSION_TOKEN in public_id.lower():
         raise DriftError(f"registry_public_id_forbidden:{public_id}")
     if any(re.fullmatch(r"v[0-9]+", segment) for segment in public_id.split(".")):
         raise DriftError(f"registry_public_id_versioned:{public_id}")

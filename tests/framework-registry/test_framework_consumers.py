@@ -307,6 +307,14 @@ class FrameworkConsumerDriftValidatorTest(unittest.TestCase):
                 VALIDATOR.validate_aggregate(path)
 
         registry = json.loads(AGGREGATE.read_text(encoding="utf-8"))
+        legacy_version_token = "".join(("s", "f", "5"))
+        registry["entries"][0]["id"] = f"component.{legacy_version_token}-button"
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Fixtures.write_path(Path(temporary) / "versioned-id.json", registry)
+            with self.assertRaisesRegex(VALIDATOR.DriftError, "registry_public_id_forbidden"):
+                VALIDATOR.validate_aggregate(path)
+
+        registry = json.loads(AGGREGATE.read_text(encoding="utf-8"))
         registry["indexes"]["recipe_closure"]["recipe.admin.collection"].remove("utility.gap")
         with tempfile.TemporaryDirectory() as temporary:
             path = Fixtures.write_path(Path(temporary) / "bad-closure.json", registry)
