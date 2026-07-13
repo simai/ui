@@ -2457,7 +2457,7 @@
     {
       "curated_for": [],
       "documentation_refs": [
-        "simai/larena-layout@9c2e1f24c91e8e740be2244a46b67220b6648dc9:README.md"
+        "simai/larena-layout@a4c3c8768b894a5d9ffff0d8fc55c1430114e43f:README.md"
       ],
       "example_refs": [
         "simai/larena-admin@7e673a5de3b0cd89838d7515ae1a683241c4c8be:tests/Unit/SmartRecipePresenterTest.php"
@@ -2468,11 +2468,11 @@
       "name": "admin.collection",
       "owner": "larena/layout",
       "provenance": {
-        "commit": "9c2e1f24c91e8e740be2244a46b67220b6648dc9",
+        "commit": "a4c3c8768b894a5d9ffff0d8fc55c1430114e43f",
         "repository": "https://github.com/simai/larena-layout",
         "source_refs": [
           "simai/larena-admin@7e673a5de3b0cd89838d7515ae1a683241c4c8be:src/Runtime/SmartRecipePresenter.php",
-          "simai/larena-layout@9c2e1f24c91e8e740be2244a46b67220b6648dc9:src/Contracts/AdminCollectionLayoutPlan.php"
+          "simai/larena-layout@a4c3c8768b894a5d9ffff0d8fc55c1430114e43f:src/Contracts/AdminCollectionLayoutPlan.php"
         ],
         "tag": null
       },
@@ -2488,7 +2488,11 @@
         "smart.buttons",
         "smart.pagination",
         "smart.table",
-        "utility.display"
+        "utility.display",
+        "utility.flex-direction",
+        "utility.gap",
+        "utility.overflow",
+        "utility.width"
       ],
       "runtime": {
         "profile": "list-page",
@@ -7733,7 +7737,9 @@
       "title": "Flex Basis Ext"
     },
     {
-      "curated_for": [],
+      "curated_for": [
+        "recipe.admin.collection"
+      ],
       "documentation_refs": [
         "simai/ui@7e836d8a9414d5da553fb1ab0404721e5b48769a:README.md"
       ],
@@ -7757,8 +7763,8 @@
         "profiles": [
           "plain-assets-v1"
         ],
-        "safe_to_suggest": false,
-        "status": "discoverable"
+        "safe_to_suggest": true,
+        "status": "ready"
       },
       "requires": [],
       "runtime": {
@@ -8308,7 +8314,9 @@
       "title": "Font Weight"
     },
     {
-      "curated_for": [],
+      "curated_for": [
+        "recipe.admin.collection"
+      ],
       "documentation_refs": [
         "simai/ui@7e836d8a9414d5da553fb1ab0404721e5b48769a:README.md"
       ],
@@ -8332,8 +8340,8 @@
         "profiles": [
           "plain-assets-v1"
         ],
-        "safe_to_suggest": false,
-        "status": "discoverable"
+        "safe_to_suggest": true,
+        "status": "ready"
       },
       "requires": [],
       "runtime": {
@@ -10547,7 +10555,9 @@
       "title": "Outline Width"
     },
     {
-      "curated_for": [],
+      "curated_for": [
+        "recipe.admin.collection"
+      ],
       "documentation_refs": [
         "simai/ui@7e836d8a9414d5da553fb1ab0404721e5b48769a:README.md"
       ],
@@ -10571,8 +10581,8 @@
         "profiles": [
           "plain-assets-v1"
         ],
-        "safe_to_suggest": false,
-        "status": "discoverable"
+        "safe_to_suggest": true,
+        "status": "ready"
       },
       "requires": [],
       "runtime": {
@@ -13653,7 +13663,9 @@
       "title": "White Space"
     },
     {
-      "curated_for": [],
+      "curated_for": [
+        "recipe.admin.collection"
+      ],
       "documentation_refs": [
         "simai/ui@7e836d8a9414d5da553fb1ab0404721e5b48769a:README.md"
       ],
@@ -13677,8 +13689,8 @@
         "profiles": [
           "plain-assets-v1"
         ],
-        "safe_to_suggest": false,
-        "status": "discoverable"
+        "safe_to_suggest": true,
+        "status": "ready"
       },
       "requires": [],
       "runtime": {
@@ -14227,7 +14239,11 @@
         "smart.list-item",
         "smart.pagination",
         "smart.table",
-        "utility.display"
+        "utility.display",
+        "utility.flex-direction",
+        "utility.gap",
+        "utility.overflow",
+        "utility.width"
       ]
     },
     "safe_to_suggest": [
@@ -14251,7 +14267,11 @@
       "smart.list-item",
       "smart.pagination",
       "smart.table",
-      "utility.display"
+      "utility.display",
+      "utility.flex-direction",
+      "utility.gap",
+      "utility.overflow",
+      "utility.width"
     ]
   },
   "nonclaims": {
@@ -14274,7 +14294,7 @@
       "kind": "recipe",
       "owner": "larena/layout",
       "path": "contracts/owners/recipe.manifest.json",
-      "sha256": "00336a467395de0a85f113f238f41b76533fa16ca51fbd8819d108fa6e06001f"
+      "sha256": "6afb18808d424466853044eb007cad923a8607fbd6415e9623ad6246302c2815"
     },
     {
       "contract_revision": "16dcd1e804dd38d89965fe4fee433c315d788862",
@@ -14290,7 +14310,7 @@
       "kind": "utility",
       "owner": "simai/ui",
       "path": "contracts/owners/utility.manifest.json",
-      "sha256": "ca0732fdb20b58039bf6de9c5e67ef974560965c9db99d0a1780134ef48be410"
+      "sha256": "811e01a942485784e6a99269c37def08c11dfb2c39671a8756ef1dc1714552cd"
     }
   ]
 }

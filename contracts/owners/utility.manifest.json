@@ -45,6 +45,46 @@
         "simai/ui-play@0a393e85f0c6a137ae024f442dd52cc34d5f0508:examples/layout/display/index.html"
       ],
       "curated_for": ["recipe.admin.collection"]
+    },
+    {
+      "id": "utility.flex-direction",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": ["plain-assets-v1"],
+        "blockers": []
+      },
+      "curated_for": ["recipe.admin.collection"]
+    },
+    {
+      "id": "utility.gap",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": ["plain-assets-v1"],
+        "blockers": []
+      },
+      "curated_for": ["recipe.admin.collection"]
+    },
+    {
+      "id": "utility.overflow",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": ["plain-assets-v1"],
+        "blockers": []
+      },
+      "curated_for": ["recipe.admin.collection"]
+    },
+    {
+      "id": "utility.width",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": ["plain-assets-v1"],
+        "blockers": []
+      },
+      "curated_for": ["recipe.admin.collection"]
     }
   ]
 }

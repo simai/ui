@@ -86,8 +86,15 @@ class FrameworkContractRegistryTest(unittest.TestCase):
             | {self.by_id["recipe.admin.collection"]["kind"]},
             {"utility", "component", "smart-component", "recipe"},
         )
-        self.assertEqual(len(closure), 20)
-        self.assertIn("utility.display", closure)
+        self.assertEqual(len(closure), 24)
+        for utility_id in (
+            "utility.display",
+            "utility.flex-direction",
+            "utility.gap",
+            "utility.overflow",
+            "utility.width",
+        ):
+            self.assertIn(utility_id, closure)
         self.assertIn("component.buttons", closure)
         self.assertIn("smart.table", closure)
         self.assertTrue(
@@ -95,7 +102,16 @@ class FrameworkContractRegistryTest(unittest.TestCase):
         )
         self.assertEqual(
             self.by_id["recipe.admin.collection"]["requires"],
-            ["smart.buttons", "smart.pagination", "smart.table", "utility.display"],
+            [
+                "smart.buttons",
+                "smart.pagination",
+                "smart.table",
+                "utility.display",
+                "utility.flex-direction",
+                "utility.gap",
+                "utility.overflow",
+                "utility.width",
+            ],
         )
         self.assertEqual(
             self.by_id["smart.table"]["requires"],

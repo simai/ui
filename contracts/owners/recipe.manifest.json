@@ -9,12 +9,12 @@
   },
   "release": {
     "tag": null,
-    "commit": "9c2e1f24c91e8e740be2244a46b67220b6648dc9",
-    "tree": "ee45e8f2dc3a2f5c2e592325e383ed7de14cdaac",
-    "archive_sha256": "5c793ba2b5342ac447b77cb45eb9714110e4a13d2bb39080248cd5b38a044886"
+    "commit": "a4c3c8768b894a5d9ffff0d8fc55c1430114e43f",
+    "tree": "d00a92ceacbd317bd8599347f53cb9aefb07bf68",
+    "archive_sha256": "de96ad7e9e567de2d43880be524609b1ff6a6dfaab9cc539358e65adf3870446"
   },
   "inventory": {
-    "source": "simai/larena-layout@9c2e1f24c91e8e740be2244a46b67220b6648dc9:src/Contracts/AdminCollectionLayoutPlan.php",
+    "source": "simai/larena-layout@a4c3c8768b894a5d9ffff0d8fc55c1430114e43f:src/Contracts/AdminCollectionLayoutPlan.php",
     "selector": {"mode": "explicit"},
     "expected": {"entries": 1}
   },
@@ -46,14 +46,14 @@
       "provenance": {
         "repository": "https://github.com/simai/larena-layout",
         "tag": null,
-        "commit": "9c2e1f24c91e8e740be2244a46b67220b6648dc9",
+        "commit": "a4c3c8768b894a5d9ffff0d8fc55c1430114e43f",
         "source_refs": [
-          "simai/larena-layout@9c2e1f24c91e8e740be2244a46b67220b6648dc9:src/Contracts/AdminCollectionLayoutPlan.php",
+          "simai/larena-layout@a4c3c8768b894a5d9ffff0d8fc55c1430114e43f:src/Contracts/AdminCollectionLayoutPlan.php",
           "simai/larena-admin@7e673a5de3b0cd89838d7515ae1a683241c4c8be:src/Runtime/SmartRecipePresenter.php"
         ]
       },
       "documentation_refs": [
-        "simai/larena-layout@9c2e1f24c91e8e740be2244a46b67220b6648dc9:README.md"
+        "simai/larena-layout@a4c3c8768b894a5d9ffff0d8fc55c1430114e43f:README.md"
       ],
       "example_refs": [
         "simai/larena-admin@7e673a5de3b0cd89838d7515ae1a683241c4c8be:tests/Unit/SmartRecipePresenterTest.php"
@@ -66,6 +66,10 @@
       },
       "requires": [
         "utility.display",
+        "utility.flex-direction",
+        "utility.gap",
+        "utility.overflow",
+        "utility.width",
         "smart.buttons",
         "smart.pagination",
         "smart.table"
