@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:simai:framework-contract-registry:aggregate:1",
+  "title": "Simai Framework Contract Registry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_id",
+    "schema_version",
+    "compatibility",
+    "source_manifests",
+    "counts",
+    "entries",
+    "indexes",
+    "nonclaims"
+  ],
+  "properties": {
+    "schema_id": {"const": "simai.framework.contract-registry"},
+    "schema_version": {"const": 1},
+    "compatibility": {"type": "object"},
+    "source_manifests": {"type": "array", "minItems": 4},
+    "counts": {"type": "object"},
+    "entries": {"type": "array", "minItems": 331},
+    "indexes": {"type": "object"},
+    "nonclaims": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["production_ready", "full_compatibility", "all_items_ready"],
+      "properties": {
+        "production_ready": {"const": false},
+        "full_compatibility": {"const": false},
+        "all_items_ready": {"const": false}
+      }
+    }
+  }
+}
