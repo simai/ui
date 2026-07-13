@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:simai:framework-contract-registry:release-lock:1",
+  "title": "Simai Framework bounded release lock",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_id",
+    "schema_version",
+    "compatibility_id",
+    "status",
+    "profile",
+    "runtime_sources",
+    "inventory",
+    "exclusions",
+    "claims"
+  ],
+  "properties": {
+    "schema_id": {"const": "simai.framework.release-lock"},
+    "schema_version": {"const": 1},
+    "compatibility_id": {"const": "sf-v5.3.2-7e836d8a-dd786bba"},
+    "status": {"const": "bounded"},
+    "profile": {"const": "plain-assets-v1"},
+    "runtime_sources": {"type": "object", "required": ["ui", "ui-smart"]},
+    "inventory": {"type": "object"},
+    "exclusions": {"type": "array", "minItems": 2},
+    "claims": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["full_compatible", "production_ready", "all_items_ready"],
+      "properties": {
+        "full_compatible": {"const": false},
+        "production_ready": {"const": false},
+        "all_items_ready": {"const": false}
+      }
+    }
+  }
+}
