@@ -22,6 +22,10 @@ REGISTRY_OWNER = "simai/ui"
 REGISTRY_PATH = "contracts/generated/framework-contract-registry.json"
 REGISTRY_TREE = "contracts/generated"
 LARENA_REGISTRY_RELATIVE_PATH = "contract/" + REGISTRY_PATH
+LARENA_LOCK_PROFILES = {
+    "larena.ui.frontend_runtime_lock.v2": None,
+    "larena.ui.frontend_runtime_lock.v3": "exact-git-tree-v2",
+}
 UI_RUNTIME = {
     "tag": "v5.3.2",
     "commit": "7e836d8a9414d5da553fb1ab0404721e5b48769a",
@@ -258,10 +262,23 @@ def validate_registry_git_source(ui_root: Path, commit: str, aggregate_sha: str)
 
 def validate_larena_lock(path: Path, registry: dict[str, str], aggregate_sha: str) -> dict[str, Any]:
     lock = load_json(path)
-    bundle_id = f"{COMPATIBILITY_ID}-registry-{aggregate_sha[:8]}"
+    schema = lock.get("schema")
+    if schema not in LARENA_LOCK_PROFILES:
+        raise DriftError("larena_lock_schema_unsupported")
+    required_profile = LARENA_LOCK_PROFILES[schema]
+    base_bundle_id = f"{COMPATIBILITY_ID}-registry-{aggregate_sha[:8]}"
+    if required_profile is None:
+        if "publication_profile" in lock:
+            raise DriftError("larena_lock_publication_profile_unexpected")
+        publication_profile = "legacy-registry-v2"
+        bundle_id = base_bundle_id
+    else:
+        if lock.get("publication_profile") != required_profile:
+            raise DriftError("larena_lock_publication_profile_mismatch")
+        publication_profile = required_profile
+        bundle_id = f"{base_bundle_id}-{publication_profile}"
     if (
-        lock.get("schema") != "larena.ui.frontend_runtime_lock.v2"
-        or lock.get("runtime") != "simai-framework"
+        lock.get("runtime") != "simai-framework"
         or lock.get("tag") != UI_RUNTIME["tag"]
         or lock.get("pair_id") != COMPATIBILITY_ID
         or lock.get("bundle_id") != bundle_id
@@ -290,7 +307,14 @@ def validate_larena_lock(path: Path, registry: dict[str, str], aggregate_sha: st
     }
     if lock.get("framework_registry") != expected_registry:
         raise DriftError("larena_registry_lock_identity_mismatch")
-    return {"status": "aligned", "accepted": True, "bundle_id": bundle_id, "drift": []}
+    return {
+        "status": "aligned",
+        "accepted": True,
+        "schema": schema,
+        "publication_profile": publication_profile,
+        "bundle_id": bundle_id,
+        "drift": [],
+    }
 
 
 def validate_ui_play(path: Path) -> dict[str, Any]:

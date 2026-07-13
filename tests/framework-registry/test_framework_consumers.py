@@ -129,11 +129,12 @@ class Fixtures:
 
     def aligned_larena_lock(self) -> dict:
         return {
-            "schema": "larena.ui.frontend_runtime_lock.v2",
+            "schema": "larena.ui.frontend_runtime_lock.v3",
             "runtime": "simai-framework",
             "tag": VALIDATOR.UI_RUNTIME["tag"],
             "pair_id": VALIDATOR.COMPATIBILITY_ID,
-            "bundle_id": f"{VALIDATOR.COMPATIBILITY_ID}-registry-{self.aggregate_sha[:8]}",
+            "bundle_id": f"{VALIDATOR.COMPATIBILITY_ID}-registry-{self.aggregate_sha[:8]}-exact-git-tree-v2",
+            "publication_profile": "exact-git-tree-v2",
             "ui": {**VALIDATOR.UI_RUNTIME, "files": 2596},
             "ui_smart": {**VALIDATOR.SMART_RUNTIME, "files": 112},
             "framework_registry": {
@@ -190,6 +191,9 @@ class FrameworkConsumerDriftValidatorTest(unittest.TestCase):
         self.assertEqual(result["registry"]["entry_count"], 331)
         self.assertTrue(all(value["accepted"] for value in result["consumers"].values()))
         self.assertTrue(result["screen_acceptance"]["accepted"])
+        self.assertEqual(result["consumers"]["larena"]["schema"], "larena.ui.frontend_runtime_lock.v3")
+        self.assertEqual(result["consumers"]["larena"]["publication_profile"], "exact-git-tree-v2")
+        self.assertTrue(result["consumers"]["larena"]["bundle_id"].endswith("-exact-git-tree-v2"))
 
     def test_real_consumer_drift_is_detected_without_hiding_larena_acceptance(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -237,6 +241,22 @@ class FrameworkConsumerDriftValidatorTest(unittest.TestCase):
 
         with tempfile.TemporaryDirectory() as temporary:
             fixtures = Fixtures(Path(temporary))
+            lock = fixtures.aligned_larena_lock()
+            lock["publication_profile"] = "unverified-archive"
+            fixtures.larena_lock = fixtures.write("wrong-profile.json", lock)
+            with self.assertRaisesRegex(VALIDATOR.DriftError, "larena_lock_publication_profile_mismatch"):
+                fixtures.validate()
+
+        with tempfile.TemporaryDirectory() as temporary:
+            fixtures = Fixtures(Path(temporary))
+            lock = fixtures.aligned_larena_lock()
+            lock["schema"] = "larena.ui.frontend_runtime_lock.v4"
+            fixtures.larena_lock = fixtures.write("future-schema.json", lock)
+            with self.assertRaisesRegex(VALIDATOR.DriftError, "larena_lock_schema_unsupported"):
+                fixtures.validate()
+
+        with tempfile.TemporaryDirectory() as temporary:
+            fixtures = Fixtures(Path(temporary))
             changed = copy.deepcopy(fixtures.registry_value)
             changed["contract_note"] = "metamorphic-change"
             fixtures.aggregate = fixtures.write("changed-aggregate.json", changed)
@@ -249,6 +269,34 @@ class FrameworkConsumerDriftValidatorTest(unittest.TestCase):
                 setattr(fixtures, key, fixtures.write(f"{key}.json", fixtures.pointer(consumer_id, role)))
             with self.assertRaisesRegex(VALIDATOR.DriftError, "registry_git_artifact_sha256_mismatch"):
                 fixtures.validate()
+
+    def test_legacy_v2_bundle_derivation_is_explicit(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            fixtures = Fixtures(Path(temporary))
+            lock = fixtures.aligned_larena_lock()
+            lock["schema"] = "larena.ui.frontend_runtime_lock.v2"
+            lock.pop("publication_profile")
+            lock["bundle_id"] = f"{VALIDATOR.COMPATIBILITY_ID}-registry-{fixtures.aggregate_sha[:8]}"
+            fixtures.larena_lock = fixtures.write("legacy-v2.json", lock)
+            result = fixtures.validate()["consumers"]["larena"]
+        self.assertEqual(result["schema"], "larena.ui.frontend_runtime_lock.v2")
+        self.assertEqual(result["publication_profile"], "legacy-registry-v2")
+        self.assertFalse(result["bundle_id"].endswith("-exact-git-tree-v2"))
+
+    def test_current_larena_runtime_lock_when_supplied(self) -> None:
+        path = os.environ.get("SIMAI_LARENA_RUNTIME_LOCK")
+        if path is None:
+            self.skipTest("SIMAI_LARENA_RUNTIME_LOCK is not configured")
+        lock_path = Path(path).resolve()
+        aggregate_sha = VALIDATOR.sha256_file(AGGREGATE)
+        lock = VALIDATOR.load_json(lock_path)
+        registry_commit = lock.get("framework_registry", {}).get("source", {}).get("commit")
+        self.assertIsInstance(registry_commit, str)
+        source = VALIDATOR.validate_registry_git_source(ROOT, registry_commit, aggregate_sha)
+        result = VALIDATOR.validate_larena_lock(lock_path, source, aggregate_sha)
+        self.assertEqual(result["schema"], "larena.ui.frontend_runtime_lock.v3")
+        self.assertEqual(result["publication_profile"], "exact-git-tree-v2")
+        self.assertTrue(result["accepted"])
 
     def test_public_ids_and_recipe_utility_closure_fail_closed(self) -> None:
         registry = json.loads(AGGREGATE.read_text(encoding="utf-8"))
