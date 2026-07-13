@@ -2596,18 +2596,19 @@
     "type": "smart",
     "mode": "smart",
     "js": true,
+    "css": true,
     "relation": [
       {
         "name": "alerts"
       },
       {
-        "name": "buttons"
+        "name": "cl-buttons"
       },
       {
-        "name": "icon-buttons"
+        "name": "cl-icon-buttons"
       },
       {
-        "name": "icons"
+        "name": "cl-icons"
       }
     ]
   },
@@ -2827,6 +2828,23 @@
     ]
   },
   {
+    "name": "cl-fab",
+    "tags": [
+      "sf-fab"
+    ],
+    "type": "smart",
+    "mode": "smart",
+    "js": true,
+    "relation": [
+      {
+        "name": "cl-icon"
+      },
+      {
+        "name": "fab"
+      }
+    ]
+  },
+  {
     "name": "cl-file-preview",
     "tags": [
       "sf-file-preview"
@@ -2965,6 +2983,9 @@
         "name": "cl-list-item"
       },
       {
+        "name": "list"
+      },
+      {
         "name": "cl-inputs"
       }
     ]
@@ -3086,6 +3107,23 @@
     ]
   },
   {
+    "name": "cl-rating",
+    "tags": [
+      "sf-rating"
+    ],
+    "type": "smart",
+    "mode": "smart",
+    "js": true,
+    "relation": [
+      {
+        "name": "rating"
+      },
+      {
+        "name": "cl-icon-buttons"
+      }
+    ]
+  },
+  {
     "name": "cl-reference-link",
     "tags": [
       "sf-reference-link"
@@ -3195,31 +3233,40 @@
     "css": true,
     "relation": [
       {
-        "name": "checkbox"
+        "name": "cl-checkbox"
       },
       {
-        "name": "buttons"
+        "name": "cl-buttons"
       },
       {
-        "name": "icon-buttons"
+        "name": "cl-icon-buttons"
       },
       {
-        "name": "icons"
+        "name": "cl-icons"
       },
       {
-        "name": "inputs"
+        "name": "cl-inputs"
       },
       {
         "name": "cl-list"
       },
       {
-        "name": "tags"
+        "name": "cl-tags"
       },
       {
-        "name": "pagination"
+        "name": "cl-pagination"
       },
       {
         "name": "cl-datepicker"
+      },
+      {
+        "name": "cl-context-menu"
+      },
+      {
+        "name": "cl-tabs"
+      },
+      {
+        "name": "cl-radio"
       }
     ]
   },
@@ -3507,6 +3554,9 @@
     "relation": [
       {
         "name": "icon-buttons"
+      },
+      {
+        "name": "list"
       }
     ]
   },
@@ -3602,6 +3652,13 @@
     "js": false
   },
   {
+    "name": "list",
+    "regex": "/sf-list/",
+    "type": "component",
+    "css": true,
+    "js": false
+  },
+  {
     "name": "menu",
     "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-menu\\b/i",
     "type": "component",
@@ -3683,6 +3740,13 @@
     "type": "component",
     "css": true,
     "js": true
+  },
+  {
+    "name": "rating",
+    "regex": "/sf-rating/",
+    "type": "component",
+    "css": true,
+    "js": false
   },
   {
     "name": "reference-link",
