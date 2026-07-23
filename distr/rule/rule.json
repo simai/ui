@@ -2685,7 +2685,9 @@
     "js": true,
     "relation": [
       {
-        "name": "buttons"
+        "name": "buttons",
+        "css": true,
+        "js": false
       }
     ]
   },
@@ -2890,6 +2892,29 @@
         "name": "icon-buttons"
       }
     ]
+  },
+  {
+    "name": "cl-flags",
+    "tags": [
+      "sf-flags"
+    ],
+    "type": "smart",
+    "mode": "smart",
+    "js": true,
+    "relation": [
+      {
+        "name": "flags"
+      }
+    ]
+  },
+  {
+    "name": "cl-form",
+    "tags": [
+      "sf-form"
+    ],
+    "type": "smart",
+    "mode": "smart",
+    "js": true
   },
   {
     "name": "cl-gallery",
@@ -3608,6 +3633,13 @@
     "type": "component",
     "css": true,
     "js": true
+  },
+  {
+    "name": "flags",
+    "regex": "/sf-flags/",
+    "type": "component",
+    "css": true,
+    "js": false
   },
   {
     "name": "hideShow",
