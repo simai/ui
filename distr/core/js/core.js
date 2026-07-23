@@ -376,20 +376,19 @@ getGlobalRoot().Mask = Mask;
 /***/ },
 
 /***/ "fcc5b3e351e9"
-(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+() {
 
-/* global __webpack_public_path__: writable */
 (() => {
   const cdnDefault = 'https://cdn.jsdelivr.net/gh/simai/ui@main/distr/';
   if (typeof window === 'undefined') return;
 
   if (!window.sfPath) {
     window.sfPath = cdnDefault;
-  }
+  } // Keep sfPath as the public Framework asset root, but let webpack retain its
+  // script-relative public path for Core chunks. Legacy bundles emit
+  // `core/js/*` from the Framework root, while the deterministic builder emits
+  // `js/*` from the Core root; webpack's generated bootstrap resolves both.
 
-  if (__webpack_require__.p !== window.sfPath) {
-    __webpack_require__.p = window.sfPath;
-  }
 })();
 
 /***/ },
