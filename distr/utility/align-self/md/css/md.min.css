@@ -1,0 +1,1 @@
+@layer sf.utilities{@media(min-width: 720px){.md\:self-cross-auto{align-self:auto}.md\:self-cross-start{align-self:start}.md\:self-cross-end{align-self:end}.md\:self-cross-center{align-self:center}.md\:self-cross-stretch{align-self:stretch}.md\:self-cross-baseline{align-self:baseline}}}

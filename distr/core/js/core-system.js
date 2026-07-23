@@ -1,1 +1,86 @@
-"use strict";(self.webpackChunkSimaiCore=self.webpackChunkSimaiCore||[]).push([[784],{34568:(e,t,n)=>{async function c(e,t){return new Promise(n=>{let c;if(document.createEvent)c=new Event(e,{bubbles:!0,cancelable:!1});else{if(!document.createEventObject())return void n(!0);c=document.createEventObject()}t.dispatchEvent?t.dispatchEvent(c):t.fireEvent&&t.fireEvent(e,c),n(!0)})}function a(e,t,n){window.addEventListener?t.addEventListener(e,n,!1):window.attachEvent&&t.attachEvent(e,n)}n.r(t),n.d(t,{receive:()=>a,send:()=>c}),SF.send=c,SF.receive=a},36375:(e,t,n)=>{n.r(t),n.d(t,{default:()=>i,isReady:()=>a});let c=[],a=!1;function i(e=function(){}){switch(document.readyState){case"loading":c.push(e);break;case"interactive":case"complete":"function"==typeof e&&e(),a=!0}}document.addEventListener("readystatechange",()=>{a||(c.forEach(i),c=[])}),SF.ready=i}}]);
+"use strict";
+(self["webpackChunk"] = self["webpackChunk"] || []).push([[88616323197113],{
+
+/***/ "dc808f2de26e"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   receive: () => (/* binding */ receive),
+/* harmony export */   send: () => (/* binding */ send)
+/* harmony export */ });
+async function send(event, element) {
+  return new Promise(resolve => {
+    let e;
+
+    if (document.createEvent) {
+      e = new Event(event, {
+        bubbles: true,
+        cancelable: false
+      });
+    } else if (document.createEventObject()) {
+      e = document.createEventObject();
+    } else {
+      resolve(true);
+      return;
+    }
+
+    if (element.dispatchEvent) {
+      element.dispatchEvent(e);
+    } else if (element.fireEvent) element.fireEvent(event, e);
+
+    resolve(true);
+  });
+}
+SF.send = send;
+function receive(event, el, handler) {
+  if (window.addEventListener) {
+    el.addEventListener(event, handler, false);
+  } else if (window.attachEvent) {
+    el.attachEvent(event, handler);
+  }
+}
+SF.receive = receive;
+
+/***/ },
+
+/***/ "4b01484752a0"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ ready),
+/* harmony export */   isReady: () => (/* binding */ isReady)
+/* harmony export */ });
+let stack = [];
+let isReady = false;
+function ready(handler = function () {}) {
+  switch (document.readyState) {
+    case 'loading':
+      stack.push(handler);
+      break;
+
+    case 'interactive':
+    case 'complete':
+      if (typeof handler == 'function') {
+        handler();
+      }
+
+      isReady = true;
+      break;
+
+    default:
+      break;
+  }
+}
+document.addEventListener('readystatechange', () => {
+  if (!isReady) {
+    stack.forEach(ready);
+    stack = [];
+  }
+});
+SF.ready = ready;
+
+/***/ }
+
+}]);

@@ -1,1 +1,22 @@
-@layer sf.utilities{@media(min-width: 720px){.md\:content-main-start{-webkit-box-pack:start;-ms-flex-pack:start;justify-content:flex-start}.md\:content-main-end{-webkit-box-pack:end;-ms-flex-pack:end;justify-content:flex-end}.md\:content-main-center{-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center}.md\:content-main-between{-webkit-box-pack:justify;-ms-flex-pack:justify;justify-content:space-between}.md\:content-main-around{-ms-flex-pack:distribute;justify-content:space-around}.md\:content-main-evenly{-webkit-box-pack:space-evenly;-ms-flex-pack:space-evenly;justify-content:space-evenly}}}
+@layer sf.utilities {
+  @media (min-width: 720px) {
+    .md\:content-main-start {
+      justify-content: flex-start;
+    }
+    .md\:content-main-end {
+      justify-content: flex-end;
+    }
+    .md\:content-main-center {
+      justify-content: center;
+    }
+    .md\:content-main-between {
+      justify-content: space-between;
+    }
+    .md\:content-main-around {
+      justify-content: space-around;
+    }
+    .md\:content-main-evenly {
+      justify-content: space-evenly;
+    }
+  }
+}

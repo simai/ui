@@ -1,1 +1,10 @@
-@layer sf.utilities{@media(min-width: 1140px){.xl\:grow{-webkit-box-flex:1;-ms-flex-positive:1;flex-grow:1}.xl\:grow-none{-webkit-box-flex:0;-ms-flex-positive:0;flex-grow:0}}}
+@layer sf.utilities {
+  @media (min-width: 1140px) {
+    .xl\:grow {
+      flex-grow: 1;
+    }
+    .xl\:grow-none {
+      flex-grow: 0;
+    }
+  }
+}

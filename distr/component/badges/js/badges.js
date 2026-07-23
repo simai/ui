@@ -1,1 +1,398 @@
-(()=>{"use strict";class t{constructor(t){this.props=t,this.id=t?.id,this.params=t?.param,this.attrs=t?.attrs||{},this.template=null,window.dispatchEvent(new CustomEvent(`${this.componentName}:beforeRender`,{detail:this}))}getUtilityMap(){return this.constructor.utilityMap||null}extractUtilityClasses(t){if(!Array.isArray(t))return[];const e=new Set;return t.forEach(t=>{if("string"!=typeof t)return;const i=t.match(/\(([^)]+)\)/g);i&&i.forEach(t=>{t.slice(1,-1).split(/\s+/).filter(Boolean).forEach(t=>{e.add(t.replace(/^\./,""))})})}),Array.from(e)}applyLayoutUtilities(t,e){if(!t||!e)return;const i=this.getUtilityMap();if(!i||!i[e])return;this.extractUtilityClasses(i[e]).forEach(e=>t.classList.add(e))}render(){return this.html=this.template,"function"==typeof this.init&&this.init(),this.html&&window.dispatchEvent(new CustomEvent(`${this.componentName}:render`,{detail:this})),this.html}destroy(){this.destroyInternal?.(),this.props=null,this.id=null,this.params=null,this.template=null,this.html&&(this.html.remove(),this.html=null),window.dispatchEvent(new CustomEvent(`${this.componentName}:destroy`,{detail:this}))}destroyInternal(){}}const e=JSON.parse('{".sf-badge":["display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","gap/var(--sf-a0)","justify-content/center (.justify-center)","align-items/center (.items-center)"],".sf-badge .sf-badge-icon-container":["flex/1 (.flex-1)","display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","justify-content/center (.justify-center)","align-items/center (.items-center)"],".sf-badge .sf-badge-icon-container .sf-icon":["display/flex (.flex)","justify-content/center (.justify-center)","align-items/center (.items-center)"],".sf-badge .sf-badge-text-container":["display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","justify-content/center (.justify-center)","align-items/center (.items-center)"]}');const i=function(t,e){if(t&&e)if("undefined"==typeof window||"function"!=typeof window.registerSfComponent){if("undefined"!=typeof window&&window.SF?.Loader?.registerComponent)window.SF.Loader.registerComponent(t,e);else if("undefined"!=typeof window){(window.SF_PENDING_COMPONENTS=window.SF_PENDING_COMPONENTS||[]).push([t,e])}}else window.registerSfComponent(t,e)};class s extends t{static componentName="Badges";html=null;constructor(t){super(t);const{size:e="1/3",type:i="main",scheme:s="neutral",text:n="",icon:a,iconLeft:r,iconRight:o,iconPosition:l="start"}=this.params||{},c=this.attrs.class||this.attrs.className;this.badge=document.createElement("div"),this.id&&(this.badge.id=this.id),this.badge.classList.add("sf-badge",`sf-badge--size-${e}`,`sf-badge--type-${i}`,`sf-badge--${s}`),c&&this.badge.classList.add(...`${c}`.split(" ").filter(Boolean)),Object.entries(this.attrs).filter(([t])=>!["class","className"].includes(t)).forEach(([t,e])=>{null!=e&&this.badge.setAttribute(t,e)});const d=r??(a&&"end"!==l?a:null),h=o??(a&&"end"===l?a:null);this.iconContainerLeft=this.createIcon(d),this.iconContainerRight=this.createIcon(h),this.textContainer=document.createElement("span"),this.textContainer.classList.add("sf-badge-text-container"),this.textElement=document.createElement("span"),this.textElement.classList.add("sf-badge-text"),this.textElement.textContent=n,this.textContainer.append(this.textElement),this.applyLayoutUtilities(this.badge,".sf-badge"),this.applyLayoutUtilities(this.iconContainerLeft,".sf-badge .sf-badge-icon-container"),this.applyLayoutUtilities(this.iconContainerRight,".sf-badge .sf-badge-icon-container"),this.applyLayoutUtilities(this.textContainer,".sf-badge .sf-badge-text-container"),this.applyLayoutUtilities(this.textElement,".sf-badge .sf-badge-text"),this.applyUtilities(this.badge,this.params?.utilities?.badge??this.params?.utilities),this.applyUtilities(this.iconContainerLeft,this.params?.utilities?.iconContainer??this.params?.utilities?.icon),this.applyUtilities(this.iconContainerRight,this.params?.utilities?.iconContainer??this.params?.utilities?.icon),this.applyUtilities(this.textContainer,this.params?.utilities?.textContainer),this.applyUtilities(this.textElement,this.params?.utilities?.text),this.iconContainerLeft&&this.badge.append(this.iconContainerLeft),this.badge.append(this.textContainer),this.iconContainerRight&&this.badge.append(this.iconContainerRight),this.template=this.badge}createIcon(t){if(!t)return null;const e=document.createElement("span");e.classList.add("sf-badge-icon-container");const i=document.createElement("i");return i.classList.add("sf-icon"),i.textContent=t,e.append(i),e}applyUtilities(t,e){if(!t||!e)return;var i;(i=e,Array.isArray(i)?i:"string"==typeof i?i.split(" "):Array.isArray(i?.classes)?i.classes:"string"==typeof i?.classes?i.classes.split(" "):Array.isArray(i?.badge)?i.badge:"string"==typeof i?.badge?i.badge.split(" "):[]).filter(Boolean).forEach(e=>t.classList.add(e))}init(){}}s.utilityMap=e,i("Badges",s)})();
+/******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
+/******/ 	var __webpack_modules__ = ({
+
+/***/ "1fc4386fa38f"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("9e6d91f0c51a");
+/* harmony import */ var _json_badge_utility_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("6973628c3b90");
+/* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("0bd4772bf4ae");
+
+
+
+
+class Badges extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.ComponentObserver {
+  static componentName = 'Badges';
+  html = null;
+
+  constructor(props) {
+    super(props);
+    const {
+      size = '1/3',
+      type = 'main',
+      scheme = 'neutral',
+      text = '',
+      icon,
+      iconLeft,
+      iconRight,
+      iconPosition = 'start'
+    } = this.params || {};
+    const className = this.attrs.class || this.attrs.className;
+    this.badge = document.createElement('div');
+
+    if (this.id) {
+      this.badge.id = this.id;
+    }
+
+    this.badge.classList.add('sf-badge', `sf-badge--size-${size}`, `sf-badge--type-${type}`, `sf-badge--${scheme}`);
+
+    if (className) {
+      this.badge.classList.add(...`${className}`.split(' ').filter(Boolean));
+    }
+
+    Object.entries(this.attrs).filter(([attr]) => !['class', 'className'].includes(attr)).forEach(([attr, value]) => {
+      if (value === undefined || value === null) {
+        return;
+      }
+
+      this.badge.setAttribute(attr, value);
+    });
+    const startIcon = iconLeft ?? (icon && iconPosition !== 'end' ? icon : null);
+    const endIcon = iconRight ?? (icon && iconPosition === 'end' ? icon : null);
+    this.iconContainerLeft = this.createIcon(startIcon);
+    this.iconContainerRight = this.createIcon(endIcon);
+    this.textContainer = document.createElement('span');
+    this.textContainer.classList.add('sf-badge-text-container');
+    this.textElement = document.createElement('span');
+    this.textElement.classList.add('sf-badge-text');
+    this.textElement.textContent = text;
+    this.textContainer.append(this.textElement);
+    this.applyLayoutUtilities(this.badge, '.sf-badge');
+    this.applyLayoutUtilities(this.iconContainerLeft, '.sf-badge .sf-badge-icon-container');
+    this.applyLayoutUtilities(this.iconContainerRight, '.sf-badge .sf-badge-icon-container');
+    this.applyLayoutUtilities(this.textContainer, '.sf-badge .sf-badge-text-container');
+    this.applyLayoutUtilities(this.textElement, '.sf-badge .sf-badge-text');
+    this.applyUtilities(this.badge, this.params?.utilities?.badge ?? this.params?.utilities);
+    this.applyUtilities(this.iconContainerLeft, this.params?.utilities?.iconContainer ?? this.params?.utilities?.icon);
+    this.applyUtilities(this.iconContainerRight, this.params?.utilities?.iconContainer ?? this.params?.utilities?.icon);
+    this.applyUtilities(this.textContainer, this.params?.utilities?.textContainer);
+    this.applyUtilities(this.textElement, this.params?.utilities?.text);
+
+    if (this.iconContainerLeft) {
+      this.badge.append(this.iconContainerLeft);
+    }
+
+    this.badge.append(this.textContainer);
+
+    if (this.iconContainerRight) {
+      this.badge.append(this.iconContainerRight);
+    }
+
+    this.template = this.badge;
+  }
+
+  createIcon(iconName) {
+    if (!iconName) {
+      return null;
+    }
+
+    const container = document.createElement('span');
+    container.classList.add('sf-badge-icon-container');
+    const icon = document.createElement('i');
+    icon.classList.add('sf-icon');
+    icon.textContent = iconName;
+    container.append(icon);
+    return container;
+  }
+
+  applyUtilities(target, utilities) {
+    if (!target || !utilities) {
+      return;
+    }
+
+    const normalize = value => {
+      if (Array.isArray(value)) return value;
+      if (typeof value === 'string') return value.split(' ');
+      if (Array.isArray(value?.classes)) return value.classes;
+      if (typeof value?.classes === 'string') return value.classes.split(' ');
+      if (Array.isArray(value?.badge)) return value.badge;
+      if (typeof value?.badge === 'string') return value.badge.split(' ');
+      return [];
+    };
+
+    normalize(utilities).filter(Boolean).forEach(cls => target.classList.add(cls));
+  }
+
+  init() {}
+
+}
+
+Badges.utilityMap = _json_badge_utility_json__WEBPACK_IMPORTED_MODULE_1__;
+(0,_register_helper__WEBPACK_IMPORTED_MODULE_2__["default"])('Badges', Badges);
+
+/***/ },
+
+/***/ "990dda80f73a"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _badges__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("1fc4386fa38f");
+/*
+* Main JS file for including JS for component.
+* 
+* Imports:
+* - Base function component (_component_name.js)
+*/
+
+
+/***/ },
+
+/***/ "0bd4772bf4ae"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   registerComponent: () => (/* binding */ registerComponent)
+/* harmony export */ });
+// Simple helper to register a component in one call.
+// Usage inside component bundle:
+//   import register from './register-helper';
+//   register('Buttons', Buttons);
+function registerComponent(name, cls) {
+  if (!name || !cls) return;
+
+  if (typeof window !== 'undefined' && typeof window.registerSfComponent === 'function') {
+    window.registerSfComponent(name, cls);
+    return;
+  }
+
+  if (typeof window !== 'undefined' && window.SF?.Loader?.registerComponent) {
+    window.SF.Loader.registerComponent(name, cls);
+    return;
+  }
+
+  if (typeof window !== 'undefined') {
+    const pending = window.SF_PENDING_COMPONENTS = window.SF_PENDING_COMPONENTS || [];
+    pending.push([name, cls]);
+  }
+}
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (registerComponent);
+
+/***/ },
+
+/***/ "9e6d91f0c51a"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   ComponentObserver: () => (/* binding */ ComponentObserver)
+/* harmony export */ });
+class ComponentObserver {
+  constructor(props) {
+    this.props = props;
+    this.id = props?.id;
+    this.params = props?.param;
+    this.attrs = props?.attrs || {};
+    this.template = null;
+    window.dispatchEvent(new CustomEvent(`${this.componentName}:beforeRender`, {
+      detail: this
+    }));
+  }
+
+  getUtilityMap() {
+    return this.constructor.utilityMap || null;
+  }
+
+  extractUtilityClasses(values) {
+    if (!Array.isArray(values)) {
+      return [];
+    }
+
+    const classes = new Set();
+    values.forEach(value => {
+      if (typeof value !== 'string') {
+        return;
+      }
+
+      const matches = value.match(/\(([^)]+)\)/g);
+
+      if (!matches) {
+        return;
+      }
+
+      matches.forEach(match => {
+        const raw = match.slice(1, -1);
+        raw.split(/\s+/).filter(Boolean).forEach(cls => {
+          classes.add(cls.replace(/^\./, ''));
+        });
+      });
+    });
+    return Array.from(classes);
+  }
+
+  applyLayoutUtilities(target, selector) {
+    if (!target || !selector) {
+      return;
+    }
+
+    const map = this.getUtilityMap();
+
+    if (!map || !map[selector]) {
+      return;
+    }
+
+    const classes = this.extractUtilityClasses(map[selector]);
+    classes.forEach(cls => target.classList.add(cls));
+  }
+
+  render() {
+    this.html = this.template;
+
+    if (typeof this.init === 'function') {
+      this.init();
+    }
+
+    if (this.html) {
+      window.dispatchEvent(new CustomEvent(`${this.componentName}:render`, {
+        detail: this
+      }));
+    }
+
+    return this.html;
+  }
+
+  destroy() {
+    this.destroyInternal?.();
+    this.props = null;
+    this.id = null;
+    this.params = null;
+    this.template = null;
+
+    if (this.html) {
+      this.html.remove();
+      this.html = null;
+    }
+
+    window.dispatchEvent(new CustomEvent(`${this.componentName}:destroy`, {
+      detail: this
+    }));
+  }
+
+  destroyInternal() {}
+
+}
+
+/***/ },
+
+/***/ "5fef9c911621"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ },
+
+/***/ "6973628c3b90"
+(module) {
+
+module.exports = /*#__PURE__*/JSON.parse('{".sf-badge":["display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","gap/var(--sf-a0)","justify-content/center (.justify-center)","align-items/center (.items-center)"],".sf-badge .sf-badge-icon-container":["flex/1 (.flex-1)","display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","justify-content/center (.justify-center)","align-items/center (.items-center)"],".sf-badge .sf-badge-icon-container .sf-icon":["display/flex (.flex)","justify-content/center (.justify-center)","align-items/center (.items-center)"],".sf-badge .sf-badge-text-container":["display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","justify-content/center (.justify-center)","align-items/center (.items-center)"]}');
+
+/***/ }
+
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	const __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		const cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		const module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		if (!(moduleId in __webpack_modules__)) {
+/******/ 			delete __webpack_module_cache__[moduleId];
+/******/ 			const e = new Error("Cannot find module '" + moduleId + "'");
+/******/ 			e.code = 'MODULE_NOT_FOUND';
+/******/ 			throw e;
+/******/ 		}
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter/value functions for harmony exports
+/******/ 		__webpack_require__.d = (exports, definition) => {
+/******/ 			if(Array.isArray(definition)) {
+/******/ 				var i = 0;
+/******/ 				while(i < definition.length) {
+/******/ 					var key = definition[i++];
+/******/ 					var binding = definition[i++];
+/******/ 					if(!__webpack_require__.o(exports, key)) {
+/******/ 						if(binding === 0) {
+/******/ 							Object.defineProperty(exports, key, { enumerable: true, value: definition[i++] });
+/******/ 						} else {
+/******/ 							Object.defineProperty(exports, key, { enumerable: true, get: binding });
+/******/ 						}
+/******/ 					} else if(binding === 0) { i++; }
+/******/ 				}
+/******/ 			} else {
+/******/ 				for(var key in definition) {
+/******/ 					if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 						Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 					}
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = (exports) => {
+/******/ 			if(Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/************************************************************************/
+let __webpack_exports__ = {};
+// This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
+(() => {
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("5fef9c911621");
+/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("990dda80f73a");
+/**
+* SIMAI Framework
+* Copyright 2008-2026 SIMAI Ltd
+* http://simai.studio
+* Read the license: http://framework.simai.studio/license/
+* Documentation: http://framework.simai.studio/
+* Support: http://simai.studio/support/
+* 
+* BADGES
+* 
+* Entry point for importing components from this directory.
+* Simplifies the import process in other parts of the project.
+* Instead of importing individual files, all component can be imported through this file.
+*/
+
+
+})();
+
+/******/ })()
+;

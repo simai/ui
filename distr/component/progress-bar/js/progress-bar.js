@@ -1,1 +1,519 @@
-(()=>{"use strict";class t{constructor(t){this.props=t,this.id=t?.id,this.params=t?.param,this.attrs=t?.attrs||{},this.template=null,window.dispatchEvent(new CustomEvent(`${this.componentName}:beforeRender`,{detail:this}))}getUtilityMap(){return this.constructor.utilityMap||null}extractUtilityClasses(t){if(!Array.isArray(t))return[];const e=new Set;return t.forEach(t=>{if("string"!=typeof t)return;const s=t.match(/\(([^)]+)\)/g);s&&s.forEach(t=>{t.slice(1,-1).split(/\s+/).filter(Boolean).forEach(t=>{e.add(t.replace(/^\./,""))})})}),Array.from(e)}applyLayoutUtilities(t,e){if(!t||!e)return;const s=this.getUtilityMap();if(!s||!s[e])return;this.extractUtilityClasses(s[e]).forEach(e=>t.classList.add(e))}render(){return this.html=this.template,"function"==typeof this.init&&this.init(),this.html&&window.dispatchEvent(new CustomEvent(`${this.componentName}:render`,{detail:this})),this.html}destroy(){this.destroyInternal?.(),this.props=null,this.id=null,this.params=null,this.template=null,this.html&&(this.html.remove(),this.html=null),window.dispatchEvent(new CustomEvent(`${this.componentName}:destroy`,{detail:this}))}destroyInternal(){}}const e=function(t,e){if(t&&e)if("undefined"==typeof window||"function"!=typeof window.registerSfComponent){if("undefined"!=typeof window&&window.SF?.Loader?.registerComponent)window.SF.Loader.registerComponent(t,e);else if("undefined"!=typeof window){(window.SF_PENDING_COMPONENTS=window.SF_PENDING_COMPONENTS||[]).push([t,e])}}else window.registerSfComponent(t,e)},s=".sf-progress-bar",n="sfProgressBarBound";function r(t){const e=String(t||"").toLowerCase();return["1/3","1/2","1","2","3"].includes(e)?e:"1"}function o(t){const e=Number(t);return Number.isFinite(e)?Math.max(0,Math.min(100,e)):0}function i(t,e="none"){const s=String(t||e).toLowerCase();return["none","right","bottom"].includes(s)?s:e}function a(t){return t?.querySelector?.(".sf-progress-bar-text")||null}function l(t){return a(t)?t.classList.contains("flex-col")?"bottom":"right":"none"}function c(t){if(!t)return!1;const e=function(t){return t?.querySelector?.(".sf-progress-bar-progress")||null}(t),s=function(t){return t?.querySelector?.(".sf-progress-bar-main")||null}(t);if(!e||!s)return!1;const n=o(t.dataset.value??t.getAttribute("data-value")??0),r=i(t.dataset.textPosition??t.getAttribute("data-text-position"),l(t));if(function(t,e="none"){t.classList.add("sf-progress-bar","flex"),t.classList.remove("flex-col","flex-row","items-cross-end","items-cross-center"),"bottom"!==e?"right"===e&&t.classList.add("flex-row","items-cross-center"):t.classList.add("flex-col","items-cross-end")}(t,r),e.style.width=`${n}%`,t.dataset.value=String(n),t.dataset.textPosition=r,"none"===r){const e=a(t);return e&&e.remove(),!0}const c=function(t){let e=a(t);return e||(e=document.createElement("div"),e.className="sf-progress-bar-text",t.append(e),e)}(t);return c.textContent=`${n}%`,"bottom"===r&&c.parentElement!==t&&t.append(c),!0}function d(t){t&&"1"!==t.dataset[n]&&(c(t),t.dataset[n]="1")}function u(t=document){t.querySelectorAll(s).forEach(d)}e("ProgressBar",class extends t{static componentName="ProgressBar";html=null;constructor(t){super(t);const{size:e="1",value:s=0,textPosition:n="none"}=this.params||{},a=this.attrs.class||this.attrs.className,l=document.createElement("div");this.id&&(l.id=this.id),l.classList.add("sf-progress-bar",`sf-progress-bar--size-${r(e)}`,"flex"),a&&l.classList.add(...String(a).split(" ").filter(Boolean)),l.dataset.value=String(o(s)),l.dataset.textPosition=i(n);const c=document.createElement("div");c.className="sf-progress-bar-main";const d=document.createElement("div");d.className="sf-progress-bar-progress transition",c.append(d),l.append(c),this.template=l}init(){d(this.template)}destroyInternal(){var t;(t=this.template)&&"1"===t.dataset[n]&&delete t.dataset[n]}}),"undefined"!=typeof window&&(window.SF=window.SF||{},window.SF.ProgressBar=window.SF.ProgressBar||{},window.SF.ProgressBar.getState=function(t){const e=t instanceof HTMLElement?t.closest(s)||t:null;return e?{value:o(e.dataset.value??0),textPosition:i(e.dataset.textPosition,l(e))}:null},window.SF.ProgressBar.setState=function(t,e={}){const n=t instanceof HTMLElement?t.closest(s)||t:null;if(!n)return!1;if(Object.prototype.hasOwnProperty.call(e,"value")&&(n.dataset.value=String(o(e.value))),Object.prototype.hasOwnProperty.call(e,"textPosition")&&(n.dataset.textPosition=i(e.textPosition)),Object.prototype.hasOwnProperty.call(e,"size")){const t=Array.from(n.classList).find(t=>t.startsWith("sf-progress-bar--size-"));t&&n.classList.remove(t),n.classList.add(`sf-progress-bar--size-${r(e.size)}`)}return c(n)}),"loading"===document.readyState?document.addEventListener("DOMContentLoaded",()=>u(),{once:!0}):u();new MutationObserver(t=>{t.forEach(t=>{t.addedNodes.forEach(t=>{t instanceof Element&&(t.matches?.(s)&&d(t),u(t))})})}).observe(document.documentElement,{childList:!0,subtree:!0})})();
+/******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
+/******/ 	var __webpack_modules__ = ({
+
+/***/ "c5150caded43"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   bindProgressBar: () => (/* binding */ bindProgressBar),
+/* harmony export */   getProgressBarState: () => (/* binding */ getProgressBarState),
+/* harmony export */   initExistingProgressBars: () => (/* binding */ initExistingProgressBars),
+/* harmony export */   setProgressBarState: () => (/* binding */ setProgressBarState),
+/* harmony export */   unbindProgressBar: () => (/* binding */ unbindProgressBar)
+/* harmony export */ });
+/* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("9e6d91f0c51a");
+/* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("0bd4772bf4ae");
+
+
+const PROGRESS_BAR_SELECTOR = '.sf-progress-bar';
+const PROGRESS_BAR_BOUND_FLAG = 'sfProgressBarBound';
+
+function normalizeSize(value) {
+  const normalized = String(value || '').toLowerCase();
+  const supported = ['1/3', '1/2', '1', '2', '3'];
+  return supported.includes(normalized) ? normalized : '1';
+}
+
+function normalizeValue(value) {
+  const parsed = Number(value);
+
+  if (!Number.isFinite(parsed)) {
+    return 0;
+  }
+
+  return Math.max(0, Math.min(100, parsed));
+}
+
+function normalizeTextPosition(value, fallback = 'none') {
+  const normalized = String(value || fallback).toLowerCase();
+  return ['none', 'right', 'inline-end', 'bottom'].includes(normalized) ? normalized : fallback;
+}
+
+function getProgressNode(root) {
+  return root?.querySelector?.('.sf-progress-bar-progress') || null;
+}
+
+function getTextNode(root) {
+  return root?.querySelector?.('.sf-progress-bar-text') || null;
+}
+
+function getMainNode(root) {
+  return root?.querySelector?.('.sf-progress-bar-main') || null;
+}
+
+function detectTextPosition(root) {
+  if (!getTextNode(root)) {
+    return 'none';
+  }
+
+  if (root.classList.contains('flex-col')) {
+    return 'bottom';
+  }
+
+  return 'right';
+}
+
+function ensureTextNode(root) {
+  let textNode = getTextNode(root);
+  if (textNode) return textNode;
+  textNode = document.createElement('div');
+  textNode.className = 'sf-progress-bar-text';
+  root.append(textNode);
+  return textNode;
+}
+
+function syncRootLayout(root, textPosition = 'none') {
+  root.classList.add('sf-progress-bar', 'flex');
+  root.classList.remove('flex-col', 'flex-row', 'items-cross-end', 'items-cross-center');
+
+  if (textPosition === 'bottom') {
+    root.classList.add('flex-col', 'items-cross-end');
+    return;
+  }
+
+  if (textPosition === 'right' || textPosition === 'inline-end') {
+    root.classList.add('flex-row', 'items-cross-center');
+  }
+}
+
+function renderProgressBar(root) {
+  if (!root) return false;
+  const progress = getProgressNode(root);
+  const main = getMainNode(root);
+  if (!progress || !main) return false;
+  const value = normalizeValue(root.dataset.value ?? root.getAttribute('data-value') ?? 0);
+  const textPosition = normalizeTextPosition(root.dataset.textPosition ?? root.getAttribute('data-text-position'), detectTextPosition(root));
+  syncRootLayout(root, textPosition);
+  progress.style.width = `${value}%`;
+  root.dataset.value = String(value);
+  root.dataset.textPosition = textPosition;
+
+  if (textPosition === 'none') {
+    const textNode = getTextNode(root);
+
+    if (textNode) {
+      textNode.remove();
+    }
+
+    return true;
+  }
+
+  const textNode = ensureTextNode(root);
+  textNode.textContent = `${value}%`;
+
+  if (textPosition === 'bottom' && textNode.parentElement !== root) {
+    root.append(textNode);
+  }
+
+  return true;
+}
+
+function bindProgressBar(root) {
+  if (!root || root.dataset[PROGRESS_BAR_BOUND_FLAG] === '1') return;
+  renderProgressBar(root);
+  root.dataset[PROGRESS_BAR_BOUND_FLAG] = '1';
+}
+
+function unbindProgressBar(root) {
+  if (!root || root.dataset[PROGRESS_BAR_BOUND_FLAG] !== '1') return;
+  delete root.dataset[PROGRESS_BAR_BOUND_FLAG];
+}
+
+function initExistingProgressBars(target = document) {
+  target.querySelectorAll(PROGRESS_BAR_SELECTOR).forEach(bindProgressBar);
+}
+
+function setProgressBarState(target, state = {}) {
+  const root = target instanceof HTMLElement ? target.closest(PROGRESS_BAR_SELECTOR) || target : null;
+  if (!root) return false;
+
+  if (Object.prototype.hasOwnProperty.call(state, 'value')) {
+    root.dataset.value = String(normalizeValue(state.value));
+  }
+
+  if (Object.prototype.hasOwnProperty.call(state, 'textPosition')) {
+    root.dataset.textPosition = normalizeTextPosition(state.textPosition);
+  }
+
+  if (Object.prototype.hasOwnProperty.call(state, 'size')) {
+    const currentSizeClass = Array.from(root.classList).find(cls => cls.startsWith('sf-progress-bar--size-'));
+
+    if (currentSizeClass) {
+      root.classList.remove(currentSizeClass);
+    }
+
+    root.classList.add(`sf-progress-bar--size-${normalizeSize(state.size)}`);
+  }
+
+  return renderProgressBar(root);
+}
+
+function getProgressBarState(target) {
+  const root = target instanceof HTMLElement ? target.closest(PROGRESS_BAR_SELECTOR) || target : null;
+  if (!root) return null;
+  return {
+    value: normalizeValue(root.dataset.value ?? 0),
+    textPosition: normalizeTextPosition(root.dataset.textPosition, detectTextPosition(root))
+  };
+}
+
+class ProgressBar extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.ComponentObserver {
+  static componentName = 'ProgressBar';
+  html = null;
+
+  constructor(props) {
+    super(props);
+    const {
+      size = '1',
+      value = 0,
+      textPosition = 'none'
+    } = this.params || {};
+    const className = this.attrs.class || this.attrs.className;
+    const root = document.createElement('div');
+
+    if (this.id) {
+      root.id = this.id;
+    }
+
+    root.classList.add('sf-progress-bar', `sf-progress-bar--size-${normalizeSize(size)}`, 'flex');
+
+    if (className) {
+      root.classList.add(...String(className).split(' ').filter(Boolean));
+    }
+
+    root.dataset.value = String(normalizeValue(value));
+    root.dataset.textPosition = normalizeTextPosition(textPosition);
+    const main = document.createElement('div');
+    main.className = 'sf-progress-bar-main';
+    const progress = document.createElement('div');
+    progress.className = 'sf-progress-bar-progress transition';
+    main.append(progress);
+    root.append(main);
+    this.template = root;
+  }
+
+  init() {
+    bindProgressBar(this.template);
+  }
+
+  destroyInternal() {
+    unbindProgressBar(this.template);
+  }
+
+}
+
+(0,_register_helper__WEBPACK_IMPORTED_MODULE_1__["default"])('ProgressBar', ProgressBar);
+
+if (typeof window !== 'undefined') {
+  window.SF = window.SF || {};
+  window.SF.ProgressBar = window.SF.ProgressBar || {};
+  window.SF.ProgressBar.getState = getProgressBarState;
+  window.SF.ProgressBar.setState = setProgressBarState;
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => initExistingProgressBars(), {
+    once: true
+  });
+} else {
+  initExistingProgressBars();
+}
+
+const progressBarObserver = new MutationObserver(mutations => {
+  mutations.forEach(mutation => {
+    mutation.addedNodes.forEach(node => {
+      if (!(node instanceof Element)) return;
+
+      if (node.matches?.(PROGRESS_BAR_SELECTOR)) {
+        bindProgressBar(node);
+      }
+
+      initExistingProgressBars(node);
+    });
+  });
+});
+progressBarObserver.observe(document.documentElement, {
+  childList: true,
+  subtree: true
+});
+
+
+/***/ },
+
+/***/ "f049ab3d6cb2"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _progressbar__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("c5150caded43");
+/*
+* Main JS file for including JS for component.
+* 
+* Imports:
+* - Base function component (_component_name.js)
+*/
+
+
+/***/ },
+
+/***/ "0bd4772bf4ae"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   registerComponent: () => (/* binding */ registerComponent)
+/* harmony export */ });
+// Simple helper to register a component in one call.
+// Usage inside component bundle:
+//   import register from './register-helper';
+//   register('Buttons', Buttons);
+function registerComponent(name, cls) {
+  if (!name || !cls) return;
+
+  if (typeof window !== 'undefined' && typeof window.registerSfComponent === 'function') {
+    window.registerSfComponent(name, cls);
+    return;
+  }
+
+  if (typeof window !== 'undefined' && window.SF?.Loader?.registerComponent) {
+    window.SF.Loader.registerComponent(name, cls);
+    return;
+  }
+
+  if (typeof window !== 'undefined') {
+    const pending = window.SF_PENDING_COMPONENTS = window.SF_PENDING_COMPONENTS || [];
+    pending.push([name, cls]);
+  }
+}
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (registerComponent);
+
+/***/ },
+
+/***/ "9e6d91f0c51a"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   ComponentObserver: () => (/* binding */ ComponentObserver)
+/* harmony export */ });
+class ComponentObserver {
+  constructor(props) {
+    this.props = props;
+    this.id = props?.id;
+    this.params = props?.param;
+    this.attrs = props?.attrs || {};
+    this.template = null;
+    window.dispatchEvent(new CustomEvent(`${this.componentName}:beforeRender`, {
+      detail: this
+    }));
+  }
+
+  getUtilityMap() {
+    return this.constructor.utilityMap || null;
+  }
+
+  extractUtilityClasses(values) {
+    if (!Array.isArray(values)) {
+      return [];
+    }
+
+    const classes = new Set();
+    values.forEach(value => {
+      if (typeof value !== 'string') {
+        return;
+      }
+
+      const matches = value.match(/\(([^)]+)\)/g);
+
+      if (!matches) {
+        return;
+      }
+
+      matches.forEach(match => {
+        const raw = match.slice(1, -1);
+        raw.split(/\s+/).filter(Boolean).forEach(cls => {
+          classes.add(cls.replace(/^\./, ''));
+        });
+      });
+    });
+    return Array.from(classes);
+  }
+
+  applyLayoutUtilities(target, selector) {
+    if (!target || !selector) {
+      return;
+    }
+
+    const map = this.getUtilityMap();
+
+    if (!map || !map[selector]) {
+      return;
+    }
+
+    const classes = this.extractUtilityClasses(map[selector]);
+    classes.forEach(cls => target.classList.add(cls));
+  }
+
+  render() {
+    this.html = this.template;
+
+    if (typeof this.init === 'function') {
+      this.init();
+    }
+
+    if (this.html) {
+      window.dispatchEvent(new CustomEvent(`${this.componentName}:render`, {
+        detail: this
+      }));
+    }
+
+    return this.html;
+  }
+
+  destroy() {
+    this.destroyInternal?.();
+    this.props = null;
+    this.id = null;
+    this.params = null;
+    this.template = null;
+
+    if (this.html) {
+      this.html.remove();
+      this.html = null;
+    }
+
+    window.dispatchEvent(new CustomEvent(`${this.componentName}:destroy`, {
+      detail: this
+    }));
+  }
+
+  destroyInternal() {}
+
+}
+
+/***/ },
+
+/***/ "3a579e1a26fd"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ }
+
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	const __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		const cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		const module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		if (!(moduleId in __webpack_modules__)) {
+/******/ 			delete __webpack_module_cache__[moduleId];
+/******/ 			const e = new Error("Cannot find module '" + moduleId + "'");
+/******/ 			e.code = 'MODULE_NOT_FOUND';
+/******/ 			throw e;
+/******/ 		}
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter/value functions for harmony exports
+/******/ 		__webpack_require__.d = (exports, definition) => {
+/******/ 			if(Array.isArray(definition)) {
+/******/ 				var i = 0;
+/******/ 				while(i < definition.length) {
+/******/ 					var key = definition[i++];
+/******/ 					var binding = definition[i++];
+/******/ 					if(!__webpack_require__.o(exports, key)) {
+/******/ 						if(binding === 0) {
+/******/ 							Object.defineProperty(exports, key, { enumerable: true, value: definition[i++] });
+/******/ 						} else {
+/******/ 							Object.defineProperty(exports, key, { enumerable: true, get: binding });
+/******/ 						}
+/******/ 					} else if(binding === 0) { i++; }
+/******/ 				}
+/******/ 			} else {
+/******/ 				for(var key in definition) {
+/******/ 					if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 						Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 					}
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = (exports) => {
+/******/ 			if(Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/************************************************************************/
+let __webpack_exports__ = {};
+// This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
+(() => {
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("3a579e1a26fd");
+/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("f049ab3d6cb2");
+/**
+* SIMAI Framework
+* Copyright 2008-2026 SIMAI Ltd
+* http://simai.studio
+* Read the license: http://framework.simai.studio/license/
+* Documentation: http://framework.simai.studio/
+* Support: http://simai.studio/support/
+* 
+* PROGRESSBAR
+* 
+* Entry point for importing components from this directory.
+* Simplifies the import process in other parts of the project.
+* Instead of importing individual files, all component can be imported through this file.
+*/
+
+
+})();
+
+/******/ })()
+;

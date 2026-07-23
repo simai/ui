@@ -1,1 +1,757 @@
-(()=>{"use strict";class t{constructor(t){this.props=t,this.id=t?.id,this.params=t?.param,this.attrs=t?.attrs||{},this.template=null,window.dispatchEvent(new CustomEvent(`${this.componentName}:beforeRender`,{detail:this}))}getUtilityMap(){return this.constructor.utilityMap||null}extractUtilityClasses(t){if(!Array.isArray(t))return[];const e=new Set;return t.forEach(t=>{if("string"!=typeof t)return;const i=t.match(/\(([^)]+)\)/g);i&&i.forEach(t=>{t.slice(1,-1).split(/\s+/).filter(Boolean).forEach(t=>{e.add(t.replace(/^\./,""))})})}),Array.from(e)}applyLayoutUtilities(t,e){if(!t||!e)return;const i=this.getUtilityMap();if(!i||!i[e])return;this.extractUtilityClasses(i[e]).forEach(e=>t.classList.add(e))}render(){return this.html=this.template,"function"==typeof this.init&&this.init(),this.html&&window.dispatchEvent(new CustomEvent(`${this.componentName}:render`,{detail:this})),this.html}destroy(){this.destroyInternal?.(),this.props=null,this.id=null,this.params=null,this.template=null,this.html&&(this.html.remove(),this.html=null),window.dispatchEvent(new CustomEvent(`${this.componentName}:destroy`,{detail:this}))}destroyInternal(){}}const e=function(t,e){if(t&&e)if("undefined"==typeof window||"function"!=typeof window.registerSfComponent){if("undefined"!=typeof window&&window.SF?.Loader?.registerComponent)window.SF.Loader.registerComponent(t,e);else if("undefined"!=typeof window){(window.SF_PENDING_COMPONENTS=window.SF_PENDING_COMPONENTS||[]).push([t,e])}}else window.registerSfComponent(t,e)},i="label.sf-radio-button",n="sfRadioBound",s=new Set(["class","className","type","count","text","title","description","help","checked","disabled"]);function o(t,e=!1){if(null==t||""===t)return e;if("boolean"==typeof t)return t;const i=String(t).toLowerCase();return["1","true","yes","on","checked","disabled"].includes(i)}function a(t,e=0){const i=Number(t);return Number.isFinite(i)?i:e}function r(t){if(Array.isArray(t))return t;if(null==t||""===t)return[];if("string"==typeof t){const e=t.trim();if(!e)return[];if(e.startsWith("[")&&e.endsWith("]")||e.startsWith("{")&&e.endsWith("}"))try{const t=JSON.parse(e);return Array.isArray(t)?t:[]}catch{return e.slice(1,-1).split(",").map(t=>t.trim()).filter(Boolean)}return e.split(",").map(t=>t.trim()).filter(Boolean)}return[t]}function d(t){if(!t)return{};return{input:t.querySelector('input[type="radio"]'),mark:t.querySelector(".sf-radio-button-box .sf-radio-button-mark")}}function c(t){const{input:e,mark:i}=d(t);e&&(t.classList.toggle("active",!!e.checked),t.classList.toggle("disabled",!!e.disabled),i&&i.setAttribute("aria-hidden","true"))}function l(t){const e=t?.closest?.(".sf-radio-wrap--type-font");if(!e)return;const n=r(e.dataset.sfRadioDescriptions||""),s=e.querySelector(".sf-radio-button-description"),o=e.querySelector(`${i} input[type="radio"]:checked`),d=a(o?.dataset?.sfRadioFontIndex,-1);e.querySelectorAll(".sf-radio-text").forEach((t,e)=>t.classList.toggle("active",e===d)),s&&(d>=0&&d<n.length?s.textContent=n[d]||"":s.textContent=n[0]||e.dataset.sfRadioDescription||"")}function u(t){const e=function(t){return t instanceof HTMLInputElement&&"radio"===t.type&&t.name?Array.from(document.querySelectorAll(`${i} input[type="radio"][name="${t.name}"]`)).map(t=>t.closest(i)).filter(Boolean):[]}(t);if(!e.length){const e=t?.closest?.(i);return e&&c(e),void l(t)}e.forEach(t=>c(t)),l(t)}function p(t){if(!t||"1"===t.dataset[n])return;const{input:e}=d(t);if(!e)return;const i=()=>u(e);t.__sfRadioHandleChange=i,e.addEventListener("change",i),t.dataset[n]="1",c(t)}function h(t){if(!t)return;const{input:e}=d(t);e&&t.__sfRadioHandleChange&&e.removeEventListener("change",t.__sfRadioHandleChange),delete t.__sfRadioHandleChange,delete t.dataset[n]}function f(t){(t instanceof Element||t===document)&&(t instanceof Element&&t.matches?.(i)&&p(t),t.querySelectorAll?.(i).forEach(p))}function m(t=document){f(t)}function y(t){return t instanceof HTMLInputElement&&"radio"===t.type?(t.style.position="absolute",t.style.opacity="0",t.style.pointerEvents="none",t.style.inlineSize="0",t.style.blockSize="0",t.style.margin="0",t):t}e("Radio",class extends t{static componentName="Radio";html=null;constructor(t){super(t);const{size:e="1",type:i="default",count:n=0,text:a="",title:r="",description:d="",help:c="",checked:l=!1,disabled:u=!1,name:p="",value:h}=this.params||{},f=this.attrs.class||this.attrs.className;if(this.type=i||"default",this.template="font"===this.type?this.buildFontTemplate({size:e,count:n,text:a,title:r,description:d,help:c,checked:l,disabled:u,name:p,value:h,className:f}):document.createElement("label"),this.id&&(this.template.id=this.id),"font"===this.type)return;this.template.classList.add("sf-radio-button",`sf-radio-button--size-${e}`,`sf-radio-button--type-${i||"default"}`),f&&this.template.classList.add(...`${f}`.split(" ").filter(Boolean)),this.box=document.createElement("span"),this.box.classList.add("sf-radio-button-box"),this.input=document.createElement("input"),this.input.type="radio",p&&(this.input.name=p),void 0!==h&&(this.input.value=h),this.input.checked="font"===this.type&&this.previewCheckedIndex>=0||o(l),this.input.disabled=o(u),y(this.input),Object.entries(this.attrs).filter(([t])=>!s.has(t)).forEach(([t,e])=>{null!=e&&this.input.setAttribute(t,e)}),"font"===this.type?(this.box.classList.add("sf-radio-button-box--font"),this.box.append(this.input,this.createFontPreview())):(this.mark=document.createElement("span"),this.mark.classList.add("sf-radio-button-mark"),this.mark.setAttribute("aria-hidden","true"),this.box.append(this.input,this.mark)),this.template.append(this.box);const m="font"===this.type?this.getSelectedDescription(d):d;(r||m||c)&&(this.container=document.createElement("span"),this.container.classList.add("sf-radio-button-container","flex","flex-col"),(r||c)&&(this.top=document.createElement("span"),this.top.classList.add("sf-radio-button-top","flex"),r&&(this.text=document.createElement("span"),this.text.classList.add("sf-radio-button-text"),this.text.textContent=r,this.top.append(this.text)),c&&(this.helpIcon=document.createElement("i"),this.helpIcon.classList.add("sf-icon"),this.helpIcon.setAttribute("aria-hidden","true"),this.helpIcon.textContent=c,this.top.append(this.helpIcon)),this.container.append(this.top)),m&&(this.description=document.createElement("span"),this.description.classList.add("sf-radio-button-description"),this.description.textContent=m,this.container.append(this.description)),this.template.append(this.container))}init(){f(this.template)}destroyInternal(){this.template&&(this.template.matches?.(i)?h(this.template):this.template.querySelectorAll?.(i).forEach(h))}resolveCheckedIndex(t,e){const i=Math.max(0,a(e,0));if("number"==typeof t||"string"==typeof t&&""!==t){const e=Math.floor(a(t,-1));return e>=0&&e<i?e:-1}return o(t,!1)?0:-1}buildFontTemplate({size:t="1",count:e=1,text:i="A",title:n="",description:d="",help:c="",checked:l=!1,disabled:u=!1,name:p="",value:h,className:f=""}={}){const m=document.createElement("div"),b=Math.max(1,a(e,1)),E=this.resolveCheckedIndex(l,b),w=r(d),x=r(h);m.classList.add("sf-radio-button","sf-radio-wrap--type-font","flex",`sf-radio-button--size-${t}`),f&&m.classList.add(...`${f}`.split(" ").filter(Boolean)),m.dataset.sfRadioDescriptions=JSON.stringify(w),m.dataset.sfRadioDescription=(E>=0?w[E]:w[0])||"";const L=document.createElement("div");L.classList.add("sf-radio-group","sf-radio-group--font","flex","items-cross-start");for(let e=0;e<b;e+=1){const n=document.createElement("label");n.classList.add("sf-radio-button",`sf-radio-button--size-${t}`,"sf-radio-button--type-font");const a=document.createElement("i");a.classList.add("sf-radio-text"),e===E&&a.classList.add("active"),a.setAttribute("aria-hidden","true"),a.textContent=i||"A";const r=document.createElement("input");r.type="radio",r.dataset.sfRadioFontIndex=String(e),p&&(r.name=p),void 0!==x[e]?r.value=String(x[e]):void 0===h||Array.isArray(h)?r.value=String(e):r.value=String(h),r.checked=e===E,r.disabled=o(u),y(r),Object.entries(this.attrs).filter(([t])=>!s.has(t)).forEach(([t,e])=>{null!=e&&r.setAttribute(t,e)}),n.append(a,r),L.append(n)}const g=document.createElement("div");if(g.classList.add("sf-radio-button-container","flex","flex-col"),n||c){const t=document.createElement("span");if(t.classList.add("sf-radio-button-top","flex"),n){const e=document.createElement("span");e.classList.add("sf-radio-button-text"),e.textContent=n,t.append(e)}if(c){const e=document.createElement("i");e.classList.add("sf-icon"),e.setAttribute("aria-hidden","true"),e.textContent=c,t.append(e)}g.append(t)}const v=(E>=0?w[E]:w[0])||"";if(v){const t=document.createElement("span");t.classList.add("sf-radio-button-description"),t.textContent=v,g.append(t)}return m.append(L,g),m}}),"undefined"!=typeof window&&(window.SF=window.SF||{},window.SF.Radio=window.SF.Radio||{},window.SF.Radio.setState=function(t,e={}){return t instanceof HTMLInputElement&&"radio"===t.type&&(Object.prototype.hasOwnProperty.call(e,"checked")&&(t.checked=o(e.checked)),Object.prototype.hasOwnProperty.call(e,"disabled")&&(t.disabled=o(e.disabled)),u(t),!0)}),"loading"===document.readyState?document.addEventListener("DOMContentLoaded",()=>m()):m();new MutationObserver(t=>{t.forEach(t=>{t.addedNodes.forEach(t=>{t instanceof Element&&f(t)})})}).observe(document.documentElement,{childList:!0,subtree:!0})})();
+/******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
+/******/ 	var __webpack_modules__ = ({
+
+/***/ "6c0db15f93c5"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   bindRadio: () => (/* binding */ bindRadio),
+/* harmony export */   setRadioState: () => (/* binding */ setRadioState),
+/* harmony export */   syncRadioState: () => (/* binding */ syncRadioState),
+/* harmony export */   unbindRadio: () => (/* binding */ unbindRadio)
+/* harmony export */ });
+/* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("9e6d91f0c51a");
+/* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("0bd4772bf4ae");
+
+
+const RADIO_SELECTOR = 'label.sf-radio-button';
+const RADIO_BOUND_FLAG = 'sfRadioBound';
+const RADIO_FONT_WRAP_SELECTOR = '.sf-radio-wrap--type-font';
+const RADIO_INTERNAL_ATTRS = new Set(['class', 'className', 'type', 'count', 'text', 'title', 'description', 'help', 'checked', 'disabled']);
+
+function toBoolean(value, defaultValue = false) {
+  if (value === undefined || value === null || value === '') return defaultValue;
+  if (typeof value === 'boolean') return value;
+  const normalized = String(value).toLowerCase();
+  return ['1', 'true', 'yes', 'on', 'checked', 'disabled'].includes(normalized);
+}
+
+function toNumber(value, defaultValue = 0) {
+  const nextValue = Number(value);
+  return Number.isFinite(nextValue) ? nextValue : defaultValue;
+}
+
+function toArray(value) {
+  if (Array.isArray(value)) {
+    return value;
+  }
+
+  if (value === undefined || value === null || value === '') {
+    return [];
+  }
+
+  if (typeof value === 'string') {
+    const normalized = value.trim();
+
+    if (!normalized) {
+      return [];
+    }
+
+    if (normalized.startsWith('[') && normalized.endsWith(']') || normalized.startsWith('{') && normalized.endsWith('}')) {
+      try {
+        const parsed = JSON.parse(normalized);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch {
+        return normalized.slice(1, -1).split(',').map(item => item.trim()).filter(Boolean);
+      }
+    }
+
+    return normalized.split(',').map(item => item.trim()).filter(Boolean);
+  }
+
+  return [value];
+}
+
+function getRadioNodes(root) {
+  if (!root) return {};
+  const input = root.querySelector('input[type="radio"]');
+  const mark = root.querySelector('.sf-radio-button-box .sf-radio-button-mark');
+  return {
+    input,
+    mark
+  };
+}
+
+function getRadioGroupRoots(input) {
+  if (!(input instanceof HTMLInputElement) || input.type !== 'radio' || !input.name) {
+    return [];
+  }
+
+  return Array.from(document.querySelectorAll(`${RADIO_SELECTOR} input[type="radio"][name="${input.name}"]`)).map(node => node.closest(RADIO_SELECTOR)).filter(Boolean);
+}
+
+function syncRadioState(root) {
+  const {
+    input,
+    mark
+  } = getRadioNodes(root);
+  if (!input) return;
+  root.classList.toggle('active', !!input.checked);
+  root.classList.toggle('disabled', !!input.disabled);
+
+  if (mark) {
+    mark.setAttribute('aria-hidden', 'true');
+  }
+}
+
+function syncFontRadioWrap(input) {
+  const wrap = input?.closest?.(RADIO_FONT_WRAP_SELECTOR);
+  if (!wrap) return;
+  const descriptions = toArray(wrap.dataset.sfRadioDescriptions || '');
+  const descriptionNode = wrap.querySelector('.sf-radio-button-description');
+  const checkedInput = wrap.querySelector(`${RADIO_SELECTOR} input[type="radio"]:checked`);
+  const checkedIndex = toNumber(checkedInput?.dataset?.sfRadioFontIndex, -1);
+  wrap.querySelectorAll('.sf-radio-text').forEach((node, index) => node.classList.toggle('active', index === checkedIndex));
+  if (!descriptionNode) return;
+
+  if (checkedIndex >= 0 && checkedIndex < descriptions.length) {
+    descriptionNode.textContent = descriptions[checkedIndex] || '';
+    return;
+  }
+
+  descriptionNode.textContent = descriptions[0] || wrap.dataset.sfRadioDescription || '';
+}
+
+function refreshRadioGroup(input) {
+  const roots = getRadioGroupRoots(input);
+
+  if (!roots.length) {
+    const root = input?.closest?.(RADIO_SELECTOR);
+
+    if (root) {
+      syncRadioState(root);
+    }
+
+    syncFontRadioWrap(input);
+    return;
+  }
+
+  roots.forEach(root => syncRadioState(root));
+  syncFontRadioWrap(input);
+}
+
+function bindRadio(root) {
+  if (!root || root.dataset[RADIO_BOUND_FLAG] === '1') return;
+  const {
+    input
+  } = getRadioNodes(root);
+  if (!input) return;
+
+  const handleChange = () => refreshRadioGroup(input);
+
+  root.__sfRadioHandleChange = handleChange;
+  input.addEventListener('change', handleChange);
+  root.dataset[RADIO_BOUND_FLAG] = '1';
+  syncRadioState(root);
+}
+
+function unbindRadio(root) {
+  if (!root) return;
+  const {
+    input
+  } = getRadioNodes(root);
+
+  if (input && root.__sfRadioHandleChange) {
+    input.removeEventListener('change', root.__sfRadioHandleChange);
+  }
+
+  delete root.__sfRadioHandleChange;
+  delete root.dataset[RADIO_BOUND_FLAG];
+}
+
+function initRadioTree(target) {
+  if (!(target instanceof Element) && target !== document) return;
+
+  if (target instanceof Element && target.matches?.(RADIO_SELECTOR)) {
+    bindRadio(target);
+  }
+
+  target.querySelectorAll?.(RADIO_SELECTOR).forEach(bindRadio);
+}
+
+function setRadioState(input, state = {}) {
+  if (!(input instanceof HTMLInputElement) || input.type !== 'radio') {
+    return false;
+  }
+
+  if (Object.prototype.hasOwnProperty.call(state, 'checked')) {
+    input.checked = toBoolean(state.checked);
+  }
+
+  if (Object.prototype.hasOwnProperty.call(state, 'disabled')) {
+    input.disabled = toBoolean(state.disabled);
+  }
+
+  refreshRadioGroup(input);
+  return true;
+}
+
+function initExistingRadios(target = document) {
+  initRadioTree(target);
+}
+
+function hideNativeRadioInput(input) {
+  if (!(input instanceof HTMLInputElement) || input.type !== 'radio') {
+    return input;
+  }
+
+  input.style.position = 'absolute';
+  input.style.opacity = '0';
+  input.style.pointerEvents = 'none';
+  input.style.inlineSize = '0';
+  input.style.blockSize = '0';
+  input.style.margin = '0';
+  return input;
+}
+
+class Radio extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.ComponentObserver {
+  static componentName = 'Radio';
+  html = null;
+
+  constructor(props) {
+    super(props);
+    const {
+      size = '1',
+      type = 'default',
+      count = 0,
+      text = '',
+      title = '',
+      description = '',
+      help = '',
+      checked = false,
+      disabled = false,
+      name = '',
+      value
+    } = this.params || {};
+    const className = this.attrs.class || this.attrs.className;
+    this.type = type || 'default';
+    this.template = this.type === 'font' ? this.buildFontTemplate({
+      size,
+      count,
+      text,
+      title,
+      description,
+      help,
+      checked,
+      disabled,
+      name,
+      value,
+      className
+    }) : document.createElement('label');
+
+    if (this.id) {
+      this.template.id = this.id;
+    }
+
+    if (this.type === 'font') {
+      return;
+    }
+
+    this.template.classList.add('sf-radio-button', `sf-radio-button--size-${size}`, `sf-radio-button--type-${type || 'default'}`);
+
+    if (className) {
+      this.template.classList.add(...`${className}`.split(' ').filter(Boolean));
+    }
+
+    this.box = document.createElement('span');
+    this.box.classList.add('sf-radio-button-box');
+    this.input = document.createElement('input');
+    this.input.type = 'radio';
+
+    if (name) {
+      this.input.name = name;
+    }
+
+    if (value !== undefined) {
+      this.input.value = value;
+    }
+
+    this.input.checked = this.type === 'font' ? this.previewCheckedIndex >= 0 || toBoolean(checked) : toBoolean(checked);
+    this.input.disabled = toBoolean(disabled);
+    hideNativeRadioInput(this.input);
+    Object.entries(this.attrs).filter(([attr]) => !RADIO_INTERNAL_ATTRS.has(attr)).forEach(([attr, attrValue]) => {
+      if (attrValue === undefined || attrValue === null) return;
+      this.input.setAttribute(attr, attrValue);
+    });
+
+    if (this.type === 'font') {
+      this.box.classList.add('sf-radio-button-box--font');
+      this.box.append(this.input, this.createFontPreview());
+    } else {
+      this.mark = document.createElement('span');
+      this.mark.classList.add('sf-radio-button-mark');
+      this.mark.setAttribute('aria-hidden', 'true');
+      this.box.append(this.input, this.mark);
+    }
+
+    this.template.append(this.box);
+    const descriptionText = this.type === 'font' ? this.getSelectedDescription(description) : description;
+
+    if (title || descriptionText || help) {
+      this.container = document.createElement('span');
+      this.container.classList.add('sf-radio-button-container', 'flex', 'flex-col');
+
+      if (title || help) {
+        this.top = document.createElement('span');
+        this.top.classList.add('sf-radio-button-top', 'flex');
+
+        if (title) {
+          this.text = document.createElement('span');
+          this.text.classList.add('sf-radio-button-text');
+          this.text.textContent = title;
+          this.top.append(this.text);
+        }
+
+        if (help) {
+          this.helpIcon = document.createElement('i');
+          this.helpIcon.classList.add('sf-icon');
+          this.helpIcon.setAttribute('aria-hidden', 'true');
+          this.helpIcon.textContent = help;
+          this.top.append(this.helpIcon);
+        }
+
+        this.container.append(this.top);
+      }
+
+      if (descriptionText) {
+        this.description = document.createElement('span');
+        this.description.classList.add('sf-radio-button-description');
+        this.description.textContent = descriptionText;
+        this.container.append(this.description);
+      }
+
+      this.template.append(this.container);
+    }
+  }
+
+  init() {
+    initRadioTree(this.template);
+  }
+
+  destroyInternal() {
+    if (!this.template) return;
+
+    if (this.template.matches?.(RADIO_SELECTOR)) {
+      unbindRadio(this.template);
+      return;
+    }
+
+    this.template.querySelectorAll?.(RADIO_SELECTOR).forEach(unbindRadio);
+  }
+
+  resolveCheckedIndex(checked, count) {
+    const total = Math.max(0, toNumber(count, 0));
+
+    if (typeof checked === 'number' || typeof checked === 'string' && checked !== '') {
+      const index = Math.floor(toNumber(checked, -1));
+      return index >= 0 && index < total ? index : -1;
+    }
+
+    return toBoolean(checked, false) ? 0 : -1;
+  }
+
+  buildFontTemplate({
+    size = '1',
+    count = 1,
+    text = 'A',
+    title = '',
+    description = '',
+    help = '',
+    checked = false,
+    disabled = false,
+    name = '',
+    value,
+    className = ''
+  } = {}) {
+    const wrap = document.createElement('div');
+    const total = Math.max(1, toNumber(count, 1));
+    const checkedIndex = this.resolveCheckedIndex(checked, total);
+    const descriptions = toArray(description);
+    const values = toArray(value);
+    wrap.classList.add('sf-radio-button', 'sf-radio-wrap--type-font', 'flex', `sf-radio-button--size-${size}`);
+
+    if (className) {
+      wrap.classList.add(...`${className}`.split(' ').filter(Boolean));
+    }
+
+    wrap.dataset.sfRadioDescriptions = JSON.stringify(descriptions);
+    wrap.dataset.sfRadioDescription = (checkedIndex >= 0 ? descriptions[checkedIndex] : descriptions[0]) || '';
+    const group = document.createElement('div');
+    group.classList.add('sf-radio-group', 'sf-radio-group--font', 'flex', 'items-cross-start');
+
+    for (let index = 0; index < total; index += 1) {
+      const option = document.createElement('label');
+      option.classList.add('sf-radio-button', `sf-radio-button--size-${size}`, 'sf-radio-button--type-font');
+      const icon = document.createElement('i');
+      icon.classList.add('sf-radio-text');
+
+      if (index === checkedIndex) {
+        icon.classList.add('active');
+      }
+
+      icon.setAttribute('aria-hidden', 'true');
+      icon.textContent = text || 'A';
+      const input = document.createElement('input');
+      input.type = 'radio';
+      input.dataset.sfRadioFontIndex = String(index);
+
+      if (name) {
+        input.name = name;
+      }
+
+      if (values[index] !== undefined) {
+        input.value = String(values[index]);
+      } else if (value !== undefined && !Array.isArray(value)) {
+        input.value = String(value);
+      } else {
+        input.value = String(index);
+      }
+
+      input.checked = index === checkedIndex;
+      input.disabled = toBoolean(disabled);
+      hideNativeRadioInput(input);
+      Object.entries(this.attrs).filter(([attr]) => !RADIO_INTERNAL_ATTRS.has(attr)).forEach(([attr, attrValue]) => {
+        if (attrValue === undefined || attrValue === null) return;
+        input.setAttribute(attr, attrValue);
+      });
+      option.append(icon, input);
+      group.append(option);
+    }
+
+    const container = document.createElement('div');
+    container.classList.add('sf-radio-button-container', 'flex', 'flex-col');
+
+    if (title || help) {
+      const top = document.createElement('span');
+      top.classList.add('sf-radio-button-top', 'flex');
+
+      if (title) {
+        const textNode = document.createElement('span');
+        textNode.classList.add('sf-radio-button-text');
+        textNode.textContent = title;
+        top.append(textNode);
+      }
+
+      if (help) {
+        const helpIcon = document.createElement('i');
+        helpIcon.classList.add('sf-icon');
+        helpIcon.setAttribute('aria-hidden', 'true');
+        helpIcon.textContent = help;
+        top.append(helpIcon);
+      }
+
+      container.append(top);
+    }
+
+    const descriptionText = (checkedIndex >= 0 ? descriptions[checkedIndex] : descriptions[0]) || '';
+
+    if (descriptionText) {
+      const descriptionNode = document.createElement('span');
+      descriptionNode.classList.add('sf-radio-button-description');
+      descriptionNode.textContent = descriptionText;
+      container.append(descriptionNode);
+    }
+
+    wrap.append(group, container);
+    return wrap;
+  }
+
+}
+
+(0,_register_helper__WEBPACK_IMPORTED_MODULE_1__["default"])('Radio', Radio);
+
+if (typeof window !== 'undefined') {
+  window.SF = window.SF || {};
+  window.SF.Radio = window.SF.Radio || {};
+  window.SF.Radio.setState = setRadioState;
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => initExistingRadios());
+} else {
+  initExistingRadios();
+}
+
+const radioObserver = new MutationObserver(mutations => {
+  mutations.forEach(mutation => {
+    mutation.addedNodes.forEach(node => {
+      if (!(node instanceof Element)) return;
+      initRadioTree(node);
+    });
+  });
+});
+radioObserver.observe(document.documentElement, {
+  childList: true,
+  subtree: true
+});
+
+
+/***/ },
+
+/***/ "d5794f0a9b79"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _radio__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("6c0db15f93c5");
+/*
+* Main JS file for including JS for component.
+*
+* Imports:
+* - Base function component (_component_name.js)
+*/
+
+
+/***/ },
+
+/***/ "0bd4772bf4ae"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   registerComponent: () => (/* binding */ registerComponent)
+/* harmony export */ });
+// Simple helper to register a component in one call.
+// Usage inside component bundle:
+//   import register from './register-helper';
+//   register('Buttons', Buttons);
+function registerComponent(name, cls) {
+  if (!name || !cls) return;
+
+  if (typeof window !== 'undefined' && typeof window.registerSfComponent === 'function') {
+    window.registerSfComponent(name, cls);
+    return;
+  }
+
+  if (typeof window !== 'undefined' && window.SF?.Loader?.registerComponent) {
+    window.SF.Loader.registerComponent(name, cls);
+    return;
+  }
+
+  if (typeof window !== 'undefined') {
+    const pending = window.SF_PENDING_COMPONENTS = window.SF_PENDING_COMPONENTS || [];
+    pending.push([name, cls]);
+  }
+}
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (registerComponent);
+
+/***/ },
+
+/***/ "9e6d91f0c51a"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   ComponentObserver: () => (/* binding */ ComponentObserver)
+/* harmony export */ });
+class ComponentObserver {
+  constructor(props) {
+    this.props = props;
+    this.id = props?.id;
+    this.params = props?.param;
+    this.attrs = props?.attrs || {};
+    this.template = null;
+    window.dispatchEvent(new CustomEvent(`${this.componentName}:beforeRender`, {
+      detail: this
+    }));
+  }
+
+  getUtilityMap() {
+    return this.constructor.utilityMap || null;
+  }
+
+  extractUtilityClasses(values) {
+    if (!Array.isArray(values)) {
+      return [];
+    }
+
+    const classes = new Set();
+    values.forEach(value => {
+      if (typeof value !== 'string') {
+        return;
+      }
+
+      const matches = value.match(/\(([^)]+)\)/g);
+
+      if (!matches) {
+        return;
+      }
+
+      matches.forEach(match => {
+        const raw = match.slice(1, -1);
+        raw.split(/\s+/).filter(Boolean).forEach(cls => {
+          classes.add(cls.replace(/^\./, ''));
+        });
+      });
+    });
+    return Array.from(classes);
+  }
+
+  applyLayoutUtilities(target, selector) {
+    if (!target || !selector) {
+      return;
+    }
+
+    const map = this.getUtilityMap();
+
+    if (!map || !map[selector]) {
+      return;
+    }
+
+    const classes = this.extractUtilityClasses(map[selector]);
+    classes.forEach(cls => target.classList.add(cls));
+  }
+
+  render() {
+    this.html = this.template;
+
+    if (typeof this.init === 'function') {
+      this.init();
+    }
+
+    if (this.html) {
+      window.dispatchEvent(new CustomEvent(`${this.componentName}:render`, {
+        detail: this
+      }));
+    }
+
+    return this.html;
+  }
+
+  destroy() {
+    this.destroyInternal?.();
+    this.props = null;
+    this.id = null;
+    this.params = null;
+    this.template = null;
+
+    if (this.html) {
+      this.html.remove();
+      this.html = null;
+    }
+
+    window.dispatchEvent(new CustomEvent(`${this.componentName}:destroy`, {
+      detail: this
+    }));
+  }
+
+  destroyInternal() {}
+
+}
+
+/***/ },
+
+/***/ "48440ed07638"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ }
+
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	const __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		const cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		const module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		if (!(moduleId in __webpack_modules__)) {
+/******/ 			delete __webpack_module_cache__[moduleId];
+/******/ 			const e = new Error("Cannot find module '" + moduleId + "'");
+/******/ 			e.code = 'MODULE_NOT_FOUND';
+/******/ 			throw e;
+/******/ 		}
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter/value functions for harmony exports
+/******/ 		__webpack_require__.d = (exports, definition) => {
+/******/ 			if(Array.isArray(definition)) {
+/******/ 				var i = 0;
+/******/ 				while(i < definition.length) {
+/******/ 					var key = definition[i++];
+/******/ 					var binding = definition[i++];
+/******/ 					if(!__webpack_require__.o(exports, key)) {
+/******/ 						if(binding === 0) {
+/******/ 							Object.defineProperty(exports, key, { enumerable: true, value: definition[i++] });
+/******/ 						} else {
+/******/ 							Object.defineProperty(exports, key, { enumerable: true, get: binding });
+/******/ 						}
+/******/ 					} else if(binding === 0) { i++; }
+/******/ 				}
+/******/ 			} else {
+/******/ 				for(var key in definition) {
+/******/ 					if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 						Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 					}
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = (exports) => {
+/******/ 			if(Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/************************************************************************/
+let __webpack_exports__ = {};
+// This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
+(() => {
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("48440ed07638");
+/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("d5794f0a9b79");
+/**
+ * SIMAI Framework
+ * Copyright 2008-2026 SIMAI Ltd
+ * http://simai.studio
+ * Read the license: http://framework.simai.studio/license/
+ * Documentation: http://framework.simai.studio/
+ * Support: http://simai.studio/support/
+ *
+ * INPUTS
+ *
+ * Entry point for importing components from this directory.
+ * Simplifies the import process in other parts of the project.
+ * Instead of importing individual files, all component can be imported through this file.
+ */
+
+
+})();
+
+/******/ })()
+;

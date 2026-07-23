@@ -1,1 +1,1826 @@
-"use strict";(self.webpackChunkSimaiCore=self.webpackChunkSimaiCore||[]).push([[0],{21021:(t,e,s)=>{s.r(e),s.d(e,{default:()=>T,normalizeEnum:()=>C,parseJsonAttribute:()=>_,toAttributeName:()=>g,toBoolean:()=>b,toNumber:()=>A});var r=s(92182),i=s(54714);const{it:o}=i.ge;var n=s(31926);const a=(t,e)=>{const s=t._$AN;if(void 0===s)return!1;for(const t of s)t._$AO?.(e,!1),a(t,e);return!0},l=t=>{let e,s;do{if(void 0===(e=t._$AM))break;s=e._$AN,s.delete(t),t=e}while(0===s?.size)},h=t=>{for(let e;e=t._$AM;t=e){let s=e._$AN;if(void 0===s)e._$AN=s=new Set;else if(s.has(t))break;s.add(t),d(e)}};function u(t){void 0!==this._$AN?(l(this),this._$AM=t,h(this)):this._$AM=t}function c(t,e=!1,s=0){const r=this._$AH,i=this._$AN;if(void 0!==i&&0!==i.size)if(e)if(Array.isArray(r))for(let t=s;t<r.length;t++)a(r[t],!1),l(r[t]);else null!=r&&(a(r,!1),l(r));else a(this,t)}const d=t=>{t.type==n.OA.CHILD&&(t._$AP??=c,t._$AQ??=u)};class p extends n.WL{constructor(){super(...arguments),this._$AN=void 0}_$AT(t,e,s){super._$AT(t,e,s),h(this),this.isConnected=t._$AU}_$AO(t,e=!0){t!==this.isConnected&&(this.isConnected=t,t?this.reconnected?.():this.disconnected?.()),e&&(a(this,t),l(this))}setValue(t){if((t=>void 0===t.strings)(this._$Ct))this._$Ct._$AI(t,this);else{const e=[...this._$Ct._$AH];e[this._$Ci]=t,this._$Ct._$AI(e,this,0)}}disconnected(){}reconnected(){}}class m{}const f=new WeakMap;(0,n.u$)(class extends p{render(t){return i.s6}update(t,[e]){const s=e!==this.H;return s&&this.I(void 0),(s||this.kt!==this.Tt)&&(this.H=e,this.N=t.options?.host,this.I(this.Tt=t.element)),i.s6}I(t){if(void 0!==this.H)if(this.isConnected||(t=void 0),"function"==typeof this.H){const e=this.N??globalThis;let s=f.get(e);void 0===s&&(s=new WeakMap,f.set(e,s)),void 0!==s.get(this.H)&&this.H.call(this.N,void 0),s.set(this.H,t),void 0!==t&&this.H.call(this.N,t)}else this.H.value=t}get kt(){return"function"==typeof this.H?f.get(this.N??globalThis)?.get(this.H):this.H?.value}disconnected(){this.kt===this.Tt&&this.I(void 0)}reconnected(){this.I(this.Tt)}});var y=s(99555);function b(t,e=!1){return null==t||""===t?e:"boolean"==typeof t?t:["1","true","yes","on","checked","disabled","download","indeterminate","multiple"].includes(String(t).toLowerCase())}function g(t){return"className"===t?"class":String(t||"").replace(/[A-Z]/g,t=>`-${t.toLowerCase()}`)}function A(t,e=0){const s=Number(t);return Number.isFinite(s)?s:e}function C(t,e,s){const r=String(t||s).trim().toLowerCase();return Array.isArray(e)&&e.includes(r)?r:s}function _(t,e,s=null){const r=t?.getAttribute?.(e);if(!r)return s;try{return JSON.parse(r)}catch(r){return console.warn(`${t?.tagName?.toLowerCase?.()||"sf-element"}: invalid ${e} JSON`,r),s}}class S extends HTMLElement{static externalTemplateBasePath="/local/smart/templates";static externalTemplateModules=new Map;static externalTemplateMisses=new Set;static externalTemplateChecks=new Map;static externalTemplateCssLoaded=new Set;static externalTemplateCssMisses=new Set;static waitForStylesBeforeRenderReady=!0;static styleReadyTimeout=3e3;static styleReadinessCssId="sf-smart-style-readiness";static get props(){return{}}static get observedAttributes(){return Array.from(new Set([...this.propsToAttributes(),"root-class","root-style","style"]))}static propsToAttributes(t=this.props){return Object.entries(t||{}).map(([t,e])=>this.normalizePropConfig(t,e).attribute).filter(Boolean)}static normalizePropConfig(t,e=""){const s=e&&"object"==typeof e&&!Array.isArray(e)&&(Object.prototype.hasOwnProperty.call(e,"type")||Object.prototype.hasOwnProperty.call(e,"default")||Object.prototype.hasOwnProperty.call(e,"attribute")||Object.prototype.hasOwnProperty.call(e,"parser")||Object.prototype.hasOwnProperty.call(e,"parse")||Object.prototype.hasOwnProperty.call(e,"values"))?{...e}:{default:e},r=s.default,i=s.type||(Array.isArray(r)?Array:null!==r&&"object"==typeof r?Object:"boolean"==typeof r?Boolean:"number"==typeof r?Number:String);return{...s,key:t,attribute:!1===s.attribute?"":s.attribute||g(t),default:r,type:i}}static toBoolean(t,e=!1){return b(t,e)}static toAttributeName(t){return g(t)}static toNumber(t,e=0){return A(t,e)}static normalizeEnum(t,e,s){return C(t,e,s)}static parseJsonAttribute(t,e,s=null){return _(t,e,s)}static get tagName(){return this.resolveTagName()}static resolveTagName(t=this.name){const e=String(t||"").trim().replace(/([a-z0-9])([A-Z])/g,"$1-$2").replace(/([A-Z])([A-Z][a-z])/g,"$1-$2").replace(/_/g,"-").toLowerCase();return e?e.includes("-")?e:`sf-${e}`:""}static define(t){const e=String(t||this.resolveTagName()).trim().toLowerCase();if(!e||!e.includes("-"))throw new Error(`${this.name||"SfBaseElement"}.define(): cannot resolve custom element tag. Call define() on a named subclass or pass tagName explicitly.`);const s=customElements.get(e);return s?(s!==this&&console.warn(`${this.name||"SfBaseElement"}.define(): ${e} is already defined`,s),s):(customElements.define(e,this),this)}static ensureStyleReadinessCss(){if("undefined"==typeof document||document.getElementById(this.styleReadinessCssId))return;const t=document.createElement("style");t.id=this.styleReadinessCssId,t.textContent="[data-sf-style-pending],[data-sf-style-pending] *{visibility:hidden!important;}",document.head.append(t)}constructor(){super(),this._updateScheduled=!1,this._changedAttributes=new Set,this._updateLoopCount=0,this._updateLoopResetScheduled=!1,this._updateLoopBlocked=!1,this._updateLoopWarned=!1,this._isMounted=!1,this._hasRendered=!1,this._renderToken=0,this._externalTemplateModule=null,this._slotTemplates=new Map,this._liveSlotNodes=new Map,this._slotTemplatesCaptured=!1,this._customTemplateProps=new Map,this._refEffects=new Map,this._activeRefEffects=null,this._hostStyle="",this._syncingHostStyle=!1,this._styleReady=!1,this._styleReadyPromise=null,this.__sfSmartElement=!0,this.__sfSourceCaptured=!1}connectedCallback(){this.constructor.ensureStyleReadinessCss(),this.captureHostStyle(),this.applyHostDisplayStyle(),this.captureSlotTemplates(),this.__sfSourceCaptured=!0,this._isMounted=!0,this.emitComponentEvent("connected"),this.requestComponentUpdate("connected")}disconnectedCallback(){this._isMounted=!1,this.onDisconnected(),this.emitComponentEvent("disconnected")}toBoolean(t,e=!1){return b(t,e)}toAttributeName(t){return g(t)}toNumber(t,e=0){return A(t,e)}normalizeEnum(t,e,s){return C(t,e,s)}parseJsonAttribute(t,e=null){return _(this,t,e)}getBooleanAttr(t,e=!1){const s=this.attributeName(t);if(!s||!this.hasAttribute(s))return e;const r=this.getAttribute(s);return""===r||b(r,e)}getNumberAttr(t,e=0){const s=this.attributeName(t);if(!s||!this.hasAttribute(s))return e;const r=this.getAttribute(s);return""===r?e:A(r,e)}getEnumAttr(t,e=[],s=""){const r=this.attributeName(t);return C(r&&this.hasAttribute(r)?this.getAttribute(r):void 0,e,s)}hasDeclaredProps(){return Object.keys(this.constructor.props||{}).length>0}createRef(){const t=new m;return t.__sfOwner=this,t}registerRefEffect(t,e,s={}){if(!t||"function"!=typeof e)return this;const r={...this._refEffects.get(t)||{},callback:e,once:!0===s.once};return this._refEffects.set(t,r),this._activeRefEffects?.add(t),this}flushRefEffects(){if(!this._refEffects.size)return this;const t=this._activeRefEffects;return this._refEffects.forEach((e,s)=>{if(t&&!t.has(s))return"function"==typeof e.cleanup&&e.cleanup(),void this._refEffects.delete(s);const r=s?.value||null;if(Object.is(e.value,r))return;if("function"==typeof e.cleanup&&e.cleanup(),e.value=r,e.cleanup=null,!r)return;const i=e.callback.call(this,r,{component:this,ref:s,value:r});e.cleanup="function"==typeof i?i:null,e.once&&this._refEffects.delete(s)}),this._activeRefEffects=null,this}getPropsContext(t=this.constructor.props||{}){return Object.fromEntries(Object.entries(t).map(([t,e])=>[t,this.getPropValue(t,e)]))}getProp(t,e=""){const s=this.constructor.props||{};return this.getPropValue(t,s[t]??e)}getPropValue(t,e=""){const s=this.constructor.normalizePropConfig(t,e),{attribute:r,type:i,default:o}=s,n=s.parser||s.parse,a=!!r&&this.hasAttribute(r),l=a?this.getAttribute(r):void 0;return!a&&Object.prototype.hasOwnProperty.call(this,t)?this.coercePropValue(this[t],s):"function"==typeof n?n.call(this,l,o,this):a?this.coercePropValue(l,s):this.clonePropDefault(o,i)}coercePropValue(t,e={}){const{type:s,default:r,values:i}=e;if(s===Boolean)return""===t||b(t,Boolean(r));if(s===Number)return A(t,Number(r||0));if(s===Array||s===Object){if("string"!=typeof t)return t??this.clonePropDefault(r,s);try{return JSON.parse(t)}catch(t){return console.warn(`${this.tagName.toLowerCase()}: invalid ${e.attribute} JSON`,t),this.clonePropDefault(r,s)}}return Array.isArray(i)?C(t,i,r||i[0]||""):t??this.clonePropDefault(r,s)}clonePropDefault(t,e){return Array.isArray(t)?[...t]:!t||"object"!=typeof t||e!==Object&&e!==Array?void 0!==t?t:e!==Boolean&&(e===Number?0:e===Array?[]:e===Object?{}:""):{...t}}get value(){return this.getAttribute("value")||""}set value(t){!t||"object"!=typeof t||Array.isArray(t)?this.setAttributeValue("value",t):this.setValueAttributes(t)}getAttributeValue(t="value",e=""){return this.getAttribute(t)||e}setAttributeValue(t="value",e=""){const s=g(t);return s?null==e?(this.removeAttribute(s),this):(this.setAttribute(s,String(e)),this):this}setValueAttributes(t={},e={}){if(!t||"object"!=typeof t)return this;const{stringifyObjects:s=!0,removeEmptyString:r=!0}=e;return Object.entries(t).forEach(([t,e])=>{const i=g(t);i&&(this.setCustomTemplateProp(t,e),!1===e||null==e||r&&""===e?this.removeAttribute(i):!0!==e?!s||!Array.isArray(e)&&"object"!=typeof e?this.setAttribute(i,String(e)):this.setAttribute(i,JSON.stringify(e)):this.setAttribute(i,""))}),this}attributeChangedCallback(t,e,s){if(e!==s){if("style"===t){if(this._syncingHostStyle)return;this._hostStyle=this.normalizeHostStyle(s),this.applyHostDisplayStyle()}this.requestComponentUpdate(t)}}get updateLoopLimit(){const t=Number(this.constructor.updateLoopLimit??50);return Number.isFinite(t)?t:50}resetUpdateLoopGuard(){this._updateLoopCount=0,this._updateLoopResetScheduled=!1,this._updateLoopBlocked=!1,this._updateLoopWarned=!1}scheduleUpdateLoopGuardReset(){this._updateLoopResetScheduled||(this._updateLoopResetScheduled=!0,setTimeout(()=>{this.resetUpdateLoopGuard()},0))}canScheduleComponentUpdate(t="unknown"){if(this._updateLoopBlocked)return!1;const e=this.updateLoopLimit;return e<=0||(this.scheduleUpdateLoopGuardReset(),this._updateLoopCount+=1,this._updateLoopCount<=e||(this._updateLoopBlocked=!0,this._changedAttributes.clear(),this._updateLoopWarned||(this._updateLoopWarned=!0,console.warn(`${this.componentTagName||"sf-element"}: update loop limit reached`,{reason:t,limit:e,component:this})),!1))}requestComponentUpdate(t="unknown"){this._updateLoopBlocked||(t&&this._changedAttributes.add(t),this._updateScheduled||this.canScheduleComponentUpdate(t)&&(this._updateScheduled=!0,Promise.resolve().then(()=>{if(this._updateScheduled=!1,!this._isMounted)return;const t=Array.from(this._changedAttributes);this._changedAttributes.clear(),this.performComponentUpdate(t)})))}async performComponentUpdate(t=[]){const e=this.resolveUpdateMode(t);if("dom"===e&&!1!==this.updateDom(t))return this.afterUpdate(t,e),this.emitComponentEvent("updated",{changedAttributes:t,updateMode:e}),void this.emitComponentEvent("props-change",this.createPropChangeDetail(t,e));await this.renderComponent(t),this.afterUpdate(t,"lit"),this.emitComponentEvent("updated",{changedAttributes:t,updateMode:"lit"}),this.emitComponentEvent("props-change",this.createPropChangeDetail(t,"lit"))}async renderComponent(t=[]){const e=++this._renderToken;if(!this._isMounted)return;this._activeRefEffects=new Set,this.beforeRender(t),this.emitComponentEvent("before-render",{changedAttributes:t}),this.runExternalHook("beforeRender",{changedAttributes:t,root:this});const s=await this.resolveTemplateResult(t);this._isMounted&&e===this._renderToken&&(this.prepareRenderContainer(t),this.markStylePending(this),(0,r.XX)(s,this),this.flushRefEffects(),await this.whenRenderedStylesReady(this),this._isMounted&&e===this._renderToken&&(this._hasRendered=!0,this.afterRender(t),this._childrenDefinedPromise=null,this.runExternalHook("afterRender",{changedAttributes:t,root:this}),this.emitComponentEvent("after-render",{changedAttributes:t})))}shouldWaitForStylesReady(){return!1!==this.constructor.waitForStylesBeforeRenderReady}markStylePending(t=this){return!this.shouldWaitForStylesReady()||this._styleReady||t?.setAttribute&&(t.setAttribute("data-sf-style-pending",""),t.removeAttribute("data-sf-style-ready")),this}markStyleReady(t=this){return this._styleReady=!0,[t,this].forEach(t=>{t?.removeAttribute&&t?.setAttribute&&(t.removeAttribute("data-sf-style-pending"),t.setAttribute("data-sf-style-ready",""))}),this}async whenRenderedStylesReady(t=this){if(!this.shouldWaitForStylesReady())return;const e=window.SF?.Loader;if(!e||"function"!=typeof e.ensureStylesReady)return void this.markStyleReady(t);const s=Promise.resolve().then(()=>e.ensureStylesReady(t||this,{autoLoad:!0})),r=Number(this.constructor.styleReadyTimeout??3e3);this._styleReadyPromise=r>0?Promise.race([s,new Promise(t=>{setTimeout(t,r)})]):s,await this._styleReadyPromise.catch(t=>{console.warn(`${this.componentTagName||"sf-element"}: style readiness failed`,t)}),this.markStyleReady(t)}getChildCustomElements(){return Array.from(this.querySelectorAll("*")).filter(t=>(t?.tagName?.toLowerCase?.()||"").startsWith("sf-"))}async whenChildrenDefined(){return this._childrenDefinedPromise||(this._childrenDefinedPromise=Promise.resolve().then(async()=>{const t=this.getChildCustomElements();return await Promise.all(t.map(async t=>{const e=t.tagName?.toLowerCase?.();e&&window.customElements?.whenDefined&&(await window.customElements.whenDefined(e),t.updateComplete?.then&&await t.updateComplete,t._updateScheduled&&await Promise.resolve())})),t})),this._childrenDefinedPromise}get componentTagName(){return this.tagName?.toLowerCase?.()||""}get componentTemplateName(){return this.getAttribute("template")||"default"}get externalTemplateComponentName(){return this.componentTagName.startsWith("sf-")?this.componentTagName.replace(/^sf-/,""):this.componentTagName}get externalTemplateBasePath(){return window.SF_SMART_TEMPLATE_PATH||window.SFSmartTemplatePath||this.constructor.externalTemplateBasePath}emitComponentEvent(t,e={}){const s={component:this,tagName:this.componentTagName,template:this.componentTemplateName,...e};this.dispatchEvent(new CustomEvent(`sf-${t}`,{bubbles:!0,composed:!0,detail:s}))}attributeName(t){return String(t||"").replace(/[A-Z]/g,t=>`-${t.toLowerCase()}`)}shouldSerializeFalseAttribute(t){const e=this.constructor.defaultTrueAttributes;return!!e&&(e instanceof Set?e.has(t):!!Array.isArray(e)&&e.includes(t))}setAttributes(t={}){return t&&"object"==typeof t?(Object.entries(t).forEach(([t,e])=>{const s=this.attributeName(t);s&&(this.setCustomTemplateProp(t,e),!1===e&&this.shouldSerializeFalseAttribute(s)?this.setAttribute(s,"false"):!1!==e&&null!=e&&""!==e?!0!==e?this.setAttribute(s,String(e)):this.setAttribute(s,""):this.removeAttribute(s))}),this):this}forwardHostAttributes(t,e={}){if(!t)return this;const{exclude:s=[],transferDataAttributes:r=!0,storageKey:i="__sfForwardedDataAttributes",targetStorageKey:o="__sfForwardedAttributeKeys"}=e,n=s instanceof Set?s:new Set(s),a=this[i]||new Map,l=t[o]||new Set,h=[],u=new Set;return l.forEach(e=>{t.removeAttribute(e)}),Array.from(this.attributes).forEach(e=>{const{name:s,value:i}=e;if(!n.has(s)&&!/^on[a-z]/i.test(s)){if(r&&s.startsWith("data-"))return a.set(s,i),void h.push(s);u.add(s),t.setAttribute(s,i)}}),a.forEach((e,s)=>{u.add(s),t.setAttribute(s,e)}),t[o]=u,this[i]=a,h.length&&(this.__sfForwardingHostAttributes=!0,h.forEach(t=>this.removeAttribute(t)),this.__sfForwardingHostAttributes=!1),this}observeForwardedHostAttributes(t,e={}){if(this._forwardHostAttributeObserver)return this;const s="function"==typeof t?t:()=>t;return this._forwardHostAttributeObserver=new MutationObserver(()=>{this.__sfForwardingHostAttributes||this.forwardHostAttributes(s(),e)}),this._forwardHostAttributeObserver.observe(this,{attributes:!0}),this}disconnectForwardedHostAttributes(){return this._forwardHostAttributeObserver?.disconnect?.(),this._forwardHostAttributeObserver=null,this}removeAttributes(t=[]){return(Array.isArray(t)?t:[t]).filter(Boolean).forEach(t=>this.removeAttribute(this.attributeName(t))),this}refresh(t="manual"){return this.requestComponentUpdate(t),this}get isRendered(){return!0===this._hasRendered}createRenderDetail(t={}){return{component:this,tagName:this.componentTagName,template:this.componentTemplateName,...t}}runRenderedCallback(t,e={},s=null){if("function"==typeof t)return t.call(this,this.createRenderDetail(e),s)}whenRendered(t=null,e={}){const s=!0===e.next;if(this.isRendered&&!s){const e=this.createRenderDetail({changedAttributes:[],immediate:!0});return Promise.resolve().then(()=>(this.runRenderedCallback(t,e),e))}return new Promise(e=>{this.addEventListener("sf-after-render",s=>{const r=s?.detail||this.createRenderDetail();this.runRenderedCallback(t,r,s),e(r)},{once:!0})})}onAfterRender(t,e={}){const s=!1!==e.immediate,r=!1!==e.once;if(s&&this.isRendered&&(this.runRenderedCallback(t,{changedAttributes:[],immediate:!0}),r))return()=>{};const i=e=>{this.runRenderedCallback(t,e?.detail||{},e),r&&this.removeEventListener("sf-after-render",i)};return this.addEventListener("sf-after-render",i),()=>this.removeEventListener("sf-after-render",i)}getState(){return void 0!==this.state?this.state:this.hasDeclaredProps()?this.templateContext():void 0!==this.value?this.value:this.templateContext()}normalizeStateCallbackArgs(t,e,s="state"){return"function"==typeof t?{reason:s,callback:t}:{reason:t||s,callback:e}}runStateCallback(t,e={}){return"function"!=typeof t||t.call(this,{component:this,state:this.getState(),...e}),this}scheduleStateCallback(t,e={}){return"function"!=typeof t?this:this._isMounted&&this._updateScheduled?(this.whenRendered(s=>{this.runStateCallback(t,{...e,renderDetail:s})},{next:!0}),this):(Promise.resolve().then(()=>{this.runStateCallback(t,e)}),this)}setState(t={},e=null){return this.setAttributes(t),this.scheduleStateCallback(e,{patch:t,reason:"attributes"}),this}patchState(t={},e="state",s=null){const{reason:r,callback:i}=this.normalizeStateCallbackArgs(e,s,"state"),o=this.state&&"object"==typeof this.state?this.state:{},n="function"==typeof t?t(o):t;if(!n||"object"!=typeof n||Object.is(n,o))return this.scheduleStateCallback(i,{patch:n,reason:r,changed:!1,changedKeys:[],prevState:o,nextState:o}),this;let a=!1;const l=[],h={...o};return Object.entries(n).forEach(([t,e])=>{Object.is(h[t],e)||(h[t]=e,a=!0,l.push(t))}),a?(this.state=h,this.requestComponentUpdate(r),this.scheduleStateCallback(i,{patch:n,reason:r,changed:!0,changedKeys:l,prevState:o,nextState:h}),this):(this.scheduleStateCallback(i,{patch:n,reason:r,changed:!1,changedKeys:l,prevState:o,nextState:o}),this)}set(t={},e="state",s=null){return this.patchState(t,e,s)}getRootClass(){return this.getAttribute("root-class")||""}normalizeHostStyle(t=""){const e=document.createElement("div");return e.setAttribute("style",String(t||"")),e.style.removeProperty("display"),e.getAttribute("style")||""}captureHostStyle(){const t=this.normalizeHostStyle(this.getAttribute("style"));return!t&&this._hostStyle||(this._hostStyle=t),this}applyHostDisplayStyle(){const t="display: contents;";return this.getAttribute("style")===t||(this._syncingHostStyle=!0,this.setAttribute("style",t),this._syncingHostStyle=!1),this}getRootStyle(){return[this._hostStyle,this.getAttribute("root-style")].filter(Boolean).join("; ")}setRootClass(t=""){const e=String(t||"").trim();return e?(this.setAttribute("root-class",e),this):(this.removeAttribute("root-class"),this)}addRootClass(...t){const e=new Set(this.getRootClass().split(/\s+/).filter(Boolean));return t.flat().filter(Boolean).forEach(t=>{String(t).split(/\s+/).filter(Boolean).forEach(t=>e.add(t))}),this.setRootClass(Array.from(e).join(" "))}setRootStyle(t=""){const e=String(t||"").trim();return e?(this.setAttribute("root-style",e),this):(this.removeAttribute("root-style"),this)}removeRootClass(...t){const e=new Set(this.getRootClass().split(/\s+/).filter(Boolean));return t.flat().filter(Boolean).forEach(t=>{String(t).split(/\s+/).filter(Boolean).forEach(t=>e.delete(t))}),this.setRootClass(Array.from(e).join(" "))}toggleRootClass(t,e){const s=String(t||"").trim();if(!s)return this;const r=new Set(this.getRootClass().split(/\s+/).filter(Boolean));return("boolean"==typeof e?e:!r.has(s))?r.add(s):r.delete(s),this.setRootClass(Array.from(r).join(" ")),this}setHidden(t=!0){const e=b(t,!0);return this.toggleAttribute("hidden",e),this.toggleRootClass("hidden",e),this}isHidden(){const t=new Set(this.getRootClass().split(/\s+/).filter(Boolean));return this.hasAttribute("hidden")||t.has("hidden")}createPropChangeDetail(t=[],e="lit"){return{changedAttributes:t,updateMode:e,state:this.getState()}}onPropChange(t,e){return"function"==typeof t&&this.addEventListener("sf-props-change",e=>{t(e.detail?.state,e.detail,e)},e),this}onUpdate(t,e){return"function"==typeof t&&this.addEventListener("sf-updated",e=>{t(this.getState(),e.detail,e)},e),this}createTemplateContext(t={}){const e=this.hasDeclaredProps()?this.getPropsContext():{},s={component:this,rootClass:this.getRootClass(),rootStyle:this.getRootStyle(),...e,...t},r=this.getCustomTemplateProps(s);return{...r,...s,custom:r}}getCustomTemplateProps(t={}){const e=this.getReservedTemplateAttributes(),s=this.getReservedTemplateKeys(t),r={};return this._customTemplateProps.forEach((e,s)=>{this.isCustomTemplateProp(s,t)&&(r[s]=e)}),Object.entries(this.getOwnCustomTemplateProps(t)).forEach(([t,e])=>{!t||s.has(t)||Object.prototype.hasOwnProperty.call(r,t)||(r[t]=e)}),Array.from(this.attributes||[]).forEach(({name:t,value:i})=>{if(e.has(t))return;const o=this.attributeToPropertyName(t);!o||s.has(o)||Object.prototype.hasOwnProperty.call(r,o)||(r[o]=i)}),r}getOwnCustomTemplateProps(t={}){const e={},s=this.getReservedTemplateKeys(t);return Object.keys(this).forEach(t=>{t.startsWith("_")||s.has(t)||"function"==typeof this[t]||(e[t]=this[t])}),e}getReservedTemplateAttributes(){const t=new Set(["class","style","id","slot","template"]);return(this.constructor.observedAttributes||[]).forEach(e=>{const s=g(e);s&&t.add(s)}),t}getReservedTemplateKeys(t={}){const e=new Set(["custom"]);return Object.keys(t||{}).forEach(t=>{e.add(t)}),this.getReservedTemplateAttributes().forEach(t=>{const s=this.attributeToPropertyName(t);s&&e.add(s)}),e}isCustomTemplateProp(t,e={}){const s=this.attributeToPropertyName(g(t));if(!s)return!1;const r=g(s),i=this.getReservedTemplateAttributes(),o=this.getReservedTemplateKeys(e);return!i.has(r)&&!o.has(s)}setCustomTemplateProps(t={},e={}){return t&&"object"==typeof t?(Object.entries(t).forEach(([t,s])=>{this.setCustomTemplateProp(t,s,e)}),this):this}setCustomTemplateProp(t,e,s={}){const r=this.attributeToPropertyName(g(t));return this.isCustomTemplateProp(r,s)?!1===e||null==e?(this._customTemplateProps.delete(r)&&this.requestComponentUpdate(r),this):(this._customTemplateProps.get(r)===e||(this._customTemplateProps.set(r,e),this.requestComponentUpdate(r)),this):this}attributeToPropertyName(t){return String(t||"").replace(/-([a-z0-9])/g,(t,e)=>e.toUpperCase())}resolveUpdateMode(){return"lit"}createPropsTemplateContext(t={}){return this.createTemplateContext({component:this,...this.getPropsContext(),...t})}templateContext(){return this.createPropsTemplateContext()}captureSlotTemplates(){this._slotTemplatesCaptured||(this._slotTemplatesCaptured=!0,Array.from(this.children).forEach(t=>{if(!(t instanceof HTMLElement))return;const e=t.getAttribute("slot");if(!e)return;if("template"===t.tagName?.toLowerCase?.())return this._slotTemplates.has(e)||this._slotTemplates.set(e,[]),Array.from(t.content?.childNodes||[]).forEach(t=>{this._slotTemplates.get(e).push(t.cloneNode(!0))}),void t.remove();this._liveSlotNodes.has(e)||this._liveSlotNodes.set(e,[]);const s=1===t.getAttributeNames().length&&t.hasAttribute("slot")?Array.from(t.childNodes):[t];this._liveSlotNodes.get(e).push(...s),t.remove()}))}captureChildTemplates(t,e,s={}){if(!t)return[];const{append:r=!0,remove:i=!0}=s,o="function"==typeof e?e:t=>t instanceof Element&&"string"==typeof e&&t.matches?.(e),n=Array.from(this.childNodes||[]).filter(t=>o(t));if(!n.length)return[];r&&this._slotTemplates.has(t)||this._slotTemplates.set(t,[]);const a=n.map(t=>t.cloneNode(!0));return a.forEach(e=>{this._slotTemplates.get(t).push(e)}),i&&n.forEach(t=>t.remove()),a.map(t=>t.cloneNode(!0))}hasSlotContent(t){return(this._liveSlotNodes.get(t)||[]).length>0||(this._slotTemplates.get(t)||[]).length>0}getSlotContent(t){const e=this._liveSlotNodes.get(t)||[];if(e.length)return 1===e.length?e[0]:e;const s=this._slotTemplates.get(t)||[];return s.length?1===s.length?s[0].cloneNode(!0):s.map(t=>t.cloneNode(!0)):r.s6}setSlot(t,...e){if(!t)return this;const s=e.map(t=>{if("string"==typeof t){const e=document.createElement("div");return e.innerHTML=t,Array.from(e.childNodes)}return[t]}).flat().filter(t=>t instanceof Node);return this._slotTemplates.delete(t),this._liveSlotNodes.set(t,s),this.requestComponentUpdate("slot-change"),this}copyRuntimeData(t,e){if(!(t instanceof Node&&e instanceof Node))return;t.__sfCreateEventHandlers&&Object.defineProperty(e,"__sfCreateEventHandlers",{configurable:!0,enumerable:!1,value:t.__sfCreateEventHandlers.slice()});const s=Array.from(t.childNodes||[]),r=Array.from(e.childNodes||[]);s.forEach((t,e)=>{this.copyRuntimeData(t,r[e])})}clearSlot(t){return t?(this._slotTemplates.delete(t),this._liveSlotNodes&&this._liveSlotNodes.delete(t),this.requestComponentUpdate("slot-change"),this):this}async resolveTemplateResult(t=[]){const e=this.componentTemplateName;if(this.hasBuiltInTemplate(e))return this._externalTemplateModule=null,this.template();const s=await this.resolveExternalTemplateModule(e);if(this._externalTemplateModule=s||null,s){const e=this.templateContext(),i=this.createTemplateContext(this.mapExternalTemplateContext(e,s)),o="function"==typeof s.default?s.default:null;if(o)return o({html:r.qy,nothing:r.s6,context:i,component:this,changedAttributes:t})}return this._externalTemplateModule=null,this.template()}hasBuiltInTemplate(t=this.componentTemplateName){return!t||"default"===t}mapExternalTemplateContext(t,e){return"function"==typeof e?.mapContext&&e.mapContext({context:t,component:this,html:r.qy,nothing:r.s6})||t}async resolveExternalTemplateModule(t=this.componentTemplateName){if(!t)return null;const e=this.getExternalTemplateModuleUrl(t);if(!e)return null;if(await this.loadExternalTemplateCss(t),this.constructor.externalTemplateModules.has(e))return this.constructor.externalTemplateModules.get(e);if(this.constructor.externalTemplateMisses.has(e))return null;if(!await this.checkExternalTemplateModule(e))return this.constructor.externalTemplateMisses.add(e),null;try{const t=await import(e);return this.constructor.externalTemplateModules.set(e,t),t}catch(t){return console.warn(t),this.constructor.externalTemplateMisses.add(e),null}}async checkExternalTemplateModule(t){if(!t)return!1;if(this.constructor.externalTemplateChecks.has(t))return this.constructor.externalTemplateChecks.get(t);const e=fetch(t,{method:"GET",cache:"no-store"}).then(t=>t.ok).catch(()=>!1);this.constructor.externalTemplateChecks.set(t,e);const s=await e;return s||this.constructor.externalTemplateChecks.delete(t),s}getExternalTemplateModuleUrl(t=this.componentTemplateName){const e=String(this.externalTemplateBasePath||"").replace(/\/$/,""),s=this.externalTemplateComponentName;return e&&s&&t?`${e}/${s}/${t}/index.js`:""}getExternalTemplateCssUrl(t=this.componentTemplateName){const e=String(this.externalTemplateBasePath||"").replace(/\/$/,""),s=this.externalTemplateComponentName;return e&&s&&t?`${e}/${s}/${t}/index.css`:""}loadExternalTemplateCss(t=this.componentTemplateName){const e=this.getExternalTemplateCssUrl(t);if(!e)return Promise.resolve(!1);if(this.constructor.externalTemplateCssLoaded.has(e))return Promise.resolve(!0);if(this.constructor.externalTemplateCssMisses.has(e))return Promise.resolve(!1);return document.querySelector(`link[data-sf-smart-css="${e}"]`)?(this.constructor.externalTemplateCssLoaded.add(e),Promise.resolve(!0)):new Promise(t=>{const s=document.createElement("link");s.rel="stylesheet",s.href=e,s.dataset.sfSmartCss=e,s.onload=()=>{this.constructor.externalTemplateCssLoaded.add(e),t(!0)},s.onerror=()=>{this.constructor.externalTemplateCssMisses.add(e),t(!1)},document.head.append(s)})}runExternalHook(t,e={}){if("function"==typeof this._externalTemplateModule?.[t])try{this._externalTemplateModule[t]({component:this,root:this,html:r.qy,nothing:r.s6,context:this.templateContext(),...e})}catch(t){console.warn(t)}}updateDom(){return!1}shouldClearLightDomBeforeFirstRender(){return!0===this.constructor.clearLightDomBeforeFirstRender}prepareRenderContainer(){!this._hasRendered&&this.shouldClearLightDomBeforeFirstRender()&&this.replaceChildren()}template(){return r.s6}beforeRender(){}afterRender(t){if("function"==typeof t)return this.whenRendered(t)}afterUpdate(){}onDisconnected(){this.runExternalHook("destroy")}}const T=S;"undefined"!=typeof window&&(window.SfBaseElement=S,window.html=r.qy,window.nothing=r.s6,window.render=r.XX,window.litProps=y.k,window.SF||(window.SF={}),window.SF.SfBaseElement=S,window.SF.html=r.qy,window.SF.nothing=r.s6,window.SF.render=r.XX,window.SF.litProps=y.k,window.SF.smart={...window.SF.smart||{},SfBaseElement:S,html:r.qy,nothing:r.s6,render:r.XX,litProps:y.k,toBoolean:b,toAttributeName:g,toNumber:A,normalizeEnum:C,parseJsonAttribute:_})}}]);
+"use strict";
+(self["webpackChunk"] = self["webpackChunk"] || []).push([[51805064141692],{
+
+/***/ "bb60cdf56707"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   normalizeEnum: () => (/* binding */ normalizeEnum),
+/* harmony export */   parseJsonAttribute: () => (/* binding */ parseJsonAttribute),
+/* harmony export */   toAttributeName: () => (/* binding */ toAttributeName),
+/* harmony export */   toBoolean: () => (/* binding */ toBoolean),
+/* harmony export */   toNumber: () => (/* binding */ toNumber)
+/* harmony export */ });
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("0c917574924c");
+/* harmony import */ var lit_directives_ref_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5c50cfe285ee");
+
+
+function toBoolean(value, fallback = false) {
+  if (value === undefined || value === null || value === "") return fallback;
+  if (typeof value === "boolean") return value;
+  return ["1", "true", "yes", "on", "checked", "disabled", "download", "indeterminate", "multiple"].includes(String(value).toLowerCase());
+}
+function toAttributeName(key) {
+  if (key === "className") {
+    return "class";
+  }
+
+  return String(key || "").replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`);
+}
+function toNumber(value, fallback = 0) {
+  const number = Number(value);
+  return Number.isFinite(number) ? number : fallback;
+}
+function normalizeEnum(value, allowed, fallback) {
+  const normalized = String(value || fallback).trim().toLowerCase();
+  return Array.isArray(allowed) && allowed.includes(normalized) ? normalized : fallback;
+}
+function parseJsonAttribute(element, name, fallback = null) {
+  const rawValue = element?.getAttribute?.(name);
+
+  if (!rawValue) {
+    return fallback;
+  }
+
+  try {
+    return JSON.parse(rawValue);
+  } catch (error) {
+    console.warn(`${element?.tagName?.toLowerCase?.() || "sf-element"}: invalid ${name} JSON`, error);
+    return fallback;
+  }
+}
+
+class SfBaseElement extends HTMLElement {
+  static externalTemplateBasePath = "/local/smart/templates";
+  static externalTemplateModules = new Map();
+  static externalTemplateMisses = new Set();
+  static externalTemplateChecks = new Map();
+  static externalTemplateCssLoaded = new Set();
+  static externalTemplateCssMisses = new Set();
+
+  static get props() {
+    return {};
+  }
+
+  static get observedAttributes() {
+    return Array.from(new Set([...this.propsToAttributes(), "root-class", "root-style", "style"]));
+  }
+
+  static propsToAttributes(props = this.props) {
+    return Object.entries(props || {}).map(([key, config]) => this.normalizePropConfig(key, config).attribute).filter(Boolean);
+  }
+
+  static normalizePropConfig(key, config = "") {
+    const isConfigObject = config && typeof config === "object" && !Array.isArray(config) && (Object.prototype.hasOwnProperty.call(config, "type") || Object.prototype.hasOwnProperty.call(config, "default") || Object.prototype.hasOwnProperty.call(config, "attribute") || Object.prototype.hasOwnProperty.call(config, "parser") || Object.prototype.hasOwnProperty.call(config, "parse") || Object.prototype.hasOwnProperty.call(config, "values"));
+    const propConfig = isConfigObject ? { ...config
+    } : {
+      default: config
+    };
+    const defaultValue = propConfig.default;
+    const inferredType = propConfig.type || (Array.isArray(defaultValue) ? Array : defaultValue !== null && typeof defaultValue === "object" ? Object : typeof defaultValue === "boolean" ? Boolean : typeof defaultValue === "number" ? Number : String);
+    return { ...propConfig,
+      key,
+      attribute: propConfig.attribute === false ? "" : propConfig.attribute || toAttributeName(key),
+      default: defaultValue,
+      type: inferredType
+    };
+  }
+
+  static toBoolean(value, fallback = false) {
+    return toBoolean(value, fallback);
+  }
+
+  static toAttributeName(key) {
+    return toAttributeName(key);
+  }
+
+  static toNumber(value, fallback = 0) {
+    return toNumber(value, fallback);
+  }
+
+  static normalizeEnum(value, allowed, fallback) {
+    return normalizeEnum(value, allowed, fallback);
+  }
+
+  static parseJsonAttribute(element, name, fallback = null) {
+    return parseJsonAttribute(element, name, fallback);
+  }
+
+  static get tagName() {
+    return this.resolveTagName();
+  }
+
+  static resolveTagName(className = this.name) {
+    const tagName = String(className || "").trim().replace(/([a-z0-9])([A-Z])/g, "$1-$2").replace(/([A-Z])([A-Z][a-z])/g, "$1-$2").replace(/_/g, "-").toLowerCase();
+
+    if (!tagName) {
+      return "";
+    }
+
+    return tagName.includes("-") ? tagName : `sf-${tagName}`;
+  }
+
+  static define(tagName) {
+    const resolvedTagName = String(tagName || this.resolveTagName()).trim().toLowerCase();
+
+    if (!resolvedTagName || !resolvedTagName.includes("-")) {
+      throw new Error(`${this.name || "SfBaseElement"}.define(): cannot resolve custom element tag. Call define() on a named subclass or pass tagName explicitly.`);
+    }
+
+    const existing = customElements.get(resolvedTagName);
+
+    if (existing) {
+      if (existing !== this) {
+        console.warn(`${this.name || "SfBaseElement"}.define(): ${resolvedTagName} is already defined`, existing);
+      }
+
+      return existing;
+    }
+
+    customElements.define(resolvedTagName, this);
+    return this;
+  }
+
+  constructor() {
+    super();
+    this._updateScheduled = false;
+    this._changedAttributes = new Set();
+    this._updateLoopCount = 0;
+    this._updateLoopResetScheduled = false;
+    this._updateLoopBlocked = false;
+    this._updateLoopWarned = false;
+    this._isMounted = false;
+    this._hasRendered = false;
+    this._renderToken = 0;
+    this._externalTemplateModule = null;
+    this._slotTemplates = new Map();
+    this._liveSlotNodes = new Map();
+    this._slotTemplatesCaptured = false;
+    this._customTemplateProps = new Map();
+    this._refEffects = new Map();
+    this._activeRefEffects = null;
+    this._hostStyle = "";
+    this._syncingHostStyle = false;
+    this.__sfSmartElement = true;
+    this.__sfSourceCaptured = false;
+  }
+
+  connectedCallback() {
+    this.captureHostStyle();
+    this.applyHostDisplayStyle();
+    this.captureSlotTemplates();
+    this.__sfSourceCaptured = true;
+    this._isMounted = true;
+    this.emitComponentEvent("connected");
+    this.requestComponentUpdate("connected");
+  }
+
+  disconnectedCallback() {
+    this._isMounted = false;
+    this.onDisconnected();
+    this.emitComponentEvent("disconnected");
+  }
+
+  toBoolean(value, fallback = false) {
+    return toBoolean(value, fallback);
+  }
+
+  toAttributeName(key) {
+    return toAttributeName(key);
+  }
+
+  toNumber(value, fallback = 0) {
+    return toNumber(value, fallback);
+  }
+
+  normalizeEnum(value, allowed, fallback) {
+    return normalizeEnum(value, allowed, fallback);
+  }
+
+  parseJsonAttribute(name, fallback = null) {
+    return parseJsonAttribute(this, name, fallback);
+  }
+
+  getBooleanAttr(name, fallback = false) {
+    const attr = this.attributeName(name);
+
+    if (!attr || !this.hasAttribute(attr)) {
+      return fallback;
+    }
+
+    const value = this.getAttribute(attr);
+
+    if (value === "") {
+      return true;
+    }
+
+    return toBoolean(value, fallback);
+  }
+
+  getNumberAttr(name, fallback = 0) {
+    const attr = this.attributeName(name);
+
+    if (!attr || !this.hasAttribute(attr)) {
+      return fallback;
+    }
+
+    const value = this.getAttribute(attr);
+
+    if (value === "") {
+      return fallback;
+    }
+
+    return toNumber(value, fallback);
+  }
+
+  getEnumAttr(name, allowed = [], fallback = "") {
+    const attr = this.attributeName(name);
+    const value = attr && this.hasAttribute(attr) ? this.getAttribute(attr) : undefined;
+    return normalizeEnum(value, allowed, fallback);
+  }
+
+  hasDeclaredProps() {
+    return Object.keys(this.constructor.props || {}).length > 0;
+  }
+
+  createRef() {
+    const ref = (0,lit_directives_ref_js__WEBPACK_IMPORTED_MODULE_1__.createRef)();
+    ref.__sfOwner = this;
+    return ref;
+  }
+
+  registerRefEffect(ref, callback, options = {}) {
+    if (!ref || typeof callback !== "function") {
+      return this;
+    }
+
+    const currentRecord = this._refEffects.get(ref) || {};
+    const record = { ...currentRecord,
+      callback,
+      once: options.once === true
+    };
+
+    this._refEffects.set(ref, record);
+
+    this._activeRefEffects?.add(ref);
+    return this;
+  }
+
+  flushRefEffects() {
+    if (!this._refEffects.size) {
+      return this;
+    }
+
+    const activeRefs = this._activeRefEffects;
+
+    this._refEffects.forEach((record, ref) => {
+      if (activeRefs && !activeRefs.has(ref)) {
+        if (typeof record.cleanup === "function") {
+          record.cleanup();
+        }
+
+        this._refEffects.delete(ref);
+
+        return;
+      }
+
+      const nextValue = ref?.value || null;
+
+      if (Object.is(record.value, nextValue)) {
+        return;
+      }
+
+      if (typeof record.cleanup === "function") {
+        record.cleanup();
+      }
+
+      record.value = nextValue;
+      record.cleanup = null;
+
+      if (!nextValue) {
+        return;
+      }
+
+      const cleanup = record.callback.call(this, nextValue, {
+        component: this,
+        ref,
+        value: nextValue
+      });
+      record.cleanup = typeof cleanup === "function" ? cleanup : null;
+
+      if (record.once) {
+        this._refEffects.delete(ref);
+      }
+    });
+
+    this._activeRefEffects = null;
+    return this;
+  }
+
+  getPropsContext(props = this.constructor.props || {}) {
+    return Object.fromEntries(Object.entries(props).map(([key, config]) => [key, this.getPropValue(key, config)]));
+  }
+
+  getProp(key, fallbackConfig = "") {
+    const props = this.constructor.props || {};
+    return this.getPropValue(key, props[key] ?? fallbackConfig);
+  }
+
+  getPropValue(key, config = "") {
+    const propConfig = this.constructor.normalizePropConfig(key, config);
+    const {
+      attribute,
+      type,
+      default: defaultValue
+    } = propConfig;
+    const parser = propConfig.parser || propConfig.parse;
+    const hasAttribute = attribute ? this.hasAttribute(attribute) : false;
+    const rawValue = hasAttribute ? this.getAttribute(attribute) : undefined;
+
+    if (!hasAttribute && Object.prototype.hasOwnProperty.call(this, key)) {
+      return this.coercePropValue(this[key], propConfig);
+    }
+
+    if (typeof parser === "function") {
+      return parser.call(this, rawValue, defaultValue, this);
+    }
+
+    if (!hasAttribute) {
+      return this.clonePropDefault(defaultValue, type);
+    }
+
+    return this.coercePropValue(rawValue, propConfig);
+  }
+
+  coercePropValue(value, config = {}) {
+    const {
+      type,
+      default: defaultValue,
+      values
+    } = config;
+
+    if (type === Boolean) {
+      if (value === "") {
+        return true;
+      }
+
+      return toBoolean(value, Boolean(defaultValue));
+    }
+
+    if (type === Number) {
+      return toNumber(value, Number(defaultValue || 0));
+    }
+
+    if (type === Array || type === Object) {
+      if (typeof value !== "string") {
+        return value ?? this.clonePropDefault(defaultValue, type);
+      }
+
+      try {
+        return JSON.parse(value);
+      } catch (error) {
+        console.warn(`${this.tagName.toLowerCase()}: invalid ${config.attribute} JSON`, error);
+        return this.clonePropDefault(defaultValue, type);
+      }
+    }
+
+    if (Array.isArray(values)) {
+      return normalizeEnum(value, values, defaultValue || values[0] || "");
+    }
+
+    return value ?? this.clonePropDefault(defaultValue, type);
+  }
+
+  clonePropDefault(defaultValue, type) {
+    if (Array.isArray(defaultValue)) {
+      return [...defaultValue];
+    }
+
+    if (defaultValue && typeof defaultValue === "object" && (type === Object || type === Array)) {
+      return { ...defaultValue
+      };
+    }
+
+    if (typeof defaultValue !== "undefined") {
+      return defaultValue;
+    }
+
+    if (type === Boolean) {
+      return false;
+    }
+
+    if (type === Number) {
+      return 0;
+    }
+
+    if (type === Array) {
+      return [];
+    }
+
+    if (type === Object) {
+      return {};
+    }
+
+    return "";
+  }
+
+  get value() {
+    return this.getAttribute("value") || "";
+  }
+
+  set value(nextValue) {
+    if (nextValue && typeof nextValue === "object" && !Array.isArray(nextValue)) {
+      this.setValueAttributes(nextValue);
+      return;
+    }
+
+    this.setAttributeValue("value", nextValue);
+  }
+
+  getAttributeValue(name = "value", fallback = "") {
+    return this.getAttribute(name) || fallback;
+  }
+
+  setAttributeValue(name = "value", nextValue = "") {
+    const attr = toAttributeName(name);
+
+    if (!attr) {
+      return this;
+    }
+
+    if (nextValue === null || typeof nextValue === "undefined") {
+      this.removeAttribute(attr);
+      return this;
+    }
+
+    this.setAttribute(attr, String(nextValue));
+    return this;
+  }
+
+  setValueAttributes(nextValue = {}, options = {}) {
+    if (!nextValue || typeof nextValue !== "object") {
+      return this;
+    }
+
+    const {
+      stringifyObjects = true,
+      removeEmptyString = true
+    } = options;
+    Object.entries(nextValue).forEach(([key, value]) => {
+      const attr = toAttributeName(key);
+
+      if (!attr) {
+        return;
+      }
+
+      this.setCustomTemplateProp(key, value);
+
+      if (value === false || value === null || typeof value === "undefined" || removeEmptyString && value === "") {
+        this.removeAttribute(attr);
+        return;
+      }
+
+      if (value === true) {
+        this.setAttribute(attr, "");
+        return;
+      }
+
+      if (stringifyObjects && (Array.isArray(value) || typeof value === "object")) {
+        this.setAttribute(attr, JSON.stringify(value));
+        return;
+      }
+
+      this.setAttribute(attr, String(value));
+    });
+    return this;
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (oldValue === newValue) {
+      return;
+    }
+
+    if (name === "style") {
+      if (this._syncingHostStyle) {
+        return;
+      }
+
+      this._hostStyle = this.normalizeHostStyle(newValue);
+      this.applyHostDisplayStyle();
+    }
+
+    this.requestComponentUpdate(name);
+  }
+
+  get updateLoopLimit() {
+    const limit = Number(this.constructor.updateLoopLimit ?? 50);
+    return Number.isFinite(limit) ? limit : 50;
+  }
+
+  resetUpdateLoopGuard() {
+    this._updateLoopCount = 0;
+    this._updateLoopResetScheduled = false;
+    this._updateLoopBlocked = false;
+    this._updateLoopWarned = false;
+  }
+
+  scheduleUpdateLoopGuardReset() {
+    if (this._updateLoopResetScheduled) {
+      return;
+    }
+
+    this._updateLoopResetScheduled = true;
+    setTimeout(() => {
+      this.resetUpdateLoopGuard();
+    }, 0);
+  }
+
+  canScheduleComponentUpdate(reason = "unknown") {
+    if (this._updateLoopBlocked) {
+      return false;
+    }
+
+    const limit = this.updateLoopLimit;
+
+    if (limit <= 0) {
+      return true;
+    }
+
+    this.scheduleUpdateLoopGuardReset();
+    this._updateLoopCount += 1;
+
+    if (this._updateLoopCount <= limit) {
+      return true;
+    }
+
+    this._updateLoopBlocked = true;
+
+    this._changedAttributes.clear();
+
+    if (!this._updateLoopWarned) {
+      this._updateLoopWarned = true;
+      console.warn(`${this.componentTagName || "sf-element"}: update loop limit reached`, {
+        reason,
+        limit,
+        component: this
+      });
+    }
+
+    return false;
+  }
+
+  requestComponentUpdate(reason = "unknown") {
+    if (this._updateLoopBlocked) {
+      return;
+    }
+
+    if (reason) {
+      this._changedAttributes.add(reason);
+    }
+
+    if (this._updateScheduled) {
+      return;
+    }
+
+    if (!this.canScheduleComponentUpdate(reason)) {
+      return;
+    }
+
+    this._updateScheduled = true;
+    Promise.resolve().then(() => {
+      this._updateScheduled = false;
+
+      if (!this._isMounted) {
+        return;
+      }
+
+      const changedAttributes = Array.from(this._changedAttributes);
+
+      this._changedAttributes.clear();
+
+      void this.performComponentUpdate(changedAttributes);
+    });
+  }
+
+  async performComponentUpdate(changedAttributes = []) {
+    const mode = this.resolveUpdateMode(changedAttributes);
+
+    if (mode === "dom" && this.updateDom(changedAttributes) !== false) {
+      this.afterUpdate(changedAttributes, mode);
+      this.emitComponentEvent("updated", {
+        changedAttributes,
+        updateMode: mode
+      });
+      this.emitComponentEvent("props-change", this.createPropChangeDetail(changedAttributes, mode));
+      return;
+    }
+
+    await this.renderComponent(changedAttributes);
+    this.afterUpdate(changedAttributes, "lit");
+    this.emitComponentEvent("updated", {
+      changedAttributes,
+      updateMode: "lit"
+    });
+    this.emitComponentEvent("props-change", this.createPropChangeDetail(changedAttributes, "lit"));
+  }
+
+  async renderComponent(changedAttributes = []) {
+    const renderToken = ++this._renderToken;
+
+    if (!this._isMounted) {
+      return;
+    }
+
+    this._activeRefEffects = new Set();
+    this.beforeRender(changedAttributes);
+    this.emitComponentEvent("before-render", {
+      changedAttributes
+    });
+    this.runExternalHook("beforeRender", {
+      changedAttributes,
+      root: this
+    });
+    const templateResult = await this.resolveTemplateResult(changedAttributes);
+
+    if (!this._isMounted || renderToken !== this._renderToken) {
+      return;
+    }
+
+    this.prepareRenderContainer(changedAttributes);
+    (0,lit__WEBPACK_IMPORTED_MODULE_0__.render)(templateResult, this);
+    this.flushRefEffects();
+    this._hasRendered = true;
+    this.afterRender(changedAttributes);
+    this._childrenDefinedPromise = null;
+    this.runExternalHook("afterRender", {
+      changedAttributes,
+      root: this
+    });
+    this.emitComponentEvent("after-render", {
+      changedAttributes
+    });
+  }
+
+  getChildCustomElements() {
+    return Array.from(this.querySelectorAll("*")).filter(node => {
+      const tagName = node?.tagName?.toLowerCase?.() || "";
+      return tagName.startsWith("sf-");
+    });
+  }
+
+  async whenChildrenDefined() {
+    if (this._childrenDefinedPromise) {
+      return this._childrenDefinedPromise;
+    }
+
+    this._childrenDefinedPromise = Promise.resolve().then(async () => {
+      const children = this.getChildCustomElements();
+      await Promise.all(children.map(async child => {
+        const tagName = child.tagName?.toLowerCase?.();
+
+        if (!tagName || !window.customElements?.whenDefined) {
+          return;
+        }
+
+        await window.customElements.whenDefined(tagName);
+
+        if (child.updateComplete?.then) {
+          await child.updateComplete;
+        }
+
+        if (child._updateScheduled) {
+          await Promise.resolve();
+        }
+      }));
+      return children;
+    });
+    return this._childrenDefinedPromise;
+  }
+
+  get componentTagName() {
+    return this.tagName?.toLowerCase?.() || "";
+  }
+
+  get componentTemplateName() {
+    return this.getAttribute("template") || "default";
+  }
+
+  get externalTemplateComponentName() {
+    return this.componentTagName.startsWith("sf-") ? this.componentTagName.replace(/^sf-/, "") : this.componentTagName;
+  }
+
+  get externalTemplateBasePath() {
+    return window.SF_SMART_TEMPLATE_PATH || window.SFSmartTemplatePath || this.constructor.externalTemplateBasePath;
+  }
+
+  emitComponentEvent(name, detail = {}) {
+    const eventDetail = {
+      component: this,
+      tagName: this.componentTagName,
+      template: this.componentTemplateName,
+      ...detail
+    };
+    this.dispatchEvent(new CustomEvent(`sf-${name}`, {
+      bubbles: true,
+      composed: true,
+      detail: eventDetail
+    }));
+  }
+
+  attributeName(key) {
+    return String(key || "").replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`);
+  }
+
+  shouldSerializeFalseAttribute(attr) {
+    const attributes = this.constructor.defaultTrueAttributes;
+
+    if (!attributes) {
+      return false;
+    }
+
+    if (attributes instanceof Set) {
+      return attributes.has(attr);
+    }
+
+    if (Array.isArray(attributes)) {
+      return attributes.includes(attr);
+    }
+
+    return false;
+  }
+
+  setAttributes(nextAttributes = {}) {
+    if (!nextAttributes || typeof nextAttributes !== "object") {
+      return this;
+    }
+
+    Object.entries(nextAttributes).forEach(([key, value]) => {
+      const attr = this.attributeName(key);
+
+      if (!attr) {
+        return;
+      }
+
+      this.setCustomTemplateProp(key, value);
+
+      if (value === false && this.shouldSerializeFalseAttribute(attr)) {
+        this.setAttribute(attr, "false");
+        return;
+      }
+
+      if (value === false || value === null || value === undefined || value === "") {
+        this.removeAttribute(attr);
+        return;
+      }
+
+      if (value === true) {
+        this.setAttribute(attr, "");
+        return;
+      }
+
+      this.setAttribute(attr, String(value));
+    });
+    return this;
+  }
+
+  forwardHostAttributes(target, options = {}) {
+    if (!target) {
+      return this;
+    }
+
+    const {
+      exclude = [],
+      transferDataAttributes = true,
+      storageKey = "__sfForwardedDataAttributes",
+      targetStorageKey = "__sfForwardedAttributeKeys"
+    } = options;
+    const excludeSet = exclude instanceof Set ? exclude : new Set(exclude);
+    const dataAttributes = this[storageKey] || new Map();
+    const previous = target[targetStorageKey] || new Set();
+    const dataAttributeNamesToRemove = [];
+    const nextKeys = new Set();
+    previous.forEach(name => {
+      target.removeAttribute(name);
+    });
+    Array.from(this.attributes).forEach(attribute => {
+      const {
+        name,
+        value
+      } = attribute;
+
+      if (excludeSet.has(name)) {
+        return;
+      }
+
+      if (/^on[a-z]/i.test(name)) {
+        return;
+      }
+
+      if (transferDataAttributes && name.startsWith("data-")) {
+        dataAttributes.set(name, value);
+        dataAttributeNamesToRemove.push(name);
+        return;
+      }
+
+      nextKeys.add(name);
+      target.setAttribute(name, value);
+    });
+    dataAttributes.forEach((value, name) => {
+      nextKeys.add(name);
+      target.setAttribute(name, value);
+    });
+    target[targetStorageKey] = nextKeys;
+    this[storageKey] = dataAttributes;
+
+    if (dataAttributeNamesToRemove.length) {
+      this.__sfForwardingHostAttributes = true;
+      dataAttributeNamesToRemove.forEach(name => this.removeAttribute(name));
+      this.__sfForwardingHostAttributes = false;
+    }
+
+    return this;
+  }
+
+  observeForwardedHostAttributes(targetGetter, options = {}) {
+    if (this._forwardHostAttributeObserver) {
+      return this;
+    }
+
+    const resolveTarget = typeof targetGetter === "function" ? targetGetter : () => targetGetter;
+    this._forwardHostAttributeObserver = new MutationObserver(() => {
+      if (this.__sfForwardingHostAttributes) {
+        return;
+      }
+
+      this.forwardHostAttributes(resolveTarget(), options);
+    });
+
+    this._forwardHostAttributeObserver.observe(this, {
+      attributes: true
+    });
+
+    return this;
+  }
+
+  disconnectForwardedHostAttributes() {
+    this._forwardHostAttributeObserver?.disconnect?.();
+    this._forwardHostAttributeObserver = null;
+    return this;
+  }
+
+  removeAttributes(attributeNames = []) {
+    const names = Array.isArray(attributeNames) ? attributeNames : [attributeNames];
+    names.filter(Boolean).forEach(name => this.removeAttribute(this.attributeName(name)));
+    return this;
+  }
+
+  refresh(reason = "manual") {
+    this.requestComponentUpdate(reason);
+    return this;
+  }
+
+  get isRendered() {
+    return this._hasRendered === true;
+  }
+
+  createRenderDetail(detail = {}) {
+    return {
+      component: this,
+      tagName: this.componentTagName,
+      template: this.componentTemplateName,
+      ...detail
+    };
+  }
+
+  runRenderedCallback(callback, detail = {}, event = null) {
+    if (typeof callback !== "function") {
+      return undefined;
+    }
+
+    return callback.call(this, this.createRenderDetail(detail), event);
+  }
+
+  whenRendered(callback = null, options = {}) {
+    const waitNext = options.next === true;
+
+    if (this.isRendered && !waitNext) {
+      const detail = this.createRenderDetail({
+        changedAttributes: [],
+        immediate: true
+      });
+      return Promise.resolve().then(() => {
+        this.runRenderedCallback(callback, detail);
+        return detail;
+      });
+    }
+
+    return new Promise(resolve => {
+      const onAfterRender = event => {
+        const detail = event?.detail || this.createRenderDetail();
+        this.runRenderedCallback(callback, detail, event);
+        resolve(detail);
+      };
+
+      this.addEventListener("sf-after-render", onAfterRender, {
+        once: true
+      });
+    });
+  }
+
+  onAfterRender(callback, options = {}) {
+    const immediate = options.immediate !== false;
+    const once = options.once !== false;
+
+    if (immediate && this.isRendered) {
+      this.runRenderedCallback(callback, {
+        changedAttributes: [],
+        immediate: true
+      });
+
+      if (once) {
+        return () => {};
+      }
+    }
+
+    const onAfterRender = event => {
+      this.runRenderedCallback(callback, event?.detail || {}, event);
+
+      if (once) {
+        this.removeEventListener("sf-after-render", onAfterRender);
+      }
+    };
+
+    this.addEventListener("sf-after-render", onAfterRender);
+    return () => this.removeEventListener("sf-after-render", onAfterRender);
+  }
+
+  getState() {
+    if (typeof this.state !== "undefined") {
+      return this.state;
+    }
+
+    if (this.hasDeclaredProps()) {
+      return this.templateContext();
+    }
+
+    if (typeof this.value !== "undefined") {
+      return this.value;
+    }
+
+    return this.templateContext();
+  }
+
+  normalizeStateCallbackArgs(reasonOrCallback, callback, fallbackReason = "state") {
+    if (typeof reasonOrCallback === "function") {
+      return {
+        reason: fallbackReason,
+        callback: reasonOrCallback
+      };
+    }
+
+    return {
+      reason: reasonOrCallback || fallbackReason,
+      callback
+    };
+  }
+
+  runStateCallback(callback, detail = {}) {
+    if (typeof callback !== "function") {
+      return this;
+    }
+
+    callback.call(this, {
+      component: this,
+      state: this.getState(),
+      ...detail
+    });
+    return this;
+  }
+
+  scheduleStateCallback(callback, detail = {}) {
+    if (typeof callback !== "function") {
+      return this;
+    }
+
+    if (this._isMounted && this._updateScheduled) {
+      this.whenRendered(renderDetail => {
+        this.runStateCallback(callback, { ...detail,
+          renderDetail
+        });
+      }, {
+        next: true
+      });
+      return this;
+    }
+
+    Promise.resolve().then(() => {
+      this.runStateCallback(callback, detail);
+    });
+    return this;
+  }
+
+  setState(nextState = {}, callback = null) {
+    this.setAttributes(nextState);
+    this.scheduleStateCallback(callback, {
+      patch: nextState,
+      reason: "attributes"
+    });
+    return this;
+  }
+
+  patchState(nextState = {}, reasonOrCallback = "state", callback = null) {
+    const {
+      reason,
+      callback: stateCallback
+    } = this.normalizeStateCallbackArgs(reasonOrCallback, callback, "state");
+    const prevState = this.state && typeof this.state === "object" ? this.state : {};
+    const patch = typeof nextState === "function" ? nextState(prevState) : nextState;
+
+    if (!patch || typeof patch !== "object" || Object.is(patch, prevState)) {
+      this.scheduleStateCallback(stateCallback, {
+        patch,
+        reason,
+        changed: false,
+        changedKeys: [],
+        prevState,
+        nextState: prevState
+      });
+      return this;
+    }
+
+    let changed = false;
+    const changedKeys = [];
+    const state = { ...prevState
+    };
+    Object.entries(patch).forEach(([key, value]) => {
+      if (Object.is(state[key], value)) {
+        return;
+      }
+
+      state[key] = value;
+      changed = true;
+      changedKeys.push(key);
+    });
+
+    if (!changed) {
+      this.scheduleStateCallback(stateCallback, {
+        patch,
+        reason,
+        changed: false,
+        changedKeys,
+        prevState,
+        nextState: prevState
+      });
+      return this;
+    }
+
+    this.state = state;
+    this.requestComponentUpdate(reason);
+    this.scheduleStateCallback(stateCallback, {
+      patch,
+      reason,
+      changed: true,
+      changedKeys,
+      prevState,
+      nextState: state
+    });
+    return this;
+  }
+
+  set(nextState = {}, reasonOrCallback = "state", callback = null) {
+    return this.patchState(nextState, reasonOrCallback, callback);
+  }
+
+  getRootClass() {
+    return this.getAttribute("root-class") || "";
+  }
+
+  normalizeHostStyle(style = "") {
+    const element = document.createElement("div");
+    element.setAttribute("style", String(style || ""));
+    element.style.removeProperty("display");
+    return element.getAttribute("style") || "";
+  }
+
+  captureHostStyle() {
+    const normalized = this.normalizeHostStyle(this.getAttribute("style"));
+
+    if (normalized || !this._hostStyle) {
+      this._hostStyle = normalized;
+    }
+
+    return this;
+  }
+
+  applyHostDisplayStyle() {
+    const nextStyle = "display: contents;";
+
+    if (this.getAttribute("style") === nextStyle) {
+      return this;
+    }
+
+    this._syncingHostStyle = true;
+    this.setAttribute("style", nextStyle);
+    this._syncingHostStyle = false;
+    return this;
+  }
+
+  getRootStyle() {
+    return [this._hostStyle, this.getAttribute("root-style")].filter(Boolean).join("; ");
+  }
+
+  setRootClass(nextValue = "") {
+    const value = String(nextValue || "").trim();
+
+    if (!value) {
+      this.removeAttribute("root-class");
+      return this;
+    }
+
+    this.setAttribute("root-class", value);
+    return this;
+  }
+
+  addRootClass(...tokens) {
+    const classes = new Set(this.getRootClass().split(/\s+/).filter(Boolean));
+    tokens.flat().filter(Boolean).forEach(token => {
+      String(token).split(/\s+/).filter(Boolean).forEach(part => classes.add(part));
+    });
+    return this.setRootClass(Array.from(classes).join(" "));
+  }
+
+  setRootStyle(nextValue = "") {
+    const value = String(nextValue || "").trim();
+
+    if (!value) {
+      this.removeAttribute("root-style");
+      return this;
+    }
+
+    this.setAttribute("root-style", value);
+    return this;
+  }
+
+  removeRootClass(...tokens) {
+    const classes = new Set(this.getRootClass().split(/\s+/).filter(Boolean));
+    tokens.flat().filter(Boolean).forEach(token => {
+      String(token).split(/\s+/).filter(Boolean).forEach(part => classes.delete(part));
+    });
+    return this.setRootClass(Array.from(classes).join(" "));
+  }
+
+  toggleRootClass(token, force) {
+    const normalized = String(token || "").trim();
+
+    if (!normalized) {
+      return this;
+    }
+
+    const classes = new Set(this.getRootClass().split(/\s+/).filter(Boolean));
+    const shouldAdd = typeof force === "boolean" ? force : !classes.has(normalized);
+
+    if (shouldAdd) {
+      classes.add(normalized);
+    } else {
+      classes.delete(normalized);
+    }
+
+    this.setRootClass(Array.from(classes).join(" "));
+    return this;
+  }
+
+  setHidden(hidden = true) {
+    const next = toBoolean(hidden, true);
+    this.toggleAttribute("hidden", next);
+    this.toggleRootClass("hidden", next);
+    return this;
+  }
+
+  isHidden() {
+    const rootClasses = new Set(this.getRootClass().split(/\s+/).filter(Boolean));
+    return this.hasAttribute("hidden") || rootClasses.has("hidden");
+  }
+
+  createPropChangeDetail(changedAttributes = [], updateMode = "lit") {
+    return {
+      changedAttributes,
+      updateMode,
+      state: this.getState()
+    };
+  }
+
+  onPropChange(handler, options) {
+    if (typeof handler === "function") {
+      this.addEventListener("sf-props-change", event => {
+        handler(event.detail?.state, event.detail, event);
+      }, options);
+    }
+
+    return this;
+  }
+
+  onUpdate(handler, options) {
+    if (typeof handler === "function") {
+      this.addEventListener("sf-updated", event => {
+        handler(this.getState(), event.detail, event);
+      }, options);
+    }
+
+    return this;
+  }
+
+  createTemplateContext(baseContext = {}) {
+    const propsContext = this.hasDeclaredProps() ? this.getPropsContext() : {};
+    const normalizedContext = {
+      component: this,
+      rootClass: this.getRootClass(),
+      rootStyle: this.getRootStyle(),
+      ...propsContext,
+      ...baseContext
+    };
+    const custom = this.getCustomTemplateProps(normalizedContext);
+    return { ...custom,
+      ...normalizedContext,
+      custom
+    };
+  }
+
+  getCustomTemplateProps(baseContext = {}) {
+    const reservedAttributes = this.getReservedTemplateAttributes();
+    const reservedKeys = this.getReservedTemplateKeys(baseContext);
+    const props = {};
+
+    this._customTemplateProps.forEach((value, key) => {
+      if (!this.isCustomTemplateProp(key, baseContext)) {
+        return;
+      }
+
+      props[key] = value;
+    });
+
+    Object.entries(this.getOwnCustomTemplateProps(baseContext)).forEach(([key, value]) => {
+      if (!key || reservedKeys.has(key) || Object.prototype.hasOwnProperty.call(props, key)) {
+        return;
+      }
+
+      props[key] = value;
+    });
+    Array.from(this.attributes || []).forEach(({
+      name,
+      value
+    }) => {
+      if (reservedAttributes.has(name)) {
+        return;
+      }
+
+      const key = this.attributeToPropertyName(name);
+
+      if (!key || reservedKeys.has(key) || Object.prototype.hasOwnProperty.call(props, key)) {
+        return;
+      }
+
+      props[key] = value;
+    });
+    return props;
+  }
+
+  getOwnCustomTemplateProps(baseContext = {}) {
+    const props = {};
+    const reservedKeys = this.getReservedTemplateKeys(baseContext);
+    Object.keys(this).forEach(key => {
+      if (key.startsWith("_") || reservedKeys.has(key) || typeof this[key] === "function") {
+        return;
+      }
+
+      props[key] = this[key];
+    });
+    return props;
+  }
+
+  getReservedTemplateAttributes() {
+    const reservedAttributes = new Set(["class", "style", "id", "slot", "template"]);
+    const observedAttributes = this.constructor.observedAttributes || [];
+    observedAttributes.forEach(name => {
+      const attr = toAttributeName(name);
+
+      if (attr) {
+        reservedAttributes.add(attr);
+      }
+    });
+    return reservedAttributes;
+  }
+
+  getReservedTemplateKeys(baseContext = {}) {
+    const reservedKeys = new Set(["custom"]);
+    Object.keys(baseContext || {}).forEach(key => {
+      reservedKeys.add(key);
+    });
+    this.getReservedTemplateAttributes().forEach(attr => {
+      const key = this.attributeToPropertyName(attr);
+
+      if (key) {
+        reservedKeys.add(key);
+      }
+    });
+    return reservedKeys;
+  }
+
+  isCustomTemplateProp(key, baseContext = {}) {
+    const prop = this.attributeToPropertyName(toAttributeName(key));
+
+    if (!prop) {
+      return false;
+    }
+
+    const attr = toAttributeName(prop);
+    const reservedAttributes = this.getReservedTemplateAttributes();
+    const reservedKeys = this.getReservedTemplateKeys(baseContext);
+    return !reservedAttributes.has(attr) && !reservedKeys.has(prop);
+  }
+
+  setCustomTemplateProps(nextProps = {}, baseContext = {}) {
+    if (!nextProps || typeof nextProps !== "object") {
+      return this;
+    }
+
+    Object.entries(nextProps).forEach(([key, value]) => {
+      this.setCustomTemplateProp(key, value, baseContext);
+    });
+    return this;
+  }
+
+  setCustomTemplateProp(key, value, baseContext = {}) {
+    const prop = this.attributeToPropertyName(toAttributeName(key));
+
+    if (!this.isCustomTemplateProp(prop, baseContext)) {
+      return this;
+    }
+
+    if (value === false || value === null || typeof value === "undefined") {
+      if (this._customTemplateProps.delete(prop)) {
+        this.requestComponentUpdate(prop);
+      }
+
+      return this;
+    }
+
+    if (this._customTemplateProps.get(prop) === value) {
+      return this;
+    }
+
+    this._customTemplateProps.set(prop, value);
+
+    this.requestComponentUpdate(prop);
+    return this;
+  }
+
+  attributeToPropertyName(name) {
+    return String(name || "").replace(/-([a-z0-9])/g, (_, symbol) => symbol.toUpperCase());
+  }
+
+  resolveUpdateMode() {
+    return "lit";
+  }
+
+  createPropsTemplateContext(extraContext = {}) {
+    return this.createTemplateContext({
+      component: this,
+      ...this.getPropsContext(),
+      ...extraContext
+    });
+  }
+
+  templateContext() {
+    return this.createPropsTemplateContext();
+  }
+
+  captureSlotTemplates() {
+    if (this._slotTemplatesCaptured) {
+      return;
+    }
+
+    this._slotTemplatesCaptured = true;
+    Array.from(this.children).forEach(child => {
+      if (!(child instanceof HTMLElement)) {
+        return;
+      }
+
+      const slotName = child.getAttribute("slot");
+
+      if (!slotName) {
+        return;
+      }
+
+      if (child.tagName?.toLowerCase?.() === "template") {
+        if (!this._slotTemplates.has(slotName)) {
+          this._slotTemplates.set(slotName, []);
+        }
+
+        Array.from(child.content?.childNodes || []).forEach(node => {
+          this._slotTemplates.get(slotName).push(node.cloneNode(true));
+        });
+        child.remove();
+        return;
+      }
+
+      if (!this._liveSlotNodes.has(slotName)) {
+        this._liveSlotNodes.set(slotName, []);
+      }
+
+      const shouldUnwrapSlotHost = child.getAttributeNames().length === 1 && child.hasAttribute("slot");
+      const slotNodes = shouldUnwrapSlotHost ? Array.from(child.childNodes) : [child];
+
+      this._liveSlotNodes.get(slotName).push(...slotNodes);
+
+      child.remove();
+    });
+  }
+
+  captureChildTemplates(name, matcher, options = {}) {
+    if (!name) {
+      return [];
+    }
+
+    const {
+      append = true,
+      remove = true
+    } = options;
+    const matches = typeof matcher === "function" ? matcher : node => node instanceof Element && typeof matcher === "string" && node.matches?.(matcher);
+    const nodes = Array.from(this.childNodes || []).filter(child => matches(child));
+
+    if (!nodes.length) {
+      return [];
+    }
+
+    if (!append || !this._slotTemplates.has(name)) {
+      this._slotTemplates.set(name, []);
+    }
+
+    const templates = nodes.map(node => node.cloneNode(true));
+    templates.forEach(node => {
+      this._slotTemplates.get(name).push(node);
+    });
+
+    if (remove) {
+      nodes.forEach(node => node.remove());
+    }
+
+    return templates.map(node => node.cloneNode(true));
+  }
+
+  hasSlotContent(name) {
+    if ((this._liveSlotNodes.get(name) || []).length > 0) {
+      return true;
+    }
+
+    return (this._slotTemplates.get(name) || []).length > 0;
+  }
+
+  getSlotContent(name) {
+    const liveSlotContent = this._liveSlotNodes.get(name) || [];
+
+    if (liveSlotContent.length) {
+      return liveSlotContent.length === 1 ? liveSlotContent[0] : liveSlotContent;
+    }
+
+    const slotContent = this._slotTemplates.get(name) || [];
+
+    if (!slotContent.length) {
+      return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+    }
+
+    if (slotContent.length === 1) {
+      return slotContent[0].cloneNode(true);
+    }
+
+    return slotContent.map(node => node.cloneNode(true));
+  }
+
+  setSlot(name, ...elements) {
+    if (!name) {
+      return this;
+    } // Преобразуем строки в DOM-элементы
+
+
+    const parsed = elements.map(el => {
+      if (typeof el === "string") {
+        const wrapper = document.createElement("div");
+        wrapper.innerHTML = el;
+        return Array.from(wrapper.childNodes);
+      }
+
+      return [el];
+    }).flat().filter(node => node instanceof Node); // Обновляем _slotTemplates (Lit-рендеринг)
+
+    this._slotTemplates.delete(name); // Обновляем _liveSlotNodes (если есть — для совместимости с sf-modal)
+
+
+    this._liveSlotNodes.set(name, parsed); // Запрашиваем перерендер
+
+
+    this.requestComponentUpdate("slot-change");
+    return this;
+  }
+
+  copyRuntimeData(source, target) {
+    if (!(source instanceof Node) || !(target instanceof Node)) {
+      return;
+    }
+
+    if (source.__sfCreateEventHandlers) {
+      Object.defineProperty(target, "__sfCreateEventHandlers", {
+        configurable: true,
+        enumerable: false,
+        value: source.__sfCreateEventHandlers.slice()
+      });
+    }
+
+    const sourceChildren = Array.from(source.childNodes || []);
+    const targetChildren = Array.from(target.childNodes || []);
+    sourceChildren.forEach((sourceChild, index) => {
+      this.copyRuntimeData(sourceChild, targetChildren[index]);
+    });
+  }
+
+  clearSlot(name) {
+    if (!name) {
+      return this;
+    }
+
+    this._slotTemplates.delete(name);
+
+    if (this._liveSlotNodes) {
+      this._liveSlotNodes.delete(name);
+    }
+
+    this.requestComponentUpdate("slot-change");
+    return this;
+  }
+
+  async resolveTemplateResult(changedAttributes = []) {
+    const templateName = this.componentTemplateName;
+
+    if (this.hasBuiltInTemplate(templateName)) {
+      this._externalTemplateModule = null;
+      return this.template();
+    }
+
+    const externalModule = await this.resolveExternalTemplateModule(templateName);
+    this._externalTemplateModule = externalModule || null;
+
+    if (externalModule) {
+      const rawContext = this.templateContext();
+      const context = this.createTemplateContext(this.mapExternalTemplateContext(rawContext, externalModule));
+      const renderFn = typeof externalModule.default === "function" ? externalModule.default : null;
+
+      if (renderFn) {
+        return renderFn({
+          html: lit__WEBPACK_IMPORTED_MODULE_0__.html,
+          nothing: lit__WEBPACK_IMPORTED_MODULE_0__.nothing,
+          context,
+          component: this,
+          changedAttributes
+        });
+      }
+    }
+
+    this._externalTemplateModule = null;
+    return this.template();
+  }
+
+  hasBuiltInTemplate(templateName = this.componentTemplateName) {
+    return !templateName || templateName === "default";
+  }
+
+  mapExternalTemplateContext(context, externalModule) {
+    if (typeof externalModule?.mapContext === "function") {
+      return externalModule.mapContext({
+        context,
+        component: this,
+        html: lit__WEBPACK_IMPORTED_MODULE_0__.html,
+        nothing: lit__WEBPACK_IMPORTED_MODULE_0__.nothing
+      }) || context;
+    }
+
+    return context;
+  }
+
+  async resolveExternalTemplateModule(templateName = this.componentTemplateName) {
+    if (!templateName) {
+      return null;
+    }
+
+    const moduleUrl = this.getExternalTemplateModuleUrl(templateName);
+
+    if (!moduleUrl) {
+      return null;
+    }
+
+    await this.loadExternalTemplateCss(templateName);
+
+    if (this.constructor.externalTemplateModules.has(moduleUrl)) {
+      return this.constructor.externalTemplateModules.get(moduleUrl);
+    }
+
+    if (this.constructor.externalTemplateMisses.has(moduleUrl)) {
+      return null;
+    }
+
+    const exists = await this.checkExternalTemplateModule(moduleUrl);
+
+    if (!exists) {
+      this.constructor.externalTemplateMisses.add(moduleUrl);
+      return null;
+    }
+
+    try {
+      const externalModule = await import(
+      /* webpackIgnore: true */
+      moduleUrl);
+      this.constructor.externalTemplateModules.set(moduleUrl, externalModule);
+      return externalModule;
+    } catch (error) {
+      console.warn(error);
+      this.constructor.externalTemplateMisses.add(moduleUrl);
+      return null;
+    }
+  }
+
+  async checkExternalTemplateModule(moduleUrl) {
+    if (!moduleUrl) {
+      return false;
+    }
+
+    if (this.constructor.externalTemplateChecks.has(moduleUrl)) {
+      return this.constructor.externalTemplateChecks.get(moduleUrl);
+    }
+
+    const checkPromise = fetch(moduleUrl, {
+      method: "GET",
+      cache: "no-store"
+    }).then(response => response.ok).catch(() => false);
+    this.constructor.externalTemplateChecks.set(moduleUrl, checkPromise);
+    const exists = await checkPromise;
+
+    if (!exists) {
+      this.constructor.externalTemplateChecks.delete(moduleUrl);
+    }
+
+    return exists;
+  }
+
+  getExternalTemplateModuleUrl(templateName = this.componentTemplateName) {
+    const basePath = String(this.externalTemplateBasePath || "").replace(/\/$/, "");
+    const componentName = this.externalTemplateComponentName;
+
+    if (!basePath || !componentName || !templateName) {
+      return "";
+    }
+
+    return `${basePath}/${componentName}/${templateName}/index.js`;
+  }
+
+  getExternalTemplateCssUrl(templateName = this.componentTemplateName) {
+    const basePath = String(this.externalTemplateBasePath || "").replace(/\/$/, "");
+    const componentName = this.externalTemplateComponentName;
+
+    if (!basePath || !componentName || !templateName) {
+      return "";
+    }
+
+    return `${basePath}/${componentName}/${templateName}/index.css`;
+  }
+
+  loadExternalTemplateCss(templateName = this.componentTemplateName) {
+    const cssUrl = this.getExternalTemplateCssUrl(templateName);
+
+    if (!cssUrl) {
+      return Promise.resolve(false);
+    }
+
+    if (this.constructor.externalTemplateCssLoaded.has(cssUrl)) {
+      return Promise.resolve(true);
+    }
+
+    if (this.constructor.externalTemplateCssMisses.has(cssUrl)) {
+      return Promise.resolve(false);
+    }
+
+    const existing = document.querySelector(`link[data-sf-smart-css="${cssUrl}"]`);
+
+    if (existing) {
+      this.constructor.externalTemplateCssLoaded.add(cssUrl);
+      return Promise.resolve(true);
+    }
+
+    return new Promise(resolve => {
+      const link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href = cssUrl;
+      link.dataset.sfSmartCss = cssUrl;
+
+      link.onload = () => {
+        this.constructor.externalTemplateCssLoaded.add(cssUrl);
+        resolve(true);
+      };
+
+      link.onerror = () => {
+        this.constructor.externalTemplateCssMisses.add(cssUrl);
+        resolve(false);
+      };
+
+      document.head.append(link);
+    });
+  }
+
+  runExternalHook(hookName, detail = {}) {
+    if (typeof this._externalTemplateModule?.[hookName] !== "function") {
+      return;
+    }
+
+    try {
+      this._externalTemplateModule[hookName]({
+        component: this,
+        root: this,
+        html: lit__WEBPACK_IMPORTED_MODULE_0__.html,
+        nothing: lit__WEBPACK_IMPORTED_MODULE_0__.nothing,
+        context: this.templateContext(),
+        ...detail
+      });
+    } catch (error) {
+      console.warn(error);
+    }
+  }
+
+  updateDom() {
+    return false;
+  }
+
+  shouldClearLightDomBeforeFirstRender() {
+    return this.constructor.clearLightDomBeforeFirstRender === true;
+  }
+
+  prepareRenderContainer() {
+    if (this._hasRendered || !this.shouldClearLightDomBeforeFirstRender()) {
+      return;
+    }
+
+    this.replaceChildren();
+  }
+
+  template() {
+    return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  }
+
+  beforeRender() {}
+
+  afterRender(callback) {
+    if (typeof callback === "function") {
+      return this.whenRendered(callback);
+    }
+
+    return undefined;
+  }
+
+  afterUpdate() {}
+
+  onDisconnected() {
+    this.runExternalHook("destroy");
+  }
+
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (SfBaseElement); // Global access for Playground, console, and project-level components.
+
+if (typeof window !== "undefined") {
+  window.SfBaseElement = SfBaseElement;
+  window.html = lit__WEBPACK_IMPORTED_MODULE_0__.html;
+  window.nothing = lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  window.render = lit__WEBPACK_IMPORTED_MODULE_0__.render;
+
+  if (!window.SF) {
+    window.SF = {};
+  }
+
+  window.SF.SfBaseElement = SfBaseElement;
+  window.SF.html = lit__WEBPACK_IMPORTED_MODULE_0__.html;
+  window.SF.nothing = lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  window.SF.render = lit__WEBPACK_IMPORTED_MODULE_0__.render;
+  window.SF.smart = { ...(window.SF.smart || {}),
+    SfBaseElement,
+    html: lit__WEBPACK_IMPORTED_MODULE_0__.html,
+    nothing: lit__WEBPACK_IMPORTED_MODULE_0__.nothing,
+    render: lit__WEBPACK_IMPORTED_MODULE_0__.render,
+    toBoolean,
+    toAttributeName,
+    toNumber,
+    normalizeEnum,
+    parseJsonAttribute
+  };
+}
+
+/***/ }
+
+}]);

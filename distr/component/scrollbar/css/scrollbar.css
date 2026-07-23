@@ -1,1 +1,45 @@
-.scrollbar::-webkit-scrollbar{width:var(--sf-a8)}.scrollbar::-webkit-scrollbar-track{background:rgba(0,0,0,0)}.scrollbar::-webkit-scrollbar-thumb{background:var(--sf-surface-4)}.scrollbar::-webkit-scrollbar-thumb:hover{background:var(--sf-on-surface-variant)}
+/*
+* Main SCSS file for including styles for component.
+*
+* Imports:
+* - Styling variables (_var__component_name.scss)
+* - Base styles (_css__component_name.scss)
+*
+*/
+/*
+* _var__component_name.scss
+* 
+* SCSS file containing variables for component styling.
+* 
+* Used to define default parameters (color, size, etc.)
+* that can be overridden in other parts of the project.
+* 
+* Example usage:
+* --sf-icon--fill: 0; // Fill for icon
+*/
+/*
+* Main SCSS file for including styles for component.
+*
+* Imports:
+* - Styling variables (_var__component_name.scss)
+* - Base styles (_css__component_name.scss)
+*
+*/
+.scrollbar::-webkit-scrollbar {
+  width: var(--sf-a8);
+}
+
+/* Track */
+.scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Handle */
+.scrollbar::-webkit-scrollbar-thumb {
+  background: var(--sf-surface-4); /*#888;*/
+}
+
+/* Handle on hover */
+.scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--sf-on-surface-variant);
+}

@@ -1,0 +1,1 @@
+@layer sf.utilities{@media(min-width: 520px){.sm\:shrink{flex-shrink:1}.sm\:shrink-none{flex-shrink:0}}}

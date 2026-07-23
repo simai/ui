@@ -8,6 +8,27 @@
     "regex": "/hover\\:accent-(transparent|current|on-surface|primary|secondary|tertiary|success|warning|error)/"
   },
   {
+    "name": "accordion",
+    "css": true,
+    "js": true,
+    "regex": "/sf-accordion/",
+    "type": "component"
+  },
+  {
+    "name": "admin-menu",
+    "css": true,
+    "js": true,
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-admin-menu\\b/i",
+    "type": "component"
+  },
+  {
+    "name": "alerts",
+    "css": true,
+    "js": true,
+    "regex": "/sf-alert/",
+    "type": "component"
+  },
+  {
     "name": "align-content/default",
     "regex": "/content-cross-/"
   },
@@ -68,12 +89,12 @@
     "regex": "/xl\\:self-cross-/"
   },
   {
-    "name": "animation/default",
-    "regex": "/animation-from-|(?:^|[\\s\"])(?:animation|infinite)(?=[\\s\"]|$)/"
-  },
-  {
     "name": "animation-duration/default",
     "regex": "/animation-duration-/"
+  },
+  {
+    "name": "animation/default",
+    "regex": "/animation-from-|(?:^|[\\s\"])(?:animation|infinite)(?=[\\s\"]|$)/"
   },
   {
     "name": "appearance/default",
@@ -98,6 +119,13 @@
   {
     "name": "aspect-ratio/xl",
     "regex": "/xl\\:aspect-/"
+  },
+  {
+    "name": "avatars",
+    "css": true,
+    "js": true,
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-avatar\\b/i",
+    "type": "component"
   },
   {
     "name": "backdrop-filer-hue-rotate/default",
@@ -212,16 +240,16 @@
     "regex": "/xl\\:bg-clip-(border|padding|content|text)/"
   },
   {
-    "name": "background-color/default",
-    "regex": "/(hover:|active:)?bg-[\\w-]+/"
-  },
-  {
     "name": "background-color-brand/default",
     "regex": "/bg-(fb|fb-messenger|youtube|whatsapp|instagram|wechat|tiktok|sinaweibo|qq|telegram|snapchat|kuaishou|qzone|pinterest|twitter|reddit|quora|skype|msteams|linkedin|vk|viber|vimeo|ok|tumblr|behance|soundcloud)/"
   },
   {
     "name": "background-color-brand/hover",
     "regex": "/hover\\:bg-(fb|fb-messenger|youtube|whatsapp|instagram|wechat|tiktok|sinaweibo|qq|telegram|snapchat|kuaishou|qzone|pinterest|twitter|reddit|quora|skype|msteams|linkedin|vk|viber|vimeo|ok|tumblr|behance|soundcloud)/"
+  },
+  {
+    "name": "background-color/default",
+    "regex": "/(hover:|active:)?bg-[\\w-]+/"
   },
   {
     "name": "background-fake/default",
@@ -292,6 +320,26 @@
     "regex": "/xl\\:(bg-repeat|(bg-repeat-(none|x|y|round|space)))/"
   },
   {
+    "name": "background-size-ext/default",
+    "regex": "/bg-size-(([a-i]{1}[0-9]{1})|(100|[0-9]{1,2}))/"
+  },
+  {
+    "name": "background-size-ext/lg",
+    "regex": "/lg\\:bg-size-(([a-i]{1}[0-9]{1})|(100|[0-9]{1,2}))/"
+  },
+  {
+    "name": "background-size-ext/md",
+    "regex": "/md\\:bg-size-(([a-i]{1}[0-9]{1})|(100|[0-9]{1,2}))/"
+  },
+  {
+    "name": "background-size-ext/sm",
+    "regex": "/sm\\:bg-size-(([a-i]{1}[0-9]{1})|(100|[0-9]{1,2}))/"
+  },
+  {
+    "name": "background-size-ext/xl",
+    "regex": "/xl\\:bg-size-(([a-i]{1}[0-9]{1})|(100|[0-9]{1,2}))/"
+  },
+  {
     "name": "background-size/default",
     "regex": "/bg-(auto|cover|contain)/"
   },
@@ -312,24 +360,11 @@
     "regex": "/xl\\:bg-(auto|cover|contain)/"
   },
   {
-    "name": "background-size-ext/default",
-    "regex": "/bg-size-(([a-i]{1}[0-9]{1})|(100|[0-9]{1,2}))/"
-  },
-  {
-    "name": "background-size-ext/lg",
-    "regex": "/lg\\:bg-size-(([a-i]{1}[0-9]{1})|(100|[0-9]{1,2}))/"
-  },
-  {
-    "name": "background-size-ext/md",
-    "regex": "/md\\:bg-size-(([a-i]{1}[0-9]{1})|(100|[0-9]{1,2}))/"
-  },
-  {
-    "name": "background-size-ext/sm",
-    "regex": "/sm\\:bg-size-(([a-i]{1}[0-9]{1})|(100|[0-9]{1,2}))/"
-  },
-  {
-    "name": "background-size-ext/xl",
-    "regex": "/xl\\:bg-size-(([a-i]{1}[0-9]{1})|(100|[0-9]{1,2}))/"
+    "name": "badges",
+    "css": true,
+    "js": true,
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-badge\\b/i",
+    "type": "component"
   },
   {
     "name": "border-collapse/default",
@@ -404,14 +439,6 @@
     "regex": "/box-(slice|clone)/"
   },
   {
-    "name": "box-shadow/default",
-    "regex": "/shadow-[0-5]/"
-  },
-  {
-    "name": "box-shadow/hover",
-    "regex": "/hover\\:shadow-[0-5]/"
-  },
-  {
     "name": "box-shadow-color/active",
     "regex": "/active\\:shadow-(on-surface|primary|secondary|tertiary|error|success|warning)/"
   },
@@ -424,8 +451,23 @@
     "regex": "/hover\\:shadow-(on-surface|primary|secondary|tertiary|error|success|warning)/"
   },
   {
+    "name": "box-shadow/default",
+    "regex": "/shadow-[0-5]/"
+  },
+  {
+    "name": "box-shadow/hover",
+    "regex": "/hover\\:shadow-[0-5]/"
+  },
+  {
     "name": "box-sizing/default",
     "regex": "/box-(border|content)/"
+  },
+  {
+    "name": "breadcrumbs",
+    "css": true,
+    "js": true,
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-breadcrumbs\\b/i",
+    "type": "component"
   },
   {
     "name": "break-after/default",
@@ -488,8 +530,759 @@
     "regex": "/xl\\:break-inside-/"
   },
   {
+    "name": "buttons",
+    "css": true,
+    "js": true,
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-button\\b/i",
+    "type": "component"
+  },
+  {
     "name": "caret-color/default",
     "regex": "/caret-(transparent|current|on-surface|primary|secondary|tertiary|success|warning|error)/"
+  },
+  {
+    "name": "carousel",
+    "css": true,
+    "js": true,
+    "regex": "/sf-carousel/",
+    "type": "component"
+  },
+  {
+    "name": "checkbox",
+    "css": true,
+    "js": true,
+    "regex": "/sf-checkbox/",
+    "type": "component"
+  },
+  {
+    "name": "cl-admin-menu",
+    "css": false,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "admin-menu"
+      },
+      {
+        "name": "icons"
+      },
+      {
+        "name": "inputs"
+      },
+      {
+        "name": "badges"
+      }
+    ],
+    "tags": [
+      "sf-admin-menu"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-alert",
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "alerts"
+      },
+      {
+        "name": "buttons"
+      },
+      {
+        "name": "icon-buttons"
+      },
+      {
+        "name": "icons"
+      }
+    ],
+    "tags": [
+      "sf-alert"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-avatar",
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "avatars"
+      }
+    ],
+    "tags": [
+      "sf-avatar"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-avatars",
+    "js": true,
+    "mode": "smart",
+    "regex": "/<sf-avatars\\b/i",
+    "relation": [
+      {
+        "name": "avatars"
+      },
+      {
+        "name": "icons"
+      }
+    ],
+    "tags": [
+      "sf-avatars"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-badges",
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "badges"
+      }
+    ],
+    "tags": [
+      "sf-badge"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-breadcrumbs",
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "breadcrumbs"
+      },
+      {
+        "name": "icons"
+      }
+    ],
+    "tags": [
+      "sf-breadcrumbs"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-buttons",
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "buttons"
+      }
+    ],
+    "tags": [
+      "sf-button"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-checkbox",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "checkbox"
+      },
+      {
+        "name": "cl-icons"
+      }
+    ],
+    "tags": [
+      "sf-checkbox"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-close",
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "close"
+      }
+    ],
+    "tags": [
+      "sf-close"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-context-menu",
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "context-menu"
+      }
+    ],
+    "tags": [
+      "sf-context-menu"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-country-code",
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "country-code"
+      }
+    ],
+    "tags": [
+      "sf-country-code"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-datepicker",
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "datepicker"
+      },
+      {
+        "name": "cl-inputs"
+      },
+      {
+        "name": "cl-buttons"
+      },
+      {
+        "name": "cl-icon-buttons"
+      }
+    ],
+    "tags": [
+      "sf-datepicker"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-download-file",
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "download-file"
+      }
+    ],
+    "tags": [
+      "sf-download-file"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-dropdown",
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "dropdown"
+      },
+      {
+        "name": "inputs"
+      },
+      {
+        "name": "icon-buttons"
+      }
+    ],
+    "tags": [
+      "sf-dropdown"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-file-upload",
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "file-upload"
+      },
+      {
+        "name": "featured-icon"
+      },
+      {
+        "name": "cl-progress-bar"
+      },
+      {
+        "name": "icon-buttons"
+      }
+    ],
+    "tags": [
+      "sf-file-upload"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-gallery",
+    "js": true,
+    "mode": "smart",
+    "regex": "/data-sf-gallery(?:\\s|=|>|$)/",
+    "relation": [
+      {
+        "name": "cl-slider"
+      },
+      {
+        "name": "cl-modal"
+      }
+    ],
+    "tags": [
+      "sf-gallery"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-icon-buttons",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "icon-buttons"
+      },
+      {
+        "name": "cl-icons"
+      }
+    ],
+    "tags": [
+      "sf-icon-button"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-icons",
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "icons"
+      }
+    ],
+    "tags": [
+      "sf-icon"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-inputs",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "inputs"
+      }
+    ],
+    "tags": [
+      "sf-input"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-list-item",
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "dropdown"
+      },
+      {
+        "name": "icons"
+      },
+      {
+        "name": "checkbox"
+      },
+      {
+        "name": "avatars"
+      },
+      {
+        "name": "tags"
+      }
+    ],
+    "tags": [
+      "sf-list-item"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-modal",
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "modal"
+      },
+      {
+        "name": "icon-buttons"
+      }
+    ],
+    "tags": [
+      "sf-modal"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-pagination",
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "pagination"
+      }
+    ],
+    "tags": [
+      "sf-pagination"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-progress-bar",
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "progress-bar"
+      }
+    ],
+    "tags": [
+      "sf-progress-bar"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-progress-scale",
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "progress-scale"
+      }
+    ],
+    "tags": [
+      "sf-progress-scale"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-radio",
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "radio"
+      },
+      {
+        "name": "icons"
+      }
+    ],
+    "tags": [
+      "sf-radio"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-range-slider",
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "range-slider"
+      }
+    ],
+    "tags": [
+      "sf-range-slider"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-reference-link",
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "reference-link"
+      },
+      {
+        "name": "icons"
+      }
+    ],
+    "tags": [
+      "sf-reference-link"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-skeleton",
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "skeleton"
+      }
+    ],
+    "tags": [
+      "sf-skeleton"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-slider",
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "slider"
+      },
+      {
+        "name": "icon-buttons"
+      },
+      {
+        "name": "icons"
+      }
+    ],
+    "tags": [
+      "sf-slider"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-spinner",
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "spinner"
+      }
+    ],
+    "tags": [
+      "sf-spinner"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-steps",
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "step"
+      },
+      {
+        "name": "icons"
+      }
+    ],
+    "tags": [
+      "sf-steps"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-switch",
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "switch"
+      },
+      {
+        "name": "icons"
+      }
+    ],
+    "tags": [
+      "sf-switch"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-table",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "checkbox"
+      },
+      {
+        "name": "buttons"
+      },
+      {
+        "name": "icon-buttons"
+      },
+      {
+        "name": "icons"
+      },
+      {
+        "name": "inputs"
+      },
+      {
+        "name": "tags"
+      },
+      {
+        "name": "pagination"
+      },
+      {
+        "name": "cl-datepicker"
+      }
+    ],
+    "tags": [
+      "sf-table"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-tabs",
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "tabs"
+      },
+      {
+        "name": "cl-buttons"
+      }
+    ],
+    "tags": [
+      "sf-tabs"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-tags",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "icon-buttons"
+      },
+      {
+        "name": "tags"
+      },
+      {
+        "name": "checkbox"
+      },
+      {
+        "name": "avatars"
+      },
+      {
+        "name": "dot"
+      }
+    ],
+    "tags": [
+      "sf-tag"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-textarea",
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "textarea"
+      }
+    ],
+    "tags": [
+      "sf-textarea"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-toast",
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "toast"
+      },
+      {
+        "name": "buttons"
+      },
+      {
+        "name": "icon-buttons"
+      },
+      {
+        "name": "icons"
+      },
+      {
+        "name": "close"
+      }
+    ],
+    "tags": [
+      "sf-toast"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-toggle",
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "toggle"
+      },
+      {
+        "name": "icons"
+      }
+    ],
+    "tags": [
+      "sf-toggle"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-tooltip",
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "tooltip"
+      }
+    ],
+    "tags": [
+      "sf-tooltip"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-tree",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "tree"
+      }
+    ],
+    "tags": [
+      "sf-tree"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-tree-item",
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "tree-item"
+      },
+      {
+        "name": "icon-buttons"
+      },
+      {
+        "name": "cl-icons"
+      }
+    ],
+    "tags": [
+      "sf-tree-item"
+    ],
+    "type": "smart"
   },
   {
     "name": "clear/default",
@@ -512,24 +1305,17 @@
     "regex": "/xl\\:clear-/"
   },
   {
-    "name": "column/default",
-    "regex": "/layout-col-/"
+    "name": "clipboard",
+    "css": true,
+    "js": true,
+    "regex": "/(btn-clipboard|source)/",
+    "type": "component"
   },
   {
-    "name": "column/lg",
-    "regex": "/lg\\:layout-col-/"
-  },
-  {
-    "name": "column/md",
-    "regex": "/md\\:layout-col-/"
-  },
-  {
-    "name": "column/sm",
-    "regex": "/sm\\:layout-col-/"
-  },
-  {
-    "name": "column/xl",
-    "regex": "/xl\\:layout-col-/"
+    "name": "close",
+    "css": true,
+    "regex": "/sf-close/",
+    "type": "component"
   },
   {
     "name": "column-gap/default",
@@ -550,6 +1336,26 @@
   {
     "name": "column-gap/xl",
     "regex": "/xl:col-gap-/"
+  },
+  {
+    "name": "column/default",
+    "regex": "/layout-col-/"
+  },
+  {
+    "name": "column/lg",
+    "regex": "/lg\\:layout-col-/"
+  },
+  {
+    "name": "column/md",
+    "regex": "/md\\:layout-col-/"
+  },
+  {
+    "name": "column/sm",
+    "regex": "/sm\\:layout-col-/"
+  },
+  {
+    "name": "column/xl",
+    "regex": "/xl\\:layout-col-/"
   },
   {
     "name": "container/default",
@@ -576,8 +1382,40 @@
     "regex": "/(after|before)-(empty|none)/"
   },
   {
+    "name": "contentDivider",
+    "css": true,
+    "js": true,
+    "regex": "/sf-divider/",
+    "type": "component"
+  },
+  {
+    "name": "context-menu",
+    "css": true,
+    "js": false,
+    "regex": "/sf-context-menu/",
+    "type": "component"
+  },
+  {
+    "name": "country-code",
+    "css": true,
+    "js": true,
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-country-code\\b/i",
+    "type": "component"
+  },
+  {
     "name": "cursor/default",
     "regex": "/cursor-/"
+  },
+  {
+    "name": "datepicker",
+    "css": true,
+    "js": false,
+    "regex": "/sf-datepicker/",
+    "type": "component"
+  },
+  {
+    "name": "display-print/default",
+    "regex": "/print-(block|inline-block|inline|flex|inline-flex|table|hidden|visible|visible-none)/"
   },
   {
     "name": "display/default",
@@ -600,10 +1438,6 @@
     "regex": "/xl\\:(block|inline-block|inline|flex|inline-flex|table|inline-table|table-caption|table-cell|table-column|table-column-group|table-footer-group|table-header-group|table-row-group|table-row|flow-root|grid|inline-grid|content|list-item|hidden)/"
   },
   {
-    "name": "display-print/default",
-    "regex": "/print-(block|inline-block|inline|flex|inline-flex|table|hidden|visible|visible-none)/"
-  },
-  {
     "name": "divider-color/default",
     "regex": "/(divider|divide)-(outline|primary|secondary|tertiary|success|warning|error|transparent|current)/"
   },
@@ -624,12 +1458,25 @@
     "regex": "/(divider|divide)-(x|y)-([0-4]|reverse)/"
   },
   {
-    "name": "drop-shadow/default",
-    "regex": "/drop-shadow-[0-5]/"
+    "name": "doc",
+    "css": true,
+    "js": true,
+    "regex": "/(language-|block--start|btn-clipboard|bd-example-indeterminate|bd-content|example)/",
+    "type": "component"
   },
   {
-    "name": "drop-shadow/hover",
-    "regex": "/hover\\:drop-shadow-[0-5]/"
+    "name": "dot",
+    "css": true,
+    "js": false,
+    "regex": "/sf-dot/",
+    "type": "component"
+  },
+  {
+    "name": "download-file",
+    "css": true,
+    "js": true,
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-download-file\\b/i",
+    "type": "component"
   },
   {
     "name": "drop-shadow-color/default",
@@ -640,24 +1487,24 @@
     "regex": "/hover\\:drop-shadow-(transparent|current|surface|surface-0|surface-1|surface-2|surface-3|surface-4|surface-container|surface-inverse|surface-inverse-fixed|on-surface|on-surface-variant|primary|primary-container|primary-transparent-select|primary-transparent-overlay|secondary|secondary-container|secondary-transparent-select|secondary-transparent-overlay|tertiary|tertiary-container|tertiary-transparent-select|tertiary-transparent-overlay|error|error-container|error-transparent-select|error-transparent-overlay|warning|warning-container|warning-transparent-select|warning-transparent-overlay|success|success-container|success-transparent-select|success-transparent-overlay)/"
   },
   {
-    "name": "element-position/default",
-    "regex": "/(inset|top|bottom|inline-(start|end))-/"
+    "name": "drop-shadow/default",
+    "regex": "/drop-shadow-[0-5]/"
   },
   {
-    "name": "element-position/lg",
-    "regex": "/lg\\:(inset|top|bottom|inline-(start|end))-/"
+    "name": "drop-shadow/hover",
+    "regex": "/hover\\:drop-shadow-[0-5]/"
   },
   {
-    "name": "element-position/md",
-    "regex": "/md\\:(inset|top|bottom|inline-(start|end))-/"
-  },
-  {
-    "name": "element-position/sm",
-    "regex": "/sm\\:(inset|top|bottom|inline-(start|end))-/"
-  },
-  {
-    "name": "element-position/xl",
-    "regex": "/xl\\:(inset|top|bottom|inline-(start|end))-/"
+    "name": "dropdown",
+    "css": true,
+    "js": true,
+    "regex": "/sf-dropdown|sf-list-item/",
+    "relation": [
+      {
+        "name": "icon-buttons"
+      }
+    ],
+    "type": "component"
   },
   {
     "name": "element-position-ext/default",
@@ -680,8 +1527,71 @@
     "regex": "/xl\\:((top|bottom|block-(start|end)|inline-(start|end))|(-(top|bottom|block-(start|end)|inline-(start|end))))-([a-i]{1}[1-9]{1})/"
   },
   {
-    "name": "fill/default",
-    "regex": "/((hover\\\\:)?fill-(transparent|current|surface-0|surface-1|surface-2|surface-3|surface-4|surface|surface-inverse|surface-inverse-fixed|surface-container|on-surface|on-surface-variant|surface-transparent-select|surface-transparent-overlay|disable|primary|primary-container|primary-transparent-select|primary-transparent-overlay|secondary|secondary-container|secondary-transparent-select|secondary-transparent-overlay|tertiary|tertiary-container|tertiary-transparent-select|tertiary-transparent-overlay|error|error-container|error-transparent-select|error-transparent-overlay|warning|warning-container|warning-transparent-select|warning-transparent-overlay|success|success-container|success-transparent-select|success-transparent-overlay|surface-transparent|primary-transparent|secondary-transparent|tertiary-transparent|error-transparent|warning-transparent|success-transparent))/"
+    "name": "element-position/default",
+    "regex": "/(inset|top|bottom|inline-(start|end))-/"
+  },
+  {
+    "name": "element-position/lg",
+    "regex": "/lg\\:(inset|top|bottom|inline-(start|end))-/"
+  },
+  {
+    "name": "element-position/md",
+    "regex": "/md\\:(inset|top|bottom|inline-(start|end))-/"
+  },
+  {
+    "name": "element-position/sm",
+    "regex": "/sm\\:(inset|top|bottom|inline-(start|end))-/"
+  },
+  {
+    "name": "element-position/xl",
+    "regex": "/xl\\:(inset|top|bottom|inline-(start|end))-/"
+  },
+  {
+    "name": "emoji",
+    "css": true,
+    "js": true,
+    "regex": "/sf-emoji/",
+    "type": "component"
+  },
+  {
+    "name": "fab",
+    "css": true,
+    "js": true,
+    "regex": "/sf-fab/",
+    "type": "component"
+  },
+  {
+    "name": "fancybox",
+    "css": true,
+    "js": true,
+    "mode": "component",
+    "regex": "/data-fancybox/",
+    "relation": [
+      {
+        "js": true,
+        "mode": "component",
+        "name": "jquery"
+      }
+    ],
+    "type": "attribute"
+  },
+  {
+    "name": "featured-icon",
+    "css": true,
+    "js": false,
+    "regex": "/sf-featured-icon/",
+    "type": "component"
+  },
+  {
+    "name": "file-upload",
+    "css": true,
+    "js": true,
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-file-upload\\b/i",
+    "type": "component"
+  },
+  {
+    "name": "filer-hue-rotate/hover",
+    "regex": "/hover\\:hue-rotate-/"
   },
   {
     "name": "fill-brand/default",
@@ -694,6 +1604,10 @@
   {
     "name": "fill-rule/default",
     "regex": "/fill-(nonzero|evenodd)/"
+  },
+  {
+    "name": "fill/default",
+    "regex": "/((hover\\\\:)?fill-(transparent|current|surface-0|surface-1|surface-2|surface-3|surface-4|surface|surface-inverse|surface-inverse-fixed|surface-container|on-surface|on-surface-variant|surface-transparent-select|surface-transparent-overlay|disable|primary|primary-container|primary-transparent-select|primary-transparent-overlay|secondary|secondary-container|secondary-transparent-select|secondary-transparent-overlay|tertiary|tertiary-container|tertiary-transparent-select|tertiary-transparent-overlay|error|error-container|error-transparent-select|error-transparent-overlay|warning|warning-container|warning-transparent-select|warning-transparent-overlay|success|success-container|success-transparent-select|success-transparent-overlay|surface-transparent|primary-transparent|secondary-transparent|tertiary-transparent|error-transparent|warning-transparent|success-transparent))/"
   },
   {
     "name": "filter-blur/default",
@@ -732,10 +1646,6 @@
     "regex": "/hue-rotate-/"
   },
   {
-    "name": "filer-hue-rotate/hover",
-    "regex": "/hover\\:hue-rotate-/"
-  },
-  {
     "name": "filter-invert/default",
     "regex": "/invert|invert-none/"
   },
@@ -768,26 +1678,6 @@
     "regex": "/hover\\:(sepia|sepia-none)/"
   },
   {
-    "name": "flex/default",
-    "regex": "/flex-/"
-  },
-  {
-    "name": "flex/lg",
-    "regex": "/lg\\:flex-/"
-  },
-  {
-    "name": "flex/md",
-    "regex": "/md\\:flex-/"
-  },
-  {
-    "name": "flex/sm",
-    "regex": "/sm\\:flex-/"
-  },
-  {
-    "name": "flex/xl",
-    "regex": "/xl\\:flex-/"
-  },
-  {
     "name": "flex-align/default",
     "regex": "/(start|center|end)-(start|center|end)/"
   },
@@ -808,26 +1698,6 @@
     "regex": "/xl\\:(start|center|end)-(start|center|end)/"
   },
   {
-    "name": "flex-basis/default",
-    "regex": "/basis-/"
-  },
-  {
-    "name": "flex-basis/lg",
-    "regex": "/lg\\:basis-/"
-  },
-  {
-    "name": "flex-basis/md",
-    "regex": "/md\\:basis-/"
-  },
-  {
-    "name": "flex-basis/sm",
-    "regex": "/sm\\:basis-/"
-  },
-  {
-    "name": "flex-basis/xl",
-    "regex": "/xl\\:basis-/"
-  },
-  {
     "name": "flex-basis-ext/default",
     "regex": "/basis-(([0-9]{1})|([0-9]{2})|([0-9]{3}))/"
   },
@@ -846,6 +1716,26 @@
   {
     "name": "flex-basis-ext/xl",
     "regex": "/xl\\:basis-(([0-9]{1})|([0-9]{2})|([0-9]{3}))/"
+  },
+  {
+    "name": "flex-basis/default",
+    "regex": "/basis-/"
+  },
+  {
+    "name": "flex-basis/lg",
+    "regex": "/lg\\:basis-/"
+  },
+  {
+    "name": "flex-basis/md",
+    "regex": "/md\\:basis-/"
+  },
+  {
+    "name": "flex-basis/sm",
+    "regex": "/sm\\:basis-/"
+  },
+  {
+    "name": "flex-basis/xl",
+    "regex": "/xl\\:basis-/"
   },
   {
     "name": "flex-direction/default",
@@ -928,6 +1818,26 @@
     "regex": "/xl\\:flex-/"
   },
   {
+    "name": "flex/default",
+    "regex": "/flex-/"
+  },
+  {
+    "name": "flex/lg",
+    "regex": "/lg\\:flex-/"
+  },
+  {
+    "name": "flex/md",
+    "regex": "/md\\:flex-/"
+  },
+  {
+    "name": "flex/sm",
+    "regex": "/sm\\:flex-/"
+  },
+  {
+    "name": "flex/xl",
+    "regex": "/xl\\:flex-/"
+  },
+  {
     "name": "float/default",
     "regex": "/float-/"
   },
@@ -952,10 +1862,6 @@
     "regex": "/sans|serif|mono/"
   },
   {
-    "name": "font-size/default",
-    "regex": "/text-(([1-9]{1}|[0-9]{2})|(([0-9]{1}|[0-9]{2})\\/([0-9]{1}|[0-9]{2})))/"
-  },
-  {
     "name": "font-size-ext/default",
     "regex": "/text-([a-i]{1}[0-9]{1})/"
   },
@@ -976,6 +1882,10 @@
     "regex": "/xl\\:text-([a-i]{1}[0-9]{1})/"
   },
   {
+    "name": "font-size/default",
+    "regex": "/text-(([1-9]{1}|[0-9]{2})|(([0-9]{1}|[0-9]{2})\\/([0-9]{1}|[0-9]{2})))/"
+  },
+  {
     "name": "font-smoothing/default",
     "regex": "/(antialiased|smoothing)/"
   },
@@ -988,12 +1898,12 @@
     "regex": "/(lowercase|uppercase|capitalize|normalcase)/"
   },
   {
-    "name": "font-variant/default",
-    "regex": "/small-(caps|caps-none)/"
-  },
-  {
     "name": "font-variant-numeric/default",
     "regex": "/num-/"
+  },
+  {
+    "name": "font-variant/default",
+    "regex": "/small-(caps|caps-none)/"
   },
   {
     "name": "font-weight/default",
@@ -1049,14 +1959,14 @@
   },
   {
     "name": "gradient-type/default",
-    "regex": "/gr-(line|conic)-[2-3]/",
-    "mode": "utility",
     "css": true,
+    "mode": "utility",
+    "regex": "/gr-(line|conic)-[2-3]/",
     "relation": [
       {
-        "name": "gradient-color-ext/default",
+        "css": true,
         "mode": "utility",
-        "css": true
+        "name": "gradient-color-ext/default"
       }
     ]
   },
@@ -1137,26 +2047,6 @@
     "regex": "/xl\\:auto-rows/"
   },
   {
-    "name": "grid-column/default",
-    "regex": "/col-(auto|span)-/"
-  },
-  {
-    "name": "grid-column/lg",
-    "regex": "/lg\\:col-(auto|span)-/"
-  },
-  {
-    "name": "grid-column/md",
-    "regex": "/md\\:col-(auto|span)-/"
-  },
-  {
-    "name": "grid-column/sm",
-    "regex": "/sm\\:col-(auto|span)-/"
-  },
-  {
-    "name": "grid-column/xl",
-    "regex": "/xl\\:col-(auto|span)-/"
-  },
-  {
     "name": "grid-column-end/default",
     "regex": "/col-end-/"
   },
@@ -1197,24 +2087,24 @@
     "regex": "/xl\\:col-start-/"
   },
   {
-    "name": "grid-row/default",
-    "regex": "/grid-row-(auto|span)/"
+    "name": "grid-column/default",
+    "regex": "/col-(auto|span)-/"
   },
   {
-    "name": "grid-row/lg",
-    "regex": "/lg\\:grid-row-(auto|span)/"
+    "name": "grid-column/lg",
+    "regex": "/lg\\:col-(auto|span)-/"
   },
   {
-    "name": "grid-row/md",
-    "regex": "/md\\:grid-row-(auto|span)/"
+    "name": "grid-column/md",
+    "regex": "/md\\:col-(auto|span)-/"
   },
   {
-    "name": "grid-row/sm",
-    "regex": "/sm\\:grid-row-(auto|span)/"
+    "name": "grid-column/sm",
+    "regex": "/sm\\:col-(auto|span)-/"
   },
   {
-    "name": "grid-row/xl",
-    "regex": "/xl\\:grid-row-(auto|span)/"
+    "name": "grid-column/xl",
+    "regex": "/xl\\:col-(auto|span)-/"
   },
   {
     "name": "grid-row-end/default",
@@ -1255,6 +2145,26 @@
   {
     "name": "grid-row-start/xl",
     "regex": "/xl\\:grid-row-start-/"
+  },
+  {
+    "name": "grid-row/default",
+    "regex": "/grid-row-(auto|span)/"
+  },
+  {
+    "name": "grid-row/lg",
+    "regex": "/lg\\:grid-row-(auto|span)/"
+  },
+  {
+    "name": "grid-row/md",
+    "regex": "/md\\:grid-row-(auto|span)/"
+  },
+  {
+    "name": "grid-row/sm",
+    "regex": "/sm\\:grid-row-(auto|span)/"
+  },
+  {
+    "name": "grid-row/xl",
+    "regex": "/xl\\:grid-row-(auto|span)/"
   },
   {
     "name": "grid-template-columns/default",
@@ -1301,6 +2211,26 @@
     "regex": "/(h1|h2|h3|h4|h5|h6)/"
   },
   {
+    "name": "height-ext/default",
+    "regex": "/h-(([a-i]{1}[0-9]{1})|(([1-9]{1})|([0-9]{2})|([0-9]{3})))/"
+  },
+  {
+    "name": "height-ext/lg",
+    "regex": "/lg\\:h-(([a-i]{1}[0-9]{1})|(([1-9]{1})|([0-9]{2})|([0-9]{3})))/"
+  },
+  {
+    "name": "height-ext/md",
+    "regex": "/md\\:h-(([a-i]{1}[0-9]{1})|(([1-9]{1})|([0-9]{2})|([0-9]{3})))/"
+  },
+  {
+    "name": "height-ext/sm",
+    "regex": "/sm\\:h-(([a-i]{1}[0-9]{1})|(([1-9]{1})|([0-9]{2})|([0-9]{3})))/"
+  },
+  {
+    "name": "height-ext/xl",
+    "regex": "/xl\\:h-(([a-i]{1}[0-9]{1})|(([1-9]{1})|([0-9]{2})|([0-9]{3})))/"
+  },
+  {
     "name": "height/default",
     "regex": "/h-((([1-9]{1}|[1-9]{2})\\/([1-9]{1}|[1-9]{2}))|auto|full|screen|min|max|fit|px|0)/"
   },
@@ -1321,24 +2251,39 @@
     "regex": "/xl\\:h-((([1-9]{1}|[1-9]{2})\\/([1-9]{1}|[1-9]{2}))|auto|full|screen|min|max|fit|px|0)/"
   },
   {
-    "name": "height-ext/default",
-    "regex": "/h-(([a-i]{1}[0-9]{1})|(([1-9]{1})|([0-9]{2})|([0-9]{3})))/"
+    "name": "hideShow",
+    "css": false,
+    "js": true,
+    "regex": "/sf-hide-show/",
+    "type": "component"
   },
   {
-    "name": "height-ext/lg",
-    "regex": "/lg\\:h-(([a-i]{1}[0-9]{1})|(([1-9]{1})|([0-9]{2})|([0-9]{3})))/"
+    "name": "highlight",
+    "css": true,
+    "js": true,
+    "regex": "/(?:class\\s*=\\s*[\"'][^\"']*language-[^\"']*[\"']|<pre\\b[^>]*>\\s*<code\\b[^>]*>)/i",
+    "type": "component"
   },
   {
-    "name": "height-ext/md",
-    "regex": "/md\\:h-(([a-i]{1}[0-9]{1})|(([1-9]{1})|([0-9]{2})|([0-9]{3})))/"
+    "name": "icon-buttons",
+    "css": true,
+    "js": true,
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-icon-button\\b/i",
+    "type": "component"
   },
   {
-    "name": "height-ext/sm",
-    "regex": "/sm\\:h-(([a-i]{1}[0-9]{1})|(([1-9]{1})|([0-9]{2})|([0-9]{3})))/"
+    "name": "icons",
+    "css": true,
+    "js": true,
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-icon\\b[^\"']*[\"']|<\\s*i[^>]*class\\s*=\\s*[\"'][^\"']*\\bsf-icon\\b[^\"']*[\"']/i",
+    "type": "component"
   },
   {
-    "name": "height-ext/xl",
-    "regex": "/xl\\:h-(([a-i]{1}[0-9]{1})|(([1-9]{1})|([0-9]{2})|([0-9]{3})))/"
+    "name": "inputs",
+    "css": true,
+    "js": true,
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-input\\b/i",
+    "type": "component"
   },
   {
     "name": "isolate/default",
@@ -1457,26 +2402,6 @@
     "regex": "/list-(none|disc|decimal)/"
   },
   {
-    "name": "margin/default",
-    "regex": "/(m-((auto)|([0-9]{1})|((inline|block)-([0-9]{1}|auto))|((top|bottom|inline-(start|end))-([0-9]{1}|auto)))|-m-(([0-9]{1})|((inline|block)-[0-9]{1})|((top|bottom|inline-(start|end))-[0-9]{1})))/"
-  },
-  {
-    "name": "margin/lg",
-    "regex": "/lg\\:(m-(([0-9]{1})|((inline|block)-([0-9]{1}|auto))|((top|bottom|inline-(start|end))-([0-9]{1}|auto)))|-m-(([0-9]{1})|((inline|block)-[0-9]{1})|((top|bottom|inline-(start|end))-[0-9]{1})))/"
-  },
-  {
-    "name": "margin/md",
-    "regex": "/md\\:(m-(([0-9]{1})|((inline|block)-([0-9]{1}|auto))|((top|bottom|inline-(start|end))-([0-9]{1}|auto)))|-m-(([0-9]{1})|((inline|block)-[0-9]{1})|((top|bottom|inline-(start|end))-[0-9]{1})))/"
-  },
-  {
-    "name": "margin/sm",
-    "regex": "/sm\\:(m-(([0-9]{1})|((inline|block)-([0-9]{1}|auto))|((top|bottom|inline-(start|end))-([0-9]{1}|auto)))|-m-(([0-9]{1})|((inline|block)-[0-9]{1})|((top|bottom|inline-(start|end))-[0-9]{1})))/"
-  },
-  {
-    "name": "margin/xl",
-    "regex": "/xl\\:(m-(([0-9]{1})|((inline|block)-([0-9]{1}|auto))|((top|bottom|inline-(start|end))-([0-9]{1}|auto)))|-m-(([0-9]{1})|((inline|block)-[0-9]{1})|((top|bottom|inline-(start|end))-[0-9]{1})))/"
-  },
-  {
     "name": "margin-ext/default",
     "regex": "/(m-(([a-i][0-9])|((top|bottom|inline-(start|end))-([a-i][0-9])))|-m-(([a-i][0-9])|((top|bottom|inline-(start|end))-([a-i][0-9]))))/"
   },
@@ -1495,6 +2420,26 @@
   {
     "name": "margin-ext/xl",
     "regex": "/xl\\:(m-(([a-i][0-9])|((top|bottom|inline-(start|end))-([a-i][0-9])))|-m-(([a-i][0-9])|((top|bottom|inline-(start|end))-([a-i][0-9]))))/"
+  },
+  {
+    "name": "margin/default",
+    "regex": "/(m-((auto)|([0-9]{1})|((inline|block)-([0-9]{1}|auto))|((top|bottom|inline-(start|end))-([0-9]{1}|auto)))|-m-(([0-9]{1})|((inline|block)-[0-9]{1})|((top|bottom|inline-(start|end))-[0-9]{1})))/"
+  },
+  {
+    "name": "margin/lg",
+    "regex": "/lg\\:(m-(([0-9]{1})|((inline|block)-([0-9]{1}|auto))|((top|bottom|inline-(start|end))-([0-9]{1}|auto)))|-m-(([0-9]{1})|((inline|block)-[0-9]{1})|((top|bottom|inline-(start|end))-[0-9]{1})))/"
+  },
+  {
+    "name": "margin/md",
+    "regex": "/md\\:(m-(([0-9]{1})|((inline|block)-([0-9]{1}|auto))|((top|bottom|inline-(start|end))-([0-9]{1}|auto)))|-m-(([0-9]{1})|((inline|block)-[0-9]{1})|((top|bottom|inline-(start|end))-[0-9]{1})))/"
+  },
+  {
+    "name": "margin/sm",
+    "regex": "/sm\\:(m-(([0-9]{1})|((inline|block)-([0-9]{1}|auto))|((top|bottom|inline-(start|end))-([0-9]{1}|auto)))|-m-(([0-9]{1})|((inline|block)-[0-9]{1})|((top|bottom|inline-(start|end))-[0-9]{1})))/"
+  },
+  {
+    "name": "margin/xl",
+    "regex": "/xl\\:(m-(([0-9]{1})|((inline|block)-([0-9]{1}|auto))|((top|bottom|inline-(start|end))-([0-9]{1}|auto)))|-m-(([0-9]{1})|((inline|block)-[0-9]{1})|((top|bottom|inline-(start|end))-[0-9]{1})))/"
   },
   {
     "name": "mask-clip/default",
@@ -1533,6 +2478,26 @@
     "regex": "/max-container-/"
   },
   {
+    "name": "max-height-ext/default",
+    "regex": "/max-h-([a-i]{1}[0-9]{1})/"
+  },
+  {
+    "name": "max-height-ext/lg",
+    "regex": "/lg\\:max-h-([a-i]{1}[0-9]{1})/"
+  },
+  {
+    "name": "max-height-ext/md",
+    "regex": "/md\\:max-h-([a-i]{1}[0-9]{1})/"
+  },
+  {
+    "name": "max-height-ext/sm",
+    "regex": "/sm\\:max-h-([a-i]{1}[0-9]{1})/"
+  },
+  {
+    "name": "max-height-ext/xl",
+    "regex": "/xl\\:max-h-([a-i]{1}[0-9]{1})/"
+  },
+  {
     "name": "max-height/default",
     "regex": "/max-h-(full|screen|min|max|fit|prose|none|0|sm|md|lg|xl)/"
   },
@@ -1553,24 +2518,24 @@
     "regex": "/xl\\:max-h-(full|screen|min|max|fit|prose|none|0|sm|md|lg|xl)/"
   },
   {
-    "name": "max-height-ext/default",
-    "regex": "/max-h-([a-i]{1}[0-9]{1})/"
+    "name": "max-width-ext/default",
+    "regex": "/max-w-([a-i]{1}[0-9]{1})/"
   },
   {
-    "name": "max-height-ext/lg",
-    "regex": "/lg\\:max-h-([a-i]{1}[0-9]{1})/"
+    "name": "max-width-ext/lg",
+    "regex": "/lg\\:max-w-([a-i]{1}[0-9]{1})/"
   },
   {
-    "name": "max-height-ext/md",
-    "regex": "/md\\:max-h-([a-i]{1}[0-9]{1})/"
+    "name": "max-width-ext/md",
+    "regex": "/md\\:max-w-([a-i]{1}[0-9]{1})/"
   },
   {
-    "name": "max-height-ext/sm",
-    "regex": "/sm\\:max-h-([a-i]{1}[0-9]{1})/"
+    "name": "max-width-ext/sm",
+    "regex": "/sm\\:max-w-([a-i]{1}[0-9]{1})/"
   },
   {
-    "name": "max-height-ext/xl",
-    "regex": "/xl\\:max-h-([a-i]{1}[0-9]{1})/"
+    "name": "max-width-ext/xl",
+    "regex": "/xl\\:max-w-([a-i]{1}[0-9]{1})/"
   },
   {
     "name": "max-width/default",
@@ -1593,24 +2558,19 @@
     "regex": "/xl\\:max-w-(full|screen|min|max|fit|prose|none|0|sm|md|lg|xl)/"
   },
   {
-    "name": "max-width-ext/default",
-    "regex": "/max-w-([a-i]{1}[0-9]{1})/"
-  },
-  {
-    "name": "max-width-ext/lg",
-    "regex": "/lg\\:max-w-([a-i]{1}[0-9]{1})/"
-  },
-  {
-    "name": "max-width-ext/md",
-    "regex": "/md\\:max-w-([a-i]{1}[0-9]{1})/"
-  },
-  {
-    "name": "max-width-ext/sm",
-    "regex": "/sm\\:max-w-([a-i]{1}[0-9]{1})/"
-  },
-  {
-    "name": "max-width-ext/xl",
-    "regex": "/xl\\:max-w-([a-i]{1}[0-9]{1})/"
+    "name": "menu",
+    "css": true,
+    "js": true,
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-menu\\b/i",
+    "relation": [
+      {
+        "name": "icons"
+      },
+      {
+        "name": "icon-buttons"
+      }
+    ],
+    "type": "component"
   },
   {
     "name": "min-height/default",
@@ -1655,6 +2615,25 @@
   {
     "name": "mix-blend-mode/default",
     "regex": "/mix-blend-/"
+  },
+  {
+    "name": "modal",
+    "css": true,
+    "js": true,
+    "regex": "/(data-sf-modal-(open|close)|sf-modal)/",
+    "relation": [
+      {
+        "name": "backdrop-filter-blur/default"
+      }
+    ],
+    "type": "component"
+  },
+  {
+    "name": "monaco",
+    "css": true,
+    "js": true,
+    "regex": "/sf-monaco/",
+    "type": "component"
   },
   {
     "name": "object-fit/default",
@@ -1801,6 +2780,26 @@
     "regex": "/scroll-over-((x|y|auto|contain|none)|((x|y|auto|contain|none)-(x|y|auto|contain|none)))/"
   },
   {
+    "name": "padding-ext/default",
+    "regex": "/p-(([a-i][0-9])|((top|bottom|inline-(start|end))-([a-i][0-9])))/"
+  },
+  {
+    "name": "padding-ext/lg",
+    "regex": "/lg\\:p-(([a-i][0-9])|((top|bottom|inline-(start|end))-([a-i][0-9])))/"
+  },
+  {
+    "name": "padding-ext/md",
+    "regex": "/md\\:p-(([a-i][0-9])|((top|bottom|inline-(start|end))-([a-i][0-9])))/"
+  },
+  {
+    "name": "padding-ext/sm",
+    "regex": "/sm\\:p-(([a-i][0-9])|((top|bottom|inline-(start|end))-([a-i][0-9])))/"
+  },
+  {
+    "name": "padding-ext/xl",
+    "regex": "/xl\\:p-(([a-i][0-9])|((top|bottom|inline-(start|end))-([a-i][0-9])))/"
+  },
+  {
     "name": "padding/default",
     "regex": "/p-([0-9]|((top|bottom|inline-(start|end)|x|y)-[0-9]))/"
   },
@@ -1821,24 +2820,11 @@
     "regex": "/xl\\:p-([0-9]{1}|((top|bottom|inline-(start|end)|x|y)-[0-9]{1}))/"
   },
   {
-    "name": "padding-ext/default",
-    "regex": "/p-(([a-i][0-9])|((top|bottom|inline-(start|end))-([a-i][0-9])))/"
-  },
-  {
-    "name": "padding-ext/lg",
-    "regex": "/lg\\:p-(([a-i][0-9])|((top|bottom|inline-(start|end))-([a-i][0-9])))/"
-  },
-  {
-    "name": "padding-ext/md",
-    "regex": "/md\\:p-(([a-i][0-9])|((top|bottom|inline-(start|end))-([a-i][0-9])))/"
-  },
-  {
-    "name": "padding-ext/sm",
-    "regex": "/sm\\:p-(([a-i][0-9])|((top|bottom|inline-(start|end))-([a-i][0-9])))/"
-  },
-  {
-    "name": "padding-ext/xl",
-    "regex": "/xl\\:p-(([a-i][0-9])|((top|bottom|inline-(start|end))-([a-i][0-9])))/"
+    "name": "pagination",
+    "css": true,
+    "js": true,
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\b(?:sf-pagination|sf-page-number)\\b/i",
+    "type": "component"
   },
   {
     "name": "pattern/default",
@@ -1921,6 +2907,13 @@
     "regex": "/xl\\:self-/"
   },
   {
+    "name": "placeholder",
+    "css": true,
+    "js": false,
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\b(?:sf-placeholder)\\b/i",
+    "type": "component"
+  },
+  {
     "name": "placeholder-color/default",
     "regex": "/placeholder-/"
   },
@@ -1967,6 +2960,48 @@
   {
     "name": "position/xl",
     "regex": "/xl\\:(static|relative|absolute|fixed|sticky)/"
+  },
+  {
+    "name": "progress-bar",
+    "css": true,
+    "js": true,
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-progress-bar\\b/i",
+    "type": "component"
+  },
+  {
+    "name": "progress-scale",
+    "css": true,
+    "js": true,
+    "regex": "/sf-progress-scale/",
+    "type": "component"
+  },
+  {
+    "name": "quantity",
+    "css": true,
+    "js": true,
+    "regex": "/sf-quantity/",
+    "type": "component"
+  },
+  {
+    "name": "radio",
+    "css": true,
+    "js": true,
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-radio\\b/i",
+    "type": "component"
+  },
+  {
+    "name": "range-slider",
+    "css": true,
+    "js": true,
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-range-slider\\b/i",
+    "type": "component"
+  },
+  {
+    "name": "reference-link",
+    "css": true,
+    "js": true,
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-reference-link\\b/i",
+    "type": "component"
   },
   {
     "name": "resize/default",
@@ -2065,20 +3100,20 @@
     "regex": "/scroll-hover/"
   },
   {
-    "name": "scroll-margin/default",
-    "regex": "/scroll-m/"
-  },
-  {
     "name": "scroll-margin-ext/default",
     "regex": "/(scroll-m-((inline-(start|end)|t|b)-)?([a-i][0-9])|-scroll-m-((inline-(start|end)|t|b)-)?([a-i][0-9]))/"
   },
   {
-    "name": "scroll-padding/default",
-    "regex": "/scroll-p/"
+    "name": "scroll-margin/default",
+    "regex": "/scroll-m/"
   },
   {
     "name": "scroll-padding-ext/default",
     "regex": "/(scroll-p-((inline-(start|end)|t|b)-)?([a-i][0-9])|-scroll-p-((inline-(start|end)|t|b)-)?([a-i][0-9]))/"
+  },
+  {
+    "name": "scroll-padding/default",
+    "regex": "/scroll-p/"
   },
   {
     "name": "scroll-slider-color/default",
@@ -2105,6 +3140,39 @@
     "regex": "/snap-(none|x|y|both|mandatory|proximity)/"
   },
   {
+    "name": "scrollbar",
+    "css": true,
+    "js": true,
+    "regex": "/\"scrollbar\"/",
+    "type": "component"
+  },
+  {
+    "name": "sf-system",
+    "css": false,
+    "js": true,
+    "regex": "/sf-gallery|sf-overbox/",
+    "type": "attribute"
+  },
+  {
+    "name": "skeleton",
+    "css": true,
+    "js": true,
+    "regex": "/sf-skeleton/",
+    "type": "component"
+  },
+  {
+    "name": "slider",
+    "css": true,
+    "js": true,
+    "regex": "/sf-slider/",
+    "relation": [
+      {
+        "name": "swiper"
+      }
+    ],
+    "type": "component"
+  },
+  {
     "name": "space/default",
     "regex": "/space-(x|y)-([0-9]{1}|reverse)/"
   },
@@ -2125,28 +3193,29 @@
     "regex": "/xl\\:space-(x|y)-([0-9]{1}|reverse)/"
   },
   {
+    "name": "special",
+    "css": true,
+    "js": true,
+    "regex": "/sf-special/",
+    "type": "attribute"
+  },
+  {
+    "name": "spinner",
+    "css": true,
+    "js": true,
+    "regex": "/sf-loader/",
+    "type": "component"
+  },
+  {
     "name": "sr-only/default",
     "regex": "/(sr-only|not-sr-only)/"
   },
   {
-    "name": "stripe/default",
-    "regex": "/stripe-[1-4]/"
-  },
-  {
-    "name": "stripe/lg",
-    "regex": "/lg\\:stripe-[1-4]/"
-  },
-  {
-    "name": "stripe/md",
-    "regex": "/md\\:stripe-[1-4]/"
-  },
-  {
-    "name": "stripe/sm",
-    "regex": "/sm\\:stripe-[1-4]/"
-  },
-  {
-    "name": "stripe/xl",
-    "regex": "/xl\\:stripe-[1-4]/"
+    "name": "step",
+    "css": true,
+    "js": true,
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-step\\b/i",
+    "type": "component"
   },
   {
     "name": "stripe-color/default",
@@ -2171,6 +3240,26 @@
   {
     "name": "stripe-width/xl",
     "regex": "/xl\\:stripe-size-[1-4]/"
+  },
+  {
+    "name": "stripe/default",
+    "regex": "/stripe-[1-4]/"
+  },
+  {
+    "name": "stripe/lg",
+    "regex": "/lg\\:stripe-[1-4]/"
+  },
+  {
+    "name": "stripe/md",
+    "regex": "/md\\:stripe-[1-4]/"
+  },
+  {
+    "name": "stripe/sm",
+    "regex": "/sm\\:stripe-[1-4]/"
+  },
+  {
+    "name": "stripe/xl",
+    "regex": "/xl\\:stripe-[1-4]/"
   },
   {
     "name": "stroke-color/default",
@@ -2229,8 +3318,25 @@
     "regex": "/xl\\:svg-/"
   },
   {
-    "name": "table/default",
-    "regex": "/table|table-small/"
+    "name": "swiper",
+    "css": true,
+    "js": true,
+    "regex": "/swiper/",
+    "type": "component"
+  },
+  {
+    "name": "switch",
+    "css": true,
+    "js": true,
+    "regex": "/sf-switch/",
+    "type": "component"
+  },
+  {
+    "name": "tab",
+    "css": true,
+    "js": true,
+    "regex": "/sf-tab/",
+    "type": "component"
   },
   {
     "name": "table-active/default",
@@ -2251,6 +3357,24 @@
   {
     "name": "table-stripe/default",
     "regex": "/table-stripe/"
+  },
+  {
+    "name": "table/default",
+    "regex": "/table|table-small/"
+  },
+  {
+    "name": "tabs",
+    "css": true,
+    "js": true,
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-tabs\\b/i",
+    "type": "component"
+  },
+  {
+    "name": "tags",
+    "css": true,
+    "js": true,
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-tag\\b/i",
+    "type": "component"
   },
   {
     "name": "text-align/default",
@@ -2289,22 +3413,6 @@
     "regex": "/hover\\:color-/"
   },
   {
-    "name": "text-decoration/active",
-    "regex": "/active\\:(underline|overline|line-through|decoration-none)/"
-  },
-  {
-    "name": "text-decoration/default",
-    "regex": "/(underline|overline|line-through|decoration-none)/"
-  },
-  {
-    "name": "text-decoration/focus",
-    "regex": "/focus\\:(underline|overline|line-through|decoration-none)/"
-  },
-  {
-    "name": "text-decoration/hover",
-    "regex": "/hover\\:(underline|overline|line-through|decoration-none)/"
-  },
-  {
     "name": "text-decoration-color/active",
     "regex": "/active\\:decoration-(transparent|inherit|current|outline-primary|outline-secondary|outline-tertiary|outline-error|outline-warning|outline-success)/"
   },
@@ -2331,6 +3439,22 @@
   {
     "name": "text-decoration-thickness/default",
     "regex": "/decoration-(auto|font|[0-4])/"
+  },
+  {
+    "name": "text-decoration/active",
+    "regex": "/active\\:(underline|overline|line-through|decoration-none)/"
+  },
+  {
+    "name": "text-decoration/default",
+    "regex": "/(underline|overline|line-through|decoration-none)/"
+  },
+  {
+    "name": "text-decoration/focus",
+    "regex": "/focus\\:(underline|overline|line-through|decoration-none)/"
+  },
+  {
+    "name": "text-decoration/hover",
+    "regex": "/hover\\:(underline|overline|line-through|decoration-none)/"
   },
   {
     "name": "text-indent/default",
@@ -2361,12 +3485,68 @@
     "regex": "/(truncate|(t-(ellipsis|clip)))/"
   },
   {
+    "name": "textarea",
+    "css": true,
+    "js": true,
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-textarea\\b/i",
+    "type": "component"
+  },
+  {
+    "name": "theme",
+    "css": false,
+    "js": true,
+    "regex": "/sf-theme/",
+    "type": "component"
+  },
+  {
+    "name": "theme-builder",
+    "css": true,
+    "js": true,
+    "regex": "/sf-theme-builder/",
+    "relation": [
+      {
+        "name": "range-slider"
+      },
+      {
+        "name": "modal"
+      },
+      {
+        "name": "checkbox"
+      },
+      {
+        "name": "dropdown"
+      }
+    ],
+    "type": "component"
+  },
+  {
     "name": "theme/default",
     "regex": "/theme-(light|light-dim|dark|dark-dim|yellow|blue|green)/"
   },
   {
     "name": "title/default",
     "regex": "/title-([1-9]{1}|[0-9]{2})/"
+  },
+  {
+    "name": "toast",
+    "css": true,
+    "js": true,
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-toast\\b/i",
+    "type": "component"
+  },
+  {
+    "name": "toggle",
+    "css": true,
+    "js": true,
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-toggle\\b/i",
+    "type": "component"
+  },
+  {
+    "name": "tooltip",
+    "css": true,
+    "js": true,
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-tooltip\\b/i",
+    "type": "component"
   },
   {
     "name": "touch-action/default",
@@ -2401,20 +3581,20 @@
     "regex": "/hover\\:skew-/"
   },
   {
-    "name": "transform-translate/default",
-    "regex": "/-?translate-(x|y)-(half|full|[0-9])/"
-  },
-  {
-    "name": "transform-translate/hover",
-    "regex": "/-?hover:translate-(x|y)-(half|full|[0-9])/"
-  },
-  {
     "name": "transform-translate-ext/default",
     "regex": "/(translate-(x|y)-[a-i][0-9])|(-translate-(x|y)-[a-i][0-9])/"
   },
   {
     "name": "transform-translate-ext/hover",
     "regex": "/hover\\:(translate-(x|y)-[a-i][0-9])|(-translate-(x|y)-[a-i][0-9])/"
+  },
+  {
+    "name": "transform-translate/default",
+    "regex": "/-?translate-(x|y)-(half|full|[0-9])/"
+  },
+  {
+    "name": "transform-translate/hover",
+    "regex": "/-?hover:translate-(x|y)-(half|full|[0-9])/"
   },
   {
     "name": "transition-delay/default",
@@ -2465,8 +3645,45 @@
     "regex": "/ease-(linear|in|out|in-out)/"
   },
   {
+    "name": "tree",
+    "css": true,
+    "js": true,
+    "regex": "/(?:<sf-tree(?=[\\s>/])|class\\s*=\\s*[\"'][^\"']*(?:^|\\s)sf-tree(?=\\s|[\"']))/i",
+    "relation": [
+      {
+        "name": "tree-item"
+      },
+      {
+        "name": "icon-buttons"
+      },
+      {
+        "name": "icons"
+      }
+    ],
+    "type": "component"
+  },
+  {
+    "name": "tree-item",
+    "css": true,
+    "js": true,
+    "regex": "/(?:<sf-tree-item(?=[\\s>/])|class\\s*=\\s*[\"'][^\"']*(?:^|\\s)sf-tree-item(?=\\s|[\"']))/i",
+    "relation": [
+      {
+        "name": "icons"
+      }
+    ],
+    "type": "component"
+  },
+  {
     "name": "user-select/default",
     "regex": "/select-(none|text|all|auto|contain)/"
+  },
+  {
+    "name": "verification",
+    "css": true,
+    "js": true,
+    "regex": "/sf-verification/",
+    "type": "component"
   },
   {
     "name": "vertical-align/default",
@@ -2497,26 +3714,6 @@
     "regex": "/(pre|pre-line|pre-wrap|whitespace-normal|wrap-none)/"
   },
   {
-    "name": "width/default",
-    "regex": "/w-((([1-9]{1}|[1-9]{2})\\/([1-9]{1}|[1-9]{2}))|auto|full|screen|min|max|fit|px|0)/"
-  },
-  {
-    "name": "width/lg",
-    "regex": "/lg\\:w-((([1-9]{1}|[1-9]{2})\\/([1-9]{1}|[1-9]{2}))|auto|full|screen|min|max|fit|px|0)/"
-  },
-  {
-    "name": "width/md",
-    "regex": "/md:w-((([1-9]{1}|[1-9]{2})\\/([1-9]{1}|[1-9]{2}))|auto|full|screen|min|max|fit|px|0)/"
-  },
-  {
-    "name": "width/sm",
-    "regex": "/sm\\:w-((([1-9]{1}|[1-9]{2})\\/([1-9]{1}|[1-9]{2}))|auto|full|screen|min|max|fit|px|0)/"
-  },
-  {
-    "name": "width/xl",
-    "regex": "/xl\\:w-((([1-9]{1}|[1-9]{2})\\/([1-9]{1}|[1-9]{2}))|auto|full|screen|min|max|fit|px|0)/"
-  },
-  {
     "name": "width-ext/default",
     "regex": "/w-(([a-i]{1}[0-9]{1})|(([1-9]{1})|([0-9]{2})|([0-9]{3})))/"
   },
@@ -2535,6 +3732,26 @@
   {
     "name": "width-ext/xl",
     "regex": "/xl\\:w-(([a-i]{1}[0-9]{1})|(([1-9]{1})|([0-9]{2})|([0-9]{3})))/"
+  },
+  {
+    "name": "width/default",
+    "regex": "/w-((([1-9]{1}|[1-9]{2})\\/([1-9]{1}|[1-9]{2}))|auto|full|screen|min|max|fit|px|0)/"
+  },
+  {
+    "name": "width/lg",
+    "regex": "/lg\\:w-((([1-9]{1}|[1-9]{2})\\/([1-9]{1}|[1-9]{2}))|auto|full|screen|min|max|fit|px|0)/"
+  },
+  {
+    "name": "width/md",
+    "regex": "/md:w-((([1-9]{1}|[1-9]{2})\\/([1-9]{1}|[1-9]{2}))|auto|full|screen|min|max|fit|px|0)/"
+  },
+  {
+    "name": "width/sm",
+    "regex": "/sm\\:w-((([1-9]{1}|[1-9]{2})\\/([1-9]{1}|[1-9]{2}))|auto|full|screen|min|max|fit|px|0)/"
+  },
+  {
+    "name": "width/xl",
+    "regex": "/xl\\:w-((([1-9]{1}|[1-9]{2})\\/([1-9]{1}|[1-9]{2}))|auto|full|screen|min|max|fit|px|0)/"
   },
   {
     "name": "will-change/default",
@@ -2563,1314 +3780,5 @@
   {
     "name": "z-index/xl",
     "regex": "/xl\\:z-([1-9]{1}|auto|-1)/"
-  },
-  {
-    "name": "cl-admin-menu",
-    "tags": [
-      "sf-admin-menu"
-    ],
-    "type": "smart",
-    "mode": "smart",
-    "js": true,
-    "css": false,
-    "relation": [
-      {
-        "name": "admin-menu"
-      },
-      {
-        "name": "icons"
-      },
-      {
-        "name": "inputs"
-      },
-      {
-        "name": "badges"
-      }
-    ]
-  },
-  {
-    "name": "cl-alert",
-    "tags": [
-      "sf-alert"
-    ],
-    "type": "smart",
-    "mode": "smart",
-    "js": true,
-    "relation": [
-      {
-        "name": "alerts"
-      },
-      {
-        "name": "buttons"
-      },
-      {
-        "name": "icon-buttons"
-      },
-      {
-        "name": "icons"
-      }
-    ]
-  },
-  {
-    "name": "cl-avatar",
-    "tags": [
-      "sf-avatar"
-    ],
-    "type": "smart",
-    "mode": "smart",
-    "js": true,
-    "relation": [
-      {
-        "name": "avatars"
-      }
-    ]
-  },
-  {
-    "name": "cl-avatars",
-    "tags": [
-      "sf-avatars"
-    ],
-    "regex": "/<sf-avatars\\b/i",
-    "type": "smart",
-    "mode": "smart",
-    "js": true,
-    "relation": [
-      {
-        "name": "avatars"
-      },
-      {
-        "name": "icons"
-      }
-    ]
-  },
-  {
-    "name": "cl-badges",
-    "tags": [
-      "sf-badge"
-    ],
-    "type": "smart",
-    "mode": "smart",
-    "js": true,
-    "relation": [
-      {
-        "name": "badges"
-      }
-    ]
-  },
-  {
-    "name": "cl-breadcrumbs",
-    "tags": [
-      "sf-breadcrumbs"
-    ],
-    "type": "smart",
-    "mode": "smart",
-    "js": true,
-    "relation": [
-      {
-        "name": "breadcrumbs"
-      },
-      {
-        "name": "icons"
-      }
-    ]
-  },
-  {
-    "name": "cl-buttons",
-    "tags": [
-      "sf-button"
-    ],
-    "type": "smart",
-    "mode": "smart",
-    "js": true,
-    "relation": [
-      {
-        "name": "buttons"
-      }
-    ]
-  },
-  {
-    "name": "cl-checkbox",
-    "tags": [
-      "sf-checkbox"
-    ],
-    "type": "smart",
-    "mode": "smart",
-    "js": true,
-    "css": true,
-    "relation": [
-      {
-        "name": "checkbox"
-      },
-      {
-        "name": "cl-icons"
-      }
-    ]
-  },
-  {
-    "name": "cl-close",
-    "tags": [
-      "sf-close"
-    ],
-    "type": "smart",
-    "mode": "smart",
-    "js": true,
-    "relation": [
-      {
-        "name": "close"
-      }
-    ]
-  },
-  {
-    "name": "cl-context-menu",
-    "tags": [
-      "sf-context-menu"
-    ],
-    "type": "smart",
-    "mode": "smart",
-    "js": true,
-    "relation": [
-      {
-        "name": "context-menu"
-      }
-    ]
-  },
-  {
-    "name": "cl-country-code",
-    "tags": [
-      "sf-country-code"
-    ],
-    "type": "smart",
-    "mode": "smart",
-    "js": true,
-    "relation": [
-      {
-        "name": "country-code"
-      }
-    ]
-  },
-  {
-    "name": "cl-datepicker",
-    "tags": [
-      "sf-datepicker"
-    ],
-    "type": "smart",
-    "mode": "smart",
-    "js": true,
-    "relation": [
-      {
-        "name": "datepicker"
-      },
-      {
-        "name": "cl-inputs"
-      },
-      {
-        "name": "cl-buttons"
-      },
-      {
-        "name": "cl-icon-buttons"
-      }
-    ]
-  },
-  {
-    "name": "cl-download-file",
-    "tags": [
-      "sf-download-file"
-    ],
-    "type": "smart",
-    "mode": "smart",
-    "js": true,
-    "relation": [
-      {
-        "name": "download-file"
-      }
-    ]
-  },
-  {
-    "name": "cl-dropdown",
-    "tags": [
-      "sf-dropdown"
-    ],
-    "type": "smart",
-    "mode": "smart",
-    "js": true,
-    "relation": [
-      {
-        "name": "dropdown"
-      },
-      {
-        "name": "cl-list"
-      },
-      {
-        "name": "inputs"
-      },
-      {
-        "name": "icon-buttons"
-      }
-    ]
-  },
-  {
-    "name": "cl-editor",
-    "tags": [
-      "sf-editor"
-    ],
-    "type": "smart",
-    "mode": "smart",
-    "js": true,
-    "css": true,
-    "relation": [
-      {
-        "name": "textarea"
-      },
-      {
-        "name": "cl-icon-buttons"
-      }
-    ]
-  },
-  {
-    "name": "cl-file-preview",
-    "tags": [
-      "sf-file-preview"
-    ],
-    "type": "smart",
-    "mode": "smart",
-    "js": true,
-    "relation": [
-      {
-        "name": "file-preview"
-      },
-      {
-        "name": "cl-avatar"
-      },
-      {
-        "name": "icon-buttons"
-      }
-    ]
-  },
-  {
-    "name": "cl-file-upload",
-    "tags": [
-      "sf-file-upload"
-    ],
-    "type": "smart",
-    "mode": "smart",
-    "js": true,
-    "css": true,
-    "relation": [
-      {
-        "name": "file-upload"
-      },
-      {
-        "name": "featured-icon"
-      },
-      {
-        "name": "cl-progress-bar"
-      },
-      {
-        "name": "cl-file-preview"
-      },
-      {
-        "name": "icon-buttons"
-      }
-    ]
-  },
-  {
-    "name": "cl-gallery",
-    "regex": "/data-sf-gallery(?:\\s|=|>|$)/",
-    "tags": [
-      "sf-gallery"
-    ],
-    "type": "smart",
-    "mode": "smart",
-    "js": true,
-    "relation": [
-      {
-        "name": "cl-slider"
-      },
-      {
-        "name": "cl-modal"
-      }
-    ]
-  },
-  {
-    "name": "cl-icon-buttons",
-    "tags": [
-      "sf-icon-button"
-    ],
-    "type": "smart",
-    "mode": "smart",
-    "js": true,
-    "css": true,
-    "relation": [
-      {
-        "name": "icon-buttons"
-      },
-      {
-        "name": "cl-icons"
-      }
-    ]
-  },
-  {
-    "name": "cl-icons",
-    "tags": [
-      "sf-icon"
-    ],
-    "type": "smart",
-    "mode": "smart",
-    "js": true,
-    "relation": [
-      {
-        "name": "icons"
-      }
-    ]
-  },
-  {
-    "name": "cl-inputs",
-    "tags": [
-      "sf-input"
-    ],
-    "type": "smart",
-    "mode": "smart",
-    "js": true,
-    "css": true,
-    "relation": [
-      {
-        "name": "inputs"
-      }
-    ]
-  },
-  {
-    "name": "cl-link",
-    "tags": [
-      "sf-link"
-    ],
-    "type": "smart",
-    "mode": "smart",
-    "js": true,
-    "relation": [
-      {
-        "name": "link"
-      }
-    ]
-  },
-  {
-    "name": "cl-list",
-    "tags": [
-      "sf-list"
-    ],
-    "type": "smart",
-    "mode": "smart",
-    "js": true,
-    "relation": [
-      {
-        "name": "cl-list-item"
-      },
-      {
-        "name": "cl-inputs"
-      }
-    ]
-  },
-  {
-    "name": "cl-list-item",
-    "tags": [
-      "sf-list-item"
-    ],
-    "type": "smart",
-    "mode": "smart",
-    "js": true,
-    "relation": [
-      {
-        "name": "dropdown"
-      },
-      {
-        "name": "icons"
-      },
-      {
-        "name": "checkbox"
-      },
-      {
-        "name": "avatars"
-      },
-      {
-        "name": "tags"
-      }
-    ]
-  },
-  {
-    "name": "cl-modal",
-    "tags": [
-      "sf-modal"
-    ],
-    "type": "smart",
-    "mode": "smart",
-    "js": true,
-    "relation": [
-      {
-        "name": "modal"
-      },
-      {
-        "name": "icon-buttons"
-      }
-    ]
-  },
-  {
-    "name": "cl-pagination",
-    "tags": [
-      "sf-pagination"
-    ],
-    "type": "smart",
-    "mode": "smart",
-    "js": true,
-    "relation": [
-      {
-        "name": "pagination"
-      }
-    ]
-  },
-  {
-    "name": "cl-progress-bar",
-    "tags": [
-      "sf-progress-bar"
-    ],
-    "type": "smart",
-    "mode": "smart",
-    "js": true,
-    "relation": [
-      {
-        "name": "progress-bar"
-      }
-    ]
-  },
-  {
-    "name": "cl-progress-scale",
-    "tags": [
-      "sf-progress-scale"
-    ],
-    "type": "smart",
-    "mode": "smart",
-    "js": true,
-    "relation": [
-      {
-        "name": "progress-scale"
-      }
-    ]
-  },
-  {
-    "name": "cl-radio",
-    "tags": [
-      "sf-radio"
-    ],
-    "type": "smart",
-    "mode": "smart",
-    "js": true,
-    "relation": [
-      {
-        "name": "radio"
-      },
-      {
-        "name": "icons"
-      }
-    ]
-  },
-  {
-    "name": "cl-range-slider",
-    "tags": [
-      "sf-range-slider"
-    ],
-    "type": "smart",
-    "mode": "smart",
-    "js": true,
-    "relation": [
-      {
-        "name": "range-slider"
-      }
-    ]
-  },
-  {
-    "name": "cl-reference-link",
-    "tags": [
-      "sf-reference-link"
-    ],
-    "type": "smart",
-    "mode": "smart",
-    "js": true,
-    "relation": [
-      {
-        "name": "reference-link"
-      },
-      {
-        "name": "icons"
-      }
-    ]
-  },
-  {
-    "name": "cl-skeleton",
-    "tags": [
-      "sf-skeleton"
-    ],
-    "type": "smart",
-    "mode": "smart",
-    "js": true,
-    "relation": [
-      {
-        "name": "skeleton"
-      }
-    ]
-  },
-  {
-    "name": "cl-slider",
-    "tags": [
-      "sf-slider"
-    ],
-    "type": "smart",
-    "mode": "smart",
-    "js": true,
-    "relation": [
-      {
-        "name": "slider"
-      },
-      {
-        "name": "icon-buttons"
-      },
-      {
-        "name": "icons"
-      }
-    ]
-  },
-  {
-    "name": "cl-spinner",
-    "tags": [
-      "sf-spinner"
-    ],
-    "type": "smart",
-    "mode": "smart",
-    "js": true,
-    "relation": [
-      {
-        "name": "spinner"
-      }
-    ]
-  },
-  {
-    "name": "cl-steps",
-    "tags": [
-      "sf-steps"
-    ],
-    "type": "smart",
-    "mode": "smart",
-    "js": true,
-    "relation": [
-      {
-        "name": "step"
-      },
-      {
-        "name": "icons"
-      }
-    ]
-  },
-  {
-    "name": "cl-switch",
-    "tags": [
-      "sf-switch"
-    ],
-    "type": "smart",
-    "mode": "smart",
-    "js": true,
-    "relation": [
-      {
-        "name": "switch"
-      },
-      {
-        "name": "icons"
-      }
-    ]
-  },
-  {
-    "name": "cl-table",
-    "tags": [
-      "sf-table"
-    ],
-    "type": "smart",
-    "mode": "smart",
-    "js": true,
-    "css": true,
-    "relation": [
-      {
-        "name": "checkbox"
-      },
-      {
-        "name": "buttons"
-      },
-      {
-        "name": "icon-buttons"
-      },
-      {
-        "name": "icons"
-      },
-      {
-        "name": "inputs"
-      },
-      {
-        "name": "cl-list"
-      },
-      {
-        "name": "tags"
-      },
-      {
-        "name": "pagination"
-      },
-      {
-        "name": "cl-datepicker"
-      }
-    ]
-  },
-  {
-    "name": "cl-tabs",
-    "tags": [
-      "sf-tabs"
-    ],
-    "type": "smart",
-    "mode": "smart",
-    "js": true,
-    "relation": [
-      {
-        "name": "tabs"
-      },
-      {
-        "name": "cl-buttons"
-      }
-    ]
-  },
-  {
-    "name": "cl-tags",
-    "tags": [
-      "sf-tag"
-    ],
-    "type": "smart",
-    "mode": "smart",
-    "js": true,
-    "css": true,
-    "relation": [
-      {
-        "name": "icon-buttons"
-      },
-      {
-        "name": "tags"
-      },
-      {
-        "name": "checkbox"
-      },
-      {
-        "name": "avatars"
-      },
-      {
-        "name": "dot"
-      }
-    ]
-  },
-  {
-    "name": "cl-textarea",
-    "tags": [
-      "sf-textarea"
-    ],
-    "type": "smart",
-    "mode": "smart",
-    "js": true,
-    "relation": [
-      {
-        "name": "textarea"
-      }
-    ]
-  },
-  {
-    "name": "cl-toast",
-    "tags": [
-      "sf-toast"
-    ],
-    "type": "smart",
-    "mode": "smart",
-    "js": true,
-    "relation": [
-      {
-        "name": "toast"
-      },
-      {
-        "name": "buttons"
-      },
-      {
-        "name": "icon-buttons"
-      },
-      {
-        "name": "icons"
-      },
-      {
-        "name": "close"
-      }
-    ]
-  },
-  {
-    "name": "cl-toggle",
-    "tags": [
-      "sf-toggle"
-    ],
-    "type": "smart",
-    "mode": "smart",
-    "js": true,
-    "relation": [
-      {
-        "name": "toggle"
-      },
-      {
-        "name": "cl-icons"
-      }
-    ]
-  },
-  {
-    "name": "cl-tooltip",
-    "tags": [
-      "sf-tooltip"
-    ],
-    "type": "smart",
-    "mode": "smart",
-    "js": true,
-    "relation": [
-      {
-        "name": "tooltip"
-      }
-    ]
-  },
-  {
-    "name": "cl-tree",
-    "tags": [
-      "sf-tree"
-    ],
-    "type": "smart",
-    "mode": "smart",
-    "js": true,
-    "css": true,
-    "relation": [
-      {
-        "name": "tree"
-      }
-    ]
-  },
-  {
-    "name": "cl-tree-item",
-    "tags": [
-      "sf-tree-item"
-    ],
-    "type": "smart",
-    "mode": "smart",
-    "js": true,
-    "relation": [
-      {
-        "name": "tree-item"
-      },
-      {
-        "name": "icon-buttons"
-      },
-      {
-        "name": "cl-icons"
-      }
-    ]
-  },
-  {
-    "name": "accordion",
-    "regex": "/sf-accordion/",
-    "type": "component",
-    "css": true,
-    "js": true
-  },
-  {
-    "name": "admin-menu",
-    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-admin-menu\\b/i",
-    "type": "component",
-    "css": true,
-    "js": true
-  },
-  {
-    "name": "alerts",
-    "regex": "/sf-alert/",
-    "type": "component",
-    "css": true,
-    "js": true
-  },
-  {
-    "name": "avatars",
-    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-avatar\\b/i",
-    "type": "component",
-    "css": true,
-    "js": true
-  },
-  {
-    "name": "badges",
-    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-badge\\b/i",
-    "type": "component",
-    "css": true,
-    "js": true
-  },
-  {
-    "name": "breadcrumbs",
-    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-breadcrumbs\\b/i",
-    "type": "component",
-    "css": true,
-    "js": true
-  },
-  {
-    "name": "buttons",
-    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-button\\b/i",
-    "type": "component",
-    "css": true,
-    "js": true
-  },
-  {
-    "name": "carousel",
-    "regex": "/sf-carousel/",
-    "type": "component",
-    "css": true,
-    "js": true
-  },
-  {
-    "name": "checkbox",
-    "regex": "/sf-checkbox/",
-    "type": "component",
-    "css": true,
-    "js": true
-  },
-  {
-    "name": "clipboard",
-    "regex": "/(btn-clipboard|source)/",
-    "type": "component",
-    "js": true,
-    "css": true
-  },
-  {
-    "name": "close",
-    "regex": "/sf-close/",
-    "type": "component",
-    "css": true
-  },
-  {
-    "name": "contentDivider",
-    "regex": "/sf-divider/",
-    "type": "component",
-    "css": true,
-    "js": true
-  },
-  {
-    "name": "context-menu",
-    "regex": "/sf-context-menu/",
-    "type": "component",
-    "css": true,
-    "js": false
-  },
-  {
-    "name": "country-code",
-    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-country-code\\b/i",
-    "type": "component",
-    "css": true,
-    "js": true
-  },
-  {
-    "name": "datepicker",
-    "regex": "/sf-datepicker/",
-    "type": "component",
-    "css": true,
-    "js": false
-  },
-  {
-    "name": "doc",
-    "regex": "/(language-|block--start|btn-clipboard|bd-example-indeterminate|bd-content|example)/",
-    "type": "component",
-    "css": true,
-    "js": true
-  },
-  {
-    "name": "dot",
-    "regex": "/sf-dot/",
-    "type": "component",
-    "css": true,
-    "js": false
-  },
-  {
-    "name": "download-file",
-    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-download-file\\b/i",
-    "type": "component",
-    "css": true,
-    "js": true
-  },
-  {
-    "name": "dropdown",
-    "regex": "/sf-dropdown|sf-list-item/",
-    "type": "component",
-    "css": true,
-    "js": true,
-    "relation": [
-      {
-        "name": "icon-buttons"
-      }
-    ]
-  },
-  {
-    "name": "emoji",
-    "regex": "/sf-emoji/",
-    "type": "component",
-    "css": true,
-    "js": true
-  },
-  {
-    "name": "fab",
-    "regex": "/sf-fab/",
-    "type": "component",
-    "css": true,
-    "js": true
-  },
-  {
-    "name": "fancybox",
-    "regex": "/data-fancybox/",
-    "type": "attribute",
-    "mode": "component",
-    "js": true,
-    "css": true,
-    "relation": [
-      {
-        "name": "jquery",
-        "mode": "component",
-        "js": true
-      }
-    ]
-  },
-  {
-    "name": "featured-icon",
-    "regex": "/sf-featured-icon/",
-    "type": "component",
-    "css": true,
-    "js": false
-  },
-  {
-    "name": "file-preview",
-    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-file-preview\\b/i",
-    "type": "component",
-    "css": true
-  },
-  {
-    "name": "file-upload",
-    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-file-upload\\b/i",
-    "type": "component",
-    "css": true,
-    "js": true
-  },
-  {
-    "name": "hideShow",
-    "regex": "/sf-hide-show/",
-    "type": "component",
-    "css": false,
-    "js": true
-  },
-  {
-    "name": "highlight",
-    "regex": "/(?:class\\s*=\\s*[\"'][^\"']*language-[^\"']*[\"']|<pre\\b[^>]*>\\s*<code\\b[^>]*>)/i",
-    "type": "component",
-    "js": true,
-    "css": true
-  },
-  {
-    "name": "icon-buttons",
-    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-icon-button\\b/i",
-    "type": "component",
-    "css": true,
-    "js": true
-  },
-  {
-    "name": "icons",
-    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-icon\\b[^\"']*[\"']|<\\s*i[^>]*class\\s*=\\s*[\"'][^\"']*\\bsf-icon\\b[^\"']*[\"']/i",
-    "type": "component",
-    "css": true,
-    "js": true
-  },
-  {
-    "name": "inputs",
-    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-input\\b/i",
-    "type": "component",
-    "css": true,
-    "js": true
-  },
-  {
-    "name": "link",
-    "regex": "/sf-link/",
-    "type": "component",
-    "css": true,
-    "js": false
-  },
-  {
-    "name": "menu",
-    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-menu\\b/i",
-    "type": "component",
-    "css": true,
-    "js": true,
-    "relation": [
-      {
-        "name": "icons"
-      },
-      {
-        "name": "icon-buttons"
-      }
-    ]
-  },
-  {
-    "name": "modal",
-    "regex": "/(data-sf-modal-(open|close)|sf-modal)/",
-    "type": "component",
-    "css": true,
-    "js": true,
-    "relation": [
-      {
-        "name": "backdrop-filter-blur/default"
-      }
-    ]
-  },
-  {
-    "name": "monaco",
-    "regex": "/sf-monaco/",
-    "type": "component",
-    "css": true,
-    "js": true
-  },
-  {
-    "name": "pagination",
-    "regex": "/class\\s*=\\s*[\"'][^\"']*\\b(?:sf-pagination|sf-page-number)\\b/i",
-    "type": "component",
-    "css": true,
-    "js": true
-  },
-  {
-    "name": "placeholder",
-    "regex": "/class\\s*=\\s*[\"'][^\"']*\\b(?:sf-placeholder)\\b/i",
-    "type": "component",
-    "css": true,
-    "js": false
-  },
-  {
-    "name": "progress-bar",
-    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-progress-bar\\b/i",
-    "type": "component",
-    "css": true,
-    "js": true
-  },
-  {
-    "name": "progress-scale",
-    "regex": "/sf-progress-scale/",
-    "type": "component",
-    "css": true,
-    "js": true
-  },
-  {
-    "name": "quantity",
-    "regex": "/sf-quantity/",
-    "type": "component",
-    "css": true,
-    "js": true
-  },
-  {
-    "name": "radio",
-    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-radio\\b/i",
-    "type": "component",
-    "css": true,
-    "js": true
-  },
-  {
-    "name": "range-slider",
-    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-range-slider\\b/i",
-    "type": "component",
-    "css": true,
-    "js": true
-  },
-  {
-    "name": "reference-link",
-    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-reference-link\\b/i",
-    "type": "component",
-    "css": true,
-    "js": true
-  },
-  {
-    "name": "scrollbar",
-    "regex": "/\"scrollbar\"/",
-    "type": "component",
-    "css": true,
-    "js": true
-  },
-  {
-    "name": "sf-system",
-    "regex": "/sf-gallery|sf-overbox/",
-    "type": "attribute",
-    "css": false,
-    "js": true
-  },
-  {
-    "name": "skeleton",
-    "regex": "/sf-skeleton/",
-    "type": "component",
-    "css": true,
-    "js": true
-  },
-  {
-    "name": "slider",
-    "regex": "/sf-slider/",
-    "type": "component",
-    "css": true,
-    "js": true,
-    "relation": [
-      {
-        "name": "swiper"
-      }
-    ]
-  },
-  {
-    "name": "special",
-    "regex": "/sf-special/",
-    "type": "attribute",
-    "js": true,
-    "css": true
-  },
-  {
-    "name": "spinner",
-    "regex": "/sf-loader/",
-    "type": "component",
-    "css": true,
-    "js": true
-  },
-  {
-    "name": "step",
-    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-step\\b/i",
-    "type": "component",
-    "css": true,
-    "js": true
-  },
-  {
-    "name": "swiper",
-    "regex": "/swiper/",
-    "type": "component",
-    "css": true,
-    "js": true
-  },
-  {
-    "name": "switch",
-    "regex": "/sf-switch/",
-    "type": "component",
-    "css": true,
-    "js": true
-  },
-  {
-    "name": "tab",
-    "regex": "/sf-tab/",
-    "type": "component",
-    "css": true,
-    "js": true
-  },
-  {
-    "name": "tabs",
-    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-tabs\\b/i",
-    "type": "component",
-    "css": true,
-    "js": true
-  },
-  {
-    "name": "tags",
-    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-tag\\b/i",
-    "type": "component",
-    "css": true,
-    "js": true
-  },
-  {
-    "name": "textarea",
-    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-textarea\\b/i",
-    "type": "component",
-    "css": true,
-    "js": true
-  },
-  {
-    "name": "theme",
-    "regex": "/sf-theme/",
-    "type": "component",
-    "css": false,
-    "js": true
-  },
-  {
-    "name": "theme-builder",
-    "regex": "/sf-theme-builder/",
-    "type": "component",
-    "relation": [
-      {
-        "name": "range-slider"
-      },
-      {
-        "name": "modal"
-      },
-      {
-        "name": "checkbox"
-      },
-      {
-        "name": "dropdown"
-      }
-    ],
-    "css": true,
-    "js": true
-  },
-  {
-    "name": "toast",
-    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-toast\\b/i",
-    "type": "component",
-    "css": true,
-    "js": true
-  },
-  {
-    "name": "toggle",
-    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-toggle\\b/i",
-    "type": "component",
-    "css": true,
-    "js": true
-  },
-  {
-    "name": "tooltip",
-    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-tooltip\\b/i",
-    "type": "component",
-    "css": true,
-    "js": true
-  },
-  {
-    "name": "tree",
-    "regex": "/(?:<sf-tree(?=[\\s>/])|class\\s*=\\s*[\"'][^\"']*(?:^|\\s)sf-tree(?=\\s|[\"']))/i",
-    "type": "component",
-    "css": true,
-    "js": true,
-    "relation": [
-      {
-        "name": "tree-item"
-      },
-      {
-        "name": "icon-buttons"
-      },
-      {
-        "name": "icons"
-      }
-    ]
-  },
-  {
-    "name": "tree-item",
-    "regex": "/(?:<sf-tree-item(?=[\\s>/])|class\\s*=\\s*[\"'][^\"']*(?:^|\\s)sf-tree-item(?=\\s|[\"']))/i",
-    "type": "component",
-    "css": true,
-    "js": true,
-    "relation": [
-      {
-        "name": "icons"
-      }
-    ]
-  },
-  {
-    "name": "verification",
-    "regex": "/sf-verification/",
-    "type": "component",
-    "css": true,
-    "js": true
   }
 ]

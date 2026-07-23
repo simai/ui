@@ -1,1 +1,51 @@
-@layer sf.utilities{@media(min-width: 960px){.lg\:break-after-auto{page-break-after:auto;-webkit-column-break-after:auto;-moz-column-break-after:auto;break-after:auto}.lg\:break-after-avoid{page-break-after:avoid;-webkit-column-break-after:avoid;-moz-column-break-after:avoid;break-after:avoid}.lg\:break-after-all{page-break-after:all;-webkit-column-break-after:all;-moz-column-break-after:all;break-after:all}.lg\:break-after-avoid-page{page-break-after:avoid;-webkit-column-break-after:avoid;-moz-column-break-after:avoid;break-after:avoid-page}.lg\:break-after-page{page-break-after:always;-webkit-column-break-after:page;-moz-column-break-after:page;break-after:page}.lg\:break-after-left{page-break-after:left;-webkit-column-break-after:left;-moz-column-break-after:left;break-after:left}.lg\:break-after-right{page-break-after:right;-webkit-column-break-after:right;-moz-column-break-after:right;break-after:right}.lg\:break-after-column{-webkit-column-break-after:column;-moz-column-break-after:column;break-after:column}}}
+@layer sf.utilities {
+  @media (min-width: 960px) {
+    .lg\:break-after-auto {
+      page-break-after: auto;
+      -webkit-column-break-after: auto;
+         -moz-column-break-after: auto;
+              break-after: auto;
+    }
+    .lg\:break-after-avoid {
+      page-break-after: avoid;
+      -webkit-column-break-after: avoid;
+         -moz-column-break-after: avoid;
+              break-after: avoid;
+    }
+    .lg\:break-after-all {
+      page-break-after: all;
+      -webkit-column-break-after: all;
+         -moz-column-break-after: all;
+              break-after: all;
+    }
+    .lg\:break-after-avoid-page {
+      page-break-after: avoid;
+      -webkit-column-break-after: avoid;
+         -moz-column-break-after: avoid;
+              break-after: avoid-page;
+    }
+    .lg\:break-after-page {
+      page-break-after: always;
+      -webkit-column-break-after: page;
+         -moz-column-break-after: page;
+              break-after: page;
+    }
+    .lg\:break-after-left {
+      page-break-after: left;
+      -webkit-column-break-after: left;
+         -moz-column-break-after: left;
+              break-after: left;
+    }
+    .lg\:break-after-right {
+      page-break-after: right;
+      -webkit-column-break-after: right;
+         -moz-column-break-after: right;
+              break-after: right;
+    }
+    .lg\:break-after-column {
+      -webkit-column-break-after: column;
+         -moz-column-break-after: column;
+              break-after: column;
+    }
+  }
+}

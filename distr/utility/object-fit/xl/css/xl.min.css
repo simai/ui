@@ -1,0 +1,1 @@
+@layer sf.utilities{@media(min-width: 1140px){.xl\:object-contain{-o-object-fit:contain;object-fit:contain}.xl\:object-cover{-o-object-fit:cover;object-fit:cover}.xl\:object-fill{-o-object-fit:fill;object-fit:fill}.xl\:object-none{-o-object-fit:none;object-fit:none}.xl\:object-scale-down{-o-object-fit:scale-down;object-fit:scale-down}}}
