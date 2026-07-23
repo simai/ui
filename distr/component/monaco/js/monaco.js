@@ -380,19 +380,38 @@ function registerComponent(name, cls) {
 /***/ },
 
 /***/ "fcc5b3e351e9"
-() {
+(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
+/* global __webpack_public_path__: writable */
 (() => {
   const cdnDefault = 'https://cdn.jsdelivr.net/gh/simai/ui@main/distr/';
   if (typeof window === 'undefined') return;
 
   if (!window.sfPath) {
     window.sfPath = cdnDefault;
-  } // Keep sfPath as the public Framework asset root, but let webpack retain its
-  // script-relative public path for Core chunks. Legacy bundles emit
-  // `core/js/*` from the Framework root, while the deterministic builder emits
-  // `js/*` from the Core root; webpack's generated bootstrap resolves both.
+  }
 
+  const frameworkRoot = new URL(window.sfPath, window.location?.href || cdnDefault);
+
+  if (!frameworkRoot.pathname.endsWith('/')) {
+    frameworkRoot.pathname += '/';
+  }
+
+  const configuredCoreRoot = frameworkRoot.pathname.endsWith('/core/') ? frameworkRoot : new URL('core/', frameworkRoot);
+  const coreScript = typeof document === 'undefined' ? null : Array.from(document.scripts).reverse().find(script => {
+    if (!script.src) return false;
+
+    try {
+      return /\/core\/js\/core(?:\.min)?\.js$/.test(new URL(script.src, document.baseURI).pathname);
+    } catch {
+      return false;
+    }
+  });
+  const coreRoot = coreScript ? new URL('../', new URL(coreScript.src, document.baseURI)) : configuredCoreRoot;
+
+  if (__webpack_require__.p !== coreRoot.href) {
+    __webpack_require__.p = coreRoot.href;
+  }
 })();
 
 /***/ },
@@ -159294,6 +159313,18 @@ The range will extend backwards to the start of the first line containing the se
 /******/ 		};
 /******/ 	})();
 /******/ 	
+/******/ 	/* webpack/runtime/global */
+/******/ 	(() => {
+/******/ 		__webpack_require__.g = (function() {
+/******/ 			if (typeof globalThis === 'object') return globalThis;
+/******/ 			try {
+/******/ 				return this || new Function('return this')();
+/******/ 			} catch (e) {
+/******/ 				if (typeof window === 'object') return window;
+/******/ 			}
+/******/ 		})();
+/******/ 	})();
+/******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
 /******/ 	(() => {
 /******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
@@ -159308,6 +159339,29 @@ The range will extend backwards to the start of the first line containing the se
 /******/ 			}
 /******/ 			Object.defineProperty(exports, '__esModule', { value: true });
 /******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/publicPath */
+/******/ 	(() => {
+/******/ 		let scriptUrl;
+/******/ 		if (__webpack_require__.g.importScripts) scriptUrl = __webpack_require__.g.location + "";
+/******/ 		const document = __webpack_require__.g.document;
+/******/ 		if (!scriptUrl && document) {
+/******/ 			if (document.currentScript?.tagName.toUpperCase() === 'SCRIPT')
+/******/ 				scriptUrl = document.currentScript.src;
+/******/ 			if (!scriptUrl) {
+/******/ 				const scripts = document.getElementsByTagName("script");
+/******/ 				if(scripts.length) {
+/******/ 					let i = scripts.length - 1;
+/******/ 					while (i > -1 && (!scriptUrl || !/^http(s?):/.test(scriptUrl))) scriptUrl = scripts[i--].src;
+/******/ 				}
+/******/ 			}
+/******/ 		}
+/******/ 		// When supporting browsers where an automatic publicPath is not supported you must specify an output.publicPath manually via configuration
+/******/ 		// or pass an empty string ("") and set the __webpack_public_path__ variable from your code to use your own logic.
+/******/ 		if (!scriptUrl) throw new Error("Automatic publicPath is not supported in this browser");
+/******/ 		scriptUrl = scriptUrl.replace(/^blob:/, "").replace(/#.*$/, "").replace(/\?.*$/, "").replace(/\/[^\/]+$/, "/");
+/******/ 		__webpack_require__.p = scriptUrl + "../";
 /******/ 	})();
 /******/ 	
 /************************************************************************/
