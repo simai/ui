@@ -2,13 +2,13 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "37dc9722deb6"
+/***/ "03dc9135d9dc"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("9e6d91f0c51a");
-/* harmony import */ var _json_button_utility_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("14dcbc46080c");
-/* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("0bd4772bf4ae");
+/* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("77de01747ad5");
+/* harmony import */ var _json_button_utility_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("c71a77b9cdfb");
+/* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("89862d12f06a");
 
 
 
@@ -145,11 +145,11 @@ Buttons.utilityMap = _json_button_utility_json__WEBPACK_IMPORTED_MODULE_1__;
 
 /***/ },
 
-/***/ "7833b151b594"
+/***/ "a67f0d805acc"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _buttons__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("37dc9722deb6");
+/* harmony import */ var _buttons__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("03dc9135d9dc");
 /*
 * Main JS file for including JS for component.
 * 
@@ -160,7 +160,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ },
 
-/***/ "0bd4772bf4ae"
+/***/ "89862d12f06a"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -194,7 +194,7 @@ function registerComponent(name, cls) {
 
 /***/ },
 
-/***/ "9e6d91f0c51a"
+/***/ "77de01747ad5"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -298,7 +298,7 @@ class ComponentObserver {
 
 /***/ },
 
-/***/ "0a5be21dc24f"
+/***/ "a8191681d656"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -307,7 +307,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ },
 
-/***/ "14dcbc46080c"
+/***/ "c71a77b9cdfb"
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{".sf-button":["display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","justify-content/center (.justify-center)","align-items/center (.items-center)"],".sf-button .sf-icon":["display/flex (.flex)","justify-content/center (.justify-center)","align-items/center (.items-center)"],".sf-button .sf-button-text-container":["display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","justify-content/center (.justify-center)","align-items/center (.items-center)"]}');
@@ -395,8 +395,8 @@ let __webpack_exports__ = {};
 // This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
 (() => {
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("0a5be21dc24f");
-/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("7833b151b594");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("a8191681d656");
+/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("a67f0d805acc");
 /**
 * SIMAI Framework
 * Copyright 2008-2026 SIMAI Ltd

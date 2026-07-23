@@ -2,12 +2,12 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "374e8bddf1f8"
+/***/ "943e6082ddce"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("9e6d91f0c51a");
-/* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("0bd4772bf4ae");
+/* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("77de01747ad5");
+/* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("89862d12f06a");
 
 
 
@@ -66,11 +66,11 @@ class Fab extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Compon
 
 /***/ },
 
-/***/ "dc485ccde027"
+/***/ "4d51d8128922"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _fab__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("374e8bddf1f8");
+/* harmony import */ var _fab__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("943e6082ddce");
 /*
 * Main JS file for including JS for component.
 *
@@ -81,7 +81,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ },
 
-/***/ "0bd4772bf4ae"
+/***/ "89862d12f06a"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -115,7 +115,7 @@ function registerComponent(name, cls) {
 
 /***/ },
 
-/***/ "9e6d91f0c51a"
+/***/ "77de01747ad5"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -219,7 +219,7 @@ class ComponentObserver {
 
 /***/ },
 
-/***/ "677eb39844e5"
+/***/ "bcbe1c5a149c"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -309,8 +309,8 @@ let __webpack_exports__ = {};
 // This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
 (() => {
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("677eb39844e5");
-/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("dc485ccde027");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("bcbe1c5a149c");
+/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("4d51d8128922");
 /**
  * SIMAI Framework
  * Copyright 2008-2026 SIMAI Ltd

@@ -2,7 +2,7 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "18a774909a9b"
+/***/ "9a5b71b613b3"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -11,9 +11,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   initExistingDownloadFiles: () => (/* binding */ initExistingDownloadFiles),
 /* harmony export */   unbindDownloadFile: () => (/* binding */ unbindDownloadFile)
 /* harmony export */ });
-/* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("9e6d91f0c51a");
-/* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("0bd4772bf4ae");
-/* harmony import */ var _json_download_file_utility_json__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("2876974f15b3");
+/* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("77de01747ad5");
+/* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("89862d12f06a");
+/* harmony import */ var _json_download_file_utility_json__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("8ea1dd3302c4");
 
 
 
@@ -318,11 +318,11 @@ if (typeof document !== 'undefined') {
 
 /***/ },
 
-/***/ "6815e574f04a"
+/***/ "6943576cb34b"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _download_file__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("18a774909a9b");
+/* harmony import */ var _download_file__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("9a5b71b613b3");
 /*
 * Main JS file for including JS for component.
 *
@@ -333,7 +333,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ },
 
-/***/ "0bd4772bf4ae"
+/***/ "89862d12f06a"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -367,7 +367,7 @@ function registerComponent(name, cls) {
 
 /***/ },
 
-/***/ "9e6d91f0c51a"
+/***/ "77de01747ad5"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -471,7 +471,7 @@ class ComponentObserver {
 
 /***/ },
 
-/***/ "0d5df047c40e"
+/***/ "57777a4d7f29"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -480,7 +480,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ },
 
-/***/ "2876974f15b3"
+/***/ "8ea1dd3302c4"
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{".sf-download-file":["display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","gap/var(--sf-e5)","justify-content/space-between (.justify-between)","align-items/center (.items-center)"],".sf-download-file .sf-download-file-wrap":["display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","gap/var(--sf-download-file-wrap--gap)","justify-content/flex-start (.justify-start)","align-items/center (.items-center)"]}');
@@ -568,8 +568,8 @@ let __webpack_exports__ = {};
 // This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
 (() => {
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("0d5df047c40e");
-/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("6815e574f04a");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("57777a4d7f29");
+/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("6943576cb34b");
 /**
  * SIMAI Framework
  * Copyright 2008-2026 SIMAI Ltd

@@ -1,7 +1,7 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "279bb68d0b92"
+/***/ "baa9de9f1bef"
 () {
 
 (() => {
@@ -59,12 +59,12 @@
 
 /***/ },
 
-/***/ "3e6c7fa0e485"
+/***/ "90b5fc0b8e62"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _theme__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("279bb68d0b92");
+/* harmony import */ var _theme__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("baa9de9f1bef");
 /* harmony import */ var _theme__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_theme__WEBPACK_IMPORTED_MODULE_0__);
 
 
@@ -164,7 +164,7 @@ let __webpack_exports__ = {};
 (() => {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("3e6c7fa0e485");
+/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("90b5fc0b8e62");
 /**
 * SIMAI Framework
 * Copyright 2008-2026 SIMAI Ltd

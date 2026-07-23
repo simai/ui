@@ -2,7 +2,7 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "0bd4772bf4ae"
+/***/ "89862d12f06a"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -36,7 +36,7 @@ function registerComponent(name, cls) {
 
 /***/ },
 
-/***/ "684dc2916d72"
+/***/ "e3bad9a511bb"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -46,8 +46,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   syncToggleState: () => (/* binding */ syncToggleState),
 /* harmony export */   unbindToggle: () => (/* binding */ unbindToggle)
 /* harmony export */ });
-/* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("9e6d91f0c51a");
-/* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("0bd4772bf4ae");
+/* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("77de01747ad5");
+/* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("89862d12f06a");
 
 
 const TOGGLE_SELECTOR = 'label.sf-toggle';
@@ -333,11 +333,11 @@ toggleObserver.observe(document.documentElement, {
 
 /***/ },
 
-/***/ "440308f3646d"
+/***/ "82c575c4ade5"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _toggle__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("684dc2916d72");
+/* harmony import */ var _toggle__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("e3bad9a511bb");
 /*
 * Main JS file for including JS for component.
 *
@@ -348,7 +348,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ },
 
-/***/ "9e6d91f0c51a"
+/***/ "77de01747ad5"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -452,7 +452,7 @@ class ComponentObserver {
 
 /***/ },
 
-/***/ "34b988bd68a6"
+/***/ "15d5b1a69fcc"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -542,8 +542,8 @@ let __webpack_exports__ = {};
 // This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
 (() => {
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("34b988bd68a6");
-/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("440308f3646d");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("15d5b1a69fcc");
+/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("82c575c4ade5");
 /**
  * SIMAI Framework
  * Copyright 2008-2026 SIMAI Ltd

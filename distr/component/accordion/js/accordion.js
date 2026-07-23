@@ -2,14 +2,14 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "db56ce9291a3"
+/***/ "431efb0fada7"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("0bd4772bf4ae");
+/* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("89862d12f06a");
 
 
 class SfAccordion {
@@ -126,11 +126,11 @@ if (typeof MutationObserver !== 'undefined') {
 
 /***/ },
 
-/***/ "e53fefeffe08"
+/***/ "353cd45e0fbc"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _accordion__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("db56ce9291a3");
+/* harmony import */ var _accordion__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("431efb0fada7");
 /*
 * Main JS file for including JS for component.
 * 
@@ -141,7 +141,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ },
 
-/***/ "0bd4772bf4ae"
+/***/ "89862d12f06a"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -175,7 +175,7 @@ function registerComponent(name, cls) {
 
 /***/ },
 
-/***/ "32fd0336c8c0"
+/***/ "2f54c90cca6e"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -265,8 +265,8 @@ let __webpack_exports__ = {};
 // This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
 (() => {
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("32fd0336c8c0");
-/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("e53fefeffe08");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2f54c90cca6e");
+/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("353cd45e0fbc");
 /**
 * SIMAI Framework
 * Copyright 2008-2026 SIMAI Ltd

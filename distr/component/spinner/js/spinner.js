@@ -2,7 +2,7 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "0bd4772bf4ae"
+/***/ "89862d12f06a"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -36,7 +36,7 @@ function registerComponent(name, cls) {
 
 /***/ },
 
-/***/ "4e347f4a7133"
+/***/ "1148c726c0fe"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -47,8 +47,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   renderSpinner: () => (/* binding */ renderSpinner),
 /* harmony export */   unbindSpinner: () => (/* binding */ unbindSpinner)
 /* harmony export */ });
-/* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("9e6d91f0c51a");
-/* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("0bd4772bf4ae");
+/* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("77de01747ad5");
+/* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("89862d12f06a");
 
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -376,11 +376,11 @@ spinnerObserver.observe(document.documentElement, {
 
 /***/ },
 
-/***/ "dc218a908296"
+/***/ "50816fe3819e"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _spinner__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("4e347f4a7133");
+/* harmony import */ var _spinner__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("1148c726c0fe");
 /*
 * Main JS file for including JS for component.
 * 
@@ -391,7 +391,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ },
 
-/***/ "9e6d91f0c51a"
+/***/ "77de01747ad5"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -495,7 +495,7 @@ class ComponentObserver {
 
 /***/ },
 
-/***/ "ba5fba5011f6"
+/***/ "919788a5025d"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -585,8 +585,8 @@ let __webpack_exports__ = {};
 // This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
 (() => {
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("ba5fba5011f6");
-/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("dc218a908296");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("919788a5025d");
+/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("50816fe3819e");
 /**
 * SIMAI Framework
 * Copyright 2008-2026 SIMAI Ltd

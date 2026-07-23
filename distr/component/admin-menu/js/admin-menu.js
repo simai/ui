@@ -2,7 +2,7 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "8f5d89976310"
+/***/ "6703269cb53a"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -10,7 +10,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   AdminMenu: () => (/* binding */ AdminMenu),
 /* harmony export */   initAdminMenus: () => (/* binding */ initAdminMenus)
 /* harmony export */ });
-/* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("0bd4772bf4ae");
+/* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("89862d12f06a");
 
 const SMART_TAG = 'SF-ADMIN-MENU';
 const ROOT_SELECTOR = ".sf-admin-menu, .sf-admin-menu-panel:not(.sf-admin-menu-panel-sub)";
@@ -387,11 +387,11 @@ if (document.readyState === "loading") {
 
 /***/ },
 
-/***/ "4c91ab6995d2"
+/***/ "52dd1c45375f"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _admin_menu__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("8f5d89976310");
+/* harmony import */ var _admin_menu__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("6703269cb53a");
 /*
 * Main JS file for including JS for component.
 *
@@ -402,7 +402,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ },
 
-/***/ "0bd4772bf4ae"
+/***/ "89862d12f06a"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -436,7 +436,7 @@ function registerComponent(name, cls) {
 
 /***/ },
 
-/***/ "0e3f5faddefb"
+/***/ "ba4455b1a60a"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -526,8 +526,8 @@ let __webpack_exports__ = {};
 // This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
 (() => {
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("0e3f5faddefb");
-/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("4c91ab6995d2");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("ba4455b1a60a");
+/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("52dd1c45375f");
 /**
 * SIMAI Framework
 * Copyright 2008-2026 SIMAI Ltd

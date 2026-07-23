@@ -1,7 +1,7 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "dad77d9154e1"
+/***/ "3623bc015e12"
 () {
 
 // Base avatars component does not register the smart custom element.
@@ -9,12 +9,12 @@
 
 /***/ },
 
-/***/ "ddbc65e781b8"
+/***/ "a32e0372aaa9"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _avatars__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("dad77d9154e1");
+/* harmony import */ var _avatars__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("3623bc015e12");
 /* harmony import */ var _avatars__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_avatars__WEBPACK_IMPORTED_MODULE_0__);
 /*
 * Main JS file for including JS for component.
@@ -26,7 +26,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ },
 
-/***/ "3c5815585569"
+/***/ "c5c49dae575a"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -130,8 +130,8 @@ let __webpack_exports__ = {};
 (() => {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("3c5815585569");
-/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("ddbc65e781b8");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("c5c49dae575a");
+/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("a32e0372aaa9");
 /**
 * SIMAI Framework
 * Copyright 2008-2026 SIMAI Ltd

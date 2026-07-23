@@ -2,7 +2,7 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "0bd4772bf4ae"
+/***/ "89862d12f06a"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -36,7 +36,7 @@ function registerComponent(name, cls) {
 
 /***/ },
 
-/***/ "7f8f87080a67"
+/***/ "5045d2bb3a27"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -45,9 +45,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   setTextareaState: () => (/* binding */ setTextareaState),
 /* harmony export */   unbindTextarea: () => (/* binding */ unbindTextarea)
 /* harmony export */ });
-/* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("9e6d91f0c51a");
-/* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("0bd4772bf4ae");
-/* harmony import */ var _json_textarea_utility_json__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e7f9279bc92d");
+/* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("77de01747ad5");
+/* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("89862d12f06a");
+/* harmony import */ var _json_textarea_utility_json__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("9fe5ba254a5b");
 
 
 
@@ -288,11 +288,11 @@ textareaObserver.observe(document.documentElement, {
 
 /***/ },
 
-/***/ "390297e2d6d6"
+/***/ "a6a89351d44f"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _textarea__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("7f8f87080a67");
+/* harmony import */ var _textarea__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("5045d2bb3a27");
 /*
 * Main JS file for including JS for component.
 *
@@ -303,7 +303,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ },
 
-/***/ "9e6d91f0c51a"
+/***/ "77de01747ad5"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -407,7 +407,7 @@ class ComponentObserver {
 
 /***/ },
 
-/***/ "964bdd46dc8b"
+/***/ "4008daf7a69f"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -416,7 +416,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ },
 
-/***/ "e7f9279bc92d"
+/***/ "9fe5ba254a5b"
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{".sf-textarea":["display/flex (.flex)","flex-direction/column (.flex-col)","flex-wrap/nowrap (.flex-nowrap)","gap/var(--sf-space-1\\\\/4)","justify-content/flex-start (.justify-start)","align-items/flex-start (.items-start)"],".sf-textarea .sf-textarea-label":["flex/1 (.flex-1)","display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","gap/var(--sf-space-1\\\\/4)","justify-content/flex-start (.justify-start)","align-items/flex-start (.items-start)"],".sf-textarea textarea":["flex/1 (.flex-1)","display/flex (.flex)"],".sf-textarea .sf-textarea-hint-text-wrap":["flex/1 (.flex-1)","display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","gap/var(--sf-b0)","justify-content/flex-start (.justify-start)","align-items/center (.items-center)"]}');
@@ -504,8 +504,8 @@ let __webpack_exports__ = {};
 // This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
 (() => {
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("964bdd46dc8b");
-/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("390297e2d6d6");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("4008daf7a69f");
+/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("a6a89351d44f");
 /**
 * SIMAI Framework
 * Copyright 2008-2026 SIMAI Ltd

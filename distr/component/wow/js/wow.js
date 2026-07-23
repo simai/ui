@@ -1,7 +1,7 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "f3e095061f79"
+/***/ "a480b3a9790c"
 () {
 
 var WOW = function (properties) {
@@ -290,12 +290,12 @@ window.addEventListener("DOMContentLoaded", function () {
 
 /***/ },
 
-/***/ "cf6c93f8def0"
+/***/ "8f7e9ae7ee8e"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _wow__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("f3e095061f79");
+/* harmony import */ var _wow__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("a480b3a9790c");
 /* harmony import */ var _wow__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wow__WEBPACK_IMPORTED_MODULE_0__);
 
 
@@ -395,7 +395,7 @@ let __webpack_exports__ = {};
 (() => {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("cf6c93f8def0");
+/* harmony import */ var _js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("8f7e9ae7ee8e");
 //import './scss';
 
 })();
