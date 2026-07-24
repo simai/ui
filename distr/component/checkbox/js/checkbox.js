@@ -2,7 +2,7 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "9b5005c560e4"
+/***/ "1ab8ca5917ff"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -13,8 +13,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   syncCheckboxState: () => (/* binding */ syncCheckboxState),
 /* harmony export */   unbindCheckbox: () => (/* binding */ unbindCheckbox)
 /* harmony export */ });
-/* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d7f974466839");
-/* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("58661bec99a6");
+/* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("77de01747ad5");
+/* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("89862d12f06a");
 
 
 const CHECKBOX_SELECTOR = 'label.sf-checkbox';
@@ -284,11 +284,11 @@ checkboxObserver.observe(document.documentElement, {
 
 /***/ },
 
-/***/ "d314a44002f3"
+/***/ "a4092c5a0412"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _checkbox__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("9b5005c560e4");
+/* harmony import */ var _checkbox__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("1ab8ca5917ff");
 /*
 * Main JS file for including JS for component.
 * 
@@ -299,7 +299,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ },
 
-/***/ "58661bec99a6"
+/***/ "89862d12f06a"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -333,7 +333,7 @@ function registerComponent(name, cls) {
 
 /***/ },
 
-/***/ "d7f974466839"
+/***/ "77de01747ad5"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -437,7 +437,7 @@ class ComponentObserver {
 
 /***/ },
 
-/***/ "f84c26cb4666"
+/***/ "0b783afbfc5a"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -527,8 +527,8 @@ let __webpack_exports__ = {};
 // This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
 (() => {
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("f84c26cb4666");
-/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("d314a44002f3");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("0b783afbfc5a");
+/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("a4092c5a0412");
 /**
 * SIMAI Framework
 * Copyright 2008-2026 SIMAI Ltd

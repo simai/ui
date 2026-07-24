@@ -2,7 +2,7 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "c2e2433fb668"
+/***/ "c312b8e2f36a"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -12,8 +12,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   syncRadioState: () => (/* binding */ syncRadioState),
 /* harmony export */   unbindRadio: () => (/* binding */ unbindRadio)
 /* harmony export */ });
-/* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d7f974466839");
-/* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("58661bec99a6");
+/* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("77de01747ad5");
+/* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("89862d12f06a");
 
 
 const RADIO_SELECTOR = 'label.sf-radio-button';
@@ -490,11 +490,11 @@ radioObserver.observe(document.documentElement, {
 
 /***/ },
 
-/***/ "65d79a2935f2"
+/***/ "c49756fad5c2"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _radio__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("c2e2433fb668");
+/* harmony import */ var _radio__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("c312b8e2f36a");
 /*
 * Main JS file for including JS for component.
 *
@@ -505,7 +505,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ },
 
-/***/ "58661bec99a6"
+/***/ "89862d12f06a"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -539,7 +539,7 @@ function registerComponent(name, cls) {
 
 /***/ },
 
-/***/ "d7f974466839"
+/***/ "77de01747ad5"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -643,7 +643,7 @@ class ComponentObserver {
 
 /***/ },
 
-/***/ "fe76739c64c5"
+/***/ "fdae276c4c35"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -733,8 +733,8 @@ let __webpack_exports__ = {};
 // This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
 (() => {
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("fe76739c64c5");
-/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("65d79a2935f2");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("fdae276c4c35");
+/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("c49756fad5c2");
 /**
  * SIMAI Framework
  * Copyright 2008-2026 SIMAI Ltd

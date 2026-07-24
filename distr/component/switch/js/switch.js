@@ -2,7 +2,7 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "58661bec99a6"
+/***/ "89862d12f06a"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -36,7 +36,7 @@ function registerComponent(name, cls) {
 
 /***/ },
 
-/***/ "3358c85d2142"
+/***/ "57080fb53751"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -46,8 +46,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   syncSwitchState: () => (/* binding */ syncSwitchState),
 /* harmony export */   unbindSwitch: () => (/* binding */ unbindSwitch)
 /* harmony export */ });
-/* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d7f974466839");
-/* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("58661bec99a6");
+/* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("77de01747ad5");
+/* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("89862d12f06a");
 
 
 const SWITCH_SELECTOR = 'label.sf-switch';
@@ -311,11 +311,11 @@ switchObserver.observe(document.documentElement, {
 
 /***/ },
 
-/***/ "2d7e07f685fc"
+/***/ "29ab3b8e5ba1"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _switch__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("3358c85d2142");
+/* harmony import */ var _switch__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("57080fb53751");
 /*
 * Main JS file for including JS for component.
 *
@@ -326,7 +326,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ },
 
-/***/ "d7f974466839"
+/***/ "77de01747ad5"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -430,7 +430,7 @@ class ComponentObserver {
 
 /***/ },
 
-/***/ "604233088ade"
+/***/ "56624feea766"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -520,8 +520,8 @@ let __webpack_exports__ = {};
 // This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
 (() => {
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("604233088ade");
-/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("2d7e07f685fc");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("56624feea766");
+/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("29ab3b8e5ba1");
 /**
  * SIMAI Framework
  * Copyright 2008-2026 SIMAI Ltd

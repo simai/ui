@@ -1,7 +1,7 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "5b7a5658d78a"
+/***/ "557d809cb14d"
 () {
 
 const ROOT_SELECTOR = '.sf-breadcrumbs';
@@ -203,7 +203,7 @@ if (typeof MutationObserver !== 'undefined') {
 
 /***/ },
 
-/***/ "61b2b2e52939"
+/***/ "6ab6d42a9559"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -307,8 +307,8 @@ let __webpack_exports__ = {};
 (() => {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("61b2b2e52939");
-/* harmony import */ var _js_breadcrumbs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5b7a5658d78a");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("6ab6d42a9559");
+/* harmony import */ var _js_breadcrumbs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("557d809cb14d");
 /* harmony import */ var _js_breadcrumbs__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_js_breadcrumbs__WEBPACK_IMPORTED_MODULE_1__);
 /**
 * SIMAI Framework

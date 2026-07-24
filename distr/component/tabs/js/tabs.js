@@ -2,7 +2,7 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "58661bec99a6"
+/***/ "89862d12f06a"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -36,12 +36,12 @@ function registerComponent(name, cls) {
 
 /***/ },
 
-/***/ "13fe7358c81f"
+/***/ "cfda1b049f18"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d7f974466839");
-/* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("58661bec99a6");
+/* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("77de01747ad5");
+/* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("89862d12f06a");
 
 
 const TABS_SELECTOR = '.sf-tabs';
@@ -170,11 +170,11 @@ if (document.readyState === 'loading') {
 
 /***/ },
 
-/***/ "3d8d7b2253e9"
+/***/ "feb6b98834f6"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _tabs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("13fe7358c81f");
+/* harmony import */ var _tabs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("cfda1b049f18");
 /*
 * Main JS file for including JS for component.
 * 
@@ -185,7 +185,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ },
 
-/***/ "d7f974466839"
+/***/ "77de01747ad5"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -289,7 +289,7 @@ class ComponentObserver {
 
 /***/ },
 
-/***/ "c516309e5631"
+/***/ "3294863c954a"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -379,8 +379,8 @@ let __webpack_exports__ = {};
 // This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
 (() => {
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("c516309e5631");
-/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("3d8d7b2253e9");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("3294863c954a");
+/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("feb6b98834f6");
 /**
 * SIMAI Framework
 * Copyright 2008-2026 SIMAI Ltd
