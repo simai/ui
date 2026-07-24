@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkSimaiHighlight=self.webpackChunkSimaiHighlight||[]).push([[6340],{6340:(s,e,a)=>{function i(s){return{name:"Shell Session",aliases:["console","shellsession"],contains:[{className:"meta.prompt",begin:/^\s{0,3}[/~\w\d[\]()@-]*[>%$#][ ]?/,starts:{end:/[^\\](?=\s*$)/,subLanguage:"bash"}}]}}a.r(e),a.d(e,{default:()=>i})}}]);
