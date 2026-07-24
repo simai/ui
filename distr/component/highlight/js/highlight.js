@@ -936,9 +936,9 @@ function initLineNumbers(hljs) {
 if (typeof window !== 'undefined') {
   const documentBase = typeof document === 'undefined' ? window.location?.href : document.baseURI;
   const currentScript = typeof document === 'undefined' ? null : document.currentScript;
-  const scriptRoot = currentScript?.src ? new URL('./', new URL(currentScript.src, documentBase)) : null;
+  const scriptRoot = currentScript?.src ? new URL('../', new URL(currentScript.src, documentBase)) : null;
   const frameworkRoot = window.sfPath ? new URL(window.sfPath, window.location?.href || documentBase) : null;
-  const fallbackRoot = frameworkRoot ? new URL('component/highlight/js/', frameworkRoot) : null;
+  const fallbackRoot = frameworkRoot ? new URL('component/highlight/', frameworkRoot) : null;
   const publicRoot = scriptRoot || fallbackRoot;
 
   if (publicRoot && __webpack_require__.p !== publicRoot.href) {
