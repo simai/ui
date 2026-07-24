@@ -1,15 +1,15 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "e60ce552251b"
+/***/ "ff6757f5dacf"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var clipboard__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("eb9a3ed995a6");
+/* harmony import */ var clipboard__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("37917e634950");
 /* harmony import */ var clipboard__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(clipboard__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("77de01747ad5");
-/* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("89862d12f06a");
+/* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("d7f974466839");
+/* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("58661bec99a6");
 
 
 
@@ -87,7 +87,7 @@ class Copy extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_1__.Compo
 
 /***/ },
 
-/***/ "89862d12f06a"
+/***/ "58661bec99a6"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -122,7 +122,7 @@ function registerComponent(name, cls) {
 
 /***/ },
 
-/***/ "77de01747ad5"
+/***/ "d7f974466839"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -227,7 +227,7 @@ class ComponentObserver {
 
 /***/ },
 
-/***/ "6d869279526d"
+/***/ "65609afdaa7d"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -237,7 +237,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ },
 
-/***/ "eb9a3ed995a6"
+/***/ "37917e634950"
 (module) {
 
 /*!
@@ -1223,8 +1223,8 @@ let __webpack_exports__ = {};
 (() => {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("6d869279526d");
-/* harmony import */ var _js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("e60ce552251b");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("65609afdaa7d");
+/* harmony import */ var _js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("ff6757f5dacf");
 
 
 })();
