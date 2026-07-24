@@ -7,7 +7,8 @@
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   initIconSubsetState: () => (/* binding */ initIconSubsetState),
-/* harmony export */   installIconSubsetRuntime: () => (/* binding */ installIconSubsetRuntime)
+/* harmony export */   installIconSubsetRuntime: () => (/* binding */ installIconSubsetRuntime),
+/* harmony export */   normalizeIconFontLoadWeight: () => (/* binding */ normalizeIconFontLoadWeight)
 /* harmony export */ });
 function initIconSubsetState(loader) {
   loader.iconFontReady = false;
@@ -23,6 +24,20 @@ function initIconSubsetState(loader) {
   loader.isSyncingStaticIconState = false;
   loader.staticIconDescriptorKeys = new WeakMap();
   return loader;
+}
+function normalizeIconFontLoadWeight(value = "400") {
+  const normalized = String(value || "").trim().replace(/\s+/g, " ");
+  const range = normalized.match(/^([1-9]00)\s+([1-9]00)$/);
+
+  if (!range) {
+    return normalized || "400";
+  }
+
+  const start = Number(range[1]);
+  const end = Number(range[2]);
+  const minimum = Math.min(start, end);
+  const maximum = Math.max(start, end);
+  return String(Math.min(maximum, Math.max(minimum, 400)));
 }
 function installIconSubsetRuntime(SFLoaderPlugin, {
   safeSetItem,
@@ -1057,7 +1072,7 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
     const sampleText = icons.join(" ");
     await new Promise(resolve => requestAnimationFrame(resolve));
     const results = await Promise.all(fonts.map(font => {
-      const weight = font.weight || manifest.axes?.wght?.value || 400;
+      const weight = normalizeIconFontLoadWeight(font.weight || manifest.axes?.wght?.value || defaultIconWeight);
       return document.fonts.load(`${weight} 16px "${family}"`, sampleText);
     }));
     const loadedCount = results.reduce((sum, fontFaces) => sum + fontFaces.length, 0);
@@ -1118,7 +1133,7 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
     const results = await Promise.all(fontFaces.map(({
       family,
       weight
-    }) => document.fonts.load(`${weight} 16px "${family}"`, sampleText)));
+    }) => document.fonts.load(`${normalizeIconFontLoadWeight(weight)} 16px "${family}"`, sampleText)));
     const loadedCount = results.reduce((sum, fontFaceList) => sum + fontFaceList.length, 0);
 
     if (!loadedCount) {
