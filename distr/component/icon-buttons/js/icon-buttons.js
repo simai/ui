@@ -2,13 +2,13 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "52c364c0e0ea"
+/***/ "c63121eefb3d"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("77de01747ad5");
+/* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d7f974466839");
 /* harmony import */ var _json_icon_button_utility_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5e376cf3b181");
-/* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("89862d12f06a");
+/* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("58661bec99a6");
 
 
 
@@ -116,11 +116,11 @@ IconButtons.utilityMap = _json_icon_button_utility_json__WEBPACK_IMPORTED_MODULE
 
 /***/ },
 
-/***/ "47c0ac50a575"
+/***/ "d7b5dc480957"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _icon_buttons__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("52c364c0e0ea");
+/* harmony import */ var _icon_buttons__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("c63121eefb3d");
 /*
 * Main JS file for including JS for component.
 *
@@ -131,7 +131,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ },
 
-/***/ "89862d12f06a"
+/***/ "58661bec99a6"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -165,7 +165,7 @@ function registerComponent(name, cls) {
 
 /***/ },
 
-/***/ "77de01747ad5"
+/***/ "d7f974466839"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -269,7 +269,7 @@ class ComponentObserver {
 
 /***/ },
 
-/***/ "d0c852fc236a"
+/***/ "100c5163d917"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -366,8 +366,8 @@ let __webpack_exports__ = {};
 // This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
 (() => {
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d0c852fc236a");
-/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("47c0ac50a575");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("100c5163d917");
+/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("d7b5dc480957");
 /**
 * SIMAI Framework
 * Copyright 2008-2026 SIMAI Ltd

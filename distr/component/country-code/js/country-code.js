@@ -2,7 +2,7 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "92c5525b44a8"
+/***/ "c0450586011d"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -15,8 +15,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   toBoolean: () => (/* binding */ toBoolean),
 /* harmony export */   unbindCountryCode: () => (/* binding */ unbindCountryCode)
 /* harmony export */ });
-/* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("77de01747ad5");
-/* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("89862d12f06a");
+/* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d7f974466839");
+/* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("58661bec99a6");
 /* harmony import */ var _json_country_code_utility_json__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("8c672a55a76a");
 /* harmony import */ var _data_countries_json__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("c614c5e30b0d");
 
@@ -949,11 +949,11 @@ countryCodeObserver.observe(document.documentElement, {
 
 /***/ },
 
-/***/ "78c251de40b3"
+/***/ "4157111e8609"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _country_code__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("92c5525b44a8");
+/* harmony import */ var _country_code__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("c0450586011d");
 /*
 * Main JS file for including JS for component.
 *
@@ -964,7 +964,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ },
 
-/***/ "89862d12f06a"
+/***/ "58661bec99a6"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -998,7 +998,7 @@ function registerComponent(name, cls) {
 
 /***/ },
 
-/***/ "77de01747ad5"
+/***/ "d7f974466839"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -1102,7 +1102,7 @@ class ComponentObserver {
 
 /***/ },
 
-/***/ "19e598bf5217"
+/***/ "57cf5fca5804"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -1206,8 +1206,8 @@ let __webpack_exports__ = {};
 // This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
 (() => {
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("19e598bf5217");
-/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("78c251de40b3");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("57cf5fca5804");
+/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("4157111e8609");
 /**
  * SIMAI Framework
  * Copyright 2008-2026 SIMAI Ltd

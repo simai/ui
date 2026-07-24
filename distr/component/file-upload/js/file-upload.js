@@ -2,7 +2,7 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "566096673b3e"
+/***/ "c43efa1014a6"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -15,8 +15,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   setFileUploadItems: () => (/* binding */ setFileUploadItems),
 /* harmony export */   unbindFileUpload: () => (/* binding */ unbindFileUpload)
 /* harmony export */ });
-/* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("77de01747ad5");
-/* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("89862d12f06a");
+/* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d7f974466839");
+/* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("58661bec99a6");
 
 
 const FILE_UPLOAD_SELECTOR = '.sf-file-upload';
@@ -616,11 +616,11 @@ fileUploadObserver.observe(document.documentElement, {
 
 /***/ },
 
-/***/ "c0b945015f70"
+/***/ "0c39c584acf3"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _file_upload__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("566096673b3e");
+/* harmony import */ var _file_upload__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("c43efa1014a6");
 /*
 * Main JS file for including JS for component.
 *
@@ -631,7 +631,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ },
 
-/***/ "89862d12f06a"
+/***/ "58661bec99a6"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -665,7 +665,7 @@ function registerComponent(name, cls) {
 
 /***/ },
 
-/***/ "77de01747ad5"
+/***/ "d7f974466839"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -769,7 +769,7 @@ class ComponentObserver {
 
 /***/ },
 
-/***/ "d1ba80274b57"
+/***/ "1b5cf325ddb6"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -859,8 +859,8 @@ let __webpack_exports__ = {};
 // This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
 (() => {
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d1ba80274b57");
-/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("c0b945015f70");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("1b5cf325ddb6");
+/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("0c39c584acf3");
 /**
  * SIMAI Framework
  * Copyright 2008-2026 SIMAI Ltd
