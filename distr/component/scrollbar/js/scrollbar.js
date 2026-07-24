@@ -1,7 +1,7 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "5256f7956871"
+/***/ "081919d851a1"
 () {
 
 /*
@@ -11,12 +11,12 @@
 
 /***/ },
 
-/***/ "435019e7ed9c"
+/***/ "8a4fa5cb579e"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _scrollbar__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("5256f7956871");
+/* harmony import */ var _scrollbar__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("081919d851a1");
 /* harmony import */ var _scrollbar__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_scrollbar__WEBPACK_IMPORTED_MODULE_0__);
 /*
 * Main JS file for including JS for component.
@@ -28,7 +28,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ },
 
-/***/ "a22ce96bf26f"
+/***/ "385a155fa715"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -132,8 +132,8 @@ let __webpack_exports__ = {};
 (() => {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("a22ce96bf26f");
-/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("435019e7ed9c");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("385a155fa715");
+/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("8a4fa5cb579e");
 /**
 * SIMAI Framework
 * Copyright 2008-2026 SIMAI Ltd

@@ -2,7 +2,7 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "58661bec99a6"
+/***/ "89862d12f06a"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -36,11 +36,11 @@ function registerComponent(name, cls) {
 
 /***/ },
 
-/***/ "95a72b608b88"
+/***/ "360756ce8a52"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("58661bec99a6");
+/* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("89862d12f06a");
 
 ;
 
@@ -133,16 +133,16 @@ const SfTabExport = window.sfTab;
 
 /***/ },
 
-/***/ "a662749cf487"
+/***/ "26cf8ec71874"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _tabs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("95a72b608b88");
+/* harmony import */ var _tabs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("360756ce8a52");
 
 
 /***/ },
 
-/***/ "ad65ed20f8fa"
+/***/ "525dab5242c9"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -232,8 +232,8 @@ let __webpack_exports__ = {};
 // This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
 (() => {
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("ad65ed20f8fa");
-/* harmony import */ var _js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("a662749cf487");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("525dab5242c9");
+/* harmony import */ var _js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("26cf8ec71874");
 
 
 })();

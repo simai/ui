@@ -2,7 +2,7 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "9e5aefb3c7c5"
+/***/ "b883c3ab1474"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -356,11 +356,11 @@ sliderObserver.observe(document.documentElement, {
 
 /***/ },
 
-/***/ "211fcc82fdf0"
+/***/ "d5830a5df724"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _slider__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("9e5aefb3c7c5");
+/* harmony import */ var _slider__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("b883c3ab1474");
 /*
 * Main JS file for including JS for component.
 * 
@@ -371,7 +371,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ },
 
-/***/ "83898a5e7b0c"
+/***/ "a98ad777bcb1"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -461,8 +461,8 @@ let __webpack_exports__ = {};
 // This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
 (() => {
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("83898a5e7b0c");
-/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("211fcc82fdf0");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("a98ad777bcb1");
+/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("d5830a5df724");
 /**
 * SIMAI Framework
 * Copyright 2008-2026 SIMAI Ltd
