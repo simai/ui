@@ -465,9 +465,9 @@
     --sf-link-active: var(--sf-primary-90);
     --sf-link-visited: var(--sf-tertiary-80);
     --sf-code: var(--sf-tertiary-90--alfa-24);
-    --sf-shadow--color-fill: var(--sf-white--alfa-24);
-    --sf-shadow--color-outline: var(--sf-white--alfa-12);
-    --sf-shadow--color-shading: var(--sf-white--alfa-8);
+    --sf-shadow--color-fill: var(--sf-black--alfa-12);
+    --sf-shadow--color-outline: var(--sf-black--alfa-8);
+    --sf-shadow--color-shading: var(--sf-black--alfa-4);
   }
 }
 /*
@@ -2248,9 +2248,9 @@ body {
     --sf-shadow--alfa-fill: 24%;
     --sf-shadow--alfa-outline: 12%;
     --sf-shadow--alfa-shade: 8%;
-    --sf-shadow--color-fill: color-mix(in srgb, var(--sf-transparent), var(--sf-shadow--color, var(--sf-on-surface, #000)) var(--sf-shadow--alfa-fill));
-    --sf-shadow--color-outline: color-mix(in srgb, var(--sf-transparent), var(--sf-shadow--color, var(--sf-on-surface, #000)) var(--sf-shadow--alfa-outline));
-    --sf-shadow--color-shading: color-mix(in srgb, var(--sf-transparent), var(--sf-shadow--color, var(--sf-on-surface, #000)) var(--sf-shadow--alfa-shade));
+    --sf-shadow--color-fill: color-mix(in srgb, var(--sf-transparent), var(--sf-shadow--color, var(--sf-black, #000)) var(--sf-shadow--alfa-fill));
+    --sf-shadow--color-outline: color-mix(in srgb, var(--sf-transparent), var(--sf-shadow--color, var(--sf-black, #000)) var(--sf-shadow--alfa-outline));
+    --sf-shadow--color-shading: color-mix(in srgb, var(--sf-transparent), var(--sf-shadow--color, var(--sf-black, #000)) var(--sf-shadow--alfa-shade));
     --sf-shadow--color-shade: var(--sf-shadow--color-shading);
   }
   [class*=shadow] {
