@@ -1,0 +1,1 @@
+.scrollbar::-webkit-scrollbar{width:var(--sf-a8)}.scrollbar::-webkit-scrollbar-track{background:rgba(0,0,0,0)}.scrollbar::-webkit-scrollbar-thumb{background:var(--sf-surface-4)}.scrollbar::-webkit-scrollbar-thumb:hover{background:var(--sf-on-surface-variant)}

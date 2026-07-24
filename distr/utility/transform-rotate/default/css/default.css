@@ -1,1 +1,38 @@
-@layer sf.utilities{.rotate-0{--sf-rotate: 0deg;-webkit-transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1));-ms-transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1));transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1))}.rotate-1{--sf-rotate: 1deg;-webkit-transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1));-ms-transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1));transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1))}.rotate-2{--sf-rotate: 2deg;-webkit-transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1));-ms-transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1));transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1))}.rotate-3{--sf-rotate: 3deg;-webkit-transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1));-ms-transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1));transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1))}.rotate-5{--sf-rotate: 5deg;-webkit-transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1));-ms-transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1));transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1))}.rotate-15{--sf-rotate: 15deg;-webkit-transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1));-ms-transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1));transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1))}.rotate-45{--sf-rotate: 45deg;-webkit-transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1));-ms-transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1));transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1))}.rotate-90{--sf-rotate: 90deg;-webkit-transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1));-ms-transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1));transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1))}.rotate-180{--sf-rotate: 180deg;-webkit-transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1));-ms-transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1));transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1))}}
+@layer sf.utilities {
+  .rotate-0 {
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+  }
+  .rotate-1 {
+    -webkit-transform: rotate(1deg);
+            transform: rotate(1deg);
+  }
+  .rotate-2 {
+    -webkit-transform: rotate(2deg);
+            transform: rotate(2deg);
+  }
+  .rotate-3 {
+    -webkit-transform: rotate(3deg);
+            transform: rotate(3deg);
+  }
+  .rotate-5 {
+    -webkit-transform: rotate(5deg);
+            transform: rotate(5deg);
+  }
+  .rotate-15 {
+    -webkit-transform: rotate(15deg);
+            transform: rotate(15deg);
+  }
+  .rotate-45 {
+    -webkit-transform: rotate(45deg);
+            transform: rotate(45deg);
+  }
+  .rotate-90 {
+    -webkit-transform: rotate(90deg);
+            transform: rotate(90deg);
+  }
+  .rotate-180 {
+    -webkit-transform: rotate(180deg);
+            transform: rotate(180deg);
+  }
+}

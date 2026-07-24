@@ -1,1 +1,332 @@
-(()=>{var e={2064:()=>{const e=".sf-breadcrumbs",t='[data-sf-breadcrumbs-generated="ellipsis"]',n="__sfBreadcrumbsBound";function r(e){if(!(e instanceof HTMLElement))return!1;if("true"===e.dataset.sfBreadcrumbSeparator)return!0;if(!e.classList.contains("sf-breadcrumbs-item--default"))return!1;const t=function(e){return String(e.textContent||"").trim()}(e);return"chevron_right"===t||"chevron_rightchevron_right"===t}function s(e){return e?.matches?.(t)}function a(e){return Array.from(e.children).filter(e=>e instanceof HTMLElement&&e.matches(".sf-breadcrumbs-item")&&!s(e))}function i(e){return a(e).filter(e=>!r(e))}function c(e){e.querySelectorAll(t).forEach(e=>e.remove())}function o(e,t=[]){const n=new Set(t);a(e).forEach(e=>{const a=n.has(e)||t.some(t=>function(e){let t=e.previousElementSibling;for(;t&&s(t);)t=t.previousElementSibling;return r(t)?t:null}(t)===e);e.hidden=a})}function u(e,t){const n=document.createElement("button");return n.type="button",n.className="sf-breadcrumbs-item sf-breadcrumbs-item--link sf-breadcrumbs-item--default",n.dataset.sfBreadcrumbsGenerated="ellipsis",n.dataset.sfBreadcrumbIndex="ellipsis",n.setAttribute("aria-label","Show hidden breadcrumbs"),n.innerHTML='<span class="sf-breadcrumbs-item-container flex items-cross-center"><span>...</span></span>',n.addEventListener("click",n=>{const r=new CustomEvent("sf-breadcrumb-click",{bubbles:!0,composed:!0,cancelable:!0,detail:{root:e,item:{label:"...",ellipsis:!0,hiddenItems:t},index:"ellipsis",items:i(e),originalEvent:n}});e.dispatchEvent(r),r.defaultPrevented||function(e){e.dataset.sfBreadcrumbsExpanded="true",c(e),o(e,[])}(e)}),n}function d(e){const t=function(e){const t=e.getAttribute("data-max-items")||e.getAttribute("max-items")||e.dataset.maxItems,n=Number(t);return Number.isFinite(n)?n:4}(e),n=i(e);if(c(e),o(e,[]),"true"===e.dataset.sfBreadcrumbsExpanded)return;if(t<3||n.length<=t)return;const r=t-1,s=Math.floor(r/2),a=r-s,d=n.slice(s,n.length-a);if(!d.length)return;o(e,d);const l=d[0],m=d[d.length-1].nextElementSibling,f=function(){const e=document.createElement("div");return e.className="sf-breadcrumbs-item sf-breadcrumbs-item--default",e.dataset.sfBreadcrumbsGenerated="ellipsis",e.dataset.sfBreadcrumbSeparator="true",e.setAttribute("aria-hidden","true"),e.innerHTML='<span class="sf-breadcrumbs-item-container flex items-cross-center"><i class="sf-icon">chevron_right</i></span>',e}(),b=u(e,d);e.insertBefore(f,l),e.insertBefore(b,m)}function l(e){e instanceof HTMLElement&&!e[n]&&(e[n]=!0,d(e))}function m(t=document){t instanceof HTMLElement&&t.matches(e)&&l(t),t.querySelectorAll?.(e).forEach(l)}"loading"===document.readyState?document.addEventListener("DOMContentLoaded",()=>m(document)):m(document),"undefined"!=typeof MutationObserver&&new MutationObserver(t=>{t.forEach(t=>{t.addedNodes.forEach(t=>{if(!(t instanceof HTMLElement)||s(t))return;m(t);const r=t.closest?.(e);r instanceof HTMLElement&&r[n]&&(delete r.dataset.sfBreadcrumbsExpanded,d(r))})})}).observe(document.documentElement,{childList:!0,subtree:!0})}},t={};function n(r){var s=t[r];if(void 0!==s)return s.exports;var a=t[r]={exports:{}};return e[r](a,a.exports,n),a.exports}n.n=e=>{var t=e&&e.__esModule?()=>e.default:()=>e;return n.d(t,{a:t}),t},n.d=(e,t)=>{for(var r in t)n.o(t,r)&&!n.o(e,r)&&Object.defineProperty(e,r,{enumerable:!0,get:t[r]})},n.o=(e,t)=>Object.prototype.hasOwnProperty.call(e,t),(()=>{"use strict";n(2064)})()})();
+/******/ (() => { // webpackBootstrap
+/******/ 	var __webpack_modules__ = ({
+
+/***/ "5b7a5658d78a"
+() {
+
+const ROOT_SELECTOR = '.sf-breadcrumbs';
+const ITEM_SELECTOR = '.sf-breadcrumbs-item';
+const GENERATED_SELECTOR = '[data-sf-breadcrumbs-generated="ellipsis"]';
+const BOUND_KEY = '__sfBreadcrumbsBound';
+
+function getMaxItems(root) {
+  const value = root.getAttribute('data-max-items') || root.getAttribute('max-items') || root.dataset.maxItems;
+  const maxItems = Number(value);
+  return Number.isFinite(maxItems) ? maxItems : 4;
+}
+
+function getItemLabel(item) {
+  return String(item.textContent || '').trim();
+}
+
+function isSeparator(item) {
+  if (!(item instanceof HTMLElement)) {
+    return false;
+  }
+
+  if (item.dataset.sfBreadcrumbSeparator === 'true') {
+    return true;
+  }
+
+  if (!item.classList.contains('sf-breadcrumbs-item--default')) {
+    return false;
+  }
+
+  const label = getItemLabel(item);
+  return label === 'chevron_right' || label === 'chevron_rightchevron_right';
+}
+
+function isGenerated(item) {
+  return item?.matches?.(GENERATED_SELECTOR);
+}
+
+function getBreadcrumbNodes(root) {
+  return Array.from(root.children).filter(child => child instanceof HTMLElement && child.matches(ITEM_SELECTOR) && !isGenerated(child));
+}
+
+function getContentItems(root) {
+  return getBreadcrumbNodes(root).filter(item => !isSeparator(item));
+}
+
+function getPreviousSeparator(item) {
+  let current = item.previousElementSibling;
+
+  while (current && isGenerated(current)) {
+    current = current.previousElementSibling;
+  }
+
+  return isSeparator(current) ? current : null;
+}
+
+function clearGenerated(root) {
+  root.querySelectorAll(GENERATED_SELECTOR).forEach(node => node.remove());
+}
+
+function setCollapsedState(root, collapsedItems = []) {
+  const collapsedSet = new Set(collapsedItems);
+  getBreadcrumbNodes(root).forEach(node => {
+    const shouldHide = collapsedSet.has(node) || collapsedItems.some(item => getPreviousSeparator(item) === node);
+    node.hidden = shouldHide;
+  });
+}
+
+function createSeparator() {
+  const separator = document.createElement('div');
+  separator.className = 'sf-breadcrumbs-item sf-breadcrumbs-item--default';
+  separator.dataset.sfBreadcrumbsGenerated = 'ellipsis';
+  separator.dataset.sfBreadcrumbSeparator = 'true';
+  separator.setAttribute('aria-hidden', 'true');
+  separator.innerHTML = '<span class="sf-breadcrumbs-item-container flex items-cross-center"><i class="sf-icon">chevron_right</i></span>';
+  return separator;
+}
+
+function createEllipsis(root, hiddenItems) {
+  const ellipsis = document.createElement('button');
+  ellipsis.type = 'button';
+  ellipsis.className = 'sf-breadcrumbs-item sf-breadcrumbs-item--link sf-breadcrumbs-item--default';
+  ellipsis.dataset.sfBreadcrumbsGenerated = 'ellipsis';
+  ellipsis.dataset.sfBreadcrumbIndex = 'ellipsis';
+  ellipsis.setAttribute('aria-label', 'Show hidden breadcrumbs');
+  ellipsis.innerHTML = '<span class="sf-breadcrumbs-item-container flex items-cross-center"><span>...</span></span>';
+  ellipsis.addEventListener('click', event => {
+    const clickEvent = new CustomEvent('sf-breadcrumb-click', {
+      bubbles: true,
+      composed: true,
+      cancelable: true,
+      detail: {
+        root,
+        item: {
+          label: '...',
+          ellipsis: true,
+          hiddenItems
+        },
+        index: 'ellipsis',
+        items: getContentItems(root),
+        originalEvent: event
+      }
+    });
+    root.dispatchEvent(clickEvent);
+
+    if (clickEvent.defaultPrevented) {
+      return;
+    }
+
+    expandBreadcrumbs(root);
+  });
+  return ellipsis;
+}
+
+function expandBreadcrumbs(root) {
+  root.dataset.sfBreadcrumbsExpanded = 'true';
+  clearGenerated(root);
+  setCollapsedState(root, []);
+}
+
+function collapseBreadcrumbs(root) {
+  const maxItems = getMaxItems(root);
+  const items = getContentItems(root);
+  clearGenerated(root);
+  setCollapsedState(root, []);
+
+  if (root.dataset.sfBreadcrumbsExpanded === 'true') {
+    return;
+  }
+
+  if (maxItems < 3 || items.length <= maxItems) {
+    return;
+  }
+
+  const visibleSlots = maxItems - 1;
+  const leadingCount = Math.floor(visibleSlots / 2);
+  const trailingCount = visibleSlots - leadingCount;
+  const hiddenItems = items.slice(leadingCount, items.length - trailingCount);
+
+  if (!hiddenItems.length) {
+    return;
+  }
+
+  setCollapsedState(root, hiddenItems);
+  const firstHidden = hiddenItems[0];
+  const lastHidden = hiddenItems[hiddenItems.length - 1];
+  const insertionTarget = lastHidden.nextElementSibling;
+  const separator = createSeparator();
+  const ellipsis = createEllipsis(root, hiddenItems);
+  root.insertBefore(separator, firstHidden);
+  root.insertBefore(ellipsis, insertionTarget);
+}
+
+function bindBreadcrumbs(root) {
+  if (!(root instanceof HTMLElement) || root[BOUND_KEY]) {
+    return;
+  }
+
+  root[BOUND_KEY] = true;
+  collapseBreadcrumbs(root);
+}
+
+function initBreadcrumbs(target = document) {
+  if (target instanceof HTMLElement && target.matches(ROOT_SELECTOR)) {
+    bindBreadcrumbs(target);
+  }
+
+  target.querySelectorAll?.(ROOT_SELECTOR).forEach(bindBreadcrumbs);
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => initBreadcrumbs(document));
+} else {
+  initBreadcrumbs(document);
+}
+
+if (typeof MutationObserver !== 'undefined') {
+  new MutationObserver(mutations => {
+    mutations.forEach(mutation => {
+      mutation.addedNodes.forEach(node => {
+        if (!(node instanceof HTMLElement) || isGenerated(node)) {
+          return;
+        }
+
+        initBreadcrumbs(node);
+        const root = node.closest?.(ROOT_SELECTOR);
+
+        if (root instanceof HTMLElement && root[BOUND_KEY]) {
+          delete root.dataset.sfBreadcrumbsExpanded;
+          collapseBreadcrumbs(root);
+        }
+      });
+    });
+  }).observe(document.documentElement, {
+    childList: true,
+    subtree: true
+  });
+}
+
+/***/ },
+
+/***/ "61b2b2e52939"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ }
+
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	const __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		const cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		const module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		if (!(moduleId in __webpack_modules__)) {
+/******/ 			delete __webpack_module_cache__[moduleId];
+/******/ 			const e = new Error("Cannot find module '" + moduleId + "'");
+/******/ 			e.code = 'MODULE_NOT_FOUND';
+/******/ 			throw e;
+/******/ 		}
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	(() => {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__webpack_require__.n = (module) => {
+/******/ 			const getter = module && module.__esModule ?
+/******/ 				() => (module['default']) :
+/******/ 				() => (module);
+/******/ 			__webpack_require__.d(getter, { a: getter });
+/******/ 			return getter;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter/value functions for harmony exports
+/******/ 		__webpack_require__.d = (exports, definition) => {
+/******/ 			if(Array.isArray(definition)) {
+/******/ 				var i = 0;
+/******/ 				while(i < definition.length) {
+/******/ 					var key = definition[i++];
+/******/ 					var binding = definition[i++];
+/******/ 					if(!__webpack_require__.o(exports, key)) {
+/******/ 						if(binding === 0) {
+/******/ 							Object.defineProperty(exports, key, { enumerable: true, value: definition[i++] });
+/******/ 						} else {
+/******/ 							Object.defineProperty(exports, key, { enumerable: true, get: binding });
+/******/ 						}
+/******/ 					} else if(binding === 0) { i++; }
+/******/ 				}
+/******/ 			} else {
+/******/ 				for(var key in definition) {
+/******/ 					if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 						Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 					}
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = (exports) => {
+/******/ 			if(Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/************************************************************************/
+let __webpack_exports__ = {};
+// This entry needs to be wrapped in an IIFE because it needs to be in strict mode.
+(() => {
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("61b2b2e52939");
+/* harmony import */ var _js_breadcrumbs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5b7a5658d78a");
+/* harmony import */ var _js_breadcrumbs__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_js_breadcrumbs__WEBPACK_IMPORTED_MODULE_1__);
+/**
+* SIMAI Framework
+* Copyright 2008-2026 SIMAI Ltd
+* http://simai.studio
+* Read the license: http://framework.simai.studio/license/
+* Documentation: http://framework.simai.studio/
+* Support: http://simai.studio/support/
+*
+* BREADCRUMBS
+*
+* Entry point for importing components from this directory.
+* Simplifies the import process in other parts of the project.
+* Instead of importing individual files, all component can be imported through this file.
+*/
+
+
+})();
+
+/******/ })()
+;

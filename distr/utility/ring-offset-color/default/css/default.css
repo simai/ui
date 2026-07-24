@@ -1,1 +1,101 @@
-@layer sf.utilities{.ring-offset-transparent{--sf-ring-offset-color: var(--sf-transparent)}.ring-offset-current{--sf-ring-offset-color: var(--sf-current)}.ring-offset-outline{--sf-ring-offset-color: var(--sf-outline)}.ring-offset-outline-variant{--sf-ring-offset-color: var(--sf-outline-variant)}.ring-offset-surface{--sf-ring-offset-color: var(--sf-surface-1)}.ring-offset-surface-0{--sf-ring-offset-color: var(--sf-surface-0)}.ring-offset-surface-1{--sf-ring-offset-color: var(--sf-surface-1)}.ring-offset-surface-container{--sf-ring-offset-color: var(--sf-surface-container)}.ring-offset-surface-overlay{--sf-ring-offset-color: var(--sf-surface-overlay)}.ring-offset-surface-transparent-overlay{--sf-ring-offset-color: var(--sf-surface-transparent-overlay)}.ring-offset-surface-inverse{--sf-ring-offset-color: var(--sf-surface-inverse)}.ring-offset-on-surface{--sf-ring-offset-color: var(--sf-on-surface)}.ring-offset-on-surface-variant{--sf-ring-offset-color: var(--sf-on-surface-variant)}.ring-offset-primary{--sf-ring-offset-color: var(--sf-outline-primary)}.ring-offset-primary-container{--sf-ring-offset-color: var(--sf-primary-container)}.ring-offset-primary-transparent-overlay{--sf-ring-offset-color: var(--sf-primary-transparent-overlay)}.ring-offset-secondary{--sf-ring-offset-color: var(--sf-outline-secondary)}.ring-offset-secondary-container{--sf-ring-offset-color: var(--sf-secondary-container)}.ring-offset-secondary-transparent-overlay{--sf-ring-offset-color: var(--sf-secondary-transparent-overlay)}.ring-offset-tertiary{--sf-ring-offset-color: var(--sf-outline-tertiary)}.ring-offset-tertiary-container{--sf-ring-offset-color: var(--sf-tertiary-container)}.ring-offset-tertiary-transparent-overlay{--sf-ring-offset-color: var(--sf-tertiary-transparent-overlay)}.ring-offset-error{--sf-ring-offset-color: var(--sf-outline-error)}.ring-offset-error-container{--sf-ring-offset-color: var(--sf-error-container)}.ring-offset-error-transparent-overlay{--sf-ring-offset-color: var(--sf-error-transparent-overlay)}.ring-offset-warning{--sf-ring-offset-color: var(--sf-outline-warning)}.ring-offset-warning-container{--sf-ring-offset-color: var(--sf-warning-container)}.ring-offset-warning-transparent-overlay{--sf-ring-offset-color: var(--sf-warning-transparent-overlay)}.ring-offset-success{--sf-ring-offset-color: var(--sf-outline-success)}.ring-offset-success-container{--sf-ring-offset-color: var(--sf-success-container)}.ring-offset-success-transparent-overlay{--sf-ring-offset-color: var(--sf-success-transparent-overlay)}.ring-offset-info{--sf-ring-offset-color: var(--sf-outline-info)}.ring-offset-info-container{--sf-ring-offset-color: var(--sf-info-container)}}
+@layer sf.utilities {
+  .ring-offset-transparent {
+    --sf-ring-offset-color: var(--sf-transparent);
+  }
+  .ring-offset-current {
+    --sf-ring-offset-color: var(--sf-current);
+  }
+  .ring-offset-outline {
+    --sf-ring-offset-color: var(--sf-outline);
+  }
+  .ring-offset-outline-variant {
+    --sf-ring-offset-color: var(--sf-outline-variant);
+  }
+  .ring-offset-surface {
+    --sf-ring-offset-color: var(--sf-surface-1);
+  }
+  .ring-offset-surface-0 {
+    --sf-ring-offset-color: var(--sf-surface-0);
+  }
+  .ring-offset-surface-1 {
+    --sf-ring-offset-color: var(--sf-surface-1);
+  }
+  .ring-offset-surface-container {
+    --sf-ring-offset-color: var(--sf-surface-container);
+  }
+  .ring-offset-surface-overlay {
+    --sf-ring-offset-color: var(--sf-surface-overlay);
+  }
+  .ring-offset-surface-transparent-overlay {
+    --sf-ring-offset-color: var(--sf-surface-transparent-overlay);
+  }
+  .ring-offset-surface-inverse {
+    --sf-ring-offset-color: var(--sf-surface-inverse);
+  }
+  .ring-offset-on-surface {
+    --sf-ring-offset-color: var(--sf-on-surface);
+  }
+  .ring-offset-on-surface-variant {
+    --sf-ring-offset-color: var(--sf-on-surface-variant);
+  }
+  .ring-offset-primary {
+    --sf-ring-offset-color: var(--sf-outline-primary);
+  }
+  .ring-offset-primary-container {
+    --sf-ring-offset-color: var(--sf-primary-container);
+  }
+  .ring-offset-primary-transparent-overlay {
+    --sf-ring-offset-color: var(--sf-primary-transparent-overlay);
+  }
+  .ring-offset-secondary {
+    --sf-ring-offset-color: var(--sf-outline-secondary);
+  }
+  .ring-offset-secondary-container {
+    --sf-ring-offset-color: var(--sf-secondary-container);
+  }
+  .ring-offset-secondary-transparent-overlay {
+    --sf-ring-offset-color: var(--sf-secondary-transparent-overlay);
+  }
+  .ring-offset-tertiary {
+    --sf-ring-offset-color: var(--sf-outline-tertiary);
+  }
+  .ring-offset-tertiary-container {
+    --sf-ring-offset-color: var(--sf-tertiary-container);
+  }
+  .ring-offset-tertiary-transparent-overlay {
+    --sf-ring-offset-color: var(--sf-tertiary-transparent-overlay);
+  }
+  .ring-offset-error {
+    --sf-ring-offset-color: var(--sf-outline-error);
+  }
+  .ring-offset-error-container {
+    --sf-ring-offset-color: var(--sf-error-container);
+  }
+  .ring-offset-error-transparent-overlay {
+    --sf-ring-offset-color: var(--sf-error-transparent-overlay);
+  }
+  .ring-offset-warning {
+    --sf-ring-offset-color: var(--sf-outline-warning);
+  }
+  .ring-offset-warning-container {
+    --sf-ring-offset-color: var(--sf-warning-container);
+  }
+  .ring-offset-warning-transparent-overlay {
+    --sf-ring-offset-color: var(--sf-warning-transparent-overlay);
+  }
+  .ring-offset-success {
+    --sf-ring-offset-color: var(--sf-outline-success);
+  }
+  .ring-offset-success-container {
+    --sf-ring-offset-color: var(--sf-success-container);
+  }
+  .ring-offset-success-transparent-overlay {
+    --sf-ring-offset-color: var(--sf-success-transparent-overlay);
+  }
+  .ring-offset-info {
+    --sf-ring-offset-color: var(--sf-outline-info);
+  }
+  .ring-offset-info-container {
+    --sf-ring-offset-color: var(--sf-info-container);
+  }
+}

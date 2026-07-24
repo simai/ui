@@ -1,1 +1,40 @@
-@layer sf.components{.sf-clipboard{padding:var(--btn-space-2-y);font-size:var(--btn-font-size);line-height:var(--btn-font-size);background-color:rgba(0,0,0,0);border:0;position:absolute;right:var(--sf-space-1\/4);top:var(--sf-space-1\/4);cursor:pointer;outline:none !important;z-index:100}.sf-clipboard-surface{background:var(--sf-surface-container);-webkit-transition:.3s background-color ease;transition:.3s background-color ease}.sf-clipboard-surface:hover{background:var(--sf-surface-container-hover)}.sf-clipboard-3{--btn-space-2-y: var(--sf-b0);--btn-font-size: var(--sf-c8)}.sf-clipboard-2{--btn-space-2-y: var(--sf-b0);--btn-font-size: var(--sf-c2)}.sf-clipboard-1{--btn-space-2-y: var(--sf-a8);--btn-font-size: var(--sf-c0)}}
+@layer sf.components {
+  [dir="ltr"] .sf-clipboard {
+    right: var(--sf-space-1\/4);
+  }
+  [dir="rtl"] .sf-clipboard {
+    left: var(--sf-space-1\/4);
+  }
+  .sf-clipboard {
+    padding: var(--btn-space-2-y);
+    font-size: var(--btn-font-size);
+    line-height: var(--btn-font-size);
+    background-color: transparent;
+    border: 0;
+    position: absolute;
+    inset-inline-end: var(--sf-space-1\/4);
+    top: var(--sf-space-1\/4);
+    cursor: pointer;
+    outline: none !important;
+    z-index: 100;
+  }
+  .sf-clipboard-surface {
+    background: var(--sf-surface-container);
+    transition: 0.3s background-color ease;
+  }
+  .sf-clipboard-surface:hover {
+    background: var(--sf-surface-container-hover);
+  }
+  .sf-clipboard-3 {
+    --btn-space-2-y: var(--sf-b0);
+    --btn-font-size: var(--sf-c8);
+  }
+  .sf-clipboard-2 {
+    --btn-space-2-y: var(--sf-b0);
+    --btn-font-size: var(--sf-c2);
+  }
+  .sf-clipboard-1 {
+    --btn-space-2-y: var(--sf-a8);
+    --btn-font-size: var(--sf-c0);
+  }
+}

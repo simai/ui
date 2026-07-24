@@ -1,1 +1,40 @@
-@layer sf.utilities{@media(min-width: 720px){.md\:start-start{-webkit-box-pack:start;-ms-flex-pack:start;justify-content:flex-start;-webkit-box-align:start;-ms-flex-align:start;align-items:flex-start}.md\:start-center{-webkit-box-pack:start;-ms-flex-pack:start;justify-content:flex-start;-webkit-box-align:center;-ms-flex-align:center;align-items:center}.md\:start-end{-webkit-box-pack:start;-ms-flex-pack:start;justify-content:flex-start;-webkit-box-align:end;-ms-flex-align:end;align-items:flex-end}.md\:center-start{-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;-webkit-box-align:start;-ms-flex-align:start;align-items:flex-start}.md\:center-center{-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;-webkit-box-align:center;-ms-flex-align:center;align-items:center}.md\:center-end{-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;-webkit-box-align:end;-ms-flex-align:end;align-items:flex-end}.md\:end-start{-webkit-box-pack:end;-ms-flex-pack:end;justify-content:flex-end;-webkit-box-align:start;-ms-flex-align:start;align-items:flex-start}.md\:end-center{-webkit-box-pack:end;-ms-flex-pack:end;justify-content:flex-end;-webkit-box-align:center;-ms-flex-align:center;align-items:center}.md\:end-end{-webkit-box-pack:end;-ms-flex-pack:end;justify-content:flex-end;-webkit-box-align:end;-ms-flex-align:end;align-items:flex-end}}}
+@layer sf.utilities {
+  @media (min-width: 720px) {
+    .md\:start-start {
+      justify-content: flex-start;
+      align-items: flex-start;
+    }
+    .md\:start-center {
+      justify-content: flex-start;
+      align-items: center;
+    }
+    .md\:start-end {
+      justify-content: flex-start;
+      align-items: flex-end;
+    }
+    .md\:center-start {
+      justify-content: center;
+      align-items: flex-start;
+    }
+    .md\:center-center {
+      justify-content: center;
+      align-items: center;
+    }
+    .md\:center-end {
+      justify-content: center;
+      align-items: flex-end;
+    }
+    .md\:end-start {
+      justify-content: flex-end;
+      align-items: flex-start;
+    }
+    .md\:end-center {
+      justify-content: flex-end;
+      align-items: center;
+    }
+    .md\:end-end {
+      justify-content: flex-end;
+      align-items: flex-end;
+    }
+  }
+}

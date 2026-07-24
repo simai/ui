@@ -1,0 +1,1 @@
+@layer sf.utilities{@media(min-width: 520px){.sm\:auto-rows{grid-auto-rows:auto}.sm\:auto-rows-min{grid-auto-rows:-webkit-min-content;grid-auto-rows:min-content}.sm\:auto-rows-max{grid-auto-rows:-webkit-max-content;grid-auto-rows:max-content}.sm\:auto-rows-fr{grid-auto-rows:minmax(0, 1fr)}}}

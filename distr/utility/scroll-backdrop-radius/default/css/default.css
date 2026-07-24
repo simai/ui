@@ -1,1 +1,14 @@
-@layer sf.utilities{.scroll-bg-radius-1{--sf-scroll-radius: var(--sf-a1)}.scroll-bg-radius-2{--sf-scroll-radius: var(--sf-a2)}.scroll-bg-radius-3{--sf-scroll-radius: var(--sf-a4)}.scroll-bg-radius-4{--sf-scroll-radius: var(--sf-a8)}}
+@layer sf.utilities {
+  .scroll-bg-radius-1 {
+    --sf-scroll-radius: var(--sf-a1);
+  }
+  .scroll-bg-radius-2 {
+    --sf-scroll-radius: var(--sf-a2);
+  }
+  .scroll-bg-radius-3 {
+    --sf-scroll-radius: var(--sf-a4);
+  }
+  .scroll-bg-radius-4 {
+    --sf-scroll-radius: var(--sf-a8);
+  }
+}

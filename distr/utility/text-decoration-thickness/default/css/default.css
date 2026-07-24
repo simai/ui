@@ -1,1 +1,23 @@
-@layer sf.utilities{.decoration-auto{text-decoration-thickness:auto}.decoration-font{text-decoration-thickness:from-font}.decoration-0{text-decoration-thickness:var(--sf-a0)}.decoration-1{text-decoration-thickness:var(--sf-a1)}.decoration-2{text-decoration-thickness:var(--sf-a2)}.decoration-3{text-decoration-thickness:var(--sf-a3)}.decoration-4{text-decoration-thickness:var(--sf-a4)}}
+@layer sf.utilities {
+  .decoration-auto {
+    text-decoration-thickness: auto;
+  }
+  .decoration-font {
+    text-decoration-thickness: from-font;
+  }
+  .decoration-0 {
+    text-decoration-thickness: var(--sf-a0);
+  }
+  .decoration-1 {
+    text-decoration-thickness: var(--sf-a1);
+  }
+  .decoration-2 {
+    text-decoration-thickness: var(--sf-a2);
+  }
+  .decoration-3 {
+    text-decoration-thickness: var(--sf-a3);
+  }
+  .decoration-4 {
+    text-decoration-thickness: var(--sf-a4);
+  }
+}
