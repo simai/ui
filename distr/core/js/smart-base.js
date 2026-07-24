@@ -1,7 +1,7 @@
 "use strict";
 (self["webpackChunk"] = self["webpackChunk"] || []).push([[51805064141692],{
 
-/***/ "7aae0f825ba6"
+/***/ "0037910e23c1"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -13,8 +13,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   toBoolean: () => (/* binding */ toBoolean),
 /* harmony export */   toNumber: () => (/* binding */ toNumber)
 /* harmony export */ });
-/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("fef8077ac919");
-/* harmony import */ var lit_directives_ref_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("7fcbcc00731e");
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("0c917574924c");
+/* harmony import */ var lit_directives_ref_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5c50cfe285ee");
 
 
 function toBoolean(value, fallback = false) {
@@ -59,6 +59,9 @@ class SfBaseElement extends HTMLElement {
   static externalTemplateChecks = new Map();
   static externalTemplateCssLoaded = new Set();
   static externalTemplateCssMisses = new Set();
+  static waitForStylesBeforeRenderReady = true;
+  static styleReadyTimeout = 3000;
+  static styleReadinessCssId = "sf-smart-style-readiness";
 
   static get props() {
     return {};
@@ -143,6 +146,17 @@ class SfBaseElement extends HTMLElement {
     return this;
   }
 
+  static ensureStyleReadinessCss() {
+    if (typeof document === "undefined" || document.getElementById(this.styleReadinessCssId)) {
+      return;
+    }
+
+    const style = document.createElement("style");
+    style.id = this.styleReadinessCssId;
+    style.textContent = "[data-sf-style-pending],[data-sf-style-pending] *{visibility:hidden!important;}";
+    document.head.append(style);
+  }
+
   constructor() {
     super();
     this._updateScheduled = false;
@@ -163,11 +177,14 @@ class SfBaseElement extends HTMLElement {
     this._activeRefEffects = null;
     this._hostStyle = "";
     this._syncingHostStyle = false;
+    this._styleReady = false;
+    this._styleReadyPromise = null;
     this.__sfSmartElement = true;
     this.__sfSourceCaptured = false;
   }
 
   connectedCallback() {
+    this.constructor.ensureStyleReadinessCss();
     this.captureHostStyle();
     this.applyHostDisplayStyle();
     this.captureSlotTemplates();
@@ -649,8 +666,15 @@ class SfBaseElement extends HTMLElement {
     }
 
     this.prepareRenderContainer(changedAttributes);
+    this.markStylePending(this);
     (0,lit__WEBPACK_IMPORTED_MODULE_0__.render)(templateResult, this);
     this.flushRefEffects();
+    await this.whenRenderedStylesReady(this);
+
+    if (!this._isMounted || renderToken !== this._renderToken) {
+      return;
+    }
+
     this._hasRendered = true;
     this.afterRender(changedAttributes);
     this._childrenDefinedPromise = null;
@@ -661,6 +685,55 @@ class SfBaseElement extends HTMLElement {
     this.emitComponentEvent("after-render", {
       changedAttributes
     });
+  }
+
+  shouldWaitForStylesReady() {
+    return this.constructor.waitForStylesBeforeRenderReady !== false;
+  }
+
+  markStylePending(target = this) {
+    if (this.shouldWaitForStylesReady() && !this._styleReady && target?.setAttribute) {
+      target.setAttribute("data-sf-style-pending", "");
+      target.removeAttribute("data-sf-style-ready");
+    }
+
+    return this;
+  }
+
+  markStyleReady(target = this) {
+    this._styleReady = true;
+    [target, this].forEach(element => {
+      if (element?.removeAttribute && element?.setAttribute) {
+        element.removeAttribute("data-sf-style-pending");
+        element.setAttribute("data-sf-style-ready", "");
+      }
+    });
+    return this;
+  }
+
+  async whenRenderedStylesReady(target = this) {
+    if (!this.shouldWaitForStylesReady()) {
+      return;
+    }
+
+    const loader = window.SF?.Loader;
+
+    if (!loader || typeof loader.ensureStylesReady !== "function") {
+      this.markStyleReady(target);
+      return;
+    }
+
+    const readiness = Promise.resolve().then(() => loader.ensureStylesReady(target || this, {
+      autoLoad: true
+    }));
+    const timeout = Number(this.constructor.styleReadyTimeout ?? 3000);
+    this._styleReadyPromise = timeout > 0 ? Promise.race([readiness, new Promise(resolve => {
+      setTimeout(resolve, timeout);
+    })]) : readiness;
+    await this._styleReadyPromise.catch(error => {
+      console.warn(`${this.componentTagName || "sf-element"}: style readiness failed`, error);
+    });
+    this.markStyleReady(target);
   }
 
   getChildCustomElements() {
