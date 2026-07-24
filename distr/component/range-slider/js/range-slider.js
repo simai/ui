@@ -2,7 +2,7 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "46dcc01f14ec"
+/***/ "66a59c122e59"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -13,7 +13,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   setRangeSliderValue: () => (/* binding */ setRangeSliderValue),
 /* harmony export */   unbindRangeSlider: () => (/* binding */ unbindRangeSlider)
 /* harmony export */ });
-/* harmony import */ var nouislider__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("1f80f6f36b75");
+/* harmony import */ var nouislider__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("f5dfa4fe61f4");
 
 const RANGE_SLIDER_SELECTOR = '.sf-range-slider';
 const RANGE_SLIDER_BOUND_FLAG = 'sfRangeSliderBound';
@@ -408,11 +408,11 @@ rangeSliderObserver.observe(document.documentElement, {
 
 /***/ },
 
-/***/ "cd6ba85ff5f3"
+/***/ "99f6aba61ca2"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _range_slider__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("46dcc01f14ec");
+/* harmony import */ var _range_slider__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("66a59c122e59");
 /*
 * Main JS file for including JS for component.
 *
@@ -423,7 +423,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ },
 
-/***/ "0b6229fca096"
+/***/ "c21e32fde69f"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -432,7 +432,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ },
 
-/***/ "1f80f6f36b75"
+/***/ "f5dfa4fe61f4"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -2229,17 +2229,17 @@ function scope(target, options, originalOptions) {
                 scope_Events[targetEvent].forEach(function (callback) {
                     callback.call(
                     // Use the slider public API as the scope ('this')
-                    scope_Self, 
+                    scope_Self,
                     // Return values as array, so arg_1[arg_2] is always valid.
-                    scope_Values.map(options.format.to), 
+                    scope_Values.map(options.format.to),
                     // Handle index, 0 or 1
-                    handleNumber, 
+                    handleNumber,
                     // Un-formatted slider values
-                    scope_Values.slice(), 
+                    scope_Values.slice(),
                     // Event is fired by tap, true or false
-                    tap || false, 
+                    tap || false,
                     // Left offset of the handle, in relation to the slider
-                    scope_Locations.slice(), 
+                    scope_Locations.slice(),
                     // add the slider public API to an accessible parameter when this is unavailable
                     scope_Self);
                 });
@@ -2722,7 +2722,7 @@ function initialize(target, originalOptions) {
 /************************************************************************/
 /******/ 	// The module cache
 /******/ 	const __webpack_module_cache__ = {};
-/******/ 	
+/******/
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
 /******/ 		// Check if module is in cache
@@ -2736,7 +2736,7 @@ function initialize(target, originalOptions) {
 /******/ 			// no module.loaded needed
 /******/ 			exports: {}
 /******/ 		};
-/******/ 	
+/******/
 /******/ 		// Execute the module function
 /******/ 		if (!(moduleId in __webpack_modules__)) {
 /******/ 			delete __webpack_module_cache__[moduleId];
@@ -2745,11 +2745,11 @@ function initialize(target, originalOptions) {
 /******/ 			throw e;
 /******/ 		}
 /******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
-/******/ 	
+/******/
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
-/******/ 	
+/******/
 /************************************************************************/
 /******/ 	/* webpack/runtime/define property getters */
 /******/ 	(() => {
@@ -2777,12 +2777,12 @@ function initialize(target, originalOptions) {
 /******/ 			}
 /******/ 		};
 /******/ 	})();
-/******/ 	
+/******/
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
 /******/ 	(() => {
 /******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
 /******/ 	})();
-/******/ 	
+/******/
 /******/ 	/* webpack/runtime/make namespace object */
 /******/ 	(() => {
 /******/ 		// define __esModule on exports
@@ -2793,14 +2793,14 @@ function initialize(target, originalOptions) {
 /******/ 			Object.defineProperty(exports, '__esModule', { value: true });
 /******/ 		};
 /******/ 	})();
-/******/ 	
+/******/
 /************************************************************************/
 let __webpack_exports__ = {};
 // This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
 (() => {
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("0b6229fca096");
-/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("cd6ba85ff5f3");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("c21e32fde69f");
+/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("99f6aba61ca2");
 /**
  * SIMAI Framework
  * Copyright 2008-2026 SIMAI Ltd

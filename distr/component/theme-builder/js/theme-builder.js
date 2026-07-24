@@ -2,14 +2,14 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "d45e1e8d65ea"
+/***/ "35a87ba72f84"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _material_material_color_utilities__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("a4465fb0d4f3");
-/* harmony import */ var _utils_functions__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("ce4c5d18e9c8");
-/* harmony import */ var _utils_colors__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("db624dd59390");
-/* harmony import */ var vanilla_picker__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("76af9d08392d");
+/* harmony import */ var _material_material_color_utilities__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("7621b37b8c28");
+/* harmony import */ var _utils_functions__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("8e3c338a2f6d");
+/* harmony import */ var _utils_colors__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("2476e6b22ac9");
+/* harmony import */ var vanilla_picker__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("db8ec806d1bf");
 
 
 
@@ -1050,9 +1050,9 @@ class ThemeBuilder {
                 Drag and drop an image, or use the upload button below.
               </div>
               <div class="sf-theme-builder__swatch is-dynamic h-e5 flex items-cross-center content-main-center bg-surface-inverse p-3 radius-default" data-tb-preview-dynamic>
-                     
+
                 <i class="sf-icon">visibility</i>
-       
+
               </div>
             </div>
           </div>
@@ -3467,7 +3467,7 @@ document.addEventListener('turbo:before-cache', () => ThemeBuilder.destroyAll())
 
 /***/ },
 
-/***/ "0789749c5bc2"
+/***/ "72156604dbb1"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -3491,16 +3491,16 @@ class Cam16 {
 
 /***/ },
 
-/***/ "789aa2ede179"
+/***/ "be2dd58d516b"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   ImageResult: () => (/* binding */ ImageResult)
 /* harmony export */ });
-/* harmony import */ var _utils_math_utils_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("710690b9ec6a");
-/* harmony import */ var _utils_constants__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("07d1b93a2bb7");
-/* harmony import */ var _smc__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("0ee1af918537");
+/* harmony import */ var _utils_math_utils_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("f0394bb6676b");
+/* harmony import */ var _utils_constants__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("2943d4651489");
+/* harmony import */ var _smc__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e0a8d647bcbb");
 
 
 
@@ -3616,7 +3616,7 @@ ImageResult.CUTOFF_EXCITED_PROPORTION = 0.01;
 
 /***/ },
 
-/***/ "86073f4268f3"
+/***/ "f9ecad84de4b"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -3624,9 +3624,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   ColorPalette: () => (/* binding */ ColorPalette),
 /* harmony export */   Palette: () => (/* binding */ Palette)
 /* harmony export */ });
-/* harmony import */ var _smc__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("0ee1af918537");
-/* harmony import */ var _tonalPalette__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("4d3a1f1d5e72");
-/* harmony import */ var _utils_functions__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("ce4c5d18e9c8");
+/* harmony import */ var _smc__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("e0a8d647bcbb");
+/* harmony import */ var _tonalPalette__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("01d0638fcd56");
+/* harmony import */ var _utils_functions__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("8e3c338a2f6d");
 
 
 
@@ -5069,14 +5069,14 @@ class ColorPalette {
 
 /***/ },
 
-/***/ "8c86bfc570d8"
+/***/ "41189c9ae038"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   LabPointProvider: () => (/* binding */ LabPointProvider)
 /* harmony export */ });
-/* harmony import */ var _utils_functions_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("ce4c5d18e9c8");
+/* harmony import */ var _utils_functions_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("8e3c338a2f6d");
 /**
  * @license
  * Copyright 2021 Google LLC
@@ -5114,15 +5114,15 @@ class LabPointProvider {
 
 /***/ },
 
-/***/ "3fa91098d5c9"
+/***/ "925423064676"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   QuantizerCelebi: () => (/* binding */ QuantizerCelebi)
 /* harmony export */ });
-/* harmony import */ var _quantizer_wsmeans_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("5f1c9daf0716");
-/* harmony import */ var _quantizer_wu_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("d9460302a8a1");
+/* harmony import */ var _quantizer_wsmeans_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("54830afc8ef2");
+/* harmony import */ var _quantizer_wu_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("749468df4406");
 /**
  * @license
  * Copyright 2021 Google LLC
@@ -5177,14 +5177,14 @@ class QuantizerCelebi {
 
 /***/ },
 
-/***/ "8ff974b46843"
+/***/ "64c8b6e993e7"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   QuantizerMap: () => (/* binding */ QuantizerMap)
 /* harmony export */ });
-/* harmony import */ var _utils_functions__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("ce4c5d18e9c8");
+/* harmony import */ var _utils_functions__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("8e3c338a2f6d");
 /**
  * @license
  * Copyright 2021 Google LLC
@@ -5228,14 +5228,14 @@ class QuantizerMap {
 
 /***/ },
 
-/***/ "5f1c9daf0716"
+/***/ "54830afc8ef2"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   QuantizerWsmeans: () => (/* binding */ QuantizerWsmeans)
 /* harmony export */ });
-/* harmony import */ var _lab_point_provider_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("8c86bfc570d8");
+/* harmony import */ var _lab_point_provider_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("41189c9ae038");
 /**
  * @license
  * Copyright 2021 Google LLC
@@ -5465,14 +5465,14 @@ class DistanceAndIndex {
 
 /***/ },
 
-/***/ "d9460302a8a1"
+/***/ "749468df4406"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   QuantizerWu: () => (/* binding */ QuantizerWu)
 /* harmony export */ });
-/* harmony import */ var _quantizer_map_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("8ff974b46843");
+/* harmony import */ var _quantizer_map_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("64c8b6e993e7");
 /**
  * @license
  * Copyright 2021 Google LLC
@@ -5879,17 +5879,17 @@ class MaximizeResult {
 
 /***/ },
 
-/***/ "0ee1af918537"
+/***/ "e0a8d647bcbb"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   SMC: () => (/* binding */ SMC)
 /* harmony export */ });
-/* harmony import */ var _view__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("5c7297c4cd4f");
-/* harmony import */ var _utils_math_utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("710690b9ec6a");
-/* harmony import */ var _utils_functions__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("ce4c5d18e9c8");
-/* harmony import */ var _utils_constants__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("07d1b93a2bb7");
+/* harmony import */ var _view__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("4c063e557491");
+/* harmony import */ var _utils_math_utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("f0394bb6676b");
+/* harmony import */ var _utils_functions__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("8e3c338a2f6d");
+/* harmony import */ var _utils_constants__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("2943d4651489");
 
 
 
@@ -6194,14 +6194,14 @@ class SMC {
 
 /***/ },
 
-/***/ "cc73a8c3a24d"
+/***/ "960e025a662f"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Theme: () => (/* binding */ Theme)
 /* harmony export */ });
-/* harmony import */ var _palette__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("86073f4268f3");
+/* harmony import */ var _palette__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("f9ecad84de4b");
 
 class Theme {
   constructor(props) {
@@ -6359,14 +6359,14 @@ class Theme {
 
 /***/ },
 
-/***/ "4d3a1f1d5e72"
+/***/ "01d0638fcd56"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   TPalette: () => (/* binding */ TPalette)
 /* harmony export */ });
-/* harmony import */ var _smc__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("0ee1af918537");
+/* harmony import */ var _smc__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("e0a8d647bcbb");
 
 class TPalette {
   static fHAC(hue, chroma) {
@@ -6432,15 +6432,15 @@ class TPalette {
 
 /***/ },
 
-/***/ "5c7297c4cd4f"
+/***/ "4c063e557491"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ POW)
 /* harmony export */ });
-/* harmony import */ var _cam16__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("0789749c5bc2");
-/* harmony import */ var _utils_constants__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("07d1b93a2bb7");
+/* harmony import */ var _cam16__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("72156604dbb1");
+/* harmony import */ var _utils_constants__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("2943d4651489");
 
 
 class POW {
@@ -6513,11 +6513,11 @@ class POW {
 
 /***/ },
 
-/***/ "b3343415bd1d"
+/***/ "d4e09c97dd83"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _theme_builder__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d45e1e8d65ea");
+/* harmony import */ var _theme_builder__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("35a87ba72f84");
 /*
  * Main JS file for including JS for component.
  */
@@ -6525,19 +6525,19 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ },
 
-/***/ "853e8cba90b9"
+/***/ "a4c8f985b669"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ Mixed)
 /* harmony export */ });
-/* harmony import */ var _helpers_theme__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("cc73a8c3a24d");
-/* harmony import */ var _utils_functions__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("ce4c5d18e9c8");
-/* harmony import */ var _material_material_color_utilities__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("a4465fb0d4f3");
-/* harmony import */ var _theme__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("2ab7307f2ed7");
-/* harmony import */ var _helpers_tonalPalette__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("4d3a1f1d5e72");
-/* harmony import */ var _helpers_smc__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("0ee1af918537");
+/* harmony import */ var _helpers_theme__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("960e025a662f");
+/* harmony import */ var _utils_functions__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("8e3c338a2f6d");
+/* harmony import */ var _material_material_color_utilities__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("7621b37b8c28");
+/* harmony import */ var _theme__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("e82514fd211b");
+/* harmony import */ var _helpers_tonalPalette__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("01d0638fcd56");
+/* harmony import */ var _helpers_smc__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("e0a8d647bcbb");
 
 
 
@@ -6719,15 +6719,15 @@ class Mixed {
 
 /***/ },
 
-/***/ "2ab7307f2ed7"
+/***/ "e82514fd211b"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ ColorBuilder)
 /* harmony export */ });
-/* harmony import */ var _helpers_palette__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("86073f4268f3");
-/* harmony import */ var _helpers_theme__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("cc73a8c3a24d");
+/* harmony import */ var _helpers_palette__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("f9ecad84de4b");
+/* harmony import */ var _helpers_theme__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("960e025a662f");
 
 
 class ColorBuilder {
@@ -6784,7 +6784,7 @@ class ColorBuilder {
 
 /***/ },
 
-/***/ "db624dd59390"
+/***/ "2476e6b22ac9"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -6834,7 +6834,7 @@ function hex2argb(hex) {
 
 /***/ },
 
-/***/ "07d1b93a2bb7"
+/***/ "2943d4651489"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -6856,7 +6856,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   position: () => (/* binding */ position),
 /* harmony export */   sR: () => (/* binding */ sR)
 /* harmony export */ });
-/* harmony import */ var _math_utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("710690b9ec6a");
+/* harmony import */ var _math_utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("f0394bb6676b");
 
 const STX = [[0.41233895, 0.35762064, 0.18051042], [0.2126, 0.7152, 0.0722], [0.01932141, 0.11916382, 0.95034478]];
 const bL = 50.0;
@@ -6937,7 +6937,7 @@ const position = makePosition();
 
 /***/ },
 
-/***/ "ce4c5d18e9c8"
+/***/ "8e3c338a2f6d"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -6974,17 +6974,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   xyzFromArgb: () => (/* binding */ xyzFromArgb),
 /* harmony export */   yFromLstar: () => (/* binding */ yFromLstar)
 /* harmony export */ });
-/* harmony import */ var _math_utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("710690b9ec6a");
-/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("07d1b93a2bb7");
-/* harmony import */ var _colors__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("db624dd59390");
-/* harmony import */ var _theme__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("2ab7307f2ed7");
-/* harmony import */ var _helpers_image_results__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("789aa2ede179");
-/* harmony import */ var _helpers_quantize_quantizer_celebi__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("3fa91098d5c9");
-/* harmony import */ var _mixed__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("853e8cba90b9");
-/* harmony import */ var _helpers_palette__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("86073f4268f3");
-/* harmony import */ var _helpers_smc__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("0ee1af918537");
-/* harmony import */ var _helpers_tonalPalette__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("4d3a1f1d5e72");
-/* harmony import */ var _material_material_color_utilities__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("a4465fb0d4f3");
+/* harmony import */ var _math_utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("f0394bb6676b");
+/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("2943d4651489");
+/* harmony import */ var _colors__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("2476e6b22ac9");
+/* harmony import */ var _theme__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("e82514fd211b");
+/* harmony import */ var _helpers_image_results__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("be2dd58d516b");
+/* harmony import */ var _helpers_quantize_quantizer_celebi__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("925423064676");
+/* harmony import */ var _mixed__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("a4c8f985b669");
+/* harmony import */ var _helpers_palette__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("f9ecad84de4b");
+/* harmony import */ var _helpers_smc__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("e0a8d647bcbb");
+/* harmony import */ var _helpers_tonalPalette__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("01d0638fcd56");
+/* harmony import */ var _material_material_color_utilities__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("7621b37b8c28");
 
 
 
@@ -7405,7 +7405,7 @@ const buildTheme = async props => {
 
 /***/ },
 
-/***/ "710690b9ec6a"
+/***/ "f0394bb6676b"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -7568,7 +7568,7 @@ function matrixMultiply(row, matrix) {
 
 /***/ },
 
-/***/ "d7c1d03a3f73"
+/***/ "cb18abae3b1e"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -7577,17 +7577,17 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ },
 
-/***/ "95860925e668"
+/***/ "cd50b2143df0"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Blend: () => (/* binding */ Blend)
 /* harmony export */ });
-/* harmony import */ var _hct_cam16_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("bcd1e8163538");
-/* harmony import */ var _hct_hct_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("3cdc1bb3fe85");
-/* harmony import */ var _utils_color_utils_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("d94c5d6ff17a");
-/* harmony import */ var _utils_math_utils_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("6d41ddc214ee");
+/* harmony import */ var _hct_cam16_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2739447bfa51");
+/* harmony import */ var _hct_hct_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("1f08ae92406f");
+/* harmony import */ var _utils_color_utils_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("cd19d38fef3a");
+/* harmony import */ var _utils_math_utils_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("9f6b9fc5cce2");
 /**
  * @license
  * Copyright 2021 Google LLC
@@ -7683,15 +7683,15 @@ class Blend {
 
 /***/ },
 
-/***/ "517e90600719"
+/***/ "f22300665383"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Contrast: () => (/* binding */ Contrast)
 /* harmony export */ });
-/* harmony import */ var _utils_color_utils_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d94c5d6ff17a");
-/* harmony import */ var _utils_math_utils_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("6d41ddc214ee");
+/* harmony import */ var _utils_color_utils_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("cd19d38fef3a");
+/* harmony import */ var _utils_math_utils_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("9f6b9fc5cce2");
 /**
  * @license
  * Copyright 2022 Google LLC
@@ -7843,14 +7843,14 @@ class Contrast {
 
 /***/ },
 
-/***/ "c14890e64efd"
+/***/ "78864fdc8fdb"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   DislikeAnalyzer: () => (/* binding */ DislikeAnalyzer)
 /* harmony export */ });
-/* harmony import */ var _hct_hct_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("3cdc1bb3fe85");
+/* harmony import */ var _hct_hct_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("1f08ae92406f");
 /**
  * @license
  * Copyright 2023 Google LLC
@@ -7915,14 +7915,14 @@ class DislikeAnalyzer {
 
 /***/ },
 
-/***/ "e25d88b1069e"
+/***/ "ee0dfda691fe"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   ContrastCurve: () => (/* binding */ ContrastCurve)
 /* harmony export */ });
-/* harmony import */ var _utils_math_utils_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("6d41ddc214ee");
+/* harmony import */ var _utils_math_utils_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("9f6b9fc5cce2");
 /**
  * @license
  * Copyright 2023 Google LLC
@@ -7991,15 +7991,15 @@ class ContrastCurve {
 
 /***/ },
 
-/***/ "10cdd4ea39cc"
+/***/ "b98723479c25"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   DynamicColor: () => (/* binding */ DynamicColor)
 /* harmony export */ });
-/* harmony import */ var _contrast_contrast_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("517e90600719");
-/* harmony import */ var _utils_math_utils_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("6d41ddc214ee");
+/* harmony import */ var _contrast_contrast_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("f22300665383");
+/* harmony import */ var _utils_math_utils_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("9f6b9fc5cce2");
 /**
  * @license
  * Copyright 2022 Google LLC
@@ -8360,17 +8360,17 @@ class DynamicColor {
 
 /***/ },
 
-/***/ "18c2b362ecf9"
+/***/ "ed78f68415a7"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   DynamicScheme: () => (/* binding */ DynamicScheme)
 /* harmony export */ });
-/* harmony import */ var _hct_hct_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("3cdc1bb3fe85");
-/* harmony import */ var _palettes_tonal_palette_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("6a8d616d58de");
-/* harmony import */ var _utils_math_utils_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("6d41ddc214ee");
-/* harmony import */ var _material_dynamic_colors_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("bcc70d254bcd");
+/* harmony import */ var _hct_hct_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("1f08ae92406f");
+/* harmony import */ var _palettes_tonal_palette_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5d3c876b6b04");
+/* harmony import */ var _utils_math_utils_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("9f6b9fc5cce2");
+/* harmony import */ var _material_dynamic_colors_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("ad399494d95a");
 /**
  * @license
  * Copyright 2022 Google LLC
@@ -8614,19 +8614,19 @@ class DynamicScheme {
 
 /***/ },
 
-/***/ "bcc70d254bcd"
+/***/ "ad399494d95a"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   MaterialDynamicColors: () => (/* binding */ MaterialDynamicColors)
 /* harmony export */ });
-/* harmony import */ var _dislike_dislike_analyzer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("c14890e64efd");
-/* harmony import */ var _hct_hct_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("3cdc1bb3fe85");
-/* harmony import */ var _contrast_curve_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e25d88b1069e");
-/* harmony import */ var _dynamic_color_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("10cdd4ea39cc");
-/* harmony import */ var _tone_delta_pair_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("a5c05756fc8b");
-/* harmony import */ var _variant_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("5c8e12e65ddb");
+/* harmony import */ var _dislike_dislike_analyzer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("78864fdc8fdb");
+/* harmony import */ var _hct_hct_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("1f08ae92406f");
+/* harmony import */ var _contrast_curve_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("ee0dfda691fe");
+/* harmony import */ var _dynamic_color_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("b98723479c25");
+/* harmony import */ var _tone_delta_pair_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("85ab9e6962e0");
+/* harmony import */ var _variant_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("e234b7ba712c");
 /**
  * @license
  * Copyright 2022 Google LLC
@@ -9171,7 +9171,7 @@ MaterialDynamicColors.onTertiaryFixedVariant = _dynamic_color_js__WEBPACK_IMPORT
 
 /***/ },
 
-/***/ "a5c05756fc8b"
+/***/ "85ab9e6962e0"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -9238,7 +9238,7 @@ class ToneDeltaPair {
 
 /***/ },
 
-/***/ "5c8e12e65ddb"
+/***/ "e234b7ba712c"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -9282,16 +9282,16 @@ var Variant;
 
 /***/ },
 
-/***/ "bcd1e8163538"
+/***/ "2739447bfa51"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Cam16: () => (/* binding */ Cam16)
 /* harmony export */ });
-/* harmony import */ var _utils_color_utils_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d94c5d6ff17a");
-/* harmony import */ var _utils_math_utils_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("6d41ddc214ee");
-/* harmony import */ var _viewing_conditions_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("0052ca963f59");
+/* harmony import */ var _utils_color_utils_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("cd19d38fef3a");
+/* harmony import */ var _utils_math_utils_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("9f6b9fc5cce2");
+/* harmony import */ var _viewing_conditions_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("56a35bb46948");
 /**
  * @license
  * Copyright 2021 Google LLC
@@ -9652,17 +9652,17 @@ class Cam16 {
 
 /***/ },
 
-/***/ "3cdc1bb3fe85"
+/***/ "1f08ae92406f"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Hct: () => (/* binding */ Hct)
 /* harmony export */ });
-/* harmony import */ var _utils_color_utils_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d94c5d6ff17a");
-/* harmony import */ var _cam16_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("bcd1e8163538");
-/* harmony import */ var _hct_solver_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("f0f125eadff5");
-/* harmony import */ var _viewing_conditions_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("0052ca963f59");
+/* harmony import */ var _utils_color_utils_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("cd19d38fef3a");
+/* harmony import */ var _cam16_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("2739447bfa51");
+/* harmony import */ var _hct_solver_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("9d507383d637");
+/* harmony import */ var _viewing_conditions_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("56a35bb46948");
 /**
  * @license
  * Copyright 2021 Google LLC
@@ -9801,17 +9801,17 @@ class Hct {
 
 /***/ },
 
-/***/ "f0f125eadff5"
+/***/ "9d507383d637"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   HctSolver: () => (/* binding */ HctSolver)
 /* harmony export */ });
-/* harmony import */ var _utils_color_utils_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d94c5d6ff17a");
-/* harmony import */ var _utils_math_utils_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("6d41ddc214ee");
-/* harmony import */ var _cam16_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("bcd1e8163538");
-/* harmony import */ var _viewing_conditions_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("0052ca963f59");
+/* harmony import */ var _utils_color_utils_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("cd19d38fef3a");
+/* harmony import */ var _utils_math_utils_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("9f6b9fc5cce2");
+/* harmony import */ var _cam16_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("2739447bfa51");
+/* harmony import */ var _viewing_conditions_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("56a35bb46948");
 /**
  * @license
  * Copyright 2021 Google LLC
@@ -10330,15 +10330,15 @@ HctSolver.CRITICAL_PLANES = [
 
 /***/ },
 
-/***/ "0052ca963f59"
+/***/ "56a35bb46948"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   ViewingConditions: () => (/* binding */ ViewingConditions)
 /* harmony export */ });
-/* harmony import */ var _utils_color_utils_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d94c5d6ff17a");
-/* harmony import */ var _utils_math_utils_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("6d41ddc214ee");
+/* harmony import */ var _utils_color_utils_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("cd19d38fef3a");
+/* harmony import */ var _utils_math_utils_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("9f6b9fc5cce2");
 /**
  * @license
  * Copyright 2021 Google LLC
@@ -10459,7 +10459,7 @@ ViewingConditions.DEFAULT = ViewingConditions.make();
 
 /***/ },
 
-/***/ "a4465fb0d4f3"
+/***/ "7621b37b8c28"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -10529,39 +10529,39 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   xyzFromArgb: () => (/* reexport safe */ _utils_color_utils_js__WEBPACK_IMPORTED_MODULE_28__.xyzFromArgb),
 /* harmony export */   yFromLstar: () => (/* reexport safe */ _utils_color_utils_js__WEBPACK_IMPORTED_MODULE_28__.yFromLstar)
 /* harmony export */ });
-/* harmony import */ var _blend_blend_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("95860925e668");
-/* harmony import */ var _contrast_contrast_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("517e90600719");
-/* harmony import */ var _dislike_dislike_analyzer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("c14890e64efd");
-/* harmony import */ var _dynamiccolor_dynamic_color_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("10cdd4ea39cc");
-/* harmony import */ var _dynamiccolor_dynamic_scheme_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("18c2b362ecf9");
-/* harmony import */ var _dynamiccolor_material_dynamic_colors_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("bcc70d254bcd");
-/* harmony import */ var _hct_cam16_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("bcd1e8163538");
-/* harmony import */ var _hct_hct_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("3cdc1bb3fe85");
-/* harmony import */ var _hct_viewing_conditions_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("0052ca963f59");
-/* harmony import */ var _palettes_core_palette_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("47393141bc89");
-/* harmony import */ var _palettes_tonal_palette_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("6a8d616d58de");
-/* harmony import */ var _quantize_quantizer_celebi_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("738ea086586b");
-/* harmony import */ var _quantize_quantizer_map_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("853cb20da992");
-/* harmony import */ var _quantize_quantizer_wsmeans_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("92b533a80928");
-/* harmony import */ var _quantize_quantizer_wu_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("2583849a43b9");
-/* harmony import */ var _scheme_scheme_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("bcf9088bc193");
-/* harmony import */ var _scheme_scheme_android_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__("4ac550de11ee");
-/* harmony import */ var _scheme_scheme_content_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__("fb83e96bf2a5");
-/* harmony import */ var _scheme_scheme_expressive_js__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__("55748f5fcbea");
-/* harmony import */ var _scheme_scheme_fidelity_js__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__("47e5916d4368");
-/* harmony import */ var _scheme_scheme_fruit_salad_js__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__("2d3aad516aec");
-/* harmony import */ var _scheme_scheme_monochrome_js__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__("b7825d1e757b");
-/* harmony import */ var _scheme_scheme_neutral_js__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__("227ca002a784");
-/* harmony import */ var _scheme_scheme_rainbow_js__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__("30c0afe3afd5");
-/* harmony import */ var _scheme_scheme_tonal_spot_js__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__("5a6ca393b43b");
-/* harmony import */ var _scheme_scheme_vibrant_js__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__("574234a1cfe3");
-/* harmony import */ var _score_score_js__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__("217abdf950e0");
-/* harmony import */ var _temperature_temperature_cache_js__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__("6e2844c45242");
-/* harmony import */ var _utils_color_utils_js__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__("d94c5d6ff17a");
-/* harmony import */ var _utils_math_utils_js__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__("6d41ddc214ee");
-/* harmony import */ var _utils_string_utils_js__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__("12b386736c08");
-/* harmony import */ var _utils_image_utils_js__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__("e666a2135778");
-/* harmony import */ var _utils_theme_utils_js__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__("b26f78deb86d");
+/* harmony import */ var _blend_blend_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("cd50b2143df0");
+/* harmony import */ var _contrast_contrast_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("f22300665383");
+/* harmony import */ var _dislike_dislike_analyzer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("78864fdc8fdb");
+/* harmony import */ var _dynamiccolor_dynamic_color_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("b98723479c25");
+/* harmony import */ var _dynamiccolor_dynamic_scheme_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("ed78f68415a7");
+/* harmony import */ var _dynamiccolor_material_dynamic_colors_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("ad399494d95a");
+/* harmony import */ var _hct_cam16_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("2739447bfa51");
+/* harmony import */ var _hct_hct_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("1f08ae92406f");
+/* harmony import */ var _hct_viewing_conditions_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("56a35bb46948");
+/* harmony import */ var _palettes_core_palette_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("2c0134ab71cc");
+/* harmony import */ var _palettes_tonal_palette_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("5d3c876b6b04");
+/* harmony import */ var _quantize_quantizer_celebi_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("f2bac036692c");
+/* harmony import */ var _quantize_quantizer_map_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("1fd0631927f3");
+/* harmony import */ var _quantize_quantizer_wsmeans_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("942d99d38a9e");
+/* harmony import */ var _quantize_quantizer_wu_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("038f52ad48b5");
+/* harmony import */ var _scheme_scheme_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("12a7b360ac07");
+/* harmony import */ var _scheme_scheme_android_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__("f9f04b2a8f6d");
+/* harmony import */ var _scheme_scheme_content_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__("7a8ca07defa9");
+/* harmony import */ var _scheme_scheme_expressive_js__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__("13005e36a37e");
+/* harmony import */ var _scheme_scheme_fidelity_js__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__("9e0f35db269f");
+/* harmony import */ var _scheme_scheme_fruit_salad_js__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__("9005d3f8bef8");
+/* harmony import */ var _scheme_scheme_monochrome_js__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__("72f3d13934b7");
+/* harmony import */ var _scheme_scheme_neutral_js__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__("6833bec56f8d");
+/* harmony import */ var _scheme_scheme_rainbow_js__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__("79fa963a9fd5");
+/* harmony import */ var _scheme_scheme_tonal_spot_js__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__("f368cfab54b4");
+/* harmony import */ var _scheme_scheme_vibrant_js__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__("a920c2a312a4");
+/* harmony import */ var _score_score_js__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__("cc7efe8c77fd");
+/* harmony import */ var _temperature_temperature_cache_js__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__("88f548524735");
+/* harmony import */ var _utils_color_utils_js__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__("cd19d38fef3a");
+/* harmony import */ var _utils_math_utils_js__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__("9f6b9fc5cce2");
+/* harmony import */ var _utils_string_utils_js__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__("ad7d7ca643f2");
+/* harmony import */ var _utils_image_utils_js__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__("93037308f849");
+/* harmony import */ var _utils_theme_utils_js__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__("7cad45d76354");
 /**
  * @license
  * Copyright 2021 Google LLC
@@ -10615,15 +10615,15 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ },
 
-/***/ "47393141bc89"
+/***/ "2c0134ab71cc"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   CorePalette: () => (/* binding */ CorePalette)
 /* harmony export */ });
-/* harmony import */ var _hct_hct_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("3cdc1bb3fe85");
-/* harmony import */ var _tonal_palette_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("6a8d616d58de");
+/* harmony import */ var _hct_hct_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("1f08ae92406f");
+/* harmony import */ var _tonal_palette_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5d3c876b6b04");
 /**
  * @license
  * Copyright 2021 Google LLC
@@ -10721,14 +10721,14 @@ class CorePalette {
 
 /***/ },
 
-/***/ "6a8d616d58de"
+/***/ "5d3c876b6b04"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   TonalPalette: () => (/* binding */ TonalPalette)
 /* harmony export */ });
-/* harmony import */ var _hct_hct_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("3cdc1bb3fe85");
+/* harmony import */ var _hct_hct_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("1f08ae92406f");
 /**
  * @license
  * Copyright 2021 Google LLC
@@ -10875,14 +10875,14 @@ class KeyColor {
 
 /***/ },
 
-/***/ "8d7b463281c5"
+/***/ "979ac8f81c02"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   LabPointProvider: () => (/* binding */ LabPointProvider)
 /* harmony export */ });
-/* harmony import */ var _utils_color_utils_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d94c5d6ff17a");
+/* harmony import */ var _utils_color_utils_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("cd19d38fef3a");
 /**
  * @license
  * Copyright 2021 Google LLC
@@ -10937,15 +10937,15 @@ class LabPointProvider {
 
 /***/ },
 
-/***/ "738ea086586b"
+/***/ "f2bac036692c"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   QuantizerCelebi: () => (/* binding */ QuantizerCelebi)
 /* harmony export */ });
-/* harmony import */ var _quantizer_wsmeans_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("92b533a80928");
-/* harmony import */ var _quantizer_wu_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("2583849a43b9");
+/* harmony import */ var _quantizer_wsmeans_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("942d99d38a9e");
+/* harmony import */ var _quantizer_wu_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("038f52ad48b5");
 /**
  * @license
  * Copyright 2021 Google LLC
@@ -10999,14 +10999,14 @@ class QuantizerCelebi {
 
 /***/ },
 
-/***/ "853cb20da992"
+/***/ "1fd0631927f3"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   QuantizerMap: () => (/* binding */ QuantizerMap)
 /* harmony export */ });
-/* harmony import */ var _utils_color_utils_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d94c5d6ff17a");
+/* harmony import */ var _utils_color_utils_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("cd19d38fef3a");
 /**
  * @license
  * Copyright 2021 Google LLC
@@ -11056,14 +11056,14 @@ class QuantizerMap {
 
 /***/ },
 
-/***/ "92b533a80928"
+/***/ "942d99d38a9e"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   QuantizerWsmeans: () => (/* binding */ QuantizerWsmeans)
 /* harmony export */ });
-/* harmony import */ var _lab_point_provider_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("8d7b463281c5");
+/* harmony import */ var _lab_point_provider_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("979ac8f81c02");
 /**
  * @license
  * Copyright 2021 Google LLC
@@ -11277,15 +11277,15 @@ class DistanceAndIndex {
 
 /***/ },
 
-/***/ "2583849a43b9"
+/***/ "038f52ad48b5"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   QuantizerWu: () => (/* binding */ QuantizerWu)
 /* harmony export */ });
-/* harmony import */ var _utils_color_utils_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d94c5d6ff17a");
-/* harmony import */ var _quantizer_map_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("853cb20da992");
+/* harmony import */ var _utils_color_utils_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("cd19d38fef3a");
+/* harmony import */ var _quantizer_map_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("1fd0631927f3");
 /**
  * @license
  * Copyright 2021 Google LLC
@@ -11663,14 +11663,14 @@ class MaximizeResult {
 
 /***/ },
 
-/***/ "bcf9088bc193"
+/***/ "12a7b360ac07"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Scheme: () => (/* binding */ Scheme)
 /* harmony export */ });
-/* harmony import */ var _palettes_core_palette_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("47393141bc89");
+/* harmony import */ var _palettes_core_palette_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2c0134ab71cc");
 /**
  * @license
  * Copyright 2021 Google LLC
@@ -11898,14 +11898,14 @@ class Scheme {
 
 /***/ },
 
-/***/ "4ac550de11ee"
+/***/ "f9f04b2a8f6d"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   SchemeAndroid: () => (/* binding */ SchemeAndroid)
 /* harmony export */ });
-/* harmony import */ var _palettes_core_palette_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("47393141bc89");
+/* harmony import */ var _palettes_core_palette_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2c0134ab71cc");
 /**
  * @license
  * Copyright 2021 Google LLC
@@ -12109,18 +12109,18 @@ class SchemeAndroid {
 
 /***/ },
 
-/***/ "fb83e96bf2a5"
+/***/ "7a8ca07defa9"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   SchemeContent: () => (/* binding */ SchemeContent)
 /* harmony export */ });
-/* harmony import */ var _dislike_dislike_analyzer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("c14890e64efd");
-/* harmony import */ var _dynamiccolor_dynamic_scheme_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("18c2b362ecf9");
-/* harmony import */ var _dynamiccolor_variant_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("5c8e12e65ddb");
-/* harmony import */ var _palettes_tonal_palette_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("6a8d616d58de");
-/* harmony import */ var _temperature_temperature_cache_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("6e2844c45242");
+/* harmony import */ var _dislike_dislike_analyzer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("78864fdc8fdb");
+/* harmony import */ var _dynamiccolor_dynamic_scheme_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("ed78f68415a7");
+/* harmony import */ var _dynamiccolor_variant_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e234b7ba712c");
+/* harmony import */ var _palettes_tonal_palette_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("5d3c876b6b04");
+/* harmony import */ var _temperature_temperature_cache_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("88f548524735");
 /**
  * @license
  * Copyright 2023 Google LLC
@@ -12172,17 +12172,17 @@ class SchemeContent extends _dynamiccolor_dynamic_scheme_js__WEBPACK_IMPORTED_MO
 
 /***/ },
 
-/***/ "55748f5fcbea"
+/***/ "13005e36a37e"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   SchemeExpressive: () => (/* binding */ SchemeExpressive)
 /* harmony export */ });
-/* harmony import */ var _dynamiccolor_dynamic_scheme_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("18c2b362ecf9");
-/* harmony import */ var _dynamiccolor_variant_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5c8e12e65ddb");
-/* harmony import */ var _palettes_tonal_palette_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("6a8d616d58de");
-/* harmony import */ var _utils_math_utils_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("6d41ddc214ee");
+/* harmony import */ var _dynamiccolor_dynamic_scheme_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("ed78f68415a7");
+/* harmony import */ var _dynamiccolor_variant_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("e234b7ba712c");
+/* harmony import */ var _palettes_tonal_palette_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("5d3c876b6b04");
+/* harmony import */ var _utils_math_utils_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("9f6b9fc5cce2");
 /**
  * @license
  * Copyright 2022 Google LLC
@@ -12270,18 +12270,18 @@ SchemeExpressive.tertiaryRotations = [
 
 /***/ },
 
-/***/ "47e5916d4368"
+/***/ "9e0f35db269f"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   SchemeFidelity: () => (/* binding */ SchemeFidelity)
 /* harmony export */ });
-/* harmony import */ var _dislike_dislike_analyzer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("c14890e64efd");
-/* harmony import */ var _dynamiccolor_dynamic_scheme_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("18c2b362ecf9");
-/* harmony import */ var _dynamiccolor_variant_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("5c8e12e65ddb");
-/* harmony import */ var _palettes_tonal_palette_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("6a8d616d58de");
-/* harmony import */ var _temperature_temperature_cache_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("6e2844c45242");
+/* harmony import */ var _dislike_dislike_analyzer_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("78864fdc8fdb");
+/* harmony import */ var _dynamiccolor_dynamic_scheme_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("ed78f68415a7");
+/* harmony import */ var _dynamiccolor_variant_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e234b7ba712c");
+/* harmony import */ var _palettes_tonal_palette_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("5d3c876b6b04");
+/* harmony import */ var _temperature_temperature_cache_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("88f548524735");
 /**
  * @license
  * Copyright 2023 Google LLC
@@ -12333,17 +12333,17 @@ class SchemeFidelity extends _dynamiccolor_dynamic_scheme_js__WEBPACK_IMPORTED_M
 
 /***/ },
 
-/***/ "2d3aad516aec"
+/***/ "9005d3f8bef8"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   SchemeFruitSalad: () => (/* binding */ SchemeFruitSalad)
 /* harmony export */ });
-/* harmony import */ var _dynamiccolor_dynamic_scheme_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("18c2b362ecf9");
-/* harmony import */ var _dynamiccolor_variant_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5c8e12e65ddb");
-/* harmony import */ var _palettes_tonal_palette_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("6a8d616d58de");
-/* harmony import */ var _utils_math_utils_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("6d41ddc214ee");
+/* harmony import */ var _dynamiccolor_dynamic_scheme_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("ed78f68415a7");
+/* harmony import */ var _dynamiccolor_variant_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("e234b7ba712c");
+/* harmony import */ var _palettes_tonal_palette_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("5d3c876b6b04");
+/* harmony import */ var _utils_math_utils_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("9f6b9fc5cce2");
 /**
  * @license
  * Copyright 2022 Google LLC
@@ -12386,16 +12386,16 @@ class SchemeFruitSalad extends _dynamiccolor_dynamic_scheme_js__WEBPACK_IMPORTED
 
 /***/ },
 
-/***/ "b7825d1e757b"
+/***/ "72f3d13934b7"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   SchemeMonochrome: () => (/* binding */ SchemeMonochrome)
 /* harmony export */ });
-/* harmony import */ var _dynamiccolor_dynamic_scheme_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("18c2b362ecf9");
-/* harmony import */ var _dynamiccolor_variant_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5c8e12e65ddb");
-/* harmony import */ var _palettes_tonal_palette_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("6a8d616d58de");
+/* harmony import */ var _dynamiccolor_dynamic_scheme_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("ed78f68415a7");
+/* harmony import */ var _dynamiccolor_variant_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("e234b7ba712c");
+/* harmony import */ var _palettes_tonal_palette_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("5d3c876b6b04");
 /**
  * @license
  * Copyright 2022 Google LLC
@@ -12435,16 +12435,16 @@ class SchemeMonochrome extends _dynamiccolor_dynamic_scheme_js__WEBPACK_IMPORTED
 
 /***/ },
 
-/***/ "227ca002a784"
+/***/ "6833bec56f8d"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   SchemeNeutral: () => (/* binding */ SchemeNeutral)
 /* harmony export */ });
-/* harmony import */ var _dynamiccolor_dynamic_scheme_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("18c2b362ecf9");
-/* harmony import */ var _dynamiccolor_variant_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5c8e12e65ddb");
-/* harmony import */ var _palettes_tonal_palette_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("6a8d616d58de");
+/* harmony import */ var _dynamiccolor_dynamic_scheme_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("ed78f68415a7");
+/* harmony import */ var _dynamiccolor_variant_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("e234b7ba712c");
+/* harmony import */ var _palettes_tonal_palette_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("5d3c876b6b04");
 /**
  * @license
  * Copyright 2022 Google LLC
@@ -12484,17 +12484,17 @@ class SchemeNeutral extends _dynamiccolor_dynamic_scheme_js__WEBPACK_IMPORTED_MO
 
 /***/ },
 
-/***/ "30c0afe3afd5"
+/***/ "79fa963a9fd5"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   SchemeRainbow: () => (/* binding */ SchemeRainbow)
 /* harmony export */ });
-/* harmony import */ var _dynamiccolor_dynamic_scheme_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("18c2b362ecf9");
-/* harmony import */ var _dynamiccolor_variant_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5c8e12e65ddb");
-/* harmony import */ var _palettes_tonal_palette_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("6a8d616d58de");
-/* harmony import */ var _utils_math_utils_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("6d41ddc214ee");
+/* harmony import */ var _dynamiccolor_dynamic_scheme_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("ed78f68415a7");
+/* harmony import */ var _dynamiccolor_variant_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("e234b7ba712c");
+/* harmony import */ var _palettes_tonal_palette_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("5d3c876b6b04");
+/* harmony import */ var _utils_math_utils_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("9f6b9fc5cce2");
 /**
  * @license
  * Copyright 2022 Google LLC
@@ -12537,17 +12537,17 @@ class SchemeRainbow extends _dynamiccolor_dynamic_scheme_js__WEBPACK_IMPORTED_MO
 
 /***/ },
 
-/***/ "5a6ca393b43b"
+/***/ "f368cfab54b4"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   SchemeTonalSpot: () => (/* binding */ SchemeTonalSpot)
 /* harmony export */ });
-/* harmony import */ var _dynamiccolor_dynamic_scheme_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("18c2b362ecf9");
-/* harmony import */ var _dynamiccolor_variant_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5c8e12e65ddb");
-/* harmony import */ var _palettes_tonal_palette_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("6a8d616d58de");
-/* harmony import */ var _utils_math_utils_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("6d41ddc214ee");
+/* harmony import */ var _dynamiccolor_dynamic_scheme_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("ed78f68415a7");
+/* harmony import */ var _dynamiccolor_variant_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("e234b7ba712c");
+/* harmony import */ var _palettes_tonal_palette_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("5d3c876b6b04");
+/* harmony import */ var _utils_math_utils_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("9f6b9fc5cce2");
 /**
  * @license
  * Copyright 2022 Google LLC
@@ -12593,16 +12593,16 @@ class SchemeTonalSpot extends _dynamiccolor_dynamic_scheme_js__WEBPACK_IMPORTED_
 
 /***/ },
 
-/***/ "574234a1cfe3"
+/***/ "a920c2a312a4"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   SchemeVibrant: () => (/* binding */ SchemeVibrant)
 /* harmony export */ });
-/* harmony import */ var _dynamiccolor_dynamic_scheme_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("18c2b362ecf9");
-/* harmony import */ var _dynamiccolor_variant_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5c8e12e65ddb");
-/* harmony import */ var _palettes_tonal_palette_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("6a8d616d58de");
+/* harmony import */ var _dynamiccolor_dynamic_scheme_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("ed78f68415a7");
+/* harmony import */ var _dynamiccolor_variant_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("e234b7ba712c");
+/* harmony import */ var _palettes_tonal_palette_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("5d3c876b6b04");
 /**
  * @license
  * Copyright 2022 Google LLC
@@ -12690,15 +12690,15 @@ SchemeVibrant.tertiaryRotations = [
 
 /***/ },
 
-/***/ "217abdf950e0"
+/***/ "cc7efe8c77fd"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Score: () => (/* binding */ Score)
 /* harmony export */ });
-/* harmony import */ var _hct_hct_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("3cdc1bb3fe85");
-/* harmony import */ var _utils_math_utils_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("6d41ddc214ee");
+/* harmony import */ var _hct_hct_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("1f08ae92406f");
+/* harmony import */ var _utils_math_utils_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("9f6b9fc5cce2");
 /**
  * @license
  * Copyright 2021 Google LLC
@@ -12834,16 +12834,16 @@ Score.CUTOFF_EXCITED_PROPORTION = 0.01;
 
 /***/ },
 
-/***/ "6e2844c45242"
+/***/ "88f548524735"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   TemperatureCache: () => (/* binding */ TemperatureCache)
 /* harmony export */ });
-/* harmony import */ var _hct_hct_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("3cdc1bb3fe85");
-/* harmony import */ var _utils_color_utils_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("d94c5d6ff17a");
-/* harmony import */ var _utils_math_utils_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("6d41ddc214ee");
+/* harmony import */ var _hct_hct_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("1f08ae92406f");
+/* harmony import */ var _utils_color_utils_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("cd19d38fef3a");
+/* harmony import */ var _utils_math_utils_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("9f6b9fc5cce2");
 /**
  * @license
  * Copyright 2023 Google LLC
@@ -13117,7 +13117,7 @@ class TemperatureCache {
 
 /***/ },
 
-/***/ "d94c5d6ff17a"
+/***/ "cd19d38fef3a"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -13143,7 +13143,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   xyzFromArgb: () => (/* binding */ xyzFromArgb),
 /* harmony export */   yFromLstar: () => (/* binding */ yFromLstar)
 /* harmony export */ });
-/* harmony import */ var _math_utils_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("6d41ddc214ee");
+/* harmony import */ var _math_utils_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("9f6b9fc5cce2");
 /**
  * @license
  * Copyright 2021 Google LLC
@@ -13455,16 +13455,16 @@ function labInvf(ft) {
 
 /***/ },
 
-/***/ "e666a2135778"
+/***/ "93037308f849"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   sourceColorFromImage: () => (/* binding */ sourceColorFromImage)
 /* harmony export */ });
-/* harmony import */ var _quantize_quantizer_celebi_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("738ea086586b");
-/* harmony import */ var _score_score_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("217abdf950e0");
-/* harmony import */ var _color_utils_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("d94c5d6ff17a");
+/* harmony import */ var _quantize_quantizer_celebi_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("f2bac036692c");
+/* harmony import */ var _score_score_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("cc7efe8c77fd");
+/* harmony import */ var _color_utils_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("cd19d38fef3a");
 /**
  * @license
  * Copyright 2021 Google LLC
@@ -13548,7 +13548,7 @@ async function sourceColorFromImage(image) {
 
 /***/ },
 
-/***/ "6d41ddc214ee"
+/***/ "9f6b9fc5cce2"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -13700,7 +13700,7 @@ function matrixMultiply(row, matrix) {
 
 /***/ },
 
-/***/ "12b386736c08"
+/***/ "ad7d7ca643f2"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -13708,7 +13708,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   argbFromHex: () => (/* binding */ argbFromHex),
 /* harmony export */   hexFromArgb: () => (/* binding */ hexFromArgb)
 /* harmony export */ });
-/* harmony import */ var _color_utils_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d94c5d6ff17a");
+/* harmony import */ var _color_utils_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("cd19d38fef3a");
 /**
  * @license
  * Copyright 2021 Google LLC
@@ -13789,7 +13789,7 @@ function parseIntHex(value) {
 
 /***/ },
 
-/***/ "b26f78deb86d"
+/***/ "7cad45d76354"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -13799,11 +13799,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   themeFromImage: () => (/* binding */ themeFromImage),
 /* harmony export */   themeFromSourceColor: () => (/* binding */ themeFromSourceColor)
 /* harmony export */ });
-/* harmony import */ var _blend_blend_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("95860925e668");
-/* harmony import */ var _palettes_core_palette_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("47393141bc89");
-/* harmony import */ var _scheme_scheme_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("bcf9088bc193");
-/* harmony import */ var _image_utils_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("e666a2135778");
-/* harmony import */ var _string_utils_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("12b386736c08");
+/* harmony import */ var _blend_blend_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("cd50b2143df0");
+/* harmony import */ var _palettes_core_palette_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("2c0134ab71cc");
+/* harmony import */ var _scheme_scheme_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("12a7b360ac07");
+/* harmony import */ var _image_utils_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("93037308f849");
+/* harmony import */ var _string_utils_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("ad7d7ca643f2");
 /**
  * @license
  * Copyright 2021 Google LLC
@@ -13935,7 +13935,7 @@ function setSchemeProperties(target, scheme, suffix = '') {
 
 /***/ },
 
-/***/ "76af9d08392d"
+/***/ "db8ec806d1bf"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -14951,7 +14951,7 @@ var Picker = function () {
 /************************************************************************/
 /******/ 	// The module cache
 /******/ 	const __webpack_module_cache__ = {};
-/******/ 	
+/******/
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
 /******/ 		// Check if module is in cache
@@ -14965,7 +14965,7 @@ var Picker = function () {
 /******/ 			// no module.loaded needed
 /******/ 			exports: {}
 /******/ 		};
-/******/ 	
+/******/
 /******/ 		// Execute the module function
 /******/ 		if (!(moduleId in __webpack_modules__)) {
 /******/ 			delete __webpack_module_cache__[moduleId];
@@ -14974,11 +14974,11 @@ var Picker = function () {
 /******/ 			throw e;
 /******/ 		}
 /******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
-/******/ 	
+/******/
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
-/******/ 	
+/******/
 /************************************************************************/
 /******/ 	/* webpack/runtime/define property getters */
 /******/ 	(() => {
@@ -15006,12 +15006,12 @@ var Picker = function () {
 /******/ 			}
 /******/ 		};
 /******/ 	})();
-/******/ 	
+/******/
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
 /******/ 	(() => {
 /******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
 /******/ 	})();
-/******/ 	
+/******/
 /******/ 	/* webpack/runtime/make namespace object */
 /******/ 	(() => {
 /******/ 		// define __esModule on exports
@@ -15022,14 +15022,14 @@ var Picker = function () {
 /******/ 			Object.defineProperty(exports, '__esModule', { value: true });
 /******/ 		};
 /******/ 	})();
-/******/ 	
+/******/
 /************************************************************************/
 let __webpack_exports__ = {};
 // This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
 (() => {
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d7c1d03a3f73");
-/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("b3343415bd1d");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("cb18abae3b1e");
+/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("d4e09c97dd83");
 /**
  * SIMAI Framework
  * Copyright 2008-2026 SIMAI Ltd

@@ -129,7 +129,7 @@ function reasonml(hljs) {
         scope: 'operator',
         match: /\s+(\|\||\+[\+\.]?|\*[\*\/\.]?|\/[\.]?|\.\.\.|\|>|&&|===?)\s+/,
         relevance: 0
-      },      
+      },
       hljs.inherit(hljs.APOS_STRING_MODE, {
         scope: 'string',
         relevance: 0
