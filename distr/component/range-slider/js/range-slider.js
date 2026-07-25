@@ -2,7 +2,7 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "66a59c122e59"
+/***/ "46dcc01f14ec"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -13,7 +13,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   setRangeSliderValue: () => (/* binding */ setRangeSliderValue),
 /* harmony export */   unbindRangeSlider: () => (/* binding */ unbindRangeSlider)
 /* harmony export */ });
-/* harmony import */ var nouislider__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("f5dfa4fe61f4");
+/* harmony import */ var nouislider__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("1f80f6f36b75");
 
 const RANGE_SLIDER_SELECTOR = '.sf-range-slider';
 const RANGE_SLIDER_BOUND_FLAG = 'sfRangeSliderBound';
@@ -408,11 +408,11 @@ rangeSliderObserver.observe(document.documentElement, {
 
 /***/ },
 
-/***/ "99f6aba61ca2"
+/***/ "cd6ba85ff5f3"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _range_slider__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("66a59c122e59");
+/* harmony import */ var _range_slider__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("46dcc01f14ec");
 /*
 * Main JS file for including JS for component.
 *
@@ -423,7 +423,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ },
 
-/***/ "c21e32fde69f"
+/***/ "0b6229fca096"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -432,7 +432,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ },
 
-/***/ "f5dfa4fe61f4"
+/***/ "1f80f6f36b75"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -2799,8 +2799,8 @@ let __webpack_exports__ = {};
 // This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
 (() => {
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("c21e32fde69f");
-/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("99f6aba61ca2");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("0b6229fca096");
+/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("cd6ba85ff5f3");
 /**
  * SIMAI Framework
  * Copyright 2008-2026 SIMAI Ltd
