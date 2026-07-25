@@ -2,14 +2,14 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "6014669ceac6"
+/***/ "431efb0fada7"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("58661bec99a6");
+/* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("89862d12f06a");
 
 
 class SfAccordion {
@@ -126,14 +126,14 @@ if (typeof MutationObserver !== 'undefined') {
 
 /***/ },
 
-/***/ "5383c575ac1a"
+/***/ "353cd45e0fbc"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _accordion__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("6014669ceac6");
+/* harmony import */ var _accordion__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("431efb0fada7");
 /*
 * Main JS file for including JS for component.
-* 
+*
 * Imports:
 * - Base function component (_component_name.js)
 */
@@ -141,7 +141,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ },
 
-/***/ "58661bec99a6"
+/***/ "89862d12f06a"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -175,7 +175,7 @@ function registerComponent(name, cls) {
 
 /***/ },
 
-/***/ "cee052b3ccee"
+/***/ "2f54c90cca6e"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -188,7 +188,7 @@ __webpack_require__.r(__webpack_exports__);
 /************************************************************************/
 /******/ 	// The module cache
 /******/ 	const __webpack_module_cache__ = {};
-/******/ 	
+/******/
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
 /******/ 		// Check if module is in cache
@@ -202,7 +202,7 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 			// no module.loaded needed
 /******/ 			exports: {}
 /******/ 		};
-/******/ 	
+/******/
 /******/ 		// Execute the module function
 /******/ 		if (!(moduleId in __webpack_modules__)) {
 /******/ 			delete __webpack_module_cache__[moduleId];
@@ -211,11 +211,11 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 			throw e;
 /******/ 		}
 /******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
-/******/ 	
+/******/
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
-/******/ 	
+/******/
 /************************************************************************/
 /******/ 	/* webpack/runtime/define property getters */
 /******/ 	(() => {
@@ -243,12 +243,12 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 			}
 /******/ 		};
 /******/ 	})();
-/******/ 	
+/******/
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
 /******/ 	(() => {
 /******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
 /******/ 	})();
-/******/ 	
+/******/
 /******/ 	/* webpack/runtime/make namespace object */
 /******/ 	(() => {
 /******/ 		// define __esModule on exports
@@ -259,14 +259,14 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 			Object.defineProperty(exports, '__esModule', { value: true });
 /******/ 		};
 /******/ 	})();
-/******/ 	
+/******/
 /************************************************************************/
 let __webpack_exports__ = {};
 // This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
 (() => {
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("cee052b3ccee");
-/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5383c575ac1a");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2f54c90cca6e");
+/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("353cd45e0fbc");
 /**
 * SIMAI Framework
 * Copyright 2008-2026 SIMAI Ltd
@@ -274,9 +274,9 @@ __webpack_require__.r(__webpack_exports__);
 * Read the license: http://framework.simai.studio/license/
 * Documentation: http://framework.simai.studio/
 * Support: http://simai.studio/support/
-* 
+*
 * ACCORDION
-* 
+*
 * Entry point for importing components from this directory.
 * Simplifies the import process in other parts of the project.
 * Instead of importing individual files, all component can be imported through this file.

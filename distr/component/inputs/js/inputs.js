@@ -2,7 +2,7 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "73aef1a2bf74"
+/***/ "9e07fee0f0c8"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -11,8 +11,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   setInputState: () => (/* binding */ setInputState),
 /* harmony export */   unbindInput: () => (/* binding */ unbindInput)
 /* harmony export */ });
-/* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d7f974466839");
-/* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("58661bec99a6");
+/* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("77de01747ad5");
+/* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("89862d12f06a");
 /* harmony import */ var _json_input_utility_json__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("d6935866be49");
 
 
@@ -309,14 +309,14 @@ inputObserver.observe(document.documentElement, {
 
 /***/ },
 
-/***/ "82934b8e84bb"
+/***/ "4f86496fda01"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _inputs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("73aef1a2bf74");
+/* harmony import */ var _inputs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("9e07fee0f0c8");
 /*
 * Main JS file for including JS for component.
-* 
+*
 * Imports:
 * - Base function component (_component_name.js)
 */
@@ -324,7 +324,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ },
 
-/***/ "58661bec99a6"
+/***/ "89862d12f06a"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -358,7 +358,7 @@ function registerComponent(name, cls) {
 
 /***/ },
 
-/***/ "d7f974466839"
+/***/ "77de01747ad5"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -462,7 +462,7 @@ class ComponentObserver {
 
 /***/ },
 
-/***/ "f8617676bb87"
+/***/ "e59bf6182f4b"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -482,7 +482,7 @@ module.exports = /*#__PURE__*/JSON.parse('{".sf-input":["display/flex (.flex)","
 /************************************************************************/
 /******/ 	// The module cache
 /******/ 	const __webpack_module_cache__ = {};
-/******/ 	
+/******/
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
 /******/ 		// Check if module is in cache
@@ -496,7 +496,7 @@ module.exports = /*#__PURE__*/JSON.parse('{".sf-input":["display/flex (.flex)","
 /******/ 			// no module.loaded needed
 /******/ 			exports: {}
 /******/ 		};
-/******/ 	
+/******/
 /******/ 		// Execute the module function
 /******/ 		if (!(moduleId in __webpack_modules__)) {
 /******/ 			delete __webpack_module_cache__[moduleId];
@@ -505,11 +505,11 @@ module.exports = /*#__PURE__*/JSON.parse('{".sf-input":["display/flex (.flex)","
 /******/ 			throw e;
 /******/ 		}
 /******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
-/******/ 	
+/******/
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
-/******/ 	
+/******/
 /************************************************************************/
 /******/ 	/* webpack/runtime/define property getters */
 /******/ 	(() => {
@@ -537,12 +537,12 @@ module.exports = /*#__PURE__*/JSON.parse('{".sf-input":["display/flex (.flex)","
 /******/ 			}
 /******/ 		};
 /******/ 	})();
-/******/ 	
+/******/
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
 /******/ 	(() => {
 /******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
 /******/ 	})();
-/******/ 	
+/******/
 /******/ 	/* webpack/runtime/make namespace object */
 /******/ 	(() => {
 /******/ 		// define __esModule on exports
@@ -553,14 +553,14 @@ module.exports = /*#__PURE__*/JSON.parse('{".sf-input":["display/flex (.flex)","
 /******/ 			Object.defineProperty(exports, '__esModule', { value: true });
 /******/ 		};
 /******/ 	})();
-/******/ 	
+/******/
 /************************************************************************/
 let __webpack_exports__ = {};
 // This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
 (() => {
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("f8617676bb87");
-/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("82934b8e84bb");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("e59bf6182f4b");
+/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("4f86496fda01");
 /**
 * SIMAI Framework
 * Copyright 2008-2026 SIMAI Ltd
@@ -568,9 +568,9 @@ __webpack_require__.r(__webpack_exports__);
 * Read the license: http://framework.simai.studio/license/
 * Documentation: http://framework.simai.studio/
 * Support: http://simai.studio/support/
-* 
+*
 * INPUTS
-* 
+*
 * Entry point for importing components from this directory.
 * Simplifies the import process in other parts of the project.
 * Instead of importing individual files, all component can be imported through this file.

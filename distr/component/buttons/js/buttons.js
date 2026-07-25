@@ -2,13 +2,13 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "176a9b5b7b35"
+/***/ "03dc9135d9dc"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d7f974466839");
+/* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("77de01747ad5");
 /* harmony import */ var _json_button_utility_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("c71a77b9cdfb");
-/* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("58661bec99a6");
+/* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("89862d12f06a");
 
 
 
@@ -145,14 +145,14 @@ Buttons.utilityMap = _json_button_utility_json__WEBPACK_IMPORTED_MODULE_1__;
 
 /***/ },
 
-/***/ "757f80eca5ff"
+/***/ "a67f0d805acc"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _buttons__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("176a9b5b7b35");
+/* harmony import */ var _buttons__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("03dc9135d9dc");
 /*
 * Main JS file for including JS for component.
-* 
+*
 * Imports:
 * - Base function component (_component_name.js)
 */
@@ -160,7 +160,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ },
 
-/***/ "58661bec99a6"
+/***/ "89862d12f06a"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -194,7 +194,7 @@ function registerComponent(name, cls) {
 
 /***/ },
 
-/***/ "d7f974466839"
+/***/ "77de01747ad5"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -298,7 +298,7 @@ class ComponentObserver {
 
 /***/ },
 
-/***/ "bef9a721ac58"
+/***/ "a8191681d656"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -318,7 +318,7 @@ module.exports = /*#__PURE__*/JSON.parse('{".sf-button":["display/flex (.flex)",
 /************************************************************************/
 /******/ 	// The module cache
 /******/ 	const __webpack_module_cache__ = {};
-/******/ 	
+/******/
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
 /******/ 		// Check if module is in cache
@@ -332,7 +332,7 @@ module.exports = /*#__PURE__*/JSON.parse('{".sf-button":["display/flex (.flex)",
 /******/ 			// no module.loaded needed
 /******/ 			exports: {}
 /******/ 		};
-/******/ 	
+/******/
 /******/ 		// Execute the module function
 /******/ 		if (!(moduleId in __webpack_modules__)) {
 /******/ 			delete __webpack_module_cache__[moduleId];
@@ -341,11 +341,11 @@ module.exports = /*#__PURE__*/JSON.parse('{".sf-button":["display/flex (.flex)",
 /******/ 			throw e;
 /******/ 		}
 /******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
-/******/ 	
+/******/
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
-/******/ 	
+/******/
 /************************************************************************/
 /******/ 	/* webpack/runtime/define property getters */
 /******/ 	(() => {
@@ -373,12 +373,12 @@ module.exports = /*#__PURE__*/JSON.parse('{".sf-button":["display/flex (.flex)",
 /******/ 			}
 /******/ 		};
 /******/ 	})();
-/******/ 	
+/******/
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
 /******/ 	(() => {
 /******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
 /******/ 	})();
-/******/ 	
+/******/
 /******/ 	/* webpack/runtime/make namespace object */
 /******/ 	(() => {
 /******/ 		// define __esModule on exports
@@ -389,14 +389,14 @@ module.exports = /*#__PURE__*/JSON.parse('{".sf-button":["display/flex (.flex)",
 /******/ 			Object.defineProperty(exports, '__esModule', { value: true });
 /******/ 		};
 /******/ 	})();
-/******/ 	
+/******/
 /************************************************************************/
 let __webpack_exports__ = {};
 // This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
 (() => {
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("bef9a721ac58");
-/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("757f80eca5ff");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("a8191681d656");
+/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("a67f0d805acc");
 /**
 * SIMAI Framework
 * Copyright 2008-2026 SIMAI Ltd

@@ -2,7 +2,7 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "92b137c03f44"
+/***/ "9a5b71b613b3"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -11,8 +11,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   initExistingDownloadFiles: () => (/* binding */ initExistingDownloadFiles),
 /* harmony export */   unbindDownloadFile: () => (/* binding */ unbindDownloadFile)
 /* harmony export */ });
-/* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d7f974466839");
-/* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("58661bec99a6");
+/* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("77de01747ad5");
+/* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("89862d12f06a");
 /* harmony import */ var _json_download_file_utility_json__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("8ea1dd3302c4");
 
 
@@ -318,11 +318,11 @@ if (typeof document !== 'undefined') {
 
 /***/ },
 
-/***/ "6268ef3b5ed9"
+/***/ "6943576cb34b"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _download_file__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("92b137c03f44");
+/* harmony import */ var _download_file__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("9a5b71b613b3");
 /*
 * Main JS file for including JS for component.
 *
@@ -333,7 +333,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ },
 
-/***/ "58661bec99a6"
+/***/ "89862d12f06a"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -367,7 +367,7 @@ function registerComponent(name, cls) {
 
 /***/ },
 
-/***/ "d7f974466839"
+/***/ "77de01747ad5"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -471,7 +471,7 @@ class ComponentObserver {
 
 /***/ },
 
-/***/ "fadc616d6a49"
+/***/ "57777a4d7f29"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -491,7 +491,7 @@ module.exports = /*#__PURE__*/JSON.parse('{".sf-download-file":["display/flex (.
 /************************************************************************/
 /******/ 	// The module cache
 /******/ 	const __webpack_module_cache__ = {};
-/******/ 	
+/******/
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
 /******/ 		// Check if module is in cache
@@ -505,7 +505,7 @@ module.exports = /*#__PURE__*/JSON.parse('{".sf-download-file":["display/flex (.
 /******/ 			// no module.loaded needed
 /******/ 			exports: {}
 /******/ 		};
-/******/ 	
+/******/
 /******/ 		// Execute the module function
 /******/ 		if (!(moduleId in __webpack_modules__)) {
 /******/ 			delete __webpack_module_cache__[moduleId];
@@ -514,11 +514,11 @@ module.exports = /*#__PURE__*/JSON.parse('{".sf-download-file":["display/flex (.
 /******/ 			throw e;
 /******/ 		}
 /******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
-/******/ 	
+/******/
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
-/******/ 	
+/******/
 /************************************************************************/
 /******/ 	/* webpack/runtime/define property getters */
 /******/ 	(() => {
@@ -546,12 +546,12 @@ module.exports = /*#__PURE__*/JSON.parse('{".sf-download-file":["display/flex (.
 /******/ 			}
 /******/ 		};
 /******/ 	})();
-/******/ 	
+/******/
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
 /******/ 	(() => {
 /******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
 /******/ 	})();
-/******/ 	
+/******/
 /******/ 	/* webpack/runtime/make namespace object */
 /******/ 	(() => {
 /******/ 		// define __esModule on exports
@@ -562,14 +562,14 @@ module.exports = /*#__PURE__*/JSON.parse('{".sf-download-file":["display/flex (.
 /******/ 			Object.defineProperty(exports, '__esModule', { value: true });
 /******/ 		};
 /******/ 	})();
-/******/ 	
+/******/
 /************************************************************************/
 let __webpack_exports__ = {};
 // This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
 (() => {
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("fadc616d6a49");
-/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("6268ef3b5ed9");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("57777a4d7f29");
+/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("6943576cb34b");
 /**
  * SIMAI Framework
  * Copyright 2008-2026 SIMAI Ltd

@@ -1,4 +1,8 @@
 @layer sf.components {
+  .sf-modal {
+    --sf-modal-overlay-background: var(--sf-black, #000);
+    --sf-modal-overlay-opacity: var(--sf-opacity-60, 0.6);
+  }
   .sf-modal[data-sf-modal-position=left],
   .sf-modal[data-sf-modal-position=right],
   .sf-modal[data-sf-modal-position=inline-start],
@@ -80,6 +84,8 @@
     --sf-modal-surface-shadow: var(--sf-ui-shadow-3);
   }
   .sf-modal [data-sf-modal-overlay] {
+    background-color: var(--sf-modal-overlay-background);
+    opacity: var(--sf-modal-overlay-opacity);
     transition: opacity 0.24s ease;
   }
   .sf-modal[data-sf-modal-state=opening] [data-sf-modal-overlay] {

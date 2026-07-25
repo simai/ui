@@ -2,7 +2,7 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "58661bec99a6"
+/***/ "89862d12f06a"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -36,7 +36,7 @@ function registerComponent(name, cls) {
 
 /***/ },
 
-/***/ "d1a6a5f99125"
+/***/ "5045d2bb3a27"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -45,8 +45,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   setTextareaState: () => (/* binding */ setTextareaState),
 /* harmony export */   unbindTextarea: () => (/* binding */ unbindTextarea)
 /* harmony export */ });
-/* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d7f974466839");
-/* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("58661bec99a6");
+/* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("77de01747ad5");
+/* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("89862d12f06a");
 /* harmony import */ var _json_textarea_utility_json__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("9fe5ba254a5b");
 
 
@@ -288,11 +288,11 @@ textareaObserver.observe(document.documentElement, {
 
 /***/ },
 
-/***/ "5d28d50fe1f7"
+/***/ "a6a89351d44f"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _textarea__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d1a6a5f99125");
+/* harmony import */ var _textarea__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("5045d2bb3a27");
 /*
 * Main JS file for including JS for component.
 *
@@ -303,7 +303,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ },
 
-/***/ "d7f974466839"
+/***/ "77de01747ad5"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -407,7 +407,7 @@ class ComponentObserver {
 
 /***/ },
 
-/***/ "2e93e8130040"
+/***/ "4008daf7a69f"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -427,7 +427,7 @@ module.exports = /*#__PURE__*/JSON.parse('{".sf-textarea":["display/flex (.flex)
 /************************************************************************/
 /******/ 	// The module cache
 /******/ 	const __webpack_module_cache__ = {};
-/******/ 	
+/******/
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
 /******/ 		// Check if module is in cache
@@ -441,7 +441,7 @@ module.exports = /*#__PURE__*/JSON.parse('{".sf-textarea":["display/flex (.flex)
 /******/ 			// no module.loaded needed
 /******/ 			exports: {}
 /******/ 		};
-/******/ 	
+/******/
 /******/ 		// Execute the module function
 /******/ 		if (!(moduleId in __webpack_modules__)) {
 /******/ 			delete __webpack_module_cache__[moduleId];
@@ -450,11 +450,11 @@ module.exports = /*#__PURE__*/JSON.parse('{".sf-textarea":["display/flex (.flex)
 /******/ 			throw e;
 /******/ 		}
 /******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
-/******/ 	
+/******/
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
-/******/ 	
+/******/
 /************************************************************************/
 /******/ 	/* webpack/runtime/define property getters */
 /******/ 	(() => {
@@ -482,12 +482,12 @@ module.exports = /*#__PURE__*/JSON.parse('{".sf-textarea":["display/flex (.flex)
 /******/ 			}
 /******/ 		};
 /******/ 	})();
-/******/ 	
+/******/
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
 /******/ 	(() => {
 /******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
 /******/ 	})();
-/******/ 	
+/******/
 /******/ 	/* webpack/runtime/make namespace object */
 /******/ 	(() => {
 /******/ 		// define __esModule on exports
@@ -498,14 +498,14 @@ module.exports = /*#__PURE__*/JSON.parse('{".sf-textarea":["display/flex (.flex)
 /******/ 			Object.defineProperty(exports, '__esModule', { value: true });
 /******/ 		};
 /******/ 	})();
-/******/ 	
+/******/
 /************************************************************************/
 let __webpack_exports__ = {};
 // This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
 (() => {
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2e93e8130040");
-/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5d28d50fe1f7");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("4008daf7a69f");
+/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("a6a89351d44f");
 /**
 * SIMAI Framework
 * Copyright 2008-2026 SIMAI Ltd
@@ -513,9 +513,9 @@ __webpack_require__.r(__webpack_exports__);
 * Read the license: http://framework.simai.studio/license/
 * Documentation: http://framework.simai.studio/
 * Support: http://simai.studio/support/
-* 
+*
 * INPUTS
-* 
+*
 * Entry point for importing components from this directory.
 * Simplifies the import process in other parts of the project.
 * Instead of importing individual files, all component can be imported through this file.
