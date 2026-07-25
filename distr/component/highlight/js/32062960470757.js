@@ -38,7 +38,7 @@ function yaml(hljs) {
         begin: /'[\w*@][\w*@ :()\./-]*':(?=[ \t]|$)/ },
     ]
   };
-  
+
   const TEMPLATE_VARIABLES = {
     className: 'template-variable',
     variants: [

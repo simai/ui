@@ -2229,17 +2229,17 @@ function scope(target, options, originalOptions) {
                 scope_Events[targetEvent].forEach(function (callback) {
                     callback.call(
                     // Use the slider public API as the scope ('this')
-                    scope_Self, 
+                    scope_Self,
                     // Return values as array, so arg_1[arg_2] is always valid.
-                    scope_Values.map(options.format.to), 
+                    scope_Values.map(options.format.to),
                     // Handle index, 0 or 1
-                    handleNumber, 
+                    handleNumber,
                     // Un-formatted slider values
-                    scope_Values.slice(), 
+                    scope_Values.slice(),
                     // Event is fired by tap, true or false
-                    tap || false, 
+                    tap || false,
                     // Left offset of the handle, in relation to the slider
-                    scope_Locations.slice(), 
+                    scope_Locations.slice(),
                     // add the slider public API to an accessible parameter when this is unavailable
                     scope_Self);
                 });
@@ -2722,7 +2722,7 @@ function initialize(target, originalOptions) {
 /************************************************************************/
 /******/ 	// The module cache
 /******/ 	const __webpack_module_cache__ = {};
-/******/ 	
+/******/
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
 /******/ 		// Check if module is in cache
@@ -2736,7 +2736,7 @@ function initialize(target, originalOptions) {
 /******/ 			// no module.loaded needed
 /******/ 			exports: {}
 /******/ 		};
-/******/ 	
+/******/
 /******/ 		// Execute the module function
 /******/ 		if (!(moduleId in __webpack_modules__)) {
 /******/ 			delete __webpack_module_cache__[moduleId];
@@ -2745,11 +2745,11 @@ function initialize(target, originalOptions) {
 /******/ 			throw e;
 /******/ 		}
 /******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
-/******/ 	
+/******/
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
-/******/ 	
+/******/
 /************************************************************************/
 /******/ 	/* webpack/runtime/define property getters */
 /******/ 	(() => {
@@ -2777,12 +2777,12 @@ function initialize(target, originalOptions) {
 /******/ 			}
 /******/ 		};
 /******/ 	})();
-/******/ 	
+/******/
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
 /******/ 	(() => {
 /******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
 /******/ 	})();
-/******/ 	
+/******/
 /******/ 	/* webpack/runtime/make namespace object */
 /******/ 	(() => {
 /******/ 		// define __esModule on exports
@@ -2793,7 +2793,7 @@ function initialize(target, originalOptions) {
 /******/ 			Object.defineProperty(exports, '__esModule', { value: true });
 /******/ 		};
 /******/ 	})();
-/******/ 	
+/******/
 /************************************************************************/
 let __webpack_exports__ = {};
 // This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.

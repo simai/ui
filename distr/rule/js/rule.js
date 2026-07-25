@@ -7388,7 +7388,7 @@ SF.RuleLoader['scroll-slider-radius/default'] = /(scroll-radius|scroll-thumb-rad
 /***/ "1a6eca4b228a"
 () {
 
-SF.RuleLoader['scroll-slider-width/default'] = /(?:scroll|scroll-thumb)-[1-4]/;
+SF.RuleLoader['scroll-slider-width/default'] = /(?:scroll|scroll-thumb)-[0-4]/;
 
 /***/ },
 
@@ -8229,7 +8229,7 @@ SF.RuleLoader['z-index/xl'] = /xl\:z-([1-9]{1}|auto|-1)/;
 /************************************************************************/
 /******/ 	// The module cache
 /******/ 	const __webpack_module_cache__ = {};
-/******/ 	
+/******/
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
 /******/ 		// Check if module is in cache
@@ -8243,7 +8243,7 @@ SF.RuleLoader['z-index/xl'] = /xl\:z-([1-9]{1}|auto|-1)/;
 /******/ 			// no module.loaded needed
 /******/ 			exports: {}
 /******/ 		};
-/******/ 	
+/******/
 /******/ 		// Execute the module function
 /******/ 		if (!(moduleId in __webpack_modules__)) {
 /******/ 			delete __webpack_module_cache__[moduleId];
@@ -8252,11 +8252,11 @@ SF.RuleLoader['z-index/xl'] = /xl\:z-([1-9]{1}|auto|-1)/;
 /******/ 			throw e;
 /******/ 		}
 /******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
-/******/ 	
+/******/
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
-/******/ 	
+/******/
 /************************************************************************/
 /******/ 	/* webpack/runtime/compat get default export */
 /******/ 	(() => {
@@ -8269,7 +8269,7 @@ SF.RuleLoader['z-index/xl'] = /xl\:z-([1-9]{1}|auto|-1)/;
 /******/ 			return getter;
 /******/ 		};
 /******/ 	})();
-/******/ 	
+/******/
 /******/ 	/* webpack/runtime/define property getters */
 /******/ 	(() => {
 /******/ 		// define getter/value functions for harmony exports
@@ -8296,12 +8296,12 @@ SF.RuleLoader['z-index/xl'] = /xl\:z-([1-9]{1}|auto|-1)/;
 /******/ 			}
 /******/ 		};
 /******/ 	})();
-/******/ 	
+/******/
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
 /******/ 	(() => {
 /******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
 /******/ 	})();
-/******/ 	
+/******/
 /******/ 	/* webpack/runtime/make namespace object */
 /******/ 	(() => {
 /******/ 		// define __esModule on exports
@@ -8312,7 +8312,7 @@ SF.RuleLoader['z-index/xl'] = /xl\:z-([1-9]{1}|auto|-1)/;
 /******/ 			Object.defineProperty(exports, '__esModule', { value: true });
 /******/ 		};
 /******/ 	})();
-/******/ 	
+/******/
 /************************************************************************/
 let __webpack_exports__ = {};
 // This entry needs to be wrapped in an IIFE because it needs to be in strict mode.

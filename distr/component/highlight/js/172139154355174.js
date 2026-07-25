@@ -1001,7 +1001,7 @@ function less(hljs) {
       MIXIN_GUARD_MODE,
       IDENT_MODE('keyword', 'all\\b'),
       IDENT_MODE('variable', '@\\{' + IDENT_RE + '\\}'), // otherwise it’s identified as tag
-      
+
       {
         begin: '\\b(' + TAGS.join('|') + ')\\b',
         className: 'selector-tag'

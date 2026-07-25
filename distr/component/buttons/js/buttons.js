@@ -152,7 +152,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _buttons__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("176a9b5b7b35");
 /*
 * Main JS file for including JS for component.
-* 
+*
 * Imports:
 * - Base function component (_component_name.js)
 */
@@ -318,7 +318,7 @@ module.exports = /*#__PURE__*/JSON.parse('{".sf-button":["display/flex (.flex)",
 /************************************************************************/
 /******/ 	// The module cache
 /******/ 	const __webpack_module_cache__ = {};
-/******/ 	
+/******/
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
 /******/ 		// Check if module is in cache
@@ -332,7 +332,7 @@ module.exports = /*#__PURE__*/JSON.parse('{".sf-button":["display/flex (.flex)",
 /******/ 			// no module.loaded needed
 /******/ 			exports: {}
 /******/ 		};
-/******/ 	
+/******/
 /******/ 		// Execute the module function
 /******/ 		if (!(moduleId in __webpack_modules__)) {
 /******/ 			delete __webpack_module_cache__[moduleId];
@@ -341,11 +341,11 @@ module.exports = /*#__PURE__*/JSON.parse('{".sf-button":["display/flex (.flex)",
 /******/ 			throw e;
 /******/ 		}
 /******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
-/******/ 	
+/******/
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
-/******/ 	
+/******/
 /************************************************************************/
 /******/ 	/* webpack/runtime/define property getters */
 /******/ 	(() => {
@@ -373,12 +373,12 @@ module.exports = /*#__PURE__*/JSON.parse('{".sf-button":["display/flex (.flex)",
 /******/ 			}
 /******/ 		};
 /******/ 	})();
-/******/ 	
+/******/
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
 /******/ 	(() => {
 /******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
 /******/ 	})();
-/******/ 	
+/******/
 /******/ 	/* webpack/runtime/make namespace object */
 /******/ 	(() => {
 /******/ 		// define __esModule on exports
@@ -389,7 +389,7 @@ module.exports = /*#__PURE__*/JSON.parse('{".sf-button":["display/flex (.flex)",
 /******/ 			Object.defineProperty(exports, '__esModule', { value: true });
 /******/ 		};
 /******/ 	})();
-/******/ 	
+/******/
 /************************************************************************/
 let __webpack_exports__ = {};
 // This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
