@@ -7376,7 +7376,7 @@ SF.RuleLoader['scroll-slider-radius/default'] = /(scroll-radius|scroll-thumb-rad
 /***/ "0250d46ef1d4"
 () {
 
-SF.RuleLoader['scroll-slider-width/default'] = /(?:scroll|scroll-thumb)-[1-4]/;
+SF.RuleLoader['scroll-slider-width/default'] = /(?:scroll|scroll-thumb)-[0-4]/;
 
 /***/ },
 

@@ -3125,7 +3125,7 @@
   },
   {
     "name": "scroll-slider-width/default",
-    "regex": "/(?:scroll|scroll-thumb)-[1-4]/"
+    "regex": "/(?:scroll|scroll-thumb)-[0-4]/"
   },
   {
     "name": "scroll-snap-align/default",
