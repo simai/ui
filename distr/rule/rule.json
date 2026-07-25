@@ -3147,7 +3147,7 @@
     "name": "scrollbar",
     "css": true,
     "js": true,
-    "regex": "/\"scrollbar\"/",
+    "regex": "/(?:class\\s*=\\s*[\"'][^\"']*\\bsf-scrollbar\\b|data-sf-scrollbar(?:\\s*=\\s*[\"'][^\"']*[\"'])?)/i",
     "type": "component"
   },
   {

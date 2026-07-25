@@ -25,21 +25,234 @@
 * - Base styles (_css__component_name.scss)
 *
 */
-.scrollbar::-webkit-scrollbar {
-  width: var(--sf-a8);
-}
-
-/* Track */
-.scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-/* Handle */
-.scrollbar::-webkit-scrollbar-thumb {
-  background: var(--sf-surface-4); /*#888;*/
-}
-
-/* Handle on hover */
-.scrollbar::-webkit-scrollbar-thumb:hover {
-  background: var(--sf-on-surface-variant);
+@layer sf.components {
+  .sf-scrollbar {
+    --sf-scrollbar-hit-size: var(--sf-b6);
+    --sf-scrollbar-rest-size: var(--sf-a2);
+    --sf-scrollbar-active-size: var(--sf-a6);
+    --sf-scrollbar-thumb-color: color-mix(
+      in srgb,
+      var(--sf-on-surface) 34%,
+      var(--sf-transparent)
+    );
+    position: relative;
+    min-height: 0;
+    min-block-size: 0;
+    overflow: hidden;
+  }
+  .sf-scrollbar__viewport {
+    height: 100%;
+    block-size: 100%;
+    overflow: auto;
+    -ms-scroll-chaining: none;
+        overscroll-behavior: contain;
+    scrollbar-gutter: auto;
+  }
+  .sf-scrollbar:not([data-sf-scrollbar]) .sf-scrollbar__viewport,
+  .sf-scrollbar[data-sf-scrollbar=""] .sf-scrollbar__viewport,
+  .sf-scrollbar[data-sf-scrollbar=overlay] .sf-scrollbar__viewport,
+  .sf-scrollbar[data-sf-scrollbar=persistent] .sf-scrollbar__viewport,
+  .sf-scrollbar[data-sf-scrollbar=hidden] .sf-scrollbar__viewport {
+    scrollbar-width: none;
+  }
+  .sf-scrollbar:not([data-sf-scrollbar]) .sf-scrollbar__viewport::-webkit-scrollbar,
+  .sf-scrollbar[data-sf-scrollbar=""] .sf-scrollbar__viewport::-webkit-scrollbar,
+  .sf-scrollbar[data-sf-scrollbar=overlay] .sf-scrollbar__viewport::-webkit-scrollbar,
+  .sf-scrollbar[data-sf-scrollbar=persistent] .sf-scrollbar__viewport::-webkit-scrollbar,
+  .sf-scrollbar[data-sf-scrollbar=hidden] .sf-scrollbar__viewport::-webkit-scrollbar {
+    display: none;
+  }
+  .sf-scrollbar[data-sf-scrollbar=standard] .sf-scrollbar__viewport {
+    scrollbar-color: var(--sf-outline) var(--sf-transparent);
+    scrollbar-width: auto;
+  }
+  .sf-scrollbar[data-sf-scrollbar=standard] .sf-scrollbar__viewport::-webkit-scrollbar {
+    height: var(--sf-scroll-bg-width);
+    block-size: var(--sf-scroll-bg-width);
+    width: var(--sf-scroll-bg-width);
+    inline-size: var(--sf-scroll-bg-width);
+  }
+  .sf-scrollbar[data-sf-scrollbar=standard] .sf-scrollbar__viewport::-webkit-scrollbar-track {
+    border: var(--sf-scroll-thumb-inset) solid var(--sf-transparent);
+    border-radius: var(--sf-scroll-radius);
+    background: var(--sf-transparent);
+    background-clip: padding-box;
+  }
+  .sf-scrollbar[data-sf-scrollbar=standard] .sf-scrollbar__viewport::-webkit-scrollbar-thumb {
+    min-height: var(--sf-scroll-thumb-size);
+    min-block-size: var(--sf-scroll-thumb-size);
+    min-width: var(--sf-scroll-thumb-size);
+    min-inline-size: var(--sf-scroll-thumb-size);
+    border: var(--sf-scroll-thumb-inset) solid var(--sf-transparent);
+    border-radius: var(--sf-scroll-radius);
+    background: var(--sf-outline);
+    background-clip: padding-box;
+  }
+  .sf-scrollbar[data-sf-scrollbar=standard] .sf-scrollbar__viewport::-webkit-scrollbar-thumb:hover {
+    background-color: var(--sf-on-surface-variant);
+  }
+  [dir="ltr"] .sf-scrollbar__track {
+    right: 0;
+  }
+  [dir="rtl"] .sf-scrollbar__track {
+    left: 0;
+  }
+  .sf-scrollbar__track {
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    bottom: 0;
+    inset-block: 0;
+    inset-inline-end: 0;
+    width: var(--sf-scrollbar-hit-size);
+    inline-size: var(--sf-scrollbar-hit-size);
+    opacity: 0;
+    pointer-events: auto;
+    transition: opacity var(--sf-duration-fast) var(--sf-animation);
+  }
+  [dir="ltr"] .sf-scrollbar__thumb {
+    right: 0;
+  }
+  [dir="rtl"] .sf-scrollbar__thumb {
+    left: 0;
+  }
+  .sf-scrollbar__thumb {
+    position: absolute;
+    top: 0;
+    inset-block-start: 0;
+    inset-inline-end: 0;
+    width: var(--sf-scrollbar-hit-size);
+    inline-size: var(--sf-scrollbar-hit-size);
+    min-height: var(--sf-d1);
+    min-block-size: var(--sf-d1);
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    cursor: -webkit-grab;
+    cursor: grab;
+    touch-action: none;
+    -webkit-transform: translateY(0);
+            transform: translateY(0);
+    -webkit-transform: translateY(var(--sf-scrollbar-thumb-offset, 0));
+            transform: translateY(var(--sf-scrollbar-thumb-offset, 0));
+  }
+  [dir="ltr"] .sf-scrollbar__thumb::before {
+    right: 0;
+  }
+  [dir="rtl"] .sf-scrollbar__thumb::before {
+    left: 0;
+  }
+  .sf-scrollbar__thumb::before {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    inset-block: 0;
+    inset-inline-end: 0;
+    width: var(--sf-scrollbar-rest-size);
+    inline-size: var(--sf-scrollbar-rest-size);
+    border-radius: inherit;
+    background: var(--sf-scrollbar-thumb-color);
+    content: "";
+    transition: inline-size var(--sf-duration-fast) var(--sf-animation);
+  }
+  .sf-scrollbar[data-sf-scrollbar=persistent] .sf-scrollbar__thumb::before,
+  .sf-scrollbar__track:hover .sf-scrollbar__thumb::before,
+  .sf-scrollbar__thumb.focus-visible::before,
+  .sf-scrollbar[data-sf-scrollbar-dragging=true] .sf-scrollbar__thumb::before {
+    width: var(--sf-scrollbar-active-size);
+    inline-size: var(--sf-scrollbar-active-size);
+  }
+  .sf-scrollbar[data-sf-scrollbar=persistent] .sf-scrollbar__thumb::before,
+  .sf-scrollbar__track:hover .sf-scrollbar__thumb::before,
+  .sf-scrollbar__thumb.focus-visible::before,
+  .sf-scrollbar[data-sf-scrollbar-dragging=true] .sf-scrollbar__thumb::before {
+    width: var(--sf-scrollbar-active-size);
+    width: var(--sf-scrollbar-active-size);
+    inline-size: var(--sf-scrollbar-active-size);
+  }
+  .sf-scrollbar[data-sf-scrollbar=persistent] .sf-scrollbar__thumb::before,
+  .sf-scrollbar__track:hover .sf-scrollbar__thumb::before,
+  .sf-scrollbar__thumb:focus-visible::before,
+  .sf-scrollbar[data-sf-scrollbar-dragging=true] .sf-scrollbar__thumb::before {
+    width: var(--sf-scrollbar-active-size);
+    inline-size: var(--sf-scrollbar-active-size);
+  }
+  .sf-scrollbar[data-sf-scrollbar-state=active] .sf-scrollbar__track,
+  .sf-scrollbar[data-sf-scrollbar=persistent] .sf-scrollbar__track,
+  .sf-scrollbar[focus-within] .sf-scrollbar__track {
+    opacity: 1;
+  }
+  .sf-scrollbar[data-sf-scrollbar-state=active] .sf-scrollbar__track,
+  .sf-scrollbar[data-sf-scrollbar=persistent] .sf-scrollbar__track,
+  .sf-scrollbar:focus-within .sf-scrollbar__track {
+    opacity: 1;
+  }
+  .sf-scrollbar[data-sf-scrollbar-dragging=true] .sf-scrollbar__thumb {
+    cursor: -webkit-grabbing;
+    cursor: grabbing;
+  }
+  .sf-scrollbar[data-sf-scrollbar-overflow=false] .sf-scrollbar__track {
+    display: none;
+  }
+  .sf-scrollbar__thumb.focus-visible {
+    outline: var(--sf-focus-outline-width) solid var(--sf-focus);
+    outline-offset: calc(-1 * var(--sf-focus-outline-width));
+  }
+  .sf-scrollbar__thumb:focus-visible {
+    outline: var(--sf-focus-outline-width) solid var(--sf-focus);
+    outline-offset: calc(-1 * var(--sf-focus-outline-width));
+  }
+  .scrollbar::-webkit-scrollbar {
+    width: var(--sf-a8);
+    inline-size: var(--sf-a8);
+  }
+  .scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scrollbar::-webkit-scrollbar-thumb {
+    background: var(--sf-surface-4);
+  }
+  .scrollbar::-webkit-scrollbar-thumb:hover {
+    background: var(--sf-on-surface-variant);
+  }
+  @media (pointer: coarse) {
+    .sf-scrollbar__track,
+    .sf-scrollbar__thumb {
+      width: var(--sf-a8);
+      inline-size: var(--sf-a8);
+      pointer-events: none;
+    }
+    .sf-scrollbar__thumb::before {
+      width: var(--sf-a4);
+      inline-size: var(--sf-a4);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sf-scrollbar__track,
+    .sf-scrollbar__thumb::before {
+      transition: none;
+    }
+  }
+  @media (forced-colors: active) {
+    .sf-scrollbar__track {
+      display: none;
+    }
+    .sf-scrollbar:not([data-sf-scrollbar]) .sf-scrollbar__viewport,
+    .sf-scrollbar[data-sf-scrollbar=""] .sf-scrollbar__viewport,
+    .sf-scrollbar[data-sf-scrollbar=overlay] .sf-scrollbar__viewport,
+    .sf-scrollbar[data-sf-scrollbar=persistent] .sf-scrollbar__viewport,
+    .sf-scrollbar[data-sf-scrollbar=hidden] .sf-scrollbar__viewport {
+      scrollbar-color: auto;
+      scrollbar-width: auto;
+    }
+    .sf-scrollbar:not([data-sf-scrollbar]) .sf-scrollbar__viewport::-webkit-scrollbar,
+    .sf-scrollbar[data-sf-scrollbar=""] .sf-scrollbar__viewport::-webkit-scrollbar,
+    .sf-scrollbar[data-sf-scrollbar=overlay] .sf-scrollbar__viewport::-webkit-scrollbar,
+    .sf-scrollbar[data-sf-scrollbar=persistent] .sf-scrollbar__viewport::-webkit-scrollbar,
+    .sf-scrollbar[data-sf-scrollbar=hidden] .sf-scrollbar__viewport::-webkit-scrollbar {
+      display: inline;
+      display: initial;
+    }
+  }
 }

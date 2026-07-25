@@ -501,7 +501,7 @@ SF.RuleLoader['reference-link'] = {
 () {
 
 SF.RuleLoader['scrollbar'] = {
-  regex: /"scrollbar"/,
+  regex: /(?:class\s*=\s*["'][^"']*\bsf-scrollbar\b|data-sf-scrollbar(?:\s*=\s*["'][^"']*["'])?)/i,
   type: 'component',
   css: true,
   js: true
