@@ -170,9 +170,6 @@ highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_1__["default"].addPlugin({
 
       el.id = id;
       el.source.classList.add('init');
-      highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_1__["default"].lineNumbersBlock(el, {
-        singleLine: true
-      });
     }
   }
 });
