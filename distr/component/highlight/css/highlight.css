@@ -161,8 +161,11 @@
     margin-bottom: var(--sf-space-1\/2);
   }
   .sf--highlight-wrap {
-    padding: 0 var(--sf-space-1) var(--sf-space-1);
+    padding: 0;
     height: 100%;
+  }
+  .sf--highlight-wrap > .sf-scrollbar__viewport {
+    padding: var(--sf-space-1);
   }
   .body .source {
     border-radius: var(--sf-radius-1);
