@@ -164,7 +164,7 @@
     padding: 0;
     height: 100%;
   }
-  .sf--highlight-wrap > .sf-scrollbar__viewport {
+  .sf--highlight-wrap > .sf-scrollbar__viewport:not([class*=p-]) {
     padding: var(--sf-space-1);
   }
   .body .source {
