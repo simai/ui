@@ -2279,6 +2279,9 @@
       },
       {
         "name": "icons"
+      },
+      {
+        "name": "scrollbar"
       }
     ],
     "type": "component"

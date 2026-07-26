@@ -51,10 +51,9 @@ class Copy extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_1__.Compo
       this.button.classList.add('sf-icon-button', 'sf-icon-button--icon', `sf-icon-button--size-${size}`, `sf-icon-button--${scheme}`, `sf-icon-button--${type}`, 'm-0');
     }
 
-    this.icon = document.createElement('i');
-    this.icon.classList.add('sf-icon');
+    this.icon = document.createElement('sf-icon');
+    this.icon.setAttribute('icon', 'content_copy');
     this.icon.setAttribute('aria-hidden', 'true');
-    this.icon.textContent = 'content_copy';
     this.button.append(this.icon);
 
     if (this.hasText) {
@@ -73,7 +72,7 @@ class Copy extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_1__.Compo
       } = this.text;
 
       if (this.icon) {
-        this.icon.textContent = 'check';
+        this.icon.setAttribute('icon', 'check');
 
         if (done) {
           this.button.setAttribute('aria-label', done);
@@ -84,7 +83,7 @@ class Copy extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_1__.Compo
         }
 
         setTimeout(() => {
-          this.icon.textContent = 'content_copy';
+          this.icon.setAttribute('icon', 'content_copy');
           this.button.setAttribute('aria-label', this.attrs['aria-label'] || this.params.label || text || 'Copy');
 
           if (done && this.span) {

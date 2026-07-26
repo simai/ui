@@ -88,7 +88,9 @@ highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_1__["default"].addPlugin({
   }) => {
     let source = el.closest('.source');
     el.wrap = document.createElement('div');
-    el.wrap.classList.add('sf--highlight-wrap');
+    el.wrap.classList.add('sf--highlight-wrap', 'sf-scrollbar');
+    el.wrap.dataset.sfScrollbar = 'overlay';
+    el.wrap.dataset.sfScrollbarAxis = 'horizontal';
     const classLang = el.className && el.className.match(/(?:language|lang)-([^\s]+)/) || [];
     const requestedLang = (el.dataset?.lang || classLang[1] || '').toLowerCase();
 
@@ -99,12 +101,21 @@ highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_1__["default"].addPlugin({
     if (!source) {
       const parent = el.parentNode;
       const clone = parent.cloneNode();
+      clone.classList.add('sf-scrollbar__viewport');
       source = document.createElement('div');
       source.classList.add('source');
       clone.appendChild(el);
       source.append(el.wrap);
       el.wrap.append(clone);
       parent.replaceWith(source);
+    } else {
+      const parent = el.parentNode;
+
+      if (parent && !parent.closest('.sf--highlight-wrap')) {
+        parent.classList.add('sf-scrollbar__viewport');
+        parent.replaceWith(el.wrap);
+        el.wrap.append(parent);
+      }
     }
 
     el.source = source;

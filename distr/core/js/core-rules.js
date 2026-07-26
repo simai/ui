@@ -327,6 +327,8 @@ SF.RuleLoader.highlight = {
     name: 'icon-buttons'
   }, {
     name: 'icons'
+  }, {
+    name: 'scrollbar'
   }]
 };
 
