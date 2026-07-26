@@ -44,8 +44,8 @@
     height: 100%;
     block-size: 100%;
     overflow: auto;
-    -ms-scroll-chaining: none;
-        overscroll-behavior: contain;
+    overscroll-behavior-block: contain;
+    overscroll-behavior-inline: auto;
     scrollbar-gutter: auto;
   }
   .sf-scrollbar:not([data-sf-scrollbar]) .sf-scrollbar__viewport,
@@ -210,6 +210,8 @@
     max-inline-size: 100%;
     overflow-x: auto;
     overflow-y: hidden;
+    overscroll-behavior-block: auto;
+    overscroll-behavior-inline: contain;
   }
   .sf-scrollbar__track--horizontal {
     top: auto;
