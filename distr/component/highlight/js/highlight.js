@@ -110,7 +110,7 @@ highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_1__["default"].addPlugin({
     el.source = source;
     el.head = document.createElement('div');
     el.langText = document.createElement('span');
-    el.langText.classList.add('flex', 'sf-text-1/3', 'weight-5');
+    el.langText.classList.add('flex', 'sf-text-1/2', 'weight-5');
     el.head.classList.add('sf--highlight-head', 'flex', 'content-main-between', 'border-outline-variant', 'items-center', 'bg-surface-overlay');
   },
   'after:highlightElement': ({
@@ -129,7 +129,7 @@ highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_1__["default"].addPlugin({
         el.source.prepend(el.head);
         el.head.append(el.langText);
         el.langText.textContent = displayLang;
-        el.head.append(`[!Copy data-id=copy](size=1/3 scheme=on-surface type=link text=Copy done=Copied)#${id}`);
+        el.head.append(`[!Copy data-id=copy](size=1/2 scheme=on-surface type=link label=Copy done=Copied)#${id}`);
         el.head.style.visibility = 'hidden';
 
         const applyShortcodes = () => {

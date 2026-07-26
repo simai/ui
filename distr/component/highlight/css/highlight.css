@@ -2,7 +2,7 @@
   .theme-light,
   .theme-dark {
     --sf-highlight-text: var(--sf-on-surface);
-    --sf-highlight-background: var(--sf-surface-1);
+    --sf-highlight-background: transparent;
     --sf-highlight-keyword: var(--sf-error);
     --sf-highlight-title: var(--sf-tertiary);
     --sf-highlight-attribute: var(--sf-primary);
@@ -157,7 +157,7 @@
 }
 @layer sf.components {
   .sf--highlight-head {
-    padding: var(--sf-space-1) var(--sf-space-1) var(--sf-space-1\/2);
+    padding: var(--sf-space-1\/3) var(--sf-space-1);
     margin-bottom: var(--sf-space-1\/2);
   }
   .sf--highlight-wrap {

@@ -111,11 +111,16 @@ SF.RuleLoader['checkbox'] = {
 /***/ "c823f2459268"
 () {
 
-SF.RuleLoader['clipboard'] = {
+SF.RuleLoader.clipboard = {
   regex: /(btn-clipboard|source)/,
   type: 'component',
   js: true,
-  css: true
+  css: true,
+  relation: [{
+    name: 'icon-buttons'
+  }, {
+    name: 'icons'
+  }]
 };
 
 /***/ },
@@ -315,7 +320,14 @@ SF.RuleLoader.highlight = {
   regex: /(?:class\s*=\s*["'][^"']*language-[^"']*["']|<pre\b[^>]*>\s*<code\b[^>]*>)/i,
   type: 'component',
   js: true,
-  css: true
+  css: true,
+  relation: [{
+    name: 'clipboard'
+  }, {
+    name: 'icon-buttons'
+  }, {
+    name: 'icons'
+  }]
 };
 
 /***/ },

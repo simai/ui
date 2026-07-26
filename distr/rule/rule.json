@@ -1309,6 +1309,14 @@
     "css": true,
     "js": true,
     "regex": "/(btn-clipboard|source)/",
+    "relation": [
+      {
+        "name": "icon-buttons"
+      },
+      {
+        "name": "icons"
+      }
+    ],
     "type": "component"
   },
   {
@@ -2262,6 +2270,17 @@
     "css": true,
     "js": true,
     "regex": "/(?:class\\s*=\\s*[\"'][^\"']*language-[^\"']*[\"']|<pre\\b[^>]*>\\s*<code\\b[^>]*>)/i",
+    "relation": [
+      {
+        "name": "clipboard"
+      },
+      {
+        "name": "icon-buttons"
+      },
+      {
+        "name": "icons"
+      }
+    ],
     "type": "component"
   },
   {
