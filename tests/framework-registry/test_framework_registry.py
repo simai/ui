@@ -19,8 +19,8 @@ if not SMART_MANIFEST_INPUT:
     raise RuntimeError("SIMAI_UI_SMART_MANIFEST is required for cross-repository tests")
 SMART_MANIFEST = Path(SMART_MANIFEST_INPUT).resolve()
 GENERATED = ROOT / "contracts/generated/framework-contract-registry.json"
-LOCK = ROOT / "contracts/releases/ui-148dbf36d42a-smart-daf5f285d006.lock.json"
-SMART_REFERENCE = ROOT / "contracts/registry-inputs/ui-smart-daf5f285d006.ref.json"
+LOCK = ROOT / "contracts/releases/ui-8afb6defbf76-smart-655406493ce9.lock.json"
+SMART_REFERENCE = ROOT / "contracts/registry-inputs/ui-smart-655406493ce9.ref.json"
 
 
 def load_builder():
@@ -78,15 +78,15 @@ class FrameworkContractRegistryTest(unittest.TestCase):
             self.registry["counts"],
             {
                 "utility": 226,
-                "component": 58,
+                "component": 60,
                 "smart-component": 42,
                 "recipe": 1,
-                "total": 327,
+                "total": 329,
             },
         )
         self.assertEqual(
             self.registry["compatibility"]["id"],
-            "ui-148dbf36d42a-smart-daf5f285d006",
+            "ui-8afb6defbf76-smart-655406493ce9",
         )
         self.assertEqual(self.registry["compatibility"]["status"], "bounded")
         self.assertEqual(self.registry["compatibility"]["profile"], "plain-assets-v1")
@@ -330,12 +330,12 @@ class FrameworkContractRegistryTest(unittest.TestCase):
         )
         self.assertEqual(
             reference["contract_revision"],
-            "7a7c6b1ff51b477bde8c7f367c624a58863c3734",
+            "4df01bdc553524bfbde201f38727861f67a6e013",
         )
         self.assertEqual(reference["status"], "committed")
         self.assertEqual(
             reference["manifest"]["file_sha256"],
-            "c5717fa292c79c856976f8dea95840f32297f5abbb9790ddaebecc71e7b9968f",
+            "6024c6f48236765421a08915668442a8129e67216a6f9293f4da9f495bff4ab0",
         )
         smart_source = next(
             item

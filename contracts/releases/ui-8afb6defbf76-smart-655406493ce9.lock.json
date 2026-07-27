@@ -1,7 +1,7 @@
 {
   "schema_id": "simai.framework.release-lock",
   "schema_version": 1,
-  "compatibility_id": "ui-148dbf36d42a-smart-daf5f285d006",
+  "compatibility_id": "ui-8afb6defbf76-smart-655406493ce9",
   "status": "bounded",
   "profile": "plain-assets-v1",
   "runtime_sources": {
@@ -9,29 +9,29 @@
       "owner": "simai/ui",
       "tag": null,
       "tag_object": null,
-      "commit": "148dbf36d42a535b0fd710980532f9bcec966b1d",
-      "tree": "8a3b485410af8938cd5c71df7af120a4164f0934",
+      "commit": "8afb6defbf76222ce7972f2e1dcefd34b760d2b6",
+      "tree": "90de9c4969a68c7e2d6a5bac0a387ce9e2b0c623",
       "runtime_path": "distr",
-      "runtime_tree": "b0f2e017ba92984c59bce3dcb6bae13ebc60f217",
-      "archive_sha256": "2585a32e1b868cca5e40d1b30f6f90684fc4841165c22f141c8317b6b7e68559"
+      "runtime_tree": "0004769574c8b242fcd83047c3a70a040589431f",
+      "archive_sha256": "ef51da94ad36d7c8785340303d857f734cf4a25b59c0dbaa9d17313b229de510"
     },
     "ui-smart": {
       "owner": "simai/ui-smart",
       "tag": null,
       "tag_object": null,
-      "commit": "daf5f285d00640de8115f0939045828ba473ae1e",
-      "tree": "847b5a7263600503fe1da85f16ca3449c4721391",
+      "commit": "655406493ce9d0c3a3574a2ec8d29d276a33cfca",
+      "tree": "ac59d526cc81df1a4a7d9dc859a1c728969741de",
       "runtime_path": "smart",
-      "runtime_tree": "4ea5f520c53ba343995e0ce9b6d7e22417a3f0d1",
-      "archive_sha256": "84c4f4840ed92c66df2c9145c98bdf9612d2cbc47cbdb6067ab40fa17a498942"
+      "runtime_tree": "103f2a8224cb612a6d10cb3abc8d81687787bf58",
+      "archive_sha256": "93c7dc096395a41c914e55e9957588b82e37dd294b8820f88487d3e7b9d55504"
     }
   },
   "build_inputs": {
     "source": {
       "owner": "simai/ui-loader",
-      "commit": "d91b05211565a484935b41331f7e71629183787e",
-      "tree": "e354a4a4202f44115ba60ccc72595f02030901ea",
-      "archive_sha256": "d61a6487a4da20aad0a41e8fc8484bce2795435852c11be3a741b7e3f3cc2e6a"
+      "commit": "e4817b268426ae70b27ed65fc19c1970a16ef7d9",
+      "tree": "50c13eb2901c38d4f3aa06110a991e5c982167ac",
+      "archive_sha256": "82e02604f41444d53963e65a9b27c2eeb6e7893b52ac6854b5643bb9c0683dc9"
     },
     "builder": {
       "owner": "simai/ui-builder",
@@ -76,7 +76,7 @@
   "inventory": {
     "utility_rules": 640,
     "utility_families": 226,
-    "components": 58,
+    "components": 60,
     "smart_components": 42,
     "recipes": 1
   },

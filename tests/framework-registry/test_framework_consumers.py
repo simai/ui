@@ -193,7 +193,7 @@ class FrameworkConsumerDriftValidatorTest(unittest.TestCase):
         self.assertEqual(result["status"], "passed")
         self.assertEqual(result["contract_identity"], "passed")
         self.assertEqual(result["stale_consumers"], [])
-        self.assertEqual(result["registry"]["entry_count"], 327)
+        self.assertEqual(result["registry"]["entry_count"], 329)
         self.assertTrue(all(value["accepted"] for value in result["consumers"].values()))
         self.assertTrue(result["screen_acceptance"]["accepted"])
         self.assertEqual(result["consumers"]["larena"]["schema"], "larena.ui.frontend_runtime_lock.v3")
