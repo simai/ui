@@ -1,7 +1,7 @@
 {
   "schema_id": "simai.framework.release-lock",
   "schema_version": 1,
-  "compatibility_id": "ui-8afb6defbf76-smart-655406493ce9",
+  "compatibility_id": "ui-873666dee394-smart-655406493ce9",
   "status": "bounded",
   "profile": "plain-assets-v1",
   "runtime_sources": {
@@ -9,11 +9,11 @@
       "owner": "simai/ui",
       "tag": null,
       "tag_object": null,
-      "commit": "8afb6defbf76222ce7972f2e1dcefd34b760d2b6",
-      "tree": "90de9c4969a68c7e2d6a5bac0a387ce9e2b0c623",
+      "commit": "873666dee3945da563b0d0054b57509a7e69413e",
+      "tree": "66492978dc014ab1d69c6431873a4c2e137cea90",
       "runtime_path": "distr",
-      "runtime_tree": "0004769574c8b242fcd83047c3a70a040589431f",
-      "archive_sha256": "ef51da94ad36d7c8785340303d857f734cf4a25b59c0dbaa9d17313b229de510"
+      "runtime_tree": "26334e320f579835e795165f297bde1a49e07029",
+      "archive_sha256": "d70df69254034f3e883dd538144d7e66b893afb9d7ab13ca64986a0f0da11367"
     },
     "ui-smart": {
       "owner": "simai/ui-smart",
@@ -29,9 +29,9 @@
   "build_inputs": {
     "source": {
       "owner": "simai/ui-loader",
-      "commit": "e4817b268426ae70b27ed65fc19c1970a16ef7d9",
-      "tree": "50c13eb2901c38d4f3aa06110a991e5c982167ac",
-      "archive_sha256": "82e02604f41444d53963e65a9b27c2eeb6e7893b52ac6854b5643bb9c0683dc9"
+      "commit": "6e970c48d88bc809f23a2040f434eecdca79b0c2",
+      "tree": "eb4b573d05ccd4c6629bf8ee686d8ae53ccafe77",
+      "archive_sha256": "56045ca8f2c2f19670b655a31c08a42ca2c4ed0913268f98054378c37c51bef3"
     },
     "builder": {
       "owner": "simai/ui-builder",
