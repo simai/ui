@@ -31,6 +31,16 @@ function normalizeLanguage(lang) {
   return _languages__WEBPACK_IMPORTED_MODULE_2__.LANGUAGE_ALIASES[lang] || lang;
 }
 
+function registerConfiguredAliases(languageName) {
+  const aliases = Object.entries(_languages__WEBPACK_IMPORTED_MODULE_2__.LANGUAGE_ALIASES).filter(([, target]) => target === languageName).map(([alias]) => alias);
+
+  if (aliases.length > 0) {
+    highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_0__["default"].registerAliases(aliases, {
+      languageName
+    });
+  }
+}
+
 function extractLanguagesFromDOM(root = document) {
   if (typeof document === 'undefined') return [];
   const languages = new Set();
@@ -50,7 +60,13 @@ function extractLanguagesFromDOM(root = document) {
 async function ensureLanguagesRegistered(langs) {
   for (const lang of langs) {
     const normalized = normalizeLanguage(lang);
-    if (!normalized || highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_0__["default"].getLanguage(normalized)) continue;
+    if (!normalized) continue;
+
+    if (highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_0__["default"].getLanguage(normalized)) {
+      registerConfiguredAliases(normalized);
+      continue;
+    }
+
     const loader = _languages__WEBPACK_IMPORTED_MODULE_2__.CUSTOM_LANGUAGE_LOADERS[normalized] || _languages__WEBPACK_IMPORTED_MODULE_2__.LANGUAGE_LOADERS[normalized];
     if (!loader) continue;
 
@@ -64,6 +80,7 @@ async function ensureLanguagesRegistered(langs) {
 
       if (typeof definition === 'function') {
         highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_0__["default"].registerLanguage(normalized, definition);
+        registerConfiguredAliases(normalized);
       }
     }).catch(() => {
       if (!highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_0__["default"].getLanguage('plaintext') && _languages__WEBPACK_IMPORTED_MODULE_2__.LANGUAGE_LOADERS.plaintext) {
