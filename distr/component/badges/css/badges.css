@@ -102,7 +102,7 @@
     border-color: transparent;
     border-color: var(--sf-badge--border-color, transparent);
   }
-  /* utility-hint: flex/1 (.flex-1) display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) justify-content/center (.justify-center) align-items/center (.items-center) */
+  /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) justify-content/center (.justify-center) align-items/center (.items-center) */
   .sf-badge .sf-badge-icon-container {
     background-color: transparent;
   }

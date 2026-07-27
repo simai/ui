@@ -159,9 +159,15 @@ highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_1__["default"].addPlugin({
 
       el.id = id;
       el.source.classList.add('init');
-      highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_1__["default"].lineNumbersBlock(el, {
-        singleLine: true
-      });
+      el.source.classList.add('sf-code-surface');
+      const scroll = el.closest('pre');
+      if (scroll) scroll.classList.add('sf-code-surface__scroll');
+
+      if (el.dataset.lineNumbers === 'true') {
+        highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_1__["default"].lineNumbersBlock(el, {
+          singleLine: true
+        });
+      }
     }
   }
 });

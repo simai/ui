@@ -2381,6 +2381,12 @@
     "regex": "/xl\\:self-main-/"
   },
   {
+    "name": "kbd",
+    "css": true,
+    "regex": "/(?:<kbd\\b|\\bsf-kbd\\b)/i",
+    "type": "component"
+  },
+  {
     "name": "letter-spacing/default",
     "regex": "/tracking-/"
   },
@@ -2737,6 +2743,12 @@
   {
     "name": "order/xl",
     "regex": "/xl\\:order-/"
+  },
+  {
+    "name": "outline",
+    "css": true,
+    "regex": "/\\bsf-outline(?:__|\\b)/i",
+    "type": "component"
   },
   {
     "name": "outline-color/active",
