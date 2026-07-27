@@ -776,6 +776,21 @@
     "type": "smart"
   },
   {
+    "name": "cl-drawer",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "icon-buttons"
+      }
+    ],
+    "tags": [
+      "sf-drawer"
+    ],
+    "type": "smart"
+  },
+  {
     "name": "cl-dropdown",
     "js": true,
     "mode": "smart",
