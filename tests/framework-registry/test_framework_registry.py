@@ -90,6 +90,18 @@ class FrameworkContractRegistryTest(unittest.TestCase):
         )
         self.assertEqual(self.registry["compatibility"]["status"], "bounded")
         self.assertEqual(self.registry["compatibility"]["profile"], "plain-assets-v1")
+        lock = json.loads(LOCK.read_text())
+        self.assertEqual(
+            self.registry["compatibility"]["build_inputs"],
+            lock["build_inputs"],
+        )
+        legacy = lock["build_inputs"]["legacy_compatibility"]
+        self.assertTrue(legacy["required"])
+        self.assertEqual(
+            legacy["invocation"]["arguments"][-1],
+            "--require-legacy-compatibility",
+        )
+        self.assertEqual(legacy["lineage_manifest"]["records_count"], 223)
         self.assertEqual(
             self.registry["compatibility"]["claims"],
             {
@@ -254,6 +266,24 @@ class FrameworkContractRegistryTest(unittest.TestCase):
                 BUILDER.ContractError, "release_lock_source_hash_invalid:ui"
             ):
                 BUILDER.build_registry(ROOT, SMART_MANIFEST, release_lock_path=wrong_hash_path)
+
+            missing_legacy = copy.deepcopy(lock)
+            del missing_legacy["build_inputs"]["legacy_compatibility"]
+            missing_legacy_path = self.write_json(directory, "missing-legacy.json", missing_legacy)
+            with self.assertRaisesRegex(BUILDER.ContractError, "release_lock_build_inputs_invalid"):
+                BUILDER.build_registry(ROOT, SMART_MANIFEST, release_lock_path=missing_legacy_path)
+
+            wrong_lineage_hash = copy.deepcopy(lock)
+            wrong_lineage_hash["build_inputs"]["legacy_compatibility"]["lineage_manifest"]["sha256"] = "invalid"
+            wrong_lineage_hash_path = self.write_json(directory, "wrong-lineage-hash.json", wrong_lineage_hash)
+            with self.assertRaisesRegex(BUILDER.ContractError, "release_lock_legacy_lineage_content_invalid"):
+                BUILDER.build_registry(ROOT, SMART_MANIFEST, release_lock_path=wrong_lineage_hash_path)
+
+            missing_required_flag = copy.deepcopy(lock)
+            missing_required_flag["build_inputs"]["legacy_compatibility"]["invocation"]["arguments"].pop()
+            missing_required_flag_path = self.write_json(directory, "missing-required-flag.json", missing_required_flag)
+            with self.assertRaisesRegex(BUILDER.ContractError, "release_lock_legacy_invocation_binding_invalid"):
+                BUILDER.build_registry(ROOT, SMART_MANIFEST, release_lock_path=missing_required_flag_path)
 
             wrong_id = copy.deepcopy(utility)
             wrong_id["entries"][0]["id"] = "utility.bad_name"

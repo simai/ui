@@ -26,6 +26,53 @@
       "archive_sha256": "84c4f4840ed92c66df2c9145c98bdf9612d2cbc47cbdb6067ab40fa17a498942"
     }
   },
+  "build_inputs": {
+    "source": {
+      "owner": "simai/ui-loader",
+      "commit": "d91b05211565a484935b41331f7e71629183787e",
+      "tree": "e354a4a4202f44115ba60ccc72595f02030901ea",
+      "archive_sha256": "d61a6487a4da20aad0a41e8fc8484bce2795435852c11be3a741b7e3f3cc2e6a"
+    },
+    "builder": {
+      "owner": "simai/ui-builder",
+      "commit": "8804747e3140ad622afe334cb780a22c1f09eae9",
+      "tree": "e0277cc7e083becaa2a4f5523ba768769f937e9b",
+      "archive_sha256": "3ccfd57155f715fb40c3520287982cf3e19a32b629e068300ccede06b00fcf78"
+    },
+    "legacy_compatibility": {
+      "required": true,
+      "source": {
+        "owner": "simai/ui",
+        "commit": "7e836d8a9414d5da553fb1ab0404721e5b48769a",
+        "tree": "64335a6a75f9c83d0850de0df419b5287e362f9e",
+        "runtime_path": "distr",
+        "runtime_tree": "a54f83245250ffd25f5bf47c9726ebdbc7436b26",
+        "archive_sha256": "481eabfafc259ab71cd11aff19f9358cdbd2b6709f85e7e8c39620ce9cace8d7"
+      },
+      "lineage_manifest": {
+        "owner": "simai/ui-control",
+        "commit": "79dd36d72b03f5f52841f85eb2d4e49732e8307e",
+        "tree": "8ec71547cfc369e747943ad2519a5ae889656d56",
+        "path": "source/workflow/evidence/ltr-rtl/2026-07-22-rtl-3i-legacy-runtime-lineage-v2.json",
+        "blob": "0f76833bb3ca214c4747511996b477d471d9b9e7",
+        "sha256": "134f30cca8964781fedde4d5981d1afe5861bf36c318fa251c24adf51530a179",
+        "records_count": 223
+      },
+      "invocation": {
+        "command": "node scripts/verify-product-reproducibility.cjs",
+        "arguments": [
+          "<ui-loader-root>",
+          "<workspace-root>",
+          "--require-legacy-compatibility"
+        ],
+        "environment_bindings": {
+          "SF_LEGACY_COMPATIBILITY_ROOT": "legacy_compatibility.source.runtime_path",
+          "SF_LEGACY_COMPATIBILITY_REVISION": "legacy_compatibility.source.commit",
+          "SF_LEGACY_COMPATIBILITY_MANIFEST": "legacy_compatibility.lineage_manifest"
+        }
+      }
+    }
+  },
   "inventory": {
     "utility_rules": 640,
     "utility_families": 226,

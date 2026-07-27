@@ -398,6 +398,89 @@ def validate_lock(lock: dict[str, Any]) -> None:
             raise ContractError(f"release_lock_source_revision_invalid:{key}")
         if not HEX64.fullmatch(str(source.get("archive_sha256", ""))):
             raise ContractError(f"release_lock_source_hash_invalid:{key}")
+    build_inputs = lock.get("build_inputs")
+    if not isinstance(build_inputs, dict) or set(build_inputs) != {
+        "source",
+        "builder",
+        "legacy_compatibility",
+    }:
+        raise ContractError("release_lock_build_inputs_invalid")
+    for key, owner in (("source", "simai/ui-loader"), ("builder", "simai/ui-builder")):
+        build_input = build_inputs.get(key)
+        if not isinstance(build_input, dict) or set(build_input) != {
+            "owner",
+            "commit",
+            "tree",
+            "archive_sha256",
+        }:
+            raise ContractError(f"release_lock_build_input_invalid:{key}")
+        if build_input.get("owner") != owner:
+            raise ContractError(f"release_lock_build_input_owner_invalid:{key}")
+        if any(not HEX40.fullmatch(str(build_input.get(field, ""))) for field in ("commit", "tree")):
+            raise ContractError(f"release_lock_build_input_revision_invalid:{key}")
+        if not HEX64.fullmatch(str(build_input.get("archive_sha256", ""))):
+            raise ContractError(f"release_lock_build_input_hash_invalid:{key}")
+    legacy = build_inputs.get("legacy_compatibility")
+    if not isinstance(legacy, dict) or set(legacy) != {
+        "required",
+        "source",
+        "lineage_manifest",
+        "invocation",
+    } or legacy.get("required") is not True:
+        raise ContractError("release_lock_legacy_compatibility_invalid")
+    legacy_source = legacy.get("source")
+    if not isinstance(legacy_source, dict) or set(legacy_source) != {
+        "owner",
+        "commit",
+        "tree",
+        "runtime_path",
+        "runtime_tree",
+        "archive_sha256",
+    }:
+        raise ContractError("release_lock_legacy_source_invalid")
+    if legacy_source.get("owner") != "simai/ui" or legacy_source.get("runtime_path") != "distr":
+        raise ContractError("release_lock_legacy_source_identity_invalid")
+    if any(not HEX40.fullmatch(str(legacy_source.get(field, ""))) for field in ("commit", "tree", "runtime_tree")):
+        raise ContractError("release_lock_legacy_source_revision_invalid")
+    if not HEX64.fullmatch(str(legacy_source.get("archive_sha256", ""))):
+        raise ContractError("release_lock_legacy_source_hash_invalid")
+    lineage = legacy.get("lineage_manifest")
+    if not isinstance(lineage, dict) or set(lineage) != {
+        "owner",
+        "commit",
+        "tree",
+        "path",
+        "blob",
+        "sha256",
+        "records_count",
+    }:
+        raise ContractError("release_lock_legacy_lineage_invalid")
+    if lineage.get("owner") != "simai/ui-control" or not isinstance(lineage.get("path"), str) or not lineage["path"]:
+        raise ContractError("release_lock_legacy_lineage_identity_invalid")
+    if any(not HEX40.fullmatch(str(lineage.get(field, ""))) for field in ("commit", "tree", "blob")):
+        raise ContractError("release_lock_legacy_lineage_revision_invalid")
+    if not HEX64.fullmatch(str(lineage.get("sha256", ""))) or not isinstance(lineage.get("records_count"), int) or lineage["records_count"] < 1:
+        raise ContractError("release_lock_legacy_lineage_content_invalid")
+    invocation = legacy.get("invocation")
+    required_environment = {
+        "SF_LEGACY_COMPATIBILITY_ROOT": "legacy_compatibility.source.runtime_path",
+        "SF_LEGACY_COMPATIBILITY_REVISION": "legacy_compatibility.source.commit",
+        "SF_LEGACY_COMPATIBILITY_MANIFEST": "legacy_compatibility.lineage_manifest",
+    }
+    if not isinstance(invocation, dict) or set(invocation) != {
+        "command",
+        "arguments",
+        "environment_bindings",
+    }:
+        raise ContractError("release_lock_legacy_invocation_invalid")
+    if invocation.get("command") != "node scripts/verify-product-reproducibility.cjs":
+        raise ContractError("release_lock_legacy_invocation_command_invalid")
+    if invocation.get("arguments") != [
+        "<ui-loader-root>",
+        "<workspace-root>",
+        "--require-legacy-compatibility",
+    ] or invocation.get("environment_bindings") != required_environment:
+        raise ContractError("release_lock_legacy_invocation_binding_invalid")
     expected_id = (
         f"ui-{sources['ui']['commit'][:12]}-smart-"
         f"{sources['ui-smart']['commit'][:12]}"
@@ -630,6 +713,7 @@ def build_registry(
             "runtime_sources": [
                 lock["runtime_sources"][key] for key in sorted(lock["runtime_sources"])
             ],
+            "build_inputs": lock["build_inputs"],
             "exclusions": lock["exclusions"],
             "claims": lock["claims"],
         },
