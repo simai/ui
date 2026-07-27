@@ -9,29 +9,26 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _public_path__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("92f78dcd2767");
-/* harmony import */ var _public_path__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_public_path__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("2f3e26953260");
-/* harmony import */ var _line_numbers__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("c67f05508e63");
-/* harmony import */ var _languages__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("8e4e61390880");
-/* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("58661bec99a6");
+/* harmony import */ var highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2f3e26953260");
+/* harmony import */ var _line_numbers__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("c67f05508e63");
+/* harmony import */ var _languages__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("8e4e61390880");
+/* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("58661bec99a6");
 
 
 
 
-
-highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_1__["default"].componentName = 'hljs';
-(0,_line_numbers__WEBPACK_IMPORTED_MODULE_2__.initLineNumbers)(highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_1__["default"]);
+highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_0__["default"].componentName = 'hljs';
+(0,_line_numbers__WEBPACK_IMPORTED_MODULE_1__.initLineNumbers)(highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_0__["default"]);
 const languagePromiseCache = new Map();
 const highlightedNodes = new WeakSet();
 
 if (typeof window !== 'undefined') {
-  window.hljs = highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_1__["default"];
+  window.hljs = highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_0__["default"];
 }
 
 function normalizeLanguage(lang) {
   if (!lang) return '';
-  return _languages__WEBPACK_IMPORTED_MODULE_3__.LANGUAGE_ALIASES[lang] || lang;
+  return _languages__WEBPACK_IMPORTED_MODULE_2__.LANGUAGE_ALIASES[lang] || lang;
 }
 
 function extractLanguagesFromDOM(root = document) {
@@ -53,8 +50,8 @@ function extractLanguagesFromDOM(root = document) {
 async function ensureLanguagesRegistered(langs) {
   for (const lang of langs) {
     const normalized = normalizeLanguage(lang);
-    if (!normalized || highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_1__["default"].getLanguage(normalized)) continue;
-    const loader = _languages__WEBPACK_IMPORTED_MODULE_3__.CUSTOM_LANGUAGE_LOADERS[normalized] || _languages__WEBPACK_IMPORTED_MODULE_3__.LANGUAGE_LOADERS[normalized];
+    if (!normalized || highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_0__["default"].getLanguage(normalized)) continue;
+    const loader = _languages__WEBPACK_IMPORTED_MODULE_2__.CUSTOM_LANGUAGE_LOADERS[normalized] || _languages__WEBPACK_IMPORTED_MODULE_2__.LANGUAGE_LOADERS[normalized];
     if (!loader) continue;
 
     if (languagePromiseCache.has(normalized)) {
@@ -66,12 +63,12 @@ async function ensureLanguagesRegistered(langs) {
       const definition = module.default || module;
 
       if (typeof definition === 'function') {
-        highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_1__["default"].registerLanguage(normalized, definition);
+        highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_0__["default"].registerLanguage(normalized, definition);
       }
     }).catch(() => {
-      if (!highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_1__["default"].getLanguage('plaintext') && _languages__WEBPACK_IMPORTED_MODULE_3__.LANGUAGE_LOADERS.plaintext) {
-        return _languages__WEBPACK_IMPORTED_MODULE_3__.LANGUAGE_LOADERS.plaintext().then(mod => {
-          highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_1__["default"].registerLanguage('plaintext', mod.default || mod);
+      if (!highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_0__["default"].getLanguage('plaintext') && _languages__WEBPACK_IMPORTED_MODULE_2__.LANGUAGE_LOADERS.plaintext) {
+        return _languages__WEBPACK_IMPORTED_MODULE_2__.LANGUAGE_LOADERS.plaintext().then(mod => {
+          highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_0__["default"].registerLanguage('plaintext', mod.default || mod);
         });
       }
 
@@ -82,7 +79,7 @@ async function ensureLanguagesRegistered(langs) {
   }
 }
 
-highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_1__["default"].addPlugin({
+highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_0__["default"].addPlugin({
   'before:highlightElement': ({
     el
   }) => {
@@ -164,7 +161,7 @@ highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_1__["default"].addPlugin({
       if (scroll) scroll.classList.add('sf-code-surface__scroll');
 
       if (el.dataset.lineNumbers === 'true') {
-        highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_1__["default"].lineNumbersBlock(el, {
+        highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_0__["default"].lineNumbersBlock(el, {
           singleLine: true
         });
       }
@@ -198,7 +195,7 @@ async function highlightAllLazy(root = document) {
 
     try {
       sanitizeCodeBlock(block);
-      highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_1__["default"].highlightElement(block);
+      highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_0__["default"].highlightElement(block);
       highlightedNodes.add(block);
     } catch (e) {
       console.warn('highlight.js failed for block', e);
@@ -209,11 +206,11 @@ async function highlightAllLazy(root = document) {
 async function initHighlight() {
   if (typeof document === 'undefined') return;
   await highlightAllLazy();
-  highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_1__["default"].componentName = 'hljs';
+  highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_0__["default"].componentName = 'hljs';
 }
 
 initHighlight();
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_1__["default"]);
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_0__["default"]);
 
 if (typeof MutationObserver !== 'undefined' && typeof document !== 'undefined') {
   const observer = new MutationObserver(mutations => {
@@ -239,7 +236,7 @@ if (typeof MutationObserver !== 'undefined' && typeof document !== 'undefined') 
   });
 }
 
-(0,_register_helper__WEBPACK_IMPORTED_MODULE_4__["default"])('hljs', highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_1__["default"]);
+(0,_register_helper__WEBPACK_IMPORTED_MODULE_3__["default"])('hljs', highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_0__["default"]);
 
 /***/ },
 
@@ -930,18 +927,6 @@ function initLineNumbers(hljs) {
     if (!str) return fallback;
     var number = Number(str);
     return isFinite(number) ? number : fallback;
-  }
-}
-
-/***/ },
-
-/***/ "92f78dcd2767"
-(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
-
-/* global __webpack_public_path__: writable */
-if (typeof window !== 'undefined' && window.sfPath) {
-  if (__webpack_require__.p !== window.sfPath) {
-    __webpack_require__.p = window.sfPath;
   }
 }
 
@@ -3650,18 +3635,6 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 	__webpack_require__.m = __webpack_modules__;
 /******/
 /************************************************************************/
-/******/ 	/* webpack/runtime/compat get default export */
-/******/ 	(() => {
-/******/ 		// getDefaultExport function for compatibility with non-harmony modules
-/******/ 		__webpack_require__.n = (module) => {
-/******/ 			const getter = module && module.__esModule ?
-/******/ 				() => (module['default']) :
-/******/ 				() => (module);
-/******/ 			__webpack_require__.d(getter, { a: getter });
-/******/ 			return getter;
-/******/ 		};
-/******/ 	})();
-/******/
 /******/ 	/* webpack/runtime/define property getters */
 /******/ 	(() => {
 /******/ 		// define getter/value functions for harmony exports
