@@ -40,6 +40,7 @@ class Fixtures:
         (self.ui_root / "contracts/generated").mkdir(parents=True)
         self.aggregate = self.ui_root / VALIDATOR.REGISTRY_PATH
         self.write_path(self.aggregate, self.registry_value)
+        self.identity = VALIDATOR.validate_aggregate(self.aggregate)[1]
         run("git", "init", "-q", cwd=self.ui_root)
         run("git", "config", "user.name", "Registry Test", cwd=self.ui_root)
         run("git", "config", "user.email", "registry@example.test", cwd=self.ui_root)
@@ -78,7 +79,7 @@ class Fixtures:
             "schema_id": VALIDATOR.POINTER_SCHEMA_ID,
             "schema_version": 1,
             "consumer": {"id": consumer_id, "role": role},
-            "compatibility_id": VALIDATOR.COMPATIBILITY_ID,
+            "compatibility_id": self.identity["compatibility_id"],
             "registry": {
                 "owner": VALIDATOR.REGISTRY_OWNER,
                 "commit": self.commit,
@@ -92,13 +93,14 @@ class Fixtures:
             },
         }
 
-    @staticmethod
-    def aligned_ui_play_lock() -> dict:
+    def aligned_ui_play_lock(self) -> dict:
+        ui = self.identity["ui_runtime"]
+        smart = self.identity["smart_runtime"]
         return {
             "schemaVersion": 1,
-            "compatibilityId": f"ui-{VALIDATOR.UI_RUNTIME['commit'][:12]}-smart-{VALIDATOR.SMART_RUNTIME['commit'][:12]}",
-            "core": {"commit": VALIDATOR.UI_RUNTIME["commit"]},
-            "smart": {"commit": VALIDATOR.SMART_RUNTIME["commit"]},
+            "compatibilityId": self.identity["compatibility_id"],
+            "core": {"commit": ui["commit"]},
+            "smart": {"commit": smart["commit"]},
         }
 
     def write_docs(self, *, full_coverage: bool) -> None:
@@ -114,10 +116,10 @@ class Fixtures:
         catalog.write_text("# Registry\n\n" + "\n".join(values) + "\n", encoding="utf-8")
 
     def write_inventory(self, *, aligned: bool) -> None:
-        ui = VALIDATOR.UI_RUNTIME["commit"] if aligned else "1" * 40
-        smart = VALIDATOR.SMART_RUNTIME["commit"] if aligned else "2" * 40
-        components = VALIDATOR.EXPECTED_COUNTS["component"] if aligned else 72
-        smart_count = VALIDATOR.EXPECTED_COUNTS["smart-component"] if aligned else 34
+        ui = self.identity["ui_runtime"]["commit"] if aligned else "1" * 40
+        smart = self.identity["smart_runtime"]["commit"] if aligned else "2" * 40
+        components = self.identity["counts"]["component"] if aligned else 72
+        smart_count = self.identity["counts"]["smart-component"] if aligned else 34
         self.ai_inventory.write_text(
             "# Source Inventory\n\n"
             f"- `ui`: `main` @ `{ui}`\n"
@@ -128,18 +130,21 @@ class Fixtures:
         )
 
     def aligned_larena_lock(self) -> dict:
+        compatibility_id = self.identity["compatibility_id"]
+        ui_runtime = self.identity["ui_runtime"]
+        smart_runtime = self.identity["smart_runtime"]
         return {
             "schema": "larena.ui.frontend_runtime_lock.v3",
             "runtime": "simai-framework",
-            "tag": VALIDATOR.UI_RUNTIME["tag"],
-            "pair_id": VALIDATOR.COMPATIBILITY_ID,
-            "bundle_id": f"{VALIDATOR.COMPATIBILITY_ID}-registry-{self.aggregate_sha[:8]}-exact-git-tree-v2",
+            "tag": ui_runtime["tag"],
+            "pair_id": compatibility_id,
+            "bundle_id": f"{compatibility_id}-registry-{self.aggregate_sha[:8]}-exact-git-tree-v2",
             "publication_profile": "exact-git-tree-v2",
-            "ui": {**VALIDATOR.UI_RUNTIME, "files": 2596},
-            "ui_smart": {**VALIDATOR.SMART_RUNTIME, "files": 112},
+            "ui": {**ui_runtime, "files": 2596},
+            "ui_smart": {**smart_runtime, "files": 112},
             "framework_registry": {
                 "schema_id": VALIDATOR.SCHEMA_ID,
-                "compatibility_id": VALIDATOR.COMPATIBILITY_ID,
+                "compatibility_id": compatibility_id,
                 "profile": VALIDATOR.PROFILE,
                 "relative_path": VALIDATOR.LARENA_REGISTRY_RELATIVE_PATH,
                 "file_sha256": self.aggregate_sha,
@@ -188,7 +193,7 @@ class FrameworkConsumerDriftValidatorTest(unittest.TestCase):
         self.assertEqual(result["status"], "passed")
         self.assertEqual(result["contract_identity"], "passed")
         self.assertEqual(result["stale_consumers"], [])
-        self.assertEqual(result["registry"]["entry_count"], 331)
+        self.assertEqual(result["registry"]["entry_count"], 327)
         self.assertTrue(all(value["accepted"] for value in result["consumers"].values()))
         self.assertTrue(result["screen_acceptance"]["accepted"])
         self.assertEqual(result["consumers"]["larena"]["schema"], "larena.ui.frontend_runtime_lock.v3")
@@ -276,7 +281,7 @@ class FrameworkConsumerDriftValidatorTest(unittest.TestCase):
             lock = fixtures.aligned_larena_lock()
             lock["schema"] = "larena.ui.frontend_runtime_lock.v2"
             lock.pop("publication_profile")
-            lock["bundle_id"] = f"{VALIDATOR.COMPATIBILITY_ID}-registry-{fixtures.aggregate_sha[:8]}"
+            lock["bundle_id"] = f"{fixtures.identity['compatibility_id']}-registry-{fixtures.aggregate_sha[:8]}"
             fixtures.larena_lock = fixtures.write("legacy-v2.json", lock)
             result = fixtures.validate()["consumers"]["larena"]
         self.assertEqual(result["schema"], "larena.ui.frontend_runtime_lock.v2")
@@ -293,7 +298,15 @@ class FrameworkConsumerDriftValidatorTest(unittest.TestCase):
         registry_commit = lock.get("framework_registry", {}).get("source", {}).get("commit")
         self.assertIsInstance(registry_commit, str)
         source = VALIDATOR.validate_registry_git_source(ROOT, registry_commit, aggregate_sha)
-        result = VALIDATOR.validate_larena_lock(lock_path, source, aggregate_sha)
+        _registry, identity = VALIDATOR.validate_aggregate(AGGREGATE)
+        result = VALIDATOR.validate_larena_lock(
+            lock_path,
+            source,
+            aggregate_sha,
+            identity["compatibility_id"],
+            identity["ui_runtime"],
+            identity["smart_runtime"],
+        )
         self.assertEqual(result["schema"], "larena.ui.frontend_runtime_lock.v3")
         self.assertEqual(result["publication_profile"], "exact-git-tree-v2")
         self.assertTrue(result["accepted"])

@@ -16,7 +16,6 @@ from typing import Any
 
 SCHEMA_ID = "simai.framework.contract-registry"
 POINTER_SCHEMA_ID = "simai.framework.contract-registry.consumer-pointer"
-COMPATIBILITY_ID = "sf-v5.3.2-7e836d8a-dd786bba"
 PROFILE = "plain-assets-v1"
 REGISTRY_OWNER = "simai/ui"
 REGISTRY_PATH = "contracts/generated/framework-contract-registry.json"
@@ -26,27 +25,7 @@ LARENA_LOCK_PROFILES = {
     "larena.ui.frontend_runtime_lock.v2": None,
     "larena.ui.frontend_runtime_lock.v3": "exact-git-tree-v2",
 }
-UI_RUNTIME = {
-    "tag": "v5.3.2",
-    "commit": "7e836d8a9414d5da553fb1ab0404721e5b48769a",
-    "tree": "distr",
-    "mount": "ui",
-    "sha256": "481eabfafc259ab71cd11aff19f9358cdbd2b6709f85e7e8c39620ce9cace8d7",
-}
-SMART_RUNTIME = {
-    "tag": "v5.3.1",
-    "commit": "dd786bbae98391fb21df9b4e1e6cd402ead0614c",
-    "tree": "smart",
-    "mount": "smart",
-    "sha256": "1c2eacbc58f3deb1d351b11dfb5da6755502386bb1224554754477bc700c9262",
-}
-EXPECTED_COUNTS = {
-    "utility": 225,
-    "component": 60,
-    "smart-component": 45,
-    "recipe": 1,
-    "total": 331,
-}
+COMPATIBILITY_ID = re.compile(r"^ui-[0-9a-f]{12}-smart-[0-9a-f]{12}$")
 EXPECTED_RECIPE_UTILITIES = [
     "utility.display",
     "utility.flex-direction",
@@ -148,15 +127,23 @@ def validate_aggregate(path: Path) -> tuple[dict[str, Any], dict[str, Any]]:
     compatibility = registry.get("compatibility")
     if not isinstance(compatibility, dict):
         raise DriftError("registry_compatibility_missing")
+    compatibility_id = compatibility.get("id")
     if (
-        compatibility.get("id") != COMPATIBILITY_ID
+        not isinstance(compatibility_id, str)
+        or not COMPATIBILITY_ID.fullmatch(compatibility_id)
         or compatibility.get("status") != "bounded"
         or compatibility.get("profile") != PROFILE
         or compatibility.get("claims")
         != {"all_items_ready": False, "full_compatible": False, "production_ready": False}
     ):
         raise DriftError("registry_compatibility_invalid")
-    if registry.get("counts") != EXPECTED_COUNTS:
+    counts = registry.get("counts")
+    if (
+        not isinstance(counts, dict)
+        or set(counts) != {"utility", "component", "smart-component", "recipe", "total"}
+        or any(not isinstance(value, int) or value < 1 for value in counts.values())
+        or counts["total"] != sum(counts[kind] for kind in ("utility", "component", "smart-component", "recipe"))
+    ):
         raise DriftError("registry_counts_mismatch")
     if registry.get("nonclaims") != {
         "all_items_ready": False,
@@ -166,7 +153,7 @@ def validate_aggregate(path: Path) -> tuple[dict[str, Any], dict[str, Any]]:
         raise DriftError("registry_nonclaims_invalid")
 
     entries = registry.get("entries")
-    if not isinstance(entries, list) or len(entries) != EXPECTED_COUNTS["total"]:
+    if not isinstance(entries, list) or len(entries) != counts["total"]:
         raise DriftError("registry_entries_invalid")
     ids: list[str] = []
     by_kind = {kind: [] for kind in ("utility", "component", "smart-component", "recipe")}
@@ -189,24 +176,48 @@ def validate_aggregate(path: Path) -> tuple[dict[str, Any], dict[str, Any]]:
     if not isinstance(runtime_sources, list):
         raise DriftError("registry_runtime_sources_invalid")
     by_owner = {item.get("owner"): item for item in runtime_sources if isinstance(item, dict)}
-    for owner, expected in (("simai/ui", UI_RUNTIME), ("simai/ui-smart", SMART_RUNTIME)):
+    runtime_contracts: dict[str, dict[str, Any]] = {}
+    for owner, runtime_path, mount in (
+        ("simai/ui", "distr", "ui"),
+        ("simai/ui-smart", "smart", "smart"),
+    ):
         source = by_owner.get(owner)
         if not isinstance(source, dict):
             raise DriftError(f"registry_runtime_source_missing:{owner}")
-        if source.get("tag") != expected["tag"] or source.get("commit") != expected["commit"]:
+        if (
+            source.get("runtime_path") != runtime_path
+            or not HEX40.fullmatch(str(source.get("commit", "")))
+            or not HEX64.fullmatch(str(source.get("archive_sha256", "")))
+        ):
             raise DriftError(f"registry_runtime_source_mismatch:{owner}")
+        runtime_contracts[owner] = {
+            "tag": source.get("tag"),
+            "commit": source["commit"],
+            "tree": runtime_path,
+            "mount": mount,
+            "sha256": source["archive_sha256"],
+        }
 
     return registry, {
-        "compatibility_id": COMPATIBILITY_ID,
+        "compatibility_id": compatibility_id,
         "profile": PROFILE,
         "entry_count": len(entries),
+        "counts": counts,
+        "ui_runtime": runtime_contracts["simai/ui"],
+        "smart_runtime": runtime_contracts["simai/ui-smart"],
         "file_sha256": sha256_file(path),
         "public_ids": ids,
         "recipe_closure": closure,
     }
 
 
-def validate_pointer(path: Path, expected_id: str, expected_role: str, aggregate_sha: str) -> dict[str, str]:
+def validate_pointer(
+    path: Path,
+    expected_id: str,
+    expected_role: str,
+    aggregate_sha: str,
+    compatibility_id: str,
+) -> dict[str, str]:
     pointer = load_json(path)
     forbidden = find_forbidden_pointer_key(pointer)
     if forbidden:
@@ -228,7 +239,7 @@ def validate_pointer(path: Path, expected_id: str, expected_role: str, aggregate
         raise DriftError("pointer_registry_invalid")
     commit = registry.get("commit")
     if (
-        pointer.get("compatibility_id") != COMPATIBILITY_ID
+        pointer.get("compatibility_id") != compatibility_id
         or registry.get("owner") != REGISTRY_OWNER
         or registry.get("path") != REGISTRY_PATH
         or registry.get("file_sha256") != aggregate_sha
@@ -261,13 +272,20 @@ def validate_registry_git_source(ui_root: Path, commit: str, aggregate_sha: str)
     return {"commit": commit, "tree_oid": tree_oid, "archive_sha256": sha256_bytes(archive)}
 
 
-def validate_larena_lock(path: Path, registry: dict[str, str], aggregate_sha: str) -> dict[str, Any]:
+def validate_larena_lock(
+    path: Path,
+    registry: dict[str, str],
+    aggregate_sha: str,
+    compatibility_id: str,
+    ui_runtime: dict[str, Any],
+    smart_runtime: dict[str, Any],
+) -> dict[str, Any]:
     lock = load_json(path)
     schema = lock.get("schema")
     if schema not in LARENA_LOCK_PROFILES:
         raise DriftError("larena_lock_schema_unsupported")
     required_profile = LARENA_LOCK_PROFILES[schema]
-    base_bundle_id = f"{COMPATIBILITY_ID}-registry-{aggregate_sha[:8]}"
+    base_bundle_id = f"{compatibility_id}-registry-{aggregate_sha[:8]}"
     if required_profile is None:
         if "publication_profile" in lock:
             raise DriftError("larena_lock_publication_profile_unexpected")
@@ -280,12 +298,12 @@ def validate_larena_lock(path: Path, registry: dict[str, str], aggregate_sha: st
         bundle_id = f"{base_bundle_id}-{publication_profile}"
     if (
         lock.get("runtime") != "simai-framework"
-        or lock.get("tag") != UI_RUNTIME["tag"]
-        or lock.get("pair_id") != COMPATIBILITY_ID
+        or lock.get("tag") != ui_runtime["tag"]
+        or lock.get("pair_id") != compatibility_id
         or lock.get("bundle_id") != bundle_id
     ):
         raise DriftError("larena_lock_identity_mismatch")
-    for key, expected in (("ui", UI_RUNTIME), ("ui_smart", SMART_RUNTIME)):
+    for key, expected in (("ui", ui_runtime), ("ui_smart", smart_runtime)):
         source = lock.get(key)
         if not isinstance(source, dict) or any(source.get(field) != value for field, value in expected.items()):
             raise DriftError(f"larena_lock_runtime_mismatch:{key}")
@@ -293,7 +311,7 @@ def validate_larena_lock(path: Path, registry: dict[str, str], aggregate_sha: st
             raise DriftError(f"larena_lock_files_invalid:{key}")
     expected_registry = {
         "schema_id": SCHEMA_ID,
-        "compatibility_id": COMPATIBILITY_ID,
+        "compatibility_id": compatibility_id,
         "profile": PROFILE,
         "relative_path": LARENA_REGISTRY_RELATIVE_PATH,
         "file_sha256": aggregate_sha,
@@ -318,15 +336,19 @@ def validate_larena_lock(path: Path, registry: dict[str, str], aggregate_sha: st
     }
 
 
-def validate_ui_play(path: Path) -> dict[str, Any]:
+def validate_ui_play(
+    path: Path,
+    ui_runtime: dict[str, Any],
+    smart_runtime: dict[str, Any],
+) -> dict[str, Any]:
     lock = load_json(path)
-    expected_compatibility = f"ui-{UI_RUNTIME['commit'][:12]}-smart-{SMART_RUNTIME['commit'][:12]}"
+    expected_compatibility = f"ui-{ui_runtime['commit'][:12]}-smart-{smart_runtime['commit'][:12]}"
     drift: list[str] = []
     if lock.get("compatibilityId") != expected_compatibility:
         drift.append("compatibility_id_mismatch")
-    if lock.get("core", {}).get("commit") != UI_RUNTIME["commit"]:
+    if lock.get("core", {}).get("commit") != ui_runtime["commit"]:
         drift.append("core_commit_mismatch")
-    if lock.get("smart", {}).get("commit") != SMART_RUNTIME["commit"]:
+    if lock.get("smart", {}).get("commit") != smart_runtime["commit"]:
         drift.append("smart_commit_mismatch")
     status = "aligned" if not drift else "drifted"
     return {"status": status, "accepted": status == "aligned", "drift": drift}
@@ -367,16 +389,21 @@ def validate_ui_doc(root: Path, public_ids: list[str]) -> dict[str, Any]:
     }
 
 
-def validate_ai_skill_inventory(path: Path) -> dict[str, Any]:
+def validate_ai_skill_inventory(
+    path: Path,
+    ui_runtime: dict[str, Any],
+    smart_runtime: dict[str, Any],
+    counts: dict[str, int],
+) -> dict[str, Any]:
     try:
         text = path.read_text(encoding="utf-8")
     except OSError as error:
         raise DriftError("ai_skill_inventory_unreadable") from error
     expected = {
-        "ui_revision": UI_RUNTIME["commit"],
-        "smart_revision": SMART_RUNTIME["commit"],
-        "component_count": EXPECTED_COUNTS["component"],
-        "smart_count": EXPECTED_COUNTS["smart-component"],
+        "ui_revision": ui_runtime["commit"],
+        "smart_revision": smart_runtime["commit"],
+        "component_count": counts["component"],
+        "smart_count": counts["smart-component"],
     }
     actual: dict[str, Any] = {}
     patterns = {
@@ -409,16 +436,40 @@ def validate_consumers(
     pointers = []
     for key, path in (("ui-play", ui_play_pointer), ("ui-doc", ui_doc_pointer), ("ai-skill", ai_skill_pointer)):
         expected_id, expected_role = EXPECTED_CONSUMERS[key]
-        pointers.append(validate_pointer(path, expected_id, expected_role, aggregate["file_sha256"]))
+        pointers.append(
+            validate_pointer(
+                path,
+                expected_id,
+                expected_role,
+                aggregate["file_sha256"],
+                aggregate["compatibility_id"],
+            )
+        )
     commits = {pointer["registry_commit"] for pointer in pointers}
     if len(commits) != 1:
         raise DriftError("pointer_registry_commit_disagreement")
     source = validate_registry_git_source(ui_root, commits.pop(), aggregate["file_sha256"])
     consumers = {
-        "ui-play": validate_ui_play(ui_play_asset_lock),
+        "ui-play": validate_ui_play(
+            ui_play_asset_lock,
+            aggregate["ui_runtime"],
+            aggregate["smart_runtime"],
+        ),
         "ui-doc": validate_ui_doc(ui_doc_root, aggregate["public_ids"]),
-        "ai-skill": validate_ai_skill_inventory(ai_skill_inventory),
-        "larena": validate_larena_lock(larena_runtime_lock, source, aggregate["file_sha256"]),
+        "ai-skill": validate_ai_skill_inventory(
+            ai_skill_inventory,
+            aggregate["ui_runtime"],
+            aggregate["smart_runtime"],
+            aggregate["counts"],
+        ),
+        "larena": validate_larena_lock(
+            larena_runtime_lock,
+            source,
+            aggregate["file_sha256"],
+            aggregate["compatibility_id"],
+            aggregate["ui_runtime"],
+            aggregate["smart_runtime"],
+        ),
     }
     stale = sorted(name for name, value in consumers.items() if not value["accepted"])
     return {

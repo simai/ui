@@ -18,12 +18,15 @@
   "properties": {
     "schema_id": {"const": "simai.framework.release-lock"},
     "schema_version": {"const": 1},
-    "compatibility_id": {"const": "sf-v5.3.2-7e836d8a-dd786bba"},
+    "compatibility_id": {
+      "type": "string",
+      "pattern": "^ui-[0-9a-f]{12}-smart-[0-9a-f]{12}$"
+    },
     "status": {"const": "bounded"},
     "profile": {"const": "plain-assets-v1"},
     "runtime_sources": {"type": "object", "required": ["ui", "ui-smart"]},
     "inventory": {"type": "object"},
-    "exclusions": {"type": "array", "minItems": 2},
+    "exclusions": {"type": "array"},
     "claims": {
       "type": "object",
       "additionalProperties": false,

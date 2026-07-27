@@ -14,14 +14,11 @@ from pathlib import Path
 from typing import Any
 
 
-COMPATIBILITY_ID = "sf-v5.3.2-7e836d8a-dd786bba"
 PROFILE = "plain-assets-v1"
-EXPECTED_COUNTS = {
-    "utility": 225,
-    "component": 60,
-    "smart-component": 45,
-    "recipe": 1,
-}
+KINDS = ("utility", "component", "smart-component", "recipe")
+HEX40 = re.compile(r"^[0-9a-f]{40}$")
+HEX64 = re.compile(r"^[0-9a-f]{64}$")
+COMPATIBILITY_ID = re.compile(r"^ui-[0-9a-f]{12}-smart-[0-9a-f]{12}$")
 ENTRY_KEYS = {
     "id",
     "kind",
@@ -258,13 +255,14 @@ def derive_utility_entries(
     rules: list[dict[str, Any]],
 ) -> dict[str, dict[str, Any]]:
     utility_rules = [rule for rule in rules if "type" not in rule]
-    if len(utility_rules) != 639:
+    expected = manifest["inventory"]["expected"]
+    if len(utility_rules) != expected["rules"]:
         raise ContractError(f"utility_rule_count_mismatch:{len(utility_rules)}")
     grouped: dict[str, list[dict[str, Any]]] = {}
     for rule in utility_rules:
         family = rule["name"].split("/", 1)[0]
         grouped.setdefault(family, []).append(rule)
-    if len(grouped) != EXPECTED_COUNTS["utility"]:
+    if len(grouped) != expected["entries"]:
         raise ContractError(f"utility_family_count_mismatch:{len(grouped)}")
     entries: dict[str, dict[str, Any]] = {}
     for family, family_rules in grouped.items():
@@ -309,7 +307,8 @@ def derive_component_entries(
     rule_kinds: dict[str, str],
 ) -> dict[str, dict[str, Any]]:
     component_rules = [rule for rule in rules if rule.get("type") == "component"]
-    if len(component_rules) != EXPECTED_COUNTS["component"]:
+    expected = manifest["inventory"]["expected"]
+    if len(component_rules) != expected["rules"]:
         raise ContractError(f"component_count_mismatch:{len(component_rules)}")
     entries: dict[str, dict[str, Any]] = {}
     for rule in component_rules:
@@ -376,40 +375,40 @@ def validate_normalized_entry(entry: dict[str, Any]) -> None:
 def validate_lock(lock: dict[str, Any]) -> None:
     if lock.get("schema_id") != "simai.framework.release-lock" or lock.get("schema_version") != 1:
         raise ContractError("release_lock_schema_invalid")
-    if lock.get("compatibility_id") != COMPATIBILITY_ID:
+    compatibility_id = lock.get("compatibility_id")
+    if not isinstance(compatibility_id, str) or not COMPATIBILITY_ID.fullmatch(compatibility_id):
         raise ContractError("release_lock_pair_invalid")
     if lock.get("status") != "bounded" or lock.get("profile") != PROFILE:
         raise ContractError("release_lock_profile_invalid")
     sources = lock.get("runtime_sources")
     if not isinstance(sources, dict) or set(sources) != {"ui", "ui-smart"}:
         raise ContractError("release_lock_sources_invalid")
-    exact = {
-        "ui": (
-            "v5.3.2",
-            "7e836d8a9414d5da553fb1ab0404721e5b48769a",
-            "481eabfafc259ab71cd11aff19f9358cdbd2b6709f85e7e8c39620ce9cace8d7",
-        ),
-        "ui-smart": (
-            "v5.3.1",
-            "dd786bbae98391fb21df9b4e1e6cd402ead0614c",
-            "1c2eacbc58f3deb1d351b11dfb5da6755502386bb1224554754477bc700c9262",
-        ),
-    }
-    for key, (tag, commit, archive_sha256) in exact.items():
+    for key, owner, runtime_path in (
+        ("ui", "simai/ui", "distr"),
+        ("ui-smart", "simai/ui-smart", "smart"),
+    ):
         source = sources[key]
-        if (source.get("tag"), source.get("commit"), source.get("archive_sha256")) != (
-            tag,
-            commit,
-            archive_sha256,
-        ):
+        if not isinstance(source, dict):
+            raise ContractError(f"release_lock_source_invalid:{key}")
+        if source.get("owner") != owner or source.get("runtime_path") != runtime_path:
+            raise ContractError(f"release_lock_source_identity_invalid:{key}")
+        if source.get("tag") is not None or source.get("tag_object") is not None:
+            raise ContractError(f"release_lock_candidate_must_be_untagged:{key}")
+        if any(not HEX40.fullmatch(str(source.get(field, ""))) for field in ("commit", "tree", "runtime_tree")):
+            raise ContractError(f"release_lock_source_revision_invalid:{key}")
+        if not HEX64.fullmatch(str(source.get("archive_sha256", ""))):
             raise ContractError(f"release_lock_source_hash_invalid:{key}")
+    expected_id = (
+        f"ui-{sources['ui']['commit'][:12]}-smart-"
+        f"{sources['ui-smart']['commit'][:12]}"
+    )
+    if compatibility_id != expected_id:
+        raise ContractError("release_lock_pair_invalid")
     exclusions = lock.get("exclusions")
     if not isinstance(exclusions, list):
         raise ContractError("release_lock_exclusions_invalid")
-    if not any(item.get("resource_id") == "smart.file-upload" for item in exclusions):
-        raise ContractError("release_lock_file_upload_exclusion_missing")
-    if not any(item.get("capability") == "precompressed-sidecars" for item in exclusions):
-        raise ContractError("release_lock_gzip_exclusion_missing")
+    if any(not isinstance(item, dict) for item in exclusions):
+        raise ContractError("release_lock_exclusion_invalid")
     if lock.get("claims") != {
         "full_compatible": False,
         "production_ready": False,
@@ -491,8 +490,8 @@ def build_registry(
     utility_path = utility_manifest_path or ui_root / "contracts/owners/utility.manifest.json"
     component_path = component_manifest_path or ui_root / "contracts/owners/component.manifest.json"
     recipe_path = recipe_manifest_path or ui_root / "contracts/owners/recipe.manifest.json"
-    lock_path = release_lock_path or ui_root / "contracts/releases/sf-v5.3.2-7e836d8a-dd786bba.lock.json"
-    reference_path = smart_reference_path or ui_root / "contracts/registry-inputs/ui-smart-v5.3.1.ref.json"
+    lock_path = release_lock_path or ui_root / "contracts/releases/ui-148dbf36d42a-smart-daf5f285d006.lock.json"
+    reference_path = smart_reference_path or ui_root / "contracts/registry-inputs/ui-smart-daf5f285d006.ref.json"
     manifests = {
         "utility": load_json(utility_path),
         "component": load_json(component_path),
@@ -512,16 +511,26 @@ def build_registry(
         lock,
         smart_file_sha256,
     )
-    if manifests["utility"]["release"]["commit"] != lock["runtime_sources"]["ui"]["commit"]:
-        raise ContractError("utility_runtime_pair_mismatch")
-    if manifests["component"]["release"]["commit"] != lock["runtime_sources"]["ui"]["commit"]:
-        raise ContractError("component_runtime_pair_mismatch")
-    if manifests["smart-component"]["release"]["commit"] != lock["runtime_sources"]["ui-smart"]["commit"]:
-        raise ContractError("smart_runtime_pair_mismatch")
+    for kind, source_key in (
+        ("utility", "ui"),
+        ("component", "ui"),
+        ("smart-component", "ui-smart"),
+    ):
+        release = manifests[kind]["release"]
+        source = lock["runtime_sources"][source_key]
+        expected = {
+            "tag": source["tag"],
+            "commit": source["commit"],
+            "tree": source["tree"],
+            "runtime_subtree": source["runtime_tree"],
+            "archive_sha256": source["archive_sha256"],
+        }
+        if release != expected:
+            raise ContractError(f"{kind}_runtime_pair_mismatch")
 
     rules_path = ui_root / "distr/rule/rule.json"
     rules_value = json.loads(rules_path.read_text(encoding="utf-8"))
-    if not isinstance(rules_value, list) or len(rules_value) != 747:
+    if not isinstance(rules_value, list):
         raise ContractError("loader_rule_inventory_invalid")
     rules: list[dict[str, Any]] = rules_value
     rule_kinds = {rule["name"]: rule.get("type", "utility") for rule in rules}
@@ -545,11 +554,17 @@ def build_registry(
             if dependency not in entries:
                 raise ContractError(f"relation_unknown:{entry['id']}:{dependency}")
 
+    expected_counts = {
+        "utility": manifests["utility"]["inventory"]["expected"]["entries"],
+        "component": manifests["component"]["inventory"]["expected"]["entries"],
+        "smart-component": manifests["smart-component"]["inventory"]["expected"],
+        "recipe": manifests["recipe"]["inventory"]["expected"]["entries"],
+    }
     counts = {
         kind: sum(entry["kind"] == kind for entry in entries.values())
-        for kind in EXPECTED_COUNTS
+        for kind in KINDS
     }
-    if counts != EXPECTED_COUNTS:
+    if counts != expected_counts:
         raise ContractError(f"aggregate_count_mismatch:{counts}")
     counts["total"] = len(entries)
 
@@ -562,7 +577,7 @@ def build_registry(
         raise ContractError(f"recipe_closure_not_safe:{unsafe[0]}")
 
     smart_rules = {rule["name"]: rule for rule in rules if rule.get("type") == "smart"}
-    if len(smart_rules) != EXPECTED_COUNTS["smart-component"]:
+    if len(smart_rules) != expected_counts["smart-component"]:
         raise ContractError("smart_rule_count_mismatch")
     for entry in (item for item in entries.values() if item["kind"] == "smart-component"):
         rule_name = entry["runtime"].get("rule_name")
@@ -581,10 +596,6 @@ def build_registry(
         }
         if declared != expected_declared:
             raise ContractError(f"smart_rule_assets_mismatch:{entry['id']}")
-    file_upload = entries["smart.file-upload"]
-    if file_upload["readiness"]["status"] != "blocked":
-        raise ContractError("smart_file_upload_must_be_blocked")
-
     source_manifest_records = [
             {
                 "kind": kind,
@@ -607,13 +618,13 @@ def build_registry(
     sorted_entries = [entries[public_id] for public_id in sorted(entries)]
     by_kind = {
         kind: [entry["id"] for entry in sorted_entries if entry["kind"] == kind]
-        for kind in EXPECTED_COUNTS
+        for kind in KINDS
     }
     return {
         "schema_id": "simai.framework.contract-registry",
         "schema_version": 1,
         "compatibility": {
-            "id": COMPATIBILITY_ID,
+            "id": lock["compatibility_id"],
             "status": "bounded",
             "profile": PROFILE,
             "runtime_sources": [

@@ -1,10 +1,13 @@
 from __future__ import annotations
 
 import copy
+import gzip
+import hashlib
 import importlib.util
 import json
 import os
 import re
+import subprocess
 import tempfile
 import unittest
 from pathlib import Path
@@ -16,8 +19,8 @@ if not SMART_MANIFEST_INPUT:
     raise RuntimeError("SIMAI_UI_SMART_MANIFEST is required for cross-repository tests")
 SMART_MANIFEST = Path(SMART_MANIFEST_INPUT).resolve()
 GENERATED = ROOT / "contracts/generated/framework-contract-registry.json"
-LOCK = ROOT / "contracts/releases/sf-v5.3.2-7e836d8a-dd786bba.lock.json"
-SMART_REFERENCE = ROOT / "contracts/registry-inputs/ui-smart-v5.3.1.ref.json"
+LOCK = ROOT / "contracts/releases/ui-148dbf36d42a-smart-daf5f285d006.lock.json"
+SMART_REFERENCE = ROOT / "contracts/registry-inputs/ui-smart-daf5f285d006.ref.json"
 
 
 def load_builder():
@@ -44,20 +47,46 @@ class FrameworkContractRegistryTest(unittest.TestCase):
         path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n")
         return path
 
+    def test_exact_runtime_archives_and_precompressed_assets_are_reproducible(self) -> None:
+        smart_root = SMART_MANIFEST.parents[2]
+        for root, manifest_path, runtime_path in (
+            (ROOT, ROOT / "contracts/owners/utility.manifest.json", "distr"),
+            (smart_root, SMART_MANIFEST, "smart"),
+        ):
+            manifest = json.loads(manifest_path.read_text())
+            release = manifest["release"]
+            commit = release["commit"]
+            self.assertEqual(
+                subprocess.check_output(["git", "-C", str(root), "rev-parse", f"{commit}^{{tree}}"], text=True).strip(),
+                release["tree"],
+            )
+            self.assertEqual(
+                subprocess.check_output(["git", "-C", str(root), "rev-parse", f"{commit}:{runtime_path}"], text=True).strip(),
+                release["runtime_subtree"],
+            )
+            archive = subprocess.check_output(
+                ["git", "-C", str(root), "archive", "--format=tar", commit, runtime_path]
+            )
+            self.assertEqual(hashlib.sha256(archive).hexdigest(), release["archive_sha256"])
+            for compressed in (root / runtime_path).rglob("*.gz"):
+                plain = Path(str(compressed)[:-3])
+                if plain.is_file():
+                    self.assertEqual(gzip.decompress(compressed.read_bytes()), plain.read_bytes())
+
     def test_positive_inventory_pair_and_recipe_closure(self) -> None:
         self.assertEqual(
             self.registry["counts"],
             {
-                "utility": 225,
-                "component": 60,
-                "smart-component": 45,
+                "utility": 226,
+                "component": 58,
+                "smart-component": 42,
                 "recipe": 1,
-                "total": 331,
+                "total": 327,
             },
         )
         self.assertEqual(
             self.registry["compatibility"]["id"],
-            "sf-v5.3.2-7e836d8a-dd786bba",
+            "ui-148dbf36d42a-smart-daf5f285d006",
         )
         self.assertEqual(self.registry["compatibility"]["status"], "bounded")
         self.assertEqual(self.registry["compatibility"]["profile"], "plain-assets-v1")
@@ -86,7 +115,7 @@ class FrameworkContractRegistryTest(unittest.TestCase):
             | {self.by_id["recipe.admin.collection"]["kind"]},
             {"utility", "component", "smart-component", "recipe"},
         )
-        self.assertEqual(len(closure), 24)
+        self.assertEqual(len(closure), 20)
         for utility_id in (
             "utility.display",
             "utility.flex-direction",
@@ -124,7 +153,6 @@ class FrameworkContractRegistryTest(unittest.TestCase):
                 "component.pagination",
                 "component.tags",
                 "smart.datepicker",
-                "smart.list",
             ],
         )
 
@@ -136,11 +164,8 @@ class FrameworkContractRegistryTest(unittest.TestCase):
         self.assertEqual(safe, closure | {"recipe.admin.collection"})
         self.assertEqual(
             self.registry["indexes"]["blocked"],
-            ["smart.file-upload", "utility.filer-hue-rotate"],
+            ["utility.filer-hue-rotate"],
         )
-        file_upload = self.by_id["smart.file-upload"]
-        self.assertEqual(file_upload["readiness"]["status"], "blocked")
-        self.assertFalse(file_upload["readiness"]["safe_to_suggest"])
         typo_gap = self.by_id["utility.filer-hue-rotate"]
         self.assertEqual(typo_gap["readiness"]["status"], "blocked")
         self.assertEqual(
@@ -223,7 +248,7 @@ class FrameworkContractRegistryTest(unittest.TestCase):
                 BUILDER.build_registry(ROOT, SMART_MANIFEST, release_lock_path=wrong_pair_path)
 
             wrong_hash = copy.deepcopy(lock)
-            wrong_hash["runtime_sources"]["ui"]["archive_sha256"] = "0" * 64
+            wrong_hash["runtime_sources"]["ui"]["archive_sha256"] = "invalid"
             wrong_hash_path = self.write_json(directory, "wrong-hash.json", wrong_hash)
             with self.assertRaisesRegex(
                 BUILDER.ContractError, "release_lock_source_hash_invalid:ui"
@@ -275,12 +300,12 @@ class FrameworkContractRegistryTest(unittest.TestCase):
         )
         self.assertEqual(
             reference["contract_revision"],
-            "16dcd1e804dd38d89965fe4fee433c315d788862",
+            "7a7c6b1ff51b477bde8c7f367c624a58863c3734",
         )
         self.assertEqual(reference["status"], "committed")
         self.assertEqual(
             reference["manifest"]["file_sha256"],
-            "5939c09751850a4ec5e0cb6cf1531b8671807e7725a87011363072f6ba3491d2",
+            "c5717fa292c79c856976f8dea95840f32297f5abbb9790ddaebecc71e7b9968f",
         )
         smart_source = next(
             item
