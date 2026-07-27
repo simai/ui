@@ -19,7 +19,7 @@ if not SMART_MANIFEST_INPUT:
     raise RuntimeError("SIMAI_UI_SMART_MANIFEST is required for cross-repository tests")
 SMART_MANIFEST = Path(SMART_MANIFEST_INPUT).resolve()
 GENERATED = ROOT / "contracts/generated/framework-contract-registry.json"
-LOCK = ROOT / "contracts/releases/ui-873666dee394-smart-655406493ce9.lock.json"
+LOCK = ROOT / "contracts/releases/ui-5c458af1455b-smart-655406493ce9.lock.json"
 SMART_REFERENCE = ROOT / "contracts/registry-inputs/ui-smart-655406493ce9.ref.json"
 
 
@@ -86,7 +86,7 @@ class FrameworkContractRegistryTest(unittest.TestCase):
         )
         self.assertEqual(
             self.registry["compatibility"]["id"],
-            "ui-873666dee394-smart-655406493ce9",
+            "ui-5c458af1455b-smart-655406493ce9",
         )
         self.assertEqual(self.registry["compatibility"]["status"], "bounded")
         self.assertEqual(self.registry["compatibility"]["profile"], "plain-assets-v1")
