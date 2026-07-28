@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:simai:framework-contract-registry:owner-manifest:1",
+  "title": "Simai Framework owner manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_id",
+    "schema_version",
+    "kind",
+    "owner",
+    "release",
+    "inventory",
+    "defaults",
+    "entries"
+  ],
+  "properties": {
+    "schema_id": {"const": "simai.framework.owner-manifest"},
+    "schema_version": {"const": 1},
+    "kind": {"enum": ["utility", "component", "smart-component", "recipe"]},
+    "owner": {"$ref": "#/$defs/owner"},
+    "release": {"$ref": "#/$defs/release"},
+    "inventory": {"type": "object"},
+    "defaults": {"$ref": "#/$defs/defaults"},
+    "entries": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/entry"}
+    }
+  },
+  "$defs": {
+    "publicId": {
+      "type": "string",
+      "pattern": "^(utility|component|smart|recipe)\\.[a-z][a-z0-9]*(?:-[a-z0-9]+)*(?:\\.[a-z][a-z0-9]*(?:-[a-z0-9]+)*)*$"
+    },
+    "owner": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "repository", "manifest_path"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "repository": {"type": "string", "minLength": 1},
+        "manifest_path": {"type": "string", "minLength": 1}
+      }
+    },
+    "release": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["commit"],
+      "properties": {
+        "tag": {"type": ["string", "null"]},
+        "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "tree": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "runtime_subtree": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "archive_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "readiness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "safe_to_suggest", "profiles", "blockers"],
+      "properties": {
+        "status": {"enum": ["ready", "discoverable", "blocked"]},
+        "safe_to_suggest": {"type": "boolean"},
+        "profiles": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "blockers": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
+      }
+    },
+    "defaults": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["lifecycle", "readiness"],
+      "properties": {
+        "lifecycle": {"enum": ["released", "experimental", "deprecated", "retired"]},
+        "readiness": {"$ref": "#/$defs/readiness"},
+        "documentation_refs": {"type": "array", "items": {"type": "string"}},
+        "example_refs": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id"],
+      "properties": {
+        "id": {"$ref": "#/$defs/publicId"},
+        "kind": {"enum": ["utility", "component", "smart-component", "recipe"]},
+        "name": {"type": "string"},
+        "title": {"type": "string"},
+        "owner": {"type": "string"},
+        "lifecycle": {"enum": ["released", "experimental", "deprecated", "retired"]},
+        "readiness": {"$ref": "#/$defs/readiness"},
+        "provenance": {"type": "object"},
+        "documentation_refs": {"type": "array", "items": {"type": "string"}},
+        "example_refs": {"type": "array", "items": {"type": "string"}},
+        "runtime": {"type": "object"},
+        "requires": {"type": "array", "items": {"$ref": "#/$defs/publicId"}, "uniqueItems": true},
+        "curated_for": {"type": "array", "items": {"$ref": "#/$defs/publicId"}, "uniqueItems": true}
+      }
+    }
+  }
+}

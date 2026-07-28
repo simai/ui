@@ -1,0 +1,62 @@
+{
+  "schema_id": "simai.framework.release-lock",
+  "schema_version": 1,
+  "compatibility_id": "sf-v5.3.2-7e836d8a-dd786bba",
+  "status": "bounded",
+  "profile": "plain-assets-v1",
+  "runtime_sources": {
+    "ui": {
+      "owner": "simai/ui",
+      "tag": "v5.3.2",
+      "tag_object": "b73c27677788b348d235a207a843a550343eb3f5",
+      "commit": "7e836d8a9414d5da553fb1ab0404721e5b48769a",
+      "tree": "64335a6a75f9c83d0850de0df419b5287e362f9e",
+      "runtime_path": "distr",
+      "runtime_tree": "a54f83245250ffd25f5bf47c9726ebdbc7436b26",
+      "archive_sha256": "481eabfafc259ab71cd11aff19f9358cdbd2b6709f85e7e8c39620ce9cace8d7"
+    },
+    "ui-smart": {
+      "owner": "simai/ui-smart",
+      "tag": "v5.3.1",
+      "tag_object": "f96c0fba29115e6b277a9a781fed2003edb8c982",
+      "commit": "dd786bbae98391fb21df9b4e1e6cd402ead0614c",
+      "tree": "90c5281d4b312900905167216f0585cfc13162cb",
+      "runtime_path": "smart",
+      "runtime_tree": "8f76fae24dc00376981d2b082942f36145645650",
+      "archive_sha256": "1c2eacbc58f3deb1d351b11dfb5da6755502386bb1224554754477bc700c9262"
+    }
+  },
+  "inventory": {
+    "utility_rules": 639,
+    "utility_families": 225,
+    "components": 60,
+    "smart_components": 45,
+    "recipes": 1
+  },
+  "exclusions": [
+    {
+      "resource_id": "smart.file-upload",
+      "status": "blocked",
+      "reason_code": "declared-smart-css-missing",
+      "evidence": [
+        "simai/ui@7e836d8a9414d5da553fb1ab0404721e5b48769a:distr/rule/rule.json#cl-file-upload.css=true",
+        "simai/ui-smart@dd786bbae98391fb21df9b4e1e6cd402ead0614c:smart/file-upload/css/file-upload.css#missing"
+      ]
+    },
+    {
+      "capability": "precompressed-sidecars",
+      "status": "unsupported",
+      "reason_code": "gzip-plain-parity-not-guaranteed",
+      "evidence": [
+        "simai/ui@7e836d8a9414d5da553fb1ab0404721e5b48769a:distr#120-of-637-pairs-mismatch",
+        "simai/ui-smart@dd786bbae98391fb21df9b4e1e6cd402ead0614c:smart/avatars/template/default/index.html.gz",
+        "simai/ui-smart@dd786bbae98391fb21df9b4e1e6cd402ead0614c:smart/close/js/close.js.gz"
+      ]
+    }
+  ],
+  "claims": {
+    "full_compatible": false,
+    "production_ready": false,
+    "all_items_ready": false
+  }
+}

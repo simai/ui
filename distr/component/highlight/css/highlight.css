@@ -167,6 +167,51 @@
   .body .source {
     border-radius: var(--sf-radius-1);
   }
+  /* Public code-surface composition used by documentation and developer tools. */
+  .sf-code-surface {
+    min-width: 0;
+    overflow: hidden;
+    margin: 0;
+    background: var(--sf-surface-container);
+    border: var(--sf-a1) solid var(--sf-outline-variant);
+    border-radius: var(--sf-radius-2);
+    color: var(--sf-on-surface);
+  }
+  .sf-code-surface > .sf--highlight-head {
+    margin: 0;
+    padding-top: var(--sf-space-1\/3);
+    padding-bottom: var(--sf-space-1\/3);
+    padding-block: var(--sf-space-1\/3);
+    padding-left: var(--sf-space-1);
+    padding-right: var(--sf-space-1);
+    padding-inline: var(--sf-space-1);
+    border-bottom: var(--sf-a1) solid var(--sf-outline-variant);
+    -webkit-border-after: var(--sf-a1) solid var(--sf-outline-variant);
+            border-block-end: var(--sf-a1) solid var(--sf-outline-variant);
+  }
+  .sf-code-surface__scroll {
+    max-width: 100%;
+    margin: 0;
+    padding: var(--sf-space-1);
+    overflow: auto;
+    overscroll-behavior-inline: contain;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .sf-code-surface__scroll code {
+    display: block;
+    min-width: -webkit-max-content;
+    min-width: -moz-max-content;
+    min-width: max-content;
+    min-inline-size: -webkit-max-content;
+    min-inline-size: -moz-max-content;
+    min-inline-size: max-content;
+    padding: 0;
+    white-space: pre;
+    background: transparent;
+  }
   li .source {
     margin-top: var(--sf-text-size-1);
   }

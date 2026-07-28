@@ -186,6 +186,12 @@
   .sf-radio-button:has(input:enabled:not(:disabled):not(.disabled):hover) .sf-radio-button-box {
     --sf-radio-button-box--border-color: var(--sf-primary-hover);
   }
+  .sf-radio-button[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\)]:hover {
+    --sf-radio-button--background-color: var(--sf-surface-container-hover);
+  }
+  .sf-radio-button:has(input:enabled:not(:disabled):not(.disabled)):hover {
+    --sf-radio-button--background-color: var(--sf-surface-container-hover);
+  }
   .sf-radio-button[\:has\(input\:checked\)] .sf-radio-button-box {
     --sf-radio-button-box--border-color: var(--sf-primary);
   }
@@ -200,11 +206,23 @@
     --sf-radio-button-mark--background-color: var(--sf-primary);
     --sf-radio-button-mark--border-radius: var(--sf-radius-circle);
   }
-  .sf-radio-button[\:has\(input\:not\(\:disabled\)\:not\(.disabled\)\:focus\)] .sf-radio-button-box {
+  .sf-radio-button[\:has\(input\:not\(\:disabled\)\:not\(.disabled\)\:focus\)] .sf-radio-button-box,
+  .sf-radio-button[\:has\(input\:not\(\:disabled\)\:not\(.disabled\).focus-visible\)] .sf-radio-button-box {
     --sf-radio-button-box--background-color: var(--sf-transparent-for-focus);
     --sf-radio-button-box--box-shadow: var(--sf-ui-focus);
   }
-  .sf-radio-button:has(input:not(:disabled):not(.disabled):focus) .sf-radio-button-box {
+  .sf-radio-button:has(input:not(:disabled):not(.disabled):focus) .sf-radio-button-box,
+  .sf-radio-button:has(input:not(:disabled):not(.disabled).focus-visible) .sf-radio-button-box {
+    --sf-radio-button-box--background-color: var(--sf-transparent-for-focus);
+    --sf-radio-button-box--box-shadow: var(--sf-ui-focus);
+  }
+  .sf-radio-button[\:has\(input\:not\(\:disabled\)\:not\(.disabled\)\:focus\)] .sf-radio-button-box,
+  .sf-radio-button[\:has\(input\:not\(\:disabled\)\:not\(.disabled\)\:focus-visible\)] .sf-radio-button-box {
+    --sf-radio-button-box--background-color: var(--sf-transparent-for-focus);
+    --sf-radio-button-box--box-shadow: var(--sf-ui-focus);
+  }
+  .sf-radio-button:has(input:not(:disabled):not(.disabled):focus) .sf-radio-button-box,
+  .sf-radio-button:has(input:not(:disabled):not(.disabled):focus-visible) .sf-radio-button-box {
     --sf-radio-button-box--background-color: var(--sf-transparent-for-focus);
     --sf-radio-button-box--box-shadow: var(--sf-ui-focus);
   }

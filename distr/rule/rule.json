@@ -776,6 +776,21 @@
     "type": "smart"
   },
   {
+    "name": "cl-drawer",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "icon-buttons"
+      }
+    ],
+    "tags": [
+      "sf-drawer"
+    ],
+    "type": "smart"
+  },
+  {
     "name": "cl-dropdown",
     "js": true,
     "mode": "smart",
@@ -2366,6 +2381,12 @@
     "regex": "/xl\\:self-main-/"
   },
   {
+    "name": "kbd",
+    "css": true,
+    "regex": "/(?:<kbd\\b|\\bsf-kbd\\b)/i",
+    "type": "component"
+  },
+  {
     "name": "letter-spacing/default",
     "regex": "/tracking-/"
   },
@@ -2722,6 +2743,12 @@
   {
     "name": "order/xl",
     "regex": "/xl\\:order-/"
+  },
+  {
+    "name": "outline",
+    "css": true,
+    "regex": "/\\bsf-outline(?:__|\\b)/i",
+    "type": "component"
   },
   {
     "name": "outline-color/active",

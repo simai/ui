@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:simai:framework-contract-registry:release-lock:1",
+  "title": "Simai Framework bounded release lock",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_id",
+    "schema_version",
+    "compatibility_id",
+    "status",
+    "profile",
+    "runtime_sources",
+    "build_inputs",
+    "inventory",
+    "exclusions",
+    "claims"
+  ],
+  "properties": {
+    "schema_id": {"const": "simai.framework.release-lock"},
+    "schema_version": {"const": 1},
+    "compatibility_id": {
+      "type": "string",
+      "pattern": "^ui-[0-9a-f]{12}-smart-[0-9a-f]{12}$"
+    },
+    "status": {"const": "bounded"},
+    "profile": {"const": "plain-assets-v1"},
+    "runtime_sources": {"type": "object", "required": ["ui", "ui-smart"]},
+    "build_inputs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "builder", "legacy_compatibility"],
+      "properties": {
+        "source": {"$ref": "#/$defs/repositoryInput"},
+        "builder": {"$ref": "#/$defs/repositoryInput"},
+        "legacy_compatibility": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["required", "source", "lineage_manifest", "invocation"],
+          "properties": {
+            "required": {"const": true},
+            "source": {
+              "allOf": [
+                {"$ref": "#/$defs/repositoryInput"},
+                {
+                  "type": "object",
+                  "required": ["runtime_path", "runtime_tree"],
+                  "properties": {
+                    "runtime_path": {"const": "distr"},
+                    "runtime_tree": {"$ref": "#/$defs/sha1"}
+                  }
+                }
+              ]
+            },
+            "lineage_manifest": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["owner", "commit", "tree", "path", "blob", "sha256", "records_count"],
+              "properties": {
+                "owner": {"const": "simai/ui-control"},
+                "commit": {"$ref": "#/$defs/sha1"},
+                "tree": {"$ref": "#/$defs/sha1"},
+                "path": {"type": "string", "minLength": 1},
+                "blob": {"$ref": "#/$defs/sha1"},
+                "sha256": {"$ref": "#/$defs/sha256"},
+                "records_count": {"type": "integer", "minimum": 1}
+              }
+            },
+            "invocation": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["command", "arguments", "environment_bindings"],
+              "properties": {
+                "command": {"const": "node scripts/verify-product-reproducibility.cjs"},
+                "arguments": {
+                  "type": "array",
+                  "contains": {"const": "--require-legacy-compatibility"}
+                },
+                "environment_bindings": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "SF_LEGACY_COMPATIBILITY_ROOT",
+                    "SF_LEGACY_COMPATIBILITY_REVISION",
+                    "SF_LEGACY_COMPATIBILITY_MANIFEST"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "inventory": {"type": "object"},
+    "exclusions": {"type": "array"},
+    "claims": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["full_compatible", "production_ready", "all_items_ready"],
+      "properties": {
+        "full_compatible": {"const": false},
+        "production_ready": {"const": false},
+        "all_items_ready": {"const": false}
+      }
+    }
+  },
+  "$defs": {
+    "sha1": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "repositoryInput": {
+      "type": "object",
+      "required": ["owner", "commit", "tree", "archive_sha256"],
+      "properties": {
+        "owner": {"type": "string", "pattern": "^simai/[a-z0-9-]+$"},
+        "commit": {"$ref": "#/$defs/sha1"},
+        "tree": {"$ref": "#/$defs/sha1"},
+        "archive_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    }
+  }
+}

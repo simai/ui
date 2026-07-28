@@ -1,0 +1,80 @@
+{
+  "schema_id": "simai.framework.owner-manifest",
+  "schema_version": 1,
+  "kind": "recipe",
+  "owner": {
+    "id": "larena/layout",
+    "repository": "https://github.com/simai/larena-layout",
+    "manifest_path": "contracts/owners/recipe.manifest.json"
+  },
+  "release": {
+    "tag": null,
+    "commit": "a4c3c8768b894a5d9ffff0d8fc55c1430114e43f",
+    "tree": "d00a92ceacbd317bd8599347f53cb9aefb07bf68",
+    "archive_sha256": "de96ad7e9e567de2d43880be524609b1ff6a6dfaab9cc539358e65adf3870446"
+  },
+  "inventory": {
+    "source": "simai/larena-layout@a4c3c8768b894a5d9ffff0d8fc55c1430114e43f:src/Contracts/AdminCollectionLayoutPlan.php",
+    "selector": {"mode": "explicit"},
+    "expected": {"entries": 1}
+  },
+  "defaults": {
+    "lifecycle": "released",
+    "readiness": {
+      "status": "discoverable",
+      "safe_to_suggest": false,
+      "profiles": ["plain-assets-v1"],
+      "blockers": []
+    },
+    "documentation_refs": [],
+    "example_refs": []
+  },
+  "entries": [
+    {
+      "id": "recipe.admin.collection",
+      "kind": "recipe",
+      "name": "admin.collection",
+      "title": "Admin collection",
+      "owner": "larena/layout",
+      "lifecycle": "released",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": ["plain-assets-v1"],
+        "blockers": []
+      },
+      "provenance": {
+        "repository": "https://github.com/simai/larena-layout",
+        "tag": null,
+        "commit": "a4c3c8768b894a5d9ffff0d8fc55c1430114e43f",
+        "source_refs": [
+          "simai/larena-layout@a4c3c8768b894a5d9ffff0d8fc55c1430114e43f:src/Contracts/AdminCollectionLayoutPlan.php",
+          "simai/larena-admin@7e673a5de3b0cd89838d7515ae1a683241c4c8be:src/Runtime/SmartRecipePresenter.php"
+        ]
+      },
+      "documentation_refs": [
+        "simai/larena-layout@a4c3c8768b894a5d9ffff0d8fc55c1430114e43f:README.md"
+      ],
+      "example_refs": [
+        "simai/larena-admin@7e673a5de3b0cd89838d7515ae1a683241c4c8be:tests/Unit/SmartRecipePresenterTest.php"
+      ],
+      "runtime": {
+        "version": "1.0.0",
+        "profile": "list-page",
+        "regions": ["heading", "toolbar", "content", "pagination"],
+        "read_only": true
+      },
+      "requires": [
+        "utility.display",
+        "utility.flex-direction",
+        "utility.gap",
+        "utility.overflow",
+        "utility.width",
+        "smart.buttons",
+        "smart.pagination",
+        "smart.table"
+      ],
+      "curated_for": []
+    }
+  ]
+}
