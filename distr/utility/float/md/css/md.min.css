@@ -1,1 +1,0 @@
-@layer sf.utilities{@media(min-width: 720px){[dir="ltr"] .md\:float-inline-end{float:right}[dir="rtl"] .md\:float-inline-end{float:left}.md\:float-inline-end{float:inline-end}[dir="ltr"] .md\:float-inline-start{float:left}[dir="rtl"] .md\:float-inline-start{float:right}.md\:float-inline-start{float:inline-start}.md\:float-none{float:none}}}

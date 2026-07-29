@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {
   ".sf-badge": [
     "display/flex (.flex)",
@@ -27,3 +28,35 @@
     "align-items/center (.items-center)"
   ]
 }
+=======
+{
+  ".sf-badge": [
+    "display/flex (.flex)",
+    "flex-direction/row (.flex-row)",
+    "flex-wrap/nowrap (.flex-nowrap)",
+    "gap/var(--sf-a0)",
+    "justify-content/center (.justify-center)",
+    "align-items/center (.items-center)"
+  ],
+  ".sf-badge .sf-badge-icon-container": [
+    "flex/1 (.flex-1)",
+    "display/flex (.flex)",
+    "flex-direction/row (.flex-row)",
+    "flex-wrap/nowrap (.flex-nowrap)",
+    "justify-content/center (.justify-center)",
+    "align-items/center (.items-center)"
+  ],
+  ".sf-badge .sf-badge-icon-container .sf-icon": [
+    "display/flex (.flex)",
+    "justify-content/center (.justify-center)",
+    "align-items/center (.items-center)"
+  ],
+  ".sf-badge .sf-badge-text-container": [
+    "display/flex (.flex)",
+    "flex-direction/row (.flex-row)",
+    "flex-wrap/nowrap (.flex-nowrap)",
+    "justify-content/center (.justify-center)",
+    "align-items/center (.items-center)"
+  ]
+}
+>>>>>>> 913e8fc6 (chore: release core assets)

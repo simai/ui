@@ -1,8 +1,1 @@
-@layer sf.utilities {
-  .fill-nonzero {
-    fill-rule: nonzero;
-  }
-  .fill-evenodd {
-    fill-rule: evenodd;
-  }
-}
+@layer sf.utilities{.fill-nonzero{fill-rule:nonzero}.fill-evenodd{fill-rule:evenodd}}

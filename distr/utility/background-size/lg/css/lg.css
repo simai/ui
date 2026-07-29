@@ -1,13 +1,1 @@
-@layer sf.utilities {
-  @media (min-width: 960px) {
-    .lg\:bg-auto {
-      background-size: auto;
-    }
-    .lg\:bg-cover {
-      background-size: cover;
-    }
-    .lg\:bg-contain {
-      background-size: contain;
-    }
-  }
-}
+@layer sf.utilities{@media(min-width: 960px){.lg\:bg-auto{background-size:auto}.lg\:bg-cover{background-size:cover}.lg\:bg-contain{background-size:contain}}}

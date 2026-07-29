@@ -1,8 +1,1 @@
-@layer sf.utilities {
-  .box-border {
-    box-sizing: border-box;
-  }
-  .box-content {
-    box-sizing: content-box;
-  }
-}
+@layer sf.utilities{.box-border{-webkit-box-sizing:border-box;box-sizing:border-box}.box-content{-webkit-box-sizing:content-box;box-sizing:content-box}}

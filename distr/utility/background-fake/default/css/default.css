@@ -1,5 +1,1 @@
-@layer sf.utilities {
-  .bg-fake {
-    background-color: var(--sf-transparent);
-  }
-}
+@layer sf.utilities{.bg-fake{background-color:var(--sf-transparent)}}

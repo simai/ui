@@ -1,16 +1,1 @@
-@layer sf.utilities {
-  @media (min-width: 720px) {
-    .md\:flex-row {
-      flex-direction: row;
-    }
-    .md\:flex-col {
-      flex-direction: column;
-    }
-    .md\:flex-row-reverse {
-      flex-direction: row-reverse;
-    }
-    .md\:flex-col-reverse {
-      flex-direction: column-reverse;
-    }
-  }
-}
+@layer sf.utilities{@media(min-width: 720px){.md\:flex-row{-webkit-box-orient:horizontal;-webkit-box-direction:normal;-ms-flex-direction:row;flex-direction:row}.md\:flex-col{-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column}.md\:flex-row-reverse{-webkit-box-orient:horizontal;-webkit-box-direction:reverse;-ms-flex-direction:row-reverse;flex-direction:row-reverse}.md\:flex-col-reverse{-webkit-box-orient:vertical;-webkit-box-direction:reverse;-ms-flex-direction:column-reverse;flex-direction:column-reverse}}}

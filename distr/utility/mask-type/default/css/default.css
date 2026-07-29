@@ -1,8 +1,1 @@
-@layer sf.utilities {
-  .mask-type-luminance {
-    mask-type: luminance;
-  }
-  .mask-type-alpha {
-    mask-type: alpha;
-  }
-}
+@layer sf.utilities{.mask-type-luminance{mask-type:luminance}.mask-type-alpha{mask-type:alpha}}

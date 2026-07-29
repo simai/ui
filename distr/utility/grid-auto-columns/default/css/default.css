@@ -1,16 +1,1 @@
-@layer sf.utilities {
-  .auto-cols {
-    grid-auto-columns: auto;
-  }
-  .auto-cols-min {
-    grid-auto-columns: -webkit-min-content;
-    grid-auto-columns: min-content;
-  }
-  .auto-cols-max {
-    grid-auto-columns: -webkit-max-content;
-    grid-auto-columns: max-content;
-  }
-  .auto-cols-fr {
-    grid-auto-columns: minmax(0, 1fr);
-  }
-}
+@layer sf.utilities{.auto-cols{grid-auto-columns:auto}.auto-cols-min{grid-auto-columns:-webkit-min-content;grid-auto-columns:min-content}.auto-cols-max{grid-auto-columns:-webkit-max-content;grid-auto-columns:max-content}.auto-cols-fr{grid-auto-columns:minmax(0, 1fr)}}

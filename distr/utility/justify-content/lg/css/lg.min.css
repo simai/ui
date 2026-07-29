@@ -1,1 +1,0 @@
-@layer sf.utilities{@media(min-width: 960px){.lg\:content-main-start{justify-content:flex-start}.lg\:content-main-end{justify-content:flex-end}.lg\:content-main-center{justify-content:center}.lg\:content-main-between{justify-content:space-between}.lg\:content-main-around{justify-content:space-around}.lg\:content-main-evenly{justify-content:space-evenly}}}

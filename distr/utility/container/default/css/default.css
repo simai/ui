@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 @layer sf.utilities {
   [dir="ltr"] .container {
     padding-left: var(--sf-space-1);
@@ -129,3 +130,6 @@
     }
   }
 }
+=======
+@layer sf.utilities{.container{width:100%;padding-left:var(--sf-space-1);padding-right:var(--sf-space-1)}@media(min-width: 520px){.container{width:var(--sf-breakpoint-sm);padding-left:var(--sf-space-2);padding-right:var(--sf-space-2)}}@media(min-width: 720px){.container{width:var(--sf-breakpoint-md);padding-left:var(--sf-space-3);padding-right:var(--sf-space-3)}}@media(min-width: 960px){.container{width:var(--sf-breakpoint-lg);padding-left:var(--sf-space-4);padding-right:var(--sf-space-4)}}@media(min-width: 1140px){.container{width:var(--sf-breakpoint-xl);padding-left:var(--sf-space-5);padding-right:var(--sf-space-5)}}@media(min-width: 1320px){.container{width:var(--sf-breakpoint-xxl);padding-left:var(--sf-space-6);padding-right:var(--sf-space-6)}}}
+>>>>>>> 913e8fc6 (chore: release core assets)

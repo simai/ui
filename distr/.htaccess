@@ -1,0 +1,19 @@
+AddEncoding gzip .gz
+
+
+AddType application/javascript .js.gz
+
+
+AddType text/css .css.gz
+
+
+<FilesMatch "\.js\.gz$">
+  ForceType application/javascript
+  Header set Content-Encoding gzip
+</FilesMatch>
+
+
+<FilesMatch "\.css\.gz$">
+  ForceType text/css
+  Header set Content-Encoding gzip
+</FilesMatch>
