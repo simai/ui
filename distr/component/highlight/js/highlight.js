@@ -933,11 +933,29 @@ function initLineNumbers(hljs) {
 (__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 /* global __webpack_public_path__: writable */
-if (typeof window !== 'undefined' && window.sfPath) {
-  if (__webpack_require__.p !== window.sfPath) {
-    __webpack_require__.p = window.sfPath;
+(() => {
+  if (typeof window === 'undefined' || !window.sfPath) return;
+  const frameworkRoot = new URL(window.sfPath, window.location?.href || document.baseURI);
+
+  if (!frameworkRoot.pathname.endsWith('/')) {
+    frameworkRoot.pathname += '/';
   }
-}
+
+  const highlightScript = typeof document === 'undefined' ? null : Array.from(document.scripts).reverse().find(script => {
+    if (!script.src) return false;
+
+    try {
+      return /\/component\/highlight\/js\/highlight(?:\.min)?\.js$/.test(new URL(script.src, document.baseURI).pathname);
+    } catch {
+      return false;
+    }
+  });
+  const highlightRoot = highlightScript ? new URL('../', new URL(highlightScript.src, document.baseURI)) : new URL('component/highlight/', frameworkRoot);
+
+  if (__webpack_require__.p !== highlightRoot.href) {
+    __webpack_require__.p = highlightRoot.href;
+  }
+})();
 
 /***/ },
 

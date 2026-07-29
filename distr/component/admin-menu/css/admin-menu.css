@@ -27,6 +27,18 @@
     border-right-width: 1px;
     border-right-width: var(--sf-admin-menu-panel--border-inline-start-width, 1px);
   }
+  [dir="ltr"] .sf-admin-menu-panel {
+    border-right-width: 1px;
+  }
+  [dir="rtl"] .sf-admin-menu-panel {
+    border-left-width: 1px;
+  }
+  [dir="ltr"] .sf-admin-menu-panel {
+    border-left-width: 1px;
+  }
+  [dir="rtl"] .sf-admin-menu-panel {
+    border-right-width: 1px;
+  }
   .sf-admin-menu-panel {
     height: 100%;
     background-color: var(--sf-surface-0);
@@ -367,6 +379,18 @@
     border-top-right-radius: var(--sf-admin-menu-item-segment--border-start-start-radius, var(--sf-radius-default));
   }
   [dir="ltr"] .sf-admin-menu-item-segment {
+    border-right-width: 0;
+  }
+  [dir="rtl"] .sf-admin-menu-item-segment {
+    border-left-width: 0;
+  }
+  [dir="ltr"] .sf-admin-menu-item-segment {
+    border-left-width: 0;
+  }
+  [dir="rtl"] .sf-admin-menu-item-segment {
+    border-right-width: 0;
+  }
+  [dir="ltr"] .sf-admin-menu-item-segment {
     border-bottom-right-radius: var(--sf-radius-default);
   }
   [dir="rtl"] .sf-admin-menu-item-segment {
@@ -534,6 +558,18 @@
   [dir="rtl"] .sf-admin-menu-item {
     border-top-right-radius: var(--sf-radius-default);
   }
+  [dir="ltr"] .sf-admin-menu-item {
+    border-right-width: 0;
+  }
+  [dir="rtl"] .sf-admin-menu-item {
+    border-left-width: 0;
+  }
+  [dir="ltr"] .sf-admin-menu-item {
+    border-left-width: 0;
+  }
+  [dir="rtl"] .sf-admin-menu-item {
+    border-right-width: 0;
+  }
   .sf-admin-menu-item {
     -webkit-padding-start: var(--sf-space-1);
             padding-inline-start: var(--sf-space-1);
@@ -665,6 +701,18 @@
   }
   [dir="rtl"] .sf-admin-menu-bottom {
     padding-left: var(--sf-space-1);
+  }
+  [dir="ltr"] .sf-admin-menu-bottom {
+    border-bottom-right-radius: 0;
+  }
+  [dir="rtl"] .sf-admin-menu-bottom {
+    border-bottom-left-radius: 0;
+  }
+  [dir="ltr"] .sf-admin-menu-bottom {
+    border-bottom-left-radius: 0;
+  }
+  [dir="rtl"] .sf-admin-menu-bottom {
+    border-bottom-right-radius: 0;
   }
   [dir="ltr"] .sf-admin-menu-bottom {
     border-top-right-radius: var(--sf-radius-default);

@@ -367,6 +367,18 @@
     border-bottom-right-radius: var(--sf-radius-1\/2);
   }
   [dir="ltr"] .sf-list {
+    border-right-width: 1px;
+  }
+  [dir="rtl"] .sf-list {
+    border-left-width: 1px;
+  }
+  [dir="ltr"] .sf-list {
+    border-left-width: 1px;
+  }
+  [dir="rtl"] .sf-list {
+    border-right-width: 1px;
+  }
+  [dir="ltr"] .sf-list {
     border-top-right-radius: var(--sf-radius-1\/2);
   }
   [dir="rtl"] .sf-list {

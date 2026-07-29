@@ -90,6 +90,18 @@
     border-bottom-right-radius: var(--sf-radius-1);
   }
   [dir="ltr"] .sf-menu-element {
+    border-right-width: 1px;
+  }
+  [dir="rtl"] .sf-menu-element {
+    border-left-width: 1px;
+  }
+  [dir="ltr"] .sf-menu-element {
+    border-left-width: 1px;
+  }
+  [dir="rtl"] .sf-menu-element {
+    border-right-width: 1px;
+  }
+  [dir="ltr"] .sf-menu-element {
     border-top-right-radius: var(--sf-radius-1);
   }
   [dir="rtl"] .sf-menu-element {

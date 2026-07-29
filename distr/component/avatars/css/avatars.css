@@ -298,6 +298,18 @@
   [dir="rtl"] .sf-avatar {
     border-top-right-radius: var(--sf-radius-circle);
   }
+  [dir="ltr"] .sf-avatar {
+    border-right-width: 0;
+  }
+  [dir="rtl"] .sf-avatar {
+    border-left-width: 0;
+  }
+  [dir="ltr"] .sf-avatar {
+    border-left-width: 0;
+  }
+  [dir="rtl"] .sf-avatar {
+    border-right-width: 0;
+  }
   .sf-avatar {
     border-end-end-radius: var(--sf-radius-circle);
     border-end-end-radius: var(--sf-avatar--border-bottom-right-radius, var(--sf-radius-circle));
