@@ -1,1 +1,20 @@
-@layer sf.utilities{.decoration-offset-auto{text-underline-offset:auto}.decoration-offset-0{text-underline-offset:var(--sf-a0)}.decoration-offset-1{text-underline-offset:var(--sf-a1)}.decoration-offset-2{text-underline-offset:var(--sf-a2)}.decoration-offset-3{text-underline-offset:var(--sf-a3)}.decoration-offset-4{text-underline-offset:var(--sf-a4)}}
+@layer sf.utilities {
+  .decoration-offset-auto {
+    text-underline-offset: auto;
+  }
+  .decoration-offset-0 {
+    text-underline-offset: var(--sf-a0);
+  }
+  .decoration-offset-1 {
+    text-underline-offset: var(--sf-a1);
+  }
+  .decoration-offset-2 {
+    text-underline-offset: var(--sf-a2);
+  }
+  .decoration-offset-3 {
+    text-underline-offset: var(--sf-a3);
+  }
+  .decoration-offset-4 {
+    text-underline-offset: var(--sf-a4);
+  }
+}

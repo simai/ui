@@ -1,0 +1,1 @@
+@layer sf.utilities{@media(min-width: 520px){.sm\:measure{max-width:var(--sf-text--measure)}.sm\:measure-wide{max-width:var(--sf-text--measure-wide)}.sm\:measure-narrow{max-width:var(--sf-text--measure-narrow)}}}

@@ -1,1 +1,19 @@
-@layer sf.components{.sf-tree-item .sf-tree-item-container{gap:var(--sf-tree-item-container--gap, var(--sf-space-1\/3))}.sf-tree-item .sf-tree-item-name{color:var(--sf-tree-item-name--color, var(--sf-primary));font-size:var(--sf-tree-item-name--font-size, var(--sf-text-size-1));line-height:var(--sf-tree-item-name--line-height, var(--sf-text-height-1))}}@layer sf.overrides{.sf-tree-item .sf-icon{--sf-icon--color: var(--sf-secondary-transparent-overlay)}}
+@layer sf.components {
+  .sf-tree-item .sf-tree-item-container {
+    gap: var(--sf-space-1\/3);
+    gap: var(--sf-tree-item-container--gap, var(--sf-space-1\/3));
+  }
+  .sf-tree-item .sf-tree-item-name {
+    color: var(--sf-primary);
+    color: var(--sf-tree-item-name--color, var(--sf-primary));
+    font-size: var(--sf-text-size-1);
+    font-size: var(--sf-tree-item-name--font-size, var(--sf-text-size-1));
+    line-height: var(--sf-text-height-1);
+    line-height: var(--sf-tree-item-name--line-height, var(--sf-text-height-1));
+  }
+}
+@layer sf.override {
+  .sf-tree-item .sf-icon {
+    --sf-icon--color: var(--sf-secondary-transparent-overlay);
+  }
+}

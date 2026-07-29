@@ -1,1 +1,485 @@
-(()=>{"use strict";const e=".sf-slider",t="sfSliderBound",n="sfSliderWaiting",r=["a11y","autoplay","cardsEffect","coverflowEffect","creativeEffect","cubeEffect","fadeEffect","flipEffect","freeMode","grid","keyboard","mousewheel","scrollbar","thumbs","virtual"];function i(e,t=!1){return null==e||""===e?t:"boolean"==typeof e?e:["1","true","yes","on"].includes(String(e).toLowerCase())}function o(e,t){const n=Number.parseFloat(String(e??""));return Number.isFinite(n)?n:t}function s(e,t=1){return"auto"===String(e||"").trim().toLowerCase()?"auto":o(e,t)}function l(e,t,n){return t?.dataset?.[n]??e?.dataset?.[n]}function a(e=""){return e?e.charAt(0).toLowerCase()+e.slice(1):""}function u(e){const t=String(e??"").trim();if(""===t)return"";if("true"===t)return!0;if("false"===t)return!1;if("null"===t)return null;if(/^-?\d+(\.\d+)?$/.test(t))return Number(t);if(t.startsWith("{")&&t.endsWith("}")||t.startsWith("[")&&t.endsWith("]"))try{return JSON.parse(t)}catch(e){console.warn("SF slider: invalid data-swiper-options JSON",e)}return t}function d(e){return e&&"object"==typeof e&&!Array.isArray(e)&&!(e instanceof Element)}function c(e={},t={}){const n={...e};return Object.entries(t||{}).forEach(([e,t])=>{d(t)&&d(n[e])?n[e]=c(n[e],t):n[e]=t}),n}function f(...e){return e.reduce((e,t)=>{if(!t?.dataset)return e;if(t.dataset.swiperOptions){const n=u(t.dataset.swiperOptions);d(n)&&(e=c(e,n))}return Object.entries(t.dataset).forEach(([t,n])=>{!function(e,t,n){if(!t.startsWith("swiper")||"swiperOptions"===t)return;const i=a(t.slice(6));if(!i)return;const o=r.find(e=>{const t=i.slice(e.length);return i===e||/^[A-Z]/.test(t)});if(o&&i!==o){const t=a(i.slice(o.length));return void(e[o]={...d(e[o])?e[o]:{},[t]:n})}e[i]=n}(e,t,u(n))}),e},{})}function p(e,t,n=1){let r={centeredSlides:i(l(e,t,"centeredSlides"),!1),loop:i(l(e,t,"loop"),!1),slidesPerView:s(l(e,t,"slidesPerView"),n),spaceBetween:o(l(e,t,"spaceBetween"),0),speed:o(l(e,t,"speed"),300),watchSlidesProgress:!0};const a=function(e,t){if(i(l(e,t,"autoplay"),!1))return{enabled:!0,delay:o(l(e,t,"autoplayDelay"),3e3),disableOnInteraction:i(l(e,t,"autoplayDisableOnInteraction"),!0),pauseOnMouseEnter:i(l(e,t,"autoplayPauseOnMouseEnter"),!1),reverseDirection:i(l(e,t,"autoplayReverseDirection"),!1),stopOnLastSlide:i(l(e,t,"autoplayStopOnLastSlide"),!1)}}(e,t);return a&&(r.autoplay=a),r=c(r,f(e,t)),function(e={}){return!0===e.autoplay?e.autoplay={enabled:!0}:d(e.autoplay)&&(e.autoplay={enabled:!0,...e.autoplay}),e}(r)}function w(e){const t=Array.from(e.querySelectorAll?.('sf-icon-button[root-class*="sf-slider-button-"]')||[]);return!!t.length&&t.some(e=>!e.querySelector(".sf-icon-button"))}function S(e){if("true"===e.dataset[n])return null;e.dataset[n]="true";let t=0;const r=()=>{if(document.documentElement.contains(e)){if("function"==typeof window.Swiper&&!w(e))return delete e.dataset[n],void b(e);t+=1,t<40?window.setTimeout(r,50):delete e.dataset[n]}else delete e.dataset[n]};return window.setTimeout(r,0),null}function b(e){if(!(e instanceof HTMLElement))return null;if("true"===e.dataset[t])return e._sfSlider;if("undefined"==typeof window||"function"!=typeof window.Swiper)return S(e);const n=e.querySelector(".sf-slider-main.swiper, .swiper");if(!(n instanceof HTMLElement))return null;if(w(e))return S(e);const r=e.querySelector(".sf-slider-button-prev"),i=e.querySelector(".sf-slider-button-next"),o=e.querySelector(".sf-slider-pagination"),s=e.querySelector(".sf-slider-thumbnails.swiper");let l=null;const a=(u=s,u?.querySelectorAll?.(".swiper-wrapper > .swiper-slide")?.length||0);var u;s instanceof HTMLElement&&a>0&&(l=new window.Swiper(s,{...p(e,s,Math.min(a,6)),loop:!1,centeredSlides:!1,spaceBetween:6,slidesPerView:Math.min(a,6),slideToClickedSlide:!1}));const d={...p(e,n,1)},c=function(e,t){if(e||t)return{disabledClass:"swiper-button-disabled",hiddenClass:"swiper-button-hidden",lockClass:"swiper-button-lock",nextEl:t,prevEl:e}}(r,i),f=function(e){if(e)return{el:e,bulletActiveClass:"active",bulletClass:"sf-slider-dots-dot",bulletElement:"button",clickable:!0}}(o);c&&(d.navigation=c),f&&(d.pagination=f),l&&(d.thumbs={swiper:l});const b=new window.Swiper(n,d);return e.dataset[t]="true",e._sfSlider=b,e._sfSliderThumbs=l,b}function m(t){(t instanceof Element||t===document)&&(t instanceof Element&&t.matches?.(e)&&b(t),t.querySelectorAll?.(e).forEach(b))}function y(e=document){m(e)}"undefined"!=typeof window&&(window.SF=window.SF||{},window.SF.Slider=window.SF.Slider||{},window.SF.Slider.bind=b,window.SF.Slider.refresh=function(e){if(!(e instanceof HTMLElement))return null;const t=e._sfSlider||b(e);return t?(e._sfSliderThumbs?.update?.(),t.update?.(),t.navigation?.update?.(),t.pagination?.update?.(),"number"==typeof t.activeIndex&&t.slideTo?.(t.activeIndex,0,!1),t):null},window.SF.Slider.unbind=function(e){e instanceof HTMLElement&&(e._sfSlider?.destroy?.(!0,!0),e._sfSliderThumbs?.destroy?.(!0,!0),delete e._sfSlider,delete e._sfSliderThumbs,delete e.dataset[t])}),"loading"===document.readyState?document.addEventListener("DOMContentLoaded",()=>y()):y();new MutationObserver(e=>{e.forEach(e=>{e.addedNodes.forEach(e=>{e instanceof Element&&m(e)})})}).observe(document.documentElement,{childList:!0,subtree:!0})})();
+/******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
+/******/ 	var __webpack_modules__ = ({
+
+/***/ "9e5aefb3c7c5"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   bindSlider: () => (/* binding */ bindSlider),
+/* harmony export */   initExistingSliders: () => (/* binding */ initExistingSliders),
+/* harmony export */   refreshSlider: () => (/* binding */ refreshSlider),
+/* harmony export */   unbindSlider: () => (/* binding */ unbindSlider)
+/* harmony export */ });
+const SLIDER_SELECTOR = '.sf-slider';
+const SLIDER_BOUND_FLAG = 'sfSliderBound';
+const SLIDER_WAITING_FLAG = 'sfSliderWaiting';
+const SWIPER_NESTED_OPTION_PREFIXES = ['a11y', 'autoplay', 'cardsEffect', 'coverflowEffect', 'creativeEffect', 'cubeEffect', 'fadeEffect', 'flipEffect', 'freeMode', 'grid', 'keyboard', 'mousewheel', 'scrollbar', 'thumbs', 'virtual'];
+
+function toBoolean(value, fallback = false) {
+  if (value === undefined || value === null || value === '') return fallback;
+  if (typeof value === 'boolean') return value;
+  return ['1', 'true', 'yes', 'on'].includes(String(value).toLowerCase());
+}
+
+function toNumber(value, fallback) {
+  const parsed = Number.parseFloat(String(value ?? ''));
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+function toSlidesPerView(value, fallback = 1) {
+  if (String(value || '').trim().toLowerCase() === 'auto') return 'auto';
+  return toNumber(value, fallback);
+}
+
+function getOption(root, element, name) {
+  return element?.dataset?.[name] ?? root?.dataset?.[name];
+}
+
+function lowerFirst(value = '') {
+  return value ? value.charAt(0).toLowerCase() + value.slice(1) : '';
+}
+
+function parseDataValue(value) {
+  const normalized = String(value ?? '').trim();
+  if (normalized === '') return '';
+  if (normalized === 'true') return true;
+  if (normalized === 'false') return false;
+  if (normalized === 'null') return null;
+  if (/^-?\d+(\.\d+)?$/.test(normalized)) return Number(normalized);
+
+  if (normalized.startsWith('{') && normalized.endsWith('}') || normalized.startsWith('[') && normalized.endsWith(']')) {
+    try {
+      return JSON.parse(normalized);
+    } catch (error) {
+      console.warn('SF slider: invalid data-swiper-options JSON', error);
+    }
+  }
+
+  return normalized;
+}
+
+function isPlainObject(value) {
+  return value && typeof value === 'object' && !Array.isArray(value) && !(value instanceof Element);
+}
+
+function deepMerge(target = {}, source = {}) {
+  const result = { ...target
+  };
+  Object.entries(source || {}).forEach(([key, value]) => {
+    if (isPlainObject(value) && isPlainObject(result[key])) {
+      result[key] = deepMerge(result[key], value);
+      return;
+    }
+
+    result[key] = value;
+  });
+  return result;
+}
+
+function setSwiperDataOption(options, datasetKey, value) {
+  if (!datasetKey.startsWith('swiper') || datasetKey === 'swiperOptions') {
+    return;
+  }
+
+  const optionName = lowerFirst(datasetKey.slice('swiper'.length));
+  if (!optionName) return;
+  const nestedPrefix = SWIPER_NESTED_OPTION_PREFIXES.find(prefix => {
+    const rest = optionName.slice(prefix.length);
+    return optionName === prefix || /^[A-Z]/.test(rest);
+  });
+
+  if (nestedPrefix && optionName !== nestedPrefix) {
+    const nestedName = lowerFirst(optionName.slice(nestedPrefix.length));
+    options[nestedPrefix] = { ...(isPlainObject(options[nestedPrefix]) ? options[nestedPrefix] : {}),
+      [nestedName]: value
+    };
+    return;
+  }
+
+  options[optionName] = value;
+}
+
+function collectSwiperDataOptions(...elements) {
+  return elements.reduce((options, element) => {
+    if (!element?.dataset) return options;
+
+    if (element.dataset.swiperOptions) {
+      const parsedOptions = parseDataValue(element.dataset.swiperOptions);
+
+      if (isPlainObject(parsedOptions)) {
+        options = deepMerge(options, parsedOptions);
+      }
+    }
+
+    Object.entries(element.dataset).forEach(([key, value]) => {
+      setSwiperDataOption(options, key, parseDataValue(value));
+    });
+    return options;
+  }, {});
+}
+
+function normalizeAutoplayOptions(options = {}) {
+  if (options.autoplay === true) {
+    options.autoplay = {
+      enabled: true
+    };
+  } else if (isPlainObject(options.autoplay)) {
+    options.autoplay = {
+      enabled: true,
+      ...options.autoplay
+    };
+  }
+
+  return options;
+}
+
+function createPaginationOptions(paginationEl) {
+  if (!paginationEl) return undefined;
+  return {
+    el: paginationEl,
+    bulletActiveClass: 'active',
+    bulletClass: 'sf-slider-dots-dot',
+    bulletElement: 'button',
+    clickable: true
+  };
+}
+
+function createNavigationOptions(prevEl, nextEl) {
+  if (!prevEl && !nextEl) return undefined;
+  return {
+    disabledClass: 'swiper-button-disabled',
+    hiddenClass: 'swiper-button-hidden',
+    lockClass: 'swiper-button-lock',
+    nextEl,
+    prevEl
+  };
+}
+
+function createAutoplayOptions(root, element) {
+  const autoplay = toBoolean(getOption(root, element, 'autoplay'), false);
+  if (!autoplay) return undefined;
+  return {
+    enabled: true,
+    delay: toNumber(getOption(root, element, 'autoplayDelay'), 3000),
+    disableOnInteraction: toBoolean(getOption(root, element, 'autoplayDisableOnInteraction'), true),
+    pauseOnMouseEnter: toBoolean(getOption(root, element, 'autoplayPauseOnMouseEnter'), false),
+    reverseDirection: toBoolean(getOption(root, element, 'autoplayReverseDirection'), false),
+    stopOnLastSlide: toBoolean(getOption(root, element, 'autoplayStopOnLastSlide'), false)
+  };
+}
+
+function createBaseOptions(root, element, fallbackSlidesPerView = 1) {
+  let options = {
+    centeredSlides: toBoolean(getOption(root, element, 'centeredSlides'), false),
+    loop: toBoolean(getOption(root, element, 'loop'), false),
+    slidesPerView: toSlidesPerView(getOption(root, element, 'slidesPerView'), fallbackSlidesPerView),
+    spaceBetween: toNumber(getOption(root, element, 'spaceBetween'), 0),
+    speed: toNumber(getOption(root, element, 'speed'), 300),
+    watchSlidesProgress: true
+  };
+  const autoplay = createAutoplayOptions(root, element);
+
+  if (autoplay) {
+    options.autoplay = autoplay;
+  }
+
+  options = deepMerge(options, collectSwiperDataOptions(root, element));
+  return normalizeAutoplayOptions(options);
+}
+
+function getSlidesCount(element) {
+  return element?.querySelectorAll?.('.swiper-wrapper > .swiper-slide')?.length || 0;
+}
+
+function hasPendingSmartArrowRender(root) {
+  const arrowHosts = Array.from(root.querySelectorAll?.('sf-icon-button[root-class*="sf-slider-button-"]') || []);
+  if (!arrowHosts.length) return false;
+  return arrowHosts.some(host => !host.querySelector('.sf-icon-button'));
+}
+
+function waitForSliderReady(root) {
+  if (root.dataset[SLIDER_WAITING_FLAG] === 'true') return null;
+  root.dataset[SLIDER_WAITING_FLAG] = 'true';
+  let attempts = 0;
+
+  const retry = () => {
+    if (!document.documentElement.contains(root)) {
+      delete root.dataset[SLIDER_WAITING_FLAG];
+      return;
+    }
+
+    if (typeof window.Swiper === 'function' && !hasPendingSmartArrowRender(root)) {
+      delete root.dataset[SLIDER_WAITING_FLAG];
+      bindSlider(root);
+      return;
+    }
+
+    attempts += 1;
+
+    if (attempts < 40) {
+      window.setTimeout(retry, 50);
+    } else {
+      delete root.dataset[SLIDER_WAITING_FLAG];
+    }
+  };
+
+  window.setTimeout(retry, 0);
+  return null;
+}
+
+function bindSlider(root) {
+  if (!(root instanceof HTMLElement)) return null;
+  if (root.dataset[SLIDER_BOUND_FLAG] === 'true') return root._sfSlider;
+
+  if (typeof window === 'undefined' || typeof window.Swiper !== 'function') {
+    return waitForSliderReady(root);
+  }
+
+  const mainEl = root.querySelector('.sf-slider-main.swiper, .swiper');
+  if (!(mainEl instanceof HTMLElement)) return null;
+
+  if (hasPendingSmartArrowRender(root)) {
+    return waitForSliderReady(root);
+  }
+
+  const prevEl = root.querySelector('.sf-slider-button-prev');
+  const nextEl = root.querySelector('.sf-slider-button-next');
+  const paginationEl = root.querySelector('.sf-slider-pagination');
+  const thumbsEl = root.querySelector('.sf-slider-thumbnails.swiper');
+  let thumbs = null;
+  const thumbsCount = getSlidesCount(thumbsEl);
+
+  if (thumbsEl instanceof HTMLElement && thumbsCount > 0) {
+    thumbs = new window.Swiper(thumbsEl, { ...createBaseOptions(root, thumbsEl, Math.min(thumbsCount, 6)),
+      loop: false,
+      centeredSlides: false,
+      spaceBetween: 6,
+      slidesPerView: Math.min(thumbsCount, 6),
+      slideToClickedSlide: false
+    });
+  }
+
+  const sliderOptions = { ...createBaseOptions(root, mainEl, 1)
+  };
+  const navigation = createNavigationOptions(prevEl, nextEl);
+  const pagination = createPaginationOptions(paginationEl);
+
+  if (navigation) {
+    sliderOptions.navigation = navigation;
+  }
+
+  if (pagination) {
+    sliderOptions.pagination = pagination;
+  }
+
+  if (thumbs) {
+    sliderOptions.thumbs = {
+      swiper: thumbs
+    };
+  }
+
+  const slider = new window.Swiper(mainEl, sliderOptions);
+  root.dataset[SLIDER_BOUND_FLAG] = 'true';
+  root._sfSlider = slider;
+  root._sfSliderThumbs = thumbs;
+  return slider;
+}
+
+function refreshSlider(root) {
+  if (!(root instanceof HTMLElement)) return null;
+  const slider = root._sfSlider || bindSlider(root);
+  if (!slider) return null;
+  root._sfSliderThumbs?.update?.();
+  slider.update?.();
+  slider.navigation?.update?.();
+  slider.pagination?.update?.();
+
+  if (typeof slider.activeIndex === 'number') {
+    slider.slideTo?.(slider.activeIndex, 0, false);
+  }
+
+  return slider;
+}
+
+function unbindSlider(root) {
+  if (!(root instanceof HTMLElement)) return;
+  root._sfSlider?.destroy?.(true, true);
+  root._sfSliderThumbs?.destroy?.(true, true);
+  delete root._sfSlider;
+  delete root._sfSliderThumbs;
+  delete root.dataset[SLIDER_BOUND_FLAG];
+}
+
+function initSliderTree(target) {
+  if (!(target instanceof Element) && target !== document) return;
+
+  if (target instanceof Element && target.matches?.(SLIDER_SELECTOR)) {
+    bindSlider(target);
+  }
+
+  target.querySelectorAll?.(SLIDER_SELECTOR).forEach(bindSlider);
+}
+
+function initExistingSliders(scope = document) {
+  initSliderTree(scope);
+}
+
+if (typeof window !== 'undefined') {
+  window.SF = window.SF || {};
+  window.SF.Slider = window.SF.Slider || {};
+  window.SF.Slider.bind = bindSlider;
+  window.SF.Slider.refresh = refreshSlider;
+  window.SF.Slider.unbind = unbindSlider;
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => initExistingSliders());
+} else {
+  initExistingSliders();
+}
+
+const sliderObserver = new MutationObserver(mutations => {
+  mutations.forEach(mutation => {
+    mutation.addedNodes.forEach(node => {
+      if (!(node instanceof Element)) return;
+      initSliderTree(node);
+    });
+  });
+});
+sliderObserver.observe(document.documentElement, {
+  childList: true,
+  subtree: true
+});
+
+
+/***/ },
+
+/***/ "211fcc82fdf0"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _slider__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("9e5aefb3c7c5");
+/*
+* Main JS file for including JS for component.
+*
+* Imports:
+* - Base function component (_component_name.js)
+*/
+
+
+/***/ },
+
+/***/ "83898a5e7b0c"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ }
+
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	const __webpack_module_cache__ = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		const cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		const module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		if (!(moduleId in __webpack_modules__)) {
+/******/ 			delete __webpack_module_cache__[moduleId];
+/******/ 			const e = new Error("Cannot find module '" + moduleId + "'");
+/******/ 			e.code = 'MODULE_NOT_FOUND';
+/******/ 			throw e;
+/******/ 		}
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/************************************************************************/
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter/value functions for harmony exports
+/******/ 		__webpack_require__.d = (exports, definition) => {
+/******/ 			if(Array.isArray(definition)) {
+/******/ 				var i = 0;
+/******/ 				while(i < definition.length) {
+/******/ 					var key = definition[i++];
+/******/ 					var binding = definition[i++];
+/******/ 					if(!__webpack_require__.o(exports, key)) {
+/******/ 						if(binding === 0) {
+/******/ 							Object.defineProperty(exports, key, { enumerable: true, value: definition[i++] });
+/******/ 						} else {
+/******/ 							Object.defineProperty(exports, key, { enumerable: true, get: binding });
+/******/ 						}
+/******/ 					} else if(binding === 0) { i++; }
+/******/ 				}
+/******/ 			} else {
+/******/ 				for(var key in definition) {
+/******/ 					if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 						Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 					}
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = (exports) => {
+/******/ 			if(Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/
+/************************************************************************/
+let __webpack_exports__ = {};
+// This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
+(() => {
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("83898a5e7b0c");
+/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("211fcc82fdf0");
+/**
+* SIMAI Framework
+* Copyright 2008-2026 SIMAI Ltd
+* http://simai.studio
+* Read the license: http://framework.simai.studio/license/
+* Documentation: http://framework.simai.studio/
+* Support: http://simai.studio/support/
+*
+* SLIDER
+*
+* Entry point for importing components from this directory.
+* Simplifies the import process in other parts of the project.
+* Instead of importing individual files, all component can be imported through this file.
+*/
+
+
+})();
+
+/******/ })()
+;

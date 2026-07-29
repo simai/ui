@@ -1,1 +1,11 @@
-@layer sf.utilities{.sans{font-family:var(--sf-sans)}.serif{font-family:var(--sf-serif)}.mono{font-family:var(--sf-mono)}}
+@layer sf.utilities {
+  .sans {
+    font-family: var(--sf-sans);
+  }
+  .serif {
+    font-family: var(--sf-serif);
+  }
+  .mono {
+    font-family: var(--sf-mono);
+  }
+}

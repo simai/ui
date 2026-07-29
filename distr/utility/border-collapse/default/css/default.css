@@ -1,1 +1,8 @@
-@layer sf.utilities{.border-collapse{border-collapse:collapse}.border-separate{border-collapse:separate}}
+@layer sf.utilities {
+  .border-collapse {
+    border-collapse: collapse;
+  }
+  .border-separate {
+    border-collapse: separate;
+  }
+}

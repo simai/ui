@@ -1,1 +1,17 @@
-@layer sf.utilities{.focus\:ring-offset-1:focus{--sf-ring-offset-width: var(--sf-a1)}.focus\:ring-offset-2:focus{--sf-ring-offset-width: var(--sf-a2)}.focus\:ring-offset-3:focus{--sf-ring-offset-width: var(--sf-a3)}.focus\:ring-offset-4:focus{--sf-ring-offset-width: var(--sf-a4)}.focus\:ring-offset-0:focus{--sf-ring-offset-width: var(--sf-0)}}
+@layer sf.utilities {
+  .focus\:ring-offset-1:focus {
+    --sf-ring-offset-width: var(--sf-a1);
+  }
+  .focus\:ring-offset-2:focus {
+    --sf-ring-offset-width: var(--sf-a2);
+  }
+  .focus\:ring-offset-3:focus {
+    --sf-ring-offset-width: var(--sf-a3);
+  }
+  .focus\:ring-offset-4:focus {
+    --sf-ring-offset-width: var(--sf-a4);
+  }
+  .focus\:ring-offset-0:focus {
+    --sf-ring-offset-width: var(--sf-0);
+  }
+}

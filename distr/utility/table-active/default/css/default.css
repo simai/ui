@@ -1,1 +1,6 @@
-@layer sf.utilities{.table-active{--sf-table-accent-bg:var(--sf-table-active-bg);color:var(--sf-table-active-color)}}
+@layer sf.utilities {
+  .table-active {
+    --sf-table-accent-bg: var(--sf-table-active-bg);
+    color: var(--sf-table-active-color);
+  }
+}

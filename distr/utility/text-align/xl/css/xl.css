@@ -1,1 +1,28 @@
-@layer sf.utilities{@media(min-width: 1140px){.xl\:text-start{text-align:left}.xl\:text-center{text-align:center}.xl\:text-end{text-align:right}.xl\:text-justify{text-align:justify}}}
+@layer sf.utilities {
+  @media (min-width: 1140px) {
+    [dir="ltr"] .xl\:text-start {
+      text-align: left;
+    }
+    [dir="rtl"] .xl\:text-start {
+      text-align: right;
+    }
+    .xl\:text-start {
+      text-align: start;
+    }
+    .xl\:text-center {
+      text-align: center;
+    }
+    [dir="ltr"] .xl\:text-end {
+      text-align: right;
+    }
+    [dir="rtl"] .xl\:text-end {
+      text-align: left;
+    }
+    .xl\:text-end {
+      text-align: end;
+    }
+    .xl\:text-justify {
+      text-align: justify;
+    }
+  }
+}

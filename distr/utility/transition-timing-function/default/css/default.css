@@ -1,1 +1,14 @@
-@layer sf.utilities{.ease-linear{-webkit-transition-timing-function:linear;transition-timing-function:linear}.ease-in{-webkit-transition-timing-function:cubic-bezier(0.4, 0, 1, 1);transition-timing-function:cubic-bezier(0.4, 0, 1, 1)}.ease-out{-webkit-transition-timing-function:cubic-bezier(0, 0, 0.2, 1);transition-timing-function:cubic-bezier(0, 0, 0.2, 1)}.ease-in-out{-webkit-transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1)}}
+@layer sf.utilities {
+  .ease-linear {
+    transition-timing-function: linear;
+  }
+  .ease-in {
+    transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
+  }
+  .ease-out {
+    transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  }
+  .ease-in-out {
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
