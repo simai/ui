@@ -60,18 +60,6 @@
     border-left-width: 0;
     border-left-width: var(--sf-badge--border-inline-end-width, 0);
   }
-  [dir="ltr"] .sf-badge {
-    border-left-width: 0;
-  }
-  [dir="rtl"] .sf-badge {
-    border-right-width: 0;
-  }
-  [dir="ltr"] .sf-badge {
-    border-right-width: 0;
-  }
-  [dir="rtl"] .sf-badge {
-    border-left-width: 0;
-  }
   .sf-badge {
     border-end-end-radius: var(--sf-radius-circle);
     border-end-start-radius: var(--sf-radius-circle);
