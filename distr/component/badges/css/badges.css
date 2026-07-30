@@ -131,10 +131,10 @@
     --sf-badge--background-color: var(--sf-on-surface-variant);
     --sf-badge--color: var(--sf-on-surface-inverse);
   }
-  .sf-badge.sf-badge--tonal.sf-badge--neutral .sf-icon, .sf-badge.sf-badge--tonal.sf-badge--primary .sf-icon, .sf-badge.sf-badge--tonal.sf-badge--secondary .sf-icon, .sf-badge.sf-badge--tonal.sf-badge--tertiary .sf-icon, .sf-badge.sf-badge--main .sf-icon, .sf-badge.sf-badge--outline .sf-icon {
+  .sf-badge.sf-badge--tonal .sf-icon, .sf-badge.sf-badge--main .sf-icon, .sf-badge.sf-badge--outline .sf-icon {
     --sf-icon--color: var(--sf-badge--color);
   }
-  .sf-badge.sf-badge--tonal.sf-badge--neutral .sf-badge-text, .sf-badge.sf-badge--tonal.sf-badge--primary .sf-badge-text, .sf-badge.sf-badge--tonal.sf-badge--secondary .sf-badge-text, .sf-badge.sf-badge--tonal.sf-badge--tertiary .sf-badge-text, .sf-badge.sf-badge--main .sf-badge-text, .sf-badge.sf-badge--outline .sf-badge-text {
+  .sf-badge.sf-badge--tonal .sf-badge-text, .sf-badge.sf-badge--main .sf-badge-text, .sf-badge.sf-badge--outline .sf-badge-text {
     --sf-badge-text--color: var(--sf-badge--color);
   }
   .sf-badge.sf-badge--main.sf-badge--primary {
@@ -188,6 +188,54 @@
   .sf-badge.sf-badge--outline.sf-badge--on-surface {
     --sf-badge--border-color: var(--sf-outline);
     --sf-badge--color: var(--sf-on-surface);
+  }
+  .sf-badge.sf-badge--main.sf-badge--info {
+    --sf-badge--background-color: var(--sf-info);
+    --sf-badge--color: var(--sf-on-info);
+  }
+  .sf-badge.sf-badge--tonal.sf-badge--info {
+    --sf-badge--background-color: var(--sf-info-container);
+    --sf-badge--color: var(--sf-on-info-container);
+  }
+  .sf-badge.sf-badge--outline.sf-badge--info {
+    --sf-badge--border-color: var(--sf-outline-info);
+    --sf-badge--color: var(--sf-info);
+  }
+  .sf-badge.sf-badge--main.sf-badge--success {
+    --sf-badge--background-color: var(--sf-success);
+    --sf-badge--color: var(--sf-on-success);
+  }
+  .sf-badge.sf-badge--tonal.sf-badge--success {
+    --sf-badge--background-color: var(--sf-success-container);
+    --sf-badge--color: var(--sf-on-success-container);
+  }
+  .sf-badge.sf-badge--outline.sf-badge--success {
+    --sf-badge--border-color: var(--sf-outline-success);
+    --sf-badge--color: var(--sf-success);
+  }
+  .sf-badge.sf-badge--main.sf-badge--warning {
+    --sf-badge--background-color: var(--sf-warning);
+    --sf-badge--color: var(--sf-on-warning);
+  }
+  .sf-badge.sf-badge--tonal.sf-badge--warning {
+    --sf-badge--background-color: var(--sf-warning-container);
+    --sf-badge--color: var(--sf-on-warning-container);
+  }
+  .sf-badge.sf-badge--outline.sf-badge--warning {
+    --sf-badge--border-color: var(--sf-outline-warning);
+    --sf-badge--color: var(--sf-warning);
+  }
+  .sf-badge.sf-badge--main.sf-badge--danger {
+    --sf-badge--background-color: var(--sf-error);
+    --sf-badge--color: var(--sf-on-error);
+  }
+  .sf-badge.sf-badge--tonal.sf-badge--danger {
+    --sf-badge--background-color: var(--sf-error-container);
+    --sf-badge--color: var(--sf-on-error-container);
+  }
+  .sf-badge.sf-badge--outline.sf-badge--danger {
+    --sf-badge--border-color: var(--sf-outline-error);
+    --sf-badge--color: var(--sf-error);
   }
   .sf-badge--size-1 {
     --sf-badge--font-size: var(--sf-text-size-1);

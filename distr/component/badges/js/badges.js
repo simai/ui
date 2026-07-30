@@ -148,7 +148,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   normalizeBadgeContract: () => (/* binding */ normalizeBadgeContract)
 /* harmony export */ });
 const BADGE_TYPES = Object.freeze(['main', 'tonal', 'outline']);
-const BADGE_SCHEMES = Object.freeze(['neutral', 'primary', 'secondary', 'tertiary', 'on-surface']);
+const BADGE_SCHEMES = Object.freeze(['neutral', 'primary', 'secondary', 'tertiary', 'info', 'success', 'warning', 'danger', 'on-surface']);
 const BADGE_SIZES = Object.freeze(['1/3', '1/2', '1']);
 const DEFAULT_BADGE_TYPE = 'main';
 const DEFAULT_BADGE_SCHEME = 'neutral';
