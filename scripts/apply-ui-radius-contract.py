@@ -60,6 +60,24 @@ def patch_component(source: str, path: str, component: str, anchor: str) -> str:
             f"var(--sf-{component}--{corner}, var(--sf-radius-default))",
             f"var(--sf-{component}--{corner}, var({own}))",
         )
+    if f"border-radius: var({own});" in source or f"border-radius:var({own})" in source:
+        return source
+    if "border-radius: var(--sf-radius-default);" in source:
+        source = replace_exact(
+            source,
+            "border-radius: var(--sf-radius-default);",
+            f"border-radius: var({own});",
+            1,
+            path,
+        )
+    else:
+        source = replace_exact(
+            source,
+            "border-radius:var(--sf-radius-default)",
+            f"border-radius:var({own})",
+            1,
+            path,
+        )
     return source
 
 

@@ -389,7 +389,7 @@
     --sf-button--border-width: 1px;
   }
   .sf-button.radius-default {
-    border-radius: var(--sf-radius-default);
+    border-radius: var(--sf-button--radius);
   }
   .sf-button.radius-square {
     border-radius: var(--sf-radius-square);
