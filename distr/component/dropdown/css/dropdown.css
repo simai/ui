@@ -323,20 +323,20 @@
     border-right-width: var(--sf-list--border-left-width, 1px);
   }
   [dir="ltr"] .sf-list {
-    border-top-right-radius: var(--sf-dropdown--radius);
-    border-top-right-radius: var(--sf-list--border-top-right-radius, var(--sf-dropdown--radius));
+    border-top-right-radius: var(--sf-radius-1\/2);
+    border-top-right-radius: var(--sf-list--border-top-right-radius, var(--sf-radius-1\/2));
   }
   [dir="rtl"] .sf-list {
-    border-top-left-radius: var(--sf-dropdown--radius);
-    border-top-left-radius: var(--sf-list--border-top-right-radius, var(--sf-dropdown--radius));
+    border-top-left-radius: var(--sf-radius-1\/2);
+    border-top-left-radius: var(--sf-list--border-top-right-radius, var(--sf-radius-1\/2));
   }
   [dir="ltr"] .sf-list {
-    border-top-left-radius: var(--sf-dropdown--radius);
-    border-top-left-radius: var(--sf-list--border-top-left-radius, var(--sf-dropdown--radius));
+    border-top-left-radius: var(--sf-radius-1\/2);
+    border-top-left-radius: var(--sf-list--border-top-left-radius, var(--sf-radius-1\/2));
   }
   [dir="rtl"] .sf-list {
-    border-top-right-radius: var(--sf-dropdown--radius);
-    border-top-right-radius: var(--sf-list--border-top-left-radius, var(--sf-dropdown--radius));
+    border-top-right-radius: var(--sf-radius-1\/2);
+    border-top-right-radius: var(--sf-list--border-top-left-radius, var(--sf-radius-1\/2));
   }
   [dir="ltr"] .sf-list {
     padding-right: var(--sf-space-1\/3);
@@ -355,16 +355,16 @@
     padding-right: var(--sf-list--padding-left, var(--sf-space-1\/3));
   }
   [dir="ltr"] .sf-list {
-    border-bottom-right-radius: var(--sf-dropdown--radius);
+    border-bottom-right-radius: var(--sf-radius-1\/2);
   }
   [dir="rtl"] .sf-list {
-    border-bottom-left-radius: var(--sf-dropdown--radius);
+    border-bottom-left-radius: var(--sf-radius-1\/2);
   }
   [dir="ltr"] .sf-list {
-    border-bottom-left-radius: var(--sf-dropdown--radius);
+    border-bottom-left-radius: var(--sf-radius-1\/2);
   }
   [dir="rtl"] .sf-list {
-    border-bottom-right-radius: var(--sf-dropdown--radius);
+    border-bottom-right-radius: var(--sf-radius-1\/2);
   }
   [dir="ltr"] .sf-list {
     border-right-width: 1px;
@@ -500,10 +500,10 @@
   }
   .sf-dropdown .sf-dropdown-field {
     --sf-dropdown-field--border: var(--sf-a1) solid;
-    --sf-dropdown-field--border-end-end-radius: var(--sf-radius-1\/2);
-    --sf-dropdown-field--border-end-start-radius: var(--sf-radius-1\/2);
-    --sf-dropdown-field--border-start-end-radius: var(--sf-radius-1\/2);
-    --sf-dropdown-field--border-start-start-radius: var(--sf-radius-1\/2);
+    --sf-dropdown-field--border-end-end-radius: var(--sf-dropdown--radius);
+    --sf-dropdown-field--border-end-start-radius: var(--sf-dropdown--radius);
+    --sf-dropdown-field--border-start-end-radius: var(--sf-dropdown--radius);
+    --sf-dropdown-field--border-start-start-radius: var(--sf-dropdown--radius);
     background-color: var(--sf-dropdown-field--background-color);
     border: var(--sf-dropdown-field--border);
     border-color: transparent;

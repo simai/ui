@@ -89,7 +89,16 @@ def patch_input(source: str, path: str, anchor: str) -> str:
         1,
         path,
     )
-    return source.replace("var(--sf-ui-radius-default)", "var(--sf-input--radius)", 4)
+    for corner in ("end-end", "end-start", "start-end", "start-start"):
+        separator = ": " if f"--sf-input-field--border-{corner}-radius: " in source else ":"
+        source = replace_exact(
+            source,
+            f"--sf-input-field--border-{corner}-radius{separator}var(--sf-ui-radius-default)",
+            f"--sf-input-field--border-{corner}-radius{separator}var(--sf-input--radius)",
+            1,
+            path,
+        )
+    return source
 
 
 def patch_dropdown(source: str, path: str, anchor: str) -> str:
@@ -100,7 +109,16 @@ def patch_dropdown(source: str, path: str, anchor: str) -> str:
         1,
         path,
     )
-    return source.replace("var(--sf-radius-1\\/2)", "var(--sf-dropdown--radius)", 4)
+    for corner in ("end-end", "end-start", "start-end", "start-start"):
+        separator = ": " if f"--sf-dropdown-field--border-{corner}-radius: " in source else ":"
+        source = replace_exact(
+            source,
+            f"--sf-dropdown-field--border-{corner}-radius{separator}var(--sf-radius-1\\/2)",
+            f"--sf-dropdown-field--border-{corner}-radius{separator}var(--sf-dropdown--radius)",
+            1,
+            path,
+        )
+    return source
 
 
 def apply(root: Path) -> None:
