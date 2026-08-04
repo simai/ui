@@ -1,1 +1,8 @@
-@layer sf.utilities{.scroll-smooth{scroll-behavior:smooth}.scroll-auto{scroll-behavior:auto}}
+@layer sf.utilities {
+  .scroll-smooth {
+    scroll-behavior: smooth;
+  }
+  .scroll-auto {
+    scroll-behavior: auto;
+  }
+}

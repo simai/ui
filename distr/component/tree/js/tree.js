@@ -1,1 +1,432 @@
-(()=>{"use strict";class t{constructor(t){this.props=t,this.id=t?.id,this.params=t?.param,this.attrs=t?.attrs||{},this.template=null,window.dispatchEvent(new CustomEvent(`${this.componentName}:beforeRender`,{detail:this}))}getUtilityMap(){return this.constructor.utilityMap||null}extractUtilityClasses(t){if(!Array.isArray(t))return[];const e=new Set;return t.forEach(t=>{if("string"!=typeof t)return;const n=t.match(/\(([^)]+)\)/g);n&&n.forEach(t=>{t.slice(1,-1).split(/\s+/).filter(Boolean).forEach(t=>{e.add(t.replace(/^\./,""))})})}),Array.from(e)}applyLayoutUtilities(t,e){if(!t||!e)return;const n=this.getUtilityMap();if(!n||!n[e])return;this.extractUtilityClasses(n[e]).forEach(e=>t.classList.add(e))}render(){return this.html=this.template,"function"==typeof this.init&&this.init(),this.html&&window.dispatchEvent(new CustomEvent(`${this.componentName}:render`,{detail:this})),this.html}destroy(){this.destroyInternal?.(),this.props=null,this.id=null,this.params=null,this.template=null,this.html&&(this.html.remove(),this.html=null),window.dispatchEvent(new CustomEvent(`${this.componentName}:destroy`,{detail:this}))}destroyInternal(){}}const e=function(t,e){if(t&&e)if("undefined"==typeof window||"function"!=typeof window.registerSfComponent){if("undefined"!=typeof window&&window.SF?.Loader?.registerComponent)window.SF.Loader.registerComponent(t,e);else if("undefined"!=typeof window){(window.SF_PENDING_COMPONENTS=window.SF_PENDING_COMPONENTS||[]).push([t,e])}}else window.registerSfComponent(t,e)},n=".sf-tree",o=".sf-tree-item",i="sfTreeBound";function r(t){return t?.querySelector?.(":scope > .sf-tree-item-container")||null}function s(t){return function(t){return Array.from(t?.children||[]).filter(t=>t.classList?.contains("sf-tree-item"))}(t).length>0}function c(t){const e=r(t);return e?.querySelector?.(":scope > .sf-icon-button")||null}function l(t,e){t&&(t.textContent=e)}function a(t){if(!(t instanceof HTMLElement))return;const e=s(t),n=t.classList.contains("open")||t.hasAttribute("open"),o=e&&n,i=c(t);t.classList.toggle("has-children",e),t.classList.toggle("open",o),t.toggleAttribute("open",o),e?t.setAttribute("aria-expanded",String(o)):t.removeAttribute("aria-expanded"),i&&(i.type=i.getAttribute("type")||"button",i.setAttribute("aria-expanded",e?String(o):"false"),i.toggleAttribute("disabled",!e)),l(function(t){return c(t)?.querySelector?.(".sf-icon")||null}(t),o?function(t){return t.getAttribute("data-open-icon")||"folder_open"}(t):function(t){return t.getAttribute("data-closed-icon")||"folder"}(t)),l(function(t){const e=r(t);return e?.querySelector?.(":scope > .sf-tree-chevron .sf-icon")||null}(t),o?"keyboard_arrow_down":"chevron_right")}function u(t){t.querySelectorAll(o).forEach(a)}function d(t,e=!0){return!!(t instanceof HTMLElement&&s(t))&&(t.classList.toggle("open",e),t.toggleAttribute("open",e),a(t),t.dispatchEvent(new CustomEvent("sf-tree:toggle",{bubbles:!0,detail:{item:t,open:e}})),!0)}function f(t){return d(t,!t.classList.contains("open"))}function h(t){t instanceof HTMLElement&&"1"!==t.dataset[i]&&!t.closest?.("sf-tree")&&(t.setAttribute("role",t.getAttribute("role")||"tree"),u(t),t.addEventListener("click",e=>{const n=e.target.closest?.(".sf-icon-button");if(!n||!t.contains(n))return;const i=n.closest(o);if(!i||!t.contains(i))return;const s=r(i);s&&!s.contains(n)||f(i)}),t.dataset[i]="1")}function p(t=document){(t instanceof Element||t===document)&&(t instanceof Element&&t.matches?.(n)&&h(t),t.querySelectorAll?.(n).forEach(h))}e("Tree",class extends t{static componentName="Tree";html=null}),"undefined"!=typeof window&&(window.SF=window.SF||{},window.SF.Tree=window.SF.Tree||{},window.SF.Tree.init=p,window.SF.Tree.sync=u,window.SF.Tree.open=t=>d(t,!0),window.SF.Tree.close=t=>d(t,!1),window.SF.Tree.toggle=f),"loading"===document.readyState?document.addEventListener("DOMContentLoaded",()=>p(document)):p(document);new MutationObserver(t=>{t.forEach(t=>{t.addedNodes.forEach(t=>{if(!(t instanceof Element))return;p(t);const e=t.closest?.(n);e&&u(e)})})}).observe(document.documentElement,{childList:!0,subtree:!0})})();
+/******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
+/******/ 	var __webpack_modules__ = ({
+
+/***/ "58661bec99a6"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   registerComponent: () => (/* binding */ registerComponent)
+/* harmony export */ });
+// Simple helper to register a component in one call.
+// Usage inside component bundle:
+//   import register from './register-helper';
+//   register('Buttons', Buttons);
+function registerComponent(name, cls) {
+  if (!name || !cls) return;
+
+  if (typeof window !== 'undefined' && typeof window.registerSfComponent === 'function') {
+    window.registerSfComponent(name, cls);
+    return;
+  }
+
+  if (typeof window !== 'undefined' && window.SF?.Loader?.registerComponent) {
+    window.SF.Loader.registerComponent(name, cls);
+    return;
+  }
+
+  if (typeof window !== 'undefined') {
+    const pending = window.SF_PENDING_COMPONENTS = window.SF_PENDING_COMPONENTS || [];
+    pending.push([name, cls]);
+  }
+}
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (registerComponent);
+
+/***/ },
+
+/***/ "3eb8861071f8"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   initTree: () => (/* binding */ initTree),
+/* harmony export */   setTreeItemOpen: () => (/* binding */ setTreeItemOpen),
+/* harmony export */   syncTree: () => (/* binding */ syncTree),
+/* harmony export */   toggleTreeItem: () => (/* binding */ toggleTreeItem)
+/* harmony export */ });
+/* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d7f974466839");
+/* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("58661bec99a6");
+
+
+const TREE_SELECTOR = '.sf-tree';
+const TREE_ITEM_SELECTOR = '.sf-tree-item';
+const TREE_BOUND_FLAG = 'sfTreeBound';
+
+function getItemContainer(item) {
+  return item?.querySelector?.(':scope > .sf-tree-item-container') || null;
+}
+
+function getNestedItems(item) {
+  return Array.from(item?.children || []).filter(child => child.classList?.contains('sf-tree-item'));
+}
+
+function isBranch(item) {
+  return getNestedItems(item).length > 0;
+}
+
+function getToggleButton(item) {
+  const container = getItemContainer(item);
+  return container?.querySelector?.(':scope > .sf-icon-button') || null;
+}
+
+function getButtonIcon(item) {
+  return getToggleButton(item)?.querySelector?.('.sf-icon') || null;
+}
+
+function getChevronIcon(item) {
+  const container = getItemContainer(item);
+  return container?.querySelector?.(':scope > .sf-tree-chevron .sf-icon') || null;
+}
+
+function getOpenIcon(item) {
+  return item.getAttribute('data-open-icon') || 'folder_open';
+}
+
+function getClosedIcon(item) {
+  return item.getAttribute('data-closed-icon') || 'folder';
+}
+
+function setIconText(icon, value) {
+  if (icon) {
+    icon.textContent = value;
+  }
+}
+
+function syncTreeItem(item) {
+  if (!(item instanceof HTMLElement)) return;
+  const branch = isBranch(item);
+  const open = item.classList.contains('open') || item.hasAttribute('open');
+  const activeOpen = branch && open;
+  const button = getToggleButton(item);
+  item.classList.toggle('has-children', branch);
+  item.classList.toggle('open', activeOpen);
+  item.toggleAttribute('open', activeOpen);
+
+  if (branch) {
+    item.setAttribute('aria-expanded', String(activeOpen));
+  } else {
+    item.removeAttribute('aria-expanded');
+  }
+
+  if (button) {
+    button.type = button.getAttribute('type') || 'button';
+    button.setAttribute('aria-expanded', branch ? String(activeOpen) : 'false');
+    button.toggleAttribute('disabled', !branch);
+  }
+
+  setIconText(getButtonIcon(item), activeOpen ? getOpenIcon(item) : getClosedIcon(item));
+  setIconText(getChevronIcon(item), activeOpen ? 'keyboard_arrow_down' : 'chevron_right');
+}
+
+function syncTree(root) {
+  root.querySelectorAll(TREE_ITEM_SELECTOR).forEach(syncTreeItem);
+}
+
+function setTreeItemOpen(item, open = true) {
+  if (!(item instanceof HTMLElement) || !isBranch(item)) return false;
+  item.classList.toggle('open', open);
+  item.toggleAttribute('open', open);
+  syncTreeItem(item);
+  item.dispatchEvent(new CustomEvent('sf-tree:toggle', {
+    bubbles: true,
+    detail: {
+      item,
+      open
+    }
+  }));
+  return true;
+}
+
+function toggleTreeItem(item) {
+  return setTreeItemOpen(item, !item.classList.contains('open'));
+}
+
+function bindTree(root) {
+  if (!(root instanceof HTMLElement) || root.dataset[TREE_BOUND_FLAG] === '1' || root.closest?.('sf-tree')) {
+    return;
+  }
+
+  root.setAttribute('role', root.getAttribute('role') || 'tree');
+  syncTree(root);
+  root.addEventListener('click', event => {
+    const button = event.target.closest?.('.sf-icon-button');
+    if (!button || !root.contains(button)) return;
+    const item = button.closest(TREE_ITEM_SELECTOR);
+    if (!item || !root.contains(item)) return;
+    const container = getItemContainer(item);
+    if (container && !container.contains(button)) return;
+    toggleTreeItem(item);
+  });
+  root.dataset[TREE_BOUND_FLAG] = '1';
+}
+
+function initTree(target = document) {
+  if (!(target instanceof Element) && target !== document) return;
+
+  if (target instanceof Element && target.matches?.(TREE_SELECTOR)) {
+    bindTree(target);
+  }
+
+  target.querySelectorAll?.(TREE_SELECTOR).forEach(bindTree);
+}
+
+class Tree extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.ComponentObserver {
+  static componentName = 'Tree';
+  html = null;
+}
+
+(0,_register_helper__WEBPACK_IMPORTED_MODULE_1__["default"])('Tree', Tree);
+
+if (typeof window !== 'undefined') {
+  window.SF = window.SF || {};
+  window.SF.Tree = window.SF.Tree || {};
+  window.SF.Tree.init = initTree;
+  window.SF.Tree.sync = syncTree;
+
+  window.SF.Tree.open = item => setTreeItemOpen(item, true);
+
+  window.SF.Tree.close = item => setTreeItemOpen(item, false);
+
+  window.SF.Tree.toggle = toggleTreeItem;
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => initTree(document));
+} else {
+  initTree(document);
+}
+
+const treeObserver = new MutationObserver(mutations => {
+  mutations.forEach(mutation => {
+    mutation.addedNodes.forEach(node => {
+      if (!(node instanceof Element)) return;
+      initTree(node);
+      const tree = node.closest?.(TREE_SELECTOR);
+
+      if (tree) {
+        syncTree(tree);
+      }
+    });
+  });
+});
+treeObserver.observe(document.documentElement, {
+  childList: true,
+  subtree: true
+});
+
+
+/***/ },
+
+/***/ "bd12fe10a7e1"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _tree__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("3eb8861071f8");
+
+
+/***/ },
+
+/***/ "d7f974466839"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   ComponentObserver: () => (/* binding */ ComponentObserver)
+/* harmony export */ });
+class ComponentObserver {
+  constructor(props) {
+    this.props = props;
+    this.id = props?.id;
+    this.params = props?.param;
+    this.attrs = props?.attrs || {};
+    this.template = null;
+    window.dispatchEvent(new CustomEvent(`${this.componentName}:beforeRender`, {
+      detail: this
+    }));
+  }
+
+  getUtilityMap() {
+    return this.constructor.utilityMap || null;
+  }
+
+  extractUtilityClasses(values) {
+    if (!Array.isArray(values)) {
+      return [];
+    }
+
+    const classes = new Set();
+    values.forEach(value => {
+      if (typeof value !== 'string') {
+        return;
+      }
+
+      const matches = value.match(/\(([^)]+)\)/g);
+
+      if (!matches) {
+        return;
+      }
+
+      matches.forEach(match => {
+        const raw = match.slice(1, -1);
+        raw.split(/\s+/).filter(Boolean).forEach(cls => {
+          classes.add(cls.replace(/^\./, ''));
+        });
+      });
+    });
+    return Array.from(classes);
+  }
+
+  applyLayoutUtilities(target, selector) {
+    if (!target || !selector) {
+      return;
+    }
+
+    const map = this.getUtilityMap();
+
+    if (!map || !map[selector]) {
+      return;
+    }
+
+    const classes = this.extractUtilityClasses(map[selector]);
+    classes.forEach(cls => target.classList.add(cls));
+  }
+
+  render() {
+    this.html = this.template;
+
+    if (typeof this.init === 'function') {
+      this.init();
+    }
+
+    if (this.html) {
+      window.dispatchEvent(new CustomEvent(`${this.componentName}:render`, {
+        detail: this
+      }));
+    }
+
+    return this.html;
+  }
+
+  destroy() {
+    this.destroyInternal?.();
+    this.props = null;
+    this.id = null;
+    this.params = null;
+    this.template = null;
+
+    if (this.html) {
+      this.html.remove();
+      this.html = null;
+    }
+
+    window.dispatchEvent(new CustomEvent(`${this.componentName}:destroy`, {
+      detail: this
+    }));
+  }
+
+  destroyInternal() {}
+
+}
+
+/***/ },
+
+/***/ "caacbb3de1c1"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ }
+
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	const __webpack_module_cache__ = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		const cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		const module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		if (!(moduleId in __webpack_modules__)) {
+/******/ 			delete __webpack_module_cache__[moduleId];
+/******/ 			const e = new Error("Cannot find module '" + moduleId + "'");
+/******/ 			e.code = 'MODULE_NOT_FOUND';
+/******/ 			throw e;
+/******/ 		}
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/************************************************************************/
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter/value functions for harmony exports
+/******/ 		__webpack_require__.d = (exports, definition) => {
+/******/ 			if(Array.isArray(definition)) {
+/******/ 				var i = 0;
+/******/ 				while(i < definition.length) {
+/******/ 					var key = definition[i++];
+/******/ 					var binding = definition[i++];
+/******/ 					if(!__webpack_require__.o(exports, key)) {
+/******/ 						if(binding === 0) {
+/******/ 							Object.defineProperty(exports, key, { enumerable: true, value: definition[i++] });
+/******/ 						} else {
+/******/ 							Object.defineProperty(exports, key, { enumerable: true, get: binding });
+/******/ 						}
+/******/ 					} else if(binding === 0) { i++; }
+/******/ 				}
+/******/ 			} else {
+/******/ 				for(var key in definition) {
+/******/ 					if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 						Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 					}
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = (exports) => {
+/******/ 			if(Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/
+/************************************************************************/
+let __webpack_exports__ = {};
+// This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
+(() => {
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("caacbb3de1c1");
+/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("bd12fe10a7e1");
+
+
+})();
+
+/******/ })()
+;

@@ -1,1 +1,577 @@
-@layer sf.utilities{@media(min-width: 960px){.lg\:bg-size-a0{background-size:var(--sf-a0)}.lg\:bg-size-a1{background-size:var(--sf-a1)}.lg\:bg-size-a2{background-size:var(--sf-a2)}.lg\:bg-size-a3{background-size:var(--sf-a3)}.lg\:bg-size-a4{background-size:var(--sf-a4)}.lg\:bg-size-a5{background-size:var(--sf-a5)}.lg\:bg-size-a6{background-size:var(--sf-a6)}.lg\:bg-size-a7{background-size:var(--sf-a7)}.lg\:bg-size-a8{background-size:var(--sf-a8)}.lg\:bg-size-a9{background-size:var(--sf-a9)}.lg\:bg-size-b0{background-size:var(--sf-b0)}.lg\:bg-size-b1{background-size:var(--sf-b1)}.lg\:bg-size-b2{background-size:var(--sf-b2)}.lg\:bg-size-b3{background-size:var(--sf-b3)}.lg\:bg-size-b4{background-size:var(--sf-b4)}.lg\:bg-size-b5{background-size:var(--sf-b5)}.lg\:bg-size-b6{background-size:var(--sf-b6)}.lg\:bg-size-b7{background-size:var(--sf-b7)}.lg\:bg-size-b8{background-size:var(--sf-b8)}.lg\:bg-size-b9{background-size:var(--sf-b9)}.lg\:bg-size-c0{background-size:var(--sf-c0)}.lg\:bg-size-c1{background-size:var(--sf-c1)}.lg\:bg-size-c2{background-size:var(--sf-c2)}.lg\:bg-size-c3{background-size:var(--sf-c3)}.lg\:bg-size-c4{background-size:var(--sf-c4)}.lg\:bg-size-c5{background-size:var(--sf-c5)}.lg\:bg-size-c6{background-size:var(--sf-c6)}.lg\:bg-size-c7{background-size:var(--sf-c7)}.lg\:bg-size-c8{background-size:var(--sf-c8)}.lg\:bg-size-c9{background-size:var(--sf-c9)}.lg\:bg-size-d0{background-size:var(--sf-d0)}.lg\:bg-size-d1{background-size:var(--sf-d1)}.lg\:bg-size-d2{background-size:var(--sf-d2)}.lg\:bg-size-d3{background-size:var(--sf-d3)}.lg\:bg-size-d4{background-size:var(--sf-d4)}.lg\:bg-size-d5{background-size:var(--sf-d5)}.lg\:bg-size-d6{background-size:var(--sf-d6)}.lg\:bg-size-d7{background-size:var(--sf-d7)}.lg\:bg-size-d8{background-size:var(--sf-d8)}.lg\:bg-size-d9{background-size:var(--sf-d9)}.lg\:bg-size-e0{background-size:var(--sf-e0)}.lg\:bg-size-e1{background-size:var(--sf-e1)}.lg\:bg-size-e2{background-size:var(--sf-e2)}.lg\:bg-size-e3{background-size:var(--sf-e3)}.lg\:bg-size-e4{background-size:var(--sf-e4)}.lg\:bg-size-e5{background-size:var(--sf-e5)}.lg\:bg-size-e6{background-size:var(--sf-e6)}.lg\:bg-size-e7{background-size:var(--sf-e7)}.lg\:bg-size-e8{background-size:var(--sf-e8)}.lg\:bg-size-e9{background-size:var(--sf-e9)}.lg\:bg-size-f0{background-size:var(--sf-f0)}.lg\:bg-size-f1{background-size:var(--sf-f1)}.lg\:bg-size-f2{background-size:var(--sf-f2)}.lg\:bg-size-f3{background-size:var(--sf-f3)}.lg\:bg-size-f4{background-size:var(--sf-f4)}.lg\:bg-size-f5{background-size:var(--sf-f5)}.lg\:bg-size-f6{background-size:var(--sf-f6)}.lg\:bg-size-f7{background-size:var(--sf-f7)}.lg\:bg-size-f8{background-size:var(--sf-f8)}.lg\:bg-size-f9{background-size:var(--sf-f9)}.lg\:bg-size-g0{background-size:var(--sf-g0)}.lg\:bg-size-g1{background-size:var(--sf-g1)}.lg\:bg-size-g2{background-size:var(--sf-g2)}.lg\:bg-size-g3{background-size:var(--sf-g3)}.lg\:bg-size-g4{background-size:var(--sf-g4)}.lg\:bg-size-g5{background-size:var(--sf-g5)}.lg\:bg-size-g6{background-size:var(--sf-g6)}.lg\:bg-size-g7{background-size:var(--sf-g7)}.lg\:bg-size-g8{background-size:var(--sf-g8)}.lg\:bg-size-g9{background-size:var(--sf-g9)}.lg\:bg-size-h0{background-size:var(--sf-h0)}.lg\:bg-size-h1{background-size:var(--sf-h1)}.lg\:bg-size-h2{background-size:var(--sf-h2)}.lg\:bg-size-h3{background-size:var(--sf-h3)}.lg\:bg-size-h4{background-size:var(--sf-h4)}.lg\:bg-size-h5{background-size:var(--sf-h5)}.lg\:bg-size-h6{background-size:var(--sf-h6)}.lg\:bg-size-h7{background-size:var(--sf-h7)}.lg\:bg-size-h8{background-size:var(--sf-h8)}.lg\:bg-size-h9{background-size:var(--sf-h9)}.lg\:bg-size-i0{background-size:var(--sf-i0)}.lg\:bg-size-i1{background-size:var(--sf-i1)}.lg\:bg-size-i2{background-size:var(--sf-i2)}.lg\:bg-size-i3{background-size:var(--sf-i3)}.lg\:bg-size-i4{background-size:var(--sf-i4)}.lg\:bg-size-i5{background-size:var(--sf-i5)}.lg\:bg-size-i6{background-size:var(--sf-i6)}.lg\:bg-size-i7{background-size:var(--sf-i7)}.lg\:bg-size-i8{background-size:var(--sf-i8)}.lg\:bg-size-i9{background-size:var(--sf-i9)}.lg\:bg-size-0{background-size:0%}.lg\:bg-size-1{background-size:1%}.lg\:bg-size-2{background-size:2%}.lg\:bg-size-3{background-size:3%}.lg\:bg-size-4{background-size:4%}.lg\:bg-size-5{background-size:5%}.lg\:bg-size-6{background-size:6%}.lg\:bg-size-7{background-size:7%}.lg\:bg-size-8{background-size:8%}.lg\:bg-size-9{background-size:9%}.lg\:bg-size-10{background-size:10%}.lg\:bg-size-11{background-size:11%}.lg\:bg-size-12{background-size:12%}.lg\:bg-size-13{background-size:13%}.lg\:bg-size-14{background-size:14%}.lg\:bg-size-15{background-size:15%}.lg\:bg-size-16{background-size:16%}.lg\:bg-size-17{background-size:17%}.lg\:bg-size-18{background-size:18%}.lg\:bg-size-19{background-size:19%}.lg\:bg-size-20{background-size:20%}.lg\:bg-size-21{background-size:21%}.lg\:bg-size-22{background-size:22%}.lg\:bg-size-23{background-size:23%}.lg\:bg-size-24{background-size:24%}.lg\:bg-size-25{background-size:25%}.lg\:bg-size-26{background-size:26%}.lg\:bg-size-27{background-size:27%}.lg\:bg-size-28{background-size:28%}.lg\:bg-size-29{background-size:29%}.lg\:bg-size-30{background-size:30%}.lg\:bg-size-31{background-size:31%}.lg\:bg-size-32{background-size:32%}.lg\:bg-size-33{background-size:33%}.lg\:bg-size-34{background-size:34%}.lg\:bg-size-35{background-size:35%}.lg\:bg-size-36{background-size:36%}.lg\:bg-size-37{background-size:37%}.lg\:bg-size-38{background-size:38%}.lg\:bg-size-39{background-size:39%}.lg\:bg-size-40{background-size:40%}.lg\:bg-size-41{background-size:41%}.lg\:bg-size-42{background-size:42%}.lg\:bg-size-43{background-size:43%}.lg\:bg-size-44{background-size:44%}.lg\:bg-size-45{background-size:45%}.lg\:bg-size-46{background-size:46%}.lg\:bg-size-47{background-size:47%}.lg\:bg-size-48{background-size:48%}.lg\:bg-size-49{background-size:49%}.lg\:bg-size-50{background-size:50%}.lg\:bg-size-51{background-size:51%}.lg\:bg-size-52{background-size:52%}.lg\:bg-size-53{background-size:53%}.lg\:bg-size-54{background-size:54%}.lg\:bg-size-55{background-size:55%}.lg\:bg-size-56{background-size:56%}.lg\:bg-size-57{background-size:57%}.lg\:bg-size-58{background-size:58%}.lg\:bg-size-59{background-size:59%}.lg\:bg-size-60{background-size:60%}.lg\:bg-size-61{background-size:61%}.lg\:bg-size-62{background-size:62%}.lg\:bg-size-63{background-size:63%}.lg\:bg-size-64{background-size:64%}.lg\:bg-size-65{background-size:65%}.lg\:bg-size-66{background-size:66%}.lg\:bg-size-67{background-size:67%}.lg\:bg-size-68{background-size:68%}.lg\:bg-size-69{background-size:69%}.lg\:bg-size-70{background-size:70%}.lg\:bg-size-71{background-size:71%}.lg\:bg-size-72{background-size:72%}.lg\:bg-size-73{background-size:73%}.lg\:bg-size-74{background-size:74%}.lg\:bg-size-75{background-size:75%}.lg\:bg-size-76{background-size:76%}.lg\:bg-size-77{background-size:77%}.lg\:bg-size-78{background-size:78%}.lg\:bg-size-79{background-size:79%}.lg\:bg-size-80{background-size:80%}.lg\:bg-size-81{background-size:81%}.lg\:bg-size-82{background-size:82%}.lg\:bg-size-83{background-size:83%}.lg\:bg-size-84{background-size:84%}.lg\:bg-size-85{background-size:85%}.lg\:bg-size-86{background-size:86%}.lg\:bg-size-87{background-size:87%}.lg\:bg-size-88{background-size:88%}.lg\:bg-size-89{background-size:89%}.lg\:bg-size-90{background-size:90%}.lg\:bg-size-91{background-size:91%}.lg\:bg-size-92{background-size:92%}.lg\:bg-size-93{background-size:93%}.lg\:bg-size-94{background-size:94%}.lg\:bg-size-95{background-size:95%}.lg\:bg-size-96{background-size:96%}.lg\:bg-size-97{background-size:97%}.lg\:bg-size-98{background-size:98%}.lg\:bg-size-99{background-size:99%}.lg\:bg-size-100{background-size:100%}}}
+@layer sf.utilities {
+  @media (min-width: 960px) {
+    .lg\:bg-size-a0 {
+      background-size: var(--sf-a0);
+    }
+    .lg\:bg-size-a1 {
+      background-size: var(--sf-a1);
+    }
+    .lg\:bg-size-a2 {
+      background-size: var(--sf-a2);
+    }
+    .lg\:bg-size-a3 {
+      background-size: var(--sf-a3);
+    }
+    .lg\:bg-size-a4 {
+      background-size: var(--sf-a4);
+    }
+    .lg\:bg-size-a5 {
+      background-size: var(--sf-a5);
+    }
+    .lg\:bg-size-a6 {
+      background-size: var(--sf-a6);
+    }
+    .lg\:bg-size-a7 {
+      background-size: var(--sf-a7);
+    }
+    .lg\:bg-size-a8 {
+      background-size: var(--sf-a8);
+    }
+    .lg\:bg-size-a9 {
+      background-size: var(--sf-a9);
+    }
+    .lg\:bg-size-b0 {
+      background-size: var(--sf-b0);
+    }
+    .lg\:bg-size-b1 {
+      background-size: var(--sf-b1);
+    }
+    .lg\:bg-size-b2 {
+      background-size: var(--sf-b2);
+    }
+    .lg\:bg-size-b3 {
+      background-size: var(--sf-b3);
+    }
+    .lg\:bg-size-b4 {
+      background-size: var(--sf-b4);
+    }
+    .lg\:bg-size-b5 {
+      background-size: var(--sf-b5);
+    }
+    .lg\:bg-size-b6 {
+      background-size: var(--sf-b6);
+    }
+    .lg\:bg-size-b7 {
+      background-size: var(--sf-b7);
+    }
+    .lg\:bg-size-b8 {
+      background-size: var(--sf-b8);
+    }
+    .lg\:bg-size-b9 {
+      background-size: var(--sf-b9);
+    }
+    .lg\:bg-size-c0 {
+      background-size: var(--sf-c0);
+    }
+    .lg\:bg-size-c1 {
+      background-size: var(--sf-c1);
+    }
+    .lg\:bg-size-c2 {
+      background-size: var(--sf-c2);
+    }
+    .lg\:bg-size-c3 {
+      background-size: var(--sf-c3);
+    }
+    .lg\:bg-size-c4 {
+      background-size: var(--sf-c4);
+    }
+    .lg\:bg-size-c5 {
+      background-size: var(--sf-c5);
+    }
+    .lg\:bg-size-c6 {
+      background-size: var(--sf-c6);
+    }
+    .lg\:bg-size-c7 {
+      background-size: var(--sf-c7);
+    }
+    .lg\:bg-size-c8 {
+      background-size: var(--sf-c8);
+    }
+    .lg\:bg-size-c9 {
+      background-size: var(--sf-c9);
+    }
+    .lg\:bg-size-d0 {
+      background-size: var(--sf-d0);
+    }
+    .lg\:bg-size-d1 {
+      background-size: var(--sf-d1);
+    }
+    .lg\:bg-size-d2 {
+      background-size: var(--sf-d2);
+    }
+    .lg\:bg-size-d3 {
+      background-size: var(--sf-d3);
+    }
+    .lg\:bg-size-d4 {
+      background-size: var(--sf-d4);
+    }
+    .lg\:bg-size-d5 {
+      background-size: var(--sf-d5);
+    }
+    .lg\:bg-size-d6 {
+      background-size: var(--sf-d6);
+    }
+    .lg\:bg-size-d7 {
+      background-size: var(--sf-d7);
+    }
+    .lg\:bg-size-d8 {
+      background-size: var(--sf-d8);
+    }
+    .lg\:bg-size-d9 {
+      background-size: var(--sf-d9);
+    }
+    .lg\:bg-size-e0 {
+      background-size: var(--sf-e0);
+    }
+    .lg\:bg-size-e1 {
+      background-size: var(--sf-e1);
+    }
+    .lg\:bg-size-e2 {
+      background-size: var(--sf-e2);
+    }
+    .lg\:bg-size-e3 {
+      background-size: var(--sf-e3);
+    }
+    .lg\:bg-size-e4 {
+      background-size: var(--sf-e4);
+    }
+    .lg\:bg-size-e5 {
+      background-size: var(--sf-e5);
+    }
+    .lg\:bg-size-e6 {
+      background-size: var(--sf-e6);
+    }
+    .lg\:bg-size-e7 {
+      background-size: var(--sf-e7);
+    }
+    .lg\:bg-size-e8 {
+      background-size: var(--sf-e8);
+    }
+    .lg\:bg-size-e9 {
+      background-size: var(--sf-e9);
+    }
+    .lg\:bg-size-f0 {
+      background-size: var(--sf-f0);
+    }
+    .lg\:bg-size-f1 {
+      background-size: var(--sf-f1);
+    }
+    .lg\:bg-size-f2 {
+      background-size: var(--sf-f2);
+    }
+    .lg\:bg-size-f3 {
+      background-size: var(--sf-f3);
+    }
+    .lg\:bg-size-f4 {
+      background-size: var(--sf-f4);
+    }
+    .lg\:bg-size-f5 {
+      background-size: var(--sf-f5);
+    }
+    .lg\:bg-size-f6 {
+      background-size: var(--sf-f6);
+    }
+    .lg\:bg-size-f7 {
+      background-size: var(--sf-f7);
+    }
+    .lg\:bg-size-f8 {
+      background-size: var(--sf-f8);
+    }
+    .lg\:bg-size-f9 {
+      background-size: var(--sf-f9);
+    }
+    .lg\:bg-size-g0 {
+      background-size: var(--sf-g0);
+    }
+    .lg\:bg-size-g1 {
+      background-size: var(--sf-g1);
+    }
+    .lg\:bg-size-g2 {
+      background-size: var(--sf-g2);
+    }
+    .lg\:bg-size-g3 {
+      background-size: var(--sf-g3);
+    }
+    .lg\:bg-size-g4 {
+      background-size: var(--sf-g4);
+    }
+    .lg\:bg-size-g5 {
+      background-size: var(--sf-g5);
+    }
+    .lg\:bg-size-g6 {
+      background-size: var(--sf-g6);
+    }
+    .lg\:bg-size-g7 {
+      background-size: var(--sf-g7);
+    }
+    .lg\:bg-size-g8 {
+      background-size: var(--sf-g8);
+    }
+    .lg\:bg-size-g9 {
+      background-size: var(--sf-g9);
+    }
+    .lg\:bg-size-h0 {
+      background-size: var(--sf-h0);
+    }
+    .lg\:bg-size-h1 {
+      background-size: var(--sf-h1);
+    }
+    .lg\:bg-size-h2 {
+      background-size: var(--sf-h2);
+    }
+    .lg\:bg-size-h3 {
+      background-size: var(--sf-h3);
+    }
+    .lg\:bg-size-h4 {
+      background-size: var(--sf-h4);
+    }
+    .lg\:bg-size-h5 {
+      background-size: var(--sf-h5);
+    }
+    .lg\:bg-size-h6 {
+      background-size: var(--sf-h6);
+    }
+    .lg\:bg-size-h7 {
+      background-size: var(--sf-h7);
+    }
+    .lg\:bg-size-h8 {
+      background-size: var(--sf-h8);
+    }
+    .lg\:bg-size-h9 {
+      background-size: var(--sf-h9);
+    }
+    .lg\:bg-size-i0 {
+      background-size: var(--sf-i0);
+    }
+    .lg\:bg-size-i1 {
+      background-size: var(--sf-i1);
+    }
+    .lg\:bg-size-i2 {
+      background-size: var(--sf-i2);
+    }
+    .lg\:bg-size-i3 {
+      background-size: var(--sf-i3);
+    }
+    .lg\:bg-size-i4 {
+      background-size: var(--sf-i4);
+    }
+    .lg\:bg-size-i5 {
+      background-size: var(--sf-i5);
+    }
+    .lg\:bg-size-i6 {
+      background-size: var(--sf-i6);
+    }
+    .lg\:bg-size-i7 {
+      background-size: var(--sf-i7);
+    }
+    .lg\:bg-size-i8 {
+      background-size: var(--sf-i8);
+    }
+    .lg\:bg-size-i9 {
+      background-size: var(--sf-i9);
+    }
+    .lg\:bg-size-0 {
+      background-size: 0%;
+    }
+    .lg\:bg-size-1 {
+      background-size: 1%;
+    }
+    .lg\:bg-size-2 {
+      background-size: 2%;
+    }
+    .lg\:bg-size-3 {
+      background-size: 3%;
+    }
+    .lg\:bg-size-4 {
+      background-size: 4%;
+    }
+    .lg\:bg-size-5 {
+      background-size: 5%;
+    }
+    .lg\:bg-size-6 {
+      background-size: 6%;
+    }
+    .lg\:bg-size-7 {
+      background-size: 7%;
+    }
+    .lg\:bg-size-8 {
+      background-size: 8%;
+    }
+    .lg\:bg-size-9 {
+      background-size: 9%;
+    }
+    .lg\:bg-size-10 {
+      background-size: 10%;
+    }
+    .lg\:bg-size-11 {
+      background-size: 11%;
+    }
+    .lg\:bg-size-12 {
+      background-size: 12%;
+    }
+    .lg\:bg-size-13 {
+      background-size: 13%;
+    }
+    .lg\:bg-size-14 {
+      background-size: 14%;
+    }
+    .lg\:bg-size-15 {
+      background-size: 15%;
+    }
+    .lg\:bg-size-16 {
+      background-size: 16%;
+    }
+    .lg\:bg-size-17 {
+      background-size: 17%;
+    }
+    .lg\:bg-size-18 {
+      background-size: 18%;
+    }
+    .lg\:bg-size-19 {
+      background-size: 19%;
+    }
+    .lg\:bg-size-20 {
+      background-size: 20%;
+    }
+    .lg\:bg-size-21 {
+      background-size: 21%;
+    }
+    .lg\:bg-size-22 {
+      background-size: 22%;
+    }
+    .lg\:bg-size-23 {
+      background-size: 23%;
+    }
+    .lg\:bg-size-24 {
+      background-size: 24%;
+    }
+    .lg\:bg-size-25 {
+      background-size: 25%;
+    }
+    .lg\:bg-size-26 {
+      background-size: 26%;
+    }
+    .lg\:bg-size-27 {
+      background-size: 27%;
+    }
+    .lg\:bg-size-28 {
+      background-size: 28%;
+    }
+    .lg\:bg-size-29 {
+      background-size: 29%;
+    }
+    .lg\:bg-size-30 {
+      background-size: 30%;
+    }
+    .lg\:bg-size-31 {
+      background-size: 31%;
+    }
+    .lg\:bg-size-32 {
+      background-size: 32%;
+    }
+    .lg\:bg-size-33 {
+      background-size: 33%;
+    }
+    .lg\:bg-size-34 {
+      background-size: 34%;
+    }
+    .lg\:bg-size-35 {
+      background-size: 35%;
+    }
+    .lg\:bg-size-36 {
+      background-size: 36%;
+    }
+    .lg\:bg-size-37 {
+      background-size: 37%;
+    }
+    .lg\:bg-size-38 {
+      background-size: 38%;
+    }
+    .lg\:bg-size-39 {
+      background-size: 39%;
+    }
+    .lg\:bg-size-40 {
+      background-size: 40%;
+    }
+    .lg\:bg-size-41 {
+      background-size: 41%;
+    }
+    .lg\:bg-size-42 {
+      background-size: 42%;
+    }
+    .lg\:bg-size-43 {
+      background-size: 43%;
+    }
+    .lg\:bg-size-44 {
+      background-size: 44%;
+    }
+    .lg\:bg-size-45 {
+      background-size: 45%;
+    }
+    .lg\:bg-size-46 {
+      background-size: 46%;
+    }
+    .lg\:bg-size-47 {
+      background-size: 47%;
+    }
+    .lg\:bg-size-48 {
+      background-size: 48%;
+    }
+    .lg\:bg-size-49 {
+      background-size: 49%;
+    }
+    .lg\:bg-size-50 {
+      background-size: 50%;
+    }
+    .lg\:bg-size-51 {
+      background-size: 51%;
+    }
+    .lg\:bg-size-52 {
+      background-size: 52%;
+    }
+    .lg\:bg-size-53 {
+      background-size: 53%;
+    }
+    .lg\:bg-size-54 {
+      background-size: 54%;
+    }
+    .lg\:bg-size-55 {
+      background-size: 55%;
+    }
+    .lg\:bg-size-56 {
+      background-size: 56%;
+    }
+    .lg\:bg-size-57 {
+      background-size: 57%;
+    }
+    .lg\:bg-size-58 {
+      background-size: 58%;
+    }
+    .lg\:bg-size-59 {
+      background-size: 59%;
+    }
+    .lg\:bg-size-60 {
+      background-size: 60%;
+    }
+    .lg\:bg-size-61 {
+      background-size: 61%;
+    }
+    .lg\:bg-size-62 {
+      background-size: 62%;
+    }
+    .lg\:bg-size-63 {
+      background-size: 63%;
+    }
+    .lg\:bg-size-64 {
+      background-size: 64%;
+    }
+    .lg\:bg-size-65 {
+      background-size: 65%;
+    }
+    .lg\:bg-size-66 {
+      background-size: 66%;
+    }
+    .lg\:bg-size-67 {
+      background-size: 67%;
+    }
+    .lg\:bg-size-68 {
+      background-size: 68%;
+    }
+    .lg\:bg-size-69 {
+      background-size: 69%;
+    }
+    .lg\:bg-size-70 {
+      background-size: 70%;
+    }
+    .lg\:bg-size-71 {
+      background-size: 71%;
+    }
+    .lg\:bg-size-72 {
+      background-size: 72%;
+    }
+    .lg\:bg-size-73 {
+      background-size: 73%;
+    }
+    .lg\:bg-size-74 {
+      background-size: 74%;
+    }
+    .lg\:bg-size-75 {
+      background-size: 75%;
+    }
+    .lg\:bg-size-76 {
+      background-size: 76%;
+    }
+    .lg\:bg-size-77 {
+      background-size: 77%;
+    }
+    .lg\:bg-size-78 {
+      background-size: 78%;
+    }
+    .lg\:bg-size-79 {
+      background-size: 79%;
+    }
+    .lg\:bg-size-80 {
+      background-size: 80%;
+    }
+    .lg\:bg-size-81 {
+      background-size: 81%;
+    }
+    .lg\:bg-size-82 {
+      background-size: 82%;
+    }
+    .lg\:bg-size-83 {
+      background-size: 83%;
+    }
+    .lg\:bg-size-84 {
+      background-size: 84%;
+    }
+    .lg\:bg-size-85 {
+      background-size: 85%;
+    }
+    .lg\:bg-size-86 {
+      background-size: 86%;
+    }
+    .lg\:bg-size-87 {
+      background-size: 87%;
+    }
+    .lg\:bg-size-88 {
+      background-size: 88%;
+    }
+    .lg\:bg-size-89 {
+      background-size: 89%;
+    }
+    .lg\:bg-size-90 {
+      background-size: 90%;
+    }
+    .lg\:bg-size-91 {
+      background-size: 91%;
+    }
+    .lg\:bg-size-92 {
+      background-size: 92%;
+    }
+    .lg\:bg-size-93 {
+      background-size: 93%;
+    }
+    .lg\:bg-size-94 {
+      background-size: 94%;
+    }
+    .lg\:bg-size-95 {
+      background-size: 95%;
+    }
+    .lg\:bg-size-96 {
+      background-size: 96%;
+    }
+    .lg\:bg-size-97 {
+      background-size: 97%;
+    }
+    .lg\:bg-size-98 {
+      background-size: 98%;
+    }
+    .lg\:bg-size-99 {
+      background-size: 99%;
+    }
+    .lg\:bg-size-100 {
+      background-size: 100%;
+    }
+  }
+}

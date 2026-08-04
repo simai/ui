@@ -1,1 +1,23 @@
-@layer sf.utilities{@media(min-width: 1140px){.xl\:container{width:var(--sf-breakpoint-xl);padding-left:var(--sf-space-5);padding-right:var(--sf-space-5)}}}
+@layer sf.utilities {
+  @media (min-width: 1140px) {
+    [dir="ltr"] .xl\:container {
+      padding-left: var(--sf-space-5);
+    }
+    [dir="rtl"] .xl\:container {
+      padding-right: var(--sf-space-5);
+    }
+    [dir="ltr"] .xl\:container {
+      padding-right: var(--sf-space-5);
+    }
+    [dir="rtl"] .xl\:container {
+      padding-left: var(--sf-space-5);
+    }
+    .xl\:container {
+      width: var(--sf-breakpoint-xl);
+      -webkit-padding-start: var(--sf-space-5);
+              padding-inline-start: var(--sf-space-5);
+      -webkit-padding-end: var(--sf-space-5);
+              padding-inline-end: var(--sf-space-5);
+    }
+  }
+}

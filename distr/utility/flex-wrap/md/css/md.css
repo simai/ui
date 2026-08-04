@@ -1,1 +1,13 @@
-@layer sf.utilities{@media(min-width: 720px){.md\:flex-wrap{-ms-flex-wrap:wrap;flex-wrap:wrap}.md\:flex-wrap-reverse{-ms-flex-wrap:wrap-reverse;flex-wrap:wrap-reverse}.md\:flex-nowrap{-ms-flex-wrap:nowrap;flex-wrap:nowrap}}}
+@layer sf.utilities {
+  @media (min-width: 720px) {
+    .md\:flex-wrap {
+      flex-wrap: wrap;
+    }
+    .md\:flex-wrap-reverse {
+      flex-wrap: wrap-reverse;
+    }
+    .md\:flex-nowrap {
+      flex-wrap: nowrap;
+    }
+  }
+}

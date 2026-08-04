@@ -1,1 +1,19 @@
-@layer sf.utilities{@media(min-width: 720px){.md\:flex-1{-webkit-box-flex:1;-ms-flex:1 1 0%;flex:1 1 0%}.md\:flex-auto{-webkit-box-flex:1;-ms-flex:1 1 auto;flex:1 1 auto}.md\:flex-content{-webkit-box-flex:1;-ms-flex:1 0 auto;flex:1 0 auto}.md\:flex-initial{-webkit-box-flex:0;-ms-flex:0 1 auto;flex:0 1 auto}.md\:flex-none{-webkit-box-flex:0;-ms-flex:none;flex:none}}}
+@layer sf.utilities {
+  @media (min-width: 720px) {
+    .md\:flex-1 {
+      flex: 1 1 0%;
+    }
+    .md\:flex-auto {
+      flex: 1 1 auto;
+    }
+    .md\:flex-content {
+      flex: 1 0 auto;
+    }
+    .md\:flex-initial {
+      flex: 0 1 auto;
+    }
+    .md\:flex-none {
+      flex: none;
+    }
+  }
+}

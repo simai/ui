@@ -1,1 +1,8 @@
-@layer sf.utilities{.snap-normal{scroll-snap-stop:normal}.snap-always{scroll-snap-stop:always}}
+@layer sf.utilities {
+  .snap-normal {
+    scroll-snap-stop: normal;
+  }
+  .snap-always {
+    scroll-snap-stop: always;
+  }
+}

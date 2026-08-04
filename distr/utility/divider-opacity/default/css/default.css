@@ -1,1 +1,46 @@
-@layer sf.utilities{.divider-opacity-1,.divide-opacity-1{--sf-divider--alfa: var(--sf-opacity-10, 0.1)}.divider-opacity-2,.divide-opacity-2{--sf-divider--alfa: var(--sf-opacity-20, 0.2)}.divider-opacity-3,.divide-opacity-3{--sf-divider--alfa: var(--sf-opacity-30, 0.3)}.divider-opacity-4,.divide-opacity-4{--sf-divider--alfa: var(--sf-opacity-40, 0.4)}.divider-opacity-5,.divide-opacity-5{--sf-divider--alfa: var(--sf-opacity-50, 0.5)}.divider-opacity-6,.divide-opacity-6{--sf-divider--alfa: var(--sf-opacity-60, 0.6)}.divider-opacity-7,.divide-opacity-7{--sf-divider--alfa: var(--sf-opacity-70, 0.7)}.divider-opacity-8,.divide-opacity-8{--sf-divider--alfa: var(--sf-opacity-80, 0.8)}.divider-opacity-9,.divide-opacity-9{--sf-divider--alfa: var(--sf-opacity-90, 0.9)}.divider-opacity-full,.divide-opacity-full{--sf-divider--alfa: 1}.divider-opacity-0,.divide-opacity-0{--sf-divider--alfa: 0}}
+@layer sf.utilities {
+  .divider-opacity-1,
+  .divide-opacity-1 {
+    --sf-divider--alfa: var(--sf-opacity-10, 0.1);
+  }
+  .divider-opacity-2,
+  .divide-opacity-2 {
+    --sf-divider--alfa: var(--sf-opacity-20, 0.2);
+  }
+  .divider-opacity-3,
+  .divide-opacity-3 {
+    --sf-divider--alfa: var(--sf-opacity-30, 0.3);
+  }
+  .divider-opacity-4,
+  .divide-opacity-4 {
+    --sf-divider--alfa: var(--sf-opacity-40, 0.4);
+  }
+  .divider-opacity-5,
+  .divide-opacity-5 {
+    --sf-divider--alfa: var(--sf-opacity-50, 0.5);
+  }
+  .divider-opacity-6,
+  .divide-opacity-6 {
+    --sf-divider--alfa: var(--sf-opacity-60, 0.6);
+  }
+  .divider-opacity-7,
+  .divide-opacity-7 {
+    --sf-divider--alfa: var(--sf-opacity-70, 0.7);
+  }
+  .divider-opacity-8,
+  .divide-opacity-8 {
+    --sf-divider--alfa: var(--sf-opacity-80, 0.8);
+  }
+  .divider-opacity-9,
+  .divide-opacity-9 {
+    --sf-divider--alfa: var(--sf-opacity-90, 0.9);
+  }
+  .divider-opacity-full,
+  .divide-opacity-full {
+    --sf-divider--alfa: 1;
+  }
+  .divider-opacity-0,
+  .divide-opacity-0 {
+    --sf-divider--alfa: 0;
+  }
+}

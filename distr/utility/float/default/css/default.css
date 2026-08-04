@@ -1,1 +1,23 @@
-@layer sf.utilities{.float-inline-end{float:right}.float-inline-start{float:left}.float-none{float:none}}
+@layer sf.utilities {
+  [dir="ltr"] .float-inline-end {
+    float: right;
+  }
+  [dir="rtl"] .float-inline-end {
+    float: left;
+  }
+  .float-inline-end {
+    float: inline-end;
+  }
+  [dir="ltr"] .float-inline-start {
+    float: left;
+  }
+  [dir="rtl"] .float-inline-start {
+    float: right;
+  }
+  .float-inline-start {
+    float: inline-start;
+  }
+  .float-none {
+    float: none;
+  }
+}

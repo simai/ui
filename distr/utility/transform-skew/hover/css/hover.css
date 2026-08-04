@@ -1,1 +1,50 @@
-@layer sf.utilities{.hover\:skew-x-0:hover{--sf-skew-x: 0deg;-webkit-transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1));-ms-transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1));transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1))}.hover\:skew-y-0:hover{--sf-skew-y: 0deg;-webkit-transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1));-ms-transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1));transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1))}.hover\:skew-x-1:hover{--sf-skew-x: 1deg;-webkit-transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1));-ms-transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1));transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1))}.hover\:skew-y-1:hover{--sf-skew-y: 1deg;-webkit-transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1));-ms-transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1));transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1))}.hover\:skew-x-2:hover{--sf-skew-x: 2deg;-webkit-transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1));-ms-transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1));transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1))}.hover\:skew-y-2:hover{--sf-skew-y: 2deg;-webkit-transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1));-ms-transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1));transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1))}.hover\:skew-x-3:hover{--sf-skew-x: 3deg;-webkit-transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1));-ms-transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1));transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1))}.hover\:skew-y-3:hover{--sf-skew-y: 3deg;-webkit-transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1));-ms-transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1));transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1))}.hover\:skew-x-5:hover{--sf-skew-x: 5deg;-webkit-transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1));-ms-transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1));transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1))}.hover\:skew-y-5:hover{--sf-skew-y: 5deg;-webkit-transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1));-ms-transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1));transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1))}.hover\:skew-x-15:hover{--sf-skew-x: 15deg;-webkit-transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1));-ms-transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1));transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1))}.hover\:skew-y-15:hover{--sf-skew-y: 15deg;-webkit-transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1));-ms-transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1));transform:translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0)) rotate(var(--sf-rotate, 0)) skewX(var(--sf-skew-x, 0)) skewY(var(--sf-skew-y, 0)) scaleX(var(--sf-scale-x, 1)) scaleY(var(--sf-scale-y, 1))}}
+@layer sf.utilities {
+  .hover\:skew-x-0:hover {
+    -webkit-transform: skewX(0deg);
+            transform: skewX(0deg);
+  }
+  .hover\:skew-y-0:hover {
+    -webkit-transform: skewY(0deg);
+            transform: skewY(0deg);
+  }
+  .hover\:skew-x-1:hover {
+    -webkit-transform: skewX(1deg);
+            transform: skewX(1deg);
+  }
+  .hover\:skew-y-1:hover {
+    -webkit-transform: skewY(1deg);
+            transform: skewY(1deg);
+  }
+  .hover\:skew-x-2:hover {
+    -webkit-transform: skewX(2deg);
+            transform: skewX(2deg);
+  }
+  .hover\:skew-y-2:hover {
+    -webkit-transform: skewY(2deg);
+            transform: skewY(2deg);
+  }
+  .hover\:skew-x-3:hover {
+    -webkit-transform: skewX(3deg);
+            transform: skewX(3deg);
+  }
+  .hover\:skew-y-3:hover {
+    -webkit-transform: skewY(3deg);
+            transform: skewY(3deg);
+  }
+  .hover\:skew-x-5:hover {
+    -webkit-transform: skewX(5deg);
+            transform: skewX(5deg);
+  }
+  .hover\:skew-y-5:hover {
+    -webkit-transform: skewY(5deg);
+            transform: skewY(5deg);
+  }
+  .hover\:skew-x-15:hover {
+    -webkit-transform: skewX(15deg);
+            transform: skewX(15deg);
+  }
+  .hover\:skew-y-15:hover {
+    -webkit-transform: skewY(15deg);
+            transform: skewY(15deg);
+  }
+}

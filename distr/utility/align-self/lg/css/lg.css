@@ -1,1 +1,22 @@
-@layer sf.utilities{@media(min-width: 960px){.lg\:self-cross-auto{-ms-flex-item-align:auto;align-self:auto}.lg\:self-cross-start{-ms-flex-item-align:start;align-self:start}.lg\:self-cross-end{-ms-flex-item-align:end;align-self:end}.lg\:self-cross-center{-ms-flex-item-align:center;align-self:center}.lg\:self-cross-stretch{-ms-flex-item-align:stretch;align-self:stretch}.lg\:self-cross-baseline{-ms-flex-item-align:baseline;align-self:baseline}}}
+@layer sf.utilities {
+  @media (min-width: 960px) {
+    .lg\:self-cross-auto {
+      align-self: auto;
+    }
+    .lg\:self-cross-start {
+      align-self: start;
+    }
+    .lg\:self-cross-end {
+      align-self: end;
+    }
+    .lg\:self-cross-center {
+      align-self: center;
+    }
+    .lg\:self-cross-stretch {
+      align-self: stretch;
+    }
+    .lg\:self-cross-baseline {
+      align-self: baseline;
+    }
+  }
+}
