@@ -45,6 +45,13 @@
 }
 
 /* fallback */
+@font-face {
+  font-family: "Material Symbols Outlined";
+  font-style: normal;
+  font-weight: 100 700;
+  font-display: block;
+  src: url("../fonts/MaterialSymbols-Outlined.woff2") format("woff2");
+}
 .sf-icon {
   --sf-icon-line-height: inherit;
   --sf-icon-font-size: inherit;
