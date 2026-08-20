@@ -1,1 +1,50 @@
-@layer sf.components{.sf-placeholder{background-color:var(--sf-placeholder--background-color, transparent);gap:var(--sf-placeholder--gap, var(--sf-space-1))}.sf-placeholder .sf-placeholder-right{--sf-placeholder-right--background-color: transparent;--sf-placeholder-right--gap: var(--sf-space-1);background-color:var(--sf-placeholder-right--background-color);gap:var(--sf-placeholder-right--gap)}.sf-placeholder .sf-placeholder-top{--sf-placeholder-top--background-color: transparent;--sf-placeholder-top--gap: var(--sf-space-1\/3);background-color:var(--sf-placeholder-top--background-color);gap:var(--sf-placeholder-top--gap)}.sf-placeholder .sf-placeholder-top-text{color:var(--sf-placeholder-top-text--color);font-family:var(--sf-placeholder-top-text--font-family);font-size:var(--sf-placeholder-top-text--font-size);font-weight:var(--sf-placeholder-top-text--font-weight);line-height:var(--sf-placeholder-top-text--line-height)}.sf-placeholder.sf-placeholder--row .sf-placeholder-right .sf-placeholder-top .sf-placeholder-top-text:nth-child(1),.sf-placeholder.sf-placeholder--column .sf-placeholder-right .sf-placeholder-top .sf-placeholder-top-text:nth-child(1){--sf-placeholder-top-text--color: var(--sf-on-surface);--sf-placeholder-top-text--font-family: var(--sf-heading--family);--sf-placeholder-top-text--font-size: var(--sf-text-size-2);--sf-placeholder-top-text--font-weight: var(--sf-heading--weight);--sf-placeholder-top-text--line-height: var(--sf-title-height-2)}.sf-placeholder.sf-placeholder--row .sf-placeholder-right .sf-placeholder-top .sf-placeholder-top-text:nth-child(2),.sf-placeholder.sf-placeholder--column .sf-placeholder-right .sf-placeholder-top .sf-placeholder-top-text:nth-child(2){--sf-placeholder-top-text--color: var(--sf-on-surface-variant);--sf-placeholder-top-text--font-family: var(--sf-text--family);--sf-placeholder-top-text--font-size: var(--sf-text-size-1);--sf-placeholder-top-text--font-weight: var(--sf-font-weight-regular);--sf-placeholder-top-text--line-height: var(--sf-text-height-1)}}
+/*
+* Main SCSS file for including styles for component.
+*
+* Imports:
+* - Styling variables (_var__component_name.scss)
+* - Base styles (_css__component_name.scss)
+*
+*/
+@layer sf.components {
+  /* utility-hint: display/flex (.flex) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-space-1) */
+  .sf-placeholder {
+    background-color: var(--sf-placeholder--background-color, transparent);
+    gap: var(--sf-placeholder--gap, var(--sf-space-1));
+  }
+  /* utility-hint: display/flex (.flex) flex-direction/column (.flex-col) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-placeholder-right--gap) justify-content/flex-start (.justify-start) */
+  .sf-placeholder .sf-placeholder-right {
+    --sf-placeholder-right--background-color: transparent;
+    --sf-placeholder-right--gap: var(--sf-space-1);
+    background-color: var(--sf-placeholder-right--background-color);
+    gap: var(--sf-placeholder-right--gap);
+  }
+  /* utility-hint: display/flex (.flex) flex-direction/column (.flex-col) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-placeholder-top--gap) justify-content/flex-start (.justify-start) align-items/flex-start (.items-start) */
+  .sf-placeholder .sf-placeholder-top {
+    --sf-placeholder-top--background-color: transparent;
+    --sf-placeholder-top--gap: var(--sf-space-1\/3);
+    background-color: var(--sf-placeholder-top--background-color);
+    gap: var(--sf-placeholder-top--gap);
+  }
+  .sf-placeholder .sf-placeholder-top-text {
+    color: var(--sf-placeholder-top-text--color);
+    font-family: var(--sf-placeholder-top-text--font-family);
+    font-size: var(--sf-placeholder-top-text--font-size);
+    font-weight: var(--sf-placeholder-top-text--font-weight);
+    line-height: var(--sf-placeholder-top-text--line-height);
+  }
+  .sf-placeholder.sf-placeholder--row .sf-placeholder-right .sf-placeholder-top .sf-placeholder-top-text:nth-child(1), .sf-placeholder.sf-placeholder--column .sf-placeholder-right .sf-placeholder-top .sf-placeholder-top-text:nth-child(1) {
+    --sf-placeholder-top-text--color: var(--sf-on-surface);
+    --sf-placeholder-top-text--font-family: var(--sf-heading--family);
+    --sf-placeholder-top-text--font-size: var(--sf-text-size-2);
+    --sf-placeholder-top-text--font-weight: var(--sf-heading--weight);
+    --sf-placeholder-top-text--line-height: var(--sf-title-height-2);
+  }
+  .sf-placeholder.sf-placeholder--row .sf-placeholder-right .sf-placeholder-top .sf-placeholder-top-text:nth-child(2), .sf-placeholder.sf-placeholder--column .sf-placeholder-right .sf-placeholder-top .sf-placeholder-top-text:nth-child(2) {
+    --sf-placeholder-top-text--color: var(--sf-on-surface-variant);
+    --sf-placeholder-top-text--font-family: var(--sf-text--family);
+    --sf-placeholder-top-text--font-size: var(--sf-text-size-1);
+    --sf-placeholder-top-text--font-weight: var(--sf-font-weight-regular);
+    --sf-placeholder-top-text--line-height: var(--sf-text-height-1);
+  }
+}

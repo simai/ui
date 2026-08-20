@@ -1,1 +1,163 @@
-.sf-divider{position:relative;text-align:center;--sf-divider--background-color: var(--sf-outline-variant);--sf-divider-borders--border-color: var(--sf-outline-variant);--sf-divider-content--padding: var(--sf-space-1\/3) var(--sf-space-1);--sf-divider-content--background-color: var(--sf-surface-0);--sf-divider-content--color: var(--sf-on-surface);--sf-divider-content--font-size: var(--sf-text-size-2)}.sf-divider-horizontal::before{content:"";position:absolute;top:50%;left:0;right:0;height:var(--sf-a1);background-color:var(--sf-divider--background-color);z-index:1}.sf-divider-borders::after{content:"";position:absolute;top:0;left:0;right:0;z-index:2;height:100%;border-top:var(--sf-a1) solid var(--sf-divider--border-color);border-bottom:var(--sf-a1) solid var(--sf-divider--border-color);pointer-events:none}.sf-divider-content{position:relative;display:-webkit-inline-box;display:-ms-inline-flexbox;display:inline-flex;padding:var(--sf-divider-content--padding);background-color:var(--sf-divider-content--background-color);max-height:var(--sf-d0);z-index:2;color:var(--sf-divider-content--color);-webkit-box-align:center;-ms-flex-align:center;align-items:center;font-size:var(--sf-divider-content--font-size)}.sf-divider-content--bold{--sf-divider-content--font-size: var(--sf-text-size-2);font-weight:var(--sf-text--font-weight-5)}.sf-divider-content-border{border:var(--sf-a1) solid var(--sf-outline);border-radius:var(--sf-radius-1\/2);padding:var(--sf-space-1\/3) var(--sf-c0);--sf-divider-content--font-size: var(--sf-text-size-1)}.sf-divider-content--small{--sf-divider-content--font-size: var(--sf-text-size-1\/2);color:var(--sf-on-surface-variant);line-height:var(--sf-text-height-1\/2)}.sf-divider-button{position:relative;display:-webkit-inline-box;display:-ms-inline-flexbox;display:inline-flex;padding:0 var(--sf-space-1);font-size:var(--sf-c2);font-size:var(--sf-text-size-1);border:var(--sf-a1) solid var(--sf-outline);padding:var(--sf-space-1\/3) var(--sf-space-1);-webkit-box-align:center;-ms-flex-align:center;align-items:center;z-index:2;max-height:inherit;border-right:none;background-color:var(--sf-surface)}.sf-divider-button .sf-icon{max-height:var(--sf-c2);font-size:var(--sf-text-size-3)}.sf-divider-button--solo{border:var(--sf-a1) solid var(--sf-outline);width:var(--sf-d0);-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;border-radius:var(--sf-radius-1)}.sf-divider-buttons{display:-webkit-inline-box;display:-ms-inline-flexbox;display:inline-flex;max-height:var(--sf-d0);-webkit-box-sizing:border-box;box-sizing:border-box;font-size:var(--sf-text-size-1)}.sf-divider-button--left{border-top-left-radius:var(--sf-radius-3);border-bottom-left-radius:var(--sf-radius-3);border-top-right-radius:0;border-bottom-right-radius:0}.sf-divider-button--right{border-top-right-radius:var(--sf-radius-3);border-bottom-right-radius:var(--sf-radius-3);border-top-left-radius:0;border-bottom-left-radius:0;border-right:var(--sf-a1) solid var(--sf-outline)}.sf-divider-button:not(:last-child){border-right:none}.sf-divider-button-square--left{border-top-left-radius:var(--sf-radius-1);border-bottom-left-radius:var(--sf-radius-1);border-top-right-radius:0;border-bottom-right-radius:0}.sf-divider-button-square--right{border-top-right-radius:var(--sf-radius-1);border-bottom-right-radius:var(--sf-radius-1);border-top-left-radius:0;border-bottom-left-radius:0;border-right:var(--sf-a1) solid var(--sf-outline)}
+@charset "UTF-8";
+/*
+* Main SCSS file for including styles for component.
+*
+* Imports:
+* - Styling variables (_var__component_name.scss)
+* - Base styles (_css__component_name.scss)
+*
+*/
+/*
+* _var__component_name.scss
+* 
+* SCSS file containing variables for component styling.
+* 
+* Used to define default parameters (color, size, etc.)
+* that can be overridden in other parts of the project.
+* 
+* Example usage:
+* --sf-icon--fill: 0; // Fill for icon
+*/
+/*
+* Main SCSS file for including styles for component.
+*
+* Imports:
+* - Styling variables (_var__component_name.scss)
+* - Base styles (_css__component_name.scss)
+*
+*/
+.sf-divider {
+  position: relative;
+  text-align: center;
+  --sf-divider--background-color: var(--sf-outline-variant);
+  --sf-divider-borders--border-color: var(--sf-outline-variant);
+  --sf-divider-content--padding: var(--sf-space-1\/3) var(--sf-space-1);
+  --sf-divider-content--background-color: var(--sf-surface-0);
+  --sf-divider-content--color: var(--sf-on-surface);
+  --sf-divider-content--font-size: var(--sf-text-size-2);
+}
+.sf-divider-horizontal::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: var(--sf-a1);
+  background-color: var(--sf-divider--background-color);
+  z-index: 1;
+}
+.sf-divider-borders::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  height: 100%;
+  border-top: var(--sf-a1) solid var(--sf-divider--border-color);
+  border-bottom: var(--sf-a1) solid var(--sf-divider--border-color);
+  pointer-events: none;
+}
+.sf-divider-content {
+  position: relative;
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  padding: var(--sf-divider-content--padding);
+  background-color: var(--sf-divider-content--background-color); /* Р¦РІРµС‚ С„РѕРЅР° С‚РµРєСЃС‚Р° */
+  max-height: var(--sf-d0);
+  z-index: 2;
+  color: var(--sf-divider-content--color);
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  font-size: var(--sf-divider-content--font-size);
+}
+.sf-divider-content--bold {
+  --sf-divider-content--font-size: var(--sf-text-size-2);
+  font-weight: var(--sf-text--font-weight-5);
+}
+.sf-divider-content-border {
+  border: var(--sf-a1) solid var(--sf-outline);
+  border-radius: var(--sf-radius-1\/2);
+  padding: var(--sf-space-1\/3) var(--sf-c0);
+  --sf-divider-content--font-size: var(--sf-text-size-1);
+}
+.sf-divider-content--small {
+  --sf-divider-content--font-size: var(--sf-text-size-1\/2);
+  color: var(--sf-on-surface-variant);
+  line-height: var(--sf-text-height-1\/2);
+}
+.sf-divider-button {
+  position: relative;
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  padding: 0 var(--sf-space-1);
+  font-size: var(--sf-c2);
+  font-size: var(--sf-text-size-1);
+  border: var(--sf-a1) solid var(--sf-outline);
+  padding: var(--sf-space-1\/3) var(--sf-space-1);
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  z-index: 2;
+  max-height: inherit;
+  border-right: none;
+  background-color: var(--sf-surface);
+}
+.sf-divider-button .sf-icon {
+  max-height: var(--sf-c2);
+  font-size: var(--sf-text-size-3);
+}
+.sf-divider-button--solo {
+  border: var(--sf-a1) solid var(--sf-outline);
+  width: var(--sf-d0);
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  border-radius: var(--sf-radius-1);
+}
+.sf-divider-buttons {
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  max-height: var(--sf-d0);
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  font-size: var(--sf-text-size-1);
+}
+
+.sf-divider-button--left {
+  border-top-left-radius: var(--sf-radius-3);
+  border-bottom-left-radius: var(--sf-radius-3);
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.sf-divider-button--right {
+  border-top-right-radius: var(--sf-radius-3);
+  border-bottom-right-radius: var(--sf-radius-3);
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-right: var(--sf-a1) solid var(--sf-outline);
+}
+
+.sf-divider-button:not(:last-child) {
+  border-right: none;
+}
+
+.sf-divider-button-square--left {
+  border-top-left-radius: var(--sf-radius-1);
+  border-bottom-left-radius: var(--sf-radius-1);
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.sf-divider-button-square--right {
+  border-top-right-radius: var(--sf-radius-1);
+  border-bottom-right-radius: var(--sf-radius-1);
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-right: var(--sf-a1) solid var(--sf-outline);
+}
