@@ -2812,6 +2812,61 @@
     ]
   },
   {
+    "name": "cl-editor",
+    "tags": [
+      "sf-editor"
+    ],
+    "type": "smart",
+    "mode": "smart",
+    "js": true,
+    "css": true,
+    "relation": [
+      {
+        "name": "textarea"
+      },
+      {
+        "name": "cl-icon-buttons"
+      }
+    ]
+  },
+  {
+    "name": "cl-fab",
+    "tags": [
+      "sf-fab"
+    ],
+    "type": "smart",
+    "mode": "smart",
+    "js": true,
+    "relation": [
+      {
+        "name": "cl-icon"
+      },
+      {
+        "name": "fab"
+      }
+    ]
+  },
+  {
+    "name": "cl-file-preview",
+    "tags": [
+      "sf-file-preview"
+    ],
+    "type": "smart",
+    "mode": "smart",
+    "js": true,
+    "relation": [
+      {
+        "name": "file-preview"
+      },
+      {
+        "name": "cl-avatar"
+      },
+      {
+        "name": "icon-buttons"
+      }
+    ]
+  },
+  {
     "name": "cl-file-upload",
     "tags": [
       "sf-file-upload"
@@ -2837,6 +2892,29 @@
         "name": "icon-buttons"
       }
     ]
+  },
+  {
+    "name": "cl-flags",
+    "tags": [
+      "sf-flags"
+    ],
+    "type": "smart",
+    "mode": "smart",
+    "js": true,
+    "relation": [
+      {
+        "name": "flags"
+      }
+    ]
+  },
+  {
+    "name": "cl-form",
+    "tags": [
+      "sf-form"
+    ],
+    "type": "smart",
+    "mode": "smart",
+    "js": true
   },
   {
     "name": "cl-gallery",
@@ -2904,6 +2982,40 @@
     ]
   },
   {
+    "name": "cl-link",
+    "tags": [
+      "sf-link"
+    ],
+    "type": "smart",
+    "mode": "smart",
+    "js": true,
+    "relation": [
+      {
+        "name": "link"
+      }
+    ]
+  },
+  {
+    "name": "cl-list",
+    "tags": [
+      "sf-list"
+    ],
+    "type": "smart",
+    "mode": "smart",
+    "js": true,
+    "relation": [
+      {
+        "name": "cl-list-item"
+      },
+      {
+        "name": "list"
+      },
+      {
+        "name": "cl-inputs"
+      }
+    ]
+  },
+  {
     "name": "cl-list-item",
     "tags": [
       "sf-list-item"
@@ -2926,6 +3038,30 @@
       },
       {
         "name": "tags"
+      }
+    ]
+  },
+  {
+    "name": "cl-menu",
+    "tags": [
+      "sf-menu"
+    ],
+    "type": "smart",
+    "mode": "smart",
+    "js": true,
+    "relation": [
+      {
+        "name": "menu",
+        "css": true,
+        "js": false
+      },
+      {
+        "name": "icon-buttons",
+        "css": true,
+        "js": false
+      },
+      {
+        "name": "cl-icons"
       }
     ]
   },
@@ -3020,6 +3156,23 @@
     ]
   },
   {
+    "name": "cl-rating",
+    "tags": [
+      "sf-rating"
+    ],
+    "type": "smart",
+    "mode": "smart",
+    "js": true,
+    "relation": [
+      {
+        "name": "rating"
+      },
+      {
+        "name": "cl-icon-buttons"
+      }
+    ]
+  },
+  {
     "name": "cl-reference-link",
     "tags": [
       "sf-reference-link"
@@ -3033,6 +3186,20 @@
       },
       {
         "name": "icons"
+      }
+    ]
+  },
+  {
+    "name": "cl-settings",
+    "tags": [
+      "sf-settings"
+    ],
+    "type": "smart",
+    "mode": "smart",
+    "js": true,
+    "relation": [
+      {
+        "name": "cl-modal"
       }
     ]
   },
@@ -3493,11 +3660,24 @@
     "js": false
   },
   {
+    "name": "file-preview",
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-file-preview\\b/i",
+    "type": "component",
+    "css": true
+  },
+  {
     "name": "file-upload",
     "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-file-upload\\b/i",
     "type": "component",
     "css": true,
     "js": true
+  },
+  {
+    "name": "flags",
+    "regex": "/sf-flags/",
+    "type": "component",
+    "css": true,
+    "js": false
   },
   {
     "name": "hideShow",
@@ -3533,6 +3713,20 @@
     "type": "component",
     "css": true,
     "js": true
+  },
+  {
+    "name": "link",
+    "regex": "/sf-link/",
+    "type": "component",
+    "css": true,
+    "js": false
+  },
+  {
+    "name": "list",
+    "regex": "/sf-list/",
+    "type": "component",
+    "css": true,
+    "js": false
   },
   {
     "name": "menu",
@@ -3616,6 +3810,13 @@
     "type": "component",
     "css": true,
     "js": true
+  },
+  {
+    "name": "rating",
+    "regex": "/sf-rating/",
+    "type": "component",
+    "css": true,
+    "js": false
   },
   {
     "name": "reference-link",

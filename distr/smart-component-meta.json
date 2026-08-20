@@ -1,0 +1,268 @@
+{
+  "generatedAt": "2026-07-01T13:52:14.600Z",
+  "sourceRoot": "src/smart",
+  "tags": [
+    "sf-button",
+    "sf-icon-button"
+  ],
+  "components": {
+    "sf-button": {
+      "tag": "sf-button",
+      "source": "src/smart/buttons/meta.mjs",
+      "attributes": {
+        "template": {
+          "kind": "custom",
+          "valueType": "string",
+          "default": "default",
+          "description": "Template variant name for SfBaseElement external templates."
+        },
+        "size": {
+          "kind": "enum",
+          "values": [
+            "1/3",
+            "1/2",
+            "1",
+            "2",
+            "3"
+          ],
+          "default": "1",
+          "description": "Button size token."
+        },
+        "type": {
+          "kind": "enum",
+          "values": [
+            "default",
+            "tonal",
+            "outline",
+            "link"
+          ],
+          "default": "default",
+          "description": "Visual button type."
+        },
+        "scheme": {
+          "kind": "enum",
+          "values": [
+            "primary",
+            "secondary",
+            "on-surface"
+          ],
+          "default": "primary",
+          "description": "Visual color scheme."
+        },
+        "text": {
+          "kind": "custom",
+          "valueType": "string",
+          "default": "",
+          "description": "Visible button text when no text slot is provided."
+        },
+        "icon": {
+          "kind": "custom",
+          "valueType": "string",
+          "default": "",
+          "description": "Single icon name shortcut."
+        },
+        "icon-left": {
+          "kind": "custom",
+          "valueType": "string",
+          "default": "",
+          "description": "Left icon name."
+        },
+        "icon-right": {
+          "kind": "custom",
+          "valueType": "string",
+          "default": "",
+          "description": "Right icon name."
+        },
+        "icon-position": {
+          "kind": "enum",
+          "values": [
+            "start",
+            "end"
+          ],
+          "default": "start",
+          "description": "Placement for the single icon shortcut."
+        },
+        "tightness": {
+          "kind": "enum",
+          "values": [
+            "low",
+            "high",
+            "highest"
+          ],
+          "default": "",
+          "description": "Vertical tightness modifier."
+        },
+        "radius": {
+          "kind": "enum",
+          "values": [
+            "default",
+            "square",
+            "rounded"
+          ],
+          "default": "",
+          "description": "Border radius modifier."
+        },
+        "root-class": {
+          "kind": "custom",
+          "valueType": "string",
+          "default": "",
+          "description": "Extra classes applied to the inner button element."
+        },
+        "loading": {
+          "kind": "boolean",
+          "values": [
+            "true",
+            "false"
+          ],
+          "default": "false",
+          "description": "Loading state flag."
+        },
+        "disabled": {
+          "kind": "boolean",
+          "values": [
+            "true",
+            "false"
+          ],
+          "default": "false",
+          "description": "Disabled state flag."
+        },
+        "native-type": {
+          "kind": "enum",
+          "values": [
+            "button",
+            "submit",
+            "reset"
+          ],
+          "default": "button",
+          "description": "Native button type attribute."
+        },
+        "aria-label": {
+          "kind": "custom",
+          "valueType": "string",
+          "default": "",
+          "description": "Accessible label for icon-only or custom buttons."
+        }
+      }
+    },
+    "sf-icon-button": {
+      "tag": "sf-icon-button",
+      "source": "src/smart/icon-buttons/meta.mjs",
+      "attributes": {
+        "template": {
+          "kind": "custom",
+          "valueType": "string",
+          "default": "default",
+          "description": "Template variant name for SfBaseElement external templates."
+        },
+        "variant": {
+          "kind": "enum",
+          "values": [
+            "icon",
+            "close"
+          ],
+          "default": "icon",
+          "description": "Rendered inner content variant."
+        },
+        "size": {
+          "kind": "enum",
+          "values": [
+            "1/3",
+            "1/2",
+            "1",
+            "2",
+            "3"
+          ],
+          "default": "1",
+          "description": "Icon button size token."
+        },
+        "type": {
+          "kind": "enum",
+          "values": [
+            "default",
+            "tonal",
+            "outline",
+            "link"
+          ],
+          "default": "default",
+          "description": "Visual icon button type."
+        },
+        "scheme": {
+          "kind": "enum",
+          "values": [
+            "primary",
+            "secondary",
+            "on-surface"
+          ],
+          "default": "primary",
+          "description": "Visual color scheme."
+        },
+        "icon": {
+          "kind": "custom",
+          "valueType": "string",
+          "default": "add",
+          "description": "Material icon name."
+        },
+        "tightness": {
+          "kind": "enum",
+          "values": [
+            "low",
+            "high",
+            "highest"
+          ],
+          "default": "",
+          "description": "Vertical tightness modifier."
+        },
+        "radius": {
+          "kind": "enum",
+          "values": [
+            "default",
+            "square",
+            "rounded"
+          ],
+          "default": "",
+          "description": "Border radius modifier."
+        },
+        "root-class": {
+          "kind": "custom",
+          "valueType": "string",
+          "default": "",
+          "description": "Extra classes applied to the inner icon button element."
+        },
+        "loading": {
+          "kind": "boolean",
+          "values": [
+            "true",
+            "false"
+          ],
+          "default": "false",
+          "description": "Loading state flag."
+        },
+        "disabled": {
+          "kind": "boolean",
+          "values": [
+            "true",
+            "false"
+          ],
+          "default": "false",
+          "description": "Disabled state flag."
+        },
+        "native-type": {
+          "kind": "enum",
+          "values": [
+            "button",
+            "submit",
+            "reset"
+          ],
+          "default": "button",
+          "description": "Native button type attribute."
+        },
+        "aria-label": {
+          "kind": "custom",
+          "valueType": "string",
+          "default": "",
+          "description": "Accessible label."
+        }
+      }
+    }
+  }
+}

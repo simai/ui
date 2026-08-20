@@ -1,0 +1,1 @@
+@layer sf.components{.sf-rating-star svg{color:var(--sf-surface-container)}.sf-rating-icon-background svg{color:var(--sf-warning-70);clip-path:inset(0 calc(100% - var(--fill)) 0 0)}}
