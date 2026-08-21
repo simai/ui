@@ -26,7 +26,7 @@
         "status": "unsupported"
       }
     ],
-    "id": "sf-v5.4.0-local.9-3db5af38-7cf3a66e",
+    "id": "sf-v5.4.0-local.10-3db5af38-702aa62d",
     "profile": "plain-assets-v1",
     "runtime_sources": [
       {
@@ -2510,7 +2510,7 @@
     {
       "curated_for": [],
       "documentation_refs": [
-        "simai/ui-smart@a600f4477eab8b6efa0127c63b7c0a7ee6090a49:README.md"
+        "simai/ui-smart@702aa62d8b5a56e1d3888da96300906136ce79c4:README.md"
       ],
       "example_refs": [],
       "id": "smart.admin-menu",
@@ -2519,13 +2519,13 @@
       "name": "admin-menu",
       "owner": "simai/ui-smart",
       "provenance": {
-        "commit": "a600f4477eab8b6efa0127c63b7c0a7ee6090a49",
+        "commit": "702aa62d8b5a56e1d3888da96300906136ce79c4",
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
-          "simai/ui-smart@a600f4477eab8b6efa0127c63b7c0a7ee6090a49:smart/admin-menu",
+          "simai/ui-smart@702aa62d8b5a56e1d3888da96300906136ce79c4:smart/admin-menu",
           "simai/ui@812cc5e9b84003c195288fa2b86e73c12bae1489:distr/rule/rule.json#name=cl-admin-menu"
         ],
-        "tag": "v5.4.0-local.8"
+        "tag": "v5.4.0-local.10"
       },
       "readiness": {
         "blockers": [],
@@ -2543,7 +2543,7 @@
       ],
       "runtime": {
         "asset_paths": [
-          "simai/ui-smart@a600f4477eab8b6efa0127c63b7c0a7ee6090a49:smart/admin-menu/js/admin-menu.js"
+          "simai/ui-smart@702aa62d8b5a56e1d3888da96300906136ce79c4:smart/admin-menu/js/admin-menu.js"
         ],
         "declared": {
           "css": false,
