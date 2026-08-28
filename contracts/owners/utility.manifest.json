@@ -101,6 +101,34 @@
       ]
     },
     {
+      "id": "utility.pointer-events",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      },
+      "curated_for": [
+        "recipe.admin.collection"
+      ]
+    },
+    {
+      "id": "utility.text-align",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      },
+      "curated_for": [
+        "recipe.admin.collection"
+      ]
+    },
+    {
       "id": "utility.width",
       "readiness": {
         "status": "ready",
