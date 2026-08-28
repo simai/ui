@@ -455,7 +455,7 @@ def validate_lock(lock: dict[str, Any]) -> None:
         "records_count",
     }:
         raise ContractError("release_lock_legacy_lineage_invalid")
-    if lineage.get("owner") != "simai/ui-control" or not isinstance(lineage.get("path"), str) or not lineage["path"]:
+    if lineage.get("owner") not in {"simai/ui-control", "simai/ui"} or not isinstance(lineage.get("path"), str) or not lineage["path"]:
         raise ContractError("release_lock_legacy_lineage_identity_invalid")
     if any(not HEX40.fullmatch(str(lineage.get(field, ""))) for field in ("commit", "tree", "blob")):
         raise ContractError("release_lock_legacy_lineage_revision_invalid")
@@ -573,8 +573,8 @@ def build_registry(
     utility_path = utility_manifest_path or ui_root / "contracts/owners/utility.manifest.json"
     component_path = component_manifest_path or ui_root / "contracts/owners/component.manifest.json"
     recipe_path = recipe_manifest_path or ui_root / "contracts/owners/recipe.manifest.json"
-    lock_path = release_lock_path or ui_root / "contracts/releases/ui-e305e1cffe9f-smart-655406493ce9.lock.json"
-    reference_path = smart_reference_path or ui_root / "contracts/registry-inputs/ui-smart-655406493ce9.ref.json"
+    lock_path = release_lock_path or ui_root / "contracts/releases/ui-1fe83c75768e-smart-9e05dc35289c.lock.json"
+    reference_path = smart_reference_path or ui_root / "contracts/registry-inputs/ui-smart-9e05dc35289c.ref.json"
     manifests = {
         "utility": load_json(utility_path),
         "component": load_json(component_path),
