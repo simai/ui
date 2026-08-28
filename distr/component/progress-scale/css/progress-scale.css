@@ -8,9 +8,13 @@
 */
 @layer sf.components {
   .sf-progress-scale {
+    background-color: transparent;
     background-color: var(--sf-progress-scale--background-color, transparent);
+    color: var(--sf-on-surface-muted);
     color: var(--sf-progress-scale--color, var(--sf-on-surface-muted));
+    font-family: var(--sf-text--family);
     font-family: var(--sf-progress-scale--font-family, var(--sf-text--family));
+    font-weight: var(--sf-font-weight-regular);
     font-weight: var(--sf-progress-scale--font-weight, var(--sf-font-weight-regular));
     gap: var(--sf-progress-scale--gap);
     font-size: var(--sf-progress-scale--font-size);

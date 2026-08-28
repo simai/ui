@@ -25,16 +25,18 @@
 * - Base styles (_css__component_name.scss)
 *
 */
+[dir="ltr"] .sf-carousel-pagination {
+  left: 0;
+}
+[dir="rtl"] .sf-carousel-pagination {
+  right: 0;
+}
 .sf-carousel-pagination {
-  display: -webkit-inline-box;
-  display: -ms-inline-flexbox;
   display: inline-flex;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
+  justify-content: center;
   bottom: 0;
   position: absolute;
-  left: 0;
+  inset-inline-start: 0;
   --sf-carousel-pagination-item--background-color: var(--sf-primary-50);
   background-color: var(--sf-primary);
   border-radius: var(--sf-b3);
@@ -42,7 +44,6 @@
 }
 .sf-carousel-pagination .sf-carousel-pagination-item, .sf-carousel-pagination .swiper-pagination-bullet {
   background-color: var(--sf-carousel-pagination-item--background-color);
-  -webkit-transition: all 0.25s ease-in-out;
   transition: all 0.25s ease-in-out;
   color: white;
   min-height: var(--sf-a8);
@@ -104,20 +105,13 @@
   padding: var(--sf-b0);
   border-radius: 50%;
   -webkit-transform: translateY(-50%);
-      -ms-transform: translateY(-50%);
           transform: translateY(-50%);
   max-height: var(--sf-c6);
   max-width: var(--sf-c6);
   font-size: var(--sf-text-height-1\/3);
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  justify-content: center;
+  align-items: center;
 }
 .sf-carousel-switch .sf-icon {
   color: inherit;
@@ -172,6 +166,7 @@
   height: var(--sf-carousel-slide--height);
   position: relative;
   width: 100%;
+  max-width: 768px;
   max-width: var(--sf-max-w-md, 768px);
   margin: 0 auto;
   overflow: hidden;
@@ -180,13 +175,11 @@
   width: inherit;
   height: inherit;
   position: absolute;
-  -webkit-transition: opacity 0.5s ease-in-out, -webkit-transform 0.5s ease-in-out;
   transition: opacity 0.5s ease-in-out, -webkit-transform 0.5s ease-in-out;
   transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
   transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out, -webkit-transform 0.5s ease-in-out;
   opacity: 0;
   -webkit-transform: translateX(100%);
-      -ms-transform: translateX(100%);
           transform: translateX(100%);
 }
 .sf-carousel .sf-carousel-slide img {
@@ -198,28 +191,37 @@
 .sf-carousel .sf-carousel-slide--active {
   opacity: 1;
   -webkit-transform: translateX(0);
-      -ms-transform: translateX(0);
           transform: translateX(0);
 }
 .sf-carousel .sf-carousel-slide--prev {
   -webkit-transform: translateX(-100%);
-      -ms-transform: translateX(-100%);
           transform: translateX(-100%);
 }
 .sf-carousel .sf-carousel-slide--next {
   -webkit-transform: translateX(100%);
-      -ms-transform: translateX(100%);
           transform: translateX(100%);
 }
 .sf-carousel .sf-carousel-switch {
   position: absolute;
   top: 50%;
 }
+[dir="ltr"] .sf-carousel .sf-carousel-switch--right {
+  right: var(--sf-b6);
+}
+[dir="rtl"] .sf-carousel .sf-carousel-switch--right {
+  left: var(--sf-b6);
+}
 .sf-carousel .sf-carousel-switch--right {
+  inset-inline-end: var(--sf-b6);
+}
+[dir="ltr"] .sf-carousel .sf-carousel-switch--left {
+  left: var(--sf-b6);
+}
+[dir="rtl"] .sf-carousel .sf-carousel-switch--left {
   right: var(--sf-b6);
 }
 .sf-carousel .sf-carousel-switch--left {
-  left: var(--sf-b6);
+  inset-inline-start: var(--sf-b6);
 }
 .sf-carousel .sf-carousel-switch.swiper-button-prev, .sf-carousel .sf-carousel-switch.swiper-button-next {
   width: auto;
@@ -229,19 +231,22 @@
   margin-top: 0;
   margin-top: initial;
   z-index: 10;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  align-items: center;
   color: var(--sf-carousel-switch--color);
 }
 .sf-carousel .sf-carousel-switch.swiper-button-prev:after, .sf-carousel .sf-carousel-switch.swiper-button-next:after {
   content: normal;
   content: initial;
 }
+[dir="ltr"] .sf-carousel .sf-carousel-pagination {
+  left: 50%;
+}
+[dir="rtl"] .sf-carousel .sf-carousel-pagination {
+  right: 50%;
+}
 .sf-carousel .sf-carousel-pagination {
   bottom: var(--sf-b6);
-  left: 50%;
+  inset-inline-start: 50%;
   -webkit-transform: translate(-50%, 0);
-      -ms-transform: translate(-50%, 0);
           transform: translate(-50%, 0);
 }

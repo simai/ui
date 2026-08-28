@@ -3,8 +3,6 @@
     list-style-type: none;
     padding: 0px;
     margin: 0px;
-    display: -webkit-box;
-    display: -ms-flexbox;
     display: flex;
   }
   .sf-tab ul li .sf-tab-active {

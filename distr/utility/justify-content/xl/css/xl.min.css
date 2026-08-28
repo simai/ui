@@ -1,0 +1,1 @@
+@layer sf.utilities{@media(min-width: 1140px){.xl\:content-main-start{justify-content:flex-start}.xl\:content-main-end{justify-content:flex-end}.xl\:content-main-center{justify-content:center}.xl\:content-main-between{justify-content:space-between}.xl\:content-main-around{justify-content:space-around}.xl\:content-main-evenly{justify-content:space-evenly}}}

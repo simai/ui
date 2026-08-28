@@ -8,29 +8,132 @@
 */
 @layer sf.components {
   /* utility-hint: display/flex (.flex) flex-direction/column (.flex-col) flex-wrap/nowrap (.flex-nowrap) justify-content/flex-start (.justify-start) align-items/center (.items-center) */
-  .sf-file-upload {
-    border-bottom-width: var(--sf-file-upload--border-bottom-width, var(--sf-a1, 0));
+  [dir="ltr"] .sf-file-upload {
+    border-bottom-right-radius: var(--sf-radius-2);
     border-bottom-right-radius: var(--sf-file-upload--border-bottom-right-radius, var(--sf-radius-2));
+  }
+  [dir="rtl"] .sf-file-upload {
+    border-bottom-left-radius: var(--sf-radius-2);
+    border-bottom-left-radius: var(--sf-file-upload--border-bottom-right-radius, var(--sf-radius-2));
+  }
+  [dir="ltr"] .sf-file-upload {
+    border-bottom-left-radius: var(--sf-radius-2);
     border-bottom-left-radius: var(--sf-file-upload--border-bottom-left-radius, var(--sf-radius-2));
-    border-right-width: var(--sf-file-upload--border-right-width, var(--sf-a1, 0));
-    border-left-width: var(--sf-file-upload--border-left-width, var(--sf-a1, 0));
+  }
+  [dir="rtl"] .sf-file-upload {
+    border-bottom-right-radius: var(--sf-radius-2);
+    border-bottom-right-radius: var(--sf-file-upload--border-bottom-left-radius, var(--sf-radius-2));
+  }
+  [dir="ltr"] .sf-file-upload {
+    border-right-width: var(--sf-a1);
+    border-right-width: var(--sf-file-upload--border-right-width, var(--sf-a1));
+  }
+  [dir="rtl"] .sf-file-upload {
+    border-left-width: var(--sf-a1);
+    border-left-width: var(--sf-file-upload--border-right-width, var(--sf-a1));
+  }
+  [dir="ltr"] .sf-file-upload {
+    border-left-width: var(--sf-a1);
+    border-left-width: var(--sf-file-upload--border-left-width, var(--sf-a1));
+  }
+  [dir="rtl"] .sf-file-upload {
+    border-right-width: var(--sf-a1);
+    border-right-width: var(--sf-file-upload--border-left-width, var(--sf-a1));
+  }
+  [dir="ltr"] .sf-file-upload {
+    border-top-right-radius: var(--sf-radius-2);
     border-top-right-radius: var(--sf-file-upload--border-top-right-radius, var(--sf-radius-2));
+  }
+  [dir="rtl"] .sf-file-upload {
+    border-top-left-radius: var(--sf-radius-2);
+    border-top-left-radius: var(--sf-file-upload--border-top-right-radius, var(--sf-radius-2));
+  }
+  [dir="ltr"] .sf-file-upload {
+    border-top-left-radius: var(--sf-radius-2);
     border-top-left-radius: var(--sf-file-upload--border-top-left-radius, var(--sf-radius-2));
-    border-top-width: var(--sf-file-upload--border-top-width, var(--sf-a1, 0));
-    gap: var(--sf-file-upload--gap);
+  }
+  [dir="rtl"] .sf-file-upload {
+    border-top-right-radius: var(--sf-radius-2);
+    border-top-right-radius: var(--sf-file-upload--border-top-left-radius, var(--sf-radius-2));
+  }
+  [dir="ltr"] .sf-file-upload {
     padding-left: var(--sf-file-upload--padding-inline-start);
-    padding-top: var(--sf-file-upload--padding-top);
+  }
+  [dir="rtl"] .sf-file-upload {
+    padding-right: var(--sf-file-upload--padding-inline-start);
+  }
+  [dir="ltr"] .sf-file-upload {
     padding-right: var(--sf-file-upload--padding-inline-end);
+  }
+  [dir="rtl"] .sf-file-upload {
+    padding-left: var(--sf-file-upload--padding-inline-end);
+  }
+  [dir="ltr"] .sf-file-upload {
+    border-bottom-right-radius: var(--sf-radius-2);
+  }
+  [dir="rtl"] .sf-file-upload {
+    border-bottom-left-radius: var(--sf-radius-2);
+  }
+  [dir="ltr"] .sf-file-upload {
+    border-bottom-left-radius: var(--sf-radius-2);
+  }
+  [dir="rtl"] .sf-file-upload {
+    border-bottom-right-radius: var(--sf-radius-2);
+  }
+  [dir="ltr"] .sf-file-upload {
+    border-right-width: var(--sf-a1);
+  }
+  [dir="rtl"] .sf-file-upload {
+    border-left-width: var(--sf-a1);
+  }
+  [dir="ltr"] .sf-file-upload {
+    border-left-width: var(--sf-a1);
+  }
+  [dir="rtl"] .sf-file-upload {
+    border-right-width: var(--sf-a1);
+  }
+  [dir="ltr"] .sf-file-upload {
+    border-top-right-radius: var(--sf-radius-2);
+  }
+  [dir="rtl"] .sf-file-upload {
+    border-top-left-radius: var(--sf-radius-2);
+  }
+  [dir="ltr"] .sf-file-upload {
+    border-top-left-radius: var(--sf-radius-2);
+  }
+  [dir="rtl"] .sf-file-upload {
+    border-top-right-radius: var(--sf-radius-2);
+  }
+  .sf-file-upload {
+    border-bottom-width: var(--sf-a1);
+    border-bottom-width: var(--sf-file-upload--border-bottom-width, var(--sf-a1));
+    border-end-end-radius: var(--sf-radius-2);
+    border-end-end-radius: var(--sf-file-upload--border-bottom-right-radius, var(--sf-radius-2));
+    border-end-start-radius: var(--sf-radius-2);
+    border-end-start-radius: var(--sf-file-upload--border-bottom-left-radius, var(--sf-radius-2));
+    border-inline-end-width: var(--sf-a1);
+    border-inline-end-width: var(--sf-file-upload--border-right-width, var(--sf-a1));
+    border-inline-start-width: var(--sf-a1);
+    border-inline-start-width: var(--sf-file-upload--border-left-width, var(--sf-a1));
+    border-start-end-radius: var(--sf-radius-2);
+    border-start-end-radius: var(--sf-file-upload--border-top-right-radius, var(--sf-radius-2));
+    border-start-start-radius: var(--sf-radius-2);
+    border-start-start-radius: var(--sf-file-upload--border-top-left-radius, var(--sf-radius-2));
+    border-top-width: var(--sf-a1);
+    border-top-width: var(--sf-file-upload--border-top-width, var(--sf-a1));
+    gap: var(--sf-file-upload--gap);
+    -webkit-padding-start: var(--sf-file-upload--padding-inline-start);
+            padding-inline-start: var(--sf-file-upload--padding-inline-start);
+    padding-top: var(--sf-file-upload--padding-top);
+    -webkit-padding-end: var(--sf-file-upload--padding-inline-end);
+            padding-inline-end: var(--sf-file-upload--padding-inline-end);
     padding-bottom: var(--sf-file-upload--padding-bottom);
     background-color: var(--sf-file-upload--background-color);
+    border-color: transparent;
     border-color: var(--sf-file-upload--border-color, transparent);
-    -webkit-box-shadow: var(--sf-file-upload--box-shadow);
-            box-shadow: var(--sf-file-upload--box-shadow);
+    box-shadow: var(--sf-file-upload--box-shadow);
     --sf-file-upload--background-color: var(--sf-surface-0);
     --sf-file-upload--border-color: var(--sf-outline);
-  }
-  .sf-file-upload .sf-featured-icon {
-    background-color: var(--sf-featured-icon--background-color);
   }
   /* utility-hint: flex/1 (.flex-1) display/flex (.flex) flex-direction/column (.flex-col) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-file-upload-bottom--gap) justify-content/flex-start (.justify-start) align-items/center (.items-center) */
   .sf-file-upload .sf-file-upload-bottom {
@@ -46,6 +149,18 @@
     background-color: var(--sf-file-upload-block--background-color);
     gap: var(--sf-file-upload-block--gap);
   }
+  .sf-file-upload .sf-file-upload-link {
+    --sf-file-upload-link--color: var(--sf-primary);
+    --sf-file-upload-link--font-family: var(--sf-text--family);
+    --sf-file-upload-link--font-weight: var(--sf-font-weight-medium);
+    --sf-file-upload-link--margin-bottom: var(--sf-text--margin);
+    color: var(--sf-file-upload-link--color);
+    font-family: var(--sf-file-upload-link--font-family);
+    font-size: var(--sf-file-upload-link--font-size);
+    font-weight: var(--sf-file-upload-link--font-weight);
+    line-height: var(--sf-file-upload-link--line-height);
+    margin-bottom: var(--sf-file-upload-link--margin-bottom);
+  }
   .sf-file-upload .sf-file-upload-block-text {
     --sf-file-upload-block-text--color: var(--sf-on-surface-variant);
     --sf-file-upload-block-text--font-family: var(--sf-text--family);
@@ -55,16 +170,6 @@
     font-size: var(--sf-file-upload-block-text--font-size);
     font-weight: var(--sf-file-upload-block-text--font-weight);
     line-height: var(--sf-file-upload-block-text--line-height);
-  }
-  .sf-file-upload .sf-file-upload-link {
-    --sf-file-upload-link--color: var(--sf-primary);
-    --sf-file-upload-link--font-family: var(--sf-text--family);
-    --sf-file-upload-link--font-weight: var(--sf-font-weight-regular);
-    color: var(--sf-file-upload-link--color);
-    font-family: var(--sf-file-upload-link--font-family);
-    font-size: var(--sf-file-upload-link--font-size);
-    font-weight: var(--sf-file-upload-link--font-weight);
-    line-height: var(--sf-file-upload-link--line-height);
   }
   .sf-file-upload .sf-file-upload-text {
     --sf-file-upload-text--color: var(--sf-on-surface-variant);
@@ -76,63 +181,66 @@
     font-weight: var(--sf-file-upload-text--font-weight);
     line-height: var(--sf-file-upload-text--line-height);
   }
-  .sf-file-upload.sf-file-upload--size-1 .sf-file-upload-block-text {
-    --sf-file-upload-block-text--font-size: var(--sf-text-size-1);
-    --sf-file-upload-block-text--line-height: var(--sf-text-height-1);
+  .sf-file-upload .sf-featured-icon > .sf-icon {
+    color: var(--sf-icon-featured-icon--color);
   }
-  .sf-file-upload.sf-file-upload--size-1 .sf-file-upload-link {
+  .sf-file-upload--size-1 .sf-file-upload-link {
     --sf-file-upload-link--font-size: var(--sf-text-size-1);
     --sf-file-upload-link--line-height: var(--sf-text-height-1);
   }
-  .sf-file-upload.sf-file-upload--size-1 .sf-file-upload-text {
+  .sf-file-upload--size-1 .sf-file-upload-block-text {
+    --sf-file-upload-block-text--font-size: var(--sf-text-size-1);
+    --sf-file-upload-block-text--line-height: var(--sf-text-height-1);
+  }
+  .sf-file-upload--size-1 .sf-file-upload-text {
     --sf-file-upload-text--font-size: var(--sf-text-size-1);
     --sf-file-upload-text--line-height: var(--sf-text-height-1);
   }
-  .sf-file-upload.sf-file-upload--size-2 .sf-file-upload-block-text {
-    --sf-file-upload-block-text--font-size: var(--sf-text-size-2);
-    --sf-file-upload-block-text--line-height: var(--sf-text-height-2);
-  }
-  .sf-file-upload.sf-file-upload--size-2 .sf-file-upload-link {
+  .sf-file-upload--size-2 .sf-file-upload-link {
     --sf-file-upload-link--font-size: var(--sf-text-size-2);
     --sf-file-upload-link--line-height: var(--sf-text-height-2);
   }
-  .sf-file-upload.sf-file-upload--size-2 .sf-file-upload-text {
+  .sf-file-upload--size-2 .sf-file-upload-block-text {
+    --sf-file-upload-block-text--font-size: var(--sf-text-size-2);
+    --sf-file-upload-block-text--line-height: var(--sf-text-height-2);
+  }
+  .sf-file-upload--size-2 .sf-file-upload-text {
     --sf-file-upload-text--font-size: var(--sf-text-size-2);
     --sf-file-upload-text--line-height: var(--sf-text-height-2);
   }
-  .sf-file-upload.sf-file-upload--size-3 .sf-file-upload-block-text {
-    --sf-file-upload-block-text--font-size: var(--sf-text-size-3);
-    --sf-file-upload-block-text--line-height: var(--sf-text-height-3);
-  }
-  .sf-file-upload.sf-file-upload--size-3 .sf-file-upload-link {
+  .sf-file-upload--size-3 .sf-file-upload-link {
     --sf-file-upload-link--font-size: var(--sf-text-size-3);
     --sf-file-upload-link--line-height: var(--sf-text-height-3);
   }
-  .sf-file-upload.sf-file-upload--size-3 .sf-file-upload-text {
+  .sf-file-upload--size-3 .sf-file-upload-block-text {
+    --sf-file-upload-block-text--font-size: var(--sf-text-size-3);
+    --sf-file-upload-block-text--line-height: var(--sf-text-height-3);
+  }
+  .sf-file-upload--size-3 .sf-file-upload-text {
     --sf-file-upload-text--font-size: var(--sf-text-size-3);
     --sf-file-upload-text--line-height: var(--sf-text-height-3);
   }
-  .sf-file-upload.sf-file-upload--size-1\/2 .sf-file-upload-block-text {
-    --sf-file-upload-block-text--font-size: var(--sf-text-size-1\/2);
-    --sf-file-upload-block-text--line-height: var(--sf-text-height-1\/2);
-  }
-  .sf-file-upload.sf-file-upload--size-1\/2 .sf-file-upload-link {
+  .sf-file-upload--size-1\/2 .sf-file-upload-link {
     --sf-file-upload-link--font-size: var(--sf-text-size-1\/2);
     --sf-file-upload-link--line-height: var(--sf-text-height-1\/2);
   }
-  .sf-file-upload.sf-file-upload--size-1\/2 .sf-file-upload-text {
+  .sf-file-upload--size-1\/2 .sf-file-upload-block-text {
+    --sf-file-upload-block-text--font-size: var(--sf-text-size-1\/2);
+    --sf-file-upload-block-text--line-height: var(--sf-text-height-1\/2);
+  }
+  .sf-file-upload--size-1\/2 .sf-file-upload-text {
     --sf-file-upload-text--font-size: var(--sf-text-size-1\/2);
     --sf-file-upload-text--line-height: var(--sf-text-height-1\/2);
   }
-  .sf-file-upload.sf-file-upload--size-1\/3 .sf-file-upload-block-text {
-    --sf-file-upload-block-text--font-size: var(--sf-text-size-1\/3);
-    --sf-file-upload-block-text--line-height: var(--sf-text-height-1\/3);
-  }
-  .sf-file-upload.sf-file-upload--size-1\/3 .sf-file-upload-link {
+  .sf-file-upload--size-1\/3 .sf-file-upload-link {
     --sf-file-upload-link--font-size: var(--sf-text-size-1\/3);
     --sf-file-upload-link--line-height: var(--sf-text-height-1\/3);
   }
-  .sf-file-upload.sf-file-upload--size-1\/3 .sf-file-upload-text {
+  .sf-file-upload--size-1\/3 .sf-file-upload-block-text {
+    --sf-file-upload-block-text--font-size: var(--sf-text-size-1\/3);
+    --sf-file-upload-block-text--line-height: var(--sf-text-height-1\/3);
+  }
+  .sf-file-upload--size-1\/3 .sf-file-upload-text {
     --sf-file-upload-text--font-size: var(--sf-text-size-1\/3);
     --sf-file-upload-text--line-height: var(--sf-text-height-1\/3);
   }
@@ -171,62 +279,40 @@
     --sf-file-upload--padding-inline-start: var(--sf-space-2);
     --sf-file-upload--padding-top: var(--sf-space-1\/2);
   }
-}
-@layer sf.states {
-  .sf-file-upload:not(:disabled):not(.disabled):hover {
-    --sf-file-upload--border-color: var(--sf-outline-primary);
-  }
   .sf-file-upload:not(:disabled):not(.disabled):focus {
     --sf-file-upload--background-color: var(--sf-transparent-for-focus);
     --sf-file-upload--border-color: var(--sf-outline-variant);
     --sf-file-upload--box-shadow: var(--sf-ui-focus);
   }
-  .sf-file-upload.disabled .sf-featured-icon.sf-featured-icon--clear.sf-featured-icon--light.sf-featured-icon--circle {
-    --sf-featured-icon--background-color: var(--sf-disable);
+  .sf-file-upload:not(:disabled):not(.disabled):focus .sf-featured-icon .sf-icon, .sf-file-upload:not(:disabled):not(.disabled):hover .sf-featured-icon .sf-icon {
+    color: var(--sf-primary);
   }
-  .sf-file-upload.disabled > .sf-featured-icon.sf-featured-icon--clear.sf-featured-icon--light.sf-featured-icon--circle > .sf-icon {
-    --sf-icon--color: var(--sf-on-disable);
+  .sf-file-upload:not(:disabled):not(.disabled):hover {
+    --sf-file-upload--border-color: var(--sf-outline-primary);
   }
   .sf-file-upload.disabled {
     --sf-file-upload--background-color: var(--sf-disable);
     --sf-file-upload--border-color: var(--sf-outline-disable);
   }
-  .sf-file-upload.disabled .sf-file-upload-block-text {
-    --sf-file-upload-block-text--color: var(--sf-on-disable);
+  .sf-file-upload.disabled .sf-featured-icon .sf-icon {
+    color: var(--sf-on-disable);
   }
   .sf-file-upload.disabled .sf-file-upload-link {
     --sf-file-upload-link--color: var(--sf-on-disable);
+  }
+  .sf-file-upload.disabled .sf-file-upload-block-text {
+    --sf-file-upload-block-text--color: var(--sf-on-disable);
   }
   .sf-file-upload.disabled .sf-file-upload-text {
     --sf-file-upload-text--color: var(--sf-on-disable);
   }
 }
-@layer sf.overrides {
-  .sf-file-upload > .sf-featured-icon.sf-featured-icon--clear.sf-featured-icon--light.sf-featured-icon--circle > .sf-icon {
-    --sf-icon--color: var(--sf-primary);
-  }
-}
 @layer sf.components {
   /* utility-hint: flex/1 (.flex-1) display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) justify-content/flex-start (.justify-start) align-items/flex-start (.items-start) */
   .sf-upload-progress {
+    background-color: transparent;
     background-color: var(--sf-upload-progress--background-color, transparent);
     gap: var(--sf-upload-progress--gap);
-  }
-  .sf-upload-progress .sf-icon {
-    color: var(--sf-icon--color, var(--sf-on-surface-variant));
-    font-size: var(--sf-icon--font-size, var(--sf-icon-size-3));
-    height: var(--sf-icon--height, var(--sf-icon-size-3));
-    width: var(--sf-icon--width, var(--sf-icon-size-3));
-  }
-  /* utility-hint: gap/var(--sf-progress-bar--gap) */
-  .sf-upload-progress .sf-progress-bar {
-    gap: var(--sf-progress-bar--gap);
-  }
-  .sf-upload-progress .sf-progress-bar-progress {
-    border-bottom-right-radius: var(--sf-progress-bar-progress--border-end-end-radius);
-    border-bottom-left-radius: var(--sf-progress-bar-progress--border-end-start-radius);
-    border-top-right-radius: var(--sf-progress-bar-progress--border-start-end-radius);
-    border-top-left-radius: var(--sf-progress-bar-progress--border-start-start-radius);
   }
   /* utility-hint: flex/1 (.flex-1) display/flex (.flex) flex-direction/column (.flex-col) flex-wrap/nowrap (.flex-nowrap) justify-content/flex-start (.justify-start) align-items/flex-start (.items-start) gap/var(--sf-upload-progress-content--gap) */
   .sf-upload-progress .sf-upload-progress-content {
@@ -248,7 +334,7 @@
   .sf-upload-progress .sf-upload-progress-name {
     --sf-upload-progress-name--color: var(--sf-on-surface);
     --sf-upload-progress-name--font-family: var(--sf-text--family);
-    --sf-upload-progress-name--font-weight: var(--sf-font-weight-regular);
+    --sf-upload-progress-name--font-weight: var(--sf-font-weight-medium);
     color: var(--sf-upload-progress-name--color);
     font-family: var(--sf-upload-progress-name--font-family);
     font-size: var(--sf-upload-progress-name--font-size);
@@ -264,6 +350,33 @@
     font-weight: var(--sf-upload-progress-text--font-weight);
     line-height: var(--sf-upload-progress-text--line-height);
   }
+  .sf-upload-progress .sf-icon {
+    color: var(--sf-on-surface-variant);
+    color: var(--sf-icon--color, var(--sf-on-surface-variant));
+    font-size: var(--sf-icon--font-size);
+    height: var(--sf-icon--height);
+    width: var(--sf-icon--width);
+  }
+  [dir="ltr"] .sf-upload-progress .sf-icon-button {
+    padding-right: var(--sf-icon-button--padding-inline-end);
+  }
+  [dir="rtl"] .sf-upload-progress .sf-icon-button {
+    padding-left: var(--sf-icon-button--padding-inline-end);
+  }
+  [dir="ltr"] .sf-upload-progress .sf-icon-button {
+    padding-left: var(--sf-icon-button--padding-inline-start);
+  }
+  [dir="rtl"] .sf-upload-progress .sf-icon-button {
+    padding-right: var(--sf-icon-button--padding-inline-start);
+  }
+  .sf-upload-progress .sf-icon-button {
+    padding-bottom: var(--sf-icon-button--padding-bottom);
+    -webkit-padding-end: var(--sf-icon-button--padding-inline-end);
+            padding-inline-end: var(--sf-icon-button--padding-inline-end);
+    -webkit-padding-start: var(--sf-icon-button--padding-inline-start);
+            padding-inline-start: var(--sf-icon-button--padding-inline-start);
+    padding-top: var(--sf-icon-button--padding-top);
+  }
   .sf-upload-progress .sf-upload-progress-repeat {
     color: var(--sf-upload-progress-repeat--color);
     font-family: var(--sf-upload-progress-repeat--font-family);
@@ -271,96 +384,101 @@
     font-weight: var(--sf-upload-progress-repeat--font-weight);
     line-height: var(--sf-upload-progress-repeat--line-height);
   }
-  /* utility-hint: flex/1 (.flex-1) */
-  .sf-upload-progress.sf-upload-progress--size-1 .sf-progress-bar, .sf-upload-progress.sf-upload-progress--size-2 .sf-progress-bar {
-    --sf-progress-bar--gap: var(--sf-space-1\/3);
-  }
-  .sf-upload-progress.sf-upload-progress--size-1 .sf-upload-progress-content, .sf-upload-progress.sf-upload-progress--size-1\/3 .sf-upload-progress-content, .sf-upload-progress.sf-upload-progress--size-1\/2 .sf-upload-progress-content {
+  .sf-upload-progress--size-1 .sf-upload-progress-content, .sf-upload-progress--size-1\/3 .sf-upload-progress-content, .sf-upload-progress--size-1\/2 .sf-upload-progress-content {
     --sf-upload-progress-content--gap: var(--sf-space-1\/4);
   }
-  .sf-upload-progress.sf-upload-progress--size-1 .sf-upload-progress-name {
+  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/3 .sf-upload-progress-top, .sf-upload-progress.sf-upload-progress--done.sf-upload-progress--size-1\/3 .sf-upload-progress-top, .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/3 .sf-upload-progress-top, .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/2 .sf-upload-progress-top, .sf-upload-progress.sf-upload-progress--done.sf-upload-progress--size-1\/2 .sf-upload-progress-top, .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/2 .sf-upload-progress-top, .sf-upload-progress--size-1 .sf-upload-progress-top {
+    --sf-upload-progress-top--gap: var(--sf-space-1\/3);
+  }
+  .sf-upload-progress--size-1 .sf-upload-progress-name {
     --sf-upload-progress-name--font-size: var(--sf-text-size-1);
     --sf-upload-progress-name--line-height: var(--sf-text-height-1);
   }
-  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/3 .sf-upload-progress-top, .sf-upload-progress.sf-upload-progress--done.sf-upload-progress--size-1\/3 .sf-upload-progress-top, .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/3 .sf-upload-progress-top, .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/2 .sf-upload-progress-top, .sf-upload-progress.sf-upload-progress--done.sf-upload-progress--size-1\/2 .sf-upload-progress-top, .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/2 .sf-upload-progress-top, .sf-upload-progress.sf-upload-progress--size-1 .sf-upload-progress-top {
-    --sf-upload-progress-top--gap: var(--sf-space-1\/3);
+  [dir="ltr"] .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon,[dir="ltr"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon,[dir="ltr"]  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon,[dir="ltr"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon,[dir="ltr"]  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-3 .sf-button .sf-icon,[dir="ltr"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-3 .sf-button .sf-icon {
+    padding-right: var(--sf-ui-1\/3--space-y-tightness-default);
   }
-  .sf-upload-progress.sf-upload-progress--size-1 .sf-icon {
-    --sf-icon--font-size: var(--sf-text-size-3);
-    --sf-icon--height: var(--sf-text-size-3);
-    --sf-icon--width: var(--sf-text-size-3);
+  [dir="rtl"] .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-3 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-3 .sf-button .sf-icon {
+    padding-left: var(--sf-ui-1\/3--space-y-tightness-default);
+  }
+  [dir="ltr"] .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon,[dir="ltr"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon,[dir="ltr"]  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon,[dir="ltr"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon,[dir="ltr"]  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-3 .sf-button .sf-icon,[dir="ltr"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-3 .sf-button .sf-icon {
+    padding-left: var(--sf-ui-1\/3--space-y-tightness-default);
+  }
+  [dir="rtl"] .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-3 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-3 .sf-button .sf-icon {
+    padding-right: var(--sf-ui-1\/3--space-y-tightness-default);
+  }
+  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon, .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon, .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon, .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon, .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-3 .sf-button .sf-icon, .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-3 .sf-button .sf-icon {
+    padding-bottom: var(--sf-ui-1\/2--space-y-tightness-default);
+    -webkit-padding-end: var(--sf-ui-1\/3--space-y-tightness-default);
+            padding-inline-end: var(--sf-ui-1\/3--space-y-tightness-default);
+    -webkit-padding-start: var(--sf-ui-1\/3--space-y-tightness-default);
+            padding-inline-start: var(--sf-ui-1\/3--space-y-tightness-default);
+    padding-top: var(--sf-ui-1\/2--space-y-tightness-default);
   }
   .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-upload-progress-repeat {
     --sf-upload-progress-repeat--font-size: var(--sf-text-size-1);
     --sf-upload-progress-repeat--line-height: var(--sf-text-height-1);
   }
-  .sf-upload-progress.sf-upload-progress--size-2 .sf-upload-progress-content {
+  .sf-upload-progress--size-2 .sf-upload-progress-content {
     --sf-upload-progress-content--gap: var(--sf-space-1\/3);
   }
-  .sf-upload-progress.sf-upload-progress--size-2 .sf-upload-progress-name {
-    --sf-upload-progress-name--font-size: var(--sf-text-size-2);
-    --sf-upload-progress-name--line-height: var(--sf-text-height-2);
-  }
-  .sf-upload-progress.sf-upload-progress--size-2 .sf-upload-progress-top {
+  .sf-upload-progress--size-2 .sf-upload-progress-top {
     --sf-upload-progress-top--gap: var(--sf-space-1\/2);
   }
-  .sf-upload-progress.sf-upload-progress--size-2 .sf-icon {
-    --sf-icon--font-size: var(--sf-text-size-4);
-    --sf-icon--height: var(--sf-text-size-4);
-    --sf-icon--width: var(--sf-text-size-4);
+  .sf-upload-progress--size-2 .sf-upload-progress-name {
+    --sf-upload-progress-name--font-size: var(--sf-text-size-2);
+    --sf-upload-progress-name--line-height: var(--sf-text-height-2);
   }
   .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-upload-progress-repeat {
     --sf-upload-progress-repeat--font-size: var(--sf-text-size-2);
     --sf-upload-progress-repeat--line-height: var(--sf-text-height-2);
   }
-  /* utility-hint: flex/1 (.flex-1) */
-  .sf-upload-progress.sf-upload-progress--size-3 .sf-progress-bar {
-    --sf-progress-bar--gap: var(--sf-space-1\/2);
-  }
-  .sf-upload-progress.sf-upload-progress--size-3 .sf-upload-progress-content {
+  .sf-upload-progress--size-3 .sf-upload-progress-content {
     --sf-upload-progress-content--gap: var(--sf-space-1\/2);
   }
-  .sf-upload-progress.sf-upload-progress--size-3 .sf-upload-progress-name {
-    --sf-upload-progress-name--font-size: var(--sf-text-size-3);
-    --sf-upload-progress-name--line-height: var(--sf-text-height-3);
-  }
-  .sf-upload-progress.sf-upload-progress--size-3 .sf-upload-progress-top {
+  .sf-upload-progress--size-3 .sf-upload-progress-top {
     --sf-upload-progress-top--gap: var(--sf-space-1);
   }
-  .sf-upload-progress.sf-upload-progress--size-3 .sf-icon {
-    --sf-icon--font-size: var(--sf-text-size-5);
-    --sf-icon--height: var(--sf-text-size-5);
-    --sf-icon--width: var(--sf-text-size-5);
+  .sf-upload-progress--size-3 .sf-upload-progress-name {
+    --sf-upload-progress-name--font-size: var(--sf-text-size-3);
+    --sf-upload-progress-name--line-height: var(--sf-text-height-3);
   }
   .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-3 .sf-upload-progress-repeat {
     --sf-upload-progress-repeat--font-size: var(--sf-text-size-3);
     --sf-upload-progress-repeat--line-height: var(--sf-text-height-3);
   }
-  /* utility-hint: flex/1 (.flex-1) */
-  .sf-upload-progress.sf-upload-progress--size-1\/3 .sf-progress-bar, .sf-upload-progress.sf-upload-progress--size-1\/2 .sf-progress-bar {
-    --sf-progress-bar--gap: var(--sf-space-1\/4);
-  }
-  .sf-upload-progress.sf-upload-progress--size-1\/3 .sf-upload-progress-name {
+  .sf-upload-progress--size-1\/3 .sf-upload-progress-name {
     --sf-upload-progress-name--font-size: var(--sf-text-size-1\/3);
     --sf-upload-progress-name--line-height: var(--sf-text-height-1\/3);
   }
-  .sf-upload-progress.sf-upload-progress--size-1\/3 .sf-icon {
-    --sf-icon--font-size: var(--sf-text-size-1);
-    --sf-icon--height: var(--sf-text-size-1);
-    --sf-icon--width: var(--sf-text-size-1);
+  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/3 .sf-button .sf-icon, .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/3 .sf-button .sf-icon {
+    padding-bottom: var(--sf-ui-1\/2--space-y-tightness-default);
+    padding-top: var(--sf-ui-1\/2--space-y-tightness-default);
   }
   .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/3 .sf-upload-progress-repeat {
     --sf-upload-progress-repeat--font-size: var(--sf-text-size-1\/3);
     --sf-upload-progress-repeat--line-height: var(--sf-text-height-1\/3);
   }
-  .sf-upload-progress.sf-upload-progress--size-1\/2 .sf-upload-progress-name {
+  .sf-upload-progress--size-1\/2 .sf-upload-progress-name {
     --sf-upload-progress-name--font-size: var(--sf-text-size-1\/2);
     --sf-upload-progress-name--line-height: var(--sf-text-height-1\/2);
   }
-  .sf-upload-progress.sf-upload-progress--size-1\/2 .sf-icon {
-    --sf-icon--font-size: var(--sf-text-size-2);
-    --sf-icon--height: var(--sf-text-size-2);
-    --sf-icon--width: var(--sf-text-size-2);
+  [dir="ltr"] .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/2 .sf-button .sf-icon,[dir="ltr"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/2 .sf-button .sf-icon {
+    padding-right: var(--sf-ui-1\/3--space-y-tightness-default);
+  }
+  [dir="rtl"] .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/2 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/2 .sf-button .sf-icon {
+    padding-left: var(--sf-ui-1\/3--space-y-tightness-default);
+  }
+  [dir="ltr"] .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/2 .sf-button .sf-icon,[dir="ltr"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/2 .sf-button .sf-icon {
+    padding-left: var(--sf-ui-1\/3--space-y-tightness-default);
+  }
+  [dir="rtl"] .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/2 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/2 .sf-button .sf-icon {
+    padding-right: var(--sf-ui-1\/3--space-y-tightness-default);
+  }
+  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/2 .sf-button .sf-icon, .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/2 .sf-button .sf-icon {
+    -webkit-padding-end: var(--sf-ui-1\/3--space-y-tightness-default);
+            padding-inline-end: var(--sf-ui-1\/3--space-y-tightness-default);
+    -webkit-padding-start: var(--sf-ui-1\/3--space-y-tightness-default);
+            padding-inline-start: var(--sf-ui-1\/3--space-y-tightness-default);
   }
   .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/2 .sf-upload-progress-repeat {
     --sf-upload-progress-repeat--font-size: var(--sf-text-size-1\/2);
@@ -369,12 +487,22 @@
   .sf-upload-progress--size-1 {
     --sf-upload-progress--gap: var(--sf-space-1\/2);
   }
+  .sf-upload-progress.sf-upload-progress--size-1 .sf-icon {
+    --sf-icon--font-size: var(--sf-text-size-3);
+    --sf-icon--height: var(--sf-text-size-3);
+    --sf-icon--width: var(--sf-text-size-3);
+  }
   .sf-upload-progress.sf-upload-progress--size-1 .sf-upload-progress-text {
     --sf-upload-progress-text--font-size: var(--sf-text-size-1\/2);
     --sf-upload-progress-text--line-height: var(--sf-text-height-1\/2);
   }
   .sf-upload-progress--size-2 {
     --sf-upload-progress--gap: var(--sf-space-1);
+  }
+  .sf-upload-progress.sf-upload-progress--size-2 .sf-icon {
+    --sf-icon--font-size: var(--sf-text-size-4);
+    --sf-icon--height: var(--sf-text-size-4);
+    --sf-icon--width: var(--sf-text-size-4);
   }
   .sf-upload-progress.sf-upload-progress--size-2 .sf-upload-progress-text {
     --sf-upload-progress-text--font-size: var(--sf-text-size-1);
@@ -383,6 +511,11 @@
   .sf-upload-progress--size-3 {
     --sf-upload-progress--gap: var(--sf-space-2);
   }
+  .sf-upload-progress.sf-upload-progress--size-3 .sf-icon {
+    --sf-icon--font-size: var(--sf-text-size-5);
+    --sf-icon--height: var(--sf-text-size-5);
+    --sf-icon--width: var(--sf-text-size-5);
+  }
   .sf-upload-progress.sf-upload-progress--size-3 .sf-upload-progress-text {
     --sf-upload-progress-text--font-size: var(--sf-text-size-2);
     --sf-upload-progress-text--line-height: var(--sf-text-height-2);
@@ -390,43 +523,45 @@
   .sf-upload-progress--size-1\/3, .sf-upload-progress--size-1\/2 {
     --sf-upload-progress--gap: var(--sf-space-1\/3);
   }
+  .sf-upload-progress.sf-upload-progress--size-1\/3 .sf-icon {
+    --sf-icon--font-size: var(--sf-text-size-1);
+    --sf-icon--height: var(--sf-text-size-1);
+    --sf-icon--width: var(--sf-text-size-1);
+  }
+  .sf-upload-progress--size-1\/3 .sf-upload-progress-top, .sf-upload-progress--size-1\/2 .sf-upload-progress-top {
+    --sf-upload-progress-top--gap: var(--sf-upload-progress--gap);
+  }
   .sf-upload-progress.sf-upload-progress--size-1\/3 .sf-upload-progress-text {
     --sf-upload-progress-text--font-size: var(--sf-text-size-1\/4);
     --sf-upload-progress-text--line-height: var(--sf-text-height-1\/4);
   }
-  .sf-upload-progress.sf-upload-progress--size-1\/3 .sf-upload-progress-top, .sf-upload-progress.sf-upload-progress--size-1\/2 .sf-upload-progress-top {
-    --sf-upload-progress-top--gap: var(--sf-upload-progress--gap);
+  .sf-upload-progress.sf-upload-progress--size-1\/2 .sf-icon {
+    --sf-icon--font-size: var(--sf-text-size-2);
+    --sf-icon--height: var(--sf-text-size-2);
+    --sf-icon--width: var(--sf-text-size-2);
   }
   .sf-upload-progress.sf-upload-progress--size-1\/2 .sf-upload-progress-text {
     --sf-upload-progress-text--font-size: var(--sf-text-size-1\/3);
     --sf-upload-progress-text--line-height: var(--sf-text-height-1\/3);
   }
-  .sf-upload-progress.sf-upload-progress--process .sf-icon, .sf-upload-progress.sf-upload-progress--done .sf-icon {
+  .sf-upload-progress--process .sf-icon, .sf-upload-progress--done .sf-icon {
     --sf-icon--color: var(--sf-primary);
   }
-  .sf-upload-progress.sf-upload-progress--process .sf-progress-bar-progress, .sf-upload-progress.sf-upload-progress--done .sf-progress-bar-progress {
-    --sf-progress-bar-progress--border-end-end-radius: var(--sf-radius-1\/2);
-    --sf-progress-bar-progress--border-end-start-radius: var(--sf-radius-1\/2);
-    --sf-progress-bar-progress--border-start-end-radius: var(--sf-radius-1\/2);
-    --sf-progress-bar-progress--border-start-start-radius: var(--sf-radius-1\/2);
-  }
-  .sf-upload-progress.sf-upload-progress--process .sf-upload-progress-text, .sf-upload-progress.sf-upload-progress--done .sf-upload-progress-text {
+  .sf-upload-progress--process .sf-upload-progress-text, .sf-upload-progress--done .sf-upload-progress-text {
     --sf-upload-progress-text--color: var(--sf-on-surface-variant);
   }
-  .sf-upload-progress.sf-upload-progress--error .sf-icon {
+  .sf-upload-progress--process .sf-icon-button > .sf-icon, .sf-upload-progress--error .sf-icon-button > .sf-icon {
+    --sf-icon--color: var(--sf-on-surface-variant);
+  }
+  .sf-upload-progress--error .sf-icon {
     --sf-icon--color: var(--sf-error);
   }
-  .sf-upload-progress.sf-upload-progress--error .sf-upload-progress-repeat {
-    --sf-upload-progress-repeat--color: var(--sf-on-surface);
-    --sf-upload-progress-repeat--font-family: var(--sf-text--family);
-    --sf-upload-progress-repeat--font-weight: var(--sf-font-weight-regular);
-  }
-  .sf-upload-progress.sf-upload-progress--error .sf-upload-progress-text {
+  .sf-upload-progress--error .sf-upload-progress-text {
     --sf-upload-progress-text--color: var(--sf-on-surface);
   }
-}
-@layer sf.overrides {
-  .sf-upload-progress > .sf-upload-progress-content > .sf-upload-progress-top > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > .sf-icon {
-    --sf-icon--color: var(--sf-on-surface-variant);
+  .sf-upload-progress--error .sf-upload-progress-repeat {
+    --sf-upload-progress-repeat--color: var(--sf-on-surface);
+    --sf-upload-progress-repeat--font-family: var(--sf-text--family);
+    --sf-upload-progress-repeat--font-weight: var(--sf-font-weight-bold);
   }
 }

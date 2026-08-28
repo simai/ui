@@ -1,11 +1,49 @@
 @layer sf.components {
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-b0) justify-content/flex-start (.justify-start) align-items/center (.items-center) */
-  .sf-dot {
-    background-color: var(--sf-dot--background-color, transparent);
-    gap: var(--sf-dot--gap, var(--sf-b0));
-    padding-bottom: var(--sf-dot--padding-bottom, var(--sf-a1));
+  [dir="ltr"] .sf-dot {
+    padding-right: var(--sf-a1);
     padding-right: var(--sf-dot--padding-right, var(--sf-a1));
+  }
+  [dir="rtl"] .sf-dot {
+    padding-left: var(--sf-a1);
+    padding-left: var(--sf-dot--padding-right, var(--sf-a1));
+  }
+  [dir="ltr"] .sf-dot {
+    padding-left: var(--sf-a1);
     padding-left: var(--sf-dot--padding-left, var(--sf-a1));
+  }
+  [dir="rtl"] .sf-dot {
+    padding-right: var(--sf-a1);
+    padding-right: var(--sf-dot--padding-left, var(--sf-a1));
+  }
+  [dir="ltr"] .sf-dot {
+    padding-right: var(--sf-a1);
+  }
+  [dir="rtl"] .sf-dot {
+    padding-left: var(--sf-a1);
+  }
+  [dir="ltr"] .sf-dot {
+    padding-left: var(--sf-a1);
+  }
+  [dir="rtl"] .sf-dot {
+    padding-right: var(--sf-a1);
+  }
+  .sf-dot {
+    background-color: transparent;
+    background-color: var(--sf-dot--background-color, transparent);
+    gap: var(--sf-b0);
+    gap: var(--sf-dot--gap, var(--sf-b0));
+    padding-bottom: var(--sf-a1);
+    padding-bottom: var(--sf-dot--padding-bottom, var(--sf-a1));
+    -webkit-padding-end: var(--sf-a1);
+            padding-inline-end: var(--sf-a1);
+    -webkit-padding-end: var(--sf-dot--padding-right, var(--sf-a1));
+            padding-inline-end: var(--sf-dot--padding-right, var(--sf-a1));
+    -webkit-padding-start: var(--sf-a1);
+            padding-inline-start: var(--sf-a1);
+    -webkit-padding-start: var(--sf-dot--padding-left, var(--sf-a1));
+            padding-inline-start: var(--sf-dot--padding-left, var(--sf-a1));
+    padding-top: var(--sf-a1);
     padding-top: var(--sf-dot--padding-top, var(--sf-a1));
   }
   .sf-dot .sf-dot-item {

@@ -10,16 +10,10 @@
   .sf-emoji {
     --sf-emoji--font-size: var(--sf-text-size-2);
     --sf-emoji--line-height: var(--sf-text-height-2);
-    --sf-emoji--font-family: 'Segoe UI Emoji', 'Noto Color Emoji', 'Apple Color Emoji', sans-serif;
-    display: -webkit-inline-box;
-    display: -ms-inline-flexbox;
+    --sf-emoji--font-family: "Segoe UI Emoji", "Noto Color Emoji", "Apple Color Emoji", sans-serif;
     display: inline-flex;
-    -webkit-box-align: center;
-        -ms-flex-align: center;
-            align-items: center;
-    -webkit-box-pack: center;
-        -ms-flex-pack: center;
-            justify-content: center;
+    align-items: center;
+    justify-content: center;
     font-family: var(--sf-emoji--font-family);
     font-size: var(--sf-emoji--font-size);
     line-height: var(--sf-emoji--line-height);

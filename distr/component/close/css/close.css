@@ -1,10 +1,25 @@
 @layer sf.components {
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) justify-content/center (.justify-center) align-items/center (.items-center) */
-  .sf-close {
-    background-color: var(--sf-close--background-color, transparent);
+  [dir="ltr"] .sf-close {
     padding-left: var(--sf-close--padding-inline-start);
-    padding-top: var(--sf-close--padding-top);
+  }
+  [dir="rtl"] .sf-close {
+    padding-right: var(--sf-close--padding-inline-start);
+  }
+  [dir="ltr"] .sf-close {
     padding-right: var(--sf-close--padding-inline-end);
+  }
+  [dir="rtl"] .sf-close {
+    padding-left: var(--sf-close--padding-inline-end);
+  }
+  .sf-close {
+    background-color: transparent;
+    background-color: var(--sf-close--background-color, transparent);
+    -webkit-padding-start: var(--sf-close--padding-inline-start);
+            padding-inline-start: var(--sf-close--padding-inline-start);
+    padding-top: var(--sf-close--padding-top);
+    -webkit-padding-end: var(--sf-close--padding-inline-end);
+            padding-inline-end: var(--sf-close--padding-inline-end);
     padding-bottom: var(--sf-close--padding-bottom);
   }
   .sf-close .sf-close-icon {
@@ -18,6 +33,7 @@
     -webkit-mask-repeat: var(--sf-close-icon---webkit-mask-repeat);
     -webkit-mask-size: var(--sf-close-icon---webkit-mask-size);
     background-color: var(--sf-close-icon--background-color);
+    border-color: transparent;
     border-color: var(--sf-close-icon--border-color, transparent);
     font-size: var(--sf-close-icon--font-size);
     height: var(--sf-close-icon--height);

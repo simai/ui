@@ -1,1 +1,22 @@
-@layer sf.utilities{@media(min-width: 1140px){.xl\:content-main-start{-webkit-box-pack:start;-ms-flex-pack:start;justify-content:flex-start}.xl\:content-main-end{-webkit-box-pack:end;-ms-flex-pack:end;justify-content:flex-end}.xl\:content-main-center{-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center}.xl\:content-main-between{-webkit-box-pack:justify;-ms-flex-pack:justify;justify-content:space-between}.xl\:content-main-around{-ms-flex-pack:distribute;justify-content:space-around}.xl\:content-main-evenly{-webkit-box-pack:space-evenly;-ms-flex-pack:space-evenly;justify-content:space-evenly}}}
+@layer sf.utilities {
+  @media (min-width: 1140px) {
+    .xl\:content-main-start {
+      justify-content: flex-start;
+    }
+    .xl\:content-main-end {
+      justify-content: flex-end;
+    }
+    .xl\:content-main-center {
+      justify-content: center;
+    }
+    .xl\:content-main-between {
+      justify-content: space-between;
+    }
+    .xl\:content-main-around {
+      justify-content: space-around;
+    }
+    .xl\:content-main-evenly {
+      justify-content: space-evenly;
+    }
+  }
+}

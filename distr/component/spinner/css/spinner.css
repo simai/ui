@@ -34,20 +34,11 @@
   --sf-loader-stroke-width: var(--sf-a6);
   --sf-loader-text-gap: var(--sf-space-1/2);
   --sf-loader-text-size: var(--sf-text-size-1);
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  flex-direction: column;
+  align-items: center;
   gap: var(--sf-loader-text-gap);
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
+  justify-content: center;
 }
 
 .sf-loader-container .sf-loader--text {
@@ -97,6 +88,7 @@
   --sf-loader-svg-width: var(--sf-text-size-8);
   --sf-loader-svg-height: var(--sf-text-size-8);
   --sf-loader-stroke-width: var(--sf-a5);
+  color: var(--sf-primary);
   color: var(--sf-loader--color, var(--sf-primary));
 }
 
@@ -122,8 +114,6 @@
 
 .sf-loader-container .sf-loader--loading-indicator,
 .sf-loader-container .sf-loader--circles {
-  display: -webkit-inline-box;
-  display: -ms-inline-flexbox;
   display: inline-flex;
   height: var(--sf-loader-svg-height);
   width: var(--sf-loader-svg-width);
@@ -139,6 +129,7 @@
 .sf-loader-container .sf-loader-ring-filled {
   fill: none;
   opacity: 0.32;
+  stroke: var(--sf-surface-container);
   stroke: var(--sf-loader-track-color, var(--sf-surface-container));
   stroke-linecap: round;
   stroke-width: var(--sf-loader-stroke-width);
@@ -167,6 +158,8 @@
   opacity: 0.16;
   -webkit-animation: sf-loader-dot-wave 1.4s linear infinite;
           animation: sf-loader-dot-wave 1.4s linear infinite;
+  -webkit-animation-delay: 0s;
+          animation-delay: 0s;
   -webkit-animation-delay: var(--sf-loader-dot-delay, 0s);
           animation-delay: var(--sf-loader-dot-delay, 0s);
 }

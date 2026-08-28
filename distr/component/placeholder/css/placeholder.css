@@ -9,7 +9,9 @@
 @layer sf.components {
   /* utility-hint: display/flex (.flex) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-space-1) */
   .sf-placeholder {
+    background-color: transparent;
     background-color: var(--sf-placeholder--background-color, transparent);
+    gap: var(--sf-space-1);
     gap: var(--sf-placeholder--gap, var(--sf-space-1));
   }
   /* utility-hint: display/flex (.flex) flex-direction/column (.flex-col) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-placeholder-right--gap) justify-content/flex-start (.justify-start) */

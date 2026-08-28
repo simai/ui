@@ -8,12 +8,90 @@
 */
 @layer sf.components {
   /* utility-hint: display/flex (.flex) flex-direction/column (.flex-col) flex-wrap/nowrap (.flex-nowrap) justify-content/center (.justify-center) align-items/center (.items-center) */
-  .sf-verification {
+  [dir="ltr"] .sf-verification {
+    border-bottom-right-radius: var(--sf-ui-radius-default);
     border-bottom-right-radius: var(--sf-verification--border-bottom-right-radius, var(--sf-ui-radius-default));
+  }
+  [dir="rtl"] .sf-verification {
+    border-bottom-left-radius: var(--sf-ui-radius-default);
+    border-bottom-left-radius: var(--sf-verification--border-bottom-right-radius, var(--sf-ui-radius-default));
+  }
+  [dir="ltr"] .sf-verification {
+    border-bottom-left-radius: var(--sf-ui-radius-default);
     border-bottom-left-radius: var(--sf-verification--border-bottom-left-radius, var(--sf-ui-radius-default));
+  }
+  [dir="rtl"] .sf-verification {
+    border-bottom-right-radius: var(--sf-ui-radius-default);
+    border-bottom-right-radius: var(--sf-verification--border-bottom-left-radius, var(--sf-ui-radius-default));
+  }
+  [dir="ltr"] .sf-verification {
+    border-top-right-radius: var(--sf-ui-radius-default);
     border-top-right-radius: var(--sf-verification--border-top-right-radius, var(--sf-ui-radius-default));
+  }
+  [dir="rtl"] .sf-verification {
+    border-top-left-radius: var(--sf-ui-radius-default);
+    border-top-left-radius: var(--sf-verification--border-top-right-radius, var(--sf-ui-radius-default));
+  }
+  [dir="ltr"] .sf-verification {
+    border-top-left-radius: var(--sf-ui-radius-default);
     border-top-left-radius: var(--sf-verification--border-top-left-radius, var(--sf-ui-radius-default));
+  }
+  [dir="rtl"] .sf-verification {
+    border-top-right-radius: var(--sf-ui-radius-default);
+    border-top-right-radius: var(--sf-verification--border-top-left-radius, var(--sf-ui-radius-default));
+  }
+  [dir="ltr"] .sf-verification {
+    border-right-width: 0;
+    border-right-width: var(--sf-verification--border-inline-end-width, 0);
+  }
+  [dir="rtl"] .sf-verification {
+    border-left-width: 0;
+    border-left-width: var(--sf-verification--border-inline-end-width, 0);
+  }
+  [dir="ltr"] .sf-verification {
+    border-left-width: 0;
+    border-left-width: var(--sf-verification--border-inline-start-width, 0);
+  }
+  [dir="rtl"] .sf-verification {
+    border-right-width: 0;
+    border-right-width: var(--sf-verification--border-inline-start-width, 0);
+  }
+  [dir="ltr"] .sf-verification {
+    border-bottom-right-radius: var(--sf-ui-radius-default);
+  }
+  [dir="rtl"] .sf-verification {
+    border-bottom-left-radius: var(--sf-ui-radius-default);
+  }
+  [dir="ltr"] .sf-verification {
+    border-bottom-left-radius: var(--sf-ui-radius-default);
+  }
+  [dir="rtl"] .sf-verification {
+    border-bottom-right-radius: var(--sf-ui-radius-default);
+  }
+  [dir="ltr"] .sf-verification {
+    border-top-right-radius: var(--sf-ui-radius-default);
+  }
+  [dir="rtl"] .sf-verification {
+    border-top-left-radius: var(--sf-ui-radius-default);
+  }
+  [dir="ltr"] .sf-verification {
+    border-top-left-radius: var(--sf-ui-radius-default);
+  }
+  [dir="rtl"] .sf-verification {
+    border-top-right-radius: var(--sf-ui-radius-default);
+  }
+  .sf-verification {
+    border-end-end-radius: var(--sf-ui-radius-default);
+    border-end-end-radius: var(--sf-verification--border-bottom-right-radius, var(--sf-ui-radius-default));
+    border-end-start-radius: var(--sf-ui-radius-default);
+    border-end-start-radius: var(--sf-verification--border-bottom-left-radius, var(--sf-ui-radius-default));
+    border-start-end-radius: var(--sf-ui-radius-default);
+    border-start-end-radius: var(--sf-verification--border-top-right-radius, var(--sf-ui-radius-default));
+    border-start-start-radius: var(--sf-ui-radius-default);
+    border-start-start-radius: var(--sf-verification--border-top-left-radius, var(--sf-ui-radius-default));
+    font-family: var(--sf-text--family);
     font-family: var(--sf-verification--font-family, var(--sf-text--family));
+    font-weight: var(--sf-font-weight-regular);
     font-weight: var(--sf-verification--font-weight, var(--sf-font-weight-regular));
     width: var(--sf-verification--width);
     height: var(--sf-verification--height);
@@ -21,14 +99,20 @@
     color: var(--sf-verification--color);
     font-size: var(--sf-verification--font-size);
     line-height: var(--sf-verification--line-height);
-    -webkit-box-shadow: var(--sf-verification--box-shadow);
-            box-shadow: var(--sf-verification--box-shadow);
+    box-shadow: var(--sf-verification--box-shadow);
+    border-color: transparent;
     border-color: var(--sf-verification--border-color, transparent);
+    border-width: 0;
     border-width: var(--sf-verification--border-width, 0);
+    border-top-width: 0;
     border-top-width: var(--sf-verification--border-top-width, 0);
-    border-right-width: var(--sf-verification--border-inline-end-width, 0);
+    border-inline-end-width: 0;
+    border-inline-end-width: var(--sf-verification--border-inline-end-width, 0);
+    border-bottom-width: 0;
     border-bottom-width: var(--sf-verification--border-bottom-width, 0);
-    border-left-width: var(--sf-verification--border-inline-start-width, 0);
+    border-inline-start-width: 0;
+    border-inline-start-width: var(--sf-verification--border-inline-start-width, 0);
+    border-style: solid;
     border-style: var(--sf-verification--border-style, solid);
     --sf-verification--color: var(--sf-on-surface-muted);
     --sf-verification--border-top-width: 1px;
@@ -96,9 +180,28 @@
     font-weight: var(--sf-verification-placeholder--font-weight);
     line-height: var(--sf-verification-placeholder--line-height);
   }
+  .sf-verification.sf-verification--bordered[\:has\(input\:disabled\)] {
+    --sf-verification--background-color: var(--sf-surface-0);
+    --sf-verification--border-color: var(--sf-outline-disable);
+  }
   .sf-verification.sf-verification--bordered:has(input:disabled) {
     --sf-verification--background-color: var(--sf-surface-0);
     --sf-verification--border-color: var(--sf-outline-disable);
+  }
+  .sf-verification.sf-verification--bordered[\:has\(input\:disabled\)] input::-webkit-input-placeholder, .sf-verification.sf-verification--filled[\:has\(input\:disabled\)] input::-webkit-input-placeholder {
+    --sf-verification-placeholder--color: var(--sf-on-disable);
+  }
+  .sf-verification.sf-verification--bordered[\:has\(input\:disabled\)] input::-moz-placeholder, .sf-verification.sf-verification--filled[\:has\(input\:disabled\)] input::-moz-placeholder {
+    --sf-verification-placeholder--color: var(--sf-on-disable);
+  }
+  .sf-verification.sf-verification--bordered[\:has\(input\:disabled\)] input:-ms-input-placeholder, .sf-verification.sf-verification--filled[\:has\(input\:disabled\)] input:-ms-input-placeholder {
+    --sf-verification-placeholder--color: var(--sf-on-disable);
+  }
+  .sf-verification.sf-verification--bordered[\:has\(input\:disabled\)] input::-ms-input-placeholder, .sf-verification.sf-verification--filled[\:has\(input\:disabled\)] input::-ms-input-placeholder {
+    --sf-verification-placeholder--color: var(--sf-on-disable);
+  }
+  .sf-verification.sf-verification--bordered[\:has\(input\:disabled\)] input::placeholder, .sf-verification.sf-verification--filled[\:has\(input\:disabled\)] input::placeholder {
+    --sf-verification-placeholder--color: var(--sf-on-disable);
   }
   .sf-verification.sf-verification--bordered:has(input:disabled) input::-webkit-input-placeholder, .sf-verification.sf-verification--filled:has(input:disabled) input::-webkit-input-placeholder {
     --sf-verification-placeholder--color: var(--sf-on-disable);
@@ -114,6 +217,9 @@
   }
   .sf-verification.sf-verification--bordered:has(input:disabled) input::placeholder, .sf-verification.sf-verification--filled:has(input:disabled) input::placeholder {
     --sf-verification-placeholder--color: var(--sf-on-disable);
+  }
+  .sf-verification.sf-verification--bordered[\:has\(input\:disabled\)] input, .sf-verification.sf-verification--filled[\:has\(input\:disabled\)] input {
+    --sf-verification-input--color: var(--sf-on-disable);
   }
   .sf-verification.sf-verification--bordered:has(input:disabled) input, .sf-verification.sf-verification--filled:has(input:disabled) input {
     --sf-verification-input--color: var(--sf-on-disable);
@@ -171,8 +277,26 @@
   .sf-verification.sf-verification--bordered input, .sf-verification.sf-verification--filled input {
     --sf-verification-input--color: var(--sf-on-surface-muted);
   }
+  .sf-verification.sf-verification--bordered.sf-verification--size-1[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:focus\)], .sf-verification.sf-verification--bordered.sf-verification--size-2[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:focus\)], .sf-verification.sf-verification--bordered.sf-verification--size-1\/2[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:focus\)], .sf-verification.sf-verification--bordered.sf-verification--size-1\/3[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:focus\)] {
+    --sf-verification--color: var(--sf-on-surface-variant);
+  }
   .sf-verification.sf-verification--bordered.sf-verification--size-1:has(input:enabled:not(:disabled):not(.disabled):focus), .sf-verification.sf-verification--bordered.sf-verification--size-2:has(input:enabled:not(:disabled):not(.disabled):focus), .sf-verification.sf-verification--bordered.sf-verification--size-1\/2:has(input:enabled:not(:disabled):not(.disabled):focus), .sf-verification.sf-verification--bordered.sf-verification--size-1\/3:has(input:enabled:not(:disabled):not(.disabled):focus) {
     --sf-verification--color: var(--sf-on-surface-variant);
+  }
+  .sf-verification.sf-verification--bordered[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:focus\)] input::-webkit-input-placeholder, .sf-verification.sf-verification--filled[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:focus\)] input::-webkit-input-placeholder, .sf-verification[\:has\(input\:disabled\)] input::-webkit-input-placeholder, .sf-verification[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:active\)] input::-webkit-input-placeholder, .sf-verification[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:hover\)] input::-webkit-input-placeholder {
+    --sf-verification-placeholder--color: var(--sf-verification--color);
+  }
+  .sf-verification.sf-verification--bordered[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:focus\)] input::-moz-placeholder, .sf-verification.sf-verification--filled[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:focus\)] input::-moz-placeholder, .sf-verification[\:has\(input\:disabled\)] input::-moz-placeholder, .sf-verification[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:active\)] input::-moz-placeholder, .sf-verification[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:hover\)] input::-moz-placeholder {
+    --sf-verification-placeholder--color: var(--sf-verification--color);
+  }
+  .sf-verification.sf-verification--bordered[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:focus\)] input:-ms-input-placeholder, .sf-verification.sf-verification--filled[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:focus\)] input:-ms-input-placeholder, .sf-verification[\:has\(input\:disabled\)] input:-ms-input-placeholder, .sf-verification[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:active\)] input:-ms-input-placeholder, .sf-verification[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:hover\)] input:-ms-input-placeholder {
+    --sf-verification-placeholder--color: var(--sf-verification--color);
+  }
+  .sf-verification.sf-verification--bordered[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:focus\)] input::-ms-input-placeholder, .sf-verification.sf-verification--filled[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:focus\)] input::-ms-input-placeholder, .sf-verification[\:has\(input\:disabled\)] input::-ms-input-placeholder, .sf-verification[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:active\)] input::-ms-input-placeholder, .sf-verification[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:hover\)] input::-ms-input-placeholder {
+    --sf-verification-placeholder--color: var(--sf-verification--color);
+  }
+  .sf-verification.sf-verification--bordered[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:focus\)] input::placeholder, .sf-verification.sf-verification--filled[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:focus\)] input::placeholder, .sf-verification[\:has\(input\:disabled\)] input::placeholder, .sf-verification[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:active\)] input::placeholder, .sf-verification[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:hover\)] input::placeholder {
+    --sf-verification-placeholder--color: var(--sf-verification--color);
   }
   .sf-verification.sf-verification--bordered:has(input:enabled:not(:disabled):not(.disabled):focus) input::-webkit-input-placeholder, .sf-verification.sf-verification--filled:has(input:enabled:not(:disabled):not(.disabled):focus) input::-webkit-input-placeholder, .sf-verification:has(input:disabled) input::-webkit-input-placeholder, .sf-verification:has(input:enabled:not(:disabled):not(.disabled):active) input::-webkit-input-placeholder, .sf-verification:has(input:enabled:not(:disabled):not(.disabled):hover) input::-webkit-input-placeholder {
     --sf-verification-placeholder--color: var(--sf-verification--color);
@@ -189,8 +313,26 @@
   .sf-verification.sf-verification--bordered:has(input:enabled:not(:disabled):not(.disabled):focus) input::placeholder, .sf-verification.sf-verification--filled:has(input:enabled:not(:disabled):not(.disabled):focus) input::placeholder, .sf-verification:has(input:disabled) input::placeholder, .sf-verification:has(input:enabled:not(:disabled):not(.disabled):active) input::placeholder, .sf-verification:has(input:enabled:not(:disabled):not(.disabled):hover) input::placeholder {
     --sf-verification-placeholder--color: var(--sf-verification--color);
   }
+  .sf-verification.sf-verification--bordered[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:focus\)] input, .sf-verification.sf-verification--filled[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:focus\)] input {
+    --sf-verification-input--color: var(--sf-verification--color);
+  }
   .sf-verification.sf-verification--bordered:has(input:enabled:not(:disabled):not(.disabled):focus) input, .sf-verification.sf-verification--filled:has(input:enabled:not(:disabled):not(.disabled):focus) input {
     --sf-verification-input--color: var(--sf-verification--color);
+  }
+  .sf-verification.sf-verification--bordered[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:active\)] input::-webkit-input-placeholder, .sf-verification.sf-verification--filled[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:active\)] input::-webkit-input-placeholder {
+    --sf-verification-placeholder--color: var(--sf-on-surface);
+  }
+  .sf-verification.sf-verification--bordered[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:active\)] input::-moz-placeholder, .sf-verification.sf-verification--filled[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:active\)] input::-moz-placeholder {
+    --sf-verification-placeholder--color: var(--sf-on-surface);
+  }
+  .sf-verification.sf-verification--bordered[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:active\)] input:-ms-input-placeholder, .sf-verification.sf-verification--filled[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:active\)] input:-ms-input-placeholder {
+    --sf-verification-placeholder--color: var(--sf-on-surface);
+  }
+  .sf-verification.sf-verification--bordered[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:active\)] input::-ms-input-placeholder, .sf-verification.sf-verification--filled[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:active\)] input::-ms-input-placeholder {
+    --sf-verification-placeholder--color: var(--sf-on-surface);
+  }
+  .sf-verification.sf-verification--bordered[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:active\)] input::placeholder, .sf-verification.sf-verification--filled[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:active\)] input::placeholder {
+    --sf-verification-placeholder--color: var(--sf-on-surface);
   }
   .sf-verification.sf-verification--bordered:has(input:enabled:not(:disabled):not(.disabled):active) input::-webkit-input-placeholder, .sf-verification.sf-verification--filled:has(input:enabled:not(:disabled):not(.disabled):active) input::-webkit-input-placeholder {
     --sf-verification-placeholder--color: var(--sf-on-surface);
@@ -207,11 +349,20 @@
   .sf-verification.sf-verification--bordered:has(input:enabled:not(:disabled):not(.disabled):active) input::placeholder, .sf-verification.sf-verification--filled:has(input:enabled:not(:disabled):not(.disabled):active) input::placeholder {
     --sf-verification-placeholder--color: var(--sf-on-surface);
   }
+  .sf-verification.sf-verification--bordered[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:active\)] input, .sf-verification.sf-verification--filled[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:active\)] input {
+    --sf-verification-input--color: var(--sf-on-surface);
+  }
   .sf-verification.sf-verification--bordered:has(input:enabled:not(:disabled):not(.disabled):active) input, .sf-verification.sf-verification--filled:has(input:enabled:not(:disabled):not(.disabled):active) input {
     --sf-verification-input--color: var(--sf-on-surface);
   }
+  .sf-verification.sf-verification--bordered[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:hover\)] {
+    --sf-verification--border-color: var(--sf-primary-hover);
+  }
   .sf-verification.sf-verification--bordered:has(input:enabled:not(:disabled):not(.disabled):hover) {
     --sf-verification--border-color: var(--sf-primary-hover);
+  }
+  .sf-verification.sf-verification--filled[\:has\(input\:disabled\)] {
+    --sf-verification--background-color: var(--sf-disable);
   }
   .sf-verification.sf-verification--filled:has(input:disabled) {
     --sf-verification--background-color: var(--sf-disable);
@@ -220,8 +371,14 @@
     --sf-verification--background-color: var(--sf-error-container);
     --sf-verification--color: var(--sf-on-error-container);
   }
+  .sf-verification.sf-verification--filled[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:active\)] {
+    --sf-verification--background-color: var(--sf-surface-container-active);
+  }
   .sf-verification.sf-verification--filled:has(input:enabled:not(:disabled):not(.disabled):active) {
     --sf-verification--background-color: var(--sf-surface-container-active);
+  }
+  .sf-verification.sf-verification--filled[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:hover\)] {
+    --sf-verification--background-color: var(--sf-surface-container-hover);
   }
   .sf-verification.sf-verification--filled:has(input:enabled:not(:disabled):not(.disabled):hover) {
     --sf-verification--background-color: var(--sf-surface-container-hover);
@@ -276,6 +433,10 @@
   .sf-verification.sf-verification--filled.sf-verification--size-3 input, .sf-verification.sf-verification--bordered.sf-verification--size-3 input {
     --sf-verification-input--font-size: var(--sf-text-size-3);
     --sf-verification-input--line-height: var(--sf-text-height-3);
+  }
+  .sf-verification.sf-verification--bordered.sf-verification--size-3[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:focus\)] {
+    --sf-verification--border-color: var(--sf-outline);
+    --sf-verification--color: var(--sf-on-surface-variant);
   }
   .sf-verification.sf-verification--bordered.sf-verification--size-3:has(input:enabled:not(:disabled):not(.disabled):focus) {
     --sf-verification--border-color: var(--sf-outline);
@@ -379,12 +540,25 @@
     --sf-verification--line-height: var(--sf-text-height-1\/3);
     --sf-verification--width: var(--sf-title-height-3);
   }
+  .sf-verification[\:has\(input\:disabled\)] {
+    --sf-verification--color: var(--sf-on-disable);
+  }
   .sf-verification:has(input:disabled) {
     --sf-verification--color: var(--sf-on-disable);
+  }
+  .sf-verification[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:focus\)] {
+    --sf-verification--background-color: var(--sf-ui-focus);
+    --sf-verification--box-shadow: var(--sf-ui-focus);
   }
   .sf-verification:has(input:enabled:not(:disabled):not(.disabled):focus) {
     --sf-verification--background-color: var(--sf-ui-focus);
     --sf-verification--box-shadow: var(--sf-ui-focus);
+  }
+  .sf-verification[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:active\)] {
+    --sf-verification--border-color: var(--sf-primary-active);
+    --sf-verification--border-style: solid;
+    --sf-verification--border-width: 1px;
+    --sf-verification--color: var(--sf-on-surface);
   }
   .sf-verification:has(input:enabled:not(:disabled):not(.disabled):active) {
     --sf-verification--border-color: var(--sf-primary-active);
@@ -400,7 +574,9 @@
 @layer sf.components {
   /* utility-hint: flex/1 (.flex-1) display/flex (.flex) flex-direction/column (.flex-col) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-space-1\/3) justify-content/flex-start (.justify-start) align-items/flex-start (.items-start) */
   .sf-verification-form {
+    background-color: transparent;
     background-color: var(--sf-verification-form--background-color, transparent);
+    gap: var(--sf-space-1\/3);
     gap: var(--sf-verification-form--gap, var(--sf-space-1\/3));
   }
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-b0) justify-content/flex-start (.justify-start) align-items/center (.items-center) */
@@ -409,6 +585,30 @@
     background-color: var(--sf-verification-form-wrap--background-color);
     gap: var(--sf-b0);
   }
+  [dir="ltr"] .sf-verification-form .sf-verification {
+    border-bottom-right-radius: var(--sf-verification--border-end-end-radius);
+  }
+  [dir="rtl"] .sf-verification-form .sf-verification {
+    border-bottom-left-radius: var(--sf-verification--border-end-end-radius);
+  }
+  [dir="ltr"] .sf-verification-form .sf-verification {
+    border-bottom-left-radius: var(--sf-verification--border-end-start-radius);
+  }
+  [dir="rtl"] .sf-verification-form .sf-verification {
+    border-bottom-right-radius: var(--sf-verification--border-end-start-radius);
+  }
+  [dir="ltr"] .sf-verification-form .sf-verification {
+    border-top-right-radius: var(--sf-verification--border-start-end-radius);
+  }
+  [dir="rtl"] .sf-verification-form .sf-verification {
+    border-top-left-radius: var(--sf-verification--border-start-end-radius);
+  }
+  [dir="ltr"] .sf-verification-form .sf-verification {
+    border-top-left-radius: var(--sf-verification--border-start-start-radius);
+  }
+  [dir="rtl"] .sf-verification-form .sf-verification {
+    border-top-right-radius: var(--sf-verification--border-start-start-radius);
+  }
   .sf-verification-form .sf-verification {
     --sf-verification--border-end-end-radius: var(--sf-ui-radius-default);
     --sf-verification--border-end-start-radius: var(--sf-ui-radius-default);
@@ -416,11 +616,13 @@
     --sf-verification--border-start-start-radius: var(--sf-ui-radius-default);
     background-color: var(--sf-verification--background-color);
     border: var(--sf-verification--border);
+    border-color: transparent;
     border-color: var(--sf-verification--border-color, transparent);
-    border-bottom-right-radius: var(--sf-verification--border-end-end-radius);
-    border-bottom-left-radius: var(--sf-verification--border-end-start-radius);
-    border-top-right-radius: var(--sf-verification--border-start-end-radius);
-    border-top-left-radius: var(--sf-verification--border-start-start-radius);
+    border-end-end-radius: var(--sf-verification--border-end-end-radius);
+    border-end-start-radius: var(--sf-verification--border-end-start-radius);
+    border-start-end-radius: var(--sf-verification--border-start-end-radius);
+    border-start-start-radius: var(--sf-verification--border-start-start-radius);
+    border-style: solid;
     border-style: var(--sf-verification--border-style, solid);
     border-width: var(--sf-verification--border-width);
     color: var(--sf-verification--color);

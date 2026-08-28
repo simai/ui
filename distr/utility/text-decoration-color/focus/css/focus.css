@@ -1,1 +1,38 @@
-@layer sf.utilities{.focus\:decoration-inherit:focus{text-decoration-color:var(--sf-inherit)}.focus\:decoration-current:focus{text-decoration-color:var(--sf-currentColor)}.focus\:decoration-transparent:focus{text-decoration-color:var(--sf-transparent)}.focus\:decoration-primary:focus{text-decoration-color:var(--sf-outline-primary)}.focus\:decoration-secondary:focus{text-decoration-color:var(--sf-outline-secondary)}.focus\:decoration-tertiary:focus{text-decoration-color:var(--sf-outline-tertiary)}.focus\:decoration-error:focus{text-decoration-color:var(--sf-outline-error)}.focus\:decoration-warning:focus{text-decoration-color:var(--sf-outline-warning)}.focus\:decoration-success:focus{text-decoration-color:var(--sf-outline-success)}}
+@layer sf.utilities {
+  .focus\:decoration-inherit:focus {
+    -webkit-text-decoration-color: var(--sf-inherit);
+            text-decoration-color: var(--sf-inherit);
+  }
+  .focus\:decoration-current:focus {
+    -webkit-text-decoration-color: var(--sf-currentColor);
+            text-decoration-color: var(--sf-currentColor);
+  }
+  .focus\:decoration-transparent:focus {
+    -webkit-text-decoration-color: var(--sf-transparent);
+            text-decoration-color: var(--sf-transparent);
+  }
+  .focus\:decoration-primary:focus {
+    -webkit-text-decoration-color: var(--sf-outline-primary);
+            text-decoration-color: var(--sf-outline-primary);
+  }
+  .focus\:decoration-secondary:focus {
+    -webkit-text-decoration-color: var(--sf-outline-secondary);
+            text-decoration-color: var(--sf-outline-secondary);
+  }
+  .focus\:decoration-tertiary:focus {
+    -webkit-text-decoration-color: var(--sf-outline-tertiary);
+            text-decoration-color: var(--sf-outline-tertiary);
+  }
+  .focus\:decoration-error:focus {
+    -webkit-text-decoration-color: var(--sf-outline-error);
+            text-decoration-color: var(--sf-outline-error);
+  }
+  .focus\:decoration-warning:focus {
+    -webkit-text-decoration-color: var(--sf-outline-warning);
+            text-decoration-color: var(--sf-outline-warning);
+  }
+  .focus\:decoration-success:focus {
+    -webkit-text-decoration-color: var(--sf-outline-success);
+            text-decoration-color: var(--sf-outline-success);
+  }
+}

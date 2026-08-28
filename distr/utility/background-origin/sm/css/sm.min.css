@@ -1,0 +1,1 @@
+@layer sf.utilities{@media(min-width: 520px){.sm\:bg-origin-border{background-origin:border-box}.sm\:bg-origin-padding{background-origin:padding-box}.sm\:bg-origin-content{background-origin:content-box}}}

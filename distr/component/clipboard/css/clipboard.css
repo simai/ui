@@ -1,4 +1,10 @@
 @layer sf.components {
+  [dir="ltr"] .sf-clipboard {
+    right: var(--sf-space-1\/4);
+  }
+  [dir="rtl"] .sf-clipboard {
+    left: var(--sf-space-1\/4);
+  }
   .sf-clipboard {
     padding: var(--btn-space-2-y);
     font-size: var(--btn-font-size);
@@ -6,7 +12,7 @@
     background-color: transparent;
     border: 0;
     position: absolute;
-    right: var(--sf-space-1\/4);
+    inset-inline-end: var(--sf-space-1\/4);
     top: var(--sf-space-1\/4);
     cursor: pointer;
     outline: none !important;
@@ -14,7 +20,6 @@
   }
   .sf-clipboard-surface {
     background: var(--sf-surface-container);
-    -webkit-transition: 0.3s background-color ease;
     transition: 0.3s background-color ease;
   }
   .sf-clipboard-surface:hover {

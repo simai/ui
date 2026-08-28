@@ -100,9 +100,9 @@
     background-color: inherit !important;
     color: inherit !important;
     border-color: inherit !important;
-    -webkit-box-shadow: none !important;
-            box-shadow: none !important;
-    text-decoration-color: inherit !important;
+    box-shadow: none !important;
+    -webkit-text-decoration-color: inherit !important;
+            text-decoration-color: inherit !important;
   }
   html.special .sf-special-white [class*="hover:bg-"]:not(.special-panel):not([data-bg]):hover,
   html.special .sf-special-white [class*="hover:bg-"]:not(.special-panel):not([data-bg]):hover::after,
@@ -138,9 +138,9 @@
     background-color: inherit !important;
     color: inherit !important;
     border-color: inherit !important;
-    -webkit-box-shadow: none !important;
-            box-shadow: none !important;
-    text-decoration-color: inherit !important;
+    box-shadow: none !important;
+    -webkit-text-decoration-color: inherit !important;
+            text-decoration-color: inherit !important;
   }
   html.special .sf-special-black [class*="hover:bg-"]:not(.special-panel):not([data-bg]):hover,
   html.special .sf-special-black [class*="hover:bg-"]:not(.special-panel):not([data-bg]):hover::after,
@@ -176,9 +176,9 @@
     background-color: inherit !important;
     color: inherit !important;
     border-color: inherit !important;
-    -webkit-box-shadow: none !important;
-            box-shadow: none !important;
-    text-decoration-color: inherit !important;
+    box-shadow: none !important;
+    -webkit-text-decoration-color: inherit !important;
+            text-decoration-color: inherit !important;
   }
   html.special .sf-special-yellow [class*="hover:bg-"]:not(.special-panel):not([data-bg]):hover,
   html.special .sf-special-yellow [class*="hover:bg-"]:not(.special-panel):not([data-bg]):hover::after,
@@ -214,7 +214,8 @@
     background-color: inherit !important;
     color: inherit !important;
     border-color: inherit !important;
-    text-decoration-color: inherit !important;
+    -webkit-text-decoration-color: inherit !important;
+            text-decoration-color: inherit !important;
   }
   html.special .sf-special-blue [class*="hover:bg-"]:not(.special-panel):not([data-bg]):hover,
   html.special .sf-special-blue [class*="hover:bg-"]:not(.special-panel):not([data-bg]):hover::after,
@@ -229,8 +230,7 @@
     background-color: #000 !important;
     color: #9FD7FF !important;
     border-color: #9FD7FF !important;
-    -webkit-box-shadow: none !important;
-            box-shadow: none !important;
+    box-shadow: none !important;
   }
   html.special .sf-special-blue [class*="hover:color-"]:not(.special-panel):not([data-bg]):hover,
   html.special .sf-special-blue [class*="hover:color-"]:not(.special-panel):not([data-bg]):hover::after,
@@ -273,9 +273,9 @@
     background-color: inherit !important;
     color: inherit !important;
     border-color: inherit !important;
-    -webkit-box-shadow: none !important;
-            box-shadow: none !important;
-    text-decoration-color: inherit !important;
+    box-shadow: none !important;
+    -webkit-text-decoration-color: inherit !important;
+            text-decoration-color: inherit !important;
   }
   html.special .sf-special-green [class*="hover:bg-"]:not(.special-panel):not([data-bg]):hover,
   html.special .sf-special-green [class*="hover:bg-"]:not(.special-panel):not([data-bg]):hover::after,

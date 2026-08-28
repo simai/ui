@@ -22,7 +22,6 @@ body.compensate-for-scrollbar {
   position: fixed;
   -webkit-tap-highlight-color: transparent;
   top: 0;
-  -ms-touch-action: manipulation;
   touch-action: manipulation;
   -webkit-transform: translateZ(0);
   transform: translateZ(0);
@@ -31,8 +30,7 @@ body.compensate-for-scrollbar {
 }
 
 .fancybox-container * {
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 .fancybox-outer,
@@ -54,18 +52,14 @@ body.compensate-for-scrollbar {
 .fancybox-bg {
   background: #1e1e1e;
   opacity: 0;
-  -webkit-transition-duration: inherit;
-          transition-duration: inherit;
-  -webkit-transition-property: opacity;
+  transition-duration: inherit;
   transition-property: opacity;
-  -webkit-transition-timing-function: cubic-bezier(0.47, 0, 0.74, 0.71);
-          transition-timing-function: cubic-bezier(0.47, 0, 0.74, 0.71);
+  transition-timing-function: cubic-bezier(0.47, 0, 0.74, 0.71);
 }
 
 .fancybox-is-open .fancybox-bg {
   opacity: 0.9;
-  -webkit-transition-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
-          transition-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
+  transition-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 .fancybox-infobar,
@@ -75,7 +69,6 @@ body.compensate-for-scrollbar {
   direction: ltr;
   opacity: 0;
   position: absolute;
-  -webkit-transition: opacity 0.25s ease, visibility 0s ease 0.25s;
   transition: opacity 0.25s ease, visibility 0s ease 0.25s;
   visibility: hidden;
   z-index: 99997;
@@ -86,7 +79,6 @@ body.compensate-for-scrollbar {
 .fancybox-show-caption .fancybox-caption,
 .fancybox-show-nav .fancybox-navigation .fancybox-button {
   opacity: 1;
-  -webkit-transition: opacity 0.25s ease 0s, visibility 0s ease 0s;
   transition: opacity 0.25s ease 0s, visibility 0s ease 0s;
   visibility: visible;
 }
@@ -141,7 +133,6 @@ body.compensate-for-scrollbar {
   text-align: center;
   top: 0;
   transition-property: opacity, -webkit-transform;
-  -webkit-transition-property: opacity, -webkit-transform;
   transition-property: transform, opacity;
   transition-property: transform, opacity, -webkit-transform;
   white-space: normal;
@@ -205,10 +196,8 @@ body.compensate-for-scrollbar {
   position: absolute;
   top: 0;
   -webkit-transform-origin: top left;
-  -ms-transform-origin: top left;
   transform-origin: top left;
   transition-property: opacity, -webkit-transform;
-  -webkit-transition-property: opacity, -webkit-transform;
   transition-property: transform, opacity;
   transition-property: transform, opacity, -webkit-transform;
   -webkit-user-select: none;
@@ -328,15 +317,13 @@ body.compensate-for-scrollbar {
   background: rgba(30, 30, 30, 0.6);
   border: 0;
   border-radius: 0;
-  -webkit-box-shadow: none;
-          box-shadow: none;
+  box-shadow: none;
   cursor: pointer;
   display: inline-block;
   height: 44px;
   margin: 0;
   padding: 10px;
   position: relative;
-  -webkit-transition: color 0.2s;
   transition: color 0.2s;
   vertical-align: top;
   visibility: inherit;
@@ -404,17 +391,13 @@ body.compensate-for-scrollbar {
   right: 0;
   top: 0;
   -webkit-transform: scaleX(0);
-  -ms-transform: scaleX(0);
   transform: scaleX(0);
   -webkit-transform-origin: 0;
-  -ms-transform-origin: 0;
   transform-origin: 0;
   transition-property: -webkit-transform;
-  -webkit-transition-property: -webkit-transform;
   transition-property: transform;
   transition-property: transform, -webkit-transform;
-  -webkit-transition-timing-function: linear;
-          transition-timing-function: linear;
+  transition-timing-function: linear;
   z-index: 99998;
 }
 
@@ -511,13 +494,11 @@ body.compensate-for-scrollbar {
 .fancybox-caption a:link,
 .fancybox-caption a:visited {
   color: #ccc;
-  -webkit-text-decoration: none;
   text-decoration: none;
 }
 
 .fancybox-caption a:hover {
   color: #fff;
-  -webkit-text-decoration: underline;
   text-decoration: underline;
 }
 
@@ -554,8 +535,7 @@ body.compensate-for-scrollbar {
 }
 /* Transition effects */
 .fancybox-animated {
-  -webkit-transition-timing-function: cubic-bezier(0, 0, 0.25, 1);
-          transition-timing-function: cubic-bezier(0, 0, 0.25, 1);
+  transition-timing-function: cubic-bezier(0, 0, 0.25, 1);
 }
 
 /* transitionEffect: slide */
@@ -581,8 +561,7 @@ body.compensate-for-scrollbar {
 .fancybox-fx-fade.fancybox-slide--previous,
 .fancybox-fx-fade.fancybox-slide--next {
   opacity: 0;
-  -webkit-transition-timing-function: cubic-bezier(0.19, 1, 0.22, 1);
-          transition-timing-function: cubic-bezier(0.19, 1, 0.22, 1);
+  transition-timing-function: cubic-bezier(0.19, 1, 0.22, 1);
 }
 
 .fancybox-fx-fade.fancybox-slide--current {
@@ -612,21 +591,18 @@ body.compensate-for-scrollbar {
 .fancybox-fx-rotate.fancybox-slide--previous {
   opacity: 0;
   -webkit-transform: rotate(-360deg);
-  -ms-transform: rotate(-360deg);
   transform: rotate(-360deg);
 }
 
 .fancybox-fx-rotate.fancybox-slide--next {
   opacity: 0;
   -webkit-transform: rotate(360deg);
-  -ms-transform: rotate(360deg);
   transform: rotate(360deg);
 }
 
 .fancybox-fx-rotate.fancybox-slide--current {
   opacity: 1;
   -webkit-transform: rotate(0deg);
-  -ms-transform: rotate(0deg);
   transform: rotate(0deg);
 }
 
@@ -722,9 +698,7 @@ body.compensate-for-scrollbar {
   margin: 0 5px 10px 5px;
   min-width: 130px;
   padding: 0 15px;
-  -webkit-text-decoration: none;
   text-decoration: none;
-  -webkit-transition: all 0.2s;
   transition: all 0.2s;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -739,7 +713,6 @@ body.compensate-for-scrollbar {
 }
 
 .fancybox-share__button:hover {
-  -webkit-text-decoration: none;
   text-decoration: none;
 }
 
@@ -848,8 +821,7 @@ body.compensate-for-scrollbar {
 .fancybox-thumbs-y .fancybox-thumbs__list::-webkit-scrollbar-track {
   background: #fff;
   border-radius: 10px;
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-          box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
 }
 
 .fancybox-thumbs-y .fancybox-thumbs__list::-webkit-scrollbar-thumb {
@@ -887,7 +859,6 @@ body.compensate-for-scrollbar {
   position: absolute;
   right: 0;
   top: 0;
-  -webkit-transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   z-index: 99991;
 }

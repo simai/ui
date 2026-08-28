@@ -1,1 +1,39 @@
-@layer sf.utilities{.brightness-0,.brightness-1\/4,.brightness-1\/3,.brightness-1\/2,.brightness-1,.brightness-2,.brightness-3,.brightness-4{--sf-blur: ;--sf-brightness: ;--sf-contrast: ;--sf-grayscale: ;--sf-hue-rotate: ;--sf-invert: ;--sf-saturate: ;--sf-sepia: ;--sf-drop-shadow: ;-webkit-filter:var(--sf-blur) var(--sf-brightness) var(--sf-contrast) var(--sf-grayscale) var(--sf-hue-rotate) var(--sf-invert) var(--sf-saturate) var(--sf-sepia) var(--sf-drop-shadow);filter:var(--sf-blur) var(--sf-brightness) var(--sf-contrast) var(--sf-grayscale) var(--sf-hue-rotate) var(--sf-invert) var(--sf-saturate) var(--sf-sepia) var(--sf-drop-shadow)}.brightness-0{--sf-brightness: brightness(0)}.brightness-1\/4{--sf-brightness: brightness(0.8)}.brightness-1\/3{--sf-brightness: brightness(0.9)}.brightness-1\/2{--sf-brightness: brightness(0.95)}.brightness-1{--sf-brightness: brightness(1)}.brightness-2{--sf-brightness: brightness(1.05)}.brightness-3{--sf-brightness: brightness(1.1)}.brightness-4{--sf-brightness: brightness(1.2)}}
+@layer sf.utilities {
+  .brightness-0, .brightness-1\/4, .brightness-1\/3, .brightness-1\/2, .brightness-1, .brightness-2, .brightness-3, .brightness-4 {
+    --sf-blur: ;
+    --sf-brightness: ;
+    --sf-contrast: ;
+    --sf-grayscale: ;
+    --sf-hue-rotate: ;
+    --sf-invert: ;
+    --sf-saturate: ;
+    --sf-sepia: ;
+    --sf-drop-shadow: ;
+    -webkit-filter: var(--sf-blur) var(--sf-brightness) var(--sf-contrast) var(--sf-grayscale) var(--sf-hue-rotate) var(--sf-invert) var(--sf-saturate) var(--sf-sepia) var(--sf-drop-shadow);
+            filter: var(--sf-blur) var(--sf-brightness) var(--sf-contrast) var(--sf-grayscale) var(--sf-hue-rotate) var(--sf-invert) var(--sf-saturate) var(--sf-sepia) var(--sf-drop-shadow);
+  }
+  .brightness-0 {
+    --sf-brightness: brightness(0);
+  }
+  .brightness-1\/4 {
+    --sf-brightness: brightness(0.8);
+  }
+  .brightness-1\/3 {
+    --sf-brightness: brightness(0.9);
+  }
+  .brightness-1\/2 {
+    --sf-brightness: brightness(0.95);
+  }
+  .brightness-1 {
+    --sf-brightness: brightness(1);
+  }
+  .brightness-2 {
+    --sf-brightness: brightness(1.05);
+  }
+  .brightness-3 {
+    --sf-brightness: brightness(1.1);
+  }
+  .brightness-4 {
+    --sf-brightness: brightness(1.2);
+  }
+}

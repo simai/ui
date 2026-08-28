@@ -1,1 +1,748 @@
-@layer sf.utilities{@media(min-width: 720px){.md\:top-0{top:0}.md\:inline-end-0{right:0}.md\:bottom-0{bottom:0}.md\:inline-start-0{left:0}.md\:top-auto{top:auto}.md\:inline-end-auto{right:auto}.md\:bottom-auto{bottom:auto}.md\:inline-start-auto{left:auto}.md\:top-1\/2{top:50%}.md\:inline-end-1\/2{right:50%}.md\:bottom-1\/2{bottom:50%}.md\:inline-start-1\/2{left:50%}.md\:top-1\/3{top:33.333333%}.md\:inline-end-1\/3{right:33.333333%}.md\:bottom-1\/3{bottom:33.333333%}.md\:inline-start-1\/3{left:33.333333%}.md\:top-2\/3{top:66.666667%}.md\:inline-end-2\/3{right:66.666667%}.md\:bottom-2\/3{bottom:66.666667%}.md\:inline-start-2\/3{left:66.666667%}.md\:top-1\/4{top:25%}.md\:inline-end-1\/4{right:25%}.md\:bottom-1\/4{bottom:25%}.md\:inline-start-1\/4{left:25%}.md\:top-2\/4{top:50%}.md\:inline-end-2\/4{right:50%}.md\:bottom-2\/4{bottom:50%}.md\:inline-start-2\/4{left:50%}.md\:top-3\/4{top:75%}.md\:inline-end-3\/4{right:75%}.md\:bottom-3\/4{bottom:75%}.md\:inline-start-3\/4{left:75%}.md\:top-1\/5{top:20%}.md\:inline-end-1\/5{right:20%}.md\:bottom-1\/5{bottom:20%}.md\:inline-start-1\/5{left:20%}.md\:top-2\/5{top:40%}.md\:inline-end-2\/5{right:40%}.md\:bottom-2\/5{bottom:40%}.md\:inline-start-2\/5{left:40%}.md\:top-3\/5{top:60%}.md\:inline-end-3\/5{right:60%}.md\:bottom-3\/5{bottom:60%}.md\:inline-start-3\/5{left:60%}.md\:top-4\/5{top:80%}.md\:inline-end-4\/5{right:80%}.md\:bottom-4\/5{bottom:80%}.md\:inline-start-4\/5{left:80%}.md\:top-1\/6{top:16.666667%}.md\:inline-end-1\/6{right:16.666667%}.md\:bottom-1\/6{bottom:16.666667%}.md\:inline-start-1\/6{left:16.666667%}.md\:top-2\/6{top:33.333333%}.md\:inline-end-2\/6{right:33.333333%}.md\:bottom-2\/6{bottom:33.333333%}.md\:inline-start-2\/6{left:33.333333%}.md\:top-3\/6{top:50%}.md\:inline-end-3\/6{right:50%}.md\:bottom-3\/6{bottom:50%}.md\:inline-start-3\/6{left:50%}.md\:top-4\/6{top:66.666667%}.md\:inline-end-4\/6{right:66.666667%}.md\:bottom-4\/6{bottom:66.666667%}.md\:inline-start-4\/6{left:66.666667%}.md\:top-5\/6{top:83.333333%}.md\:inline-end-5\/6{right:83.333333%}.md\:bottom-5\/6{bottom:83.333333%}.md\:inline-start-5\/6{left:83.333333%}.md\:top-1\/12{top:8.333333%}.md\:inline-end-1\/12{right:8.333333%}.md\:bottom-1\/12{bottom:8.333333%}.md\:inline-start-1\/12{left:8.333333%}.md\:top-2\/12{top:16.666667%}.md\:inline-end-2\/12{right:16.666667%}.md\:bottom-2\/12{bottom:16.666667%}.md\:inline-start-2\/12{left:16.666667%}.md\:top-3\/12{top:25%}.md\:inline-end-3\/12{right:25%}.md\:bottom-3\/12{bottom:25%}.md\:inline-start-3\/12{left:25%}.md\:top-4\/12{top:33.333333%}.md\:inline-end-4\/12{right:33.333333%}.md\:bottom-4\/12{bottom:33.333333%}.md\:inline-start-4\/12{left:33.333333%}.md\:top-5\/12{top:41.666667%}.md\:inline-end-5\/12{right:41.666667%}.md\:bottom-5\/12{bottom:41.666667%}.md\:inline-start-5\/12{left:41.666667%}.md\:top-6\/12{top:50%}.md\:inline-end-6\/12{right:50%}.md\:bottom-6\/12{bottom:50%}.md\:inline-start-6\/12{left:50%}.md\:top-7\/12{top:58.333333%}.md\:inline-end-7\/12{right:58.333333%}.md\:bottom-7\/12{bottom:58.333333%}.md\:inline-start-7\/12{left:58.333333%}.md\:top-8\/12{top:66.666667%}.md\:inline-end-8\/12{right:66.666667%}.md\:bottom-8\/12{bottom:66.666667%}.md\:inline-start-8\/12{left:66.666667%}.md\:top-9\/12{top:75%}.md\:inline-end-9\/12{right:75%}.md\:bottom-9\/12{bottom:75%}.md\:inline-start-9\/12{left:75%}.md\:top-10\/12{top:83.333333%}.md\:inline-end-10\/12{right:83.333333%}.md\:bottom-10\/12{bottom:83.333333%}.md\:inline-start-10\/12{left:83.333333%}.md\:top-11\/12{top:91.666667%}.md\:inline-end-11\/12{right:91.666667%}.md\:bottom-11\/12{bottom:91.666667%}.md\:inline-start-11\/12{left:91.666667%}.md\:top-full{top:100%}.md\:inline-end-full{right:100%}.md\:bottom-full{bottom:100%}.md\:inline-start-full{left:100%}.md\:inset-0{top:0;right:0;bottom:0;left:0}.md\:inset-x-0{right:0;left:0}.md\:inset-y-0{top:0;bottom:0}.md\:inset-center{left:50%;top:50%}}}
+@layer sf.utilities {
+  @media (min-width: 720px) {
+    .md\:top-0 {
+      top: 0;
+    }
+    [dir="ltr"] .md\:inline-end-0 {
+      right: 0;
+    }
+    [dir="rtl"] .md\:inline-end-0 {
+      left: 0;
+    }
+    .md\:inline-end-0 {
+      inset-inline-end: 0;
+    }
+    .md\:bottom-0 {
+      bottom: 0;
+    }
+    [dir="ltr"] .md\:inline-start-0 {
+      left: 0;
+    }
+    [dir="rtl"] .md\:inline-start-0 {
+      right: 0;
+    }
+    .md\:inline-start-0 {
+      inset-inline-start: 0;
+    }
+    .md\:top-auto {
+      top: auto;
+    }
+    [dir="ltr"] .md\:inline-end-auto {
+      right: auto;
+    }
+    [dir="rtl"] .md\:inline-end-auto {
+      left: auto;
+    }
+    .md\:inline-end-auto {
+      inset-inline-end: auto;
+    }
+    .md\:bottom-auto {
+      bottom: auto;
+    }
+    [dir="ltr"] .md\:inline-start-auto {
+      left: auto;
+    }
+    [dir="rtl"] .md\:inline-start-auto {
+      right: auto;
+    }
+    .md\:inline-start-auto {
+      inset-inline-start: auto;
+    }
+    .md\:top-1\/2 {
+      top: 50%;
+    }
+    [dir="ltr"] .md\:inline-end-1\/2 {
+      right: 50%;
+    }
+    [dir="rtl"] .md\:inline-end-1\/2 {
+      left: 50%;
+    }
+    .md\:inline-end-1\/2 {
+      inset-inline-end: 50%;
+    }
+    .md\:bottom-1\/2 {
+      bottom: 50%;
+    }
+    [dir="ltr"] .md\:inline-start-1\/2 {
+      left: 50%;
+    }
+    [dir="rtl"] .md\:inline-start-1\/2 {
+      right: 50%;
+    }
+    .md\:inline-start-1\/2 {
+      inset-inline-start: 50%;
+    }
+    .md\:top-1\/3 {
+      top: 33.333333%;
+    }
+    [dir="ltr"] .md\:inline-end-1\/3 {
+      right: 33.333333%;
+    }
+    [dir="rtl"] .md\:inline-end-1\/3 {
+      left: 33.333333%;
+    }
+    .md\:inline-end-1\/3 {
+      inset-inline-end: 33.333333%;
+    }
+    .md\:bottom-1\/3 {
+      bottom: 33.333333%;
+    }
+    [dir="ltr"] .md\:inline-start-1\/3 {
+      left: 33.333333%;
+    }
+    [dir="rtl"] .md\:inline-start-1\/3 {
+      right: 33.333333%;
+    }
+    .md\:inline-start-1\/3 {
+      inset-inline-start: 33.333333%;
+    }
+    .md\:top-2\/3 {
+      top: 66.666667%;
+    }
+    [dir="ltr"] .md\:inline-end-2\/3 {
+      right: 66.666667%;
+    }
+    [dir="rtl"] .md\:inline-end-2\/3 {
+      left: 66.666667%;
+    }
+    .md\:inline-end-2\/3 {
+      inset-inline-end: 66.666667%;
+    }
+    .md\:bottom-2\/3 {
+      bottom: 66.666667%;
+    }
+    [dir="ltr"] .md\:inline-start-2\/3 {
+      left: 66.666667%;
+    }
+    [dir="rtl"] .md\:inline-start-2\/3 {
+      right: 66.666667%;
+    }
+    .md\:inline-start-2\/3 {
+      inset-inline-start: 66.666667%;
+    }
+    .md\:top-1\/4 {
+      top: 25%;
+    }
+    [dir="ltr"] .md\:inline-end-1\/4 {
+      right: 25%;
+    }
+    [dir="rtl"] .md\:inline-end-1\/4 {
+      left: 25%;
+    }
+    .md\:inline-end-1\/4 {
+      inset-inline-end: 25%;
+    }
+    .md\:bottom-1\/4 {
+      bottom: 25%;
+    }
+    [dir="ltr"] .md\:inline-start-1\/4 {
+      left: 25%;
+    }
+    [dir="rtl"] .md\:inline-start-1\/4 {
+      right: 25%;
+    }
+    .md\:inline-start-1\/4 {
+      inset-inline-start: 25%;
+    }
+    .md\:top-2\/4 {
+      top: 50%;
+    }
+    [dir="ltr"] .md\:inline-end-2\/4 {
+      right: 50%;
+    }
+    [dir="rtl"] .md\:inline-end-2\/4 {
+      left: 50%;
+    }
+    .md\:inline-end-2\/4 {
+      inset-inline-end: 50%;
+    }
+    .md\:bottom-2\/4 {
+      bottom: 50%;
+    }
+    [dir="ltr"] .md\:inline-start-2\/4 {
+      left: 50%;
+    }
+    [dir="rtl"] .md\:inline-start-2\/4 {
+      right: 50%;
+    }
+    .md\:inline-start-2\/4 {
+      inset-inline-start: 50%;
+    }
+    .md\:top-3\/4 {
+      top: 75%;
+    }
+    [dir="ltr"] .md\:inline-end-3\/4 {
+      right: 75%;
+    }
+    [dir="rtl"] .md\:inline-end-3\/4 {
+      left: 75%;
+    }
+    .md\:inline-end-3\/4 {
+      inset-inline-end: 75%;
+    }
+    .md\:bottom-3\/4 {
+      bottom: 75%;
+    }
+    [dir="ltr"] .md\:inline-start-3\/4 {
+      left: 75%;
+    }
+    [dir="rtl"] .md\:inline-start-3\/4 {
+      right: 75%;
+    }
+    .md\:inline-start-3\/4 {
+      inset-inline-start: 75%;
+    }
+    .md\:top-1\/5 {
+      top: 20%;
+    }
+    [dir="ltr"] .md\:inline-end-1\/5 {
+      right: 20%;
+    }
+    [dir="rtl"] .md\:inline-end-1\/5 {
+      left: 20%;
+    }
+    .md\:inline-end-1\/5 {
+      inset-inline-end: 20%;
+    }
+    .md\:bottom-1\/5 {
+      bottom: 20%;
+    }
+    [dir="ltr"] .md\:inline-start-1\/5 {
+      left: 20%;
+    }
+    [dir="rtl"] .md\:inline-start-1\/5 {
+      right: 20%;
+    }
+    .md\:inline-start-1\/5 {
+      inset-inline-start: 20%;
+    }
+    .md\:top-2\/5 {
+      top: 40%;
+    }
+    [dir="ltr"] .md\:inline-end-2\/5 {
+      right: 40%;
+    }
+    [dir="rtl"] .md\:inline-end-2\/5 {
+      left: 40%;
+    }
+    .md\:inline-end-2\/5 {
+      inset-inline-end: 40%;
+    }
+    .md\:bottom-2\/5 {
+      bottom: 40%;
+    }
+    [dir="ltr"] .md\:inline-start-2\/5 {
+      left: 40%;
+    }
+    [dir="rtl"] .md\:inline-start-2\/5 {
+      right: 40%;
+    }
+    .md\:inline-start-2\/5 {
+      inset-inline-start: 40%;
+    }
+    .md\:top-3\/5 {
+      top: 60%;
+    }
+    [dir="ltr"] .md\:inline-end-3\/5 {
+      right: 60%;
+    }
+    [dir="rtl"] .md\:inline-end-3\/5 {
+      left: 60%;
+    }
+    .md\:inline-end-3\/5 {
+      inset-inline-end: 60%;
+    }
+    .md\:bottom-3\/5 {
+      bottom: 60%;
+    }
+    [dir="ltr"] .md\:inline-start-3\/5 {
+      left: 60%;
+    }
+    [dir="rtl"] .md\:inline-start-3\/5 {
+      right: 60%;
+    }
+    .md\:inline-start-3\/5 {
+      inset-inline-start: 60%;
+    }
+    .md\:top-4\/5 {
+      top: 80%;
+    }
+    [dir="ltr"] .md\:inline-end-4\/5 {
+      right: 80%;
+    }
+    [dir="rtl"] .md\:inline-end-4\/5 {
+      left: 80%;
+    }
+    .md\:inline-end-4\/5 {
+      inset-inline-end: 80%;
+    }
+    .md\:bottom-4\/5 {
+      bottom: 80%;
+    }
+    [dir="ltr"] .md\:inline-start-4\/5 {
+      left: 80%;
+    }
+    [dir="rtl"] .md\:inline-start-4\/5 {
+      right: 80%;
+    }
+    .md\:inline-start-4\/5 {
+      inset-inline-start: 80%;
+    }
+    .md\:top-1\/6 {
+      top: 16.666667%;
+    }
+    [dir="ltr"] .md\:inline-end-1\/6 {
+      right: 16.666667%;
+    }
+    [dir="rtl"] .md\:inline-end-1\/6 {
+      left: 16.666667%;
+    }
+    .md\:inline-end-1\/6 {
+      inset-inline-end: 16.666667%;
+    }
+    .md\:bottom-1\/6 {
+      bottom: 16.666667%;
+    }
+    [dir="ltr"] .md\:inline-start-1\/6 {
+      left: 16.666667%;
+    }
+    [dir="rtl"] .md\:inline-start-1\/6 {
+      right: 16.666667%;
+    }
+    .md\:inline-start-1\/6 {
+      inset-inline-start: 16.666667%;
+    }
+    .md\:top-2\/6 {
+      top: 33.333333%;
+    }
+    [dir="ltr"] .md\:inline-end-2\/6 {
+      right: 33.333333%;
+    }
+    [dir="rtl"] .md\:inline-end-2\/6 {
+      left: 33.333333%;
+    }
+    .md\:inline-end-2\/6 {
+      inset-inline-end: 33.333333%;
+    }
+    .md\:bottom-2\/6 {
+      bottom: 33.333333%;
+    }
+    [dir="ltr"] .md\:inline-start-2\/6 {
+      left: 33.333333%;
+    }
+    [dir="rtl"] .md\:inline-start-2\/6 {
+      right: 33.333333%;
+    }
+    .md\:inline-start-2\/6 {
+      inset-inline-start: 33.333333%;
+    }
+    .md\:top-3\/6 {
+      top: 50%;
+    }
+    [dir="ltr"] .md\:inline-end-3\/6 {
+      right: 50%;
+    }
+    [dir="rtl"] .md\:inline-end-3\/6 {
+      left: 50%;
+    }
+    .md\:inline-end-3\/6 {
+      inset-inline-end: 50%;
+    }
+    .md\:bottom-3\/6 {
+      bottom: 50%;
+    }
+    [dir="ltr"] .md\:inline-start-3\/6 {
+      left: 50%;
+    }
+    [dir="rtl"] .md\:inline-start-3\/6 {
+      right: 50%;
+    }
+    .md\:inline-start-3\/6 {
+      inset-inline-start: 50%;
+    }
+    .md\:top-4\/6 {
+      top: 66.666667%;
+    }
+    [dir="ltr"] .md\:inline-end-4\/6 {
+      right: 66.666667%;
+    }
+    [dir="rtl"] .md\:inline-end-4\/6 {
+      left: 66.666667%;
+    }
+    .md\:inline-end-4\/6 {
+      inset-inline-end: 66.666667%;
+    }
+    .md\:bottom-4\/6 {
+      bottom: 66.666667%;
+    }
+    [dir="ltr"] .md\:inline-start-4\/6 {
+      left: 66.666667%;
+    }
+    [dir="rtl"] .md\:inline-start-4\/6 {
+      right: 66.666667%;
+    }
+    .md\:inline-start-4\/6 {
+      inset-inline-start: 66.666667%;
+    }
+    .md\:top-5\/6 {
+      top: 83.333333%;
+    }
+    [dir="ltr"] .md\:inline-end-5\/6 {
+      right: 83.333333%;
+    }
+    [dir="rtl"] .md\:inline-end-5\/6 {
+      left: 83.333333%;
+    }
+    .md\:inline-end-5\/6 {
+      inset-inline-end: 83.333333%;
+    }
+    .md\:bottom-5\/6 {
+      bottom: 83.333333%;
+    }
+    [dir="ltr"] .md\:inline-start-5\/6 {
+      left: 83.333333%;
+    }
+    [dir="rtl"] .md\:inline-start-5\/6 {
+      right: 83.333333%;
+    }
+    .md\:inline-start-5\/6 {
+      inset-inline-start: 83.333333%;
+    }
+    .md\:top-1\/12 {
+      top: 8.333333%;
+    }
+    [dir="ltr"] .md\:inline-end-1\/12 {
+      right: 8.333333%;
+    }
+    [dir="rtl"] .md\:inline-end-1\/12 {
+      left: 8.333333%;
+    }
+    .md\:inline-end-1\/12 {
+      inset-inline-end: 8.333333%;
+    }
+    .md\:bottom-1\/12 {
+      bottom: 8.333333%;
+    }
+    [dir="ltr"] .md\:inline-start-1\/12 {
+      left: 8.333333%;
+    }
+    [dir="rtl"] .md\:inline-start-1\/12 {
+      right: 8.333333%;
+    }
+    .md\:inline-start-1\/12 {
+      inset-inline-start: 8.333333%;
+    }
+    .md\:top-2\/12 {
+      top: 16.666667%;
+    }
+    [dir="ltr"] .md\:inline-end-2\/12 {
+      right: 16.666667%;
+    }
+    [dir="rtl"] .md\:inline-end-2\/12 {
+      left: 16.666667%;
+    }
+    .md\:inline-end-2\/12 {
+      inset-inline-end: 16.666667%;
+    }
+    .md\:bottom-2\/12 {
+      bottom: 16.666667%;
+    }
+    [dir="ltr"] .md\:inline-start-2\/12 {
+      left: 16.666667%;
+    }
+    [dir="rtl"] .md\:inline-start-2\/12 {
+      right: 16.666667%;
+    }
+    .md\:inline-start-2\/12 {
+      inset-inline-start: 16.666667%;
+    }
+    .md\:top-3\/12 {
+      top: 25%;
+    }
+    [dir="ltr"] .md\:inline-end-3\/12 {
+      right: 25%;
+    }
+    [dir="rtl"] .md\:inline-end-3\/12 {
+      left: 25%;
+    }
+    .md\:inline-end-3\/12 {
+      inset-inline-end: 25%;
+    }
+    .md\:bottom-3\/12 {
+      bottom: 25%;
+    }
+    [dir="ltr"] .md\:inline-start-3\/12 {
+      left: 25%;
+    }
+    [dir="rtl"] .md\:inline-start-3\/12 {
+      right: 25%;
+    }
+    .md\:inline-start-3\/12 {
+      inset-inline-start: 25%;
+    }
+    .md\:top-4\/12 {
+      top: 33.333333%;
+    }
+    [dir="ltr"] .md\:inline-end-4\/12 {
+      right: 33.333333%;
+    }
+    [dir="rtl"] .md\:inline-end-4\/12 {
+      left: 33.333333%;
+    }
+    .md\:inline-end-4\/12 {
+      inset-inline-end: 33.333333%;
+    }
+    .md\:bottom-4\/12 {
+      bottom: 33.333333%;
+    }
+    [dir="ltr"] .md\:inline-start-4\/12 {
+      left: 33.333333%;
+    }
+    [dir="rtl"] .md\:inline-start-4\/12 {
+      right: 33.333333%;
+    }
+    .md\:inline-start-4\/12 {
+      inset-inline-start: 33.333333%;
+    }
+    .md\:top-5\/12 {
+      top: 41.666667%;
+    }
+    [dir="ltr"] .md\:inline-end-5\/12 {
+      right: 41.666667%;
+    }
+    [dir="rtl"] .md\:inline-end-5\/12 {
+      left: 41.666667%;
+    }
+    .md\:inline-end-5\/12 {
+      inset-inline-end: 41.666667%;
+    }
+    .md\:bottom-5\/12 {
+      bottom: 41.666667%;
+    }
+    [dir="ltr"] .md\:inline-start-5\/12 {
+      left: 41.666667%;
+    }
+    [dir="rtl"] .md\:inline-start-5\/12 {
+      right: 41.666667%;
+    }
+    .md\:inline-start-5\/12 {
+      inset-inline-start: 41.666667%;
+    }
+    .md\:top-6\/12 {
+      top: 50%;
+    }
+    [dir="ltr"] .md\:inline-end-6\/12 {
+      right: 50%;
+    }
+    [dir="rtl"] .md\:inline-end-6\/12 {
+      left: 50%;
+    }
+    .md\:inline-end-6\/12 {
+      inset-inline-end: 50%;
+    }
+    .md\:bottom-6\/12 {
+      bottom: 50%;
+    }
+    [dir="ltr"] .md\:inline-start-6\/12 {
+      left: 50%;
+    }
+    [dir="rtl"] .md\:inline-start-6\/12 {
+      right: 50%;
+    }
+    .md\:inline-start-6\/12 {
+      inset-inline-start: 50%;
+    }
+    .md\:top-7\/12 {
+      top: 58.333333%;
+    }
+    [dir="ltr"] .md\:inline-end-7\/12 {
+      right: 58.333333%;
+    }
+    [dir="rtl"] .md\:inline-end-7\/12 {
+      left: 58.333333%;
+    }
+    .md\:inline-end-7\/12 {
+      inset-inline-end: 58.333333%;
+    }
+    .md\:bottom-7\/12 {
+      bottom: 58.333333%;
+    }
+    [dir="ltr"] .md\:inline-start-7\/12 {
+      left: 58.333333%;
+    }
+    [dir="rtl"] .md\:inline-start-7\/12 {
+      right: 58.333333%;
+    }
+    .md\:inline-start-7\/12 {
+      inset-inline-start: 58.333333%;
+    }
+    .md\:top-8\/12 {
+      top: 66.666667%;
+    }
+    [dir="ltr"] .md\:inline-end-8\/12 {
+      right: 66.666667%;
+    }
+    [dir="rtl"] .md\:inline-end-8\/12 {
+      left: 66.666667%;
+    }
+    .md\:inline-end-8\/12 {
+      inset-inline-end: 66.666667%;
+    }
+    .md\:bottom-8\/12 {
+      bottom: 66.666667%;
+    }
+    [dir="ltr"] .md\:inline-start-8\/12 {
+      left: 66.666667%;
+    }
+    [dir="rtl"] .md\:inline-start-8\/12 {
+      right: 66.666667%;
+    }
+    .md\:inline-start-8\/12 {
+      inset-inline-start: 66.666667%;
+    }
+    .md\:top-9\/12 {
+      top: 75%;
+    }
+    [dir="ltr"] .md\:inline-end-9\/12 {
+      right: 75%;
+    }
+    [dir="rtl"] .md\:inline-end-9\/12 {
+      left: 75%;
+    }
+    .md\:inline-end-9\/12 {
+      inset-inline-end: 75%;
+    }
+    .md\:bottom-9\/12 {
+      bottom: 75%;
+    }
+    [dir="ltr"] .md\:inline-start-9\/12 {
+      left: 75%;
+    }
+    [dir="rtl"] .md\:inline-start-9\/12 {
+      right: 75%;
+    }
+    .md\:inline-start-9\/12 {
+      inset-inline-start: 75%;
+    }
+    .md\:top-10\/12 {
+      top: 83.333333%;
+    }
+    [dir="ltr"] .md\:inline-end-10\/12 {
+      right: 83.333333%;
+    }
+    [dir="rtl"] .md\:inline-end-10\/12 {
+      left: 83.333333%;
+    }
+    .md\:inline-end-10\/12 {
+      inset-inline-end: 83.333333%;
+    }
+    .md\:bottom-10\/12 {
+      bottom: 83.333333%;
+    }
+    [dir="ltr"] .md\:inline-start-10\/12 {
+      left: 83.333333%;
+    }
+    [dir="rtl"] .md\:inline-start-10\/12 {
+      right: 83.333333%;
+    }
+    .md\:inline-start-10\/12 {
+      inset-inline-start: 83.333333%;
+    }
+    .md\:top-11\/12 {
+      top: 91.666667%;
+    }
+    [dir="ltr"] .md\:inline-end-11\/12 {
+      right: 91.666667%;
+    }
+    [dir="rtl"] .md\:inline-end-11\/12 {
+      left: 91.666667%;
+    }
+    .md\:inline-end-11\/12 {
+      inset-inline-end: 91.666667%;
+    }
+    .md\:bottom-11\/12 {
+      bottom: 91.666667%;
+    }
+    [dir="ltr"] .md\:inline-start-11\/12 {
+      left: 91.666667%;
+    }
+    [dir="rtl"] .md\:inline-start-11\/12 {
+      right: 91.666667%;
+    }
+    .md\:inline-start-11\/12 {
+      inset-inline-start: 91.666667%;
+    }
+    .md\:top-full {
+      top: 100%;
+    }
+    [dir="ltr"] .md\:inline-end-full {
+      right: 100%;
+    }
+    [dir="rtl"] .md\:inline-end-full {
+      left: 100%;
+    }
+    .md\:inline-end-full {
+      inset-inline-end: 100%;
+    }
+    .md\:bottom-full {
+      bottom: 100%;
+    }
+    [dir="ltr"] .md\:inline-start-full {
+      left: 100%;
+    }
+    [dir="rtl"] .md\:inline-start-full {
+      right: 100%;
+    }
+    .md\:inline-start-full {
+      inset-inline-start: 100%;
+    }
+    [dir="ltr"] .md\:inset-0 {
+      right: 0;
+    }
+    [dir="rtl"] .md\:inset-0 {
+      left: 0;
+    }
+    [dir="ltr"] .md\:inset-0 {
+      left: 0;
+    }
+    [dir="rtl"] .md\:inset-0 {
+      right: 0;
+    }
+    .md\:inset-0 {
+      top: 0;
+      inset-inline-end: 0;
+      bottom: 0;
+      inset-inline-start: 0;
+    }
+    [dir="ltr"] .md\:inset-x-0 {
+      right: 0;
+    }
+    [dir="rtl"] .md\:inset-x-0 {
+      left: 0;
+    }
+    [dir="ltr"] .md\:inset-x-0 {
+      left: 0;
+    }
+    [dir="rtl"] .md\:inset-x-0 {
+      right: 0;
+    }
+    .md\:inset-x-0 {
+      inset-inline-end: 0;
+      inset-inline-start: 0;
+    }
+    .md\:inset-y-0 {
+      top: 0;
+      bottom: 0;
+    }
+    [dir="ltr"] .md\:inset-center {
+      left: 50%;
+    }
+    [dir="rtl"] .md\:inset-center {
+      right: 50%;
+    }
+    .md\:inset-center {
+      inset-inline-start: 50%;
+      top: 50%;
+    }
+  }
+}

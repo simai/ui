@@ -8,23 +8,100 @@
 */
 @layer sf.components {
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) justify-content/center (.justify-center) align-items/center (.items-center) */
-  .sf-fab {
+  [dir="ltr"] .sf-fab {
+    border-bottom-right-radius: var(--sf-radius-circle);
     border-bottom-right-radius: var(--sf-fab--border-bottom-right-radius, var(--sf-radius-circle));
+  }
+  [dir="rtl"] .sf-fab {
+    border-bottom-left-radius: var(--sf-radius-circle);
+    border-bottom-left-radius: var(--sf-fab--border-bottom-right-radius, var(--sf-radius-circle));
+  }
+  [dir="ltr"] .sf-fab {
+    border-bottom-left-radius: var(--sf-radius-circle);
     border-bottom-left-radius: var(--sf-fab--border-bottom-left-radius, var(--sf-radius-circle));
+  }
+  [dir="rtl"] .sf-fab {
+    border-bottom-right-radius: var(--sf-radius-circle);
+    border-bottom-right-radius: var(--sf-fab--border-bottom-left-radius, var(--sf-radius-circle));
+  }
+  [dir="ltr"] .sf-fab {
+    border-top-right-radius: var(--sf-radius-circle);
     border-top-right-radius: var(--sf-fab--border-top-right-radius, var(--sf-radius-circle));
+  }
+  [dir="rtl"] .sf-fab {
+    border-top-left-radius: var(--sf-radius-circle);
+    border-top-left-radius: var(--sf-fab--border-top-right-radius, var(--sf-radius-circle));
+  }
+  [dir="ltr"] .sf-fab {
+    border-top-left-radius: var(--sf-radius-circle);
     border-top-left-radius: var(--sf-fab--border-top-left-radius, var(--sf-radius-circle));
+  }
+  [dir="rtl"] .sf-fab {
+    border-top-right-radius: var(--sf-radius-circle);
+    border-top-right-radius: var(--sf-fab--border-top-left-radius, var(--sf-radius-circle));
+  }
+  [dir="ltr"] .sf-fab {
     padding-left: var(--sf-fab--padding-inline-start);
-    padding-top: var(--sf-fab--padding-top);
+  }
+  [dir="rtl"] .sf-fab {
+    padding-right: var(--sf-fab--padding-inline-start);
+  }
+  [dir="ltr"] .sf-fab {
     padding-right: var(--sf-fab--padding-inline-end);
+  }
+  [dir="rtl"] .sf-fab {
+    padding-left: var(--sf-fab--padding-inline-end);
+  }
+  [dir="ltr"] .sf-fab {
+    border-bottom-right-radius: var(--sf-radius-circle);
+  }
+  [dir="rtl"] .sf-fab {
+    border-bottom-left-radius: var(--sf-radius-circle);
+  }
+  [dir="ltr"] .sf-fab {
+    border-bottom-left-radius: var(--sf-radius-circle);
+  }
+  [dir="rtl"] .sf-fab {
+    border-bottom-right-radius: var(--sf-radius-circle);
+  }
+  [dir="ltr"] .sf-fab {
+    border-top-right-radius: var(--sf-radius-circle);
+  }
+  [dir="rtl"] .sf-fab {
+    border-top-left-radius: var(--sf-radius-circle);
+  }
+  [dir="ltr"] .sf-fab {
+    border-top-left-radius: var(--sf-radius-circle);
+  }
+  [dir="rtl"] .sf-fab {
+    border-top-right-radius: var(--sf-radius-circle);
+  }
+  .sf-fab {
+    border-end-end-radius: var(--sf-radius-circle);
+    border-end-end-radius: var(--sf-fab--border-bottom-right-radius, var(--sf-radius-circle));
+    border-end-start-radius: var(--sf-radius-circle);
+    border-end-start-radius: var(--sf-fab--border-bottom-left-radius, var(--sf-radius-circle));
+    border-start-end-radius: var(--sf-radius-circle);
+    border-start-end-radius: var(--sf-fab--border-top-right-radius, var(--sf-radius-circle));
+    border-start-start-radius: var(--sf-radius-circle);
+    border-start-start-radius: var(--sf-fab--border-top-left-radius, var(--sf-radius-circle));
+    -webkit-padding-start: var(--sf-fab--padding-inline-start);
+            padding-inline-start: var(--sf-fab--padding-inline-start);
+    padding-top: var(--sf-fab--padding-top);
+    -webkit-padding-end: var(--sf-fab--padding-inline-end);
+            padding-inline-end: var(--sf-fab--padding-inline-end);
     padding-bottom: var(--sf-fab--padding-bottom);
     background-color: var(--sf-fab--background-color);
-    -webkit-box-shadow: var(--sf-fab--box-shadow);
-            box-shadow: var(--sf-fab--box-shadow);
+    box-shadow: var(--sf-fab--box-shadow);
   }
   .sf-fab .sf-icon {
+    color: var(--sf-on-surface-variant);
     color: var(--sf-icon--color, var(--sf-on-surface-variant));
+    font-size: var(--sf-icon-size-3);
     font-size: var(--sf-icon--font-size, var(--sf-icon-size-3));
+    height: var(--sf-icon-size-3);
     height: var(--sf-icon--height, var(--sf-icon-size-3));
+    width: var(--sf-icon-size-3);
     width: var(--sf-icon--width, var(--sf-icon-size-3));
   }
   .sf-fab.sf-fab--default.sf-fab--primary {

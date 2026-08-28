@@ -9,13 +9,18 @@
 @layer sf.components {
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) justify-content/flex-start (.justify-start) align-items/flex-start (.items-start) */
   .sf-switch {
+    background-color: transparent;
     background-color: var(--sf-switch--background-color, transparent);
     gap: var(--sf-switch--gap);
   }
   .sf-switch .sf-icon {
+    color: var(--sf-on-surface-variant);
     color: var(--sf-icon--color, var(--sf-on-surface-variant));
+    font-size: var(--sf-text-size-3);
     font-size: var(--sf-icon--font-size, var(--sf-text-size-3));
+    height: var(--sf-text-size-3);
     height: var(--sf-icon--height, var(--sf-text-size-3));
+    width: var(--sf-text-size-3);
     width: var(--sf-icon--width, var(--sf-text-size-3));
   }
   /* utility-hint: display/flex (.flex) flex-direction/column (.flex-col) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-switch-container-wrap--gap) justify-content/flex-start (.justify-start) align-items/flex-start (.items-start) */
@@ -55,6 +60,42 @@
     --sf-switch-container--color: var(--sf-on-surface);
   }
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) align-items/center (.items-center) */
+  [dir="ltr"] .sf-switch .sf-switch-toggler {
+    border-bottom-right-radius: var(--sf-switch-toggler--border-end-end-radius);
+  }
+  [dir="rtl"] .sf-switch .sf-switch-toggler {
+    border-bottom-left-radius: var(--sf-switch-toggler--border-end-end-radius);
+  }
+  [dir="ltr"] .sf-switch .sf-switch-toggler {
+    border-bottom-left-radius: var(--sf-switch-toggler--border-end-start-radius);
+  }
+  [dir="rtl"] .sf-switch .sf-switch-toggler {
+    border-bottom-right-radius: var(--sf-switch-toggler--border-end-start-radius);
+  }
+  [dir="ltr"] .sf-switch .sf-switch-toggler {
+    border-top-right-radius: var(--sf-switch-toggler--border-start-end-radius);
+  }
+  [dir="rtl"] .sf-switch .sf-switch-toggler {
+    border-top-left-radius: var(--sf-switch-toggler--border-start-end-radius);
+  }
+  [dir="ltr"] .sf-switch .sf-switch-toggler {
+    border-top-left-radius: var(--sf-switch-toggler--border-start-start-radius);
+  }
+  [dir="rtl"] .sf-switch .sf-switch-toggler {
+    border-top-right-radius: var(--sf-switch-toggler--border-start-start-radius);
+  }
+  [dir="ltr"] .sf-switch .sf-switch-toggler {
+    padding-right: var(--sf-switch-toggler--padding-inline-end);
+  }
+  [dir="rtl"] .sf-switch .sf-switch-toggler {
+    padding-left: var(--sf-switch-toggler--padding-inline-end);
+  }
+  [dir="ltr"] .sf-switch .sf-switch-toggler {
+    padding-left: var(--sf-switch-toggler--padding-inline-start);
+  }
+  [dir="rtl"] .sf-switch .sf-switch-toggler {
+    padding-right: var(--sf-switch-toggler--padding-inline-start);
+  }
   .sf-switch .sf-switch-toggler {
     --sf-switch-toggler--background-color: var(--sf-surface-0);
     --sf-switch-toggler--border: 1px solid;
@@ -67,19 +108,22 @@
     --sf-switch-toggler--border-width: 1px;
     background-color: var(--sf-switch-toggler--background-color);
     border: var(--sf-switch-toggler--border);
+    border-color: transparent;
     border-color: var(--sf-switch-toggler--border-color, transparent);
-    border-bottom-right-radius: var(--sf-switch-toggler--border-end-end-radius);
-    border-bottom-left-radius: var(--sf-switch-toggler--border-end-start-radius);
-    border-top-right-radius: var(--sf-switch-toggler--border-start-end-radius);
-    border-top-left-radius: var(--sf-switch-toggler--border-start-start-radius);
+    border-end-end-radius: var(--sf-switch-toggler--border-end-end-radius);
+    border-end-start-radius: var(--sf-switch-toggler--border-end-start-radius);
+    border-start-end-radius: var(--sf-switch-toggler--border-start-end-radius);
+    border-start-start-radius: var(--sf-switch-toggler--border-start-start-radius);
+    border-style: solid;
     border-style: var(--sf-switch-toggler--border-style, solid);
     border-width: var(--sf-switch-toggler--border-width);
-    -webkit-box-shadow: var(--sf-switch-toggler--box-shadow);
-            box-shadow: var(--sf-switch-toggler--box-shadow);
+    box-shadow: var(--sf-switch-toggler--box-shadow);
     height: var(--sf-switch-toggler--height);
     padding-bottom: var(--sf-switch-toggler--padding-bottom);
-    padding-right: var(--sf-switch-toggler--padding-inline-end);
-    padding-left: var(--sf-switch-toggler--padding-inline-start);
+    -webkit-padding-end: var(--sf-switch-toggler--padding-inline-end);
+            padding-inline-end: var(--sf-switch-toggler--padding-inline-end);
+    -webkit-padding-start: var(--sf-switch-toggler--padding-inline-start);
+            padding-inline-start: var(--sf-switch-toggler--padding-inline-start);
     padding-top: var(--sf-switch-toggler--padding-top);
     width: var(--sf-switch-toggler--width);
   }
@@ -127,8 +171,14 @@
     --sf-switch-description--font-size: var(--sf-text-size-1\/2);
     --sf-switch-description--line-height: var(--sf-text-height-1\/2);
   }
+  .sf-switch.active[\:not-has\(input\:disabled\)] .sf-switch-inner {
+    --sf-switch-inner--background-color: var(--sf-on-primary);
+  }
   .sf-switch.active:not(:has(input:disabled)) .sf-switch-inner {
     --sf-switch-inner--background-color: var(--sf-on-primary);
+  }
+  .sf-switch.active[\:not-has\(input\:disabled\)] .sf-switch-toggler {
+    --sf-switch-toggler--background-color: var(--sf-primary);
   }
   .sf-switch.active:not(:has(input:disabled)) .sf-switch-toggler {
     --sf-switch-toggler--background-color: var(--sf-primary);
@@ -181,8 +231,14 @@
   .sf-switch.disabled .sf-switch-toggler {
     --sf-switch-toggler--border-color: var(--sf-outline-disable);
   }
+  .sf-switch[\:has\(input\:not\(\:disabled\)\:not\(.disabled\)\:focus\)] .sf-switch-toggler {
+    --sf-switch-toggler--box-shadow: var(--sf-ui-focus);
+  }
   .sf-switch:has(input:not(:disabled):not(.disabled):focus) .sf-switch-toggler {
     --sf-switch-toggler--box-shadow: var(--sf-ui-focus);
+  }
+  .sf-switch[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:hover\)] .sf-switch-toggler {
+    --sf-switch-toggler--border-color: var(--sf-primary-hover);
   }
   .sf-switch:has(input:enabled:not(:disabled):not(.disabled):hover) .sf-switch-toggler {
     --sf-switch-toggler--border-color: var(--sf-primary-hover);
@@ -206,6 +262,7 @@
     position: relative;
   }
   .sf-switch .sf-switch-text {
+    white-space: nowrap;
     white-space: var(--sf-switch-text--white-space, nowrap);
   }
   .sf-switch .sf-switch-toggler input[type=checkbox] {
@@ -214,6 +271,7 @@
     right: 0;
     bottom: 0;
     left: 0;
+    inset: 0;
     margin: 0;
     opacity: 0;
     position: absolute;

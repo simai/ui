@@ -1,1 +1,609 @@
-(()=>{"use strict";var t={"./component/register-helper.js":(t,e,n)=>{function i(t,e){if(t&&e)if("undefined"==typeof window||"function"!=typeof window.registerSfComponent){if("undefined"!=typeof window&&window.SF?.Loader?.registerComponent)window.SF.Loader.registerComponent(t,e);else if("undefined"!=typeof window){(window.SF_PENDING_COMPONENTS=window.SF_PENDING_COMPONENTS||[]).push([t,e])}}else window.registerSfComponent(t,e)}n.r(e),n.d(e,{default:()=>s,registerComponent:()=>i});const s=i},"./component/spinner/js/_spinner.js":(t,e,n)=>{n.r(e),n.d(e,{bindSpinner:()=>m,createSpinnerArcSvg:()=>c,createSpinnerDotsSvg:()=>h,renderSpinner:()=>f,unbindSpinner:()=>u});var i=n("./core/js/ComponentObserver.js"),s=n("./component/register-helper.js");const r="http://www.w3.org/2000/svg",a=".sf-loader-container",o="sfSpinnerBound";function d(t,e){const n=Number.parseFloat(String(t??""));return Number.isFinite(n)?n:e}function l(t,e={}){const n=document.createElementNS(r,t);return Object.entries(e).forEach(([t,e])=>{null!=e&&""!==e&&n.setAttribute(t,String(e))}),n}function c({width:t=58,height:e=58,strokeWidth:n=4}={}){const i=Math.max(1,t),s=Math.max(1,e),r=Math.max(1,n),a=Math.max(1,Math.min(i,s)/2-r/2),o=i/2,d=s/2,c=l("svg",{class:"sf-loader-svg",viewBox:`0 0 ${i} ${s}`,width:i,height:s,"aria-hidden":"true"}),h=l("circle",{class:"sf-loader-ring-filled",cx:o,cy:d,r:a}),p=l("circle",{class:"sf-loader-ring-accent",cx:o,cy:d,r:a,pathLength:100,"stroke-dasharray":"0 100",transform:`rotate(90 ${o} ${d})`});return c.append(h,p),c}function h({width:t=58,height:e=58,dots:n=16,filled:i=6,dotRadius:s=null,direction:r="clockwise"}={}){const a=Math.max(1,t),o=Math.max(1,e),d=Math.max(3,Math.floor(n)),c=(h=Math.floor(i),p=1,f=d,Math.min(Math.max(h,p),f));var h,p,f;const m=null===s?Math.max(1.5,.06*Math.min(a,o)):Math.max(1,s),u=Math.max(m,Math.min(a,o)/2-m-1),w=a/2,g=o/2,y=l("svg",{class:"sf-loader-svg",viewBox:`0 0 ${a} ${o}`,width:a,height:o,"aria-hidden":"true",style:`--sf-loader-dot-count:${d}; --sf-loader-dot-filled:${c};`});for(let t=0;t<d;t+=1){const e=2*Math.PI/d*t-Math.PI/2,n=l("circle",{class:"sf-loader-dot",cx:w+u*Math.cos(e),cy:g+u*Math.sin(e),r:m,style:`--sf-loader-dot-index:${t}; --sf-loader-dot-delay:${(-1.4/d*("counterclockwise"===r?t:(d-t)%d)).toFixed(4)}s;`});y.append(n)}return y}function p(t,e,n){let i=t.querySelector(e);return i?(i.innerHTML="",i):(i=document.createElement("div"),i.className=n,i.dataset.sfSpinnerPart=n,t.append(i),i)}function f(t){if(!(t instanceof HTMLElement))return t;const e=function(t){const e=t.querySelector(".sf-loader--loading-indicator"),n=t.querySelector(".sf-loader--circles"),i=t.querySelector(".sf-loader--text"),s=Object.prototype.hasOwnProperty.call(t.dataset,"width")||Object.prototype.hasOwnProperty.call(t.dataset,"w"),r=Object.prototype.hasOwnProperty.call(t.dataset,"height")||Object.prototype.hasOwnProperty.call(t.dataset,"h"),a=d(t.dataset.width,d(t.dataset.w,58)),o=d(t.dataset.height,d(t.dataset.h,a)),l=t.dataset.strokeWidth?d(t.dataset.strokeWidth,null):null,c=d(t.dataset.dots,16),h=d(t.dataset.filled,6),p=t.dataset.dotRadius?d(t.dataset.dotRadius,null):null,f=String(t.dataset.direction||"clockwise").toLowerCase();let m=String(t.dataset.variant||"").toLowerCase();return m||(m=n?"dots":"arc"),{width:a,height:o,strokeWidth:l,dots:c,filled:h,dotRadius:p,direction:f,variant:m,hasExplicitWidth:s,hasExplicitHeight:r,infinite:"true"===t.dataset.infinite,label:void 0!==t.dataset.label?t.dataset.label:i?.textContent?.trim?.()||"",indicator:e,circles:n,labelNode:i}}(t);t.classList.add("sf-loader-container"),e.infinite?t.classList.add("sf-loader--infinite"):t.classList.remove("sf-loader--infinite"),e.hasExplicitWidth?t.style.setProperty("--sf-loader-svg-width",`${e.width}px`):t.style.removeProperty("--sf-loader-svg-width"),e.hasExplicitHeight||e.hasExplicitWidth?t.style.setProperty("--sf-loader-svg-height",`${e.height}px`):t.style.removeProperty("--sf-loader-svg-height"),null!==e.strokeWidth?t.style.setProperty("--sf-loader-stroke-width",`${e.strokeWidth}px`):t.style.removeProperty("--sf-loader-stroke-width");const n="dots"===e.variant?"sf-loader--circles":"sf-loader--loading-indicator",i=p(t,`.${n}`,n),s=e.label||e.labelNode?p(t,".sf-loader--text","sf-loader--text"):null,r="dots"===e.variant?h(e):c(e);i.append(r);const a="dots"===e.variant?".sf-loader--loading-indicator":".sf-loader--circles";return t.querySelector(a)?.remove(),s&&(s.textContent=e.label||""),t}function m(t){return t instanceof HTMLElement&&"1"!==t.dataset[o]?(f(t),t.dataset[o]="1",t):t}function u(t){t instanceof HTMLElement&&delete t.dataset[o]}function w(t){(t instanceof Element||t===document)&&(t instanceof Element&&t.matches?.(a)&&m(t),t.querySelectorAll?.(a).forEach(m))}class g extends i.ComponentObserver{static componentName="Spinner";constructor(t){super(t);const{width:e=58,height:n=58,label:i="Loading...",variant:s="arc",dots:r=16,filled:a=6,strokeWidth:o=null,dotRadius:d=null,infinite:l=!1,direction:c="clockwise"}=this.params||{},h=this.attrs.class||this.attrs.className;this.template=document.createElement("div"),this.id&&(this.template.id=this.id),this.template.classList.add("sf-loader-container"),h&&this.template.classList.add(...`${h}`.split(" ").filter(Boolean)),Object.entries(this.attrs).filter(([t])=>!["class","className"].includes(t)).forEach(([t,e])=>{null!=e&&this.template.setAttribute(t,e)}),this.template.dataset.width=String(e),this.template.dataset.height=String(n),this.template.dataset.label=String(i??""),this.template.dataset.variant=String(s),this.template.dataset.dots=String(r),this.template.dataset.filled=String(a),null!=o&&""!==o&&(this.template.dataset.strokeWidth=String(o)),this.template.dataset.infinite=String(l),this.template.dataset.direction=String(c),null!=d&&(this.template.dataset.dotRadius=String(d))}init(){m(this.template)}destroyInternal(){u(this.template)}}(0,s.default)("Spinner",g),"undefined"!=typeof window&&(window.SF=window.SF||{},window.SF.Spinner=window.SF.Spinner||{},window.SF.Spinner.bind=m,window.SF.Spinner.render=f,window.SF.Spinner.unbind=u,window.SF.Spinner.createArcSvg=c,window.SF.Spinner.createDotsSvg=h),"loading"===document.readyState?document.addEventListener("DOMContentLoaded",()=>w(document)):w(document);new MutationObserver(t=>{t.forEach(t=>{t.addedNodes.forEach(t=>{t instanceof Element&&w(t)})})}).observe(document.documentElement,{childList:!0,subtree:!0})},"./component/spinner/js/index.js":(t,e,n)=>{n.r(e);n("./component/spinner/js/_spinner.js")},"./component/spinner/scss/index.scss":(t,e,n)=>{n.r(e)},"./core/js/ComponentObserver.js":(t,e,n)=>{n.r(e),n.d(e,{ComponentObserver:()=>i});class i{constructor(t){this.props=t,this.id=t?.id,this.params=t?.param,this.attrs=t?.attrs||{},this.template=null,window.dispatchEvent(new CustomEvent(`${this.componentName}:beforeRender`,{detail:this}))}getUtilityMap(){return this.constructor.utilityMap||null}extractUtilityClasses(t){if(!Array.isArray(t))return[];const e=new Set;return t.forEach(t=>{if("string"!=typeof t)return;const n=t.match(/\(([^)]+)\)/g);n&&n.forEach(t=>{t.slice(1,-1).split(/\s+/).filter(Boolean).forEach(t=>{e.add(t.replace(/^\./,""))})})}),Array.from(e)}applyLayoutUtilities(t,e){if(!t||!e)return;const n=this.getUtilityMap();if(!n||!n[e])return;this.extractUtilityClasses(n[e]).forEach(e=>t.classList.add(e))}render(){return this.html=this.template,"function"==typeof this.init&&this.init(),this.html&&window.dispatchEvent(new CustomEvent(`${this.componentName}:render`,{detail:this})),this.html}destroy(){this.destroyInternal?.(),this.props=null,this.id=null,this.params=null,this.template=null,this.html&&(this.html.remove(),this.html=null),window.dispatchEvent(new CustomEvent(`${this.componentName}:destroy`,{detail:this}))}destroyInternal(){}}}},e={};function n(i){var s=e[i];if(void 0!==s)return s.exports;var r=e[i]={exports:{}};return t[i](r,r.exports,n),r.exports}n.d=(t,e)=>{for(var i in e)n.o(e,i)&&!n.o(t,i)&&Object.defineProperty(t,i,{enumerable:!0,get:e[i]})},n.o=(t,e)=>Object.prototype.hasOwnProperty.call(t,e),n.r=t=>{"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(t,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(t,"__esModule",{value:!0})};var i={};(()=>{n.r(i);n("./component/spinner/scss/index.scss"),n("./component/spinner/js/index.js")})()})();
+/******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
+/******/ 	var __webpack_modules__ = ({
+
+/***/ "58661bec99a6"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   registerComponent: () => (/* binding */ registerComponent)
+/* harmony export */ });
+// Simple helper to register a component in one call.
+// Usage inside component bundle:
+//   import register from './register-helper';
+//   register('Buttons', Buttons);
+function registerComponent(name, cls) {
+  if (!name || !cls) return;
+
+  if (typeof window !== 'undefined' && typeof window.registerSfComponent === 'function') {
+    window.registerSfComponent(name, cls);
+    return;
+  }
+
+  if (typeof window !== 'undefined' && window.SF?.Loader?.registerComponent) {
+    window.SF.Loader.registerComponent(name, cls);
+    return;
+  }
+
+  if (typeof window !== 'undefined') {
+    const pending = window.SF_PENDING_COMPONENTS = window.SF_PENDING_COMPONENTS || [];
+    pending.push([name, cls]);
+  }
+}
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (registerComponent);
+
+/***/ },
+
+/***/ "eecc41af23fd"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   bindSpinner: () => (/* binding */ bindSpinner),
+/* harmony export */   createSpinnerArcSvg: () => (/* binding */ createSpinnerArcSvg),
+/* harmony export */   createSpinnerDotsSvg: () => (/* binding */ createSpinnerDotsSvg),
+/* harmony export */   renderSpinner: () => (/* binding */ renderSpinner),
+/* harmony export */   unbindSpinner: () => (/* binding */ unbindSpinner)
+/* harmony export */ });
+/* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d7f974466839");
+/* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("58661bec99a6");
+
+
+const SVG_NS = 'http://www.w3.org/2000/svg';
+const SPINNER_SELECTOR = '.sf-loader-container';
+const SPINNER_BOUND_FLAG = 'sfSpinnerBound';
+
+function toNumber(value, fallback) {
+  const parsed = Number.parseFloat(String(value ?? ''));
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+function clamp(value, min, max) {
+  return Math.min(Math.max(value, min), max);
+}
+
+function createSvgNode(tagName, attributes = {}) {
+  const node = document.createElementNS(SVG_NS, tagName);
+  Object.entries(attributes).forEach(([key, value]) => {
+    if (value === undefined || value === null || value === '') {
+      return;
+    }
+
+    node.setAttribute(key, String(value));
+  });
+  return node;
+}
+
+function createSpinnerArcSvg({
+  width = 58,
+  height = 58,
+  strokeWidth = 4
+} = {}) {
+  const safeWidth = Math.max(1, width);
+  const safeHeight = Math.max(1, height);
+  const safeStroke = Math.max(1, strokeWidth);
+  const radius = Math.max(1, Math.min(safeWidth, safeHeight) / 2 - safeStroke / 2);
+  const cx = safeWidth / 2;
+  const cy = safeHeight / 2;
+  const svg = createSvgNode('svg', {
+    class: 'sf-loader-svg',
+    viewBox: `0 0 ${safeWidth} ${safeHeight}`,
+    width: safeWidth,
+    height: safeHeight,
+    'aria-hidden': 'true'
+  });
+  const filled = createSvgNode('circle', {
+    class: 'sf-loader-ring-filled',
+    cx,
+    cy,
+    r: radius
+  });
+  const accent = createSvgNode('circle', {
+    class: 'sf-loader-ring-accent',
+    cx,
+    cy,
+    r: radius,
+    pathLength: 100,
+    'stroke-dasharray': '0 100',
+    transform: `rotate(90 ${cx} ${cy})`
+  });
+  svg.append(filled, accent);
+  return svg;
+}
+
+function createSpinnerDotsSvg({
+  width = 58,
+  height = 58,
+  dots = 16,
+  filled = 6,
+  dotRadius = null,
+  direction = 'clockwise'
+} = {}) {
+  const safeWidth = Math.max(1, width);
+  const safeHeight = Math.max(1, height);
+  const count = Math.max(3, Math.floor(dots));
+  const activeDots = clamp(Math.floor(filled), 1, count);
+  const resolvedDotRadius = dotRadius === null ? Math.max(1.5, Math.min(safeWidth, safeHeight) * 0.06) : Math.max(1, dotRadius);
+  const orbitRadius = Math.max(resolvedDotRadius, Math.min(safeWidth, safeHeight) / 2 - resolvedDotRadius - 1);
+  const cx = safeWidth / 2;
+  const cy = safeHeight / 2;
+  const svg = createSvgNode('svg', {
+    class: 'sf-loader-svg',
+    viewBox: `0 0 ${safeWidth} ${safeHeight}`,
+    width: safeWidth,
+    height: safeHeight,
+    'aria-hidden': 'true',
+    style: `--sf-loader-dot-count:${count}; --sf-loader-dot-filled:${activeDots};`
+  });
+
+  for (let index = 0; index < count; index += 1) {
+    const angle = Math.PI * 2 / count * index - Math.PI / 2;
+    const dotCx = cx + orbitRadius * Math.cos(angle);
+    const dotCy = cy + orbitRadius * Math.sin(angle);
+    const animationIndex = direction === 'counterclockwise' ? index : (count - index) % count;
+    const animationOffset = -(1.4 / count * animationIndex);
+    const dot = createSvgNode('circle', {
+      class: 'sf-loader-dot',
+      cx: dotCx,
+      cy: dotCy,
+      r: resolvedDotRadius,
+      style: `--sf-loader-dot-index:${index}; --sf-loader-dot-delay:${animationOffset.toFixed(4)}s;`
+    });
+    svg.append(dot);
+  }
+
+  return svg;
+}
+
+function getSpinnerConfig(root) {
+  const indicator = root.querySelector('.sf-loader--loading-indicator');
+  const circles = root.querySelector('.sf-loader--circles');
+  const labelNode = root.querySelector('.sf-loader--text');
+  const hasExplicitWidth = Object.prototype.hasOwnProperty.call(root.dataset, 'width') || Object.prototype.hasOwnProperty.call(root.dataset, 'w');
+  const hasExplicitHeight = Object.prototype.hasOwnProperty.call(root.dataset, 'height') || Object.prototype.hasOwnProperty.call(root.dataset, 'h');
+  const width = toNumber(root.dataset.width, toNumber(root.dataset.w, 58));
+  const height = toNumber(root.dataset.height, toNumber(root.dataset.h, width));
+  const strokeWidth = root.dataset.strokeWidth ? toNumber(root.dataset.strokeWidth, null) : null;
+  const dots = toNumber(root.dataset.dots, 16);
+  const filled = toNumber(root.dataset.filled, 6);
+  const dotRadius = root.dataset.dotRadius ? toNumber(root.dataset.dotRadius, null) : null;
+  const direction = String(root.dataset.direction || 'clockwise').toLowerCase();
+  let variant = String(root.dataset.variant || '').toLowerCase();
+
+  if (!variant) {
+    variant = circles ? 'dots' : 'arc';
+  }
+
+  return {
+    width,
+    height,
+    strokeWidth,
+    dots,
+    filled,
+    dotRadius,
+    direction,
+    variant,
+    hasExplicitWidth,
+    hasExplicitHeight,
+    infinite: root.dataset.infinite === 'true',
+    label: root.dataset.label !== undefined ? root.dataset.label : labelNode?.textContent?.trim?.() || '',
+    indicator,
+    circles,
+    labelNode
+  };
+}
+
+function ensureSpinnerPart(root, selector, className) {
+  let node = root.querySelector(selector);
+
+  if (node) {
+    node.innerHTML = '';
+    return node;
+  }
+
+  node = document.createElement('div');
+  node.className = className;
+  node.dataset.sfSpinnerPart = className;
+  root.append(node);
+  return node;
+}
+
+function renderSpinner(root) {
+  if (!(root instanceof HTMLElement)) return root;
+  const config = getSpinnerConfig(root);
+  root.classList.add('sf-loader-container');
+
+  if (config.infinite) {
+    root.classList.add('sf-loader--infinite');
+  } else {
+    root.classList.remove('sf-loader--infinite');
+  }
+
+  if (config.hasExplicitWidth) {
+    root.style.setProperty('--sf-loader-svg-width', `${config.width}px`);
+  } else {
+    root.style.removeProperty('--sf-loader-svg-width');
+  }
+
+  if (config.hasExplicitHeight || config.hasExplicitWidth) {
+    root.style.setProperty('--sf-loader-svg-height', `${config.height}px`);
+  } else {
+    root.style.removeProperty('--sf-loader-svg-height');
+  }
+
+  if (config.strokeWidth !== null) {
+    root.style.setProperty('--sf-loader-stroke-width', `${config.strokeWidth}px`);
+  } else {
+    root.style.removeProperty('--sf-loader-stroke-width');
+  }
+
+  const visualClass = config.variant === 'dots' ? 'sf-loader--circles' : 'sf-loader--loading-indicator';
+  const visual = ensureSpinnerPart(root, `.${visualClass}`, visualClass);
+  const label = config.label || config.labelNode ? ensureSpinnerPart(root, '.sf-loader--text', 'sf-loader--text') : null;
+  const svg = config.variant === 'dots' ? createSpinnerDotsSvg(config) : createSpinnerArcSvg(config);
+  visual.append(svg);
+  const obsoleteClass = config.variant === 'dots' ? '.sf-loader--loading-indicator' : '.sf-loader--circles';
+  root.querySelector(obsoleteClass)?.remove();
+
+  if (label) {
+    label.textContent = config.label || '';
+  }
+
+  return root;
+}
+
+function bindSpinner(root) {
+  if (!(root instanceof HTMLElement) || root.dataset[SPINNER_BOUND_FLAG] === '1') {
+    return root;
+  }
+
+  renderSpinner(root);
+  root.dataset[SPINNER_BOUND_FLAG] = '1';
+  return root;
+}
+
+function unbindSpinner(root) {
+  if (!(root instanceof HTMLElement)) return;
+  delete root.dataset[SPINNER_BOUND_FLAG];
+}
+
+function initSpinnerTree(target) {
+  if (!(target instanceof Element) && target !== document) return;
+
+  if (target instanceof Element && target.matches?.(SPINNER_SELECTOR)) {
+    bindSpinner(target);
+  }
+
+  target.querySelectorAll?.(SPINNER_SELECTOR).forEach(bindSpinner);
+}
+
+class Spinner extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.ComponentObserver {
+  static componentName = 'Spinner';
+
+  constructor(props) {
+    super(props);
+    const {
+      width = 58,
+      height = 58,
+      label = 'Loading...',
+      variant = 'arc',
+      dots = 16,
+      filled = 6,
+      strokeWidth = null,
+      dotRadius = null,
+      infinite = false,
+      direction = 'clockwise'
+    } = this.params || {};
+    const className = this.attrs.class || this.attrs.className;
+    this.template = document.createElement('div');
+
+    if (this.id) {
+      this.template.id = this.id;
+    }
+
+    this.template.classList.add('sf-loader-container');
+
+    if (className) {
+      this.template.classList.add(...`${className}`.split(' ').filter(Boolean));
+    }
+
+    Object.entries(this.attrs).filter(([attr]) => !['class', 'className'].includes(attr)).forEach(([attr, value]) => {
+      if (value === undefined || value === null) return;
+      this.template.setAttribute(attr, value);
+    });
+    this.template.dataset.width = String(width);
+    this.template.dataset.height = String(height);
+    this.template.dataset.label = String(label ?? '');
+    this.template.dataset.variant = String(variant);
+    this.template.dataset.dots = String(dots);
+    this.template.dataset.filled = String(filled);
+
+    if (strokeWidth !== null && strokeWidth !== undefined && strokeWidth !== '') {
+      this.template.dataset.strokeWidth = String(strokeWidth);
+    }
+
+    this.template.dataset.infinite = String(infinite);
+    this.template.dataset.direction = String(direction);
+
+    if (dotRadius !== null && dotRadius !== undefined) {
+      this.template.dataset.dotRadius = String(dotRadius);
+    }
+  }
+
+  init() {
+    bindSpinner(this.template);
+  }
+
+  destroyInternal() {
+    unbindSpinner(this.template);
+  }
+
+}
+
+(0,_register_helper__WEBPACK_IMPORTED_MODULE_1__["default"])('Spinner', Spinner);
+
+if (typeof window !== 'undefined') {
+  window.SF = window.SF || {};
+  window.SF.Spinner = window.SF.Spinner || {};
+  window.SF.Spinner.bind = bindSpinner;
+  window.SF.Spinner.render = renderSpinner;
+  window.SF.Spinner.unbind = unbindSpinner;
+  window.SF.Spinner.createArcSvg = createSpinnerArcSvg;
+  window.SF.Spinner.createDotsSvg = createSpinnerDotsSvg;
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => initSpinnerTree(document));
+} else {
+  initSpinnerTree(document);
+}
+
+const spinnerObserver = new MutationObserver(mutations => {
+  mutations.forEach(mutation => {
+    mutation.addedNodes.forEach(node => {
+      if (!(node instanceof Element)) return;
+      initSpinnerTree(node);
+    });
+  });
+});
+spinnerObserver.observe(document.documentElement, {
+  childList: true,
+  subtree: true
+});
+
+
+/***/ },
+
+/***/ "11ee8fe694f8"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _spinner__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("eecc41af23fd");
+/*
+* Main JS file for including JS for component.
+*
+* Imports:
+* - Base function component (_component_name.js)
+*/
+
+
+/***/ },
+
+/***/ "d7f974466839"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   ComponentObserver: () => (/* binding */ ComponentObserver)
+/* harmony export */ });
+class ComponentObserver {
+  constructor(props) {
+    this.props = props;
+    this.id = props?.id;
+    this.params = props?.param;
+    this.attrs = props?.attrs || {};
+    this.template = null;
+    window.dispatchEvent(new CustomEvent(`${this.componentName}:beforeRender`, {
+      detail: this
+    }));
+  }
+
+  getUtilityMap() {
+    return this.constructor.utilityMap || null;
+  }
+
+  extractUtilityClasses(values) {
+    if (!Array.isArray(values)) {
+      return [];
+    }
+
+    const classes = new Set();
+    values.forEach(value => {
+      if (typeof value !== 'string') {
+        return;
+      }
+
+      const matches = value.match(/\(([^)]+)\)/g);
+
+      if (!matches) {
+        return;
+      }
+
+      matches.forEach(match => {
+        const raw = match.slice(1, -1);
+        raw.split(/\s+/).filter(Boolean).forEach(cls => {
+          classes.add(cls.replace(/^\./, ''));
+        });
+      });
+    });
+    return Array.from(classes);
+  }
+
+  applyLayoutUtilities(target, selector) {
+    if (!target || !selector) {
+      return;
+    }
+
+    const map = this.getUtilityMap();
+
+    if (!map || !map[selector]) {
+      return;
+    }
+
+    const classes = this.extractUtilityClasses(map[selector]);
+    classes.forEach(cls => target.classList.add(cls));
+  }
+
+  render() {
+    this.html = this.template;
+
+    if (typeof this.init === 'function') {
+      this.init();
+    }
+
+    if (this.html) {
+      window.dispatchEvent(new CustomEvent(`${this.componentName}:render`, {
+        detail: this
+      }));
+    }
+
+    return this.html;
+  }
+
+  destroy() {
+    this.destroyInternal?.();
+    this.props = null;
+    this.id = null;
+    this.params = null;
+    this.template = null;
+
+    if (this.html) {
+      this.html.remove();
+      this.html = null;
+    }
+
+    window.dispatchEvent(new CustomEvent(`${this.componentName}:destroy`, {
+      detail: this
+    }));
+  }
+
+  destroyInternal() {}
+
+}
+
+/***/ },
+
+/***/ "71a47b831017"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ }
+
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	const __webpack_module_cache__ = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		const cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		const module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		if (!(moduleId in __webpack_modules__)) {
+/******/ 			delete __webpack_module_cache__[moduleId];
+/******/ 			const e = new Error("Cannot find module '" + moduleId + "'");
+/******/ 			e.code = 'MODULE_NOT_FOUND';
+/******/ 			throw e;
+/******/ 		}
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/************************************************************************/
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter/value functions for harmony exports
+/******/ 		__webpack_require__.d = (exports, definition) => {
+/******/ 			if(Array.isArray(definition)) {
+/******/ 				var i = 0;
+/******/ 				while(i < definition.length) {
+/******/ 					var key = definition[i++];
+/******/ 					var binding = definition[i++];
+/******/ 					if(!__webpack_require__.o(exports, key)) {
+/******/ 						if(binding === 0) {
+/******/ 							Object.defineProperty(exports, key, { enumerable: true, value: definition[i++] });
+/******/ 						} else {
+/******/ 							Object.defineProperty(exports, key, { enumerable: true, get: binding });
+/******/ 						}
+/******/ 					} else if(binding === 0) { i++; }
+/******/ 				}
+/******/ 			} else {
+/******/ 				for(var key in definition) {
+/******/ 					if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 						Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 					}
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = (exports) => {
+/******/ 			if(Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/
+/************************************************************************/
+let __webpack_exports__ = {};
+// This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
+(() => {
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("71a47b831017");
+/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("11ee8fe694f8");
+/**
+* SIMAI Framework
+* Copyright 2008-2026 SIMAI Ltd
+* http://simai.studio
+* Read the license: http://framework.simai.studio/license/
+* Documentation: http://framework.simai.studio/
+* Support: http://simai.studio/support/
+*
+* SPINNER
+*
+* Entry point for importing components from this directory.
+* Simplifies the import process in other parts of the project.
+* Instead of importing individual files, all component can be imported through this file.
+*/
+
+
+})();
+
+/******/ })()
+;

@@ -1,1 +1,25 @@
-@layer sf.utilities{@media(min-width: 520px){.sm\:float-inline-end{float:right}.sm\:float-inline-start{float:left}.sm\:float-none{float:none}}}
+@layer sf.utilities {
+  @media (min-width: 520px) {
+    [dir="ltr"] .sm\:float-inline-end {
+      float: right;
+    }
+    [dir="rtl"] .sm\:float-inline-end {
+      float: left;
+    }
+    .sm\:float-inline-end {
+      float: inline-end;
+    }
+    [dir="ltr"] .sm\:float-inline-start {
+      float: left;
+    }
+    [dir="rtl"] .sm\:float-inline-start {
+      float: right;
+    }
+    .sm\:float-inline-start {
+      float: inline-start;
+    }
+    .sm\:float-none {
+      float: none;
+    }
+  }
+}
