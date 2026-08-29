@@ -4,6 +4,16 @@
 
 Формат версий: `major.minor.patch`. Для ветки SIMAI Framework 5 мажорная версия начинается с `5`.
 
+## [Unreleased]
+
+### Добавлено
+
+- Авторитетный registry builder формирует нейтральный
+  `contracts/generated/documentation-source.json` для контроля документации
+  Core, utilities, компонентов и Smart Components без второй ручной базы.
+- В публичном контракте дизайн-токенов закреплены разные зоны применения
+  `--sf-radius--ui` и `--sf-radius-default`.
+
 ## [5.3.2] - 2026-07-11
 
 Patch-релиз локальной и детерминированной поставки шрифтов.

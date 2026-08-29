@@ -1605,6 +1605,12 @@
     "type": "component"
   },
   {
+    "name": "file-preview",
+    "css": true,
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-file-preview\\b/i",
+    "type": "component"
+  },
+  {
     "name": "filer-hue-rotate/hover",
     "regex": "/hover\\:hue-rotate-/"
   },
@@ -2407,6 +2413,13 @@
   {
     "name": "line-height/xl",
     "regex": "/xl\\:line-/"
+  },
+  {
+    "name": "link",
+    "css": true,
+    "js": false,
+    "regex": "/sf-link/",
+    "type": "component"
   },
   {
     "name": "list-style-position/default",

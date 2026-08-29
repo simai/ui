@@ -80,6 +80,44 @@ def pretty_json(value: Any) -> str:
     return json.dumps(value, ensure_ascii=False, sort_keys=True, indent=2) + "\n"
 
 
+def css_custom_property(css: str, name: str) -> str:
+    pattern = re.compile(rf"{re.escape(name)}\s*:\s*([^;{{}}]+);")
+    match = pattern.search(css)
+    if match is None:
+        raise ContractError(f"documentation_token_missing:{name}")
+    return match.group(1).strip()
+
+
+def component_public_surface(ui_root: Path, runtime: dict[str, Any]) -> dict[str, Any]:
+    asset_root = runtime.get("asset_root")
+    if not isinstance(asset_root, str):
+        return {}
+    root = ui_root / asset_root
+    if not root.is_dir() or root.is_symlink():
+        return {}
+    classes: set[str] = set()
+    custom_properties: set[str] = set()
+    for path in sorted(root.rglob("*.css")):
+        if path.name.endswith(".min.css") or path.is_symlink():
+            continue
+        css = path.read_text(encoding="utf-8")
+        css_without_comments = re.sub(r"/\*.*?\*/", "", css, flags=re.DOTALL)
+        for selector in re.findall(r"([^{}]+)\{", css_without_comments):
+            if selector.lstrip().startswith("@"):
+                continue
+            classes.update(
+                value.replace("\\", "")
+                for value in re.findall(r"\.([A-Za-z_][A-Za-z0-9_-]*)", selector)
+            )
+        custom_properties.update(re.findall(r"--sf-[A-Za-z0-9_\\/-]+", css))
+    surface: dict[str, Any] = {}
+    if classes:
+        surface["classes"] = sorted(classes)
+    if custom_properties:
+        surface["custom_properties"] = sorted(custom_properties)
+    return surface
+
+
 def title_for(name: str) -> str:
     return name.replace("-", " ").replace(".", " ").title()
 
@@ -742,6 +780,66 @@ def build_registry(
     }
 
 
+def build_documentation_source(
+    ui_root: Path,
+    registry: dict[str, Any],
+) -> dict[str, Any]:
+    """Project the owner registry into Docara's neutral documentation contract."""
+    entities: list[dict[str, Any]] = []
+    for entry in registry["entries"]:
+        kind = "smart_component" if entry["kind"] == "smart-component" else entry["kind"]
+        public_contract = {
+            "lifecycle": entry["lifecycle"],
+            "runtime": entry["runtime"],
+            "requires": entry["requires"],
+        }
+        public_contract.update(component_public_surface(ui_root, entry["runtime"]))
+        entities.append(
+            {
+                "key": entry["id"],
+                "kind": kind,
+                "title": entry["title"],
+                "public_contract": public_contract,
+                "example_cases": ["default"],
+                "provenance": entry["provenance"]["source_refs"],
+            }
+        )
+
+    core_path = ui_root / "distr/core/css/core.css"
+    core_css = core_path.read_text(encoding="utf-8")
+    entities.append(
+        {
+            "key": "core.design-tokens",
+            "kind": "core",
+            "title": "Design tokens",
+            "public_contract": {
+                "semantic_radius": {
+                    "--sf-radius--ui": {
+                        "value": css_custom_property(core_css, "--sf-radius--ui"),
+                        "scope": "compact_controls",
+                    },
+                    "--sf-radius-default": {
+                        "value": css_custom_property(core_css, "--sf-radius-default"),
+                        "scope": "large_surfaces",
+                    },
+                    "square": {"role": "explicit_override"},
+                    "rounded": {"role": "explicit_override"},
+                }
+            },
+            "example_cases": [],
+            "provenance": ["simai/ui@distr/core/css/core.css"],
+        }
+    )
+    entities.sort(key=lambda entity: entity["key"])
+    return {
+        "schema": "docara.documentation_source.v1",
+        "id": "simai-framework",
+        "provider": "simai_framework",
+        "revision": registry["compatibility"]["id"],
+        "entities": entities,
+    }
+
+
 def parse_args(argv: list[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--ui-root", type=Path, default=Path(__file__).resolve().parents[1])
@@ -759,6 +857,11 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
         "--output",
         type=Path,
         default=Path("contracts/generated/framework-contract-registry.json"),
+    )
+    parser.add_argument(
+        "--documentation-output",
+        type=Path,
+        default=Path("contracts/generated/documentation-source.json"),
     )
     parser.add_argument("--stdout", action="store_true")
     parser.add_argument("--check", action="store_true")
@@ -781,14 +884,27 @@ def main(argv: list[str] | None = None) -> int:
     )
     rendered = pretty_json(registry)
     output = args.output if args.output.is_absolute() else ui_root / args.output
+    documentation = pretty_json(build_documentation_source(ui_root, registry))
+    documentation_output = (
+        args.documentation_output
+        if args.documentation_output.is_absolute()
+        else ui_root / args.documentation_output
+    )
     if args.check:
         if not output.is_file() or output.read_text(encoding="utf-8") != rendered:
             raise ContractError(f"generated_registry_stale:{output}")
+        if (
+            not documentation_output.is_file()
+            or documentation_output.read_text(encoding="utf-8") != documentation
+        ):
+            raise ContractError(f"generated_documentation_source_stale:{documentation_output}")
     elif args.stdout:
         sys.stdout.write(rendered)
     else:
         output.parent.mkdir(parents=True, exist_ok=True)
         output.write_text(rendered, encoding="utf-8")
+        documentation_output.parent.mkdir(parents=True, exist_ok=True)
+        documentation_output.write_text(documentation, encoding="utf-8")
     return 0
 
 

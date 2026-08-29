@@ -12,6 +12,7 @@ SIMAI UI Core - статический дистрибутив SIMAI Framework UI
 
 - [CHANGELOG.md](CHANGELOG.md)
 - [docs/releases/5.3.1.md](docs/releases/5.3.1.md)
+- [Documentation source contract](docs/documentation-source-contract.md)
 
 ## Установка через CDN
 
@@ -136,5 +137,4 @@ Utility-стили дистрибутива размещаются в слое `
 - Не подключайте `@main` в production, чтобы избежать непредсказуемых обновлений.
 - При обновлении версии очищайте кеш CDN/браузера, если проект использует долгоживущий cache.
 - Для локальной поставки храните структуру `distr/` без переименования внутренних директорий.
-
 

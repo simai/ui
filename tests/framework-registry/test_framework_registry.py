@@ -19,6 +19,7 @@ if not SMART_MANIFEST_INPUT:
     raise RuntimeError("SIMAI_UI_SMART_MANIFEST is required for cross-repository tests")
 SMART_MANIFEST = Path(SMART_MANIFEST_INPUT).resolve()
 GENERATED = ROOT / "contracts/generated/framework-contract-registry.json"
+DOCUMENTATION_SOURCE = ROOT / "contracts/generated/documentation-source.json"
 LOCK = ROOT / "contracts/releases/ui-e305e1cffe9f-smart-655406493ce9.lock.json"
 SMART_REFERENCE = ROOT / "contracts/registry-inputs/ui-smart-655406493ce9.ref.json"
 
@@ -138,6 +139,11 @@ class FrameworkContractRegistryTest(unittest.TestCase):
             self.assertIn(utility_id, closure)
         self.assertIn("component.buttons", closure)
         self.assertIn("smart.table", closure)
+        for component_id in ("component.file-preview", "component.link"):
+            self.assertIn(component_id, self.by_id)
+            self.assertTrue(
+                (ROOT / self.by_id[component_id]["runtime"]["asset_root"]).is_dir()
+            )
         self.assertTrue(
             all(self.by_id[public_id]["readiness"]["safe_to_suggest"] for public_id in closure)
         )
@@ -198,6 +204,33 @@ class FrameworkContractRegistryTest(unittest.TestCase):
         self.assertNotIn("/" + "Users/", first)
         self.assertNotIn("file:" + "//", first)
         self.assertNotIn("pending-commit", first)
+
+    def test_documentation_source_is_deterministic_and_public_only(self) -> None:
+        first = BUILDER.pretty_json(
+            BUILDER.build_documentation_source(ROOT, self.registry)
+        )
+        second = BUILDER.pretty_json(
+            BUILDER.build_documentation_source(ROOT, self.registry)
+        )
+        self.assertEqual(first, second)
+        self.assertEqual(first, DOCUMENTATION_SOURCE.read_text())
+        source = json.loads(first)
+        self.assertEqual(source["schema"], "docara.documentation_source.v1")
+        self.assertEqual(source["id"], "simai-framework")
+        self.assertEqual(len(source["entities"]), self.registry["counts"]["total"])
+        entities = {entity["key"]: entity for entity in source["entities"]}
+        self.assertIn("component.buttons", entities)
+        self.assertIn("utility.display", entities)
+        self.assertIn("smart.table", entities)
+        self.assertIn("sf-button", entities["component.buttons"]["public_contract"]["classes"])
+        self.assertIn("sf-button--primary", entities["component.buttons"]["public_contract"]["classes"])
+        self.assertIn("--sf-button--radius", entities["component.buttons"]["public_contract"]["custom_properties"])
+        radius = entities["core.design-tokens"]["public_contract"]["semantic_radius"]
+        self.assertEqual(radius["--sf-radius--ui"]["scope"], "compact_controls")
+        self.assertEqual(radius["--sf-radius-default"]["scope"], "large_surfaces")
+        self.assertNotIn("documentation_refs", first)
+        self.assertNotIn("example_refs", first)
+        self.assertNotIn("readiness", first)
 
     def test_source_manifest_hashes_are_canonical_and_order_independent(self) -> None:
         component_path = ROOT / "contracts/owners/component.manifest.json"
