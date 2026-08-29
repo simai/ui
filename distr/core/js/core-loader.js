@@ -1436,7 +1436,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var blueimp_md5__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(blueimp_md5__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _tailwind_map__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("3f02a73d71b2");
 /* harmony import */ var _iconSubsetRuntime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("09d27e26e137");
-/* harmony import */ var lit_static_html_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("ee5035470810");
+/* harmony import */ var _preloader__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("6c7f357fe960");
+/* harmony import */ var lit_static_html_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("ee5035470810");
+
 
 
 
@@ -1561,9 +1563,9 @@ function SFLoaderPlugin(params) {
   this.heavyModules = params.heavyModules || ['monaco'];
   this.priorityModules = params.priorityModules || ['container', 'display', 'flex', 'grid', 'gap', 'column', 'width', 'height', 'aspect-ratio', 'element-position', 'element-position-ext', 'headers', 'theme', 'skeleton'];
   this.preloader = {
-    color: 'var(--sf-error-60, #E81123)',
-    width: 66,
-    height: 100
+    color: (0,_preloader__WEBPACK_IMPORTED_MODULE_4__.getPreloaderColor)(),
+    width: _preloader__WEBPACK_IMPORTED_MODULE_4__.DEFAULT_PRELOADER.width,
+    height: _preloader__WEBPACK_IMPORTED_MODULE_4__.DEFAULT_PRELOADER.height
   };
   this.timingStart = typeof performance !== 'undefined' && performance.now ? performance.now() : Date.now();
   this.turboEventsBound = false;
@@ -1589,7 +1591,7 @@ function SFLoaderPlugin(params) {
   this.contentPreloaderText = params.contentPreloaderText ? params.contentPreloaderText : 'LOADING';
   this.arrowInterval = null;
   this.contentPreloader = '';
-  this.backgroundPreloader = params.backgroundPreloader ? params.backgroundPreloader : 'var(--sf-surface-0, #FFFFFF)';
+  this.backgroundPreloader = params.backgroundPreloader ? params.backgroundPreloader : (0,_preloader__WEBPACK_IMPORTED_MODULE_4__.getPreloaderBackground)();
   this.tempLoaderStyles = 'inset: 0;position: fixed;width: 100%;height: 100vh;opacity: 1;z-index: 1000;background-color: var(--sf-color--surface-highest, var(--sf-surface-0, #fff));text-align: center;';
   this.modifierPreloader = params.modifierPreloader ? params.modifierPreloader : 'loader-default';
   this.isDebug = false;
@@ -2094,62 +2096,13 @@ SFLoaderPlugin.prototype.runPreloader = function () {
 };
 
 SFLoaderPlugin.prototype.rotatePreloader = function () {
-  let rotationAngle = 0;
-
-  const moveItem = (item, number) => {
-    item.style.transform = `translateX(${number}px)`;
-  };
-
-  const arrowAnimate = () => {
-    Array.from(this.preloaderWrap.children).forEach((child, index) => {
-      setTimeout(() => {
-        if (this.preloaderRun) {
-          moveItem(child, index === 0 ? 8 : -8);
-        }
-      }, 100);
-      setTimeout(() => {
-        if (this.preloaderRun) {
-          moveItem(child, index === 0 ? -20 : 20);
-        }
-      }, 200);
-      setTimeout(() => {
-        if (this.preloaderRun) {
-          moveItem(child, 0);
-        }
-      }, 1000);
-    });
-    setTimeout(() => {
-      if (this.preloaderRun) {
-        setTimeout(() => {
-          updateRotation();
-        }, 200);
-      }
-    }, 1100);
-  };
-
-  arrowAnimate();
-  this.arrowInterval = setInterval(() => {
-    arrowAnimate();
-  }, 1800);
-
-  const updateRotation = () => {
-    this.preloaderWrap.style.transform = 'rotate(' + (rotationAngle - 5) + 'deg)';
-    rotationAngle += 90;
-    setTimeout(() => {
-      if (this.preloaderRun) {
-        this.preloaderWrap.style.transform = 'rotate(' + rotationAngle + 'deg)';
-      }
-    }, 200);
-  };
+  (0,_preloader__WEBPACK_IMPORTED_MODULE_4__.startPreloaderMotion)(this.preloaderWrap, () => this.preloaderRun, this.preloader);
 };
 
 SFLoaderPlugin.prototype.stopAnimation = function () {
   clearInterval(this.arrowInterval);
   if (!this.preloaderWrap) return;
-  this.preloaderWrap.style.transform = 'rotate(0deg)';
-  Array.from(this.preloaderWrap.children).forEach(child => {
-    child.style.transform = 'none';
-  });
+  (0,_preloader__WEBPACK_IMPORTED_MODULE_4__.stopPreloaderMotion)(this.preloaderWrap);
 };
 
 SFLoaderPlugin.prototype.stopPreloader = function () {
@@ -4502,7 +4455,7 @@ SFLoaderPlugin.prototype.getLoader = async function (PluginList, temp = false, s
   const heavyModules = this.heavyModules || [];
   const allowDefer = !skipDefer && !this.loadPage;
 
-  if (!skipDefer && PluginList.length < 10) {
+  if (!skipDefer && PluginList.length < 10 && !this.productionPlanActive) {
     this.debug('PluginList is empty, use Cookie');
     PluginList = this.getModuleArray();
   }
@@ -4865,7 +4818,7 @@ SFLoaderPlugin.prototype.setPreloaderParams = function () {
     }
   }
 
-  this.contentPreloader = this.params.contentPreloader ? this.params.contentPreloader : `<svg style="transition: .2s all ease-in-out;" id="sv_li_1" xmlns="http://www.w3.org/2000/svg" width="${this.preloader.width}" height="${this.preloader.height}" viewBox="0 0 66 100" fill="none">\n` + `<path fill-rule="evenodd" clip-rule="evenodd" d="M0 50.0013L49.812 0L66 16.2495L32.3722 50.0051L65.9938 83.7543L49.8097 100L0 50.0013Z" fill="${this.preloader.color}"/>\n` + '</svg>' + `<svg style="transition: .2s all ease-in-out;" id="sv_li_2" xmlns="http://www.w3.org/2000/svg" width="${this.preloader.width}" height="${this.preloader.height}" viewBox="0 0 66 100" fill="none">\n` + `<path fill-rule="evenodd" clip-rule="evenodd" d="M66 50.0013L16.188 0L0 16.2495L33.6278 50.0051L0.00615692 83.7543L16.1903 100L66 50.0013Z" fill="${this.preloader.color}"/>\n` + '</svg>';
+  this.contentPreloader = this.params.contentPreloader ? this.params.contentPreloader : (0,_preloader__WEBPACK_IMPORTED_MODULE_4__.createPreloaderContent)(this.preloader);
 };
 
 SFLoaderPlugin.prototype.getCurrentUrl = function () {
@@ -4920,9 +4873,9 @@ SFLoaderPlugin.prototype.prepare = function (observer = null) {
     }
   }
 
-  let plugins = localStorage.getItem(`SF_PLUGIN_LIST-${this.urlHash}`); // fallback: если есть bundle-id, пробуем его ключ даже в standAlone
+  let plugins = this.productionPlanActive ? null : localStorage.getItem(`SF_PLUGIN_LIST-${this.urlHash}`); // fallback: если есть bundle-id, пробуем его ключ даже в standAlone
 
-  if (!plugins && window.BUNDLE_ID) {
+  if (!this.productionPlanActive && !plugins && window.BUNDLE_ID) {
     plugins = localStorage.getItem(`SF_PLUGIN_LIST-${window.BUNDLE_ID}`);
   }
 
@@ -5046,6 +4999,7 @@ SFLoaderPlugin.prototype.mutate = function (fn) {
 
 SFLoaderPlugin.prototype.ensureLoadedModules = function () {
   if (window.SF_PRELOADED) {
+    this.productionPlanActive = true;
     this.pendingRegex = false;
     this.firstLoad = false;
     const {
@@ -5502,8 +5456,8 @@ SF.litHtml = (tagName, props = {}) => {
     }
   }
 
-  const tag = (0,lit_static_html_js__WEBPACK_IMPORTED_MODULE_4__.unsafeStatic)(tagName);
-  return (0,lit_static_html_js__WEBPACK_IMPORTED_MODULE_4__.html)`<${tag} ...=${props}></${tag}>`;
+  const tag = (0,lit_static_html_js__WEBPACK_IMPORTED_MODULE_5__.unsafeStatic)(tagName);
+  return (0,lit_static_html_js__WEBPACK_IMPORTED_MODULE_5__.html)`<${tag} ...=${props}></${tag}>`;
 };
 
 SF.whenDefine = whenSmartDefined;

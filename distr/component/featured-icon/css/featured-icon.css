@@ -65,18 +65,6 @@
     border-left-width: 0;
     border-left-width: var(--sf-featured-icon--border-inline-end-width, 0);
   }
-  [dir="ltr"] .sf-featured-icon {
-    border-left-width: 0;
-  }
-  [dir="rtl"] .sf-featured-icon {
-    border-right-width: 0;
-  }
-  [dir="ltr"] .sf-featured-icon {
-    border-right-width: 0;
-  }
-  [dir="rtl"] .sf-featured-icon {
-    border-left-width: 0;
-  }
   .sf-featured-icon {
     gap: var(--sf-b0);
     gap: var(--sf-featured-icon--gap, var(--sf-b0));

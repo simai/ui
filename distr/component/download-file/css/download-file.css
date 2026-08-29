@@ -81,18 +81,6 @@
     border-bottom-right-radius: var(--sf-radius-default);
   }
   [dir="ltr"] .sf-download-file {
-    border-right-width: 1px;
-  }
-  [dir="rtl"] .sf-download-file {
-    border-left-width: 1px;
-  }
-  [dir="ltr"] .sf-download-file {
-    border-left-width: 1px;
-  }
-  [dir="rtl"] .sf-download-file {
-    border-right-width: 1px;
-  }
-  [dir="ltr"] .sf-download-file {
     border-top-right-radius: var(--sf-radius-default);
   }
   [dir="rtl"] .sf-download-file {

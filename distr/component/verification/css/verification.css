@@ -80,18 +80,6 @@
   [dir="rtl"] .sf-verification {
     border-top-right-radius: var(--sf-ui-radius-default);
   }
-  [dir="ltr"] .sf-verification {
-    border-right-width: 0;
-  }
-  [dir="rtl"] .sf-verification {
-    border-left-width: 0;
-  }
-  [dir="ltr"] .sf-verification {
-    border-left-width: 0;
-  }
-  [dir="rtl"] .sf-verification {
-    border-right-width: 0;
-  }
   .sf-verification {
     border-end-end-radius: var(--sf-ui-radius-default);
     border-end-end-radius: var(--sf-verification--border-bottom-right-radius, var(--sf-ui-radius-default));

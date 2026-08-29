@@ -76,18 +76,6 @@
   [dir="rtl"] .sf-page-number {
     padding-right: var(--sf-space-1\/3);
   }
-  [dir="ltr"] .sf-page-number {
-    border-right-width: 0;
-  }
-  [dir="rtl"] .sf-page-number {
-    border-left-width: 0;
-  }
-  [dir="ltr"] .sf-page-number {
-    border-left-width: 0;
-  }
-  [dir="rtl"] .sf-page-number {
-    border-right-width: 0;
-  }
   .sf-page-number {
     font-family: var(--sf-text--family);
     font-family: var(--sf-page-number--font-family, var(--sf-text--family));

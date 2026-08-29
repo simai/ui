@@ -20,11 +20,12 @@ class Copy extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_1__.Compo
   constructor(props) {
     super(props);
     const {
-      size,
-      type,
-      scheme,
+      size = '1',
+      type = 'link',
+      scheme = 'on-surface',
       text,
-      done
+      done,
+      label
     } = this.params;
     this.text = {
       text: text,
@@ -35,15 +36,24 @@ class Copy extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_1__.Compo
     this.span.classList.add('sf-button-text-container');
     this.span.textContent = text;
     this.button = document.createElement('button');
+    this.button.type = 'button';
 
     if (this.id) {
       this.button.dataset.clipboardTarget = `#${this.id}`;
     }
 
-    this.button.classList.add(`sf-button`, `sf-button--size-${size}`, `sf-button--${scheme}`, `sf-button--${type}`, 'm-0');
-    this.icon = document.createElement('i');
-    this.icon.classList.add('sf-icon');
-    this.icon.textContent = 'content_copy';
+    const accessibleLabel = this.attrs['aria-label'] || label || text || 'Copy';
+    this.button.setAttribute('aria-label', accessibleLabel);
+
+    if (this.hasText) {
+      this.button.classList.add(`sf-button`, `sf-button--size-${size}`, `sf-button--${scheme}`, `sf-button--${type}`, 'm-0');
+    } else {
+      this.button.classList.add('sf-icon-button', 'sf-icon-button--icon', `sf-icon-button--size-${size}`, `sf-icon-button--${scheme}`, `sf-icon-button--${type}`, 'm-0');
+    }
+
+    this.icon = document.createElement('sf-icon');
+    this.icon.setAttribute('icon', 'content_copy');
+    this.icon.setAttribute('aria-hidden', 'true');
     this.button.append(this.icon);
 
     if (this.hasText) {
@@ -62,14 +72,19 @@ class Copy extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_1__.Compo
       } = this.text;
 
       if (this.icon) {
-        this.icon.textContent = 'check';
+        this.icon.setAttribute('icon', 'check');
+
+        if (done) {
+          this.button.setAttribute('aria-label', done);
+        }
 
         if (done && this.span) {
           this.span.textContent = done;
         }
 
         setTimeout(() => {
-          this.icon.textContent = 'content_copy';
+          this.icon.setAttribute('icon', 'content_copy');
+          this.button.setAttribute('aria-label', this.attrs['aria-label'] || this.params.label || text || 'Copy');
 
           if (done && this.span) {
             this.span.textContent = text;

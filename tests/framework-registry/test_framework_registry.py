@@ -20,8 +20,8 @@ if not SMART_MANIFEST_INPUT:
 SMART_MANIFEST = Path(SMART_MANIFEST_INPUT).resolve()
 GENERATED = ROOT / "contracts/generated/framework-contract-registry.json"
 DOCUMENTATION_SOURCE = ROOT / "contracts/generated/documentation-source.json"
-LOCK = ROOT / "contracts/releases/ui-e305e1cffe9f-smart-655406493ce9.lock.json"
-SMART_REFERENCE = ROOT / "contracts/registry-inputs/ui-smart-655406493ce9.ref.json"
+LOCK = ROOT / "contracts/releases/ui-1fe83c75768e-smart-9e05dc35289c.lock.json"
+SMART_REFERENCE = ROOT / "contracts/registry-inputs/ui-smart-9e05dc35289c.ref.json"
 
 
 def load_builder():
@@ -79,15 +79,15 @@ class FrameworkContractRegistryTest(unittest.TestCase):
             self.registry["counts"],
             {
                 "utility": 226,
-                "component": 60,
-                "smart-component": 42,
+                "component": 63,
+                "smart-component": 43,
                 "recipe": 1,
-                "total": 329,
+                "total": 333,
             },
         )
         self.assertEqual(
             self.registry["compatibility"]["id"],
-            "ui-e305e1cffe9f-smart-655406493ce9",
+            "ui-1fe83c75768e-smart-9e05dc35289c",
         )
         self.assertEqual(self.registry["compatibility"]["status"], "bounded")
         self.assertEqual(self.registry["compatibility"]["profile"], "plain-assets-v1")
@@ -102,7 +102,7 @@ class FrameworkContractRegistryTest(unittest.TestCase):
             legacy["invocation"]["arguments"][-1],
             "--require-legacy-compatibility",
         )
-        self.assertEqual(legacy["lineage_manifest"]["records_count"], 223)
+        self.assertEqual(legacy["lineage_manifest"]["records_count"], 472)
         self.assertEqual(
             self.registry["compatibility"]["claims"],
             {
@@ -128,12 +128,14 @@ class FrameworkContractRegistryTest(unittest.TestCase):
             | {self.by_id["recipe.admin.collection"]["kind"]},
             {"utility", "component", "smart-component", "recipe"},
         )
-        self.assertEqual(len(closure), 20)
+        self.assertEqual(len(closure), 22)
         for utility_id in (
             "utility.display",
             "utility.flex-direction",
             "utility.gap",
             "utility.overflow",
+            "utility.pointer-events",
+            "utility.text-align",
             "utility.width",
         ):
             self.assertIn(utility_id, closure)
@@ -363,12 +365,12 @@ class FrameworkContractRegistryTest(unittest.TestCase):
         )
         self.assertEqual(
             reference["contract_revision"],
-            "4df01bdc553524bfbde201f38727861f67a6e013",
+            "23d00d92346717b8f835297d142a14458f806602",
         )
         self.assertEqual(reference["status"], "committed")
         self.assertEqual(
             reference["manifest"]["file_sha256"],
-            "6024c6f48236765421a08915668442a8129e67216a6f9293f4da9f495bff4ab0",
+            "88c10de9386669c66d2c289a1bfda560caa1b468728927b5f45931b0903c2aff",
         )
         smart_source = next(
             item

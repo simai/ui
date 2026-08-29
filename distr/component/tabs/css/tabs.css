@@ -39,18 +39,6 @@
     padding-right: 0;
     padding-right: var(--sf-tabs-main-container--padding-inline-start, 0);
   }
-  [dir="ltr"] .sf-tabs-main-container {
-    padding-right: 0;
-  }
-  [dir="rtl"] .sf-tabs-main-container {
-    padding-left: 0;
-  }
-  [dir="ltr"] .sf-tabs-main-container {
-    padding-left: 0;
-  }
-  [dir="rtl"] .sf-tabs-main-container {
-    padding-right: 0;
-  }
   .sf-tabs-main-container {
     -webkit-padding-end: 0;
             padding-inline-end: 0;
@@ -80,18 +68,6 @@
   [dir="rtl"] .sf-tabs-top-container {
     padding-right: 0;
     padding-right: var(--sf-tabs-top-container--padding-inline-start, 0);
-  }
-  [dir="ltr"] .sf-tabs-top-container {
-    padding-right: 0;
-  }
-  [dir="rtl"] .sf-tabs-top-container {
-    padding-left: 0;
-  }
-  [dir="ltr"] .sf-tabs-top-container {
-    padding-left: 0;
-  }
-  [dir="rtl"] .sf-tabs-top-container {
-    padding-right: 0;
   }
   .sf-tabs-top-container {
     border-width: 0 0 1px 0;

@@ -530,6 +530,13 @@
     "regex": "/xl\\:break-inside-/"
   },
   {
+    "name": "button-group",
+    "css": true,
+    "js": true,
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-button-group\\b/i",
+    "type": "component"
+  },
+  {
     "name": "buttons",
     "css": true,
     "js": true,
@@ -665,12 +672,35 @@
     "type": "smart"
   },
   {
+    "name": "cl-button-group",
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "button-group"
+      },
+      {
+        "name": "cl-buttons"
+      }
+    ],
+    "tags": [
+      "sf-button-group"
+    ],
+    "type": "smart"
+  },
+  {
     "name": "cl-buttons",
     "js": true,
     "mode": "smart",
     "relation": [
       {
         "name": "buttons"
+      },
+      {
+        "name": "pointer-events/default"
+      },
+      {
+        "name": "text-align/default"
       }
     ],
     "tags": [
@@ -862,6 +892,9 @@
       },
       {
         "name": "cl-icons"
+      },
+      {
+        "name": "pointer-events/default"
       }
     ],
     "tags": [
@@ -1324,6 +1357,20 @@
     "css": true,
     "js": true,
     "regex": "/(btn-clipboard|source)/",
+    "relation": [
+      {
+        "name": "icon-buttons"
+      },
+      {
+        "name": "icons"
+      },
+      {
+        "name": "doc"
+      },
+      {
+        "name": "highlight"
+      }
+    ],
     "type": "component"
   },
   {
@@ -2283,6 +2330,20 @@
     "css": true,
     "js": true,
     "regex": "/(?:class\\s*=\\s*[\"'][^\"']*language-[^\"']*[\"']|<pre\\b[^>]*>\\s*<code\\b[^>]*>)/i",
+    "relation": [
+      {
+        "name": "clipboard"
+      },
+      {
+        "name": "icon-buttons"
+      },
+      {
+        "name": "icons"
+      },
+      {
+        "name": "scrollbar"
+      }
+    ],
     "type": "component"
   },
   {
@@ -2385,6 +2446,12 @@
   {
     "name": "justify-self/xl",
     "regex": "/xl\\:self-main-/"
+  },
+  {
+    "name": "kbd",
+    "css": true,
+    "regex": "/(?:<kbd\\b|\\bsf-kbd\\b)/i",
+    "type": "component"
   },
   {
     "name": "letter-spacing/default",
@@ -2750,6 +2817,12 @@
   {
     "name": "order/xl",
     "regex": "/xl\\:order-/"
+  },
+  {
+    "name": "outline",
+    "css": true,
+    "regex": "/\\bsf-outline(?:__|\\b)/i",
+    "type": "component"
   },
   {
     "name": "outline-color/active",
@@ -3723,7 +3796,7 @@
   },
   {
     "name": "visibility/default",
-    "regex": "/class\\s*=\\s*[\"'][^\"']*\\b(visible|invisible)\\b/i"
+    "regex": "/class\\s*=\\s*[\"'](?:[^\"']*\\s)?(visible|invisible)(?=\\s|[\"'])/i"
   },
   {
     "name": "visibility/lg",

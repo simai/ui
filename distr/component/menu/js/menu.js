@@ -79,7 +79,14 @@ function ensureWrap(element) {
 
   if (!wrap) {
     wrap = document.createElement('span');
-    wrap.className = 'sf-menu-element-wrap';
+    wrap.className = 'sf-menu-element-wrap'; // Reuse accessible server-rendered content instead of leaving it beside
+    // an empty wrapper. Two flex children would introduce the menu gap after
+    // hydration and change the control width.
+
+    const leading = element.querySelector(':scope > .sf-menu-element-icon');
+    const text = element.querySelector(':scope > .sf-menu-element-text');
+    if (leading) wrap.append(leading);
+    if (text) wrap.append(text);
     element.prepend(wrap);
   }
 

@@ -2,6 +2,93 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "e138a730fd7c"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   createFieldContract: () => (/* binding */ createFieldContract),
+/* harmony export */   syncFieldContract: () => (/* binding */ syncFieldContract)
+/* harmony export */ });
+let fieldSequence = 0;
+const fieldIdentities = new WeakMap();
+
+function nextIdentity(owner, prefix) {
+  if (owner && fieldIdentities.has(owner)) return fieldIdentities.get(owner);
+  const explicit = owner?.id ? String(owner.id).trim() : '';
+  const base = explicit || `${prefix}-${++fieldSequence}`;
+  const identity = {
+    controlId: `${base}-control`,
+    messageId: `${base}-message`
+  };
+
+  if (owner && (typeof owner === 'object' || typeof owner === 'function')) {
+    fieldIdentities.set(owner, identity);
+  }
+
+  return identity;
+}
+
+function mergeIdRefs(existing, additions) {
+  return [...new Set([...String(existing || '').split(/\s+/).filter(Boolean), ...additions.filter(Boolean)])].join(' ');
+}
+
+function createFieldContract(owner, {
+  prefix = 'sf-field',
+  required = false,
+  invalid = false,
+  hint = '',
+  errorMessage = ''
+} = {}) {
+  const identity = nextIdentity(owner, prefix);
+  const normalizedInvalid = Boolean(invalid);
+  const message = normalizedInvalid && errorMessage ? errorMessage : hint;
+  return { ...identity,
+    required: Boolean(required),
+    invalid: normalizedInvalid,
+    message,
+    describedBy: message ? identity.messageId : '',
+    errorMessageId: normalizedInvalid && errorMessage ? identity.messageId : ''
+  };
+}
+function syncFieldContract(root, control, {
+  prefix = 'sf-field',
+  required = false,
+  invalid = false,
+  messageNode = null,
+  errorMessage = ''
+} = {}) {
+  if (!root || !control) return null;
+  const hint = messageNode?.textContent?.trim() || '';
+  const contract = createFieldContract(root, {
+    prefix,
+    required,
+    invalid,
+    hint,
+    errorMessage
+  });
+  if (!control.id) control.id = contract.controlId;
+  control.required = contract.required;
+  root.classList.toggle('error', contract.invalid);
+  control.classList.toggle('error', contract.invalid);
+  if (contract.invalid) control.setAttribute('aria-invalid', 'true');else control.removeAttribute('aria-invalid');
+
+  if (messageNode) {
+    if (!messageNode.id) messageNode.id = contract.messageId;
+    control.setAttribute('aria-describedby', mergeIdRefs(control.getAttribute('aria-describedby'), [messageNode.id]));
+  }
+
+  if (contract.errorMessageId && messageNode) {
+    control.setAttribute('aria-errormessage', messageNode.id);
+  } else {
+    control.removeAttribute('aria-errormessage');
+  }
+
+  return contract;
+}
+
+/***/ },
+
 /***/ "58661bec99a6"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -48,6 +135,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d7f974466839");
 /* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("58661bec99a6");
 /* harmony import */ var _json_textarea_utility_json__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("9fe5ba254a5b");
+/* harmony import */ var _field_contract__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("e138a730fd7c");
+
 
 
 
@@ -62,6 +151,27 @@ function toBoolean(value, fallback = false) {
 
 function getTextareaNode(root) {
   return root?.querySelector?.('textarea') || null;
+}
+
+function getMessageNode(root) {
+  return root?.querySelector?.('.sf-textarea-hint-text-wrap') || null;
+}
+
+function ensureMessageNode(root) {
+  const existing = getMessageNode(root);
+  if (existing) return existing;
+  const messageNode = document.createElement('span');
+  messageNode.classList.add('sf-textarea-hint-text-wrap');
+  root.append(messageNode);
+  return messageNode;
+}
+
+function messageState(root) {
+  const messageNode = getMessageNode(root);
+  return {
+    messageNode,
+    errorMessage: messageNode?.dataset.fieldMessage === 'error' ? messageNode.textContent?.trim() || '' : ''
+  };
 }
 
 function parseMaskOptions(raw) {
@@ -121,6 +231,13 @@ function bindTextarea(root) {
   textarea.addEventListener('input', noopHandler);
   root.__sfTextareaNoopHandler = noopHandler;
   root.dataset[TEXTAREA_BOUND_FLAG] = '1';
+  const message = messageState(root);
+  (0,_field_contract__WEBPACK_IMPORTED_MODULE_3__.syncFieldContract)(root, textarea, {
+    prefix: 'sf-textarea',
+    required: textarea.required || Boolean(root.querySelector('.sf-textarea-required')),
+    invalid: root.classList.contains('error') || textarea.classList.contains('error'),
+    ...message
+  });
   bindMask(root, textarea);
 }
 
@@ -156,7 +273,25 @@ function setTextareaState(target, state = {}) {
   }
 
   if (Object.prototype.hasOwnProperty.call(state, 'error')) {
-    textarea.classList.toggle('error', toBoolean(state.error));
+    const invalid = toBoolean(state.error);
+    root.classList.toggle('error', invalid);
+    textarea.classList.toggle('error', invalid);
+  }
+
+  if (Object.prototype.hasOwnProperty.call(state, 'invalid')) {
+    const invalid = toBoolean(state.invalid);
+    root.classList.toggle('error', invalid);
+    textarea.classList.toggle('error', invalid);
+  }
+
+  if (Object.prototype.hasOwnProperty.call(state, 'errorMessage')) {
+    const value = String(state.errorMessage ?? '');
+    const messageNode = value ? ensureMessageNode(root) : getMessageNode(root);
+
+    if (messageNode) {
+      messageNode.textContent = value;
+      messageNode.dataset.fieldMessage = value ? 'error' : 'hint';
+    }
   }
 
   if (Object.prototype.hasOwnProperty.call(state, 'value')) {
@@ -166,6 +301,12 @@ function setTextareaState(target, state = {}) {
     }));
   }
 
+  (0,_field_contract__WEBPACK_IMPORTED_MODULE_3__.syncFieldContract)(root, textarea, {
+    prefix: 'sf-textarea',
+    required: textarea.required || Boolean(root.querySelector('.sf-textarea-required')),
+    invalid: root.classList.contains('error') || textarea.classList.contains('error'),
+    ...messageState(root)
+  });
   return true;
 }
 
@@ -186,7 +327,10 @@ class Textarea extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.C
       name = '',
       rows = 3,
       disabled = false,
+      readonly = false,
       error = false,
+      invalid = false,
+      errorMessage = '',
       mask = false,
       maskOptions,
       maskPattern
@@ -195,6 +339,7 @@ class Textarea extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.C
     this.template = document.createElement('label');
     if (this.id) this.template.id = this.id;
     this.template.classList.add('sf-textarea', `sf-textarea--size-${size}`, `sf-textarea--${type}`);
+    this.template.classList.toggle('error', toBoolean(invalid || error, false));
 
     if (className) {
       this.template.classList.add(...`${className}`.split(' ').filter(Boolean));
@@ -220,7 +365,9 @@ class Textarea extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.C
     textarea.rows = Number(rows) > 0 ? Number(rows) : 3;
     if (name) textarea.name = String(name);
     textarea.disabled = toBoolean(disabled, false);
-    textarea.classList.toggle('error', toBoolean(error, false));
+    textarea.readOnly = toBoolean(readonly, false);
+    textarea.required = toBoolean(required, true);
+    textarea.classList.toggle('error', toBoolean(invalid || error, false));
     textarea.dataset.mask = String(Boolean(mask));
     if (maskPattern) textarea.dataset.maskPattern = String(maskPattern);
 
@@ -229,11 +376,13 @@ class Textarea extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.C
     }
 
     this.template.append(labelWrap, textarea);
+    const message = toBoolean(invalid || error, false) && errorMessage ? errorMessage : hint;
 
-    if (hint) {
+    if (message) {
       const hintWrap = document.createElement('span');
       hintWrap.classList.add('sf-textarea-hint-text-wrap');
-      hintWrap.textContent = String(hint);
+      hintWrap.textContent = String(message);
+      hintWrap.dataset.fieldMessage = toBoolean(invalid || error, false) && errorMessage ? 'error' : 'hint';
       this.template.append(hintWrap);
     }
 

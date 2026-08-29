@@ -83,18 +83,6 @@
     border-bottom-right-radius: var(--sf-radius-circle);
   }
   [dir="ltr"] .sf-step {
-    border-right-width: 1px;
-  }
-  [dir="rtl"] .sf-step {
-    border-left-width: 1px;
-  }
-  [dir="ltr"] .sf-step {
-    border-left-width: 1px;
-  }
-  [dir="rtl"] .sf-step {
-    border-right-width: 1px;
-  }
-  [dir="ltr"] .sf-step {
     border-top-right-radius: var(--sf-radius-circle);
   }
   [dir="rtl"] .sf-step {

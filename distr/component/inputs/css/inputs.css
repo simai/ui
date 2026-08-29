@@ -20,7 +20,8 @@
 }
 @layer sf.components {
   /* utility-hint: display/flex (.flex) flex-direction/column (.flex-col) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-space-1\/4) justify-content/flex-start (.justify-start) align-items/flex-start (.items-start) */
-  .sf-input {--sf-input--radius: var(--sf-radius--ui);
+  .sf-input {
+    --sf-input--radius: var(--sf-radius--ui);
     background-color: transparent;
     background-color: var(--sf-input--background-color, transparent);
     gap: var(--sf-space-1\/4);

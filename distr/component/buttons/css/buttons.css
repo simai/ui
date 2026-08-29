@@ -9,35 +9,35 @@
 @layer sf.components {
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) justify-content/center (.justify-center) align-items/center (.items-center) */
   [dir="ltr"] .sf-button {
-    border-bottom-right-radius: var(--sf-radius-default);
+    border-bottom-right-radius: var(--sf-button--radius);
     border-bottom-right-radius: var(--sf-button--border-bottom-right-radius, var(--sf-button--radius));
   }
   [dir="rtl"] .sf-button {
-    border-bottom-left-radius: var(--sf-radius-default);
+    border-bottom-left-radius: var(--sf-button--radius);
     border-bottom-left-radius: var(--sf-button--border-bottom-right-radius, var(--sf-button--radius));
   }
   [dir="ltr"] .sf-button {
-    border-bottom-left-radius: var(--sf-radius-default);
+    border-bottom-left-radius: var(--sf-button--radius);
     border-bottom-left-radius: var(--sf-button--border-bottom-left-radius, var(--sf-button--radius));
   }
   [dir="rtl"] .sf-button {
-    border-bottom-right-radius: var(--sf-radius-default);
+    border-bottom-right-radius: var(--sf-button--radius);
     border-bottom-right-radius: var(--sf-button--border-bottom-left-radius, var(--sf-button--radius));
   }
   [dir="ltr"] .sf-button {
-    border-top-right-radius: var(--sf-radius-default);
+    border-top-right-radius: var(--sf-button--radius);
     border-top-right-radius: var(--sf-button--border-top-right-radius, var(--sf-button--radius));
   }
   [dir="rtl"] .sf-button {
-    border-top-left-radius: var(--sf-radius-default);
+    border-top-left-radius: var(--sf-button--radius);
     border-top-left-radius: var(--sf-button--border-top-right-radius, var(--sf-button--radius));
   }
   [dir="ltr"] .sf-button {
-    border-top-left-radius: var(--sf-radius-default);
+    border-top-left-radius: var(--sf-button--radius);
     border-top-left-radius: var(--sf-button--border-top-left-radius, var(--sf-button--radius));
   }
   [dir="rtl"] .sf-button {
-    border-top-right-radius: var(--sf-radius-default);
+    border-top-right-radius: var(--sf-button--radius);
     border-top-right-radius: var(--sf-button--border-top-left-radius, var(--sf-button--radius));
   }
   [dir="ltr"] .sf-button {
@@ -69,49 +69,38 @@
     border-right-width: var(--sf-button--border-inline-start-width, 0);
   }
   [dir="ltr"] .sf-button {
-    border-bottom-right-radius: var(--sf-radius-default);
+    border-bottom-right-radius: var(--sf-button--radius);
   }
   [dir="rtl"] .sf-button {
-    border-bottom-left-radius: var(--sf-radius-default);
+    border-bottom-left-radius: var(--sf-button--radius);
   }
   [dir="ltr"] .sf-button {
-    border-bottom-left-radius: var(--sf-radius-default);
+    border-bottom-left-radius: var(--sf-button--radius);
   }
   [dir="rtl"] .sf-button {
-    border-bottom-right-radius: var(--sf-radius-default);
+    border-bottom-right-radius: var(--sf-button--radius);
   }
   [dir="ltr"] .sf-button {
-    border-top-right-radius: var(--sf-radius-default);
+    border-top-right-radius: var(--sf-button--radius);
   }
   [dir="rtl"] .sf-button {
-    border-top-left-radius: var(--sf-radius-default);
+    border-top-left-radius: var(--sf-button--radius);
   }
   [dir="ltr"] .sf-button {
-    border-top-left-radius: var(--sf-radius-default);
+    border-top-left-radius: var(--sf-button--radius);
   }
   [dir="rtl"] .sf-button {
-    border-top-right-radius: var(--sf-radius-default);
+    border-top-right-radius: var(--sf-button--radius);
   }
-  [dir="ltr"] .sf-button {
-    border-right-width: 0;
-  }
-  [dir="rtl"] .sf-button {
-    border-left-width: 0;
-  }
-  [dir="ltr"] .sf-button {
-    border-left-width: 0;
-  }
-  [dir="rtl"] .sf-button {
-    border-right-width: 0;
-  }
-  .sf-button {--sf-button--radius: var(--sf-radius--ui);
-    border-end-end-radius: var(--sf-radius-default);
+  .sf-button {
+    --sf-button--radius: var(--sf-radius--ui);
+    border-end-end-radius: var(--sf-button--radius);
     border-end-end-radius: var(--sf-button--border-bottom-right-radius, var(--sf-button--radius));
-    border-end-start-radius: var(--sf-radius-default);
+    border-end-start-radius: var(--sf-button--radius);
     border-end-start-radius: var(--sf-button--border-bottom-left-radius, var(--sf-button--radius));
-    border-start-end-radius: var(--sf-radius-default);
+    border-start-end-radius: var(--sf-button--radius);
     border-start-end-radius: var(--sf-button--border-top-right-radius, var(--sf-button--radius));
-    border-start-start-radius: var(--sf-radius-default);
+    border-start-start-radius: var(--sf-button--radius);
     border-start-start-radius: var(--sf-button--border-top-left-radius, var(--sf-button--radius));
     -webkit-padding-start: var(--sf-button--padding-inline-start);
             padding-inline-start: var(--sf-button--padding-inline-start);
@@ -389,7 +378,7 @@
     --sf-button--border-width: 1px;
   }
   .sf-button.radius-default {
-    border-radius: var(--sf-button--radius);
+    border-radius: var(--sf-radius-default);
   }
   .sf-button.radius-square {
     border-radius: var(--sf-radius-square);
@@ -418,12 +407,6 @@
     border-right-color: transparent;
     border-right-color: var(--sf-white--alfa-24, transparent);
   }
-  [dir="ltr"] .sf-button.segment-end {
-    border-left-color: transparent;
-  }
-  [dir="rtl"] .sf-button.segment-end {
-    border-right-color: transparent;
-  }
   .sf-button.segment-end {
     --sf-button--border-top-left-radius: var(--sf-radius-square);
     --sf-button--border-bottom-left-radius: var(--sf-radius-square);
@@ -439,12 +422,6 @@
     border-right-color: transparent;
     border-right-color: var(--sf-white--alfa-24, transparent);
   }
-  [dir="ltr"] .sf-button:not(.sf-button--outline).segment-end {
-    border-left-color: transparent;
-  }
-  [dir="rtl"] .sf-button:not(.sf-button--outline).segment-end {
-    border-right-color: transparent;
-  }
   .sf-button:not(.sf-button--outline).segment-end {
     border-inline-start-color: transparent;
     border-inline-start-color: var(--sf-white--alfa-24, transparent);
@@ -456,12 +433,6 @@
   [dir="rtl"] .sf-button:not(.sf-button--outline).segment-start {
     border-left-color: transparent;
     border-left-color: var(--sf-white--alfa-24, transparent);
-  }
-  [dir="ltr"] .sf-button:not(.sf-button--outline).segment-start {
-    border-right-color: transparent;
-  }
-  [dir="rtl"] .sf-button:not(.sf-button--outline).segment-start {
-    border-left-color: transparent;
   }
   .sf-button:not(.sf-button--outline).segment-start {
     border-inline-end-color: transparent;
@@ -483,18 +454,6 @@
     border-right-color: transparent;
     border-right-color: var(--sf-white--alfa-24, transparent);
   }
-  [dir="ltr"] .sf-button:not(.sf-button--outline).segment-middle {
-    border-right-color: transparent;
-  }
-  [dir="rtl"] .sf-button:not(.sf-button--outline).segment-middle {
-    border-left-color: transparent;
-  }
-  [dir="ltr"] .sf-button:not(.sf-button--outline).segment-middle {
-    border-left-color: transparent;
-  }
-  [dir="rtl"] .sf-button:not(.sf-button--outline).segment-middle {
-    border-right-color: transparent;
-  }
   .sf-button:not(.sf-button--outline).segment-middle {
     border-inline-end-color: transparent;
     border-inline-end-color: var(--sf-white--alfa-24, transparent);
@@ -503,7 +462,10 @@
   }
 }
 @layer sf.states {
-  .sf-button.sf-button--outline.sf-button--primary:not(:disabled):not(.disabled):focus, .sf-button.sf-button--outline.sf-button--on-surface:not(:disabled):not(.disabled):focus, .sf-button.sf-button--link.sf-button--primary:not(:disabled):not(.disabled):focus, .sf-button.sf-button--link.sf-button--on-surface:not(:disabled):not(.disabled):focus {
+  .sf-button.sf-button--outline.sf-button--primary:not(:disabled):not(.disabled).focus-visible, .sf-button.sf-button--outline.sf-button--on-surface:not(:disabled):not(.disabled).focus-visible, .sf-button.sf-button--link.sf-button--primary:not(:disabled):not(.disabled).focus-visible, .sf-button.sf-button--link.sf-button--on-surface:not(:disabled):not(.disabled).focus-visible {
+    --sf-button--background-color: var(--sf-transparent-for-focus);
+  }
+  .sf-button.sf-button--outline.sf-button--primary:not(:disabled):not(.disabled):focus-visible, .sf-button.sf-button--outline.sf-button--on-surface:not(:disabled):not(.disabled):focus-visible, .sf-button.sf-button--link.sf-button--primary:not(:disabled):not(.disabled):focus-visible, .sf-button.sf-button--link.sf-button--on-surface:not(:disabled):not(.disabled):focus-visible {
     --sf-button--background-color: var(--sf-transparent-for-focus);
   }
   .sf-button.sf-button--default.sf-button--primary:disabled, .sf-button.sf-button--default.sf-button--on-surface:disabled, .sf-button.sf-button--tonal.sf-button--secondary:disabled, .sf-button.sf-button--tonal.sf-button--on-surface:disabled {
@@ -572,7 +534,10 @@
   .sf-button.sf-button--outline.sf-button--on-surface:not(:disabled):not(.disabled):active .sf-icon, .sf-button.sf-button--outline.sf-button--on-surface:not(:disabled):not(.disabled).active .sf-icon, .sf-button.sf-button--link.sf-button--on-surface:not(:disabled):not(.disabled):active .sf-icon, .sf-button.sf-button--link.sf-button--on-surface:not(:disabled):not(.disabled).active .sf-icon {
     --sf-icon--color: var(--sf-on-surface-active);
   }
-  .sf-button:not(:disabled):not(.disabled):focus {
+  .sf-button:not(:disabled):not(.disabled).focus-visible {
+    --sf-button--box-shadow: var(--sf-ui-focus);
+  }
+  .sf-button:not(:disabled):not(.disabled):focus-visible {
     --sf-button--box-shadow: var(--sf-ui-focus);
   }
   .sf-button.sf-button.sf-button:disabled .sf-icon {
@@ -651,6 +616,24 @@
   }
 }
 @layer sf.override {
+  /* An outline segment and its link siblings form one closed control. The
+     link variant previously kept only a translucent join, leaving its outer
+     top, bottom and end edges transparent. Draw the group perimeter once and
+     let the selected outline segment own both of its joins. */
+  .sf-button.sf-button--link[class*=segment-] {
+    border-color: var(--sf-outline);
+    --sf-button--border-top-width: 1px;
+    --sf-button--border-bottom-width: 1px;
+  }
+  .sf-button.sf-button--link.segment-start,
+  .sf-button.sf-button--link.segment-middle {
+    --sf-button--border-inline-start-width: 1px;
+    --sf-button--border-inline-end-width: 0;
+  }
+  .sf-button.sf-button--link.segment-end {
+    --sf-button--border-inline-start-width: 1px;
+    --sf-button--border-inline-end-width: 1px;
+  }
   sf-button[\:has\(.sf-button--outline\[class*\%3Dsegment-\]\)] + sf-icon-button .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline),
   .sf-button.sf-button--outline[class*=segment-] + .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
     --sf-icon-button--border-top-width: 1px;
@@ -706,5 +689,101 @@
     --sf-button--border-inline-end-width: 1px;
     --sf-button--border-bottom-width: 1px;
     --sf-button--border-inline-start-width: 1px;
+  }
+  /* Keep this after the compatibility rules above: the selected segment's
+     end border is the only line at this join. */
+  [dir="ltr"] sf-button[*|\:has\(.sf-button--outline\[class] + sf-button .sf-button.sf-button--link[class*=segment-],[dir="ltr"] 
+  .sf-button.sf-button--outline[class*=segment-] + .sf-button.sf-button--link[class*=segment-] {
+    border-left-width: 0;
+  }
+  [dir="rtl"] sf-button[*|\:has\(.sf-button--outline\[class] + sf-button .sf-button.sf-button--link[class*=segment-],[dir="rtl"] 
+  .sf-button.sf-button--outline[class*=segment-] + .sf-button.sf-button--link[class*=segment-] {
+    border-right-width: 0;
+  }
+  sf-button[\:has\(.sf-button--outline\[class*\%3Dsegment-\]\)] + sf-button .sf-button.sf-button--link[class*=segment-],
+  .sf-button.sf-button--outline[class*=segment-] + .sf-button.sf-button--link[class*=segment-] {
+    --sf-button--border-inline-start-width: 0;
+    border-inline-start-width: 0;
+  }
+  [dir="ltr"] sf-button[\:has\(.sf-button--outline\[class*\%3Dsegment-\]\)] + sf-button .sf-button.sf-button--link[class*=segment-],[dir="ltr"] 
+  .sf-button.sf-button--outline[class*=segment-] + .sf-button.sf-button--link[class*=segment-] {
+    border-left-width: 0;
+  }
+  [dir="ltr"] sf-button:has(.sf-button--outline[class*=segment-]) + sf-button .sf-button.sf-button--link[class*=segment-],[dir="ltr"] 
+  .sf-button.sf-button--outline[class*=segment-] + .sf-button.sf-button--link[class*=segment-] {
+    border-left-width: 0;
+  }
+  [dir="rtl"] sf-button[\:has\(.sf-button--outline\[class*\%3Dsegment-\]\)] + sf-button .sf-button.sf-button--link[class*=segment-],[dir="rtl"] 
+  .sf-button.sf-button--outline[class*=segment-] + .sf-button.sf-button--link[class*=segment-] {
+    border-right-width: 0;
+  }
+  [dir="rtl"] sf-button:has(.sf-button--outline[class*=segment-]) + sf-button .sf-button.sf-button--link[class*=segment-],[dir="rtl"] 
+  .sf-button.sf-button--outline[class*=segment-] + .sf-button.sf-button--link[class*=segment-] {
+    border-right-width: 0;
+  }
+  [dir="ltr"] sf-button[*|\:has\(.sf-button--outline\[class] + sf-button .sf-button.sf-button--link[class*=segment-],[dir="ltr"] 
+  .sf-button.sf-button--outline[class*=segment-] + .sf-button.sf-button--link[class*=segment-] {
+    border-left-width: 0;
+  }
+  [dir="rtl"] sf-button[*|\:has\(.sf-button--outline\[class] + sf-button .sf-button.sf-button--link[class*=segment-],[dir="rtl"] 
+  .sf-button.sf-button--outline[class*=segment-] + .sf-button.sf-button--link[class*=segment-] {
+    border-right-width: 0;
+  }
+  sf-button[\:has\(.sf-button--outline\[class*\%3Dsegment-\]\)] + sf-button .sf-button.sf-button--link[class*=segment-],
+  .sf-button.sf-button--outline[class*=segment-] + .sf-button.sf-button--link[class*=segment-] {
+    --sf-button--border-inline-start-width: 0;
+    border-inline-start-width: 0;
+  }
+  sf-button:has(.sf-button--outline[class*=segment-]) + sf-button .sf-button.sf-button--link[class*=segment-],
+  .sf-button.sf-button--outline[class*=segment-] + .sf-button.sf-button--link[class*=segment-] {
+    --sf-button--border-inline-start-width: 0;
+    border-inline-start-width: 0;
+  }
+  [dir="ltr"] sf-button[*|\:has\(\%2B\%20sf-button\%20.sf-button--outline\[class] .sf-button.sf-button--link[class*=segment-],[dir="ltr"] 
+  .sf-button.sf-button--link[class*=segment-][*|\:has\(\%2B\%20.sf-button.sf-button--outline\[class] {
+    border-right-width: 0;
+  }
+  [dir="rtl"] sf-button[*|\:has\(\%2B\%20sf-button\%20.sf-button--outline\[class] .sf-button.sf-button--link[class*=segment-],[dir="rtl"] 
+  .sf-button.sf-button--link[class*=segment-][*|\:has\(\%2B\%20.sf-button.sf-button--outline\[class] {
+    border-left-width: 0;
+  }
+  sf-button[\:has\(\%2B\%20sf-button\%20.sf-button--outline\[class*\%3Dsegment-\]\)] .sf-button.sf-button--link[class*=segment-],
+  .sf-button.sf-button--link[class*=segment-][\:has\(\%2B\%20.sf-button.sf-button--outline\[class*\%3Dsegment-\]\)] {
+    --sf-button--border-inline-end-width: 0;
+    border-inline-end-width: 0;
+  }
+  [dir="ltr"] sf-button[\:has\(\%2B\%20sf-button\%20.sf-button--outline\[class*\%3Dsegment-\]\)] .sf-button.sf-button--link[class*=segment-],[dir="ltr"] 
+  .sf-button.sf-button--link[class*=segment-][\:has\(\%2B\%20.sf-button.sf-button--outline\[class*\%3Dsegment-\]\)] {
+    border-right-width: 0;
+  }
+  [dir="ltr"] sf-button:has(+ sf-button .sf-button--outline[class*=segment-]) .sf-button.sf-button--link[class*=segment-],[dir="ltr"] 
+  .sf-button.sf-button--link[class*=segment-]:has(+ .sf-button.sf-button--outline[class*=segment-]) {
+    border-right-width: 0;
+  }
+  [dir="rtl"] sf-button[\:has\(\%2B\%20sf-button\%20.sf-button--outline\[class*\%3Dsegment-\]\)] .sf-button.sf-button--link[class*=segment-],[dir="rtl"] 
+  .sf-button.sf-button--link[class*=segment-][\:has\(\%2B\%20.sf-button.sf-button--outline\[class*\%3Dsegment-\]\)] {
+    border-left-width: 0;
+  }
+  [dir="rtl"] sf-button:has(+ sf-button .sf-button--outline[class*=segment-]) .sf-button.sf-button--link[class*=segment-],[dir="rtl"] 
+  .sf-button.sf-button--link[class*=segment-]:has(+ .sf-button.sf-button--outline[class*=segment-]) {
+    border-left-width: 0;
+  }
+  [dir="ltr"] sf-button[*|\:has\(\%2B\%20sf-button\%20.sf-button--outline\[class] .sf-button.sf-button--link[class*=segment-],[dir="ltr"] 
+  .sf-button.sf-button--link[class*=segment-][*|\:has\(\%2B\%20.sf-button.sf-button--outline\[class] {
+    border-right-width: 0;
+  }
+  [dir="rtl"] sf-button[*|\:has\(\%2B\%20sf-button\%20.sf-button--outline\[class] .sf-button.sf-button--link[class*=segment-],[dir="rtl"] 
+  .sf-button.sf-button--link[class*=segment-][*|\:has\(\%2B\%20.sf-button.sf-button--outline\[class] {
+    border-left-width: 0;
+  }
+  sf-button[\:has\(\%2B\%20sf-button\%20.sf-button--outline\[class*\%3Dsegment-\]\)] .sf-button.sf-button--link[class*=segment-],
+  .sf-button.sf-button--link[class*=segment-][\:has\(\%2B\%20.sf-button.sf-button--outline\[class*\%3Dsegment-\]\)] {
+    --sf-button--border-inline-end-width: 0;
+    border-inline-end-width: 0;
+  }
+  sf-button:has(+ sf-button .sf-button--outline[class*=segment-]) .sf-button.sf-button--link[class*=segment-],
+  .sf-button.sf-button--link[class*=segment-]:has(+ .sf-button.sf-button--outline[class*=segment-]) {
+    --sf-button--border-inline-end-width: 0;
+    border-inline-end-width: 0;
   }
 }

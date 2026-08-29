@@ -13750,64 +13750,100 @@
 }
 @layer sf.utilities {
   .text-1\/4 {
-    font-size: var(--sf-text-size-1\/4);
-    line-height: var(--sf-text-height-1\/4);
+    font-size: var(--sf-text--size-1\/4);
+    line-height: var(--sf-text--height-1\/4);
   }
   .text-1\/3 {
-    font-size: var(--sf-text-size-1\/3);
-    line-height: var(--sf-text-height-1\/3);
+    font-size: var(--sf-text--size-1\/3);
+    line-height: var(--sf-text--height-1\/3);
   }
   .text-1\/2 {
-    font-size: var(--sf-text-size-1\/2);
-    line-height: var(--sf-text-height-1\/2);
+    font-size: var(--sf-text--size-1\/2);
+    line-height: var(--sf-text--height-1\/2);
   }
   .text-1 {
-    font-size: var(--sf-text-size-1);
-    line-height: var(--sf-text-height-1);
+    font-size: var(--sf-text--size-1);
+    line-height: var(--sf-text--height-1);
   }
   .text-2 {
-    font-size: var(--sf-text-size-2);
-    line-height: var(--sf-text-height-2);
+    font-size: var(--sf-text--size-2);
+    line-height: var(--sf-text--height-2);
   }
   .text-3 {
-    font-size: var(--sf-text-size-3);
-    line-height: var(--sf-text-height-3);
+    font-size: var(--sf-text--size-3);
+    line-height: var(--sf-text--height-3);
   }
   .text-4 {
-    font-size: var(--sf-text-size-4);
-    line-height: var(--sf-text-height-4);
+    font-size: var(--sf-text--size-4);
+    line-height: var(--sf-text--height-4);
   }
   .text-5 {
-    font-size: var(--sf-text-size-5);
-    line-height: var(--sf-text-height-5);
+    font-size: var(--sf-text--size-5);
+    line-height: var(--sf-text--height-5);
   }
   .text-6 {
-    font-size: var(--sf-text-size-6);
-    line-height: var(--sf-text-height-6);
+    font-size: var(--sf-text--size-6);
+    line-height: var(--sf-text--height-6);
   }
   .text-7 {
-    font-size: var(--sf-text-size-7);
-    line-height: var(--sf-text-height-7);
+    font-size: var(--sf-text--size-7);
+    line-height: var(--sf-text--height-7);
   }
   .text-8 {
-    font-size: var(--sf-text-size-8);
-    line-height: var(--sf-text-height-8);
+    font-size: var(--sf-text--size-8);
+    line-height: var(--sf-text--height-8);
   }
   .text-9 {
-    font-size: var(--sf-text-size-9);
-    line-height: var(--sf-text-height-9);
+    font-size: var(--sf-text--size-9);
+    line-height: var(--sf-text--height-9);
   }
   .text-10 {
-    font-size: var(--sf-text-size-10);
-    line-height: var(--sf-text-height-10);
+    font-size: var(--sf-text--size-10);
+    line-height: var(--sf-text--height-10);
   }
   .text-11 {
-    font-size: var(--sf-text-size-11);
-    line-height: var(--sf-text-height-11);
+    font-size: var(--sf-text--size-11);
+    line-height: var(--sf-text--height-11);
   }
   .text-12 {
-    font-size: var(--sf-text-size-12);
-    line-height: var(--sf-text-height-12);
+    font-size: var(--sf-text--size-12);
+    line-height: var(--sf-text--height-12);
+  }
+  .text-1.heading {
+    line-height: var(--sf-title--height-1);
+  }
+  .text-2.heading {
+    line-height: var(--sf-title--height-2);
+  }
+  .text-3.heading {
+    line-height: var(--sf-title--height-3);
+  }
+  .text-4.heading {
+    line-height: var(--sf-title--height-4);
+  }
+  .text-5.heading {
+    line-height: var(--sf-title--height-5);
+  }
+  .text-6.heading {
+    line-height: var(--sf-title--height-6);
+  }
+  .text-7.heading {
+    line-height: var(--sf-title--height-7);
+  }
+  .text-8.heading {
+    line-height: var(--sf-title--height-8);
+  }
+  .text-9.heading {
+    line-height: var(--sf-title--height-9);
+  }
+  .text-10.heading {
+    line-height: var(--sf-title--height-10);
+  }
+  .text-11.heading {
+    line-height: var(--sf-title--height-11);
+  }
+  .text-12.heading {
+    line-height: var(--sf-title--height-12);
   }
 }
 @layer sf.utilities {
@@ -15078,28 +15114,28 @@
 }
 @layer sf.utilities {
   h1 {
-    font-size: var(--sf-text-size-6);
-    line-height: var(--sf-text-height-6);
+    font-size: var(--sf-heading-1--size);
+    line-height: var(--sf-heading-1--height);
   }
   h2 {
-    font-size: var(--sf-text-size-5);
-    line-height: var(--sf-text-height-5);
+    font-size: var(--sf-heading-2--size);
+    line-height: var(--sf-heading-2--height);
   }
   h3 {
-    font-size: var(--sf-text-size-4);
-    line-height: var(--sf-text-height-4);
+    font-size: var(--sf-heading-3--size);
+    line-height: var(--sf-heading-3--height);
   }
   h4 {
-    font-size: var(--sf-text-size-3);
-    line-height: var(--sf-text-height-3);
+    font-size: var(--sf-heading-4--size);
+    line-height: var(--sf-heading-4--height);
   }
   h5 {
-    font-size: var(--sf-text-size-2);
-    line-height: var(--sf-text-height-2);
+    font-size: var(--sf-heading-5--size);
+    line-height: var(--sf-heading-5--height);
   }
   h6 {
-    font-size: var(--sf-text-size-1);
-    line-height: var(--sf-text-height-1);
+    font-size: var(--sf-heading-6--size);
+    line-height: var(--sf-heading-6--height);
   }
 }
 @layer sf.utilities {
@@ -15550,49 +15586,49 @@
 }
 @layer sf.utilities {
   .line-1\/4 {
-    line-height: var(--sf-text-height-1\/4);
+    line-height: var(--sf-text--height-1\/4);
   }
   .line-1\/3 {
-    line-height: var(--sf-text-height-1\/3);
+    line-height: var(--sf-text--height-1\/3);
   }
   .line-1\/2 {
-    line-height: var(--sf-text-height-1\/2);
+    line-height: var(--sf-text--height-1\/2);
   }
   .line-1 {
-    line-height: var(--sf-text-height-1);
+    line-height: var(--sf-text--height-1);
   }
   .line-2 {
-    line-height: var(--sf-text-height-2);
+    line-height: var(--sf-text--height-2);
   }
   .line-3 {
-    line-height: var(--sf-text-height-3);
+    line-height: var(--sf-text--height-3);
   }
   .line-4 {
-    line-height: var(--sf-text-height-4);
+    line-height: var(--sf-text--height-4);
   }
   .line-5 {
-    line-height: var(--sf-text-height-5);
+    line-height: var(--sf-text--height-5);
   }
   .line-6 {
-    line-height: var(--sf-text-height-6);
+    line-height: var(--sf-text--height-6);
   }
   .line-7 {
-    line-height: var(--sf-text-height-7);
+    line-height: var(--sf-text--height-7);
   }
   .line-8 {
-    line-height: var(--sf-text-height-8);
+    line-height: var(--sf-text--height-8);
   }
   .line-9 {
-    line-height: var(--sf-text-height-9);
+    line-height: var(--sf-text--height-9);
   }
   .line-10 {
-    line-height: var(--sf-text-height-10);
+    line-height: var(--sf-text--height-10);
   }
   .line-11 {
-    line-height: var(--sf-text-height-11);
+    line-height: var(--sf-text--height-11);
   }
   .line-12 {
-    line-height: var(--sf-text-height-12);
+    line-height: var(--sf-text--height-12);
   }
   .line-tight {
     line-height: 1.25;
@@ -22103,6 +22139,30 @@
   }
 }
 @layer sf.utilities {
+  .max-container-1 .container {
+    width: 100%;
+  }
+  .max-container-2 .container {
+    width: 100%;
+  }
+  .max-container-3 .container {
+    width: 100%;
+  }
+  .max-container-4 .container {
+    width: 100%;
+  }
+  .max-container-5 .container {
+    width: 100%;
+  }
+  .max-container-6 .container {
+    width: 100%;
+  }
+  .max-container-7 .container {
+    width: 100%;
+  }
+  .max-container-8 .container {
+    width: 100%;
+  }
   @media (min-width: 960px) {
     .max-container-1 .container {
       max-width: var(--sf-container-1--size-max);
@@ -36390,52 +36450,52 @@
 @layer sf.utilities {}
 @layer sf.utilities {
   .title-1 {
-    font-size: var(--sf-text-size-1);
-    line-height: var(--sf-title-height-1);
+    font-size: var(--sf-text--size-1);
+    line-height: var(--sf-title--height-1);
   }
   .title-2 {
-    font-size: var(--sf-text-size-2);
-    line-height: var(--sf-title-height-2);
+    font-size: var(--sf-text--size-2);
+    line-height: var(--sf-title--height-2);
   }
   .title-3 {
-    font-size: var(--sf-text-size-3);
-    line-height: var(--sf-title-height-3);
+    font-size: var(--sf-text--size-3);
+    line-height: var(--sf-title--height-3);
   }
   .title-4 {
-    font-size: var(--sf-text-size-4);
-    line-height: var(--sf-title-height-4);
+    font-size: var(--sf-text--size-4);
+    line-height: var(--sf-title--height-4);
   }
   .title-5 {
-    font-size: var(--sf-text-size-5);
-    line-height: var(--sf-title-height-5);
+    font-size: var(--sf-text--size-5);
+    line-height: var(--sf-title--height-5);
   }
   .title-6 {
-    font-size: var(--sf-text-size-6);
-    line-height: var(--sf-title-height-6);
+    font-size: var(--sf-text--size-6);
+    line-height: var(--sf-title--height-6);
   }
   .title-7 {
-    font-size: var(--sf-text-size-7);
-    line-height: var(--sf-title-height-7);
+    font-size: var(--sf-text--size-7);
+    line-height: var(--sf-title--height-7);
   }
   .title-8 {
-    font-size: var(--sf-text-size-8);
-    line-height: var(--sf-title-height-8);
+    font-size: var(--sf-text--size-8);
+    line-height: var(--sf-title--height-8);
   }
   .title-9 {
-    font-size: var(--sf-text-size-9);
-    line-height: var(--sf-title-height-9);
+    font-size: var(--sf-text--size-9);
+    line-height: var(--sf-title--height-9);
   }
   .title-10 {
-    font-size: var(--sf-text-size-10);
-    line-height: var(--sf-title-height-10);
+    font-size: var(--sf-text--size-10);
+    line-height: var(--sf-title--height-10);
   }
   .title-11 {
-    font-size: var(--sf-text-size-11);
-    line-height: var(--sf-title-height-11);
+    font-size: var(--sf-text--size-11);
+    line-height: var(--sf-title--height-11);
   }
   .title-12 {
-    font-size: var(--sf-text-size-12);
-    line-height: var(--sf-title-height-12);
+    font-size: var(--sf-text--size-12);
+    line-height: var(--sf-title--height-12);
   }
 }
 @layer sf.utilities {

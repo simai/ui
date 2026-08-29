@@ -50,7 +50,7 @@
   font-style: normal;
   font-weight: 100 700;
   font-display: block;
-  src: url("../fonts/MaterialSymbols-Outlined.woff2") format("woff2");
+  src: url(../a5f1f832a64baed42867.woff2) format("woff2");
 }
 .sf-icon {
   --sf-icon-line-height: inherit;
@@ -167,6 +167,72 @@
 }
 .sf-icon--size-7 {
   --sf-icon--font-size: var(--sf-icon-size-7);
+  --sf-icon--width: var(--sf-icon-size-7);
+  --sf-icon--height: var(--sf-icon-size-7);
+}
+
+/*
+ * Reserve the final icon geometry before the Smart Component is registered.
+ * The light-DOM host is intentionally empty until JavaScript renders the
+ * internal `.sf-icon`, so without this contract controls grow after first
+ * paint. The same variables are used by the rendered icon above.
+ */
+sf-icon:not(:defined) {
+  display: inline-flex;
+  flex: none;
+  width: var(--sf-icon-size-3);
+  width: var(--sf-icon--width, var(--sf-icon-size-3));
+  height: var(--sf-icon-size-3);
+  height: var(--sf-icon--height, var(--sf-icon-size-3));
+  vertical-align: bottom;
+}
+
+sf-icon[size="1/4"]:not(:defined) {
+  --sf-icon--width: var(--sf-icon-size-1\/4);
+  --sf-icon--height: var(--sf-icon-size-1\/4);
+}
+
+sf-icon[size="1/3"]:not(:defined) {
+  --sf-icon--width: var(--sf-icon-size-1\/3);
+  --sf-icon--height: var(--sf-icon-size-1\/3);
+}
+
+sf-icon[size="1/2"]:not(:defined) {
+  --sf-icon--width: var(--sf-icon-size-1\/2);
+  --sf-icon--height: var(--sf-icon-size-1\/2);
+}
+
+sf-icon[size="1"]:not(:defined) {
+  --sf-icon--width: var(--sf-icon-size-1);
+  --sf-icon--height: var(--sf-icon-size-1);
+}
+
+sf-icon[size="2"]:not(:defined) {
+  --sf-icon--width: var(--sf-icon-size-2);
+  --sf-icon--height: var(--sf-icon-size-2);
+}
+
+sf-icon[size="3"]:not(:defined) {
+  --sf-icon--width: var(--sf-icon-size-3);
+  --sf-icon--height: var(--sf-icon-size-3);
+}
+
+sf-icon[size="4"]:not(:defined) {
+  --sf-icon--width: var(--sf-icon-size-4);
+  --sf-icon--height: var(--sf-icon-size-4);
+}
+
+sf-icon[size="5"]:not(:defined) {
+  --sf-icon--width: var(--sf-icon-size-5);
+  --sf-icon--height: var(--sf-icon-size-5);
+}
+
+sf-icon[size="6"]:not(:defined) {
+  --sf-icon--width: var(--sf-icon-size-6);
+  --sf-icon--height: var(--sf-icon-size-6);
+}
+
+sf-icon[size="7"]:not(:defined) {
   --sf-icon--width: var(--sf-icon-size-7);
   --sf-icon--height: var(--sf-icon-size-7);
 }

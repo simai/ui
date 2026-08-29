@@ -10,6 +10,7 @@ const TRACK_CLASS = 'sf-scrollbar__track';
 const THUMB_CLASS = 'sf-scrollbar__thumb';
 const MANAGED_PRESETS = new Set(['overlay', 'persistent']);
 const VALID_PRESETS = new Set(['overlay', 'standard', 'persistent', 'hidden']);
+const VALID_AXES = new Set(['vertical', 'horizontal']);
 const IDLE_DELAY = 900;
 const controllers = new WeakMap();
 let viewportId = 0;
@@ -19,14 +20,19 @@ function getPreset(root) {
   return VALID_PRESETS.has(value) ? value : 'overlay';
 }
 
-function createTrack(viewport) {
+function getAxis(root) {
+  const value = String(root.getAttribute('data-sf-scrollbar-axis') || 'vertical').trim().toLowerCase();
+  return VALID_AXES.has(value) ? value : 'vertical';
+}
+
+function createTrack(viewport, axis) {
   const track = document.createElement('div');
   const thumb = document.createElement('button');
-  track.className = TRACK_CLASS;
-  thumb.className = THUMB_CLASS;
+  track.className = `${TRACK_CLASS} ${TRACK_CLASS}--${axis}`;
+  thumb.className = `${THUMB_CLASS} ${THUMB_CLASS}--${axis}`;
   thumb.type = 'button';
   thumb.setAttribute('role', 'scrollbar');
-  thumb.setAttribute('aria-orientation', 'vertical');
+  thumb.setAttribute('aria-orientation', axis);
   thumb.setAttribute('aria-valuemin', '0');
   thumb.setAttribute('aria-valuemax', '100');
   thumb.setAttribute('aria-valuenow', '0');
@@ -46,10 +52,11 @@ function createTrack(viewport) {
 }
 
 class ScrollbarController {
-  constructor(root, viewport, preset) {
+  constructor(root, viewport, preset, axis) {
     this.root = root;
     this.viewport = viewport;
     this.preset = preset;
+    this.axis = axis;
     this.idleTimer = 0;
     this.dragging = false;
     this.pointerOverTrack = false;
@@ -58,7 +65,7 @@ class ScrollbarController {
     const {
       track,
       thumb
-    } = createTrack(viewport);
+    } = createTrack(viewport, axis);
     this.track = track;
     this.thumb = thumb;
     root.append(track);
@@ -91,9 +98,14 @@ class ScrollbarController {
       if (event.target !== this.track) return;
       event.preventDefault();
       const thumbRect = this.thumb.getBoundingClientRect();
-      const direction = event.clientY < thumbRect.top ? -1 : 1;
-      const page = Math.max(40, this.viewport.clientHeight - 40);
-      this.viewport.scrollBy({
+      const pointer = this.axis === 'horizontal' ? event.clientX : event.clientY;
+      const thumbStart = this.axis === 'horizontal' ? thumbRect.left : thumbRect.top;
+      const direction = pointer < thumbStart ? -1 : 1;
+      const viewportSize = this.axis === 'horizontal' ? this.viewport.clientWidth : this.viewport.clientHeight;
+      const page = Math.max(40, viewportSize - 40);
+      this.viewport.scrollBy(this.axis === 'horizontal' ? {
+        left: direction * page
+      } : {
         top: direction * page
       });
       this.activate();
@@ -102,7 +114,7 @@ class ScrollbarController {
       event.preventDefault();
       const thumbRect = this.thumb.getBoundingClientRect();
       this.dragging = true;
-      this.dragPointerOffset = event.clientY - thumbRect.top;
+      this.dragPointerOffset = this.axis === 'horizontal' ? event.clientX - thumbRect.left : event.clientY - thumbRect.top;
       this.root.dataset.sfScrollbarDragging = 'true';
       this.thumb.setPointerCapture?.(event.pointerId);
       this.activate();
@@ -110,11 +122,22 @@ class ScrollbarController {
     this.listen(this.thumb, 'pointermove', event => {
       if (!this.dragging) return;
       const trackRect = this.track.getBoundingClientRect();
-      const maxThumbOffset = Math.max(1, this.track.clientHeight - this.thumb.offsetHeight);
-      const maxScroll = Math.max(0, this.viewport.scrollHeight - this.viewport.clientHeight);
-      const pointerOffset = event.clientY - trackRect.top - this.dragPointerOffset;
+      const trackSize = this.axis === 'horizontal' ? this.track.clientWidth : this.track.clientHeight;
+      const thumbSize = this.axis === 'horizontal' ? this.thumb.offsetWidth : this.thumb.offsetHeight;
+      const viewportSize = this.axis === 'horizontal' ? this.viewport.clientWidth : this.viewport.clientHeight;
+      const contentSize = this.axis === 'horizontal' ? this.viewport.scrollWidth : this.viewport.scrollHeight;
+      const pointer = this.axis === 'horizontal' ? event.clientX : event.clientY;
+      const trackStart = this.axis === 'horizontal' ? trackRect.left : trackRect.top;
+      const maxThumbOffset = Math.max(1, trackSize - thumbSize);
+      const maxScroll = Math.max(0, contentSize - viewportSize);
+      const pointerOffset = pointer - trackStart - this.dragPointerOffset;
       const thumbOffset = Math.min(maxThumbOffset, Math.max(0, pointerOffset));
-      this.viewport.scrollTop = thumbOffset / maxThumbOffset * maxScroll;
+
+      if (this.axis === 'horizontal') {
+        this.viewport.scrollLeft = thumbOffset / maxThumbOffset * maxScroll;
+      } else {
+        this.viewport.scrollTop = thumbOffset / maxThumbOffset * maxScroll;
+      }
     });
 
     const endDrag = event => {
@@ -136,8 +159,9 @@ class ScrollbarController {
     this.listen(this.thumb, 'blur', () => this.scheduleIdle());
     this.listen(this.thumb, 'keydown', event => {
       const line = 40;
-      const page = Math.max(line, this.viewport.clientHeight - line);
-      const commands = {
+      const viewportSize = this.axis === 'horizontal' ? this.viewport.clientWidth : this.viewport.clientHeight;
+      const page = Math.max(line, viewportSize - line);
+      const verticalCommands = {
         ArrowUp: () => this.viewport.scrollBy({
           top: -line
         }),
@@ -149,12 +173,28 @@ class ScrollbarController {
         }),
         PageDown: () => this.viewport.scrollBy({
           top: page
+        })
+      };
+      const horizontalCommands = {
+        ArrowLeft: () => this.viewport.scrollBy({
+          left: -line
         }),
+        ArrowRight: () => this.viewport.scrollBy({
+          left: line
+        }),
+        PageUp: () => this.viewport.scrollBy({
+          left: -page
+        }),
+        PageDown: () => this.viewport.scrollBy({
+          left: page
+        })
+      };
+      const commands = { ...(this.axis === 'horizontal' ? horizontalCommands : verticalCommands),
         Home: () => {
-          this.viewport.scrollTop = 0;
+          if (this.axis === 'horizontal') this.viewport.scrollLeft = 0;else this.viewport.scrollTop = 0;
         },
         End: () => {
-          this.viewport.scrollTop = this.viewport.scrollHeight;
+          if (this.axis === 'horizontal') this.viewport.scrollLeft = this.viewport.scrollWidth;else this.viewport.scrollTop = this.viewport.scrollHeight;
         }
       };
       if (!commands[event.key]) return;
@@ -174,15 +214,22 @@ class ScrollbarController {
   }
 
   sync() {
-    const viewportHeight = this.viewport.clientHeight;
-    const contentHeight = this.viewport.scrollHeight;
-    const maxScroll = Math.max(0, contentHeight - viewportHeight);
+    const viewportSize = this.axis === 'horizontal' ? this.viewport.clientWidth : this.viewport.clientHeight;
+    const contentSize = this.axis === 'horizontal' ? this.viewport.scrollWidth : this.viewport.scrollHeight;
+    const scrollPosition = this.axis === 'horizontal' ? this.viewport.scrollLeft : this.viewport.scrollTop;
+    const maxScroll = Math.max(0, contentSize - viewportSize);
     const hasOverflow = maxScroll > 1;
-    const thumbHeight = hasOverflow ? Math.max(44, Math.round(viewportHeight * viewportHeight / contentHeight)) : viewportHeight;
-    const maxThumbOffset = Math.max(0, viewportHeight - thumbHeight);
-    const ratio = maxScroll ? this.viewport.scrollTop / maxScroll : 0;
+    const thumbSize = hasOverflow ? Math.max(44, Math.round(viewportSize * viewportSize / contentSize)) : viewportSize;
+    const maxThumbOffset = Math.max(0, viewportSize - thumbSize);
+    const ratio = maxScroll ? scrollPosition / maxScroll : 0;
     this.root.dataset.sfScrollbarOverflow = String(hasOverflow);
-    this.thumb.style.blockSize = `${thumbHeight}px`;
+
+    if (this.axis === 'horizontal') {
+      this.thumb.style.inlineSize = `${thumbSize}px`;
+    } else {
+      this.thumb.style.blockSize = `${thumbSize}px`;
+    }
+
     this.thumb.style.setProperty('--sf-scrollbar-thumb-offset', `${Math.round(maxThumbOffset * ratio)}px`);
     this.thumb.setAttribute('aria-valuenow', String(Math.round(ratio * 100)));
     this.thumb.disabled = !hasOverflow;
@@ -234,6 +281,7 @@ function destroyScrollbar(root) {
 function initScrollbar(root) {
   if (!(root instanceof HTMLElement) || !root.matches(ROOT_SELECTOR)) return;
   const preset = getPreset(root);
+  const axis = getAxis(root);
   const requestedPreset = String(root.getAttribute('data-sf-scrollbar') || '').trim().toLowerCase();
 
   if (requestedPreset && !VALID_PRESETS.has(requestedPreset)) {
@@ -241,13 +289,13 @@ function initScrollbar(root) {
   }
 
   const existing = controllers.get(root);
-  if (existing?.preset === preset) return;
+  if (existing?.preset === preset && existing?.axis === axis) return;
   if (existing) destroyScrollbar(root);
   root.dataset.sfScrollbarReady = 'true';
   if (!MANAGED_PRESETS.has(preset)) return;
   const viewport = root.querySelector(`:scope > ${VIEWPORT_SELECTOR}`);
   if (!(viewport instanceof HTMLElement)) return;
-  controllers.set(root, new ScrollbarController(root, viewport, preset));
+  controllers.set(root, new ScrollbarController(root, viewport, preset, axis));
 }
 
 function initScrollbars(target = document) {
@@ -283,7 +331,7 @@ if (typeof MutationObserver !== 'undefined') {
     });
   }).observe(document.documentElement, {
     attributes: true,
-    attributeFilter: ['data-sf-scrollbar'],
+    attributeFilter: ['data-sf-scrollbar', 'data-sf-scrollbar-axis'],
     childList: true,
     subtree: true
   });

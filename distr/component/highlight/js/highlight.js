@@ -87,8 +87,8 @@ highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_1__["default"].addPlugin({
     el
   }) => {
     let source = el.closest('.source');
-    el.wrap = document.createElement('div');
-    el.wrap.classList.add('sf--highlight-wrap');
+    const staticChrome = Boolean(source && source.matches('[data-sf-highlight-chrome="static"]'));
+    el.sfStaticChrome = staticChrome;
     const classLang = el.className && el.className.match(/(?:language|lang)-([^\s]+)/) || [];
     const requestedLang = (el.dataset?.lang || classLang[1] || '').toLowerCase();
 
@@ -96,21 +96,40 @@ highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_1__["default"].addPlugin({
       el.dataset.requestedLang = requestedLang;
     }
 
+    if (staticChrome) {
+      el.source = source;
+      return;
+    }
+
+    el.wrap = document.createElement('div');
+    el.wrap.classList.add('sf--highlight-wrap', 'sf-scrollbar');
+    el.wrap.dataset.sfScrollbar = 'overlay';
+    el.wrap.dataset.sfScrollbarAxis = 'horizontal';
+
     if (!source) {
       const parent = el.parentNode;
       const clone = parent.cloneNode();
+      clone.classList.add('sf-scrollbar__viewport');
       source = document.createElement('div');
       source.classList.add('source');
       clone.appendChild(el);
       source.append(el.wrap);
       el.wrap.append(clone);
       parent.replaceWith(source);
+    } else {
+      const parent = el.parentNode;
+
+      if (parent && !parent.closest('.sf--highlight-wrap')) {
+        parent.classList.add('sf-scrollbar__viewport');
+        parent.replaceWith(el.wrap);
+        el.wrap.append(parent);
+      }
     }
 
     el.source = source;
     el.head = document.createElement('div');
     el.langText = document.createElement('span');
-    el.langText.classList.add('flex', 'sf-text-1/3', 'weight-5');
+    el.langText.classList.add('flex', 'sf-text-1/2', 'weight-5');
     el.head.classList.add('sf--highlight-head', 'flex', 'content-main-between', 'border-outline-variant', 'items-center', 'bg-surface-overlay');
   },
   'after:highlightElement': ({
@@ -125,11 +144,25 @@ highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_1__["default"].addPlugin({
     const id = `copy_${randomId(10)}`;
 
     if (el && el.source) {
+      if (el.sfStaticChrome) {
+        el.source.classList.add('init', 'sf-code-surface');
+        const scroll = el.closest('pre');
+        if (scroll) scroll.classList.add('sf-code-surface__scroll');
+
+        if (el.dataset.lineNumbers === 'true') {
+          highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_0__["default"].lineNumbersBlock(el, {
+            singleLine: true
+          });
+        }
+
+        return;
+      }
+
       if (!el.classList.contains('editor')) {
         el.source.prepend(el.head);
         el.head.append(el.langText);
         el.langText.textContent = displayLang;
-        el.head.append(`[!Copy data-id=copy](size=1/3 scheme=on-surface type=link text=Copy done=Copied)#${id}`);
+        el.head.append(`[!Copy data-id=copy](size=1/2 scheme=on-surface type=link label=Copy done=Copied)#${id}`);
         el.head.style.visibility = 'hidden';
 
         const applyShortcodes = () => {

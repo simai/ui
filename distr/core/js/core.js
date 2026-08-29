@@ -11,6 +11,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _rule__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("987c832cfe13");
 /* harmony import */ var _rule__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_rule__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _mask__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("9770341d4bfa");
+/* harmony import */ var _preloader__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("6c7f357fe960");
+
 
 
 
@@ -94,27 +96,21 @@ __webpack_require__.r(__webpack_exports__);
   const mountPreloader = () => {
     const cfg = {
       enabled: true,
-      background: 'var(--sf-color--surface-highest, var(--sf-surface-0, #fff))',
+      background: (0,_preloader__WEBPACK_IMPORTED_MODULE_3__.getPreloaderBackground)(),
       modifier: 'loader-default',
       tempStyles: 'inset: 0;position: fixed;width: 100%;height: 100vh;opacity: 1;z-index: 1000;background-color: var(--sf-color--surface-highest, var(--sf-surface-0, #fff));text-align: center;',
-      color: 'var(--sf-error-60, #E81123)',
-      width: 66,
-      height: 100,
+      color: (0,_preloader__WEBPACK_IMPORTED_MODULE_3__.getPreloaderColor)(),
+      width: _preloader__WEBPACK_IMPORTED_MODULE_3__.DEFAULT_PRELOADER.width,
+      height: _preloader__WEBPACK_IMPORTED_MODULE_3__.DEFAULT_PRELOADER.height,
       content: '',
       delay: 300,
       ...(window.SF_BOOT_CONFIG?.preloader || {})
     };
     if (cfg.enabled === false || document.querySelector('.sf-loader')) return;
-    const svgContent = cfg.content || `<svg style="transition: .2s all ease-in-out;" id="sv_li_1" xmlns="http://www.w3.org/2000/svg" width="${cfg.width}" height="${cfg.height}" viewBox="0 0 66 100" fill="none">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M0 50.0013L49.812 0L66 16.2495L32.3722 50.0051L65.9938 83.7543L49.8097 100L0 50.0013Z" fill="${cfg.color}"/>
-</svg>
-<svg style="transition: .2s all ease-in-out;" id="sv_li_2" xmlns="http://www.w3.org/2000/svg" width="${cfg.width}" height="${cfg.height}" viewBox="0 0 66 100" fill="none">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M66 50.0013L16.188 0L0 16.2495L33.6278 50.0051L0.00615692 83.7543L16.1903 100L66 50.0013Z" fill="${cfg.color}"/>
-</svg>`;
+    const svgContent = cfg.content || (0,_preloader__WEBPACK_IMPORTED_MODULE_3__.createPreloaderContent)(cfg);
     let wrap = null;
     let preloaderWrap = null;
     let preloaderRun = false;
-    let arrowInterval = null;
     let delayTimer = null;
 
     const hide = () => {
@@ -124,14 +120,8 @@ __webpack_require__.r(__webpack_exports__);
     };
 
     const stopAnimation = () => {
-      clearInterval(arrowInterval);
-      arrowInterval = null;
-
       if (preloaderWrap) {
-        preloaderWrap.style.transform = 'rotate(0deg)';
-        Array.from(preloaderWrap.children).forEach(child => {
-          child.style.transform = 'none';
-        });
+        (0,_preloader__WEBPACK_IMPORTED_MODULE_3__.stopPreloaderMotion)(preloaderWrap);
       }
     };
 
@@ -158,56 +148,7 @@ __webpack_require__.r(__webpack_exports__);
         wrap: wrap,
         preloaderActive: true
       };
-
-      const moveItem = (item, number) => {
-        item.style.transform = `translateX(${number}px)`;
-      };
-
-      const updateRotation = rotationAngle => {
-        if (!preloaderRun || !preloaderWrap) return rotationAngle;
-        preloaderWrap.style.transform = `rotate(${rotationAngle - 5}deg)`;
-        rotationAngle += 90;
-        setTimeout(() => {
-          if (preloaderRun && preloaderWrap) {
-            preloaderWrap.style.transform = `rotate(${rotationAngle}deg)`;
-          }
-        }, 200);
-        return rotationAngle;
-      };
-
-      let rotationAngle = 0;
-
-      const arrowAnimate = () => {
-        Array.from(preloaderWrap.children).forEach((child, index) => {
-          setTimeout(() => {
-            if (preloaderRun) {
-              moveItem(child, index === 0 ? 8 : -8);
-            }
-          }, 100);
-          setTimeout(() => {
-            if (preloaderRun) {
-              moveItem(child, index === 0 ? -20 : 20);
-            }
-          }, 200);
-          setTimeout(() => {
-            if (preloaderRun) {
-              moveItem(child, 0);
-            }
-          }, 1000);
-        });
-        setTimeout(() => {
-          if (preloaderRun) {
-            setTimeout(() => {
-              rotationAngle = updateRotation(rotationAngle);
-            }, 200);
-          }
-        }, 1100);
-      };
-
-      arrowAnimate();
-      arrowInterval = setInterval(() => {
-        arrowAnimate();
-      }, 1800);
+      (0,_preloader__WEBPACK_IMPORTED_MODULE_3__.startPreloaderMotion)(preloaderWrap, () => preloaderRun, cfg);
     };
 
     const cancelBuild = () => {
@@ -372,6 +313,142 @@ const Mask = {
 };
 getGlobalRoot().Mask = Mask;
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Mask);
+
+/***/ },
+
+/***/ "6c7f357fe960"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   DEFAULT_PRELOADER: () => (/* binding */ DEFAULT_PRELOADER),
+/* harmony export */   createPreloaderContent: () => (/* binding */ createPreloaderContent),
+/* harmony export */   getPreloaderBackground: () => (/* binding */ getPreloaderBackground),
+/* harmony export */   getPreloaderColor: () => (/* binding */ getPreloaderColor),
+/* harmony export */   startPreloaderMotion: () => (/* binding */ startPreloaderMotion),
+/* harmony export */   stopPreloaderMotion: () => (/* binding */ stopPreloaderMotion)
+/* harmony export */ });
+const DEFAULT_PRELOADER = Object.freeze({
+  width: 31.68,
+  height: 48,
+  distance: 6,
+  cycle: 1800,
+  rotateAt: 1458,
+  rotationStep: 90,
+  transition: 300,
+  easing: 'cubic-bezier(0.3, 1.85, 0.55, 1)'
+});
+const MOTION_HANDLE = '__sfPreloaderMotion';
+function getPreloaderColor(root = document.documentElement) {
+  const fallback = root?.classList?.contains('theme-dark') ? '#e3e2e7' : '#1a1b1f';
+  return `var(--sf-on-surface, ${fallback})`;
+}
+function getPreloaderBackground(root = document.documentElement) {
+  const fallback = root?.classList?.contains('theme-dark') ? '#0f1115' : '#ffffff';
+  return `var(--sf-color--surface-highest, var(--sf-surface-0, ${fallback}))`;
+}
+function createPreloaderContent(preloader = {}) {
+  const config = { ...DEFAULT_PRELOADER,
+    ...preloader
+  };
+  return `<svg data-sf-preloader-mark id="sv_li_1" xmlns="http://www.w3.org/2000/svg" width="${config.width}" height="${config.height}" viewBox="0 0 66 100" fill="none">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M0 50.0013L49.812 0L66 16.2495L32.3722 50.0051L65.9938 83.7543L49.8097 100L0 50.0013Z" fill="${config.color}"/>
+</svg>
+<svg data-sf-preloader-mark id="sv_li_2" xmlns="http://www.w3.org/2000/svg" width="${config.width}" height="${config.height}" viewBox="0 0 66 100" fill="none">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M66 50.0013L16.188 0L0 16.2495L33.6278 50.0051L0.00615692 83.7543L16.1903 100L66 50.0013Z" fill="${config.color}"/>
+</svg>`;
+}
+function stopPreloaderMotion(container) {
+  container?.[MOTION_HANDLE]?.();
+}
+function startPreloaderMotion(container, isActive = () => true, options = {}) {
+  if (!container) return () => {};
+  stopPreloaderMotion(container);
+  const config = { ...DEFAULT_PRELOADER,
+    ...options
+  };
+  const marks = Array.from(container.querySelectorAll('[data-sf-preloader-mark]'));
+
+  if (marks.length !== 2 || typeof marks[0].animate !== 'function') {
+    return () => {};
+  }
+
+  if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+    container.style.transition = 'none';
+    container.style.transform = 'rotate(0deg)';
+    marks.forEach(mark => {
+      mark.style.transform = 'none';
+    });
+
+    const stop = () => {
+      if (container[MOTION_HANDLE] === stop) {
+        delete container[MOTION_HANDLE];
+      }
+    };
+
+    container[MOTION_HANDLE] = stop;
+    return stop;
+  }
+
+  container.style.transition = `${config.transition}ms transform ease-in-out`;
+  let rotationAngle = 0;
+  let rotationTimer = null;
+  let stopped = false;
+  const animations = marks.map((mark, index) => {
+    const distance = index === 0 ? -config.distance : config.distance;
+    return mark.animate([{
+      transform: 'translateX(0)',
+      offset: 0,
+      easing: config.easing
+    }, {
+      transform: `translateX(${distance}px)`,
+      offset: 0.36,
+      easing: config.easing
+    }, {
+      transform: `translateX(${distance}px)`,
+      offset: 0.48,
+      easing: config.easing
+    }, {
+      transform: 'translateX(0)',
+      offset: 0.84,
+      easing: config.easing
+    }, {
+      transform: 'translateX(0)',
+      offset: 1
+    }], {
+      duration: config.cycle,
+      iterations: Number.POSITIVE_INFINITY
+    });
+  });
+
+  const rotate = () => {
+    if (stopped || !isActive()) return;
+    rotationAngle += config.rotationStep;
+    container.style.transform = `rotate(${rotationAngle}deg)`;
+    rotationTimer = window.setTimeout(rotate, config.cycle);
+  };
+
+  rotationTimer = window.setTimeout(rotate, config.rotateAt);
+
+  const stop = () => {
+    if (stopped) return;
+    stopped = true;
+    window.clearTimeout(rotationTimer);
+    animations.forEach(animation => animation.cancel());
+    container.style.transform = 'rotate(0deg)';
+    marks.forEach(mark => {
+      mark.style.transform = 'none';
+    });
+
+    if (container[MOTION_HANDLE] === stop) {
+      delete container[MOTION_HANDLE];
+    }
+  };
+
+  container[MOTION_HANDLE] = stop;
+  return stop;
+}
 
 /***/ },
 

@@ -56,10 +56,51 @@
     "typography": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["sizes", "lineHeights", "pairedRoles", "unpairedSizeRoles"],
+      "required": [
+        "sizes",
+        "lineHeights",
+        "titleLineHeights",
+        "roles",
+        "flowSpacing",
+        "pairedRoles",
+        "unpairedSizeRoles"
+      ],
       "properties": {
         "sizes": { "$ref": "#/$defs/aliasMap" },
         "lineHeights": { "$ref": "#/$defs/aliasMap" },
+        "titleLineHeights": { "$ref": "#/$defs/aliasMap" },
+        "roles": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["label", "body", "heading", "display"],
+          "properties": {
+            "label": { "$ref": "#/$defs/roleMap" },
+            "body": { "$ref": "#/$defs/roleMap" },
+            "heading": { "$ref": "#/$defs/roleMap" },
+            "display": { "$ref": "#/$defs/roleMap" }
+          }
+        },
+        "flowSpacing": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["content", "textBottom", "headingTop", "headingBottom"],
+          "properties": {
+            "content": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["text", "related", "block", "section"],
+              "properties": {
+                "text": { "type": "string", "minLength": 1 },
+                "related": { "type": "string", "minLength": 1 },
+                "block": { "type": "string", "minLength": 1 },
+                "section": { "type": "string", "minLength": 1 }
+              }
+            },
+            "textBottom": { "type": "string", "minLength": 1 },
+            "headingTop": { "type": "string", "minLength": 1 },
+            "headingBottom": { "type": "string", "minLength": 1 }
+          }
+        },
         "pairedRoles": { "$ref": "#/$defs/roleList" },
         "unpairedSizeRoles": { "$ref": "#/$defs/roleList" }
       }
@@ -118,6 +159,20 @@
       "type": "object",
       "minProperties": 1,
       "additionalProperties": { "$ref": "#/$defs/alias" }
+    },
+    "roleBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["size", "height"],
+      "properties": {
+        "size": { "type": "string", "minLength": 1 },
+        "height": { "type": "string", "minLength": 1 }
+      }
+    },
+    "roleMap": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": { "$ref": "#/$defs/roleBinding" }
     },
     "roleList": {
       "type": "array",

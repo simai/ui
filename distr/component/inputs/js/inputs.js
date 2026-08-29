@@ -2,6 +2,93 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "e138a730fd7c"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   createFieldContract: () => (/* binding */ createFieldContract),
+/* harmony export */   syncFieldContract: () => (/* binding */ syncFieldContract)
+/* harmony export */ });
+let fieldSequence = 0;
+const fieldIdentities = new WeakMap();
+
+function nextIdentity(owner, prefix) {
+  if (owner && fieldIdentities.has(owner)) return fieldIdentities.get(owner);
+  const explicit = owner?.id ? String(owner.id).trim() : '';
+  const base = explicit || `${prefix}-${++fieldSequence}`;
+  const identity = {
+    controlId: `${base}-control`,
+    messageId: `${base}-message`
+  };
+
+  if (owner && (typeof owner === 'object' || typeof owner === 'function')) {
+    fieldIdentities.set(owner, identity);
+  }
+
+  return identity;
+}
+
+function mergeIdRefs(existing, additions) {
+  return [...new Set([...String(existing || '').split(/\s+/).filter(Boolean), ...additions.filter(Boolean)])].join(' ');
+}
+
+function createFieldContract(owner, {
+  prefix = 'sf-field',
+  required = false,
+  invalid = false,
+  hint = '',
+  errorMessage = ''
+} = {}) {
+  const identity = nextIdentity(owner, prefix);
+  const normalizedInvalid = Boolean(invalid);
+  const message = normalizedInvalid && errorMessage ? errorMessage : hint;
+  return { ...identity,
+    required: Boolean(required),
+    invalid: normalizedInvalid,
+    message,
+    describedBy: message ? identity.messageId : '',
+    errorMessageId: normalizedInvalid && errorMessage ? identity.messageId : ''
+  };
+}
+function syncFieldContract(root, control, {
+  prefix = 'sf-field',
+  required = false,
+  invalid = false,
+  messageNode = null,
+  errorMessage = ''
+} = {}) {
+  if (!root || !control) return null;
+  const hint = messageNode?.textContent?.trim() || '';
+  const contract = createFieldContract(root, {
+    prefix,
+    required,
+    invalid,
+    hint,
+    errorMessage
+  });
+  if (!control.id) control.id = contract.controlId;
+  control.required = contract.required;
+  root.classList.toggle('error', contract.invalid);
+  control.classList.toggle('error', contract.invalid);
+  if (contract.invalid) control.setAttribute('aria-invalid', 'true');else control.removeAttribute('aria-invalid');
+
+  if (messageNode) {
+    if (!messageNode.id) messageNode.id = contract.messageId;
+    control.setAttribute('aria-describedby', mergeIdRefs(control.getAttribute('aria-describedby'), [messageNode.id]));
+  }
+
+  if (contract.errorMessageId && messageNode) {
+    control.setAttribute('aria-errormessage', messageNode.id);
+  } else {
+    control.removeAttribute('aria-errormessage');
+  }
+
+  return contract;
+}
+
+/***/ },
+
 /***/ "73aef1a2bf74"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -14,6 +101,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d7f974466839");
 /* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("58661bec99a6");
 /* harmony import */ var _json_input_utility_json__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("d6935866be49");
+/* harmony import */ var _field_contract__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("e138a730fd7c");
+
 
 
 
@@ -28,6 +117,27 @@ function toBoolean(value, fallback = false) {
 
 function getInputNode(root) {
   return root?.querySelector?.('.sf-input-field input, input') || null;
+}
+
+function getMessageNode(root) {
+  return root?.querySelector?.('.sf-input-hint-text-wrap') || null;
+}
+
+function ensureMessageNode(root) {
+  const existing = getMessageNode(root);
+  if (existing) return existing;
+  const messageNode = document.createElement('span');
+  messageNode.classList.add('sf-input-hint-text-wrap');
+  root.append(messageNode);
+  return messageNode;
+}
+
+function messageState(root) {
+  const messageNode = getMessageNode(root);
+  return {
+    messageNode,
+    errorMessage: messageNode?.dataset.fieldMessage === 'error' ? messageNode.textContent?.trim() || '' : ''
+  };
 }
 
 function parseMaskOptions(raw) {
@@ -108,6 +218,13 @@ function bindInput(root) {
   input.addEventListener('input', noopHandler);
   root.__sfInputNoopHandler = noopHandler;
   root.dataset[INPUT_BOUND_FLAG] = '1';
+  const message = messageState(root);
+  (0,_field_contract__WEBPACK_IMPORTED_MODULE_3__.syncFieldContract)(root, input, {
+    prefix: 'sf-input',
+    required: input.required || Boolean(root.querySelector('.sf-input-required')),
+    invalid: root.classList.contains('error') || input.classList.contains('error'),
+    ...message
+  });
   bindMask(root, input);
 }
 
@@ -143,7 +260,25 @@ function setInputState(target, state = {}) {
   }
 
   if (Object.prototype.hasOwnProperty.call(state, 'error')) {
-    input.classList.toggle('error', toBoolean(state.error));
+    const invalid = toBoolean(state.error);
+    root.classList.toggle('error', invalid);
+    input.classList.toggle('error', invalid);
+  }
+
+  if (Object.prototype.hasOwnProperty.call(state, 'invalid')) {
+    const invalid = toBoolean(state.invalid);
+    root.classList.toggle('error', invalid);
+    input.classList.toggle('error', invalid);
+  }
+
+  if (Object.prototype.hasOwnProperty.call(state, 'errorMessage')) {
+    const value = String(state.errorMessage ?? '');
+    const messageNode = value ? ensureMessageNode(root) : getMessageNode(root);
+
+    if (messageNode) {
+      messageNode.textContent = value;
+      messageNode.dataset.fieldMessage = value ? 'error' : 'hint';
+    }
   }
 
   if (Object.prototype.hasOwnProperty.call(state, 'value')) {
@@ -153,6 +288,12 @@ function setInputState(target, state = {}) {
     }));
   }
 
+  (0,_field_contract__WEBPACK_IMPORTED_MODULE_3__.syncFieldContract)(root, input, {
+    prefix: 'sf-input',
+    required: input.required || Boolean(root.querySelector('.sf-input-required')),
+    invalid: root.classList.contains('error') || input.classList.contains('error'),
+    ...messageState(root)
+  });
   return true;
 }
 
@@ -175,7 +316,10 @@ class Inputs extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Com
       rightText = '',
       hintIcon = '',
       disabled = false,
+      readonly = false,
       error = false,
+      invalid = false,
+      errorMessage = '',
       mask = false,
       maskPattern = '',
       maskLazy = '',
@@ -186,6 +330,7 @@ class Inputs extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Com
     this.template = document.createElement('label');
     if (this.id) this.template.id = this.id;
     this.template.classList.add('sf-input', `sf-input--size-${size}`, `sf-input--${type}`);
+    this.template.classList.toggle('error', toBoolean(invalid || error, false));
     this.template.dataset.mask = String(toBoolean(mask, false));
     this.template.dataset.maskPattern = String(maskPattern || '');
     this.template.dataset.maskLazy = String(maskLazy ?? '');
@@ -226,12 +371,14 @@ class Inputs extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Com
     input.value = String(value ?? '');
     if (name) input.name = String(name);
     input.disabled = toBoolean(disabled, false);
+    input.readOnly = toBoolean(readonly, false);
+    input.required = toBoolean(required, true);
     input.dataset.mask = String(toBoolean(mask, false));
     input.dataset.maskPattern = String(maskPattern || '');
     input.dataset.maskLazy = String(maskLazy ?? '');
     input.dataset.maskPlaceholderChar = String(maskPlaceholderChar || '');
     input.dataset.maskOptions = String(maskOptions || '');
-    input.classList.toggle('error', toBoolean(error, false));
+    input.classList.toggle('error', toBoolean(invalid || error, false));
     field.append(input);
 
     if (rightText) {
@@ -249,11 +396,13 @@ class Inputs extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Com
     }
 
     this.template.append(labelWrap, field);
+    const message = toBoolean(invalid || error, false) && errorMessage ? errorMessage : hint;
 
-    if (hint) {
+    if (message) {
       const hintWrap = document.createElement('span');
       hintWrap.classList.add('sf-input-hint-text-wrap');
-      hintWrap.textContent = String(hint);
+      hintWrap.textContent = String(message);
+      hintWrap.dataset.fieldMessage = toBoolean(invalid || error, false) && errorMessage ? 'error' : 'hint';
       this.template.append(hintWrap);
     }
 
