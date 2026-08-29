@@ -20,7 +20,7 @@ if not SMART_MANIFEST_INPUT:
 SMART_MANIFEST = Path(SMART_MANIFEST_INPUT).resolve()
 GENERATED = ROOT / "contracts/generated/framework-contract-registry.json"
 DOCUMENTATION_SOURCE = ROOT / "contracts/generated/documentation-source.json"
-LOCK = ROOT / "contracts/releases/ui-1fe83c75768e-smart-9e05dc35289c.lock.json"
+LOCK = ROOT / "contracts/releases/ui-5c0a5e3b0828-smart-9e05dc35289c.lock.json"
 SMART_REFERENCE = ROOT / "contracts/registry-inputs/ui-smart-9e05dc35289c.ref.json"
 
 
@@ -87,7 +87,7 @@ class FrameworkContractRegistryTest(unittest.TestCase):
         )
         self.assertEqual(
             self.registry["compatibility"]["id"],
-            "ui-1fe83c75768e-smart-9e05dc35289c",
+            "ui-5c0a5e3b0828-smart-9e05dc35289c",
         )
         self.assertEqual(self.registry["compatibility"]["status"], "bounded")
         self.assertEqual(self.registry["compatibility"]["profile"], "plain-assets-v1")
@@ -219,7 +219,7 @@ class FrameworkContractRegistryTest(unittest.TestCase):
         source = json.loads(first)
         self.assertEqual(source["schema"], "docara.documentation_source.v1")
         self.assertEqual(source["id"], "simai-framework")
-        self.assertEqual(len(source["entities"]), self.registry["counts"]["total"])
+        self.assertEqual(len(source["entities"]), self.registry["counts"]["total"] + 1)
         entities = {entity["key"]: entity for entity in source["entities"]}
         self.assertIn("component.buttons", entities)
         self.assertIn("utility.display", entities)
