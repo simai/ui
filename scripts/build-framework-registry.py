@@ -500,10 +500,10 @@ def validate_lock(lock: dict[str, Any]) -> None:
     if not HEX64.fullmatch(str(lineage.get("sha256", ""))) or not isinstance(lineage.get("records_count"), int) or lineage["records_count"] < 1:
         raise ContractError("release_lock_legacy_lineage_content_invalid")
     invocation = legacy.get("invocation")
-    required_environment = {
-        "SF_LEGACY_COMPATIBILITY_ROOT": "legacy_compatibility.source.runtime_path",
-        "SF_LEGACY_COMPATIBILITY_REVISION": "legacy_compatibility.source.commit",
-        "SF_LEGACY_COMPATIBILITY_MANIFEST": "legacy_compatibility.lineage_manifest",
+    legacy_environment = invocation.get("environment_bindings") if isinstance(invocation, dict) else None
+    supported_revision_bindings = {
+        "legacy_compatibility.source.commit",
+        "legacy_compatibility.lineage_manifest.generated_repository.revision",
     }
     if not isinstance(invocation, dict) or set(invocation) != {
         "command",
@@ -517,7 +517,11 @@ def validate_lock(lock: dict[str, Any]) -> None:
         "<ui-loader-root>",
         "<workspace-root>",
         "--require-legacy-compatibility",
-    ] or invocation.get("environment_bindings") != required_environment:
+    ] or not isinstance(legacy_environment, dict) or legacy_environment != {
+        "SF_LEGACY_COMPATIBILITY_ROOT": "legacy_compatibility.source.runtime_path",
+        "SF_LEGACY_COMPATIBILITY_REVISION": legacy_environment.get("SF_LEGACY_COMPATIBILITY_REVISION"),
+        "SF_LEGACY_COMPATIBILITY_MANIFEST": "legacy_compatibility.lineage_manifest",
+    } or legacy_environment.get("SF_LEGACY_COMPATIBILITY_REVISION") not in supported_revision_bindings:
         raise ContractError("release_lock_legacy_invocation_binding_invalid")
     expected_id = (
         f"ui-{sources['ui']['commit'][:12]}-smart-"
@@ -611,7 +615,7 @@ def build_registry(
     utility_path = utility_manifest_path or ui_root / "contracts/owners/utility.manifest.json"
     component_path = component_manifest_path or ui_root / "contracts/owners/component.manifest.json"
     recipe_path = recipe_manifest_path or ui_root / "contracts/owners/recipe.manifest.json"
-    lock_path = release_lock_path or ui_root / "contracts/releases/ui-5c0a5e3b0828-smart-9e05dc35289c.lock.json"
+    lock_path = release_lock_path or ui_root / "contracts/releases/ui-dbb2d0c1bc20-smart-9e05dc35289c.lock.json"
     reference_path = smart_reference_path or ui_root / "contracts/registry-inputs/ui-smart-9e05dc35289c.ref.json"
     manifests = {
         "utility": load_json(utility_path),

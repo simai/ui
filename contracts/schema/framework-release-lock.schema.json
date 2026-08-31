@@ -57,7 +57,7 @@
               "additionalProperties": false,
               "required": ["owner", "commit", "tree", "path", "blob", "sha256", "records_count"],
               "properties": {
-                "owner": {"const": "simai/ui-control"},
+                "owner": {"enum": ["simai/ui-control", "simai/ui"]},
                 "commit": {"$ref": "#/$defs/sha1"},
                 "tree": {"$ref": "#/$defs/sha1"},
                 "path": {"type": "string", "minLength": 1},
