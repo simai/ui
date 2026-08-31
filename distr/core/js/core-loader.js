@@ -20,6 +20,9 @@ function initIconSubsetState(loader) {
   loader.iconSubsetManifest = null;
   loader.iconSubsetHash = "";
   loader.iconManifestStorageKey = "SF_ICON_SUBSET_MANIFEST";
+  loader.iconSubsetManifests = new Map();
+  loader.iconSubsetHashes = new Map();
+  loader.iconSubsetWarnings = new Set();
   loader.pendingIconScanCount = 0;
   loader.isSyncingStaticIconState = false;
   loader.staticIconDescriptorKeys = new WeakMap();
@@ -63,7 +66,26 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
   const defaultIconWeight = "400";
   const iconTypeClassMap = new Map([["sf-icon-rounded", "rounded"], ["sf-icon-shape", "sharp"]]);
   const iconFamilyTypeMap = new Map([["material symbols outlined", "outlined"], ["material symbols rounded", "rounded"], ["material symbols sharp", "sharp"]]);
-  const iconFallbackFontUrl = "https://cdn.jsdelivr.net/gh/simai/ui@latest/distr/fonts/MaterialSymbols-Outlined.woff2";
+  const iconFallbackFontFiles = Object.freeze({
+    outlined: {
+      family: "Material Symbols Outlined",
+      file: "MaterialSymbols-Outlined.woff2",
+      format: "woff2",
+      weight: "100 700"
+    },
+    rounded: {
+      family: "Material Icons Round",
+      file: "MaterialIconsRound-Regular.otf",
+      format: "opentype",
+      weight: "400"
+    },
+    sharp: {
+      family: "Material Icons Sharp",
+      file: "MaterialIconsSharp-Regular.otf",
+      format: "opentype",
+      weight: "400"
+    }
+  });
 
   const isTruthyIconFlag = (value, fallback = false) => {
     if (value === "" || value === true) return true;
@@ -108,6 +130,41 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
 
   SFLoaderPlugin.prototype.getDefaultIconType = function () {
     return this.normalizeIconType(window.SF_BOOT_CONFIG?.icons?.type || window.SF_ICON_TYPE || "outlined");
+  };
+
+  SFLoaderPlugin.prototype.getIconManifestStorageKey = function (type = "") {
+    const normalizedType = this.normalizeIconType(type);
+    return normalizedType === "outlined" ? this.iconManifestStorageKey : `${this.iconManifestStorageKey}:${normalizedType}`;
+  };
+
+  SFLoaderPlugin.prototype.getIconManifestForType = function (type = "") {
+    const normalizedType = this.normalizeIconType(type);
+    return this.iconSubsetManifests?.get(normalizedType) || (this.iconSubsetManifest && this.getIconManifestType(this.iconSubsetManifest) === normalizedType ? this.iconSubsetManifest : null);
+  };
+
+  SFLoaderPlugin.prototype.setIconManifestForType = function (type = "", manifest = null) {
+    const normalizedType = this.normalizeIconType(type);
+
+    if (!this.iconSubsetManifests) {
+      this.iconSubsetManifests = new Map();
+    }
+
+    if (!this.iconSubsetHashes) {
+      this.iconSubsetHashes = new Map();
+    }
+
+    if (!manifest) {
+      this.iconSubsetManifests.delete(normalizedType);
+      this.iconSubsetHashes.delete(normalizedType);
+    } else {
+      this.iconSubsetManifests.set(normalizedType, manifest);
+      this.iconSubsetHashes.set(normalizedType, manifest.hash || manifest.packet_sha256 || "");
+    }
+
+    if (normalizedType === this.getDefaultIconType()) {
+      this.iconSubsetManifest = manifest;
+      this.iconSubsetHash = manifest?.hash || manifest?.packet_sha256 || "";
+    }
   };
 
   SFLoaderPlugin.prototype.getConfiguredIconSubsetConfig = function () {
@@ -253,12 +310,12 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
   };
 
   SFLoaderPlugin.prototype.isIconCoveredByManifest = function (icon = "", attrs = {}) {
-    const manifest = this.iconSubsetManifest;
+    const attrType = this.normalizeIconType(attrs.type || this.getDefaultIconType());
+    const manifest = this.getIconManifestForType(attrType);
     if (!manifest || typeof manifest !== "object") return false;
     const manifestIcons = Array.isArray(manifest.icons) ? manifest.icons : [];
     if (!manifestIcons.includes(icon)) return false;
     const manifestType = this.getIconManifestType(manifest);
-    const attrType = this.normalizeIconType(attrs.type || this.getDefaultIconType());
 
     if (manifestType !== attrType) {
       return false;
@@ -803,8 +860,8 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
     }
   };
 
-  SFLoaderPlugin.prototype.getStoredIconManifest = function () {
-    const raw = localStorage.getItem(this.iconManifestStorageKey);
+  SFLoaderPlugin.prototype.getStoredIconManifest = function (type = "") {
+    const raw = localStorage.getItem(this.getIconManifestStorageKey(type));
     if (!raw) return null;
 
     try {
@@ -817,11 +874,12 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
   };
 
   SFLoaderPlugin.prototype.getIconManifestFontFamily = function (manifest = {}) {
-    return `${manifest.family || "Material Symbols Outlined"} Subset`;
+    if (manifest.font_family) return String(manifest.font_family);
+    return `${(manifest.schema === "sf.icon_subset.v1" ? iconFallbackFontFiles[this.getIconManifestType(manifest)]?.family : manifest.family) || "Material Symbols Outlined"} Subset`;
   };
 
   SFLoaderPlugin.prototype.getIconManifestType = function (manifest = {}) {
-    const manifestType = String(manifest.type || "").trim().toLowerCase();
+    const manifestType = String(manifest.type || (manifest.schema === "sf.icon_subset.v1" ? manifest.family : "") || "").trim().toLowerCase();
 
     if (manifestType) {
       return this.normalizeIconType(manifestType);
@@ -849,23 +907,41 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
     const fallbackFonts = window.SF_BOOT_CONFIG?.icons?.fallbackFonts || window.SF_ICON_FALLBACK_FONTS || {};
     const normalizedType = this.normalizeIconType(type);
     const configuredUrl = fallbackFonts[normalizedType] || fallbackFonts.outlined || window.SF_BOOT_CONFIG?.icons?.fallbackFontUrl || window.SF_ICON_FALLBACK_FONT_URL;
-    return configuredUrl || iconFallbackFontUrl;
+
+    if (configuredUrl) {
+      return configuredUrl;
+    }
+
+    const file = iconFallbackFontFiles[normalizedType]?.file;
+    const root = String(window.sfPath || "").replace(/\/+$/, "");
+
+    if (!file || !root) {
+      return "";
+    }
+
+    return `${root}/component/icons/fonts/${file}`;
   };
 
   SFLoaderPlugin.prototype.buildIconFallbackCss = function (options = {}) {
     const type = this.normalizeIconType(options.type || this.getDefaultIconType());
     const url = this.getIconFallbackFontUrl(type);
+    const fallbackFont = iconFallbackFontFiles[type];
+
+    if (!url || !fallbackFont) {
+      return "";
+    }
+
     const selector = this.getIconSubsetSelector({
       type,
-      family: "Material Symbols Outlined"
+      family: fallbackFont.family
     });
-    return `@font-face {\n` + `  font-family: 'Material Symbols Outlined';\n` + `  src: url('${url}') format('woff2');\n` + `  font-style: normal;\n` + `  font-weight: 100 700;\n` + `  font-display: block;\n` + `}\n\n` + `${selector} {\n` + `  --sf-icon--font-family: 'Material Symbols Outlined';\n` + `  font-family: 'Material Symbols Outlined';\n` + `  font-feature-settings: 'liga';\n` + `  font-variation-settings: ` + `'FILL' var(--sf-icon--fill, 0), ` + `'wght' var(--sf-icon--weight, 400), ` + `'GRAD' var(--sf-icon--grade, 0), ` + `'opsz' var(--sf-icon--optical-size, 24);\n` + `}\n`;
+    return `@font-face {\n` + `  font-family: '${fallbackFont.family}';\n` + `  src: url('${url}') format('${fallbackFont.format}');\n` + `  font-style: normal;\n` + `  font-weight: ${fallbackFont.weight};\n` + `  font-display: block;\n` + `}\n\n` + `${selector} {\n` + `  --sf-icon--font-family: '${fallbackFont.family}';\n` + `  font-family: '${fallbackFont.family}';\n` + `  font-feature-settings: 'liga';\n` + `  font-variation-settings: ` + `'FILL' var(--sf-icon--fill, 0), ` + `'wght' var(--sf-icon--weight, 400), ` + `'GRAD' var(--sf-icon--grade, 0), ` + `'opsz' var(--sf-icon--optical-size, 24);\n` + `}\n`;
   };
 
   SFLoaderPlugin.prototype.applyIconFontFallback = function (options = {}) {
     const icons = Array.isArray(options.icons) ? options.icons : [];
     const type = this.normalizeIconType(options.type || this.getDefaultIconType());
-    const prev = document.querySelector("style[data-sf-icons-fallback]");
+    const prev = document.querySelector(`style[data-sf-icons-fallback="${type}"]`);
     const style = document.createElement("style");
     style.setAttribute("data-sf-icons-fallback", type);
 
@@ -876,6 +952,11 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
     style.textContent = this.buildIconFallbackCss({
       type
     });
+
+    if (!style.textContent) {
+      return false;
+    }
+
     document.head.appendChild(style);
 
     if (prev) {
@@ -895,12 +976,18 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
     this.iconFontReady = true;
     document.body?.classList?.add("sf-icons-loaded");
     this.syncStaticIconLoadedState();
-    console.warn("SFLoader icon subset font fallback applied", {
-      type,
-      icons,
-      reason: options.reason || null,
-      url: this.getIconFallbackFontUrl(type)
-    });
+    const warningKey = `fallback:${type}`;
+
+    if (!this.iconSubsetWarnings?.has(warningKey)) {
+      this.iconSubsetWarnings?.add(warningKey);
+      console.warn("SFLoader icon subset font fallback applied", {
+        type,
+        icons,
+        reason: options.reason || null,
+        url: this.getIconFallbackFontUrl(type)
+      });
+    }
+
     window.dispatchEvent(new CustomEvent("sf-icons-subset:ready", {
       detail: {
         icons: new Set(icons),
@@ -957,25 +1044,29 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
     const cssText = options.cssText || builtCssText;
     if (!cssText) return false;
     const icons = Array.isArray(manifest.icons) ? manifest.icons : [];
-    const prev = document.querySelector("style[data-sf-icons-subset]");
+    const type = this.getIconManifestType(manifest);
+    const prev = document.querySelector(`style[data-sf-icons-subset-family="${type}"]`);
     const style = document.createElement("style");
     style.setAttribute("data-sf-icons-subset", icons.join(","));
+    style.setAttribute("data-sf-icons-subset-family", type);
 
     if (manifest.hash) {
       style.setAttribute("data-sf-icons-subset-hash", manifest.hash);
     }
 
     style.textContent = cssText;
-    this.iconSubsetManifest = manifest;
+    this.setIconManifestForType(type, manifest);
     this.markManifestIconsAsLoaded(manifest);
-    this.iconSubsetHash = manifest.hash || "";
     this.iconSubsetPending = true;
     this.iconSubsetReady = false;
     document.head.appendChild(style);
-    this.iconSubsetPromise = this.verifyIconManifestFonts(manifest, {
+    const fontVerification = Array.isArray(manifest.fonts) && manifest.fonts.length ? this.verifyIconManifestFonts(manifest, {
       icons,
       weights
-    }).then(async () => {
+    }) : this.verifyIconCssFonts(cssText, {
+      icons
+    });
+    this.iconSubsetPromise = fontVerification.then(async () => {
       this.ensureConfiguredIconSubsetState({
         forceLoaded: true
       });
@@ -1026,10 +1117,9 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
     }).catch(error => {
       this.iconSubsetPending = false;
       this.iconSubsetReady = false;
-      this.iconSubsetManifest = null;
-      this.iconSubsetHash = "";
+      this.setIconManifestForType(type, null);
       style.remove();
-      safeRemoveItem?.(this.iconManifestStorageKey);
+      safeRemoveItem?.(this.getIconManifestStorageKey(type));
       console.warn("SFLoader cached icon manifest failed", error);
       this.applyIconFontFallback({
         icons,
@@ -1149,15 +1239,14 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
 
   SFLoaderPlugin.prototype.restoreIconManifestFromCache = function () {
     if (!this.isIconSubsetEnabled()) return false;
-    const manifest = this.getStoredIconManifest();
+    const currentDefaultType = this.getIconSubsetRequestConfig().defaultType;
+    const manifest = this.getStoredIconManifest(currentDefaultType);
     if (!manifest) return false;
     const manifestType = this.getIconManifestType(manifest);
-    const currentDefaultType = this.getIconSubsetRequestConfig().defaultType;
 
     if (manifestType !== currentDefaultType || !this.isManifestCoveredByConfiguredSubset(manifest)) {
-      safeRemoveItem?.(this.iconManifestStorageKey);
-      this.iconSubsetManifest = null;
-      this.iconSubsetHash = "";
+      safeRemoveItem?.(this.getIconManifestStorageKey(currentDefaultType));
+      this.setIconManifestForType(currentDefaultType, null);
       return false;
     }
 
@@ -1268,6 +1357,151 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
     return true;
   };
 
+  SFLoaderPlugin.prototype.getIconSubsetRequestConfigs = function () {
+    const baseConfig = this.getIconSubsetRequestConfig();
+    const configs = new Map();
+
+    const getConfig = type => {
+      const normalizedType = this.normalizeIconType(type);
+
+      if (!configs.has(normalizedType)) {
+        configs.set(normalizedType, {
+          accumulate: baseConfig.accumulate,
+          defaultType: normalizedType,
+          fill: false,
+          grade: new Set(),
+          icons: new Set(),
+          weights: new Set()
+        });
+      }
+
+      return configs.get(normalizedType);
+    };
+
+    this.uniqueIcons.forEach((attrs, icon) => {
+      const rawTypes = attrs.get("type");
+      const types = rawTypes instanceof Set || Array.isArray(rawTypes) ? [...rawTypes] : [rawTypes || baseConfig.defaultType];
+      const rawWeights = attrs.get("weight");
+      const weights = rawWeights instanceof Set || Array.isArray(rawWeights) ? [...rawWeights] : rawWeights ? [rawWeights] : [];
+      const rawGrades = attrs.get("grade");
+      const grades = rawGrades instanceof Set || Array.isArray(rawGrades) ? [...rawGrades] : rawGrades ? [rawGrades] : [];
+      types.forEach(type => {
+        const config = getConfig(type);
+        config.icons.add(icon);
+        weights.forEach(weight => config.weights.add(String(weight)));
+        grades.forEach(grade => config.grade.add(String(grade)));
+
+        if (attrs.get("filled")) {
+          config.fill = true;
+        }
+      });
+    });
+
+    if (!configs.size && baseConfig.icons.length) {
+      const types = baseConfig.types?.size ? [...baseConfig.types] : [baseConfig.defaultType];
+      types.forEach(type => {
+        const config = getConfig(type);
+        baseConfig.icons.forEach(icon => config.icons.add(icon));
+        baseConfig.weights.forEach(weight => config.weights.add(weight));
+        String(baseConfig.grade || "").split(",").filter(Boolean).forEach(grade => config.grade.add(grade));
+        config.fill = baseConfig.fill;
+      });
+    }
+
+    return [...configs.values()].map(config => ({ ...config,
+      grade: [...config.grade].sort().join(","),
+      icons: [...config.icons].sort()
+    })).sort((left, right) => left.defaultType.localeCompare(right.defaultType));
+  };
+
+  SFLoaderPlugin.prototype.loadIconSubsetFamily = async function (requestConfig) {
+    const {
+      defaultType: type,
+      icons
+    } = requestConfig;
+    if (!icons.length) return false;
+    const host = this.getIconSubsetHost();
+    const query = new URLSearchParams({
+      icon_names: icons.join(","),
+      type
+    });
+
+    if (requestConfig.weights.size) {
+      query.set("weight", [...requestConfig.weights].sort().join(","));
+    }
+
+    if (requestConfig.fill) query.set("fill", "1");
+    if (requestConfig.grade) query.set("grade", requestConfig.grade);
+    if (requestConfig.accumulate) query.set("accumulate", "true");
+    let manifest = null;
+    let appliedStyle = null;
+
+    try {
+      const response = await fetch(`${host}/ms/css?${query.toString()}`, {
+        cache: "reload"
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      manifest = this.decodeIconManifestHeader(response.headers.get("X-SIMAI-Font-Manifest"));
+      const cssText = await response.text();
+      const manifestType = manifest ? this.getIconManifestType(manifest) : type;
+
+      if (manifest && manifestType !== type) {
+        throw new Error(`Icon subset family mismatch: requested ${type}, received ${manifestType}`);
+      }
+
+      const previous = document.querySelector(`style[data-sf-icons-subset-family="${type}"]`);
+      const style = document.createElement("style");
+      style.setAttribute("data-sf-icons-subset", icons.join(","));
+      style.setAttribute("data-sf-icons-subset-family", type);
+      style.textContent = cssText;
+      document.head.appendChild(style);
+      appliedStyle = style;
+
+      if (manifest) {
+        safeSetItem?.(this.getIconManifestStorageKey(type), JSON.stringify(manifest));
+        this.setIconManifestForType(type, manifest);
+        this.markManifestIconsAsLoaded(manifest);
+
+        if (Array.isArray(manifest.fonts) && manifest.fonts.length) {
+          await this.verifyIconManifestFonts(manifest, {
+            icons
+          });
+        } else {
+          await this.verifyIconCssFonts(cssText, {
+            icons
+          });
+        }
+      } else {
+        await this.verifyIconCssFonts(cssText, {
+          icons
+        });
+      }
+
+      if (document.fonts?.ready) await document.fonts.ready;
+      await new Promise(resolve => requestAnimationFrame(resolve));
+      await new Promise(resolve => requestAnimationFrame(resolve));
+      previous?.remove?.();
+      window.dispatchEvent(new CustomEvent("sf-icons-subset:ready", {
+        detail: {
+          icons: new Set(icons),
+          loader: this,
+          type,
+          weights: [...requestConfig.weights]
+        }
+      }));
+      return true;
+    } catch (error) {
+      appliedStyle?.remove?.();
+      this.setIconManifestForType(type, null);
+      safeRemoveItem?.(this.getIconManifestStorageKey(type));
+      return this.applyIconFontFallback({
+        icons,
+        reason: error,
+        type
+      });
+    }
+  };
+
   SFLoaderPlugin.prototype.loadFonts = async function () {
     if (!this.isIconSubsetEnabled()) {
       return false;
@@ -1280,147 +1514,33 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
       return this.iconSubsetPromise;
     }
 
-    return new Promise(resolve => {
-      const unloadedIcons = Array.from(this.uniqueIcons).filter(([icon, attrs]) => {
-        if (attrs.get("loading") !== false) return false;
-        const loadAttrs = this.getIconLoadAttrs({
-          weight: attrs.get("weight") instanceof Set ? [...attrs.get("weight")][0] : attrs.get("weight"),
-          filled: attrs.get("filled") instanceof Set ? [...attrs.get("filled")][0] : attrs.get("filled"),
-          grade: attrs.get("grade") instanceof Set ? [...attrs.get("grade")][0] : attrs.get("grade"),
-          type: attrs.get("type") instanceof Set ? [...attrs.get("type")][0] : attrs.get("type")
-        });
+    const unloadedIcons = Array.from(this.uniqueIcons).filter(([, attrs]) => attrs.get("loading") === false);
 
-        if (this.isIconCoveredByManifest(icon, loadAttrs)) {
-          attrs.set("loading", true);
-          return false;
-        }
+    if (!unloadedIcons.length) {
+      return this.iconSubsetPromise || false;
+    }
 
-        return true;
-      }).map(([icon, attrs]) => ({
-        icon,
-        attrs
-      }));
-      const icons = [];
-
-      if (!Object.keys(unloadedIcons).length) {
-        resolve(this.iconSubsetPromise || false);
-        return;
-      }
-
-      for (const [, item] of Object.entries(unloadedIcons)) {
-        const {
-          icon
-        } = item;
-        icons.push(icon);
-        this.uniqueIcons.get(icon).set("loading", true);
-      }
-
-      this.iconSubsetPending = true;
-      this.iconSubsetReady = false;
-      const requestConfig = this.getIconSubsetRequestConfig();
-      const host = this.getIconSubsetHost();
-      let url = `${host}/ms/css?icon_names=${requestConfig.icons.join(",")}`;
-
-      if (requestConfig.weights.size) {
-        url += `&weight=${[...requestConfig.weights].join(",")}`;
-      }
-
-      if (requestConfig.fill) {
-        url += `&fill=1`;
-      }
-
-      if (requestConfig.grade) {
-        url += `&grade=${requestConfig.grade}`;
-      }
-
-      if (requestConfig.defaultType) {
-        url += `&type=${requestConfig.defaultType}`;
-      }
-
-      if (requestConfig.accumulate) {
-        url += "&accumulate=true";
-      }
-
-      let manifest = null;
-      let appliedStyle = null;
-      this.iconSubsetPromise = fetch(url, {
-        cache: "reload"
-      }).then(res => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const manifestRaw = res.headers.get("X-SIMAI-Font-Manifest");
-        manifest = this.decodeIconManifestHeader(manifestRaw);
-        return res.text();
-      }).then(async cssText => {
-        const prev = document.querySelector("style[data-sf-icons-subset]");
-        await new Promise(resolve => requestAnimationFrame(resolve));
-        const style = document.createElement("style");
-        style.setAttribute("data-sf-icons-subset", [...this.uniqueIcons.keys()].join(","));
-        style.textContent = cssText;
-        document.head.appendChild(style);
-        appliedStyle = style;
-
-        if (manifest) {
-          safeSetItem?.(this.iconManifestStorageKey, JSON.stringify(manifest));
-          this.iconSubsetManifest = manifest;
-          this.markManifestIconsAsLoaded(manifest);
-          this.iconSubsetHash = manifest.hash || "";
-        }
-
-        if (manifest) {
-          await this.verifyIconManifestFonts(manifest, {
-            icons
-          });
-        } else {
-          await this.verifyIconCssFonts(cssText, {
-            icons
-          });
-        }
-
-        if (document.fonts?.ready) {
-          await document.fonts.ready;
-        }
-
-        await new Promise(resolve => requestAnimationFrame(resolve));
-        await new Promise(resolve => requestAnimationFrame(resolve));
-
-        if (prev) {
-          prev.remove();
-        }
-
-        const loadedDescriptorKeys = new Set(this.loadedIcons);
-        unloadedIcons.forEach(({
-          icon,
-          attrs
-        }) => {
-          this.getLoadedDescriptorKeysForIconState(icon, attrs).forEach(key => loadedDescriptorKeys.add(key));
-        });
-        this.loadedIcons = loadedDescriptorKeys;
-        this.iconSubsetPending = false;
-        this.iconSubsetReady = true;
-        window.dispatchEvent(new CustomEvent("sf-icons-subset:ready", {
-          detail: {
-            icons: new Set([...icons]),
-            weights: [...requestConfig.weights],
-            loader: this
-          }
-        }));
-        this.syncStaticIconLoadedState();
-        resolve(true);
-      }).catch(err => {
-        this.iconSubsetPending = false;
-        this.iconSubsetReady = false;
-        this.iconSubsetPromise = null;
-        appliedStyle?.remove?.();
-        this.applyIconFontFallback({
-          icons,
-          type: manifest ? this.getIconManifestType(manifest) : requestConfig.defaultType,
-          reason: err
-        });
-        console.warn("SFLoader icon subset CSS failed", err);
-        resolve(true);
-        return true;
+    unloadedIcons.forEach(([, attrs]) => attrs.set("loading", true));
+    this.iconSubsetPending = true;
+    this.iconSubsetReady = false;
+    const requestConfigs = this.getIconSubsetRequestConfigs();
+    this.iconSubsetPromise = Promise.all(requestConfigs.map(config => this.loadIconSubsetFamily(config))).then(results => {
+      const loadedDescriptorKeys = new Set(this.loadedIcons);
+      unloadedIcons.forEach(([icon, attrs]) => {
+        this.getLoadedDescriptorKeysForIconState(icon, attrs).forEach(key => loadedDescriptorKeys.add(key));
       });
+      this.loadedIcons = loadedDescriptorKeys;
+      this.iconSubsetPending = false;
+      this.iconSubsetReady = results.every(Boolean);
+      this.syncStaticIconLoadedState();
+      return this.iconSubsetReady;
+    }).finally(() => {
+      const needsReload = this.iconSubsetNeedsReload;
+      this.iconSubsetNeedsReload = false;
+      this.iconSubsetPromise = null;
+      if (needsReload) void this.loadFonts();
     });
+    return this.iconSubsetPromise;
   };
 }
 
