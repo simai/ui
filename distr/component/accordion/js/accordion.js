@@ -11,6 +11,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("58661bec99a6");
 
+const accordionInstances = new WeakMap();
+let accordionId = 0;
 
 class SfAccordion {
   static componentName = 'Accordion';
@@ -19,63 +21,120 @@ class SfAccordion {
     this.el = el;
     this.content = el?.querySelector?.('.sf-accordion-content') || null;
     this.title = el?.querySelector?.('.sf-accordion-title') || null;
-    this.icon = el?.querySelector?.(':scope > .sf-icon') || el?.querySelector?.('.sf-icon');
+    this.trigger = el?.querySelector?.('.sf-accordion-trigger') || el;
+    this.icon = this.trigger?.querySelector?.('.sf-icon') || el?.querySelector?.(':scope > .sf-icon') || el?.querySelector?.('.sf-icon');
     this.onClick = this.handleClick.bind(this);
+    this.onKeydown = this.handleKeydown.bind(this);
   }
 
   init() {
     if (!this.el || this.el.dataset.sfAccordionInit === '1') return;
     this.el.dataset.sfAccordionInit = '1';
+    accordionInstances.set(this.el, this);
+    const usesLegacyTrigger = this.trigger === this.el;
 
-    if (!this.el.hasAttribute('role')) {
-      this.el.setAttribute('role', 'button');
-    }
+    if (usesLegacyTrigger) {
+      this.el.classList.add('sf-accordion--legacy');
 
-    if (!this.el.hasAttribute('tabindex')) {
-      this.el.setAttribute('tabindex', '0');
-    }
-
-    this.syncState();
-    this.el.addEventListener('click', this.onClick);
-    this.el.addEventListener('keydown', event => {
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        this.toggle();
+      if (!this.trigger.hasAttribute('role')) {
+        this.trigger.setAttribute('role', 'button');
       }
-    });
+
+      if (!this.trigger.hasAttribute('tabindex')) {
+        this.trigger.setAttribute('tabindex', '0');
+      }
+    }
+
+    this.bindRelationship();
+    this.syncState();
+    this.trigger.addEventListener('click', this.onClick);
+
+    if (usesLegacyTrigger) {
+      this.trigger.addEventListener('keydown', this.onKeydown);
+    }
   }
 
   destroy() {
     if (!this.el) return;
-    this.el.removeEventListener('click', this.onClick);
+    this.trigger?.removeEventListener('click', this.onClick);
+    this.trigger?.removeEventListener('keydown', this.onKeydown);
+    accordionInstances.delete(this.el);
+    this.el.classList.remove('sf-accordion--legacy');
     delete this.el.dataset.sfAccordionInit;
   }
 
-  handleClick(event) {
-    // Ignore clicks on interactive children if they appear later.
-    const interactive = event.target.closest?.('a, button, input, textarea, select, summary');
-    if (interactive && interactive !== this.el) return;
+  bindRelationship() {
+    if (!this.trigger || !this.content) return;
+    accordionId += 1;
+
+    if (!this.trigger.id) {
+      this.trigger.id = `sf-accordion-trigger-${accordionId}`;
+    }
+
+    if (!this.content.id) {
+      this.content.id = `sf-accordion-panel-${accordionId}`;
+    }
+
+    this.trigger.setAttribute('aria-controls', this.content.id);
+
+    if (this.content.getAttribute('role') === 'region') {
+      this.content.setAttribute('aria-labelledby', this.trigger.id);
+    }
+  }
+
+  handleClick() {
+    this.toggle();
+  }
+
+  handleKeydown(event) {
+    if (event.key !== 'Enter' && event.key !== ' ') return;
+    event.preventDefault();
     this.toggle();
   }
 
   isOpen() {
     if (!this.content) return false;
-    return !this.content.classList.contains('hidden');
+    return !this.content.hidden && !this.content.classList.contains('hidden');
   }
 
   toggle() {
     if (!this.content) return;
-    this.content.classList.toggle('hidden');
+    this.setOpen(!this.isOpen());
+  }
+
+  setOpen(open) {
+    if (!this.content) return;
+
+    if (open) {
+      this.closeSingleModeSiblings();
+    }
+
+    this.content.hidden = !open;
+    this.content.classList.toggle('hidden', !open);
     this.syncState();
+  }
+
+  closeSingleModeSiblings() {
+    const group = this.el.closest?.('[data-sf-accordion-mode="single"]');
+    if (!group) return;
+    group.querySelectorAll(':scope > .sf-accordion').forEach(item => {
+      if (item === this.el) return;
+      const instance = accordionInstances.get(item);
+
+      if (instance?.isOpen()) {
+        instance.setOpen(false);
+      }
+    });
   }
 
   syncState() {
     const open = this.isOpen();
-    this.el?.setAttribute('aria-expanded', open ? 'true' : 'false');
+    this.trigger?.setAttribute('aria-expanded', open ? 'true' : 'false');
     this.el?.classList.toggle('active', open);
 
     if (this.icon) {
-      this.icon.textContent = open ? 'keyboard_arrow_up' : 'keyboard_arrow_down';
+      this.icon.textContent = 'chevron_right';
+      this.icon.setAttribute('aria-hidden', 'true');
     }
   }
 
@@ -84,7 +143,7 @@ class SfAccordion {
 function initAccordions(root = document) {
   if (!root?.querySelectorAll) return;
   root.querySelectorAll('.sf-accordion').forEach(el => {
-    const inst = new SfAccordion(el);
+    const inst = accordionInstances.get(el) || new SfAccordion(el);
     inst.init();
   });
 }
@@ -104,7 +163,7 @@ if (typeof MutationObserver !== 'undefined') {
         if (!(node instanceof HTMLElement)) return;
 
         if (node.matches('.sf-accordion')) {
-          const inst = new SfAccordion(node);
+          const inst = accordionInstances.get(node) || new SfAccordion(node);
           inst.init();
           return;
         }
