@@ -350,28 +350,43 @@
   }
   .sf-button-group > sf-button[\:has\(\%3E\%20.sf-button.focus-visible\)] > .sf-button,
   .sf-button-group > .sf-button.focus-visible {
-    --sf-button--box-shadow: inset 0 0 0 var(--sf-focus-outline-width) var(--sf-focus);
-    box-shadow: inset 0 0 0 var(--sf-focus-outline-width) var(--sf-focus);
+    --sf-button--box-shadow: var(
+      --sf-ui-focus-inset,
+      inset 0 0 0 var(--sf-focus-outline-width) var(--sf-focus)
+    );
+    box-shadow: var(--sf-button--box-shadow);
   }
   .sf-button-group > sf-button:has(> .sf-button.focus-visible) > .sf-button,
   .sf-button-group > .sf-button.focus-visible {
-    --sf-button--box-shadow: inset 0 0 0 var(--sf-focus-outline-width) var(--sf-focus);
-    box-shadow: inset 0 0 0 var(--sf-focus-outline-width) var(--sf-focus);
+    --sf-button--box-shadow: var(
+      --sf-ui-focus-inset,
+      inset 0 0 0 var(--sf-focus-outline-width) var(--sf-focus)
+    );
+    box-shadow: var(--sf-button--box-shadow);
   }
   .sf-button-group > sf-button[\:has\(\%3E\%20.sf-button\:focus-visible\)] > .sf-button,
   .sf-button-group > .sf-button.focus-visible {
-    --sf-button--box-shadow: inset 0 0 0 var(--sf-focus-outline-width) var(--sf-focus);
-    box-shadow: inset 0 0 0 var(--sf-focus-outline-width) var(--sf-focus);
+    --sf-button--box-shadow: var(
+      --sf-ui-focus-inset,
+      inset 0 0 0 var(--sf-focus-outline-width) var(--sf-focus)
+    );
+    box-shadow: var(--sf-button--box-shadow);
   }
   .sf-button-group > sf-button[\:has\(\%3E\%20.sf-button\:focus-visible\)] > .sf-button,
   .sf-button-group > .sf-button:focus-visible {
-    --sf-button--box-shadow: inset 0 0 0 var(--sf-focus-outline-width) var(--sf-focus);
-    box-shadow: inset 0 0 0 var(--sf-focus-outline-width) var(--sf-focus);
+    --sf-button--box-shadow: var(
+      --sf-ui-focus-inset,
+      inset 0 0 0 var(--sf-focus-outline-width) var(--sf-focus)
+    );
+    box-shadow: var(--sf-button--box-shadow);
   }
   .sf-button-group > sf-button:has(> .sf-button:focus-visible) > .sf-button,
   .sf-button-group > .sf-button:focus-visible {
-    --sf-button--box-shadow: inset 0 0 0 var(--sf-focus-outline-width) var(--sf-focus);
-    box-shadow: inset 0 0 0 var(--sf-focus-outline-width) var(--sf-focus);
+    --sf-button--box-shadow: var(
+      --sf-ui-focus-inset,
+      inset 0 0 0 var(--sf-focus-outline-width) var(--sf-focus)
+    );
+    box-shadow: var(--sf-button--box-shadow);
   }
   .sf-button-group > sf-button > .sf-button,
   .sf-button-group > .sf-button {

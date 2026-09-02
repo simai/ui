@@ -144,23 +144,23 @@
 .sf-accordion-trigger.focus-visible {
   z-index: 1;
   outline: none;
-  box-shadow: 0 0 0 var(--sf-focus-outline-width) var(--sf-focus);
-  box-shadow: var(--sf-ui-focus, 0 0 0 var(--sf-focus-outline-width) var(--sf-focus));
+  box-shadow: inset 0 0 0 var(--sf-focus-outline-width) var(--sf-focus);
+  box-shadow: var(--sf-ui-focus-inset, inset 0 0 0 var(--sf-focus-outline-width) var(--sf-focus));
 }
 
 .sf-accordion-trigger.focus-visible {
   z-index: 1;
   outline: none;
-  box-shadow: 0 0 0 var(--sf-focus-outline-width) var(--sf-focus);
-  box-shadow: 0 0 0 var(--sf-focus-outline-width) var(--sf-focus);
-  box-shadow: var(--sf-ui-focus, 0 0 0 var(--sf-focus-outline-width) var(--sf-focus));
+  box-shadow: inset 0 0 0 var(--sf-focus-outline-width) var(--sf-focus);
+  box-shadow: inset 0 0 0 var(--sf-focus-outline-width) var(--sf-focus);
+  box-shadow: var(--sf-ui-focus-inset, inset 0 0 0 var(--sf-focus-outline-width) var(--sf-focus));
 }
 
 .sf-accordion-trigger:focus-visible {
   z-index: 1;
   outline: none;
-  box-shadow: 0 0 0 var(--sf-focus-outline-width) var(--sf-focus);
-  box-shadow: var(--sf-ui-focus, 0 0 0 var(--sf-focus-outline-width) var(--sf-focus));
+  box-shadow: inset 0 0 0 var(--sf-focus-outline-width) var(--sf-focus);
+  box-shadow: var(--sf-ui-focus-inset, inset 0 0 0 var(--sf-focus-outline-width) var(--sf-focus));
 }
 
 .sf-accordion .sf-accordion-title {
@@ -168,9 +168,9 @@
   min-width: 0;
   color: inherit;
   font-family: var(--sf-text--family);
-  font-size: var(--sf-text-size-1);
+  font-size: var(--sf-text--size);
   font-weight: var(--sf-font-weight-medium);
-  line-height: var(--sf-text-height-1);
+  line-height: var(--sf-text--height);
 }
 
 .sf-accordion .sf-icon {
@@ -201,16 +201,34 @@
           transform: rotate(180deg);
 }
 
+.sf-accordion.sf-accordion--plus-minus .sf-accordion-trigger .sf-icon,
+[dir=rtl] .sf-accordion.sf-accordion--plus-minus .sf-accordion-trigger .sf-icon {
+  -webkit-transform: none;
+          transform: none;
+}
+
 .sf-accordion .sf-accordion-content {
   padding: var(--sf-accordion--content-padding);
   color: var(--sf-on-surface-variant);
   color: var(--sf-accordion-content--color, var(--sf-on-surface-variant));
   font-family: var(--sf-text--family);
-  font-size: var(--sf-text-size-1);
+  font-size: var(--sf-text--size);
   font-weight: var(--sf-font-weight-regular);
-  line-height: var(--sf-text-height-1);
+  line-height: var(--sf-text--height);
 }
 
+@media (forced-colors: active) {
+  .sf-accordion-trigger.focus-visible {
+    outline: var(--sf-focus-outline-width) solid currentColor;
+    outline-offset: calc(var(--sf-focus-outline-width) * -1);
+    box-shadow: none;
+  }
+  .sf-accordion-trigger:focus-visible {
+    outline: var(--sf-focus-outline-width) solid currentColor;
+    outline-offset: calc(var(--sf-focus-outline-width) * -1);
+    box-shadow: none;
+  }
+}
 /* Compatibility path for the released pre-trigger markup. */
 .sf-accordion.sf-accordion--legacy {
   gap: var(--sf-space-1\/3);

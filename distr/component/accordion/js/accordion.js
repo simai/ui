@@ -12,6 +12,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("58661bec99a6");
 
 const accordionInstances = new WeakMap();
+const ACCORDION_GROUP_SELECTOR = '.sf-accordion-group';
+const LEGACY_SINGLE_GROUP_SELECTOR = '[data-sf-accordion-mode="single"]';
+const PLUS_MINUS_MODIFIER = 'sf-accordion--plus-minus';
 let accordionId = 0;
 
 class SfAccordion {
@@ -115,7 +118,7 @@ class SfAccordion {
   }
 
   closeSingleModeSiblings() {
-    const group = this.el.closest?.('[data-sf-accordion-mode="single"]');
+    const group = this.singleModeGroup();
     if (!group) return;
     group.querySelectorAll(':scope > .sf-accordion').forEach(item => {
       if (item === this.el) return;
@@ -127,13 +130,23 @@ class SfAccordion {
     });
   }
 
+  singleModeGroup() {
+    const canonicalGroup = this.el.closest?.(ACCORDION_GROUP_SELECTOR);
+
+    if (canonicalGroup) {
+      return canonicalGroup.getAttribute('data-mode') === 'single' ? canonicalGroup : null;
+    }
+
+    return this.el.closest?.(LEGACY_SINGLE_GROUP_SELECTOR) || null;
+  }
+
   syncState() {
     const open = this.isOpen();
     this.trigger?.setAttribute('aria-expanded', open ? 'true' : 'false');
     this.el?.classList.toggle('active', open);
 
     if (this.icon) {
-      this.icon.textContent = 'chevron_right';
+      this.icon.textContent = this.el.classList.contains(PLUS_MINUS_MODIFIER) ? open ? 'remove' : 'add' : 'chevron_right';
       this.icon.setAttribute('aria-hidden', 'true');
     }
   }

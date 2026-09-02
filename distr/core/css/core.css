@@ -91,6 +91,7 @@
     --sf-focus--offset: var(--sf-a0);
     --sf-focus--style: solid;
     --sf-focus--width: var(--sf-a4);
+    --sf-ui-focus-inset: inset 0 0 0 var(--sf-focus-outline-width) var(--sf-focus);
   }
   :focus {
     outline-color: var(--sf-focus-color);
