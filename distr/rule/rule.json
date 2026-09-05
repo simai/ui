@@ -1654,6 +1654,13 @@
     "type": "component"
   },
   {
+    "name": "file-preview",
+    "css": true,
+    "js": false,
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-file-preview\\b/i",
+    "type": "component"
+  },
+  {
     "name": "file-upload",
     "css": true,
     "js": true,
@@ -2483,6 +2490,13 @@
   {
     "name": "line-height/xl",
     "regex": "/xl\\:line-/"
+  },
+  {
+    "name": "link",
+    "css": true,
+    "js": false,
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-link\\b/i",
+    "type": "component"
   },
   {
     "name": "list-style-position/default",
