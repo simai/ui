@@ -1,0 +1,111 @@
+{
+  "schema_id": "simai.framework.release-lock",
+  "schema_version": 1,
+  "compatibility_id": "ui-6360a94727a8-smart-3f86eabc5152",
+  "status": "bounded",
+  "profile": "plain-assets-v1",
+  "runtime_sources": {
+    "ui": {
+      "owner": "simai/ui",
+      "tag": null,
+      "tag_object": null,
+      "commit": "6360a94727a8eb23d52e1373adff444d5e7d485d",
+      "tree": "6b60c3fcb5dfcafa3d38dbd76379c9574cb64fd3",
+      "runtime_path": "distr",
+      "runtime_tree": "58ee18954f71e6934299363328282a6c4f9d3e65",
+      "archive_sha256": "45af33c73d9d12d1b2e78e23b0bc467ef667dbc3ab50c3149c50a0ec8f366dd8"
+    },
+    "ui-smart": {
+      "owner": "simai/ui-smart",
+      "tag": null,
+      "tag_object": null,
+      "commit": "3f86eabc515299d0ed3f2bb2f28b6bf2c07a5a9b",
+      "tree": "9b17a28d0d2fb98f57e6c4c0125b6fff96652d01",
+      "runtime_path": "smart",
+      "runtime_tree": "df2555693ace9ffe73cac71492303a8661c2a7e1",
+      "archive_sha256": "bd1b26bd36a3ca4f30619cfde5a99780a976be25f265acc2951b61a4267fb9a2"
+    }
+  },
+  "build_inputs": {
+    "source": {
+      "owner": "simai/ui-loader",
+      "commit": "4b55b4d234a8193dab1438c50fcc176b36d62085",
+      "tree": "04be3502dbf1900a4f2c08112ed0037a0600d0ef",
+      "archive_sha256": "cbf81aeea7938e97440256d78a79f75ca8f420a26009e5820221f14af9f8e34a"
+    },
+    "builder": {
+      "owner": "simai/ui-builder",
+      "commit": "96b56d2a4e5bd4e3be3f839ffebf205ba7fa77c2",
+      "tree": "afc3bbcfbd2a59ffdcc4e2ae7e5f06b882b2814c",
+      "archive_sha256": "d4213fc7fc3bd1da606cf5228fdd76179939de08fb7bba9c6e1b932bcdf0b89a"
+    },
+    "legacy_compatibility": {
+      "required": true,
+      "source": {
+        "owner": "simai/ui",
+        "commit": "185ca0620df6b46b9e2c9c92231a46c9b79a786b",
+        "tree": "25923ec2eb2fc755ac3774cd26067cd7ff15c2e5",
+        "runtime_path": "distr",
+        "runtime_tree": "76a326dcaeadd78c85d89ce355954cd1e1a25d55",
+        "archive_sha256": "1c57b3d20e1acf0c9145caef6e796aebea3506b4fc8df620380f81e3d22cce8c"
+      },
+      "lineage_manifest": {
+        "owner": "simai/ui",
+        "commit": "185ca0620df6b46b9e2c9c92231a46c9b79a786b",
+        "tree": "25923ec2eb2fc755ac3774cd26067cd7ff15c2e5",
+        "path": "contracts/lineage/legacy-runtime-ui-v5.4.0.json",
+        "blob": "5ef937fe1a91f4fa246e4b16657b01c6d486988e",
+        "sha256": "ec7113e78d9965f71e75b5ecaa1e62003de0e04abfc06cbb60cb1cc90b2aa88c",
+        "records_count": 472
+      },
+      "invocation": {
+        "command": "node scripts/verify-product-reproducibility.cjs",
+        "arguments": [
+          "<ui-loader-root>",
+          "<workspace-root>",
+          "--require-legacy-compatibility"
+        ],
+        "environment_bindings": {
+          "SF_LEGACY_COMPATIBILITY_ROOT": "legacy_compatibility.source.runtime_path",
+          "SF_LEGACY_COMPATIBILITY_REVISION": "legacy_compatibility.lineage_manifest.generated_repository.revision",
+          "SF_LEGACY_COMPATIBILITY_MANIFEST": "legacy_compatibility.lineage_manifest"
+        }
+      }
+    }
+  },
+  "inventory": {
+    "utility_rules": 640,
+    "utility_families": 226,
+    "components": 63,
+    "smart_components": 43,
+    "recipes": 1
+  },
+  "exclusions": [
+    {
+      "reason": "legacy_smart_runtime_retained_from_previous_public_distribution",
+      "source": {
+        "owner": "simai/ui-smart",
+        "commit": "08f946208bdbed6ac4108afad684c43153f93aa5"
+      },
+      "paths": [
+        "smart/alert/css/alert.css",
+        "smart/editor/css/editor.css",
+        "smart/editor/js/editor.js",
+        "smart/fab/js/fab.js",
+        "smart/file-preview/js/file-preview.js",
+        "smart/flags/js/flags.js",
+        "smart/form/js/form.js",
+        "smart/link/js/link.js",
+        "smart/list/js/list.js",
+        "smart/menu/js/menu.js",
+        "smart/rating/js/rating.js",
+        "smart/settings/js/settings.js"
+      ]
+    }
+  ],
+  "claims": {
+    "full_compatible": false,
+    "production_ready": false,
+    "all_items_ready": false
+  }
+}
