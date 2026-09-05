@@ -3069,6 +3069,10 @@ SF.RuleLoader["cl-admin-menu"] = {
     name: "inputs"
   }, {
     name: "badges"
+  }, {
+    name: "cl-buttons"
+  }, {
+    name: "cl-context-menu"
   }]
 };
 
@@ -3239,6 +3243,8 @@ SF.RuleLoader['cl-context-menu'] = {
   js: true,
   relation: [{
     name: 'context-menu'
+  }, {
+    name: 'cl-buttons'
   }]
 };
 

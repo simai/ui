@@ -1,8 +1,27 @@
 @layer sf.components {
   .sf-context-menu {
-    --sf-context-menu-tail-size: var(--sf-text-height-1\/4);
+    --sf-context-menu-viewport-space: var(--sf-space-1\/2);
+    scroll-behavior: auto;
+    --sf-context-menu-tail-size: var(--sf-b2);
     --sf-context-menu-tail-half: calc(var(--sf-context-menu-tail-size) / 2);
     --sf-context-menu-tail-corner-offset: var(--sf-space-1\/2);
+  }
+  .sf-context-menu > .relative {
+    display: flex;
+    min-width: 0;
+    min-inline-size: 0;
+    min-height: 0;
+    min-block-size: 0;
+    max-width: none;
+    max-inline-size: none;
+    max-width: none;
+    max-width: var(--sf-context-menu-available-inline-size, none);
+    max-inline-size: var(--sf-context-menu-available-inline-size, none);
+    max-height: none;
+    max-block-size: none;
+    max-height: none;
+    max-height: var(--sf-context-menu-available-block-size, none);
+    max-block-size: var(--sf-context-menu-available-block-size, none);
   }
   .sf-context-menu[class*=sf-context-menu--position-] .sf-context-menu-content {
     position: relative;
@@ -200,83 +219,84 @@
 @layer sf.components {
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-d4) justify-content/flex-start (.justify-start) align-items/flex-start (.items-start) */
   [dir="ltr"] .sf-context-menu {
-    border-bottom-right-radius: var(--sf-radius-1\/2);
-    border-bottom-right-radius: var(--sf-context-menu--border-end-end-radius, var(--sf-radius-1\/2));
+    border-bottom-right-radius: var(--sf-radius-default);
+    border-bottom-right-radius: var(--sf-context-menu--border-end-end-radius, var(--sf-radius-default));
   }
   [dir="rtl"] .sf-context-menu {
-    border-bottom-left-radius: var(--sf-radius-1\/2);
-    border-bottom-left-radius: var(--sf-context-menu--border-end-end-radius, var(--sf-radius-1\/2));
+    border-bottom-left-radius: var(--sf-radius-default);
+    border-bottom-left-radius: var(--sf-context-menu--border-end-end-radius, var(--sf-radius-default));
   }
   [dir="ltr"] .sf-context-menu {
-    border-bottom-left-radius: var(--sf-radius-1\/2);
-    border-bottom-left-radius: var(--sf-context-menu--border-end-start-radius, var(--sf-radius-1\/2));
+    border-bottom-left-radius: var(--sf-radius-default);
+    border-bottom-left-radius: var(--sf-context-menu--border-end-start-radius, var(--sf-radius-default));
   }
   [dir="rtl"] .sf-context-menu {
-    border-bottom-right-radius: var(--sf-radius-1\/2);
-    border-bottom-right-radius: var(--sf-context-menu--border-end-start-radius, var(--sf-radius-1\/2));
+    border-bottom-right-radius: var(--sf-radius-default);
+    border-bottom-right-radius: var(--sf-context-menu--border-end-start-radius, var(--sf-radius-default));
   }
   [dir="ltr"] .sf-context-menu {
-    border-top-right-radius: var(--sf-radius-1\/2);
-    border-top-right-radius: var(--sf-context-menu--border-start-end-radius, var(--sf-radius-1\/2));
+    border-top-right-radius: var(--sf-radius-default);
+    border-top-right-radius: var(--sf-context-menu--border-start-end-radius, var(--sf-radius-default));
   }
   [dir="rtl"] .sf-context-menu {
-    border-top-left-radius: var(--sf-radius-1\/2);
-    border-top-left-radius: var(--sf-context-menu--border-start-end-radius, var(--sf-radius-1\/2));
+    border-top-left-radius: var(--sf-radius-default);
+    border-top-left-radius: var(--sf-context-menu--border-start-end-radius, var(--sf-radius-default));
   }
   [dir="ltr"] .sf-context-menu {
-    border-top-left-radius: var(--sf-radius-1\/2);
-    border-top-left-radius: var(--sf-context-menu--border-start-start-radius, var(--sf-radius-1\/2));
+    border-top-left-radius: var(--sf-radius-default);
+    border-top-left-radius: var(--sf-context-menu--border-start-start-radius, var(--sf-radius-default));
   }
   [dir="rtl"] .sf-context-menu {
-    border-top-right-radius: var(--sf-radius-1\/2);
-    border-top-right-radius: var(--sf-context-menu--border-start-start-radius, var(--sf-radius-1\/2));
+    border-top-right-radius: var(--sf-radius-default);
+    border-top-right-radius: var(--sf-context-menu--border-start-start-radius, var(--sf-radius-default));
   }
   [dir="ltr"] .sf-context-menu {
-    border-bottom-right-radius: var(--sf-radius-1\/2);
+    border-bottom-right-radius: var(--sf-radius-default);
   }
   [dir="rtl"] .sf-context-menu {
-    border-bottom-left-radius: var(--sf-radius-1\/2);
+    border-bottom-left-radius: var(--sf-radius-default);
   }
   [dir="ltr"] .sf-context-menu {
-    border-bottom-left-radius: var(--sf-radius-1\/2);
+    border-bottom-left-radius: var(--sf-radius-default);
   }
   [dir="rtl"] .sf-context-menu {
-    border-bottom-right-radius: var(--sf-radius-1\/2);
+    border-bottom-right-radius: var(--sf-radius-default);
   }
   [dir="ltr"] .sf-context-menu {
-    border-top-right-radius: var(--sf-radius-1\/2);
+    border-top-right-radius: var(--sf-radius-default);
   }
   [dir="rtl"] .sf-context-menu {
-    border-top-left-radius: var(--sf-radius-1\/2);
+    border-top-left-radius: var(--sf-radius-default);
   }
   [dir="ltr"] .sf-context-menu {
-    border-top-left-radius: var(--sf-radius-1\/2);
+    border-top-left-radius: var(--sf-radius-default);
   }
   [dir="rtl"] .sf-context-menu {
-    border-top-right-radius: var(--sf-radius-1\/2);
+    border-top-right-radius: var(--sf-radius-default);
   }
   .sf-context-menu {
     background-color: transparent;
     background-color: var(--sf-context-menu--background-color, transparent);
     box-shadow: var(--sf-ui-shadow-2);
     box-shadow: var(--sf-context-menu--box-shadow, var(--sf-ui-shadow-2));
-    border-end-end-radius: var(--sf-radius-1\/2);
-    border-end-end-radius: var(--sf-context-menu--border-end-end-radius, var(--sf-radius-1\/2));
-    border-end-start-radius: var(--sf-radius-1\/2);
-    border-end-start-radius: var(--sf-context-menu--border-end-start-radius, var(--sf-radius-1\/2));
-    border-start-end-radius: var(--sf-radius-1\/2);
-    border-start-end-radius: var(--sf-context-menu--border-start-end-radius, var(--sf-radius-1\/2));
-    border-start-start-radius: var(--sf-radius-1\/2);
-    border-start-start-radius: var(--sf-context-menu--border-start-start-radius, var(--sf-radius-1\/2));
+    border-end-end-radius: var(--sf-radius-default);
+    border-end-end-radius: var(--sf-context-menu--border-end-end-radius, var(--sf-radius-default));
+    border-end-start-radius: var(--sf-radius-default);
+    border-end-start-radius: var(--sf-context-menu--border-end-start-radius, var(--sf-radius-default));
+    border-start-end-radius: var(--sf-radius-default);
+    border-start-end-radius: var(--sf-context-menu--border-start-end-radius, var(--sf-radius-default));
+    border-start-start-radius: var(--sf-radius-default);
+    border-start-start-radius: var(--sf-context-menu--border-start-start-radius, var(--sf-radius-default));
     gap: var(--sf-d4);
   }
   /* utility-hint: display/block */
   .sf-context-menu .sf-context-menu-tooltip {
     background-color: var(--sf-surface-0);
     box-shadow: var(--sf-ui-shadow-1);
-    font-size: var(--sf-text-height-1\/4);
-    height: var(--sf-text-height-1\/4);
-    width: var(--sf-text-height-1\/4);
+    height: var(--sf-b2);
+    height: var(--sf-context-menu-tail-size, var(--sf-b2));
+    width: var(--sf-b2);
+    width: var(--sf-context-menu-tail-size, var(--sf-b2));
   }
   /* utility-hint: display/flex (.flex) flex-direction/column (.flex-col) flex-wrap/nowrap (.flex-nowrap) justify-content/flex-start (.justify-start) align-items/flex-start (.items-start) */
   [dir="ltr"] .sf-context-menu .sf-context-menu-content {
@@ -297,7 +317,7 @@
     --sf-context-menu-content--padding-inline-end: var(--sf-space-1\/4);
     --sf-context-menu-content--padding-inline-start: var(--sf-space-1\/4);
     --sf-context-menu-content--padding-top: var(--sf-space-1\/4);
-    --sf-context-menu-content--border-radius: var(--sf-radius-1);
+    --sf-context-menu-content--border-radius: var(--sf-radius-default);
     border-radius: var(--sf-context-menu-content--border-radius);
     background-color: var(--sf-context-menu-content--background-color);
     padding-bottom: var(--sf-context-menu-content--padding-bottom);
@@ -306,5 +326,55 @@
     -webkit-padding-start: var(--sf-context-menu-content--padding-inline-start);
             padding-inline-start: var(--sf-context-menu-content--padding-inline-start);
     padding-top: var(--sf-context-menu-content--padding-top);
+    min-width: 0;
+    min-inline-size: 0;
+    min-height: 0;
+    min-block-size: 0;
+    max-width: 100%;
+    max-inline-size: 100%;
+    max-width: 100%;
+    max-width: var(--sf-context-menu-available-inline-size, 100%);
+    max-inline-size: var(--sf-context-menu-available-inline-size, 100%);
+    max-height: 100%;
+    max-block-size: 100%;
+    max-height: 100%;
+    max-height: var(--sf-context-menu-available-block-size, 100%);
+    max-block-size: var(--sf-context-menu-available-block-size, 100%);
+    overflow: auto;
+    scroll-behavior: auto;
+  }
+}
+@layer sf.states {
+  .sf-context-menu-content > .sf-button:not(:disabled):not(.disabled).focus-visible,
+  .sf-context-menu-content > sf-button > .sf-button:not(:disabled):not(.disabled).focus-visible {
+    --sf-button--box-shadow: var(--sf-ui-focus-inset);
+    position: relative;
+    z-index: 1;
+    outline: none;
+  }
+  .sf-context-menu-content > .sf-button:not(:disabled):not(.disabled):focus-visible,
+  .sf-context-menu-content > sf-button > .sf-button:not(:disabled):not(.disabled):focus-visible {
+    --sf-button--box-shadow: var(--sf-ui-focus-inset);
+    position: relative;
+    z-index: 1;
+    outline: none;
+  }
+}
+@media (forced-colors: active) {
+  .sf-context-menu .sf-context-menu-content,
+  .sf-context-menu .sf-context-menu-tooltip {
+    border: var(--sf-px) solid CanvasText;
+  }
+  .sf-context-menu-content > .sf-button:not(:disabled):not(.disabled).focus-visible,
+  .sf-context-menu-content > sf-button > .sf-button:not(:disabled):not(.disabled).focus-visible {
+    outline: var(--sf-focus-outline-width) solid currentColor;
+    outline-offset: calc(var(--sf-focus-outline-width) * -1);
+    box-shadow: none;
+  }
+  .sf-context-menu-content > .sf-button:not(:disabled):not(.disabled):focus-visible,
+  .sf-context-menu-content > sf-button > .sf-button:not(:disabled):not(.disabled):focus-visible {
+    outline: var(--sf-focus-outline-width) solid currentColor;
+    outline-offset: calc(var(--sf-focus-outline-width) * -1);
+    box-shadow: none;
   }
 }

@@ -241,7 +241,7 @@ class AdminMenu {
 
   updateMenuItemHeight(items) {
     const visibleItem = items.find(item => !item.classList.contains("hidden"));
-    const nextHeight = visibleItem?.offsetHeight || this.menuItemHeight || 56;
+    const nextHeight = visibleItem?.offsetHeight || this.menuItemHeight;
 
     if (nextHeight && nextHeight !== this.menuItemHeight) {
       this.menuItemHeight = nextHeight;
@@ -260,6 +260,20 @@ class AdminMenu {
     return Array.from(list.querySelectorAll(":scope > .sf-admin-menu-item-wrap:not(.more)"));
   }
 
+  contentFitsWithoutOverflow(items) {
+    if (!this.main) return true;
+
+    if (this.moreWrap) {
+      this.setInvisible(this.moreWrap, true, true);
+    }
+
+    items.forEach(item => {
+      this.setHidden(item, false);
+      this.setInvisible(item, false);
+    });
+    return this.main.scrollHeight <= this.main.clientHeight + 1;
+  }
+
   ensureMoreItem() {
     if (!this.moreWrap) {
       this.moreWrap = this.createMoreItem();
@@ -274,6 +288,13 @@ class AdminMenu {
     if (!this.main) return;
     const items = this.getItems();
     if (!items.length) return;
+
+    if (this.contentFitsWithoutOverflow(items)) {
+      this.overflowOpen = false;
+      this.main.classList.remove("overflow-auto", "open");
+      return;
+    }
+
     const itemHeight = this.updateMenuItemHeight(items);
     const containerHeight = this.main.clientHeight - itemHeight;
     const visibleCount = Math.max(0, Math.min(items.length, Math.floor(containerHeight / itemHeight)));
