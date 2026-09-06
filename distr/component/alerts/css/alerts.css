@@ -281,7 +281,7 @@
 }
 
 .sf-alert.sf-alert--success .sf-icon {
-  --sf-icon--color: transparent;
+  --sf-icon--color: var(--sf-success);
 }
 
 .sf-alert.sf-alert--clear.sf-alert--outlined {
