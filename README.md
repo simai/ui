@@ -6,12 +6,12 @@ SIMAI UI Core - статический дистрибутив SIMAI Framework UI
 
 ## Текущая версия
 
-Текущая релизная версия: `5.6.2`.
+Текущая релизная версия: `5.6.3`.
 
 См. также:
 
 - [CHANGELOG.md](CHANGELOG.md)
-- [docs/releases/5.6.2.md](docs/releases/5.6.2.md)
+- [docs/releases/5.6.3.md](docs/releases/5.6.3.md)
 - [Documentation source contract](docs/documentation-source-contract.md)
 
 ## Установка через CDN
