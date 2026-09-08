@@ -20,7 +20,7 @@ if not SMART_MANIFEST_INPUT:
 SMART_MANIFEST = Path(SMART_MANIFEST_INPUT).resolve()
 GENERATED = ROOT / "contracts/generated/framework-contract-registry.json"
 DOCUMENTATION_SOURCE = ROOT / "contracts/generated/documentation-source.json"
-LOCK = ROOT / "contracts/releases/ui-bdfcd116f445-smart-3f86eabc5152.lock.json"
+LOCK = ROOT / "contracts/releases/ui-f6f72c731dcf-smart-3f86eabc5152.lock.json"
 SMART_REFERENCE = ROOT / "contracts/registry-inputs/ui-smart-3f86eabc5152.ref.json"
 
 
@@ -78,16 +78,16 @@ class FrameworkContractRegistryTest(unittest.TestCase):
         self.assertEqual(
             self.registry["counts"],
             {
-                "utility": 226,
+                "utility": 225,
                 "component": 63,
                 "smart-component": 43,
                 "recipe": 1,
-                "total": 333,
+                "total": 332,
             },
         )
         self.assertEqual(
             self.registry["compatibility"]["id"],
-            "ui-bdfcd116f445-smart-3f86eabc5152",
+            "ui-f6f72c731dcf-smart-3f86eabc5152",
         )
         self.assertEqual(self.registry["compatibility"]["status"], "bounded")
         self.assertEqual(self.registry["compatibility"]["profile"], "plain-assets-v1")
@@ -182,16 +182,7 @@ class FrameworkContractRegistryTest(unittest.TestCase):
             self.registry["indexes"]["recipe_closure"]["recipe.admin.collection"]
         )
         self.assertEqual(safe, closure | {"recipe.admin.collection"})
-        self.assertEqual(
-            self.registry["indexes"]["blocked"],
-            ["utility.filer-hue-rotate"],
-        )
-        typo_gap = self.by_id["utility.filer-hue-rotate"]
-        self.assertEqual(typo_gap["readiness"]["status"], "blocked")
-        self.assertEqual(
-            typo_gap["readiness"]["blockers"],
-            ["runtime_directory_missing:distr/utility/filer-hue-rotate"],
-        )
+        self.assertEqual(self.registry["indexes"]["blocked"], [])
         for entry in self.registry["entries"]:
             if entry["id"] not in safe and entry["readiness"]["status"] != "blocked":
                 self.assertEqual(entry["readiness"]["status"], "discoverable")
