@@ -3,7 +3,7 @@
     .sm\:isolate {
       isolation: isolate;
     }
-    .sm\:auto {
+    .sm\:isolation-auto {
       isolation: auto;
     }
   }

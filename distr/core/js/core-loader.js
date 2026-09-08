@@ -2582,6 +2582,16 @@ SFLoaderPlugin.prototype.getRuleRegexSource = function (rule) {
   return '';
 };
 
+SFLoaderPlugin.prototype.doesClassRuleMatchTokens = function (rule, className = '') {
+  const regex = rule?.regex ? rule.regex : rule;
+  const tokens = String(className).split(/\s+/).filter(Boolean);
+  return tokens.some(token => {
+    const re = regex instanceof RegExp ? new RegExp(regex.source, regex.flags.replace(/[gy]/g, '')) : new RegExp(regex);
+    const match = re.exec(token);
+    return Boolean(match && match.index === 0);
+  });
+};
+
 SFLoaderPlugin.prototype.extractRuleAttributeTargets = function (rule) {
   const source = this.getRuleRegexSource(rule);
   const attrs = new Set();
@@ -2924,7 +2934,10 @@ SFLoaderPlugin.prototype.getAttributes = function (HtmlElement) {
     const regex = rule.regex ? rule.regex : rule;
     const re = regex instanceof RegExp ? regex : new RegExp(regex, regex.flags || '');
     if (re.global || re.sticky) re.lastIndex = 0;
-    const match = re.test(string);
+    const targets = this.extractRuleAttributeTargets(rule);
+    const nonClassTargets = [...targets.attrs].filter(attrName => attrName !== 'class');
+    const classOnlyRule = targets.attrs.has('class') && nonClassTargets.length === 0 && targets.prefixes.size === 0;
+    const match = classOnlyRule ? this.doesClassRuleMatchTokens(rule, className) : re.test(string);
 
     if (match && !this.module[key]) {
       keys.push(key);

@@ -13,15 +13,15 @@
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
             transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
   }
-  .-hover\:translate-x-0:hover {
-    --sf-translate-x: calc(0rem - var(--sf-0px));
+  .hover\:-translate-x-0:hover {
+    --sf-translate-x: calc(-1 * var(--sf-0px));
     -webkit-transform: translate(0, 0);
             transform: translate(0, 0);
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
             transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
   }
-  .-hover\:translate-y-0:hover {
-    --sf-translate-y: calc(0rem - var(--sf-0px));
+  .hover\:-translate-y-0:hover {
+    --sf-translate-y: calc(-1 * var(--sf-0px));
     -webkit-transform: translate(0, 0);
             transform: translate(0, 0);
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
@@ -41,15 +41,15 @@
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
             transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
   }
-  .-hover\:translate-x-1:hover {
-    --sf-translate-x: calc(0rem - var(--sf-px));
+  .hover\:-translate-x-1:hover {
+    --sf-translate-x: calc(-1 * var(--sf-px));
     -webkit-transform: translate(0, 0);
             transform: translate(0, 0);
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
             transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
   }
-  .-hover\:translate-y-1:hover {
-    --sf-translate-y: calc(0rem - var(--sf-px));
+  .hover\:-translate-y-1:hover {
+    --sf-translate-y: calc(-1 * var(--sf-px));
     -webkit-transform: translate(0, 0);
             transform: translate(0, 0);
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
@@ -69,15 +69,15 @@
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
             transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
   }
-  .-hover\:translate-x-2:hover {
-    --sf-translate-x: calc(0rem - var(--sf-a2));
+  .hover\:-translate-x-2:hover {
+    --sf-translate-x: calc(-1 * var(--sf-a2));
     -webkit-transform: translate(0, 0);
             transform: translate(0, 0);
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
             transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
   }
-  .-hover\:translate-y-2:hover {
-    --sf-translate-y: calc(0rem - var(--sf-a2));
+  .hover\:-translate-y-2:hover {
+    --sf-translate-y: calc(-1 * var(--sf-a2));
     -webkit-transform: translate(0, 0);
             transform: translate(0, 0);
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
@@ -97,15 +97,15 @@
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
             transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
   }
-  .-hover\:translate-x-3:hover {
-    --sf-translate-x: calc(0rem - var(--sf-a4));
+  .hover\:-translate-x-3:hover {
+    --sf-translate-x: calc(-1 * var(--sf-a4));
     -webkit-transform: translate(0, 0);
             transform: translate(0, 0);
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
             transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
   }
-  .-hover\:translate-y-3:hover {
-    --sf-translate-y: calc(0rem - var(--sf-a4));
+  .hover\:-translate-y-3:hover {
+    --sf-translate-y: calc(-1 * var(--sf-a4));
     -webkit-transform: translate(0, 0);
             transform: translate(0, 0);
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
@@ -125,15 +125,15 @@
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
             transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
   }
-  .-hover\:translate-x-4:hover {
-    --sf-translate-x: calc(0rem - var(--sf-a6));
+  .hover\:-translate-x-4:hover {
+    --sf-translate-x: calc(-1 * var(--sf-a6));
     -webkit-transform: translate(0, 0);
             transform: translate(0, 0);
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
             transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
   }
-  .-hover\:translate-y-4:hover {
-    --sf-translate-y: calc(0rem - var(--sf-a6));
+  .hover\:-translate-y-4:hover {
+    --sf-translate-y: calc(-1 * var(--sf-a6));
     -webkit-transform: translate(0, 0);
             transform: translate(0, 0);
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
@@ -153,15 +153,15 @@
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
             transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
   }
-  .-hover\:translate-x-5:hover {
-    --sf-translate-x: calc(0rem - var(--sf-a8));
+  .hover\:-translate-x-5:hover {
+    --sf-translate-x: calc(-1 * var(--sf-a8));
     -webkit-transform: translate(0, 0);
             transform: translate(0, 0);
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
             transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
   }
-  .-hover\:translate-y-5:hover {
-    --sf-translate-y: calc(0rem - var(--sf-a8));
+  .hover\:-translate-y-5:hover {
+    --sf-translate-y: calc(-1 * var(--sf-a8));
     -webkit-transform: translate(0, 0);
             transform: translate(0, 0);
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
@@ -181,15 +181,15 @@
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
             transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
   }
-  .-hover\:translate-x-6:hover {
-    --sf-translate-x: calc(0rem - var(--sf-b0));
+  .hover\:-translate-x-6:hover {
+    --sf-translate-x: calc(-1 * var(--sf-b0));
     -webkit-transform: translate(0, 0);
             transform: translate(0, 0);
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
             transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
   }
-  .-hover\:translate-y-6:hover {
-    --sf-translate-y: calc(0rem - var(--sf-b0));
+  .hover\:-translate-y-6:hover {
+    --sf-translate-y: calc(-1 * var(--sf-b0));
     -webkit-transform: translate(0, 0);
             transform: translate(0, 0);
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
@@ -209,15 +209,15 @@
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
             transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
   }
-  .-hover\:translate-x-7:hover {
-    --sf-translate-x: calc(0rem - var(--sf-b2));
+  .hover\:-translate-x-7:hover {
+    --sf-translate-x: calc(-1 * var(--sf-b2));
     -webkit-transform: translate(0, 0);
             transform: translate(0, 0);
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
             transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
   }
-  .-hover\:translate-y-7:hover {
-    --sf-translate-y: calc(0rem - var(--sf-b2));
+  .hover\:-translate-y-7:hover {
+    --sf-translate-y: calc(-1 * var(--sf-b2));
     -webkit-transform: translate(0, 0);
             transform: translate(0, 0);
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
@@ -237,15 +237,15 @@
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
             transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
   }
-  .-hover\:translate-x-8:hover {
-    --sf-translate-x: calc(0rem - var(--sf-b4));
+  .hover\:-translate-x-8:hover {
+    --sf-translate-x: calc(-1 * var(--sf-b4));
     -webkit-transform: translate(0, 0);
             transform: translate(0, 0);
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
             transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
   }
-  .-hover\:translate-y-8:hover {
-    --sf-translate-y: calc(0rem - var(--sf-b4));
+  .hover\:-translate-y-8:hover {
+    --sf-translate-y: calc(-1 * var(--sf-b4));
     -webkit-transform: translate(0, 0);
             transform: translate(0, 0);
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
@@ -265,15 +265,15 @@
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
             transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
   }
-  .-hover\:translate-x-9:hover {
-    --sf-translate-x: calc(0rem - var(--sf-b6));
+  .hover\:-translate-x-9:hover {
+    --sf-translate-x: calc(-1 * var(--sf-b6));
     -webkit-transform: translate(0, 0);
             transform: translate(0, 0);
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
             transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
   }
-  .-hover\:translate-y-9:hover {
-    --sf-translate-y: calc(0rem - var(--sf-b6));
+  .hover\:-translate-y-9:hover {
+    --sf-translate-y: calc(-1 * var(--sf-b6));
     -webkit-transform: translate(0, 0);
             transform: translate(0, 0);
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
@@ -293,14 +293,14 @@
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
             transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
   }
-  .-hover\:translate-x-half:hover {
+  .hover\:-translate-x-half:hover {
     --sf-translate-x: -50%;
     -webkit-transform: translate(0, 0);
             transform: translate(0, 0);
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
             transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
   }
-  .-hover\:translate-y-half:hover {
+  .hover\:-translate-y-half:hover {
     --sf-translate-y: -50%;
     -webkit-transform: translate(0, 0);
             transform: translate(0, 0);
@@ -321,14 +321,14 @@
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
             transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
   }
-  .-hover\:translate-x-full:hover {
+  .hover\:-translate-x-full:hover {
     --sf-translate-x: -100%;
     -webkit-transform: translate(0, 0);
             transform: translate(0, 0);
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
             transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
   }
-  .-hover\:translate-y-full:hover {
+  .hover\:-translate-y-full:hover {
     --sf-translate-y: -100%;
     -webkit-transform: translate(0, 0);
             transform: translate(0, 0);

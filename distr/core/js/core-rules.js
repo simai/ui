@@ -3988,14 +3988,14 @@ SF.RuleLoader['aspect-ratio/xl'] = /xl\:aspect-/;
 /***/ "d5965a223fd1"
 () {
 
-SF.RuleLoader['backdrop-filer-hue-rotate/default'] = /backdrop-hue-rotate/;
+SF.RuleLoader['backdrop-filer-hue-rotate/default'] = /-?backdrop-hue-rotate-/;
 
 /***/ },
 
 /***/ "b7220c8703c8"
 () {
 
-SF.RuleLoader['backdrop-filer-hue-rotate/hover'] = /hover\:backdrop-hue-rotate/;
+SF.RuleLoader['backdrop-filer-hue-rotate/hover'] = /hover\:-?backdrop-hue-rotate-/;
 
 /***/ },
 
@@ -4934,35 +4934,35 @@ SF.RuleLoader['drop-shadow/hover'] = /hover\:drop-shadow-[0-5]/;
 /***/ "39384fcf7b05"
 () {
 
-SF.RuleLoader['element-position-ext/default'] = /((top|bottom|block-(start|end)|inline-(start|end))|(-(top|bottom|block-(start|end)|inline-(start|end))))-([a-i]{1}[1-9]{1})/;
+SF.RuleLoader['element-position-ext/default'] = /-?(?:top|bottom|block-(?:start|end)|inline-(?:start|end))-[a-i][0-9]/;
 
 /***/ },
 
 /***/ "dfdbf7b70bc3"
 () {
 
-SF.RuleLoader['element-position-ext/lg'] = /lg\:((top|bottom|block-(start|end)|inline-(start|end))|(-(top|bottom|block-(start|end)|inline-(start|end))))-([a-i]{1}[1-9]{1})/;
+SF.RuleLoader['element-position-ext/lg'] = /lg\:-?(?:top|bottom|block-(?:start|end)|inline-(?:start|end))-[a-i][0-9]/;
 
 /***/ },
 
 /***/ "ac105cb0f2d6"
 () {
 
-SF.RuleLoader['element-position-ext/md'] = /md\:((top|bottom|block-(start|end)|inline-(start|end))|(-(top|bottom|block-(start|end)|inline-(start|end))))-([a-i]{1}[1-9]{1})/;
+SF.RuleLoader['element-position-ext/md'] = /md\:-?(?:top|bottom|block-(?:start|end)|inline-(?:start|end))-[a-i][0-9]/;
 
 /***/ },
 
 /***/ "075138d8c058"
 () {
 
-SF.RuleLoader['element-position-ext/sm'] = /sm\:((top|bottom|block-(start|end)|inline-(start|end))|(-(top|bottom|block-(start|end)|inline-(start|end))))-([a-i]{1}[1-9]{1})/;
+SF.RuleLoader['element-position-ext/sm'] = /sm\:-?(?:top|bottom|block-(?:start|end)|inline-(?:start|end))-[a-i][0-9]/;
 
 /***/ },
 
 /***/ "05f2872f3688"
 () {
 
-SF.RuleLoader['element-position-ext/xl'] = /xl\:((top|bottom|block-(start|end)|inline-(start|end))|(-(top|bottom|block-(start|end)|inline-(start|end))))-([a-i]{1}[1-9]{1})/;
+SF.RuleLoader['element-position-ext/xl'] = /xl\:-?(?:top|bottom|block-(?:start|end)|inline-(?:start|end))-[a-i][0-9]/;
 
 /***/ },
 
@@ -5025,7 +5025,7 @@ SF.RuleLoader['fill-rule/default'] = /fill-(nonzero|evenodd)/;
 /***/ "6b33db3eb963"
 () {
 
-SF.RuleLoader['fill/default'] = /((hover\\:)?fill-(transparent|current|surface-0|surface-1|surface-2|surface-3|surface-4|surface|surface-inverse|surface-inverse-fixed|surface-container|on-surface|on-surface-variant|surface-transparent-select|surface-transparent-overlay|disable|primary|primary-container|primary-transparent-select|primary-transparent-overlay|secondary|secondary-container|secondary-transparent-select|secondary-transparent-overlay|tertiary|tertiary-container|tertiary-transparent-select|tertiary-transparent-overlay|error|error-container|error-transparent-select|error-transparent-overlay|warning|warning-container|warning-transparent-select|warning-transparent-overlay|success|success-container|success-transparent-select|success-transparent-overlay|surface-transparent|primary-transparent|secondary-transparent|tertiary-transparent|error-transparent|warning-transparent|success-transparent))/;
+SF.RuleLoader['fill/default'] = /(?:hover\:)?fill-/;
 
 /***/ },
 
@@ -5088,14 +5088,14 @@ SF.RuleLoader['filter-grayscale/hover'] = /hover\:(grayscale|grayscale-none)/;
 /***/ "62d48459e7a4"
 () {
 
-SF.RuleLoader['filter-hue-rotate/default'] = /hue-rotate-/;
+SF.RuleLoader['filter-hue-rotate/default'] = /-?hue-rotate-/;
 
 /***/ },
 
 /***/ "3072c962f3de"
 () {
 
-SF.RuleLoader['filer-hue-rotate/hover'] = /hover\:hue-rotate-/;
+SF.RuleLoader['filter-hue-rotate/hover'] = /hover\:-?hue-rotate-/;
 
 /***/ },
 
@@ -5333,35 +5333,35 @@ SF.RuleLoader['flex-grow/xl'] = /xl\:grow/;
 /***/ "d860a849e3fe"
 () {
 
-SF.RuleLoader['flex-shrink/default'] = /shrink-/;
+SF.RuleLoader['flex-shrink/default'] = /shrink(?:-|$)/;
 
 /***/ },
 
 /***/ "06a5ed22d6a2"
 () {
 
-SF.RuleLoader['flex-shrink/lg'] = /lg\:shrink-/;
+SF.RuleLoader['flex-shrink/lg'] = /lg\:shrink(?:-|$)/;
 
 /***/ },
 
 /***/ "11cdcf63718e"
 () {
 
-SF.RuleLoader['flex-shrink/md'] = /md\:shrink-/;
+SF.RuleLoader['flex-shrink/md'] = /md\:shrink(?:-|$)/;
 
 /***/ },
 
 /***/ "e8877e1d2a6a"
 () {
 
-SF.RuleLoader['flex-shrink/sm'] = /sm\:shrink-/;
+SF.RuleLoader['flex-shrink/sm'] = /sm\:shrink(?:-|$)/;
 
 /***/ },
 
 /***/ "ec5ff6b5547b"
 () {
 
-SF.RuleLoader['flex-shrink/xl'] = /xl\:shrink-/;
+SF.RuleLoader['flex-shrink/xl'] = /xl\:shrink(?:-|$)/;
 
 /***/ },
 
@@ -5515,7 +5515,7 @@ SF.RuleLoader['font-size-ext/xl'] = /xl\:text-([a-i]{1}[0-9]{1})/;
 /***/ "bf3cb53e6214"
 () {
 
-SF.RuleLoader['font-size/default'] = /text-(([1-9]{1}|[0-9]{2})|(([0-9]{1}|[0-9]{2})\/([0-9]{1}|[0-9]{2})))/;
+SF.RuleLoader['font-size/default'] = /(?:heading|text-(([1-9]{1}|[0-9]{2})|(([0-9]{1}|[0-9]{2})\/([0-9]{1}|[0-9]{2}))))/;
 
 /***/ },
 
@@ -5599,42 +5599,42 @@ SF.RuleLoader['font-weight/xl'] = /xl\:(regular|bold|lighter|bolder|(weight-[1-9
 /***/ "d6dd91a0d58e"
 () {
 
-SF.RuleLoader['gap/default'] = /(?:^|\s)(?:gap|g)-/;
+SF.RuleLoader['gap/default'] = /(?:gap|row-gap|col-gap|g|gap-x|gap-y|g-x|g-y)-/;
 
 /***/ },
 
 /***/ "2fad68986e39"
 () {
 
-SF.RuleLoader['gap/lg'] = /lg:(?:gap|g)-/;
+SF.RuleLoader['gap/lg'] = /lg:(?:gap|row-gap|col-gap|g|gap-x|gap-y|g-x|g-y)-/;
 
 /***/ },
 
 /***/ "ec3ec3b367dc"
 () {
 
-SF.RuleLoader['gap/md'] = /md:(?:gap|g)-/;
+SF.RuleLoader['gap/md'] = /md:(?:gap|row-gap|col-gap|g|gap-x|gap-y|g-x|g-y)-/;
 
 /***/ },
 
 /***/ "38320a6b4297"
 () {
 
-SF.RuleLoader['gap/sm'] = /sm:(?:gap|g)-/;
+SF.RuleLoader['gap/sm'] = /sm:(?:gap|row-gap|col-gap|g|gap-x|gap-y|g-x|g-y)-/;
 
 /***/ },
 
 /***/ "253bdc1d51b7"
 () {
 
-SF.RuleLoader['gap/xl'] = /xl:(?:gap|g)-/;
+SF.RuleLoader['gap/xl'] = /xl:(?:gap|row-gap|col-gap|g|gap-x|gap-y|g-x|g-y)-/;
 
 /***/ },
 
 /***/ "e293dde03445"
 () {
 
-SF.RuleLoader['gradient-color/default'] = /gr[1-3]-(transparent|current|surface|on-surface|primary|secondary|tertiary|disable|success|warning|error)/;
+SF.RuleLoader['gradient-color/default'] = /gr[1-3]-(?:transparent|current|inherit|surface-[0-2]|on-surface|primary(?:-container)?|secondary(?:-container)?|tertiary(?:-container)?|success|warning)/;
 
 /***/ },
 
@@ -5649,7 +5649,7 @@ SF.RuleLoader['gradient-stops/default'] = /(from|via|to)-/;
 () {
 
 SF.RuleLoader['gradient-type/default'] = {
-  regex: /gr-(line|conic)-[2-3]/,
+  regex: /gr-(?:line|conic|radial)-[2-3]/,
   mode: 'utility',
   css: true,
   relation: [{
@@ -5664,28 +5664,28 @@ SF.RuleLoader['gradient-type/default'] = {
 /***/ "1c76572f25b7"
 () {
 
-SF.RuleLoader['gradient-type/lg'] = /lg\:gr-(line|conic)-[2-3]/;
+SF.RuleLoader['gradient-type/lg'] = /lg\:gr-(?:line|conic|radial)-[2-3]/;
 
 /***/ },
 
 /***/ "1cc02b76f1a8"
 () {
 
-SF.RuleLoader['gradient-type/md'] = /md\:gr-(line|conic)-[2-3]/;
+SF.RuleLoader['gradient-type/md'] = /md\:gr-(?:line|conic|radial)-[2-3]/;
 
 /***/ },
 
 /***/ "8ad9deb0c96e"
 () {
 
-SF.RuleLoader['gradient-type/sm'] = /sm\:gr-(line|conic)-[2-3]/;
+SF.RuleLoader['gradient-type/sm'] = /sm\:gr-(?:line|conic|radial)-[2-3]/;
 
 /***/ },
 
 /***/ "e799f224789f"
 () {
 
-SF.RuleLoader['gradient-type/xl'] = /xl\:gr-(line|conic)-[2-3]/;
+SF.RuleLoader['gradient-type/xl'] = /xl\:gr-(?:line|conic|radial)-[2-3]/;
 
 /***/ },
 
@@ -5867,35 +5867,35 @@ SF.RuleLoader['grid-column-start/xl'] = /xl\:col-start-/;
 /***/ "8d9edd005483"
 () {
 
-SF.RuleLoader['grid-column/default'] = /col-(auto|span)-/;
+SF.RuleLoader['grid-column/default'] = /col-(?:auto|span-)/;
 
 /***/ },
 
 /***/ "0164a3cef127"
 () {
 
-SF.RuleLoader['grid-column/lg'] = /lg\:col-(auto|span)-/;
+SF.RuleLoader['grid-column/lg'] = /lg\:col-(?:auto|span-)/;
 
 /***/ },
 
 /***/ "984edc0fcbb1"
 () {
 
-SF.RuleLoader['grid-column/md'] = /md\:col-(auto|span)-/;
+SF.RuleLoader['grid-column/md'] = /md\:col-(?:auto|span-)/;
 
 /***/ },
 
 /***/ "24be9919814d"
 () {
 
-SF.RuleLoader['grid-column/sm'] = /sm\:col-(auto|span)-/;
+SF.RuleLoader['grid-column/sm'] = /sm\:col-(?:auto|span-)/;
 
 /***/ },
 
 /***/ "3f8305f617d6"
 () {
 
-SF.RuleLoader['grid-column/xl'] = /xl\:col-(auto|span)-/;
+SF.RuleLoader['grid-column/xl'] = /xl\:col-(?:auto|span-)/;
 
 /***/ },
 
@@ -6119,105 +6119,105 @@ SF.RuleLoader['height-ext/xl'] = /xl\:h-(([a-i]{1}[0-9]{1})|(([1-9]{1})|([0-9]{2
 /***/ "6a5f7ad71f5c"
 () {
 
-SF.RuleLoader['height/default'] = /h-((([1-9]{1}|[1-9]{2})\/([1-9]{1}|[1-9]{2}))|auto|full|screen|min|max|fit|px|0)/;
+SF.RuleLoader['height/default'] = /h-(?:(?:[1-9][0-9]?\/[1-9][0-9]?)|auto|full|screen|content-(?:min|max)|min|max|fit|px|0)/;
 
 /***/ },
 
 /***/ "af813b20397c"
 () {
 
-SF.RuleLoader['height/lg'] = /lg\:h-((([1-9]{1}|[1-9]{2})\/([1-9]{1}|[1-9]{2}))|auto|full|screen|min|max|fit|px|0)/;
+SF.RuleLoader['height/lg'] = /lg\:h-(?:(?:[1-9][0-9]?\/[1-9][0-9]?)|auto|full|screen|content-(?:min|max)|min|max|fit|px|0)/;
 
 /***/ },
 
 /***/ "be9f6e37e2c6"
 () {
 
-SF.RuleLoader['height/md'] = /md\:h-((([1-9]{1}|[1-9]{2})\/([1-9]{1}|[1-9]{2}))|auto|full|screen|min|max|fit|px|0)/;
+SF.RuleLoader['height/md'] = /md\:h-(?:(?:[1-9][0-9]?\/[1-9][0-9]?)|auto|full|screen|content-(?:min|max)|min|max|fit|px|0)/;
 
 /***/ },
 
 /***/ "4e26fb94225f"
 () {
 
-SF.RuleLoader['height/sm'] = /sm\:h-((([1-9]{1}|[1-9]{2})\/([1-9]{1}|[1-9]{2}))|auto|full|screen|min|max|fit|px|0)/;
+SF.RuleLoader['height/sm'] = /sm\:h-(?:(?:[1-9][0-9]?\/[1-9][0-9]?)|auto|full|screen|content-(?:min|max)|min|max|fit|px|0)/;
 
 /***/ },
 
 /***/ "990f32465b47"
 () {
 
-SF.RuleLoader['height/xl'] = /xl\:h-((([1-9]{1}|[1-9]{2})\/([1-9]{1}|[1-9]{2}))|auto|full|screen|min|max|fit|px|0)/;
+SF.RuleLoader['height/xl'] = /xl\:h-(?:(?:[1-9][0-9]?\/[1-9][0-9]?)|auto|full|screen|content-(?:min|max)|min|max|fit|px|0)/;
 
 /***/ },
 
 /***/ "288a1503119c"
 () {
 
-SF.RuleLoader['isolate/default'] = /isolate/;
+SF.RuleLoader['isolate/default'] = /(?:isolate|isolation-auto)/;
 
 /***/ },
 
 /***/ "e5665d9a6914"
 () {
 
-SF.RuleLoader['isolate/lg'] = /lg\:isolate/;
+SF.RuleLoader['isolate/lg'] = /lg\:(?:isolate|isolation-auto)/;
 
 /***/ },
 
 /***/ "d75540db2a74"
 () {
 
-SF.RuleLoader['isolate/md'] = /md\:isolate/;
+SF.RuleLoader['isolate/md'] = /md\:(?:isolate|isolation-auto)/;
 
 /***/ },
 
 /***/ "514707c34804"
 () {
 
-SF.RuleLoader['isolate/sm'] = /sm\:isolate/;
+SF.RuleLoader['isolate/sm'] = /sm\:(?:isolate|isolation-auto)/;
 
 /***/ },
 
 /***/ "7d1ad4413a09"
 () {
 
-SF.RuleLoader['isolate/xl'] = /xl\:isolate/;
+SF.RuleLoader['isolate/xl'] = /xl\:(?:isolate|isolation-auto)/;
 
 /***/ },
 
 /***/ "98e0a0dcf933"
 () {
 
-SF.RuleLoader['justify-content/default'] = /content-main-/;
+SF.RuleLoader['justify-content/default'] = /(?:justify|content-main)-(?:start|end|center|between|around|evenly)/;
 
 /***/ },
 
 /***/ "a4f770c8bc18"
 () {
 
-SF.RuleLoader['justify-content/lg'] = /lg\:content-main-/;
+SF.RuleLoader['justify-content/lg'] = /lg\:(?:justify|content-main)-(?:start|end|center|between|around|evenly)/;
 
 /***/ },
 
 /***/ "7b44cc2b5468"
 () {
 
-SF.RuleLoader['justify-content/md'] = /md\:content-main-/;
+SF.RuleLoader['justify-content/md'] = /md\:(?:justify|content-main)-(?:start|end|center|between|around|evenly)/;
 
 /***/ },
 
 /***/ "67ebd6bf9944"
 () {
 
-SF.RuleLoader['justify-content/sm'] = /sm\:content-main-/;
+SF.RuleLoader['justify-content/sm'] = /sm\:(?:justify|content-main)-(?:start|end|center|between|around|evenly)/;
 
 /***/ },
 
 /***/ "11e03b92f0ef"
 () {
 
-SF.RuleLoader['justify-content/xl'] = /xl\:content-main-/;
+SF.RuleLoader['justify-content/xl'] = /xl\:(?:justify|content-main)-(?:start|end|center|between|around|evenly)/;
 
 /***/ },
 
@@ -6392,35 +6392,35 @@ SF.RuleLoader['margin-ext/xl'] = /xl\:(m-(([a-i][0-9])|((top|bottom|inline-(star
 /***/ "55a1df8cc52f"
 () {
 
-SF.RuleLoader['margin/default'] = /(m-((auto)|([0-9]{1})|((inline|block)-([0-9]{1}|auto))|((top|bottom|inline-(start|end))-([0-9]{1}|auto)))|-m-(([0-9]{1})|((inline|block)-[0-9]{1})|((top|bottom|inline-(start|end))-[0-9]{1})))/;
+SF.RuleLoader['margin/default'] = /-?m(?:-(?:top|bottom|inline-start|inline-end|inline|block))?-(?:auto|[0-8]|1\/[234])/;
 
 /***/ },
 
 /***/ "14a3ad5ccf0b"
 () {
 
-SF.RuleLoader['margin/lg'] = /lg\:(m-(([0-9]{1})|((inline|block)-([0-9]{1}|auto))|((top|bottom|inline-(start|end))-([0-9]{1}|auto)))|-m-(([0-9]{1})|((inline|block)-[0-9]{1})|((top|bottom|inline-(start|end))-[0-9]{1})))/;
+SF.RuleLoader['margin/lg'] = /lg\:-?m(?:-(?:top|bottom|inline-start|inline-end|inline|block))?-(?:auto|[0-8]|1\/[234])/;
 
 /***/ },
 
 /***/ "cbbb3b7bfdce"
 () {
 
-SF.RuleLoader['margin/md'] = /md\:(m-(([0-9]{1})|((inline|block)-([0-9]{1}|auto))|((top|bottom|inline-(start|end))-([0-9]{1}|auto)))|-m-(([0-9]{1})|((inline|block)-[0-9]{1})|((top|bottom|inline-(start|end))-[0-9]{1})))/;
+SF.RuleLoader['margin/md'] = /md\:-?m(?:-(?:top|bottom|inline-start|inline-end|inline|block))?-(?:auto|[0-8]|1\/[234])/;
 
 /***/ },
 
 /***/ "3ec64f0bc36f"
 () {
 
-SF.RuleLoader['margin/sm'] = /sm\:(m-(([0-9]{1})|((inline|block)-([0-9]{1}|auto))|((top|bottom|inline-(start|end))-([0-9]{1}|auto)))|-m-(([0-9]{1})|((inline|block)-[0-9]{1})|((top|bottom|inline-(start|end))-[0-9]{1})))/;
+SF.RuleLoader['margin/sm'] = /sm\:-?m(?:-(?:top|bottom|inline-start|inline-end|inline|block))?-(?:auto|[0-8]|1\/[234])/;
 
 /***/ },
 
 /***/ "7cef0fa37bf5"
 () {
 
-SF.RuleLoader['margin/xl'] = /xl\:(m-(([0-9]{1})|((inline|block)-([0-9]{1}|auto))|((top|bottom|inline-(start|end))-([0-9]{1}|auto)))|-m-(([0-9]{1})|((inline|block)-[0-9]{1})|((top|bottom|inline-(start|end))-[0-9]{1})))/;
+SF.RuleLoader['margin/xl'] = /xl\:-?m(?:-(?:top|bottom|inline-start|inline-end|inline|block))?-(?:auto|[0-8]|1\/[234])/;
 
 /***/ },
 
@@ -6525,35 +6525,35 @@ SF.RuleLoader['max-height-ext/xl'] = /xl\:max-h-([a-i]{1}[0-9]{1})/;
 /***/ "d55f3d544f3c"
 () {
 
-SF.RuleLoader['max-height/default'] = /max-h-(full|screen|min|max|fit|prose|none|0|sm|md|lg|xl)/;
+SF.RuleLoader['max-height/default'] = /max-h-(?:full|screen|min|max|fit|prose|none|px|0|sm|md|lg|xl)/;
 
 /***/ },
 
 /***/ "842663f31156"
 () {
 
-SF.RuleLoader['max-height/lg'] = /lg\:max-h-(full|screen|min|max|fit|prose|none|0|sm|md|lg|xl)/;
+SF.RuleLoader['max-height/lg'] = /lg\:max-h-(?:full|screen|min|max|fit|prose|none|px|0|sm|md|lg|xl)/;
 
 /***/ },
 
 /***/ "38d8e4c089a6"
 () {
 
-SF.RuleLoader['max-height/md'] = /md\:max-h-(full|screen|min|max|fit|prose|none|0|sm|md|lg|xl)/;
+SF.RuleLoader['max-height/md'] = /md\:max-h-(?:full|screen|min|max|fit|prose|none|px|0|sm|md|lg|xl)/;
 
 /***/ },
 
 /***/ "7f7228c4b7e1"
 () {
 
-SF.RuleLoader['max-height/sm'] = /sm\:max-h-(full|screen|min|max|fit|prose|none|0|sm|md|lg|xl)/;
+SF.RuleLoader['max-height/sm'] = /sm\:max-h-(?:full|screen|min|max|fit|prose|none|px|0|sm|md|lg|xl)/;
 
 /***/ },
 
 /***/ "436f259911be"
 () {
 
-SF.RuleLoader['max-height/xl'] = /xl\:max-h-(full|screen|min|max|fit|prose|none|0|sm|md|lg|xl)/;
+SF.RuleLoader['max-height/xl'] = /xl\:max-h-(?:full|screen|min|max|fit|prose|none|px|0|sm|md|lg|xl)/;
 
 /***/ },
 
@@ -6595,70 +6595,70 @@ SF.RuleLoader['max-width-ext/xl'] = /xl\:max-w-([a-i]{1}[0-9]{1})/;
 /***/ "8d9da71479a5"
 () {
 
-SF.RuleLoader['max-width/default'] = /max-w-(full|screen|min|max|fit|prose|none|0|sm|md|lg|xl)/;
+SF.RuleLoader['max-width/default'] = /max-w-(?:full|screen|min|max|fit|prose|none|0|sm|md|lg|xl|xxl)/;
 
 /***/ },
 
 /***/ "15a86da3e6b7"
 () {
 
-SF.RuleLoader['max-width/lg'] = /lg\:max-w-(full|screen|min|max|fit|prose|none|0|sm|md|lg|xl)/;
+SF.RuleLoader['max-width/lg'] = /lg\:max-w-(?:full|screen|min|max|fit|prose|none|0|sm|md|lg|xl|xxl)/;
 
 /***/ },
 
 /***/ "5fba542f9c68"
 () {
 
-SF.RuleLoader['max-width/md'] = /md\:max-w-(full|screen|min|max|fit|prose|none|0|sm|md|lg|xl)/;
+SF.RuleLoader['max-width/md'] = /md\:max-w-(?:full|screen|min|max|fit|prose|none|0|sm|md|lg|xl|xxl)/;
 
 /***/ },
 
 /***/ "35331f8f8845"
 () {
 
-SF.RuleLoader['max-width/sm'] = /sm\:max-w-(full|screen|min|max|fit|prose|none|0|sm|md|lg|xl)/;
+SF.RuleLoader['max-width/sm'] = /sm\:max-w-(?:full|screen|min|max|fit|prose|none|0|sm|md|lg|xl|xxl)/;
 
 /***/ },
 
 /***/ "94a72085a7b0"
 () {
 
-SF.RuleLoader['max-width/xl'] = /xl\:max-w-(full|screen|min|max|fit|prose|none|0|sm|md|lg|xl)/;
+SF.RuleLoader['max-width/xl'] = /xl\:max-w-(?:full|screen|min|max|fit|prose|none|0|sm|md|lg|xl|xxl)/;
 
 /***/ },
 
 /***/ "48598263bea5"
 () {
 
-SF.RuleLoader['min-height/default'] = /min-h-(min|max|fit|full|0)/;
+SF.RuleLoader['min-height/default'] = /min-h-(?:min|max|fit|full|screen|0)/;
 
 /***/ },
 
 /***/ "46922f756a15"
 () {
 
-SF.RuleLoader['min-height/lg'] = /lg\:min-h-(min|max|fit|full|0)/;
+SF.RuleLoader['min-height/lg'] = /lg\:min-h-(?:min|max|fit|full|screen|0)/;
 
 /***/ },
 
 /***/ "ac214a587f3b"
 () {
 
-SF.RuleLoader['min-height/md'] = /md\:min-h-(min|max|fit|full|0)/;
+SF.RuleLoader['min-height/md'] = /md\:min-h-(?:min|max|fit|full|screen|0)/;
 
 /***/ },
 
 /***/ "e649bb315a5c"
 () {
 
-SF.RuleLoader['min-height/sm'] = /sm\:min-h-(min|max|fit|full|0)/;
+SF.RuleLoader['min-height/sm'] = /sm\:min-h-(?:min|max|fit|full|screen|0)/;
 
 /***/ },
 
 /***/ "87ac27999aef"
 () {
 
-SF.RuleLoader['min-height/xl'] = /xl\:min-h-(min|max|fit|full|0)/;
+SF.RuleLoader['min-height/xl'] = /xl\:min-h-(?:min|max|fit|full|screen|0)/;
 
 /***/ },
 
@@ -6777,35 +6777,35 @@ SF.RuleLoader['object-position/xl'] = /xl\:object-((inline-(start|end)(-(top|bot
 /***/ "b2ef7e172b5d"
 () {
 
-SF.RuleLoader['offset/default'] = /offset-((([1-9]{1}|[1-9]{2})\/([1-9]{1}|[1-9]{2})))/;
+SF.RuleLoader['offset/default'] = /offset-(?:[1-9][0-9]?\/[1-9][0-9]?)/;
 
 /***/ },
 
 /***/ "1f373bed7aee"
 () {
 
-SF.RuleLoader['offset/lg'] = /lg\:offset-((([1-9]{1}|[1-9]{2})\/([1-9]{1}|[1-9]{2})))/;
+SF.RuleLoader['offset/lg'] = /lg\:offset-(?:[1-9][0-9]?\/[1-9][0-9]?)/;
 
 /***/ },
 
 /***/ "f9360c7a0530"
 () {
 
-SF.RuleLoader['offset/md'] = /md\:offset-((([1-9]{1}|[1-9]{2})\/([1-9]{1}|[1-9]{2})))/;
+SF.RuleLoader['offset/md'] = /md\:offset-(?:[1-9][0-9]?\/[1-9][0-9]?)/;
 
 /***/ },
 
 /***/ "1b324fbda179"
 () {
 
-SF.RuleLoader['offset/sm'] = /sm\:offset-((([1-9]{1}|[1-9]{2})\/([1-9]{1}|[1-9]{2})))/;
+SF.RuleLoader['offset/sm'] = /sm\:offset-(?:[1-9][0-9]?\/[1-9][0-9]?)/;
 
 /***/ },
 
 /***/ "1f11e7c889ae"
 () {
 
-SF.RuleLoader['offset/xl'] = /xl\:offset-((([1-9]{1}|[1-9]{2})\/([1-9]{1}|[1-9]{2})))/;
+SF.RuleLoader['offset/xl'] = /xl\:offset-(?:[1-9][0-9]?\/[1-9][0-9]?)/;
 
 /***/ },
 
@@ -6910,7 +6910,7 @@ SF.RuleLoader['outline-width/default'] = /outline-[0-4]/;
 /***/ "b32ad544c323"
 () {
 
-SF.RuleLoader['outline-width/focus'] = /focus\:outline-[0-4]/;
+SF.RuleLoader['outline-width/focus'] = /(?:focus\:outline-[0-4]|focus-visible)/;
 
 /***/ },
 
@@ -7260,21 +7260,21 @@ SF.RuleLoader['resize/default'] = /resize|(resize-(none|x|y))/;
 /***/ "23a614f4f892"
 () {
 
-SF.RuleLoader['ring-color/default'] = /ring-(transparent|current|outline|outline-variant|primary|secondary|tertiary|error|warning|success)/;
+SF.RuleLoader['ring-color/default'] = /ring-(?:transparent|current|outline(?:-variant)?|surface(?:-[0-1]|-container|-overlay|-transparent-overlay|-inverse)?|on-surface(?:-variant)?|primary(?:-container|-transparent-overlay)?|secondary(?:-container|-transparent-overlay)?|tertiary(?:-container|-transparent-overlay)?|error(?:-container|-transparent-overlay)?|warning(?:-container|-transparent-overlay)?|success(?:-container|-transparent-overlay)?|info(?:-container)?)/;
 
 /***/ },
 
 /***/ "8139c518dfcb"
 () {
 
-SF.RuleLoader['ring-color/focus'] = /focus\:ring-(transparent|current|outline|outline-variant|primary|secondary|tertiary|error|warning|success)/;
+SF.RuleLoader['ring-color/focus'] = /focus\:ring-(?:transparent|current|outline(?:-variant)?|surface(?:-[0-1]|-container|-overlay|-transparent-overlay|-inverse)?|on-surface(?:-variant)?|primary(?:-container|-transparent-overlay)?|secondary(?:-container|-transparent-overlay)?|tertiary(?:-container|-transparent-overlay)?|error(?:-container|-transparent-overlay)?|warning(?:-container|-transparent-overlay)?|success(?:-container|-transparent-overlay)?|info(?:-container)?)/;
 
 /***/ },
 
 /***/ "1731af7af8e6"
 () {
 
-SF.RuleLoader['ring-color/hover'] = /hover\:ring-(transparent|current|outline|outline-variant|primary|secondary|tertiary|error|warning|success)/;
+SF.RuleLoader['ring-color/hover'] = /hover\:ring-(?:transparent|current|outline(?:-variant)?|surface(?:-[0-1]|-container|-overlay|-transparent-overlay|-inverse)?|on-surface(?:-variant)?|primary(?:-container|-transparent-overlay)?|secondary(?:-container|-transparent-overlay)?|tertiary(?:-container|-transparent-overlay)?|error(?:-container|-transparent-overlay)?|warning(?:-container|-transparent-overlay)?|success(?:-container|-transparent-overlay)?|info(?:-container)?)/;
 
 /***/ },
 
@@ -7302,21 +7302,21 @@ SF.RuleLoader['ring-inset/hover'] = /hover\:ring-inset/;
 /***/ "e7176d28e779"
 () {
 
-SF.RuleLoader['ring-offset-color/default'] = /ring-offset-(transparent|current|outline|outline-variant|primary|secondary|tertiary|error|warning|success)/;
+SF.RuleLoader['ring-offset-color/default'] = /ring-offset-(?:transparent|current|outline(?:-variant)?|surface(?:-[0-1]|-container|-overlay|-transparent-overlay|-inverse)?|on-surface(?:-variant)?|primary(?:-container|-transparent-overlay)?|secondary(?:-container|-transparent-overlay)?|tertiary(?:-container|-transparent-overlay)?|error(?:-container|-transparent-overlay)?|warning(?:-container|-transparent-overlay)?|success(?:-container|-transparent-overlay)?|info(?:-container)?)/;
 
 /***/ },
 
 /***/ "74314d157aa4"
 () {
 
-SF.RuleLoader['ring-offset-color/focus'] = /focus\:ring-offset-(transparent|current|outline|outline-variant|primary|secondary|tertiary|error|warning|success)/;
+SF.RuleLoader['ring-offset-color/focus'] = /focus\:ring-offset-(?:transparent|current|outline(?:-variant)?|surface(?:-[0-1]|-container|-overlay|-transparent-overlay|-inverse)?|on-surface(?:-variant)?|primary(?:-container|-transparent-overlay)?|secondary(?:-container|-transparent-overlay)?|tertiary(?:-container|-transparent-overlay)?|error(?:-container|-transparent-overlay)?|warning(?:-container|-transparent-overlay)?|success(?:-container|-transparent-overlay)?|info(?:-container)?)/;
 
 /***/ },
 
 /***/ "d696e61d9ce9"
 () {
 
-SF.RuleLoader['ring-offset-color/hover'] = /hover\:ring-offset-(transparent|current|outline|outline-variant|primary|secondary|tertiary|error|warning|success)/;
+SF.RuleLoader['ring-offset-color/hover'] = /hover\:ring-offset-(?:transparent|current|outline(?:-variant)?|surface(?:-[0-1]|-container|-overlay|-transparent-overlay|-inverse)?|on-surface(?:-variant)?|primary(?:-container|-transparent-overlay)?|secondary(?:-container|-transparent-overlay)?|tertiary(?:-container|-transparent-overlay)?|error(?:-container|-transparent-overlay)?|warning(?:-container|-transparent-overlay)?|success(?:-container|-transparent-overlay)?|info(?:-container)?)/;
 
 /***/ },
 
@@ -7421,7 +7421,7 @@ SF.RuleLoader['scroll-hover/default'] = /scroll-hover/;
 /***/ "d09da96130e0"
 () {
 
-SF.RuleLoader['scroll-margin-ext/default'] = /(scroll-m-((inline-(start|end)|t|b)-)?([a-i][0-9])|-scroll-m-((inline-(start|end)|t|b)-)?([a-i][0-9]))/;
+SF.RuleLoader['scroll-margin-ext/default'] = /-?scroll-(?:m|mt|mb|m-inline-(?:start|end))-[a-i][0-9]/;
 
 /***/ },
 
@@ -7435,7 +7435,7 @@ SF.RuleLoader['scroll-margin/default'] = /scroll-m/;
 /***/ "a74d20a13c77"
 () {
 
-SF.RuleLoader['scroll-padding-ext/default'] = /(scroll-p-((inline-(start|end)|t|b)-)?([a-i][0-9])|-scroll-p-((inline-(start|end)|t|b)-)?([a-i][0-9]))/;
+SF.RuleLoader['scroll-padding-ext/default'] = /-?scroll-(?:p|pt|pb|p-inline-(?:start|end))-[a-i][0-9]/;
 
 /***/ },
 
@@ -7540,7 +7540,7 @@ SF.RuleLoader['sr-only/default'] = /(sr-only|not-sr-only)/;
 /***/ "9b7a48a03c9c"
 () {
 
-SF.RuleLoader['stripe-color/default'] = /stripe-(transparent|current|surface|on-surface|primary|secondary|tertiary)/;
+SF.RuleLoader['stripe-color/default'] = /stripe-(?:transparent|current|inherit|surface-transparent-overlay|on-surface|primary(?:-container)?|secondary(?:-container)?|tertiary(?:-container)?)/;
 
 /***/ },
 
@@ -7652,28 +7652,28 @@ SF.RuleLoader['stroke-width/default'] = /stroke-(0|[1-9]|10)/;
 /***/ "994475790a68"
 () {
 
-SF.RuleLoader['stroke-width/lg'] = /lg\:stroke-[0-4]/;
+SF.RuleLoader['stroke-width/lg'] = /lg\:stroke-[0-9]/;
 
 /***/ },
 
 /***/ "1ff2df8000a5"
 () {
 
-SF.RuleLoader['stroke-width/md'] = /md\:stroke-[0-4]/;
+SF.RuleLoader['stroke-width/md'] = /md\:stroke-[0-9]/;
 
 /***/ },
 
 /***/ "773bbbee2972"
 () {
 
-SF.RuleLoader['stroke-width/sm'] = /sm\:stroke-[0-4]/;
+SF.RuleLoader['stroke-width/sm'] = /sm\:stroke-[0-9]/;
 
 /***/ },
 
 /***/ "280b3342454f"
 () {
 
-SF.RuleLoader['stroke-width/xl'] = /xl\:stroke-[0-4]/;
+SF.RuleLoader['stroke-width/xl'] = /xl\:stroke-[0-9]/;
 
 /***/ },
 
@@ -7820,7 +7820,7 @@ SF.RuleLoader['text-color/hover'] = /hover\:color-/;
 /***/ "b6bd6cb6f5c2"
 () {
 
-SF.RuleLoader['text-decoration-color/active'] = /active\:decoration-(transparent|inherit|current|outline-primary|outline-secondary|outline-tertiary|outline-error|outline-warning|outline-success)/;
+SF.RuleLoader['text-decoration-color/active'] = /active\:decoration-(?:transparent|inherit|current|primary|secondary|tertiary|error|warning|success)/;
 
 /***/ },
 
@@ -7834,14 +7834,14 @@ SF.RuleLoader['text-decoration-color/default'] = /decoration-(transparent|inheri
 /***/ "556e184bb1b4"
 () {
 
-SF.RuleLoader['text-decoration-color/focus'] = /focus\:decoration-(transparent|inherit|current|outline-primary|outline-secondary|outline-tertiary|outline-error|outline-warning|outline-success)/;
+SF.RuleLoader['text-decoration-color/focus'] = /focus\:decoration-(?:transparent|inherit|current|primary|secondary|tertiary|error|warning|success)/;
 
 /***/ },
 
 /***/ "d912678570f7"
 () {
 
-SF.RuleLoader['text-decoration-color/hover'] = /hover\:decoration-(transparent|inherit|current|outline-primary|outline-secondary|outline-tertiary|outline-error|outline-warning|outline-success)/;
+SF.RuleLoader['text-decoration-color/hover'] = /hover\:decoration-(?:transparent|inherit|current|primary|secondary|tertiary|error|warning|success)/;
 
 /***/ },
 
@@ -8023,7 +8023,7 @@ SF.RuleLoader['transform-translate-ext/default'] = /(translate-(x|y)-[a-i][0-9])
 /***/ "e3598556448e"
 () {
 
-SF.RuleLoader['transform-translate-ext/hover'] = /hover\:(translate-(x|y)-[a-i][0-9])|(-translate-(x|y)-[a-i][0-9])/;
+SF.RuleLoader['transform-translate-ext/hover'] = /hover\:-?translate-(?:x|y)-[a-i][0-9]/;
 
 /***/ },
 
@@ -8037,7 +8037,7 @@ SF.RuleLoader["transform-translate/default"] = /-?translate-(x|y)-(half|full|[0-
 /***/ "a07eab8d9c96"
 () {
 
-SF.RuleLoader["transform-translate/hover"] = /-?hover:translate-(x|y)-(half|full|[0-9])/;
+SF.RuleLoader["transform-translate/hover"] = /hover:-?translate-(x|y)-(half|full|[0-9])/;
 
 /***/ },
 
@@ -8142,35 +8142,35 @@ SF.RuleLoader['vertical-align/default'] = /text-(baseline|top|middle|bottom|sup|
 /***/ "5855a56a1f61"
 () {
 
-SF.RuleLoader['visibility/default'] = /class\s*=\s*["'](?:[^"']*\s)?(visible|invisible)(?=\s|["'])/i;
+SF.RuleLoader['visibility/default'] = /(?<![A-Za-z0-9_-])(?:visible|invisible)(?![A-Za-z0-9_-])/;
 
 /***/ },
 
 /***/ "afa982e49dfa"
 () {
 
-SF.RuleLoader['visibility/lg'] = /lg\:visible/;
+SF.RuleLoader['visibility/lg'] = /(?<![A-Za-z0-9_-])lg\:(?:visible|invisible)(?![A-Za-z0-9_-])/;
 
 /***/ },
 
 /***/ "9974a76e1e00"
 () {
 
-SF.RuleLoader['visibility/md'] = /md\:visible/;
+SF.RuleLoader['visibility/md'] = /(?<![A-Za-z0-9_-])md\:(?:visible|invisible)(?![A-Za-z0-9_-])/;
 
 /***/ },
 
 /***/ "90d202099eb4"
 () {
 
-SF.RuleLoader['visibility/sm'] = /sm\:visible/;
+SF.RuleLoader['visibility/sm'] = /(?<![A-Za-z0-9_-])sm\:(?:visible|invisible)(?![A-Za-z0-9_-])/;
 
 /***/ },
 
 /***/ "f60e5a26912d"
 () {
 
-SF.RuleLoader['visibility/xl'] = /xl\:visible/;
+SF.RuleLoader['visibility/xl'] = /(?<![A-Za-z0-9_-])xl\:(?:visible|invisible)(?![A-Za-z0-9_-])/;
 
 /***/ },
 
@@ -8219,35 +8219,35 @@ SF.RuleLoader['width-ext/xl'] = /xl\:w-(([a-i]{1}[0-9]{1})|(([1-9]{1})|([0-9]{2}
 /***/ "49d148529fc7"
 () {
 
-SF.RuleLoader['width/default'] = /w-((([1-9]{1}|[1-9]{2})\/([1-9]{1}|[1-9]{2}))|auto|full|screen|min|max|fit|px|0)/;
+SF.RuleLoader['width/default'] = /w-(?:(?:[1-9][0-9]?\/[1-9][0-9]?)|auto|full|screen|min|max|fit|px|0)/;
 
 /***/ },
 
 /***/ "74d19de73e52"
 () {
 
-SF.RuleLoader['width/lg'] = /lg\:w-((([1-9]{1}|[1-9]{2})\/([1-9]{1}|[1-9]{2}))|auto|full|screen|min|max|fit|px|0)/;
+SF.RuleLoader['width/lg'] = /lg\:w-(?:(?:[1-9][0-9]?\/[1-9][0-9]?)|auto|full|screen|min|max|fit|px|0)/;
 
 /***/ },
 
 /***/ "77d32867e837"
 () {
 
-SF.RuleLoader['width/md'] = /md:w-((([1-9]{1}|[1-9]{2})\/([1-9]{1}|[1-9]{2}))|auto|full|screen|min|max|fit|px|0)/;
+SF.RuleLoader['width/md'] = /md\:w-(?:(?:[1-9][0-9]?\/[1-9][0-9]?)|auto|full|screen|min|max|fit|px|0)/;
 
 /***/ },
 
 /***/ "a616dc541848"
 () {
 
-SF.RuleLoader['width/sm'] = /sm\:w-((([1-9]{1}|[1-9]{2})\/([1-9]{1}|[1-9]{2}))|auto|full|screen|min|max|fit|px|0)/;
+SF.RuleLoader['width/sm'] = /sm\:w-(?:(?:[1-9][0-9]?\/[1-9][0-9]?)|auto|full|screen|min|max|fit|px|0)/;
 
 /***/ },
 
 /***/ "ed15b626f4e6"
 () {
 
-SF.RuleLoader['width/xl'] = /xl\:w-((([1-9]{1}|[1-9]{2})\/([1-9]{1}|[1-9]{2}))|auto|full|screen|min|max|fit|px|0)/;
+SF.RuleLoader['width/xl'] = /xl\:w-(?:(?:[1-9][0-9]?\/[1-9][0-9]?)|auto|full|screen|min|max|fit|px|0)/;
 
 /***/ },
 
@@ -8268,35 +8268,35 @@ SF.RuleLoader['word-break/default'] = /text-break-(normal|word|all)/;
 /***/ "733c1c4b701b"
 () {
 
-SF.RuleLoader['z-index/default'] = /z-([1-9]{1}|auto|-1)/;
+SF.RuleLoader['z-index/default'] = /z-(?:[0-9]|auto|-1)/;
 
 /***/ },
 
 /***/ "559930cb5c8a"
 () {
 
-SF.RuleLoader['z-index/lg'] = /lg\:z-([1-9]{1}|auto|-1)/;
+SF.RuleLoader['z-index/lg'] = /lg\:z-(?:[0-9]|auto|-1)/;
 
 /***/ },
 
 /***/ "10ee3b329bc0"
 () {
 
-SF.RuleLoader['z-index/md'] = /md\:z-([1-9]{1}|auto|-1)/;
+SF.RuleLoader['z-index/md'] = /md\:z-(?:[0-9]|auto|-1)/;
 
 /***/ },
 
 /***/ "71cc4e62bc76"
 () {
 
-SF.RuleLoader['z-index/sm'] = /sm\:z-([1-9]{1}|auto|-1)/;
+SF.RuleLoader['z-index/sm'] = /sm\:z-(?:[0-9]|auto|-1)/;
 
 /***/ },
 
 /***/ "1d0bea37d193"
 () {
 
-SF.RuleLoader['z-index/xl'] = /xl\:z-([1-9]{1}|auto|-1)/;
+SF.RuleLoader['z-index/xl'] = /xl\:z-(?:[0-9]|auto|-1)/;
 
 /***/ }
 

@@ -129,11 +129,11 @@
   },
   {
     "name": "backdrop-filer-hue-rotate/default",
-    "regex": "/backdrop-hue-rotate/"
+    "regex": "/-?backdrop-hue-rotate-/"
   },
   {
     "name": "backdrop-filer-hue-rotate/hover",
-    "regex": "/hover\\:backdrop-hue-rotate/"
+    "regex": "/hover\\:-?backdrop-hue-rotate-/"
   },
   {
     "name": "backdrop-filter-blur/default",
@@ -1579,23 +1579,23 @@
   },
   {
     "name": "element-position-ext/default",
-    "regex": "/((top|bottom|block-(start|end)|inline-(start|end))|(-(top|bottom|block-(start|end)|inline-(start|end))))-([a-i]{1}[1-9]{1})/"
+    "regex": "/-?(?:top|bottom|block-(?:start|end)|inline-(?:start|end))-[a-i][0-9]/"
   },
   {
     "name": "element-position-ext/lg",
-    "regex": "/lg\\:((top|bottom|block-(start|end)|inline-(start|end))|(-(top|bottom|block-(start|end)|inline-(start|end))))-([a-i]{1}[1-9]{1})/"
+    "regex": "/lg\\:-?(?:top|bottom|block-(?:start|end)|inline-(?:start|end))-[a-i][0-9]/"
   },
   {
     "name": "element-position-ext/md",
-    "regex": "/md\\:((top|bottom|block-(start|end)|inline-(start|end))|(-(top|bottom|block-(start|end)|inline-(start|end))))-([a-i]{1}[1-9]{1})/"
+    "regex": "/md\\:-?(?:top|bottom|block-(?:start|end)|inline-(?:start|end))-[a-i][0-9]/"
   },
   {
     "name": "element-position-ext/sm",
-    "regex": "/sm\\:((top|bottom|block-(start|end)|inline-(start|end))|(-(top|bottom|block-(start|end)|inline-(start|end))))-([a-i]{1}[1-9]{1})/"
+    "regex": "/sm\\:-?(?:top|bottom|block-(?:start|end)|inline-(?:start|end))-[a-i][0-9]/"
   },
   {
     "name": "element-position-ext/xl",
-    "regex": "/xl\\:((top|bottom|block-(start|end)|inline-(start|end))|(-(top|bottom|block-(start|end)|inline-(start|end))))-([a-i]{1}[1-9]{1})/"
+    "regex": "/xl\\:-?(?:top|bottom|block-(?:start|end)|inline-(?:start|end))-[a-i][0-9]/"
   },
   {
     "name": "element-position/default",
@@ -1668,10 +1668,6 @@
     "type": "component"
   },
   {
-    "name": "filer-hue-rotate/hover",
-    "regex": "/hover\\:hue-rotate-/"
-  },
-  {
     "name": "fill-brand/default",
     "regex": "/fill-(fb|fb-messenger|youtube|whatsapp|instagram|wechat|tiktok|sinaweibo|qq|telegram|snapchat|kuaishou|qzone|pinterest|twitter|reddit|quora|skype|msteams|linkedin|vk|viber|vimeo|ok|tumblr|behance|soundcloud)/"
   },
@@ -1685,7 +1681,7 @@
   },
   {
     "name": "fill/default",
-    "regex": "/((hover\\\\:)?fill-(transparent|current|surface-0|surface-1|surface-2|surface-3|surface-4|surface|surface-inverse|surface-inverse-fixed|surface-container|on-surface|on-surface-variant|surface-transparent-select|surface-transparent-overlay|disable|primary|primary-container|primary-transparent-select|primary-transparent-overlay|secondary|secondary-container|secondary-transparent-select|secondary-transparent-overlay|tertiary|tertiary-container|tertiary-transparent-select|tertiary-transparent-overlay|error|error-container|error-transparent-select|error-transparent-overlay|warning|warning-container|warning-transparent-select|warning-transparent-overlay|success|success-container|success-transparent-select|success-transparent-overlay|surface-transparent|primary-transparent|secondary-transparent|tertiary-transparent|error-transparent|warning-transparent|success-transparent))/"
+    "regex": "/(?:hover\\:)?fill-/"
   },
   {
     "name": "filter-blur/default",
@@ -1721,7 +1717,11 @@
   },
   {
     "name": "filter-hue-rotate/default",
-    "regex": "/hue-rotate-/"
+    "regex": "/-?hue-rotate-/"
+  },
+  {
+    "name": "filter-hue-rotate/hover",
+    "regex": "/hover\\:-?hue-rotate-/"
   },
   {
     "name": "filter-invert/default",
@@ -1857,23 +1857,23 @@
   },
   {
     "name": "flex-shrink/default",
-    "regex": "/shrink-/"
+    "regex": "/shrink(?:-|$)/"
   },
   {
     "name": "flex-shrink/lg",
-    "regex": "/lg\\:shrink-/"
+    "regex": "/lg\\:shrink(?:-|$)/"
   },
   {
     "name": "flex-shrink/md",
-    "regex": "/md\\:shrink-/"
+    "regex": "/md\\:shrink(?:-|$)/"
   },
   {
     "name": "flex-shrink/sm",
-    "regex": "/sm\\:shrink-/"
+    "regex": "/sm\\:shrink(?:-|$)/"
   },
   {
     "name": "flex-shrink/xl",
-    "regex": "/xl\\:shrink-/"
+    "regex": "/xl\\:shrink(?:-|$)/"
   },
   {
     "name": "flex-wrap/default",
@@ -1961,7 +1961,7 @@
   },
   {
     "name": "font-size/default",
-    "regex": "/text-(([1-9]{1}|[0-9]{2})|(([0-9]{1}|[0-9]{2})\\/([0-9]{1}|[0-9]{2})))/"
+    "regex": "/(?:heading|text-(([1-9]{1}|[0-9]{2})|(([0-9]{1}|[0-9]{2})\\/([0-9]{1}|[0-9]{2}))))/"
   },
   {
     "name": "font-smoothing/default",
@@ -2009,27 +2009,27 @@
   },
   {
     "name": "gap/default",
-    "regex": "/(?:^|\\s)(?:gap|g)-/"
+    "regex": "/(?:gap|row-gap|col-gap|g|gap-x|gap-y|g-x|g-y)-/"
   },
   {
     "name": "gap/lg",
-    "regex": "/lg:(?:gap|g)-/"
+    "regex": "/lg:(?:gap|row-gap|col-gap|g|gap-x|gap-y|g-x|g-y)-/"
   },
   {
     "name": "gap/md",
-    "regex": "/md:(?:gap|g)-/"
+    "regex": "/md:(?:gap|row-gap|col-gap|g|gap-x|gap-y|g-x|g-y)-/"
   },
   {
     "name": "gap/sm",
-    "regex": "/sm:(?:gap|g)-/"
+    "regex": "/sm:(?:gap|row-gap|col-gap|g|gap-x|gap-y|g-x|g-y)-/"
   },
   {
     "name": "gap/xl",
-    "regex": "/xl:(?:gap|g)-/"
+    "regex": "/xl:(?:gap|row-gap|col-gap|g|gap-x|gap-y|g-x|g-y)-/"
   },
   {
     "name": "gradient-color/default",
-    "regex": "/gr[1-3]-(transparent|current|surface|on-surface|primary|secondary|tertiary|disable|success|warning|error)/"
+    "regex": "/gr[1-3]-(?:transparent|current|inherit|surface-[0-2]|on-surface|primary(?:-container)?|secondary(?:-container)?|tertiary(?:-container)?|success|warning)/"
   },
   {
     "name": "gradient-stops/default",
@@ -2039,7 +2039,7 @@
     "name": "gradient-type/default",
     "css": true,
     "mode": "utility",
-    "regex": "/gr-(line|conic)-[2-3]/",
+    "regex": "/gr-(?:line|conic|radial)-[2-3]/",
     "relation": [
       {
         "css": true,
@@ -2050,19 +2050,19 @@
   },
   {
     "name": "gradient-type/lg",
-    "regex": "/lg\\:gr-(line|conic)-[2-3]/"
+    "regex": "/lg\\:gr-(?:line|conic|radial)-[2-3]/"
   },
   {
     "name": "gradient-type/md",
-    "regex": "/md\\:gr-(line|conic)-[2-3]/"
+    "regex": "/md\\:gr-(?:line|conic|radial)-[2-3]/"
   },
   {
     "name": "gradient-type/sm",
-    "regex": "/sm\\:gr-(line|conic)-[2-3]/"
+    "regex": "/sm\\:gr-(?:line|conic|radial)-[2-3]/"
   },
   {
     "name": "gradient-type/xl",
-    "regex": "/xl\\:gr-(line|conic)-[2-3]/"
+    "regex": "/xl\\:gr-(?:line|conic|radial)-[2-3]/"
   },
   {
     "name": "grid-auto-columns/default",
@@ -2166,23 +2166,23 @@
   },
   {
     "name": "grid-column/default",
-    "regex": "/col-(auto|span)-/"
+    "regex": "/col-(?:auto|span-)/"
   },
   {
     "name": "grid-column/lg",
-    "regex": "/lg\\:col-(auto|span)-/"
+    "regex": "/lg\\:col-(?:auto|span-)/"
   },
   {
     "name": "grid-column/md",
-    "regex": "/md\\:col-(auto|span)-/"
+    "regex": "/md\\:col-(?:auto|span-)/"
   },
   {
     "name": "grid-column/sm",
-    "regex": "/sm\\:col-(auto|span)-/"
+    "regex": "/sm\\:col-(?:auto|span-)/"
   },
   {
     "name": "grid-column/xl",
-    "regex": "/xl\\:col-(auto|span)-/"
+    "regex": "/xl\\:col-(?:auto|span-)/"
   },
   {
     "name": "grid-row-end/default",
@@ -2310,23 +2310,23 @@
   },
   {
     "name": "height/default",
-    "regex": "/h-((([1-9]{1}|[1-9]{2})\\/([1-9]{1}|[1-9]{2}))|auto|full|screen|min|max|fit|px|0)/"
+    "regex": "/h-(?:(?:[1-9][0-9]?\\/[1-9][0-9]?)|auto|full|screen|content-(?:min|max)|min|max|fit|px|0)/"
   },
   {
     "name": "height/lg",
-    "regex": "/lg\\:h-((([1-9]{1}|[1-9]{2})\\/([1-9]{1}|[1-9]{2}))|auto|full|screen|min|max|fit|px|0)/"
+    "regex": "/lg\\:h-(?:(?:[1-9][0-9]?\\/[1-9][0-9]?)|auto|full|screen|content-(?:min|max)|min|max|fit|px|0)/"
   },
   {
     "name": "height/md",
-    "regex": "/md\\:h-((([1-9]{1}|[1-9]{2})\\/([1-9]{1}|[1-9]{2}))|auto|full|screen|min|max|fit|px|0)/"
+    "regex": "/md\\:h-(?:(?:[1-9][0-9]?\\/[1-9][0-9]?)|auto|full|screen|content-(?:min|max)|min|max|fit|px|0)/"
   },
   {
     "name": "height/sm",
-    "regex": "/sm\\:h-((([1-9]{1}|[1-9]{2})\\/([1-9]{1}|[1-9]{2}))|auto|full|screen|min|max|fit|px|0)/"
+    "regex": "/sm\\:h-(?:(?:[1-9][0-9]?\\/[1-9][0-9]?)|auto|full|screen|content-(?:min|max)|min|max|fit|px|0)/"
   },
   {
     "name": "height/xl",
-    "regex": "/xl\\:h-((([1-9]{1}|[1-9]{2})\\/([1-9]{1}|[1-9]{2}))|auto|full|screen|min|max|fit|px|0)/"
+    "regex": "/xl\\:h-(?:(?:[1-9][0-9]?\\/[1-9][0-9]?)|auto|full|screen|content-(?:min|max)|min|max|fit|px|0)/"
   },
   {
     "name": "hideShow",
@@ -2379,43 +2379,43 @@
   },
   {
     "name": "isolate/default",
-    "regex": "/isolate/"
+    "regex": "/(?:isolate|isolation-auto)/"
   },
   {
     "name": "isolate/lg",
-    "regex": "/lg\\:isolate/"
+    "regex": "/lg\\:(?:isolate|isolation-auto)/"
   },
   {
     "name": "isolate/md",
-    "regex": "/md\\:isolate/"
+    "regex": "/md\\:(?:isolate|isolation-auto)/"
   },
   {
     "name": "isolate/sm",
-    "regex": "/sm\\:isolate/"
+    "regex": "/sm\\:(?:isolate|isolation-auto)/"
   },
   {
     "name": "isolate/xl",
-    "regex": "/xl\\:isolate/"
+    "regex": "/xl\\:(?:isolate|isolation-auto)/"
   },
   {
     "name": "justify-content/default",
-    "regex": "/content-main-/"
+    "regex": "/(?:justify|content-main)-(?:start|end|center|between|around|evenly)/"
   },
   {
     "name": "justify-content/lg",
-    "regex": "/lg\\:content-main-/"
+    "regex": "/lg\\:(?:justify|content-main)-(?:start|end|center|between|around|evenly)/"
   },
   {
     "name": "justify-content/md",
-    "regex": "/md\\:content-main-/"
+    "regex": "/md\\:(?:justify|content-main)-(?:start|end|center|between|around|evenly)/"
   },
   {
     "name": "justify-content/sm",
-    "regex": "/sm\\:content-main-/"
+    "regex": "/sm\\:(?:justify|content-main)-(?:start|end|center|between|around|evenly)/"
   },
   {
     "name": "justify-content/xl",
-    "regex": "/xl\\:content-main-/"
+    "regex": "/xl\\:(?:justify|content-main)-(?:start|end|center|between|around|evenly)/"
   },
   {
     "name": "justify-items/default",
@@ -2528,23 +2528,23 @@
   },
   {
     "name": "margin/default",
-    "regex": "/(m-((auto)|([0-9]{1})|((inline|block)-([0-9]{1}|auto))|((top|bottom|inline-(start|end))-([0-9]{1}|auto)))|-m-(([0-9]{1})|((inline|block)-[0-9]{1})|((top|bottom|inline-(start|end))-[0-9]{1})))/"
+    "regex": "/-?m(?:-(?:top|bottom|inline-start|inline-end|inline|block))?-(?:auto|[0-8]|1\\/[234])/"
   },
   {
     "name": "margin/lg",
-    "regex": "/lg\\:(m-(([0-9]{1})|((inline|block)-([0-9]{1}|auto))|((top|bottom|inline-(start|end))-([0-9]{1}|auto)))|-m-(([0-9]{1})|((inline|block)-[0-9]{1})|((top|bottom|inline-(start|end))-[0-9]{1})))/"
+    "regex": "/lg\\:-?m(?:-(?:top|bottom|inline-start|inline-end|inline|block))?-(?:auto|[0-8]|1\\/[234])/"
   },
   {
     "name": "margin/md",
-    "regex": "/md\\:(m-(([0-9]{1})|((inline|block)-([0-9]{1}|auto))|((top|bottom|inline-(start|end))-([0-9]{1}|auto)))|-m-(([0-9]{1})|((inline|block)-[0-9]{1})|((top|bottom|inline-(start|end))-[0-9]{1})))/"
+    "regex": "/md\\:-?m(?:-(?:top|bottom|inline-start|inline-end|inline|block))?-(?:auto|[0-8]|1\\/[234])/"
   },
   {
     "name": "margin/sm",
-    "regex": "/sm\\:(m-(([0-9]{1})|((inline|block)-([0-9]{1}|auto))|((top|bottom|inline-(start|end))-([0-9]{1}|auto)))|-m-(([0-9]{1})|((inline|block)-[0-9]{1})|((top|bottom|inline-(start|end))-[0-9]{1})))/"
+    "regex": "/sm\\:-?m(?:-(?:top|bottom|inline-start|inline-end|inline|block))?-(?:auto|[0-8]|1\\/[234])/"
   },
   {
     "name": "margin/xl",
-    "regex": "/xl\\:(m-(([0-9]{1})|((inline|block)-([0-9]{1}|auto))|((top|bottom|inline-(start|end))-([0-9]{1}|auto)))|-m-(([0-9]{1})|((inline|block)-[0-9]{1})|((top|bottom|inline-(start|end))-[0-9]{1})))/"
+    "regex": "/xl\\:-?m(?:-(?:top|bottom|inline-start|inline-end|inline|block))?-(?:auto|[0-8]|1\\/[234])/"
   },
   {
     "name": "mask-clip/default",
@@ -2604,23 +2604,23 @@
   },
   {
     "name": "max-height/default",
-    "regex": "/max-h-(full|screen|min|max|fit|prose|none|0|sm|md|lg|xl)/"
+    "regex": "/max-h-(?:full|screen|min|max|fit|prose|none|px|0|sm|md|lg|xl)/"
   },
   {
     "name": "max-height/lg",
-    "regex": "/lg\\:max-h-(full|screen|min|max|fit|prose|none|0|sm|md|lg|xl)/"
+    "regex": "/lg\\:max-h-(?:full|screen|min|max|fit|prose|none|px|0|sm|md|lg|xl)/"
   },
   {
     "name": "max-height/md",
-    "regex": "/md\\:max-h-(full|screen|min|max|fit|prose|none|0|sm|md|lg|xl)/"
+    "regex": "/md\\:max-h-(?:full|screen|min|max|fit|prose|none|px|0|sm|md|lg|xl)/"
   },
   {
     "name": "max-height/sm",
-    "regex": "/sm\\:max-h-(full|screen|min|max|fit|prose|none|0|sm|md|lg|xl)/"
+    "regex": "/sm\\:max-h-(?:full|screen|min|max|fit|prose|none|px|0|sm|md|lg|xl)/"
   },
   {
     "name": "max-height/xl",
-    "regex": "/xl\\:max-h-(full|screen|min|max|fit|prose|none|0|sm|md|lg|xl)/"
+    "regex": "/xl\\:max-h-(?:full|screen|min|max|fit|prose|none|px|0|sm|md|lg|xl)/"
   },
   {
     "name": "max-width-ext/default",
@@ -2644,23 +2644,23 @@
   },
   {
     "name": "max-width/default",
-    "regex": "/max-w-(full|screen|min|max|fit|prose|none|0|sm|md|lg|xl)/"
+    "regex": "/max-w-(?:full|screen|min|max|fit|prose|none|0|sm|md|lg|xl|xxl)/"
   },
   {
     "name": "max-width/lg",
-    "regex": "/lg\\:max-w-(full|screen|min|max|fit|prose|none|0|sm|md|lg|xl)/"
+    "regex": "/lg\\:max-w-(?:full|screen|min|max|fit|prose|none|0|sm|md|lg|xl|xxl)/"
   },
   {
     "name": "max-width/md",
-    "regex": "/md\\:max-w-(full|screen|min|max|fit|prose|none|0|sm|md|lg|xl)/"
+    "regex": "/md\\:max-w-(?:full|screen|min|max|fit|prose|none|0|sm|md|lg|xl|xxl)/"
   },
   {
     "name": "max-width/sm",
-    "regex": "/sm\\:max-w-(full|screen|min|max|fit|prose|none|0|sm|md|lg|xl)/"
+    "regex": "/sm\\:max-w-(?:full|screen|min|max|fit|prose|none|0|sm|md|lg|xl|xxl)/"
   },
   {
     "name": "max-width/xl",
-    "regex": "/xl\\:max-w-(full|screen|min|max|fit|prose|none|0|sm|md|lg|xl)/"
+    "regex": "/xl\\:max-w-(?:full|screen|min|max|fit|prose|none|0|sm|md|lg|xl|xxl)/"
   },
   {
     "name": "menu",
@@ -2679,23 +2679,23 @@
   },
   {
     "name": "min-height/default",
-    "regex": "/min-h-(min|max|fit|full|0)/"
+    "regex": "/min-h-(?:min|max|fit|full|screen|0)/"
   },
   {
     "name": "min-height/lg",
-    "regex": "/lg\\:min-h-(min|max|fit|full|0)/"
+    "regex": "/lg\\:min-h-(?:min|max|fit|full|screen|0)/"
   },
   {
     "name": "min-height/md",
-    "regex": "/md\\:min-h-(min|max|fit|full|0)/"
+    "regex": "/md\\:min-h-(?:min|max|fit|full|screen|0)/"
   },
   {
     "name": "min-height/sm",
-    "regex": "/sm\\:min-h-(min|max|fit|full|0)/"
+    "regex": "/sm\\:min-h-(?:min|max|fit|full|screen|0)/"
   },
   {
     "name": "min-height/xl",
-    "regex": "/xl\\:min-h-(min|max|fit|full|0)/"
+    "regex": "/xl\\:min-h-(?:min|max|fit|full|screen|0)/"
   },
   {
     "name": "min-width/default",
@@ -2782,23 +2782,23 @@
   },
   {
     "name": "offset/default",
-    "regex": "/offset-((([1-9]{1}|[1-9]{2})\\/([1-9]{1}|[1-9]{2})))/"
+    "regex": "/offset-(?:[1-9][0-9]?\\/[1-9][0-9]?)/"
   },
   {
     "name": "offset/lg",
-    "regex": "/lg\\:offset-((([1-9]{1}|[1-9]{2})\\/([1-9]{1}|[1-9]{2})))/"
+    "regex": "/lg\\:offset-(?:[1-9][0-9]?\\/[1-9][0-9]?)/"
   },
   {
     "name": "offset/md",
-    "regex": "/md\\:offset-((([1-9]{1}|[1-9]{2})\\/([1-9]{1}|[1-9]{2})))/"
+    "regex": "/md\\:offset-(?:[1-9][0-9]?\\/[1-9][0-9]?)/"
   },
   {
     "name": "offset/sm",
-    "regex": "/sm\\:offset-((([1-9]{1}|[1-9]{2})\\/([1-9]{1}|[1-9]{2})))/"
+    "regex": "/sm\\:offset-(?:[1-9][0-9]?\\/[1-9][0-9]?)/"
   },
   {
     "name": "offset/xl",
-    "regex": "/xl\\:offset-((([1-9]{1}|[1-9]{2})\\/([1-9]{1}|[1-9]{2})))/"
+    "regex": "/xl\\:offset-(?:[1-9][0-9]?\\/[1-9][0-9]?)/"
   },
   {
     "name": "opacity/default",
@@ -2864,7 +2864,7 @@
   },
   {
     "name": "outline-width/focus",
-    "regex": "/focus\\:outline-[0-4]/"
+    "regex": "/(?:focus\\:outline-[0-4]|focus-visible)/"
   },
   {
     "name": "overflow/default",
@@ -3120,15 +3120,15 @@
   },
   {
     "name": "ring-color/default",
-    "regex": "/ring-(transparent|current|outline|outline-variant|primary|secondary|tertiary|error|warning|success)/"
+    "regex": "/ring-(?:transparent|current|outline(?:-variant)?|surface(?:-[0-1]|-container|-overlay|-transparent-overlay|-inverse)?|on-surface(?:-variant)?|primary(?:-container|-transparent-overlay)?|secondary(?:-container|-transparent-overlay)?|tertiary(?:-container|-transparent-overlay)?|error(?:-container|-transparent-overlay)?|warning(?:-container|-transparent-overlay)?|success(?:-container|-transparent-overlay)?|info(?:-container)?)/"
   },
   {
     "name": "ring-color/focus",
-    "regex": "/focus\\:ring-(transparent|current|outline|outline-variant|primary|secondary|tertiary|error|warning|success)/"
+    "regex": "/focus\\:ring-(?:transparent|current|outline(?:-variant)?|surface(?:-[0-1]|-container|-overlay|-transparent-overlay|-inverse)?|on-surface(?:-variant)?|primary(?:-container|-transparent-overlay)?|secondary(?:-container|-transparent-overlay)?|tertiary(?:-container|-transparent-overlay)?|error(?:-container|-transparent-overlay)?|warning(?:-container|-transparent-overlay)?|success(?:-container|-transparent-overlay)?|info(?:-container)?)/"
   },
   {
     "name": "ring-color/hover",
-    "regex": "/hover\\:ring-(transparent|current|outline|outline-variant|primary|secondary|tertiary|error|warning|success)/"
+    "regex": "/hover\\:ring-(?:transparent|current|outline(?:-variant)?|surface(?:-[0-1]|-container|-overlay|-transparent-overlay|-inverse)?|on-surface(?:-variant)?|primary(?:-container|-transparent-overlay)?|secondary(?:-container|-transparent-overlay)?|tertiary(?:-container|-transparent-overlay)?|error(?:-container|-transparent-overlay)?|warning(?:-container|-transparent-overlay)?|success(?:-container|-transparent-overlay)?|info(?:-container)?)/"
   },
   {
     "name": "ring-inset/default",
@@ -3144,15 +3144,15 @@
   },
   {
     "name": "ring-offset-color/default",
-    "regex": "/ring-offset-(transparent|current|outline|outline-variant|primary|secondary|tertiary|error|warning|success)/"
+    "regex": "/ring-offset-(?:transparent|current|outline(?:-variant)?|surface(?:-[0-1]|-container|-overlay|-transparent-overlay|-inverse)?|on-surface(?:-variant)?|primary(?:-container|-transparent-overlay)?|secondary(?:-container|-transparent-overlay)?|tertiary(?:-container|-transparent-overlay)?|error(?:-container|-transparent-overlay)?|warning(?:-container|-transparent-overlay)?|success(?:-container|-transparent-overlay)?|info(?:-container)?)/"
   },
   {
     "name": "ring-offset-color/focus",
-    "regex": "/focus\\:ring-offset-(transparent|current|outline|outline-variant|primary|secondary|tertiary|error|warning|success)/"
+    "regex": "/focus\\:ring-offset-(?:transparent|current|outline(?:-variant)?|surface(?:-[0-1]|-container|-overlay|-transparent-overlay|-inverse)?|on-surface(?:-variant)?|primary(?:-container|-transparent-overlay)?|secondary(?:-container|-transparent-overlay)?|tertiary(?:-container|-transparent-overlay)?|error(?:-container|-transparent-overlay)?|warning(?:-container|-transparent-overlay)?|success(?:-container|-transparent-overlay)?|info(?:-container)?)/"
   },
   {
     "name": "ring-offset-color/hover",
-    "regex": "/hover\\:ring-offset-(transparent|current|outline|outline-variant|primary|secondary|tertiary|error|warning|success)/"
+    "regex": "/hover\\:ring-offset-(?:transparent|current|outline(?:-variant)?|surface(?:-[0-1]|-container|-overlay|-transparent-overlay|-inverse)?|on-surface(?:-variant)?|primary(?:-container|-transparent-overlay)?|secondary(?:-container|-transparent-overlay)?|tertiary(?:-container|-transparent-overlay)?|error(?:-container|-transparent-overlay)?|warning(?:-container|-transparent-overlay)?|success(?:-container|-transparent-overlay)?|info(?:-container)?)/"
   },
   {
     "name": "ring-offset-width/default",
@@ -3212,7 +3212,7 @@
   },
   {
     "name": "scroll-margin-ext/default",
-    "regex": "/(scroll-m-((inline-(start|end)|t|b)-)?([a-i][0-9])|-scroll-m-((inline-(start|end)|t|b)-)?([a-i][0-9]))/"
+    "regex": "/-?scroll-(?:m|mt|mb|m-inline-(?:start|end))-[a-i][0-9]/"
   },
   {
     "name": "scroll-margin/default",
@@ -3220,7 +3220,7 @@
   },
   {
     "name": "scroll-padding-ext/default",
-    "regex": "/(scroll-p-((inline-(start|end)|t|b)-)?([a-i][0-9])|-scroll-p-((inline-(start|end)|t|b)-)?([a-i][0-9]))/"
+    "regex": "/-?scroll-(?:p|pt|pb|p-inline-(?:start|end))-[a-i][0-9]/"
   },
   {
     "name": "scroll-padding/default",
@@ -3334,7 +3334,7 @@
   },
   {
     "name": "stripe-color/default",
-    "regex": "/stripe-(transparent|current|surface|on-surface|primary|secondary|tertiary)/"
+    "regex": "/stripe-(?:transparent|current|inherit|surface-transparent-overlay|on-surface|primary(?:-container)?|secondary(?:-container)?|tertiary(?:-container)?)/"
   },
   {
     "name": "stripe-width/default",
@@ -3398,19 +3398,19 @@
   },
   {
     "name": "stroke-width/lg",
-    "regex": "/lg\\:stroke-[0-4]/"
+    "regex": "/lg\\:stroke-[0-9]/"
   },
   {
     "name": "stroke-width/md",
-    "regex": "/md\\:stroke-[0-4]/"
+    "regex": "/md\\:stroke-[0-9]/"
   },
   {
     "name": "stroke-width/sm",
-    "regex": "/sm\\:stroke-[0-4]/"
+    "regex": "/sm\\:stroke-[0-9]/"
   },
   {
     "name": "stroke-width/xl",
-    "regex": "/xl\\:stroke-[0-4]/"
+    "regex": "/xl\\:stroke-[0-9]/"
   },
   {
     "name": "svg-size/default",
@@ -3529,7 +3529,7 @@
   },
   {
     "name": "text-decoration-color/active",
-    "regex": "/active\\:decoration-(transparent|inherit|current|outline-primary|outline-secondary|outline-tertiary|outline-error|outline-warning|outline-success)/"
+    "regex": "/active\\:decoration-(?:transparent|inherit|current|primary|secondary|tertiary|error|warning|success)/"
   },
   {
     "name": "text-decoration-color/default",
@@ -3537,11 +3537,11 @@
   },
   {
     "name": "text-decoration-color/focus",
-    "regex": "/focus\\:decoration-(transparent|inherit|current|outline-primary|outline-secondary|outline-tertiary|outline-error|outline-warning|outline-success)/"
+    "regex": "/focus\\:decoration-(?:transparent|inherit|current|primary|secondary|tertiary|error|warning|success)/"
   },
   {
     "name": "text-decoration-color/hover",
-    "regex": "/hover\\:decoration-(transparent|inherit|current|outline-primary|outline-secondary|outline-tertiary|outline-error|outline-warning|outline-success)/"
+    "regex": "/hover\\:decoration-(?:transparent|inherit|current|primary|secondary|tertiary|error|warning|success)/"
   },
   {
     "name": "text-decoration-offset/default",
@@ -3701,7 +3701,7 @@
   },
   {
     "name": "transform-translate-ext/hover",
-    "regex": "/hover\\:(translate-(x|y)-[a-i][0-9])|(-translate-(x|y)-[a-i][0-9])/"
+    "regex": "/hover\\:-?translate-(?:x|y)-[a-i][0-9]/"
   },
   {
     "name": "transform-translate/default",
@@ -3709,7 +3709,7 @@
   },
   {
     "name": "transform-translate/hover",
-    "regex": "/-?hover:translate-(x|y)-(half|full|[0-9])/"
+    "regex": "/hover:-?translate-(x|y)-(half|full|[0-9])/"
   },
   {
     "name": "transition-delay/default",
@@ -3806,23 +3806,23 @@
   },
   {
     "name": "visibility/default",
-    "regex": "/class\\s*=\\s*[\"'](?:[^\"']*\\s)?(visible|invisible)(?=\\s|[\"'])/i"
+    "regex": "/(?<![A-Za-z0-9_-])(?:visible|invisible)(?![A-Za-z0-9_-])/"
   },
   {
     "name": "visibility/lg",
-    "regex": "/lg\\:visible/"
+    "regex": "/(?<![A-Za-z0-9_-])lg\\:(?:visible|invisible)(?![A-Za-z0-9_-])/"
   },
   {
     "name": "visibility/md",
-    "regex": "/md\\:visible/"
+    "regex": "/(?<![A-Za-z0-9_-])md\\:(?:visible|invisible)(?![A-Za-z0-9_-])/"
   },
   {
     "name": "visibility/sm",
-    "regex": "/sm\\:visible/"
+    "regex": "/(?<![A-Za-z0-9_-])sm\\:(?:visible|invisible)(?![A-Za-z0-9_-])/"
   },
   {
     "name": "visibility/xl",
-    "regex": "/xl\\:visible/"
+    "regex": "/(?<![A-Za-z0-9_-])xl\\:(?:visible|invisible)(?![A-Za-z0-9_-])/"
   },
   {
     "name": "white-space/default",
@@ -3850,23 +3850,23 @@
   },
   {
     "name": "width/default",
-    "regex": "/w-((([1-9]{1}|[1-9]{2})\\/([1-9]{1}|[1-9]{2}))|auto|full|screen|min|max|fit|px|0)/"
+    "regex": "/w-(?:(?:[1-9][0-9]?\\/[1-9][0-9]?)|auto|full|screen|min|max|fit|px|0)/"
   },
   {
     "name": "width/lg",
-    "regex": "/lg\\:w-((([1-9]{1}|[1-9]{2})\\/([1-9]{1}|[1-9]{2}))|auto|full|screen|min|max|fit|px|0)/"
+    "regex": "/lg\\:w-(?:(?:[1-9][0-9]?\\/[1-9][0-9]?)|auto|full|screen|min|max|fit|px|0)/"
   },
   {
     "name": "width/md",
-    "regex": "/md:w-((([1-9]{1}|[1-9]{2})\\/([1-9]{1}|[1-9]{2}))|auto|full|screen|min|max|fit|px|0)/"
+    "regex": "/md\\:w-(?:(?:[1-9][0-9]?\\/[1-9][0-9]?)|auto|full|screen|min|max|fit|px|0)/"
   },
   {
     "name": "width/sm",
-    "regex": "/sm\\:w-((([1-9]{1}|[1-9]{2})\\/([1-9]{1}|[1-9]{2}))|auto|full|screen|min|max|fit|px|0)/"
+    "regex": "/sm\\:w-(?:(?:[1-9][0-9]?\\/[1-9][0-9]?)|auto|full|screen|min|max|fit|px|0)/"
   },
   {
     "name": "width/xl",
-    "regex": "/xl\\:w-((([1-9]{1}|[1-9]{2})\\/([1-9]{1}|[1-9]{2}))|auto|full|screen|min|max|fit|px|0)/"
+    "regex": "/xl\\:w-(?:(?:[1-9][0-9]?\\/[1-9][0-9]?)|auto|full|screen|min|max|fit|px|0)/"
   },
   {
     "name": "will-change/default",
@@ -3878,22 +3878,22 @@
   },
   {
     "name": "z-index/default",
-    "regex": "/z-([1-9]{1}|auto|-1)/"
+    "regex": "/z-(?:[0-9]|auto|-1)/"
   },
   {
     "name": "z-index/lg",
-    "regex": "/lg\\:z-([1-9]{1}|auto|-1)/"
+    "regex": "/lg\\:z-(?:[0-9]|auto|-1)/"
   },
   {
     "name": "z-index/md",
-    "regex": "/md\\:z-([1-9]{1}|auto|-1)/"
+    "regex": "/md\\:z-(?:[0-9]|auto|-1)/"
   },
   {
     "name": "z-index/sm",
-    "regex": "/sm\\:z-([1-9]{1}|auto|-1)/"
+    "regex": "/sm\\:z-(?:[0-9]|auto|-1)/"
   },
   {
     "name": "z-index/xl",
-    "regex": "/xl\\:z-([1-9]{1}|auto|-1)/"
+    "regex": "/xl\\:z-(?:[0-9]|auto|-1)/"
   }
 ]

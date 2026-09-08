@@ -3,7 +3,7 @@
     .md\:isolate {
       isolation: isolate;
     }
-    .md\:auto {
+    .md\:isolation-auto {
       isolation: auto;
     }
   }

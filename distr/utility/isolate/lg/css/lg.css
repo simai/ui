@@ -3,7 +3,7 @@
     .lg\:isolate {
       isolation: isolate;
     }
-    .lg\:auto {
+    .lg\:isolation-auto {
       isolation: auto;
     }
   }

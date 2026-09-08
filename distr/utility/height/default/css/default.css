@@ -71,6 +71,16 @@
   .h-screen-3\/4 {
     height: 75vh;
   }
+  .h-min {
+    height: -webkit-min-content;
+    height: -moz-min-content;
+    height: min-content;
+  }
+  .h-max {
+    height: -webkit-max-content;
+    height: -moz-max-content;
+    height: max-content;
+  }
   .h-content-min {
     height: -webkit-min-content;
     height: -moz-min-content;

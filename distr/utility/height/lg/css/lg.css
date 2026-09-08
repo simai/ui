@@ -72,6 +72,16 @@
     .lg\:h-screen-3\/4 {
       height: 75vh;
     }
+    .lg\:h-min {
+      height: -webkit-min-content;
+      height: -moz-min-content;
+      height: min-content;
+    }
+    .lg\:h-max {
+      height: -webkit-max-content;
+      height: -moz-max-content;
+      height: max-content;
+    }
     .lg\:h-content-min {
       height: -webkit-min-content;
       height: -moz-min-content;

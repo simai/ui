@@ -3,7 +3,7 @@
     .xl\:isolate {
       isolation: isolate;
     }
-    .xl\:auto {
+    .xl\:isolation-auto {
       isolation: auto;
     }
   }
