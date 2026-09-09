@@ -115,12 +115,18 @@ class FrameworkAssetPlannerTest(unittest.TestCase):
         self.assertTrue({"buttons", "pointer-events/default", "text-align/default"} <= button_relations)
         self.assertTrue({"icon-buttons", "cl-icons", "pointer-events/default"} <= icon_button_relations)
         self.assertEqual(clipboard_relations, {"icon-buttons", "icons", "doc", "highlight"})
-        visibility = PLANNER.compile_loader_regex(
-            by_name["visibility/default"]["regex"], "visibility/default"
+        self.assertNotIn(
+            "visibility/default",
+            PLANNER.selected_rule_names('<div class="overflow-visible"></div>', rules),
         )
-        self.assertIsNotNone(visibility)
-        self.assertIsNone(visibility.search('<div class="overflow-visible"></div>'))
-        self.assertIsNotNone(visibility.search('<div class="visible"></div>'))
+        self.assertIn(
+            "visibility/default",
+            PLANNER.selected_rule_names('<div class="visible"></div>', rules),
+        )
+        self.assertIn(
+            "visibility/default",
+            PLANNER.selected_rule_names('<div class="p-1 visible m-1"></div>', rules),
+        )
 
     def test_invalid_regex_dependency_and_files_fail_closed(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
