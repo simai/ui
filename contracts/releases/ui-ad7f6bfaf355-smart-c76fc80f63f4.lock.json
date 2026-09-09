@@ -1,7 +1,7 @@
 {
   "schema_id": "simai.framework.release-lock",
   "schema_version": 1,
-  "compatibility_id": "ui-454c328e1d04-smart-cdb210a0fc4e",
+  "compatibility_id": "ui-ad7f6bfaf355-smart-c76fc80f63f4",
   "status": "bounded",
   "profile": "plain-assets-v1",
   "runtime_sources": {
@@ -9,29 +9,29 @@
       "owner": "simai/ui",
       "tag": null,
       "tag_object": null,
-      "commit": "454c328e1d0435019f5ddeeeddd2b6ee836f28ed",
+      "commit": "ad7f6bfaf35560f8b3977dab71c0756f4f55474f",
       "tree": "4ad0bb6a00bddb1390eb0b509b57d86365c7e574",
       "runtime_path": "distr",
       "runtime_tree": "7a70c4588866a8ee2b8f73d3bb3d09542e9f1441",
-      "archive_sha256": "8ac5cf8affdcf1c167e0a4dbd4b868f0b4af19dc2912cc67a6b60016367f6e0c"
+      "archive_sha256": "d50cfb90a041d4cb2eb3a56f72236a294330e3fbb15f651fdb7bdfe2dc18359d"
     },
     "ui-smart": {
       "owner": "simai/ui-smart",
       "tag": null,
       "tag_object": null,
-      "commit": "cdb210a0fc4e746ccd0cfa36ee52f54cdf8498e6",
-      "tree": "1fb92c9bc5586715692b27b825009b6f81c49890",
+      "commit": "c76fc80f63f45d9ef54ea01e827c23e95be11bab",
+      "tree": "52761466a001f446ee77cbfa4cf6d03a21fff0de",
       "runtime_path": "smart",
-      "runtime_tree": "b672a21e84fd975092dc8dba353ce8e575060290",
-      "archive_sha256": "05869ccb60318ab4a4ab6d87b6a52e89c1ded5420a349f151e864a1dcf971a32"
+      "runtime_tree": "bc9befa812ab541fc698d23d99fb49680c64d13f",
+      "archive_sha256": "3afb4a486658f8ea8882c7686e41c98c52f4bf5cb49f4a1299f78f379ea7b120"
     }
   },
   "build_inputs": {
     "source": {
       "owner": "simai/ui-loader",
-      "commit": "0199be31031f476516d71829ff5d8608c1dae22a",
-      "tree": "bb9858b0ec25876955036a326dfacf66accbd337",
-      "archive_sha256": "7b46bb66b3adf2f6825ea42cc7e234f1ab8565c078c9f5176b13558faefaddf5"
+      "commit": "b9f01744e29a2f09aa611fe7a85f14b7c6231d14",
+      "tree": "4dc0ab5a632a5e4255ccfc59755aa6405701003b",
+      "archive_sha256": "57280385a57d6f681c1d08dbd8ff34766f128c98d06f5d6e062b06af7dd55a19"
     },
     "builder": {
       "owner": "simai/ui-builder",
