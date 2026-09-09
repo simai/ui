@@ -1,5 +1,5 @@
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 45rem) {
     .md\:block {
       display: block;
     }
@@ -16,6 +16,9 @@
       display: inline-flex;
     }
     .md\:table {
+      display: table;
+    }
+    .md\:display-table {
       display: table;
     }
     .md\:inline-table {

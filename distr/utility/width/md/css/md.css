@@ -1,5 +1,5 @@
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 45rem) {
     .md\:w-auto {
       width: auto;
     }
@@ -89,6 +89,15 @@
     }
     .md\:w-screen {
       width: 100vw;
+    }
+    .md\:w-screen-small {
+      width: var(--sf-viewport-width-small);
+    }
+    .md\:w-screen-large {
+      width: var(--sf-viewport-width-large);
+    }
+    .md\:w-screen-dynamic {
+      width: var(--sf-viewport-width-dynamic);
     }
     .md\:w-min {
       width: -webkit-min-content;

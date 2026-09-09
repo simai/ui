@@ -5,8 +5,7 @@
     --sf-skeleton-highlight: rgba(155, 155, 155, 0.5);
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    gap: var(--sf-b0, 4px);
+    gap: var(--sf-b0);
   }
   .sf-skeleton-text {
     position: relative;

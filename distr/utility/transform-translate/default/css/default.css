@@ -1,27 +1,27 @@
 @layer sf.utilities {
   .translate-x-0 {
-    --sf-translate-x: var(--sf-0px);
+    --sf-translate-x: var(--sf-0);
     -webkit-transform: translate(0, 0);
             transform: translate(0, 0);
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
             transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
   }
   .translate-y-0 {
-    --sf-translate-y: var(--sf-0px);
+    --sf-translate-y: var(--sf-0);
     -webkit-transform: translate(0, 0);
             transform: translate(0, 0);
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
             transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
   }
   .-translate-x-0 {
-    --sf-translate-x: calc(0rem - var(--sf-0px));
+    --sf-translate-x: calc(-1 * var(--sf-0));
     -webkit-transform: translate(0, 0);
             transform: translate(0, 0);
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
             transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
   }
   .-translate-y-0 {
-    --sf-translate-y: calc(0rem - var(--sf-0px));
+    --sf-translate-y: calc(-1 * var(--sf-0));
     -webkit-transform: translate(0, 0);
             transform: translate(0, 0);
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
@@ -42,14 +42,14 @@
             transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
   }
   .-translate-x-1 {
-    --sf-translate-x: calc(0rem - var(--sf-px));
+    --sf-translate-x: calc(-1 * var(--sf-px));
     -webkit-transform: translate(0, 0);
             transform: translate(0, 0);
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
             transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
   }
   .-translate-y-1 {
-    --sf-translate-y: calc(0rem - var(--sf-px));
+    --sf-translate-y: calc(-1 * var(--sf-px));
     -webkit-transform: translate(0, 0);
             transform: translate(0, 0);
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
@@ -70,14 +70,14 @@
             transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
   }
   .-translate-x-2 {
-    --sf-translate-x: calc(0rem - var(--sf-a2));
+    --sf-translate-x: calc(-1 * var(--sf-a2));
     -webkit-transform: translate(0, 0);
             transform: translate(0, 0);
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
             transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
   }
   .-translate-y-2 {
-    --sf-translate-y: calc(0rem - var(--sf-a2));
+    --sf-translate-y: calc(-1 * var(--sf-a2));
     -webkit-transform: translate(0, 0);
             transform: translate(0, 0);
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
@@ -98,14 +98,14 @@
             transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
   }
   .-translate-x-3 {
-    --sf-translate-x: calc(0rem - var(--sf-a4));
+    --sf-translate-x: calc(-1 * var(--sf-a4));
     -webkit-transform: translate(0, 0);
             transform: translate(0, 0);
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
             transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
   }
   .-translate-y-3 {
-    --sf-translate-y: calc(0rem - var(--sf-a4));
+    --sf-translate-y: calc(-1 * var(--sf-a4));
     -webkit-transform: translate(0, 0);
             transform: translate(0, 0);
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
@@ -126,14 +126,14 @@
             transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
   }
   .-translate-x-4 {
-    --sf-translate-x: calc(0rem - var(--sf-a6));
+    --sf-translate-x: calc(-1 * var(--sf-a6));
     -webkit-transform: translate(0, 0);
             transform: translate(0, 0);
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
             transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
   }
   .-translate-y-4 {
-    --sf-translate-y: calc(0rem - var(--sf-a6));
+    --sf-translate-y: calc(-1 * var(--sf-a6));
     -webkit-transform: translate(0, 0);
             transform: translate(0, 0);
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
@@ -154,14 +154,14 @@
             transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
   }
   .-translate-x-5 {
-    --sf-translate-x: calc(0rem - var(--sf-a8));
+    --sf-translate-x: calc(-1 * var(--sf-a8));
     -webkit-transform: translate(0, 0);
             transform: translate(0, 0);
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
             transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
   }
   .-translate-y-5 {
-    --sf-translate-y: calc(0rem - var(--sf-a8));
+    --sf-translate-y: calc(-1 * var(--sf-a8));
     -webkit-transform: translate(0, 0);
             transform: translate(0, 0);
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
@@ -182,14 +182,14 @@
             transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
   }
   .-translate-x-6 {
-    --sf-translate-x: calc(0rem - var(--sf-b0));
+    --sf-translate-x: calc(-1 * var(--sf-b0));
     -webkit-transform: translate(0, 0);
             transform: translate(0, 0);
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
             transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
   }
   .-translate-y-6 {
-    --sf-translate-y: calc(0rem - var(--sf-b0));
+    --sf-translate-y: calc(-1 * var(--sf-b0));
     -webkit-transform: translate(0, 0);
             transform: translate(0, 0);
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
@@ -210,14 +210,14 @@
             transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
   }
   .-translate-x-7 {
-    --sf-translate-x: calc(0rem - var(--sf-b2));
+    --sf-translate-x: calc(-1 * var(--sf-b2));
     -webkit-transform: translate(0, 0);
             transform: translate(0, 0);
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
             transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
   }
   .-translate-y-7 {
-    --sf-translate-y: calc(0rem - var(--sf-b2));
+    --sf-translate-y: calc(-1 * var(--sf-b2));
     -webkit-transform: translate(0, 0);
             transform: translate(0, 0);
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
@@ -238,14 +238,14 @@
             transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
   }
   .-translate-x-8 {
-    --sf-translate-x: calc(0rem - var(--sf-b4));
+    --sf-translate-x: calc(-1 * var(--sf-b4));
     -webkit-transform: translate(0, 0);
             transform: translate(0, 0);
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
             transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
   }
   .-translate-y-8 {
-    --sf-translate-y: calc(0rem - var(--sf-b4));
+    --sf-translate-y: calc(-1 * var(--sf-b4));
     -webkit-transform: translate(0, 0);
             transform: translate(0, 0);
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
@@ -266,14 +266,14 @@
             transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
   }
   .-translate-x-9 {
-    --sf-translate-x: calc(0rem - var(--sf-b6));
+    --sf-translate-x: calc(-1 * var(--sf-b6));
     -webkit-transform: translate(0, 0);
             transform: translate(0, 0);
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
             transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
   }
   .-translate-y-9 {
-    --sf-translate-y: calc(0rem - var(--sf-b6));
+    --sf-translate-y: calc(-1 * var(--sf-b6));
     -webkit-transform: translate(0, 0);
             transform: translate(0, 0);
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));

@@ -783,7 +783,7 @@
   .sf-admin-menu-panel.small .sf-admin-menu-head {
     justify-content: center;
   }
-  @media (max-width: 520px) {
+  @media (max-width: 32.5rem) {
     .sf-admin-menu-panel:not(.small) {
       width: 100%;
       inline-size: 100%;

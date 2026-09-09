@@ -1,5 +1,5 @@
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 71.25rem) {
     .xl\:grid-row-1 {
       grid-template-rows: repeat(1, minmax(0, 1fr));
     }
@@ -20,6 +20,9 @@
     }
     .xl\:grid-row-none {
       grid-template-rows: none;
+    }
+    .xl\:grid-row-subgrid {
+      grid-template-rows: subgrid;
     }
   }
 }

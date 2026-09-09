@@ -1,5 +1,5 @@
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32.5rem) {
     .sm\:grid-row-1 {
       grid-template-rows: repeat(1, minmax(0, 1fr));
     }
@@ -20,6 +20,9 @@
     }
     .sm\:grid-row-none {
       grid-template-rows: none;
+    }
+    .sm\:grid-row-subgrid {
+      grid-template-rows: subgrid;
     }
   }
 }

@@ -618,7 +618,7 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
     iframe.src = this.src;
     iframe.setAttribute('data-sf-modal-iframe', '');
     iframe.setAttribute('allowfullscreen', '');
-    iframe.style.minHeight = '400px';
+    iframe.style.minHeight = 'calc(var(--sf-g2) + var(--sf-b6))';
     iframe.style.height = '100%';
     iframe.addEventListener('load', () => {
       this._contentLoaded = true;

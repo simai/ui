@@ -10,21 +10,21 @@
 .sf-theme-builder {
   font-family: inherit;
   font-family: var(--sf-font-family, inherit);
-  /* local tokens */
-  --sf-theme-builder-panel-radius: var(--sf-radius-2, 18px);
-  --sf-theme-builder-tabs-radius: var(--sf-radius-1, 12px);
-  --sf-theme-builder-section-columns: 1fr var(--sf-space-d6, 120px);
-  --sf-theme-builder-input-min-width: var(--sf-space-d6, 120px);
-  --sf-theme-builder-menu-width: var(--sf-space-d7, 140px);
-  --sf-theme-builder-menu-padding: var(--sf-space-d2, 8px);
-  --sf-theme-builder-menu-btn-padding: var(--sf-space-d1, 6px)
-    var(--sf-space-d2, 8px);
-  --sf-theme-builder-tiles-min: 46px;
-  --sf-theme-builder-modal-padding: var(--sf-space-d4, 16px);
-  --sf-theme-builder-preview-min: var(--sf-space-d4, 32px);
-  --sf-theme-builder-drop-preview-height: var(--sf-space-d8, 140px);
-  --sf-theme-builder-translate-up: calc(-1 * var(--sf-a6, 18px));
-  --sf-theme-builder-min-width: var(--sf-space-e2, 400px);
+  /* Component settings derive from the Core size system. Intermediate values
+     preserve the nominal layout by composing existing steps, not new tokens. */
+  --sf-theme-builder-panel-radius: var(--sf-radius-2);
+  --sf-theme-builder-tabs-radius: var(--sf-radius-1);
+  --sf-theme-builder-section-columns: 1fr var(--sf-e5);
+  --sf-theme-builder-input-min-width: var(--sf-e5);
+  --sf-theme-builder-menu-width: calc(var(--sf-e7) + var(--sf-a4));
+  --sf-theme-builder-menu-padding: var(--sf-a8);
+  --sf-theme-builder-menu-btn-padding: var(--sf-a6) var(--sf-a8);
+  --sf-theme-builder-tiles-min: calc(var(--sf-d1) + var(--sf-a2));
+  --sf-theme-builder-modal-padding: var(--sf-b6);
+  --sf-theme-builder-preview-min: var(--sf-c6);
+  --sf-theme-builder-drop-preview-height: calc(var(--sf-e7) + var(--sf-a4));
+  --sf-theme-builder-translate-up: calc(-1 * var(--sf-a6));
+  --sf-theme-builder-min-width: calc(var(--sf-g2) + var(--sf-b6));
 }
 
 [dir="ltr"] .sf-theme-builder--drawer{
@@ -40,7 +40,7 @@
   bottom: 0;
   inset-block: 0;
   inset-inline-end: 0;
-  height: 100vh;
+  height: var(--sf-viewport-height-dynamic);
   min-width: var(--sf-theme-builder-min-width);
   -webkit-transform: translateX(100%);
           transform: translateX(100%);
@@ -82,20 +82,20 @@
 }
 
 .sf-theme-builder__drop-preview img {
-  max-height: calc(var(--sf-theme-builder-drop-preview-height) + 20px);
+  max-height: calc(var(--sf-theme-builder-drop-preview-height) + var(--sf-c0));
 }
 
 [dir="ltr"] .sf-theme-builder__palette-menu{
-  left: calc(100% + 6px);
+  left: calc(100% + var(--sf-a6));
 }
 
 [dir="rtl"] .sf-theme-builder__palette-menu{
-  right: calc(100% + 6px);
+  right: calc(100% + var(--sf-a6));
 }
 
 .sf-theme-builder__palette-menu {
   top: 50%;
-  inset-inline-start: calc(100% + 6px);
+  inset-inline-start: calc(100% + var(--sf-a6));
   -webkit-transform: translateY(-50%);
           transform: translateY(-50%);
   min-width: var(--sf-theme-builder-menu-width);
@@ -118,8 +118,8 @@
   min-height: var(--sf-theme-builder-preview-min);
 }
 
-@media (max-width: 640px) {
+@media (max-width: 40rem) {
   .sf-theme-builder__swatch {
-    height: 100px;
+    height: calc(var(--sf-e2) + var(--sf-a4));
   }
 }

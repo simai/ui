@@ -1,5 +1,5 @@
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32.5rem) {
     .sm\:object-bottom {
       -o-object-position: bottom;
          object-position: bottom;

@@ -1,5 +1,5 @@
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 45rem) {
     .md\:bg-clip-border {
       background-clip: border-box;
     }

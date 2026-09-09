@@ -370,12 +370,12 @@
     --sf-button--padding-bottom: var(--sf-ui-1\/3--space-y-tightness-highest);
   }
   .sf-button--outline {
-    --sf-button--border-bottom-width: 1px;
-    --sf-button--border-inline-end-width: 1px;
-    --sf-button--border-inline-start-width: 1px;
+    --sf-button--border-bottom-width: var(--sf-px);
+    --sf-button--border-inline-end-width: var(--sf-px);
+    --sf-button--border-inline-start-width: var(--sf-px);
     --sf-button--border-style: solid;
-    --sf-button--border-top-width: 1px;
-    --sf-button--border-width: 1px;
+    --sf-button--border-top-width: var(--sf-px);
+    --sf-button--border-width: var(--sf-px);
   }
   .sf-button.radius-default {
     border-radius: var(--sf-radius-default);
@@ -389,15 +389,15 @@
   .sf-button.segment-start {
     --sf-button--border-top-right-radius: var(--sf-radius-square);
     --sf-button--border-bottom-right-radius: var(--sf-radius-square);
-    --sf-button--border-inline-end-width: 1px;
+    --sf-button--border-inline-end-width: var(--sf-px);
   }
   .sf-button.segment-middle {
     --sf-button--border-top-left-radius: var(--sf-radius-square);
     --sf-button--border-top-right-radius: var(--sf-radius-square);
     --sf-button--border-bottom-right-radius: var(--sf-radius-square);
     --sf-button--border-bottom-left-radius: var(--sf-radius-square);
-    --sf-button--border-inline-start-width: 1px;
-    --sf-button--border-inline-end-width: 1px;
+    --sf-button--border-inline-start-width: var(--sf-px);
+    --sf-button--border-inline-end-width: var(--sf-px);
   }
   [dir="ltr"] .sf-button.segment-end {
     border-left-color: transparent;
@@ -412,7 +412,7 @@
     --sf-button--border-bottom-left-radius: var(--sf-radius-square);
     border-inline-start-color: transparent;
     border-inline-start-color: var(--sf-white--alfa-24, transparent);
-    --sf-button--border-inline-start-width: 1px;
+    --sf-button--border-inline-start-width: var(--sf-px);
   }
   [dir="ltr"] .sf-button:not(.sf-button--outline).segment-end {
     border-left-color: transparent;
@@ -570,7 +570,7 @@
     bottom: -50%;
     left: -50%;
     inset: -50%;
-    background-image: repeating-linear-gradient(135deg, var(--sf-button-loading-stripe-1) 0px, var(--sf-button-loading-stripe-1) 6px, var(--sf-button-loading-stripe-2) 6px, var(--sf-button-loading-stripe-2) 12px);
+    background-image: repeating-linear-gradient(135deg, var(--sf-button-loading-stripe-1) 0, var(--sf-button-loading-stripe-1) var(--sf-a6), var(--sf-button-loading-stripe-2) var(--sf-a6), var(--sf-button-loading-stripe-2) var(--sf-b2));
     -webkit-animation: stripes-slide 1s linear infinite;
             animation: stripes-slide 1s linear infinite;
     will-change: transform;
@@ -600,8 +600,8 @@
               transform: translateX(0);
     }
     to {
-      -webkit-transform: translateX(52px);
-              transform: translateX(52px);
+      -webkit-transform: translateX(var(--sf-d3));
+              transform: translateX(var(--sf-d3));
     }
   }
   @keyframes stripes-slide {
@@ -610,8 +610,8 @@
               transform: translateX(0);
     }
     to {
-      -webkit-transform: translateX(52px);
-              transform: translateX(52px);
+      -webkit-transform: translateX(var(--sf-d3));
+              transform: translateX(var(--sf-d3));
     }
   }
 }
@@ -622,73 +622,73 @@
      let the selected outline segment own both of its joins. */
   .sf-button.sf-button--link[class*=segment-] {
     border-color: var(--sf-outline);
-    --sf-button--border-top-width: 1px;
-    --sf-button--border-bottom-width: 1px;
+    --sf-button--border-top-width: var(--sf-px);
+    --sf-button--border-bottom-width: var(--sf-px);
   }
   .sf-button.sf-button--link.segment-start,
   .sf-button.sf-button--link.segment-middle {
-    --sf-button--border-inline-start-width: 1px;
+    --sf-button--border-inline-start-width: var(--sf-px);
     --sf-button--border-inline-end-width: 0;
   }
   .sf-button.sf-button--link.segment-end {
-    --sf-button--border-inline-start-width: 1px;
-    --sf-button--border-inline-end-width: 1px;
+    --sf-button--border-inline-start-width: var(--sf-px);
+    --sf-button--border-inline-end-width: var(--sf-px);
   }
   sf-button[\:has\(.sf-button--outline\[class*\%3Dsegment-\]\)] + sf-icon-button .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline),
   .sf-button.sf-button--outline[class*=segment-] + .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
-    --sf-icon-button--border-top-width: 1px;
-    --sf-icon-button--border-inline-end-width: 1px;
-    --sf-icon-button--border-bottom-width: 1px;
-    --sf-icon-button--border-inline-start-width: 1px;
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-inline-end-width: var(--sf-px);
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+    --sf-icon-button--border-inline-start-width: var(--sf-px);
   }
   sf-button:has(.sf-button--outline[class*=segment-]) + sf-icon-button .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline),
   .sf-button.sf-button--outline[class*=segment-] + .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
-    --sf-icon-button--border-top-width: 1px;
-    --sf-icon-button--border-inline-end-width: 1px;
-    --sf-icon-button--border-bottom-width: 1px;
-    --sf-icon-button--border-inline-start-width: 1px;
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-inline-end-width: var(--sf-px);
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+    --sf-icon-button--border-inline-start-width: var(--sf-px);
   }
   sf-button[\:has\(.sf-button--outline\[class*\%3Dsegment-\]\)] + sf-button .sf-button[class*=segment-]:not(.sf-button--outline),
   .sf-button.sf-button--outline[class*=segment-] + .sf-button[class*=segment-]:not(.sf-button--outline) {
-    --sf-button--border-top-width: 1px;
-    --sf-button--border-inline-end-width: 1px;
-    --sf-button--border-bottom-width: 1px;
-    --sf-button--border-inline-start-width: 1px;
+    --sf-button--border-top-width: var(--sf-px);
+    --sf-button--border-inline-end-width: var(--sf-px);
+    --sf-button--border-bottom-width: var(--sf-px);
+    --sf-button--border-inline-start-width: var(--sf-px);
   }
   sf-button:has(.sf-button--outline[class*=segment-]) + sf-button .sf-button[class*=segment-]:not(.sf-button--outline),
   .sf-button.sf-button--outline[class*=segment-] + .sf-button[class*=segment-]:not(.sf-button--outline) {
-    --sf-button--border-top-width: 1px;
-    --sf-button--border-inline-end-width: 1px;
-    --sf-button--border-bottom-width: 1px;
-    --sf-button--border-inline-start-width: 1px;
+    --sf-button--border-top-width: var(--sf-px);
+    --sf-button--border-inline-end-width: var(--sf-px);
+    --sf-button--border-bottom-width: var(--sf-px);
+    --sf-button--border-inline-start-width: var(--sf-px);
   }
   sf-button[\:has\(\%2B\%20sf-icon-button\%20.sf-icon-button--outline\[class*\%3Dsegment-\]\)] .sf-button[class*=segment-]:not(.sf-button--outline),
   .sf-button[class*=segment-]:not(.sf-button--outline) [\:has\(\%2B\%20.sf-icon-button.sf-icon-button--outline\[class*\%3Dsegment-\]\)] {
-    --sf-button--border-top-width: 1px;
-    --sf-button--border-inline-end-width: 1px;
-    --sf-button--border-bottom-width: 1px;
-    --sf-button--border-inline-start-width: 1px;
+    --sf-button--border-top-width: var(--sf-px);
+    --sf-button--border-inline-end-width: var(--sf-px);
+    --sf-button--border-bottom-width: var(--sf-px);
+    --sf-button--border-inline-start-width: var(--sf-px);
   }
   sf-button:has(+ sf-icon-button .sf-icon-button--outline[class*=segment-]) .sf-button[class*=segment-]:not(.sf-button--outline),
   .sf-button[class*=segment-]:not(.sf-button--outline) :has(+ .sf-icon-button.sf-icon-button--outline[class*=segment-]) {
-    --sf-button--border-top-width: 1px;
-    --sf-button--border-inline-end-width: 1px;
-    --sf-button--border-bottom-width: 1px;
-    --sf-button--border-inline-start-width: 1px;
+    --sf-button--border-top-width: var(--sf-px);
+    --sf-button--border-inline-end-width: var(--sf-px);
+    --sf-button--border-bottom-width: var(--sf-px);
+    --sf-button--border-inline-start-width: var(--sf-px);
   }
   sf-button[\:has\(\%2B\%20sf-button\%20.sf-button--outline\[class*\%3Dsegment-\]\)] .sf-button[class*=segment-]:not(.sf-button--outline),
   .sf-button[class*=segment-]:not(.sf-button--outline)[\:has\(\%2B\%20.sf-button.sf-button--outline\[class*\%3Dsegment-\]\)] {
-    --sf-button--border-top-width: 1px;
-    --sf-button--border-inline-end-width: 1px;
-    --sf-button--border-bottom-width: 1px;
-    --sf-button--border-inline-start-width: 1px;
+    --sf-button--border-top-width: var(--sf-px);
+    --sf-button--border-inline-end-width: var(--sf-px);
+    --sf-button--border-bottom-width: var(--sf-px);
+    --sf-button--border-inline-start-width: var(--sf-px);
   }
   sf-button:has(+ sf-button .sf-button--outline[class*=segment-]) .sf-button[class*=segment-]:not(.sf-button--outline),
   .sf-button[class*=segment-]:not(.sf-button--outline):has(+ .sf-button.sf-button--outline[class*=segment-]) {
-    --sf-button--border-top-width: 1px;
-    --sf-button--border-inline-end-width: 1px;
-    --sf-button--border-bottom-width: 1px;
-    --sf-button--border-inline-start-width: 1px;
+    --sf-button--border-top-width: var(--sf-px);
+    --sf-button--border-inline-end-width: var(--sf-px);
+    --sf-button--border-bottom-width: var(--sf-px);
+    --sf-button--border-inline-start-width: var(--sf-px);
   }
   /* Keep this after the compatibility rules above: the selected segment's
      end border is the only line at this join. */

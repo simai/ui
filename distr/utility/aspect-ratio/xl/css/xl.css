@@ -1,5 +1,5 @@
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 71.25rem) {
     .xl\:aspect-1x1 {
       aspect-ratio: 1 / 1;
     }

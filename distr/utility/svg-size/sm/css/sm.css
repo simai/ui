@@ -1,5 +1,5 @@
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32.5rem) {
     .sm\:svg-1\/4 {
       width: var(--sf-text-size-1\/4);
       height: var(--sf-text-size-1\/4);

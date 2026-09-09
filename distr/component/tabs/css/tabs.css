@@ -70,8 +70,8 @@
     padding-right: var(--sf-tabs-top-container--padding-inline-start, 0);
   }
   .sf-tabs-top-container {
-    border-width: 0 0 1px 0;
-    border-width: var(--sf-tabs-top-container--border-width, 0 0 1px 0);
+    border-width: 0 0 var(--sf-px) 0;
+    border-width: var(--sf-tabs-top-container--border-width, 0 0 var(--sf-px) 0);
     border-style: solid;
     border-style: var(--sf-tabs-top-container--border-style, solid);
     border-color: var(--sf-outline-variant);
@@ -90,7 +90,7 @@
     padding-bottom: var(--sf-tabs-top-container--padding-bottom, 0);
   }
   .sf-tabs--underline .sf-tabs-top {
-    --sf-tabs-top--margin: 0 0 -1px 0;
+    --sf-tabs-top--margin: 0 0 calc(-1 * var(--sf-px)) 0;
   }
   .sf-tabs--pills .sf-tabs-top-container,
   .sf-tabs--full .sf-tabs-top-container,
@@ -130,28 +130,28 @@
   .sf-tabs--underline .sf-tabs-top .sf-icon-button {
     --sf-button--border-top-width: 0;
     --sf-button--border-inline-start-width: 0;
-    --sf-button--border-bottom-width: 2px;
+    --sf-button--border-bottom-width: var(--sf-a2);
     --sf-button--border-inline-end-width: 0;
     --sf-icon-button--border-top-width: 0;
     --sf-icon-button--border-inline-start-width: 0;
-    --sf-icon-button--border-bottom-width: 2px;
+    --sf-icon-button--border-bottom-width: var(--sf-a2);
     --sf-icon-button--border-inline-end-width: 0;
   }
   .sf-tabs.sf-tabs--full .sf-tabs-top .sf-button,
   .sf-tabs.sf-tabs--full .sf-tabs-top .sf-icon-button {
     flex: 1;
-    --sf-button--border-top-width: 1px;
-    --sf-button--border-inline-start-width: 1px;
-    --sf-button--border-bottom-width: 1px;
-    --sf-button--border-inline-end-width: 1px;
+    --sf-button--border-top-width: var(--sf-px);
+    --sf-button--border-inline-start-width: var(--sf-px);
+    --sf-button--border-bottom-width: var(--sf-px);
+    --sf-button--border-inline-end-width: var(--sf-px);
     --sf-button--border-bottom-right-radius: var(--sf-radius-square);
     --sf-button--border-bottom-left-radius: var(--sf-radius-square);
     --sf-button--border-top-right-radius: var(--sf-radius-square);
     --sf-button--border-top-left-radius: var(--sf-radius-square);
-    --sf-icon-button--border-top-width: 1px;
-    --sf-icon-button--border-inline-start-width: 1px;
-    --sf-icon-button--border-bottom-width: 1px;
-    --sf-icon-button--border-inline-end-width: 1px;
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-inline-start-width: var(--sf-px);
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+    --sf-icon-button--border-inline-end-width: var(--sf-px);
     --sf-icon-button--border-color: var(--sf-primary-active);
     --sf-button--border-color: var(--sf-primary-active);
     --sf-icon-button--border-bottom-right-radius: var(--sf-radius-square);
@@ -161,8 +161,8 @@
   }
   .sf-tabs.sf-tabs--full .sf-tabs-top .sf-button + .sf-button,
   .sf-tabs.sf-tabs--full .sf-tabs-top .sf-icon-button + .sf-icon-button {
-    --sf-button--border-inline-start-width: 0px;
-    --sf-icon-button--border-inline-start-width: 0px;
+    --sf-button--border-inline-start-width: 0;
+    --sf-icon-button--border-inline-start-width: 0;
   }
   .sf-tabs.sf-tabs--full .sf-tabs-top > .sf-button:first-child,
   .sf-tabs.sf-tabs--full .sf-tabs-top > :first-child .sf-button:first-child,

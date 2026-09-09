@@ -1,5 +1,5 @@
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:break-inside-auto {
       page-break-inside: auto;
       -webkit-column-break-inside: auto;

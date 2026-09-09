@@ -68,7 +68,7 @@ function getFlagObserver() {
       flagObserver?.unobserve?.(img);
     });
   }, {
-    rootMargin: '120px'
+    rootMargin: getComputedStyle(document.documentElement).getPropertyValue('--sf-e5').trim()
   });
   return flagObserver;
 }

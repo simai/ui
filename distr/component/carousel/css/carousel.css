@@ -166,8 +166,7 @@
   height: var(--sf-carousel-slide--height);
   position: relative;
   width: 100%;
-  max-width: 768px;
-  max-width: var(--sf-max-w-md, 768px);
+  max-width: var(--sf-h2);
   margin: 0 auto;
   overflow: hidden;
 }

@@ -1,5 +1,5 @@
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 71.25rem) {
     .xl\:layout-col-1 {
       -webkit-column-count: 1;
          -moz-column-count: 1;

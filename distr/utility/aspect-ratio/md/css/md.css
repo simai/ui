@@ -1,5 +1,5 @@
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 45rem) {
     .md\:aspect-1x1 {
       aspect-ratio: 1 / 1;
     }

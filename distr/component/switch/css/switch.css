@@ -98,14 +98,14 @@
   }
   .sf-switch .sf-switch-toggler {
     --sf-switch-toggler--background-color: var(--sf-surface-0);
-    --sf-switch-toggler--border: 1px solid;
+    --sf-switch-toggler--border: var(--sf-px) solid;
     --sf-switch-toggler--border-color: var(--sf-outline);
     --sf-switch-toggler--border-end-end-radius: var(--sf-radius-circle);
     --sf-switch-toggler--border-end-start-radius: var(--sf-radius-circle);
     --sf-switch-toggler--border-start-end-radius: var(--sf-radius-circle);
     --sf-switch-toggler--border-start-start-radius: var(--sf-radius-circle);
     --sf-switch-toggler--border-style: solid;
-    --sf-switch-toggler--border-width: 1px;
+    --sf-switch-toggler--border-width: var(--sf-px);
     background-color: var(--sf-switch-toggler--background-color);
     border: var(--sf-switch-toggler--border);
     border-color: transparent;

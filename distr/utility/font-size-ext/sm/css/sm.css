@@ -1,5 +1,5 @@
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32.5rem) {
     .sm\:text-a0 {
       font-size: var(--sf-a0);
       line-height: var(--sf-a0);

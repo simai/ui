@@ -45,7 +45,7 @@ let instanceCounter = 0;
 const instanceMap = new WeakMap();
 
 function getPaletteMenuPosition(direction) {
-  const inlineEndOffset = 'calc(100% + 6px)';
+  const inlineEndOffset = 'calc(100% + var(--sf-a6))';
   return {
     left: direction === 'rtl' ? inlineEndOffset : 'auto',
     right: direction === 'rtl' ? 'auto' : inlineEndOffset,

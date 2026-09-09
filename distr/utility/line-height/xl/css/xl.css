@@ -1,5 +1,5 @@
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 71.25rem) {
     .xl\:line-1\/4 {
       line-height: var(--sf-text-height-1\/4);
     }

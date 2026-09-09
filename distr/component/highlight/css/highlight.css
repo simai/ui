@@ -24,11 +24,11 @@
   .theme-dark pre code.hljs {
     display: block;
     overflow-x: auto;
-    padding: 1em;
+    padding: var(--sf-b6);
   }
   .theme-light code.hljs,
   .theme-dark code.hljs {
-    padding: 3px 5px;
+    padding: var(--sf-a3) var(--sf-a5);
   }
   .theme-light .hljs,
   .theme-dark .hljs {
@@ -170,6 +170,51 @@
   .body .source {
     border-radius: var(--sf-radius-1);
   }
+  /* Public code-surface composition used by documentation and developer tools. */
+  .sf-code-surface {
+    min-width: 0;
+    overflow: hidden;
+    margin: 0;
+    background: var(--sf-surface-container);
+    border: var(--sf-a1) solid var(--sf-outline-variant);
+    border-radius: var(--sf-radius-2);
+    color: var(--sf-on-surface);
+  }
+  .sf-code-surface > .sf--highlight-head {
+    margin: 0;
+    padding-top: var(--sf-space-1\/3);
+    padding-bottom: var(--sf-space-1\/3);
+    padding-block: var(--sf-space-1\/3);
+    padding-left: var(--sf-space-1);
+    padding-right: var(--sf-space-1);
+    padding-inline: var(--sf-space-1);
+    border-bottom: var(--sf-a1) solid var(--sf-outline-variant);
+    -webkit-border-after: var(--sf-a1) solid var(--sf-outline-variant);
+            border-block-end: var(--sf-a1) solid var(--sf-outline-variant);
+  }
+  .sf-code-surface__scroll {
+    max-width: 100%;
+    margin: 0;
+    padding: var(--sf-space-1);
+    overflow: auto;
+    overscroll-behavior-inline: contain;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .sf-code-surface__scroll code {
+    display: block;
+    min-width: -webkit-max-content;
+    min-width: -moz-max-content;
+    min-width: max-content;
+    min-inline-size: -webkit-max-content;
+    min-inline-size: -moz-max-content;
+    min-inline-size: max-content;
+    padding: 0;
+    white-space: pre;
+    background: transparent;
+  }
   li .source {
     margin-top: var(--sf-text-size-1);
   }
@@ -194,10 +239,10 @@
     /* your custom style here */
   }
   [dir="ltr"] .hljs-ln-numbers div {
-    border-right: 1px solid var(--sf-highlight-line-divider);
+    border-right: var(--sf-px) solid var(--sf-highlight-line-divider);
   }
   [dir="rtl"] .hljs-ln-numbers div {
-    border-left: 1px solid var(--sf-highlight-line-divider);
+    border-left: var(--sf-px) solid var(--sf-highlight-line-divider);
   }
   [dir="ltr"] .hljs-ln-numbers div {
     padding-right: var(--sf-a5);
@@ -206,8 +251,8 @@
     padding-left: var(--sf-a5);
   }
   .hljs-ln-numbers div {
-    -webkit-border-end: 1px solid var(--sf-highlight-line-divider);
-            border-inline-end: 1px solid var(--sf-highlight-line-divider);
+    -webkit-border-end: var(--sf-px) solid var(--sf-highlight-line-divider);
+            border-inline-end: var(--sf-px) solid var(--sf-highlight-line-divider);
     -webkit-padding-end: var(--sf-a5);
             padding-inline-end: var(--sf-a5);
   }

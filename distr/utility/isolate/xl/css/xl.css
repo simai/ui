@@ -1,9 +1,9 @@
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 71.25rem) {
     .xl\:isolate {
       isolation: isolate;
     }
-    .xl\:auto {
+    .xl\:isolation-auto {
       isolation: auto;
     }
   }

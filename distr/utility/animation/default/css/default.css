@@ -44,8 +44,8 @@
   @-webkit-keyframes sf-animation-from-left {
     from {
       opacity: 0;
-      -webkit-transform: translateX(calc(0rem - var(--sf-b0)));
-              transform: translateX(calc(0rem - var(--sf-b0)));
+      -webkit-transform: translateX(calc(-1 * var(--sf-b0)));
+              transform: translateX(calc(-1 * var(--sf-b0)));
     }
     to {
       opacity: 1;
@@ -56,8 +56,8 @@
   @keyframes sf-animation-from-left {
     from {
       opacity: 0;
-      -webkit-transform: translateX(calc(0rem - var(--sf-b0)));
-              transform: translateX(calc(0rem - var(--sf-b0)));
+      -webkit-transform: translateX(calc(-1 * var(--sf-b0)));
+              transform: translateX(calc(-1 * var(--sf-b0)));
     }
     to {
       opacity: 1;

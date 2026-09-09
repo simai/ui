@@ -640,8 +640,8 @@ SF.Provider = function () {
       button.style.setProperty('color', param.color ? param.color : '#000', 'important');
       button.style.setProperty('line-height', 1, 'important');
       button.style.setProperty('letter-spacing', 'normal', 'important');
-      button.style.fontSize = param.fontSize ? param.fontSize : '.875em';
-      button.style.padding = '0.75em 1em';
+      button.style.fontSize = param.fontSize ? param.fontSize : 'var(--sf-b4)';
+      button.style.padding = 'var(--sf-b2) var(--sf-b6)';
       button.style.borderTopRightRadius = param.borderTopRightRadius ? param.borderTopRightRadius : 0;
       button.style.borderBottomRightRadius = param.borderBottomRightRadius ? param.borderBottomRightRadius : 0;
       button.style.borderTopLeftRadius = param.borderTopLeftRadius ? param.borderTopLeftRadius : 0;
@@ -650,7 +650,7 @@ SF.Provider = function () {
       button.title = param.title;
       button.addEventListener('mouseover', () => {
         if (!button.classList.contains('sf-special-btn--noclick')) {
-          button.style.boxShadow = `0 0px 0px 4px ${param.boxShadowColor ? param.boxShadowColor : 'lightgrey'}`;
+          button.style.boxShadow = `0 0 0 var(--sf-a4) ${param.boxShadowColor ? param.boxShadowColor : 'lightgrey'}`;
           button.style.zIndex = 1;
           button.style.borderWidth = 0;
         }
@@ -686,8 +686,8 @@ SF.Provider = function () {
         btn.style.outline = 'none';
       });
       btn.style.setProperty('color', param.color ? param.color : '#000', 'important');
-      btn.style.fontSize = param.fontSize ? param.fontSize : '.875em';
-      btn.style.padding = '.75em 1em';
+      btn.style.fontSize = param.fontSize ? param.fontSize : 'var(--sf-b4)';
+      btn.style.padding = 'var(--sf-b2) var(--sf-b6)';
       btn.innerHTML = param.text;
       btn.title = param.title;
     };
@@ -713,18 +713,18 @@ SF.Provider = function () {
 
     this.setLocalStatusStyle = (panel = false, className = false, status = () => {}) => {
       panel.status.className = className;
-      panel.status.style.setProperty('margin-top', '0.75em', 'important');
+      panel.status.style.setProperty('margin-top', 'var(--sf-b2)', 'important');
       panel.status.style.setProperty('letter-spacing', 'normal', 'important');
       panel.status.style.setProperty('line-height', 1, 'important');
-      panel.status.style.fontSize = '.875em';
+      panel.status.style.fontSize = 'var(--sf-b4)';
       panel.status.style.setProperty('color', '#000', 'important');
       panel.status.innerText = status();
     };
 
     this.setLocalNameStyle = (panel = false, className = false, name = false) => {
       panel.name.className = className;
-      panel.name.style.fontSize = '.875em';
-      panel.name.style.setProperty('margin-bottom', '.75em', 'important');
+      panel.name.style.fontSize = 'var(--sf-b4)';
+      panel.name.style.setProperty('margin-bottom', 'var(--sf-b2)', 'important');
       panel.name.style.setProperty('color', '#000', 'important');
       panel.name.style.setProperty('letter-spacing', 'normal', 'important');
       panel.name.style.setProperty('line-height', 1, 'important');
@@ -814,15 +814,15 @@ SF.Provider = function () {
     };
     panel = document.createElement('nav');
     panel.className = par.modifier.panel;
-    panel.style.setProperty('border-bottom', '1px solid #D1D5DA', 'important');
-    panel.style.setProperty('font-size', '16px', 'important');
+    panel.style.setProperty('border-bottom', 'var(--sf-px) solid #D1D5DA', 'important');
+    panel.style.setProperty('font-size', 'var(--sf-b6)', 'important');
     panel.setAttribute('sf-special-panel', '');
     panel.classList.add('relative');
     panel.style.setProperty('background-color', '#fff', 'important');
     panel.style.transition = 'margin-top 1s ease';
     panel.font = document.createElement('div');
     panel.font.className = par.modifier.font;
-    panel.font.style.setProperty('padding', '1em', 'important');
+    panel.font.style.setProperty('padding', 'var(--sf-b6)', 'important');
     panel.font.name = document.createElement('div');
     panel.font.content = document.createElement('div');
     panel.font.status = document.createElement('div');
@@ -888,7 +888,7 @@ SF.Provider = function () {
 
     panel.kegl = document.createElement('div');
     panel.kegl.className = par.modifier.kegl;
-    panel.kegl.style.setProperty('padding', '1em', 'important');
+    panel.kegl.style.setProperty('padding', 'var(--sf-b6)', 'important');
     panel.kegl.name = document.createElement('div');
     panel.kegl.content = document.createElement('div');
     panel.kegl.status = document.createElement('div');
@@ -941,7 +941,7 @@ SF.Provider = function () {
 
     panel.kerning = document.createElement('div');
     panel.kerning.className = par.modifier.kerning;
-    panel.kerning.style.setProperty('padding', '1em', 'important');
+    panel.kerning.style.setProperty('padding', 'var(--sf-b6)', 'important');
     panel.kerning.name = document.createElement('div');
     panel.kerning.content = document.createElement('div');
     panel.kerning.status = document.createElement('div');
@@ -1007,7 +1007,7 @@ SF.Provider = function () {
 
     panel.interval = document.createElement('div');
     panel.interval.className = par.modifier.interval;
-    panel.interval.style.setProperty('padding', '1em', 'important');
+    panel.interval.style.setProperty('padding', 'var(--sf-b6)', 'important');
     panel.interval.name = document.createElement('div');
     this.setLocalNameStyle(panel.interval, 'kegl-text', BX.message("SF_SPECIAL__INTERVAL")); // panel.interval.name.classList.add('kegl-text');
     // panel.interval.name.style.setProperty('margin-bottom', '0.75em', 'important');
@@ -1068,7 +1068,7 @@ SF.Provider = function () {
 
     panel.color = document.createElement('div');
     panel.color.className = par.modifier.color;
-    panel.color.style.setProperty('padding', '1em', 'important');
+    panel.color.style.setProperty('padding', 'var(--sf-b6)', 'important');
     panel.color.name = document.createElement('div');
     this.setLocalNameStyle(panel.color, 'color-text', BX.message("SF_SPECIAL__COLOR")); // panel.color.name.classList.add('color-text');
     // panel.color.name.style.setProperty('margin-bottom','0.75em', 'important');
@@ -1080,8 +1080,8 @@ SF.Provider = function () {
     panel.color.content = document.createElement('div');
     panel.color.status = document.createElement('div');
     panel.color.content.classList.add('color-content', 'flex');
-    panel.color.content.style.boxShadow = '0 1px 2px 1px rgb(0,0,0,0.1)';
-    panel.color.content.style.borderRadius = '6px'; // panel.color.status.classList.add('status-text');
+    panel.color.content.style.boxShadow = '0 var(--sf-px) var(--sf-a2) var(--sf-px) rgb(0,0,0,0.1)';
+    panel.color.content.style.borderRadius = 'var(--sf-a6)'; // panel.color.status.classList.add('status-text');
     // panel.color.status.style.setProperty('margin-top', '0.75em', 'important');
     // panel.color.status.style.fontSize = '.875em';
     // panel.color.status.style.setProperty('color','#000','important');
@@ -1098,9 +1098,9 @@ SF.Provider = function () {
       class: 'cursor-pointer line-none focus:outline-0 appearance-none border-0 transition-shadow',
       backgroundColor: '#FFF',
       color: '#000',
-      padding: '12px',
-      borderTopLeftRadius: '6px',
-      borderBottomLeftRadius: '6px',
+      padding: 'var(--sf-b2)',
+      borderTopLeftRadius: 'var(--sf-a6)',
+      borderBottomLeftRadius: 'var(--sf-a6)',
       text: 'C',
       title: BX.message("SF_SPECIAL__BTN_WHITE")
     });
@@ -1124,7 +1124,7 @@ SF.Provider = function () {
       backgroundColor: '#000',
       color: '#FFF',
       borderColor: '#000',
-      padding: '12px',
+      padding: 'var(--sf-b2)',
       text: 'C',
       title: BX.message("SF_SPECIAL__BTN_BLACK")
     });
@@ -1141,7 +1141,7 @@ SF.Provider = function () {
       // boxShadowColor: '#FF0',
       color: '#000',
       borderColor: '#FF0',
-      padding: '12px',
+      padding: 'var(--sf-b2)',
       text: 'C',
       title: BX.message("SF_SPECIAL__BTN_YELLOW")
     });
@@ -1157,7 +1157,7 @@ SF.Provider = function () {
       backgroundColor: '#9fd7ff',
       color: '#000',
       borderColor: '#9fd7ff',
-      padding: '12px',
+      padding: 'var(--sf-b2)',
       text: 'C',
       title: BX.message("SF_SPECIAL__BTN_BLUE")
     });
@@ -1173,9 +1173,9 @@ SF.Provider = function () {
       backgroundColor: '#a9dd38',
       color: '#000',
       borderColor: '#a9dd38',
-      padding: '12px',
-      borderTopRightRadius: '6px',
-      borderBottomRightRadius: '6px',
+      padding: 'var(--sf-b2)',
+      borderTopRightRadius: 'var(--sf-a6)',
+      borderBottomRightRadius: 'var(--sf-a6)',
       text: 'C',
       title: BX.message("SF_SPECIAL__BTN_GREEN")
     });
@@ -1198,7 +1198,7 @@ SF.Provider = function () {
 
     panel.img = document.createElement('div');
     panel.img.className = par.modifier.img;
-    panel.img.style.setProperty('padding', '1em', 'important');
+    panel.img.style.setProperty('padding', 'var(--sf-b6)', 'important');
     panel.img.name = document.createElement('div');
     this.setLocalNameStyle(panel.img, 'image-text', BX.message("SF_SPECIAL__IMG")); // panel.img.name.classList.add('color-text');
     // panel.img.name.style.setProperty('margin-bottom', '0.75em', 'important');
@@ -1335,7 +1335,7 @@ SF.Provider = function () {
 
     panel.onoff = document.createElement('div');
     panel.onoff.className = par.modifier.onoff;
-    panel.onoff.style.setProperty('padding', '1em', 'important');
+    panel.onoff.style.setProperty('padding', 'var(--sf-b6)', 'important');
     panel.onoff.name = document.createElement('div');
     this.setLocalNameStyle(panel.onoff, 'onoff-text', BX.message("SF_SPECIAL__PANEL")); // panel.onoff.name.classList.add('onoff-text');
     // panel.onoff.name.style.setProperty('margin-bottom', '0.75em', 'important');
@@ -1352,7 +1352,7 @@ SF.Provider = function () {
     panel.onoff.content.btnonoff = document.createElement('button');
     this.addbtn(panel.onoff.content.btndefault, {
       class: 'cursor-pointer line-none focus:outline-0 appearance-none border-inline-end-1',
-      text: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor" style="width:1em;height:1em"><path d="M142.9 142.9c62.2-62.2 162.7-62.5 225.3-1L327 183c-6.9 6.9-8.9 17.2-5.2 26.2s12.5 14.8 22.2 14.8H463.5c0 0 0 0 0 0H472c13.3 0 24-10.7 24-24V72c0-9.7-5.8-18.5-14.8-22.2s-19.3-1.7-26.2 5.2L413.4 96.6c-87.6-86.5-228.7-86.2-315.8 1C73.2 122 55.6 150.7 44.8 181.4c-5.9 16.7 2.9 34.9 19.5 40.8s34.9-2.9 40.8-19.5c7.7-21.8 20.2-42.3 37.8-59.8zM16 312v7.6 .7V440c0 9.7 5.8 18.5 14.8 22.2s19.3 1.7 26.2-5.2l41.6-41.6c87.6 86.5 228.7 86.2 315.8-1c24.4-24.4 42.1-53.1 52.9-83.7c5.9-16.7-2.9-34.9-19.5-40.8s-34.9 2.9-40.8 19.5c-7.7 21.8-20.2 42.3-37.8 59.8c-62.2 62.2-162.7 62.5-225.3 1L185 329c6.9-6.9 8.9-17.2 5.2-26.2s-12.5-14.8-22.2-14.8H48.4h-.7H40c-13.3 0-24 10.7-24 24z"/></svg>',
+      text: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor" style="width:var(--sf-icon-size-1);height:var(--sf-icon-size-1)"><path d="M142.9 142.9c62.2-62.2 162.7-62.5 225.3-1L327 183c-6.9 6.9-8.9 17.2-5.2 26.2s12.5 14.8 22.2 14.8H463.5c0 0 0 0 0 0H472c13.3 0 24-10.7 24-24V72c0-9.7-5.8-18.5-14.8-22.2s-19.3-1.7-26.2 5.2L413.4 96.6c-87.6-86.5-228.7-86.2-315.8 1C73.2 122 55.6 150.7 44.8 181.4c-5.9 16.7 2.9 34.9 19.5 40.8s34.9-2.9 40.8-19.5c7.7-21.8 20.2-42.3 37.8-59.8zM16 312v7.6 .7V440c0 9.7 5.8 18.5 14.8 22.2s19.3 1.7 26.2-5.2l41.6-41.6c87.6 86.5 228.7 86.2 315.8-1c24.4-24.4 42.1-53.1 52.9-83.7c5.9-16.7-2.9-34.9-19.5-40.8s-34.9 2.9-40.8 19.5c-7.7 21.8-20.2 42.3-37.8 59.8c-62.2 62.2-162.7 62.5-225.3 1L185 329c6.9-6.9 8.9-17.2 5.2-26.2s-12.5-14.8-22.2-14.8H48.4h-.7H40c-13.3 0-24 10.7-24 24z"/></svg>',
       title: BX.message("SF_SPECIAL__BTN_DEFAULT")
     });
     panel.onoff.content.btndefault.addEventListener('click', function () {
@@ -1370,7 +1370,7 @@ SF.Provider = function () {
     });
     this.addbtn(panel.onoff.content.btnup, {
       class: 'cursor-pointer focus:outline-0 appearance-none',
-      text: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="currentColor" style="width:1em;height:1em"><path d="M201.4 137.4c12.5-12.5 32.8-12.5 45.3 0l160 160c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L224 205.3 86.6 342.6c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l160-160z"/></svg>',
+      text: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="currentColor" style="width:var(--sf-icon-size-1);height:var(--sf-icon-size-1)"><path d="M201.4 137.4c12.5-12.5 32.8-12.5 45.3 0l160 160c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L224 205.3 86.6 342.6c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l160-160z"/></svg>',
       title: BX.message("SF_SPECIAL__BTN_UP")
     });
     panel.onoff.content.btnup.classList.add('absolute', 'bottom-0', 'inline-end-0', 'radius-none'); // panel.onoff.content.btnup.style.bottom = '0';
@@ -2234,7 +2234,7 @@ SF.Special = function (el, opt) {
 
   this.buttonColorActive = button => {
     button.classList.add('sf-special-btn--noclick');
-    button.style.boxShadow = '0 0px 0px 4px lightgrey';
+    button.style.boxShadow = '0 0 0 var(--sf-a4) lightgrey';
     button.style.zIndex = 1;
   };
 

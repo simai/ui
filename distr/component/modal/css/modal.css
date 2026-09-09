@@ -67,7 +67,7 @@
     --sf-modal-surface-bg: var(--sf-surface-1, #fff);
     --sf-modal-surface-border-color: var(--sf-outline-variant, transparent);
     --sf-modal-surface-border-style: solid;
-    --sf-modal-surface-border-width: var(--sf-border-width, 1px);
+    --sf-modal-surface-border-width: var(--sf-border-width, var(--sf-px));
     --sf-modal-surface-gap: var(--sf-space-1);
     --sf-modal-surface-padding: var(--sf-space-2);
     --sf-modal-surface-radius: var(--sf-radius-2);
@@ -143,8 +143,8 @@
             transform: translateY(100%);
   }
   .sf-modal[data-sf-modal-position=center] [data-sf-modal-panel] {
-    -webkit-transform: translateY(0.75rem) scale(0.98);
-            transform: translateY(0.75rem) scale(0.98);
+    -webkit-transform: translateY(var(--sf-b2)) scale(0.98);
+            transform: translateY(var(--sf-b2)) scale(0.98);
   }
   .sf-modal[data-sf-modal-state=opening] [data-sf-modal-panel] {
     opacity: 0;
@@ -195,14 +195,14 @@
             transform: translateY(100%);
   }
   .sf-modal[data-sf-modal-state=closing][data-sf-modal-position=center] [data-sf-modal-panel] {
-    -webkit-transform: translateY(0.75rem) scale(0.98);
-            transform: translateY(0.75rem) scale(0.98);
+    -webkit-transform: translateY(var(--sf-b2)) scale(0.98);
+            transform: translateY(var(--sf-b2)) scale(0.98);
   }
   .sf-modal[data-sf-modal-state][data-sf-modal-hidden=true] [data-sf-modal-panel] {
     opacity: 0;
     pointer-events: none;
-    -webkit-transform: translateY(0.75rem) scale(0.98);
-            transform: translateY(0.75rem) scale(0.98);
+    -webkit-transform: translateY(var(--sf-b2)) scale(0.98);
+            transform: translateY(var(--sf-b2)) scale(0.98);
   }
   .sf-modal [data-sf-modal-panel][data-sf-modal-has-width] {
     max-width: min(100%, var(--sf-modal-width));
@@ -313,8 +313,7 @@
   .sf-modal-hide-icon {
     background-color: currentColor;
     display: block;
-    height: 2px;
-    height: var(--sf-border-width-2, 2px);
+    height: var(--sf-a2);
     width: var(--sf-space-1);
   }
 }

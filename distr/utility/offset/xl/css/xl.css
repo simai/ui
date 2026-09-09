@@ -1,5 +1,5 @@
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 71.25rem) {
     [dir="ltr"] .xl\:offset-1\/12 {
       margin-left: 8.333333%;
     }

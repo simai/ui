@@ -1,5 +1,5 @@
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     [dir="ltr"] .lg\:space-x-0 > * + * {
       margin-right: calc(var(--sf-space-0) * var(--sf-space--reverse-x));
     }

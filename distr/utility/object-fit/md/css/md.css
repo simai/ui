@@ -1,5 +1,5 @@
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 45rem) {
     .md\:object-contain {
       -o-object-fit: contain;
          object-fit: contain;

@@ -89,6 +89,15 @@
   .w-screen {
     width: 100vw;
   }
+  .w-screen-small {
+    width: var(--sf-viewport-width-small);
+  }
+  .w-screen-large {
+    width: var(--sf-viewport-width-large);
+  }
+  .w-screen-dynamic {
+    width: var(--sf-viewport-width-dynamic);
+  }
   .w-min {
     width: -webkit-min-content;
     width: -moz-min-content;

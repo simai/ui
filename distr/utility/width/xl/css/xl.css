@@ -1,5 +1,5 @@
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 71.25rem) {
     .xl\:w-auto {
       width: auto;
     }
@@ -89,6 +89,15 @@
     }
     .xl\:w-screen {
       width: 100vw;
+    }
+    .xl\:w-screen-small {
+      width: var(--sf-viewport-width-small);
+    }
+    .xl\:w-screen-large {
+      width: var(--sf-viewport-width-large);
+    }
+    .xl\:w-screen-dynamic {
+      width: var(--sf-viewport-width-dynamic);
     }
     .xl\:w-min {
       width: -webkit-min-content;

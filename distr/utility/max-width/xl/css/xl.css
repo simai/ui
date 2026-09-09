@@ -1,5 +1,5 @@
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 71.25rem) {
     .xl\:max-w-full {
       max-width: 100%;
     }
@@ -31,19 +31,19 @@
       max-width: none;
     }
     .xl\:max-w-sm {
-      max-width: 520px;
+      max-width: 32.5rem;
     }
     .xl\:max-w-md {
-      max-width: 720px;
+      max-width: 45rem;
     }
     .xl\:max-w-lg {
-      max-width: 960px;
+      max-width: 60rem;
     }
     .xl\:max-w-xl {
-      max-width: 1140px;
+      max-width: 71.25rem;
     }
     .xl\:max-w-xxl {
-      max-width: 1320px;
+      max-width: 82.5rem;
     }
   }
 }

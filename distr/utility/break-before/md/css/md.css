@@ -1,5 +1,5 @@
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 45rem) {
     .md\:break-before-auto {
       page-break-before: auto;
       -webkit-column-break-before: auto;

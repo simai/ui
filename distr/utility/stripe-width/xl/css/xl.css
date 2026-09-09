@@ -1,5 +1,5 @@
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 71.25rem) {
     .xl\:stripe-size-1 {
       --sf-stripe--size: var(--sf-a2);
     }

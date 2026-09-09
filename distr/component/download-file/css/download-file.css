@@ -25,20 +25,20 @@
     border-bottom-right-radius: var(--sf-download-file--border-bottom-left-radius, var(--sf-radius-default));
   }
   [dir="ltr"] .sf-download-file {
-    border-right-width: 1px;
-    border-right-width: var(--sf-download-file--border-right-width, 1px);
+    border-right-width: var(--sf-px);
+    border-right-width: var(--sf-download-file--border-right-width, var(--sf-px));
   }
   [dir="rtl"] .sf-download-file {
-    border-left-width: 1px;
-    border-left-width: var(--sf-download-file--border-right-width, 1px);
+    border-left-width: var(--sf-px);
+    border-left-width: var(--sf-download-file--border-right-width, var(--sf-px));
   }
   [dir="ltr"] .sf-download-file {
-    border-left-width: 1px;
-    border-left-width: var(--sf-download-file--border-left-width, 1px);
+    border-left-width: var(--sf-px);
+    border-left-width: var(--sf-download-file--border-left-width, var(--sf-px));
   }
   [dir="rtl"] .sf-download-file {
-    border-right-width: 1px;
-    border-right-width: var(--sf-download-file--border-left-width, 1px);
+    border-right-width: var(--sf-px);
+    border-right-width: var(--sf-download-file--border-left-width, var(--sf-px));
   }
   [dir="ltr"] .sf-download-file {
     border-top-right-radius: var(--sf-radius-default);
@@ -81,6 +81,18 @@
     border-bottom-right-radius: var(--sf-radius-default);
   }
   [dir="ltr"] .sf-download-file {
+    border-right-width: var(--sf-px);
+  }
+  [dir="rtl"] .sf-download-file {
+    border-left-width: var(--sf-px);
+  }
+  [dir="ltr"] .sf-download-file {
+    border-left-width: var(--sf-px);
+  }
+  [dir="rtl"] .sf-download-file {
+    border-right-width: var(--sf-px);
+  }
+  [dir="ltr"] .sf-download-file {
     border-top-right-radius: var(--sf-radius-default);
   }
   [dir="rtl"] .sf-download-file {
@@ -95,26 +107,26 @@
   .sf-download-file {
     background-color: transparent;
     background-color: var(--sf-download-file--background-color, transparent);
-    border-bottom-width: 1px;
-    border-bottom-width: var(--sf-download-file--border-bottom-width, 1px);
+    border-bottom-width: var(--sf-px);
+    border-bottom-width: var(--sf-download-file--border-bottom-width, var(--sf-px));
     border-end-end-radius: var(--sf-radius-default);
     border-end-end-radius: var(--sf-download-file--border-bottom-right-radius, var(--sf-radius-default));
     border-end-start-radius: var(--sf-radius-default);
     border-end-start-radius: var(--sf-download-file--border-bottom-left-radius, var(--sf-radius-default));
-    border-inline-end-width: 1px;
-    border-inline-end-width: var(--sf-download-file--border-right-width, 1px);
-    border-inline-start-width: 1px;
-    border-inline-start-width: var(--sf-download-file--border-left-width, 1px);
+    border-inline-end-width: var(--sf-px);
+    border-inline-end-width: var(--sf-download-file--border-right-width, var(--sf-px));
+    border-inline-start-width: var(--sf-px);
+    border-inline-start-width: var(--sf-download-file--border-left-width, var(--sf-px));
     border-start-end-radius: var(--sf-radius-default);
     border-start-end-radius: var(--sf-download-file--border-top-right-radius, var(--sf-radius-default));
     border-start-start-radius: var(--sf-radius-default);
     border-start-start-radius: var(--sf-download-file--border-top-left-radius, var(--sf-radius-default));
     border-style: solid;
     border-style: var(--sf-download-file--border-style, solid);
-    border-top-width: 1px;
-    border-top-width: var(--sf-download-file--border-top-width, 1px);
-    border-width: 1px;
-    border-width: var(--sf-download-file--border-width, 1px);
+    border-top-width: var(--sf-px);
+    border-top-width: var(--sf-download-file--border-top-width, var(--sf-px));
+    border-width: var(--sf-px);
+    border-width: var(--sf-download-file--border-width, var(--sf-px));
     gap: var(--sf-e5);
     gap: var(--sf-download-file--gap, var(--sf-e5));
     -webkit-padding-start: var(--sf-download-file--padding-inline-start);

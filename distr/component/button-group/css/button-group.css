@@ -123,23 +123,23 @@
   }
   [dir="ltr"] .sf-button-group > sf-button[segment][type][scheme] > .sf-button[class*=segment-],[dir="ltr"] 
   .sf-button-group > .sf-button[class*=segment-] {
-    border-right-width: 1px;
+    border-right-width: var(--sf-px);
   }
   [dir="rtl"] .sf-button-group > sf-button[segment][type][scheme] > .sf-button[class*=segment-],[dir="rtl"] 
   .sf-button-group > .sf-button[class*=segment-] {
-    border-left-width: 1px;
+    border-left-width: var(--sf-px);
   }
   .sf-button-group > sf-button[segment][type][scheme] > .sf-button[class*=segment-],
   .sf-button-group > .sf-button[class*=segment-] {
-    --sf-button--border-top-width: 1px;
-    --sf-button--border-bottom-width: 1px;
+    --sf-button--border-top-width: var(--sf-px);
+    --sf-button--border-bottom-width: var(--sf-px);
     --sf-button--border-inline-start-width: 0;
-    --sf-button--border-inline-end-width: 1px;
-    border-top-width: 1px;
-    border-bottom-width: 1px;
-    border-block-width: 1px;
+    --sf-button--border-inline-end-width: var(--sf-px);
+    border-top-width: var(--sf-px);
+    border-bottom-width: var(--sf-px);
+    border-block-width: var(--sf-px);
     border-inline-start-width: 0;
-    border-inline-end-width: 1px;
+    border-inline-end-width: var(--sf-px);
     border-top-color: var(--sf-outline);
     border-bottom-color: var(--sf-outline);
     border-block-color: var(--sf-outline);
@@ -149,11 +149,11 @@
   }
   [dir="ltr"] .sf-button-group > sf-button[segment][type][scheme]:first-child > .sf-button[class*=segment-],[dir="ltr"] 
   .sf-button-group > .sf-button[class*=segment-]:first-child {
-    border-left-width: 1px;
+    border-left-width: var(--sf-px);
   }
   [dir="rtl"] .sf-button-group > sf-button[segment][type][scheme]:first-child > .sf-button[class*=segment-],[dir="rtl"] 
   .sf-button-group > .sf-button[class*=segment-]:first-child {
-    border-right-width: 1px;
+    border-right-width: var(--sf-px);
   }
   [dir="ltr"] .sf-button-group > sf-button[segment][type][scheme]:first-child > .sf-button[class*=segment-],[dir="ltr"] 
   .sf-button-group > .sf-button[class*=segment-]:first-child {
@@ -189,8 +189,8 @@
   }
   .sf-button-group > sf-button[segment][type][scheme]:first-child > .sf-button[class*=segment-],
   .sf-button-group > .sf-button[class*=segment-]:first-child {
-    --sf-button--border-inline-start-width: 1px;
-    border-inline-start-width: 1px;
+    --sf-button--border-inline-start-width: var(--sf-px);
+    border-inline-start-width: var(--sf-px);
     border-start-start-radius: var(--sf-button--radius);
     border-end-start-radius: var(--sf-button--radius);
     border-start-end-radius: 0;
@@ -243,16 +243,16 @@
   .sf-button-group[aria-orientation=vertical] > sf-button[segment][type][scheme] > .sf-button[class*=segment-],
   .sf-button-group[aria-orientation=vertical] > .sf-button[class*=segment-] {
     --sf-button--border-top-width: 0;
-    --sf-button--border-bottom-width: 1px;
-    --sf-button--border-inline-start-width: 1px;
-    --sf-button--border-inline-end-width: 1px;
+    --sf-button--border-bottom-width: var(--sf-px);
+    --sf-button--border-inline-start-width: var(--sf-px);
+    --sf-button--border-inline-end-width: var(--sf-px);
     border-top-width: 0;
     border-block-start-width: 0;
-    border-bottom-width: 1px;
-    border-block-end-width: 1px;
-    border-left-width: 1px;
-    border-right-width: 1px;
-    border-inline-width: 1px;
+    border-bottom-width: var(--sf-px);
+    border-block-end-width: var(--sf-px);
+    border-left-width: var(--sf-px);
+    border-right-width: var(--sf-px);
+    border-inline-width: var(--sf-px);
   }
   [dir="ltr"] .sf-button-group[aria-orientation=vertical] > sf-button[segment][type][scheme]:first-child > .sf-button[class*=segment-],[dir="ltr"] 
   .sf-button-group[aria-orientation=vertical] > .sf-button[class*=segment-]:first-child {
@@ -288,9 +288,9 @@
   }
   .sf-button-group[aria-orientation=vertical] > sf-button[segment][type][scheme]:first-child > .sf-button[class*=segment-],
   .sf-button-group[aria-orientation=vertical] > .sf-button[class*=segment-]:first-child {
-    --sf-button--border-top-width: 1px;
-    border-top-width: 1px;
-    border-block-start-width: 1px;
+    --sf-button--border-top-width: var(--sf-px);
+    border-top-width: var(--sf-px);
+    border-block-start-width: var(--sf-px);
     border-start-start-radius: var(--sf-button--radius);
     border-start-end-radius: var(--sf-button--radius);
     border-end-start-radius: 0;

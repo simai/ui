@@ -1,5 +1,5 @@
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:layout-col-1 {
       -webkit-column-count: 1;
          -moz-column-count: 1;

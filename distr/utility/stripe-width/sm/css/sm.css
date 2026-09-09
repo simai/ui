@@ -1,5 +1,5 @@
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32.5rem) {
     .sm\:stripe-size-1 {
       --sf-stripe--size: var(--sf-a2);
     }

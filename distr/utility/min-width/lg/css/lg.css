@@ -1,5 +1,5 @@
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:min-w-min {
       min-width: -webkit-min-content;
       min-width: -moz-min-content;

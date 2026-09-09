@@ -1,9 +1,9 @@
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 45rem) {
     .md\:isolate {
       isolation: isolate;
     }
-    .md\:auto {
+    .md\:isolation-auto {
       isolation: auto;
     }
   }

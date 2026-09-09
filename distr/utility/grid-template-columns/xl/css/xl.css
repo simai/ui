@@ -1,5 +1,5 @@
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 71.25rem) {
     .xl\:grid-col-1 {
       grid-template-columns: repeat(1, minmax(0, 1fr));
     }
@@ -38,6 +38,9 @@
     }
     .xl\:grid-col-none {
       grid-template-columns: none;
+    }
+    .xl\:grid-col-subgrid {
+      grid-template-columns: subgrid;
     }
   }
 }

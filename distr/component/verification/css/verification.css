@@ -115,10 +115,10 @@
     border-style: solid;
     border-style: var(--sf-verification--border-style, solid);
     --sf-verification--color: var(--sf-on-surface-muted);
-    --sf-verification--border-top-width: 1px;
-    --sf-verification--border-bottom-width: 1px;
-    --sf-verification--border-inline-start-width: 1px;
-    --sf-verification--border-inline-end-width: 1px;
+    --sf-verification--border-top-width: var(--sf-px);
+    --sf-verification--border-bottom-width: var(--sf-px);
+    --sf-verification--border-inline-start-width: var(--sf-px);
+    --sf-verification--border-inline-end-width: var(--sf-px);
   }
   /* utility-hint: flex/1 (.flex-1) */
   .sf-verification input {
@@ -557,18 +557,18 @@
   .sf-verification[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:active\)] {
     --sf-verification--border-color: var(--sf-primary-active);
     --sf-verification--border-style: solid;
-    --sf-verification--border-width: 1px;
+    --sf-verification--border-width: var(--sf-px);
     --sf-verification--color: var(--sf-on-surface);
   }
   .sf-verification:has(input:enabled:not(:disabled):not(.disabled):active) {
     --sf-verification--border-color: var(--sf-primary-active);
     --sf-verification--border-style: solid;
-    --sf-verification--border-width: 1px;
+    --sf-verification--border-width: var(--sf-px);
     --sf-verification--color: var(--sf-on-surface);
   }
   .sf-verification--bordered {
     --sf-verification--border-style: solid;
-    --sf-verification--border-width: 1px;
+    --sf-verification--border-width: var(--sf-px);
   }
 }
 @layer sf.components {
@@ -724,9 +724,9 @@
   }
   .sf-verification-form--bordered .sf-verification {
     --sf-verification--background-color: var(--sf-surface-0);
-    --sf-verification--border: 1px solid;
+    --sf-verification--border: var(--sf-px) solid;
     --sf-verification--border-style: solid;
-    --sf-verification--border-width: 1px;
+    --sf-verification--border-width: var(--sf-px);
   }
   .sf-verification-form.error .sf-verification-form-hint {
     --sf-verification-form-hint--color: var(--sf-error);

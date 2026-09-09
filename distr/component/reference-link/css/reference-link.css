@@ -25,20 +25,20 @@
     border-bottom-right-radius: var(--sf-reference-link--border-bottom-left-radius, var(--sf-radius-default));
   }
   [dir="ltr"] .sf-reference-link {
-    border-right-width: 1px;
-    border-right-width: var(--sf-reference-link--border-right-width, 1px);
+    border-right-width: var(--sf-px);
+    border-right-width: var(--sf-reference-link--border-right-width, var(--sf-px));
   }
   [dir="rtl"] .sf-reference-link {
-    border-left-width: 1px;
-    border-left-width: var(--sf-reference-link--border-right-width, 1px);
+    border-left-width: var(--sf-px);
+    border-left-width: var(--sf-reference-link--border-right-width, var(--sf-px));
   }
   [dir="ltr"] .sf-reference-link {
-    border-left-width: 1px;
-    border-left-width: var(--sf-reference-link--border-left-width, 1px);
+    border-left-width: var(--sf-px);
+    border-left-width: var(--sf-reference-link--border-left-width, var(--sf-px));
   }
   [dir="rtl"] .sf-reference-link {
-    border-right-width: 1px;
-    border-right-width: var(--sf-reference-link--border-left-width, 1px);
+    border-right-width: var(--sf-px);
+    border-right-width: var(--sf-reference-link--border-left-width, var(--sf-px));
   }
   [dir="ltr"] .sf-reference-link {
     border-top-right-radius: var(--sf-radius-default);
@@ -85,6 +85,18 @@
     border-bottom-right-radius: var(--sf-radius-default);
   }
   [dir="ltr"] .sf-reference-link {
+    border-right-width: var(--sf-px);
+  }
+  [dir="rtl"] .sf-reference-link {
+    border-left-width: var(--sf-px);
+  }
+  [dir="ltr"] .sf-reference-link {
+    border-left-width: var(--sf-px);
+  }
+  [dir="rtl"] .sf-reference-link {
+    border-right-width: var(--sf-px);
+  }
+  [dir="ltr"] .sf-reference-link {
     border-top-right-radius: var(--sf-radius-default);
   }
   [dir="rtl"] .sf-reference-link {
@@ -111,26 +123,26 @@
   .sf-reference-link {
     background-color: transparent;
     background-color: var(--sf-reference-link--background-color, transparent);
-    border-bottom-width: 1px;
-    border-bottom-width: var(--sf-reference-link--border-bottom-width, 1px);
+    border-bottom-width: var(--sf-px);
+    border-bottom-width: var(--sf-reference-link--border-bottom-width, var(--sf-px));
     border-end-end-radius: var(--sf-radius-default);
     border-end-end-radius: var(--sf-reference-link--border-bottom-right-radius, var(--sf-radius-default));
     border-end-start-radius: var(--sf-radius-default);
     border-end-start-radius: var(--sf-reference-link--border-bottom-left-radius, var(--sf-radius-default));
-    border-inline-end-width: 1px;
-    border-inline-end-width: var(--sf-reference-link--border-right-width, 1px);
-    border-inline-start-width: 1px;
-    border-inline-start-width: var(--sf-reference-link--border-left-width, 1px);
+    border-inline-end-width: var(--sf-px);
+    border-inline-end-width: var(--sf-reference-link--border-right-width, var(--sf-px));
+    border-inline-start-width: var(--sf-px);
+    border-inline-start-width: var(--sf-reference-link--border-left-width, var(--sf-px));
     border-start-end-radius: var(--sf-radius-default);
     border-start-end-radius: var(--sf-reference-link--border-top-right-radius, var(--sf-radius-default));
     border-start-start-radius: var(--sf-radius-default);
     border-start-start-radius: var(--sf-reference-link--border-top-left-radius, var(--sf-radius-default));
     border-style: solid;
     border-style: var(--sf-reference-link--border-style, solid);
-    border-top-width: 1px;
-    border-top-width: var(--sf-reference-link--border-top-width, 1px);
-    border-width: 1px;
-    border-width: var(--sf-reference-link--border-width, 1px);
+    border-top-width: var(--sf-px);
+    border-top-width: var(--sf-reference-link--border-top-width, var(--sf-px));
+    border-width: var(--sf-px);
+    border-width: var(--sf-reference-link--border-width, var(--sf-px));
     gap: var(--sf-b0);
     gap: var(--sf-reference-link--gap, var(--sf-b0));
     padding-bottom: var(--sf-space-1);
