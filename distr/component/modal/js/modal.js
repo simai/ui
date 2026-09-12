@@ -22,7 +22,7 @@ function joinClasses(...parts) {
 
 function normalizePosition(value = 'center') {
   const normalized = String(value || 'center').trim().toLowerCase();
-  return ['center', 'left', 'right', 'top', 'bottom'].includes(normalized) ? normalized : 'center';
+  return ['center', 'left', 'right', 'inline-start', 'inline-end', 'top', 'bottom'].includes(normalized) ? normalized : 'center';
 }
 
 function normalizeBlurType(value = 'medium') {
