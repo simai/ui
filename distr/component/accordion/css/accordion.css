@@ -26,28 +26,92 @@
   *
   */
 /* utility-hint: flex/1 (.flex-1) display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-space-1\/3) justify-content/flex-start (.justify-start) align-items/flex-start (.items-start) */
-[dir="ltr"] .sf-accordion {
+_:-ms-input-placeholder, html:not([dir="rtl"]) .sf-accordion {
   border-bottom-right-radius: var(--sf-accordion--radius);
 }
-[dir="rtl"] .sf-accordion {
-  border-bottom-left-radius: var(--sf-accordion--radius);
+@supports not (border-end-end-radius: initial) {
+html:not([dir="rtl"]) .sf-accordion {
+  border-bottom-right-radius: var(--sf-accordion--radius);
+  }
 }
-[dir="ltr"] .sf-accordion {
-  border-bottom-left-radius: var(--sf-accordion--radius);
-}
-[dir="rtl"] .sf-accordion {
+.sf-accordion:where(:dir(ltr)) {
   border-bottom-right-radius: var(--sf-accordion--radius);
 }
-[dir="ltr"] .sf-accordion {
+_:-ms-input-placeholder, [dir="rtl"] .sf-accordion {
+  border-bottom-left-radius: var(--sf-accordion--radius);
+}
+@supports not (border-end-end-radius: initial) {
+[dir="rtl"] .sf-accordion {
+  border-bottom-left-radius: var(--sf-accordion--radius);
+  }
+}
+.sf-accordion:where(:dir(rtl)) {
+  border-bottom-left-radius: var(--sf-accordion--radius);
+}
+_:-ms-input-placeholder, html:not([dir="rtl"]) .sf-accordion {
+  border-bottom-left-radius: var(--sf-accordion--radius);
+}
+@supports not (border-end-start-radius: initial) {
+html:not([dir="rtl"]) .sf-accordion {
+  border-bottom-left-radius: var(--sf-accordion--radius);
+  }
+}
+.sf-accordion:where(:dir(ltr)) {
+  border-bottom-left-radius: var(--sf-accordion--radius);
+}
+_:-ms-input-placeholder, [dir="rtl"] .sf-accordion {
+  border-bottom-right-radius: var(--sf-accordion--radius);
+}
+@supports not (border-end-start-radius: initial) {
+[dir="rtl"] .sf-accordion {
+  border-bottom-right-radius: var(--sf-accordion--radius);
+  }
+}
+.sf-accordion:where(:dir(rtl)) {
+  border-bottom-right-radius: var(--sf-accordion--radius);
+}
+_:-ms-input-placeholder, html:not([dir="rtl"]) .sf-accordion {
   border-top-right-radius: var(--sf-accordion--radius);
 }
-[dir="rtl"] .sf-accordion {
+@supports not (border-start-end-radius: initial) {
+html:not([dir="rtl"]) .sf-accordion {
+  border-top-right-radius: var(--sf-accordion--radius);
+  }
+}
+.sf-accordion:where(:dir(ltr)) {
+  border-top-right-radius: var(--sf-accordion--radius);
+}
+_:-ms-input-placeholder, [dir="rtl"] .sf-accordion {
   border-top-left-radius: var(--sf-accordion--radius);
 }
-[dir="ltr"] .sf-accordion {
+@supports not (border-start-end-radius: initial) {
+[dir="rtl"] .sf-accordion {
+  border-top-left-radius: var(--sf-accordion--radius);
+  }
+}
+.sf-accordion:where(:dir(rtl)) {
   border-top-left-radius: var(--sf-accordion--radius);
 }
+_:-ms-input-placeholder, html:not([dir="rtl"]) .sf-accordion {
+  border-top-left-radius: var(--sf-accordion--radius);
+}
+@supports not (border-start-start-radius: initial) {
+html:not([dir="rtl"]) .sf-accordion {
+  border-top-left-radius: var(--sf-accordion--radius);
+  }
+}
+.sf-accordion:where(:dir(ltr)) {
+  border-top-left-radius: var(--sf-accordion--radius);
+}
+_:-ms-input-placeholder, [dir="rtl"] .sf-accordion {
+  border-top-right-radius: var(--sf-accordion--radius);
+}
+@supports not (border-start-start-radius: initial) {
 [dir="rtl"] .sf-accordion {
+  border-top-right-radius: var(--sf-accordion--radius);
+  }
+}
+.sf-accordion:where(:dir(rtl)) {
   border-top-right-radius: var(--sf-accordion--radius);
 }
 .sf-accordion {
@@ -85,11 +149,33 @@
   font: inherit;
 }
 
-[dir="ltr"] .sf-accordion-trigger {
+_:-ms-input-placeholder, html:not([dir="rtl"]) .sf-accordion-trigger {
   text-align: left;
 }
 
+@supports not (text-align: start) {
+
+html:not([dir="rtl"]) .sf-accordion-trigger {
+  text-align: left;
+  }
+}
+
+.sf-accordion-trigger:where(:dir(ltr)) {
+  text-align: left;
+}
+
+_:-ms-input-placeholder, [dir="rtl"] .sf-accordion-trigger {
+  text-align: right;
+}
+
+@supports not (text-align: start) {
+
 [dir="rtl"] .sf-accordion-trigger {
+  text-align: right;
+  }
+}
+
+.sf-accordion-trigger:where(:dir(rtl)) {
   text-align: right;
 }
 

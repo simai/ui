@@ -20,127 +20,351 @@
   .border-none {
     border-style: none;
   }
-  [dir="ltr"] .border-inline-start-dotted {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .border-inline-start-dotted {
     border-left-style: dotted;
   }
+  @supports not (border-inline-start-style: initial) {
+  html:not([dir="rtl"]) .border-inline-start-dotted {
+    border-left-style: dotted;
+    }
+  }
+  .border-inline-start-dotted:where(:dir(ltr)) {
+    border-left-style: dotted;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .border-inline-start-dotted {
+    border-right-style: dotted;
+  }
+  @supports not (border-inline-start-style: initial) {
   [dir="rtl"] .border-inline-start-dotted {
+    border-right-style: dotted;
+    }
+  }
+  .border-inline-start-dotted:where(:dir(rtl)) {
     border-right-style: dotted;
   }
   .border-inline-start-dotted {
     border-inline-start-style: dotted;
   }
-  [dir="ltr"] .border-inline-start-dashed {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .border-inline-start-dashed {
     border-left-style: dashed;
   }
+  @supports not (border-inline-start-style: initial) {
+  html:not([dir="rtl"]) .border-inline-start-dashed {
+    border-left-style: dashed;
+    }
+  }
+  .border-inline-start-dashed:where(:dir(ltr)) {
+    border-left-style: dashed;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .border-inline-start-dashed {
+    border-right-style: dashed;
+  }
+  @supports not (border-inline-start-style: initial) {
   [dir="rtl"] .border-inline-start-dashed {
+    border-right-style: dashed;
+    }
+  }
+  .border-inline-start-dashed:where(:dir(rtl)) {
     border-right-style: dashed;
   }
   .border-inline-start-dashed {
     border-inline-start-style: dashed;
   }
-  [dir="ltr"] .border-inline-start-solid {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .border-inline-start-solid {
     border-left-style: solid;
   }
+  @supports not (border-inline-start-style: initial) {
+  html:not([dir="rtl"]) .border-inline-start-solid {
+    border-left-style: solid;
+    }
+  }
+  .border-inline-start-solid:where(:dir(ltr)) {
+    border-left-style: solid;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .border-inline-start-solid {
+    border-right-style: solid;
+  }
+  @supports not (border-inline-start-style: initial) {
   [dir="rtl"] .border-inline-start-solid {
+    border-right-style: solid;
+    }
+  }
+  .border-inline-start-solid:where(:dir(rtl)) {
     border-right-style: solid;
   }
   .border-inline-start-solid {
     border-inline-start-style: solid;
   }
-  [dir="ltr"] .border-inline-start-double {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .border-inline-start-double {
     border-left-style: double;
   }
+  @supports not (border-inline-start-style: initial) {
+  html:not([dir="rtl"]) .border-inline-start-double {
+    border-left-style: double;
+    }
+  }
+  .border-inline-start-double:where(:dir(ltr)) {
+    border-left-style: double;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .border-inline-start-double {
+    border-right-style: double;
+  }
+  @supports not (border-inline-start-style: initial) {
   [dir="rtl"] .border-inline-start-double {
+    border-right-style: double;
+    }
+  }
+  .border-inline-start-double:where(:dir(rtl)) {
     border-right-style: double;
   }
   .border-inline-start-double {
     border-inline-start-style: double;
   }
-  [dir="ltr"] .border-inline-start-hidden {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .border-inline-start-hidden {
     border-left-style: hidden;
   }
+  @supports not (border-inline-start-style: initial) {
+  html:not([dir="rtl"]) .border-inline-start-hidden {
+    border-left-style: hidden;
+    }
+  }
+  .border-inline-start-hidden:where(:dir(ltr)) {
+    border-left-style: hidden;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .border-inline-start-hidden {
+    border-right-style: hidden;
+  }
+  @supports not (border-inline-start-style: initial) {
   [dir="rtl"] .border-inline-start-hidden {
+    border-right-style: hidden;
+    }
+  }
+  .border-inline-start-hidden:where(:dir(rtl)) {
     border-right-style: hidden;
   }
   .border-inline-start-hidden {
     border-inline-start-style: hidden;
   }
-  [dir="ltr"] .border-inline-start-inset {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .border-inline-start-inset {
     border-left-style: inset;
   }
+  @supports not (border-inline-start-style: initial) {
+  html:not([dir="rtl"]) .border-inline-start-inset {
+    border-left-style: inset;
+    }
+  }
+  .border-inline-start-inset:where(:dir(ltr)) {
+    border-left-style: inset;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .border-inline-start-inset {
+    border-right-style: inset;
+  }
+  @supports not (border-inline-start-style: initial) {
   [dir="rtl"] .border-inline-start-inset {
+    border-right-style: inset;
+    }
+  }
+  .border-inline-start-inset:where(:dir(rtl)) {
     border-right-style: inset;
   }
   .border-inline-start-inset {
     border-inline-start-style: inset;
   }
-  [dir="ltr"] .border-inline-start-none {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .border-inline-start-none {
     border-left-style: none;
   }
+  @supports not (border-inline-start-style: initial) {
+  html:not([dir="rtl"]) .border-inline-start-none {
+    border-left-style: none;
+    }
+  }
+  .border-inline-start-none:where(:dir(ltr)) {
+    border-left-style: none;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .border-inline-start-none {
+    border-right-style: none;
+  }
+  @supports not (border-inline-start-style: initial) {
   [dir="rtl"] .border-inline-start-none {
+    border-right-style: none;
+    }
+  }
+  .border-inline-start-none:where(:dir(rtl)) {
     border-right-style: none;
   }
   .border-inline-start-none {
     border-inline-start-style: none;
   }
-  [dir="ltr"] .border-inline-end-dotted {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .border-inline-end-dotted {
     border-right-style: dotted;
   }
+  @supports not (border-inline-end-style: initial) {
+  html:not([dir="rtl"]) .border-inline-end-dotted {
+    border-right-style: dotted;
+    }
+  }
+  .border-inline-end-dotted:where(:dir(ltr)) {
+    border-right-style: dotted;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .border-inline-end-dotted {
+    border-left-style: dotted;
+  }
+  @supports not (border-inline-end-style: initial) {
   [dir="rtl"] .border-inline-end-dotted {
+    border-left-style: dotted;
+    }
+  }
+  .border-inline-end-dotted:where(:dir(rtl)) {
     border-left-style: dotted;
   }
   .border-inline-end-dotted {
     border-inline-end-style: dotted;
   }
-  [dir="ltr"] .border-inline-end-dashed {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .border-inline-end-dashed {
     border-right-style: dashed;
   }
+  @supports not (border-inline-end-style: initial) {
+  html:not([dir="rtl"]) .border-inline-end-dashed {
+    border-right-style: dashed;
+    }
+  }
+  .border-inline-end-dashed:where(:dir(ltr)) {
+    border-right-style: dashed;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .border-inline-end-dashed {
+    border-left-style: dashed;
+  }
+  @supports not (border-inline-end-style: initial) {
   [dir="rtl"] .border-inline-end-dashed {
+    border-left-style: dashed;
+    }
+  }
+  .border-inline-end-dashed:where(:dir(rtl)) {
     border-left-style: dashed;
   }
   .border-inline-end-dashed {
     border-inline-end-style: dashed;
   }
-  [dir="ltr"] .border-inline-end-solid {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .border-inline-end-solid {
     border-right-style: solid;
   }
+  @supports not (border-inline-end-style: initial) {
+  html:not([dir="rtl"]) .border-inline-end-solid {
+    border-right-style: solid;
+    }
+  }
+  .border-inline-end-solid:where(:dir(ltr)) {
+    border-right-style: solid;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .border-inline-end-solid {
+    border-left-style: solid;
+  }
+  @supports not (border-inline-end-style: initial) {
   [dir="rtl"] .border-inline-end-solid {
+    border-left-style: solid;
+    }
+  }
+  .border-inline-end-solid:where(:dir(rtl)) {
     border-left-style: solid;
   }
   .border-inline-end-solid {
     border-inline-end-style: solid;
   }
-  [dir="ltr"] .border-inline-end-double {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .border-inline-end-double {
     border-right-style: double;
   }
+  @supports not (border-inline-end-style: initial) {
+  html:not([dir="rtl"]) .border-inline-end-double {
+    border-right-style: double;
+    }
+  }
+  .border-inline-end-double:where(:dir(ltr)) {
+    border-right-style: double;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .border-inline-end-double {
+    border-left-style: double;
+  }
+  @supports not (border-inline-end-style: initial) {
   [dir="rtl"] .border-inline-end-double {
+    border-left-style: double;
+    }
+  }
+  .border-inline-end-double:where(:dir(rtl)) {
     border-left-style: double;
   }
   .border-inline-end-double {
     border-inline-end-style: double;
   }
-  [dir="ltr"] .border-inline-end-hidden {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .border-inline-end-hidden {
     border-right-style: hidden;
   }
+  @supports not (border-inline-end-style: initial) {
+  html:not([dir="rtl"]) .border-inline-end-hidden {
+    border-right-style: hidden;
+    }
+  }
+  .border-inline-end-hidden:where(:dir(ltr)) {
+    border-right-style: hidden;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .border-inline-end-hidden {
+    border-left-style: hidden;
+  }
+  @supports not (border-inline-end-style: initial) {
   [dir="rtl"] .border-inline-end-hidden {
+    border-left-style: hidden;
+    }
+  }
+  .border-inline-end-hidden:where(:dir(rtl)) {
     border-left-style: hidden;
   }
   .border-inline-end-hidden {
     border-inline-end-style: hidden;
   }
-  [dir="ltr"] .border-inline-end-inset {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .border-inline-end-inset {
     border-right-style: inset;
   }
+  @supports not (border-inline-end-style: initial) {
+  html:not([dir="rtl"]) .border-inline-end-inset {
+    border-right-style: inset;
+    }
+  }
+  .border-inline-end-inset:where(:dir(ltr)) {
+    border-right-style: inset;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .border-inline-end-inset {
+    border-left-style: inset;
+  }
+  @supports not (border-inline-end-style: initial) {
   [dir="rtl"] .border-inline-end-inset {
+    border-left-style: inset;
+    }
+  }
+  .border-inline-end-inset:where(:dir(rtl)) {
     border-left-style: inset;
   }
   .border-inline-end-inset {
     border-inline-end-style: inset;
   }
-  [dir="ltr"] .border-inline-end-none {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .border-inline-end-none {
     border-right-style: none;
   }
+  @supports not (border-inline-end-style: initial) {
+  html:not([dir="rtl"]) .border-inline-end-none {
+    border-right-style: none;
+    }
+  }
+  .border-inline-end-none:where(:dir(ltr)) {
+    border-right-style: none;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .border-inline-end-none {
+    border-left-style: none;
+  }
+  @supports not (border-inline-end-style: initial) {
   [dir="rtl"] .border-inline-end-none {
+    border-left-style: none;
+    }
+  }
+  .border-inline-end-none:where(:dir(rtl)) {
     border-left-style: none;
   }
   .border-inline-end-none {
@@ -188,112 +412,336 @@
   .border-bottom-none {
     border-bottom-style: none;
   }
-  [dir="ltr"] .border-x-dotted {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .border-x-dotted {
     border-left-style: dotted;
   }
-  [dir="rtl"] .border-x-dotted {
+  @supports not (border-inline-start-style: initial) {
+  html:not([dir="rtl"]) .border-x-dotted {
+    border-left-style: dotted;
+    }
+  }
+  .border-x-dotted:where(:dir(ltr)) {
+    border-left-style: dotted;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .border-x-dotted {
     border-right-style: dotted;
   }
-  [dir="ltr"] .border-x-dotted {
+  @supports not (border-inline-start-style: initial) {
+  [dir="rtl"] .border-x-dotted {
+    border-right-style: dotted;
+    }
+  }
+  .border-x-dotted:where(:dir(rtl)) {
     border-right-style: dotted;
   }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .border-x-dotted {
+    border-right-style: dotted;
+  }
+  @supports not (border-inline-end-style: initial) {
+  html:not([dir="rtl"]) .border-x-dotted {
+    border-right-style: dotted;
+    }
+  }
+  .border-x-dotted:where(:dir(ltr)) {
+    border-right-style: dotted;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .border-x-dotted {
+    border-left-style: dotted;
+  }
+  @supports not (border-inline-end-style: initial) {
   [dir="rtl"] .border-x-dotted {
+    border-left-style: dotted;
+    }
+  }
+  .border-x-dotted:where(:dir(rtl)) {
     border-left-style: dotted;
   }
   .border-x-dotted {
     border-inline-start-style: dotted;
     border-inline-end-style: dotted;
   }
-  [dir="ltr"] .border-x-dashed {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .border-x-dashed {
     border-left-style: dashed;
   }
-  [dir="rtl"] .border-x-dashed {
+  @supports not (border-inline-start-style: initial) {
+  html:not([dir="rtl"]) .border-x-dashed {
+    border-left-style: dashed;
+    }
+  }
+  .border-x-dashed:where(:dir(ltr)) {
+    border-left-style: dashed;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .border-x-dashed {
     border-right-style: dashed;
   }
-  [dir="ltr"] .border-x-dashed {
+  @supports not (border-inline-start-style: initial) {
+  [dir="rtl"] .border-x-dashed {
+    border-right-style: dashed;
+    }
+  }
+  .border-x-dashed:where(:dir(rtl)) {
     border-right-style: dashed;
   }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .border-x-dashed {
+    border-right-style: dashed;
+  }
+  @supports not (border-inline-end-style: initial) {
+  html:not([dir="rtl"]) .border-x-dashed {
+    border-right-style: dashed;
+    }
+  }
+  .border-x-dashed:where(:dir(ltr)) {
+    border-right-style: dashed;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .border-x-dashed {
+    border-left-style: dashed;
+  }
+  @supports not (border-inline-end-style: initial) {
   [dir="rtl"] .border-x-dashed {
+    border-left-style: dashed;
+    }
+  }
+  .border-x-dashed:where(:dir(rtl)) {
     border-left-style: dashed;
   }
   .border-x-dashed {
     border-inline-start-style: dashed;
     border-inline-end-style: dashed;
   }
-  [dir="ltr"] .border-x-solid {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .border-x-solid {
     border-left-style: solid;
   }
-  [dir="rtl"] .border-x-solid {
+  @supports not (border-inline-start-style: initial) {
+  html:not([dir="rtl"]) .border-x-solid {
+    border-left-style: solid;
+    }
+  }
+  .border-x-solid:where(:dir(ltr)) {
+    border-left-style: solid;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .border-x-solid {
     border-right-style: solid;
   }
-  [dir="ltr"] .border-x-solid {
+  @supports not (border-inline-start-style: initial) {
+  [dir="rtl"] .border-x-solid {
+    border-right-style: solid;
+    }
+  }
+  .border-x-solid:where(:dir(rtl)) {
     border-right-style: solid;
   }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .border-x-solid {
+    border-right-style: solid;
+  }
+  @supports not (border-inline-end-style: initial) {
+  html:not([dir="rtl"]) .border-x-solid {
+    border-right-style: solid;
+    }
+  }
+  .border-x-solid:where(:dir(ltr)) {
+    border-right-style: solid;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .border-x-solid {
+    border-left-style: solid;
+  }
+  @supports not (border-inline-end-style: initial) {
   [dir="rtl"] .border-x-solid {
+    border-left-style: solid;
+    }
+  }
+  .border-x-solid:where(:dir(rtl)) {
     border-left-style: solid;
   }
   .border-x-solid {
     border-inline-start-style: solid;
     border-inline-end-style: solid;
   }
-  [dir="ltr"] .border-x-double {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .border-x-double {
     border-left-style: double;
   }
-  [dir="rtl"] .border-x-double {
+  @supports not (border-inline-start-style: initial) {
+  html:not([dir="rtl"]) .border-x-double {
+    border-left-style: double;
+    }
+  }
+  .border-x-double:where(:dir(ltr)) {
+    border-left-style: double;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .border-x-double {
     border-right-style: double;
   }
-  [dir="ltr"] .border-x-double {
+  @supports not (border-inline-start-style: initial) {
+  [dir="rtl"] .border-x-double {
+    border-right-style: double;
+    }
+  }
+  .border-x-double:where(:dir(rtl)) {
     border-right-style: double;
   }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .border-x-double {
+    border-right-style: double;
+  }
+  @supports not (border-inline-end-style: initial) {
+  html:not([dir="rtl"]) .border-x-double {
+    border-right-style: double;
+    }
+  }
+  .border-x-double:where(:dir(ltr)) {
+    border-right-style: double;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .border-x-double {
+    border-left-style: double;
+  }
+  @supports not (border-inline-end-style: initial) {
   [dir="rtl"] .border-x-double {
+    border-left-style: double;
+    }
+  }
+  .border-x-double:where(:dir(rtl)) {
     border-left-style: double;
   }
   .border-x-double {
     border-inline-start-style: double;
     border-inline-end-style: double;
   }
-  [dir="ltr"] .border-x-hidden {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .border-x-hidden {
     border-left-style: hidden;
   }
-  [dir="rtl"] .border-x-hidden {
+  @supports not (border-inline-start-style: initial) {
+  html:not([dir="rtl"]) .border-x-hidden {
+    border-left-style: hidden;
+    }
+  }
+  .border-x-hidden:where(:dir(ltr)) {
+    border-left-style: hidden;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .border-x-hidden {
     border-right-style: hidden;
   }
-  [dir="ltr"] .border-x-hidden {
+  @supports not (border-inline-start-style: initial) {
+  [dir="rtl"] .border-x-hidden {
+    border-right-style: hidden;
+    }
+  }
+  .border-x-hidden:where(:dir(rtl)) {
     border-right-style: hidden;
   }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .border-x-hidden {
+    border-right-style: hidden;
+  }
+  @supports not (border-inline-end-style: initial) {
+  html:not([dir="rtl"]) .border-x-hidden {
+    border-right-style: hidden;
+    }
+  }
+  .border-x-hidden:where(:dir(ltr)) {
+    border-right-style: hidden;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .border-x-hidden {
+    border-left-style: hidden;
+  }
+  @supports not (border-inline-end-style: initial) {
   [dir="rtl"] .border-x-hidden {
+    border-left-style: hidden;
+    }
+  }
+  .border-x-hidden:where(:dir(rtl)) {
     border-left-style: hidden;
   }
   .border-x-hidden {
     border-inline-start-style: hidden;
     border-inline-end-style: hidden;
   }
-  [dir="ltr"] .border-x-inset {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .border-x-inset {
     border-left-style: inset;
   }
-  [dir="rtl"] .border-x-inset {
+  @supports not (border-inline-start-style: initial) {
+  html:not([dir="rtl"]) .border-x-inset {
+    border-left-style: inset;
+    }
+  }
+  .border-x-inset:where(:dir(ltr)) {
+    border-left-style: inset;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .border-x-inset {
     border-right-style: inset;
   }
-  [dir="ltr"] .border-x-inset {
+  @supports not (border-inline-start-style: initial) {
+  [dir="rtl"] .border-x-inset {
+    border-right-style: inset;
+    }
+  }
+  .border-x-inset:where(:dir(rtl)) {
     border-right-style: inset;
   }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .border-x-inset {
+    border-right-style: inset;
+  }
+  @supports not (border-inline-end-style: initial) {
+  html:not([dir="rtl"]) .border-x-inset {
+    border-right-style: inset;
+    }
+  }
+  .border-x-inset:where(:dir(ltr)) {
+    border-right-style: inset;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .border-x-inset {
+    border-left-style: inset;
+  }
+  @supports not (border-inline-end-style: initial) {
   [dir="rtl"] .border-x-inset {
+    border-left-style: inset;
+    }
+  }
+  .border-x-inset:where(:dir(rtl)) {
     border-left-style: inset;
   }
   .border-x-inset {
     border-inline-start-style: inset;
     border-inline-end-style: inset;
   }
-  [dir="ltr"] .border-x-none {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .border-x-none {
     border-left-style: none;
   }
-  [dir="rtl"] .border-x-none {
+  @supports not (border-inline-start-style: initial) {
+  html:not([dir="rtl"]) .border-x-none {
+    border-left-style: none;
+    }
+  }
+  .border-x-none:where(:dir(ltr)) {
+    border-left-style: none;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .border-x-none {
     border-right-style: none;
   }
-  [dir="ltr"] .border-x-none {
+  @supports not (border-inline-start-style: initial) {
+  [dir="rtl"] .border-x-none {
+    border-right-style: none;
+    }
+  }
+  .border-x-none:where(:dir(rtl)) {
     border-right-style: none;
   }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .border-x-none {
+    border-right-style: none;
+  }
+  @supports not (border-inline-end-style: initial) {
+  html:not([dir="rtl"]) .border-x-none {
+    border-right-style: none;
+    }
+  }
+  .border-x-none:where(:dir(ltr)) {
+    border-right-style: none;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .border-x-none {
+    border-left-style: none;
+  }
+  @supports not (border-inline-end-style: initial) {
   [dir="rtl"] .border-x-none {
+    border-left-style: none;
+    }
+  }
+  .border-x-none:where(:dir(rtl)) {
     border-left-style: none;
   }
   .border-x-none {

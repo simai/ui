@@ -8,72 +8,248 @@
 */
 @layer sf.components {
   /* utility-hint: display/flex (.flex) flex-direction/column (.flex-col) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-b0) justify-content/center (.justify-center) align-items/center (.items-center) */
-  [dir="ltr"] .sf-page-number {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-page-number {
     padding-right: var(--sf-space-1\/3);
     padding-right: var(--sf-page-number--padding-right, var(--sf-space-1\/3));
   }
-  [dir="rtl"] .sf-page-number {
+  @supports not (padding-inline-end: initial) {
+  html:not([dir="rtl"]) .sf-page-number {
+    padding-right: var(--sf-space-1\/3);
+    padding-right: var(--sf-page-number--padding-right, var(--sf-space-1\/3));
+    }
+  }
+  .sf-page-number:where(:dir(ltr)) {
+    padding-right: var(--sf-space-1\/3);
+    padding-right: var(--sf-page-number--padding-right, var(--sf-space-1\/3));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-page-number {
     padding-left: var(--sf-space-1\/3);
     padding-left: var(--sf-page-number--padding-right, var(--sf-space-1\/3));
   }
-  [dir="ltr"] .sf-page-number {
+  @supports not (padding-inline-end: initial) {
+  [dir="rtl"] .sf-page-number {
+    padding-left: var(--sf-space-1\/3);
+    padding-left: var(--sf-page-number--padding-right, var(--sf-space-1\/3));
+    }
+  }
+  .sf-page-number:where(:dir(rtl)) {
+    padding-left: var(--sf-space-1\/3);
+    padding-left: var(--sf-page-number--padding-right, var(--sf-space-1\/3));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-page-number {
     padding-left: var(--sf-space-1\/3);
     padding-left: var(--sf-page-number--padding-left, var(--sf-space-1\/3));
   }
-  [dir="rtl"] .sf-page-number {
+  @supports not (padding-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-page-number {
+    padding-left: var(--sf-space-1\/3);
+    padding-left: var(--sf-page-number--padding-left, var(--sf-space-1\/3));
+    }
+  }
+  .sf-page-number:where(:dir(ltr)) {
+    padding-left: var(--sf-space-1\/3);
+    padding-left: var(--sf-page-number--padding-left, var(--sf-space-1\/3));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-page-number {
     padding-right: var(--sf-space-1\/3);
     padding-right: var(--sf-page-number--padding-left, var(--sf-space-1\/3));
   }
-  [dir="ltr"] .sf-page-number {
+  @supports not (padding-inline-start: initial) {
+  [dir="rtl"] .sf-page-number {
+    padding-right: var(--sf-space-1\/3);
+    padding-right: var(--sf-page-number--padding-left, var(--sf-space-1\/3));
+    }
+  }
+  .sf-page-number:where(:dir(rtl)) {
+    padding-right: var(--sf-space-1\/3);
+    padding-right: var(--sf-page-number--padding-left, var(--sf-space-1\/3));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-page-number {
     border-top-left-radius: var(--sf-page-number--border-start-start-radius);
   }
-  [dir="rtl"] .sf-page-number {
+  @supports not (border-start-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-page-number {
+    border-top-left-radius: var(--sf-page-number--border-start-start-radius);
+    }
+  }
+  .sf-page-number:where(:dir(ltr)) {
+    border-top-left-radius: var(--sf-page-number--border-start-start-radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-page-number {
     border-top-right-radius: var(--sf-page-number--border-start-start-radius);
   }
-  [dir="ltr"] .sf-page-number {
+  @supports not (border-start-start-radius: initial) {
+  [dir="rtl"] .sf-page-number {
+    border-top-right-radius: var(--sf-page-number--border-start-start-radius);
+    }
+  }
+  .sf-page-number:where(:dir(rtl)) {
+    border-top-right-radius: var(--sf-page-number--border-start-start-radius);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-page-number {
     border-top-right-radius: var(--sf-page-number--border-start-end-radius);
   }
-  [dir="rtl"] .sf-page-number {
+  @supports not (border-start-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-page-number {
+    border-top-right-radius: var(--sf-page-number--border-start-end-radius);
+    }
+  }
+  .sf-page-number:where(:dir(ltr)) {
+    border-top-right-radius: var(--sf-page-number--border-start-end-radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-page-number {
     border-top-left-radius: var(--sf-page-number--border-start-end-radius);
   }
-  [dir="ltr"] .sf-page-number {
+  @supports not (border-start-end-radius: initial) {
+  [dir="rtl"] .sf-page-number {
+    border-top-left-radius: var(--sf-page-number--border-start-end-radius);
+    }
+  }
+  .sf-page-number:where(:dir(rtl)) {
+    border-top-left-radius: var(--sf-page-number--border-start-end-radius);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-page-number {
     border-bottom-left-radius: var(--sf-page-number--border-end-start-radius);
   }
-  [dir="rtl"] .sf-page-number {
+  @supports not (border-end-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-page-number {
+    border-bottom-left-radius: var(--sf-page-number--border-end-start-radius);
+    }
+  }
+  .sf-page-number:where(:dir(ltr)) {
+    border-bottom-left-radius: var(--sf-page-number--border-end-start-radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-page-number {
     border-bottom-right-radius: var(--sf-page-number--border-end-start-radius);
   }
-  [dir="ltr"] .sf-page-number {
+  @supports not (border-end-start-radius: initial) {
+  [dir="rtl"] .sf-page-number {
+    border-bottom-right-radius: var(--sf-page-number--border-end-start-radius);
+    }
+  }
+  .sf-page-number:where(:dir(rtl)) {
+    border-bottom-right-radius: var(--sf-page-number--border-end-start-radius);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-page-number {
     border-bottom-right-radius: var(--sf-page-number--border-end-end-radius);
   }
-  [dir="rtl"] .sf-page-number {
+  @supports not (border-end-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-page-number {
+    border-bottom-right-radius: var(--sf-page-number--border-end-end-radius);
+    }
+  }
+  .sf-page-number:where(:dir(ltr)) {
+    border-bottom-right-radius: var(--sf-page-number--border-end-end-radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-page-number {
     border-bottom-left-radius: var(--sf-page-number--border-end-end-radius);
   }
-  [dir="ltr"] .sf-page-number {
+  @supports not (border-end-end-radius: initial) {
+  [dir="rtl"] .sf-page-number {
+    border-bottom-left-radius: var(--sf-page-number--border-end-end-radius);
+    }
+  }
+  .sf-page-number:where(:dir(rtl)) {
+    border-bottom-left-radius: var(--sf-page-number--border-end-end-radius);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-page-number {
     border-right-width: 0;
     border-right-width: var(--sf-page-number--border-inline-end-width, 0);
   }
-  [dir="rtl"] .sf-page-number {
+  @supports not (border-inline-end-width: initial) {
+  html:not([dir="rtl"]) .sf-page-number {
+    border-right-width: 0;
+    border-right-width: var(--sf-page-number--border-inline-end-width, 0);
+    }
+  }
+  .sf-page-number:where(:dir(ltr)) {
+    border-right-width: 0;
+    border-right-width: var(--sf-page-number--border-inline-end-width, 0);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-page-number {
     border-left-width: 0;
     border-left-width: var(--sf-page-number--border-inline-end-width, 0);
   }
-  [dir="ltr"] .sf-page-number {
+  @supports not (border-inline-end-width: initial) {
+  [dir="rtl"] .sf-page-number {
+    border-left-width: 0;
+    border-left-width: var(--sf-page-number--border-inline-end-width, 0);
+    }
+  }
+  .sf-page-number:where(:dir(rtl)) {
+    border-left-width: 0;
+    border-left-width: var(--sf-page-number--border-inline-end-width, 0);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-page-number {
     border-left-width: 0;
     border-left-width: var(--sf-page-number--border-inline-start-width, 0);
   }
-  [dir="rtl"] .sf-page-number {
+  @supports not (border-inline-start-width: initial) {
+  html:not([dir="rtl"]) .sf-page-number {
+    border-left-width: 0;
+    border-left-width: var(--sf-page-number--border-inline-start-width, 0);
+    }
+  }
+  .sf-page-number:where(:dir(ltr)) {
+    border-left-width: 0;
+    border-left-width: var(--sf-page-number--border-inline-start-width, 0);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-page-number {
     border-right-width: 0;
     border-right-width: var(--sf-page-number--border-inline-start-width, 0);
   }
-  [dir="ltr"] .sf-page-number {
+  @supports not (border-inline-start-width: initial) {
+  [dir="rtl"] .sf-page-number {
+    border-right-width: 0;
+    border-right-width: var(--sf-page-number--border-inline-start-width, 0);
+    }
+  }
+  .sf-page-number:where(:dir(rtl)) {
+    border-right-width: 0;
+    border-right-width: var(--sf-page-number--border-inline-start-width, 0);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-page-number {
     padding-right: var(--sf-space-1\/3);
   }
-  [dir="rtl"] .sf-page-number {
+  @supports not (padding-inline-end: initial) {
+  html:not([dir="rtl"]) .sf-page-number {
+    padding-right: var(--sf-space-1\/3);
+    }
+  }
+  .sf-page-number:where(:dir(ltr)) {
+    padding-right: var(--sf-space-1\/3);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-page-number {
     padding-left: var(--sf-space-1\/3);
   }
-  [dir="ltr"] .sf-page-number {
+  @supports not (padding-inline-end: initial) {
+  [dir="rtl"] .sf-page-number {
+    padding-left: var(--sf-space-1\/3);
+    }
+  }
+  .sf-page-number:where(:dir(rtl)) {
     padding-left: var(--sf-space-1\/3);
   }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-page-number {
+    padding-left: var(--sf-space-1\/3);
+  }
+  @supports not (padding-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-page-number {
+    padding-left: var(--sf-space-1\/3);
+    }
+  }
+  .sf-page-number:where(:dir(ltr)) {
+    padding-left: var(--sf-space-1\/3);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-page-number {
+    padding-right: var(--sf-space-1\/3);
+  }
+  @supports not (padding-inline-start: initial) {
   [dir="rtl"] .sf-page-number {
+    padding-right: var(--sf-space-1\/3);
+    }
+  }
+  .sf-page-number:where(:dir(rtl)) {
     padding-right: var(--sf-space-1\/3);
   }
   .sf-page-number {
@@ -269,28 +445,92 @@
     line-height: var(--sf-text-height-1);
     line-height: var(--sf-pagination-container--line-height, var(--sf-text-height-1));
   }
-  [dir="ltr"] .sf-pagination .sf-icon-button {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-pagination .sf-icon-button {
     border-bottom-right-radius: var(--sf-icon-button--border-end-end-radius);
   }
-  [dir="rtl"] .sf-pagination .sf-icon-button {
+  @supports not (border-end-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-pagination .sf-icon-button {
+    border-bottom-right-radius: var(--sf-icon-button--border-end-end-radius);
+    }
+  }
+  .sf-pagination .sf-icon-button:where(:dir(ltr)) {
+    border-bottom-right-radius: var(--sf-icon-button--border-end-end-radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-pagination .sf-icon-button {
     border-bottom-left-radius: var(--sf-icon-button--border-end-end-radius);
   }
-  [dir="ltr"] .sf-pagination .sf-icon-button {
+  @supports not (border-end-end-radius: initial) {
+  [dir="rtl"] .sf-pagination .sf-icon-button {
+    border-bottom-left-radius: var(--sf-icon-button--border-end-end-radius);
+    }
+  }
+  .sf-pagination .sf-icon-button:where(:dir(rtl)) {
+    border-bottom-left-radius: var(--sf-icon-button--border-end-end-radius);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-pagination .sf-icon-button {
     border-bottom-left-radius: var(--sf-icon-button--border-end-start-radius);
   }
-  [dir="rtl"] .sf-pagination .sf-icon-button {
+  @supports not (border-end-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-pagination .sf-icon-button {
+    border-bottom-left-radius: var(--sf-icon-button--border-end-start-radius);
+    }
+  }
+  .sf-pagination .sf-icon-button:where(:dir(ltr)) {
+    border-bottom-left-radius: var(--sf-icon-button--border-end-start-radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-pagination .sf-icon-button {
     border-bottom-right-radius: var(--sf-icon-button--border-end-start-radius);
   }
-  [dir="ltr"] .sf-pagination .sf-icon-button {
+  @supports not (border-end-start-radius: initial) {
+  [dir="rtl"] .sf-pagination .sf-icon-button {
+    border-bottom-right-radius: var(--sf-icon-button--border-end-start-radius);
+    }
+  }
+  .sf-pagination .sf-icon-button:where(:dir(rtl)) {
+    border-bottom-right-radius: var(--sf-icon-button--border-end-start-radius);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-pagination .sf-icon-button {
     border-top-right-radius: var(--sf-icon-button--border-start-end-radius);
   }
-  [dir="rtl"] .sf-pagination .sf-icon-button {
+  @supports not (border-start-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-pagination .sf-icon-button {
+    border-top-right-radius: var(--sf-icon-button--border-start-end-radius);
+    }
+  }
+  .sf-pagination .sf-icon-button:where(:dir(ltr)) {
+    border-top-right-radius: var(--sf-icon-button--border-start-end-radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-pagination .sf-icon-button {
     border-top-left-radius: var(--sf-icon-button--border-start-end-radius);
   }
-  [dir="ltr"] .sf-pagination .sf-icon-button {
+  @supports not (border-start-end-radius: initial) {
+  [dir="rtl"] .sf-pagination .sf-icon-button {
+    border-top-left-radius: var(--sf-icon-button--border-start-end-radius);
+    }
+  }
+  .sf-pagination .sf-icon-button:where(:dir(rtl)) {
+    border-top-left-radius: var(--sf-icon-button--border-start-end-radius);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-pagination .sf-icon-button {
     border-top-left-radius: var(--sf-icon-button--border-start-start-radius);
   }
+  @supports not (border-start-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-pagination .sf-icon-button {
+    border-top-left-radius: var(--sf-icon-button--border-start-start-radius);
+    }
+  }
+  .sf-pagination .sf-icon-button:where(:dir(ltr)) {
+    border-top-left-radius: var(--sf-icon-button--border-start-start-radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-pagination .sf-icon-button {
+    border-top-right-radius: var(--sf-icon-button--border-start-start-radius);
+  }
+  @supports not (border-start-start-radius: initial) {
   [dir="rtl"] .sf-pagination .sf-icon-button {
+    border-top-right-radius: var(--sf-icon-button--border-start-start-radius);
+    }
+  }
+  .sf-pagination .sf-icon-button:where(:dir(rtl)) {
     border-top-right-radius: var(--sf-icon-button--border-start-start-radius);
   }
   .sf-pagination .sf-icon-button {

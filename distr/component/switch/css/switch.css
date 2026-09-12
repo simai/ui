@@ -60,40 +60,136 @@
     --sf-switch-container--color: var(--sf-on-surface);
   }
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) align-items/center (.items-center) */
-  [dir="ltr"] .sf-switch .sf-switch-toggler {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-switch .sf-switch-toggler {
     border-bottom-right-radius: var(--sf-switch-toggler--border-end-end-radius);
   }
-  [dir="rtl"] .sf-switch .sf-switch-toggler {
+  @supports not (border-end-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-switch .sf-switch-toggler {
+    border-bottom-right-radius: var(--sf-switch-toggler--border-end-end-radius);
+    }
+  }
+  .sf-switch .sf-switch-toggler:where(:dir(ltr)) {
+    border-bottom-right-radius: var(--sf-switch-toggler--border-end-end-radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-switch .sf-switch-toggler {
     border-bottom-left-radius: var(--sf-switch-toggler--border-end-end-radius);
   }
-  [dir="ltr"] .sf-switch .sf-switch-toggler {
+  @supports not (border-end-end-radius: initial) {
+  [dir="rtl"] .sf-switch .sf-switch-toggler {
+    border-bottom-left-radius: var(--sf-switch-toggler--border-end-end-radius);
+    }
+  }
+  .sf-switch .sf-switch-toggler:where(:dir(rtl)) {
+    border-bottom-left-radius: var(--sf-switch-toggler--border-end-end-radius);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-switch .sf-switch-toggler {
     border-bottom-left-radius: var(--sf-switch-toggler--border-end-start-radius);
   }
-  [dir="rtl"] .sf-switch .sf-switch-toggler {
+  @supports not (border-end-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-switch .sf-switch-toggler {
+    border-bottom-left-radius: var(--sf-switch-toggler--border-end-start-radius);
+    }
+  }
+  .sf-switch .sf-switch-toggler:where(:dir(ltr)) {
+    border-bottom-left-radius: var(--sf-switch-toggler--border-end-start-radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-switch .sf-switch-toggler {
     border-bottom-right-radius: var(--sf-switch-toggler--border-end-start-radius);
   }
-  [dir="ltr"] .sf-switch .sf-switch-toggler {
+  @supports not (border-end-start-radius: initial) {
+  [dir="rtl"] .sf-switch .sf-switch-toggler {
+    border-bottom-right-radius: var(--sf-switch-toggler--border-end-start-radius);
+    }
+  }
+  .sf-switch .sf-switch-toggler:where(:dir(rtl)) {
+    border-bottom-right-radius: var(--sf-switch-toggler--border-end-start-radius);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-switch .sf-switch-toggler {
     border-top-right-radius: var(--sf-switch-toggler--border-start-end-radius);
   }
-  [dir="rtl"] .sf-switch .sf-switch-toggler {
+  @supports not (border-start-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-switch .sf-switch-toggler {
+    border-top-right-radius: var(--sf-switch-toggler--border-start-end-radius);
+    }
+  }
+  .sf-switch .sf-switch-toggler:where(:dir(ltr)) {
+    border-top-right-radius: var(--sf-switch-toggler--border-start-end-radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-switch .sf-switch-toggler {
     border-top-left-radius: var(--sf-switch-toggler--border-start-end-radius);
   }
-  [dir="ltr"] .sf-switch .sf-switch-toggler {
+  @supports not (border-start-end-radius: initial) {
+  [dir="rtl"] .sf-switch .sf-switch-toggler {
+    border-top-left-radius: var(--sf-switch-toggler--border-start-end-radius);
+    }
+  }
+  .sf-switch .sf-switch-toggler:where(:dir(rtl)) {
+    border-top-left-radius: var(--sf-switch-toggler--border-start-end-radius);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-switch .sf-switch-toggler {
     border-top-left-radius: var(--sf-switch-toggler--border-start-start-radius);
   }
-  [dir="rtl"] .sf-switch .sf-switch-toggler {
+  @supports not (border-start-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-switch .sf-switch-toggler {
+    border-top-left-radius: var(--sf-switch-toggler--border-start-start-radius);
+    }
+  }
+  .sf-switch .sf-switch-toggler:where(:dir(ltr)) {
+    border-top-left-radius: var(--sf-switch-toggler--border-start-start-radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-switch .sf-switch-toggler {
     border-top-right-radius: var(--sf-switch-toggler--border-start-start-radius);
   }
-  [dir="ltr"] .sf-switch .sf-switch-toggler {
+  @supports not (border-start-start-radius: initial) {
+  [dir="rtl"] .sf-switch .sf-switch-toggler {
+    border-top-right-radius: var(--sf-switch-toggler--border-start-start-radius);
+    }
+  }
+  .sf-switch .sf-switch-toggler:where(:dir(rtl)) {
+    border-top-right-radius: var(--sf-switch-toggler--border-start-start-radius);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-switch .sf-switch-toggler {
     padding-right: var(--sf-switch-toggler--padding-inline-end);
   }
-  [dir="rtl"] .sf-switch .sf-switch-toggler {
+  @supports not (padding-inline-end: initial) {
+  html:not([dir="rtl"]) .sf-switch .sf-switch-toggler {
+    padding-right: var(--sf-switch-toggler--padding-inline-end);
+    }
+  }
+  .sf-switch .sf-switch-toggler:where(:dir(ltr)) {
+    padding-right: var(--sf-switch-toggler--padding-inline-end);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-switch .sf-switch-toggler {
     padding-left: var(--sf-switch-toggler--padding-inline-end);
   }
-  [dir="ltr"] .sf-switch .sf-switch-toggler {
+  @supports not (padding-inline-end: initial) {
+  [dir="rtl"] .sf-switch .sf-switch-toggler {
+    padding-left: var(--sf-switch-toggler--padding-inline-end);
+    }
+  }
+  .sf-switch .sf-switch-toggler:where(:dir(rtl)) {
+    padding-left: var(--sf-switch-toggler--padding-inline-end);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-switch .sf-switch-toggler {
     padding-left: var(--sf-switch-toggler--padding-inline-start);
   }
+  @supports not (padding-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-switch .sf-switch-toggler {
+    padding-left: var(--sf-switch-toggler--padding-inline-start);
+    }
+  }
+  .sf-switch .sf-switch-toggler:where(:dir(ltr)) {
+    padding-left: var(--sf-switch-toggler--padding-inline-start);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-switch .sf-switch-toggler {
+    padding-right: var(--sf-switch-toggler--padding-inline-start);
+  }
+  @supports not (padding-inline-start: initial) {
   [dir="rtl"] .sf-switch .sf-switch-toggler {
+    padding-right: var(--sf-switch-toggler--padding-inline-start);
+    }
+  }
+  .sf-switch .sf-switch-toggler:where(:dir(rtl)) {
     padding-right: var(--sf-switch-toggler--padding-inline-start);
   }
   .sf-switch .sf-switch-toggler {

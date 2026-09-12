@@ -36,28 +36,92 @@
     gap: var(--sf-checkbox--gap);
   }
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) justify-content/center (.justify-center) align-items/center (.items-center) */
-  [dir="ltr"] .sf-checkbox .sf-checkbox-box {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-checkbox .sf-checkbox-box {
     border-bottom-right-radius: var(--sf-checkbox-box--border-end-end-radius);
   }
-  [dir="rtl"] .sf-checkbox .sf-checkbox-box {
+  @supports not (border-end-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-checkbox .sf-checkbox-box {
+    border-bottom-right-radius: var(--sf-checkbox-box--border-end-end-radius);
+    }
+  }
+  .sf-checkbox .sf-checkbox-box:where(:dir(ltr)) {
+    border-bottom-right-radius: var(--sf-checkbox-box--border-end-end-radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-checkbox .sf-checkbox-box {
     border-bottom-left-radius: var(--sf-checkbox-box--border-end-end-radius);
   }
-  [dir="ltr"] .sf-checkbox .sf-checkbox-box {
+  @supports not (border-end-end-radius: initial) {
+  [dir="rtl"] .sf-checkbox .sf-checkbox-box {
+    border-bottom-left-radius: var(--sf-checkbox-box--border-end-end-radius);
+    }
+  }
+  .sf-checkbox .sf-checkbox-box:where(:dir(rtl)) {
+    border-bottom-left-radius: var(--sf-checkbox-box--border-end-end-radius);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-checkbox .sf-checkbox-box {
     border-bottom-left-radius: var(--sf-checkbox-box--border-end-start-radius);
   }
-  [dir="rtl"] .sf-checkbox .sf-checkbox-box {
+  @supports not (border-end-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-checkbox .sf-checkbox-box {
+    border-bottom-left-radius: var(--sf-checkbox-box--border-end-start-radius);
+    }
+  }
+  .sf-checkbox .sf-checkbox-box:where(:dir(ltr)) {
+    border-bottom-left-radius: var(--sf-checkbox-box--border-end-start-radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-checkbox .sf-checkbox-box {
     border-bottom-right-radius: var(--sf-checkbox-box--border-end-start-radius);
   }
-  [dir="ltr"] .sf-checkbox .sf-checkbox-box {
+  @supports not (border-end-start-radius: initial) {
+  [dir="rtl"] .sf-checkbox .sf-checkbox-box {
+    border-bottom-right-radius: var(--sf-checkbox-box--border-end-start-radius);
+    }
+  }
+  .sf-checkbox .sf-checkbox-box:where(:dir(rtl)) {
+    border-bottom-right-radius: var(--sf-checkbox-box--border-end-start-radius);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-checkbox .sf-checkbox-box {
     border-top-right-radius: var(--sf-checkbox-box--border-start-end-radius);
   }
-  [dir="rtl"] .sf-checkbox .sf-checkbox-box {
+  @supports not (border-start-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-checkbox .sf-checkbox-box {
+    border-top-right-radius: var(--sf-checkbox-box--border-start-end-radius);
+    }
+  }
+  .sf-checkbox .sf-checkbox-box:where(:dir(ltr)) {
+    border-top-right-radius: var(--sf-checkbox-box--border-start-end-radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-checkbox .sf-checkbox-box {
     border-top-left-radius: var(--sf-checkbox-box--border-start-end-radius);
   }
-  [dir="ltr"] .sf-checkbox .sf-checkbox-box {
+  @supports not (border-start-end-radius: initial) {
+  [dir="rtl"] .sf-checkbox .sf-checkbox-box {
+    border-top-left-radius: var(--sf-checkbox-box--border-start-end-radius);
+    }
+  }
+  .sf-checkbox .sf-checkbox-box:where(:dir(rtl)) {
+    border-top-left-radius: var(--sf-checkbox-box--border-start-end-radius);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-checkbox .sf-checkbox-box {
     border-top-left-radius: var(--sf-checkbox-box--border-start-start-radius);
   }
+  @supports not (border-start-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-checkbox .sf-checkbox-box {
+    border-top-left-radius: var(--sf-checkbox-box--border-start-start-radius);
+    }
+  }
+  .sf-checkbox .sf-checkbox-box:where(:dir(ltr)) {
+    border-top-left-radius: var(--sf-checkbox-box--border-start-start-radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-checkbox .sf-checkbox-box {
+    border-top-right-radius: var(--sf-checkbox-box--border-start-start-radius);
+  }
+  @supports not (border-start-start-radius: initial) {
   [dir="rtl"] .sf-checkbox .sf-checkbox-box {
+    border-top-right-radius: var(--sf-checkbox-box--border-start-start-radius);
+    }
+  }
+  .sf-checkbox .sf-checkbox-box:where(:dir(rtl)) {
     border-top-right-radius: var(--sf-checkbox-box--border-start-start-radius);
   }
   .sf-checkbox .sf-checkbox-box {

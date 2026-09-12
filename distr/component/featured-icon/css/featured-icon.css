@@ -13,55 +13,191 @@
 }
 @layer sf.components {
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-b0) justify-content/flex-start (.justify-start) align-items/center (.items-center) */
-  [dir="ltr"] .sf-featured-icon {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-featured-icon {
     padding-left: var(--sf-featured-icon--padding-inline-start);
   }
-  [dir="rtl"] .sf-featured-icon {
+  @supports not (padding-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-featured-icon {
+    padding-left: var(--sf-featured-icon--padding-inline-start);
+    }
+  }
+  .sf-featured-icon:where(:dir(ltr)) {
+    padding-left: var(--sf-featured-icon--padding-inline-start);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-featured-icon {
     padding-right: var(--sf-featured-icon--padding-inline-start);
   }
-  [dir="ltr"] .sf-featured-icon {
+  @supports not (padding-inline-start: initial) {
+  [dir="rtl"] .sf-featured-icon {
+    padding-right: var(--sf-featured-icon--padding-inline-start);
+    }
+  }
+  .sf-featured-icon:where(:dir(rtl)) {
+    padding-right: var(--sf-featured-icon--padding-inline-start);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-featured-icon {
     padding-right: var(--sf-featured-icon--padding-inline-end);
   }
-  [dir="rtl"] .sf-featured-icon {
+  @supports not (padding-inline-end: initial) {
+  html:not([dir="rtl"]) .sf-featured-icon {
+    padding-right: var(--sf-featured-icon--padding-inline-end);
+    }
+  }
+  .sf-featured-icon:where(:dir(ltr)) {
+    padding-right: var(--sf-featured-icon--padding-inline-end);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-featured-icon {
     padding-left: var(--sf-featured-icon--padding-inline-end);
   }
-  [dir="ltr"] .sf-featured-icon {
+  @supports not (padding-inline-end: initial) {
+  [dir="rtl"] .sf-featured-icon {
+    padding-left: var(--sf-featured-icon--padding-inline-end);
+    }
+  }
+  .sf-featured-icon:where(:dir(rtl)) {
+    padding-left: var(--sf-featured-icon--padding-inline-end);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-featured-icon {
     border-top-left-radius: var(--sf-featured-icon--border-start-start-radius);
   }
-  [dir="rtl"] .sf-featured-icon {
+  @supports not (border-start-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-featured-icon {
+    border-top-left-radius: var(--sf-featured-icon--border-start-start-radius);
+    }
+  }
+  .sf-featured-icon:where(:dir(ltr)) {
+    border-top-left-radius: var(--sf-featured-icon--border-start-start-radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-featured-icon {
     border-top-right-radius: var(--sf-featured-icon--border-start-start-radius);
   }
-  [dir="ltr"] .sf-featured-icon {
+  @supports not (border-start-start-radius: initial) {
+  [dir="rtl"] .sf-featured-icon {
+    border-top-right-radius: var(--sf-featured-icon--border-start-start-radius);
+    }
+  }
+  .sf-featured-icon:where(:dir(rtl)) {
+    border-top-right-radius: var(--sf-featured-icon--border-start-start-radius);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-featured-icon {
     border-top-right-radius: var(--sf-featured-icon--border-start-end-radius);
   }
-  [dir="rtl"] .sf-featured-icon {
+  @supports not (border-start-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-featured-icon {
+    border-top-right-radius: var(--sf-featured-icon--border-start-end-radius);
+    }
+  }
+  .sf-featured-icon:where(:dir(ltr)) {
+    border-top-right-radius: var(--sf-featured-icon--border-start-end-radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-featured-icon {
     border-top-left-radius: var(--sf-featured-icon--border-start-end-radius);
   }
-  [dir="ltr"] .sf-featured-icon {
+  @supports not (border-start-end-radius: initial) {
+  [dir="rtl"] .sf-featured-icon {
+    border-top-left-radius: var(--sf-featured-icon--border-start-end-radius);
+    }
+  }
+  .sf-featured-icon:where(:dir(rtl)) {
+    border-top-left-radius: var(--sf-featured-icon--border-start-end-radius);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-featured-icon {
     border-bottom-left-radius: var(--sf-featured-icon--border-end-start-radius);
   }
-  [dir="rtl"] .sf-featured-icon {
+  @supports not (border-end-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-featured-icon {
+    border-bottom-left-radius: var(--sf-featured-icon--border-end-start-radius);
+    }
+  }
+  .sf-featured-icon:where(:dir(ltr)) {
+    border-bottom-left-radius: var(--sf-featured-icon--border-end-start-radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-featured-icon {
     border-bottom-right-radius: var(--sf-featured-icon--border-end-start-radius);
   }
-  [dir="ltr"] .sf-featured-icon {
+  @supports not (border-end-start-radius: initial) {
+  [dir="rtl"] .sf-featured-icon {
+    border-bottom-right-radius: var(--sf-featured-icon--border-end-start-radius);
+    }
+  }
+  .sf-featured-icon:where(:dir(rtl)) {
+    border-bottom-right-radius: var(--sf-featured-icon--border-end-start-radius);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-featured-icon {
     border-bottom-right-radius: var(--sf-featured-icon--border-end-end-radius);
   }
-  [dir="rtl"] .sf-featured-icon {
+  @supports not (border-end-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-featured-icon {
+    border-bottom-right-radius: var(--sf-featured-icon--border-end-end-radius);
+    }
+  }
+  .sf-featured-icon:where(:dir(ltr)) {
+    border-bottom-right-radius: var(--sf-featured-icon--border-end-end-radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-featured-icon {
     border-bottom-left-radius: var(--sf-featured-icon--border-end-end-radius);
   }
-  [dir="ltr"] .sf-featured-icon {
+  @supports not (border-end-end-radius: initial) {
+  [dir="rtl"] .sf-featured-icon {
+    border-bottom-left-radius: var(--sf-featured-icon--border-end-end-radius);
+    }
+  }
+  .sf-featured-icon:where(:dir(rtl)) {
+    border-bottom-left-radius: var(--sf-featured-icon--border-end-end-radius);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-featured-icon {
     border-left-width: 0;
     border-left-width: var(--sf-featured-icon--border-inline-start-width, 0);
   }
-  [dir="rtl"] .sf-featured-icon {
+  @supports not (border-inline-start-width: initial) {
+  html:not([dir="rtl"]) .sf-featured-icon {
+    border-left-width: 0;
+    border-left-width: var(--sf-featured-icon--border-inline-start-width, 0);
+    }
+  }
+  .sf-featured-icon:where(:dir(ltr)) {
+    border-left-width: 0;
+    border-left-width: var(--sf-featured-icon--border-inline-start-width, 0);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-featured-icon {
     border-right-width: 0;
     border-right-width: var(--sf-featured-icon--border-inline-start-width, 0);
   }
-  [dir="ltr"] .sf-featured-icon {
+  @supports not (border-inline-start-width: initial) {
+  [dir="rtl"] .sf-featured-icon {
+    border-right-width: 0;
+    border-right-width: var(--sf-featured-icon--border-inline-start-width, 0);
+    }
+  }
+  .sf-featured-icon:where(:dir(rtl)) {
+    border-right-width: 0;
+    border-right-width: var(--sf-featured-icon--border-inline-start-width, 0);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-featured-icon {
     border-right-width: 0;
     border-right-width: var(--sf-featured-icon--border-inline-end-width, 0);
   }
+  @supports not (border-inline-end-width: initial) {
+  html:not([dir="rtl"]) .sf-featured-icon {
+    border-right-width: 0;
+    border-right-width: var(--sf-featured-icon--border-inline-end-width, 0);
+    }
+  }
+  .sf-featured-icon:where(:dir(ltr)) {
+    border-right-width: 0;
+    border-right-width: var(--sf-featured-icon--border-inline-end-width, 0);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-featured-icon {
+    border-left-width: 0;
+    border-left-width: var(--sf-featured-icon--border-inline-end-width, 0);
+  }
+  @supports not (border-inline-end-width: initial) {
   [dir="rtl"] .sf-featured-icon {
+    border-left-width: 0;
+    border-left-width: var(--sf-featured-icon--border-inline-end-width, 0);
+    }
+  }
+  .sf-featured-icon:where(:dir(rtl)) {
     border-left-width: 0;
     border-left-width: var(--sf-featured-icon--border-inline-end-width, 0);
   }

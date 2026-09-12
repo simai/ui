@@ -1,14 +1,46 @@
 @layer sf.utilities {
-  [dir="ltr"] .container {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .container {
     padding-left: var(--sf-space-1);
   }
-  [dir="rtl"] .container {
+  @supports not (padding-inline-start: initial) {
+  html:not([dir="rtl"]) .container {
+    padding-left: var(--sf-space-1);
+    }
+  }
+  .container:where(:dir(ltr)) {
+    padding-left: var(--sf-space-1);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .container {
     padding-right: var(--sf-space-1);
   }
-  [dir="ltr"] .container {
+  @supports not (padding-inline-start: initial) {
+  [dir="rtl"] .container {
+    padding-right: var(--sf-space-1);
+    }
+  }
+  .container:where(:dir(rtl)) {
     padding-right: var(--sf-space-1);
   }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .container {
+    padding-right: var(--sf-space-1);
+  }
+  @supports not (padding-inline-end: initial) {
+  html:not([dir="rtl"]) .container {
+    padding-right: var(--sf-space-1);
+    }
+  }
+  .container:where(:dir(ltr)) {
+    padding-right: var(--sf-space-1);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .container {
+    padding-left: var(--sf-space-1);
+  }
+  @supports not (padding-inline-end: initial) {
   [dir="rtl"] .container {
+    padding-left: var(--sf-space-1);
+    }
+  }
+  .container:where(:dir(rtl)) {
     padding-left: var(--sf-space-1);
   }
   .container {
@@ -19,16 +51,48 @@
             padding-inline-end: var(--sf-space-1);
   }
   @media (min-width: 32.5rem) {
-    [dir="ltr"] .container {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .container {
       padding-left: var(--sf-space-2);
     }
-    [dir="rtl"] .container {
+    @supports not (padding-inline-start: initial) {
+    html:not([dir="rtl"]) .container {
+      padding-left: var(--sf-space-2);
+      }
+    }
+    .container:where(:dir(ltr)) {
+      padding-left: var(--sf-space-2);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .container {
       padding-right: var(--sf-space-2);
     }
-    [dir="ltr"] .container {
+    @supports not (padding-inline-start: initial) {
+    [dir="rtl"] .container {
+      padding-right: var(--sf-space-2);
+      }
+    }
+    .container:where(:dir(rtl)) {
       padding-right: var(--sf-space-2);
     }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .container {
+      padding-right: var(--sf-space-2);
+    }
+    @supports not (padding-inline-end: initial) {
+    html:not([dir="rtl"]) .container {
+      padding-right: var(--sf-space-2);
+      }
+    }
+    .container:where(:dir(ltr)) {
+      padding-right: var(--sf-space-2);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .container {
+      padding-left: var(--sf-space-2);
+    }
+    @supports not (padding-inline-end: initial) {
     [dir="rtl"] .container {
+      padding-left: var(--sf-space-2);
+      }
+    }
+    .container:where(:dir(rtl)) {
       padding-left: var(--sf-space-2);
     }
     .container {
@@ -41,16 +105,48 @@
     }
   }
   @media (min-width: 45rem) {
-    [dir="ltr"] .container {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .container {
       padding-left: var(--sf-space-3);
     }
-    [dir="rtl"] .container {
+    @supports not (padding-inline-start: initial) {
+    html:not([dir="rtl"]) .container {
+      padding-left: var(--sf-space-3);
+      }
+    }
+    .container:where(:dir(ltr)) {
+      padding-left: var(--sf-space-3);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .container {
       padding-right: var(--sf-space-3);
     }
-    [dir="ltr"] .container {
+    @supports not (padding-inline-start: initial) {
+    [dir="rtl"] .container {
+      padding-right: var(--sf-space-3);
+      }
+    }
+    .container:where(:dir(rtl)) {
       padding-right: var(--sf-space-3);
     }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .container {
+      padding-right: var(--sf-space-3);
+    }
+    @supports not (padding-inline-end: initial) {
+    html:not([dir="rtl"]) .container {
+      padding-right: var(--sf-space-3);
+      }
+    }
+    .container:where(:dir(ltr)) {
+      padding-right: var(--sf-space-3);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .container {
+      padding-left: var(--sf-space-3);
+    }
+    @supports not (padding-inline-end: initial) {
     [dir="rtl"] .container {
+      padding-left: var(--sf-space-3);
+      }
+    }
+    .container:where(:dir(rtl)) {
       padding-left: var(--sf-space-3);
     }
     .container {
@@ -63,16 +159,48 @@
     }
   }
   @media (min-width: 60rem) {
-    [dir="ltr"] .container {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .container {
       padding-left: var(--sf-space-4);
     }
-    [dir="rtl"] .container {
+    @supports not (padding-inline-start: initial) {
+    html:not([dir="rtl"]) .container {
+      padding-left: var(--sf-space-4);
+      }
+    }
+    .container:where(:dir(ltr)) {
+      padding-left: var(--sf-space-4);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .container {
       padding-right: var(--sf-space-4);
     }
-    [dir="ltr"] .container {
+    @supports not (padding-inline-start: initial) {
+    [dir="rtl"] .container {
+      padding-right: var(--sf-space-4);
+      }
+    }
+    .container:where(:dir(rtl)) {
       padding-right: var(--sf-space-4);
     }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .container {
+      padding-right: var(--sf-space-4);
+    }
+    @supports not (padding-inline-end: initial) {
+    html:not([dir="rtl"]) .container {
+      padding-right: var(--sf-space-4);
+      }
+    }
+    .container:where(:dir(ltr)) {
+      padding-right: var(--sf-space-4);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .container {
+      padding-left: var(--sf-space-4);
+    }
+    @supports not (padding-inline-end: initial) {
     [dir="rtl"] .container {
+      padding-left: var(--sf-space-4);
+      }
+    }
+    .container:where(:dir(rtl)) {
       padding-left: var(--sf-space-4);
     }
     .container {
@@ -85,16 +213,48 @@
     }
   }
   @media (min-width: 71.25rem) {
-    [dir="ltr"] .container {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .container {
       padding-left: var(--sf-space-5);
     }
-    [dir="rtl"] .container {
+    @supports not (padding-inline-start: initial) {
+    html:not([dir="rtl"]) .container {
+      padding-left: var(--sf-space-5);
+      }
+    }
+    .container:where(:dir(ltr)) {
+      padding-left: var(--sf-space-5);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .container {
       padding-right: var(--sf-space-5);
     }
-    [dir="ltr"] .container {
+    @supports not (padding-inline-start: initial) {
+    [dir="rtl"] .container {
+      padding-right: var(--sf-space-5);
+      }
+    }
+    .container:where(:dir(rtl)) {
       padding-right: var(--sf-space-5);
     }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .container {
+      padding-right: var(--sf-space-5);
+    }
+    @supports not (padding-inline-end: initial) {
+    html:not([dir="rtl"]) .container {
+      padding-right: var(--sf-space-5);
+      }
+    }
+    .container:where(:dir(ltr)) {
+      padding-right: var(--sf-space-5);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .container {
+      padding-left: var(--sf-space-5);
+    }
+    @supports not (padding-inline-end: initial) {
     [dir="rtl"] .container {
+      padding-left: var(--sf-space-5);
+      }
+    }
+    .container:where(:dir(rtl)) {
       padding-left: var(--sf-space-5);
     }
     .container {
@@ -107,16 +267,48 @@
     }
   }
   @media (min-width: 82.5rem) {
-    [dir="ltr"] .container {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .container {
       padding-left: var(--sf-space-6);
     }
-    [dir="rtl"] .container {
+    @supports not (padding-inline-start: initial) {
+    html:not([dir="rtl"]) .container {
+      padding-left: var(--sf-space-6);
+      }
+    }
+    .container:where(:dir(ltr)) {
+      padding-left: var(--sf-space-6);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .container {
       padding-right: var(--sf-space-6);
     }
-    [dir="ltr"] .container {
+    @supports not (padding-inline-start: initial) {
+    [dir="rtl"] .container {
+      padding-right: var(--sf-space-6);
+      }
+    }
+    .container:where(:dir(rtl)) {
       padding-right: var(--sf-space-6);
     }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .container {
+      padding-right: var(--sf-space-6);
+    }
+    @supports not (padding-inline-end: initial) {
+    html:not([dir="rtl"]) .container {
+      padding-right: var(--sf-space-6);
+      }
+    }
+    .container:where(:dir(ltr)) {
+      padding-right: var(--sf-space-6);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .container {
+      padding-left: var(--sf-space-6);
+    }
+    @supports not (padding-inline-end: initial) {
     [dir="rtl"] .container {
+      padding-left: var(--sf-space-6);
+      }
+    }
+    .container:where(:dir(rtl)) {
       padding-left: var(--sf-space-6);
     }
     .container {

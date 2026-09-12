@@ -8,72 +8,248 @@
 */
 @layer sf.components {
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) justify-content/center (.justify-center) align-items/center (.items-center) */
-  [dir="ltr"] .sf-fab {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-fab {
     border-bottom-right-radius: var(--sf-radius-circle);
     border-bottom-right-radius: var(--sf-fab--border-bottom-right-radius, var(--sf-radius-circle));
   }
-  [dir="rtl"] .sf-fab {
+  @supports not (border-end-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-fab {
+    border-bottom-right-radius: var(--sf-radius-circle);
+    border-bottom-right-radius: var(--sf-fab--border-bottom-right-radius, var(--sf-radius-circle));
+    }
+  }
+  .sf-fab:where(:dir(ltr)) {
+    border-bottom-right-radius: var(--sf-radius-circle);
+    border-bottom-right-radius: var(--sf-fab--border-bottom-right-radius, var(--sf-radius-circle));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-fab {
     border-bottom-left-radius: var(--sf-radius-circle);
     border-bottom-left-radius: var(--sf-fab--border-bottom-right-radius, var(--sf-radius-circle));
   }
-  [dir="ltr"] .sf-fab {
+  @supports not (border-end-end-radius: initial) {
+  [dir="rtl"] .sf-fab {
+    border-bottom-left-radius: var(--sf-radius-circle);
+    border-bottom-left-radius: var(--sf-fab--border-bottom-right-radius, var(--sf-radius-circle));
+    }
+  }
+  .sf-fab:where(:dir(rtl)) {
+    border-bottom-left-radius: var(--sf-radius-circle);
+    border-bottom-left-radius: var(--sf-fab--border-bottom-right-radius, var(--sf-radius-circle));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-fab {
     border-bottom-left-radius: var(--sf-radius-circle);
     border-bottom-left-radius: var(--sf-fab--border-bottom-left-radius, var(--sf-radius-circle));
   }
-  [dir="rtl"] .sf-fab {
+  @supports not (border-end-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-fab {
+    border-bottom-left-radius: var(--sf-radius-circle);
+    border-bottom-left-radius: var(--sf-fab--border-bottom-left-radius, var(--sf-radius-circle));
+    }
+  }
+  .sf-fab:where(:dir(ltr)) {
+    border-bottom-left-radius: var(--sf-radius-circle);
+    border-bottom-left-radius: var(--sf-fab--border-bottom-left-radius, var(--sf-radius-circle));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-fab {
     border-bottom-right-radius: var(--sf-radius-circle);
     border-bottom-right-radius: var(--sf-fab--border-bottom-left-radius, var(--sf-radius-circle));
   }
-  [dir="ltr"] .sf-fab {
+  @supports not (border-end-start-radius: initial) {
+  [dir="rtl"] .sf-fab {
+    border-bottom-right-radius: var(--sf-radius-circle);
+    border-bottom-right-radius: var(--sf-fab--border-bottom-left-radius, var(--sf-radius-circle));
+    }
+  }
+  .sf-fab:where(:dir(rtl)) {
+    border-bottom-right-radius: var(--sf-radius-circle);
+    border-bottom-right-radius: var(--sf-fab--border-bottom-left-radius, var(--sf-radius-circle));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-fab {
     border-top-right-radius: var(--sf-radius-circle);
     border-top-right-radius: var(--sf-fab--border-top-right-radius, var(--sf-radius-circle));
   }
-  [dir="rtl"] .sf-fab {
+  @supports not (border-start-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-fab {
+    border-top-right-radius: var(--sf-radius-circle);
+    border-top-right-radius: var(--sf-fab--border-top-right-radius, var(--sf-radius-circle));
+    }
+  }
+  .sf-fab:where(:dir(ltr)) {
+    border-top-right-radius: var(--sf-radius-circle);
+    border-top-right-radius: var(--sf-fab--border-top-right-radius, var(--sf-radius-circle));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-fab {
     border-top-left-radius: var(--sf-radius-circle);
     border-top-left-radius: var(--sf-fab--border-top-right-radius, var(--sf-radius-circle));
   }
-  [dir="ltr"] .sf-fab {
+  @supports not (border-start-end-radius: initial) {
+  [dir="rtl"] .sf-fab {
+    border-top-left-radius: var(--sf-radius-circle);
+    border-top-left-radius: var(--sf-fab--border-top-right-radius, var(--sf-radius-circle));
+    }
+  }
+  .sf-fab:where(:dir(rtl)) {
+    border-top-left-radius: var(--sf-radius-circle);
+    border-top-left-radius: var(--sf-fab--border-top-right-radius, var(--sf-radius-circle));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-fab {
     border-top-left-radius: var(--sf-radius-circle);
     border-top-left-radius: var(--sf-fab--border-top-left-radius, var(--sf-radius-circle));
   }
-  [dir="rtl"] .sf-fab {
+  @supports not (border-start-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-fab {
+    border-top-left-radius: var(--sf-radius-circle);
+    border-top-left-radius: var(--sf-fab--border-top-left-radius, var(--sf-radius-circle));
+    }
+  }
+  .sf-fab:where(:dir(ltr)) {
+    border-top-left-radius: var(--sf-radius-circle);
+    border-top-left-radius: var(--sf-fab--border-top-left-radius, var(--sf-radius-circle));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-fab {
     border-top-right-radius: var(--sf-radius-circle);
     border-top-right-radius: var(--sf-fab--border-top-left-radius, var(--sf-radius-circle));
   }
-  [dir="ltr"] .sf-fab {
+  @supports not (border-start-start-radius: initial) {
+  [dir="rtl"] .sf-fab {
+    border-top-right-radius: var(--sf-radius-circle);
+    border-top-right-radius: var(--sf-fab--border-top-left-radius, var(--sf-radius-circle));
+    }
+  }
+  .sf-fab:where(:dir(rtl)) {
+    border-top-right-radius: var(--sf-radius-circle);
+    border-top-right-radius: var(--sf-fab--border-top-left-radius, var(--sf-radius-circle));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-fab {
     padding-left: var(--sf-fab--padding-inline-start);
   }
-  [dir="rtl"] .sf-fab {
+  @supports not (padding-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-fab {
+    padding-left: var(--sf-fab--padding-inline-start);
+    }
+  }
+  .sf-fab:where(:dir(ltr)) {
+    padding-left: var(--sf-fab--padding-inline-start);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-fab {
     padding-right: var(--sf-fab--padding-inline-start);
   }
-  [dir="ltr"] .sf-fab {
+  @supports not (padding-inline-start: initial) {
+  [dir="rtl"] .sf-fab {
+    padding-right: var(--sf-fab--padding-inline-start);
+    }
+  }
+  .sf-fab:where(:dir(rtl)) {
+    padding-right: var(--sf-fab--padding-inline-start);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-fab {
     padding-right: var(--sf-fab--padding-inline-end);
   }
-  [dir="rtl"] .sf-fab {
+  @supports not (padding-inline-end: initial) {
+  html:not([dir="rtl"]) .sf-fab {
+    padding-right: var(--sf-fab--padding-inline-end);
+    }
+  }
+  .sf-fab:where(:dir(ltr)) {
+    padding-right: var(--sf-fab--padding-inline-end);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-fab {
     padding-left: var(--sf-fab--padding-inline-end);
   }
-  [dir="ltr"] .sf-fab {
+  @supports not (padding-inline-end: initial) {
+  [dir="rtl"] .sf-fab {
+    padding-left: var(--sf-fab--padding-inline-end);
+    }
+  }
+  .sf-fab:where(:dir(rtl)) {
+    padding-left: var(--sf-fab--padding-inline-end);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-fab {
     border-bottom-right-radius: var(--sf-radius-circle);
   }
-  [dir="rtl"] .sf-fab {
-    border-bottom-left-radius: var(--sf-radius-circle);
+  @supports not (border-end-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-fab {
+    border-bottom-right-radius: var(--sf-radius-circle);
+    }
   }
-  [dir="ltr"] .sf-fab {
-    border-bottom-left-radius: var(--sf-radius-circle);
-  }
-  [dir="rtl"] .sf-fab {
+  .sf-fab:where(:dir(ltr)) {
     border-bottom-right-radius: var(--sf-radius-circle);
   }
-  [dir="ltr"] .sf-fab {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-fab {
+    border-bottom-left-radius: var(--sf-radius-circle);
+  }
+  @supports not (border-end-end-radius: initial) {
+  [dir="rtl"] .sf-fab {
+    border-bottom-left-radius: var(--sf-radius-circle);
+    }
+  }
+  .sf-fab:where(:dir(rtl)) {
+    border-bottom-left-radius: var(--sf-radius-circle);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-fab {
+    border-bottom-left-radius: var(--sf-radius-circle);
+  }
+  @supports not (border-end-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-fab {
+    border-bottom-left-radius: var(--sf-radius-circle);
+    }
+  }
+  .sf-fab:where(:dir(ltr)) {
+    border-bottom-left-radius: var(--sf-radius-circle);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-fab {
+    border-bottom-right-radius: var(--sf-radius-circle);
+  }
+  @supports not (border-end-start-radius: initial) {
+  [dir="rtl"] .sf-fab {
+    border-bottom-right-radius: var(--sf-radius-circle);
+    }
+  }
+  .sf-fab:where(:dir(rtl)) {
+    border-bottom-right-radius: var(--sf-radius-circle);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-fab {
     border-top-right-radius: var(--sf-radius-circle);
   }
-  [dir="rtl"] .sf-fab {
+  @supports not (border-start-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-fab {
+    border-top-right-radius: var(--sf-radius-circle);
+    }
+  }
+  .sf-fab:where(:dir(ltr)) {
+    border-top-right-radius: var(--sf-radius-circle);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-fab {
     border-top-left-radius: var(--sf-radius-circle);
   }
-  [dir="ltr"] .sf-fab {
+  @supports not (border-start-end-radius: initial) {
+  [dir="rtl"] .sf-fab {
+    border-top-left-radius: var(--sf-radius-circle);
+    }
+  }
+  .sf-fab:where(:dir(rtl)) {
     border-top-left-radius: var(--sf-radius-circle);
   }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-fab {
+    border-top-left-radius: var(--sf-radius-circle);
+  }
+  @supports not (border-start-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-fab {
+    border-top-left-radius: var(--sf-radius-circle);
+    }
+  }
+  .sf-fab:where(:dir(ltr)) {
+    border-top-left-radius: var(--sf-radius-circle);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-fab {
+    border-top-right-radius: var(--sf-radius-circle);
+  }
+  @supports not (border-start-start-radius: initial) {
   [dir="rtl"] .sf-fab {
+    border-top-right-radius: var(--sf-radius-circle);
+    }
+  }
+  .sf-fab:where(:dir(rtl)) {
     border-top-right-radius: var(--sf-radius-circle);
   }
   .sf-fab {

@@ -8,76 +8,260 @@
 */
 @layer sf.components {
   /* utility-hint: display/flex (.flex) flex-direction/column (.flex-col) flex-wrap/nowrap (.flex-nowrap) justify-content/center (.justify-center) align-items/center (.items-center) */
-  [dir="ltr"] .sf-verification {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-verification {
     border-bottom-right-radius: var(--sf-ui-radius-default);
     border-bottom-right-radius: var(--sf-verification--border-bottom-right-radius, var(--sf-ui-radius-default));
   }
-  [dir="rtl"] .sf-verification {
+  @supports not (border-end-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-verification {
+    border-bottom-right-radius: var(--sf-ui-radius-default);
+    border-bottom-right-radius: var(--sf-verification--border-bottom-right-radius, var(--sf-ui-radius-default));
+    }
+  }
+  .sf-verification:where(:dir(ltr)) {
+    border-bottom-right-radius: var(--sf-ui-radius-default);
+    border-bottom-right-radius: var(--sf-verification--border-bottom-right-radius, var(--sf-ui-radius-default));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-verification {
     border-bottom-left-radius: var(--sf-ui-radius-default);
     border-bottom-left-radius: var(--sf-verification--border-bottom-right-radius, var(--sf-ui-radius-default));
   }
-  [dir="ltr"] .sf-verification {
+  @supports not (border-end-end-radius: initial) {
+  [dir="rtl"] .sf-verification {
+    border-bottom-left-radius: var(--sf-ui-radius-default);
+    border-bottom-left-radius: var(--sf-verification--border-bottom-right-radius, var(--sf-ui-radius-default));
+    }
+  }
+  .sf-verification:where(:dir(rtl)) {
+    border-bottom-left-radius: var(--sf-ui-radius-default);
+    border-bottom-left-radius: var(--sf-verification--border-bottom-right-radius, var(--sf-ui-radius-default));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-verification {
     border-bottom-left-radius: var(--sf-ui-radius-default);
     border-bottom-left-radius: var(--sf-verification--border-bottom-left-radius, var(--sf-ui-radius-default));
   }
-  [dir="rtl"] .sf-verification {
+  @supports not (border-end-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-verification {
+    border-bottom-left-radius: var(--sf-ui-radius-default);
+    border-bottom-left-radius: var(--sf-verification--border-bottom-left-radius, var(--sf-ui-radius-default));
+    }
+  }
+  .sf-verification:where(:dir(ltr)) {
+    border-bottom-left-radius: var(--sf-ui-radius-default);
+    border-bottom-left-radius: var(--sf-verification--border-bottom-left-radius, var(--sf-ui-radius-default));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-verification {
     border-bottom-right-radius: var(--sf-ui-radius-default);
     border-bottom-right-radius: var(--sf-verification--border-bottom-left-radius, var(--sf-ui-radius-default));
   }
-  [dir="ltr"] .sf-verification {
+  @supports not (border-end-start-radius: initial) {
+  [dir="rtl"] .sf-verification {
+    border-bottom-right-radius: var(--sf-ui-radius-default);
+    border-bottom-right-radius: var(--sf-verification--border-bottom-left-radius, var(--sf-ui-radius-default));
+    }
+  }
+  .sf-verification:where(:dir(rtl)) {
+    border-bottom-right-radius: var(--sf-ui-radius-default);
+    border-bottom-right-radius: var(--sf-verification--border-bottom-left-radius, var(--sf-ui-radius-default));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-verification {
     border-top-right-radius: var(--sf-ui-radius-default);
     border-top-right-radius: var(--sf-verification--border-top-right-radius, var(--sf-ui-radius-default));
   }
-  [dir="rtl"] .sf-verification {
+  @supports not (border-start-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-verification {
+    border-top-right-radius: var(--sf-ui-radius-default);
+    border-top-right-radius: var(--sf-verification--border-top-right-radius, var(--sf-ui-radius-default));
+    }
+  }
+  .sf-verification:where(:dir(ltr)) {
+    border-top-right-radius: var(--sf-ui-radius-default);
+    border-top-right-radius: var(--sf-verification--border-top-right-radius, var(--sf-ui-radius-default));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-verification {
     border-top-left-radius: var(--sf-ui-radius-default);
     border-top-left-radius: var(--sf-verification--border-top-right-radius, var(--sf-ui-radius-default));
   }
-  [dir="ltr"] .sf-verification {
+  @supports not (border-start-end-radius: initial) {
+  [dir="rtl"] .sf-verification {
+    border-top-left-radius: var(--sf-ui-radius-default);
+    border-top-left-radius: var(--sf-verification--border-top-right-radius, var(--sf-ui-radius-default));
+    }
+  }
+  .sf-verification:where(:dir(rtl)) {
+    border-top-left-radius: var(--sf-ui-radius-default);
+    border-top-left-radius: var(--sf-verification--border-top-right-radius, var(--sf-ui-radius-default));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-verification {
     border-top-left-radius: var(--sf-ui-radius-default);
     border-top-left-radius: var(--sf-verification--border-top-left-radius, var(--sf-ui-radius-default));
   }
-  [dir="rtl"] .sf-verification {
+  @supports not (border-start-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-verification {
+    border-top-left-radius: var(--sf-ui-radius-default);
+    border-top-left-radius: var(--sf-verification--border-top-left-radius, var(--sf-ui-radius-default));
+    }
+  }
+  .sf-verification:where(:dir(ltr)) {
+    border-top-left-radius: var(--sf-ui-radius-default);
+    border-top-left-radius: var(--sf-verification--border-top-left-radius, var(--sf-ui-radius-default));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-verification {
     border-top-right-radius: var(--sf-ui-radius-default);
     border-top-right-radius: var(--sf-verification--border-top-left-radius, var(--sf-ui-radius-default));
   }
-  [dir="ltr"] .sf-verification {
+  @supports not (border-start-start-radius: initial) {
+  [dir="rtl"] .sf-verification {
+    border-top-right-radius: var(--sf-ui-radius-default);
+    border-top-right-radius: var(--sf-verification--border-top-left-radius, var(--sf-ui-radius-default));
+    }
+  }
+  .sf-verification:where(:dir(rtl)) {
+    border-top-right-radius: var(--sf-ui-radius-default);
+    border-top-right-radius: var(--sf-verification--border-top-left-radius, var(--sf-ui-radius-default));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-verification {
     border-right-width: 0;
     border-right-width: var(--sf-verification--border-inline-end-width, 0);
   }
-  [dir="rtl"] .sf-verification {
+  @supports not (border-inline-end-width: initial) {
+  html:not([dir="rtl"]) .sf-verification {
+    border-right-width: 0;
+    border-right-width: var(--sf-verification--border-inline-end-width, 0);
+    }
+  }
+  .sf-verification:where(:dir(ltr)) {
+    border-right-width: 0;
+    border-right-width: var(--sf-verification--border-inline-end-width, 0);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-verification {
     border-left-width: 0;
     border-left-width: var(--sf-verification--border-inline-end-width, 0);
   }
-  [dir="ltr"] .sf-verification {
+  @supports not (border-inline-end-width: initial) {
+  [dir="rtl"] .sf-verification {
+    border-left-width: 0;
+    border-left-width: var(--sf-verification--border-inline-end-width, 0);
+    }
+  }
+  .sf-verification:where(:dir(rtl)) {
+    border-left-width: 0;
+    border-left-width: var(--sf-verification--border-inline-end-width, 0);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-verification {
     border-left-width: 0;
     border-left-width: var(--sf-verification--border-inline-start-width, 0);
   }
-  [dir="rtl"] .sf-verification {
+  @supports not (border-inline-start-width: initial) {
+  html:not([dir="rtl"]) .sf-verification {
+    border-left-width: 0;
+    border-left-width: var(--sf-verification--border-inline-start-width, 0);
+    }
+  }
+  .sf-verification:where(:dir(ltr)) {
+    border-left-width: 0;
+    border-left-width: var(--sf-verification--border-inline-start-width, 0);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-verification {
     border-right-width: 0;
     border-right-width: var(--sf-verification--border-inline-start-width, 0);
   }
-  [dir="ltr"] .sf-verification {
+  @supports not (border-inline-start-width: initial) {
+  [dir="rtl"] .sf-verification {
+    border-right-width: 0;
+    border-right-width: var(--sf-verification--border-inline-start-width, 0);
+    }
+  }
+  .sf-verification:where(:dir(rtl)) {
+    border-right-width: 0;
+    border-right-width: var(--sf-verification--border-inline-start-width, 0);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-verification {
     border-bottom-right-radius: var(--sf-ui-radius-default);
   }
-  [dir="rtl"] .sf-verification {
-    border-bottom-left-radius: var(--sf-ui-radius-default);
+  @supports not (border-end-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-verification {
+    border-bottom-right-radius: var(--sf-ui-radius-default);
+    }
   }
-  [dir="ltr"] .sf-verification {
-    border-bottom-left-radius: var(--sf-ui-radius-default);
-  }
-  [dir="rtl"] .sf-verification {
+  .sf-verification:where(:dir(ltr)) {
     border-bottom-right-radius: var(--sf-ui-radius-default);
   }
-  [dir="ltr"] .sf-verification {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-verification {
+    border-bottom-left-radius: var(--sf-ui-radius-default);
+  }
+  @supports not (border-end-end-radius: initial) {
+  [dir="rtl"] .sf-verification {
+    border-bottom-left-radius: var(--sf-ui-radius-default);
+    }
+  }
+  .sf-verification:where(:dir(rtl)) {
+    border-bottom-left-radius: var(--sf-ui-radius-default);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-verification {
+    border-bottom-left-radius: var(--sf-ui-radius-default);
+  }
+  @supports not (border-end-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-verification {
+    border-bottom-left-radius: var(--sf-ui-radius-default);
+    }
+  }
+  .sf-verification:where(:dir(ltr)) {
+    border-bottom-left-radius: var(--sf-ui-radius-default);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-verification {
+    border-bottom-right-radius: var(--sf-ui-radius-default);
+  }
+  @supports not (border-end-start-radius: initial) {
+  [dir="rtl"] .sf-verification {
+    border-bottom-right-radius: var(--sf-ui-radius-default);
+    }
+  }
+  .sf-verification:where(:dir(rtl)) {
+    border-bottom-right-radius: var(--sf-ui-radius-default);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-verification {
     border-top-right-radius: var(--sf-ui-radius-default);
   }
-  [dir="rtl"] .sf-verification {
+  @supports not (border-start-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-verification {
+    border-top-right-radius: var(--sf-ui-radius-default);
+    }
+  }
+  .sf-verification:where(:dir(ltr)) {
+    border-top-right-radius: var(--sf-ui-radius-default);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-verification {
     border-top-left-radius: var(--sf-ui-radius-default);
   }
-  [dir="ltr"] .sf-verification {
+  @supports not (border-start-end-radius: initial) {
+  [dir="rtl"] .sf-verification {
+    border-top-left-radius: var(--sf-ui-radius-default);
+    }
+  }
+  .sf-verification:where(:dir(rtl)) {
     border-top-left-radius: var(--sf-ui-radius-default);
   }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-verification {
+    border-top-left-radius: var(--sf-ui-radius-default);
+  }
+  @supports not (border-start-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-verification {
+    border-top-left-radius: var(--sf-ui-radius-default);
+    }
+  }
+  .sf-verification:where(:dir(ltr)) {
+    border-top-left-radius: var(--sf-ui-radius-default);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-verification {
+    border-top-right-radius: var(--sf-ui-radius-default);
+  }
+  @supports not (border-start-start-radius: initial) {
   [dir="rtl"] .sf-verification {
+    border-top-right-radius: var(--sf-ui-radius-default);
+    }
+  }
+  .sf-verification:where(:dir(rtl)) {
     border-top-right-radius: var(--sf-ui-radius-default);
   }
   .sf-verification {
@@ -585,28 +769,92 @@
     background-color: var(--sf-verification-form-wrap--background-color);
     gap: var(--sf-b0);
   }
-  [dir="ltr"] .sf-verification-form .sf-verification {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-verification-form .sf-verification {
     border-bottom-right-radius: var(--sf-verification--border-end-end-radius);
   }
-  [dir="rtl"] .sf-verification-form .sf-verification {
+  @supports not (border-end-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-verification-form .sf-verification {
+    border-bottom-right-radius: var(--sf-verification--border-end-end-radius);
+    }
+  }
+  .sf-verification-form .sf-verification:where(:dir(ltr)) {
+    border-bottom-right-radius: var(--sf-verification--border-end-end-radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-verification-form .sf-verification {
     border-bottom-left-radius: var(--sf-verification--border-end-end-radius);
   }
-  [dir="ltr"] .sf-verification-form .sf-verification {
+  @supports not (border-end-end-radius: initial) {
+  [dir="rtl"] .sf-verification-form .sf-verification {
+    border-bottom-left-radius: var(--sf-verification--border-end-end-radius);
+    }
+  }
+  .sf-verification-form .sf-verification:where(:dir(rtl)) {
+    border-bottom-left-radius: var(--sf-verification--border-end-end-radius);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-verification-form .sf-verification {
     border-bottom-left-radius: var(--sf-verification--border-end-start-radius);
   }
-  [dir="rtl"] .sf-verification-form .sf-verification {
+  @supports not (border-end-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-verification-form .sf-verification {
+    border-bottom-left-radius: var(--sf-verification--border-end-start-radius);
+    }
+  }
+  .sf-verification-form .sf-verification:where(:dir(ltr)) {
+    border-bottom-left-radius: var(--sf-verification--border-end-start-radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-verification-form .sf-verification {
     border-bottom-right-radius: var(--sf-verification--border-end-start-radius);
   }
-  [dir="ltr"] .sf-verification-form .sf-verification {
+  @supports not (border-end-start-radius: initial) {
+  [dir="rtl"] .sf-verification-form .sf-verification {
+    border-bottom-right-radius: var(--sf-verification--border-end-start-radius);
+    }
+  }
+  .sf-verification-form .sf-verification:where(:dir(rtl)) {
+    border-bottom-right-radius: var(--sf-verification--border-end-start-radius);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-verification-form .sf-verification {
     border-top-right-radius: var(--sf-verification--border-start-end-radius);
   }
-  [dir="rtl"] .sf-verification-form .sf-verification {
+  @supports not (border-start-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-verification-form .sf-verification {
+    border-top-right-radius: var(--sf-verification--border-start-end-radius);
+    }
+  }
+  .sf-verification-form .sf-verification:where(:dir(ltr)) {
+    border-top-right-radius: var(--sf-verification--border-start-end-radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-verification-form .sf-verification {
     border-top-left-radius: var(--sf-verification--border-start-end-radius);
   }
-  [dir="ltr"] .sf-verification-form .sf-verification {
+  @supports not (border-start-end-radius: initial) {
+  [dir="rtl"] .sf-verification-form .sf-verification {
+    border-top-left-radius: var(--sf-verification--border-start-end-radius);
+    }
+  }
+  .sf-verification-form .sf-verification:where(:dir(rtl)) {
+    border-top-left-radius: var(--sf-verification--border-start-end-radius);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-verification-form .sf-verification {
     border-top-left-radius: var(--sf-verification--border-start-start-radius);
   }
+  @supports not (border-start-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-verification-form .sf-verification {
+    border-top-left-radius: var(--sf-verification--border-start-start-radius);
+    }
+  }
+  .sf-verification-form .sf-verification:where(:dir(ltr)) {
+    border-top-left-radius: var(--sf-verification--border-start-start-radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-verification-form .sf-verification {
+    border-top-right-radius: var(--sf-verification--border-start-start-radius);
+  }
+  @supports not (border-start-start-radius: initial) {
   [dir="rtl"] .sf-verification-form .sf-verification {
+    border-top-right-radius: var(--sf-verification--border-start-start-radius);
+    }
+  }
+  .sf-verification-form .sf-verification:where(:dir(rtl)) {
     border-top-right-radius: var(--sf-verification--border-start-start-radius);
   }
   .sf-verification-form .sf-verification {

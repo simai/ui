@@ -13,10 +13,26 @@
     padding: 0;
     list-style: none;
   }
-  [dir="ltr"] .sf-outline__list .sf-outline__list {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-outline__list .sf-outline__list {
     padding-left: var(--sf-space-1);
   }
+  @supports not (padding-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-outline__list .sf-outline__list {
+    padding-left: var(--sf-space-1);
+    }
+  }
+  .sf-outline__list .sf-outline__list:where(:dir(ltr)) {
+    padding-left: var(--sf-space-1);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-outline__list .sf-outline__list {
+    padding-right: var(--sf-space-1);
+  }
+  @supports not (padding-inline-start: initial) {
   [dir="rtl"] .sf-outline__list .sf-outline__list {
+    padding-right: var(--sf-space-1);
+    }
+  }
+  .sf-outline__list .sf-outline__list:where(:dir(rtl)) {
     padding-right: var(--sf-space-1);
   }
   .sf-outline__list .sf-outline__list {
@@ -56,12 +72,32 @@
     color: var(--sf-on-surface);
     font-weight: var(--sf-font-weight-medium);
   }
-  [dir="ltr"] .sf-outline__link[aria-current=location]::before,[dir="ltr"] 
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-outline__link[aria-current=location]::before,html:not([dir="rtl"])
   .sf-outline__link[data-sf-outline-active]::before {
     left: calc(var(--sf-space-2) * -1 - var(--sf-a2));
   }
-  [dir="rtl"] .sf-outline__link[aria-current=location]::before,[dir="rtl"] 
+  @supports not (inset-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-outline__link[aria-current=location]::before,html:not([dir="rtl"])
   .sf-outline__link[data-sf-outline-active]::before {
+    left: calc(var(--sf-space-2) * -1 - var(--sf-a2));
+    }
+  }
+  .sf-outline__link[aria-current=location]::before:where(:dir(ltr)),
+  .sf-outline__link[data-sf-outline-active]::before:where(:dir(ltr)) {
+    left: calc(var(--sf-space-2) * -1 - var(--sf-a2));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-outline__link[aria-current=location]::before,[dir="rtl"]
+  .sf-outline__link[data-sf-outline-active]::before {
+    right: calc(var(--sf-space-2) * -1 - var(--sf-a2));
+  }
+  @supports not (inset-inline-start: initial) {
+  [dir="rtl"] .sf-outline__link[aria-current=location]::before,[dir="rtl"]
+  .sf-outline__link[data-sf-outline-active]::before {
+    right: calc(var(--sf-space-2) * -1 - var(--sf-a2));
+    }
+  }
+  .sf-outline__link[aria-current=location]::before:where(:dir(rtl)),
+  .sf-outline__link[data-sf-outline-active]::before:where(:dir(rtl)) {
     right: calc(var(--sf-space-2) * -1 - var(--sf-a2));
   }
   .sf-outline__link[aria-current=location]::before,

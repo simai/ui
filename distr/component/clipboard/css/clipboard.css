@@ -1,8 +1,24 @@
 @layer sf.components {
-  [dir="ltr"] .sf-clipboard {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-clipboard {
     right: var(--sf-space-1\/4);
   }
+  @supports not (inset-inline-end: initial) {
+  html:not([dir="rtl"]) .sf-clipboard {
+    right: var(--sf-space-1\/4);
+    }
+  }
+  .sf-clipboard:where(:dir(ltr)) {
+    right: var(--sf-space-1\/4);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-clipboard {
+    left: var(--sf-space-1\/4);
+  }
+  @supports not (inset-inline-end: initial) {
   [dir="rtl"] .sf-clipboard {
+    left: var(--sf-space-1\/4);
+    }
+  }
+  .sf-clipboard:where(:dir(rtl)) {
     left: var(--sf-space-1\/4);
   }
   .sf-clipboard {

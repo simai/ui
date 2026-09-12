@@ -8,100 +8,348 @@
 */
 @layer sf.components {
   /* utility-hint: display/flex (.flex) flex-direction/column (.flex-col) flex-wrap/nowrap (.flex-nowrap) justify-content/flex-start (.justify-start) align-items/center (.items-center) */
-  [dir="ltr"] .sf-file-upload {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-file-upload {
     border-bottom-right-radius: var(--sf-radius-2);
     border-bottom-right-radius: var(--sf-file-upload--border-bottom-right-radius, var(--sf-radius-2));
   }
-  [dir="rtl"] .sf-file-upload {
+  @supports not (border-end-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-file-upload {
+    border-bottom-right-radius: var(--sf-radius-2);
+    border-bottom-right-radius: var(--sf-file-upload--border-bottom-right-radius, var(--sf-radius-2));
+    }
+  }
+  .sf-file-upload:where(:dir(ltr)) {
+    border-bottom-right-radius: var(--sf-radius-2);
+    border-bottom-right-radius: var(--sf-file-upload--border-bottom-right-radius, var(--sf-radius-2));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-file-upload {
     border-bottom-left-radius: var(--sf-radius-2);
     border-bottom-left-radius: var(--sf-file-upload--border-bottom-right-radius, var(--sf-radius-2));
   }
-  [dir="ltr"] .sf-file-upload {
+  @supports not (border-end-end-radius: initial) {
+  [dir="rtl"] .sf-file-upload {
+    border-bottom-left-radius: var(--sf-radius-2);
+    border-bottom-left-radius: var(--sf-file-upload--border-bottom-right-radius, var(--sf-radius-2));
+    }
+  }
+  .sf-file-upload:where(:dir(rtl)) {
+    border-bottom-left-radius: var(--sf-radius-2);
+    border-bottom-left-radius: var(--sf-file-upload--border-bottom-right-radius, var(--sf-radius-2));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-file-upload {
     border-bottom-left-radius: var(--sf-radius-2);
     border-bottom-left-radius: var(--sf-file-upload--border-bottom-left-radius, var(--sf-radius-2));
   }
-  [dir="rtl"] .sf-file-upload {
+  @supports not (border-end-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-file-upload {
+    border-bottom-left-radius: var(--sf-radius-2);
+    border-bottom-left-radius: var(--sf-file-upload--border-bottom-left-radius, var(--sf-radius-2));
+    }
+  }
+  .sf-file-upload:where(:dir(ltr)) {
+    border-bottom-left-radius: var(--sf-radius-2);
+    border-bottom-left-radius: var(--sf-file-upload--border-bottom-left-radius, var(--sf-radius-2));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-file-upload {
     border-bottom-right-radius: var(--sf-radius-2);
     border-bottom-right-radius: var(--sf-file-upload--border-bottom-left-radius, var(--sf-radius-2));
   }
-  [dir="ltr"] .sf-file-upload {
+  @supports not (border-end-start-radius: initial) {
+  [dir="rtl"] .sf-file-upload {
+    border-bottom-right-radius: var(--sf-radius-2);
+    border-bottom-right-radius: var(--sf-file-upload--border-bottom-left-radius, var(--sf-radius-2));
+    }
+  }
+  .sf-file-upload:where(:dir(rtl)) {
+    border-bottom-right-radius: var(--sf-radius-2);
+    border-bottom-right-radius: var(--sf-file-upload--border-bottom-left-radius, var(--sf-radius-2));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-file-upload {
     border-right-width: var(--sf-a1);
     border-right-width: var(--sf-file-upload--border-right-width, var(--sf-a1));
   }
-  [dir="rtl"] .sf-file-upload {
+  @supports not (border-inline-end-width: initial) {
+  html:not([dir="rtl"]) .sf-file-upload {
+    border-right-width: var(--sf-a1);
+    border-right-width: var(--sf-file-upload--border-right-width, var(--sf-a1));
+    }
+  }
+  .sf-file-upload:where(:dir(ltr)) {
+    border-right-width: var(--sf-a1);
+    border-right-width: var(--sf-file-upload--border-right-width, var(--sf-a1));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-file-upload {
     border-left-width: var(--sf-a1);
     border-left-width: var(--sf-file-upload--border-right-width, var(--sf-a1));
   }
-  [dir="ltr"] .sf-file-upload {
+  @supports not (border-inline-end-width: initial) {
+  [dir="rtl"] .sf-file-upload {
+    border-left-width: var(--sf-a1);
+    border-left-width: var(--sf-file-upload--border-right-width, var(--sf-a1));
+    }
+  }
+  .sf-file-upload:where(:dir(rtl)) {
+    border-left-width: var(--sf-a1);
+    border-left-width: var(--sf-file-upload--border-right-width, var(--sf-a1));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-file-upload {
     border-left-width: var(--sf-a1);
     border-left-width: var(--sf-file-upload--border-left-width, var(--sf-a1));
   }
-  [dir="rtl"] .sf-file-upload {
+  @supports not (border-inline-start-width: initial) {
+  html:not([dir="rtl"]) .sf-file-upload {
+    border-left-width: var(--sf-a1);
+    border-left-width: var(--sf-file-upload--border-left-width, var(--sf-a1));
+    }
+  }
+  .sf-file-upload:where(:dir(ltr)) {
+    border-left-width: var(--sf-a1);
+    border-left-width: var(--sf-file-upload--border-left-width, var(--sf-a1));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-file-upload {
     border-right-width: var(--sf-a1);
     border-right-width: var(--sf-file-upload--border-left-width, var(--sf-a1));
   }
-  [dir="ltr"] .sf-file-upload {
+  @supports not (border-inline-start-width: initial) {
+  [dir="rtl"] .sf-file-upload {
+    border-right-width: var(--sf-a1);
+    border-right-width: var(--sf-file-upload--border-left-width, var(--sf-a1));
+    }
+  }
+  .sf-file-upload:where(:dir(rtl)) {
+    border-right-width: var(--sf-a1);
+    border-right-width: var(--sf-file-upload--border-left-width, var(--sf-a1));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-file-upload {
     border-top-right-radius: var(--sf-radius-2);
     border-top-right-radius: var(--sf-file-upload--border-top-right-radius, var(--sf-radius-2));
   }
-  [dir="rtl"] .sf-file-upload {
+  @supports not (border-start-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-file-upload {
+    border-top-right-radius: var(--sf-radius-2);
+    border-top-right-radius: var(--sf-file-upload--border-top-right-radius, var(--sf-radius-2));
+    }
+  }
+  .sf-file-upload:where(:dir(ltr)) {
+    border-top-right-radius: var(--sf-radius-2);
+    border-top-right-radius: var(--sf-file-upload--border-top-right-radius, var(--sf-radius-2));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-file-upload {
     border-top-left-radius: var(--sf-radius-2);
     border-top-left-radius: var(--sf-file-upload--border-top-right-radius, var(--sf-radius-2));
   }
-  [dir="ltr"] .sf-file-upload {
+  @supports not (border-start-end-radius: initial) {
+  [dir="rtl"] .sf-file-upload {
+    border-top-left-radius: var(--sf-radius-2);
+    border-top-left-radius: var(--sf-file-upload--border-top-right-radius, var(--sf-radius-2));
+    }
+  }
+  .sf-file-upload:where(:dir(rtl)) {
+    border-top-left-radius: var(--sf-radius-2);
+    border-top-left-radius: var(--sf-file-upload--border-top-right-radius, var(--sf-radius-2));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-file-upload {
     border-top-left-radius: var(--sf-radius-2);
     border-top-left-radius: var(--sf-file-upload--border-top-left-radius, var(--sf-radius-2));
   }
-  [dir="rtl"] .sf-file-upload {
+  @supports not (border-start-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-file-upload {
+    border-top-left-radius: var(--sf-radius-2);
+    border-top-left-radius: var(--sf-file-upload--border-top-left-radius, var(--sf-radius-2));
+    }
+  }
+  .sf-file-upload:where(:dir(ltr)) {
+    border-top-left-radius: var(--sf-radius-2);
+    border-top-left-radius: var(--sf-file-upload--border-top-left-radius, var(--sf-radius-2));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-file-upload {
     border-top-right-radius: var(--sf-radius-2);
     border-top-right-radius: var(--sf-file-upload--border-top-left-radius, var(--sf-radius-2));
   }
-  [dir="ltr"] .sf-file-upload {
+  @supports not (border-start-start-radius: initial) {
+  [dir="rtl"] .sf-file-upload {
+    border-top-right-radius: var(--sf-radius-2);
+    border-top-right-radius: var(--sf-file-upload--border-top-left-radius, var(--sf-radius-2));
+    }
+  }
+  .sf-file-upload:where(:dir(rtl)) {
+    border-top-right-radius: var(--sf-radius-2);
+    border-top-right-radius: var(--sf-file-upload--border-top-left-radius, var(--sf-radius-2));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-file-upload {
     padding-left: var(--sf-file-upload--padding-inline-start);
   }
-  [dir="rtl"] .sf-file-upload {
+  @supports not (padding-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-file-upload {
+    padding-left: var(--sf-file-upload--padding-inline-start);
+    }
+  }
+  .sf-file-upload:where(:dir(ltr)) {
+    padding-left: var(--sf-file-upload--padding-inline-start);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-file-upload {
     padding-right: var(--sf-file-upload--padding-inline-start);
   }
-  [dir="ltr"] .sf-file-upload {
+  @supports not (padding-inline-start: initial) {
+  [dir="rtl"] .sf-file-upload {
+    padding-right: var(--sf-file-upload--padding-inline-start);
+    }
+  }
+  .sf-file-upload:where(:dir(rtl)) {
+    padding-right: var(--sf-file-upload--padding-inline-start);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-file-upload {
     padding-right: var(--sf-file-upload--padding-inline-end);
   }
-  [dir="rtl"] .sf-file-upload {
+  @supports not (padding-inline-end: initial) {
+  html:not([dir="rtl"]) .sf-file-upload {
+    padding-right: var(--sf-file-upload--padding-inline-end);
+    }
+  }
+  .sf-file-upload:where(:dir(ltr)) {
+    padding-right: var(--sf-file-upload--padding-inline-end);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-file-upload {
     padding-left: var(--sf-file-upload--padding-inline-end);
   }
-  [dir="ltr"] .sf-file-upload {
+  @supports not (padding-inline-end: initial) {
+  [dir="rtl"] .sf-file-upload {
+    padding-left: var(--sf-file-upload--padding-inline-end);
+    }
+  }
+  .sf-file-upload:where(:dir(rtl)) {
+    padding-left: var(--sf-file-upload--padding-inline-end);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-file-upload {
     border-bottom-right-radius: var(--sf-radius-2);
   }
-  [dir="rtl"] .sf-file-upload {
-    border-bottom-left-radius: var(--sf-radius-2);
+  @supports not (border-end-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-file-upload {
+    border-bottom-right-radius: var(--sf-radius-2);
+    }
   }
-  [dir="ltr"] .sf-file-upload {
-    border-bottom-left-radius: var(--sf-radius-2);
-  }
-  [dir="rtl"] .sf-file-upload {
+  .sf-file-upload:where(:dir(ltr)) {
     border-bottom-right-radius: var(--sf-radius-2);
   }
-  [dir="ltr"] .sf-file-upload {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-file-upload {
+    border-bottom-left-radius: var(--sf-radius-2);
+  }
+  @supports not (border-end-end-radius: initial) {
+  [dir="rtl"] .sf-file-upload {
+    border-bottom-left-radius: var(--sf-radius-2);
+    }
+  }
+  .sf-file-upload:where(:dir(rtl)) {
+    border-bottom-left-radius: var(--sf-radius-2);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-file-upload {
+    border-bottom-left-radius: var(--sf-radius-2);
+  }
+  @supports not (border-end-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-file-upload {
+    border-bottom-left-radius: var(--sf-radius-2);
+    }
+  }
+  .sf-file-upload:where(:dir(ltr)) {
+    border-bottom-left-radius: var(--sf-radius-2);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-file-upload {
+    border-bottom-right-radius: var(--sf-radius-2);
+  }
+  @supports not (border-end-start-radius: initial) {
+  [dir="rtl"] .sf-file-upload {
+    border-bottom-right-radius: var(--sf-radius-2);
+    }
+  }
+  .sf-file-upload:where(:dir(rtl)) {
+    border-bottom-right-radius: var(--sf-radius-2);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-file-upload {
     border-right-width: var(--sf-a1);
   }
-  [dir="rtl"] .sf-file-upload {
-    border-left-width: var(--sf-a1);
+  @supports not (border-inline-end-width: initial) {
+  html:not([dir="rtl"]) .sf-file-upload {
+    border-right-width: var(--sf-a1);
+    }
   }
-  [dir="ltr"] .sf-file-upload {
-    border-left-width: var(--sf-a1);
-  }
-  [dir="rtl"] .sf-file-upload {
+  .sf-file-upload:where(:dir(ltr)) {
     border-right-width: var(--sf-a1);
   }
-  [dir="ltr"] .sf-file-upload {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-file-upload {
+    border-left-width: var(--sf-a1);
+  }
+  @supports not (border-inline-end-width: initial) {
+  [dir="rtl"] .sf-file-upload {
+    border-left-width: var(--sf-a1);
+    }
+  }
+  .sf-file-upload:where(:dir(rtl)) {
+    border-left-width: var(--sf-a1);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-file-upload {
+    border-left-width: var(--sf-a1);
+  }
+  @supports not (border-inline-start-width: initial) {
+  html:not([dir="rtl"]) .sf-file-upload {
+    border-left-width: var(--sf-a1);
+    }
+  }
+  .sf-file-upload:where(:dir(ltr)) {
+    border-left-width: var(--sf-a1);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-file-upload {
+    border-right-width: var(--sf-a1);
+  }
+  @supports not (border-inline-start-width: initial) {
+  [dir="rtl"] .sf-file-upload {
+    border-right-width: var(--sf-a1);
+    }
+  }
+  .sf-file-upload:where(:dir(rtl)) {
+    border-right-width: var(--sf-a1);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-file-upload {
     border-top-right-radius: var(--sf-radius-2);
   }
-  [dir="rtl"] .sf-file-upload {
+  @supports not (border-start-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-file-upload {
+    border-top-right-radius: var(--sf-radius-2);
+    }
+  }
+  .sf-file-upload:where(:dir(ltr)) {
+    border-top-right-radius: var(--sf-radius-2);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-file-upload {
     border-top-left-radius: var(--sf-radius-2);
   }
-  [dir="ltr"] .sf-file-upload {
+  @supports not (border-start-end-radius: initial) {
+  [dir="rtl"] .sf-file-upload {
+    border-top-left-radius: var(--sf-radius-2);
+    }
+  }
+  .sf-file-upload:where(:dir(rtl)) {
     border-top-left-radius: var(--sf-radius-2);
   }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-file-upload {
+    border-top-left-radius: var(--sf-radius-2);
+  }
+  @supports not (border-start-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-file-upload {
+    border-top-left-radius: var(--sf-radius-2);
+    }
+  }
+  .sf-file-upload:where(:dir(ltr)) {
+    border-top-left-radius: var(--sf-radius-2);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-file-upload {
+    border-top-right-radius: var(--sf-radius-2);
+  }
+  @supports not (border-start-start-radius: initial) {
   [dir="rtl"] .sf-file-upload {
+    border-top-right-radius: var(--sf-radius-2);
+    }
+  }
+  .sf-file-upload:where(:dir(rtl)) {
     border-top-right-radius: var(--sf-radius-2);
   }
   .sf-file-upload {
@@ -357,16 +605,48 @@
     height: var(--sf-icon--height);
     width: var(--sf-icon--width);
   }
-  [dir="ltr"] .sf-upload-progress .sf-icon-button {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-upload-progress .sf-icon-button {
     padding-right: var(--sf-icon-button--padding-inline-end);
   }
-  [dir="rtl"] .sf-upload-progress .sf-icon-button {
+  @supports not (padding-inline-end: initial) {
+  html:not([dir="rtl"]) .sf-upload-progress .sf-icon-button {
+    padding-right: var(--sf-icon-button--padding-inline-end);
+    }
+  }
+  .sf-upload-progress .sf-icon-button:where(:dir(ltr)) {
+    padding-right: var(--sf-icon-button--padding-inline-end);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-upload-progress .sf-icon-button {
     padding-left: var(--sf-icon-button--padding-inline-end);
   }
-  [dir="ltr"] .sf-upload-progress .sf-icon-button {
+  @supports not (padding-inline-end: initial) {
+  [dir="rtl"] .sf-upload-progress .sf-icon-button {
+    padding-left: var(--sf-icon-button--padding-inline-end);
+    }
+  }
+  .sf-upload-progress .sf-icon-button:where(:dir(rtl)) {
+    padding-left: var(--sf-icon-button--padding-inline-end);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-upload-progress .sf-icon-button {
     padding-left: var(--sf-icon-button--padding-inline-start);
   }
+  @supports not (padding-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-upload-progress .sf-icon-button {
+    padding-left: var(--sf-icon-button--padding-inline-start);
+    }
+  }
+  .sf-upload-progress .sf-icon-button:where(:dir(ltr)) {
+    padding-left: var(--sf-icon-button--padding-inline-start);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-upload-progress .sf-icon-button {
+    padding-right: var(--sf-icon-button--padding-inline-start);
+  }
+  @supports not (padding-inline-start: initial) {
   [dir="rtl"] .sf-upload-progress .sf-icon-button {
+    padding-right: var(--sf-icon-button--padding-inline-start);
+    }
+  }
+  .sf-upload-progress .sf-icon-button:where(:dir(rtl)) {
     padding-right: var(--sf-icon-button--padding-inline-start);
   }
   .sf-upload-progress .sf-icon-button {
@@ -394,16 +674,48 @@
     --sf-upload-progress-name--font-size: var(--sf-text-size-1);
     --sf-upload-progress-name--line-height: var(--sf-text-height-1);
   }
-  [dir="ltr"] .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon,[dir="ltr"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon,[dir="ltr"]  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon,[dir="ltr"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon,[dir="ltr"]  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-3 .sf-button .sf-icon,[dir="ltr"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-3 .sf-button .sf-icon {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-3 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-3 .sf-button .sf-icon {
     padding-right: var(--sf-ui-1\/3--space-y-tightness-default);
   }
-  [dir="rtl"] .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-3 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-3 .sf-button .sf-icon {
+  @supports not (padding-inline-end: initial) {
+  html:not([dir="rtl"]) .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-3 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-3 .sf-button .sf-icon {
+    padding-right: var(--sf-ui-1\/3--space-y-tightness-default);
+    }
+  }
+  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon:where(:dir(ltr)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon:where(:dir(ltr)), .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon:where(:dir(ltr)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon:where(:dir(ltr)), .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-3 .sf-button .sf-icon:where(:dir(ltr)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-3 .sf-button .sf-icon:where(:dir(ltr)) {
+    padding-right: var(--sf-ui-1\/3--space-y-tightness-default);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-3 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-3 .sf-button .sf-icon {
     padding-left: var(--sf-ui-1\/3--space-y-tightness-default);
   }
-  [dir="ltr"] .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon,[dir="ltr"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon,[dir="ltr"]  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon,[dir="ltr"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon,[dir="ltr"]  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-3 .sf-button .sf-icon,[dir="ltr"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-3 .sf-button .sf-icon {
+  @supports not (padding-inline-end: initial) {
+  [dir="rtl"] .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-3 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-3 .sf-button .sf-icon {
+    padding-left: var(--sf-ui-1\/3--space-y-tightness-default);
+    }
+  }
+  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon:where(:dir(rtl)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon:where(:dir(rtl)), .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon:where(:dir(rtl)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon:where(:dir(rtl)), .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-3 .sf-button .sf-icon:where(:dir(rtl)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-3 .sf-button .sf-icon:where(:dir(rtl)) {
     padding-left: var(--sf-ui-1\/3--space-y-tightness-default);
   }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-3 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-3 .sf-button .sf-icon {
+    padding-left: var(--sf-ui-1\/3--space-y-tightness-default);
+  }
+  @supports not (padding-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-3 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-3 .sf-button .sf-icon {
+    padding-left: var(--sf-ui-1\/3--space-y-tightness-default);
+    }
+  }
+  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon:where(:dir(ltr)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon:where(:dir(ltr)), .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon:where(:dir(ltr)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon:where(:dir(ltr)), .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-3 .sf-button .sf-icon:where(:dir(ltr)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-3 .sf-button .sf-icon:where(:dir(ltr)) {
+    padding-left: var(--sf-ui-1\/3--space-y-tightness-default);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-3 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-3 .sf-button .sf-icon {
+    padding-right: var(--sf-ui-1\/3--space-y-tightness-default);
+  }
+  @supports not (padding-inline-start: initial) {
   [dir="rtl"] .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-3 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-3 .sf-button .sf-icon {
+    padding-right: var(--sf-ui-1\/3--space-y-tightness-default);
+    }
+  }
+  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon:where(:dir(rtl)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon:where(:dir(rtl)), .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon:where(:dir(rtl)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon:where(:dir(rtl)), .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-3 .sf-button .sf-icon:where(:dir(rtl)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-3 .sf-button .sf-icon:where(:dir(rtl)) {
     padding-right: var(--sf-ui-1\/3--space-y-tightness-default);
   }
   .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon, .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon, .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon, .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon, .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-3 .sf-button .sf-icon, .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-3 .sf-button .sf-icon {
@@ -462,16 +774,48 @@
     --sf-upload-progress-name--font-size: var(--sf-text-size-1\/2);
     --sf-upload-progress-name--line-height: var(--sf-text-height-1\/2);
   }
-  [dir="ltr"] .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/2 .sf-button .sf-icon,[dir="ltr"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/2 .sf-button .sf-icon {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/2 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/2 .sf-button .sf-icon {
     padding-right: var(--sf-ui-1\/3--space-y-tightness-default);
   }
-  [dir="rtl"] .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/2 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/2 .sf-button .sf-icon {
+  @supports not (padding-inline-end: initial) {
+  html:not([dir="rtl"]) .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/2 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/2 .sf-button .sf-icon {
+    padding-right: var(--sf-ui-1\/3--space-y-tightness-default);
+    }
+  }
+  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/2 .sf-button .sf-icon:where(:dir(ltr)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/2 .sf-button .sf-icon:where(:dir(ltr)) {
+    padding-right: var(--sf-ui-1\/3--space-y-tightness-default);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/2 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/2 .sf-button .sf-icon {
     padding-left: var(--sf-ui-1\/3--space-y-tightness-default);
   }
-  [dir="ltr"] .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/2 .sf-button .sf-icon,[dir="ltr"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/2 .sf-button .sf-icon {
+  @supports not (padding-inline-end: initial) {
+  [dir="rtl"] .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/2 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/2 .sf-button .sf-icon {
+    padding-left: var(--sf-ui-1\/3--space-y-tightness-default);
+    }
+  }
+  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/2 .sf-button .sf-icon:where(:dir(rtl)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/2 .sf-button .sf-icon:where(:dir(rtl)) {
     padding-left: var(--sf-ui-1\/3--space-y-tightness-default);
   }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/2 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/2 .sf-button .sf-icon {
+    padding-left: var(--sf-ui-1\/3--space-y-tightness-default);
+  }
+  @supports not (padding-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/2 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/2 .sf-button .sf-icon {
+    padding-left: var(--sf-ui-1\/3--space-y-tightness-default);
+    }
+  }
+  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/2 .sf-button .sf-icon:where(:dir(ltr)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/2 .sf-button .sf-icon:where(:dir(ltr)) {
+    padding-left: var(--sf-ui-1\/3--space-y-tightness-default);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/2 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/2 .sf-button .sf-icon {
+    padding-right: var(--sf-ui-1\/3--space-y-tightness-default);
+  }
+  @supports not (padding-inline-start: initial) {
   [dir="rtl"] .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/2 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/2 .sf-button .sf-icon {
+    padding-right: var(--sf-ui-1\/3--space-y-tightness-default);
+    }
+  }
+  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/2 .sf-button .sf-icon:where(:dir(rtl)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/2 .sf-button .sf-icon:where(:dir(rtl)) {
     padding-right: var(--sf-ui-1\/3--space-y-tightness-default);
   }
   .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/2 .sf-button .sf-icon, .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/2 .sf-button .sf-icon {

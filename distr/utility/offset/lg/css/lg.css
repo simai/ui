@@ -1,109 +1,285 @@
 @layer sf.utilities {
   @media (min-width: 60rem) {
-    [dir="ltr"] .lg\:offset-1\/12 {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:offset-1\/12 {
       margin-left: 8.333333%;
     }
+    @supports not (margin-inline-start: initial) {
+    html:not([dir="rtl"]) .lg\:offset-1\/12 {
+      margin-left: 8.333333%;
+      }
+    }
+    .lg\:offset-1\/12:where(:dir(ltr)) {
+      margin-left: 8.333333%;
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .lg\:offset-1\/12 {
+      margin-right: 8.333333%;
+    }
+    @supports not (margin-inline-start: initial) {
     [dir="rtl"] .lg\:offset-1\/12 {
+      margin-right: 8.333333%;
+      }
+    }
+    .lg\:offset-1\/12:where(:dir(rtl)) {
       margin-right: 8.333333%;
     }
     .lg\:offset-1\/12 {
       -webkit-margin-start: 8.333333%;
               margin-inline-start: 8.333333%;
     }
-    [dir="ltr"] .lg\:offset-2\/12 {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:offset-2\/12 {
       margin-left: 16.666667%;
     }
+    @supports not (margin-inline-start: initial) {
+    html:not([dir="rtl"]) .lg\:offset-2\/12 {
+      margin-left: 16.666667%;
+      }
+    }
+    .lg\:offset-2\/12:where(:dir(ltr)) {
+      margin-left: 16.666667%;
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .lg\:offset-2\/12 {
+      margin-right: 16.666667%;
+    }
+    @supports not (margin-inline-start: initial) {
     [dir="rtl"] .lg\:offset-2\/12 {
+      margin-right: 16.666667%;
+      }
+    }
+    .lg\:offset-2\/12:where(:dir(rtl)) {
       margin-right: 16.666667%;
     }
     .lg\:offset-2\/12 {
       -webkit-margin-start: 16.666667%;
               margin-inline-start: 16.666667%;
     }
-    [dir="ltr"] .lg\:offset-3\/12 {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:offset-3\/12 {
       margin-left: 25%;
     }
+    @supports not (margin-inline-start: initial) {
+    html:not([dir="rtl"]) .lg\:offset-3\/12 {
+      margin-left: 25%;
+      }
+    }
+    .lg\:offset-3\/12:where(:dir(ltr)) {
+      margin-left: 25%;
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .lg\:offset-3\/12 {
+      margin-right: 25%;
+    }
+    @supports not (margin-inline-start: initial) {
     [dir="rtl"] .lg\:offset-3\/12 {
+      margin-right: 25%;
+      }
+    }
+    .lg\:offset-3\/12:where(:dir(rtl)) {
       margin-right: 25%;
     }
     .lg\:offset-3\/12 {
       -webkit-margin-start: 25%;
               margin-inline-start: 25%;
     }
-    [dir="ltr"] .lg\:offset-4\/12 {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:offset-4\/12 {
       margin-left: 33.333333%;
     }
+    @supports not (margin-inline-start: initial) {
+    html:not([dir="rtl"]) .lg\:offset-4\/12 {
+      margin-left: 33.333333%;
+      }
+    }
+    .lg\:offset-4\/12:where(:dir(ltr)) {
+      margin-left: 33.333333%;
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .lg\:offset-4\/12 {
+      margin-right: 33.333333%;
+    }
+    @supports not (margin-inline-start: initial) {
     [dir="rtl"] .lg\:offset-4\/12 {
+      margin-right: 33.333333%;
+      }
+    }
+    .lg\:offset-4\/12:where(:dir(rtl)) {
       margin-right: 33.333333%;
     }
     .lg\:offset-4\/12 {
       -webkit-margin-start: 33.333333%;
               margin-inline-start: 33.333333%;
     }
-    [dir="ltr"] .lg\:offset-5\/12 {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:offset-5\/12 {
       margin-left: 41.666667%;
     }
+    @supports not (margin-inline-start: initial) {
+    html:not([dir="rtl"]) .lg\:offset-5\/12 {
+      margin-left: 41.666667%;
+      }
+    }
+    .lg\:offset-5\/12:where(:dir(ltr)) {
+      margin-left: 41.666667%;
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .lg\:offset-5\/12 {
+      margin-right: 41.666667%;
+    }
+    @supports not (margin-inline-start: initial) {
     [dir="rtl"] .lg\:offset-5\/12 {
+      margin-right: 41.666667%;
+      }
+    }
+    .lg\:offset-5\/12:where(:dir(rtl)) {
       margin-right: 41.666667%;
     }
     .lg\:offset-5\/12 {
       -webkit-margin-start: 41.666667%;
               margin-inline-start: 41.666667%;
     }
-    [dir="ltr"] .lg\:offset-6\/12 {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:offset-6\/12 {
       margin-left: 50%;
     }
+    @supports not (margin-inline-start: initial) {
+    html:not([dir="rtl"]) .lg\:offset-6\/12 {
+      margin-left: 50%;
+      }
+    }
+    .lg\:offset-6\/12:where(:dir(ltr)) {
+      margin-left: 50%;
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .lg\:offset-6\/12 {
+      margin-right: 50%;
+    }
+    @supports not (margin-inline-start: initial) {
     [dir="rtl"] .lg\:offset-6\/12 {
+      margin-right: 50%;
+      }
+    }
+    .lg\:offset-6\/12:where(:dir(rtl)) {
       margin-right: 50%;
     }
     .lg\:offset-6\/12 {
       -webkit-margin-start: 50%;
               margin-inline-start: 50%;
     }
-    [dir="ltr"] .lg\:offset-7\/12 {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:offset-7\/12 {
       margin-left: 58.333333%;
     }
+    @supports not (margin-inline-start: initial) {
+    html:not([dir="rtl"]) .lg\:offset-7\/12 {
+      margin-left: 58.333333%;
+      }
+    }
+    .lg\:offset-7\/12:where(:dir(ltr)) {
+      margin-left: 58.333333%;
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .lg\:offset-7\/12 {
+      margin-right: 58.333333%;
+    }
+    @supports not (margin-inline-start: initial) {
     [dir="rtl"] .lg\:offset-7\/12 {
+      margin-right: 58.333333%;
+      }
+    }
+    .lg\:offset-7\/12:where(:dir(rtl)) {
       margin-right: 58.333333%;
     }
     .lg\:offset-7\/12 {
       -webkit-margin-start: 58.333333%;
               margin-inline-start: 58.333333%;
     }
-    [dir="ltr"] .lg\:offset-8\/12 {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:offset-8\/12 {
       margin-left: 66.666667%;
     }
+    @supports not (margin-inline-start: initial) {
+    html:not([dir="rtl"]) .lg\:offset-8\/12 {
+      margin-left: 66.666667%;
+      }
+    }
+    .lg\:offset-8\/12:where(:dir(ltr)) {
+      margin-left: 66.666667%;
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .lg\:offset-8\/12 {
+      margin-right: 66.666667%;
+    }
+    @supports not (margin-inline-start: initial) {
     [dir="rtl"] .lg\:offset-8\/12 {
+      margin-right: 66.666667%;
+      }
+    }
+    .lg\:offset-8\/12:where(:dir(rtl)) {
       margin-right: 66.666667%;
     }
     .lg\:offset-8\/12 {
       -webkit-margin-start: 66.666667%;
               margin-inline-start: 66.666667%;
     }
-    [dir="ltr"] .lg\:offset-9\/12 {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:offset-9\/12 {
       margin-left: 75%;
     }
+    @supports not (margin-inline-start: initial) {
+    html:not([dir="rtl"]) .lg\:offset-9\/12 {
+      margin-left: 75%;
+      }
+    }
+    .lg\:offset-9\/12:where(:dir(ltr)) {
+      margin-left: 75%;
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .lg\:offset-9\/12 {
+      margin-right: 75%;
+    }
+    @supports not (margin-inline-start: initial) {
     [dir="rtl"] .lg\:offset-9\/12 {
+      margin-right: 75%;
+      }
+    }
+    .lg\:offset-9\/12:where(:dir(rtl)) {
       margin-right: 75%;
     }
     .lg\:offset-9\/12 {
       -webkit-margin-start: 75%;
               margin-inline-start: 75%;
     }
-    [dir="ltr"] .lg\:offset-10\/12 {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:offset-10\/12 {
       margin-left: 83.333333%;
     }
+    @supports not (margin-inline-start: initial) {
+    html:not([dir="rtl"]) .lg\:offset-10\/12 {
+      margin-left: 83.333333%;
+      }
+    }
+    .lg\:offset-10\/12:where(:dir(ltr)) {
+      margin-left: 83.333333%;
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .lg\:offset-10\/12 {
+      margin-right: 83.333333%;
+    }
+    @supports not (margin-inline-start: initial) {
     [dir="rtl"] .lg\:offset-10\/12 {
+      margin-right: 83.333333%;
+      }
+    }
+    .lg\:offset-10\/12:where(:dir(rtl)) {
       margin-right: 83.333333%;
     }
     .lg\:offset-10\/12 {
       -webkit-margin-start: 83.333333%;
               margin-inline-start: 83.333333%;
     }
-    [dir="ltr"] .lg\:offset-11\/12 {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:offset-11\/12 {
       margin-left: 91.666667%;
     }
+    @supports not (margin-inline-start: initial) {
+    html:not([dir="rtl"]) .lg\:offset-11\/12 {
+      margin-left: 91.666667%;
+      }
+    }
+    .lg\:offset-11\/12:where(:dir(ltr)) {
+      margin-left: 91.666667%;
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .lg\:offset-11\/12 {
+      margin-right: 91.666667%;
+    }
+    @supports not (margin-inline-start: initial) {
     [dir="rtl"] .lg\:offset-11\/12 {
+      margin-right: 91.666667%;
+      }
+    }
+    .lg\:offset-11\/12:where(:dir(rtl)) {
       margin-right: 91.666667%;
     }
     .lg\:offset-11\/12 {

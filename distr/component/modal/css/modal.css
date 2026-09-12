@@ -126,11 +126,11 @@
     -webkit-transform: translateX(100%);
             transform: translateX(100%);
   }
-  [dir="rtl"] .sf-modal[data-sf-modal-position=inline-start] [data-sf-modal-panel] {
+  .sf-modal[data-sf-modal-position=inline-start]:dir(rtl) [data-sf-modal-panel] {
     -webkit-transform: translateX(100%);
             transform: translateX(100%);
   }
-  [dir="rtl"] .sf-modal[data-sf-modal-position=inline-end] [data-sf-modal-panel] {
+  .sf-modal[data-sf-modal-position=inline-end]:dir(rtl) [data-sf-modal-panel] {
     -webkit-transform: translateX(-100%);
             transform: translateX(-100%);
   }
@@ -178,11 +178,11 @@
     -webkit-transform: translateX(100%);
             transform: translateX(100%);
   }
-  [dir="rtl"] .sf-modal[data-sf-modal-state=closing][data-sf-modal-position=inline-start] [data-sf-modal-panel] {
+  .sf-modal[data-sf-modal-state=closing][data-sf-modal-position=inline-start]:dir(rtl) [data-sf-modal-panel] {
     -webkit-transform: translateX(100%);
             transform: translateX(100%);
   }
-  [dir="rtl"] .sf-modal[data-sf-modal-state=closing][data-sf-modal-position=inline-end] [data-sf-modal-panel] {
+  .sf-modal[data-sf-modal-state=closing][data-sf-modal-position=inline-end]:dir(rtl) [data-sf-modal-panel] {
     -webkit-transform: translateX(-100%);
             transform: translateX(-100%);
   }
@@ -262,18 +262,54 @@
     left: var(--sf-modal-close-left);
     bottom: var(--sf-modal-close-bottom);
   }
-  [dir="ltr"] .sf-modal-close-button--inline-end {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-modal-close-button--inline-end {
     right: var(--sf-modal-close-right);
     right: var(--sf-modal-close-inline-end, var(--sf-modal-close-right));
   }
-  [dir="rtl"] .sf-modal-close-button--inline-end {
+  @supports not (inset-inline-end: initial) {
+  html:not([dir="rtl"]) .sf-modal-close-button--inline-end {
+    right: var(--sf-modal-close-right);
+    right: var(--sf-modal-close-inline-end, var(--sf-modal-close-right));
+    }
+  }
+  .sf-modal-close-button--inline-end:where(:dir(ltr)) {
+    right: var(--sf-modal-close-right);
+    right: var(--sf-modal-close-inline-end, var(--sf-modal-close-right));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-modal-close-button--inline-end {
     left: var(--sf-modal-close-right);
     left: var(--sf-modal-close-inline-end, var(--sf-modal-close-right));
   }
-  [dir="ltr"] .sf-modal-close-button--inline-end {
+  @supports not (inset-inline-end: initial) {
+  [dir="rtl"] .sf-modal-close-button--inline-end {
+    left: var(--sf-modal-close-right);
+    left: var(--sf-modal-close-inline-end, var(--sf-modal-close-right));
+    }
+  }
+  .sf-modal-close-button--inline-end:where(:dir(rtl)) {
+    left: var(--sf-modal-close-right);
+    left: var(--sf-modal-close-inline-end, var(--sf-modal-close-right));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-modal-close-button--inline-end {
     right: var(--sf-modal-close-right);
   }
+  @supports not (inset-inline-end: initial) {
+  html:not([dir="rtl"]) .sf-modal-close-button--inline-end {
+    right: var(--sf-modal-close-right);
+    }
+  }
+  .sf-modal-close-button--inline-end:where(:dir(ltr)) {
+    right: var(--sf-modal-close-right);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-modal-close-button--inline-end {
+    left: var(--sf-modal-close-right);
+  }
+  @supports not (inset-inline-end: initial) {
   [dir="rtl"] .sf-modal-close-button--inline-end {
+    left: var(--sf-modal-close-right);
+    }
+  }
+  .sf-modal-close-button--inline-end:where(:dir(rtl)) {
     left: var(--sf-modal-close-right);
   }
   .sf-modal-close-button--inline-end {
@@ -290,18 +326,54 @@
     left: var(--sf-modal-hide-left);
     bottom: var(--sf-modal-hide-bottom);
   }
-  [dir="ltr"] .sf-modal-hide-button--inline-end {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-modal-hide-button--inline-end {
     right: var(--sf-modal-hide-right);
     right: var(--sf-modal-hide-inline-end, var(--sf-modal-hide-right));
   }
-  [dir="rtl"] .sf-modal-hide-button--inline-end {
+  @supports not (inset-inline-end: initial) {
+  html:not([dir="rtl"]) .sf-modal-hide-button--inline-end {
+    right: var(--sf-modal-hide-right);
+    right: var(--sf-modal-hide-inline-end, var(--sf-modal-hide-right));
+    }
+  }
+  .sf-modal-hide-button--inline-end:where(:dir(ltr)) {
+    right: var(--sf-modal-hide-right);
+    right: var(--sf-modal-hide-inline-end, var(--sf-modal-hide-right));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-modal-hide-button--inline-end {
     left: var(--sf-modal-hide-right);
     left: var(--sf-modal-hide-inline-end, var(--sf-modal-hide-right));
   }
-  [dir="ltr"] .sf-modal-hide-button--inline-end {
+  @supports not (inset-inline-end: initial) {
+  [dir="rtl"] .sf-modal-hide-button--inline-end {
+    left: var(--sf-modal-hide-right);
+    left: var(--sf-modal-hide-inline-end, var(--sf-modal-hide-right));
+    }
+  }
+  .sf-modal-hide-button--inline-end:where(:dir(rtl)) {
+    left: var(--sf-modal-hide-right);
+    left: var(--sf-modal-hide-inline-end, var(--sf-modal-hide-right));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-modal-hide-button--inline-end {
     right: var(--sf-modal-hide-right);
   }
+  @supports not (inset-inline-end: initial) {
+  html:not([dir="rtl"]) .sf-modal-hide-button--inline-end {
+    right: var(--sf-modal-hide-right);
+    }
+  }
+  .sf-modal-hide-button--inline-end:where(:dir(ltr)) {
+    right: var(--sf-modal-hide-right);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-modal-hide-button--inline-end {
+    left: var(--sf-modal-hide-right);
+  }
+  @supports not (inset-inline-end: initial) {
   [dir="rtl"] .sf-modal-hide-button--inline-end {
+    left: var(--sf-modal-hide-right);
+    }
+  }
+  .sf-modal-hide-button--inline-end:where(:dir(rtl)) {
     left: var(--sf-modal-hide-right);
   }
   .sf-modal-hide-button--inline-end {

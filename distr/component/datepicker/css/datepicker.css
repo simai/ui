@@ -1,87 +1,303 @@
 @layer sf.components {
   /* utility-hint: display/flex (.flex) flex-direction/column (.flex-col) flex-wrap/nowrap (.flex-nowrap) justify-content/flex-start (.justify-start) align-items/center (.items-center) */
-  [dir="ltr"] .sf-datepicker-day {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-datepicker-day {
     border-bottom-right-radius: var(--sf-radius-1);
     border-bottom-right-radius: var(--sf-datepicker-day--border-bottom-right-radius, var(--sf-radius-1));
   }
-  [dir="rtl"] .sf-datepicker-day {
+  @supports not (border-end-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-datepicker-day {
+    border-bottom-right-radius: var(--sf-radius-1);
+    border-bottom-right-radius: var(--sf-datepicker-day--border-bottom-right-radius, var(--sf-radius-1));
+    }
+  }
+  .sf-datepicker-day:where(:dir(ltr)) {
+    border-bottom-right-radius: var(--sf-radius-1);
+    border-bottom-right-radius: var(--sf-datepicker-day--border-bottom-right-radius, var(--sf-radius-1));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-datepicker-day {
     border-bottom-left-radius: var(--sf-radius-1);
     border-bottom-left-radius: var(--sf-datepicker-day--border-bottom-right-radius, var(--sf-radius-1));
   }
-  [dir="ltr"] .sf-datepicker-day {
+  @supports not (border-end-end-radius: initial) {
+  [dir="rtl"] .sf-datepicker-day {
+    border-bottom-left-radius: var(--sf-radius-1);
+    border-bottom-left-radius: var(--sf-datepicker-day--border-bottom-right-radius, var(--sf-radius-1));
+    }
+  }
+  .sf-datepicker-day:where(:dir(rtl)) {
+    border-bottom-left-radius: var(--sf-radius-1);
+    border-bottom-left-radius: var(--sf-datepicker-day--border-bottom-right-radius, var(--sf-radius-1));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-datepicker-day {
     border-bottom-left-radius: var(--sf-radius-1);
     border-bottom-left-radius: var(--sf-datepicker-day--border-bottom-left-radius, var(--sf-radius-1));
   }
-  [dir="rtl"] .sf-datepicker-day {
+  @supports not (border-end-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-datepicker-day {
+    border-bottom-left-radius: var(--sf-radius-1);
+    border-bottom-left-radius: var(--sf-datepicker-day--border-bottom-left-radius, var(--sf-radius-1));
+    }
+  }
+  .sf-datepicker-day:where(:dir(ltr)) {
+    border-bottom-left-radius: var(--sf-radius-1);
+    border-bottom-left-radius: var(--sf-datepicker-day--border-bottom-left-radius, var(--sf-radius-1));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-datepicker-day {
     border-bottom-right-radius: var(--sf-radius-1);
     border-bottom-right-radius: var(--sf-datepicker-day--border-bottom-left-radius, var(--sf-radius-1));
   }
-  [dir="ltr"] .sf-datepicker-day {
+  @supports not (border-end-start-radius: initial) {
+  [dir="rtl"] .sf-datepicker-day {
+    border-bottom-right-radius: var(--sf-radius-1);
+    border-bottom-right-radius: var(--sf-datepicker-day--border-bottom-left-radius, var(--sf-radius-1));
+    }
+  }
+  .sf-datepicker-day:where(:dir(rtl)) {
+    border-bottom-right-radius: var(--sf-radius-1);
+    border-bottom-right-radius: var(--sf-datepicker-day--border-bottom-left-radius, var(--sf-radius-1));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-datepicker-day {
     border-top-right-radius: var(--sf-radius-1);
     border-top-right-radius: var(--sf-datepicker-day--border-top-right-radius, var(--sf-radius-1));
   }
-  [dir="rtl"] .sf-datepicker-day {
+  @supports not (border-start-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-datepicker-day {
+    border-top-right-radius: var(--sf-radius-1);
+    border-top-right-radius: var(--sf-datepicker-day--border-top-right-radius, var(--sf-radius-1));
+    }
+  }
+  .sf-datepicker-day:where(:dir(ltr)) {
+    border-top-right-radius: var(--sf-radius-1);
+    border-top-right-radius: var(--sf-datepicker-day--border-top-right-radius, var(--sf-radius-1));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-datepicker-day {
     border-top-left-radius: var(--sf-radius-1);
     border-top-left-radius: var(--sf-datepicker-day--border-top-right-radius, var(--sf-radius-1));
   }
-  [dir="ltr"] .sf-datepicker-day {
+  @supports not (border-start-end-radius: initial) {
+  [dir="rtl"] .sf-datepicker-day {
+    border-top-left-radius: var(--sf-radius-1);
+    border-top-left-radius: var(--sf-datepicker-day--border-top-right-radius, var(--sf-radius-1));
+    }
+  }
+  .sf-datepicker-day:where(:dir(rtl)) {
+    border-top-left-radius: var(--sf-radius-1);
+    border-top-left-radius: var(--sf-datepicker-day--border-top-right-radius, var(--sf-radius-1));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-datepicker-day {
     border-top-left-radius: var(--sf-radius-1);
     border-top-left-radius: var(--sf-datepicker-day--border-top-left-radius, var(--sf-radius-1));
   }
-  [dir="rtl"] .sf-datepicker-day {
+  @supports not (border-start-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-datepicker-day {
+    border-top-left-radius: var(--sf-radius-1);
+    border-top-left-radius: var(--sf-datepicker-day--border-top-left-radius, var(--sf-radius-1));
+    }
+  }
+  .sf-datepicker-day:where(:dir(ltr)) {
+    border-top-left-radius: var(--sf-radius-1);
+    border-top-left-radius: var(--sf-datepicker-day--border-top-left-radius, var(--sf-radius-1));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-datepicker-day {
     border-top-right-radius: var(--sf-radius-1);
     border-top-right-radius: var(--sf-datepicker-day--border-top-left-radius, var(--sf-radius-1));
   }
-  [dir="ltr"] .sf-datepicker-day {
+  @supports not (border-start-start-radius: initial) {
+  [dir="rtl"] .sf-datepicker-day {
+    border-top-right-radius: var(--sf-radius-1);
+    border-top-right-radius: var(--sf-datepicker-day--border-top-left-radius, var(--sf-radius-1));
+    }
+  }
+  .sf-datepicker-day:where(:dir(rtl)) {
+    border-top-right-radius: var(--sf-radius-1);
+    border-top-right-radius: var(--sf-datepicker-day--border-top-left-radius, var(--sf-radius-1));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-datepicker-day {
     padding-right: var(--sf-ui-1\/3--space-y);
     padding-right: var(--sf-datepicker-day--padding-right, var(--sf-ui-1\/3--space-y));
   }
-  [dir="rtl"] .sf-datepicker-day {
+  @supports not (padding-inline-end: initial) {
+  html:not([dir="rtl"]) .sf-datepicker-day {
+    padding-right: var(--sf-ui-1\/3--space-y);
+    padding-right: var(--sf-datepicker-day--padding-right, var(--sf-ui-1\/3--space-y));
+    }
+  }
+  .sf-datepicker-day:where(:dir(ltr)) {
+    padding-right: var(--sf-ui-1\/3--space-y);
+    padding-right: var(--sf-datepicker-day--padding-right, var(--sf-ui-1\/3--space-y));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-datepicker-day {
     padding-left: var(--sf-ui-1\/3--space-y);
     padding-left: var(--sf-datepicker-day--padding-right, var(--sf-ui-1\/3--space-y));
   }
-  [dir="ltr"] .sf-datepicker-day {
+  @supports not (padding-inline-end: initial) {
+  [dir="rtl"] .sf-datepicker-day {
+    padding-left: var(--sf-ui-1\/3--space-y);
+    padding-left: var(--sf-datepicker-day--padding-right, var(--sf-ui-1\/3--space-y));
+    }
+  }
+  .sf-datepicker-day:where(:dir(rtl)) {
+    padding-left: var(--sf-ui-1\/3--space-y);
+    padding-left: var(--sf-datepicker-day--padding-right, var(--sf-ui-1\/3--space-y));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-datepicker-day {
     padding-left: var(--sf-ui-1\/3--space-y);
     padding-left: var(--sf-datepicker-day--padding-left, var(--sf-ui-1\/3--space-y));
   }
-  [dir="rtl"] .sf-datepicker-day {
+  @supports not (padding-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-datepicker-day {
+    padding-left: var(--sf-ui-1\/3--space-y);
+    padding-left: var(--sf-datepicker-day--padding-left, var(--sf-ui-1\/3--space-y));
+    }
+  }
+  .sf-datepicker-day:where(:dir(ltr)) {
+    padding-left: var(--sf-ui-1\/3--space-y);
+    padding-left: var(--sf-datepicker-day--padding-left, var(--sf-ui-1\/3--space-y));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-datepicker-day {
     padding-right: var(--sf-ui-1\/3--space-y);
     padding-right: var(--sf-datepicker-day--padding-left, var(--sf-ui-1\/3--space-y));
   }
-  [dir="ltr"] .sf-datepicker-day {
+  @supports not (padding-inline-start: initial) {
+  [dir="rtl"] .sf-datepicker-day {
+    padding-right: var(--sf-ui-1\/3--space-y);
+    padding-right: var(--sf-datepicker-day--padding-left, var(--sf-ui-1\/3--space-y));
+    }
+  }
+  .sf-datepicker-day:where(:dir(rtl)) {
+    padding-right: var(--sf-ui-1\/3--space-y);
+    padding-right: var(--sf-datepicker-day--padding-left, var(--sf-ui-1\/3--space-y));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-datepicker-day {
     border-bottom-right-radius: var(--sf-radius-1);
   }
-  [dir="rtl"] .sf-datepicker-day {
-    border-bottom-left-radius: var(--sf-radius-1);
+  @supports not (border-end-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-datepicker-day {
+    border-bottom-right-radius: var(--sf-radius-1);
+    }
   }
-  [dir="ltr"] .sf-datepicker-day {
-    border-bottom-left-radius: var(--sf-radius-1);
-  }
-  [dir="rtl"] .sf-datepicker-day {
+  .sf-datepicker-day:where(:dir(ltr)) {
     border-bottom-right-radius: var(--sf-radius-1);
   }
-  [dir="ltr"] .sf-datepicker-day {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-datepicker-day {
+    border-bottom-left-radius: var(--sf-radius-1);
+  }
+  @supports not (border-end-end-radius: initial) {
+  [dir="rtl"] .sf-datepicker-day {
+    border-bottom-left-radius: var(--sf-radius-1);
+    }
+  }
+  .sf-datepicker-day:where(:dir(rtl)) {
+    border-bottom-left-radius: var(--sf-radius-1);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-datepicker-day {
+    border-bottom-left-radius: var(--sf-radius-1);
+  }
+  @supports not (border-end-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-datepicker-day {
+    border-bottom-left-radius: var(--sf-radius-1);
+    }
+  }
+  .sf-datepicker-day:where(:dir(ltr)) {
+    border-bottom-left-radius: var(--sf-radius-1);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-datepicker-day {
+    border-bottom-right-radius: var(--sf-radius-1);
+  }
+  @supports not (border-end-start-radius: initial) {
+  [dir="rtl"] .sf-datepicker-day {
+    border-bottom-right-radius: var(--sf-radius-1);
+    }
+  }
+  .sf-datepicker-day:where(:dir(rtl)) {
+    border-bottom-right-radius: var(--sf-radius-1);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-datepicker-day {
     border-top-right-radius: var(--sf-radius-1);
   }
-  [dir="rtl"] .sf-datepicker-day {
-    border-top-left-radius: var(--sf-radius-1);
+  @supports not (border-start-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-datepicker-day {
+    border-top-right-radius: var(--sf-radius-1);
+    }
   }
-  [dir="ltr"] .sf-datepicker-day {
-    border-top-left-radius: var(--sf-radius-1);
-  }
-  [dir="rtl"] .sf-datepicker-day {
+  .sf-datepicker-day:where(:dir(ltr)) {
     border-top-right-radius: var(--sf-radius-1);
   }
-  [dir="ltr"] .sf-datepicker-day {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-datepicker-day {
+    border-top-left-radius: var(--sf-radius-1);
+  }
+  @supports not (border-start-end-radius: initial) {
+  [dir="rtl"] .sf-datepicker-day {
+    border-top-left-radius: var(--sf-radius-1);
+    }
+  }
+  .sf-datepicker-day:where(:dir(rtl)) {
+    border-top-left-radius: var(--sf-radius-1);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-datepicker-day {
+    border-top-left-radius: var(--sf-radius-1);
+  }
+  @supports not (border-start-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-datepicker-day {
+    border-top-left-radius: var(--sf-radius-1);
+    }
+  }
+  .sf-datepicker-day:where(:dir(ltr)) {
+    border-top-left-radius: var(--sf-radius-1);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-datepicker-day {
+    border-top-right-radius: var(--sf-radius-1);
+  }
+  @supports not (border-start-start-radius: initial) {
+  [dir="rtl"] .sf-datepicker-day {
+    border-top-right-radius: var(--sf-radius-1);
+    }
+  }
+  .sf-datepicker-day:where(:dir(rtl)) {
+    border-top-right-radius: var(--sf-radius-1);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-datepicker-day {
     padding-right: var(--sf-ui-1\/3--space-y);
   }
-  [dir="rtl"] .sf-datepicker-day {
+  @supports not (padding-inline-end: initial) {
+  html:not([dir="rtl"]) .sf-datepicker-day {
+    padding-right: var(--sf-ui-1\/3--space-y);
+    }
+  }
+  .sf-datepicker-day:where(:dir(ltr)) {
+    padding-right: var(--sf-ui-1\/3--space-y);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-datepicker-day {
     padding-left: var(--sf-ui-1\/3--space-y);
   }
-  [dir="ltr"] .sf-datepicker-day {
+  @supports not (padding-inline-end: initial) {
+  [dir="rtl"] .sf-datepicker-day {
+    padding-left: var(--sf-ui-1\/3--space-y);
+    }
+  }
+  .sf-datepicker-day:where(:dir(rtl)) {
     padding-left: var(--sf-ui-1\/3--space-y);
   }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-datepicker-day {
+    padding-left: var(--sf-ui-1\/3--space-y);
+  }
+  @supports not (padding-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-datepicker-day {
+    padding-left: var(--sf-ui-1\/3--space-y);
+    }
+  }
+  .sf-datepicker-day:where(:dir(ltr)) {
+    padding-left: var(--sf-ui-1\/3--space-y);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-datepicker-day {
+    padding-right: var(--sf-ui-1\/3--space-y);
+  }
+  @supports not (padding-inline-start: initial) {
   [dir="rtl"] .sf-datepicker-day {
+    padding-right: var(--sf-ui-1\/3--space-y);
+    }
+  }
+  .sf-datepicker-day:where(:dir(rtl)) {
     padding-right: var(--sf-ui-1\/3--space-y);
   }
   .sf-datepicker-day {
@@ -159,88 +375,304 @@
 }
 @layer sf.components {
   /* utility-hint: display/flex (.flex) flex-direction/column (.flex-col) flex-wrap/nowrap (.flex-nowrap) justify-content/center (.justify-center) align-items/center (.items-center) */
-  [dir="ltr"] .sf-datepicker-text {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-datepicker-text {
     border-bottom-right-radius: var(--sf-radius-1);
     border-bottom-right-radius: var(--sf-datepicker-text--border-bottom-right-radius, var(--sf-radius-1));
   }
-  [dir="rtl"] .sf-datepicker-text {
+  @supports not (border-end-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-datepicker-text {
+    border-bottom-right-radius: var(--sf-radius-1);
+    border-bottom-right-radius: var(--sf-datepicker-text--border-bottom-right-radius, var(--sf-radius-1));
+    }
+  }
+  .sf-datepicker-text:where(:dir(ltr)) {
+    border-bottom-right-radius: var(--sf-radius-1);
+    border-bottom-right-radius: var(--sf-datepicker-text--border-bottom-right-radius, var(--sf-radius-1));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-datepicker-text {
     border-bottom-left-radius: var(--sf-radius-1);
     border-bottom-left-radius: var(--sf-datepicker-text--border-bottom-right-radius, var(--sf-radius-1));
   }
-  [dir="ltr"] .sf-datepicker-text {
+  @supports not (border-end-end-radius: initial) {
+  [dir="rtl"] .sf-datepicker-text {
+    border-bottom-left-radius: var(--sf-radius-1);
+    border-bottom-left-radius: var(--sf-datepicker-text--border-bottom-right-radius, var(--sf-radius-1));
+    }
+  }
+  .sf-datepicker-text:where(:dir(rtl)) {
+    border-bottom-left-radius: var(--sf-radius-1);
+    border-bottom-left-radius: var(--sf-datepicker-text--border-bottom-right-radius, var(--sf-radius-1));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-datepicker-text {
     border-bottom-left-radius: var(--sf-radius-1);
     border-bottom-left-radius: var(--sf-datepicker-text--border-bottom-left-radius, var(--sf-radius-1));
   }
-  [dir="rtl"] .sf-datepicker-text {
+  @supports not (border-end-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-datepicker-text {
+    border-bottom-left-radius: var(--sf-radius-1);
+    border-bottom-left-radius: var(--sf-datepicker-text--border-bottom-left-radius, var(--sf-radius-1));
+    }
+  }
+  .sf-datepicker-text:where(:dir(ltr)) {
+    border-bottom-left-radius: var(--sf-radius-1);
+    border-bottom-left-radius: var(--sf-datepicker-text--border-bottom-left-radius, var(--sf-radius-1));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-datepicker-text {
     border-bottom-right-radius: var(--sf-radius-1);
     border-bottom-right-radius: var(--sf-datepicker-text--border-bottom-left-radius, var(--sf-radius-1));
   }
-  [dir="ltr"] .sf-datepicker-text {
+  @supports not (border-end-start-radius: initial) {
+  [dir="rtl"] .sf-datepicker-text {
+    border-bottom-right-radius: var(--sf-radius-1);
+    border-bottom-right-radius: var(--sf-datepicker-text--border-bottom-left-radius, var(--sf-radius-1));
+    }
+  }
+  .sf-datepicker-text:where(:dir(rtl)) {
+    border-bottom-right-radius: var(--sf-radius-1);
+    border-bottom-right-radius: var(--sf-datepicker-text--border-bottom-left-radius, var(--sf-radius-1));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-datepicker-text {
     border-top-right-radius: var(--sf-radius-1);
     border-top-right-radius: var(--sf-datepicker-text--border-top-right-radius, var(--sf-radius-1));
   }
-  [dir="rtl"] .sf-datepicker-text {
+  @supports not (border-start-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-datepicker-text {
+    border-top-right-radius: var(--sf-radius-1);
+    border-top-right-radius: var(--sf-datepicker-text--border-top-right-radius, var(--sf-radius-1));
+    }
+  }
+  .sf-datepicker-text:where(:dir(ltr)) {
+    border-top-right-radius: var(--sf-radius-1);
+    border-top-right-radius: var(--sf-datepicker-text--border-top-right-radius, var(--sf-radius-1));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-datepicker-text {
     border-top-left-radius: var(--sf-radius-1);
     border-top-left-radius: var(--sf-datepicker-text--border-top-right-radius, var(--sf-radius-1));
   }
-  [dir="ltr"] .sf-datepicker-text {
+  @supports not (border-start-end-radius: initial) {
+  [dir="rtl"] .sf-datepicker-text {
+    border-top-left-radius: var(--sf-radius-1);
+    border-top-left-radius: var(--sf-datepicker-text--border-top-right-radius, var(--sf-radius-1));
+    }
+  }
+  .sf-datepicker-text:where(:dir(rtl)) {
+    border-top-left-radius: var(--sf-radius-1);
+    border-top-left-radius: var(--sf-datepicker-text--border-top-right-radius, var(--sf-radius-1));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-datepicker-text {
     border-top-left-radius: var(--sf-radius-1);
     border-top-left-radius: var(--sf-datepicker-text--border-top-left-radius, var(--sf-radius-1));
   }
-  [dir="rtl"] .sf-datepicker-text {
+  @supports not (border-start-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-datepicker-text {
+    border-top-left-radius: var(--sf-radius-1);
+    border-top-left-radius: var(--sf-datepicker-text--border-top-left-radius, var(--sf-radius-1));
+    }
+  }
+  .sf-datepicker-text:where(:dir(ltr)) {
+    border-top-left-radius: var(--sf-radius-1);
+    border-top-left-radius: var(--sf-datepicker-text--border-top-left-radius, var(--sf-radius-1));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-datepicker-text {
     border-top-right-radius: var(--sf-radius-1);
     border-top-right-radius: var(--sf-datepicker-text--border-top-left-radius, var(--sf-radius-1));
   }
-  [dir="ltr"] .sf-datepicker-text {
+  @supports not (border-start-start-radius: initial) {
+  [dir="rtl"] .sf-datepicker-text {
+    border-top-right-radius: var(--sf-radius-1);
+    border-top-right-radius: var(--sf-datepicker-text--border-top-left-radius, var(--sf-radius-1));
+    }
+  }
+  .sf-datepicker-text:where(:dir(rtl)) {
+    border-top-right-radius: var(--sf-radius-1);
+    border-top-right-radius: var(--sf-datepicker-text--border-top-left-radius, var(--sf-radius-1));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-datepicker-text {
     padding-right: var(--sf-space-1\/2);
     padding-right: var(--sf-datepicker-text--padding-right, var(--sf-space-1\/2));
   }
-  [dir="rtl"] .sf-datepicker-text {
+  @supports not (padding-inline-end: initial) {
+  html:not([dir="rtl"]) .sf-datepicker-text {
+    padding-right: var(--sf-space-1\/2);
+    padding-right: var(--sf-datepicker-text--padding-right, var(--sf-space-1\/2));
+    }
+  }
+  .sf-datepicker-text:where(:dir(ltr)) {
+    padding-right: var(--sf-space-1\/2);
+    padding-right: var(--sf-datepicker-text--padding-right, var(--sf-space-1\/2));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-datepicker-text {
     padding-left: var(--sf-space-1\/2);
     padding-left: var(--sf-datepicker-text--padding-right, var(--sf-space-1\/2));
   }
-  [dir="ltr"] .sf-datepicker-text {
+  @supports not (padding-inline-end: initial) {
+  [dir="rtl"] .sf-datepicker-text {
+    padding-left: var(--sf-space-1\/2);
+    padding-left: var(--sf-datepicker-text--padding-right, var(--sf-space-1\/2));
+    }
+  }
+  .sf-datepicker-text:where(:dir(rtl)) {
+    padding-left: var(--sf-space-1\/2);
+    padding-left: var(--sf-datepicker-text--padding-right, var(--sf-space-1\/2));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-datepicker-text {
     padding-left: var(--sf-space-1\/2);
     padding-left: var(--sf-datepicker-text--padding-left, var(--sf-space-1\/2));
   }
-  [dir="rtl"] .sf-datepicker-text {
+  @supports not (padding-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-datepicker-text {
+    padding-left: var(--sf-space-1\/2);
+    padding-left: var(--sf-datepicker-text--padding-left, var(--sf-space-1\/2));
+    }
+  }
+  .sf-datepicker-text:where(:dir(ltr)) {
+    padding-left: var(--sf-space-1\/2);
+    padding-left: var(--sf-datepicker-text--padding-left, var(--sf-space-1\/2));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-datepicker-text {
     padding-right: var(--sf-space-1\/2);
     padding-right: var(--sf-datepicker-text--padding-left, var(--sf-space-1\/2));
   }
-  [dir="ltr"] .sf-datepicker-text {
+  @supports not (padding-inline-start: initial) {
+  [dir="rtl"] .sf-datepicker-text {
+    padding-right: var(--sf-space-1\/2);
+    padding-right: var(--sf-datepicker-text--padding-left, var(--sf-space-1\/2));
+    }
+  }
+  .sf-datepicker-text:where(:dir(rtl)) {
+    padding-right: var(--sf-space-1\/2);
+    padding-right: var(--sf-datepicker-text--padding-left, var(--sf-space-1\/2));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-datepicker-text {
     border-bottom-right-radius: var(--sf-radius-1);
   }
-  [dir="rtl"] .sf-datepicker-text {
-    border-bottom-left-radius: var(--sf-radius-1);
+  @supports not (border-end-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-datepicker-text {
+    border-bottom-right-radius: var(--sf-radius-1);
+    }
   }
-  [dir="ltr"] .sf-datepicker-text {
-    border-bottom-left-radius: var(--sf-radius-1);
-  }
-  [dir="rtl"] .sf-datepicker-text {
+  .sf-datepicker-text:where(:dir(ltr)) {
     border-bottom-right-radius: var(--sf-radius-1);
   }
-  [dir="ltr"] .sf-datepicker-text {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-datepicker-text {
+    border-bottom-left-radius: var(--sf-radius-1);
+  }
+  @supports not (border-end-end-radius: initial) {
+  [dir="rtl"] .sf-datepicker-text {
+    border-bottom-left-radius: var(--sf-radius-1);
+    }
+  }
+  .sf-datepicker-text:where(:dir(rtl)) {
+    border-bottom-left-radius: var(--sf-radius-1);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-datepicker-text {
+    border-bottom-left-radius: var(--sf-radius-1);
+  }
+  @supports not (border-end-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-datepicker-text {
+    border-bottom-left-radius: var(--sf-radius-1);
+    }
+  }
+  .sf-datepicker-text:where(:dir(ltr)) {
+    border-bottom-left-radius: var(--sf-radius-1);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-datepicker-text {
+    border-bottom-right-radius: var(--sf-radius-1);
+  }
+  @supports not (border-end-start-radius: initial) {
+  [dir="rtl"] .sf-datepicker-text {
+    border-bottom-right-radius: var(--sf-radius-1);
+    }
+  }
+  .sf-datepicker-text:where(:dir(rtl)) {
+    border-bottom-right-radius: var(--sf-radius-1);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-datepicker-text {
     border-top-right-radius: var(--sf-radius-1);
   }
-  [dir="rtl"] .sf-datepicker-text {
-    border-top-left-radius: var(--sf-radius-1);
+  @supports not (border-start-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-datepicker-text {
+    border-top-right-radius: var(--sf-radius-1);
+    }
   }
-  [dir="ltr"] .sf-datepicker-text {
-    border-top-left-radius: var(--sf-radius-1);
-  }
-  [dir="rtl"] .sf-datepicker-text {
+  .sf-datepicker-text:where(:dir(ltr)) {
     border-top-right-radius: var(--sf-radius-1);
   }
-  [dir="ltr"] .sf-datepicker-text {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-datepicker-text {
+    border-top-left-radius: var(--sf-radius-1);
+  }
+  @supports not (border-start-end-radius: initial) {
+  [dir="rtl"] .sf-datepicker-text {
+    border-top-left-radius: var(--sf-radius-1);
+    }
+  }
+  .sf-datepicker-text:where(:dir(rtl)) {
+    border-top-left-radius: var(--sf-radius-1);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-datepicker-text {
+    border-top-left-radius: var(--sf-radius-1);
+  }
+  @supports not (border-start-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-datepicker-text {
+    border-top-left-radius: var(--sf-radius-1);
+    }
+  }
+  .sf-datepicker-text:where(:dir(ltr)) {
+    border-top-left-radius: var(--sf-radius-1);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-datepicker-text {
+    border-top-right-radius: var(--sf-radius-1);
+  }
+  @supports not (border-start-start-radius: initial) {
+  [dir="rtl"] .sf-datepicker-text {
+    border-top-right-radius: var(--sf-radius-1);
+    }
+  }
+  .sf-datepicker-text:where(:dir(rtl)) {
+    border-top-right-radius: var(--sf-radius-1);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-datepicker-text {
     padding-right: var(--sf-space-1\/2);
   }
-  [dir="rtl"] .sf-datepicker-text {
+  @supports not (padding-inline-end: initial) {
+  html:not([dir="rtl"]) .sf-datepicker-text {
+    padding-right: var(--sf-space-1\/2);
+    }
+  }
+  .sf-datepicker-text:where(:dir(ltr)) {
+    padding-right: var(--sf-space-1\/2);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-datepicker-text {
     padding-left: var(--sf-space-1\/2);
   }
-  [dir="ltr"] .sf-datepicker-text {
+  @supports not (padding-inline-end: initial) {
+  [dir="rtl"] .sf-datepicker-text {
+    padding-left: var(--sf-space-1\/2);
+    }
+  }
+  .sf-datepicker-text:where(:dir(rtl)) {
     padding-left: var(--sf-space-1\/2);
   }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-datepicker-text {
+    padding-left: var(--sf-space-1\/2);
+  }
+  @supports not (padding-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-datepicker-text {
+    padding-left: var(--sf-space-1\/2);
+    }
+  }
+  .sf-datepicker-text:where(:dir(ltr)) {
+    padding-left: var(--sf-space-1\/2);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-datepicker-text {
+    padding-right: var(--sf-space-1\/2);
+  }
+  @supports not (padding-inline-start: initial) {
   [dir="rtl"] .sf-datepicker-text {
+    padding-right: var(--sf-space-1\/2);
+    }
+  }
+  .sf-datepicker-text:where(:dir(rtl)) {
     padding-right: var(--sf-space-1\/2);
   }
   .sf-datepicker-text {
@@ -342,88 +774,304 @@
 }
 @layer sf.components {
   /* utility-hint: display/flex (.flex) flex-direction/column (.flex-col) flex-wrap/nowrap (.flex-nowrap) justify-content/flex-start (.justify-start) align-items/flex-start (.items-start) */
-  [dir="ltr"] .sf-datepicker {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-datepicker {
     border-bottom-right-radius: var(--sf-radius-1);
     border-bottom-right-radius: var(--sf-datepicker--border-bottom-right-radius, var(--sf-radius-1));
   }
-  [dir="rtl"] .sf-datepicker {
+  @supports not (border-end-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-datepicker {
+    border-bottom-right-radius: var(--sf-radius-1);
+    border-bottom-right-radius: var(--sf-datepicker--border-bottom-right-radius, var(--sf-radius-1));
+    }
+  }
+  .sf-datepicker:where(:dir(ltr)) {
+    border-bottom-right-radius: var(--sf-radius-1);
+    border-bottom-right-radius: var(--sf-datepicker--border-bottom-right-radius, var(--sf-radius-1));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-datepicker {
     border-bottom-left-radius: var(--sf-radius-1);
     border-bottom-left-radius: var(--sf-datepicker--border-bottom-right-radius, var(--sf-radius-1));
   }
-  [dir="ltr"] .sf-datepicker {
+  @supports not (border-end-end-radius: initial) {
+  [dir="rtl"] .sf-datepicker {
+    border-bottom-left-radius: var(--sf-radius-1);
+    border-bottom-left-radius: var(--sf-datepicker--border-bottom-right-radius, var(--sf-radius-1));
+    }
+  }
+  .sf-datepicker:where(:dir(rtl)) {
+    border-bottom-left-radius: var(--sf-radius-1);
+    border-bottom-left-radius: var(--sf-datepicker--border-bottom-right-radius, var(--sf-radius-1));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-datepicker {
     border-bottom-left-radius: var(--sf-radius-1);
     border-bottom-left-radius: var(--sf-datepicker--border-bottom-left-radius, var(--sf-radius-1));
   }
-  [dir="rtl"] .sf-datepicker {
+  @supports not (border-end-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-datepicker {
+    border-bottom-left-radius: var(--sf-radius-1);
+    border-bottom-left-radius: var(--sf-datepicker--border-bottom-left-radius, var(--sf-radius-1));
+    }
+  }
+  .sf-datepicker:where(:dir(ltr)) {
+    border-bottom-left-radius: var(--sf-radius-1);
+    border-bottom-left-radius: var(--sf-datepicker--border-bottom-left-radius, var(--sf-radius-1));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-datepicker {
     border-bottom-right-radius: var(--sf-radius-1);
     border-bottom-right-radius: var(--sf-datepicker--border-bottom-left-radius, var(--sf-radius-1));
   }
-  [dir="ltr"] .sf-datepicker {
+  @supports not (border-end-start-radius: initial) {
+  [dir="rtl"] .sf-datepicker {
+    border-bottom-right-radius: var(--sf-radius-1);
+    border-bottom-right-radius: var(--sf-datepicker--border-bottom-left-radius, var(--sf-radius-1));
+    }
+  }
+  .sf-datepicker:where(:dir(rtl)) {
+    border-bottom-right-radius: var(--sf-radius-1);
+    border-bottom-right-radius: var(--sf-datepicker--border-bottom-left-radius, var(--sf-radius-1));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-datepicker {
     border-top-right-radius: var(--sf-radius-1);
     border-top-right-radius: var(--sf-datepicker--border-top-right-radius, var(--sf-radius-1));
   }
-  [dir="rtl"] .sf-datepicker {
+  @supports not (border-start-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-datepicker {
+    border-top-right-radius: var(--sf-radius-1);
+    border-top-right-radius: var(--sf-datepicker--border-top-right-radius, var(--sf-radius-1));
+    }
+  }
+  .sf-datepicker:where(:dir(ltr)) {
+    border-top-right-radius: var(--sf-radius-1);
+    border-top-right-radius: var(--sf-datepicker--border-top-right-radius, var(--sf-radius-1));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-datepicker {
     border-top-left-radius: var(--sf-radius-1);
     border-top-left-radius: var(--sf-datepicker--border-top-right-radius, var(--sf-radius-1));
   }
-  [dir="ltr"] .sf-datepicker {
+  @supports not (border-start-end-radius: initial) {
+  [dir="rtl"] .sf-datepicker {
+    border-top-left-radius: var(--sf-radius-1);
+    border-top-left-radius: var(--sf-datepicker--border-top-right-radius, var(--sf-radius-1));
+    }
+  }
+  .sf-datepicker:where(:dir(rtl)) {
+    border-top-left-radius: var(--sf-radius-1);
+    border-top-left-radius: var(--sf-datepicker--border-top-right-radius, var(--sf-radius-1));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-datepicker {
     border-top-left-radius: var(--sf-radius-1);
     border-top-left-radius: var(--sf-datepicker--border-top-left-radius, var(--sf-radius-1));
   }
-  [dir="rtl"] .sf-datepicker {
+  @supports not (border-start-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-datepicker {
+    border-top-left-radius: var(--sf-radius-1);
+    border-top-left-radius: var(--sf-datepicker--border-top-left-radius, var(--sf-radius-1));
+    }
+  }
+  .sf-datepicker:where(:dir(ltr)) {
+    border-top-left-radius: var(--sf-radius-1);
+    border-top-left-radius: var(--sf-datepicker--border-top-left-radius, var(--sf-radius-1));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-datepicker {
     border-top-right-radius: var(--sf-radius-1);
     border-top-right-radius: var(--sf-datepicker--border-top-left-radius, var(--sf-radius-1));
   }
-  [dir="ltr"] .sf-datepicker {
+  @supports not (border-start-start-radius: initial) {
+  [dir="rtl"] .sf-datepicker {
+    border-top-right-radius: var(--sf-radius-1);
+    border-top-right-radius: var(--sf-datepicker--border-top-left-radius, var(--sf-radius-1));
+    }
+  }
+  .sf-datepicker:where(:dir(rtl)) {
+    border-top-right-radius: var(--sf-radius-1);
+    border-top-right-radius: var(--sf-datepicker--border-top-left-radius, var(--sf-radius-1));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-datepicker {
     padding-right: var(--sf-space-1\/3);
     padding-right: var(--sf-datepicker--padding-right, var(--sf-space-1\/3));
   }
-  [dir="rtl"] .sf-datepicker {
+  @supports not (padding-inline-end: initial) {
+  html:not([dir="rtl"]) .sf-datepicker {
+    padding-right: var(--sf-space-1\/3);
+    padding-right: var(--sf-datepicker--padding-right, var(--sf-space-1\/3));
+    }
+  }
+  .sf-datepicker:where(:dir(ltr)) {
+    padding-right: var(--sf-space-1\/3);
+    padding-right: var(--sf-datepicker--padding-right, var(--sf-space-1\/3));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-datepicker {
     padding-left: var(--sf-space-1\/3);
     padding-left: var(--sf-datepicker--padding-right, var(--sf-space-1\/3));
   }
-  [dir="ltr"] .sf-datepicker {
+  @supports not (padding-inline-end: initial) {
+  [dir="rtl"] .sf-datepicker {
+    padding-left: var(--sf-space-1\/3);
+    padding-left: var(--sf-datepicker--padding-right, var(--sf-space-1\/3));
+    }
+  }
+  .sf-datepicker:where(:dir(rtl)) {
+    padding-left: var(--sf-space-1\/3);
+    padding-left: var(--sf-datepicker--padding-right, var(--sf-space-1\/3));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-datepicker {
     padding-left: var(--sf-space-1\/3);
     padding-left: var(--sf-datepicker--padding-left, var(--sf-space-1\/3));
   }
-  [dir="rtl"] .sf-datepicker {
+  @supports not (padding-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-datepicker {
+    padding-left: var(--sf-space-1\/3);
+    padding-left: var(--sf-datepicker--padding-left, var(--sf-space-1\/3));
+    }
+  }
+  .sf-datepicker:where(:dir(ltr)) {
+    padding-left: var(--sf-space-1\/3);
+    padding-left: var(--sf-datepicker--padding-left, var(--sf-space-1\/3));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-datepicker {
     padding-right: var(--sf-space-1\/3);
     padding-right: var(--sf-datepicker--padding-left, var(--sf-space-1\/3));
   }
-  [dir="ltr"] .sf-datepicker {
+  @supports not (padding-inline-start: initial) {
+  [dir="rtl"] .sf-datepicker {
+    padding-right: var(--sf-space-1\/3);
+    padding-right: var(--sf-datepicker--padding-left, var(--sf-space-1\/3));
+    }
+  }
+  .sf-datepicker:where(:dir(rtl)) {
+    padding-right: var(--sf-space-1\/3);
+    padding-right: var(--sf-datepicker--padding-left, var(--sf-space-1\/3));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-datepicker {
     border-bottom-right-radius: var(--sf-radius-1);
   }
-  [dir="rtl"] .sf-datepicker {
-    border-bottom-left-radius: var(--sf-radius-1);
+  @supports not (border-end-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-datepicker {
+    border-bottom-right-radius: var(--sf-radius-1);
+    }
   }
-  [dir="ltr"] .sf-datepicker {
-    border-bottom-left-radius: var(--sf-radius-1);
-  }
-  [dir="rtl"] .sf-datepicker {
+  .sf-datepicker:where(:dir(ltr)) {
     border-bottom-right-radius: var(--sf-radius-1);
   }
-  [dir="ltr"] .sf-datepicker {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-datepicker {
+    border-bottom-left-radius: var(--sf-radius-1);
+  }
+  @supports not (border-end-end-radius: initial) {
+  [dir="rtl"] .sf-datepicker {
+    border-bottom-left-radius: var(--sf-radius-1);
+    }
+  }
+  .sf-datepicker:where(:dir(rtl)) {
+    border-bottom-left-radius: var(--sf-radius-1);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-datepicker {
+    border-bottom-left-radius: var(--sf-radius-1);
+  }
+  @supports not (border-end-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-datepicker {
+    border-bottom-left-radius: var(--sf-radius-1);
+    }
+  }
+  .sf-datepicker:where(:dir(ltr)) {
+    border-bottom-left-radius: var(--sf-radius-1);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-datepicker {
+    border-bottom-right-radius: var(--sf-radius-1);
+  }
+  @supports not (border-end-start-radius: initial) {
+  [dir="rtl"] .sf-datepicker {
+    border-bottom-right-radius: var(--sf-radius-1);
+    }
+  }
+  .sf-datepicker:where(:dir(rtl)) {
+    border-bottom-right-radius: var(--sf-radius-1);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-datepicker {
     border-top-right-radius: var(--sf-radius-1);
   }
-  [dir="rtl"] .sf-datepicker {
-    border-top-left-radius: var(--sf-radius-1);
+  @supports not (border-start-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-datepicker {
+    border-top-right-radius: var(--sf-radius-1);
+    }
   }
-  [dir="ltr"] .sf-datepicker {
-    border-top-left-radius: var(--sf-radius-1);
-  }
-  [dir="rtl"] .sf-datepicker {
+  .sf-datepicker:where(:dir(ltr)) {
     border-top-right-radius: var(--sf-radius-1);
   }
-  [dir="ltr"] .sf-datepicker {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-datepicker {
+    border-top-left-radius: var(--sf-radius-1);
+  }
+  @supports not (border-start-end-radius: initial) {
+  [dir="rtl"] .sf-datepicker {
+    border-top-left-radius: var(--sf-radius-1);
+    }
+  }
+  .sf-datepicker:where(:dir(rtl)) {
+    border-top-left-radius: var(--sf-radius-1);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-datepicker {
+    border-top-left-radius: var(--sf-radius-1);
+  }
+  @supports not (border-start-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-datepicker {
+    border-top-left-radius: var(--sf-radius-1);
+    }
+  }
+  .sf-datepicker:where(:dir(ltr)) {
+    border-top-left-radius: var(--sf-radius-1);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-datepicker {
+    border-top-right-radius: var(--sf-radius-1);
+  }
+  @supports not (border-start-start-radius: initial) {
+  [dir="rtl"] .sf-datepicker {
+    border-top-right-radius: var(--sf-radius-1);
+    }
+  }
+  .sf-datepicker:where(:dir(rtl)) {
+    border-top-right-radius: var(--sf-radius-1);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-datepicker {
     padding-right: var(--sf-space-1\/3);
   }
-  [dir="rtl"] .sf-datepicker {
+  @supports not (padding-inline-end: initial) {
+  html:not([dir="rtl"]) .sf-datepicker {
+    padding-right: var(--sf-space-1\/3);
+    }
+  }
+  .sf-datepicker:where(:dir(ltr)) {
+    padding-right: var(--sf-space-1\/3);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-datepicker {
     padding-left: var(--sf-space-1\/3);
   }
-  [dir="ltr"] .sf-datepicker {
+  @supports not (padding-inline-end: initial) {
+  [dir="rtl"] .sf-datepicker {
+    padding-left: var(--sf-space-1\/3);
+    }
+  }
+  .sf-datepicker:where(:dir(rtl)) {
     padding-left: var(--sf-space-1\/3);
   }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-datepicker {
+    padding-left: var(--sf-space-1\/3);
+  }
+  @supports not (padding-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-datepicker {
+    padding-left: var(--sf-space-1\/3);
+    }
+  }
+  .sf-datepicker:where(:dir(ltr)) {
+    padding-left: var(--sf-space-1\/3);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-datepicker {
+    padding-right: var(--sf-space-1\/3);
+  }
+  @supports not (padding-inline-start: initial) {
   [dir="rtl"] .sf-datepicker {
+    padding-right: var(--sf-space-1\/3);
+    }
+  }
+  .sf-datepicker:where(:dir(rtl)) {
     padding-right: var(--sf-space-1\/3);
   }
   .sf-datepicker {
@@ -460,16 +1108,48 @@
     --sf-datepicker-row--background-color: transparent;
     background-color: var(--sf-datepicker-row--background-color);
   }
-  [dir="ltr"] .sf-datepicker .sf-datepicker-top {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-datepicker .sf-datepicker-top {
     padding-right: var(--sf-datepicker-top--padding-inline-end);
   }
-  [dir="rtl"] .sf-datepicker .sf-datepicker-top {
+  @supports not (padding-inline-end: initial) {
+  html:not([dir="rtl"]) .sf-datepicker .sf-datepicker-top {
+    padding-right: var(--sf-datepicker-top--padding-inline-end);
+    }
+  }
+  .sf-datepicker .sf-datepicker-top:where(:dir(ltr)) {
+    padding-right: var(--sf-datepicker-top--padding-inline-end);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-datepicker .sf-datepicker-top {
     padding-left: var(--sf-datepicker-top--padding-inline-end);
   }
-  [dir="ltr"] .sf-datepicker .sf-datepicker-top {
+  @supports not (padding-inline-end: initial) {
+  [dir="rtl"] .sf-datepicker .sf-datepicker-top {
+    padding-left: var(--sf-datepicker-top--padding-inline-end);
+    }
+  }
+  .sf-datepicker .sf-datepicker-top:where(:dir(rtl)) {
+    padding-left: var(--sf-datepicker-top--padding-inline-end);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-datepicker .sf-datepicker-top {
     padding-left: var(--sf-datepicker-top--padding-inline-start);
   }
+  @supports not (padding-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-datepicker .sf-datepicker-top {
+    padding-left: var(--sf-datepicker-top--padding-inline-start);
+    }
+  }
+  .sf-datepicker .sf-datepicker-top:where(:dir(ltr)) {
+    padding-left: var(--sf-datepicker-top--padding-inline-start);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-datepicker .sf-datepicker-top {
+    padding-right: var(--sf-datepicker-top--padding-inline-start);
+  }
+  @supports not (padding-inline-start: initial) {
   [dir="rtl"] .sf-datepicker .sf-datepicker-top {
+    padding-right: var(--sf-datepicker-top--padding-inline-start);
+    }
+  }
+  .sf-datepicker .sf-datepicker-top:where(:dir(rtl)) {
     padding-right: var(--sf-datepicker-top--padding-inline-start);
   }
   .sf-datepicker .sf-datepicker-top {

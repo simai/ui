@@ -42,40 +42,136 @@
     line-height: var(--sf-country-code-required--line-height);
   }
   /* utility-hint: flex/1 (.flex-1) display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) justify-content/flex-start (.justify-start) align-items/center (.items-center) */
-  [dir="ltr"] .sf-country-code .sf-country-code-field {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-country-code .sf-country-code-field {
     border-bottom-right-radius: var(--sf-country-code-field--border-end-end-radius);
   }
-  [dir="rtl"] .sf-country-code .sf-country-code-field {
+  @supports not (border-end-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-country-code .sf-country-code-field {
+    border-bottom-right-radius: var(--sf-country-code-field--border-end-end-radius);
+    }
+  }
+  .sf-country-code .sf-country-code-field:where(:dir(ltr)) {
+    border-bottom-right-radius: var(--sf-country-code-field--border-end-end-radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-country-code .sf-country-code-field {
     border-bottom-left-radius: var(--sf-country-code-field--border-end-end-radius);
   }
-  [dir="ltr"] .sf-country-code .sf-country-code-field {
+  @supports not (border-end-end-radius: initial) {
+  [dir="rtl"] .sf-country-code .sf-country-code-field {
+    border-bottom-left-radius: var(--sf-country-code-field--border-end-end-radius);
+    }
+  }
+  .sf-country-code .sf-country-code-field:where(:dir(rtl)) {
+    border-bottom-left-radius: var(--sf-country-code-field--border-end-end-radius);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-country-code .sf-country-code-field {
     border-bottom-left-radius: var(--sf-country-code-field--border-end-start-radius);
   }
-  [dir="rtl"] .sf-country-code .sf-country-code-field {
+  @supports not (border-end-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-country-code .sf-country-code-field {
+    border-bottom-left-radius: var(--sf-country-code-field--border-end-start-radius);
+    }
+  }
+  .sf-country-code .sf-country-code-field:where(:dir(ltr)) {
+    border-bottom-left-radius: var(--sf-country-code-field--border-end-start-radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-country-code .sf-country-code-field {
     border-bottom-right-radius: var(--sf-country-code-field--border-end-start-radius);
   }
-  [dir="ltr"] .sf-country-code .sf-country-code-field {
+  @supports not (border-end-start-radius: initial) {
+  [dir="rtl"] .sf-country-code .sf-country-code-field {
+    border-bottom-right-radius: var(--sf-country-code-field--border-end-start-radius);
+    }
+  }
+  .sf-country-code .sf-country-code-field:where(:dir(rtl)) {
+    border-bottom-right-radius: var(--sf-country-code-field--border-end-start-radius);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-country-code .sf-country-code-field {
     border-top-right-radius: var(--sf-country-code-field--border-start-end-radius);
   }
-  [dir="rtl"] .sf-country-code .sf-country-code-field {
+  @supports not (border-start-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-country-code .sf-country-code-field {
+    border-top-right-radius: var(--sf-country-code-field--border-start-end-radius);
+    }
+  }
+  .sf-country-code .sf-country-code-field:where(:dir(ltr)) {
+    border-top-right-radius: var(--sf-country-code-field--border-start-end-radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-country-code .sf-country-code-field {
     border-top-left-radius: var(--sf-country-code-field--border-start-end-radius);
   }
-  [dir="ltr"] .sf-country-code .sf-country-code-field {
+  @supports not (border-start-end-radius: initial) {
+  [dir="rtl"] .sf-country-code .sf-country-code-field {
+    border-top-left-radius: var(--sf-country-code-field--border-start-end-radius);
+    }
+  }
+  .sf-country-code .sf-country-code-field:where(:dir(rtl)) {
+    border-top-left-radius: var(--sf-country-code-field--border-start-end-radius);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-country-code .sf-country-code-field {
     border-top-left-radius: var(--sf-country-code-field--border-start-start-radius);
   }
-  [dir="rtl"] .sf-country-code .sf-country-code-field {
+  @supports not (border-start-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-country-code .sf-country-code-field {
+    border-top-left-radius: var(--sf-country-code-field--border-start-start-radius);
+    }
+  }
+  .sf-country-code .sf-country-code-field:where(:dir(ltr)) {
+    border-top-left-radius: var(--sf-country-code-field--border-start-start-radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-country-code .sf-country-code-field {
     border-top-right-radius: var(--sf-country-code-field--border-start-start-radius);
   }
-  [dir="ltr"] .sf-country-code .sf-country-code-field {
+  @supports not (border-start-start-radius: initial) {
+  [dir="rtl"] .sf-country-code .sf-country-code-field {
+    border-top-right-radius: var(--sf-country-code-field--border-start-start-radius);
+    }
+  }
+  .sf-country-code .sf-country-code-field:where(:dir(rtl)) {
+    border-top-right-radius: var(--sf-country-code-field--border-start-start-radius);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-country-code .sf-country-code-field {
     padding-right: var(--sf-country-code-field--padding-inline-end);
   }
-  [dir="rtl"] .sf-country-code .sf-country-code-field {
+  @supports not (padding-inline-end: initial) {
+  html:not([dir="rtl"]) .sf-country-code .sf-country-code-field {
+    padding-right: var(--sf-country-code-field--padding-inline-end);
+    }
+  }
+  .sf-country-code .sf-country-code-field:where(:dir(ltr)) {
+    padding-right: var(--sf-country-code-field--padding-inline-end);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-country-code .sf-country-code-field {
     padding-left: var(--sf-country-code-field--padding-inline-end);
   }
-  [dir="ltr"] .sf-country-code .sf-country-code-field {
+  @supports not (padding-inline-end: initial) {
+  [dir="rtl"] .sf-country-code .sf-country-code-field {
+    padding-left: var(--sf-country-code-field--padding-inline-end);
+    }
+  }
+  .sf-country-code .sf-country-code-field:where(:dir(rtl)) {
+    padding-left: var(--sf-country-code-field--padding-inline-end);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-country-code .sf-country-code-field {
     padding-left: var(--sf-country-code-field--padding-inline-start);
   }
+  @supports not (padding-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-country-code .sf-country-code-field {
+    padding-left: var(--sf-country-code-field--padding-inline-start);
+    }
+  }
+  .sf-country-code .sf-country-code-field:where(:dir(ltr)) {
+    padding-left: var(--sf-country-code-field--padding-inline-start);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-country-code .sf-country-code-field {
+    padding-right: var(--sf-country-code-field--padding-inline-start);
+  }
+  @supports not (padding-inline-start: initial) {
   [dir="rtl"] .sf-country-code .sf-country-code-field {
+    padding-right: var(--sf-country-code-field--padding-inline-start);
+    }
+  }
+  .sf-country-code .sf-country-code-field:where(:dir(rtl)) {
     padding-right: var(--sf-country-code-field--padding-inline-start);
   }
   .sf-country-code .sf-country-code-field {
@@ -116,16 +212,48 @@
     width: var(--sf-country-code-flag-icon--width);
   }
   /* utility-hint: flex/1 (.flex-1) display/flex (.flex) */
-  [dir="ltr"] .sf-country-code .sf-country-code-field input {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-country-code .sf-country-code-field input {
     padding-right: var(--sf-country-code-input--padding-inline-end);
   }
-  [dir="rtl"] .sf-country-code .sf-country-code-field input {
+  @supports not (padding-inline-end: initial) {
+  html:not([dir="rtl"]) .sf-country-code .sf-country-code-field input {
+    padding-right: var(--sf-country-code-input--padding-inline-end);
+    }
+  }
+  .sf-country-code .sf-country-code-field input:where(:dir(ltr)) {
+    padding-right: var(--sf-country-code-input--padding-inline-end);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-country-code .sf-country-code-field input {
     padding-left: var(--sf-country-code-input--padding-inline-end);
   }
-  [dir="ltr"] .sf-country-code .sf-country-code-field input {
+  @supports not (padding-inline-end: initial) {
+  [dir="rtl"] .sf-country-code .sf-country-code-field input {
+    padding-left: var(--sf-country-code-input--padding-inline-end);
+    }
+  }
+  .sf-country-code .sf-country-code-field input:where(:dir(rtl)) {
+    padding-left: var(--sf-country-code-input--padding-inline-end);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-country-code .sf-country-code-field input {
     padding-left: var(--sf-country-code-input--padding-inline-start);
   }
+  @supports not (padding-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-country-code .sf-country-code-field input {
+    padding-left: var(--sf-country-code-input--padding-inline-start);
+    }
+  }
+  .sf-country-code .sf-country-code-field input:where(:dir(ltr)) {
+    padding-left: var(--sf-country-code-input--padding-inline-start);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-country-code .sf-country-code-field input {
+    padding-right: var(--sf-country-code-input--padding-inline-start);
+  }
+  @supports not (padding-inline-start: initial) {
   [dir="rtl"] .sf-country-code .sf-country-code-field input {
+    padding-right: var(--sf-country-code-input--padding-inline-start);
+    }
+  }
+  .sf-country-code .sf-country-code-field input:where(:dir(rtl)) {
     padding-right: var(--sf-country-code-input--padding-inline-start);
   }
   .sf-country-code .sf-country-code-field input {
@@ -191,16 +319,48 @@
     font-weight: var(--sf-country-code-hint--font-weight);
     line-height: var(--sf-country-code-hint--line-height);
   }
-  [dir="ltr"] .sf-country-code .sf-country-code-list {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-country-code .sf-country-code-list {
     padding-right: var(--sf-country-code-list--padding-inline-end);
   }
-  [dir="rtl"] .sf-country-code .sf-country-code-list {
+  @supports not (padding-inline-end: initial) {
+  html:not([dir="rtl"]) .sf-country-code .sf-country-code-list {
+    padding-right: var(--sf-country-code-list--padding-inline-end);
+    }
+  }
+  .sf-country-code .sf-country-code-list:where(:dir(ltr)) {
+    padding-right: var(--sf-country-code-list--padding-inline-end);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-country-code .sf-country-code-list {
     padding-left: var(--sf-country-code-list--padding-inline-end);
   }
-  [dir="ltr"] .sf-country-code .sf-country-code-list {
+  @supports not (padding-inline-end: initial) {
+  [dir="rtl"] .sf-country-code .sf-country-code-list {
+    padding-left: var(--sf-country-code-list--padding-inline-end);
+    }
+  }
+  .sf-country-code .sf-country-code-list:where(:dir(rtl)) {
+    padding-left: var(--sf-country-code-list--padding-inline-end);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-country-code .sf-country-code-list {
     padding-left: var(--sf-country-code-list--padding-inline-start);
   }
+  @supports not (padding-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-country-code .sf-country-code-list {
+    padding-left: var(--sf-country-code-list--padding-inline-start);
+    }
+  }
+  .sf-country-code .sf-country-code-list:where(:dir(ltr)) {
+    padding-left: var(--sf-country-code-list--padding-inline-start);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-country-code .sf-country-code-list {
+    padding-right: var(--sf-country-code-list--padding-inline-start);
+  }
+  @supports not (padding-inline-start: initial) {
   [dir="rtl"] .sf-country-code .sf-country-code-list {
+    padding-right: var(--sf-country-code-list--padding-inline-start);
+    }
+  }
+  .sf-country-code .sf-country-code-list:where(:dir(rtl)) {
     padding-right: var(--sf-country-code-list--padding-inline-start);
   }
   .sf-country-code .sf-country-code-list {
@@ -217,16 +377,48 @@
     background-color: var(--sf-country-code-items--background-color);
   }
   /* utility-hint: flex/1 (.flex-1) display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-country-code-item--gap) justify-content/flex-start (.justify-start) align-items/center (.items-center) */
-  [dir="ltr"] .sf-country-code .sf-country-code-item {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-country-code .sf-country-code-item {
     padding-right: var(--sf-country-code-item--padding-inline-end);
   }
-  [dir="rtl"] .sf-country-code .sf-country-code-item {
+  @supports not (padding-inline-end: initial) {
+  html:not([dir="rtl"]) .sf-country-code .sf-country-code-item {
+    padding-right: var(--sf-country-code-item--padding-inline-end);
+    }
+  }
+  .sf-country-code .sf-country-code-item:where(:dir(ltr)) {
+    padding-right: var(--sf-country-code-item--padding-inline-end);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-country-code .sf-country-code-item {
     padding-left: var(--sf-country-code-item--padding-inline-end);
   }
-  [dir="ltr"] .sf-country-code .sf-country-code-item {
+  @supports not (padding-inline-end: initial) {
+  [dir="rtl"] .sf-country-code .sf-country-code-item {
+    padding-left: var(--sf-country-code-item--padding-inline-end);
+    }
+  }
+  .sf-country-code .sf-country-code-item:where(:dir(rtl)) {
+    padding-left: var(--sf-country-code-item--padding-inline-end);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-country-code .sf-country-code-item {
     padding-left: var(--sf-country-code-item--padding-inline-start);
   }
+  @supports not (padding-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-country-code .sf-country-code-item {
+    padding-left: var(--sf-country-code-item--padding-inline-start);
+    }
+  }
+  .sf-country-code .sf-country-code-item:where(:dir(ltr)) {
+    padding-left: var(--sf-country-code-item--padding-inline-start);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-country-code .sf-country-code-item {
+    padding-right: var(--sf-country-code-item--padding-inline-start);
+  }
+  @supports not (padding-inline-start: initial) {
   [dir="rtl"] .sf-country-code .sf-country-code-item {
+    padding-right: var(--sf-country-code-item--padding-inline-start);
+    }
+  }
+  .sf-country-code .sf-country-code-item:where(:dir(rtl)) {
     padding-right: var(--sf-country-code-item--padding-inline-start);
   }
   .sf-country-code .sf-country-code-item {
@@ -681,10 +873,26 @@
   .sf-country-code {
     position: relative;
   }
-  [dir="ltr"] .sf-country-code .sf-country-code-list {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-country-code .sf-country-code-list {
     left: 0;
   }
+  @supports not (inset-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-country-code .sf-country-code-list {
+    left: 0;
+    }
+  }
+  .sf-country-code .sf-country-code-list:where(:dir(ltr)) {
+    left: 0;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-country-code .sf-country-code-list {
+    right: 0;
+  }
+  @supports not (inset-inline-start: initial) {
   [dir="rtl"] .sf-country-code .sf-country-code-list {
+    right: 0;
+    }
+  }
+  .sf-country-code .sf-country-code-list:where(:dir(rtl)) {
     right: 0;
   }
   .sf-country-code .sf-country-code-list {

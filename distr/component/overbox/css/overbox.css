@@ -4,10 +4,26 @@
     height: var(--sf-c1);
     width: var(--sf-c6);
   }
-  [dir="ltr"] .sf-overbox-pointer:before {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-overbox-pointer:before {
     left: var(--sf-a8);
   }
+  @supports not (inset-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-overbox-pointer:before {
+    left: var(--sf-a8);
+    }
+  }
+  .sf-overbox-pointer:before:where(:dir(ltr)) {
+    left: var(--sf-a8);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-overbox-pointer:before {
+    right: var(--sf-a8);
+  }
+  @supports not (inset-inline-start: initial) {
   [dir="rtl"] .sf-overbox-pointer:before {
+    right: var(--sf-a8);
+    }
+  }
+  .sf-overbox-pointer:before:where(:dir(rtl)) {
     right: var(--sf-a8);
   }
   .sf-overbox-pointer:before {
@@ -24,10 +40,26 @@
     -webkit-transform-origin: 50% 50%;
     transform-origin: 50% 50%;
   }
-  [dir="ltr"] .sf-overbox-right {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-overbox-right {
     right: calc(-1 * var(--sf-c3));
   }
+  @supports not (inset-inline-end: initial) {
+  html:not([dir="rtl"]) .sf-overbox-right {
+    right: calc(-1 * var(--sf-c3));
+    }
+  }
+  .sf-overbox-right:where(:dir(ltr)) {
+    right: calc(-1 * var(--sf-c3));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-overbox-right {
+    left: calc(-1 * var(--sf-c3));
+  }
+  @supports not (inset-inline-end: initial) {
   [dir="rtl"] .sf-overbox-right {
+    left: calc(-1 * var(--sf-c3));
+    }
+  }
+  .sf-overbox-right:where(:dir(rtl)) {
     left: calc(-1 * var(--sf-c3));
   }
   .sf-overbox-right {
@@ -40,10 +72,26 @@
     top: auto;
     bottom: var(--sf-b6);
   }
-  [dir="ltr"] .sf-overbox-left {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-overbox-left {
     left: calc(-1 * var(--sf-c3));
   }
+  @supports not (inset-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-overbox-left {
+    left: calc(-1 * var(--sf-c3));
+    }
+  }
+  .sf-overbox-left:where(:dir(ltr)) {
+    left: calc(-1 * var(--sf-c3));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-overbox-left {
+    right: calc(-1 * var(--sf-c3));
+  }
+  @supports not (inset-inline-start: initial) {
   [dir="rtl"] .sf-overbox-left {
+    right: calc(-1 * var(--sf-c3));
+    }
+  }
+  .sf-overbox-left:where(:dir(rtl)) {
     right: calc(-1 * var(--sf-c3));
   }
   .sf-overbox-left {

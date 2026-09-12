@@ -25,10 +25,26 @@
 * - Base styles (_css__component_name.scss)
 *
 */
-[dir="ltr"] .sf-carousel-pagination {
+_:-ms-input-placeholder, html:not([dir="rtl"]) .sf-carousel-pagination {
   left: 0;
 }
+@supports not (inset-inline-start: initial) {
+html:not([dir="rtl"]) .sf-carousel-pagination {
+  left: 0;
+  }
+}
+.sf-carousel-pagination:where(:dir(ltr)) {
+  left: 0;
+}
+_:-ms-input-placeholder, [dir="rtl"] .sf-carousel-pagination {
+  right: 0;
+}
+@supports not (inset-inline-start: initial) {
 [dir="rtl"] .sf-carousel-pagination {
+  right: 0;
+  }
+}
+.sf-carousel-pagination:where(:dir(rtl)) {
   right: 0;
 }
 .sf-carousel-pagination {
@@ -204,19 +220,51 @@
   position: absolute;
   top: 50%;
 }
-[dir="ltr"] .sf-carousel .sf-carousel-switch--right {
+_:-ms-input-placeholder, html:not([dir="rtl"]) .sf-carousel .sf-carousel-switch--right {
   right: var(--sf-b6);
 }
+@supports not (inset-inline-end: initial) {
+html:not([dir="rtl"]) .sf-carousel .sf-carousel-switch--right {
+  right: var(--sf-b6);
+  }
+}
+.sf-carousel .sf-carousel-switch--right:where(:dir(ltr)) {
+  right: var(--sf-b6);
+}
+_:-ms-input-placeholder, [dir="rtl"] .sf-carousel .sf-carousel-switch--right {
+  left: var(--sf-b6);
+}
+@supports not (inset-inline-end: initial) {
 [dir="rtl"] .sf-carousel .sf-carousel-switch--right {
+  left: var(--sf-b6);
+  }
+}
+.sf-carousel .sf-carousel-switch--right:where(:dir(rtl)) {
   left: var(--sf-b6);
 }
 .sf-carousel .sf-carousel-switch--right {
   inset-inline-end: var(--sf-b6);
 }
-[dir="ltr"] .sf-carousel .sf-carousel-switch--left {
+_:-ms-input-placeholder, html:not([dir="rtl"]) .sf-carousel .sf-carousel-switch--left {
   left: var(--sf-b6);
 }
+@supports not (inset-inline-start: initial) {
+html:not([dir="rtl"]) .sf-carousel .sf-carousel-switch--left {
+  left: var(--sf-b6);
+  }
+}
+.sf-carousel .sf-carousel-switch--left:where(:dir(ltr)) {
+  left: var(--sf-b6);
+}
+_:-ms-input-placeholder, [dir="rtl"] .sf-carousel .sf-carousel-switch--left {
+  right: var(--sf-b6);
+}
+@supports not (inset-inline-start: initial) {
 [dir="rtl"] .sf-carousel .sf-carousel-switch--left {
+  right: var(--sf-b6);
+  }
+}
+.sf-carousel .sf-carousel-switch--left:where(:dir(rtl)) {
   right: var(--sf-b6);
 }
 .sf-carousel .sf-carousel-switch--left {
@@ -237,10 +285,26 @@
   content: normal;
   content: initial;
 }
-[dir="ltr"] .sf-carousel .sf-carousel-pagination {
+_:-ms-input-placeholder, html:not([dir="rtl"]) .sf-carousel .sf-carousel-pagination {
   left: 50%;
 }
+@supports not (inset-inline-start: initial) {
+html:not([dir="rtl"]) .sf-carousel .sf-carousel-pagination {
+  left: 50%;
+  }
+}
+.sf-carousel .sf-carousel-pagination:where(:dir(ltr)) {
+  left: 50%;
+}
+_:-ms-input-placeholder, [dir="rtl"] .sf-carousel .sf-carousel-pagination {
+  right: 50%;
+}
+@supports not (inset-inline-start: initial) {
 [dir="rtl"] .sf-carousel .sf-carousel-pagination {
+  right: 50%;
+  }
+}
+.sf-carousel .sf-carousel-pagination:where(:dir(rtl)) {
   right: 50%;
 }
 .sf-carousel .sf-carousel-pagination {

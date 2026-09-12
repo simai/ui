@@ -66,100 +66,276 @@
     .xl\:border-top-0 {
       border-top-width: var(--sf-0);
     }
-    [dir="ltr"] .xl\:border-inline-end-1 {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:border-inline-end-1 {
       border-right-width: var(--sf-a1);
     }
+    @supports not (border-inline-end-width: initial) {
+    html:not([dir="rtl"]) .xl\:border-inline-end-1 {
+      border-right-width: var(--sf-a1);
+      }
+    }
+    .xl\:border-inline-end-1:where(:dir(ltr)) {
+      border-right-width: var(--sf-a1);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:border-inline-end-1 {
+      border-left-width: var(--sf-a1);
+    }
+    @supports not (border-inline-end-width: initial) {
     [dir="rtl"] .xl\:border-inline-end-1 {
+      border-left-width: var(--sf-a1);
+      }
+    }
+    .xl\:border-inline-end-1:where(:dir(rtl)) {
       border-left-width: var(--sf-a1);
     }
     .xl\:border-inline-end-1 {
       border-inline-end-width: var(--sf-a1);
     }
-    [dir="ltr"] .xl\:border-inline-end-2 {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:border-inline-end-2 {
       border-right-width: var(--sf-a2);
     }
+    @supports not (border-inline-end-width: initial) {
+    html:not([dir="rtl"]) .xl\:border-inline-end-2 {
+      border-right-width: var(--sf-a2);
+      }
+    }
+    .xl\:border-inline-end-2:where(:dir(ltr)) {
+      border-right-width: var(--sf-a2);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:border-inline-end-2 {
+      border-left-width: var(--sf-a2);
+    }
+    @supports not (border-inline-end-width: initial) {
     [dir="rtl"] .xl\:border-inline-end-2 {
+      border-left-width: var(--sf-a2);
+      }
+    }
+    .xl\:border-inline-end-2:where(:dir(rtl)) {
       border-left-width: var(--sf-a2);
     }
     .xl\:border-inline-end-2 {
       border-inline-end-width: var(--sf-a2);
     }
-    [dir="ltr"] .xl\:border-inline-end-3 {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:border-inline-end-3 {
       border-right-width: var(--sf-a3);
     }
+    @supports not (border-inline-end-width: initial) {
+    html:not([dir="rtl"]) .xl\:border-inline-end-3 {
+      border-right-width: var(--sf-a3);
+      }
+    }
+    .xl\:border-inline-end-3:where(:dir(ltr)) {
+      border-right-width: var(--sf-a3);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:border-inline-end-3 {
+      border-left-width: var(--sf-a3);
+    }
+    @supports not (border-inline-end-width: initial) {
     [dir="rtl"] .xl\:border-inline-end-3 {
+      border-left-width: var(--sf-a3);
+      }
+    }
+    .xl\:border-inline-end-3:where(:dir(rtl)) {
       border-left-width: var(--sf-a3);
     }
     .xl\:border-inline-end-3 {
       border-inline-end-width: var(--sf-a3);
     }
-    [dir="ltr"] .xl\:border-inline-end-4 {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:border-inline-end-4 {
       border-right-width: var(--sf-a4);
     }
+    @supports not (border-inline-end-width: initial) {
+    html:not([dir="rtl"]) .xl\:border-inline-end-4 {
+      border-right-width: var(--sf-a4);
+      }
+    }
+    .xl\:border-inline-end-4:where(:dir(ltr)) {
+      border-right-width: var(--sf-a4);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:border-inline-end-4 {
+      border-left-width: var(--sf-a4);
+    }
+    @supports not (border-inline-end-width: initial) {
     [dir="rtl"] .xl\:border-inline-end-4 {
+      border-left-width: var(--sf-a4);
+      }
+    }
+    .xl\:border-inline-end-4:where(:dir(rtl)) {
       border-left-width: var(--sf-a4);
     }
     .xl\:border-inline-end-4 {
       border-inline-end-width: var(--sf-a4);
     }
-    [dir="ltr"] .xl\:border-inline-end-5 {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:border-inline-end-5 {
       border-right-width: var(--sf-a5);
     }
+    @supports not (border-inline-end-width: initial) {
+    html:not([dir="rtl"]) .xl\:border-inline-end-5 {
+      border-right-width: var(--sf-a5);
+      }
+    }
+    .xl\:border-inline-end-5:where(:dir(ltr)) {
+      border-right-width: var(--sf-a5);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:border-inline-end-5 {
+      border-left-width: var(--sf-a5);
+    }
+    @supports not (border-inline-end-width: initial) {
     [dir="rtl"] .xl\:border-inline-end-5 {
+      border-left-width: var(--sf-a5);
+      }
+    }
+    .xl\:border-inline-end-5:where(:dir(rtl)) {
       border-left-width: var(--sf-a5);
     }
     .xl\:border-inline-end-5 {
       border-inline-end-width: var(--sf-a5);
     }
-    [dir="ltr"] .xl\:border-inline-end-6 {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:border-inline-end-6 {
       border-right-width: var(--sf-a6);
     }
+    @supports not (border-inline-end-width: initial) {
+    html:not([dir="rtl"]) .xl\:border-inline-end-6 {
+      border-right-width: var(--sf-a6);
+      }
+    }
+    .xl\:border-inline-end-6:where(:dir(ltr)) {
+      border-right-width: var(--sf-a6);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:border-inline-end-6 {
+      border-left-width: var(--sf-a6);
+    }
+    @supports not (border-inline-end-width: initial) {
     [dir="rtl"] .xl\:border-inline-end-6 {
+      border-left-width: var(--sf-a6);
+      }
+    }
+    .xl\:border-inline-end-6:where(:dir(rtl)) {
       border-left-width: var(--sf-a6);
     }
     .xl\:border-inline-end-6 {
       border-inline-end-width: var(--sf-a6);
     }
-    [dir="ltr"] .xl\:border-inline-end-7 {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:border-inline-end-7 {
       border-right-width: var(--sf-a7);
     }
+    @supports not (border-inline-end-width: initial) {
+    html:not([dir="rtl"]) .xl\:border-inline-end-7 {
+      border-right-width: var(--sf-a7);
+      }
+    }
+    .xl\:border-inline-end-7:where(:dir(ltr)) {
+      border-right-width: var(--sf-a7);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:border-inline-end-7 {
+      border-left-width: var(--sf-a7);
+    }
+    @supports not (border-inline-end-width: initial) {
     [dir="rtl"] .xl\:border-inline-end-7 {
+      border-left-width: var(--sf-a7);
+      }
+    }
+    .xl\:border-inline-end-7:where(:dir(rtl)) {
       border-left-width: var(--sf-a7);
     }
     .xl\:border-inline-end-7 {
       border-inline-end-width: var(--sf-a7);
     }
-    [dir="ltr"] .xl\:border-inline-end-8 {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:border-inline-end-8 {
       border-right-width: var(--sf-a8);
     }
+    @supports not (border-inline-end-width: initial) {
+    html:not([dir="rtl"]) .xl\:border-inline-end-8 {
+      border-right-width: var(--sf-a8);
+      }
+    }
+    .xl\:border-inline-end-8:where(:dir(ltr)) {
+      border-right-width: var(--sf-a8);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:border-inline-end-8 {
+      border-left-width: var(--sf-a8);
+    }
+    @supports not (border-inline-end-width: initial) {
     [dir="rtl"] .xl\:border-inline-end-8 {
+      border-left-width: var(--sf-a8);
+      }
+    }
+    .xl\:border-inline-end-8:where(:dir(rtl)) {
       border-left-width: var(--sf-a8);
     }
     .xl\:border-inline-end-8 {
       border-inline-end-width: var(--sf-a8);
     }
-    [dir="ltr"] .xl\:border-inline-end-9 {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:border-inline-end-9 {
       border-right-width: var(--sf-a9);
     }
+    @supports not (border-inline-end-width: initial) {
+    html:not([dir="rtl"]) .xl\:border-inline-end-9 {
+      border-right-width: var(--sf-a9);
+      }
+    }
+    .xl\:border-inline-end-9:where(:dir(ltr)) {
+      border-right-width: var(--sf-a9);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:border-inline-end-9 {
+      border-left-width: var(--sf-a9);
+    }
+    @supports not (border-inline-end-width: initial) {
     [dir="rtl"] .xl\:border-inline-end-9 {
+      border-left-width: var(--sf-a9);
+      }
+    }
+    .xl\:border-inline-end-9:where(:dir(rtl)) {
       border-left-width: var(--sf-a9);
     }
     .xl\:border-inline-end-9 {
       border-inline-end-width: var(--sf-a9);
     }
-    [dir="ltr"] .xl\:border-inline-end-10 {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:border-inline-end-10 {
       border-right-width: var(--sf-b0);
     }
+    @supports not (border-inline-end-width: initial) {
+    html:not([dir="rtl"]) .xl\:border-inline-end-10 {
+      border-right-width: var(--sf-b0);
+      }
+    }
+    .xl\:border-inline-end-10:where(:dir(ltr)) {
+      border-right-width: var(--sf-b0);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:border-inline-end-10 {
+      border-left-width: var(--sf-b0);
+    }
+    @supports not (border-inline-end-width: initial) {
     [dir="rtl"] .xl\:border-inline-end-10 {
+      border-left-width: var(--sf-b0);
+      }
+    }
+    .xl\:border-inline-end-10:where(:dir(rtl)) {
       border-left-width: var(--sf-b0);
     }
     .xl\:border-inline-end-10 {
       border-inline-end-width: var(--sf-b0);
     }
-    [dir="ltr"] .xl\:border-inline-end-0 {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:border-inline-end-0 {
       border-right-width: var(--sf-0);
     }
+    @supports not (border-inline-end-width: initial) {
+    html:not([dir="rtl"]) .xl\:border-inline-end-0 {
+      border-right-width: var(--sf-0);
+      }
+    }
+    .xl\:border-inline-end-0:where(:dir(ltr)) {
+      border-right-width: var(--sf-0);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:border-inline-end-0 {
+      border-left-width: var(--sf-0);
+    }
+    @supports not (border-inline-end-width: initial) {
     [dir="rtl"] .xl\:border-inline-end-0 {
+      border-left-width: var(--sf-0);
+      }
+    }
+    .xl\:border-inline-end-0:where(:dir(rtl)) {
       border-left-width: var(--sf-0);
     }
     .xl\:border-inline-end-0 {
@@ -198,275 +374,803 @@
     .xl\:border-bottom-0 {
       border-bottom-width: var(--sf-0);
     }
-    [dir="ltr"] .xl\:border-inline-start-1 {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:border-inline-start-1 {
       border-left-width: var(--sf-a1);
     }
+    @supports not (border-inline-start-width: initial) {
+    html:not([dir="rtl"]) .xl\:border-inline-start-1 {
+      border-left-width: var(--sf-a1);
+      }
+    }
+    .xl\:border-inline-start-1:where(:dir(ltr)) {
+      border-left-width: var(--sf-a1);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:border-inline-start-1 {
+      border-right-width: var(--sf-a1);
+    }
+    @supports not (border-inline-start-width: initial) {
     [dir="rtl"] .xl\:border-inline-start-1 {
+      border-right-width: var(--sf-a1);
+      }
+    }
+    .xl\:border-inline-start-1:where(:dir(rtl)) {
       border-right-width: var(--sf-a1);
     }
     .xl\:border-inline-start-1 {
       border-inline-start-width: var(--sf-a1);
     }
-    [dir="ltr"] .xl\:border-inline-start-2 {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:border-inline-start-2 {
       border-left-width: var(--sf-a2);
     }
+    @supports not (border-inline-start-width: initial) {
+    html:not([dir="rtl"]) .xl\:border-inline-start-2 {
+      border-left-width: var(--sf-a2);
+      }
+    }
+    .xl\:border-inline-start-2:where(:dir(ltr)) {
+      border-left-width: var(--sf-a2);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:border-inline-start-2 {
+      border-right-width: var(--sf-a2);
+    }
+    @supports not (border-inline-start-width: initial) {
     [dir="rtl"] .xl\:border-inline-start-2 {
+      border-right-width: var(--sf-a2);
+      }
+    }
+    .xl\:border-inline-start-2:where(:dir(rtl)) {
       border-right-width: var(--sf-a2);
     }
     .xl\:border-inline-start-2 {
       border-inline-start-width: var(--sf-a2);
     }
-    [dir="ltr"] .xl\:border-inline-start-3 {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:border-inline-start-3 {
       border-left-width: var(--sf-a3);
     }
+    @supports not (border-inline-start-width: initial) {
+    html:not([dir="rtl"]) .xl\:border-inline-start-3 {
+      border-left-width: var(--sf-a3);
+      }
+    }
+    .xl\:border-inline-start-3:where(:dir(ltr)) {
+      border-left-width: var(--sf-a3);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:border-inline-start-3 {
+      border-right-width: var(--sf-a3);
+    }
+    @supports not (border-inline-start-width: initial) {
     [dir="rtl"] .xl\:border-inline-start-3 {
+      border-right-width: var(--sf-a3);
+      }
+    }
+    .xl\:border-inline-start-3:where(:dir(rtl)) {
       border-right-width: var(--sf-a3);
     }
     .xl\:border-inline-start-3 {
       border-inline-start-width: var(--sf-a3);
     }
-    [dir="ltr"] .xl\:border-inline-start-4 {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:border-inline-start-4 {
       border-left-width: var(--sf-a4);
     }
+    @supports not (border-inline-start-width: initial) {
+    html:not([dir="rtl"]) .xl\:border-inline-start-4 {
+      border-left-width: var(--sf-a4);
+      }
+    }
+    .xl\:border-inline-start-4:where(:dir(ltr)) {
+      border-left-width: var(--sf-a4);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:border-inline-start-4 {
+      border-right-width: var(--sf-a4);
+    }
+    @supports not (border-inline-start-width: initial) {
     [dir="rtl"] .xl\:border-inline-start-4 {
+      border-right-width: var(--sf-a4);
+      }
+    }
+    .xl\:border-inline-start-4:where(:dir(rtl)) {
       border-right-width: var(--sf-a4);
     }
     .xl\:border-inline-start-4 {
       border-inline-start-width: var(--sf-a4);
     }
-    [dir="ltr"] .xl\:border-inline-start-5 {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:border-inline-start-5 {
       border-left-width: var(--sf-a5);
     }
+    @supports not (border-inline-start-width: initial) {
+    html:not([dir="rtl"]) .xl\:border-inline-start-5 {
+      border-left-width: var(--sf-a5);
+      }
+    }
+    .xl\:border-inline-start-5:where(:dir(ltr)) {
+      border-left-width: var(--sf-a5);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:border-inline-start-5 {
+      border-right-width: var(--sf-a5);
+    }
+    @supports not (border-inline-start-width: initial) {
     [dir="rtl"] .xl\:border-inline-start-5 {
+      border-right-width: var(--sf-a5);
+      }
+    }
+    .xl\:border-inline-start-5:where(:dir(rtl)) {
       border-right-width: var(--sf-a5);
     }
     .xl\:border-inline-start-5 {
       border-inline-start-width: var(--sf-a5);
     }
-    [dir="ltr"] .xl\:border-inline-start-6 {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:border-inline-start-6 {
       border-left-width: var(--sf-a6);
     }
+    @supports not (border-inline-start-width: initial) {
+    html:not([dir="rtl"]) .xl\:border-inline-start-6 {
+      border-left-width: var(--sf-a6);
+      }
+    }
+    .xl\:border-inline-start-6:where(:dir(ltr)) {
+      border-left-width: var(--sf-a6);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:border-inline-start-6 {
+      border-right-width: var(--sf-a6);
+    }
+    @supports not (border-inline-start-width: initial) {
     [dir="rtl"] .xl\:border-inline-start-6 {
+      border-right-width: var(--sf-a6);
+      }
+    }
+    .xl\:border-inline-start-6:where(:dir(rtl)) {
       border-right-width: var(--sf-a6);
     }
     .xl\:border-inline-start-6 {
       border-inline-start-width: var(--sf-a6);
     }
-    [dir="ltr"] .xl\:border-inline-start-7 {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:border-inline-start-7 {
       border-left-width: var(--sf-a7);
     }
+    @supports not (border-inline-start-width: initial) {
+    html:not([dir="rtl"]) .xl\:border-inline-start-7 {
+      border-left-width: var(--sf-a7);
+      }
+    }
+    .xl\:border-inline-start-7:where(:dir(ltr)) {
+      border-left-width: var(--sf-a7);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:border-inline-start-7 {
+      border-right-width: var(--sf-a7);
+    }
+    @supports not (border-inline-start-width: initial) {
     [dir="rtl"] .xl\:border-inline-start-7 {
+      border-right-width: var(--sf-a7);
+      }
+    }
+    .xl\:border-inline-start-7:where(:dir(rtl)) {
       border-right-width: var(--sf-a7);
     }
     .xl\:border-inline-start-7 {
       border-inline-start-width: var(--sf-a7);
     }
-    [dir="ltr"] .xl\:border-inline-start-8 {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:border-inline-start-8 {
       border-left-width: var(--sf-a8);
     }
+    @supports not (border-inline-start-width: initial) {
+    html:not([dir="rtl"]) .xl\:border-inline-start-8 {
+      border-left-width: var(--sf-a8);
+      }
+    }
+    .xl\:border-inline-start-8:where(:dir(ltr)) {
+      border-left-width: var(--sf-a8);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:border-inline-start-8 {
+      border-right-width: var(--sf-a8);
+    }
+    @supports not (border-inline-start-width: initial) {
     [dir="rtl"] .xl\:border-inline-start-8 {
+      border-right-width: var(--sf-a8);
+      }
+    }
+    .xl\:border-inline-start-8:where(:dir(rtl)) {
       border-right-width: var(--sf-a8);
     }
     .xl\:border-inline-start-8 {
       border-inline-start-width: var(--sf-a8);
     }
-    [dir="ltr"] .xl\:border-inline-start-9 {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:border-inline-start-9 {
       border-left-width: var(--sf-a9);
     }
+    @supports not (border-inline-start-width: initial) {
+    html:not([dir="rtl"]) .xl\:border-inline-start-9 {
+      border-left-width: var(--sf-a9);
+      }
+    }
+    .xl\:border-inline-start-9:where(:dir(ltr)) {
+      border-left-width: var(--sf-a9);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:border-inline-start-9 {
+      border-right-width: var(--sf-a9);
+    }
+    @supports not (border-inline-start-width: initial) {
     [dir="rtl"] .xl\:border-inline-start-9 {
+      border-right-width: var(--sf-a9);
+      }
+    }
+    .xl\:border-inline-start-9:where(:dir(rtl)) {
       border-right-width: var(--sf-a9);
     }
     .xl\:border-inline-start-9 {
       border-inline-start-width: var(--sf-a9);
     }
-    [dir="ltr"] .xl\:border-inline-start-10 {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:border-inline-start-10 {
       border-left-width: var(--sf-b0);
     }
+    @supports not (border-inline-start-width: initial) {
+    html:not([dir="rtl"]) .xl\:border-inline-start-10 {
+      border-left-width: var(--sf-b0);
+      }
+    }
+    .xl\:border-inline-start-10:where(:dir(ltr)) {
+      border-left-width: var(--sf-b0);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:border-inline-start-10 {
+      border-right-width: var(--sf-b0);
+    }
+    @supports not (border-inline-start-width: initial) {
     [dir="rtl"] .xl\:border-inline-start-10 {
+      border-right-width: var(--sf-b0);
+      }
+    }
+    .xl\:border-inline-start-10:where(:dir(rtl)) {
       border-right-width: var(--sf-b0);
     }
     .xl\:border-inline-start-10 {
       border-inline-start-width: var(--sf-b0);
     }
-    [dir="ltr"] .xl\:border-inline-start-0 {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:border-inline-start-0 {
       border-left-width: var(--sf-0);
     }
+    @supports not (border-inline-start-width: initial) {
+    html:not([dir="rtl"]) .xl\:border-inline-start-0 {
+      border-left-width: var(--sf-0);
+      }
+    }
+    .xl\:border-inline-start-0:where(:dir(ltr)) {
+      border-left-width: var(--sf-0);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:border-inline-start-0 {
+      border-right-width: var(--sf-0);
+    }
+    @supports not (border-inline-start-width: initial) {
     [dir="rtl"] .xl\:border-inline-start-0 {
+      border-right-width: var(--sf-0);
+      }
+    }
+    .xl\:border-inline-start-0:where(:dir(rtl)) {
       border-right-width: var(--sf-0);
     }
     .xl\:border-inline-start-0 {
       border-inline-start-width: var(--sf-0);
     }
-    [dir="ltr"] .xl\:border-x-1 {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:border-x-1 {
       border-right-width: var(--sf-a1);
     }
-    [dir="rtl"] .xl\:border-x-1 {
+    @supports not (border-inline-end-width: initial) {
+    html:not([dir="rtl"]) .xl\:border-x-1 {
+      border-right-width: var(--sf-a1);
+      }
+    }
+    .xl\:border-x-1:where(:dir(ltr)) {
+      border-right-width: var(--sf-a1);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:border-x-1 {
       border-left-width: var(--sf-a1);
     }
-    [dir="ltr"] .xl\:border-x-1 {
+    @supports not (border-inline-end-width: initial) {
+    [dir="rtl"] .xl\:border-x-1 {
+      border-left-width: var(--sf-a1);
+      }
+    }
+    .xl\:border-x-1:where(:dir(rtl)) {
       border-left-width: var(--sf-a1);
     }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:border-x-1 {
+      border-left-width: var(--sf-a1);
+    }
+    @supports not (border-inline-start-width: initial) {
+    html:not([dir="rtl"]) .xl\:border-x-1 {
+      border-left-width: var(--sf-a1);
+      }
+    }
+    .xl\:border-x-1:where(:dir(ltr)) {
+      border-left-width: var(--sf-a1);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:border-x-1 {
+      border-right-width: var(--sf-a1);
+    }
+    @supports not (border-inline-start-width: initial) {
     [dir="rtl"] .xl\:border-x-1 {
+      border-right-width: var(--sf-a1);
+      }
+    }
+    .xl\:border-x-1:where(:dir(rtl)) {
       border-right-width: var(--sf-a1);
     }
     .xl\:border-x-1 {
       border-inline-end-width: var(--sf-a1);
       border-inline-start-width: var(--sf-a1);
     }
-    [dir="ltr"] .xl\:border-x-2 {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:border-x-2 {
       border-right-width: var(--sf-a2);
     }
-    [dir="rtl"] .xl\:border-x-2 {
+    @supports not (border-inline-end-width: initial) {
+    html:not([dir="rtl"]) .xl\:border-x-2 {
+      border-right-width: var(--sf-a2);
+      }
+    }
+    .xl\:border-x-2:where(:dir(ltr)) {
+      border-right-width: var(--sf-a2);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:border-x-2 {
       border-left-width: var(--sf-a2);
     }
-    [dir="ltr"] .xl\:border-x-2 {
+    @supports not (border-inline-end-width: initial) {
+    [dir="rtl"] .xl\:border-x-2 {
+      border-left-width: var(--sf-a2);
+      }
+    }
+    .xl\:border-x-2:where(:dir(rtl)) {
       border-left-width: var(--sf-a2);
     }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:border-x-2 {
+      border-left-width: var(--sf-a2);
+    }
+    @supports not (border-inline-start-width: initial) {
+    html:not([dir="rtl"]) .xl\:border-x-2 {
+      border-left-width: var(--sf-a2);
+      }
+    }
+    .xl\:border-x-2:where(:dir(ltr)) {
+      border-left-width: var(--sf-a2);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:border-x-2 {
+      border-right-width: var(--sf-a2);
+    }
+    @supports not (border-inline-start-width: initial) {
     [dir="rtl"] .xl\:border-x-2 {
+      border-right-width: var(--sf-a2);
+      }
+    }
+    .xl\:border-x-2:where(:dir(rtl)) {
       border-right-width: var(--sf-a2);
     }
     .xl\:border-x-2 {
       border-inline-end-width: var(--sf-a2);
       border-inline-start-width: var(--sf-a2);
     }
-    [dir="ltr"] .xl\:border-x-3 {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:border-x-3 {
       border-right-width: var(--sf-a3);
     }
-    [dir="rtl"] .xl\:border-x-3 {
+    @supports not (border-inline-end-width: initial) {
+    html:not([dir="rtl"]) .xl\:border-x-3 {
+      border-right-width: var(--sf-a3);
+      }
+    }
+    .xl\:border-x-3:where(:dir(ltr)) {
+      border-right-width: var(--sf-a3);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:border-x-3 {
       border-left-width: var(--sf-a3);
     }
-    [dir="ltr"] .xl\:border-x-3 {
+    @supports not (border-inline-end-width: initial) {
+    [dir="rtl"] .xl\:border-x-3 {
+      border-left-width: var(--sf-a3);
+      }
+    }
+    .xl\:border-x-3:where(:dir(rtl)) {
       border-left-width: var(--sf-a3);
     }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:border-x-3 {
+      border-left-width: var(--sf-a3);
+    }
+    @supports not (border-inline-start-width: initial) {
+    html:not([dir="rtl"]) .xl\:border-x-3 {
+      border-left-width: var(--sf-a3);
+      }
+    }
+    .xl\:border-x-3:where(:dir(ltr)) {
+      border-left-width: var(--sf-a3);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:border-x-3 {
+      border-right-width: var(--sf-a3);
+    }
+    @supports not (border-inline-start-width: initial) {
     [dir="rtl"] .xl\:border-x-3 {
+      border-right-width: var(--sf-a3);
+      }
+    }
+    .xl\:border-x-3:where(:dir(rtl)) {
       border-right-width: var(--sf-a3);
     }
     .xl\:border-x-3 {
       border-inline-end-width: var(--sf-a3);
       border-inline-start-width: var(--sf-a3);
     }
-    [dir="ltr"] .xl\:border-x-4 {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:border-x-4 {
       border-right-width: var(--sf-a4);
     }
-    [dir="rtl"] .xl\:border-x-4 {
+    @supports not (border-inline-end-width: initial) {
+    html:not([dir="rtl"]) .xl\:border-x-4 {
+      border-right-width: var(--sf-a4);
+      }
+    }
+    .xl\:border-x-4:where(:dir(ltr)) {
+      border-right-width: var(--sf-a4);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:border-x-4 {
       border-left-width: var(--sf-a4);
     }
-    [dir="ltr"] .xl\:border-x-4 {
+    @supports not (border-inline-end-width: initial) {
+    [dir="rtl"] .xl\:border-x-4 {
+      border-left-width: var(--sf-a4);
+      }
+    }
+    .xl\:border-x-4:where(:dir(rtl)) {
       border-left-width: var(--sf-a4);
     }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:border-x-4 {
+      border-left-width: var(--sf-a4);
+    }
+    @supports not (border-inline-start-width: initial) {
+    html:not([dir="rtl"]) .xl\:border-x-4 {
+      border-left-width: var(--sf-a4);
+      }
+    }
+    .xl\:border-x-4:where(:dir(ltr)) {
+      border-left-width: var(--sf-a4);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:border-x-4 {
+      border-right-width: var(--sf-a4);
+    }
+    @supports not (border-inline-start-width: initial) {
     [dir="rtl"] .xl\:border-x-4 {
+      border-right-width: var(--sf-a4);
+      }
+    }
+    .xl\:border-x-4:where(:dir(rtl)) {
       border-right-width: var(--sf-a4);
     }
     .xl\:border-x-4 {
       border-inline-end-width: var(--sf-a4);
       border-inline-start-width: var(--sf-a4);
     }
-    [dir="ltr"] .xl\:border-x-5 {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:border-x-5 {
       border-right-width: var(--sf-a5);
     }
-    [dir="rtl"] .xl\:border-x-5 {
+    @supports not (border-inline-end-width: initial) {
+    html:not([dir="rtl"]) .xl\:border-x-5 {
+      border-right-width: var(--sf-a5);
+      }
+    }
+    .xl\:border-x-5:where(:dir(ltr)) {
+      border-right-width: var(--sf-a5);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:border-x-5 {
       border-left-width: var(--sf-a5);
     }
-    [dir="ltr"] .xl\:border-x-5 {
+    @supports not (border-inline-end-width: initial) {
+    [dir="rtl"] .xl\:border-x-5 {
+      border-left-width: var(--sf-a5);
+      }
+    }
+    .xl\:border-x-5:where(:dir(rtl)) {
       border-left-width: var(--sf-a5);
     }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:border-x-5 {
+      border-left-width: var(--sf-a5);
+    }
+    @supports not (border-inline-start-width: initial) {
+    html:not([dir="rtl"]) .xl\:border-x-5 {
+      border-left-width: var(--sf-a5);
+      }
+    }
+    .xl\:border-x-5:where(:dir(ltr)) {
+      border-left-width: var(--sf-a5);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:border-x-5 {
+      border-right-width: var(--sf-a5);
+    }
+    @supports not (border-inline-start-width: initial) {
     [dir="rtl"] .xl\:border-x-5 {
+      border-right-width: var(--sf-a5);
+      }
+    }
+    .xl\:border-x-5:where(:dir(rtl)) {
       border-right-width: var(--sf-a5);
     }
     .xl\:border-x-5 {
       border-inline-end-width: var(--sf-a5);
       border-inline-start-width: var(--sf-a5);
     }
-    [dir="ltr"] .xl\:border-x-6 {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:border-x-6 {
       border-right-width: var(--sf-a6);
     }
-    [dir="rtl"] .xl\:border-x-6 {
+    @supports not (border-inline-end-width: initial) {
+    html:not([dir="rtl"]) .xl\:border-x-6 {
+      border-right-width: var(--sf-a6);
+      }
+    }
+    .xl\:border-x-6:where(:dir(ltr)) {
+      border-right-width: var(--sf-a6);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:border-x-6 {
       border-left-width: var(--sf-a6);
     }
-    [dir="ltr"] .xl\:border-x-6 {
+    @supports not (border-inline-end-width: initial) {
+    [dir="rtl"] .xl\:border-x-6 {
+      border-left-width: var(--sf-a6);
+      }
+    }
+    .xl\:border-x-6:where(:dir(rtl)) {
       border-left-width: var(--sf-a6);
     }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:border-x-6 {
+      border-left-width: var(--sf-a6);
+    }
+    @supports not (border-inline-start-width: initial) {
+    html:not([dir="rtl"]) .xl\:border-x-6 {
+      border-left-width: var(--sf-a6);
+      }
+    }
+    .xl\:border-x-6:where(:dir(ltr)) {
+      border-left-width: var(--sf-a6);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:border-x-6 {
+      border-right-width: var(--sf-a6);
+    }
+    @supports not (border-inline-start-width: initial) {
     [dir="rtl"] .xl\:border-x-6 {
+      border-right-width: var(--sf-a6);
+      }
+    }
+    .xl\:border-x-6:where(:dir(rtl)) {
       border-right-width: var(--sf-a6);
     }
     .xl\:border-x-6 {
       border-inline-end-width: var(--sf-a6);
       border-inline-start-width: var(--sf-a6);
     }
-    [dir="ltr"] .xl\:border-x-7 {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:border-x-7 {
       border-right-width: var(--sf-a7);
     }
-    [dir="rtl"] .xl\:border-x-7 {
+    @supports not (border-inline-end-width: initial) {
+    html:not([dir="rtl"]) .xl\:border-x-7 {
+      border-right-width: var(--sf-a7);
+      }
+    }
+    .xl\:border-x-7:where(:dir(ltr)) {
+      border-right-width: var(--sf-a7);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:border-x-7 {
       border-left-width: var(--sf-a7);
     }
-    [dir="ltr"] .xl\:border-x-7 {
+    @supports not (border-inline-end-width: initial) {
+    [dir="rtl"] .xl\:border-x-7 {
+      border-left-width: var(--sf-a7);
+      }
+    }
+    .xl\:border-x-7:where(:dir(rtl)) {
       border-left-width: var(--sf-a7);
     }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:border-x-7 {
+      border-left-width: var(--sf-a7);
+    }
+    @supports not (border-inline-start-width: initial) {
+    html:not([dir="rtl"]) .xl\:border-x-7 {
+      border-left-width: var(--sf-a7);
+      }
+    }
+    .xl\:border-x-7:where(:dir(ltr)) {
+      border-left-width: var(--sf-a7);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:border-x-7 {
+      border-right-width: var(--sf-a7);
+    }
+    @supports not (border-inline-start-width: initial) {
     [dir="rtl"] .xl\:border-x-7 {
+      border-right-width: var(--sf-a7);
+      }
+    }
+    .xl\:border-x-7:where(:dir(rtl)) {
       border-right-width: var(--sf-a7);
     }
     .xl\:border-x-7 {
       border-inline-end-width: var(--sf-a7);
       border-inline-start-width: var(--sf-a7);
     }
-    [dir="ltr"] .xl\:border-x-8 {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:border-x-8 {
       border-right-width: var(--sf-a8);
     }
-    [dir="rtl"] .xl\:border-x-8 {
+    @supports not (border-inline-end-width: initial) {
+    html:not([dir="rtl"]) .xl\:border-x-8 {
+      border-right-width: var(--sf-a8);
+      }
+    }
+    .xl\:border-x-8:where(:dir(ltr)) {
+      border-right-width: var(--sf-a8);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:border-x-8 {
       border-left-width: var(--sf-a8);
     }
-    [dir="ltr"] .xl\:border-x-8 {
+    @supports not (border-inline-end-width: initial) {
+    [dir="rtl"] .xl\:border-x-8 {
+      border-left-width: var(--sf-a8);
+      }
+    }
+    .xl\:border-x-8:where(:dir(rtl)) {
       border-left-width: var(--sf-a8);
     }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:border-x-8 {
+      border-left-width: var(--sf-a8);
+    }
+    @supports not (border-inline-start-width: initial) {
+    html:not([dir="rtl"]) .xl\:border-x-8 {
+      border-left-width: var(--sf-a8);
+      }
+    }
+    .xl\:border-x-8:where(:dir(ltr)) {
+      border-left-width: var(--sf-a8);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:border-x-8 {
+      border-right-width: var(--sf-a8);
+    }
+    @supports not (border-inline-start-width: initial) {
     [dir="rtl"] .xl\:border-x-8 {
+      border-right-width: var(--sf-a8);
+      }
+    }
+    .xl\:border-x-8:where(:dir(rtl)) {
       border-right-width: var(--sf-a8);
     }
     .xl\:border-x-8 {
       border-inline-end-width: var(--sf-a8);
       border-inline-start-width: var(--sf-a8);
     }
-    [dir="ltr"] .xl\:border-x-9 {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:border-x-9 {
       border-right-width: var(--sf-a9);
     }
-    [dir="rtl"] .xl\:border-x-9 {
+    @supports not (border-inline-end-width: initial) {
+    html:not([dir="rtl"]) .xl\:border-x-9 {
+      border-right-width: var(--sf-a9);
+      }
+    }
+    .xl\:border-x-9:where(:dir(ltr)) {
+      border-right-width: var(--sf-a9);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:border-x-9 {
       border-left-width: var(--sf-a9);
     }
-    [dir="ltr"] .xl\:border-x-9 {
+    @supports not (border-inline-end-width: initial) {
+    [dir="rtl"] .xl\:border-x-9 {
+      border-left-width: var(--sf-a9);
+      }
+    }
+    .xl\:border-x-9:where(:dir(rtl)) {
       border-left-width: var(--sf-a9);
     }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:border-x-9 {
+      border-left-width: var(--sf-a9);
+    }
+    @supports not (border-inline-start-width: initial) {
+    html:not([dir="rtl"]) .xl\:border-x-9 {
+      border-left-width: var(--sf-a9);
+      }
+    }
+    .xl\:border-x-9:where(:dir(ltr)) {
+      border-left-width: var(--sf-a9);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:border-x-9 {
+      border-right-width: var(--sf-a9);
+    }
+    @supports not (border-inline-start-width: initial) {
     [dir="rtl"] .xl\:border-x-9 {
+      border-right-width: var(--sf-a9);
+      }
+    }
+    .xl\:border-x-9:where(:dir(rtl)) {
       border-right-width: var(--sf-a9);
     }
     .xl\:border-x-9 {
       border-inline-end-width: var(--sf-a9);
       border-inline-start-width: var(--sf-a9);
     }
-    [dir="ltr"] .xl\:border-x-10 {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:border-x-10 {
       border-right-width: var(--sf-b0);
     }
-    [dir="rtl"] .xl\:border-x-10 {
+    @supports not (border-inline-end-width: initial) {
+    html:not([dir="rtl"]) .xl\:border-x-10 {
+      border-right-width: var(--sf-b0);
+      }
+    }
+    .xl\:border-x-10:where(:dir(ltr)) {
+      border-right-width: var(--sf-b0);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:border-x-10 {
       border-left-width: var(--sf-b0);
     }
-    [dir="ltr"] .xl\:border-x-10 {
+    @supports not (border-inline-end-width: initial) {
+    [dir="rtl"] .xl\:border-x-10 {
+      border-left-width: var(--sf-b0);
+      }
+    }
+    .xl\:border-x-10:where(:dir(rtl)) {
       border-left-width: var(--sf-b0);
     }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:border-x-10 {
+      border-left-width: var(--sf-b0);
+    }
+    @supports not (border-inline-start-width: initial) {
+    html:not([dir="rtl"]) .xl\:border-x-10 {
+      border-left-width: var(--sf-b0);
+      }
+    }
+    .xl\:border-x-10:where(:dir(ltr)) {
+      border-left-width: var(--sf-b0);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:border-x-10 {
+      border-right-width: var(--sf-b0);
+    }
+    @supports not (border-inline-start-width: initial) {
     [dir="rtl"] .xl\:border-x-10 {
+      border-right-width: var(--sf-b0);
+      }
+    }
+    .xl\:border-x-10:where(:dir(rtl)) {
       border-right-width: var(--sf-b0);
     }
     .xl\:border-x-10 {
       border-inline-end-width: var(--sf-b0);
       border-inline-start-width: var(--sf-b0);
     }
-    [dir="ltr"] .xl\:border-x-0 {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:border-x-0 {
       border-right-width: var(--sf-0);
     }
-    [dir="rtl"] .xl\:border-x-0 {
+    @supports not (border-inline-end-width: initial) {
+    html:not([dir="rtl"]) .xl\:border-x-0 {
+      border-right-width: var(--sf-0);
+      }
+    }
+    .xl\:border-x-0:where(:dir(ltr)) {
+      border-right-width: var(--sf-0);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:border-x-0 {
       border-left-width: var(--sf-0);
     }
-    [dir="ltr"] .xl\:border-x-0 {
+    @supports not (border-inline-end-width: initial) {
+    [dir="rtl"] .xl\:border-x-0 {
+      border-left-width: var(--sf-0);
+      }
+    }
+    .xl\:border-x-0:where(:dir(rtl)) {
       border-left-width: var(--sf-0);
     }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:border-x-0 {
+      border-left-width: var(--sf-0);
+    }
+    @supports not (border-inline-start-width: initial) {
+    html:not([dir="rtl"]) .xl\:border-x-0 {
+      border-left-width: var(--sf-0);
+      }
+    }
+    .xl\:border-x-0:where(:dir(ltr)) {
+      border-left-width: var(--sf-0);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:border-x-0 {
+      border-right-width: var(--sf-0);
+    }
+    @supports not (border-inline-start-width: initial) {
     [dir="rtl"] .xl\:border-x-0 {
+      border-right-width: var(--sf-0);
+      }
+    }
+    .xl\:border-x-0:where(:dir(rtl)) {
       border-right-width: var(--sf-0);
     }
     .xl\:border-x-0 {

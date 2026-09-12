@@ -238,16 +238,48 @@
     vertical-align: top;
     /* your custom style here */
   }
-  [dir="ltr"] .hljs-ln-numbers div {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .hljs-ln-numbers div {
     border-right: var(--sf-px) solid var(--sf-highlight-line-divider);
   }
-  [dir="rtl"] .hljs-ln-numbers div {
+  @supports not (border-inline-end: initial) {
+  html:not([dir="rtl"]) .hljs-ln-numbers div {
+    border-right: var(--sf-px) solid var(--sf-highlight-line-divider);
+    }
+  }
+  .hljs-ln-numbers div:where(:dir(ltr)) {
+    border-right: var(--sf-px) solid var(--sf-highlight-line-divider);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .hljs-ln-numbers div {
     border-left: var(--sf-px) solid var(--sf-highlight-line-divider);
   }
-  [dir="ltr"] .hljs-ln-numbers div {
+  @supports not (border-inline-end: initial) {
+  [dir="rtl"] .hljs-ln-numbers div {
+    border-left: var(--sf-px) solid var(--sf-highlight-line-divider);
+    }
+  }
+  .hljs-ln-numbers div:where(:dir(rtl)) {
+    border-left: var(--sf-px) solid var(--sf-highlight-line-divider);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .hljs-ln-numbers div {
     padding-right: var(--sf-a5);
   }
+  @supports not (padding-inline-end: initial) {
+  html:not([dir="rtl"]) .hljs-ln-numbers div {
+    padding-right: var(--sf-a5);
+    }
+  }
+  .hljs-ln-numbers div:where(:dir(ltr)) {
+    padding-right: var(--sf-a5);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .hljs-ln-numbers div {
+    padding-left: var(--sf-a5);
+  }
+  @supports not (padding-inline-end: initial) {
   [dir="rtl"] .hljs-ln-numbers div {
+    padding-left: var(--sf-a5);
+    }
+  }
+  .hljs-ln-numbers div:where(:dir(rtl)) {
     padding-left: var(--sf-a5);
   }
   .hljs-ln-numbers div {
@@ -257,10 +289,26 @@
             padding-inline-end: var(--sf-a5);
   }
   /* for block of code */
-  [dir="ltr"] .hljs-ln-code {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .hljs-ln-code {
     padding-left: var(--sf-b0);
   }
+  @supports not (padding-inline-start: initial) {
+  html:not([dir="rtl"]) .hljs-ln-code {
+    padding-left: var(--sf-b0);
+    }
+  }
+  .hljs-ln-code:where(:dir(ltr)) {
+    padding-left: var(--sf-b0);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .hljs-ln-code {
+    padding-right: var(--sf-b0);
+  }
+  @supports not (padding-inline-start: initial) {
   [dir="rtl"] .hljs-ln-code {
+    padding-right: var(--sf-b0);
+    }
+  }
+  .hljs-ln-code:where(:dir(rtl)) {
     padding-right: var(--sf-b0);
   }
   .hljs-ln-code {

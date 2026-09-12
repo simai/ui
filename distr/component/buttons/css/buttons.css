@@ -8,88 +8,304 @@
 */
 @layer sf.components {
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) justify-content/center (.justify-center) align-items/center (.items-center) */
-  [dir="ltr"] .sf-button {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button {
     border-bottom-right-radius: var(--sf-button--radius);
     border-bottom-right-radius: var(--sf-button--border-bottom-right-radius, var(--sf-button--radius));
   }
-  [dir="rtl"] .sf-button {
+  @supports not (border-end-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-button {
+    border-bottom-right-radius: var(--sf-button--radius);
+    border-bottom-right-radius: var(--sf-button--border-bottom-right-radius, var(--sf-button--radius));
+    }
+  }
+  .sf-button:where(:dir(ltr)) {
+    border-bottom-right-radius: var(--sf-button--radius);
+    border-bottom-right-radius: var(--sf-button--border-bottom-right-radius, var(--sf-button--radius));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-button {
     border-bottom-left-radius: var(--sf-button--radius);
     border-bottom-left-radius: var(--sf-button--border-bottom-right-radius, var(--sf-button--radius));
   }
-  [dir="ltr"] .sf-button {
+  @supports not (border-end-end-radius: initial) {
+  [dir="rtl"] .sf-button {
+    border-bottom-left-radius: var(--sf-button--radius);
+    border-bottom-left-radius: var(--sf-button--border-bottom-right-radius, var(--sf-button--radius));
+    }
+  }
+  .sf-button:where(:dir(rtl)) {
+    border-bottom-left-radius: var(--sf-button--radius);
+    border-bottom-left-radius: var(--sf-button--border-bottom-right-radius, var(--sf-button--radius));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button {
     border-bottom-left-radius: var(--sf-button--radius);
     border-bottom-left-radius: var(--sf-button--border-bottom-left-radius, var(--sf-button--radius));
   }
-  [dir="rtl"] .sf-button {
+  @supports not (border-end-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-button {
+    border-bottom-left-radius: var(--sf-button--radius);
+    border-bottom-left-radius: var(--sf-button--border-bottom-left-radius, var(--sf-button--radius));
+    }
+  }
+  .sf-button:where(:dir(ltr)) {
+    border-bottom-left-radius: var(--sf-button--radius);
+    border-bottom-left-radius: var(--sf-button--border-bottom-left-radius, var(--sf-button--radius));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-button {
     border-bottom-right-radius: var(--sf-button--radius);
     border-bottom-right-radius: var(--sf-button--border-bottom-left-radius, var(--sf-button--radius));
   }
-  [dir="ltr"] .sf-button {
+  @supports not (border-end-start-radius: initial) {
+  [dir="rtl"] .sf-button {
+    border-bottom-right-radius: var(--sf-button--radius);
+    border-bottom-right-radius: var(--sf-button--border-bottom-left-radius, var(--sf-button--radius));
+    }
+  }
+  .sf-button:where(:dir(rtl)) {
+    border-bottom-right-radius: var(--sf-button--radius);
+    border-bottom-right-radius: var(--sf-button--border-bottom-left-radius, var(--sf-button--radius));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button {
     border-top-right-radius: var(--sf-button--radius);
     border-top-right-radius: var(--sf-button--border-top-right-radius, var(--sf-button--radius));
   }
-  [dir="rtl"] .sf-button {
+  @supports not (border-start-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-button {
+    border-top-right-radius: var(--sf-button--radius);
+    border-top-right-radius: var(--sf-button--border-top-right-radius, var(--sf-button--radius));
+    }
+  }
+  .sf-button:where(:dir(ltr)) {
+    border-top-right-radius: var(--sf-button--radius);
+    border-top-right-radius: var(--sf-button--border-top-right-radius, var(--sf-button--radius));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-button {
     border-top-left-radius: var(--sf-button--radius);
     border-top-left-radius: var(--sf-button--border-top-right-radius, var(--sf-button--radius));
   }
-  [dir="ltr"] .sf-button {
+  @supports not (border-start-end-radius: initial) {
+  [dir="rtl"] .sf-button {
+    border-top-left-radius: var(--sf-button--radius);
+    border-top-left-radius: var(--sf-button--border-top-right-radius, var(--sf-button--radius));
+    }
+  }
+  .sf-button:where(:dir(rtl)) {
+    border-top-left-radius: var(--sf-button--radius);
+    border-top-left-radius: var(--sf-button--border-top-right-radius, var(--sf-button--radius));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button {
     border-top-left-radius: var(--sf-button--radius);
     border-top-left-radius: var(--sf-button--border-top-left-radius, var(--sf-button--radius));
   }
-  [dir="rtl"] .sf-button {
+  @supports not (border-start-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-button {
+    border-top-left-radius: var(--sf-button--radius);
+    border-top-left-radius: var(--sf-button--border-top-left-radius, var(--sf-button--radius));
+    }
+  }
+  .sf-button:where(:dir(ltr)) {
+    border-top-left-radius: var(--sf-button--radius);
+    border-top-left-radius: var(--sf-button--border-top-left-radius, var(--sf-button--radius));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-button {
     border-top-right-radius: var(--sf-button--radius);
     border-top-right-radius: var(--sf-button--border-top-left-radius, var(--sf-button--radius));
   }
-  [dir="ltr"] .sf-button {
+  @supports not (border-start-start-radius: initial) {
+  [dir="rtl"] .sf-button {
+    border-top-right-radius: var(--sf-button--radius);
+    border-top-right-radius: var(--sf-button--border-top-left-radius, var(--sf-button--radius));
+    }
+  }
+  .sf-button:where(:dir(rtl)) {
+    border-top-right-radius: var(--sf-button--radius);
+    border-top-right-radius: var(--sf-button--border-top-left-radius, var(--sf-button--radius));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button {
     padding-left: var(--sf-button--padding-inline-start);
   }
-  [dir="rtl"] .sf-button {
+  @supports not (padding-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-button {
+    padding-left: var(--sf-button--padding-inline-start);
+    }
+  }
+  .sf-button:where(:dir(ltr)) {
+    padding-left: var(--sf-button--padding-inline-start);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-button {
     padding-right: var(--sf-button--padding-inline-start);
   }
-  [dir="ltr"] .sf-button {
+  @supports not (padding-inline-start: initial) {
+  [dir="rtl"] .sf-button {
+    padding-right: var(--sf-button--padding-inline-start);
+    }
+  }
+  .sf-button:where(:dir(rtl)) {
+    padding-right: var(--sf-button--padding-inline-start);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button {
     padding-right: var(--sf-button--padding-inline-end);
   }
-  [dir="rtl"] .sf-button {
+  @supports not (padding-inline-end: initial) {
+  html:not([dir="rtl"]) .sf-button {
+    padding-right: var(--sf-button--padding-inline-end);
+    }
+  }
+  .sf-button:where(:dir(ltr)) {
+    padding-right: var(--sf-button--padding-inline-end);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-button {
     padding-left: var(--sf-button--padding-inline-end);
   }
-  [dir="ltr"] .sf-button {
+  @supports not (padding-inline-end: initial) {
+  [dir="rtl"] .sf-button {
+    padding-left: var(--sf-button--padding-inline-end);
+    }
+  }
+  .sf-button:where(:dir(rtl)) {
+    padding-left: var(--sf-button--padding-inline-end);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button {
     border-right-width: 0;
     border-right-width: var(--sf-button--border-inline-end-width, 0);
   }
-  [dir="rtl"] .sf-button {
+  @supports not (border-inline-end-width: initial) {
+  html:not([dir="rtl"]) .sf-button {
+    border-right-width: 0;
+    border-right-width: var(--sf-button--border-inline-end-width, 0);
+    }
+  }
+  .sf-button:where(:dir(ltr)) {
+    border-right-width: 0;
+    border-right-width: var(--sf-button--border-inline-end-width, 0);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-button {
     border-left-width: 0;
     border-left-width: var(--sf-button--border-inline-end-width, 0);
   }
-  [dir="ltr"] .sf-button {
+  @supports not (border-inline-end-width: initial) {
+  [dir="rtl"] .sf-button {
+    border-left-width: 0;
+    border-left-width: var(--sf-button--border-inline-end-width, 0);
+    }
+  }
+  .sf-button:where(:dir(rtl)) {
+    border-left-width: 0;
+    border-left-width: var(--sf-button--border-inline-end-width, 0);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button {
     border-left-width: 0;
     border-left-width: var(--sf-button--border-inline-start-width, 0);
   }
-  [dir="rtl"] .sf-button {
+  @supports not (border-inline-start-width: initial) {
+  html:not([dir="rtl"]) .sf-button {
+    border-left-width: 0;
+    border-left-width: var(--sf-button--border-inline-start-width, 0);
+    }
+  }
+  .sf-button:where(:dir(ltr)) {
+    border-left-width: 0;
+    border-left-width: var(--sf-button--border-inline-start-width, 0);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-button {
     border-right-width: 0;
     border-right-width: var(--sf-button--border-inline-start-width, 0);
   }
-  [dir="ltr"] .sf-button {
+  @supports not (border-inline-start-width: initial) {
+  [dir="rtl"] .sf-button {
+    border-right-width: 0;
+    border-right-width: var(--sf-button--border-inline-start-width, 0);
+    }
+  }
+  .sf-button:where(:dir(rtl)) {
+    border-right-width: 0;
+    border-right-width: var(--sf-button--border-inline-start-width, 0);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button {
     border-bottom-right-radius: var(--sf-button--radius);
   }
-  [dir="rtl"] .sf-button {
-    border-bottom-left-radius: var(--sf-button--radius);
+  @supports not (border-end-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-button {
+    border-bottom-right-radius: var(--sf-button--radius);
+    }
   }
-  [dir="ltr"] .sf-button {
-    border-bottom-left-radius: var(--sf-button--radius);
-  }
-  [dir="rtl"] .sf-button {
+  .sf-button:where(:dir(ltr)) {
     border-bottom-right-radius: var(--sf-button--radius);
   }
-  [dir="ltr"] .sf-button {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-button {
+    border-bottom-left-radius: var(--sf-button--radius);
+  }
+  @supports not (border-end-end-radius: initial) {
+  [dir="rtl"] .sf-button {
+    border-bottom-left-radius: var(--sf-button--radius);
+    }
+  }
+  .sf-button:where(:dir(rtl)) {
+    border-bottom-left-radius: var(--sf-button--radius);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button {
+    border-bottom-left-radius: var(--sf-button--radius);
+  }
+  @supports not (border-end-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-button {
+    border-bottom-left-radius: var(--sf-button--radius);
+    }
+  }
+  .sf-button:where(:dir(ltr)) {
+    border-bottom-left-radius: var(--sf-button--radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-button {
+    border-bottom-right-radius: var(--sf-button--radius);
+  }
+  @supports not (border-end-start-radius: initial) {
+  [dir="rtl"] .sf-button {
+    border-bottom-right-radius: var(--sf-button--radius);
+    }
+  }
+  .sf-button:where(:dir(rtl)) {
+    border-bottom-right-radius: var(--sf-button--radius);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button {
     border-top-right-radius: var(--sf-button--radius);
   }
-  [dir="rtl"] .sf-button {
+  @supports not (border-start-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-button {
+    border-top-right-radius: var(--sf-button--radius);
+    }
+  }
+  .sf-button:where(:dir(ltr)) {
+    border-top-right-radius: var(--sf-button--radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-button {
     border-top-left-radius: var(--sf-button--radius);
   }
-  [dir="ltr"] .sf-button {
+  @supports not (border-start-end-radius: initial) {
+  [dir="rtl"] .sf-button {
+    border-top-left-radius: var(--sf-button--radius);
+    }
+  }
+  .sf-button:where(:dir(rtl)) {
     border-top-left-radius: var(--sf-button--radius);
   }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button {
+    border-top-left-radius: var(--sf-button--radius);
+  }
+  @supports not (border-start-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-button {
+    border-top-left-radius: var(--sf-button--radius);
+    }
+  }
+  .sf-button:where(:dir(ltr)) {
+    border-top-left-radius: var(--sf-button--radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-button {
+    border-top-right-radius: var(--sf-button--radius);
+  }
+  @supports not (border-start-start-radius: initial) {
   [dir="rtl"] .sf-button {
+    border-top-right-radius: var(--sf-button--radius);
+    }
+  }
+  .sf-button:where(:dir(rtl)) {
     border-top-right-radius: var(--sf-button--radius);
   }
   .sf-button {
@@ -126,16 +342,48 @@
     box-shadow: var(--sf-button--box-shadow);
   }
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) justify-content/center (.justify-center) align-items/center (.items-center) */
-  [dir="ltr"] .sf-button .sf-button-text-container {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button .sf-button-text-container {
     padding-right: var(--sf-button-text-container--padding-inline-end);
   }
-  [dir="rtl"] .sf-button .sf-button-text-container {
+  @supports not (padding-inline-end: initial) {
+  html:not([dir="rtl"]) .sf-button .sf-button-text-container {
+    padding-right: var(--sf-button-text-container--padding-inline-end);
+    }
+  }
+  .sf-button .sf-button-text-container:where(:dir(ltr)) {
+    padding-right: var(--sf-button-text-container--padding-inline-end);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-button .sf-button-text-container {
     padding-left: var(--sf-button-text-container--padding-inline-end);
   }
-  [dir="ltr"] .sf-button .sf-button-text-container {
+  @supports not (padding-inline-end: initial) {
+  [dir="rtl"] .sf-button .sf-button-text-container {
+    padding-left: var(--sf-button-text-container--padding-inline-end);
+    }
+  }
+  .sf-button .sf-button-text-container:where(:dir(rtl)) {
+    padding-left: var(--sf-button-text-container--padding-inline-end);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button .sf-button-text-container {
     padding-left: var(--sf-button-text-container--padding-inline-start);
   }
+  @supports not (padding-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-button .sf-button-text-container {
+    padding-left: var(--sf-button-text-container--padding-inline-start);
+    }
+  }
+  .sf-button .sf-button-text-container:where(:dir(ltr)) {
+    padding-left: var(--sf-button-text-container--padding-inline-start);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-button .sf-button-text-container {
+    padding-right: var(--sf-button-text-container--padding-inline-start);
+  }
+  @supports not (padding-inline-start: initial) {
   [dir="rtl"] .sf-button .sf-button-text-container {
+    padding-right: var(--sf-button-text-container--padding-inline-start);
+    }
+  }
+  .sf-button .sf-button-text-container:where(:dir(rtl)) {
     padding-right: var(--sf-button-text-container--padding-inline-start);
   }
   .sf-button .sf-button-text-container {
@@ -399,11 +647,31 @@
     --sf-button--border-inline-start-width: var(--sf-px);
     --sf-button--border-inline-end-width: var(--sf-px);
   }
-  [dir="ltr"] .sf-button.segment-end {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button.segment-end {
     border-left-color: transparent;
     border-left-color: var(--sf-white--alfa-24, transparent);
   }
+  @supports not (border-inline-start-color: initial) {
+  html:not([dir="rtl"]) .sf-button.segment-end {
+    border-left-color: transparent;
+    border-left-color: var(--sf-white--alfa-24, transparent);
+    }
+  }
+  .sf-button.segment-end:where(:dir(ltr)) {
+    border-left-color: transparent;
+    border-left-color: var(--sf-white--alfa-24, transparent);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-button.segment-end {
+    border-right-color: transparent;
+    border-right-color: var(--sf-white--alfa-24, transparent);
+  }
+  @supports not (border-inline-start-color: initial) {
   [dir="rtl"] .sf-button.segment-end {
+    border-right-color: transparent;
+    border-right-color: var(--sf-white--alfa-24, transparent);
+    }
+  }
+  .sf-button.segment-end:where(:dir(rtl)) {
     border-right-color: transparent;
     border-right-color: var(--sf-white--alfa-24, transparent);
   }
@@ -414,11 +682,31 @@
     border-inline-start-color: var(--sf-white--alfa-24, transparent);
     --sf-button--border-inline-start-width: var(--sf-px);
   }
-  [dir="ltr"] .sf-button:not(.sf-button--outline).segment-end {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button:not(.sf-button--outline).segment-end {
     border-left-color: transparent;
     border-left-color: var(--sf-white--alfa-24, transparent);
   }
+  @supports not (border-inline-start-color: initial) {
+  html:not([dir="rtl"]) .sf-button:not(.sf-button--outline).segment-end {
+    border-left-color: transparent;
+    border-left-color: var(--sf-white--alfa-24, transparent);
+    }
+  }
+  .sf-button:not(.sf-button--outline).segment-end:where(:dir(ltr)) {
+    border-left-color: transparent;
+    border-left-color: var(--sf-white--alfa-24, transparent);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-button:not(.sf-button--outline).segment-end {
+    border-right-color: transparent;
+    border-right-color: var(--sf-white--alfa-24, transparent);
+  }
+  @supports not (border-inline-start-color: initial) {
   [dir="rtl"] .sf-button:not(.sf-button--outline).segment-end {
+    border-right-color: transparent;
+    border-right-color: var(--sf-white--alfa-24, transparent);
+    }
+  }
+  .sf-button:not(.sf-button--outline).segment-end:where(:dir(rtl)) {
     border-right-color: transparent;
     border-right-color: var(--sf-white--alfa-24, transparent);
   }
@@ -426,11 +714,31 @@
     border-inline-start-color: transparent;
     border-inline-start-color: var(--sf-white--alfa-24, transparent);
   }
-  [dir="ltr"] .sf-button:not(.sf-button--outline).segment-start {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button:not(.sf-button--outline).segment-start {
     border-right-color: transparent;
     border-right-color: var(--sf-white--alfa-24, transparent);
   }
+  @supports not (border-inline-end-color: initial) {
+  html:not([dir="rtl"]) .sf-button:not(.sf-button--outline).segment-start {
+    border-right-color: transparent;
+    border-right-color: var(--sf-white--alfa-24, transparent);
+    }
+  }
+  .sf-button:not(.sf-button--outline).segment-start:where(:dir(ltr)) {
+    border-right-color: transparent;
+    border-right-color: var(--sf-white--alfa-24, transparent);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-button:not(.sf-button--outline).segment-start {
+    border-left-color: transparent;
+    border-left-color: var(--sf-white--alfa-24, transparent);
+  }
+  @supports not (border-inline-end-color: initial) {
   [dir="rtl"] .sf-button:not(.sf-button--outline).segment-start {
+    border-left-color: transparent;
+    border-left-color: var(--sf-white--alfa-24, transparent);
+    }
+  }
+  .sf-button:not(.sf-button--outline).segment-start:where(:dir(rtl)) {
     border-left-color: transparent;
     border-left-color: var(--sf-white--alfa-24, transparent);
   }
@@ -438,19 +746,59 @@
     border-inline-end-color: transparent;
     border-inline-end-color: var(--sf-white--alfa-24, transparent);
   }
-  [dir="ltr"] .sf-button:not(.sf-button--outline).segment-middle {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button:not(.sf-button--outline).segment-middle {
     border-right-color: transparent;
     border-right-color: var(--sf-white--alfa-24, transparent);
   }
-  [dir="rtl"] .sf-button:not(.sf-button--outline).segment-middle {
+  @supports not (border-inline-end-color: initial) {
+  html:not([dir="rtl"]) .sf-button:not(.sf-button--outline).segment-middle {
+    border-right-color: transparent;
+    border-right-color: var(--sf-white--alfa-24, transparent);
+    }
+  }
+  .sf-button:not(.sf-button--outline).segment-middle:where(:dir(ltr)) {
+    border-right-color: transparent;
+    border-right-color: var(--sf-white--alfa-24, transparent);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-button:not(.sf-button--outline).segment-middle {
     border-left-color: transparent;
     border-left-color: var(--sf-white--alfa-24, transparent);
   }
-  [dir="ltr"] .sf-button:not(.sf-button--outline).segment-middle {
+  @supports not (border-inline-end-color: initial) {
+  [dir="rtl"] .sf-button:not(.sf-button--outline).segment-middle {
+    border-left-color: transparent;
+    border-left-color: var(--sf-white--alfa-24, transparent);
+    }
+  }
+  .sf-button:not(.sf-button--outline).segment-middle:where(:dir(rtl)) {
     border-left-color: transparent;
     border-left-color: var(--sf-white--alfa-24, transparent);
   }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button:not(.sf-button--outline).segment-middle {
+    border-left-color: transparent;
+    border-left-color: var(--sf-white--alfa-24, transparent);
+  }
+  @supports not (border-inline-start-color: initial) {
+  html:not([dir="rtl"]) .sf-button:not(.sf-button--outline).segment-middle {
+    border-left-color: transparent;
+    border-left-color: var(--sf-white--alfa-24, transparent);
+    }
+  }
+  .sf-button:not(.sf-button--outline).segment-middle:where(:dir(ltr)) {
+    border-left-color: transparent;
+    border-left-color: var(--sf-white--alfa-24, transparent);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-button:not(.sf-button--outline).segment-middle {
+    border-right-color: transparent;
+    border-right-color: var(--sf-white--alfa-24, transparent);
+  }
+  @supports not (border-inline-start-color: initial) {
   [dir="rtl"] .sf-button:not(.sf-button--outline).segment-middle {
+    border-right-color: transparent;
+    border-right-color: var(--sf-white--alfa-24, transparent);
+    }
+  }
+  .sf-button:not(.sf-button--outline).segment-middle:where(:dir(rtl)) {
     border-right-color: transparent;
     border-right-color: var(--sf-white--alfa-24, transparent);
   }
@@ -692,12 +1040,32 @@
   }
   /* Keep this after the compatibility rules above: the selected segment's
      end border is the only line at this join. */
-  [dir="ltr"] sf-button[*|\:has\(.sf-button--outline\[class] + sf-button .sf-button.sf-button--link[class*=segment-],[dir="ltr"] 
+  _:-ms-input-placeholder, html:not([dir="rtl"]) sf-button[*|\:has\(.sf-button--outline\[class] + sf-button .sf-button.sf-button--link[class*=segment-],html:not([dir="rtl"])
   .sf-button.sf-button--outline[class*=segment-] + .sf-button.sf-button--link[class*=segment-] {
     border-left-width: 0;
   }
-  [dir="rtl"] sf-button[*|\:has\(.sf-button--outline\[class] + sf-button .sf-button.sf-button--link[class*=segment-],[dir="rtl"] 
+  @supports not (border-inline-start-width: initial) {
+  html:not([dir="rtl"]) sf-button[*|\:has\(.sf-button--outline\[class] + sf-button .sf-button.sf-button--link[class*=segment-],html:not([dir="rtl"])
   .sf-button.sf-button--outline[class*=segment-] + .sf-button.sf-button--link[class*=segment-] {
+    border-left-width: 0;
+    }
+  }
+  sf-button[\:has\(.sf-button--outline\[class*\%3Dsegment-\]\)] + sf-button .sf-button.sf-button--link[class*=segment-]:where(:dir(ltr)),
+  .sf-button.sf-button--outline[class*=segment-] + .sf-button.sf-button--link[class*=segment-]:where(:dir(ltr)) {
+    border-left-width: 0;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] sf-button[*|\:has\(.sf-button--outline\[class] + sf-button .sf-button.sf-button--link[class*=segment-],[dir="rtl"]
+  .sf-button.sf-button--outline[class*=segment-] + .sf-button.sf-button--link[class*=segment-] {
+    border-right-width: 0;
+  }
+  @supports not (border-inline-start-width: initial) {
+  [dir="rtl"] sf-button[*|\:has\(.sf-button--outline\[class] + sf-button .sf-button.sf-button--link[class*=segment-],[dir="rtl"]
+  .sf-button.sf-button--outline[class*=segment-] + .sf-button.sf-button--link[class*=segment-] {
+    border-right-width: 0;
+    }
+  }
+  sf-button[\:has\(.sf-button--outline\[class*\%3Dsegment-\]\)] + sf-button .sf-button.sf-button--link[class*=segment-]:where(:dir(rtl)),
+  .sf-button.sf-button--outline[class*=segment-] + .sf-button.sf-button--link[class*=segment-]:where(:dir(rtl)) {
     border-right-width: 0;
   }
   sf-button[\:has\(.sf-button--outline\[class*\%3Dsegment-\]\)] + sf-button .sf-button.sf-button--link[class*=segment-],
@@ -705,28 +1073,88 @@
     --sf-button--border-inline-start-width: 0;
     border-inline-start-width: 0;
   }
-  [dir="ltr"] sf-button[\:has\(.sf-button--outline\[class*\%3Dsegment-\]\)] + sf-button .sf-button.sf-button--link[class*=segment-],[dir="ltr"] 
+  _:-ms-input-placeholder, html:not([dir="rtl"]) sf-button[*|\:has\(.sf-button--outline\[class] + sf-button .sf-button.sf-button--link[class*=segment-],html:not([dir="rtl"])
   .sf-button.sf-button--outline[class*=segment-] + .sf-button.sf-button--link[class*=segment-] {
     border-left-width: 0;
   }
-  [dir="ltr"] sf-button:has(.sf-button--outline[class*=segment-]) + sf-button .sf-button.sf-button--link[class*=segment-],[dir="ltr"] 
+  @supports not (border-inline-start-width: initial) {
+  html:not([dir="rtl"]) sf-button[*|\:has\(.sf-button--outline\[class] + sf-button .sf-button.sf-button--link[class*=segment-],html:not([dir="rtl"])
+  .sf-button.sf-button--outline[class*=segment-] + .sf-button.sf-button--link[class*=segment-] {
+    border-left-width: 0;
+    }
+  }
+  sf-button[\:has\(.sf-button--outline\[class*\%3Dsegment-\]\)] + sf-button .sf-button.sf-button--link[class*=segment-]:where(:dir(ltr)),
+  .sf-button.sf-button--outline[class*=segment-] + .sf-button.sf-button--link[class*=segment-]:where(:dir(ltr)) {
+    border-left-width: 0;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) sf-button:has(.sf-button--outline[class*=segment-]) + sf-button .sf-button.sf-button--link[class*=segment-],html:not([dir="rtl"])
   .sf-button.sf-button--outline[class*=segment-] + .sf-button.sf-button--link[class*=segment-] {
     border-left-width: 0;
   }
-  [dir="rtl"] sf-button[\:has\(.sf-button--outline\[class*\%3Dsegment-\]\)] + sf-button .sf-button.sf-button--link[class*=segment-],[dir="rtl"] 
+  @supports not (border-inline-start-width: initial) {
+  html:not([dir="rtl"]) sf-button:has(.sf-button--outline[class*=segment-]) + sf-button .sf-button.sf-button--link[class*=segment-],html:not([dir="rtl"])
+  .sf-button.sf-button--outline[class*=segment-] + .sf-button.sf-button--link[class*=segment-] {
+    border-left-width: 0;
+    }
+  }
+  sf-button:has(.sf-button--outline[class*=segment-]) + sf-button .sf-button.sf-button--link[class*=segment-]:where(:dir(ltr)),
+  .sf-button.sf-button--outline[class*=segment-] + .sf-button.sf-button--link[class*=segment-]:where(:dir(ltr)) {
+    border-left-width: 0;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] sf-button[*|\:has\(.sf-button--outline\[class] + sf-button .sf-button.sf-button--link[class*=segment-],[dir="rtl"]
   .sf-button.sf-button--outline[class*=segment-] + .sf-button.sf-button--link[class*=segment-] {
     border-right-width: 0;
   }
-  [dir="rtl"] sf-button:has(.sf-button--outline[class*=segment-]) + sf-button .sf-button.sf-button--link[class*=segment-],[dir="rtl"] 
+  @supports not (border-inline-start-width: initial) {
+  [dir="rtl"] sf-button[*|\:has\(.sf-button--outline\[class] + sf-button .sf-button.sf-button--link[class*=segment-],[dir="rtl"]
+  .sf-button.sf-button--outline[class*=segment-] + .sf-button.sf-button--link[class*=segment-] {
+    border-right-width: 0;
+    }
+  }
+  sf-button[\:has\(.sf-button--outline\[class*\%3Dsegment-\]\)] + sf-button .sf-button.sf-button--link[class*=segment-]:where(:dir(rtl)),
+  .sf-button.sf-button--outline[class*=segment-] + .sf-button.sf-button--link[class*=segment-]:where(:dir(rtl)) {
+    border-right-width: 0;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] sf-button:has(.sf-button--outline[class*=segment-]) + sf-button .sf-button.sf-button--link[class*=segment-],[dir="rtl"]
   .sf-button.sf-button--outline[class*=segment-] + .sf-button.sf-button--link[class*=segment-] {
     border-right-width: 0;
   }
-  [dir="ltr"] sf-button[*|\:has\(.sf-button--outline\[class] + sf-button .sf-button.sf-button--link[class*=segment-],[dir="ltr"] 
+  @supports not (border-inline-start-width: initial) {
+  [dir="rtl"] sf-button:has(.sf-button--outline[class*=segment-]) + sf-button .sf-button.sf-button--link[class*=segment-],[dir="rtl"]
+  .sf-button.sf-button--outline[class*=segment-] + .sf-button.sf-button--link[class*=segment-] {
+    border-right-width: 0;
+    }
+  }
+  sf-button:has(.sf-button--outline[class*=segment-]) + sf-button .sf-button.sf-button--link[class*=segment-]:where(:dir(rtl)),
+  .sf-button.sf-button--outline[class*=segment-] + .sf-button.sf-button--link[class*=segment-]:where(:dir(rtl)) {
+    border-right-width: 0;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) sf-button[*|\:has\(.sf-button--outline\[class] + sf-button .sf-button.sf-button--link[class*=segment-],html:not([dir="rtl"])
   .sf-button.sf-button--outline[class*=segment-] + .sf-button.sf-button--link[class*=segment-] {
     border-left-width: 0;
   }
-  [dir="rtl"] sf-button[*|\:has\(.sf-button--outline\[class] + sf-button .sf-button.sf-button--link[class*=segment-],[dir="rtl"] 
+  @supports not (border-inline-start-width: initial) {
+  html:not([dir="rtl"]) sf-button[*|\:has\(.sf-button--outline\[class] + sf-button .sf-button.sf-button--link[class*=segment-],html:not([dir="rtl"])
   .sf-button.sf-button--outline[class*=segment-] + .sf-button.sf-button--link[class*=segment-] {
+    border-left-width: 0;
+    }
+  }
+  sf-button[\:has\(.sf-button--outline\[class*\%3Dsegment-\]\)] + sf-button .sf-button.sf-button--link[class*=segment-]:where(:dir(ltr)),
+  .sf-button.sf-button--outline[class*=segment-] + .sf-button.sf-button--link[class*=segment-]:where(:dir(ltr)) {
+    border-left-width: 0;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] sf-button[*|\:has\(.sf-button--outline\[class] + sf-button .sf-button.sf-button--link[class*=segment-],[dir="rtl"]
+  .sf-button.sf-button--outline[class*=segment-] + .sf-button.sf-button--link[class*=segment-] {
+    border-right-width: 0;
+  }
+  @supports not (border-inline-start-width: initial) {
+  [dir="rtl"] sf-button[*|\:has\(.sf-button--outline\[class] + sf-button .sf-button.sf-button--link[class*=segment-],[dir="rtl"]
+  .sf-button.sf-button--outline[class*=segment-] + .sf-button.sf-button--link[class*=segment-] {
+    border-right-width: 0;
+    }
+  }
+  sf-button[\:has\(.sf-button--outline\[class*\%3Dsegment-\]\)] + sf-button .sf-button.sf-button--link[class*=segment-]:where(:dir(rtl)),
+  .sf-button.sf-button--outline[class*=segment-] + .sf-button.sf-button--link[class*=segment-]:where(:dir(rtl)) {
     border-right-width: 0;
   }
   sf-button[\:has\(.sf-button--outline\[class*\%3Dsegment-\]\)] + sf-button .sf-button.sf-button--link[class*=segment-],
@@ -739,12 +1167,32 @@
     --sf-button--border-inline-start-width: 0;
     border-inline-start-width: 0;
   }
-  [dir="ltr"] sf-button[*|\:has\(\%2B\%20sf-button\%20.sf-button--outline\[class] .sf-button.sf-button--link[class*=segment-],[dir="ltr"] 
+  _:-ms-input-placeholder, html:not([dir="rtl"]) sf-button[*|\:has\(\%2B\%20sf-button\%20.sf-button--outline\[class] .sf-button.sf-button--link[class*=segment-],html:not([dir="rtl"])
   .sf-button.sf-button--link[class*=segment-][*|\:has\(\%2B\%20.sf-button.sf-button--outline\[class] {
     border-right-width: 0;
   }
-  [dir="rtl"] sf-button[*|\:has\(\%2B\%20sf-button\%20.sf-button--outline\[class] .sf-button.sf-button--link[class*=segment-],[dir="rtl"] 
+  @supports not (border-inline-end-width: initial) {
+  html:not([dir="rtl"]) sf-button[*|\:has\(\%2B\%20sf-button\%20.sf-button--outline\[class] .sf-button.sf-button--link[class*=segment-],html:not([dir="rtl"])
   .sf-button.sf-button--link[class*=segment-][*|\:has\(\%2B\%20.sf-button.sf-button--outline\[class] {
+    border-right-width: 0;
+    }
+  }
+  sf-button[\:has\(\%2B\%20sf-button\%20.sf-button--outline\[class*\%3Dsegment-\]\)] .sf-button.sf-button--link[class*=segment-]:where(:dir(ltr)),
+  .sf-button.sf-button--link[class*=segment-][\:has\(\%2B\%20.sf-button.sf-button--outline\[class*\%3Dsegment-\]\)]:where(:dir(ltr)) {
+    border-right-width: 0;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] sf-button[*|\:has\(\%2B\%20sf-button\%20.sf-button--outline\[class] .sf-button.sf-button--link[class*=segment-],[dir="rtl"]
+  .sf-button.sf-button--link[class*=segment-][*|\:has\(\%2B\%20.sf-button.sf-button--outline\[class] {
+    border-left-width: 0;
+  }
+  @supports not (border-inline-end-width: initial) {
+  [dir="rtl"] sf-button[*|\:has\(\%2B\%20sf-button\%20.sf-button--outline\[class] .sf-button.sf-button--link[class*=segment-],[dir="rtl"]
+  .sf-button.sf-button--link[class*=segment-][*|\:has\(\%2B\%20.sf-button.sf-button--outline\[class] {
+    border-left-width: 0;
+    }
+  }
+  sf-button[\:has\(\%2B\%20sf-button\%20.sf-button--outline\[class*\%3Dsegment-\]\)] .sf-button.sf-button--link[class*=segment-]:where(:dir(rtl)),
+  .sf-button.sf-button--link[class*=segment-][\:has\(\%2B\%20.sf-button.sf-button--outline\[class*\%3Dsegment-\]\)]:where(:dir(rtl)) {
     border-left-width: 0;
   }
   sf-button[\:has\(\%2B\%20sf-button\%20.sf-button--outline\[class*\%3Dsegment-\]\)] .sf-button.sf-button--link[class*=segment-],
@@ -752,28 +1200,88 @@
     --sf-button--border-inline-end-width: 0;
     border-inline-end-width: 0;
   }
-  [dir="ltr"] sf-button[\:has\(\%2B\%20sf-button\%20.sf-button--outline\[class*\%3Dsegment-\]\)] .sf-button.sf-button--link[class*=segment-],[dir="ltr"] 
-  .sf-button.sf-button--link[class*=segment-][\:has\(\%2B\%20.sf-button.sf-button--outline\[class*\%3Dsegment-\]\)] {
-    border-right-width: 0;
-  }
-  [dir="ltr"] sf-button:has(+ sf-button .sf-button--outline[class*=segment-]) .sf-button.sf-button--link[class*=segment-],[dir="ltr"] 
-  .sf-button.sf-button--link[class*=segment-]:has(+ .sf-button.sf-button--outline[class*=segment-]) {
-    border-right-width: 0;
-  }
-  [dir="rtl"] sf-button[\:has\(\%2B\%20sf-button\%20.sf-button--outline\[class*\%3Dsegment-\]\)] .sf-button.sf-button--link[class*=segment-],[dir="rtl"] 
-  .sf-button.sf-button--link[class*=segment-][\:has\(\%2B\%20.sf-button.sf-button--outline\[class*\%3Dsegment-\]\)] {
-    border-left-width: 0;
-  }
-  [dir="rtl"] sf-button:has(+ sf-button .sf-button--outline[class*=segment-]) .sf-button.sf-button--link[class*=segment-],[dir="rtl"] 
-  .sf-button.sf-button--link[class*=segment-]:has(+ .sf-button.sf-button--outline[class*=segment-]) {
-    border-left-width: 0;
-  }
-  [dir="ltr"] sf-button[*|\:has\(\%2B\%20sf-button\%20.sf-button--outline\[class] .sf-button.sf-button--link[class*=segment-],[dir="ltr"] 
+  _:-ms-input-placeholder, html:not([dir="rtl"]) sf-button[*|\:has\(\%2B\%20sf-button\%20.sf-button--outline\[class] .sf-button.sf-button--link[class*=segment-],html:not([dir="rtl"])
   .sf-button.sf-button--link[class*=segment-][*|\:has\(\%2B\%20.sf-button.sf-button--outline\[class] {
     border-right-width: 0;
   }
-  [dir="rtl"] sf-button[*|\:has\(\%2B\%20sf-button\%20.sf-button--outline\[class] .sf-button.sf-button--link[class*=segment-],[dir="rtl"] 
+  @supports not (border-inline-end-width: initial) {
+  html:not([dir="rtl"]) sf-button[*|\:has\(\%2B\%20sf-button\%20.sf-button--outline\[class] .sf-button.sf-button--link[class*=segment-],html:not([dir="rtl"])
   .sf-button.sf-button--link[class*=segment-][*|\:has\(\%2B\%20.sf-button.sf-button--outline\[class] {
+    border-right-width: 0;
+    }
+  }
+  sf-button[\:has\(\%2B\%20sf-button\%20.sf-button--outline\[class*\%3Dsegment-\]\)] .sf-button.sf-button--link[class*=segment-]:where(:dir(ltr)),
+  .sf-button.sf-button--link[class*=segment-][\:has\(\%2B\%20.sf-button.sf-button--outline\[class*\%3Dsegment-\]\)]:where(:dir(ltr)) {
+    border-right-width: 0;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) sf-button:has(+ sf-button .sf-button--outline[class*=segment-]) .sf-button.sf-button--link[class*=segment-],html:not([dir="rtl"])
+  .sf-button.sf-button--link[class*=segment-]:has(+ .sf-button.sf-button--outline[class*=segment-]) {
+    border-right-width: 0;
+  }
+  @supports not (border-inline-end-width: initial) {
+  html:not([dir="rtl"]) sf-button:has(+ sf-button .sf-button--outline[class*=segment-]) .sf-button.sf-button--link[class*=segment-],html:not([dir="rtl"])
+  .sf-button.sf-button--link[class*=segment-]:has(+ .sf-button.sf-button--outline[class*=segment-]) {
+    border-right-width: 0;
+    }
+  }
+  sf-button:has(+ sf-button .sf-button--outline[class*=segment-]) .sf-button.sf-button--link[class*=segment-]:where(:dir(ltr)),
+  .sf-button.sf-button--link[class*=segment-]:has(+ .sf-button.sf-button--outline[class*=segment-]):where(:dir(ltr)) {
+    border-right-width: 0;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] sf-button[*|\:has\(\%2B\%20sf-button\%20.sf-button--outline\[class] .sf-button.sf-button--link[class*=segment-],[dir="rtl"]
+  .sf-button.sf-button--link[class*=segment-][*|\:has\(\%2B\%20.sf-button.sf-button--outline\[class] {
+    border-left-width: 0;
+  }
+  @supports not (border-inline-end-width: initial) {
+  [dir="rtl"] sf-button[*|\:has\(\%2B\%20sf-button\%20.sf-button--outline\[class] .sf-button.sf-button--link[class*=segment-],[dir="rtl"]
+  .sf-button.sf-button--link[class*=segment-][*|\:has\(\%2B\%20.sf-button.sf-button--outline\[class] {
+    border-left-width: 0;
+    }
+  }
+  sf-button[\:has\(\%2B\%20sf-button\%20.sf-button--outline\[class*\%3Dsegment-\]\)] .sf-button.sf-button--link[class*=segment-]:where(:dir(rtl)),
+  .sf-button.sf-button--link[class*=segment-][\:has\(\%2B\%20.sf-button.sf-button--outline\[class*\%3Dsegment-\]\)]:where(:dir(rtl)) {
+    border-left-width: 0;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] sf-button:has(+ sf-button .sf-button--outline[class*=segment-]) .sf-button.sf-button--link[class*=segment-],[dir="rtl"]
+  .sf-button.sf-button--link[class*=segment-]:has(+ .sf-button.sf-button--outline[class*=segment-]) {
+    border-left-width: 0;
+  }
+  @supports not (border-inline-end-width: initial) {
+  [dir="rtl"] sf-button:has(+ sf-button .sf-button--outline[class*=segment-]) .sf-button.sf-button--link[class*=segment-],[dir="rtl"]
+  .sf-button.sf-button--link[class*=segment-]:has(+ .sf-button.sf-button--outline[class*=segment-]) {
+    border-left-width: 0;
+    }
+  }
+  sf-button:has(+ sf-button .sf-button--outline[class*=segment-]) .sf-button.sf-button--link[class*=segment-]:where(:dir(rtl)),
+  .sf-button.sf-button--link[class*=segment-]:has(+ .sf-button.sf-button--outline[class*=segment-]):where(:dir(rtl)) {
+    border-left-width: 0;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) sf-button[*|\:has\(\%2B\%20sf-button\%20.sf-button--outline\[class] .sf-button.sf-button--link[class*=segment-],html:not([dir="rtl"])
+  .sf-button.sf-button--link[class*=segment-][*|\:has\(\%2B\%20.sf-button.sf-button--outline\[class] {
+    border-right-width: 0;
+  }
+  @supports not (border-inline-end-width: initial) {
+  html:not([dir="rtl"]) sf-button[*|\:has\(\%2B\%20sf-button\%20.sf-button--outline\[class] .sf-button.sf-button--link[class*=segment-],html:not([dir="rtl"])
+  .sf-button.sf-button--link[class*=segment-][*|\:has\(\%2B\%20.sf-button.sf-button--outline\[class] {
+    border-right-width: 0;
+    }
+  }
+  sf-button[\:has\(\%2B\%20sf-button\%20.sf-button--outline\[class*\%3Dsegment-\]\)] .sf-button.sf-button--link[class*=segment-]:where(:dir(ltr)),
+  .sf-button.sf-button--link[class*=segment-][\:has\(\%2B\%20.sf-button.sf-button--outline\[class*\%3Dsegment-\]\)]:where(:dir(ltr)) {
+    border-right-width: 0;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] sf-button[*|\:has\(\%2B\%20sf-button\%20.sf-button--outline\[class] .sf-button.sf-button--link[class*=segment-],[dir="rtl"]
+  .sf-button.sf-button--link[class*=segment-][*|\:has\(\%2B\%20.sf-button.sf-button--outline\[class] {
+    border-left-width: 0;
+  }
+  @supports not (border-inline-end-width: initial) {
+  [dir="rtl"] sf-button[*|\:has\(\%2B\%20sf-button\%20.sf-button--outline\[class] .sf-button.sf-button--link[class*=segment-],[dir="rtl"]
+  .sf-button.sf-button--link[class*=segment-][*|\:has\(\%2B\%20.sf-button.sf-button--outline\[class] {
+    border-left-width: 0;
+    }
+  }
+  sf-button[\:has\(\%2B\%20sf-button\%20.sf-button--outline\[class*\%3Dsegment-\]\)] .sf-button.sf-button--link[class*=segment-]:where(:dir(rtl)),
+  .sf-button.sf-button--link[class*=segment-][\:has\(\%2B\%20.sf-button.sf-button--outline\[class*\%3Dsegment-\]\)]:where(:dir(rtl)) {
     border-left-width: 0;
   }
   sf-button[\:has\(\%2B\%20sf-button\%20.sf-button--outline\[class*\%3Dsegment-\]\)] .sf-button.sf-button--link[class*=segment-],

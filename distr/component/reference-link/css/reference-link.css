@@ -8,116 +8,404 @@
 */
 @layer sf.components {
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-b0) justify-content/flex-start (.justify-start) align-items/center (.items-center) */
-  [dir="ltr"] .sf-reference-link {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-reference-link {
     border-bottom-right-radius: var(--sf-radius-default);
     border-bottom-right-radius: var(--sf-reference-link--border-bottom-right-radius, var(--sf-radius-default));
   }
-  [dir="rtl"] .sf-reference-link {
+  @supports not (border-end-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-reference-link {
+    border-bottom-right-radius: var(--sf-radius-default);
+    border-bottom-right-radius: var(--sf-reference-link--border-bottom-right-radius, var(--sf-radius-default));
+    }
+  }
+  .sf-reference-link:where(:dir(ltr)) {
+    border-bottom-right-radius: var(--sf-radius-default);
+    border-bottom-right-radius: var(--sf-reference-link--border-bottom-right-radius, var(--sf-radius-default));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-reference-link {
     border-bottom-left-radius: var(--sf-radius-default);
     border-bottom-left-radius: var(--sf-reference-link--border-bottom-right-radius, var(--sf-radius-default));
   }
-  [dir="ltr"] .sf-reference-link {
+  @supports not (border-end-end-radius: initial) {
+  [dir="rtl"] .sf-reference-link {
+    border-bottom-left-radius: var(--sf-radius-default);
+    border-bottom-left-radius: var(--sf-reference-link--border-bottom-right-radius, var(--sf-radius-default));
+    }
+  }
+  .sf-reference-link:where(:dir(rtl)) {
+    border-bottom-left-radius: var(--sf-radius-default);
+    border-bottom-left-radius: var(--sf-reference-link--border-bottom-right-radius, var(--sf-radius-default));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-reference-link {
     border-bottom-left-radius: var(--sf-radius-default);
     border-bottom-left-radius: var(--sf-reference-link--border-bottom-left-radius, var(--sf-radius-default));
   }
-  [dir="rtl"] .sf-reference-link {
+  @supports not (border-end-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-reference-link {
+    border-bottom-left-radius: var(--sf-radius-default);
+    border-bottom-left-radius: var(--sf-reference-link--border-bottom-left-radius, var(--sf-radius-default));
+    }
+  }
+  .sf-reference-link:where(:dir(ltr)) {
+    border-bottom-left-radius: var(--sf-radius-default);
+    border-bottom-left-radius: var(--sf-reference-link--border-bottom-left-radius, var(--sf-radius-default));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-reference-link {
     border-bottom-right-radius: var(--sf-radius-default);
     border-bottom-right-radius: var(--sf-reference-link--border-bottom-left-radius, var(--sf-radius-default));
   }
-  [dir="ltr"] .sf-reference-link {
+  @supports not (border-end-start-radius: initial) {
+  [dir="rtl"] .sf-reference-link {
+    border-bottom-right-radius: var(--sf-radius-default);
+    border-bottom-right-radius: var(--sf-reference-link--border-bottom-left-radius, var(--sf-radius-default));
+    }
+  }
+  .sf-reference-link:where(:dir(rtl)) {
+    border-bottom-right-radius: var(--sf-radius-default);
+    border-bottom-right-radius: var(--sf-reference-link--border-bottom-left-radius, var(--sf-radius-default));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-reference-link {
     border-right-width: var(--sf-px);
     border-right-width: var(--sf-reference-link--border-right-width, var(--sf-px));
   }
-  [dir="rtl"] .sf-reference-link {
+  @supports not (border-inline-end-width: initial) {
+  html:not([dir="rtl"]) .sf-reference-link {
+    border-right-width: var(--sf-px);
+    border-right-width: var(--sf-reference-link--border-right-width, var(--sf-px));
+    }
+  }
+  .sf-reference-link:where(:dir(ltr)) {
+    border-right-width: var(--sf-px);
+    border-right-width: var(--sf-reference-link--border-right-width, var(--sf-px));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-reference-link {
     border-left-width: var(--sf-px);
     border-left-width: var(--sf-reference-link--border-right-width, var(--sf-px));
   }
-  [dir="ltr"] .sf-reference-link {
+  @supports not (border-inline-end-width: initial) {
+  [dir="rtl"] .sf-reference-link {
+    border-left-width: var(--sf-px);
+    border-left-width: var(--sf-reference-link--border-right-width, var(--sf-px));
+    }
+  }
+  .sf-reference-link:where(:dir(rtl)) {
+    border-left-width: var(--sf-px);
+    border-left-width: var(--sf-reference-link--border-right-width, var(--sf-px));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-reference-link {
     border-left-width: var(--sf-px);
     border-left-width: var(--sf-reference-link--border-left-width, var(--sf-px));
   }
-  [dir="rtl"] .sf-reference-link {
+  @supports not (border-inline-start-width: initial) {
+  html:not([dir="rtl"]) .sf-reference-link {
+    border-left-width: var(--sf-px);
+    border-left-width: var(--sf-reference-link--border-left-width, var(--sf-px));
+    }
+  }
+  .sf-reference-link:where(:dir(ltr)) {
+    border-left-width: var(--sf-px);
+    border-left-width: var(--sf-reference-link--border-left-width, var(--sf-px));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-reference-link {
     border-right-width: var(--sf-px);
     border-right-width: var(--sf-reference-link--border-left-width, var(--sf-px));
   }
-  [dir="ltr"] .sf-reference-link {
+  @supports not (border-inline-start-width: initial) {
+  [dir="rtl"] .sf-reference-link {
+    border-right-width: var(--sf-px);
+    border-right-width: var(--sf-reference-link--border-left-width, var(--sf-px));
+    }
+  }
+  .sf-reference-link:where(:dir(rtl)) {
+    border-right-width: var(--sf-px);
+    border-right-width: var(--sf-reference-link--border-left-width, var(--sf-px));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-reference-link {
     border-top-right-radius: var(--sf-radius-default);
     border-top-right-radius: var(--sf-reference-link--border-top-right-radius, var(--sf-radius-default));
   }
-  [dir="rtl"] .sf-reference-link {
+  @supports not (border-start-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-reference-link {
+    border-top-right-radius: var(--sf-radius-default);
+    border-top-right-radius: var(--sf-reference-link--border-top-right-radius, var(--sf-radius-default));
+    }
+  }
+  .sf-reference-link:where(:dir(ltr)) {
+    border-top-right-radius: var(--sf-radius-default);
+    border-top-right-radius: var(--sf-reference-link--border-top-right-radius, var(--sf-radius-default));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-reference-link {
     border-top-left-radius: var(--sf-radius-default);
     border-top-left-radius: var(--sf-reference-link--border-top-right-radius, var(--sf-radius-default));
   }
-  [dir="ltr"] .sf-reference-link {
+  @supports not (border-start-end-radius: initial) {
+  [dir="rtl"] .sf-reference-link {
+    border-top-left-radius: var(--sf-radius-default);
+    border-top-left-radius: var(--sf-reference-link--border-top-right-radius, var(--sf-radius-default));
+    }
+  }
+  .sf-reference-link:where(:dir(rtl)) {
+    border-top-left-radius: var(--sf-radius-default);
+    border-top-left-radius: var(--sf-reference-link--border-top-right-radius, var(--sf-radius-default));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-reference-link {
     border-top-left-radius: var(--sf-radius-default);
     border-top-left-radius: var(--sf-reference-link--border-top-left-radius, var(--sf-radius-default));
   }
-  [dir="rtl"] .sf-reference-link {
+  @supports not (border-start-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-reference-link {
+    border-top-left-radius: var(--sf-radius-default);
+    border-top-left-radius: var(--sf-reference-link--border-top-left-radius, var(--sf-radius-default));
+    }
+  }
+  .sf-reference-link:where(:dir(ltr)) {
+    border-top-left-radius: var(--sf-radius-default);
+    border-top-left-radius: var(--sf-reference-link--border-top-left-radius, var(--sf-radius-default));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-reference-link {
     border-top-right-radius: var(--sf-radius-default);
     border-top-right-radius: var(--sf-reference-link--border-top-left-radius, var(--sf-radius-default));
   }
-  [dir="ltr"] .sf-reference-link {
+  @supports not (border-start-start-radius: initial) {
+  [dir="rtl"] .sf-reference-link {
+    border-top-right-radius: var(--sf-radius-default);
+    border-top-right-radius: var(--sf-reference-link--border-top-left-radius, var(--sf-radius-default));
+    }
+  }
+  .sf-reference-link:where(:dir(rtl)) {
+    border-top-right-radius: var(--sf-radius-default);
+    border-top-right-radius: var(--sf-reference-link--border-top-left-radius, var(--sf-radius-default));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-reference-link {
     padding-right: var(--sf-space-1);
     padding-right: var(--sf-reference-link--padding-right, var(--sf-space-1));
   }
-  [dir="rtl"] .sf-reference-link {
+  @supports not (padding-inline-end: initial) {
+  html:not([dir="rtl"]) .sf-reference-link {
+    padding-right: var(--sf-space-1);
+    padding-right: var(--sf-reference-link--padding-right, var(--sf-space-1));
+    }
+  }
+  .sf-reference-link:where(:dir(ltr)) {
+    padding-right: var(--sf-space-1);
+    padding-right: var(--sf-reference-link--padding-right, var(--sf-space-1));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-reference-link {
     padding-left: var(--sf-space-1);
     padding-left: var(--sf-reference-link--padding-right, var(--sf-space-1));
   }
-  [dir="ltr"] .sf-reference-link {
+  @supports not (padding-inline-end: initial) {
+  [dir="rtl"] .sf-reference-link {
+    padding-left: var(--sf-space-1);
+    padding-left: var(--sf-reference-link--padding-right, var(--sf-space-1));
+    }
+  }
+  .sf-reference-link:where(:dir(rtl)) {
+    padding-left: var(--sf-space-1);
+    padding-left: var(--sf-reference-link--padding-right, var(--sf-space-1));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-reference-link {
     padding-left: var(--sf-space-1);
     padding-left: var(--sf-reference-link--padding-left, var(--sf-space-1));
   }
-  [dir="rtl"] .sf-reference-link {
+  @supports not (padding-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-reference-link {
+    padding-left: var(--sf-space-1);
+    padding-left: var(--sf-reference-link--padding-left, var(--sf-space-1));
+    }
+  }
+  .sf-reference-link:where(:dir(ltr)) {
+    padding-left: var(--sf-space-1);
+    padding-left: var(--sf-reference-link--padding-left, var(--sf-space-1));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-reference-link {
     padding-right: var(--sf-space-1);
     padding-right: var(--sf-reference-link--padding-left, var(--sf-space-1));
   }
-  [dir="ltr"] .sf-reference-link {
+  @supports not (padding-inline-start: initial) {
+  [dir="rtl"] .sf-reference-link {
+    padding-right: var(--sf-space-1);
+    padding-right: var(--sf-reference-link--padding-left, var(--sf-space-1));
+    }
+  }
+  .sf-reference-link:where(:dir(rtl)) {
+    padding-right: var(--sf-space-1);
+    padding-right: var(--sf-reference-link--padding-left, var(--sf-space-1));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-reference-link {
     border-bottom-right-radius: var(--sf-radius-default);
   }
-  [dir="rtl"] .sf-reference-link {
-    border-bottom-left-radius: var(--sf-radius-default);
+  @supports not (border-end-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-reference-link {
+    border-bottom-right-radius: var(--sf-radius-default);
+    }
   }
-  [dir="ltr"] .sf-reference-link {
-    border-bottom-left-radius: var(--sf-radius-default);
-  }
-  [dir="rtl"] .sf-reference-link {
+  .sf-reference-link:where(:dir(ltr)) {
     border-bottom-right-radius: var(--sf-radius-default);
   }
-  [dir="ltr"] .sf-reference-link {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-reference-link {
+    border-bottom-left-radius: var(--sf-radius-default);
+  }
+  @supports not (border-end-end-radius: initial) {
+  [dir="rtl"] .sf-reference-link {
+    border-bottom-left-radius: var(--sf-radius-default);
+    }
+  }
+  .sf-reference-link:where(:dir(rtl)) {
+    border-bottom-left-radius: var(--sf-radius-default);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-reference-link {
+    border-bottom-left-radius: var(--sf-radius-default);
+  }
+  @supports not (border-end-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-reference-link {
+    border-bottom-left-radius: var(--sf-radius-default);
+    }
+  }
+  .sf-reference-link:where(:dir(ltr)) {
+    border-bottom-left-radius: var(--sf-radius-default);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-reference-link {
+    border-bottom-right-radius: var(--sf-radius-default);
+  }
+  @supports not (border-end-start-radius: initial) {
+  [dir="rtl"] .sf-reference-link {
+    border-bottom-right-radius: var(--sf-radius-default);
+    }
+  }
+  .sf-reference-link:where(:dir(rtl)) {
+    border-bottom-right-radius: var(--sf-radius-default);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-reference-link {
     border-right-width: var(--sf-px);
   }
-  [dir="rtl"] .sf-reference-link {
-    border-left-width: var(--sf-px);
+  @supports not (border-inline-end-width: initial) {
+  html:not([dir="rtl"]) .sf-reference-link {
+    border-right-width: var(--sf-px);
+    }
   }
-  [dir="ltr"] .sf-reference-link {
-    border-left-width: var(--sf-px);
-  }
-  [dir="rtl"] .sf-reference-link {
+  .sf-reference-link:where(:dir(ltr)) {
     border-right-width: var(--sf-px);
   }
-  [dir="ltr"] .sf-reference-link {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-reference-link {
+    border-left-width: var(--sf-px);
+  }
+  @supports not (border-inline-end-width: initial) {
+  [dir="rtl"] .sf-reference-link {
+    border-left-width: var(--sf-px);
+    }
+  }
+  .sf-reference-link:where(:dir(rtl)) {
+    border-left-width: var(--sf-px);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-reference-link {
+    border-left-width: var(--sf-px);
+  }
+  @supports not (border-inline-start-width: initial) {
+  html:not([dir="rtl"]) .sf-reference-link {
+    border-left-width: var(--sf-px);
+    }
+  }
+  .sf-reference-link:where(:dir(ltr)) {
+    border-left-width: var(--sf-px);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-reference-link {
+    border-right-width: var(--sf-px);
+  }
+  @supports not (border-inline-start-width: initial) {
+  [dir="rtl"] .sf-reference-link {
+    border-right-width: var(--sf-px);
+    }
+  }
+  .sf-reference-link:where(:dir(rtl)) {
+    border-right-width: var(--sf-px);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-reference-link {
     border-top-right-radius: var(--sf-radius-default);
   }
-  [dir="rtl"] .sf-reference-link {
-    border-top-left-radius: var(--sf-radius-default);
+  @supports not (border-start-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-reference-link {
+    border-top-right-radius: var(--sf-radius-default);
+    }
   }
-  [dir="ltr"] .sf-reference-link {
-    border-top-left-radius: var(--sf-radius-default);
-  }
-  [dir="rtl"] .sf-reference-link {
+  .sf-reference-link:where(:dir(ltr)) {
     border-top-right-radius: var(--sf-radius-default);
   }
-  [dir="ltr"] .sf-reference-link {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-reference-link {
+    border-top-left-radius: var(--sf-radius-default);
+  }
+  @supports not (border-start-end-radius: initial) {
+  [dir="rtl"] .sf-reference-link {
+    border-top-left-radius: var(--sf-radius-default);
+    }
+  }
+  .sf-reference-link:where(:dir(rtl)) {
+    border-top-left-radius: var(--sf-radius-default);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-reference-link {
+    border-top-left-radius: var(--sf-radius-default);
+  }
+  @supports not (border-start-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-reference-link {
+    border-top-left-radius: var(--sf-radius-default);
+    }
+  }
+  .sf-reference-link:where(:dir(ltr)) {
+    border-top-left-radius: var(--sf-radius-default);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-reference-link {
+    border-top-right-radius: var(--sf-radius-default);
+  }
+  @supports not (border-start-start-radius: initial) {
+  [dir="rtl"] .sf-reference-link {
+    border-top-right-radius: var(--sf-radius-default);
+    }
+  }
+  .sf-reference-link:where(:dir(rtl)) {
+    border-top-right-radius: var(--sf-radius-default);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-reference-link {
     padding-right: var(--sf-space-1);
   }
-  [dir="rtl"] .sf-reference-link {
+  @supports not (padding-inline-end: initial) {
+  html:not([dir="rtl"]) .sf-reference-link {
+    padding-right: var(--sf-space-1);
+    }
+  }
+  .sf-reference-link:where(:dir(ltr)) {
+    padding-right: var(--sf-space-1);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-reference-link {
     padding-left: var(--sf-space-1);
   }
-  [dir="ltr"] .sf-reference-link {
+  @supports not (padding-inline-end: initial) {
+  [dir="rtl"] .sf-reference-link {
+    padding-left: var(--sf-space-1);
+    }
+  }
+  .sf-reference-link:where(:dir(rtl)) {
     padding-left: var(--sf-space-1);
   }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-reference-link {
+    padding-left: var(--sf-space-1);
+  }
+  @supports not (padding-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-reference-link {
+    padding-left: var(--sf-space-1);
+    }
+  }
+  .sf-reference-link:where(:dir(ltr)) {
+    padding-left: var(--sf-space-1);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-reference-link {
+    padding-right: var(--sf-space-1);
+  }
+  @supports not (padding-inline-start: initial) {
   [dir="rtl"] .sf-reference-link {
+    padding-right: var(--sf-space-1);
+    }
+  }
+  .sf-reference-link:where(:dir(rtl)) {
     padding-right: var(--sf-space-1);
   }
   .sf-reference-link {
