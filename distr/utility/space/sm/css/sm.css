@@ -1,47 +1,15 @@
 @layer sf.utilities {
   @media (min-width: 32.5rem) {
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:space-x-0 > * + * {
+    [dir="ltr"] .sm\:space-x-0 > * + * {
       margin-right: calc(var(--sf-space-0) * var(--sf-space--reverse-x));
     }
-    @supports not (margin-inline-end: initial) {
-    html:not([dir="rtl"]) .sm\:space-x-0 > * + * {
-      margin-right: calc(var(--sf-space-0) * var(--sf-space--reverse-x));
-      }
-    }
-    .sm\:space-x-0 > * + *:where(:dir(ltr)) {
-      margin-right: calc(var(--sf-space-0) * var(--sf-space--reverse-x));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sm\:space-x-0 > * + * {
-      margin-left: calc(var(--sf-space-0) * var(--sf-space--reverse-x));
-    }
-    @supports not (margin-inline-end: initial) {
     [dir="rtl"] .sm\:space-x-0 > * + * {
       margin-left: calc(var(--sf-space-0) * var(--sf-space--reverse-x));
-      }
     }
-    .sm\:space-x-0 > * + *:where(:dir(rtl)) {
-      margin-left: calc(var(--sf-space-0) * var(--sf-space--reverse-x));
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:space-x-0 > * + * {
+    [dir="ltr"] .sm\:space-x-0 > * + * {
       margin-left: calc(var(--sf-space-0) * (1 - var(--sf-space--reverse-x)));
     }
-    @supports not (margin-inline-start: initial) {
-    html:not([dir="rtl"]) .sm\:space-x-0 > * + * {
-      margin-left: calc(var(--sf-space-0) * (1 - var(--sf-space--reverse-x)));
-      }
-    }
-    .sm\:space-x-0 > * + *:where(:dir(ltr)) {
-      margin-left: calc(var(--sf-space-0) * (1 - var(--sf-space--reverse-x)));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sm\:space-x-0 > * + * {
-      margin-right: calc(var(--sf-space-0) * (1 - var(--sf-space--reverse-x)));
-    }
-    @supports not (margin-inline-start: initial) {
     [dir="rtl"] .sm\:space-x-0 > * + * {
-      margin-right: calc(var(--sf-space-0) * (1 - var(--sf-space--reverse-x)));
-      }
-    }
-    .sm\:space-x-0 > * + *:where(:dir(rtl)) {
       margin-right: calc(var(--sf-space-0) * (1 - var(--sf-space--reverse-x)));
     }
     .sm\:space-x-0 > * + * {
@@ -56,48 +24,16 @@
       margin-top: calc(var(--sf-space-0) * (1 - var(--sf-space--reverse-y)));
       margin-bottom: calc(var(--sf-space-0) * var(--sf-space--reverse-y));
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:space-x-1\/4 > * + * {
+    [dir="ltr"] .sm\:space-x-1\/4 > * + * {
       margin-right: calc(var(--sf-space-1\/4) * var(--sf-space--reverse-x));
     }
-    @supports not (margin-inline-end: initial) {
-    html:not([dir="rtl"]) .sm\:space-x-1\/4 > * + * {
-      margin-right: calc(var(--sf-space-1\/4) * var(--sf-space--reverse-x));
-      }
-    }
-    .sm\:space-x-1\/4 > * + *:where(:dir(ltr)) {
-      margin-right: calc(var(--sf-space-1\/4) * var(--sf-space--reverse-x));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sm\:space-x-1\/4 > * + * {
-      margin-left: calc(var(--sf-space-1\/4) * var(--sf-space--reverse-x));
-    }
-    @supports not (margin-inline-end: initial) {
     [dir="rtl"] .sm\:space-x-1\/4 > * + * {
       margin-left: calc(var(--sf-space-1\/4) * var(--sf-space--reverse-x));
-      }
     }
-    .sm\:space-x-1\/4 > * + *:where(:dir(rtl)) {
-      margin-left: calc(var(--sf-space-1\/4) * var(--sf-space--reverse-x));
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:space-x-1\/4 > * + * {
+    [dir="ltr"] .sm\:space-x-1\/4 > * + * {
       margin-left: calc(var(--sf-space-1\/4) * (1 - var(--sf-space--reverse-x)));
     }
-    @supports not (margin-inline-start: initial) {
-    html:not([dir="rtl"]) .sm\:space-x-1\/4 > * + * {
-      margin-left: calc(var(--sf-space-1\/4) * (1 - var(--sf-space--reverse-x)));
-      }
-    }
-    .sm\:space-x-1\/4 > * + *:where(:dir(ltr)) {
-      margin-left: calc(var(--sf-space-1\/4) * (1 - var(--sf-space--reverse-x)));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sm\:space-x-1\/4 > * + * {
-      margin-right: calc(var(--sf-space-1\/4) * (1 - var(--sf-space--reverse-x)));
-    }
-    @supports not (margin-inline-start: initial) {
     [dir="rtl"] .sm\:space-x-1\/4 > * + * {
-      margin-right: calc(var(--sf-space-1\/4) * (1 - var(--sf-space--reverse-x)));
-      }
-    }
-    .sm\:space-x-1\/4 > * + *:where(:dir(rtl)) {
       margin-right: calc(var(--sf-space-1\/4) * (1 - var(--sf-space--reverse-x)));
     }
     .sm\:space-x-1\/4 > * + * {
@@ -112,48 +48,16 @@
       margin-top: calc(var(--sf-space-1\/4) * (1 - var(--sf-space--reverse-y)));
       margin-bottom: calc(var(--sf-space-1\/4) * var(--sf-space--reverse-y));
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:space-x-1\/3 > * + * {
+    [dir="ltr"] .sm\:space-x-1\/3 > * + * {
       margin-right: calc(var(--sf-space-1\/3) * var(--sf-space--reverse-x));
     }
-    @supports not (margin-inline-end: initial) {
-    html:not([dir="rtl"]) .sm\:space-x-1\/3 > * + * {
-      margin-right: calc(var(--sf-space-1\/3) * var(--sf-space--reverse-x));
-      }
-    }
-    .sm\:space-x-1\/3 > * + *:where(:dir(ltr)) {
-      margin-right: calc(var(--sf-space-1\/3) * var(--sf-space--reverse-x));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sm\:space-x-1\/3 > * + * {
-      margin-left: calc(var(--sf-space-1\/3) * var(--sf-space--reverse-x));
-    }
-    @supports not (margin-inline-end: initial) {
     [dir="rtl"] .sm\:space-x-1\/3 > * + * {
       margin-left: calc(var(--sf-space-1\/3) * var(--sf-space--reverse-x));
-      }
     }
-    .sm\:space-x-1\/3 > * + *:where(:dir(rtl)) {
-      margin-left: calc(var(--sf-space-1\/3) * var(--sf-space--reverse-x));
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:space-x-1\/3 > * + * {
+    [dir="ltr"] .sm\:space-x-1\/3 > * + * {
       margin-left: calc(var(--sf-space-1\/3) * (1 - var(--sf-space--reverse-x)));
     }
-    @supports not (margin-inline-start: initial) {
-    html:not([dir="rtl"]) .sm\:space-x-1\/3 > * + * {
-      margin-left: calc(var(--sf-space-1\/3) * (1 - var(--sf-space--reverse-x)));
-      }
-    }
-    .sm\:space-x-1\/3 > * + *:where(:dir(ltr)) {
-      margin-left: calc(var(--sf-space-1\/3) * (1 - var(--sf-space--reverse-x)));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sm\:space-x-1\/3 > * + * {
-      margin-right: calc(var(--sf-space-1\/3) * (1 - var(--sf-space--reverse-x)));
-    }
-    @supports not (margin-inline-start: initial) {
     [dir="rtl"] .sm\:space-x-1\/3 > * + * {
-      margin-right: calc(var(--sf-space-1\/3) * (1 - var(--sf-space--reverse-x)));
-      }
-    }
-    .sm\:space-x-1\/3 > * + *:where(:dir(rtl)) {
       margin-right: calc(var(--sf-space-1\/3) * (1 - var(--sf-space--reverse-x)));
     }
     .sm\:space-x-1\/3 > * + * {
@@ -168,48 +72,16 @@
       margin-top: calc(var(--sf-space-1\/3) * (1 - var(--sf-space--reverse-y)));
       margin-bottom: calc(var(--sf-space-1\/3) * var(--sf-space--reverse-y));
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:space-x-1\/2 > * + * {
+    [dir="ltr"] .sm\:space-x-1\/2 > * + * {
       margin-right: calc(var(--sf-space-1\/2) * var(--sf-space--reverse-x));
     }
-    @supports not (margin-inline-end: initial) {
-    html:not([dir="rtl"]) .sm\:space-x-1\/2 > * + * {
-      margin-right: calc(var(--sf-space-1\/2) * var(--sf-space--reverse-x));
-      }
-    }
-    .sm\:space-x-1\/2 > * + *:where(:dir(ltr)) {
-      margin-right: calc(var(--sf-space-1\/2) * var(--sf-space--reverse-x));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sm\:space-x-1\/2 > * + * {
-      margin-left: calc(var(--sf-space-1\/2) * var(--sf-space--reverse-x));
-    }
-    @supports not (margin-inline-end: initial) {
     [dir="rtl"] .sm\:space-x-1\/2 > * + * {
       margin-left: calc(var(--sf-space-1\/2) * var(--sf-space--reverse-x));
-      }
     }
-    .sm\:space-x-1\/2 > * + *:where(:dir(rtl)) {
-      margin-left: calc(var(--sf-space-1\/2) * var(--sf-space--reverse-x));
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:space-x-1\/2 > * + * {
+    [dir="ltr"] .sm\:space-x-1\/2 > * + * {
       margin-left: calc(var(--sf-space-1\/2) * (1 - var(--sf-space--reverse-x)));
     }
-    @supports not (margin-inline-start: initial) {
-    html:not([dir="rtl"]) .sm\:space-x-1\/2 > * + * {
-      margin-left: calc(var(--sf-space-1\/2) * (1 - var(--sf-space--reverse-x)));
-      }
-    }
-    .sm\:space-x-1\/2 > * + *:where(:dir(ltr)) {
-      margin-left: calc(var(--sf-space-1\/2) * (1 - var(--sf-space--reverse-x)));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sm\:space-x-1\/2 > * + * {
-      margin-right: calc(var(--sf-space-1\/2) * (1 - var(--sf-space--reverse-x)));
-    }
-    @supports not (margin-inline-start: initial) {
     [dir="rtl"] .sm\:space-x-1\/2 > * + * {
-      margin-right: calc(var(--sf-space-1\/2) * (1 - var(--sf-space--reverse-x)));
-      }
-    }
-    .sm\:space-x-1\/2 > * + *:where(:dir(rtl)) {
       margin-right: calc(var(--sf-space-1\/2) * (1 - var(--sf-space--reverse-x)));
     }
     .sm\:space-x-1\/2 > * + * {
@@ -224,48 +96,16 @@
       margin-top: calc(var(--sf-space-1\/2) * (1 - var(--sf-space--reverse-y)));
       margin-bottom: calc(var(--sf-space-1\/2) * var(--sf-space--reverse-y));
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:space-x-1 > * + * {
+    [dir="ltr"] .sm\:space-x-1 > * + * {
       margin-right: calc(var(--sf-space-1) * var(--sf-space--reverse-x));
     }
-    @supports not (margin-inline-end: initial) {
-    html:not([dir="rtl"]) .sm\:space-x-1 > * + * {
-      margin-right: calc(var(--sf-space-1) * var(--sf-space--reverse-x));
-      }
-    }
-    .sm\:space-x-1 > * + *:where(:dir(ltr)) {
-      margin-right: calc(var(--sf-space-1) * var(--sf-space--reverse-x));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sm\:space-x-1 > * + * {
-      margin-left: calc(var(--sf-space-1) * var(--sf-space--reverse-x));
-    }
-    @supports not (margin-inline-end: initial) {
     [dir="rtl"] .sm\:space-x-1 > * + * {
       margin-left: calc(var(--sf-space-1) * var(--sf-space--reverse-x));
-      }
     }
-    .sm\:space-x-1 > * + *:where(:dir(rtl)) {
-      margin-left: calc(var(--sf-space-1) * var(--sf-space--reverse-x));
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:space-x-1 > * + * {
+    [dir="ltr"] .sm\:space-x-1 > * + * {
       margin-left: calc(var(--sf-space-1) * (1 - var(--sf-space--reverse-x)));
     }
-    @supports not (margin-inline-start: initial) {
-    html:not([dir="rtl"]) .sm\:space-x-1 > * + * {
-      margin-left: calc(var(--sf-space-1) * (1 - var(--sf-space--reverse-x)));
-      }
-    }
-    .sm\:space-x-1 > * + *:where(:dir(ltr)) {
-      margin-left: calc(var(--sf-space-1) * (1 - var(--sf-space--reverse-x)));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sm\:space-x-1 > * + * {
-      margin-right: calc(var(--sf-space-1) * (1 - var(--sf-space--reverse-x)));
-    }
-    @supports not (margin-inline-start: initial) {
     [dir="rtl"] .sm\:space-x-1 > * + * {
-      margin-right: calc(var(--sf-space-1) * (1 - var(--sf-space--reverse-x)));
-      }
-    }
-    .sm\:space-x-1 > * + *:where(:dir(rtl)) {
       margin-right: calc(var(--sf-space-1) * (1 - var(--sf-space--reverse-x)));
     }
     .sm\:space-x-1 > * + * {
@@ -280,48 +120,16 @@
       margin-top: calc(var(--sf-space-1) * (1 - var(--sf-space--reverse-y)));
       margin-bottom: calc(var(--sf-space-1) * var(--sf-space--reverse-y));
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:space-x-2 > * + * {
+    [dir="ltr"] .sm\:space-x-2 > * + * {
       margin-right: calc(var(--sf-space-2) * var(--sf-space--reverse-x));
     }
-    @supports not (margin-inline-end: initial) {
-    html:not([dir="rtl"]) .sm\:space-x-2 > * + * {
-      margin-right: calc(var(--sf-space-2) * var(--sf-space--reverse-x));
-      }
-    }
-    .sm\:space-x-2 > * + *:where(:dir(ltr)) {
-      margin-right: calc(var(--sf-space-2) * var(--sf-space--reverse-x));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sm\:space-x-2 > * + * {
-      margin-left: calc(var(--sf-space-2) * var(--sf-space--reverse-x));
-    }
-    @supports not (margin-inline-end: initial) {
     [dir="rtl"] .sm\:space-x-2 > * + * {
       margin-left: calc(var(--sf-space-2) * var(--sf-space--reverse-x));
-      }
     }
-    .sm\:space-x-2 > * + *:where(:dir(rtl)) {
-      margin-left: calc(var(--sf-space-2) * var(--sf-space--reverse-x));
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:space-x-2 > * + * {
+    [dir="ltr"] .sm\:space-x-2 > * + * {
       margin-left: calc(var(--sf-space-2) * (1 - var(--sf-space--reverse-x)));
     }
-    @supports not (margin-inline-start: initial) {
-    html:not([dir="rtl"]) .sm\:space-x-2 > * + * {
-      margin-left: calc(var(--sf-space-2) * (1 - var(--sf-space--reverse-x)));
-      }
-    }
-    .sm\:space-x-2 > * + *:where(:dir(ltr)) {
-      margin-left: calc(var(--sf-space-2) * (1 - var(--sf-space--reverse-x)));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sm\:space-x-2 > * + * {
-      margin-right: calc(var(--sf-space-2) * (1 - var(--sf-space--reverse-x)));
-    }
-    @supports not (margin-inline-start: initial) {
     [dir="rtl"] .sm\:space-x-2 > * + * {
-      margin-right: calc(var(--sf-space-2) * (1 - var(--sf-space--reverse-x)));
-      }
-    }
-    .sm\:space-x-2 > * + *:where(:dir(rtl)) {
       margin-right: calc(var(--sf-space-2) * (1 - var(--sf-space--reverse-x)));
     }
     .sm\:space-x-2 > * + * {
@@ -336,48 +144,16 @@
       margin-top: calc(var(--sf-space-2) * (1 - var(--sf-space--reverse-y)));
       margin-bottom: calc(var(--sf-space-2) * var(--sf-space--reverse-y));
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:space-x-3 > * + * {
+    [dir="ltr"] .sm\:space-x-3 > * + * {
       margin-right: calc(var(--sf-space-3) * var(--sf-space--reverse-x));
     }
-    @supports not (margin-inline-end: initial) {
-    html:not([dir="rtl"]) .sm\:space-x-3 > * + * {
-      margin-right: calc(var(--sf-space-3) * var(--sf-space--reverse-x));
-      }
-    }
-    .sm\:space-x-3 > * + *:where(:dir(ltr)) {
-      margin-right: calc(var(--sf-space-3) * var(--sf-space--reverse-x));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sm\:space-x-3 > * + * {
-      margin-left: calc(var(--sf-space-3) * var(--sf-space--reverse-x));
-    }
-    @supports not (margin-inline-end: initial) {
     [dir="rtl"] .sm\:space-x-3 > * + * {
       margin-left: calc(var(--sf-space-3) * var(--sf-space--reverse-x));
-      }
     }
-    .sm\:space-x-3 > * + *:where(:dir(rtl)) {
-      margin-left: calc(var(--sf-space-3) * var(--sf-space--reverse-x));
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:space-x-3 > * + * {
+    [dir="ltr"] .sm\:space-x-3 > * + * {
       margin-left: calc(var(--sf-space-3) * (1 - var(--sf-space--reverse-x)));
     }
-    @supports not (margin-inline-start: initial) {
-    html:not([dir="rtl"]) .sm\:space-x-3 > * + * {
-      margin-left: calc(var(--sf-space-3) * (1 - var(--sf-space--reverse-x)));
-      }
-    }
-    .sm\:space-x-3 > * + *:where(:dir(ltr)) {
-      margin-left: calc(var(--sf-space-3) * (1 - var(--sf-space--reverse-x)));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sm\:space-x-3 > * + * {
-      margin-right: calc(var(--sf-space-3) * (1 - var(--sf-space--reverse-x)));
-    }
-    @supports not (margin-inline-start: initial) {
     [dir="rtl"] .sm\:space-x-3 > * + * {
-      margin-right: calc(var(--sf-space-3) * (1 - var(--sf-space--reverse-x)));
-      }
-    }
-    .sm\:space-x-3 > * + *:where(:dir(rtl)) {
       margin-right: calc(var(--sf-space-3) * (1 - var(--sf-space--reverse-x)));
     }
     .sm\:space-x-3 > * + * {
@@ -392,48 +168,16 @@
       margin-top: calc(var(--sf-space-3) * (1 - var(--sf-space--reverse-y)));
       margin-bottom: calc(var(--sf-space-3) * var(--sf-space--reverse-y));
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:space-x-4 > * + * {
+    [dir="ltr"] .sm\:space-x-4 > * + * {
       margin-right: calc(var(--sf-space-4) * var(--sf-space--reverse-x));
     }
-    @supports not (margin-inline-end: initial) {
-    html:not([dir="rtl"]) .sm\:space-x-4 > * + * {
-      margin-right: calc(var(--sf-space-4) * var(--sf-space--reverse-x));
-      }
-    }
-    .sm\:space-x-4 > * + *:where(:dir(ltr)) {
-      margin-right: calc(var(--sf-space-4) * var(--sf-space--reverse-x));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sm\:space-x-4 > * + * {
-      margin-left: calc(var(--sf-space-4) * var(--sf-space--reverse-x));
-    }
-    @supports not (margin-inline-end: initial) {
     [dir="rtl"] .sm\:space-x-4 > * + * {
       margin-left: calc(var(--sf-space-4) * var(--sf-space--reverse-x));
-      }
     }
-    .sm\:space-x-4 > * + *:where(:dir(rtl)) {
-      margin-left: calc(var(--sf-space-4) * var(--sf-space--reverse-x));
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:space-x-4 > * + * {
+    [dir="ltr"] .sm\:space-x-4 > * + * {
       margin-left: calc(var(--sf-space-4) * (1 - var(--sf-space--reverse-x)));
     }
-    @supports not (margin-inline-start: initial) {
-    html:not([dir="rtl"]) .sm\:space-x-4 > * + * {
-      margin-left: calc(var(--sf-space-4) * (1 - var(--sf-space--reverse-x)));
-      }
-    }
-    .sm\:space-x-4 > * + *:where(:dir(ltr)) {
-      margin-left: calc(var(--sf-space-4) * (1 - var(--sf-space--reverse-x)));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sm\:space-x-4 > * + * {
-      margin-right: calc(var(--sf-space-4) * (1 - var(--sf-space--reverse-x)));
-    }
-    @supports not (margin-inline-start: initial) {
     [dir="rtl"] .sm\:space-x-4 > * + * {
-      margin-right: calc(var(--sf-space-4) * (1 - var(--sf-space--reverse-x)));
-      }
-    }
-    .sm\:space-x-4 > * + *:where(:dir(rtl)) {
       margin-right: calc(var(--sf-space-4) * (1 - var(--sf-space--reverse-x)));
     }
     .sm\:space-x-4 > * + * {
@@ -448,48 +192,16 @@
       margin-top: calc(var(--sf-space-4) * (1 - var(--sf-space--reverse-y)));
       margin-bottom: calc(var(--sf-space-4) * var(--sf-space--reverse-y));
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:space-x-5 > * + * {
+    [dir="ltr"] .sm\:space-x-5 > * + * {
       margin-right: calc(var(--sf-space-5) * var(--sf-space--reverse-x));
     }
-    @supports not (margin-inline-end: initial) {
-    html:not([dir="rtl"]) .sm\:space-x-5 > * + * {
-      margin-right: calc(var(--sf-space-5) * var(--sf-space--reverse-x));
-      }
-    }
-    .sm\:space-x-5 > * + *:where(:dir(ltr)) {
-      margin-right: calc(var(--sf-space-5) * var(--sf-space--reverse-x));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sm\:space-x-5 > * + * {
-      margin-left: calc(var(--sf-space-5) * var(--sf-space--reverse-x));
-    }
-    @supports not (margin-inline-end: initial) {
     [dir="rtl"] .sm\:space-x-5 > * + * {
       margin-left: calc(var(--sf-space-5) * var(--sf-space--reverse-x));
-      }
     }
-    .sm\:space-x-5 > * + *:where(:dir(rtl)) {
-      margin-left: calc(var(--sf-space-5) * var(--sf-space--reverse-x));
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:space-x-5 > * + * {
+    [dir="ltr"] .sm\:space-x-5 > * + * {
       margin-left: calc(var(--sf-space-5) * (1 - var(--sf-space--reverse-x)));
     }
-    @supports not (margin-inline-start: initial) {
-    html:not([dir="rtl"]) .sm\:space-x-5 > * + * {
-      margin-left: calc(var(--sf-space-5) * (1 - var(--sf-space--reverse-x)));
-      }
-    }
-    .sm\:space-x-5 > * + *:where(:dir(ltr)) {
-      margin-left: calc(var(--sf-space-5) * (1 - var(--sf-space--reverse-x)));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sm\:space-x-5 > * + * {
-      margin-right: calc(var(--sf-space-5) * (1 - var(--sf-space--reverse-x)));
-    }
-    @supports not (margin-inline-start: initial) {
     [dir="rtl"] .sm\:space-x-5 > * + * {
-      margin-right: calc(var(--sf-space-5) * (1 - var(--sf-space--reverse-x)));
-      }
-    }
-    .sm\:space-x-5 > * + *:where(:dir(rtl)) {
       margin-right: calc(var(--sf-space-5) * (1 - var(--sf-space--reverse-x)));
     }
     .sm\:space-x-5 > * + * {
@@ -504,48 +216,16 @@
       margin-top: calc(var(--sf-space-5) * (1 - var(--sf-space--reverse-y)));
       margin-bottom: calc(var(--sf-space-5) * var(--sf-space--reverse-y));
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:space-x-6 > * + * {
+    [dir="ltr"] .sm\:space-x-6 > * + * {
       margin-right: calc(var(--sf-space-6) * var(--sf-space--reverse-x));
     }
-    @supports not (margin-inline-end: initial) {
-    html:not([dir="rtl"]) .sm\:space-x-6 > * + * {
-      margin-right: calc(var(--sf-space-6) * var(--sf-space--reverse-x));
-      }
-    }
-    .sm\:space-x-6 > * + *:where(:dir(ltr)) {
-      margin-right: calc(var(--sf-space-6) * var(--sf-space--reverse-x));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sm\:space-x-6 > * + * {
-      margin-left: calc(var(--sf-space-6) * var(--sf-space--reverse-x));
-    }
-    @supports not (margin-inline-end: initial) {
     [dir="rtl"] .sm\:space-x-6 > * + * {
       margin-left: calc(var(--sf-space-6) * var(--sf-space--reverse-x));
-      }
     }
-    .sm\:space-x-6 > * + *:where(:dir(rtl)) {
-      margin-left: calc(var(--sf-space-6) * var(--sf-space--reverse-x));
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:space-x-6 > * + * {
+    [dir="ltr"] .sm\:space-x-6 > * + * {
       margin-left: calc(var(--sf-space-6) * (1 - var(--sf-space--reverse-x)));
     }
-    @supports not (margin-inline-start: initial) {
-    html:not([dir="rtl"]) .sm\:space-x-6 > * + * {
-      margin-left: calc(var(--sf-space-6) * (1 - var(--sf-space--reverse-x)));
-      }
-    }
-    .sm\:space-x-6 > * + *:where(:dir(ltr)) {
-      margin-left: calc(var(--sf-space-6) * (1 - var(--sf-space--reverse-x)));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sm\:space-x-6 > * + * {
-      margin-right: calc(var(--sf-space-6) * (1 - var(--sf-space--reverse-x)));
-    }
-    @supports not (margin-inline-start: initial) {
     [dir="rtl"] .sm\:space-x-6 > * + * {
-      margin-right: calc(var(--sf-space-6) * (1 - var(--sf-space--reverse-x)));
-      }
-    }
-    .sm\:space-x-6 > * + *:where(:dir(rtl)) {
       margin-right: calc(var(--sf-space-6) * (1 - var(--sf-space--reverse-x)));
     }
     .sm\:space-x-6 > * + * {
@@ -560,48 +240,16 @@
       margin-top: calc(var(--sf-space-6) * (1 - var(--sf-space--reverse-y)));
       margin-bottom: calc(var(--sf-space-6) * var(--sf-space--reverse-y));
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:space-x-7 > * + * {
+    [dir="ltr"] .sm\:space-x-7 > * + * {
       margin-right: calc(var(--sf-space-7) * var(--sf-space--reverse-x));
     }
-    @supports not (margin-inline-end: initial) {
-    html:not([dir="rtl"]) .sm\:space-x-7 > * + * {
-      margin-right: calc(var(--sf-space-7) * var(--sf-space--reverse-x));
-      }
-    }
-    .sm\:space-x-7 > * + *:where(:dir(ltr)) {
-      margin-right: calc(var(--sf-space-7) * var(--sf-space--reverse-x));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sm\:space-x-7 > * + * {
-      margin-left: calc(var(--sf-space-7) * var(--sf-space--reverse-x));
-    }
-    @supports not (margin-inline-end: initial) {
     [dir="rtl"] .sm\:space-x-7 > * + * {
       margin-left: calc(var(--sf-space-7) * var(--sf-space--reverse-x));
-      }
     }
-    .sm\:space-x-7 > * + *:where(:dir(rtl)) {
-      margin-left: calc(var(--sf-space-7) * var(--sf-space--reverse-x));
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:space-x-7 > * + * {
+    [dir="ltr"] .sm\:space-x-7 > * + * {
       margin-left: calc(var(--sf-space-7) * (1 - var(--sf-space--reverse-x)));
     }
-    @supports not (margin-inline-start: initial) {
-    html:not([dir="rtl"]) .sm\:space-x-7 > * + * {
-      margin-left: calc(var(--sf-space-7) * (1 - var(--sf-space--reverse-x)));
-      }
-    }
-    .sm\:space-x-7 > * + *:where(:dir(ltr)) {
-      margin-left: calc(var(--sf-space-7) * (1 - var(--sf-space--reverse-x)));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sm\:space-x-7 > * + * {
-      margin-right: calc(var(--sf-space-7) * (1 - var(--sf-space--reverse-x)));
-    }
-    @supports not (margin-inline-start: initial) {
     [dir="rtl"] .sm\:space-x-7 > * + * {
-      margin-right: calc(var(--sf-space-7) * (1 - var(--sf-space--reverse-x)));
-      }
-    }
-    .sm\:space-x-7 > * + *:where(:dir(rtl)) {
       margin-right: calc(var(--sf-space-7) * (1 - var(--sf-space--reverse-x)));
     }
     .sm\:space-x-7 > * + * {
@@ -616,48 +264,16 @@
       margin-top: calc(var(--sf-space-7) * (1 - var(--sf-space--reverse-y)));
       margin-bottom: calc(var(--sf-space-7) * var(--sf-space--reverse-y));
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:space-x-8 > * + * {
+    [dir="ltr"] .sm\:space-x-8 > * + * {
       margin-right: calc(var(--sf-space-8) * var(--sf-space--reverse-x));
     }
-    @supports not (margin-inline-end: initial) {
-    html:not([dir="rtl"]) .sm\:space-x-8 > * + * {
-      margin-right: calc(var(--sf-space-8) * var(--sf-space--reverse-x));
-      }
-    }
-    .sm\:space-x-8 > * + *:where(:dir(ltr)) {
-      margin-right: calc(var(--sf-space-8) * var(--sf-space--reverse-x));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sm\:space-x-8 > * + * {
-      margin-left: calc(var(--sf-space-8) * var(--sf-space--reverse-x));
-    }
-    @supports not (margin-inline-end: initial) {
     [dir="rtl"] .sm\:space-x-8 > * + * {
       margin-left: calc(var(--sf-space-8) * var(--sf-space--reverse-x));
-      }
     }
-    .sm\:space-x-8 > * + *:where(:dir(rtl)) {
-      margin-left: calc(var(--sf-space-8) * var(--sf-space--reverse-x));
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:space-x-8 > * + * {
+    [dir="ltr"] .sm\:space-x-8 > * + * {
       margin-left: calc(var(--sf-space-8) * (1 - var(--sf-space--reverse-x)));
     }
-    @supports not (margin-inline-start: initial) {
-    html:not([dir="rtl"]) .sm\:space-x-8 > * + * {
-      margin-left: calc(var(--sf-space-8) * (1 - var(--sf-space--reverse-x)));
-      }
-    }
-    .sm\:space-x-8 > * + *:where(:dir(ltr)) {
-      margin-left: calc(var(--sf-space-8) * (1 - var(--sf-space--reverse-x)));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sm\:space-x-8 > * + * {
-      margin-right: calc(var(--sf-space-8) * (1 - var(--sf-space--reverse-x)));
-    }
-    @supports not (margin-inline-start: initial) {
     [dir="rtl"] .sm\:space-x-8 > * + * {
-      margin-right: calc(var(--sf-space-8) * (1 - var(--sf-space--reverse-x)));
-      }
-    }
-    .sm\:space-x-8 > * + *:where(:dir(rtl)) {
       margin-right: calc(var(--sf-space-8) * (1 - var(--sf-space--reverse-x)));
     }
     .sm\:space-x-8 > * + * {

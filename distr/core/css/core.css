@@ -2060,70 +2060,22 @@ body {
     font-size: var(--sf-text-large--size);
     line-height: var(--sf-text-large--height);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) ul{
+  [dir="ltr"] ul{
     margin-left: 0;
   }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) ul{
-    margin-left: 0;
-    }
-  }
-  ul:where(:dir(ltr)){
-    margin-left: 0;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] ul{
-    margin-right: 0;
-  }
-  @supports not (margin-inline-start: initial){
   [dir="rtl"] ul{
     margin-right: 0;
-    }
   }
-  ul:where(:dir(rtl)){
+  [dir="ltr"] ul{
     margin-right: 0;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) ul{
-    margin-right: 0;
-  }
-  @supports not (margin-inline-end: initial){
-  html:not([dir="rtl"]) ul{
-    margin-right: 0;
-    }
-  }
-  ul:where(:dir(ltr)){
-    margin-right: 0;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] ul{
-    margin-left: 0;
-  }
-  @supports not (margin-inline-end: initial){
   [dir="rtl"] ul{
     margin-left: 0;
-    }
   }
-  ul:where(:dir(rtl)){
-    margin-left: 0;
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) ul{
+  [dir="ltr"] ul{
     padding-left: var(--sf-text--size-2);
   }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) ul{
-    padding-left: var(--sf-text--size-2);
-    }
-  }
-  ul:where(:dir(ltr)){
-    padding-left: var(--sf-text--size-2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] ul{
-    padding-right: var(--sf-text--size-2);
-  }
-  @supports not (padding-inline-start: initial){
   [dir="rtl"] ul{
-    padding-right: var(--sf-text--size-2);
-    }
-  }
-  ul:where(:dir(rtl)){
     padding-right: var(--sf-text--size-2);
   }
   ul {
@@ -2288,26 +2240,10 @@ body {
   }
 }
 @layer sf.base {
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-loader.loader-default{
+  [dir="ltr"] .sf-loader.loader-default{
     left: 0;
   }
-  @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) .sf-loader.loader-default{
-    left: 0;
-    }
-  }
-  .sf-loader.loader-default:where(:dir(ltr)){
-    left: 0;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-loader.loader-default{
-    right: 0;
-  }
-  @supports not (inset-inline-start: initial){
   [dir="rtl"] .sf-loader.loader-default{
-    right: 0;
-    }
-  }
-  .sf-loader.loader-default:where(:dir(rtl)){
     right: 0;
   }
   .sf-loader.loader-default {
@@ -2324,26 +2260,10 @@ body {
   .sf-loader.hidden {
     display: none;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-loader-inner{
+  [dir="ltr"] .sf-loader-inner{
     left: 50vw;
   }
-  @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) .sf-loader-inner{
-    left: 50vw;
-    }
-  }
-  .sf-loader-inner:where(:dir(ltr)){
-    left: 50vw;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-loader-inner{
-    right: 50vw;
-  }
-  @supports not (inset-inline-start: initial){
   [dir="rtl"] .sf-loader-inner{
-    right: 50vw;
-    }
-  }
-  .sf-loader-inner:where(:dir(rtl)){
     right: 50vw;
   }
   .sf-loader-inner {

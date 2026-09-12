@@ -1,0 +1,37 @@
+@layer sf.utilities {
+  @media (min-width: 82.5rem) {
+    .xxl\:stroke-1 {
+      stroke-width: var(--sf-a1);
+    }
+    .xxl\:stroke-2 {
+      stroke-width: var(--sf-a2);
+    }
+    .xxl\:stroke-3 {
+      stroke-width: var(--sf-a3);
+    }
+    .xxl\:stroke-4 {
+      stroke-width: var(--sf-a4);
+    }
+    .xxl\:stroke-5 {
+      stroke-width: var(--sf-a5);
+    }
+    .xxl\:stroke-6 {
+      stroke-width: var(--sf-a6);
+    }
+    .xxl\:stroke-7 {
+      stroke-width: var(--sf-a7);
+    }
+    .xxl\:stroke-8 {
+      stroke-width: var(--sf-a8);
+    }
+    .xxl\:stroke-9 {
+      stroke-width: var(--sf-a9);
+    }
+    .xxl\:stroke-10 {
+      stroke-width: var(--sf-b0);
+    }
+    .xxl\:stroke-0 {
+      stroke-width: var(--sf-0);
+    }
+  }
+}

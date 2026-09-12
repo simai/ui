@@ -3671,7 +3671,7 @@ SFLoaderPlugin.prototype.setRelation = function (relation, name, output, visited
 };
 
 SFLoaderPlugin.prototype.sortPlugins = function (module, arPathCss, arPathJs, plugin) {
-  const breakpoints = ['default', 'sm', 'md', 'lg', 'xl', 'hover', 'focus', 'active'];
+  const breakpoints = ['default', 'sm', 'md', 'lg', 'xl', 'xxl', 'hover', 'focus', 'active'];
 
   for (const point of breakpoints) {
     this.sortPlugin(plugin[point] || [], point, module, arPathCss, arPathJs);
@@ -6081,7 +6081,7 @@ function resolveUtilityModule(name, aliases, rules, productionPlanActive = false
     if (visited.has(current)) return name;
     visited.add(current);
     const next = aliases[current];
-    if (typeof next !== 'string' || !/^[a-z][a-z0-9-]*\/(default|sm|md|lg|xl)$/.test(next) || next.split('/')[1] !== current.split('/')[1]) return name;
+    if (typeof next !== 'string' || !/^[a-z][a-z0-9-]*\/(default|sm|md|lg|xl|xxl)$/.test(next) || next.split('/')[1] !== current.split('/')[1]) return name;
     const source = rules[current],
           target = rules[next];
     if (!source || !target || source.type && source.type !== 'utility' || target.type && target.type !== 'utility') return name;
@@ -6096,7 +6096,7 @@ function resolveUtilityModule(name, aliases, rules, productionPlanActive = false
 /***/ "b3ed17287563"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"version":1,"aliases":{"column-gap/default":"gap/default","column-gap/sm":"gap/sm","column-gap/md":"gap/md","column-gap/lg":"gap/lg","column-gap/xl":"gap/xl"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"version":1,"aliases":{"column-gap/default":"gap/default","column-gap/sm":"gap/sm","column-gap/md":"gap/md","column-gap/lg":"gap/lg","column-gap/xl":"gap/xl","column-gap/xxl":"gap/xxl"}}');
 
 /***/ }
 

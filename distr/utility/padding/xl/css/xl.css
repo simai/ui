@@ -6,26 +6,10 @@
     .xl\:p-top-0 {
       padding-top: var(--sf-space-0);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:p-inline-end-0 {
+    [dir="ltr"] .xl\:p-inline-end-0 {
       padding-right: var(--sf-space-0);
     }
-    @supports not (padding-inline-end: initial) {
-    html:not([dir="rtl"]) .xl\:p-inline-end-0 {
-      padding-right: var(--sf-space-0);
-      }
-    }
-    .xl\:p-inline-end-0:where(:dir(ltr)) {
-      padding-right: var(--sf-space-0);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:p-inline-end-0 {
-      padding-left: var(--sf-space-0);
-    }
-    @supports not (padding-inline-end: initial) {
     [dir="rtl"] .xl\:p-inline-end-0 {
-      padding-left: var(--sf-space-0);
-      }
-    }
-    .xl\:p-inline-end-0:where(:dir(rtl)) {
       padding-left: var(--sf-space-0);
     }
     .xl\:p-inline-end-0 {
@@ -35,48 +19,16 @@
     .xl\:p-bottom-0 {
       padding-bottom: var(--sf-space-0);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:p-x-0 {
+    [dir="ltr"] .xl\:p-x-0 {
       padding-left: var(--sf-space-0);
     }
-    @supports not (padding-inline-start: initial) {
-    html:not([dir="rtl"]) .xl\:p-x-0 {
-      padding-left: var(--sf-space-0);
-      }
-    }
-    .xl\:p-x-0:where(:dir(ltr)) {
-      padding-left: var(--sf-space-0);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:p-x-0 {
-      padding-right: var(--sf-space-0);
-    }
-    @supports not (padding-inline-start: initial) {
     [dir="rtl"] .xl\:p-x-0 {
       padding-right: var(--sf-space-0);
-      }
     }
-    .xl\:p-x-0:where(:dir(rtl)) {
+    [dir="ltr"] .xl\:p-x-0 {
       padding-right: var(--sf-space-0);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:p-x-0 {
-      padding-right: var(--sf-space-0);
-    }
-    @supports not (padding-inline-end: initial) {
-    html:not([dir="rtl"]) .xl\:p-x-0 {
-      padding-right: var(--sf-space-0);
-      }
-    }
-    .xl\:p-x-0:where(:dir(ltr)) {
-      padding-right: var(--sf-space-0);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:p-x-0 {
-      padding-left: var(--sf-space-0);
-    }
-    @supports not (padding-inline-end: initial) {
     [dir="rtl"] .xl\:p-x-0 {
-      padding-left: var(--sf-space-0);
-      }
-    }
-    .xl\:p-x-0:where(:dir(rtl)) {
       padding-left: var(--sf-space-0);
     }
     .xl\:p-x-0 {
@@ -89,26 +41,10 @@
       padding-top: var(--sf-space-0);
       padding-bottom: var(--sf-space-0);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:p-inline-start-0 {
+    [dir="ltr"] .xl\:p-inline-start-0 {
       padding-left: var(--sf-space-0);
     }
-    @supports not (padding-inline-start: initial) {
-    html:not([dir="rtl"]) .xl\:p-inline-start-0 {
-      padding-left: var(--sf-space-0);
-      }
-    }
-    .xl\:p-inline-start-0:where(:dir(ltr)) {
-      padding-left: var(--sf-space-0);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:p-inline-start-0 {
-      padding-right: var(--sf-space-0);
-    }
-    @supports not (padding-inline-start: initial) {
     [dir="rtl"] .xl\:p-inline-start-0 {
-      padding-right: var(--sf-space-0);
-      }
-    }
-    .xl\:p-inline-start-0:where(:dir(rtl)) {
       padding-right: var(--sf-space-0);
     }
     .xl\:p-inline-start-0 {
@@ -121,26 +57,10 @@
     .xl\:p-top-1\/4 {
       padding-top: var(--sf-space-1\/4);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:p-inline-end-1\/4 {
+    [dir="ltr"] .xl\:p-inline-end-1\/4 {
       padding-right: var(--sf-space-1\/4);
     }
-    @supports not (padding-inline-end: initial) {
-    html:not([dir="rtl"]) .xl\:p-inline-end-1\/4 {
-      padding-right: var(--sf-space-1\/4);
-      }
-    }
-    .xl\:p-inline-end-1\/4:where(:dir(ltr)) {
-      padding-right: var(--sf-space-1\/4);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:p-inline-end-1\/4 {
-      padding-left: var(--sf-space-1\/4);
-    }
-    @supports not (padding-inline-end: initial) {
     [dir="rtl"] .xl\:p-inline-end-1\/4 {
-      padding-left: var(--sf-space-1\/4);
-      }
-    }
-    .xl\:p-inline-end-1\/4:where(:dir(rtl)) {
       padding-left: var(--sf-space-1\/4);
     }
     .xl\:p-inline-end-1\/4 {
@@ -150,48 +70,16 @@
     .xl\:p-bottom-1\/4 {
       padding-bottom: var(--sf-space-1\/4);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:p-x-1\/4 {
+    [dir="ltr"] .xl\:p-x-1\/4 {
       padding-left: var(--sf-space-1\/4);
     }
-    @supports not (padding-inline-start: initial) {
-    html:not([dir="rtl"]) .xl\:p-x-1\/4 {
-      padding-left: var(--sf-space-1\/4);
-      }
-    }
-    .xl\:p-x-1\/4:where(:dir(ltr)) {
-      padding-left: var(--sf-space-1\/4);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:p-x-1\/4 {
-      padding-right: var(--sf-space-1\/4);
-    }
-    @supports not (padding-inline-start: initial) {
     [dir="rtl"] .xl\:p-x-1\/4 {
       padding-right: var(--sf-space-1\/4);
-      }
     }
-    .xl\:p-x-1\/4:where(:dir(rtl)) {
+    [dir="ltr"] .xl\:p-x-1\/4 {
       padding-right: var(--sf-space-1\/4);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:p-x-1\/4 {
-      padding-right: var(--sf-space-1\/4);
-    }
-    @supports not (padding-inline-end: initial) {
-    html:not([dir="rtl"]) .xl\:p-x-1\/4 {
-      padding-right: var(--sf-space-1\/4);
-      }
-    }
-    .xl\:p-x-1\/4:where(:dir(ltr)) {
-      padding-right: var(--sf-space-1\/4);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:p-x-1\/4 {
-      padding-left: var(--sf-space-1\/4);
-    }
-    @supports not (padding-inline-end: initial) {
     [dir="rtl"] .xl\:p-x-1\/4 {
-      padding-left: var(--sf-space-1\/4);
-      }
-    }
-    .xl\:p-x-1\/4:where(:dir(rtl)) {
       padding-left: var(--sf-space-1\/4);
     }
     .xl\:p-x-1\/4 {
@@ -204,26 +92,10 @@
       padding-top: var(--sf-space-1\/4);
       padding-bottom: var(--sf-space-1\/4);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:p-inline-start-1\/4 {
+    [dir="ltr"] .xl\:p-inline-start-1\/4 {
       padding-left: var(--sf-space-1\/4);
     }
-    @supports not (padding-inline-start: initial) {
-    html:not([dir="rtl"]) .xl\:p-inline-start-1\/4 {
-      padding-left: var(--sf-space-1\/4);
-      }
-    }
-    .xl\:p-inline-start-1\/4:where(:dir(ltr)) {
-      padding-left: var(--sf-space-1\/4);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:p-inline-start-1\/4 {
-      padding-right: var(--sf-space-1\/4);
-    }
-    @supports not (padding-inline-start: initial) {
     [dir="rtl"] .xl\:p-inline-start-1\/4 {
-      padding-right: var(--sf-space-1\/4);
-      }
-    }
-    .xl\:p-inline-start-1\/4:where(:dir(rtl)) {
       padding-right: var(--sf-space-1\/4);
     }
     .xl\:p-inline-start-1\/4 {
@@ -236,26 +108,10 @@
     .xl\:p-top-1\/3 {
       padding-top: var(--sf-space-1\/3);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:p-inline-end-1\/3 {
+    [dir="ltr"] .xl\:p-inline-end-1\/3 {
       padding-right: var(--sf-space-1\/3);
     }
-    @supports not (padding-inline-end: initial) {
-    html:not([dir="rtl"]) .xl\:p-inline-end-1\/3 {
-      padding-right: var(--sf-space-1\/3);
-      }
-    }
-    .xl\:p-inline-end-1\/3:where(:dir(ltr)) {
-      padding-right: var(--sf-space-1\/3);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:p-inline-end-1\/3 {
-      padding-left: var(--sf-space-1\/3);
-    }
-    @supports not (padding-inline-end: initial) {
     [dir="rtl"] .xl\:p-inline-end-1\/3 {
-      padding-left: var(--sf-space-1\/3);
-      }
-    }
-    .xl\:p-inline-end-1\/3:where(:dir(rtl)) {
       padding-left: var(--sf-space-1\/3);
     }
     .xl\:p-inline-end-1\/3 {
@@ -265,48 +121,16 @@
     .xl\:p-bottom-1\/3 {
       padding-bottom: var(--sf-space-1\/3);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:p-x-1\/3 {
+    [dir="ltr"] .xl\:p-x-1\/3 {
       padding-left: var(--sf-space-1\/3);
     }
-    @supports not (padding-inline-start: initial) {
-    html:not([dir="rtl"]) .xl\:p-x-1\/3 {
-      padding-left: var(--sf-space-1\/3);
-      }
-    }
-    .xl\:p-x-1\/3:where(:dir(ltr)) {
-      padding-left: var(--sf-space-1\/3);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:p-x-1\/3 {
-      padding-right: var(--sf-space-1\/3);
-    }
-    @supports not (padding-inline-start: initial) {
     [dir="rtl"] .xl\:p-x-1\/3 {
       padding-right: var(--sf-space-1\/3);
-      }
     }
-    .xl\:p-x-1\/3:where(:dir(rtl)) {
+    [dir="ltr"] .xl\:p-x-1\/3 {
       padding-right: var(--sf-space-1\/3);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:p-x-1\/3 {
-      padding-right: var(--sf-space-1\/3);
-    }
-    @supports not (padding-inline-end: initial) {
-    html:not([dir="rtl"]) .xl\:p-x-1\/3 {
-      padding-right: var(--sf-space-1\/3);
-      }
-    }
-    .xl\:p-x-1\/3:where(:dir(ltr)) {
-      padding-right: var(--sf-space-1\/3);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:p-x-1\/3 {
-      padding-left: var(--sf-space-1\/3);
-    }
-    @supports not (padding-inline-end: initial) {
     [dir="rtl"] .xl\:p-x-1\/3 {
-      padding-left: var(--sf-space-1\/3);
-      }
-    }
-    .xl\:p-x-1\/3:where(:dir(rtl)) {
       padding-left: var(--sf-space-1\/3);
     }
     .xl\:p-x-1\/3 {
@@ -319,26 +143,10 @@
       padding-top: var(--sf-space-1\/3);
       padding-bottom: var(--sf-space-1\/3);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:p-inline-start-1\/3 {
+    [dir="ltr"] .xl\:p-inline-start-1\/3 {
       padding-left: var(--sf-space-1\/3);
     }
-    @supports not (padding-inline-start: initial) {
-    html:not([dir="rtl"]) .xl\:p-inline-start-1\/3 {
-      padding-left: var(--sf-space-1\/3);
-      }
-    }
-    .xl\:p-inline-start-1\/3:where(:dir(ltr)) {
-      padding-left: var(--sf-space-1\/3);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:p-inline-start-1\/3 {
-      padding-right: var(--sf-space-1\/3);
-    }
-    @supports not (padding-inline-start: initial) {
     [dir="rtl"] .xl\:p-inline-start-1\/3 {
-      padding-right: var(--sf-space-1\/3);
-      }
-    }
-    .xl\:p-inline-start-1\/3:where(:dir(rtl)) {
       padding-right: var(--sf-space-1\/3);
     }
     .xl\:p-inline-start-1\/3 {
@@ -351,26 +159,10 @@
     .xl\:p-top-1\/2 {
       padding-top: var(--sf-space-1\/2);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:p-inline-end-1\/2 {
+    [dir="ltr"] .xl\:p-inline-end-1\/2 {
       padding-right: var(--sf-space-1\/2);
     }
-    @supports not (padding-inline-end: initial) {
-    html:not([dir="rtl"]) .xl\:p-inline-end-1\/2 {
-      padding-right: var(--sf-space-1\/2);
-      }
-    }
-    .xl\:p-inline-end-1\/2:where(:dir(ltr)) {
-      padding-right: var(--sf-space-1\/2);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:p-inline-end-1\/2 {
-      padding-left: var(--sf-space-1\/2);
-    }
-    @supports not (padding-inline-end: initial) {
     [dir="rtl"] .xl\:p-inline-end-1\/2 {
-      padding-left: var(--sf-space-1\/2);
-      }
-    }
-    .xl\:p-inline-end-1\/2:where(:dir(rtl)) {
       padding-left: var(--sf-space-1\/2);
     }
     .xl\:p-inline-end-1\/2 {
@@ -380,48 +172,16 @@
     .xl\:p-bottom-1\/2 {
       padding-bottom: var(--sf-space-1\/2);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:p-x-1\/2 {
+    [dir="ltr"] .xl\:p-x-1\/2 {
       padding-left: var(--sf-space-1\/2);
     }
-    @supports not (padding-inline-start: initial) {
-    html:not([dir="rtl"]) .xl\:p-x-1\/2 {
-      padding-left: var(--sf-space-1\/2);
-      }
-    }
-    .xl\:p-x-1\/2:where(:dir(ltr)) {
-      padding-left: var(--sf-space-1\/2);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:p-x-1\/2 {
-      padding-right: var(--sf-space-1\/2);
-    }
-    @supports not (padding-inline-start: initial) {
     [dir="rtl"] .xl\:p-x-1\/2 {
       padding-right: var(--sf-space-1\/2);
-      }
     }
-    .xl\:p-x-1\/2:where(:dir(rtl)) {
+    [dir="ltr"] .xl\:p-x-1\/2 {
       padding-right: var(--sf-space-1\/2);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:p-x-1\/2 {
-      padding-right: var(--sf-space-1\/2);
-    }
-    @supports not (padding-inline-end: initial) {
-    html:not([dir="rtl"]) .xl\:p-x-1\/2 {
-      padding-right: var(--sf-space-1\/2);
-      }
-    }
-    .xl\:p-x-1\/2:where(:dir(ltr)) {
-      padding-right: var(--sf-space-1\/2);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:p-x-1\/2 {
-      padding-left: var(--sf-space-1\/2);
-    }
-    @supports not (padding-inline-end: initial) {
     [dir="rtl"] .xl\:p-x-1\/2 {
-      padding-left: var(--sf-space-1\/2);
-      }
-    }
-    .xl\:p-x-1\/2:where(:dir(rtl)) {
       padding-left: var(--sf-space-1\/2);
     }
     .xl\:p-x-1\/2 {
@@ -434,26 +194,10 @@
       padding-top: var(--sf-space-1\/2);
       padding-bottom: var(--sf-space-1\/2);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:p-inline-start-1\/2 {
+    [dir="ltr"] .xl\:p-inline-start-1\/2 {
       padding-left: var(--sf-space-1\/2);
     }
-    @supports not (padding-inline-start: initial) {
-    html:not([dir="rtl"]) .xl\:p-inline-start-1\/2 {
-      padding-left: var(--sf-space-1\/2);
-      }
-    }
-    .xl\:p-inline-start-1\/2:where(:dir(ltr)) {
-      padding-left: var(--sf-space-1\/2);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:p-inline-start-1\/2 {
-      padding-right: var(--sf-space-1\/2);
-    }
-    @supports not (padding-inline-start: initial) {
     [dir="rtl"] .xl\:p-inline-start-1\/2 {
-      padding-right: var(--sf-space-1\/2);
-      }
-    }
-    .xl\:p-inline-start-1\/2:where(:dir(rtl)) {
       padding-right: var(--sf-space-1\/2);
     }
     .xl\:p-inline-start-1\/2 {
@@ -466,26 +210,10 @@
     .xl\:p-top-1 {
       padding-top: var(--sf-space-1);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:p-inline-end-1 {
+    [dir="ltr"] .xl\:p-inline-end-1 {
       padding-right: var(--sf-space-1);
     }
-    @supports not (padding-inline-end: initial) {
-    html:not([dir="rtl"]) .xl\:p-inline-end-1 {
-      padding-right: var(--sf-space-1);
-      }
-    }
-    .xl\:p-inline-end-1:where(:dir(ltr)) {
-      padding-right: var(--sf-space-1);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:p-inline-end-1 {
-      padding-left: var(--sf-space-1);
-    }
-    @supports not (padding-inline-end: initial) {
     [dir="rtl"] .xl\:p-inline-end-1 {
-      padding-left: var(--sf-space-1);
-      }
-    }
-    .xl\:p-inline-end-1:where(:dir(rtl)) {
       padding-left: var(--sf-space-1);
     }
     .xl\:p-inline-end-1 {
@@ -495,48 +223,16 @@
     .xl\:p-bottom-1 {
       padding-bottom: var(--sf-space-1);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:p-x-1 {
+    [dir="ltr"] .xl\:p-x-1 {
       padding-left: var(--sf-space-1);
     }
-    @supports not (padding-inline-start: initial) {
-    html:not([dir="rtl"]) .xl\:p-x-1 {
-      padding-left: var(--sf-space-1);
-      }
-    }
-    .xl\:p-x-1:where(:dir(ltr)) {
-      padding-left: var(--sf-space-1);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:p-x-1 {
-      padding-right: var(--sf-space-1);
-    }
-    @supports not (padding-inline-start: initial) {
     [dir="rtl"] .xl\:p-x-1 {
       padding-right: var(--sf-space-1);
-      }
     }
-    .xl\:p-x-1:where(:dir(rtl)) {
+    [dir="ltr"] .xl\:p-x-1 {
       padding-right: var(--sf-space-1);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:p-x-1 {
-      padding-right: var(--sf-space-1);
-    }
-    @supports not (padding-inline-end: initial) {
-    html:not([dir="rtl"]) .xl\:p-x-1 {
-      padding-right: var(--sf-space-1);
-      }
-    }
-    .xl\:p-x-1:where(:dir(ltr)) {
-      padding-right: var(--sf-space-1);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:p-x-1 {
-      padding-left: var(--sf-space-1);
-    }
-    @supports not (padding-inline-end: initial) {
     [dir="rtl"] .xl\:p-x-1 {
-      padding-left: var(--sf-space-1);
-      }
-    }
-    .xl\:p-x-1:where(:dir(rtl)) {
       padding-left: var(--sf-space-1);
     }
     .xl\:p-x-1 {
@@ -549,26 +245,10 @@
       padding-top: var(--sf-space-1);
       padding-bottom: var(--sf-space-1);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:p-inline-start-1 {
+    [dir="ltr"] .xl\:p-inline-start-1 {
       padding-left: var(--sf-space-1);
     }
-    @supports not (padding-inline-start: initial) {
-    html:not([dir="rtl"]) .xl\:p-inline-start-1 {
-      padding-left: var(--sf-space-1);
-      }
-    }
-    .xl\:p-inline-start-1:where(:dir(ltr)) {
-      padding-left: var(--sf-space-1);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:p-inline-start-1 {
-      padding-right: var(--sf-space-1);
-    }
-    @supports not (padding-inline-start: initial) {
     [dir="rtl"] .xl\:p-inline-start-1 {
-      padding-right: var(--sf-space-1);
-      }
-    }
-    .xl\:p-inline-start-1:where(:dir(rtl)) {
       padding-right: var(--sf-space-1);
     }
     .xl\:p-inline-start-1 {
@@ -581,26 +261,10 @@
     .xl\:p-top-2 {
       padding-top: var(--sf-space-2);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:p-inline-end-2 {
+    [dir="ltr"] .xl\:p-inline-end-2 {
       padding-right: var(--sf-space-2);
     }
-    @supports not (padding-inline-end: initial) {
-    html:not([dir="rtl"]) .xl\:p-inline-end-2 {
-      padding-right: var(--sf-space-2);
-      }
-    }
-    .xl\:p-inline-end-2:where(:dir(ltr)) {
-      padding-right: var(--sf-space-2);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:p-inline-end-2 {
-      padding-left: var(--sf-space-2);
-    }
-    @supports not (padding-inline-end: initial) {
     [dir="rtl"] .xl\:p-inline-end-2 {
-      padding-left: var(--sf-space-2);
-      }
-    }
-    .xl\:p-inline-end-2:where(:dir(rtl)) {
       padding-left: var(--sf-space-2);
     }
     .xl\:p-inline-end-2 {
@@ -610,48 +274,16 @@
     .xl\:p-bottom-2 {
       padding-bottom: var(--sf-space-2);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:p-x-2 {
+    [dir="ltr"] .xl\:p-x-2 {
       padding-left: var(--sf-space-2);
     }
-    @supports not (padding-inline-start: initial) {
-    html:not([dir="rtl"]) .xl\:p-x-2 {
-      padding-left: var(--sf-space-2);
-      }
-    }
-    .xl\:p-x-2:where(:dir(ltr)) {
-      padding-left: var(--sf-space-2);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:p-x-2 {
-      padding-right: var(--sf-space-2);
-    }
-    @supports not (padding-inline-start: initial) {
     [dir="rtl"] .xl\:p-x-2 {
       padding-right: var(--sf-space-2);
-      }
     }
-    .xl\:p-x-2:where(:dir(rtl)) {
+    [dir="ltr"] .xl\:p-x-2 {
       padding-right: var(--sf-space-2);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:p-x-2 {
-      padding-right: var(--sf-space-2);
-    }
-    @supports not (padding-inline-end: initial) {
-    html:not([dir="rtl"]) .xl\:p-x-2 {
-      padding-right: var(--sf-space-2);
-      }
-    }
-    .xl\:p-x-2:where(:dir(ltr)) {
-      padding-right: var(--sf-space-2);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:p-x-2 {
-      padding-left: var(--sf-space-2);
-    }
-    @supports not (padding-inline-end: initial) {
     [dir="rtl"] .xl\:p-x-2 {
-      padding-left: var(--sf-space-2);
-      }
-    }
-    .xl\:p-x-2:where(:dir(rtl)) {
       padding-left: var(--sf-space-2);
     }
     .xl\:p-x-2 {
@@ -664,26 +296,10 @@
       padding-top: var(--sf-space-2);
       padding-bottom: var(--sf-space-2);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:p-inline-start-2 {
+    [dir="ltr"] .xl\:p-inline-start-2 {
       padding-left: var(--sf-space-2);
     }
-    @supports not (padding-inline-start: initial) {
-    html:not([dir="rtl"]) .xl\:p-inline-start-2 {
-      padding-left: var(--sf-space-2);
-      }
-    }
-    .xl\:p-inline-start-2:where(:dir(ltr)) {
-      padding-left: var(--sf-space-2);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:p-inline-start-2 {
-      padding-right: var(--sf-space-2);
-    }
-    @supports not (padding-inline-start: initial) {
     [dir="rtl"] .xl\:p-inline-start-2 {
-      padding-right: var(--sf-space-2);
-      }
-    }
-    .xl\:p-inline-start-2:where(:dir(rtl)) {
       padding-right: var(--sf-space-2);
     }
     .xl\:p-inline-start-2 {
@@ -696,26 +312,10 @@
     .xl\:p-top-3 {
       padding-top: var(--sf-space-3);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:p-inline-end-3 {
+    [dir="ltr"] .xl\:p-inline-end-3 {
       padding-right: var(--sf-space-3);
     }
-    @supports not (padding-inline-end: initial) {
-    html:not([dir="rtl"]) .xl\:p-inline-end-3 {
-      padding-right: var(--sf-space-3);
-      }
-    }
-    .xl\:p-inline-end-3:where(:dir(ltr)) {
-      padding-right: var(--sf-space-3);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:p-inline-end-3 {
-      padding-left: var(--sf-space-3);
-    }
-    @supports not (padding-inline-end: initial) {
     [dir="rtl"] .xl\:p-inline-end-3 {
-      padding-left: var(--sf-space-3);
-      }
-    }
-    .xl\:p-inline-end-3:where(:dir(rtl)) {
       padding-left: var(--sf-space-3);
     }
     .xl\:p-inline-end-3 {
@@ -725,48 +325,16 @@
     .xl\:p-bottom-3 {
       padding-bottom: var(--sf-space-3);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:p-x-3 {
+    [dir="ltr"] .xl\:p-x-3 {
       padding-left: var(--sf-space-3);
     }
-    @supports not (padding-inline-start: initial) {
-    html:not([dir="rtl"]) .xl\:p-x-3 {
-      padding-left: var(--sf-space-3);
-      }
-    }
-    .xl\:p-x-3:where(:dir(ltr)) {
-      padding-left: var(--sf-space-3);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:p-x-3 {
-      padding-right: var(--sf-space-3);
-    }
-    @supports not (padding-inline-start: initial) {
     [dir="rtl"] .xl\:p-x-3 {
       padding-right: var(--sf-space-3);
-      }
     }
-    .xl\:p-x-3:where(:dir(rtl)) {
+    [dir="ltr"] .xl\:p-x-3 {
       padding-right: var(--sf-space-3);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:p-x-3 {
-      padding-right: var(--sf-space-3);
-    }
-    @supports not (padding-inline-end: initial) {
-    html:not([dir="rtl"]) .xl\:p-x-3 {
-      padding-right: var(--sf-space-3);
-      }
-    }
-    .xl\:p-x-3:where(:dir(ltr)) {
-      padding-right: var(--sf-space-3);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:p-x-3 {
-      padding-left: var(--sf-space-3);
-    }
-    @supports not (padding-inline-end: initial) {
     [dir="rtl"] .xl\:p-x-3 {
-      padding-left: var(--sf-space-3);
-      }
-    }
-    .xl\:p-x-3:where(:dir(rtl)) {
       padding-left: var(--sf-space-3);
     }
     .xl\:p-x-3 {
@@ -779,26 +347,10 @@
       padding-top: var(--sf-space-3);
       padding-bottom: var(--sf-space-3);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:p-inline-start-3 {
+    [dir="ltr"] .xl\:p-inline-start-3 {
       padding-left: var(--sf-space-3);
     }
-    @supports not (padding-inline-start: initial) {
-    html:not([dir="rtl"]) .xl\:p-inline-start-3 {
-      padding-left: var(--sf-space-3);
-      }
-    }
-    .xl\:p-inline-start-3:where(:dir(ltr)) {
-      padding-left: var(--sf-space-3);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:p-inline-start-3 {
-      padding-right: var(--sf-space-3);
-    }
-    @supports not (padding-inline-start: initial) {
     [dir="rtl"] .xl\:p-inline-start-3 {
-      padding-right: var(--sf-space-3);
-      }
-    }
-    .xl\:p-inline-start-3:where(:dir(rtl)) {
       padding-right: var(--sf-space-3);
     }
     .xl\:p-inline-start-3 {
@@ -811,26 +363,10 @@
     .xl\:p-top-4 {
       padding-top: var(--sf-space-4);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:p-inline-end-4 {
+    [dir="ltr"] .xl\:p-inline-end-4 {
       padding-right: var(--sf-space-4);
     }
-    @supports not (padding-inline-end: initial) {
-    html:not([dir="rtl"]) .xl\:p-inline-end-4 {
-      padding-right: var(--sf-space-4);
-      }
-    }
-    .xl\:p-inline-end-4:where(:dir(ltr)) {
-      padding-right: var(--sf-space-4);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:p-inline-end-4 {
-      padding-left: var(--sf-space-4);
-    }
-    @supports not (padding-inline-end: initial) {
     [dir="rtl"] .xl\:p-inline-end-4 {
-      padding-left: var(--sf-space-4);
-      }
-    }
-    .xl\:p-inline-end-4:where(:dir(rtl)) {
       padding-left: var(--sf-space-4);
     }
     .xl\:p-inline-end-4 {
@@ -840,48 +376,16 @@
     .xl\:p-bottom-4 {
       padding-bottom: var(--sf-space-4);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:p-x-4 {
+    [dir="ltr"] .xl\:p-x-4 {
       padding-left: var(--sf-space-4);
     }
-    @supports not (padding-inline-start: initial) {
-    html:not([dir="rtl"]) .xl\:p-x-4 {
-      padding-left: var(--sf-space-4);
-      }
-    }
-    .xl\:p-x-4:where(:dir(ltr)) {
-      padding-left: var(--sf-space-4);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:p-x-4 {
-      padding-right: var(--sf-space-4);
-    }
-    @supports not (padding-inline-start: initial) {
     [dir="rtl"] .xl\:p-x-4 {
       padding-right: var(--sf-space-4);
-      }
     }
-    .xl\:p-x-4:where(:dir(rtl)) {
+    [dir="ltr"] .xl\:p-x-4 {
       padding-right: var(--sf-space-4);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:p-x-4 {
-      padding-right: var(--sf-space-4);
-    }
-    @supports not (padding-inline-end: initial) {
-    html:not([dir="rtl"]) .xl\:p-x-4 {
-      padding-right: var(--sf-space-4);
-      }
-    }
-    .xl\:p-x-4:where(:dir(ltr)) {
-      padding-right: var(--sf-space-4);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:p-x-4 {
-      padding-left: var(--sf-space-4);
-    }
-    @supports not (padding-inline-end: initial) {
     [dir="rtl"] .xl\:p-x-4 {
-      padding-left: var(--sf-space-4);
-      }
-    }
-    .xl\:p-x-4:where(:dir(rtl)) {
       padding-left: var(--sf-space-4);
     }
     .xl\:p-x-4 {
@@ -894,26 +398,10 @@
       padding-top: var(--sf-space-4);
       padding-bottom: var(--sf-space-4);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:p-inline-start-4 {
+    [dir="ltr"] .xl\:p-inline-start-4 {
       padding-left: var(--sf-space-4);
     }
-    @supports not (padding-inline-start: initial) {
-    html:not([dir="rtl"]) .xl\:p-inline-start-4 {
-      padding-left: var(--sf-space-4);
-      }
-    }
-    .xl\:p-inline-start-4:where(:dir(ltr)) {
-      padding-left: var(--sf-space-4);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:p-inline-start-4 {
-      padding-right: var(--sf-space-4);
-    }
-    @supports not (padding-inline-start: initial) {
     [dir="rtl"] .xl\:p-inline-start-4 {
-      padding-right: var(--sf-space-4);
-      }
-    }
-    .xl\:p-inline-start-4:where(:dir(rtl)) {
       padding-right: var(--sf-space-4);
     }
     .xl\:p-inline-start-4 {
@@ -926,26 +414,10 @@
     .xl\:p-top-5 {
       padding-top: var(--sf-space-5);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:p-inline-end-5 {
+    [dir="ltr"] .xl\:p-inline-end-5 {
       padding-right: var(--sf-space-5);
     }
-    @supports not (padding-inline-end: initial) {
-    html:not([dir="rtl"]) .xl\:p-inline-end-5 {
-      padding-right: var(--sf-space-5);
-      }
-    }
-    .xl\:p-inline-end-5:where(:dir(ltr)) {
-      padding-right: var(--sf-space-5);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:p-inline-end-5 {
-      padding-left: var(--sf-space-5);
-    }
-    @supports not (padding-inline-end: initial) {
     [dir="rtl"] .xl\:p-inline-end-5 {
-      padding-left: var(--sf-space-5);
-      }
-    }
-    .xl\:p-inline-end-5:where(:dir(rtl)) {
       padding-left: var(--sf-space-5);
     }
     .xl\:p-inline-end-5 {
@@ -955,48 +427,16 @@
     .xl\:p-bottom-5 {
       padding-bottom: var(--sf-space-5);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:p-x-5 {
+    [dir="ltr"] .xl\:p-x-5 {
       padding-left: var(--sf-space-5);
     }
-    @supports not (padding-inline-start: initial) {
-    html:not([dir="rtl"]) .xl\:p-x-5 {
-      padding-left: var(--sf-space-5);
-      }
-    }
-    .xl\:p-x-5:where(:dir(ltr)) {
-      padding-left: var(--sf-space-5);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:p-x-5 {
-      padding-right: var(--sf-space-5);
-    }
-    @supports not (padding-inline-start: initial) {
     [dir="rtl"] .xl\:p-x-5 {
       padding-right: var(--sf-space-5);
-      }
     }
-    .xl\:p-x-5:where(:dir(rtl)) {
+    [dir="ltr"] .xl\:p-x-5 {
       padding-right: var(--sf-space-5);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:p-x-5 {
-      padding-right: var(--sf-space-5);
-    }
-    @supports not (padding-inline-end: initial) {
-    html:not([dir="rtl"]) .xl\:p-x-5 {
-      padding-right: var(--sf-space-5);
-      }
-    }
-    .xl\:p-x-5:where(:dir(ltr)) {
-      padding-right: var(--sf-space-5);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:p-x-5 {
-      padding-left: var(--sf-space-5);
-    }
-    @supports not (padding-inline-end: initial) {
     [dir="rtl"] .xl\:p-x-5 {
-      padding-left: var(--sf-space-5);
-      }
-    }
-    .xl\:p-x-5:where(:dir(rtl)) {
       padding-left: var(--sf-space-5);
     }
     .xl\:p-x-5 {
@@ -1009,26 +449,10 @@
       padding-top: var(--sf-space-5);
       padding-bottom: var(--sf-space-5);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:p-inline-start-5 {
+    [dir="ltr"] .xl\:p-inline-start-5 {
       padding-left: var(--sf-space-5);
     }
-    @supports not (padding-inline-start: initial) {
-    html:not([dir="rtl"]) .xl\:p-inline-start-5 {
-      padding-left: var(--sf-space-5);
-      }
-    }
-    .xl\:p-inline-start-5:where(:dir(ltr)) {
-      padding-left: var(--sf-space-5);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:p-inline-start-5 {
-      padding-right: var(--sf-space-5);
-    }
-    @supports not (padding-inline-start: initial) {
     [dir="rtl"] .xl\:p-inline-start-5 {
-      padding-right: var(--sf-space-5);
-      }
-    }
-    .xl\:p-inline-start-5:where(:dir(rtl)) {
       padding-right: var(--sf-space-5);
     }
     .xl\:p-inline-start-5 {
@@ -1041,26 +465,10 @@
     .xl\:p-top-6 {
       padding-top: var(--sf-space-6);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:p-inline-end-6 {
+    [dir="ltr"] .xl\:p-inline-end-6 {
       padding-right: var(--sf-space-6);
     }
-    @supports not (padding-inline-end: initial) {
-    html:not([dir="rtl"]) .xl\:p-inline-end-6 {
-      padding-right: var(--sf-space-6);
-      }
-    }
-    .xl\:p-inline-end-6:where(:dir(ltr)) {
-      padding-right: var(--sf-space-6);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:p-inline-end-6 {
-      padding-left: var(--sf-space-6);
-    }
-    @supports not (padding-inline-end: initial) {
     [dir="rtl"] .xl\:p-inline-end-6 {
-      padding-left: var(--sf-space-6);
-      }
-    }
-    .xl\:p-inline-end-6:where(:dir(rtl)) {
       padding-left: var(--sf-space-6);
     }
     .xl\:p-inline-end-6 {
@@ -1070,48 +478,16 @@
     .xl\:p-bottom-6 {
       padding-bottom: var(--sf-space-6);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:p-x-6 {
+    [dir="ltr"] .xl\:p-x-6 {
       padding-left: var(--sf-space-6);
     }
-    @supports not (padding-inline-start: initial) {
-    html:not([dir="rtl"]) .xl\:p-x-6 {
-      padding-left: var(--sf-space-6);
-      }
-    }
-    .xl\:p-x-6:where(:dir(ltr)) {
-      padding-left: var(--sf-space-6);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:p-x-6 {
-      padding-right: var(--sf-space-6);
-    }
-    @supports not (padding-inline-start: initial) {
     [dir="rtl"] .xl\:p-x-6 {
       padding-right: var(--sf-space-6);
-      }
     }
-    .xl\:p-x-6:where(:dir(rtl)) {
+    [dir="ltr"] .xl\:p-x-6 {
       padding-right: var(--sf-space-6);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:p-x-6 {
-      padding-right: var(--sf-space-6);
-    }
-    @supports not (padding-inline-end: initial) {
-    html:not([dir="rtl"]) .xl\:p-x-6 {
-      padding-right: var(--sf-space-6);
-      }
-    }
-    .xl\:p-x-6:where(:dir(ltr)) {
-      padding-right: var(--sf-space-6);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:p-x-6 {
-      padding-left: var(--sf-space-6);
-    }
-    @supports not (padding-inline-end: initial) {
     [dir="rtl"] .xl\:p-x-6 {
-      padding-left: var(--sf-space-6);
-      }
-    }
-    .xl\:p-x-6:where(:dir(rtl)) {
       padding-left: var(--sf-space-6);
     }
     .xl\:p-x-6 {
@@ -1124,26 +500,10 @@
       padding-top: var(--sf-space-6);
       padding-bottom: var(--sf-space-6);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:p-inline-start-6 {
+    [dir="ltr"] .xl\:p-inline-start-6 {
       padding-left: var(--sf-space-6);
     }
-    @supports not (padding-inline-start: initial) {
-    html:not([dir="rtl"]) .xl\:p-inline-start-6 {
-      padding-left: var(--sf-space-6);
-      }
-    }
-    .xl\:p-inline-start-6:where(:dir(ltr)) {
-      padding-left: var(--sf-space-6);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:p-inline-start-6 {
-      padding-right: var(--sf-space-6);
-    }
-    @supports not (padding-inline-start: initial) {
     [dir="rtl"] .xl\:p-inline-start-6 {
-      padding-right: var(--sf-space-6);
-      }
-    }
-    .xl\:p-inline-start-6:where(:dir(rtl)) {
       padding-right: var(--sf-space-6);
     }
     .xl\:p-inline-start-6 {
@@ -1156,26 +516,10 @@
     .xl\:p-top-7 {
       padding-top: var(--sf-space-7);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:p-inline-end-7 {
+    [dir="ltr"] .xl\:p-inline-end-7 {
       padding-right: var(--sf-space-7);
     }
-    @supports not (padding-inline-end: initial) {
-    html:not([dir="rtl"]) .xl\:p-inline-end-7 {
-      padding-right: var(--sf-space-7);
-      }
-    }
-    .xl\:p-inline-end-7:where(:dir(ltr)) {
-      padding-right: var(--sf-space-7);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:p-inline-end-7 {
-      padding-left: var(--sf-space-7);
-    }
-    @supports not (padding-inline-end: initial) {
     [dir="rtl"] .xl\:p-inline-end-7 {
-      padding-left: var(--sf-space-7);
-      }
-    }
-    .xl\:p-inline-end-7:where(:dir(rtl)) {
       padding-left: var(--sf-space-7);
     }
     .xl\:p-inline-end-7 {
@@ -1185,48 +529,16 @@
     .xl\:p-bottom-7 {
       padding-bottom: var(--sf-space-7);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:p-x-7 {
+    [dir="ltr"] .xl\:p-x-7 {
       padding-left: var(--sf-space-7);
     }
-    @supports not (padding-inline-start: initial) {
-    html:not([dir="rtl"]) .xl\:p-x-7 {
-      padding-left: var(--sf-space-7);
-      }
-    }
-    .xl\:p-x-7:where(:dir(ltr)) {
-      padding-left: var(--sf-space-7);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:p-x-7 {
-      padding-right: var(--sf-space-7);
-    }
-    @supports not (padding-inline-start: initial) {
     [dir="rtl"] .xl\:p-x-7 {
       padding-right: var(--sf-space-7);
-      }
     }
-    .xl\:p-x-7:where(:dir(rtl)) {
+    [dir="ltr"] .xl\:p-x-7 {
       padding-right: var(--sf-space-7);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:p-x-7 {
-      padding-right: var(--sf-space-7);
-    }
-    @supports not (padding-inline-end: initial) {
-    html:not([dir="rtl"]) .xl\:p-x-7 {
-      padding-right: var(--sf-space-7);
-      }
-    }
-    .xl\:p-x-7:where(:dir(ltr)) {
-      padding-right: var(--sf-space-7);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:p-x-7 {
-      padding-left: var(--sf-space-7);
-    }
-    @supports not (padding-inline-end: initial) {
     [dir="rtl"] .xl\:p-x-7 {
-      padding-left: var(--sf-space-7);
-      }
-    }
-    .xl\:p-x-7:where(:dir(rtl)) {
       padding-left: var(--sf-space-7);
     }
     .xl\:p-x-7 {
@@ -1239,26 +551,10 @@
       padding-top: var(--sf-space-7);
       padding-bottom: var(--sf-space-7);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:p-inline-start-7 {
+    [dir="ltr"] .xl\:p-inline-start-7 {
       padding-left: var(--sf-space-7);
     }
-    @supports not (padding-inline-start: initial) {
-    html:not([dir="rtl"]) .xl\:p-inline-start-7 {
-      padding-left: var(--sf-space-7);
-      }
-    }
-    .xl\:p-inline-start-7:where(:dir(ltr)) {
-      padding-left: var(--sf-space-7);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:p-inline-start-7 {
-      padding-right: var(--sf-space-7);
-    }
-    @supports not (padding-inline-start: initial) {
     [dir="rtl"] .xl\:p-inline-start-7 {
-      padding-right: var(--sf-space-7);
-      }
-    }
-    .xl\:p-inline-start-7:where(:dir(rtl)) {
       padding-right: var(--sf-space-7);
     }
     .xl\:p-inline-start-7 {
@@ -1271,26 +567,10 @@
     .xl\:p-top-8 {
       padding-top: var(--sf-space-8);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:p-inline-end-8 {
+    [dir="ltr"] .xl\:p-inline-end-8 {
       padding-right: var(--sf-space-8);
     }
-    @supports not (padding-inline-end: initial) {
-    html:not([dir="rtl"]) .xl\:p-inline-end-8 {
-      padding-right: var(--sf-space-8);
-      }
-    }
-    .xl\:p-inline-end-8:where(:dir(ltr)) {
-      padding-right: var(--sf-space-8);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:p-inline-end-8 {
-      padding-left: var(--sf-space-8);
-    }
-    @supports not (padding-inline-end: initial) {
     [dir="rtl"] .xl\:p-inline-end-8 {
-      padding-left: var(--sf-space-8);
-      }
-    }
-    .xl\:p-inline-end-8:where(:dir(rtl)) {
       padding-left: var(--sf-space-8);
     }
     .xl\:p-inline-end-8 {
@@ -1300,48 +580,16 @@
     .xl\:p-bottom-8 {
       padding-bottom: var(--sf-space-8);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:p-x-8 {
+    [dir="ltr"] .xl\:p-x-8 {
       padding-left: var(--sf-space-8);
     }
-    @supports not (padding-inline-start: initial) {
-    html:not([dir="rtl"]) .xl\:p-x-8 {
-      padding-left: var(--sf-space-8);
-      }
-    }
-    .xl\:p-x-8:where(:dir(ltr)) {
-      padding-left: var(--sf-space-8);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:p-x-8 {
-      padding-right: var(--sf-space-8);
-    }
-    @supports not (padding-inline-start: initial) {
     [dir="rtl"] .xl\:p-x-8 {
       padding-right: var(--sf-space-8);
-      }
     }
-    .xl\:p-x-8:where(:dir(rtl)) {
+    [dir="ltr"] .xl\:p-x-8 {
       padding-right: var(--sf-space-8);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:p-x-8 {
-      padding-right: var(--sf-space-8);
-    }
-    @supports not (padding-inline-end: initial) {
-    html:not([dir="rtl"]) .xl\:p-x-8 {
-      padding-right: var(--sf-space-8);
-      }
-    }
-    .xl\:p-x-8:where(:dir(ltr)) {
-      padding-right: var(--sf-space-8);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:p-x-8 {
-      padding-left: var(--sf-space-8);
-    }
-    @supports not (padding-inline-end: initial) {
     [dir="rtl"] .xl\:p-x-8 {
-      padding-left: var(--sf-space-8);
-      }
-    }
-    .xl\:p-x-8:where(:dir(rtl)) {
       padding-left: var(--sf-space-8);
     }
     .xl\:p-x-8 {
@@ -1354,26 +602,10 @@
       padding-top: var(--sf-space-8);
       padding-bottom: var(--sf-space-8);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:p-inline-start-8 {
+    [dir="ltr"] .xl\:p-inline-start-8 {
       padding-left: var(--sf-space-8);
     }
-    @supports not (padding-inline-start: initial) {
-    html:not([dir="rtl"]) .xl\:p-inline-start-8 {
-      padding-left: var(--sf-space-8);
-      }
-    }
-    .xl\:p-inline-start-8:where(:dir(ltr)) {
-      padding-left: var(--sf-space-8);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:p-inline-start-8 {
-      padding-right: var(--sf-space-8);
-    }
-    @supports not (padding-inline-start: initial) {
     [dir="rtl"] .xl\:p-inline-start-8 {
-      padding-right: var(--sf-space-8);
-      }
-    }
-    .xl\:p-inline-start-8:where(:dir(rtl)) {
       padding-right: var(--sf-space-8);
     }
     .xl\:p-inline-start-8 {

@@ -1,0 +1,13 @@
+@layer sf.utilities {
+  @media (min-width: 82.5rem) {
+    .xxl\:measure {
+      max-width: var(--sf-text--measure);
+    }
+    .xxl\:measure-wide {
+      max-width: var(--sf-text--measure-wide);
+    }
+    .xxl\:measure-narrow {
+      max-width: var(--sf-text--measure-narrow);
+    }
+  }
+}

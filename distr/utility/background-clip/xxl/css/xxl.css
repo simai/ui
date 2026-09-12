@@ -1,0 +1,17 @@
+@layer sf.utilities {
+  @media (min-width: 82.5rem) {
+    .xxl\:bg-clip-border {
+      background-clip: border-box;
+    }
+    .xxl\:bg-clip-padding {
+      background-clip: padding-box;
+    }
+    .xxl\:bg-clip-content {
+      background-clip: content-box;
+    }
+    .xxl\:bg-clip-text {
+      -webkit-background-clip: text;
+              background-clip: text;
+    }
+  }
+}

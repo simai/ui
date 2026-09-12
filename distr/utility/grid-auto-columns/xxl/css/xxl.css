@@ -1,0 +1,18 @@
+@layer sf.utilities {
+  @media (min-width: 82.5rem) {
+    .xxl\:auto-cols {
+      grid-auto-columns: auto;
+    }
+    .xxl\:auto-cols-min {
+      grid-auto-columns: -webkit-min-content;
+      grid-auto-columns: min-content;
+    }
+    .xxl\:auto-cols-max {
+      grid-auto-columns: -webkit-max-content;
+      grid-auto-columns: max-content;
+    }
+    .xxl\:auto-cols-fr {
+      grid-auto-columns: minmax(0, 1fr);
+    }
+  }
+}

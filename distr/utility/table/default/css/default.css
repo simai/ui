@@ -8,26 +8,10 @@
     border-style: solid;
     border-width: 0;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .table {
+  [dir="ltr"] .table {
     text-align: left;
   }
-  @supports not (text-align: start) {
-  html:not([dir="rtl"]) .table {
-    text-align: left;
-    }
-  }
-  .table:where(:dir(ltr)) {
-    text-align: left;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .table {
-    text-align: right;
-  }
-  @supports not (text-align: start) {
   [dir="rtl"] .table {
-    text-align: right;
-    }
-  }
-  .table:where(:dir(rtl)) {
     text-align: right;
   }
   .table {

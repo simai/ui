@@ -1,25 +1,9 @@
 @layer sf.utilities {
   @media (min-width: 45rem) {
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .md\:text-start {
+    [dir="ltr"] .md\:text-start {
       text-align: left;
     }
-    @supports not (text-align: start) {
-    html:not([dir="rtl"]) .md\:text-start {
-      text-align: left;
-      }
-    }
-    .md\:text-start:where(:dir(ltr)) {
-      text-align: left;
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .md\:text-start {
-      text-align: right;
-    }
-    @supports not (text-align: start) {
     [dir="rtl"] .md\:text-start {
-      text-align: right;
-      }
-    }
-    .md\:text-start:where(:dir(rtl)) {
       text-align: right;
     }
     .md\:text-start {
@@ -28,26 +12,10 @@
     .md\:text-center {
       text-align: center;
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .md\:text-end {
+    [dir="ltr"] .md\:text-end {
       text-align: right;
     }
-    @supports not (text-align: end) {
-    html:not([dir="rtl"]) .md\:text-end {
-      text-align: right;
-      }
-    }
-    .md\:text-end:where(:dir(ltr)) {
-      text-align: right;
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .md\:text-end {
-      text-align: left;
-    }
-    @supports not (text-align: end) {
     [dir="rtl"] .md\:text-end {
-      text-align: left;
-      }
-    }
-    .md\:text-end:where(:dir(rtl)) {
       text-align: left;
     }
     .md\:text-end {

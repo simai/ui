@@ -1,0 +1,1 @@
+@layer sf.utilities{@media(min-width: 82.5rem){[dir="ltr"] .xxl\:text-start{text-align:left}[dir="rtl"] .xxl\:text-start{text-align:right}.xxl\:text-start{text-align:start}.xxl\:text-center{text-align:center}[dir="ltr"] .xxl\:text-end{text-align:right}[dir="rtl"] .xxl\:text-end{text-align:left}.xxl\:text-end{text-align:end}.xxl\:text-justify{text-align:justify}}}

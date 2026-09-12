@@ -1,0 +1,13 @@
+@layer sf.utilities {
+  @media (min-width: 82.5rem) {
+    .xxl\:bg-auto {
+      background-size: auto;
+    }
+    .xxl\:bg-cover {
+      background-size: cover;
+    }
+    .xxl\:bg-contain {
+      background-size: contain;
+    }
+  }
+}
