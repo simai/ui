@@ -149,7 +149,7 @@
   .sf-modal[data-sf-modal-state=opening] [data-sf-modal-panel] {
     opacity: 0;
   }
-  .sf-modal[data-sf-modal-state=open] [data-sf-modal-panel] {
+  .sf-modal[data-sf-modal-state=open][data-sf-modal-position] [data-sf-modal-panel] {
     opacity: 1;
     -webkit-transform: translate(0, 0) scale(1);
             transform: translate(0, 0) scale(1);
