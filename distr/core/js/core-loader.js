@@ -2790,6 +2790,19 @@ SFLoaderPlugin.prototype.clearRegexpScanRules = function () {
   this.regexpScanRules = null;
 };
 
+SFLoaderPlugin.prototype.doesRuleMatchAttributes = function (rule, attributeString, className = '') {
+  const regex = rule?.regex ? rule.regex : rule;
+  const re = regex instanceof RegExp ? regex : new RegExp(regex, regex?.flags || '');
+
+  const test = value => {
+    if (re.global || re.sticky) re.lastIndex = 0;
+    return re.test(value);
+  };
+
+  if (test(attributeString)) return true;
+  return String(className).split(/\s+/).filter(Boolean).some(token => test(token));
+};
+
 SFLoaderPlugin.prototype.hasRelevantRuleAttributes = function (el) {
   if (!el || !el.getAttributeNames) return false;
   const attributeRuleIndex = this.getAttributeRuleIndex();
@@ -2929,10 +2942,7 @@ SFLoaderPlugin.prototype.getAttributes = function (HtmlElement) {
     if (this.module[key]) continue;
     const hasRegex = rule instanceof RegExp || typeof rule === 'string' || rule && typeof rule === 'object' && rule.regex;
     if (!hasRegex) continue;
-    const regex = rule.regex ? rule.regex : rule;
-    const re = regex instanceof RegExp ? regex : new RegExp(regex, regex.flags || '');
-    if (re.global || re.sticky) re.lastIndex = 0;
-    const match = re.test(string);
+    const match = this.doesRuleMatchAttributes(rule, string, className);
 
     if (match && !this.module[key]) {
       keys.push(key);
