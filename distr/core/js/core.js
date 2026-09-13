@@ -814,7 +814,8 @@ const PRESENTATION_FIELDS = new Set(['view', 'preset', 'modifiers']);
 const BINDING_FIELDS = new Set(['owner', 'ref', 'target', 'revision']);
 const FORBIDDEN_KEYS = new Set([
   'html', 'innerhtml', 'script', 'javascript', 'php', 'eval', 'function',
-  'secret', 'password', 'token', 'cookie', 'authorization', 'request',
+  'expression', 'query', 'sql', 'graphql', 'class', 'classname', 'rootclass',
+  'cssclass', 'secret', 'password', 'token', 'cookie', 'authorization', 'request',
 ]);
 const SAFE_SCHEMES = new Set(['http:', 'https:', 'mailto:', 'tel:']);
 const DEFAULT_LIMITS = Object.freeze({
@@ -875,7 +876,7 @@ function scanForbiddenKeys(value, path, diagnostics) {
   }
 }
 
-function validateExtensions(value, path, diagnostics) {
+function validateExtensions(value, path, diagnostics, supported = new Set()) {
   if (!isPlainObject(value)) {
     diagnostics.push(diagnostic('extensions_invalid', path, 'Extensions must be an object'));
     return;
@@ -883,6 +884,9 @@ function validateExtensions(value, path, diagnostics) {
   for (const key of Object.keys(value)) {
     if (!/^[a-z][a-z0-9.-]*:[a-z][a-z0-9._-]*$/u.test(key)) {
       diagnostics.push(diagnostic('extension_name_invalid', `${path}.${key}`, 'Extension keys must be namespaced'));
+    }
+    if (isPlainObject(value[key]) && value[key].required === true && !supported.has(key)) {
+      diagnostics.push(diagnostic('extension_required_unknown', `${path}.${key}`, `Required extension ${key} is not supported`));
     }
   }
 }
@@ -1005,6 +1009,7 @@ function validate(document, registry = undefined, options = {}) {
   const diagnostics = [];
   const resolvedRegistry = normalizeRegistry(registry);
   const limits = { ...DEFAULT_LIMITS, ...(options.limits || {}) };
+  const supportedExtensions = new Set(options.supportedExtensions || []);
   let serialized;
   try {
     serialized = JSON.stringify(document);
@@ -1018,7 +1023,7 @@ function validate(document, registry = undefined, options = {}) {
   if (typeof document.id !== 'string' || !/^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,119}$/u.test(document.id)) diagnostics.push(diagnostic('document_id_invalid', '$.id', 'Document id is invalid'));
   if (!PROFILES.has(document.profile)) diagnostics.push(diagnostic('profile_unknown', '$.profile', 'Profile is not supported'));
   if (document.locale !== undefined && (typeof document.locale !== 'string' || !/^[a-zA-Z]{2,8}(?:-[a-zA-Z0-9]{1,8})*$/u.test(document.locale))) diagnostics.push(diagnostic('locale_invalid', '$.locale', 'Locale is invalid'));
-  if (document.extensions !== undefined) validateExtensions(document.extensions, '$.extensions', diagnostics);
+  if (document.extensions !== undefined) validateExtensions(document.extensions, '$.extensions', diagnostics, supportedExtensions);
   scanForbiddenKeys(document, '$', diagnostics);
 
   const ids = new Set();
@@ -1057,7 +1062,7 @@ function validate(document, registry = undefined, options = {}) {
         }
       }
     }
-    if (node.extensions !== undefined) validateExtensions(node.extensions, `${path}.extensions`, diagnostics);
+    if (node.extensions !== undefined) validateExtensions(node.extensions, `${path}.extensions`, diagnostics, supportedExtensions);
     if (node.bindings !== undefined) {
       if (!Array.isArray(node.bindings)) diagnostics.push(diagnostic('bindings_invalid', `${path}.bindings`, 'Bindings must be an array'));
       else node.bindings.forEach((binding, index) => {
