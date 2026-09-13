@@ -68,7 +68,7 @@ class SfBaseElement extends HTMLElement {
   }
 
   static get observedAttributes() {
-    return Array.from(new Set([...this.propsToAttributes(), "root-class", "root-style", "style"]));
+    return Array.from(new Set([...this.propsToAttributes(), "template", "root-class", "root-style", "style"]));
   }
 
   static propsToAttributes(props = this.props) {
@@ -192,13 +192,20 @@ class SfBaseElement extends HTMLElement {
     this.captureSlotTemplates();
     this.__sfSourceCaptured = true;
     this._isMounted = true;
+    this.onConnected();
     this.emitComponentEvent("connected");
     this.requestComponentUpdate("connected");
   }
 
   disconnectedCallback() {
     this._isMounted = false;
-    this.onDisconnected();
+
+    try {
+      this.onDisconnected();
+    } finally {
+      this._releaseExternalTemplate();
+    }
+
     this.emitComponentEvent("disconnected");
   }
 
@@ -675,7 +682,7 @@ class SfBaseElement extends HTMLElement {
   }
 
   async performComponentUpdate(changedAttributes = []) {
-    const mode = this.resolveUpdateMode(changedAttributes);
+    const mode = this.hasBuiltInTemplate(this.componentTemplateName) && !this._externalTemplateModule ? this.resolveUpdateMode(changedAttributes) : "lit";
 
     if (mode === "dom" && this.updateDom(changedAttributes) !== false) {
       this.afterUpdate(changedAttributes, mode);
@@ -1735,13 +1742,24 @@ class SfBaseElement extends HTMLElement {
 
   async resolveTemplateResult(changedAttributes = []) {
     const templateName = this.componentTemplateName;
+    const renderToken = this._renderToken;
 
     if (this.hasBuiltInTemplate(templateName)) {
-      this._externalTemplateModule = null;
+      this._releaseExternalTemplate();
+
       return this.template();
     }
 
     const externalModule = await this.resolveExternalTemplateModule(templateName);
+
+    if (!this._isMounted || renderToken !== this._renderToken || templateName !== this.componentTemplateName) {
+      return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+    }
+
+    if (externalModule !== this._externalTemplateModule) {
+      this._releaseExternalTemplate();
+    }
+
     this._externalTemplateModule = externalModule || null;
 
     if (externalModule) {
@@ -1909,13 +1927,20 @@ class SfBaseElement extends HTMLElement {
     });
   }
 
-  runExternalHook(hookName, detail = {}) {
-    if (typeof this._externalTemplateModule?.[hookName] !== "function") {
+  _releaseExternalTemplate() {
+    const externalModule = this._externalTemplateModule;
+    if (!externalModule) return;
+    this._externalTemplateModule = null;
+    this.runExternalHook("destroy", {}, externalModule);
+  }
+
+  runExternalHook(hookName, detail = {}, externalModule = this._externalTemplateModule) {
+    if (typeof externalModule?.[hookName] !== "function") {
       return;
     }
 
     try {
-      this._externalTemplateModule[hookName]({
+      externalModule[hookName]({
         component: this,
         root: this,
         html: lit__WEBPACK_IMPORTED_MODULE_0__.html,
@@ -1960,8 +1985,10 @@ class SfBaseElement extends HTMLElement {
 
   afterUpdate() {}
 
+  onConnected() {}
+
   onDisconnected() {
-    this.runExternalHook("destroy");
+    this._releaseExternalTemplate();
   }
 
 }

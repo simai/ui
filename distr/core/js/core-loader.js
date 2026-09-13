@@ -1649,9 +1649,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _cacheCodec__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d0f4f6f9dbe0");
 /* harmony import */ var _stableHash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("af3c1d41479b");
 /* harmony import */ var _tailwind_map__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("3f02a73d71b2");
-/* harmony import */ var _iconSubsetRuntime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("09d27e26e137");
-/* harmony import */ var _preloader__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("6c7f357fe960");
-/* harmony import */ var lit_static_html_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("ee5035470810");
+/* harmony import */ var _contracts_utility_module_aliases_v1_json__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("b3ed17287563");
+/* harmony import */ var _utilityModuleAliases__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("98e08d2c9eb6");
+/* harmony import */ var _iconSubsetRuntime__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("09d27e26e137");
+/* harmony import */ var _preloader__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("6c7f357fe960");
+/* harmony import */ var lit_static_html_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("ee5035470810");
+
+
 
 
 
@@ -1735,7 +1739,7 @@ function SFLoaderPlugin(params) {
   };
   this.componentTemplates = {};
   this.prepareInit = false;
-  (0,_iconSubsetRuntime__WEBPACK_IMPORTED_MODULE_3__.initIconSubsetState)(this);
+  (0,_iconSubsetRuntime__WEBPACK_IMPORTED_MODULE_5__.initIconSubsetState)(this);
   this.eventSend = false;
   this.uniqueIcons = new Map();
   this.pendingRegex = true;
@@ -1780,9 +1784,9 @@ function SFLoaderPlugin(params) {
   this.heavyModules = params.heavyModules || [];
   this.priorityModules = params.priorityModules || ['container', 'display', 'flex', 'grid', 'gap', 'column', 'width', 'height', 'aspect-ratio', 'element-position', 'element-position-ext', 'headers', 'theme', 'skeleton'];
   this.preloader = {
-    color: (0,_preloader__WEBPACK_IMPORTED_MODULE_4__.getPreloaderColor)(),
-    width: _preloader__WEBPACK_IMPORTED_MODULE_4__.DEFAULT_PRELOADER.width,
-    height: _preloader__WEBPACK_IMPORTED_MODULE_4__.DEFAULT_PRELOADER.height
+    color: (0,_preloader__WEBPACK_IMPORTED_MODULE_6__.getPreloaderColor)(),
+    width: _preloader__WEBPACK_IMPORTED_MODULE_6__.DEFAULT_PRELOADER.width,
+    height: _preloader__WEBPACK_IMPORTED_MODULE_6__.DEFAULT_PRELOADER.height
   };
   this.timingStart = typeof performance !== 'undefined' && performance.now ? performance.now() : Date.now();
   this.turboEventsBound = false;
@@ -1808,7 +1812,7 @@ function SFLoaderPlugin(params) {
   this.contentPreloaderText = params.contentPreloaderText ? params.contentPreloaderText : 'LOADING';
   this.arrowInterval = null;
   this.contentPreloader = '';
-  this.backgroundPreloader = params.backgroundPreloader ? params.backgroundPreloader : (0,_preloader__WEBPACK_IMPORTED_MODULE_4__.getPreloaderBackground)();
+  this.backgroundPreloader = params.backgroundPreloader ? params.backgroundPreloader : (0,_preloader__WEBPACK_IMPORTED_MODULE_6__.getPreloaderBackground)();
   this.tempLoaderStyles = 'inset: 0;position: fixed;width: 100%;height: 100vh;opacity: 1;z-index: 1000;background-color: var(--sf-color--surface-highest, var(--sf-surface-0, #fff));text-align: center;';
   this.modifierPreloader = params.modifierPreloader ? params.modifierPreloader : 'loader-default';
   this.isDebug = false;
@@ -2225,7 +2229,7 @@ function safeRemoveItem(key) {
   }
 }
 
-(0,_iconSubsetRuntime__WEBPACK_IMPORTED_MODULE_3__.installIconSubsetRuntime)(SFLoaderPlugin, {
+(0,_iconSubsetRuntime__WEBPACK_IMPORTED_MODULE_5__.installIconSubsetRuntime)(SFLoaderPlugin, {
   safeSetItem,
   safeRemoveItem
 });
@@ -2313,13 +2317,13 @@ SFLoaderPlugin.prototype.runPreloader = function () {
 };
 
 SFLoaderPlugin.prototype.rotatePreloader = function () {
-  (0,_preloader__WEBPACK_IMPORTED_MODULE_4__.startPreloaderMotion)(this.preloaderWrap, () => this.preloaderRun, this.preloader);
+  (0,_preloader__WEBPACK_IMPORTED_MODULE_6__.startPreloaderMotion)(this.preloaderWrap, () => this.preloaderRun, this.preloader);
 };
 
 SFLoaderPlugin.prototype.stopAnimation = function () {
   clearInterval(this.arrowInterval);
   if (!this.preloaderWrap) return;
-  (0,_preloader__WEBPACK_IMPORTED_MODULE_4__.stopPreloaderMotion)(this.preloaderWrap);
+  (0,_preloader__WEBPACK_IMPORTED_MODULE_6__.stopPreloaderMotion)(this.preloaderWrap);
 };
 
 SFLoaderPlugin.prototype.stopPreloader = function () {
@@ -3609,6 +3613,7 @@ SFLoaderPlugin.prototype.search = function () {
 };
 
 SFLoaderPlugin.prototype.setExistCookie = function (name, output = null, output2 = null) {
+  name = (0,_utilityModuleAliases__WEBPACK_IMPORTED_MODULE_4__.resolveUtilityModule)(name, _contracts_utility_module_aliases_v1_json__WEBPACK_IMPORTED_MODULE_3__.aliases, this.findPlugins, this.productionPlanActive);
   let mode;
   const param = this.findPlugins[name] && typeof this.findPlugins[name] === 'object' ? this.findPlugins[name] : false;
   const pluginName = this.getPluginName(name + '/');
@@ -4642,6 +4647,12 @@ SFLoaderPlugin.prototype.getLoader = async function (PluginList, temp = false, s
     PluginList = this.getObjectArray(PluginList || {});
   }
 
+  PluginList = [...new Set(PluginList.map(name => (0,_utilityModuleAliases__WEBPACK_IMPORTED_MODULE_4__.resolveUtilityModule)(name, _contracts_utility_module_aliases_v1_json__WEBPACK_IMPORTED_MODULE_3__.aliases, this.findPlugins, this.productionPlanActive)))];
+
+  if (!this.productionPlanActive) {
+    PluginList.forEach(name => this.setModule(name));
+  }
+
   const profile = this.profileStart('getLoader');
   const requestedPluginCount = PluginList.length;
   const prioritySet = new Set(this.priorityModules || []);
@@ -4802,6 +4813,28 @@ SFLoaderPlugin.prototype.isEmptyObject = function (obj) {
   }
 
   return true;
+}; // A failed stylesheet may be a temporary network error. Keep CSS failures in
+// this document so repeated scans do not loop, but retry them after reload.
+// JavaScript failures remain persistent because evaluating a partial script
+// twice can leave an inconsistent runtime.
+
+
+SFLoaderPlugin.prototype.getPersistentMissingFiles = function (files = this.notFoundFiles) {
+  const result = Object.create(null);
+
+  if (!files || typeof files !== 'object' || Array.isArray(files)) {
+    return result;
+  }
+
+  for (const [name, state] of Object.entries(files)) {
+    if (state && typeof state === 'object' && state.js === true) {
+      result[name] = {
+        js: true
+      };
+    }
+  }
+
+  return result;
 };
 
 SFLoaderPlugin.prototype.addToMissingFiles = function (name, type, missingMin = true) {
@@ -4817,7 +4850,7 @@ SFLoaderPlugin.prototype.addToMissingFiles = function (name, type, missingMin = 
     this.notFoundFiles[name].missingMin = missingMin;
   }
 
-  safeSetItem('SF_MISSING_PLUGINS', (0,_cacheCodec__WEBPACK_IMPORTED_MODULE_0__.encodeCacheValue)(JSON.stringify(this.notFoundFiles)));
+  safeSetItem('SF_MISSING_PLUGINS', (0,_cacheCodec__WEBPACK_IMPORTED_MODULE_0__.encodeCacheValue)(JSON.stringify(this.getPersistentMissingFiles())));
 };
 
 SFLoaderPlugin.prototype.getAssetVersion = function () {
@@ -4855,13 +4888,18 @@ SFLoaderPlugin.prototype.addStyle = async function (pluginURL) {
     style.href = src;
     style.type = 'text/css';
     style.rel = 'stylesheet';
-    head.append(style);
     style.addEventListener('load', () => {
       resolve();
+    }, {
+      once: true
     });
     style.addEventListener('error', () => {
-      reject(new Error(`Ошибка загрузки скрипта - ${pluginURL}`));
+      style.remove();
+      reject(new Error(`Ошибка загрузки стилей - ${pluginURL}`));
+    }, {
+      once: true
     });
+    head.append(style);
   });
 };
 
@@ -4896,7 +4934,7 @@ SFLoaderPlugin.prototype.setPreloaderParams = function () {
     }
   }
 
-  this.contentPreloader = this.params.contentPreloader ? this.params.contentPreloader : (0,_preloader__WEBPACK_IMPORTED_MODULE_4__.createPreloaderContent)(this.preloader);
+  this.contentPreloader = this.params.contentPreloader ? this.params.contentPreloader : (0,_preloader__WEBPACK_IMPORTED_MODULE_6__.createPreloaderContent)(this.preloader);
 };
 
 SFLoaderPlugin.prototype.getCurrentUrl = function () {
@@ -4945,7 +4983,7 @@ SFLoaderPlugin.prototype.prepare = function (observer = null) {
     const localMissingPlugins = localStorage.getItem('SF_MISSING_PLUGINS');
 
     try {
-      this.notFoundFiles = localMissingPlugins ? JSON.parse((0,_cacheCodec__WEBPACK_IMPORTED_MODULE_0__.decodeCacheValue)(localMissingPlugins)) : {};
+      this.notFoundFiles = localMissingPlugins ? this.getPersistentMissingFiles(JSON.parse((0,_cacheCodec__WEBPACK_IMPORTED_MODULE_0__.decodeCacheValue)(localMissingPlugins))) : {};
     } catch (e) {
       console.warn(e);
     }
@@ -5534,8 +5572,8 @@ SF.litHtml = (tagName, props = {}) => {
     }
   }
 
-  const tag = (0,lit_static_html_js__WEBPACK_IMPORTED_MODULE_5__.unsafeStatic)(tagName);
-  return (0,lit_static_html_js__WEBPACK_IMPORTED_MODULE_5__.html)`<${tag} ...=${props}></${tag}>`;
+  const tag = (0,lit_static_html_js__WEBPACK_IMPORTED_MODULE_7__.unsafeStatic)(tagName);
+  return (0,lit_static_html_js__WEBPACK_IMPORTED_MODULE_7__.html)`<${tag} ...=${props}></${tag}>`;
 };
 
 SF.whenDefine = whenSmartDefined;
@@ -6007,6 +6045,36 @@ function convertTailwindClasses(value) {
 
 /***/ },
 
+/***/ "98e08d2c9eb6"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   resolveUtilityModule: () => (/* binding */ resolveUtilityModule)
+/* harmony export */ });
+// Only compiled, verified compatibility records participate in auto discovery.
+// A pinned production asset plan owns its own URLs and is never rewritten here.
+function resolveUtilityModule(name, aliases, rules, productionPlanActive = false) {
+  if (productionPlanActive || !Object.hasOwn(aliases, name)) return name;
+  const visited = new Set();
+  let current = name;
+
+  while (Object.hasOwn(aliases, current)) {
+    if (visited.has(current)) return name;
+    visited.add(current);
+    const next = aliases[current];
+    if (typeof next !== 'string' || !/^[a-z][a-z0-9-]*\/(default|sm|md|lg|xl|xxl)$/.test(next) || next.split('/')[1] !== current.split('/')[1]) return name;
+    const source = rules[current],
+          target = rules[next];
+    if (!source || !target || source.type && source.type !== 'utility' || target.type && target.type !== 'utility') return name;
+    current = next;
+  }
+
+  return current;
+}
+
+/***/ },
+
 /***/ "f550d360fd36"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
@@ -6072,6 +6140,13 @@ __webpack_require__.r(__webpack_exports__);
 
 //# sourceMappingURL=static-html.js.map
 
+
+/***/ },
+
+/***/ "b3ed17287563"
+(module) {
+
+module.exports = /*#__PURE__*/JSON.parse('{"version":1,"aliases":{"column-gap/default":"gap/default","column-gap/sm":"gap/sm","column-gap/md":"gap/md","column-gap/lg":"gap/lg","column-gap/xl":"gap/xl","column-gap/xxl":"gap/xxl"}}');
 
 /***/ }
 

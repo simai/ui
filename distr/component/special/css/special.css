@@ -1,9 +1,9 @@
 @layer sf.components {
   html.special.special-kerning-middle * {
-    letter-spacing: 0.15em !important;
+    letter-spacing: calc(var(--sf-text--tracking-widest) * 1.5) !important;
   }
   html.special.special-kerning-big * {
-    letter-spacing: 0.3em !important;
+    letter-spacing: calc(var(--sf-text--tracking-widest) * 3) !important;
   }
 }
 @layer sf.components {
@@ -62,7 +62,7 @@
   html.special.special-img-none .sf-special-blue [data-bg],
   html.special.special-img-none .sf-special-blue svg,
   html.special.special-img-none .sf-special-blue video {
-    border: 1px solid currentColor !important;
+    border: var(--sf-px) solid currentColor !important;
   }
   html.special.special-img-black .swiper-lazy-loaded,
   html.special.special-img-black [data-bg],
@@ -74,7 +74,7 @@
     filter: grayscale(1) !important;
     -webkit-filter: grayscale(1);
     background-color: transparent !important;
-    border: 1px solid currentColor !important;
+    border: var(--sf-px) solid currentColor !important;
   }
 }
 @layer sf.components {

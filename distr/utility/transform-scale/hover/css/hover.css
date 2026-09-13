@@ -16,36 +16,36 @@
             transform: scale(0.8);
   }
   .hover\:scale-x-1\/4:hover {
-    -webkit-transform: scale(0.8);
-            transform: scale(0.8);
+    -webkit-transform: scaleX(0.8);
+            transform: scaleX(0.8);
   }
   .hover\:scale-y-1\/4:hover {
-    -webkit-transform: scale(0.8);
-            transform: scale(0.8);
+    -webkit-transform: scaleY(0.8);
+            transform: scaleY(0.8);
   }
   .hover\:scale-1\/3:hover {
     -webkit-transform: scale(0.9);
             transform: scale(0.9);
   }
   .hover\:scale-x-1\/3:hover {
-    -webkit-transform: scale(0.9);
-            transform: scale(0.9);
+    -webkit-transform: scaleX(0.9);
+            transform: scaleX(0.9);
   }
   .hover\:scale-y-1\/3:hover {
-    -webkit-transform: scale(0.9);
-            transform: scale(0.9);
+    -webkit-transform: scaleY(0.9);
+            transform: scaleY(0.9);
   }
   .hover\:scale-1\/2:hover {
     -webkit-transform: scale(0.95);
             transform: scale(0.95);
   }
   .hover\:scale-x-1\/2:hover {
-    -webkit-transform: scale(0.95);
-            transform: scale(0.95);
+    -webkit-transform: scaleX(0.95);
+            transform: scaleX(0.95);
   }
   .hover\:scale-y-1\/2:hover {
-    -webkit-transform: scale(0.95);
-            transform: scale(0.95);
+    -webkit-transform: scaleY(0.95);
+            transform: scaleY(0.95);
   }
   .hover\:scale-1:hover {
     -webkit-transform: scale(1);

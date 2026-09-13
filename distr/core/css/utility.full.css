@@ -7476,28 +7476,28 @@
   }
   .shadow-1 {
     --sf-shadow--level-ratio: 1;
-    box-shadow: 0px calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(-1 * var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill), 0px calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a3) * var(--sf-shadow--level-ratio)) 0px var(--sf-shadow--color-outline), 0px calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a4) * var(--sf-shadow--level-ratio)) calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading);
-    box-shadow: var(--sf-ui-shadow-1, 0px calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(-1 * var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill), 0px calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a3) * var(--sf-shadow--level-ratio)) 0px var(--sf-shadow--color-outline), 0px calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a4) * var(--sf-shadow--level-ratio)) calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading));
+    box-shadow: 0 calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(-1 * var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill), 0 calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a3) * var(--sf-shadow--level-ratio)) 0 var(--sf-shadow--color-outline), 0 calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a4) * var(--sf-shadow--level-ratio)) calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading);
+    box-shadow: var(--sf-ui-shadow-1, 0 calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(-1 * var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill), 0 calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a3) * var(--sf-shadow--level-ratio)) 0 var(--sf-shadow--color-outline), 0 calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a4) * var(--sf-shadow--level-ratio)) calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading));
   }
   .shadow-2 {
     --sf-shadow--level-ratio: 2;
-    box-shadow: 0px calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(-1 * var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill), 0px calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a3) * var(--sf-shadow--level-ratio)) 0px var(--sf-shadow--color-outline), 0px calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a4) * var(--sf-shadow--level-ratio)) calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading);
-    box-shadow: var(--sf-ui-shadow-2, 0px calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(-1 * var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill), 0px calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a3) * var(--sf-shadow--level-ratio)) 0px var(--sf-shadow--color-outline), 0px calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a4) * var(--sf-shadow--level-ratio)) calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading));
+    box-shadow: 0 calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(-1 * var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill), 0 calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a3) * var(--sf-shadow--level-ratio)) 0 var(--sf-shadow--color-outline), 0 calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a4) * var(--sf-shadow--level-ratio)) calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading);
+    box-shadow: var(--sf-ui-shadow-2, 0 calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(-1 * var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill), 0 calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a3) * var(--sf-shadow--level-ratio)) 0 var(--sf-shadow--color-outline), 0 calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a4) * var(--sf-shadow--level-ratio)) calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading));
   }
   .shadow-3 {
     --sf-shadow--level-ratio: 4;
-    box-shadow: 0px calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(-1 * var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill), 0px calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a3) * var(--sf-shadow--level-ratio)) 0px var(--sf-shadow--color-outline), 0px calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a4) * var(--sf-shadow--level-ratio)) calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading);
-    box-shadow: var(--sf-ui-shadow-3, 0px calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(-1 * var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill), 0px calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a3) * var(--sf-shadow--level-ratio)) 0px var(--sf-shadow--color-outline), 0px calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a4) * var(--sf-shadow--level-ratio)) calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading));
+    box-shadow: 0 calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(-1 * var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill), 0 calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a3) * var(--sf-shadow--level-ratio)) 0 var(--sf-shadow--color-outline), 0 calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a4) * var(--sf-shadow--level-ratio)) calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading);
+    box-shadow: var(--sf-ui-shadow-3, 0 calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(-1 * var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill), 0 calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a3) * var(--sf-shadow--level-ratio)) 0 var(--sf-shadow--color-outline), 0 calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a4) * var(--sf-shadow--level-ratio)) calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading));
   }
   .shadow-4 {
     --sf-shadow--level-ratio: 8;
-    box-shadow: 0px calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(-1 * var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill), 0px calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a3) * var(--sf-shadow--level-ratio)) 0px var(--sf-shadow--color-outline), 0px calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a4) * var(--sf-shadow--level-ratio)) calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading);
-    box-shadow: var(--sf-ui-shadow-4, 0px calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(-1 * var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill), 0px calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a3) * var(--sf-shadow--level-ratio)) 0px var(--sf-shadow--color-outline), 0px calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a4) * var(--sf-shadow--level-ratio)) calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading));
+    box-shadow: 0 calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(-1 * var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill), 0 calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a3) * var(--sf-shadow--level-ratio)) 0 var(--sf-shadow--color-outline), 0 calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a4) * var(--sf-shadow--level-ratio)) calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading);
+    box-shadow: var(--sf-ui-shadow-4, 0 calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(-1 * var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill), 0 calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a3) * var(--sf-shadow--level-ratio)) 0 var(--sf-shadow--color-outline), 0 calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a4) * var(--sf-shadow--level-ratio)) calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading));
   }
   .shadow-5 {
     --sf-shadow--level-ratio: 16;
-    box-shadow: 0px calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(-1 * var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill), 0px calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a3) * var(--sf-shadow--level-ratio)) 0px var(--sf-shadow--color-outline), 0px calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a4) * var(--sf-shadow--level-ratio)) calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading);
-    box-shadow: var(--sf-ui-shadow-5, 0px calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(-1 * var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill), 0px calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a3) * var(--sf-shadow--level-ratio)) 0px var(--sf-shadow--color-outline), 0px calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a4) * var(--sf-shadow--level-ratio)) calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading));
+    box-shadow: 0 calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(-1 * var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill), 0 calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a3) * var(--sf-shadow--level-ratio)) 0 var(--sf-shadow--color-outline), 0 calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a4) * var(--sf-shadow--level-ratio)) calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading);
+    box-shadow: var(--sf-ui-shadow-5, 0 calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(-1 * var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill), 0 calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a3) * var(--sf-shadow--level-ratio)) 0 var(--sf-shadow--color-outline), 0 calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a4) * var(--sf-shadow--level-ratio)) calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading));
   }
 }
 @layer sf.utilities {
@@ -7507,11 +7507,11 @@
     --sf-shadow--color-outline: color-mix(in srgb, var(--sf-transparent), var(--sf-primary) var(--sf-shadow--alfa-outline));
     --sf-shadow--color-shading: color-mix(in srgb, var(--sf-transparent), var(--sf-primary) var(--sf-shadow--alfa-shade));
     --sf-shadow--color-shade: var(--sf-shadow--color-shading);
-    --sf-ui-shadow-1: 0px 2px 4px 1px var(--sf-shadow--color-shading), 0px 1px 3px 0px var(--sf-shadow--color-outline), 0px 2px 2px -1px var(--sf-shadow--color-fill);
-    --sf-ui-shadow-2: 0px 4px 8px 2px var(--sf-shadow--color-shading), 0px 2px 6px 0px var(--sf-shadow--color-outline), 0px 4px 4px -2px var(--sf-shadow--color-fill);
-    --sf-ui-shadow-3: 0px 8px 16px 4px var(--sf-shadow--color-shading), 0px 4px 12px 0px var(--sf-shadow--color-outline), 0px 8px 8px -4px var(--sf-shadow--color-fill);
-    --sf-ui-shadow-4: 0px 16px 32px 4px var(--sf-shadow--color-shading), 0px 8px 24px 0px var(--sf-shadow--color-outline), 0px 16px 16px -8px var(--sf-shadow--color-fill);
-    --sf-ui-shadow-5: 0px 32px 64px 8px var(--sf-shadow--color-shading), 0px 16px 48px 0px var(--sf-shadow--color-outline), 0px 32px 32px -16px var(--sf-shadow--color-fill);
+    --sf-ui-shadow-1: 0 var(--sf-a2) var(--sf-a4) var(--sf-px) var(--sf-shadow--color-shading), 0 var(--sf-px) var(--sf-a3) 0 var(--sf-shadow--color-outline), 0 var(--sf-a2) var(--sf-a2) calc(-1 * var(--sf-px)) var(--sf-shadow--color-fill);
+    --sf-ui-shadow-2: 0 var(--sf-a4) var(--sf-a8) var(--sf-a2) var(--sf-shadow--color-shading), 0 var(--sf-a2) var(--sf-a6) 0 var(--sf-shadow--color-outline), 0 var(--sf-a4) var(--sf-a4) calc(-1 * var(--sf-a2)) var(--sf-shadow--color-fill);
+    --sf-ui-shadow-3: 0 var(--sf-a8) var(--sf-b6) var(--sf-a4) var(--sf-shadow--color-shading), 0 var(--sf-a4) var(--sf-b2) 0 var(--sf-shadow--color-outline), 0 var(--sf-a8) var(--sf-a8) calc(-1 * var(--sf-a4)) var(--sf-shadow--color-fill);
+    --sf-ui-shadow-4: 0 var(--sf-b6) var(--sf-c6) var(--sf-a4) var(--sf-shadow--color-shading), 0 var(--sf-a8) var(--sf-c2) 0 var(--sf-shadow--color-outline), 0 var(--sf-b6) var(--sf-b6) calc(-1 * var(--sf-a8)) var(--sf-shadow--color-fill);
+    --sf-ui-shadow-5: 0 var(--sf-c6) var(--sf-d6) var(--sf-a8) var(--sf-shadow--color-shading), 0 var(--sf-b6) var(--sf-d2) 0 var(--sf-shadow--color-outline), 0 var(--sf-c6) var(--sf-c6) calc(-1 * var(--sf-b6)) var(--sf-shadow--color-fill);
   }
   .shadow-secondary {
     --sf-shadow--color: var(--sf-secondary);
@@ -7519,11 +7519,11 @@
     --sf-shadow--color-outline: color-mix(in srgb, var(--sf-transparent), var(--sf-secondary) var(--sf-shadow--alfa-outline));
     --sf-shadow--color-shading: color-mix(in srgb, var(--sf-transparent), var(--sf-secondary) var(--sf-shadow--alfa-shade));
     --sf-shadow--color-shade: var(--sf-shadow--color-shading);
-    --sf-ui-shadow-1: 0px 2px 4px 1px var(--sf-shadow--color-shading), 0px 1px 3px 0px var(--sf-shadow--color-outline), 0px 2px 2px -1px var(--sf-shadow--color-fill);
-    --sf-ui-shadow-2: 0px 4px 8px 2px var(--sf-shadow--color-shading), 0px 2px 6px 0px var(--sf-shadow--color-outline), 0px 4px 4px -2px var(--sf-shadow--color-fill);
-    --sf-ui-shadow-3: 0px 8px 16px 4px var(--sf-shadow--color-shading), 0px 4px 12px 0px var(--sf-shadow--color-outline), 0px 8px 8px -4px var(--sf-shadow--color-fill);
-    --sf-ui-shadow-4: 0px 16px 32px 4px var(--sf-shadow--color-shading), 0px 8px 24px 0px var(--sf-shadow--color-outline), 0px 16px 16px -8px var(--sf-shadow--color-fill);
-    --sf-ui-shadow-5: 0px 32px 64px 8px var(--sf-shadow--color-shading), 0px 16px 48px 0px var(--sf-shadow--color-outline), 0px 32px 32px -16px var(--sf-shadow--color-fill);
+    --sf-ui-shadow-1: 0 var(--sf-a2) var(--sf-a4) var(--sf-px) var(--sf-shadow--color-shading), 0 var(--sf-px) var(--sf-a3) 0 var(--sf-shadow--color-outline), 0 var(--sf-a2) var(--sf-a2) calc(-1 * var(--sf-px)) var(--sf-shadow--color-fill);
+    --sf-ui-shadow-2: 0 var(--sf-a4) var(--sf-a8) var(--sf-a2) var(--sf-shadow--color-shading), 0 var(--sf-a2) var(--sf-a6) 0 var(--sf-shadow--color-outline), 0 var(--sf-a4) var(--sf-a4) calc(-1 * var(--sf-a2)) var(--sf-shadow--color-fill);
+    --sf-ui-shadow-3: 0 var(--sf-a8) var(--sf-b6) var(--sf-a4) var(--sf-shadow--color-shading), 0 var(--sf-a4) var(--sf-b2) 0 var(--sf-shadow--color-outline), 0 var(--sf-a8) var(--sf-a8) calc(-1 * var(--sf-a4)) var(--sf-shadow--color-fill);
+    --sf-ui-shadow-4: 0 var(--sf-b6) var(--sf-c6) var(--sf-a4) var(--sf-shadow--color-shading), 0 var(--sf-a8) var(--sf-c2) 0 var(--sf-shadow--color-outline), 0 var(--sf-b6) var(--sf-b6) calc(-1 * var(--sf-a8)) var(--sf-shadow--color-fill);
+    --sf-ui-shadow-5: 0 var(--sf-c6) var(--sf-d6) var(--sf-a8) var(--sf-shadow--color-shading), 0 var(--sf-b6) var(--sf-d2) 0 var(--sf-shadow--color-outline), 0 var(--sf-c6) var(--sf-c6) calc(-1 * var(--sf-b6)) var(--sf-shadow--color-fill);
   }
   .shadow-tertiary {
     --sf-shadow--color: var(--sf-tertiary);
@@ -7531,11 +7531,11 @@
     --sf-shadow--color-outline: color-mix(in srgb, var(--sf-transparent), var(--sf-tertiary) var(--sf-shadow--alfa-outline));
     --sf-shadow--color-shading: color-mix(in srgb, var(--sf-transparent), var(--sf-tertiary) var(--sf-shadow--alfa-shade));
     --sf-shadow--color-shade: var(--sf-shadow--color-shading);
-    --sf-ui-shadow-1: 0px 2px 4px 1px var(--sf-shadow--color-shading), 0px 1px 3px 0px var(--sf-shadow--color-outline), 0px 2px 2px -1px var(--sf-shadow--color-fill);
-    --sf-ui-shadow-2: 0px 4px 8px 2px var(--sf-shadow--color-shading), 0px 2px 6px 0px var(--sf-shadow--color-outline), 0px 4px 4px -2px var(--sf-shadow--color-fill);
-    --sf-ui-shadow-3: 0px 8px 16px 4px var(--sf-shadow--color-shading), 0px 4px 12px 0px var(--sf-shadow--color-outline), 0px 8px 8px -4px var(--sf-shadow--color-fill);
-    --sf-ui-shadow-4: 0px 16px 32px 4px var(--sf-shadow--color-shading), 0px 8px 24px 0px var(--sf-shadow--color-outline), 0px 16px 16px -8px var(--sf-shadow--color-fill);
-    --sf-ui-shadow-5: 0px 32px 64px 8px var(--sf-shadow--color-shading), 0px 16px 48px 0px var(--sf-shadow--color-outline), 0px 32px 32px -16px var(--sf-shadow--color-fill);
+    --sf-ui-shadow-1: 0 var(--sf-a2) var(--sf-a4) var(--sf-px) var(--sf-shadow--color-shading), 0 var(--sf-px) var(--sf-a3) 0 var(--sf-shadow--color-outline), 0 var(--sf-a2) var(--sf-a2) calc(-1 * var(--sf-px)) var(--sf-shadow--color-fill);
+    --sf-ui-shadow-2: 0 var(--sf-a4) var(--sf-a8) var(--sf-a2) var(--sf-shadow--color-shading), 0 var(--sf-a2) var(--sf-a6) 0 var(--sf-shadow--color-outline), 0 var(--sf-a4) var(--sf-a4) calc(-1 * var(--sf-a2)) var(--sf-shadow--color-fill);
+    --sf-ui-shadow-3: 0 var(--sf-a8) var(--sf-b6) var(--sf-a4) var(--sf-shadow--color-shading), 0 var(--sf-a4) var(--sf-b2) 0 var(--sf-shadow--color-outline), 0 var(--sf-a8) var(--sf-a8) calc(-1 * var(--sf-a4)) var(--sf-shadow--color-fill);
+    --sf-ui-shadow-4: 0 var(--sf-b6) var(--sf-c6) var(--sf-a4) var(--sf-shadow--color-shading), 0 var(--sf-a8) var(--sf-c2) 0 var(--sf-shadow--color-outline), 0 var(--sf-b6) var(--sf-b6) calc(-1 * var(--sf-a8)) var(--sf-shadow--color-fill);
+    --sf-ui-shadow-5: 0 var(--sf-c6) var(--sf-d6) var(--sf-a8) var(--sf-shadow--color-shading), 0 var(--sf-b6) var(--sf-d2) 0 var(--sf-shadow--color-outline), 0 var(--sf-c6) var(--sf-c6) calc(-1 * var(--sf-b6)) var(--sf-shadow--color-fill);
   }
   .shadow-error {
     --sf-shadow--color: var(--sf-error);
@@ -7543,11 +7543,11 @@
     --sf-shadow--color-outline: color-mix(in srgb, var(--sf-transparent), var(--sf-error) var(--sf-shadow--alfa-outline));
     --sf-shadow--color-shading: color-mix(in srgb, var(--sf-transparent), var(--sf-error) var(--sf-shadow--alfa-shade));
     --sf-shadow--color-shade: var(--sf-shadow--color-shading);
-    --sf-ui-shadow-1: 0px 2px 4px 1px var(--sf-shadow--color-shading), 0px 1px 3px 0px var(--sf-shadow--color-outline), 0px 2px 2px -1px var(--sf-shadow--color-fill);
-    --sf-ui-shadow-2: 0px 4px 8px 2px var(--sf-shadow--color-shading), 0px 2px 6px 0px var(--sf-shadow--color-outline), 0px 4px 4px -2px var(--sf-shadow--color-fill);
-    --sf-ui-shadow-3: 0px 8px 16px 4px var(--sf-shadow--color-shading), 0px 4px 12px 0px var(--sf-shadow--color-outline), 0px 8px 8px -4px var(--sf-shadow--color-fill);
-    --sf-ui-shadow-4: 0px 16px 32px 4px var(--sf-shadow--color-shading), 0px 8px 24px 0px var(--sf-shadow--color-outline), 0px 16px 16px -8px var(--sf-shadow--color-fill);
-    --sf-ui-shadow-5: 0px 32px 64px 8px var(--sf-shadow--color-shading), 0px 16px 48px 0px var(--sf-shadow--color-outline), 0px 32px 32px -16px var(--sf-shadow--color-fill);
+    --sf-ui-shadow-1: 0 var(--sf-a2) var(--sf-a4) var(--sf-px) var(--sf-shadow--color-shading), 0 var(--sf-px) var(--sf-a3) 0 var(--sf-shadow--color-outline), 0 var(--sf-a2) var(--sf-a2) calc(-1 * var(--sf-px)) var(--sf-shadow--color-fill);
+    --sf-ui-shadow-2: 0 var(--sf-a4) var(--sf-a8) var(--sf-a2) var(--sf-shadow--color-shading), 0 var(--sf-a2) var(--sf-a6) 0 var(--sf-shadow--color-outline), 0 var(--sf-a4) var(--sf-a4) calc(-1 * var(--sf-a2)) var(--sf-shadow--color-fill);
+    --sf-ui-shadow-3: 0 var(--sf-a8) var(--sf-b6) var(--sf-a4) var(--sf-shadow--color-shading), 0 var(--sf-a4) var(--sf-b2) 0 var(--sf-shadow--color-outline), 0 var(--sf-a8) var(--sf-a8) calc(-1 * var(--sf-a4)) var(--sf-shadow--color-fill);
+    --sf-ui-shadow-4: 0 var(--sf-b6) var(--sf-c6) var(--sf-a4) var(--sf-shadow--color-shading), 0 var(--sf-a8) var(--sf-c2) 0 var(--sf-shadow--color-outline), 0 var(--sf-b6) var(--sf-b6) calc(-1 * var(--sf-a8)) var(--sf-shadow--color-fill);
+    --sf-ui-shadow-5: 0 var(--sf-c6) var(--sf-d6) var(--sf-a8) var(--sf-shadow--color-shading), 0 var(--sf-b6) var(--sf-d2) 0 var(--sf-shadow--color-outline), 0 var(--sf-c6) var(--sf-c6) calc(-1 * var(--sf-b6)) var(--sf-shadow--color-fill);
   }
   .shadow-warning {
     --sf-shadow--color: var(--sf-warning);
@@ -7555,11 +7555,11 @@
     --sf-shadow--color-outline: color-mix(in srgb, var(--sf-transparent), var(--sf-warning) var(--sf-shadow--alfa-outline));
     --sf-shadow--color-shading: color-mix(in srgb, var(--sf-transparent), var(--sf-warning) var(--sf-shadow--alfa-shade));
     --sf-shadow--color-shade: var(--sf-shadow--color-shading);
-    --sf-ui-shadow-1: 0px 2px 4px 1px var(--sf-shadow--color-shading), 0px 1px 3px 0px var(--sf-shadow--color-outline), 0px 2px 2px -1px var(--sf-shadow--color-fill);
-    --sf-ui-shadow-2: 0px 4px 8px 2px var(--sf-shadow--color-shading), 0px 2px 6px 0px var(--sf-shadow--color-outline), 0px 4px 4px -2px var(--sf-shadow--color-fill);
-    --sf-ui-shadow-3: 0px 8px 16px 4px var(--sf-shadow--color-shading), 0px 4px 12px 0px var(--sf-shadow--color-outline), 0px 8px 8px -4px var(--sf-shadow--color-fill);
-    --sf-ui-shadow-4: 0px 16px 32px 4px var(--sf-shadow--color-shading), 0px 8px 24px 0px var(--sf-shadow--color-outline), 0px 16px 16px -8px var(--sf-shadow--color-fill);
-    --sf-ui-shadow-5: 0px 32px 64px 8px var(--sf-shadow--color-shading), 0px 16px 48px 0px var(--sf-shadow--color-outline), 0px 32px 32px -16px var(--sf-shadow--color-fill);
+    --sf-ui-shadow-1: 0 var(--sf-a2) var(--sf-a4) var(--sf-px) var(--sf-shadow--color-shading), 0 var(--sf-px) var(--sf-a3) 0 var(--sf-shadow--color-outline), 0 var(--sf-a2) var(--sf-a2) calc(-1 * var(--sf-px)) var(--sf-shadow--color-fill);
+    --sf-ui-shadow-2: 0 var(--sf-a4) var(--sf-a8) var(--sf-a2) var(--sf-shadow--color-shading), 0 var(--sf-a2) var(--sf-a6) 0 var(--sf-shadow--color-outline), 0 var(--sf-a4) var(--sf-a4) calc(-1 * var(--sf-a2)) var(--sf-shadow--color-fill);
+    --sf-ui-shadow-3: 0 var(--sf-a8) var(--sf-b6) var(--sf-a4) var(--sf-shadow--color-shading), 0 var(--sf-a4) var(--sf-b2) 0 var(--sf-shadow--color-outline), 0 var(--sf-a8) var(--sf-a8) calc(-1 * var(--sf-a4)) var(--sf-shadow--color-fill);
+    --sf-ui-shadow-4: 0 var(--sf-b6) var(--sf-c6) var(--sf-a4) var(--sf-shadow--color-shading), 0 var(--sf-a8) var(--sf-c2) 0 var(--sf-shadow--color-outline), 0 var(--sf-b6) var(--sf-b6) calc(-1 * var(--sf-a8)) var(--sf-shadow--color-fill);
+    --sf-ui-shadow-5: 0 var(--sf-c6) var(--sf-d6) var(--sf-a8) var(--sf-shadow--color-shading), 0 var(--sf-b6) var(--sf-d2) 0 var(--sf-shadow--color-outline), 0 var(--sf-c6) var(--sf-c6) calc(-1 * var(--sf-b6)) var(--sf-shadow--color-fill);
   }
   .shadow-success {
     --sf-shadow--color: var(--sf-success);
@@ -7567,11 +7567,11 @@
     --sf-shadow--color-outline: color-mix(in srgb, var(--sf-transparent), var(--sf-success) var(--sf-shadow--alfa-outline));
     --sf-shadow--color-shading: color-mix(in srgb, var(--sf-transparent), var(--sf-success) var(--sf-shadow--alfa-shade));
     --sf-shadow--color-shade: var(--sf-shadow--color-shading);
-    --sf-ui-shadow-1: 0px 2px 4px 1px var(--sf-shadow--color-shading), 0px 1px 3px 0px var(--sf-shadow--color-outline), 0px 2px 2px -1px var(--sf-shadow--color-fill);
-    --sf-ui-shadow-2: 0px 4px 8px 2px var(--sf-shadow--color-shading), 0px 2px 6px 0px var(--sf-shadow--color-outline), 0px 4px 4px -2px var(--sf-shadow--color-fill);
-    --sf-ui-shadow-3: 0px 8px 16px 4px var(--sf-shadow--color-shading), 0px 4px 12px 0px var(--sf-shadow--color-outline), 0px 8px 8px -4px var(--sf-shadow--color-fill);
-    --sf-ui-shadow-4: 0px 16px 32px 4px var(--sf-shadow--color-shading), 0px 8px 24px 0px var(--sf-shadow--color-outline), 0px 16px 16px -8px var(--sf-shadow--color-fill);
-    --sf-ui-shadow-5: 0px 32px 64px 8px var(--sf-shadow--color-shading), 0px 16px 48px 0px var(--sf-shadow--color-outline), 0px 32px 32px -16px var(--sf-shadow--color-fill);
+    --sf-ui-shadow-1: 0 var(--sf-a2) var(--sf-a4) var(--sf-px) var(--sf-shadow--color-shading), 0 var(--sf-px) var(--sf-a3) 0 var(--sf-shadow--color-outline), 0 var(--sf-a2) var(--sf-a2) calc(-1 * var(--sf-px)) var(--sf-shadow--color-fill);
+    --sf-ui-shadow-2: 0 var(--sf-a4) var(--sf-a8) var(--sf-a2) var(--sf-shadow--color-shading), 0 var(--sf-a2) var(--sf-a6) 0 var(--sf-shadow--color-outline), 0 var(--sf-a4) var(--sf-a4) calc(-1 * var(--sf-a2)) var(--sf-shadow--color-fill);
+    --sf-ui-shadow-3: 0 var(--sf-a8) var(--sf-b6) var(--sf-a4) var(--sf-shadow--color-shading), 0 var(--sf-a4) var(--sf-b2) 0 var(--sf-shadow--color-outline), 0 var(--sf-a8) var(--sf-a8) calc(-1 * var(--sf-a4)) var(--sf-shadow--color-fill);
+    --sf-ui-shadow-4: 0 var(--sf-b6) var(--sf-c6) var(--sf-a4) var(--sf-shadow--color-shading), 0 var(--sf-a8) var(--sf-c2) 0 var(--sf-shadow--color-outline), 0 var(--sf-b6) var(--sf-b6) calc(-1 * var(--sf-a8)) var(--sf-shadow--color-fill);
+    --sf-ui-shadow-5: 0 var(--sf-c6) var(--sf-d6) var(--sf-a8) var(--sf-shadow--color-shading), 0 var(--sf-b6) var(--sf-d2) 0 var(--sf-shadow--color-outline), 0 var(--sf-c6) var(--sf-c6) calc(-1 * var(--sf-b6)) var(--sf-shadow--color-fill);
   }
   .shadow-on-surface {
     --sf-shadow--color: var(--sf-on-surface);
@@ -7579,11 +7579,11 @@
     --sf-shadow--color-outline: color-mix(in srgb, var(--sf-transparent), var(--sf-on-surface) var(--sf-shadow--alfa-outline));
     --sf-shadow--color-shading: color-mix(in srgb, var(--sf-transparent), var(--sf-on-surface) var(--sf-shadow--alfa-shade));
     --sf-shadow--color-shade: var(--sf-shadow--color-shading);
-    --sf-ui-shadow-1: 0px 2px 4px 1px var(--sf-shadow--color-shading), 0px 1px 3px 0px var(--sf-shadow--color-outline), 0px 2px 2px -1px var(--sf-shadow--color-fill);
-    --sf-ui-shadow-2: 0px 4px 8px 2px var(--sf-shadow--color-shading), 0px 2px 6px 0px var(--sf-shadow--color-outline), 0px 4px 4px -2px var(--sf-shadow--color-fill);
-    --sf-ui-shadow-3: 0px 8px 16px 4px var(--sf-shadow--color-shading), 0px 4px 12px 0px var(--sf-shadow--color-outline), 0px 8px 8px -4px var(--sf-shadow--color-fill);
-    --sf-ui-shadow-4: 0px 16px 32px 4px var(--sf-shadow--color-shading), 0px 8px 24px 0px var(--sf-shadow--color-outline), 0px 16px 16px -8px var(--sf-shadow--color-fill);
-    --sf-ui-shadow-5: 0px 32px 64px 8px var(--sf-shadow--color-shading), 0px 16px 48px 0px var(--sf-shadow--color-outline), 0px 32px 32px -16px var(--sf-shadow--color-fill);
+    --sf-ui-shadow-1: 0 var(--sf-a2) var(--sf-a4) var(--sf-px) var(--sf-shadow--color-shading), 0 var(--sf-px) var(--sf-a3) 0 var(--sf-shadow--color-outline), 0 var(--sf-a2) var(--sf-a2) calc(-1 * var(--sf-px)) var(--sf-shadow--color-fill);
+    --sf-ui-shadow-2: 0 var(--sf-a4) var(--sf-a8) var(--sf-a2) var(--sf-shadow--color-shading), 0 var(--sf-a2) var(--sf-a6) 0 var(--sf-shadow--color-outline), 0 var(--sf-a4) var(--sf-a4) calc(-1 * var(--sf-a2)) var(--sf-shadow--color-fill);
+    --sf-ui-shadow-3: 0 var(--sf-a8) var(--sf-b6) var(--sf-a4) var(--sf-shadow--color-shading), 0 var(--sf-a4) var(--sf-b2) 0 var(--sf-shadow--color-outline), 0 var(--sf-a8) var(--sf-a8) calc(-1 * var(--sf-a4)) var(--sf-shadow--color-fill);
+    --sf-ui-shadow-4: 0 var(--sf-b6) var(--sf-c6) var(--sf-a4) var(--sf-shadow--color-shading), 0 var(--sf-a8) var(--sf-c2) 0 var(--sf-shadow--color-outline), 0 var(--sf-b6) var(--sf-b6) calc(-1 * var(--sf-a8)) var(--sf-shadow--color-fill);
+    --sf-ui-shadow-5: 0 var(--sf-c6) var(--sf-d6) var(--sf-a8) var(--sf-shadow--color-shading), 0 var(--sf-b6) var(--sf-d2) 0 var(--sf-shadow--color-outline), 0 var(--sf-c6) var(--sf-c6) calc(-1 * var(--sf-b6)) var(--sf-shadow--color-fill);
   }
 }
 @layer sf.utilities {
@@ -7593,11 +7593,11 @@
     --sf-shadow--color-outline: color-mix(in srgb, var(--sf-transparent), var(--sf-primary) var(--sf-shadow--alfa-outline)) !important;
     --sf-shadow--color-shading: color-mix(in srgb, var(--sf-transparent), var(--sf-primary) var(--sf-shadow--alfa-shade)) !important;
     --sf-shadow--color-shade: var(--sf-shadow--color-shading) !important;
-    --sf-ui-shadow-1: 0px 2px 4px 1px var(--sf-shadow--color-shading), 0px 1px 3px 0px var(--sf-shadow--color-outline), 0px 2px 2px -1px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-2: 0px 4px 8px 2px var(--sf-shadow--color-shading), 0px 2px 6px 0px var(--sf-shadow--color-outline), 0px 4px 4px -2px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-3: 0px 8px 16px 4px var(--sf-shadow--color-shading), 0px 4px 12px 0px var(--sf-shadow--color-outline), 0px 8px 8px -4px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-4: 0px 16px 32px 4px var(--sf-shadow--color-shading), 0px 8px 24px 0px var(--sf-shadow--color-outline), 0px 16px 16px -8px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-5: 0px 32px 64px 8px var(--sf-shadow--color-shading), 0px 16px 48px 0px var(--sf-shadow--color-outline), 0px 32px 32px -16px var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-1: 0 var(--sf-a2) var(--sf-a4) var(--sf-px) var(--sf-shadow--color-shading), 0 var(--sf-px) var(--sf-a3) 0 var(--sf-shadow--color-outline), 0 var(--sf-a2) var(--sf-a2) calc(-1 * var(--sf-px)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-2: 0 var(--sf-a4) var(--sf-a8) var(--sf-a2) var(--sf-shadow--color-shading), 0 var(--sf-a2) var(--sf-a6) 0 var(--sf-shadow--color-outline), 0 var(--sf-a4) var(--sf-a4) calc(-1 * var(--sf-a2)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-3: 0 var(--sf-a8) var(--sf-b6) var(--sf-a4) var(--sf-shadow--color-shading), 0 var(--sf-a4) var(--sf-b2) 0 var(--sf-shadow--color-outline), 0 var(--sf-a8) var(--sf-a8) calc(-1 * var(--sf-a4)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-4: 0 var(--sf-b6) var(--sf-c6) var(--sf-a4) var(--sf-shadow--color-shading), 0 var(--sf-a8) var(--sf-c2) 0 var(--sf-shadow--color-outline), 0 var(--sf-b6) var(--sf-b6) calc(-1 * var(--sf-a8)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-5: 0 var(--sf-c6) var(--sf-d6) var(--sf-a8) var(--sf-shadow--color-shading), 0 var(--sf-b6) var(--sf-d2) 0 var(--sf-shadow--color-outline), 0 var(--sf-c6) var(--sf-c6) calc(-1 * var(--sf-b6)) var(--sf-shadow--color-fill) !important;
   }
   .hover\:shadow-secondary:hover {
     --sf-shadow--color: var(--sf-secondary) !important;
@@ -7605,11 +7605,11 @@
     --sf-shadow--color-outline: color-mix(in srgb, var(--sf-transparent), var(--sf-secondary) var(--sf-shadow--alfa-outline)) !important;
     --sf-shadow--color-shading: color-mix(in srgb, var(--sf-transparent), var(--sf-secondary) var(--sf-shadow--alfa-shade)) !important;
     --sf-shadow--color-shade: var(--sf-shadow--color-shading) !important;
-    --sf-ui-shadow-1: 0px 2px 4px 1px var(--sf-shadow--color-shading), 0px 1px 3px 0px var(--sf-shadow--color-outline), 0px 2px 2px -1px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-2: 0px 4px 8px 2px var(--sf-shadow--color-shading), 0px 2px 6px 0px var(--sf-shadow--color-outline), 0px 4px 4px -2px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-3: 0px 8px 16px 4px var(--sf-shadow--color-shading), 0px 4px 12px 0px var(--sf-shadow--color-outline), 0px 8px 8px -4px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-4: 0px 16px 32px 4px var(--sf-shadow--color-shading), 0px 8px 24px 0px var(--sf-shadow--color-outline), 0px 16px 16px -8px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-5: 0px 32px 64px 8px var(--sf-shadow--color-shading), 0px 16px 48px 0px var(--sf-shadow--color-outline), 0px 32px 32px -16px var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-1: 0 var(--sf-a2) var(--sf-a4) var(--sf-px) var(--sf-shadow--color-shading), 0 var(--sf-px) var(--sf-a3) 0 var(--sf-shadow--color-outline), 0 var(--sf-a2) var(--sf-a2) calc(-1 * var(--sf-px)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-2: 0 var(--sf-a4) var(--sf-a8) var(--sf-a2) var(--sf-shadow--color-shading), 0 var(--sf-a2) var(--sf-a6) 0 var(--sf-shadow--color-outline), 0 var(--sf-a4) var(--sf-a4) calc(-1 * var(--sf-a2)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-3: 0 var(--sf-a8) var(--sf-b6) var(--sf-a4) var(--sf-shadow--color-shading), 0 var(--sf-a4) var(--sf-b2) 0 var(--sf-shadow--color-outline), 0 var(--sf-a8) var(--sf-a8) calc(-1 * var(--sf-a4)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-4: 0 var(--sf-b6) var(--sf-c6) var(--sf-a4) var(--sf-shadow--color-shading), 0 var(--sf-a8) var(--sf-c2) 0 var(--sf-shadow--color-outline), 0 var(--sf-b6) var(--sf-b6) calc(-1 * var(--sf-a8)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-5: 0 var(--sf-c6) var(--sf-d6) var(--sf-a8) var(--sf-shadow--color-shading), 0 var(--sf-b6) var(--sf-d2) 0 var(--sf-shadow--color-outline), 0 var(--sf-c6) var(--sf-c6) calc(-1 * var(--sf-b6)) var(--sf-shadow--color-fill) !important;
   }
   .hover\:shadow-tertiary:hover {
     --sf-shadow--color: var(--sf-tertiary) !important;
@@ -7617,11 +7617,11 @@
     --sf-shadow--color-outline: color-mix(in srgb, var(--sf-transparent), var(--sf-tertiary) var(--sf-shadow--alfa-outline)) !important;
     --sf-shadow--color-shading: color-mix(in srgb, var(--sf-transparent), var(--sf-tertiary) var(--sf-shadow--alfa-shade)) !important;
     --sf-shadow--color-shade: var(--sf-shadow--color-shading) !important;
-    --sf-ui-shadow-1: 0px 2px 4px 1px var(--sf-shadow--color-shading), 0px 1px 3px 0px var(--sf-shadow--color-outline), 0px 2px 2px -1px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-2: 0px 4px 8px 2px var(--sf-shadow--color-shading), 0px 2px 6px 0px var(--sf-shadow--color-outline), 0px 4px 4px -2px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-3: 0px 8px 16px 4px var(--sf-shadow--color-shading), 0px 4px 12px 0px var(--sf-shadow--color-outline), 0px 8px 8px -4px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-4: 0px 16px 32px 4px var(--sf-shadow--color-shading), 0px 8px 24px 0px var(--sf-shadow--color-outline), 0px 16px 16px -8px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-5: 0px 32px 64px 8px var(--sf-shadow--color-shading), 0px 16px 48px 0px var(--sf-shadow--color-outline), 0px 32px 32px -16px var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-1: 0 var(--sf-a2) var(--sf-a4) var(--sf-px) var(--sf-shadow--color-shading), 0 var(--sf-px) var(--sf-a3) 0 var(--sf-shadow--color-outline), 0 var(--sf-a2) var(--sf-a2) calc(-1 * var(--sf-px)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-2: 0 var(--sf-a4) var(--sf-a8) var(--sf-a2) var(--sf-shadow--color-shading), 0 var(--sf-a2) var(--sf-a6) 0 var(--sf-shadow--color-outline), 0 var(--sf-a4) var(--sf-a4) calc(-1 * var(--sf-a2)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-3: 0 var(--sf-a8) var(--sf-b6) var(--sf-a4) var(--sf-shadow--color-shading), 0 var(--sf-a4) var(--sf-b2) 0 var(--sf-shadow--color-outline), 0 var(--sf-a8) var(--sf-a8) calc(-1 * var(--sf-a4)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-4: 0 var(--sf-b6) var(--sf-c6) var(--sf-a4) var(--sf-shadow--color-shading), 0 var(--sf-a8) var(--sf-c2) 0 var(--sf-shadow--color-outline), 0 var(--sf-b6) var(--sf-b6) calc(-1 * var(--sf-a8)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-5: 0 var(--sf-c6) var(--sf-d6) var(--sf-a8) var(--sf-shadow--color-shading), 0 var(--sf-b6) var(--sf-d2) 0 var(--sf-shadow--color-outline), 0 var(--sf-c6) var(--sf-c6) calc(-1 * var(--sf-b6)) var(--sf-shadow--color-fill) !important;
   }
   .hover\:shadow-error:hover {
     --sf-shadow--color: var(--sf-error) !important;
@@ -7629,11 +7629,11 @@
     --sf-shadow--color-outline: color-mix(in srgb, var(--sf-transparent), var(--sf-error) var(--sf-shadow--alfa-outline)) !important;
     --sf-shadow--color-shading: color-mix(in srgb, var(--sf-transparent), var(--sf-error) var(--sf-shadow--alfa-shade)) !important;
     --sf-shadow--color-shade: var(--sf-shadow--color-shading) !important;
-    --sf-ui-shadow-1: 0px 2px 4px 1px var(--sf-shadow--color-shading), 0px 1px 3px 0px var(--sf-shadow--color-outline), 0px 2px 2px -1px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-2: 0px 4px 8px 2px var(--sf-shadow--color-shading), 0px 2px 6px 0px var(--sf-shadow--color-outline), 0px 4px 4px -2px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-3: 0px 8px 16px 4px var(--sf-shadow--color-shading), 0px 4px 12px 0px var(--sf-shadow--color-outline), 0px 8px 8px -4px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-4: 0px 16px 32px 4px var(--sf-shadow--color-shading), 0px 8px 24px 0px var(--sf-shadow--color-outline), 0px 16px 16px -8px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-5: 0px 32px 64px 8px var(--sf-shadow--color-shading), 0px 16px 48px 0px var(--sf-shadow--color-outline), 0px 32px 32px -16px var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-1: 0 var(--sf-a2) var(--sf-a4) var(--sf-px) var(--sf-shadow--color-shading), 0 var(--sf-px) var(--sf-a3) 0 var(--sf-shadow--color-outline), 0 var(--sf-a2) var(--sf-a2) calc(-1 * var(--sf-px)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-2: 0 var(--sf-a4) var(--sf-a8) var(--sf-a2) var(--sf-shadow--color-shading), 0 var(--sf-a2) var(--sf-a6) 0 var(--sf-shadow--color-outline), 0 var(--sf-a4) var(--sf-a4) calc(-1 * var(--sf-a2)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-3: 0 var(--sf-a8) var(--sf-b6) var(--sf-a4) var(--sf-shadow--color-shading), 0 var(--sf-a4) var(--sf-b2) 0 var(--sf-shadow--color-outline), 0 var(--sf-a8) var(--sf-a8) calc(-1 * var(--sf-a4)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-4: 0 var(--sf-b6) var(--sf-c6) var(--sf-a4) var(--sf-shadow--color-shading), 0 var(--sf-a8) var(--sf-c2) 0 var(--sf-shadow--color-outline), 0 var(--sf-b6) var(--sf-b6) calc(-1 * var(--sf-a8)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-5: 0 var(--sf-c6) var(--sf-d6) var(--sf-a8) var(--sf-shadow--color-shading), 0 var(--sf-b6) var(--sf-d2) 0 var(--sf-shadow--color-outline), 0 var(--sf-c6) var(--sf-c6) calc(-1 * var(--sf-b6)) var(--sf-shadow--color-fill) !important;
   }
   .hover\:shadow-warning:hover {
     --sf-shadow--color: var(--sf-warning) !important;
@@ -7641,11 +7641,11 @@
     --sf-shadow--color-outline: color-mix(in srgb, var(--sf-transparent), var(--sf-warning) var(--sf-shadow--alfa-outline)) !important;
     --sf-shadow--color-shading: color-mix(in srgb, var(--sf-transparent), var(--sf-warning) var(--sf-shadow--alfa-shade)) !important;
     --sf-shadow--color-shade: var(--sf-shadow--color-shading) !important;
-    --sf-ui-shadow-1: 0px 2px 4px 1px var(--sf-shadow--color-shading), 0px 1px 3px 0px var(--sf-shadow--color-outline), 0px 2px 2px -1px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-2: 0px 4px 8px 2px var(--sf-shadow--color-shading), 0px 2px 6px 0px var(--sf-shadow--color-outline), 0px 4px 4px -2px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-3: 0px 8px 16px 4px var(--sf-shadow--color-shading), 0px 4px 12px 0px var(--sf-shadow--color-outline), 0px 8px 8px -4px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-4: 0px 16px 32px 4px var(--sf-shadow--color-shading), 0px 8px 24px 0px var(--sf-shadow--color-outline), 0px 16px 16px -8px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-5: 0px 32px 64px 8px var(--sf-shadow--color-shading), 0px 16px 48px 0px var(--sf-shadow--color-outline), 0px 32px 32px -16px var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-1: 0 var(--sf-a2) var(--sf-a4) var(--sf-px) var(--sf-shadow--color-shading), 0 var(--sf-px) var(--sf-a3) 0 var(--sf-shadow--color-outline), 0 var(--sf-a2) var(--sf-a2) calc(-1 * var(--sf-px)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-2: 0 var(--sf-a4) var(--sf-a8) var(--sf-a2) var(--sf-shadow--color-shading), 0 var(--sf-a2) var(--sf-a6) 0 var(--sf-shadow--color-outline), 0 var(--sf-a4) var(--sf-a4) calc(-1 * var(--sf-a2)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-3: 0 var(--sf-a8) var(--sf-b6) var(--sf-a4) var(--sf-shadow--color-shading), 0 var(--sf-a4) var(--sf-b2) 0 var(--sf-shadow--color-outline), 0 var(--sf-a8) var(--sf-a8) calc(-1 * var(--sf-a4)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-4: 0 var(--sf-b6) var(--sf-c6) var(--sf-a4) var(--sf-shadow--color-shading), 0 var(--sf-a8) var(--sf-c2) 0 var(--sf-shadow--color-outline), 0 var(--sf-b6) var(--sf-b6) calc(-1 * var(--sf-a8)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-5: 0 var(--sf-c6) var(--sf-d6) var(--sf-a8) var(--sf-shadow--color-shading), 0 var(--sf-b6) var(--sf-d2) 0 var(--sf-shadow--color-outline), 0 var(--sf-c6) var(--sf-c6) calc(-1 * var(--sf-b6)) var(--sf-shadow--color-fill) !important;
   }
   .hover\:shadow-success:hover {
     --sf-shadow--color: var(--sf-success) !important;
@@ -7653,11 +7653,11 @@
     --sf-shadow--color-outline: color-mix(in srgb, var(--sf-transparent), var(--sf-success) var(--sf-shadow--alfa-outline)) !important;
     --sf-shadow--color-shading: color-mix(in srgb, var(--sf-transparent), var(--sf-success) var(--sf-shadow--alfa-shade)) !important;
     --sf-shadow--color-shade: var(--sf-shadow--color-shading) !important;
-    --sf-ui-shadow-1: 0px 2px 4px 1px var(--sf-shadow--color-shading), 0px 1px 3px 0px var(--sf-shadow--color-outline), 0px 2px 2px -1px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-2: 0px 4px 8px 2px var(--sf-shadow--color-shading), 0px 2px 6px 0px var(--sf-shadow--color-outline), 0px 4px 4px -2px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-3: 0px 8px 16px 4px var(--sf-shadow--color-shading), 0px 4px 12px 0px var(--sf-shadow--color-outline), 0px 8px 8px -4px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-4: 0px 16px 32px 4px var(--sf-shadow--color-shading), 0px 8px 24px 0px var(--sf-shadow--color-outline), 0px 16px 16px -8px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-5: 0px 32px 64px 8px var(--sf-shadow--color-shading), 0px 16px 48px 0px var(--sf-shadow--color-outline), 0px 32px 32px -16px var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-1: 0 var(--sf-a2) var(--sf-a4) var(--sf-px) var(--sf-shadow--color-shading), 0 var(--sf-px) var(--sf-a3) 0 var(--sf-shadow--color-outline), 0 var(--sf-a2) var(--sf-a2) calc(-1 * var(--sf-px)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-2: 0 var(--sf-a4) var(--sf-a8) var(--sf-a2) var(--sf-shadow--color-shading), 0 var(--sf-a2) var(--sf-a6) 0 var(--sf-shadow--color-outline), 0 var(--sf-a4) var(--sf-a4) calc(-1 * var(--sf-a2)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-3: 0 var(--sf-a8) var(--sf-b6) var(--sf-a4) var(--sf-shadow--color-shading), 0 var(--sf-a4) var(--sf-b2) 0 var(--sf-shadow--color-outline), 0 var(--sf-a8) var(--sf-a8) calc(-1 * var(--sf-a4)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-4: 0 var(--sf-b6) var(--sf-c6) var(--sf-a4) var(--sf-shadow--color-shading), 0 var(--sf-a8) var(--sf-c2) 0 var(--sf-shadow--color-outline), 0 var(--sf-b6) var(--sf-b6) calc(-1 * var(--sf-a8)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-5: 0 var(--sf-c6) var(--sf-d6) var(--sf-a8) var(--sf-shadow--color-shading), 0 var(--sf-b6) var(--sf-d2) 0 var(--sf-shadow--color-outline), 0 var(--sf-c6) var(--sf-c6) calc(-1 * var(--sf-b6)) var(--sf-shadow--color-fill) !important;
   }
   .hover\:shadow-on-surface:hover {
     --sf-shadow--color: var(--sf-on-surface) !important;
@@ -7665,11 +7665,11 @@
     --sf-shadow--color-outline: color-mix(in srgb, var(--sf-transparent), var(--sf-on-surface) var(--sf-shadow--alfa-outline)) !important;
     --sf-shadow--color-shading: color-mix(in srgb, var(--sf-transparent), var(--sf-on-surface) var(--sf-shadow--alfa-shade)) !important;
     --sf-shadow--color-shade: var(--sf-shadow--color-shading) !important;
-    --sf-ui-shadow-1: 0px 2px 4px 1px var(--sf-shadow--color-shading), 0px 1px 3px 0px var(--sf-shadow--color-outline), 0px 2px 2px -1px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-2: 0px 4px 8px 2px var(--sf-shadow--color-shading), 0px 2px 6px 0px var(--sf-shadow--color-outline), 0px 4px 4px -2px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-3: 0px 8px 16px 4px var(--sf-shadow--color-shading), 0px 4px 12px 0px var(--sf-shadow--color-outline), 0px 8px 8px -4px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-4: 0px 16px 32px 4px var(--sf-shadow--color-shading), 0px 8px 24px 0px var(--sf-shadow--color-outline), 0px 16px 16px -8px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-5: 0px 32px 64px 8px var(--sf-shadow--color-shading), 0px 16px 48px 0px var(--sf-shadow--color-outline), 0px 32px 32px -16px var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-1: 0 var(--sf-a2) var(--sf-a4) var(--sf-px) var(--sf-shadow--color-shading), 0 var(--sf-px) var(--sf-a3) 0 var(--sf-shadow--color-outline), 0 var(--sf-a2) var(--sf-a2) calc(-1 * var(--sf-px)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-2: 0 var(--sf-a4) var(--sf-a8) var(--sf-a2) var(--sf-shadow--color-shading), 0 var(--sf-a2) var(--sf-a6) 0 var(--sf-shadow--color-outline), 0 var(--sf-a4) var(--sf-a4) calc(-1 * var(--sf-a2)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-3: 0 var(--sf-a8) var(--sf-b6) var(--sf-a4) var(--sf-shadow--color-shading), 0 var(--sf-a4) var(--sf-b2) 0 var(--sf-shadow--color-outline), 0 var(--sf-a8) var(--sf-a8) calc(-1 * var(--sf-a4)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-4: 0 var(--sf-b6) var(--sf-c6) var(--sf-a4) var(--sf-shadow--color-shading), 0 var(--sf-a8) var(--sf-c2) 0 var(--sf-shadow--color-outline), 0 var(--sf-b6) var(--sf-b6) calc(-1 * var(--sf-a8)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-5: 0 var(--sf-c6) var(--sf-d6) var(--sf-a8) var(--sf-shadow--color-shading), 0 var(--sf-b6) var(--sf-d2) 0 var(--sf-shadow--color-outline), 0 var(--sf-c6) var(--sf-c6) calc(-1 * var(--sf-b6)) var(--sf-shadow--color-fill) !important;
   }
 }
 @layer sf.utilities {
@@ -7679,11 +7679,11 @@
     --sf-shadow--color-outline: color-mix(in srgb, var(--sf-transparent), var(--sf-primary) var(--sf-shadow--alfa-outline)) !important;
     --sf-shadow--color-shading: color-mix(in srgb, var(--sf-transparent), var(--sf-primary) var(--sf-shadow--alfa-shade)) !important;
     --sf-shadow--color-shade: var(--sf-shadow--color-shading) !important;
-    --sf-ui-shadow-1: 0px 2px 4px 1px var(--sf-shadow--color-shading), 0px 1px 3px 0px var(--sf-shadow--color-outline), 0px 2px 2px -1px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-2: 0px 4px 8px 2px var(--sf-shadow--color-shading), 0px 2px 6px 0px var(--sf-shadow--color-outline), 0px 4px 4px -2px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-3: 0px 8px 16px 4px var(--sf-shadow--color-shading), 0px 4px 12px 0px var(--sf-shadow--color-outline), 0px 8px 8px -4px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-4: 0px 16px 32px 4px var(--sf-shadow--color-shading), 0px 8px 24px 0px var(--sf-shadow--color-outline), 0px 16px 16px -8px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-5: 0px 32px 64px 8px var(--sf-shadow--color-shading), 0px 16px 48px 0px var(--sf-shadow--color-outline), 0px 32px 32px -16px var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-1: 0 var(--sf-a2) var(--sf-a4) var(--sf-px) var(--sf-shadow--color-shading), 0 var(--sf-px) var(--sf-a3) 0 var(--sf-shadow--color-outline), 0 var(--sf-a2) var(--sf-a2) calc(-1 * var(--sf-px)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-2: 0 var(--sf-a4) var(--sf-a8) var(--sf-a2) var(--sf-shadow--color-shading), 0 var(--sf-a2) var(--sf-a6) 0 var(--sf-shadow--color-outline), 0 var(--sf-a4) var(--sf-a4) calc(-1 * var(--sf-a2)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-3: 0 var(--sf-a8) var(--sf-b6) var(--sf-a4) var(--sf-shadow--color-shading), 0 var(--sf-a4) var(--sf-b2) 0 var(--sf-shadow--color-outline), 0 var(--sf-a8) var(--sf-a8) calc(-1 * var(--sf-a4)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-4: 0 var(--sf-b6) var(--sf-c6) var(--sf-a4) var(--sf-shadow--color-shading), 0 var(--sf-a8) var(--sf-c2) 0 var(--sf-shadow--color-outline), 0 var(--sf-b6) var(--sf-b6) calc(-1 * var(--sf-a8)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-5: 0 var(--sf-c6) var(--sf-d6) var(--sf-a8) var(--sf-shadow--color-shading), 0 var(--sf-b6) var(--sf-d2) 0 var(--sf-shadow--color-outline), 0 var(--sf-c6) var(--sf-c6) calc(-1 * var(--sf-b6)) var(--sf-shadow--color-fill) !important;
   }
   .active\:shadow-secondary:active {
     --sf-shadow--color: var(--sf-secondary) !important;
@@ -7691,11 +7691,11 @@
     --sf-shadow--color-outline: color-mix(in srgb, var(--sf-transparent), var(--sf-secondary) var(--sf-shadow--alfa-outline)) !important;
     --sf-shadow--color-shading: color-mix(in srgb, var(--sf-transparent), var(--sf-secondary) var(--sf-shadow--alfa-shade)) !important;
     --sf-shadow--color-shade: var(--sf-shadow--color-shading) !important;
-    --sf-ui-shadow-1: 0px 2px 4px 1px var(--sf-shadow--color-shading), 0px 1px 3px 0px var(--sf-shadow--color-outline), 0px 2px 2px -1px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-2: 0px 4px 8px 2px var(--sf-shadow--color-shading), 0px 2px 6px 0px var(--sf-shadow--color-outline), 0px 4px 4px -2px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-3: 0px 8px 16px 4px var(--sf-shadow--color-shading), 0px 4px 12px 0px var(--sf-shadow--color-outline), 0px 8px 8px -4px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-4: 0px 16px 32px 4px var(--sf-shadow--color-shading), 0px 8px 24px 0px var(--sf-shadow--color-outline), 0px 16px 16px -8px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-5: 0px 32px 64px 8px var(--sf-shadow--color-shading), 0px 16px 48px 0px var(--sf-shadow--color-outline), 0px 32px 32px -16px var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-1: 0 var(--sf-a2) var(--sf-a4) var(--sf-px) var(--sf-shadow--color-shading), 0 var(--sf-px) var(--sf-a3) 0 var(--sf-shadow--color-outline), 0 var(--sf-a2) var(--sf-a2) calc(-1 * var(--sf-px)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-2: 0 var(--sf-a4) var(--sf-a8) var(--sf-a2) var(--sf-shadow--color-shading), 0 var(--sf-a2) var(--sf-a6) 0 var(--sf-shadow--color-outline), 0 var(--sf-a4) var(--sf-a4) calc(-1 * var(--sf-a2)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-3: 0 var(--sf-a8) var(--sf-b6) var(--sf-a4) var(--sf-shadow--color-shading), 0 var(--sf-a4) var(--sf-b2) 0 var(--sf-shadow--color-outline), 0 var(--sf-a8) var(--sf-a8) calc(-1 * var(--sf-a4)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-4: 0 var(--sf-b6) var(--sf-c6) var(--sf-a4) var(--sf-shadow--color-shading), 0 var(--sf-a8) var(--sf-c2) 0 var(--sf-shadow--color-outline), 0 var(--sf-b6) var(--sf-b6) calc(-1 * var(--sf-a8)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-5: 0 var(--sf-c6) var(--sf-d6) var(--sf-a8) var(--sf-shadow--color-shading), 0 var(--sf-b6) var(--sf-d2) 0 var(--sf-shadow--color-outline), 0 var(--sf-c6) var(--sf-c6) calc(-1 * var(--sf-b6)) var(--sf-shadow--color-fill) !important;
   }
   .active\:shadow-tertiary:active {
     --sf-shadow--color: var(--sf-tertiary) !important;
@@ -7703,11 +7703,11 @@
     --sf-shadow--color-outline: color-mix(in srgb, var(--sf-transparent), var(--sf-tertiary) var(--sf-shadow--alfa-outline)) !important;
     --sf-shadow--color-shading: color-mix(in srgb, var(--sf-transparent), var(--sf-tertiary) var(--sf-shadow--alfa-shade)) !important;
     --sf-shadow--color-shade: var(--sf-shadow--color-shading) !important;
-    --sf-ui-shadow-1: 0px 2px 4px 1px var(--sf-shadow--color-shading), 0px 1px 3px 0px var(--sf-shadow--color-outline), 0px 2px 2px -1px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-2: 0px 4px 8px 2px var(--sf-shadow--color-shading), 0px 2px 6px 0px var(--sf-shadow--color-outline), 0px 4px 4px -2px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-3: 0px 8px 16px 4px var(--sf-shadow--color-shading), 0px 4px 12px 0px var(--sf-shadow--color-outline), 0px 8px 8px -4px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-4: 0px 16px 32px 4px var(--sf-shadow--color-shading), 0px 8px 24px 0px var(--sf-shadow--color-outline), 0px 16px 16px -8px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-5: 0px 32px 64px 8px var(--sf-shadow--color-shading), 0px 16px 48px 0px var(--sf-shadow--color-outline), 0px 32px 32px -16px var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-1: 0 var(--sf-a2) var(--sf-a4) var(--sf-px) var(--sf-shadow--color-shading), 0 var(--sf-px) var(--sf-a3) 0 var(--sf-shadow--color-outline), 0 var(--sf-a2) var(--sf-a2) calc(-1 * var(--sf-px)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-2: 0 var(--sf-a4) var(--sf-a8) var(--sf-a2) var(--sf-shadow--color-shading), 0 var(--sf-a2) var(--sf-a6) 0 var(--sf-shadow--color-outline), 0 var(--sf-a4) var(--sf-a4) calc(-1 * var(--sf-a2)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-3: 0 var(--sf-a8) var(--sf-b6) var(--sf-a4) var(--sf-shadow--color-shading), 0 var(--sf-a4) var(--sf-b2) 0 var(--sf-shadow--color-outline), 0 var(--sf-a8) var(--sf-a8) calc(-1 * var(--sf-a4)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-4: 0 var(--sf-b6) var(--sf-c6) var(--sf-a4) var(--sf-shadow--color-shading), 0 var(--sf-a8) var(--sf-c2) 0 var(--sf-shadow--color-outline), 0 var(--sf-b6) var(--sf-b6) calc(-1 * var(--sf-a8)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-5: 0 var(--sf-c6) var(--sf-d6) var(--sf-a8) var(--sf-shadow--color-shading), 0 var(--sf-b6) var(--sf-d2) 0 var(--sf-shadow--color-outline), 0 var(--sf-c6) var(--sf-c6) calc(-1 * var(--sf-b6)) var(--sf-shadow--color-fill) !important;
   }
   .active\:shadow-error:active {
     --sf-shadow--color: var(--sf-error) !important;
@@ -7715,11 +7715,11 @@
     --sf-shadow--color-outline: color-mix(in srgb, var(--sf-transparent), var(--sf-error) var(--sf-shadow--alfa-outline)) !important;
     --sf-shadow--color-shading: color-mix(in srgb, var(--sf-transparent), var(--sf-error) var(--sf-shadow--alfa-shade)) !important;
     --sf-shadow--color-shade: var(--sf-shadow--color-shading) !important;
-    --sf-ui-shadow-1: 0px 2px 4px 1px var(--sf-shadow--color-shading), 0px 1px 3px 0px var(--sf-shadow--color-outline), 0px 2px 2px -1px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-2: 0px 4px 8px 2px var(--sf-shadow--color-shading), 0px 2px 6px 0px var(--sf-shadow--color-outline), 0px 4px 4px -2px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-3: 0px 8px 16px 4px var(--sf-shadow--color-shading), 0px 4px 12px 0px var(--sf-shadow--color-outline), 0px 8px 8px -4px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-4: 0px 16px 32px 4px var(--sf-shadow--color-shading), 0px 8px 24px 0px var(--sf-shadow--color-outline), 0px 16px 16px -8px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-5: 0px 32px 64px 8px var(--sf-shadow--color-shading), 0px 16px 48px 0px var(--sf-shadow--color-outline), 0px 32px 32px -16px var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-1: 0 var(--sf-a2) var(--sf-a4) var(--sf-px) var(--sf-shadow--color-shading), 0 var(--sf-px) var(--sf-a3) 0 var(--sf-shadow--color-outline), 0 var(--sf-a2) var(--sf-a2) calc(-1 * var(--sf-px)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-2: 0 var(--sf-a4) var(--sf-a8) var(--sf-a2) var(--sf-shadow--color-shading), 0 var(--sf-a2) var(--sf-a6) 0 var(--sf-shadow--color-outline), 0 var(--sf-a4) var(--sf-a4) calc(-1 * var(--sf-a2)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-3: 0 var(--sf-a8) var(--sf-b6) var(--sf-a4) var(--sf-shadow--color-shading), 0 var(--sf-a4) var(--sf-b2) 0 var(--sf-shadow--color-outline), 0 var(--sf-a8) var(--sf-a8) calc(-1 * var(--sf-a4)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-4: 0 var(--sf-b6) var(--sf-c6) var(--sf-a4) var(--sf-shadow--color-shading), 0 var(--sf-a8) var(--sf-c2) 0 var(--sf-shadow--color-outline), 0 var(--sf-b6) var(--sf-b6) calc(-1 * var(--sf-a8)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-5: 0 var(--sf-c6) var(--sf-d6) var(--sf-a8) var(--sf-shadow--color-shading), 0 var(--sf-b6) var(--sf-d2) 0 var(--sf-shadow--color-outline), 0 var(--sf-c6) var(--sf-c6) calc(-1 * var(--sf-b6)) var(--sf-shadow--color-fill) !important;
   }
   .active\:shadow-warning:active {
     --sf-shadow--color: var(--sf-warning) !important;
@@ -7727,11 +7727,11 @@
     --sf-shadow--color-outline: color-mix(in srgb, var(--sf-transparent), var(--sf-warning) var(--sf-shadow--alfa-outline)) !important;
     --sf-shadow--color-shading: color-mix(in srgb, var(--sf-transparent), var(--sf-warning) var(--sf-shadow--alfa-shade)) !important;
     --sf-shadow--color-shade: var(--sf-shadow--color-shading) !important;
-    --sf-ui-shadow-1: 0px 2px 4px 1px var(--sf-shadow--color-shading), 0px 1px 3px 0px var(--sf-shadow--color-outline), 0px 2px 2px -1px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-2: 0px 4px 8px 2px var(--sf-shadow--color-shading), 0px 2px 6px 0px var(--sf-shadow--color-outline), 0px 4px 4px -2px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-3: 0px 8px 16px 4px var(--sf-shadow--color-shading), 0px 4px 12px 0px var(--sf-shadow--color-outline), 0px 8px 8px -4px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-4: 0px 16px 32px 4px var(--sf-shadow--color-shading), 0px 8px 24px 0px var(--sf-shadow--color-outline), 0px 16px 16px -8px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-5: 0px 32px 64px 8px var(--sf-shadow--color-shading), 0px 16px 48px 0px var(--sf-shadow--color-outline), 0px 32px 32px -16px var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-1: 0 var(--sf-a2) var(--sf-a4) var(--sf-px) var(--sf-shadow--color-shading), 0 var(--sf-px) var(--sf-a3) 0 var(--sf-shadow--color-outline), 0 var(--sf-a2) var(--sf-a2) calc(-1 * var(--sf-px)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-2: 0 var(--sf-a4) var(--sf-a8) var(--sf-a2) var(--sf-shadow--color-shading), 0 var(--sf-a2) var(--sf-a6) 0 var(--sf-shadow--color-outline), 0 var(--sf-a4) var(--sf-a4) calc(-1 * var(--sf-a2)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-3: 0 var(--sf-a8) var(--sf-b6) var(--sf-a4) var(--sf-shadow--color-shading), 0 var(--sf-a4) var(--sf-b2) 0 var(--sf-shadow--color-outline), 0 var(--sf-a8) var(--sf-a8) calc(-1 * var(--sf-a4)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-4: 0 var(--sf-b6) var(--sf-c6) var(--sf-a4) var(--sf-shadow--color-shading), 0 var(--sf-a8) var(--sf-c2) 0 var(--sf-shadow--color-outline), 0 var(--sf-b6) var(--sf-b6) calc(-1 * var(--sf-a8)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-5: 0 var(--sf-c6) var(--sf-d6) var(--sf-a8) var(--sf-shadow--color-shading), 0 var(--sf-b6) var(--sf-d2) 0 var(--sf-shadow--color-outline), 0 var(--sf-c6) var(--sf-c6) calc(-1 * var(--sf-b6)) var(--sf-shadow--color-fill) !important;
   }
   .active\:shadow-success:active {
     --sf-shadow--color: var(--sf-success) !important;
@@ -7739,11 +7739,11 @@
     --sf-shadow--color-outline: color-mix(in srgb, var(--sf-transparent), var(--sf-success) var(--sf-shadow--alfa-outline)) !important;
     --sf-shadow--color-shading: color-mix(in srgb, var(--sf-transparent), var(--sf-success) var(--sf-shadow--alfa-shade)) !important;
     --sf-shadow--color-shade: var(--sf-shadow--color-shading) !important;
-    --sf-ui-shadow-1: 0px 2px 4px 1px var(--sf-shadow--color-shading), 0px 1px 3px 0px var(--sf-shadow--color-outline), 0px 2px 2px -1px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-2: 0px 4px 8px 2px var(--sf-shadow--color-shading), 0px 2px 6px 0px var(--sf-shadow--color-outline), 0px 4px 4px -2px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-3: 0px 8px 16px 4px var(--sf-shadow--color-shading), 0px 4px 12px 0px var(--sf-shadow--color-outline), 0px 8px 8px -4px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-4: 0px 16px 32px 4px var(--sf-shadow--color-shading), 0px 8px 24px 0px var(--sf-shadow--color-outline), 0px 16px 16px -8px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-5: 0px 32px 64px 8px var(--sf-shadow--color-shading), 0px 16px 48px 0px var(--sf-shadow--color-outline), 0px 32px 32px -16px var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-1: 0 var(--sf-a2) var(--sf-a4) var(--sf-px) var(--sf-shadow--color-shading), 0 var(--sf-px) var(--sf-a3) 0 var(--sf-shadow--color-outline), 0 var(--sf-a2) var(--sf-a2) calc(-1 * var(--sf-px)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-2: 0 var(--sf-a4) var(--sf-a8) var(--sf-a2) var(--sf-shadow--color-shading), 0 var(--sf-a2) var(--sf-a6) 0 var(--sf-shadow--color-outline), 0 var(--sf-a4) var(--sf-a4) calc(-1 * var(--sf-a2)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-3: 0 var(--sf-a8) var(--sf-b6) var(--sf-a4) var(--sf-shadow--color-shading), 0 var(--sf-a4) var(--sf-b2) 0 var(--sf-shadow--color-outline), 0 var(--sf-a8) var(--sf-a8) calc(-1 * var(--sf-a4)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-4: 0 var(--sf-b6) var(--sf-c6) var(--sf-a4) var(--sf-shadow--color-shading), 0 var(--sf-a8) var(--sf-c2) 0 var(--sf-shadow--color-outline), 0 var(--sf-b6) var(--sf-b6) calc(-1 * var(--sf-a8)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-5: 0 var(--sf-c6) var(--sf-d6) var(--sf-a8) var(--sf-shadow--color-shading), 0 var(--sf-b6) var(--sf-d2) 0 var(--sf-shadow--color-outline), 0 var(--sf-c6) var(--sf-c6) calc(-1 * var(--sf-b6)) var(--sf-shadow--color-fill) !important;
   }
   .active\:shadow-on-surface:active {
     --sf-shadow--color: var(--sf-on-surface) !important;
@@ -7751,11 +7751,11 @@
     --sf-shadow--color-outline: color-mix(in srgb, var(--sf-transparent), var(--sf-on-surface) var(--sf-shadow--alfa-outline)) !important;
     --sf-shadow--color-shading: color-mix(in srgb, var(--sf-transparent), var(--sf-on-surface) var(--sf-shadow--alfa-shade)) !important;
     --sf-shadow--color-shade: var(--sf-shadow--color-shading) !important;
-    --sf-ui-shadow-1: 0px 2px 4px 1px var(--sf-shadow--color-shading), 0px 1px 3px 0px var(--sf-shadow--color-outline), 0px 2px 2px -1px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-2: 0px 4px 8px 2px var(--sf-shadow--color-shading), 0px 2px 6px 0px var(--sf-shadow--color-outline), 0px 4px 4px -2px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-3: 0px 8px 16px 4px var(--sf-shadow--color-shading), 0px 4px 12px 0px var(--sf-shadow--color-outline), 0px 8px 8px -4px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-4: 0px 16px 32px 4px var(--sf-shadow--color-shading), 0px 8px 24px 0px var(--sf-shadow--color-outline), 0px 16px 16px -8px var(--sf-shadow--color-fill) !important;
-    --sf-ui-shadow-5: 0px 32px 64px 8px var(--sf-shadow--color-shading), 0px 16px 48px 0px var(--sf-shadow--color-outline), 0px 32px 32px -16px var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-1: 0 var(--sf-a2) var(--sf-a4) var(--sf-px) var(--sf-shadow--color-shading), 0 var(--sf-px) var(--sf-a3) 0 var(--sf-shadow--color-outline), 0 var(--sf-a2) var(--sf-a2) calc(-1 * var(--sf-px)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-2: 0 var(--sf-a4) var(--sf-a8) var(--sf-a2) var(--sf-shadow--color-shading), 0 var(--sf-a2) var(--sf-a6) 0 var(--sf-shadow--color-outline), 0 var(--sf-a4) var(--sf-a4) calc(-1 * var(--sf-a2)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-3: 0 var(--sf-a8) var(--sf-b6) var(--sf-a4) var(--sf-shadow--color-shading), 0 var(--sf-a4) var(--sf-b2) 0 var(--sf-shadow--color-outline), 0 var(--sf-a8) var(--sf-a8) calc(-1 * var(--sf-a4)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-4: 0 var(--sf-b6) var(--sf-c6) var(--sf-a4) var(--sf-shadow--color-shading), 0 var(--sf-a8) var(--sf-c2) 0 var(--sf-shadow--color-outline), 0 var(--sf-b6) var(--sf-b6) calc(-1 * var(--sf-a8)) var(--sf-shadow--color-fill) !important;
+    --sf-ui-shadow-5: 0 var(--sf-c6) var(--sf-d6) var(--sf-a8) var(--sf-shadow--color-shading), 0 var(--sf-b6) var(--sf-d2) 0 var(--sf-shadow--color-outline), 0 var(--sf-c6) var(--sf-c6) calc(-1 * var(--sf-b6)) var(--sf-shadow--color-fill) !important;
   }
 }
 @layer sf.utilities {
@@ -8317,6 +8317,2001 @@
               padding-inline-start: var(--sf-space-6);
       -webkit-padding-end: var(--sf-space-6);
               padding-inline-end: var(--sf-space-6);
+    }
+  }
+}
+@layer sf.utilities {
+  .query-container {
+    container-type: inline-size;
+  }
+  .query-container\/sidebar {
+    container-type: inline-size;
+    container-name: sidebar;
+  }
+}
+@layer sf.utilities {
+  @container (min-width: 520px) {
+    .cq-sm\:block {
+      display: block;
+    }
+    .cq-sm\:inline-block {
+      display: inline-block;
+    }
+    .cq-sm\:flex {
+      display: flex;
+    }
+    .cq-sm\:inline-flex {
+      display: inline-flex;
+    }
+    .cq-sm\:grid {
+      display: grid;
+    }
+    .cq-sm\:hidden {
+      display: none;
+    }
+    .cq-sm\:flex-row {
+      flex-direction: row;
+    }
+    .cq-sm\:flex-col {
+      flex-direction: column;
+    }
+    .cq-sm\:flex-row-reverse {
+      flex-direction: row-reverse;
+    }
+    .cq-sm\:flex-col-reverse {
+      flex-direction: column-reverse;
+    }
+    .cq-sm\:flex-wrap {
+      flex-wrap: wrap;
+    }
+    .cq-sm\:flex-wrap-reverse {
+      flex-wrap: wrap-reverse;
+    }
+    .cq-sm\:flex-nowrap {
+      flex-wrap: nowrap;
+    }
+    .cq-sm\:grid-col-1 {
+      grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+    .cq-sm\:grid-col-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .cq-sm\:grid-col-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .cq-sm\:grid-col-4 {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+    .cq-sm\:grid-col-5 {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+    .cq-sm\:grid-col-6 {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+    .cq-sm\:grid-col-7 {
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+    }
+    .cq-sm\:grid-col-8 {
+      grid-template-columns: repeat(8, minmax(0, 1fr));
+    }
+    .cq-sm\:grid-col-9 {
+      grid-template-columns: repeat(9, minmax(0, 1fr));
+    }
+    .cq-sm\:grid-col-10 {
+      grid-template-columns: repeat(10, minmax(0, 1fr));
+    }
+    .cq-sm\:grid-col-11 {
+      grid-template-columns: repeat(11, minmax(0, 1fr));
+    }
+    .cq-sm\:grid-col-12 {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+    }
+    .cq-sm\:grid-col-none {
+      grid-template-columns: none;
+    }
+    .cq-sm\:grid-col-subgrid {
+      grid-template-columns: subgrid;
+    }
+    .cq-sm\:justify-start {
+      justify-content: flex-start;
+    }
+    .cq-sm\:justify-end {
+      justify-content: flex-end;
+    }
+    .cq-sm\:justify-center {
+      justify-content: center;
+    }
+    .cq-sm\:justify-between {
+      justify-content: space-between;
+    }
+    .cq-sm\:justify-around {
+      justify-content: space-around;
+    }
+    .cq-sm\:justify-evenly {
+      justify-content: space-evenly;
+    }
+    .cq-sm\:items-cross-start {
+      align-items: start;
+    }
+    .cq-sm\:items-cross-end {
+      align-items: end;
+    }
+    .cq-sm\:items-cross-center {
+      align-items: center;
+    }
+    .cq-sm\:items-cross-baseline {
+      align-items: baseline;
+    }
+    .cq-sm\:items-cross-stretch {
+      align-items: stretch;
+    }
+    .cq-sm\:gap-0 {
+      gap: var(--sf-space-0);
+    }
+    .cq-sm\:gap-1\/4 {
+      gap: var(--sf-space-1\/4);
+    }
+    .cq-sm\:gap-1\/3 {
+      gap: var(--sf-space-1\/3);
+    }
+    .cq-sm\:gap-1\/2 {
+      gap: var(--sf-space-1\/2);
+    }
+    .cq-sm\:gap-1 {
+      gap: var(--sf-space-1);
+    }
+    .cq-sm\:gap-2 {
+      gap: var(--sf-space-2);
+    }
+    .cq-sm\:gap-3 {
+      gap: var(--sf-space-3);
+    }
+    .cq-sm\:gap-4 {
+      gap: var(--sf-space-4);
+    }
+    .cq-sm\:gap-5 {
+      gap: var(--sf-space-5);
+    }
+    .cq-sm\:gap-6 {
+      gap: var(--sf-space-6);
+    }
+    .cq-sm\:gap-7 {
+      gap: var(--sf-space-7);
+    }
+    .cq-sm\:gap-8 {
+      gap: var(--sf-space-8);
+    }
+    .cq-sm\:row-gap-0 {
+      row-gap: var(--sf-space-0);
+    }
+    .cq-sm\:col-gap-0 {
+      -webkit-column-gap: var(--sf-space-0);
+         -moz-column-gap: var(--sf-space-0);
+              column-gap: var(--sf-space-0);
+    }
+    .cq-sm\:row-gap-1\/4 {
+      row-gap: var(--sf-space-1\/4);
+    }
+    .cq-sm\:col-gap-1\/4 {
+      -webkit-column-gap: var(--sf-space-1\/4);
+         -moz-column-gap: var(--sf-space-1\/4);
+              column-gap: var(--sf-space-1\/4);
+    }
+    .cq-sm\:row-gap-1\/3 {
+      row-gap: var(--sf-space-1\/3);
+    }
+    .cq-sm\:col-gap-1\/3 {
+      -webkit-column-gap: var(--sf-space-1\/3);
+         -moz-column-gap: var(--sf-space-1\/3);
+              column-gap: var(--sf-space-1\/3);
+    }
+    .cq-sm\:row-gap-1\/2 {
+      row-gap: var(--sf-space-1\/2);
+    }
+    .cq-sm\:col-gap-1\/2 {
+      -webkit-column-gap: var(--sf-space-1\/2);
+         -moz-column-gap: var(--sf-space-1\/2);
+              column-gap: var(--sf-space-1\/2);
+    }
+    .cq-sm\:row-gap-1 {
+      row-gap: var(--sf-space-1);
+    }
+    .cq-sm\:col-gap-1 {
+      -webkit-column-gap: var(--sf-space-1);
+         -moz-column-gap: var(--sf-space-1);
+              column-gap: var(--sf-space-1);
+    }
+    .cq-sm\:row-gap-2 {
+      row-gap: var(--sf-space-2);
+    }
+    .cq-sm\:col-gap-2 {
+      -webkit-column-gap: var(--sf-space-2);
+         -moz-column-gap: var(--sf-space-2);
+              column-gap: var(--sf-space-2);
+    }
+    .cq-sm\:row-gap-3 {
+      row-gap: var(--sf-space-3);
+    }
+    .cq-sm\:col-gap-3 {
+      -webkit-column-gap: var(--sf-space-3);
+         -moz-column-gap: var(--sf-space-3);
+              column-gap: var(--sf-space-3);
+    }
+    .cq-sm\:row-gap-4 {
+      row-gap: var(--sf-space-4);
+    }
+    .cq-sm\:col-gap-4 {
+      -webkit-column-gap: var(--sf-space-4);
+         -moz-column-gap: var(--sf-space-4);
+              column-gap: var(--sf-space-4);
+    }
+    .cq-sm\:row-gap-5 {
+      row-gap: var(--sf-space-5);
+    }
+    .cq-sm\:col-gap-5 {
+      -webkit-column-gap: var(--sf-space-5);
+         -moz-column-gap: var(--sf-space-5);
+              column-gap: var(--sf-space-5);
+    }
+    .cq-sm\:row-gap-6 {
+      row-gap: var(--sf-space-6);
+    }
+    .cq-sm\:col-gap-6 {
+      -webkit-column-gap: var(--sf-space-6);
+         -moz-column-gap: var(--sf-space-6);
+              column-gap: var(--sf-space-6);
+    }
+    .cq-sm\:row-gap-7 {
+      row-gap: var(--sf-space-7);
+    }
+    .cq-sm\:col-gap-7 {
+      -webkit-column-gap: var(--sf-space-7);
+         -moz-column-gap: var(--sf-space-7);
+              column-gap: var(--sf-space-7);
+    }
+    .cq-sm\:row-gap-8 {
+      row-gap: var(--sf-space-8);
+    }
+    .cq-sm\:col-gap-8 {
+      -webkit-column-gap: var(--sf-space-8);
+         -moz-column-gap: var(--sf-space-8);
+              column-gap: var(--sf-space-8);
+    }
+  }
+  @container sidebar (min-width: 520px) {
+    .cq-sm\/sidebar\:block {
+      display: block;
+    }
+    .cq-sm\/sidebar\:inline-block {
+      display: inline-block;
+    }
+    .cq-sm\/sidebar\:flex {
+      display: flex;
+    }
+    .cq-sm\/sidebar\:inline-flex {
+      display: inline-flex;
+    }
+    .cq-sm\/sidebar\:grid {
+      display: grid;
+    }
+    .cq-sm\/sidebar\:hidden {
+      display: none;
+    }
+    .cq-sm\/sidebar\:flex-row {
+      flex-direction: row;
+    }
+    .cq-sm\/sidebar\:flex-col {
+      flex-direction: column;
+    }
+    .cq-sm\/sidebar\:flex-row-reverse {
+      flex-direction: row-reverse;
+    }
+    .cq-sm\/sidebar\:flex-col-reverse {
+      flex-direction: column-reverse;
+    }
+    .cq-sm\/sidebar\:flex-wrap {
+      flex-wrap: wrap;
+    }
+    .cq-sm\/sidebar\:flex-wrap-reverse {
+      flex-wrap: wrap-reverse;
+    }
+    .cq-sm\/sidebar\:flex-nowrap {
+      flex-wrap: nowrap;
+    }
+    .cq-sm\/sidebar\:grid-col-1 {
+      grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+    .cq-sm\/sidebar\:grid-col-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .cq-sm\/sidebar\:grid-col-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .cq-sm\/sidebar\:grid-col-4 {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+    .cq-sm\/sidebar\:grid-col-5 {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+    .cq-sm\/sidebar\:grid-col-6 {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+    .cq-sm\/sidebar\:grid-col-7 {
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+    }
+    .cq-sm\/sidebar\:grid-col-8 {
+      grid-template-columns: repeat(8, minmax(0, 1fr));
+    }
+    .cq-sm\/sidebar\:grid-col-9 {
+      grid-template-columns: repeat(9, minmax(0, 1fr));
+    }
+    .cq-sm\/sidebar\:grid-col-10 {
+      grid-template-columns: repeat(10, minmax(0, 1fr));
+    }
+    .cq-sm\/sidebar\:grid-col-11 {
+      grid-template-columns: repeat(11, minmax(0, 1fr));
+    }
+    .cq-sm\/sidebar\:grid-col-12 {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+    }
+    .cq-sm\/sidebar\:grid-col-none {
+      grid-template-columns: none;
+    }
+    .cq-sm\/sidebar\:grid-col-subgrid {
+      grid-template-columns: subgrid;
+    }
+    .cq-sm\/sidebar\:justify-start {
+      justify-content: flex-start;
+    }
+    .cq-sm\/sidebar\:justify-end {
+      justify-content: flex-end;
+    }
+    .cq-sm\/sidebar\:justify-center {
+      justify-content: center;
+    }
+    .cq-sm\/sidebar\:justify-between {
+      justify-content: space-between;
+    }
+    .cq-sm\/sidebar\:justify-around {
+      justify-content: space-around;
+    }
+    .cq-sm\/sidebar\:justify-evenly {
+      justify-content: space-evenly;
+    }
+    .cq-sm\/sidebar\:items-cross-start {
+      align-items: start;
+    }
+    .cq-sm\/sidebar\:items-cross-end {
+      align-items: end;
+    }
+    .cq-sm\/sidebar\:items-cross-center {
+      align-items: center;
+    }
+    .cq-sm\/sidebar\:items-cross-baseline {
+      align-items: baseline;
+    }
+    .cq-sm\/sidebar\:items-cross-stretch {
+      align-items: stretch;
+    }
+    .cq-sm\/sidebar\:gap-0 {
+      gap: var(--sf-space-0);
+    }
+    .cq-sm\/sidebar\:gap-1\/4 {
+      gap: var(--sf-space-1\/4);
+    }
+    .cq-sm\/sidebar\:gap-1\/3 {
+      gap: var(--sf-space-1\/3);
+    }
+    .cq-sm\/sidebar\:gap-1\/2 {
+      gap: var(--sf-space-1\/2);
+    }
+    .cq-sm\/sidebar\:gap-1 {
+      gap: var(--sf-space-1);
+    }
+    .cq-sm\/sidebar\:gap-2 {
+      gap: var(--sf-space-2);
+    }
+    .cq-sm\/sidebar\:gap-3 {
+      gap: var(--sf-space-3);
+    }
+    .cq-sm\/sidebar\:gap-4 {
+      gap: var(--sf-space-4);
+    }
+    .cq-sm\/sidebar\:gap-5 {
+      gap: var(--sf-space-5);
+    }
+    .cq-sm\/sidebar\:gap-6 {
+      gap: var(--sf-space-6);
+    }
+    .cq-sm\/sidebar\:gap-7 {
+      gap: var(--sf-space-7);
+    }
+    .cq-sm\/sidebar\:gap-8 {
+      gap: var(--sf-space-8);
+    }
+    .cq-sm\/sidebar\:row-gap-0 {
+      row-gap: var(--sf-space-0);
+    }
+    .cq-sm\/sidebar\:col-gap-0 {
+      -webkit-column-gap: var(--sf-space-0);
+         -moz-column-gap: var(--sf-space-0);
+              column-gap: var(--sf-space-0);
+    }
+    .cq-sm\/sidebar\:row-gap-1\/4 {
+      row-gap: var(--sf-space-1\/4);
+    }
+    .cq-sm\/sidebar\:col-gap-1\/4 {
+      -webkit-column-gap: var(--sf-space-1\/4);
+         -moz-column-gap: var(--sf-space-1\/4);
+              column-gap: var(--sf-space-1\/4);
+    }
+    .cq-sm\/sidebar\:row-gap-1\/3 {
+      row-gap: var(--sf-space-1\/3);
+    }
+    .cq-sm\/sidebar\:col-gap-1\/3 {
+      -webkit-column-gap: var(--sf-space-1\/3);
+         -moz-column-gap: var(--sf-space-1\/3);
+              column-gap: var(--sf-space-1\/3);
+    }
+    .cq-sm\/sidebar\:row-gap-1\/2 {
+      row-gap: var(--sf-space-1\/2);
+    }
+    .cq-sm\/sidebar\:col-gap-1\/2 {
+      -webkit-column-gap: var(--sf-space-1\/2);
+         -moz-column-gap: var(--sf-space-1\/2);
+              column-gap: var(--sf-space-1\/2);
+    }
+    .cq-sm\/sidebar\:row-gap-1 {
+      row-gap: var(--sf-space-1);
+    }
+    .cq-sm\/sidebar\:col-gap-1 {
+      -webkit-column-gap: var(--sf-space-1);
+         -moz-column-gap: var(--sf-space-1);
+              column-gap: var(--sf-space-1);
+    }
+    .cq-sm\/sidebar\:row-gap-2 {
+      row-gap: var(--sf-space-2);
+    }
+    .cq-sm\/sidebar\:col-gap-2 {
+      -webkit-column-gap: var(--sf-space-2);
+         -moz-column-gap: var(--sf-space-2);
+              column-gap: var(--sf-space-2);
+    }
+    .cq-sm\/sidebar\:row-gap-3 {
+      row-gap: var(--sf-space-3);
+    }
+    .cq-sm\/sidebar\:col-gap-3 {
+      -webkit-column-gap: var(--sf-space-3);
+         -moz-column-gap: var(--sf-space-3);
+              column-gap: var(--sf-space-3);
+    }
+    .cq-sm\/sidebar\:row-gap-4 {
+      row-gap: var(--sf-space-4);
+    }
+    .cq-sm\/sidebar\:col-gap-4 {
+      -webkit-column-gap: var(--sf-space-4);
+         -moz-column-gap: var(--sf-space-4);
+              column-gap: var(--sf-space-4);
+    }
+    .cq-sm\/sidebar\:row-gap-5 {
+      row-gap: var(--sf-space-5);
+    }
+    .cq-sm\/sidebar\:col-gap-5 {
+      -webkit-column-gap: var(--sf-space-5);
+         -moz-column-gap: var(--sf-space-5);
+              column-gap: var(--sf-space-5);
+    }
+    .cq-sm\/sidebar\:row-gap-6 {
+      row-gap: var(--sf-space-6);
+    }
+    .cq-sm\/sidebar\:col-gap-6 {
+      -webkit-column-gap: var(--sf-space-6);
+         -moz-column-gap: var(--sf-space-6);
+              column-gap: var(--sf-space-6);
+    }
+    .cq-sm\/sidebar\:row-gap-7 {
+      row-gap: var(--sf-space-7);
+    }
+    .cq-sm\/sidebar\:col-gap-7 {
+      -webkit-column-gap: var(--sf-space-7);
+         -moz-column-gap: var(--sf-space-7);
+              column-gap: var(--sf-space-7);
+    }
+    .cq-sm\/sidebar\:row-gap-8 {
+      row-gap: var(--sf-space-8);
+    }
+    .cq-sm\/sidebar\:col-gap-8 {
+      -webkit-column-gap: var(--sf-space-8);
+         -moz-column-gap: var(--sf-space-8);
+              column-gap: var(--sf-space-8);
+    }
+  }
+  @container (min-width: 720px) {
+    .cq-md\:block {
+      display: block;
+    }
+    .cq-md\:inline-block {
+      display: inline-block;
+    }
+    .cq-md\:flex {
+      display: flex;
+    }
+    .cq-md\:inline-flex {
+      display: inline-flex;
+    }
+    .cq-md\:grid {
+      display: grid;
+    }
+    .cq-md\:hidden {
+      display: none;
+    }
+    .cq-md\:flex-row {
+      flex-direction: row;
+    }
+    .cq-md\:flex-col {
+      flex-direction: column;
+    }
+    .cq-md\:flex-row-reverse {
+      flex-direction: row-reverse;
+    }
+    .cq-md\:flex-col-reverse {
+      flex-direction: column-reverse;
+    }
+    .cq-md\:flex-wrap {
+      flex-wrap: wrap;
+    }
+    .cq-md\:flex-wrap-reverse {
+      flex-wrap: wrap-reverse;
+    }
+    .cq-md\:flex-nowrap {
+      flex-wrap: nowrap;
+    }
+    .cq-md\:grid-col-1 {
+      grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+    .cq-md\:grid-col-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .cq-md\:grid-col-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .cq-md\:grid-col-4 {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+    .cq-md\:grid-col-5 {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+    .cq-md\:grid-col-6 {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+    .cq-md\:grid-col-7 {
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+    }
+    .cq-md\:grid-col-8 {
+      grid-template-columns: repeat(8, minmax(0, 1fr));
+    }
+    .cq-md\:grid-col-9 {
+      grid-template-columns: repeat(9, minmax(0, 1fr));
+    }
+    .cq-md\:grid-col-10 {
+      grid-template-columns: repeat(10, minmax(0, 1fr));
+    }
+    .cq-md\:grid-col-11 {
+      grid-template-columns: repeat(11, minmax(0, 1fr));
+    }
+    .cq-md\:grid-col-12 {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+    }
+    .cq-md\:grid-col-none {
+      grid-template-columns: none;
+    }
+    .cq-md\:grid-col-subgrid {
+      grid-template-columns: subgrid;
+    }
+    .cq-md\:justify-start {
+      justify-content: flex-start;
+    }
+    .cq-md\:justify-end {
+      justify-content: flex-end;
+    }
+    .cq-md\:justify-center {
+      justify-content: center;
+    }
+    .cq-md\:justify-between {
+      justify-content: space-between;
+    }
+    .cq-md\:justify-around {
+      justify-content: space-around;
+    }
+    .cq-md\:justify-evenly {
+      justify-content: space-evenly;
+    }
+    .cq-md\:items-cross-start {
+      align-items: start;
+    }
+    .cq-md\:items-cross-end {
+      align-items: end;
+    }
+    .cq-md\:items-cross-center {
+      align-items: center;
+    }
+    .cq-md\:items-cross-baseline {
+      align-items: baseline;
+    }
+    .cq-md\:items-cross-stretch {
+      align-items: stretch;
+    }
+    .cq-md\:gap-0 {
+      gap: var(--sf-space-0);
+    }
+    .cq-md\:gap-1\/4 {
+      gap: var(--sf-space-1\/4);
+    }
+    .cq-md\:gap-1\/3 {
+      gap: var(--sf-space-1\/3);
+    }
+    .cq-md\:gap-1\/2 {
+      gap: var(--sf-space-1\/2);
+    }
+    .cq-md\:gap-1 {
+      gap: var(--sf-space-1);
+    }
+    .cq-md\:gap-2 {
+      gap: var(--sf-space-2);
+    }
+    .cq-md\:gap-3 {
+      gap: var(--sf-space-3);
+    }
+    .cq-md\:gap-4 {
+      gap: var(--sf-space-4);
+    }
+    .cq-md\:gap-5 {
+      gap: var(--sf-space-5);
+    }
+    .cq-md\:gap-6 {
+      gap: var(--sf-space-6);
+    }
+    .cq-md\:gap-7 {
+      gap: var(--sf-space-7);
+    }
+    .cq-md\:gap-8 {
+      gap: var(--sf-space-8);
+    }
+    .cq-md\:row-gap-0 {
+      row-gap: var(--sf-space-0);
+    }
+    .cq-md\:col-gap-0 {
+      -webkit-column-gap: var(--sf-space-0);
+         -moz-column-gap: var(--sf-space-0);
+              column-gap: var(--sf-space-0);
+    }
+    .cq-md\:row-gap-1\/4 {
+      row-gap: var(--sf-space-1\/4);
+    }
+    .cq-md\:col-gap-1\/4 {
+      -webkit-column-gap: var(--sf-space-1\/4);
+         -moz-column-gap: var(--sf-space-1\/4);
+              column-gap: var(--sf-space-1\/4);
+    }
+    .cq-md\:row-gap-1\/3 {
+      row-gap: var(--sf-space-1\/3);
+    }
+    .cq-md\:col-gap-1\/3 {
+      -webkit-column-gap: var(--sf-space-1\/3);
+         -moz-column-gap: var(--sf-space-1\/3);
+              column-gap: var(--sf-space-1\/3);
+    }
+    .cq-md\:row-gap-1\/2 {
+      row-gap: var(--sf-space-1\/2);
+    }
+    .cq-md\:col-gap-1\/2 {
+      -webkit-column-gap: var(--sf-space-1\/2);
+         -moz-column-gap: var(--sf-space-1\/2);
+              column-gap: var(--sf-space-1\/2);
+    }
+    .cq-md\:row-gap-1 {
+      row-gap: var(--sf-space-1);
+    }
+    .cq-md\:col-gap-1 {
+      -webkit-column-gap: var(--sf-space-1);
+         -moz-column-gap: var(--sf-space-1);
+              column-gap: var(--sf-space-1);
+    }
+    .cq-md\:row-gap-2 {
+      row-gap: var(--sf-space-2);
+    }
+    .cq-md\:col-gap-2 {
+      -webkit-column-gap: var(--sf-space-2);
+         -moz-column-gap: var(--sf-space-2);
+              column-gap: var(--sf-space-2);
+    }
+    .cq-md\:row-gap-3 {
+      row-gap: var(--sf-space-3);
+    }
+    .cq-md\:col-gap-3 {
+      -webkit-column-gap: var(--sf-space-3);
+         -moz-column-gap: var(--sf-space-3);
+              column-gap: var(--sf-space-3);
+    }
+    .cq-md\:row-gap-4 {
+      row-gap: var(--sf-space-4);
+    }
+    .cq-md\:col-gap-4 {
+      -webkit-column-gap: var(--sf-space-4);
+         -moz-column-gap: var(--sf-space-4);
+              column-gap: var(--sf-space-4);
+    }
+    .cq-md\:row-gap-5 {
+      row-gap: var(--sf-space-5);
+    }
+    .cq-md\:col-gap-5 {
+      -webkit-column-gap: var(--sf-space-5);
+         -moz-column-gap: var(--sf-space-5);
+              column-gap: var(--sf-space-5);
+    }
+    .cq-md\:row-gap-6 {
+      row-gap: var(--sf-space-6);
+    }
+    .cq-md\:col-gap-6 {
+      -webkit-column-gap: var(--sf-space-6);
+         -moz-column-gap: var(--sf-space-6);
+              column-gap: var(--sf-space-6);
+    }
+    .cq-md\:row-gap-7 {
+      row-gap: var(--sf-space-7);
+    }
+    .cq-md\:col-gap-7 {
+      -webkit-column-gap: var(--sf-space-7);
+         -moz-column-gap: var(--sf-space-7);
+              column-gap: var(--sf-space-7);
+    }
+    .cq-md\:row-gap-8 {
+      row-gap: var(--sf-space-8);
+    }
+    .cq-md\:col-gap-8 {
+      -webkit-column-gap: var(--sf-space-8);
+         -moz-column-gap: var(--sf-space-8);
+              column-gap: var(--sf-space-8);
+    }
+  }
+  @container sidebar (min-width: 720px) {
+    .cq-md\/sidebar\:block {
+      display: block;
+    }
+    .cq-md\/sidebar\:inline-block {
+      display: inline-block;
+    }
+    .cq-md\/sidebar\:flex {
+      display: flex;
+    }
+    .cq-md\/sidebar\:inline-flex {
+      display: inline-flex;
+    }
+    .cq-md\/sidebar\:grid {
+      display: grid;
+    }
+    .cq-md\/sidebar\:hidden {
+      display: none;
+    }
+    .cq-md\/sidebar\:flex-row {
+      flex-direction: row;
+    }
+    .cq-md\/sidebar\:flex-col {
+      flex-direction: column;
+    }
+    .cq-md\/sidebar\:flex-row-reverse {
+      flex-direction: row-reverse;
+    }
+    .cq-md\/sidebar\:flex-col-reverse {
+      flex-direction: column-reverse;
+    }
+    .cq-md\/sidebar\:flex-wrap {
+      flex-wrap: wrap;
+    }
+    .cq-md\/sidebar\:flex-wrap-reverse {
+      flex-wrap: wrap-reverse;
+    }
+    .cq-md\/sidebar\:flex-nowrap {
+      flex-wrap: nowrap;
+    }
+    .cq-md\/sidebar\:grid-col-1 {
+      grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+    .cq-md\/sidebar\:grid-col-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .cq-md\/sidebar\:grid-col-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .cq-md\/sidebar\:grid-col-4 {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+    .cq-md\/sidebar\:grid-col-5 {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+    .cq-md\/sidebar\:grid-col-6 {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+    .cq-md\/sidebar\:grid-col-7 {
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+    }
+    .cq-md\/sidebar\:grid-col-8 {
+      grid-template-columns: repeat(8, minmax(0, 1fr));
+    }
+    .cq-md\/sidebar\:grid-col-9 {
+      grid-template-columns: repeat(9, minmax(0, 1fr));
+    }
+    .cq-md\/sidebar\:grid-col-10 {
+      grid-template-columns: repeat(10, minmax(0, 1fr));
+    }
+    .cq-md\/sidebar\:grid-col-11 {
+      grid-template-columns: repeat(11, minmax(0, 1fr));
+    }
+    .cq-md\/sidebar\:grid-col-12 {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+    }
+    .cq-md\/sidebar\:grid-col-none {
+      grid-template-columns: none;
+    }
+    .cq-md\/sidebar\:grid-col-subgrid {
+      grid-template-columns: subgrid;
+    }
+    .cq-md\/sidebar\:justify-start {
+      justify-content: flex-start;
+    }
+    .cq-md\/sidebar\:justify-end {
+      justify-content: flex-end;
+    }
+    .cq-md\/sidebar\:justify-center {
+      justify-content: center;
+    }
+    .cq-md\/sidebar\:justify-between {
+      justify-content: space-between;
+    }
+    .cq-md\/sidebar\:justify-around {
+      justify-content: space-around;
+    }
+    .cq-md\/sidebar\:justify-evenly {
+      justify-content: space-evenly;
+    }
+    .cq-md\/sidebar\:items-cross-start {
+      align-items: start;
+    }
+    .cq-md\/sidebar\:items-cross-end {
+      align-items: end;
+    }
+    .cq-md\/sidebar\:items-cross-center {
+      align-items: center;
+    }
+    .cq-md\/sidebar\:items-cross-baseline {
+      align-items: baseline;
+    }
+    .cq-md\/sidebar\:items-cross-stretch {
+      align-items: stretch;
+    }
+    .cq-md\/sidebar\:gap-0 {
+      gap: var(--sf-space-0);
+    }
+    .cq-md\/sidebar\:gap-1\/4 {
+      gap: var(--sf-space-1\/4);
+    }
+    .cq-md\/sidebar\:gap-1\/3 {
+      gap: var(--sf-space-1\/3);
+    }
+    .cq-md\/sidebar\:gap-1\/2 {
+      gap: var(--sf-space-1\/2);
+    }
+    .cq-md\/sidebar\:gap-1 {
+      gap: var(--sf-space-1);
+    }
+    .cq-md\/sidebar\:gap-2 {
+      gap: var(--sf-space-2);
+    }
+    .cq-md\/sidebar\:gap-3 {
+      gap: var(--sf-space-3);
+    }
+    .cq-md\/sidebar\:gap-4 {
+      gap: var(--sf-space-4);
+    }
+    .cq-md\/sidebar\:gap-5 {
+      gap: var(--sf-space-5);
+    }
+    .cq-md\/sidebar\:gap-6 {
+      gap: var(--sf-space-6);
+    }
+    .cq-md\/sidebar\:gap-7 {
+      gap: var(--sf-space-7);
+    }
+    .cq-md\/sidebar\:gap-8 {
+      gap: var(--sf-space-8);
+    }
+    .cq-md\/sidebar\:row-gap-0 {
+      row-gap: var(--sf-space-0);
+    }
+    .cq-md\/sidebar\:col-gap-0 {
+      -webkit-column-gap: var(--sf-space-0);
+         -moz-column-gap: var(--sf-space-0);
+              column-gap: var(--sf-space-0);
+    }
+    .cq-md\/sidebar\:row-gap-1\/4 {
+      row-gap: var(--sf-space-1\/4);
+    }
+    .cq-md\/sidebar\:col-gap-1\/4 {
+      -webkit-column-gap: var(--sf-space-1\/4);
+         -moz-column-gap: var(--sf-space-1\/4);
+              column-gap: var(--sf-space-1\/4);
+    }
+    .cq-md\/sidebar\:row-gap-1\/3 {
+      row-gap: var(--sf-space-1\/3);
+    }
+    .cq-md\/sidebar\:col-gap-1\/3 {
+      -webkit-column-gap: var(--sf-space-1\/3);
+         -moz-column-gap: var(--sf-space-1\/3);
+              column-gap: var(--sf-space-1\/3);
+    }
+    .cq-md\/sidebar\:row-gap-1\/2 {
+      row-gap: var(--sf-space-1\/2);
+    }
+    .cq-md\/sidebar\:col-gap-1\/2 {
+      -webkit-column-gap: var(--sf-space-1\/2);
+         -moz-column-gap: var(--sf-space-1\/2);
+              column-gap: var(--sf-space-1\/2);
+    }
+    .cq-md\/sidebar\:row-gap-1 {
+      row-gap: var(--sf-space-1);
+    }
+    .cq-md\/sidebar\:col-gap-1 {
+      -webkit-column-gap: var(--sf-space-1);
+         -moz-column-gap: var(--sf-space-1);
+              column-gap: var(--sf-space-1);
+    }
+    .cq-md\/sidebar\:row-gap-2 {
+      row-gap: var(--sf-space-2);
+    }
+    .cq-md\/sidebar\:col-gap-2 {
+      -webkit-column-gap: var(--sf-space-2);
+         -moz-column-gap: var(--sf-space-2);
+              column-gap: var(--sf-space-2);
+    }
+    .cq-md\/sidebar\:row-gap-3 {
+      row-gap: var(--sf-space-3);
+    }
+    .cq-md\/sidebar\:col-gap-3 {
+      -webkit-column-gap: var(--sf-space-3);
+         -moz-column-gap: var(--sf-space-3);
+              column-gap: var(--sf-space-3);
+    }
+    .cq-md\/sidebar\:row-gap-4 {
+      row-gap: var(--sf-space-4);
+    }
+    .cq-md\/sidebar\:col-gap-4 {
+      -webkit-column-gap: var(--sf-space-4);
+         -moz-column-gap: var(--sf-space-4);
+              column-gap: var(--sf-space-4);
+    }
+    .cq-md\/sidebar\:row-gap-5 {
+      row-gap: var(--sf-space-5);
+    }
+    .cq-md\/sidebar\:col-gap-5 {
+      -webkit-column-gap: var(--sf-space-5);
+         -moz-column-gap: var(--sf-space-5);
+              column-gap: var(--sf-space-5);
+    }
+    .cq-md\/sidebar\:row-gap-6 {
+      row-gap: var(--sf-space-6);
+    }
+    .cq-md\/sidebar\:col-gap-6 {
+      -webkit-column-gap: var(--sf-space-6);
+         -moz-column-gap: var(--sf-space-6);
+              column-gap: var(--sf-space-6);
+    }
+    .cq-md\/sidebar\:row-gap-7 {
+      row-gap: var(--sf-space-7);
+    }
+    .cq-md\/sidebar\:col-gap-7 {
+      -webkit-column-gap: var(--sf-space-7);
+         -moz-column-gap: var(--sf-space-7);
+              column-gap: var(--sf-space-7);
+    }
+    .cq-md\/sidebar\:row-gap-8 {
+      row-gap: var(--sf-space-8);
+    }
+    .cq-md\/sidebar\:col-gap-8 {
+      -webkit-column-gap: var(--sf-space-8);
+         -moz-column-gap: var(--sf-space-8);
+              column-gap: var(--sf-space-8);
+    }
+  }
+  @container (min-width: 960px) {
+    .cq-lg\:block {
+      display: block;
+    }
+    .cq-lg\:inline-block {
+      display: inline-block;
+    }
+    .cq-lg\:flex {
+      display: flex;
+    }
+    .cq-lg\:inline-flex {
+      display: inline-flex;
+    }
+    .cq-lg\:grid {
+      display: grid;
+    }
+    .cq-lg\:hidden {
+      display: none;
+    }
+    .cq-lg\:flex-row {
+      flex-direction: row;
+    }
+    .cq-lg\:flex-col {
+      flex-direction: column;
+    }
+    .cq-lg\:flex-row-reverse {
+      flex-direction: row-reverse;
+    }
+    .cq-lg\:flex-col-reverse {
+      flex-direction: column-reverse;
+    }
+    .cq-lg\:flex-wrap {
+      flex-wrap: wrap;
+    }
+    .cq-lg\:flex-wrap-reverse {
+      flex-wrap: wrap-reverse;
+    }
+    .cq-lg\:flex-nowrap {
+      flex-wrap: nowrap;
+    }
+    .cq-lg\:grid-col-1 {
+      grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+    .cq-lg\:grid-col-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .cq-lg\:grid-col-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .cq-lg\:grid-col-4 {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+    .cq-lg\:grid-col-5 {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+    .cq-lg\:grid-col-6 {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+    .cq-lg\:grid-col-7 {
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+    }
+    .cq-lg\:grid-col-8 {
+      grid-template-columns: repeat(8, minmax(0, 1fr));
+    }
+    .cq-lg\:grid-col-9 {
+      grid-template-columns: repeat(9, minmax(0, 1fr));
+    }
+    .cq-lg\:grid-col-10 {
+      grid-template-columns: repeat(10, minmax(0, 1fr));
+    }
+    .cq-lg\:grid-col-11 {
+      grid-template-columns: repeat(11, minmax(0, 1fr));
+    }
+    .cq-lg\:grid-col-12 {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+    }
+    .cq-lg\:grid-col-none {
+      grid-template-columns: none;
+    }
+    .cq-lg\:grid-col-subgrid {
+      grid-template-columns: subgrid;
+    }
+    .cq-lg\:justify-start {
+      justify-content: flex-start;
+    }
+    .cq-lg\:justify-end {
+      justify-content: flex-end;
+    }
+    .cq-lg\:justify-center {
+      justify-content: center;
+    }
+    .cq-lg\:justify-between {
+      justify-content: space-between;
+    }
+    .cq-lg\:justify-around {
+      justify-content: space-around;
+    }
+    .cq-lg\:justify-evenly {
+      justify-content: space-evenly;
+    }
+    .cq-lg\:items-cross-start {
+      align-items: start;
+    }
+    .cq-lg\:items-cross-end {
+      align-items: end;
+    }
+    .cq-lg\:items-cross-center {
+      align-items: center;
+    }
+    .cq-lg\:items-cross-baseline {
+      align-items: baseline;
+    }
+    .cq-lg\:items-cross-stretch {
+      align-items: stretch;
+    }
+    .cq-lg\:gap-0 {
+      gap: var(--sf-space-0);
+    }
+    .cq-lg\:gap-1\/4 {
+      gap: var(--sf-space-1\/4);
+    }
+    .cq-lg\:gap-1\/3 {
+      gap: var(--sf-space-1\/3);
+    }
+    .cq-lg\:gap-1\/2 {
+      gap: var(--sf-space-1\/2);
+    }
+    .cq-lg\:gap-1 {
+      gap: var(--sf-space-1);
+    }
+    .cq-lg\:gap-2 {
+      gap: var(--sf-space-2);
+    }
+    .cq-lg\:gap-3 {
+      gap: var(--sf-space-3);
+    }
+    .cq-lg\:gap-4 {
+      gap: var(--sf-space-4);
+    }
+    .cq-lg\:gap-5 {
+      gap: var(--sf-space-5);
+    }
+    .cq-lg\:gap-6 {
+      gap: var(--sf-space-6);
+    }
+    .cq-lg\:gap-7 {
+      gap: var(--sf-space-7);
+    }
+    .cq-lg\:gap-8 {
+      gap: var(--sf-space-8);
+    }
+    .cq-lg\:row-gap-0 {
+      row-gap: var(--sf-space-0);
+    }
+    .cq-lg\:col-gap-0 {
+      -webkit-column-gap: var(--sf-space-0);
+         -moz-column-gap: var(--sf-space-0);
+              column-gap: var(--sf-space-0);
+    }
+    .cq-lg\:row-gap-1\/4 {
+      row-gap: var(--sf-space-1\/4);
+    }
+    .cq-lg\:col-gap-1\/4 {
+      -webkit-column-gap: var(--sf-space-1\/4);
+         -moz-column-gap: var(--sf-space-1\/4);
+              column-gap: var(--sf-space-1\/4);
+    }
+    .cq-lg\:row-gap-1\/3 {
+      row-gap: var(--sf-space-1\/3);
+    }
+    .cq-lg\:col-gap-1\/3 {
+      -webkit-column-gap: var(--sf-space-1\/3);
+         -moz-column-gap: var(--sf-space-1\/3);
+              column-gap: var(--sf-space-1\/3);
+    }
+    .cq-lg\:row-gap-1\/2 {
+      row-gap: var(--sf-space-1\/2);
+    }
+    .cq-lg\:col-gap-1\/2 {
+      -webkit-column-gap: var(--sf-space-1\/2);
+         -moz-column-gap: var(--sf-space-1\/2);
+              column-gap: var(--sf-space-1\/2);
+    }
+    .cq-lg\:row-gap-1 {
+      row-gap: var(--sf-space-1);
+    }
+    .cq-lg\:col-gap-1 {
+      -webkit-column-gap: var(--sf-space-1);
+         -moz-column-gap: var(--sf-space-1);
+              column-gap: var(--sf-space-1);
+    }
+    .cq-lg\:row-gap-2 {
+      row-gap: var(--sf-space-2);
+    }
+    .cq-lg\:col-gap-2 {
+      -webkit-column-gap: var(--sf-space-2);
+         -moz-column-gap: var(--sf-space-2);
+              column-gap: var(--sf-space-2);
+    }
+    .cq-lg\:row-gap-3 {
+      row-gap: var(--sf-space-3);
+    }
+    .cq-lg\:col-gap-3 {
+      -webkit-column-gap: var(--sf-space-3);
+         -moz-column-gap: var(--sf-space-3);
+              column-gap: var(--sf-space-3);
+    }
+    .cq-lg\:row-gap-4 {
+      row-gap: var(--sf-space-4);
+    }
+    .cq-lg\:col-gap-4 {
+      -webkit-column-gap: var(--sf-space-4);
+         -moz-column-gap: var(--sf-space-4);
+              column-gap: var(--sf-space-4);
+    }
+    .cq-lg\:row-gap-5 {
+      row-gap: var(--sf-space-5);
+    }
+    .cq-lg\:col-gap-5 {
+      -webkit-column-gap: var(--sf-space-5);
+         -moz-column-gap: var(--sf-space-5);
+              column-gap: var(--sf-space-5);
+    }
+    .cq-lg\:row-gap-6 {
+      row-gap: var(--sf-space-6);
+    }
+    .cq-lg\:col-gap-6 {
+      -webkit-column-gap: var(--sf-space-6);
+         -moz-column-gap: var(--sf-space-6);
+              column-gap: var(--sf-space-6);
+    }
+    .cq-lg\:row-gap-7 {
+      row-gap: var(--sf-space-7);
+    }
+    .cq-lg\:col-gap-7 {
+      -webkit-column-gap: var(--sf-space-7);
+         -moz-column-gap: var(--sf-space-7);
+              column-gap: var(--sf-space-7);
+    }
+    .cq-lg\:row-gap-8 {
+      row-gap: var(--sf-space-8);
+    }
+    .cq-lg\:col-gap-8 {
+      -webkit-column-gap: var(--sf-space-8);
+         -moz-column-gap: var(--sf-space-8);
+              column-gap: var(--sf-space-8);
+    }
+  }
+  @container sidebar (min-width: 960px) {
+    .cq-lg\/sidebar\:block {
+      display: block;
+    }
+    .cq-lg\/sidebar\:inline-block {
+      display: inline-block;
+    }
+    .cq-lg\/sidebar\:flex {
+      display: flex;
+    }
+    .cq-lg\/sidebar\:inline-flex {
+      display: inline-flex;
+    }
+    .cq-lg\/sidebar\:grid {
+      display: grid;
+    }
+    .cq-lg\/sidebar\:hidden {
+      display: none;
+    }
+    .cq-lg\/sidebar\:flex-row {
+      flex-direction: row;
+    }
+    .cq-lg\/sidebar\:flex-col {
+      flex-direction: column;
+    }
+    .cq-lg\/sidebar\:flex-row-reverse {
+      flex-direction: row-reverse;
+    }
+    .cq-lg\/sidebar\:flex-col-reverse {
+      flex-direction: column-reverse;
+    }
+    .cq-lg\/sidebar\:flex-wrap {
+      flex-wrap: wrap;
+    }
+    .cq-lg\/sidebar\:flex-wrap-reverse {
+      flex-wrap: wrap-reverse;
+    }
+    .cq-lg\/sidebar\:flex-nowrap {
+      flex-wrap: nowrap;
+    }
+    .cq-lg\/sidebar\:grid-col-1 {
+      grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+    .cq-lg\/sidebar\:grid-col-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .cq-lg\/sidebar\:grid-col-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .cq-lg\/sidebar\:grid-col-4 {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+    .cq-lg\/sidebar\:grid-col-5 {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+    .cq-lg\/sidebar\:grid-col-6 {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+    .cq-lg\/sidebar\:grid-col-7 {
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+    }
+    .cq-lg\/sidebar\:grid-col-8 {
+      grid-template-columns: repeat(8, minmax(0, 1fr));
+    }
+    .cq-lg\/sidebar\:grid-col-9 {
+      grid-template-columns: repeat(9, minmax(0, 1fr));
+    }
+    .cq-lg\/sidebar\:grid-col-10 {
+      grid-template-columns: repeat(10, minmax(0, 1fr));
+    }
+    .cq-lg\/sidebar\:grid-col-11 {
+      grid-template-columns: repeat(11, minmax(0, 1fr));
+    }
+    .cq-lg\/sidebar\:grid-col-12 {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+    }
+    .cq-lg\/sidebar\:grid-col-none {
+      grid-template-columns: none;
+    }
+    .cq-lg\/sidebar\:grid-col-subgrid {
+      grid-template-columns: subgrid;
+    }
+    .cq-lg\/sidebar\:justify-start {
+      justify-content: flex-start;
+    }
+    .cq-lg\/sidebar\:justify-end {
+      justify-content: flex-end;
+    }
+    .cq-lg\/sidebar\:justify-center {
+      justify-content: center;
+    }
+    .cq-lg\/sidebar\:justify-between {
+      justify-content: space-between;
+    }
+    .cq-lg\/sidebar\:justify-around {
+      justify-content: space-around;
+    }
+    .cq-lg\/sidebar\:justify-evenly {
+      justify-content: space-evenly;
+    }
+    .cq-lg\/sidebar\:items-cross-start {
+      align-items: start;
+    }
+    .cq-lg\/sidebar\:items-cross-end {
+      align-items: end;
+    }
+    .cq-lg\/sidebar\:items-cross-center {
+      align-items: center;
+    }
+    .cq-lg\/sidebar\:items-cross-baseline {
+      align-items: baseline;
+    }
+    .cq-lg\/sidebar\:items-cross-stretch {
+      align-items: stretch;
+    }
+    .cq-lg\/sidebar\:gap-0 {
+      gap: var(--sf-space-0);
+    }
+    .cq-lg\/sidebar\:gap-1\/4 {
+      gap: var(--sf-space-1\/4);
+    }
+    .cq-lg\/sidebar\:gap-1\/3 {
+      gap: var(--sf-space-1\/3);
+    }
+    .cq-lg\/sidebar\:gap-1\/2 {
+      gap: var(--sf-space-1\/2);
+    }
+    .cq-lg\/sidebar\:gap-1 {
+      gap: var(--sf-space-1);
+    }
+    .cq-lg\/sidebar\:gap-2 {
+      gap: var(--sf-space-2);
+    }
+    .cq-lg\/sidebar\:gap-3 {
+      gap: var(--sf-space-3);
+    }
+    .cq-lg\/sidebar\:gap-4 {
+      gap: var(--sf-space-4);
+    }
+    .cq-lg\/sidebar\:gap-5 {
+      gap: var(--sf-space-5);
+    }
+    .cq-lg\/sidebar\:gap-6 {
+      gap: var(--sf-space-6);
+    }
+    .cq-lg\/sidebar\:gap-7 {
+      gap: var(--sf-space-7);
+    }
+    .cq-lg\/sidebar\:gap-8 {
+      gap: var(--sf-space-8);
+    }
+    .cq-lg\/sidebar\:row-gap-0 {
+      row-gap: var(--sf-space-0);
+    }
+    .cq-lg\/sidebar\:col-gap-0 {
+      -webkit-column-gap: var(--sf-space-0);
+         -moz-column-gap: var(--sf-space-0);
+              column-gap: var(--sf-space-0);
+    }
+    .cq-lg\/sidebar\:row-gap-1\/4 {
+      row-gap: var(--sf-space-1\/4);
+    }
+    .cq-lg\/sidebar\:col-gap-1\/4 {
+      -webkit-column-gap: var(--sf-space-1\/4);
+         -moz-column-gap: var(--sf-space-1\/4);
+              column-gap: var(--sf-space-1\/4);
+    }
+    .cq-lg\/sidebar\:row-gap-1\/3 {
+      row-gap: var(--sf-space-1\/3);
+    }
+    .cq-lg\/sidebar\:col-gap-1\/3 {
+      -webkit-column-gap: var(--sf-space-1\/3);
+         -moz-column-gap: var(--sf-space-1\/3);
+              column-gap: var(--sf-space-1\/3);
+    }
+    .cq-lg\/sidebar\:row-gap-1\/2 {
+      row-gap: var(--sf-space-1\/2);
+    }
+    .cq-lg\/sidebar\:col-gap-1\/2 {
+      -webkit-column-gap: var(--sf-space-1\/2);
+         -moz-column-gap: var(--sf-space-1\/2);
+              column-gap: var(--sf-space-1\/2);
+    }
+    .cq-lg\/sidebar\:row-gap-1 {
+      row-gap: var(--sf-space-1);
+    }
+    .cq-lg\/sidebar\:col-gap-1 {
+      -webkit-column-gap: var(--sf-space-1);
+         -moz-column-gap: var(--sf-space-1);
+              column-gap: var(--sf-space-1);
+    }
+    .cq-lg\/sidebar\:row-gap-2 {
+      row-gap: var(--sf-space-2);
+    }
+    .cq-lg\/sidebar\:col-gap-2 {
+      -webkit-column-gap: var(--sf-space-2);
+         -moz-column-gap: var(--sf-space-2);
+              column-gap: var(--sf-space-2);
+    }
+    .cq-lg\/sidebar\:row-gap-3 {
+      row-gap: var(--sf-space-3);
+    }
+    .cq-lg\/sidebar\:col-gap-3 {
+      -webkit-column-gap: var(--sf-space-3);
+         -moz-column-gap: var(--sf-space-3);
+              column-gap: var(--sf-space-3);
+    }
+    .cq-lg\/sidebar\:row-gap-4 {
+      row-gap: var(--sf-space-4);
+    }
+    .cq-lg\/sidebar\:col-gap-4 {
+      -webkit-column-gap: var(--sf-space-4);
+         -moz-column-gap: var(--sf-space-4);
+              column-gap: var(--sf-space-4);
+    }
+    .cq-lg\/sidebar\:row-gap-5 {
+      row-gap: var(--sf-space-5);
+    }
+    .cq-lg\/sidebar\:col-gap-5 {
+      -webkit-column-gap: var(--sf-space-5);
+         -moz-column-gap: var(--sf-space-5);
+              column-gap: var(--sf-space-5);
+    }
+    .cq-lg\/sidebar\:row-gap-6 {
+      row-gap: var(--sf-space-6);
+    }
+    .cq-lg\/sidebar\:col-gap-6 {
+      -webkit-column-gap: var(--sf-space-6);
+         -moz-column-gap: var(--sf-space-6);
+              column-gap: var(--sf-space-6);
+    }
+    .cq-lg\/sidebar\:row-gap-7 {
+      row-gap: var(--sf-space-7);
+    }
+    .cq-lg\/sidebar\:col-gap-7 {
+      -webkit-column-gap: var(--sf-space-7);
+         -moz-column-gap: var(--sf-space-7);
+              column-gap: var(--sf-space-7);
+    }
+    .cq-lg\/sidebar\:row-gap-8 {
+      row-gap: var(--sf-space-8);
+    }
+    .cq-lg\/sidebar\:col-gap-8 {
+      -webkit-column-gap: var(--sf-space-8);
+         -moz-column-gap: var(--sf-space-8);
+              column-gap: var(--sf-space-8);
+    }
+  }
+  @container (min-width: 1140px) {
+    .cq-xl\:block {
+      display: block;
+    }
+    .cq-xl\:inline-block {
+      display: inline-block;
+    }
+    .cq-xl\:flex {
+      display: flex;
+    }
+    .cq-xl\:inline-flex {
+      display: inline-flex;
+    }
+    .cq-xl\:grid {
+      display: grid;
+    }
+    .cq-xl\:hidden {
+      display: none;
+    }
+    .cq-xl\:flex-row {
+      flex-direction: row;
+    }
+    .cq-xl\:flex-col {
+      flex-direction: column;
+    }
+    .cq-xl\:flex-row-reverse {
+      flex-direction: row-reverse;
+    }
+    .cq-xl\:flex-col-reverse {
+      flex-direction: column-reverse;
+    }
+    .cq-xl\:flex-wrap {
+      flex-wrap: wrap;
+    }
+    .cq-xl\:flex-wrap-reverse {
+      flex-wrap: wrap-reverse;
+    }
+    .cq-xl\:flex-nowrap {
+      flex-wrap: nowrap;
+    }
+    .cq-xl\:grid-col-1 {
+      grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+    .cq-xl\:grid-col-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .cq-xl\:grid-col-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .cq-xl\:grid-col-4 {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+    .cq-xl\:grid-col-5 {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+    .cq-xl\:grid-col-6 {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+    .cq-xl\:grid-col-7 {
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+    }
+    .cq-xl\:grid-col-8 {
+      grid-template-columns: repeat(8, minmax(0, 1fr));
+    }
+    .cq-xl\:grid-col-9 {
+      grid-template-columns: repeat(9, minmax(0, 1fr));
+    }
+    .cq-xl\:grid-col-10 {
+      grid-template-columns: repeat(10, minmax(0, 1fr));
+    }
+    .cq-xl\:grid-col-11 {
+      grid-template-columns: repeat(11, minmax(0, 1fr));
+    }
+    .cq-xl\:grid-col-12 {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+    }
+    .cq-xl\:grid-col-none {
+      grid-template-columns: none;
+    }
+    .cq-xl\:grid-col-subgrid {
+      grid-template-columns: subgrid;
+    }
+    .cq-xl\:justify-start {
+      justify-content: flex-start;
+    }
+    .cq-xl\:justify-end {
+      justify-content: flex-end;
+    }
+    .cq-xl\:justify-center {
+      justify-content: center;
+    }
+    .cq-xl\:justify-between {
+      justify-content: space-between;
+    }
+    .cq-xl\:justify-around {
+      justify-content: space-around;
+    }
+    .cq-xl\:justify-evenly {
+      justify-content: space-evenly;
+    }
+    .cq-xl\:items-cross-start {
+      align-items: start;
+    }
+    .cq-xl\:items-cross-end {
+      align-items: end;
+    }
+    .cq-xl\:items-cross-center {
+      align-items: center;
+    }
+    .cq-xl\:items-cross-baseline {
+      align-items: baseline;
+    }
+    .cq-xl\:items-cross-stretch {
+      align-items: stretch;
+    }
+    .cq-xl\:gap-0 {
+      gap: var(--sf-space-0);
+    }
+    .cq-xl\:gap-1\/4 {
+      gap: var(--sf-space-1\/4);
+    }
+    .cq-xl\:gap-1\/3 {
+      gap: var(--sf-space-1\/3);
+    }
+    .cq-xl\:gap-1\/2 {
+      gap: var(--sf-space-1\/2);
+    }
+    .cq-xl\:gap-1 {
+      gap: var(--sf-space-1);
+    }
+    .cq-xl\:gap-2 {
+      gap: var(--sf-space-2);
+    }
+    .cq-xl\:gap-3 {
+      gap: var(--sf-space-3);
+    }
+    .cq-xl\:gap-4 {
+      gap: var(--sf-space-4);
+    }
+    .cq-xl\:gap-5 {
+      gap: var(--sf-space-5);
+    }
+    .cq-xl\:gap-6 {
+      gap: var(--sf-space-6);
+    }
+    .cq-xl\:gap-7 {
+      gap: var(--sf-space-7);
+    }
+    .cq-xl\:gap-8 {
+      gap: var(--sf-space-8);
+    }
+    .cq-xl\:row-gap-0 {
+      row-gap: var(--sf-space-0);
+    }
+    .cq-xl\:col-gap-0 {
+      -webkit-column-gap: var(--sf-space-0);
+         -moz-column-gap: var(--sf-space-0);
+              column-gap: var(--sf-space-0);
+    }
+    .cq-xl\:row-gap-1\/4 {
+      row-gap: var(--sf-space-1\/4);
+    }
+    .cq-xl\:col-gap-1\/4 {
+      -webkit-column-gap: var(--sf-space-1\/4);
+         -moz-column-gap: var(--sf-space-1\/4);
+              column-gap: var(--sf-space-1\/4);
+    }
+    .cq-xl\:row-gap-1\/3 {
+      row-gap: var(--sf-space-1\/3);
+    }
+    .cq-xl\:col-gap-1\/3 {
+      -webkit-column-gap: var(--sf-space-1\/3);
+         -moz-column-gap: var(--sf-space-1\/3);
+              column-gap: var(--sf-space-1\/3);
+    }
+    .cq-xl\:row-gap-1\/2 {
+      row-gap: var(--sf-space-1\/2);
+    }
+    .cq-xl\:col-gap-1\/2 {
+      -webkit-column-gap: var(--sf-space-1\/2);
+         -moz-column-gap: var(--sf-space-1\/2);
+              column-gap: var(--sf-space-1\/2);
+    }
+    .cq-xl\:row-gap-1 {
+      row-gap: var(--sf-space-1);
+    }
+    .cq-xl\:col-gap-1 {
+      -webkit-column-gap: var(--sf-space-1);
+         -moz-column-gap: var(--sf-space-1);
+              column-gap: var(--sf-space-1);
+    }
+    .cq-xl\:row-gap-2 {
+      row-gap: var(--sf-space-2);
+    }
+    .cq-xl\:col-gap-2 {
+      -webkit-column-gap: var(--sf-space-2);
+         -moz-column-gap: var(--sf-space-2);
+              column-gap: var(--sf-space-2);
+    }
+    .cq-xl\:row-gap-3 {
+      row-gap: var(--sf-space-3);
+    }
+    .cq-xl\:col-gap-3 {
+      -webkit-column-gap: var(--sf-space-3);
+         -moz-column-gap: var(--sf-space-3);
+              column-gap: var(--sf-space-3);
+    }
+    .cq-xl\:row-gap-4 {
+      row-gap: var(--sf-space-4);
+    }
+    .cq-xl\:col-gap-4 {
+      -webkit-column-gap: var(--sf-space-4);
+         -moz-column-gap: var(--sf-space-4);
+              column-gap: var(--sf-space-4);
+    }
+    .cq-xl\:row-gap-5 {
+      row-gap: var(--sf-space-5);
+    }
+    .cq-xl\:col-gap-5 {
+      -webkit-column-gap: var(--sf-space-5);
+         -moz-column-gap: var(--sf-space-5);
+              column-gap: var(--sf-space-5);
+    }
+    .cq-xl\:row-gap-6 {
+      row-gap: var(--sf-space-6);
+    }
+    .cq-xl\:col-gap-6 {
+      -webkit-column-gap: var(--sf-space-6);
+         -moz-column-gap: var(--sf-space-6);
+              column-gap: var(--sf-space-6);
+    }
+    .cq-xl\:row-gap-7 {
+      row-gap: var(--sf-space-7);
+    }
+    .cq-xl\:col-gap-7 {
+      -webkit-column-gap: var(--sf-space-7);
+         -moz-column-gap: var(--sf-space-7);
+              column-gap: var(--sf-space-7);
+    }
+    .cq-xl\:row-gap-8 {
+      row-gap: var(--sf-space-8);
+    }
+    .cq-xl\:col-gap-8 {
+      -webkit-column-gap: var(--sf-space-8);
+         -moz-column-gap: var(--sf-space-8);
+              column-gap: var(--sf-space-8);
+    }
+  }
+  @container sidebar (min-width: 1140px) {
+    .cq-xl\/sidebar\:block {
+      display: block;
+    }
+    .cq-xl\/sidebar\:inline-block {
+      display: inline-block;
+    }
+    .cq-xl\/sidebar\:flex {
+      display: flex;
+    }
+    .cq-xl\/sidebar\:inline-flex {
+      display: inline-flex;
+    }
+    .cq-xl\/sidebar\:grid {
+      display: grid;
+    }
+    .cq-xl\/sidebar\:hidden {
+      display: none;
+    }
+    .cq-xl\/sidebar\:flex-row {
+      flex-direction: row;
+    }
+    .cq-xl\/sidebar\:flex-col {
+      flex-direction: column;
+    }
+    .cq-xl\/sidebar\:flex-row-reverse {
+      flex-direction: row-reverse;
+    }
+    .cq-xl\/sidebar\:flex-col-reverse {
+      flex-direction: column-reverse;
+    }
+    .cq-xl\/sidebar\:flex-wrap {
+      flex-wrap: wrap;
+    }
+    .cq-xl\/sidebar\:flex-wrap-reverse {
+      flex-wrap: wrap-reverse;
+    }
+    .cq-xl\/sidebar\:flex-nowrap {
+      flex-wrap: nowrap;
+    }
+    .cq-xl\/sidebar\:grid-col-1 {
+      grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+    .cq-xl\/sidebar\:grid-col-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .cq-xl\/sidebar\:grid-col-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .cq-xl\/sidebar\:grid-col-4 {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+    .cq-xl\/sidebar\:grid-col-5 {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+    .cq-xl\/sidebar\:grid-col-6 {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+    .cq-xl\/sidebar\:grid-col-7 {
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+    }
+    .cq-xl\/sidebar\:grid-col-8 {
+      grid-template-columns: repeat(8, minmax(0, 1fr));
+    }
+    .cq-xl\/sidebar\:grid-col-9 {
+      grid-template-columns: repeat(9, minmax(0, 1fr));
+    }
+    .cq-xl\/sidebar\:grid-col-10 {
+      grid-template-columns: repeat(10, minmax(0, 1fr));
+    }
+    .cq-xl\/sidebar\:grid-col-11 {
+      grid-template-columns: repeat(11, minmax(0, 1fr));
+    }
+    .cq-xl\/sidebar\:grid-col-12 {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+    }
+    .cq-xl\/sidebar\:grid-col-none {
+      grid-template-columns: none;
+    }
+    .cq-xl\/sidebar\:grid-col-subgrid {
+      grid-template-columns: subgrid;
+    }
+    .cq-xl\/sidebar\:justify-start {
+      justify-content: flex-start;
+    }
+    .cq-xl\/sidebar\:justify-end {
+      justify-content: flex-end;
+    }
+    .cq-xl\/sidebar\:justify-center {
+      justify-content: center;
+    }
+    .cq-xl\/sidebar\:justify-between {
+      justify-content: space-between;
+    }
+    .cq-xl\/sidebar\:justify-around {
+      justify-content: space-around;
+    }
+    .cq-xl\/sidebar\:justify-evenly {
+      justify-content: space-evenly;
+    }
+    .cq-xl\/sidebar\:items-cross-start {
+      align-items: start;
+    }
+    .cq-xl\/sidebar\:items-cross-end {
+      align-items: end;
+    }
+    .cq-xl\/sidebar\:items-cross-center {
+      align-items: center;
+    }
+    .cq-xl\/sidebar\:items-cross-baseline {
+      align-items: baseline;
+    }
+    .cq-xl\/sidebar\:items-cross-stretch {
+      align-items: stretch;
+    }
+    .cq-xl\/sidebar\:gap-0 {
+      gap: var(--sf-space-0);
+    }
+    .cq-xl\/sidebar\:gap-1\/4 {
+      gap: var(--sf-space-1\/4);
+    }
+    .cq-xl\/sidebar\:gap-1\/3 {
+      gap: var(--sf-space-1\/3);
+    }
+    .cq-xl\/sidebar\:gap-1\/2 {
+      gap: var(--sf-space-1\/2);
+    }
+    .cq-xl\/sidebar\:gap-1 {
+      gap: var(--sf-space-1);
+    }
+    .cq-xl\/sidebar\:gap-2 {
+      gap: var(--sf-space-2);
+    }
+    .cq-xl\/sidebar\:gap-3 {
+      gap: var(--sf-space-3);
+    }
+    .cq-xl\/sidebar\:gap-4 {
+      gap: var(--sf-space-4);
+    }
+    .cq-xl\/sidebar\:gap-5 {
+      gap: var(--sf-space-5);
+    }
+    .cq-xl\/sidebar\:gap-6 {
+      gap: var(--sf-space-6);
+    }
+    .cq-xl\/sidebar\:gap-7 {
+      gap: var(--sf-space-7);
+    }
+    .cq-xl\/sidebar\:gap-8 {
+      gap: var(--sf-space-8);
+    }
+    .cq-xl\/sidebar\:row-gap-0 {
+      row-gap: var(--sf-space-0);
+    }
+    .cq-xl\/sidebar\:col-gap-0 {
+      -webkit-column-gap: var(--sf-space-0);
+         -moz-column-gap: var(--sf-space-0);
+              column-gap: var(--sf-space-0);
+    }
+    .cq-xl\/sidebar\:row-gap-1\/4 {
+      row-gap: var(--sf-space-1\/4);
+    }
+    .cq-xl\/sidebar\:col-gap-1\/4 {
+      -webkit-column-gap: var(--sf-space-1\/4);
+         -moz-column-gap: var(--sf-space-1\/4);
+              column-gap: var(--sf-space-1\/4);
+    }
+    .cq-xl\/sidebar\:row-gap-1\/3 {
+      row-gap: var(--sf-space-1\/3);
+    }
+    .cq-xl\/sidebar\:col-gap-1\/3 {
+      -webkit-column-gap: var(--sf-space-1\/3);
+         -moz-column-gap: var(--sf-space-1\/3);
+              column-gap: var(--sf-space-1\/3);
+    }
+    .cq-xl\/sidebar\:row-gap-1\/2 {
+      row-gap: var(--sf-space-1\/2);
+    }
+    .cq-xl\/sidebar\:col-gap-1\/2 {
+      -webkit-column-gap: var(--sf-space-1\/2);
+         -moz-column-gap: var(--sf-space-1\/2);
+              column-gap: var(--sf-space-1\/2);
+    }
+    .cq-xl\/sidebar\:row-gap-1 {
+      row-gap: var(--sf-space-1);
+    }
+    .cq-xl\/sidebar\:col-gap-1 {
+      -webkit-column-gap: var(--sf-space-1);
+         -moz-column-gap: var(--sf-space-1);
+              column-gap: var(--sf-space-1);
+    }
+    .cq-xl\/sidebar\:row-gap-2 {
+      row-gap: var(--sf-space-2);
+    }
+    .cq-xl\/sidebar\:col-gap-2 {
+      -webkit-column-gap: var(--sf-space-2);
+         -moz-column-gap: var(--sf-space-2);
+              column-gap: var(--sf-space-2);
+    }
+    .cq-xl\/sidebar\:row-gap-3 {
+      row-gap: var(--sf-space-3);
+    }
+    .cq-xl\/sidebar\:col-gap-3 {
+      -webkit-column-gap: var(--sf-space-3);
+         -moz-column-gap: var(--sf-space-3);
+              column-gap: var(--sf-space-3);
+    }
+    .cq-xl\/sidebar\:row-gap-4 {
+      row-gap: var(--sf-space-4);
+    }
+    .cq-xl\/sidebar\:col-gap-4 {
+      -webkit-column-gap: var(--sf-space-4);
+         -moz-column-gap: var(--sf-space-4);
+              column-gap: var(--sf-space-4);
+    }
+    .cq-xl\/sidebar\:row-gap-5 {
+      row-gap: var(--sf-space-5);
+    }
+    .cq-xl\/sidebar\:col-gap-5 {
+      -webkit-column-gap: var(--sf-space-5);
+         -moz-column-gap: var(--sf-space-5);
+              column-gap: var(--sf-space-5);
+    }
+    .cq-xl\/sidebar\:row-gap-6 {
+      row-gap: var(--sf-space-6);
+    }
+    .cq-xl\/sidebar\:col-gap-6 {
+      -webkit-column-gap: var(--sf-space-6);
+         -moz-column-gap: var(--sf-space-6);
+              column-gap: var(--sf-space-6);
+    }
+    .cq-xl\/sidebar\:row-gap-7 {
+      row-gap: var(--sf-space-7);
+    }
+    .cq-xl\/sidebar\:col-gap-7 {
+      -webkit-column-gap: var(--sf-space-7);
+         -moz-column-gap: var(--sf-space-7);
+              column-gap: var(--sf-space-7);
+    }
+    .cq-xl\/sidebar\:row-gap-8 {
+      row-gap: var(--sf-space-8);
+    }
+    .cq-xl\/sidebar\:col-gap-8 {
+      -webkit-column-gap: var(--sf-space-8);
+         -moz-column-gap: var(--sf-space-8);
+              column-gap: var(--sf-space-8);
     }
   }
 }
@@ -54598,20 +56593,16 @@
 }
 @layer sf.utilities {
   .stripe-1 {
-    background-image: repeating-linear-gradient(90deg, var(--sf-stripe--color) 0,var(--sf-stripe--color) 1px, transparent 1px var(--sf-stripe--size));
-    background-image: repeating-linear-gradient(90deg, var(--sf-stripe--color) 0 1px, transparent 1px var(--sf-stripe--size));
+    background-image: repeating-linear-gradient(90deg, var(--sf-stripe--color) 0 var(--sf-px), transparent var(--sf-px) var(--sf-stripe--size));
   }
   .stripe-2 {
-    background-image: repeating-linear-gradient(0deg, var(--sf-stripe--color) 0,var(--sf-stripe--color) 1px, transparent 1px var(--sf-stripe--size));
-    background-image: repeating-linear-gradient(0deg, var(--sf-stripe--color) 0 1px, transparent 1px var(--sf-stripe--size));
+    background-image: repeating-linear-gradient(0deg, var(--sf-stripe--color) 0 var(--sf-px), transparent var(--sf-px) var(--sf-stripe--size));
   }
   .stripe-3 {
-    background-image: repeating-linear-gradient(0deg, var(--sf-stripe--color) 0,var(--sf-stripe--color) 1px, transparent 1px var(--sf-stripe--size)), repeating-linear-gradient(90deg, var(--sf-stripe--color) 0,var(--sf-stripe--color) 1px, transparent 1px var(--sf-stripe--size));
-    background-image: repeating-linear-gradient(0deg, var(--sf-stripe--color) 0 1px, transparent 1px var(--sf-stripe--size)), repeating-linear-gradient(90deg, var(--sf-stripe--color) 0 1px, transparent 1px var(--sf-stripe--size));
+    background-image: repeating-linear-gradient(0deg, var(--sf-stripe--color) 0 var(--sf-px), transparent var(--sf-px) var(--sf-stripe--size)), repeating-linear-gradient(90deg, var(--sf-stripe--color) 0 var(--sf-px), transparent var(--sf-px) var(--sf-stripe--size));
   }
   .stripe-4 {
-    background-image: repeating-linear-gradient(135deg, var(--sf-stripe--color) 0,var(--sf-stripe--color) 1px, transparent 1px var(--sf-stripe--size));
-    background-image: repeating-linear-gradient(135deg, var(--sf-stripe--color) 0 1px, transparent 1px var(--sf-stripe--size));
+    background-image: repeating-linear-gradient(135deg, var(--sf-stripe--color) 0 var(--sf-px), transparent var(--sf-px) var(--sf-stripe--size));
   }
 }
 @layer sf.utilities {
@@ -54881,7 +56872,7 @@
     --sf-table-hover-color: var(--sf-color--text-primary);
     --sf-table-hover-bg: var(--sf-surface-transparent-hover);
     width: 100%;
-    margin-bottom: 1rem;
+    margin-bottom: var(--sf-b6);
     color: var(--sf-table-color);
     vertical-align: top;
     border-color: var(--sf-table-border-color);
@@ -54890,7 +56881,7 @@
   .table > :not(caption) > * > * {
     padding: 0.5rem 0.5rem;
     border-bottom-width: var(--sf-px);
-    box-shadow: inset 0 0 0 9999px var(--sf-table-accent-bg);
+    background-image: linear-gradient(var(--sf-table-accent-bg), var(--sf-table-accent-bg));
   }
   .table > tbody {
     vertical-align: inherit;
@@ -57839,36 +59830,36 @@
             transform: scale(0.8);
   }
   .scale-x-1\/4 {
-    -webkit-transform: scale(0.8);
-            transform: scale(0.8);
+    -webkit-transform: scaleX(0.8);
+            transform: scaleX(0.8);
   }
   .scale-y-1\/4 {
-    -webkit-transform: scale(0.8);
-            transform: scale(0.8);
+    -webkit-transform: scaleY(0.8);
+            transform: scaleY(0.8);
   }
   .scale-1\/3 {
     -webkit-transform: scale(0.9);
             transform: scale(0.9);
   }
   .scale-x-1\/3 {
-    -webkit-transform: scale(0.9);
-            transform: scale(0.9);
+    -webkit-transform: scaleX(0.9);
+            transform: scaleX(0.9);
   }
   .scale-y-1\/3 {
-    -webkit-transform: scale(0.9);
-            transform: scale(0.9);
+    -webkit-transform: scaleY(0.9);
+            transform: scaleY(0.9);
   }
   .scale-1\/2 {
     -webkit-transform: scale(0.95);
             transform: scale(0.95);
   }
   .scale-x-1\/2 {
-    -webkit-transform: scale(0.95);
-            transform: scale(0.95);
+    -webkit-transform: scaleX(0.95);
+            transform: scaleX(0.95);
   }
   .scale-y-1\/2 {
-    -webkit-transform: scale(0.95);
-            transform: scale(0.95);
+    -webkit-transform: scaleY(0.95);
+            transform: scaleY(0.95);
   }
   .scale-1 {
     -webkit-transform: scale(1);
@@ -61006,10 +62997,10 @@
 @layer sf.utilities {
   .sr-only {
     position: absolute;
-    width: 1px;
-    height: 1px;
+    width: var(--sf-px);
+    height: var(--sf-px);
     padding: 0;
-    margin: -1px;
+    margin: calc(-1 * var(--sf-px));
     overflow: hidden;
     clip: rect(0, 0, 0, 0);
     white-space: nowrap;
@@ -61069,6 +63060,20 @@
   }
   .whitespace-normal {
     white-space: normal;
+  }
+}
+@layer sf.utilities {
+  .text-wrap {
+    text-wrap: wrap;
+  }
+  .text-nowrap {
+    text-wrap: nowrap;
+  }
+  .text-balance {
+    text-wrap: balance;
+  }
+  .text-pretty {
+    text-wrap: pretty;
   }
 }
 @layer sf.utilities {
@@ -279554,28 +281559,28 @@
   }
   .hover\:shadow-1:hover {
     --sf-shadow--level-ratio: 1;
-    box-shadow: 0px calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(-1 * var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill), 0px calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a3) * var(--sf-shadow--level-ratio)) 0px var(--sf-shadow--color-outline), 0px calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a4) * var(--sf-shadow--level-ratio)) calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading);
-    box-shadow: var(--sf-ui-shadow-1, 0px calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(-1 * var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill), 0px calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a3) * var(--sf-shadow--level-ratio)) 0px var(--sf-shadow--color-outline), 0px calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a4) * var(--sf-shadow--level-ratio)) calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading));
+    box-shadow: 0 calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(-1 * var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill), 0 calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a3) * var(--sf-shadow--level-ratio)) 0 var(--sf-shadow--color-outline), 0 calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a4) * var(--sf-shadow--level-ratio)) calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading);
+    box-shadow: var(--sf-ui-shadow-1, 0 calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(-1 * var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill), 0 calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a3) * var(--sf-shadow--level-ratio)) 0 var(--sf-shadow--color-outline), 0 calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a4) * var(--sf-shadow--level-ratio)) calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading));
   }
   .hover\:shadow-2:hover {
     --sf-shadow--level-ratio: 2;
-    box-shadow: 0px calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(-1 * var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill), 0px calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a3) * var(--sf-shadow--level-ratio)) 0px var(--sf-shadow--color-outline), 0px calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a4) * var(--sf-shadow--level-ratio)) calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading);
-    box-shadow: var(--sf-ui-shadow-2, 0px calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(-1 * var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill), 0px calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a3) * var(--sf-shadow--level-ratio)) 0px var(--sf-shadow--color-outline), 0px calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a4) * var(--sf-shadow--level-ratio)) calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading));
+    box-shadow: 0 calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(-1 * var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill), 0 calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a3) * var(--sf-shadow--level-ratio)) 0 var(--sf-shadow--color-outline), 0 calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a4) * var(--sf-shadow--level-ratio)) calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading);
+    box-shadow: var(--sf-ui-shadow-2, 0 calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(-1 * var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill), 0 calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a3) * var(--sf-shadow--level-ratio)) 0 var(--sf-shadow--color-outline), 0 calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a4) * var(--sf-shadow--level-ratio)) calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading));
   }
   .hover\:shadow-3:hover {
     --sf-shadow--level-ratio: 4;
-    box-shadow: 0px calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(-1 * var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill), 0px calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a3) * var(--sf-shadow--level-ratio)) 0px var(--sf-shadow--color-outline), 0px calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a4) * var(--sf-shadow--level-ratio)) calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading);
-    box-shadow: var(--sf-ui-shadow-3, 0px calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(-1 * var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill), 0px calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a3) * var(--sf-shadow--level-ratio)) 0px var(--sf-shadow--color-outline), 0px calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a4) * var(--sf-shadow--level-ratio)) calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading));
+    box-shadow: 0 calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(-1 * var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill), 0 calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a3) * var(--sf-shadow--level-ratio)) 0 var(--sf-shadow--color-outline), 0 calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a4) * var(--sf-shadow--level-ratio)) calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading);
+    box-shadow: var(--sf-ui-shadow-3, 0 calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(-1 * var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill), 0 calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a3) * var(--sf-shadow--level-ratio)) 0 var(--sf-shadow--color-outline), 0 calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a4) * var(--sf-shadow--level-ratio)) calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading));
   }
   .hover\:shadow-4:hover {
     --sf-shadow--level-ratio: 8;
-    box-shadow: 0px calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(-1 * var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill), 0px calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a3) * var(--sf-shadow--level-ratio)) 0px var(--sf-shadow--color-outline), 0px calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a4) * var(--sf-shadow--level-ratio)) calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading);
-    box-shadow: var(--sf-ui-shadow-4, 0px calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(-1 * var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill), 0px calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a3) * var(--sf-shadow--level-ratio)) 0px var(--sf-shadow--color-outline), 0px calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a4) * var(--sf-shadow--level-ratio)) calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading));
+    box-shadow: 0 calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(-1 * var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill), 0 calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a3) * var(--sf-shadow--level-ratio)) 0 var(--sf-shadow--color-outline), 0 calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a4) * var(--sf-shadow--level-ratio)) calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading);
+    box-shadow: var(--sf-ui-shadow-4, 0 calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(-1 * var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill), 0 calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a3) * var(--sf-shadow--level-ratio)) 0 var(--sf-shadow--color-outline), 0 calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a4) * var(--sf-shadow--level-ratio)) calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading));
   }
   .hover\:shadow-5:hover {
     --sf-shadow--level-ratio: 16;
-    box-shadow: 0px calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(-1 * var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill), 0px calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a3) * var(--sf-shadow--level-ratio)) 0px var(--sf-shadow--color-outline), 0px calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a4) * var(--sf-shadow--level-ratio)) calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading);
-    box-shadow: var(--sf-ui-shadow-5, 0px calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(-1 * var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill), 0px calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a3) * var(--sf-shadow--level-ratio)) 0px var(--sf-shadow--color-outline), 0px calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a4) * var(--sf-shadow--level-ratio)) calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading));
+    box-shadow: 0 calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(-1 * var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill), 0 calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a3) * var(--sf-shadow--level-ratio)) 0 var(--sf-shadow--color-outline), 0 calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a4) * var(--sf-shadow--level-ratio)) calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading);
+    box-shadow: var(--sf-ui-shadow-5, 0 calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(-1 * var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill), 0 calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a3) * var(--sf-shadow--level-ratio)) 0 var(--sf-shadow--color-outline), 0 calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a4) * var(--sf-shadow--level-ratio)) calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading));
   }
 }
 @layer sf.utilities {
@@ -280612,36 +282617,36 @@
             transform: scale(0.8);
   }
   .hover\:scale-x-1\/4:hover {
-    -webkit-transform: scale(0.8);
-            transform: scale(0.8);
+    -webkit-transform: scaleX(0.8);
+            transform: scaleX(0.8);
   }
   .hover\:scale-y-1\/4:hover {
-    -webkit-transform: scale(0.8);
-            transform: scale(0.8);
+    -webkit-transform: scaleY(0.8);
+            transform: scaleY(0.8);
   }
   .hover\:scale-1\/3:hover {
     -webkit-transform: scale(0.9);
             transform: scale(0.9);
   }
   .hover\:scale-x-1\/3:hover {
-    -webkit-transform: scale(0.9);
-            transform: scale(0.9);
+    -webkit-transform: scaleX(0.9);
+            transform: scaleX(0.9);
   }
   .hover\:scale-y-1\/3:hover {
-    -webkit-transform: scale(0.9);
-            transform: scale(0.9);
+    -webkit-transform: scaleY(0.9);
+            transform: scaleY(0.9);
   }
   .hover\:scale-1\/2:hover {
     -webkit-transform: scale(0.95);
             transform: scale(0.95);
   }
   .hover\:scale-x-1\/2:hover {
-    -webkit-transform: scale(0.95);
-            transform: scale(0.95);
+    -webkit-transform: scaleX(0.95);
+            transform: scaleX(0.95);
   }
   .hover\:scale-y-1\/2:hover {
-    -webkit-transform: scale(0.95);
-            transform: scale(0.95);
+    -webkit-transform: scaleY(0.95);
+            transform: scaleY(0.95);
   }
   .hover\:scale-1:hover {
     -webkit-transform: scale(1);

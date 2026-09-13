@@ -36,6 +36,7 @@
  * 	y - (Y-axis) vertically;
  *
  */
+@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.base {
   :root {
     --sf-radius-1\/3: 0.125rem;
@@ -112,7 +113,7 @@
     border: var(--sf-px) var(--sf-outline-variant) solid;
   }
   .divider-none > :not([hidden]) ~ :not([hidden]) {
-    border-width: 0rem;
+    border-width: 0;
     border-width: var(--sf-0);
   }
   .outline {
@@ -120,7 +121,7 @@
     outline: var(--sf-px) var(--sf-outline-variant) solid;
   }
   .outline-none {
-    outline-width: 0rem;
+    outline-width: 0;
     outline-width: var(--sf-0);
   }
   @media (min-width: 520px) {
@@ -563,7 +564,7 @@
   }
 }
 :root {
-  --sf-0: 0rem;
+  --sf-0: 0;
   --sf-px: 1px;
   --sf-auto: auto;
   --sf-a0: 0rem;
@@ -2354,20 +2355,28 @@ body {
               transform: translateY(0);
     }
     20%, 50% {
-      -webkit-transform: translateY(9px);
-              transform: translateY(9px);
+      -webkit-transform: translateY(0.5625rem);
+              transform: translateY(0.5625rem);
+      -webkit-transform: translateY(var(--sf-a9));
+              transform: translateY(var(--sf-a9));
     }
     80% {
-      -webkit-transform: translateY(2px);
-              transform: translateY(2px);
+      -webkit-transform: translateY(0.125rem);
+              transform: translateY(0.125rem);
+      -webkit-transform: translateY(var(--sf-a2));
+              transform: translateY(var(--sf-a2));
     }
     40% {
-      -webkit-transform: translateY(-15px);
-              transform: translateY(-15px);
+      -webkit-transform: translateY(calc(-1 * 0.9375rem));
+              transform: translateY(calc(-1 * 0.9375rem));
+      -webkit-transform: translateY(calc(-1 * var(--sf-b5)));
+              transform: translateY(calc(-1 * var(--sf-b5)));
     }
     60% {
-      -webkit-transform: translateY(-7px);
-              transform: translateY(-7px);
+      -webkit-transform: translateY(calc(-1 * 0.4375rem));
+              transform: translateY(calc(-1 * 0.4375rem));
+      -webkit-transform: translateY(calc(-1 * var(--sf-a7)));
+              transform: translateY(calc(-1 * var(--sf-a7)));
     }
   }
   @keyframes bounce {
@@ -2376,20 +2385,28 @@ body {
               transform: translateY(0);
     }
     20%, 50% {
-      -webkit-transform: translateY(9px);
-              transform: translateY(9px);
+      -webkit-transform: translateY(0.5625rem);
+              transform: translateY(0.5625rem);
+      -webkit-transform: translateY(var(--sf-a9));
+              transform: translateY(var(--sf-a9));
     }
     80% {
-      -webkit-transform: translateY(2px);
-              transform: translateY(2px);
+      -webkit-transform: translateY(0.125rem);
+              transform: translateY(0.125rem);
+      -webkit-transform: translateY(var(--sf-a2));
+              transform: translateY(var(--sf-a2));
     }
     40% {
-      -webkit-transform: translateY(-15px);
-              transform: translateY(-15px);
+      -webkit-transform: translateY(calc(-1 * 0.9375rem));
+              transform: translateY(calc(-1 * 0.9375rem));
+      -webkit-transform: translateY(calc(-1 * var(--sf-b5)));
+              transform: translateY(calc(-1 * var(--sf-b5)));
     }
     60% {
-      -webkit-transform: translateY(-7px);
-              transform: translateY(-7px);
+      -webkit-transform: translateY(calc(-1 * 0.4375rem));
+              transform: translateY(calc(-1 * 0.4375rem));
+      -webkit-transform: translateY(calc(-1 * var(--sf-a7)));
+              transform: translateY(calc(-1 * var(--sf-a7)));
     }
   }
 }
@@ -2405,15 +2422,15 @@ body {
     --sf-shadow--color-shade: var(--sf-shadow--color-shading);
   }
   [class*=shadow] {
-    box-shadow: 0px calc(0.125rem * var(--sf-shadow--level-ratio)) calc(0.125rem * var(--sf-shadow--level-ratio)) calc(-1 * 0.0625rem * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill), 0px calc(0.0625rem * var(--sf-shadow--level-ratio)) calc(0.1875rem * var(--sf-shadow--level-ratio)) 0px var(--sf-shadow--color-outline), 0px calc(0.125rem * var(--sf-shadow--level-ratio)) calc(0.25rem * var(--sf-shadow--level-ratio)) calc(0.0625rem * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading);
-    box-shadow: 0px calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(-1 * var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill), 0px calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a3) * var(--sf-shadow--level-ratio)) 0px var(--sf-shadow--color-outline), 0px calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a4) * var(--sf-shadow--level-ratio)) calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading);
+    box-shadow: 0 calc(0.125rem * var(--sf-shadow--level-ratio)) calc(0.125rem * var(--sf-shadow--level-ratio)) calc(-1 * 0.0625rem * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill), 0 calc(0.0625rem * var(--sf-shadow--level-ratio)) calc(0.1875rem * var(--sf-shadow--level-ratio)) 0 var(--sf-shadow--color-outline), 0 calc(0.125rem * var(--sf-shadow--level-ratio)) calc(0.25rem * var(--sf-shadow--level-ratio)) calc(0.0625rem * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading);
+    box-shadow: 0 calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(-1 * var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill), 0 calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a3) * var(--sf-shadow--level-ratio)) 0 var(--sf-shadow--color-outline), 0 calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a4) * var(--sf-shadow--level-ratio)) calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading);
   }
   [class*=drop-shadow] {
     box-shadow: none;
-    -webkit-filter: drop-shadow(0px calc(0.0625rem * var(--sf-shadow--level-ratio)) calc(0.0625rem * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill)) drop-shadow(0px calc(0.0625rem * var(--sf-shadow--level-ratio)) calc(0.1875rem * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-outline)) drop-shadow(0px calc(0.125rem * var(--sf-shadow--level-ratio)) calc(0.25rem * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading));
-            filter: drop-shadow(0px calc(0.0625rem * var(--sf-shadow--level-ratio)) calc(0.0625rem * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill)) drop-shadow(0px calc(0.0625rem * var(--sf-shadow--level-ratio)) calc(0.1875rem * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-outline)) drop-shadow(0px calc(0.125rem * var(--sf-shadow--level-ratio)) calc(0.25rem * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading));
-    -webkit-filter: drop-shadow(0px calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill)) drop-shadow(0px calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a3) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-outline)) drop-shadow(0px calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a4) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading));
-            filter: drop-shadow(0px calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill)) drop-shadow(0px calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a3) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-outline)) drop-shadow(0px calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a4) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading));
+    -webkit-filter: drop-shadow(0 calc(0.0625rem * var(--sf-shadow--level-ratio)) calc(0.0625rem * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill)) drop-shadow(0 calc(0.0625rem * var(--sf-shadow--level-ratio)) calc(0.1875rem * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-outline)) drop-shadow(0 calc(0.125rem * var(--sf-shadow--level-ratio)) calc(0.25rem * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading));
+            filter: drop-shadow(0 calc(0.0625rem * var(--sf-shadow--level-ratio)) calc(0.0625rem * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill)) drop-shadow(0 calc(0.0625rem * var(--sf-shadow--level-ratio)) calc(0.1875rem * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-outline)) drop-shadow(0 calc(0.125rem * var(--sf-shadow--level-ratio)) calc(0.25rem * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading));
+    -webkit-filter: drop-shadow(0 calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill)) drop-shadow(0 calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a3) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-outline)) drop-shadow(0 calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a4) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading));
+            filter: drop-shadow(0 calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill)) drop-shadow(0 calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a3) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-outline)) drop-shadow(0 calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a4) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading));
   }
 }
 @layer sf.base {
@@ -2486,4 +2503,3 @@ body {
     }
   }
 }
-@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
