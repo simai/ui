@@ -21,7 +21,7 @@ class UiRadiusContractTest(unittest.TestCase):
             "distr/component/buttons/css/buttons.css": "--sf-button--radius: var(--sf-radius--ui);",
             "distr/component/icon-buttons/css/icon-buttons.css": "--sf-icon-button--radius: var(--sf-radius--ui);",
             "distr/component/inputs/css/inputs.css": "--sf-input--radius: var(--sf-radius--ui);",
-            "distr/component/dropdown/css/dropdown.css": "--sf-dropdown--radius: var(--sf-radius--ui);",
+            "distr/component/dropdown/css/dropdown.css": "var(--sf-dropdown--radius, var(--sf-radius--ui))",
         }
         for relative, declaration in expected.items():
             with self.subTest(relative=relative):

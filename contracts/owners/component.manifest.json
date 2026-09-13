@@ -9,20 +9,20 @@
   },
   "release": {
     "tag": null,
-    "commit": "f25621cdd37387c44a8d27ee425cec4c4d543c7d",
-    "tree": "af55330a0a47faebdd752e400b2846b9a66bda39",
-    "runtime_subtree": "1d7d87a46da344c94a0317d6c9457799360ba821",
-    "archive_sha256": "35fcfea01f2fc1cac4d6c71da4c2caf48396b9950231a4de86f4d119b541c0ec"
+    "commit": "73bd250f1d8e2435bd2cbd57d6fe2080ade92f01",
+    "tree": "abf3c2c136bdfb43da7676bd4a3520265f9bd6c6",
+    "runtime_subtree": "fcd7fab108ecc9e5149100949a9025cb38f55c9b",
+    "archive_sha256": "b91e06ee82a6a554125da7aa5393ac558c2d5919a164ceeece1e05969ce5c786"
   },
   "inventory": {
-    "source": "simai/ui@f25621cdd37387c44a8d27ee425cec4c4d543c7d:distr/rule/rule.json",
+    "source": "simai/ui@73bd250f1d8e2435bd2cbd57d6fe2080ade92f01:distr/rule/rule.json",
     "selector": {
       "mode": "rule-type",
       "type": "component"
     },
     "expected": {
-      "rules": 63,
-      "entries": 63
+      "rules": 61,
+      "entries": 61
     }
   },
   "defaults": {
@@ -44,14 +44,16 @@
     {
       "id": "component.avatars",
       "readiness": {
-        "status": "discoverable",
-        "safe_to_suggest": false,
+        "status": "ready",
+        "safe_to_suggest": true,
         "profiles": [
           "plain-assets-v1"
         ],
         "blockers": []
       },
-      "curated_for": []
+      "curated_for": [
+        "recipe.admin.collection"
+      ]
     },
     {
       "id": "component.buttons",
@@ -88,7 +90,49 @@
       ]
     },
     {
+      "id": "component.close",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      },
+      "curated_for": [
+        "recipe.admin.collection"
+      ]
+    },
+    {
+      "id": "component.context-menu",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      },
+      "curated_for": [
+        "recipe.admin.collection"
+      ]
+    },
+    {
       "id": "component.datepicker",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      },
+      "curated_for": [
+        "recipe.admin.collection"
+      ]
+    },
+    {
+      "id": "component.dot",
       "readiness": {
         "status": "ready",
         "safe_to_suggest": true,
@@ -104,8 +148,8 @@
     {
       "id": "component.dropdown",
       "readiness": {
-        "status": "discoverable",
-        "safe_to_suggest": false,
+        "status": "ready",
+        "safe_to_suggest": true,
         "profiles": [
           "plain-assets-v1"
         ],
@@ -114,7 +158,9 @@
       "example_refs": [
         "simai/ui-play@0a393e85f0c6a137ae024f442dd52cc34d5f0508:examples/components/dropdown/dropdown/index.html"
       ],
-      "curated_for": []
+      "curated_for": [
+        "recipe.admin.collection"
+      ]
     },
     {
       "id": "component.icon-buttons",
@@ -177,6 +223,34 @@
       "example_refs": [
         "simai/ui-play@0a393e85f0c6a137ae024f442dd52cc34d5f0508:examples/components/pagination/default/index.html"
       ],
+      "curated_for": [
+        "recipe.admin.collection"
+      ]
+    },
+    {
+      "id": "component.spinner",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      },
+      "curated_for": [
+        "recipe.admin.collection"
+      ]
+    },
+    {
+      "id": "component.tabs",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      },
       "curated_for": [
         "recipe.admin.collection"
       ]

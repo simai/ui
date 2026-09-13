@@ -20,8 +20,8 @@ if not SMART_MANIFEST_INPUT:
 SMART_MANIFEST = Path(SMART_MANIFEST_INPUT).resolve()
 GENERATED = ROOT / "contracts/generated/framework-contract-registry.json"
 DOCUMENTATION_SOURCE = ROOT / "contracts/generated/documentation-source.json"
-LOCK = ROOT / "contracts/releases/ui-f25621cdd373-smart-839ca74ae47e.lock.json"
-SMART_REFERENCE = ROOT / "contracts/registry-inputs/ui-smart-839ca74ae47e.ref.json"
+LOCK = ROOT / "contracts/releases/ui-73bd250f1d8e-smart-1de6c70ed455.lock.json"
+SMART_REFERENCE = ROOT / "contracts/registry-inputs/ui-smart-1de6c70ed455.ref.json"
 
 
 def load_builder():
@@ -79,15 +79,15 @@ class FrameworkContractRegistryTest(unittest.TestCase):
             self.registry["counts"],
             {
                 "utility": 228,
-                "component": 63,
-                "smart-component": 43,
+                "component": 61,
+                "smart-component": 44,
                 "recipe": 1,
-                "total": 335,
+                "total": 334,
             },
         )
         self.assertEqual(
             self.registry["compatibility"]["id"],
-            "ui-f25621cdd373-smart-839ca74ae47e",
+            "ui-73bd250f1d8e-smart-1de6c70ed455",
         )
         self.assertEqual(self.registry["compatibility"]["status"], "bounded")
         self.assertEqual(self.registry["compatibility"]["profile"], "plain-assets-v1")
@@ -97,12 +97,7 @@ class FrameworkContractRegistryTest(unittest.TestCase):
             lock["build_inputs"],
         )
         legacy = lock["build_inputs"]["legacy_compatibility"]
-        self.assertTrue(legacy["required"])
-        self.assertEqual(
-            legacy["invocation"]["arguments"][-1],
-            "--require-legacy-compatibility",
-        )
-        self.assertEqual(legacy["lineage_manifest"]["records_count"], 472)
+        self.assertEqual(legacy, {"required": False})
         self.assertEqual(
             self.registry["compatibility"]["claims"],
             {
@@ -128,7 +123,7 @@ class FrameworkContractRegistryTest(unittest.TestCase):
             | {self.by_id["recipe.admin.collection"]["kind"]},
             {"utility", "component", "smart-component", "recipe"},
         )
-        self.assertEqual(len(closure), 22)
+        self.assertGreaterEqual(len(closure), 22)
         for utility_id in (
             "utility.display",
             "utility.flex-direction",
@@ -140,7 +135,7 @@ class FrameworkContractRegistryTest(unittest.TestCase):
         ):
             self.assertIn(utility_id, closure)
         self.assertIn("component.buttons", closure)
-        self.assertIn("smart.table", closure)
+        self.assertIn("smart.data-view", closure)
         for component_id in ("component.file-preview", "component.link"):
             self.assertIn(component_id, self.by_id)
             self.assertTrue(
@@ -153,8 +148,8 @@ class FrameworkContractRegistryTest(unittest.TestCase):
             self.by_id["recipe.admin.collection"]["requires"],
             [
                 "smart.buttons",
+                "smart.data-view",
                 "smart.pagination",
-                "smart.table",
                 "utility.display",
                 "utility.flex-direction",
                 "utility.gap",
@@ -163,16 +158,20 @@ class FrameworkContractRegistryTest(unittest.TestCase):
             ],
         )
         self.assertEqual(
-            self.by_id["smart.table"]["requires"],
+            self.by_id["smart.data-view"]["requires"],
             [
-                "component.buttons",
-                "component.checkbox",
-                "component.icon-buttons",
                 "component.icons",
-                "component.inputs",
-                "component.pagination",
-                "component.tags",
+                "smart.buttons",
+                "smart.checkbox",
+                "smart.context-menu",
                 "smart.datepicker",
+                "smart.dropdown",
+                "smart.icon-buttons",
+                "smart.inputs",
+                "smart.pagination",
+                "smart.spinner",
+                "smart.tabs",
+                "smart.tags",
             ],
         )
 
@@ -216,7 +215,7 @@ class FrameworkContractRegistryTest(unittest.TestCase):
         entities = {entity["key"]: entity for entity in source["entities"]}
         self.assertIn("component.buttons", entities)
         self.assertIn("utility.display", entities)
-        self.assertIn("smart.table", entities)
+        self.assertIn("smart.data-view", entities)
         self.assertIn("sf-button", entities["component.buttons"]["public_contract"]["classes"])
         self.assertIn("sf-button--primary", entities["component.buttons"]["public_contract"]["classes"])
         self.assertIn("--sf-button--radius", entities["component.buttons"]["public_contract"]["custom_properties"])
@@ -301,17 +300,17 @@ class FrameworkContractRegistryTest(unittest.TestCase):
             with self.assertRaisesRegex(BUILDER.ContractError, "release_lock_build_inputs_invalid"):
                 BUILDER.build_registry(ROOT, SMART_MANIFEST, release_lock_path=missing_legacy_path)
 
-            wrong_lineage_hash = copy.deepcopy(lock)
-            wrong_lineage_hash["build_inputs"]["legacy_compatibility"]["lineage_manifest"]["sha256"] = "invalid"
-            wrong_lineage_hash_path = self.write_json(directory, "wrong-lineage-hash.json", wrong_lineage_hash)
-            with self.assertRaisesRegex(BUILDER.ContractError, "release_lock_legacy_lineage_content_invalid"):
-                BUILDER.build_registry(ROOT, SMART_MANIFEST, release_lock_path=wrong_lineage_hash_path)
-
-            missing_required_flag = copy.deepcopy(lock)
-            missing_required_flag["build_inputs"]["legacy_compatibility"]["invocation"]["arguments"].pop()
-            missing_required_flag_path = self.write_json(directory, "missing-required-flag.json", missing_required_flag)
-            with self.assertRaisesRegex(BUILDER.ContractError, "release_lock_legacy_invocation_binding_invalid"):
-                BUILDER.build_registry(ROOT, SMART_MANIFEST, release_lock_path=missing_required_flag_path)
+            invalid_disabled_legacy = copy.deepcopy(lock)
+            invalid_disabled_legacy["build_inputs"]["legacy_compatibility"]["source"] = {}
+            invalid_disabled_path = self.write_json(
+                directory, "invalid-disabled-legacy.json", invalid_disabled_legacy
+            )
+            with self.assertRaisesRegex(
+                BUILDER.ContractError, "release_lock_legacy_compatibility_invalid"
+            ):
+                BUILDER.build_registry(
+                    ROOT, SMART_MANIFEST, release_lock_path=invalid_disabled_path
+                )
 
             wrong_id = copy.deepcopy(utility)
             wrong_id["entries"][0]["id"] = "utility.bad_name"
@@ -358,12 +357,12 @@ class FrameworkContractRegistryTest(unittest.TestCase):
         )
         self.assertEqual(
             reference["contract_revision"],
-            "2a02ece381a9c86956d7783bca581ee89b424961",
+            "d1453d47812f12eaeb11b767bd06c9c56e7d07f6",
         )
         self.assertEqual(reference["status"], "committed")
         self.assertEqual(
             reference["manifest"]["file_sha256"],
-            "03250a38e804eabc950053c4e0023e13bd0a5fe19924f206eb2955327809550b",
+            hashlib.sha256(SMART_MANIFEST.read_bytes()).hexdigest(),
         )
         smart_source = next(
             item

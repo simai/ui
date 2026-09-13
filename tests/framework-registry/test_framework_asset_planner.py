@@ -114,7 +114,7 @@ class FrameworkAssetPlannerTest(unittest.TestCase):
         clipboard_relations = {item["name"] for item in by_name["clipboard"]["relation"]}
         self.assertTrue({"buttons", "pointer-events/default", "text-align/default"} <= button_relations)
         self.assertTrue({"icon-buttons", "cl-icons", "pointer-events/default"} <= icon_button_relations)
-        self.assertEqual(clipboard_relations, {"icon-buttons", "icons", "doc", "highlight"})
+        self.assertEqual(clipboard_relations, {"buttons", "icon-buttons", "icons"})
         self.assertNotIn(
             "visibility/default",
             PLANNER.selected_rule_names('<div class="overflow-visible"></div>', rules),

@@ -72,7 +72,7 @@
         "utility.width",
         "smart.buttons",
         "smart.pagination",
-        "smart.table"
+        "smart.data-view"
       ],
       "curated_for": []
     }
