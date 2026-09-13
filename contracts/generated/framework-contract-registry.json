@@ -2577,7 +2577,7 @@
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@1de6c70ed455fa2d4d568795452b63431fdd73a1:smart/admin-menu",
-          "simai/ui@73bd250f1d8e2435bd2cbd57d6fe2080ade92f01:distr/rule/rule.json#name=cl-admin-menu"
+          "simai/ui@122b478ab68d8d7be02febe4a87016eb677a69e8:distr/rule/rule.json#name=cl-admin-menu"
         ],
         "tag": null
       },
@@ -2631,7 +2631,7 @@
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@1de6c70ed455fa2d4d568795452b63431fdd73a1:smart/alert",
-          "simai/ui@73bd250f1d8e2435bd2cbd57d6fe2080ade92f01:distr/rule/rule.json#name=cl-alert"
+          "simai/ui@122b478ab68d8d7be02febe4a87016eb677a69e8:distr/rule/rule.json#name=cl-alert"
         ],
         "tag": null
       },
@@ -2683,7 +2683,7 @@
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@1de6c70ed455fa2d4d568795452b63431fdd73a1:smart/avatar",
-          "simai/ui@73bd250f1d8e2435bd2cbd57d6fe2080ade92f01:distr/rule/rule.json#name=cl-avatar"
+          "simai/ui@122b478ab68d8d7be02febe4a87016eb677a69e8:distr/rule/rule.json#name=cl-avatar"
         ],
         "tag": null
       },
@@ -2735,7 +2735,7 @@
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@1de6c70ed455fa2d4d568795452b63431fdd73a1:smart/avatars",
-          "simai/ui@73bd250f1d8e2435bd2cbd57d6fe2080ade92f01:distr/rule/rule.json#name=cl-avatars"
+          "simai/ui@122b478ab68d8d7be02febe4a87016eb677a69e8:distr/rule/rule.json#name=cl-avatars"
         ],
         "tag": null
       },
@@ -2792,7 +2792,7 @@
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@1de6c70ed455fa2d4d568795452b63431fdd73a1:smart/badges",
-          "simai/ui@73bd250f1d8e2435bd2cbd57d6fe2080ade92f01:distr/rule/rule.json#name=cl-badges"
+          "simai/ui@122b478ab68d8d7be02febe4a87016eb677a69e8:distr/rule/rule.json#name=cl-badges"
         ],
         "tag": null
       },
@@ -2841,7 +2841,7 @@
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@1de6c70ed455fa2d4d568795452b63431fdd73a1:smart/breadcrumbs",
-          "simai/ui@73bd250f1d8e2435bd2cbd57d6fe2080ade92f01:distr/rule/rule.json#name=cl-breadcrumbs"
+          "simai/ui@122b478ab68d8d7be02febe4a87016eb677a69e8:distr/rule/rule.json#name=cl-breadcrumbs"
         ],
         "tag": null
       },
@@ -2891,7 +2891,7 @@
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@1de6c70ed455fa2d4d568795452b63431fdd73a1:smart/button-group",
-          "simai/ui@73bd250f1d8e2435bd2cbd57d6fe2080ade92f01:distr/rule/rule.json#name=cl-button-group"
+          "simai/ui@122b478ab68d8d7be02febe4a87016eb677a69e8:distr/rule/rule.json#name=cl-button-group"
         ],
         "tag": null
       },
@@ -2943,7 +2943,7 @@
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@1de6c70ed455fa2d4d568795452b63431fdd73a1:smart/buttons",
-          "simai/ui@73bd250f1d8e2435bd2cbd57d6fe2080ade92f01:distr/rule/rule.json#name=cl-buttons"
+          "simai/ui@122b478ab68d8d7be02febe4a87016eb677a69e8:distr/rule/rule.json#name=cl-buttons"
         ],
         "tag": null
       },
@@ -2996,7 +2996,7 @@
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@1de6c70ed455fa2d4d568795452b63431fdd73a1:smart/checkbox",
-          "simai/ui@73bd250f1d8e2435bd2cbd57d6fe2080ade92f01:distr/rule/rule.json#name=cl-checkbox"
+          "simai/ui@122b478ab68d8d7be02febe4a87016eb677a69e8:distr/rule/rule.json#name=cl-checkbox"
         ],
         "tag": null
       },
@@ -3051,7 +3051,7 @@
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@1de6c70ed455fa2d4d568795452b63431fdd73a1:smart/close",
-          "simai/ui@73bd250f1d8e2435bd2cbd57d6fe2080ade92f01:distr/rule/rule.json#name=cl-close"
+          "simai/ui@122b478ab68d8d7be02febe4a87016eb677a69e8:distr/rule/rule.json#name=cl-close"
         ],
         "tag": null
       },
@@ -3102,7 +3102,7 @@
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@1de6c70ed455fa2d4d568795452b63431fdd73a1:smart/context-menu",
-          "simai/ui@73bd250f1d8e2435bd2cbd57d6fe2080ade92f01:distr/rule/rule.json#name=cl-context-menu"
+          "simai/ui@122b478ab68d8d7be02febe4a87016eb677a69e8:distr/rule/rule.json#name=cl-context-menu"
         ],
         "tag": null
       },
@@ -3152,7 +3152,7 @@
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@1de6c70ed455fa2d4d568795452b63431fdd73a1:smart/country-code",
-          "simai/ui@73bd250f1d8e2435bd2cbd57d6fe2080ade92f01:distr/rule/rule.json#name=cl-country-code"
+          "simai/ui@122b478ab68d8d7be02febe4a87016eb677a69e8:distr/rule/rule.json#name=cl-country-code"
         ],
         "tag": null
       },
@@ -3203,7 +3203,7 @@
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@1de6c70ed455fa2d4d568795452b63431fdd73a1:smart/table",
-          "simai/ui@73bd250f1d8e2435bd2cbd57d6fe2080ade92f01:distr/rule/rule.json#name=cl-table"
+          "simai/ui@122b478ab68d8d7be02febe4a87016eb677a69e8:distr/rule/rule.json#name=cl-table"
         ],
         "tag": null
       },
@@ -3269,7 +3269,7 @@
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@1de6c70ed455fa2d4d568795452b63431fdd73a1:smart/datepicker",
-          "simai/ui@73bd250f1d8e2435bd2cbd57d6fe2080ade92f01:distr/rule/rule.json#name=cl-datepicker"
+          "simai/ui@122b478ab68d8d7be02febe4a87016eb677a69e8:distr/rule/rule.json#name=cl-datepicker"
         ],
         "tag": null
       },
@@ -3321,7 +3321,7 @@
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@1de6c70ed455fa2d4d568795452b63431fdd73a1:smart/download-file",
-          "simai/ui@73bd250f1d8e2435bd2cbd57d6fe2080ade92f01:distr/rule/rule.json#name=cl-download-file"
+          "simai/ui@122b478ab68d8d7be02febe4a87016eb677a69e8:distr/rule/rule.json#name=cl-download-file"
         ],
         "tag": null
       },
@@ -3371,7 +3371,7 @@
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@1de6c70ed455fa2d4d568795452b63431fdd73a1:smart/drawer",
-          "simai/ui@73bd250f1d8e2435bd2cbd57d6fe2080ade92f01:distr/rule/rule.json#name=cl-drawer"
+          "simai/ui@122b478ab68d8d7be02febe4a87016eb677a69e8:distr/rule/rule.json#name=cl-drawer"
         ],
         "tag": null
       },
@@ -3424,7 +3424,7 @@
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@1de6c70ed455fa2d4d568795452b63431fdd73a1:smart/dropdown",
-          "simai/ui@73bd250f1d8e2435bd2cbd57d6fe2080ade92f01:distr/rule/rule.json#name=cl-dropdown"
+          "simai/ui@122b478ab68d8d7be02febe4a87016eb677a69e8:distr/rule/rule.json#name=cl-dropdown"
         ],
         "tag": null
       },
@@ -3475,7 +3475,7 @@
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@1de6c70ed455fa2d4d568795452b63431fdd73a1:smart/file-preview",
-          "simai/ui@73bd250f1d8e2435bd2cbd57d6fe2080ade92f01:distr/rule/rule.json#name=cl-file-preview"
+          "simai/ui@122b478ab68d8d7be02febe4a87016eb677a69e8:distr/rule/rule.json#name=cl-file-preview"
         ],
         "tag": null
       },
@@ -3526,7 +3526,7 @@
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@1de6c70ed455fa2d4d568795452b63431fdd73a1:smart/file-upload",
-          "simai/ui@73bd250f1d8e2435bd2cbd57d6fe2080ade92f01:distr/rule/rule.json#name=cl-file-upload"
+          "simai/ui@122b478ab68d8d7be02febe4a87016eb677a69e8:distr/rule/rule.json#name=cl-file-upload"
         ],
         "tag": null
       },
@@ -3578,7 +3578,7 @@
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@1de6c70ed455fa2d4d568795452b63431fdd73a1:smart/gallery",
-          "simai/ui@73bd250f1d8e2435bd2cbd57d6fe2080ade92f01:distr/rule/rule.json#name=cl-gallery"
+          "simai/ui@122b478ab68d8d7be02febe4a87016eb677a69e8:distr/rule/rule.json#name=cl-gallery"
         ],
         "tag": null
       },
@@ -3633,7 +3633,7 @@
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@1de6c70ed455fa2d4d568795452b63431fdd73a1:smart/icon-buttons",
-          "simai/ui@73bd250f1d8e2435bd2cbd57d6fe2080ade92f01:distr/rule/rule.json#name=cl-icon-buttons"
+          "simai/ui@122b478ab68d8d7be02febe4a87016eb677a69e8:distr/rule/rule.json#name=cl-icon-buttons"
         ],
         "tag": null
       },
@@ -3690,7 +3690,7 @@
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@1de6c70ed455fa2d4d568795452b63431fdd73a1:smart/icons",
-          "simai/ui@73bd250f1d8e2435bd2cbd57d6fe2080ade92f01:distr/rule/rule.json#name=cl-icons"
+          "simai/ui@122b478ab68d8d7be02febe4a87016eb677a69e8:distr/rule/rule.json#name=cl-icons"
         ],
         "tag": null
       },
@@ -3741,7 +3741,7 @@
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@1de6c70ed455fa2d4d568795452b63431fdd73a1:smart/inputs",
-          "simai/ui@73bd250f1d8e2435bd2cbd57d6fe2080ade92f01:distr/rule/rule.json#name=cl-inputs"
+          "simai/ui@122b478ab68d8d7be02febe4a87016eb677a69e8:distr/rule/rule.json#name=cl-inputs"
         ],
         "tag": null
       },
@@ -3793,7 +3793,7 @@
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@1de6c70ed455fa2d4d568795452b63431fdd73a1:smart/list-item",
-          "simai/ui@73bd250f1d8e2435bd2cbd57d6fe2080ade92f01:distr/rule/rule.json#name=cl-list-item"
+          "simai/ui@122b478ab68d8d7be02febe4a87016eb677a69e8:distr/rule/rule.json#name=cl-list-item"
         ],
         "tag": null
       },
@@ -3846,7 +3846,7 @@
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@1de6c70ed455fa2d4d568795452b63431fdd73a1:smart/modal",
-          "simai/ui@73bd250f1d8e2435bd2cbd57d6fe2080ade92f01:distr/rule/rule.json#name=cl-modal"
+          "simai/ui@122b478ab68d8d7be02febe4a87016eb677a69e8:distr/rule/rule.json#name=cl-modal"
         ],
         "tag": null
       },
@@ -3898,7 +3898,7 @@
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@1de6c70ed455fa2d4d568795452b63431fdd73a1:smart/pagination",
-          "simai/ui@73bd250f1d8e2435bd2cbd57d6fe2080ade92f01:distr/rule/rule.json#name=cl-pagination"
+          "simai/ui@122b478ab68d8d7be02febe4a87016eb677a69e8:distr/rule/rule.json#name=cl-pagination"
         ],
         "tag": null
       },
@@ -3947,7 +3947,7 @@
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@1de6c70ed455fa2d4d568795452b63431fdd73a1:smart/progress-bar",
-          "simai/ui@73bd250f1d8e2435bd2cbd57d6fe2080ade92f01:distr/rule/rule.json#name=cl-progress-bar"
+          "simai/ui@122b478ab68d8d7be02febe4a87016eb677a69e8:distr/rule/rule.json#name=cl-progress-bar"
         ],
         "tag": null
       },
@@ -3996,7 +3996,7 @@
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@1de6c70ed455fa2d4d568795452b63431fdd73a1:smart/progress-scale",
-          "simai/ui@73bd250f1d8e2435bd2cbd57d6fe2080ade92f01:distr/rule/rule.json#name=cl-progress-scale"
+          "simai/ui@122b478ab68d8d7be02febe4a87016eb677a69e8:distr/rule/rule.json#name=cl-progress-scale"
         ],
         "tag": null
       },
@@ -4045,7 +4045,7 @@
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@1de6c70ed455fa2d4d568795452b63431fdd73a1:smart/radio",
-          "simai/ui@73bd250f1d8e2435bd2cbd57d6fe2080ade92f01:distr/rule/rule.json#name=cl-radio"
+          "simai/ui@122b478ab68d8d7be02febe4a87016eb677a69e8:distr/rule/rule.json#name=cl-radio"
         ],
         "tag": null
       },
@@ -4095,7 +4095,7 @@
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@1de6c70ed455fa2d4d568795452b63431fdd73a1:smart/range-slider",
-          "simai/ui@73bd250f1d8e2435bd2cbd57d6fe2080ade92f01:distr/rule/rule.json#name=cl-range-slider"
+          "simai/ui@122b478ab68d8d7be02febe4a87016eb677a69e8:distr/rule/rule.json#name=cl-range-slider"
         ],
         "tag": null
       },
@@ -4144,7 +4144,7 @@
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@1de6c70ed455fa2d4d568795452b63431fdd73a1:smart/reference-link",
-          "simai/ui@73bd250f1d8e2435bd2cbd57d6fe2080ade92f01:distr/rule/rule.json#name=cl-reference-link"
+          "simai/ui@122b478ab68d8d7be02febe4a87016eb677a69e8:distr/rule/rule.json#name=cl-reference-link"
         ],
         "tag": null
       },
@@ -4194,7 +4194,7 @@
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@1de6c70ed455fa2d4d568795452b63431fdd73a1:smart/skeleton",
-          "simai/ui@73bd250f1d8e2435bd2cbd57d6fe2080ade92f01:distr/rule/rule.json#name=cl-skeleton"
+          "simai/ui@122b478ab68d8d7be02febe4a87016eb677a69e8:distr/rule/rule.json#name=cl-skeleton"
         ],
         "tag": null
       },
@@ -4243,7 +4243,7 @@
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@1de6c70ed455fa2d4d568795452b63431fdd73a1:smart/slider",
-          "simai/ui@73bd250f1d8e2435bd2cbd57d6fe2080ade92f01:distr/rule/rule.json#name=cl-slider"
+          "simai/ui@122b478ab68d8d7be02febe4a87016eb677a69e8:distr/rule/rule.json#name=cl-slider"
         ],
         "tag": null
       },
@@ -4296,7 +4296,7 @@
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@1de6c70ed455fa2d4d568795452b63431fdd73a1:smart/spinner",
-          "simai/ui@73bd250f1d8e2435bd2cbd57d6fe2080ade92f01:distr/rule/rule.json#name=cl-spinner"
+          "simai/ui@122b478ab68d8d7be02febe4a87016eb677a69e8:distr/rule/rule.json#name=cl-spinner"
         ],
         "tag": null
       },
@@ -4345,7 +4345,7 @@
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@1de6c70ed455fa2d4d568795452b63431fdd73a1:smart/steps",
-          "simai/ui@73bd250f1d8e2435bd2cbd57d6fe2080ade92f01:distr/rule/rule.json#name=cl-steps"
+          "simai/ui@122b478ab68d8d7be02febe4a87016eb677a69e8:distr/rule/rule.json#name=cl-steps"
         ],
         "tag": null
       },
@@ -4395,7 +4395,7 @@
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@1de6c70ed455fa2d4d568795452b63431fdd73a1:smart/switch",
-          "simai/ui@73bd250f1d8e2435bd2cbd57d6fe2080ade92f01:distr/rule/rule.json#name=cl-switch"
+          "simai/ui@122b478ab68d8d7be02febe4a87016eb677a69e8:distr/rule/rule.json#name=cl-switch"
         ],
         "tag": null
       },
@@ -4447,7 +4447,7 @@
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@1de6c70ed455fa2d4d568795452b63431fdd73a1:smart/tabs",
-          "simai/ui@73bd250f1d8e2435bd2cbd57d6fe2080ade92f01:distr/rule/rule.json#name=cl-tabs"
+          "simai/ui@122b478ab68d8d7be02febe4a87016eb677a69e8:distr/rule/rule.json#name=cl-tabs"
         ],
         "tag": null
       },
@@ -4503,7 +4503,7 @@
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@1de6c70ed455fa2d4d568795452b63431fdd73a1:smart/tags",
-          "simai/ui@73bd250f1d8e2435bd2cbd57d6fe2080ade92f01:distr/rule/rule.json#name=cl-tags"
+          "simai/ui@122b478ab68d8d7be02febe4a87016eb677a69e8:distr/rule/rule.json#name=cl-tags"
         ],
         "tag": null
       },
@@ -4558,7 +4558,7 @@
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@1de6c70ed455fa2d4d568795452b63431fdd73a1:smart/textarea",
-          "simai/ui@73bd250f1d8e2435bd2cbd57d6fe2080ade92f01:distr/rule/rule.json#name=cl-textarea"
+          "simai/ui@122b478ab68d8d7be02febe4a87016eb677a69e8:distr/rule/rule.json#name=cl-textarea"
         ],
         "tag": null
       },
@@ -4607,7 +4607,7 @@
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@1de6c70ed455fa2d4d568795452b63431fdd73a1:smart/toast",
-          "simai/ui@73bd250f1d8e2435bd2cbd57d6fe2080ade92f01:distr/rule/rule.json#name=cl-toast"
+          "simai/ui@122b478ab68d8d7be02febe4a87016eb677a69e8:distr/rule/rule.json#name=cl-toast"
         ],
         "tag": null
       },
@@ -4660,7 +4660,7 @@
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@1de6c70ed455fa2d4d568795452b63431fdd73a1:smart/toggle",
-          "simai/ui@73bd250f1d8e2435bd2cbd57d6fe2080ade92f01:distr/rule/rule.json#name=cl-toggle"
+          "simai/ui@122b478ab68d8d7be02febe4a87016eb677a69e8:distr/rule/rule.json#name=cl-toggle"
         ],
         "tag": null
       },
@@ -4711,7 +4711,7 @@
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@1de6c70ed455fa2d4d568795452b63431fdd73a1:smart/tooltip",
-          "simai/ui@73bd250f1d8e2435bd2cbd57d6fe2080ade92f01:distr/rule/rule.json#name=cl-tooltip"
+          "simai/ui@122b478ab68d8d7be02febe4a87016eb677a69e8:distr/rule/rule.json#name=cl-tooltip"
         ],
         "tag": null
       },
@@ -4760,7 +4760,7 @@
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@1de6c70ed455fa2d4d568795452b63431fdd73a1:smart/tree",
-          "simai/ui@73bd250f1d8e2435bd2cbd57d6fe2080ade92f01:distr/rule/rule.json#name=cl-tree"
+          "simai/ui@122b478ab68d8d7be02febe4a87016eb677a69e8:distr/rule/rule.json#name=cl-tree"
         ],
         "tag": null
       },
@@ -4812,7 +4812,7 @@
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@1de6c70ed455fa2d4d568795452b63431fdd73a1:smart/tree-item",
-          "simai/ui@73bd250f1d8e2435bd2cbd57d6fe2080ade92f01:distr/rule/rule.json#name=cl-tree-item"
+          "simai/ui@122b478ab68d8d7be02febe4a87016eb677a69e8:distr/rule/rule.json#name=cl-tree-item"
         ],
         "tag": null
       },
@@ -14707,13 +14707,13 @@
       "sha256": "715443b12c80966e337af4fb9ec28e2cb37c767c5fcaaa7966fd6f63b3ca2458"
     },
     {
-      "contract_revision": "94bf00b744da5e541b5110138f2a01f902d2d03f",
-      "file_sha256": "d581f025f867e959dccce198544f594c82cc7d58a06917367aaf60d200e26132",
+      "contract_revision": "cfcc8b2020e1cc9582b9e9dabc2417f61b85bdc0",
+      "file_sha256": "b74ca8c00ef6c02e84fe0a9a326375d86c1de1a7b605966b87da68e853bf25ab",
       "hash_mode": "canonical-json-v1",
       "kind": "smart-component",
       "owner": "simai/ui-smart",
       "path": "contracts/owners/smart-component.manifest.json",
-      "sha256": "edb019918b525d4db04fb4cf50016176093a69ca70a988e85b25107d7ce56a1f"
+      "sha256": "f60a3153439cc2ee7c56112652ab672cb59713161c73698e4c8f0b70c268879f"
     },
     {
       "hash_mode": "canonical-json-v1",

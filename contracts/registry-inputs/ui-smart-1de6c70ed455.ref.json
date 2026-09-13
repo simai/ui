@@ -12,9 +12,9 @@
   "manifest": {
     "path": "contracts/owners/smart-component.manifest.json",
     "hash_mode": "canonical-json-v1",
-    "sha256": "edb019918b525d4db04fb4cf50016176093a69ca70a988e85b25107d7ce56a1f",
-    "file_sha256": "d581f025f867e959dccce198544f594c82cc7d58a06917367aaf60d200e26132"
+    "sha256": "f60a3153439cc2ee7c56112652ab672cb59713161c73698e4c8f0b70c268879f",
+    "file_sha256": "b74ca8c00ef6c02e84fe0a9a326375d86c1de1a7b605966b87da68e853bf25ab"
   },
-  "contract_revision": "94bf00b744da5e541b5110138f2a01f902d2d03f",
+  "contract_revision": "cfcc8b2020e1cc9582b9e9dabc2417f61b85bdc0",
   "status": "committed"
 }
