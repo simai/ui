@@ -1,7 +1,7 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "03bdf58522db"
+/***/ "55554fda6b33"
 () {
 
 const MENU_ITEM_SELECTOR = '.sf-menu-item';
@@ -71,6 +71,43 @@ function clearDirectTextNodes(root) {
 function hasSubmenu(root) {
   const nestedMenu = root.querySelector(':scope > .sf-menu');
   return Boolean(nestedMenu);
+}
+
+function isHorizontalTopLevel(root) {
+  return root?.parentElement?.matches('.sf-menu.sf-menu--horizontal') || false;
+}
+
+function getDisclosureController(root) {
+  const element = root?.querySelector(':scope > .sf-menu-element');
+  if (!element) return null;
+  return element.querySelector(':scope > button.sf-icon-button') || element;
+}
+
+function closeHorizontalSiblings(root) {
+  if (!isHorizontalTopLevel(root)) return;
+  Array.from(root.parentElement.children).forEach(candidate => {
+    if (candidate === root || !candidate.matches('.sf-menu-item.open')) return;
+    setMenuItemOpen(candidate, false);
+  });
+}
+
+function closeHorizontalDescendants(root) {
+  if (!isHorizontalTopLevel(root)) return;
+  Array.from(root.querySelectorAll('.sf-menu-item.open')).reverse().forEach(candidate => {
+    setMenuItemOpen(candidate, false);
+  });
+}
+
+function positionHorizontalSubmenu(root) {
+  const horizontal = root?.closest('.sf-menu.sf-menu--horizontal');
+  const submenu = root?.querySelector(':scope > .sf-menu');
+  if (!horizontal || !submenu || submenu.hidden) return;
+  submenu.classList.remove('sf-menu--flip-inline');
+  const viewportWidth = document.documentElement.clientWidth;
+  const rect = submenu.getBoundingClientRect();
+  const direction = getComputedStyle(horizontal).direction;
+  const overflowsInlineEnd = direction === 'rtl' ? rect.left < 0 : rect.right > viewportWidth;
+  if (overflowsInlineEnd) submenu.classList.add('sf-menu--flip-inline');
 }
 
 function ensureElement(root, isBranch) {
@@ -225,7 +262,8 @@ function applyDisclosureState(root, element, suppliedToggle, expanded, isBranch)
 }
 
 function applyTrailingState(trailing, root, expanded) {
-  const trailingIcon = root.getAttribute('trailing-icon') || (expanded ? 'keyboard_arrow_down' : 'chevron_right');
+  const horizontalTopLevel = isHorizontalTopLevel(root);
+  const trailingIcon = root.getAttribute('trailing-icon') || (horizontalTopLevel ? expanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down' : expanded ? 'keyboard_arrow_down' : 'chevron_right');
   trailing.classList.toggle('disabled', root.classList.contains('disabled') || root.hasAttribute('disabled'));
 
   if (trailing.tagName === 'BUTTON') {
@@ -244,14 +282,14 @@ function applyTrailingState(trailing, root, expanded) {
   }
 }
 
-function toggleMenuItem(root) {
+function setMenuItemOpen(root, nextOpen) {
   if (!root || root.classList.contains('disabled') || root.hasAttribute('disabled')) {
     return false;
   }
 
   const nestedMenu = root.querySelector(':scope > .sf-menu');
   if (!nestedMenu) return false;
-  const nextOpen = !root.classList.contains('open');
+  if (nextOpen) closeHorizontalSiblings(root);
   const usesLegacyAriaState = root.hasAttribute('aria-expanded');
 
   if (nextOpen) {
@@ -259,13 +297,19 @@ function toggleMenuItem(root) {
     if (legacyExpandedOwners.has(root)) root.setAttribute('expanded', '');
     if (usesLegacyAriaState) root.setAttribute('aria-expanded', 'true');
   } else {
+    closeHorizontalDescendants(root);
     root.classList.remove('open');
     if (legacyExpandedOwners.has(root)) root.removeAttribute('expanded');
     if (usesLegacyAriaState) root.setAttribute('aria-expanded', 'false');
   }
 
   initMenuItem(root);
+  if (nextOpen) requestAnimationFrame(() => positionHorizontalSubmenu(root));
   return true;
+}
+
+function toggleMenuItem(root) {
+  return setMenuItemOpen(root, !root?.classList.contains('open'));
 }
 
 function initMenuItem(root) {
@@ -365,6 +409,9 @@ function bindMenuEvents() {
   document.addEventListener('click', event => {
     const target = event.target;
     if (!(target instanceof Element)) return;
+    document.querySelectorAll('.sf-menu.sf-menu--horizontal > .sf-menu-item.open').forEach(root => {
+      if (!root.contains(target)) setMenuItemOpen(root, false);
+    });
     const button = target.closest('.sf-menu-item > .sf-menu-element > .sf-icon-button');
 
     if (button) {
@@ -381,9 +428,19 @@ function bindMenuEvents() {
     toggleMenuItem(element.closest('.sf-menu-item'));
   });
   document.addEventListener('keydown', event => {
-    if (event.key !== 'Enter' && event.key !== ' ') return;
     const target = event.target;
     if (!(target instanceof Element)) return;
+
+    if (event.key === 'Escape') {
+      const root = target.closest('.sf-menu-item.open');
+      if (!root || !root.closest('.sf-menu.sf-menu--horizontal')) return;
+      event.preventDefault();
+      setMenuItemOpen(root, false);
+      getDisclosureController(root)?.focus();
+      return;
+    }
+
+    if (event.key !== 'Enter' && event.key !== ' ') return;
     const element = target.closest('.sf-menu-item > .sf-menu-element');
     if (!element) return;
     const nestedInteractive = target.closest('a[href], button, input, select, textarea');
@@ -411,12 +468,12 @@ if (document.readyState === 'loading') {
 
 /***/ },
 
-/***/ "ec84dd674a49"
+/***/ "599a20f16c4c"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _menu__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("03bdf58522db");
+/* harmony import */ var _menu__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("55554fda6b33");
 /* harmony import */ var _menu__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_menu__WEBPACK_IMPORTED_MODULE_0__);
 /*
 * Main JS file for including JS for component.
@@ -428,7 +485,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ },
 
-/***/ "4df711608965"
+/***/ "6ef95f7a17ac"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -532,8 +589,8 @@ let __webpack_exports__ = {};
 (() => {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("4df711608965");
-/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("ec84dd674a49");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("6ef95f7a17ac");
+/* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("599a20f16c4c");
 /**
 * SIMAI Framework
 * Copyright 2008-2026 SIMAI Ltd
