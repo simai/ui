@@ -6768,42 +6768,42 @@ SF.RuleLoader['isolate/xxl'] = /xxl\:isolate/;
 /***/ "98e0a0dcf933"
 () {
 
-SF.RuleLoader['justify-content/default'] = /content-main-/;
+SF.RuleLoader['justify-content/default'] = /(?:justify|content-main)-(?:start|end|center|between|around|evenly)/;
 
 /***/ },
 
 /***/ "a4f770c8bc18"
 () {
 
-SF.RuleLoader['justify-content/lg'] = /lg\:content-main-/;
+SF.RuleLoader['justify-content/lg'] = /lg\:(?:justify|content-main)-(?:start|end|center|between|around|evenly)/;
 
 /***/ },
 
 /***/ "7b44cc2b5468"
 () {
 
-SF.RuleLoader['justify-content/md'] = /md\:content-main-/;
+SF.RuleLoader['justify-content/md'] = /md\:(?:justify|content-main)-(?:start|end|center|between|around|evenly)/;
 
 /***/ },
 
 /***/ "67ebd6bf9944"
 () {
 
-SF.RuleLoader['justify-content/sm'] = /sm\:content-main-/;
+SF.RuleLoader['justify-content/sm'] = /sm\:(?:justify|content-main)-(?:start|end|center|between|around|evenly)/;
 
 /***/ },
 
 /***/ "11e03b92f0ef"
 () {
 
-SF.RuleLoader['justify-content/xl'] = /xl\:content-main-/;
+SF.RuleLoader['justify-content/xl'] = /xl\:(?:justify|content-main)-(?:start|end|center|between|around|evenly)/;
 
 /***/ },
 
 /***/ "14294d44be56"
 () {
 
-SF.RuleLoader['justify-content/xxl'] = /xxl\:content-main-/;
+SF.RuleLoader['justify-content/xxl'] = /xxl\:(?:justify|content-main)-(?:start|end|center|between|around|evenly)/;
 
 /***/ },
 

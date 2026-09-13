@@ -2625,27 +2625,27 @@
   },
   {
     "name": "justify-content/default",
-    "regex": "/content-main-/"
+    "regex": "/(?:justify|content-main)-(?:start|end|center|between|around|evenly)/"
   },
   {
     "name": "justify-content/lg",
-    "regex": "/lg\\:content-main-/"
+    "regex": "/lg\\:(?:justify|content-main)-(?:start|end|center|between|around|evenly)/"
   },
   {
     "name": "justify-content/md",
-    "regex": "/md\\:content-main-/"
+    "regex": "/md\\:(?:justify|content-main)-(?:start|end|center|between|around|evenly)/"
   },
   {
     "name": "justify-content/sm",
-    "regex": "/sm\\:content-main-/"
+    "regex": "/sm\\:(?:justify|content-main)-(?:start|end|center|between|around|evenly)/"
   },
   {
     "name": "justify-content/xl",
-    "regex": "/xl\\:content-main-/"
+    "regex": "/xl\\:(?:justify|content-main)-(?:start|end|center|between|around|evenly)/"
   },
   {
     "name": "justify-content/xxl",
-    "regex": "/xxl\\:content-main-/"
+    "regex": "/xxl\\:(?:justify|content-main)-(?:start|end|center|between|around|evenly)/"
   },
   {
     "name": "justify-items/default",
