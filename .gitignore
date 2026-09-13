@@ -13,3 +13,5 @@ codex-local-check*
 smart/
 stats/
 ai/
+__pycache__/
+*.py[cod]
