@@ -14,6 +14,7 @@ function initIconSubsetState(loader) {
   loader.iconFontReady = false;
   loader.iconSubsetPending = false;
   loader.loadedIcons = new Set();
+  loader.iconDescriptorStates = new Map();
   loader.iconSubsetReady = false;
   loader.iconSubsetPromise = null;
   loader.iconSubsetNeedsReload = false;
@@ -62,9 +63,9 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
     return [value];
   };
 
-  const iconWeightClassMap = new Map([["sf-icon-thin", "100"], ["sf-icon-extra-light", "200"], ["sf-icon-light", "300"], ["sf-icon-regular", "400"], ["sf-icon-medium", "500"], ["sf-icon-semi-bold", "600"], ["sf-icon-bold", "700"]]);
+  const iconWeightClassMap = new Map([["sf-icon--weight-thin", "100"], ["sf-icon-thin", "100"], ["sf-icon--weight-extra-light", "200"], ["sf-icon-extra-light", "200"], ["sf-icon--weight-light", "300"], ["sf-icon-light", "300"], ["sf-icon--weight-regular", "400"], ["sf-icon-regular", "400"], ["sf-icon--weight-medium", "500"], ["sf-icon-medium", "500"], ["sf-icon--weight-semi-bold", "600"], ["sf-icon-semi-bold", "600"], ["sf-icon--weight-bold", "700"], ["sf-icon-bold", "700"]]);
   const defaultIconWeight = "400";
-  const iconTypeClassMap = new Map([["sf-icon-rounded", "rounded"], ["sf-icon-shape", "sharp"]]);
+  const iconTypeClassMap = new Map([["sf-icon--rounded", "rounded"], ["sf-icon-rounded", "rounded"], ["sf-icon--sharp", "sharp"], ["sf-icon-shape", "sharp"]]);
   const iconFamilyTypeMap = new Map([["material symbols outlined", "outlined"], ["material symbols rounded", "rounded"], ["material symbols sharp", "sharp"]]);
   const iconFallbackFontFiles = Object.freeze({
     outlined: {
@@ -183,6 +184,7 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
     const weights = new Set(normalizeConfigList(rawConfig.weights || rawConfig.weight).map(item => String(item).trim()));
     const fills = new Set(normalizeConfigList(rawConfig.fill ?? rawConfig.filled).map(item => String(item).trim()));
     const grades = new Set(normalizeConfigList(rawConfig.grade).map(item => String(item).trim()));
+    const opticalSizes = new Set(normalizeConfigList(rawConfig.optical_size ?? rawConfig.opticalSize ?? rawConfig.opsz).map(item => String(item).trim()));
     const defaultType = this.normalizeIconType(rawConfig.type || this.getDefaultIconType());
     const types = new Set(normalizeConfigList(rawConfig.type || defaultType).map(item => this.normalizeIconType(item)));
     return {
@@ -190,9 +192,11 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
       weights,
       fills,
       grades,
+      opticalSizes,
       types,
       fill: fills.size > 0,
       grade: grades.size ? [...grades].join(",") : "",
+      opticalSize: opticalSizes.size ? [...opticalSizes].join(",") : "",
       defaultType
     };
   };
@@ -224,6 +228,10 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
 
       if (config.grades.size) {
         iconAttrs.set("grade", new Set(config.grades));
+      }
+
+      if (config.opticalSizes.size) {
+        iconAttrs.set("optical-size", new Set(config.opticalSizes));
       }
 
       if (config.types.size) {
@@ -329,6 +337,14 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
       return false;
     }
 
+    if (attrs.grade && !this.manifestAxisIncludesValue(manifest, "GRAD", attrs.grade)) {
+      return false;
+    }
+
+    if (attrs["optical-size"] && !this.manifestAxisIncludesValue(manifest, "opsz", attrs["optical-size"])) {
+      return false;
+    }
+
     return true;
   };
 
@@ -359,6 +375,10 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
       return false;
     }
 
+    if ([...config.opticalSizes].some(size => !this.manifestAxisIncludesValue(manifest, "opsz", size))) {
+      return false;
+    }
+
     return true;
   };
 
@@ -367,6 +387,24 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
     if (this.hasConfiguredIconSubset()) return 0;
     const normalizedIcon = String(icon || "").trim();
     if (!normalizedIcon) return 0;
+    const loadAttrs = this.getIconLoadAttrs(attrs);
+    const descriptorKey = this.getLoadedIconDescriptorKey(normalizedIcon, loadAttrs);
+
+    if (!this.iconDescriptorStates) {
+      this.iconDescriptorStates = new Map();
+    }
+
+    const knownDescriptor = this.iconDescriptorStates.get(descriptorKey);
+
+    if (knownDescriptor || this.loadedIcons.has(descriptorKey) || this.isIconCoveredByManifest(normalizedIcon, loadAttrs)) {
+      return 0;
+    }
+
+    this.iconDescriptorStates.set(descriptorKey, {
+      attrs: loadAttrs,
+      icon: normalizedIcon,
+      loading: false
+    });
     const isNewIcon = !this.uniqueIcons.has(normalizedIcon);
     const iconAttrs = isNewIcon ? new Map() : this.uniqueIcons.get(normalizedIcon);
     let hasNewAttrs = false;
@@ -385,7 +423,6 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
         hasNewAttrs = true;
       }
     });
-    const loadAttrs = this.getIconLoadAttrs(attrs);
 
     if (this.isIconCoveredByManifest(normalizedIcon, loadAttrs)) {
       iconAttrs.set("loading", true);
@@ -409,7 +446,7 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
 
   SFLoaderPlugin.prototype.getIconLoadAttrs = function (attrs = {}) {
     const normalized = {};
-    ["weight", "filled", "grade", "type"].forEach(key => {
+    ["weight", "filled", "grade", "optical-size", "type"].forEach(key => {
       const value = attrs?.[key];
 
       if (value == null || value === "") {
@@ -516,7 +553,7 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
     const icon = String(el.getAttribute("icon") || "").trim();
     if (!icon) return null;
     const attrs = {};
-    ["weight", "size"].forEach(attr => {
+    ["weight", "size", "grade", "optical-size", "type"].forEach(attr => {
       const value = el.getAttribute(attr);
 
       if (value != null) {
@@ -532,7 +569,7 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
       }
     }
 
-    attrs.type = this.getDefaultIconType();
+    attrs.type = this.normalizeIconType(attrs.type || this.getDefaultIconType());
     return {
       icon,
       attrs
@@ -575,7 +612,7 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
     }
 
     const styleFill = String(el.style?.getPropertyValue?.("--sf-icon--fill") || "").trim();
-    const isFilled = el.classList.contains("sf-icon-filled") || el.hasAttribute("data-filled") && isTruthyIconFlag(el.getAttribute("data-filled")) || el.hasAttribute("filled") && isTruthyIconFlag(el.getAttribute("filled")) || isTruthyIconFlag(styleFill, false);
+    const isFilled = el.classList.contains("sf-icon--filled") || el.classList.contains("sf-icon-filled") || el.hasAttribute("data-filled") && isTruthyIconFlag(el.getAttribute("data-filled")) || el.hasAttribute("filled") && isTruthyIconFlag(el.getAttribute("filled")) || isTruthyIconFlag(styleFill, false);
 
     if (isFilled) {
       attrs.filled = "1";
@@ -834,7 +871,6 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
 
     if (normalized.count > 0) {
       this.mutate(() => this.getLoader(this.module, true));
-      return normalized;
     }
 
     if (this.isIconSubsetEnabled() && normalized.iconCount > 0) {
@@ -893,14 +929,14 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
     const type = this.getIconManifestType(manifest);
 
     if (type === "rounded") {
-      return ".sf-icon.sf-icon-rounded";
+      return ".sf-icon:is(.sf-icon--rounded, .sf-icon-rounded)";
     }
 
     if (type === "sharp") {
-      return ".sf-icon.sf-icon-shape";
+      return ".sf-icon:is(.sf-icon--sharp, .sf-icon-shape)";
     }
 
-    return ".sf-icon:not(.sf-icon-rounded):not(.sf-icon-shape)";
+    return ".sf-icon:not(.sf-icon--rounded):not(.sf-icon-rounded):not(.sf-icon--sharp):not(.sf-icon-shape)";
   };
 
   SFLoaderPlugin.prototype.getIconFallbackFontUrl = function (type = "") {
@@ -1278,6 +1314,7 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
         weights: configured.weights,
         fill: configured.fill,
         grade: configured.grade,
+        opticalSize: configured.opticalSize,
         types: configured.types,
         defaultType: configured.defaultType,
         accumulate
@@ -1289,11 +1326,13 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
     const types = new Set();
     let fill = false;
     const grades = new Set();
+    const opticalSizes = new Set();
     const defaultType = this.getDefaultIconType();
     this.uniqueIcons.forEach(attrs => {
       const weight = attrs.get("weight");
       const filled = attrs.get("filled");
       const grade = attrs.get("grade");
+      const opticalSize = attrs.get("optical-size");
       const type = attrs.get("type");
 
       if (filled) {
@@ -1318,6 +1357,12 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
           grades.add(String(grade));
         }
 
+        if (opticalSize instanceof Set || Array.isArray(opticalSize)) {
+          opticalSize.forEach(item => opticalSizes.add(String(item)));
+        } else if (opticalSize) {
+          opticalSizes.add(String(opticalSize));
+        }
+
         return;
       }
 
@@ -1332,12 +1377,19 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
       } else if (grade) {
         grades.add(String(grade));
       }
+
+      if (opticalSize instanceof Set || Array.isArray(opticalSize)) {
+        opticalSize.forEach(item => opticalSizes.add(String(item)));
+      } else if (opticalSize) {
+        opticalSizes.add(String(opticalSize));
+      }
     });
     return {
       icons,
       weights,
       fill,
       grade: grades.size ? [...grades].join(",") : "",
+      opticalSize: opticalSizes.size ? [...opticalSizes].join(",") : "",
       types,
       defaultType,
       accumulate
@@ -1370,6 +1422,7 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
           defaultType: normalizedType,
           fill: false,
           grade: new Set(),
+          opticalSize: new Set(),
           icons: new Set(),
           weights: new Set()
         });
@@ -1385,11 +1438,14 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
       const weights = rawWeights instanceof Set || Array.isArray(rawWeights) ? [...rawWeights] : rawWeights ? [rawWeights] : [];
       const rawGrades = attrs.get("grade");
       const grades = rawGrades instanceof Set || Array.isArray(rawGrades) ? [...rawGrades] : rawGrades ? [rawGrades] : [];
+      const rawOpticalSizes = attrs.get("optical-size");
+      const opticalSizes = rawOpticalSizes instanceof Set || Array.isArray(rawOpticalSizes) ? [...rawOpticalSizes] : rawOpticalSizes ? [rawOpticalSizes] : [];
       types.forEach(type => {
         const config = getConfig(type);
         config.icons.add(icon);
         weights.forEach(weight => config.weights.add(String(weight)));
         grades.forEach(grade => config.grade.add(String(grade)));
+        opticalSizes.forEach(size => config.opticalSize.add(String(size)));
 
         if (attrs.get("filled")) {
           config.fill = true;
@@ -1404,12 +1460,14 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
         baseConfig.icons.forEach(icon => config.icons.add(icon));
         baseConfig.weights.forEach(weight => config.weights.add(weight));
         String(baseConfig.grade || "").split(",").filter(Boolean).forEach(grade => config.grade.add(grade));
+        String(baseConfig.opticalSize || "").split(",").filter(Boolean).forEach(size => config.opticalSize.add(size));
         config.fill = baseConfig.fill;
       });
     }
 
     return [...configs.values()].map(config => ({ ...config,
       grade: [...config.grade].sort().join(","),
+      opticalSize: [...config.opticalSize].sort().join(","),
       icons: [...config.icons].sort()
     })).sort((left, right) => left.defaultType.localeCompare(right.defaultType));
   };
@@ -1432,6 +1490,11 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
 
     if (requestConfig.fill) query.set("fill", "1");
     if (requestConfig.grade) query.set("grade", requestConfig.grade);
+
+    if (requestConfig.opticalSize) {
+      query.set("optical_size", requestConfig.opticalSize);
+    }
+
     if (requestConfig.accumulate) query.set("accumulate", "true");
     let manifest = null;
     let appliedStyle = null;
@@ -1481,14 +1544,6 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
       await new Promise(resolve => requestAnimationFrame(resolve));
       await new Promise(resolve => requestAnimationFrame(resolve));
       previous?.remove?.();
-      window.dispatchEvent(new CustomEvent("sf-icons-subset:ready", {
-        detail: {
-          icons: new Set(icons),
-          loader: this,
-          type,
-          weights: [...requestConfig.weights]
-        }
-      }));
       return true;
     } catch (error) {
       appliedStyle?.remove?.();
@@ -1515,23 +1570,40 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
     }
 
     const unloadedIcons = Array.from(this.uniqueIcons).filter(([, attrs]) => attrs.get("loading") === false);
+    const unloadedDescriptors = Array.from(this.iconDescriptorStates || new Map()).filter(([, descriptor]) => descriptor.loading === false);
 
-    if (!unloadedIcons.length) {
+    if (!unloadedIcons.length && !unloadedDescriptors.length) {
       return this.iconSubsetPromise || false;
     }
 
     unloadedIcons.forEach(([, attrs]) => attrs.set("loading", true));
+    unloadedDescriptors.forEach(([, descriptor]) => {
+      descriptor.loading = true;
+    });
     this.iconSubsetPending = true;
     this.iconSubsetReady = false;
     const requestConfigs = this.getIconSubsetRequestConfigs();
     this.iconSubsetPromise = Promise.all(requestConfigs.map(config => this.loadIconSubsetFamily(config))).then(results => {
       const loadedDescriptorKeys = new Set(this.loadedIcons);
-      unloadedIcons.forEach(([icon, attrs]) => {
-        this.getLoadedDescriptorKeysForIconState(icon, attrs).forEach(key => loadedDescriptorKeys.add(key));
-      });
+
+      if (unloadedDescriptors.length) {
+        unloadedDescriptors.forEach(([key]) => loadedDescriptorKeys.add(key));
+      } else {
+        unloadedIcons.forEach(([icon, attrs]) => {
+          this.getLoadedDescriptorKeysForIconState(icon, attrs).forEach(key => loadedDescriptorKeys.add(key));
+        });
+      }
+
       this.loadedIcons = loadedDescriptorKeys;
       this.iconSubsetPending = false;
       this.iconSubsetReady = results.every(Boolean);
+      window.dispatchEvent?.(new CustomEvent("sf-icons-subset:ready", {
+        detail: {
+          icons: new Set([...unloadedIcons.map(([icon]) => icon), ...unloadedDescriptors.map(([, descriptor]) => descriptor.icon)]),
+          loader: this,
+          types: requestConfigs.map(config => config.defaultType)
+        }
+      }));
       this.syncStaticIconLoadedState();
       return this.iconSubsetReady;
     }).finally(() => {
@@ -1654,8 +1726,11 @@ function SFLoaderPlugin(params) {
   this.lastLoadHash = null;
   this.theme = 'light';
   this.themeEnabled = params.theme !== false;
-  this.preloaderWrap = window.SF_BOOT_CONFIG.preloader?.wrap || null;
-  this.standAlone = params.standAlone ?? false;
+  this.preloaderWrap = window.SF_BOOT_CONFIG.preloader?.wrap || null; // Simai Framework 5 resolves versioned static assets in the browser.
+  // Keep the public flag for compatibility, but do not enable the retired
+  // server-side PHP bundler when callers pass `standAlone: false`.
+
+  this.standAlone = true;
   this.disableSmart = !!params.disableSmart;
   this.smart = { ...(window.SF_BOOT_CONFIG?.smart || {}),
     ...(params.smart || {})
@@ -1680,7 +1755,7 @@ function SFLoaderPlugin(params) {
   this.relationPlugins = {};
   this.totalRelationsPlugins = {};
   this.shortcodeReadyCache = new Map();
-  this.heavyModules = params.heavyModules || ['monaco'];
+  this.heavyModules = params.heavyModules || [];
   this.priorityModules = params.priorityModules || ['container', 'display', 'flex', 'grid', 'gap', 'column', 'width', 'height', 'aspect-ratio', 'element-position', 'element-position-ext', 'headers', 'theme', 'skeleton'];
   this.preloader = {
     color: (0,_preloader__WEBPACK_IMPORTED_MODULE_4__.getPreloaderColor)(),
@@ -2306,22 +2381,36 @@ SFLoaderPlugin.prototype.getPluginName = function (pluginURL) {
 SFLoaderPlugin.prototype.setCookie = function (name, value, expiredays = 30) {
   const exdate = new Date();
   exdate.setTime(exdate.getTime() + expiredays * 86400 * 1000);
-  document.cookie = name + '=' + encodeURIComponent(value) + (expiredays == null ? '' : '; expires=' + exdate.toUTCString()) + '; path=/';
+
+  try {
+    document.cookie = name + '=' + encodeURIComponent(value) + (expiredays == null ? '' : '; expires=' + exdate.toUTCString()) + '; path=/';
+    return true;
+  } catch {
+    return false;
+  }
 };
 
 SFLoaderPlugin.prototype.getCookie = function (name) {
-  if (document.cookie.length > 0) {
-    let start = document.cookie.indexOf(name + '=');
+  let cookies = '';
+
+  try {
+    cookies = document.cookie;
+  } catch {
+    return '';
+  }
+
+  if (cookies.length > 0) {
+    let start = cookies.indexOf(name + '=');
 
     if (start !== -1) {
       start = start + name.length + 1;
-      let end = document.cookie.indexOf(';', start);
+      let end = cookies.indexOf(';', start);
 
       if (end === -1) {
-        end = document.cookie.length;
+        end = cookies.length;
       }
 
-      return encodeURI(document.cookie.substring(start, end));
+      return encodeURI(cookies.substring(start, end));
     }
   }
 
@@ -2370,31 +2459,7 @@ SFLoaderPlugin.prototype.isExistPluginCookie = function (plugin) {
 };
 
 SFLoaderPlugin.prototype.getFakeTemplates = async function () {
-  const xhr = new XMLHttpRequest();
-  xhr.open('POST', '/simai/loader/templateLoader.php', true);
-  xhr.setRequestHeader('Accept', 'application/json');
-  xhr.setRequestHeader('Content-Type', 'application/json');
-  const body = JSON.stringify({
-    getFake: true
-  });
-  let isNo200;
-
-  try {
-    xhr.send(body);
-
-    xhr.onreadystatechange = function () {
-      if (xhr.status === 200) {
-        if (this.readyState !== 4) {
-          return false;
-        }
-      }
-    };
-  } catch (e) {
-    console.warn(e);
-    return isNo200;
-  }
-
-  return isNo200;
+  return null;
 };
 
 SFLoaderPlugin.prototype.checkEventsPlugins = function (name) {
@@ -2404,32 +2469,7 @@ SFLoaderPlugin.prototype.checkEventsPlugins = function (name) {
 };
 
 SFLoaderPlugin.prototype.checkFake = async function () {
-  return new Promise(resolve => {
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST', '/simai/loader/templateLoader.php', true);
-    xhr.setRequestHeader('Accept', 'application/json');
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    const url = window.location.pathname;
-    const body = JSON.stringify({
-      checkFake: true,
-      url
-    });
-    let isNo200;
-
-    try {
-      xhr.send(body);
-
-      xhr.onreadystatechange = function () {
-        if (xhr.status === 200) {
-          if (this.readyState !== 4) return false;
-          resolve(JSON.parse(xhr.response));
-        }
-      };
-    } catch (e) {
-      console.warn(e);
-      return isNo200;
-    }
-  });
+  return null;
 };
 
 SFLoaderPlugin.prototype.setLocalStorage = function (templates, fake) {
@@ -2441,35 +2481,8 @@ SFLoaderPlugin.prototype.setLocalStorage = function (templates, fake) {
 };
 
 SFLoaderPlugin.prototype.setCacheContent = async function (templates, fake) {
-  const xhr = new XMLHttpRequest();
-  xhr.open('POST', '/simai/loader/templateLoader.php', true);
-  xhr.setRequestHeader('Accept', 'application/json');
-  xhr.setRequestHeader('Content-Type', 'application/json');
-  const pathname = window.location.pathname;
-  const body = JSON.stringify({
-    setCacheContent: true,
-    url: pathname,
-    templates,
-    cache: fake
-  });
-  let isNo200;
-
-  try {
-    xhr.send(body);
-
-    xhr.onreadystatechange = function () {
-      if (xhr.status === 200) {
-        if (this.readyState !== 4) {
-          return false;
-        }
-      }
-    };
-  } catch (e) {
-    console.warn(e);
-    return isNo200;
-  }
-
-  return isNo200;
+  this.setLocalStorage(templates, fake);
+  return true;
 };
 
 SFLoaderPlugin.prototype.isLoaded = function (pluginURL, type) {
@@ -2566,11 +2579,6 @@ SFLoaderPlugin.prototype.shouldSkipNode = function (node) {
   if (host.closest?.(OBSERVER_IGNORE_SELECTOR)) return true;
   const tag = host.tagName.toLowerCase();
   if (!this.excludedTags(tag)) return true;
-
-  if (host.closest && host.closest('.monaco-editor') && !host.closest('[data-allow-shortcodes]')) {
-    return true;
-  }
-
   return false;
 };
 
@@ -3653,7 +3661,7 @@ SFLoaderPlugin.prototype.setRelation = function (relation, name, output, visited
 };
 
 SFLoaderPlugin.prototype.sortPlugins = function (module, arPathCss, arPathJs, plugin) {
-  const breakpoints = ['default', 'sm', 'md', 'lg', 'xl', 'hover', 'focus', 'active'];
+  const breakpoints = ['default', 'sm', 'md', 'lg', 'xl', 'xxl', 'hover', 'focus', 'active'];
 
   for (const point of breakpoints) {
     this.sortPlugin(plugin[point] || [], point, module, arPathCss, arPathJs);
@@ -4253,12 +4261,52 @@ SFLoaderPlugin.prototype.sendThemeToPlayground = function (iframe = null, theme 
   }, '*');
 };
 
+SFLoaderPlugin.prototype.ensureThemePreferenceListener = function () {
+  if (!this.themeEnabled || this.themeMediaQuery) {
+    return this.themeMediaQuery || null;
+  }
+
+  const media = window.matchMedia?.('(prefers-color-scheme: dark)');
+  if (!media) return null;
+  this.themeMediaQuery = media;
+
+  this.themeMediaListener = () => {
+    if (this.themePreference === 'system') this.checkTheme();
+  };
+
+  if (typeof media.addEventListener === 'function') {
+    media.addEventListener('change', this.themeMediaListener);
+  } else {
+    media.addListener?.(this.themeMediaListener);
+  }
+
+  return media;
+};
+
+SFLoaderPlugin.prototype.setTheme = function (preference) {
+  if (!this.themeEnabled) return false;
+  const supported = ['system', 'light', 'dark'];
+  if (!supported.includes(preference)) return false;
+
+  if (preference === 'system') {
+    try {
+      document.cookie = 'sf-theme=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Lax';
+    } catch {// Sandboxed documents retain the session theme without persistence.
+    }
+
+    this.themeSessionPreference = this.getCookie('sf-theme') ? 'system' : null;
+  } else {
+    const persisted = this.setCookie('sf-theme', preference) && this.getCookie('sf-theme') === preference;
+    this.themeSessionPreference = persisted ? null : preference;
+  }
+
+  this.checkTheme();
+  return true;
+};
+
 SFLoaderPlugin.prototype.changeTheme = function () {
   if (!this.themeEnabled) return false;
-  this.theme = this.theme === 'dark' ? 'light' : 'dark';
-  this.sendThemeToPlayground();
-  this.setCookie('sf-theme', this.theme);
-  this.checkTheme();
+  return this.setTheme(this.theme === 'dark' ? 'light' : 'dark');
 };
 
 SFLoaderPlugin.prototype.turboFontCheck = function (body) {
@@ -4270,23 +4318,31 @@ SFLoaderPlugin.prototype.turboFontCheck = function (body) {
 SFLoaderPlugin.prototype.checkTheme = function (body = null) {
   if (!this.themeEnabled) return false;
   const classes = ['theme-dark', 'theme-light'];
-  let isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  let theme = this.getCookie('sf-theme');
-
-  if (theme) {
-    isDark = theme === 'dark';
-  }
-
-  theme = isDark ? 'dark' : 'light';
+  const savedTheme = this.getCookie('sf-theme');
+  const sessionPreference = this.themeSessionPreference;
+  const preference = ['system', 'light', 'dark'].includes(sessionPreference) ? sessionPreference : ['light', 'dark'].includes(savedTheme) ? savedTheme : 'system';
+  const media = this.ensureThemePreferenceListener();
+  const isDark = preference === 'dark' || preference === 'system' && media?.matches;
+  const theme = isDark ? 'dark' : 'light';
+  const previousTheme = this.theme;
+  const previousPreference = this.themePreference;
   this.theme = theme;
+  this.themePreference = preference;
   body = body || document.documentElement;
+  body.classList.remove(...classes);
+  body.classList.add(isDark ? classes[0] : classes[1]);
+  this.sendThemeToPlayground();
 
-  if (theme || !body.classList.contains('theme-light') && !body.classList.contains('theme-dark')) {
-    body.classList.remove(isDark ? classes[1] : classes[0]);
-    body.classList.add(isDark ? classes[0] : classes[1]);
+  if (body === document.documentElement && (theme !== previousTheme || preference !== previousPreference)) {
+    window.dispatchEvent(new CustomEvent('sf-theme-change', {
+      detail: {
+        theme,
+        preference
+      }
+    }));
   }
 
-  this.sendThemeToPlayground();
+  return theme;
 };
 
 SFLoaderPlugin.prototype.checkForCache = function () {
@@ -4538,7 +4594,7 @@ SFLoaderPlugin.prototype.getObserverFilteredHTML = function (node) {
 
 SFLoaderPlugin.prototype.stripIgnoredBlocks = function (html) {
   if (!html) return '';
-  const patterns = [/<code\b[^>]*>.*?<\/code>/gims, /<pre\b[^>]*>.*?<\/pre>/gims, /<([a-z][\w:-]*)\b[^>]*data-sf-observer=["']ignore["'][^>]*>.*?<\/\1>/gims, /<(div|section)\b[^>]*class=["']?[^"'>]*monaco[^"'>]*["']?[^>]*>.*?<\/\1>/gims];
+  const patterns = [/<code\b[^>]*>.*?<\/code>/gims, /<pre\b[^>]*>.*?<\/pre>/gims, /<([a-z][\w:-]*)\b[^>]*data-sf-observer=["']ignore["'][^>]*>.*?<\/\1>/gims];
   return patterns.reduce((acc, pattern) => acc.replace(pattern, ''), html);
 };
 
@@ -4693,136 +4749,6 @@ SFLoaderPlugin.prototype.getLoader = async function (PluginList, temp = false, s
         this.getLoader(deferredModules, temp, true);
       }
     });
-  } else {
-    this.logTiming('remote load request');
-    const thisObject = this;
-    const params = new URLSearchParams({
-      a: PluginList,
-      clear_cache: clearCache,
-      relations: JSON.stringify(this.relationPlugins),
-      gzipSupport: window.SUPPORTS_GZIP,
-      temp,
-      load: this.firstLoad,
-      checkFake: true,
-      url: window.location.pathname
-    });
-    const xhr = new XMLHttpRequest();
-    xhr.responseType = 'json';
-    const linkQuery = `/simai/loader/loader.php?${params.toString()}`;
-    this.firstLoad = false;
-    xhr.open('GET', linkQuery);
-    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-    xhr.send();
-
-    xhr.onload = () => {
-      if (xhr.status !== 200) {
-        console.warn(`Ошибка ${xhr.status}: ${xhr.statusText}`);
-        const localMissingPlugins = localStorage.getItem('SF_MISSING_PLUGINS');
-
-        if (localMissingPlugins) {
-          try {
-            this.notFoundFiles = JSON.parse((0,lz_string__WEBPACK_IMPORTED_MODULE_0__.decompressFromUTF16)(localMissingPlugins));
-          } catch (e) {
-            console.warn('Failed to parse SF_MISSING_PLUGINS', e);
-          }
-        }
-
-        this.vUseMergeConfigGenerate(PluginList);
-        this.waitForResolverIdle().then(() => {
-          this.dispatchReadyOnce();
-          this.stopPreloader();
-          this.logTiming('remote load fallback complete');
-          this.profileEnd(profile, {
-            mode: 'remote',
-            fallback: true,
-            requestedPluginCount,
-            pluginCount: PluginList.length,
-            deferredCount: deferredModules.length
-          });
-
-          if (deferredModules.length) {
-            this.getLoader(deferredModules, temp, true);
-          }
-        });
-      } else {
-        thisObject.debug(xhr.response);
-
-        if (xhr.response && xhr.response.frameworkPath) {
-          window.frameWorkPath = xhr.response.frameworkPath;
-        }
-
-        if (xhr.response) {
-          const {
-            smartFakeContent
-          } = xhr.response;
-          const promiseAll = [];
-
-          if (xhr.response.js.length > 1) {
-            const jsItem = document.querySelector(`[src="${xhr.response.js}"]`);
-
-            if (jsItem) {
-              jsItem.remove();
-            }
-
-            promiseAll.push(thisObject.addScript(xhr.response.js).catch(e => {
-              console.warn(e);
-            }));
-          }
-
-          if (xhr.response.css.length > 1) {
-            const cssItem = document.querySelector(`[href="${xhr.response.css}"]`);
-
-            if (cssItem) {
-              cssItem.remove();
-            }
-
-            promiseAll.push(thisObject.addStyle(xhr.response.css));
-          }
-
-          Promise.allSettled(promiseAll).then(async () => {
-            this.dispatchReadyOnce();
-
-            if (smartFakeContent && smartFakeContent.status) {
-              let htmlString = '';
-              SF.cl.fakeLoader.cachedTemplates = smartFakeContent.fakeTemplates;
-              SF.cl.cacheManager.cachedTemplates = smartFakeContent.templates ? smartFakeContent.templates : {};
-              SF.cl.cacheManager.hasHash = smartFakeContent.hasHash;
-
-              for (const key in smartFakeContent.fakeTemplates) {
-                if (smartFakeContent.fakeTemplates[key]) {
-                  htmlString += smartFakeContent.fakeTemplates[key];
-                }
-              }
-
-              const html = SF.cl.parseFromString(htmlString);
-              this.searchRegexp('', html);
-            }
-
-            await this.waitForResolverIdle();
-            this.stopPreloader();
-            this.loadPage = true;
-            const totalLoaded = Object.keys(this.loadedPlugins || {}).length;
-            this.logTiming(`remote load complete: ${totalLoaded} modules`);
-            this.profileEnd(profile, {
-              mode: 'remote',
-              requestedPluginCount,
-              pluginCount: PluginList.length,
-              resourceCount: promiseAll.length,
-              totalLoaded,
-              deferredCount: deferredModules.length
-            });
-
-            if (this.isDebug) {
-              console.log('SFLoader loaded modules (remote)', this.loadedPlugins);
-            }
-
-            if (deferredModules.length) {
-              this.getLoader(deferredModules, temp, true);
-            }
-          });
-        }
-      }
-    };
   }
 
   return true;

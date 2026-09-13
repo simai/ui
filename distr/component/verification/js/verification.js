@@ -48,206 +48,239 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const VERIFICATION_FORM_SELECTOR = '.sf-verification-form';
-const VERIFICATION_SELECTOR = '.sf-verification';
-const BOUND_FORM_FLAG = 'sfVerificationFormBound';
+const FORM_SELECTOR = '.sf-verification-form';
+const CONTROL_SELECTOR = '.sf-verification';
+const INPUT_SELECTOR = '.sf-verification-input';
+const states = new WeakMap();
 
-function getFormInputs(root) {
-  return Array.from(root?.querySelectorAll?.(`${VERIFICATION_SELECTOR} input`) || []);
+function getRoot(target) {
+  return target instanceof Element ? target.closest(FORM_SELECTOR) || target : null;
 }
 
-function normalizeInputValue(input, raw) {
-  if (!input) return '';
-  const mode = String(input.dataset.mode || 'numeric').toLowerCase();
-  const source = String(raw ?? input.value ?? '');
-  let filtered = source;
+function getMode(root) {
+  return String(root?.dataset?.mode || 'numeric').toLowerCase();
+}
 
-  if (mode === 'numeric') {
-    filtered = filtered.replace(/\D/g, '');
-  } else if (mode === 'alphanumeric') {
-    filtered = filtered.replace(/[^a-z0-9]/gi, '');
-  } else {
-    filtered = filtered.replace(/\s/g, '');
+function getLength(root, input) {
+  const requested = Number.parseInt(root?.dataset?.length || input?.maxLength || '6', 10);
+  return Number.isFinite(requested) && requested > 0 ? Math.min(requested, 12) : 6;
+}
+
+function normalize(value, mode, length) {
+  let result = String(value || '');
+  if (mode === 'numeric') result = result.replace(/\D/g, '');else if (mode === 'alphanumeric') result = result.replace(/[^a-z0-9]/gi, '');else result = result.replace(/\s/g, '');
+  return result.slice(0, length);
+}
+
+function canonicalInput(root) {
+  return root?.querySelector?.(INPUT_SELECTOR) || null;
+}
+
+function legacyInputs(root) {
+  if (canonicalInput(root)) return [];
+  return Array.from(root?.querySelectorAll?.(`${CONTROL_SELECTOR} input`) || []);
+}
+
+function renderCanonical(root, state) {
+  const value = normalize(state.input.value, state.mode, state.length);
+  if (state.input.value !== value) state.input.value = value;
+  state.cells.forEach((cell, index) => {
+    cell.textContent = value[index] || '';
+    cell.classList.toggle('active', index < value.length);
+    cell.classList.toggle('current', index === Math.min(value.length, state.length - 1));
+  });
+  root.classList.toggle('active', Boolean(value));
+
+  if (value.length === state.length && state.completedValue !== value) {
+    state.completedValue = value;
+    root.dispatchEvent(new CustomEvent('verification:complete', {
+      bubbles: true,
+      detail: {
+        value
+      }
+    }));
+  } else if (value.length < state.length) {
+    state.completedValue = '';
+  }
+}
+
+function bindCanonical(root, input) {
+  const control = input.closest(CONTROL_SELECTOR);
+  if (!control) return null;
+  const length = getLength(root, input);
+  const mode = getMode(root);
+  input.maxLength = length;
+  if (!input.inputMode && mode === 'numeric') input.inputMode = 'numeric';
+  if (!input.autocomplete) input.autocomplete = 'one-time-code';
+  input.dir = 'ltr';
+  let cellsRoot = control.querySelector('.sf-verification-cells');
+
+  if (!cellsRoot) {
+    cellsRoot = document.createElement('span');
+    cellsRoot.className = 'sf-verification-cells';
+    cellsRoot.setAttribute('aria-hidden', 'true');
+    control.appendChild(cellsRoot);
   }
 
-  const normalized = filtered.slice(0, 1);
-  input.value = normalized;
-  return normalized;
+  cellsRoot.replaceChildren();
+  const cells = Array.from({
+    length
+  }, () => {
+    const cell = document.createElement('span');
+    cell.className = 'sf-verification-cell';
+    cellsRoot.appendChild(cell);
+    return cell;
+  });
+  const state = {
+    input,
+    cells,
+    length,
+    mode,
+    completedValue: ''
+  };
+
+  const onInput = () => {
+    root.classList.remove('error');
+    input.removeAttribute('aria-invalid');
+    renderCanonical(root, state);
+  };
+
+  const onPaste = event => {
+    const value = normalize(event.clipboardData?.getData('text'), mode, length);
+    if (!value) return;
+    event.preventDefault();
+    input.value = value;
+    onInput();
+  };
+
+  const onReset = () => requestAnimationFrame(() => renderCanonical(root, state));
+
+  input.addEventListener('input', onInput);
+  input.addEventListener('paste', onPaste);
+  input.form?.addEventListener('reset', onReset);
+
+  state.destroy = () => {
+    input.removeEventListener('input', onInput);
+    input.removeEventListener('paste', onPaste);
+    input.form?.removeEventListener('reset', onReset);
+  };
+
+  renderCanonical(root, state);
+  return state;
 }
 
-function syncVerificationActiveState(root) {
-  getFormInputs(root).forEach(input => {
-    const box = input.closest(VERIFICATION_SELECTOR);
-    if (!box) return;
-
-    if (box.classList.contains('error')) {
-      box.classList.remove('active');
-      return;
-    }
-
-    box.classList.toggle('active', Boolean(String(input.value || '').trim()));
+function syncLegacy(root, inputs) {
+  inputs.forEach(input => {
+    const control = input.closest(CONTROL_SELECTOR);
+    control?.classList.toggle('active', Boolean(input.value));
   });
 }
 
-function focusInput(input) {
-  if (!input || input.disabled) return;
-  input.focus();
-  if (typeof input.select === 'function') input.select();
-}
-
-function onFormPaste(root, event) {
-  const inputs = getFormInputs(root).filter(input => !input.disabled);
-  if (!inputs.length) return;
-  event.preventDefault();
-  const target = event.target instanceof HTMLInputElement ? event.target : inputs[0];
-  const startIndex = Math.max(0, inputs.indexOf(target));
-  const payload = event.clipboardData?.getData('text') || '';
-  const mode = String(target?.dataset?.mode || 'numeric').toLowerCase();
-  let chars = payload;
-
-  if (mode === 'numeric') {
-    chars = chars.replace(/\D/g, '');
-  } else if (mode === 'alphanumeric') {
-    chars = chars.replace(/[^a-z0-9]/gi, '');
-  } else {
-    chars = chars.replace(/\s/g, '');
-  }
-
-  if (!chars) return;
-  let lastFilled = startIndex;
-  chars.split('').forEach((char, offset) => {
-    const input = inputs[startIndex + offset];
-    if (!input) return;
-    input.value = char;
-    lastFilled = startIndex + offset;
-  });
-  syncVerificationActiveState(root);
-  focusInput(inputs[Math.min(lastFilled + 1, inputs.length - 1)]);
-}
-
-function bindVerificationForm(root) {
-  if (!root || root.dataset[BOUND_FORM_FLAG] === '1') return;
-  const inputs = getFormInputs(root);
-  if (!inputs.length) return;
+function bindLegacy(root, inputs) {
+  const mode = getMode(root);
 
   const onInput = event => {
     const input = event.target;
     if (!(input instanceof HTMLInputElement)) return;
-    const box = input.closest(VERIFICATION_SELECTOR);
+    input.value = normalize(input.value, mode, 1);
+    root.classList.remove('error');
+    syncLegacy(root, inputs);
+    if (input.value) inputs[inputs.indexOf(input) + 1]?.focus();
+  };
 
-    if (box?.classList.contains('error')) {
-      box.classList.remove('error');
-    }
-
-    const normalized = normalizeInputValue(input, input.value);
-    syncVerificationActiveState(root);
-    if (!normalized) return;
-    const enabledInputs = getFormInputs(root).filter(item => !item.disabled);
-    const index = enabledInputs.indexOf(input);
-    const next = enabledInputs[index + 1];
-    if (next) focusInput(next);
+  const onPaste = event => {
+    const value = normalize(event.clipboardData?.getData('text'), mode, inputs.length);
+    if (!value) return;
+    event.preventDefault();
+    inputs.forEach((input, index) => {
+      input.value = value[index] || '';
+    });
+    syncLegacy(root, inputs);
+    inputs[Math.min(value.length, inputs.length - 1)]?.focus();
   };
 
   const onKeydown = event => {
     const input = event.target;
-    if (!(input instanceof HTMLInputElement)) return;
-    const enabledInputs = getFormInputs(root).filter(item => !item.disabled);
-    const index = enabledInputs.indexOf(input);
-    const prev = enabledInputs[index - 1];
+    const index = inputs.indexOf(input);
 
-    if (event.key === 'Backspace' && !input.value && prev) {
+    if (event.key === 'Backspace' && !input.value && index > 0) {
       event.preventDefault();
-      prev.value = '';
-      syncVerificationActiveState(root);
-      focusInput(prev);
-    }
-
-    if (event.key === 'ArrowLeft' && prev) {
-      event.preventDefault();
-      focusInput(prev);
-    }
-
-    if (event.key === 'ArrowRight') {
-      const next = enabledInputs[index + 1];
-
-      if (next) {
-        event.preventDefault();
-        focusInput(next);
-      }
+      inputs[index - 1].value = '';
+      inputs[index - 1].focus();
+      syncLegacy(root, inputs);
     }
   };
-
-  const onFocus = event => {
-    const input = event.target;
-    if (!(input instanceof HTMLInputElement)) return;
-    if (typeof input.select === 'function') input.select();
-  };
-
-  const onPaste = event => onFormPaste(root, event);
 
   inputs.forEach(input => {
-    if (!input.hasAttribute('maxlength')) input.setAttribute('maxlength', '1');
+    input.maxLength = 1;
     input.addEventListener('input', onInput);
     input.addEventListener('keydown', onKeydown);
-    input.addEventListener('focus', onFocus);
   });
   root.addEventListener('paste', onPaste);
-  root.__sfVerificationOnInput = onInput;
-  root.__sfVerificationOnKeydown = onKeydown;
-  root.__sfVerificationOnFocus = onFocus;
-  root.__sfVerificationOnPaste = onPaste;
-  root.dataset[BOUND_FORM_FLAG] = '1';
-  syncVerificationActiveState(root);
+  syncLegacy(root, inputs);
+  return {
+    inputs,
+    mode,
+
+    destroy() {
+      inputs.forEach(input => {
+        input.removeEventListener('input', onInput);
+        input.removeEventListener('keydown', onKeydown);
+      });
+      root.removeEventListener('paste', onPaste);
+    }
+
+  };
 }
 
-function unbindVerificationForm(root) {
-  if (!root || root.dataset[BOUND_FORM_FLAG] !== '1') return;
-  const inputs = getFormInputs(root);
-  inputs.forEach(input => {
-    if (root.__sfVerificationOnInput) {
-      input.removeEventListener('input', root.__sfVerificationOnInput);
-    }
+function bind(root) {
+  if (!root || states.has(root)) return states.get(root);
+  const input = canonicalInput(root);
+  const inputs = legacyInputs(root);
+  const state = input ? bindCanonical(root, input) : inputs.length ? bindLegacy(root, inputs) : null;
+  if (state) states.set(root, state);
+  return state;
+}
 
-    if (root.__sfVerificationOnKeydown) {
-      input.removeEventListener('keydown', root.__sfVerificationOnKeydown);
-    }
+function unbind(root) {
+  const state = states.get(root);
+  if (!state) return;
+  state.destroy?.();
+  states.delete(root);
+}
 
-    if (root.__sfVerificationOnFocus) {
-      input.removeEventListener('focus', root.__sfVerificationOnFocus);
-    }
-  });
+function initAll(target = document) {
+  if (target.matches?.(FORM_SELECTOR)) bind(target);
+  target.querySelectorAll?.(FORM_SELECTOR).forEach(bind);
+}
 
-  if (root.__sfVerificationOnPaste) {
-    root.removeEventListener('paste', root.__sfVerificationOnPaste);
+function getValue(target) {
+  const root = getRoot(target);
+  if (!root) return '';
+  const input = canonicalInput(root);
+  if (input) return normalize(input.value, getMode(root), getLength(root, input));
+  return legacyInputs(root).map(item => item.value).join('');
+}
+
+function setValue(target, value = '') {
+  const root = getRoot(target);
+  if (!root) return false;
+  const state = bind(root);
+  const input = canonicalInput(root);
+
+  if (input) {
+    input.value = normalize(value, state.mode, state.length);
+    renderCanonical(root, state);
+    return true;
   }
 
-  delete root.__sfVerificationOnInput;
-  delete root.__sfVerificationOnKeydown;
-  delete root.__sfVerificationOnFocus;
-  delete root.__sfVerificationOnPaste;
-  delete root.dataset[BOUND_FORM_FLAG];
-}
-
-function initExistingVerificationForms(target = document) {
-  target.querySelectorAll(VERIFICATION_FORM_SELECTOR).forEach(bindVerificationForm);
-}
-
-function getVerificationValue(target) {
-  const root = target instanceof HTMLElement ? target.closest(VERIFICATION_FORM_SELECTOR) || target : null;
-  if (!root) return '';
-  return getFormInputs(root).map(input => String(input.value || '')).join('');
-}
-
-function setVerificationValue(target, value = '') {
-  const root = target instanceof HTMLElement ? target.closest(VERIFICATION_FORM_SELECTOR) || target : null;
-  if (!root) return false;
-  const inputs = getFormInputs(root);
-  const chars = String(value || '').split('');
-  inputs.forEach((input, index) => {
-    input.value = chars[index] || '';
+  const inputs = legacyInputs(root);
+  const normalized = normalize(value, getMode(root), inputs.length);
+  inputs.forEach((item, index) => {
+    item.value = normalized[index] || '';
   });
-  syncVerificationActiveState(root);
-  return true;
+  syncLegacy(root, inputs);
+  return Boolean(inputs.length);
 }
 
 class Verification extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.ComponentObserver {
@@ -263,11 +296,11 @@ class VerificationForm extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODU
   html = null;
 
   init() {
-    bindVerificationForm(this.template);
+    bind(this.template);
   }
 
   destroyInternal() {
-    unbindVerificationForm(this.template);
+    unbind(this.template);
   }
 
 }
@@ -275,36 +308,41 @@ class VerificationForm extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODU
 VerificationForm.utilityMap = _json_verification_form_utility_json__WEBPACK_IMPORTED_MODULE_3__;
 (0,_register_helper__WEBPACK_IMPORTED_MODULE_1__["default"])('VerificationForm', VerificationForm);
 
-if (typeof window !== 'undefined') {
+function install() {
+  if (window.SF?.Verification?.contract === 'single-input') return window.SF.Verification;
   window.SF = window.SF || {};
-  window.SF.Verification = window.SF.Verification || {};
-  window.SF.Verification.getValue = getVerificationValue;
-  window.SF.Verification.setValue = setVerificationValue;
-}
+  const api = {
+    contract: 'single-input',
+    initAll,
+    getValue,
+    setValue
+  };
+  window.SF.Verification = api;
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => initExistingVerificationForms());
-} else {
-  initExistingVerificationForms();
-}
-
-const verificationObserver = new MutationObserver(mutations => {
-  mutations.forEach(mutation => {
-    mutation.addedNodes.forEach(node => {
-      if (!(node instanceof Element)) return;
-
-      if (node.matches?.(VERIFICATION_FORM_SELECTOR)) {
-        bindVerificationForm(node);
-      }
-
-      initExistingVerificationForms(node);
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => initAll(), {
+      once: true
     });
+  } else initAll();
+
+  const observer = new MutationObserver(mutations => mutations.forEach(mutation => {
+    mutation.removedNodes.forEach(node => {
+      if (!(node instanceof Element)) return;
+      if (node.matches?.(FORM_SELECTOR)) unbind(node);
+      node.querySelectorAll?.(FORM_SELECTOR).forEach(unbind);
+    });
+    mutation.addedNodes.forEach(node => {
+      if (node instanceof Element) initAll(node);
+    });
+  }));
+  observer.observe(document.documentElement, {
+    childList: true,
+    subtree: true
   });
-});
-verificationObserver.observe(document.documentElement, {
-  childList: true,
-  subtree: true
-});
+  return api;
+}
+
+if (typeof window !== 'undefined') install();
 
 /***/ },
 
@@ -366,7 +404,9 @@ class ComponentObserver {
       matches.forEach(match => {
         const raw = match.slice(1, -1);
         raw.split(/\s+/).filter(Boolean).forEach(cls => {
-          classes.add(cls.replace(/^\./, ''));
+          // Only explicit (.class) annotations are classes; the
+          // parentheses in var(--token) are CSS values, not markup.
+          if (cls.startsWith('.') && cls.length > 1) classes.add(cls.slice(1));
         });
       });
     });

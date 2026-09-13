@@ -7,256 +7,334 @@
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   highlightAllLazy: () => (/* binding */ highlightAllLazy),
+/* harmony export */   highlightBlock: () => (/* binding */ highlightBlock),
+/* harmony export */   lineNumbersEnabled: () => (/* binding */ lineNumbersEnabled),
+/* harmony export */   normalizeLanguage: () => (/* binding */ normalizeLanguage),
+/* harmony export */   refresh: () => (/* binding */ refresh),
+/* harmony export */   requestedLanguage: () => (/* binding */ requestedLanguage)
 /* harmony export */ });
-/* harmony import */ var _public_path__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("92f78dcd2767");
-/* harmony import */ var _public_path__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_public_path__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("2f3e26953260");
-/* harmony import */ var _line_numbers__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("c67f05508e63");
-/* harmony import */ var _languages__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("8e4e61390880");
-/* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("58661bec99a6");
+/* harmony import */ var highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2f3e26953260");
+/* harmony import */ var _line_numbers__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("c67f05508e63");
+/* harmony import */ var _languages__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("8e4e61390880");
+/* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("58661bec99a6");
 
 
 
 
-
-highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_1__["default"].componentName = 'hljs';
-(0,_line_numbers__WEBPACK_IMPORTED_MODULE_2__.initLineNumbers)(highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_1__["default"]);
+const CODE_SELECTOR = 'pre code';
+const ROOT_SELECTOR = '.sf-highlight, .source';
+const CHROME_MODES = new Set(['auto', 'none', 'static']);
 const languagePromiseCache = new Map();
 const highlightedNodes = new WeakSet();
+const sourceText = new WeakMap();
+let codeId = 0;
+highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_0__["default"].componentName = 'hljs';
+(0,_line_numbers__WEBPACK_IMPORTED_MODULE_1__.initLineNumbers)(highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_0__["default"]);
+if (typeof window !== 'undefined') window.hljs = highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_0__["default"];
 
-if (typeof window !== 'undefined') {
-  window.hljs = highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_1__["default"];
+function normalizeLanguage(language) {
+  const normalized = String(language || '').trim().toLowerCase();
+  return _languages__WEBPACK_IMPORTED_MODULE_2__.LANGUAGE_ALIASES[normalized] || normalized;
 }
 
-function normalizeLanguage(lang) {
-  if (!lang) return '';
-  return _languages__WEBPACK_IMPORTED_MODULE_3__.LANGUAGE_ALIASES[lang] || lang;
+function requestedLanguage(block) {
+  const className = [...block.classList].find(name => /^(?:language|lang)-/.test(name));
+  return String(block.dataset.lang || className?.replace(/^(?:language|lang)-/, '') || '').trim().toLowerCase();
 }
 
-function extractLanguagesFromDOM(root = document) {
-  if (typeof document === 'undefined') return [];
-  const languages = new Set();
-  const codeBlocks = root.querySelectorAll('pre code');
-  codeBlocks.forEach(el => {
-    const dataLang = el.dataset ? el.dataset.lang : '';
-    const classLang = el.className && el.className.match(/(?:language|lang)-([^\s]+)/) || [];
-    const lang = normalizeLanguage((dataLang || classLang[1] || '').toLowerCase());
-
-    if (lang) {
-      languages.add(lang);
-    }
+function registerConfiguredAliases(languageName) {
+  const aliases = Object.entries(_languages__WEBPACK_IMPORTED_MODULE_2__.LANGUAGE_ALIASES).filter(([, target]) => target === languageName).map(([alias]) => alias);
+  if (aliases.length > 0) highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_0__["default"].registerAliases(aliases, {
+    languageName
   });
-  return Array.from(languages);
 }
 
-async function ensureLanguagesRegistered(langs) {
-  for (const lang of langs) {
-    const normalized = normalizeLanguage(lang);
-    if (!normalized || highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_1__["default"].getLanguage(normalized)) continue;
-    const loader = _languages__WEBPACK_IMPORTED_MODULE_3__.CUSTOM_LANGUAGE_LOADERS[normalized] || _languages__WEBPACK_IMPORTED_MODULE_3__.LANGUAGE_LOADERS[normalized];
-    if (!loader) continue;
+async function registerLanguage(languageName) {
+  const normalized = normalizeLanguage(languageName);
+  if (!normalized) return false;
+  if (highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_0__["default"].getLanguage(normalized)) return true;
 
-    if (languagePromiseCache.has(normalized)) {
-      await languagePromiseCache.get(normalized);
-      continue;
+  if (languagePromiseCache.has(normalized)) {
+    return languagePromiseCache.get(normalized);
+  }
+
+  const loader = _languages__WEBPACK_IMPORTED_MODULE_2__.CUSTOM_LANGUAGE_LOADERS[normalized] || _languages__WEBPACK_IMPORTED_MODULE_2__.LANGUAGE_LOADERS[normalized];
+  if (!loader) return false;
+  const promise = loader().then(module => {
+    const definition = module.default || module;
+    if (typeof definition !== 'function') return false;
+    highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_0__["default"].registerLanguage(normalized, definition);
+    registerConfiguredAliases(normalized);
+    return true;
+  }).catch(() => false);
+  languagePromiseCache.set(normalized, promise);
+  return promise;
+}
+
+async function prepareLanguage(block) {
+  const requested = requestedLanguage(block);
+  if (requested) block.dataset.requestedLang = requested;
+  block.dataset.highlightState = 'pending';
+  const normalized = normalizeLanguage(requested);
+  const supported = normalized ? await registerLanguage(normalized) : false;
+
+  if (supported) {
+    if (![...block.classList].some(name => /^(?:language|lang)-/.test(name))) {
+      block.classList.add(`language-${requested || normalized}`);
     }
 
-    const promise = loader().then(module => {
-      const definition = module.default || module;
-
-      if (typeof definition === 'function') {
-        highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_1__["default"].registerLanguage(normalized, definition);
-      }
-    }).catch(() => {
-      if (!highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_1__["default"].getLanguage('plaintext') && _languages__WEBPACK_IMPORTED_MODULE_3__.LANGUAGE_LOADERS.plaintext) {
-        return _languages__WEBPACK_IMPORTED_MODULE_3__.LANGUAGE_LOADERS.plaintext().then(mod => {
-          highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_1__["default"].registerLanguage('plaintext', mod.default || mod);
-        });
-      }
-
-      return null;
-    });
-    languagePromiseCache.set(normalized, promise);
-    await promise;
+    return {
+      language: normalized,
+      requested,
+      supported: true
+    };
   }
+
+  await registerLanguage('plaintext');
+  [...block.classList].filter(name => /^(?:language|lang)-/.test(name)).forEach(name => block.classList.remove(name));
+  block.classList.add('language-plaintext');
+  return {
+    language: 'plaintext',
+    requested,
+    supported: requested === ''
+  };
 }
 
-highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_1__["default"].addPlugin({
+function chromeMode(block, root) {
+  const value = block.dataset.chrome || root?.dataset.chrome || root?.dataset.sfHighlightChrome || 'auto';
+  return CHROME_MODES.has(value) ? value : 'auto';
+}
+
+function lineNumbersEnabled(block) {
+  if (block.hasAttribute('data-lines')) return block.dataset.lines !== 'false';
+  return block.dataset.lineNumbers === 'true';
+}
+
+function ensureCodeId(block) {
+  if (block.id) return block.id;
+
+  do {
+    codeId += 1;
+    block.id = `sf-highlight-code-${codeId}`;
+  } while (block.ownerDocument.getElementById(block.id) !== block);
+
+  return block.id;
+}
+
+function localizedCopyStrings(block, root) {
+  const language = block.closest('[lang]')?.lang || block.ownerDocument.documentElement.lang || 'en';
+  const isRussian = language.toLowerCase().startsWith('ru');
+  return {
+    label: block.dataset.copyLabel || root?.dataset.copyLabel || (isRussian ? 'Копировать код' : 'Copy code'),
+    success: block.dataset.copySuccess || root?.dataset.copySuccess || (isRussian ? 'Код скопирован' : 'Code copied')
+  };
+}
+
+function ensureCopyButton(block, root, head) {
+  let button = head.querySelector(':scope > .sf-highlight__copy');
+  if (button) return button;
+  const strings = localizedCopyStrings(block, root);
+  const codeElementId = ensureCodeId(block);
+  let status = head.querySelector(':scope > .sf-highlight__status');
+
+  if (!status) {
+    status = block.ownerDocument.createElement('span');
+    status.id = `${codeElementId}-copy-status`;
+    status.className = 'sf-highlight__status sr-only';
+    head.append(status);
+  }
+
+  button = block.ownerDocument.createElement('button');
+  button.type = 'button';
+  button.className = ['sf-highlight__copy', 'sf-clipboard', 'sf-icon-button', 'sf-icon-button--size-1/2', 'sf-icon-button--icon', 'sf-icon-button--link', 'sf-icon-button--on-surface', 'flex', 'items-cross-center'].join(' ');
+  button.dataset.target = `#${codeElementId}`;
+  button.dataset.status = `#${status.id}`;
+  button.dataset.success = strings.success;
+  button.setAttribute('aria-label', strings.label);
+  const icon = block.ownerDocument.createElement('span');
+  icon.className = 'sf-icon';
+  icon.textContent = 'content_copy';
+  icon.setAttribute('aria-hidden', 'true');
+  button.append(icon);
+  head.append(button);
+  return button;
+}
+
+function ensureStructure(block) {
+  let root = block.closest(ROOT_SELECTOR);
+  const mode = chromeMode(block, root);
+  const pre = block.closest('pre');
+  if (!pre) return {
+    root: null,
+    mode
+  };
+
+  if (!root) {
+    root = block.ownerDocument.createElement('div');
+    root.className = 'sf-highlight source';
+    pre.replaceWith(root);
+    root.append(pre);
+  } else {
+    root.classList.add('sf-highlight');
+  }
+
+  root.classList.add('sf-code-surface');
+  pre.classList.add('sf-code-surface__scroll');
+
+  if (mode !== 'static') {
+    let wrap = pre.closest('.sf-highlight__wrap, .sf--highlight-wrap');
+
+    if (!wrap || wrap.closest(ROOT_SELECTOR) !== root) {
+      wrap = block.ownerDocument.createElement('div');
+      wrap.className = 'sf-highlight__wrap sf--highlight-wrap sf-scrollbar';
+      wrap.dataset.sfScrollbar = 'overlay';
+      wrap.dataset.sfScrollbarAxis = 'horizontal';
+      pre.replaceWith(wrap);
+      wrap.append(pre);
+    } else {
+      wrap.classList.add('sf-highlight__wrap', 'sf--highlight-wrap', 'sf-scrollbar');
+    }
+
+    pre.classList.add('sf-scrollbar__viewport');
+  }
+
+  let head = null;
+
+  if (mode === 'auto') {
+    head = root.querySelector(':scope > .sf-highlight__head, :scope > .sf--highlight-head');
+
+    if (!head) {
+      head = block.ownerDocument.createElement('div');
+      head.className = ['sf-highlight__head', 'sf--highlight-head', 'flex', 'content-main-between', 'items-center', 'border-outline-variant', 'bg-surface-overlay'].join(' ');
+      root.prepend(head);
+    }
+  }
+
+  return {
+    head,
+    mode,
+    root
+  };
+}
+
+function updateChrome(block, result) {
+  const {
+    head,
+    mode,
+    root
+  } = ensureStructure(block);
+  if (!root) return;
+  root.dataset.highlightState = block.dataset.highlightState;
+  root.classList.add('init');
+  if (mode !== 'auto' || !head) return;
+  let language = head.querySelector(':scope > .sf-highlight__language');
+
+  if (!language) {
+    language = block.ownerDocument.createElement('span');
+    language.className = 'sf-highlight__language sf-text-1/2 weight-5';
+    head.prepend(language);
+  }
+
+  const requested = block.dataset.requestedLang || '';
+  language.textContent = requested || result.language || 'text';
+  ensureCopyButton(block, root, head);
+}
+
+highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_0__["default"].addPlugin({
   'before:highlightElement': ({
     el
   }) => {
-    let source = el.closest('.source');
-    const staticChrome = Boolean(source && source.matches('[data-sf-highlight-chrome="static"]'));
-    el.sfStaticChrome = staticChrome;
-    const classLang = el.className && el.className.match(/(?:language|lang)-([^\s]+)/) || [];
-    const requestedLang = (el.dataset?.lang || classLang[1] || '').toLowerCase();
-
-    if (requestedLang) {
-      el.dataset.requestedLang = requestedLang;
-    }
-
-    if (staticChrome) {
-      el.source = source;
-      return;
-    }
-
-    el.wrap = document.createElement('div');
-    el.wrap.classList.add('sf--highlight-wrap', 'sf-scrollbar');
-    el.wrap.dataset.sfScrollbar = 'overlay';
-    el.wrap.dataset.sfScrollbarAxis = 'horizontal';
-
-    if (!source) {
-      const parent = el.parentNode;
-      const clone = parent.cloneNode();
-      clone.classList.add('sf-scrollbar__viewport');
-      source = document.createElement('div');
-      source.classList.add('source');
-      clone.appendChild(el);
-      source.append(el.wrap);
-      el.wrap.append(clone);
-      parent.replaceWith(source);
-    } else {
-      const parent = el.parentNode;
-
-      if (parent && !parent.closest('.sf--highlight-wrap')) {
-        parent.classList.add('sf-scrollbar__viewport');
-        parent.replaceWith(el.wrap);
-        el.wrap.append(parent);
-      }
-    }
-
-    el.source = source;
-    el.head = document.createElement('div');
-    el.langText = document.createElement('span');
-    el.langText.classList.add('flex', 'sf-text-1/2', 'weight-5');
-    el.head.classList.add('sf--highlight-head', 'flex', 'content-main-between', 'border-outline-variant', 'items-center', 'bg-surface-overlay');
+    ensureStructure(el);
   },
   'after:highlightElement': ({
     el,
     result
   }) => {
-    const {
-      language
-    } = result;
-    const requestedLang = el.dataset?.requestedLang || '';
-    const displayLang = requestedLang && language === 'xml' && (requestedLang === 'html' || requestedLang === 'xhtml') ? 'html' : requestedLang || language;
-    const id = `copy_${randomId(10)}`;
+    updateChrome(el, result);
 
-    if (el && el.source) {
-      if (el.sfStaticChrome) {
-        el.source.classList.add('init', 'sf-code-surface');
-        const scroll = el.closest('pre');
-        if (scroll) scroll.classList.add('sf-code-surface__scroll');
-
-        if (el.dataset.lineNumbers === 'true') {
-          highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_0__["default"].lineNumbersBlock(el, {
-            singleLine: true
-          });
-        }
-
-        return;
-      }
-
-      if (!el.classList.contains('editor')) {
-        el.source.prepend(el.head);
-        el.head.append(el.langText);
-        el.langText.textContent = displayLang;
-        el.head.append(`[!Copy data-id=copy](size=1/2 scheme=on-surface type=link label=Copy done=Copied)#${id}`);
-        el.head.style.visibility = 'hidden';
-
-        const applyShortcodes = () => {
-          let status = false;
-
-          if (window.SF && window.SF.Loader) {
-            status = true;
-          }
-
-          const ok = status ? SF.Loader.findShortCodes(el.head) : null;
-
-          if (status) {
-            el.head.style.visibility = '';
-          }
-
-          return ok;
-        };
-
-        if (!applyShortcodes()) {
-          window.addEventListener('sf-loader-init', () => {
-            el.head.style.visibility = '';
-          }, {
-            once: true
-          });
-        }
-      }
-
-      el.id = id;
-      el.source.classList.add('init');
-      highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_1__["default"].lineNumbersBlock(el, {
+    if (lineNumbersEnabled(el)) {
+      highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_0__["default"].lineNumbersBlock(el, {
         singleLine: true
       });
     }
   }
 });
 
-function randomId(length = 8) {
-  return Math.random().toString(36).substr(2, length);
-}
-
 function sanitizeCodeBlock(block) {
   if (!block || block.dataset.sfSanitized) return;
+  block.textContent = block.textContent.trim();
+  block.dataset.sfSanitized = '1';
+}
 
-  if (block.children.length) {
-    const raw = block.innerHTML.trim();
-    block.textContent = raw;
-    block.dataset.sfSanitized = '1';
-  } else {
-    block.textContent = block.textContent.trim();
+function codeBlocksIn(root = document) {
+  const blocks = [];
+  if (root instanceof Element && root.matches(CODE_SELECTOR)) blocks.push(root);
+  root.querySelectorAll?.(CODE_SELECTOR).forEach(block => blocks.push(block));
+  return blocks;
+}
+
+async function highlightBlock(block) {
+  if (!(block instanceof HTMLElement)) return false;
+  if (block.dataset.highlighted || highlightedNodes.has(block)) return true;
+  sanitizeCodeBlock(block);
+  sourceText.set(block, block.textContent);
+  const resolution = await prepareLanguage(block);
+
+  try {
+    highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_0__["default"].highlightElement(block);
+
+    if (!resolution.supported && resolution.requested) {
+      block.classList.add(`language-${resolution.requested}`);
+      block.dataset.highlightState = 'unsupported';
+    } else {
+      block.dataset.highlightState = 'ready';
+    }
+
+    block.closest(ROOT_SELECTOR)?.setAttribute('data-highlight-state', block.dataset.highlightState);
+    highlightedNodes.add(block);
+    return true;
+  } catch (error) {
+    block.dataset.highlightState = 'error';
+    block.closest(ROOT_SELECTOR)?.setAttribute('data-highlight-state', 'error');
+    console.warn('Highlight failed; source remains readable.', error);
+    return false;
   }
 }
 
 async function highlightAllLazy(root = document) {
-  const languages = extractLanguagesFromDOM(root);
-  await ensureLanguagesRegistered(languages);
-  const blocks = root.querySelectorAll('pre code');
-  blocks.forEach(block => {
-    if (block.dataset?.highlighted) return;
-    if (highlightedNodes.has(block)) return;
+  const blocks = codeBlocksIn(root);
 
-    try {
-      sanitizeCodeBlock(block);
-      highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_1__["default"].highlightElement(block);
-      highlightedNodes.add(block);
-    } catch (e) {
-      console.warn('highlight.js failed for block', e);
-    }
-  });
+  for (const block of blocks) await highlightBlock(block);
+
+  return blocks;
 }
 
-async function initHighlight() {
-  if (typeof document === 'undefined') return;
-  await highlightAllLazy();
-  highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_1__["default"].componentName = 'hljs';
+async function refresh(target, nextSource) {
+  const root = target instanceof Element ? target : document;
+  const blocks = codeBlocksIn(root);
+
+  for (const block of blocks) {
+    const fallbackSource = sourceText.get(block) || block.textContent;
+    block.textContent = typeof nextSource === 'string' ? nextSource : fallbackSource;
+    delete block.dataset.highlighted;
+    delete block.dataset.sfSanitized;
+    highlightedNodes.delete(block);
+    block.classList.remove('hljs');
+    await highlightBlock(block);
+  }
+
+  return blocks;
 }
 
-initHighlight();
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_1__["default"]);
+highlightAllLazy();
 
 if (typeof MutationObserver !== 'undefined' && typeof document !== 'undefined') {
   const observer = new MutationObserver(mutations => {
     mutations.forEach(mutation => {
-      mutation.addedNodes.forEach(async node => {
-        if (!(node instanceof HTMLElement)) return;
-
-        if (node.matches('pre code')) {
-          await highlightAllLazy(node.parentElement || node);
-        } else {
-          const innerBlocks = node.querySelectorAll?.('pre code');
-
-          if (innerBlocks && innerBlocks.length) {
-            await highlightAllLazy(node);
-          }
-        }
+      mutation.addedNodes.forEach(node => {
+        if (node instanceof Element) highlightAllLazy(node);
       });
     });
   });
@@ -266,7 +344,17 @@ if (typeof MutationObserver !== 'undefined' && typeof document !== 'undefined') 
   });
 }
 
-(0,_register_helper__WEBPACK_IMPORTED_MODULE_4__["default"])('hljs', highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_1__["default"]);
+if (typeof window !== 'undefined') {
+  window.SF = window.SF || {};
+  window.SF.Highlight = {
+    highlight: highlightBlock,
+    refresh
+  };
+}
+
+(0,_register_helper__WEBPACK_IMPORTED_MODULE_3__["default"])('hljs', highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_0__["default"]);
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (highlight_js_lib_core__WEBPACK_IMPORTED_MODULE_0__["default"]);
 
 /***/ },
 
@@ -789,33 +877,17 @@ function initLineNumbers(hljs) {
       let startFrom = options.startFrom || 1;
       let maxLineNumber = startFrom + lines.length - 1;
       let digits = String(maxLineNumber).length;
-      let remSize = `1.5rem`;
-
-      switch (digits) {
-        case 1:
-          remSize = `1.5rem`;
-          break;
-
-        case 2:
-          remSize = `2rem`;
-          break;
-
-        case 3:
-          remSize = `2.5rem`;
-          break;
-      }
-
-      let widthStyle = `style="inline-size:${remSize}"`;
+      const widthToken = digits > 2 ? '--sf-space-4' : digits > 1 ? '--sf-space-3' : '--sf-space-2';
 
       for (let i = 0, l = lines.length; i < l; i++) {
-        html += format('<tr>' + '<td class="{0} {1}"{7} {3}="{5}">' + '<div class="{2}"{3}="{5}"></div>' + '</td>' + '<td class="{0} {4}" {3}="{5}">' + '{6}' + '</td>' + '</tr>', [LINE_NAME, NUMBERS_BLOCK_NAME, NUMBER_LINE_NAME, DATA_ATTR_NAME, CODE_BLOCK_NAME, i + startFrom, lines[i].length > 0 ? lines[i] : ' ', widthStyle]);
+        html += format('<tr>' + '<td class="{0} {1}" aria-hidden="true" {3}="{5}">' + '<div class="{2}"{3}="{5}"></div>' + '</td>' + '<td class="{0} {4}" {3}="{5}">' + '{6}' + '</td>' + '</tr>', [LINE_NAME, NUMBERS_BLOCK_NAME, NUMBER_LINE_NAME, DATA_ATTR_NAME, CODE_BLOCK_NAME, i + startFrom, lines[i].length > 0 ? lines[i] : ' ']);
       }
 
       if (area) {
         const textarea = document.getElementById(area);
 
         if (textarea) {
-          textarea.style.paddingLeft = `calc(${remSize} + var(--sf-space-1) + var(--sf-b0))`;
+          textarea.style.paddingInlineStart = `calc(var(${widthToken}) + var(--sf-space-1) + var(--sf-b0))`;
         }
       }
 
@@ -858,7 +930,11 @@ function initLineNumbers(hljs) {
     } // can be overridden because local option is priority
 
 
-    var value = getAttribute(element, 'data-ln-start-from');
+    var value = getAttribute(element, 'data-start');
+
+    if (value === null) {
+      value = getAttribute(element, 'data-ln-start-from');
+    }
 
     if (value !== null) {
       startFrom = toNumber(value, defaultValue);
@@ -959,36 +1035,6 @@ function initLineNumbers(hljs) {
     return isFinite(number) ? number : fallback;
   }
 }
-
-/***/ },
-
-/***/ "92f78dcd2767"
-(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
-
-/* global __webpack_public_path__: writable */
-(() => {
-  if (typeof window === 'undefined' || !window.sfPath) return;
-  const frameworkRoot = new URL(window.sfPath, window.location?.href || document.baseURI);
-
-  if (!frameworkRoot.pathname.endsWith('/')) {
-    frameworkRoot.pathname += '/';
-  }
-
-  const highlightScript = typeof document === 'undefined' ? null : Array.from(document.scripts).reverse().find(script => {
-    if (!script.src) return false;
-
-    try {
-      return /\/component\/highlight\/js\/highlight(?:\.min)?\.js$/.test(new URL(script.src, document.baseURI).pathname);
-    } catch {
-      return false;
-    }
-  });
-  const highlightRoot = highlightScript ? new URL('../', new URL(highlightScript.src, document.baseURI)) : new URL('component/highlight/', frameworkRoot);
-
-  if (__webpack_require__.p !== highlightRoot.href) {
-    __webpack_require__.p = highlightRoot.href;
-  }
-})();
 
 /***/ },
 
@@ -3695,18 +3741,6 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 	__webpack_require__.m = __webpack_modules__;
 /******/
 /************************************************************************/
-/******/ 	/* webpack/runtime/compat get default export */
-/******/ 	(() => {
-/******/ 		// getDefaultExport function for compatibility with non-harmony modules
-/******/ 		__webpack_require__.n = (module) => {
-/******/ 			const getter = module && module.__esModule ?
-/******/ 				() => (module['default']) :
-/******/ 				() => (module);
-/******/ 			__webpack_require__.d(getter, { a: getter });
-/******/ 			return getter;
-/******/ 		};
-/******/ 	})();
-/******/
 /******/ 	/* webpack/runtime/define property getters */
 /******/ 	(() => {
 /******/ 		// define getter/value functions for harmony exports

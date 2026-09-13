@@ -4,62 +4,8 @@
 /***/ "864efccbef39"
 () {
 
-const bdExample = document.querySelectorAll('.bd-example-indeterminate [type="checkbox"]');
-const bdContent = document.querySelectorAll('.bd-content [href="#"]');
-const exModal = document.querySelector('#exampleModal');
-
-if (bdExample) {
-  bdExample.forEach(function (el) {
-    el.indeterminate = true;
-  });
-}
-
-if (bdContent) {
-  bdContent.forEach(function (el) {
-    el.addEventListener('click', function (e) {
-      e.preventDefault();
-    });
-  });
-}
-
-if (exModal) {
-  exModal.addEventListener('show.bs.modal', function (e) {
-    const btn = e.relatedTarget;
-    const recipient = btn.getAttribute('data-whatever');
-    const modalTitle = this.querySelector('.modal-title');
-    const modalInput = this.querySelectorAll('.modal-body input');
-
-    if (modalTitle) {
-      modalTitle.innerHTML = 'New message to ' + recipient;
-    }
-
-    if (modalInput) {
-      modalInput.forEach(function (el) {
-        el.value = recipient;
-      });
-    }
-  });
-}
-
-const bdToogleAnimated = document.querySelectorAll('.bd-toggle-animated-progress');
-
-if (bdToogleAnimated) {
-  bdToogleAnimated.forEach(function (el) {
-    el.addEventListener('click', function () {
-      const progress = this.parentNode.querySelectorAll('.progress');
-
-      if (progress) {
-        progress.forEach(function (pEl) {
-          let progressBar = pEl.querySelector('.progress-bar-striped');
-
-          if (progressBar) {
-            progressBar.classList.toggle('progress-bar-animated');
-          }
-        });
-      }
-    });
-  });
-} //
+// Doc is intentionally presentation-only. Interactive documentation examples
+// are initialized by the component that owns their behavior.
 
 /***/ },
 

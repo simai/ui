@@ -137,6 +137,54 @@ function syncInputConfig(root, input) {
   input.disabled = isDisabledRoot(root);
 }
 
+function syncFileUploadInteraction(root) {
+  const state = root.__sfFileUploadInteractionState ||= {
+    tabIndex: root.getAttribute('tabindex') ?? '0',
+    disabled: false,
+    buttons: new WeakMap()
+  };
+  const disabled = isDisabledRoot(root);
+  if (!state.disabled) state.tabIndex = root.getAttribute('tabindex') ?? '0';
+  const tabIndex = disabled ? '-1' : state.tabIndex;
+  if (root.getAttribute('tabindex') !== tabIndex) root.setAttribute('tabindex', tabIndex);
+  if (root.getAttribute('aria-disabled') !== String(disabled)) root.setAttribute('aria-disabled', String(disabled));
+  state.disabled = disabled;
+  syncInputConfig(root, getInput(root));
+  if (disabled && root.classList.contains('dragover')) root.classList.remove('dragover');
+  const files = getFilesContainer(root);
+  const russian = (root.closest('[lang]')?.getAttribute('lang') || document.documentElement.lang).toLowerCase().startsWith('ru');
+  files?.querySelectorAll('button[data-action="remove"], button[data-action="retry"]').forEach(button => {
+    let previous = state.buttons.get(button);
+
+    if (!previous) {
+      previous = {
+        disabled: button.disabled,
+        managedDisabled: false,
+        label: null
+      };
+      state.buttons.set(button, previous);
+    }
+
+    if (!previous.managedDisabled) previous.disabled = button.disabled;
+    const nextDisabled = disabled || previous.disabled;
+    if (button.disabled !== nextDisabled) button.disabled = nextDisabled;
+    previous.managedDisabled = disabled;
+    if (button.dataset.action !== 'remove') return;
+    const currentLabel = button.getAttribute('aria-label');
+
+    if (!button.hasAttribute('aria-labelledby') && (!currentLabel || currentLabel === previous.label)) {
+      const name = button.closest('.sf-upload-progress')?.querySelector('.sf-upload-progress-name')?.textContent?.trim() || '';
+      const label = `${russian ? 'Удалить' : 'Remove'} ${name}`.trim();
+      if (currentLabel !== label) button.setAttribute('aria-label', label);
+      previous.label = label;
+    }
+
+    button.querySelectorAll('.sf-icon').forEach(icon => {
+      if (icon.getAttribute('aria-hidden') !== 'true') icon.setAttribute('aria-hidden', 'true');
+    });
+  });
+}
+
 function createUploadProgressItem(item, size = '1') {
   const normalizedSize = normalizeSize(size);
   const state = String(item.state || item.status || 'done').toLowerCase();
@@ -173,7 +221,7 @@ function createUploadProgressItem(item, size = '1') {
   } else if (state === 'error') {
     const removeButton = document.createElement('button');
     removeButton.type = 'button';
-    removeButton.className = `sf-icon-button sf-icon-button--on-surface sf-icon-button--link sf-icon-button--size-${normalizedSize} radius-default`;
+    removeButton.className = `sf-icon-button sf-icon-button--icon sf-icon-button--on-surface sf-icon-button--link sf-icon-button--size-${normalizedSize} flex items-cross-center content-main-center self-cross-start`;
     removeButton.dataset.action = 'remove';
     const removeIcon = document.createElement('i');
     removeIcon.className = 'sf-icon';
@@ -191,7 +239,7 @@ function createUploadProgressItem(item, size = '1') {
   } else {
     const removeButton = document.createElement('button');
     removeButton.type = 'button';
-    removeButton.className = `sf-icon-button sf-icon-button--on-surface sf-icon-button--link sf-icon-button--size-${normalizedSize} radius-default`;
+    removeButton.className = `sf-icon-button sf-icon-button--icon sf-icon-button--on-surface sf-icon-button--link sf-icon-button--size-${normalizedSize} flex items-cross-center content-main-center self-cross-start`;
     removeButton.dataset.action = 'remove';
     const removeIcon = document.createElement('i');
     removeIcon.className = 'sf-icon';
@@ -202,6 +250,8 @@ function createUploadProgressItem(item, size = '1') {
 
   const progressBar = document.createElement('div');
   progressBar.className = `sf-progress-bar sf-progress-bar--size-${normalizedSize} flex flex-row items-cross-center`;
+  progressBar.dataset.value = String(progress);
+  progressBar.dataset.textPosition = 'inline-end';
   const progressMain = document.createElement('div');
   progressMain.className = 'sf-progress-bar-main';
   const progressValue = document.createElement('div');
@@ -220,7 +270,12 @@ function createUploadProgressItem(item, size = '1') {
 function renderFileUploadItems(root, items = []) {
   root?.classList?.toggle?.('has-files', items.length > 0);
   const container = getFilesContainer(root);
-  if (!container || isManagedRenderRoot(root)) return;
+
+  if (!container || isManagedRenderRoot(root)) {
+    if (root) syncFileUploadInteraction(root);
+    return;
+  }
+
   container.innerHTML = '';
   const size = normalizeSize(Array.from(root.classList).find(cls => cls.startsWith('sf-file-upload--size-'))?.replace('sf-file-upload--size-', '') || '1');
   items.forEach((item, index) => {
@@ -228,6 +283,7 @@ function renderFileUploadItems(root, items = []) {
     node.dataset.index = String(index);
     container.append(node);
   });
+  syncFileUploadInteraction(root);
 }
 
 function emitFileUploadItemAdd(root, item, index, items, source = 'input') {
@@ -389,14 +445,24 @@ function applySelectedFiles(root, files = [], source = 'input') {
 }
 
 function bindFileUpload(root) {
-  if (!root || root.dataset[FILE_UPLOAD_BOUND_FLAG] === '1') return;
+  if (!root) return;
   const input = ensureInput(root);
-  const filesContainer = getFilesContainer(root);
-  syncInputConfig(root, input);
+  const filesContainer = getFilesContainer(root); // DOM markers survive cloneNode; listeners and selected File objects do not.
 
-  if (!root.hasAttribute('tabindex') && !isDisabledRoot(root)) {
-    root.tabIndex = 0;
+  if (typeof root.__sfFileUploadOnClick === 'function') {
+    if (root.__sfFileUploadBoundInput === input && root.__sfFileUploadBoundFiles === filesContainer) return;
+    unbindFileUpload(root);
+  } else if (root.dataset[FILE_UPLOAD_BOUND_FLAG] === '1' && !root.__sfFileUploadItems && !isManagedRenderRoot(root)) {
+    root.__sfFileUploadItems = [];
+
+    if (root.classList.contains('has-files') && !root.hasAttribute('data-target')) {
+      renderFileUploadItems(root, []);
+    }
+
+    root.classList.remove('has-files', 'dragover');
   }
+
+  syncFileUploadInteraction(root);
 
   if (!root.hasAttribute('role')) {
     root.setAttribute('role', 'button');
@@ -423,6 +489,7 @@ function bindFileUpload(root) {
   };
 
   const onKeydown = event => {
+    if (event.target !== root || event.repeat || root.matches('button, input, a[href]')) return;
     if (isDisabledRoot(root)) return;
     if (event.key !== 'Enter' && event.key !== ' ') return;
     event.preventDefault();
@@ -430,6 +497,7 @@ function bindFileUpload(root) {
   };
 
   const onInputChange = event => {
+    if (isDisabledRoot(root)) return;
     const files = Array.from(event.target?.files || []);
     if (!files.length) return;
     applySelectedFiles(root, files, 'input');
@@ -437,8 +505,15 @@ function bindFileUpload(root) {
   };
 
   const onDragOver = event => {
-    if (isDisabledRoot(root)) return;
+    if (!Array.from(event.dataTransfer?.types || []).includes('Files')) return;
     event.preventDefault();
+
+    if (isDisabledRoot(root)) {
+      event.dataTransfer.dropEffect = 'none';
+      return;
+    }
+
+    event.dataTransfer.dropEffect = 'copy';
     root.classList.add('dragover');
   };
 
@@ -449,11 +524,11 @@ function bindFileUpload(root) {
   };
 
   const onDrop = event => {
-    if (isDisabledRoot(root)) return;
-    event.preventDefault();
     root.classList.remove('dragover');
     const files = Array.from(event.dataTransfer?.files || []);
-    if (!files.length) return;
+    if (!files.length && !Array.from(event.dataTransfer?.types || []).includes('Files')) return;
+    event.preventDefault();
+    if (isDisabledRoot(root) || !files.length) return;
     const normalized = getMultiple(root) ? files : files.slice(0, 1);
     applySelectedFiles(root, normalized, 'drop');
   };
@@ -464,6 +539,13 @@ function bindFileUpload(root) {
     const removeButton = target.closest('[data-action="remove"]');
     const retryButton = target.closest('[data-action="retry"]');
     if (!removeButton && !retryButton) return;
+
+    if (isDisabledRoot(root) || (removeButton || retryButton).disabled) {
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
+
     const itemNode = (removeButton || retryButton).closest('.sf-upload-progress');
     if (!itemNode) return;
     event.preventDefault();
@@ -491,12 +573,27 @@ function bindFileUpload(root) {
   root.__sfFileUploadOnDrop = onDrop;
   root.__sfFileUploadOnChange = onInputChange;
   root.__sfFileUploadOnFilesClick = onFilesClick;
+  root.__sfFileUploadBoundInput = input;
+  root.__sfFileUploadBoundFiles = filesContainer;
+  const interactionObserver = new MutationObserver(() => syncFileUploadInteraction(root));
+  interactionObserver.observe(root, {
+    attributes: true,
+    attributeFilter: ['disabled', 'class', 'accept', 'multiple', 'data-accept', 'data-multiple']
+  });
+  if (filesContainer) interactionObserver.observe(filesContainer, {
+    childList: true,
+    subtree: true,
+    characterData: true
+  });
+  root.__sfFileUploadInteractionObserver = interactionObserver;
   root.dataset[FILE_UPLOAD_BOUND_FLAG] = '1';
 }
 
 function unbindFileUpload(root) {
-  if (!root || root.dataset[FILE_UPLOAD_BOUND_FLAG] !== '1') return;
-  const input = getInput(root);
+  if (!root) return;
+  const input = root.__sfFileUploadBoundInput || getInput(root);
+  root.__sfFileUploadInteractionObserver?.disconnect();
+  delete root.__sfFileUploadInteractionObserver;
 
   if (root.__sfFileUploadOnClick) {
     root.removeEventListener('click', root.__sfFileUploadOnClick);
@@ -522,7 +619,7 @@ function unbindFileUpload(root) {
     input.removeEventListener('change', root.__sfFileUploadOnChange);
   }
 
-  const filesContainer = getFilesContainer(root);
+  const filesContainer = root.__sfFileUploadBoundFiles || getFilesContainer(root);
 
   if (filesContainer && root.__sfFileUploadOnFilesClick) {
     filesContainer.removeEventListener('click', root.__sfFileUploadOnFilesClick);
@@ -535,11 +632,18 @@ function unbindFileUpload(root) {
   delete root.__sfFileUploadOnDrop;
   delete root.__sfFileUploadOnChange;
   delete root.__sfFileUploadOnFilesClick;
+  delete root.__sfFileUploadBoundInput;
+  delete root.__sfFileUploadBoundFiles;
   delete root.dataset[FILE_UPLOAD_BOUND_FLAG];
 }
 
 function initExistingFileUploads(target = document) {
-  target.querySelectorAll(FILE_UPLOAD_SELECTOR).forEach(bindFileUpload);
+  target.querySelectorAll(FILE_UPLOAD_SELECTOR).forEach(bindOrdinaryFileUpload);
+}
+
+function bindOrdinaryFileUpload(root) {
+  // Smart owns its render timing and teardown, even when both bundles load.
+  if (root.isConnected && !root.closest('sf-file-upload')) bindFileUpload(root);
 }
 
 function getFileUploadItems(target) {
@@ -601,10 +705,18 @@ const fileUploadObserver = new MutationObserver(mutations => {
       if (!(node instanceof Element)) return;
 
       if (node.matches?.(FILE_UPLOAD_SELECTOR)) {
-        bindFileUpload(node);
+        bindOrdinaryFileUpload(node);
       }
 
       initExistingFileUploads(node);
+    });
+    mutation.removedNodes.forEach(node => {
+      if (!(node instanceof Element) || node.isConnected) return;
+      const roots = [...node.querySelectorAll(FILE_UPLOAD_SELECTOR)];
+      if (node.matches(FILE_UPLOAD_SELECTOR)) roots.push(node);
+      roots.forEach(root => {
+        if (!root.isConnected && !root.closest('sf-file-upload')) unbindFileUpload(root);
+      });
     });
   });
 });
@@ -708,7 +820,9 @@ class ComponentObserver {
       matches.forEach(match => {
         const raw = match.slice(1, -1);
         raw.split(/\s+/).filter(Boolean).forEach(cls => {
-          classes.add(cls.replace(/^\./, ''));
+          // Only explicit (.class) annotations are classes; the
+          // parentheses in var(--token) are CSS values, not markup.
+          if (cls.startsWith('.') && cls.length > 1) classes.add(cls.slice(1));
         });
       });
     });

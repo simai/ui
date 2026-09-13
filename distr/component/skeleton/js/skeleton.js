@@ -61,22 +61,27 @@ class Skeleton extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.C
       items = null
     } = this.params || {};
     const className = this.attrs.class || this.attrs.className;
+    const sizeValue = normalizeChoice(size, ['1/7', '1/6', '1/5', '1/4', '1/3', '1/2', '1', '2', '3', '4', '5', '6', '7'], '1');
+    const animationValue = normalizeChoice(animation, ['pulse', 'wave', 'none'], 'pulse');
+    const variantValue = normalizeChoice(variant, ['text', 'circle', 'square', 'rounded'], 'text');
+    const typeValue = type === 'icon' ? 'icon' : null;
     const widths = normalizeList(width, ['100%']);
     const heights = normalizeList(height);
     const perItemAttrs = parseItemAttrs(items);
     this.container = document.createElement('div');
     this.container.classList.add('sf-skeleton', 'flex');
+    this.container.setAttribute('aria-hidden', 'true');
 
-    if (type !== 'icon') {
+    if (typeValue !== 'icon') {
       this.container.classList.add('flex-1');
 
       if (widths.length) {
-        this.container.style.width = resolveSize(widths[0]);
+        this.container.style.inlineSize = resolveSize(widths[0]);
       }
     }
 
-    if (animation) {
-      this.container.classList.add(`sf-skeleton--animation-${animation}`);
+    if (animationValue) {
+      this.container.classList.add(`sf-skeleton--animation-${animationValue}`);
     }
 
     if (className) {
@@ -84,28 +89,28 @@ class Skeleton extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.C
     }
 
     const total = Number(count);
-    const itemsCount = Number.isFinite(total) && total > 0 ? total : 1;
+    const itemsCount = Number.isFinite(total) ? Math.min(20, Math.max(1, Math.trunc(total))) : 1;
 
     for (let i = 0; i < itemsCount; i++) {
       const item = document.createElement('div');
-      item.classList.add('sf-skeleton-text', `sf-skeleton-text--size-${size}`);
+      item.classList.add('sf-skeleton-text', `sf-skeleton-text--size-${sizeValue}`);
 
-      if (variant && variant !== 'text') {
-        item.classList.add(`sf-skeleton-${variant}`);
+      if (variantValue !== 'text') {
+        item.classList.add(`sf-skeleton-${variantValue}`);
       }
 
-      if (type) {
-        item.classList.add(`sf-skeleton-${type}`);
+      if (typeValue) {
+        item.classList.add(`sf-skeleton-${typeValue}`);
       }
 
       const resolvedWidth = widths[i % widths.length] || '';
       const resolvedHeight = heights[i % heights.length] || '';
 
-      if (type !== 'icon') {
-        item.style.width = resolveSize(resolvedWidth || '100%');
+      if (typeValue !== 'icon') {
+        item.style.inlineSize = resolveSize(resolvedWidth || '100%');
 
         if (resolvedHeight) {
-          item.style.height = resolveSize(resolvedHeight);
+          item.style.blockSize = resolveSize(resolvedHeight);
         }
       }
 
@@ -113,7 +118,7 @@ class Skeleton extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.C
       const mergedAttrs = { ...this.attrs,
         ...specificAttrs
       };
-      Object.entries(mergedAttrs || {}).filter(([attr]) => !['class', 'className'].includes(attr)).forEach(([attr, value]) => {
+      Object.entries(mergedAttrs || {}).filter(([attr]) => isSafeItemAttribute(attr)).forEach(([attr, value]) => {
         if (value === undefined || value === null) {
           return;
         }
@@ -142,7 +147,24 @@ function resolveSize(value) {
     return `var(--sf-${token.toLowerCase()})`;
   }
 
-  return token;
+  if (/^var\(--sf-[a-z0-9_-]+\)$/i.test(token)) {
+    return token;
+  }
+
+  if (/^(?:100|[0-9]{1,2}(?:\.[0-9]+)?)%$/.test(token)) {
+    return token;
+  }
+
+  return '';
+}
+
+function normalizeChoice(value, allowed, fallback) {
+  const normalized = `${value ?? ''}`;
+  return allowed.includes(normalized) ? normalized : fallback;
+}
+
+function isSafeItemAttribute(name) {
+  return /^(?:aria-[a-z0-9_-]+|data-[a-z0-9_-]+)$/i.test(name);
 }
 
 function parseItemAttrs(items) {
@@ -220,7 +242,9 @@ class ComponentObserver {
       matches.forEach(match => {
         const raw = match.slice(1, -1);
         raw.split(/\s+/).filter(Boolean).forEach(cls => {
-          classes.add(cls.replace(/^\./, ''));
+          // Only explicit (.class) annotations are classes; the
+          // parentheses in var(--token) are CSS values, not markup.
+          if (cls.startsWith('.') && cls.length > 1) classes.add(cls.slice(1));
         });
       });
     });

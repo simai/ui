@@ -16,6 +16,8 @@ __webpack_require__.r(__webpack_exports__);
 
 const ROOT_SELECTOR = '.sf-button-group';
 const SEGMENTS = ['start', 'middle', 'end'];
+const OBSERVER_KEY = '__sfButtonGroupObserver';
+const ORIENTED_ROLES = new Set(['listbox', 'menu', 'radiogroup', 'tablist', 'toolbar', 'tree']);
 
 function getItems(root) {
   return Array.from(root.children).filter(item => item.matches?.('sf-button, .sf-button'));
@@ -45,21 +47,54 @@ function syncButtonGroup(root) {
   }
 
   const items = getItems(root);
-  root.setAttribute('role', root.getAttribute('role') || 'group');
-  const orientation = root.getAttribute('aria-orientation') === 'vertical' ? 'vertical' : 'horizontal';
-  root.setAttribute('aria-orientation', orientation);
+  const role = root.getAttribute('role') || 'group';
+
+  if (root.getAttribute('role') !== role) {
+    root.setAttribute('role', role);
+  }
+
+  const orientation = root.getAttribute('data-orientation') === 'vertical' || root.getAttribute('aria-orientation') === 'vertical' ? 'vertical' : 'horizontal';
+
+  if (root.getAttribute('data-orientation') !== orientation) {
+    root.setAttribute('data-orientation', orientation);
+  }
+
+  if (ORIENTED_ROLES.has(role)) {
+    if (root.getAttribute('aria-orientation') !== orientation) {
+      root.setAttribute('aria-orientation', orientation);
+    }
+  } else if (root.hasAttribute('aria-orientation')) {
+    root.removeAttribute('aria-orientation');
+  }
+
   items.forEach((item, index) => {
     const segment = items.length === 1 ? '' : index === 0 ? 'start' : index === items.length - 1 ? 'end' : 'middle';
     setSegment(item, segment);
   });
   return root;
 }
-function initButtonGroups(target = document) {
-  if (target instanceof Element && target.matches?.(ROOT_SELECTOR)) {
-    syncButtonGroup(target);
+
+function bindButtonGroup(root) {
+  if (!(root instanceof HTMLElement) || root[OBSERVER_KEY]) {
+    return syncButtonGroup(root);
   }
 
-  target.querySelectorAll?.(ROOT_SELECTOR).forEach(syncButtonGroup);
+  syncButtonGroup(root);
+  root[OBSERVER_KEY] = new MutationObserver(() => syncButtonGroup(root));
+  root[OBSERVER_KEY].observe(root, {
+    childList: true,
+    attributes: true,
+    attributeFilter: ['role', 'data-orientation', 'aria-orientation']
+  });
+  return root;
+}
+
+function initButtonGroups(target = document) {
+  if (target instanceof Element && target.matches?.(ROOT_SELECTOR)) {
+    bindButtonGroup(target);
+  }
+
+  target.querySelectorAll?.(ROOT_SELECTOR).forEach(bindButtonGroup);
 }
 
 class ButtonGroup extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.ComponentObserver {
@@ -172,7 +207,9 @@ class ComponentObserver {
       matches.forEach(match => {
         const raw = match.slice(1, -1);
         raw.split(/\s+/).filter(Boolean).forEach(cls => {
-          classes.add(cls.replace(/^\./, ''));
+          // Only explicit (.class) annotations are classes; the
+          // parentheses in var(--token) are CSS values, not markup.
+          if (cls.startsWith('.') && cls.length > 1) classes.add(cls.slice(1));
         });
       });
     });

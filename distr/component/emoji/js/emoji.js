@@ -22,7 +22,8 @@ class Emoji extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
       name,
       label,
       title,
-      size = '2',
+      size = '1',
+      decorative = false,
       skin,
       fallback,
       utilities = {}
@@ -53,8 +54,23 @@ class Emoji extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
     });
     const content = this.resolveEmoji(name, emoji, fallback);
     this.element.textContent = content;
-    this.element.setAttribute('role', 'img');
-    this.element.setAttribute('aria-label', `${label ?? title ?? content}`);
+    const hidden = decorative || this.element.getAttribute('aria-hidden') === 'true';
+    const labelledBy = this.element.getAttribute('aria-labelledby');
+    const accessibleLabel = this.element.getAttribute('aria-label') || label || title || content;
+
+    if (hidden) {
+      this.element.setAttribute('aria-hidden', 'true');
+      this.element.removeAttribute('role');
+      this.element.removeAttribute('aria-label');
+      this.element.removeAttribute('aria-labelledby');
+    } else {
+      this.element.setAttribute('role', 'img');
+      this.element.removeAttribute('aria-hidden');
+
+      if (!labelledBy && accessibleLabel) {
+        this.element.setAttribute('aria-label', `${accessibleLabel}`);
+      }
+    }
 
     if (title) {
       this.element.title = title;
@@ -249,7 +265,9 @@ class ComponentObserver {
       matches.forEach(match => {
         const raw = match.slice(1, -1);
         raw.split(/\s+/).filter(Boolean).forEach(cls => {
-          classes.add(cls.replace(/^\./, ''));
+          // Only explicit (.class) annotations are classes; the
+          // parentheses in var(--token) are CSS values, not markup.
+          if (cls.startsWith('.') && cls.length > 1) classes.add(cls.slice(1));
         });
       });
     });

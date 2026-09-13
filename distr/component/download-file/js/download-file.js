@@ -136,9 +136,6 @@ function emitDownloadFileClick(root, href, fileName, download) {
 
 function bindDownloadFile(root) {
   if (!root || root.dataset[DOWNLOAD_FILE_BOUND_FLAG] === '1') return;
-  const href = getRootHref(root);
-  const fileName = root.getAttribute('download') || root.dataset.fileName || root.querySelector('.sf-download-file-file-name')?.textContent?.trim() || '';
-  const download = root.hasAttribute('download') || root.dataset.download === 'true';
 
   const handleClick = event => {
     if (isDisabledRoot(root)) {
@@ -147,6 +144,9 @@ function bindDownloadFile(root) {
       return;
     }
 
+    const href = getRootHref(root);
+    const fileName = root.getAttribute('download') || root.dataset.fileName || root.querySelector('.sf-download-file__name, .sf-download-file-file-name')?.textContent?.trim() || '';
+    const download = root.hasAttribute('download') || root.dataset.download === 'true';
     emitDownloadFileClick(root, href, fileName, download);
 
     if (root.tagName.toLowerCase() === 'a') {
@@ -164,7 +164,6 @@ function bindDownloadFile(root) {
   root.addEventListener('click', handleClick);
   root.__sfDownloadFileClick = handleClick;
   root.dataset[DOWNLOAD_FILE_BOUND_FLAG] = '1';
-  console;
   resolveAndApplyFileSize(root);
 }
 
@@ -235,19 +234,23 @@ class DownloadFile extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0
       root.classList.add(...String(className).split(' ').filter(Boolean));
     }
 
-    const wrap = document.createElement('div');
-    wrap.classList.add('sf-download-file-wrap');
+    const wrap = document.createElement('span');
+    wrap.classList.add('sf-download-file__body', 'sf-download-file-wrap');
+    const container = document.createElement('span');
+    container.classList.add('sf-download-file__main', 'sf-download-file-container');
     const iconNode = document.createElement('i');
-    iconNode.classList.add('sf-icon');
+    iconNode.classList.add('sf-download-file__icon', 'sf-icon');
+    iconNode.setAttribute('aria-hidden', 'true');
     iconNode.textContent = String(icon || 'download');
     const fileNameNode = document.createElement('span');
-    fileNameNode.classList.add('sf-download-file-file-name');
+    fileNameNode.classList.add('sf-download-file__name', 'sf-download-file-file-name');
     fileNameNode.textContent = String(fileName || '');
-    wrap.append(iconNode, fileNameNode);
+    container.append(iconNode, fileNameNode);
     const fileSizeNode = document.createElement('span');
-    fileSizeNode.classList.add('sf-download-file-file-size');
+    fileSizeNode.classList.add('sf-download-file__size', 'sf-download-file-file-size');
     fileSizeNode.textContent = String(fileSize || '');
-    root.append(wrap, fileSizeNode);
+    wrap.append(container, fileSizeNode);
+    root.append(wrap);
     this.href = String(href || '');
     this.download = toBoolean(download, false);
     this.fileName = String(fileName || '');
@@ -410,7 +413,9 @@ class ComponentObserver {
       matches.forEach(match => {
         const raw = match.slice(1, -1);
         raw.split(/\s+/).filter(Boolean).forEach(cls => {
-          classes.add(cls.replace(/^\./, ''));
+          // Only explicit (.class) annotations are classes; the
+          // parentheses in var(--token) are CSS values, not markup.
+          if (cls.startsWith('.') && cls.length > 1) classes.add(cls.slice(1));
         });
       });
     });

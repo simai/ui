@@ -1,0 +1,304 @@
+@layer sf.utilities {
+  @media (min-width: 1320px) {
+    .xxl\:basis-1 {
+      flex-basis: 1%;
+    }
+    .xxl\:basis-2 {
+      flex-basis: 2%;
+    }
+    .xxl\:basis-3 {
+      flex-basis: 3%;
+    }
+    .xxl\:basis-4 {
+      flex-basis: 4%;
+    }
+    .xxl\:basis-5 {
+      flex-basis: 5%;
+    }
+    .xxl\:basis-6 {
+      flex-basis: 6%;
+    }
+    .xxl\:basis-7 {
+      flex-basis: 7%;
+    }
+    .xxl\:basis-8 {
+      flex-basis: 8%;
+    }
+    .xxl\:basis-9 {
+      flex-basis: 9%;
+    }
+    .xxl\:basis-10 {
+      flex-basis: 10%;
+    }
+    .xxl\:basis-11 {
+      flex-basis: 11%;
+    }
+    .xxl\:basis-12 {
+      flex-basis: 12%;
+    }
+    .xxl\:basis-13 {
+      flex-basis: 13%;
+    }
+    .xxl\:basis-14 {
+      flex-basis: 14%;
+    }
+    .xxl\:basis-15 {
+      flex-basis: 15%;
+    }
+    .xxl\:basis-16 {
+      flex-basis: 16%;
+    }
+    .xxl\:basis-17 {
+      flex-basis: 17%;
+    }
+    .xxl\:basis-18 {
+      flex-basis: 18%;
+    }
+    .xxl\:basis-19 {
+      flex-basis: 19%;
+    }
+    .xxl\:basis-20 {
+      flex-basis: 20%;
+    }
+    .xxl\:basis-21 {
+      flex-basis: 21%;
+    }
+    .xxl\:basis-22 {
+      flex-basis: 22%;
+    }
+    .xxl\:basis-23 {
+      flex-basis: 23%;
+    }
+    .xxl\:basis-24 {
+      flex-basis: 24%;
+    }
+    .xxl\:basis-25 {
+      flex-basis: 25%;
+    }
+    .xxl\:basis-26 {
+      flex-basis: 26%;
+    }
+    .xxl\:basis-27 {
+      flex-basis: 27%;
+    }
+    .xxl\:basis-28 {
+      flex-basis: 28%;
+    }
+    .xxl\:basis-29 {
+      flex-basis: 29%;
+    }
+    .xxl\:basis-30 {
+      flex-basis: 30%;
+    }
+    .xxl\:basis-31 {
+      flex-basis: 31%;
+    }
+    .xxl\:basis-32 {
+      flex-basis: 32%;
+    }
+    .xxl\:basis-33 {
+      flex-basis: 33%;
+    }
+    .xxl\:basis-34 {
+      flex-basis: 34%;
+    }
+    .xxl\:basis-35 {
+      flex-basis: 35%;
+    }
+    .xxl\:basis-36 {
+      flex-basis: 36%;
+    }
+    .xxl\:basis-37 {
+      flex-basis: 37%;
+    }
+    .xxl\:basis-38 {
+      flex-basis: 38%;
+    }
+    .xxl\:basis-39 {
+      flex-basis: 39%;
+    }
+    .xxl\:basis-40 {
+      flex-basis: 40%;
+    }
+    .xxl\:basis-41 {
+      flex-basis: 41%;
+    }
+    .xxl\:basis-42 {
+      flex-basis: 42%;
+    }
+    .xxl\:basis-43 {
+      flex-basis: 43%;
+    }
+    .xxl\:basis-44 {
+      flex-basis: 44%;
+    }
+    .xxl\:basis-45 {
+      flex-basis: 45%;
+    }
+    .xxl\:basis-46 {
+      flex-basis: 46%;
+    }
+    .xxl\:basis-47 {
+      flex-basis: 47%;
+    }
+    .xxl\:basis-48 {
+      flex-basis: 48%;
+    }
+    .xxl\:basis-49 {
+      flex-basis: 49%;
+    }
+    .xxl\:basis-50 {
+      flex-basis: 50%;
+    }
+    .xxl\:basis-51 {
+      flex-basis: 51%;
+    }
+    .xxl\:basis-52 {
+      flex-basis: 52%;
+    }
+    .xxl\:basis-53 {
+      flex-basis: 53%;
+    }
+    .xxl\:basis-54 {
+      flex-basis: 54%;
+    }
+    .xxl\:basis-55 {
+      flex-basis: 55%;
+    }
+    .xxl\:basis-56 {
+      flex-basis: 56%;
+    }
+    .xxl\:basis-57 {
+      flex-basis: 57%;
+    }
+    .xxl\:basis-58 {
+      flex-basis: 58%;
+    }
+    .xxl\:basis-59 {
+      flex-basis: 59%;
+    }
+    .xxl\:basis-60 {
+      flex-basis: 60%;
+    }
+    .xxl\:basis-61 {
+      flex-basis: 61%;
+    }
+    .xxl\:basis-62 {
+      flex-basis: 62%;
+    }
+    .xxl\:basis-63 {
+      flex-basis: 63%;
+    }
+    .xxl\:basis-64 {
+      flex-basis: 64%;
+    }
+    .xxl\:basis-65 {
+      flex-basis: 65%;
+    }
+    .xxl\:basis-66 {
+      flex-basis: 66%;
+    }
+    .xxl\:basis-67 {
+      flex-basis: 67%;
+    }
+    .xxl\:basis-68 {
+      flex-basis: 68%;
+    }
+    .xxl\:basis-69 {
+      flex-basis: 69%;
+    }
+    .xxl\:basis-70 {
+      flex-basis: 70%;
+    }
+    .xxl\:basis-71 {
+      flex-basis: 71%;
+    }
+    .xxl\:basis-72 {
+      flex-basis: 72%;
+    }
+    .xxl\:basis-73 {
+      flex-basis: 73%;
+    }
+    .xxl\:basis-74 {
+      flex-basis: 74%;
+    }
+    .xxl\:basis-75 {
+      flex-basis: 75%;
+    }
+    .xxl\:basis-76 {
+      flex-basis: 76%;
+    }
+    .xxl\:basis-77 {
+      flex-basis: 77%;
+    }
+    .xxl\:basis-78 {
+      flex-basis: 78%;
+    }
+    .xxl\:basis-79 {
+      flex-basis: 79%;
+    }
+    .xxl\:basis-80 {
+      flex-basis: 80%;
+    }
+    .xxl\:basis-81 {
+      flex-basis: 81%;
+    }
+    .xxl\:basis-82 {
+      flex-basis: 82%;
+    }
+    .xxl\:basis-83 {
+      flex-basis: 83%;
+    }
+    .xxl\:basis-84 {
+      flex-basis: 84%;
+    }
+    .xxl\:basis-85 {
+      flex-basis: 85%;
+    }
+    .xxl\:basis-86 {
+      flex-basis: 86%;
+    }
+    .xxl\:basis-87 {
+      flex-basis: 87%;
+    }
+    .xxl\:basis-88 {
+      flex-basis: 88%;
+    }
+    .xxl\:basis-89 {
+      flex-basis: 89%;
+    }
+    .xxl\:basis-90 {
+      flex-basis: 90%;
+    }
+    .xxl\:basis-91 {
+      flex-basis: 91%;
+    }
+    .xxl\:basis-92 {
+      flex-basis: 92%;
+    }
+    .xxl\:basis-93 {
+      flex-basis: 93%;
+    }
+    .xxl\:basis-94 {
+      flex-basis: 94%;
+    }
+    .xxl\:basis-95 {
+      flex-basis: 95%;
+    }
+    .xxl\:basis-96 {
+      flex-basis: 96%;
+    }
+    .xxl\:basis-97 {
+      flex-basis: 97%;
+    }
+    .xxl\:basis-98 {
+      flex-basis: 98%;
+    }
+    .xxl\:basis-99 {
+      flex-basis: 99%;
+    }
+    .xxl\:basis-100 {
+      flex-basis: 100%;
+    }
+  }
+}

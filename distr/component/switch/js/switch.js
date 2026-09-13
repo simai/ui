@@ -2,6 +2,46 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "67eed2647f47"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   bindFormReset: () => (/* binding */ bindFormReset)
+/* harmony export */ });
+// Reset fires before the browser restores default values. Synchronize afterwards
+// without synthesizing input/change events or retaining detached controls.
+const subscriptions = new WeakMap();
+const listeningDocuments = new WeakSet();
+function bindFormReset(input, synchronize) {
+  const doc = input.ownerDocument;
+
+  if (!listeningDocuments.has(doc)) {
+    doc.addEventListener('reset', event => {
+      const form = event.target;
+      if (form?.tagName !== 'FORM') return;
+      const controls = Array.from(form.elements);
+      setTimeout(() => {
+        if (event.defaultPrevented) return;
+
+        for (const control of controls) {
+          if (!control.isConnected || control.form !== form) continue;
+
+          for (const callback of subscriptions.get(control) || []) callback();
+        }
+      }, 0);
+    }, true);
+    listeningDocuments.add(doc);
+  }
+
+  let callbacks = subscriptions.get(input);
+  if (!callbacks) subscriptions.set(input, callbacks = new Set());
+  callbacks.add(synchronize);
+  return () => callbacks.delete(synchronize);
+}
+
+/***/ },
+
 /***/ "58661bec99a6"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -48,6 +88,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d7f974466839");
 /* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("58661bec99a6");
+/* harmony import */ var _form_reset_helper__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("67eed2647f47");
+
 
 
 const SWITCH_SELECTOR = 'label.sf-switch';
@@ -91,7 +133,8 @@ function syncSwitchState(root) {
   root.classList.toggle('disabled', isDisabled);
   toggler.classList.toggle('content-main-start', !isChecked);
   toggler.classList.toggle('content-main-end', isChecked);
-  toggler.setAttribute('aria-hidden', 'true');
+  toggler.removeAttribute('aria-hidden');
+  inner.setAttribute('aria-hidden', 'true');
 
   if (description && hasToggleText) {
     description.textContent = isChecked ? onText : offText;
@@ -109,12 +152,15 @@ function bindSwitch(root) {
 
   root.__sfSwitchHandleChange = handleChange;
   input.addEventListener('change', handleChange);
+  root.__sfSwitchReleaseReset = (0,_form_reset_helper__WEBPACK_IMPORTED_MODULE_2__.bindFormReset)(input, handleChange);
   root.dataset[SWITCH_BOUND_FLAG] = '1';
   syncSwitchState(root);
 }
 
 function unbindSwitch(root) {
   if (!root) return;
+  root.__sfSwitchReleaseReset?.();
+  delete root.__sfSwitchReleaseReset;
   const {
     input
   } = getSwitchNodes(root);
@@ -199,6 +245,7 @@ class Switch extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Com
     this.toggler.classList.add('sf-switch-toggler', 'transition', 'flex', 'items-cross-center', 'content-main-start');
     this.input = document.createElement('input');
     this.input.type = 'checkbox';
+    this.input.setAttribute('role', 'switch');
 
     if (name) {
       this.input.name = name;
@@ -213,6 +260,7 @@ class Switch extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Com
     this.offText = off || '';
     const descriptionText = this.hasToggleText ? toBoolean(checked) ? this.onText : this.offText : description;
     this.input.checked = toBoolean(checked);
+    this.input.defaultChecked = this.input.checked;
     this.input.disabled = toBoolean(disabled);
 
     if (this.hasToggleText) {
@@ -369,7 +417,9 @@ class ComponentObserver {
       matches.forEach(match => {
         const raw = match.slice(1, -1);
         raw.split(/\s+/).filter(Boolean).forEach(cls => {
-          classes.add(cls.replace(/^\./, ''));
+          // Only explicit (.class) annotations are classes; the
+          // parentheses in var(--token) are CSS values, not markup.
+          if (cls.startsWith('.') && cls.length > 1) classes.add(cls.slice(1));
         });
       });
     });

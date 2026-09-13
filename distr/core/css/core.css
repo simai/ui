@@ -174,6 +174,7 @@
 }
 @layer sf.base {
   .theme-light {
+    color-scheme: light;
     --sf-neutral: var(--sf-neutral-40);
     --sf-primary: var(--sf-primary-40);
     --sf-secondary: var(--sf-secondary-40);
@@ -290,6 +291,7 @@
     --sf-shadow--color-shading: var(--sf-black--alfa-4);
   }
   .theme-dark {
+    color-scheme: dark;
     --sf-neutral: var(--sf-neutral-80);
     --sf-primary: var(--sf-primary-80);
     --sf-secondary: var(--sf-secondary-80);
@@ -2031,22 +2033,70 @@ body {
     font-size: var(--sf-text-large--size);
     line-height: var(--sf-text-large--height);
   }
-  [dir="ltr"] ul{
+  _:-ms-input-placeholder, html:not([dir="rtl"]) ul{
     margin-left: 0px;
   }
-  [dir="rtl"] ul{
-    margin-right: 0px;
+  @supports not (margin-inline-start: initial){
+  html:not([dir="rtl"]) ul{
+    margin-left: 0px;
+    }
   }
-  [dir="ltr"] ul{
-    margin-right: 0px;
-  }
-  [dir="rtl"] ul{
+  ul:where(:dir(ltr)){
     margin-left: 0px;
   }
-  [dir="ltr"] ul{
+  _:-ms-input-placeholder, [dir="rtl"] ul{
+    margin-right: 0px;
+  }
+  @supports not (margin-inline-start: initial){
+  [dir="rtl"] ul{
+    margin-right: 0px;
+    }
+  }
+  ul:where(:dir(rtl)){
+    margin-right: 0px;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) ul{
+    margin-right: 0px;
+  }
+  @supports not (margin-inline-end: initial){
+  html:not([dir="rtl"]) ul{
+    margin-right: 0px;
+    }
+  }
+  ul:where(:dir(ltr)){
+    margin-right: 0px;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] ul{
+    margin-left: 0px;
+  }
+  @supports not (margin-inline-end: initial){
+  [dir="rtl"] ul{
+    margin-left: 0px;
+    }
+  }
+  ul:where(:dir(rtl)){
+    margin-left: 0px;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) ul{
     padding-left: var(--sf-text--size-2);
   }
+  @supports not (padding-inline-start: initial){
+  html:not([dir="rtl"]) ul{
+    padding-left: var(--sf-text--size-2);
+    }
+  }
+  ul:where(:dir(ltr)){
+    padding-left: var(--sf-text--size-2);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] ul{
+    padding-right: var(--sf-text--size-2);
+  }
+  @supports not (padding-inline-start: initial){
   [dir="rtl"] ul{
+    padding-right: var(--sf-text--size-2);
+    }
+  }
+  ul:where(:dir(rtl)){
     padding-right: var(--sf-text--size-2);
   }
   ul {
@@ -2211,10 +2261,26 @@ body {
   }
 }
 @layer sf.base {
-  [dir="ltr"] .sf-loader.loader-default{
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-loader.loader-default{
     left: 0;
   }
+  @supports not (inset-inline-start: initial){
+  html:not([dir="rtl"]) .sf-loader.loader-default{
+    left: 0;
+    }
+  }
+  .sf-loader.loader-default:where(:dir(ltr)){
+    left: 0;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-loader.loader-default{
+    right: 0;
+  }
+  @supports not (inset-inline-start: initial){
   [dir="rtl"] .sf-loader.loader-default{
+    right: 0;
+    }
+  }
+  .sf-loader.loader-default:where(:dir(rtl)){
     right: 0;
   }
   .sf-loader.loader-default {
@@ -2231,10 +2297,26 @@ body {
   .sf-loader.hidden {
     display: none;
   }
-  [dir="ltr"] .sf-loader-inner{
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-loader-inner{
     left: 50vw;
   }
+  @supports not (inset-inline-start: initial){
+  html:not([dir="rtl"]) .sf-loader-inner{
+    left: 50vw;
+    }
+  }
+  .sf-loader-inner:where(:dir(ltr)){
+    left: 50vw;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-loader-inner{
+    right: 50vw;
+  }
+  @supports not (inset-inline-start: initial){
   [dir="rtl"] .sf-loader-inner{
+    right: 50vw;
+    }
+  }
+  .sf-loader-inner:where(:dir(rtl)){
     right: 50vw;
   }
   .sf-loader-inner {

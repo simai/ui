@@ -34,6 +34,8 @@
   --sf-loader-stroke-width: var(--sf-a6);
   --sf-loader-text-gap: var(--sf-space-1/2);
   --sf-loader-text-size: var(--sf-text-size-1);
+  --sf-loader-cycle-duration: calc(var(--sf-duration-slow) * 6);
+  --sf-loader-dot-duration: calc(var(--sf-duration-slow) * 3);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -84,7 +86,7 @@
 *
 */
 .sf-loader-container {
-  --sf-loader-track-color: var(--sf-surface-4);
+  --sf-loader-track-color: var(--sf-surface-container);
   --sf-loader-svg-width: var(--sf-text-size-8);
   --sf-loader-svg-height: var(--sf-text-size-8);
   --sf-loader-stroke-width: var(--sf-a5);
@@ -128,7 +130,7 @@
 
 .sf-loader-container .sf-loader-ring-filled {
   fill: none;
-  opacity: 0.32;
+  opacity: var(--sf-opacity-30);
   stroke: var(--sf-surface-container);
   stroke: var(--sf-loader-track-color, var(--sf-surface-container));
   stroke-linecap: round;
@@ -144,24 +146,31 @@
 }
 
 .sf-loader-container .sf-loader--loading-indicator .sf-loader-ring-accent {
-  -webkit-animation: sf-loader-ring-accent-fill 3.2s linear forwards;
-          animation: sf-loader-ring-accent-fill 3.2s linear forwards;
+  -webkit-animation: sf-loader-ring-accent-fill var(--sf-loader-cycle-duration) linear both;
+          animation: sf-loader-ring-accent-fill var(--sf-loader-cycle-duration) linear both;
 }
 
 .sf-loader-container.sf-loader--infinite .sf-loader--loading-indicator .sf-loader-ring-accent {
-  -webkit-animation: sf-loader-ring-accent-fill 3.2s linear infinite;
-          animation: sf-loader-ring-accent-fill 3.2s linear infinite;
+  -webkit-animation-iteration-count: infinite;
+          animation-iteration-count: infinite;
 }
 
 .sf-loader-container .sf-loader-dot {
   fill: currentColor;
-  opacity: 0.16;
-  -webkit-animation: sf-loader-dot-wave 1.4s linear infinite;
-          animation: sf-loader-dot-wave 1.4s linear infinite;
-  -webkit-animation-delay: 0s;
-          animation-delay: 0s;
-  -webkit-animation-delay: var(--sf-loader-dot-delay, 0s);
-          animation-delay: var(--sf-loader-dot-delay, 0s);
+  opacity: var(--sf-opacity-20);
+  -webkit-animation: sf-loader-dot-wave var(--sf-loader-dot-duration) linear both;
+          animation: sf-loader-dot-wave var(--sf-loader-dot-duration) linear both;
+  -webkit-animation-delay: calc(var(--sf-loader-dot-duration) / var(--sf-loader-dot-count) * var(--sf-loader-dot-step) * -1);
+          animation-delay: calc(var(--sf-loader-dot-duration) / var(--sf-loader-dot-count) * var(--sf-loader-dot-step) * -1);
+}
+
+.sf-loader-container .sf-loader-dot--active {
+  opacity: var(--sf-opacity-60);
+}
+
+.sf-loader-container.sf-loader--infinite .sf-loader-dot {
+  -webkit-animation-iteration-count: infinite;
+          animation-iteration-count: infinite;
 }
 
 @-webkit-keyframes sf-loader-svg-rotate {
@@ -187,30 +196,41 @@
 }
 @-webkit-keyframes sf-loader-dot-wave {
   0% {
-    opacity: 0.16;
+    opacity: var(--sf-opacity-20);
   }
   18% {
     opacity: 1;
   }
   40% {
-    opacity: 0.62;
+    opacity: var(--sf-opacity-60);
   }
   100% {
-    opacity: 0.16;
+    opacity: var(--sf-opacity-20);
   }
 }
 @keyframes sf-loader-dot-wave {
   0% {
-    opacity: 0.16;
+    opacity: var(--sf-opacity-20);
   }
   18% {
     opacity: 1;
   }
   40% {
-    opacity: 0.62;
+    opacity: var(--sf-opacity-60);
   }
   100% {
-    opacity: 0.16;
+    opacity: var(--sf-opacity-20);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sf-loader-container .sf-loader-ring-accent,
+  .sf-loader-container .sf-loader-dot {
+    -webkit-animation: none !important;
+            animation: none !important;
+  }
+  .sf-loader-container .sf-loader-ring-accent {
+    opacity: 1;
+    stroke-dasharray: 24 76;
   }
 }
 @-webkit-keyframes sf-loader-ring-accent-fill {

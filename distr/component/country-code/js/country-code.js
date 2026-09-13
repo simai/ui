@@ -19,6 +19,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("58661bec99a6");
 /* harmony import */ var _json_country_code_utility_json__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("8c672a55a76a");
 /* harmony import */ var _data_countries_json__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("c614c5e30b0d");
+/* harmony import */ var _form_reset_helper__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("67eed2647f47");
+
 
 
 
@@ -27,6 +29,133 @@ const COUNTRY_CODE_SELECTOR = '.sf-country-code';
 const COUNTRY_CODE_BOUND_FLAG = 'sfCountryCodeBound';
 const COUNTRY_ITEMS = Array.isArray(_data_countries_json__WEBPACK_IMPORTED_MODULE_3__?.items) ? _data_countries_json__WEBPACK_IMPORTED_MODULE_3__.items : [];
 let flagObserver = null;
+let countryId = 0;
+const countryGeneratedNames = new WeakMap();
+const countryResetDefaults = new WeakMap();
+const countryRequiredMessages = new WeakMap();
+const countryFieldReferences = new WeakMap();
+const countryMaskConfiguration = new WeakMap();
+
+function syncCountryFieldReferences(root, input) {
+  if (!input) return;
+  const refs = countryFieldReferences.get(input) || {};
+  const label = root.querySelector('.sf-country-code-text');
+  const hint = root.querySelector('.sf-country-code-hint');
+  const generatedName = countryGeneratedNames.get(input);
+  const authorName = input.hasAttribute('aria-label') && input.getAttribute('aria-label') !== generatedName;
+
+  for (const [attribute, candidate] of [['aria-labelledby', label], ['aria-describedby', hint]]) {
+    const node = candidate?.textContent.trim() ? candidate : null;
+    let tokens = (input.getAttribute(attribute) || '').split(/\s+/).filter(Boolean); // A clone retains generated markup, not WeakMap entries. Recognize only the
+    // framework-owned id of its own local label/hint before repairing duplicates.
+
+    const copiedId = candidate && /^sf-country-\d+$/.test(candidate.id) && tokens.includes(candidate.id) ? candidate.id : '';
+    const previous = refs[attribute] || copiedId;
+    tokens = tokens.filter(id => id !== previous);
+    const attach = node && (attribute === 'aria-describedby' || !authorName && tokens.length === 0);
+    const next = attach ? ensureCountryId(node) : '';
+    if (next) tokens.push(next);
+    const value = [...new Set(tokens)].join(' ');
+
+    if (value !== (input.getAttribute(attribute) || '')) {
+      if (value) input.setAttribute(attribute, value);else input.removeAttribute(attribute);
+    }
+
+    refs[attribute] = next;
+  }
+
+  countryFieldReferences.set(input, refs);
+
+  if (label?.textContent.trim() || input.hasAttribute('aria-labelledby')) {
+    if (generatedName && input.getAttribute('aria-label') === generatedName) input.removeAttribute('aria-label');
+  } else if (!authorName) {
+    const name = root.__sfCountryConfig?.locale === 'en' ? 'Phone number' : 'Телефон';
+    if (input.getAttribute('aria-label') !== name) input.setAttribute('aria-label', name);
+    countryGeneratedNames.set(input, name);
+  }
+}
+
+function syncCountryRequired(root, input) {
+  const previous = countryRequiredMessages.get(input);
+  if (input.validity.customError && input.validationMessage !== previous) return;
+  const config = root.__sfCountryConfig || {};
+  const value = String(input.value || '').trim();
+  const local = config.showCode ? extractLocalPart(value, root.dataset.dialCode) : value;
+  const missing = input.required && value !== '' && !/\d/.test(local);
+  const message = missing ? config.locale === 'en' ? 'Enter a phone number.' : 'Введите номер телефона.' : '';
+  input.setCustomValidity(message);
+  countryRequiredMessages.set(input, message);
+}
+
+function ensureCountryId(node) {
+  if (!node) return '';
+
+  if (!node.id || document.getElementById(node.id) && document.getElementById(node.id) !== node) {
+    do {
+      node.id = `sf-country-${++countryId}`;
+    } while (document.getElementById(node.id) && document.getElementById(node.id) !== node);
+  }
+
+  return node.id;
+}
+
+function setCountryName(node, value) {
+  if (!node || node.hasAttribute('aria-labelledby')) return;
+  const previous = countryGeneratedNames.get(node);
+
+  if (!node.hasAttribute('aria-label') || node.getAttribute('aria-label') === previous) {
+    node.setAttribute('aria-label', value);
+    countryGeneratedNames.set(node, value);
+  }
+}
+
+function syncCountryAccessibility(root) {
+  const {
+    input,
+    toggle,
+    list,
+    items
+  } = getNodes(root);
+  const config = root.__sfCountryConfig || {};
+  const open = root.classList.contains('open');
+  const selected = root.__sfCountrySelected;
+  const countryName = config.locale === 'en' ? 'Country code' : 'Код страны';
+  syncCountryFieldReferences(root, input);
+  root.querySelectorAll('.sf-country-code-required, .sf-country-code-left .sf-icon').forEach(node => node.setAttribute('aria-hidden', 'true'));
+
+  if (toggle) {
+    setCountryName(toggle, `${countryName}${selected ? `: ${getCountryLabel(selected, config.locale)}` : ''}`);
+
+    if (config.multiCountry && config.showCode && list) {
+      toggle.setAttribute('aria-haspopup', 'listbox');
+      toggle.setAttribute('aria-controls', ensureCountryId(list));
+      toggle.setAttribute('aria-expanded', String(open));
+    } else {
+      toggle.removeAttribute('aria-haspopup');
+      toggle.removeAttribute('aria-controls');
+      toggle.removeAttribute('aria-expanded');
+      toggle.removeAttribute('role');
+      toggle.tabIndex = -1;
+    }
+  }
+
+  if (list) {
+    list.setAttribute('role', 'listbox');
+    setCountryName(list, countryName);
+    list.setAttribute('aria-hidden', String(!open));
+    list.inert = !open;
+  }
+
+  let selectedFound = false;
+
+  for (const item of items) {
+    const matches = !selectedFound && !!selected && (selected.iso2 ? normalizeIso2(item.dataset.iso2) === selected.iso2 : item.dataset.code === selected.dialCode);
+    selectedFound ||= matches;
+    item.setAttribute('role', 'option');
+    item.setAttribute('aria-selected', String(matches));
+    item.tabIndex = open && item === document.activeElement ? 0 : -1;
+  }
+}
 
 function toBoolean(value, fallback = false) {
   if (value === undefined || value === null || value === '') return fallback;
@@ -213,13 +342,19 @@ function extractLocalPart(fullValue, previousDialCode) {
 function closeAllCountryCodes(except = null) {
   document.querySelectorAll(COUNTRY_CODE_SELECTOR).forEach(node => {
     if (except && node === except) return;
-    node.classList.remove('open');
+    setOpenState(node, false);
   });
 }
 
 function setOpenState(root, open) {
   if (!root) return;
+  const {
+    input
+  } = getNodes(root);
+  if (input?.disabled || root.classList.contains('disabled') || root.__sfCountryConfig?.multiCountry === false) open = false;
   if (open) root.classList.add('open');else root.classList.remove('open');
+  syncCountryAccessibility(root);
+  root.__sfCountryViewport?.(open);
 }
 
 function resolveConfig(root, input) {
@@ -246,8 +381,9 @@ function resolveConfig(root, input) {
 
 function getCountryLabel(country, locale) {
   if (!country) return '';
-  const name = locale === 'en' ? country.nameEn : country.nameRu || country.nameEn;
-  return `${name} (${country.dialCode})`;
+  if (country.label) return String(country.label);
+  const name = (locale === 'en' ? country.nameEn || country.nameRu : country.nameRu || country.nameEn) || country.iso2;
+  return name ? `${name} (${country.dialCode})` : String(country.dialCode || '');
 }
 
 function normalizeCountriesList(countries, locale = 'ru', maxItems = 0) {
@@ -257,11 +393,40 @@ function normalizeCountriesList(countries, locale = 'ru', maxItems = 0) {
     items = items.slice(0, Number(maxItems));
   }
 
-  return items.map(country => ({ ...country,
-    iso2: normalizeIso2(country.iso2),
-    dialCode: String(country.dialCode || country.code || '').trim(),
-    label: country.label || getCountryLabel(country, locale)
-  }));
+  return items.filter(country => country && typeof country === 'object').map(country => {
+    const iso2 = normalizeIso2(country.iso2);
+    const dialCode = String(country.dialCode || country.code || '').trim();
+    const known = getCountryByIso2(iso2) || !iso2 && getCountryByDialCode(dialCode) || {};
+    const item = { ...known,
+      ...country,
+      iso2: iso2 || known.iso2 || '',
+      dialCode: dialCode || known.dialCode || ''
+    };
+    item.label = getCountryLabel(item, locale);
+    return item;
+  });
+}
+
+function readCountryItem(item, locale) {
+  const text = item.cloneNode(true);
+  text.querySelectorAll('.sf-country-code-flag, [aria-hidden="true"]').forEach(node => node.remove());
+  return normalizeCountriesList([{
+    iso2: item.dataset.iso2,
+    code: item.dataset.code,
+    label: text.textContent.trim(),
+    ...(item.hasAttribute('data-mask-pattern') ? {
+      maskPattern: item.dataset.maskPattern
+    } : {})
+  }], locale)[0];
+}
+
+function resolveCountry(root, iso2 = '', dialCode = '') {
+  const countries = root.__sfCountryOptions || [];
+  const iso = normalizeIso2(iso2),
+        code = String(dialCode || '').trim(); // Explicit known countries outside the visible list remain supported for
+  // compatibility. Local descriptors take precedence over the shared dataset.
+
+  return iso && countries.find(country => country.iso2 === iso) || code && countries.find(country => country.dialCode === code) || getCountryByIso2(iso) || getCountryByDialCode(code);
 }
 
 function ensureListMarkup(root, config) {
@@ -307,7 +472,7 @@ function renderDatasetItems(root, config) {
   const frag = document.createDocumentFragment();
   sliced.forEach(country => {
     const item = document.createElement('span');
-    item.classList.add('sf-country-code-item', 'flex', 'items-center', 'transition', 'radius-default');
+    item.classList.add('sf-country-code-item', 'flex', 'items-center', 'transition');
     item.dataset.iso2 = country.iso2;
     item.dataset.code = country.dialCode;
     if (country.maskPattern) item.dataset.maskPattern = country.maskPattern;
@@ -333,26 +498,99 @@ function applyDropdownViewport(root, visibleItems = 8) {
     list,
     itemsWrap
   } = getNodes(root);
-  if (!list || !itemsWrap || visibleItems <= 0) return;
+  if (!list || !itemsWrap || visibleItems <= 0 || !root.classList.contains('open')) return;
   const items = Array.from(itemsWrap.querySelectorAll('.sf-country-code-item'));
   if (!items.length) return;
-  const firstItem = items[0];
-  const itemHeight = firstItem.getBoundingClientRect().height;
-  if (!itemHeight) return;
+  const rootBox = root.getBoundingClientRect();
+  if (!rootBox.height || !root.offsetHeight) return;
+  const scale = rootBox.height / root.offsetHeight;
+  const itemHeights = items.slice(0, visibleItems).map(item => item.getBoundingClientRect().height / scale);
+  if (!itemHeights.some(Boolean)) return;
   const wrapStyle = window.getComputedStyle(itemsWrap);
   const gap = Number.parseFloat(wrapStyle.rowGap || '') || Number.parseFloat(wrapStyle.gap || '') || 0;
   const paddingTop = Number.parseFloat(wrapStyle.paddingTop || '') || 0;
   const paddingBottom = Number.parseFloat(wrapStyle.paddingBottom || '') || 0;
   const visibleCount = Math.min(visibleItems, items.length);
-  const totalHeight = visibleCount * itemHeight + (visibleCount - 1) * gap + paddingTop + paddingBottom;
+  const totalHeight = itemHeights.reduce((sum, height) => sum + height, 0) + (visibleCount - 1) * gap + paddingTop + paddingBottom;
+  const style = getComputedStyle(list);
+  const chrome = ['paddingTop', 'paddingBottom', 'borderTopWidth', 'borderBottomWidth'].reduce((sum, name) => sum + (parseFloat(style[name]) || 0), 0); // Reuse the panel's semantic padding as clearance from the viewport edge.
+
+  const margin = Math.max(parseFloat(style.paddingTop) || 0, parseFloat(style.paddingBottom) || 0) * scale;
+  const viewport = window.visualViewport;
+  const top = (viewport?.offsetTop || 0) + margin;
+  const bottom = (viewport?.offsetTop || 0) + (viewport?.height || document.documentElement.clientHeight) - margin;
+
+  if (rootBox.bottom <= top || rootBox.top >= bottom) {
+    setOpenState(root, false);
+    return;
+  }
+
+  const below = Math.max(0, bottom - rootBox.bottom);
+  const above = Math.max(0, rootBox.top - top);
+  const up = (totalHeight + chrome) * scale > below && above > below;
+  const available = Math.max(0, (up ? above : below) / scale - chrome);
   list.style.overflow = 'hidden';
-  itemsWrap.style.maxHeight = `${Math.ceil(totalHeight)}px`;
+  itemsWrap.style.maxHeight = `${Math.min(totalHeight, available)}px`;
   itemsWrap.style.overflowY = 'auto';
   itemsWrap.style.overflowX = 'hidden';
+  list.style.insetBlockStart = up ? `${-list.getBoundingClientRect().height / scale}px` : '100%';
+}
+
+function bindCountryViewport(root) {
+  const {
+    list,
+    itemsWrap
+  } = getNodes(root);
+  if (!list || !itemsWrap) return;
+  let active = false,
+      frame = 0,
+      saved = null;
+
+  const position = () => {
+    if (active && root.isConnected) applyDropdownViewport(root);
+  };
+
+  const schedule = () => {
+    if (active && !frame) frame = requestAnimationFrame(() => {
+      frame = 0;
+      position();
+    });
+  };
+
+  const observer = typeof ResizeObserver === 'function' ? new ResizeObserver(schedule) : null;
+
+  root.__sfCountryViewport = open => {
+    if (open && !active) {
+      active = true;
+      saved = [list.style.getPropertyValue('inset-block-start'), list.style.getPropertyPriority('inset-block-start')];
+      window.addEventListener('resize', schedule);
+      document.addEventListener('scroll', schedule, true);
+      window.visualViewport?.addEventListener('resize', schedule);
+      window.visualViewport?.addEventListener('scroll', schedule);
+      observer?.observe(root);
+      observer?.observe(itemsWrap);
+    } else if (!open && active) {
+      active = false;
+      window.removeEventListener('resize', schedule);
+      document.removeEventListener('scroll', schedule, true);
+      window.visualViewport?.removeEventListener('resize', schedule);
+      window.visualViewport?.removeEventListener('scroll', schedule);
+      observer?.disconnect();
+      if (frame) cancelAnimationFrame(frame);
+      frame = 0;
+      if (saved[0]) list.style.setProperty('inset-block-start', saved[0], saved[1]);else list.style.removeProperty('inset-block-start');
+    }
+
+    if (open) position();
+  };
 }
 
 async function applyMaskForRoot(root, input, maskPattern, config = null) {
-  if (!input) return;
+  if (!input) return; // Requests can overlap across unbind/rebind or mask removal. A counter that
+  // restarts on rebind lets an old request match a new one (the ABA problem).
+
+  const token = Symbol('country-code-mask');
+  root.__sfCountryMaskToken = token;
 
   if (root.__sfCountryMask) {
     window.SF?.Mask?.destroy?.(root.__sfCountryMask);
@@ -362,8 +600,6 @@ async function applyMaskForRoot(root, input, maskPattern, config = null) {
   if (!maskPattern) return;
   if (!window.SF?.Mask?.create) return;
   const current = input.value;
-  root.__sfCountryMaskToken = (root.__sfCountryMaskToken || 0) + 1;
-  const token = root.__sfCountryMaskToken;
 
   try {
     const resolvedConfig = config || root.__sfCountryConfig || resolveConfig(root, input);
@@ -403,23 +639,15 @@ async function applyMaskForRoot(root, input, maskPattern, config = null) {
 
       input.value = instance.value || input.value;
     }
+
+    syncCountryRequired(root, input);
   } catch (error) {
     console.warn('SF.CountryCode mask init failed', error);
   }
 }
 
-function resolveInitialCountry(config) {
-  if (config.defaultIso2) {
-    const byIso = getCountryByIso2(config.defaultIso2);
-    if (byIso) return byIso;
-  }
-
-  if (config.fixedDialCode) {
-    const byDial = getCountryByDialCode(config.fixedDialCode);
-    if (byDial) return byDial;
-  }
-
-  return COUNTRY_ITEMS[0] || null;
+function resolveInitialCountry(config, root) {
+  return resolveCountry(root, config.defaultIso2) || resolveCountry(root, '', config.fixedDialCode) || root.__sfCountryOptions?.[0] || COUNTRY_ITEMS[0] || null;
 }
 
 function syncDisabledState(root) {
@@ -437,6 +665,9 @@ function syncDisabledState(root) {
     toggle.setAttribute('aria-disabled', disabled ? 'true' : 'false');
     toggle.tabIndex = disabled ? -1 : 0;
   }
+
+  if (disabled) setOpenState(root, false);
+  syncCountryAccessibility(root);
 }
 
 function getLockedPrefix(root, config) {
@@ -477,6 +708,8 @@ function applyCountrySelection(root, country, source = 'runtime') {
   root.dataset.iso2 = country.iso2;
   root.dataset.dialCode = country.dialCode;
   root.dataset.maskPattern = country.maskPattern || '';
+  const maskConfiguration = countryMaskConfiguration.get(root);
+  if (maskConfiguration) maskConfiguration.selected = root.dataset.maskPattern;
   root.__sfCountrySelected = country;
 
   if (config.showCode && leftFlag) {
@@ -492,7 +725,9 @@ function applyCountrySelection(root, country, source = 'runtime') {
   }
 
   if (source === 'item' || source === 'state') {
-    const localPart = extractLocalPart(input.value, previousDialCode);
+    const localPart = extractLocalPart(input.value, previousDialCode); // The previous country's mask must not consume events for the new prefix.
+
+    applyMaskForRoot(root, input, '', config);
     const prefix = country.dialCode ? `${country.dialCode} ` : '';
     input.value = `${prefix}${localPart}`.trim();
     input.dispatchEvent(new Event('input', {
@@ -510,22 +745,50 @@ function applyCountrySelection(root, country, source = 'runtime') {
   } else {
     applyMaskForRoot(root, input, '', config);
   }
+
+  syncCountryAccessibility(root);
+  syncCountryRequired(root, input);
 }
 
-function bindCountryCode(root) {
-  if (!root || root.dataset[COUNTRY_CODE_BOUND_FLAG] === '1') return;
+function bindCountryCode(root, {
+  resetCountry = false,
+  countries,
+  maskPattern
+} = {}) {
+  // Both ordinary and Smart bundles may contain this module. Keep reattachment
+  // with the original owner of WeakMap defaults and authored configuration.
+  if (root?.__sfCountryCodeBind && root.__sfCountryCodeBind !== bindCountryCode) {
+    return root.__sfCountryCodeBind(root, {
+      resetCountry,
+      countries,
+      maskPattern
+    });
+  }
+
+  if (!root || typeof root.__sfCountryCodeInput === 'function') return;
   const {
     input,
     toggle,
     leftFlag
   } = getNodes(root);
   if (!input) return;
+  root.__sfCountryCodeBind = bindCountryCode;
+  root.__sfCountryCodeSetState = setCountryCodeState;
   const config = resolveConfig(root, input);
+  const previousMask = countryMaskConfiguration.get(root);
+  const fixedPattern = maskPattern !== undefined ? String(maskPattern).trim() : previousMask && config.fixedMaskPattern === previousMask.selected ? previousMask.fixed : config.fixedMaskPattern;
+  config.fixedMaskPattern = fixedPattern;
+  countryMaskConfiguration.set(root, {
+    fixed: fixedPattern,
+    selected: root.dataset.maskPattern
+  });
   root.__sfCountryConfig = config;
   renderDatasetItems(root, config);
   applyDropdownViewport(root, 8);
   const nodes = getNodes(root);
   const items = nodes.items;
+  bindCountryViewport(root);
+  root.__sfCountryOptions = countries === undefined ? items.map(item => readCountryItem(item, config.locale)) : normalizeCountriesList(countries, config.locale, config.maxItems);
 
   if (!config.showCode && toggle) {
     toggle.classList.add('hidden');
@@ -544,7 +807,8 @@ function bindCountryCode(root) {
     nodes.list?.classList?.remove('hidden');
   }
 
-  const initialCountry = resolveInitialCountry(config);
+  const initialCountry = resolveInitialCountry(config, root);
+  if (resetCountry || !countryResetDefaults.has(input)) countryResetDefaults.set(input, initialCountry);
 
   if (initialCountry) {
     applyCountrySelection(root, initialCountry, 'init');
@@ -554,21 +818,29 @@ function bindCountryCode(root) {
 
   const onToggleClick = event => {
     event.preventDefault();
-    if (!config.multiCountry || root.classList.contains('disabled')) return;
+    if (!config.multiCountry || input.disabled || root.classList.contains('disabled')) return;
     const willOpen = !root.classList.contains('open');
     closeAllCountryCodes(root);
     setOpenState(root, willOpen);
 
     if (willOpen) {
-      applyDropdownViewport(root, 8);
       prefetchVisibleFlags(root);
     }
   };
 
   const onToggleKeydown = event => {
+    if (event.altKey || event.ctrlKey || event.metaKey || input.disabled || root.classList.contains('disabled') || !config.multiCountry) return;
+
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       onToggleClick(event);
+      if (root.classList.contains('open')) focusItem();
+    }
+
+    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+      event.preventDefault();
+      if (!root.classList.contains('open')) onToggleClick(event);
+      focusItem(event.key === 'ArrowUp' ? -1 : undefined);
     }
 
     if (event.key === 'Escape') {
@@ -583,19 +855,104 @@ function bindCountryCode(root) {
   };
 
   const onItemClick = event => {
+    event.preventDefault();
+    if (input.disabled || root.classList.contains('disabled') || !config.multiCountry) return;
     const item = event.currentTarget;
-    const iso2 = item.dataset.iso2 || '';
-    const byIso = getCountryByIso2(iso2);
-    const byDial = getCountryByDialCode(item.dataset.code || '');
-    const selected = byIso || byDial;
+    if (item.getAttribute('aria-disabled') === 'true' || item.classList.contains('disabled')) return;
+    const selected = readCountryItem(item, config.locale);
     if (!selected) return;
     applyCountrySelection(root, selected, 'item');
-    setOpenState(root, false);
+    setOpenState(root, false); // Preserve pointer workflow: after choosing a code, continue typing the phone.
+    // Keyboard confirmation returns to the selector instead.
+
+    (event.type === 'keydown' ? toggle : input)?.focus({
+      preventScroll: true
+    });
+  };
+
+  const enabledItems = () => items.filter(item => item.getAttribute('aria-disabled') !== 'true' && !item.classList.contains('disabled') && !item.hidden);
+
+  const focusItem = index => {
+    const choices = enabledItems();
+    const selectedIndex = choices.findIndex(item => item.getAttribute('aria-selected') === 'true');
+    const next = index === undefined ? Math.max(0, selectedIndex) : index < 0 ? choices.length - 1 : Math.min(index, choices.length - 1);
+    items.forEach(item => {
+      item.tabIndex = -1;
+    });
+    const item = choices[next];
+    if (!item) return;
+    item.tabIndex = 0;
+    item.focus({
+      preventScroll: true
+    }); // Scroll only the options viewport; focusing must not move the whole page.
+
+    const wrap = nodes.itemsWrap;
+
+    if (wrap) {
+      const box = wrap.getBoundingClientRect(),
+            option = item.getBoundingClientRect();
+      if (option.top < box.top) wrap.scrollTo({
+        top: wrap.scrollTop - (box.top - option.top),
+        behavior: 'instant'
+      });else if (option.bottom > box.bottom) wrap.scrollTo({
+        top: wrap.scrollTop + (option.bottom - box.bottom),
+        behavior: 'instant'
+      });
+    }
+  };
+
+  let search = '',
+      searchTime = 0;
+
+  const onItemKeydown = event => {
+    if (event.altKey || event.ctrlKey || event.metaKey || input.disabled || root.classList.contains('disabled')) return;
+    const choices = enabledItems(),
+          current = choices.indexOf(event.currentTarget);
+
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      setOpenState(root, false);
+      toggle?.focus({
+        preventScroll: true
+      });
+      return;
+    }
+
+    if (event.key === 'Enter' || event.key === ' ') {
+      onItemClick(event);
+      return;
+    }
+
+    if (['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) {
+      event.preventDefault();
+      const index = event.key === 'Home' ? 0 : event.key === 'End' ? choices.length - 1 : Math.max(0, current + (event.key === 'ArrowDown' ? 1 : -1));
+      focusItem(index);
+      return;
+    }
+
+    if (event.key.length === 1) {
+      const now = performance.now();
+      search = now - searchTime > 700 ? event.key : search + event.key;
+      searchTime = now;
+      const query = [...search].every(char => char === search[0]) ? search[0] : search;
+      const ordered = [...choices.slice(current + 1), ...choices.slice(0, current + 1)];
+      const found = ordered.find(item => (item.querySelector('span')?.textContent || item.textContent).trim().toLocaleLowerCase().startsWith(query.toLocaleLowerCase()));
+
+      if (found) {
+        event.preventDefault();
+        focusItem(choices.indexOf(found));
+      }
+    }
+  };
+
+  const onFocusOut = event => {
+    if (!root.contains(event.relatedTarget)) setOpenState(root, false);
   };
 
   const onInput = () => {
     enforceDialCodePrefix(root, input, config);
     keepCaretAfterPrefix(input, getLockedPrefix(root, config));
+    syncCountryRequired(root, input);
   };
 
   const onPaste = () => {
@@ -639,26 +996,59 @@ function bindCountryCode(root) {
   input.addEventListener('input', onInput);
   input.addEventListener('paste', onPaste);
   input.addEventListener('keydown', onKeydownInput);
-  items.forEach(item => item.addEventListener('click', onItemClick));
+  items.forEach(item => {
+    item.addEventListener('click', onItemClick);
+    item.addEventListener('keydown', onItemKeydown);
+  });
+  root.addEventListener('focusout', onFocusOut);
   document.addEventListener('click', onDocumentClick);
   root.__sfCountryCodeToggleClick = onToggleClick;
   root.__sfCountryCodeToggleKeydown = onToggleKeydown;
   root.__sfCountryCodeDocClick = onDocumentClick;
   root.__sfCountryCodeItemClick = onItemClick;
+  root.__sfCountryCodeItemKeydown = onItemKeydown;
+  root.__sfCountryCodeFocusOut = onFocusOut;
   root.__sfCountryCodeInput = onInput;
   root.__sfCountryCodePaste = onPaste;
   root.__sfCountryCodeInputKeydown = onKeydownInput;
+  root.__sfCountryReleaseReset = (0,_form_reset_helper__WEBPACK_IMPORTED_MODULE_4__.bindFormReset)(input, () => {
+    const country = countryResetDefaults.get(input);
+    if (country) applyCountrySelection(root, country, 'reset');
+    setOpenState(root, false);
+    syncCountryRequired(root, input);
+  });
+  root.__sfCountryRequiredObserver = new MutationObserver(() => {
+    syncCountryRequired(root, input);
+    syncCountryFieldReferences(root, input);
+  });
+
+  root.__sfCountryRequiredObserver.observe(root, {
+    attributes: true,
+    attributeFilter: ['required', 'aria-label', 'aria-labelledby', 'aria-describedby', 'id'],
+    childList: true,
+    characterData: true,
+    subtree: true
+  });
+
   root.dataset[COUNTRY_CODE_BOUND_FLAG] = '1';
   syncDisabledState(root);
+  root.__sfCountryViewport?.(root.classList.contains('open'));
 }
 
 function unbindCountryCode(root) {
-  if (!root || root.dataset[COUNTRY_CODE_BOUND_FLAG] !== '1') return;
+  if (!root || typeof root.__sfCountryCodeInput !== 'function') return;
   const {
     input,
     toggle,
     items
   } = getNodes(root);
+  root.__sfCountryReleaseReset?.();
+  delete root.__sfCountryReleaseReset;
+  root.__sfCountryRequiredObserver?.disconnect();
+  delete root.__sfCountryRequiredObserver;
+  root.__sfCountryViewport?.(false);
+  delete root.__sfCountryViewport;
+  root.querySelectorAll('img[data-flag-src]').forEach(img => flagObserver?.unobserve(img));
 
   if (toggle && root.__sfCountryCodeToggleClick) {
     toggle.removeEventListener('click', root.__sfCountryCodeToggleClick);
@@ -673,10 +1063,13 @@ function unbindCountryCode(root) {
   }
 
   items.forEach(item => {
+    if (root.__sfCountryCodeItemKeydown) item.removeEventListener('keydown', root.__sfCountryCodeItemKeydown);
+
     if (root.__sfCountryCodeItemClick) {
       item.removeEventListener('click', root.__sfCountryCodeItemClick);
     }
   });
+  if (root.__sfCountryCodeFocusOut) root.removeEventListener('focusout', root.__sfCountryCodeFocusOut);
 
   if (input && root.__sfCountryCodeInput) {
     input.removeEventListener('input', root.__sfCountryCodeInput);
@@ -698,6 +1091,8 @@ function unbindCountryCode(root) {
   delete root.__sfCountryCodeToggleKeydown;
   delete root.__sfCountryCodeDocClick;
   delete root.__sfCountryCodeItemClick;
+  delete root.__sfCountryCodeItemKeydown;
+  delete root.__sfCountryCodeFocusOut;
   delete root.__sfCountryCodeInput;
   delete root.__sfCountryCodePaste;
   delete root.__sfCountryCodeInputKeydown;
@@ -705,16 +1100,26 @@ function unbindCountryCode(root) {
   delete root.__sfCountryMaskToken;
   delete root.__sfCountrySelected;
   delete root.__sfCountryConfig;
+  delete root.__sfCountryOptions;
   delete root.dataset[COUNTRY_CODE_BOUND_FLAG];
 }
 
 function initExistingCountryCodes(target = document) {
-  target.querySelectorAll(COUNTRY_CODE_SELECTOR).forEach(bindCountryCode);
+  target.querySelectorAll(COUNTRY_CODE_SELECTOR).forEach(root => {
+    // The Smart owner binds its own root after render. Ordinary auto-init must
+    // not claim it first with a different bundled module's reset state.
+    if (!root.closest('sf-country-code')) bindCountryCode(root);
+  });
 }
 
 function setCountryCodeState(target, state = {}) {
   const root = target instanceof HTMLElement ? target.closest(COUNTRY_CODE_SELECTOR) || target : null;
   if (!root) return false;
+
+  if (root.__sfCountryCodeSetState && root.__sfCountryCodeSetState !== setCountryCodeState) {
+    return root.__sfCountryCodeSetState(root, state);
+  }
+
   const {
     input
   } = getNodes(root);
@@ -746,12 +1151,12 @@ function setCountryCodeState(target, state = {}) {
   }
 
   if (Object.prototype.hasOwnProperty.call(state, 'iso2')) {
-    const country = getCountryByIso2(state.iso2);
+    const country = resolveCountry(root, state.iso2);
     if (country) applyCountrySelection(root, country, 'state');
   }
 
   if (Object.prototype.hasOwnProperty.call(state, 'dialCode')) {
-    const country = getCountryByDialCode(state.dialCode);
+    const country = resolveCountry(root, '', state.dialCode);
     if (country) applyCountrySelection(root, country, 'state');
   }
 
@@ -768,6 +1173,8 @@ class CountryCode extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0_
       size = '1',
       label = 'Label',
       required = false,
+      name = '',
+      form = '',
       hint = '',
       value = '',
       placeholder = '+7(___)___-__-__',
@@ -841,13 +1248,16 @@ class CountryCode extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0_
     icon.textContent = toBoolean(open) ? 'expand_less' : 'expand_more';
     left.append(flag, icon);
     const input = document.createElement('input');
-    input.type = 'text';
-    input.value = String(value ?? '');
+    input.type = 'tel';
+    input.name = String(name);
+    if (form) input.setAttribute('form', String(form));
+    input.required = toBoolean(required, false);
+    input.defaultValue = String(value ?? '');
     input.placeholder = String(placeholder ?? '');
     input.disabled = toBoolean(disabled, false);
     field.append(left, input);
     this.template.append(labelWrap, field);
-    const sourceCountries = Array.isArray(countries) && countries.length ? countries : COUNTRY_ITEMS.slice(0, Number(maxItems) > 0 ? Number(maxItems) : undefined);
+    const sourceCountries = normalizeCountriesList(countries, locale, maxItems);
 
     if (sourceCountries.length) {
       const list = document.createElement('span');
@@ -863,7 +1273,7 @@ class CountryCode extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0_
           item.dataset.code = String(country.dialCode || country.code);
         }
 
-        if (country?.maskPattern) item.dataset.maskPattern = String(country.maskPattern);
+        if (country?.maskPattern !== undefined) item.dataset.maskPattern = String(country.maskPattern || '');
         const itemFlag = createFlagNode({
           iso2: country?.iso2,
           flagEmoji: country?.flagEmoji || ''
@@ -882,6 +1292,8 @@ class CountryCode extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0_
         }
 
         item.append(itemFlag, text);
+        this.applyLayoutUtilities(item, '.sf-country-code .sf-country-code-item');
+        this.applyLayoutUtilities(itemFlag, '.sf-country-code .sf-country-code-flag');
         itemsWrap.append(item);
       });
       list.append(itemsWrap);
@@ -904,7 +1316,9 @@ class CountryCode extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0_
   }
 
   init() {
-    bindCountryCode(this.template);
+    bindCountryCode(this.template, {
+      maskPattern: this.params?.maskPattern || ''
+    });
   }
 
   destroyInternal() {
@@ -930,10 +1344,17 @@ if (document.readyState === 'loading') {
 
 const countryCodeObserver = new MutationObserver(mutations => {
   mutations.forEach(mutation => {
+    mutation.removedNodes.forEach(node => {
+      if (!(node instanceof Element)) return;
+      const roots = [...node.querySelectorAll(COUNTRY_CODE_SELECTOR)];
+      if (node.matches(COUNTRY_CODE_SELECTOR)) roots.unshift(node);
+
+      for (const root of roots) if (!root.isConnected && !root.closest('sf-country-code')) unbindCountryCode(root);
+    });
     mutation.addedNodes.forEach(node => {
       if (!(node instanceof Element)) return;
 
-      if (node.matches?.(COUNTRY_CODE_SELECTOR)) {
+      if (node.matches?.(COUNTRY_CODE_SELECTOR) && !node.closest('sf-country-code')) {
         bindCountryCode(node);
       }
 
@@ -961,6 +1382,46 @@ __webpack_require__.r(__webpack_exports__);
 * - Base function component (_component_name.js)
 */
 
+
+/***/ },
+
+/***/ "67eed2647f47"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   bindFormReset: () => (/* binding */ bindFormReset)
+/* harmony export */ });
+// Reset fires before the browser restores default values. Synchronize afterwards
+// without synthesizing input/change events or retaining detached controls.
+const subscriptions = new WeakMap();
+const listeningDocuments = new WeakSet();
+function bindFormReset(input, synchronize) {
+  const doc = input.ownerDocument;
+
+  if (!listeningDocuments.has(doc)) {
+    doc.addEventListener('reset', event => {
+      const form = event.target;
+      if (form?.tagName !== 'FORM') return;
+      const controls = Array.from(form.elements);
+      setTimeout(() => {
+        if (event.defaultPrevented) return;
+
+        for (const control of controls) {
+          if (!control.isConnected || control.form !== form) continue;
+
+          for (const callback of subscriptions.get(control) || []) callback();
+        }
+      }, 0);
+    }, true);
+    listeningDocuments.add(doc);
+  }
+
+  let callbacks = subscriptions.get(input);
+  if (!callbacks) subscriptions.set(input, callbacks = new Set());
+  callbacks.add(synchronize);
+  return () => callbacks.delete(synchronize);
+}
 
 /***/ },
 
@@ -1041,7 +1502,9 @@ class ComponentObserver {
       matches.forEach(match => {
         const raw = match.slice(1, -1);
         raw.split(/\s+/).filter(Boolean).forEach(cls => {
-          classes.add(cls.replace(/^\./, ''));
+          // Only explicit (.class) annotations are classes; the
+          // parentheses in var(--token) are CSS values, not markup.
+          if (cls.startsWith('.') && cls.length > 1) classes.add(cls.slice(1));
         });
       });
     });
@@ -1121,7 +1584,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"generatedAt":"2026-03-05T11:52:50.32
 /***/ "8c672a55a76a"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{".sf-country-code":["display/flex (.flex)","flex-direction/column (.flex-col)","flex-wrap/nowrap (.flex-nowrap)","gap/var(--sf-space-1\\\\/4)","justify-content/flex-start (.justify-start)","align-items/flex-start (.items-start)"],".sf-country-code .sf-country-code-label":["flex/1 (.flex-1)","display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","gap/var(--sf-space-1\\\\/4)","justify-content/flex-start (.justify-start)","align-items/flex-start (.items-start)"],".sf-country-code .sf-country-code-field":["flex/1 (.flex-1)","display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","justify-content/flex-start (.justify-start)","align-items/center (.items-center)"],".sf-country-code .sf-country-code-left":["display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","justify-content/flex-start (.justify-start)","align-items/center (.items-center)"],".sf-country-code .sf-country-code-field input":["flex/1 (.flex-1)","display/flex (.flex)"],".sf-country-code .sf-country-code-items":["gap/var(--sf-country-code-items--gap)"],".sf-country-code .sf-country-code-item":["flex/1 (.flex-1)","display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","gap/var(--sf-space-1\\\\/3)","justify-content/flex-start (.justify-start)","align-items/center (.items-center)"],".sf-country-code .sf-country-code-flag":["display/flex (.flex)","justify-content/flex-start (.justify-start)","align-items/center (.items-center)"],".sf-country-code.open .sf-country-code-list":["flex/1 (.flex-1)","display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","justify-content/flex-start (.justify-start)","align-items/flex-start (.items-start)"],".sf-country-code.open .sf-country-code-items":["flex/1 (.flex-1)","display/flex (.flex)","flex-direction/column (.flex-col)","flex-wrap/nowrap (.flex-nowrap)","justify-content/flex-start (.justify-start)","align-items/flex-start (.items-start)"],".sf-country-code.sf-country-code--size-1.open .sf-country-code-list":["flex/1 (.flex-1)","display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","justify-content/flex-start (.justify-start)","align-items/flex-start (.items-start)"],".sf-country-code.sf-country-code--size-1.open .sf-country-code-items":["flex/1 (.flex-1)","display/flex (.flex)","flex-direction/column (.flex-col)","flex-wrap/nowrap (.flex-nowrap)","justify-content/flex-start (.justify-start)","align-items/flex-start (.items-start)"],".sf-country-code.sf-country-code--size-2.open .sf-country-code-list":["flex/1 (.flex-1)","display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","justify-content/flex-start (.justify-start)","align-items/flex-start (.items-start)"],".sf-country-code.sf-country-code--size-2.open .sf-country-code-items":["flex/1 (.flex-1)","display/flex (.flex)","flex-direction/column (.flex-col)","flex-wrap/nowrap (.flex-nowrap)","justify-content/flex-start (.justify-start)","align-items/flex-start (.items-start)"],".sf-country-code.sf-country-code--size-3.open .sf-country-code-list":["flex/1 (.flex-1)","display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","justify-content/flex-start (.justify-start)","align-items/flex-start (.items-start)"],".sf-country-code.sf-country-code--size-3.open .sf-country-code-items":["flex/1 (.flex-1)","display/flex (.flex)","flex-direction/column (.flex-col)","flex-wrap/nowrap (.flex-nowrap)","justify-content/flex-start (.justify-start)","align-items/flex-start (.items-start)"],".sf-country-code.sf-country-code--size-1\\\\/3.open .sf-country-code-list":["flex/1 (.flex-1)","display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","justify-content/flex-start (.justify-start)","align-items/flex-start (.items-start)"],".sf-country-code.sf-country-code--size-1\\\\/3.open .sf-country-code-items":["flex/1 (.flex-1)","display/flex (.flex)","flex-direction/column (.flex-col)","flex-wrap/nowrap (.flex-nowrap)","justify-content/flex-start (.justify-start)","align-items/flex-start (.items-start)"],".sf-country-code.sf-country-code--size-1\\\\/2.open .sf-country-code-list":["flex/1 (.flex-1)","display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","justify-content/flex-start (.justify-start)","align-items/flex-start (.items-start)"],".sf-country-code.sf-country-code--size-1\\\\/2.open .sf-country-code-items":["flex/1 (.flex-1)","display/flex (.flex)","flex-direction/column (.flex-col)","flex-wrap/nowrap (.flex-nowrap)","justify-content/flex-start (.justify-start)","align-items/flex-start (.items-start)"]}');
+module.exports = /*#__PURE__*/JSON.parse('{".sf-country-code":["display/flex (.flex)","flex-direction/column (.flex-col)","flex-wrap/nowrap (.flex-nowrap)","gap/var(--sf-space-1\\\\/4)","justify-content/flex-start (.justify-start)"],".sf-country-code .sf-country-code-label":["display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","gap/var(--sf-space-1\\\\/4)","justify-content/flex-start (.justify-start)","align-items/flex-start (.items-start)"],".sf-country-code .sf-country-code-field":["display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","justify-content/flex-start (.justify-start)","align-items/center (.items-center)"],".sf-country-code .sf-country-code-left":["display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","justify-content/flex-start (.justify-start)","align-items/center (.items-center)"],".sf-country-code .sf-country-code-field input":["flex/1 (.flex-1)","display/flex (.flex)"],".sf-country-code .sf-country-code-items":["gap/var(--sf-country-code-items--gap)"],".sf-country-code .sf-country-code-item":["display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","gap/var(--sf-space-1\\\\/3)","justify-content/flex-start (.justify-start)","align-items/center (.items-center)"],".sf-country-code .sf-country-code-flag":["display/flex (.flex)","justify-content/flex-start (.justify-start)","align-items/center (.items-center)"],".sf-country-code.open .sf-country-code-list":["flex/1 (.flex-1)","display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","justify-content/flex-start (.justify-start)","align-items/flex-start (.items-start)"],".sf-country-code.open .sf-country-code-items":["flex/1 (.flex-1)","display/flex (.flex)","flex-direction/column (.flex-col)","flex-wrap/nowrap (.flex-nowrap)","justify-content/flex-start (.justify-start)","align-items/flex-start (.items-start)"],".sf-country-code.sf-country-code--size-1.open .sf-country-code-list":["flex/1 (.flex-1)","display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","justify-content/flex-start (.justify-start)","align-items/flex-start (.items-start)"],".sf-country-code.sf-country-code--size-1.open .sf-country-code-items":["flex/1 (.flex-1)","display/flex (.flex)","flex-direction/column (.flex-col)","flex-wrap/nowrap (.flex-nowrap)","justify-content/flex-start (.justify-start)","align-items/flex-start (.items-start)"],".sf-country-code.sf-country-code--size-2.open .sf-country-code-list":["flex/1 (.flex-1)","display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","justify-content/flex-start (.justify-start)","align-items/flex-start (.items-start)"],".sf-country-code.sf-country-code--size-2.open .sf-country-code-items":["flex/1 (.flex-1)","display/flex (.flex)","flex-direction/column (.flex-col)","flex-wrap/nowrap (.flex-nowrap)","justify-content/flex-start (.justify-start)","align-items/flex-start (.items-start)"],".sf-country-code.sf-country-code--size-3.open .sf-country-code-list":["flex/1 (.flex-1)","display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","justify-content/flex-start (.justify-start)","align-items/flex-start (.items-start)"],".sf-country-code.sf-country-code--size-3.open .sf-country-code-items":["flex/1 (.flex-1)","display/flex (.flex)","flex-direction/column (.flex-col)","flex-wrap/nowrap (.flex-nowrap)","justify-content/flex-start (.justify-start)","align-items/flex-start (.items-start)"],".sf-country-code.sf-country-code--size-1\\\\/3.open .sf-country-code-list":["flex/1 (.flex-1)","display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","justify-content/flex-start (.justify-start)","align-items/flex-start (.items-start)"],".sf-country-code.sf-country-code--size-1\\\\/3.open .sf-country-code-items":["flex/1 (.flex-1)","display/flex (.flex)","flex-direction/column (.flex-col)","flex-wrap/nowrap (.flex-nowrap)","justify-content/flex-start (.justify-start)","align-items/flex-start (.items-start)"],".sf-country-code.sf-country-code--size-1\\\\/2.open .sf-country-code-list":["flex/1 (.flex-1)","display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","justify-content/flex-start (.justify-start)","align-items/flex-start (.items-start)"],".sf-country-code.sf-country-code--size-1\\\\/2.open .sf-country-code-items":["flex/1 (.flex-1)","display/flex (.flex)","flex-direction/column (.flex-col)","flex-wrap/nowrap (.flex-nowrap)","justify-content/flex-start (.justify-start)","align-items/flex-start (.items-start)"]}');
 
 /***/ }
 

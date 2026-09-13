@@ -1,0 +1,57 @@
+@layer sf.utilities {
+  @media (min-width: 1320px) {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xxl\:float-inline-end {
+      float: right;
+    }
+    @supports not (float: inline-end) {
+    html:not([dir="rtl"]) .xxl\:float-inline-end {
+      float: right;
+      }
+    }
+    .xxl\:float-inline-end:where(:dir(ltr)) {
+      float: right;
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xxl\:float-inline-end {
+      float: left;
+    }
+    @supports not (float: inline-end) {
+    [dir="rtl"] .xxl\:float-inline-end {
+      float: left;
+      }
+    }
+    .xxl\:float-inline-end:where(:dir(rtl)) {
+      float: left;
+    }
+    .xxl\:float-inline-end {
+      float: inline-end;
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xxl\:float-inline-start {
+      float: left;
+    }
+    @supports not (float: inline-start) {
+    html:not([dir="rtl"]) .xxl\:float-inline-start {
+      float: left;
+      }
+    }
+    .xxl\:float-inline-start:where(:dir(ltr)) {
+      float: left;
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xxl\:float-inline-start {
+      float: right;
+    }
+    @supports not (float: inline-start) {
+    [dir="rtl"] .xxl\:float-inline-start {
+      float: right;
+      }
+    }
+    .xxl\:float-inline-start:where(:dir(rtl)) {
+      float: right;
+    }
+    .xxl\:float-inline-start {
+      float: inline-start;
+    }
+    .xxl\:float-none {
+      float: none;
+    }
+  }
+}

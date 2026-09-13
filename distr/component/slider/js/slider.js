@@ -33,6 +33,34 @@ function toSlidesPerView(value, fallback = 1) {
   return toNumber(value, fallback);
 }
 
+function resolveCssLength(element, property, fallback = 0) {
+  if (!(element instanceof HTMLElement)) return fallback;
+  const probe = document.createElement('span');
+  probe.setAttribute('aria-hidden', 'true');
+  probe.style.cssText = ['position:absolute', 'visibility:hidden', 'pointer-events:none', 'inline-size:0', `margin-inline-start:var(${property})`].join(';');
+  element.append(probe);
+  const value = Number.parseFloat(getComputedStyle(probe).marginInlineStart);
+  probe.remove();
+  return Number.isFinite(value) ? value : fallback;
+}
+
+function resolveCssDuration(element, property, fallback = 300) {
+  if (!(element instanceof HTMLElement)) return fallback;
+  const probe = document.createElement('span');
+  probe.setAttribute('aria-hidden', 'true');
+  probe.style.cssText = ['position:absolute', 'visibility:hidden', 'pointer-events:none', `transition-duration:var(${property})`].join(';');
+  element.append(probe);
+  const value = getComputedStyle(probe).transitionDuration.trim();
+  probe.remove();
+  const parsed = Number.parseFloat(value);
+  if (!Number.isFinite(parsed)) return fallback;
+  return value.endsWith('ms') ? parsed : parsed * 1000;
+}
+
+function prefersReducedMotion() {
+  return typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
 function getOption(root, element, name) {
   return element?.dataset?.[name] ?? root?.dataset?.[name];
 }
@@ -87,7 +115,7 @@ function setSwiperDataOption(options, datasetKey, value) {
   if (!optionName) return;
   const nestedPrefix = SWIPER_NESTED_OPTION_PREFIXES.find(prefix => {
     const rest = optionName.slice(prefix.length);
-    return optionName === prefix || /^[A-Z]/.test(rest);
+    return optionName === prefix || optionName.startsWith(prefix) && /^[A-Z]/.test(rest);
   });
 
   if (nestedPrefix && optionName !== nestedPrefix) {
@@ -157,6 +185,28 @@ function createNavigationOptions(prevEl, nextEl) {
   };
 }
 
+function getNavigationLabels(prevEl, nextEl) {
+  return [[prevEl, 'prevSlideMessage'], [nextEl, 'nextSlideMessage']].filter(([element]) => element instanceof Element).map(([element, message]) => ({
+    element,
+    message,
+    authored: element.getAttribute('aria-label')
+  }));
+}
+
+function applyNavigationLabelDefaults(options, labels) {
+  if (options.a11y === false) return;
+  const defaults = {};
+  labels.forEach(({
+    message,
+    authored
+  }) => {
+    if (authored?.trim()) defaults[message] = authored;
+  });
+  options.a11y = { ...defaults,
+    ...(isPlainObject(options.a11y) ? options.a11y : {})
+  };
+}
+
 function createAutoplayOptions(root, element) {
   const autoplay = toBoolean(getOption(root, element, 'autoplay'), false);
   if (!autoplay) return undefined;
@@ -175,8 +225,8 @@ function createBaseOptions(root, element, fallbackSlidesPerView = 1) {
     centeredSlides: toBoolean(getOption(root, element, 'centeredSlides'), false),
     loop: toBoolean(getOption(root, element, 'loop'), false),
     slidesPerView: toSlidesPerView(getOption(root, element, 'slidesPerView'), fallbackSlidesPerView),
-    spaceBetween: toNumber(getOption(root, element, 'spaceBetween'), 0),
-    speed: toNumber(getOption(root, element, 'speed'), 300),
+    spaceBetween: toNumber(getOption(root, element, 'spaceBetween'), resolveCssLength(root, '--sf-slider--space-between', 0)),
+    speed: toNumber(getOption(root, element, 'speed'), resolveCssDuration(root, '--sf-slider--duration', 300)),
     watchSlidesProgress: true
   };
   const autoplay = createAutoplayOptions(root, element);
@@ -186,7 +236,90 @@ function createBaseOptions(root, element, fallbackSlidesPerView = 1) {
   }
 
   options = deepMerge(options, collectSwiperDataOptions(root, element));
+
+  if (prefersReducedMotion()) {
+    options.speed = 0;
+    delete options.autoplay;
+  }
+
   return normalizeAutoplayOptions(options);
+}
+
+function createSlideInteractivityGuard(slider) {
+  const authoredState = new Map();
+
+  const sync = () => {
+    const slides = Array.from(slider?.slides || []);
+    slides.forEach(slide => {
+      if (!(slide instanceof HTMLElement)) return;
+
+      if (!authoredState.has(slide)) {
+        authoredState.set(slide, slide.hasAttribute('inert'));
+      }
+
+      const reachable = slide.classList.contains('swiper-slide-visible') || slide.classList.contains('swiper-slide-active');
+
+      if (!reachable) {
+        slide.setAttribute('inert', '');
+      } else if (!authoredState.get(slide)) {
+        slide.removeAttribute('inert');
+      }
+    });
+  };
+
+  ['init', 'slideChange', 'transitionEnd', 'update', 'resize'].forEach(event => {
+    slider?.on?.(event, sync);
+  });
+  sync();
+  return () => {
+    ['init', 'slideChange', 'transitionEnd', 'update', 'resize'].forEach(event => {
+      slider?.off?.(event, sync);
+    });
+    authoredState.forEach((authored, slide) => {
+      if (!slide.isConnected) return;
+      if (authored) slide.setAttribute('inert', '');else slide.removeAttribute('inert');
+    });
+  };
+}
+
+function createAutoplayGuard(root, slider) {
+  if (!slider?.autoplay || prefersReducedMotion()) return () => {};
+  const pauseReasons = new Set();
+  let resumeOwned = false;
+
+  const pause = reason => {
+    pauseReasons.add(reason);
+    if (!slider.autoplay.running) return;
+    resumeOwned = true;
+    slider.autoplay.stop();
+  };
+
+  const resume = reason => {
+    pauseReasons.delete(reason);
+    if (!resumeOwned || pauseReasons.size || !root.isConnected) return;
+    resumeOwned = false;
+    slider.autoplay.start();
+  };
+
+  const onFocusIn = () => pause('focus');
+
+  const onFocusOut = event => {
+    if (!root.contains(event.relatedTarget)) resume('focus');
+  };
+
+  const onVisibilityChange = () => {
+    if (document.hidden) pause('visibility');else resume('visibility');
+  };
+
+  root.addEventListener('focusin', onFocusIn);
+  root.addEventListener('focusout', onFocusOut);
+  document.addEventListener('visibilitychange', onVisibilityChange);
+  onVisibilityChange();
+  return () => {
+    root.removeEventListener('focusin', onFocusIn);
+    root.removeEventListener('focusout', onFocusOut);
+    document.removeEventListener('visibilitychange', onVisibilityChange);
+  };
 }
 
 function getSlidesCount(element) {
@@ -255,7 +388,7 @@ function bindSlider(root) {
     thumbs = new window.Swiper(thumbsEl, { ...createBaseOptions(root, thumbsEl, Math.min(thumbsCount, 6)),
       loop: false,
       centeredSlides: false,
-      spaceBetween: 6,
+      spaceBetween: toNumber(getOption(root, thumbsEl, 'spaceBetween'), resolveCssLength(root, '--sf-slider-thumbnails--space-between', 0)),
       slidesPerView: Math.min(thumbsCount, 6),
       slideToClickedSlide: false
     });
@@ -280,7 +413,13 @@ function bindSlider(root) {
     };
   }
 
+  const navigationLabels = getNavigationLabels(prevEl, nextEl);
+  applyNavigationLabelDefaults(sliderOptions, navigationLabels);
   const slider = new window.Swiper(mainEl, sliderOptions);
+  root._sfSliderCleanup = [createSlideInteractivityGuard(slider), createAutoplayGuard(root, slider)];
+  root._sfSliderNavigationLabels = navigationLabels.map(label => ({ ...label,
+    applied: label.element.getAttribute('aria-label')
+  }));
   root.dataset[SLIDER_BOUND_FLAG] = 'true';
   root._sfSlider = slider;
   root._sfSliderThumbs = thumbs;
@@ -305,8 +444,20 @@ function refreshSlider(root) {
 
 function unbindSlider(root) {
   if (!(root instanceof HTMLElement)) return;
+  root._sfSliderCleanup?.forEach(cleanup => cleanup());
   root._sfSlider?.destroy?.(true, true);
   root._sfSliderThumbs?.destroy?.(true, true);
+  root._sfSliderNavigationLabels?.forEach(({
+    element,
+    authored,
+    applied
+  }) => {
+    // Do not undo a later author edit; restore only the value owned by Swiper.
+    if (element.getAttribute('aria-label') !== applied) return;
+    if (authored === null) element.removeAttribute('aria-label');else element.setAttribute('aria-label', authored);
+  });
+  delete root._sfSliderNavigationLabels;
+  delete root._sfSliderCleanup;
   delete root._sfSlider;
   delete root._sfSliderThumbs;
   delete root.dataset[SLIDER_BOUND_FLAG];

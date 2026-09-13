@@ -60,52 +60,148 @@
     --sf-switch-container--color: var(--sf-on-surface);
   }
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) align-items/center (.items-center) */
-  [dir="ltr"] .sf-switch .sf-switch-toggler {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-switch .sf-switch-toggler {
     border-bottom-right-radius: var(--sf-switch-toggler--border-end-end-radius);
   }
-  [dir="rtl"] .sf-switch .sf-switch-toggler {
+  @supports not (border-end-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-switch .sf-switch-toggler {
+    border-bottom-right-radius: var(--sf-switch-toggler--border-end-end-radius);
+    }
+  }
+  .sf-switch .sf-switch-toggler:where(:dir(ltr)) {
+    border-bottom-right-radius: var(--sf-switch-toggler--border-end-end-radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-switch .sf-switch-toggler {
     border-bottom-left-radius: var(--sf-switch-toggler--border-end-end-radius);
   }
-  [dir="ltr"] .sf-switch .sf-switch-toggler {
+  @supports not (border-end-end-radius: initial) {
+  [dir="rtl"] .sf-switch .sf-switch-toggler {
+    border-bottom-left-radius: var(--sf-switch-toggler--border-end-end-radius);
+    }
+  }
+  .sf-switch .sf-switch-toggler:where(:dir(rtl)) {
+    border-bottom-left-radius: var(--sf-switch-toggler--border-end-end-radius);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-switch .sf-switch-toggler {
     border-bottom-left-radius: var(--sf-switch-toggler--border-end-start-radius);
   }
-  [dir="rtl"] .sf-switch .sf-switch-toggler {
+  @supports not (border-end-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-switch .sf-switch-toggler {
+    border-bottom-left-radius: var(--sf-switch-toggler--border-end-start-radius);
+    }
+  }
+  .sf-switch .sf-switch-toggler:where(:dir(ltr)) {
+    border-bottom-left-radius: var(--sf-switch-toggler--border-end-start-radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-switch .sf-switch-toggler {
     border-bottom-right-radius: var(--sf-switch-toggler--border-end-start-radius);
   }
-  [dir="ltr"] .sf-switch .sf-switch-toggler {
+  @supports not (border-end-start-radius: initial) {
+  [dir="rtl"] .sf-switch .sf-switch-toggler {
+    border-bottom-right-radius: var(--sf-switch-toggler--border-end-start-radius);
+    }
+  }
+  .sf-switch .sf-switch-toggler:where(:dir(rtl)) {
+    border-bottom-right-radius: var(--sf-switch-toggler--border-end-start-radius);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-switch .sf-switch-toggler {
     border-top-right-radius: var(--sf-switch-toggler--border-start-end-radius);
   }
-  [dir="rtl"] .sf-switch .sf-switch-toggler {
+  @supports not (border-start-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-switch .sf-switch-toggler {
+    border-top-right-radius: var(--sf-switch-toggler--border-start-end-radius);
+    }
+  }
+  .sf-switch .sf-switch-toggler:where(:dir(ltr)) {
+    border-top-right-radius: var(--sf-switch-toggler--border-start-end-radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-switch .sf-switch-toggler {
     border-top-left-radius: var(--sf-switch-toggler--border-start-end-radius);
   }
-  [dir="ltr"] .sf-switch .sf-switch-toggler {
+  @supports not (border-start-end-radius: initial) {
+  [dir="rtl"] .sf-switch .sf-switch-toggler {
+    border-top-left-radius: var(--sf-switch-toggler--border-start-end-radius);
+    }
+  }
+  .sf-switch .sf-switch-toggler:where(:dir(rtl)) {
+    border-top-left-radius: var(--sf-switch-toggler--border-start-end-radius);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-switch .sf-switch-toggler {
     border-top-left-radius: var(--sf-switch-toggler--border-start-start-radius);
   }
-  [dir="rtl"] .sf-switch .sf-switch-toggler {
+  @supports not (border-start-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-switch .sf-switch-toggler {
+    border-top-left-radius: var(--sf-switch-toggler--border-start-start-radius);
+    }
+  }
+  .sf-switch .sf-switch-toggler:where(:dir(ltr)) {
+    border-top-left-radius: var(--sf-switch-toggler--border-start-start-radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-switch .sf-switch-toggler {
     border-top-right-radius: var(--sf-switch-toggler--border-start-start-radius);
   }
-  [dir="ltr"] .sf-switch .sf-switch-toggler {
+  @supports not (border-start-start-radius: initial) {
+  [dir="rtl"] .sf-switch .sf-switch-toggler {
+    border-top-right-radius: var(--sf-switch-toggler--border-start-start-radius);
+    }
+  }
+  .sf-switch .sf-switch-toggler:where(:dir(rtl)) {
+    border-top-right-radius: var(--sf-switch-toggler--border-start-start-radius);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-switch .sf-switch-toggler {
     padding-right: var(--sf-switch-toggler--padding-inline-end);
   }
-  [dir="rtl"] .sf-switch .sf-switch-toggler {
+  @supports not (padding-inline-end: initial) {
+  html:not([dir="rtl"]) .sf-switch .sf-switch-toggler {
+    padding-right: var(--sf-switch-toggler--padding-inline-end);
+    }
+  }
+  .sf-switch .sf-switch-toggler:where(:dir(ltr)) {
+    padding-right: var(--sf-switch-toggler--padding-inline-end);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-switch .sf-switch-toggler {
     padding-left: var(--sf-switch-toggler--padding-inline-end);
   }
-  [dir="ltr"] .sf-switch .sf-switch-toggler {
+  @supports not (padding-inline-end: initial) {
+  [dir="rtl"] .sf-switch .sf-switch-toggler {
+    padding-left: var(--sf-switch-toggler--padding-inline-end);
+    }
+  }
+  .sf-switch .sf-switch-toggler:where(:dir(rtl)) {
+    padding-left: var(--sf-switch-toggler--padding-inline-end);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-switch .sf-switch-toggler {
     padding-left: var(--sf-switch-toggler--padding-inline-start);
   }
+  @supports not (padding-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-switch .sf-switch-toggler {
+    padding-left: var(--sf-switch-toggler--padding-inline-start);
+    }
+  }
+  .sf-switch .sf-switch-toggler:where(:dir(ltr)) {
+    padding-left: var(--sf-switch-toggler--padding-inline-start);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-switch .sf-switch-toggler {
+    padding-right: var(--sf-switch-toggler--padding-inline-start);
+  }
+  @supports not (padding-inline-start: initial) {
   [dir="rtl"] .sf-switch .sf-switch-toggler {
+    padding-right: var(--sf-switch-toggler--padding-inline-start);
+    }
+  }
+  .sf-switch .sf-switch-toggler:where(:dir(rtl)) {
     padding-right: var(--sf-switch-toggler--padding-inline-start);
   }
   .sf-switch .sf-switch-toggler {
     --sf-switch-toggler--background-color: var(--sf-surface-0);
-    --sf-switch-toggler--border: 1px solid;
+    --sf-switch-toggler--border: var(--sf-px) solid;
     --sf-switch-toggler--border-color: var(--sf-outline);
     --sf-switch-toggler--border-end-end-radius: var(--sf-radius-circle);
     --sf-switch-toggler--border-end-start-radius: var(--sf-radius-circle);
     --sf-switch-toggler--border-start-end-radius: var(--sf-radius-circle);
     --sf-switch-toggler--border-start-start-radius: var(--sf-radius-circle);
     --sf-switch-toggler--border-style: solid;
-    --sf-switch-toggler--border-width: 1px;
+    --sf-switch-toggler--border-width: var(--sf-px);
     background-color: var(--sf-switch-toggler--background-color);
     border: var(--sf-switch-toggler--border);
     border-color: transparent;
@@ -231,10 +327,16 @@
   .sf-switch.disabled .sf-switch-toggler {
     --sf-switch-toggler--border-color: var(--sf-outline-disable);
   }
-  .sf-switch[\:has\(input\:not\(\:disabled\)\:not\(.disabled\)\:focus\)] .sf-switch-toggler {
+  .sf-switch[\:has\(input\:not\(\:disabled\)\:not\(.disabled\).focus-visible\)] .sf-switch-toggler {
     --sf-switch-toggler--box-shadow: var(--sf-ui-focus);
   }
-  .sf-switch:has(input:not(:disabled):not(.disabled):focus) .sf-switch-toggler {
+  .sf-switch:has(input:not(:disabled):not(.disabled).focus-visible) .sf-switch-toggler {
+    --sf-switch-toggler--box-shadow: var(--sf-ui-focus);
+  }
+  .sf-switch[\:has\(input\:not\(\:disabled\)\:not\(.disabled\)\:focus-visible\)] .sf-switch-toggler {
+    --sf-switch-toggler--box-shadow: var(--sf-ui-focus);
+  }
+  .sf-switch:has(input:not(:disabled):not(.disabled):focus-visible) .sf-switch-toggler {
     --sf-switch-toggler--box-shadow: var(--sf-ui-focus);
   }
   .sf-switch[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:hover\)] .sf-switch-toggler {
@@ -251,19 +353,95 @@
     --sf-switch-toggler--background-color: var(--sf-primary);
   }
 }
+@layer sf.states {
+  @media (forced-colors: active) {
+    .sf-switch .sf-switch-toggler {
+      forced-color-adjust: none;
+      background-color: Canvas;
+      border-color: ButtonText;
+    }
+    .sf-switch .sf-switch-inner {
+      background-color: ButtonText;
+    }
+    .sf-switch[\:has\(input\:checked\)] .sf-switch-toggler {
+      background-color: Highlight;
+      border-color: Highlight;
+    }
+    .sf-switch:has(input:checked) .sf-switch-toggler {
+      background-color: Highlight;
+      border-color: Highlight;
+    }
+    .sf-switch[\:has\(input\:checked\)] .sf-switch-inner {
+      background-color: HighlightText;
+    }
+    .sf-switch:has(input:checked) .sf-switch-inner {
+      background-color: HighlightText;
+    }
+    .sf-switch[\:has\(input\:disabled\)] .sf-switch-toggler {
+      background-color: Canvas;
+      border-color: GrayText;
+    }
+    .sf-switch:has(input:disabled) .sf-switch-toggler {
+      background-color: Canvas;
+      border-color: GrayText;
+    }
+    .sf-switch[\:has\(input\:disabled\)] .sf-switch-inner {
+      background-color: GrayText;
+    }
+    .sf-switch:has(input:disabled) .sf-switch-inner {
+      background-color: GrayText;
+    }
+    .sf-switch[\:has\(input\:not\(\:disabled\)\:not\(.disabled\).focus-visible\)] .sf-switch-toggler {
+      outline: var(--sf-focus-outline-width) solid currentColor;
+      outline-offset: var(--sf-focus-outline-width);
+      --sf-switch-toggler--box-shadow: none;
+    }
+    .sf-switch:has(input:not(:disabled):not(.disabled).focus-visible) .sf-switch-toggler {
+      outline: var(--sf-focus-outline-width) solid currentColor;
+      outline-offset: var(--sf-focus-outline-width);
+      --sf-switch-toggler--box-shadow: none;
+    }
+    .sf-switch[\:has\(input\:not\(\:disabled\)\:not\(.disabled\)\:focus-visible\)] .sf-switch-toggler {
+      outline: var(--sf-focus-outline-width) solid currentColor;
+      outline-offset: var(--sf-focus-outline-width);
+      --sf-switch-toggler--box-shadow: none;
+    }
+    .sf-switch:has(input:not(:disabled):not(.disabled):focus-visible) .sf-switch-toggler {
+      outline: var(--sf-focus-outline-width) solid currentColor;
+      outline-offset: var(--sf-focus-outline-width);
+      --sf-switch-toggler--box-shadow: none;
+    }
+  }
+}
 @layer sf.components {
   .sf-switch {
+    min-width: 0;
+  }
+  .sf-switch:not(.disabled)[\:has\(input\:not\(\:disabled\)\)] {
     cursor: pointer;
   }
-  .sf-switch.disabled {
+  .sf-switch:not(.disabled):has(input:not(:disabled)) {
+    cursor: pointer;
+  }
+  .sf-switch.disabled,
+  .sf-switch[\:has\(input\:disabled\)] {
+    cursor: default;
+  }
+  .sf-switch.disabled,
+  .sf-switch:has(input:disabled) {
     cursor: default;
   }
   .sf-switch .sf-switch-toggler {
     position: relative;
+    flex-shrink: 0;
+  }
+  .sf-switch .sf-switch-container-wrap {
+    min-width: 0;
   }
   .sf-switch .sf-switch-text {
-    white-space: nowrap;
-    white-space: var(--sf-switch-text--white-space, nowrap);
+    white-space: normal;
+    white-space: var(--sf-switch-text--white-space, normal);
+    word-wrap: anywhere;
   }
   .sf-switch .sf-switch-toggler input[type=checkbox] {
     cursor: inherit;

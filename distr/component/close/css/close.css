@@ -1,15 +1,47 @@
 @layer sf.components {
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) justify-content/center (.justify-center) align-items/center (.items-center) */
-  [dir="ltr"] .sf-close {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-close {
     padding-left: var(--sf-close--padding-inline-start);
   }
-  [dir="rtl"] .sf-close {
+  @supports not (padding-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-close {
+    padding-left: var(--sf-close--padding-inline-start);
+    }
+  }
+  .sf-close:where(:dir(ltr)) {
+    padding-left: var(--sf-close--padding-inline-start);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-close {
     padding-right: var(--sf-close--padding-inline-start);
   }
-  [dir="ltr"] .sf-close {
+  @supports not (padding-inline-start: initial) {
+  [dir="rtl"] .sf-close {
+    padding-right: var(--sf-close--padding-inline-start);
+    }
+  }
+  .sf-close:where(:dir(rtl)) {
+    padding-right: var(--sf-close--padding-inline-start);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-close {
     padding-right: var(--sf-close--padding-inline-end);
   }
+  @supports not (padding-inline-end: initial) {
+  html:not([dir="rtl"]) .sf-close {
+    padding-right: var(--sf-close--padding-inline-end);
+    }
+  }
+  .sf-close:where(:dir(ltr)) {
+    padding-right: var(--sf-close--padding-inline-end);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-close {
+    padding-left: var(--sf-close--padding-inline-end);
+  }
+  @supports not (padding-inline-end: initial) {
   [dir="rtl"] .sf-close {
+    padding-left: var(--sf-close--padding-inline-end);
+    }
+  }
+  .sf-close:where(:dir(rtl)) {
     padding-left: var(--sf-close--padding-inline-end);
   }
   .sf-close {
@@ -156,5 +188,17 @@
     --sf-close--padding-inline-end: var(--sf-a3);
     --sf-close--padding-inline-start: var(--sf-a3);
     --sf-close--padding-top: var(--sf-a3);
+  }
+  @media (forced-colors: active) {
+    .sf-close .sf-close-icon,
+    .sf-icon-button .sf-close .sf-close-icon {
+      forced-color-adjust: none;
+      background-color: CanvasText;
+    }
+    :disabled .sf-close .sf-close-icon,
+    [aria-disabled=true] .sf-close .sf-close-icon,
+    .sf-close:disabled .sf-close-icon {
+      background-color: GrayText;
+    }
   }
 }

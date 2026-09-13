@@ -1,0 +1,22 @@
+@layer sf.utilities {
+  @media (min-width: 1320px) {
+    .xxl\:bg-repeat {
+      background-repeat: repeat;
+    }
+    .xxl\:bg-repeat-none {
+      background-repeat: no-repeat;
+    }
+    .xxl\:bg-repeat-x {
+      background-repeat: repeat-x;
+    }
+    .xxl\:bg-repeat-y {
+      background-repeat: repeat-y;
+    }
+    .xxl\:bg-repeat-round {
+      background-repeat: round;
+    }
+    .xxl\:bg-repeat-space {
+      background-repeat: space;
+    }
+  }
+}

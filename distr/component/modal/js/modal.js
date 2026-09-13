@@ -2,6 +2,167 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "3f3a6e2680d5"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   freezeModalContent: () => (/* binding */ freezeModalContent)
+/* harmony export */ });
+// Keep the closing dialog itself meaningful while its visible content becomes
+// non-interactive. Restore only temporary inert attributes owned by this lease.
+function freezeModalContent(panel, focusPanel = false) {
+  if (!panel) return () => {};
+  const owned = new Set();
+
+  const freeze = () => {
+    for (const child of panel.children) {
+      if (!child.hasAttribute('inert')) {
+        child.setAttribute('inert', '');
+        owned.add(child);
+      }
+    }
+  };
+
+  if (focusPanel) panel.focus({
+    preventScroll: true
+  });
+  freeze();
+  const observer = new panel.ownerDocument.defaultView.MutationObserver(freeze);
+  observer.observe(panel, {
+    childList: true
+  });
+  return () => {
+    observer.disconnect();
+
+    for (const child of owned) {
+      if (child.getAttribute('inert') === '') child.removeAttribute('inert');
+    }
+
+    owned.clear();
+  };
+}
+
+
+
+/***/ },
+
+/***/ "c8d66dd2c299"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   getModalTabStops: () => (/* binding */ getModalTabStops),
+/* harmony export */   syncModalFocusGuards: () => (/* binding */ syncModalFocusGuards),
+/* harmony export */   trapModalFocus: () => (/* binding */ trapModalFocus)
+/* harmony export */ });
+const FOCUSABLE_SELECTOR = ['a[href]', 'area[href]', 'button', 'input', 'select', 'textarea', 'iframe', 'summary', 'audio[controls]', 'video[controls]', '[contenteditable]', '[tabindex]'].join(',');
+const GUARDS_KEY = Symbol.for('simai.modal.focus-guards');
+
+function syncModalFocusGuards(modal) {
+  const root = modal?.getModalRoot?.() || modal?.template;
+  const panel = root?.querySelector?.('[data-sf-modal-panel]');
+  const previous = document[GUARDS_KEY];
+  if (previous && previous.panel === panel && previous.before.isConnected && previous.after.isConnected) return;
+  previous?.before.remove();
+  previous?.after.remove();
+  delete document[GUARDS_KEY];
+  if (!panel?.parentNode) return;
+  const guards = {
+    panel,
+    relaying: false
+  };
+
+  for (const edge of ['before', 'after']) {
+    const guard = panel.ownerDocument.createElement('span');
+    guard.tabIndex = 0;
+    guard.className = 'sf-modal-focus-guard';
+    guard.setAttribute('aria-hidden', 'true');
+    guard.addEventListener('focus', () => {
+      if (guards.relaying || !panel.isConnected || root.inert || root.getAttribute('aria-hidden') === 'true') return;
+      const backward = edge === 'before';
+      const stops = getModalTabStops(panel, backward);
+      const destination = backward ? stops.at(-1) : stops[0]; // A frame's child document owns the outgoing key event. If both edges are
+      // frames, return to the meaningful dialog boundary; the next native Tab
+      // enters the requested end of the document without inspecting its origin.
+
+      if (!destination || destination.tagName === 'IFRAME') panel.focus({
+        preventScroll: true
+      });else destination.focus({
+        preventScroll: true
+      });
+    });
+    guards[edge] = guard;
+  }
+
+  panel.before(guards.before);
+  panel.after(guards.after);
+  document[GUARDS_KEY] = guards;
+}
+
+function sameRadioGroup(a, b) {
+  return a?.tagName === 'INPUT' && b?.tagName === 'INPUT' && a.type === 'radio' && b.type === 'radio' && !!a.name && a.name === b.name && a.form === b.form && a.getRootNode() === b.getRootNode();
+} // Shared by ordinary and Smart Modal. Read the current DOM on each Tab so
+// hidden, inert or disabled controls never become stale focus boundaries.
+
+
+function getModalTabStops(panel, backward = false) {
+  const view = panel.ownerDocument.defaultView;
+  const candidates = Array.from(panel.querySelectorAll(FOCUSABLE_SELECTOR)).filter(node => node.tabIndex >= 0 && !node.matches(':disabled') && !node.closest('[inert]') && node.getClientRects().length > 0 && view.getComputedStyle(node).visibility === 'visible').sort((a, b) => (a.tabIndex || Infinity) - (b.tabIndex || Infinity)); // Native radio groups contribute one sequential stop, not every input.
+  // Do not rewrite checked/tabindex or intercept their native arrow-key handling.
+
+  return candidates.filter(node => {
+    if (!sameRadioGroup(node, node)) return true;
+    const group = candidates.filter(candidate => sameRadioGroup(node, candidate));
+    const selected = group.find(candidate => candidate.checked);
+    return node === (selected || group.at(backward ? -1 : 0));
+  });
+}
+
+function trapModalFocus(panel, event) {
+  if (!panel) return;
+  const nodes = getModalTabStops(panel, event.shiftKey);
+  const active = panel.ownerDocument.activeElement;
+
+  if (!nodes.length) {
+    event.preventDefault();
+    panel.focus();
+    return;
+  }
+
+  const first = nodes[0];
+  const last = nodes[nodes.length - 1];
+  const boundary = event.shiftKey ? first : last;
+
+  if (!panel.contains(active) || active === panel || active === boundary || sameRadioGroup(active, boundary)) {
+    const destination = event.shiftKey ? last : first;
+    const guards = panel.ownerDocument[GUARDS_KEY];
+
+    if (destination.tagName === 'IFRAME' && guards?.panel === panel) {
+      // Let the trusted browser Tab action traverse the iframe itself. Calling
+      // iframe.focus() cannot choose its last child in an opaque document.
+      guards.relaying = true;
+
+      try {
+        (event.shiftKey ? guards.after : guards.before).focus({
+          preventScroll: true
+        });
+      } finally {
+        guards.relaying = false;
+      }
+
+      return;
+    }
+
+    event.preventDefault();
+    destination.focus();
+  }
+}
+
+
+
+/***/ },
+
 /***/ "d1e2388bb47f"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -11,10 +172,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d7f974466839");
 /* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("58661bec99a6");
+/* harmony import */ var _focus__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("c8d66dd2c299");
+/* harmony import */ var _closing__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("3f3a6e2680d5");
+/* harmony import */ var _motion__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("201fd0b17b8b");
+/* harmony import */ var _scroll__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("ed3ae3576d0a");
+/* harmony import */ var _stack__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("93025a68d8ab");
 
 
-const FOCUSABLE_SELECTOR = ['a[href]', 'button:not([disabled])', 'input:not([disabled])', 'select:not([disabled])', 'textarea:not([disabled])', '[tabindex]:not([tabindex="-1"])'].join(',');
-const MODAL_TRANSITION_MS = 240;
+
+
+
+
+
 
 function joinClasses(...parts) {
   return parts.filter(Boolean).join(' ').trim();
@@ -22,7 +191,7 @@ function joinClasses(...parts) {
 
 function normalizePosition(value = 'center') {
   const normalized = String(value || 'center').trim().toLowerCase();
-  return ['center', 'left', 'right', 'top', 'bottom'].includes(normalized) ? normalized : 'center';
+  return ['center', 'left', 'right', 'inline-start', 'inline-end', 'top', 'bottom'].includes(normalized) ? normalized : 'center';
 }
 
 function normalizeBlurType(value = 'medium') {
@@ -63,7 +232,7 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
   static baseZIndex = 9000;
 
   static getTopModal() {
-    return Modal.stack[Modal.stack.length - 1] || null;
+    return (0,_stack__WEBPACK_IMPORTED_MODULE_6__.getTopModalLayer)();
   }
 
   static isTopModal(modal) {
@@ -75,16 +244,10 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
       return;
     }
 
-    const wasEmpty = Modal.stack.length === 0;
     Modal.stack = Modal.stack.filter(item => item !== modal);
     Modal.stack.push(modal);
     Modal.openCount = Modal.stack.length;
-
-    if (wasEmpty) {
-      Modal.lockPage(modal.preserveScrollGap);
-    }
-
-    Modal.updateStackStyles();
+    (0,_stack__WEBPACK_IMPORTED_MODULE_6__.addModalLayer)(modal, Modal);
   }
 
   static removeFromStack(modal) {
@@ -92,15 +255,9 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
       return;
     }
 
-    const previousLength = Modal.stack.length;
     Modal.stack = Modal.stack.filter(item => item !== modal);
     Modal.openCount = Modal.stack.length;
-
-    if (previousLength > 0 && Modal.stack.length === 0) {
-      Modal.unlockPage();
-    }
-
-    Modal.updateStackStyles();
+    (0,_stack__WEBPACK_IMPORTED_MODULE_6__.removeModalLayer)(modal);
   }
 
   static bringToFront(modal) {
@@ -110,13 +267,11 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
 
     Modal.stack = Modal.stack.filter(item => item !== modal);
     Modal.stack.push(modal);
-    Modal.updateStackStyles();
+    (0,_stack__WEBPACK_IMPORTED_MODULE_6__.raiseModalLayer)(modal);
   }
 
   static updateStackStyles() {
-    Modal.stack.forEach((modal, index) => {
-      modal.applyStackPosition(index);
-    });
+    (0,_stack__WEBPACK_IMPORTED_MODULE_6__.updateModalLayers)();
   }
 
   constructor(props) {
@@ -166,7 +321,6 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
     cancelable = false,
     detail = {}
   } = {}) {
-    console.log(eventName);
     const payload = {
       modal: this,
       id: this.modalId,
@@ -376,12 +530,13 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
     }
 
     const surface = document.createElement('div');
-    surface.className = joinClasses(isInline ? 'bg-surface border border-outline-variant radius-2 p-2 flex flex-col gap-1 min-w-0' : 'bg-surface border border-outline-variant radius-2 shadow-3 p-2 flex flex-col gap-1 min-w-0', params.surfaceClass);
+    surface.className = joinClasses(isInline ? 'bg-surface border border-outline-variant radius-default p-2 flex flex-col gap-1 min-w-0' : 'bg-surface border border-outline-variant radius-default shadow-3 p-2 flex flex-col gap-1 min-w-0', params.surfaceClass);
     surface.setAttribute('data-sf-modal-surface', '');
     const header = document.createElement('header');
-    header.className = joinClasses(`sf-modal-header flex content-main-between items-cross-center border-b border-outline-variant gap-1 ${this.showClose ? 'p-right-2' : ''}`, params.headerClass);
+    header.className = joinClasses('sf-modal-header flex items-start min-w-0 border-b border-outline-variant gap-1', params.headerClass);
 
     if (Array.isArray(params.headerNodes) && params.headerNodes.length) {
+      root.setAttribute('aria-label', params.title || 'Modal');
       params.headerNodes.forEach(node => {
         if (node instanceof Node) {
           header.append(node);
@@ -389,14 +544,16 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
       });
     } else {
       const title = document.createElement('h2');
-      title.className = 'title-3 m-0';
+      title.id = `${this.modalId}-title`;
+      root.setAttribute('aria-labelledby', title.id);
+      title.className = 'sf-modal-header-content title-3 m-0';
       title.textContent = params.title || 'Modal';
       header.append(title);
 
       if (this.showClose) {
         const closeButton = document.createElement('button');
         closeButton.type = 'button';
-        closeButton.className = joinClasses('sf-icon-button sf-modal-close-button sf-icon-button--close sf-icon-button--link sf-icon-button--on-surface sf-icon-button--size-1/3 radius-default m-0 absolute', params.closeClass);
+        closeButton.className = joinClasses('sf-icon-button sf-modal-header-action sf-modal-close-button sf-icon-button--close sf-icon-button--link sf-icon-button--on-surface sf-icon-button--size-1/3 m-0', params.closeClass);
         closeButton.setAttribute('aria-label', 'Close modal');
         closeButton.setAttribute('data-sf-modal-close', this.modalId);
         closeButton.innerHTML = '            <span\n' + '              class="sf-close sf-close--size-1/3 flex justify-center items-center"\n' + '              aria-label="Close size 1/4"\n' + '            >\n' + '              <span class="sf-close-icon"></span>\n' + '            </span>';
@@ -614,11 +771,11 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
 
     bodyScroll.innerHTML = '';
     const iframe = document.createElement('iframe');
-    iframe.className = 'sf-modal-iframe w-full border-0 radius-2';
+    iframe.className = 'sf-modal-iframe w-full border-0 radius-default';
     iframe.src = this.src;
     iframe.setAttribute('data-sf-modal-iframe', '');
     iframe.setAttribute('allowfullscreen', '');
-    iframe.style.minHeight = '400px';
+    iframe.style.minHeight = 'var(--sf-modal-iframe-min-height)';
     iframe.style.height = '100%';
     iframe.addEventListener('load', () => {
       this._contentLoaded = true;
@@ -727,6 +884,8 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
         this.isOpen = true;
       }
 
+      this.template.setAttribute('aria-hidden', String(!this.isOpen));
+
       if (this.root) {
         this.root.append(this.template);
       }
@@ -806,7 +965,7 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
   }
 
   onKeyDown(event) {
-    if (!this.isOpen) {
+    if (!this.isOpen && this._modalState !== 'closing') {
       return;
     }
 
@@ -814,7 +973,7 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
       return;
     }
 
-    if (event.key === 'Escape' && this.closeOnEsc) {
+    if (event.key === 'Escape' && this.closeOnEsc && this._modalState !== 'closing') {
       event.preventDefault();
       event.stopImmediatePropagation();
       this.close();
@@ -832,26 +991,7 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
     }
 
     const panel = this.template.querySelector('[data-sf-modal-panel]');
-    const nodes = panel ? Array.from(panel.querySelectorAll(FOCUSABLE_SELECTOR)) : [];
-
-    if (!nodes.length) {
-      return;
-    }
-
-    const first = nodes[0];
-    const last = nodes[nodes.length - 1];
-    const active = document.activeElement;
-
-    if (event.shiftKey && active === first) {
-      event.preventDefault();
-      last.focus();
-      return;
-    }
-
-    if (!event.shiftKey && active === last) {
-      event.preventDefault();
-      first.focus();
-    }
+    (0,_focus__WEBPACK_IMPORTED_MODULE_2__.trapModalFocus)(panel, event);
   }
 
   focusFirst() {
@@ -869,7 +1009,7 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
     panel.focus();
   }
 
-  applyStackPosition(index = Modal.stack.indexOf(this)) {
+  applyStackPosition(index = (0,_stack__WEBPACK_IMPORTED_MODULE_6__.getModalLayerIndex)(this)) {
     this._stackIndex = index;
 
     if (!this.template || this.display === 'inline') {
@@ -907,6 +1047,7 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
       this._modalState = 'open';
       this.template.setAttribute('data-sf-modal-state', 'open');
       this.template.classList.remove('hidden');
+      this.template.setAttribute('aria-hidden', 'false');
       this.emitAfterOpen();
       return;
     }
@@ -930,18 +1071,22 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
       }
 
       this._loadContent();
+    } // Reopening cancels a pending close, not the original focus-return target.
+
+
+    this._releaseClosingContent?.();
+    this._releaseClosingContent = null;
+
+    if (this._modalState !== 'closing') {
+      this.lastActive = document.activeElement;
+      this._focusReturnAncestors = (0,_stack__WEBPACK_IMPORTED_MODULE_6__.captureModalFocusAncestors)(this.lastActive);
     }
 
-    this.lastActive = document.activeElement;
     this.cancelCloseTransition();
     this.template.classList.remove('hidden');
     this.template.classList.add('flex');
     this.template.setAttribute('aria-hidden', 'false');
-
-    if (animate) {
-      this.template.classList.add('animate');
-    }
-
+    this.template.classList.toggle('animate', Boolean(animate));
     this.template.setAttribute('data-sf-modal-state', 'opening');
     this.isOpen = true;
     Modal.addToStack(this);
@@ -954,7 +1099,7 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
       return;
     }
 
-    requestAnimationFrame(() => {
+    (0,_motion__WEBPACK_IMPORTED_MODULE_4__.scheduleModalFrame)(() => {
       if (!this.isOpen || this._modalState === 'closing') {
         return;
       }
@@ -977,6 +1122,7 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
       this._modalState = 'closed';
       this.template.setAttribute('data-sf-modal-state', 'closed');
       this.template.classList.add('hidden');
+      this.template.setAttribute('aria-hidden', 'true');
       this.emitAfterClose();
       return;
     }
@@ -991,31 +1137,10 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
 
     this._modalState = 'closing';
     this.template.setAttribute('data-sf-modal-state', 'closing');
-    this.template.setAttribute('aria-hidden', 'true');
     this.isOpen = false;
     const panel = this.template.querySelector('[data-sf-modal-panel]');
-
-    const finalize = () => this.finishClose();
-
-    if (panel) {
-      const onTransitionEnd = event => {
-        if (event.target !== panel) {
-          return;
-        }
-
-        finalize();
-      };
-
-      this._closeTransitionAbort = () => {
-        panel.removeEventListener('transitionend', onTransitionEnd);
-      };
-
-      panel.addEventListener('transitionend', onTransitionEnd, {
-        once: true
-      });
-    }
-
-    this._closeTimer = window.setTimeout(finalize, MODAL_TRANSITION_MS);
+    this._releaseClosingContent = (0,_closing__WEBPACK_IMPORTED_MODULE_3__.freezeModalContent)(panel, Modal.isTopModal(this));
+    this._closeTransitionAbort = (0,_motion__WEBPACK_IMPORTED_MODULE_4__.scheduleModalClose)(() => this.template, () => this.finishClose());
   }
 
   toggle() {
@@ -1110,13 +1235,13 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
     this.template.classList.remove('flex');
     this.template.classList.add('hidden');
     this.template.setAttribute('data-sf-modal-state', 'closed');
+    this.template.setAttribute('aria-hidden', 'true');
+    this._releaseClosingContent?.();
+    this._releaseClosingContent = null;
     this._modalState = 'closed';
+    const wasTop = Modal.isTopModal(this);
     Modal.removeFromStack(this);
-
-    if (this.lastActive && typeof this.lastActive.focus === 'function') {
-      this.lastActive.focus();
-    }
-
+    (0,_stack__WEBPACK_IMPORTED_MODULE_6__.restoreModalLayerFocus)(wasTop, this.lastActive, this._focusReturnAncestors);
     this.emitAfterClose();
   }
 
@@ -1174,49 +1299,324 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
   }
 
   static lockPage(preserveScrollGap = true) {
-    const docEl = document.documentElement;
-    const body = document.body;
-
-    if (!docEl || !body) {
-      return;
-    }
-
-    const scrollbarWidth = Math.max(0, window.innerWidth - docEl.clientWidth);
-    Modal.lockState = {
-      bodyPaddingInlineEnd: body.style.paddingInlineEnd
-    };
-    docEl.classList.add('overflow-hidden');
-    body.classList.add('overflow-hidden');
-
-    if (!preserveScrollGap) {
-      return;
-    }
-
-    if (scrollbarWidth > 0) {
-      body.style.paddingInlineEnd = `${scrollbarWidth}px`;
-    }
+    if (!Modal.lockState) Modal.lockState = (0,_scroll__WEBPACK_IMPORTED_MODULE_5__.lockModalScroll)(preserveScrollGap);
   }
 
   static unlockPage() {
-    const docEl = document.documentElement;
-    const body = document.body;
-
-    if (!docEl || !body) {
-      return;
-    }
-
-    docEl.classList.remove('overflow-hidden');
-    body.classList.remove('overflow-hidden');
-
-    if (Modal.lockState) {
-      body.style.paddingInlineEnd = Modal.lockState.bodyPaddingInlineEnd || '';
-      Modal.lockState = null;
-    }
+    (0,_scroll__WEBPACK_IMPORTED_MODULE_5__.unlockModalScroll)(Modal.lockState);
+    Modal.lockState = null;
   }
 
 }
 
 (0,_register_helper__WEBPACK_IMPORTED_MODULE_1__["default"])('Modal', Modal);
+
+
+/***/ },
+
+/***/ "201fd0b17b8b"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   modalTransitionDuration: () => (/* binding */ modalTransitionDuration),
+/* harmony export */   scheduleModalClose: () => (/* binding */ scheduleModalClose),
+/* harmony export */   scheduleModalFrame: () => (/* binding */ scheduleModalFrame)
+/* harmony export */ });
+const timeInMs = value => {
+  const number = Number.parseFloat(value);
+  return Number.isFinite(number) ? number * (value.trim().endsWith('ms') ? 1 : 1000) : 0;
+}; // Hidden/offscreen documents may throttle requestAnimationFrame indefinitely.
+// Modal state changes must still complete, so the first scheduled channel wins.
+
+
+function scheduleModalFrame(callback, view = window) {
+  let complete = false;
+  let frame = null;
+  let timer = null;
+
+  const run = () => {
+    if (complete) return;
+    complete = true;
+
+    if (frame !== null) {
+      view.cancelAnimationFrame(frame);
+      frame = null;
+    }
+
+    if (timer !== null) {
+      view.clearTimeout(timer);
+      timer = null;
+    }
+
+    callback();
+  };
+
+  frame = view.requestAnimationFrame(run);
+  timer = view.setTimeout(run, 50);
+  if (typeof view.queueMicrotask === 'function') view.queueMicrotask(run);
+  return () => {
+    complete = true;
+    if (frame !== null) view.cancelAnimationFrame(frame);
+    if (timer !== null) view.clearTimeout(timer);
+  };
+} // CSS lists repeat to match transition-property, not the longest input list.
+
+function modalTransitionDuration(style) {
+  const properties = style.transitionProperty.split(',').map(value => value.trim());
+  const durations = style.transitionDuration.split(',').map(timeInMs);
+  const delays = style.transitionDelay.split(',').map(timeInMs);
+  return Math.max(0, ...properties.map((property, index) => {
+    if (!['all', 'opacity', 'transform', '-webkit-transform'].includes(property)) return 0;
+    return Math.max(0, durations[index % durations.length]) + delays[index % delays.length];
+  }));
+} // Measure after the Smart projection has applied the closing state. A bounded
+// timer also completes when no transitionend fires (unchanged or hidden panel).
+// Never finish on the first property/descendant transitionend.
+
+function scheduleModalClose(getRoot, finalize, view = window) {
+  let timer = null,
+      cancelled = false;
+  const cancelFrame = scheduleModalFrame(() => {
+    if (cancelled) return;
+    const root = getRoot();
+    const nodes = root?.querySelectorAll('[data-sf-modal-panel], [data-sf-modal-overlay]') || [];
+    const duration = Math.max(0, ...Array.from(nodes, node => {
+      const style = view.getComputedStyle(node);
+      return style.display === 'none' ? 0 : modalTransitionDuration(style);
+    }));
+    timer = view.setTimeout(() => {
+      if (!cancelled) finalize();
+    }, duration);
+  }, view);
+  return () => {
+    cancelled = true;
+    cancelFrame();
+    if (timer !== null) view.clearTimeout(timer);
+  };
+}
+
+/***/ },
+
+/***/ "ed3ae3576d0a"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   lockModalScroll: () => (/* binding */ lockModalScroll),
+/* harmony export */   unlockModalScroll: () => (/* binding */ unlockModalScroll)
+/* harmony export */ });
+// One lease is held by the first visible layer in the shared Modal stack.
+// Restore only changes that this lease owns, not pre-existing page styling.
+function lockModalScroll(preserveScrollGap = true) {
+  const docEl = document.documentElement;
+  const body = document.body;
+  if (!docEl || !body) return null;
+  const gap = Math.max(0, window.innerWidth - docEl.clientWidth);
+  const padding = parseFloat(window.getComputedStyle(body).paddingInlineEnd) || 0;
+  const saved = {
+    docEl,
+    body,
+    htmlLocked: docEl.classList.contains('overflow-hidden'),
+    bodyLocked: body.classList.contains('overflow-hidden'),
+    bodyPaddingInlineEnd: body.style.getPropertyValue('padding-inline-end'),
+    paddingPriority: body.style.getPropertyPriority('padding-inline-end'),
+    appliedPadding: null
+  };
+  docEl.classList.add('overflow-hidden');
+  body.classList.add('overflow-hidden');
+
+  if (preserveScrollGap && gap > 0) {
+    body.style.setProperty('padding-inline-end', `${padding + gap}px`, saved.paddingPriority);
+    saved.appliedPadding = body.style.getPropertyValue('padding-inline-end');
+  }
+
+  return saved;
+}
+
+function unlockModalScroll(saved) {
+  if (!saved) return;
+  const {
+    docEl,
+    body
+  } = saved;
+  if (!saved.htmlLocked) docEl.classList.remove('overflow-hidden');
+  if (!saved.bodyLocked) body.classList.remove('overflow-hidden');
+
+  if (saved.appliedPadding !== null && body.style.getPropertyValue('padding-inline-end') === saved.appliedPadding && body.style.getPropertyPriority('padding-inline-end') === saved.paddingPriority) {
+    if (saved.bodyPaddingInlineEnd) {
+      body.style.setProperty('padding-inline-end', saved.bodyPaddingInlineEnd, saved.paddingPriority);
+    } else {
+      body.style.removeProperty('padding-inline-end');
+    }
+  }
+}
+
+
+
+/***/ },
+
+/***/ "93025a68d8ab"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   addModalLayer: () => (/* binding */ addModalLayer),
+/* harmony export */   captureModalFocusAncestors: () => (/* binding */ captureModalFocusAncestors),
+/* harmony export */   getModalLayerIndex: () => (/* binding */ getModalLayerIndex),
+/* harmony export */   getTopModalLayer: () => (/* binding */ getTopModalLayer),
+/* harmony export */   raiseModalLayer: () => (/* binding */ raiseModalLayer),
+/* harmony export */   removeModalLayer: () => (/* binding */ removeModalLayer),
+/* harmony export */   restoreModalLayerFocus: () => (/* binding */ restoreModalLayerFocus),
+/* harmony export */   updateModalLayers: () => (/* binding */ updateModalLayers)
+/* harmony export */ });
+/* harmony import */ var _focus__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("c8d66dd2c299");
+// Ordinary and Smart Modal are separate bundles. Share only document-local
+// coordination, not their registries, public instance APIs or rendering.
+
+const STACK_KEY = Symbol.for('simai.modal.document-stack');
+
+function state() {
+  if (!document[STACK_KEY]) {
+    Object.defineProperty(document, STACK_KEY, {
+      value: {
+        items: [],
+        lockOwner: null
+      },
+      configurable: true
+    });
+  }
+
+  return document[STACK_KEY];
+}
+
+function getTopModalLayer() {
+  return state().items.at(-1) || null;
+}
+
+function getModalLayerIndex(modal) {
+  return state().items.indexOf(modal);
+}
+
+function updateModalLayers() {
+  state().items.forEach((modal, index) => modal.applyStackPosition(index));
+  (0,_focus__WEBPACK_IMPORTED_MODULE_0__.syncModalFocusGuards)(getTopModalLayer());
+}
+
+function addModalLayer(modal, owner) {
+  const stack = state();
+  if (stack.items.includes(modal)) return;
+
+  if (!stack.items.length) {
+    stack.lockOwner = owner;
+    owner.lockPage(modal.preserveScrollGap);
+  }
+
+  stack.items.push(modal);
+  updateModalLayers();
+}
+
+function removeModalLayer(modal) {
+  const stack = state();
+  const index = stack.items.indexOf(modal);
+  if (index < 0) return;
+  stack.items.splice(index, 1);
+
+  if (!stack.items.length) {
+    stack.lockOwner?.unlockPage();
+    stack.lockOwner = null;
+  }
+
+  updateModalLayers();
+}
+
+function raiseModalLayer(modal) {
+  const stack = state();
+  const index = stack.items.indexOf(modal);
+  if (index < 0) return;
+  stack.items.splice(index, 1);
+  stack.items.push(modal);
+  updateModalLayers();
+}
+
+function captureModalFocusAncestors(node) {
+  const ancestors = [];
+
+  for (let parent = node?.parentElement; parent; parent = parent.parentElement) {
+    if (parent.matches('main, section, article, [role="main"], [role="region"]')) {
+      ancestors.push(parent);
+    }
+  }
+
+  return ancestors;
+}
+
+function tryReturnFocus(node, temporaryTabIndex = false) {
+  if (!node?.isConnected || typeof node.focus !== 'function' || node.matches(':disabled') || node.closest('[inert], [hidden], [aria-hidden="true"]') || !node.getClientRects().length || node.ownerDocument.defaultView.getComputedStyle(node).visibility !== 'visible') {
+    return false;
+  }
+
+  const addTabIndex = temporaryTabIndex && !node.hasAttribute('tabindex');
+  let observer;
+
+  const cleanup = () => {
+    observer?.disconnect();
+    node.removeEventListener('blur', cleanup); // Preserve synchronous author changes to the temporary attribute.
+
+    if (addTabIndex && node.getAttribute('tabindex') === '-1') node.removeAttribute('tabindex');
+  };
+
+  if (addTabIndex) {
+    node.setAttribute('tabindex', '-1');
+    node.addEventListener('blur', cleanup, {
+      once: true
+    });
+    observer = new node.ownerDocument.defaultView.MutationObserver(() => {
+      if (!node.isConnected) cleanup();
+    });
+    observer.observe(node.ownerDocument.documentElement, {
+      childList: true,
+      subtree: true
+    });
+  }
+
+  let focused = false;
+
+  try {
+    node.focus({
+      preventScroll: true
+    });
+    focused = node.ownerDocument.activeElement === node;
+    return focused;
+  } catch {
+    return false;
+  } finally {
+    // Removing tabindex while a non-native target is focused blurs it in browsers.
+    if (addTabIndex && !focused) cleanup();
+  }
+}
+
+function restoreModalLayerFocus(wasTop, lastActive, ancestors = []) {
+  if (!wasTop) return;
+  const top = getTopModalLayer();
+  const root = top?.getModalRoot?.() || top?.template;
+
+  if ((!top || root?.contains(lastActive)) && tryReturnFocus(lastActive)) {
+    return;
+  }
+
+  if (top) {
+    top.focusFirst();
+    return;
+  }
+
+  const candidates = new Set([...ancestors, ...document.querySelectorAll('main, [role="main"]'), document.body]);
+
+  for (const candidate of candidates) {
+    if (tryReturnFocus(candidate, true)) return;
+  }
+}
+
 
 
 /***/ },
@@ -1307,7 +1707,9 @@ class ComponentObserver {
       matches.forEach(match => {
         const raw = match.slice(1, -1);
         raw.split(/\s+/).filter(Boolean).forEach(cls => {
-          classes.add(cls.replace(/^\./, ''));
+          // Only explicit (.class) annotations are classes; the
+          // parentheses in var(--token) are CSS values, not markup.
+          if (cls.startsWith('.') && cls.length > 1) classes.add(cls.slice(1));
         });
       });
     });

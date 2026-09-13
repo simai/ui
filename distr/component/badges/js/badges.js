@@ -34,7 +34,8 @@ class Badges extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Com
       scheme
     } = (0,_contract__WEBPACK_IMPORTED_MODULE_3__.normalizeBadgeContract)(this.params);
     const className = this.attrs.class || this.attrs.className;
-    this.badge = document.createElement('div');
+    const accessibleLabel = this.attrs['aria-label'] || '';
+    this.badge = document.createElement('span');
 
     if (this.id) {
       this.badge.id = this.id;
@@ -46,7 +47,7 @@ class Badges extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Com
       this.badge.classList.add(...`${className}`.split(' ').filter(Boolean));
     }
 
-    Object.entries(this.attrs).filter(([attr]) => !['class', 'className'].includes(attr)).forEach(([attr, value]) => {
+    Object.entries(this.attrs).filter(([attr]) => !['class', 'className', 'aria-label'].includes(attr)).forEach(([attr, value]) => {
       if (value === undefined || value === null) {
         return;
       }
@@ -57,6 +58,14 @@ class Badges extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Com
     const endIcon = iconRight ?? (icon && iconPosition === 'end' ? icon : null);
     this.iconContainerLeft = this.createIcon(startIcon);
     this.iconContainerRight = this.createIcon(endIcon);
+    this.accessibleText = null;
+
+    if (accessibleLabel) {
+      this.accessibleText = document.createElement('span');
+      this.accessibleText.classList.add('sr-only');
+      this.accessibleText.textContent = accessibleLabel;
+    }
+
     this.textContainer = null;
     this.textElement = null;
 
@@ -67,6 +76,14 @@ class Badges extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Com
       this.textElement.classList.add('sf-badge-text');
       this.textElement.textContent = text;
       this.textContainer.append(this.textElement);
+
+      if (accessibleLabel) {
+        this.textContainer.setAttribute('aria-hidden', 'true');
+      }
+    }
+
+    if (!accessibleLabel && !this.textContainer) {
+      this.badge.setAttribute('aria-hidden', 'true');
     }
 
     this.applyLayoutUtilities(this.badge, '.sf-badge');
@@ -79,6 +96,10 @@ class Badges extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Com
     this.applyUtilities(this.iconContainerRight, this.params?.utilities?.iconContainer ?? this.params?.utilities?.icon);
     this.applyUtilities(this.textContainer, this.params?.utilities?.textContainer);
     this.applyUtilities(this.textElement, this.params?.utilities?.text);
+
+    if (this.accessibleText) {
+      this.badge.append(this.accessibleText);
+    }
 
     if (this.iconContainerLeft) {
       this.badge.append(this.iconContainerLeft);
@@ -104,6 +125,7 @@ class Badges extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Com
     container.classList.add('sf-badge-icon-container');
     const icon = document.createElement('i');
     icon.classList.add('sf-icon');
+    icon.setAttribute('aria-hidden', 'true');
     icon.textContent = iconName;
     container.append(icon);
     return container;
@@ -278,7 +300,9 @@ class ComponentObserver {
       matches.forEach(match => {
         const raw = match.slice(1, -1);
         raw.split(/\s+/).filter(Boolean).forEach(cls => {
-          classes.add(cls.replace(/^\./, ''));
+          // Only explicit (.class) annotations are classes; the
+          // parentheses in var(--token) are CSS values, not markup.
+          if (cls.startsWith('.') && cls.length > 1) classes.add(cls.slice(1));
         });
       });
     });

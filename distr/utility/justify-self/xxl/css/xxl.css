@@ -1,0 +1,19 @@
+@layer sf.utilities {
+  @media (min-width: 1320px) {
+    .xxl\:self-main-auto {
+      justify-self: auto;
+    }
+    .xxl\:self-main-start {
+      justify-self: start;
+    }
+    .xxl\:self-main-end {
+      justify-self: end;
+    }
+    .xxl\:self-main-center {
+      justify-self: center;
+    }
+    .xxl\:self-main-stretch {
+      justify-self: stretch;
+    }
+  }
+}

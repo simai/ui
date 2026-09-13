@@ -2,6 +2,46 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "67eed2647f47"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   bindFormReset: () => (/* binding */ bindFormReset)
+/* harmony export */ });
+// Reset fires before the browser restores default values. Synchronize afterwards
+// without synthesizing input/change events or retaining detached controls.
+const subscriptions = new WeakMap();
+const listeningDocuments = new WeakSet();
+function bindFormReset(input, synchronize) {
+  const doc = input.ownerDocument;
+
+  if (!listeningDocuments.has(doc)) {
+    doc.addEventListener('reset', event => {
+      const form = event.target;
+      if (form?.tagName !== 'FORM') return;
+      const controls = Array.from(form.elements);
+      setTimeout(() => {
+        if (event.defaultPrevented) return;
+
+        for (const control of controls) {
+          if (!control.isConnected || control.form !== form) continue;
+
+          for (const callback of subscriptions.get(control) || []) callback();
+        }
+      }, 0);
+    }, true);
+    listeningDocuments.add(doc);
+  }
+
+  let callbacks = subscriptions.get(input);
+  if (!callbacks) subscriptions.set(input, callbacks = new Set());
+  callbacks.add(synchronize);
+  return () => callbacks.delete(synchronize);
+}
+
+/***/ },
+
 /***/ "c2e2433fb668"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -14,6 +54,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d7f974466839");
 /* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("58661bec99a6");
+/* harmony import */ var _form_reset_helper__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("67eed2647f47");
+
 
 
 const RADIO_SELECTOR = 'label.sf-radio-button';
@@ -79,7 +121,7 @@ function getRadioGroupRoots(input) {
     return [];
   }
 
-  return Array.from(document.querySelectorAll(`${RADIO_SELECTOR} input[type="radio"][name="${input.name}"]`)).map(node => node.closest(RADIO_SELECTOR)).filter(Boolean);
+  return Array.from(input.getRootNode().querySelectorAll(`${RADIO_SELECTOR} input[type="radio"]`)).filter(node => node.name === input.name && node.form === input.form).map(node => node.closest(RADIO_SELECTOR)).filter(Boolean);
 }
 
 function syncRadioState(root) {
@@ -143,12 +185,15 @@ function bindRadio(root) {
 
   root.__sfRadioHandleChange = handleChange;
   input.addEventListener('change', handleChange);
+  root.__sfRadioReleaseReset = (0,_form_reset_helper__WEBPACK_IMPORTED_MODULE_2__.bindFormReset)(input, handleChange);
   root.dataset[RADIO_BOUND_FLAG] = '1';
   syncRadioState(root);
 }
 
 function unbindRadio(root) {
   if (!root) return;
+  root.__sfRadioReleaseReset?.();
+  delete root.__sfRadioReleaseReset;
   const {
     input
   } = getRadioNodes(root);
@@ -269,6 +314,7 @@ class Radio extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
     }
 
     this.input.checked = this.type === 'font' ? this.previewCheckedIndex >= 0 || toBoolean(checked) : toBoolean(checked);
+    this.input.defaultChecked = this.input.checked;
     this.input.disabled = toBoolean(disabled);
     hideNativeRadioInput(this.input);
     Object.entries(this.attrs).filter(([attr]) => !RADIO_INTERNAL_ATTRS.has(attr)).forEach(([attr, attrValue]) => {
@@ -410,7 +456,10 @@ class Radio extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
       }
 
       input.checked = index === checkedIndex;
+      input.defaultChecked = input.checked;
       input.disabled = toBoolean(disabled);
+      const optionLabel = descriptions[index] || (values[index] !== undefined ? String(values[index]) : `${title || text || 'Radio'} ${index + 1}`);
+      input.setAttribute('aria-label', optionLabel);
       hideNativeRadioInput(input);
       Object.entries(this.attrs).filter(([attr]) => !RADIO_INTERNAL_ATTRS.has(attr)).forEach(([attr, attrValue]) => {
         if (attrValue === undefined || attrValue === null) return;
@@ -582,7 +631,9 @@ class ComponentObserver {
       matches.forEach(match => {
         const raw = match.slice(1, -1);
         raw.split(/\s+/).filter(Boolean).forEach(cls => {
-          classes.add(cls.replace(/^\./, ''));
+          // Only explicit (.class) annotations are classes; the
+          // parentheses in var(--token) are CSS values, not markup.
+          if (cls.startsWith('.') && cls.length > 1) classes.add(cls.slice(1));
         });
       });
     });

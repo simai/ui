@@ -8,6 +8,17 @@ const MENU_ITEM_SELECTOR = '.sf-menu-item';
 const BOUND_FLAG = 'sfMenuBound';
 const EVENTS_BOUND_FLAG = 'sfMenuEventsBound';
 const OBSERVED_ATTRIBUTES = ['icon', 'trailing-icon', 'text', 'expanded', 'aria-expanded', 'disabled'];
+const ownedRoles = new WeakSet();
+const ownedTabIndexes = new WeakMap();
+const generatedElements = new WeakSet();
+const generatedLeadingIcons = new WeakSet();
+const generatedTrailingControls = new WeakSet();
+const legacyExpandedOwners = new WeakSet();
+let submenuId = 0;
+
+function isNativeInteractive(element) {
+  return element.matches('button, a[href], input, select, textarea');
+}
 
 function toBoolean(value, fallback = false) {
   if (value === undefined || value === null || value === '') return fallback;
@@ -45,7 +56,7 @@ function getElementLevel(root) {
 function getTextContent(root) {
   const explicitText = root.getAttribute('text');
   if (explicitText) return explicitText;
-  const text = root.querySelector('.sf-menu-element-text');
+  const text = root.querySelector(':scope > .sf-menu-element > .sf-menu-element-wrap .sf-menu-element-text');
   if (text) return text.textContent?.trim() || '';
   return Array.from(root.childNodes).filter(node => node.nodeType === Node.TEXT_NODE).map(node => node.textContent || '').join(' ').replace(/\s+/g, ' ').trim();
 }
@@ -62,13 +73,26 @@ function hasSubmenu(root) {
   return Boolean(nestedMenu);
 }
 
-function ensureElement(root) {
+function ensureElement(root, isBranch) {
   let element = root.querySelector(':scope > .sf-menu-element');
 
   if (!element) {
-    element = document.createElement('div');
+    element = document.createElement(isBranch ? 'button' : 'span');
     element.className = 'sf-menu-element';
+    if (isBranch) element.type = 'button';
+    generatedElements.add(element);
     root.prepend(element);
+  } else if (generatedElements.has(element) && element.matches(isBranch ? ':not(button)' : 'button')) {
+    const replacement = document.createElement(isBranch ? 'button' : 'span');
+    replacement.className = element.className;
+    if (isBranch) replacement.type = 'button';
+
+    while (element.firstChild) replacement.append(element.firstChild);
+
+    element.replaceWith(replacement);
+    generatedElements.delete(element);
+    generatedElements.add(replacement);
+    element = replacement;
   }
 
   return element;
@@ -87,6 +111,16 @@ function ensureWrap(element) {
     const text = element.querySelector(':scope > .sf-menu-element-text');
     if (leading) wrap.append(leading);
     if (text) wrap.append(text);
+    const directTextNodes = Array.from(element.childNodes).filter(node => node.nodeType === Node.TEXT_NODE && node.textContent?.trim());
+
+    if (directTextNodes.length > 0) {
+      const directText = document.createElement('span');
+      directText.className = 'sf-menu-element-text';
+      directText.textContent = directTextNodes.map(node => node.textContent || '').join(' ').replace(/\s+/g, ' ').trim();
+      directTextNodes.forEach(node => node.remove());
+      wrap.append(directText);
+    }
+
     element.prepend(wrap);
   }
 
@@ -98,13 +132,14 @@ function ensureLeading(root, wrap) {
   let leading = wrap.querySelector('.sf-menu-element-icon');
 
   if (!iconName) {
-    if (leading) leading.remove();
+    if (leading && generatedLeadingIcons.has(leading)) leading.remove();
     return null;
   }
 
   if (!leading) {
     leading = document.createElement('span');
     leading.className = 'sf-icon sf-menu-element-icon';
+    generatedLeadingIcons.add(leading);
     wrap.prepend(leading);
   }
 
@@ -113,6 +148,7 @@ function ensureLeading(root, wrap) {
 }
 
 function ensureText(root, wrap) {
+  const content = getTextContent(root);
   let text = wrap.querySelector('.sf-menu-element-text');
 
   if (!text) {
@@ -121,7 +157,7 @@ function ensureText(root, wrap) {
     wrap.append(text);
   }
 
-  text.textContent = getTextContent(root);
+  text.textContent = content;
   return text;
 }
 
@@ -129,42 +165,78 @@ function ensureTrailing(element) {
   let trailing = element.querySelector(':scope > .sf-icon-button');
 
   if (!trailing) {
-    trailing = document.createElement('button');
-    trailing.type = 'button';
+    trailing = document.createElement('span');
     trailing.className = 'sf-icon-button';
     trailing.innerHTML = '<span class="sf-icon" aria-hidden="true"></span>';
+    generatedTrailingControls.add(trailing);
     element.append(trailing);
   }
 
   trailing.classList.add('sf-icon-button');
+  if (trailing.tagName !== 'BUTTON') trailing.setAttribute('aria-hidden', 'true');
   return trailing;
 }
 
 function removeTrailing(element) {
   const trailing = element.querySelector(':scope > .sf-icon-button');
 
-  if (trailing) {
+  if (trailing && generatedTrailingControls.has(trailing)) {
     trailing.remove();
   }
 }
 
 function applyElementState(root, element, expanded, isBranch) {
+  const disabled = root.classList.contains('disabled') || root.hasAttribute('disabled');
   element.classList.remove('sf-menu-element--level-1', 'sf-menu-element--level-2', 'sf-menu-element--level-3', 'sf-menu-element--level-4');
   element.classList.add(getElementLevel(root));
   element.classList.toggle('open', expanded);
   element.classList.toggle('sf-menu-element--has-submenu', isBranch);
-  element.classList.toggle('disabled', root.classList.contains('disabled') || root.hasAttribute('disabled'));
+  element.classList.toggle('disabled', disabled);
+  if (element instanceof HTMLButtonElement) element.disabled = disabled;
+}
 
-  if (isBranch) {
-    element.setAttribute('aria-expanded', String(expanded));
-  } else {
+function ensureSubmenuId(submenu) {
+  if (!submenu.id) {
+    submenuId += 1;
+    submenu.id = `sf-menu-submenu-${submenuId}`;
+  }
+
+  return submenu.id;
+}
+
+function applyDisclosureState(root, element, suppliedToggle, expanded, isBranch) {
+  const submenu = root.querySelector(':scope > .sf-menu');
+  const controller = suppliedToggle || (isBranch ? element : null);
+
+  if (!submenu || !controller) {
     element.removeAttribute('aria-expanded');
+    element.removeAttribute('aria-controls');
+    return;
+  }
+
+  controller.setAttribute('aria-expanded', String(expanded));
+  controller.setAttribute('aria-controls', ensureSubmenuId(submenu));
+  submenu.hidden = !expanded;
+
+  if (suppliedToggle) {
+    element.removeAttribute('aria-expanded');
+    element.removeAttribute('aria-controls');
   }
 }
 
 function applyTrailingState(trailing, root, expanded) {
-  const trailingIcon = root.getAttribute('trailing-icon') || (expanded ? 'expand_less' : 'expand_more');
-  trailing.disabled = root.classList.contains('disabled') || root.hasAttribute('disabled');
+  const trailingIcon = root.getAttribute('trailing-icon') || (expanded ? 'keyboard_arrow_down' : 'chevron_right');
+  trailing.classList.toggle('disabled', root.classList.contains('disabled') || root.hasAttribute('disabled'));
+
+  if (trailing.tagName === 'BUTTON') {
+    trailing.disabled = root.classList.contains('disabled') || root.hasAttribute('disabled');
+    trailing.setAttribute('aria-expanded', String(expanded));
+
+    if (!trailing.hasAttribute('aria-label') && !trailing.hasAttribute('aria-labelledby')) {
+      trailing.setAttribute('aria-label', getTextContent(root));
+    }
+  }
+
   const icon = trailing.querySelector('.sf-icon');
 
   if (icon) {
@@ -180,15 +252,16 @@ function toggleMenuItem(root) {
   const nestedMenu = root.querySelector(':scope > .sf-menu');
   if (!nestedMenu) return false;
   const nextOpen = !root.classList.contains('open');
+  const usesLegacyAriaState = root.hasAttribute('aria-expanded');
 
   if (nextOpen) {
     root.classList.add('open');
-    root.setAttribute('expanded', '');
-    root.setAttribute('aria-expanded', 'true');
+    if (legacyExpandedOwners.has(root)) root.setAttribute('expanded', '');
+    if (usesLegacyAriaState) root.setAttribute('aria-expanded', 'true');
   } else {
     root.classList.remove('open');
-    root.removeAttribute('expanded');
-    root.setAttribute('aria-expanded', 'false');
+    if (legacyExpandedOwners.has(root)) root.removeAttribute('expanded');
+    if (usesLegacyAriaState) root.setAttribute('aria-expanded', 'false');
   }
 
   initMenuItem(root);
@@ -197,26 +270,43 @@ function toggleMenuItem(root) {
 
 function initMenuItem(root) {
   if (!root) return;
+  if (root.hasAttribute('expanded')) legacyExpandedOwners.add(root);
   const expanded = isExpanded(root);
   const isBranch = hasSubmenu(root);
-  const element = ensureElement(root);
+  const element = ensureElement(root, isBranch);
   const wrap = ensureWrap(element);
+  const suppliedToggle = isBranch && element.querySelector(':scope > button.sf-icon-button');
+  const usesRowController = isBranch && !isNativeInteractive(element) && !suppliedToggle;
   root.dataset[BOUND_FLAG] = 'true';
   root.classList.add('sf-menu-item');
   root.classList.toggle('sf-menu-item--has-submenu', isBranch);
 
-  if (!element.hasAttribute('role') && root.tagName !== 'BUTTON' && root.tagName !== 'A') {
+  if (usesRowController && !element.hasAttribute('role')) {
     element.setAttribute('role', 'button');
+    ownedRoles.add(element);
+  } else if (!usesRowController && ownedRoles.has(element)) {
+    if (element.getAttribute('role') === 'button') element.removeAttribute('role');
+    ownedRoles.delete(element);
   }
 
-  if (!element.hasAttribute('tabindex') && root.tagName !== 'BUTTON' && root.tagName !== 'A') {
-    element.setAttribute('tabindex', root.hasAttribute('disabled') ? '-1' : '0');
+  if (ownedTabIndexes.has(element) && element.getAttribute('tabindex') !== ownedTabIndexes.get(element)) {
+    ownedTabIndexes.delete(element);
+  }
+
+  if (usesRowController && (!element.hasAttribute('tabindex') || ownedTabIndexes.has(element))) {
+    const tabIndex = root.hasAttribute('disabled') || root.classList.contains('disabled') ? '-1' : '0';
+    element.setAttribute('tabindex', tabIndex);
+    ownedTabIndexes.set(element, tabIndex);
+  } else if (!usesRowController && ownedTabIndexes.has(element)) {
+    element.removeAttribute('tabindex');
+    ownedTabIndexes.delete(element);
   }
 
   ensureLeading(root, wrap);
   ensureText(root, wrap);
   clearDirectTextNodes(root);
   applyElementState(root, element, expanded, isBranch);
+  applyDisclosureState(root, element, suppliedToggle, expanded, isBranch);
 
   if (isBranch) {
     const trailing = ensureTrailing(element);
@@ -251,6 +341,10 @@ function observeMenuItems() {
         return;
       }
 
+      if (mutation.target instanceof Element && mutation.target.matches(MENU_ITEM_SELECTOR) && [...mutation.addedNodes, ...mutation.removedNodes].some(node => node instanceof Element && node.matches('.sf-menu'))) {
+        initMenuItem(mutation.target);
+      }
+
       mutation.addedNodes.forEach(node => {
         if (!(node instanceof Element)) return;
         initAllMenuItems(node);
@@ -283,6 +377,7 @@ function bindMenuEvents() {
     const element = target.closest('.sf-menu-item > .sf-menu-element');
     if (!element) return;
     if (target.closest('.sf-icon-button')) return;
+    if (target.closest('a[href], button, input, select, textarea') !== element) return;
     toggleMenuItem(element.closest('.sf-menu-item'));
   });
   document.addEventListener('keydown', event => {
@@ -291,8 +386,12 @@ function bindMenuEvents() {
     if (!(target instanceof Element)) return;
     const element = target.closest('.sf-menu-item > .sf-menu-element');
     if (!element) return;
+    const nestedInteractive = target.closest('a[href], button, input, select, textarea');
+    if (nestedInteractive && nestedInteractive !== element && !nestedInteractive.classList.contains('sf-icon-button')) return;
+    const root = element.closest('.sf-menu-item');
+    if (!hasSubmenu(root)) return;
     event.preventDefault();
-    toggleMenuItem(element.closest('.sf-menu-item'));
+    toggleMenuItem(root);
   });
 }
 

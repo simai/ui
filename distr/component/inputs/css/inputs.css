@@ -19,8 +19,10 @@
   }
 }
 @layer sf.components {
-  /* utility-hint: display/flex (.flex) flex-direction/column (.flex-col) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-space-1\/4) justify-content/flex-start (.justify-start) align-items/flex-start (.items-start) */
+  /* utility-hint: display/flex (.flex) flex-direction/column (.flex-col) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-space-1\/4) justify-content/flex-start (.justify-start) */
   .sf-input {
+    min-width: 0;
+    min-inline-size: 0;
     --sf-input--radius: var(--sf-radius--ui);
     background-color: transparent;
     background-color: var(--sf-input--background-color, transparent);
@@ -37,45 +39,143 @@
     width: var(--sf-icon-size-3);
     width: var(--sf-icon--width, var(--sf-icon-size-3));
   }
-  /* utility-hint: flex/1 (.flex-1) display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) justify-content/flex-start (.justify-start) align-items/center (.items-center) */
-  [dir="ltr"] .sf-input .sf-input-field {
+  /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) justify-content/flex-start (.justify-start) align-items/center (.items-center) */
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-input .sf-input-field {
     border-bottom-right-radius: var(--sf-input-field--border-end-end-radius);
   }
-  [dir="rtl"] .sf-input .sf-input-field {
+  @supports not (border-end-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-input .sf-input-field {
+    border-bottom-right-radius: var(--sf-input-field--border-end-end-radius);
+    }
+  }
+  .sf-input .sf-input-field:where(:dir(ltr)) {
+    border-bottom-right-radius: var(--sf-input-field--border-end-end-radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-input .sf-input-field {
     border-bottom-left-radius: var(--sf-input-field--border-end-end-radius);
   }
-  [dir="ltr"] .sf-input .sf-input-field {
+  @supports not (border-end-end-radius: initial) {
+  [dir="rtl"] .sf-input .sf-input-field {
+    border-bottom-left-radius: var(--sf-input-field--border-end-end-radius);
+    }
+  }
+  .sf-input .sf-input-field:where(:dir(rtl)) {
+    border-bottom-left-radius: var(--sf-input-field--border-end-end-radius);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-input .sf-input-field {
     border-bottom-left-radius: var(--sf-input-field--border-end-start-radius);
   }
-  [dir="rtl"] .sf-input .sf-input-field {
+  @supports not (border-end-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-input .sf-input-field {
+    border-bottom-left-radius: var(--sf-input-field--border-end-start-radius);
+    }
+  }
+  .sf-input .sf-input-field:where(:dir(ltr)) {
+    border-bottom-left-radius: var(--sf-input-field--border-end-start-radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-input .sf-input-field {
     border-bottom-right-radius: var(--sf-input-field--border-end-start-radius);
   }
-  [dir="ltr"] .sf-input .sf-input-field {
+  @supports not (border-end-start-radius: initial) {
+  [dir="rtl"] .sf-input .sf-input-field {
+    border-bottom-right-radius: var(--sf-input-field--border-end-start-radius);
+    }
+  }
+  .sf-input .sf-input-field:where(:dir(rtl)) {
+    border-bottom-right-radius: var(--sf-input-field--border-end-start-radius);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-input .sf-input-field {
     border-top-right-radius: var(--sf-input-field--border-start-end-radius);
   }
-  [dir="rtl"] .sf-input .sf-input-field {
+  @supports not (border-start-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-input .sf-input-field {
+    border-top-right-radius: var(--sf-input-field--border-start-end-radius);
+    }
+  }
+  .sf-input .sf-input-field:where(:dir(ltr)) {
+    border-top-right-radius: var(--sf-input-field--border-start-end-radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-input .sf-input-field {
     border-top-left-radius: var(--sf-input-field--border-start-end-radius);
   }
-  [dir="ltr"] .sf-input .sf-input-field {
+  @supports not (border-start-end-radius: initial) {
+  [dir="rtl"] .sf-input .sf-input-field {
+    border-top-left-radius: var(--sf-input-field--border-start-end-radius);
+    }
+  }
+  .sf-input .sf-input-field:where(:dir(rtl)) {
+    border-top-left-radius: var(--sf-input-field--border-start-end-radius);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-input .sf-input-field {
     border-top-left-radius: var(--sf-input-field--border-start-start-radius);
   }
-  [dir="rtl"] .sf-input .sf-input-field {
+  @supports not (border-start-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-input .sf-input-field {
+    border-top-left-radius: var(--sf-input-field--border-start-start-radius);
+    }
+  }
+  .sf-input .sf-input-field:where(:dir(ltr)) {
+    border-top-left-radius: var(--sf-input-field--border-start-start-radius);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-input .sf-input-field {
     border-top-right-radius: var(--sf-input-field--border-start-start-radius);
   }
-  [dir="ltr"] .sf-input .sf-input-field {
+  @supports not (border-start-start-radius: initial) {
+  [dir="rtl"] .sf-input .sf-input-field {
+    border-top-right-radius: var(--sf-input-field--border-start-start-radius);
+    }
+  }
+  .sf-input .sf-input-field:where(:dir(rtl)) {
+    border-top-right-radius: var(--sf-input-field--border-start-start-radius);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-input .sf-input-field {
     padding-right: var(--sf-input-field--padding-inline-end);
   }
-  [dir="rtl"] .sf-input .sf-input-field {
+  @supports not (padding-inline-end: initial) {
+  html:not([dir="rtl"]) .sf-input .sf-input-field {
+    padding-right: var(--sf-input-field--padding-inline-end);
+    }
+  }
+  .sf-input .sf-input-field:where(:dir(ltr)) {
+    padding-right: var(--sf-input-field--padding-inline-end);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-input .sf-input-field {
     padding-left: var(--sf-input-field--padding-inline-end);
   }
-  [dir="ltr"] .sf-input .sf-input-field {
+  @supports not (padding-inline-end: initial) {
+  [dir="rtl"] .sf-input .sf-input-field {
+    padding-left: var(--sf-input-field--padding-inline-end);
+    }
+  }
+  .sf-input .sf-input-field:where(:dir(rtl)) {
+    padding-left: var(--sf-input-field--padding-inline-end);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-input .sf-input-field {
     padding-left: var(--sf-input-field--padding-inline-start);
   }
+  @supports not (padding-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-input .sf-input-field {
+    padding-left: var(--sf-input-field--padding-inline-start);
+    }
+  }
+  .sf-input .sf-input-field:where(:dir(ltr)) {
+    padding-left: var(--sf-input-field--padding-inline-start);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-input .sf-input-field {
+    padding-right: var(--sf-input-field--padding-inline-start);
+  }
+  @supports not (padding-inline-start: initial) {
   [dir="rtl"] .sf-input .sf-input-field {
+    padding-right: var(--sf-input-field--padding-inline-start);
+    }
+  }
+  .sf-input .sf-input-field:where(:dir(rtl)) {
     padding-right: var(--sf-input-field--padding-inline-start);
   }
   .sf-input .sf-input-field {
-    --sf-input-field--border: var(--sf-a1) solid;
+    min-width: 0;
+    min-inline-size: 0;
+    --sf-input-field--border: var(--sf-px) solid;
     --sf-input-field--border-end-end-radius: var(--sf-input--radius);
     --sf-input-field--border-end-start-radius: var(--sf-input--radius);
     --sf-input-field--border-start-end-radius: var(--sf-input--radius);
@@ -96,25 +196,62 @@
     -webkit-padding-start: var(--sf-input-field--padding-inline-start);
             padding-inline-start: var(--sf-input-field--padding-inline-start);
     padding-top: var(--sf-input-field--padding-top);
+    transition-duration: var(--sf-duration-fast);
+    transition-property: background-color, border-color, box-shadow, color;
+    transition-timing-function: var(--sf-animation);
   }
   .sf-input .sf-input-hint {
     --sf-input-hint--background-color: transparent;
     background-color: var(--sf-input-hint--background-color);
   }
-  /* utility-hint: flex/1 (.flex-1) display/flex (.flex) */
-  [dir="ltr"] .sf-input .sf-input-field input {
+  /* utility-hint: flex/1 (.flex-1) */
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-input .sf-input-field input {
     padding-right: var(--sf-input-input--padding-inline-end);
   }
-  [dir="rtl"] .sf-input .sf-input-field input {
+  @supports not (padding-inline-end: initial) {
+  html:not([dir="rtl"]) .sf-input .sf-input-field input {
+    padding-right: var(--sf-input-input--padding-inline-end);
+    }
+  }
+  .sf-input .sf-input-field input:where(:dir(ltr)) {
+    padding-right: var(--sf-input-input--padding-inline-end);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-input .sf-input-field input {
     padding-left: var(--sf-input-input--padding-inline-end);
   }
-  [dir="ltr"] .sf-input .sf-input-field input {
+  @supports not (padding-inline-end: initial) {
+  [dir="rtl"] .sf-input .sf-input-field input {
+    padding-left: var(--sf-input-input--padding-inline-end);
+    }
+  }
+  .sf-input .sf-input-field input:where(:dir(rtl)) {
+    padding-left: var(--sf-input-input--padding-inline-end);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-input .sf-input-field input {
     padding-left: var(--sf-input-input--padding-inline-start);
   }
+  @supports not (padding-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-input .sf-input-field input {
+    padding-left: var(--sf-input-input--padding-inline-start);
+    }
+  }
+  .sf-input .sf-input-field input:where(:dir(ltr)) {
+    padding-left: var(--sf-input-input--padding-inline-start);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-input .sf-input-field input {
+    padding-right: var(--sf-input-input--padding-inline-start);
+  }
+  @supports not (padding-inline-start: initial) {
   [dir="rtl"] .sf-input .sf-input-field input {
+    padding-right: var(--sf-input-input--padding-inline-start);
+    }
+  }
+  .sf-input .sf-input-field input:where(:dir(rtl)) {
     padding-right: var(--sf-input-input--padding-inline-start);
   }
   .sf-input .sf-input-field input {
+    min-width: 0;
+    min-inline-size: 0;
     --sf-input-input--background-color: transparent;
     background-color: var(--sf-input-input--background-color);
     color: var(--sf-input-input--color);
@@ -127,7 +264,7 @@
             padding-inline-start: var(--sf-input-input--padding-inline-start);
   }
   .sf-input .sf-input-field input::-webkit-input-placeholder {
-    --sf-input-placeholder--color: var(--sf-on-surface-muted);
+    --sf-input-placeholder--color: var(--sf-on-surface-variant);
     --sf-input-placeholder--font-family: var(--sf-text--family);
     color: var(--sf-input-placeholder--color);
     font-family: var(--sf-input-placeholder--font-family);
@@ -135,7 +272,7 @@
     line-height: var(--sf-input-placeholder--line-height);
   }
   .sf-input .sf-input-field input::-moz-placeholder {
-    --sf-input-placeholder--color: var(--sf-on-surface-muted);
+    --sf-input-placeholder--color: var(--sf-on-surface-variant);
     --sf-input-placeholder--font-family: var(--sf-text--family);
     color: var(--sf-input-placeholder--color);
     font-family: var(--sf-input-placeholder--font-family);
@@ -143,7 +280,7 @@
     line-height: var(--sf-input-placeholder--line-height);
   }
   .sf-input .sf-input-field input:-ms-input-placeholder {
-    --sf-input-placeholder--color: var(--sf-on-surface-muted);
+    --sf-input-placeholder--color: var(--sf-on-surface-variant);
     --sf-input-placeholder--font-family: var(--sf-text--family);
     color: var(--sf-input-placeholder--color);
     font-family: var(--sf-input-placeholder--font-family);
@@ -151,7 +288,7 @@
     line-height: var(--sf-input-placeholder--line-height);
   }
   .sf-input .sf-input-field input::-ms-input-placeholder {
-    --sf-input-placeholder--color: var(--sf-on-surface-muted);
+    --sf-input-placeholder--color: var(--sf-on-surface-variant);
     --sf-input-placeholder--font-family: var(--sf-text--family);
     color: var(--sf-input-placeholder--color);
     font-family: var(--sf-input-placeholder--font-family);
@@ -159,28 +296,75 @@
     line-height: var(--sf-input-placeholder--line-height);
   }
   .sf-input .sf-input-field input::placeholder {
-    --sf-input-placeholder--color: var(--sf-on-surface-muted);
+    --sf-input-placeholder--color: var(--sf-on-surface-variant);
     --sf-input-placeholder--font-family: var(--sf-text--family);
     color: var(--sf-input-placeholder--color);
     font-family: var(--sf-input-placeholder--font-family);
     font-size: var(--sf-input-placeholder--font-size);
     line-height: var(--sf-input-placeholder--line-height);
   }
+  .sf-input.sf-input--filled .sf-input-field input::-webkit-input-placeholder {
+    --sf-input-placeholder--color: var(--sf-on-surface);
+  }
+  .sf-input.sf-input--filled .sf-input-field input::-moz-placeholder {
+    --sf-input-placeholder--color: var(--sf-on-surface);
+  }
+  .sf-input.sf-input--filled .sf-input-field input:-ms-input-placeholder {
+    --sf-input-placeholder--color: var(--sf-on-surface);
+  }
+  .sf-input.sf-input--filled .sf-input-field input::-ms-input-placeholder {
+    --sf-input-placeholder--color: var(--sf-on-surface);
+  }
+  .sf-input.sf-input--filled .sf-input-field input::placeholder {
+    --sf-input-placeholder--color: var(--sf-on-surface);
+  }
   .sf-input .sf-input-left {
     --sf-input-left--background-color: transparent;
     background-color: var(--sf-input-left--background-color);
   }
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) justify-content/center (.justify-center) align-items/center (.items-center) */
-  [dir="ltr"] .sf-input .sf-input-right {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-input .sf-input-right {
     padding-right: var(--sf-input-right--padding-inline-end);
   }
-  [dir="rtl"] .sf-input .sf-input-right {
+  @supports not (padding-inline-end: initial) {
+  html:not([dir="rtl"]) .sf-input .sf-input-right {
+    padding-right: var(--sf-input-right--padding-inline-end);
+    }
+  }
+  .sf-input .sf-input-right:where(:dir(ltr)) {
+    padding-right: var(--sf-input-right--padding-inline-end);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-input .sf-input-right {
     padding-left: var(--sf-input-right--padding-inline-end);
   }
-  [dir="ltr"] .sf-input .sf-input-right {
+  @supports not (padding-inline-end: initial) {
+  [dir="rtl"] .sf-input .sf-input-right {
+    padding-left: var(--sf-input-right--padding-inline-end);
+    }
+  }
+  .sf-input .sf-input-right:where(:dir(rtl)) {
+    padding-left: var(--sf-input-right--padding-inline-end);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-input .sf-input-right {
     padding-left: var(--sf-input-right--padding-inline-start);
   }
+  @supports not (padding-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-input .sf-input-right {
+    padding-left: var(--sf-input-right--padding-inline-start);
+    }
+  }
+  .sf-input .sf-input-right:where(:dir(ltr)) {
+    padding-left: var(--sf-input-right--padding-inline-start);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-input .sf-input-right {
+    padding-right: var(--sf-input-right--padding-inline-start);
+  }
+  @supports not (padding-inline-start: initial) {
   [dir="rtl"] .sf-input .sf-input-right {
+    padding-right: var(--sf-input-right--padding-inline-start);
+    }
+  }
+  .sf-input .sf-input-right:where(:dir(rtl)) {
     padding-right: var(--sf-input-right--padding-inline-start);
   }
   .sf-input .sf-input-right {
@@ -192,7 +376,7 @@
             padding-inline-start: var(--sf-input-right--padding-inline-start);
   }
   .sf-input .sf-input-text {
-    --sf-input-text--color: var(--sf-on-surface-muted);
+    --sf-input-text--color: var(--sf-on-surface-variant);
     --sf-input-text--font-family: var(--sf-text--family);
     --sf-input-text--font-weight: var(--sf-font-weight-regular);
     color: var(--sf-input-text--color);
@@ -212,7 +396,7 @@
     gap: var(--sf-b0);
     line-height: var(--sf-input-hint-text-wrap--line-height);
   }
-  /* utility-hint: flex/1 (.flex-1) display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-input-label--gap) justify-content/flex-start (.justify-start) align-items/flex-start (.items-start) */
+  /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-input-label--gap) justify-content/flex-start (.justify-start) align-items/flex-start (.items-start) */
   .sf-input .sf-input-label {
     --sf-input-label--background-color: transparent;
     --sf-input-label--gap: var(--sf-space-1\/4);
@@ -254,7 +438,7 @@
     --sf-input-hint-text-wrap--font-weight: var(--sf-font-weight-regular);
   }
   .sf-input.sf-input--bordered .sf-input-hint-text-wrap, .sf-input.sf-input--filled .sf-input-hint-text-wrap {
-    --sf-input-hint-text-wrap--color: var(--sf-on-surface-muted);
+    --sf-input-hint-text-wrap--color: var(--sf-on-surface-variant);
   }
   .sf-input.sf-input--size-1 input {
     --sf-input-input--font-size: var(--sf-text-size-1);
@@ -557,10 +741,16 @@
     --sf-input-field--background-color: var(--sf-surface-0);
     --sf-input-field--border-color: var(--sf-outline-variant);
   }
-  .sf-input:not(.error).sf-input--bordered[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:active\)] .sf-input-field {
+  .sf-input:not(.error).sf-input--bordered[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:not\(\:-moz-read-only\)\:active\)] .sf-input-field {
     --sf-input-field--border-color: var(--sf-primary);
   }
-  .sf-input:not(.error).sf-input--bordered:has(input:enabled:not(:disabled):not(.disabled):active) .sf-input-field {
+  .sf-input:not(.error).sf-input--bordered[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:not\(\:read-only\)\:active\)] .sf-input-field {
+    --sf-input-field--border-color: var(--sf-primary);
+  }
+  .sf-input:not(.error).sf-input--bordered:has(input:enabled:not(:disabled):not(.disabled):not(:-moz-read-only):active) .sf-input-field {
+    --sf-input-field--border-color: var(--sf-primary);
+  }
+  .sf-input:not(.error).sf-input--bordered:has(input:enabled:not(:disabled):not(.disabled):not(:read-only):active) .sf-input-field {
     --sf-input-field--border-color: var(--sf-primary);
   }
   .sf-input.sf-input--bordered[\:has\(input\:disabled\)] .sf-input-field {
@@ -589,16 +779,28 @@
     --sf-input-field--background-color: var(--sf-surface-container);
     --sf-input-field--border-color: var(--sf-transparent-for-focus);
   }
-  .sf-input:not(.error).sf-input--filled[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:hover\)] .sf-input-field {
+  .sf-input:not(.error).sf-input--filled[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:not\(\:-moz-read-only\)\:hover\)] .sf-input-field {
     --sf-input-field--background-color: var(--sf-surface-container-hover);
   }
-  .sf-input:not(.error).sf-input--filled:has(input:enabled:not(:disabled):not(.disabled):hover) .sf-input-field {
+  .sf-input:not(.error).sf-input--filled[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:not\(\:read-only\)\:hover\)] .sf-input-field {
     --sf-input-field--background-color: var(--sf-surface-container-hover);
   }
-  .sf-input:not(.error).sf-input--filled[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:active\)] .sf-input-field {
+  .sf-input:not(.error).sf-input--filled:has(input:enabled:not(:disabled):not(.disabled):not(:-moz-read-only):hover) .sf-input-field {
+    --sf-input-field--background-color: var(--sf-surface-container-hover);
+  }
+  .sf-input:not(.error).sf-input--filled:has(input:enabled:not(:disabled):not(.disabled):not(:read-only):hover) .sf-input-field {
+    --sf-input-field--background-color: var(--sf-surface-container-hover);
+  }
+  .sf-input:not(.error).sf-input--filled[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:not\(\:-moz-read-only\)\:active\)] .sf-input-field {
     --sf-input-field--border-color: var(--sf-primary-active);
   }
-  .sf-input:not(.error).sf-input--filled:has(input:enabled:not(:disabled):not(.disabled):active) .sf-input-field {
+  .sf-input:not(.error).sf-input--filled[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:not\(\:read-only\)\:active\)] .sf-input-field {
+    --sf-input-field--border-color: var(--sf-primary-active);
+  }
+  .sf-input:not(.error).sf-input--filled:has(input:enabled:not(:disabled):not(.disabled):not(:-moz-read-only):active) .sf-input-field {
+    --sf-input-field--border-color: var(--sf-primary-active);
+  }
+  .sf-input:not(.error).sf-input--filled:has(input:enabled:not(:disabled):not(.disabled):not(:read-only):active) .sf-input-field {
     --sf-input-field--border-color: var(--sf-primary-active);
   }
   .sf-input[\:has\(input\:disabled\)] > .sf-input-field > .sf-input-hint > .sf-icon, .sf-input[\:has\(input\:disabled\)] > .sf-input-field > .sf-input-left > .sf-icon {
@@ -643,22 +845,83 @@
   .sf-input:has(input:disabled) .sf-input-text {
     --sf-input-text--color: var(--sf-on-disable);
   }
-  .sf-input:not(.error)[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:hover\)] .sf-input-field {
+  .sf-input:not(.error)[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:not\(\:-moz-read-only\)\:hover\)] .sf-input-field {
     --sf-input-field--border-color: var(--sf-primary-hover);
   }
-  .sf-input:not(.error):has(input:enabled:not(:disabled):not(.disabled):hover) .sf-input-field {
+  .sf-input:not(.error)[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:not\(\:read-only\)\:hover\)] .sf-input-field {
     --sf-input-field--border-color: var(--sf-primary-hover);
   }
-  .sf-input:not(.error)[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:active\)] .sf-input-field {
+  .sf-input:not(.error):has(input:enabled:not(:disabled):not(.disabled):not(:-moz-read-only):hover) .sf-input-field {
+    --sf-input-field--border-color: var(--sf-primary-hover);
+  }
+  .sf-input:not(.error):has(input:enabled:not(:disabled):not(.disabled):not(:read-only):hover) .sf-input-field {
+    --sf-input-field--border-color: var(--sf-primary-hover);
+  }
+  .sf-input:not(.error)[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:not\(\:-moz-read-only\)\:active\)] .sf-input-field {
     --sf-input-field--background-color: var(--sf-surface-0);
   }
-  .sf-input:not(.error):has(input:enabled:not(:disabled):not(.disabled):active) .sf-input-field {
+  .sf-input:not(.error)[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:not\(\:read-only\)\:active\)] .sf-input-field {
     --sf-input-field--background-color: var(--sf-surface-0);
   }
-  .sf-input:not(.error)[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:focus\)] .sf-input-field {
+  .sf-input:not(.error):has(input:enabled:not(:disabled):not(.disabled):not(:-moz-read-only):active) .sf-input-field {
+    --sf-input-field--background-color: var(--sf-surface-0);
+  }
+  .sf-input:not(.error):has(input:enabled:not(:disabled):not(.disabled):not(:read-only):active) .sf-input-field {
+    --sf-input-field--background-color: var(--sf-surface-0);
+  }
+  .sf-input:not(.sf-input--pointer-focus)[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\).focus-visible\)] .sf-input-field {
     --sf-input-field--box-shadow: var(--sf-ui-focus);
   }
-  .sf-input:not(.error):has(input:enabled:not(:disabled):not(.disabled):focus) .sf-input-field {
+  .sf-input:not(.sf-input--pointer-focus):has(input:enabled:not(:disabled):not(.disabled).focus-visible) .sf-input-field {
     --sf-input-field--box-shadow: var(--sf-ui-focus);
+  }
+  .sf-input:not(.sf-input--pointer-focus)[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:focus-visible\)] .sf-input-field {
+    --sf-input-field--box-shadow: var(--sf-ui-focus);
+  }
+  .sf-input:not(.sf-input--pointer-focus):has(input:enabled:not(:disabled):not(.disabled):focus-visible) .sf-input-field {
+    --sf-input-field--box-shadow: var(--sf-ui-focus);
+  }
+  .sf-input:not(.error).sf-input--bordered[\:has\(input\:-moz-read-only\:not\(\:disabled\)\)] .sf-input-field {
+    --sf-input-field--background-color: var(--sf-surface-container);
+  }
+  .sf-input:not(.error).sf-input--bordered[\:has\(input\:read-only\:not\(\:disabled\)\)] .sf-input-field {
+    --sf-input-field--background-color: var(--sf-surface-container);
+  }
+  .sf-input:not(.error).sf-input--bordered:has(input:-moz-read-only:not(:disabled)) .sf-input-field {
+    --sf-input-field--background-color: var(--sf-surface-container);
+  }
+  .sf-input:not(.error).sf-input--bordered:has(input:read-only:not(:disabled)) .sf-input-field {
+    --sf-input-field--background-color: var(--sf-surface-container);
+  }
+}
+@layer sf.states {
+  @media (prefers-reduced-motion: reduce) {
+    .sf-input .sf-input-field {
+      transition-duration: 0s;
+    }
+  }
+}
+@layer sf.states {
+  @media (forced-colors: active) {
+    .sf-input:not(.sf-input--pointer-focus)[\:has\(input\:not\(\:disabled\)\:not\(.disabled\).focus-visible\)] .sf-input-field {
+      outline: var(--sf-focus-outline-width) solid currentColor;
+      outline-offset: var(--sf-focus-outline-width);
+      --sf-input-field--box-shadow: none;
+    }
+    .sf-input:not(.sf-input--pointer-focus):has(input:not(:disabled):not(.disabled).focus-visible) .sf-input-field {
+      outline: var(--sf-focus-outline-width) solid currentColor;
+      outline-offset: var(--sf-focus-outline-width);
+      --sf-input-field--box-shadow: none;
+    }
+    .sf-input:not(.sf-input--pointer-focus)[\:has\(input\:not\(\:disabled\)\:not\(.disabled\)\:focus-visible\)] .sf-input-field {
+      outline: var(--sf-focus-outline-width) solid currentColor;
+      outline-offset: var(--sf-focus-outline-width);
+      --sf-input-field--box-shadow: none;
+    }
+    .sf-input:not(.sf-input--pointer-focus):has(input:not(:disabled):not(.disabled):focus-visible) .sf-input-field {
+      outline: var(--sf-focus-outline-width) solid currentColor;
+      outline-offset: var(--sf-focus-outline-width);
+      --sf-input-field--box-shadow: none;
+    }
   }
 }

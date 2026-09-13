@@ -5,56 +5,36 @@
 () {
 
 (() => {
-  const applySavedThemeClass = () => {
-    const classes = ['theme-dark', 'theme-light'];
-    const doc = document.documentElement;
-    if (!doc) return;
-    const themeCookie = document.cookie.split('; ').find(c => c.startsWith('sf-theme='));
-    let theme = themeCookie ? decodeURIComponent(themeCookie.split('=')[1]) : '';
-    let isDark = theme === 'dark' || !theme && window.matchMedia?.('(prefers-color-scheme: dark)').matches;
-    const targetClass = isDark ? classes[0] : classes[1];
-    const removeClass = isDark ? classes[1] : classes[0];
-
-    if (!doc.classList.contains(targetClass)) {
-      doc.classList.remove(removeClass);
-      doc.classList.add(targetClass);
-    }
-  };
-
-  applySavedThemeClass();
-
-  const bindThemeClick = () => {
-    const btn = document.querySelector('.sf-theme-button');
-    if (!btn || btn.dataset.sfThemeBound) return;
-    btn.dataset.sfThemeBound = '1';
-    btn.addEventListener('click', () => {
-      if (window.SF?.Loader?.changeTheme) {
-        window.SF.Loader.changeTheme(btn);
-      }
+  const syncControls = () => {
+    const isDark = document.documentElement.classList.contains('theme-dark');
+    const preference = window.SF?.Loader?.themePreference;
+    document.querySelectorAll('.sf-theme-button').forEach(button => {
+      const requested = button.dataset.theme;
+      const pressed = requested ? requested === preference : isDark;
+      button.setAttribute('aria-pressed', String(pressed));
     });
   };
 
-  const attach = () => {
-    const loader = window.SF?.Loader;
+  const handleClick = event => {
+    const button = event.target.closest?.('.sf-theme-button');
+    if (!button || !button.isConnected) return;
+    const requested = button.dataset.theme;
 
-    if (!loader) {
-      window.addEventListener('sf-loader-ready', attach, {
-        once: true
-      });
+    if (requested !== undefined) {
+      if (['system', 'light', 'dark'].includes(requested)) {
+        window.SF?.Loader?.setTheme?.(requested);
+      }
+
       return;
     }
 
-    if (loader.turboEnabled) {
-      document.addEventListener('turbo:load', bindThemeClick);
-    } // initial attempt
-
-
-    bindThemeClick(); // re-run after loader fully ready (e.g., dynamic content)
-
-    window.addEventListener('sf-loader-ready', bindThemeClick);
+    window.SF?.Loader?.changeTheme?.(button);
   };
 
-  attach();
+  document.addEventListener('click', handleClick);
+  window.addEventListener('sf-theme-change', syncControls);
+  document.addEventListener('turbo:load', syncControls);
+  syncControls();
 })();
 
 /***/ },

@@ -1,0 +1,1 @@
+@layer sf.utilities{@media(min-width: 1320px){.xxl\:grid-flow-row{grid-auto-flow:row}.xxl\:grid-flow-col{grid-auto-flow:column}.xxl\:grid-flow-row-dense{grid-auto-flow:row dense}.xxl\:grid-flow-col-dense{grid-auto-flow:column dense}}}

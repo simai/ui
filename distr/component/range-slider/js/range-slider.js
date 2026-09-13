@@ -16,7 +16,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var nouislider__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("1f80f6f36b75");
 
 const RANGE_SLIDER_SELECTOR = '.sf-range-slider';
-const RANGE_SLIDER_BOUND_FLAG = 'sfRangeSliderBound';
+const RANGE_SLIDER_BOUND_FLAG = 'sfRangeSliderBound'; // Instance-owned state is shared by separately bundled Component/Smart code.
+
+const SLIDER_ACCESSIBILITY_STATE = '__sfRangeSliderAccessibility';
+const SLIDER_LABEL_STATE = '__sfRangeSliderLabels';
+const accessibleAttributes = ['aria-label', 'aria-labelledby', 'aria-describedby'];
+const handleLabelAttributes = ['data-lower-label', 'data-upper-label'];
 
 function toBoolean(value, fallback = false) {
   if (value === undefined || value === null || value === '') return fallback;
@@ -29,29 +34,58 @@ function toNumber(value, fallback) {
   return Number.isFinite(parsed) ? parsed : fallback;
 }
 
+function getNormalizedRange(root) {
+  let min = toNumber(root.getAttribute('data-min'), 0);
+  let max = toNumber(root.getAttribute('data-max'), 100);
+
+  if (min > max) {
+    [min, max] = [max, min];
+  }
+
+  if (!(max > min) || !Number.isFinite(max - min)) {
+    return {
+      min: 0,
+      max: 100
+    };
+  }
+
+  return {
+    min,
+    max
+  };
+}
+
+function clampValue(value, min, max, fallback) {
+  const numeric = toNumber(value, fallback);
+  return Math.min(max, Math.max(min, numeric));
+}
+
+function getConnect(root, multiple) {
+  const fallback = multiple ? true : 'lower';
+  if (!root.hasAttribute('data-connect')) return fallback;
+  const value = String(root.getAttribute('data-connect') ?? '').trim().toLowerCase();
+  if (value === 'true') return true;
+  if (value === 'false') return false;
+  if (value === 'lower' || value === 'upper') return value;
+  return fallback;
+}
+
 function getDecimalPlaces(value) {
-  const normalized = String(value ?? '').trim();
-  if (!normalized || !normalized.includes('.')) return 0;
-  return normalized.split('.')[1]?.replace(/0+$/, '').length || 0;
+  const normalized = String(value ?? '').trim().toLowerCase();
+  if (!normalized || !Number.isFinite(Number(normalized))) return 0;
+  const [coefficient, exponent = '0'] = normalized.split('e');
+  const fraction = coefficient.split('.')[1]?.replace(/0+$/, '').length || 0;
+  return Math.min(100, Math.max(0, fraction - Number(exponent)));
 }
 
 function getValueDecimals(root) {
   const decimalsAttr = root.getAttribute('data-decimals');
 
   if (decimalsAttr !== null && decimalsAttr !== '') {
-    return Math.max(0, Math.trunc(toNumber(decimalsAttr, 0)));
+    return Math.min(100, Math.max(0, Math.trunc(toNumber(decimalsAttr, 0))));
   }
 
   return getDecimalPlaces(root.getAttribute('data-step'));
-}
-
-function normalizeNumericValue(root, value) {
-  const numeric = Number(value);
-  if (!Number.isFinite(numeric)) return value;
-  const decimals = getValueDecimals(root);
-  const multiplier = 10 ** decimals;
-  const rounded = Math.round((numeric + Number.EPSILON) * multiplier) / multiplier;
-  return Number(rounded.toFixed(decimals));
 }
 
 function isMultipleRoot(root) {
@@ -61,22 +95,16 @@ function isMultipleRoot(root) {
 function parseStart(root) {
   const raw = root.getAttribute('data-start') || root.getAttribute('data-value') || '0';
   const parts = String(raw).split(',');
-  const min = toNumber(root.getAttribute('data-min'), 0);
-  const max = toNumber(root.getAttribute('data-max'), 100);
+  const {
+    min,
+    max
+  } = getNormalizedRange(root);
 
   if (parts.length > 1 && isMultipleRoot(root)) {
-    const first = Number.parseFloat(parts[0].trim());
-    const second = Number.parseFloat(parts[1].trim());
-    return [Number.isFinite(first) ? first : min, Number.isFinite(second) ? second : max];
+    return [clampValue(parts[0].trim(), min, max, min), clampValue(parts[1].trim(), min, max, max)].sort((a, b) => a - b);
   }
 
-  const values = [parts[0]].map(item => Number.parseFloat(item.trim())).filter(item => Number.isFinite(item));
-
-  if (!values.length) {
-    return [min];
-  }
-
-  return values.slice(0, 2);
+  return [clampValue(parts[0].trim(), min, max, min)];
 }
 
 function getHandleLabelMode(root) {
@@ -132,9 +160,9 @@ function createVisualNode(mode = 'none', position = 'top') {
   const handleRow = document.createElement('div');
   handleRow.className = 'flex';
   const handle = document.createElement('span');
-  handle.className = 'sf-thumb-handle transition flex items-cross-center content-main-center';
+  handle.className = 'sf-thumb-handle flex items-cross-center content-main-center';
   const inner = document.createElement('div');
-  inner.className = 'sf-thumb-inner transition';
+  inner.className = 'sf-thumb-inner';
   handle.append(inner);
   handleRow.append(handle);
   visual.append(handleRow);
@@ -163,6 +191,68 @@ function getHandles(root) {
   return Array.from(root.querySelectorAll('.sf-range-slider-handle'));
 }
 
+function bindSliderAccessibility(root, owner = root) {
+  const state = root[SLIDER_ACCESSIBILITY_STATE] || {
+    assigned: new WeakMap()
+  };
+  state.observer?.disconnect();
+  const handles = getHandles(root);
+
+  const sync = () => getHandles(root).forEach((handle, index) => {
+    const previous = state.assigned.get(handle) || {};
+    Object.entries(previous).forEach(([name, value]) => {
+      if (handle.getAttribute(name) === value) handle.removeAttribute(name);
+    });
+    const explicitName = handle.hasAttribute('aria-label') || handle.hasAttribute('aria-labelledby');
+    const next = {};
+    const specificName = handles.length > 1 ? root.getAttribute(handleLabelAttributes[index]) || owner.getAttribute(index === 0 ? 'lower-label' : 'upper-label') : null;
+
+    if (!explicitName && specificName) {
+      handle.setAttribute('aria-label', specificName);
+      next['aria-label'] = specificName;
+    }
+
+    accessibleAttributes.forEach(name => {
+      if (handle.hasAttribute(name) || (explicitName || specificName) && name !== 'aria-describedby') return;
+      const value = owner.getAttribute(name);
+
+      if (value !== null) {
+        handle.setAttribute(name, value);
+        next[name] = value;
+      }
+    });
+
+    if (isDisabledRoot(root)) {
+      handle.setAttribute('aria-disabled', 'true');
+      next['aria-disabled'] = 'true';
+    }
+
+    state.assigned.set(handle, next);
+  });
+
+  sync();
+  state.observer = new MutationObserver(sync);
+  const ownerFilter = owner === root ? [...accessibleAttributes, ...handleLabelAttributes] : [...accessibleAttributes, 'lower-label', 'upper-label'];
+
+  if (owner === root) {
+    state.observer.observe(root, {
+      attributes: true,
+      attributeFilter: [...ownerFilter, 'disabled', 'class']
+    });
+  } else {
+    state.observer.observe(owner, {
+      attributes: true,
+      attributeFilter: ownerFilter
+    });
+    state.observer.observe(root, {
+      attributes: true,
+      attributeFilter: [...handleLabelAttributes, 'disabled', 'class']
+    });
+  }
+
+  root[SLIDER_ACCESSIBILITY_STATE] = state;
+}
+
 function decorateHandles(root) {
   const mode = getHandleLabelMode(root);
   const position = getHandleLabelPosition(root, mode);
@@ -174,8 +264,7 @@ function decorateHandles(root) {
     let visual = touchArea.querySelector(':scope > .sf-range-slider-visual');
 
     if (!visual) {
-      touchArea.setAttribute('role', 'button');
-      touchArea.setAttribute('tabindex', '0');
+      // noUiSlider owns the focusable slider handle; its touch area is decoration.
       visual = createVisualNode(mode, position);
       touchArea.append(visual);
     }
@@ -186,19 +275,127 @@ function decorateHandles(root) {
   });
 }
 
-function updateHandleLabels(root, values = []) {
+function planLabelPositions(width, centers, sizes, gap = 0) {
+  const positions = centers.map((center, index) => Math.max(0, Math.min(width - sizes[index], center - sizes[index] / 2)));
+  const order = positions.map((left, index) => ({
+    left,
+    index
+  })).sort((a, b) => a.left - b.left);
+  const merged = order.length === 2 && order[0].left + sizes[order[0].index] + gap > order[1].left;
+  return {
+    positions,
+    merged
+  };
+}
+
+function bindHandleLabels(root) {
   const mode = getHandleLabelMode(root);
   if (mode === 'none') return;
-  getHandles(root).forEach((handle, index) => {
-    const value = values[index];
-    const formatted = formatValue(root, value);
-    const targetSelector = mode === 'tooltip' ? '.sf-tooltip-text' : '.sf-thumb-text';
-    const target = handle.querySelector(targetSelector);
+  const position = getHandleLabelPosition(root, mode);
+  const base = root.querySelector('.sf-range-slider-base');
+  const row = document.createElement('div');
+  row.className = `sf-range-slider-labels sf-thumb sf-thumb--label-${mode} sf-range-slider-labels--${position}`; // Each handle exposes its exact value and units through ARIA already.
 
-    if (target) {
-      target.textContent = formatted;
-    }
+  row.setAttribute('aria-hidden', 'true');
+  const entries = getHandles(root).map(handle => {
+    const label = handle.querySelector(mode === 'tooltip' ? '.sf-tooltip' : '.sf-thumb-text');
+    const text = mode === 'tooltip' ? label.querySelector('.sf-tooltip-text') : label;
+    row.append(label);
+    return {
+      handle,
+      label,
+      text
+    };
   });
+  if (position === 'top') root.insertBefore(row, base);else root.append(row);
+  const state = {
+    entries,
+    row,
+    values: [],
+    frame: null,
+    active: true
+  };
+
+  const layout = () => {
+    if (!state.active || !root.isConnected || !state.values.length) return;
+    const bounds = row.getBoundingClientRect();
+    if (!bounds.width) return;
+    entries.forEach(({
+      label,
+      text
+    }, index) => {
+      label.style.display = '';
+      text.textContent = state.values[index];
+    });
+    const centers = entries.map(({
+      handle
+    }) => {
+      const rect = handle.getBoundingClientRect();
+      return rect.left + rect.width / 2 - bounds.left;
+    });
+    const sizes = entries.map(({
+      label
+    }) => label.getBoundingClientRect().width);
+    const gap = Number.parseFloat(getComputedStyle(row).columnGap) || 0;
+    const plan = planLabelPositions(bounds.width, centers, sizes, gap);
+
+    if (plan.merged) {
+      entries[0].text.textContent = state.values.join(' – ');
+      entries[1].label.style.display = 'none';
+      const size = entries[0].label.getBoundingClientRect().width;
+      entries[0].label.style.left = `${Math.max(0, Math.min(bounds.width - size, (centers[0] + centers[1] - size) / 2))}px`;
+    } else {
+      entries.forEach(({
+        label
+      }, index) => {
+        label.style.left = `${plan.positions[index]}px`;
+      });
+    }
+
+    const height = Math.max(...entries.map(({
+      label
+    }) => label.getBoundingClientRect().height));
+    const blockSize = `${height}px`;
+    if (row.style.blockSize !== blockSize) row.style.blockSize = blockSize;
+  };
+
+  const schedule = () => {
+    if (!state.active || state.frame !== null) return;
+    state.frame = requestAnimationFrame(() => {
+      state.frame = null;
+      layout();
+    });
+  };
+
+  state.layout = layout;
+
+  if (typeof ResizeObserver !== 'undefined') {
+    state.observer = new ResizeObserver(schedule);
+    state.observer.observe(base);
+    entries.forEach(({
+      label
+    }) => state.observer.observe(label));
+  }
+
+  document.fonts?.ready.then(schedule);
+  document.fonts?.addEventListener('loadingdone', schedule);
+
+  state.release = () => {
+    state.active = false;
+    state.observer?.disconnect();
+    if (state.frame !== null) cancelAnimationFrame(state.frame);
+    document.fonts?.removeEventListener('loadingdone', schedule);
+    row.remove();
+  };
+
+  root[SLIDER_LABEL_STATE] = state;
+}
+
+function updateHandleLabels(root, values = []) {
+  const state = root[SLIDER_LABEL_STATE];
+  if (!state) return;
+  state.values = values.map(value => formatValue(root, value));
+  state.layout();
 }
 
 function isDisabledRoot(root) {
@@ -207,17 +404,23 @@ function isDisabledRoot(root) {
 }
 
 function createSliderOptions(root) {
-  const min = toNumber(root.getAttribute('data-min'), 0);
-  const max = toNumber(root.getAttribute('data-max'), 100);
+  const {
+    min,
+    max
+  } = getNormalizedRange(root);
   const multiple = isMultipleRoot(root);
   const parsedStart = parseStart(root);
   const start = multiple ? [parsedStart[0] ?? min, parsedStart[1] ?? max] : [parsedStart[0] ?? min];
   const handleCount = multiple ? 2 : 1;
   return {
     start: handleCount > 1 ? start : [start[0]],
-    connect: root.hasAttribute('data-connect') ? root.getAttribute('data-connect') === 'true' ? true : root.getAttribute('data-connect') || 'lower' : multiple ? true : 'lower',
-    step: root.hasAttribute('data-step') ? toNumber(root.getAttribute('data-step'), 1) : undefined,
-    margin: root.hasAttribute('data-margin') ? toNumber(root.getAttribute('data-margin'), 0) : undefined,
+    direction: getComputedStyle(root).direction === 'rtl' ? 'rtl' : 'ltr',
+    ariaFormat: {
+      to: value => `${root.getAttribute('data-prefix') || ''}${value}${root.getAttribute('data-suffix') || ''}`
+    },
+    connect: getConnect(root, multiple),
+    step: root.hasAttribute('data-step') && toNumber(root.getAttribute('data-step'), 0) > 0 ? toNumber(root.getAttribute('data-step'), 1) : undefined,
+    margin: multiple && root.hasAttribute('data-margin') && toNumber(root.getAttribute('data-margin'), 0) > 0 ? Math.min(max - min, toNumber(root.getAttribute('data-margin'), 0)) : undefined,
     range: {
       min,
       max
@@ -265,12 +468,12 @@ function createSliderOptions(root) {
   };
 }
 
-function getNumericValues(root, unencoded = []) {
-  return (Array.isArray(unencoded) ? unencoded : [unencoded]).map(value => normalizeNumericValue(root, value));
+function getNumericValues(unencoded = []) {
+  return (Array.isArray(unencoded) ? unencoded : [unencoded]).map(Number);
 }
 
 function dispatchSliderEvent(root, name, unencoded = [], meta = {}) {
-  const values = getNumericValues(root, unencoded);
+  const values = getNumericValues(unencoded);
   const eventValues = isMultipleRoot(root) ? values.slice(0, 2) : values.slice(0, 1);
   const eventValue = isMultipleRoot(root) ? eventValues : eventValues[0];
   root.dataset.value = Array.isArray(eventValue) ? eventValue.join(',') : String(eventValue ?? '');
@@ -287,8 +490,12 @@ function dispatchSliderEvent(root, name, unencoded = [], meta = {}) {
   }));
 }
 
-function bindRangeSlider(root) {
+function bindRangeSlider(root, accessibilityOwner) {
   if (!(root instanceof HTMLElement) || root.dataset[RANGE_SLIDER_BOUND_FLAG] === 'true') {
+    if (root?._sfRangeSliderInstance && accessibilityOwner instanceof HTMLElement) {
+      bindSliderAccessibility(root, accessibilityOwner);
+    }
+
     return root?._sfRangeSliderInstance || null;
   }
 
@@ -303,13 +510,26 @@ function bindRangeSlider(root) {
   const base = root.querySelector('.sf-range-slider-base');
   ensureTrack(base);
   decorateHandles(root);
+  bindHandleLabels(root);
+  bindSliderAccessibility(root, accessibilityOwner instanceof HTMLElement ? accessibilityOwner : root);
 
   if (isDisabledRoot(root)) {
     slider.disable();
   }
 
   slider.on('update', (values, handle, unencoded) => {
-    const numericValues = getNumericValues(root, unencoded);
+    const numericValues = getNumericValues(unencoded); // noUiSlider rounds numeric ARIA bounds to one decimal. Keep the exact
+    // supported linear range and adjacent-handle margin for fractional ranges.
+
+    const {
+      range,
+      margin = 0
+    } = slider.options;
+    getHandles(root).forEach((node, index) => {
+      node.setAttribute('aria-valuenow', String(numericValues[index]));
+      node.setAttribute('aria-valuemin', String(index > 0 ? Math.max(range.min, numericValues[index - 1] + margin) : range.min));
+      node.setAttribute('aria-valuemax', String(index < numericValues.length - 1 ? Math.min(range.max, numericValues[index + 1] - margin) : range.max));
+    });
     updateHandleLabels(root, numericValues);
     dispatchSliderEvent(root, 'update', numericValues, {
       handle
@@ -339,6 +559,11 @@ function bindRangeSlider(root) {
 }
 
 function unbindRangeSlider(root) {
+  root?.[SLIDER_LABEL_STATE]?.release();
+  if (root) delete root[SLIDER_LABEL_STATE];
+  root?.[SLIDER_ACCESSIBILITY_STATE]?.observer.disconnect();
+  if (root) delete root[SLIDER_ACCESSIBILITY_STATE];
+
   if (!(root instanceof HTMLElement) || !root.noUiSlider) {
     delete root?.dataset?.[RANGE_SLIDER_BOUND_FLAG];
     delete root?._sfRangeSliderInstance;
@@ -357,7 +582,7 @@ function initRangeSliderTree(target) {
     bindRangeSlider(target);
   }
 
-  target.querySelectorAll?.(RANGE_SLIDER_SELECTOR).forEach(bindRangeSlider);
+  target.querySelectorAll?.(RANGE_SLIDER_SELECTOR).forEach(root => bindRangeSlider(root));
 }
 
 function initExistingRangeSliders(scope = document) {
@@ -372,7 +597,8 @@ function getRangeSliderValue(root) {
 
 function setRangeSliderValue(root, value) {
   if (!(root instanceof HTMLElement) || !root.noUiSlider) return false;
-  const nextValue = !isMultipleRoot(root) && Array.isArray(value) ? value[0] : value;
+  const multiple = isMultipleRoot(root);
+  const nextValue = multiple && typeof value === 'string' && value.includes(',') ? value.split(',').map(item => item.trim()) : !multiple && Array.isArray(value) ? value[0] : value;
   root.noUiSlider.set(nextValue);
   return true;
 }
@@ -397,6 +623,13 @@ const rangeSliderObserver = new MutationObserver(mutations => {
     mutation.addedNodes.forEach(node => {
       if (!(node instanceof Element)) return;
       initRangeSliderTree(node);
+    });
+    mutation.removedNodes.forEach(node => {
+      if (!(node instanceof Element) || node.isConnected) return;
+      if (node.matches(RANGE_SLIDER_SELECTOR)) unbindRangeSlider(node);
+      node.querySelectorAll(RANGE_SLIDER_SELECTOR).forEach(root => {
+        if (!root.isConnected) unbindRangeSlider(root);
+      });
     });
   });
 });

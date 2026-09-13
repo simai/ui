@@ -12,7 +12,11 @@ const BOUND_KEY = '__sfBreadcrumbsBound';
 function getMaxItems(root) {
   const value = root.getAttribute('data-max-items') || root.getAttribute('max-items') || root.dataset.maxItems;
   const maxItems = Number(value);
-  return Number.isFinite(maxItems) ? maxItems : 4;
+  return Number.isFinite(maxItems) ? Math.max(0, Math.floor(maxItems)) : 4;
+}
+
+function getExpandLabel(root) {
+  return root.getAttribute('data-expand-label') || root.getAttribute('expand-label') || 'Show hidden breadcrumbs';
 }
 
 function getItemLabel(item) {
@@ -24,7 +28,7 @@ function isSeparator(item) {
     return false;
   }
 
-  if (item.dataset.sfBreadcrumbSeparator === 'true') {
+  if (item.classList.contains('sf-breadcrumbs-item--separator') || item.dataset.sfBreadcrumbSeparator === 'true') {
     return true;
   }
 
@@ -72,11 +76,11 @@ function setCollapsedState(root, collapsedItems = []) {
 
 function createSeparator() {
   const separator = document.createElement('div');
-  separator.className = 'sf-breadcrumbs-item sf-breadcrumbs-item--default';
+  separator.className = 'sf-breadcrumbs-item sf-breadcrumbs-item--default sf-breadcrumbs-item--separator';
   separator.dataset.sfBreadcrumbsGenerated = 'ellipsis';
   separator.dataset.sfBreadcrumbSeparator = 'true';
   separator.setAttribute('aria-hidden', 'true');
-  separator.innerHTML = '<span class="sf-breadcrumbs-item-container flex items-cross-center"><i class="sf-icon">chevron_right</i></span>';
+  separator.innerHTML = '<span class="sf-breadcrumbs-item-container flex items-cross-center"><i class="sf-icon" aria-hidden="true">chevron_right</i></span>';
   return separator;
 }
 
@@ -86,8 +90,9 @@ function createEllipsis(root, hiddenItems) {
   ellipsis.className = 'sf-breadcrumbs-item sf-breadcrumbs-item--link sf-breadcrumbs-item--default';
   ellipsis.dataset.sfBreadcrumbsGenerated = 'ellipsis';
   ellipsis.dataset.sfBreadcrumbIndex = 'ellipsis';
-  ellipsis.setAttribute('aria-label', 'Show hidden breadcrumbs');
-  ellipsis.innerHTML = '<span class="sf-breadcrumbs-item-container flex items-cross-center"><span>...</span></span>';
+  ellipsis.setAttribute('aria-label', getExpandLabel(root));
+  ellipsis.setAttribute('aria-expanded', 'false');
+  ellipsis.innerHTML = '<span class="sf-breadcrumbs-item-container flex items-cross-center"><span aria-hidden="true">…</span></span>';
   ellipsis.addEventListener('click', event => {
     const clickEvent = new CustomEvent('sf-breadcrumb-click', {
       bubbles: true,
@@ -181,6 +186,17 @@ if (document.readyState === 'loading') {
 if (typeof MutationObserver !== 'undefined') {
   new MutationObserver(mutations => {
     mutations.forEach(mutation => {
+      if (mutation.type === 'attributes') {
+        const root = mutation.target;
+
+        if (root instanceof HTMLElement && root.matches(ROOT_SELECTOR)) {
+          delete root.dataset.sfBreadcrumbsExpanded;
+          collapseBreadcrumbs(root);
+        }
+
+        return;
+      }
+
       mutation.addedNodes.forEach(node => {
         if (!(node instanceof HTMLElement) || isGenerated(node)) {
           return;
@@ -194,10 +210,19 @@ if (typeof MutationObserver !== 'undefined') {
           collapseBreadcrumbs(root);
         }
       });
+      const changedByRemoval = Array.from(mutation.removedNodes).some(node => !isGenerated(node));
+      const mutationRoot = mutation.target.closest?.(ROOT_SELECTOR);
+
+      if (changedByRemoval && mutationRoot instanceof HTMLElement && mutationRoot[BOUND_KEY]) {
+        delete mutationRoot.dataset.sfBreadcrumbsExpanded;
+        collapseBreadcrumbs(mutationRoot);
+      }
     });
   }).observe(document.documentElement, {
     childList: true,
-    subtree: true
+    subtree: true,
+    attributes: true,
+    attributeFilter: ['data-max-items', 'max-items', 'data-expand-label', 'expand-label']
   });
 }
 

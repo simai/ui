@@ -54,6 +54,7 @@ class Buttons extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Co
     if (loading) {
       this.button.classList.add('loading', 'sf-button-state-loading');
       this.button.setAttribute('aria-busy', 'true');
+      this.button.disabled = true;
     }
 
     if (disabled) {
@@ -116,6 +117,7 @@ class Buttons extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Co
 
     const icon = document.createElement('i');
     icon.classList.add('sf-icon');
+    icon.setAttribute('aria-hidden', 'true');
     icon.textContent = name;
     return icon;
   }
@@ -237,7 +239,9 @@ class ComponentObserver {
       matches.forEach(match => {
         const raw = match.slice(1, -1);
         raw.split(/\s+/).filter(Boolean).forEach(cls => {
-          classes.add(cls.replace(/^\./, ''));
+          // Only explicit (.class) annotations are classes; the
+          // parentheses in var(--token) are CSS values, not markup.
+          if (cls.startsWith('.') && cls.length > 1) classes.add(cls.slice(1));
         });
       });
     });

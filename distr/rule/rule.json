@@ -49,6 +49,10 @@
     "regex": "/xl\\:content-cross-/"
   },
   {
+    "name": "align-content/xxl",
+    "regex": "/xxl\\:content-cross-/"
+  },
+  {
     "name": "align-items/default",
     "regex": "/items-cross-/"
   },
@@ -69,6 +73,10 @@
     "regex": "/xl\\:items-cross-/"
   },
   {
+    "name": "align-items/xxl",
+    "regex": "/xxl\\:items-cross-/"
+  },
+  {
     "name": "align-self/default",
     "regex": "/self-cross-/"
   },
@@ -87,6 +95,10 @@
   {
     "name": "align-self/xl",
     "regex": "/xl\\:self-cross-/"
+  },
+  {
+    "name": "align-self/xxl",
+    "regex": "/xxl\\:self-cross-/"
   },
   {
     "name": "animation-duration/default",
@@ -121,10 +133,14 @@
     "regex": "/xl\\:aspect-/"
   },
   {
+    "name": "aspect-ratio/xxl",
+    "regex": "/xxl\\:aspect-/"
+  },
+  {
     "name": "avatars",
     "css": true,
-    "js": true,
-    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-avatar\\b/i",
+    "js": false,
+    "regex": "/class\\s*=\\s*[\"'](?:[^\"'\\s]+\\s+)*sf-avatar(?=\\s|[\"'])/i",
     "type": "component"
   },
   {
@@ -220,6 +236,10 @@
     "regex": "/xl\\:bg-(fixed|local|scroll)/"
   },
   {
+    "name": "background-attachment/xxl",
+    "regex": "/xxl\\:bg-(fixed|local|scroll)/"
+  },
+  {
     "name": "background-clip/default",
     "regex": "/bg-clip-(border|padding|content|text)/"
   },
@@ -238,6 +258,10 @@
   {
     "name": "background-clip/xl",
     "regex": "/xl\\:bg-clip-(border|padding|content|text)/"
+  },
+  {
+    "name": "background-clip/xxl",
+    "regex": "/xxl\\:bg-clip-(border|padding|content|text)/"
   },
   {
     "name": "background-color-brand/default",
@@ -280,6 +304,10 @@
     "regex": "/xl\\:bg-origin-(border|padding|content)/"
   },
   {
+    "name": "background-origin/xxl",
+    "regex": "/xxl\\:bg-origin-(border|padding|content)/"
+  },
+  {
     "name": "background-position/default",
     "regex": "/\\b(?:[a-z]{2,3}:)?bg-(?:top|bottom|center|left|right|inline-(?:start|end))(?:-(?:top|bottom|center|left|right|inline-(?:start|end)))?\\b/"
   },
@@ -298,6 +326,10 @@
   {
     "name": "background-position/xl",
     "regex": "/\\bxl:bg-(?:top|bottom|center|left|right|inline-(?:start|end))(?:-(?:top|bottom|center|left|right|inline-(?:start|end)))?\\b/"
+  },
+  {
+    "name": "background-position/xxl",
+    "regex": "/\\bxxl:bg-(?:top|bottom|center|left|right|inline-(?:start|end))(?:-(?:top|bottom|center|left|right|inline-(?:start|end)))?\\b/"
   },
   {
     "name": "background-repeat/default",
@@ -320,6 +352,10 @@
     "regex": "/xl\\:(bg-repeat|(bg-repeat-(none|x|y|round|space)))/"
   },
   {
+    "name": "background-repeat/xxl",
+    "regex": "/xxl\\:(bg-repeat|(bg-repeat-(none|x|y|round|space)))/"
+  },
+  {
     "name": "background-size-ext/default",
     "regex": "/bg-size-(([a-i]{1}[0-9]{1})|(100|[0-9]{1,2}))/"
   },
@@ -340,6 +376,10 @@
     "regex": "/xl\\:bg-size-(([a-i]{1}[0-9]{1})|(100|[0-9]{1,2}))/"
   },
   {
+    "name": "background-size-ext/xxl",
+    "regex": "/xxl\\:bg-size-(([a-i]{1}[0-9]{1})|(100|[0-9]{1,2}))/"
+  },
+  {
     "name": "background-size/default",
     "regex": "/bg-(auto|cover|contain)/"
   },
@@ -358,6 +398,10 @@
   {
     "name": "background-size/xl",
     "regex": "/xl\\:bg-(auto|cover|contain)/"
+  },
+  {
+    "name": "background-size/xxl",
+    "regex": "/xxl\\:bg-(auto|cover|contain)/"
   },
   {
     "name": "badges",
@@ -407,6 +451,10 @@
     "regex": "/xl\\:radius-/"
   },
   {
+    "name": "border-radius/xxl",
+    "regex": "/xxl\\:radius-/"
+  },
+  {
     "name": "border-spacing/default",
     "regex": "/border-spacing(-(x|y))?-/"
   },
@@ -433,6 +481,10 @@
   {
     "name": "border-width/xl",
     "regex": "/xl\\:border-((10|[0-9])|((top|bottom|inline-(start|end))-(10|[0-9]))|((x|y)-(10|[0-9])))/"
+  },
+  {
+    "name": "border-width/xxl",
+    "regex": "/xxl\\:border-((10|[0-9])|((top|bottom|inline-(start|end))-(10|[0-9]))|((x|y)-(10|[0-9])))/"
   },
   {
     "name": "box-decoration-break/default",
@@ -490,6 +542,10 @@
     "regex": "/xl\\:break-after-/"
   },
   {
+    "name": "break-after/xxl",
+    "regex": "/xxl\\:break-after-/"
+  },
+  {
     "name": "break-before/default",
     "regex": "/break-before-/"
   },
@@ -510,6 +566,10 @@
     "regex": "/xl\\:break-before-/"
   },
   {
+    "name": "break-before/xxl",
+    "regex": "/xxl\\:break-before-/"
+  },
+  {
     "name": "break-inside/default",
     "regex": "/break-inside-/"
   },
@@ -528,6 +588,10 @@
   {
     "name": "break-inside/xl",
     "regex": "/xl\\:break-inside-/"
+  },
+  {
+    "name": "break-inside/xxl",
+    "regex": "/xxl\\:break-inside-/"
   },
   {
     "name": "button-group",
@@ -552,6 +616,11 @@
     "css": true,
     "js": true,
     "regex": "/sf-carousel/",
+    "relation": [
+      {
+        "name": "swiper"
+      }
+    ],
     "type": "component"
   },
   {
@@ -603,10 +672,10 @@
         "name": "buttons"
       },
       {
-        "name": "icon-buttons"
+        "name": "cl-icon-buttons"
       },
       {
-        "name": "icons"
+        "name": "cl-icons"
       }
     ],
     "tags": [
@@ -807,6 +876,9 @@
     "relation": [
       {
         "name": "download-file"
+      },
+      {
+        "name": "icons"
       }
     ],
     "tags": [
@@ -822,6 +894,9 @@
     "relation": [
       {
         "name": "icon-buttons"
+      },
+      {
+        "name": "close"
       }
     ],
     "tags": [
@@ -850,6 +925,26 @@
     "type": "smart"
   },
   {
+    "name": "cl-file-preview",
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "file-preview"
+      },
+      {
+        "name": "icons"
+      },
+      {
+        "name": "icon-buttons"
+      }
+    ],
+    "tags": [
+      "sf-file-preview"
+    ],
+    "type": "smart"
+  },
+  {
     "name": "cl-file-upload",
     "js": true,
     "mode": "smart",
@@ -874,6 +969,7 @@
   },
   {
     "name": "cl-gallery",
+    "css": true,
     "js": true,
     "mode": "smart",
     "regex": "/data-sf-gallery(?:\\s|=|>|$)/",
@@ -901,6 +997,9 @@
       },
       {
         "name": "cl-icons"
+      },
+      {
+        "name": "cl-close"
       },
       {
         "name": "pointer-events/default"
@@ -1096,10 +1195,7 @@
         "name": "slider"
       },
       {
-        "name": "icon-buttons"
-      },
-      {
-        "name": "icons"
+        "name": "cl-icon-buttons"
       }
     ],
     "tags": [
@@ -1162,28 +1258,40 @@
     "mode": "smart",
     "relation": [
       {
-        "name": "checkbox"
+        "name": "cl-checkbox"
       },
       {
-        "name": "buttons"
+        "name": "cl-buttons"
       },
       {
-        "name": "icon-buttons"
+        "name": "cl-icon-buttons"
       },
       {
         "name": "icons"
       },
       {
-        "name": "inputs"
+        "name": "cl-inputs"
       },
       {
-        "name": "tags"
+        "name": "cl-tags"
       },
       {
-        "name": "pagination"
+        "name": "cl-pagination"
+      },
+      {
+        "name": "cl-spinner"
       },
       {
         "name": "cl-datepicker"
+      },
+      {
+        "name": "cl-dropdown"
+      },
+      {
+        "name": "cl-tabs"
+      },
+      {
+        "name": "cl-context-menu"
       }
     ],
     "tags": [
@@ -1201,6 +1309,9 @@
       },
       {
         "name": "cl-buttons"
+      },
+      {
+        "name": "cl-icon-buttons"
       }
     ],
     "tags": [
@@ -1219,9 +1330,6 @@
       },
       {
         "name": "tags"
-      },
-      {
-        "name": "checkbox"
       },
       {
         "name": "avatars"
@@ -1261,10 +1369,10 @@
         "name": "buttons"
       },
       {
-        "name": "icon-buttons"
+        "name": "cl-icon-buttons"
       },
       {
-        "name": "icons"
+        "name": "cl-icons"
       },
       {
         "name": "close"
@@ -1362,22 +1470,23 @@
     "regex": "/xl\\:clear-/"
   },
   {
+    "name": "clear/xxl",
+    "regex": "/xxl\\:clear-/"
+  },
+  {
     "name": "clipboard",
     "css": true,
     "js": true,
-    "regex": "/(btn-clipboard|source)/",
+    "regex": "/(?:sf-clipboard|btn-clipboard|data-copy|data-clipboard-target)/",
     "relation": [
       {
         "name": "icon-buttons"
       },
       {
+        "name": "buttons"
+      },
+      {
         "name": "icons"
-      },
-      {
-        "name": "doc"
-      },
-      {
-        "name": "highlight"
       }
     ],
     "type": "component"
@@ -1409,6 +1518,10 @@
     "regex": "/xl:col-gap-/"
   },
   {
+    "name": "column-gap/xxl",
+    "regex": "/xxl:col-gap-/"
+  },
+  {
     "name": "column/default",
     "regex": "/layout-col-/"
   },
@@ -1427,6 +1540,10 @@
   {
     "name": "column/xl",
     "regex": "/xl\\:layout-col-/"
+  },
+  {
+    "name": "column/xxl",
+    "regex": "/xxl\\:layout-col-/"
   },
   {
     "name": "container/default",
@@ -1449,14 +1566,18 @@
     "regex": "/xl\\:container/"
   },
   {
+    "name": "container/xxl",
+    "regex": "/xxl\\:container/"
+  },
+  {
     "name": "content/default",
     "regex": "/(after|before)-(empty|none)/"
   },
   {
     "name": "contentDivider",
     "css": true,
-    "js": true,
-    "regex": "/sf-divider/",
+    "js": false,
+    "regex": "/(?:^|[\"'\\s])sf-divider(?:[\\s\"']|--|-)/",
     "type": "component"
   },
   {
@@ -1481,7 +1602,7 @@
     "name": "datepicker",
     "css": true,
     "js": false,
-    "regex": "/sf-datepicker/",
+    "regex": "/(?:^|[\"'\\s])sf-datepicker(?:[\\s\"']|-)/",
     "type": "component"
   },
   {
@@ -1509,6 +1630,10 @@
     "regex": "/xl\\:(block|inline-block|inline|flex|inline-flex|table|inline-table|table-caption|table-cell|table-column|table-column-group|table-footer-group|table-header-group|table-row-group|table-row|flow-root|grid|inline-grid|content|list-item|hidden)/"
   },
   {
+    "name": "display/xxl",
+    "regex": "/xxl\\:(block|inline-block|inline|flex|inline-flex|table|inline-table|table-caption|table-cell|table-column|table-column-group|table-footer-group|table-header-group|table-row-group|table-row|flow-root|grid|inline-grid|content|list-item|hidden)/"
+  },
+  {
     "name": "divider-color/default",
     "regex": "/(divider|divide)-(outline|primary|secondary|tertiary|success|warning|error|transparent|current)/"
   },
@@ -1531,15 +1656,15 @@
   {
     "name": "doc",
     "css": true,
-    "js": true,
-    "regex": "/(language-|block--start|btn-clipboard|bd-example-indeterminate|bd-content|example)/",
+    "js": false,
+    "regex": "/(?:^|[\"'\\s])(?:sf-doc-(?:code|lead|example|source|stripes|checkerboard)|t-lead|t-source|example|source|bg-stripes(?:-(?:white|blue))?|bg-checkered)(?=$|[\"'\\s])/",
     "type": "component"
   },
   {
     "name": "dot",
     "css": true,
     "js": false,
-    "regex": "/sf-dot/",
+    "regex": "/(?:^|[\"'\\s])sf-dot(?:[\\s\"']|-)/",
     "type": "component"
   },
   {
@@ -1598,6 +1723,10 @@
     "regex": "/xl\\:((top|bottom|block-(start|end)|inline-(start|end))|(-(top|bottom|block-(start|end)|inline-(start|end))))-([a-i]{1}[1-9]{1})/"
   },
   {
+    "name": "element-position-ext/xxl",
+    "regex": "/xxl\\:((top|bottom|block-(start|end)|inline-(start|end))|(-(top|bottom|block-(start|end)|inline-(start|end))))-([a-i]{1}[1-9]{1})/"
+  },
+  {
     "name": "element-position/default",
     "regex": "/(inset|top|bottom|inline-(start|end))-/"
   },
@@ -1618,10 +1747,14 @@
     "regex": "/xl\\:(inset|top|bottom|inline-(start|end))-/"
   },
   {
+    "name": "element-position/xxl",
+    "regex": "/xxl\\:(inset|top|bottom|inline-(start|end))-/"
+  },
+  {
     "name": "emoji",
     "css": true,
     "js": true,
-    "regex": "/sf-emoji/",
+    "regex": "/(?:^|[\"'\\s<])sf-emoji(?:$|[\"'\\s>])/i",
     "type": "component"
   },
   {
@@ -1632,25 +1765,10 @@
     "type": "component"
   },
   {
-    "name": "fancybox",
-    "css": true,
-    "js": true,
-    "mode": "component",
-    "regex": "/data-fancybox/",
-    "relation": [
-      {
-        "js": true,
-        "mode": "component",
-        "name": "jquery"
-      }
-    ],
-    "type": "attribute"
-  },
-  {
     "name": "featured-icon",
     "css": true,
     "js": false,
-    "regex": "/sf-featured-icon/",
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-featured-icon\\b/i",
     "type": "component"
   },
   {
@@ -1776,6 +1894,10 @@
     "regex": "/xl\\:(start|center|end)-(start|center|end)/"
   },
   {
+    "name": "flex-align/xxl",
+    "regex": "/xxl\\:(start|center|end)-(start|center|end)/"
+  },
+  {
     "name": "flex-basis-ext/default",
     "regex": "/basis-(([0-9]{1})|([0-9]{2})|([0-9]{3}))/"
   },
@@ -1794,6 +1916,10 @@
   {
     "name": "flex-basis-ext/xl",
     "regex": "/xl\\:basis-(([0-9]{1})|([0-9]{2})|([0-9]{3}))/"
+  },
+  {
+    "name": "flex-basis-ext/xxl",
+    "regex": "/xxl\\:basis-(([0-9]{1})|([0-9]{2})|([0-9]{3}))/"
   },
   {
     "name": "flex-basis/default",
@@ -1816,6 +1942,10 @@
     "regex": "/xl\\:basis-/"
   },
   {
+    "name": "flex-basis/xxl",
+    "regex": "/xxl\\:basis-/"
+  },
+  {
     "name": "flex-direction/default",
     "regex": "/flex-/"
   },
@@ -1834,6 +1964,10 @@
   {
     "name": "flex-direction/xl",
     "regex": "/xl\\:flex-/"
+  },
+  {
+    "name": "flex-direction/xxl",
+    "regex": "/xxl\\:flex-/"
   },
   {
     "name": "flex-grow/default",
@@ -1856,6 +1990,10 @@
     "regex": "/xl\\:grow/"
   },
   {
+    "name": "flex-grow/xxl",
+    "regex": "/xxl\\:grow/"
+  },
+  {
     "name": "flex-shrink/default",
     "regex": "/shrink-/"
   },
@@ -1874,6 +2012,10 @@
   {
     "name": "flex-shrink/xl",
     "regex": "/xl\\:shrink-/"
+  },
+  {
+    "name": "flex-shrink/xxl",
+    "regex": "/xxl\\:shrink-/"
   },
   {
     "name": "flex-wrap/default",
@@ -1896,6 +2038,10 @@
     "regex": "/xl\\:flex-/"
   },
   {
+    "name": "flex-wrap/xxl",
+    "regex": "/xxl\\:flex-/"
+  },
+  {
     "name": "flex/default",
     "regex": "/flex-/"
   },
@@ -1916,6 +2062,10 @@
     "regex": "/xl\\:flex-/"
   },
   {
+    "name": "flex/xxl",
+    "regex": "/xxl\\:flex-/"
+  },
+  {
     "name": "float/default",
     "regex": "/float-/"
   },
@@ -1934,6 +2084,10 @@
   {
     "name": "float/xl",
     "regex": "/xl\\:float-/"
+  },
+  {
+    "name": "float/xxl",
+    "regex": "/xxl\\:float-/"
   },
   {
     "name": "font-family/default",
@@ -1958,6 +2112,10 @@
   {
     "name": "font-size-ext/xl",
     "regex": "/xl\\:text-([a-i]{1}[0-9]{1})/"
+  },
+  {
+    "name": "font-size-ext/xxl",
+    "regex": "/xxl\\:text-([a-i]{1}[0-9]{1})/"
   },
   {
     "name": "font-size/default",
@@ -2008,24 +2166,32 @@
     "regex": "/xl\\:(regular|bold|lighter|bolder|(weight-[1-9]{1}))/"
   },
   {
+    "name": "font-weight/xxl",
+    "regex": "/xxl\\:(regular|bold|lighter|bolder|(weight-[1-9]{1}))/"
+  },
+  {
     "name": "gap/default",
-    "regex": "/(?:^|\\s)(?:gap|g)-/"
+    "regex": "/^(?:(?:col-gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|g(?:-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|x-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|y-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8))|ap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|x-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|y-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)))|row-gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)))(?![\\s\\S])/"
   },
   {
     "name": "gap/lg",
-    "regex": "/lg:(?:gap|g)-/"
+    "regex": "/^(?:lg:(?:col-gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|g(?:-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|x-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|y-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8))|ap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|x-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|y-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)))|row-gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)))(?![\\s\\S])/"
   },
   {
     "name": "gap/md",
-    "regex": "/md:(?:gap|g)-/"
+    "regex": "/^(?:md:(?:col-gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|g(?:-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|x-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|y-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8))|ap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|x-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|y-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)))|row-gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)))(?![\\s\\S])/"
   },
   {
     "name": "gap/sm",
-    "regex": "/sm:(?:gap|g)-/"
+    "regex": "/^(?:sm:(?:col-gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|g(?:-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|x-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|y-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8))|ap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|x-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|y-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)))|row-gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)))(?![\\s\\S])/"
   },
   {
     "name": "gap/xl",
-    "regex": "/xl:(?:gap|g)-/"
+    "regex": "/^(?:xl:(?:col-gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|g(?:-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|x-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|y-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8))|ap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|x-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|y-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)))|row-gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)))(?![\\s\\S])/"
+  },
+  {
+    "name": "gap/xxl",
+    "regex": "/^(?:xxl:(?:col-gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|g(?:-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|x-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|y-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8))|ap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|x-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|y-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)))|row-gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)))(?![\\s\\S])/"
   },
   {
     "name": "gradient-color/default",
@@ -2065,6 +2231,10 @@
     "regex": "/xl\\:gr-(line|conic)-[2-3]/"
   },
   {
+    "name": "gradient-type/xxl",
+    "regex": "/xxl\\:gr-(line|conic)-[2-3]/"
+  },
+  {
     "name": "grid-auto-columns/default",
     "regex": "/auto-cols/"
   },
@@ -2083,6 +2253,10 @@
   {
     "name": "grid-auto-columns/xl",
     "regex": "/xl\\:auto-cols/"
+  },
+  {
+    "name": "grid-auto-columns/xxl",
+    "regex": "/xxl\\:auto-cols/"
   },
   {
     "name": "grid-auto-flow/default",
@@ -2105,6 +2279,10 @@
     "regex": "/xl\\:grid-flow-(row|col)/"
   },
   {
+    "name": "grid-auto-flow/xxl",
+    "regex": "/xxl\\:grid-flow-(row|col)/"
+  },
+  {
     "name": "grid-auto-rows/default",
     "regex": "/auto-rows/"
   },
@@ -2123,6 +2301,10 @@
   {
     "name": "grid-auto-rows/xl",
     "regex": "/xl\\:auto-rows/"
+  },
+  {
+    "name": "grid-auto-rows/xxl",
+    "regex": "/xxl\\:auto-rows/"
   },
   {
     "name": "grid-column-end/default",
@@ -2145,6 +2327,10 @@
     "regex": "/xl\\:col-end-/"
   },
   {
+    "name": "grid-column-end/xxl",
+    "regex": "/xxl\\:col-end-/"
+  },
+  {
     "name": "grid-column-start/default",
     "regex": "/col-start-/"
   },
@@ -2163,6 +2349,10 @@
   {
     "name": "grid-column-start/xl",
     "regex": "/xl\\:col-start-/"
+  },
+  {
+    "name": "grid-column-start/xxl",
+    "regex": "/xxl\\:col-start-/"
   },
   {
     "name": "grid-column/default",
@@ -2185,6 +2375,10 @@
     "regex": "/xl\\:col-(auto|span)-/"
   },
   {
+    "name": "grid-column/xxl",
+    "regex": "/xxl\\:col-(auto|span)-/"
+  },
+  {
     "name": "grid-row-end/default",
     "regex": "/grid-row-end-/"
   },
@@ -2203,6 +2397,10 @@
   {
     "name": "grid-row-end/xl",
     "regex": "/xl\\:grid-row-end-/"
+  },
+  {
+    "name": "grid-row-end/xxl",
+    "regex": "/xxl\\:grid-row-end-/"
   },
   {
     "name": "grid-row-start/default",
@@ -2225,6 +2423,10 @@
     "regex": "/xl\\:grid-row-start-/"
   },
   {
+    "name": "grid-row-start/xxl",
+    "regex": "/xxl\\:grid-row-start-/"
+  },
+  {
     "name": "grid-row/default",
     "regex": "/grid-row-(auto|span)/"
   },
@@ -2243,6 +2445,10 @@
   {
     "name": "grid-row/xl",
     "regex": "/xl\\:grid-row-(auto|span)/"
+  },
+  {
+    "name": "grid-row/xxl",
+    "regex": "/xxl\\:grid-row-(auto|span)/"
   },
   {
     "name": "grid-template-columns/default",
@@ -2265,6 +2471,10 @@
     "regex": "/xl\\:grid-col-/"
   },
   {
+    "name": "grid-template-columns/xxl",
+    "regex": "/xxl\\:grid-col-/"
+  },
+  {
     "name": "grid-template-rows/default",
     "regex": "/grid-row-/"
   },
@@ -2283,6 +2493,10 @@
   {
     "name": "grid-template-rows/xl",
     "regex": "/xl\\:grid-row-/"
+  },
+  {
+    "name": "grid-template-rows/xxl",
+    "regex": "/xxl\\:grid-row-/"
   },
   {
     "name": "headers/default",
@@ -2309,6 +2523,10 @@
     "regex": "/xl\\:h-(([a-i]{1}[0-9]{1})|(([1-9]{1})|([0-9]{2})|([0-9]{3})))/"
   },
   {
+    "name": "height-ext/xxl",
+    "regex": "/xxl\\:h-(([a-i]{1}[0-9]{1})|(([1-9]{1})|([0-9]{2})|([0-9]{3})))/"
+  },
+  {
     "name": "height/default",
     "regex": "/h-((([1-9]{1}|[1-9]{2})\\/([1-9]{1}|[1-9]{2}))|auto|full|screen|min|max|fit|px|0)/"
   },
@@ -2327,6 +2545,10 @@
   {
     "name": "height/xl",
     "regex": "/xl\\:h-((([1-9]{1}|[1-9]{2})\\/([1-9]{1}|[1-9]{2}))|auto|full|screen|min|max|fit|px|0)/"
+  },
+  {
+    "name": "height/xxl",
+    "regex": "/xxl\\:h-((([1-9]{1}|[1-9]{2})\\/([1-9]{1}|[1-9]{2}))|auto|full|screen|min|max|fit|px|0)/"
   },
   {
     "name": "hideShow",
@@ -2366,7 +2588,7 @@
   {
     "name": "icons",
     "css": true,
-    "js": true,
+    "js": false,
     "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-icon\\b[^\"']*[\"']|<\\s*i[^>]*class\\s*=\\s*[\"'][^\"']*\\bsf-icon\\b[^\"']*[\"']/i",
     "type": "component"
   },
@@ -2398,6 +2620,10 @@
     "regex": "/xl\\:isolate/"
   },
   {
+    "name": "isolate/xxl",
+    "regex": "/xxl\\:isolate/"
+  },
+  {
     "name": "justify-content/default",
     "regex": "/content-main-/"
   },
@@ -2416,6 +2642,10 @@
   {
     "name": "justify-content/xl",
     "regex": "/xl\\:content-main-/"
+  },
+  {
+    "name": "justify-content/xxl",
+    "regex": "/xxl\\:content-main-/"
   },
   {
     "name": "justify-items/default",
@@ -2438,6 +2668,10 @@
     "regex": "/xl\\:items-main-/"
   },
   {
+    "name": "justify-items/xxl",
+    "regex": "/xxl\\:items-main-/"
+  },
+  {
     "name": "justify-self/default",
     "regex": "/self-main-/"
   },
@@ -2458,8 +2692,13 @@
     "regex": "/xl\\:self-main-/"
   },
   {
+    "name": "justify-self/xxl",
+    "regex": "/xxl\\:self-main-/"
+  },
+  {
     "name": "kbd",
     "css": true,
+    "js": false,
     "regex": "/(?:<kbd\\b|\\bsf-kbd\\b)/i",
     "type": "component"
   },
@@ -2490,6 +2729,10 @@
   {
     "name": "line-height/xl",
     "regex": "/xl\\:line-/"
+  },
+  {
+    "name": "line-height/xxl",
+    "regex": "/xxl\\:line-/"
   },
   {
     "name": "link",
@@ -2527,6 +2770,10 @@
     "regex": "/xl\\:(m-(([a-i][0-9])|((top|bottom|inline-(start|end))-([a-i][0-9])))|-m-(([a-i][0-9])|((top|bottom|inline-(start|end))-([a-i][0-9]))))/"
   },
   {
+    "name": "margin-ext/xxl",
+    "regex": "/xxl\\:(m-(([a-i][0-9])|((top|bottom|inline-(start|end))-([a-i][0-9])))|-m-(([a-i][0-9])|((top|bottom|inline-(start|end))-([a-i][0-9]))))/"
+  },
+  {
     "name": "margin/default",
     "regex": "/(m-((auto)|([0-9]{1})|((inline|block)-([0-9]{1}|auto))|((top|bottom|inline-(start|end))-([0-9]{1}|auto)))|-m-(([0-9]{1})|((inline|block)-[0-9]{1})|((top|bottom|inline-(start|end))-[0-9]{1})))/"
   },
@@ -2545,6 +2792,10 @@
   {
     "name": "margin/xl",
     "regex": "/xl\\:(m-(([0-9]{1})|((inline|block)-([0-9]{1}|auto))|((top|bottom|inline-(start|end))-([0-9]{1}|auto)))|-m-(([0-9]{1})|((inline|block)-[0-9]{1})|((top|bottom|inline-(start|end))-[0-9]{1})))/"
+  },
+  {
+    "name": "margin/xxl",
+    "regex": "/xxl\\:(m-(([0-9]{1})|((inline|block)-([0-9]{1}|auto))|((top|bottom|inline-(start|end))-([0-9]{1}|auto)))|-m-(([0-9]{1})|((inline|block)-[0-9]{1})|((top|bottom|inline-(start|end))-[0-9]{1})))/"
   },
   {
     "name": "mask-clip/default",
@@ -2603,6 +2854,10 @@
     "regex": "/xl\\:max-h-([a-i]{1}[0-9]{1})/"
   },
   {
+    "name": "max-height-ext/xxl",
+    "regex": "/xxl\\:max-h-([a-i]{1}[0-9]{1})/"
+  },
+  {
     "name": "max-height/default",
     "regex": "/max-h-(full|screen|min|max|fit|prose|none|0|sm|md|lg|xl)/"
   },
@@ -2621,6 +2876,10 @@
   {
     "name": "max-height/xl",
     "regex": "/xl\\:max-h-(full|screen|min|max|fit|prose|none|0|sm|md|lg|xl)/"
+  },
+  {
+    "name": "max-height/xxl",
+    "regex": "/xxl\\:max-h-(full|screen|min|max|fit|prose|none|0|sm|md|lg|xl)/"
   },
   {
     "name": "max-width-ext/default",
@@ -2643,6 +2902,10 @@
     "regex": "/xl\\:max-w-([a-i]{1}[0-9]{1})/"
   },
   {
+    "name": "max-width-ext/xxl",
+    "regex": "/xxl\\:max-w-([a-i]{1}[0-9]{1})/"
+  },
+  {
     "name": "max-width/default",
     "regex": "/max-w-(full|screen|min|max|fit|prose|none|0|sm|md|lg|xl)/"
   },
@@ -2661,6 +2924,10 @@
   {
     "name": "max-width/xl",
     "regex": "/xl\\:max-w-(full|screen|min|max|fit|prose|none|0|sm|md|lg|xl)/"
+  },
+  {
+    "name": "max-width/xxl",
+    "regex": "/xxl\\:max-w-(full|screen|min|max|fit|prose|none|0|sm|md|lg|xl)/"
   },
   {
     "name": "menu",
@@ -2698,6 +2965,10 @@
     "regex": "/xl\\:min-h-(min|max|fit|full|0)/"
   },
   {
+    "name": "min-height/xxl",
+    "regex": "/xxl\\:min-h-(min|max|fit|full|0)/"
+  },
+  {
     "name": "min-width/default",
     "regex": "/min-w-(min|max|fit|full|0)/"
   },
@@ -2718,6 +2989,10 @@
     "regex": "/xl\\:min-w-(min|max|fit|full|0)/"
   },
   {
+    "name": "min-width/xxl",
+    "regex": "/xxl\\:min-w-(min|max|fit|full|0)/"
+  },
+  {
     "name": "mix-blend-mode/default",
     "regex": "/mix-blend-/"
   },
@@ -2729,15 +3004,14 @@
     "relation": [
       {
         "name": "backdrop-filter-blur/default"
+      },
+      {
+        "name": "icon-buttons"
+      },
+      {
+        "name": "close"
       }
     ],
-    "type": "component"
-  },
-  {
-    "name": "monaco",
-    "css": true,
-    "js": true,
-    "regex": "/sf-monaco/",
     "type": "component"
   },
   {
@@ -2761,6 +3035,10 @@
     "regex": "/xl:object-(contain|cover|fill|none|scale-down)/"
   },
   {
+    "name": "object-fit/xxl",
+    "regex": "/xxl:object-(contain|cover|fill|none|scale-down)/"
+  },
+  {
     "name": "object-position/default",
     "regex": "/object-((inline-(start|end)(-(top|bottom))?)|bottom|top|center)/"
   },
@@ -2781,6 +3059,10 @@
     "regex": "/xl\\:object-((inline-(start|end)(-(top|bottom))?)|bottom|top|center)/"
   },
   {
+    "name": "object-position/xxl",
+    "regex": "/xxl\\:object-((inline-(start|end)(-(top|bottom))?)|bottom|top|center)/"
+  },
+  {
     "name": "offset/default",
     "regex": "/offset-((([1-9]{1}|[1-9]{2})\\/([1-9]{1}|[1-9]{2})))/"
   },
@@ -2799,6 +3081,10 @@
   {
     "name": "offset/xl",
     "regex": "/xl\\:offset-((([1-9]{1}|[1-9]{2})\\/([1-9]{1}|[1-9]{2})))/"
+  },
+  {
+    "name": "offset/xxl",
+    "regex": "/xxl\\:offset-((([1-9]{1}|[1-9]{2})\\/([1-9]{1}|[1-9]{2})))/"
   },
   {
     "name": "opacity/default",
@@ -2827,6 +3113,10 @@
   {
     "name": "order/xl",
     "regex": "/xl\\:order-/"
+  },
+  {
+    "name": "order/xxl",
+    "regex": "/xxl\\:order-/"
   },
   {
     "name": "outline",
@@ -2887,6 +3177,10 @@
     "regex": "/xl\\:overflow-/"
   },
   {
+    "name": "overflow/xxl",
+    "regex": "/xxl\\:overflow-/"
+  },
+  {
     "name": "overscroll-behavior/default",
     "regex": "/scroll-over-((x|y|auto|contain|none)|((x|y|auto|contain|none)-(x|y|auto|contain|none)))/"
   },
@@ -2911,6 +3205,10 @@
     "regex": "/xl\\:p-(([a-i][0-9])|((top|bottom|inline-(start|end))-([a-i][0-9])))/"
   },
   {
+    "name": "padding-ext/xxl",
+    "regex": "/xxl\\:p-(([a-i][0-9])|((top|bottom|inline-(start|end))-([a-i][0-9])))/"
+  },
+  {
     "name": "padding/default",
     "regex": "/p-([0-9]|((top|bottom|inline-(start|end)|x|y)-[0-9]))/"
   },
@@ -2929,6 +3227,10 @@
   {
     "name": "padding/xl",
     "regex": "/xl\\:p-([0-9]{1}|((top|bottom|inline-(start|end)|x|y)-[0-9]{1}))/"
+  },
+  {
+    "name": "padding/xxl",
+    "regex": "/xxl\\:p-([0-9]{1}|((top|bottom|inline-(start|end)|x|y)-[0-9]{1}))/"
   },
   {
     "name": "pagination",
@@ -2958,6 +3260,10 @@
     "regex": "/xl\\:pattern-([0-9]|[0-9]{2})/"
   },
   {
+    "name": "pattern/xxl",
+    "regex": "/xxl\\:pattern-([0-9]|[0-9]{2})/"
+  },
+  {
     "name": "place-content/default",
     "regex": "/content-/"
   },
@@ -2976,6 +3282,10 @@
   {
     "name": "place-content/xl",
     "regex": "/xl\\:content-/"
+  },
+  {
+    "name": "place-content/xxl",
+    "regex": "/xxl\\:content-/"
   },
   {
     "name": "place-items/default",
@@ -2998,6 +3308,10 @@
     "regex": "/xl\\:items-/"
   },
   {
+    "name": "place-items/xxl",
+    "regex": "/xxl\\:items-/"
+  },
+  {
     "name": "place-self/default",
     "regex": "/self-/"
   },
@@ -3016,6 +3330,10 @@
   {
     "name": "place-self/xl",
     "regex": "/xl\\:self-/"
+  },
+  {
+    "name": "place-self/xxl",
+    "regex": "/xxl\\:self-/"
   },
   {
     "name": "placeholder",
@@ -3073,6 +3391,10 @@
     "regex": "/xl\\:(static|relative|absolute|fixed|sticky)/"
   },
   {
+    "name": "position/xxl",
+    "regex": "/xxl\\:(static|relative|absolute|fixed|sticky)/"
+  },
+  {
     "name": "progress-bar",
     "css": true,
     "js": true,
@@ -3110,7 +3432,7 @@
   {
     "name": "reference-link",
     "css": true,
-    "js": true,
+    "js": false,
     "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-reference-link\\b/i",
     "type": "component"
   },
@@ -3258,7 +3580,7 @@
     "name": "scrollbar",
     "css": true,
     "js": true,
-    "regex": "/(?:class\\s*=\\s*[\"'][^\"']*\\bsf-scrollbar\\b|data-sf-scrollbar(?:\\s*=\\s*[\"'][^\"']*[\"'])?)/i",
+    "regex": "/(?:class\\s*=\\s*[\"'][^\"']*\\bsf-scrollbar\\b|data-sf-scrollbar(?:-axis)?(?:\\s*=\\s*[\"'][^\"']*[\"'])?)/i",
     "type": "component"
   },
   {
@@ -3306,6 +3628,10 @@
   {
     "name": "space/xl",
     "regex": "/xl\\:space-(x|y)-([0-9]{1}|reverse)/"
+  },
+  {
+    "name": "space/xxl",
+    "regex": "/xxl\\:space-(x|y)-([0-9]{1}|reverse)/"
   },
   {
     "name": "special",
@@ -3357,6 +3683,10 @@
     "regex": "/xl\\:stripe-size-[1-4]/"
   },
   {
+    "name": "stripe-width/xxl",
+    "regex": "/xxl\\:stripe-size-[1-4]/"
+  },
+  {
     "name": "stripe/default",
     "regex": "/stripe-[1-4]/"
   },
@@ -3375,6 +3705,10 @@
   {
     "name": "stripe/xl",
     "regex": "/xl\\:stripe-[1-4]/"
+  },
+  {
+    "name": "stripe/xxl",
+    "regex": "/xxl\\:stripe-[1-4]/"
   },
   {
     "name": "stroke-color/default",
@@ -3413,6 +3747,10 @@
     "regex": "/xl\\:stroke-[0-4]/"
   },
   {
+    "name": "stroke-width/xxl",
+    "regex": "/xxl\\:stroke-[0-4]/"
+  },
+  {
     "name": "svg-size/default",
     "regex": "/svg-/"
   },
@@ -3433,10 +3771,14 @@
     "regex": "/xl\\:svg-/"
   },
   {
+    "name": "svg-size/xxl",
+    "regex": "/xxl\\:svg-/"
+  },
+  {
     "name": "swiper",
     "css": true,
     "js": true,
-    "regex": "/swiper/",
+    "regex": "/class=\"(?:[^\"]*\\s)?swiper(?:\\s[^\"]*)?\"/",
     "type": "component"
   },
   {
@@ -3450,7 +3792,7 @@
     "name": "tab",
     "css": true,
     "js": true,
-    "regex": "/sf-tab/",
+    "regex": "/sf-tab(?:\\s|[\"'])/",
     "type": "component"
   },
   {
@@ -3510,6 +3852,10 @@
   {
     "name": "text-align/xl",
     "regex": "/xl\\:text-(start|center|end|justify)/"
+  },
+  {
+    "name": "text-align/xxl",
+    "regex": "/xxl\\:text-(start|center|end|justify)/"
   },
   {
     "name": "text-color/active",
@@ -3596,6 +3942,10 @@
     "regex": "/xl\\:(measure|(measure-(wide|narrow)))/"
   },
   {
+    "name": "text-max-width/xxl",
+    "regex": "/xxl\\:(measure|(measure-(wide|narrow)))/"
+  },
+  {
     "name": "text-overflow/default",
     "regex": "/(truncate|(t-(ellipsis|clip)))/"
   },
@@ -3610,28 +3960,7 @@
     "name": "theme",
     "css": false,
     "js": true,
-    "regex": "/sf-theme/",
-    "type": "component"
-  },
-  {
-    "name": "theme-builder",
-    "css": true,
-    "js": true,
-    "regex": "/sf-theme-builder/",
-    "relation": [
-      {
-        "name": "range-slider"
-      },
-      {
-        "name": "modal"
-      },
-      {
-        "name": "checkbox"
-      },
-      {
-        "name": "dropdown"
-      }
-    ],
+    "regex": "/class=\"(?:[^\"]*\\s)?sf-theme-button(?:\\s[^\"]*)?\"/",
     "type": "component"
   },
   {
@@ -3732,6 +4061,10 @@
     "regex": "/xl\\:delay-[0-9]/"
   },
   {
+    "name": "transition-delay/xxl",
+    "regex": "/xxl\\:delay-[0-9]/"
+  },
+  {
     "name": "transition-duration/default",
     "regex": "/duration-/"
   },
@@ -3754,6 +4087,10 @@
   {
     "name": "transition-property/xl",
     "regex": "/xl\\:transition|(transition-(none|all|color|opacity|shadow|transform|width|height|size|max-width|max-height|max-size|flex|flex-basis|layout))/"
+  },
+  {
+    "name": "transition-property/xxl",
+    "regex": "/xxl\\:transition|(transition-(none|all|color|opacity|shadow|transform|width|height|size|max-width|max-height|max-size|flex|flex-basis|layout))/"
   },
   {
     "name": "transition-timing-function/default",
@@ -3797,7 +4134,7 @@
     "name": "verification",
     "css": true,
     "js": true,
-    "regex": "/sf-verification/",
+    "regex": "/(?:class=[\"'][^\"']*\\bsf-verification(?:-form)?(?:\\s|[\"'])|<sf-verification\\b)/",
     "type": "component"
   },
   {
@@ -3825,6 +4162,10 @@
     "regex": "/xl\\:visible/"
   },
   {
+    "name": "visibility/xxl",
+    "regex": "/xxl\\:visible/"
+  },
+  {
     "name": "white-space/default",
     "regex": "/(pre|pre-line|pre-wrap|whitespace-normal|wrap-none)/"
   },
@@ -3849,6 +4190,10 @@
     "regex": "/xl\\:w-(([a-i]{1}[0-9]{1})|(([1-9]{1})|([0-9]{2})|([0-9]{3})))/"
   },
   {
+    "name": "width-ext/xxl",
+    "regex": "/xxl\\:w-(([a-i]{1}[0-9]{1})|(([1-9]{1})|([0-9]{2})|([0-9]{3})))/"
+  },
+  {
     "name": "width/default",
     "regex": "/w-((([1-9]{1}|[1-9]{2})\\/([1-9]{1}|[1-9]{2}))|auto|full|screen|min|max|fit|px|0)/"
   },
@@ -3867,6 +4212,10 @@
   {
     "name": "width/xl",
     "regex": "/xl\\:w-((([1-9]{1}|[1-9]{2})\\/([1-9]{1}|[1-9]{2}))|auto|full|screen|min|max|fit|px|0)/"
+  },
+  {
+    "name": "width/xxl",
+    "regex": "/xxl\\:w-((([1-9]{1}|[1-9]{2})\\/([1-9]{1}|[1-9]{2}))|auto|full|screen|min|max|fit|px|0)/"
   },
   {
     "name": "will-change/default",
@@ -3895,5 +4244,9 @@
   {
     "name": "z-index/xl",
     "regex": "/xl\\:z-([1-9]{1}|auto|-1)/"
+  },
+  {
+    "name": "z-index/xxl",
+    "regex": "/xxl\\:z-([1-9]{1}|auto|-1)/"
   }
 ]

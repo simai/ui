@@ -56,6 +56,7 @@ function syncFieldContract(root, control, {
   required = false,
   invalid = false,
   messageNode = null,
+  labelNode = null,
   errorMessage = ''
 } = {}) {
   if (!root || !control) return null;
@@ -68,6 +69,18 @@ function syncFieldContract(root, control, {
     errorMessage
   });
   if (!control.id) control.id = contract.controlId;
+
+  if (root.tagName === 'LABEL' && !root.hasAttribute('for')) {
+    root.setAttribute('for', control.id);
+  } // Name the field by its visible label, not every hint or adjacent button.
+  // Author-provided accessible names remain authoritative.
+
+
+  if (labelNode?.textContent?.trim() && !control.hasAttribute('aria-label') && !control.hasAttribute('aria-labelledby')) {
+    if (!labelNode.id) labelNode.id = `${control.id}-label`;
+    control.setAttribute('aria-labelledby', labelNode.id);
+  }
+
   control.required = contract.required;
   root.classList.toggle('error', contract.invalid);
   control.classList.toggle('error', contract.invalid);
@@ -85,6 +98,46 @@ function syncFieldContract(root, control, {
   }
 
   return contract;
+}
+
+/***/ },
+
+/***/ "67eed2647f47"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   bindFormReset: () => (/* binding */ bindFormReset)
+/* harmony export */ });
+// Reset fires before the browser restores default values. Synchronize afterwards
+// without synthesizing input/change events or retaining detached controls.
+const subscriptions = new WeakMap();
+const listeningDocuments = new WeakSet();
+function bindFormReset(input, synchronize) {
+  const doc = input.ownerDocument;
+
+  if (!listeningDocuments.has(doc)) {
+    doc.addEventListener('reset', event => {
+      const form = event.target;
+      if (form?.tagName !== 'FORM') return;
+      const controls = Array.from(form.elements);
+      setTimeout(() => {
+        if (event.defaultPrevented) return;
+
+        for (const control of controls) {
+          if (!control.isConnected || control.form !== form) continue;
+
+          for (const callback of subscriptions.get(control) || []) callback();
+        }
+      }, 0);
+    }, true);
+    listeningDocuments.add(doc);
+  }
+
+  let callbacks = subscriptions.get(input);
+  if (!callbacks) subscriptions.set(input, callbacks = new Set());
+  callbacks.add(synchronize);
+  return () => callbacks.delete(synchronize);
 }
 
 /***/ },
@@ -136,12 +189,39 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("58661bec99a6");
 /* harmony import */ var _json_textarea_utility_json__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("9fe5ba254a5b");
 /* harmony import */ var _field_contract__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("e138a730fd7c");
+/* harmony import */ var _form_reset_helper__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("67eed2647f47");
+
 
 
 
 
 const TEXTAREA_SELECTOR = 'label.sf-textarea';
 const TEXTAREA_BOUND_FLAG = 'sfTextareaBound';
+const TEXTAREA_SIZES = new Set(['1/3', '1/2', '1', '2', '3']);
+const TEXTAREA_VARIANTS = new Set(['bordered', 'filled']);
+const TEXTAREA_INPUT_MODES = new Set(['', 'none', 'text', 'tel', 'url', 'email', 'numeric', 'decimal', 'search']);
+const TEXTAREA_WRAP_VALUES = new Set(['soft', 'hard']);
+
+function boundedValue(value, allowed, fallback) {
+  const normalized = String(value || fallback);
+  return allowed.has(normalized) ? normalized : fallback;
+}
+
+function normalizeInputMode(value) {
+  const normalized = String(value || '').toLowerCase();
+  return TEXTAREA_INPUT_MODES.has(normalized) ? normalized : '';
+}
+
+function normalizeLength(value) {
+  if (value === '' || value === null || typeof value === 'undefined') return null;
+  const normalized = Number(value);
+  return Number.isInteger(normalized) && normalized >= 0 ? normalized : null;
+}
+
+function normalizeWrap(value) {
+  const normalized = String(value || 'soft').toLowerCase();
+  return TEXTAREA_WRAP_VALUES.has(normalized) ? normalized : 'soft';
+}
 
 function toBoolean(value, fallback = false) {
   if (value === undefined || value === null || value === '') return fallback;
@@ -205,13 +285,16 @@ async function bindMask(root, textarea) {
   const config = resolveMaskConfig(root, textarea);
   if (!config) return;
   if (!window.SF?.Mask?.create) return;
+  const service = window.SF.Mask;
+  const request = {};
+  root.__sfTextareaMaskRequest = request;
 
   try {
-    const instance = await window.SF.Mask.create(textarea, config);
+    const instance = await service.create(textarea, config);
     if (!instance) return;
 
-    if (root.dataset[TEXTAREA_BOUND_FLAG] !== '1') {
-      window.SF.Mask.destroy(instance);
+    if (root.dataset[TEXTAREA_BOUND_FLAG] !== '1' || root.__sfTextareaMaskRequest !== request || getTextareaNode(root) !== textarea) {
+      service.destroy(instance);
       return;
     }
 
@@ -228,33 +311,59 @@ function bindTextarea(root) {
 
   const noopHandler = () => {};
 
+  const pointerFocusHandler = () => root.classList.add('sf-textarea--pointer-focus');
+
+  const blurHandler = () => root.classList.remove('sf-textarea--pointer-focus');
+
   textarea.addEventListener('input', noopHandler);
+  textarea.addEventListener('pointerdown', pointerFocusHandler);
+  textarea.addEventListener('blur', blurHandler);
   root.__sfTextareaNoopHandler = noopHandler;
+  root.__sfTextareaPointerFocusHandler = pointerFocusHandler;
+  root.__sfTextareaBlurHandler = blurHandler;
   root.dataset[TEXTAREA_BOUND_FLAG] = '1';
   const message = messageState(root);
   (0,_field_contract__WEBPACK_IMPORTED_MODULE_3__.syncFieldContract)(root, textarea, {
     prefix: 'sf-textarea',
+    labelNode: root.querySelector('.sf-textarea-text'),
     required: textarea.required || Boolean(root.querySelector('.sf-textarea-required')),
     invalid: root.classList.contains('error') || textarea.classList.contains('error'),
     ...message
+  });
+  root.__sfTextareaReleaseReset = (0,_form_reset_helper__WEBPACK_IMPORTED_MODULE_4__.bindFormReset)(textarea, () => {
+    if (root.__sfTextareaMask) root.__sfTextareaMask.value = textarea.value;
   });
   bindMask(root, textarea);
 }
 
 function unbindTextarea(root) {
   if (!root || root.dataset[TEXTAREA_BOUND_FLAG] !== '1') return;
+  delete root.__sfTextareaMaskRequest;
   const textarea = getTextareaNode(root);
 
   if (textarea && root.__sfTextareaNoopHandler) {
     textarea.removeEventListener('input', root.__sfTextareaNoopHandler);
   }
 
+  if (textarea && root.__sfTextareaPointerFocusHandler) {
+    textarea.removeEventListener('pointerdown', root.__sfTextareaPointerFocusHandler);
+  }
+
+  if (textarea && root.__sfTextareaBlurHandler) {
+    textarea.removeEventListener('blur', root.__sfTextareaBlurHandler);
+  }
+
   if (root.__sfTextareaMask) {
     window.SF?.Mask?.destroy?.(root.__sfTextareaMask);
   }
 
+  root.__sfTextareaReleaseReset?.();
+  delete root.__sfTextareaReleaseReset;
   delete root.__sfTextareaMask;
   delete root.__sfTextareaNoopHandler;
+  delete root.__sfTextareaPointerFocusHandler;
+  delete root.__sfTextareaBlurHandler;
+  root.classList.remove('sf-textarea--pointer-focus');
   delete root.dataset[TEXTAREA_BOUND_FLAG];
 }
 
@@ -303,6 +412,7 @@ function setTextareaState(target, state = {}) {
 
   (0,_field_contract__WEBPACK_IMPORTED_MODULE_3__.syncFieldContract)(root, textarea, {
     prefix: 'sf-textarea',
+    labelNode: root.querySelector('.sf-textarea-text'),
     required: textarea.required || Boolean(root.querySelector('.sf-textarea-required')),
     invalid: root.classList.contains('error') || textarea.classList.contains('error'),
     ...messageState(root)
@@ -322,6 +432,12 @@ class Textarea extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.C
       label = 'Label',
       required = true,
       placeholder = 'placeholder',
+      autocomplete = '',
+      inputMode = '',
+      minLength = '',
+      maxLength = '',
+      spellcheck = true,
+      wrap = 'soft',
       hint = '',
       value = '',
       name = '',
@@ -336,9 +452,11 @@ class Textarea extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.C
       maskPattern
     } = this.params || {};
     const className = this.attrs.class || this.attrs.className;
+    const normalizedSize = boundedValue(size, TEXTAREA_SIZES, '1');
+    const normalizedVariant = boundedValue(type, TEXTAREA_VARIANTS, 'bordered');
     this.template = document.createElement('label');
     if (this.id) this.template.id = this.id;
-    this.template.classList.add('sf-textarea', `sf-textarea--size-${size}`, `sf-textarea--${type}`);
+    this.template.classList.add('sf-textarea', `sf-textarea--size-${normalizedSize}`, `sf-textarea--${normalizedVariant}`);
     this.template.classList.toggle('error', toBoolean(invalid || error, false));
 
     if (className) {
@@ -361,7 +479,16 @@ class Textarea extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.C
 
     const textarea = document.createElement('textarea');
     textarea.placeholder = String(placeholder ?? '');
+    if (autocomplete) textarea.autocomplete = String(autocomplete);
+    textarea.inputMode = normalizeInputMode(inputMode);
+    const normalizedMinLength = normalizeLength(minLength);
+    const normalizedMaxLength = normalizeLength(maxLength);
+    if (normalizedMinLength !== null) textarea.minLength = normalizedMinLength;
+    if (normalizedMaxLength !== null) textarea.maxLength = normalizedMaxLength;
+    textarea.spellcheck = toBoolean(spellcheck, true);
+    textarea.wrap = normalizeWrap(wrap);
     textarea.value = String(value ?? '');
+    textarea.defaultValue = String(value ?? '');
     textarea.rows = Number(rows) > 0 ? Number(rows) : 3;
     if (name) textarea.name = String(name);
     textarea.disabled = toBoolean(disabled, false);
@@ -495,7 +622,9 @@ class ComponentObserver {
       matches.forEach(match => {
         const raw = match.slice(1, -1);
         raw.split(/\s+/).filter(Boolean).forEach(cls => {
-          classes.add(cls.replace(/^\./, ''));
+          // Only explicit (.class) annotations are classes; the
+          // parentheses in var(--token) are CSS values, not markup.
+          if (cls.startsWith('.') && cls.length > 1) classes.add(cls.slice(1));
         });
       });
     });
@@ -568,7 +697,7 @@ __webpack_require__.r(__webpack_exports__);
 /***/ "9fe5ba254a5b"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{".sf-textarea":["display/flex (.flex)","flex-direction/column (.flex-col)","flex-wrap/nowrap (.flex-nowrap)","gap/var(--sf-space-1\\\\/4)","justify-content/flex-start (.justify-start)","align-items/flex-start (.items-start)"],".sf-textarea .sf-textarea-label":["flex/1 (.flex-1)","display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","gap/var(--sf-space-1\\\\/4)","justify-content/flex-start (.justify-start)","align-items/flex-start (.items-start)"],".sf-textarea textarea":["flex/1 (.flex-1)","display/flex (.flex)"],".sf-textarea .sf-textarea-hint-text-wrap":["flex/1 (.flex-1)","display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","gap/var(--sf-b0)","justify-content/flex-start (.justify-start)","align-items/center (.items-center)"]}');
+module.exports = /*#__PURE__*/JSON.parse('{".sf-textarea":["display/flex (.flex)","flex-direction/column (.flex-col)","flex-wrap/nowrap (.flex-nowrap)","gap/var(--sf-space-1\\\\/4)","justify-content/flex-start (.justify-start)"],".sf-textarea .sf-textarea-label":["display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","gap/var(--sf-space-1\\\\/4)","justify-content/flex-start (.justify-start)","align-items/flex-start (.items-start)"],".sf-textarea textarea":[],".sf-textarea .sf-textarea-hint-text-wrap":["flex/1 (.flex-1)","display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","gap/var(--sf-b0)","justify-content/flex-start (.justify-start)","align-items/center (.items-center)"]}');
 
 /***/ }
 

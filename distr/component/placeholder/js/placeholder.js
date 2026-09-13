@@ -4,12 +4,7 @@
 /***/ "4847d784d4d0"
 () {
 
-/*
-* Main JS file for including JS for component.
-*
-* Imports:
-* - Base function component (_component_name.js)
-*/
+/* Placeholder is a CSS-only composition. */
 
 /***/ },
 
@@ -128,7 +123,7 @@ __webpack_require__.r(__webpack_exports__);
 * Documentation: http://framework.simai.studio/
 * Support: http://simai.studio/support/
 *
-* PAGINATION
+* PLACEHOLDER
 *
 * Entry point for importing components from this directory.
 * Simplifies the import process in other parts of the project.

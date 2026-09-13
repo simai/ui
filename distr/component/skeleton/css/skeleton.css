@@ -1,28 +1,24 @@
 @layer sf.components {
   /* utility-hint: flex/1 (.flex-1) display/flex (.flex) */
   .sf-skeleton {
-    --sf-skeleton-base: var(--sf-ui-skeleton, #e0e0e0);
-    --sf-skeleton-highlight: rgba(155, 155, 155, 0.5);
+    --sf-skeleton-base: var(--sf-ui-skeleton);
+    --sf-skeleton-highlight: var(--sf-surface-container-active);
+    --sf-skeleton-duration: calc(var(--sf-duration-slow) * 3);
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    gap: var(--sf-b0, 4px);
+    gap: var(--sf-b0);
   }
   .sf-skeleton-text {
     position: relative;
     overflow: hidden;
-    background-color: transparent;
-    background-image: #e0e0e0;
-    background-image: var(--sf-skeleton-base, #e0e0e0);
-    border-bottom-left-radius: var(--sf-radius-1\/2);
-    border-bottom-right-radius: var(--sf-radius-1\/2);
-    border-top-left-radius: var(--sf-radius-1\/2);
-    border-top-right-radius: var(--sf-radius-1\/2);
+    background: var(--sf-skeleton-base);
+    border-radius: var(--sf-radius--ui);
     height: var(--sf-skeleton-text--height);
+    block-size: var(--sf-skeleton-text--height);
   }
   .sf-skeleton--animation-pulse .sf-skeleton-text {
-    -webkit-animation: sf-skeleton-pulse 1.6s ease-in-out infinite;
-            animation: sf-skeleton-pulse 1.6s ease-in-out infinite;
+    -webkit-animation: sf-skeleton-pulse var(--sf-skeleton-duration) var(--sf-animation) infinite;
+            animation: sf-skeleton-pulse var(--sf-skeleton-duration) var(--sf-animation) infinite;
   }
   .sf-skeleton--animation-wave .sf-skeleton-text::after {
     content: "";
@@ -34,10 +30,9 @@
     inset: 0;
     -webkit-transform: translateX(-100%);
             transform: translateX(-100%);
-    background-image: linear-gradient(90deg, transparent, rgba(155, 155, 155, 0.5), transparent);
-    background-image: linear-gradient(90deg, transparent, var(--sf-skeleton-highlight, rgba(155, 155, 155, 0.5)), transparent);
-    -webkit-animation: sf-skeleton-wave 1.6s ease-in-out infinite;
-            animation: sf-skeleton-wave 1.6s ease-in-out infinite;
+    background-image: linear-gradient(90deg, var(--sf-transparent), var(--sf-skeleton-highlight), var(--sf-transparent));
+    -webkit-animation: sf-skeleton-wave var(--sf-skeleton-duration) var(--sf-animation) infinite;
+            animation: sf-skeleton-wave var(--sf-skeleton-duration) var(--sf-animation) infinite;
   }
   .sf-skeleton--animation-none .sf-skeleton-text,
   .sf-skeleton--animation-none .sf-skeleton-text::after {
@@ -85,6 +80,7 @@
   }
   .sf-skeleton-icon {
     width: var(--sf-skeleton-text--height);
+    inline-size: var(--sf-skeleton-text--height);
   }
   .sf-skeleton-circle {
     border-radius: var(--sf-radius-circle);
@@ -93,31 +89,19 @@
     border-radius: 0;
   }
   .sf-skeleton-rounded {
-    border-radius: var(--sf-radius-1);
+    border-radius: var(--sf-radius-default);
   }
   .sf-skeleton--animation-wave .sf-skeleton-text {
     overflow: hidden;
   }
   @-webkit-keyframes sf-skeleton-pulse {
-    0% {
-      opacity: 1;
-    }
     50% {
-      opacity: 0.6;
-    }
-    100% {
-      opacity: 1;
+      opacity: var(--sf-opacity-60);
     }
   }
   @keyframes sf-skeleton-pulse {
-    0% {
-      opacity: 1;
-    }
     50% {
-      opacity: 0.6;
-    }
-    100% {
-      opacity: 1;
+      opacity: var(--sf-opacity-60);
     }
   }
   @-webkit-keyframes sf-skeleton-wave {
@@ -138,6 +122,22 @@
     100% {
       -webkit-transform: translateX(100%);
               transform: translateX(100%);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sf-skeleton--animation-pulse .sf-skeleton-text,
+    .sf-skeleton--animation-wave .sf-skeleton-text::after {
+      -webkit-animation: none;
+              animation: none;
+    }
+  }
+  @media (forced-colors: active) {
+    .sf-skeleton-text {
+      background: CanvasText;
+      opacity: var(--sf-opacity-30);
+    }
+    .sf-skeleton--animation-wave .sf-skeleton-text::after {
+      display: none;
     }
   }
 }

@@ -41,6 +41,11 @@ function normalizeTextPosition(value, fallback = 'none') {
   return ['none', 'right', 'inline-end', 'bottom'].includes(normalized) ? normalized : fallback;
 }
 
+function normalizeTone(value) {
+  const normalized = String(value || '').toLowerCase();
+  return ['primary', 'success', 'warning', 'error'].includes(normalized) ? normalized : 'primary';
+}
+
 function getProgressNode(root) {
   return root?.querySelector?.('.sf-progress-bar-progress') || null;
 }
@@ -88,17 +93,47 @@ function syncRootLayout(root, textPosition = 'none') {
   }
 }
 
+function syncProgressAccessibility(root, value) {
+  root.setAttribute('role', 'progressbar');
+  root.setAttribute('aria-valuemin', '0');
+  root.setAttribute('aria-valuemax', '100');
+  root.setAttribute('aria-valuenow', String(value));
+  const label = root.dataset.label;
+
+  if (label) {
+    root.setAttribute('aria-label', label);
+  }
+
+  const valueText = root.dataset.valueText;
+
+  if (valueText) {
+    root.setAttribute('aria-valuetext', valueText);
+  } else {
+    root.removeAttribute('aria-valuetext');
+  }
+}
+
+function syncTone(root, tone) {
+  ['primary', 'success', 'warning', 'error'].forEach(name => {
+    root.classList.toggle(`sf-progress-bar--${name}`, name === tone);
+  });
+  root.dataset.tone = tone;
+}
+
 function renderProgressBar(root) {
   if (!root) return false;
   const progress = getProgressNode(root);
   const main = getMainNode(root);
   if (!progress || !main) return false;
   const value = normalizeValue(root.dataset.value ?? root.getAttribute('data-value') ?? 0);
-  const textPosition = normalizeTextPosition(root.dataset.textPosition ?? root.getAttribute('data-text-position'), detectTextPosition(root));
+  const textPosition = normalizeTextPosition(root.dataset.position ?? root.dataset.textPosition ?? root.getAttribute('data-text-position'), detectTextPosition(root));
+  const tone = normalizeTone(root.dataset.tone);
   syncRootLayout(root, textPosition);
+  syncTone(root, tone);
+  syncProgressAccessibility(root, value);
   progress.style.width = `${value}%`;
   root.dataset.value = String(value);
-  root.dataset.textPosition = textPosition;
+  root.dataset.position = textPosition;
 
   if (textPosition === 'none') {
     const textNode = getTextNode(root);
@@ -144,7 +179,28 @@ function setProgressBarState(target, state = {}) {
   }
 
   if (Object.prototype.hasOwnProperty.call(state, 'textPosition')) {
-    root.dataset.textPosition = normalizeTextPosition(state.textPosition);
+    root.dataset.position = normalizeTextPosition(state.textPosition);
+  }
+
+  if (Object.prototype.hasOwnProperty.call(state, 'tone')) {
+    root.dataset.tone = normalizeTone(state.tone);
+  }
+
+  if (Object.prototype.hasOwnProperty.call(state, 'label')) {
+    const label = String(state.label || '').trim();
+
+    if (label) {
+      root.dataset.label = label;
+      root.setAttribute('aria-label', label);
+    } else {
+      delete root.dataset.label;
+      root.removeAttribute('aria-label');
+    }
+  }
+
+  if (Object.prototype.hasOwnProperty.call(state, 'valueText')) {
+    const valueText = String(state.valueText || '').trim();
+    if (valueText) root.dataset.valueText = valueText;else delete root.dataset.valueText;
   }
 
   if (Object.prototype.hasOwnProperty.call(state, 'size')) {
@@ -165,7 +221,10 @@ function getProgressBarState(target) {
   if (!root) return null;
   return {
     value: normalizeValue(root.dataset.value ?? 0),
-    textPosition: normalizeTextPosition(root.dataset.textPosition, detectTextPosition(root))
+    textPosition: normalizeTextPosition(root.dataset.position ?? root.dataset.textPosition, detectTextPosition(root)),
+    tone: normalizeTone(root.dataset.tone),
+    label: root.getAttribute('aria-label') || '',
+    valueText: root.getAttribute('aria-valuetext') || ''
   };
 }
 
@@ -178,7 +237,10 @@ class ProgressBar extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0_
     const {
       size = '1',
       value = 0,
-      textPosition = 'none'
+      textPosition = 'none',
+      tone = 'primary',
+      label = '',
+      valueText = ''
     } = this.params || {};
     const className = this.attrs.class || this.attrs.className;
     const root = document.createElement('div');
@@ -194,7 +256,10 @@ class ProgressBar extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0_
     }
 
     root.dataset.value = String(normalizeValue(value));
-    root.dataset.textPosition = normalizeTextPosition(textPosition);
+    root.dataset.position = normalizeTextPosition(textPosition);
+    root.dataset.tone = normalizeTone(tone);
+    if (String(label).trim()) root.dataset.label = String(label).trim();
+    if (String(valueText).trim()) root.dataset.valueText = String(valueText).trim();
     const main = document.createElement('div');
     main.className = 'sf-progress-bar-main';
     const progress = document.createElement('div');
@@ -344,7 +409,9 @@ class ComponentObserver {
       matches.forEach(match => {
         const raw = match.slice(1, -1);
         raw.split(/\s+/).filter(Boolean).forEach(cls => {
-          classes.add(cls.replace(/^\./, ''));
+          // Only explicit (.class) annotations are classes; the
+          // parentheses in var(--token) are CSS values, not markup.
+          if (cls.startsWith('.') && cls.length > 1) classes.add(cls.slice(1));
         });
       });
     });

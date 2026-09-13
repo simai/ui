@@ -64,6 +64,11 @@ function clamp(value, min, max) {
   return Math.min(Math.max(value, min), max);
 }
 
+function normalizeChoice(value, allowed, fallback) {
+  const normalized = String(value || '').trim().toLowerCase();
+  return allowed.includes(normalized) ? normalized : fallback;
+}
+
 function createSvgNode(tagName, attributes = {}) {
   const node = document.createElementNS(SVG_NS, tagName);
   Object.entries(attributes).forEach(([key, value]) => {
@@ -81,9 +86,9 @@ function createSpinnerArcSvg({
   height = 58,
   strokeWidth = 4
 } = {}) {
-  const safeWidth = Math.max(1, width);
-  const safeHeight = Math.max(1, height);
-  const safeStroke = Math.max(1, strokeWidth);
+  const safeWidth = clamp(toNumber(width, 58), 16, 256);
+  const safeHeight = clamp(toNumber(height, safeWidth), 16, 256);
+  const safeStroke = clamp(toNumber(strokeWidth, 4), 1, Math.min(safeWidth, safeHeight) / 2);
   const radius = Math.max(1, Math.min(safeWidth, safeHeight) / 2 - safeStroke / 2);
   const cx = safeWidth / 2;
   const cy = safeHeight / 2;
@@ -121,11 +126,11 @@ function createSpinnerDotsSvg({
   dotRadius = null,
   direction = 'clockwise'
 } = {}) {
-  const safeWidth = Math.max(1, width);
-  const safeHeight = Math.max(1, height);
-  const count = Math.max(3, Math.floor(dots));
-  const activeDots = clamp(Math.floor(filled), 1, count);
-  const resolvedDotRadius = dotRadius === null ? Math.max(1.5, Math.min(safeWidth, safeHeight) * 0.06) : Math.max(1, dotRadius);
+  const safeWidth = clamp(toNumber(width, 58), 16, 256);
+  const safeHeight = clamp(toNumber(height, safeWidth), 16, 256);
+  const count = clamp(Math.floor(toNumber(dots, 16)), 3, 32);
+  const activeDots = clamp(Math.floor(toNumber(filled, 6)), 1, count);
+  const resolvedDotRadius = dotRadius === null ? Math.max(1.5, Math.min(safeWidth, safeHeight) * 0.06) : clamp(toNumber(dotRadius, 1), 1, Math.min(safeWidth, safeHeight) / 4);
   const orbitRadius = Math.max(resolvedDotRadius, Math.min(safeWidth, safeHeight) / 2 - resolvedDotRadius - 1);
   const cx = safeWidth / 2;
   const cy = safeHeight / 2;
@@ -143,13 +148,12 @@ function createSpinnerDotsSvg({
     const dotCx = cx + orbitRadius * Math.cos(angle);
     const dotCy = cy + orbitRadius * Math.sin(angle);
     const animationIndex = direction === 'counterclockwise' ? index : (count - index) % count;
-    const animationOffset = -(1.4 / count * animationIndex);
     const dot = createSvgNode('circle', {
-      class: 'sf-loader-dot',
+      class: `sf-loader-dot${index < activeDots ? ' sf-loader-dot--active' : ''}`,
       cx: dotCx,
       cy: dotCy,
       r: resolvedDotRadius,
-      style: `--sf-loader-dot-index:${index}; --sf-loader-dot-delay:${animationOffset.toFixed(4)}s;`
+      style: `--sf-loader-dot-index:${index}; --sf-loader-dot-step:${animationIndex};`
     });
     svg.append(dot);
   }
@@ -163,19 +167,15 @@ function getSpinnerConfig(root) {
   const labelNode = root.querySelector('.sf-loader--text');
   const hasExplicitWidth = Object.prototype.hasOwnProperty.call(root.dataset, 'width') || Object.prototype.hasOwnProperty.call(root.dataset, 'w');
   const hasExplicitHeight = Object.prototype.hasOwnProperty.call(root.dataset, 'height') || Object.prototype.hasOwnProperty.call(root.dataset, 'h');
-  const width = toNumber(root.dataset.width, toNumber(root.dataset.w, 58));
-  const height = toNumber(root.dataset.height, toNumber(root.dataset.h, width));
-  const strokeWidth = root.dataset.strokeWidth ? toNumber(root.dataset.strokeWidth, null) : null;
-  const dots = toNumber(root.dataset.dots, 16);
-  const filled = toNumber(root.dataset.filled, 6);
-  const dotRadius = root.dataset.dotRadius ? toNumber(root.dataset.dotRadius, null) : null;
-  const direction = String(root.dataset.direction || 'clockwise').toLowerCase();
+  const width = clamp(toNumber(root.dataset.width, toNumber(root.dataset.w, 58)), 16, 256);
+  const height = clamp(toNumber(root.dataset.height, toNumber(root.dataset.h, width)), 16, 256);
+  const strokeWidth = root.dataset.strokeWidth ? clamp(toNumber(root.dataset.strokeWidth, 4), 1, Math.min(width, height) / 2) : null;
+  const dots = clamp(Math.floor(toNumber(root.dataset.dots, 16)), 3, 32);
+  const filled = clamp(Math.floor(toNumber(root.dataset.filled, 6)), 1, dots);
+  const dotRadius = root.dataset.dotRadius ? clamp(toNumber(root.dataset.dotRadius, 1), 1, Math.min(width, height) / 4) : null;
+  const direction = normalizeChoice(root.dataset.direction, ['clockwise', 'counterclockwise'], 'clockwise');
   let variant = String(root.dataset.variant || '').toLowerCase();
-
-  if (!variant) {
-    variant = circles ? 'dots' : 'arc';
-  }
-
+  variant = normalizeChoice(variant, ['arc', 'dots'], circles ? 'dots' : 'arc');
   return {
     width,
     height,
@@ -188,11 +188,32 @@ function getSpinnerConfig(root) {
     hasExplicitWidth,
     hasExplicitHeight,
     infinite: root.dataset.infinite === 'true',
+    announce: root.dataset.announce === 'true',
     label: root.dataset.label !== undefined ? root.dataset.label : labelNode?.textContent?.trim?.() || '',
     indicator,
     circles,
     labelNode
   };
+}
+
+function syncSpinnerAccessibility(root, config) {
+  const hasLabel = Boolean(config.label);
+  root.toggleAttribute('aria-hidden', !hasLabel);
+
+  if (config.announce && hasLabel) {
+    root.setAttribute('role', 'status');
+    root.setAttribute('aria-live', 'polite');
+    root.setAttribute('aria-atomic', 'true');
+    root.dataset.sfSpinnerSemantics = 'status';
+    return;
+  }
+
+  if (root.dataset.sfSpinnerSemantics === 'status') {
+    root.removeAttribute('role');
+    root.removeAttribute('aria-live');
+    root.removeAttribute('aria-atomic');
+    delete root.dataset.sfSpinnerSemantics;
+  }
 }
 
 function ensureSpinnerPart(root, selector, className) {
@@ -251,6 +272,7 @@ function renderSpinner(root) {
     label.textContent = config.label || '';
   }
 
+  syncSpinnerAccessibility(root, config);
   return root;
 }
 
@@ -294,6 +316,7 @@ class Spinner extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Co
       strokeWidth = null,
       dotRadius = null,
       infinite = false,
+      announce = false,
       direction = 'clockwise'
     } = this.params || {};
     const className = this.attrs.class || this.attrs.className;
@@ -325,6 +348,7 @@ class Spinner extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Co
     }
 
     this.template.dataset.infinite = String(infinite);
+    this.template.dataset.announce = String(announce);
     this.template.dataset.direction = String(direction);
 
     if (dotRadius !== null && dotRadius !== undefined) {
@@ -434,7 +458,9 @@ class ComponentObserver {
       matches.forEach(match => {
         const raw = match.slice(1, -1);
         raw.split(/\s+/).filter(Boolean).forEach(cls => {
-          classes.add(cls.replace(/^\./, ''));
+          // Only explicit (.class) annotations are classes; the
+          // parentheses in var(--token) are CSS values, not markup.
+          if (cls.startsWith('.') && cls.length > 1) classes.add(cls.slice(1));
         });
       });
     });

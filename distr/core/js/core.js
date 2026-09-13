@@ -37,16 +37,29 @@ __webpack_require__.r(__webpack_exports__);
     const classes = ['theme-dark', 'theme-light'];
     const doc = document.documentElement;
     if (!doc) return;
-    const themeCookie = document.cookie.split('; ').find(c => c.startsWith('sf-theme='));
-    let theme = themeCookie ? decodeURIComponent(themeCookie.split('=')[1]) : '';
-    let isDark = theme === 'dark' || !theme && window.matchMedia?.('(prefers-color-scheme: dark)').matches;
-    const targetClass = isDark ? classes[0] : classes[1];
-    const removeClass = isDark ? classes[1] : classes[0];
+    let themeCookie;
 
-    if (!doc.classList.contains(targetClass)) {
-      doc.classList.remove(removeClass);
-      doc.classList.add(targetClass);
+    try {
+      themeCookie = document.cookie.split('; ').find(c => c.startsWith('sf-theme='));
+    } catch {
+      themeCookie = undefined;
     }
+
+    let savedTheme = '';
+
+    if (themeCookie) {
+      try {
+        savedTheme = decodeURIComponent(themeCookie.split('=')[1]);
+      } catch {
+        savedTheme = '';
+      }
+    }
+
+    const preference = ['light', 'dark'].includes(savedTheme) ? savedTheme : 'system';
+    const isDark = preference === 'dark' || preference === 'system' && window.matchMedia?.('(prefers-color-scheme: dark)').matches;
+    const targetClass = isDark ? classes[0] : classes[1];
+    doc.classList.remove(...classes);
+    doc.classList.add(targetClass);
   };
 
   applyInitialTheme();

@@ -1,0 +1,16 @@
+@layer sf.utilities {
+  @media (min-width: 1320px) {
+    .xxl\:clear-inline-start {
+      clear: left;
+    }
+    .xxl\:clear-inline-end {
+      clear: right;
+    }
+    .xxl\:clear-both {
+      clear: both;
+    }
+    .xxl\:clear-none {
+      clear: none;
+    }
+  }
+}

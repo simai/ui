@@ -6,7 +6,7 @@
     "contract_sha256": "b70d02d6902345e17954eafb44f24052b7478439184286bed5a8df6c69c1fe45"
   },
   "ownership": {
-    "token_values": "simai/ui-loader",
+    "token_values": "simai/ui-source",
     "relationship_selection": "consumer parent flow",
     "component_outer_margin": "none by default"
   },

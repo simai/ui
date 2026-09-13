@@ -20,14 +20,32 @@
 @layer sf.components {
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) justify-content/flex-start (.justify-start) align-items/center (.items-center) */
   .sf-breadcrumbs-item {
+    min-width: -webkit-min-content;
+    min-width: -moz-min-content;
+    min-width: min-content;
+    min-inline-size: -webkit-min-content;
+    min-inline-size: -moz-min-content;
+    min-inline-size: min-content;
     background-color: var(--sf-breadcrumbs-item--background-color);
     box-shadow: var(--sf-breadcrumbs-item--box-shadow);
     --sf-breadcrumbs-item--background-color: transparent;
+    --sf-breadcrumbs-item--box-shadow: none;
+  }
+  .sf-breadcrumbs-item.sf-breadcrumbs-item--separator {
+    flex: 0 0 auto;
   }
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-breadcrumbs-item-container--gap) justify-content/flex-start (.justify-start) align-items/center (.items-center) */
   .sf-breadcrumbs-item .sf-breadcrumbs-item-container {
+    min-width: 0;
+    min-inline-size: 0;
+    word-wrap: anywhere;
     --sf-breadcrumbs-item-container--background-color: transparent;
+    --sf-breadcrumbs-item-container--color: var(--sf-on-surface-variant);
+    --sf-breadcrumbs-item-container--font-family: var(--sf-text--family);
+    --sf-breadcrumbs-item-container--font-size: var(--sf-text-size-1\/2);
+    --sf-breadcrumbs-item-container--font-weight: var(--sf-font-weight-regular);
     --sf-breadcrumbs-item-container--gap: var(--sf-space-1\/4);
+    --sf-breadcrumbs-item-container--line-height: var(--sf-text-height-1\/2);
     background-color: var(--sf-breadcrumbs-item-container--background-color);
     color: var(--sf-breadcrumbs-item-container--color);
     font-family: var(--sf-breadcrumbs-item-container--font-family);
@@ -37,6 +55,7 @@
     line-height: var(--sf-breadcrumbs-item-container--line-height);
   }
   .sf-breadcrumbs-item .sf-breadcrumbs-item-container > .sf-icon, .sf-breadcrumbs-item .sf-breadcrumbs-item-container > sf-icon > .sf-icon {
+    flex-shrink: 0;
     --sf-icon--font-size: var(--sf-text-height-1\/2);
     --sf-icon--height: var(--sf-text-height-1\/2);
     --sf-icon--width: var(--sf-text-height-1\/2);
@@ -46,12 +65,13 @@
     height: var(--sf-icon--height);
     width: var(--sf-icon--width);
   }
-  .sf-breadcrumbs-item.sf-breadcrumbs-item--link .sf-breadcrumbs-item-container, .sf-breadcrumbs-item.sf-breadcrumbs-item--default .sf-breadcrumbs-item-container {
-    --sf-breadcrumbs-item-container--color: var(--sf-on-surface-variant);
-    --sf-breadcrumbs-item-container--font-size: var(--sf-text-size-1\/2);
-    --sf-breadcrumbs-item-container--line-height: var(--sf-text-height-1\/2);
-    --sf-breadcrumbs-item-container--font-family: var(--sf-text--family);
-    --sf-breadcrumbs-item-container--font-weight: var(--sf-font-weight-regular);
+  .sf-breadcrumbs-item.sf-breadcrumbs-item--link .sf-breadcrumbs-item-container {
+    --sf-breadcrumbs-item-container--color: var(--sf-primary);
+  }
+  .sf-breadcrumbs-item[aria-current=page] .sf-breadcrumbs-item-container,
+  .sf-breadcrumbs-item .sf-breadcrumbs-item-container[aria-current=page] {
+    --sf-breadcrumbs-item-container--color: var(--sf-on-surface);
+    --sf-breadcrumbs-item-container--font-weight: var(--sf-font-weight-medium);
   }
 }
 @layer sf.states {
@@ -67,17 +87,47 @@
   .sf-breadcrumbs-item:not(:disabled):not(.disabled):active.sf-breadcrumbs-item--link .sf-breadcrumbs-item-container, .sf-breadcrumbs-item.active.sf-breadcrumbs-item--link .sf-breadcrumbs-item-container {
     --sf-breadcrumbs-item-container--color: var(--sf-primary-active);
   }
-  .sf-breadcrumbs-item.sf-breadcrumbs-item--link:not(:disabled):not(.disabled):focus {
+  .sf-breadcrumbs-item.sf-breadcrumbs-item--link:not(:disabled):not(.disabled):not([aria-disabled=true]).focus-visible {
     --sf-breadcrumbs-item--background-color: var(--sf-transparent-for-focus);
     --sf-breadcrumbs-item--box-shadow: var(--sf-ui-focus);
   }
+  .sf-breadcrumbs-item.sf-breadcrumbs-item--link:not(:disabled):not(.disabled):not([aria-disabled=true]):focus-visible {
+    --sf-breadcrumbs-item--background-color: var(--sf-transparent-for-focus);
+    --sf-breadcrumbs-item--box-shadow: var(--sf-ui-focus);
+  }
+  @media (forced-colors: active) {
+    .sf-breadcrumbs-item.sf-breadcrumbs-item--link:not(:disabled):not(.disabled):not([aria-disabled=true]).focus-visible {
+      outline: var(--sf-focus-outline-width) solid currentColor;
+      outline-offset: var(--sf-focus-outline-width);
+      --sf-breadcrumbs-item--box-shadow: none;
+    }
+    .sf-breadcrumbs-item.sf-breadcrumbs-item--link:not(:disabled):not(.disabled):not([aria-disabled=true]):focus-visible {
+      outline: var(--sf-focus-outline-width) solid currentColor;
+      outline-offset: var(--sf-focus-outline-width);
+      --sf-breadcrumbs-item--box-shadow: none;
+    }
+  }
 }
 @layer sf.components {
-  /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-space-1\/3) justify-content/flex-start (.justify-start) align-items/center (.items-center) */
+  /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/wrap (.flex-wrap) gap/var(--sf-space-1\/3) justify-content/flex-start (.justify-start) align-items/center (.items-center) */
   .sf-breadcrumbs {
+    min-width: 0;
+    min-inline-size: 0;
+    max-width: 100%;
+    max-inline-size: 100%;
+    flex-wrap: wrap;
     background-color: transparent;
     background-color: var(--sf-breadcrumbs--background-color, transparent);
     gap: var(--sf-space-1\/3);
     gap: var(--sf-breadcrumbs--gap, var(--sf-space-1\/3));
+    overscroll-behavior-inline: contain;
+  }
+  .sf-breadcrumbs-item[hidden] {
+    display: none;
+  }
+  [dir=rtl] .sf-breadcrumbs .sf-breadcrumbs-item--separator .sf-icon,
+  .sf-breadcrumbs[dir=rtl] .sf-breadcrumbs-item--separator .sf-icon {
+    -webkit-transform: scaleX(-1);
+            transform: scaleX(-1);
   }
 }

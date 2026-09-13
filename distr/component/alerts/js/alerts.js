@@ -1,22 +1,113 @@
 /******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "ecb933b3dc1e"
-() {
+/***/ "2b61c7885d13"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
-/*
-* This file provides functionality for working with components.
-*
-*/
-const sfAlertBlocks = document.getElementsByClassName('sf-alert--close');
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   dismissAlertElement: () => (/* binding */ dismissAlertElement)
+/* harmony export */ });
+function dismissAlertElement(alert, removalTarget = alert) {
+  if (!alert?.isConnected || !removalTarget?.isConnected) {
+    return Promise.resolve(removalTarget);
+  }
 
-for (let i = 0; i < sfAlertBlocks.length; i++) {
-  sfAlertBlocks[i].addEventListener("click", function () {
-    const alertBlock = this.closest(".sf-alert");
-    alertBlock.style.transition = "opacity 1s ease";
-    alertBlock.style.opacity = '0';
-    setTimeout(() => alertBlock.remove(), 1000);
+  const remove = () => {
+    if (removalTarget.isConnected) {
+      removalTarget.remove();
+    }
+
+    return removalTarget;
+  };
+
+  const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+
+  if (reducedMotion || typeof alert.getAnimations !== 'function') {
+    return Promise.resolve(remove());
+  } // Commit the resting style before switching to the token-driven exit state.
+
+
+  window.getComputedStyle(alert).opacity;
+  alert.classList.add('closing');
+  return new Promise(resolve => {
+    window.requestAnimationFrame(() => {
+      const animations = alert.getAnimations().filter(animation => {
+        const timing = animation.effect?.getComputedTiming?.();
+        return timing && timing.iterations !== Infinity;
+      });
+
+      if (animations.length === 0) {
+        resolve(remove());
+        return;
+      }
+
+      Promise.allSettled(animations.map(animation => animation.finished)).then(() => resolve(remove()));
+    });
   });
+}
+
+/***/ },
+
+/***/ "ecb933b3dc1e"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _dismiss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2b61c7885d13");
+
+const BINDING_KEY = '__sfAlertDocumentClickHandler';
+
+function isDisabled(trigger) {
+  return trigger.matches(':disabled, [aria-disabled="true"]');
+}
+
+function belongsToSmartAlert(alert) {
+  return alert.parentElement?.matches('sf-alert') === true;
+}
+
+function dispatchAction(alert, trigger) {
+  alert.dispatchEvent(new CustomEvent('sf-alert-action', {
+    bubbles: true,
+    detail: {
+      action: trigger.getAttribute('data-action') || trigger.getAttribute('data-alert-action') || '',
+      alert,
+      trigger
+    }
+  }));
+}
+
+function dispatchClose(alert, trigger) {
+  alert.dispatchEvent(new CustomEvent('sf-alert-close', {
+    bubbles: true,
+    detail: {
+      alert,
+      trigger
+    }
+  }));
+}
+
+function handleDocumentClick(event) {
+  const trigger = event.target?.closest?.('[data-close], [data-alert-close], [data-action], [data-alert-action], .sf-alert--close');
+  const alert = trigger?.closest?.('.sf-alert');
+
+  if (!trigger || !alert || isDisabled(trigger) || belongsToSmartAlert(alert)) {
+    return;
+  }
+
+  if (trigger.matches('[data-close], [data-alert-close], .sf-alert--close')) {
+    event.preventDefault();
+    dispatchClose(alert, trigger);
+    (0,_dismiss__WEBPACK_IMPORTED_MODULE_0__.dismissAlertElement)(alert);
+    return;
+  }
+
+  dispatchAction(alert, trigger);
+}
+
+if (typeof document !== 'undefined' && typeof window !== 'undefined' && !window[BINDING_KEY]) {
+  window[BINDING_KEY] = handleDocumentClick;
+  document.addEventListener('click', handleDocumentClick);
 }
 
 /***/ },
@@ -24,10 +115,8 @@ for (let i = 0; i < sfAlertBlocks.length; i++) {
 /***/ "baa258d704e7"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _alerts__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("ecb933b3dc1e");
-/* harmony import */ var _alerts__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_alerts__WEBPACK_IMPORTED_MODULE_0__);
 /*
 * Main JS file for including JS for component.
 *
@@ -41,7 +130,6 @@ __webpack_require__.r(__webpack_exports__);
 /***/ "24c178ecb046"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 // extracted by mini-css-extract-plugin
 
@@ -81,18 +169,6 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 	}
 /******/
 /************************************************************************/
-/******/ 	/* webpack/runtime/compat get default export */
-/******/ 	(() => {
-/******/ 		// getDefaultExport function for compatibility with non-harmony modules
-/******/ 		__webpack_require__.n = (module) => {
-/******/ 			const getter = module && module.__esModule ?
-/******/ 				() => (module['default']) :
-/******/ 				() => (module);
-/******/ 			__webpack_require__.d(getter, { a: getter });
-/******/ 			return getter;
-/******/ 		};
-/******/ 	})();
-/******/
 /******/ 	/* webpack/runtime/define property getters */
 /******/ 	(() => {
 /******/ 		// define getter/value functions for harmony exports
@@ -138,9 +214,8 @@ __webpack_require__.r(__webpack_exports__);
 /******/
 /************************************************************************/
 let __webpack_exports__ = {};
-// This entry needs to be wrapped in an IIFE because it needs to be in strict mode.
+// This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
 (() => {
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("24c178ecb046");
 /* harmony import */ var _js_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("baa258d704e7");

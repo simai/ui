@@ -177,6 +177,8 @@ class SfBaseElement extends HTMLElement {
     this._activeRefEffects = null;
     this._hostStyle = "";
     this._syncingHostStyle = false;
+    this._authorStyleElement = null;
+    this._authorStyleObserver = null;
     this._styleReady = false;
     this._styleReadyPromise = null;
     this.__sfSmartElement = true;
@@ -206,6 +208,56 @@ class SfBaseElement extends HTMLElement {
 
   toAttributeName(key) {
     return toAttributeName(key);
+  }
+
+  renderSmartElement(type, props = {}) {
+    const tagName = String(type || "").startsWith("sf-") ? String(type) : `sf-${String(type || "")}`;
+
+    if (!/^sf-[a-z0-9-]+$/.test(tagName)) {
+      throw new Error(`Invalid SF tag name: ${tagName}`);
+    }
+
+    const element = document.createElement(tagName);
+    Object.entries(props || {}).forEach(([key, value]) => {
+      if (key === ":key" || typeof value === "undefined" || value === null) {
+        return;
+      }
+
+      if (key === ":ref") {
+        if (typeof value === "function") {
+          value(element);
+        } else if (value && typeof value === "object") {
+          value.value = element;
+        }
+
+        return;
+      }
+
+      if (key.startsWith("@") && typeof value === "function") {
+        element.addEventListener(key.slice(1), value);
+        return;
+      }
+
+      if (/^on[A-Z]/.test(key) && typeof value === "function") {
+        element.addEventListener(key.slice(2).toLowerCase(), value);
+        return;
+      }
+
+      const attributeName = toAttributeName(key);
+
+      if (typeof value === "boolean") {
+        element.toggleAttribute(attributeName, value);
+        return;
+      }
+
+      if (typeof value === "object" || typeof value === "function") {
+        element[key] = value;
+        return;
+      }
+
+      element.setAttribute(attributeName, String(value));
+    });
+    return element;
   }
 
   toNumber(value, fallback = 0) {
@@ -525,6 +577,7 @@ class SfBaseElement extends HTMLElement {
       }
 
       this._hostStyle = this.normalizeHostStyle(newValue);
+      this.syncAuthorStyle();
       this.applyHostDisplayStyle();
     }
 
@@ -1174,16 +1227,63 @@ class SfBaseElement extends HTMLElement {
     const element = document.createElement("div");
     element.setAttribute("style", String(style || ""));
     element.style.removeProperty("display");
-    return element.getAttribute("style") || "";
+    return element.style.cssText;
+  } // The host is deliberately boxless; author styles belong to the template
+  // root. Keep a real, stable CSSStyleDeclaration for CSSOM edits rather than
+  // exposing the internal display-only declaration and losing prior edits.
+
+
+  get style() {
+    if (!this._authorStyleElement) {
+      this._authorStyleElement = document.createElement("div");
+      this._hostStyle = this.normalizeHostStyle(this.getAttribute("style")) || this._hostStyle;
+      this.syncAuthorStyle();
+      this._authorStyleObserver = new MutationObserver(() => this.flushAuthorStyle());
+
+      this._authorStyleObserver.observe(this._authorStyleElement, {
+        attributes: true,
+        attributeFilter: ["style"]
+      });
+    }
+
+    return this._authorStyleElement.style;
+  }
+
+  set style(value) {
+    this.style.cssText = value == null ? "" : String(value);
+  }
+
+  syncAuthorStyle() {
+    if (!this._authorStyleElement) return;
+    const next = `${this._hostStyle} display: contents;`.trim();
+
+    if (this._authorStyleElement.style.cssText !== next) {
+      this._authorStyleElement.style.cssText = next;
+    }
+  }
+
+  flushAuthorStyle() {
+    if (!this._authorStyleElement) return;
+    const next = this.normalizeHostStyle(this._authorStyleElement.style.cssText);
+
+    if (next !== this._hostStyle) {
+      // Reuse the existing attribute -> render path. Attribute replacement and
+      // removal supersede pending CSSOM edits just as they do for native style.
+      this.setAttribute("style", next);
+    } else if (this._authorStyleElement.style.display !== "contents") {
+      this.syncAuthorStyle();
+    }
   }
 
   captureHostStyle() {
+    this.flushAuthorStyle();
     const normalized = this.normalizeHostStyle(this.getAttribute("style"));
 
     if (normalized || !this._hostStyle) {
       this._hostStyle = normalized;
     }
 
+    this.syncAuthorStyle();
     return this;
   }
 
@@ -1201,6 +1301,7 @@ class SfBaseElement extends HTMLElement {
   }
 
   getRootStyle() {
+    this.flushAuthorStyle();
     return [this._hostStyle, this.getAttribute("root-style")].filter(Boolean).join("; ");
   }
 

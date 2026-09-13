@@ -16,12 +16,12 @@ const controllers = new WeakMap();
 let viewportId = 0;
 
 function getPreset(root) {
-  const value = String(root.getAttribute('data-sf-scrollbar') || 'overlay').trim().toLowerCase();
+  const value = String(root.getAttribute('data-mode') || root.getAttribute('data-sf-scrollbar') || 'overlay').trim().toLowerCase();
   return VALID_PRESETS.has(value) ? value : 'overlay';
 }
 
 function getAxis(root) {
-  const value = String(root.getAttribute('data-sf-scrollbar-axis') || 'vertical').trim().toLowerCase();
+  const value = String(root.getAttribute('data-axis') || root.getAttribute('data-sf-scrollbar-axis') || 'vertical').trim().toLowerCase();
   return VALID_AXES.has(value) ? value : 'vertical';
 }
 
@@ -36,7 +36,9 @@ function createTrack(viewport, axis) {
   thumb.setAttribute('aria-valuemin', '0');
   thumb.setAttribute('aria-valuemax', '100');
   thumb.setAttribute('aria-valuenow', '0');
-  thumb.setAttribute('aria-label', viewport.getAttribute('aria-label') || 'Scroll');
+  const labelledBy = viewport.getAttribute('aria-labelledby');
+  const label = viewport.getAttribute('aria-label');
+  if (labelledBy) thumb.setAttribute('aria-labelledby', labelledBy);else thumb.setAttribute('aria-label', label || 'Scroll');
 
   if (!viewport.id) {
     viewportId += 1;
@@ -51,6 +53,19 @@ function createTrack(viewport, axis) {
   };
 }
 
+function measureTokenLength(root, propertyName) {
+  const probe = document.createElement('span');
+  probe.setAttribute('aria-hidden', 'true');
+  probe.style.position = 'absolute';
+  probe.style.blockSize = `var(${propertyName})`;
+  probe.style.pointerEvents = 'none';
+  probe.style.visibility = 'hidden';
+  root.append(probe);
+  const value = probe.offsetHeight;
+  probe.remove();
+  return value;
+}
+
 class ScrollbarController {
   constructor(root, viewport, preset, axis) {
     this.root = root;
@@ -62,6 +77,7 @@ class ScrollbarController {
     this.pointerOverTrack = false;
     this.dragPointerOffset = 0;
     this.cleanup = [];
+    this.keyboardStep = measureTokenLength(root, '--sf-scrollbar-keyboard-step');
     const {
       track,
       thumb
@@ -77,6 +93,31 @@ class ScrollbarController {
   listen(target, type, listener, options) {
     target.addEventListener(type, listener, options);
     this.cleanup.push(() => target.removeEventListener(type, listener, options));
+  }
+
+  isHorizontalRtl() {
+    return this.axis === 'horizontal' && getComputedStyle(this.viewport).direction === 'rtl';
+  }
+
+  getLogicalScrollPosition(maxScroll) {
+    if (this.axis === 'vertical') return this.viewport.scrollTop;
+    const position = this.isHorizontalRtl() ? -this.viewport.scrollLeft : this.viewport.scrollLeft;
+    return Math.min(maxScroll, Math.max(0, position));
+  }
+
+  setLogicalScrollPosition(position, maxScroll) {
+    const boundedPosition = Math.min(maxScroll, Math.max(0, position));
+
+    if (this.axis === 'vertical') {
+      this.viewport.scrollTop = boundedPosition;
+      return;
+    }
+
+    this.viewport.scrollLeft = this.isHorizontalRtl() ? -boundedPosition : boundedPosition;
+  }
+
+  getKeyboardStep() {
+    return this.keyboardStep > 0 ? this.keyboardStep : this.thumb.offsetHeight;
   }
 
   bind() {
@@ -102,7 +143,8 @@ class ScrollbarController {
       const thumbStart = this.axis === 'horizontal' ? thumbRect.left : thumbRect.top;
       const direction = pointer < thumbStart ? -1 : 1;
       const viewportSize = this.axis === 'horizontal' ? this.viewport.clientWidth : this.viewport.clientHeight;
-      const page = Math.max(40, viewportSize - 40);
+      const step = this.getKeyboardStep();
+      const page = Math.max(step, viewportSize - step);
       this.viewport.scrollBy(this.axis === 'horizontal' ? {
         left: direction * page
       } : {
@@ -132,12 +174,8 @@ class ScrollbarController {
       const maxScroll = Math.max(0, contentSize - viewportSize);
       const pointerOffset = pointer - trackStart - this.dragPointerOffset;
       const thumbOffset = Math.min(maxThumbOffset, Math.max(0, pointerOffset));
-
-      if (this.axis === 'horizontal') {
-        this.viewport.scrollLeft = thumbOffset / maxThumbOffset * maxScroll;
-      } else {
-        this.viewport.scrollTop = thumbOffset / maxThumbOffset * maxScroll;
-      }
+      const ratio = this.isHorizontalRtl() ? 1 - thumbOffset / maxThumbOffset : thumbOffset / maxThumbOffset;
+      this.setLogicalScrollPosition(ratio * maxScroll, maxScroll);
     });
 
     const endDrag = event => {
@@ -158,7 +196,7 @@ class ScrollbarController {
     this.listen(this.thumb, 'focus', () => this.activate());
     this.listen(this.thumb, 'blur', () => this.scheduleIdle());
     this.listen(this.thumb, 'keydown', event => {
-      const line = 40;
+      const line = this.getKeyboardStep();
       const viewportSize = this.axis === 'horizontal' ? this.viewport.clientWidth : this.viewport.clientHeight;
       const page = Math.max(line, viewportSize - line);
       const verticalCommands = {
@@ -191,10 +229,13 @@ class ScrollbarController {
       };
       const commands = { ...(this.axis === 'horizontal' ? horizontalCommands : verticalCommands),
         Home: () => {
-          if (this.axis === 'horizontal') this.viewport.scrollLeft = 0;else this.viewport.scrollTop = 0;
+          const contentSize = this.axis === 'horizontal' ? this.viewport.scrollWidth : this.viewport.scrollHeight;
+          this.setLogicalScrollPosition(0, Math.max(0, contentSize - viewportSize));
         },
         End: () => {
-          if (this.axis === 'horizontal') this.viewport.scrollLeft = this.viewport.scrollWidth;else this.viewport.scrollTop = this.viewport.scrollHeight;
+          const contentSize = this.axis === 'horizontal' ? this.viewport.scrollWidth : this.viewport.scrollHeight;
+          const maxScroll = Math.max(0, contentSize - viewportSize);
+          this.setLogicalScrollPosition(maxScroll, maxScroll);
         }
       };
       if (!commands[event.key]) return;
@@ -206,9 +247,31 @@ class ScrollbarController {
     if (typeof ResizeObserver !== 'undefined') {
       this.resizeObserver = new ResizeObserver(() => this.sync());
       this.resizeObserver.observe(this.viewport);
+      Array.from(this.viewport.children).forEach(child => {
+        if (child instanceof HTMLElement) this.resizeObserver.observe(child);
+      });
     } else {
       this.listen(window, 'resize', () => this.sync(), {
         passive: true
+      });
+    }
+
+    if (typeof MutationObserver !== 'undefined') {
+      this.contentObserver = new MutationObserver(() => {
+        if (this.resizeObserver) {
+          Array.from(this.viewport.children).forEach(child => {
+            if (child instanceof HTMLElement) this.resizeObserver.observe(child);
+          });
+        }
+
+        this.sync();
+      });
+      this.contentObserver.observe(this.viewport, {
+        attributes: true,
+        attributeFilter: ['class', 'hidden', 'style'],
+        characterData: true,
+        childList: true,
+        subtree: true
       });
     }
   }
@@ -216,21 +279,22 @@ class ScrollbarController {
   sync() {
     const viewportSize = this.axis === 'horizontal' ? this.viewport.clientWidth : this.viewport.clientHeight;
     const contentSize = this.axis === 'horizontal' ? this.viewport.scrollWidth : this.viewport.scrollHeight;
-    const scrollPosition = this.axis === 'horizontal' ? this.viewport.scrollLeft : this.viewport.scrollTop;
     const maxScroll = Math.max(0, contentSize - viewportSize);
     const hasOverflow = maxScroll > 1;
-    const thumbSize = hasOverflow ? Math.max(44, Math.round(viewportSize * viewportSize / contentSize)) : viewportSize;
-    const maxThumbOffset = Math.max(0, viewportSize - thumbSize);
-    const ratio = maxScroll ? scrollPosition / maxScroll : 0;
+    const requestedThumbSize = hasOverflow ? Math.round(viewportSize * viewportSize / contentSize) : viewportSize;
     this.root.dataset.sfScrollbarOverflow = String(hasOverflow);
 
     if (this.axis === 'horizontal') {
-      this.thumb.style.inlineSize = `${thumbSize}px`;
+      this.thumb.style.inlineSize = `${requestedThumbSize}px`;
     } else {
-      this.thumb.style.blockSize = `${thumbSize}px`;
+      this.thumb.style.blockSize = `${requestedThumbSize}px`;
     }
 
-    this.thumb.style.setProperty('--sf-scrollbar-thumb-offset', `${Math.round(maxThumbOffset * ratio)}px`);
+    const thumbSize = this.axis === 'horizontal' ? this.thumb.offsetWidth : this.thumb.offsetHeight;
+    const maxThumbOffset = Math.max(0, viewportSize - thumbSize);
+    const ratio = maxScroll ? this.getLogicalScrollPosition(maxScroll) / maxScroll : 0;
+    const physicalOffset = Math.round(maxThumbOffset * ratio) * (this.isHorizontalRtl() ? -1 : 1);
+    this.thumb.style.setProperty('--sf-scrollbar-thumb-offset', `${physicalOffset}px`);
     this.thumb.setAttribute('aria-valuenow', String(Math.round(ratio * 100)));
     this.thumb.disabled = !hasOverflow;
   }
@@ -261,6 +325,7 @@ class ScrollbarController {
   destroy() {
     window.clearTimeout(this.idleTimer);
     this.resizeObserver?.disconnect();
+    this.contentObserver?.disconnect();
     this.cleanup.forEach(remove => remove());
     this.track.remove();
     delete this.root.dataset.sfScrollbarState;
@@ -282,10 +347,12 @@ function initScrollbar(root) {
   if (!(root instanceof HTMLElement) || !root.matches(ROOT_SELECTOR)) return;
   const preset = getPreset(root);
   const axis = getAxis(root);
-  const requestedPreset = String(root.getAttribute('data-sf-scrollbar') || '').trim().toLowerCase();
+  const canonicalPreset = root.getAttribute('data-mode');
+  const legacyPreset = root.getAttribute('data-sf-scrollbar');
+  const requestedPreset = String(canonicalPreset || legacyPreset || '').trim().toLowerCase();
 
   if (requestedPreset && !VALID_PRESETS.has(requestedPreset)) {
-    root.setAttribute('data-sf-scrollbar', preset);
+    root.setAttribute(canonicalPreset !== null ? 'data-mode' : 'data-sf-scrollbar', preset);
   }
 
   const existing = controllers.get(root);
@@ -331,7 +398,7 @@ if (typeof MutationObserver !== 'undefined') {
     });
   }).observe(document.documentElement, {
     attributes: true,
-    attributeFilter: ['data-sf-scrollbar', 'data-sf-scrollbar-axis'],
+    attributeFilter: ['data-mode', 'data-axis', 'data-sf-scrollbar', 'data-sf-scrollbar-axis'],
     childList: true,
     subtree: true
   });

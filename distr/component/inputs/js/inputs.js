@@ -56,6 +56,7 @@ function syncFieldContract(root, control, {
   required = false,
   invalid = false,
   messageNode = null,
+  labelNode = null,
   errorMessage = ''
 } = {}) {
   if (!root || !control) return null;
@@ -68,6 +69,18 @@ function syncFieldContract(root, control, {
     errorMessage
   });
   if (!control.id) control.id = contract.controlId;
+
+  if (root.tagName === 'LABEL' && !root.hasAttribute('for')) {
+    root.setAttribute('for', control.id);
+  } // Name the field by its visible label, not every hint or adjacent button.
+  // Author-provided accessible names remain authoritative.
+
+
+  if (labelNode?.textContent?.trim() && !control.hasAttribute('aria-label') && !control.hasAttribute('aria-labelledby')) {
+    if (!labelNode.id) labelNode.id = `${control.id}-label`;
+    control.setAttribute('aria-labelledby', labelNode.id);
+  }
+
   control.required = contract.required;
   root.classList.toggle('error', contract.invalid);
   control.classList.toggle('error', contract.invalid);
@@ -89,6 +102,46 @@ function syncFieldContract(root, control, {
 
 /***/ },
 
+/***/ "67eed2647f47"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   bindFormReset: () => (/* binding */ bindFormReset)
+/* harmony export */ });
+// Reset fires before the browser restores default values. Synchronize afterwards
+// without synthesizing input/change events or retaining detached controls.
+const subscriptions = new WeakMap();
+const listeningDocuments = new WeakSet();
+function bindFormReset(input, synchronize) {
+  const doc = input.ownerDocument;
+
+  if (!listeningDocuments.has(doc)) {
+    doc.addEventListener('reset', event => {
+      const form = event.target;
+      if (form?.tagName !== 'FORM') return;
+      const controls = Array.from(form.elements);
+      setTimeout(() => {
+        if (event.defaultPrevented) return;
+
+        for (const control of controls) {
+          if (!control.isConnected || control.form !== form) continue;
+
+          for (const callback of subscriptions.get(control) || []) callback();
+        }
+      }, 0);
+    }, true);
+    listeningDocuments.add(doc);
+  }
+
+  let callbacks = subscriptions.get(input);
+  if (!callbacks) subscriptions.set(input, callbacks = new Set());
+  callbacks.add(synchronize);
+  return () => callbacks.delete(synchronize);
+}
+
+/***/ },
+
 /***/ "73aef1a2bf74"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -102,12 +155,39 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("58661bec99a6");
 /* harmony import */ var _json_input_utility_json__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("d6935866be49");
 /* harmony import */ var _field_contract__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("e138a730fd7c");
+/* harmony import */ var _form_reset_helper__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("67eed2647f47");
+
 
 
 
 
 const INPUT_SELECTOR = 'label.sf-input';
 const INPUT_BOUND_FLAG = 'sfInputBound';
+const INPUT_TYPES = new Set(['text', 'email', 'password', 'search', 'tel', 'url']);
+const INPUT_MODES = new Set(['', 'none', 'text', 'tel', 'url', 'email', 'numeric', 'decimal', 'search']);
+const INPUT_SIZES = new Set(['1/3', '1/2', '1', '2', '3']);
+const INPUT_VARIANTS = new Set(['bordered', 'filled', 'hidden']);
+
+function boundedValue(value, allowed, fallback) {
+  const normalized = String(value || fallback);
+  return allowed.has(normalized) ? normalized : fallback;
+}
+
+function normalizeInputType(value) {
+  const normalized = String(value || 'text').toLowerCase();
+  return INPUT_TYPES.has(normalized) ? normalized : 'text';
+}
+
+function normalizeInputMode(value) {
+  const normalized = String(value || '').toLowerCase();
+  return INPUT_MODES.has(normalized) ? normalized : '';
+}
+
+function normalizeLength(value) {
+  if (value === '' || value === null || typeof value === 'undefined') return null;
+  const normalized = Number(value);
+  return Number.isInteger(normalized) && normalized >= 0 ? normalized : null;
+}
 
 function toBoolean(value, fallback = false) {
   if (value === undefined || value === null || value === '') return fallback;
@@ -192,13 +272,16 @@ async function bindMask(root, input) {
   const config = resolveMaskConfig(root, input);
   if (!config) return;
   if (!window.SF?.Mask?.create) return;
+  const service = window.SF.Mask;
+  const request = {};
+  root.__sfInputMaskRequest = request;
 
   try {
-    const instance = await window.SF.Mask.create(input, config);
+    const instance = await service.create(input, config);
     if (!instance) return;
 
-    if (root.dataset[INPUT_BOUND_FLAG] !== '1') {
-      window.SF.Mask.destroy(instance);
+    if (root.dataset[INPUT_BOUND_FLAG] !== '1' || root.__sfInputMaskRequest !== request || getInputNode(root) !== input) {
+      service.destroy(instance);
       return;
     }
 
@@ -215,33 +298,59 @@ function bindInput(root) {
 
   const noopHandler = () => {};
 
+  const pointerFocusHandler = () => root.classList.add('sf-input--pointer-focus');
+
+  const blurHandler = () => root.classList.remove('sf-input--pointer-focus');
+
   input.addEventListener('input', noopHandler);
+  input.addEventListener('pointerdown', pointerFocusHandler);
+  input.addEventListener('blur', blurHandler);
   root.__sfInputNoopHandler = noopHandler;
+  root.__sfInputPointerFocusHandler = pointerFocusHandler;
+  root.__sfInputBlurHandler = blurHandler;
   root.dataset[INPUT_BOUND_FLAG] = '1';
   const message = messageState(root);
   (0,_field_contract__WEBPACK_IMPORTED_MODULE_3__.syncFieldContract)(root, input, {
     prefix: 'sf-input',
+    labelNode: root.querySelector('.sf-input-text'),
     required: input.required || Boolean(root.querySelector('.sf-input-required')),
     invalid: root.classList.contains('error') || input.classList.contains('error'),
     ...message
+  });
+  root.__sfInputReleaseReset = (0,_form_reset_helper__WEBPACK_IMPORTED_MODULE_4__.bindFormReset)(input, () => {
+    if (root.__sfInputMask) root.__sfInputMask.value = input.value;
   });
   bindMask(root, input);
 }
 
 function unbindInput(root) {
   if (!root || root.dataset[INPUT_BOUND_FLAG] !== '1') return;
+  delete root.__sfInputMaskRequest;
   const input = getInputNode(root);
 
   if (input && root.__sfInputNoopHandler) {
     input.removeEventListener('input', root.__sfInputNoopHandler);
   }
 
+  if (input && root.__sfInputPointerFocusHandler) {
+    input.removeEventListener('pointerdown', root.__sfInputPointerFocusHandler);
+  }
+
+  if (input && root.__sfInputBlurHandler) {
+    input.removeEventListener('blur', root.__sfInputBlurHandler);
+  }
+
   if (root.__sfInputMask) {
     window.SF?.Mask?.destroy?.(root.__sfInputMask);
   }
 
+  root.__sfInputReleaseReset?.();
+  delete root.__sfInputReleaseReset;
   delete root.__sfInputMask;
   delete root.__sfInputNoopHandler;
+  delete root.__sfInputPointerFocusHandler;
+  delete root.__sfInputBlurHandler;
+  root.classList.remove('sf-input--pointer-focus');
   delete root.dataset[INPUT_BOUND_FLAG];
 }
 
@@ -290,6 +399,7 @@ function setInputState(target, state = {}) {
 
   (0,_field_contract__WEBPACK_IMPORTED_MODULE_3__.syncFieldContract)(root, input, {
     prefix: 'sf-input',
+    labelNode: root.querySelector('.sf-input-text'),
     required: input.required || Boolean(root.querySelector('.sf-input-required')),
     invalid: root.classList.contains('error') || input.classList.contains('error'),
     ...messageState(root)
@@ -309,6 +419,12 @@ class Inputs extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Com
       label = 'Label',
       required = true,
       placeholder = 'placeholder',
+      inputType = 'text',
+      autocomplete = '',
+      inputMode = '',
+      minLength = '',
+      maxLength = '',
+      pattern = '',
       hint = '',
       value = '',
       name = '',
@@ -327,9 +443,11 @@ class Inputs extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Com
       maskOptions = ''
     } = this.params || {};
     const className = this.attrs.class || this.attrs.className;
+    const normalizedSize = boundedValue(size, INPUT_SIZES, '1');
+    const normalizedVariant = boundedValue(type, INPUT_VARIANTS, 'bordered');
     this.template = document.createElement('label');
     if (this.id) this.template.id = this.id;
-    this.template.classList.add('sf-input', `sf-input--size-${size}`, `sf-input--${type}`);
+    this.template.classList.add('sf-input', `sf-input--size-${normalizedSize}`, `sf-input--${normalizedVariant}`);
     this.template.classList.toggle('error', toBoolean(invalid || error, false));
     this.template.dataset.mask = String(toBoolean(mask, false));
     this.template.dataset.maskPattern = String(maskPattern || '');
@@ -366,9 +484,17 @@ class Inputs extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Com
     }
 
     const input = document.createElement('input');
-    input.type = 'text';
+    input.type = normalizeInputType(inputType);
     input.placeholder = String(placeholder ?? '');
+    if (autocomplete) input.autocomplete = String(autocomplete);
+    input.inputMode = normalizeInputMode(inputMode);
+    const normalizedMinLength = normalizeLength(minLength);
+    const normalizedMaxLength = normalizeLength(maxLength);
+    if (normalizedMinLength !== null) input.minLength = normalizedMinLength;
+    if (normalizedMaxLength !== null) input.maxLength = normalizedMaxLength;
+    if (pattern) input.pattern = String(pattern);
     input.value = String(value ?? '');
+    input.defaultValue = String(value ?? '');
     if (name) input.name = String(name);
     input.disabled = toBoolean(disabled, false);
     input.readOnly = toBoolean(readonly, false);
@@ -407,9 +533,9 @@ class Inputs extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Com
     }
 
     this.applyLayoutUtilities(this.template, '.sf-input');
-    this.applyLayoutUtilities(labelWrap, '.sf-input .sf-input-group');
+    this.applyLayoutUtilities(labelWrap, '.sf-input .sf-input-label');
     this.applyLayoutUtilities(field, '.sf-input .sf-input-field');
-    this.applyLayoutUtilities(input, '.sf-input .sf-input-text-container');
+    this.applyLayoutUtilities(input, '.sf-input .sf-input-field input');
   }
 
   init() {
@@ -550,7 +676,9 @@ class ComponentObserver {
       matches.forEach(match => {
         const raw = match.slice(1, -1);
         raw.split(/\s+/).filter(Boolean).forEach(cls => {
-          classes.add(cls.replace(/^\./, ''));
+          // Only explicit (.class) annotations are classes; the
+          // parentheses in var(--token) are CSS values, not markup.
+          if (cls.startsWith('.') && cls.length > 1) classes.add(cls.slice(1));
         });
       });
     });
@@ -623,7 +751,7 @@ __webpack_require__.r(__webpack_exports__);
 /***/ "d6935866be49"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{".sf-input":["display/flex (.flex)","flex-direction/column (.flex-col)","flex-wrap/nowrap (.flex-nowrap)","gap/var(--sf-space-1\\\\/4)","justify-content/flex-start (.justify-start)","align-items/flex-start (.items-start)"],".sf-input .sf-input-field":["flex/1 (.flex-1)","display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","justify-content/flex-start (.justify-start)","align-items/center (.items-center)"],".sf-input .sf-input-field .sf-icon":["display/flex (.flex)","justify-content/flex-start (.justify-start)","align-items/center (.items-center)"],".sf-input .sf-input-text-container":["flex/1 (.flex-1)","display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","justify-content/flex-start (.justify-start)","align-items/center (.items-center)"],".sf-input .sf-input-group":["display/flex (.flex)","flex-direction/column (.flex-col)","flex-wrap/nowrap (.flex-nowrap)","justify-content/center (.justify-center)","align-items/flex-start (.items-start)"],".sf-input .sf-input-text-container-alt":["display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","justify-content/center (.justify-center)","align-items/center (.items-center)"],".sf-input .sf-icon-alt":["display/flex (.flex)","justify-content/flex-start (.justify-start)","align-items/center (.items-center)"],".sf-input .sf-input-hint-text-wrap":["flex/1 (.flex-1)","display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","gap/var(--sf-b0)","justify-content/flex-start (.justify-start)","align-items/center (.items-center)"]}');
+module.exports = /*#__PURE__*/JSON.parse('{".sf-input":["display/flex (.flex)","flex-direction/column (.flex-col)","flex-wrap/nowrap (.flex-nowrap)","gap/var(--sf-space-1\\\\/4)","justify-content/flex-start (.justify-start)"],".sf-input .sf-input-field":["display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","justify-content/flex-start (.justify-start)","align-items/center (.items-center)"],".sf-input .sf-input-label":["display/flex (.flex)","flex-direction/row (.flex-row)","align-items/flex-start (.items-start)"],".sf-input .sf-input-field input":["flex/1 (.flex-1)"],".sf-input .sf-input-field .sf-icon":["display/flex (.flex)","justify-content/flex-start (.justify-start)","align-items/center (.items-center)"],".sf-input .sf-input-text-container":["flex/1 (.flex-1)","display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","justify-content/flex-start (.justify-start)","align-items/center (.items-center)"],".sf-input .sf-input-group":["display/flex (.flex)","flex-direction/column (.flex-col)","flex-wrap/nowrap (.flex-nowrap)","justify-content/center (.justify-center)","align-items/flex-start (.items-start)"],".sf-input .sf-input-text-container-alt":["display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","justify-content/center (.justify-center)","align-items/center (.items-center)"],".sf-input .sf-icon-alt":["display/flex (.flex)","justify-content/flex-start (.justify-start)","align-items/center (.items-center)"],".sf-input .sf-input-hint-text-wrap":["flex/1 (.flex-1)","display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","gap/var(--sf-b0)","justify-content/flex-start (.justify-start)","align-items/center (.items-center)"]}');
 
 /***/ }
 

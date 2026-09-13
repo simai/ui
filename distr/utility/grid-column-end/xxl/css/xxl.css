@@ -1,0 +1,46 @@
+@layer sf.utilities {
+  @media (min-width: 1320px) {
+    .xxl\:col-end-1 {
+      grid-column-end: 1;
+    }
+    .xxl\:col-end-2 {
+      grid-column-end: 2;
+    }
+    .xxl\:col-end-3 {
+      grid-column-end: 3;
+    }
+    .xxl\:col-end-4 {
+      grid-column-end: 4;
+    }
+    .xxl\:col-end-5 {
+      grid-column-end: 5;
+    }
+    .xxl\:col-end-6 {
+      grid-column-end: 6;
+    }
+    .xxl\:col-end-7 {
+      grid-column-end: 7;
+    }
+    .xxl\:col-end-8 {
+      grid-column-end: 8;
+    }
+    .xxl\:col-end-9 {
+      grid-column-end: 9;
+    }
+    .xxl\:col-end-10 {
+      grid-column-end: 10;
+    }
+    .xxl\:col-end-11 {
+      grid-column-end: 11;
+    }
+    .xxl\:col-end-12 {
+      grid-column-end: 12;
+    }
+    .xxl\:col-end-13 {
+      grid-column-end: 13;
+    }
+    .xxl\:col-end-auto {
+      grid-column-end: auto;
+    }
+  }
+}

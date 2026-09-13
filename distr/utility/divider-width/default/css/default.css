@@ -1,18 +1,58 @@
 @layer sf.utilities {
-  [dir="ltr"] .divider-x-1 > :not([hidden]) ~ :not([hidden]),[dir="ltr"] 
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .divider-x-1 > :not([hidden]) ~ :not([hidden]),html:not([dir="rtl"])
   .divide-x-1 > :not([hidden]) ~ :not([hidden]) {
     border-right-width: calc(var(--sf-a1) * var(--sf-divide-x-reverse));
   }
-  [dir="rtl"] .divider-x-1 > :not([hidden]) ~ :not([hidden]),[dir="rtl"] 
+  @supports not (border-inline-end-width: initial) {
+  html:not([dir="rtl"]) .divider-x-1 > :not([hidden]) ~ :not([hidden]),html:not([dir="rtl"])
+  .divide-x-1 > :not([hidden]) ~ :not([hidden]) {
+    border-right-width: calc(var(--sf-a1) * var(--sf-divide-x-reverse));
+    }
+  }
+  .divider-x-1 > :not([hidden]) ~ :not([hidden]):where(:dir(ltr)),
+  .divide-x-1 > :not([hidden]) ~ :not([hidden]):where(:dir(ltr)) {
+    border-right-width: calc(var(--sf-a1) * var(--sf-divide-x-reverse));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .divider-x-1 > :not([hidden]) ~ :not([hidden]),[dir="rtl"]
   .divide-x-1 > :not([hidden]) ~ :not([hidden]) {
     border-left-width: calc(var(--sf-a1) * var(--sf-divide-x-reverse));
   }
-  [dir="ltr"] .divider-x-1 > :not([hidden]) ~ :not([hidden]),[dir="ltr"] 
+  @supports not (border-inline-end-width: initial) {
+  [dir="rtl"] .divider-x-1 > :not([hidden]) ~ :not([hidden]),[dir="rtl"]
+  .divide-x-1 > :not([hidden]) ~ :not([hidden]) {
+    border-left-width: calc(var(--sf-a1) * var(--sf-divide-x-reverse));
+    }
+  }
+  .divider-x-1 > :not([hidden]) ~ :not([hidden]):where(:dir(rtl)),
+  .divide-x-1 > :not([hidden]) ~ :not([hidden]):where(:dir(rtl)) {
+    border-left-width: calc(var(--sf-a1) * var(--sf-divide-x-reverse));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .divider-x-1 > :not([hidden]) ~ :not([hidden]),html:not([dir="rtl"])
   .divide-x-1 > :not([hidden]) ~ :not([hidden]) {
     border-left-width: calc(var(--sf-a1) * (1 - var(--sf-divide-x-reverse)));
   }
-  [dir="rtl"] .divider-x-1 > :not([hidden]) ~ :not([hidden]),[dir="rtl"] 
+  @supports not (border-inline-start-width: initial) {
+  html:not([dir="rtl"]) .divider-x-1 > :not([hidden]) ~ :not([hidden]),html:not([dir="rtl"])
   .divide-x-1 > :not([hidden]) ~ :not([hidden]) {
+    border-left-width: calc(var(--sf-a1) * (1 - var(--sf-divide-x-reverse)));
+    }
+  }
+  .divider-x-1 > :not([hidden]) ~ :not([hidden]):where(:dir(ltr)),
+  .divide-x-1 > :not([hidden]) ~ :not([hidden]):where(:dir(ltr)) {
+    border-left-width: calc(var(--sf-a1) * (1 - var(--sf-divide-x-reverse)));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .divider-x-1 > :not([hidden]) ~ :not([hidden]),[dir="rtl"]
+  .divide-x-1 > :not([hidden]) ~ :not([hidden]) {
+    border-right-width: calc(var(--sf-a1) * (1 - var(--sf-divide-x-reverse)));
+  }
+  @supports not (border-inline-start-width: initial) {
+  [dir="rtl"] .divider-x-1 > :not([hidden]) ~ :not([hidden]),[dir="rtl"]
+  .divide-x-1 > :not([hidden]) ~ :not([hidden]) {
+    border-right-width: calc(var(--sf-a1) * (1 - var(--sf-divide-x-reverse)));
+    }
+  }
+  .divider-x-1 > :not([hidden]) ~ :not([hidden]):where(:dir(rtl)),
+  .divide-x-1 > :not([hidden]) ~ :not([hidden]):where(:dir(rtl)) {
     border-right-width: calc(var(--sf-a1) * (1 - var(--sf-divide-x-reverse)));
   }
   .divider-x-1 > :not([hidden]) ~ :not([hidden]),
@@ -27,20 +67,60 @@
     border-top-width: calc(var(--sf-a1) * (1 - var(--sf-divide-y-reverse)));
     border-bottom-width: calc(var(--sf-a1) * var(--sf-divide-y-reverse));
   }
-  [dir="ltr"] .divider-x-2 > :not([hidden]) ~ :not([hidden]),[dir="ltr"] 
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .divider-x-2 > :not([hidden]) ~ :not([hidden]),html:not([dir="rtl"])
   .divide-x-2 > :not([hidden]) ~ :not([hidden]) {
     border-right-width: calc(var(--sf-a2) * var(--sf-divide-x-reverse));
   }
-  [dir="rtl"] .divider-x-2 > :not([hidden]) ~ :not([hidden]),[dir="rtl"] 
+  @supports not (border-inline-end-width: initial) {
+  html:not([dir="rtl"]) .divider-x-2 > :not([hidden]) ~ :not([hidden]),html:not([dir="rtl"])
+  .divide-x-2 > :not([hidden]) ~ :not([hidden]) {
+    border-right-width: calc(var(--sf-a2) * var(--sf-divide-x-reverse));
+    }
+  }
+  .divider-x-2 > :not([hidden]) ~ :not([hidden]):where(:dir(ltr)),
+  .divide-x-2 > :not([hidden]) ~ :not([hidden]):where(:dir(ltr)) {
+    border-right-width: calc(var(--sf-a2) * var(--sf-divide-x-reverse));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .divider-x-2 > :not([hidden]) ~ :not([hidden]),[dir="rtl"]
   .divide-x-2 > :not([hidden]) ~ :not([hidden]) {
     border-left-width: calc(var(--sf-a2) * var(--sf-divide-x-reverse));
   }
-  [dir="ltr"] .divider-x-2 > :not([hidden]) ~ :not([hidden]),[dir="ltr"] 
+  @supports not (border-inline-end-width: initial) {
+  [dir="rtl"] .divider-x-2 > :not([hidden]) ~ :not([hidden]),[dir="rtl"]
+  .divide-x-2 > :not([hidden]) ~ :not([hidden]) {
+    border-left-width: calc(var(--sf-a2) * var(--sf-divide-x-reverse));
+    }
+  }
+  .divider-x-2 > :not([hidden]) ~ :not([hidden]):where(:dir(rtl)),
+  .divide-x-2 > :not([hidden]) ~ :not([hidden]):where(:dir(rtl)) {
+    border-left-width: calc(var(--sf-a2) * var(--sf-divide-x-reverse));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .divider-x-2 > :not([hidden]) ~ :not([hidden]),html:not([dir="rtl"])
   .divide-x-2 > :not([hidden]) ~ :not([hidden]) {
     border-left-width: calc(var(--sf-a2) * (1 - var(--sf-divide-x-reverse)));
   }
-  [dir="rtl"] .divider-x-2 > :not([hidden]) ~ :not([hidden]),[dir="rtl"] 
+  @supports not (border-inline-start-width: initial) {
+  html:not([dir="rtl"]) .divider-x-2 > :not([hidden]) ~ :not([hidden]),html:not([dir="rtl"])
   .divide-x-2 > :not([hidden]) ~ :not([hidden]) {
+    border-left-width: calc(var(--sf-a2) * (1 - var(--sf-divide-x-reverse)));
+    }
+  }
+  .divider-x-2 > :not([hidden]) ~ :not([hidden]):where(:dir(ltr)),
+  .divide-x-2 > :not([hidden]) ~ :not([hidden]):where(:dir(ltr)) {
+    border-left-width: calc(var(--sf-a2) * (1 - var(--sf-divide-x-reverse)));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .divider-x-2 > :not([hidden]) ~ :not([hidden]),[dir="rtl"]
+  .divide-x-2 > :not([hidden]) ~ :not([hidden]) {
+    border-right-width: calc(var(--sf-a2) * (1 - var(--sf-divide-x-reverse)));
+  }
+  @supports not (border-inline-start-width: initial) {
+  [dir="rtl"] .divider-x-2 > :not([hidden]) ~ :not([hidden]),[dir="rtl"]
+  .divide-x-2 > :not([hidden]) ~ :not([hidden]) {
+    border-right-width: calc(var(--sf-a2) * (1 - var(--sf-divide-x-reverse)));
+    }
+  }
+  .divider-x-2 > :not([hidden]) ~ :not([hidden]):where(:dir(rtl)),
+  .divide-x-2 > :not([hidden]) ~ :not([hidden]):where(:dir(rtl)) {
     border-right-width: calc(var(--sf-a2) * (1 - var(--sf-divide-x-reverse)));
   }
   .divider-x-2 > :not([hidden]) ~ :not([hidden]),
@@ -55,20 +135,60 @@
     border-top-width: calc(var(--sf-a2) * (1 - var(--sf-divide-y-reverse)));
     border-bottom-width: calc(var(--sf-a2) * var(--sf-divide-y-reverse));
   }
-  [dir="ltr"] .divider-x-3 > :not([hidden]) ~ :not([hidden]),[dir="ltr"] 
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .divider-x-3 > :not([hidden]) ~ :not([hidden]),html:not([dir="rtl"])
   .divide-x-3 > :not([hidden]) ~ :not([hidden]) {
     border-right-width: calc(var(--sf-a4) * var(--sf-divide-x-reverse));
   }
-  [dir="rtl"] .divider-x-3 > :not([hidden]) ~ :not([hidden]),[dir="rtl"] 
+  @supports not (border-inline-end-width: initial) {
+  html:not([dir="rtl"]) .divider-x-3 > :not([hidden]) ~ :not([hidden]),html:not([dir="rtl"])
+  .divide-x-3 > :not([hidden]) ~ :not([hidden]) {
+    border-right-width: calc(var(--sf-a4) * var(--sf-divide-x-reverse));
+    }
+  }
+  .divider-x-3 > :not([hidden]) ~ :not([hidden]):where(:dir(ltr)),
+  .divide-x-3 > :not([hidden]) ~ :not([hidden]):where(:dir(ltr)) {
+    border-right-width: calc(var(--sf-a4) * var(--sf-divide-x-reverse));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .divider-x-3 > :not([hidden]) ~ :not([hidden]),[dir="rtl"]
   .divide-x-3 > :not([hidden]) ~ :not([hidden]) {
     border-left-width: calc(var(--sf-a4) * var(--sf-divide-x-reverse));
   }
-  [dir="ltr"] .divider-x-3 > :not([hidden]) ~ :not([hidden]),[dir="ltr"] 
+  @supports not (border-inline-end-width: initial) {
+  [dir="rtl"] .divider-x-3 > :not([hidden]) ~ :not([hidden]),[dir="rtl"]
+  .divide-x-3 > :not([hidden]) ~ :not([hidden]) {
+    border-left-width: calc(var(--sf-a4) * var(--sf-divide-x-reverse));
+    }
+  }
+  .divider-x-3 > :not([hidden]) ~ :not([hidden]):where(:dir(rtl)),
+  .divide-x-3 > :not([hidden]) ~ :not([hidden]):where(:dir(rtl)) {
+    border-left-width: calc(var(--sf-a4) * var(--sf-divide-x-reverse));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .divider-x-3 > :not([hidden]) ~ :not([hidden]),html:not([dir="rtl"])
   .divide-x-3 > :not([hidden]) ~ :not([hidden]) {
     border-left-width: calc(var(--sf-a4) * (1 - var(--sf-divide-x-reverse)));
   }
-  [dir="rtl"] .divider-x-3 > :not([hidden]) ~ :not([hidden]),[dir="rtl"] 
+  @supports not (border-inline-start-width: initial) {
+  html:not([dir="rtl"]) .divider-x-3 > :not([hidden]) ~ :not([hidden]),html:not([dir="rtl"])
   .divide-x-3 > :not([hidden]) ~ :not([hidden]) {
+    border-left-width: calc(var(--sf-a4) * (1 - var(--sf-divide-x-reverse)));
+    }
+  }
+  .divider-x-3 > :not([hidden]) ~ :not([hidden]):where(:dir(ltr)),
+  .divide-x-3 > :not([hidden]) ~ :not([hidden]):where(:dir(ltr)) {
+    border-left-width: calc(var(--sf-a4) * (1 - var(--sf-divide-x-reverse)));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .divider-x-3 > :not([hidden]) ~ :not([hidden]),[dir="rtl"]
+  .divide-x-3 > :not([hidden]) ~ :not([hidden]) {
+    border-right-width: calc(var(--sf-a4) * (1 - var(--sf-divide-x-reverse)));
+  }
+  @supports not (border-inline-start-width: initial) {
+  [dir="rtl"] .divider-x-3 > :not([hidden]) ~ :not([hidden]),[dir="rtl"]
+  .divide-x-3 > :not([hidden]) ~ :not([hidden]) {
+    border-right-width: calc(var(--sf-a4) * (1 - var(--sf-divide-x-reverse)));
+    }
+  }
+  .divider-x-3 > :not([hidden]) ~ :not([hidden]):where(:dir(rtl)),
+  .divide-x-3 > :not([hidden]) ~ :not([hidden]):where(:dir(rtl)) {
     border-right-width: calc(var(--sf-a4) * (1 - var(--sf-divide-x-reverse)));
   }
   .divider-x-3 > :not([hidden]) ~ :not([hidden]),
@@ -83,20 +203,60 @@
     border-top-width: calc(var(--sf-a4) * (1 - var(--sf-divide-y-reverse)));
     border-bottom-width: calc(var(--sf-a4) * var(--sf-divide-y-reverse));
   }
-  [dir="ltr"] .divider-x-4 > :not([hidden]) ~ :not([hidden]),[dir="ltr"] 
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .divider-x-4 > :not([hidden]) ~ :not([hidden]),html:not([dir="rtl"])
   .divide-x-4 > :not([hidden]) ~ :not([hidden]) {
     border-right-width: calc(var(--sf-a8) * var(--sf-divide-x-reverse));
   }
-  [dir="rtl"] .divider-x-4 > :not([hidden]) ~ :not([hidden]),[dir="rtl"] 
+  @supports not (border-inline-end-width: initial) {
+  html:not([dir="rtl"]) .divider-x-4 > :not([hidden]) ~ :not([hidden]),html:not([dir="rtl"])
+  .divide-x-4 > :not([hidden]) ~ :not([hidden]) {
+    border-right-width: calc(var(--sf-a8) * var(--sf-divide-x-reverse));
+    }
+  }
+  .divider-x-4 > :not([hidden]) ~ :not([hidden]):where(:dir(ltr)),
+  .divide-x-4 > :not([hidden]) ~ :not([hidden]):where(:dir(ltr)) {
+    border-right-width: calc(var(--sf-a8) * var(--sf-divide-x-reverse));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .divider-x-4 > :not([hidden]) ~ :not([hidden]),[dir="rtl"]
   .divide-x-4 > :not([hidden]) ~ :not([hidden]) {
     border-left-width: calc(var(--sf-a8) * var(--sf-divide-x-reverse));
   }
-  [dir="ltr"] .divider-x-4 > :not([hidden]) ~ :not([hidden]),[dir="ltr"] 
+  @supports not (border-inline-end-width: initial) {
+  [dir="rtl"] .divider-x-4 > :not([hidden]) ~ :not([hidden]),[dir="rtl"]
+  .divide-x-4 > :not([hidden]) ~ :not([hidden]) {
+    border-left-width: calc(var(--sf-a8) * var(--sf-divide-x-reverse));
+    }
+  }
+  .divider-x-4 > :not([hidden]) ~ :not([hidden]):where(:dir(rtl)),
+  .divide-x-4 > :not([hidden]) ~ :not([hidden]):where(:dir(rtl)) {
+    border-left-width: calc(var(--sf-a8) * var(--sf-divide-x-reverse));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .divider-x-4 > :not([hidden]) ~ :not([hidden]),html:not([dir="rtl"])
   .divide-x-4 > :not([hidden]) ~ :not([hidden]) {
     border-left-width: calc(var(--sf-a8) * (1 - var(--sf-divide-x-reverse)));
   }
-  [dir="rtl"] .divider-x-4 > :not([hidden]) ~ :not([hidden]),[dir="rtl"] 
+  @supports not (border-inline-start-width: initial) {
+  html:not([dir="rtl"]) .divider-x-4 > :not([hidden]) ~ :not([hidden]),html:not([dir="rtl"])
   .divide-x-4 > :not([hidden]) ~ :not([hidden]) {
+    border-left-width: calc(var(--sf-a8) * (1 - var(--sf-divide-x-reverse)));
+    }
+  }
+  .divider-x-4 > :not([hidden]) ~ :not([hidden]):where(:dir(ltr)),
+  .divide-x-4 > :not([hidden]) ~ :not([hidden]):where(:dir(ltr)) {
+    border-left-width: calc(var(--sf-a8) * (1 - var(--sf-divide-x-reverse)));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .divider-x-4 > :not([hidden]) ~ :not([hidden]),[dir="rtl"]
+  .divide-x-4 > :not([hidden]) ~ :not([hidden]) {
+    border-right-width: calc(var(--sf-a8) * (1 - var(--sf-divide-x-reverse)));
+  }
+  @supports not (border-inline-start-width: initial) {
+  [dir="rtl"] .divider-x-4 > :not([hidden]) ~ :not([hidden]),[dir="rtl"]
+  .divide-x-4 > :not([hidden]) ~ :not([hidden]) {
+    border-right-width: calc(var(--sf-a8) * (1 - var(--sf-divide-x-reverse)));
+    }
+  }
+  .divider-x-4 > :not([hidden]) ~ :not([hidden]):where(:dir(rtl)),
+  .divide-x-4 > :not([hidden]) ~ :not([hidden]):where(:dir(rtl)) {
     border-right-width: calc(var(--sf-a8) * (1 - var(--sf-divide-x-reverse)));
   }
   .divider-x-4 > :not([hidden]) ~ :not([hidden]),
@@ -111,20 +271,60 @@
     border-top-width: calc(var(--sf-a8) * (1 - var(--sf-divide-y-reverse)));
     border-bottom-width: calc(var(--sf-a8) * var(--sf-divide-y-reverse));
   }
-  [dir="ltr"] .divider-x-0 > :not([hidden]) ~ :not([hidden]),[dir="ltr"] 
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .divider-x-0 > :not([hidden]) ~ :not([hidden]),html:not([dir="rtl"])
   .divide-x-0 > :not([hidden]) ~ :not([hidden]) {
     border-right-width: calc(var(--sf-0) * var(--sf-divide-x-reverse));
   }
-  [dir="rtl"] .divider-x-0 > :not([hidden]) ~ :not([hidden]),[dir="rtl"] 
+  @supports not (border-inline-end-width: initial) {
+  html:not([dir="rtl"]) .divider-x-0 > :not([hidden]) ~ :not([hidden]),html:not([dir="rtl"])
+  .divide-x-0 > :not([hidden]) ~ :not([hidden]) {
+    border-right-width: calc(var(--sf-0) * var(--sf-divide-x-reverse));
+    }
+  }
+  .divider-x-0 > :not([hidden]) ~ :not([hidden]):where(:dir(ltr)),
+  .divide-x-0 > :not([hidden]) ~ :not([hidden]):where(:dir(ltr)) {
+    border-right-width: calc(var(--sf-0) * var(--sf-divide-x-reverse));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .divider-x-0 > :not([hidden]) ~ :not([hidden]),[dir="rtl"]
   .divide-x-0 > :not([hidden]) ~ :not([hidden]) {
     border-left-width: calc(var(--sf-0) * var(--sf-divide-x-reverse));
   }
-  [dir="ltr"] .divider-x-0 > :not([hidden]) ~ :not([hidden]),[dir="ltr"] 
+  @supports not (border-inline-end-width: initial) {
+  [dir="rtl"] .divider-x-0 > :not([hidden]) ~ :not([hidden]),[dir="rtl"]
+  .divide-x-0 > :not([hidden]) ~ :not([hidden]) {
+    border-left-width: calc(var(--sf-0) * var(--sf-divide-x-reverse));
+    }
+  }
+  .divider-x-0 > :not([hidden]) ~ :not([hidden]):where(:dir(rtl)),
+  .divide-x-0 > :not([hidden]) ~ :not([hidden]):where(:dir(rtl)) {
+    border-left-width: calc(var(--sf-0) * var(--sf-divide-x-reverse));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .divider-x-0 > :not([hidden]) ~ :not([hidden]),html:not([dir="rtl"])
   .divide-x-0 > :not([hidden]) ~ :not([hidden]) {
     border-left-width: calc(var(--sf-0) * (1 - var(--sf-divide-x-reverse)));
   }
-  [dir="rtl"] .divider-x-0 > :not([hidden]) ~ :not([hidden]),[dir="rtl"] 
+  @supports not (border-inline-start-width: initial) {
+  html:not([dir="rtl"]) .divider-x-0 > :not([hidden]) ~ :not([hidden]),html:not([dir="rtl"])
   .divide-x-0 > :not([hidden]) ~ :not([hidden]) {
+    border-left-width: calc(var(--sf-0) * (1 - var(--sf-divide-x-reverse)));
+    }
+  }
+  .divider-x-0 > :not([hidden]) ~ :not([hidden]):where(:dir(ltr)),
+  .divide-x-0 > :not([hidden]) ~ :not([hidden]):where(:dir(ltr)) {
+    border-left-width: calc(var(--sf-0) * (1 - var(--sf-divide-x-reverse)));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .divider-x-0 > :not([hidden]) ~ :not([hidden]),[dir="rtl"]
+  .divide-x-0 > :not([hidden]) ~ :not([hidden]) {
+    border-right-width: calc(var(--sf-0) * (1 - var(--sf-divide-x-reverse)));
+  }
+  @supports not (border-inline-start-width: initial) {
+  [dir="rtl"] .divider-x-0 > :not([hidden]) ~ :not([hidden]),[dir="rtl"]
+  .divide-x-0 > :not([hidden]) ~ :not([hidden]) {
+    border-right-width: calc(var(--sf-0) * (1 - var(--sf-divide-x-reverse)));
+    }
+  }
+  .divider-x-0 > :not([hidden]) ~ :not([hidden]):where(:dir(rtl)),
+  .divide-x-0 > :not([hidden]) ~ :not([hidden]):where(:dir(rtl)) {
     border-right-width: calc(var(--sf-0) * (1 - var(--sf-divide-x-reverse)));
   }
   .divider-x-0 > :not([hidden]) ~ :not([hidden]),

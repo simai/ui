@@ -19,24 +19,49 @@ class Fab extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Compon
   constructor(props) {
     super(props);
     const {
-      size,
-      type,
-      scheme,
-      icon
-    } = this.params;
+      size = '1',
+      type = 'default',
+      scheme = 'primary',
+      icon = 'chevron_left'
+    } = this.params || {};
+    const className = this.attrs.class || this.attrs.className;
     this.button = document.createElement('button');
-    this.button.classList.add('sf-fab', 'flex', 'flex-row', 'flex-nowrap', 'justify-center', 'items-center', 'rotate-90', 'z-7', 'cursor-pointer', 'transition-bg', 'fixed', 'radius-rounded', 'opacity-0', 'invisible', 'block-end-b6', 'inline-end-b6', 'md:block-end-c5', 'md:inline-end-c5', `sf-fab--size-${size}`, `sf-fab--${type ?? 'default'}`, `sf-fab--${scheme ?? 'primary'}`);
+
+    if (this.id) {
+      this.button.id = this.id;
+    }
+
+    this.button.classList.add('sf-fab', 'flex', 'flex-row', 'flex-nowrap', 'justify-center', 'items-center', 'rotate-90', 'z-7', 'cursor-pointer', 'transition-bg', 'fixed', 'radius-rounded', 'opacity-0', 'invisible', 'block-end-b6', 'inline-end-b6', 'md:block-end-c5', 'md:inline-end-c5', `sf-fab--size-${size}`, `sf-fab--${type}`, `sf-fab--${scheme}`);
+
+    if (className) {
+      this.button.classList.add(...`${className}`.split(' ').filter(Boolean));
+    }
+
+    Object.entries(this.attrs).filter(([attr]) => !['class', 'className'].includes(attr)).forEach(([attr, value]) => {
+      if (value === undefined || value === null) {
+        return;
+      }
+
+      this.button.setAttribute(attr, value);
+    });
+
+    if (!this.button.hasAttribute('type')) {
+      this.button.setAttribute('type', 'button');
+    }
+
     this.icon = document.createElement('i');
     this.icon.classList.add('sf-icon', 'flex', 'justify-center', 'items-center');
-    this.icon.textContent = icon ?? 'chevron_left';
+    this.icon.setAttribute('aria-hidden', 'true');
+    this.icon.textContent = icon;
     this.button.append(this.icon);
     this.template = this.button;
   }
 
   top() {
+    const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
     window.scrollTo({
       top: 0,
-      behavior: 'smooth'
+      behavior: reduceMotion ? 'auto' : 'smooth'
     });
   }
 
@@ -53,6 +78,7 @@ class Fab extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Compon
   init() {
     this.button.addEventListener('click', this.top);
     window.addEventListener('scroll', this.scrollHandler);
+    this.scrollSetup();
   }
 
   destroyInternal() {
@@ -158,7 +184,9 @@ class ComponentObserver {
       matches.forEach(match => {
         const raw = match.slice(1, -1);
         raw.split(/\s+/).filter(Boolean).forEach(cls => {
-          classes.add(cls.replace(/^\./, ''));
+          // Only explicit (.class) annotations are classes; the
+          // parentheses in var(--token) are CSS values, not markup.
+          if (cls.startsWith('.') && cls.length > 1) classes.add(cls.slice(1));
         });
       });
     });

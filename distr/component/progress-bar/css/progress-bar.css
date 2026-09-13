@@ -7,16 +7,46 @@
 *
 */
 @layer sf.components {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-progress-bar .sf-progress-bar-progress {
+    margin-right: auto;
+  }
+  @supports not (margin-inline-end: initial) {
+  html:not([dir="rtl"]) .sf-progress-bar .sf-progress-bar-progress {
+    margin-right: auto;
+    }
+  }
+  .sf-progress-bar .sf-progress-bar-progress:where(:dir(ltr)) {
+    margin-right: auto;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-progress-bar .sf-progress-bar-progress {
+    margin-left: auto;
+  }
+  @supports not (margin-inline-end: initial) {
+  [dir="rtl"] .sf-progress-bar .sf-progress-bar-progress {
+    margin-left: auto;
+    }
+  }
+  .sf-progress-bar .sf-progress-bar-progress:where(:dir(rtl)) {
+    margin-left: auto;
+  }
   .sf-progress-bar .sf-progress-bar-progress {
     height: 100%;
+    -webkit-margin-end: auto;
+            margin-inline-end: auto;
     width: 0;
     transition-property: width;
+    transition-duration: var(--sf-duration-default);
   }
   .sf-progress-bar .sf-progress-bar-main {
     width: 100%;
   }
   .sf-progress-bar {
     width: 100%;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sf-progress-bar .sf-progress-bar-progress {
+      transition-duration: 0s;
+    }
   }
 }
 @layer sf.components {
@@ -36,16 +66,25 @@
   }
   .sf-progress-bar .sf-progress-bar-main {
     --sf-progress-bar-main--background-color: var(--sf-surface-container);
-    --sf-progress-bar-main--border-radius: var(--sf-radius-1);
+    --sf-progress-bar-main--border-radius: var(--sf-radius--ui);
     background-color: var(--sf-progress-bar-main--background-color);
     border-radius: var(--sf-progress-bar-main--border-radius);
     height: var(--sf-progress-bar-main--height);
   }
   .sf-progress-bar .sf-progress-bar-progress {
     --sf-progress-bar-progress--background-color: var(--sf-primary);
-    --sf-progress-bar-progress--border-radius: var(--sf-radius-1\/2);
+    --sf-progress-bar-progress--border-radius: var(--sf-radius--ui);
     background-color: var(--sf-progress-bar-progress--background-color);
     border-radius: var(--sf-progress-bar-progress--border-radius);
+  }
+  .sf-progress-bar.sf-progress-bar--success .sf-progress-bar-progress {
+    --sf-progress-bar-progress--background-color: var(--sf-success);
+  }
+  .sf-progress-bar.sf-progress-bar--warning .sf-progress-bar-progress {
+    --sf-progress-bar-progress--background-color: var(--sf-warning);
+  }
+  .sf-progress-bar.sf-progress-bar--error .sf-progress-bar-progress {
+    --sf-progress-bar-progress--background-color: var(--sf-error);
   }
   /* utility-hint: align-items/flex-end (.items-end) */
   .sf-progress-bar.sf-progress-bar--size-1 {

@@ -1,15 +1,47 @@
 @layer sf.utilities {
   @media (min-width: 720px) {
-    [dir="ltr"] .md\:container {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .md\:container {
       padding-left: var(--sf-space-3);
     }
-    [dir="rtl"] .md\:container {
+    @supports not (padding-inline-start: initial) {
+    html:not([dir="rtl"]) .md\:container {
+      padding-left: var(--sf-space-3);
+      }
+    }
+    .md\:container:where(:dir(ltr)) {
+      padding-left: var(--sf-space-3);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .md\:container {
       padding-right: var(--sf-space-3);
     }
-    [dir="ltr"] .md\:container {
+    @supports not (padding-inline-start: initial) {
+    [dir="rtl"] .md\:container {
+      padding-right: var(--sf-space-3);
+      }
+    }
+    .md\:container:where(:dir(rtl)) {
       padding-right: var(--sf-space-3);
     }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .md\:container {
+      padding-right: var(--sf-space-3);
+    }
+    @supports not (padding-inline-end: initial) {
+    html:not([dir="rtl"]) .md\:container {
+      padding-right: var(--sf-space-3);
+      }
+    }
+    .md\:container:where(:dir(ltr)) {
+      padding-right: var(--sf-space-3);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .md\:container {
+      padding-left: var(--sf-space-3);
+    }
+    @supports not (padding-inline-end: initial) {
     [dir="rtl"] .md\:container {
+      padding-left: var(--sf-space-3);
+      }
+    }
+    .md\:container:where(:dir(rtl)) {
       padding-left: var(--sf-space-3);
     }
     .md\:container {

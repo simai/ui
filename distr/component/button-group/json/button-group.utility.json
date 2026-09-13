@@ -5,7 +5,7 @@
     "flex-wrap/nowrap (.flex-nowrap)",
     "align-items/stretch (.items-stretch)"
   ],
-  ".sf-button-group[aria-orientation='vertical']": [
+  ".sf-button-group[data-orientation='vertical'], .sf-button-group[aria-orientation='vertical']": [
     "flex-direction/column (.flex-col)",
     "align-items/stretch (.items-stretch)"
   ]

@@ -1,7 +1,17 @@
 @layer sf.components {
+  .sf-modal-focus-guard {
+    position: fixed;
+    width: 0;
+    inline-size: 0;
+    height: 0;
+    block-size: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
   .sf-modal {
     --sf-modal-overlay-background: var(--sf-black, #000);
     --sf-modal-overlay-opacity: var(--sf-opacity-60, 0.6);
+    --sf-modal-iframe-min-height: var(--sf-g2);
   }
   .sf-modal[data-sf-modal-position=left],
   .sf-modal[data-sf-modal-position=right],
@@ -70,7 +80,7 @@
     --sf-modal-surface-border-width: var(--sf-border-width, 1px);
     --sf-modal-surface-gap: var(--sf-space-1);
     --sf-modal-surface-padding: var(--sf-space-2);
-    --sf-modal-surface-radius: var(--sf-radius-2);
+    --sf-modal-surface-radius: var(--sf-radius-default);
     --sf-modal-surface-shadow: none;
     background-color: var(--sf-modal-surface-bg);
     border: var(--sf-modal-surface-border-width) var(--sf-modal-surface-border-style) var(--sf-modal-surface-border-color);
@@ -86,7 +96,7 @@
   .sf-modal [data-sf-modal-overlay] {
     background-color: var(--sf-modal-overlay-background);
     opacity: var(--sf-modal-overlay-opacity);
-    transition: opacity 0.24s ease;
+    transition: opacity var(--sf-duration-normal) var(--sf-animation);
   }
   .sf-modal[data-sf-modal-state=opening] [data-sf-modal-overlay] {
     opacity: 0;
@@ -105,9 +115,9 @@
     opacity: 0;
   }
   .sf-modal.animate [data-sf-modal-panel] {
-    transition: opacity 0.24s ease, -webkit-transform 0.24s ease;
-    transition: transform 0.24s ease, opacity 0.24s ease;
-    transition: transform 0.24s ease, opacity 0.24s ease, -webkit-transform 0.24s ease;
+    transition: opacity var(--sf-duration-normal) var(--sf-animation), -webkit-transform var(--sf-duration-normal) var(--sf-animation);
+    transition: transform var(--sf-duration-normal) var(--sf-animation), opacity var(--sf-duration-normal) var(--sf-animation);
+    transition: transform var(--sf-duration-normal) var(--sf-animation), opacity var(--sf-duration-normal) var(--sf-animation), -webkit-transform var(--sf-duration-normal) var(--sf-animation);
     will-change: transform, opacity;
   }
   .sf-modal[data-sf-modal-position=left] [data-sf-modal-panel] {
@@ -126,11 +136,11 @@
     -webkit-transform: translateX(100%);
             transform: translateX(100%);
   }
-  [dir="rtl"] .sf-modal[data-sf-modal-position=inline-start] [data-sf-modal-panel] {
+  .sf-modal[data-sf-modal-position=inline-start]:dir(rtl) [data-sf-modal-panel] {
     -webkit-transform: translateX(100%);
             transform: translateX(100%);
   }
-  [dir="rtl"] .sf-modal[data-sf-modal-position=inline-end] [data-sf-modal-panel] {
+  .sf-modal[data-sf-modal-position=inline-end]:dir(rtl) [data-sf-modal-panel] {
     -webkit-transform: translateX(-100%);
             transform: translateX(-100%);
   }
@@ -143,8 +153,8 @@
             transform: translateY(100%);
   }
   .sf-modal[data-sf-modal-position=center] [data-sf-modal-panel] {
-    -webkit-transform: translateY(0.75rem) scale(0.98);
-            transform: translateY(0.75rem) scale(0.98);
+    -webkit-transform: translateY(var(--sf-space-1\/2)) scale(0.98);
+            transform: translateY(var(--sf-space-1\/2)) scale(0.98);
   }
   .sf-modal[data-sf-modal-state=opening] [data-sf-modal-panel] {
     opacity: 0;
@@ -178,11 +188,11 @@
     -webkit-transform: translateX(100%);
             transform: translateX(100%);
   }
-  [dir="rtl"] .sf-modal[data-sf-modal-state=closing][data-sf-modal-position=inline-start] [data-sf-modal-panel] {
+  .sf-modal[data-sf-modal-state=closing][data-sf-modal-position=inline-start]:dir(rtl) [data-sf-modal-panel] {
     -webkit-transform: translateX(100%);
             transform: translateX(100%);
   }
-  [dir="rtl"] .sf-modal[data-sf-modal-state=closing][data-sf-modal-position=inline-end] [data-sf-modal-panel] {
+  .sf-modal[data-sf-modal-state=closing][data-sf-modal-position=inline-end]:dir(rtl) [data-sf-modal-panel] {
     -webkit-transform: translateX(-100%);
             transform: translateX(-100%);
   }
@@ -195,14 +205,14 @@
             transform: translateY(100%);
   }
   .sf-modal[data-sf-modal-state=closing][data-sf-modal-position=center] [data-sf-modal-panel] {
-    -webkit-transform: translateY(0.75rem) scale(0.98);
-            transform: translateY(0.75rem) scale(0.98);
+    -webkit-transform: translateY(var(--sf-space-1\/2)) scale(0.98);
+            transform: translateY(var(--sf-space-1\/2)) scale(0.98);
   }
   .sf-modal[data-sf-modal-state][data-sf-modal-hidden=true] [data-sf-modal-panel] {
     opacity: 0;
     pointer-events: none;
-    -webkit-transform: translateY(0.75rem) scale(0.98);
-            transform: translateY(0.75rem) scale(0.98);
+    -webkit-transform: translateY(var(--sf-space-1\/2)) scale(0.98);
+            transform: translateY(var(--sf-space-1\/2)) scale(0.98);
   }
   .sf-modal [data-sf-modal-panel][data-sf-modal-has-width] {
     max-width: min(100%, var(--sf-modal-width));
@@ -252,8 +262,30 @@
     flex: 1;
     max-height: none;
   }
+  @media (prefers-reduced-motion: reduce) {
+    .sf-modal.animate [data-sf-modal-panel],
+    .sf-modal [data-sf-modal-overlay] {
+      transition: none;
+      will-change: auto;
+    }
+  }
 }
 @layer sf.components {
+  .sf-modal-header-content {
+    flex: 1 1 auto;
+    min-width: 0;
+    word-wrap: anywhere;
+  }
+  .sf-modal-header-action {
+    align-items: center;
+    display: flex;
+    flex: 0 0 auto;
+    justify-content: center;
+    min-height: var(--sf-ui-1\/3--control-height);
+    min-block-size: var(--sf-ui-1\/3--control-height);
+    min-width: var(--sf-ui-1\/3--control-height);
+    min-inline-size: var(--sf-ui-1\/3--control-height);
+  }
   .sf-modal-close-button {
     --sf-modal-close-right: var(--sf-space-1\/3);
     --sf-modal-close-top: var(--sf-space-1\/3);
@@ -262,19 +294,33 @@
     left: var(--sf-modal-close-left);
     bottom: var(--sf-modal-close-bottom);
   }
-  [dir="ltr"] .sf-modal-close-button--inline-end {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-modal-close-button--inline-end {
     right: var(--sf-modal-close-right);
     right: var(--sf-modal-close-inline-end, var(--sf-modal-close-right));
   }
-  [dir="rtl"] .sf-modal-close-button--inline-end {
+  @supports not (inset-inline-end: initial) {
+  html:not([dir="rtl"]) .sf-modal-close-button--inline-end {
+    right: var(--sf-modal-close-right);
+    right: var(--sf-modal-close-inline-end, var(--sf-modal-close-right));
+    }
+  }
+  .sf-modal-close-button--inline-end:where(:dir(ltr)) {
+    right: var(--sf-modal-close-right);
+    right: var(--sf-modal-close-inline-end, var(--sf-modal-close-right));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-modal-close-button--inline-end {
     left: var(--sf-modal-close-right);
     left: var(--sf-modal-close-inline-end, var(--sf-modal-close-right));
   }
-  [dir="ltr"] .sf-modal-close-button--inline-end {
-    right: var(--sf-modal-close-right);
-  }
+  @supports not (inset-inline-end: initial) {
   [dir="rtl"] .sf-modal-close-button--inline-end {
     left: var(--sf-modal-close-right);
+    left: var(--sf-modal-close-inline-end, var(--sf-modal-close-right));
+    }
+  }
+  .sf-modal-close-button--inline-end:where(:dir(rtl)) {
+    left: var(--sf-modal-close-right);
+    left: var(--sf-modal-close-inline-end, var(--sf-modal-close-right));
   }
   .sf-modal-close-button--inline-end {
     left: auto;
@@ -290,19 +336,33 @@
     left: var(--sf-modal-hide-left);
     bottom: var(--sf-modal-hide-bottom);
   }
-  [dir="ltr"] .sf-modal-hide-button--inline-end {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-modal-hide-button--inline-end {
     right: var(--sf-modal-hide-right);
     right: var(--sf-modal-hide-inline-end, var(--sf-modal-hide-right));
   }
-  [dir="rtl"] .sf-modal-hide-button--inline-end {
+  @supports not (inset-inline-end: initial) {
+  html:not([dir="rtl"]) .sf-modal-hide-button--inline-end {
+    right: var(--sf-modal-hide-right);
+    right: var(--sf-modal-hide-inline-end, var(--sf-modal-hide-right));
+    }
+  }
+  .sf-modal-hide-button--inline-end:where(:dir(ltr)) {
+    right: var(--sf-modal-hide-right);
+    right: var(--sf-modal-hide-inline-end, var(--sf-modal-hide-right));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-modal-hide-button--inline-end {
     left: var(--sf-modal-hide-right);
     left: var(--sf-modal-hide-inline-end, var(--sf-modal-hide-right));
   }
-  [dir="ltr"] .sf-modal-hide-button--inline-end {
-    right: var(--sf-modal-hide-right);
-  }
+  @supports not (inset-inline-end: initial) {
   [dir="rtl"] .sf-modal-hide-button--inline-end {
     left: var(--sf-modal-hide-right);
+    left: var(--sf-modal-hide-inline-end, var(--sf-modal-hide-right));
+    }
+  }
+  .sf-modal-hide-button--inline-end:where(:dir(rtl)) {
+    left: var(--sf-modal-hide-right);
+    left: var(--sf-modal-hide-inline-end, var(--sf-modal-hide-right));
   }
   .sf-modal-hide-button--inline-end {
     left: auto;

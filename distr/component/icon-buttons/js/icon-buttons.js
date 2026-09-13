@@ -37,7 +37,7 @@ class IconButtons extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0_
       this.button.id = this.id;
     }
 
-    this.button.classList.add('sf-icon-button', `sf-icon-button--size-${size}`, `sf-icon-button--${type}`, `sf-icon-button--${scheme}`);
+    this.button.classList.add('sf-icon-button', 'sf-icon-button--icon', `sf-icon-button--size-${size}`, `sf-icon-button--${type}`, `sf-icon-button--${scheme}`);
 
     if (tightness) {
       this.button.classList.add(`tightness-${tightness}`);
@@ -50,6 +50,7 @@ class IconButtons extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0_
     if (loading) {
       this.button.classList.add('loading', 'sf-icon-button-state-loading');
       this.button.setAttribute('aria-busy', 'true');
+      this.button.disabled = true;
     }
 
     if (disabled) {
@@ -66,7 +67,12 @@ class IconButtons extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0_
       }
 
       this.button.setAttribute(attr, value);
-    });
+    }); // Avoid implicit form submission unless the caller explicitly chooses it.
+
+    if (!this.button.hasAttribute('type')) {
+      this.button.setAttribute('type', 'button');
+    }
+
     this.iconElement = this.createIcon(icon);
     this.applyLayoutUtilities(this.button, '.sf-icon-button');
     this.applyLayoutUtilities(this.iconElement, '.sf-icon-button .sf-icon');
@@ -87,6 +93,7 @@ class IconButtons extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0_
 
     const icon = document.createElement('i');
     icon.classList.add('sf-icon');
+    icon.setAttribute('aria-hidden', 'true');
     icon.textContent = name;
     return icon;
   }
@@ -208,7 +215,9 @@ class ComponentObserver {
       matches.forEach(match => {
         const raw = match.slice(1, -1);
         raw.split(/\s+/).filter(Boolean).forEach(cls => {
-          classes.add(cls.replace(/^\./, ''));
+          // Only explicit (.class) annotations are classes; the
+          // parentheses in var(--token) are CSS values, not markup.
+          if (cls.startsWith('.') && cls.length > 1) classes.add(cls.slice(1));
         });
       });
     });

@@ -2,10 +2,26 @@
   .top-0 {
     top: 0;
   }
-  [dir="ltr"] .inline-end-0 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-end-0 {
     right: 0;
   }
+  @supports not (inset-inline-end: initial) {
+  html:not([dir="rtl"]) .inline-end-0 {
+    right: 0;
+    }
+  }
+  .inline-end-0:where(:dir(ltr)) {
+    right: 0;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-end-0 {
+    left: 0;
+  }
+  @supports not (inset-inline-end: initial) {
   [dir="rtl"] .inline-end-0 {
+    left: 0;
+    }
+  }
+  .inline-end-0:where(:dir(rtl)) {
     left: 0;
   }
   .inline-end-0 {
@@ -14,10 +30,26 @@
   .bottom-0 {
     bottom: 0;
   }
-  [dir="ltr"] .inline-start-0 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-start-0 {
     left: 0;
   }
+  @supports not (inset-inline-start: initial) {
+  html:not([dir="rtl"]) .inline-start-0 {
+    left: 0;
+    }
+  }
+  .inline-start-0:where(:dir(ltr)) {
+    left: 0;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-start-0 {
+    right: 0;
+  }
+  @supports not (inset-inline-start: initial) {
   [dir="rtl"] .inline-start-0 {
+    right: 0;
+    }
+  }
+  .inline-start-0:where(:dir(rtl)) {
     right: 0;
   }
   .inline-start-0 {
@@ -26,10 +58,26 @@
   .top-auto {
     top: auto;
   }
-  [dir="ltr"] .inline-end-auto {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-end-auto {
     right: auto;
   }
+  @supports not (inset-inline-end: initial) {
+  html:not([dir="rtl"]) .inline-end-auto {
+    right: auto;
+    }
+  }
+  .inline-end-auto:where(:dir(ltr)) {
+    right: auto;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-end-auto {
+    left: auto;
+  }
+  @supports not (inset-inline-end: initial) {
   [dir="rtl"] .inline-end-auto {
+    left: auto;
+    }
+  }
+  .inline-end-auto:where(:dir(rtl)) {
     left: auto;
   }
   .inline-end-auto {
@@ -38,10 +86,26 @@
   .bottom-auto {
     bottom: auto;
   }
-  [dir="ltr"] .inline-start-auto {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-start-auto {
     left: auto;
   }
+  @supports not (inset-inline-start: initial) {
+  html:not([dir="rtl"]) .inline-start-auto {
+    left: auto;
+    }
+  }
+  .inline-start-auto:where(:dir(ltr)) {
+    left: auto;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-start-auto {
+    right: auto;
+  }
+  @supports not (inset-inline-start: initial) {
   [dir="rtl"] .inline-start-auto {
+    right: auto;
+    }
+  }
+  .inline-start-auto:where(:dir(rtl)) {
     right: auto;
   }
   .inline-start-auto {
@@ -50,10 +114,26 @@
   .top-1\/2 {
     top: 50%;
   }
-  [dir="ltr"] .inline-end-1\/2 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-end-1\/2 {
     right: 50%;
   }
+  @supports not (inset-inline-end: initial) {
+  html:not([dir="rtl"]) .inline-end-1\/2 {
+    right: 50%;
+    }
+  }
+  .inline-end-1\/2:where(:dir(ltr)) {
+    right: 50%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-end-1\/2 {
+    left: 50%;
+  }
+  @supports not (inset-inline-end: initial) {
   [dir="rtl"] .inline-end-1\/2 {
+    left: 50%;
+    }
+  }
+  .inline-end-1\/2:where(:dir(rtl)) {
     left: 50%;
   }
   .inline-end-1\/2 {
@@ -62,10 +142,26 @@
   .bottom-1\/2 {
     bottom: 50%;
   }
-  [dir="ltr"] .inline-start-1\/2 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-start-1\/2 {
     left: 50%;
   }
+  @supports not (inset-inline-start: initial) {
+  html:not([dir="rtl"]) .inline-start-1\/2 {
+    left: 50%;
+    }
+  }
+  .inline-start-1\/2:where(:dir(ltr)) {
+    left: 50%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-start-1\/2 {
+    right: 50%;
+  }
+  @supports not (inset-inline-start: initial) {
   [dir="rtl"] .inline-start-1\/2 {
+    right: 50%;
+    }
+  }
+  .inline-start-1\/2:where(:dir(rtl)) {
     right: 50%;
   }
   .inline-start-1\/2 {
@@ -74,10 +170,26 @@
   .top-1\/3 {
     top: 33.333333%;
   }
-  [dir="ltr"] .inline-end-1\/3 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-end-1\/3 {
     right: 33.333333%;
   }
+  @supports not (inset-inline-end: initial) {
+  html:not([dir="rtl"]) .inline-end-1\/3 {
+    right: 33.333333%;
+    }
+  }
+  .inline-end-1\/3:where(:dir(ltr)) {
+    right: 33.333333%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-end-1\/3 {
+    left: 33.333333%;
+  }
+  @supports not (inset-inline-end: initial) {
   [dir="rtl"] .inline-end-1\/3 {
+    left: 33.333333%;
+    }
+  }
+  .inline-end-1\/3:where(:dir(rtl)) {
     left: 33.333333%;
   }
   .inline-end-1\/3 {
@@ -86,10 +198,26 @@
   .bottom-1\/3 {
     bottom: 33.333333%;
   }
-  [dir="ltr"] .inline-start-1\/3 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-start-1\/3 {
     left: 33.333333%;
   }
+  @supports not (inset-inline-start: initial) {
+  html:not([dir="rtl"]) .inline-start-1\/3 {
+    left: 33.333333%;
+    }
+  }
+  .inline-start-1\/3:where(:dir(ltr)) {
+    left: 33.333333%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-start-1\/3 {
+    right: 33.333333%;
+  }
+  @supports not (inset-inline-start: initial) {
   [dir="rtl"] .inline-start-1\/3 {
+    right: 33.333333%;
+    }
+  }
+  .inline-start-1\/3:where(:dir(rtl)) {
     right: 33.333333%;
   }
   .inline-start-1\/3 {
@@ -98,10 +226,26 @@
   .top-2\/3 {
     top: 66.666667%;
   }
-  [dir="ltr"] .inline-end-2\/3 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-end-2\/3 {
     right: 66.666667%;
   }
+  @supports not (inset-inline-end: initial) {
+  html:not([dir="rtl"]) .inline-end-2\/3 {
+    right: 66.666667%;
+    }
+  }
+  .inline-end-2\/3:where(:dir(ltr)) {
+    right: 66.666667%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-end-2\/3 {
+    left: 66.666667%;
+  }
+  @supports not (inset-inline-end: initial) {
   [dir="rtl"] .inline-end-2\/3 {
+    left: 66.666667%;
+    }
+  }
+  .inline-end-2\/3:where(:dir(rtl)) {
     left: 66.666667%;
   }
   .inline-end-2\/3 {
@@ -110,10 +254,26 @@
   .bottom-2\/3 {
     bottom: 66.666667%;
   }
-  [dir="ltr"] .inline-start-2\/3 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-start-2\/3 {
     left: 66.666667%;
   }
+  @supports not (inset-inline-start: initial) {
+  html:not([dir="rtl"]) .inline-start-2\/3 {
+    left: 66.666667%;
+    }
+  }
+  .inline-start-2\/3:where(:dir(ltr)) {
+    left: 66.666667%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-start-2\/3 {
+    right: 66.666667%;
+  }
+  @supports not (inset-inline-start: initial) {
   [dir="rtl"] .inline-start-2\/3 {
+    right: 66.666667%;
+    }
+  }
+  .inline-start-2\/3:where(:dir(rtl)) {
     right: 66.666667%;
   }
   .inline-start-2\/3 {
@@ -122,10 +282,26 @@
   .top-1\/4 {
     top: 25%;
   }
-  [dir="ltr"] .inline-end-1\/4 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-end-1\/4 {
     right: 25%;
   }
+  @supports not (inset-inline-end: initial) {
+  html:not([dir="rtl"]) .inline-end-1\/4 {
+    right: 25%;
+    }
+  }
+  .inline-end-1\/4:where(:dir(ltr)) {
+    right: 25%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-end-1\/4 {
+    left: 25%;
+  }
+  @supports not (inset-inline-end: initial) {
   [dir="rtl"] .inline-end-1\/4 {
+    left: 25%;
+    }
+  }
+  .inline-end-1\/4:where(:dir(rtl)) {
     left: 25%;
   }
   .inline-end-1\/4 {
@@ -134,10 +310,26 @@
   .bottom-1\/4 {
     bottom: 25%;
   }
-  [dir="ltr"] .inline-start-1\/4 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-start-1\/4 {
     left: 25%;
   }
+  @supports not (inset-inline-start: initial) {
+  html:not([dir="rtl"]) .inline-start-1\/4 {
+    left: 25%;
+    }
+  }
+  .inline-start-1\/4:where(:dir(ltr)) {
+    left: 25%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-start-1\/4 {
+    right: 25%;
+  }
+  @supports not (inset-inline-start: initial) {
   [dir="rtl"] .inline-start-1\/4 {
+    right: 25%;
+    }
+  }
+  .inline-start-1\/4:where(:dir(rtl)) {
     right: 25%;
   }
   .inline-start-1\/4 {
@@ -146,10 +338,26 @@
   .top-2\/4 {
     top: 50%;
   }
-  [dir="ltr"] .inline-end-2\/4 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-end-2\/4 {
     right: 50%;
   }
+  @supports not (inset-inline-end: initial) {
+  html:not([dir="rtl"]) .inline-end-2\/4 {
+    right: 50%;
+    }
+  }
+  .inline-end-2\/4:where(:dir(ltr)) {
+    right: 50%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-end-2\/4 {
+    left: 50%;
+  }
+  @supports not (inset-inline-end: initial) {
   [dir="rtl"] .inline-end-2\/4 {
+    left: 50%;
+    }
+  }
+  .inline-end-2\/4:where(:dir(rtl)) {
     left: 50%;
   }
   .inline-end-2\/4 {
@@ -158,10 +366,26 @@
   .bottom-2\/4 {
     bottom: 50%;
   }
-  [dir="ltr"] .inline-start-2\/4 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-start-2\/4 {
     left: 50%;
   }
+  @supports not (inset-inline-start: initial) {
+  html:not([dir="rtl"]) .inline-start-2\/4 {
+    left: 50%;
+    }
+  }
+  .inline-start-2\/4:where(:dir(ltr)) {
+    left: 50%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-start-2\/4 {
+    right: 50%;
+  }
+  @supports not (inset-inline-start: initial) {
   [dir="rtl"] .inline-start-2\/4 {
+    right: 50%;
+    }
+  }
+  .inline-start-2\/4:where(:dir(rtl)) {
     right: 50%;
   }
   .inline-start-2\/4 {
@@ -170,10 +394,26 @@
   .top-3\/4 {
     top: 75%;
   }
-  [dir="ltr"] .inline-end-3\/4 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-end-3\/4 {
     right: 75%;
   }
+  @supports not (inset-inline-end: initial) {
+  html:not([dir="rtl"]) .inline-end-3\/4 {
+    right: 75%;
+    }
+  }
+  .inline-end-3\/4:where(:dir(ltr)) {
+    right: 75%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-end-3\/4 {
+    left: 75%;
+  }
+  @supports not (inset-inline-end: initial) {
   [dir="rtl"] .inline-end-3\/4 {
+    left: 75%;
+    }
+  }
+  .inline-end-3\/4:where(:dir(rtl)) {
     left: 75%;
   }
   .inline-end-3\/4 {
@@ -182,10 +422,26 @@
   .bottom-3\/4 {
     bottom: 75%;
   }
-  [dir="ltr"] .inline-start-3\/4 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-start-3\/4 {
     left: 75%;
   }
+  @supports not (inset-inline-start: initial) {
+  html:not([dir="rtl"]) .inline-start-3\/4 {
+    left: 75%;
+    }
+  }
+  .inline-start-3\/4:where(:dir(ltr)) {
+    left: 75%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-start-3\/4 {
+    right: 75%;
+  }
+  @supports not (inset-inline-start: initial) {
   [dir="rtl"] .inline-start-3\/4 {
+    right: 75%;
+    }
+  }
+  .inline-start-3\/4:where(:dir(rtl)) {
     right: 75%;
   }
   .inline-start-3\/4 {
@@ -194,10 +450,26 @@
   .top-1\/5 {
     top: 20%;
   }
-  [dir="ltr"] .inline-end-1\/5 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-end-1\/5 {
     right: 20%;
   }
+  @supports not (inset-inline-end: initial) {
+  html:not([dir="rtl"]) .inline-end-1\/5 {
+    right: 20%;
+    }
+  }
+  .inline-end-1\/5:where(:dir(ltr)) {
+    right: 20%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-end-1\/5 {
+    left: 20%;
+  }
+  @supports not (inset-inline-end: initial) {
   [dir="rtl"] .inline-end-1\/5 {
+    left: 20%;
+    }
+  }
+  .inline-end-1\/5:where(:dir(rtl)) {
     left: 20%;
   }
   .inline-end-1\/5 {
@@ -206,10 +478,26 @@
   .bottom-1\/5 {
     bottom: 20%;
   }
-  [dir="ltr"] .inline-start-1\/5 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-start-1\/5 {
     left: 20%;
   }
+  @supports not (inset-inline-start: initial) {
+  html:not([dir="rtl"]) .inline-start-1\/5 {
+    left: 20%;
+    }
+  }
+  .inline-start-1\/5:where(:dir(ltr)) {
+    left: 20%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-start-1\/5 {
+    right: 20%;
+  }
+  @supports not (inset-inline-start: initial) {
   [dir="rtl"] .inline-start-1\/5 {
+    right: 20%;
+    }
+  }
+  .inline-start-1\/5:where(:dir(rtl)) {
     right: 20%;
   }
   .inline-start-1\/5 {
@@ -218,10 +506,26 @@
   .top-2\/5 {
     top: 40%;
   }
-  [dir="ltr"] .inline-end-2\/5 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-end-2\/5 {
     right: 40%;
   }
+  @supports not (inset-inline-end: initial) {
+  html:not([dir="rtl"]) .inline-end-2\/5 {
+    right: 40%;
+    }
+  }
+  .inline-end-2\/5:where(:dir(ltr)) {
+    right: 40%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-end-2\/5 {
+    left: 40%;
+  }
+  @supports not (inset-inline-end: initial) {
   [dir="rtl"] .inline-end-2\/5 {
+    left: 40%;
+    }
+  }
+  .inline-end-2\/5:where(:dir(rtl)) {
     left: 40%;
   }
   .inline-end-2\/5 {
@@ -230,10 +534,26 @@
   .bottom-2\/5 {
     bottom: 40%;
   }
-  [dir="ltr"] .inline-start-2\/5 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-start-2\/5 {
     left: 40%;
   }
+  @supports not (inset-inline-start: initial) {
+  html:not([dir="rtl"]) .inline-start-2\/5 {
+    left: 40%;
+    }
+  }
+  .inline-start-2\/5:where(:dir(ltr)) {
+    left: 40%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-start-2\/5 {
+    right: 40%;
+  }
+  @supports not (inset-inline-start: initial) {
   [dir="rtl"] .inline-start-2\/5 {
+    right: 40%;
+    }
+  }
+  .inline-start-2\/5:where(:dir(rtl)) {
     right: 40%;
   }
   .inline-start-2\/5 {
@@ -242,10 +562,26 @@
   .top-3\/5 {
     top: 60%;
   }
-  [dir="ltr"] .inline-end-3\/5 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-end-3\/5 {
     right: 60%;
   }
+  @supports not (inset-inline-end: initial) {
+  html:not([dir="rtl"]) .inline-end-3\/5 {
+    right: 60%;
+    }
+  }
+  .inline-end-3\/5:where(:dir(ltr)) {
+    right: 60%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-end-3\/5 {
+    left: 60%;
+  }
+  @supports not (inset-inline-end: initial) {
   [dir="rtl"] .inline-end-3\/5 {
+    left: 60%;
+    }
+  }
+  .inline-end-3\/5:where(:dir(rtl)) {
     left: 60%;
   }
   .inline-end-3\/5 {
@@ -254,10 +590,26 @@
   .bottom-3\/5 {
     bottom: 60%;
   }
-  [dir="ltr"] .inline-start-3\/5 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-start-3\/5 {
     left: 60%;
   }
+  @supports not (inset-inline-start: initial) {
+  html:not([dir="rtl"]) .inline-start-3\/5 {
+    left: 60%;
+    }
+  }
+  .inline-start-3\/5:where(:dir(ltr)) {
+    left: 60%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-start-3\/5 {
+    right: 60%;
+  }
+  @supports not (inset-inline-start: initial) {
   [dir="rtl"] .inline-start-3\/5 {
+    right: 60%;
+    }
+  }
+  .inline-start-3\/5:where(:dir(rtl)) {
     right: 60%;
   }
   .inline-start-3\/5 {
@@ -266,10 +618,26 @@
   .top-4\/5 {
     top: 80%;
   }
-  [dir="ltr"] .inline-end-4\/5 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-end-4\/5 {
     right: 80%;
   }
+  @supports not (inset-inline-end: initial) {
+  html:not([dir="rtl"]) .inline-end-4\/5 {
+    right: 80%;
+    }
+  }
+  .inline-end-4\/5:where(:dir(ltr)) {
+    right: 80%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-end-4\/5 {
+    left: 80%;
+  }
+  @supports not (inset-inline-end: initial) {
   [dir="rtl"] .inline-end-4\/5 {
+    left: 80%;
+    }
+  }
+  .inline-end-4\/5:where(:dir(rtl)) {
     left: 80%;
   }
   .inline-end-4\/5 {
@@ -278,10 +646,26 @@
   .bottom-4\/5 {
     bottom: 80%;
   }
-  [dir="ltr"] .inline-start-4\/5 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-start-4\/5 {
     left: 80%;
   }
+  @supports not (inset-inline-start: initial) {
+  html:not([dir="rtl"]) .inline-start-4\/5 {
+    left: 80%;
+    }
+  }
+  .inline-start-4\/5:where(:dir(ltr)) {
+    left: 80%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-start-4\/5 {
+    right: 80%;
+  }
+  @supports not (inset-inline-start: initial) {
   [dir="rtl"] .inline-start-4\/5 {
+    right: 80%;
+    }
+  }
+  .inline-start-4\/5:where(:dir(rtl)) {
     right: 80%;
   }
   .inline-start-4\/5 {
@@ -290,10 +674,26 @@
   .top-1\/6 {
     top: 16.666667%;
   }
-  [dir="ltr"] .inline-end-1\/6 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-end-1\/6 {
     right: 16.666667%;
   }
+  @supports not (inset-inline-end: initial) {
+  html:not([dir="rtl"]) .inline-end-1\/6 {
+    right: 16.666667%;
+    }
+  }
+  .inline-end-1\/6:where(:dir(ltr)) {
+    right: 16.666667%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-end-1\/6 {
+    left: 16.666667%;
+  }
+  @supports not (inset-inline-end: initial) {
   [dir="rtl"] .inline-end-1\/6 {
+    left: 16.666667%;
+    }
+  }
+  .inline-end-1\/6:where(:dir(rtl)) {
     left: 16.666667%;
   }
   .inline-end-1\/6 {
@@ -302,10 +702,26 @@
   .bottom-1\/6 {
     bottom: 16.666667%;
   }
-  [dir="ltr"] .inline-start-1\/6 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-start-1\/6 {
     left: 16.666667%;
   }
+  @supports not (inset-inline-start: initial) {
+  html:not([dir="rtl"]) .inline-start-1\/6 {
+    left: 16.666667%;
+    }
+  }
+  .inline-start-1\/6:where(:dir(ltr)) {
+    left: 16.666667%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-start-1\/6 {
+    right: 16.666667%;
+  }
+  @supports not (inset-inline-start: initial) {
   [dir="rtl"] .inline-start-1\/6 {
+    right: 16.666667%;
+    }
+  }
+  .inline-start-1\/6:where(:dir(rtl)) {
     right: 16.666667%;
   }
   .inline-start-1\/6 {
@@ -314,10 +730,26 @@
   .top-2\/6 {
     top: 33.333333%;
   }
-  [dir="ltr"] .inline-end-2\/6 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-end-2\/6 {
     right: 33.333333%;
   }
+  @supports not (inset-inline-end: initial) {
+  html:not([dir="rtl"]) .inline-end-2\/6 {
+    right: 33.333333%;
+    }
+  }
+  .inline-end-2\/6:where(:dir(ltr)) {
+    right: 33.333333%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-end-2\/6 {
+    left: 33.333333%;
+  }
+  @supports not (inset-inline-end: initial) {
   [dir="rtl"] .inline-end-2\/6 {
+    left: 33.333333%;
+    }
+  }
+  .inline-end-2\/6:where(:dir(rtl)) {
     left: 33.333333%;
   }
   .inline-end-2\/6 {
@@ -326,10 +758,26 @@
   .bottom-2\/6 {
     bottom: 33.333333%;
   }
-  [dir="ltr"] .inline-start-2\/6 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-start-2\/6 {
     left: 33.333333%;
   }
+  @supports not (inset-inline-start: initial) {
+  html:not([dir="rtl"]) .inline-start-2\/6 {
+    left: 33.333333%;
+    }
+  }
+  .inline-start-2\/6:where(:dir(ltr)) {
+    left: 33.333333%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-start-2\/6 {
+    right: 33.333333%;
+  }
+  @supports not (inset-inline-start: initial) {
   [dir="rtl"] .inline-start-2\/6 {
+    right: 33.333333%;
+    }
+  }
+  .inline-start-2\/6:where(:dir(rtl)) {
     right: 33.333333%;
   }
   .inline-start-2\/6 {
@@ -338,10 +786,26 @@
   .top-3\/6 {
     top: 50%;
   }
-  [dir="ltr"] .inline-end-3\/6 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-end-3\/6 {
     right: 50%;
   }
+  @supports not (inset-inline-end: initial) {
+  html:not([dir="rtl"]) .inline-end-3\/6 {
+    right: 50%;
+    }
+  }
+  .inline-end-3\/6:where(:dir(ltr)) {
+    right: 50%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-end-3\/6 {
+    left: 50%;
+  }
+  @supports not (inset-inline-end: initial) {
   [dir="rtl"] .inline-end-3\/6 {
+    left: 50%;
+    }
+  }
+  .inline-end-3\/6:where(:dir(rtl)) {
     left: 50%;
   }
   .inline-end-3\/6 {
@@ -350,10 +814,26 @@
   .bottom-3\/6 {
     bottom: 50%;
   }
-  [dir="ltr"] .inline-start-3\/6 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-start-3\/6 {
     left: 50%;
   }
+  @supports not (inset-inline-start: initial) {
+  html:not([dir="rtl"]) .inline-start-3\/6 {
+    left: 50%;
+    }
+  }
+  .inline-start-3\/6:where(:dir(ltr)) {
+    left: 50%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-start-3\/6 {
+    right: 50%;
+  }
+  @supports not (inset-inline-start: initial) {
   [dir="rtl"] .inline-start-3\/6 {
+    right: 50%;
+    }
+  }
+  .inline-start-3\/6:where(:dir(rtl)) {
     right: 50%;
   }
   .inline-start-3\/6 {
@@ -362,10 +842,26 @@
   .top-4\/6 {
     top: 66.666667%;
   }
-  [dir="ltr"] .inline-end-4\/6 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-end-4\/6 {
     right: 66.666667%;
   }
+  @supports not (inset-inline-end: initial) {
+  html:not([dir="rtl"]) .inline-end-4\/6 {
+    right: 66.666667%;
+    }
+  }
+  .inline-end-4\/6:where(:dir(ltr)) {
+    right: 66.666667%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-end-4\/6 {
+    left: 66.666667%;
+  }
+  @supports not (inset-inline-end: initial) {
   [dir="rtl"] .inline-end-4\/6 {
+    left: 66.666667%;
+    }
+  }
+  .inline-end-4\/6:where(:dir(rtl)) {
     left: 66.666667%;
   }
   .inline-end-4\/6 {
@@ -374,10 +870,26 @@
   .bottom-4\/6 {
     bottom: 66.666667%;
   }
-  [dir="ltr"] .inline-start-4\/6 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-start-4\/6 {
     left: 66.666667%;
   }
+  @supports not (inset-inline-start: initial) {
+  html:not([dir="rtl"]) .inline-start-4\/6 {
+    left: 66.666667%;
+    }
+  }
+  .inline-start-4\/6:where(:dir(ltr)) {
+    left: 66.666667%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-start-4\/6 {
+    right: 66.666667%;
+  }
+  @supports not (inset-inline-start: initial) {
   [dir="rtl"] .inline-start-4\/6 {
+    right: 66.666667%;
+    }
+  }
+  .inline-start-4\/6:where(:dir(rtl)) {
     right: 66.666667%;
   }
   .inline-start-4\/6 {
@@ -386,10 +898,26 @@
   .top-5\/6 {
     top: 83.333333%;
   }
-  [dir="ltr"] .inline-end-5\/6 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-end-5\/6 {
     right: 83.333333%;
   }
+  @supports not (inset-inline-end: initial) {
+  html:not([dir="rtl"]) .inline-end-5\/6 {
+    right: 83.333333%;
+    }
+  }
+  .inline-end-5\/6:where(:dir(ltr)) {
+    right: 83.333333%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-end-5\/6 {
+    left: 83.333333%;
+  }
+  @supports not (inset-inline-end: initial) {
   [dir="rtl"] .inline-end-5\/6 {
+    left: 83.333333%;
+    }
+  }
+  .inline-end-5\/6:where(:dir(rtl)) {
     left: 83.333333%;
   }
   .inline-end-5\/6 {
@@ -398,10 +926,26 @@
   .bottom-5\/6 {
     bottom: 83.333333%;
   }
-  [dir="ltr"] .inline-start-5\/6 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-start-5\/6 {
     left: 83.333333%;
   }
+  @supports not (inset-inline-start: initial) {
+  html:not([dir="rtl"]) .inline-start-5\/6 {
+    left: 83.333333%;
+    }
+  }
+  .inline-start-5\/6:where(:dir(ltr)) {
+    left: 83.333333%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-start-5\/6 {
+    right: 83.333333%;
+  }
+  @supports not (inset-inline-start: initial) {
   [dir="rtl"] .inline-start-5\/6 {
+    right: 83.333333%;
+    }
+  }
+  .inline-start-5\/6:where(:dir(rtl)) {
     right: 83.333333%;
   }
   .inline-start-5\/6 {
@@ -410,10 +954,26 @@
   .top-1\/12 {
     top: 8.333333%;
   }
-  [dir="ltr"] .inline-end-1\/12 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-end-1\/12 {
     right: 8.333333%;
   }
+  @supports not (inset-inline-end: initial) {
+  html:not([dir="rtl"]) .inline-end-1\/12 {
+    right: 8.333333%;
+    }
+  }
+  .inline-end-1\/12:where(:dir(ltr)) {
+    right: 8.333333%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-end-1\/12 {
+    left: 8.333333%;
+  }
+  @supports not (inset-inline-end: initial) {
   [dir="rtl"] .inline-end-1\/12 {
+    left: 8.333333%;
+    }
+  }
+  .inline-end-1\/12:where(:dir(rtl)) {
     left: 8.333333%;
   }
   .inline-end-1\/12 {
@@ -422,10 +982,26 @@
   .bottom-1\/12 {
     bottom: 8.333333%;
   }
-  [dir="ltr"] .inline-start-1\/12 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-start-1\/12 {
     left: 8.333333%;
   }
+  @supports not (inset-inline-start: initial) {
+  html:not([dir="rtl"]) .inline-start-1\/12 {
+    left: 8.333333%;
+    }
+  }
+  .inline-start-1\/12:where(:dir(ltr)) {
+    left: 8.333333%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-start-1\/12 {
+    right: 8.333333%;
+  }
+  @supports not (inset-inline-start: initial) {
   [dir="rtl"] .inline-start-1\/12 {
+    right: 8.333333%;
+    }
+  }
+  .inline-start-1\/12:where(:dir(rtl)) {
     right: 8.333333%;
   }
   .inline-start-1\/12 {
@@ -434,10 +1010,26 @@
   .top-2\/12 {
     top: 16.666667%;
   }
-  [dir="ltr"] .inline-end-2\/12 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-end-2\/12 {
     right: 16.666667%;
   }
+  @supports not (inset-inline-end: initial) {
+  html:not([dir="rtl"]) .inline-end-2\/12 {
+    right: 16.666667%;
+    }
+  }
+  .inline-end-2\/12:where(:dir(ltr)) {
+    right: 16.666667%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-end-2\/12 {
+    left: 16.666667%;
+  }
+  @supports not (inset-inline-end: initial) {
   [dir="rtl"] .inline-end-2\/12 {
+    left: 16.666667%;
+    }
+  }
+  .inline-end-2\/12:where(:dir(rtl)) {
     left: 16.666667%;
   }
   .inline-end-2\/12 {
@@ -446,10 +1038,26 @@
   .bottom-2\/12 {
     bottom: 16.666667%;
   }
-  [dir="ltr"] .inline-start-2\/12 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-start-2\/12 {
     left: 16.666667%;
   }
+  @supports not (inset-inline-start: initial) {
+  html:not([dir="rtl"]) .inline-start-2\/12 {
+    left: 16.666667%;
+    }
+  }
+  .inline-start-2\/12:where(:dir(ltr)) {
+    left: 16.666667%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-start-2\/12 {
+    right: 16.666667%;
+  }
+  @supports not (inset-inline-start: initial) {
   [dir="rtl"] .inline-start-2\/12 {
+    right: 16.666667%;
+    }
+  }
+  .inline-start-2\/12:where(:dir(rtl)) {
     right: 16.666667%;
   }
   .inline-start-2\/12 {
@@ -458,10 +1066,26 @@
   .top-3\/12 {
     top: 25%;
   }
-  [dir="ltr"] .inline-end-3\/12 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-end-3\/12 {
     right: 25%;
   }
+  @supports not (inset-inline-end: initial) {
+  html:not([dir="rtl"]) .inline-end-3\/12 {
+    right: 25%;
+    }
+  }
+  .inline-end-3\/12:where(:dir(ltr)) {
+    right: 25%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-end-3\/12 {
+    left: 25%;
+  }
+  @supports not (inset-inline-end: initial) {
   [dir="rtl"] .inline-end-3\/12 {
+    left: 25%;
+    }
+  }
+  .inline-end-3\/12:where(:dir(rtl)) {
     left: 25%;
   }
   .inline-end-3\/12 {
@@ -470,10 +1094,26 @@
   .bottom-3\/12 {
     bottom: 25%;
   }
-  [dir="ltr"] .inline-start-3\/12 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-start-3\/12 {
     left: 25%;
   }
+  @supports not (inset-inline-start: initial) {
+  html:not([dir="rtl"]) .inline-start-3\/12 {
+    left: 25%;
+    }
+  }
+  .inline-start-3\/12:where(:dir(ltr)) {
+    left: 25%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-start-3\/12 {
+    right: 25%;
+  }
+  @supports not (inset-inline-start: initial) {
   [dir="rtl"] .inline-start-3\/12 {
+    right: 25%;
+    }
+  }
+  .inline-start-3\/12:where(:dir(rtl)) {
     right: 25%;
   }
   .inline-start-3\/12 {
@@ -482,10 +1122,26 @@
   .top-4\/12 {
     top: 33.333333%;
   }
-  [dir="ltr"] .inline-end-4\/12 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-end-4\/12 {
     right: 33.333333%;
   }
+  @supports not (inset-inline-end: initial) {
+  html:not([dir="rtl"]) .inline-end-4\/12 {
+    right: 33.333333%;
+    }
+  }
+  .inline-end-4\/12:where(:dir(ltr)) {
+    right: 33.333333%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-end-4\/12 {
+    left: 33.333333%;
+  }
+  @supports not (inset-inline-end: initial) {
   [dir="rtl"] .inline-end-4\/12 {
+    left: 33.333333%;
+    }
+  }
+  .inline-end-4\/12:where(:dir(rtl)) {
     left: 33.333333%;
   }
   .inline-end-4\/12 {
@@ -494,10 +1150,26 @@
   .bottom-4\/12 {
     bottom: 33.333333%;
   }
-  [dir="ltr"] .inline-start-4\/12 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-start-4\/12 {
     left: 33.333333%;
   }
+  @supports not (inset-inline-start: initial) {
+  html:not([dir="rtl"]) .inline-start-4\/12 {
+    left: 33.333333%;
+    }
+  }
+  .inline-start-4\/12:where(:dir(ltr)) {
+    left: 33.333333%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-start-4\/12 {
+    right: 33.333333%;
+  }
+  @supports not (inset-inline-start: initial) {
   [dir="rtl"] .inline-start-4\/12 {
+    right: 33.333333%;
+    }
+  }
+  .inline-start-4\/12:where(:dir(rtl)) {
     right: 33.333333%;
   }
   .inline-start-4\/12 {
@@ -506,10 +1178,26 @@
   .top-5\/12 {
     top: 41.666667%;
   }
-  [dir="ltr"] .inline-end-5\/12 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-end-5\/12 {
     right: 41.666667%;
   }
+  @supports not (inset-inline-end: initial) {
+  html:not([dir="rtl"]) .inline-end-5\/12 {
+    right: 41.666667%;
+    }
+  }
+  .inline-end-5\/12:where(:dir(ltr)) {
+    right: 41.666667%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-end-5\/12 {
+    left: 41.666667%;
+  }
+  @supports not (inset-inline-end: initial) {
   [dir="rtl"] .inline-end-5\/12 {
+    left: 41.666667%;
+    }
+  }
+  .inline-end-5\/12:where(:dir(rtl)) {
     left: 41.666667%;
   }
   .inline-end-5\/12 {
@@ -518,10 +1206,26 @@
   .bottom-5\/12 {
     bottom: 41.666667%;
   }
-  [dir="ltr"] .inline-start-5\/12 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-start-5\/12 {
     left: 41.666667%;
   }
+  @supports not (inset-inline-start: initial) {
+  html:not([dir="rtl"]) .inline-start-5\/12 {
+    left: 41.666667%;
+    }
+  }
+  .inline-start-5\/12:where(:dir(ltr)) {
+    left: 41.666667%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-start-5\/12 {
+    right: 41.666667%;
+  }
+  @supports not (inset-inline-start: initial) {
   [dir="rtl"] .inline-start-5\/12 {
+    right: 41.666667%;
+    }
+  }
+  .inline-start-5\/12:where(:dir(rtl)) {
     right: 41.666667%;
   }
   .inline-start-5\/12 {
@@ -530,10 +1234,26 @@
   .top-6\/12 {
     top: 50%;
   }
-  [dir="ltr"] .inline-end-6\/12 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-end-6\/12 {
     right: 50%;
   }
+  @supports not (inset-inline-end: initial) {
+  html:not([dir="rtl"]) .inline-end-6\/12 {
+    right: 50%;
+    }
+  }
+  .inline-end-6\/12:where(:dir(ltr)) {
+    right: 50%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-end-6\/12 {
+    left: 50%;
+  }
+  @supports not (inset-inline-end: initial) {
   [dir="rtl"] .inline-end-6\/12 {
+    left: 50%;
+    }
+  }
+  .inline-end-6\/12:where(:dir(rtl)) {
     left: 50%;
   }
   .inline-end-6\/12 {
@@ -542,10 +1262,26 @@
   .bottom-6\/12 {
     bottom: 50%;
   }
-  [dir="ltr"] .inline-start-6\/12 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-start-6\/12 {
     left: 50%;
   }
+  @supports not (inset-inline-start: initial) {
+  html:not([dir="rtl"]) .inline-start-6\/12 {
+    left: 50%;
+    }
+  }
+  .inline-start-6\/12:where(:dir(ltr)) {
+    left: 50%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-start-6\/12 {
+    right: 50%;
+  }
+  @supports not (inset-inline-start: initial) {
   [dir="rtl"] .inline-start-6\/12 {
+    right: 50%;
+    }
+  }
+  .inline-start-6\/12:where(:dir(rtl)) {
     right: 50%;
   }
   .inline-start-6\/12 {
@@ -554,10 +1290,26 @@
   .top-7\/12 {
     top: 58.333333%;
   }
-  [dir="ltr"] .inline-end-7\/12 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-end-7\/12 {
     right: 58.333333%;
   }
+  @supports not (inset-inline-end: initial) {
+  html:not([dir="rtl"]) .inline-end-7\/12 {
+    right: 58.333333%;
+    }
+  }
+  .inline-end-7\/12:where(:dir(ltr)) {
+    right: 58.333333%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-end-7\/12 {
+    left: 58.333333%;
+  }
+  @supports not (inset-inline-end: initial) {
   [dir="rtl"] .inline-end-7\/12 {
+    left: 58.333333%;
+    }
+  }
+  .inline-end-7\/12:where(:dir(rtl)) {
     left: 58.333333%;
   }
   .inline-end-7\/12 {
@@ -566,10 +1318,26 @@
   .bottom-7\/12 {
     bottom: 58.333333%;
   }
-  [dir="ltr"] .inline-start-7\/12 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-start-7\/12 {
     left: 58.333333%;
   }
+  @supports not (inset-inline-start: initial) {
+  html:not([dir="rtl"]) .inline-start-7\/12 {
+    left: 58.333333%;
+    }
+  }
+  .inline-start-7\/12:where(:dir(ltr)) {
+    left: 58.333333%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-start-7\/12 {
+    right: 58.333333%;
+  }
+  @supports not (inset-inline-start: initial) {
   [dir="rtl"] .inline-start-7\/12 {
+    right: 58.333333%;
+    }
+  }
+  .inline-start-7\/12:where(:dir(rtl)) {
     right: 58.333333%;
   }
   .inline-start-7\/12 {
@@ -578,10 +1346,26 @@
   .top-8\/12 {
     top: 66.666667%;
   }
-  [dir="ltr"] .inline-end-8\/12 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-end-8\/12 {
     right: 66.666667%;
   }
+  @supports not (inset-inline-end: initial) {
+  html:not([dir="rtl"]) .inline-end-8\/12 {
+    right: 66.666667%;
+    }
+  }
+  .inline-end-8\/12:where(:dir(ltr)) {
+    right: 66.666667%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-end-8\/12 {
+    left: 66.666667%;
+  }
+  @supports not (inset-inline-end: initial) {
   [dir="rtl"] .inline-end-8\/12 {
+    left: 66.666667%;
+    }
+  }
+  .inline-end-8\/12:where(:dir(rtl)) {
     left: 66.666667%;
   }
   .inline-end-8\/12 {
@@ -590,10 +1374,26 @@
   .bottom-8\/12 {
     bottom: 66.666667%;
   }
-  [dir="ltr"] .inline-start-8\/12 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-start-8\/12 {
     left: 66.666667%;
   }
+  @supports not (inset-inline-start: initial) {
+  html:not([dir="rtl"]) .inline-start-8\/12 {
+    left: 66.666667%;
+    }
+  }
+  .inline-start-8\/12:where(:dir(ltr)) {
+    left: 66.666667%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-start-8\/12 {
+    right: 66.666667%;
+  }
+  @supports not (inset-inline-start: initial) {
   [dir="rtl"] .inline-start-8\/12 {
+    right: 66.666667%;
+    }
+  }
+  .inline-start-8\/12:where(:dir(rtl)) {
     right: 66.666667%;
   }
   .inline-start-8\/12 {
@@ -602,10 +1402,26 @@
   .top-9\/12 {
     top: 75%;
   }
-  [dir="ltr"] .inline-end-9\/12 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-end-9\/12 {
     right: 75%;
   }
+  @supports not (inset-inline-end: initial) {
+  html:not([dir="rtl"]) .inline-end-9\/12 {
+    right: 75%;
+    }
+  }
+  .inline-end-9\/12:where(:dir(ltr)) {
+    right: 75%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-end-9\/12 {
+    left: 75%;
+  }
+  @supports not (inset-inline-end: initial) {
   [dir="rtl"] .inline-end-9\/12 {
+    left: 75%;
+    }
+  }
+  .inline-end-9\/12:where(:dir(rtl)) {
     left: 75%;
   }
   .inline-end-9\/12 {
@@ -614,10 +1430,26 @@
   .bottom-9\/12 {
     bottom: 75%;
   }
-  [dir="ltr"] .inline-start-9\/12 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-start-9\/12 {
     left: 75%;
   }
+  @supports not (inset-inline-start: initial) {
+  html:not([dir="rtl"]) .inline-start-9\/12 {
+    left: 75%;
+    }
+  }
+  .inline-start-9\/12:where(:dir(ltr)) {
+    left: 75%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-start-9\/12 {
+    right: 75%;
+  }
+  @supports not (inset-inline-start: initial) {
   [dir="rtl"] .inline-start-9\/12 {
+    right: 75%;
+    }
+  }
+  .inline-start-9\/12:where(:dir(rtl)) {
     right: 75%;
   }
   .inline-start-9\/12 {
@@ -626,10 +1458,26 @@
   .top-10\/12 {
     top: 83.333333%;
   }
-  [dir="ltr"] .inline-end-10\/12 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-end-10\/12 {
     right: 83.333333%;
   }
+  @supports not (inset-inline-end: initial) {
+  html:not([dir="rtl"]) .inline-end-10\/12 {
+    right: 83.333333%;
+    }
+  }
+  .inline-end-10\/12:where(:dir(ltr)) {
+    right: 83.333333%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-end-10\/12 {
+    left: 83.333333%;
+  }
+  @supports not (inset-inline-end: initial) {
   [dir="rtl"] .inline-end-10\/12 {
+    left: 83.333333%;
+    }
+  }
+  .inline-end-10\/12:where(:dir(rtl)) {
     left: 83.333333%;
   }
   .inline-end-10\/12 {
@@ -638,10 +1486,26 @@
   .bottom-10\/12 {
     bottom: 83.333333%;
   }
-  [dir="ltr"] .inline-start-10\/12 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-start-10\/12 {
     left: 83.333333%;
   }
+  @supports not (inset-inline-start: initial) {
+  html:not([dir="rtl"]) .inline-start-10\/12 {
+    left: 83.333333%;
+    }
+  }
+  .inline-start-10\/12:where(:dir(ltr)) {
+    left: 83.333333%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-start-10\/12 {
+    right: 83.333333%;
+  }
+  @supports not (inset-inline-start: initial) {
   [dir="rtl"] .inline-start-10\/12 {
+    right: 83.333333%;
+    }
+  }
+  .inline-start-10\/12:where(:dir(rtl)) {
     right: 83.333333%;
   }
   .inline-start-10\/12 {
@@ -650,10 +1514,26 @@
   .top-11\/12 {
     top: 91.666667%;
   }
-  [dir="ltr"] .inline-end-11\/12 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-end-11\/12 {
     right: 91.666667%;
   }
+  @supports not (inset-inline-end: initial) {
+  html:not([dir="rtl"]) .inline-end-11\/12 {
+    right: 91.666667%;
+    }
+  }
+  .inline-end-11\/12:where(:dir(ltr)) {
+    right: 91.666667%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-end-11\/12 {
+    left: 91.666667%;
+  }
+  @supports not (inset-inline-end: initial) {
   [dir="rtl"] .inline-end-11\/12 {
+    left: 91.666667%;
+    }
+  }
+  .inline-end-11\/12:where(:dir(rtl)) {
     left: 91.666667%;
   }
   .inline-end-11\/12 {
@@ -662,10 +1542,26 @@
   .bottom-11\/12 {
     bottom: 91.666667%;
   }
-  [dir="ltr"] .inline-start-11\/12 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-start-11\/12 {
     left: 91.666667%;
   }
+  @supports not (inset-inline-start: initial) {
+  html:not([dir="rtl"]) .inline-start-11\/12 {
+    left: 91.666667%;
+    }
+  }
+  .inline-start-11\/12:where(:dir(ltr)) {
+    left: 91.666667%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-start-11\/12 {
+    right: 91.666667%;
+  }
+  @supports not (inset-inline-start: initial) {
   [dir="rtl"] .inline-start-11\/12 {
+    right: 91.666667%;
+    }
+  }
+  .inline-start-11\/12:where(:dir(rtl)) {
     right: 91.666667%;
   }
   .inline-start-11\/12 {
@@ -674,10 +1570,26 @@
   .top-full {
     top: 100%;
   }
-  [dir="ltr"] .inline-end-full {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-end-full {
     right: 100%;
   }
+  @supports not (inset-inline-end: initial) {
+  html:not([dir="rtl"]) .inline-end-full {
+    right: 100%;
+    }
+  }
+  .inline-end-full:where(:dir(ltr)) {
+    right: 100%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-end-full {
+    left: 100%;
+  }
+  @supports not (inset-inline-end: initial) {
   [dir="rtl"] .inline-end-full {
+    left: 100%;
+    }
+  }
+  .inline-end-full:where(:dir(rtl)) {
     left: 100%;
   }
   .inline-end-full {
@@ -686,25 +1598,73 @@
   .bottom-full {
     bottom: 100%;
   }
-  [dir="ltr"] .inline-start-full {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inline-start-full {
     left: 100%;
   }
+  @supports not (inset-inline-start: initial) {
+  html:not([dir="rtl"]) .inline-start-full {
+    left: 100%;
+    }
+  }
+  .inline-start-full:where(:dir(ltr)) {
+    left: 100%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inline-start-full {
+    right: 100%;
+  }
+  @supports not (inset-inline-start: initial) {
   [dir="rtl"] .inline-start-full {
+    right: 100%;
+    }
+  }
+  .inline-start-full:where(:dir(rtl)) {
     right: 100%;
   }
   .inline-start-full {
     inset-inline-start: 100%;
   }
-  [dir="ltr"] .inset-0 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inset-0 {
     right: 0;
   }
-  [dir="rtl"] .inset-0 {
+  @supports not (inset-inline-end: initial) {
+  html:not([dir="rtl"]) .inset-0 {
+    right: 0;
+    }
+  }
+  .inset-0:where(:dir(ltr)) {
+    right: 0;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inset-0 {
     left: 0;
   }
-  [dir="ltr"] .inset-0 {
+  @supports not (inset-inline-end: initial) {
+  [dir="rtl"] .inset-0 {
+    left: 0;
+    }
+  }
+  .inset-0:where(:dir(rtl)) {
     left: 0;
   }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inset-0 {
+    left: 0;
+  }
+  @supports not (inset-inline-start: initial) {
+  html:not([dir="rtl"]) .inset-0 {
+    left: 0;
+    }
+  }
+  .inset-0:where(:dir(ltr)) {
+    left: 0;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inset-0 {
+    right: 0;
+  }
+  @supports not (inset-inline-start: initial) {
   [dir="rtl"] .inset-0 {
+    right: 0;
+    }
+  }
+  .inset-0:where(:dir(rtl)) {
     right: 0;
   }
   .inset-0 {
@@ -713,16 +1673,48 @@
     bottom: 0;
     inset-inline-start: 0;
   }
-  [dir="ltr"] .inset-x-0 {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inset-x-0 {
     right: 0;
   }
-  [dir="rtl"] .inset-x-0 {
+  @supports not (inset-inline-end: initial) {
+  html:not([dir="rtl"]) .inset-x-0 {
+    right: 0;
+    }
+  }
+  .inset-x-0:where(:dir(ltr)) {
+    right: 0;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inset-x-0 {
     left: 0;
   }
-  [dir="ltr"] .inset-x-0 {
+  @supports not (inset-inline-end: initial) {
+  [dir="rtl"] .inset-x-0 {
+    left: 0;
+    }
+  }
+  .inset-x-0:where(:dir(rtl)) {
     left: 0;
   }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inset-x-0 {
+    left: 0;
+  }
+  @supports not (inset-inline-start: initial) {
+  html:not([dir="rtl"]) .inset-x-0 {
+    left: 0;
+    }
+  }
+  .inset-x-0:where(:dir(ltr)) {
+    left: 0;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inset-x-0 {
+    right: 0;
+  }
+  @supports not (inset-inline-start: initial) {
   [dir="rtl"] .inset-x-0 {
+    right: 0;
+    }
+  }
+  .inset-x-0:where(:dir(rtl)) {
     right: 0;
   }
   .inset-x-0 {
@@ -733,10 +1725,26 @@
     top: 0;
     bottom: 0;
   }
-  [dir="ltr"] .inset-center {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .inset-center {
     left: 50%;
   }
+  @supports not (inset-inline-start: initial) {
+  html:not([dir="rtl"]) .inset-center {
+    left: 50%;
+    }
+  }
+  .inset-center:where(:dir(ltr)) {
+    left: 50%;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .inset-center {
+    right: 50%;
+  }
+  @supports not (inset-inline-start: initial) {
   [dir="rtl"] .inset-center {
+    right: 50%;
+    }
+  }
+  .inset-center:where(:dir(rtl)) {
     right: 50%;
   }
   .inset-center {

@@ -1,10 +1,16 @@
 :root {
-  --swiper-theme-color: #007aff;
+  --swiper-theme-color: var(--sf-primary);
 }
 
 .swiper {
+  contain: inline-size;
+  width: 100%;
+  inline-size: 100%;
   margin-left: auto;
   margin-right: auto;
+  margin-inline: auto;
+  min-width: 0;
+  min-inline-size: 0;
   position: relative;
   overflow: hidden;
   list-style: none;
@@ -148,10 +154,26 @@
   flex-shrink: 0;
   order: 9999;
 }
-[dir="ltr"] .swiper-centered.swiper-horizontal > .swiper-wrapper > .swiper-slide:first-child {
+_:-ms-input-placeholder, html:not([dir="rtl"]) .swiper-centered.swiper-horizontal > .swiper-wrapper > .swiper-slide:first-child {
   margin-left: var(--swiper-centered-offset-before);
 }
+@supports not (margin-inline-start: initial) {
+html:not([dir="rtl"]) .swiper-centered.swiper-horizontal > .swiper-wrapper > .swiper-slide:first-child {
+  margin-left: var(--swiper-centered-offset-before);
+  }
+}
+.swiper-centered.swiper-horizontal > .swiper-wrapper > .swiper-slide:first-child:where(:dir(ltr)) {
+  margin-left: var(--swiper-centered-offset-before);
+}
+_:-ms-input-placeholder, [dir="rtl"] .swiper-centered.swiper-horizontal > .swiper-wrapper > .swiper-slide:first-child {
+  margin-right: var(--swiper-centered-offset-before);
+}
+@supports not (margin-inline-start: initial) {
 [dir="rtl"] .swiper-centered.swiper-horizontal > .swiper-wrapper > .swiper-slide:first-child {
+  margin-right: var(--swiper-centered-offset-before);
+  }
+}
+.swiper-centered.swiper-horizontal > .swiper-wrapper > .swiper-slide:first-child:where(:dir(rtl)) {
   margin-right: var(--swiper-centered-offset-before);
 }
 .swiper-centered.swiper-horizontal > .swiper-wrapper > .swiper-slide:first-child {
@@ -176,33 +198,32 @@
 }
 
 :root {
-  --swiper-navigation-size: 44px;
-  /*
+  --swiper-navigation-size: var(--sf-ui-2--control-height);
+  --swiper-navigation-icon-size: var(--sf-text--size-3);
   --swiper-navigation-color: var(--swiper-theme-color);
-  */
 }
 
 .swiper-button-prev,
 .swiper-button-next {
   position: absolute;
   top: 50%;
-  width: calc(44px / 44 * 27);
-  width: calc(var(--swiper-navigation-size) / 44 * 27);
-  height: 44px;
+  width: var(--sf-ui-2--control-height);
+  width: var(--swiper-navigation-size);
+  height: var(--sf-ui-2--control-height);
   height: var(--swiper-navigation-size);
-  margin-top: calc(0px - 44px / 2);
-  margin-top: calc(0px - var(--swiper-navigation-size) / 2);
+  margin-top: calc(var(--sf-ui-2--control-height) / -2);
+  margin-top: calc(var(--swiper-navigation-size) / -2);
   z-index: 10;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #007aff;
+  color: var(--sf-primary);
   color: var(--swiper-navigation-color, var(--swiper-theme-color));
 }
 .swiper-button-prev.swiper-button-disabled,
 .swiper-button-next.swiper-button-disabled {
-  opacity: 0.35;
+  opacity: var(--sf-opacity-40);
   cursor: auto;
   pointer-events: none;
 }
@@ -219,8 +240,8 @@
 .swiper-button-prev:after,
 .swiper-button-next:after {
   font-family: swiper-icons;
-  font-size: 44px;
-  font-size: var(--swiper-navigation-size);
+  font-size: var(--sf-text--size-3);
+  font-size: var(--swiper-navigation-icon-size);
   text-transform: none !important;
   letter-spacing: 0;
   -webkit-font-feature-settings: ;
@@ -232,7 +253,7 @@
 
 .swiper-button-prev,
 .swiper-rtl .swiper-button-next {
-  left: 10px;
+  left: var(--sf-space-1);
   right: auto;
 }
 .swiper-button-prev:after,
@@ -242,7 +263,7 @@
 
 .swiper-button-next,
 .swiper-rtl .swiper-button-prev {
-  right: 10px;
+  right: var(--sf-space-1);
   left: auto;
 }
 .swiper-button-next:after,
@@ -252,6 +273,270 @@
 
 .swiper-button-lock {
   display: none;
+}
+
+.swiper-button-prev.focus-visible,
+.swiper-button-next.focus-visible {
+  outline: var(--sf-focus-outline-width) solid currentColor;
+  outline-offset: 0;
+}
+
+.swiper-button-prev:focus-visible,
+.swiper-button-next:focus-visible {
+  outline: var(--sf-focus-outline-width) solid currentColor;
+  outline-offset: 0;
+}
+
+@media (forced-colors: active) {
+  .swiper-button-prev,
+  .swiper-button-next {
+    color: ButtonText;
+    forced-color-adjust: none;
+  }
+  .swiper-button-prev.focus-visible,
+  .swiper-button-next.focus-visible {
+    outline-color: Highlight;
+  }
+  .swiper-button-prev:focus-visible,
+  .swiper-button-next:focus-visible {
+    outline-color: Highlight;
+  }
+}
+:root {
+  --swiper-pagination-color: var(--swiper-theme-color);
+  --swiper-pagination-bullet-size: var(--sf-a8);
+  --swiper-pagination-bullet-width: var(--swiper-pagination-bullet-size);
+  --swiper-pagination-bullet-height: var(--swiper-pagination-bullet-size);
+  --swiper-pagination-bullet-inactive-color: var(--sf-on-surface);
+  --swiper-pagination-bullet-inactive-opacity: var(--sf-opacity-20);
+  --swiper-pagination-bullet-opacity: 1;
+  --swiper-pagination-bullet-horizontal-gap: var(--sf-space-1\/2);
+  --swiper-pagination-bullet-vertical-gap: var(--sf-space-1);
+}
+
+.swiper-pagination {
+  position: absolute;
+  text-align: center;
+  transition: var(--sf-duration-fast) opacity;
+  -webkit-transform: translate3d(0, 0, 0);
+          transform: translate3d(0, 0, 0);
+  z-index: 10;
+}
+.swiper-pagination.swiper-pagination-hidden {
+  opacity: 0;
+}
+.swiper-pagination-disabled > .swiper-pagination, .swiper-pagination.swiper-pagination-disabled {
+  display: none !important;
+}
+
+/* Common Styles */
+.swiper-pagination-fraction,
+.swiper-pagination-custom,
+.swiper-horizontal > .swiper-pagination-bullets,
+.swiper-pagination-bullets.swiper-pagination-horizontal {
+  bottom: var(--sf-space-1);
+  left: 0;
+  width: 100%;
+}
+
+/* Bullets */
+.swiper-pagination-bullets-dynamic {
+  overflow: hidden;
+  font-size: 0;
+}
+.swiper-pagination-bullets-dynamic .swiper-pagination-bullet {
+  -webkit-transform: scale(0.33);
+          transform: scale(0.33);
+  position: relative;
+}
+.swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active {
+  -webkit-transform: scale(1);
+          transform: scale(1);
+}
+.swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active-main {
+  -webkit-transform: scale(1);
+          transform: scale(1);
+}
+.swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active-prev {
+  -webkit-transform: scale(0.66);
+          transform: scale(0.66);
+}
+.swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active-prev-prev {
+  -webkit-transform: scale(0.33);
+          transform: scale(0.33);
+}
+.swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active-next {
+  -webkit-transform: scale(0.66);
+          transform: scale(0.66);
+}
+.swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active-next-next {
+  -webkit-transform: scale(0.33);
+          transform: scale(0.33);
+}
+
+.swiper-pagination-bullet {
+  width: var(--sf-a8);
+  width: var(--swiper-pagination-bullet-width, var(--swiper-pagination-bullet-size));
+  height: var(--sf-a8);
+  height: var(--swiper-pagination-bullet-height, var(--swiper-pagination-bullet-size));
+  display: inline-block;
+  border-radius: 50%;
+  background: var(--sf-on-surface);
+  background: var(--swiper-pagination-bullet-inactive-color, var(--sf-on-surface));
+  opacity: var(--sf-opacity-20);
+  opacity: var(--swiper-pagination-bullet-inactive-opacity, var(--sf-opacity-20));
+}
+button.swiper-pagination-bullet {
+  border: none;
+  margin: 0;
+  padding: 0;
+  box-shadow: none;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+}
+
+.swiper-pagination-clickable .swiper-pagination-bullet {
+  cursor: pointer;
+}
+.swiper-pagination-bullet:only-child {
+  display: none !important;
+}
+.swiper-pagination-bullet.focus-visible {
+  outline: var(--sf-focus-outline-width) solid currentColor;
+  outline-offset: 0;
+}
+.swiper-pagination-bullet:focus-visible {
+  outline: var(--sf-focus-outline-width) solid currentColor;
+  outline-offset: 0;
+}
+
+.swiper-pagination-bullet-active {
+  opacity: 1;
+  opacity: var(--swiper-pagination-bullet-opacity, 1);
+  background: var(--sf-primary);
+  background: var(--swiper-pagination-color, var(--swiper-theme-color));
+}
+
+.swiper-vertical > .swiper-pagination-bullets,
+.swiper-pagination-vertical.swiper-pagination-bullets {
+  right: var(--sf-space-1);
+  top: 50%;
+  -webkit-transform: translate3d(0px, -50%, 0);
+          transform: translate3d(0px, -50%, 0);
+}
+.swiper-vertical > .swiper-pagination-bullets .swiper-pagination-bullet,
+.swiper-pagination-vertical.swiper-pagination-bullets .swiper-pagination-bullet {
+  margin: var(--sf-space-1) 0;
+  margin: var(--swiper-pagination-bullet-vertical-gap, 6px) 0;
+  display: block;
+}
+.swiper-vertical > .swiper-pagination-bullets.swiper-pagination-bullets-dynamic,
+.swiper-pagination-vertical.swiper-pagination-bullets.swiper-pagination-bullets-dynamic {
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
+  width: var(--sf-a8);
+  width: var(--swiper-pagination-bullet-width);
+}
+.swiper-vertical > .swiper-pagination-bullets.swiper-pagination-bullets-dynamic .swiper-pagination-bullet,
+.swiper-pagination-vertical.swiper-pagination-bullets.swiper-pagination-bullets-dynamic .swiper-pagination-bullet {
+  display: inline-block;
+  transition: var(--sf-duration-fast) transform, var(--sf-duration-fast) top;
+}
+
+.swiper-horizontal > .swiper-pagination-bullets .swiper-pagination-bullet,
+.swiper-pagination-horizontal.swiper-pagination-bullets .swiper-pagination-bullet {
+  margin: 0 var(--sf-space-1\/2);
+  margin: 0 var(--swiper-pagination-bullet-horizontal-gap, 4px);
+}
+.swiper-horizontal > .swiper-pagination-bullets.swiper-pagination-bullets-dynamic,
+.swiper-pagination-horizontal.swiper-pagination-bullets.swiper-pagination-bullets-dynamic {
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+          transform: translateX(-50%);
+  white-space: nowrap;
+}
+.swiper-horizontal > .swiper-pagination-bullets.swiper-pagination-bullets-dynamic .swiper-pagination-bullet,
+.swiper-pagination-horizontal.swiper-pagination-bullets.swiper-pagination-bullets-dynamic .swiper-pagination-bullet {
+  transition: var(--sf-duration-fast) transform, var(--sf-duration-fast) left;
+}
+
+.swiper-horizontal.swiper-rtl > .swiper-pagination-bullets-dynamic .swiper-pagination-bullet {
+  transition: var(--sf-duration-fast) transform, var(--sf-duration-fast) right;
+}
+
+/* Progress */
+.swiper-pagination-progressbar {
+  background: var(--sf-outline-variant);
+  position: absolute;
+}
+.swiper-pagination-progressbar .swiper-pagination-progressbar-fill {
+  background: var(--sf-primary);
+  background: var(--swiper-pagination-color, var(--swiper-theme-color));
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  -webkit-transform: scale(0);
+          transform: scale(0);
+  -webkit-transform-origin: left top;
+          transform-origin: left top;
+}
+.swiper-rtl .swiper-pagination-progressbar .swiper-pagination-progressbar-fill {
+  -webkit-transform-origin: right top;
+          transform-origin: right top;
+}
+.swiper-horizontal > .swiper-pagination-progressbar, .swiper-pagination-progressbar.swiper-pagination-horizontal, .swiper-vertical > .swiper-pagination-progressbar.swiper-pagination-progressbar-opposite, .swiper-pagination-progressbar.swiper-pagination-vertical.swiper-pagination-progressbar-opposite {
+  width: 100%;
+  height: var(--sf-a4);
+  left: 0;
+  top: 0;
+}
+.swiper-vertical > .swiper-pagination-progressbar, .swiper-pagination-progressbar.swiper-pagination-vertical, .swiper-horizontal > .swiper-pagination-progressbar.swiper-pagination-progressbar-opposite, .swiper-pagination-progressbar.swiper-pagination-horizontal.swiper-pagination-progressbar-opposite {
+  width: var(--sf-a4);
+  height: 100%;
+  left: 0;
+  top: 0;
+}
+
+.swiper-pagination-lock {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .swiper-pagination,
+  .swiper-pagination-bullet {
+    transition-duration: 0s !important;
+  }
+}
+@media (forced-colors: active) {
+  .swiper-pagination-bullet {
+    background: ButtonFace;
+    border: var(--sf-a1) solid ButtonText;
+    forced-color-adjust: none;
+    opacity: 1;
+  }
+  .swiper-pagination-bullet-active {
+    background: Highlight;
+    border-color: Highlight;
+  }
+  .swiper-pagination-bullet.focus-visible {
+    outline-color: Highlight;
+  }
+  .swiper-pagination-bullet:focus-visible {
+    outline-color: Highlight;
+  }
+}
+/* a11y */
+.swiper .swiper-notification {
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+  opacity: 0;
+  z-index: -1000;
 }
 
 @font-face {
