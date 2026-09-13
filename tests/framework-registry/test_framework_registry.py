@@ -357,7 +357,7 @@ class FrameworkContractRegistryTest(unittest.TestCase):
         )
         self.assertEqual(
             reference["contract_revision"],
-            "d1453d47812f12eaeb11b767bd06c9c56e7d07f6",
+            "94bf00b744da5e541b5110138f2a01f902d2d03f",
         )
         self.assertEqual(reference["status"], "committed")
         self.assertEqual(

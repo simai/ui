@@ -3196,7 +3196,7 @@
       "id": "smart.data-view",
       "kind": "smart-component",
       "lifecycle": "experimental",
-      "name": "data-view",
+      "name": "table",
       "owner": "simai/ui-smart",
       "provenance": {
         "commit": "1de6c70ed455fa2d4d568795452b63431fdd73a1",
@@ -14707,13 +14707,13 @@
       "sha256": "715443b12c80966e337af4fb9ec28e2cb37c767c5fcaaa7966fd6f63b3ca2458"
     },
     {
-      "contract_revision": "d1453d47812f12eaeb11b767bd06c9c56e7d07f6",
-      "file_sha256": "3d6d3ec8e7325a4c11b087da994b2159489fe30dc848c937bae00cc73b436441",
+      "contract_revision": "94bf00b744da5e541b5110138f2a01f902d2d03f",
+      "file_sha256": "d581f025f867e959dccce198544f594c82cc7d58a06917367aaf60d200e26132",
       "hash_mode": "canonical-json-v1",
       "kind": "smart-component",
       "owner": "simai/ui-smart",
       "path": "contracts/owners/smart-component.manifest.json",
-      "sha256": "da6d5d219a693cbc19b6818ae8961d2b945ebfcdaf245586b42eec96a4cf0ce8"
+      "sha256": "edb019918b525d4db04fb4cf50016176093a69ca70a988e85b25107d7ce56a1f"
     },
     {
       "hash_mode": "canonical-json-v1",
