@@ -18,6 +18,9 @@
     .xl\:table {
       display: table;
     }
+    .xl\:display-table {
+      display: table;
+    }
     .xl\:inline-table {
       display: inline-table;
     }

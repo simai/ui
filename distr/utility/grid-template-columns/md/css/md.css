@@ -39,5 +39,8 @@
     .md\:grid-col-none {
       grid-template-columns: none;
     }
+    .md\:grid-col-subgrid {
+      grid-template-columns: subgrid;
+    }
   }
 }

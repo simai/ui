@@ -18,6 +18,9 @@
     .sm\:table {
       display: table;
     }
+    .sm\:display-table {
+      display: table;
+    }
     .sm\:inline-table {
       display: inline-table;
     }

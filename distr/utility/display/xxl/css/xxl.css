@@ -18,6 +18,9 @@
     .xxl\:table {
       display: table;
     }
+    .xxl\:display-table {
+      display: table;
+    }
     .xxl\:inline-table {
       display: inline-table;
     }

@@ -5196,42 +5196,42 @@ SF.RuleLoader['display-print/default'] = /print-(block|inline-block|inline|flex|
 /***/ "d0a2a18caf0b"
 () {
 
-SF.RuleLoader['display/default'] = /(block|inline-block|inline|flex|inline-flex|table|inline-table|table-caption|table-cell|table-column|table-column-group|table-footer-group|table-header-group|table-row-group|table-row|flow-root|grid|inline-grid|content|list-item|hidden)/;
+SF.RuleLoader["display/default"] = new RegExp("^(?:(?:block|content|display-table|fl(?:ex|ow-root)|grid|hidden|inline(?:-(?:block|flex|grid|table))?|list-item|table(?:-(?:c(?:aption|ell|olumn(?:-group)?)|footer-group|header-group|row(?:-group)?))?))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "647450e9c5a4"
 () {
 
-SF.RuleLoader['display/lg'] = /lg\:(block|inline-block|inline|flex|inline-flex|table|inline-table|table-caption|table-cell|table-column|table-column-group|table-footer-group|table-header-group|table-row-group|table-row|flow-root|grid|inline-grid|content|list-item|hidden)/;
+SF.RuleLoader["display/lg"] = new RegExp("^(?:lg:(?:block|content|display-table|fl(?:ex|ow-root)|grid|hidden|inline(?:-(?:block|flex|grid|table))?|list-item|table(?:-(?:c(?:aption|ell|olumn(?:-group)?)|footer-group|header-group|row(?:-group)?))?))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "433a03cbe4d4"
 () {
 
-SF.RuleLoader['display/md'] = /md\:(block|inline-block|inline|flex|inline-flex|table|inline-table|table-caption|table-cell|table-column|table-column-group|table-footer-group|table-header-group|table-row-group|table-row|flow-root|grid|inline-grid|content|list-item|hidden)/;
+SF.RuleLoader["display/md"] = new RegExp("^(?:md:(?:block|content|display-table|fl(?:ex|ow-root)|grid|hidden|inline(?:-(?:block|flex|grid|table))?|list-item|table(?:-(?:c(?:aption|ell|olumn(?:-group)?)|footer-group|header-group|row(?:-group)?))?))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "892041b1bb2f"
 () {
 
-SF.RuleLoader['display/sm'] = /sm\:(block|inline-block|inline|flex|inline-flex|table|inline-table|table-caption|table-cell|table-column|table-column-group|table-footer-group|table-header-group|table-row-group|table-row|flow-root|grid|inline-grid|content|list-item|hidden)/;
+SF.RuleLoader["display/sm"] = new RegExp("^(?:sm:(?:block|content|display-table|fl(?:ex|ow-root)|grid|hidden|inline(?:-(?:block|flex|grid|table))?|list-item|table(?:-(?:c(?:aption|ell|olumn(?:-group)?)|footer-group|header-group|row(?:-group)?))?))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "be17b2dd3cfb"
 () {
 
-SF.RuleLoader['display/xl'] = /xl\:(block|inline-block|inline|flex|inline-flex|table|inline-table|table-caption|table-cell|table-column|table-column-group|table-footer-group|table-header-group|table-row-group|table-row|flow-root|grid|inline-grid|content|list-item|hidden)/;
+SF.RuleLoader["display/xl"] = new RegExp("^(?:xl:(?:block|content|display-table|fl(?:ex|ow-root)|grid|hidden|inline(?:-(?:block|flex|grid|table))?|list-item|table(?:-(?:c(?:aption|ell|olumn(?:-group)?)|footer-group|header-group|row(?:-group)?))?))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "002f6b27968f"
 () {
 
-SF.RuleLoader['display/xxl'] = /xxl\:(block|inline-block|inline|flex|inline-flex|table|inline-table|table-caption|table-cell|table-column|table-column-group|table-footer-group|table-header-group|table-row-group|table-row|flow-root|grid|inline-grid|content|list-item|hidden)/;
+SF.RuleLoader["display/xxl"] = new RegExp("^(?:xxl:(?:block|content|display-table|fl(?:ex|ow-root)|grid|hidden|inline(?:-(?:block|flex|grid|table))?|list-item|table(?:-(?:c(?:aption|ell|olumn(?:-group)?)|footer-group|header-group|row(?:-group)?))?))(?![\\s\\S])");
 
 /***/ },
 
@@ -5469,14 +5469,14 @@ SF.RuleLoader['filter-grayscale/hover'] = /hover\:(grayscale|grayscale-none)/;
 /***/ "62d48459e7a4"
 () {
 
-SF.RuleLoader['filter-hue-rotate/default'] = /hue-rotate-/;
+SF.RuleLoader["filter-hue-rotate/default"] = new RegExp("^(?:(?:-hue-rotate-(?:15|30|60|90)|hue-rotate-(?:0|1(?:5|80)|30|60|90)))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "3072c962f3de"
 () {
 
-SF.RuleLoader['filer-hue-rotate/hover'] = /hover\:hue-rotate-/;
+SF.RuleLoader["filter-hue-rotate/hover"] = new RegExp("^(?:hover:(?:-hue-rotate-(?:15|30|60|90)|hue-rotate-(?:0|1(?:5|80)|30|60|90)))(?![\\s\\S])");
 
 /***/ },
 

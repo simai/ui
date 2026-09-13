@@ -18,6 +18,9 @@
     .lg\:table {
       display: table;
     }
+    .lg\:display-table {
+      display: table;
+    }
     .lg\:inline-table {
       display: inline-table;
     }

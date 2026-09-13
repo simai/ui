@@ -90,6 +90,15 @@
     .sm\:w-screen {
       width: 100vw;
     }
+    .sm\:w-screen-small {
+      width: var(--sf-viewport-width-small);
+    }
+    .sm\:w-screen-large {
+      width: var(--sf-viewport-width-large);
+    }
+    .sm\:w-screen-dynamic {
+      width: var(--sf-viewport-width-dynamic);
+    }
     .sm\:w-min {
       width: -webkit-min-content;
       width: -moz-min-content;

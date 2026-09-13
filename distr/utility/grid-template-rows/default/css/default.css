@@ -20,4 +20,7 @@
   .grid-row-none {
     grid-template-rows: none;
   }
+  .grid-row-subgrid {
+    grid-template-rows: subgrid;
+  }
 }

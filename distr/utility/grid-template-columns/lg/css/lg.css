@@ -39,5 +39,8 @@
     .lg\:grid-col-none {
       grid-template-columns: none;
     }
+    .lg\:grid-col-subgrid {
+      grid-template-columns: subgrid;
+    }
   }
 }

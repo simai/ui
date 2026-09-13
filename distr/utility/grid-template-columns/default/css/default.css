@@ -38,4 +38,7 @@
   .grid-col-none {
     grid-template-columns: none;
   }
+  .grid-col-subgrid {
+    grid-template-columns: subgrid;
+  }
 }

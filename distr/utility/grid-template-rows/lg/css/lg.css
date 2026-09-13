@@ -21,5 +21,8 @@
     .lg\:grid-row-none {
       grid-template-rows: none;
     }
+    .lg\:grid-row-subgrid {
+      grid-template-rows: subgrid;
+    }
   }
 }

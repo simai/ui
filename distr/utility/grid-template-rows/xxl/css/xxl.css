@@ -21,5 +21,8 @@
     .xxl\:grid-row-none {
       grid-template-rows: none;
     }
+    .xxl\:grid-row-subgrid {
+      grid-template-rows: subgrid;
+    }
   }
 }

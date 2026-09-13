@@ -17,6 +17,9 @@
   .table {
     display: table;
   }
+  .display-table {
+    display: table;
+  }
   .inline-table {
     display: inline-table;
   }

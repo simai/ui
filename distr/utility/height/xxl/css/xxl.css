@@ -54,6 +54,15 @@
     .xxl\:h-screen {
       height: 100vh;
     }
+    .xxl\:h-screen-small {
+      height: var(--sf-viewport-height-small);
+    }
+    .xxl\:h-screen-large {
+      height: var(--sf-viewport-height-large);
+    }
+    .xxl\:h-screen-dynamic {
+      height: var(--sf-viewport-height-dynamic);
+    }
     .xxl\:h-screen-1\/2 {
       height: 50vh;
     }
@@ -71,6 +80,16 @@
     }
     .xxl\:h-screen-3\/4 {
       height: 75vh;
+    }
+    .xxl\:h-min {
+      height: -webkit-min-content;
+      height: -moz-min-content;
+      height: min-content;
+    }
+    .xxl\:h-max {
+      height: -webkit-max-content;
+      height: -moz-max-content;
+      height: max-content;
     }
     .xxl\:h-content-min {
       height: -webkit-min-content;

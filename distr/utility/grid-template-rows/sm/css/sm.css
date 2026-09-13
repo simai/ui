@@ -21,5 +21,8 @@
     .sm\:grid-row-none {
       grid-template-rows: none;
     }
+    .sm\:grid-row-subgrid {
+      grid-template-rows: subgrid;
+    }
   }
 }

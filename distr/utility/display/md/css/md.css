@@ -18,6 +18,9 @@
     .md\:table {
       display: table;
     }
+    .md\:display-table {
+      display: table;
+    }
     .md\:inline-table {
       display: inline-table;
     }

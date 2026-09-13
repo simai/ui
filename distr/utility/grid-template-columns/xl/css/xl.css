@@ -39,5 +39,8 @@
     .xl\:grid-col-none {
       grid-template-columns: none;
     }
+    .xl\:grid-col-subgrid {
+      grid-template-columns: subgrid;
+    }
   }
 }

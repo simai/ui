@@ -54,6 +54,15 @@
     .xl\:h-screen {
       height: 100vh;
     }
+    .xl\:h-screen-small {
+      height: var(--sf-viewport-height-small);
+    }
+    .xl\:h-screen-large {
+      height: var(--sf-viewport-height-large);
+    }
+    .xl\:h-screen-dynamic {
+      height: var(--sf-viewport-height-dynamic);
+    }
     .xl\:h-screen-1\/2 {
       height: 50vh;
     }
@@ -71,6 +80,16 @@
     }
     .xl\:h-screen-3\/4 {
       height: 75vh;
+    }
+    .xl\:h-min {
+      height: -webkit-min-content;
+      height: -moz-min-content;
+      height: min-content;
+    }
+    .xl\:h-max {
+      height: -webkit-max-content;
+      height: -moz-max-content;
+      height: max-content;
     }
     .xl\:h-content-min {
       height: -webkit-min-content;

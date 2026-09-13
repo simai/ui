@@ -21,5 +21,8 @@
     .xl\:grid-row-none {
       grid-template-rows: none;
     }
+    .xl\:grid-row-subgrid {
+      grid-template-rows: subgrid;
+    }
   }
 }

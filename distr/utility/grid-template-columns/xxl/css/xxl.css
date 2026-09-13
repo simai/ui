@@ -39,5 +39,8 @@
     .xxl\:grid-col-none {
       grid-template-columns: none;
     }
+    .xxl\:grid-col-subgrid {
+      grid-template-columns: subgrid;
+    }
   }
 }
