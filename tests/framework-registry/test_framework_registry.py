@@ -20,8 +20,8 @@ if not SMART_MANIFEST_INPUT:
 SMART_MANIFEST = Path(SMART_MANIFEST_INPUT).resolve()
 GENERATED = ROOT / "contracts/generated/framework-contract-registry.json"
 DOCUMENTATION_SOURCE = ROOT / "contracts/generated/documentation-source.json"
-LOCK = ROOT / "contracts/releases/ui-bdfcd116f445-smart-3f86eabc5152.lock.json"
-SMART_REFERENCE = ROOT / "contracts/registry-inputs/ui-smart-3f86eabc5152.ref.json"
+LOCK = ROOT / "contracts/releases/ui-f25621cdd373-smart-839ca74ae47e.lock.json"
+SMART_REFERENCE = ROOT / "contracts/registry-inputs/ui-smart-839ca74ae47e.ref.json"
 
 
 def load_builder():
@@ -78,16 +78,16 @@ class FrameworkContractRegistryTest(unittest.TestCase):
         self.assertEqual(
             self.registry["counts"],
             {
-                "utility": 226,
+                "utility": 228,
                 "component": 63,
                 "smart-component": 43,
                 "recipe": 1,
-                "total": 333,
+                "total": 335,
             },
         )
         self.assertEqual(
             self.registry["compatibility"]["id"],
-            "ui-bdfcd116f445-smart-3f86eabc5152",
+            "ui-f25621cdd373-smart-839ca74ae47e",
         )
         self.assertEqual(self.registry["compatibility"]["status"], "bounded")
         self.assertEqual(self.registry["compatibility"]["profile"], "plain-assets-v1")
@@ -182,16 +182,9 @@ class FrameworkContractRegistryTest(unittest.TestCase):
             self.registry["indexes"]["recipe_closure"]["recipe.admin.collection"]
         )
         self.assertEqual(safe, closure | {"recipe.admin.collection"})
-        self.assertEqual(
-            self.registry["indexes"]["blocked"],
-            ["utility.filer-hue-rotate"],
-        )
-        typo_gap = self.by_id["utility.filer-hue-rotate"]
-        self.assertEqual(typo_gap["readiness"]["status"], "blocked")
-        self.assertEqual(
-            typo_gap["readiness"]["blockers"],
-            ["runtime_directory_missing:distr/utility/filer-hue-rotate"],
-        )
+        self.assertEqual(self.registry["indexes"]["blocked"], [])
+        self.assertNotIn("utility.filer-hue-rotate", self.by_id)
+        self.assertIn("utility.filter-hue-rotate", self.by_id)
         for entry in self.registry["entries"]:
             if entry["id"] not in safe and entry["readiness"]["status"] != "blocked":
                 self.assertEqual(entry["readiness"]["status"], "discoverable")
@@ -365,12 +358,12 @@ class FrameworkContractRegistryTest(unittest.TestCase):
         )
         self.assertEqual(
             reference["contract_revision"],
-            "b07ee0178a1dbc6cb9b1fd49d106f2c12d3ec778",
+            "2a02ece381a9c86956d7783bca581ee89b424961",
         )
         self.assertEqual(reference["status"], "committed")
         self.assertEqual(
             reference["manifest"]["file_sha256"],
-            "4ff2444f130e52e9565ea9db855488dcce4ba23ed7e698ae668951d5c2b1205e",
+            "03250a38e804eabc950053c4e0023e13bd0a5fe19924f206eb2955327809550b",
         )
         smart_source = next(
             item

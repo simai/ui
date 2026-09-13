@@ -25,6 +25,10 @@ SF_TAG = re.compile(r"<\s*(sf-[a-z][a-z0-9-]*)\b", re.IGNORECASE)
 EXPLICIT_REQUIRE = re.compile(
     r"\bdata-sf-require\s*=\s*(?:\"([^\"]*)\"|'([^']*)')", re.IGNORECASE
 )
+CLASS_ATTRIBUTE = re.compile(
+    r"\bclass\s*=\s*(?:\"([^\"]*)\"|'([^']*)'|([^\s\"'=<>`]+))",
+    re.IGNORECASE,
+)
 MAX_TEXT_ASSET_BYTES = 4 * 1024 * 1024
 
 
@@ -89,8 +93,17 @@ def scannable_html(html: str) -> str:
     )
 
 
+def class_tokens(html: str) -> set[str]:
+    tokens: set[str] = set()
+    for match in CLASS_ATTRIBUTE.finditer(html):
+        value = next((group for group in match.groups() if group is not None), "")
+        tokens.update(token for token in re.split(r"\s+", value.strip()) if token)
+    return tokens
+
+
 def selected_rule_names(html: str, rules: list[dict[str, Any]]) -> set[str]:
     scan_html = scannable_html(html)
+    tokens = class_tokens(scan_html)
     tags = {match.lower() for match in SF_TAG.findall(scan_html)}
     selected: set[str] = set()
     by_name = {rule["name"]: rule for rule in rules}
@@ -103,8 +116,14 @@ def selected_rule_names(html: str, rules: list[dict[str, Any]]) -> set[str]:
                 raise AssetPlanError(f"rule_tag_conflict:{tag}")
             by_tag[tag] = rule["name"]
         matcher = compile_loader_regex(rule.get("regex"), rule["name"])
-        if matcher is not None and matcher.search(scan_html):
-            selected.add(rule["name"])
+        if matcher is not None:
+            kind = rule.get("type", "utility")
+            token_match = kind == "utility" and any(matcher.search(token) for token in tokens)
+            # Older registries used expressions against the complete HTML
+            # fragment. Keep that compatibility path while exact utility
+            # rules use the same class-token semantics as the browser Loader.
+            if token_match or matcher.search(scan_html):
+                selected.add(rule["name"])
     for tag in tags:
         if tag in by_tag:
             selected.add(by_tag[tag])
