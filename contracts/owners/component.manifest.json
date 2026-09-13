@@ -9,13 +9,13 @@
   },
   "release": {
     "tag": null,
-    "commit": "3ef00f4a42d69ed034886cbd3363adfba1fdd4c3",
-    "tree": "04b80ce8a2e90b879945cb3e07cd5e62721e14ac",
-    "runtime_subtree": "497aa8c1df9a7c71cd713e524cce19695f682caf",
-    "archive_sha256": "96677c8d76024b5d2671e78627a40f67242e3060b81878fe320d1efc5e2a7d23"
+    "commit": "803b6e27c4554cb7d3b4dec185e4935d10659e44",
+    "tree": "ea237c3481f90bf777cce96d611a75b97c403a2a",
+    "runtime_subtree": "b9e017dc146b9296cc0b7ea5d0cf7cd032530d1e",
+    "archive_sha256": "a87d3cbc4b4db1c9bf51bca9d29350024b659d918466a40b4b0286de4030f48e"
   },
   "inventory": {
-    "source": "simai/ui@3ef00f4a42d69ed034886cbd3363adfba1fdd4c3:distr/rule/rule.json",
+    "source": "simai/ui@803b6e27c4554cb7d3b4dec185e4935d10659e44:distr/rule/rule.json",
     "selector": {
       "mode": "rule-type",
       "type": "component"
