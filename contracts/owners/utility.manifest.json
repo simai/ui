@@ -9,13 +9,13 @@
   },
   "release": {
     "tag": null,
-    "commit": "d813107a11873cf76fcd3bcddc2fa32df0cb1611",
-    "tree": "9abe2b3c7543ba7e371f6f08e6ab5c7297905c22",
-    "runtime_subtree": "c4dc8929a4c06214614fd570ff3a70fcb3708127",
-    "archive_sha256": "793e351d0270b2265eece567c8eae67b3bc6244788862a20aa68c320a7929b9b"
+    "commit": "7474e19cb34ce1189a0daaaeef8bfc002365825a",
+    "tree": "cdddfc127b0d3b3c53a65c05b4e1b85ebc2ad923",
+    "runtime_subtree": "7b8ca848ebb4ebfe5ba3e883f952bc1d91cf93fd",
+    "archive_sha256": "3aaab231dcfb8825a87012658386287ab50e48c4898c89842e0287f42ff14362"
   },
   "inventory": {
-    "source": "simai/ui@d813107a11873cf76fcd3bcddc2fa32df0cb1611:distr/rule/rule.json",
+    "source": "simai/ui@7474e19cb34ce1189a0daaaeef8bfc002365825a:distr/rule/rule.json",
     "selector": {
       "mode": "utility-family",
       "rules_without_type": true
