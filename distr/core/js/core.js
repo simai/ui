@@ -265,7 +265,7 @@ __webpack_require__.r(__webpack_exports__);
   await __webpack_require__.e(/* import() | core-rules */ 80841737880868).then(__webpack_require__.bind(__webpack_require__, "a216dbc16e89"));
   await __webpack_require__.e(/* import() | core-system */ 88616323197113).then(__webpack_require__.bind(__webpack_require__, "d55d5a9f332f"));
   await __webpack_require__.e(/* import() | core-system */ 88616323197113).then(__webpack_require__.bind(__webpack_require__, "fedbedd6b87f"));
-  await Promise.all(/* import() | core-loader */[__webpack_require__.e(159183670458118), __webpack_require__.e(66700837013363)]).then(__webpack_require__.bind(__webpack_require__, "eb03d104e275"));
+  await __webpack_require__.e(/* import() | core-loader */ 66700837013363).then(__webpack_require__.bind(__webpack_require__, "eb03d104e275"));
 })();
 
 /***/ },
@@ -276,21 +276,13 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   applyPattern: () => (/* binding */ applyPattern),
+/* harmony export */   createNativeMask: () => (/* binding */ createNativeMask),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-let imaskPromise = null;
-
 function getGlobalRoot() {
   if (!window.SF) window.SF = {};
   return window.SF;
-}
-
-function loadImask() {
-  if (!imaskPromise) {
-    imaskPromise = __webpack_require__.e(/* import() | core-mask-imask */ 217918638851825).then(__webpack_require__.bind(__webpack_require__, "e9c7c7f40684")).then(mod => mod?.default || mod);
-  }
-
-  return imaskPromise;
 }
 
 function resolveElement(target) {
@@ -300,31 +292,129 @@ function resolveElement(target) {
   return null;
 }
 
+function digits(value) {
+  return String(value ?? '').replace(/\D+/g, '');
+}
+
+function applyPattern(value, pattern) {
+  if (typeof pattern !== 'string' || pattern === '') return String(value ?? '');
+  const source = digits(value);
+  let cursor = 0;
+  let result = '';
+
+  for (const character of pattern) {
+    if (character === '0') {
+      if (cursor >= source.length) break;
+      result += source[cursor++];
+    } else if (cursor > 0 || source.length > 0) {
+      result += character;
+    }
+  }
+
+  return result;
+}
+
+function parseNumber(value, options = {}) {
+  let candidate = String(value ?? '');
+  if (options.thousandsSeparator) candidate = candidate.replaceAll(options.thousandsSeparator, '');
+  if (options.radix && options.radix !== '.') candidate = candidate.replace(options.radix, '.');
+  const number = Number(candidate);
+  return Number.isFinite(number) ? number : null;
+}
+
+function format(value, options = {}) {
+  if (options.mask === Number) {
+    if (value === '' || value === null || value === undefined) return '';
+    const number = parseNumber(value, options);
+    if (number === null) return '';
+    const minimum = Number.isFinite(options.min) ? options.min : number;
+    const maximum = Number.isFinite(options.max) ? options.max : number;
+    const normalized = Math.min(maximum, Math.max(minimum, number));
+    const precision = Math.max(0, Number(options.scale) || 0);
+    const output = options.padFractionalZeros ? normalized.toFixed(precision) : String(Number(normalized.toFixed(precision)));
+    return output.replace('.', options.radix || '.');
+  }
+
+  if (typeof options.mask === 'function') return String(options.mask(value));
+
+  if (options.mask instanceof RegExp) {
+    const candidate = String(value ?? '');
+    return options.mask.test(candidate) ? candidate : candidate.slice(0, -1);
+  }
+
+  return applyPattern(value, options.mask);
+}
+
+function createNativeMask(element, options) {
+  const state = {
+    destroyed: false
+  };
+
+  const sync = () => {
+    if (state.destroyed) return;
+    const next = format(element.value, options);
+    if (next !== element.value) element.value = next;
+  };
+
+  element.addEventListener('input', sync);
+  sync();
+  return {
+    get value() {
+      return element.value;
+    },
+
+    set value(value) {
+      element.value = format(value, options);
+    },
+
+    get unmaskedValue() {
+      return digits(element.value);
+    },
+
+    get typedValue() {
+      if (options.mask !== Number || element.value.trim() === '') return null;
+      return parseNumber(element.value, options);
+    },
+
+    set typedValue(value) {
+      element.value = format(value, options);
+    },
+
+    updateValue: sync,
+
+    destroy() {
+      if (state.destroyed) return;
+      state.destroyed = true;
+      element.removeEventListener('input', sync);
+    }
+
+  };
+}
+
 const Mask = {
   async load() {
-    return loadImask();
+    return createNativeMask;
   },
 
   async create(target, options) {
     const element = resolveElement(target);
     if (!element || !options) return null;
-    const IMask = await loadImask();
-    return IMask(element, options);
+    return createNativeMask(element, options);
   },
 
-  async pipe(value, masked, from, to) {
-    const IMask = await loadImask();
-    return IMask.pipe(value, masked, from, to);
+  async pipe(value, masked) {
+    return format(value, typeof masked === 'object' ? masked : {
+      mask: masked
+    });
   },
 
   destroy(instance) {
-    if (instance && typeof instance.destroy === 'function') {
-      instance.destroy();
-    }
+    instance?.destroy?.();
   }
 
 };
 getGlobalRoot().Mask = Mask;
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Mask);
 
 /***/ },
@@ -546,7 +636,7 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 			e.code = 'MODULE_NOT_FOUND';
 /******/ 			throw e;
 /******/ 		}
-/******/ 		__webpack_modules__[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
 /******/
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
@@ -613,7 +703,7 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.u = (chunkId) => {
 /******/ 			// return url for filenames based on template
-/******/ 			return "js/" + ({"80841737880868":"core-rules","88616323197113":"core-system","66700837013363":"core-loader","217918638851825":"core-mask-imask","51805064141692":"smart-base"}[chunkId] || chunkId) + ".js";
+/******/ 			return "js/" + ({"80841737880868":"core-rules","88616323197113":"core-system","66700837013363":"core-loader","51805064141692":"smart-base"}[chunkId] || chunkId) + ".js";
 /******/ 		};
 /******/ 	})();
 /******/

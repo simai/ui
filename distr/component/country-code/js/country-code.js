@@ -168,9 +168,7 @@ function normalizeIso2(value) {
 }
 
 function resolveDefaultFlagBase() {
-  const base = String(window.sfPath || '').replace(/\/$/, '');
-  if (!base) return '';
-  return `${base}/component/country-code/flags/svg`;
+  return '';
 }
 
 function getFlagSrc(iso2, flagBase) {
