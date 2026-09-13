@@ -11,10 +11,10 @@
         "required": false
       },
       "source": {
-        "archive_sha256": "358b4f9ef5c1ee13d801c903f0596c53aa4e9e5d05aaaf85740ad842fa7a0a18",
-        "commit": "81446e4be32fd66bdf07132e9f3c7993cdf07f58",
+        "archive_sha256": "5849a3b33d67f60d0d1f9f6d055346eda3b3de3968276e139399c34748e8a210",
+        "commit": "8496d6203983a976043ded3bcc60a0f737df69b1",
         "owner": "simai/ui-source",
-        "tree": "f7d52659b4c4ba433d0a713914965b3e88121d90"
+        "tree": "706069d650abfcd62a198575ebf744257cdfad7d"
       }
     },
     "claims": {
