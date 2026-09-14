@@ -276,10 +276,6 @@
     "regex": "/^(?:(?:active:bg-(?:current|disable|error(?:-(?:container|transparent-(?:overlay|select)))?|on-surface(?:-variant)?|primary(?:-(?:container|transparent-(?:overlay|select)))?|s(?:econdary(?:-(?:container|transparent-(?:overlay|select)))?|u(?:ccess(?:-(?:container|transparent-(?:overlay|select)))?|rface(?:-(?:0|1|2|3|4|container|inverse(?:-fixed)?|transparent-(?:overlay|select)))?))|t(?:ertiary(?:-(?:container|transparent-(?:overlay|select)))?|ransparent)|warning(?:-(?:container|transparent-(?:overlay|select)))?)|bg-(?:bl(?:ack|ue(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|current|disable|error(?:-(?:container|transparent-(?:overlay|select)))?|gr(?:ay(?:-(?:0|1|2|3|4|5|6|7|8|9))?|een(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|o(?:n-surface(?:-variant)?|range(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|p(?:ink(?:-(?:0|1|2|3|4|5|6|7|8|9))?|rimary(?:-(?:container|transparent-(?:overlay|select)))?|urple(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|red(?:-(?:0|1|2|3|4|5|6|7|8|9))?|s(?:econdary(?:-(?:container|transparent-(?:overlay|select)))?|u(?:ccess(?:-(?:container|transparent-(?:overlay|select)))?|rface(?:-(?:0|1|2|3|4|container|inverse(?:-fixed)?|transparent-(?:overlay|select)))?))|t(?:ertiary(?:-(?:container|transparent-(?:overlay|select)))?|ransparent)|w(?:arning(?:-(?:container|transparent-(?:overlay|select)))?|hite)|yellow(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|hover:bg-(?:current|disable|error(?:-(?:container|transparent-(?:overlay|select)))?|on-surface(?:-variant)?|primary(?:-(?:container|transparent-(?:overlay|select)))?|s(?:econdary(?:-(?:container|transparent-(?:overlay|select)))?|u(?:ccess(?:-(?:container|transparent-(?:overlay|select)))?|rface(?:-(?:0|1|2|3|4|container|inverse(?:-fixed)?|transparent-(?:overlay|select)))?))|t(?:ertiary(?:-(?:container|transparent-(?:overlay|select)))?|ransparent)|warning(?:-(?:container|transparent-(?:overlay|select)))?)))(?![\\s\\S])/"
   },
   {
-    "name": "background-fake/default",
-    "regex": "/^(?:bg-fake)(?![\\s\\S])/"
-  },
-  {
     "name": "background-gradient/default",
     "regex": "/^(?:bg-(?:gradient-to-(?:b(?:(?:l|r))?|l|r|t(?:(?:l|r))?)|none))(?![\\s\\S])/"
   },
