@@ -20,7 +20,7 @@ if not SMART_MANIFEST_INPUT:
 SMART_MANIFEST = Path(SMART_MANIFEST_INPUT).resolve()
 GENERATED = ROOT / "contracts/generated/framework-contract-registry.json"
 DOCUMENTATION_SOURCE = ROOT / "contracts/generated/documentation-source.json"
-LOCK = ROOT / "contracts/releases/ui-1e886550a147-smart-77feccf8867a.lock.json"
+LOCK = ROOT / "contracts/releases/ui-aa74f029c1b4-smart-77feccf8867a.lock.json"
 SMART_REFERENCE = ROOT / "contracts/registry-inputs/ui-smart-ee516ca2eb83.ref.json"
 
 
@@ -78,16 +78,16 @@ class FrameworkContractRegistryTest(unittest.TestCase):
         self.assertEqual(
             self.registry["counts"],
             {
-                "utility": 228,
+                "utility": 227,
                 "component": 61,
                 "smart-component": 44,
                 "recipe": 1,
-                "total": 334,
+                "total": 333,
             },
         )
         self.assertEqual(
             self.registry["compatibility"]["id"],
-            "ui-1e886550a147-smart-77feccf8867a",
+            "ui-aa74f029c1b4-smart-77feccf8867a",
         )
         self.assertEqual(self.registry["compatibility"]["status"], "bounded")
         self.assertEqual(self.registry["compatibility"]["profile"], "plain-assets-v1")
