@@ -1,12 +1,12 @@
 {
   "schema": "simai.composition.recipe-contract-lock.v1",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "architecture": "accepted",
   "implementation": "candidate",
   "sourceBaseRevision": "f78cf8399c89d8091c2784d41f493cdb26620151",
-  "contractDigest": "sha256:894de36b030bebdcc539c3616f29f0ca97d20f5aed07b9cd07d0d5448eda1cc2",
+  "contractDigest": "sha256:63daf55cb7d7c39d55f59a5ba3f5d7e511ace3f16d344879cbc877782ff3dcfd",
   "normativeFiles": {
-    "README.md": "sha256:59fea23453bfeb485c46c10b6143defca68f5e9bd07ea694abbf5c9bfca7f3b5",
+    "README.md": "sha256:148b5fa148644cf4f814c511db664c40efc858226a2d8cbd7bf501c4e5ee7e0d",
     "common.schema.json": "sha256:09945cc8485e7b1a5f8ee8add6938da720ffc6c434c6e86c13fe6f98a95b2fe4",
     "dependencies.schema.json": "sha256:a2f3f371ace795f22bf4fb293e0005dcecbbc6c340cb669ba8e274c6e0b745e8",
     "fixtures/canonicalization.json": "sha256:ab6e3aef30bbceef84bdd1314b301d20fe1196b32d6d83f59feb32e376b44239",
