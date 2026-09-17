@@ -1,5 +1,6 @@
-import { BUILTIN_TYPE_MANIFESTS } from './builtins.mjs';
+import { BUILTIN_EDITOR_MANIFESTS, BUILTIN_TYPE_MANIFESTS } from './builtins.mjs';
 import { canonical, isPlainObject, stableStringify } from './canonical.mjs';
+import { projectDocumentEditorFields, projectEditorFields, validateEditorManifest } from './editor.mjs';
 import { Recipe, parseRecipeJson, recipeDigest, recipeNodeId, resolveRecipe } from './recipe.mjs';
 
 const DOCUMENT_SCHEMA = 'simai.composition.document.v1';
@@ -329,7 +330,10 @@ function renderInline(content) {
 const BUILTIN_RENDERERS = {
   'layout.page': ({ node, slots }) => `<main data-sf-composition-id="${escapeHtml(node.id)}">${slots.default || ''}</main>`,
   'layout.section': ({ node, slots }) => `<section data-sf-composition-id="${escapeHtml(node.id)}">${slots.default || ''}</section>`,
-  'layout.columns': ({ node, slots }) => `<div class="sf-composition-columns" data-sf-composition-id="${escapeHtml(node.id)}">${(slots.columnsList || []).map((child) => `<div class="sf-composition-column">${child}</div>`).join('')}</div>`,
+  'layout.columns': ({ node, slots }) => {
+    const columns = Number.isInteger(node.props?.columns) ? ` data-composition-columns="${node.props.columns}"` : '';
+    return `<div class="sf-composition-columns" data-sf-composition-id="${escapeHtml(node.id)}"${columns}>${(slots.columnsList || []).map((child) => `<div class="sf-composition-column">${child}</div>`).join('')}</div>`;
+  },
   'content.heading': ({ node }) => `<h${node.data.level || 2} data-sf-composition-id="${escapeHtml(node.id)}">${renderInline(node.data.content)}</h${node.data.level || 2}>`,
   'content.paragraph': ({ node }) => `<p data-sf-composition-id="${escapeHtml(node.id)}">${renderInline(node.data.content)}</p>`,
 };
@@ -372,15 +376,19 @@ export async function render(document, context = {}) {
 }
 
 export const Composition = Object.freeze({
+  BUILTIN_EDITOR_MANIFESTS,
   Recipe,
   createRegistry,
   compositionTypeFromSmartManifest,
   normalize,
+  projectDocumentEditorFields,
+  projectEditorFields,
   render,
   resolveRecipe,
   parseRecipeJson,
   stableStringify,
   validate,
+  validateEditorManifest,
 });
 
 if (typeof globalThis !== 'undefined') {
@@ -391,4 +399,5 @@ if (typeof globalThis !== 'undefined') {
 export default Composition;
 
 export { Recipe, parseRecipeJson, recipeDigest, recipeNodeId, resolveRecipe };
+export { BUILTIN_EDITOR_MANIFESTS, projectDocumentEditorFields, projectEditorFields, validateEditorManifest };
 export { stableStringify };

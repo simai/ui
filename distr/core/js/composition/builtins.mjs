@@ -160,4 +160,52 @@ export const BUILTIN_TYPE_MANIFESTS = Object.freeze([
   },
 ]);
 
+export const BUILTIN_EDITOR_MANIFESTS = Object.freeze([
+  {
+    schema: 'simai.composition.editor-manifest.v1',
+    type: 'layout.section',
+    type_version: '1.0.0',
+    fields: [
+      {
+        key: 'surface',
+        plane: 'presentation',
+        target: 'preset',
+        property: { type: 'string', version: 2 },
+        constraints: { min_length: 1, max_length: 32 },
+        group: 'preset',
+        visibility: 'visible',
+        choices: ['surface', 'contrast'],
+        default: 'surface',
+        label_key: 'sf.composition.layout_section.surface',
+        help_key: 'sf.composition.layout_section.surface_help',
+        capability_hints: ['composition.presentation.preset'],
+        permission_hints: ['composition.node.update'],
+        owner: 'simai/framework',
+      },
+    ],
+  },
+  {
+    schema: 'simai.composition.editor-manifest.v1',
+    type: 'layout.columns',
+    type_version: '1.0.0',
+    fields: [
+      {
+        key: 'columns',
+        plane: 'props',
+        target: 'columns',
+        property: { type: 'integer', version: 1 },
+        constraints: { min: 1, max: 12 },
+        group: 'basic',
+        visibility: 'visible',
+        default: 2,
+        label_key: 'sf.composition.layout_columns.columns',
+        help_key: 'sf.composition.layout_columns.columns_help',
+        capability_hints: ['composition.props.columns'],
+        permission_hints: ['composition.node.update'],
+        owner: 'simai/framework',
+      },
+    ],
+  },
+]);
+
 export default BUILTIN_TYPE_MANIFESTS;
