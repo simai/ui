@@ -13,7 +13,7 @@
       "tree": "72b8a7d7d4ab2d7360de87df828032097ae16133",
       "runtime_path": "distr",
       "runtime_tree": "612f93145543b1ee7c4a3e885fad83140e2242fd",
-      "archive_sha256": "3b475c3737649075e3b8e0b2476d1fc98ede3d124bf7b03cd5dc919bbd440656"
+      "archive_sha256": "124d06a0eb1f0ce11da932437e0f9b790d403cf4adbd201916f814d76c4a7db1"
     },
     "ui-smart": {
       "owner": "simai/ui-smart",
@@ -23,7 +23,7 @@
       "tree": "c2ae60d038fe6f08c4fcef5873e3e0331d7b778d",
       "runtime_path": "smart",
       "runtime_tree": "3025c714b12d36c8eea58f68f37ab33f7eb92239",
-      "archive_sha256": "8a31d636246001d6c73f834147b90cadd6428a7e9ad06ba7862b983a96ff83d2"
+      "archive_sha256": "6b31fef92db9f6b11f26824b70f07a11f0e60c2147158d9d3735d189d6eeed97"
     }
   },
   "build_inputs": {

@@ -12,7 +12,7 @@
     "commit": "107833f38f4732794c64ce5fbb72f1e23537dbf5",
     "tree": "72b8a7d7d4ab2d7360de87df828032097ae16133",
     "runtime_subtree": "612f93145543b1ee7c4a3e885fad83140e2242fd",
-    "archive_sha256": "3b475c3737649075e3b8e0b2476d1fc98ede3d124bf7b03cd5dc919bbd440656"
+    "archive_sha256": "124d06a0eb1f0ce11da932437e0f9b790d403cf4adbd201916f814d76c4a7db1"
   },
   "inventory": {
     "source": "simai/ui@107833f38f4732794c64ce5fbb72f1e23537dbf5:distr/rule/rule.json",
