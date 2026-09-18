@@ -67,6 +67,38 @@
       "schema": "simai.composition.editor-manifest.v1",
       "type": "layout.columns",
       "type_version": "1.0.0"
+    },
+    {
+      "fields": [
+        {
+          "capability_hints": [
+            "composition.data.level"
+          ],
+          "constraints": {
+            "max": 6,
+            "min": 1
+          },
+          "default": 2,
+          "group": "advanced",
+          "help_key": "sf.composition.content_heading.level_help",
+          "key": "level",
+          "label_key": "sf.composition.content_heading.level",
+          "owner": "simai/framework",
+          "permission_hints": [
+            "composition.node.update"
+          ],
+          "plane": "data",
+          "property": {
+            "type": "integer",
+            "version": 1
+          },
+          "target": "level",
+          "visibility": "collapsed"
+        }
+      ],
+      "schema": "simai.composition.editor-manifest.v1",
+      "type": "content.heading",
+      "type_version": "1.0.0"
     }
   ],
   "schema": "simai.composition.editor-manifest-registry.v1"

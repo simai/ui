@@ -830,6 +830,28 @@ const BUILTIN_EDITOR_MANIFESTS = Object.freeze([
       },
     ],
   },
+  {
+    schema: 'simai.composition.editor-manifest.v1',
+    type: 'content.heading',
+    type_version: '1.0.0',
+    fields: [
+      {
+        key: 'level',
+        plane: 'data',
+        target: 'level',
+        property: { type: 'integer', version: 1 },
+        constraints: { min: 1, max: 6 },
+        group: 'advanced',
+        visibility: 'collapsed',
+        default: 2,
+        label_key: 'sf.composition.content_heading.level',
+        help_key: 'sf.composition.content_heading.level_help',
+        capability_hints: ['composition.data.level'],
+        permission_hints: ['composition.node.update'],
+        owner: 'simai/framework',
+      },
+    ],
+  },
 ]);
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (BUILTIN_TYPE_MANIFESTS);
