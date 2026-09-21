@@ -618,8 +618,8 @@ def build_registry(
     utility_path = utility_manifest_path or ui_root / "contracts/owners/utility.manifest.json"
     component_path = component_manifest_path or ui_root / "contracts/owners/component.manifest.json"
     recipe_path = recipe_manifest_path or ui_root / "contracts/owners/recipe.manifest.json"
-    lock_path = release_lock_path or ui_root / "contracts/releases/ui-2b9aa9635ad0-smart-db547bb87b6b.lock.json"
-    reference_path = smart_reference_path or ui_root / "contracts/registry-inputs/ui-smart-c8b777ba9e81.ref.json"
+    lock_path = release_lock_path or ui_root / "contracts/releases/ui-eb212efe40cd-smart-9e8d8e762e03.lock.json"
+    reference_path = smart_reference_path or ui_root / "contracts/registry-inputs/ui-smart-055306f72f54.ref.json"
     manifests = {
         "utility": load_json(utility_path),
         "component": load_json(component_path),
