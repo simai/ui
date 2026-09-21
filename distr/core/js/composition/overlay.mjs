@@ -192,11 +192,21 @@ export function defineCompositionOverlay(registry = globalThis.customElements) {
 
     /** Supplies the Document structure and a describe(node) → {label, badges}. */
     setDocument(document, { describe } = {}) {
+      const previous = this.selectedId ? this.byId.get(this.selectedId) : null;
+      const active = globalThis.document.activeElement;
+      const focused = Boolean(active) && (this.toolbar?.contains(active) || this.insertionLayer?.contains(active));
       this.nodes = overlayNodes(document);
       this.byId = new Map(this.nodes.map((node) => [node.id, node]));
       if (typeof describe === 'function') this.describe = describe;
-      if (this.selectedId && !this.byId.has(this.selectedId)) this.selectedId = null;
       this.renderTree();
+      // A selected node the host removed is deselected (and announced), so its
+      // toolbar and insertion places do not stay on screen. When keyboard focus
+      // was on a disappearing button, the parent (or first node) is selected and
+      // focus moves to the tree instead of dropping onto the page body.
+      if (this.selectedId !== null && !this.byId.has(this.selectedId)) {
+        const fallback = previous?.parent && this.byId.has(previous.parent) ? previous.parent : this.nodes[0]?.id ?? null;
+        this.select(focused ? fallback : null, { focus: focused });
+      }
       this.schedule();
       return this;
     }
@@ -597,6 +607,10 @@ export function defineCompositionOverlay(registry = globalThis.customElements) {
       if (!this.canvas) return;
       this.place(this.hoverFrame, this.hoverId && this.hoverId !== this.selectedId ? this.hoverId : null);
       const box = this.place(this.selectedFrame, this.selectedId);
+      // No toolbar without a drawn selection, e.g. while the host re-renders,
+      // unless it holds keyboard focus.
+      if (box) this.toolbar.hidden = this.actions.length === 0;
+      else if (!this.toolbar.contains(globalThis.document.activeElement)) this.toolbar.hidden = true;
       if (box && !this.toolbar.hidden) {
         const bar = this.toolbar.getBoundingClientRect();
         const above = box.top - bar.height - 4;

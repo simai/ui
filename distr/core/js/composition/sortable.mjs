@@ -34,12 +34,16 @@ const MESSAGES = {
 
 const format = (template, values) => template.replace(/\{(\w+)\}/gu, (_, key) => String(values[key] ?? ''));
 const messages = () => MESSAGES[(globalThis.document?.documentElement.lang || 'en').toLowerCase().startsWith('ru') ? 'ru' : 'en'];
-const externalTargets = new Set();
-let session = null;
+// Separate Smart bundles (sf-sortable, sf-composition-overlay) each carry a copy
+// of this module; the drag session and external targets live on one global
+// record so a library drag can land on the overlay. The key carries the record
+// version, so bundles with another record shape never share it.
+const shared = globalThis.__sfSortableSharedV1 || (globalThis.__sfSortableSharedV1 = { targets: new Set(), session: null });
+const externalTargets = shared.targets;
 
 /** The active drag session (read-only view), or null. */
 export function activeSortableSession() {
-  return session ? Object.freeze({ item: session.item, from: session.from, group: session.group, mode: session.mode, input: session.input }) : null;
+  return shared.session ? Object.freeze({ item: shared.session.item, from: shared.session.from, group: shared.session.group, mode: shared.session.mode, input: shared.session.input }) : null;
 }
 
 /**
@@ -144,9 +148,9 @@ function emitIntent(target, detail) {
 }
 
 function finish(list, reason) {
-  if (!session) return;
-  const ended = session;
-  session = null;
+  if (!shared.session) return;
+  const ended = shared.session;
+  shared.session = null;
   ended.cleanup?.abort();
   if (ended.scrollFrame) globalThis.cancelAnimationFrame(ended.scrollFrame);
   ended.source?.removeAttribute('data-sf-sortable-dragging');
@@ -199,7 +203,7 @@ export function defineSortable(registry = globalThis.customElements) {
       this.observer = null;
       this.connection?.abort();
       this.connection = null;
-      if (session?.fromList === this || session?.list === this) finish(this, 'cancelled');
+      if (shared.session?.fromList === this || shared.session?.list === this) finish(this, 'cancelled');
       this.setAttribute('data-sf-sortable', 'disposed');
     }
 
@@ -226,9 +230,9 @@ export function defineSortable(registry = globalThis.customElements) {
 
     begin(item, input) {
       const id = item.getAttribute('data-sf-sortable-item');
-      if (!id || !this.group || session) return false;
+      if (!id || !this.group || shared.session) return false;
       const all = items(this);
-      session = {
+      shared.session = {
         item: id, from: this.getAttribute('id') || this.group, group: this.group, mode: this.mode, input,
         source: item, fromList: this, sourceIndex: all.indexOf(item), list: this.mode === 'copy' ? null : this,
         index: all.indexOf(item), external: null, cleanup: new AbortController(),
@@ -241,7 +245,7 @@ export function defineSortable(registry = globalThis.customElements) {
 
     // Pointer path ---------------------------------------------------------
     onPointerDown(event) {
-      if (event.button !== 0 || session) return;
+      if (event.button !== 0 || shared.session) return;
       const item = event.target.closest?.(ITEM);
       if (!item || item.closest('sf-sortable') !== this) return;
       const handle = item.querySelector(HANDLE);
@@ -258,7 +262,7 @@ export function defineSortable(registry = globalThis.customElements) {
           if (!this.begin(item, moveEvent.pointerType || 'mouse')) { pending.abort(); return; }
           started = true;
           item.setPointerCapture?.(pointer);
-          session.ghost = this.ghost(item, moveEvent);
+          shared.session.ghost = this.ghost(item, moveEvent);
         }
         moveEvent.preventDefault();
         this.track(moveEvent.clientX, moveEvent.clientY);
@@ -288,15 +292,15 @@ export function defineSortable(registry = globalThis.customElements) {
       ghost.setAttribute('aria-hidden', 'true');
       ghost.inert = true;
       Object.assign(ghost.style, { width: `${box.width}px`, left: `${box.left}px`, top: `${box.top}px` });
-      session.offset = { x: event.clientX - box.left, y: event.clientY - box.top };
+      shared.session.offset = { x: event.clientX - box.left, y: event.clientY - box.top };
       globalThis.document.body.append(ghost);
       return ghost;
     }
 
     track(x, y) {
-      if (!session) return;
-      session.pointer = { x, y };
-      if (session.ghost) Object.assign(session.ghost.style, { left: `${x - session.offset.x}px`, top: `${y - session.offset.y}px` });
+      if (!shared.session) return;
+      shared.session.pointer = { x, y };
+      if (shared.session.ghost) Object.assign(shared.session.ghost.style, { left: `${x - shared.session.offset.x}px`, top: `${y - shared.session.offset.y}px` });
       this.retarget(x, y);
       this.startAutoScroll();
     }
@@ -307,21 +311,21 @@ export function defineSortable(registry = globalThis.customElements) {
       for (const target of externalTargets) {
         const resolved = target.resolve(x, y, activeSortableSession());
         if (resolved) {
-          session.list = null;
-          session.external = { target, ...resolved };
+          shared.session.list = null;
+          shared.session.external = { target, ...resolved };
           showIndicator(resolved.rect);
           return;
         }
       }
-      session.external = null;
-      if (list && accepts(list, session.group)) {
+      shared.session.external = null;
+      if (list && accepts(list, shared.session.group)) {
         const resolved = listTarget(list, x, y);
-        session.list = list;
+        shared.session.list = list;
         // Store the final index: positions after the source shift by one.
-        session.index = list === session.fromList && session.mode === 'move' && resolved.index > session.sourceIndex ? resolved.index - 1 : resolved.index;
+        shared.session.index = list === shared.session.fromList && shared.session.mode === 'move' && resolved.index > shared.session.sourceIndex ? resolved.index - 1 : resolved.index;
         showIndicator(resolved.rect);
       } else {
-        session.list = null;
+        shared.session.list = null;
         showIndicator(null);
       }
     }
@@ -329,11 +333,11 @@ export function defineSortable(registry = globalThis.customElements) {
     // Scrolls the nearest scroll container every frame while the pointer
     // stays in its edge zone, including when the pointer is held still.
     startAutoScroll() {
-      if (!session || session.scrollFrame) return;
+      if (!shared.session || shared.session.scrollFrame) return;
       const step = () => {
-        if (!session?.pointer) return;
-        session.scrollFrame = 0;
-        const { x, y } = session.pointer;
+        if (!shared.session?.pointer) return;
+        shared.session.scrollFrame = 0;
+        const { x, y } = shared.session.pointer;
         const container = scrollContainer(globalThis.document.elementFromPoint(x, y));
         if (!container) return;
         const box = container === globalThis.document.scrollingElement
@@ -347,15 +351,15 @@ export function defineSortable(registry = globalThis.customElements) {
           // Instant even under scroll-behavior: smooth, so every frame advances.
           container.scrollBy({ top: delta, behavior: 'instant' });
           this.retarget(x, y);
-          session.scrollFrame = globalThis.requestAnimationFrame(step);
+          shared.session.scrollFrame = globalThis.requestAnimationFrame(step);
         }
       };
-      session.scrollFrame = globalThis.requestAnimationFrame(step);
+      shared.session.scrollFrame = globalThis.requestAnimationFrame(step);
     }
 
     drop() {
-      if (!session) return;
-      const current = session;
+      if (!shared.session) return;
+      const current = shared.session;
       if (current.external) {
         current.external.target.drop(activeSortableSession(), current.external.descriptor);
         finish(this, 'dropped');
@@ -379,64 +383,64 @@ export function defineSortable(registry = globalThis.customElements) {
 
     // Keyboard path --------------------------------------------------------
     keyboardTargets() {
-      return [...globalThis.document.querySelectorAll('sf-sortable')].filter((list) => list === session?.fromList ? session.mode === 'move' : accepts(list, session?.group));
+      return [...globalThis.document.querySelectorAll('sf-sortable')].filter((list) => list === shared.session?.fromList ? shared.session.mode === 'move' : accepts(list, shared.session?.group));
     }
 
     describeKeyboard(announce = true) {
-      if (!session) return;
-      if (session.external) {
-        showIndicator(session.external.rect);
-        if (announce) this.announce(format(messages().target, { target: session.external.label || '' }));
+      if (!shared.session) return;
+      if (shared.session.external) {
+        showIndicator(shared.session.external.rect);
+        if (announce) this.announce(format(messages().target, { target: shared.session.external.label || '' }));
         return;
       }
-      const list = session.list;
+      const list = shared.session.list;
       const full = items(list);
-      const sameList = list === session.fromList && session.mode === 'move';
+      const sameList = list === shared.session.fromList && shared.session.mode === 'move';
       const positions = full.length + (sameList ? 0 : 1);
-      const physical = sameList && session.index > session.sourceIndex ? session.index + 1 : session.index;
+      const physical = sameList && shared.session.index > shared.session.sourceIndex ? shared.session.index + 1 : shared.session.index;
       showIndicator(listIndicatorRect(list, full, Math.min(physical, full.length), list.getAttribute('orientation') === 'horizontal'));
-      if (announce) this.announce(format(messages().moved, { index: session.index + 1, total: positions, list: listName(list) }));
+      if (announce) this.announce(format(messages().moved, { index: shared.session.index + 1, total: positions, list: listName(list) }));
     }
 
     onKeyDown(event) {
       const item = event.target.closest?.(ITEM);
-      if (!session) {
+      if (!shared.session) {
         if (!item || item.closest('sf-sortable') !== this || event.target !== item) return;
         if (event.key !== ' ' && event.key !== 'Enter') return;
         event.preventDefault();
         if (!this.begin(item, 'keyboard')) return;
         // An abandoned keyboard move is cancelled when focus or a click leaves the list.
-        const abandon = () => { if (session?.fromList === this) { this.announce(messages().cancelled); finish(this, 'cancelled'); } };
-        const cleanup = { signal: session.cleanup.signal };
+        const abandon = () => { if (shared.session?.fromList === this) { this.announce(messages().cancelled); finish(this, 'cancelled'); } };
+        const cleanup = { signal: shared.session.cleanup.signal };
         this.addEventListener('focusout', (focusEvent) => {
           if (focusEvent.relatedTarget && this.contains(focusEvent.relatedTarget)) return;
           globalThis.setTimeout(() => { if (!this.contains(globalThis.document.activeElement)) abandon(); }, 0);
         }, cleanup);
         globalThis.document.addEventListener('pointerdown', (pointerEvent) => { if (!this.contains(pointerEvent.target)) abandon(); }, { ...cleanup, capture: true });
-        if (session.mode === 'copy') {
+        if (shared.session.mode === 'copy') {
           const [first] = this.keyboardTargets();
           const external = [...externalTargets].flatMap((target) => (target.keyboardTargets?.(activeSortableSession()) || []).map((entry) => ({ target, ...entry })));
           if (first) {
-            session.list = first;
-            session.index = items(first).length;
+            shared.session.list = first;
+            shared.session.index = items(first).length;
           } else if (external.length) {
-            session.external = external[0];
+            shared.session.external = external[0];
           } else {
             finish(this, 'cancelled');
             return;
           }
         }
-        if (session.external) {
+        if (shared.session.external) {
           this.describeKeyboard(false);
-          this.announce(`${format(messages().picked, { item: itemLabel(item), index: 1, total: 1, list: '' }).split('.')[0]}. ${format(messages().target, { target: session.external.label || '' })}`);
+          this.announce(`${format(messages().picked, { item: itemLabel(item), index: 1, total: 1, list: '' }).split('.')[0]}. ${format(messages().target, { target: shared.session.external.label || '' })}`);
           return;
         }
-        const all = items(session.list);
+        const all = items(shared.session.list);
         this.describeKeyboard(false);
-        this.announce(format(messages().picked, { item: itemLabel(item), index: session.index + 1, total: all.length, list: listName(session.list) }));
+        this.announce(format(messages().picked, { item: itemLabel(item), index: shared.session.index + 1, total: all.length, list: listName(shared.session.list) }));
         return;
       }
-      if (session.input !== 'keyboard' || session.fromList !== this) return;
+      if (shared.session.input !== 'keyboard' || shared.session.fromList !== this) return;
       const lists = this.keyboardTargets();
       const external = [...externalTargets].flatMap((target) => (target.keyboardTargets?.(activeSortableSession()) || []).map((entry) => ({ target, ...entry })));
       if (event.key === 'Escape' || event.key === 'Tab') {
@@ -454,31 +458,31 @@ export function defineSortable(registry = globalThis.customElements) {
       const across = { ArrowLeft: -1, ArrowRight: 1 }[event.key];
       if (vertical === undefined && across === undefined) return;
       event.preventDefault();
-      if (session.external) {
-        const position = external.findIndex((entry) => entry.target === session.external.target && JSON.stringify(entry.descriptor) === JSON.stringify(session.external.descriptor));
+      if (shared.session.external) {
+        const position = external.findIndex((entry) => entry.target === shared.session.external.target && JSON.stringify(entry.descriptor) === JSON.stringify(shared.session.external.descriptor));
         const next = external[position + (vertical ?? across)];
-        if (next) session.external = next;
+        if (next) shared.session.external = next;
         else if ((vertical ?? across) < 0 && lists.length) {
-          session.external = null;
-          session.list = lists.at(-1);
-          session.index = items(session.list).length - (session.list === session.fromList && session.mode === 'move' ? 1 : 0);
+          shared.session.external = null;
+          shared.session.list = lists.at(-1);
+          shared.session.index = items(shared.session.list).length - (shared.session.list === shared.session.fromList && shared.session.mode === 'move' ? 1 : 0);
         }
         this.describeKeyboard();
         return;
       }
-      const list = session.list;
-      const count = items(list).length - (list === session.fromList && session.mode === 'move' ? 1 : 0);
+      const list = shared.session.list;
+      const count = items(list).length - (list === shared.session.fromList && shared.session.mode === 'move' ? 1 : 0);
       if (vertical !== undefined) {
-        const next = session.index + vertical;
-        if (next >= 0 && next <= count) session.index = next;
-        else if (next > count && across === undefined && external.length && lists.indexOf(list) === lists.length - 1) session.external = external[0];
+        const next = shared.session.index + vertical;
+        if (next >= 0 && next <= count) shared.session.index = next;
+        else if (next > count && across === undefined && external.length && lists.indexOf(list) === lists.length - 1) shared.session.external = external[0];
       } else {
         const next = lists[lists.indexOf(list) + across];
         if (next) {
-          session.list = next;
-          session.index = Math.min(session.index, items(next).length - (next === session.fromList && session.mode === 'move' ? 1 : 0));
+          shared.session.list = next;
+          shared.session.index = Math.min(shared.session.index, items(next).length - (next === shared.session.fromList && shared.session.mode === 'move' ? 1 : 0));
         } else if (across > 0 && external.length) {
-          session.external = external[0];
+          shared.session.external = external[0];
         }
       }
       this.describeKeyboard();

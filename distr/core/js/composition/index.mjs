@@ -12,9 +12,6 @@ import {
 } from './fields.mjs';
 import { Recipe, parseRecipeJson, recipeDigest, recipeNodeId, resolveRecipe } from './recipe.mjs';
 import { REGION_ELEMENTS, describeRegions, validateRegionRules } from './regions.mjs';
-import { OVERLAY_EVENTS, defineCompositionOverlay, overlayNodes } from './overlay.mjs';
-import { SORTABLE_INTENT_EVENT, activeSortableSession, defineSortable, registerSortableDropTarget, sortableIndexAt } from './sortable.mjs';
-import { INLINE_EVENTS, readInlineDom, renderInlineDom, startInlineEdit } from './inline-editor.mjs';
 import { INLINE_MARKS, inlineText, marksIn, normalizeInline, replaceRange, setLink, toggleMark } from './inline-model.mjs';
 import {
   ENDPOINT_EXTENSION,
@@ -28,6 +25,15 @@ import {
 } from './routing.mjs';
 
 const DOCUMENT_SCHEMA = 'simai.composition.document.v1';
+
+// The editor surfaces (sf-composition-overlay, sf-sortable, sf-inline-editor)
+// are Smart components loaded on demand, so pages that only render stay small.
+// startInlineEdit keeps its Core name and delegates to the loaded editor.
+function startInlineEdit(element, options) {
+  const editor = globalThis.SF?.InlineEditor;
+  if (typeof editor?.startInlineEdit !== 'function') throw new TypeError('inline_editor_not_loaded');
+  return editor.startInlineEdit(element, options);
+}
 const PROFILES = new Set(['ui-layout', 'structured-content']);
 const DOCUMENT_FIELDS = new Set(['schema', 'id', 'profile', 'locale', 'root', 'extensions']);
 const NODE_FIELDS = new Set(['id', 'type', 'data', 'props', 'slots', 'presentation', 'bindings', 'extensions']);
@@ -440,10 +446,7 @@ export const Composition = Object.freeze({
   VALUE_TYPES,
   checkPortValue,
   createPortRegistry,
-  defineCompositionOverlay,
   defineCompositionScope,
-  defineSortable,
-  registerSortableDropTarget,
   startInlineEdit,
   normalizeInline,
   inlineText,
@@ -451,7 +454,6 @@ export const Composition = Object.freeze({
   compositionTypeFromSmartManifest,
   describeRegions,
   normalize,
-  overlayNodes,
   projectDocumentEditorFields,
   projectEditorFields,
   render,
@@ -466,8 +468,6 @@ if (typeof globalThis !== 'undefined') {
   globalThis.SF = globalThis.SF || {};
   globalThis.SF.Composition = Composition;
   defineCompositionScope();
-  defineCompositionOverlay();
-  defineSortable();
 }
 
 export default Composition;
@@ -476,7 +476,5 @@ export { Recipe, parseRecipeJson, recipeDigest, recipeNodeId, resolveRecipe };
 export { BUILTIN_EDITOR_MANIFESTS, projectDocumentEditorFields, projectEditorFields, validateEditorManifest };
 export { describeRegions, stableStringify };
 export { BUILTIN_PORT_MANIFESTS, VALUE_TYPES, checkPortValue, createPortRegistry, defineCompositionScope };
-export { OVERLAY_EVENTS, defineCompositionOverlay, overlayNodes };
-export { SORTABLE_INTENT_EVENT, activeSortableSession, defineSortable, registerSortableDropTarget, sortableIndexAt };
-export { INLINE_EVENTS, INLINE_MARKS, inlineText, marksIn, normalizeInline, readInlineDom, renderInlineDom, replaceRange, setLink, startInlineEdit, toggleMark };
+export { INLINE_MARKS, inlineText, marksIn, normalizeInline, replaceRange, setLink, startInlineEdit, toggleMark };
 export { BUILTIN_FIELD_KINDS, applyFieldValue, parseFieldSubmission, renderFieldFallback, resolveFieldKind, validateFieldKinds, validateFieldValue };

@@ -433,4 +433,26 @@ export function startInlineEdit(element, options = {}) {
   return Object.freeze({ element, commit, cancel, value: () => normalizeInline(read()) });
 }
 
-export default { INLINE_EVENTS, readInlineDom, renderInlineDom, startInlineEdit, textOffset };
+/**
+ * <sf-inline-editor> is the loadable carrier of the inline editor: placing it
+ * on a page lets the Smart loader fetch this code on demand. It renders
+ * nothing; edit(element, options) is startInlineEdit.
+ */
+export function defineInlineEditor(registry = globalThis.customElements) {
+  if (!registry || typeof globalThis.HTMLElement !== 'function') return null;
+  const existing = registry.get('sf-inline-editor');
+  if (existing) return existing;
+  class SfInlineEditor extends globalThis.HTMLElement {
+    connectedCallback() {
+      this.hidden = true;
+    }
+
+    edit(element, options) {
+      return startInlineEdit(element, options);
+    }
+  }
+  registry.define('sf-inline-editor', SfInlineEditor);
+  return SfInlineEditor;
+}
+
+export default { INLINE_EVENTS, defineInlineEditor, readInlineDom, renderInlineDom, startInlineEdit, textOffset };
