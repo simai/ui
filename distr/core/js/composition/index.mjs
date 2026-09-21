@@ -1,7 +1,27 @@
-import { BUILTIN_EDITOR_MANIFESTS, BUILTIN_TYPE_MANIFESTS } from './builtins.mjs';
+import { BUILTIN_EDITOR_MANIFESTS, BUILTIN_PORT_MANIFESTS, BUILTIN_TYPE_MANIFESTS } from './builtins.mjs';
 import { canonical, isPlainObject, stableStringify } from './canonical.mjs';
 import { projectDocumentEditorFields, projectEditorFields, validateEditorManifest } from './editor.mjs';
+import {
+  BUILTIN_FIELD_KINDS,
+  applyFieldValue,
+  parseFieldSubmission,
+  renderFieldFallback,
+  resolveFieldKind,
+  validateFieldKinds,
+  validateFieldValue,
+} from './fields.mjs';
 import { Recipe, parseRecipeJson, recipeDigest, recipeNodeId, resolveRecipe } from './recipe.mjs';
+import { REGION_ELEMENTS, describeRegions, validateRegionRules } from './regions.mjs';
+import {
+  ENDPOINT_EXTENSION,
+  VALUE_TYPES,
+  checkPortValue,
+  createPortRegistry,
+  defineCompositionScope,
+  endpointName,
+  resolveRoutes,
+  routesAttribute,
+} from './routing.mjs';
 
 const DOCUMENT_SCHEMA = 'simai.composition.document.v1';
 const PROFILES = new Set(['ui-layout', 'structured-content']);
@@ -147,6 +167,16 @@ function validateInlineContent(value, path, diagnostics) {
   }
 }
 
+let defaultPorts = null;
+
+function normalizePorts(ports) {
+  if (ports?.elements instanceof Map) return ports;
+  if (Array.isArray(ports)) return createPortRegistry(ports);
+  if (ports && Array.isArray(ports.manifests)) return createPortRegistry(ports.manifests, { bindings: ports.bindings });
+  defaultPorts = defaultPorts || createPortRegistry(BUILTIN_PORT_MANIFESTS);
+  return defaultPorts;
+}
+
 function normalizeRegistry(registry) {
   if (registry?.types instanceof Map) return registry;
   return createRegistry(Array.isArray(registry) ? registry : BUILTIN_TYPE_MANIFESTS);
@@ -188,7 +218,7 @@ export function validate(document, registry = undefined, options = {}) {
   const diagnostics = [];
   const resolvedRegistry = normalizeRegistry(registry);
   const limits = { ...DEFAULT_LIMITS, ...(options.limits || {}) };
-  const supportedExtensions = new Set(options.supportedExtensions || []);
+  const supportedExtensions = new Set([ENDPOINT_EXTENSION, ...(options.supportedExtensions || [])]);
   let serialized;
   try {
     serialized = JSON.stringify(document);
@@ -284,6 +314,10 @@ export function validate(document, registry = undefined, options = {}) {
   };
   visit(document.root, '$.root', 1);
   if (nodeCount > limits.maxNodes) diagnostics.push(diagnostic('node_limit', '$.root', 'Composition has too many nodes'));
+  else {
+    validateRegionRules(document.root, resolvedRegistry, diagnostics);
+    resolveRoutes(document.root, resolvedRegistry, normalizePorts(options.ports), diagnostics);
+  }
   return { valid: diagnostics.length === 0, diagnostics };
 }
 
@@ -336,6 +370,15 @@ const BUILTIN_RENDERERS = {
   },
   'content.heading': ({ node }) => `<h${node.data.level || 2} data-sf-composition-id="${escapeHtml(node.id)}">${renderInline(node.data.content)}</h${node.data.level || 2}>`,
   'content.paragraph': ({ node }) => `<p data-sf-composition-id="${escapeHtml(node.id)}">${renderInline(node.data.content)}</p>`,
+  'layout.regions': ({ node, slots }) => `<div class="sf-composition-regions" data-sf-composition-id="${escapeHtml(node.id)}"><div class="sf-composition-regions-grid">${slots.regions || ''}</div></div>`,
+  'layout.region': ({ node, slots }) => {
+    const props = node.props;
+    const element = REGION_ELEMENTS[props.landmark];
+    const sticky = props.sticky === true ? ' data-sf-region-sticky=""' : '';
+    const label = props.label !== undefined ? ` aria-label="${escapeHtml(props.label)}"` : '';
+    return `<${element} class="sf-composition-region" data-sf-composition-id="${escapeHtml(node.id)}" data-sf-region="${escapeHtml(props.name)}" data-sf-region-placement="${escapeHtml(props.placement ?? 'block')}"${sticky}${label}>${slots.default || ''}</${element}>`;
+  },
+  'layout.scope': ({ node, slots, routes }) => `<sf-composition-scope data-sf-composition-id="${escapeHtml(node.id)}" data-sf-routes="${escapeHtml(routesAttribute(routes || []))}">${slots.default || ''}</sf-composition-scope>`,
 };
 
 export async function render(document, context = {}) {
@@ -344,6 +387,7 @@ export async function render(document, context = {}) {
   if (!normalized.document) return { html: '', assets: [], hydration: [], diagnostics: normalized.diagnostics, digest: null };
   const diagnostics = [];
   const hydration = [];
+  const routes = resolveRoutes(normalized.document.root, registry, normalizePorts(context.options?.ports), []);
   const renderNode = async (node) => {
     const manifest = registry.types.get(node.type);
     const slots = {};
@@ -359,8 +403,9 @@ export async function render(document, context = {}) {
     }
     let renderer = registry.renderers.get(manifest.renderer.name) || BUILTIN_RENDERERS[manifest.renderer.name];
     if (!renderer && manifest.renderer.kind === 'custom-element' && manifest.renderer.name) {
-      renderer = ({ node: current, slots: currentSlots }) => {
-        const attributes = Object.entries(current.props || {}).map(([key, value]) => ` ${escapeHtml(key)}="${escapeHtml(value)}"`).join('');
+      renderer = ({ node: current, slots: currentSlots, endpoint }) => {
+        const endpointAttribute = endpoint ? ` data-sf-endpoint="${escapeHtml(endpoint)}"` : '';
+        const attributes = Object.entries(current.props || {}).map(([key, value]) => ` ${escapeHtml(key)}="${escapeHtml(value)}"`).join('') + endpointAttribute;
         hydration.push({ id: current.id, type: current.type, element: manifest.renderer.name });
         return `<${manifest.renderer.name}${attributes}>${Object.values(currentSlots).filter((value) => typeof value === 'string').join('')}</${manifest.renderer.name}>`;
       };
@@ -369,7 +414,8 @@ export async function render(document, context = {}) {
       diagnostics.push(diagnostic('renderer_unavailable', `node:${node.id}`, `Renderer ${manifest.renderer.name} is unavailable`));
       return '';
     }
-    return renderer({ node, slots, context, resolvedBindings, manifest });
+    if (node.type === 'layout.scope') hydration.push({ id: node.id, type: node.type, element: 'sf-composition-scope' });
+    return renderer({ node, slots, context, resolvedBindings, manifest, routes: routes.get(node.id), endpoint: endpointName(node) });
   };
   const html = await renderNode(normalized.document.root);
   return { html, assets: normalized.dependencies.assets, hydration, diagnostics, digest: normalized.digest };
@@ -377,9 +423,22 @@ export async function render(document, context = {}) {
 
 export const Composition = Object.freeze({
   BUILTIN_EDITOR_MANIFESTS,
+  BUILTIN_FIELD_KINDS,
+  BUILTIN_PORT_MANIFESTS,
   Recipe,
+  applyFieldValue,
+  parseFieldSubmission,
+  renderFieldFallback,
+  resolveFieldKind,
+  validateFieldKinds,
+  validateFieldValue,
+  VALUE_TYPES,
+  checkPortValue,
+  createPortRegistry,
+  defineCompositionScope,
   createRegistry,
   compositionTypeFromSmartManifest,
+  describeRegions,
   normalize,
   projectDocumentEditorFields,
   projectEditorFields,
@@ -394,10 +453,13 @@ export const Composition = Object.freeze({
 if (typeof globalThis !== 'undefined') {
   globalThis.SF = globalThis.SF || {};
   globalThis.SF.Composition = Composition;
+  defineCompositionScope();
 }
 
 export default Composition;
 
 export { Recipe, parseRecipeJson, recipeDigest, recipeNodeId, resolveRecipe };
 export { BUILTIN_EDITOR_MANIFESTS, projectDocumentEditorFields, projectEditorFields, validateEditorManifest };
-export { stableStringify };
+export { describeRegions, stableStringify };
+export { BUILTIN_PORT_MANIFESTS, VALUE_TYPES, checkPortValue, createPortRegistry, defineCompositionScope };
+export { BUILTIN_FIELD_KINDS, applyFieldValue, parseFieldSubmission, renderFieldFallback, resolveFieldKind, validateFieldKinds, validateFieldValue };

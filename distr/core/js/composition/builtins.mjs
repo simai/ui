@@ -1,3 +1,5 @@
+import { REGION_ACCEPTS, REGION_LANDMARKS, REGION_PLACEMENTS } from './regions.mjs';
+
 const inlineContentSchema = {
   type: 'array',
   items: {
@@ -46,6 +48,16 @@ const inlineContentSchema = {
     ],
   },
 };
+
+const routeEnd = {
+          type: 'object',
+          required: ['endpoint', 'port'],
+          additionalProperties: false,
+          properties: {
+            endpoint: { type: 'string', pattern: '^[a-z][a-z0-9-]{0,31}$' },
+            port: { type: 'string', pattern: '^[a-z][a-z0-9-]{0,31}$' },
+          },
+        };
 
 const emptyObjectSchema = {
   type: 'object',
@@ -158,7 +170,121 @@ export const BUILTIN_TYPE_MANIFESTS = Object.freeze([
     assets: [],
     capabilities: ['html', 'rich-text'],
   },
+  {
+    schema: 'simai.composition.type-manifest.v1',
+    type: 'layout.regions',
+    version: '1.0.0',
+    category: 'layout',
+    mode: 'composite',
+    profiles: ['ui-layout'],
+    data_schema: emptyObjectSchema,
+    props_schema: emptyObjectSchema,
+    presentation: { views: ['default'], presets: [], modifiers: [] },
+    slots: {
+      regions: { min: 1, max: 12, types: ['layout.region'] },
+    },
+    renderer: { kind: 'builtin', name: 'layout.regions' },
+    assets: [],
+    capabilities: ['html', 'regions'],
+  },
+  {
+    schema: 'simai.composition.type-manifest.v1',
+    type: 'layout.region',
+    version: '1.0.0',
+    category: 'layout',
+    mode: 'composite',
+    profiles: ['ui-layout'],
+    data_schema: emptyObjectSchema,
+    props_schema: {
+      type: 'object',
+      required: ['name', 'landmark'],
+      additionalProperties: false,
+      properties: {
+        name: { type: 'string', pattern: '^[a-z][a-z0-9-]{0,31}$' },
+        landmark: { enum: [...REGION_LANDMARKS] },
+        placement: { enum: [...REGION_PLACEMENTS] },
+        label: { type: 'string', minLength: 1, maxLength: 120 },
+        sticky: { type: 'boolean' },
+        accepts: { type: 'array', minItems: 1, uniqueItems: true, items: { enum: [...REGION_ACCEPTS] } },
+        min_items: { type: 'integer', minimum: 0, maximum: 500 },
+        max_items: { type: 'integer', minimum: 0, maximum: 500 },
+      },
+    },
+    presentation: { views: ['default'], presets: [], modifiers: [] },
+    slots: {
+      default: { min: 0, max: 500, categories: ['layout', 'content', 'smart'] },
+    },
+    renderer: { kind: 'builtin', name: 'layout.region' },
+    assets: [],
+    capabilities: ['html', 'regions'],
+  },  {
+    schema: 'simai.composition.type-manifest.v1',
+    type: 'layout.scope',
+    version: '1.0.0',
+    category: 'layout',
+    mode: 'composite',
+    profiles: ['ui-layout'],
+    data_schema: emptyObjectSchema,
+    props_schema: {
+      type: 'object',
+      required: ['routes'],
+      additionalProperties: false,
+      properties: {
+        routes: {
+          type: 'array',
+          minItems: 1,
+          maxItems: 32,
+          items: {
+            type: 'object',
+            required: ['id', 'from', 'to'],
+            additionalProperties: false,
+            properties: {
+              id: { type: 'string', pattern: '^[a-z][a-z0-9-]{0,63}$' },
+              from: routeEnd,
+              to: routeEnd,
+            },
+          },
+        },
+      },
+    },
+    presentation: { views: ['default'], presets: [], modifiers: [] },
+    slots: {
+      default: { min: 1, max: 500, categories: ['layout', 'content', 'smart'] },
+    },
+    renderer: { kind: 'builtin', name: 'layout.scope' },
+    assets: [],
+    capabilities: ['html', 'hydration', 'routing'],
+  },
 ]);
+
+// Published typed ports. Framework owns the element protocol; the product owns
+// what a request means, data access and authorization.
+export const BUILTIN_PORT_MANIFESTS = Object.freeze([
+  {
+    schema: 'simai.composition.port-manifest.v1',
+    element: 'sf-table',
+    version: '1.0.0',
+    component: 'smart.data-view',
+    component_version: '1.2.0',
+    outputs: {
+      selection: {
+        value: 'record-ids.v1',
+        summary: 'Explicit current-result selection of this instance, emitted once per change, including clearing.',
+      },
+    },
+    inputs: {
+      context: {
+        value: 'record-ids.v1',
+        effect: 'request',
+        summary: 'Restricts this collection to records related to the given identities. The table clears its selection, enters loading and emits sf-table-query-intent with the route sequence; the host resolves the relation and access and answers with applyQueryResult.',
+        request_event: 'sf-table-query-intent',
+        result_method: 'applyQueryResult',
+      },
+    },
+  },
+]);
+
+
 
 export const BUILTIN_EDITOR_MANIFESTS = Object.freeze([
   {
@@ -223,6 +349,72 @@ export const BUILTIN_EDITOR_MANIFESTS = Object.freeze([
         label_key: 'sf.composition.content_heading.level',
         help_key: 'sf.composition.content_heading.level_help',
         capability_hints: ['composition.data.level'],
+        permission_hints: ['composition.node.update'],
+        owner: 'simai/framework',
+      },
+    ],
+  },  {
+    schema: 'simai.composition.editor-manifest.v1',
+    type: 'layout.region',
+    type_version: '1.0.0',
+    fields: [
+      {
+        key: 'placement',
+        plane: 'props',
+        target: 'placement',
+        property: { type: 'string', version: 2 },
+        constraints: { min_length: 1, max_length: 16 },
+        group: 'basic',
+        visibility: 'visible',
+        choices: [...REGION_PLACEMENTS],
+        default: 'block',
+        label_key: 'sf.composition.layout_region.placement',
+        help_key: 'sf.composition.layout_region.placement_help',
+        capability_hints: ['composition.props.placement'],
+        permission_hints: ['composition.node.update'],
+        owner: 'simai/framework',
+      },
+      {
+        key: 'label',
+        plane: 'props',
+        target: 'label',
+        property: { type: 'string', version: 2 },
+        constraints: { min_length: 1, max_length: 120 },
+        group: 'basic',
+        visibility: 'visible',
+        label_key: 'sf.composition.layout_region.label',
+        help_key: 'sf.composition.layout_region.label_help',
+        capability_hints: ['composition.props.label'],
+        permission_hints: ['composition.node.update'],
+        owner: 'simai/framework',
+      },
+      {
+        key: 'landmark',
+        plane: 'props',
+        target: 'landmark',
+        property: { type: 'string', version: 2 },
+        constraints: { min_length: 1, max_length: 16 },
+        group: 'advanced',
+        visibility: 'collapsed',
+        choices: [...REGION_LANDMARKS],
+        label_key: 'sf.composition.layout_region.landmark',
+        help_key: 'sf.composition.layout_region.landmark_help',
+        capability_hints: ['composition.props.landmark'],
+        permission_hints: ['composition.node.update'],
+        owner: 'simai/framework',
+      },
+      {
+        key: 'sticky',
+        plane: 'props',
+        target: 'sticky',
+        property: { type: 'boolean', version: 1 },
+        constraints: {},
+        group: 'advanced',
+        visibility: 'collapsed',
+        default: false,
+        label_key: 'sf.composition.layout_region.sticky',
+        help_key: 'sf.composition.layout_region.sticky_help',
+        capability_hints: ['composition.props.sticky'],
         permission_hints: ['composition.node.update'],
         owner: 'simai/framework',
       },

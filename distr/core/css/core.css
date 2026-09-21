@@ -2503,3 +2503,184 @@ body {
     }
   }
 }
+@layer sf.components {
+  .sf-composition-regions {
+    --sf-composition-region-side: minmax(0, 16rem);
+    --sf-composition-region-gap: var(--sf-space-4, 1rem);
+    container-type: inline-size;
+    display: block;
+    min-width: 0;
+    min-inline-size: 0;
+  }
+  .sf-composition-regions-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-auto-flow: row dense;
+    grid-gap: var(--sf-composition-region-gap);
+    gap: var(--sf-composition-region-gap);
+    min-width: 0;
+    min-inline-size: 0;
+  }
+  .sf-composition-region {
+    display: block;
+    min-width: 0;
+    min-inline-size: 0;
+  }
+  .sf-composition-regions-grid > [data-sf-region-placement=block][data-sf-region-sticky] {
+    position: sticky;
+    top: 0;
+    inset-block-start: 0;
+    z-index: 1;
+    background: Canvas;
+    background: var(--sf-surface-1, Canvas);
+  }
+  @container (min-width: 48rem) {
+    .sf-composition-regions-grid[\:has\(\%3E\%20\[data-sf-region-placement\%3Dstart\]\)] {
+      grid-template-columns: var(--sf-composition-region-side) minmax(0, 1fr);
+    }
+    .sf-composition-regions-grid:has(> [data-sf-region-placement=start]) {
+      grid-template-columns: var(--sf-composition-region-side) minmax(0, 1fr);
+    }
+    .sf-composition-regions-grid[\:has\(\%3E\%20\[data-sf-region-placement\%3Dend\]\)] {
+      grid-template-columns: minmax(0, 1fr) var(--sf-composition-region-side);
+    }
+    .sf-composition-regions-grid:has(> [data-sf-region-placement=end]) {
+      grid-template-columns: minmax(0, 1fr) var(--sf-composition-region-side);
+    }
+    .sf-composition-regions-grid[\:has\(\%3E\%20\[data-sf-region-placement\%3Dstart\]\)][\:has\(\%3E\%20\[data-sf-region-placement\%3Dend\]\)] {
+      grid-template-columns: var(--sf-composition-region-side) minmax(0, 1fr) var(--sf-composition-region-side);
+    }
+    .sf-composition-regions-grid:has(> [data-sf-region-placement=start]):has(> [data-sf-region-placement=end]) {
+      grid-template-columns: var(--sf-composition-region-side) minmax(0, 1fr) var(--sf-composition-region-side);
+    }
+    .sf-composition-regions-grid > [data-sf-region-placement=block] {
+      grid-column: 1/-1;
+    }
+    .sf-composition-regions-grid[\:has\(\%3E\%20\[data-sf-region-placement\%3Dstart\]\)] > [data-sf-region-placement=start] {
+      grid-column: 1;
+    }
+    .sf-composition-regions-grid:has(> [data-sf-region-placement=start]) > [data-sf-region-placement=start] {
+      grid-column: 1;
+    }
+    .sf-composition-regions-grid[\:has\(\%3E\%20\[data-sf-region-placement\%3Dstart\]\)] > [data-sf-region-placement=center] {
+      grid-column: 2;
+    }
+    .sf-composition-regions-grid:has(> [data-sf-region-placement=start]) > [data-sf-region-placement=center] {
+      grid-column: 2;
+    }
+    .sf-composition-regions-grid[\:not-has\(\%3E\%20\[data-sf-region-placement\%3Dstart\]\)] > [data-sf-region-placement=center] {
+      grid-column: 1;
+    }
+    .sf-composition-regions-grid:not(:has(> [data-sf-region-placement=start])) > [data-sf-region-placement=center] {
+      grid-column: 1;
+    }
+    .sf-composition-regions-grid > [data-sf-region-placement=end] {
+      grid-column: -2;
+    }
+    .sf-composition-regions-grid > [data-sf-region-placement=start][data-sf-region-sticky],
+    .sf-composition-regions-grid > [data-sf-region-placement=end][data-sf-region-sticky] {
+      align-self: start;
+      position: sticky;
+      top: 0;
+      inset-block-start: 0;
+    }
+  }
+}
+@layer sf.components {
+  sf-composition-scope {
+    display: contents;
+  }
+}
+@layer sf.components {
+  .sf-editor-field {
+    display: grid;
+    grid-gap: 0.25rem;
+    gap: 0.25rem;
+    grid-gap: 0.25rem;
+    grid-gap: var(--sf-space-1, 0.25rem);
+    gap: var(--sf-space-1, 0.25rem);
+    min-width: 0;
+    min-inline-size: 0;
+    color: CanvasText;
+    color: var(--sf-on-surface, CanvasText);
+  }
+  .sf-editor-field[data-sf-field-kind=toggle] {
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    -webkit-column-gap: 0.5rem;
+       -moz-column-gap: 0.5rem;
+            column-gap: 0.5rem;
+    -webkit-column-gap: var(--sf-space-2, 0.5rem);
+       -moz-column-gap: var(--sf-space-2, 0.5rem);
+            column-gap: var(--sf-space-2, 0.5rem);
+  }
+  .sf-editor-field[data-sf-field-kind=toggle] > .sf-editor-field-help {
+    grid-column: 1/-1;
+  }
+  .sf-editor-field-control:not([type=checkbox]) {
+    min-width: 0;
+    min-inline-size: 0;
+    max-width: 100%;
+    max-inline-size: 100%;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+    padding-block: 0.25rem;
+    padding-top: 0.25rem;
+    padding-top: var(--sf-space-1, 0.25rem);
+    padding-bottom: 0.25rem;
+    padding-bottom: var(--sf-space-1, 0.25rem);
+    padding-block: var(--sf-space-1, 0.25rem);
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    padding-inline: 0.5rem;
+    padding-left: 0.5rem;
+    padding-left: var(--sf-space-2, 0.5rem);
+    padding-right: 0.5rem;
+    padding-right: var(--sf-space-2, 0.5rem);
+    padding-inline: var(--sf-space-2, 0.5rem);
+    border: 1px solid GrayText;
+    border: 1px solid var(--sf-outline, GrayText);
+    border-radius: 0.25rem;
+    border-radius: var(--sf-radius-1, 0.25rem);
+    background: Canvas;
+    background: var(--sf-surface-1, Canvas);
+    color: CanvasText;
+    color: var(--sf-on-surface, CanvasText);
+    font: inherit;
+  }
+  .sf-editor-field-control[type=checkbox] {
+    width: 1.25rem;
+    inline-size: 1.25rem;
+    height: 1.25rem;
+    block-size: 1.25rem;
+    margin: 0;
+    accent-color: AccentColor;
+    accent-color: var(--sf-primary, AccentColor);
+  }
+  .sf-editor-field-control.focus-visible,
+  .sf-editor-field-disclosure > summary.focus-visible {
+    outline: 2px solid Highlight;
+    outline: 2px solid var(--sf-primary, Highlight);
+    outline-offset: 2px;
+  }
+  .sf-editor-field-control.focus-visible,
+  .sf-editor-field-disclosure > summary.focus-visible {
+    outline: 2px solid Highlight;
+    outline: 2px solid Highlight;
+    outline: 2px solid var(--sf-primary, Highlight);
+    outline-offset: 2px;
+  }
+  .sf-editor-field-control:focus-visible,
+  .sf-editor-field-disclosure > summary:focus-visible {
+    outline: 2px solid Highlight;
+    outline: 2px solid var(--sf-primary, Highlight);
+    outline-offset: 2px;
+  }
+  .sf-editor-field-help {
+    color: CanvasText;
+    color: var(--sf-on-surface-variant, var(--sf-on-surface, CanvasText));
+  }
+  .sf-editor-field-disclosure > summary {
+    cursor: pointer;
+  }
+}
