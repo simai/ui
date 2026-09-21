@@ -157,6 +157,20 @@ export function validateFieldKinds(editorManifest) {
     for (const key of kind.constraints.required || []) {
       if (!Number.isInteger(constraints[key])) problems.push(diagnostic('field_constraint_required', `${path}.constraints.${key}`, `${kind.kind} requires ${key}`));
     }
+    if (kind.kind === 'choice') {
+      const min = Number.isInteger(constraints.min_length) ? constraints.min_length : 0;
+      const max = Number.isInteger(constraints.max_length) ? constraints.max_length : Infinity;
+      if (min > max) problems.push(diagnostic('field_constraint_invalid', `${path}.constraints`, 'min_length must not exceed max_length'));
+      for (const choice of field.choices) {
+        if (typeof choice !== 'string' || codePoints(choice) < min || codePoints(choice) > max) problems.push(diagnostic('field_choice_invalid', `${path}.choices`, `${String(choice)} violates the choice constraints`));
+      }
+    }
+    if (kind.kind === 'integer' && Number.isInteger(constraints.min) && Number.isInteger(constraints.max) && constraints.min > constraints.max) {
+      problems.push(diagnostic('field_constraint_invalid', `${path}.constraints`, 'min must not exceed max'));
+    }
+    if (kind.kind === 'text' && Number.isInteger(constraints.min_length) && Number.isInteger(constraints.max_length) && constraints.min_length > constraints.max_length) {
+      problems.push(diagnostic('field_constraint_invalid', `${path}.constraints`, 'min_length must not exceed max_length'));
+    }
     if (kind.kind === 'toggle' && 'default' in field && field.default !== false) problems.push(diagnostic('field_default_invalid', `${path}.default`, 'A toggle default must be false or absent'));
     if (kind.kind !== 'toggle' && 'default' in field) problems.push(...validateFieldValue(field, field.default, `${path}.default`).map((entry) => ({ ...entry, code: 'field_default_invalid' })));
   });
@@ -189,6 +203,9 @@ export function parseFieldSubmission(field, raw) {
 
 /** Returns a new node with the field value set, or the key removed when unset. */
 export function applyFieldValue(node, field, result) {
+  if (!isPlainObject(result) || result.error || (result.unset !== true && !('value' in result))) {
+    throw new TypeError('applyFieldValue requires a successful parseFieldSubmission result');
+  }
   const next = canonical(JSON.parse(JSON.stringify(node)));
   const plane = isPlainObject(next[field.plane]) ? { ...next[field.plane] } : {};
   if (result.unset || (resolveFieldKind(field)?.kind === 'toggle' && result.value === false)) delete plane[field.target];

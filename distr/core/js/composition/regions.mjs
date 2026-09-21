@@ -118,8 +118,12 @@ export function validateRegionRules(root, registry, diagnostics) {
     if (uses.length < 2) continue;
     const labels = new Set();
     for (const use of uses) {
-      if (use.label === undefined) diagnostics.push(diagnostic('region_label_required', `${use.path}.props.label`, `Repeated ${landmark} regions require distinct labels`));
-      else if (labels.has(use.label)) diagnostics.push(diagnostic('region_label_duplicate', `${use.path}.props.label`, `Repeated ${landmark} regions require distinct labels`));
+      if (use.label === undefined) {
+        // A region landmark without a label is already reported once above.
+        if (landmark !== 'region') diagnostics.push(diagnostic('region_label_required', `${use.path}.props.label`, `Repeated ${landmark} regions require distinct labels`));
+        continue;
+      }
+      if (labels.has(use.label)) diagnostics.push(diagnostic('region_label_duplicate', `${use.path}.props.label`, `Repeated ${landmark} regions require distinct labels`));
       else labels.add(use.label);
     }
   }

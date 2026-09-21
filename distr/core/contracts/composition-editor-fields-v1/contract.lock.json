@@ -10,7 +10,7 @@
     "field_kinds": "new simai.composition.editor-field-kind-registry.v1 in composition-editor-field-kinds.v1.json",
     "registry": "additive layout.region entry in composition-editor-manifests.v1.json"
   },
-  "contractDigest": "sha256:f215bab3cfef735a272b9b9c67ea44ce6b3dd980f50ad821922717e357cf72e9",
+  "contractDigest": "sha256:773a3915bc0efe5ce2e0618155b94840f5a0cf687aef024ee92338f5cbbc64ad",
   "manifests": {
     "editor:content.heading@1.0.0": "sha256:63c6f36a5e8f13bef0ba76148e52ebee3cccf6ed172439348bf1fbf5dd8c4a46",
     "editor:layout.columns@1.0.0": "sha256:2ae61587cbbc03102118e0df69719ce9ac881924325f2324037e80ca7350f984",
@@ -22,8 +22,8 @@
     "field-kind:toggle@1": "sha256:4d65b4741f63b3b9fbf7b22c795ea1ce226521e316702fc182f56cbcda04ddf7"
   },
   "normativeFiles": {
-    "README.md": "sha256:49a90734be0b671974f2ae7455647d0db055f12fe8e5016136cf213c360d025f",
-    "fixtures/field-kinds.json": "sha256:0d3741c67847214ca841270be84d945825078581aa62c405d43835d211511a21"
+    "README.md": "sha256:8d26b4a95d021a37824324cc263c5cabcaa74cbda9aa364e249dcf97e3b2d36d",
+    "fixtures/field-kinds.json": "sha256:67055aea70a776040c66a84c2183080814a4439c52b53d94db91ffa8b314972f"
   },
   "schema": "simai.composition.capability-contract-lock.v1",
   "status": "owner-accepted-candidate",

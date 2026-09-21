@@ -1501,6 +1501,20 @@ function validateFieldKinds(editorManifest) {
     for (const key of kind.constraints.required || []) {
       if (!Number.isInteger(constraints[key])) problems.push(diagnostic('field_constraint_required', `${path}.constraints.${key}`, `${kind.kind} requires ${key}`));
     }
+    if (kind.kind === 'choice') {
+      const min = Number.isInteger(constraints.min_length) ? constraints.min_length : 0;
+      const max = Number.isInteger(constraints.max_length) ? constraints.max_length : Infinity;
+      if (min > max) problems.push(diagnostic('field_constraint_invalid', `${path}.constraints`, 'min_length must not exceed max_length'));
+      for (const choice of field.choices) {
+        if (typeof choice !== 'string' || codePoints(choice) < min || codePoints(choice) > max) problems.push(diagnostic('field_choice_invalid', `${path}.choices`, `${String(choice)} violates the choice constraints`));
+      }
+    }
+    if (kind.kind === 'integer' && Number.isInteger(constraints.min) && Number.isInteger(constraints.max) && constraints.min > constraints.max) {
+      problems.push(diagnostic('field_constraint_invalid', `${path}.constraints`, 'min must not exceed max'));
+    }
+    if (kind.kind === 'text' && Number.isInteger(constraints.min_length) && Number.isInteger(constraints.max_length) && constraints.min_length > constraints.max_length) {
+      problems.push(diagnostic('field_constraint_invalid', `${path}.constraints`, 'min_length must not exceed max_length'));
+    }
     if (kind.kind === 'toggle' && 'default' in field && field.default !== false) problems.push(diagnostic('field_default_invalid', `${path}.default`, 'A toggle default must be false or absent'));
     if (kind.kind !== 'toggle' && 'default' in field) problems.push(...validateFieldValue(field, field.default, `${path}.default`).map((entry) => ({ ...entry, code: 'field_default_invalid' })));
   });
@@ -1533,6 +1547,9 @@ function parseFieldSubmission(field, raw) {
 
 /** Returns a new node with the field value set, or the key removed when unset. */
 function applyFieldValue(node, field, result) {
+  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(result) || result.error || (result.unset !== true && !('value' in result))) {
+    throw new TypeError('applyFieldValue requires a successful parseFieldSubmission result');
+  }
   const next = (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.canonical)(JSON.parse(JSON.stringify(node)));
   const plane = (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(next[field.plane]) ? { ...next[field.plane] } : {};
   if (result.unset || (resolveFieldKind(field)?.kind === 'toggle' && result.value === false)) delete plane[field.target];
@@ -2660,7 +2677,7 @@ async function resolveRecipe(recipe, context = {}) {
     const outputBytes = utf8Size(document);
     if (outputBytes > limits.maxOutputBytes) throw Object.assign(new RangeError('Output byte limit exceeded'), { code: 'limit_exceeded', sourcePath: '/root' });
     const { normalize } = await Promise.resolve(/* import() */).then(__webpack_require__.bind(__webpack_require__, "32dfc4431a24"));
-    const normalized = await normalize(document, context.registry, { limits: { maxDocumentBytes: limits.maxOutputBytes, maxDepth: limits.maxOutputDepth, maxNodes: limits.maxOutputNodes, maxChildrenPerSlot: limits.maxChildrenPerSlot }, supportedExtensions: context.supportedExtensions });
+    const normalized = await normalize(document, context.registry, { limits: { maxDocumentBytes: limits.maxOutputBytes, maxDepth: limits.maxOutputDepth, maxNodes: limits.maxOutputNodes, maxChildrenPerSlot: limits.maxChildrenPerSlot }, supportedExtensions: context.supportedExtensions, ports: context.compositionPorts });
     if (!normalized.document) throw Object.assign(new Error('Resolved document is invalid'), { code: 'invalid_resolved_document', sourcePath: '/root', details: normalized.diagnostics });
     const executionContract = context.executionContract;
     if (!executionContract?.contractDigest || !executionContract?.registryDigest || !executionContract?.rendererDigest) throw Object.assign(new Error('Execution contract is required'), { code: 'invalid_value', sourcePath: '/executionContract' });
@@ -2831,8 +2848,12 @@ function validateRegionRules(root, registry, diagnostics) {
     if (uses.length < 2) continue;
     const labels = new Set();
     for (const use of uses) {
-      if (use.label === undefined) diagnostics.push(diagnostic('region_label_required', `${use.path}.props.label`, `Repeated ${landmark} regions require distinct labels`));
-      else if (labels.has(use.label)) diagnostics.push(diagnostic('region_label_duplicate', `${use.path}.props.label`, `Repeated ${landmark} regions require distinct labels`));
+      if (use.label === undefined) {
+        // A region landmark without a label is already reported once above.
+        if (landmark !== 'region') diagnostics.push(diagnostic('region_label_required', `${use.path}.props.label`, `Repeated ${landmark} regions require distinct labels`));
+        continue;
+      }
+      if (labels.has(use.label)) diagnostics.push(diagnostic('region_label_duplicate', `${use.path}.props.label`, `Repeated ${landmark} regions require distinct labels`));
       else labels.add(use.label);
     }
   }
@@ -2981,9 +3002,12 @@ const VALUE_TYPES = Object.freeze({
   }),
 });
 
+const own = (object, key) => (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(object) && typeof key === 'string' && Object.hasOwn(object, key);
+const knownValueType = (name) => own(VALUE_TYPES, name);
+
 function checkPortValue(valueType, value) {
+  if (!knownValueType(valueType)) throw new TypeError(`Unknown value type ${valueType}`);
   const type = VALUE_TYPES[valueType];
-  if (!type) throw new TypeError(`Unknown value type ${valueType}`);
   const checked = type.check(value);
   if (new globalThis.TextEncoder().encode(JSON.stringify(checked)).byteLength > ROUTING_LIMITS.maxValueBytes) throw new TypeError('Port value is too large');
   return checked;
@@ -2995,7 +3019,7 @@ function createPortRegistry(manifests = [], options = {}) {
     if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(manifest) || manifest.schema !== 'simai.composition.port-manifest.v1') throw new TypeError('composition_port_manifest_invalid');
     if (elements.has(manifest.element)) throw new TypeError(`composition_port_manifest_duplicate:${manifest.element}`);
     for (const port of [...Object.values(manifest.outputs || {}), ...Object.values(manifest.inputs || {})]) {
-      if (!VALUE_TYPES[port.value]) throw new TypeError(`composition_port_value_type_unknown:${port.value}`);
+      if (!knownValueType(port.value)) throw new TypeError(`composition_port_value_type_unknown:${port.value}`);
     }
     elements.set(manifest.element, (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.canonical)(manifest));
   }
@@ -3014,9 +3038,14 @@ function portsForType(typeManifest, ports) {
   return null;
 }
 
+function validEndpointExtension(extension) {
+  return (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(extension) && Object.keys(extension).length === 1
+    && typeof extension.name === 'string' && NAME_PATTERN.test(extension.name);
+}
+
 function endpointName(node) {
-  const extension = (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(node?.extensions) ? node.extensions[ENDPOINT_EXTENSION] : undefined;
-  return (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(extension) ? extension.name : undefined;
+  const extension = own(node?.extensions, ENDPOINT_EXTENSION) ? node.extensions[ENDPOINT_EXTENSION] : undefined;
+  return validEndpointExtension(extension) ? extension.name : undefined;
 }
 
 function collectScope(scopeNode, path) {
@@ -3025,11 +3054,10 @@ function collectScope(scopeNode, path) {
   const visit = (node, nodePath, nested) => {
     if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(node)) return;
     if (node !== scopeNode) {
-      const extension = (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(node.extensions) ? node.extensions[ENDPOINT_EXTENSION] : undefined;
-      if (extension !== undefined && !nested) {
-        if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(extension) || Object.keys(extension).some((key) => key !== 'name') || typeof extension.name !== 'string' || !NAME_PATTERN.test(extension.name)) {
-          problems.push(diagnostic('route_endpoint_invalid', `${nodePath}.extensions.${ENDPOINT_EXTENSION}`, 'Endpoint extension must contain only a valid name'));
-        } else if (endpoints.has(extension.name)) {
+      const extension = own(node.extensions, ENDPOINT_EXTENSION) ? node.extensions[ENDPOINT_EXTENSION] : undefined;
+      // Shape errors are reported once for every node by resolveRoutes.
+      if (validEndpointExtension(extension) && !nested) {
+        if (endpoints.has(extension.name)) {
           problems.push(diagnostic('route_endpoint_duplicate', `${nodePath}.extensions.${ENDPOINT_EXTENSION}`, `Endpoint ${extension.name} is declared twice in one scope`));
         } else {
           endpoints.set(extension.name, { node, path: nodePath });
@@ -3073,6 +3101,9 @@ function resolveRoutes(root, registry, ports, diagnostics = []) {
   const resolved = new Map();
   const visit = (node, path, scopeDepth) => {
     if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(node)) return;
+    if (own(node.extensions, ENDPOINT_EXTENSION) && !validEndpointExtension(node.extensions[ENDPOINT_EXTENSION])) {
+      diagnostics.push(diagnostic('route_endpoint_invalid', `${path}.extensions.${ENDPOINT_EXTENSION}`, 'Endpoint extension must contain only a valid name'));
+    }
     let depth = scopeDepth;
     if (node.type === 'layout.scope') {
       depth += 1;
@@ -3093,7 +3124,7 @@ function resolveRoutes(root, registry, ports, diagnostics = []) {
         ids.add(route.id);
         const ends = {};
         for (const side of ['from', 'to']) {
-          const endpoint = endpoints.get(route[side].endpoint);
+          const endpoint = typeof route[side].endpoint === 'string' ? endpoints.get(route[side].endpoint) : undefined;
           if (!endpoint) {
             diagnostics.push(diagnostic('route_endpoint_unknown', `${routePath}.${side}.endpoint`, `Endpoint ${route[side].endpoint} is not declared in this scope`));
             continue;
@@ -3101,9 +3132,9 @@ function resolveRoutes(root, registry, ports, diagnostics = []) {
           const portManifest = portsForType(registry.types.get(endpoint.node.type), ports);
           const direction = side === 'from' ? 'outputs' : 'inputs';
           const opposite = side === 'from' ? 'inputs' : 'outputs';
-          const port = portManifest?.[direction]?.[route[side].port];
+          const port = own(portManifest?.[direction], route[side].port) ? portManifest[direction][route[side].port] : undefined;
           if (!port) {
-            const wrongDirection = portManifest?.[opposite]?.[route[side].port];
+            const wrongDirection = own(portManifest?.[opposite], route[side].port);
             diagnostics.push(wrongDirection
               ? diagnostic('route_port_direction', `${routePath}.${side}.port`, `${route[side].port} is not ${side === 'from' ? 'an output' : 'an input'}`)
               : diagnostic('route_port_unknown', `${routePath}.${side}.port`, `${endpoint.node.type} publishes no ${side === 'from' ? 'output' : 'input'} ${route[side].port}`));
@@ -3199,8 +3230,12 @@ class CompositionRouteController {
       try {
         value = checkPortValue(route.from.value, detail.value);
       } catch {
+        // The newest output wins even when invalid: an older pending delivery
+        // for this route becomes stale and cannot settle afterwards.
         this.counters.rejected += 1;
-        this.setState(route.id, { status: 'error', error: 'value_invalid', sequence: this.states.get(route.id)?.sequence || 0 });
+        this.pending.get(route.id)?.abort();
+        this.pending.delete(route.id);
+        this.setState(route.id, { status: 'error', error: 'value_invalid', sequence: ++this.sequence });
         continue;
       }
       this.deliver(route, value);
@@ -3300,13 +3335,16 @@ function parseRoutesAttribute(value) {
   let parsed;
   try { parsed = JSON.parse(value || '[]'); } catch { return null; }
   if (!Array.isArray(parsed) || parsed.length > ROUTING_LIMITS.maxRoutesPerScope) return null;
+  const ids = new Set();
   for (const route of parsed) {
     if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(route) || typeof route.id !== 'string' || !ROUTE_ID_PATTERN.test(route.id)) return null;
     for (const side of ['from', 'to']) {
       const end = route[side];
-      if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(end) || !NAME_PATTERN.test(end.endpoint || '') || !NAME_PATTERN.test(end.port || '') || !VALUE_TYPES[end.value]) return null;
+      if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(end) || typeof end.endpoint !== 'string' || typeof end.port !== 'string'
+        || !NAME_PATTERN.test(end.endpoint) || !NAME_PATTERN.test(end.port) || !knownValueType(end.value)) return null;
     }
-    if (route.from.value !== route.to.value) return null;
+    if (route.from.value !== route.to.value || ids.has(route.id)) return null;
+    ids.add(route.id);
   }
   return parsed;
 }

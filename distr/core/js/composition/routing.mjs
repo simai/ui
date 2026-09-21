@@ -76,9 +76,12 @@ export const VALUE_TYPES = Object.freeze({
   }),
 });
 
+const own = (object, key) => isPlainObject(object) && typeof key === 'string' && Object.hasOwn(object, key);
+const knownValueType = (name) => own(VALUE_TYPES, name);
+
 export function checkPortValue(valueType, value) {
+  if (!knownValueType(valueType)) throw new TypeError(`Unknown value type ${valueType}`);
   const type = VALUE_TYPES[valueType];
-  if (!type) throw new TypeError(`Unknown value type ${valueType}`);
   const checked = type.check(value);
   if (new globalThis.TextEncoder().encode(JSON.stringify(checked)).byteLength > ROUTING_LIMITS.maxValueBytes) throw new TypeError('Port value is too large');
   return checked;
@@ -90,7 +93,7 @@ export function createPortRegistry(manifests = [], options = {}) {
     if (!isPlainObject(manifest) || manifest.schema !== 'simai.composition.port-manifest.v1') throw new TypeError('composition_port_manifest_invalid');
     if (elements.has(manifest.element)) throw new TypeError(`composition_port_manifest_duplicate:${manifest.element}`);
     for (const port of [...Object.values(manifest.outputs || {}), ...Object.values(manifest.inputs || {})]) {
-      if (!VALUE_TYPES[port.value]) throw new TypeError(`composition_port_value_type_unknown:${port.value}`);
+      if (!knownValueType(port.value)) throw new TypeError(`composition_port_value_type_unknown:${port.value}`);
     }
     elements.set(manifest.element, canonical(manifest));
   }
@@ -109,9 +112,14 @@ export function portsForType(typeManifest, ports) {
   return null;
 }
 
+function validEndpointExtension(extension) {
+  return isPlainObject(extension) && Object.keys(extension).length === 1
+    && typeof extension.name === 'string' && NAME_PATTERN.test(extension.name);
+}
+
 export function endpointName(node) {
-  const extension = isPlainObject(node?.extensions) ? node.extensions[ENDPOINT_EXTENSION] : undefined;
-  return isPlainObject(extension) ? extension.name : undefined;
+  const extension = own(node?.extensions, ENDPOINT_EXTENSION) ? node.extensions[ENDPOINT_EXTENSION] : undefined;
+  return validEndpointExtension(extension) ? extension.name : undefined;
 }
 
 function collectScope(scopeNode, path) {
@@ -120,11 +128,10 @@ function collectScope(scopeNode, path) {
   const visit = (node, nodePath, nested) => {
     if (!isPlainObject(node)) return;
     if (node !== scopeNode) {
-      const extension = isPlainObject(node.extensions) ? node.extensions[ENDPOINT_EXTENSION] : undefined;
-      if (extension !== undefined && !nested) {
-        if (!isPlainObject(extension) || Object.keys(extension).some((key) => key !== 'name') || typeof extension.name !== 'string' || !NAME_PATTERN.test(extension.name)) {
-          problems.push(diagnostic('route_endpoint_invalid', `${nodePath}.extensions.${ENDPOINT_EXTENSION}`, 'Endpoint extension must contain only a valid name'));
-        } else if (endpoints.has(extension.name)) {
+      const extension = own(node.extensions, ENDPOINT_EXTENSION) ? node.extensions[ENDPOINT_EXTENSION] : undefined;
+      // Shape errors are reported once for every node by resolveRoutes.
+      if (validEndpointExtension(extension) && !nested) {
+        if (endpoints.has(extension.name)) {
           problems.push(diagnostic('route_endpoint_duplicate', `${nodePath}.extensions.${ENDPOINT_EXTENSION}`, `Endpoint ${extension.name} is declared twice in one scope`));
         } else {
           endpoints.set(extension.name, { node, path: nodePath });
@@ -168,6 +175,9 @@ export function resolveRoutes(root, registry, ports, diagnostics = []) {
   const resolved = new Map();
   const visit = (node, path, scopeDepth) => {
     if (!isPlainObject(node)) return;
+    if (own(node.extensions, ENDPOINT_EXTENSION) && !validEndpointExtension(node.extensions[ENDPOINT_EXTENSION])) {
+      diagnostics.push(diagnostic('route_endpoint_invalid', `${path}.extensions.${ENDPOINT_EXTENSION}`, 'Endpoint extension must contain only a valid name'));
+    }
     let depth = scopeDepth;
     if (node.type === 'layout.scope') {
       depth += 1;
@@ -188,7 +198,7 @@ export function resolveRoutes(root, registry, ports, diagnostics = []) {
         ids.add(route.id);
         const ends = {};
         for (const side of ['from', 'to']) {
-          const endpoint = endpoints.get(route[side].endpoint);
+          const endpoint = typeof route[side].endpoint === 'string' ? endpoints.get(route[side].endpoint) : undefined;
           if (!endpoint) {
             diagnostics.push(diagnostic('route_endpoint_unknown', `${routePath}.${side}.endpoint`, `Endpoint ${route[side].endpoint} is not declared in this scope`));
             continue;
@@ -196,9 +206,9 @@ export function resolveRoutes(root, registry, ports, diagnostics = []) {
           const portManifest = portsForType(registry.types.get(endpoint.node.type), ports);
           const direction = side === 'from' ? 'outputs' : 'inputs';
           const opposite = side === 'from' ? 'inputs' : 'outputs';
-          const port = portManifest?.[direction]?.[route[side].port];
+          const port = own(portManifest?.[direction], route[side].port) ? portManifest[direction][route[side].port] : undefined;
           if (!port) {
-            const wrongDirection = portManifest?.[opposite]?.[route[side].port];
+            const wrongDirection = own(portManifest?.[opposite], route[side].port);
             diagnostics.push(wrongDirection
               ? diagnostic('route_port_direction', `${routePath}.${side}.port`, `${route[side].port} is not ${side === 'from' ? 'an output' : 'an input'}`)
               : diagnostic('route_port_unknown', `${routePath}.${side}.port`, `${endpoint.node.type} publishes no ${side === 'from' ? 'output' : 'input'} ${route[side].port}`));
@@ -294,8 +304,12 @@ export class CompositionRouteController {
       try {
         value = checkPortValue(route.from.value, detail.value);
       } catch {
+        // The newest output wins even when invalid: an older pending delivery
+        // for this route becomes stale and cannot settle afterwards.
         this.counters.rejected += 1;
-        this.setState(route.id, { status: 'error', error: 'value_invalid', sequence: this.states.get(route.id)?.sequence || 0 });
+        this.pending.get(route.id)?.abort();
+        this.pending.delete(route.id);
+        this.setState(route.id, { status: 'error', error: 'value_invalid', sequence: ++this.sequence });
         continue;
       }
       this.deliver(route, value);
@@ -395,13 +409,16 @@ export function parseRoutesAttribute(value) {
   let parsed;
   try { parsed = JSON.parse(value || '[]'); } catch { return null; }
   if (!Array.isArray(parsed) || parsed.length > ROUTING_LIMITS.maxRoutesPerScope) return null;
+  const ids = new Set();
   for (const route of parsed) {
     if (!isPlainObject(route) || typeof route.id !== 'string' || !ROUTE_ID_PATTERN.test(route.id)) return null;
     for (const side of ['from', 'to']) {
       const end = route[side];
-      if (!isPlainObject(end) || !NAME_PATTERN.test(end.endpoint || '') || !NAME_PATTERN.test(end.port || '') || !VALUE_TYPES[end.value]) return null;
+      if (!isPlainObject(end) || typeof end.endpoint !== 'string' || typeof end.port !== 'string'
+        || !NAME_PATTERN.test(end.endpoint) || !NAME_PATTERN.test(end.port) || !knownValueType(end.value)) return null;
     }
-    if (route.from.value !== route.to.value) return null;
+    if (route.from.value !== route.to.value || ids.has(route.id)) return null;
+    ids.add(route.id);
   }
   return parsed;
 }

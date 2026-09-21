@@ -2007,6 +2007,48 @@
     },
     {
       "diagnostics": [
+        "region_label_required"
+      ],
+      "document": {
+        "id": "regions-case",
+        "profile": "ui-layout",
+        "root": {
+          "id": "pair",
+          "slots": {
+            "regions": [
+              {
+                "id": "p-a",
+                "props": {
+                  "landmark": "region",
+                  "name": "a"
+                },
+                "slots": {
+                  "default": []
+                },
+                "type": "layout.region"
+              },
+              {
+                "id": "p-b",
+                "props": {
+                  "landmark": "region",
+                  "name": "b"
+                },
+                "slots": {
+                  "default": []
+                },
+                "type": "layout.region"
+              }
+            ]
+          },
+          "type": "layout.regions"
+        },
+        "schema": "simai.composition.document.v1"
+      },
+      "expect": "invalid",
+      "id": "negative.two-unlabeled-region-landmarks"
+    },
+    {
+      "diagnostics": [
         "region_label_forbidden"
       ],
       "document": {

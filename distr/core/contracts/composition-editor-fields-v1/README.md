@@ -40,7 +40,7 @@ landmark), `toggle` — закрепление области при прокр�
 | value schema | строка из choices | safe integer | строка 1..2000 code points | boolean |
 | default | обязан быть choice | обязан пройти ограничения | обязан пройти ограничения | false или отсутствует |
 | ограничения | min_length, max_length | min, max (обязательны) | min_length, max_length (max обязателен) | нет |
-| форма → значение | точная строка | `^-?(0|[1-9][0-9]*)$` | точная строка без trim и без Unicode-нормализации | `true` → true, отсутствие → false |
+| форма → значение | точная строка | `^-?(0\|[1-9][0-9]*)$` | точная строка без trim и без Unicode-нормализации | `true` → true, отсутствие → false |
 | пусто/нет значения | ключ удаляется | ключ удаляется | ключ удаляется | ключ удаляется |
 | хранение | строка | число | строка | только true; false удаляет ключ |
 
@@ -53,13 +53,14 @@ landmark), `toggle` — закрепление области при прокр�
 
 Проверка manifest по типам — `validateFieldKinds`, в дополнение к
 `validateEditorManifest`: `field_kind_unknown`, `field_constraint_unknown`,
-`field_constraint_required`, `field_default_invalid`. Она не встроена в
+`field_constraint_required`, `field_constraint_invalid` (min больше max),
+`field_choice_invalid` (вариант нарушает min_length/max_length), `field_default_invalid`. Она не встроена в
 `validateEditorManifest`, поэтому manifests продуктов с другими Property не
 ломаются.
 
 API: `resolveFieldKind`, `validateFieldValue`, `parseFieldSubmission(field,
 raw)` (raw — строка или null), `applyFieldValue(node, field, result)` — новый
-узел; исходный не меняется. Ключ `props.<target>` удаляется при unset, пустая
+узел; исходный не меняется; результат с ошибкой — TypeError. Ключ `props.<target>` удаляется при unset, пустая
 плоскость удаляется целиком. Итоговый узел нормализуется Document v1, поэтому
 digest одинаков в JS и PHP.
 
@@ -95,7 +96,8 @@ digest одинаков в JS и PHP.
 `renderFieldFallback(projectedField, {instance, messages})` выдаёт разметку без
 JavaScript: `<div class="sf-editor-field" data-sf-field-kind data-sf-field-group>`
 с нативным контролом, `label for`, `name="<instance>.<plane>.<target>"` и
-`<small class="sf-editor-field-help">`. Значения экранируются. Продукт может
+`<small class="sf-editor-field-help">`. Экранирование значений атрибутов и текста: `&` → `&amp;`, `<` → `&lt;`,
+`>` → `&gt;`, `"` → `&quot;`, `'` → `&#39;`; других замен нет. Продукт может
 заменить контрол на `sf-dropdown`, `sf-input` или `sf-switch`, сохраняя имя,
 описание и нормализацию. Отправка разбирается `parseFieldSubmission`.
 

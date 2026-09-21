@@ -87,6 +87,9 @@ layout, node, name, landmark, placement, path и `sha256:` digest канонич
   `data-sf-composition-id`, `data-sf-region`, `data-sf-region-placement`
   (фактическое значение, по умолчанию block), `data-sf-region-sticky=""`
   только при true, `aria-label` только при label. Все значения экранируются.
+
+Экранирование значений атрибутов и текста: `&` → `&amp;`, `<` → `&lt;`,
+`>` → `&gt;`, `"` → `&quot;`, `'` → `&#39;`; других замен нет.
 - Пустая область выводится пустым элементом, а не пропускается.
 
 Стили входят в core.css (`@layer sf.components`). Узкий контейнер — одна
