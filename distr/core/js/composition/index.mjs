@@ -12,6 +12,10 @@ import {
 } from './fields.mjs';
 import { Recipe, parseRecipeJson, recipeDigest, recipeNodeId, resolveRecipe } from './recipe.mjs';
 import { REGION_ELEMENTS, describeRegions, validateRegionRules } from './regions.mjs';
+import { OVERLAY_EVENTS, defineCompositionOverlay, overlayNodes } from './overlay.mjs';
+import { SORTABLE_INTENT_EVENT, activeSortableSession, defineSortable, registerSortableDropTarget, sortableIndexAt } from './sortable.mjs';
+import { INLINE_EVENTS, readInlineDom, renderInlineDom, startInlineEdit } from './inline-editor.mjs';
+import { INLINE_MARKS, inlineText, marksIn, normalizeInline, replaceRange, setLink, toggleMark } from './inline-model.mjs';
 import {
   ENDPOINT_EXTENSION,
   VALUE_TYPES,
@@ -149,7 +153,8 @@ function validateJsonSchema(value, schema, path, diagnostics) {
 }
 
 function validUrl(value) {
-  if (/^(?:\/|\.?\.\/|#)/u.test(value)) return !value.startsWith('//');
+  // Browsers read "/\\host" like "//host": backslashes never form a local link.
+  if (/^(?:\/|\.?\.\/|#)/u.test(value)) return !value.startsWith('//') && !value.includes('\\');
   try {
     return SAFE_SCHEMES.has(new globalThis.URL(value).protocol);
   } catch {
@@ -435,11 +440,18 @@ export const Composition = Object.freeze({
   VALUE_TYPES,
   checkPortValue,
   createPortRegistry,
+  defineCompositionOverlay,
   defineCompositionScope,
+  defineSortable,
+  registerSortableDropTarget,
+  startInlineEdit,
+  normalizeInline,
+  inlineText,
   createRegistry,
   compositionTypeFromSmartManifest,
   describeRegions,
   normalize,
+  overlayNodes,
   projectDocumentEditorFields,
   projectEditorFields,
   render,
@@ -454,6 +466,8 @@ if (typeof globalThis !== 'undefined') {
   globalThis.SF = globalThis.SF || {};
   globalThis.SF.Composition = Composition;
   defineCompositionScope();
+  defineCompositionOverlay();
+  defineSortable();
 }
 
 export default Composition;
@@ -462,4 +476,7 @@ export { Recipe, parseRecipeJson, recipeDigest, recipeNodeId, resolveRecipe };
 export { BUILTIN_EDITOR_MANIFESTS, projectDocumentEditorFields, projectEditorFields, validateEditorManifest };
 export { describeRegions, stableStringify };
 export { BUILTIN_PORT_MANIFESTS, VALUE_TYPES, checkPortValue, createPortRegistry, defineCompositionScope };
+export { OVERLAY_EVENTS, defineCompositionOverlay, overlayNodes };
+export { SORTABLE_INTENT_EVENT, activeSortableSession, defineSortable, registerSortableDropTarget, sortableIndexAt };
+export { INLINE_EVENTS, INLINE_MARKS, inlineText, marksIn, normalizeInline, readInlineDom, renderInlineDom, replaceRange, setLink, startInlineEdit, toggleMark };
 export { BUILTIN_FIELD_KINDS, applyFieldValue, parseFieldSubmission, renderFieldFallback, resolveFieldKind, validateFieldKinds, validateFieldValue };

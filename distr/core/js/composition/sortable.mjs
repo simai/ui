@@ -1,0 +1,492 @@
+// Sortable drag-and-drop primitive. <sf-sortable> lists and registered
+// external drop targets share one drag session. Pointer (mouse, pen, touch via
+// handles), keyboard and screen-reader paths all end in the same intent event;
+// the component never moves host DOM or data. The host applies the change.
+
+export const SORTABLE_INTENT_EVENT = 'sf-sortable-intent';
+export const SORTABLE_STATE_EVENT = 'sf-sortable-state';
+
+const ITEM = '[data-sf-sortable-item]';
+const HANDLE = '[data-sf-sortable-handle]';
+const INTERACTIVE = 'a[href],button,input,select,textarea,summary,[contenteditable]:not([contenteditable="false"])';
+const NAME = /^[a-z][a-z0-9-]{0,31}$/u;
+const DRAG_THRESHOLD = 4;
+const EDGE = 32;
+
+const MESSAGES = {
+  ru: {
+    instructions: 'Пробел или Enter — взять, стрелки — переместить, Пробел или Enter — положить, Escape — отменить.',
+    picked: 'Взято: {item}. Позиция {index} из {total} в «{list}».',
+    moved: 'Позиция {index} из {total} в «{list}».',
+    dropped: 'Положено: {item}, позиция {index} в «{list}».',
+    cancelled: 'Перемещение отменено.',
+    target: 'Цель: {target}.',
+  },
+  en: {
+    instructions: 'Space or Enter to pick up, arrows to move, Space or Enter to drop, Escape to cancel.',
+    picked: 'Picked up {item}. Position {index} of {total} in “{list}”.',
+    moved: 'Position {index} of {total} in “{list}”.',
+    dropped: 'Dropped {item} at position {index} in “{list}”.',
+    cancelled: 'Move cancelled.',
+    target: 'Target: {target}.',
+  },
+};
+
+const format = (template, values) => template.replace(/\{(\w+)\}/gu, (_, key) => String(values[key] ?? ''));
+const messages = () => MESSAGES[(globalThis.document?.documentElement.lang || 'en').toLowerCase().startsWith('ru') ? 'ru' : 'en'];
+const externalTargets = new Set();
+let session = null;
+
+/** The active drag session (read-only view), or null. */
+export function activeSortableSession() {
+  return session ? Object.freeze({ item: session.item, from: session.from, group: session.group, mode: session.mode, input: session.input }) : null;
+}
+
+/**
+ * Registers a non-list drop target such as the editor overlay.
+ * resolve(x, y, session) returns {descriptor, rect, label} or null;
+ * drop(session, descriptor) performs the intent emission.
+ */
+export function registerSortableDropTarget(target) {
+  if (!target || typeof target.resolve !== 'function' || typeof target.drop !== 'function') throw new TypeError('Drop target needs resolve and drop');
+  externalTargets.add(target);
+  return () => externalTargets.delete(target);
+}
+
+// Visible text of an item without decorative (aria-hidden) parts.
+function itemLabel(item) {
+  if (item.getAttribute('aria-label')) return item.getAttribute('aria-label');
+  const clone = item.cloneNode(true);
+  for (const hidden of clone.querySelectorAll('[aria-hidden="true"]')) hidden.remove();
+  return clone.textContent.replace(/\s+/gu, ' ').trim();
+}
+
+function listName(list) {
+  return list.getAttribute('label') || list.getAttribute('aria-label') || list.getAttribute('group') || '';
+}
+
+function items(list) {
+  return [...list.querySelectorAll(ITEM)].filter((item) => item.closest('sf-sortable') === list);
+}
+
+function accepts(list, group) {
+  if (!list || list.getAttribute('mode') === 'copy') return false;
+  const own = list.getAttribute('group');
+  const extra = (list.getAttribute('accepts') || '').split(/\s+/u).filter(Boolean);
+  return group === own || extra.includes(group);
+}
+
+function scrollContainer(element) {
+  for (let node = element?.parentElement; node; node = node.parentElement) {
+    const style = globalThis.getComputedStyle(node);
+    if (/(auto|scroll)/u.test(style.overflowY) && node.scrollHeight > node.clientHeight) return node;
+  }
+  return globalThis.document.scrollingElement;
+}
+
+function indicator() {
+  let line = globalThis.document.querySelector('.sf-sortable-indicator');
+  if (!line) {
+    line = globalThis.document.createElement('div');
+    line.className = 'sf-sortable-indicator';
+    line.setAttribute('aria-hidden', 'true');
+    globalThis.document.body.append(line);
+  }
+  return line;
+}
+
+function showIndicator(rect) {
+  const line = indicator();
+  if (!rect) {
+    line.hidden = true;
+    return;
+  }
+  line.hidden = false;
+  Object.assign(line.style, { left: `${rect.left}px`, top: `${rect.top}px`, width: `${rect.width}px`, height: `${rect.height}px` });
+}
+
+/** Index where an item would land in a list for a pointer position. */
+export function sortableIndexAt(boxes, coordinate, exclude = -1) {
+  let index = 0;
+  for (let position = 0; position < boxes.length; position += 1) {
+    if (position === exclude) continue;
+    const box = boxes[position];
+    if (coordinate > box.start + (box.end - box.start) / 2) index = position + 1;
+  }
+  return index;
+}
+
+function listTarget(list, x, y) {
+  const all = items(list);
+  const horizontal = list.getAttribute('orientation') === 'horizontal';
+  const boxes = all.map((item) => {
+    const box = item.getBoundingClientRect();
+    return horizontal ? { start: box.left, end: box.right } : { start: box.top, end: box.bottom };
+  });
+  const index = sortableIndexAt(boxes, horizontal ? x : y);
+  return { list, index, rect: listIndicatorRect(list, all, index, horizontal) };
+}
+
+function listIndicatorRect(list, all, index, horizontal) {
+  const box = list.getBoundingClientRect();
+  const before = all[index];
+  const after = all[index - 1];
+  if (horizontal) {
+    const x = before ? before.getBoundingClientRect().left : after ? after.getBoundingClientRect().right : box.left;
+    return { left: x - 1, top: box.top, width: 2, height: box.height };
+  }
+  const y = before ? before.getBoundingClientRect().top : after ? after.getBoundingClientRect().bottom : box.top;
+  return { left: box.left, top: y - 1, width: box.width, height: 2 };
+}
+
+function emitIntent(target, detail) {
+  target.dispatchEvent(new globalThis.CustomEvent(SORTABLE_INTENT_EVENT, { bubbles: true, composed: true, detail: Object.freeze(detail) }));
+}
+
+function finish(list, reason) {
+  if (!session) return;
+  const ended = session;
+  session = null;
+  ended.cleanup?.abort();
+  if (ended.scrollFrame) globalThis.cancelAnimationFrame(ended.scrollFrame);
+  ended.source?.removeAttribute('data-sf-sortable-dragging');
+  ended.ghost?.remove();
+  showIndicator(null);
+  for (const target of externalTargets) target.leave?.();
+  globalThis.document.documentElement.removeAttribute('data-sf-sortable-active');
+  list.dispatchEvent(new globalThis.CustomEvent(SORTABLE_STATE_EVENT, { bubbles: true, composed: true, detail: Object.freeze({ state: reason, item: ended.item }) }));
+}
+
+export function defineSortable(registry = globalThis.customElements) {
+  if (!registry || typeof globalThis.HTMLElement !== 'function') return null;
+  const existing = registry.get('sf-sortable');
+  if (existing) return existing;
+
+  class SfSortable extends globalThis.HTMLElement {
+    constructor() {
+      super();
+      this.connection = null;
+      this.live = null;
+      this.instructions = null;
+    }
+
+    connectedCallback() {
+      if (this.connection) return;
+      this.connection = new AbortController();
+      const options = { signal: this.connection.signal };
+      if (!this.live) {
+        this.live = globalThis.document.createElement('div');
+        this.live.className = 'sf-sortable-live';
+        this.live.setAttribute('aria-live', 'assertive');
+        this.instructions = globalThis.document.createElement('div');
+        this.instructions.className = 'sf-sortable-live';
+        this.instructions.id = `sf-sortable-help-${Math.random().toString(36).slice(2, 10)}`;
+      }
+      this.instructions.textContent = messages().instructions;
+      this.append(this.live, this.instructions);
+      this.addEventListener('pointerdown', (event) => this.onPointerDown(event), options);
+      this.addEventListener('keydown', (event) => this.onKeyDown(event), options);
+      this.addEventListener('focusin', (event) => this.prepareItem(event.target.closest?.(ITEM)), options);
+      for (const item of items(this)) this.prepareItem(item);
+      // Items the host adds later become focusable and draggable as well.
+      this.observer = new globalThis.MutationObserver(() => { for (const item of items(this)) this.prepareItem(item); });
+      this.observer.observe(this, { childList: true, subtree: true });
+      this.setAttribute('data-sf-sortable', 'connected');
+    }
+
+    disconnectedCallback() {
+      this.observer?.disconnect();
+      this.observer = null;
+      this.connection?.abort();
+      this.connection = null;
+      if (session?.fromList === this || session?.list === this) finish(this, 'cancelled');
+      this.setAttribute('data-sf-sortable', 'disposed');
+    }
+
+    prepareItem(item) {
+      if (!item || item.closest('sf-sortable') !== this) return;
+      if (!item.hasAttribute('tabindex') && !item.matches(INTERACTIVE)) item.tabIndex = 0;
+      const described = (item.getAttribute('aria-describedby') || '').split(/\s+/u);
+      if (this.instructions && !described.includes(this.instructions.id)) item.setAttribute('aria-describedby', [...described.filter(Boolean), this.instructions.id].join(' '));
+      if (!item.querySelector(HANDLE)) item.style.touchAction = 'none';
+    }
+
+    announce(text) {
+      if (this.live) this.live.textContent = text;
+    }
+
+    get group() {
+      const value = this.getAttribute('group') || '';
+      return NAME.test(value) ? value : '';
+    }
+
+    get mode() {
+      return this.getAttribute('mode') === 'copy' ? 'copy' : 'move';
+    }
+
+    begin(item, input) {
+      const id = item.getAttribute('data-sf-sortable-item');
+      if (!id || !this.group || session) return false;
+      const all = items(this);
+      session = {
+        item: id, from: this.getAttribute('id') || this.group, group: this.group, mode: this.mode, input,
+        source: item, fromList: this, sourceIndex: all.indexOf(item), list: this.mode === 'copy' ? null : this,
+        index: all.indexOf(item), external: null, cleanup: new AbortController(),
+      };
+      item.setAttribute('data-sf-sortable-dragging', '');
+      globalThis.document.documentElement.setAttribute('data-sf-sortable-active', '');
+      this.dispatchEvent(new globalThis.CustomEvent(SORTABLE_STATE_EVENT, { bubbles: true, composed: true, detail: Object.freeze({ state: 'picked', item: id }) }));
+      return true;
+    }
+
+    // Pointer path ---------------------------------------------------------
+    onPointerDown(event) {
+      if (event.button !== 0 || session) return;
+      const item = event.target.closest?.(ITEM);
+      if (!item || item.closest('sf-sortable') !== this) return;
+      const handle = item.querySelector(HANDLE);
+      if (handle && !handle.contains(event.target)) return;
+      if (!handle && event.target.closest(INTERACTIVE) && event.target.closest(INTERACTIVE) !== item) return;
+      const start = { x: event.clientX, y: event.clientY };
+      const pointer = event.pointerId;
+      let started = false;
+      const pending = new AbortController();
+      const move = (moveEvent) => {
+        if (moveEvent.pointerId !== pointer) return;
+        if (!started) {
+          if (Math.hypot(moveEvent.clientX - start.x, moveEvent.clientY - start.y) < DRAG_THRESHOLD) return;
+          if (!this.begin(item, moveEvent.pointerType || 'mouse')) { pending.abort(); return; }
+          started = true;
+          item.setPointerCapture?.(pointer);
+          session.ghost = this.ghost(item, moveEvent);
+        }
+        moveEvent.preventDefault();
+        this.track(moveEvent.clientX, moveEvent.clientY);
+      };
+      const up = (upEvent) => {
+        if (upEvent.pointerId !== pointer) return;
+        pending.abort();
+        if (started) this.drop();
+      };
+      const cancel = () => {
+        pending.abort();
+        if (started) finish(this, 'cancelled');
+      };
+      globalThis.addEventListener('pointermove', move, { signal: pending.signal, passive: false });
+      globalThis.addEventListener('pointerup', up, { signal: pending.signal });
+      globalThis.addEventListener('pointercancel', cancel, { signal: pending.signal });
+      // Capture phase: cancel the drag before page-level Escape handlers run.
+      globalThis.addEventListener('keydown', (keyEvent) => { if (keyEvent.key === 'Escape' && started) { keyEvent.preventDefault(); keyEvent.stopPropagation(); cancel(); } }, { signal: pending.signal, capture: true });
+    }
+
+    ghost(item, event) {
+      const box = item.getBoundingClientRect();
+      const ghost = item.cloneNode(true);
+      ghost.removeAttribute('id');
+      for (const element of ghost.querySelectorAll('[id]')) element.removeAttribute('id');
+      ghost.classList.add('sf-sortable-ghost');
+      ghost.setAttribute('aria-hidden', 'true');
+      ghost.inert = true;
+      Object.assign(ghost.style, { width: `${box.width}px`, left: `${box.left}px`, top: `${box.top}px` });
+      session.offset = { x: event.clientX - box.left, y: event.clientY - box.top };
+      globalThis.document.body.append(ghost);
+      return ghost;
+    }
+
+    track(x, y) {
+      if (!session) return;
+      session.pointer = { x, y };
+      if (session.ghost) Object.assign(session.ghost.style, { left: `${x - session.offset.x}px`, top: `${y - session.offset.y}px` });
+      this.retarget(x, y);
+      this.startAutoScroll();
+    }
+
+    retarget(x, y) {
+      const under = globalThis.document.elementFromPoint(x, y);
+      const list = under?.closest?.('sf-sortable');
+      for (const target of externalTargets) {
+        const resolved = target.resolve(x, y, activeSortableSession());
+        if (resolved) {
+          session.list = null;
+          session.external = { target, ...resolved };
+          showIndicator(resolved.rect);
+          return;
+        }
+      }
+      session.external = null;
+      if (list && accepts(list, session.group)) {
+        const resolved = listTarget(list, x, y);
+        session.list = list;
+        // Store the final index: positions after the source shift by one.
+        session.index = list === session.fromList && session.mode === 'move' && resolved.index > session.sourceIndex ? resolved.index - 1 : resolved.index;
+        showIndicator(resolved.rect);
+      } else {
+        session.list = null;
+        showIndicator(null);
+      }
+    }
+
+    // Scrolls the nearest scroll container every frame while the pointer
+    // stays in its edge zone, including when the pointer is held still.
+    startAutoScroll() {
+      if (!session || session.scrollFrame) return;
+      const step = () => {
+        if (!session?.pointer) return;
+        session.scrollFrame = 0;
+        const { x, y } = session.pointer;
+        const container = scrollContainer(globalThis.document.elementFromPoint(x, y));
+        if (!container) return;
+        const box = container === globalThis.document.scrollingElement
+          ? { top: 0, bottom: globalThis.innerHeight }
+          : container.getBoundingClientRect();
+        const max = container.scrollHeight - container.clientHeight;
+        let delta = 0;
+        if (y < box.top + EDGE && container.scrollTop > 0) delta = -Math.ceil((box.top + EDGE - y) / 4);
+        else if (y > box.bottom - EDGE && container.scrollTop < max) delta = Math.ceil((y - box.bottom + EDGE) / 4);
+        if (delta) {
+          // Instant even under scroll-behavior: smooth, so every frame advances.
+          container.scrollBy({ top: delta, behavior: 'instant' });
+          this.retarget(x, y);
+          session.scrollFrame = globalThis.requestAnimationFrame(step);
+        }
+      };
+      session.scrollFrame = globalThis.requestAnimationFrame(step);
+    }
+
+    drop() {
+      if (!session) return;
+      const current = session;
+      if (current.external) {
+        current.external.target.drop(activeSortableSession(), current.external.descriptor);
+        finish(this, 'dropped');
+        return;
+      }
+      if (current.list) {
+        const index = current.index;
+        const unchanged = current.list === current.fromList && index === current.sourceIndex;
+        if (!unchanged) {
+          emitIntent(current.list, {
+            item: current.item, from: current.from, to: current.list.getAttribute('id') || current.list.group,
+            index, mode: current.mode,
+          });
+          current.list.announce?.(format(messages().dropped, { item: itemLabel(current.source), index: index + 1, list: listName(current.list) }));
+          finish(this, 'dropped');
+          return;
+        }
+      }
+      finish(this, 'cancelled');
+    }
+
+    // Keyboard path --------------------------------------------------------
+    keyboardTargets() {
+      return [...globalThis.document.querySelectorAll('sf-sortable')].filter((list) => list === session?.fromList ? session.mode === 'move' : accepts(list, session?.group));
+    }
+
+    describeKeyboard(announce = true) {
+      if (!session) return;
+      if (session.external) {
+        showIndicator(session.external.rect);
+        if (announce) this.announce(format(messages().target, { target: session.external.label || '' }));
+        return;
+      }
+      const list = session.list;
+      const full = items(list);
+      const sameList = list === session.fromList && session.mode === 'move';
+      const positions = full.length + (sameList ? 0 : 1);
+      const physical = sameList && session.index > session.sourceIndex ? session.index + 1 : session.index;
+      showIndicator(listIndicatorRect(list, full, Math.min(physical, full.length), list.getAttribute('orientation') === 'horizontal'));
+      if (announce) this.announce(format(messages().moved, { index: session.index + 1, total: positions, list: listName(list) }));
+    }
+
+    onKeyDown(event) {
+      const item = event.target.closest?.(ITEM);
+      if (!session) {
+        if (!item || item.closest('sf-sortable') !== this || event.target !== item) return;
+        if (event.key !== ' ' && event.key !== 'Enter') return;
+        event.preventDefault();
+        if (!this.begin(item, 'keyboard')) return;
+        // An abandoned keyboard move is cancelled when focus or a click leaves the list.
+        const abandon = () => { if (session?.fromList === this) { this.announce(messages().cancelled); finish(this, 'cancelled'); } };
+        const cleanup = { signal: session.cleanup.signal };
+        this.addEventListener('focusout', (focusEvent) => {
+          if (focusEvent.relatedTarget && this.contains(focusEvent.relatedTarget)) return;
+          globalThis.setTimeout(() => { if (!this.contains(globalThis.document.activeElement)) abandon(); }, 0);
+        }, cleanup);
+        globalThis.document.addEventListener('pointerdown', (pointerEvent) => { if (!this.contains(pointerEvent.target)) abandon(); }, { ...cleanup, capture: true });
+        if (session.mode === 'copy') {
+          const [first] = this.keyboardTargets();
+          const external = [...externalTargets].flatMap((target) => (target.keyboardTargets?.(activeSortableSession()) || []).map((entry) => ({ target, ...entry })));
+          if (first) {
+            session.list = first;
+            session.index = items(first).length;
+          } else if (external.length) {
+            session.external = external[0];
+          } else {
+            finish(this, 'cancelled');
+            return;
+          }
+        }
+        if (session.external) {
+          this.describeKeyboard(false);
+          this.announce(`${format(messages().picked, { item: itemLabel(item), index: 1, total: 1, list: '' }).split('.')[0]}. ${format(messages().target, { target: session.external.label || '' })}`);
+          return;
+        }
+        const all = items(session.list);
+        this.describeKeyboard(false);
+        this.announce(format(messages().picked, { item: itemLabel(item), index: session.index + 1, total: all.length, list: listName(session.list) }));
+        return;
+      }
+      if (session.input !== 'keyboard' || session.fromList !== this) return;
+      const lists = this.keyboardTargets();
+      const external = [...externalTargets].flatMap((target) => (target.keyboardTargets?.(activeSortableSession()) || []).map((entry) => ({ target, ...entry })));
+      if (event.key === 'Escape' || event.key === 'Tab') {
+        if (event.key === 'Escape') event.preventDefault();
+        this.announce(messages().cancelled);
+        finish(this, 'cancelled');
+        return;
+      }
+      if (event.key === ' ' || event.key === 'Enter') {
+        event.preventDefault();
+        this.drop();
+        return;
+      }
+      const vertical = { ArrowUp: -1, ArrowDown: 1 }[event.key];
+      const across = { ArrowLeft: -1, ArrowRight: 1 }[event.key];
+      if (vertical === undefined && across === undefined) return;
+      event.preventDefault();
+      if (session.external) {
+        const position = external.findIndex((entry) => entry.target === session.external.target && JSON.stringify(entry.descriptor) === JSON.stringify(session.external.descriptor));
+        const next = external[position + (vertical ?? across)];
+        if (next) session.external = next;
+        else if ((vertical ?? across) < 0 && lists.length) {
+          session.external = null;
+          session.list = lists.at(-1);
+          session.index = items(session.list).length - (session.list === session.fromList && session.mode === 'move' ? 1 : 0);
+        }
+        this.describeKeyboard();
+        return;
+      }
+      const list = session.list;
+      const count = items(list).length - (list === session.fromList && session.mode === 'move' ? 1 : 0);
+      if (vertical !== undefined) {
+        const next = session.index + vertical;
+        if (next >= 0 && next <= count) session.index = next;
+        else if (next > count && across === undefined && external.length && lists.indexOf(list) === lists.length - 1) session.external = external[0];
+      } else {
+        const next = lists[lists.indexOf(list) + across];
+        if (next) {
+          session.list = next;
+          session.index = Math.min(session.index, items(next).length - (next === session.fromList && session.mode === 'move' ? 1 : 0));
+        } else if (across > 0 && external.length) {
+          session.external = external[0];
+        }
+      }
+      this.describeKeyboard();
+    }
+  }
+
+  registry.define('sf-sortable', SfSortable);
+  return SfSortable;
+}
+
+export default { activeSortableSession, defineSortable, registerSortableDropTarget, sortableIndexAt };
