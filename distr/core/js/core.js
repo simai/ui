@@ -631,11 +631,12 @@ const Position = Object.freeze({
   logicalSide: _position_placement_js__WEBPACK_IMPORTED_MODULE_1__.logicalSide,
   physicalPlacement: _position_placement_js__WEBPACK_IMPORTED_MODULE_1__.physicalPlacement,
   resolveLength
-});
+}); // Core publishes the helper; component bundles that carry their own copy reuse
+// an already published one instead of replacing it.
 
 if (typeof globalThis !== 'undefined') {
   globalThis.SF = globalThis.SF || {};
-  globalThis.SF.Position = Position;
+  if (!globalThis.SF.Position) globalThis.SF.Position = Position;
 }
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Position);
