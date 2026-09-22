@@ -495,8 +495,8 @@ function resolveLength(value, context = document.body) {
 }
 /**
  * Keeps `floating` anchored to `reference`.
- * options: {side, align, offset, padding, flip, shift, matchWidth, fitHeight,
- *           autoUpdate, onPosition({side, placement, x, y})}
+ * options: {side, align, offset, alignmentOffset, padding, flip, shift,
+ *           matchWidth, fitHeight, autoUpdate, onPosition({side, placement, x, y})}
  * Returns {update(): Promise, stop(), side}.
  */
 
@@ -509,6 +509,7 @@ function anchor(reference, floating, options = {}) {
     side: 'block-end',
     align: 'start',
     offset: 'var(--sf-space-1\\/4)',
+    alignmentOffset: 0,
     padding: 'var(--sf-space-1\\/2)',
     flip: true,
     shift: true,
@@ -520,7 +521,7 @@ function anchor(reference, floating, options = {}) {
   }; // Inline styles this helper writes are restored on stop(); the author's caps
   // are kept, so viewport fitting may only tighten them.
 
-  const written = ['position', 'left', 'top', 'margin', 'max-height', 'max-width', ...(settings.matchWidth ? ['width'] : [])];
+  const written = ['position', 'left', 'top', 'right', 'bottom', 'margin', 'max-height', 'max-width', ...(settings.matchWidth ? ['width'] : [])];
   const saved = written.map(name => [name, floating.style.getPropertyValue(name), floating.style.getPropertyPriority(name)]);
   const authored = {
     maxHeight: floating.style.getPropertyValue('max-height')
@@ -539,8 +540,13 @@ function anchor(reference, floating, options = {}) {
     const gap = resolveLength(settings.offset, reference.parentElement);
     const padding = resolveLength(settings.padding, reference.parentElement); // Measure the natural size so flipping compares the real panel height.
 
-    if (settings.fitHeight) floating.style.maxHeight = authored.maxHeight || '';
-    const middleware = [(0,_floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.offset)(gap)];
+    if (settings.fitHeight) floating.style.maxHeight = authored.maxHeight || ''; // alignmentOffset moves a start/end-aligned panel along its edge (mirrored
+    // for end), e.g. so a tail points at the middle of a small trigger.
+
+    const middleware = [(0,_floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.offset)({
+      mainAxis: gap,
+      alignmentAxis: resolveLength(settings.alignmentOffset, reference.parentElement)
+    })];
     if (settings.flip) middleware.push((0,_floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.flip)({
       padding,
       crossAxis: false
@@ -573,11 +579,15 @@ function anchor(reference, floating, options = {}) {
       placement: (0,_position_placement_js__WEBPACK_IMPORTED_MODULE_1__.physicalPlacement)(settings.side, settings.align, rtl),
       middleware
     });
-    if (controller.stopped) return result;
+    if (controller.stopped) return result; // right/bottom are cleared so logical insets from the component stylesheet
+    // (for example inset-inline-start in RTL) cannot over-constrain the box.
+
     Object.assign(floating.style, {
       position: 'fixed',
       left: `${result.x}px`,
       top: `${result.y}px`,
+      right: 'auto',
+      bottom: 'auto',
       margin: '0'
     });
     controller.side = (0,_position_placement_js__WEBPACK_IMPORTED_MODULE_1__.logicalSide)(result.placement, rtl);
