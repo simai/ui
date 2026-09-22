@@ -5393,7 +5393,12 @@ function applyCreateAttribute(element, key, value) {
     const eventName = toEventName(key);
 
     if (eventName) {
-      element.addEventListener(eventName, value);
+      // Modal and drawer lifecycle events bubble; a handler given to create()
+      // belongs to this element and must not hear a nested modal or drawer.
+      const handler = /^(modal|drawer):/.test(eventName) ? event => {
+        if (event.target === element) value.call(element, event);
+      } : value;
+      element.addEventListener(eventName, handler);
 
       if (!element.__sfCreateEventHandlers) {
         Object.defineProperty(element, '__sfCreateEventHandlers', {
@@ -5405,7 +5410,7 @@ function applyCreateAttribute(element, key, value) {
 
       element.__sfCreateEventHandlers.push({
         eventName,
-        handler: value
+        handler
       });
 
       return;

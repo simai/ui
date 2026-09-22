@@ -1644,9 +1644,14 @@ function anchor(reference, floating, options = {}) {
   const saved = written.map(name => [name, floating.style.getPropertyValue(name), floating.style.getPropertyPriority(name)]);
   const authored = {
     maxHeight: floating.style.getPropertyValue('max-height')
-  };
-  const computedCap = parseFloat(getComputedStyle(floating).maxHeight);
+  }; // Stylesheet caps (max-height, max-width) are read before this helper writes
+  // inline values, so fitting the viewport never loosens them.
+
+  const floatingStyle = getComputedStyle(floating);
+  const computedCap = parseFloat(floatingStyle.maxHeight);
   const heightCap = Number.isFinite(computedCap) ? computedCap : Infinity;
+  const computedWidthCap = parseFloat(floatingStyle.maxWidth);
+  const widthCap = Number.isFinite(computedWidthCap) ? computedWidthCap : Infinity;
   const controller = {
     side: settings.side,
     stopped: false
@@ -1688,7 +1693,7 @@ function anchor(reference, floating, options = {}) {
         if (controller.stopped) return;
         const viewportWidth = document.documentElement.clientWidth - padding * 2;
         if (settings.matchWidth) elements.floating.style.width = `${Math.max(0, Math.min(rects.reference.width, viewportWidth))}px`;
-        elements.floating.style.maxWidth = `${Math.max(0, Math.min(availableWidth, viewportWidth))}px`;
+        elements.floating.style.maxWidth = `${Math.max(0, Math.min(availableWidth, viewportWidth, widthCap))}px`;
         if (settings.fitHeight) elements.floating.style.maxHeight = `${Math.max(0, Math.min(availableHeight, heightCap))}px`;
       }
 
