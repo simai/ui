@@ -352,10 +352,12 @@ function isPortalDropdown(root) {
   }
 
   if (root.dataset.portal !== undefined) {
-    return toBoolean(root.dataset.portal, false);
-  }
+    return toBoolean(root.dataset.portal, true);
+  } // Shared anchored positioning (SF.Position) is the default; portal="false"
+  // keeps the legacy in-flow list.
 
-  return false;
+
+  return true;
 }
 
 function getField(root) {
@@ -1147,43 +1149,30 @@ function positionDropdownPortal(root, list) {
   if (state.wrap) {
     state.wrap.style.minHeight = '0';
     state.wrap.style.overflowY = 'auto';
+  } // Geometry is the shared Framework contract (SF.Position on Floating UI):
+  // below the field by default, flipped above when the panel does not fit and
+  // there is more room, shifted inside the viewport and height-limited by it.
+
+
+  if (!state.anchor) {
+    state.anchor = globalThis.SF.Position.anchor(field, list, {
+      side: 'block-end',
+      align: 'start',
+      matchWidth: true,
+      fitHeight: true,
+      autoUpdate: false,
+      onPosition: ({
+        side
+      }) => {
+        const up = side === 'block-start';
+        list.dataset.placement = root.dataset.placement = up ? 'top' : 'bottom';
+        root.classList.toggle('sf-dropdown--drop-up', up);
+        root.classList.toggle('sf-dropdown--drop-down', !up);
+      }
+    });
   }
 
-  const probe = document.createElement('span');
-  probe.style.cssText = 'position:absolute;visibility:hidden;pointer-events:none;width:var(--sf-space-1\\/4);height:var(--sf-space-1\\/2)';
-  root.append(probe);
-  const measured = getComputedStyle(probe);
-  const gap = parseFloat(measured.width) || 0,
-        margin = parseFloat(measured.height) || 0;
-  probe.remove();
-  const viewport = window.visualViewport;
-  const x = viewport?.offsetLeft || 0,
-        y = viewport?.offsetTop || 0;
-  const width = viewport?.width || document.documentElement.clientWidth;
-  const height = viewport?.height || document.documentElement.clientHeight;
-  const rect = field.getBoundingClientRect();
-  const panelWidth = Math.max(0, Math.min(rect.width, width - margin * 2));
-  const left = Math.max(x + margin, Math.min(rect.left, x + width - margin - panelWidth));
-  list.style.width = `${panelWidth}px`;
-  list.style.maxWidth = `${Math.max(0, width - margin * 2)}px`; // Restore the author's cap before measuring; viewport fitting can only
-  // tighten it, never enlarge a deliberately limited panel.
-
-  const [, cap, priority] = state.saved.find(([name]) => name === 'max-height');
-  if (cap) list.style.setProperty('max-height', cap, priority);else list.style.removeProperty('max-height');
-  const configuredCap = parseFloat(getComputedStyle(list).maxHeight);
-  const naturalHeight = list.getBoundingClientRect().height;
-  const below = Math.max(0, y + height - margin - rect.bottom - gap);
-  const above = Math.max(0, rect.top - gap - y - margin);
-  const up = naturalHeight > below && above > below;
-  const available = Math.min(up ? above : below, Number.isFinite(configuredCap) ? configuredCap : Infinity);
-  list.style.maxHeight = `${available}px`;
-  const panelHeight = list.getBoundingClientRect().height;
-  const top = Math.max(y + margin, Math.min(up ? rect.top - gap - panelHeight : rect.bottom + gap, y + height - margin - panelHeight));
-  list.style.left = `${left}px`;
-  list.style.top = `${top}px`;
-  list.dataset.placement = root.dataset.placement = up ? 'top' : 'bottom';
-  root.classList.toggle('sf-dropdown--drop-up', up);
-  root.classList.toggle('sf-dropdown--drop-down', !up);
+  state.anchor.update();
   return true;
 }
 function openDropdownPortal(root, list, onUnavailable) {
@@ -1262,6 +1251,7 @@ function closeDropdownPortal(list) {
   const state = portals.get(list);
   if (!state) return false;
   const active = list.contains(document.activeElement) ? document.activeElement : null;
+  state.anchor?.stop();
   state.resize?.disconnect();
   cancelAnimationFrame(state.frame);
   state.inheritance?.disconnect();
