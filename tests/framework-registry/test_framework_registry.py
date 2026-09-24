@@ -20,8 +20,8 @@ if not SMART_MANIFEST_INPUT:
 SMART_MANIFEST = Path(SMART_MANIFEST_INPUT).resolve()
 GENERATED = ROOT / "contracts/generated/framework-contract-registry.json"
 DOCUMENTATION_SOURCE = ROOT / "contracts/generated/documentation-source.json"
-LOCK = ROOT / "contracts/releases/ui-bc8dfd7e4bdb-smart-81741eac168d.lock.json"
-SMART_REFERENCE = ROOT / "contracts/registry-inputs/ui-smart-962d75f3639b.ref.json"
+LOCK = ROOT / "contracts/releases/ui-cb1cda301648-smart-81741eac168d.lock.json"
+SMART_REFERENCE = ROOT / "contracts/registry-inputs/ui-smart-a4a417221f78.ref.json"
 
 
 def load_builder():
@@ -87,7 +87,7 @@ class FrameworkContractRegistryTest(unittest.TestCase):
         )
         self.assertEqual(
             self.registry["compatibility"]["id"],
-            "ui-bc8dfd7e4bdb-smart-81741eac168d",
+            "ui-cb1cda301648-smart-81741eac168d",
         )
         self.assertEqual(self.registry["compatibility"]["status"], "bounded")
         self.assertEqual(self.registry["compatibility"]["profile"], "plain-assets-v1")
@@ -357,7 +357,7 @@ class FrameworkContractRegistryTest(unittest.TestCase):
         )
         self.assertEqual(
             reference["contract_revision"],
-            "962d75f3639b9485160084a56a7c2a5af024d224",
+            "a4a417221f78dd27ee9e06b2b0f8e8f0b36e0a7d",
         )
         self.assertEqual(reference["status"], "committed")
         self.assertEqual(
