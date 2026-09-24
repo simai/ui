@@ -206,8 +206,30 @@ export function createRegistry(manifests = BUILTIN_TYPE_MANIFESTS, renderers = {
 export function compositionTypeFromSmartManifest(manifest) {
   const declaration = manifest?.composition?.declarative;
   if (!declaration) return null;
-  const allowed = new Set(declaration.props || []);
-  const properties = Object.fromEntries(Object.entries(manifest.inputs?.properties || {}).filter(([key]) => allowed.has(key)));
+  const inputs = manifest.inputs?.properties || {};
+  // Structure and request-bound data travel in separate channels: props are the
+  // structure a document holds, data is what a host answers with. Both are
+  // closed and both come from the component's own declared inputs.
+  const pick = (names) => Object.fromEntries(Object.entries(inputs).filter(([key]) => new Set(names || []).has(key)));
+  // Request-bound data is described by the component's own declared contracts,
+  // not by attributes: rows and columns arrive from a host, not from markup.
+  const dataProperties = Object.fromEntries(Object.entries(declaration.data || {}).map(([key, binding]) => {
+    const schema = manifest.contracts?.[binding.contract];
+    if (!schema) throw new TypeError(`composition_data_contract_missing:${declaration.type}:${key}`);
+    return [key, schema];
+  }));
+  const events = Object.fromEntries((declaration.events || [])
+    .filter((name) => manifest.events?.[name])
+    .map((name) => [name, { summary: manifest.events[name].summary, payload: manifest.events[name].payload }]));
+  const persistence = manifest.persistence
+    ? {
+      mode: manifest.persistence.mode,
+      source_of_truth: manifest.persistence.source_of_truth,
+      network_owner: manifest.persistence.network_owner,
+      settings_key_prop: declaration.persistence?.settings_key_prop ?? null,
+      revision_prop: declaration.persistence?.revision_prop ?? null,
+    }
+    : undefined;
   return {
     schema: 'simai.composition.type-manifest.v1',
     type: declaration.type,
@@ -215,13 +237,15 @@ export function compositionTypeFromSmartManifest(manifest) {
     category: 'smart',
     mode: declaration.mode,
     profiles: declaration.profiles,
-    data_schema: { type: 'object', additionalProperties: false, properties: {} },
-    props_schema: { type: 'object', additionalProperties: false, properties },
+    data_schema: { type: 'object', additionalProperties: false, properties: dataProperties },
+    props_schema: { type: 'object', additionalProperties: false, properties: pick(declaration.props) },
     presentation: declaration.presentation || { views: ['default'], presets: [], modifiers: [] },
     slots: declaration.slots || {},
     renderer: declaration.renderer,
     assets: declaration.assets || [],
     capabilities: ['html', 'hydration'],
+    ...(Object.keys(events).length ? { events } : {}),
+    ...(persistence ? { persistence } : {}),
   };
 }
 
