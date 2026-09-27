@@ -2573,7 +2573,7 @@
       "name": "admin-menu",
       "owner": "simai/ui-smart",
       "provenance": {
-        "commit": "903ad66c4f4fd7b9674a537ddd315652b9c375c4",
+        "commit": "3ad71db0adeeae534844bc6676b2beb4f616ebac",
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@3ad71db0adeeae534844bc6676b2beb4f616ebac:smart/admin-menu",
@@ -2627,7 +2627,7 @@
       "name": "alert",
       "owner": "simai/ui-smart",
       "provenance": {
-        "commit": "903ad66c4f4fd7b9674a537ddd315652b9c375c4",
+        "commit": "3ad71db0adeeae534844bc6676b2beb4f616ebac",
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@3ad71db0adeeae534844bc6676b2beb4f616ebac:smart/alert",
@@ -2679,7 +2679,7 @@
       "name": "avatar",
       "owner": "simai/ui-smart",
       "provenance": {
-        "commit": "903ad66c4f4fd7b9674a537ddd315652b9c375c4",
+        "commit": "3ad71db0adeeae534844bc6676b2beb4f616ebac",
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@3ad71db0adeeae534844bc6676b2beb4f616ebac:smart/avatar",
@@ -2731,7 +2731,7 @@
       "name": "avatars",
       "owner": "simai/ui-smart",
       "provenance": {
-        "commit": "903ad66c4f4fd7b9674a537ddd315652b9c375c4",
+        "commit": "3ad71db0adeeae534844bc6676b2beb4f616ebac",
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@3ad71db0adeeae534844bc6676b2beb4f616ebac:smart/avatars",
@@ -2788,7 +2788,7 @@
       "name": "badges",
       "owner": "simai/ui-smart",
       "provenance": {
-        "commit": "903ad66c4f4fd7b9674a537ddd315652b9c375c4",
+        "commit": "3ad71db0adeeae534844bc6676b2beb4f616ebac",
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@3ad71db0adeeae534844bc6676b2beb4f616ebac:smart/badges",
@@ -2837,7 +2837,7 @@
       "name": "breadcrumbs",
       "owner": "simai/ui-smart",
       "provenance": {
-        "commit": "903ad66c4f4fd7b9674a537ddd315652b9c375c4",
+        "commit": "3ad71db0adeeae534844bc6676b2beb4f616ebac",
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@3ad71db0adeeae534844bc6676b2beb4f616ebac:smart/breadcrumbs",
@@ -2887,7 +2887,7 @@
       "name": "button-group",
       "owner": "simai/ui-smart",
       "provenance": {
-        "commit": "903ad66c4f4fd7b9674a537ddd315652b9c375c4",
+        "commit": "3ad71db0adeeae534844bc6676b2beb4f616ebac",
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@3ad71db0adeeae534844bc6676b2beb4f616ebac:smart/button-group",
@@ -2939,7 +2939,7 @@
       "name": "buttons",
       "owner": "simai/ui-smart",
       "provenance": {
-        "commit": "903ad66c4f4fd7b9674a537ddd315652b9c375c4",
+        "commit": "3ad71db0adeeae534844bc6676b2beb4f616ebac",
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@3ad71db0adeeae534844bc6676b2beb4f616ebac:smart/buttons",
@@ -2992,7 +2992,7 @@
       "name": "checkbox",
       "owner": "simai/ui-smart",
       "provenance": {
-        "commit": "903ad66c4f4fd7b9674a537ddd315652b9c375c4",
+        "commit": "3ad71db0adeeae534844bc6676b2beb4f616ebac",
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@3ad71db0adeeae534844bc6676b2beb4f616ebac:smart/checkbox",
@@ -3047,7 +3047,7 @@
       "name": "close",
       "owner": "simai/ui-smart",
       "provenance": {
-        "commit": "903ad66c4f4fd7b9674a537ddd315652b9c375c4",
+        "commit": "3ad71db0adeeae534844bc6676b2beb4f616ebac",
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@3ad71db0adeeae534844bc6676b2beb4f616ebac:smart/close",
@@ -3096,7 +3096,7 @@
       "name": "composition-overlay",
       "owner": "simai/ui-smart",
       "provenance": {
-        "commit": "903ad66c4f4fd7b9674a537ddd315652b9c375c4",
+        "commit": "3ad71db0adeeae534844bc6676b2beb4f616ebac",
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@3ad71db0adeeae534844bc6676b2beb4f616ebac:smart/composition-overlay",
@@ -3145,7 +3145,7 @@
       "name": "context-menu",
       "owner": "simai/ui-smart",
       "provenance": {
-        "commit": "903ad66c4f4fd7b9674a537ddd315652b9c375c4",
+        "commit": "3ad71db0adeeae534844bc6676b2beb4f616ebac",
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@3ad71db0adeeae534844bc6676b2beb4f616ebac:smart/context-menu",
@@ -3195,7 +3195,7 @@
       "name": "country-code",
       "owner": "simai/ui-smart",
       "provenance": {
-        "commit": "903ad66c4f4fd7b9674a537ddd315652b9c375c4",
+        "commit": "3ad71db0adeeae534844bc6676b2beb4f616ebac",
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@3ad71db0adeeae534844bc6676b2beb4f616ebac:smart/country-code",
@@ -3246,7 +3246,7 @@
       "name": "table",
       "owner": "simai/ui-smart",
       "provenance": {
-        "commit": "903ad66c4f4fd7b9674a537ddd315652b9c375c4",
+        "commit": "3ad71db0adeeae534844bc6676b2beb4f616ebac",
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@3ad71db0adeeae534844bc6676b2beb4f616ebac:smart/table",
@@ -3312,7 +3312,7 @@
       "name": "datepicker",
       "owner": "simai/ui-smart",
       "provenance": {
-        "commit": "903ad66c4f4fd7b9674a537ddd315652b9c375c4",
+        "commit": "3ad71db0adeeae534844bc6676b2beb4f616ebac",
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@3ad71db0adeeae534844bc6676b2beb4f616ebac:smart/datepicker",
@@ -3364,7 +3364,7 @@
       "name": "download-file",
       "owner": "simai/ui-smart",
       "provenance": {
-        "commit": "903ad66c4f4fd7b9674a537ddd315652b9c375c4",
+        "commit": "3ad71db0adeeae534844bc6676b2beb4f616ebac",
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@3ad71db0adeeae534844bc6676b2beb4f616ebac:smart/download-file",
@@ -3414,7 +3414,7 @@
       "name": "drawer",
       "owner": "simai/ui-smart",
       "provenance": {
-        "commit": "903ad66c4f4fd7b9674a537ddd315652b9c375c4",
+        "commit": "3ad71db0adeeae534844bc6676b2beb4f616ebac",
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@3ad71db0adeeae534844bc6676b2beb4f616ebac:smart/drawer",
@@ -3467,7 +3467,7 @@
       "name": "dropdown",
       "owner": "simai/ui-smart",
       "provenance": {
-        "commit": "903ad66c4f4fd7b9674a537ddd315652b9c375c4",
+        "commit": "3ad71db0adeeae534844bc6676b2beb4f616ebac",
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@3ad71db0adeeae534844bc6676b2beb4f616ebac:smart/dropdown",
@@ -3518,7 +3518,7 @@
       "name": "file-preview",
       "owner": "simai/ui-smart",
       "provenance": {
-        "commit": "903ad66c4f4fd7b9674a537ddd315652b9c375c4",
+        "commit": "3ad71db0adeeae534844bc6676b2beb4f616ebac",
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@3ad71db0adeeae534844bc6676b2beb4f616ebac:smart/file-preview",
@@ -3569,7 +3569,7 @@
       "name": "file-upload",
       "owner": "simai/ui-smart",
       "provenance": {
-        "commit": "903ad66c4f4fd7b9674a537ddd315652b9c375c4",
+        "commit": "3ad71db0adeeae534844bc6676b2beb4f616ebac",
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@3ad71db0adeeae534844bc6676b2beb4f616ebac:smart/file-upload",
@@ -3621,7 +3621,7 @@
       "name": "gallery",
       "owner": "simai/ui-smart",
       "provenance": {
-        "commit": "903ad66c4f4fd7b9674a537ddd315652b9c375c4",
+        "commit": "3ad71db0adeeae534844bc6676b2beb4f616ebac",
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@3ad71db0adeeae534844bc6676b2beb4f616ebac:smart/gallery",
@@ -3676,7 +3676,7 @@
       "name": "icon-buttons",
       "owner": "simai/ui-smart",
       "provenance": {
-        "commit": "903ad66c4f4fd7b9674a537ddd315652b9c375c4",
+        "commit": "3ad71db0adeeae534844bc6676b2beb4f616ebac",
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@3ad71db0adeeae534844bc6676b2beb4f616ebac:smart/icon-buttons",
@@ -3733,7 +3733,7 @@
       "name": "icons",
       "owner": "simai/ui-smart",
       "provenance": {
-        "commit": "903ad66c4f4fd7b9674a537ddd315652b9c375c4",
+        "commit": "3ad71db0adeeae534844bc6676b2beb4f616ebac",
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@3ad71db0adeeae534844bc6676b2beb4f616ebac:smart/icons",
@@ -3782,7 +3782,7 @@
       "name": "inline-editor",
       "owner": "simai/ui-smart",
       "provenance": {
-        "commit": "903ad66c4f4fd7b9674a537ddd315652b9c375c4",
+        "commit": "3ad71db0adeeae534844bc6676b2beb4f616ebac",
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@3ad71db0adeeae534844bc6676b2beb4f616ebac:smart/inline-editor",
@@ -3831,7 +3831,7 @@
       "name": "inputs",
       "owner": "simai/ui-smart",
       "provenance": {
-        "commit": "903ad66c4f4fd7b9674a537ddd315652b9c375c4",
+        "commit": "3ad71db0adeeae534844bc6676b2beb4f616ebac",
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@3ad71db0adeeae534844bc6676b2beb4f616ebac:smart/inputs",
@@ -3883,7 +3883,7 @@
       "name": "list-item",
       "owner": "simai/ui-smart",
       "provenance": {
-        "commit": "903ad66c4f4fd7b9674a537ddd315652b9c375c4",
+        "commit": "3ad71db0adeeae534844bc6676b2beb4f616ebac",
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@3ad71db0adeeae534844bc6676b2beb4f616ebac:smart/list-item",
@@ -3936,7 +3936,7 @@
       "name": "modal",
       "owner": "simai/ui-smart",
       "provenance": {
-        "commit": "903ad66c4f4fd7b9674a537ddd315652b9c375c4",
+        "commit": "3ad71db0adeeae534844bc6676b2beb4f616ebac",
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@3ad71db0adeeae534844bc6676b2beb4f616ebac:smart/modal",
@@ -3988,7 +3988,7 @@
       "name": "pagination",
       "owner": "simai/ui-smart",
       "provenance": {
-        "commit": "903ad66c4f4fd7b9674a537ddd315652b9c375c4",
+        "commit": "3ad71db0adeeae534844bc6676b2beb4f616ebac",
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@3ad71db0adeeae534844bc6676b2beb4f616ebac:smart/pagination",
@@ -4037,7 +4037,7 @@
       "name": "progress-bar",
       "owner": "simai/ui-smart",
       "provenance": {
-        "commit": "903ad66c4f4fd7b9674a537ddd315652b9c375c4",
+        "commit": "3ad71db0adeeae534844bc6676b2beb4f616ebac",
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@3ad71db0adeeae534844bc6676b2beb4f616ebac:smart/progress-bar",
@@ -4086,7 +4086,7 @@
       "name": "progress-scale",
       "owner": "simai/ui-smart",
       "provenance": {
-        "commit": "903ad66c4f4fd7b9674a537ddd315652b9c375c4",
+        "commit": "3ad71db0adeeae534844bc6676b2beb4f616ebac",
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@3ad71db0adeeae534844bc6676b2beb4f616ebac:smart/progress-scale",
@@ -4135,7 +4135,7 @@
       "name": "radio",
       "owner": "simai/ui-smart",
       "provenance": {
-        "commit": "903ad66c4f4fd7b9674a537ddd315652b9c375c4",
+        "commit": "3ad71db0adeeae534844bc6676b2beb4f616ebac",
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@3ad71db0adeeae534844bc6676b2beb4f616ebac:smart/radio",
@@ -4185,7 +4185,7 @@
       "name": "range-slider",
       "owner": "simai/ui-smart",
       "provenance": {
-        "commit": "903ad66c4f4fd7b9674a537ddd315652b9c375c4",
+        "commit": "3ad71db0adeeae534844bc6676b2beb4f616ebac",
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@3ad71db0adeeae534844bc6676b2beb4f616ebac:smart/range-slider",
@@ -4234,7 +4234,7 @@
       "name": "reference-link",
       "owner": "simai/ui-smart",
       "provenance": {
-        "commit": "903ad66c4f4fd7b9674a537ddd315652b9c375c4",
+        "commit": "3ad71db0adeeae534844bc6676b2beb4f616ebac",
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@3ad71db0adeeae534844bc6676b2beb4f616ebac:smart/reference-link",
@@ -4284,7 +4284,7 @@
       "name": "skeleton",
       "owner": "simai/ui-smart",
       "provenance": {
-        "commit": "903ad66c4f4fd7b9674a537ddd315652b9c375c4",
+        "commit": "3ad71db0adeeae534844bc6676b2beb4f616ebac",
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@3ad71db0adeeae534844bc6676b2beb4f616ebac:smart/skeleton",
@@ -4333,7 +4333,7 @@
       "name": "slider",
       "owner": "simai/ui-smart",
       "provenance": {
-        "commit": "903ad66c4f4fd7b9674a537ddd315652b9c375c4",
+        "commit": "3ad71db0adeeae534844bc6676b2beb4f616ebac",
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@3ad71db0adeeae534844bc6676b2beb4f616ebac:smart/slider",
@@ -4384,7 +4384,7 @@
       "name": "sortable",
       "owner": "simai/ui-smart",
       "provenance": {
-        "commit": "903ad66c4f4fd7b9674a537ddd315652b9c375c4",
+        "commit": "3ad71db0adeeae534844bc6676b2beb4f616ebac",
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@3ad71db0adeeae534844bc6676b2beb4f616ebac:smart/sortable",
@@ -4433,7 +4433,7 @@
       "name": "spinner",
       "owner": "simai/ui-smart",
       "provenance": {
-        "commit": "903ad66c4f4fd7b9674a537ddd315652b9c375c4",
+        "commit": "3ad71db0adeeae534844bc6676b2beb4f616ebac",
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@3ad71db0adeeae534844bc6676b2beb4f616ebac:smart/spinner",
@@ -4482,7 +4482,7 @@
       "name": "steps",
       "owner": "simai/ui-smart",
       "provenance": {
-        "commit": "903ad66c4f4fd7b9674a537ddd315652b9c375c4",
+        "commit": "3ad71db0adeeae534844bc6676b2beb4f616ebac",
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@3ad71db0adeeae534844bc6676b2beb4f616ebac:smart/steps",
@@ -4532,7 +4532,7 @@
       "name": "switch",
       "owner": "simai/ui-smart",
       "provenance": {
-        "commit": "903ad66c4f4fd7b9674a537ddd315652b9c375c4",
+        "commit": "3ad71db0adeeae534844bc6676b2beb4f616ebac",
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@3ad71db0adeeae534844bc6676b2beb4f616ebac:smart/switch",
@@ -4584,7 +4584,7 @@
       "name": "tabs",
       "owner": "simai/ui-smart",
       "provenance": {
-        "commit": "903ad66c4f4fd7b9674a537ddd315652b9c375c4",
+        "commit": "3ad71db0adeeae534844bc6676b2beb4f616ebac",
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@3ad71db0adeeae534844bc6676b2beb4f616ebac:smart/tabs",
@@ -4640,7 +4640,7 @@
       "name": "tags",
       "owner": "simai/ui-smart",
       "provenance": {
-        "commit": "903ad66c4f4fd7b9674a537ddd315652b9c375c4",
+        "commit": "3ad71db0adeeae534844bc6676b2beb4f616ebac",
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@3ad71db0adeeae534844bc6676b2beb4f616ebac:smart/tags",
@@ -4695,7 +4695,7 @@
       "name": "textarea",
       "owner": "simai/ui-smart",
       "provenance": {
-        "commit": "903ad66c4f4fd7b9674a537ddd315652b9c375c4",
+        "commit": "3ad71db0adeeae534844bc6676b2beb4f616ebac",
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@3ad71db0adeeae534844bc6676b2beb4f616ebac:smart/textarea",
@@ -4744,7 +4744,7 @@
       "name": "toast",
       "owner": "simai/ui-smart",
       "provenance": {
-        "commit": "903ad66c4f4fd7b9674a537ddd315652b9c375c4",
+        "commit": "3ad71db0adeeae534844bc6676b2beb4f616ebac",
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@3ad71db0adeeae534844bc6676b2beb4f616ebac:smart/toast",
@@ -4797,7 +4797,7 @@
       "name": "toggle",
       "owner": "simai/ui-smart",
       "provenance": {
-        "commit": "903ad66c4f4fd7b9674a537ddd315652b9c375c4",
+        "commit": "3ad71db0adeeae534844bc6676b2beb4f616ebac",
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@3ad71db0adeeae534844bc6676b2beb4f616ebac:smart/toggle",
@@ -4848,7 +4848,7 @@
       "name": "tooltip",
       "owner": "simai/ui-smart",
       "provenance": {
-        "commit": "903ad66c4f4fd7b9674a537ddd315652b9c375c4",
+        "commit": "3ad71db0adeeae534844bc6676b2beb4f616ebac",
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@3ad71db0adeeae534844bc6676b2beb4f616ebac:smart/tooltip",
@@ -4897,7 +4897,7 @@
       "name": "tree",
       "owner": "simai/ui-smart",
       "provenance": {
-        "commit": "903ad66c4f4fd7b9674a537ddd315652b9c375c4",
+        "commit": "3ad71db0adeeae534844bc6676b2beb4f616ebac",
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@3ad71db0adeeae534844bc6676b2beb4f616ebac:smart/tree",
@@ -4949,7 +4949,7 @@
       "name": "tree-item",
       "owner": "simai/ui-smart",
       "provenance": {
-        "commit": "903ad66c4f4fd7b9674a537ddd315652b9c375c4",
+        "commit": "3ad71db0adeeae534844bc6676b2beb4f616ebac",
         "repository": "https://github.com/simai/ui-smart",
         "source_refs": [
           "simai/ui-smart@3ad71db0adeeae534844bc6676b2beb4f616ebac:smart/tree-item",
@@ -14819,13 +14819,13 @@
       "sha256": "715443b12c80966e337af4fb9ec28e2cb37c767c5fcaaa7966fd6f63b3ca2458"
     },
     {
-      "contract_revision": "58581e9c4a14754050f7540b8b82118bab8af5ce",
-      "file_sha256": "c20d7ed04ca4d8242982ac9e0b96d1e8e9810294989d3fed299fadb25c3af596",
+      "contract_revision": "a85bbc4e927ab74c03295a1d02b43a416a6d0c70",
+      "file_sha256": "92c754ca860576e0fb67ab15f6cb6e56ce0f2cdc1f2dacf61eedbaec628b81e7",
       "hash_mode": "canonical-json-v1",
       "kind": "smart-component",
       "owner": "simai/ui-smart",
       "path": "contracts/owners/smart-component.manifest.json",
-      "sha256": "cac862a7228eb9315f635e6c85eec4dd4f43de9dd5ad03a7386e4134720a891f"
+      "sha256": "bd2ec8ce8d73adb299a37d478259a1d717706509e0fb2104cd028f47afc00eec"
     },
     {
       "hash_mode": "canonical-json-v1",
