@@ -348,12 +348,12 @@
     display: none;
   }
   .sf-scrollbar__thumb.focus-visible {
-    outline: var(--sf-focus-outline-width) solid var(--sf-focus);
-    outline-offset: calc(-1 * var(--sf-focus-outline-width));
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: calc(-1 * var(--sf-focus--width));
   }
   .sf-scrollbar__thumb:focus-visible {
-    outline: var(--sf-focus-outline-width) solid var(--sf-focus);
-    outline-offset: calc(-1 * var(--sf-focus-outline-width));
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: calc(-1 * var(--sf-focus--width));
   }
   .sf-scrollbar[data-axis=horizontal]:not(.does-not-exist) .sf-scrollbar__viewport {
     height: auto;

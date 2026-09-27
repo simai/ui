@@ -1,0 +1,8 @@
+@layer sf.utilities {
+  .focus-visible\:ring-inset.focus-visible {
+    --sf-ring-inset: inset;
+  }
+  .focus-visible\:ring-inset:focus-visible {
+    --sf-ring-inset: inset;
+  }
+}

@@ -343,11 +343,14 @@
   .sf-list-item.selected {
     --sf-list-item--background-color: var(--sf-primary-container-active);
   }
+  /* An option sits flush against the options above and below it. */
   .sf-list [role=option].sf-list-item:not(:disabled):not(.disabled).focus-visible {
-    --sf-list-item--box-shadow: var(--sf-ui-focus-inset);
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: calc(var(--sf-focus--width) * -1);
   }
   .sf-list [role=option].sf-list-item:not(:disabled):not(.disabled):focus-visible {
-    --sf-list-item--box-shadow: var(--sf-ui-focus-inset);
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: calc(var(--sf-focus--width) * -1);
   }
   .sf-list-item.disabled {
     --sf-list-item--border-color: var(--sf-outline-disable);
@@ -1544,17 +1547,22 @@
     --sf-dropdown-field--padding-inline-start: var(--sf-ui-3--space-x);
     --sf-dropdown-field--padding-top: var(--sf-ui-3--space-y-tightness-default);
   }
+  /* The field fills the control, so its ring turns inwards. */
   .sf-dropdown[\:has\(\%3E\%20.sf-dropdown-field\%20input\:enabled\:not\(\:disabled\)\:not\(.disabled\).focus-visible\)] .sf-dropdown-field {
-    --sf-dropdown-field--box-shadow: var(--sf-ui-focus-inset);
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: calc(var(--sf-focus--width) * -1);
   }
   .sf-dropdown:has(> .sf-dropdown-field input:enabled:not(:disabled):not(.disabled).focus-visible) .sf-dropdown-field {
-    --sf-dropdown-field--box-shadow: var(--sf-ui-focus-inset);
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: calc(var(--sf-focus--width) * -1);
   }
   .sf-dropdown[\:has\(\%3E\%20.sf-dropdown-field\%20input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:focus-visible\)] .sf-dropdown-field {
-    --sf-dropdown-field--box-shadow: var(--sf-ui-focus-inset);
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: calc(var(--sf-focus--width) * -1);
   }
   .sf-dropdown:has(> .sf-dropdown-field input:enabled:not(:disabled):not(.disabled):focus-visible) .sf-dropdown-field {
-    --sf-dropdown-field--box-shadow: var(--sf-ui-focus-inset);
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: calc(var(--sf-focus--width) * -1);
   }
   .sf-dropdown.open .sf-dropdown-field {
     --sf-dropdown-field--background-color: var(--sf-surface-0);
@@ -1833,16 +1841,20 @@
 }
 @layer sf.states {
   .sf-dropdown .sf-dropdown-field[\:has\(\%3E\%20\[aria-haspopup\].focus-visible\)] {
-    --sf-dropdown-field--box-shadow: var(--sf-ui-focus-inset);
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: calc(var(--sf-focus--width) * -1);
   }
   .sf-dropdown .sf-dropdown-field:has(> [aria-haspopup].focus-visible) {
-    --sf-dropdown-field--box-shadow: var(--sf-ui-focus-inset);
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: calc(var(--sf-focus--width) * -1);
   }
   .sf-dropdown .sf-dropdown-field[\:has\(\%3E\%20\[aria-haspopup\]\:focus-visible\)] {
-    --sf-dropdown-field--box-shadow: var(--sf-ui-focus-inset);
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: calc(var(--sf-focus--width) * -1);
   }
   .sf-dropdown .sf-dropdown-field:has(> [aria-haspopup]:focus-visible) {
-    --sf-dropdown-field--box-shadow: var(--sf-ui-focus-inset);
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: calc(var(--sf-focus--width) * -1);
   }
   .sf-dropdown .sf-dropdown-field > button[aria-haspopup].focus-visible {
     --sf-icon-button--box-shadow: none;

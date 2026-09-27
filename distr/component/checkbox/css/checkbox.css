@@ -333,16 +333,20 @@
     --sf-checkbox-box--border-color: var(--sf-primary-hover);
   }
   .sf-checkbox[\:has\(input\:not\(\:disabled\)\:not\(.disabled\).focus-visible\)] .sf-checkbox-box {
-    --sf-checkbox-box--box-shadow: var(--sf-ui-focus);
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
   }
   .sf-checkbox:has(input:not(:disabled):not(.disabled).focus-visible) .sf-checkbox-box {
-    --sf-checkbox-box--box-shadow: var(--sf-ui-focus);
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
   }
   .sf-checkbox[\:has\(input\:not\(\:disabled\)\:not\(.disabled\)\:focus-visible\)] .sf-checkbox-box {
-    --sf-checkbox-box--box-shadow: var(--sf-ui-focus);
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
   }
   .sf-checkbox:has(input:not(:disabled):not(.disabled):focus-visible) .sf-checkbox-box {
-    --sf-checkbox-box--box-shadow: var(--sf-ui-focus);
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
   }
   .sf-checkbox[\:has\(input\:disabled\)] .sf-checkbox-box {
     --sf-checkbox-box--border-color: var(--sf-outline-disable);

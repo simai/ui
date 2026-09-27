@@ -1,3 +1,4 @@
+@charset "UTF-8";
 /*
 * Main SCSS file for including styles for component.
 *
@@ -31,136 +32,136 @@
     width: var(--sf-text-size-3);
     width: var(--sf-icon--width, var(--sf-text-size-3));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toggle .sf-toggle-container {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toggle .sf-toggle-container{
     border-bottom-right-radius: var(--sf-toggle-container--border-end-end-radius);
   }
-  @supports not (border-end-end-radius: initial) {
-  html:not([dir="rtl"]) .sf-toggle .sf-toggle-container {
+  @supports not (border-end-end-radius: initial){
+  html:not([dir="rtl"]) .sf-toggle .sf-toggle-container{
     border-bottom-right-radius: var(--sf-toggle-container--border-end-end-radius);
     }
   }
-  .sf-toggle .sf-toggle-container:where(:dir(ltr)) {
+  .sf-toggle .sf-toggle-container:where(:dir(ltr)){
     border-bottom-right-radius: var(--sf-toggle-container--border-end-end-radius);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-toggle .sf-toggle-container {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-toggle .sf-toggle-container{
     border-bottom-left-radius: var(--sf-toggle-container--border-end-end-radius);
   }
-  @supports not (border-end-end-radius: initial) {
-  [dir="rtl"] .sf-toggle .sf-toggle-container {
+  @supports not (border-end-end-radius: initial){
+  [dir="rtl"] .sf-toggle .sf-toggle-container{
     border-bottom-left-radius: var(--sf-toggle-container--border-end-end-radius);
     }
   }
-  .sf-toggle .sf-toggle-container:where(:dir(rtl)) {
+  .sf-toggle .sf-toggle-container:where(:dir(rtl)){
     border-bottom-left-radius: var(--sf-toggle-container--border-end-end-radius);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toggle .sf-toggle-container {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toggle .sf-toggle-container{
     border-bottom-left-radius: var(--sf-toggle-container--border-end-start-radius);
   }
-  @supports not (border-end-start-radius: initial) {
-  html:not([dir="rtl"]) .sf-toggle .sf-toggle-container {
+  @supports not (border-end-start-radius: initial){
+  html:not([dir="rtl"]) .sf-toggle .sf-toggle-container{
     border-bottom-left-radius: var(--sf-toggle-container--border-end-start-radius);
     }
   }
-  .sf-toggle .sf-toggle-container:where(:dir(ltr)) {
+  .sf-toggle .sf-toggle-container:where(:dir(ltr)){
     border-bottom-left-radius: var(--sf-toggle-container--border-end-start-radius);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-toggle .sf-toggle-container {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-toggle .sf-toggle-container{
     border-bottom-right-radius: var(--sf-toggle-container--border-end-start-radius);
   }
-  @supports not (border-end-start-radius: initial) {
-  [dir="rtl"] .sf-toggle .sf-toggle-container {
+  @supports not (border-end-start-radius: initial){
+  [dir="rtl"] .sf-toggle .sf-toggle-container{
     border-bottom-right-radius: var(--sf-toggle-container--border-end-start-radius);
     }
   }
-  .sf-toggle .sf-toggle-container:where(:dir(rtl)) {
+  .sf-toggle .sf-toggle-container:where(:dir(rtl)){
     border-bottom-right-radius: var(--sf-toggle-container--border-end-start-radius);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toggle .sf-toggle-container {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toggle .sf-toggle-container{
     border-top-right-radius: var(--sf-toggle-container--border-start-end-radius);
   }
-  @supports not (border-start-end-radius: initial) {
-  html:not([dir="rtl"]) .sf-toggle .sf-toggle-container {
+  @supports not (border-start-end-radius: initial){
+  html:not([dir="rtl"]) .sf-toggle .sf-toggle-container{
     border-top-right-radius: var(--sf-toggle-container--border-start-end-radius);
     }
   }
-  .sf-toggle .sf-toggle-container:where(:dir(ltr)) {
+  .sf-toggle .sf-toggle-container:where(:dir(ltr)){
     border-top-right-radius: var(--sf-toggle-container--border-start-end-radius);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-toggle .sf-toggle-container {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-toggle .sf-toggle-container{
     border-top-left-radius: var(--sf-toggle-container--border-start-end-radius);
   }
-  @supports not (border-start-end-radius: initial) {
-  [dir="rtl"] .sf-toggle .sf-toggle-container {
+  @supports not (border-start-end-radius: initial){
+  [dir="rtl"] .sf-toggle .sf-toggle-container{
     border-top-left-radius: var(--sf-toggle-container--border-start-end-radius);
     }
   }
-  .sf-toggle .sf-toggle-container:where(:dir(rtl)) {
+  .sf-toggle .sf-toggle-container:where(:dir(rtl)){
     border-top-left-radius: var(--sf-toggle-container--border-start-end-radius);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toggle .sf-toggle-container {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toggle .sf-toggle-container{
     border-top-left-radius: var(--sf-toggle-container--border-start-start-radius);
   }
-  @supports not (border-start-start-radius: initial) {
-  html:not([dir="rtl"]) .sf-toggle .sf-toggle-container {
+  @supports not (border-start-start-radius: initial){
+  html:not([dir="rtl"]) .sf-toggle .sf-toggle-container{
     border-top-left-radius: var(--sf-toggle-container--border-start-start-radius);
     }
   }
-  .sf-toggle .sf-toggle-container:where(:dir(ltr)) {
+  .sf-toggle .sf-toggle-container:where(:dir(ltr)){
     border-top-left-radius: var(--sf-toggle-container--border-start-start-radius);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-toggle .sf-toggle-container {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-toggle .sf-toggle-container{
     border-top-right-radius: var(--sf-toggle-container--border-start-start-radius);
   }
-  @supports not (border-start-start-radius: initial) {
-  [dir="rtl"] .sf-toggle .sf-toggle-container {
+  @supports not (border-start-start-radius: initial){
+  [dir="rtl"] .sf-toggle .sf-toggle-container{
     border-top-right-radius: var(--sf-toggle-container--border-start-start-radius);
     }
   }
-  .sf-toggle .sf-toggle-container:where(:dir(rtl)) {
+  .sf-toggle .sf-toggle-container:where(:dir(rtl)){
     border-top-right-radius: var(--sf-toggle-container--border-start-start-radius);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toggle .sf-toggle-container {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toggle .sf-toggle-container{
     padding-right: var(--sf-toggle-container--padding-inline-end);
   }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .sf-toggle .sf-toggle-container {
+  @supports not (padding-inline-end: initial){
+  html:not([dir="rtl"]) .sf-toggle .sf-toggle-container{
     padding-right: var(--sf-toggle-container--padding-inline-end);
     }
   }
-  .sf-toggle .sf-toggle-container:where(:dir(ltr)) {
+  .sf-toggle .sf-toggle-container:where(:dir(ltr)){
     padding-right: var(--sf-toggle-container--padding-inline-end);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-toggle .sf-toggle-container {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-toggle .sf-toggle-container{
     padding-left: var(--sf-toggle-container--padding-inline-end);
   }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .sf-toggle .sf-toggle-container {
+  @supports not (padding-inline-end: initial){
+  [dir="rtl"] .sf-toggle .sf-toggle-container{
     padding-left: var(--sf-toggle-container--padding-inline-end);
     }
   }
-  .sf-toggle .sf-toggle-container:where(:dir(rtl)) {
+  .sf-toggle .sf-toggle-container:where(:dir(rtl)){
     padding-left: var(--sf-toggle-container--padding-inline-end);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toggle .sf-toggle-container {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toggle .sf-toggle-container{
     padding-left: var(--sf-toggle-container--padding-inline-start);
   }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .sf-toggle .sf-toggle-container {
+  @supports not (padding-inline-start: initial){
+  html:not([dir="rtl"]) .sf-toggle .sf-toggle-container{
     padding-left: var(--sf-toggle-container--padding-inline-start);
     }
   }
-  .sf-toggle .sf-toggle-container:where(:dir(ltr)) {
+  .sf-toggle .sf-toggle-container:where(:dir(ltr)){
     padding-left: var(--sf-toggle-container--padding-inline-start);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-toggle .sf-toggle-container {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-toggle .sf-toggle-container{
     padding-right: var(--sf-toggle-container--padding-inline-start);
   }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .sf-toggle .sf-toggle-container {
+  @supports not (padding-inline-start: initial){
+  [dir="rtl"] .sf-toggle .sf-toggle-container{
     padding-right: var(--sf-toggle-container--padding-inline-start);
     }
   }
-  .sf-toggle .sf-toggle-container:where(:dir(rtl)) {
+  .sf-toggle .sf-toggle-container:where(:dir(rtl)){
     padding-right: var(--sf-toggle-container--padding-inline-start);
   }
   .sf-toggle .sf-toggle-container {
@@ -188,136 +189,136 @@
     width: var(--sf-toggle-container--width);
   }
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) align-items/center (.items-center) */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toggle .sf-toggle-inner-wrap {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toggle .sf-toggle-inner-wrap{
     border-bottom-right-radius: var(--sf-toggle-inner-wrap--border-end-end-radius);
   }
-  @supports not (border-end-end-radius: initial) {
-  html:not([dir="rtl"]) .sf-toggle .sf-toggle-inner-wrap {
+  @supports not (border-end-end-radius: initial){
+  html:not([dir="rtl"]) .sf-toggle .sf-toggle-inner-wrap{
     border-bottom-right-radius: var(--sf-toggle-inner-wrap--border-end-end-radius);
     }
   }
-  .sf-toggle .sf-toggle-inner-wrap:where(:dir(ltr)) {
+  .sf-toggle .sf-toggle-inner-wrap:where(:dir(ltr)){
     border-bottom-right-radius: var(--sf-toggle-inner-wrap--border-end-end-radius);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-toggle .sf-toggle-inner-wrap {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-toggle .sf-toggle-inner-wrap{
     border-bottom-left-radius: var(--sf-toggle-inner-wrap--border-end-end-radius);
   }
-  @supports not (border-end-end-radius: initial) {
-  [dir="rtl"] .sf-toggle .sf-toggle-inner-wrap {
+  @supports not (border-end-end-radius: initial){
+  [dir="rtl"] .sf-toggle .sf-toggle-inner-wrap{
     border-bottom-left-radius: var(--sf-toggle-inner-wrap--border-end-end-radius);
     }
   }
-  .sf-toggle .sf-toggle-inner-wrap:where(:dir(rtl)) {
+  .sf-toggle .sf-toggle-inner-wrap:where(:dir(rtl)){
     border-bottom-left-radius: var(--sf-toggle-inner-wrap--border-end-end-radius);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toggle .sf-toggle-inner-wrap {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toggle .sf-toggle-inner-wrap{
     border-bottom-left-radius: var(--sf-toggle-inner-wrap--border-end-start-radius);
   }
-  @supports not (border-end-start-radius: initial) {
-  html:not([dir="rtl"]) .sf-toggle .sf-toggle-inner-wrap {
+  @supports not (border-end-start-radius: initial){
+  html:not([dir="rtl"]) .sf-toggle .sf-toggle-inner-wrap{
     border-bottom-left-radius: var(--sf-toggle-inner-wrap--border-end-start-radius);
     }
   }
-  .sf-toggle .sf-toggle-inner-wrap:where(:dir(ltr)) {
+  .sf-toggle .sf-toggle-inner-wrap:where(:dir(ltr)){
     border-bottom-left-radius: var(--sf-toggle-inner-wrap--border-end-start-radius);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-toggle .sf-toggle-inner-wrap {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-toggle .sf-toggle-inner-wrap{
     border-bottom-right-radius: var(--sf-toggle-inner-wrap--border-end-start-radius);
   }
-  @supports not (border-end-start-radius: initial) {
-  [dir="rtl"] .sf-toggle .sf-toggle-inner-wrap {
+  @supports not (border-end-start-radius: initial){
+  [dir="rtl"] .sf-toggle .sf-toggle-inner-wrap{
     border-bottom-right-radius: var(--sf-toggle-inner-wrap--border-end-start-radius);
     }
   }
-  .sf-toggle .sf-toggle-inner-wrap:where(:dir(rtl)) {
+  .sf-toggle .sf-toggle-inner-wrap:where(:dir(rtl)){
     border-bottom-right-radius: var(--sf-toggle-inner-wrap--border-end-start-radius);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toggle .sf-toggle-inner-wrap {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toggle .sf-toggle-inner-wrap{
     border-top-right-radius: var(--sf-toggle-inner-wrap--border-start-end-radius);
   }
-  @supports not (border-start-end-radius: initial) {
-  html:not([dir="rtl"]) .sf-toggle .sf-toggle-inner-wrap {
+  @supports not (border-start-end-radius: initial){
+  html:not([dir="rtl"]) .sf-toggle .sf-toggle-inner-wrap{
     border-top-right-radius: var(--sf-toggle-inner-wrap--border-start-end-radius);
     }
   }
-  .sf-toggle .sf-toggle-inner-wrap:where(:dir(ltr)) {
+  .sf-toggle .sf-toggle-inner-wrap:where(:dir(ltr)){
     border-top-right-radius: var(--sf-toggle-inner-wrap--border-start-end-radius);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-toggle .sf-toggle-inner-wrap {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-toggle .sf-toggle-inner-wrap{
     border-top-left-radius: var(--sf-toggle-inner-wrap--border-start-end-radius);
   }
-  @supports not (border-start-end-radius: initial) {
-  [dir="rtl"] .sf-toggle .sf-toggle-inner-wrap {
+  @supports not (border-start-end-radius: initial){
+  [dir="rtl"] .sf-toggle .sf-toggle-inner-wrap{
     border-top-left-radius: var(--sf-toggle-inner-wrap--border-start-end-radius);
     }
   }
-  .sf-toggle .sf-toggle-inner-wrap:where(:dir(rtl)) {
+  .sf-toggle .sf-toggle-inner-wrap:where(:dir(rtl)){
     border-top-left-radius: var(--sf-toggle-inner-wrap--border-start-end-radius);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toggle .sf-toggle-inner-wrap {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toggle .sf-toggle-inner-wrap{
     border-top-left-radius: var(--sf-toggle-inner-wrap--border-start-start-radius);
   }
-  @supports not (border-start-start-radius: initial) {
-  html:not([dir="rtl"]) .sf-toggle .sf-toggle-inner-wrap {
+  @supports not (border-start-start-radius: initial){
+  html:not([dir="rtl"]) .sf-toggle .sf-toggle-inner-wrap{
     border-top-left-radius: var(--sf-toggle-inner-wrap--border-start-start-radius);
     }
   }
-  .sf-toggle .sf-toggle-inner-wrap:where(:dir(ltr)) {
+  .sf-toggle .sf-toggle-inner-wrap:where(:dir(ltr)){
     border-top-left-radius: var(--sf-toggle-inner-wrap--border-start-start-radius);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-toggle .sf-toggle-inner-wrap {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-toggle .sf-toggle-inner-wrap{
     border-top-right-radius: var(--sf-toggle-inner-wrap--border-start-start-radius);
   }
-  @supports not (border-start-start-radius: initial) {
-  [dir="rtl"] .sf-toggle .sf-toggle-inner-wrap {
+  @supports not (border-start-start-radius: initial){
+  [dir="rtl"] .sf-toggle .sf-toggle-inner-wrap{
     border-top-right-radius: var(--sf-toggle-inner-wrap--border-start-start-radius);
     }
   }
-  .sf-toggle .sf-toggle-inner-wrap:where(:dir(rtl)) {
+  .sf-toggle .sf-toggle-inner-wrap:where(:dir(rtl)){
     border-top-right-radius: var(--sf-toggle-inner-wrap--border-start-start-radius);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toggle .sf-toggle-inner-wrap {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toggle .sf-toggle-inner-wrap{
     padding-right: var(--sf-toggle-inner-wrap--padding-inline-end);
   }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .sf-toggle .sf-toggle-inner-wrap {
+  @supports not (padding-inline-end: initial){
+  html:not([dir="rtl"]) .sf-toggle .sf-toggle-inner-wrap{
     padding-right: var(--sf-toggle-inner-wrap--padding-inline-end);
     }
   }
-  .sf-toggle .sf-toggle-inner-wrap:where(:dir(ltr)) {
+  .sf-toggle .sf-toggle-inner-wrap:where(:dir(ltr)){
     padding-right: var(--sf-toggle-inner-wrap--padding-inline-end);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-toggle .sf-toggle-inner-wrap {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-toggle .sf-toggle-inner-wrap{
     padding-left: var(--sf-toggle-inner-wrap--padding-inline-end);
   }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .sf-toggle .sf-toggle-inner-wrap {
+  @supports not (padding-inline-end: initial){
+  [dir="rtl"] .sf-toggle .sf-toggle-inner-wrap{
     padding-left: var(--sf-toggle-inner-wrap--padding-inline-end);
     }
   }
-  .sf-toggle .sf-toggle-inner-wrap:where(:dir(rtl)) {
+  .sf-toggle .sf-toggle-inner-wrap:where(:dir(rtl)){
     padding-left: var(--sf-toggle-inner-wrap--padding-inline-end);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toggle .sf-toggle-inner-wrap {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toggle .sf-toggle-inner-wrap{
     padding-left: var(--sf-toggle-inner-wrap--padding-inline-start);
   }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .sf-toggle .sf-toggle-inner-wrap {
+  @supports not (padding-inline-start: initial){
+  html:not([dir="rtl"]) .sf-toggle .sf-toggle-inner-wrap{
     padding-left: var(--sf-toggle-inner-wrap--padding-inline-start);
     }
   }
-  .sf-toggle .sf-toggle-inner-wrap:where(:dir(ltr)) {
+  .sf-toggle .sf-toggle-inner-wrap:where(:dir(ltr)){
     padding-left: var(--sf-toggle-inner-wrap--padding-inline-start);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-toggle .sf-toggle-inner-wrap {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-toggle .sf-toggle-inner-wrap{
     padding-right: var(--sf-toggle-inner-wrap--padding-inline-start);
   }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .sf-toggle .sf-toggle-inner-wrap {
+  @supports not (padding-inline-start: initial){
+  [dir="rtl"] .sf-toggle .sf-toggle-inner-wrap{
     padding-right: var(--sf-toggle-inner-wrap--padding-inline-start);
     }
   }
-  .sf-toggle .sf-toggle-inner-wrap:where(:dir(rtl)) {
+  .sf-toggle .sf-toggle-inner-wrap:where(:dir(rtl)){
     padding-right: var(--sf-toggle-inner-wrap--padding-inline-start);
   }
   .sf-toggle .sf-toggle-inner-wrap {
@@ -334,92 +335,92 @@
             padding-inline-start: var(--sf-toggle-inner-wrap--padding-inline-start);
     padding-top: var(--sf-toggle-inner-wrap--padding-top);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toggle .sf-toggle-inner {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toggle .sf-toggle-inner{
     border-bottom-right-radius: var(--sf-toggle-inner--border-end-end-radius);
   }
-  @supports not (border-end-end-radius: initial) {
-  html:not([dir="rtl"]) .sf-toggle .sf-toggle-inner {
+  @supports not (border-end-end-radius: initial){
+  html:not([dir="rtl"]) .sf-toggle .sf-toggle-inner{
     border-bottom-right-radius: var(--sf-toggle-inner--border-end-end-radius);
     }
   }
-  .sf-toggle .sf-toggle-inner:where(:dir(ltr)) {
+  .sf-toggle .sf-toggle-inner:where(:dir(ltr)){
     border-bottom-right-radius: var(--sf-toggle-inner--border-end-end-radius);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-toggle .sf-toggle-inner {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-toggle .sf-toggle-inner{
     border-bottom-left-radius: var(--sf-toggle-inner--border-end-end-radius);
   }
-  @supports not (border-end-end-radius: initial) {
-  [dir="rtl"] .sf-toggle .sf-toggle-inner {
+  @supports not (border-end-end-radius: initial){
+  [dir="rtl"] .sf-toggle .sf-toggle-inner{
     border-bottom-left-radius: var(--sf-toggle-inner--border-end-end-radius);
     }
   }
-  .sf-toggle .sf-toggle-inner:where(:dir(rtl)) {
+  .sf-toggle .sf-toggle-inner:where(:dir(rtl)){
     border-bottom-left-radius: var(--sf-toggle-inner--border-end-end-radius);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toggle .sf-toggle-inner {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toggle .sf-toggle-inner{
     border-bottom-left-radius: var(--sf-toggle-inner--border-end-start-radius);
   }
-  @supports not (border-end-start-radius: initial) {
-  html:not([dir="rtl"]) .sf-toggle .sf-toggle-inner {
+  @supports not (border-end-start-radius: initial){
+  html:not([dir="rtl"]) .sf-toggle .sf-toggle-inner{
     border-bottom-left-radius: var(--sf-toggle-inner--border-end-start-radius);
     }
   }
-  .sf-toggle .sf-toggle-inner:where(:dir(ltr)) {
+  .sf-toggle .sf-toggle-inner:where(:dir(ltr)){
     border-bottom-left-radius: var(--sf-toggle-inner--border-end-start-radius);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-toggle .sf-toggle-inner {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-toggle .sf-toggle-inner{
     border-bottom-right-radius: var(--sf-toggle-inner--border-end-start-radius);
   }
-  @supports not (border-end-start-radius: initial) {
-  [dir="rtl"] .sf-toggle .sf-toggle-inner {
+  @supports not (border-end-start-radius: initial){
+  [dir="rtl"] .sf-toggle .sf-toggle-inner{
     border-bottom-right-radius: var(--sf-toggle-inner--border-end-start-radius);
     }
   }
-  .sf-toggle .sf-toggle-inner:where(:dir(rtl)) {
+  .sf-toggle .sf-toggle-inner:where(:dir(rtl)){
     border-bottom-right-radius: var(--sf-toggle-inner--border-end-start-radius);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toggle .sf-toggle-inner {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toggle .sf-toggle-inner{
     border-top-right-radius: var(--sf-toggle-inner--border-start-end-radius);
   }
-  @supports not (border-start-end-radius: initial) {
-  html:not([dir="rtl"]) .sf-toggle .sf-toggle-inner {
+  @supports not (border-start-end-radius: initial){
+  html:not([dir="rtl"]) .sf-toggle .sf-toggle-inner{
     border-top-right-radius: var(--sf-toggle-inner--border-start-end-radius);
     }
   }
-  .sf-toggle .sf-toggle-inner:where(:dir(ltr)) {
+  .sf-toggle .sf-toggle-inner:where(:dir(ltr)){
     border-top-right-radius: var(--sf-toggle-inner--border-start-end-radius);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-toggle .sf-toggle-inner {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-toggle .sf-toggle-inner{
     border-top-left-radius: var(--sf-toggle-inner--border-start-end-radius);
   }
-  @supports not (border-start-end-radius: initial) {
-  [dir="rtl"] .sf-toggle .sf-toggle-inner {
+  @supports not (border-start-end-radius: initial){
+  [dir="rtl"] .sf-toggle .sf-toggle-inner{
     border-top-left-radius: var(--sf-toggle-inner--border-start-end-radius);
     }
   }
-  .sf-toggle .sf-toggle-inner:where(:dir(rtl)) {
+  .sf-toggle .sf-toggle-inner:where(:dir(rtl)){
     border-top-left-radius: var(--sf-toggle-inner--border-start-end-radius);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toggle .sf-toggle-inner {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toggle .sf-toggle-inner{
     border-top-left-radius: var(--sf-toggle-inner--border-start-start-radius);
   }
-  @supports not (border-start-start-radius: initial) {
-  html:not([dir="rtl"]) .sf-toggle .sf-toggle-inner {
+  @supports not (border-start-start-radius: initial){
+  html:not([dir="rtl"]) .sf-toggle .sf-toggle-inner{
     border-top-left-radius: var(--sf-toggle-inner--border-start-start-radius);
     }
   }
-  .sf-toggle .sf-toggle-inner:where(:dir(ltr)) {
+  .sf-toggle .sf-toggle-inner:where(:dir(ltr)){
     border-top-left-radius: var(--sf-toggle-inner--border-start-start-radius);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-toggle .sf-toggle-inner {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-toggle .sf-toggle-inner{
     border-top-right-radius: var(--sf-toggle-inner--border-start-start-radius);
   }
-  @supports not (border-start-start-radius: initial) {
-  [dir="rtl"] .sf-toggle .sf-toggle-inner {
+  @supports not (border-start-start-radius: initial){
+  [dir="rtl"] .sf-toggle .sf-toggle-inner{
     border-top-right-radius: var(--sf-toggle-inner--border-start-start-radius);
     }
   }
-  .sf-toggle .sf-toggle-inner:where(:dir(rtl)) {
+  .sf-toggle .sf-toggle-inner:where(:dir(rtl)){
     border-top-right-radius: var(--sf-toggle-inner--border-start-start-radius);
   }
   .sf-toggle .sf-toggle-inner {
@@ -482,17 +483,30 @@
   .sf-toggle.disabled.sf-toggle--short .sf-toggle-inner-wrap {
     --sf-toggle-inner-wrap--background-color: var(--sf-disable);
   }
-  .sf-toggle.sf-toggle--short[\:has\(input\:not\(\:disabled\)\:not\(.disabled\).focus-visible\)] .sf-toggle-inner-wrap {
-    --sf-toggle-inner-wrap--box-shadow: var(--sf-ui-focus);
+  /* The container keeps its own boundary in the outline, because moving it to a
+     border would make the control two pixels taller: that part has no fixed
+     height. The ring therefore lands on the root, which surrounds the switch and
+     its label — one element, one outline, no fight over the property, and in high
+     contrast the boundary and the ring are visible at the same time. */
+  .sf-toggle[\:has\(input\:not\(\:disabled\)\:not\(.disabled\).focus-visible\)] {
+    border-radius: var(--sf-radius--ui);
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
   }
-  .sf-toggle.sf-toggle--short:has(input:not(:disabled):not(.disabled).focus-visible) .sf-toggle-inner-wrap {
-    --sf-toggle-inner-wrap--box-shadow: var(--sf-ui-focus);
+  .sf-toggle:has(input:not(:disabled):not(.disabled).focus-visible) {
+    border-radius: var(--sf-radius--ui);
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
   }
-  .sf-toggle.sf-toggle--short[\:has\(input\:not\(\:disabled\)\:not\(.disabled\)\:focus-visible\)] .sf-toggle-inner-wrap {
-    --sf-toggle-inner-wrap--box-shadow: var(--sf-ui-focus);
+  .sf-toggle[\:has\(input\:not\(\:disabled\)\:not\(.disabled\)\:focus-visible\)] {
+    border-radius: var(--sf-radius--ui);
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
   }
-  .sf-toggle.sf-toggle--short:has(input:not(:disabled):not(.disabled):focus-visible) .sf-toggle-inner-wrap {
-    --sf-toggle-inner-wrap--box-shadow: var(--sf-ui-focus);
+  .sf-toggle:has(input:not(:disabled):not(.disabled):focus-visible) {
+    border-radius: var(--sf-radius--ui);
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
   }
   .sf-toggle.active[\:not-has\(input\:disabled\)].sf-toggle--short .sf-toggle-container, .sf-toggle.active[\:not-has\(input\:disabled\)].sf-toggle--simple .sf-toggle-container, .sf-toggle.active[\:not-has\(input\:disabled\)].sf-toggle--icon .sf-toggle-container {
     --sf-toggle-container--background-color: var(--sf-primary);
@@ -521,18 +535,6 @@
     --sf-icon--color: var(--sf-on-disable);
   }
   /* utility-hint: align-items/center (.items-center) */
-  .sf-toggle.sf-toggle--simple[\:has\(input\:not\(\:disabled\)\:not\(.disabled\).focus-visible\)] .sf-toggle-container, .sf-toggle.sf-toggle--icon[\:has\(input\:not\(\:disabled\)\:not\(.disabled\).focus-visible\)] .sf-toggle-container {
-    --sf-toggle-container--box-shadow: var(--sf-ui-focus);
-  }
-  .sf-toggle.sf-toggle--simple:has(input:not(:disabled):not(.disabled).focus-visible) .sf-toggle-container, .sf-toggle.sf-toggle--icon:has(input:not(:disabled):not(.disabled).focus-visible) .sf-toggle-container {
-    --sf-toggle-container--box-shadow: var(--sf-ui-focus);
-  }
-  .sf-toggle.sf-toggle--simple[\:has\(input\:not\(\:disabled\)\:not\(.disabled\)\:focus-visible\)] .sf-toggle-container, .sf-toggle.sf-toggle--icon[\:has\(input\:not\(\:disabled\)\:not\(.disabled\)\:focus-visible\)] .sf-toggle-container {
-    --sf-toggle-container--box-shadow: var(--sf-ui-focus);
-  }
-  .sf-toggle.sf-toggle--simple:has(input:not(:disabled):not(.disabled):focus-visible) .sf-toggle-container, .sf-toggle.sf-toggle--icon:has(input:not(:disabled):not(.disabled):focus-visible) .sf-toggle-container {
-    --sf-toggle-container--box-shadow: var(--sf-ui-focus);
-  }
   .sf-toggle:not(:disabled):not(.disabled):active.sf-toggle--simple .sf-toggle-inner {
     --sf-toggle-inner--background-color: var(--sf-on-primary);
   }
@@ -721,65 +723,21 @@
       background-color: Canvas;
       outline-color: GrayText;
     }
-    .sf-toggle.sf-toggle--short[\:has\(input\:not\(\:disabled\)\:not\(.disabled\).focus-visible\)] .sf-toggle-inner-wrap {
+    .sf-toggle[\:has\(input\:not\(\:disabled\)\:not\(.disabled\).focus-visible\)] {
       outline: var(--sf-focus-outline-width) solid currentColor;
       outline-offset: var(--sf-focus-outline-width);
-      --sf-toggle-inner-wrap--box-shadow: none;
     }
-    .sf-toggle.sf-toggle--short:has(input:not(:disabled):not(.disabled).focus-visible) .sf-toggle-inner-wrap {
+    .sf-toggle:has(input:not(:disabled):not(.disabled).focus-visible) {
       outline: var(--sf-focus-outline-width) solid currentColor;
       outline-offset: var(--sf-focus-outline-width);
-      --sf-toggle-inner-wrap--box-shadow: none;
     }
-    .sf-toggle.sf-toggle--short[\:has\(input\:not\(\:disabled\)\:not\(.disabled\)\:focus-visible\)] .sf-toggle-inner-wrap {
+    .sf-toggle[\:has\(input\:not\(\:disabled\)\:not\(.disabled\)\:focus-visible\)] {
       outline: var(--sf-focus-outline-width) solid currentColor;
       outline-offset: var(--sf-focus-outline-width);
-      --sf-toggle-inner-wrap--box-shadow: none;
     }
-    .sf-toggle.sf-toggle--short:has(input:not(:disabled):not(.disabled):focus-visible) .sf-toggle-inner-wrap {
+    .sf-toggle:has(input:not(:disabled):not(.disabled):focus-visible) {
       outline: var(--sf-focus-outline-width) solid currentColor;
       outline-offset: var(--sf-focus-outline-width);
-      --sf-toggle-inner-wrap--box-shadow: none;
-    }
-    .sf-toggle.sf-toggle--simple[\:has\(input\:not\(\:disabled\)\:not\(.disabled\).focus-visible\)] .sf-toggle-container {
-      outline: var(--sf-focus-outline-width) solid currentColor;
-      outline-offset: var(--sf-focus-outline-width);
-      --sf-toggle-container--box-shadow: none;
-    }
-    .sf-toggle.sf-toggle--simple:has(input:not(:disabled):not(.disabled).focus-visible) .sf-toggle-container {
-      outline: var(--sf-focus-outline-width) solid currentColor;
-      outline-offset: var(--sf-focus-outline-width);
-      --sf-toggle-container--box-shadow: none;
-    }
-    .sf-toggle.sf-toggle--simple[\:has\(input\:not\(\:disabled\)\:not\(.disabled\)\:focus-visible\)] .sf-toggle-container {
-      outline: var(--sf-focus-outline-width) solid currentColor;
-      outline-offset: var(--sf-focus-outline-width);
-      --sf-toggle-container--box-shadow: none;
-    }
-    .sf-toggle.sf-toggle--simple:has(input:not(:disabled):not(.disabled):focus-visible) .sf-toggle-container {
-      outline: var(--sf-focus-outline-width) solid currentColor;
-      outline-offset: var(--sf-focus-outline-width);
-      --sf-toggle-container--box-shadow: none;
-    }
-    .sf-toggle.sf-toggle--icon[\:has\(input\:not\(\:disabled\)\:not\(.disabled\).focus-visible\)] .sf-toggle-container {
-      outline: var(--sf-focus-outline-width) solid currentColor;
-      outline-offset: var(--sf-focus-outline-width);
-      --sf-toggle-container--box-shadow: none;
-    }
-    .sf-toggle.sf-toggle--icon:has(input:not(:disabled):not(.disabled).focus-visible) .sf-toggle-container {
-      outline: var(--sf-focus-outline-width) solid currentColor;
-      outline-offset: var(--sf-focus-outline-width);
-      --sf-toggle-container--box-shadow: none;
-    }
-    .sf-toggle.sf-toggle--icon[\:has\(input\:not\(\:disabled\)\:not\(.disabled\)\:focus-visible\)] .sf-toggle-container {
-      outline: var(--sf-focus-outline-width) solid currentColor;
-      outline-offset: var(--sf-focus-outline-width);
-      --sf-toggle-container--box-shadow: none;
-    }
-    .sf-toggle.sf-toggle--icon:has(input:not(:disabled):not(.disabled):focus-visible) .sf-toggle-container {
-      outline: var(--sf-focus-outline-width) solid currentColor;
-      outline-offset: var(--sf-focus-outline-width);
-      --sf-toggle-container--box-shadow: none;
     }
   }
 }
@@ -816,26 +774,26 @@
   .sf-toggle .sf-toggle-container {
     position: relative;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toggle.sf-toggle--short .sf-toggle-inner-wrap {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toggle.sf-toggle--short .sf-toggle-inner-wrap{
     left: 0;
   }
-  @supports not (inset-inline-start: initial) {
-  html:not([dir="rtl"]) .sf-toggle.sf-toggle--short .sf-toggle-inner-wrap {
+  @supports not (inset-inline-start: initial){
+  html:not([dir="rtl"]) .sf-toggle.sf-toggle--short .sf-toggle-inner-wrap{
     left: 0;
     }
   }
-  .sf-toggle.sf-toggle--short .sf-toggle-inner-wrap:where(:dir(ltr)) {
+  .sf-toggle.sf-toggle--short .sf-toggle-inner-wrap:where(:dir(ltr)){
     left: 0;
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-toggle.sf-toggle--short .sf-toggle-inner-wrap {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-toggle.sf-toggle--short .sf-toggle-inner-wrap{
     right: 0;
   }
-  @supports not (inset-inline-start: initial) {
-  [dir="rtl"] .sf-toggle.sf-toggle--short .sf-toggle-inner-wrap {
+  @supports not (inset-inline-start: initial){
+  [dir="rtl"] .sf-toggle.sf-toggle--short .sf-toggle-inner-wrap{
     right: 0;
     }
   }
-  .sf-toggle.sf-toggle--short .sf-toggle-inner-wrap:where(:dir(rtl)) {
+  .sf-toggle.sf-toggle--short .sf-toggle-inner-wrap:where(:dir(rtl)){
     right: 0;
   }
   .sf-toggle.sf-toggle--short .sf-toggle-inner-wrap {
@@ -845,48 +803,48 @@
     -webkit-transform: translateY(-50%);
             transform: translateY(-50%);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toggle.sf-toggle--short .sf-toggle-container.content-main-end .sf-toggle-inner-wrap {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toggle.sf-toggle--short .sf-toggle-container.content-main-end .sf-toggle-inner-wrap{
     left: auto;
   }
-  @supports not (inset-inline-start: initial) {
-  html:not([dir="rtl"]) .sf-toggle.sf-toggle--short .sf-toggle-container.content-main-end .sf-toggle-inner-wrap {
+  @supports not (inset-inline-start: initial){
+  html:not([dir="rtl"]) .sf-toggle.sf-toggle--short .sf-toggle-container.content-main-end .sf-toggle-inner-wrap{
     left: auto;
     }
   }
-  .sf-toggle.sf-toggle--short .sf-toggle-container.content-main-end .sf-toggle-inner-wrap:where(:dir(ltr)) {
+  .sf-toggle.sf-toggle--short .sf-toggle-container.content-main-end .sf-toggle-inner-wrap:where(:dir(ltr)){
     left: auto;
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-toggle.sf-toggle--short .sf-toggle-container.content-main-end .sf-toggle-inner-wrap {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-toggle.sf-toggle--short .sf-toggle-container.content-main-end .sf-toggle-inner-wrap{
     right: auto;
   }
-  @supports not (inset-inline-start: initial) {
-  [dir="rtl"] .sf-toggle.sf-toggle--short .sf-toggle-container.content-main-end .sf-toggle-inner-wrap {
+  @supports not (inset-inline-start: initial){
+  [dir="rtl"] .sf-toggle.sf-toggle--short .sf-toggle-container.content-main-end .sf-toggle-inner-wrap{
     right: auto;
     }
   }
-  .sf-toggle.sf-toggle--short .sf-toggle-container.content-main-end .sf-toggle-inner-wrap:where(:dir(rtl)) {
+  .sf-toggle.sf-toggle--short .sf-toggle-container.content-main-end .sf-toggle-inner-wrap:where(:dir(rtl)){
     right: auto;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toggle.sf-toggle--short .sf-toggle-container.content-main-end .sf-toggle-inner-wrap {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toggle.sf-toggle--short .sf-toggle-container.content-main-end .sf-toggle-inner-wrap{
     right: 0;
   }
-  @supports not (inset-inline-end: initial) {
-  html:not([dir="rtl"]) .sf-toggle.sf-toggle--short .sf-toggle-container.content-main-end .sf-toggle-inner-wrap {
+  @supports not (inset-inline-end: initial){
+  html:not([dir="rtl"]) .sf-toggle.sf-toggle--short .sf-toggle-container.content-main-end .sf-toggle-inner-wrap{
     right: 0;
     }
   }
-  .sf-toggle.sf-toggle--short .sf-toggle-container.content-main-end .sf-toggle-inner-wrap:where(:dir(ltr)) {
+  .sf-toggle.sf-toggle--short .sf-toggle-container.content-main-end .sf-toggle-inner-wrap:where(:dir(ltr)){
     right: 0;
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-toggle.sf-toggle--short .sf-toggle-container.content-main-end .sf-toggle-inner-wrap {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-toggle.sf-toggle--short .sf-toggle-container.content-main-end .sf-toggle-inner-wrap{
     left: 0;
   }
-  @supports not (inset-inline-end: initial) {
-  [dir="rtl"] .sf-toggle.sf-toggle--short .sf-toggle-container.content-main-end .sf-toggle-inner-wrap {
+  @supports not (inset-inline-end: initial){
+  [dir="rtl"] .sf-toggle.sf-toggle--short .sf-toggle-container.content-main-end .sf-toggle-inner-wrap{
     left: 0;
     }
   }
-  .sf-toggle.sf-toggle--short .sf-toggle-container.content-main-end .sf-toggle-inner-wrap:where(:dir(rtl)) {
+  .sf-toggle.sf-toggle--short .sf-toggle-container.content-main-end .sf-toggle-inner-wrap:where(:dir(rtl)){
     left: 0;
   }
   .sf-toggle.sf-toggle--short .sf-toggle-container.content-main-end .sf-toggle-inner-wrap {

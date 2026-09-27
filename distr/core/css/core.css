@@ -89,16 +89,23 @@
     border: var(--sf-border--width) var(--sf-border--style) var(--sf-border--color);
     border-color: var(--sf-outline-variant);
     --sf-radius--ui: var(--sf-radius-1\/3);
+    --sf-focus--color: var(--sf-focus);
     --sf-focus--offset: var(--sf-a0);
     --sf-focus--style: solid;
     --sf-focus--width: var(--sf-a4);
     --sf-ui-focus-inset: inset 0 0 0 var(--sf-focus-outline-width) var(--sf-focus);
   }
-  :focus {
-    outline-color: var(--sf-focus-color);
-    outline-offset: var(--sf-focus-offset);
-    outline-style: var(--sf-focus-style);
-    outline-width: var(--sf-focus-width);
+  .focus-visible {
+    outline-color: var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
+    outline-style: var(--sf-focus--style);
+    outline-width: var(--sf-focus--width);
+  }
+  :focus-visible {
+    outline-color: var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
+    outline-style: var(--sf-focus--style);
+    outline-width: var(--sf-focus--width);
   }
   .border {
     border: 0.0625rem var(--sf-outline-variant) solid;
@@ -290,6 +297,18 @@
     --sf-shadow--color-fill: var(--sf-black--alfa-12);
     --sf-shadow--color-outline: var(--sf-black--alfa-8);
     --sf-shadow--color-shading: var(--sf-black--alfa-4);
+    /* The neutral alpha ramp. One base per theme — ink on a light surface, light
+       on a dark one — so a component asks for a degree of contrast rather than
+       for black or white, and the same declaration is right in both themes. */
+    --sf-alpha-base: var(--sf-black);
+    --sf-alpha-2: color-mix(in srgb, var(--sf-transparent), var(--sf-alpha-base) 2%);
+    --sf-alpha-4: color-mix(in srgb, var(--sf-transparent), var(--sf-alpha-base) 4%);
+    --sf-alpha-6: color-mix(in srgb, var(--sf-transparent), var(--sf-alpha-base) 6%);
+    --sf-alpha-8: color-mix(in srgb, var(--sf-transparent), var(--sf-alpha-base) 8%);
+    --sf-alpha-12: color-mix(in srgb, var(--sf-transparent), var(--sf-alpha-base) 12%);
+    --sf-alpha-16: color-mix(in srgb, var(--sf-transparent), var(--sf-alpha-base) 16%);
+    --sf-alpha-20: color-mix(in srgb, var(--sf-transparent), var(--sf-alpha-base) 20%);
+    --sf-alpha-24: color-mix(in srgb, var(--sf-transparent), var(--sf-alpha-base) 24%);
   }
   .theme-dark {
     color-scheme: dark;
@@ -407,6 +426,18 @@
     --sf-shadow--color-fill: var(--sf-black--alfa-12);
     --sf-shadow--color-outline: var(--sf-black--alfa-8);
     --sf-shadow--color-shading: var(--sf-black--alfa-4);
+    /* The neutral alpha ramp. One base per theme — ink on a light surface, light
+       on a dark one — so a component asks for a degree of contrast rather than
+       for black or white, and the same declaration is right in both themes. */
+    --sf-alpha-base: var(--sf-white);
+    --sf-alpha-2: color-mix(in srgb, var(--sf-transparent), var(--sf-alpha-base) 2%);
+    --sf-alpha-4: color-mix(in srgb, var(--sf-transparent), var(--sf-alpha-base) 4%);
+    --sf-alpha-6: color-mix(in srgb, var(--sf-transparent), var(--sf-alpha-base) 6%);
+    --sf-alpha-8: color-mix(in srgb, var(--sf-transparent), var(--sf-alpha-base) 8%);
+    --sf-alpha-12: color-mix(in srgb, var(--sf-transparent), var(--sf-alpha-base) 12%);
+    --sf-alpha-16: color-mix(in srgb, var(--sf-transparent), var(--sf-alpha-base) 16%);
+    --sf-alpha-20: color-mix(in srgb, var(--sf-transparent), var(--sf-alpha-base) 20%);
+    --sf-alpha-24: color-mix(in srgb, var(--sf-transparent), var(--sf-alpha-base) 24%);
   }
 }
 /*
@@ -2153,7 +2184,6 @@ body {
   a[class*=link-],
   [class*=link-] ~ a {
     color: var(--sf-link);
-    outline: none;
     -webkit-text-decoration-color: var(--sf-link);
             text-decoration-color: var(--sf-link);
     text-underline-offset: 0.1875rem;
@@ -2259,6 +2289,9 @@ body {
     --sf-duration-normal: 0.3S;
     --sf-duration-slow: 0.5S;
     --sf-animation: cubic-bezier(.25, .8, .25, 1);
+    --sf-ease-enter: cubic-bezier(.19, 1, .22, 1);
+    --sf-ease-exit: cubic-bezier(.65, 0, .4, 1);
+    --sf-ease-move: cubic-bezier(.65, 0, .35, 1);
   }
 }
 @layer sf.base {
@@ -2503,6 +2536,9 @@ body {
     }
   }
 }
+/* sf-focus-ring: editor — the editing canvas marks what is being edited in its
+   own colour, which is part of the editor's language rather than the product's
+   focus colour. Width and style stay the system's. */
 @layer sf.components {
   .sf-composition-regions {
     --sf-composition-region-side: minmax(0, 16rem);
@@ -2659,21 +2695,21 @@ body {
   }
   .sf-editor-field-control.focus-visible,
   .sf-editor-field-disclosure > summary.focus-visible {
-    outline: 2px solid Highlight;
-    outline: 2px solid var(--sf-primary, Highlight);
+    outline: var(--sf-focus--width) var(--sf-focus--style) Highlight;
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-primary, Highlight);
     outline-offset: 2px;
   }
   .sf-editor-field-control.focus-visible,
   .sf-editor-field-disclosure > summary.focus-visible {
-    outline: 2px solid Highlight;
-    outline: 2px solid Highlight;
-    outline: 2px solid var(--sf-primary, Highlight);
+    outline: var(--sf-focus--width) var(--sf-focus--style) Highlight;
+    outline: var(--sf-focus--width) var(--sf-focus--style) Highlight;
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-primary, Highlight);
     outline-offset: 2px;
   }
   .sf-editor-field-control:focus-visible,
   .sf-editor-field-disclosure > summary:focus-visible {
-    outline: 2px solid Highlight;
-    outline: 2px solid var(--sf-primary, Highlight);
+    outline: var(--sf-focus--width) var(--sf-focus--style) Highlight;
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-primary, Highlight);
     outline-offset: 2px;
   }
   .sf-editor-field-help {

@@ -111,15 +111,15 @@
 .sf-carousel-switch.focus-visible,
 .sf-carousel-rotation.focus-visible,
 .sf-carousel-pagination-item.focus-visible {
-  outline: var(--sf-focus-outline-width) solid currentColor;
-  outline-offset: calc(var(--sf-focus-outline-width) * -1);
+  outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+  outline-offset: calc(var(--sf-focus--width) * -1);
 }
 
 .sf-carousel-switch:focus-visible,
 .sf-carousel-rotation:focus-visible,
 .sf-carousel-pagination-item:focus-visible {
-  outline: var(--sf-focus-outline-width) solid currentColor;
-  outline-offset: calc(var(--sf-focus-outline-width) * -1);
+  outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+  outline-offset: calc(var(--sf-focus--width) * -1);
 }
 
 .sf-carousel-switch--secondary-container {

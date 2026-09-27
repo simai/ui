@@ -229,24 +229,14 @@ _:-ms-input-placeholder, [dir="rtl"] .sf-accordion-trigger {
 
 .sf-accordion-trigger.focus-visible {
   z-index: 1;
-  outline: none;
-  box-shadow: inset 0 0 0 var(--sf-focus-outline-width) var(--sf-focus);
-  box-shadow: var(--sf-ui-focus-inset, inset 0 0 0 var(--sf-focus-outline-width) var(--sf-focus));
-}
-
-.sf-accordion-trigger.focus-visible {
-  z-index: 1;
-  outline: none;
-  box-shadow: inset 0 0 0 var(--sf-focus-outline-width) var(--sf-focus);
-  box-shadow: inset 0 0 0 var(--sf-focus-outline-width) var(--sf-focus);
-  box-shadow: var(--sf-ui-focus-inset, inset 0 0 0 var(--sf-focus-outline-width) var(--sf-focus));
+  outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+  outline-offset: calc(var(--sf-focus--width) * -1);
 }
 
 .sf-accordion-trigger:focus-visible {
   z-index: 1;
-  outline: none;
-  box-shadow: inset 0 0 0 var(--sf-focus-outline-width) var(--sf-focus);
-  box-shadow: var(--sf-ui-focus-inset, inset 0 0 0 var(--sf-focus-outline-width) var(--sf-focus));
+  outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+  outline-offset: calc(var(--sf-focus--width) * -1);
 }
 
 .sf-accordion .sf-accordion-title {
@@ -327,22 +317,13 @@ _:-ms-input-placeholder, [dir="rtl"] .sf-accordion-trigger {
 }
 
 .sf-accordion.sf-accordion--legacy.focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 var(--sf-focus-outline-width) var(--sf-focus);
-  box-shadow: var(--sf-ui-focus, 0 0 0 var(--sf-focus-outline-width) var(--sf-focus));
-}
-
-.sf-accordion.sf-accordion--legacy.focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 var(--sf-focus-outline-width) var(--sf-focus);
-  box-shadow: 0 0 0 var(--sf-focus-outline-width) var(--sf-focus);
-  box-shadow: var(--sf-ui-focus, 0 0 0 var(--sf-focus-outline-width) var(--sf-focus));
+  outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+  outline-offset: var(--sf-focus--offset);
 }
 
 .sf-accordion.sf-accordion--legacy:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 var(--sf-focus-outline-width) var(--sf-focus);
-  box-shadow: var(--sf-ui-focus, 0 0 0 var(--sf-focus-outline-width) var(--sf-focus));
+  outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+  outline-offset: var(--sf-focus--offset);
 }
 
 .sf-accordion.sf-accordion--legacy .sf-accordion-content {

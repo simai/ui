@@ -1,176 +1,182 @@
+@charset "UTF-8";
 /*
  * Main SCSS file for including styles for component.
  *
  * Imports:
  * - Base styles (_css__component_name.scss)
  */
+/* The status words are the shared vocabulary: neutral, info, success, warning,
+   error. The component renders the canonical class, and the two words this
+   component used before — default and primary — are matched beside it so
+   existing markup and project CSS keep working. `primary` was a colour inside a
+   list of statuses; here it meant info. See contracts/public-api-axes.json. */
 @layer sf.components {
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-space-1\/2) justify-content/flex-start (.justify-start) align-items/flex-start (.items-start) */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toast {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toast{
     border-bottom-right-radius: var(--sf-radius-default);
     border-bottom-right-radius: var(--sf-toast--border-bottom-right-radius, var(--sf-radius-default));
   }
-  @supports not (border-end-end-radius: initial) {
-  html:not([dir="rtl"]) .sf-toast {
+  @supports not (border-end-end-radius: initial){
+  html:not([dir="rtl"]) .sf-toast{
     border-bottom-right-radius: var(--sf-radius-default);
     border-bottom-right-radius: var(--sf-toast--border-bottom-right-radius, var(--sf-radius-default));
     }
   }
-  .sf-toast:where(:dir(ltr)) {
+  .sf-toast:where(:dir(ltr)){
     border-bottom-right-radius: var(--sf-radius-default);
     border-bottom-right-radius: var(--sf-toast--border-bottom-right-radius, var(--sf-radius-default));
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-toast {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-toast{
     border-bottom-left-radius: var(--sf-radius-default);
     border-bottom-left-radius: var(--sf-toast--border-bottom-right-radius, var(--sf-radius-default));
   }
-  @supports not (border-end-end-radius: initial) {
-  [dir="rtl"] .sf-toast {
+  @supports not (border-end-end-radius: initial){
+  [dir="rtl"] .sf-toast{
     border-bottom-left-radius: var(--sf-radius-default);
     border-bottom-left-radius: var(--sf-toast--border-bottom-right-radius, var(--sf-radius-default));
     }
   }
-  .sf-toast:where(:dir(rtl)) {
+  .sf-toast:where(:dir(rtl)){
     border-bottom-left-radius: var(--sf-radius-default);
     border-bottom-left-radius: var(--sf-toast--border-bottom-right-radius, var(--sf-radius-default));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toast {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toast{
     border-bottom-left-radius: var(--sf-radius-default);
     border-bottom-left-radius: var(--sf-toast--border-bottom-left-radius, var(--sf-radius-default));
   }
-  @supports not (border-end-start-radius: initial) {
-  html:not([dir="rtl"]) .sf-toast {
+  @supports not (border-end-start-radius: initial){
+  html:not([dir="rtl"]) .sf-toast{
     border-bottom-left-radius: var(--sf-radius-default);
     border-bottom-left-radius: var(--sf-toast--border-bottom-left-radius, var(--sf-radius-default));
     }
   }
-  .sf-toast:where(:dir(ltr)) {
+  .sf-toast:where(:dir(ltr)){
     border-bottom-left-radius: var(--sf-radius-default);
     border-bottom-left-radius: var(--sf-toast--border-bottom-left-radius, var(--sf-radius-default));
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-toast {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-toast{
     border-bottom-right-radius: var(--sf-radius-default);
     border-bottom-right-radius: var(--sf-toast--border-bottom-left-radius, var(--sf-radius-default));
   }
-  @supports not (border-end-start-radius: initial) {
-  [dir="rtl"] .sf-toast {
+  @supports not (border-end-start-radius: initial){
+  [dir="rtl"] .sf-toast{
     border-bottom-right-radius: var(--sf-radius-default);
     border-bottom-right-radius: var(--sf-toast--border-bottom-left-radius, var(--sf-radius-default));
     }
   }
-  .sf-toast:where(:dir(rtl)) {
+  .sf-toast:where(:dir(rtl)){
     border-bottom-right-radius: var(--sf-radius-default);
     border-bottom-right-radius: var(--sf-toast--border-bottom-left-radius, var(--sf-radius-default));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toast {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toast{
     border-top-right-radius: var(--sf-radius-default);
     border-top-right-radius: var(--sf-toast--border-top-right-radius, var(--sf-radius-default));
   }
-  @supports not (border-start-end-radius: initial) {
-  html:not([dir="rtl"]) .sf-toast {
+  @supports not (border-start-end-radius: initial){
+  html:not([dir="rtl"]) .sf-toast{
     border-top-right-radius: var(--sf-radius-default);
     border-top-right-radius: var(--sf-toast--border-top-right-radius, var(--sf-radius-default));
     }
   }
-  .sf-toast:where(:dir(ltr)) {
+  .sf-toast:where(:dir(ltr)){
     border-top-right-radius: var(--sf-radius-default);
     border-top-right-radius: var(--sf-toast--border-top-right-radius, var(--sf-radius-default));
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-toast {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-toast{
     border-top-left-radius: var(--sf-radius-default);
     border-top-left-radius: var(--sf-toast--border-top-right-radius, var(--sf-radius-default));
   }
-  @supports not (border-start-end-radius: initial) {
-  [dir="rtl"] .sf-toast {
+  @supports not (border-start-end-radius: initial){
+  [dir="rtl"] .sf-toast{
     border-top-left-radius: var(--sf-radius-default);
     border-top-left-radius: var(--sf-toast--border-top-right-radius, var(--sf-radius-default));
     }
   }
-  .sf-toast:where(:dir(rtl)) {
+  .sf-toast:where(:dir(rtl)){
     border-top-left-radius: var(--sf-radius-default);
     border-top-left-radius: var(--sf-toast--border-top-right-radius, var(--sf-radius-default));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toast {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toast{
     border-top-left-radius: var(--sf-radius-default);
     border-top-left-radius: var(--sf-toast--border-top-left-radius, var(--sf-radius-default));
   }
-  @supports not (border-start-start-radius: initial) {
-  html:not([dir="rtl"]) .sf-toast {
+  @supports not (border-start-start-radius: initial){
+  html:not([dir="rtl"]) .sf-toast{
     border-top-left-radius: var(--sf-radius-default);
     border-top-left-radius: var(--sf-toast--border-top-left-radius, var(--sf-radius-default));
     }
   }
-  .sf-toast:where(:dir(ltr)) {
+  .sf-toast:where(:dir(ltr)){
     border-top-left-radius: var(--sf-radius-default);
     border-top-left-radius: var(--sf-toast--border-top-left-radius, var(--sf-radius-default));
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-toast {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-toast{
     border-top-right-radius: var(--sf-radius-default);
     border-top-right-radius: var(--sf-toast--border-top-left-radius, var(--sf-radius-default));
   }
-  @supports not (border-start-start-radius: initial) {
-  [dir="rtl"] .sf-toast {
+  @supports not (border-start-start-radius: initial){
+  [dir="rtl"] .sf-toast{
     border-top-right-radius: var(--sf-radius-default);
     border-top-right-radius: var(--sf-toast--border-top-left-radius, var(--sf-radius-default));
     }
   }
-  .sf-toast:where(:dir(rtl)) {
+  .sf-toast:where(:dir(rtl)){
     border-top-right-radius: var(--sf-radius-default);
     border-top-right-radius: var(--sf-toast--border-top-left-radius, var(--sf-radius-default));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toast {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toast{
     padding-right: var(--sf-space-1);
     padding-right: var(--sf-toast--padding-right, var(--sf-space-1));
   }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .sf-toast {
+  @supports not (padding-inline-end: initial){
+  html:not([dir="rtl"]) .sf-toast{
     padding-right: var(--sf-space-1);
     padding-right: var(--sf-toast--padding-right, var(--sf-space-1));
     }
   }
-  .sf-toast:where(:dir(ltr)) {
+  .sf-toast:where(:dir(ltr)){
     padding-right: var(--sf-space-1);
     padding-right: var(--sf-toast--padding-right, var(--sf-space-1));
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-toast {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-toast{
     padding-left: var(--sf-space-1);
     padding-left: var(--sf-toast--padding-right, var(--sf-space-1));
   }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .sf-toast {
+  @supports not (padding-inline-end: initial){
+  [dir="rtl"] .sf-toast{
     padding-left: var(--sf-space-1);
     padding-left: var(--sf-toast--padding-right, var(--sf-space-1));
     }
   }
-  .sf-toast:where(:dir(rtl)) {
+  .sf-toast:where(:dir(rtl)){
     padding-left: var(--sf-space-1);
     padding-left: var(--sf-toast--padding-right, var(--sf-space-1));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toast {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toast{
     padding-left: var(--sf-space-1);
     padding-left: var(--sf-toast--padding-left, var(--sf-space-1));
   }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .sf-toast {
+  @supports not (padding-inline-start: initial){
+  html:not([dir="rtl"]) .sf-toast{
     padding-left: var(--sf-space-1);
     padding-left: var(--sf-toast--padding-left, var(--sf-space-1));
     }
   }
-  .sf-toast:where(:dir(ltr)) {
+  .sf-toast:where(:dir(ltr)){
     padding-left: var(--sf-space-1);
     padding-left: var(--sf-toast--padding-left, var(--sf-space-1));
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-toast {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-toast{
     padding-right: var(--sf-space-1);
     padding-right: var(--sf-toast--padding-left, var(--sf-space-1));
   }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .sf-toast {
+  @supports not (padding-inline-start: initial){
+  [dir="rtl"] .sf-toast{
     padding-right: var(--sf-space-1);
     padding-right: var(--sf-toast--padding-left, var(--sf-space-1));
     }
   }
-  .sf-toast:where(:dir(rtl)) {
+  .sf-toast:where(:dir(rtl)){
     padding-right: var(--sf-space-1);
     padding-right: var(--sf-toast--padding-left, var(--sf-space-1));
   }
@@ -210,11 +216,12 @@
     opacity: 1;
     -webkit-transform: translateY(var(--sf-0));
             transform: translateY(var(--sf-0));
-    transition: opacity var(--sf-duration-normal) var(--sf-animation), -webkit-transform var(--sf-duration-normal) var(--sf-animation);
-    transition: opacity var(--sf-duration-normal) var(--sf-animation), transform var(--sf-duration-normal) var(--sf-animation);
-    transition: opacity var(--sf-duration-normal) var(--sf-animation), transform var(--sf-duration-normal) var(--sf-animation), -webkit-transform var(--sf-duration-normal) var(--sf-animation);
+    transition: opacity var(--sf-duration-normal) var(--sf-ease-enter), -webkit-transform var(--sf-duration-normal) var(--sf-ease-enter);
+    transition: opacity var(--sf-duration-normal) var(--sf-ease-enter), transform var(--sf-duration-normal) var(--sf-ease-enter);
+    transition: opacity var(--sf-duration-normal) var(--sf-ease-enter), transform var(--sf-duration-normal) var(--sf-ease-enter), -webkit-transform var(--sf-duration-normal) var(--sf-ease-enter);
   }
   .sf-toast.closing {
+    transition-timing-function: var(--sf-ease-exit);
     opacity: 0;
     -webkit-transform: translateY(var(--sf-space-1\/2));
             transform: translateY(var(--sf-space-1\/2));
@@ -281,24 +288,46 @@
     line-height: var(--sf-toast-text--line-height);
     word-wrap: anywhere;
   }
+  .sf-toast.sf-toast--neutral .sf-icon {
+    --sf-icon--color: var(--sf-on-surface);
+  }
   .sf-toast.sf-toast--default .sf-icon {
     --sf-icon--color: var(--sf-on-surface);
+  }
+  .sf-toast.sf-toast--neutral .sf-toast-supporting-text {
+    --sf-toast-supporting-text--color: var(--sf-on-surface);
   }
   .sf-toast.sf-toast--default .sf-toast-supporting-text {
     --sf-toast-supporting-text--color: var(--sf-on-surface);
   }
+  .sf-toast.sf-toast--neutral .sf-toast-text {
+    --sf-toast-text--color: var(--sf-on-surface);
+  }
   .sf-toast.sf-toast--default .sf-toast-text {
     --sf-toast-text--color: var(--sf-on-surface);
   }
+  .sf-toast.sf-toast--info .sf-icon {
+    --sf-icon--color: var(--sf-on-primary-container-graphic);
+  }
   .sf-toast.sf-toast--primary .sf-icon {
     --sf-icon--color: var(--sf-on-primary-container-graphic);
+  }
+  .sf-toast.sf-toast--info > .sf-icon-button.sf-icon-button--link > .sf-close > .sf-close-icon {
+    --sf-close-icon--background-color: var(--sf-on-primary-container);
+    --sf-close-icon--border-color: var(--sf-outline);
   }
   .sf-toast.sf-toast--primary > .sf-icon-button.sf-icon-button--link > .sf-close > .sf-close-icon {
     --sf-close-icon--background-color: var(--sf-on-primary-container);
     --sf-close-icon--border-color: var(--sf-outline);
   }
+  .sf-toast.sf-toast--info .sf-toast-supporting-text {
+    --sf-toast-supporting-text--color: var(--sf-on-primary-container);
+  }
   .sf-toast.sf-toast--primary .sf-toast-supporting-text {
     --sf-toast-supporting-text--color: var(--sf-on-primary-container);
+  }
+  .sf-toast.sf-toast--info .sf-toast-text {
+    --sf-toast-text--color: var(--sf-on-primary-container);
   }
   .sf-toast.sf-toast--primary .sf-toast-text {
     --sf-toast-text--color: var(--sf-on-primary-container);
@@ -343,12 +372,22 @@
     --sf-toast-text--color: var(--sf-on-success-container);
   }
   /* utility-hint: flex/1 (.flex-1) */
+  .sf-toast--neutral {
+    --sf-toast--background-color: var(--sf-surface-container);
+    --sf-toast--content-color: var(--sf-on-surface);
+    --sf-close-icon--background-color: var(--sf-on-surface);
+  }
   .sf-toast--default {
     --sf-toast--background-color: var(--sf-surface-container);
     --sf-toast--content-color: var(--sf-on-surface);
     --sf-close-icon--background-color: var(--sf-on-surface);
   }
   /* utility-hint: flex/1 (.flex-1) */
+  .sf-toast--info {
+    --sf-toast--background-color: var(--sf-primary-container);
+    --sf-toast--content-color: var(--sf-on-primary-container);
+    --sf-close-icon--background-color: var(--sf-on-primary-container);
+  }
   .sf-toast--primary {
     --sf-toast--background-color: var(--sf-primary-container);
     --sf-toast--content-color: var(--sf-on-primary-container);

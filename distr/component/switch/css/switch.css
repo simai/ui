@@ -328,16 +328,20 @@
     --sf-switch-toggler--border-color: var(--sf-outline-disable);
   }
   .sf-switch[\:has\(input\:not\(\:disabled\)\:not\(.disabled\).focus-visible\)] .sf-switch-toggler {
-    --sf-switch-toggler--box-shadow: var(--sf-ui-focus);
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
   }
   .sf-switch:has(input:not(:disabled):not(.disabled).focus-visible) .sf-switch-toggler {
-    --sf-switch-toggler--box-shadow: var(--sf-ui-focus);
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
   }
   .sf-switch[\:has\(input\:not\(\:disabled\)\:not\(.disabled\)\:focus-visible\)] .sf-switch-toggler {
-    --sf-switch-toggler--box-shadow: var(--sf-ui-focus);
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
   }
   .sf-switch:has(input:not(:disabled):not(.disabled):focus-visible) .sf-switch-toggler {
-    --sf-switch-toggler--box-shadow: var(--sf-ui-focus);
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
   }
   .sf-switch[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:hover\)] .sf-switch-toggler {
     --sf-switch-toggler--border-color: var(--sf-primary-hover);

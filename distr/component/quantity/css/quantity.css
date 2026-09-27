@@ -824,16 +824,20 @@
     --sf-quantity-placeholder--color: var(--sf-on-surface);
   }
   .sf-quantity:not(.sf-quantity--pointer-focus)[\:has\(input\:not\(\:disabled\)\:not\(.disabled\).focus-visible\)] .sf-quantity-wrap {
-    --sf-quantity-wrap--box-shadow: var(--sf-ui-focus);
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
   }
   .sf-quantity:not(.sf-quantity--pointer-focus):has(input:not(:disabled):not(.disabled).focus-visible) .sf-quantity-wrap {
-    --sf-quantity-wrap--box-shadow: var(--sf-ui-focus);
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
   }
   .sf-quantity:not(.sf-quantity--pointer-focus)[\:has\(input\:not\(\:disabled\)\:not\(.disabled\)\:focus-visible\)] .sf-quantity-wrap {
-    --sf-quantity-wrap--box-shadow: var(--sf-ui-focus);
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
   }
   .sf-quantity:not(.sf-quantity--pointer-focus):has(input:not(:disabled):not(.disabled):focus-visible) .sf-quantity-wrap {
-    --sf-quantity-wrap--box-shadow: var(--sf-ui-focus);
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
   }
   .sf-quantity.error .sf-quantity-wrap {
     --sf-quantity-wrap--background-color: var(--sf-transparent-for-focus);
@@ -868,17 +872,12 @@
   .sf-quantity .sf-quantity-count:disabled .sf-icon {
     --sf-icon--color: var(--sf-on-disable);
   }
+  /* The step buttons sit inside the field, so their own ring turns inwards. */
   .sf-quantity:not(.sf-quantity--pointer-focus) .sf-icon-button.sf-quantity-count:not(:disabled).focus-visible {
-    --sf-icon-button--box-shadow: var(
-      --sf-ui-focus-inset,
-      inset 0 0 0 var(--sf-focus-outline-width) var(--sf-focus)
-    );
+    outline-offset: calc(var(--sf-focus--width) * -1);
   }
   .sf-quantity:not(.sf-quantity--pointer-focus) .sf-icon-button.sf-quantity-count:not(:disabled):focus-visible {
-    --sf-icon-button--box-shadow: var(
-      --sf-ui-focus-inset,
-      inset 0 0 0 var(--sf-focus-outline-width) var(--sf-focus)
-    );
+    outline-offset: calc(var(--sf-focus--width) * -1);
   }
   @media (forced-colors: active) {
     .sf-quantity:not(.sf-quantity--pointer-focus)[\:has\(input\:not\(\:disabled\)\:not\(.disabled\).focus-visible\)] .sf-quantity-wrap {

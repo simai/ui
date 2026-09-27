@@ -869,17 +869,23 @@
   .sf-input:not(.error):has(input:enabled:not(:disabled):not(.disabled):not(:read-only):active) .sf-input-field {
     --sf-input-field--background-color: var(--sf-surface-0);
   }
+  /* The ring belongs to the field the person sees, not to the bare control
+     inside it. An outline keeps the field's own shadow free for state. */
   .sf-input:not(.sf-input--pointer-focus)[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\).focus-visible\)] .sf-input-field {
-    --sf-input-field--box-shadow: var(--sf-ui-focus);
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
   }
   .sf-input:not(.sf-input--pointer-focus):has(input:enabled:not(:disabled):not(.disabled).focus-visible) .sf-input-field {
-    --sf-input-field--box-shadow: var(--sf-ui-focus);
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
   }
   .sf-input:not(.sf-input--pointer-focus)[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:focus-visible\)] .sf-input-field {
-    --sf-input-field--box-shadow: var(--sf-ui-focus);
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
   }
   .sf-input:not(.sf-input--pointer-focus):has(input:enabled:not(:disabled):not(.disabled):focus-visible) .sf-input-field {
-    --sf-input-field--box-shadow: var(--sf-ui-focus);
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
   }
   .sf-input:not(.error).sf-input--bordered[\:has\(input\:-moz-read-only\:not\(\:disabled\)\)] .sf-input-field {
     --sf-input-field--background-color: var(--sf-surface-container);

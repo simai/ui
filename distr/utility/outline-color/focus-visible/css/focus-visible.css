@@ -1,0 +1,62 @@
+@layer sf.utilities {
+  .focus-visible\:outline-transparent.focus-visible {
+    outline-color: var(--sf-transparent);
+  }
+  .focus-visible\:outline-transparent:focus-visible {
+    outline-color: var(--sf-transparent);
+  }
+  .focus-visible\:outline-current.focus-visible {
+    outline-color: var(--sf-current);
+  }
+  .focus-visible\:outline-current:focus-visible {
+    outline-color: var(--sf-current);
+  }
+  .focus-visible\:outline-outline.focus-visible {
+    outline-color: var(--sf-outline);
+  }
+  .focus-visible\:outline-outline:focus-visible {
+    outline-color: var(--sf-outline);
+  }
+  .focus-visible\:outline-outline-variant.focus-visible {
+    outline-color: var(--sf-outline-variant);
+  }
+  .focus-visible\:outline-outline-variant:focus-visible {
+    outline-color: var(--sf-outline-variant);
+  }
+  .focus-visible\:outline-primary.focus-visible {
+    outline-color: var(--sf-outline-primary);
+  }
+  .focus-visible\:outline-primary:focus-visible {
+    outline-color: var(--sf-outline-primary);
+  }
+  .focus-visible\:outline-secondary.focus-visible {
+    outline-color: var(--sf-outline-secondary);
+  }
+  .focus-visible\:outline-secondary:focus-visible {
+    outline-color: var(--sf-outline-secondary);
+  }
+  .focus-visible\:outline-tertiary.focus-visible {
+    outline-color: var(--sf-outline-tertiary);
+  }
+  .focus-visible\:outline-tertiary:focus-visible {
+    outline-color: var(--sf-outline-tertiary);
+  }
+  .focus-visible\:outline-error.focus-visible {
+    outline-color: var(--sf-outline-error);
+  }
+  .focus-visible\:outline-error:focus-visible {
+    outline-color: var(--sf-outline-error);
+  }
+  .focus-visible\:outline-warning.focus-visible {
+    outline-color: var(--sf-outline-warning);
+  }
+  .focus-visible\:outline-warning:focus-visible {
+    outline-color: var(--sf-outline-warning);
+  }
+  .focus-visible\:outline-success.focus-visible {
+    outline-color: var(--sf-outline-success);
+  }
+  .focus-visible\:outline-success:focus-visible {
+    outline-color: var(--sf-outline-success);
+  }
+}

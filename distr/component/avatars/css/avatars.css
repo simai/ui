@@ -802,22 +802,28 @@
     --sf-avatar--border-width: var(--sf-px);
   }
   button.sf-avatar.focus-visible:not(:disabled):not(.disabled) {
-    --sf-avatar--box-shadow: var(--sf-ui-focus, 0 0 0 var(--sf-focus-outline-width) var(--sf-focus));
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
   }
   a.sf-avatar.focus-visible:not(:disabled):not(.disabled) {
-    --sf-avatar--box-shadow: var(--sf-ui-focus, 0 0 0 var(--sf-focus-outline-width) var(--sf-focus));
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
   }
   button.sf-avatar:not(:disabled):not(.disabled).focus-visible {
-    --sf-avatar--box-shadow: var(--sf-ui-focus, 0 0 0 var(--sf-focus-outline-width) var(--sf-focus));
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
   }
   button.sf-avatar:not(:disabled):not(.disabled):focus-visible {
-    --sf-avatar--box-shadow: var(--sf-ui-focus, 0 0 0 var(--sf-focus-outline-width) var(--sf-focus));
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
   }
   a.sf-avatar:not(:disabled):not(.disabled).focus-visible {
-    --sf-avatar--box-shadow: var(--sf-ui-focus, 0 0 0 var(--sf-focus-outline-width) var(--sf-focus));
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
   }
   a.sf-avatar:not(:disabled):not(.disabled):focus-visible {
-    --sf-avatar--box-shadow: var(--sf-ui-focus, 0 0 0 var(--sf-focus-outline-width) var(--sf-focus));
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
   }
 }
 @layer sf.components {

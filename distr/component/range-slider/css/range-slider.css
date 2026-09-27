@@ -358,11 +358,13 @@
   }
   .sf-thumb:not(:disabled):not(.disabled).focus-visible .sf-thumb-handle,
   .sf-range-slider:not([disabled]):not(.disabled) .sf-range-slider-handle.focus-visible .sf-thumb-handle {
-    --sf-thumb-handle--box-shadow: var(--sf-ui-focus);
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
   }
   .sf-thumb:not(:disabled):not(.disabled):focus-visible .sf-thumb-handle,
   .sf-range-slider:not([disabled]):not(.disabled) .sf-range-slider-handle:focus-visible .sf-thumb-handle {
-    --sf-thumb-handle--box-shadow: var(--sf-ui-focus);
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
   }
   @media (forced-colors: active) {
     .sf-range-slider .sf-thumb-handle {

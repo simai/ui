@@ -374,10 +374,12 @@
 }
 @layer sf.states {
   .sf-step:not(:disabled):not(.disabled):not([aria-disabled=true]).focus-visible {
-    --sf-step--box-shadow: var(--sf-ui-focus);
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
   }
   .sf-step:not(:disabled):not(.disabled):not([aria-disabled=true]):focus-visible {
-    --sf-step--box-shadow: var(--sf-ui-focus);
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
   }
   @media (forced-colors: active) {
     .sf-step:not(:disabled):not(.disabled):not([aria-disabled=true]).focus-visible {

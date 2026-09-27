@@ -401,12 +401,16 @@ _:-ms-input-placeholder, [dir="rtl"] .sf-slider-dots .sf-slider-dots-dot {
 }
 
 .sf-slider-dots .sf-slider-dots-dot.focus-visible {
-  outline: min(var(--sf-focus-outline-width), var(--sf-slider-dots--gap) / 2) solid currentColor;
+  /* The dots are small and close together, so the ring is clamped to half the gap
+     between them. Colour and style stay the shared ones. */
+  outline: min(var(--sf-focus--width), var(--sf-slider-dots--gap) / 2) var(--sf-focus--style) var(--sf-focus--color);
   outline-offset: 0;
 }
 
 .sf-slider-dots .sf-slider-dots-dot:focus-visible {
-  outline: min(var(--sf-focus-outline-width), var(--sf-slider-dots--gap) / 2) solid currentColor;
+  /* The dots are small and close together, so the ring is clamped to half the gap
+     between them. Colour and style stay the shared ones. */
+  outline: min(var(--sf-focus--width), var(--sf-slider-dots--gap) / 2) var(--sf-focus--style) var(--sf-focus--color);
   outline-offset: 0;
 }
 

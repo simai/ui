@@ -3166,6 +3166,10 @@
     "regex": "/^(?:focus:outline-(?:current|error|outline(?:-variant)?|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))(?![\\s\\S])/"
   },
   {
+    "name": "outline-color/focus-visible",
+    "regex": "/^(?:focus-visible:outline-(?:current|error|outline(?:-variant)?|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))(?![\\s\\S])/"
+  },
+  {
     "name": "outline-color/hover",
     "regex": "/^(?:hover:outline-(?:current|error|outline(?:-variant)?|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))(?![\\s\\S])/"
   },
@@ -3184,6 +3188,10 @@
   {
     "name": "outline-width/focus",
     "regex": "/^(?:focus:outline-(?:0|1|2|3|4))(?![\\s\\S])/"
+  },
+  {
+    "name": "outline-width/focus-visible",
+    "regex": "/^(?:focus-visible:outline-(?:0|1|2|3|4))(?![\\s\\S])/"
   },
   {
     "name": "overflow/default",
@@ -3486,6 +3494,10 @@
     "regex": "/^(?:focus:ring-(?:current|error(?:-(?:container|transparent-overlay))?|info(?:-container)?|o(?:n-surface(?:-variant)?|utline(?:-variant)?)|primary(?:-(?:container|transparent-overlay))?|s(?:econdary(?:-(?:container|transparent-overlay))?|u(?:ccess(?:-(?:container|transparent-overlay))?|rface(?:-(?:0|1|container|inverse|overlay|transparent-overlay))?))|t(?:ertiary(?:-(?:container|transparent-overlay))?|ransparent)|warning(?:-(?:container|transparent-overlay))?))(?![\\s\\S])/"
   },
   {
+    "name": "ring-color/focus-visible",
+    "regex": "/^(?:focus-visible:ring-(?:current|error(?:-(?:container|transparent-overlay))?|info(?:-container)?|o(?:n-surface(?:-variant)?|utline(?:-variant)?)|primary(?:-(?:container|transparent-overlay))?|s(?:econdary(?:-(?:container|transparent-overlay))?|u(?:ccess(?:-(?:container|transparent-overlay))?|rface(?:-(?:0|1|container|inverse|overlay|transparent-overlay))?))|t(?:ertiary(?:-(?:container|transparent-overlay))?|ransparent)|warning(?:-(?:container|transparent-overlay))?))(?![\\s\\S])/"
+  },
+  {
     "name": "ring-color/hover",
     "regex": "/^(?:hover:ring-(?:current|error(?:-(?:container|transparent-overlay))?|info(?:-container)?|o(?:n-surface(?:-variant)?|utline(?:-variant)?)|primary(?:-(?:container|transparent-overlay))?|s(?:econdary(?:-(?:container|transparent-overlay))?|u(?:ccess(?:-(?:container|transparent-overlay))?|rface(?:-(?:0|1|container|inverse|overlay|transparent-overlay))?))|t(?:ertiary(?:-(?:container|transparent-overlay))?|ransparent)|warning(?:-(?:container|transparent-overlay))?))(?![\\s\\S])/"
   },
@@ -3496,6 +3508,10 @@
   {
     "name": "ring-inset/focus",
     "regex": "/^(?:focus:ring-inset)(?![\\s\\S])/"
+  },
+  {
+    "name": "ring-inset/focus-visible",
+    "regex": "/^(?:focus-visible:ring-inset)(?![\\s\\S])/"
   },
   {
     "name": "ring-inset/hover",
@@ -3510,6 +3526,10 @@
     "regex": "/^(?:focus:ring-offset-(?:current|error(?:-(?:container|transparent-overlay))?|info(?:-container)?|o(?:n-surface(?:-variant)?|utline(?:-variant)?)|primary(?:-(?:container|transparent-overlay))?|s(?:econdary(?:-(?:container|transparent-overlay))?|u(?:ccess(?:-(?:container|transparent-overlay))?|rface(?:-(?:0|1|container|inverse|overlay|transparent-overlay))?))|t(?:ertiary(?:-(?:container|transparent-overlay))?|ransparent)|warning(?:-(?:container|transparent-overlay))?))(?![\\s\\S])/"
   },
   {
+    "name": "ring-offset-color/focus-visible",
+    "regex": "/^(?:focus-visible:ring-offset-(?:current|error(?:-(?:container|transparent-overlay))?|info(?:-container)?|o(?:n-surface(?:-variant)?|utline(?:-variant)?)|primary(?:-(?:container|transparent-overlay))?|s(?:econdary(?:-(?:container|transparent-overlay))?|u(?:ccess(?:-(?:container|transparent-overlay))?|rface(?:-(?:0|1|container|inverse|overlay|transparent-overlay))?))|t(?:ertiary(?:-(?:container|transparent-overlay))?|ransparent)|warning(?:-(?:container|transparent-overlay))?))(?![\\s\\S])/"
+  },
+  {
     "name": "ring-offset-color/hover",
     "regex": "/^(?:hover:ring-offset-(?:current|error(?:-(?:container|transparent-overlay))?|info(?:-container)?|o(?:n-surface(?:-variant)?|utline(?:-variant)?)|primary(?:-(?:container|transparent-overlay))?|s(?:econdary(?:-(?:container|transparent-overlay))?|u(?:ccess(?:-(?:container|transparent-overlay))?|rface(?:-(?:0|1|container|inverse|overlay|transparent-overlay))?))|t(?:ertiary(?:-(?:container|transparent-overlay))?|ransparent)|warning(?:-(?:container|transparent-overlay))?))(?![\\s\\S])/"
   },
@@ -3520,6 +3540,10 @@
   {
     "name": "ring-offset-width/focus",
     "regex": "/^(?:focus:ring-offset-(?:0|1|2|3|4))(?![\\s\\S])/"
+  },
+  {
+    "name": "ring-offset-width/focus-visible",
+    "regex": "/^(?:focus-visible:ring-offset-(?:0|1|2|3|4))(?![\\s\\S])/"
   },
   {
     "name": "ring-offset-width/hover",
@@ -3534,6 +3558,10 @@
     "regex": "/^(?:focus:ring-opacity-(?:0|1|2|3|4|5|6|7|8|9|full))(?![\\s\\S])/"
   },
   {
+    "name": "ring-opacity/focus-visible",
+    "regex": "/^(?:focus-visible:ring-opacity-(?:0|1|2|3|4|5|6|7|8|9|full))(?![\\s\\S])/"
+  },
+  {
     "name": "ring-opacity/hover",
     "regex": "/^(?:hover:ring-opacity-(?:0|1|2|3|4|5|6|7|8|9|full))(?![\\s\\S])/"
   },
@@ -3544,6 +3572,10 @@
   {
     "name": "ring-width/focus",
     "regex": "/^(?:focus:ring-(?:0|1|2|3|4))(?![\\s\\S])/"
+  },
+  {
+    "name": "ring-width/focus-visible",
+    "regex": "/^(?:focus-visible:ring-(?:0|1|2|3|4))(?![\\s\\S])/"
   },
   {
     "name": "ring-width/hover",

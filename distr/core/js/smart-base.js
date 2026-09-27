@@ -32,10 +32,28 @@ function toAttributeName(key) {
 function toNumber(value, fallback = 0) {
   const number = Number(value);
   return Number.isFinite(number) ? number : fallback;
-}
-function normalizeEnum(value, allowed, fallback) {
+} // A closed list may also answer to legacy values that mean the same thing, which
+// is how a value can be renamed without breaking a consumer: {'1/2': ['small']}
+// keeps size="small" working while the canonical answer is 1/2.
+
+function normalizeEnum(value, allowed, fallback, valueAliases = null) {
   const normalized = String(value || fallback).trim().toLowerCase();
-  return Array.isArray(allowed) && allowed.includes(normalized) ? normalized : fallback;
+
+  if (Array.isArray(allowed) && allowed.includes(normalized)) {
+    return normalized;
+  }
+
+  if (valueAliases) {
+    for (const [canonical, legacy] of Object.entries(valueAliases)) {
+      const names = Array.isArray(legacy) ? legacy : [legacy];
+
+      if (names.map(name => String(name).toLowerCase()).includes(normalized)) {
+        return canonical;
+      }
+    }
+  }
+
+  return fallback;
 }
 function parseJsonAttribute(element, name, fallback = null) {
   const rawValue = element?.getAttribute?.(name);
@@ -72,7 +90,10 @@ class SfBaseElement extends HTMLElement {
   }
 
   static propsToAttributes(props = this.props) {
-    return Object.entries(props || {}).map(([key, config]) => this.normalizePropConfig(key, config).attribute).filter(Boolean);
+    return Object.entries(props || {}).flatMap(([key, config]) => {
+      const normalized = this.normalizePropConfig(key, config);
+      return [normalized.attribute, ...normalized.aliases];
+    }).filter(Boolean);
   }
 
   static normalizePropConfig(key, config = "") {
@@ -82,10 +103,15 @@ class SfBaseElement extends HTMLElement {
       default: config
     };
     const defaultValue = propConfig.default;
-    const inferredType = propConfig.type || (Array.isArray(defaultValue) ? Array : defaultValue !== null && typeof defaultValue === "object" ? Object : typeof defaultValue === "boolean" ? Boolean : typeof defaultValue === "number" ? Number : String);
+    const inferredType = propConfig.type || (Array.isArray(defaultValue) ? Array : defaultValue !== null && typeof defaultValue === "object" ? Object : typeof defaultValue === "boolean" ? Boolean : typeof defaultValue === "number" ? Number : String); // A prop may name legacy attributes it still answers to. The canonical name
+    // wins when both are present; otherwise the first legacy name that is set is
+    // read. This is what lets an axis be renamed without breaking a consumer.
+
+    const aliases = (Array.isArray(propConfig.aliases) ? propConfig.aliases : propConfig.aliases ? [propConfig.aliases] : []).map(alias => alias === false ? "" : toAttributeName(alias)).filter(Boolean);
     return { ...propConfig,
       key,
       attribute: propConfig.attribute === false ? "" : propConfig.attribute || toAttributeName(key),
+      aliases,
       default: defaultValue,
       type: inferredType
     };
@@ -123,6 +149,35 @@ class SfBaseElement extends HTMLElement {
     }
 
     return tagName.includes("-") ? tagName : `sf-${tagName}`;
+  } // One component can reach a page twice: as its own file and inside a bundle
+  // that carries it. Those are two class objects with the same tag, and
+  // re-registering is a no-op, not a mistake worth a warning. A tag taken by a
+  // different component, or by a class that is not a Simai element at all, is
+  // a real conflict and still warns.
+
+
+  static get sfElementBrand() {
+    return "simai.smart-base.v1";
+  }
+
+  static isSameComponentAs(other) {
+    if (other === this) {
+      return true;
+    }
+
+    if (!other || other.sfElementBrand !== this.sfElementBrand) {
+      return false;
+    }
+
+    const isClassName = value => /^[A-Z][A-Za-z0-9_]{2,}$/.test(String(value || ""));
+
+    if (isClassName(other.name) && isClassName(this.name)) {
+      return other.name === this.name;
+    } // Minified builds mangle class names; the shared brand and the tag are
+    // then all the identity there is.
+
+
+    return true;
   }
 
   static define(tagName) {
@@ -135,7 +190,7 @@ class SfBaseElement extends HTMLElement {
     const existing = customElements.get(resolvedTagName);
 
     if (existing) {
-      if (existing !== this) {
+      if (!this.isSameComponentAs(existing)) {
         console.warn(`${this.name || "SfBaseElement"}.define(): ${resolvedTagName} is already defined`, existing);
       }
 
@@ -309,12 +364,38 @@ class SfBaseElement extends HTMLElement {
     }
 
     return toNumber(value, fallback);
-  }
+  } // The canonical attribute if it is set, otherwise the first legacy name that is.
 
-  getEnumAttr(name, allowed = [], fallback = "") {
-    const attr = this.attributeName(name);
+
+  resolveAttributeName({
+    attribute = "",
+    aliases = []
+  } = {}) {
+    if (attribute && this.hasAttribute(attribute)) {
+      return attribute;
+    }
+
+    const legacy = aliases.find(alias => this.hasAttribute(alias));
+    return legacy || attribute;
+  } // The same rule for a component that reads an enum directly. It may pass the
+  // legacy attribute names it answers to, and — through the options form —
+  // the legacy values it accepts:
+  //   getEnumAttr('size', {values: ['1/2', '1'], fallback: '1',
+  //                        valueAliases: {'1/2': ['small'], 1: ['medium']}})
+
+
+  getEnumAttr(name, allowed = [], fallback = "", aliases = []) {
+    const options = allowed && !Array.isArray(allowed) && typeof allowed === "object" ? allowed : {
+      values: allowed,
+      fallback,
+      aliases
+    };
+    const attr = this.resolveAttributeName({
+      attribute: this.attributeName(name),
+      aliases: (Array.isArray(options.aliases) ? options.aliases : [options.aliases]).filter(Boolean).map(alias => this.attributeName(alias))
+    });
     const value = attr && this.hasAttribute(attr) ? this.getAttribute(attr) : undefined;
-    return normalizeEnum(value, allowed, fallback);
+    return normalizeEnum(value, options.values ?? [], options.fallback ?? "", options.valueAliases ?? null);
   }
 
   hasDeclaredProps() {
@@ -407,11 +488,11 @@ class SfBaseElement extends HTMLElement {
   getPropValue(key, config = "") {
     const propConfig = this.constructor.normalizePropConfig(key, config);
     const {
-      attribute,
       type,
       default: defaultValue
     } = propConfig;
     const parser = propConfig.parser || propConfig.parse;
+    const attribute = this.resolveAttributeName(propConfig);
     const hasAttribute = attribute ? this.hasAttribute(attribute) : false;
     const rawValue = hasAttribute ? this.getAttribute(attribute) : undefined;
 
@@ -434,7 +515,8 @@ class SfBaseElement extends HTMLElement {
     const {
       type,
       default: defaultValue,
-      values
+      values,
+      valueAliases
     } = config;
 
     if (type === Boolean) {
@@ -463,7 +545,10 @@ class SfBaseElement extends HTMLElement {
     }
 
     if (Array.isArray(values)) {
-      return normalizeEnum(value, values, defaultValue || values[0] || "");
+      // The legacy values belong here, not only in a component's own getter: the
+      // template reads the props context, so a legacy word that is normalised in
+      // the getter alone would still reach the class list as the default.
+      return normalizeEnum(value, values, defaultValue || values[0] || "", valueAliases || null);
     }
 
     return value ?? this.clonePropDefault(defaultValue, type);

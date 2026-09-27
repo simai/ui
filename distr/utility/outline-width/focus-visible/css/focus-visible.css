@@ -1,0 +1,32 @@
+@layer sf.utilities {
+  .focus-visible\:outline-1.focus-visible {
+    outline-width: var(--sf-a1);
+  }
+  .focus-visible\:outline-1:focus-visible {
+    outline-width: var(--sf-a1);
+  }
+  .focus-visible\:outline-2.focus-visible {
+    outline-width: var(--sf-a2);
+  }
+  .focus-visible\:outline-2:focus-visible {
+    outline-width: var(--sf-a2);
+  }
+  .focus-visible\:outline-3.focus-visible {
+    outline-width: var(--sf-a3);
+  }
+  .focus-visible\:outline-3:focus-visible {
+    outline-width: var(--sf-a3);
+  }
+  .focus-visible\:outline-4.focus-visible {
+    outline-width: var(--sf-a4);
+  }
+  .focus-visible\:outline-4:focus-visible {
+    outline-width: var(--sf-a4);
+  }
+  .focus-visible\:outline-0.focus-visible {
+    outline-width: var(--sf-0);
+  }
+  .focus-visible\:outline-0:focus-visible {
+    outline-width: var(--sf-0);
+  }
+}

@@ -281,11 +281,15 @@
   .sf-fab.sf-fab.sf-fab:disabled .sf-icon {
     --sf-icon--color: var(--sf-on-disable);
   }
+  /* A floating action button lives on its own elevation, which is exactly why its
+     ring must not be a shadow. */
   .sf-fab:not(:disabled):not(.disabled).focus-visible {
-    --sf-fab--box-shadow: var(--sf-ui-focus);
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
   }
   .sf-fab:not(:disabled):not(.disabled):focus-visible {
-    --sf-fab--box-shadow: var(--sf-ui-focus);
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
   }
   @media (forced-colors: active) {
     .sf-fab:not(:disabled):not(.disabled).focus-visible {

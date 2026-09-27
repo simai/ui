@@ -679,6 +679,50 @@
     border-inline-start-color: transparent;
     border-inline-start-color: var(--sf-white--alfa-24, transparent);
   }
+  /* Surface and ghost, built on the neutral alpha ramp. Same reading as on the
+     button: not a colour of their own but a degree of contrast against whatever
+     is behind them, so one declaration is right in both themes. The icon keeps
+     the role colour, because the fill is too faint to carry one. */
+  .sf-icon-button.sf-icon-button--surface {
+    --sf-icon-button--background-color: transparent;
+  }
+  .sf-icon-button.sf-icon-button--ghost {
+    --sf-icon-button--background-color: transparent;
+  }
+  .sf-icon-button.sf-icon-button--surface {
+    --sf-icon-button--background-color: var(--sf-alpha-4);
+    --sf-icon-button--border-color: var(--sf-alpha-8);
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+    --sf-icon-button--border-inline-end-width: var(--sf-px);
+    --sf-icon-button--border-inline-start-width: var(--sf-px);
+    --sf-icon-button--border-style: solid;
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-width: var(--sf-px);
+  }
+  .sf-icon-button.sf-icon-button--surface.sf-icon-button--on-surface {
+    --sf-icon--color: var(--sf-on-surface);
+  }
+  .sf-icon-button.sf-icon-button--ghost.sf-icon-button--on-surface {
+    --sf-icon--color: var(--sf-on-surface);
+  }
+  .sf-icon-button.sf-icon-button--surface.sf-icon-button--on-surface.sf-icon-button--close > .sf-close > .sf-close-icon {
+    --sf-close-icon--background-color: var(--sf-on-surface);
+  }
+  .sf-icon-button.sf-icon-button--ghost.sf-icon-button--on-surface.sf-icon-button--close > .sf-close > .sf-close-icon {
+    --sf-close-icon--background-color: var(--sf-on-surface);
+  }
+  .sf-icon-button.sf-icon-button--surface.sf-icon-button--primary {
+    --sf-icon--color: var(--sf-primary);
+  }
+  .sf-icon-button.sf-icon-button--ghost.sf-icon-button--primary {
+    --sf-icon--color: var(--sf-primary);
+  }
+  .sf-icon-button.sf-icon-button--surface.sf-icon-button--primary.sf-icon-button--close > .sf-close > .sf-close-icon {
+    --sf-close-icon--background-color: var(--sf-primary);
+  }
+  .sf-icon-button.sf-icon-button--ghost.sf-icon-button--primary.sf-icon-button--close > .sf-close > .sf-close-icon {
+    --sf-close-icon--background-color: var(--sf-primary);
+  }
 }
 @layer sf.states {
   .sf-icon-button.sf-icon-button--default.sf-icon-button--primary.sf-icon-button--icon:disabled, .sf-icon-button.sf-icon-button--tonal.sf-icon-button--secondary.sf-icon-button--icon:disabled, .sf-icon-button.sf-icon-button--tonal.sf-icon-button--on-surface.sf-icon-button--icon:disabled, .sf-icon-button.sf-icon-button--default.sf-icon-button--on-surface.sf-icon-button--icon:disabled, .sf-icon-button.sf-icon-button--default.sf-icon-button--primary.sf-icon-button--close:disabled, .sf-icon-button.sf-icon-button--tonal.sf-icon-button--secondary.sf-icon-button--close:disabled, .sf-icon-button.sf-icon-button--tonal.sf-icon-button--on-surface.sf-icon-button--close:disabled, .sf-icon-button.sf-icon-button--default.sf-icon-button--on-surface.sf-icon-button--close:disabled {
@@ -730,32 +774,103 @@
     --sf-close-icon--background-color: var(--sf-on-disable);
   }
   .sf-icon-button:not(:disabled):not(.disabled).focus-visible {
-    --sf-icon-button--box-shadow: var(--sf-ui-focus);
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
   }
   .sf-icon-button:not(:disabled):not(.disabled):focus-visible {
-    --sf-icon-button--box-shadow: var(--sf-ui-focus);
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
   }
+  /* Flush against its neighbours, so the ring turns inwards. Same colour, same
+     width, only the offset changes sign. */
   .sf-icon-button.segment-start:not(:disabled):not(.disabled).focus-visible,
   .sf-icon-button.segment-middle:not(:disabled):not(.disabled).focus-visible,
   .sf-icon-button.segment-end:not(:disabled):not(.disabled).focus-visible {
-    --sf-icon-button--box-shadow: var(--sf-ui-focus-inset);
+    outline-offset: calc(var(--sf-focus--width) * -1);
   }
   .sf-icon-button.segment-start:not(:disabled):not(.disabled):focus-visible,
   .sf-icon-button.segment-middle:not(:disabled):not(.disabled):focus-visible,
   .sf-icon-button.segment-end:not(:disabled):not(.disabled):focus-visible {
-    --sf-icon-button--box-shadow: var(--sf-ui-focus-inset);
+    outline-offset: calc(var(--sf-focus--width) * -1);
   }
   @media (forced-colors: active) {
     .sf-icon-button:not(:disabled):not(.disabled).focus-visible {
       outline: var(--sf-focus-outline-width) solid currentColor;
       outline-offset: calc(var(--sf-focus-outline-width) * -1);
-      --sf-icon-button--box-shadow: none;
     }
     .sf-icon-button:not(:disabled):not(.disabled):focus-visible {
       outline: var(--sf-focus-outline-width) solid currentColor;
       outline-offset: calc(var(--sf-focus-outline-width) * -1);
-      --sf-icon-button--box-shadow: none;
     }
+  }
+  /* The states of the two ramp appearances: one step up on hover, another when
+     pressed, and surface raises its border alongside. */
+  .sf-icon-button.sf-icon-button--surface:not(:disabled):not(.disabled):hover {
+    --sf-icon-button--background-color: var(--sf-alpha-8);
+  }
+  .sf-icon-button.sf-icon-button--ghost:not(:disabled):not(.disabled):hover {
+    --sf-icon-button--background-color: var(--sf-alpha-8);
+  }
+  .sf-icon-button.sf-icon-button--surface:not(:disabled):not(.disabled):hover {
+    --sf-icon-button--border-color: var(--sf-alpha-12);
+  }
+  .sf-icon-button.sf-icon-button--surface:not(:disabled):not(.disabled):active {
+    --sf-icon-button--background-color: var(--sf-alpha-12);
+  }
+  .sf-icon-button.sf-icon-button--surface.active:not(:disabled):not(.disabled) {
+    --sf-icon-button--background-color: var(--sf-alpha-12);
+  }
+  .sf-icon-button.sf-icon-button--ghost:not(:disabled):not(.disabled):active {
+    --sf-icon-button--background-color: var(--sf-alpha-12);
+  }
+  .sf-icon-button.sf-icon-button--ghost.active:not(:disabled):not(.disabled) {
+    --sf-icon-button--background-color: var(--sf-alpha-12);
+  }
+  .sf-icon-button.sf-icon-button--surface:not(:disabled):not(.disabled):active {
+    --sf-icon-button--border-color: var(--sf-alpha-16);
+  }
+  .sf-icon-button.sf-icon-button--surface.active:not(:disabled):not(.disabled) {
+    --sf-icon-button--border-color: var(--sf-alpha-16);
+  }
+  .sf-icon-button.sf-icon-button--surface:disabled {
+    --sf-icon-button--background-color: transparent;
+    --sf-icon-button--border-color: var(--sf-alpha-4);
+  }
+  .sf-icon-button.sf-icon-button--ghost:disabled {
+    --sf-icon-button--background-color: transparent;
+    --sf-icon-button--border-color: var(--sf-alpha-4);
+  }
+  .sf-icon-button.sf-icon-button--surface.disabled {
+    --sf-icon-button--background-color: transparent;
+    --sf-icon-button--border-color: var(--sf-alpha-4);
+  }
+  .sf-icon-button.sf-icon-button--ghost.disabled {
+    --sf-icon-button--background-color: transparent;
+    --sf-icon-button--border-color: var(--sf-alpha-4);
+  }
+  .sf-icon-button.sf-icon-button--surface:disabled {
+    --sf-icon--color: var(--sf-on-disable);
+  }
+  .sf-icon-button.sf-icon-button--ghost:disabled {
+    --sf-icon--color: var(--sf-on-disable);
+  }
+  .sf-icon-button.sf-icon-button--surface.disabled {
+    --sf-icon--color: var(--sf-on-disable);
+  }
+  .sf-icon-button.sf-icon-button--ghost.disabled {
+    --sf-icon--color: var(--sf-on-disable);
+  }
+  .sf-icon-button.sf-icon-button--surface:disabled > .sf-close > .sf-close-icon {
+    --sf-close-icon--background-color: var(--sf-on-disable);
+  }
+  .sf-icon-button.sf-icon-button--ghost:disabled > .sf-close > .sf-close-icon {
+    --sf-close-icon--background-color: var(--sf-on-disable);
+  }
+  .sf-icon-button.sf-icon-button--surface.disabled > .sf-close > .sf-close-icon {
+    --sf-close-icon--background-color: var(--sf-on-disable);
+  }
+  .sf-icon-button.sf-icon-button--ghost.disabled > .sf-close > .sf-close-icon {
+    --sf-close-icon--background-color: var(--sf-on-disable);
   }
 }
 @layer sf.override {

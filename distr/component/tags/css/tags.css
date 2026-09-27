@@ -582,6 +582,50 @@
   .sf-tag.sf-tag--color .sf-tag-color-icon {
     --sf-tag-color-icon--border-radius: var(--sf-radius-circle);
   }
+  /* Surface and ghost, built on the neutral alpha ramp. On a tag the appearance
+     is a separate axis from `type`, because a tag's type says what it carries —
+     an icon, an avatar, a checkbox — or what it reports — success, error,
+     warning. Only the neutral types take an appearance: a status tag carries its
+     meaning in its colour, and draining that colour would drain the meaning.
+
+     The boundary is an inset shadow rather than a border, because the tag is
+     built with `border: 0` and a real border would make every tag two pixels
+     taller than the one beside it. */
+  .sf-tag.sf-tag--appearance-surface.sf-tag--color {
+    --sf-tag--background-color: var(--sf-alpha-4);
+    --sf-tag--box-shadow: inset 0 0 0 var(--sf-px) var(--sf-alpha-8);
+  }
+  .sf-tag.sf-tag--appearance-surface.sf-tag--icon {
+    --sf-tag--background-color: var(--sf-alpha-4);
+    --sf-tag--box-shadow: inset 0 0 0 var(--sf-px) var(--sf-alpha-8);
+  }
+  .sf-tag.sf-tag--appearance-surface.sf-tag--default {
+    --sf-tag--background-color: var(--sf-alpha-4);
+    --sf-tag--box-shadow: inset 0 0 0 var(--sf-px) var(--sf-alpha-8);
+  }
+  .sf-tag.sf-tag--appearance-surface.sf-tag--avatar {
+    --sf-tag--background-color: var(--sf-alpha-4);
+    --sf-tag--box-shadow: inset 0 0 0 var(--sf-px) var(--sf-alpha-8);
+  }
+  .sf-tag.sf-tag--appearance-surface.sf-tag--checkbox {
+    --sf-tag--background-color: var(--sf-alpha-4);
+    --sf-tag--box-shadow: inset 0 0 0 var(--sf-px) var(--sf-alpha-8);
+  }
+  .sf-tag.sf-tag--appearance-ghost.sf-tag--color {
+    --sf-tag--background-color: transparent;
+  }
+  .sf-tag.sf-tag--appearance-ghost.sf-tag--icon {
+    --sf-tag--background-color: transparent;
+  }
+  .sf-tag.sf-tag--appearance-ghost.sf-tag--default {
+    --sf-tag--background-color: transparent;
+  }
+  .sf-tag.sf-tag--appearance-ghost.sf-tag--avatar {
+    --sf-tag--background-color: transparent;
+  }
+  .sf-tag.sf-tag--appearance-ghost.sf-tag--checkbox {
+    --sf-tag--background-color: transparent;
+  }
 }
 @layer sf.states {
   .sf-tag.sf-tag--interactive.sf-tag--success:not(:disabled):not(.disabled):hover {
@@ -672,16 +716,22 @@
     --sf-tag--padding-top: var(--sf-ui-1\/2--space-y-tightness-default);
   }
   .sf-tag--interactive:not(:disabled):not(.disabled).focus-visible {
-    --sf-tag--box-shadow: var(--sf-ui-focus);
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
   }
   .sf-tag--interactive:not(:disabled):not(.disabled):focus-visible {
-    --sf-tag--box-shadow: var(--sf-ui-focus);
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
   }
+  /* The remove action sits inside the tag, so its ring turns inwards and stays
+     off the tag's own edge. */
   .sf-tag--removable > .sf-icon-button:not(:disabled).focus-visible {
-    box-shadow: var(--sf-ui-focus);
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: calc(var(--sf-focus--width) * -1);
   }
   .sf-tag--removable > .sf-icon-button:not(:disabled):focus-visible {
-    box-shadow: var(--sf-ui-focus);
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: calc(var(--sf-focus--width) * -1);
   }
   .sf-tag.disabled {
     --sf-tag--background-color: var(--sf-disable);
@@ -704,6 +754,36 @@
     .sf-tag {
       transition: none;
     }
+  }
+  /* The states of the two ramp appearances: one step up on hover, with surface
+     raising its boundary alongside. */
+  .sf-tag.sf-tag--interactive.sf-tag--appearance-surface:not(:disabled):not(.disabled):hover,
+  .sf-tag.sf-tag--interactive.sf-tag--appearance-ghost:not(:disabled):not(.disabled):hover {
+    --sf-tag--background-color: var(--sf-alpha-8);
+  }
+  .sf-tag.sf-tag--interactive.sf-tag--appearance-surface:not(:disabled):not(.disabled):hover {
+    --sf-tag--box-shadow: inset 0 0 0 var(--sf-px) var(--sf-alpha-12);
+  }
+  /* Pressed and selected keep the primary container the tag already uses for
+     both. That is the tag's own language — on a tag, pressing shows what being
+     chosen looks like — and an appearance is not a reason to make one tag answer
+     differently from the one beside it. So the ramp governs rest and hover here,
+     not selection. */
+  .sf-tag.sf-tag--appearance-surface:disabled {
+    --sf-tag--background-color: transparent;
+    --sf-tag--box-shadow: inset 0 0 0 var(--sf-px) var(--sf-alpha-4);
+  }
+  .sf-tag.sf-tag--appearance-surface.disabled {
+    --sf-tag--background-color: transparent;
+    --sf-tag--box-shadow: inset 0 0 0 var(--sf-px) var(--sf-alpha-4);
+  }
+  .sf-tag.sf-tag--appearance-ghost:disabled {
+    --sf-tag--background-color: transparent;
+    --sf-tag--box-shadow: inset 0 0 0 var(--sf-px) var(--sf-alpha-4);
+  }
+  .sf-tag.sf-tag--appearance-ghost.disabled {
+    --sf-tag--background-color: transparent;
+    --sf-tag--box-shadow: inset 0 0 0 var(--sf-px) var(--sf-alpha-4);
   }
 }
 @layer sf.overrides {

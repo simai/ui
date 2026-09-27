@@ -307,10 +307,12 @@
     --sf-page-number--border-start-start-radius: var(--sf-radius-circle);
   }
   .sf-page-number:not(:disabled):not(.disabled).focus-visible {
-    --sf-page-number--box-shadow: var(--sf-ui-focus);
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
   }
   .sf-page-number:not(:disabled):not(.disabled):focus-visible {
-    --sf-page-number--box-shadow: var(--sf-ui-focus);
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
   }
   .sf-page-number:not(:disabled):not(.disabled):hover {
     --sf-page-number--background-color: var(--sf-surface-container);

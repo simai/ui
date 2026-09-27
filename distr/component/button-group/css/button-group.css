@@ -1384,58 +1384,29 @@
     border-end-start-radius: var(--sf-button--radius);
     border-end-end-radius: var(--sf-button--radius);
   }
-  /* Standalone buttons use an outer focus shadow. Inside a seamless group that
-     shadow covers neighbouring separators. Suppress it for pointer focus and
-     draw an inset token-based ring only for keyboard focus. */
-  .sf-button-group > sf-button[focus-within] > .sf-button,
-  .sf-button-group > .sf-button:focus {
-    --sf-button--box-shadow: none;
-    box-shadow: none;
-  }
-  .sf-button-group > sf-button:focus-within > .sf-button,
-  .sf-button-group > .sf-button:focus {
-    --sf-button--box-shadow: none;
-    box-shadow: none;
-  }
+  /* A button in a seamless group draws the same ring as a standalone one, only
+     turned inwards, so it never covers the separator of its neighbour. No
+     shadow is involved any more, so nothing has to be suppressed for pointer
+     focus either. */
   .sf-button-group > sf-button[\:has\(\%3E\%20.sf-button.focus-visible\)] > .sf-button,
   .sf-button-group > .sf-button.focus-visible {
-    --sf-button--box-shadow: var(
-      --sf-ui-focus-inset,
-      inset 0 0 0 var(--sf-focus-outline-width) var(--sf-focus)
-    );
-    box-shadow: var(--sf-button--box-shadow);
+    outline-offset: calc(var(--sf-focus--width) * -1);
   }
   .sf-button-group > sf-button:has(> .sf-button.focus-visible) > .sf-button,
   .sf-button-group > .sf-button.focus-visible {
-    --sf-button--box-shadow: var(
-      --sf-ui-focus-inset,
-      inset 0 0 0 var(--sf-focus-outline-width) var(--sf-focus)
-    );
-    box-shadow: var(--sf-button--box-shadow);
+    outline-offset: calc(var(--sf-focus--width) * -1);
   }
   .sf-button-group > sf-button[\:has\(\%3E\%20.sf-button\:focus-visible\)] > .sf-button,
   .sf-button-group > .sf-button.focus-visible {
-    --sf-button--box-shadow: var(
-      --sf-ui-focus-inset,
-      inset 0 0 0 var(--sf-focus-outline-width) var(--sf-focus)
-    );
-    box-shadow: var(--sf-button--box-shadow);
+    outline-offset: calc(var(--sf-focus--width) * -1);
   }
   .sf-button-group > sf-button[\:has\(\%3E\%20.sf-button\:focus-visible\)] > .sf-button,
   .sf-button-group > .sf-button:focus-visible {
-    --sf-button--box-shadow: var(
-      --sf-ui-focus-inset,
-      inset 0 0 0 var(--sf-focus-outline-width) var(--sf-focus)
-    );
-    box-shadow: var(--sf-button--box-shadow);
+    outline-offset: calc(var(--sf-focus--width) * -1);
   }
   .sf-button-group > sf-button:has(> .sf-button:focus-visible) > .sf-button,
   .sf-button-group > .sf-button:focus-visible {
-    --sf-button--box-shadow: var(
-      --sf-ui-focus-inset,
-      inset 0 0 0 var(--sf-focus-outline-width) var(--sf-focus)
-    );
-    box-shadow: var(--sf-button--box-shadow);
+    outline-offset: calc(var(--sf-focus--width) * -1);
   }
   @media (forced-colors: active) {
     .sf-button-group > sf-button[\:has\(\%3E\%20.sf-button.focus-visible\)] > .sf-button,

@@ -68,54 +68,23 @@
   }
   .sf-verification[\:has\(.sf-verification-input.focus-visible\)],
   .sf-verification-form-wrap .sf-verification[\:has\(input.focus-visible\)] {
-    box-shadow: 0 0 0 var(--sf-focus-outline-width) var(--sf-focus);
-    box-shadow: var(--sf-ui-focus, 0 0 0 var(--sf-focus-outline-width) var(--sf-focus));
-  }
-  .sf-verification[\:has\(.sf-verification-input.focus-visible\)],
-  .sf-verification-form-wrap .sf-verification[\:has\(input.focus-visible\)] {
-    box-shadow: 0 0 0 var(--sf-focus-outline-width) var(--sf-focus);
-    box-shadow: 0 0 0 var(--sf-focus-outline-width) var(--sf-focus);
-    box-shadow: var(--sf-ui-focus, 0 0 0 var(--sf-focus-outline-width) var(--sf-focus));
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
   }
   .sf-verification:has(.sf-verification-input.focus-visible),
   .sf-verification-form-wrap .sf-verification:has(input.focus-visible) {
-    box-shadow: 0 0 0 var(--sf-focus-outline-width) var(--sf-focus);
-    box-shadow: var(--sf-ui-focus, 0 0 0 var(--sf-focus-outline-width) var(--sf-focus));
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
   }
   .sf-verification[\:has\(.sf-verification-input\:focus-visible\)],
   .sf-verification-form-wrap .sf-verification[\:has\(input\:focus-visible\)] {
-    box-shadow: 0 0 0 var(--sf-focus-outline-width) var(--sf-focus);
-    box-shadow: var(--sf-ui-focus, 0 0 0 var(--sf-focus-outline-width) var(--sf-focus));
-  }
-  .sf-verification[\:has\(.sf-verification-input.focus-visible\)],
-  .sf-verification-form-wrap .sf-verification[\:has\(input.focus-visible\)] {
-    box-shadow: 0 0 0 var(--sf-focus-outline-width) var(--sf-focus);
-    box-shadow: 0 0 0 var(--sf-focus-outline-width) var(--sf-focus);
-    box-shadow: var(--sf-ui-focus, 0 0 0 var(--sf-focus-outline-width) var(--sf-focus));
-  }
-  .sf-verification[\:has\(.sf-verification-input.focus-visible\)],
-  .sf-verification-form-wrap .sf-verification[\:has\(input.focus-visible\)] {
-    box-shadow: 0 0 0 var(--sf-focus-outline-width) var(--sf-focus);
-    box-shadow: 0 0 0 var(--sf-focus-outline-width) var(--sf-focus);
-    box-shadow: 0 0 0 var(--sf-focus-outline-width) var(--sf-focus);
-    box-shadow: var(--sf-ui-focus, 0 0 0 var(--sf-focus-outline-width) var(--sf-focus));
-  }
-  .sf-verification:has(.sf-verification-input.focus-visible),
-  .sf-verification-form-wrap .sf-verification:has(input.focus-visible) {
-    box-shadow: 0 0 0 var(--sf-focus-outline-width) var(--sf-focus);
-    box-shadow: 0 0 0 var(--sf-focus-outline-width) var(--sf-focus);
-    box-shadow: var(--sf-ui-focus, 0 0 0 var(--sf-focus-outline-width) var(--sf-focus));
-  }
-  .sf-verification[\:has\(.sf-verification-input\:focus-visible\)],
-  .sf-verification-form-wrap .sf-verification[\:has\(input\:focus-visible\)] {
-    box-shadow: 0 0 0 var(--sf-focus-outline-width) var(--sf-focus);
-    box-shadow: 0 0 0 var(--sf-focus-outline-width) var(--sf-focus);
-    box-shadow: var(--sf-ui-focus, 0 0 0 var(--sf-focus-outline-width) var(--sf-focus));
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
   }
   .sf-verification:has(.sf-verification-input:focus-visible),
   .sf-verification-form-wrap .sf-verification:has(input:focus-visible) {
-    box-shadow: 0 0 0 var(--sf-focus-outline-width) var(--sf-focus);
-    box-shadow: var(--sf-ui-focus, 0 0 0 var(--sf-focus-outline-width) var(--sf-focus));
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
   }
   .sf-verification-cell.current {
     border-color: var(--sf-primary);

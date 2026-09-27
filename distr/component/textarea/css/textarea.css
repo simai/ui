@@ -675,16 +675,20 @@
     --sf-textarea-textarea--background-color: var(--sf-surface-0);
   }
   .sf-textarea:not(.sf-textarea--pointer-focus)[\:has\(textarea\:enabled\:not\(\:disabled\)\:not\(.disabled\).focus-visible\)] textarea {
-    --sf-textarea-textarea--box-shadow: var(--sf-ui-focus);
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
   }
   .sf-textarea:not(.sf-textarea--pointer-focus):has(textarea:enabled:not(:disabled):not(.disabled).focus-visible) textarea {
-    --sf-textarea-textarea--box-shadow: var(--sf-ui-focus);
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
   }
   .sf-textarea:not(.sf-textarea--pointer-focus)[\:has\(textarea\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:focus-visible\)] textarea {
-    --sf-textarea-textarea--box-shadow: var(--sf-ui-focus);
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
   }
   .sf-textarea:not(.sf-textarea--pointer-focus):has(textarea:enabled:not(:disabled):not(.disabled):focus-visible) textarea {
-    --sf-textarea-textarea--box-shadow: var(--sf-ui-focus);
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-focus--offset);
   }
   .sf-textarea:not(.error).sf-textarea--bordered[\:has\(textarea\:-moz-read-only\:not\(\:disabled\)\)] textarea {
     --sf-textarea-textarea--background-color: var(--sf-surface-container);
