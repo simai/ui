@@ -6390,7 +6390,7 @@
       "key": "smart.admin-menu",
       "kind": "smart_component",
       "provenance": [
-        "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/admin-menu",
+        "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/admin-menu",
         "simai/ui@1e114f57a03845b7e2e0f5825122c2e64d9b7be7:distr/rule/rule.json#name=cl-admin-menu"
       ],
       "public_contract": {
@@ -6405,10 +6405,10 @@
         ],
         "runtime": {
           "asset_paths": [
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/admin-menu/js/admin-menu.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/admin-menu/js/admin-menu.min.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/admin-menu/js/admin-menu.min.js.LICENSE.txt",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/admin-menu/template/default.js"
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/admin-menu/js/admin-menu.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/admin-menu/js/admin-menu.min.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/admin-menu/js/admin-menu.min.js.LICENSE.txt",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/admin-menu/template/default.js"
           ],
           "declared": {
             "css": false,
@@ -6429,7 +6429,7 @@
       "key": "smart.alert",
       "kind": "smart_component",
       "provenance": [
-        "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/alert",
+        "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/alert",
         "simai/ui@1e114f57a03845b7e2e0f5825122c2e64d9b7be7:distr/rule/rule.json#name=cl-alert"
       ],
       "public_contract": {
@@ -6442,10 +6442,10 @@
         ],
         "runtime": {
           "asset_paths": [
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/alert/js/alert.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/alert/js/alert.min.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/alert/js/alert.min.js.LICENSE.txt",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/alert/template/default.js"
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/alert/js/alert.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/alert/js/alert.min.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/alert/js/alert.min.js.LICENSE.txt",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/alert/template/default.js"
           ],
           "declared": {
             "css": false,
@@ -6466,7 +6466,7 @@
       "key": "smart.avatar",
       "kind": "smart_component",
       "provenance": [
-        "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/avatar",
+        "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/avatar",
         "simai/ui@1e114f57a03845b7e2e0f5825122c2e64d9b7be7:distr/rule/rule.json#name=cl-avatar"
       ],
       "public_contract": {
@@ -6476,13 +6476,13 @@
         ],
         "runtime": {
           "asset_paths": [
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/avatar/js/avatar.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/avatar/js/avatar.min.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/avatar/js/avatar.min.js.LICENSE.txt",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/avatar/template/card.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/avatar/template/default.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/avatar/template/label.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/avatar/template/shared.js"
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/avatar/js/avatar.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/avatar/js/avatar.min.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/avatar/js/avatar.min.js.LICENSE.txt",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/avatar/template/card.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/avatar/template/default.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/avatar/template/label.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/avatar/template/shared.js"
           ],
           "declared": {
             "css": false,
@@ -6503,7 +6503,7 @@
       "key": "smart.avatars",
       "kind": "smart_component",
       "provenance": [
-        "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/avatars",
+        "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/avatars",
         "simai/ui@1e114f57a03845b7e2e0f5825122c2e64d9b7be7:distr/rule/rule.json#name=cl-avatars"
       ],
       "public_contract": {
@@ -6514,17 +6514,17 @@
         ],
         "runtime": {
           "asset_paths": [
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/avatars/css/avatars.css",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/avatars/css/avatars.min.css",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/avatars/js/avatars.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/avatars/js/avatars.min.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/avatars/js/avatars.min.js.LICENSE.txt",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/avatars/template/default/index.html",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/avatars/template/default.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/avatars/template/group/index.html",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/avatars/template/label/index.html",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/avatars/template/profile/index.html",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/avatars/template/user/index.html"
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/avatars/css/avatars.css",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/avatars/css/avatars.min.css",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/avatars/js/avatars.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/avatars/js/avatars.min.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/avatars/js/avatars.min.js.LICENSE.txt",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/avatars/template/default/index.html",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/avatars/template/default.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/avatars/template/group/index.html",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/avatars/template/label/index.html",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/avatars/template/profile/index.html",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/avatars/template/user/index.html"
           ],
           "declared": {
             "css": false,
@@ -6545,7 +6545,7 @@
       "key": "smart.badges",
       "kind": "smart_component",
       "provenance": [
-        "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/badges",
+        "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/badges",
         "simai/ui@1e114f57a03845b7e2e0f5825122c2e64d9b7be7:distr/rule/rule.json#name=cl-badges"
       ],
       "public_contract": {
@@ -6555,10 +6555,10 @@
         ],
         "runtime": {
           "asset_paths": [
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/badges/js/badges.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/badges/js/badges.min.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/badges/js/badges.min.js.LICENSE.txt",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/badges/template/default.js"
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/badges/js/badges.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/badges/js/badges.min.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/badges/js/badges.min.js.LICENSE.txt",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/badges/template/default.js"
           ],
           "declared": {
             "css": false,
@@ -6579,7 +6579,7 @@
       "key": "smart.breadcrumbs",
       "kind": "smart_component",
       "provenance": [
-        "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/breadcrumbs",
+        "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/breadcrumbs",
         "simai/ui@1e114f57a03845b7e2e0f5825122c2e64d9b7be7:distr/rule/rule.json#name=cl-breadcrumbs"
       ],
       "public_contract": {
@@ -6590,10 +6590,10 @@
         ],
         "runtime": {
           "asset_paths": [
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/breadcrumbs/js/breadcrumbs.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/breadcrumbs/js/breadcrumbs.min.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/breadcrumbs/js/breadcrumbs.min.js.LICENSE.txt",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/breadcrumbs/template/default.js"
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/breadcrumbs/js/breadcrumbs.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/breadcrumbs/js/breadcrumbs.min.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/breadcrumbs/js/breadcrumbs.min.js.LICENSE.txt",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/breadcrumbs/template/default.js"
           ],
           "declared": {
             "css": false,
@@ -6614,7 +6614,7 @@
       "key": "smart.button-group",
       "kind": "smart_component",
       "provenance": [
-        "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/button-group",
+        "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/button-group",
         "simai/ui@1e114f57a03845b7e2e0f5825122c2e64d9b7be7:distr/rule/rule.json#name=cl-button-group"
       ],
       "public_contract": {
@@ -6625,10 +6625,10 @@
         ],
         "runtime": {
           "asset_paths": [
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/button-group/js/button-group.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/button-group/js/button-group.min.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/button-group/js/button-group.min.js.LICENSE.txt",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/button-group/template/default.js"
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/button-group/js/button-group.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/button-group/js/button-group.min.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/button-group/js/button-group.min.js.LICENSE.txt",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/button-group/template/default.js"
           ],
           "declared": {
             "css": false,
@@ -6649,7 +6649,7 @@
       "key": "smart.buttons",
       "kind": "smart_component",
       "provenance": [
-        "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/buttons",
+        "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/buttons",
         "simai/ui@1e114f57a03845b7e2e0f5825122c2e64d9b7be7:distr/rule/rule.json#name=cl-buttons"
       ],
       "public_contract": {
@@ -6661,10 +6661,10 @@
         ],
         "runtime": {
           "asset_paths": [
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/buttons/js/buttons.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/buttons/js/buttons.min.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/buttons/js/buttons.min.js.LICENSE.txt",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/buttons/template/default.js"
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/buttons/js/buttons.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/buttons/js/buttons.min.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/buttons/js/buttons.min.js.LICENSE.txt",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/buttons/template/default.js"
           ],
           "declared": {
             "css": false,
@@ -6685,7 +6685,7 @@
       "key": "smart.checkbox",
       "kind": "smart_component",
       "provenance": [
-        "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/checkbox",
+        "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/checkbox",
         "simai/ui@1e114f57a03845b7e2e0f5825122c2e64d9b7be7:distr/rule/rule.json#name=cl-checkbox"
       ],
       "public_contract": {
@@ -6696,13 +6696,13 @@
         ],
         "runtime": {
           "asset_paths": [
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/checkbox/css/checkbox.css",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/checkbox/css/checkbox.min.css",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/checkbox/js/checkbox.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/checkbox/js/checkbox.min.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/checkbox/js/checkbox.min.js.LICENSE.txt",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/checkbox/template/default.css",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/checkbox/template/default.js"
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/checkbox/css/checkbox.css",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/checkbox/css/checkbox.min.css",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/checkbox/js/checkbox.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/checkbox/js/checkbox.min.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/checkbox/js/checkbox.min.js.LICENSE.txt",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/checkbox/template/default.css",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/checkbox/template/default.js"
           ],
           "declared": {
             "css": true,
@@ -6723,7 +6723,7 @@
       "key": "smart.close",
       "kind": "smart_component",
       "provenance": [
-        "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/close",
+        "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/close",
         "simai/ui@1e114f57a03845b7e2e0f5825122c2e64d9b7be7:distr/rule/rule.json#name=cl-close"
       ],
       "public_contract": {
@@ -6733,10 +6733,10 @@
         ],
         "runtime": {
           "asset_paths": [
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/close/js/close.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/close/js/close.min.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/close/js/close.min.js.LICENSE.txt",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/close/template/default.js"
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/close/js/close.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/close/js/close.min.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/close/js/close.min.js.LICENSE.txt",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/close/template/default.js"
           ],
           "declared": {
             "css": false,
@@ -6757,7 +6757,7 @@
       "key": "smart.composition-overlay",
       "kind": "smart_component",
       "provenance": [
-        "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/composition-overlay",
+        "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/composition-overlay",
         "simai/ui@1e114f57a03845b7e2e0f5825122c2e64d9b7be7:distr/rule/rule.json#name=cl-composition-overlay"
       ],
       "public_contract": {
@@ -6765,10 +6765,10 @@
         "requires": [],
         "runtime": {
           "asset_paths": [
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/composition-overlay/css/composition-overlay.css",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/composition-overlay/css/composition-overlay.min.css",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/composition-overlay/js/composition-overlay.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/composition-overlay/js/composition-overlay.min.js"
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/composition-overlay/css/composition-overlay.css",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/composition-overlay/css/composition-overlay.min.css",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/composition-overlay/js/composition-overlay.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/composition-overlay/js/composition-overlay.min.js"
           ],
           "declared": {
             "css": true,
@@ -6789,7 +6789,7 @@
       "key": "smart.context-menu",
       "kind": "smart_component",
       "provenance": [
-        "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/context-menu",
+        "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/context-menu",
         "simai/ui@1e114f57a03845b7e2e0f5825122c2e64d9b7be7:distr/rule/rule.json#name=cl-context-menu"
       ],
       "public_contract": {
@@ -6800,10 +6800,10 @@
         ],
         "runtime": {
           "asset_paths": [
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/context-menu/js/context-menu.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/context-menu/js/context-menu.min.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/context-menu/js/context-menu.min.js.LICENSE.txt",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/context-menu/template/default.js"
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/context-menu/js/context-menu.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/context-menu/js/context-menu.min.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/context-menu/js/context-menu.min.js.LICENSE.txt",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/context-menu/template/default.js"
           ],
           "declared": {
             "css": false,
@@ -6824,7 +6824,7 @@
       "key": "smart.country-code",
       "kind": "smart_component",
       "provenance": [
-        "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/country-code",
+        "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/country-code",
         "simai/ui@1e114f57a03845b7e2e0f5825122c2e64d9b7be7:distr/rule/rule.json#name=cl-country-code"
       ],
       "public_contract": {
@@ -6834,10 +6834,10 @@
         ],
         "runtime": {
           "asset_paths": [
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/country-code/js/country-code.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/country-code/js/country-code.min.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/country-code/js/country-code.min.js.LICENSE.txt",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/country-code/template/default.js"
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/country-code/js/country-code.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/country-code/js/country-code.min.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/country-code/js/country-code.min.js.LICENSE.txt",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/country-code/template/default.js"
           ],
           "declared": {
             "css": false,
@@ -6858,7 +6858,7 @@
       "key": "smart.data-view",
       "kind": "smart_component",
       "provenance": [
-        "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/table",
+        "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/table",
         "simai/ui@1e114f57a03845b7e2e0f5825122c2e64d9b7be7:distr/rule/rule.json#name=cl-table"
       ],
       "public_contract": {
@@ -6879,14 +6879,14 @@
         ],
         "runtime": {
           "asset_paths": [
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/table/css/table.css",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/table/css/table.min.css",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/table/js/table.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/table/js/table.min.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/table/js/table.min.js.LICENSE.txt",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/table/template/default.css",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/table/template/default.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/table/template/link-cell-contract.js"
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/table/css/table.css",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/table/css/table.min.css",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/table/js/table.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/table/js/table.min.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/table/js/table.min.js.LICENSE.txt",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/table/template/default.css",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/table/template/default.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/table/template/link-cell-contract.js"
           ],
           "declared": {
             "css": true,
@@ -6907,7 +6907,7 @@
       "key": "smart.datepicker",
       "kind": "smart_component",
       "provenance": [
-        "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/datepicker",
+        "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/datepicker",
         "simai/ui@1e114f57a03845b7e2e0f5825122c2e64d9b7be7:distr/rule/rule.json#name=cl-datepicker"
       ],
       "public_contract": {
@@ -6920,10 +6920,10 @@
         ],
         "runtime": {
           "asset_paths": [
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/datepicker/js/datepicker.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/datepicker/js/datepicker.min.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/datepicker/js/datepicker.min.js.LICENSE.txt",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/datepicker/template/default.js"
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/datepicker/js/datepicker.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/datepicker/js/datepicker.min.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/datepicker/js/datepicker.min.js.LICENSE.txt",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/datepicker/template/default.js"
           ],
           "declared": {
             "css": false,
@@ -6944,7 +6944,7 @@
       "key": "smart.download-file",
       "kind": "smart_component",
       "provenance": [
-        "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/download-file",
+        "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/download-file",
         "simai/ui@1e114f57a03845b7e2e0f5825122c2e64d9b7be7:distr/rule/rule.json#name=cl-download-file"
       ],
       "public_contract": {
@@ -6955,10 +6955,10 @@
         ],
         "runtime": {
           "asset_paths": [
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/download-file/js/download-file.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/download-file/js/download-file.min.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/download-file/js/download-file.min.js.LICENSE.txt",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/download-file/template/default.js"
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/download-file/js/download-file.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/download-file/js/download-file.min.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/download-file/js/download-file.min.js.LICENSE.txt",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/download-file/template/default.js"
           ],
           "declared": {
             "css": false,
@@ -6979,7 +6979,7 @@
       "key": "smart.drawer",
       "kind": "smart_component",
       "provenance": [
-        "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/drawer",
+        "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/drawer",
         "simai/ui@1e114f57a03845b7e2e0f5825122c2e64d9b7be7:distr/rule/rule.json#name=cl-drawer"
       ],
       "public_contract": {
@@ -6990,11 +6990,11 @@
         ],
         "runtime": {
           "asset_paths": [
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/drawer/css/drawer.css",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/drawer/css/drawer.min.css",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/drawer/js/drawer.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/drawer/js/drawer.min.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/drawer/js/drawer.min.js.LICENSE.txt"
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/drawer/css/drawer.css",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/drawer/css/drawer.min.css",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/drawer/js/drawer.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/drawer/js/drawer.min.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/drawer/js/drawer.min.js.LICENSE.txt"
           ],
           "declared": {
             "css": true,
@@ -7015,7 +7015,7 @@
       "key": "smart.dropdown",
       "kind": "smart_component",
       "provenance": [
-        "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/dropdown",
+        "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/dropdown",
         "simai/ui@1e114f57a03845b7e2e0f5825122c2e64d9b7be7:distr/rule/rule.json#name=cl-dropdown"
       ],
       "public_contract": {
@@ -7027,10 +7027,10 @@
         ],
         "runtime": {
           "asset_paths": [
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/dropdown/js/dropdown.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/dropdown/js/dropdown.min.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/dropdown/js/dropdown.min.js.LICENSE.txt",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/dropdown/template/default.js"
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/dropdown/js/dropdown.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/dropdown/js/dropdown.min.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/dropdown/js/dropdown.min.js.LICENSE.txt",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/dropdown/template/default.js"
           ],
           "declared": {
             "css": false,
@@ -7051,7 +7051,7 @@
       "key": "smart.file-preview",
       "kind": "smart_component",
       "provenance": [
-        "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/file-preview",
+        "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/file-preview",
         "simai/ui@1e114f57a03845b7e2e0f5825122c2e64d9b7be7:distr/rule/rule.json#name=cl-file-preview"
       ],
       "public_contract": {
@@ -7063,10 +7063,10 @@
         ],
         "runtime": {
           "asset_paths": [
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/file-preview/js/file-preview.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/file-preview/js/file-preview.min.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/file-preview/js/file-preview.min.js.LICENSE.txt",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/file-preview/template/default.js"
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/file-preview/js/file-preview.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/file-preview/js/file-preview.min.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/file-preview/js/file-preview.min.js.LICENSE.txt",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/file-preview/template/default.js"
           ],
           "declared": {
             "css": false,
@@ -7087,7 +7087,7 @@
       "key": "smart.file-upload",
       "kind": "smart_component",
       "provenance": [
-        "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/file-upload",
+        "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/file-upload",
         "simai/ui@1e114f57a03845b7e2e0f5825122c2e64d9b7be7:distr/rule/rule.json#name=cl-file-upload"
       ],
       "public_contract": {
@@ -7100,10 +7100,10 @@
         ],
         "runtime": {
           "asset_paths": [
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/file-upload/js/file-upload.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/file-upload/js/file-upload.min.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/file-upload/js/file-upload.min.js.LICENSE.txt",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/file-upload/template/default.js"
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/file-upload/js/file-upload.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/file-upload/js/file-upload.min.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/file-upload/js/file-upload.min.js.LICENSE.txt",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/file-upload/template/default.js"
           ],
           "declared": {
             "css": false,
@@ -7124,7 +7124,7 @@
       "key": "smart.gallery",
       "kind": "smart_component",
       "provenance": [
-        "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/gallery",
+        "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/gallery",
         "simai/ui@1e114f57a03845b7e2e0f5825122c2e64d9b7be7:distr/rule/rule.json#name=cl-gallery"
       ],
       "public_contract": {
@@ -7135,13 +7135,13 @@
         ],
         "runtime": {
           "asset_paths": [
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/gallery/css/gallery.css",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/gallery/css/gallery.min.css",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/gallery/js/gallery.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/gallery/js/gallery.min.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/gallery/js/gallery.min.js.LICENSE.txt",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/gallery/template/default.css",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/gallery/template/default.js"
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/gallery/css/gallery.css",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/gallery/css/gallery.min.css",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/gallery/js/gallery.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/gallery/js/gallery.min.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/gallery/js/gallery.min.js.LICENSE.txt",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/gallery/template/default.css",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/gallery/template/default.js"
           ],
           "declared": {
             "css": true,
@@ -7162,7 +7162,7 @@
       "key": "smart.icon-buttons",
       "kind": "smart_component",
       "provenance": [
-        "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/icon-buttons",
+        "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/icon-buttons",
         "simai/ui@1e114f57a03845b7e2e0f5825122c2e64d9b7be7:distr/rule/rule.json#name=cl-icon-buttons"
       ],
       "public_contract": {
@@ -7175,13 +7175,13 @@
         ],
         "runtime": {
           "asset_paths": [
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/icon-buttons/css/icon-buttons.css",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/icon-buttons/css/icon-buttons.min.css",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/icon-buttons/js/icon-buttons.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/icon-buttons/js/icon-buttons.min.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/icon-buttons/js/icon-buttons.min.js.LICENSE.txt",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/icon-buttons/template/default.css",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/icon-buttons/template/default.js"
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/icon-buttons/css/icon-buttons.css",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/icon-buttons/css/icon-buttons.min.css",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/icon-buttons/js/icon-buttons.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/icon-buttons/js/icon-buttons.min.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/icon-buttons/js/icon-buttons.min.js.LICENSE.txt",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/icon-buttons/template/default.css",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/icon-buttons/template/default.js"
           ],
           "declared": {
             "css": true,
@@ -7202,7 +7202,7 @@
       "key": "smart.icons",
       "kind": "smart_component",
       "provenance": [
-        "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/icons",
+        "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/icons",
         "simai/ui@1e114f57a03845b7e2e0f5825122c2e64d9b7be7:distr/rule/rule.json#name=cl-icons"
       ],
       "public_contract": {
@@ -7212,10 +7212,10 @@
         ],
         "runtime": {
           "asset_paths": [
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/icons/js/icons.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/icons/js/icons.min.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/icons/js/icons.min.js.LICENSE.txt",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/icons/template/default.js"
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/icons/js/icons.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/icons/js/icons.min.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/icons/js/icons.min.js.LICENSE.txt",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/icons/template/default.js"
           ],
           "declared": {
             "css": false,
@@ -7236,7 +7236,7 @@
       "key": "smart.inline-editor",
       "kind": "smart_component",
       "provenance": [
-        "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/inline-editor",
+        "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/inline-editor",
         "simai/ui@1e114f57a03845b7e2e0f5825122c2e64d9b7be7:distr/rule/rule.json#name=cl-inline-editor"
       ],
       "public_contract": {
@@ -7244,10 +7244,10 @@
         "requires": [],
         "runtime": {
           "asset_paths": [
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/inline-editor/css/inline-editor.css",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/inline-editor/css/inline-editor.min.css",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/inline-editor/js/inline-editor.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/inline-editor/js/inline-editor.min.js"
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/inline-editor/css/inline-editor.css",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/inline-editor/css/inline-editor.min.css",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/inline-editor/js/inline-editor.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/inline-editor/js/inline-editor.min.js"
           ],
           "declared": {
             "css": true,
@@ -7268,7 +7268,7 @@
       "key": "smart.inputs",
       "kind": "smart_component",
       "provenance": [
-        "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/inputs",
+        "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/inputs",
         "simai/ui@1e114f57a03845b7e2e0f5825122c2e64d9b7be7:distr/rule/rule.json#name=cl-inputs"
       ],
       "public_contract": {
@@ -7278,13 +7278,13 @@
         ],
         "runtime": {
           "asset_paths": [
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/inputs/css/inputs.css",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/inputs/css/inputs.min.css",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/inputs/js/inputs.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/inputs/js/inputs.min.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/inputs/js/inputs.min.js.LICENSE.txt",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/inputs/template/default.css",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/inputs/template/default.js"
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/inputs/css/inputs.css",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/inputs/css/inputs.min.css",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/inputs/js/inputs.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/inputs/js/inputs.min.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/inputs/js/inputs.min.js.LICENSE.txt",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/inputs/template/default.css",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/inputs/template/default.js"
           ],
           "declared": {
             "css": true,
@@ -7305,7 +7305,7 @@
       "key": "smart.list-item",
       "kind": "smart_component",
       "provenance": [
-        "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/list-item",
+        "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/list-item",
         "simai/ui@1e114f57a03845b7e2e0f5825122c2e64d9b7be7:distr/rule/rule.json#name=cl-list-item"
       ],
       "public_contract": {
@@ -7319,10 +7319,10 @@
         ],
         "runtime": {
           "asset_paths": [
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/list-item/js/list-item.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/list-item/js/list-item.min.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/list-item/js/list-item.min.js.LICENSE.txt",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/list-item/template/default.js"
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/list-item/js/list-item.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/list-item/js/list-item.min.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/list-item/js/list-item.min.js.LICENSE.txt",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/list-item/template/default.js"
           ],
           "declared": {
             "css": false,
@@ -7343,7 +7343,7 @@
       "key": "smart.modal",
       "kind": "smart_component",
       "provenance": [
-        "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/modal",
+        "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/modal",
         "simai/ui@1e114f57a03845b7e2e0f5825122c2e64d9b7be7:distr/rule/rule.json#name=cl-modal"
       ],
       "public_contract": {
@@ -7354,10 +7354,10 @@
         ],
         "runtime": {
           "asset_paths": [
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/modal/js/modal.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/modal/js/modal.min.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/modal/js/modal.min.js.LICENSE.txt",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/modal/template/default.js"
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/modal/js/modal.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/modal/js/modal.min.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/modal/js/modal.min.js.LICENSE.txt",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/modal/template/default.js"
           ],
           "declared": {
             "css": false,
@@ -7378,7 +7378,7 @@
       "key": "smart.pagination",
       "kind": "smart_component",
       "provenance": [
-        "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/pagination",
+        "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/pagination",
         "simai/ui@1e114f57a03845b7e2e0f5825122c2e64d9b7be7:distr/rule/rule.json#name=cl-pagination"
       ],
       "public_contract": {
@@ -7388,10 +7388,10 @@
         ],
         "runtime": {
           "asset_paths": [
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/pagination/js/pagination.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/pagination/js/pagination.min.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/pagination/js/pagination.min.js.LICENSE.txt",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/pagination/template/default.js"
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/pagination/js/pagination.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/pagination/js/pagination.min.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/pagination/js/pagination.min.js.LICENSE.txt",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/pagination/template/default.js"
           ],
           "declared": {
             "css": false,
@@ -7412,7 +7412,7 @@
       "key": "smart.progress-bar",
       "kind": "smart_component",
       "provenance": [
-        "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/progress-bar",
+        "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/progress-bar",
         "simai/ui@1e114f57a03845b7e2e0f5825122c2e64d9b7be7:distr/rule/rule.json#name=cl-progress-bar"
       ],
       "public_contract": {
@@ -7422,10 +7422,10 @@
         ],
         "runtime": {
           "asset_paths": [
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/progress-bar/js/progress-bar.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/progress-bar/js/progress-bar.min.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/progress-bar/js/progress-bar.min.js.LICENSE.txt",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/progress-bar/template/default.js"
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/progress-bar/js/progress-bar.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/progress-bar/js/progress-bar.min.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/progress-bar/js/progress-bar.min.js.LICENSE.txt",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/progress-bar/template/default.js"
           ],
           "declared": {
             "css": false,
@@ -7446,7 +7446,7 @@
       "key": "smart.progress-scale",
       "kind": "smart_component",
       "provenance": [
-        "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/progress-scale",
+        "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/progress-scale",
         "simai/ui@1e114f57a03845b7e2e0f5825122c2e64d9b7be7:distr/rule/rule.json#name=cl-progress-scale"
       ],
       "public_contract": {
@@ -7456,10 +7456,10 @@
         ],
         "runtime": {
           "asset_paths": [
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/progress-scale/js/progress-scale.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/progress-scale/js/progress-scale.min.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/progress-scale/js/progress-scale.min.js.LICENSE.txt",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/progress-scale/template/default.js"
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/progress-scale/js/progress-scale.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/progress-scale/js/progress-scale.min.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/progress-scale/js/progress-scale.min.js.LICENSE.txt",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/progress-scale/template/default.js"
           ],
           "declared": {
             "css": false,
@@ -7480,7 +7480,7 @@
       "key": "smart.radio",
       "kind": "smart_component",
       "provenance": [
-        "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/radio",
+        "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/radio",
         "simai/ui@1e114f57a03845b7e2e0f5825122c2e64d9b7be7:distr/rule/rule.json#name=cl-radio"
       ],
       "public_contract": {
@@ -7491,10 +7491,10 @@
         ],
         "runtime": {
           "asset_paths": [
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/radio/js/radio.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/radio/js/radio.min.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/radio/js/radio.min.js.LICENSE.txt",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/radio/template/default.js"
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/radio/js/radio.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/radio/js/radio.min.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/radio/js/radio.min.js.LICENSE.txt",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/radio/template/default.js"
           ],
           "declared": {
             "css": false,
@@ -7515,7 +7515,7 @@
       "key": "smart.range-slider",
       "kind": "smart_component",
       "provenance": [
-        "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/range-slider",
+        "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/range-slider",
         "simai/ui@1e114f57a03845b7e2e0f5825122c2e64d9b7be7:distr/rule/rule.json#name=cl-range-slider"
       ],
       "public_contract": {
@@ -7525,10 +7525,10 @@
         ],
         "runtime": {
           "asset_paths": [
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/range-slider/js/range-slider.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/range-slider/js/range-slider.min.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/range-slider/js/range-slider.min.js.LICENSE.txt",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/range-slider/template/default.js"
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/range-slider/js/range-slider.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/range-slider/js/range-slider.min.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/range-slider/js/range-slider.min.js.LICENSE.txt",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/range-slider/template/default.js"
           ],
           "declared": {
             "css": false,
@@ -7549,7 +7549,7 @@
       "key": "smart.reference-link",
       "kind": "smart_component",
       "provenance": [
-        "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/reference-link",
+        "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/reference-link",
         "simai/ui@1e114f57a03845b7e2e0f5825122c2e64d9b7be7:distr/rule/rule.json#name=cl-reference-link"
       ],
       "public_contract": {
@@ -7560,10 +7560,10 @@
         ],
         "runtime": {
           "asset_paths": [
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/reference-link/js/reference-link.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/reference-link/js/reference-link.min.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/reference-link/js/reference-link.min.js.LICENSE.txt",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/reference-link/template/default.js"
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/reference-link/js/reference-link.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/reference-link/js/reference-link.min.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/reference-link/js/reference-link.min.js.LICENSE.txt",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/reference-link/template/default.js"
           ],
           "declared": {
             "css": false,
@@ -7584,7 +7584,7 @@
       "key": "smart.skeleton",
       "kind": "smart_component",
       "provenance": [
-        "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/skeleton",
+        "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/skeleton",
         "simai/ui@1e114f57a03845b7e2e0f5825122c2e64d9b7be7:distr/rule/rule.json#name=cl-skeleton"
       ],
       "public_contract": {
@@ -7594,10 +7594,10 @@
         ],
         "runtime": {
           "asset_paths": [
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/skeleton/js/skeleton.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/skeleton/js/skeleton.min.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/skeleton/js/skeleton.min.js.LICENSE.txt",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/skeleton/template/default.js"
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/skeleton/js/skeleton.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/skeleton/js/skeleton.min.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/skeleton/js/skeleton.min.js.LICENSE.txt",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/skeleton/template/default.js"
           ],
           "declared": {
             "css": false,
@@ -7618,7 +7618,7 @@
       "key": "smart.slider",
       "kind": "smart_component",
       "provenance": [
-        "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/slider",
+        "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/slider",
         "simai/ui@1e114f57a03845b7e2e0f5825122c2e64d9b7be7:distr/rule/rule.json#name=cl-slider"
       ],
       "public_contract": {
@@ -7629,11 +7629,11 @@
         ],
         "runtime": {
           "asset_paths": [
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/slider/js/slider.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/slider/js/slider.min.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/slider/js/slider.min.js.LICENSE.txt",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/slider/template/default/index.html",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/slider/template/default.js"
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/slider/js/slider.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/slider/js/slider.min.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/slider/js/slider.min.js.LICENSE.txt",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/slider/template/default/index.html",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/slider/template/default.js"
           ],
           "declared": {
             "css": false,
@@ -7654,7 +7654,7 @@
       "key": "smart.sortable",
       "kind": "smart_component",
       "provenance": [
-        "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/sortable",
+        "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/sortable",
         "simai/ui@1e114f57a03845b7e2e0f5825122c2e64d9b7be7:distr/rule/rule.json#name=cl-sortable"
       ],
       "public_contract": {
@@ -7662,10 +7662,10 @@
         "requires": [],
         "runtime": {
           "asset_paths": [
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/sortable/css/sortable.css",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/sortable/css/sortable.min.css",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/sortable/js/sortable.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/sortable/js/sortable.min.js"
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/sortable/css/sortable.css",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/sortable/css/sortable.min.css",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/sortable/js/sortable.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/sortable/js/sortable.min.js"
           ],
           "declared": {
             "css": true,
@@ -7686,7 +7686,7 @@
       "key": "smart.spinner",
       "kind": "smart_component",
       "provenance": [
-        "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/spinner",
+        "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/spinner",
         "simai/ui@1e114f57a03845b7e2e0f5825122c2e64d9b7be7:distr/rule/rule.json#name=cl-spinner"
       ],
       "public_contract": {
@@ -7696,10 +7696,10 @@
         ],
         "runtime": {
           "asset_paths": [
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/spinner/js/spinner.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/spinner/js/spinner.min.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/spinner/js/spinner.min.js.LICENSE.txt",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/spinner/template/default.js"
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/spinner/js/spinner.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/spinner/js/spinner.min.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/spinner/js/spinner.min.js.LICENSE.txt",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/spinner/template/default.js"
           ],
           "declared": {
             "css": false,
@@ -7720,7 +7720,7 @@
       "key": "smart.steps",
       "kind": "smart_component",
       "provenance": [
-        "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/steps",
+        "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/steps",
         "simai/ui@1e114f57a03845b7e2e0f5825122c2e64d9b7be7:distr/rule/rule.json#name=cl-steps"
       ],
       "public_contract": {
@@ -7731,10 +7731,10 @@
         ],
         "runtime": {
           "asset_paths": [
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/steps/js/steps.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/steps/js/steps.min.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/steps/js/steps.min.js.LICENSE.txt",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/steps/template/default.js"
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/steps/js/steps.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/steps/js/steps.min.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/steps/js/steps.min.js.LICENSE.txt",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/steps/template/default.js"
           ],
           "declared": {
             "css": false,
@@ -7755,7 +7755,7 @@
       "key": "smart.switch",
       "kind": "smart_component",
       "provenance": [
-        "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/switch",
+        "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/switch",
         "simai/ui@1e114f57a03845b7e2e0f5825122c2e64d9b7be7:distr/rule/rule.json#name=cl-switch"
       ],
       "public_contract": {
@@ -7766,10 +7766,10 @@
         ],
         "runtime": {
           "asset_paths": [
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/switch/js/switch.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/switch/js/switch.min.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/switch/js/switch.min.js.LICENSE.txt",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/switch/template/default.js"
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/switch/js/switch.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/switch/js/switch.min.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/switch/js/switch.min.js.LICENSE.txt",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/switch/template/default.js"
           ],
           "declared": {
             "css": false,
@@ -7790,7 +7790,7 @@
       "key": "smart.tabs",
       "kind": "smart_component",
       "provenance": [
-        "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/tabs",
+        "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/tabs",
         "simai/ui@1e114f57a03845b7e2e0f5825122c2e64d9b7be7:distr/rule/rule.json#name=cl-tabs"
       ],
       "public_contract": {
@@ -7802,13 +7802,13 @@
         ],
         "runtime": {
           "asset_paths": [
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/tabs/css/tabs.css",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/tabs/css/tabs.min.css",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/tabs/js/tabs.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/tabs/js/tabs.min.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/tabs/js/tabs.min.js.LICENSE.txt",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/tabs/template/default.css",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/tabs/template/default.js"
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/tabs/css/tabs.css",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/tabs/css/tabs.min.css",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/tabs/js/tabs.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/tabs/js/tabs.min.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/tabs/js/tabs.min.js.LICENSE.txt",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/tabs/template/default.css",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/tabs/template/default.js"
           ],
           "declared": {
             "css": false,
@@ -7829,7 +7829,7 @@
       "key": "smart.tags",
       "kind": "smart_component",
       "provenance": [
-        "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/tags",
+        "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/tags",
         "simai/ui@1e114f57a03845b7e2e0f5825122c2e64d9b7be7:distr/rule/rule.json#name=cl-tags"
       ],
       "public_contract": {
@@ -7842,13 +7842,13 @@
         ],
         "runtime": {
           "asset_paths": [
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/tags/css/tags.css",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/tags/css/tags.min.css",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/tags/js/tags.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/tags/js/tags.min.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/tags/js/tags.min.js.LICENSE.txt",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/tags/template/default.css",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/tags/template/default.js"
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/tags/css/tags.css",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/tags/css/tags.min.css",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/tags/js/tags.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/tags/js/tags.min.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/tags/js/tags.min.js.LICENSE.txt",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/tags/template/default.css",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/tags/template/default.js"
           ],
           "declared": {
             "css": true,
@@ -7869,7 +7869,7 @@
       "key": "smart.textarea",
       "kind": "smart_component",
       "provenance": [
-        "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/textarea",
+        "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/textarea",
         "simai/ui@1e114f57a03845b7e2e0f5825122c2e64d9b7be7:distr/rule/rule.json#name=cl-textarea"
       ],
       "public_contract": {
@@ -7879,10 +7879,10 @@
         ],
         "runtime": {
           "asset_paths": [
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/textarea/js/textarea.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/textarea/js/textarea.min.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/textarea/js/textarea.min.js.LICENSE.txt",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/textarea/template/default.js"
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/textarea/js/textarea.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/textarea/js/textarea.min.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/textarea/js/textarea.min.js.LICENSE.txt",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/textarea/template/default.js"
           ],
           "declared": {
             "css": false,
@@ -7903,7 +7903,7 @@
       "key": "smart.toast",
       "kind": "smart_component",
       "provenance": [
-        "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/toast",
+        "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/toast",
         "simai/ui@1e114f57a03845b7e2e0f5825122c2e64d9b7be7:distr/rule/rule.json#name=cl-toast"
       ],
       "public_contract": {
@@ -7917,10 +7917,10 @@
         ],
         "runtime": {
           "asset_paths": [
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/toast/js/toast.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/toast/js/toast.min.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/toast/js/toast.min.js.LICENSE.txt",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/toast/template/default.js"
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/toast/js/toast.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/toast/js/toast.min.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/toast/js/toast.min.js.LICENSE.txt",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/toast/template/default.js"
           ],
           "declared": {
             "css": false,
@@ -7941,7 +7941,7 @@
       "key": "smart.toggle",
       "kind": "smart_component",
       "provenance": [
-        "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/toggle",
+        "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/toggle",
         "simai/ui@1e114f57a03845b7e2e0f5825122c2e64d9b7be7:distr/rule/rule.json#name=cl-toggle"
       ],
       "public_contract": {
@@ -7952,11 +7952,11 @@
         ],
         "runtime": {
           "asset_paths": [
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/toggle/js/toggle.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/toggle/js/toggle.min.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/toggle/js/toggle.min.js.LICENSE.txt",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/toggle/template/default/index.html",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/toggle/template/default.js"
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/toggle/js/toggle.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/toggle/js/toggle.min.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/toggle/js/toggle.min.js.LICENSE.txt",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/toggle/template/default/index.html",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/toggle/template/default.js"
           ],
           "declared": {
             "css": false,
@@ -7977,7 +7977,7 @@
       "key": "smart.tooltip",
       "kind": "smart_component",
       "provenance": [
-        "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/tooltip",
+        "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/tooltip",
         "simai/ui@1e114f57a03845b7e2e0f5825122c2e64d9b7be7:distr/rule/rule.json#name=cl-tooltip"
       ],
       "public_contract": {
@@ -7987,10 +7987,10 @@
         ],
         "runtime": {
           "asset_paths": [
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/tooltip/js/tooltip.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/tooltip/js/tooltip.min.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/tooltip/js/tooltip.min.js.LICENSE.txt",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/tooltip/template/default.js"
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/tooltip/js/tooltip.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/tooltip/js/tooltip.min.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/tooltip/js/tooltip.min.js.LICENSE.txt",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/tooltip/template/default.js"
           ],
           "declared": {
             "css": false,
@@ -8011,7 +8011,7 @@
       "key": "smart.tree",
       "kind": "smart_component",
       "provenance": [
-        "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/tree",
+        "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/tree",
         "simai/ui@1e114f57a03845b7e2e0f5825122c2e64d9b7be7:distr/rule/rule.json#name=cl-tree"
       ],
       "public_contract": {
@@ -8021,13 +8021,13 @@
         ],
         "runtime": {
           "asset_paths": [
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/tree/css/tree.css",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/tree/css/tree.min.css",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/tree/js/tree.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/tree/js/tree.min.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/tree/js/tree.min.js.LICENSE.txt",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/tree/template/default.css",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/tree/template/default.js"
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/tree/css/tree.css",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/tree/css/tree.min.css",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/tree/js/tree.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/tree/js/tree.min.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/tree/js/tree.min.js.LICENSE.txt",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/tree/template/default.css",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/tree/template/default.js"
           ],
           "declared": {
             "css": true,
@@ -8048,7 +8048,7 @@
       "key": "smart.tree-item",
       "kind": "smart_component",
       "provenance": [
-        "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/tree-item",
+        "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/tree-item",
         "simai/ui@1e114f57a03845b7e2e0f5825122c2e64d9b7be7:distr/rule/rule.json#name=cl-tree-item"
       ],
       "public_contract": {
@@ -8060,10 +8060,10 @@
         ],
         "runtime": {
           "asset_paths": [
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/tree-item/js/tree-item.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/tree-item/js/tree-item.min.js",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/tree-item/js/tree-item.min.js.LICENSE.txt",
-            "simai/ui-smart@727a77d2a861c49f0db2acbf426af69175aef449:smart/tree-item/template/default.js"
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/tree-item/js/tree-item.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/tree-item/js/tree-item.min.js",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/tree-item/js/tree-item.min.js.LICENSE.txt",
+            "simai/ui-smart@3942df63e58c8345271d28e4388ea575e5c7b8a3:smart/tree-item/template/default.js"
           ],
           "declared": {
             "css": false,
@@ -23599,6 +23599,6 @@
   ],
   "id": "simai-framework",
   "provider": "simai_framework",
-  "revision": "ui-1e114f57a038-smart-727a77d2a861",
+  "revision": "ui-1e114f57a038-smart-3942df63e58c",
   "schema": "docara.documentation_source.v1"
 }
