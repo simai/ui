@@ -293,7 +293,6 @@
     --sf-outline: light-dark(var(--sf-neutral-50), var(--sf-neutral-60));
     --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
     --sf-outline-secondary: light-dark(var(--sf-secondary-50), var(--sf-secondary-60));
-    --sf-outline-transparent-OLD: var(--sf-transparent-for-focus);
     --sf-disable: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
     --sf-on-disable: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-48));
     --sf-outline-disable: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-48));
