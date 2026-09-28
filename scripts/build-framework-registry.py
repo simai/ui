@@ -606,6 +606,41 @@ def recipe_closure(recipe_id: str, entries: dict[str, dict[str, Any]]) -> list[s
     return sorted(visited)
 
 
+def current_pair_inputs(
+    ui_root: Path,
+    component_manifest: dict[str, Any],
+    smart_manifest: dict[str, Any],
+    smart_manifest_path: Path,
+) -> tuple[Path, Path]:
+    """Find the lock and the Smart reference that belong to the pair on disk.
+
+    Both used to be named here literally, and both had to be retyped at every
+    publication; a forgotten edit built the registry from the previous pair and
+    the mismatch only surfaced later. The manifests already say which runtimes
+    this pair is, so the two files are looked up instead, and anything other
+    than exactly one match is an error rather than a guess.
+    """
+    core_commit = component_manifest["release"]["commit"]
+    smart_commit = smart_manifest["release"]["commit"]
+    pair = f"ui-{core_commit[:12]}-smart-{smart_commit[:12]}"
+    lock_path = ui_root / f"contracts/releases/{pair}.lock.json"
+    if not lock_path.is_file():
+        raise ContractError(f"release_lock_missing:{pair}")
+
+    file_sha256 = hashlib.sha256(smart_manifest_path.read_bytes()).hexdigest()
+    candidates = sorted(
+        path
+        for path in (ui_root / "contracts/registry-inputs").glob("ui-smart-*.ref.json")
+        if (
+            (reference := load_json(path)).get("runtime", {}).get("commit") == smart_commit
+            and reference.get("manifest", {}).get("file_sha256") == file_sha256
+        )
+    )
+    if len(candidates) != 1:
+        raise ContractError(f"smart_reference_not_unique:{len(candidates)}")
+    return lock_path, candidates[0]
+
+
 def build_registry(
     ui_root: Path,
     smart_manifest_path: Path,
@@ -618,8 +653,6 @@ def build_registry(
     utility_path = utility_manifest_path or ui_root / "contracts/owners/utility.manifest.json"
     component_path = component_manifest_path or ui_root / "contracts/owners/component.manifest.json"
     recipe_path = recipe_manifest_path or ui_root / "contracts/owners/recipe.manifest.json"
-    lock_path = release_lock_path or ui_root / "contracts/releases/ui-1e114f57a038-smart-3942df63e58c.lock.json"
-    reference_path = smart_reference_path or ui_root / "contracts/registry-inputs/ui-smart-93f151f2a614.ref.json"
     manifests = {
         "utility": load_json(utility_path),
         "component": load_json(component_path),
@@ -628,6 +661,16 @@ def build_registry(
     }
     for kind, manifest in manifests.items():
         validate_manifest_envelope(manifest, kind)
+
+    if release_lock_path is None or smart_reference_path is None:
+        found_lock, found_reference = current_pair_inputs(
+            ui_root,
+            manifests["component"],
+            manifests["smart-component"],
+            smart_manifest_path,
+        )
+    lock_path = release_lock_path or found_lock
+    reference_path = smart_reference_path or found_reference
 
     lock = load_json(lock_path)
     validate_lock(lock)

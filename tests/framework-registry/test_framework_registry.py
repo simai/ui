@@ -20,8 +20,19 @@ if not SMART_MANIFEST_INPUT:
 SMART_MANIFEST = Path(SMART_MANIFEST_INPUT).resolve()
 GENERATED = ROOT / "contracts/generated/framework-contract-registry.json"
 DOCUMENTATION_SOURCE = ROOT / "contracts/generated/documentation-source.json"
-LOCK = ROOT / "contracts/releases/ui-1e114f57a038-smart-3942df63e58c.lock.json"
-SMART_REFERENCE = ROOT / "contracts/registry-inputs/ui-smart-93f151f2a614.ref.json"
+# The pair and the Smart contract revision move with every publication, so they
+# are read from the generated aggregate instead of being retyped here. The
+# assertions below then tie them back to the runtimes they name, which is the
+# part that has to hold; a pin in this file only ever went stale.
+GENERATED_REGISTRY = json.loads(GENERATED.read_text())
+PAIR_ID = GENERATED_REGISTRY["compatibility"]["id"]
+SMART_CONTRACT_REVISION = next(
+    item["contract_revision"]
+    for item in GENERATED_REGISTRY["source_manifests"]
+    if item["kind"] == "smart-component"
+)
+LOCK = ROOT / f"contracts/releases/{PAIR_ID}.lock.json"
+SMART_REFERENCE = ROOT / f"contracts/registry-inputs/ui-smart-{SMART_CONTRACT_REVISION[:12]}.ref.json"
 
 
 def load_builder():
@@ -85,10 +96,20 @@ class FrameworkContractRegistryTest(unittest.TestCase):
                 "total": 336,
             },
         )
+        # The pair names the two runtimes it was built from; that is the claim,
+        # not the literal string.
+        sources = {
+            item["owner"]: item
+            for item in self.registry["compatibility"]["runtime_sources"]
+        }
         self.assertEqual(
             self.registry["compatibility"]["id"],
-            "ui-1e114f57a038-smart-3942df63e58c",
+            "ui-{}-smart-{}".format(
+                sources["simai/ui"]["commit"][:12],
+                sources["simai/ui-smart"]["commit"][:12],
+            ),
         )
+        self.assertRegex(self.registry["compatibility"]["id"], r"^ui-[0-9a-f]{12}-smart-[0-9a-f]{12}$")
         self.assertEqual(self.registry["compatibility"]["status"], "bounded")
         self.assertEqual(self.registry["compatibility"]["profile"], "plain-assets-v1")
         lock = json.loads(LOCK.read_text())
@@ -355,9 +376,21 @@ class FrameworkContractRegistryTest(unittest.TestCase):
             reference["manifest"]["sha256"],
             BUILDER.canonical_manifest_hash(smart_manifest),
         )
+        # The reference must name a commit that ui-smart actually has, and that
+        # commit must be the one holding this manifest.
+        self.assertRegex(reference["contract_revision"], r"^[0-9a-f]{40}$")
+        self.assertEqual(reference["contract_revision"], SMART_CONTRACT_REVISION)
+        smart_root = SMART_MANIFEST.parents[2]
+        committed = subprocess.run(
+            ["git", "-C", str(smart_root), "cat-file", "-p",
+             reference["contract_revision"] + ":" + reference["manifest"]["path"]],
+            check=True,
+            capture_output=True,
+        ).stdout
         self.assertEqual(
-            reference["contract_revision"],
-            "93f151f2a614cfaf1e3e0f8531b0d54a32d818ef",
+            hashlib.sha256(committed).hexdigest(),
+            reference["manifest"]["file_sha256"],
+            "the reference names a commit whose manifest is the one it hashes",
         )
         self.assertEqual(reference["status"], "committed")
         self.assertEqual(
