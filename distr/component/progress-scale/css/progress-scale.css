@@ -22,6 +22,9 @@
     line-height: var(--sf-progress-scale--line-height);
     width: 100%;
   }
+  .sf-progress-scale.sf-progress-scale--info {
+    --sf-progress-scale-fill-color: var(--sf-info);
+  }
   .sf-progress-scale.sf-progress-scale--success {
     --sf-progress-scale-fill-color: var(--sf-success);
   }

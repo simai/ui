@@ -6,6 +6,10 @@
 * - Base styles (_css__component_name.scss)
 *
 */
+/* The status words are the shared vocabulary: info, success, warning, error. The
+   component renders the canonical class, and `danger`, the word this component
+   used before, is matched beside it so existing markup and project CSS keep
+   working. See contracts/public-api-axes.json. */
 @layer sf.components {
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-a0) justify-content/center (.justify-center) align-items/center (.items-center) */
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-badge {
@@ -370,13 +374,25 @@
     --sf-badge--border-color: var(--sf-outline-warning);
     --sf-badge--color: var(--sf-warning);
   }
+  .sf-badge.sf-badge--main.sf-badge--error {
+    --sf-badge--background-color: var(--sf-error);
+    --sf-badge--color: var(--sf-on-error);
+  }
   .sf-badge.sf-badge--main.sf-badge--danger {
     --sf-badge--background-color: var(--sf-error);
     --sf-badge--color: var(--sf-on-error);
   }
+  .sf-badge.sf-badge--tonal.sf-badge--error {
+    --sf-badge--background-color: var(--sf-error-container);
+    --sf-badge--color: var(--sf-on-error-container);
+  }
   .sf-badge.sf-badge--tonal.sf-badge--danger {
     --sf-badge--background-color: var(--sf-error-container);
     --sf-badge--color: var(--sf-on-error-container);
+  }
+  .sf-badge.sf-badge--outline.sf-badge--error {
+    --sf-badge--border-color: var(--sf-outline-error);
+    --sf-badge--color: var(--sf-error);
   }
   .sf-badge.sf-badge--outline.sf-badge--danger {
     --sf-badge--border-color: var(--sf-outline-error);

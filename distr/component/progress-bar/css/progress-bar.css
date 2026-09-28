@@ -77,6 +77,9 @@
     background-color: var(--sf-progress-bar-progress--background-color);
     border-radius: var(--sf-progress-bar-progress--border-radius);
   }
+  .sf-progress-bar.sf-progress-bar--info .sf-progress-bar-progress {
+    --sf-progress-bar-progress--background-color: var(--sf-info);
+  }
   .sf-progress-bar.sf-progress-bar--success .sf-progress-bar-progress {
     --sf-progress-bar-progress--background-color: var(--sf-success);
   }
