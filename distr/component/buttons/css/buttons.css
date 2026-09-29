@@ -251,7 +251,11 @@
     border-inline-start-width: var(--sf-button--border-inline-start-width, 0);
     border-style: solid;
     border-style: var(--sf-button--border-style, solid);
-    box-shadow: var(--sf-button--box-shadow);
+    /* Two layers, composed rather than replaced: the focus line the ring puts
+       inside the button, and whatever elevation the button already carries.
+       Written as one shorthand, a focus rule would wipe the elevation. */
+    box-shadow: 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0);
+    box-shadow: var(--sf-button--focus-inset, 0 0 rgba(0, 0, 0, 0)), var(--sf-button--box-shadow, 0 0 rgba(0, 0, 0, 0));
   }
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) justify-content/center (.justify-center) align-items/center (.items-center) */
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-button .sf-button-text-container {
@@ -905,10 +909,32 @@
   .sf-button:not(:disabled):not(.disabled).focus-visible {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
     outline-offset: var(--sf-focus--offset);
+    /* A filled button gets a second, inner line in its own ink. The ring colour
+       is chosen to read against the surface, and on a filled control the fill
+       can sit one step away from it on the same ramp: in the dark theme the
+       ring measured 1.31:1 against the primary fill, so the ring alone read as
+       part of the button. The ink is the label's colour, which contrasts with
+       that fill by construction; where a button has no fill worth separating
+       from, the token stays transparent and nothing is drawn. */
+    --sf-button--focus-inset: inset 0 0 0 var(--sf-focus--offset) var(--sf-button--focus-ink, transparent);
   }
   .sf-button:not(:disabled):not(.disabled):focus-visible {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
     outline-offset: var(--sf-focus--offset);
+    /* A filled button gets a second, inner line in its own ink. The ring colour
+       is chosen to read against the surface, and on a filled control the fill
+       can sit one step away from it on the same ramp: in the dark theme the
+       ring measured 1.31:1 against the primary fill, so the ring alone read as
+       part of the button. The ink is the label's colour, which contrasts with
+       that fill by construction; where a button has no fill worth separating
+       from, the token stays transparent and nothing is drawn. */
+    --sf-button--focus-inset: inset 0 0 0 var(--sf-focus--offset) var(--sf-button--focus-ink, transparent);
+  }
+  .sf-button.sf-button--default.sf-button--primary {
+    --sf-button--focus-ink: var(--sf-on-primary);
+  }
+  .sf-button.sf-button--default.sf-button--on-surface {
+    --sf-button--focus-ink: var(--sf-on-surface-inverse, var(--sf-surface-0));
   }
   @media (forced-colors: active) {
     .sf-button:not(:disabled):not(.disabled).focus-visible {

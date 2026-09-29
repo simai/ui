@@ -245,7 +245,8 @@
     border-inline-start-width: var(--sf-icon-button--border-inline-start-width, 0);
     border-style: solid;
     border-style: var(--sf-icon-button--border-style, solid);
-    box-shadow: var(--sf-icon-button--box-shadow);
+    box-shadow: 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0);
+    box-shadow: var(--sf-icon-button--focus-inset, 0 0 rgba(0, 0, 0, 0)), var(--sf-icon-button--box-shadow, 0 0 rgba(0, 0, 0, 0));
   }
   .sf-icon-button .sf-close-icon {
     background-color: var(--sf-close-icon--background-color);
@@ -776,10 +777,23 @@
   .sf-icon-button:not(:disabled):not(.disabled).focus-visible {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
     outline-offset: var(--sf-focus--offset);
+    /* The same second line the button draws: on a filled control the ring
+       colour can sit next to the fill on one ramp and disappear into it, so the
+       control's own ink separates them. Transparent where there is no fill to
+       separate from. */
+    --sf-icon-button--focus-inset: inset 0 0 0 var(--sf-focus--offset) var(--sf-icon-button--focus-ink, transparent);
   }
   .sf-icon-button:not(:disabled):not(.disabled):focus-visible {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
     outline-offset: var(--sf-focus--offset);
+    /* The same second line the button draws: on a filled control the ring
+       colour can sit next to the fill on one ramp and disappear into it, so the
+       control's own ink separates them. Transparent where there is no fill to
+       separate from. */
+    --sf-icon-button--focus-inset: inset 0 0 0 var(--sf-focus--offset) var(--sf-icon-button--focus-ink, transparent);
+  }
+  .sf-icon-button.sf-icon-button--default.sf-icon-button--primary {
+    --sf-icon-button--focus-ink: var(--sf-on-primary);
   }
   /* Flush against its neighbours, so the ring turns inwards. Same colour, same
      width, only the offset changes sign. */

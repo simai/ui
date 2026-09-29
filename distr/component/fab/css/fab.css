@@ -181,7 +181,8 @@
             padding-inline-end: var(--sf-fab--padding-inline-end);
     padding-bottom: var(--sf-fab--padding-bottom);
     background-color: var(--sf-fab--background-color);
-    box-shadow: var(--sf-fab--box-shadow);
+    box-shadow: 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0);
+    box-shadow: var(--sf-fab--focus-inset, 0 0 rgba(0, 0, 0, 0)), var(--sf-fab--box-shadow, 0 0 rgba(0, 0, 0, 0));
   }
   .sf-fab .sf-icon {
     color: var(--sf-on-surface-variant);
@@ -286,10 +287,23 @@
   .sf-fab:not(:disabled):not(.disabled).focus-visible {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
     outline-offset: var(--sf-focus--offset);
+    /* The same second line the button draws: on a filled control the ring
+     colour can sit next to the fill on one ramp and disappear into it, so the
+     control's own ink separates them. Transparent where there is no fill to
+     separate from. */
+    --sf-fab--focus-inset: inset 0 0 0 var(--sf-focus--offset) var(--sf-fab--focus-ink, transparent);
   }
   .sf-fab:not(:disabled):not(.disabled):focus-visible {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
     outline-offset: var(--sf-focus--offset);
+    /* The same second line the button draws: on a filled control the ring
+     colour can sit next to the fill on one ramp and disappear into it, so the
+     control's own ink separates them. Transparent where there is no fill to
+     separate from. */
+    --sf-fab--focus-inset: inset 0 0 0 var(--sf-focus--offset) var(--sf-fab--focus-ink, transparent);
+  }
+  .sf-fab.sf-fab--default.sf-fab--primary {
+    --sf-fab--focus-ink: var(--sf-on-primary);
   }
   @media (forced-colors: active) {
     .sf-fab:not(:disabled):not(.disabled).focus-visible {
