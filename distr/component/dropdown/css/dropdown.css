@@ -1866,6 +1866,14 @@
     box-shadow: none;
     outline: none;
   }
+  /* The text control inside the field gives its ring up for the same reason the
+     button does: the field already carries one for the whole control. */
+  .sf-dropdown .sf-dropdown-field input.focus-visible {
+    outline: none;
+  }
+  .sf-dropdown .sf-dropdown-field input:focus-visible {
+    outline: none;
+  }
   @media (forced-colors: active) {
     .sf-dropdown .sf-dropdown-field[\:has\(\%3E\%20\[aria-haspopup\].focus-visible\)],
     .sf-list [role=option].focus-visible {

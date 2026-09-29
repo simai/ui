@@ -76,11 +76,11 @@
 }
 @layer sf.base {
   :root {
-    --sf-focus-outline-width: var(--sf-a4);
+    --sf-focus-outline-width: var(--sf-a2);
   }
   @media (min-width: 960px) {
     :root {
-      --sf-focus-outline-width: var(--sf-a4);
+      --sf-focus-outline-width: var(--sf-a2);
     }
   }
 }
@@ -93,7 +93,7 @@
     border-color: var(--sf-outline-variant);
     --sf-radius--ui: var(--sf-radius-1\/3);
     --sf-focus--color: var(--sf-focus);
-    --sf-focus--offset: var(--sf-a0);
+    --sf-focus--offset: var(--sf-a1);
     --sf-focus--style: solid;
     --sf-focus--width: var(--sf-focus-outline-width);
     --sf-ui-focus-inset: inset 0 0 0 var(--sf-focus-outline-width) var(--sf-focus);
@@ -339,7 +339,7 @@
     --sf-mark: light-dark(var(--sf-warning-50--alfa-24), var(--sf-warning-90--alfa-24));
     --sf-focus-on-primary: light-dark(rgba(255,255,255,0.25098), rgba(0,0,0,0.2));
     --sf-focus-on-neutral: light-dark(rgba(255,255,255,0.25098), rgba(0,0,0,0.2));
-    --sf-focus: light-dark(var(--sf-primary-50--alfa-24), var(--sf-primary-90--alfa-24));
+    --sf-focus: light-dark(var(--sf-primary-50), var(--sf-primary-90));
     --sf-link-hover: light-dark(var(--sf-primary-35), var(--sf-primary-85));
     --sf-link-active: light-dark(var(--sf-primary-30), var(--sf-primary-90));
     --sf-link-visited: light-dark(var(--sf-tertiary-40), var(--sf-tertiary-80));

@@ -485,28 +485,38 @@
   }
   /* The container keeps its own boundary in the outline, because moving it to a
      border would make the control two pixels taller: that part has no fixed
-     height. The ring therefore lands on the root, which surrounds the switch and
-     its label — one element, one outline, no fight over the property, and in high
-     contrast the boundary and the ring are visible at the same time. */
-  .sf-toggle[\:has\(input\:not\(\:disabled\)\:not\(.disabled\).focus-visible\)] {
+     height. The ring therefore lands on the control wrapper, which is exactly the
+     switch and nothing else — no fight over the property, and in high contrast
+     the boundary and the ring are visible at the same time. The root is the wrong
+     place for it: that box spans the label as well, so the ring would circle a
+     whole line of text to report a twenty-pixel switch. */
+  .sf-toggle[\:has\(input\:not\(\:disabled\)\:not\(.disabled\).focus-visible\)] .sf-toggle-control {
     border-radius: var(--sf-radius--ui);
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
     outline-offset: var(--sf-focus--offset);
   }
-  .sf-toggle:has(input:not(:disabled):not(.disabled).focus-visible) {
+  .sf-toggle:has(input:not(:disabled):not(.disabled).focus-visible) .sf-toggle-control {
     border-radius: var(--sf-radius--ui);
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
     outline-offset: var(--sf-focus--offset);
   }
-  .sf-toggle[\:has\(input\:not\(\:disabled\)\:not\(.disabled\)\:focus-visible\)] {
+  .sf-toggle[\:has\(input\:not\(\:disabled\)\:not\(.disabled\)\:focus-visible\)] .sf-toggle-control {
     border-radius: var(--sf-radius--ui);
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
     outline-offset: var(--sf-focus--offset);
   }
-  .sf-toggle:has(input:not(:disabled):not(.disabled):focus-visible) {
+  .sf-toggle:has(input:not(:disabled):not(.disabled):focus-visible) .sf-toggle-control {
     border-radius: var(--sf-radius--ui);
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
     outline-offset: var(--sf-focus--offset);
+  }
+  /* The focus lives on the bare control while the ring belongs to the part the
+     person sees, so the control gives its own ring up. */
+  .sf-toggle input.focus-visible {
+    outline: none;
+  }
+  .sf-toggle input:focus-visible {
+    outline: none;
   }
   .sf-toggle.active[\:not-has\(input\:disabled\)].sf-toggle--short .sf-toggle-container, .sf-toggle.active[\:not-has\(input\:disabled\)].sf-toggle--simple .sf-toggle-container, .sf-toggle.active[\:not-has\(input\:disabled\)].sf-toggle--icon .sf-toggle-container {
     --sf-toggle-container--background-color: var(--sf-primary);
@@ -723,19 +733,19 @@
       background-color: Canvas;
       outline-color: GrayText;
     }
-    .sf-toggle[\:has\(input\:not\(\:disabled\)\:not\(.disabled\).focus-visible\)] {
+    .sf-toggle[\:has\(input\:not\(\:disabled\)\:not\(.disabled\).focus-visible\)] .sf-toggle-control {
       outline: var(--sf-focus-outline-width) solid currentColor;
       outline-offset: var(--sf-focus-outline-width);
     }
-    .sf-toggle:has(input:not(:disabled):not(.disabled).focus-visible) {
+    .sf-toggle:has(input:not(:disabled):not(.disabled).focus-visible) .sf-toggle-control {
       outline: var(--sf-focus-outline-width) solid currentColor;
       outline-offset: var(--sf-focus-outline-width);
     }
-    .sf-toggle[\:has\(input\:not\(\:disabled\)\:not\(.disabled\)\:focus-visible\)] {
+    .sf-toggle[\:has\(input\:not\(\:disabled\)\:not\(.disabled\)\:focus-visible\)] .sf-toggle-control {
       outline: var(--sf-focus-outline-width) solid currentColor;
       outline-offset: var(--sf-focus-outline-width);
     }
-    .sf-toggle:has(input:not(:disabled):not(.disabled):focus-visible) {
+    .sf-toggle:has(input:not(:disabled):not(.disabled):focus-visible) .sf-toggle-control {
       outline: var(--sf-focus-outline-width) solid currentColor;
       outline-offset: var(--sf-focus-outline-width);
     }

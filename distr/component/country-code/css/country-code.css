@@ -879,6 +879,16 @@
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
     outline-offset: var(--sf-focus--offset);
   }
+  /* The global :focus-visible rule paints the ring on whatever holds the focus.
+     Here the focus lives on the bare control while the ring belongs to the part
+     the person sees, so the control gives its own ring up: one component, one
+     ring. */
+  .sf-country-code .sf-country-code-field input.focus-visible {
+    outline: none;
+  }
+  .sf-country-code .sf-country-code-field input:focus-visible {
+    outline: none;
+  }
   .sf-country-code[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:hover\)] .sf-country-code-field {
     --sf-country-code-field--border-color: var(--sf-primary-hover);
   }

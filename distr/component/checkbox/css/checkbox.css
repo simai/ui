@@ -348,6 +348,16 @@
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
     outline-offset: var(--sf-focus--offset);
   }
+  /* The global :focus-visible rule paints the ring on whatever holds the focus.
+     Here the focus lives on the bare control while the ring belongs to the part
+     the person sees, so the control gives its own ring up: one component, one
+     ring. */
+  .sf-checkbox input.focus-visible {
+    outline: none;
+  }
+  .sf-checkbox input:focus-visible {
+    outline: none;
+  }
   .sf-checkbox[\:has\(input\:disabled\)] .sf-checkbox-box {
     --sf-checkbox-box--border-color: var(--sf-outline-disable);
   }

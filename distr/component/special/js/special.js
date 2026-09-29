@@ -1708,9 +1708,16 @@ SF.Search = function () {
   }; // ================ CONSTRUCTOR ================ //
 
 
-  var _this = this;
+  var _this = this; // The module is normally mixed into a Controller, which owns the stack
+  // and the event helpers. The loader also constructs it on its own once
+  // the page is ready, and then there is no owner: borrow the shared
+  // stack, and stay quiet if even that is missing. Throwing here stopped
+  // the whole boot, so every component after it stayed uninitialised.
 
-  if (this.stack.ev('searchstart')) {
+
+  if (!this.stack && SF.Controller) this.stack = SF.Controller.Stack;
+
+  if (this.stack && typeof this.receive === 'function' && this.stack.ev('searchstart')) {
     this.receive('searchstart', window, function () {
       _this.search();
     });
