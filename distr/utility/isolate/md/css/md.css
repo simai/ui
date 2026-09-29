@@ -3,6 +3,9 @@
     .md\:isolate {
       isolation: isolate;
     }
+    .md\:isolation-auto {
+      isolation: auto;
+    }
     .md\:auto {
       isolation: auto;
     }

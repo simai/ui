@@ -2,6 +2,9 @@
   .will-change-auto {
     will-change: auto;
   }
+  .will-change-scroll-position {
+    will-change: scroll-position;
+  }
   .will-change-scroll {
     will-change: scroll-position;
   }

@@ -31,14 +31,14 @@
     text-align: right;
   }
   .table {
-    --sf-table-color: var(--sf-color--text-primary);
+    --sf-table-color: var(--sf-on-surface);
     --sf-table-border-color: var(--sf-outline-variant);
     --sf-table-accent-bg: rgba(0, 0, 0, 0);
-    --sf-table-stripe-color: var(--sf-color--text-primary);
+    --sf-table-stripe-color: var(--sf-on-surface);
     --sf-table-stripe-bg: var(--sf-surface-transparent-select);
-    --sf-table-active-color: var(--sf-color--text-primary);
+    --sf-table-active-color: var(--sf-on-surface);
     --sf-table-active-bg: var(--sf-surface-transparent-select);
-    --sf-table-hover-color: var(--sf-color--text-primary);
+    --sf-table-hover-color: var(--sf-on-surface);
     --sf-table-hover-bg: var(--sf-surface-transparent-hover);
     width: 100%;
     margin-bottom: var(--sf-b6);

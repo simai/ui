@@ -609,7 +609,7 @@
     --sf-scroll--alfa: 1;
     --sf-scroll-thumb--alfa: 1;
     --sf-scroll-track--alfa: 1;
-    --sf-stripe--color: var(--sf-color--surface-inverse);
+    --sf-stripe--color: var(--sf-surface-inverse);
     --sf-drop-shadow--alfa: 1;
     --sf-shadow--alfa: 1;
   }
@@ -617,6 +617,13 @@
 @layer sf.base {
   :root {
     --sf-transparent: rgba(255,255,255,0);
+    /* Два значения-ключевых слова, которые утилиты просили с самого начала:
+       целое семейство классов *-current и *-inherit ссылалось на них, а
+       объявления не было. Без него bg-current давал прозрачный фон, а
+       fill-current — чёрный; там, где начальное значение свойства случайно
+       совпадало с намерением, класс работал по удаче. */
+    --sf-current: currentColor;
+    --sf-inherit: inherit;
     --sf-transparent-for-focus: rgba(255,255,255,0);
     --sf-white: #ffffff;
     --sf-white--alfa-4: rgba(255,255,255,0.03922);
@@ -884,7 +891,7 @@
   }
 }
 body {
-  --sf-stripe--color: var(--sf-color--surface-inverse);
+  --sf-stripe--color: var(--sf-surface-inverse);
 }
 
 /* width */
@@ -2031,7 +2038,7 @@ body {
   }
   code {
     font-weight: var(--sf-text--weight-regular);
-    color: var(--sf-color--text-primary);
+    color: var(--sf-on-surface);
   }
 }
 @layer sf.base {
@@ -2209,7 +2216,7 @@ body {
     height: 100vh;
     opacity: 1;
     z-index: 1000;
-    background-color: var(--sf-color--surface-highest);
+    background-color: var(--sf-surface-0);
     text-align: center;
   }
   .sf-loader.hidden {

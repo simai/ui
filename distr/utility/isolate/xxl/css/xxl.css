@@ -3,6 +3,9 @@
     .xxl\:isolate {
       isolation: isolate;
     }
+    .xxl\:isolation-auto {
+      isolation: auto;
+    }
     .xxl\:auto {
       isolation: auto;
     }

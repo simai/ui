@@ -81,6 +81,18 @@
   .cursor-ns-resize {
     cursor: ns-resize;
   }
+  .cursor-ne-resize {
+    cursor: ne-resize;
+  }
+  .cursor-nw-resize {
+    cursor: nw-resize;
+  }
+  .cursor-se-resize {
+    cursor: se-resize;
+  }
+  .cursor-sw-resize {
+    cursor: sw-resize;
+  }
   .cursor-nesw-resize {
     cursor: nesw-resize;
   }

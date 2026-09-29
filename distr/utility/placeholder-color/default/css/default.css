@@ -14,6 +14,21 @@
   .placeholder-transparent::placeholder {
     color: var(--sf-transparent);
   }
+  .placeholder-current::-webkit-input-placeholder {
+    color: var(--sf-current);
+  }
+  .placeholder-current::-moz-placeholder {
+    color: var(--sf-current);
+  }
+  .placeholder-current:-ms-input-placeholder {
+    color: var(--sf-current);
+  }
+  .placeholder-current::-ms-input-placeholder {
+    color: var(--sf-current);
+  }
+  .placeholder-current::placeholder {
+    color: var(--sf-current);
+  }
   .placeholder-inherit::-webkit-input-placeholder {
     color: var(--sf-inherit);
   }

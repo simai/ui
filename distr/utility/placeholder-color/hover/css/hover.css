@@ -14,6 +14,21 @@
   .hover\:placeholder-transparent:hover::placeholder {
     color: var(--sf-transparent);
   }
+  .hover\:placeholder-current:hover::-webkit-input-placeholder {
+    color: var(--sf-current);
+  }
+  .hover\:placeholder-current:hover::-moz-placeholder {
+    color: var(--sf-current);
+  }
+  .hover\:placeholder-current:hover:-ms-input-placeholder {
+    color: var(--sf-current);
+  }
+  .hover\:placeholder-current:hover::-ms-input-placeholder {
+    color: var(--sf-current);
+  }
+  .hover\:placeholder-current:hover::placeholder {
+    color: var(--sf-current);
+  }
   .hover\:placeholder-inherit:hover::-webkit-input-placeholder {
     color: var(--sf-inherit);
   }

@@ -10407,6 +10407,18 @@
   .cursor-ns-resize {
     cursor: ns-resize;
   }
+  .cursor-ne-resize {
+    cursor: ne-resize;
+  }
+  .cursor-nw-resize {
+    cursor: nw-resize;
+  }
+  .cursor-se-resize {
+    cursor: se-resize;
+  }
+  .cursor-sw-resize {
+    cursor: sw-resize;
+  }
   .cursor-nesw-resize {
     cursor: nesw-resize;
   }
@@ -27879,6 +27891,9 @@
 @layer sf.utilities {
   .isolate {
     isolation: isolate;
+  }
+  .isolation-auto {
+    isolation: auto;
   }
   .auto {
     isolation: auto;
@@ -56881,14 +56896,14 @@
     text-align: right;
   }
   .table {
-    --sf-table-color: var(--sf-color--text-primary);
+    --sf-table-color: var(--sf-on-surface);
     --sf-table-border-color: var(--sf-outline-variant);
     --sf-table-accent-bg: rgba(0, 0, 0, 0);
-    --sf-table-stripe-color: var(--sf-color--text-primary);
+    --sf-table-stripe-color: var(--sf-on-surface);
     --sf-table-stripe-bg: var(--sf-surface-transparent-select);
-    --sf-table-active-color: var(--sf-color--text-primary);
+    --sf-table-active-color: var(--sf-on-surface);
     --sf-table-active-bg: var(--sf-surface-transparent-select);
-    --sf-table-hover-color: var(--sf-color--text-primary);
+    --sf-table-hover-color: var(--sf-on-surface);
     --sf-table-hover-bg: var(--sf-surface-transparent-hover);
     width: 100%;
     margin-bottom: var(--sf-b6);
@@ -57012,6 +57027,9 @@
 @layer sf.utilities {
   .color-transparent {
     color: var(--sf-transparent);
+  }
+  .color-current {
+    color: var(--sf-current);
   }
   .color-inherit {
     color: var(--sf-inherit);
@@ -57395,6 +57413,21 @@
   }
   .placeholder-transparent::placeholder {
     color: var(--sf-transparent);
+  }
+  .placeholder-current::-webkit-input-placeholder {
+    color: var(--sf-current);
+  }
+  .placeholder-current::-moz-placeholder {
+    color: var(--sf-current);
+  }
+  .placeholder-current:-ms-input-placeholder {
+    color: var(--sf-current);
+  }
+  .placeholder-current::-ms-input-placeholder {
+    color: var(--sf-current);
+  }
+  .placeholder-current::placeholder {
+    color: var(--sf-current);
   }
   .placeholder-inherit::-webkit-input-placeholder {
     color: var(--sf-inherit);
@@ -58105,6 +58138,21 @@
   .hover\:placeholder-transparent:hover::placeholder {
     color: var(--sf-transparent);
   }
+  .hover\:placeholder-current:hover::-webkit-input-placeholder {
+    color: var(--sf-current);
+  }
+  .hover\:placeholder-current:hover::-moz-placeholder {
+    color: var(--sf-current);
+  }
+  .hover\:placeholder-current:hover:-ms-input-placeholder {
+    color: var(--sf-current);
+  }
+  .hover\:placeholder-current:hover::-ms-input-placeholder {
+    color: var(--sf-current);
+  }
+  .hover\:placeholder-current:hover::placeholder {
+    color: var(--sf-current);
+  }
   .hover\:placeholder-inherit:hover::-webkit-input-placeholder {
     color: var(--sf-inherit);
   }
@@ -58601,6 +58649,21 @@
   }
   .focus\:placeholder-transparent:focus::placeholder {
     color: var(--sf-transparent);
+  }
+  .focus\:placeholder-current:focus::-webkit-input-placeholder {
+    color: var(--sf-current);
+  }
+  .focus\:placeholder-current:focus::-moz-placeholder {
+    color: var(--sf-current);
+  }
+  .focus\:placeholder-current:focus:-ms-input-placeholder {
+    color: var(--sf-current);
+  }
+  .focus\:placeholder-current:focus::-ms-input-placeholder {
+    color: var(--sf-current);
+  }
+  .focus\:placeholder-current:focus::placeholder {
+    color: var(--sf-current);
   }
   .focus\:placeholder-inherit:focus::-webkit-input-placeholder {
     color: var(--sf-inherit);
@@ -63789,6 +63852,9 @@
 @layer sf.utilities {
   .will-change-auto {
     will-change: auto;
+  }
+  .will-change-scroll-position {
+    will-change: scroll-position;
   }
   .will-change-scroll {
     will-change: scroll-position;
@@ -84428,6 +84494,9 @@
   @media (min-width: 520px) {
     .sm\:isolate {
       isolation: isolate;
+    }
+    .sm\:isolation-auto {
+      isolation: auto;
     }
     .sm\:auto {
       isolation: auto;
@@ -127895,6 +127964,9 @@
     .md\:isolate {
       isolation: isolate;
     }
+    .md\:isolation-auto {
+      isolation: auto;
+    }
     .md\:auto {
       isolation: auto;
     }
@@ -171360,6 +171432,9 @@
   @media (min-width: 960px) {
     .lg\:isolate {
       isolation: isolate;
+    }
+    .lg\:isolation-auto {
+      isolation: auto;
     }
     .lg\:auto {
       isolation: auto;
@@ -235401,6 +235476,9 @@
     .xl\:isolate {
       isolation: isolate;
     }
+    .xl\:isolation-auto {
+      isolation: auto;
+    }
     .xl\:auto {
       isolation: auto;
     }
@@ -235410,6 +235488,9 @@
   @media (min-width: 1320px) {
     .xxl\:isolate {
       isolation: isolate;
+    }
+    .xxl\:isolation-auto {
+      isolation: auto;
     }
     .xxl\:auto {
       isolation: auto;
@@ -287048,103 +287129,106 @@
 }
 @layer sf.utilities {
   .focus\:color-transparent:focus {
-    color: var(--sf-color--transparent);
+    color: var(--sf-transparent);
+  }
+  .focus\:color-current:focus {
+    color: var(--sf-current);
   }
   .focus\:color-inherit:focus {
-    color: var(--sf-color--inherit);
+    color: var(--sf-inherit);
   }
   .focus\:color-on-surface:focus {
-    color: var(--sf-color--on-surface);
+    color: var(--sf-on-surface);
   }
   .focus\:color-on-surface-fixed:focus {
-    color: var(--sf-color--on-surface-fixed);
+    color: var(--sf-on-surface-fixed);
   }
   .focus\:color-on-surface-variant:focus {
-    color: var(--sf-color--on-surface-variant);
+    color: var(--sf-on-surface-variant);
   }
   .focus\:color-on-surface-inverse:focus {
-    color: var(--sf-color--on-surface-inverse);
+    color: var(--sf-on-surface-inverse);
   }
   .focus\:color-on-surface-inverse-fixed:focus {
-    color: var(--sf-color--on-surface-inverse-fixed);
+    color: var(--sf-on-surface-inverse-fixed);
   }
   .focus\:color-disable:focus {
-    color: var(--sf-color--disable);
+    color: var(--sf-disable);
   }
   .focus\:color-on-disable:focus {
-    color: var(--sf-color--on-disable);
+    color: var(--sf-on-disable);
   }
   .focus\:color-primary:focus {
-    color: var(--sf-color--primary);
+    color: var(--sf-primary);
   }
   .focus\:color-on-primary:focus {
-    color: var(--sf-color--on-primary);
+    color: var(--sf-on-primary);
   }
   .focus\:color-on-primary-container:focus {
-    color: var(--sf-color--on-primary-container);
+    color: var(--sf-on-primary-container);
   }
   .focus\:color-on-primary-container-graphic:focus {
-    color: var(--sf-color--on-primary-container-graphic);
+    color: var(--sf-on-primary-container-graphic);
   }
   .focus\:color-secondary:focus {
-    color: var(--sf-color--secondary);
+    color: var(--sf-secondary);
   }
   .focus\:color-on-secondary:focus {
-    color: var(--sf-color--on-secondary);
+    color: var(--sf-on-secondary);
   }
   .focus\:color-on-secondary-container:focus {
-    color: var(--sf-color--on-secondary-container);
+    color: var(--sf-on-secondary-container);
   }
   .focus\:color-on-secondary-container-graphic:focus {
-    color: var(--sf-color--on-secondary-container-graphic);
+    color: var(--sf-on-secondary-container-graphic);
   }
   .focus\:color-tertiary:focus {
-    color: var(--sf-color--tertiary);
+    color: var(--sf-tertiary);
   }
   .focus\:color-on-tertiary:focus {
-    color: var(--sf-color--on-tertiary);
+    color: var(--sf-on-tertiary);
   }
   .focus\:color-on-tertiary-container:focus {
-    color: var(--sf-color--on-tertiary-container);
+    color: var(--sf-on-tertiary-container);
   }
   .focus\:color-on-tertiary-container-graphic:focus {
-    color: var(--sf-color--on-tertiary-container-graphic);
+    color: var(--sf-on-tertiary-container-graphic);
   }
   .focus\:color-error:focus {
-    color: var(--sf-color--error);
+    color: var(--sf-error);
   }
   .focus\:color-on-error:focus {
-    color: var(--sf-color--on-error);
+    color: var(--sf-on-error);
   }
   .focus\:color-on-error-container:focus {
-    color: var(--sf-color--on-error-container);
+    color: var(--sf-on-error-container);
   }
   .focus\:color-on-error-container-graphic:focus {
-    color: var(--sf-color--on-error-container-graphic);
+    color: var(--sf-on-error-container-graphic);
   }
   .focus\:color-warning:focus {
-    color: var(--sf-color--warning);
+    color: var(--sf-warning);
   }
   .focus\:color-on-warning:focus {
-    color: var(--sf-color--on-warning);
+    color: var(--sf-on-warning);
   }
   .focus\:color-on-warning-container:focus {
-    color: var(--sf-color--on-warning-container);
+    color: var(--sf-on-warning-container);
   }
   .focus\:color-on-warning-container-graphic:focus {
-    color: var(--sf-color--on-warning-container-graphic);
+    color: var(--sf-on-warning-container-graphic);
   }
   .focus\:color-success:focus {
-    color: var(--sf-color--success);
+    color: var(--sf-success);
   }
   .focus\:color-on-success:focus {
-    color: var(--sf-color--on-success);
+    color: var(--sf-on-success);
   }
   .focus\:color-on-success-container:focus {
-    color: var(--sf-color--on-success-container);
+    color: var(--sf-on-success-container);
   }
   .focus\:color-on-success-container-graphic:focus {
-    color: var(--sf-color--on-success-container-graphic);
+    color: var(--sf-on-success-container-graphic);
   }
   .focus\:color-transparent:focus {
     color: var(--sf-transparent);

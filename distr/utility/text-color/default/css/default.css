@@ -2,6 +2,9 @@
   .color-transparent {
     color: var(--sf-transparent);
   }
+  .color-current {
+    color: var(--sf-current);
+  }
   .color-inherit {
     color: var(--sf-inherit);
   }
