@@ -162,10 +162,22 @@
     background: var(--sf-surface-container-active);
   }
   .sf-tree .sf-tree-item.focus-visible > .sf-tree-item-container {
-    box-shadow: inset 0 0 0 var(--sf-focus-outline-width) var(--sf-focus);
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: calc(var(--sf-focus--width) * -1);
   }
   .sf-tree .sf-tree-item:focus-visible > .sf-tree-item-container {
-    box-shadow: inset 0 0 0 var(--sf-focus-outline-width) var(--sf-focus);
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: calc(var(--sf-focus--width) * -1);
+  }
+  @media (forced-colors: active) {
+    .sf-tree .sf-tree-item.focus-visible > .sf-tree-item-container {
+      outline: var(--sf-focus--width) solid Highlight;
+      outline-offset: calc(var(--sf-focus--width) * -1);
+    }
+    .sf-tree .sf-tree-item:focus-visible > .sf-tree-item-container {
+      outline: var(--sf-focus--width) solid Highlight;
+      outline-offset: calc(var(--sf-focus--width) * -1);
+    }
   }
   .sf-tree .sf-tree-item[aria-disabled=true] {
     color: var(--sf-on-surface-muted);
