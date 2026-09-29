@@ -84,26 +84,131 @@
     cursor: inherit;
     position: absolute;
   }
-  .sf-range-slider .sf-range-slider-handle-lower {
-    right: calc(var(--sf-ui-1\/3--control-height) / -2);
-    right: calc(var(--sf-thumb-handle--width, var(--sf-ui-1\/3--control-height)) / -2);
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-range-slider .sf-range-slider-origin {
+    right: auto;
   }
+  @supports not (inset-inline-end: initial) {
+  html:not([dir="rtl"]) .sf-range-slider .sf-range-slider-origin {
+    right: auto;
+    }
+  }
+  .sf-range-slider .sf-range-slider-origin:where(:dir(ltr)) {
+    right: auto;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-range-slider .sf-range-slider-origin {
+    left: auto;
+  }
+  @supports not (inset-inline-end: initial) {
+  [dir="rtl"] .sf-range-slider .sf-range-slider-origin {
+    left: auto;
+    }
+  }
+  .sf-range-slider .sf-range-slider-origin:where(:dir(rtl)) {
+    left: auto;
+  }
+  .sf-range-slider .sf-range-slider-origin {
+    height: 0;
+    block-size: 0;
+    width: 0;
+    inline-size: 0;
+    inset-inline-end: auto;
+    position: absolute;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-range-slider .sf-range-slider-handle-lower,html:not([dir="rtl"])
+  .sf-range-slider .sf-range-slider-handle-upper {
+    right: auto;
+  }
+  @supports not (inset-inline-end: initial) {
+  html:not([dir="rtl"]) .sf-range-slider .sf-range-slider-handle-lower,html:not([dir="rtl"])
+  .sf-range-slider .sf-range-slider-handle-upper {
+    right: auto;
+    }
+  }
+  .sf-range-slider .sf-range-slider-handle-lower:where(:dir(ltr)),
+  .sf-range-slider .sf-range-slider-handle-upper:where(:dir(ltr)) {
+    right: auto;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-range-slider .sf-range-slider-handle-lower,[dir="rtl"]
+  .sf-range-slider .sf-range-slider-handle-upper {
+    left: auto;
+  }
+  @supports not (inset-inline-end: initial) {
+  [dir="rtl"] .sf-range-slider .sf-range-slider-handle-lower,[dir="rtl"]
+  .sf-range-slider .sf-range-slider-handle-upper {
+    left: auto;
+    }
+  }
+  .sf-range-slider .sf-range-slider-handle-lower:where(:dir(rtl)),
+  .sf-range-slider .sf-range-slider-handle-upper:where(:dir(rtl)) {
+    left: auto;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-range-slider .sf-range-slider-handle-lower,html:not([dir="rtl"])
+  .sf-range-slider .sf-range-slider-handle-upper {
+    left: calc(var(--sf-ui-1\/3--control-height) / -2);
+    left: calc(var(--sf-thumb-handle--width, var(--sf-ui-1\/3--control-height)) / -2);
+  }
+  @supports not (inset-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-range-slider .sf-range-slider-handle-lower,html:not([dir="rtl"])
+  .sf-range-slider .sf-range-slider-handle-upper {
+    left: calc(var(--sf-ui-1\/3--control-height) / -2);
+    left: calc(var(--sf-thumb-handle--width, var(--sf-ui-1\/3--control-height)) / -2);
+    }
+  }
+  .sf-range-slider .sf-range-slider-handle-lower:where(:dir(ltr)),
+  .sf-range-slider .sf-range-slider-handle-upper:where(:dir(ltr)) {
+    left: calc(var(--sf-ui-1\/3--control-height) / -2);
+    left: calc(var(--sf-thumb-handle--width, var(--sf-ui-1\/3--control-height)) / -2);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-range-slider .sf-range-slider-handle-lower,[dir="rtl"]
   .sf-range-slider .sf-range-slider-handle-upper {
     right: calc(var(--sf-ui-1\/3--control-height) / -2);
     right: calc(var(--sf-thumb-handle--width, var(--sf-ui-1\/3--control-height)) / -2);
   }
-  .sf-range-slider .sf-range-slider-origin {
-    height: 0;
-    position: absolute;
+  @supports not (inset-inline-start: initial) {
+  [dir="rtl"] .sf-range-slider .sf-range-slider-handle-lower,[dir="rtl"]
+  .sf-range-slider .sf-range-slider-handle-upper {
+    right: calc(var(--sf-ui-1\/3--control-height) / -2);
+    right: calc(var(--sf-thumb-handle--width, var(--sf-ui-1\/3--control-height)) / -2);
+    }
   }
-  .sf-range-slider.sf-range-slider-txt-dir-rtl .sf-range-slider-origin {
-    left: 0;
-    right: auto;
+  .sf-range-slider .sf-range-slider-handle-lower:where(:dir(rtl)),
+  .sf-range-slider .sf-range-slider-handle-upper:where(:dir(rtl)) {
+    right: calc(var(--sf-ui-1\/3--control-height) / -2);
+    right: calc(var(--sf-thumb-handle--width, var(--sf-ui-1\/3--control-height)) / -2);
   }
-  .sf-range-slider.sf-range-slider-txt-dir-rtl .sf-range-slider-handle {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-range-slider .sf-range-slider-handle-lower,html:not([dir="rtl"])
+  .sf-range-slider .sf-range-slider-handle-upper {
     left: calc(var(--sf-ui-1\/3--control-height) / -2);
-    left: calc(var(--sf-thumb-handle--width, var(--sf-ui-1\/3--control-height)) / -2);
-    right: auto;
+  }
+  @supports not (inset-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-range-slider .sf-range-slider-handle-lower,html:not([dir="rtl"])
+  .sf-range-slider .sf-range-slider-handle-upper {
+    left: calc(var(--sf-ui-1\/3--control-height) / -2);
+    }
+  }
+  .sf-range-slider .sf-range-slider-handle-lower:where(:dir(ltr)),
+  .sf-range-slider .sf-range-slider-handle-upper:where(:dir(ltr)) {
+    left: calc(var(--sf-ui-1\/3--control-height) / -2);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-range-slider .sf-range-slider-handle-lower,[dir="rtl"]
+  .sf-range-slider .sf-range-slider-handle-upper {
+    right: calc(var(--sf-ui-1\/3--control-height) / -2);
+  }
+  @supports not (inset-inline-start: initial) {
+  [dir="rtl"] .sf-range-slider .sf-range-slider-handle-lower,[dir="rtl"]
+  .sf-range-slider .sf-range-slider-handle-upper {
+    right: calc(var(--sf-ui-1\/3--control-height) / -2);
+    }
+  }
+  .sf-range-slider .sf-range-slider-handle-lower:where(:dir(rtl)),
+  .sf-range-slider .sf-range-slider-handle-upper:where(:dir(rtl)) {
+    right: calc(var(--sf-ui-1\/3--control-height) / -2);
+  }
+  .sf-range-slider .sf-range-slider-handle-lower,
+  .sf-range-slider .sf-range-slider-handle-upper {
+    inset-inline-end: auto;
+    inset-inline-start: calc(var(--sf-ui-1\/3--control-height) / -2);
+    inset-inline-start: calc(var(--sf-thumb-handle--width, var(--sf-ui-1\/3--control-height)) / -2);
   }
   .sf-range-slider .sf-range-slider-visual {
     left: 50%;
