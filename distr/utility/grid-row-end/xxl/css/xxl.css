@@ -1,26 +1,34 @@
 @layer sf.utilities {
   @media (min-width: 1320px) {
+    .xxl\:row-end-1,
     .xxl\:grid-row-end-1 {
       grid-row-end: 1;
     }
+    .xxl\:row-end-2,
     .xxl\:grid-row-end-2 {
       grid-row-end: 2;
     }
+    .xxl\:row-end-3,
     .xxl\:grid-row-end-3 {
       grid-row-end: 3;
     }
+    .xxl\:row-end-4,
     .xxl\:grid-row-end-4 {
       grid-row-end: 4;
     }
+    .xxl\:row-end-5,
     .xxl\:grid-row-end-5 {
       grid-row-end: 5;
     }
+    .xxl\:row-end-6,
     .xxl\:grid-row-end-6 {
       grid-row-end: 6;
     }
+    .xxl\:row-end-7,
     .xxl\:grid-row-end-7 {
       grid-row-end: 7;
     }
+    .xxl\:row-end-auto,
     .xxl\:grid-row-end-auto {
       grid-row-end: auto;
     }
