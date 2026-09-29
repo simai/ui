@@ -39,6 +39,8 @@
 @layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.base {
   :root {
+    /* Нулевая ступень: класс radius-0 просил её с самого начала. */
+    --sf-radius-0: var(--sf-a0);
     --sf-radius-1\/3: 0.125rem;
     --sf-radius-1\/3: var(--sf-a2);
     --sf-radius-1\/2: 0.25rem;
@@ -51,6 +53,7 @@
   }
   @media (min-width: 960px) {
     :root {
+      --sf-radius-0: var(--sf-a0);
       --sf-radius-1\/3: 0.125rem;
       --sf-radius-1\/3: var(--sf-a2);
       --sf-radius-1\/2: 0.25rem;
@@ -206,6 +209,10 @@
     --sf-success-container: light-dark(var(--sf-success-50--alfa-12), var(--sf-success-50--alfa-24));
     --sf-success-container-hover: light-dark(var(--sf-success-50--alfa-16), var(--sf-success-50--alfa-28));
     --sf-success-container-active: light-dark(var(--sf-success-50--alfa-20), var(--sf-success-50--alfa-32));
+    --sf-success-transparent-hover: light-dark(var(--sf-success-50--alfa-4), var(--sf-success-90--alfa-4));
+    --sf-success-transparent-select: light-dark(var(--sf-success-50--alfa-8), var(--sf-success-90--alfa-8));
+    --sf-success-transparent-active: light-dark(var(--sf-success-50--alfa-12), var(--sf-success-90--alfa-12));
+    --sf-success-transparent-overlay: light-dark(var(--sf-success-50--alfa-24), var(--sf-success-90--alfa-24));
     --sf-on-success: light-dark(var(--sf-white), var(--sf-success-20));
     --sf-on-success-container: light-dark(var(--sf-success-10), var(--sf-success-90));
     --sf-on-success-container-graphic: light-dark(var(--sf-success-50), var(--sf-success-60));
@@ -217,6 +224,10 @@
     --sf-error-container: light-dark(var(--sf-error-50--alfa-12), var(--sf-error-50--alfa-24));
     --sf-error-container-hover: light-dark(var(--sf-error-50--alfa-16), var(--sf-error-50--alfa-28));
     --sf-error-container-active: light-dark(var(--sf-error-50--alfa-20), var(--sf-error-50--alfa-32));
+    --sf-error-transparent-hover: light-dark(var(--sf-error-50--alfa-4), var(--sf-error-90--alfa-4));
+    --sf-error-transparent-select: light-dark(var(--sf-error-50--alfa-8), var(--sf-error-90--alfa-8));
+    --sf-error-transparent-active: light-dark(var(--sf-error-50--alfa-12), var(--sf-error-90--alfa-12));
+    --sf-error-transparent-overlay: light-dark(var(--sf-error-50--alfa-24), var(--sf-error-90--alfa-24));
     --sf-on-error: light-dark(var(--sf-white), var(--sf-error-20));
     --sf-on-error-container: light-dark(var(--sf-error-10), var(--sf-error-90));
     --sf-on-error-container-graphic: light-dark(var(--sf-error-50), var(--sf-error-60));
@@ -226,6 +237,10 @@
     --sf-warning-container: light-dark(var(--sf-warning-50--alfa-12), var(--sf-warning-50--alfa-24));
     --sf-warning-container-hover: light-dark(var(--sf-warning-50--alfa-16), var(--sf-warning-50--alfa-28));
     --sf-warning-container-active: light-dark(var(--sf-warning-50--alfa-20), var(--sf-warning-50--alfa-32));
+    --sf-warning-transparent-hover: light-dark(var(--sf-warning-50--alfa-4), var(--sf-warning-90--alfa-4));
+    --sf-warning-transparent-select: light-dark(var(--sf-warning-50--alfa-8), var(--sf-warning-90--alfa-8));
+    --sf-warning-transparent-active: light-dark(var(--sf-warning-50--alfa-12), var(--sf-warning-90--alfa-12));
+    --sf-warning-transparent-overlay: light-dark(var(--sf-warning-50--alfa-24), var(--sf-warning-90--alfa-24));
     --sf-on-warning: light-dark(var(--sf-white), var(--sf-warning-20));
     --sf-on-warning-container: light-dark(var(--sf-warning-10), var(--sf-warning-90));
     --sf-on-warning-container-graphic: light-dark(var(--sf-warning-50), var(--sf-warning-60));
@@ -235,6 +250,10 @@
     --sf-tertiary-container: light-dark(var(--sf-tertiary-50--alfa-12), var(--sf-tertiary-50--alfa-24));
     --sf-tertiary-container-hover: light-dark(var(--sf-tertiary-50--alfa-16), var(--sf-tertiary-50--alfa-28));
     --sf-tertiary-container-active: light-dark(var(--sf-tertiary-50--alfa-20), var(--sf-tertiary-50--alfa-32));
+    --sf-tertiary-transparent-hover: light-dark(var(--sf-tertiary-50--alfa-4), var(--sf-tertiary-90--alfa-4));
+    --sf-tertiary-transparent-select: light-dark(var(--sf-tertiary-50--alfa-8), var(--sf-tertiary-90--alfa-8));
+    --sf-tertiary-transparent-active: light-dark(var(--sf-tertiary-50--alfa-12), var(--sf-tertiary-90--alfa-12));
+    --sf-tertiary-transparent-overlay: light-dark(var(--sf-tertiary-50--alfa-24), var(--sf-tertiary-90--alfa-24));
     --sf-on-tertiary: light-dark(var(--sf-white), var(--sf-tertiary-20));
     --sf-on-tertiary-container: light-dark(var(--sf-tertiary-10), var(--sf-tertiary-90));
     --sf-on-tertiary-container-graphic: light-dark(var(--sf-tertiary-50), var(--sf-tertiary-60));
@@ -244,6 +263,10 @@
     --sf-secondary-container: light-dark(var(--sf-secondary-50--alfa-12), var(--sf-secondary-50--alfa-24));
     --sf-secondary-container-hover: light-dark(var(--sf-secondary-50--alfa-16), var(--sf-secondary-50--alfa-28));
     --sf-secondary-container-active: light-dark(var(--sf-secondary-50--alfa-20), var(--sf-secondary-50--alfa-32));
+    --sf-secondary-transparent-hover: light-dark(var(--sf-secondary-50--alfa-4), var(--sf-secondary-90--alfa-4));
+    --sf-secondary-transparent-select: light-dark(var(--sf-secondary-50--alfa-8), var(--sf-secondary-90--alfa-8));
+    --sf-secondary-transparent-active: light-dark(var(--sf-secondary-50--alfa-12), var(--sf-secondary-90--alfa-12));
+    --sf-secondary-transparent-overlay: light-dark(var(--sf-secondary-50--alfa-24), var(--sf-secondary-90--alfa-24));
     --sf-on-secondary: light-dark(var(--sf-white), var(--sf-secondary-20));
     --sf-on-secondary-container: light-dark(var(--sf-secondary-10), var(--sf-secondary-90));
     --sf-on-secondary-container-graphic: light-dark(var(--sf-secondary-50), var(--sf-secondary-60));
@@ -252,6 +275,14 @@
     --sf-primary-container: light-dark(var(--sf-primary-50--alfa-12), var(--sf-primary-50--alfa-24));
     --sf-primary-container-hover: light-dark(var(--sf-primary-50--alfa-16), var(--sf-primary-50--alfa-28));
     --sf-primary-container-active: light-dark(var(--sf-primary-50--alfa-20), var(--sf-primary-50--alfa-32));
+    /* Полупрозрачные слои палитры: наведение, выбор, нажатие и затемнение
+       поверх неизвестного фона. Утилиты предлагали их с самого начала,
+       а слой ролей — нет, поэтому bg-primary-transparent-select ничего
+       не красил. */
+    --sf-primary-transparent-hover: light-dark(var(--sf-primary-50--alfa-4), var(--sf-primary-90--alfa-4));
+    --sf-primary-transparent-select: light-dark(var(--sf-primary-50--alfa-8), var(--sf-primary-90--alfa-8));
+    --sf-primary-transparent-active: light-dark(var(--sf-primary-50--alfa-12), var(--sf-primary-90--alfa-12));
+    --sf-primary-transparent-overlay: light-dark(var(--sf-primary-50--alfa-24), var(--sf-primary-90--alfa-24));
     --sf-on-primary: light-dark(var(--sf-white), var(--sf-primary-20));
     --sf-on-primary-container: light-dark(var(--sf-primary-10), var(--sf-primary-90));
     --sf-on-primary-container-graphic: light-dark(var(--sf-primary-50), var(--sf-primary-60));
@@ -277,6 +308,13 @@
     --sf-surface-0: light-dark(var(--sf-white), var(--sf-neutral-5));
     --sf-surface-1: light-dark(var(--sf-neutral-98), var(--sf-neutral-10));
     --sf-surface-overlay: light-dark(var(--sf-black--alfa-8), var(--sf-white--alfa-8));
+    --sf-surface-2: light-dark(var(--sf-neutral-95), var(--sf-neutral-15));
+    --sf-surface-3: light-dark(var(--sf-neutral-90), var(--sf-neutral-20));
+    --sf-surface-4: light-dark(var(--sf-neutral-85), var(--sf-neutral-25));
+    --sf-surface-transparent-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
+    --sf-surface-transparent-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
+    --sf-surface-transparent-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    --sf-surface-transparent-overlay: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
     --sf-surface-inverse: light-dark(var(--sf-neutral-20), var(--sf-neutral-90));
     --sf-surface-inverse-fixed: var(--sf-neutral-20);
     --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-50--alfa-24));
@@ -652,6 +690,9 @@
     --sf-neutral-70: #ababb0;
     --sf-neutral-60: #909095;
     --sf-neutral-50: #76777c;
+    /* Ступени 4 % и 8 %: на них стоят слои наведения и выбора этой палитры. */
+    --sf-neutral-50--alfa-4: rgba(118,119,124,0.03922);
+    --sf-neutral-50--alfa-8: rgba(118,119,124,0.07843);
     --sf-neutral-50--alfa-12: rgba(118,119,124,0.12157);
     --sf-neutral-50--alfa-16: rgba(118,119,124,0.16078);
     --sf-neutral-50--alfa-20: rgba(118,119,124,0.2);
@@ -684,6 +725,9 @@
     --sf-tertiary-70: #cf98d8;
     --sf-tertiary-60: #b37ebb;
     --sf-tertiary-50: #9765a0;
+    /* Ступени 4 % и 8 %: на них стоят слои наведения и выбора этой палитры. */
+    --sf-tertiary-50--alfa-4: rgba(151,101,160,0.03922);
+    --sf-tertiary-50--alfa-8: rgba(151,101,160,0.07843);
     --sf-tertiary-50--alfa-12: rgba(151,101,160,0.12157);
     --sf-tertiary-50--alfa-16: rgba(151,101,160,0.16078);
     --sf-tertiary-50--alfa-20: rgba(151,101,160,0.2);
@@ -713,6 +757,9 @@
     --sf-secondary-70: #a0abc7;
     --sf-secondary-60: #8591ab;
     --sf-secondary-50: #6c7791;
+    /* Ступени 4 % и 8 %: на них стоят слои наведения и выбора этой палитры. */
+    --sf-secondary-50--alfa-4: rgba(108,119,145,0.03922);
+    --sf-secondary-50--alfa-8: rgba(108,119,145,0.07843);
     --sf-secondary-50--alfa-12: rgba(108,119,145,0.12157);
     --sf-secondary-50--alfa-16: rgba(108,119,145,0.16078);
     --sf-secondary-50--alfa-20: rgba(108,119,145,0.2);
@@ -773,6 +820,9 @@
     --sf-primary-70: #7eabff;
     --sf-primary-60: #488fff;
     --sf-primary-50: #0073ed;
+    /* Ступени 4 % и 8 %: на них стоят слои наведения и выбора этой палитры. */
+    --sf-primary-50--alfa-4: rgba(0,115,237,0.03922);
+    --sf-primary-50--alfa-8: rgba(0,115,237,0.07843);
     --sf-primary-50--alfa-12: rgba(0,115,237,0.12157);
     --sf-primary-50--alfa-16: rgba(0,115,237,0.16078);
     --sf-primary-50--alfa-20: rgba(0,115,237,0.2);
@@ -811,6 +861,9 @@
     --sf-error-70: #ff897d;
     --sf-error-60: #ff5449;
     --sf-error-50: #df362f;
+    /* Ступени 4 % и 8 %: на них стоят слои наведения и выбора этой палитры. */
+    --sf-error-50--alfa-4: rgba(223,54,47,0.03922);
+    --sf-error-50--alfa-8: rgba(223,54,47,0.07843);
     --sf-error-50--alfa-12: rgba(223,54,47,0.12157);
     --sf-error-50--alfa-16: rgba(223,54,47,0.16078);
     --sf-error-50--alfa-20: rgba(223,54,47,0.2);
@@ -841,6 +894,9 @@
     --sf-warning-70: #fa911c;
     --sf-warning-60: #d87900;
     --sf-warning-50: #b26300;
+    /* Ступени 4 % и 8 %: на них стоят слои наведения и выбора этой палитры. */
+    --sf-warning-50--alfa-4: rgba(178,99,0,0.03922);
+    --sf-warning-50--alfa-8: rgba(178,99,0,0.07843);
     --sf-warning-50--alfa-12: rgba(178,99,0,0.12157);
     --sf-warning-50--alfa-16: rgba(178,99,0,0.16078);
     --sf-warning-50--alfa-20: rgba(178,99,0,0.2);
@@ -871,6 +927,9 @@
     --sf-success-70: #58c157;
     --sf-success-60: #3ba53f;
     --sf-success-50: #198a27;
+    /* Ступени 4 % и 8 %: на них стоят слои наведения и выбора этой палитры. */
+    --sf-success-50--alfa-4: rgba(25,138,39,0.03922);
+    --sf-success-50--alfa-8: rgba(25,138,39,0.07843);
     --sf-success-50--alfa-12: rgba(25,138,39,0.12157);
     --sf-success-50--alfa-16: rgba(25,138,39,0.16078);
     --sf-success-50--alfa-20: rgba(25,138,39,0.2);
@@ -2037,7 +2096,7 @@ body {
             padding-inline-start: var(--sf-text--size-2);
   }
   code {
-    font-weight: var(--sf-text--weight-regular);
+    font-weight: var(--sf-weight--regular);
     color: var(--sf-on-surface);
   }
 }
@@ -2359,6 +2418,8 @@ body {
 }
 @layer sf.base {
   :root {
+    /* Нулевая ступень: класс blur-none просил её с самого начала. */
+    --sf-blur-none: var(--sf-a0);
     --sf-blur-small: var(--sf-a2);
     --sf-blur-medium: var(--sf-a4);
     --sf-blur-large: var(--sf-a8);
@@ -2366,6 +2427,7 @@ body {
   }
   @media (min-width: 960px) {
     :root {
+      --sf-blur-none: var(--sf-a0);
       --sf-blur-small: var(--sf-a2);
       --sf-blur-medium: var(--sf-a4);
       --sf-blur-large: var(--sf-a8);

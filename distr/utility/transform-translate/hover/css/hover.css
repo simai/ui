@@ -1,27 +1,27 @@
 @layer sf.utilities {
   .hover\:translate-x-0:hover {
-    --sf-translate-x: var(--sf-0px);
+    --sf-translate-x: var(--sf-a0);
     -webkit-transform: translate(0, 0);
             transform: translate(0, 0);
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
             transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
   }
   .hover\:translate-y-0:hover {
-    --sf-translate-y: var(--sf-0px);
+    --sf-translate-y: var(--sf-a0);
     -webkit-transform: translate(0, 0);
             transform: translate(0, 0);
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
             transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
   }
   .-hover\:translate-x-0:hover {
-    --sf-translate-x: calc(0rem - var(--sf-0px));
+    --sf-translate-x: calc(0rem - var(--sf-a0));
     -webkit-transform: translate(0, 0);
             transform: translate(0, 0);
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
             transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));
   }
   .-hover\:translate-y-0:hover {
-    --sf-translate-y: calc(0rem - var(--sf-0px));
+    --sf-translate-y: calc(0rem - var(--sf-a0));
     -webkit-transform: translate(0, 0);
             transform: translate(0, 0);
     -webkit-transform: translate(var(--sf-translate-x, 0), var(--sf-translate-y, 0));

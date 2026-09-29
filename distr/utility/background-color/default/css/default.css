@@ -119,53 +119,14 @@
   .bg-success-transparent-overlay {
     background-color: var(--sf-success-transparent-overlay);
   }
-  .active\:bg-transparent:active {
-    background-color: var(--sf-transparent-active);
-  }
-  .active\:bg-current:active {
-    background-color: var(--sf-current-active);
-  }
-  .active\:bg-surface-0:active {
-    background-color: var(--sf-surface-0-active);
-  }
-  .active\:bg-surface-1:active {
-    background-color: var(--sf-surface-1-active);
-  }
-  .active\:bg-surface-2:active {
-    background-color: var(--sf-surface-2-active);
-  }
-  .active\:bg-surface-3:active {
-    background-color: var(--sf-surface-3-active);
-  }
-  .active\:bg-surface-4:active {
-    background-color: var(--sf-surface-4-active);
-  }
-  .active\:bg-surface:active {
-    background-color: var(--sf-surface-1-active);
-  }
-  .active\:bg-surface-inverse:active {
-    background-color: var(--sf-surface-inverse-active);
-  }
-  .active\:bg-surface-inverse-fixed:active {
-    background-color: var(--sf-surface-inverse-fixed-active);
-  }
   .active\:bg-surface-container:active {
     background-color: var(--sf-surface-container-active);
   }
   .active\:bg-on-surface:active {
     background-color: var(--sf-on-surface-active);
   }
-  .active\:bg-on-surface-variant:active {
-    background-color: var(--sf-on-surface-variant-active);
-  }
-  .active\:bg-surface-transparent-select:active {
-    background-color: var(--sf-surface-transparent-select-active);
-  }
-  .active\:bg-surface-transparent-overlay:active {
-    background-color: var(--sf-surface-transparent-overlay-active);
-  }
-  .active\:bg-disable:active {
-    background-color: var(--sf-disable-active);
+  .active\:bg-surface-transparent:active {
+    background-color: var(--sf-surface-transparent-active);
   }
   .active\:bg-primary:active {
     background-color: var(--sf-primary-active);
@@ -173,11 +134,8 @@
   .active\:bg-primary-container:active {
     background-color: var(--sf-primary-container-active);
   }
-  .active\:bg-primary-transparent-select:active {
-    background-color: var(--sf-primary-transparent-select-active);
-  }
-  .active\:bg-primary-transparent-overlay:active {
-    background-color: var(--sf-primary-transparent-overlay-active);
+  .active\:bg-primary-transparent:active {
+    background-color: var(--sf-primary-transparent-active);
   }
   .active\:bg-secondary:active {
     background-color: var(--sf-secondary-active);
@@ -185,11 +143,8 @@
   .active\:bg-secondary-container:active {
     background-color: var(--sf-secondary-container-active);
   }
-  .active\:bg-secondary-transparent-select:active {
-    background-color: var(--sf-secondary-transparent-select-active);
-  }
-  .active\:bg-secondary-transparent-overlay:active {
-    background-color: var(--sf-secondary-transparent-overlay-active);
+  .active\:bg-secondary-transparent:active {
+    background-color: var(--sf-secondary-transparent-active);
   }
   .active\:bg-tertiary:active {
     background-color: var(--sf-tertiary-active);
@@ -197,11 +152,8 @@
   .active\:bg-tertiary-container:active {
     background-color: var(--sf-tertiary-container-active);
   }
-  .active\:bg-tertiary-transparent-select:active {
-    background-color: var(--sf-tertiary-transparent-select-active);
-  }
-  .active\:bg-tertiary-transparent-overlay:active {
-    background-color: var(--sf-tertiary-transparent-overlay-active);
+  .active\:bg-tertiary-transparent:active {
+    background-color: var(--sf-tertiary-transparent-active);
   }
   .active\:bg-error:active {
     background-color: var(--sf-error-active);
@@ -209,11 +161,8 @@
   .active\:bg-error-container:active {
     background-color: var(--sf-error-container-active);
   }
-  .active\:bg-error-transparent-select:active {
-    background-color: var(--sf-error-transparent-select-active);
-  }
-  .active\:bg-error-transparent-overlay:active {
-    background-color: var(--sf-error-transparent-overlay-active);
+  .active\:bg-error-transparent:active {
+    background-color: var(--sf-error-transparent-active);
   }
   .active\:bg-warning:active {
     background-color: var(--sf-warning-active);
@@ -221,11 +170,8 @@
   .active\:bg-warning-container:active {
     background-color: var(--sf-warning-container-active);
   }
-  .active\:bg-warning-transparent-select:active {
-    background-color: var(--sf-warning-transparent-select-active);
-  }
-  .active\:bg-warning-transparent-overlay:active {
-    background-color: var(--sf-warning-transparent-overlay-active);
+  .active\:bg-warning-transparent:active {
+    background-color: var(--sf-warning-transparent-active);
   }
   .active\:bg-success:active {
     background-color: var(--sf-success-active);
@@ -233,41 +179,8 @@
   .active\:bg-success-container:active {
     background-color: var(--sf-success-container-active);
   }
-  .active\:bg-success-transparent-select:active {
-    background-color: var(--sf-success-transparent-select-active);
-  }
-  .active\:bg-success-transparent-overlay:active {
-    background-color: var(--sf-success-transparent-overlay-active);
-  }
-  .hover\:bg-transparent:hover {
-    background-color: var(--sf-transparent-hover);
-  }
-  .hover\:bg-current:hover {
-    background-color: var(--sf-current-hover);
-  }
-  .hover\:bg-surface-0:hover {
-    background-color: var(--sf-surface-0-hover);
-  }
-  .hover\:bg-surface-1:hover {
-    background-color: var(--sf-surface-1-hover);
-  }
-  .hover\:bg-surface-2:hover {
-    background-color: var(--sf-surface-2-hover);
-  }
-  .hover\:bg-surface-3:hover {
-    background-color: var(--sf-surface-3-hover);
-  }
-  .hover\:bg-surface-4:hover {
-    background-color: var(--sf-surface-4-hover);
-  }
-  .hover\:bg-surface:hover {
-    background-color: var(--sf-surface-1-hover);
-  }
-  .hover\:bg-surface-inverse:hover {
-    background-color: var(--sf-surface-inverse-hover);
-  }
-  .hover\:bg-surface-inverse-fixed:hover {
-    background-color: var(--sf-surface-inverse-fixed-hover);
+  .active\:bg-success-transparent:active {
+    background-color: var(--sf-success-transparent-active);
   }
   .hover\:bg-surface-container:hover {
     background-color: var(--sf-surface-container-hover);
@@ -275,17 +188,8 @@
   .hover\:bg-on-surface:hover {
     background-color: var(--sf-on-surface-hover);
   }
-  .hover\:bg-on-surface-variant:hover {
-    background-color: var(--sf-on-surface-variant-hover);
-  }
-  .hover\:bg-surface-transparent-select:hover {
-    background-color: var(--sf-surface-transparent-select-hover);
-  }
-  .hover\:bg-surface-transparent-overlay:hover {
-    background-color: var(--sf-surface-transparent-overlay-hover);
-  }
-  .hover\:bg-disable:hover {
-    background-color: var(--sf-disable-hover);
+  .hover\:bg-surface-transparent:hover {
+    background-color: var(--sf-surface-transparent-hover);
   }
   .hover\:bg-primary:hover {
     background-color: var(--sf-primary-hover);
@@ -293,11 +197,8 @@
   .hover\:bg-primary-container:hover {
     background-color: var(--sf-primary-container-hover);
   }
-  .hover\:bg-primary-transparent-select:hover {
-    background-color: var(--sf-primary-transparent-select-hover);
-  }
-  .hover\:bg-primary-transparent-overlay:hover {
-    background-color: var(--sf-primary-transparent-overlay-hover);
+  .hover\:bg-primary-transparent:hover {
+    background-color: var(--sf-primary-transparent-hover);
   }
   .hover\:bg-secondary:hover {
     background-color: var(--sf-secondary-hover);
@@ -305,11 +206,8 @@
   .hover\:bg-secondary-container:hover {
     background-color: var(--sf-secondary-container-hover);
   }
-  .hover\:bg-secondary-transparent-select:hover {
-    background-color: var(--sf-secondary-transparent-select-hover);
-  }
-  .hover\:bg-secondary-transparent-overlay:hover {
-    background-color: var(--sf-secondary-transparent-overlay-hover);
+  .hover\:bg-secondary-transparent:hover {
+    background-color: var(--sf-secondary-transparent-hover);
   }
   .hover\:bg-tertiary:hover {
     background-color: var(--sf-tertiary-hover);
@@ -317,11 +215,8 @@
   .hover\:bg-tertiary-container:hover {
     background-color: var(--sf-tertiary-container-hover);
   }
-  .hover\:bg-tertiary-transparent-select:hover {
-    background-color: var(--sf-tertiary-transparent-select-hover);
-  }
-  .hover\:bg-tertiary-transparent-overlay:hover {
-    background-color: var(--sf-tertiary-transparent-overlay-hover);
+  .hover\:bg-tertiary-transparent:hover {
+    background-color: var(--sf-tertiary-transparent-hover);
   }
   .hover\:bg-error:hover {
     background-color: var(--sf-error-hover);
@@ -329,11 +224,8 @@
   .hover\:bg-error-container:hover {
     background-color: var(--sf-error-container-hover);
   }
-  .hover\:bg-error-transparent-select:hover {
-    background-color: var(--sf-error-transparent-select-hover);
-  }
-  .hover\:bg-error-transparent-overlay:hover {
-    background-color: var(--sf-error-transparent-overlay-hover);
+  .hover\:bg-error-transparent:hover {
+    background-color: var(--sf-error-transparent-hover);
   }
   .hover\:bg-warning:hover {
     background-color: var(--sf-warning-hover);
@@ -341,11 +233,8 @@
   .hover\:bg-warning-container:hover {
     background-color: var(--sf-warning-container-hover);
   }
-  .hover\:bg-warning-transparent-select:hover {
-    background-color: var(--sf-warning-transparent-select-hover);
-  }
-  .hover\:bg-warning-transparent-overlay:hover {
-    background-color: var(--sf-warning-transparent-overlay-hover);
+  .hover\:bg-warning-transparent:hover {
+    background-color: var(--sf-warning-transparent-hover);
   }
   .hover\:bg-success:hover {
     background-color: var(--sf-success-hover);
@@ -353,11 +242,8 @@
   .hover\:bg-success-container:hover {
     background-color: var(--sf-success-container-hover);
   }
-  .hover\:bg-success-transparent-select:hover {
-    background-color: var(--sf-success-transparent-select-hover);
-  }
-  .hover\:bg-success-transparent-overlay:hover {
-    background-color: var(--sf-success-transparent-overlay-hover);
+  .hover\:bg-success-transparent:hover {
+    background-color: var(--sf-success-transparent-hover);
   }
   .bg-white {
     background-color: rgb(255, 255, 255);
