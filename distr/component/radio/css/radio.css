@@ -189,7 +189,7 @@
     --sf-radio-button-text--font-size: var(--sf-text-size-1);
     --sf-radio-button-text--line-height: var(--sf-text-height-1);
   }
-  .sf-radio-button.sf-radio-button--size-1 .sf-radio-button-text, .sf-radio-button.sf-radio-button--size-1\/3 .sf-radio-button-text {
+  .sf-radio-button.sf-radio-button--size-1 .sf-radio-button-text {
     --sf-radio-button-text--font-family: var(--sf-text--family);
     --sf-radio-button-text--font-weight: var(--sf-font-weight-medium);
   }
@@ -210,39 +210,38 @@
   .sf-radio-button:has(input:disabled) .sf-radio-button-text {
     --sf-radio-button-text--color: var(--sf-disable);
   }
-  .sf-radio-button.sf-radio-button--size-1\/3 .sf-radio-button-box {
-    --sf-radio-button-box--height: var(--sf-text-height-1\/3);
-    --sf-radio-button-box--width: var(--sf-text-height-1\/3);
-  }
-  .sf-radio-button.sf-radio-button--size-1\/3 > .sf-radio-button-container > .sf-radio-button-top > .sf-icon {
-    --sf-icon--font-size: var(--sf-icon-size-1);
-    --sf-icon--height: var(--sf-icon-size-1);
-    --sf-icon--width: var(--sf-icon-size-1);
-  }
-  .sf-radio-button.sf-radio-button--size-1\/3 .sf-radio-button-description {
-    --sf-radio-button-description--font-size: var(--sf-text-size-1\/4);
-    --sf-radio-button-description--line-height: var(--sf-text-height-1\/4);
-  }
-  .sf-radio-button.sf-radio-button--size-1\/3 .sf-radio-button-text {
-    --sf-radio-button-text--font-size: var(--sf-text-size-1\/3);
-    --sf-radio-button-text--line-height: var(--sf-text-height-1\/3);
-  }
-  .sf-radio-button.sf-radio-button--size-1\/3 .sf-radio-button-top {
-    --sf-radio-button-top--gap: var(--sf-space-0);
-  }
-  .sf-radio-button.sf-radio-button--size-1\/3[\:has\(input\:checked\)] .sf-radio-button-mark {
-    --sf-radio-button-mark--height: var(--sf-a8);
-    --sf-radio-button-mark--width: var(--sf-a8);
-  }
-  .sf-radio-button.sf-radio-button--size-1\/3:has(input:checked) .sf-radio-button-mark {
-    --sf-radio-button-mark--height: var(--sf-a8);
-    --sf-radio-button-mark--width: var(--sf-a8);
-  }
   .sf-radio-button--size-1 {
     --sf-radio-button--gap: var(--sf-space-1\/3);
   }
-  .sf-radio-button--size-1\/3 {
-    --sf-radio-button--gap: var(--sf-space-1\/4);
+  .sf-radio-button.sf-radio-button--size-2 .sf-radio-button-box {
+    --sf-radio-button-box--height: var(--sf-text-height-2);
+    --sf-radio-button-box--width: var(--sf-text-height-2);
+  }
+  .sf-radio-button.sf-radio-button--size-2 .sf-radio-button-description {
+    --sf-radio-button-description--font-size: var(--sf-text-size-1);
+    --sf-radio-button-description--line-height: var(--sf-text-height-1);
+  }
+  .sf-radio-button.sf-radio-button--size-2 .sf-radio-button-text {
+    --sf-radio-button-text--font-size: var(--sf-text-size-2);
+    --sf-radio-button-text--line-height: var(--sf-text-height-2);
+  }
+  .sf-radio-button.sf-radio-button--size-2 .sf-radio-button-text {
+    --sf-radio-button-text--font-family: var(--sf-text--family);
+    --sf-radio-button-text--font-weight: var(--sf-font-weight-medium);
+  }
+  .sf-radio-button.sf-radio-button--size-2 .sf-radio-button-top {
+    --sf-radio-button-top--gap: var(--sf-space-1\/4);
+  }
+  .sf-radio-button.sf-radio-button--size-2[\:has\(input\:checked\)] .sf-radio-button-mark {
+    --sf-radio-button-mark--height: var(--sf-b2);
+    --sf-radio-button-mark--width: var(--sf-b2);
+  }
+  .sf-radio-button.sf-radio-button--size-2:has(input:checked) .sf-radio-button-mark {
+    --sf-radio-button-mark--height: var(--sf-b2);
+    --sf-radio-button-mark--width: var(--sf-b2);
+  }
+  .sf-radio-button--size-2 {
+    --sf-radio-button--gap: var(--sf-space-1\/3);
   }
   .sf-radio-button[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:hover\)] .sf-radio-button-box {
     --sf-radio-button-box--border-color: var(--sf-primary-hover);
@@ -457,13 +456,13 @@
     font-size: var(--sf-text-size-1);
     line-height: var(--sf-text-height-1);
   }
-  .sf-radio-button--type-font.sf-radio-button--size-1\/3 .sf-radio-text {
-    width: var(--sf-c6);
-    inline-size: var(--sf-c6);
-    height: var(--sf-b6);
-    block-size: var(--sf-b6);
-    font-size: var(--sf-text-size-1\/3);
-    line-height: var(--sf-text-height-1\/3);
+  .sf-radio-button--type-font.sf-radio-button--size-2 .sf-radio-text {
+    width: var(--sf-d4);
+    inline-size: var(--sf-d4);
+    height: var(--sf-c4);
+    block-size: var(--sf-c4);
+    font-size: var(--sf-text-size-2);
+    line-height: var(--sf-text-height-2);
   }
   .sf-radio-button--type-font[\:has\(input\:not\(\:disabled\)\:hover\)] .sf-radio-text {
     border-color: var(--sf-primary-hover);

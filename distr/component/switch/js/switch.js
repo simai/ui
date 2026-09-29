@@ -130,9 +130,11 @@ function syncSwitchState(root) {
   const offText = root.dataset.sfSwitchOffText || '';
   const hasToggleText = !!(onText && offText);
   root.classList.toggle('active', isChecked);
-  root.classList.toggle('disabled', isDisabled);
-  toggler.classList.toggle('content-main-start', !isChecked);
-  toggler.classList.toggle('content-main-end', isChecked);
+  root.classList.toggle('disabled', isDisabled); // The thumb used to move by swapping the track's alignment here. No browser
+  // animates justify-content, so it jumped to the far end while the fill faded
+  // under it. The stylesheet moves it with a transform now, off the same state
+  // class as everything else, and the track keeps one alignment for good.
+
   toggler.removeAttribute('aria-hidden');
   inner.setAttribute('aria-hidden', 'true');
 
@@ -242,7 +244,7 @@ class Switch extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Com
     }
 
     this.toggler = document.createElement('span');
-    this.toggler.classList.add('sf-switch-toggler', 'transition', 'flex', 'items-cross-center', 'content-main-start');
+    this.toggler.classList.add('sf-switch-toggler', 'flex', 'items-cross-center');
     this.input = document.createElement('input');
     this.input.type = 'checkbox';
     this.input.setAttribute('role', 'switch');
@@ -272,8 +274,10 @@ class Switch extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Com
       if (attrValue === undefined || attrValue === null) return;
       this.input.setAttribute(attr, attrValue);
     });
-    this.inner = document.createElement('span');
-    this.inner.classList.add('sf-switch-inner', 'transition');
+    this.inner = document.createElement('span'); // The component owns the motion now; the utility would override it with
+    // its own clock and its own list of properties.
+
+    this.inner.classList.add('sf-switch-inner');
     this.inner.setAttribute('aria-hidden', 'true');
     this.toggler.append(this.input, this.inner);
     this.template.append(this.toggler);
