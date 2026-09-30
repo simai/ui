@@ -91,8 +91,8 @@
     --sf-border--color: var(--sf-transparent);
     border: var(--sf-border--width) var(--sf-border--style) var(--sf-border--color);
     border-color: var(--sf-outline-variant);
-    --sf-radius--ui: var(--sf-radius-1\/3);
-    --sf-radius--surface: var(--sf-radius-default);
+    --sf-radius--ui: var(--sf-radius-1\/2);
+    --sf-radius--surface: var(--sf-radius-1);
     --sf-focus--color: var(--sf-focus);
     --sf-focus--offset: var(--sf-a1);
     --sf-focus--style: solid;
