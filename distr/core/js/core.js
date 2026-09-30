@@ -800,10 +800,20 @@ function startPreloaderMotion(container, isActive = () => true, options = {}) {
 /* global __webpack_public_path__: writable */
 (() => {
   const cdnDefault = 'https://cdn.jsdelivr.net/gh/simai/ui@main/distr/';
-  if (typeof window === 'undefined') return;
+  if (typeof window === 'undefined') return; // A page that never set sfPath used to fall back here in silence, and the
+  // fallback is an unpinned branch: the project then serves whatever sits on
+  // main today instead of the build it shipped, and nothing on screen says so.
+  // The fallback stays — a page with no configuration still has to run — but it
+  // says out loud what it just did and what to write instead.
 
   if (!window.sfPath) {
     window.sfPath = cdnDefault;
+
+    try {
+      console.warn('SIMAI Framework: window.sfPath is not set, so the runtime is loading ' + `from ${cdnDefault} — an unpinned branch that changes without notice. ` + 'Set window.sfPath to your own copy of distr/, before core.js, ' + 'or to a pinned tag.');
+    } catch {
+      /* A console is not something a runtime may insist on. */
+    }
   } // A relative sfPath is resolved against the document's base, not against the
   // window's location. Inside a srcdoc frame — which is how documentation
   // renders its live examples — location.href is `about:srcdoc`, an opaque base
