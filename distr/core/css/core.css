@@ -348,6 +348,17 @@
     --sf-shadow--color-fill: var(--sf-black--alfa-12);
     --sf-shadow--color-outline: var(--sf-black--alfa-8);
     --sf-shadow--color-shading: var(--sf-black--alfa-4);
+    /* Высота — это две вещи сразу: тень под элементом и поверхность под ним.
+       В светлой теме работает тень, и поднятая поверхность остаётся обычной.
+       В тёмной тень не работает вовсе: она чёрная, фон почти чёрный, и весь
+       пятиступенчатый набор укладывался в три-семь единиц яркости из 255 —
+       ниже порога, на котором человек замечает разницу. Там высоту несёт
+       ступень поверхности, которая в тёмной теме светлеет. */
+    --sf-elevation-1--surface: light-dark(var(--sf-surface-0), var(--sf-surface-1));
+    --sf-elevation-2--surface: light-dark(var(--sf-surface-0), var(--sf-surface-2));
+    --sf-elevation-3--surface: light-dark(var(--sf-surface-0), var(--sf-surface-3));
+    --sf-elevation-4--surface: light-dark(var(--sf-surface-0), var(--sf-surface-4));
+    --sf-elevation-5--surface: light-dark(var(--sf-surface-0), var(--sf-surface-4));
     /* The neutral alpha ramp. The base branches per scheme — ink on a light
        surface, light on a dark one — so a component asks for a degree of contrast
        rather than for black or white, and every step above is one declaration

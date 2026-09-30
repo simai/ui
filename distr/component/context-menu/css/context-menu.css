@@ -1,3 +1,4 @@
+@charset "UTF-8";
 @layer sf.components {
   .sf-context-menu {
     --sf-context-menu-viewport-space: var(--sf-space-1\/2);
@@ -37,31 +38,31 @@
   }
   /* Left / inline-start */
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu--position-left .sf-context-menu-tooltip,html:not([dir="rtl"])
-  .sf-context-menu--position-inline-start .sf-context-menu-tooltip {
+  .sf-context-menu--position-inline-start .sf-context-menu-tooltip{
     left: calc(-1 * var(--sf-context-menu-tail-half));
   }
-  @supports not (inset-inline-start: initial) {
+  @supports not (inset-inline-start: initial){
   html:not([dir="rtl"]) .sf-context-menu--position-left .sf-context-menu-tooltip,html:not([dir="rtl"])
-  .sf-context-menu--position-inline-start .sf-context-menu-tooltip {
+  .sf-context-menu--position-inline-start .sf-context-menu-tooltip{
     left: calc(-1 * var(--sf-context-menu-tail-half));
     }
   }
   .sf-context-menu--position-left .sf-context-menu-tooltip:where(:dir(ltr)),
-  .sf-context-menu--position-inline-start .sf-context-menu-tooltip:where(:dir(ltr)) {
+  .sf-context-menu--position-inline-start .sf-context-menu-tooltip:where(:dir(ltr)){
     left: calc(-1 * var(--sf-context-menu-tail-half));
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu--position-left .sf-context-menu-tooltip,[dir="rtl"]
-  .sf-context-menu--position-inline-start .sf-context-menu-tooltip {
+  .sf-context-menu--position-inline-start .sf-context-menu-tooltip{
     right: calc(-1 * var(--sf-context-menu-tail-half));
   }
-  @supports not (inset-inline-start: initial) {
+  @supports not (inset-inline-start: initial){
   [dir="rtl"] .sf-context-menu--position-left .sf-context-menu-tooltip,[dir="rtl"]
-  .sf-context-menu--position-inline-start .sf-context-menu-tooltip {
+  .sf-context-menu--position-inline-start .sf-context-menu-tooltip{
     right: calc(-1 * var(--sf-context-menu-tail-half));
     }
   }
   .sf-context-menu--position-left .sf-context-menu-tooltip:where(:dir(rtl)),
-  .sf-context-menu--position-inline-start .sf-context-menu-tooltip:where(:dir(rtl)) {
+  .sf-context-menu--position-inline-start .sf-context-menu-tooltip:where(:dir(rtl)){
     right: calc(-1 * var(--sf-context-menu-tail-half));
   }
   .sf-context-menu--position-left .sf-context-menu-tooltip,
@@ -72,31 +73,31 @@
   }
   /* Left top / inline-start top */
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu--position-left-top .sf-context-menu-tooltip,html:not([dir="rtl"])
-  .sf-context-menu--position-inline-start-top .sf-context-menu-tooltip {
+  .sf-context-menu--position-inline-start-top .sf-context-menu-tooltip{
     left: calc(-1 * var(--sf-context-menu-tail-half));
   }
-  @supports not (inset-inline-start: initial) {
+  @supports not (inset-inline-start: initial){
   html:not([dir="rtl"]) .sf-context-menu--position-left-top .sf-context-menu-tooltip,html:not([dir="rtl"])
-  .sf-context-menu--position-inline-start-top .sf-context-menu-tooltip {
+  .sf-context-menu--position-inline-start-top .sf-context-menu-tooltip{
     left: calc(-1 * var(--sf-context-menu-tail-half));
     }
   }
   .sf-context-menu--position-left-top .sf-context-menu-tooltip:where(:dir(ltr)),
-  .sf-context-menu--position-inline-start-top .sf-context-menu-tooltip:where(:dir(ltr)) {
+  .sf-context-menu--position-inline-start-top .sf-context-menu-tooltip:where(:dir(ltr)){
     left: calc(-1 * var(--sf-context-menu-tail-half));
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu--position-left-top .sf-context-menu-tooltip,[dir="rtl"]
-  .sf-context-menu--position-inline-start-top .sf-context-menu-tooltip {
+  .sf-context-menu--position-inline-start-top .sf-context-menu-tooltip{
     right: calc(-1 * var(--sf-context-menu-tail-half));
   }
-  @supports not (inset-inline-start: initial) {
+  @supports not (inset-inline-start: initial){
   [dir="rtl"] .sf-context-menu--position-left-top .sf-context-menu-tooltip,[dir="rtl"]
-  .sf-context-menu--position-inline-start-top .sf-context-menu-tooltip {
+  .sf-context-menu--position-inline-start-top .sf-context-menu-tooltip{
     right: calc(-1 * var(--sf-context-menu-tail-half));
     }
   }
   .sf-context-menu--position-left-top .sf-context-menu-tooltip:where(:dir(rtl)),
-  .sf-context-menu--position-inline-start-top .sf-context-menu-tooltip:where(:dir(rtl)) {
+  .sf-context-menu--position-inline-start-top .sf-context-menu-tooltip:where(:dir(rtl)){
     right: calc(-1 * var(--sf-context-menu-tail-half));
   }
   .sf-context-menu--position-left-top .sf-context-menu-tooltip,
@@ -107,31 +108,31 @@
   }
   /* Left bottom / inline-start bottom */
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu--position-left-bottom .sf-context-menu-tooltip,html:not([dir="rtl"])
-  .sf-context-menu--position-inline-start-bottom .sf-context-menu-tooltip {
+  .sf-context-menu--position-inline-start-bottom .sf-context-menu-tooltip{
     left: calc(-1 * var(--sf-context-menu-tail-half));
   }
-  @supports not (inset-inline-start: initial) {
+  @supports not (inset-inline-start: initial){
   html:not([dir="rtl"]) .sf-context-menu--position-left-bottom .sf-context-menu-tooltip,html:not([dir="rtl"])
-  .sf-context-menu--position-inline-start-bottom .sf-context-menu-tooltip {
+  .sf-context-menu--position-inline-start-bottom .sf-context-menu-tooltip{
     left: calc(-1 * var(--sf-context-menu-tail-half));
     }
   }
   .sf-context-menu--position-left-bottom .sf-context-menu-tooltip:where(:dir(ltr)),
-  .sf-context-menu--position-inline-start-bottom .sf-context-menu-tooltip:where(:dir(ltr)) {
+  .sf-context-menu--position-inline-start-bottom .sf-context-menu-tooltip:where(:dir(ltr)){
     left: calc(-1 * var(--sf-context-menu-tail-half));
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu--position-left-bottom .sf-context-menu-tooltip,[dir="rtl"]
-  .sf-context-menu--position-inline-start-bottom .sf-context-menu-tooltip {
+  .sf-context-menu--position-inline-start-bottom .sf-context-menu-tooltip{
     right: calc(-1 * var(--sf-context-menu-tail-half));
   }
-  @supports not (inset-inline-start: initial) {
+  @supports not (inset-inline-start: initial){
   [dir="rtl"] .sf-context-menu--position-left-bottom .sf-context-menu-tooltip,[dir="rtl"]
-  .sf-context-menu--position-inline-start-bottom .sf-context-menu-tooltip {
+  .sf-context-menu--position-inline-start-bottom .sf-context-menu-tooltip{
     right: calc(-1 * var(--sf-context-menu-tail-half));
     }
   }
   .sf-context-menu--position-left-bottom .sf-context-menu-tooltip:where(:dir(rtl)),
-  .sf-context-menu--position-inline-start-bottom .sf-context-menu-tooltip:where(:dir(rtl)) {
+  .sf-context-menu--position-inline-start-bottom .sf-context-menu-tooltip:where(:dir(rtl)){
     right: calc(-1 * var(--sf-context-menu-tail-half));
   }
   .sf-context-menu--position-left-bottom .sf-context-menu-tooltip,
@@ -142,31 +143,31 @@
   }
   /* Right / inline-end */
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu--position-right .sf-context-menu-tooltip,html:not([dir="rtl"])
-  .sf-context-menu--position-inline-end .sf-context-menu-tooltip {
+  .sf-context-menu--position-inline-end .sf-context-menu-tooltip{
     right: calc(-1 * var(--sf-context-menu-tail-half));
   }
-  @supports not (inset-inline-end: initial) {
+  @supports not (inset-inline-end: initial){
   html:not([dir="rtl"]) .sf-context-menu--position-right .sf-context-menu-tooltip,html:not([dir="rtl"])
-  .sf-context-menu--position-inline-end .sf-context-menu-tooltip {
+  .sf-context-menu--position-inline-end .sf-context-menu-tooltip{
     right: calc(-1 * var(--sf-context-menu-tail-half));
     }
   }
   .sf-context-menu--position-right .sf-context-menu-tooltip:where(:dir(ltr)),
-  .sf-context-menu--position-inline-end .sf-context-menu-tooltip:where(:dir(ltr)) {
+  .sf-context-menu--position-inline-end .sf-context-menu-tooltip:where(:dir(ltr)){
     right: calc(-1 * var(--sf-context-menu-tail-half));
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu--position-right .sf-context-menu-tooltip,[dir="rtl"]
-  .sf-context-menu--position-inline-end .sf-context-menu-tooltip {
+  .sf-context-menu--position-inline-end .sf-context-menu-tooltip{
     left: calc(-1 * var(--sf-context-menu-tail-half));
   }
-  @supports not (inset-inline-end: initial) {
+  @supports not (inset-inline-end: initial){
   [dir="rtl"] .sf-context-menu--position-right .sf-context-menu-tooltip,[dir="rtl"]
-  .sf-context-menu--position-inline-end .sf-context-menu-tooltip {
+  .sf-context-menu--position-inline-end .sf-context-menu-tooltip{
     left: calc(-1 * var(--sf-context-menu-tail-half));
     }
   }
   .sf-context-menu--position-right .sf-context-menu-tooltip:where(:dir(rtl)),
-  .sf-context-menu--position-inline-end .sf-context-menu-tooltip:where(:dir(rtl)) {
+  .sf-context-menu--position-inline-end .sf-context-menu-tooltip:where(:dir(rtl)){
     left: calc(-1 * var(--sf-context-menu-tail-half));
   }
   .sf-context-menu--position-right .sf-context-menu-tooltip,
@@ -177,31 +178,31 @@
   }
   /* Right top / inline-end top */
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu--position-right-top .sf-context-menu-tooltip,html:not([dir="rtl"])
-  .sf-context-menu--position-inline-end-top .sf-context-menu-tooltip {
+  .sf-context-menu--position-inline-end-top .sf-context-menu-tooltip{
     right: calc(-1 * var(--sf-context-menu-tail-half));
   }
-  @supports not (inset-inline-end: initial) {
+  @supports not (inset-inline-end: initial){
   html:not([dir="rtl"]) .sf-context-menu--position-right-top .sf-context-menu-tooltip,html:not([dir="rtl"])
-  .sf-context-menu--position-inline-end-top .sf-context-menu-tooltip {
+  .sf-context-menu--position-inline-end-top .sf-context-menu-tooltip{
     right: calc(-1 * var(--sf-context-menu-tail-half));
     }
   }
   .sf-context-menu--position-right-top .sf-context-menu-tooltip:where(:dir(ltr)),
-  .sf-context-menu--position-inline-end-top .sf-context-menu-tooltip:where(:dir(ltr)) {
+  .sf-context-menu--position-inline-end-top .sf-context-menu-tooltip:where(:dir(ltr)){
     right: calc(-1 * var(--sf-context-menu-tail-half));
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu--position-right-top .sf-context-menu-tooltip,[dir="rtl"]
-  .sf-context-menu--position-inline-end-top .sf-context-menu-tooltip {
+  .sf-context-menu--position-inline-end-top .sf-context-menu-tooltip{
     left: calc(-1 * var(--sf-context-menu-tail-half));
   }
-  @supports not (inset-inline-end: initial) {
+  @supports not (inset-inline-end: initial){
   [dir="rtl"] .sf-context-menu--position-right-top .sf-context-menu-tooltip,[dir="rtl"]
-  .sf-context-menu--position-inline-end-top .sf-context-menu-tooltip {
+  .sf-context-menu--position-inline-end-top .sf-context-menu-tooltip{
     left: calc(-1 * var(--sf-context-menu-tail-half));
     }
   }
   .sf-context-menu--position-right-top .sf-context-menu-tooltip:where(:dir(rtl)),
-  .sf-context-menu--position-inline-end-top .sf-context-menu-tooltip:where(:dir(rtl)) {
+  .sf-context-menu--position-inline-end-top .sf-context-menu-tooltip:where(:dir(rtl)){
     left: calc(-1 * var(--sf-context-menu-tail-half));
   }
   .sf-context-menu--position-right-top .sf-context-menu-tooltip,
@@ -212,31 +213,31 @@
   }
   /* Right bottom / inline-end bottom */
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu--position-right-bottom .sf-context-menu-tooltip,html:not([dir="rtl"])
-  .sf-context-menu--position-inline-end-bottom .sf-context-menu-tooltip {
+  .sf-context-menu--position-inline-end-bottom .sf-context-menu-tooltip{
     right: calc(-1 * var(--sf-context-menu-tail-half));
   }
-  @supports not (inset-inline-end: initial) {
+  @supports not (inset-inline-end: initial){
   html:not([dir="rtl"]) .sf-context-menu--position-right-bottom .sf-context-menu-tooltip,html:not([dir="rtl"])
-  .sf-context-menu--position-inline-end-bottom .sf-context-menu-tooltip {
+  .sf-context-menu--position-inline-end-bottom .sf-context-menu-tooltip{
     right: calc(-1 * var(--sf-context-menu-tail-half));
     }
   }
   .sf-context-menu--position-right-bottom .sf-context-menu-tooltip:where(:dir(ltr)),
-  .sf-context-menu--position-inline-end-bottom .sf-context-menu-tooltip:where(:dir(ltr)) {
+  .sf-context-menu--position-inline-end-bottom .sf-context-menu-tooltip:where(:dir(ltr)){
     right: calc(-1 * var(--sf-context-menu-tail-half));
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu--position-right-bottom .sf-context-menu-tooltip,[dir="rtl"]
-  .sf-context-menu--position-inline-end-bottom .sf-context-menu-tooltip {
+  .sf-context-menu--position-inline-end-bottom .sf-context-menu-tooltip{
     left: calc(-1 * var(--sf-context-menu-tail-half));
   }
-  @supports not (inset-inline-end: initial) {
+  @supports not (inset-inline-end: initial){
   [dir="rtl"] .sf-context-menu--position-right-bottom .sf-context-menu-tooltip,[dir="rtl"]
-  .sf-context-menu--position-inline-end-bottom .sf-context-menu-tooltip {
+  .sf-context-menu--position-inline-end-bottom .sf-context-menu-tooltip{
     left: calc(-1 * var(--sf-context-menu-tail-half));
     }
   }
   .sf-context-menu--position-right-bottom .sf-context-menu-tooltip:where(:dir(rtl)),
-  .sf-context-menu--position-inline-end-bottom .sf-context-menu-tooltip:where(:dir(rtl)) {
+  .sf-context-menu--position-inline-end-bottom .sf-context-menu-tooltip:where(:dir(rtl)){
     left: calc(-1 * var(--sf-context-menu-tail-half));
   }
   .sf-context-menu--position-right-bottom .sf-context-menu-tooltip,
@@ -247,31 +248,31 @@
   }
   /* Top center */
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu--position-top .sf-context-menu-tooltip,html:not([dir="rtl"])
-  .sf-context-menu--position-top-center .sf-context-menu-tooltip {
+  .sf-context-menu--position-top-center .sf-context-menu-tooltip{
     left: calc(50% - var(--sf-context-menu-tail-half));
   }
-  @supports not (inset-inline-start: initial) {
+  @supports not (inset-inline-start: initial){
   html:not([dir="rtl"]) .sf-context-menu--position-top .sf-context-menu-tooltip,html:not([dir="rtl"])
-  .sf-context-menu--position-top-center .sf-context-menu-tooltip {
+  .sf-context-menu--position-top-center .sf-context-menu-tooltip{
     left: calc(50% - var(--sf-context-menu-tail-half));
     }
   }
   .sf-context-menu--position-top .sf-context-menu-tooltip:where(:dir(ltr)),
-  .sf-context-menu--position-top-center .sf-context-menu-tooltip:where(:dir(ltr)) {
+  .sf-context-menu--position-top-center .sf-context-menu-tooltip:where(:dir(ltr)){
     left: calc(50% - var(--sf-context-menu-tail-half));
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu--position-top .sf-context-menu-tooltip,[dir="rtl"]
-  .sf-context-menu--position-top-center .sf-context-menu-tooltip {
+  .sf-context-menu--position-top-center .sf-context-menu-tooltip{
     right: calc(50% - var(--sf-context-menu-tail-half));
   }
-  @supports not (inset-inline-start: initial) {
+  @supports not (inset-inline-start: initial){
   [dir="rtl"] .sf-context-menu--position-top .sf-context-menu-tooltip,[dir="rtl"]
-  .sf-context-menu--position-top-center .sf-context-menu-tooltip {
+  .sf-context-menu--position-top-center .sf-context-menu-tooltip{
     right: calc(50% - var(--sf-context-menu-tail-half));
     }
   }
   .sf-context-menu--position-top .sf-context-menu-tooltip:where(:dir(rtl)),
-  .sf-context-menu--position-top-center .sf-context-menu-tooltip:where(:dir(rtl)) {
+  .sf-context-menu--position-top-center .sf-context-menu-tooltip:where(:dir(rtl)){
     right: calc(50% - var(--sf-context-menu-tail-half));
   }
   .sf-context-menu--position-top .sf-context-menu-tooltip,
@@ -282,31 +283,31 @@
   }
   /* Bottom center */
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu--position-bottom .sf-context-menu-tooltip,html:not([dir="rtl"])
-  .sf-context-menu--position-bottom-center .sf-context-menu-tooltip {
+  .sf-context-menu--position-bottom-center .sf-context-menu-tooltip{
     left: calc(50% - var(--sf-context-menu-tail-half));
   }
-  @supports not (inset-inline-start: initial) {
+  @supports not (inset-inline-start: initial){
   html:not([dir="rtl"]) .sf-context-menu--position-bottom .sf-context-menu-tooltip,html:not([dir="rtl"])
-  .sf-context-menu--position-bottom-center .sf-context-menu-tooltip {
+  .sf-context-menu--position-bottom-center .sf-context-menu-tooltip{
     left: calc(50% - var(--sf-context-menu-tail-half));
     }
   }
   .sf-context-menu--position-bottom .sf-context-menu-tooltip:where(:dir(ltr)),
-  .sf-context-menu--position-bottom-center .sf-context-menu-tooltip:where(:dir(ltr)) {
+  .sf-context-menu--position-bottom-center .sf-context-menu-tooltip:where(:dir(ltr)){
     left: calc(50% - var(--sf-context-menu-tail-half));
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu--position-bottom .sf-context-menu-tooltip,[dir="rtl"]
-  .sf-context-menu--position-bottom-center .sf-context-menu-tooltip {
+  .sf-context-menu--position-bottom-center .sf-context-menu-tooltip{
     right: calc(50% - var(--sf-context-menu-tail-half));
   }
-  @supports not (inset-inline-start: initial) {
+  @supports not (inset-inline-start: initial){
   [dir="rtl"] .sf-context-menu--position-bottom .sf-context-menu-tooltip,[dir="rtl"]
-  .sf-context-menu--position-bottom-center .sf-context-menu-tooltip {
+  .sf-context-menu--position-bottom-center .sf-context-menu-tooltip{
     right: calc(50% - var(--sf-context-menu-tail-half));
     }
   }
   .sf-context-menu--position-bottom .sf-context-menu-tooltip:where(:dir(rtl)),
-  .sf-context-menu--position-bottom-center .sf-context-menu-tooltip:where(:dir(rtl)) {
+  .sf-context-menu--position-bottom-center .sf-context-menu-tooltip:where(:dir(rtl)){
     right: calc(50% - var(--sf-context-menu-tail-half));
   }
   .sf-context-menu--position-bottom .sf-context-menu-tooltip,
@@ -317,31 +318,31 @@
   }
   /* Top left / top inline-start */
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu--position-top-left .sf-context-menu-tooltip,html:not([dir="rtl"])
-  .sf-context-menu--position-top-inline-start .sf-context-menu-tooltip {
+  .sf-context-menu--position-top-inline-start .sf-context-menu-tooltip{
     left: var(--sf-context-menu-tail-corner-offset);
   }
-  @supports not (inset-inline-start: initial) {
+  @supports not (inset-inline-start: initial){
   html:not([dir="rtl"]) .sf-context-menu--position-top-left .sf-context-menu-tooltip,html:not([dir="rtl"])
-  .sf-context-menu--position-top-inline-start .sf-context-menu-tooltip {
+  .sf-context-menu--position-top-inline-start .sf-context-menu-tooltip{
     left: var(--sf-context-menu-tail-corner-offset);
     }
   }
   .sf-context-menu--position-top-left .sf-context-menu-tooltip:where(:dir(ltr)),
-  .sf-context-menu--position-top-inline-start .sf-context-menu-tooltip:where(:dir(ltr)) {
+  .sf-context-menu--position-top-inline-start .sf-context-menu-tooltip:where(:dir(ltr)){
     left: var(--sf-context-menu-tail-corner-offset);
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu--position-top-left .sf-context-menu-tooltip,[dir="rtl"]
-  .sf-context-menu--position-top-inline-start .sf-context-menu-tooltip {
+  .sf-context-menu--position-top-inline-start .sf-context-menu-tooltip{
     right: var(--sf-context-menu-tail-corner-offset);
   }
-  @supports not (inset-inline-start: initial) {
+  @supports not (inset-inline-start: initial){
   [dir="rtl"] .sf-context-menu--position-top-left .sf-context-menu-tooltip,[dir="rtl"]
-  .sf-context-menu--position-top-inline-start .sf-context-menu-tooltip {
+  .sf-context-menu--position-top-inline-start .sf-context-menu-tooltip{
     right: var(--sf-context-menu-tail-corner-offset);
     }
   }
   .sf-context-menu--position-top-left .sf-context-menu-tooltip:where(:dir(rtl)),
-  .sf-context-menu--position-top-inline-start .sf-context-menu-tooltip:where(:dir(rtl)) {
+  .sf-context-menu--position-top-inline-start .sf-context-menu-tooltip:where(:dir(rtl)){
     right: var(--sf-context-menu-tail-corner-offset);
   }
   .sf-context-menu--position-top-left .sf-context-menu-tooltip,
@@ -352,31 +353,31 @@
   }
   /* Top right / top inline-end */
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu--position-top-right .sf-context-menu-tooltip,html:not([dir="rtl"])
-  .sf-context-menu--position-top-inline-end .sf-context-menu-tooltip {
+  .sf-context-menu--position-top-inline-end .sf-context-menu-tooltip{
     right: var(--sf-context-menu-tail-corner-offset);
   }
-  @supports not (inset-inline-end: initial) {
+  @supports not (inset-inline-end: initial){
   html:not([dir="rtl"]) .sf-context-menu--position-top-right .sf-context-menu-tooltip,html:not([dir="rtl"])
-  .sf-context-menu--position-top-inline-end .sf-context-menu-tooltip {
+  .sf-context-menu--position-top-inline-end .sf-context-menu-tooltip{
     right: var(--sf-context-menu-tail-corner-offset);
     }
   }
   .sf-context-menu--position-top-right .sf-context-menu-tooltip:where(:dir(ltr)),
-  .sf-context-menu--position-top-inline-end .sf-context-menu-tooltip:where(:dir(ltr)) {
+  .sf-context-menu--position-top-inline-end .sf-context-menu-tooltip:where(:dir(ltr)){
     right: var(--sf-context-menu-tail-corner-offset);
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu--position-top-right .sf-context-menu-tooltip,[dir="rtl"]
-  .sf-context-menu--position-top-inline-end .sf-context-menu-tooltip {
+  .sf-context-menu--position-top-inline-end .sf-context-menu-tooltip{
     left: var(--sf-context-menu-tail-corner-offset);
   }
-  @supports not (inset-inline-end: initial) {
+  @supports not (inset-inline-end: initial){
   [dir="rtl"] .sf-context-menu--position-top-right .sf-context-menu-tooltip,[dir="rtl"]
-  .sf-context-menu--position-top-inline-end .sf-context-menu-tooltip {
+  .sf-context-menu--position-top-inline-end .sf-context-menu-tooltip{
     left: var(--sf-context-menu-tail-corner-offset);
     }
   }
   .sf-context-menu--position-top-right .sf-context-menu-tooltip:where(:dir(rtl)),
-  .sf-context-menu--position-top-inline-end .sf-context-menu-tooltip:where(:dir(rtl)) {
+  .sf-context-menu--position-top-inline-end .sf-context-menu-tooltip:where(:dir(rtl)){
     left: var(--sf-context-menu-tail-corner-offset);
   }
   .sf-context-menu--position-top-right .sf-context-menu-tooltip,
@@ -387,31 +388,31 @@
   }
   /* Bottom left / bottom inline-start */
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu--position-bottom-left .sf-context-menu-tooltip,html:not([dir="rtl"])
-  .sf-context-menu--position-bottom-inline-start .sf-context-menu-tooltip {
+  .sf-context-menu--position-bottom-inline-start .sf-context-menu-tooltip{
     left: var(--sf-context-menu-tail-corner-offset);
   }
-  @supports not (inset-inline-start: initial) {
+  @supports not (inset-inline-start: initial){
   html:not([dir="rtl"]) .sf-context-menu--position-bottom-left .sf-context-menu-tooltip,html:not([dir="rtl"])
-  .sf-context-menu--position-bottom-inline-start .sf-context-menu-tooltip {
+  .sf-context-menu--position-bottom-inline-start .sf-context-menu-tooltip{
     left: var(--sf-context-menu-tail-corner-offset);
     }
   }
   .sf-context-menu--position-bottom-left .sf-context-menu-tooltip:where(:dir(ltr)),
-  .sf-context-menu--position-bottom-inline-start .sf-context-menu-tooltip:where(:dir(ltr)) {
+  .sf-context-menu--position-bottom-inline-start .sf-context-menu-tooltip:where(:dir(ltr)){
     left: var(--sf-context-menu-tail-corner-offset);
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu--position-bottom-left .sf-context-menu-tooltip,[dir="rtl"]
-  .sf-context-menu--position-bottom-inline-start .sf-context-menu-tooltip {
+  .sf-context-menu--position-bottom-inline-start .sf-context-menu-tooltip{
     right: var(--sf-context-menu-tail-corner-offset);
   }
-  @supports not (inset-inline-start: initial) {
+  @supports not (inset-inline-start: initial){
   [dir="rtl"] .sf-context-menu--position-bottom-left .sf-context-menu-tooltip,[dir="rtl"]
-  .sf-context-menu--position-bottom-inline-start .sf-context-menu-tooltip {
+  .sf-context-menu--position-bottom-inline-start .sf-context-menu-tooltip{
     right: var(--sf-context-menu-tail-corner-offset);
     }
   }
   .sf-context-menu--position-bottom-left .sf-context-menu-tooltip:where(:dir(rtl)),
-  .sf-context-menu--position-bottom-inline-start .sf-context-menu-tooltip:where(:dir(rtl)) {
+  .sf-context-menu--position-bottom-inline-start .sf-context-menu-tooltip:where(:dir(rtl)){
     right: var(--sf-context-menu-tail-corner-offset);
   }
   .sf-context-menu--position-bottom-left .sf-context-menu-tooltip,
@@ -422,31 +423,31 @@
   }
   /* Bottom right / bottom inline-end */
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu--position-bottom-right .sf-context-menu-tooltip,html:not([dir="rtl"])
-  .sf-context-menu--position-bottom-inline-end .sf-context-menu-tooltip {
+  .sf-context-menu--position-bottom-inline-end .sf-context-menu-tooltip{
     right: var(--sf-context-menu-tail-corner-offset);
   }
-  @supports not (inset-inline-end: initial) {
+  @supports not (inset-inline-end: initial){
   html:not([dir="rtl"]) .sf-context-menu--position-bottom-right .sf-context-menu-tooltip,html:not([dir="rtl"])
-  .sf-context-menu--position-bottom-inline-end .sf-context-menu-tooltip {
+  .sf-context-menu--position-bottom-inline-end .sf-context-menu-tooltip{
     right: var(--sf-context-menu-tail-corner-offset);
     }
   }
   .sf-context-menu--position-bottom-right .sf-context-menu-tooltip:where(:dir(ltr)),
-  .sf-context-menu--position-bottom-inline-end .sf-context-menu-tooltip:where(:dir(ltr)) {
+  .sf-context-menu--position-bottom-inline-end .sf-context-menu-tooltip:where(:dir(ltr)){
     right: var(--sf-context-menu-tail-corner-offset);
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu--position-bottom-right .sf-context-menu-tooltip,[dir="rtl"]
-  .sf-context-menu--position-bottom-inline-end .sf-context-menu-tooltip {
+  .sf-context-menu--position-bottom-inline-end .sf-context-menu-tooltip{
     left: var(--sf-context-menu-tail-corner-offset);
   }
-  @supports not (inset-inline-end: initial) {
+  @supports not (inset-inline-end: initial){
   [dir="rtl"] .sf-context-menu--position-bottom-right .sf-context-menu-tooltip,[dir="rtl"]
-  .sf-context-menu--position-bottom-inline-end .sf-context-menu-tooltip {
+  .sf-context-menu--position-bottom-inline-end .sf-context-menu-tooltip{
     left: var(--sf-context-menu-tail-corner-offset);
     }
   }
   .sf-context-menu--position-bottom-right .sf-context-menu-tooltip:where(:dir(rtl)),
-  .sf-context-menu--position-bottom-inline-end .sf-context-menu-tooltip:where(:dir(rtl)) {
+  .sf-context-menu--position-bottom-inline-end .sf-context-menu-tooltip:where(:dir(rtl)){
     left: var(--sf-context-menu-tail-corner-offset);
   }
   .sf-context-menu--position-bottom-right .sf-context-menu-tooltip,
@@ -458,115 +459,115 @@
 }
 @layer sf.components {
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-d4) justify-content/flex-start (.justify-start) align-items/flex-start (.items-start) */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu{
     border-bottom-right-radius: var(--sf-radius-default);
     border-bottom-right-radius: var(--sf-context-menu--border-end-end-radius, var(--sf-radius-default));
   }
-  @supports not (border-end-end-radius: initial) {
-  html:not([dir="rtl"]) .sf-context-menu {
+  @supports not (border-end-end-radius: initial){
+  html:not([dir="rtl"]) .sf-context-menu{
     border-bottom-right-radius: var(--sf-radius-default);
     border-bottom-right-radius: var(--sf-context-menu--border-end-end-radius, var(--sf-radius-default));
     }
   }
-  .sf-context-menu:where(:dir(ltr)) {
+  .sf-context-menu:where(:dir(ltr)){
     border-bottom-right-radius: var(--sf-radius-default);
     border-bottom-right-radius: var(--sf-context-menu--border-end-end-radius, var(--sf-radius-default));
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu{
     border-bottom-left-radius: var(--sf-radius-default);
     border-bottom-left-radius: var(--sf-context-menu--border-end-end-radius, var(--sf-radius-default));
   }
-  @supports not (border-end-end-radius: initial) {
-  [dir="rtl"] .sf-context-menu {
+  @supports not (border-end-end-radius: initial){
+  [dir="rtl"] .sf-context-menu{
     border-bottom-left-radius: var(--sf-radius-default);
     border-bottom-left-radius: var(--sf-context-menu--border-end-end-radius, var(--sf-radius-default));
     }
   }
-  .sf-context-menu:where(:dir(rtl)) {
+  .sf-context-menu:where(:dir(rtl)){
     border-bottom-left-radius: var(--sf-radius-default);
     border-bottom-left-radius: var(--sf-context-menu--border-end-end-radius, var(--sf-radius-default));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu{
     border-bottom-left-radius: var(--sf-radius-default);
     border-bottom-left-radius: var(--sf-context-menu--border-end-start-radius, var(--sf-radius-default));
   }
-  @supports not (border-end-start-radius: initial) {
-  html:not([dir="rtl"]) .sf-context-menu {
+  @supports not (border-end-start-radius: initial){
+  html:not([dir="rtl"]) .sf-context-menu{
     border-bottom-left-radius: var(--sf-radius-default);
     border-bottom-left-radius: var(--sf-context-menu--border-end-start-radius, var(--sf-radius-default));
     }
   }
-  .sf-context-menu:where(:dir(ltr)) {
+  .sf-context-menu:where(:dir(ltr)){
     border-bottom-left-radius: var(--sf-radius-default);
     border-bottom-left-radius: var(--sf-context-menu--border-end-start-radius, var(--sf-radius-default));
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu{
     border-bottom-right-radius: var(--sf-radius-default);
     border-bottom-right-radius: var(--sf-context-menu--border-end-start-radius, var(--sf-radius-default));
   }
-  @supports not (border-end-start-radius: initial) {
-  [dir="rtl"] .sf-context-menu {
+  @supports not (border-end-start-radius: initial){
+  [dir="rtl"] .sf-context-menu{
     border-bottom-right-radius: var(--sf-radius-default);
     border-bottom-right-radius: var(--sf-context-menu--border-end-start-radius, var(--sf-radius-default));
     }
   }
-  .sf-context-menu:where(:dir(rtl)) {
+  .sf-context-menu:where(:dir(rtl)){
     border-bottom-right-radius: var(--sf-radius-default);
     border-bottom-right-radius: var(--sf-context-menu--border-end-start-radius, var(--sf-radius-default));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu{
     border-top-right-radius: var(--sf-radius-default);
     border-top-right-radius: var(--sf-context-menu--border-start-end-radius, var(--sf-radius-default));
   }
-  @supports not (border-start-end-radius: initial) {
-  html:not([dir="rtl"]) .sf-context-menu {
+  @supports not (border-start-end-radius: initial){
+  html:not([dir="rtl"]) .sf-context-menu{
     border-top-right-radius: var(--sf-radius-default);
     border-top-right-radius: var(--sf-context-menu--border-start-end-radius, var(--sf-radius-default));
     }
   }
-  .sf-context-menu:where(:dir(ltr)) {
+  .sf-context-menu:where(:dir(ltr)){
     border-top-right-radius: var(--sf-radius-default);
     border-top-right-radius: var(--sf-context-menu--border-start-end-radius, var(--sf-radius-default));
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu{
     border-top-left-radius: var(--sf-radius-default);
     border-top-left-radius: var(--sf-context-menu--border-start-end-radius, var(--sf-radius-default));
   }
-  @supports not (border-start-end-radius: initial) {
-  [dir="rtl"] .sf-context-menu {
+  @supports not (border-start-end-radius: initial){
+  [dir="rtl"] .sf-context-menu{
     border-top-left-radius: var(--sf-radius-default);
     border-top-left-radius: var(--sf-context-menu--border-start-end-radius, var(--sf-radius-default));
     }
   }
-  .sf-context-menu:where(:dir(rtl)) {
+  .sf-context-menu:where(:dir(rtl)){
     border-top-left-radius: var(--sf-radius-default);
     border-top-left-radius: var(--sf-context-menu--border-start-end-radius, var(--sf-radius-default));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu{
     border-top-left-radius: var(--sf-radius-default);
     border-top-left-radius: var(--sf-context-menu--border-start-start-radius, var(--sf-radius-default));
   }
-  @supports not (border-start-start-radius: initial) {
-  html:not([dir="rtl"]) .sf-context-menu {
+  @supports not (border-start-start-radius: initial){
+  html:not([dir="rtl"]) .sf-context-menu{
     border-top-left-radius: var(--sf-radius-default);
     border-top-left-radius: var(--sf-context-menu--border-start-start-radius, var(--sf-radius-default));
     }
   }
-  .sf-context-menu:where(:dir(ltr)) {
+  .sf-context-menu:where(:dir(ltr)){
     border-top-left-radius: var(--sf-radius-default);
     border-top-left-radius: var(--sf-context-menu--border-start-start-radius, var(--sf-radius-default));
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu{
     border-top-right-radius: var(--sf-radius-default);
     border-top-right-radius: var(--sf-context-menu--border-start-start-radius, var(--sf-radius-default));
   }
-  @supports not (border-start-start-radius: initial) {
-  [dir="rtl"] .sf-context-menu {
+  @supports not (border-start-start-radius: initial){
+  [dir="rtl"] .sf-context-menu{
     border-top-right-radius: var(--sf-radius-default);
     border-top-right-radius: var(--sf-context-menu--border-start-start-radius, var(--sf-radius-default));
     }
   }
-  .sf-context-menu:where(:dir(rtl)) {
+  .sf-context-menu:where(:dir(rtl)){
     border-top-right-radius: var(--sf-radius-default);
     border-top-right-radius: var(--sf-context-menu--border-start-start-radius, var(--sf-radius-default));
   }
@@ -587,7 +588,9 @@
   }
   /* utility-hint: display/block */
   .sf-context-menu .sf-context-menu-tooltip {
-    background-color: var(--sf-surface-0);
+    /* Поднят: поверхность берёт ступень своей высоты, иначе в тёмной теме
+       подъём не виден — там чёрная тень ничего не даёт. */
+    background-color: var(--sf-elevation-1--surface);
     box-shadow: var(--sf-ui-shadow-1);
     height: var(--sf-b2);
     height: var(--sf-context-menu-tail-size, var(--sf-b2));
@@ -595,52 +598,52 @@
     width: var(--sf-context-menu-tail-size, var(--sf-b2));
   }
   /* utility-hint: display/flex (.flex) flex-direction/column (.flex-col) flex-wrap/nowrap (.flex-nowrap) justify-content/flex-start (.justify-start) align-items/flex-start (.items-start) */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu .sf-context-menu-content {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu .sf-context-menu-content{
     padding-right: var(--sf-context-menu-content--padding-inline-end);
   }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .sf-context-menu .sf-context-menu-content {
+  @supports not (padding-inline-end: initial){
+  html:not([dir="rtl"]) .sf-context-menu .sf-context-menu-content{
     padding-right: var(--sf-context-menu-content--padding-inline-end);
     }
   }
-  .sf-context-menu .sf-context-menu-content:where(:dir(ltr)) {
+  .sf-context-menu .sf-context-menu-content:where(:dir(ltr)){
     padding-right: var(--sf-context-menu-content--padding-inline-end);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu .sf-context-menu-content {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu .sf-context-menu-content{
     padding-left: var(--sf-context-menu-content--padding-inline-end);
   }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .sf-context-menu .sf-context-menu-content {
+  @supports not (padding-inline-end: initial){
+  [dir="rtl"] .sf-context-menu .sf-context-menu-content{
     padding-left: var(--sf-context-menu-content--padding-inline-end);
     }
   }
-  .sf-context-menu .sf-context-menu-content:where(:dir(rtl)) {
+  .sf-context-menu .sf-context-menu-content:where(:dir(rtl)){
     padding-left: var(--sf-context-menu-content--padding-inline-end);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu .sf-context-menu-content {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu .sf-context-menu-content{
     padding-left: var(--sf-context-menu-content--padding-inline-start);
   }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .sf-context-menu .sf-context-menu-content {
+  @supports not (padding-inline-start: initial){
+  html:not([dir="rtl"]) .sf-context-menu .sf-context-menu-content{
     padding-left: var(--sf-context-menu-content--padding-inline-start);
     }
   }
-  .sf-context-menu .sf-context-menu-content:where(:dir(ltr)) {
+  .sf-context-menu .sf-context-menu-content:where(:dir(ltr)){
     padding-left: var(--sf-context-menu-content--padding-inline-start);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu .sf-context-menu-content {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu .sf-context-menu-content{
     padding-right: var(--sf-context-menu-content--padding-inline-start);
   }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .sf-context-menu .sf-context-menu-content {
+  @supports not (padding-inline-start: initial){
+  [dir="rtl"] .sf-context-menu .sf-context-menu-content{
     padding-right: var(--sf-context-menu-content--padding-inline-start);
     }
   }
-  .sf-context-menu .sf-context-menu-content:where(:dir(rtl)) {
+  .sf-context-menu .sf-context-menu-content:where(:dir(rtl)){
     padding-right: var(--sf-context-menu-content--padding-inline-start);
   }
   .sf-context-menu .sf-context-menu-content {
-    --sf-context-menu-content--background-color: var(--sf-surface-0);
+    --sf-context-menu-content--background-color: var(--sf-elevation-2--surface);
     --sf-context-menu-content--padding-bottom: var(--sf-space-1\/4);
     --sf-context-menu-content--padding-inline-end: var(--sf-space-1\/4);
     --sf-context-menu-content--padding-inline-start: var(--sf-space-1\/4);

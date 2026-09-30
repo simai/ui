@@ -520,8 +520,8 @@
     border: var(--sf-px) solid var(--sf-menu-horizontal-submenu--border-color, var(--sf-outline-variant));
     border-radius: var(--sf-radius--ui);
     border-radius: var(--sf-menu-horizontal-submenu--radius, var(--sf-radius--ui));
-    background: var(--sf-surface-0);
-    background: var(--sf-menu-horizontal-submenu--background-color, var(--sf-surface-0));
+    background: var(--sf-elevation-2--surface);
+    background: var(--sf-menu-horizontal-submenu--background-color, var(--sf-elevation-2--surface));
     box-shadow: var(--sf-ui-shadow-2);
     box-shadow: var(--sf-menu-horizontal-submenu--box-shadow, var(--sf-ui-shadow-2));
   }
