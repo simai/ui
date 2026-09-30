@@ -2290,6 +2290,12 @@
   .radius-default {
     border-radius: var(--sf-radius-default);
   }
+  .radius-ui {
+    border-radius: var(--sf-radius--ui);
+  }
+  .radius-surface {
+    border-radius: var(--sf-radius--surface);
+  }
   .radius-square {
     border-radius: var(--sf-radius-square);
   }
@@ -4342,6 +4348,590 @@
   }
   .radius-bottom-inline-end-default {
     border-end-end-radius: var(--sf-radius-default);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .radius-top-ui {
+    border-top-left-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-start-start-radius: initial) {
+  html:not([dir="rtl"]) .radius-top-ui {
+    border-top-left-radius: var(--sf-radius--ui);
+    }
+  }
+  .radius-top-ui:where(:dir(ltr)) {
+    border-top-left-radius: var(--sf-radius--ui);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .radius-top-ui {
+    border-top-right-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-start-start-radius: initial) {
+  [dir="rtl"] .radius-top-ui {
+    border-top-right-radius: var(--sf-radius--ui);
+    }
+  }
+  .radius-top-ui:where(:dir(rtl)) {
+    border-top-right-radius: var(--sf-radius--ui);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .radius-top-ui {
+    border-top-right-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-start-end-radius: initial) {
+  html:not([dir="rtl"]) .radius-top-ui {
+    border-top-right-radius: var(--sf-radius--ui);
+    }
+  }
+  .radius-top-ui:where(:dir(ltr)) {
+    border-top-right-radius: var(--sf-radius--ui);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .radius-top-ui {
+    border-top-left-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-start-end-radius: initial) {
+  [dir="rtl"] .radius-top-ui {
+    border-top-left-radius: var(--sf-radius--ui);
+    }
+  }
+  .radius-top-ui:where(:dir(rtl)) {
+    border-top-left-radius: var(--sf-radius--ui);
+  }
+  .radius-top-ui {
+    border-start-start-radius: var(--sf-radius--ui);
+    border-start-end-radius: var(--sf-radius--ui);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .radius-bottom-ui {
+    border-bottom-left-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-end-start-radius: initial) {
+  html:not([dir="rtl"]) .radius-bottom-ui {
+    border-bottom-left-radius: var(--sf-radius--ui);
+    }
+  }
+  .radius-bottom-ui:where(:dir(ltr)) {
+    border-bottom-left-radius: var(--sf-radius--ui);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .radius-bottom-ui {
+    border-bottom-right-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-end-start-radius: initial) {
+  [dir="rtl"] .radius-bottom-ui {
+    border-bottom-right-radius: var(--sf-radius--ui);
+    }
+  }
+  .radius-bottom-ui:where(:dir(rtl)) {
+    border-bottom-right-radius: var(--sf-radius--ui);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .radius-bottom-ui {
+    border-bottom-right-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-end-end-radius: initial) {
+  html:not([dir="rtl"]) .radius-bottom-ui {
+    border-bottom-right-radius: var(--sf-radius--ui);
+    }
+  }
+  .radius-bottom-ui:where(:dir(ltr)) {
+    border-bottom-right-radius: var(--sf-radius--ui);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .radius-bottom-ui {
+    border-bottom-left-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-end-end-radius: initial) {
+  [dir="rtl"] .radius-bottom-ui {
+    border-bottom-left-radius: var(--sf-radius--ui);
+    }
+  }
+  .radius-bottom-ui:where(:dir(rtl)) {
+    border-bottom-left-radius: var(--sf-radius--ui);
+  }
+  .radius-bottom-ui {
+    border-end-start-radius: var(--sf-radius--ui);
+    border-end-end-radius: var(--sf-radius--ui);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .radius-inline-start-ui {
+    border-top-left-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-start-start-radius: initial) {
+  html:not([dir="rtl"]) .radius-inline-start-ui {
+    border-top-left-radius: var(--sf-radius--ui);
+    }
+  }
+  .radius-inline-start-ui:where(:dir(ltr)) {
+    border-top-left-radius: var(--sf-radius--ui);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .radius-inline-start-ui {
+    border-top-right-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-start-start-radius: initial) {
+  [dir="rtl"] .radius-inline-start-ui {
+    border-top-right-radius: var(--sf-radius--ui);
+    }
+  }
+  .radius-inline-start-ui:where(:dir(rtl)) {
+    border-top-right-radius: var(--sf-radius--ui);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .radius-inline-start-ui {
+    border-bottom-left-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-end-start-radius: initial) {
+  html:not([dir="rtl"]) .radius-inline-start-ui {
+    border-bottom-left-radius: var(--sf-radius--ui);
+    }
+  }
+  .radius-inline-start-ui:where(:dir(ltr)) {
+    border-bottom-left-radius: var(--sf-radius--ui);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .radius-inline-start-ui {
+    border-bottom-right-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-end-start-radius: initial) {
+  [dir="rtl"] .radius-inline-start-ui {
+    border-bottom-right-radius: var(--sf-radius--ui);
+    }
+  }
+  .radius-inline-start-ui:where(:dir(rtl)) {
+    border-bottom-right-radius: var(--sf-radius--ui);
+  }
+  .radius-inline-start-ui {
+    border-start-start-radius: var(--sf-radius--ui);
+    border-end-start-radius: var(--sf-radius--ui);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .radius-inline-end-ui {
+    border-top-right-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-start-end-radius: initial) {
+  html:not([dir="rtl"]) .radius-inline-end-ui {
+    border-top-right-radius: var(--sf-radius--ui);
+    }
+  }
+  .radius-inline-end-ui:where(:dir(ltr)) {
+    border-top-right-radius: var(--sf-radius--ui);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .radius-inline-end-ui {
+    border-top-left-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-start-end-radius: initial) {
+  [dir="rtl"] .radius-inline-end-ui {
+    border-top-left-radius: var(--sf-radius--ui);
+    }
+  }
+  .radius-inline-end-ui:where(:dir(rtl)) {
+    border-top-left-radius: var(--sf-radius--ui);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .radius-inline-end-ui {
+    border-bottom-right-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-end-end-radius: initial) {
+  html:not([dir="rtl"]) .radius-inline-end-ui {
+    border-bottom-right-radius: var(--sf-radius--ui);
+    }
+  }
+  .radius-inline-end-ui:where(:dir(ltr)) {
+    border-bottom-right-radius: var(--sf-radius--ui);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .radius-inline-end-ui {
+    border-bottom-left-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-end-end-radius: initial) {
+  [dir="rtl"] .radius-inline-end-ui {
+    border-bottom-left-radius: var(--sf-radius--ui);
+    }
+  }
+  .radius-inline-end-ui:where(:dir(rtl)) {
+    border-bottom-left-radius: var(--sf-radius--ui);
+  }
+  .radius-inline-end-ui {
+    border-start-end-radius: var(--sf-radius--ui);
+    border-end-end-radius: var(--sf-radius--ui);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .radius-top-inline-start-ui {
+    border-top-left-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-start-start-radius: initial) {
+  html:not([dir="rtl"]) .radius-top-inline-start-ui {
+    border-top-left-radius: var(--sf-radius--ui);
+    }
+  }
+  .radius-top-inline-start-ui:where(:dir(ltr)) {
+    border-top-left-radius: var(--sf-radius--ui);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .radius-top-inline-start-ui {
+    border-top-right-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-start-start-radius: initial) {
+  [dir="rtl"] .radius-top-inline-start-ui {
+    border-top-right-radius: var(--sf-radius--ui);
+    }
+  }
+  .radius-top-inline-start-ui:where(:dir(rtl)) {
+    border-top-right-radius: var(--sf-radius--ui);
+  }
+  .radius-top-inline-start-ui {
+    border-start-start-radius: var(--sf-radius--ui);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .radius-top-inline-end-ui {
+    border-top-right-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-start-end-radius: initial) {
+  html:not([dir="rtl"]) .radius-top-inline-end-ui {
+    border-top-right-radius: var(--sf-radius--ui);
+    }
+  }
+  .radius-top-inline-end-ui:where(:dir(ltr)) {
+    border-top-right-radius: var(--sf-radius--ui);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .radius-top-inline-end-ui {
+    border-top-left-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-start-end-radius: initial) {
+  [dir="rtl"] .radius-top-inline-end-ui {
+    border-top-left-radius: var(--sf-radius--ui);
+    }
+  }
+  .radius-top-inline-end-ui:where(:dir(rtl)) {
+    border-top-left-radius: var(--sf-radius--ui);
+  }
+  .radius-top-inline-end-ui {
+    border-start-end-radius: var(--sf-radius--ui);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .radius-bottom-inline-start-ui {
+    border-bottom-left-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-end-start-radius: initial) {
+  html:not([dir="rtl"]) .radius-bottom-inline-start-ui {
+    border-bottom-left-radius: var(--sf-radius--ui);
+    }
+  }
+  .radius-bottom-inline-start-ui:where(:dir(ltr)) {
+    border-bottom-left-radius: var(--sf-radius--ui);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .radius-bottom-inline-start-ui {
+    border-bottom-right-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-end-start-radius: initial) {
+  [dir="rtl"] .radius-bottom-inline-start-ui {
+    border-bottom-right-radius: var(--sf-radius--ui);
+    }
+  }
+  .radius-bottom-inline-start-ui:where(:dir(rtl)) {
+    border-bottom-right-radius: var(--sf-radius--ui);
+  }
+  .radius-bottom-inline-start-ui {
+    border-end-start-radius: var(--sf-radius--ui);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .radius-bottom-inline-end-ui {
+    border-bottom-right-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-end-end-radius: initial) {
+  html:not([dir="rtl"]) .radius-bottom-inline-end-ui {
+    border-bottom-right-radius: var(--sf-radius--ui);
+    }
+  }
+  .radius-bottom-inline-end-ui:where(:dir(ltr)) {
+    border-bottom-right-radius: var(--sf-radius--ui);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .radius-bottom-inline-end-ui {
+    border-bottom-left-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-end-end-radius: initial) {
+  [dir="rtl"] .radius-bottom-inline-end-ui {
+    border-bottom-left-radius: var(--sf-radius--ui);
+    }
+  }
+  .radius-bottom-inline-end-ui:where(:dir(rtl)) {
+    border-bottom-left-radius: var(--sf-radius--ui);
+  }
+  .radius-bottom-inline-end-ui {
+    border-end-end-radius: var(--sf-radius--ui);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .radius-top-surface {
+    border-top-left-radius: var(--sf-radius--surface);
+  }
+  @supports not (border-start-start-radius: initial) {
+  html:not([dir="rtl"]) .radius-top-surface {
+    border-top-left-radius: var(--sf-radius--surface);
+    }
+  }
+  .radius-top-surface:where(:dir(ltr)) {
+    border-top-left-radius: var(--sf-radius--surface);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .radius-top-surface {
+    border-top-right-radius: var(--sf-radius--surface);
+  }
+  @supports not (border-start-start-radius: initial) {
+  [dir="rtl"] .radius-top-surface {
+    border-top-right-radius: var(--sf-radius--surface);
+    }
+  }
+  .radius-top-surface:where(:dir(rtl)) {
+    border-top-right-radius: var(--sf-radius--surface);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .radius-top-surface {
+    border-top-right-radius: var(--sf-radius--surface);
+  }
+  @supports not (border-start-end-radius: initial) {
+  html:not([dir="rtl"]) .radius-top-surface {
+    border-top-right-radius: var(--sf-radius--surface);
+    }
+  }
+  .radius-top-surface:where(:dir(ltr)) {
+    border-top-right-radius: var(--sf-radius--surface);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .radius-top-surface {
+    border-top-left-radius: var(--sf-radius--surface);
+  }
+  @supports not (border-start-end-radius: initial) {
+  [dir="rtl"] .radius-top-surface {
+    border-top-left-radius: var(--sf-radius--surface);
+    }
+  }
+  .radius-top-surface:where(:dir(rtl)) {
+    border-top-left-radius: var(--sf-radius--surface);
+  }
+  .radius-top-surface {
+    border-start-start-radius: var(--sf-radius--surface);
+    border-start-end-radius: var(--sf-radius--surface);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .radius-bottom-surface {
+    border-bottom-left-radius: var(--sf-radius--surface);
+  }
+  @supports not (border-end-start-radius: initial) {
+  html:not([dir="rtl"]) .radius-bottom-surface {
+    border-bottom-left-radius: var(--sf-radius--surface);
+    }
+  }
+  .radius-bottom-surface:where(:dir(ltr)) {
+    border-bottom-left-radius: var(--sf-radius--surface);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .radius-bottom-surface {
+    border-bottom-right-radius: var(--sf-radius--surface);
+  }
+  @supports not (border-end-start-radius: initial) {
+  [dir="rtl"] .radius-bottom-surface {
+    border-bottom-right-radius: var(--sf-radius--surface);
+    }
+  }
+  .radius-bottom-surface:where(:dir(rtl)) {
+    border-bottom-right-radius: var(--sf-radius--surface);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .radius-bottom-surface {
+    border-bottom-right-radius: var(--sf-radius--surface);
+  }
+  @supports not (border-end-end-radius: initial) {
+  html:not([dir="rtl"]) .radius-bottom-surface {
+    border-bottom-right-radius: var(--sf-radius--surface);
+    }
+  }
+  .radius-bottom-surface:where(:dir(ltr)) {
+    border-bottom-right-radius: var(--sf-radius--surface);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .radius-bottom-surface {
+    border-bottom-left-radius: var(--sf-radius--surface);
+  }
+  @supports not (border-end-end-radius: initial) {
+  [dir="rtl"] .radius-bottom-surface {
+    border-bottom-left-radius: var(--sf-radius--surface);
+    }
+  }
+  .radius-bottom-surface:where(:dir(rtl)) {
+    border-bottom-left-radius: var(--sf-radius--surface);
+  }
+  .radius-bottom-surface {
+    border-end-start-radius: var(--sf-radius--surface);
+    border-end-end-radius: var(--sf-radius--surface);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .radius-inline-start-surface {
+    border-top-left-radius: var(--sf-radius--surface);
+  }
+  @supports not (border-start-start-radius: initial) {
+  html:not([dir="rtl"]) .radius-inline-start-surface {
+    border-top-left-radius: var(--sf-radius--surface);
+    }
+  }
+  .radius-inline-start-surface:where(:dir(ltr)) {
+    border-top-left-radius: var(--sf-radius--surface);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .radius-inline-start-surface {
+    border-top-right-radius: var(--sf-radius--surface);
+  }
+  @supports not (border-start-start-radius: initial) {
+  [dir="rtl"] .radius-inline-start-surface {
+    border-top-right-radius: var(--sf-radius--surface);
+    }
+  }
+  .radius-inline-start-surface:where(:dir(rtl)) {
+    border-top-right-radius: var(--sf-radius--surface);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .radius-inline-start-surface {
+    border-bottom-left-radius: var(--sf-radius--surface);
+  }
+  @supports not (border-end-start-radius: initial) {
+  html:not([dir="rtl"]) .radius-inline-start-surface {
+    border-bottom-left-radius: var(--sf-radius--surface);
+    }
+  }
+  .radius-inline-start-surface:where(:dir(ltr)) {
+    border-bottom-left-radius: var(--sf-radius--surface);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .radius-inline-start-surface {
+    border-bottom-right-radius: var(--sf-radius--surface);
+  }
+  @supports not (border-end-start-radius: initial) {
+  [dir="rtl"] .radius-inline-start-surface {
+    border-bottom-right-radius: var(--sf-radius--surface);
+    }
+  }
+  .radius-inline-start-surface:where(:dir(rtl)) {
+    border-bottom-right-radius: var(--sf-radius--surface);
+  }
+  .radius-inline-start-surface {
+    border-start-start-radius: var(--sf-radius--surface);
+    border-end-start-radius: var(--sf-radius--surface);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .radius-inline-end-surface {
+    border-top-right-radius: var(--sf-radius--surface);
+  }
+  @supports not (border-start-end-radius: initial) {
+  html:not([dir="rtl"]) .radius-inline-end-surface {
+    border-top-right-radius: var(--sf-radius--surface);
+    }
+  }
+  .radius-inline-end-surface:where(:dir(ltr)) {
+    border-top-right-radius: var(--sf-radius--surface);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .radius-inline-end-surface {
+    border-top-left-radius: var(--sf-radius--surface);
+  }
+  @supports not (border-start-end-radius: initial) {
+  [dir="rtl"] .radius-inline-end-surface {
+    border-top-left-radius: var(--sf-radius--surface);
+    }
+  }
+  .radius-inline-end-surface:where(:dir(rtl)) {
+    border-top-left-radius: var(--sf-radius--surface);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .radius-inline-end-surface {
+    border-bottom-right-radius: var(--sf-radius--surface);
+  }
+  @supports not (border-end-end-radius: initial) {
+  html:not([dir="rtl"]) .radius-inline-end-surface {
+    border-bottom-right-radius: var(--sf-radius--surface);
+    }
+  }
+  .radius-inline-end-surface:where(:dir(ltr)) {
+    border-bottom-right-radius: var(--sf-radius--surface);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .radius-inline-end-surface {
+    border-bottom-left-radius: var(--sf-radius--surface);
+  }
+  @supports not (border-end-end-radius: initial) {
+  [dir="rtl"] .radius-inline-end-surface {
+    border-bottom-left-radius: var(--sf-radius--surface);
+    }
+  }
+  .radius-inline-end-surface:where(:dir(rtl)) {
+    border-bottom-left-radius: var(--sf-radius--surface);
+  }
+  .radius-inline-end-surface {
+    border-start-end-radius: var(--sf-radius--surface);
+    border-end-end-radius: var(--sf-radius--surface);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .radius-top-inline-start-surface {
+    border-top-left-radius: var(--sf-radius--surface);
+  }
+  @supports not (border-start-start-radius: initial) {
+  html:not([dir="rtl"]) .radius-top-inline-start-surface {
+    border-top-left-radius: var(--sf-radius--surface);
+    }
+  }
+  .radius-top-inline-start-surface:where(:dir(ltr)) {
+    border-top-left-radius: var(--sf-radius--surface);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .radius-top-inline-start-surface {
+    border-top-right-radius: var(--sf-radius--surface);
+  }
+  @supports not (border-start-start-radius: initial) {
+  [dir="rtl"] .radius-top-inline-start-surface {
+    border-top-right-radius: var(--sf-radius--surface);
+    }
+  }
+  .radius-top-inline-start-surface:where(:dir(rtl)) {
+    border-top-right-radius: var(--sf-radius--surface);
+  }
+  .radius-top-inline-start-surface {
+    border-start-start-radius: var(--sf-radius--surface);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .radius-top-inline-end-surface {
+    border-top-right-radius: var(--sf-radius--surface);
+  }
+  @supports not (border-start-end-radius: initial) {
+  html:not([dir="rtl"]) .radius-top-inline-end-surface {
+    border-top-right-radius: var(--sf-radius--surface);
+    }
+  }
+  .radius-top-inline-end-surface:where(:dir(ltr)) {
+    border-top-right-radius: var(--sf-radius--surface);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .radius-top-inline-end-surface {
+    border-top-left-radius: var(--sf-radius--surface);
+  }
+  @supports not (border-start-end-radius: initial) {
+  [dir="rtl"] .radius-top-inline-end-surface {
+    border-top-left-radius: var(--sf-radius--surface);
+    }
+  }
+  .radius-top-inline-end-surface:where(:dir(rtl)) {
+    border-top-left-radius: var(--sf-radius--surface);
+  }
+  .radius-top-inline-end-surface {
+    border-start-end-radius: var(--sf-radius--surface);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .radius-bottom-inline-start-surface {
+    border-bottom-left-radius: var(--sf-radius--surface);
+  }
+  @supports not (border-end-start-radius: initial) {
+  html:not([dir="rtl"]) .radius-bottom-inline-start-surface {
+    border-bottom-left-radius: var(--sf-radius--surface);
+    }
+  }
+  .radius-bottom-inline-start-surface:where(:dir(ltr)) {
+    border-bottom-left-radius: var(--sf-radius--surface);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .radius-bottom-inline-start-surface {
+    border-bottom-right-radius: var(--sf-radius--surface);
+  }
+  @supports not (border-end-start-radius: initial) {
+  [dir="rtl"] .radius-bottom-inline-start-surface {
+    border-bottom-right-radius: var(--sf-radius--surface);
+    }
+  }
+  .radius-bottom-inline-start-surface:where(:dir(rtl)) {
+    border-bottom-right-radius: var(--sf-radius--surface);
+  }
+  .radius-bottom-inline-start-surface {
+    border-end-start-radius: var(--sf-radius--surface);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .radius-bottom-inline-end-surface {
+    border-bottom-right-radius: var(--sf-radius--surface);
+  }
+  @supports not (border-end-end-radius: initial) {
+  html:not([dir="rtl"]) .radius-bottom-inline-end-surface {
+    border-bottom-right-radius: var(--sf-radius--surface);
+    }
+  }
+  .radius-bottom-inline-end-surface:where(:dir(ltr)) {
+    border-bottom-right-radius: var(--sf-radius--surface);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .radius-bottom-inline-end-surface {
+    border-bottom-left-radius: var(--sf-radius--surface);
+  }
+  @supports not (border-end-end-radius: initial) {
+  [dir="rtl"] .radius-bottom-inline-end-surface {
+    border-bottom-left-radius: var(--sf-radius--surface);
+    }
+  }
+  .radius-bottom-inline-end-surface:where(:dir(rtl)) {
+    border-bottom-left-radius: var(--sf-radius--surface);
+  }
+  .radius-bottom-inline-end-surface {
+    border-end-end-radius: var(--sf-radius--surface);
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .radius-top-square {
     border-top-left-radius: var(--sf-radius-square);
@@ -64649,6 +65239,12 @@
     .sm\:radius-default {
       border-radius: var(--sf-radius-default);
     }
+    .sm\:radius-ui {
+      border-radius: var(--sf-radius--ui);
+    }
+    .sm\:radius-surface {
+      border-radius: var(--sf-radius--surface);
+    }
     .sm\:radius-square {
       border-radius: var(--sf-radius-square);
     }
@@ -66701,6 +67297,590 @@
     }
     .sm\:radius-bottom-inline-end-default {
       border-end-end-radius: var(--sf-radius-default);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:radius-top-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-start-radius: initial) {
+    html:not([dir="rtl"]) .sm\:radius-top-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .sm\:radius-top-ui:where(:dir(ltr)) {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sm\:radius-top-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-start-radius: initial) {
+    [dir="rtl"] .sm\:radius-top-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .sm\:radius-top-ui:where(:dir(rtl)) {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:radius-top-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-end-radius: initial) {
+    html:not([dir="rtl"]) .sm\:radius-top-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .sm\:radius-top-ui:where(:dir(ltr)) {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sm\:radius-top-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-end-radius: initial) {
+    [dir="rtl"] .sm\:radius-top-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .sm\:radius-top-ui:where(:dir(rtl)) {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    .sm\:radius-top-ui {
+      border-start-start-radius: var(--sf-radius--ui);
+      border-start-end-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:radius-bottom-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-start-radius: initial) {
+    html:not([dir="rtl"]) .sm\:radius-bottom-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .sm\:radius-bottom-ui:where(:dir(ltr)) {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sm\:radius-bottom-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-start-radius: initial) {
+    [dir="rtl"] .sm\:radius-bottom-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .sm\:radius-bottom-ui:where(:dir(rtl)) {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:radius-bottom-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-end-radius: initial) {
+    html:not([dir="rtl"]) .sm\:radius-bottom-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .sm\:radius-bottom-ui:where(:dir(ltr)) {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sm\:radius-bottom-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-end-radius: initial) {
+    [dir="rtl"] .sm\:radius-bottom-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .sm\:radius-bottom-ui:where(:dir(rtl)) {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    .sm\:radius-bottom-ui {
+      border-end-start-radius: var(--sf-radius--ui);
+      border-end-end-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:radius-inline-start-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-start-radius: initial) {
+    html:not([dir="rtl"]) .sm\:radius-inline-start-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .sm\:radius-inline-start-ui:where(:dir(ltr)) {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sm\:radius-inline-start-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-start-radius: initial) {
+    [dir="rtl"] .sm\:radius-inline-start-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .sm\:radius-inline-start-ui:where(:dir(rtl)) {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:radius-inline-start-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-start-radius: initial) {
+    html:not([dir="rtl"]) .sm\:radius-inline-start-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .sm\:radius-inline-start-ui:where(:dir(ltr)) {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sm\:radius-inline-start-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-start-radius: initial) {
+    [dir="rtl"] .sm\:radius-inline-start-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .sm\:radius-inline-start-ui:where(:dir(rtl)) {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    .sm\:radius-inline-start-ui {
+      border-start-start-radius: var(--sf-radius--ui);
+      border-end-start-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:radius-inline-end-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-end-radius: initial) {
+    html:not([dir="rtl"]) .sm\:radius-inline-end-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .sm\:radius-inline-end-ui:where(:dir(ltr)) {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sm\:radius-inline-end-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-end-radius: initial) {
+    [dir="rtl"] .sm\:radius-inline-end-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .sm\:radius-inline-end-ui:where(:dir(rtl)) {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:radius-inline-end-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-end-radius: initial) {
+    html:not([dir="rtl"]) .sm\:radius-inline-end-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .sm\:radius-inline-end-ui:where(:dir(ltr)) {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sm\:radius-inline-end-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-end-radius: initial) {
+    [dir="rtl"] .sm\:radius-inline-end-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .sm\:radius-inline-end-ui:where(:dir(rtl)) {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    .sm\:radius-inline-end-ui {
+      border-start-end-radius: var(--sf-radius--ui);
+      border-end-end-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:radius-top-inline-start-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-start-radius: initial) {
+    html:not([dir="rtl"]) .sm\:radius-top-inline-start-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .sm\:radius-top-inline-start-ui:where(:dir(ltr)) {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sm\:radius-top-inline-start-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-start-radius: initial) {
+    [dir="rtl"] .sm\:radius-top-inline-start-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .sm\:radius-top-inline-start-ui:where(:dir(rtl)) {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    .sm\:radius-top-inline-start-ui {
+      border-start-start-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:radius-top-inline-end-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-end-radius: initial) {
+    html:not([dir="rtl"]) .sm\:radius-top-inline-end-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .sm\:radius-top-inline-end-ui:where(:dir(ltr)) {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sm\:radius-top-inline-end-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-end-radius: initial) {
+    [dir="rtl"] .sm\:radius-top-inline-end-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .sm\:radius-top-inline-end-ui:where(:dir(rtl)) {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    .sm\:radius-top-inline-end-ui {
+      border-start-end-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:radius-bottom-inline-start-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-start-radius: initial) {
+    html:not([dir="rtl"]) .sm\:radius-bottom-inline-start-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .sm\:radius-bottom-inline-start-ui:where(:dir(ltr)) {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sm\:radius-bottom-inline-start-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-start-radius: initial) {
+    [dir="rtl"] .sm\:radius-bottom-inline-start-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .sm\:radius-bottom-inline-start-ui:where(:dir(rtl)) {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    .sm\:radius-bottom-inline-start-ui {
+      border-end-start-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:radius-bottom-inline-end-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-end-radius: initial) {
+    html:not([dir="rtl"]) .sm\:radius-bottom-inline-end-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .sm\:radius-bottom-inline-end-ui:where(:dir(ltr)) {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sm\:radius-bottom-inline-end-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-end-radius: initial) {
+    [dir="rtl"] .sm\:radius-bottom-inline-end-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .sm\:radius-bottom-inline-end-ui:where(:dir(rtl)) {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    .sm\:radius-bottom-inline-end-ui {
+      border-end-end-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:radius-top-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-start-radius: initial) {
+    html:not([dir="rtl"]) .sm\:radius-top-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .sm\:radius-top-surface:where(:dir(ltr)) {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sm\:radius-top-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-start-radius: initial) {
+    [dir="rtl"] .sm\:radius-top-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .sm\:radius-top-surface:where(:dir(rtl)) {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:radius-top-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-end-radius: initial) {
+    html:not([dir="rtl"]) .sm\:radius-top-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .sm\:radius-top-surface:where(:dir(ltr)) {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sm\:radius-top-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-end-radius: initial) {
+    [dir="rtl"] .sm\:radius-top-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .sm\:radius-top-surface:where(:dir(rtl)) {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    .sm\:radius-top-surface {
+      border-start-start-radius: var(--sf-radius--surface);
+      border-start-end-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:radius-bottom-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-start-radius: initial) {
+    html:not([dir="rtl"]) .sm\:radius-bottom-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .sm\:radius-bottom-surface:where(:dir(ltr)) {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sm\:radius-bottom-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-start-radius: initial) {
+    [dir="rtl"] .sm\:radius-bottom-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .sm\:radius-bottom-surface:where(:dir(rtl)) {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:radius-bottom-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-end-radius: initial) {
+    html:not([dir="rtl"]) .sm\:radius-bottom-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .sm\:radius-bottom-surface:where(:dir(ltr)) {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sm\:radius-bottom-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-end-radius: initial) {
+    [dir="rtl"] .sm\:radius-bottom-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .sm\:radius-bottom-surface:where(:dir(rtl)) {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    .sm\:radius-bottom-surface {
+      border-end-start-radius: var(--sf-radius--surface);
+      border-end-end-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:radius-inline-start-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-start-radius: initial) {
+    html:not([dir="rtl"]) .sm\:radius-inline-start-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .sm\:radius-inline-start-surface:where(:dir(ltr)) {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sm\:radius-inline-start-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-start-radius: initial) {
+    [dir="rtl"] .sm\:radius-inline-start-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .sm\:radius-inline-start-surface:where(:dir(rtl)) {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:radius-inline-start-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-start-radius: initial) {
+    html:not([dir="rtl"]) .sm\:radius-inline-start-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .sm\:radius-inline-start-surface:where(:dir(ltr)) {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sm\:radius-inline-start-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-start-radius: initial) {
+    [dir="rtl"] .sm\:radius-inline-start-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .sm\:radius-inline-start-surface:where(:dir(rtl)) {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    .sm\:radius-inline-start-surface {
+      border-start-start-radius: var(--sf-radius--surface);
+      border-end-start-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:radius-inline-end-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-end-radius: initial) {
+    html:not([dir="rtl"]) .sm\:radius-inline-end-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .sm\:radius-inline-end-surface:where(:dir(ltr)) {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sm\:radius-inline-end-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-end-radius: initial) {
+    [dir="rtl"] .sm\:radius-inline-end-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .sm\:radius-inline-end-surface:where(:dir(rtl)) {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:radius-inline-end-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-end-radius: initial) {
+    html:not([dir="rtl"]) .sm\:radius-inline-end-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .sm\:radius-inline-end-surface:where(:dir(ltr)) {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sm\:radius-inline-end-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-end-radius: initial) {
+    [dir="rtl"] .sm\:radius-inline-end-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .sm\:radius-inline-end-surface:where(:dir(rtl)) {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    .sm\:radius-inline-end-surface {
+      border-start-end-radius: var(--sf-radius--surface);
+      border-end-end-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:radius-top-inline-start-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-start-radius: initial) {
+    html:not([dir="rtl"]) .sm\:radius-top-inline-start-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .sm\:radius-top-inline-start-surface:where(:dir(ltr)) {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sm\:radius-top-inline-start-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-start-radius: initial) {
+    [dir="rtl"] .sm\:radius-top-inline-start-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .sm\:radius-top-inline-start-surface:where(:dir(rtl)) {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    .sm\:radius-top-inline-start-surface {
+      border-start-start-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:radius-top-inline-end-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-end-radius: initial) {
+    html:not([dir="rtl"]) .sm\:radius-top-inline-end-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .sm\:radius-top-inline-end-surface:where(:dir(ltr)) {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sm\:radius-top-inline-end-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-end-radius: initial) {
+    [dir="rtl"] .sm\:radius-top-inline-end-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .sm\:radius-top-inline-end-surface:where(:dir(rtl)) {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    .sm\:radius-top-inline-end-surface {
+      border-start-end-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:radius-bottom-inline-start-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-start-radius: initial) {
+    html:not([dir="rtl"]) .sm\:radius-bottom-inline-start-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .sm\:radius-bottom-inline-start-surface:where(:dir(ltr)) {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sm\:radius-bottom-inline-start-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-start-radius: initial) {
+    [dir="rtl"] .sm\:radius-bottom-inline-start-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .sm\:radius-bottom-inline-start-surface:where(:dir(rtl)) {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    .sm\:radius-bottom-inline-start-surface {
+      border-end-start-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:radius-bottom-inline-end-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-end-radius: initial) {
+    html:not([dir="rtl"]) .sm\:radius-bottom-inline-end-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .sm\:radius-bottom-inline-end-surface:where(:dir(ltr)) {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sm\:radius-bottom-inline-end-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-end-radius: initial) {
+    [dir="rtl"] .sm\:radius-bottom-inline-end-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .sm\:radius-bottom-inline-end-surface:where(:dir(rtl)) {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    .sm\:radius-bottom-inline-end-surface {
+      border-end-end-radius: var(--sf-radius--surface);
     }
     _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:radius-top-square {
       border-top-left-radius: var(--sf-radius-square);
@@ -108118,6 +109298,12 @@
     .md\:radius-default {
       border-radius: var(--sf-radius-default);
     }
+    .md\:radius-ui {
+      border-radius: var(--sf-radius--ui);
+    }
+    .md\:radius-surface {
+      border-radius: var(--sf-radius--surface);
+    }
     .md\:radius-square {
       border-radius: var(--sf-radius-square);
     }
@@ -110170,6 +111356,590 @@
     }
     .md\:radius-bottom-inline-end-default {
       border-end-end-radius: var(--sf-radius-default);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .md\:radius-top-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-start-radius: initial) {
+    html:not([dir="rtl"]) .md\:radius-top-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .md\:radius-top-ui:where(:dir(ltr)) {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .md\:radius-top-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-start-radius: initial) {
+    [dir="rtl"] .md\:radius-top-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .md\:radius-top-ui:where(:dir(rtl)) {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .md\:radius-top-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-end-radius: initial) {
+    html:not([dir="rtl"]) .md\:radius-top-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .md\:radius-top-ui:where(:dir(ltr)) {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .md\:radius-top-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-end-radius: initial) {
+    [dir="rtl"] .md\:radius-top-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .md\:radius-top-ui:where(:dir(rtl)) {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    .md\:radius-top-ui {
+      border-start-start-radius: var(--sf-radius--ui);
+      border-start-end-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .md\:radius-bottom-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-start-radius: initial) {
+    html:not([dir="rtl"]) .md\:radius-bottom-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .md\:radius-bottom-ui:where(:dir(ltr)) {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .md\:radius-bottom-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-start-radius: initial) {
+    [dir="rtl"] .md\:radius-bottom-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .md\:radius-bottom-ui:where(:dir(rtl)) {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .md\:radius-bottom-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-end-radius: initial) {
+    html:not([dir="rtl"]) .md\:radius-bottom-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .md\:radius-bottom-ui:where(:dir(ltr)) {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .md\:radius-bottom-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-end-radius: initial) {
+    [dir="rtl"] .md\:radius-bottom-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .md\:radius-bottom-ui:where(:dir(rtl)) {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    .md\:radius-bottom-ui {
+      border-end-start-radius: var(--sf-radius--ui);
+      border-end-end-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .md\:radius-inline-start-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-start-radius: initial) {
+    html:not([dir="rtl"]) .md\:radius-inline-start-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .md\:radius-inline-start-ui:where(:dir(ltr)) {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .md\:radius-inline-start-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-start-radius: initial) {
+    [dir="rtl"] .md\:radius-inline-start-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .md\:radius-inline-start-ui:where(:dir(rtl)) {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .md\:radius-inline-start-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-start-radius: initial) {
+    html:not([dir="rtl"]) .md\:radius-inline-start-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .md\:radius-inline-start-ui:where(:dir(ltr)) {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .md\:radius-inline-start-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-start-radius: initial) {
+    [dir="rtl"] .md\:radius-inline-start-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .md\:radius-inline-start-ui:where(:dir(rtl)) {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    .md\:radius-inline-start-ui {
+      border-start-start-radius: var(--sf-radius--ui);
+      border-end-start-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .md\:radius-inline-end-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-end-radius: initial) {
+    html:not([dir="rtl"]) .md\:radius-inline-end-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .md\:radius-inline-end-ui:where(:dir(ltr)) {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .md\:radius-inline-end-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-end-radius: initial) {
+    [dir="rtl"] .md\:radius-inline-end-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .md\:radius-inline-end-ui:where(:dir(rtl)) {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .md\:radius-inline-end-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-end-radius: initial) {
+    html:not([dir="rtl"]) .md\:radius-inline-end-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .md\:radius-inline-end-ui:where(:dir(ltr)) {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .md\:radius-inline-end-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-end-radius: initial) {
+    [dir="rtl"] .md\:radius-inline-end-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .md\:radius-inline-end-ui:where(:dir(rtl)) {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    .md\:radius-inline-end-ui {
+      border-start-end-radius: var(--sf-radius--ui);
+      border-end-end-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .md\:radius-top-inline-start-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-start-radius: initial) {
+    html:not([dir="rtl"]) .md\:radius-top-inline-start-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .md\:radius-top-inline-start-ui:where(:dir(ltr)) {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .md\:radius-top-inline-start-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-start-radius: initial) {
+    [dir="rtl"] .md\:radius-top-inline-start-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .md\:radius-top-inline-start-ui:where(:dir(rtl)) {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    .md\:radius-top-inline-start-ui {
+      border-start-start-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .md\:radius-top-inline-end-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-end-radius: initial) {
+    html:not([dir="rtl"]) .md\:radius-top-inline-end-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .md\:radius-top-inline-end-ui:where(:dir(ltr)) {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .md\:radius-top-inline-end-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-end-radius: initial) {
+    [dir="rtl"] .md\:radius-top-inline-end-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .md\:radius-top-inline-end-ui:where(:dir(rtl)) {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    .md\:radius-top-inline-end-ui {
+      border-start-end-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .md\:radius-bottom-inline-start-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-start-radius: initial) {
+    html:not([dir="rtl"]) .md\:radius-bottom-inline-start-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .md\:radius-bottom-inline-start-ui:where(:dir(ltr)) {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .md\:radius-bottom-inline-start-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-start-radius: initial) {
+    [dir="rtl"] .md\:radius-bottom-inline-start-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .md\:radius-bottom-inline-start-ui:where(:dir(rtl)) {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    .md\:radius-bottom-inline-start-ui {
+      border-end-start-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .md\:radius-bottom-inline-end-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-end-radius: initial) {
+    html:not([dir="rtl"]) .md\:radius-bottom-inline-end-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .md\:radius-bottom-inline-end-ui:where(:dir(ltr)) {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .md\:radius-bottom-inline-end-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-end-radius: initial) {
+    [dir="rtl"] .md\:radius-bottom-inline-end-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .md\:radius-bottom-inline-end-ui:where(:dir(rtl)) {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    .md\:radius-bottom-inline-end-ui {
+      border-end-end-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .md\:radius-top-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-start-radius: initial) {
+    html:not([dir="rtl"]) .md\:radius-top-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .md\:radius-top-surface:where(:dir(ltr)) {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .md\:radius-top-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-start-radius: initial) {
+    [dir="rtl"] .md\:radius-top-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .md\:radius-top-surface:where(:dir(rtl)) {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .md\:radius-top-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-end-radius: initial) {
+    html:not([dir="rtl"]) .md\:radius-top-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .md\:radius-top-surface:where(:dir(ltr)) {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .md\:radius-top-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-end-radius: initial) {
+    [dir="rtl"] .md\:radius-top-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .md\:radius-top-surface:where(:dir(rtl)) {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    .md\:radius-top-surface {
+      border-start-start-radius: var(--sf-radius--surface);
+      border-start-end-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .md\:radius-bottom-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-start-radius: initial) {
+    html:not([dir="rtl"]) .md\:radius-bottom-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .md\:radius-bottom-surface:where(:dir(ltr)) {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .md\:radius-bottom-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-start-radius: initial) {
+    [dir="rtl"] .md\:radius-bottom-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .md\:radius-bottom-surface:where(:dir(rtl)) {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .md\:radius-bottom-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-end-radius: initial) {
+    html:not([dir="rtl"]) .md\:radius-bottom-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .md\:radius-bottom-surface:where(:dir(ltr)) {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .md\:radius-bottom-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-end-radius: initial) {
+    [dir="rtl"] .md\:radius-bottom-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .md\:radius-bottom-surface:where(:dir(rtl)) {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    .md\:radius-bottom-surface {
+      border-end-start-radius: var(--sf-radius--surface);
+      border-end-end-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .md\:radius-inline-start-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-start-radius: initial) {
+    html:not([dir="rtl"]) .md\:radius-inline-start-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .md\:radius-inline-start-surface:where(:dir(ltr)) {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .md\:radius-inline-start-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-start-radius: initial) {
+    [dir="rtl"] .md\:radius-inline-start-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .md\:radius-inline-start-surface:where(:dir(rtl)) {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .md\:radius-inline-start-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-start-radius: initial) {
+    html:not([dir="rtl"]) .md\:radius-inline-start-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .md\:radius-inline-start-surface:where(:dir(ltr)) {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .md\:radius-inline-start-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-start-radius: initial) {
+    [dir="rtl"] .md\:radius-inline-start-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .md\:radius-inline-start-surface:where(:dir(rtl)) {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    .md\:radius-inline-start-surface {
+      border-start-start-radius: var(--sf-radius--surface);
+      border-end-start-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .md\:radius-inline-end-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-end-radius: initial) {
+    html:not([dir="rtl"]) .md\:radius-inline-end-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .md\:radius-inline-end-surface:where(:dir(ltr)) {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .md\:radius-inline-end-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-end-radius: initial) {
+    [dir="rtl"] .md\:radius-inline-end-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .md\:radius-inline-end-surface:where(:dir(rtl)) {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .md\:radius-inline-end-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-end-radius: initial) {
+    html:not([dir="rtl"]) .md\:radius-inline-end-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .md\:radius-inline-end-surface:where(:dir(ltr)) {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .md\:radius-inline-end-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-end-radius: initial) {
+    [dir="rtl"] .md\:radius-inline-end-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .md\:radius-inline-end-surface:where(:dir(rtl)) {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    .md\:radius-inline-end-surface {
+      border-start-end-radius: var(--sf-radius--surface);
+      border-end-end-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .md\:radius-top-inline-start-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-start-radius: initial) {
+    html:not([dir="rtl"]) .md\:radius-top-inline-start-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .md\:radius-top-inline-start-surface:where(:dir(ltr)) {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .md\:radius-top-inline-start-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-start-radius: initial) {
+    [dir="rtl"] .md\:radius-top-inline-start-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .md\:radius-top-inline-start-surface:where(:dir(rtl)) {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    .md\:radius-top-inline-start-surface {
+      border-start-start-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .md\:radius-top-inline-end-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-end-radius: initial) {
+    html:not([dir="rtl"]) .md\:radius-top-inline-end-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .md\:radius-top-inline-end-surface:where(:dir(ltr)) {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .md\:radius-top-inline-end-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-end-radius: initial) {
+    [dir="rtl"] .md\:radius-top-inline-end-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .md\:radius-top-inline-end-surface:where(:dir(rtl)) {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    .md\:radius-top-inline-end-surface {
+      border-start-end-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .md\:radius-bottom-inline-start-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-start-radius: initial) {
+    html:not([dir="rtl"]) .md\:radius-bottom-inline-start-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .md\:radius-bottom-inline-start-surface:where(:dir(ltr)) {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .md\:radius-bottom-inline-start-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-start-radius: initial) {
+    [dir="rtl"] .md\:radius-bottom-inline-start-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .md\:radius-bottom-inline-start-surface:where(:dir(rtl)) {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    .md\:radius-bottom-inline-start-surface {
+      border-end-start-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .md\:radius-bottom-inline-end-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-end-radius: initial) {
+    html:not([dir="rtl"]) .md\:radius-bottom-inline-end-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .md\:radius-bottom-inline-end-surface:where(:dir(ltr)) {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .md\:radius-bottom-inline-end-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-end-radius: initial) {
+    [dir="rtl"] .md\:radius-bottom-inline-end-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .md\:radius-bottom-inline-end-surface:where(:dir(rtl)) {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    .md\:radius-bottom-inline-end-surface {
+      border-end-end-radius: var(--sf-radius--surface);
     }
     _:-ms-input-placeholder, html:not([dir="rtl"]) .md\:radius-top-square {
       border-top-left-radius: var(--sf-radius-square);
@@ -151587,6 +153357,12 @@
     .lg\:radius-default {
       border-radius: var(--sf-radius-default);
     }
+    .lg\:radius-ui {
+      border-radius: var(--sf-radius--ui);
+    }
+    .lg\:radius-surface {
+      border-radius: var(--sf-radius--surface);
+    }
     .lg\:radius-square {
       border-radius: var(--sf-radius-square);
     }
@@ -153639,6 +155415,590 @@
     }
     .lg\:radius-bottom-inline-end-default {
       border-end-end-radius: var(--sf-radius-default);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:radius-top-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-start-radius: initial) {
+    html:not([dir="rtl"]) .lg\:radius-top-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .lg\:radius-top-ui:where(:dir(ltr)) {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .lg\:radius-top-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-start-radius: initial) {
+    [dir="rtl"] .lg\:radius-top-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .lg\:radius-top-ui:where(:dir(rtl)) {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:radius-top-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-end-radius: initial) {
+    html:not([dir="rtl"]) .lg\:radius-top-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .lg\:radius-top-ui:where(:dir(ltr)) {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .lg\:radius-top-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-end-radius: initial) {
+    [dir="rtl"] .lg\:radius-top-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .lg\:radius-top-ui:where(:dir(rtl)) {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    .lg\:radius-top-ui {
+      border-start-start-radius: var(--sf-radius--ui);
+      border-start-end-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:radius-bottom-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-start-radius: initial) {
+    html:not([dir="rtl"]) .lg\:radius-bottom-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .lg\:radius-bottom-ui:where(:dir(ltr)) {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .lg\:radius-bottom-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-start-radius: initial) {
+    [dir="rtl"] .lg\:radius-bottom-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .lg\:radius-bottom-ui:where(:dir(rtl)) {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:radius-bottom-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-end-radius: initial) {
+    html:not([dir="rtl"]) .lg\:radius-bottom-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .lg\:radius-bottom-ui:where(:dir(ltr)) {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .lg\:radius-bottom-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-end-radius: initial) {
+    [dir="rtl"] .lg\:radius-bottom-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .lg\:radius-bottom-ui:where(:dir(rtl)) {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    .lg\:radius-bottom-ui {
+      border-end-start-radius: var(--sf-radius--ui);
+      border-end-end-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:radius-inline-start-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-start-radius: initial) {
+    html:not([dir="rtl"]) .lg\:radius-inline-start-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .lg\:radius-inline-start-ui:where(:dir(ltr)) {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .lg\:radius-inline-start-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-start-radius: initial) {
+    [dir="rtl"] .lg\:radius-inline-start-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .lg\:radius-inline-start-ui:where(:dir(rtl)) {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:radius-inline-start-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-start-radius: initial) {
+    html:not([dir="rtl"]) .lg\:radius-inline-start-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .lg\:radius-inline-start-ui:where(:dir(ltr)) {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .lg\:radius-inline-start-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-start-radius: initial) {
+    [dir="rtl"] .lg\:radius-inline-start-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .lg\:radius-inline-start-ui:where(:dir(rtl)) {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    .lg\:radius-inline-start-ui {
+      border-start-start-radius: var(--sf-radius--ui);
+      border-end-start-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:radius-inline-end-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-end-radius: initial) {
+    html:not([dir="rtl"]) .lg\:radius-inline-end-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .lg\:radius-inline-end-ui:where(:dir(ltr)) {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .lg\:radius-inline-end-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-end-radius: initial) {
+    [dir="rtl"] .lg\:radius-inline-end-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .lg\:radius-inline-end-ui:where(:dir(rtl)) {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:radius-inline-end-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-end-radius: initial) {
+    html:not([dir="rtl"]) .lg\:radius-inline-end-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .lg\:radius-inline-end-ui:where(:dir(ltr)) {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .lg\:radius-inline-end-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-end-radius: initial) {
+    [dir="rtl"] .lg\:radius-inline-end-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .lg\:radius-inline-end-ui:where(:dir(rtl)) {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    .lg\:radius-inline-end-ui {
+      border-start-end-radius: var(--sf-radius--ui);
+      border-end-end-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:radius-top-inline-start-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-start-radius: initial) {
+    html:not([dir="rtl"]) .lg\:radius-top-inline-start-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .lg\:radius-top-inline-start-ui:where(:dir(ltr)) {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .lg\:radius-top-inline-start-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-start-radius: initial) {
+    [dir="rtl"] .lg\:radius-top-inline-start-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .lg\:radius-top-inline-start-ui:where(:dir(rtl)) {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    .lg\:radius-top-inline-start-ui {
+      border-start-start-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:radius-top-inline-end-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-end-radius: initial) {
+    html:not([dir="rtl"]) .lg\:radius-top-inline-end-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .lg\:radius-top-inline-end-ui:where(:dir(ltr)) {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .lg\:radius-top-inline-end-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-end-radius: initial) {
+    [dir="rtl"] .lg\:radius-top-inline-end-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .lg\:radius-top-inline-end-ui:where(:dir(rtl)) {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    .lg\:radius-top-inline-end-ui {
+      border-start-end-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:radius-bottom-inline-start-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-start-radius: initial) {
+    html:not([dir="rtl"]) .lg\:radius-bottom-inline-start-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .lg\:radius-bottom-inline-start-ui:where(:dir(ltr)) {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .lg\:radius-bottom-inline-start-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-start-radius: initial) {
+    [dir="rtl"] .lg\:radius-bottom-inline-start-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .lg\:radius-bottom-inline-start-ui:where(:dir(rtl)) {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    .lg\:radius-bottom-inline-start-ui {
+      border-end-start-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:radius-bottom-inline-end-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-end-radius: initial) {
+    html:not([dir="rtl"]) .lg\:radius-bottom-inline-end-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .lg\:radius-bottom-inline-end-ui:where(:dir(ltr)) {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .lg\:radius-bottom-inline-end-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-end-radius: initial) {
+    [dir="rtl"] .lg\:radius-bottom-inline-end-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .lg\:radius-bottom-inline-end-ui:where(:dir(rtl)) {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    .lg\:radius-bottom-inline-end-ui {
+      border-end-end-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:radius-top-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-start-radius: initial) {
+    html:not([dir="rtl"]) .lg\:radius-top-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .lg\:radius-top-surface:where(:dir(ltr)) {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .lg\:radius-top-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-start-radius: initial) {
+    [dir="rtl"] .lg\:radius-top-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .lg\:radius-top-surface:where(:dir(rtl)) {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:radius-top-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-end-radius: initial) {
+    html:not([dir="rtl"]) .lg\:radius-top-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .lg\:radius-top-surface:where(:dir(ltr)) {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .lg\:radius-top-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-end-radius: initial) {
+    [dir="rtl"] .lg\:radius-top-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .lg\:radius-top-surface:where(:dir(rtl)) {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    .lg\:radius-top-surface {
+      border-start-start-radius: var(--sf-radius--surface);
+      border-start-end-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:radius-bottom-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-start-radius: initial) {
+    html:not([dir="rtl"]) .lg\:radius-bottom-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .lg\:radius-bottom-surface:where(:dir(ltr)) {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .lg\:radius-bottom-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-start-radius: initial) {
+    [dir="rtl"] .lg\:radius-bottom-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .lg\:radius-bottom-surface:where(:dir(rtl)) {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:radius-bottom-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-end-radius: initial) {
+    html:not([dir="rtl"]) .lg\:radius-bottom-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .lg\:radius-bottom-surface:where(:dir(ltr)) {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .lg\:radius-bottom-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-end-radius: initial) {
+    [dir="rtl"] .lg\:radius-bottom-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .lg\:radius-bottom-surface:where(:dir(rtl)) {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    .lg\:radius-bottom-surface {
+      border-end-start-radius: var(--sf-radius--surface);
+      border-end-end-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:radius-inline-start-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-start-radius: initial) {
+    html:not([dir="rtl"]) .lg\:radius-inline-start-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .lg\:radius-inline-start-surface:where(:dir(ltr)) {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .lg\:radius-inline-start-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-start-radius: initial) {
+    [dir="rtl"] .lg\:radius-inline-start-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .lg\:radius-inline-start-surface:where(:dir(rtl)) {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:radius-inline-start-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-start-radius: initial) {
+    html:not([dir="rtl"]) .lg\:radius-inline-start-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .lg\:radius-inline-start-surface:where(:dir(ltr)) {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .lg\:radius-inline-start-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-start-radius: initial) {
+    [dir="rtl"] .lg\:radius-inline-start-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .lg\:radius-inline-start-surface:where(:dir(rtl)) {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    .lg\:radius-inline-start-surface {
+      border-start-start-radius: var(--sf-radius--surface);
+      border-end-start-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:radius-inline-end-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-end-radius: initial) {
+    html:not([dir="rtl"]) .lg\:radius-inline-end-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .lg\:radius-inline-end-surface:where(:dir(ltr)) {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .lg\:radius-inline-end-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-end-radius: initial) {
+    [dir="rtl"] .lg\:radius-inline-end-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .lg\:radius-inline-end-surface:where(:dir(rtl)) {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:radius-inline-end-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-end-radius: initial) {
+    html:not([dir="rtl"]) .lg\:radius-inline-end-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .lg\:radius-inline-end-surface:where(:dir(ltr)) {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .lg\:radius-inline-end-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-end-radius: initial) {
+    [dir="rtl"] .lg\:radius-inline-end-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .lg\:radius-inline-end-surface:where(:dir(rtl)) {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    .lg\:radius-inline-end-surface {
+      border-start-end-radius: var(--sf-radius--surface);
+      border-end-end-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:radius-top-inline-start-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-start-radius: initial) {
+    html:not([dir="rtl"]) .lg\:radius-top-inline-start-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .lg\:radius-top-inline-start-surface:where(:dir(ltr)) {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .lg\:radius-top-inline-start-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-start-radius: initial) {
+    [dir="rtl"] .lg\:radius-top-inline-start-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .lg\:radius-top-inline-start-surface:where(:dir(rtl)) {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    .lg\:radius-top-inline-start-surface {
+      border-start-start-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:radius-top-inline-end-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-end-radius: initial) {
+    html:not([dir="rtl"]) .lg\:radius-top-inline-end-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .lg\:radius-top-inline-end-surface:where(:dir(ltr)) {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .lg\:radius-top-inline-end-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-end-radius: initial) {
+    [dir="rtl"] .lg\:radius-top-inline-end-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .lg\:radius-top-inline-end-surface:where(:dir(rtl)) {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    .lg\:radius-top-inline-end-surface {
+      border-start-end-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:radius-bottom-inline-start-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-start-radius: initial) {
+    html:not([dir="rtl"]) .lg\:radius-bottom-inline-start-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .lg\:radius-bottom-inline-start-surface:where(:dir(ltr)) {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .lg\:radius-bottom-inline-start-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-start-radius: initial) {
+    [dir="rtl"] .lg\:radius-bottom-inline-start-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .lg\:radius-bottom-inline-start-surface:where(:dir(rtl)) {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    .lg\:radius-bottom-inline-start-surface {
+      border-end-start-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:radius-bottom-inline-end-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-end-radius: initial) {
+    html:not([dir="rtl"]) .lg\:radius-bottom-inline-end-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .lg\:radius-bottom-inline-end-surface:where(:dir(ltr)) {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .lg\:radius-bottom-inline-end-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-end-radius: initial) {
+    [dir="rtl"] .lg\:radius-bottom-inline-end-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .lg\:radius-bottom-inline-end-surface:where(:dir(rtl)) {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    .lg\:radius-bottom-inline-end-surface {
+      border-end-end-radius: var(--sf-radius--surface);
     }
     _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:radius-top-square {
       border-top-left-radius: var(--sf-radius-square);
@@ -195875,6 +198235,12 @@
     .xl\:radius-default {
       border-radius: var(--sf-radius-default);
     }
+    .xl\:radius-ui {
+      border-radius: var(--sf-radius--ui);
+    }
+    .xl\:radius-surface {
+      border-radius: var(--sf-radius--surface);
+    }
     .xl\:radius-square {
       border-radius: var(--sf-radius-square);
     }
@@ -197928,6 +200294,590 @@
     .xl\:radius-bottom-inline-end-default {
       border-end-end-radius: var(--sf-radius-default);
     }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:radius-top-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-start-radius: initial) {
+    html:not([dir="rtl"]) .xl\:radius-top-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .xl\:radius-top-ui:where(:dir(ltr)) {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:radius-top-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-start-radius: initial) {
+    [dir="rtl"] .xl\:radius-top-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .xl\:radius-top-ui:where(:dir(rtl)) {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:radius-top-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-end-radius: initial) {
+    html:not([dir="rtl"]) .xl\:radius-top-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .xl\:radius-top-ui:where(:dir(ltr)) {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:radius-top-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-end-radius: initial) {
+    [dir="rtl"] .xl\:radius-top-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .xl\:radius-top-ui:where(:dir(rtl)) {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    .xl\:radius-top-ui {
+      border-start-start-radius: var(--sf-radius--ui);
+      border-start-end-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:radius-bottom-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-start-radius: initial) {
+    html:not([dir="rtl"]) .xl\:radius-bottom-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .xl\:radius-bottom-ui:where(:dir(ltr)) {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:radius-bottom-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-start-radius: initial) {
+    [dir="rtl"] .xl\:radius-bottom-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .xl\:radius-bottom-ui:where(:dir(rtl)) {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:radius-bottom-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-end-radius: initial) {
+    html:not([dir="rtl"]) .xl\:radius-bottom-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .xl\:radius-bottom-ui:where(:dir(ltr)) {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:radius-bottom-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-end-radius: initial) {
+    [dir="rtl"] .xl\:radius-bottom-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .xl\:radius-bottom-ui:where(:dir(rtl)) {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    .xl\:radius-bottom-ui {
+      border-end-start-radius: var(--sf-radius--ui);
+      border-end-end-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:radius-inline-start-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-start-radius: initial) {
+    html:not([dir="rtl"]) .xl\:radius-inline-start-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .xl\:radius-inline-start-ui:where(:dir(ltr)) {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:radius-inline-start-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-start-radius: initial) {
+    [dir="rtl"] .xl\:radius-inline-start-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .xl\:radius-inline-start-ui:where(:dir(rtl)) {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:radius-inline-start-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-start-radius: initial) {
+    html:not([dir="rtl"]) .xl\:radius-inline-start-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .xl\:radius-inline-start-ui:where(:dir(ltr)) {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:radius-inline-start-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-start-radius: initial) {
+    [dir="rtl"] .xl\:radius-inline-start-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .xl\:radius-inline-start-ui:where(:dir(rtl)) {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    .xl\:radius-inline-start-ui {
+      border-start-start-radius: var(--sf-radius--ui);
+      border-end-start-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:radius-inline-end-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-end-radius: initial) {
+    html:not([dir="rtl"]) .xl\:radius-inline-end-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .xl\:radius-inline-end-ui:where(:dir(ltr)) {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:radius-inline-end-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-end-radius: initial) {
+    [dir="rtl"] .xl\:radius-inline-end-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .xl\:radius-inline-end-ui:where(:dir(rtl)) {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:radius-inline-end-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-end-radius: initial) {
+    html:not([dir="rtl"]) .xl\:radius-inline-end-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .xl\:radius-inline-end-ui:where(:dir(ltr)) {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:radius-inline-end-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-end-radius: initial) {
+    [dir="rtl"] .xl\:radius-inline-end-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .xl\:radius-inline-end-ui:where(:dir(rtl)) {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    .xl\:radius-inline-end-ui {
+      border-start-end-radius: var(--sf-radius--ui);
+      border-end-end-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:radius-top-inline-start-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-start-radius: initial) {
+    html:not([dir="rtl"]) .xl\:radius-top-inline-start-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .xl\:radius-top-inline-start-ui:where(:dir(ltr)) {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:radius-top-inline-start-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-start-radius: initial) {
+    [dir="rtl"] .xl\:radius-top-inline-start-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .xl\:radius-top-inline-start-ui:where(:dir(rtl)) {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    .xl\:radius-top-inline-start-ui {
+      border-start-start-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:radius-top-inline-end-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-end-radius: initial) {
+    html:not([dir="rtl"]) .xl\:radius-top-inline-end-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .xl\:radius-top-inline-end-ui:where(:dir(ltr)) {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:radius-top-inline-end-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-end-radius: initial) {
+    [dir="rtl"] .xl\:radius-top-inline-end-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .xl\:radius-top-inline-end-ui:where(:dir(rtl)) {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    .xl\:radius-top-inline-end-ui {
+      border-start-end-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:radius-bottom-inline-start-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-start-radius: initial) {
+    html:not([dir="rtl"]) .xl\:radius-bottom-inline-start-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .xl\:radius-bottom-inline-start-ui:where(:dir(ltr)) {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:radius-bottom-inline-start-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-start-radius: initial) {
+    [dir="rtl"] .xl\:radius-bottom-inline-start-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .xl\:radius-bottom-inline-start-ui:where(:dir(rtl)) {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    .xl\:radius-bottom-inline-start-ui {
+      border-end-start-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:radius-bottom-inline-end-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-end-radius: initial) {
+    html:not([dir="rtl"]) .xl\:radius-bottom-inline-end-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .xl\:radius-bottom-inline-end-ui:where(:dir(ltr)) {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:radius-bottom-inline-end-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-end-radius: initial) {
+    [dir="rtl"] .xl\:radius-bottom-inline-end-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .xl\:radius-bottom-inline-end-ui:where(:dir(rtl)) {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    .xl\:radius-bottom-inline-end-ui {
+      border-end-end-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:radius-top-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-start-radius: initial) {
+    html:not([dir="rtl"]) .xl\:radius-top-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .xl\:radius-top-surface:where(:dir(ltr)) {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:radius-top-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-start-radius: initial) {
+    [dir="rtl"] .xl\:radius-top-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .xl\:radius-top-surface:where(:dir(rtl)) {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:radius-top-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-end-radius: initial) {
+    html:not([dir="rtl"]) .xl\:radius-top-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .xl\:radius-top-surface:where(:dir(ltr)) {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:radius-top-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-end-radius: initial) {
+    [dir="rtl"] .xl\:radius-top-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .xl\:radius-top-surface:where(:dir(rtl)) {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    .xl\:radius-top-surface {
+      border-start-start-radius: var(--sf-radius--surface);
+      border-start-end-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:radius-bottom-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-start-radius: initial) {
+    html:not([dir="rtl"]) .xl\:radius-bottom-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .xl\:radius-bottom-surface:where(:dir(ltr)) {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:radius-bottom-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-start-radius: initial) {
+    [dir="rtl"] .xl\:radius-bottom-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .xl\:radius-bottom-surface:where(:dir(rtl)) {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:radius-bottom-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-end-radius: initial) {
+    html:not([dir="rtl"]) .xl\:radius-bottom-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .xl\:radius-bottom-surface:where(:dir(ltr)) {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:radius-bottom-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-end-radius: initial) {
+    [dir="rtl"] .xl\:radius-bottom-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .xl\:radius-bottom-surface:where(:dir(rtl)) {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    .xl\:radius-bottom-surface {
+      border-end-start-radius: var(--sf-radius--surface);
+      border-end-end-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:radius-inline-start-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-start-radius: initial) {
+    html:not([dir="rtl"]) .xl\:radius-inline-start-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .xl\:radius-inline-start-surface:where(:dir(ltr)) {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:radius-inline-start-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-start-radius: initial) {
+    [dir="rtl"] .xl\:radius-inline-start-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .xl\:radius-inline-start-surface:where(:dir(rtl)) {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:radius-inline-start-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-start-radius: initial) {
+    html:not([dir="rtl"]) .xl\:radius-inline-start-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .xl\:radius-inline-start-surface:where(:dir(ltr)) {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:radius-inline-start-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-start-radius: initial) {
+    [dir="rtl"] .xl\:radius-inline-start-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .xl\:radius-inline-start-surface:where(:dir(rtl)) {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    .xl\:radius-inline-start-surface {
+      border-start-start-radius: var(--sf-radius--surface);
+      border-end-start-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:radius-inline-end-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-end-radius: initial) {
+    html:not([dir="rtl"]) .xl\:radius-inline-end-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .xl\:radius-inline-end-surface:where(:dir(ltr)) {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:radius-inline-end-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-end-radius: initial) {
+    [dir="rtl"] .xl\:radius-inline-end-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .xl\:radius-inline-end-surface:where(:dir(rtl)) {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:radius-inline-end-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-end-radius: initial) {
+    html:not([dir="rtl"]) .xl\:radius-inline-end-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .xl\:radius-inline-end-surface:where(:dir(ltr)) {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:radius-inline-end-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-end-radius: initial) {
+    [dir="rtl"] .xl\:radius-inline-end-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .xl\:radius-inline-end-surface:where(:dir(rtl)) {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    .xl\:radius-inline-end-surface {
+      border-start-end-radius: var(--sf-radius--surface);
+      border-end-end-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:radius-top-inline-start-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-start-radius: initial) {
+    html:not([dir="rtl"]) .xl\:radius-top-inline-start-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .xl\:radius-top-inline-start-surface:where(:dir(ltr)) {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:radius-top-inline-start-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-start-radius: initial) {
+    [dir="rtl"] .xl\:radius-top-inline-start-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .xl\:radius-top-inline-start-surface:where(:dir(rtl)) {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    .xl\:radius-top-inline-start-surface {
+      border-start-start-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:radius-top-inline-end-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-end-radius: initial) {
+    html:not([dir="rtl"]) .xl\:radius-top-inline-end-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .xl\:radius-top-inline-end-surface:where(:dir(ltr)) {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:radius-top-inline-end-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-end-radius: initial) {
+    [dir="rtl"] .xl\:radius-top-inline-end-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .xl\:radius-top-inline-end-surface:where(:dir(rtl)) {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    .xl\:radius-top-inline-end-surface {
+      border-start-end-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:radius-bottom-inline-start-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-start-radius: initial) {
+    html:not([dir="rtl"]) .xl\:radius-bottom-inline-start-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .xl\:radius-bottom-inline-start-surface:where(:dir(ltr)) {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:radius-bottom-inline-start-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-start-radius: initial) {
+    [dir="rtl"] .xl\:radius-bottom-inline-start-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .xl\:radius-bottom-inline-start-surface:where(:dir(rtl)) {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    .xl\:radius-bottom-inline-start-surface {
+      border-end-start-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:radius-bottom-inline-end-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-end-radius: initial) {
+    html:not([dir="rtl"]) .xl\:radius-bottom-inline-end-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .xl\:radius-bottom-inline-end-surface:where(:dir(ltr)) {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xl\:radius-bottom-inline-end-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-end-radius: initial) {
+    [dir="rtl"] .xl\:radius-bottom-inline-end-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .xl\:radius-bottom-inline-end-surface:where(:dir(rtl)) {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    .xl\:radius-bottom-inline-end-surface {
+      border-end-end-radius: var(--sf-radius--surface);
+    }
     _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:radius-top-square {
       border-top-left-radius: var(--sf-radius-square);
     }
@@ -198828,6 +201778,12 @@
     }
     .xxl\:radius-default {
       border-radius: var(--sf-radius-default);
+    }
+    .xxl\:radius-ui {
+      border-radius: var(--sf-radius--ui);
+    }
+    .xxl\:radius-surface {
+      border-radius: var(--sf-radius--surface);
     }
     .xxl\:radius-square {
       border-radius: var(--sf-radius-square);
@@ -200881,6 +203837,590 @@
     }
     .xxl\:radius-bottom-inline-end-default {
       border-end-end-radius: var(--sf-radius-default);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xxl\:radius-top-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-start-radius: initial) {
+    html:not([dir="rtl"]) .xxl\:radius-top-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .xxl\:radius-top-ui:where(:dir(ltr)) {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xxl\:radius-top-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-start-radius: initial) {
+    [dir="rtl"] .xxl\:radius-top-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .xxl\:radius-top-ui:where(:dir(rtl)) {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xxl\:radius-top-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-end-radius: initial) {
+    html:not([dir="rtl"]) .xxl\:radius-top-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .xxl\:radius-top-ui:where(:dir(ltr)) {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xxl\:radius-top-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-end-radius: initial) {
+    [dir="rtl"] .xxl\:radius-top-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .xxl\:radius-top-ui:where(:dir(rtl)) {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    .xxl\:radius-top-ui {
+      border-start-start-radius: var(--sf-radius--ui);
+      border-start-end-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xxl\:radius-bottom-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-start-radius: initial) {
+    html:not([dir="rtl"]) .xxl\:radius-bottom-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .xxl\:radius-bottom-ui:where(:dir(ltr)) {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xxl\:radius-bottom-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-start-radius: initial) {
+    [dir="rtl"] .xxl\:radius-bottom-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .xxl\:radius-bottom-ui:where(:dir(rtl)) {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xxl\:radius-bottom-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-end-radius: initial) {
+    html:not([dir="rtl"]) .xxl\:radius-bottom-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .xxl\:radius-bottom-ui:where(:dir(ltr)) {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xxl\:radius-bottom-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-end-radius: initial) {
+    [dir="rtl"] .xxl\:radius-bottom-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .xxl\:radius-bottom-ui:where(:dir(rtl)) {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    .xxl\:radius-bottom-ui {
+      border-end-start-radius: var(--sf-radius--ui);
+      border-end-end-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xxl\:radius-inline-start-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-start-radius: initial) {
+    html:not([dir="rtl"]) .xxl\:radius-inline-start-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .xxl\:radius-inline-start-ui:where(:dir(ltr)) {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xxl\:radius-inline-start-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-start-radius: initial) {
+    [dir="rtl"] .xxl\:radius-inline-start-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .xxl\:radius-inline-start-ui:where(:dir(rtl)) {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xxl\:radius-inline-start-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-start-radius: initial) {
+    html:not([dir="rtl"]) .xxl\:radius-inline-start-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .xxl\:radius-inline-start-ui:where(:dir(ltr)) {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xxl\:radius-inline-start-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-start-radius: initial) {
+    [dir="rtl"] .xxl\:radius-inline-start-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .xxl\:radius-inline-start-ui:where(:dir(rtl)) {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    .xxl\:radius-inline-start-ui {
+      border-start-start-radius: var(--sf-radius--ui);
+      border-end-start-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xxl\:radius-inline-end-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-end-radius: initial) {
+    html:not([dir="rtl"]) .xxl\:radius-inline-end-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .xxl\:radius-inline-end-ui:where(:dir(ltr)) {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xxl\:radius-inline-end-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-end-radius: initial) {
+    [dir="rtl"] .xxl\:radius-inline-end-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .xxl\:radius-inline-end-ui:where(:dir(rtl)) {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xxl\:radius-inline-end-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-end-radius: initial) {
+    html:not([dir="rtl"]) .xxl\:radius-inline-end-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .xxl\:radius-inline-end-ui:where(:dir(ltr)) {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xxl\:radius-inline-end-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-end-radius: initial) {
+    [dir="rtl"] .xxl\:radius-inline-end-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .xxl\:radius-inline-end-ui:where(:dir(rtl)) {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    .xxl\:radius-inline-end-ui {
+      border-start-end-radius: var(--sf-radius--ui);
+      border-end-end-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xxl\:radius-top-inline-start-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-start-radius: initial) {
+    html:not([dir="rtl"]) .xxl\:radius-top-inline-start-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .xxl\:radius-top-inline-start-ui:where(:dir(ltr)) {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xxl\:radius-top-inline-start-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-start-radius: initial) {
+    [dir="rtl"] .xxl\:radius-top-inline-start-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .xxl\:radius-top-inline-start-ui:where(:dir(rtl)) {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    .xxl\:radius-top-inline-start-ui {
+      border-start-start-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xxl\:radius-top-inline-end-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-end-radius: initial) {
+    html:not([dir="rtl"]) .xxl\:radius-top-inline-end-ui {
+      border-top-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .xxl\:radius-top-inline-end-ui:where(:dir(ltr)) {
+      border-top-right-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xxl\:radius-top-inline-end-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-start-end-radius: initial) {
+    [dir="rtl"] .xxl\:radius-top-inline-end-ui {
+      border-top-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .xxl\:radius-top-inline-end-ui:where(:dir(rtl)) {
+      border-top-left-radius: var(--sf-radius--ui);
+    }
+    .xxl\:radius-top-inline-end-ui {
+      border-start-end-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xxl\:radius-bottom-inline-start-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-start-radius: initial) {
+    html:not([dir="rtl"]) .xxl\:radius-bottom-inline-start-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .xxl\:radius-bottom-inline-start-ui:where(:dir(ltr)) {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xxl\:radius-bottom-inline-start-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-start-radius: initial) {
+    [dir="rtl"] .xxl\:radius-bottom-inline-start-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .xxl\:radius-bottom-inline-start-ui:where(:dir(rtl)) {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    .xxl\:radius-bottom-inline-start-ui {
+      border-end-start-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xxl\:radius-bottom-inline-end-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-end-radius: initial) {
+    html:not([dir="rtl"]) .xxl\:radius-bottom-inline-end-ui {
+      border-bottom-right-radius: var(--sf-radius--ui);
+      }
+    }
+    .xxl\:radius-bottom-inline-end-ui:where(:dir(ltr)) {
+      border-bottom-right-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xxl\:radius-bottom-inline-end-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    @supports not (border-end-end-radius: initial) {
+    [dir="rtl"] .xxl\:radius-bottom-inline-end-ui {
+      border-bottom-left-radius: var(--sf-radius--ui);
+      }
+    }
+    .xxl\:radius-bottom-inline-end-ui:where(:dir(rtl)) {
+      border-bottom-left-radius: var(--sf-radius--ui);
+    }
+    .xxl\:radius-bottom-inline-end-ui {
+      border-end-end-radius: var(--sf-radius--ui);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xxl\:radius-top-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-start-radius: initial) {
+    html:not([dir="rtl"]) .xxl\:radius-top-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .xxl\:radius-top-surface:where(:dir(ltr)) {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xxl\:radius-top-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-start-radius: initial) {
+    [dir="rtl"] .xxl\:radius-top-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .xxl\:radius-top-surface:where(:dir(rtl)) {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xxl\:radius-top-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-end-radius: initial) {
+    html:not([dir="rtl"]) .xxl\:radius-top-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .xxl\:radius-top-surface:where(:dir(ltr)) {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xxl\:radius-top-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-end-radius: initial) {
+    [dir="rtl"] .xxl\:radius-top-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .xxl\:radius-top-surface:where(:dir(rtl)) {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    .xxl\:radius-top-surface {
+      border-start-start-radius: var(--sf-radius--surface);
+      border-start-end-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xxl\:radius-bottom-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-start-radius: initial) {
+    html:not([dir="rtl"]) .xxl\:radius-bottom-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .xxl\:radius-bottom-surface:where(:dir(ltr)) {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xxl\:radius-bottom-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-start-radius: initial) {
+    [dir="rtl"] .xxl\:radius-bottom-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .xxl\:radius-bottom-surface:where(:dir(rtl)) {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xxl\:radius-bottom-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-end-radius: initial) {
+    html:not([dir="rtl"]) .xxl\:radius-bottom-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .xxl\:radius-bottom-surface:where(:dir(ltr)) {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xxl\:radius-bottom-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-end-radius: initial) {
+    [dir="rtl"] .xxl\:radius-bottom-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .xxl\:radius-bottom-surface:where(:dir(rtl)) {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    .xxl\:radius-bottom-surface {
+      border-end-start-radius: var(--sf-radius--surface);
+      border-end-end-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xxl\:radius-inline-start-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-start-radius: initial) {
+    html:not([dir="rtl"]) .xxl\:radius-inline-start-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .xxl\:radius-inline-start-surface:where(:dir(ltr)) {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xxl\:radius-inline-start-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-start-radius: initial) {
+    [dir="rtl"] .xxl\:radius-inline-start-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .xxl\:radius-inline-start-surface:where(:dir(rtl)) {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xxl\:radius-inline-start-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-start-radius: initial) {
+    html:not([dir="rtl"]) .xxl\:radius-inline-start-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .xxl\:radius-inline-start-surface:where(:dir(ltr)) {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xxl\:radius-inline-start-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-start-radius: initial) {
+    [dir="rtl"] .xxl\:radius-inline-start-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .xxl\:radius-inline-start-surface:where(:dir(rtl)) {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    .xxl\:radius-inline-start-surface {
+      border-start-start-radius: var(--sf-radius--surface);
+      border-end-start-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xxl\:radius-inline-end-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-end-radius: initial) {
+    html:not([dir="rtl"]) .xxl\:radius-inline-end-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .xxl\:radius-inline-end-surface:where(:dir(ltr)) {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xxl\:radius-inline-end-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-end-radius: initial) {
+    [dir="rtl"] .xxl\:radius-inline-end-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .xxl\:radius-inline-end-surface:where(:dir(rtl)) {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xxl\:radius-inline-end-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-end-radius: initial) {
+    html:not([dir="rtl"]) .xxl\:radius-inline-end-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .xxl\:radius-inline-end-surface:where(:dir(ltr)) {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xxl\:radius-inline-end-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-end-radius: initial) {
+    [dir="rtl"] .xxl\:radius-inline-end-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .xxl\:radius-inline-end-surface:where(:dir(rtl)) {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    .xxl\:radius-inline-end-surface {
+      border-start-end-radius: var(--sf-radius--surface);
+      border-end-end-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xxl\:radius-top-inline-start-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-start-radius: initial) {
+    html:not([dir="rtl"]) .xxl\:radius-top-inline-start-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .xxl\:radius-top-inline-start-surface:where(:dir(ltr)) {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xxl\:radius-top-inline-start-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-start-radius: initial) {
+    [dir="rtl"] .xxl\:radius-top-inline-start-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .xxl\:radius-top-inline-start-surface:where(:dir(rtl)) {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    .xxl\:radius-top-inline-start-surface {
+      border-start-start-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xxl\:radius-top-inline-end-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-end-radius: initial) {
+    html:not([dir="rtl"]) .xxl\:radius-top-inline-end-surface {
+      border-top-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .xxl\:radius-top-inline-end-surface:where(:dir(ltr)) {
+      border-top-right-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xxl\:radius-top-inline-end-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-start-end-radius: initial) {
+    [dir="rtl"] .xxl\:radius-top-inline-end-surface {
+      border-top-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .xxl\:radius-top-inline-end-surface:where(:dir(rtl)) {
+      border-top-left-radius: var(--sf-radius--surface);
+    }
+    .xxl\:radius-top-inline-end-surface {
+      border-start-end-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xxl\:radius-bottom-inline-start-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-start-radius: initial) {
+    html:not([dir="rtl"]) .xxl\:radius-bottom-inline-start-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .xxl\:radius-bottom-inline-start-surface:where(:dir(ltr)) {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xxl\:radius-bottom-inline-start-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-start-radius: initial) {
+    [dir="rtl"] .xxl\:radius-bottom-inline-start-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .xxl\:radius-bottom-inline-start-surface:where(:dir(rtl)) {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    .xxl\:radius-bottom-inline-start-surface {
+      border-end-start-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .xxl\:radius-bottom-inline-end-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-end-radius: initial) {
+    html:not([dir="rtl"]) .xxl\:radius-bottom-inline-end-surface {
+      border-bottom-right-radius: var(--sf-radius--surface);
+      }
+    }
+    .xxl\:radius-bottom-inline-end-surface:where(:dir(ltr)) {
+      border-bottom-right-radius: var(--sf-radius--surface);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .xxl\:radius-bottom-inline-end-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    @supports not (border-end-end-radius: initial) {
+    [dir="rtl"] .xxl\:radius-bottom-inline-end-surface {
+      border-bottom-left-radius: var(--sf-radius--surface);
+      }
+    }
+    .xxl\:radius-bottom-inline-end-surface:where(:dir(rtl)) {
+      border-bottom-left-radius: var(--sf-radius--surface);
+    }
+    .xxl\:radius-bottom-inline-end-surface {
+      border-end-end-radius: var(--sf-radius--surface);
     }
     _:-ms-input-placeholder, html:not([dir="rtl"]) .xxl\:radius-top-square {
       border-top-left-radius: var(--sf-radius-square);
