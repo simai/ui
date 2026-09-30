@@ -7972,6 +7972,32 @@
   }
 }
 @layer sf.utilities {
+  .elevation-1 {
+    background-color: var(--sf-elevation-1--surface);
+    box-shadow: var(--sf-ui-shadow-1);
+  }
+  .elevation-2 {
+    background-color: var(--sf-elevation-2--surface);
+    box-shadow: var(--sf-ui-shadow-2);
+  }
+  .elevation-3 {
+    background-color: var(--sf-elevation-3--surface);
+    box-shadow: var(--sf-ui-shadow-3);
+  }
+  .elevation-4 {
+    background-color: var(--sf-elevation-4--surface);
+    box-shadow: var(--sf-ui-shadow-4);
+  }
+  .elevation-5 {
+    background-color: var(--sf-elevation-5--surface);
+    box-shadow: var(--sf-ui-shadow-5);
+  }
+  .elevation-0 {
+    background-color: var(--sf-surface-0);
+    box-shadow: none;
+  }
+}
+@layer sf.utilities {
   .shadow-primary {
     --sf-shadow--color: var(--sf-primary);
     --sf-shadow--color-fill: color-mix(in srgb, var(--sf-transparent), var(--sf-primary) var(--sf-shadow--alfa-fill));
