@@ -804,9 +804,26 @@ function startPreloaderMotion(container, isActive = () => true, options = {}) {
 
   if (!window.sfPath) {
     window.sfPath = cdnDefault;
-  }
+  } // A relative sfPath is resolved against the document's base, not against the
+  // window's location. Inside a srcdoc frame — which is how documentation
+  // renders its live examples — location.href is `about:srcdoc`, an opaque base
+  // that cannot resolve a relative reference at all, and the whole runtime used
+  // to die here before a single component registered. document.baseURI is a
+  // real absolute URL there, and it honours a <base> tag, which is what a
+  // relative path is supposed to follow anyway.
 
-  const frameworkRoot = new URL(window.sfPath, window.location?.href || cdnDefault);
+
+  const documentBase = typeof document === 'undefined' ? '' : document.baseURI;
+
+  const resolveRoot = base => {
+    try {
+      return new URL(window.sfPath, base || undefined);
+    } catch {
+      return null;
+    }
+  };
+
+  const frameworkRoot = resolveRoot(documentBase) || resolveRoot(window.location?.href) || new URL(cdnDefault);
 
   if (!frameworkRoot.pathname.endsWith('/')) {
     frameworkRoot.pathname += '/';
