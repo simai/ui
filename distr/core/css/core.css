@@ -312,6 +312,7 @@
     --sf-surface-2: light-dark(var(--sf-neutral-95), var(--sf-neutral-15));
     --sf-surface-3: light-dark(var(--sf-neutral-90), var(--sf-neutral-20));
     --sf-surface-4: light-dark(var(--sf-neutral-85), var(--sf-neutral-25));
+    --sf-surface-5: light-dark(var(--sf-neutral-80), var(--sf-neutral-30));
     --sf-surface-transparent-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
     --sf-surface-transparent-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
     --sf-surface-transparent-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
@@ -354,11 +355,11 @@
        пятиступенчатый набор укладывался в три-семь единиц яркости из 255 —
        ниже порога, на котором человек замечает разницу. Там высоту несёт
        ступень поверхности, которая в тёмной теме светлеет. */
-    --sf-elevation-1--surface: light-dark(var(--sf-surface-0), var(--sf-surface-1));
-    --sf-elevation-2--surface: light-dark(var(--sf-surface-0), var(--sf-surface-2));
-    --sf-elevation-3--surface: light-dark(var(--sf-surface-0), var(--sf-surface-3));
-    --sf-elevation-4--surface: light-dark(var(--sf-surface-0), var(--sf-surface-4));
-    --sf-elevation-5--surface: light-dark(var(--sf-surface-0), var(--sf-surface-4));
+    --sf-elevation-1--surface: light-dark(var(--sf-surface-0), var(--sf-surface-2));
+    --sf-elevation-2--surface: light-dark(var(--sf-surface-0), var(--sf-surface-3));
+    --sf-elevation-3--surface: light-dark(var(--sf-surface-0), var(--sf-surface-4));
+    --sf-elevation-4--surface: light-dark(var(--sf-surface-0), var(--sf-surface-5));
+    --sf-elevation-5--surface: light-dark(var(--sf-surface-0), var(--sf-surface-5));
     /* The neutral alpha ramp. The base branches per scheme — ink on a light
        surface, light on a dark one — so a component asks for a degree of contrast
        rather than for black or white, and every step above is one declaration
