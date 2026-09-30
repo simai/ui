@@ -176,8 +176,8 @@
   }
   .sf-country-code .sf-country-code-field {
     --sf-country-code-field--background-color: var(--sf-surface-0);
-    --sf-country-code-field--border: var(--sf-a1) solid;
-    --sf-country-code-field--border-color: var(--sf-outline-variant);
+    --sf-country-code-field--border: var(--sf-px) solid;
+    --sf-country-code-field--border-color: var(--sf-outline);
     --sf-country-code-field--border-end-end-radius: var(--sf-ui-radius-default);
     --sf-country-code-field--border-end-start-radius: var(--sf-ui-radius-default);
     --sf-country-code-field--border-start-end-radius: var(--sf-ui-radius-default);

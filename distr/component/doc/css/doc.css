@@ -34,7 +34,7 @@
     padding: var(--sf-space-3);
     word-wrap: anywhere;
     background-color: var(--sf-surface-container);
-    border: var(--sf-a1) solid var(--sf-outline-variant);
+    border: var(--sf-px) solid var(--sf-outline-variant);
     border-radius: var(--sf-radius-default);
     color: var(--sf-on-surface);
   }
@@ -1509,7 +1509,7 @@
     .sf-doc-checkerboard,
     .bg-checkered {
       background: Canvas;
-      border: var(--sf-a1) solid CanvasText;
+      border: var(--sf-px) solid CanvasText;
     }
   }
 }

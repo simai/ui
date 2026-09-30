@@ -191,7 +191,7 @@
     min-inline-size: 0;
     --sf-quantity-wrap--background-color: var(--sf-surface-0);
     --sf-quantity-wrap--border: var(--sf-px) solid;
-    --sf-quantity-wrap--border-color: var(--sf-outline-variant);
+    --sf-quantity-wrap--border-color: var(--sf-outline);
     --sf-quantity-wrap--border-end-end-radius: var(--sf-radius--ui);
     --sf-quantity-wrap--border-end-start-radius: var(--sf-radius--ui);
     --sf-quantity-wrap--border-start-end-radius: var(--sf-radius--ui);

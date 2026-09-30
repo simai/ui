@@ -170,9 +170,9 @@
   .sf-highlight__head {
     padding: var(--sf-space-1\/3) var(--sf-space-1);
     margin: 0;
-    border-bottom: var(--sf-a1) solid var(--sf-outline-variant);
-    -webkit-border-after: var(--sf-a1) solid var(--sf-outline-variant);
-            border-block-end: var(--sf-a1) solid var(--sf-outline-variant);
+    border-bottom: var(--sf-px) solid var(--sf-outline-variant);
+    -webkit-border-after: var(--sf-px) solid var(--sf-outline-variant);
+            border-block-end: var(--sf-px) solid var(--sf-outline-variant);
   }
   .sf-highlight__wrap {
     min-width: 0;
@@ -185,7 +185,7 @@
     overflow: hidden;
     margin: 0;
     background: var(--sf-surface-container);
-    border: var(--sf-a1) solid var(--sf-outline-variant);
+    border: var(--sf-px) solid var(--sf-outline-variant);
     border-radius: var(--sf-radius-default);
     color: var(--sf-on-surface);
   }
@@ -197,9 +197,9 @@
     padding-left: var(--sf-space-1);
     padding-right: var(--sf-space-1);
     padding-inline: var(--sf-space-1);
-    border-bottom: var(--sf-a1) solid var(--sf-outline-variant);
-    -webkit-border-after: var(--sf-a1) solid var(--sf-outline-variant);
-            border-block-end: var(--sf-a1) solid var(--sf-outline-variant);
+    border-bottom: var(--sf-px) solid var(--sf-outline-variant);
+    -webkit-border-after: var(--sf-px) solid var(--sf-outline-variant);
+            border-block-end: var(--sf-px) solid var(--sf-outline-variant);
   }
   .sf-code-surface > .sf--highlight-head {
     margin: 0;
@@ -209,9 +209,9 @@
     padding-left: var(--sf-space-1);
     padding-right: var(--sf-space-1);
     padding-inline: var(--sf-space-1);
-    border-bottom: var(--sf-a1) solid var(--sf-outline-variant);
-    -webkit-border-after: var(--sf-a1) solid var(--sf-outline-variant);
-            border-block-end: var(--sf-a1) solid var(--sf-outline-variant);
+    border-bottom: var(--sf-px) solid var(--sf-outline-variant);
+    -webkit-border-after: var(--sf-px) solid var(--sf-outline-variant);
+            border-block-end: var(--sf-px) solid var(--sf-outline-variant);
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-code-surface__scroll {
     text-align: left;
@@ -287,26 +287,26 @@
     /* your custom style here */
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .hljs-ln-numbers div {
-    border-right: var(--sf-a1) solid var(--sf-highlight-line-divider);
+    border-right: var(--sf-px) solid var(--sf-highlight-line-divider);
   }
   @supports not (border-inline-end: initial) {
   html:not([dir="rtl"]) .hljs-ln-numbers div {
-    border-right: var(--sf-a1) solid var(--sf-highlight-line-divider);
+    border-right: var(--sf-px) solid var(--sf-highlight-line-divider);
     }
   }
   .hljs-ln-numbers div:where(:dir(ltr)) {
-    border-right: var(--sf-a1) solid var(--sf-highlight-line-divider);
+    border-right: var(--sf-px) solid var(--sf-highlight-line-divider);
   }
   _:-ms-input-placeholder, [dir="rtl"] .hljs-ln-numbers div {
-    border-left: var(--sf-a1) solid var(--sf-highlight-line-divider);
+    border-left: var(--sf-px) solid var(--sf-highlight-line-divider);
   }
   @supports not (border-inline-end: initial) {
   [dir="rtl"] .hljs-ln-numbers div {
-    border-left: var(--sf-a1) solid var(--sf-highlight-line-divider);
+    border-left: var(--sf-px) solid var(--sf-highlight-line-divider);
     }
   }
   .hljs-ln-numbers div:where(:dir(rtl)) {
-    border-left: var(--sf-a1) solid var(--sf-highlight-line-divider);
+    border-left: var(--sf-px) solid var(--sf-highlight-line-divider);
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .hljs-ln-numbers div {
     padding-right: var(--sf-a5);
@@ -331,8 +331,8 @@
     padding-left: var(--sf-a5);
   }
   .hljs-ln-numbers div {
-    -webkit-border-end: var(--sf-a1) solid var(--sf-highlight-line-divider);
-            border-inline-end: var(--sf-a1) solid var(--sf-highlight-line-divider);
+    -webkit-border-end: var(--sf-px) solid var(--sf-highlight-line-divider);
+            border-inline-end: var(--sf-px) solid var(--sf-highlight-line-divider);
     -webkit-padding-end: var(--sf-a5);
             padding-inline-end: var(--sf-a5);
   }

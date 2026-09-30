@@ -14,6 +14,11 @@
     border-color: color-mix(in srgb, transparent, var(--sf-outline) calc(1 * 100%));
     border-color: color-mix(in srgb, transparent, var(--sf-outline) calc(var(--sf-divider--alfa, 1) * 100%));
   }
+  .divider-outline-variant > :not([hidden]) ~ :not([hidden]),
+  .divide-outline-variant > :not([hidden]) ~ :not([hidden]) {
+    border-color: color-mix(in srgb, transparent, var(--sf-outline-variant) calc(1 * 100%));
+    border-color: color-mix(in srgb, transparent, var(--sf-outline-variant) calc(var(--sf-divider--alfa, 1) * 100%));
+  }
   .divider-primary > :not([hidden]) ~ :not([hidden]),
   .divide-primary > :not([hidden]) ~ :not([hidden]) {
     border-color: color-mix(in srgb, transparent, var(--sf-outline-primary) calc(1 * 100%));

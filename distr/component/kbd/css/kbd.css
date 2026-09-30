@@ -7,7 +7,7 @@
     --sf-kbd--color: var(--sf-on-surface);
     --sf-kbd--background: var(--sf-surface-container);
     --sf-kbd--border-color: var(--sf-outline-variant);
-    --sf-kbd--border-width: var(--sf-a1);
+    --sf-kbd--border-width: var(--sf-px);
     --sf-kbd--radius: var(--sf-radius--ui);
     --sf-kbd--font-family: var(--sf-mono);
     --sf-kbd--font-size: var(--sf-text-size-1\/3);

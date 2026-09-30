@@ -8,6 +8,9 @@
   .hover\:divider-outline:hover > :not([hidden]) ~ :not([hidden]) {
     border-color: var(--sf-outline);
   }
+  .hover\:divider-outline-variant:hover > :not([hidden]) ~ :not([hidden]) {
+    border-color: var(--sf-outline-variant);
+  }
   .hover\:divider-primary:hover > :not([hidden]) ~ :not([hidden]) {
     border-color: var(--sf-outline-primary);
   }

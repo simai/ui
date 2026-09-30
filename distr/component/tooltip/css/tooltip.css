@@ -808,7 +808,7 @@
   }
   @media (forced-colors: active) {
     .sf-tooltip .sf-tooltip-content {
-      border: var(--sf-a1) solid CanvasText;
+      border: var(--sf-px) solid CanvasText;
     }
   }
 }

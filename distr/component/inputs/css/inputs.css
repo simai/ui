@@ -735,11 +735,11 @@
 @layer sf.states {
   .sf-input:not(.error).sf-input--bordered[\:not-has\(input\:disabled\)] .sf-input-field {
     --sf-input-field--background-color: var(--sf-surface-0);
-    --sf-input-field--border-color: var(--sf-outline-variant);
+    --sf-input-field--border-color: var(--sf-outline);
   }
   .sf-input:not(.error).sf-input--bordered:not(:has(input:disabled)) .sf-input-field {
     --sf-input-field--background-color: var(--sf-surface-0);
-    --sf-input-field--border-color: var(--sf-outline-variant);
+    --sf-input-field--border-color: var(--sf-outline);
   }
   .sf-input:not(.error).sf-input--bordered[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:not\(\:-moz-read-only\)\:active\)] .sf-input-field {
     --sf-input-field--border-color: var(--sf-primary);

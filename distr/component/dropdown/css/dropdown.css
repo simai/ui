@@ -61,7 +61,7 @@
     box-shadow: var(--sf-list-item--box-shadow);
     --sf-list-item--background-color: var(--sf-surface-0);
     --sf-list-item--border-color: var(--sf-outline-variant);
-    --sf-list-item--border-bottom-width: var(--sf-a1);
+    --sf-list-item--border-bottom-width: var(--sf-px);
     --sf-list-item--border-style: solid;
     min-width: 0;
     min-inline-size: 0;
@@ -823,7 +823,7 @@
     padding-right: var(--sf-dropdown-field--padding-inline-start);
   }
   .sf-dropdown .sf-dropdown-field {
-    --sf-dropdown-field--border: var(--sf-a1) solid;
+    --sf-dropdown-field--border: var(--sf-px) solid;
     background-color: var(--sf-dropdown-field--background-color);
     border: var(--sf-dropdown-field--border);
     border-color: transparent;
@@ -1112,11 +1112,11 @@
   }
   .sf-dropdown.sf-dropdown--outlined.sf-dropdown--text[\:not-has\(\%3E\%20.sf-dropdown-field\%20\%3E\%20\:disabled\)] .sf-dropdown-field, .sf-dropdown.sf-dropdown--outlined.sf-dropdown--tag[\:not-has\(\%3E\%20.sf-dropdown-field\%20\%3E\%20\:disabled\)] .sf-dropdown-field {
     --sf-dropdown-field--background-color: var(--sf-surface-0);
-    --sf-dropdown-field--border-color: var(--sf-outline-variant);
+    --sf-dropdown-field--border-color: var(--sf-outline);
   }
   .sf-dropdown.sf-dropdown--outlined.sf-dropdown--text:not(:has(> .sf-dropdown-field > :disabled)) .sf-dropdown-field, .sf-dropdown.sf-dropdown--outlined.sf-dropdown--tag:not(:has(> .sf-dropdown-field > :disabled)) .sf-dropdown-field {
     --sf-dropdown-field--background-color: var(--sf-surface-0);
-    --sf-dropdown-field--border-color: var(--sf-outline-variant);
+    --sf-dropdown-field--border-color: var(--sf-outline);
   }
   /* utility-hint: display/flex (.flex) */
   .sf-dropdown.sf-dropdown--size-1.sf-dropdown--outlined.sf-dropdown--text .sf-dropdown-field input, .sf-dropdown.sf-dropdown--size-1.sf-dropdown--filled.sf-dropdown--text .sf-dropdown-field input {

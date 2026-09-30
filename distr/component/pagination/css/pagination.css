@@ -289,10 +289,10 @@
     transition-timing-function: var(--sf-animation);
     --sf-page-number--background-color: var(--sf-surface-0);
     --sf-page-number--color: var(--sf-on-surface-variant);
-    --sf-page-number--border-top-width: var(--sf-a1);
-    --sf-page-number--border-bottom-width: var(--sf-a1);
-    --sf-page-number--border-inline-start-width: var(--sf-a1);
-    --sf-page-number--border-inline-end-width: var(--sf-a1);
+    --sf-page-number--border-top-width: var(--sf-px);
+    --sf-page-number--border-bottom-width: var(--sf-px);
+    --sf-page-number--border-inline-start-width: var(--sf-px);
+    --sf-page-number--border-inline-end-width: var(--sf-px);
   }
   .sf-page-number--square {
     --sf-page-number--border-end-end-radius: var(--sf-radius--ui);
@@ -322,7 +322,7 @@
     --sf-page-number--background-color: var(--sf-primary-container-active);
     --sf-page-number--border-color: var(--sf-primary-active);
     --sf-page-number--border-style: solid;
-    --sf-page-number--border-width: var(--sf-a1);
+    --sf-page-number--border-width: var(--sf-px);
     --sf-page-number--color: var(--sf-primary-active);
     --sf-page-number--font-weight: var(--sf-font-weight-medium);
   }
@@ -385,7 +385,7 @@
   /* utility-hint: flex/1 (.flex-1) display/flex (.flex) flex-direction/column (.flex-col) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-b0) justify-content/center (.justify-center) align-items/center (.items-center) */
   .sf-pagination .sf-pagination-top {
     --sf-pagination-top--background-color: transparent;
-    --sf-pagination-top--border-bottom-width: var(--sf-a1);
+    --sf-pagination-top--border-bottom-width: var(--sf-px);
     --sf-pagination-top--border-color: var(--sf-outline-variant);
     --sf-pagination-top--border-style: solid;
     --sf-pagination-top--padding-bottom: var(--sf-space-1);
@@ -401,7 +401,7 @@
   /* utility-hint: flex/1 (.flex-1) display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-space-1) justify-content/space-between (.justify-between) align-items/center (.items-center) */
   .sf-pagination .sf-pagination-main {
     --sf-pagination-main--background-color: transparent;
-    --sf-pagination-main--border-bottom-width: var(--sf-a1);
+    --sf-pagination-main--border-bottom-width: var(--sf-px);
     --sf-pagination-main--border-color: var(--sf-outline-variant);
     --sf-pagination-main--border-style: solid;
     --sf-pagination-main--padding-bottom: var(--sf-space-1);
