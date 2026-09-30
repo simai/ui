@@ -374,8 +374,8 @@ _:-ms-input-placeholder, [dir="rtl"] .sf-slider-dots .sf-slider-dots-dot {
   --sf-slider-dots-dot--border-start-start-radius: var(--sf-radius-circle);
   background-color: var(--sf-slider-dots-dot--background-color);
   color: var(--sf-slider-dots-dot--color);
-  border: var(--sf-a1) solid currentColor;
-  border: var(--sf-slider-dots-dot--stroke-width, var(--sf-a1)) solid currentColor;
+  border: var(--sf-px) solid currentColor;
+  border: var(--sf-slider-dots-dot--stroke-width, var(--sf-px)) solid currentColor;
   outline: none;
   border-end-end-radius: var(--sf-slider-dots-dot--border-end-end-radius);
   border-end-start-radius: var(--sf-slider-dots-dot--border-end-start-radius);

@@ -65,60 +65,60 @@
     border-bottom-right-radius: var(--sf-file-upload--border-bottom-left-radius, var(--sf-radius-default));
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-file-upload {
-    border-right-width: var(--sf-a1);
-    border-right-width: var(--sf-file-upload--border-right-width, var(--sf-a1));
+    border-right-width: var(--sf-px);
+    border-right-width: var(--sf-file-upload--border-right-width, var(--sf-px));
   }
   @supports not (border-inline-end-width: initial) {
   html:not([dir="rtl"]) .sf-file-upload {
-    border-right-width: var(--sf-a1);
-    border-right-width: var(--sf-file-upload--border-right-width, var(--sf-a1));
+    border-right-width: var(--sf-px);
+    border-right-width: var(--sf-file-upload--border-right-width, var(--sf-px));
     }
   }
   .sf-file-upload:where(:dir(ltr)) {
-    border-right-width: var(--sf-a1);
-    border-right-width: var(--sf-file-upload--border-right-width, var(--sf-a1));
+    border-right-width: var(--sf-px);
+    border-right-width: var(--sf-file-upload--border-right-width, var(--sf-px));
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-file-upload {
-    border-left-width: var(--sf-a1);
-    border-left-width: var(--sf-file-upload--border-right-width, var(--sf-a1));
+    border-left-width: var(--sf-px);
+    border-left-width: var(--sf-file-upload--border-right-width, var(--sf-px));
   }
   @supports not (border-inline-end-width: initial) {
   [dir="rtl"] .sf-file-upload {
-    border-left-width: var(--sf-a1);
-    border-left-width: var(--sf-file-upload--border-right-width, var(--sf-a1));
+    border-left-width: var(--sf-px);
+    border-left-width: var(--sf-file-upload--border-right-width, var(--sf-px));
     }
   }
   .sf-file-upload:where(:dir(rtl)) {
-    border-left-width: var(--sf-a1);
-    border-left-width: var(--sf-file-upload--border-right-width, var(--sf-a1));
+    border-left-width: var(--sf-px);
+    border-left-width: var(--sf-file-upload--border-right-width, var(--sf-px));
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-file-upload {
-    border-left-width: var(--sf-a1);
-    border-left-width: var(--sf-file-upload--border-left-width, var(--sf-a1));
+    border-left-width: var(--sf-px);
+    border-left-width: var(--sf-file-upload--border-left-width, var(--sf-px));
   }
   @supports not (border-inline-start-width: initial) {
   html:not([dir="rtl"]) .sf-file-upload {
-    border-left-width: var(--sf-a1);
-    border-left-width: var(--sf-file-upload--border-left-width, var(--sf-a1));
+    border-left-width: var(--sf-px);
+    border-left-width: var(--sf-file-upload--border-left-width, var(--sf-px));
     }
   }
   .sf-file-upload:where(:dir(ltr)) {
-    border-left-width: var(--sf-a1);
-    border-left-width: var(--sf-file-upload--border-left-width, var(--sf-a1));
+    border-left-width: var(--sf-px);
+    border-left-width: var(--sf-file-upload--border-left-width, var(--sf-px));
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-file-upload {
-    border-right-width: var(--sf-a1);
-    border-right-width: var(--sf-file-upload--border-left-width, var(--sf-a1));
+    border-right-width: var(--sf-px);
+    border-right-width: var(--sf-file-upload--border-left-width, var(--sf-px));
   }
   @supports not (border-inline-start-width: initial) {
   [dir="rtl"] .sf-file-upload {
-    border-right-width: var(--sf-a1);
-    border-right-width: var(--sf-file-upload--border-left-width, var(--sf-a1));
+    border-right-width: var(--sf-px);
+    border-right-width: var(--sf-file-upload--border-left-width, var(--sf-px));
     }
   }
   .sf-file-upload:where(:dir(rtl)) {
-    border-right-width: var(--sf-a1);
-    border-right-width: var(--sf-file-upload--border-left-width, var(--sf-a1));
+    border-right-width: var(--sf-px);
+    border-right-width: var(--sf-file-upload--border-left-width, var(--sf-px));
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-file-upload {
     border-top-right-radius: var(--sf-radius-default);
@@ -221,22 +221,22 @@
     padding-left: var(--sf-file-upload--padding-inline-end);
   }
   .sf-file-upload {
-    border-bottom-width: var(--sf-a1);
-    border-bottom-width: var(--sf-file-upload--border-bottom-width, var(--sf-a1));
+    border-bottom-width: var(--sf-px);
+    border-bottom-width: var(--sf-file-upload--border-bottom-width, var(--sf-px));
     border-end-end-radius: var(--sf-radius-default);
     border-end-end-radius: var(--sf-file-upload--border-bottom-right-radius, var(--sf-radius-default));
     border-end-start-radius: var(--sf-radius-default);
     border-end-start-radius: var(--sf-file-upload--border-bottom-left-radius, var(--sf-radius-default));
-    border-inline-end-width: var(--sf-a1);
-    border-inline-end-width: var(--sf-file-upload--border-right-width, var(--sf-a1));
-    border-inline-start-width: var(--sf-a1);
-    border-inline-start-width: var(--sf-file-upload--border-left-width, var(--sf-a1));
+    border-inline-end-width: var(--sf-px);
+    border-inline-end-width: var(--sf-file-upload--border-right-width, var(--sf-px));
+    border-inline-start-width: var(--sf-px);
+    border-inline-start-width: var(--sf-file-upload--border-left-width, var(--sf-px));
     border-start-end-radius: var(--sf-radius-default);
     border-start-end-radius: var(--sf-file-upload--border-top-right-radius, var(--sf-radius-default));
     border-start-start-radius: var(--sf-radius-default);
     border-start-start-radius: var(--sf-file-upload--border-top-left-radius, var(--sf-radius-default));
-    border-top-width: var(--sf-a1);
-    border-top-width: var(--sf-file-upload--border-top-width, var(--sf-a1));
+    border-top-width: var(--sf-px);
+    border-top-width: var(--sf-file-upload--border-top-width, var(--sf-px));
     gap: var(--sf-file-upload--gap);
     -webkit-padding-start: var(--sf-file-upload--padding-inline-start);
             padding-inline-start: var(--sf-file-upload--padding-inline-start);

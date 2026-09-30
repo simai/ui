@@ -439,60 +439,60 @@
     border-bottom-right-radius: var(--sf-list--border-bottom-left-radius, var(--sf-radius-default));
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list {
-    border-right-width: var(--sf-a1);
-    border-right-width: var(--sf-list--border-right-width, var(--sf-list--border-width, var(--sf-a1)));
+    border-right-width: var(--sf-px);
+    border-right-width: var(--sf-list--border-right-width, var(--sf-list--border-width, var(--sf-px)));
   }
   @supports not (border-inline-end-width: initial) {
   html:not([dir="rtl"]) .sf-list {
-    border-right-width: var(--sf-a1);
-    border-right-width: var(--sf-list--border-right-width, var(--sf-list--border-width, var(--sf-a1)));
+    border-right-width: var(--sf-px);
+    border-right-width: var(--sf-list--border-right-width, var(--sf-list--border-width, var(--sf-px)));
     }
   }
   .sf-list:where(:dir(ltr)) {
-    border-right-width: var(--sf-a1);
-    border-right-width: var(--sf-list--border-right-width, var(--sf-list--border-width, var(--sf-a1)));
+    border-right-width: var(--sf-px);
+    border-right-width: var(--sf-list--border-right-width, var(--sf-list--border-width, var(--sf-px)));
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-list {
-    border-left-width: var(--sf-a1);
-    border-left-width: var(--sf-list--border-right-width, var(--sf-list--border-width, var(--sf-a1)));
+    border-left-width: var(--sf-px);
+    border-left-width: var(--sf-list--border-right-width, var(--sf-list--border-width, var(--sf-px)));
   }
   @supports not (border-inline-end-width: initial) {
   [dir="rtl"] .sf-list {
-    border-left-width: var(--sf-a1);
-    border-left-width: var(--sf-list--border-right-width, var(--sf-list--border-width, var(--sf-a1)));
+    border-left-width: var(--sf-px);
+    border-left-width: var(--sf-list--border-right-width, var(--sf-list--border-width, var(--sf-px)));
     }
   }
   .sf-list:where(:dir(rtl)) {
-    border-left-width: var(--sf-a1);
-    border-left-width: var(--sf-list--border-right-width, var(--sf-list--border-width, var(--sf-a1)));
+    border-left-width: var(--sf-px);
+    border-left-width: var(--sf-list--border-right-width, var(--sf-list--border-width, var(--sf-px)));
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list {
-    border-left-width: var(--sf-a1);
-    border-left-width: var(--sf-list--border-left-width, var(--sf-list--border-width, var(--sf-a1)));
+    border-left-width: var(--sf-px);
+    border-left-width: var(--sf-list--border-left-width, var(--sf-list--border-width, var(--sf-px)));
   }
   @supports not (border-inline-start-width: initial) {
   html:not([dir="rtl"]) .sf-list {
-    border-left-width: var(--sf-a1);
-    border-left-width: var(--sf-list--border-left-width, var(--sf-list--border-width, var(--sf-a1)));
+    border-left-width: var(--sf-px);
+    border-left-width: var(--sf-list--border-left-width, var(--sf-list--border-width, var(--sf-px)));
     }
   }
   .sf-list:where(:dir(ltr)) {
-    border-left-width: var(--sf-a1);
-    border-left-width: var(--sf-list--border-left-width, var(--sf-list--border-width, var(--sf-a1)));
+    border-left-width: var(--sf-px);
+    border-left-width: var(--sf-list--border-left-width, var(--sf-list--border-width, var(--sf-px)));
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-list {
-    border-right-width: var(--sf-a1);
-    border-right-width: var(--sf-list--border-left-width, var(--sf-list--border-width, var(--sf-a1)));
+    border-right-width: var(--sf-px);
+    border-right-width: var(--sf-list--border-left-width, var(--sf-list--border-width, var(--sf-px)));
   }
   @supports not (border-inline-start-width: initial) {
   [dir="rtl"] .sf-list {
-    border-right-width: var(--sf-a1);
-    border-right-width: var(--sf-list--border-left-width, var(--sf-list--border-width, var(--sf-a1)));
+    border-right-width: var(--sf-px);
+    border-right-width: var(--sf-list--border-left-width, var(--sf-list--border-width, var(--sf-px)));
     }
   }
   .sf-list:where(:dir(rtl)) {
-    border-right-width: var(--sf-a1);
-    border-right-width: var(--sf-list--border-left-width, var(--sf-list--border-width, var(--sf-a1)));
+    border-right-width: var(--sf-px);
+    border-right-width: var(--sf-list--border-left-width, var(--sf-list--border-width, var(--sf-px)));
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list {
     border-top-right-radius: var(--sf-radius-default);
@@ -609,28 +609,28 @@
   .sf-list {
     background-color: var(--sf-surface-0);
     background-color: var(--sf-list--background-color, var(--sf-surface-0));
-    border-width: var(--sf-a1);
-    border-width: var(--sf-list--border-width, var(--sf-a1));
-    border-bottom-width: var(--sf-a1);
-    border-bottom-width: var(--sf-list--border-bottom-width, var(--sf-list--border-width, var(--sf-a1)));
+    border-width: var(--sf-px);
+    border-width: var(--sf-list--border-width, var(--sf-px));
+    border-bottom-width: var(--sf-px);
+    border-bottom-width: var(--sf-list--border-bottom-width, var(--sf-list--border-width, var(--sf-px)));
     border-color: transparent;
     border-color: var(--sf-list--border-color, var(--sf-outline-variant, transparent));
     border-end-end-radius: var(--sf-radius-default);
     border-end-end-radius: var(--sf-list--border-bottom-right-radius, var(--sf-radius-default));
     border-end-start-radius: var(--sf-radius-default);
     border-end-start-radius: var(--sf-list--border-bottom-left-radius, var(--sf-radius-default));
-    border-inline-end-width: var(--sf-a1);
-    border-inline-end-width: var(--sf-list--border-right-width, var(--sf-list--border-width, var(--sf-a1)));
-    border-inline-start-width: var(--sf-a1);
-    border-inline-start-width: var(--sf-list--border-left-width, var(--sf-list--border-width, var(--sf-a1)));
+    border-inline-end-width: var(--sf-px);
+    border-inline-end-width: var(--sf-list--border-right-width, var(--sf-list--border-width, var(--sf-px)));
+    border-inline-start-width: var(--sf-px);
+    border-inline-start-width: var(--sf-list--border-left-width, var(--sf-list--border-width, var(--sf-px)));
     border-start-end-radius: var(--sf-radius-default);
     border-start-end-radius: var(--sf-list--border-top-right-radius, var(--sf-radius-default));
     border-start-start-radius: var(--sf-radius-default);
     border-start-start-radius: var(--sf-list--border-top-left-radius, var(--sf-radius-default));
     border-style: solid;
     border-style: var(--sf-list--border-style, solid);
-    border-top-width: var(--sf-a1);
-    border-top-width: var(--sf-list--border-top-width, var(--sf-list--border-width, var(--sf-a1)));
+    border-top-width: var(--sf-px);
+    border-top-width: var(--sf-list--border-top-width, var(--sf-list--border-width, var(--sf-px)));
     gap: var(--sf-space-1\/3);
     gap: var(--sf-list--gap, var(--sf-space-1\/3));
     padding-bottom: var(--sf-space-1\/3);
