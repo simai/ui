@@ -13,7 +13,10 @@ class UiRadiusContractTest(unittest.TestCase):
     def test_core_publishes_one_shared_ui_radius(self) -> None:
         core = self.read("distr/core/css/core.css")
         self.assertEqual(core.count("--sf-radius-1\\/3: var(--sf-a2);"), 2)
-        self.assertIn("--sf-radius--ui: var(--sf-radius-1\\/3);", core)
+        # The role stands on a step of the scale, never on a primitive, so a
+        # retuned scale carries the role with it.
+        self.assertIn("--sf-radius--ui: var(--sf-radius-1\\/2);", core)
+        self.assertIn("--sf-radius--surface: var(--sf-radius-1);", core)
         self.assertEqual(core.count("--sf-ui-radius-default: var(--sf-radius--ui)"), 2)
 
     def test_small_controls_inherit_native_component_aliases(self) -> None:
