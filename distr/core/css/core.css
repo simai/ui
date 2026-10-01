@@ -1340,8 +1340,13 @@ body {
     --sf-label-small--height: var(--sf-text--height-1\/4);
     --sf-label-medium--size: var(--sf-text--size-1\/3);
     --sf-label-medium--height: var(--sf-text--height-1\/3);
-    --sf-label-large--size: var(--sf-text--size-1\/2);
-    --sf-label-large--height: var(--sf-text--height-1\/2);
+    /* Подпись не растёт вместе с экраном: она привязана к контролу, а контрол
+       своего размера от ширины не меняет. Две младшие ступени это и делали,
+       а большая стояла на адаптивной --sf-text--size-1\/2 и росла как абзац,
+       из-за чего совпадала с text-small и выпадала из собственного семейства.
+       Фиксирована на прежнем широком значении, 14/20. */
+    --sf-label-large--size: var(--sf-b4);
+    --sf-label-large--height: var(--sf-c0);
     --sf-text-small--size: var(--sf-text--size-1\/2);
     --sf-text-small--height: var(--sf-text--height-1\/2);
     --sf-text-medium--size: var(--sf-text--size-1);
