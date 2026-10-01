@@ -1276,10 +1276,10 @@ body {
 @layer sf.base {
   :root {
     --sf-title--height-1: var(--sf-b6);
-    --sf-title--height-2: var(--sf-b6);
+    --sf-title--height-2: var(--sf-b8);
     --sf-title--height-3: var(--sf-c0);
     --sf-title--height-4: var(--sf-c2);
-    --sf-title--height-5: var(--sf-c2);
+    --sf-title--height-5: var(--sf-c3);
     --sf-title--height-6: var(--sf-c4);
     --sf-title--height-7: var(--sf-c6);
     --sf-title--height-8: var(--sf-c8);
@@ -1302,7 +1302,7 @@ body {
   }
   @media (min-width: 960px) {
     :root {
-      --sf-title--height-1: var(--sf-b6);
+      --sf-title--height-1: var(--sf-b8);
       --sf-title--height-2: var(--sf-c2);
       --sf-title--height-3: var(--sf-c4);
       --sf-title--height-4: var(--sf-c6);
