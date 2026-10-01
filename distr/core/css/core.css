@@ -338,7 +338,7 @@
     --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
     --sf-outline-secondary: light-dark(var(--sf-secondary-50), var(--sf-secondary-60));
     --sf-disable: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
-    --sf-on-disable: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-48));
+    --sf-on-disable: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
     --sf-outline-disable: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-48));
     --sf-link: light-dark(var(--sf-primary-40), var(--sf-primary-80));
     --sf-focus-on-transparency: light-dark(rgba(0,0,0,0.50196), rgba(255,255,255,0.50196));
@@ -730,6 +730,14 @@
     --sf-neutral-50--alfa-36: rgba(118,119,124,0.36078);
     --sf-neutral-50--alfa-40: rgba(118,119,124,0.4);
     --sf-neutral-50--alfa-44: rgba(118,119,124,0.43922);
+    /* The scale climbs in fours and stops at 44, which is as far as a wash ever
+       needed to go. This one step is far outside that run because it is not a
+       wash: it is the ink of a disabled control in the light theme, and the
+       light theme cannot reach the dark one's legibility by small increments.
+       neutral-50 over white measures 4.47:1 even at full opacity, so 80% lands
+       at 3.10:1 -- level with the 4.12:1 the dark theme has always had. Nothing
+       between 44 and 80 is declared, because nothing asks for it. */
+    --sf-neutral-50--alfa-80: rgba(118,119,124,0.8);
     --sf-neutral-40: #5d5e63;
     --sf-neutral-35: #515257;
     --sf-neutral-30: #45474b;
