@@ -613,7 +613,7 @@
   }
   /* utility-hint: justify-content/flex-start (.justify-start) */
   .sf-toggle.disabled {
-    --sf-toggle--color: var(--sf-disable);
+    --sf-toggle--color: var(--sf-on-disable);
   }
   .sf-toggle.disabled .sf-toggle-container {
     --sf-toggle-container--background-color: var(--sf-disable);
