@@ -11,8 +11,8 @@
     --sf-progress-scale-fill-color: var(--sf-primary);
     background-color: transparent;
     background-color: var(--sf-progress-scale--background-color, transparent);
-    color: var(--sf-on-surface-muted);
-    color: var(--sf-progress-scale--color, var(--sf-on-surface-muted));
+    color: var(--sf-on-surface-variant);
+    color: var(--sf-progress-scale--color, var(--sf-on-surface-variant));
     font-family: var(--sf-text--family);
     font-family: var(--sf-progress-scale--font-family, var(--sf-text--family));
     font-weight: var(--sf-font-weight-regular);

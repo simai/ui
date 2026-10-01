@@ -729,7 +729,7 @@
     --sf-input-placeholder--line-height: var(--sf-text-height-1\/2);
   }
   .sf-input.error > .sf-input-field > .sf-input-hint > .sf-icon {
-    --sf-icon--color: var(--sf-on-surface-muted);
+    --sf-icon--color: var(--sf-error);
   }
 }
 @layer sf.states {

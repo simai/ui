@@ -975,7 +975,7 @@
     line-height: var(--sf-dropdown-required--line-height);
   }
   .sf-dropdown .sf-dropdown-text {
-    --sf-dropdown-text--color: var(--sf-on-surface-muted);
+    --sf-dropdown-text--color: var(--sf-on-surface-variant);
     --sf-dropdown-text--font-family: var(--sf-text--family);
     --sf-dropdown-text--font-weight: var(--sf-font-weight-regular);
     color: var(--sf-dropdown-text--color);
@@ -1144,19 +1144,19 @@
     --sf-dropdown-placeholder--line-height: var(--sf-text-height-1);
   }
   .sf-dropdown.sf-dropdown--outlined.sf-dropdown--text .sf-dropdown-field input::-webkit-input-placeholder, .sf-dropdown.sf-dropdown--filled.sf-dropdown--text .sf-dropdown-field input::-webkit-input-placeholder {
-    --sf-dropdown-placeholder--color: var(--sf-on-surface-muted);
+    --sf-dropdown-placeholder--color: var(--sf-on-surface-variant);
   }
   .sf-dropdown.sf-dropdown--outlined.sf-dropdown--text .sf-dropdown-field input::-moz-placeholder, .sf-dropdown.sf-dropdown--filled.sf-dropdown--text .sf-dropdown-field input::-moz-placeholder {
-    --sf-dropdown-placeholder--color: var(--sf-on-surface-muted);
+    --sf-dropdown-placeholder--color: var(--sf-on-surface-variant);
   }
   .sf-dropdown.sf-dropdown--outlined.sf-dropdown--text .sf-dropdown-field input:-ms-input-placeholder, .sf-dropdown.sf-dropdown--filled.sf-dropdown--text .sf-dropdown-field input:-ms-input-placeholder {
-    --sf-dropdown-placeholder--color: var(--sf-on-surface-muted);
+    --sf-dropdown-placeholder--color: var(--sf-on-surface-variant);
   }
   .sf-dropdown.sf-dropdown--outlined.sf-dropdown--text .sf-dropdown-field input::-ms-input-placeholder, .sf-dropdown.sf-dropdown--filled.sf-dropdown--text .sf-dropdown-field input::-ms-input-placeholder {
-    --sf-dropdown-placeholder--color: var(--sf-on-surface-muted);
+    --sf-dropdown-placeholder--color: var(--sf-on-surface-variant);
   }
   .sf-dropdown.sf-dropdown--outlined.sf-dropdown--text .sf-dropdown-field input::placeholder, .sf-dropdown.sf-dropdown--filled.sf-dropdown--text .sf-dropdown-field input::placeholder {
-    --sf-dropdown-placeholder--color: var(--sf-on-surface-muted);
+    --sf-dropdown-placeholder--color: var(--sf-on-surface-variant);
   }
   .sf-dropdown.sf-dropdown--size-1.sf-dropdown--outlined.sf-dropdown--text input, .sf-dropdown.sf-dropdown--size-1.sf-dropdown--filled.sf-dropdown--text input {
     --sf-dropdown-input--font-size: var(--sf-text-size-1);
