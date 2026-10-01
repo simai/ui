@@ -522,6 +522,7 @@
     border-radius: var(--sf-menu-horizontal-submenu--radius, var(--sf-radius--ui));
     background: var(--sf-elevation-2--surface);
     background: var(--sf-menu-horizontal-submenu--background-color, var(--sf-elevation-2--surface));
+    --sf-on-surface-variant: var(--sf-on-elevation-2--variant);
     box-shadow: var(--sf-ui-shadow-2);
     box-shadow: var(--sf-menu-horizontal-submenu--box-shadow, var(--sf-ui-shadow-2));
   }

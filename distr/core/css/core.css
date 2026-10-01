@@ -364,6 +364,17 @@
     --sf-elevation-3--surface: light-dark(var(--sf-surface-0), var(--sf-surface-4));
     --sf-elevation-4--surface: light-dark(var(--sf-surface-0), var(--sf-surface-5));
     --sf-elevation-5--surface: light-dark(var(--sf-surface-0), var(--sf-surface-5));
+    /* Приглушённый текст на поднятой поверхности. В светлой теме поднятая
+       поверхность остаётся обычной, поэтому значение то же, что у
+       --sf-on-surface-variant. В тёмной поверхность светлеет со ступенью, и
+       вместе с ней светлеет текст: иначе одна и та же роль даёт 4.14 на второй
+       ступени и 2.93 на четвёртой при требуемых WCAG 1.4.3 четырёх с половиной.
+       Значений три, а не пять: роль меняется там, где перестаёт проходить. */
+    --sf-on-elevation-1--variant: light-dark(var(--sf-neutral-40), var(--sf-neutral-60));
+    --sf-on-elevation-2--variant: light-dark(var(--sf-neutral-40), var(--sf-neutral-70));
+    --sf-on-elevation-3--variant: light-dark(var(--sf-neutral-40), var(--sf-neutral-70));
+    --sf-on-elevation-4--variant: light-dark(var(--sf-neutral-40), var(--sf-neutral-80));
+    --sf-on-elevation-5--variant: light-dark(var(--sf-neutral-40), var(--sf-neutral-80));
     /* The neutral alpha ramp. The base branches per scheme — ink on a light
        surface, light on a dark one — so a component asks for a degree of contrast
        rather than for black or white, and every step above is one declaration

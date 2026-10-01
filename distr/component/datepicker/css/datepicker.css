@@ -870,6 +870,7 @@
   }
   .sf-datepicker .sf-datepicker-top {
     --sf-datepicker-top--background-color: var(--sf-elevation-3--surface);
+    --sf-on-surface-variant: var(--sf-on-elevation-3--variant);
     --sf-datepicker-top--padding-bottom: var(--sf-space-1);
     --sf-datepicker-top--padding-inline-end: var(--sf-space-1\/3);
     --sf-datepicker-top--padding-inline-start: var(--sf-space-1\/3);

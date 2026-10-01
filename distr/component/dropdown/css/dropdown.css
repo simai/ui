@@ -60,6 +60,7 @@
     border-style: var(--sf-list-item--border-style, solid);
     box-shadow: var(--sf-list-item--box-shadow);
     --sf-list-item--background-color: var(--sf-elevation-1--surface);
+    --sf-on-surface-variant: var(--sf-on-elevation-1--variant);
     --sf-list-item--border-color: var(--sf-outline-variant);
     --sf-list-item--border-bottom-width: var(--sf-px);
     --sf-list-item--border-style: solid;

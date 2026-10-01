@@ -591,6 +591,7 @@
     /* Поднят: поверхность берёт ступень своей высоты, иначе в тёмной теме
        подъём не виден — там чёрная тень ничего не даёт. */
     background-color: var(--sf-elevation-1--surface);
+    --sf-on-surface-variant: var(--sf-on-elevation-1--variant);
     box-shadow: var(--sf-ui-shadow-1);
     height: var(--sf-b2);
     height: var(--sf-context-menu-tail-size, var(--sf-b2));
@@ -644,6 +645,7 @@
   }
   .sf-context-menu .sf-context-menu-content {
     --sf-context-menu-content--background-color: var(--sf-elevation-2--surface);
+    --sf-on-surface-variant: var(--sf-on-elevation-2--variant);
     --sf-context-menu-content--padding-bottom: var(--sf-space-1\/4);
     --sf-context-menu-content--padding-inline-end: var(--sf-space-1\/4);
     --sf-context-menu-content--padding-inline-start: var(--sf-space-1\/4);
