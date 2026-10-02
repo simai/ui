@@ -135,7 +135,7 @@
     --sf-file-preview--background-color: transparent;
     --sf-file-preview--gap: var(--sf-space-1\/2);
     --sf-file-preview--padding: var(--sf-space-0);
-    --sf-file-preview--radius: var(--sf-radius-default);
+    --sf-file-preview--radius: var(--sf-radius--ui);
     display: grid;
     grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: center;

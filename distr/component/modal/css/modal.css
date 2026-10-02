@@ -80,7 +80,7 @@
     --sf-modal-surface-border-width: var(--sf-border-width, var(--sf-px));
     --sf-modal-surface-gap: var(--sf-space-1);
     --sf-modal-surface-padding: var(--sf-space-2);
-    --sf-modal-surface-radius: var(--sf-radius-default);
+    --sf-modal-surface-radius: var(--sf-radius--surface);
     --sf-modal-surface-shadow: none;
     background-color: var(--sf-modal-surface-bg);
     border: var(--sf-modal-surface-border-width) var(--sf-modal-surface-border-style) var(--sf-modal-surface-border-color);

@@ -115,7 +115,7 @@ _:-ms-input-placeholder, [dir="rtl"] .sf-accordion {
   border-top-right-radius: var(--sf-accordion--radius);
 }
 .sf-accordion {
-  --sf-accordion--radius: var(--sf-radius-default);
+  --sf-accordion--radius: var(--sf-radius--surface);
   --sf-accordion--border-width: var(--sf-px);
   --sf-accordion--border-color: var(--sf-outline-variant);
   --sf-accordion--background-color: var(--sf-surface-container);

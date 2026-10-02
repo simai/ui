@@ -35,7 +35,7 @@
     word-wrap: anywhere;
     background-color: var(--sf-surface-container);
     border: var(--sf-px) solid var(--sf-outline-variant);
-    border-radius: var(--sf-radius-default);
+    border-radius: var(--sf-radius--surface);
     color: var(--sf-on-surface);
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-doc-example + .sf-doc-source {
@@ -1465,7 +1465,7 @@
             margin-block-end: var(--sf-text--space-bottom);
     overflow: auto;
     background-color: var(--sf-surface-inverse);
-    border-radius: var(--sf-radius-default);
+    border-radius: var(--sf-radius--surface);
     color: var(--sf-on-surface-inverse);
     -moz-tab-size: 2;
       -o-tab-size: 2;

@@ -49,7 +49,7 @@
     color: var(--sf-primary);
     background-color: var(--sf-download-file--background-color);
     border: var(--sf-px) solid var(--sf-download-file--border-color);
-    border-radius: var(--sf-radius-default);
+    border-radius: var(--sf-radius--ui);
     font-family: var(--sf-text--family);
     font-size: var(--sf-download-file--text-size);
     font-weight: var(--sf-font-weight-regular);

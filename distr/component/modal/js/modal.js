@@ -530,7 +530,7 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
     }
 
     const surface = document.createElement('div');
-    surface.className = joinClasses(isInline ? 'bg-surface border border-outline-variant radius-default p-2 flex flex-col gap-1 min-w-0' : 'bg-surface border border-outline-variant radius-default shadow-3 p-2 flex flex-col gap-1 min-w-0', params.surfaceClass);
+    surface.className = joinClasses(isInline ? 'bg-surface border border-outline-variant radius-surface p-2 flex flex-col gap-1 min-w-0' : 'bg-surface border border-outline-variant radius-surface shadow-3 p-2 flex flex-col gap-1 min-w-0', params.surfaceClass);
     surface.setAttribute('data-sf-modal-surface', '');
     const header = document.createElement('header');
     header.className = joinClasses('sf-modal-header flex items-start min-w-0 border-b border-outline-variant gap-1', params.headerClass);
@@ -771,7 +771,7 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
 
     bodyScroll.innerHTML = '';
     const iframe = document.createElement('iframe');
-    iframe.className = 'sf-modal-iframe w-full border-0 radius-default';
+    iframe.className = 'sf-modal-iframe w-full border-0 radius-surface';
     iframe.src = this.src;
     iframe.setAttribute('data-sf-modal-iframe', '');
     iframe.setAttribute('allowfullscreen', '');

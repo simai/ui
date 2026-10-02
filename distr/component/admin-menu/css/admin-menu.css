@@ -1188,60 +1188,60 @@
     border-bottom-right-radius: var(--sf-admin-menu-bottom--border-end-start-radius, 0);
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-admin-menu-bottom {
-    border-top-right-radius: var(--sf-radius-default);
-    border-top-right-radius: var(--sf-admin-menu-bottom--border-start-end-radius, var(--sf-radius-default));
+    border-top-right-radius: var(--sf-radius--surface);
+    border-top-right-radius: var(--sf-admin-menu-bottom--border-start-end-radius, var(--sf-radius--surface));
   }
   @supports not (border-start-end-radius: initial) {
   html:not([dir="rtl"]) .sf-admin-menu-bottom {
-    border-top-right-radius: var(--sf-radius-default);
-    border-top-right-radius: var(--sf-admin-menu-bottom--border-start-end-radius, var(--sf-radius-default));
+    border-top-right-radius: var(--sf-radius--surface);
+    border-top-right-radius: var(--sf-admin-menu-bottom--border-start-end-radius, var(--sf-radius--surface));
     }
   }
   .sf-admin-menu-bottom:where(:dir(ltr)) {
-    border-top-right-radius: var(--sf-radius-default);
-    border-top-right-radius: var(--sf-admin-menu-bottom--border-start-end-radius, var(--sf-radius-default));
+    border-top-right-radius: var(--sf-radius--surface);
+    border-top-right-radius: var(--sf-admin-menu-bottom--border-start-end-radius, var(--sf-radius--surface));
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-admin-menu-bottom {
-    border-top-left-radius: var(--sf-radius-default);
-    border-top-left-radius: var(--sf-admin-menu-bottom--border-start-end-radius, var(--sf-radius-default));
+    border-top-left-radius: var(--sf-radius--surface);
+    border-top-left-radius: var(--sf-admin-menu-bottom--border-start-end-radius, var(--sf-radius--surface));
   }
   @supports not (border-start-end-radius: initial) {
   [dir="rtl"] .sf-admin-menu-bottom {
-    border-top-left-radius: var(--sf-radius-default);
-    border-top-left-radius: var(--sf-admin-menu-bottom--border-start-end-radius, var(--sf-radius-default));
+    border-top-left-radius: var(--sf-radius--surface);
+    border-top-left-radius: var(--sf-admin-menu-bottom--border-start-end-radius, var(--sf-radius--surface));
     }
   }
   .sf-admin-menu-bottom:where(:dir(rtl)) {
-    border-top-left-radius: var(--sf-radius-default);
-    border-top-left-radius: var(--sf-admin-menu-bottom--border-start-end-radius, var(--sf-radius-default));
+    border-top-left-radius: var(--sf-radius--surface);
+    border-top-left-radius: var(--sf-admin-menu-bottom--border-start-end-radius, var(--sf-radius--surface));
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-admin-menu-bottom {
-    border-top-left-radius: var(--sf-radius-default);
-    border-top-left-radius: var(--sf-admin-menu-bottom--border-start-start-radius, var(--sf-radius-default));
+    border-top-left-radius: var(--sf-radius--surface);
+    border-top-left-radius: var(--sf-admin-menu-bottom--border-start-start-radius, var(--sf-radius--surface));
   }
   @supports not (border-start-start-radius: initial) {
   html:not([dir="rtl"]) .sf-admin-menu-bottom {
-    border-top-left-radius: var(--sf-radius-default);
-    border-top-left-radius: var(--sf-admin-menu-bottom--border-start-start-radius, var(--sf-radius-default));
+    border-top-left-radius: var(--sf-radius--surface);
+    border-top-left-radius: var(--sf-admin-menu-bottom--border-start-start-radius, var(--sf-radius--surface));
     }
   }
   .sf-admin-menu-bottom:where(:dir(ltr)) {
-    border-top-left-radius: var(--sf-radius-default);
-    border-top-left-radius: var(--sf-admin-menu-bottom--border-start-start-radius, var(--sf-radius-default));
+    border-top-left-radius: var(--sf-radius--surface);
+    border-top-left-radius: var(--sf-admin-menu-bottom--border-start-start-radius, var(--sf-radius--surface));
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-admin-menu-bottom {
-    border-top-right-radius: var(--sf-radius-default);
-    border-top-right-radius: var(--sf-admin-menu-bottom--border-start-start-radius, var(--sf-radius-default));
+    border-top-right-radius: var(--sf-radius--surface);
+    border-top-right-radius: var(--sf-admin-menu-bottom--border-start-start-radius, var(--sf-radius--surface));
   }
   @supports not (border-start-start-radius: initial) {
   [dir="rtl"] .sf-admin-menu-bottom {
-    border-top-right-radius: var(--sf-radius-default);
-    border-top-right-radius: var(--sf-admin-menu-bottom--border-start-start-radius, var(--sf-radius-default));
+    border-top-right-radius: var(--sf-radius--surface);
+    border-top-right-radius: var(--sf-admin-menu-bottom--border-start-start-radius, var(--sf-radius--surface));
     }
   }
   .sf-admin-menu-bottom:where(:dir(rtl)) {
-    border-top-right-radius: var(--sf-radius-default);
-    border-top-right-radius: var(--sf-admin-menu-bottom--border-start-start-radius, var(--sf-radius-default));
+    border-top-right-radius: var(--sf-radius--surface);
+    border-top-right-radius: var(--sf-admin-menu-bottom--border-start-start-radius, var(--sf-radius--surface));
   }
   .sf-admin-menu-bottom {
     -webkit-padding-start: var(--sf-space-1);
@@ -1260,10 +1260,10 @@
     border-end-end-radius: var(--sf-admin-menu-bottom--border-end-end-radius, 0);
     border-end-start-radius: 0;
     border-end-start-radius: var(--sf-admin-menu-bottom--border-end-start-radius, 0);
-    border-start-end-radius: var(--sf-radius-default);
-    border-start-end-radius: var(--sf-admin-menu-bottom--border-start-end-radius, var(--sf-radius-default));
-    border-start-start-radius: var(--sf-radius-default);
-    border-start-start-radius: var(--sf-admin-menu-bottom--border-start-start-radius, var(--sf-radius-default));
+    border-start-end-radius: var(--sf-radius--surface);
+    border-start-end-radius: var(--sf-admin-menu-bottom--border-start-end-radius, var(--sf-radius--surface));
+    border-start-start-radius: var(--sf-radius--surface);
+    border-start-start-radius: var(--sf-admin-menu-bottom--border-start-start-radius, var(--sf-radius--surface));
   }
   .sf-admin-menu-main.open + .sf-admin-menu-bottom {
     box-shadow: var(--sf-ui-shadow-top);

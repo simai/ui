@@ -952,10 +952,10 @@
     padding-right: var(--sf-tooltip-content--padding-inline-start);
   }
   .sf-tooltip .sf-tooltip-content {
-    --sf-tooltip-content--border-end-end-radius: var(--sf-radius-default);
-    --sf-tooltip-content--border-end-start-radius: var(--sf-radius-default);
-    --sf-tooltip-content--border-start-end-radius: var(--sf-radius-default);
-    --sf-tooltip-content--border-start-start-radius: var(--sf-radius-default);
+    --sf-tooltip-content--border-end-end-radius: var(--sf-radius--ui);
+    --sf-tooltip-content--border-end-start-radius: var(--sf-radius--ui);
+    --sf-tooltip-content--border-start-end-radius: var(--sf-radius--ui);
+    --sf-tooltip-content--border-start-start-radius: var(--sf-radius--ui);
     background-color: var(--sf-tooltip-content--background-color);
     border-end-end-radius: var(--sf-tooltip-content--border-end-end-radius);
     border-end-start-radius: var(--sf-tooltip-content--border-end-start-radius);
