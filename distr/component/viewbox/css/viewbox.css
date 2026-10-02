@@ -42,6 +42,8 @@ _:-ms-input-placeholder, [dir="rtl"] .fit {
   overflow: hidden;
   position: relative;
   cursor: default;
+  /* A second of fading is the longest movement in the set; the duration itself is
+     off the scale and left for the owner, but it has to stop when asked. */
 }
 _:-ms-input-placeholder, html:not([dir="rtl"]) .view .sf-viewbox,html:not([dir="rtl"])
 .view .mask,html:not([dir="rtl"])
@@ -163,6 +165,12 @@ _:-ms-input-placeholder, [dir="rtl"] .view .sf-viewbox-video,[dir="rtl"]
           transform: translateX(-50%) translateY(-50%);
   background-size: cover;
   transition: 1s opacity;
+}
+@media (prefers-reduced-motion: reduce) {
+  .view .sf-viewbox-video,
+  .sf-viewbox-wrap .sf-viewbox-video {
+    transition-duration: 0s;
+  }
 }
 @media (min-aspect-ratio: 16/9) {
   .view .sf-viewbox-video,

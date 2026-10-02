@@ -112,6 +112,16 @@
     -webkit-animation: fa-spin 1s infinite steps(8);
     animation: fa-spin 1s infinite steps(8);
   }
+  /* Two infinite animations, and infinite is the case the setting exists for:
+     everything else on a page stops on its own. Stopped at the first frame the
+     glyph still reads as itself, because fa-spin only rotates it. */
+  @media (prefers-reduced-motion: reduce) {
+    .fa-spin,
+    .fa-pulse {
+      -webkit-animation: none;
+      animation: none;
+    }
+  }
   @-webkit-keyframes fa-spin {
     0% {
       -webkit-transform: rotate(0deg);

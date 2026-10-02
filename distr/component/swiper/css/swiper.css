@@ -18,6 +18,12 @@
   transition-timing-function: ease;
 }
 
+/* The slide still changes; it arrives without travelling. */
+@media (prefers-reduced-motion: reduce) {
+  .swiper-wrapper {
+    transition-duration: 0s;
+  }
+}
 .swiper-slide {
   flex: 0 0 100%;
   width: 100%;
