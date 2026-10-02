@@ -3494,7 +3494,9 @@ SF.RuleLoader['cl-composition-overlay'] = {
   mode: 'smart',
   js: true,
   css: true,
-  relation: []
+  relation: [{
+    name: 'cl-sortable'
+  }]
 };
 
 /***/ },
@@ -3547,6 +3549,8 @@ SF.RuleLoader['cl-datepicker'] = {
     name: 'cl-buttons'
   }, {
     name: 'cl-icon-buttons'
+  }, {
+    name: 'cl-icons'
   }]
 };
 
@@ -3564,6 +3568,8 @@ SF.RuleLoader['cl-download-file'] = {
     name: 'download-file'
   }, {
     name: 'icons'
+  }, {
+    name: 'cl-icons'
   }]
 };
 
@@ -3601,6 +3607,12 @@ SF.RuleLoader['cl-dropdown'] = {
     name: 'inputs'
   }, {
     name: 'icon-buttons'
+  }, {
+    name: 'cl-list-item'
+  }, {
+    name: 'cl-inputs'
+  }, {
+    name: 'cl-icon-buttons'
   }]
 };
 
@@ -3763,6 +3775,16 @@ SF.RuleLoader['cl-pagination'] = {
   js: true,
   relation: [{
     name: 'pagination'
+  }, {
+    name: 'cl-buttons'
+  }, {
+    name: 'cl-checkbox'
+  }, {
+    name: 'cl-dropdown'
+  }, {
+    name: 'cl-icon-buttons'
+  }, {
+    name: 'cl-list-item'
   }]
 };
 
@@ -3842,6 +3864,8 @@ SF.RuleLoader['cl-reference-link'] = {
     name: 'reference-link'
   }, {
     name: 'icons'
+  }, {
+    name: 'cl-icons'
   }]
 };
 
@@ -4016,6 +4040,8 @@ SF.RuleLoader['cl-tags'] = {
     name: 'avatars'
   }, {
     name: 'dot'
+  }, {
+    name: 'cl-icon-buttons'
   }]
 };
 
@@ -4121,6 +4147,8 @@ SF.RuleLoader['cl-tree'] = {
   css: true,
   relation: [{
     name: 'tree'
+  }, {
+    name: 'cl-tree-item'
   }]
 };
 

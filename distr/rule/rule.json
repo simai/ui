@@ -816,7 +816,11 @@
     "css": true,
     "js": true,
     "mode": "smart",
-    "relation": [],
+    "relation": [
+      {
+        "name": "cl-sortable"
+      }
+    ],
     "tags": [
       "sf-composition-overlay"
     ],
@@ -869,6 +873,9 @@
       },
       {
         "name": "cl-icon-buttons"
+      },
+      {
+        "name": "cl-icons"
       }
     ],
     "tags": [
@@ -886,6 +893,9 @@
       },
       {
         "name": "icons"
+      },
+      {
+        "name": "cl-icons"
       }
     ],
     "tags": [
@@ -924,6 +934,15 @@
       },
       {
         "name": "icon-buttons"
+      },
+      {
+        "name": "cl-list-item"
+      },
+      {
+        "name": "cl-inputs"
+      },
+      {
+        "name": "cl-icon-buttons"
       }
     ],
     "tags": [
@@ -1107,6 +1126,21 @@
     "relation": [
       {
         "name": "pagination"
+      },
+      {
+        "name": "cl-buttons"
+      },
+      {
+        "name": "cl-checkbox"
+      },
+      {
+        "name": "cl-dropdown"
+      },
+      {
+        "name": "cl-icon-buttons"
+      },
+      {
+        "name": "cl-list-item"
       }
     ],
     "tags": [
@@ -1183,6 +1217,9 @@
       },
       {
         "name": "icons"
+      },
+      {
+        "name": "cl-icons"
       }
     ],
     "tags": [
@@ -1365,6 +1402,9 @@
       },
       {
         "name": "dot"
+      },
+      {
+        "name": "cl-icon-buttons"
       }
     ],
     "tags": [
@@ -1451,6 +1491,9 @@
     "relation": [
       {
         "name": "tree"
+      },
+      {
+        "name": "cl-tree-item"
       }
     ],
     "tags": [
