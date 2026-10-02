@@ -5,6 +5,8 @@ require these notices to travel with the files, so the same list ships inside
 the distribution as `core/contracts/third-party-notices.v1.json`; this file is
 rendered from it.
 
+The distribution itself is MIT. Copyright (c) 2008-2026 Rim Zabarov and contributors. See LICENSE.
+
 | Component | Version | Licence | Where it lands |
 | --- | --- | --- | --- |
 | Lit | lit 3.3.3, lit-html 3.3.3, lit-element 4.2.2, @lit/reactive-element 2.1.2 | BSD-3-Clause | smart/, core/js/smart-base.min.js |
