@@ -890,11 +890,18 @@
   /* The global :focus-visible rule paints the ring on whatever holds the focus.
      Here the focus lives on the bare control while the ring belongs to the part
      the person sees, so the control gives its own ring up: one component, one
-     ring. */
-  .sf-input:not(.sf-input--pointer-focus) input.focus-visible {
+     ring.
+
+     Not only for keyboard focus. A text field matches :focus-visible on a mouse
+     click too -- browsers decide that deliberately, because the person is about
+     to type -- so gating this on :not(--pointer-focus) did not remove the ring,
+     it moved it: off the field, onto the bare input inside, where it drew a
+     tight square inside the rounded field. The field's border already turns to
+     the focus colour in both cases and is what marks the focus after a click. */
+  .sf-input input.focus-visible {
     outline: none;
   }
-  .sf-input:not(.sf-input--pointer-focus) input:focus-visible {
+  .sf-input input:focus-visible {
     outline: none;
   }
   .sf-input:not(.error).sf-input--bordered[\:has\(input\:-moz-read-only\:not\(\:disabled\)\)] .sf-input-field {

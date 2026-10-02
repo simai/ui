@@ -839,6 +839,15 @@
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
     outline-offset: var(--sf-focus--offset);
   }
+  /* The ring belongs to the wrap, so the bare control gives its own up -- the same
+     bargain the field makes, and for the same reason: a text control matches
+     :focus-visible on a click as well as on a tab. */
+  .sf-quantity input.focus-visible {
+    outline: none;
+  }
+  .sf-quantity input:focus-visible {
+    outline: none;
+  }
   .sf-quantity.error .sf-quantity-wrap {
     --sf-quantity-wrap--background-color: var(--sf-transparent-for-focus);
     --sf-quantity-wrap--border-color: var(--sf-error);

@@ -690,6 +690,16 @@
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
     outline-offset: var(--sf-focus--offset);
   }
+  /* Here the control is the part the person sees, so the ring stays on it. What
+     has to go is the ring after a click: the global :focus-visible rule paints one
+     even when this component has decided not to, and then the textarea is the only
+     text control in the set that rings on a mouse click. */
+  .sf-textarea.sf-textarea--pointer-focus textarea.focus-visible {
+    outline: none;
+  }
+  .sf-textarea.sf-textarea--pointer-focus textarea:focus-visible {
+    outline: none;
+  }
   .sf-textarea:not(.error).sf-textarea--bordered[\:has\(textarea\:-moz-read-only\:not\(\:disabled\)\)] textarea {
     --sf-textarea-textarea--background-color: var(--sf-surface-container);
   }
