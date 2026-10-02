@@ -743,9 +743,21 @@ def build_registry(
     closure_kinds = {entries[public_id]["kind"] for public_id in closure}
     if closure_kinds != {"utility", "component", "smart-component"}:
         raise ContractError(f"recipe_closure_kind_mismatch:{sorted(closure_kinds)}")
-    unsafe = [public_id for public_id in closure if not entries[public_id]["readiness"]["safe_to_suggest"]]
+    # `safe_to_suggest` answers whether a component should be offered to an
+    # author. A recipe may only place components that are, so that is asserted
+    # for what it names itself. It is not asserted over the whole closure,
+    # because the rest of the closure is what those components are built out of:
+    # the dropdown renders list items, and the list item is deliberately not
+    # offered on its own. Requiring the closure to be suggestable conflated a
+    # runtime dependency with a suggestion, and the only reason it ever held was
+    # that the dependency went undeclared.
+    unsafe = [
+        public_id
+        for public_id in entries["recipe.admin.collection"]["requires"]
+        if not entries[public_id]["readiness"]["safe_to_suggest"]
+    ]
     if unsafe:
-        raise ContractError(f"recipe_closure_not_safe:{unsafe[0]}")
+        raise ContractError(f"recipe_placement_not_safe:{unsafe[0]}")
 
     smart_rules = {rule["name"]: rule for rule in rules if rule.get("type") == "smart"}
     if len(smart_rules) != expected_counts["smart-component"]:

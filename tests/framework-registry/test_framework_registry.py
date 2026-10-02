@@ -162,9 +162,15 @@ class FrameworkContractRegistryTest(unittest.TestCase):
             self.assertTrue(
                 (ROOT / self.by_id[component_id]["runtime"]["asset_root"]).is_dir()
             )
+        # Suggestability is asserted for what the recipe places, not for the
+        # whole closure: see test_inventory_is_fail_closed_outside_curated_plan.
         self.assertTrue(
-            all(self.by_id[public_id]["readiness"]["safe_to_suggest"] for public_id in closure)
+            all(
+                self.by_id[public_id]["readiness"]["safe_to_suggest"]
+                for public_id in self.by_id["recipe.admin.collection"]["requires"]
+            )
         )
+        self.assertIn("smart.list-item", closure, "a dependency is in the closure even when it is not offered")
         self.assertEqual(
             self.by_id["recipe.admin.collection"]["requires"],
             [
@@ -201,7 +207,18 @@ class FrameworkContractRegistryTest(unittest.TestCase):
         closure = set(
             self.registry["indexes"]["recipe_closure"]["recipe.admin.collection"]
         )
-        self.assertEqual(safe, closure | {"recipe.admin.collection"})
+        # Nothing is advertised outside the curated plan. The two sets are not
+        # equal, because the closure also holds what those components are built
+        # out of: the dropdown renders list items, and the list item is
+        # deliberately not offered on its own.
+        self.assertLessEqual(safe, closure | {"recipe.admin.collection"})
+        self.assertTrue(
+            all(
+                self.by_id[public_id]["readiness"]["safe_to_suggest"]
+                for public_id in self.by_id["recipe.admin.collection"]["requires"]
+            ),
+            "a recipe may only place components that are safe to suggest",
+        )
         self.assertEqual(self.registry["indexes"]["blocked"], [])
         self.assertNotIn("utility.filer-hue-rotate", self.by_id)
         self.assertIn("utility.filter-hue-rotate", self.by_id)
