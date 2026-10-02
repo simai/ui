@@ -1903,6 +1903,13 @@
     "regex": "/^(?:hover:sepia(?:-none)?)(?![\\s\\S])/"
   },
   {
+    "name": "flag",
+    "css": true,
+    "js": true,
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-flag\\b/i",
+    "type": "component"
+  },
+  {
     "name": "flex-align/default",
     "regex": "/^(?:(?:center-(?:center|end|start)|end-(?:center|end|start)|start-(?:center|end|start)))(?![\\s\\S])/"
   },
