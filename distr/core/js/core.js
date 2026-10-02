@@ -375,6 +375,15 @@ function createNativeMask(element, options) {
       return digits(element.value);
     },
 
+    // Readable and writable, like the two next to it. A consumer that holds a
+    // raw number and wants it shown through the mask -- the country code field
+    // does exactly that with a value the page arrived with -- writes it here;
+    // a getter alone turns that assignment into a throw under strict mode,
+    // which modules are.
+    set unmaskedValue(value) {
+      element.value = format(digits(value), options);
+    },
+
     get typedValue() {
       if (options.mask !== Number || element.value.trim() === '') return null;
       return parseNumber(element.value, options);

@@ -581,6 +581,21 @@ function bindCountryViewport(root) {
     }
   };
 }
+/* Whether a property can be assigned, not merely whether it is there. The two
+   differ: an accessor declared with a getter and no setter answers to
+   hasOwnProperty and still throws when written, and an implementation may put
+   the same property on a prototype instead of the instance, where
+   hasOwnProperty does not see it at all. */
+
+
+function writable(instance, name) {
+  for (let node = instance; node; node = Object.getPrototypeOf(node)) {
+    const descriptor = Object.getOwnPropertyDescriptor(node, name);
+    if (descriptor) return typeof descriptor.set === 'function' || descriptor.writable === true;
+  }
+
+  return false;
+}
 
 async function applyMaskForRoot(root, input, maskPattern, config = null) {
   if (!input) return; // Requests can overlap across unbind/rebind or mask removal. A counter that
@@ -624,9 +639,9 @@ async function applyMaskForRoot(root, input, maskPattern, config = null) {
     if (current) {
       const digitsOnly = String(current).replace(/\D+/g, '');
 
-      if (digitsOnly && Object.prototype.hasOwnProperty.call(instance, 'unmaskedValue')) {
+      if (digitsOnly && writable(instance, 'unmaskedValue')) {
         instance.unmaskedValue = digitsOnly;
-      } else if (Object.prototype.hasOwnProperty.call(instance, 'value')) {
+      } else if (writable(instance, 'value')) {
         instance.value = String(current);
       }
 
