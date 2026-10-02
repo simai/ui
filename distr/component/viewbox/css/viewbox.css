@@ -42,8 +42,9 @@ _:-ms-input-placeholder, [dir="rtl"] .fit {
   overflow: hidden;
   position: relative;
   cursor: default;
-  /* A second of fading is the longest movement in the set; the duration itself is
-     off the scale and left for the owner, but it has to stop when asked. */
+  /* The background video fades on the slow step, the longest the scale offers.
+     A second -- what it used to take -- was twice that and belonged to nothing.
+     Long or short, the fade still has to stop when asked. */
 }
 _:-ms-input-placeholder, html:not([dir="rtl"]) .view .sf-viewbox,html:not([dir="rtl"])
 .view .mask,html:not([dir="rtl"])
@@ -164,7 +165,7 @@ _:-ms-input-placeholder, [dir="rtl"] .view .sf-viewbox-video,[dir="rtl"]
   -webkit-transform: translateX(-50%) translateY(-50%);
           transform: translateX(-50%) translateY(-50%);
   background-size: cover;
-  transition: 1s opacity;
+  transition: var(--sf-duration-slow) opacity;
 }
 @media (prefers-reduced-motion: reduce) {
   .view .sf-viewbox-video,
