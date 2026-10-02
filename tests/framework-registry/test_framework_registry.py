@@ -90,10 +90,10 @@ class FrameworkContractRegistryTest(unittest.TestCase):
             self.registry["counts"],
             {
                 "utility": 227,
-                "component": 61,
+                "component": 62,
                 "smart-component": 47,
                 "recipe": 1,
-                "total": 336,
+                "total": 337,
             },
         )
         # The pair names the two runtimes it was built from; that is the claim,
