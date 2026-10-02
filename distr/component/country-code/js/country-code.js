@@ -171,9 +171,27 @@ function toBoolean(value, fallback = false) {
 function normalizeIso2(value) {
   return String(value || '').trim().toUpperCase();
 }
+/* The field has always been able to draw flags from an SVG set -- the whole
+   data-flag-base path below is built for it -- and the default base was an empty
+   string, so nothing ever used it. What was drawn instead was country.flagEmoji
+   through the system font: a waving flag on macOS, a flat one on Android, and on
+   Windows no flag at all, because Segoe UI Emoji carries no country glyphs and a
+   regional indicator pair renders as the letters.
+
+   The Framework now ships the set, so the default points at it. A project with
+   its own flags still overrides this with data-flag-base, and the emoji stays as
+   the fallback for a runtime that cannot resolve its own root. */
+
 
 function resolveDefaultFlagBase() {
-  return '';
+  const root = typeof window !== 'undefined' ? window.sfPath : '';
+  if (!root) return '';
+
+  try {
+    return new URL('component/flag/flags/rect', root).href.replace(/\/$/, '');
+  } catch {
+    return String(root).replace(/\/$/, '') + '/component/flag/flags/rect';
+  }
 }
 
 function getFlagSrc(iso2, flagBase) {

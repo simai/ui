@@ -204,6 +204,21 @@
     --sf-country-code-left--background-color: transparent;
     background-color: var(--sf-country-code-left--background-color);
   }
+  /* The slot was sized for an emoji glyph, so it carries a font-size and the
+     height of a text line. Now it holds a picture, and the picture has to fill the
+     slot and take the shape the rest of the set gives a flag: the radius role and
+     the hairline that keeps a white flag off a white field. */
+  .sf-country-code .sf-country-code-flag-icon img,
+  .sf-country-code .sf-country-code-flag img {
+    display: block;
+    height: 100%;
+    block-size: 100%;
+    width: auto;
+    inline-size: auto;
+    border-radius: var(--sf-radius--ui);
+    outline: var(--sf-px) solid var(--sf-outline-variant);
+    outline-offset: calc(var(--sf-px) * -1);
+  }
   .sf-country-code .sf-country-code-flag-icon {
     --sf-country-code-flag-icon--background-color: transparent;
     background-color: var(--sf-country-code-flag-icon--background-color);
