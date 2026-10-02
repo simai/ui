@@ -22,10 +22,10 @@ __webpack_require__.r(__webpack_exports__);
  *   - it knows where the set is. The runtime already knows its own root, so the
  *     default base resolves against it instead of being empty and leaving the
  *     author to supply one.
- *   - it knows which shapes exist. The set is not symmetric -- the European
- *     Union and the continents are drawn only as rectangles, two dozen
- *     territories only as circles -- so a missing shape is served in the other
- *     one rather than as a hole.
+ *   - it knows which shapes exist. Both shapes now carry the same 247 codes,
+ *     but the catalogue stays: a code outside the set, or a set an author
+ *     supplies through data-flag-base, is served in the other shape rather
+ *     than as a hole.
  */
 const SHAPES = ['rect', 'circle'];
 const BASE_ATTRIBUTE = 'data-flag-base';
