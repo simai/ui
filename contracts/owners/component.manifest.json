@@ -1,276 +1,276 @@
 {
-    "schema_id": "simai.framework.owner-manifest",
-    "schema_version": 1,
-    "kind": "component",
-    "owner": {
-        "id": "simai/ui",
-        "repository": "https://github.com/simai/ui",
-        "manifest_path": "contracts/owners/component.manifest.json"
+  "schema_id": "simai.framework.owner-manifest",
+  "schema_version": 1,
+  "kind": "component",
+  "owner": {
+    "id": "simai/ui",
+    "repository": "https://github.com/simai/ui",
+    "manifest_path": "contracts/owners/component.manifest.json"
+  },
+  "release": {
+    "tag": null,
+    "commit": "227b90a6355af29b168bde953810265ba82e5ef2",
+    "tree": "899b8ad6923e81fa50007f607260fa71a4964c0e",
+    "runtime_subtree": "89675066baf48673d9f2d964cf9ce85f36c18e0e",
+    "archive_sha256": "2b21cf8d9a0257a71c9000bee1a817c730f4d215805606edfef6a22ab1080182"
+  },
+  "inventory": {
+    "source": "simai/ui@227b90a6355af29b168bde953810265ba82e5ef2:distr/rule/rule.json",
+    "selector": {
+      "mode": "rule-type",
+      "type": "component"
     },
-    "release": {
-        "tag": null,
-        "commit": "4b3e8dc865cdd90ab6f3d83b3c686a8795bd1a40",
-        "tree": "43e68c8222a146586cf291acee3c87bc586bc8b3",
-        "runtime_subtree": "796251e6d57dec52a24dc25b77c1b3f51c399137",
-        "archive_sha256": "d64a1c6bd627ec0fe806fb7c77be6c0b06c35be899ddc02d3ca60929e826e557"
+    "expected": {
+      "rules": 62,
+      "entries": 62
+    }
+  },
+  "defaults": {
+    "lifecycle": "released",
+    "readiness": {
+      "status": "discoverable",
+      "safe_to_suggest": false,
+      "profiles": [
+        "plain-assets-v1"
+      ],
+      "blockers": []
     },
-    "inventory": {
-        "source": "simai/ui@4b3e8dc865cdd90ab6f3d83b3c686a8795bd1a40:distr/rule/rule.json",
-        "selector": {
-            "mode": "rule-type",
-            "type": "component"
-        },
-        "expected": {
-            "rules": 62,
-            "entries": 62
-        }
-    },
-    "defaults": {
-        "lifecycle": "released",
-        "readiness": {
-            "status": "discoverable",
-            "safe_to_suggest": false,
-            "profiles": [
-                "plain-assets-v1"
-            ],
-            "blockers": []
-        },
-        "documentation_refs": [
-            "simai/ui@4b3e8dc865cdd90ab6f3d83b3c686a8795bd1a40:README.md"
+    "documentation_refs": [
+      "simai/ui@227b90a6355af29b168bde953810265ba82e5ef2:README.md"
+    ],
+    "example_refs": []
+  },
+  "entries": [
+    {
+      "id": "component.avatars",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
         ],
-        "example_refs": []
+        "blockers": []
+      },
+      "curated_for": [
+        "recipe.admin.collection"
+      ]
     },
-    "entries": [
-        {
-            "id": "component.avatars",
-            "readiness": {
-                "status": "ready",
-                "safe_to_suggest": true,
-                "profiles": [
-                    "plain-assets-v1"
-                ],
-                "blockers": []
-            },
-            "curated_for": [
-                "recipe.admin.collection"
-            ]
-        },
-        {
-            "id": "component.buttons",
-            "readiness": {
-                "status": "ready",
-                "safe_to_suggest": true,
-                "profiles": [
-                    "plain-assets-v1"
-                ],
-                "blockers": []
-            },
-            "example_refs": [
-                "simai/ui-play@0a393e85f0c6a137ae024f442dd52cc34d5f0508:examples/components/buttons/all/index.html"
-            ],
-            "curated_for": [
-                "recipe.admin.collection"
-            ]
-        },
-        {
-            "id": "component.checkbox",
-            "readiness": {
-                "status": "ready",
-                "safe_to_suggest": true,
-                "profiles": [
-                    "plain-assets-v1"
-                ],
-                "blockers": []
-            },
-            "example_refs": [
-                "simai/ui-play@0a393e85f0c6a137ae024f442dd52cc34d5f0508:examples/components/checkbox/all/index.html"
-            ],
-            "curated_for": [
-                "recipe.admin.collection"
-            ]
-        },
-        {
-            "id": "component.close",
-            "readiness": {
-                "status": "ready",
-                "safe_to_suggest": true,
-                "profiles": [
-                    "plain-assets-v1"
-                ],
-                "blockers": []
-            },
-            "curated_for": [
-                "recipe.admin.collection"
-            ]
-        },
-        {
-            "id": "component.context-menu",
-            "readiness": {
-                "status": "ready",
-                "safe_to_suggest": true,
-                "profiles": [
-                    "plain-assets-v1"
-                ],
-                "blockers": []
-            },
-            "curated_for": [
-                "recipe.admin.collection"
-            ]
-        },
-        {
-            "id": "component.datepicker",
-            "readiness": {
-                "status": "ready",
-                "safe_to_suggest": true,
-                "profiles": [
-                    "plain-assets-v1"
-                ],
-                "blockers": []
-            },
-            "curated_for": [
-                "recipe.admin.collection"
-            ]
-        },
-        {
-            "id": "component.dot",
-            "readiness": {
-                "status": "ready",
-                "safe_to_suggest": true,
-                "profiles": [
-                    "plain-assets-v1"
-                ],
-                "blockers": []
-            },
-            "curated_for": [
-                "recipe.admin.collection"
-            ]
-        },
-        {
-            "id": "component.dropdown",
-            "readiness": {
-                "status": "ready",
-                "safe_to_suggest": true,
-                "profiles": [
-                    "plain-assets-v1"
-                ],
-                "blockers": []
-            },
-            "example_refs": [
-                "simai/ui-play@0a393e85f0c6a137ae024f442dd52cc34d5f0508:examples/components/dropdown/dropdown/index.html"
-            ],
-            "curated_for": [
-                "recipe.admin.collection"
-            ]
-        },
-        {
-            "id": "component.icon-buttons",
-            "readiness": {
-                "status": "ready",
-                "safe_to_suggest": true,
-                "profiles": [
-                    "plain-assets-v1"
-                ],
-                "blockers": []
-            },
-            "example_refs": [
-                "simai/ui-play@0a393e85f0c6a137ae024f442dd52cc34d5f0508:examples/components/icon-buttons/icon-buttons/index.html"
-            ],
-            "curated_for": [
-                "recipe.admin.collection"
-            ]
-        },
-        {
-            "id": "component.icons",
-            "readiness": {
-                "status": "ready",
-                "safe_to_suggest": true,
-                "profiles": [
-                    "plain-assets-v1"
-                ],
-                "blockers": []
-            },
-            "curated_for": [
-                "recipe.admin.collection"
-            ]
-        },
-        {
-            "id": "component.inputs",
-            "readiness": {
-                "status": "ready",
-                "safe_to_suggest": true,
-                "profiles": [
-                    "plain-assets-v1"
-                ],
-                "blockers": []
-            },
-            "example_refs": [
-                "simai/ui-play@0a393e85f0c6a137ae024f442dd52cc34d5f0508:examples/components/inputs/textarea/index.html"
-            ],
-            "curated_for": [
-                "recipe.admin.collection"
-            ]
-        },
-        {
-            "id": "component.pagination",
-            "readiness": {
-                "status": "ready",
-                "safe_to_suggest": true,
-                "profiles": [
-                    "plain-assets-v1"
-                ],
-                "blockers": []
-            },
-            "example_refs": [
-                "simai/ui-play@0a393e85f0c6a137ae024f442dd52cc34d5f0508:examples/components/pagination/default/index.html"
-            ],
-            "curated_for": [
-                "recipe.admin.collection"
-            ]
-        },
-        {
-            "id": "component.spinner",
-            "readiness": {
-                "status": "ready",
-                "safe_to_suggest": true,
-                "profiles": [
-                    "plain-assets-v1"
-                ],
-                "blockers": []
-            },
-            "curated_for": [
-                "recipe.admin.collection"
-            ]
-        },
-        {
-            "id": "component.tabs",
-            "readiness": {
-                "status": "ready",
-                "safe_to_suggest": true,
-                "profiles": [
-                    "plain-assets-v1"
-                ],
-                "blockers": []
-            },
-            "curated_for": [
-                "recipe.admin.collection"
-            ]
-        },
-        {
-            "id": "component.tags",
-            "readiness": {
-                "status": "ready",
-                "safe_to_suggest": true,
-                "profiles": [
-                    "plain-assets-v1"
-                ],
-                "blockers": []
-            },
-            "example_refs": [
-                "simai/ui-play@0a393e85f0c6a137ae024f442dd52cc34d5f0508:examples/components/tags/all/index.html"
-            ],
-            "curated_for": [
-                "recipe.admin.collection"
-            ]
-        }
-    ]
+    {
+      "id": "component.buttons",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      },
+      "example_refs": [
+        "simai/ui-play@0a393e85f0c6a137ae024f442dd52cc34d5f0508:examples/components/buttons/all/index.html"
+      ],
+      "curated_for": [
+        "recipe.admin.collection"
+      ]
+    },
+    {
+      "id": "component.checkbox",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      },
+      "example_refs": [
+        "simai/ui-play@0a393e85f0c6a137ae024f442dd52cc34d5f0508:examples/components/checkbox/all/index.html"
+      ],
+      "curated_for": [
+        "recipe.admin.collection"
+      ]
+    },
+    {
+      "id": "component.close",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      },
+      "curated_for": [
+        "recipe.admin.collection"
+      ]
+    },
+    {
+      "id": "component.context-menu",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      },
+      "curated_for": [
+        "recipe.admin.collection"
+      ]
+    },
+    {
+      "id": "component.datepicker",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      },
+      "curated_for": [
+        "recipe.admin.collection"
+      ]
+    },
+    {
+      "id": "component.dot",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      },
+      "curated_for": [
+        "recipe.admin.collection"
+      ]
+    },
+    {
+      "id": "component.dropdown",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      },
+      "example_refs": [
+        "simai/ui-play@0a393e85f0c6a137ae024f442dd52cc34d5f0508:examples/components/dropdown/dropdown/index.html"
+      ],
+      "curated_for": [
+        "recipe.admin.collection"
+      ]
+    },
+    {
+      "id": "component.icon-buttons",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      },
+      "example_refs": [
+        "simai/ui-play@0a393e85f0c6a137ae024f442dd52cc34d5f0508:examples/components/icon-buttons/icon-buttons/index.html"
+      ],
+      "curated_for": [
+        "recipe.admin.collection"
+      ]
+    },
+    {
+      "id": "component.icons",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      },
+      "curated_for": [
+        "recipe.admin.collection"
+      ]
+    },
+    {
+      "id": "component.inputs",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      },
+      "example_refs": [
+        "simai/ui-play@0a393e85f0c6a137ae024f442dd52cc34d5f0508:examples/components/inputs/textarea/index.html"
+      ],
+      "curated_for": [
+        "recipe.admin.collection"
+      ]
+    },
+    {
+      "id": "component.pagination",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      },
+      "example_refs": [
+        "simai/ui-play@0a393e85f0c6a137ae024f442dd52cc34d5f0508:examples/components/pagination/default/index.html"
+      ],
+      "curated_for": [
+        "recipe.admin.collection"
+      ]
+    },
+    {
+      "id": "component.spinner",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      },
+      "curated_for": [
+        "recipe.admin.collection"
+      ]
+    },
+    {
+      "id": "component.tabs",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      },
+      "curated_for": [
+        "recipe.admin.collection"
+      ]
+    },
+    {
+      "id": "component.tags",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      },
+      "example_refs": [
+        "simai/ui-play@0a393e85f0c6a137ae024f442dd52cc34d5f0508:examples/components/tags/all/index.html"
+      ],
+      "curated_for": [
+        "recipe.admin.collection"
+      ]
+    }
+  ]
 }
