@@ -1,8 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="28" height="20" viewBox="308 164 28 20" fill="none" role="img">
 <g id="Country=BZ">
-<rect id="Mask_57" x="308" y="164" width="28" height="20" rx="2" fill="#F0F0F0"/>
+<rect id="Mask_57" x="308" y="164" width="28" height="20" fill="#F0F0F0"/>
 <mask id="mask25_8205_11341" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="308" y="164" width="28" height="20">
-<rect id="Mask_58" x="308" y="164" width="28" height="20" rx="2" fill="#F0F0F0"/>
+<rect id="Mask_58" x="308" y="164" width="28" height="20" fill="#F0F0F0"/>
 </mask>
 <g mask="url(#mask25_8205_11341)">
 <path id="Rectangle 2 Copy 4" fill-rule="evenodd" clip-rule="evenodd" d="M308 181.333H336V166.667H308V181.333Z" fill="#0052B4"/>

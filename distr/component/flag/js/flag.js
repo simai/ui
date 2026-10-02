@@ -99,12 +99,26 @@ function resolveShape(shape, code, known) {
   return fallback && fallback.has(code) ? other : shape;
 }
 
-function paint(element, shape, code, base) {
+function paint(element, shape, code, base, triedOther = false) {
   const image = document.createElement('img');
   image.src = `${base}/${shape}/${code}.svg`;
   image.alt = element.getAttribute('data-alt') || '';
   if (!image.alt) image.setAttribute('aria-hidden', 'true');
-  image.decoding = 'async';
+  image.decoding = 'async'; // A file that does not load is the ground truth about which shapes exist,
+  // and it is the only one available everywhere. The catalogue is fetched, and
+  // a fetch does not survive every context: inside a sandboxed frame without
+  // allow-same-origin -- which is how the documentation renders its examples --
+  // the origin is opaque, the request counts as cross-origin and is refused,
+  // while images keep loading because they are not subject to that. Falling
+  // back on the error covers the case the catalogue cannot reach.
+
+  image.addEventListener('error', () => {
+    if (triedOther) return;
+    const other = shape === 'rect' ? 'circle' : 'rect';
+    paint(element, other, code, base, true);
+  }, {
+    once: true
+  });
   element.replaceChildren(image); // The shape may have changed under the element; the class has to follow, or
   // a circle would sit in a box sized for a rectangle.
 
