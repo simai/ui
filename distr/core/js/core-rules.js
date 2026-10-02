@@ -6233,12 +6233,7 @@ SF.RuleLoader['gradient-stops/default'] = new RegExp("^(?:(?:from-(?:current|inh
 SF.RuleLoader['gradient-type/default'] = {
   regex: new RegExp("^(?:gr-(?:conic-(?:2|3)|line-(?:2|3)|radial-(?:2|3)))(?![\\s\\S])"),
   mode: 'utility',
-  css: true,
-  relation: [{
-    name: 'gradient-color-ext/default',
-    mode: 'utility',
-    css: true
-  }]
+  css: true
 };
 
 /***/ },

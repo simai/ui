@@ -2284,14 +2284,7 @@
     "name": "gradient-type/default",
     "css": true,
     "mode": "utility",
-    "regex": "/^(?:gr-(?:conic-(?:2|3)|line-(?:2|3)|radial-(?:2|3)))(?![\\s\\S])/",
-    "relation": [
-      {
-        "css": true,
-        "mode": "utility",
-        "name": "gradient-color-ext/default"
-      }
-    ]
+    "regex": "/^(?:gr-(?:conic-(?:2|3)|line-(?:2|3)|radial-(?:2|3)))(?![\\s\\S])/"
   },
   {
     "name": "gradient-type/lg",
