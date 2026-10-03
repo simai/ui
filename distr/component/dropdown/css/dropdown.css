@@ -658,6 +658,50 @@
     background-color: var(--sf-list-container--background-color);
   }
 }
+/* The popup of a dropdown is a menu surface, and it now reads like the
+   context menu, which owners and users already found right. Before, its
+   options borrowed the look of a list row: a divider under every option, a
+   highlight that ran edge to edge with square corners, and a flat panel with a
+   border instead of a lift. The same surface, lift, inset and corner the
+   context menu uses are applied here, scoped to the dropdown -- in place and
+   in the portal, where the list is wrapped in an .sf-dropdown context -- so a
+   list item anywhere else keeps its row look.
+
+   The option row is laid out here as well. The dropdown's own script puts
+   the check mark into a selected option, and that mark lands in line only
+   when the option is a flex row; written without the flex class, the mark
+   fell under the label and the selected option stood twice as tall. A layout
+   the component's own script depends on is the component's to set. */
+@layer sf.components {
+  .sf-dropdown .sf-list {
+    --sf-list--border-width: 0;
+    --sf-list--background-color: var(--sf-elevation-2--surface);
+    --sf-on-surface-variant: var(--sf-on-elevation-2--variant);
+    --sf-list--padding-top: var(--sf-space-1\/4);
+    --sf-list--padding-bottom: var(--sf-space-1\/4);
+    --sf-list--padding-left: var(--sf-space-1\/4);
+    --sf-list--padding-right: var(--sf-space-1\/4);
+    box-shadow: var(--sf-ui-shadow-2);
+  }
+  .sf-dropdown .sf-list .sf-list-item {
+    --sf-list-item--border-bottom-width: 0;
+    --sf-list-item--background-color: transparent;
+    display: flex;
+    align-items: center;
+    border-radius: var(--sf-radius--ui);
+  }
+  .sf-dropdown .sf-list [role=option].sf-list-item:not(:disabled):not(.disabled):hover {
+    --sf-list-item--background-color: var(--sf-surface-transparent-hover);
+  }
+  .sf-dropdown .sf-list .sf-list-item.selected {
+    --sf-list-item--background-color: var(--sf-primary-container);
+  }
+}
+@media (forced-colors: active) {
+  .sf-dropdown .sf-list {
+    border: var(--sf-px) solid CanvasText;
+  }
+}
 @layer sf.components {
   /* utility-hint: display/flex (.flex) flex-direction/column (.flex-col) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-space-1\/4) justify-content/flex-start (.justify-start) align-items/flex-start (.items-start) */
   .sf-dropdown {
