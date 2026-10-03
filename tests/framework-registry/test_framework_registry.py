@@ -188,6 +188,11 @@ class FrameworkContractRegistryTest(unittest.TestCase):
             self.by_id["smart.data-view"]["requires"],
             [
                 "component.icons",
+                # The avatar, badge, list item, modal and range slider were
+                # rendered by the table's templates and never fetched; the
+                # completeness rule in ui-source closed that.
+                "smart.avatar",
+                "smart.badges",
                 "smart.buttons",
                 "smart.checkbox",
                 "smart.context-menu",
@@ -195,7 +200,10 @@ class FrameworkContractRegistryTest(unittest.TestCase):
                 "smart.dropdown",
                 "smart.icon-buttons",
                 "smart.inputs",
+                "smart.list-item",
+                "smart.modal",
                 "smart.pagination",
+                "smart.range-slider",
                 "smart.spinner",
                 "smart.tabs",
                 "smart.tags",
