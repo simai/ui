@@ -3334,6 +3334,14 @@ SF.RuleLoader["cl-admin-menu"] = {
     name: "cl-buttons"
   }, {
     name: "cl-context-menu"
+  }, {
+    name: "cl-badges"
+  }, {
+    name: "cl-icons"
+  }, {
+    name: "cl-icon-buttons"
+  }, {
+    name: "cl-inputs"
   }]
 };
 
@@ -3420,6 +3428,8 @@ SF.RuleLoader['cl-breadcrumbs'] = {
     name: 'breadcrumbs'
   }, {
     name: 'icons'
+  }, {
+    name: 'cl-icons'
   }]
 };
 
@@ -3456,6 +3466,8 @@ SF.RuleLoader['cl-buttons'] = {
     name: 'pointer-events/default'
   }, {
     name: 'text-align/default'
+  }, {
+    name: 'cl-icons'
   }]
 };
 
@@ -3729,6 +3741,8 @@ SF.RuleLoader['cl-inputs'] = {
   css: true,
   relation: [{
     name: 'inputs'
+  }, {
+    name: 'cl-icons'
   }]
 };
 
@@ -4008,6 +4022,16 @@ SF.RuleLoader["cl-table"] = {
     name: "cl-tabs"
   }, {
     name: "cl-context-menu"
+  }, {
+    name: "cl-avatar"
+  }, {
+    name: "cl-badges"
+  }, {
+    name: "cl-list-item"
+  }, {
+    name: "cl-modal"
+  }, {
+    name: "cl-range-slider"
   }]
 };
 

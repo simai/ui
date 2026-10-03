@@ -649,6 +649,18 @@
       },
       {
         "name": "cl-context-menu"
+      },
+      {
+        "name": "cl-badges"
+      },
+      {
+        "name": "cl-icons"
+      },
+      {
+        "name": "cl-icon-buttons"
+      },
+      {
+        "name": "cl-inputs"
       }
     ],
     "tags": [
@@ -735,6 +747,9 @@
       },
       {
         "name": "icons"
+      },
+      {
+        "name": "cl-icons"
       }
     ],
     "tags": [
@@ -772,6 +787,9 @@
       },
       {
         "name": "text-align/default"
+      },
+      {
+        "name": "cl-icons"
       }
     ],
     "tags": [
@@ -1069,6 +1087,9 @@
     "relation": [
       {
         "name": "inputs"
+      },
+      {
+        "name": "cl-icons"
       }
     ],
     "tags": [
@@ -1358,6 +1379,21 @@
       },
       {
         "name": "cl-context-menu"
+      },
+      {
+        "name": "cl-avatar"
+      },
+      {
+        "name": "cl-badges"
+      },
+      {
+        "name": "cl-list-item"
+      },
+      {
+        "name": "cl-modal"
+      },
+      {
+        "name": "cl-range-slider"
       }
     ],
     "tags": [
