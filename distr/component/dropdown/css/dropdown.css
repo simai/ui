@@ -681,7 +681,11 @@
     --sf-list--padding-bottom: var(--sf-space-1\/4);
     --sf-list--padding-left: var(--sf-space-1\/4);
     --sf-list--padding-right: var(--sf-space-1\/4);
-    box-shadow: var(--sf-ui-shadow-2);
+    /* The lift goes through the variable the dropdown stylesheet reads. Its own
+       rule set the variable only under .open, a class the script never puts
+       on the root -- it writes sf-dropdown--open, and the portal context drops
+       the open modifiers altogether -- so the list never had a shadow. */
+    --sf-list--box-shadow: var(--sf-ui-shadow-2);
   }
   .sf-dropdown .sf-list .sf-list-item {
     --sf-list-item--border-bottom-width: 0;
