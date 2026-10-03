@@ -648,7 +648,21 @@ function anchor(reference, floating, options = {}) {
 
     if (settings.fitHeight) floating.style.maxHeight = authored.maxHeight || ''; // alignmentOffset moves a start/end-aligned panel along its edge (mirrored
     // for end), e.g. so a tail points at the middle of a small trigger.
+    // The panel keeps its distance from the viewport's inline edges, but never
+    // more than its field keeps. With a flat padding a field closer to the edge
+    // than the padding -- every field in a documentation example, which starts
+    // at the frame's edge -- had its panel pushed inward by the difference and
+    // hanging past the field on the other side. The edge a field reaches is an
+    // edge its own panel may reach too.
 
+    const box = reference.getBoundingClientRect();
+    const clientWidth = document.documentElement.clientWidth;
+    const edges = {
+      top: padding,
+      bottom: padding,
+      left: Math.min(padding, Math.max(0, box.left)),
+      right: Math.min(padding, Math.max(0, clientWidth - box.right))
+    };
     const middleware = [(0,_floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.offset)({
       mainAxis: gap,
       alignmentAxis: resolveLength(settings.alignmentOffset, reference.parentElement)
@@ -660,11 +674,11 @@ function anchor(reference, floating, options = {}) {
     // instead of being squeezed to the space left of its field.
 
     if (settings.shift) middleware.push((0,_floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.shift)({
-      padding,
+      padding: edges,
       crossAxis: false
     }));
     middleware.push((0,_floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.size)({
-      padding,
+      padding: edges,
 
       apply({
         availableWidth,
@@ -673,7 +687,7 @@ function anchor(reference, floating, options = {}) {
         elements
       }) {
         if (controller.stopped) return;
-        const viewportWidth = document.documentElement.clientWidth - padding * 2;
+        const viewportWidth = clientWidth - edges.left - edges.right;
         if (settings.matchWidth) elements.floating.style.width = `${Math.max(0, Math.min(rects.reference.width, viewportWidth))}px`;
         elements.floating.style.maxWidth = `${Math.max(0, Math.min(availableWidth, viewportWidth, widthCap))}px`;
         if (settings.fitHeight) elements.floating.style.maxHeight = `${Math.max(0, Math.min(availableHeight, heightCap))}px`;
