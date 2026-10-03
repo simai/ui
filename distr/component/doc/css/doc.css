@@ -1471,6 +1471,12 @@
       -o-tab-size: 2;
          tab-size: 2;
   }
+  .sf-doc-source code {
+    color: inherit;
+  }
+  .source code {
+    color: inherit;
+  }
   .sf-doc-stripes,
   .bg-stripes {
     --sf-doc-pattern-color: var(--sf-surface-1);

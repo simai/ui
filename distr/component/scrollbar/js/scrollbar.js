@@ -84,7 +84,18 @@ class ScrollbarController {
     } = createTrack(viewport, axis);
     this.track = track;
     this.thumb = thumb;
-    root.append(track);
+    root.append(track); // The keyboard stop is the scrolling area, not the thumb: a focused region
+    // scrolls with the arrow keys natively, the way every scrolling area in a
+    // browser does, and one stop per area is enough. The thumb stays for the
+    // pointer. A labelled area becomes a region so its label is announced.
+
+    thumb.tabIndex = -1;
+    if (!viewport.hasAttribute('tabindex')) viewport.tabIndex = 0;
+
+    if (!viewport.hasAttribute('role') && (viewport.hasAttribute('aria-label') || viewport.hasAttribute('aria-labelledby'))) {
+      viewport.setAttribute('role', 'region');
+    }
+
     this.bind();
     this.sync();
     this.setIdle();
@@ -195,6 +206,8 @@ class ScrollbarController {
     this.listen(this.thumb, 'lostpointercapture', endDrag);
     this.listen(this.thumb, 'focus', () => this.activate());
     this.listen(this.thumb, 'blur', () => this.scheduleIdle());
+    this.listen(this.viewport, 'focus', () => this.activate());
+    this.listen(this.viewport, 'blur', () => this.scheduleIdle());
     this.listen(this.thumb, 'keydown', event => {
       const line = this.getKeyboardStep();
       const viewportSize = this.axis === 'horizontal' ? this.viewport.clientWidth : this.viewport.clientHeight;
