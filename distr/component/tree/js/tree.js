@@ -146,10 +146,31 @@ function setIconText(icon, value) {
   if (icon) {
     icon.textContent = value;
   }
+} // Nested items may be written straight inside their parent item, and the tree
+// reads them either way. Only a .sf-tree-group gets role="group" and the nested
+// indent, though, so items written straight inside were a treeitem owned by a
+// treeitem -- not allowed, and announced without their level -- and sat flush
+// with their parent. They are gathered into a group once, which makes both ways
+// of writing a tree the same tree.
+
+
+function ensureTreeGroup(item) {
+  const direct = Array.from(item.children || []).filter(child => child.classList?.contains('sf-tree-item'));
+  if (!direct.length) return;
+  let group = Array.from(item.children).find(child => child.classList?.contains('sf-tree-group'));
+
+  if (!group) {
+    group = document.createElement('div');
+    group.className = 'sf-tree-group';
+    direct[0].before(group);
+  }
+
+  group.append(...direct);
 }
 
 function syncTreeItem(item) {
   if (!(item instanceof HTMLElement)) return;
+  ensureTreeGroup(item);
   const branch = isBranch(item);
   const open = item.classList.contains('open') || item.hasAttribute('open');
   const activeOpen = branch && open;

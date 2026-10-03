@@ -182,6 +182,36 @@ function syncFileUploadInteraction(root) {
     button.querySelectorAll('.sf-icon').forEach(icon => {
       if (icon.getAttribute('aria-hidden') !== 'true') icon.setAttribute('aria-hidden', 'true');
     });
+  }); // Each file's progress bar is a progressbar, and a progressbar without a name
+  // is announced as a bare percentage: with three files uploading, the reader
+  // hears three numbers and no way to tell them apart. It takes the file's name
+  // the way the remove button does, unless the author named it.
+
+  files?.querySelectorAll('.sf-upload-progress').forEach(item => {
+    const name = item.querySelector('.sf-upload-progress-name')?.textContent?.trim() || '';
+    const label = `${russian ? 'Загрузка' : 'Uploading'} ${name}`.trim();
+    const host = item.querySelector('sf-progress-bar');
+
+    if (host) {
+      const managed = host.dataset.sfUploadLabel;
+
+      if (!host.hasAttribute('label') || host.getAttribute('label') === managed) {
+        if (host.getAttribute('label') !== label) host.setAttribute('label', label);
+        host.dataset.sfUploadLabel = label;
+      }
+
+      return;
+    }
+
+    const bar = item.querySelector('.sf-progress-bar');
+    if (!bar || bar.hasAttribute('aria-labelledby')) return;
+    const current = bar.getAttribute('aria-label');
+
+    if (!current || current === bar.dataset.sfUploadLabel) {
+      if (current !== label) bar.setAttribute('aria-label', label);
+      bar.dataset.label = label;
+      bar.dataset.sfUploadLabel = label;
+    }
   });
 }
 

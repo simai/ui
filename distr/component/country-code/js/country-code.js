@@ -129,17 +129,28 @@ function syncCountryAccessibility(root) {
   root.querySelectorAll('.sf-country-code-required, .sf-country-code-left .sf-icon').forEach(node => node.setAttribute('aria-hidden', 'true'));
 
   if (toggle) {
-    setCountryName(toggle, `${countryName}${selected ? `: ${getCountryLabel(selected, config.locale)}` : ''}`);
-
     if (config.multiCountry && config.showCode && list) {
+      setCountryName(toggle, `${countryName}${selected ? `: ${getCountryLabel(selected, config.locale)}` : ''}`);
+      toggle.setAttribute('role', 'button');
       toggle.setAttribute('aria-haspopup', 'listbox');
       toggle.setAttribute('aria-controls', ensureCountryId(list));
       toggle.setAttribute('aria-expanded', String(open));
     } else {
+      // With one fixed country the flag and code are a picture, not a control.
+      // A span without a role does not get a name: an aria-label or
+      // aria-disabled left on it is not allowed there and is never read. The
+      // dial code stays in the field's own value, which is what is read.
       toggle.removeAttribute('aria-haspopup');
       toggle.removeAttribute('aria-controls');
       toggle.removeAttribute('aria-expanded');
+      toggle.removeAttribute('aria-disabled');
       toggle.removeAttribute('role');
+
+      if (toggle.getAttribute('aria-label') === countryGeneratedNames.get(toggle)) {
+        toggle.removeAttribute('aria-label');
+        countryGeneratedNames.delete(toggle);
+      }
+
       toggle.tabIndex = -1;
     }
   }

@@ -647,7 +647,6 @@ function openDropdown(root) {
   const list = getList(root);
   if (!list) return;
   root.classList.add("sf-dropdown--open");
-  root.setAttribute("aria-expanded", "true");
   ensurePortalList(root);
   list.hidden = false;
   syncToggleIcon(root, true);
@@ -669,7 +668,6 @@ function closeDropdown(root) {
   const list = getList(root);
   if (!list) return;
   root.classList.remove("sf-dropdown--open");
-  root.setAttribute("aria-expanded", "false");
   list.hidden = true;
   syncToggleIcon(root, false);
   restorePortalList(root);
@@ -722,7 +720,15 @@ function syncDisabledState(root) {
   const triggerInput = getTriggerInput(root);
   const searchInput = getSearchInput(root);
   const toggleButton = root.querySelector(".sf-dropdown-field .sf-icon-button");
-  root.setAttribute("aria-disabled", disabled ? "true" : "false");
+  root.removeAttribute("aria-disabled"); // A native button trigger says it is disabled through its own attribute.
+  // When the field itself is the trigger it carries role="button" and has no
+  // such attribute, so the state has to be said in ARIA.
+
+  const trigger = field?.querySelector(":scope > button") || field;
+
+  if (trigger && trigger.tagName !== "BUTTON") {
+    trigger.setAttribute("aria-disabled", disabled ? "true" : "false");
+  }
 
   if (field) {
     field.classList.toggle("cursor-pointer", !disabled);
@@ -900,8 +906,12 @@ function bindDropdown(root) {
   const list = getList(root);
   const triggerInput = getTriggerInput(root);
   if (!field || !list) return;
-  root.dataset[BOUND_FLAG] = "1";
-  root.setAttribute("aria-expanded", root.classList.contains("sf-dropdown--open") ? "true" : "false");
+  root.dataset[BOUND_FLAG] = "1"; // Open and disabled state belong to the trigger, which the interaction layer
+  // gives role, aria-expanded and aria-controls. The root is a plain div: an
+  // aria-expanded or aria-disabled there is not allowed on its role, and a
+  // screen reader never reads it. Earlier builds wrote both here as well.
+
+  root.removeAttribute("aria-expanded");
 
   if (triggerInput && !isTagDropdown(root)) {
     triggerInput.readOnly = true;
