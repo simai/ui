@@ -32,7 +32,7 @@
   --sf-loader-svg-width: var(--sf-d2);
   --sf-loader-svg-height: var(--sf-d2);
   --sf-loader-stroke-width: var(--sf-a6);
-  --sf-loader-text-gap: var(--sf-space-1/2);
+  --sf-loader-text-gap: var(--sf-space-1\/2);
   --sf-loader-text-size: var(--sf-text-size-1);
   --sf-loader-cycle-duration: calc(var(--sf-duration-slow) * 6);
   --sf-loader-dot-duration: calc(var(--sf-duration-slow) * 3);

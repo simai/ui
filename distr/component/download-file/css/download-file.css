@@ -30,7 +30,10 @@
     text-align: right;
   }
   .sf-download-file {
-    --sf-download-file--background-color: var(--sf-surface);
+    /* The card sits on whatever surface holds it; hover and press add the
+       container overlay. --sf-surface is not a token, so this was transparent
+       already -- now it says so. */
+    --sf-download-file--background-color: transparent;
     --sf-download-file--border-color: var(--sf-outline-variant);
     --sf-download-file--padding: var(--sf-space-1\/3);
     --sf-download-file--text-size: var(--sf-text-size-1);

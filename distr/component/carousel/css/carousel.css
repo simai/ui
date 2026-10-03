@@ -129,7 +129,7 @@
 
 .sf-carousel-switch--secondary-container:hover {
   --sf-carousel-control--background-color: var(--sf-secondary-container-hover);
-  --sf-carousel-control--color: var(--sf-on-secondary-container-hover);
+  --sf-carousel-control--color: var(--sf-on-secondary-container);
 }
 
 .sf-carousel-switch--surface-inverse {
@@ -138,8 +138,10 @@
 }
 
 .sf-carousel-switch--surface-inverse:hover {
-  --sf-carousel-control--background-color: var(--sf-surface-inverse-hover);
-  --sf-carousel-control--color: var(--sf-on-surface-inverse-hover);
+  /* The theme has no hover role for the inverse surface; this is the same
+     five-tone step its other hover roles take. */
+  --sf-carousel-control--background-color: light-dark(var(--sf-neutral-25), var(--sf-neutral-85));
+  --sf-carousel-control--color: var(--sf-on-surface-inverse);
 }
 
 .sf-carousel-switch--surface-zero {
@@ -148,7 +150,7 @@
 }
 
 .sf-carousel-switch--surface-zero:hover {
-  --sf-carousel-control--background-color: var(--sf-surface-0-hover);
+  --sf-carousel-control--background-color: var(--sf-surface-1);
   --sf-carousel-control--color: var(--sf-on-surface-hover);
 }
 
