@@ -1,3 +1,4 @@
+@charset "UTF-8";
 /*
 * Main SCSS file for including styles for component.
 *
@@ -8,203 +9,203 @@
 */
 @layer sf.components {
   /* utility-hint: display/flex (.flex) flex-direction/column (.flex-col) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-b0) justify-content/center (.justify-center) align-items/center (.items-center) */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-page-number {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-page-number{
     padding-right: var(--sf-space-1\/3);
     padding-right: var(--sf-page-number--padding-right, var(--sf-space-1\/3));
   }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .sf-page-number {
+  @supports not (padding-inline-end: initial){
+  html:not([dir="rtl"]) .sf-page-number{
     padding-right: var(--sf-space-1\/3);
     padding-right: var(--sf-page-number--padding-right, var(--sf-space-1\/3));
     }
   }
-  .sf-page-number:where(:dir(ltr)) {
+  .sf-page-number:where(:dir(ltr)){
     padding-right: var(--sf-space-1\/3);
     padding-right: var(--sf-page-number--padding-right, var(--sf-space-1\/3));
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-page-number {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-page-number{
     padding-left: var(--sf-space-1\/3);
     padding-left: var(--sf-page-number--padding-right, var(--sf-space-1\/3));
   }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .sf-page-number {
+  @supports not (padding-inline-end: initial){
+  [dir="rtl"] .sf-page-number{
     padding-left: var(--sf-space-1\/3);
     padding-left: var(--sf-page-number--padding-right, var(--sf-space-1\/3));
     }
   }
-  .sf-page-number:where(:dir(rtl)) {
+  .sf-page-number:where(:dir(rtl)){
     padding-left: var(--sf-space-1\/3);
     padding-left: var(--sf-page-number--padding-right, var(--sf-space-1\/3));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-page-number {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-page-number{
     padding-left: var(--sf-space-1\/3);
     padding-left: var(--sf-page-number--padding-left, var(--sf-space-1\/3));
   }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .sf-page-number {
+  @supports not (padding-inline-start: initial){
+  html:not([dir="rtl"]) .sf-page-number{
     padding-left: var(--sf-space-1\/3);
     padding-left: var(--sf-page-number--padding-left, var(--sf-space-1\/3));
     }
   }
-  .sf-page-number:where(:dir(ltr)) {
+  .sf-page-number:where(:dir(ltr)){
     padding-left: var(--sf-space-1\/3);
     padding-left: var(--sf-page-number--padding-left, var(--sf-space-1\/3));
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-page-number {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-page-number{
     padding-right: var(--sf-space-1\/3);
     padding-right: var(--sf-page-number--padding-left, var(--sf-space-1\/3));
   }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .sf-page-number {
+  @supports not (padding-inline-start: initial){
+  [dir="rtl"] .sf-page-number{
     padding-right: var(--sf-space-1\/3);
     padding-right: var(--sf-page-number--padding-left, var(--sf-space-1\/3));
     }
   }
-  .sf-page-number:where(:dir(rtl)) {
+  .sf-page-number:where(:dir(rtl)){
     padding-right: var(--sf-space-1\/3);
     padding-right: var(--sf-page-number--padding-left, var(--sf-space-1\/3));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-page-number {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-page-number{
     border-top-left-radius: var(--sf-page-number--border-start-start-radius);
   }
-  @supports not (border-start-start-radius: initial) {
-  html:not([dir="rtl"]) .sf-page-number {
+  @supports not (border-start-start-radius: initial){
+  html:not([dir="rtl"]) .sf-page-number{
     border-top-left-radius: var(--sf-page-number--border-start-start-radius);
     }
   }
-  .sf-page-number:where(:dir(ltr)) {
+  .sf-page-number:where(:dir(ltr)){
     border-top-left-radius: var(--sf-page-number--border-start-start-radius);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-page-number {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-page-number{
     border-top-right-radius: var(--sf-page-number--border-start-start-radius);
   }
-  @supports not (border-start-start-radius: initial) {
-  [dir="rtl"] .sf-page-number {
+  @supports not (border-start-start-radius: initial){
+  [dir="rtl"] .sf-page-number{
     border-top-right-radius: var(--sf-page-number--border-start-start-radius);
     }
   }
-  .sf-page-number:where(:dir(rtl)) {
+  .sf-page-number:where(:dir(rtl)){
     border-top-right-radius: var(--sf-page-number--border-start-start-radius);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-page-number {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-page-number{
     border-top-right-radius: var(--sf-page-number--border-start-end-radius);
   }
-  @supports not (border-start-end-radius: initial) {
-  html:not([dir="rtl"]) .sf-page-number {
+  @supports not (border-start-end-radius: initial){
+  html:not([dir="rtl"]) .sf-page-number{
     border-top-right-radius: var(--sf-page-number--border-start-end-radius);
     }
   }
-  .sf-page-number:where(:dir(ltr)) {
+  .sf-page-number:where(:dir(ltr)){
     border-top-right-radius: var(--sf-page-number--border-start-end-radius);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-page-number {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-page-number{
     border-top-left-radius: var(--sf-page-number--border-start-end-radius);
   }
-  @supports not (border-start-end-radius: initial) {
-  [dir="rtl"] .sf-page-number {
+  @supports not (border-start-end-radius: initial){
+  [dir="rtl"] .sf-page-number{
     border-top-left-radius: var(--sf-page-number--border-start-end-radius);
     }
   }
-  .sf-page-number:where(:dir(rtl)) {
+  .sf-page-number:where(:dir(rtl)){
     border-top-left-radius: var(--sf-page-number--border-start-end-radius);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-page-number {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-page-number{
     border-bottom-left-radius: var(--sf-page-number--border-end-start-radius);
   }
-  @supports not (border-end-start-radius: initial) {
-  html:not([dir="rtl"]) .sf-page-number {
+  @supports not (border-end-start-radius: initial){
+  html:not([dir="rtl"]) .sf-page-number{
     border-bottom-left-radius: var(--sf-page-number--border-end-start-radius);
     }
   }
-  .sf-page-number:where(:dir(ltr)) {
+  .sf-page-number:where(:dir(ltr)){
     border-bottom-left-radius: var(--sf-page-number--border-end-start-radius);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-page-number {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-page-number{
     border-bottom-right-radius: var(--sf-page-number--border-end-start-radius);
   }
-  @supports not (border-end-start-radius: initial) {
-  [dir="rtl"] .sf-page-number {
+  @supports not (border-end-start-radius: initial){
+  [dir="rtl"] .sf-page-number{
     border-bottom-right-radius: var(--sf-page-number--border-end-start-radius);
     }
   }
-  .sf-page-number:where(:dir(rtl)) {
+  .sf-page-number:where(:dir(rtl)){
     border-bottom-right-radius: var(--sf-page-number--border-end-start-radius);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-page-number {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-page-number{
     border-bottom-right-radius: var(--sf-page-number--border-end-end-radius);
   }
-  @supports not (border-end-end-radius: initial) {
-  html:not([dir="rtl"]) .sf-page-number {
+  @supports not (border-end-end-radius: initial){
+  html:not([dir="rtl"]) .sf-page-number{
     border-bottom-right-radius: var(--sf-page-number--border-end-end-radius);
     }
   }
-  .sf-page-number:where(:dir(ltr)) {
+  .sf-page-number:where(:dir(ltr)){
     border-bottom-right-radius: var(--sf-page-number--border-end-end-radius);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-page-number {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-page-number{
     border-bottom-left-radius: var(--sf-page-number--border-end-end-radius);
   }
-  @supports not (border-end-end-radius: initial) {
-  [dir="rtl"] .sf-page-number {
+  @supports not (border-end-end-radius: initial){
+  [dir="rtl"] .sf-page-number{
     border-bottom-left-radius: var(--sf-page-number--border-end-end-radius);
     }
   }
-  .sf-page-number:where(:dir(rtl)) {
+  .sf-page-number:where(:dir(rtl)){
     border-bottom-left-radius: var(--sf-page-number--border-end-end-radius);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-page-number {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-page-number{
     border-right-width: 0;
     border-right-width: var(--sf-page-number--border-inline-end-width, 0);
   }
-  @supports not (border-inline-end-width: initial) {
-  html:not([dir="rtl"]) .sf-page-number {
+  @supports not (border-inline-end-width: initial){
+  html:not([dir="rtl"]) .sf-page-number{
     border-right-width: 0;
     border-right-width: var(--sf-page-number--border-inline-end-width, 0);
     }
   }
-  .sf-page-number:where(:dir(ltr)) {
+  .sf-page-number:where(:dir(ltr)){
     border-right-width: 0;
     border-right-width: var(--sf-page-number--border-inline-end-width, 0);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-page-number {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-page-number{
     border-left-width: 0;
     border-left-width: var(--sf-page-number--border-inline-end-width, 0);
   }
-  @supports not (border-inline-end-width: initial) {
-  [dir="rtl"] .sf-page-number {
+  @supports not (border-inline-end-width: initial){
+  [dir="rtl"] .sf-page-number{
     border-left-width: 0;
     border-left-width: var(--sf-page-number--border-inline-end-width, 0);
     }
   }
-  .sf-page-number:where(:dir(rtl)) {
+  .sf-page-number:where(:dir(rtl)){
     border-left-width: 0;
     border-left-width: var(--sf-page-number--border-inline-end-width, 0);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-page-number {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-page-number{
     border-left-width: 0;
     border-left-width: var(--sf-page-number--border-inline-start-width, 0);
   }
-  @supports not (border-inline-start-width: initial) {
-  html:not([dir="rtl"]) .sf-page-number {
+  @supports not (border-inline-start-width: initial){
+  html:not([dir="rtl"]) .sf-page-number{
     border-left-width: 0;
     border-left-width: var(--sf-page-number--border-inline-start-width, 0);
     }
   }
-  .sf-page-number:where(:dir(ltr)) {
+  .sf-page-number:where(:dir(ltr)){
     border-left-width: 0;
     border-left-width: var(--sf-page-number--border-inline-start-width, 0);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-page-number {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-page-number{
     border-right-width: 0;
     border-right-width: var(--sf-page-number--border-inline-start-width, 0);
   }
-  @supports not (border-inline-start-width: initial) {
-  [dir="rtl"] .sf-page-number {
+  @supports not (border-inline-start-width: initial){
+  [dir="rtl"] .sf-page-number{
     border-right-width: 0;
     border-right-width: var(--sf-page-number--border-inline-start-width, 0);
     }
   }
-  .sf-page-number:where(:dir(rtl)) {
+  .sf-page-number:where(:dir(rtl)){
     border-right-width: 0;
     border-right-width: var(--sf-page-number--border-inline-start-width, 0);
   }
@@ -491,92 +492,92 @@
     display: flex;
     flex: 0 0 auto;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-pagination .sf-icon-button {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-pagination .sf-icon-button{
     border-bottom-right-radius: var(--sf-icon-button--border-end-end-radius);
   }
-  @supports not (border-end-end-radius: initial) {
-  html:not([dir="rtl"]) .sf-pagination .sf-icon-button {
+  @supports not (border-end-end-radius: initial){
+  html:not([dir="rtl"]) .sf-pagination .sf-icon-button{
     border-bottom-right-radius: var(--sf-icon-button--border-end-end-radius);
     }
   }
-  .sf-pagination .sf-icon-button:where(:dir(ltr)) {
+  .sf-pagination .sf-icon-button:where(:dir(ltr)){
     border-bottom-right-radius: var(--sf-icon-button--border-end-end-radius);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-pagination .sf-icon-button {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-pagination .sf-icon-button{
     border-bottom-left-radius: var(--sf-icon-button--border-end-end-radius);
   }
-  @supports not (border-end-end-radius: initial) {
-  [dir="rtl"] .sf-pagination .sf-icon-button {
+  @supports not (border-end-end-radius: initial){
+  [dir="rtl"] .sf-pagination .sf-icon-button{
     border-bottom-left-radius: var(--sf-icon-button--border-end-end-radius);
     }
   }
-  .sf-pagination .sf-icon-button:where(:dir(rtl)) {
+  .sf-pagination .sf-icon-button:where(:dir(rtl)){
     border-bottom-left-radius: var(--sf-icon-button--border-end-end-radius);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-pagination .sf-icon-button {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-pagination .sf-icon-button{
     border-bottom-left-radius: var(--sf-icon-button--border-end-start-radius);
   }
-  @supports not (border-end-start-radius: initial) {
-  html:not([dir="rtl"]) .sf-pagination .sf-icon-button {
+  @supports not (border-end-start-radius: initial){
+  html:not([dir="rtl"]) .sf-pagination .sf-icon-button{
     border-bottom-left-radius: var(--sf-icon-button--border-end-start-radius);
     }
   }
-  .sf-pagination .sf-icon-button:where(:dir(ltr)) {
+  .sf-pagination .sf-icon-button:where(:dir(ltr)){
     border-bottom-left-radius: var(--sf-icon-button--border-end-start-radius);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-pagination .sf-icon-button {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-pagination .sf-icon-button{
     border-bottom-right-radius: var(--sf-icon-button--border-end-start-radius);
   }
-  @supports not (border-end-start-radius: initial) {
-  [dir="rtl"] .sf-pagination .sf-icon-button {
+  @supports not (border-end-start-radius: initial){
+  [dir="rtl"] .sf-pagination .sf-icon-button{
     border-bottom-right-radius: var(--sf-icon-button--border-end-start-radius);
     }
   }
-  .sf-pagination .sf-icon-button:where(:dir(rtl)) {
+  .sf-pagination .sf-icon-button:where(:dir(rtl)){
     border-bottom-right-radius: var(--sf-icon-button--border-end-start-radius);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-pagination .sf-icon-button {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-pagination .sf-icon-button{
     border-top-right-radius: var(--sf-icon-button--border-start-end-radius);
   }
-  @supports not (border-start-end-radius: initial) {
-  html:not([dir="rtl"]) .sf-pagination .sf-icon-button {
+  @supports not (border-start-end-radius: initial){
+  html:not([dir="rtl"]) .sf-pagination .sf-icon-button{
     border-top-right-radius: var(--sf-icon-button--border-start-end-radius);
     }
   }
-  .sf-pagination .sf-icon-button:where(:dir(ltr)) {
+  .sf-pagination .sf-icon-button:where(:dir(ltr)){
     border-top-right-radius: var(--sf-icon-button--border-start-end-radius);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-pagination .sf-icon-button {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-pagination .sf-icon-button{
     border-top-left-radius: var(--sf-icon-button--border-start-end-radius);
   }
-  @supports not (border-start-end-radius: initial) {
-  [dir="rtl"] .sf-pagination .sf-icon-button {
+  @supports not (border-start-end-radius: initial){
+  [dir="rtl"] .sf-pagination .sf-icon-button{
     border-top-left-radius: var(--sf-icon-button--border-start-end-radius);
     }
   }
-  .sf-pagination .sf-icon-button:where(:dir(rtl)) {
+  .sf-pagination .sf-icon-button:where(:dir(rtl)){
     border-top-left-radius: var(--sf-icon-button--border-start-end-radius);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-pagination .sf-icon-button {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-pagination .sf-icon-button{
     border-top-left-radius: var(--sf-icon-button--border-start-start-radius);
   }
-  @supports not (border-start-start-radius: initial) {
-  html:not([dir="rtl"]) .sf-pagination .sf-icon-button {
+  @supports not (border-start-start-radius: initial){
+  html:not([dir="rtl"]) .sf-pagination .sf-icon-button{
     border-top-left-radius: var(--sf-icon-button--border-start-start-radius);
     }
   }
-  .sf-pagination .sf-icon-button:where(:dir(ltr)) {
+  .sf-pagination .sf-icon-button:where(:dir(ltr)){
     border-top-left-radius: var(--sf-icon-button--border-start-start-radius);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-pagination .sf-icon-button {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-pagination .sf-icon-button{
     border-top-right-radius: var(--sf-icon-button--border-start-start-radius);
   }
-  @supports not (border-start-start-radius: initial) {
-  [dir="rtl"] .sf-pagination .sf-icon-button {
+  @supports not (border-start-start-radius: initial){
+  [dir="rtl"] .sf-pagination .sf-icon-button{
     border-top-right-radius: var(--sf-icon-button--border-start-start-radius);
     }
   }
-  .sf-pagination .sf-icon-button:where(:dir(rtl)) {
+  .sf-pagination .sf-icon-button:where(:dir(rtl)){
     border-top-right-radius: var(--sf-icon-button--border-start-start-radius);
   }
   .sf-pagination .sf-icon-button {
@@ -628,6 +629,62 @@
     min-width: 0;
     min-inline-size: 0;
   }
+  /* The bulk controls are a panel at the bottom of the window while rows are
+     marked. They act on the selection, which outlives the stretch of the page a
+     person happens to be looking at, so the panel does not scroll away with the
+     pagination it is rendered from. It is `position: fixed` against the viewport
+     and centred; the host needs no CSS of its own for it.
+     utility-hint: display/flex (.flex) align-items/center (.items-center) */
+  .sf-pagination .sf-pagination-actions {
+    --sf-pagination-actions--background-color: var(--sf-surface-0);
+    --sf-pagination-actions--border-color: var(--sf-outline-variant);
+    --sf-pagination-actions--gap: var(--sf-space-1);
+    --sf-pagination-actions--inset-bottom: var(--sf-space-3);
+    --sf-pagination-actions--padding-block: var(--sf-space-1);
+    --sf-pagination-actions--padding-inline: var(--sf-space-2);
+    position: fixed;
+    bottom: var(--sf-pagination-actions--inset-bottom);
+    inset-block-end: var(--sf-pagination-actions--inset-bottom);
+    left: 0;
+    right: 0;
+    inset-inline: 0;
+    margin-left: auto;
+    margin-right: auto;
+    margin-inline: auto;
+    width: -webkit-fit-content;
+    width: -moz-fit-content;
+    width: fit-content;
+    inline-size: -webkit-fit-content;
+    inline-size: -moz-fit-content;
+    inline-size: fit-content;
+    max-width: calc(100% - var(--sf-space-4));
+    max-inline-size: calc(100% - var(--sf-space-4));
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--sf-pagination-actions--gap);
+    padding-top: var(--sf-pagination-actions--padding-block);
+    padding-bottom: var(--sf-pagination-actions--padding-block);
+    padding-block: var(--sf-pagination-actions--padding-block);
+    padding-left: var(--sf-pagination-actions--padding-inline);
+    padding-right: var(--sf-pagination-actions--padding-inline);
+    padding-inline: var(--sf-pagination-actions--padding-inline);
+    background-color: var(--sf-pagination-actions--background-color);
+    border: var(--sf-px) solid var(--sf-pagination-actions--border-color);
+    border-radius: var(--sf-radius--surface);
+    box-shadow: var(--sf-ui-shadow-3);
+    z-index: var(--sf-z-index-5);
+  }
+  .sf-pagination .sf-pagination-actions-count {
+    color: var(--sf-on-surface);
+    font-weight: var(--sf-font-weight-medium);
+    white-space: nowrap;
+  }
+  .sf-pagination .sf-pagination-actions-separator {
+    align-self: stretch;
+    width: var(--sf-px);
+    inline-size: var(--sf-px);
+    background-color: var(--sf-outline-variant);
+  }
   .sf-pagination .sf-pagination-marked-text:nth-child(1) {
     --sf-pagination-marked-text--color: var(--sf-on-surface-variant);
     --sf-pagination-marked-text--font-weight: var(--sf-font-weight-regular);
@@ -651,10 +708,12 @@
       width: 100%;
       inline-size: 100%;
     }
-    .sf-pagination .sf-pagination-pages-label,
-    .sf-pagination .sf-pagination-last,
-    .sf-pagination .sf-pagination-item--ellipsis,
-    .sf-pagination .sf-pagination-item--edge:not(.sf-pagination-item--current) {
+    /* A narrow screen used to drop the gap and the edge pages to keep the row of
+       numbers short. It cannot any more: the row is five places at most by
+       design, and the gap is now the only way into the pages it hides — dropping
+       it would make them unreachable on a phone. The label goes, because it
+       repeats what the row already is. */
+    .sf-pagination .sf-pagination-pages-label {
       display: none;
     }
     .sf-pagination .sf-pagination-list {
