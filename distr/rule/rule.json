@@ -4252,7 +4252,7 @@
     "name": "tree",
     "css": true,
     "js": true,
-    "regex": "/(?:<sf-tree(?=[\\s>/])|class\\s*=\\s*[\"'][^\"']*(?:^|\\s)sf-tree(?=\\s|[\"']))/i",
+    "regex": "/(?:<sf-tree(?=[\\s>/])|class\\s*=\\s*[\"'](?:[^\"']*\\s)?sf-tree(?=\\s|[\"']))/i",
     "relation": [
       {
         "name": "tree-item"
@@ -4270,7 +4270,7 @@
     "name": "tree-item",
     "css": true,
     "js": true,
-    "regex": "/(?:<sf-tree-item(?=[\\s>/])|class\\s*=\\s*[\"'][^\"']*(?:^|\\s)sf-tree-item(?=\\s|[\"']))/i",
+    "regex": "/(?:<sf-tree-item(?=[\\s>/])|class\\s*=\\s*[\"'](?:[^\"']*\\s)?sf-tree-item(?=\\s|[\"']))/i",
     "relation": [
       {
         "name": "icons"

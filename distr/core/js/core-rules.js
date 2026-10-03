@@ -725,7 +725,7 @@ SF.RuleLoader['tooltip'] = {
 () {
 
 SF.RuleLoader['tree-item'] = {
-  regex: /(?:<sf-tree-item(?=[\s>/])|class\s*=\s*["'][^"']*(?:^|\s)sf-tree-item(?=\s|["']))/i,
+  regex: /(?:<sf-tree-item(?=[\s>/])|class\s*=\s*["'](?:[^"']*\s)?sf-tree-item(?=\s|["']))/i,
   type: 'component',
   css: true,
   js: true,
@@ -740,7 +740,7 @@ SF.RuleLoader['tree-item'] = {
 () {
 
 SF.RuleLoader.tree = {
-  regex: /(?:<sf-tree(?=[\s>/])|class\s*=\s*["'][^"']*(?:^|\s)sf-tree(?=\s|["']))/i,
+  regex: /(?:<sf-tree(?=[\s>/])|class\s*=\s*["'](?:[^"']*\s)?sf-tree(?=\s|["']))/i,
   type: 'component',
   css: true,
   js: true,
