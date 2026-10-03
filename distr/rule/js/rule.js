@@ -3808,6 +3808,8 @@ SF.RuleLoader['cl-pagination'] = {
     name: 'cl-icon-buttons'
   }, {
     name: 'cl-list-item'
+  }, {
+    name: 'cl-spinner'
   }]
 };
 

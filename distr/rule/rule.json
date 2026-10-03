@@ -1162,6 +1162,9 @@
       },
       {
         "name": "cl-list-item"
+      },
+      {
+        "name": "cl-spinner"
       }
     ],
     "tags": [
