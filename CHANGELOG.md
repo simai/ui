@@ -53,6 +53,19 @@
 
 ### Изменено
 
+- Component sheets read only tokens the theme declares. A bare `var()` of an
+  undeclared token silently drops the property to its initial value:
+  `--sf-surface` is not a token (the scale is `--sf-surface-0` … `-5`), so
+  `sf-download-file` and `sf-reference-link` were transparent — they now say
+  `transparent`, and hover and press keep the container overlay. Carousel
+  hover states read roles the theme never had: the secondary-container control
+  keeps `--sf-on-secondary-container`, the surface-zero control steps to
+  `--sf-surface-1`, the inverse control takes the five-tone hover step. The
+  spinner's `var(--sf-space-1/2)` did not parse and is escaped. The Smart table
+  and data view read `--sf-ui-shadow-3` instead of `--sf-shadow-3`, so the
+  dragged column ghost and the dragged settings item get their shadow. The
+  declared-tokens contract now walks every built component and Smart sheet.
+
 - Всплывающий список выпадающего меню выглядит как контекстное меню: без
   разделителей между вариантами, подсветка скруглена ролью контрола и отступает
   от краёв, панель — поверхность второй ступени высоты с тенью вместо рамки.
