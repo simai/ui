@@ -278,6 +278,12 @@
 
 ### Исправлено
 
+- Floating panels (dropdown lists, menus, tooltips, date panels) stay aligned
+  with a field that sits near the viewport edge. Positioning kept a flat 12px
+  away from the inline edges, so a field closer than that had its panel pushed
+  inward and overhanging it on the other side; every documentation example
+  showed it. A panel may now reach the edge its field reaches.
+
 - Скрипт дерева грузится, когда `sf-tree` стоит первым классом. Правила `tree` и
   `tree-item` искали класс после пробела или `^`, а `^` без флага `m` — начало
   всей разметки, а не значения атрибута, поэтому `class="sf-tree"` и
