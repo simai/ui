@@ -15,7 +15,8 @@
   The submenu header keeps the main header's height — the height is measured and
   published as `--sf-admin-menu-head--measured-height` instead of being guessed
   by a token — and the back row is an item, so its arrow stands in the same
-  column as every other icon in the menu.
+  column as every other icon in the menu. The waiting rows read `--sf-d0`, the
+  size of the result they stand in for.
 - Inter Variable ships with Core again. The family tokens have named Inter
   since the fontsource dependency was dropped, but nothing shipped the font, so
   a page got Inter only where the reader had it installed. `core.css` now
