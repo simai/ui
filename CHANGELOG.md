@@ -6,6 +6,21 @@
 
 ## [Unreleased]
 
+### Изменено
+
+- A Framework element declared in data — a column's or a row's
+  `{type, props}` — keeps the place it was rendered in. It used to be created
+  anew on every render and handed to lit as a new node, so every cell that is an
+  element was rebuilt whenever anything in the table changed, taking whatever
+  control a person was interacting with with it. A directive holds it now, and a
+  render writes only what differs: an attribute when its value changed, a
+  listener when the function changed, and an attribute the props no longer carry
+  is taken back off. Measured on ten rows: a full re-query went from 280 nodes
+  added, 40 removed and 542 attribute writes to 0, 0 and 82; a one-row change
+  from 140, 20 and 250 to 0, 0 and 20. A marked row stays marked, and the focus
+  stays in a cell's control through a render. `createSmartElement` is there for
+  a caller that wants the element rather than a position in a template.
+
 ### Добавлено
 
 - The column width is taken by the line between two headers. There is no handle
