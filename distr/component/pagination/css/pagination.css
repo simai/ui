@@ -639,7 +639,10 @@
      part of the table it acted on. Sticky inside the card does read as part of it,
      and costs the host no CSS either.
      utility-hint: display/flex (.flex) align-items/center (.items-center) */
-  .sf-pagination .sf-pagination-actions {
+  /* The band is placed by whatever owns the card it belongs to: inside the
+     pagination when a page row carries it, and by the data view at the end of the
+     card. Hence the unscoped selector — it is the same band either way. */
+  .sf-pagination-actions {
     --sf-pagination-actions--background-color: var(--sf-surface-0);
     --sf-pagination-actions--border-color: var(--sf-outline-variant);
     --sf-pagination-actions--gap: var(--sf-space-1);
@@ -674,30 +677,11 @@
   .sf-pagination .sf-pagination-list .sf-pagination-item:has(sf-icon-button) {
     display: contents;
   }
-  /* While rows are marked, the page row and the band under it hold the bottom of
-     the window as long as the card runs past it. A sticky box cannot leave the box
-     that contains it, and the band's container is this root, so the root is what
-     sticks — the band alone would travel no further than the page row's own
-     height. */
-  .sf-pagination[\:has\(.sf-pagination-actions\)] {
-    position: sticky;
-    bottom: 0;
-    inset-block-end: 0;
-    z-index: var(--sf-z-index-3);
-  }
-  .sf-pagination[\:has\(.sf-pagination-actions\)] {
-    position: sticky;
-    bottom: 0;
-    bottom: 0;
-    inset-block-end: 0;
-    z-index: var(--sf-z-index-3);
-  }
-  .sf-pagination:has(.sf-pagination-actions) {
-    position: sticky;
-    bottom: 0;
-    inset-block-end: 0;
-    z-index: var(--sf-z-index-3);
-  }
+  /* The page row itself does not stick. It did for one pair, as the only way to
+     give the band any travel while the band lived inside it: a sticky box cannot
+     leave the box that contains it. The consumer saw what that costs — the whole
+     row, Show more included, floating over its own last rows — so the band moved
+     to the card instead, where it is the card that contains it. */
   /* The page field sits beside the window of numbers and keeps its own width, so
      the row does not change shape as the number grows. */
   .sf-pagination .sf-pagination-page-field {
@@ -708,12 +692,12 @@
     width: var(--sf-e2);
     inline-size: var(--sf-e2);
   }
-  .sf-pagination .sf-pagination-actions-count {
+  .sf-pagination-actions-count {
     color: var(--sf-on-surface);
     font-weight: var(--sf-font-weight-medium);
     white-space: nowrap;
   }
-  .sf-pagination .sf-pagination-actions-separator {
+  .sf-pagination-actions-separator {
     align-self: stretch;
     width: var(--sf-px);
     inline-size: var(--sf-px);
