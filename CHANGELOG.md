@@ -31,6 +31,13 @@
 
 ### Добавлено
 
+- Readable density classes for buttons and icon buttons: `spacing-compact`,
+  `spacing-comfortable` and `spacing-spacious` (less, more and most inner
+  space). They apply the same steps as `tightness-low`, `tightness-high` and
+  `tightness-highest`, whose names read backwards — `low` is the least space —
+  and stay as compatibility names. The names match the Smart `spacing`
+  attribute. The constructors accept a `spacing` option; when both are given,
+  `spacing` wins, as on the Smart element.
 - The column width is taken by the line between two headers. There is no handle
   to find first: an invisible strip stands astride the separator, 8–12px wide,
   with the `col-resize` cursor, and it is still a button, so the keyboard keeps
