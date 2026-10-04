@@ -22,6 +22,11 @@
 
 ### Изменено
 
+- A dropdown tag's label is one text step below the field's text (14px in a
+  size 1 field, 16px in size 2, 20px in size 3, 12px in sizes 1/2 and 1/3), on
+  the same line box, and the gap before its remove button is `--sf-space-1/3`.
+  At the field's own size a selected tag read as heavy as a text value and
+  crowded its remove button; the field height is unchanged.
 - A dropdown field holding tags is as tall as one holding text. A selected tag
   was a free-standing size 1 tag (40px) with its inline space counted twice, and
   the in-line chevron stood 32px tall, so a size 1 field with one tag measured
