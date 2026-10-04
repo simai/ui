@@ -22,6 +22,10 @@
 
 ### Изменено
 
+- A dropdown tag's remove mark follows its label: 0.7 of the label's font size
+  (about 10px in a size 1 field, 14px in size 3) instead of the generic 12px
+  close mark, which read larger than the letters beside it. The remove button
+  keeps the whole line, so the target does not shrink.
 - A dropdown tag's label is one text step below the field's text (14px in a
   size 1 field, 16px in size 2, 20px in size 3, 12px in sizes 1/2 and 1/3), on
   the same line box, and the gap before its remove button is `--sf-space-1/3`.
