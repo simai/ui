@@ -676,6 +676,15 @@
     overflow: auto;
     scroll-behavior: auto;
   }
+  /* An item is one line. A menu opened from a control near the inline edge was
+     capped to the free space beside that control, and the labels wrapped to two
+     lines inside it -- which is not the menu getting smaller, it is the words
+     breaking. The menu is moved inside the viewport instead of being squeezed, so
+     the line it needs is the line it gets. */
+  .sf-context-menu .sf-context-menu-content > sf-button > .sf-button,
+  .sf-context-menu .sf-context-menu-content > .sf-button {
+    white-space: nowrap;
+  }
 }
 @layer sf.states {
   .sf-context-menu-content > .sf-button:not(:disabled):not(.disabled).focus-visible,

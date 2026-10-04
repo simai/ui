@@ -700,15 +700,35 @@
   }
   /* As wide as the number it holds, not as wide as the longest number a site
      might ever have: the digit count comes from the component, and the field
-     grows by a digit's width as the person types. One digit is the floor. */
+     grows by a digit's width as the person types. One digit is the floor.
+
+     The width is set on the input, as its content box, and the field around it
+     hugs. It used to be set on the field, where the arithmetic had to guess the
+     chrome inside it -- the field's own padding and the input's -- and guessed
+     short: two digits had about eleven pixels to stand in and the number was
+     clipped. A content box needs no guess, and `ch` here is read in the font the
+     digits are actually drawn in. */
   .sf-pagination .sf-pagination-page-input {
-    width: calc(max(1, 1) * 1ch + var(--sf-space-2) * 2 + var(--sf-px) * 2);
-    inline-size: calc(max(1, 1) * 1ch + var(--sf-space-2) * 2 + var(--sf-px) * 2);
-    width: calc(max(1, 1) * 1ch + var(--sf-space-2) * 2 + var(--sf-px) * 2);
-    width: calc(max(var(--sf-pagination-page-input--digits, 1), 1) * 1ch + var(--sf-space-2) * 2 + var(--sf-px) * 2);
-    inline-size: calc(max(var(--sf-pagination-page-input--digits, 1), 1) * 1ch + var(--sf-space-2) * 2 + var(--sf-px) * 2);
-    min-width: calc(1ch + var(--sf-space-2) * 2 + var(--sf-px) * 2);
-    min-inline-size: calc(1ch + var(--sf-space-2) * 2 + var(--sf-px) * 2);
+    width: auto;
+    inline-size: auto;
+  }
+  /* Through the field, so the rule outranks `.sf-input .sf-input-field input`
+     whatever order the two sheets are loaded in: that rule gives the input
+     `flex: 1 1 auto; width: auto`, and an equal-weight selector only wins while
+     this sheet happens to come later. */
+  .sf-pagination .sf-pagination-page-input .sf-input-field input {
+    /* The input is a flex child of its field; in this one field it takes the
+       width it is given and the field hugs it. */
+    flex: 0 0 auto;
+    box-sizing: content-box;
+    width: calc(max(1, 1) * 1ch);
+    inline-size: calc(max(1, 1) * 1ch);
+    width: calc(max(1, 1) * 1ch);
+    width: calc(max(var(--sf-pagination-page-input--digits, 1), 1) * 1ch);
+    inline-size: calc(max(var(--sf-pagination-page-input--digits, 1), 1) * 1ch);
+    min-width: 1ch;
+    min-inline-size: 1ch;
+    text-align: center;
   }
   .sf-pagination-actions-count {
     color: var(--sf-on-surface);
