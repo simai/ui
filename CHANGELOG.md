@@ -14,7 +14,15 @@
   the name «Изменить ширину столбца: …» and the arrows. The guide line through
   the rows is placed again in the same frame the edge moves in.
 - The band of bulk controls carries the surface radius, and the page field is as
-  wide as the number it holds, growing as the number is typed.
+  wide as the number it holds, growing as the number is typed. The width is set
+  on the input, as its content box, through a selector that outranks the inputs
+  sheet in any load order — set on the field it had to guess the chrome inside
+  it and guessed short, clipping two digits into about eleven pixels.
+- An item in a context menu is one line. A menu opened from a control near the
+  window's edge used to be capped to the free space beside that control and its
+  labels broke in two; it is moved inside the viewport instead, and an anchored
+  menu is placed again once `document.fonts` is ready, because the first cap is
+  measured before the webfont arrives.
 - The row with «Показать ещё» leaves below it what the card leaves above it:
   `pagination.css` grows from 34 828 to 36 308 bytes. A demo panel that stood in
   every table, closed and empty, took the space there and is gone.
