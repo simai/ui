@@ -720,14 +720,23 @@
     /* The input is a flex child of its field; in this one field it takes the
        width it is given and the field hugs it. */
     flex: 0 0 auto;
-    box-sizing: content-box;
-    width: calc(max(1, 1) * 1ch);
-    inline-size: calc(max(1, 1) * 1ch);
-    width: calc(max(1, 1) * 1ch);
-    width: calc(max(var(--sf-pagination-page-input--digits, 1), 1) * 1ch);
-    inline-size: calc(max(var(--sf-pagination-page-input--digits, 1), 1) * 1ch);
-    min-width: 1ch;
-    min-inline-size: 1ch;
+    /* The width counts the input's own padding and the box is a border box, so a
+       host's global reset agrees with this rule instead of fighting it. An
+       unlayered `* { box-sizing: border-box }` in a host shell beats every
+       layered declaration whatever its specificity -- a consumer hit exactly that
+       and the number was clipped again -- and under a reset that forces
+       content-box the field only comes out wider by its padding, never short. */
+    box-sizing: border-box;
+    width: calc(max(1, 1) * 1ch + var(--sf-a0) + var(--sf-a0));
+    inline-size: calc(max(1, 1) * 1ch + var(--sf-a0) + var(--sf-a0));
+    width: calc(max(1, 1) * 1ch + var(--sf-a0) + var(--sf-a0));
+    width: calc(max(var(--sf-pagination-page-input--digits, 1), 1) * 1ch + var(--sf-input-input--padding-inline-start, var(--sf-a0)) + var(--sf-input-input--padding-inline-end, var(--sf-a0)));
+    inline-size: calc(max(var(--sf-pagination-page-input--digits, 1), 1) * 1ch + var(--sf-input-input--padding-inline-start, var(--sf-a0)) + var(--sf-input-input--padding-inline-end, var(--sf-a0)));
+    min-width: calc(1ch + var(--sf-a0) + var(--sf-a0));
+    min-inline-size: calc(1ch + var(--sf-a0) + var(--sf-a0));
+    min-width: calc(1ch + var(--sf-a0) + var(--sf-a0));
+    min-width: calc(1ch + var(--sf-input-input--padding-inline-start, var(--sf-a0)) + var(--sf-input-input--padding-inline-end, var(--sf-a0)));
+    min-inline-size: calc(1ch + var(--sf-input-input--padding-inline-start, var(--sf-a0)) + var(--sf-input-input--padding-inline-end, var(--sf-a0)));
     text-align: center;
   }
   .sf-pagination-actions-count {
