@@ -96,6 +96,15 @@
 
 ### Изменено
 
+- Each button emphasis has its own look. Measured in both themes, two pairs
+  were one choice under two names. `--ghost` was identical to `--link` at rest
+  and differed only by a hover tint of 8% instead of 16%; it now reads as
+  `--link` on `sf-button` and `sf-icon-button` and stays as a compatibility
+  name until the next major version. `tonal secondary` sat on a palette close
+  to neutral and read as the same grey as `tonal on-surface`, so `tonal primary`
+  is new: a fill on the primary container roles, and an on-primary-container
+  label. `tonal secondary` is unchanged. Five emphases remain — default, tonal,
+  outline, surface, link — each in an accent and a neutral scheme.
 - Component sheets read only tokens the theme declares. A bare `var()` of an
   undeclared token silently drops the property to its initial value:
   `--sf-surface` is not a token (the scale is `--sf-surface-0` … `-5`), so
