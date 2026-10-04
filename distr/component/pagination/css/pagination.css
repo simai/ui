@@ -389,7 +389,11 @@
     --sf-pagination-top--border-bottom-width: var(--sf-px);
     --sf-pagination-top--border-color: var(--sf-outline-variant);
     --sf-pagination-top--border-style: solid;
-    --sf-pagination-top--padding-bottom: var(--sf-space-1);
+    /* The row with Show more sits between the table above it and the page row
+       below it, and the two gaps have to read the same. A card spaces its parts
+       by --sf-space-3, and the page row already pads itself by --sf-space-1, so
+       this row contributes only the difference. */
+    --sf-pagination-top--padding-bottom: calc(var(--sf-space-3) - var(--sf-space-1));
     background-color: var(--sf-pagination-top--background-color);
     border-bottom-width: var(--sf-pagination-top--border-bottom-width);
     border-color: transparent;
@@ -648,6 +652,7 @@
     --sf-pagination-actions--gap: var(--sf-space-1);
     --sf-pagination-actions--padding-block: var(--sf-space-1);
     --sf-pagination-actions--padding-inline: var(--sf-space-2);
+    --sf-pagination-actions--radius: var(--sf-radius--surface);
     position: sticky;
     bottom: 0;
     inset-block-end: 0;
@@ -665,6 +670,9 @@
     border-top: var(--sf-px) solid var(--sf-pagination-actions--border-color);
     -webkit-border-before: var(--sf-px) solid var(--sf-pagination-actions--border-color);
             border-block-start: var(--sf-px) solid var(--sf-pagination-actions--border-color);
+    /* It is a surface of its own -- it floats over the rows and holds the bottom
+       of the card -- so it is rounded like one. */
+    border-radius: var(--sf-pagination-actions--radius);
     box-shadow: var(--sf-ui-shadow-2);
     z-index: var(--sf-z-index-3);
   }
@@ -682,15 +690,25 @@
      leave the box that contains it. The consumer saw what that costs — the whole
      row, Show more included, floating over its own last rows — so the band moved
      to the card instead, where it is the card that contains it. */
-  /* The page field sits beside the window of numbers and keeps its own width, so
-     the row does not change shape as the number grows. */
+  /* The page field sits beside the window of numbers. The digit count lives here,
+     on the field, because a custom property is inherited and the input itself is
+     written by another component. */
   .sf-pagination .sf-pagination-page-field {
+    --sf-pagination-page-input--digits: 1;
     gap: var(--sf-space-1\/2);
     white-space: nowrap;
   }
+  /* As wide as the number it holds, not as wide as the longest number a site
+     might ever have: the digit count comes from the component, and the field
+     grows by a digit's width as the person types. One digit is the floor. */
   .sf-pagination .sf-pagination-page-input {
-    width: var(--sf-e2);
-    inline-size: var(--sf-e2);
+    width: calc(max(1, 1) * 1ch + var(--sf-space-2) * 2 + var(--sf-px) * 2);
+    inline-size: calc(max(1, 1) * 1ch + var(--sf-space-2) * 2 + var(--sf-px) * 2);
+    width: calc(max(1, 1) * 1ch + var(--sf-space-2) * 2 + var(--sf-px) * 2);
+    width: calc(max(var(--sf-pagination-page-input--digits, 1), 1) * 1ch + var(--sf-space-2) * 2 + var(--sf-px) * 2);
+    inline-size: calc(max(var(--sf-pagination-page-input--digits, 1), 1) * 1ch + var(--sf-space-2) * 2 + var(--sf-px) * 2);
+    min-width: calc(1ch + var(--sf-space-2) * 2 + var(--sf-px) * 2);
+    min-inline-size: calc(1ch + var(--sf-space-2) * 2 + var(--sf-px) * 2);
   }
   .sf-pagination-actions-count {
     color: var(--sf-on-surface);
