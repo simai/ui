@@ -1843,6 +1843,14 @@
     font-size: var(--sf-dropdown-tag-label--font-size);
     line-height: var(--sf-dropdown-tag-line--box);
   }
+  /* The remove mark follows the label rather than the generic close size: a 12px
+     heavy cross beside a 14px label read larger than the letters. It is 0.7 of
+     the label's font size (about 10px in a size 1 field); the button around it
+     keeps the whole line, so the target does not shrink with the mark. */
+  .sf-dropdown .sf-dropdown-tag-container > .sf-tag.sf-tag .sf-close-icon {
+    --sf-close-icon--height: calc(var(--sf-dropdown-tag-label--font-size) * 0.7);
+    --sf-close-icon--width: calc(var(--sf-dropdown-tag-label--font-size) * 0.7);
+  }
   .sf-dropdown .sf-dropdown-tag-container > .sf-tag.sf-tag > .sf-icon-button {
     height: var(--sf-dropdown-tag-line--box);
     block-size: var(--sf-dropdown-tag-line--box);
