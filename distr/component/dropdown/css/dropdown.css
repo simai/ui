@@ -1779,26 +1779,34 @@
   /* The field's text line for each size, on the root so a tag can read it (the
      input's own variables live on the input). The box is that line less the
      field's two borders: the control height counts its border inside, so a text
-     field's input line is the line height minus the borders too. */
+     field's input line is the line height minus the borders too. A tag's label
+     is one step smaller than the field's text (16px text, 14px tag): set at the
+     same size it read as heavy as the value of a text field, and the tag is a
+     chip on that line, not the line itself. The smallest size keeps its own. */
   .sf-dropdown.sf-dropdown--size-1\/3 {
     --sf-dropdown-tag-line--font-size: var(--sf-text-size-1\/3);
     --sf-dropdown-tag-line--height: var(--sf-text-height-1\/3);
+    --sf-dropdown-tag-label--font-size: var(--sf-text-size-1\/3);
   }
   .sf-dropdown.sf-dropdown--size-1\/2 {
     --sf-dropdown-tag-line--font-size: var(--sf-text-size-1\/2);
     --sf-dropdown-tag-line--height: var(--sf-text-height-1\/2);
+    --sf-dropdown-tag-label--font-size: var(--sf-text-size-1\/3);
   }
   .sf-dropdown.sf-dropdown--size-1 {
     --sf-dropdown-tag-line--font-size: var(--sf-text-size-1);
     --sf-dropdown-tag-line--height: var(--sf-text-height-1);
+    --sf-dropdown-tag-label--font-size: var(--sf-text-size-1\/2);
   }
   .sf-dropdown.sf-dropdown--size-2 {
     --sf-dropdown-tag-line--font-size: var(--sf-text-size-2);
     --sf-dropdown-tag-line--height: var(--sf-text-height-2);
+    --sf-dropdown-tag-label--font-size: var(--sf-text-size-1);
   }
   .sf-dropdown.sf-dropdown--size-3 {
     --sf-dropdown-tag-line--font-size: var(--sf-text-size-3);
     --sf-dropdown-tag-line--height: var(--sf-text-height-3);
+    --sf-dropdown-tag-label--font-size: var(--sf-text-size-2);
   }
   .sf-dropdown {
     --sf-dropdown-tag-line--box: calc(var(--sf-dropdown-tag-line--height) - 2 * var(--sf-px));
@@ -1822,17 +1830,17 @@
     padding-block: 0;
     min-height: var(--sf-dropdown-tag-line--box);
     min-block-size: var(--sf-dropdown-tag-line--box);
-    gap: var(--sf-space-1\/4);
+    gap: var(--sf-space-1\/3);
   }
   .sf-dropdown .sf-dropdown-tag-container > .sf-tag.sf-tag > .sf-tag-container {
     --sf-tag-container--padding-inline-start: 0;
     --sf-tag-container--padding-inline-end: 0;
-    --sf-tag-container--font-size: var(--sf-dropdown-tag-line--font-size);
+    --sf-tag-container--font-size: var(--sf-dropdown-tag-label--font-size);
     --sf-tag-container--line-height: var(--sf-dropdown-tag-line--box);
     padding-left: 0;
     padding-right: 0;
     padding-inline: 0;
-    font-size: var(--sf-dropdown-tag-line--font-size);
+    font-size: var(--sf-dropdown-tag-label--font-size);
     line-height: var(--sf-dropdown-tag-line--box);
   }
   .sf-dropdown .sf-dropdown-tag-container > .sf-tag.sf-tag > .sf-icon-button {
