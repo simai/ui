@@ -8,6 +8,14 @@
 
 ### Добавлено
 
+- The admin menu has a search panel, and its submenu has a header that says
+  where you are. `admin-menu.css` grows from 61 826 to 76 050 bytes: the panel,
+  its field with the `Esc` key hint, result groups with the matched part marked,
+  loading skeletons that honour reduced motion, and the keys row under the list.
+  The submenu header keeps the main header's height — the height is measured and
+  published as `--sf-admin-menu-head--measured-height` instead of being guessed
+  by a token — and the back row is an item, so its arrow stands in the same
+  column as every other icon in the menu.
 - Inter Variable ships with Core again. The family tokens have named Inter
   since the fontsource dependency was dropped, but nothing shipped the font, so
   a page got Inter only where the reader had it installed. `core.css` now
