@@ -22,6 +22,15 @@
 
 ### Изменено
 
+- A dropdown field holding tags is as tall as one holding text. A selected tag
+  was a free-standing size 1 tag (40px) with its inline space counted twice, and
+  the in-line chevron stood 32px tall, so a size 1 field with one tag measured
+  56px against 40 and two short names wrapped to 106px. Inside the field a tag
+  now fits the field's text line for every size (the line is published on the
+  dropdown root as `--sf-dropdown-tag-line--*`), the remove button and the
+  chevron are no taller than that line, and a size 1/3 tag field takes the size
+  1/3 padding. Measured after the change: 32, 40 and 48px for sizes 1/2, 1 and
+  2, the same as text fields, and unchanged after a tag is removed or added.
 - The button loading stripes are calm and seamless. A loading button is
   disabled, so it wears the grey disabled fill, while the stripes had been
   coloured for the enabled one — near-opaque primary bars over grey. Every
