@@ -1412,8 +1412,13 @@
     transition-timing-function: var(--sf-animation);
   }
   .sf-button {
-    --sf-button-loading-stripe-1: color-mix(in srgb, var(--sf-on-surface) 18%, transparent);
-    --sf-button-loading-stripe-2: color-mix(in srgb, var(--sf-surface-container) 94%, var(--sf-on-surface) 6%);
+    /* A loading button is also a disabled one -- native disabled is what stops a
+       second click -- so every emphasis wears the same disabled look while it
+       works. The stripes therefore carry no colour of their own: one step of the
+       neutral alpha ramp over transparent, which sits on the grey disabled fill,
+       on a transparent link or outline, and in either theme without shouting
+       over the label. */
+    --sf-button-loading-stripe: var(--sf-alpha-8);
   }
   .sf-button > * {
     position: relative;
@@ -1432,37 +1437,24 @@
     bottom: -50%;
     left: -50%;
     inset: -50%;
-    background-image: repeating-linear-gradient(135deg, var(--sf-button-loading-stripe-1) 0, var(--sf-button-loading-stripe-1) var(--sf-space-1\/2), var(--sf-button-loading-stripe-2) var(--sf-space-1\/2), var(--sf-button-loading-stripe-2) var(--sf-space-1));
-    -webkit-animation: sf-button-stripes-slide var(--sf-duration-slow) linear infinite;
-            animation: sf-button-stripes-slide var(--sf-duration-slow) linear infinite;
+    background-image: repeating-linear-gradient(135deg, var(--sf-button-loading-stripe) 0, var(--sf-button-loading-stripe) var(--sf-space-1\/2), transparent var(--sf-space-1\/2), transparent var(--sf-space-1));
+    -webkit-animation: sf-button-stripes-slide calc(var(--sf-duration-slow) * 2) linear infinite;
+            animation: sf-button-stripes-slide calc(var(--sf-duration-slow) * 2) linear infinite;
     will-change: transform;
     pointer-events: none;
   }
-  .sf-button.sf-button--default.sf-button--primary {
-    --sf-button-loading-stripe-1: color-mix(in srgb, var(--sf-on-primary) 18%, transparent);
-    --sf-button-loading-stripe-2: color-mix(in srgb, var(--sf-primary) 94%, var(--sf-on-primary) 6%);
-  }
-  .sf-button.sf-button--default.sf-button--on-surface {
-    --sf-button-loading-stripe-1: color-mix(in srgb, var(--sf-on-surface-inverse) 18%, transparent);
-    --sf-button-loading-stripe-2: color-mix(in srgb, var(--sf-on-surface) 94%, var(--sf-on-surface-inverse) 6%);
-  }
-  .sf-button.sf-button--tonal.sf-button--secondary {
-    --sf-button-loading-stripe-1: color-mix(in srgb, var(--sf-on-secondary-container) 18%, transparent);
-    --sf-button-loading-stripe-2: color-mix(in srgb, var(--sf-secondary-container) 94%, var(--sf-on-secondary-container) 6%);
-  }
-  .sf-button.sf-button--outline.sf-button--primary,
-  .sf-button.sf-button--link.sf-button--primary {
-    --sf-button-loading-stripe-1: color-mix(in srgb, var(--sf-primary) 18%, transparent);
-    --sf-button-loading-stripe-2: color-mix(in srgb, var(--sf-primary-container) 94%, var(--sf-primary) 6%);
-  }
+  /* The stripes repeat every --sf-space-1 across their own axis, at 135deg. Along
+     the x axis that period is longer by the square root of two, so one loop has
+     to travel exactly that far; travelling --sf-space-1 made the pattern jump
+     back at the end of every cycle. */
   @-webkit-keyframes sf-button-stripes-slide {
     from {
       -webkit-transform: translateX(0);
               transform: translateX(0);
     }
     to {
-      -webkit-transform: translateX(var(--sf-space-1));
-              transform: translateX(var(--sf-space-1));
+      -webkit-transform: translateX(calc(var(--sf-space-1) * 1.41421356));
+              transform: translateX(calc(var(--sf-space-1) * 1.41421356));
     }
   }
   @keyframes sf-button-stripes-slide {
@@ -1471,8 +1463,8 @@
               transform: translateX(0);
     }
     to {
-      -webkit-transform: translateX(var(--sf-space-1));
-              transform: translateX(var(--sf-space-1));
+      -webkit-transform: translateX(calc(var(--sf-space-1) * 1.41421356));
+              transform: translateX(calc(var(--sf-space-1) * 1.41421356));
     }
   }
   @media (prefers-reduced-motion: reduce) {
