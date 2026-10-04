@@ -6,6 +6,20 @@
 
 ## [Unreleased]
 
+### Исправлено
+
+- The open search panel of `sf-admin-menu` stands over the menu. It read
+  `translateX(100%)` and stood one menu width to the side, where the menu's own
+  overflow clipped it away: the state said open, the field had a box, and a
+  person saw nothing on any screen above the small breakpoint. A submenu has
+  always been `translateX(0)` when open, and the panel opens like a submenu.
+
+### Добавлено
+
+- `search-title` names the search panel beside the back arrow, defaulting to the
+  component's own word. `search-label` stays the magnifier's accessible name,
+  which is usually a sentence with the shortcut in it.
+
 ### Изменено
 
 - The button loading stripes are calm and seamless. A loading button is
