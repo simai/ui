@@ -15,9 +15,13 @@
   the rows is placed again in the same frame the edge moves in.
 - The band of bulk controls carries the surface radius, and the page field is as
   wide as the number it holds, growing as the number is typed. The width is set
-  on the input, as its content box, through a selector that outranks the inputs
-  sheet in any load order — set on the field it had to guess the chrome inside
-  it and guessed short, clipping two digits into about eleven pixels.
+  on the input through a selector that outranks the inputs sheet in any load
+  order — set on the field it had to guess the chrome inside it and guessed
+  short, clipping two digits into about eleven pixels. The width counts the
+  input's own padding and declares a border box, so an unlayered
+  `* { box-sizing: border-box }` in a host shell, which beats every layered
+  declaration whatever its specificity, agrees with the rule instead of clipping
+  the number.
 - An item in a context menu is one line. A menu opened from a control near the
   window's edge used to be capped to the free space beside that control and its
   labels broke in two; it is moved inside the viewport instead, and an anchored
