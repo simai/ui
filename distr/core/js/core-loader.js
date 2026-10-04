@@ -1886,7 +1886,7 @@ SFLoaderPlugin.prototype.loadSmartBase = function () {
     return this.smartBaseLoadPromise;
   }
 
-  this.smartBaseLoadPromise = Promise.all(/* import() | smart-base */[__webpack_require__.e(33924592978152), __webpack_require__.e(51805064141692)]).then(__webpack_require__.bind(__webpack_require__, "0845ef25b9de")).then(() => {
+  this.smartBaseLoadPromise = Promise.all(/* import() | smart-base */[__webpack_require__.e(111949971785676), __webpack_require__.e(51805064141692)]).then(__webpack_require__.bind(__webpack_require__, "0845ef25b9de")).then(() => {
     try {
       window.dispatchEvent(new CustomEvent('sf-smart-base-ready', {
         detail: {

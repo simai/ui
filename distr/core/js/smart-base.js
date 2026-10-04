@@ -6,15 +6,20 @@
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   applySmartProps: () => (/* binding */ applySmartProps),
+/* harmony export */   createSmartElement: () => (/* binding */ createSmartElement),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
 /* harmony export */   normalizeEnum: () => (/* binding */ normalizeEnum),
 /* harmony export */   parseJsonAttribute: () => (/* binding */ parseJsonAttribute),
+/* harmony export */   smartElement: () => (/* binding */ smartElement),
 /* harmony export */   toAttributeName: () => (/* binding */ toAttributeName),
 /* harmony export */   toBoolean: () => (/* binding */ toBoolean),
 /* harmony export */   toNumber: () => (/* binding */ toNumber)
 /* harmony export */ });
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("fef8077ac919");
 /* harmony import */ var lit_directives_ref_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("7fcbcc00731e");
+/* harmony import */ var lit_directive_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("69fcfee6f64b");
+
 
 
 function toBoolean(value, fallback = false) {
@@ -68,6 +73,138 @@ function parseJsonAttribute(element, name, fallback = null) {
     console.warn(`${element?.tagName?.toLowerCase?.() || "sf-element"}: invalid ${name} JSON`, error);
     return fallback;
   }
+}
+
+function smartTagName(type) {
+  const tagName = String(type || "").startsWith("sf-") ? String(type) : `sf-${String(type || "")}`;
+
+  if (!/^sf-[a-z0-9-]+$/.test(tagName)) {
+    throw new Error(`Invalid SF tag name: ${tagName}`);
+  }
+
+  return tagName;
+} // Writes a props object onto an element that already exists, and reports what it
+// wrote so the next write can take back what the props no longer carry. An
+// attribute is only touched when its value differs, a listener only swapped when
+// the function differs; both matter for an element a person is using while the
+// table re-renders around them.
+
+
+function applySmartProps(element, props = {}, previous = null) {
+  const listeners = previous?.listeners ?? new Map();
+  const attributes = previous?.attributes ?? new Set();
+  const nextListeners = new Map();
+  const nextAttributes = new Set();
+
+  for (const [key, value] of Object.entries(props || {})) {
+    if (key === ":key" || typeof value === "undefined" || value === null) {
+      continue;
+    }
+
+    if (key === ":ref") {
+      if (typeof value === "function") {
+        value(element);
+      } else if (value && typeof value === "object") {
+        value.value = element;
+      }
+
+      continue;
+    }
+
+    const eventName = key.startsWith("@") ? key.slice(1) : /^on[A-Z]/.test(key) ? key.slice(2).toLowerCase() : null;
+
+    if (eventName && typeof value === "function") {
+      nextListeners.set(eventName, value);
+      continue;
+    }
+
+    const attributeName = toAttributeName(key);
+
+    if (typeof value === "boolean") {
+      element.toggleAttribute(attributeName, value);
+      nextAttributes.add(attributeName);
+      continue;
+    }
+
+    if (typeof value === "object" || typeof value === "function") {
+      element[key] = value;
+      continue;
+    }
+
+    if (element.getAttribute(attributeName) !== String(value)) {
+      element.setAttribute(attributeName, String(value));
+    }
+
+    nextAttributes.add(attributeName);
+  }
+
+  for (const [name, handler] of listeners) {
+    if (nextListeners.get(name) !== handler) {
+      element.removeEventListener(name, handler);
+    }
+  }
+
+  for (const [name, handler] of nextListeners) {
+    if (listeners.get(name) !== handler) {
+      element.addEventListener(name, handler);
+    }
+  }
+
+  for (const name of attributes) {
+    if (!nextAttributes.has(name)) {
+      element.removeAttribute(name);
+    }
+  }
+
+  return {
+    listeners: nextListeners,
+    attributes: nextAttributes
+  };
+} // One element per place in the template. A directive instance belongs to the
+// position it was rendered in, so the element it makes is the element that
+// position keeps: a re-render writes the props onto it instead of replacing it.
+//
+// Elements used to be created on every render and handed to lit as a new node,
+// so every cell that is a Framework element was torn out and rebuilt whenever
+// anything in the table changed -- fourteen nodes a row, changed row or not,
+// taking the control a person was interacting with with them.
+
+class SmartElementDirective extends lit_directive_js__WEBPACK_IMPORTED_MODULE_2__.Directive {
+  constructor(partInfo) {
+    super(partInfo);
+
+    if (partInfo.type !== lit_directive_js__WEBPACK_IMPORTED_MODULE_2__.PartType.CHILD) {
+      throw new Error("renderSmartElement belongs in a child position of a template");
+    }
+
+    this._element = null;
+    this._tagName = "";
+    this._written = null;
+  }
+
+  render(type, props = {}) {
+    const tagName = smartTagName(type);
+
+    if (!this._element || this._tagName !== tagName) {
+      this._element = document.createElement(tagName);
+      this._tagName = tagName;
+      this._written = null;
+    }
+
+    this._written = applySmartProps(this._element, props, this._written);
+    return this._element;
+  }
+
+}
+
+const smartElement = (0,lit_directive_js__WEBPACK_IMPORTED_MODULE_2__.directive)(SmartElementDirective); // The same element, outside a template. A caller that holds the element itself
+// -- a portal, a measurement, a test -- gets a fresh one, because there is no
+// position to keep it in.
+
+function createSmartElement(type, props = {}) {
+  const element = document.createElement(smartTagName(type));
+  applySmartProps(element, props, null);
+  return element;
 }
 
 class SfBaseElement extends HTMLElement {
@@ -270,56 +407,12 @@ class SfBaseElement extends HTMLElement {
 
   toAttributeName(key) {
     return toAttributeName(key);
-  }
+  } // Kept as the name every template already calls. The element it returns is
+  // the one this position in the template already had.
+
 
   renderSmartElement(type, props = {}) {
-    const tagName = String(type || "").startsWith("sf-") ? String(type) : `sf-${String(type || "")}`;
-
-    if (!/^sf-[a-z0-9-]+$/.test(tagName)) {
-      throw new Error(`Invalid SF tag name: ${tagName}`);
-    }
-
-    const element = document.createElement(tagName);
-    Object.entries(props || {}).forEach(([key, value]) => {
-      if (key === ":key" || typeof value === "undefined" || value === null) {
-        return;
-      }
-
-      if (key === ":ref") {
-        if (typeof value === "function") {
-          value(element);
-        } else if (value && typeof value === "object") {
-          value.value = element;
-        }
-
-        return;
-      }
-
-      if (key.startsWith("@") && typeof value === "function") {
-        element.addEventListener(key.slice(1), value);
-        return;
-      }
-
-      if (/^on[A-Z]/.test(key) && typeof value === "function") {
-        element.addEventListener(key.slice(2).toLowerCase(), value);
-        return;
-      }
-
-      const attributeName = toAttributeName(key);
-
-      if (typeof value === "boolean") {
-        element.toggleAttribute(attributeName, value);
-        return;
-      }
-
-      if (typeof value === "object" || typeof value === "function") {
-        element[key] = value;
-        return;
-      }
-
-      element.setAttribute(attributeName, String(value));
-    });
-    return element;
+    return smartElement(type, props);
   }
 
   toNumber(value, fallback = 0) {
