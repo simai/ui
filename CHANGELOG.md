@@ -8,6 +8,14 @@
 
 ### Изменено
 
+- The button loading stripes are calm and seamless. A loading button is
+  disabled, so it wears the grey disabled fill, while the stripes had been
+  coloured for the enabled one — near-opaque primary bars over grey. Every
+  emphasis now uses one neutral alpha step (`--sf-alpha-8`) over transparent,
+  quiet in both themes. The loop jerked because it travelled `--sf-space-1`
+  while the 135° stripes repeat every `--sf-space-1 × √2` along x; one loop now
+  travels exactly that period and lasts one second. The per-variant
+  `--sf-button-loading-stripe-1/2` properties are gone.
 - A Framework element declared in data — a column's or a row's
   `{type, props}` — keeps the place it was rendered in. It used to be created
   anew on every render and handed to lit as a new node, so every cell that is an
