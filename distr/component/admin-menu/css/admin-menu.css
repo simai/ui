@@ -112,13 +112,17 @@
     -webkit-transform: translateX(0);
             transform: translateX(0);
   }
-  .sf-admin-menu-panel-search.open {
-    -webkit-transform: translateX(100%);
-            transform: translateX(100%);
-  }
+  /* Open is open, at every width. This read translateX(100%) -- a sign error
+     that put the panel one menu width to the side of the menu, where the menu's
+     own overflow clipped it away: the state said open, the field was in the DOM
+     with a box, and nothing could be seen. Only the narrow-screen block set it
+     to zero, so every screen above the small breakpoint showed nothing. A
+     submenu has always been translateX(0) when open, and the panel opens like a
+     submenu. */
+  .sf-admin-menu-panel-search.open,
   .sf-admin-menu-panel-search.open:dir(rtl) {
-    -webkit-transform: translateX(-100%);
-            transform: translateX(-100%);
+    -webkit-transform: translateX(0);
+            transform: translateX(0);
   }
   .sf-admin-menu-main {
     flex: 1 1 auto;
@@ -1562,11 +1566,8 @@
       width: 100%;
       inline-size: 100%;
     }
-    .sf-admin-menu-panel-search.open,
-    .sf-admin-menu-panel-search.open:dir(rtl) {
-      -webkit-transform: translateX(0);
-              transform: translateX(0);
-    }
+    /* The open panel is translateX(0) at every width now, so there is nothing
+       left for this breakpoint to correct. */
   }
 }
 @layer sf.states {
