@@ -629,38 +629,28 @@
     min-width: 0;
     min-inline-size: 0;
   }
-  /* The bulk controls are a panel at the bottom of the window while rows are
-     marked. They act on the selection, which outlives the stretch of the page a
-     person happens to be looking at, so the panel does not scroll away with the
-     pagination it is rendered from. It is `position: fixed` against the viewport
-     and centred; the host needs no CSS of its own for it.
+  /* The bulk controls are the last band of the table they belong to, under the
+     page row and across the full width of the card. While the bottom of the card
+     is below the window they stick to the bottom of the window, keeping the card's
+     own left and right edges, with a shadow upwards to say they are over the rows.
+
+     They were a panel floating at the bottom of the window, centred and narrow.
+     The consumer's owner replaced that on 2026-10-04: floating, it did not read as
+     part of the table it acted on. Sticky inside the card does read as part of it,
+     and costs the host no CSS either.
      utility-hint: display/flex (.flex) align-items/center (.items-center) */
   .sf-pagination .sf-pagination-actions {
     --sf-pagination-actions--background-color: var(--sf-surface-0);
     --sf-pagination-actions--border-color: var(--sf-outline-variant);
     --sf-pagination-actions--gap: var(--sf-space-1);
-    --sf-pagination-actions--inset-bottom: var(--sf-space-3);
     --sf-pagination-actions--padding-block: var(--sf-space-1);
     --sf-pagination-actions--padding-inline: var(--sf-space-2);
-    position: fixed;
-    bottom: var(--sf-pagination-actions--inset-bottom);
-    inset-block-end: var(--sf-pagination-actions--inset-bottom);
-    left: 0;
-    right: 0;
-    inset-inline: 0;
-    margin-left: auto;
-    margin-right: auto;
-    margin-inline: auto;
-    width: -webkit-fit-content;
-    width: -moz-fit-content;
-    width: fit-content;
-    inline-size: -webkit-fit-content;
-    inline-size: -moz-fit-content;
-    inline-size: fit-content;
-    max-width: calc(100% - var(--sf-space-4));
-    max-inline-size: calc(100% - var(--sf-space-4));
+    position: sticky;
+    bottom: 0;
+    inset-block-end: 0;
+    width: 100%;
+    inline-size: 100%;
     flex-wrap: wrap;
-    justify-content: center;
     gap: var(--sf-pagination-actions--gap);
     padding-top: var(--sf-pagination-actions--padding-block);
     padding-bottom: var(--sf-pagination-actions--padding-block);
@@ -669,10 +659,54 @@
     padding-right: var(--sf-pagination-actions--padding-inline);
     padding-inline: var(--sf-pagination-actions--padding-inline);
     background-color: var(--sf-pagination-actions--background-color);
-    border: var(--sf-px) solid var(--sf-pagination-actions--border-color);
-    border-radius: var(--sf-radius--surface);
-    box-shadow: var(--sf-ui-shadow-3);
-    z-index: var(--sf-z-index-5);
+    border-top: var(--sf-px) solid var(--sf-pagination-actions--border-color);
+    -webkit-border-before: var(--sf-px) solid var(--sf-pagination-actions--border-color);
+            border-block-start: var(--sf-px) solid var(--sf-pagination-actions--border-color);
+    box-shadow: var(--sf-ui-shadow-2);
+    z-index: var(--sf-z-index-3);
+  }
+  /* A direction is a button, not a cell: its item box would otherwise take a gap
+     of its own even while it is hidden, and the row of numbers moved by a few
+     pixels between the middle pages and the ends. */
+  .sf-pagination .sf-pagination-list .sf-pagination-item[\:has\(sf-icon-button\)] {
+    display: contents;
+  }
+  .sf-pagination .sf-pagination-list .sf-pagination-item:has(sf-icon-button) {
+    display: contents;
+  }
+  /* While rows are marked, the page row and the band under it hold the bottom of
+     the window as long as the card runs past it. A sticky box cannot leave the box
+     that contains it, and the band's container is this root, so the root is what
+     sticks — the band alone would travel no further than the page row's own
+     height. */
+  .sf-pagination[\:has\(.sf-pagination-actions\)] {
+    position: sticky;
+    bottom: 0;
+    inset-block-end: 0;
+    z-index: var(--sf-z-index-3);
+  }
+  .sf-pagination[\:has\(.sf-pagination-actions\)] {
+    position: sticky;
+    bottom: 0;
+    bottom: 0;
+    inset-block-end: 0;
+    z-index: var(--sf-z-index-3);
+  }
+  .sf-pagination:has(.sf-pagination-actions) {
+    position: sticky;
+    bottom: 0;
+    inset-block-end: 0;
+    z-index: var(--sf-z-index-3);
+  }
+  /* The page field sits beside the window of numbers and keeps its own width, so
+     the row does not change shape as the number grows. */
+  .sf-pagination .sf-pagination-page-field {
+    gap: var(--sf-space-1\/2);
+    white-space: nowrap;
+  }
+  .sf-pagination .sf-pagination-page-input {
+    width: var(--sf-e2);
+    inline-size: var(--sf-e2);
   }
   .sf-pagination .sf-pagination-actions-count {
     color: var(--sf-on-surface);

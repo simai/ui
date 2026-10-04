@@ -1161,6 +1161,9 @@
         "name": "cl-icon-buttons"
       },
       {
+        "name": "cl-inputs"
+      },
+      {
         "name": "cl-list-item"
       },
       {
