@@ -446,14 +446,14 @@
      person who asked not to see motion. */
   .sf-admin-menu-search-skeleton {
     display: block;
-    height: var(--sf-f0);
-    block-size: var(--sf-f0);
-    margin-left: var(--sf-space-1\/3);
-    margin-right: var(--sf-space-1\/3);
-    margin-inline: var(--sf-space-1\/3);
-    margin-top: var(--sf-space-1\/6);
-    margin-bottom: var(--sf-space-1\/6);
-    margin-block: var(--sf-space-1\/6);
+    height: var(--sf-d0);
+    block-size: var(--sf-d0);
+    margin-left: var(--sf-space-1\/4);
+    margin-right: var(--sf-space-1\/4);
+    margin-inline: var(--sf-space-1\/4);
+    margin-top: var(--sf-space-1\/4);
+    margin-bottom: var(--sf-space-1\/4);
+    margin-block: var(--sf-space-1\/4);
     border-radius: var(--sf-radius--ui);
     background-image: linear-gradient(90deg, var(--sf-surface-container), var(--sf-surface-container-hover), var(--sf-surface-container));
     background-size: 200% 100%;
