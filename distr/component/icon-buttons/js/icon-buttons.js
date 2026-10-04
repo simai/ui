@@ -25,6 +25,7 @@ class IconButtons extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0_
       scheme = 'primary',
       icon,
       tightness,
+      spacing,
       radius,
       loading = false,
       disabled = false,
@@ -37,9 +38,16 @@ class IconButtons extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0_
       this.button.id = this.id;
     }
 
-    this.button.classList.add('sf-icon-button', 'sf-icon-button--icon', `sf-icon-button--size-${size}`, `sf-icon-button--${type}`, `sf-icon-button--${scheme}`);
+    this.button.classList.add('sf-icon-button', 'sf-icon-button--icon', `sf-icon-button--size-${size}`, `sf-icon-button--${type}`, `sf-icon-button--${scheme}`); // The readable names for the same steps: compact, comfortable, spacious.
+    // `normal` is the default and needs no class. When both options are given,
+    // `spacing` wins, as it does on the Smart element (control-spacing.js), so
+    // one control never carries two different steps.
 
-    if (tightness) {
+    const hasSpacing = ['normal', 'compact', 'comfortable', 'spacious'].includes(spacing);
+
+    if (hasSpacing && spacing !== 'normal') {
+      this.button.classList.add(`spacing-${spacing}`);
+    } else if (!hasSpacing && tightness) {
       this.button.classList.add(`tightness-${tightness}`);
     }
 
