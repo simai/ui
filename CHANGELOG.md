@@ -8,6 +8,17 @@
 
 ### Добавлено
 
+- The column width is taken by the line between two headers. There is no handle
+  to find first: an invisible strip stands astride the separator, 8–12px wide,
+  with the `col-resize` cursor, and it is still a button, so the keyboard keeps
+  the name «Изменить ширину столбца: …» and the arrows. The guide line through
+  the rows is placed again in the same frame the edge moves in.
+- The band of bulk controls carries the surface radius, and the page field is as
+  wide as the number it holds, growing as the number is typed.
+- The row with «Показать ещё» leaves below it what the card leaves above it:
+  `pagination.css` grows from 34 828 to 36 308 bytes. A demo panel that stood in
+  every table, closed and empty, took the space there and is gone.
+
 - The admin menu has a search panel, and its submenu has a header that says
   where you are. `admin-menu.css` grows from 61 826 to 76 050 bytes: the panel,
   its field with the `Esc` key hint, result groups with the matched part marked,
