@@ -8,6 +8,17 @@
 
 ### Добавлено
 
+- Inter Variable ships with Core again. The family tokens have named Inter
+  since the fontsource dependency was dropped, but nothing shipped the font, so
+  a page got Inter only where the reader had it installed. `core.css` now
+  declares seven Inter Variable faces — one per script, with `unicode-range`
+  and `font-display: optional` — and the local `Inter Fallback` face (Arial
+  with metric overrides) that holds the geometry of a cold first paint.
+  `--sf-text--family`, `--sf-heading--family` and `--sf-display--family` lead
+  with them and end in the system stack. Seven hashed woff2 files (218 512
+  bytes) sit next to `css/`; a Latin and Cyrillic page loads two of them,
+  67 004 bytes. `core.css` grows from 108 209 to 110 544 bytes. Inter 5.3.0
+  from fontsource, OFL-1.1; the licence is in the third-party notices.
 - `sf-flag` — флаг страны картинкой, а не эмодзи. Набор поставляется дважды:
   прямоугольный 28×20 и круглый 24×24, по 247 кодов в каждом — составы
   совпадают, и телефонное поле целиком закрыто картинками. Круглый не обрезан из прямоугольного, а перерисован, поэтому форма
