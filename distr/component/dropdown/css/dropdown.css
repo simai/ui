@@ -1469,12 +1469,19 @@
   .sf-dropdown.sf-dropdown--outlined.sf-dropdown--text:has(> .sf-dropdown-field > :disabled) > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > .sf-icon, .sf-dropdown.sf-dropdown--outlined.sf-dropdown--tag:has(> .sf-dropdown-field > :disabled) > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > .sf-icon, .sf-dropdown.sf-dropdown--filled.sf-dropdown--tag:has(> .sf-dropdown-field > :disabled) > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > .sf-icon {
     --sf-icon--color: var(--sf-on-disable);
   }
-  .sf-dropdown.sf-dropdown--size-1\/3.sf-dropdown--outlined.sf-dropdown--tag .sf-dropdown-field {
+  .sf-dropdown.sf-dropdown--size-1\/3.sf-dropdown--filled.sf-dropdown--tag[\:not-has\(\%3E\%20.sf-dropdown-field\%20\%3E\%20\:disabled\)] .sf-dropdown-field, .sf-dropdown.sf-dropdown--size-1\/3.sf-dropdown--outlined.sf-dropdown--tag .sf-dropdown-field {
     --sf-dropdown-field--gap: var(--sf-space-1\/4);
-    --sf-dropdown-field--padding-bottom: var(--sf-ui-1\/2--space-y-tightness-default);
+    --sf-dropdown-field--padding-bottom: var(--sf-ui-1\/3--space-y-tightness-default);
     --sf-dropdown-field--padding-inline-end: var(--sf-ui-1\/3--space-x);
     --sf-dropdown-field--padding-inline-start: var(--sf-ui-1\/3--space-x);
-    --sf-dropdown-field--padding-top: var(--sf-ui-1\/2--space-y-tightness-default);
+    --sf-dropdown-field--padding-top: var(--sf-ui-1\/3--space-y-tightness-default);
+  }
+  .sf-dropdown.sf-dropdown--size-1\/3.sf-dropdown--filled.sf-dropdown--tag:not(:has(> .sf-dropdown-field > :disabled)) .sf-dropdown-field, .sf-dropdown.sf-dropdown--size-1\/3.sf-dropdown--outlined.sf-dropdown--tag .sf-dropdown-field {
+    --sf-dropdown-field--gap: var(--sf-space-1\/4);
+    --sf-dropdown-field--padding-bottom: var(--sf-ui-1\/3--space-y-tightness-default);
+    --sf-dropdown-field--padding-inline-end: var(--sf-ui-1\/3--space-x);
+    --sf-dropdown-field--padding-inline-start: var(--sf-ui-1\/3--space-x);
+    --sf-dropdown-field--padding-top: var(--sf-ui-1\/3--space-y-tightness-default);
   }
   .sf-dropdown.sf-dropdown--size-1\/3.sf-dropdown--outlined.sf-dropdown--tag > .sf-dropdown-field > .sf-dropdown-tag-container > .sf-tag.sf-tag--icon > .sf-icon, .sf-dropdown.sf-dropdown--size-1\/2.sf-dropdown--outlined.sf-dropdown--text > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > .sf-icon, .sf-dropdown.sf-dropdown--size-1\/2.sf-dropdown--outlined.sf-dropdown--tag > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > .sf-icon, .sf-dropdown.sf-dropdown--size-1\/2.sf-dropdown--filled.sf-dropdown--text > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > .sf-icon, .sf-dropdown.sf-dropdown--size-1\/2.sf-dropdown--filled.sf-dropdown--tag > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > .sf-icon {
     --sf-icon--font-size: var(--sf-icon-size-1);
@@ -1486,26 +1493,7 @@
     --sf-tag-alt--padding-inline-end: var(--sf-ui-1\/3--space-x);
     --sf-tag-alt--padding-inline-start: var(--sf-ui-1\/3--space-x);
   }
-  .sf-dropdown.sf-dropdown--size-1\/3.sf-dropdown--filled.sf-dropdown--tag[\:not-has\(\%3E\%20.sf-dropdown-field\%20\%3E\%20\:disabled\)] .sf-dropdown-field, .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field {
-    min-height: var(--sf-ui-1\/2--control-height);
-    min-block-size: var(--sf-ui-1\/2--control-height);
-    --sf-dropdown-field--gap: var(--sf-space-1\/4);
-    --sf-dropdown-field--padding-bottom: var(--sf-ui-1\/2--space-y-tightness-default);
-    --sf-dropdown-field--padding-inline-end: var(--sf-ui-1\/2--space-x);
-    --sf-dropdown-field--padding-inline-start: var(--sf-ui-1\/2--space-x);
-    --sf-dropdown-field--padding-top: var(--sf-ui-1\/2--space-y-tightness-default);
-  }
-  .sf-dropdown.sf-dropdown--size-1\/3.sf-dropdown--filled.sf-dropdown--tag[\:not-has\(\%3E\%20.sf-dropdown-field\%20\%3E\%20\:disabled\)] .sf-dropdown-field, .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field {
-    min-height: var(--sf-ui-1\/2--control-height);
-    min-height: var(--sf-ui-1\/2--control-height);
-    min-block-size: var(--sf-ui-1\/2--control-height);
-    --sf-dropdown-field--gap: var(--sf-space-1\/4);
-    --sf-dropdown-field--padding-bottom: var(--sf-ui-1\/2--space-y-tightness-default);
-    --sf-dropdown-field--padding-inline-end: var(--sf-ui-1\/2--space-x);
-    --sf-dropdown-field--padding-inline-start: var(--sf-ui-1\/2--space-x);
-    --sf-dropdown-field--padding-top: var(--sf-ui-1\/2--space-y-tightness-default);
-  }
-  .sf-dropdown.sf-dropdown--size-1\/3.sf-dropdown--filled.sf-dropdown--tag:not(:has(> .sf-dropdown-field > :disabled)) .sf-dropdown-field, .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field {
+  .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field {
     min-height: var(--sf-ui-1\/2--control-height);
     min-block-size: var(--sf-ui-1\/2--control-height);
     --sf-dropdown-field--gap: var(--sf-space-1\/4);
@@ -1788,6 +1776,76 @@
     min-inline-size: 0;
     word-wrap: anywhere;
   }
+  /* The field's text line for each size, on the root so a tag can read it (the
+     input's own variables live on the input). The box is that line less the
+     field's two borders: the control height counts its border inside, so a text
+     field's input line is the line height minus the borders too. */
+  .sf-dropdown.sf-dropdown--size-1\/3 {
+    --sf-dropdown-tag-line--font-size: var(--sf-text-size-1\/3);
+    --sf-dropdown-tag-line--height: var(--sf-text-height-1\/3);
+  }
+  .sf-dropdown.sf-dropdown--size-1\/2 {
+    --sf-dropdown-tag-line--font-size: var(--sf-text-size-1\/2);
+    --sf-dropdown-tag-line--height: var(--sf-text-height-1\/2);
+  }
+  .sf-dropdown.sf-dropdown--size-1 {
+    --sf-dropdown-tag-line--font-size: var(--sf-text-size-1);
+    --sf-dropdown-tag-line--height: var(--sf-text-height-1);
+  }
+  .sf-dropdown.sf-dropdown--size-2 {
+    --sf-dropdown-tag-line--font-size: var(--sf-text-size-2);
+    --sf-dropdown-tag-line--height: var(--sf-text-height-2);
+  }
+  .sf-dropdown.sf-dropdown--size-3 {
+    --sf-dropdown-tag-line--font-size: var(--sf-text-size-3);
+    --sf-dropdown-tag-line--height: var(--sf-text-height-3);
+  }
+  .sf-dropdown {
+    --sf-dropdown-tag-line--box: calc(var(--sf-dropdown-tag-line--height) - 2 * var(--sf-px));
+  }
+  /* A selected tag sits on the field's own text line, so a field holding tags is
+     as tall as one holding text. The tag was a free-standing size 1 tag: 40px
+     tall in a field whose line is 24px, with its inline space counted twice --
+     on the tag and again on its label -- so a field with one tag grew to 56px
+     and two short names no longer fitted on one line (106px measured). Inside
+     the field the tag takes the field's font and line height for every size,
+     drops its block padding, and keeps one small inline step on each side; the
+     remove button shrinks to the same line. Several tags still wrap, one line
+     at a time. */
+  .sf-dropdown .sf-dropdown-tag-container > .sf-tag.sf-tag {
+    --sf-tag--padding-top: 0;
+    --sf-tag--padding-bottom: 0;
+    --sf-tag--padding-inline-start: var(--sf-space-1\/3);
+    --sf-tag--padding-inline-end: var(--sf-space-1\/4);
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-block: 0;
+    min-height: var(--sf-dropdown-tag-line--box);
+    min-block-size: var(--sf-dropdown-tag-line--box);
+    gap: var(--sf-space-1\/4);
+  }
+  .sf-dropdown .sf-dropdown-tag-container > .sf-tag.sf-tag > .sf-tag-container {
+    --sf-tag-container--padding-inline-start: 0;
+    --sf-tag-container--padding-inline-end: 0;
+    --sf-tag-container--font-size: var(--sf-dropdown-tag-line--font-size);
+    --sf-tag-container--line-height: var(--sf-dropdown-tag-line--box);
+    padding-left: 0;
+    padding-right: 0;
+    padding-inline: 0;
+    font-size: var(--sf-dropdown-tag-line--font-size);
+    line-height: var(--sf-dropdown-tag-line--box);
+  }
+  .sf-dropdown .sf-dropdown-tag-container > .sf-tag.sf-tag > .sf-icon-button {
+    height: var(--sf-dropdown-tag-line--box);
+    block-size: var(--sf-dropdown-tag-line--box);
+    width: var(--sf-dropdown-tag-line--box);
+    inline-size: var(--sf-dropdown-tag-line--box);
+    min-height: 0;
+    min-block-size: 0;
+    min-width: 0;
+    min-inline-size: 0;
+    padding: 0;
+  }
   .sf-dropdown .sf-dropdown-tag-container .sf-tag > button:not(.does-not-exist) {
     flex-shrink: 0;
   }
@@ -1829,6 +1887,22 @@
   .sf-dropdown.sf-dropdown--tag > .sf-dropdown-field > button {
     position: static;
     flex-shrink: 0;
+    /* In flow, so wrapped tags never run under it -- but no taller than the
+       field's text line, or a field holding tags grows past a field holding
+       text. The icon stays centred and may overhang the line; it does not take
+       part in the line height. */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: var(--sf-dropdown-tag-line--box);
+    block-size: var(--sf-dropdown-tag-line--box);
+    width: var(--sf-dropdown-tag-line--box);
+    inline-size: var(--sf-dropdown-tag-line--box);
+    min-height: 0;
+    min-block-size: 0;
+    min-width: 0;
+    min-inline-size: 0;
+    padding: 0;
   }
   .sf-dropdown .sf-list {
     left: 0;
