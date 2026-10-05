@@ -34,6 +34,8 @@
 
 ### Изменено
 
+- Form fields on one ladder and one set of axes: a text field's leading icon takes the line at every size; a textarea starts its text where a text field does; a dropdown stands 4px under its label like the other fields; the phone field's flag is three quarters of the line like a dropdown flag, and its country list has rows as tall as the field with the field's flag on the field flag's axis.
+- New browser probe tests/browser/field-composition.cli.js (96 cases, zero tolerance).
 - Dropdown: the field and its open list are one composition. Field pictures take the whole text line (24px at size 1 on desktop, as in the list) and the block padding gives up the border, so heights are unchanged; options compensate the list inset, so the picture, the label and the check sit on the field's picture, value and chevron axes; flags are three quarters of the line in both; a mobile size 1/2 field is 28px like a text field.
 - New standard docs/foundation-composition-geometry.md and the browser probe tests/browser/dropdown-alignment.cli.js (72 cases, zero tolerance).
 - Checkbox, radio and switch: the hit area reaches at least 24×24 px around a smaller mark (WCAG 2.2, 2.5.8); the mark itself does not change.
