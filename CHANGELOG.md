@@ -34,6 +34,8 @@
 
 ### Изменено
 
+- A chosen avatar in the dropdown field is line-sized again, like the icon,
+  colour dot and flag, with the ordinary field padding.
 - A filled field turns into the ordinary field while focus is inside: input,
   textarea, dropdown (also while its list is open) and code field take the
   bordered surface (`--sf-surface-0`) and a visible boundary, and the fill
