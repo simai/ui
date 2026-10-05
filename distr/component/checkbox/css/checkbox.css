@@ -31,6 +31,10 @@
     bottom: min(0px, (100% - var(--sf-c2)) / 2);
     left: min(0px, (100% - var(--sf-c2)) / 2);
     inset: min(0px, (100% - var(--sf-c2)) / 2) min(0px, (100% - var(--sf-c2)) / 2);
+    width: max(100%, var(--sf-c2));
+    inline-size: max(100%, var(--sf-c2));
+    height: max(100%, var(--sf-c2));
+    block-size: max(100%, var(--sf-c2));
     margin: 0;
     opacity: 0;
     cursor: inherit;
