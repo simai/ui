@@ -16,6 +16,18 @@
 
 ### Добавлено
 
+- Tags get five sizes, density and an inline mode. Sizes `1/3`, `2` and `3`
+  join `1/2` and `1` (text 12, 14, 16, 20 and 24px); every size publishes its
+  text on the root as `--sf-tag--font-size` and `--sf-tag--line-height`.
+  `spacing-compact`, `spacing-comfortable` and `spacing-spacious` move the block
+  padding with the names the buttons use. `sf-tag--inline` sets a tag on
+  another control's text line: no block padding, a flush label, and a remove
+  button the height of the line with its mark at 0.7 of the label; a host may
+  publish the line as `--sf-tag--line`. Sizes 1 and 1/2 look as before. The
+  dropdown now renders its tags inline one size below the field and only
+  publishes `--sf-tag--line`, instead of overriding the tag's padding, label
+  font and close size; the field looks as before. The Smart tag takes
+  `size` 1/3..3, `spacing` and `inline`.
 - `search-title` names the search panel beside the back arrow, defaulting to the
   component's own word. `search-label` stays the magnifier's accessible name,
   which is usually a sentence with the shortcut in it.
