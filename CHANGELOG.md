@@ -34,6 +34,8 @@
 
 ### Изменено
 
+- Checkbox, radio and switch have size 1/2 next to 1 and 2, the same three sizes as form fields (16px on mobile, 20px on desktop).
+- A list item's checkbox takes the nearest form size of the list: a size 1/2 list gets a 1/2 checkbox (it asked for a 1/3 class that never existed), a size 2 list a size 2 checkbox.
 - Form fields (input, textarea, dropdown, quantity, verification, country code, file upload) have three sizes: 1/2, 1 and 2. Sizes 1/3 and 3 are retired; a retired value renders at the nearest kept size (1/3 → 1/2, 3 → 2) and warns once in the console. Buttons, icon buttons, tags, badges and list items keep their full scale.
 - Dropdown field: a flag takes the line height and no field picture can grow the field; a tag stays on one line with an ellipsis; avatar initials fit; a long value ends in an ellipsis.
 - List items: flags and colour dots keep their shape when a label wraps.
