@@ -34,6 +34,9 @@
 
 ### Изменено
 
+- Tabs and pagination on the control height: every tab variant is a size 1 control with its indicator inside the height; a page number is a size 1 control like the arrows beside it (it was 28px on mobile).
+- Inputs for the field renderer set: sf-datepicker `size` (input-size stays as its legacy name), sf-reference-link `size` (1/2, 1, 2), sf-avatar `line` (1/2, 1, 2); sf-file-preview `size` documented as the legacy name for `file-size`; sf-input, sf-textarea, sf-checkbox, sf-switch and sf-file-upload declare the events they emit.
+- New browser probe tests/browser/navigation-composition.cli.js.
 - Tags on the button's ladder: a text-only label is centred; a picture-to-label step is the text step; icons, colour dots, avatars and counts take the size's line and text; a remove mark is always drawn (0.7 of the label's font size, also in plain markup without a close size class) with a 24px target.
 - New browser probe tests/browser/action-composition.cli.js.
 - Checkbox, radio and switch: the label follows the mark at the size's text step (7/8/10 on desktop, 6/6/8 on mobile), the step a dropdown option keeps after its picture.
