@@ -177,24 +177,51 @@
     height: var(--sf-radio-button-mark--height);
     width: var(--sf-radio-button-mark--width);
   }
+  .sf-radio-button.sf-radio-button--size-1\/2 .sf-radio-button-box {
+    --sf-radio-button-box--height: var(--sf-text-height-1\/2);
+    --sf-radio-button-box--width: var(--sf-text-height-1\/2);
+  }
   .sf-radio-button.sf-radio-button--size-1 .sf-radio-button-box {
     --sf-radio-button-box--height: var(--sf-text-height-1);
     --sf-radio-button-box--width: var(--sf-text-height-1);
+  }
+  .sf-radio-button.sf-radio-button--size-1\/2 .sf-radio-button-description {
+    --sf-radio-button-description--font-size: var(--sf-text-size-1\/3);
+    --sf-radio-button-description--line-height: var(--sf-text-height-1\/3);
   }
   .sf-radio-button.sf-radio-button--size-1 .sf-radio-button-description {
     --sf-radio-button-description--font-size: var(--sf-text-size-1\/2);
     --sf-radio-button-description--line-height: var(--sf-text-height-1\/2);
   }
+  .sf-radio-button.sf-radio-button--size-1\/2 .sf-radio-button-text {
+    --sf-radio-button-text--font-size: var(--sf-text-size-1\/2);
+    --sf-radio-button-text--line-height: var(--sf-text-height-1\/2);
+  }
   .sf-radio-button.sf-radio-button--size-1 .sf-radio-button-text {
     --sf-radio-button-text--font-size: var(--sf-text-size-1);
     --sf-radio-button-text--line-height: var(--sf-text-height-1);
+  }
+  .sf-radio-button.sf-radio-button--size-1\/2 .sf-radio-button-text {
+    --sf-radio-button-text--font-family: var(--sf-text--family);
+    --sf-radio-button-text--font-weight: var(--sf-font-weight-medium);
   }
   .sf-radio-button.sf-radio-button--size-1 .sf-radio-button-text {
     --sf-radio-button-text--font-family: var(--sf-text--family);
     --sf-radio-button-text--font-weight: var(--sf-font-weight-medium);
   }
+  .sf-radio-button.sf-radio-button--size-1\/2 .sf-radio-button-top {
+    --sf-radio-button-top--gap: var(--sf-space-1\/4);
+  }
   .sf-radio-button.sf-radio-button--size-1 .sf-radio-button-top {
     --sf-radio-button-top--gap: var(--sf-space-1\/4);
+  }
+  .sf-radio-button.sf-radio-button--size-1\/2[\:has\(input\:checked\)] .sf-radio-button-mark {
+    --sf-radio-button-mark--height: var(--sf-b2);
+    --sf-radio-button-mark--width: var(--sf-b2);
+  }
+  .sf-radio-button.sf-radio-button--size-1\/2:has(input:checked) .sf-radio-button-mark {
+    --sf-radio-button-mark--height: var(--sf-b2);
+    --sf-radio-button-mark--width: var(--sf-b2);
   }
   .sf-radio-button.sf-radio-button--size-1[\:has\(input\:checked\)] .sf-radio-button-mark {
     --sf-radio-button-mark--height: var(--sf-b2);
@@ -209,6 +236,9 @@
   }
   .sf-radio-button:has(input:disabled) .sf-radio-button-text {
     --sf-radio-button-text--color: var(--sf-on-disable);
+  }
+  .sf-radio-button--size-1\/2 {
+    --sf-radio-button--gap: var(--sf-space-1\/4);
   }
   .sf-radio-button--size-1 {
     --sf-radio-button--gap: var(--sf-space-1\/3);
@@ -457,6 +487,14 @@
     transition-property: color, background-color, border-color, box-shadow;
     transition-duration: var(--sf-duration-fast);
     transition-timing-function: var(--sf-animation);
+  }
+  .sf-radio-button--type-font.sf-radio-button--size-1\/2 .sf-radio-text {
+    width: var(--sf-d1);
+    inline-size: var(--sf-d1);
+    height: var(--sf-c1);
+    block-size: var(--sf-c1);
+    font-size: var(--sf-text-size-1\/2);
+    line-height: var(--sf-text-height-1\/2);
   }
   .sf-radio-button--type-font.sf-radio-button--size-1 .sf-radio-text {
     width: var(--sf-d2);

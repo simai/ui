@@ -1419,6 +1419,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   FIELD_SIZES: () => (/* binding */ FIELD_SIZES),
 /* harmony export */   RETIRED_FIELD_SIZES: () => (/* binding */ RETIRED_FIELD_SIZES),
 /* harmony export */   fieldSize: () => (/* binding */ fieldSize),
+/* harmony export */   nearestFieldSize: () => (/* binding */ nearestFieldSize),
 /* harmony export */   retireFieldSizeClass: () => (/* binding */ retireFieldSizeClass)
 /* harmony export */ });
 // Form fields come in three sizes. 1/3 and 3 were retired: no consumer used
@@ -1430,7 +1431,14 @@ const RETIRED_FIELD_SIZES = Object.freeze({
   '1/3': '1/2',
   '3': '2'
 });
-const warned = new Set();
+const warned = new Set(); // A control placed inside something with the whole scale (a list item, say)
+// takes the nearest form size, quietly: the list is not wrong to be 1/3.
+
+function nearestFieldSize(value) {
+  const size = String(value ?? '').trim().toLowerCase();
+  if (FIELD_SIZES.includes(size)) return size;
+  return Object.hasOwn(RETIRED_FIELD_SIZES, size) ? RETIRED_FIELD_SIZES[size] : '1';
+}
 function fieldSize(value, component = 'field', fallback = '1') {
   const size = String(value ?? '').trim().toLowerCase();
   if (FIELD_SIZES.includes(size)) return size;
