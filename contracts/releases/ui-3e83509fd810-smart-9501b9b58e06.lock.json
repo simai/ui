@@ -1,0 +1,59 @@
+{
+  "schema_id": "simai.framework.release-lock",
+  "schema_version": 1,
+  "compatibility_id": "ui-3e83509fd810-smart-9501b9b58e06",
+  "status": "bounded",
+  "profile": "plain-assets-v1",
+  "runtime_sources": {
+    "ui": {
+      "owner": "simai/ui",
+      "tag": null,
+      "tag_object": null,
+      "commit": "3e83509fd8103f5ae4f84f52087b685337987c7c",
+      "tree": "3ff16de42f893ff410bb817ed7766adbfbd83093",
+      "runtime_path": "distr",
+      "runtime_tree": "1a13361bb224e769c365d709627169b9ac8baf47",
+      "archive_sha256": "f370f57dfbe90fd9e4825e3cfb3c37328c2fa11dd6d7c34bc35bc9ffe168b634"
+    },
+    "ui-smart": {
+      "owner": "simai/ui-smart",
+      "tag": null,
+      "tag_object": null,
+      "commit": "9501b9b58e069b5c2c1c85a3204cb49974f1e70e",
+      "tree": "5f1587cf926cb8c06144cc2c5932ea8f4795d921",
+      "runtime_path": "smart",
+      "runtime_tree": "6bd2e748129e9ce3e953a7c3410b83394588321b",
+      "archive_sha256": "fbc33de8de974a68e50b78c407a16b0414fbbe67a7dfb672c35fb6fa702e9799"
+    }
+  },
+  "build_inputs": {
+    "source": {
+      "owner": "simai/ui-source",
+      "commit": "dd69b4c80f02f35290fee530bc696827a4f03aac",
+      "tree": "6b82242327bfef8a4248ae47c2ded1b2e0bfe279",
+      "archive_sha256": "a1d9fb5fc508b336ee002011f14fecaf8e058eda16bf7ce0c04c77d4f989a12e"
+    },
+    "builder": {
+      "owner": "simai/ui-builder",
+      "commit": "d805a72a6c9191a97d2ebd8b86899bf2f25a2e93",
+      "tree": "dd2c4e8fb38cd2c248aa8a47a279a91964754691",
+      "archive_sha256": "34d8edd71ebef2508c099aab5626c37a6ebb171497cc607765a25f5e713e6d9f"
+    },
+    "legacy_compatibility": {
+      "required": false
+    }
+  },
+  "inventory": {
+    "utility_rules": 729,
+    "utility_families": 227,
+    "components": 61,
+    "smart_components": 44,
+    "recipes": 1
+  },
+  "exclusions": [],
+  "claims": {
+    "full_compatible": false,
+    "production_ready": false,
+    "all_items_ready": false
+  }
+}
