@@ -1,3 +1,28 @@
+/* A button's border is inside its control height: the padding gives each side's
+   border back. The side widths are registered as lengths, so a unitless 0
+   written by a group, a tab row or a host still subtracts; unregistered, it
+   would invalidate the padding. Measured before: outline, surface and every
+   segmented button stood 2px taller than its size. */
+@property --sf-icon-button--border-top-width {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
+@property --sf-icon-button--border-bottom-width {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
+@property --sf-icon-button--border-inline-start-width {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
+@property --sf-icon-button--border-inline-end-width {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
 @layer sf.components {
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) justify-content/center (.justify-center) align-items/center (.items-center) */
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-icon-button {
@@ -113,48 +138,48 @@
     border-top-right-radius: var(--sf-icon-button--border-top-left-radius, var(--sf-icon-button--radius));
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-icon-button {
-    padding-left: var(--sf-icon-button--padding-inline-start);
+    padding-left: calc(var(--sf-icon-button--padding-inline-start) - var(--sf-icon-button--border-inline-start-width));
   }
   @supports not (padding-inline-start: initial) {
   html:not([dir="rtl"]) .sf-icon-button {
-    padding-left: var(--sf-icon-button--padding-inline-start);
+    padding-left: calc(var(--sf-icon-button--padding-inline-start) - var(--sf-icon-button--border-inline-start-width));
     }
   }
   .sf-icon-button:where(:dir(ltr)) {
-    padding-left: var(--sf-icon-button--padding-inline-start);
+    padding-left: calc(var(--sf-icon-button--padding-inline-start) - var(--sf-icon-button--border-inline-start-width));
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-icon-button {
-    padding-right: var(--sf-icon-button--padding-inline-start);
+    padding-right: calc(var(--sf-icon-button--padding-inline-start) - var(--sf-icon-button--border-inline-start-width));
   }
   @supports not (padding-inline-start: initial) {
   [dir="rtl"] .sf-icon-button {
-    padding-right: var(--sf-icon-button--padding-inline-start);
+    padding-right: calc(var(--sf-icon-button--padding-inline-start) - var(--sf-icon-button--border-inline-start-width));
     }
   }
   .sf-icon-button:where(:dir(rtl)) {
-    padding-right: var(--sf-icon-button--padding-inline-start);
+    padding-right: calc(var(--sf-icon-button--padding-inline-start) - var(--sf-icon-button--border-inline-start-width));
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-icon-button {
-    padding-right: var(--sf-icon-button--padding-inline-end);
+    padding-right: calc(var(--sf-icon-button--padding-inline-end) - var(--sf-icon-button--border-inline-end-width));
   }
   @supports not (padding-inline-end: initial) {
   html:not([dir="rtl"]) .sf-icon-button {
-    padding-right: var(--sf-icon-button--padding-inline-end);
+    padding-right: calc(var(--sf-icon-button--padding-inline-end) - var(--sf-icon-button--border-inline-end-width));
     }
   }
   .sf-icon-button:where(:dir(ltr)) {
-    padding-right: var(--sf-icon-button--padding-inline-end);
+    padding-right: calc(var(--sf-icon-button--padding-inline-end) - var(--sf-icon-button--border-inline-end-width));
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-icon-button {
-    padding-left: var(--sf-icon-button--padding-inline-end);
+    padding-left: calc(var(--sf-icon-button--padding-inline-end) - var(--sf-icon-button--border-inline-end-width));
   }
   @supports not (padding-inline-end: initial) {
   [dir="rtl"] .sf-icon-button {
-    padding-left: var(--sf-icon-button--padding-inline-end);
+    padding-left: calc(var(--sf-icon-button--padding-inline-end) - var(--sf-icon-button--border-inline-end-width));
     }
   }
   .sf-icon-button:where(:dir(rtl)) {
-    padding-left: var(--sf-icon-button--padding-inline-end);
+    padding-left: calc(var(--sf-icon-button--padding-inline-end) - var(--sf-icon-button--border-inline-end-width));
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-icon-button {
     border-right-width: 0;
@@ -224,12 +249,12 @@
     border-start-end-radius: var(--sf-icon-button--border-top-right-radius, var(--sf-icon-button--radius));
     border-start-start-radius: var(--sf-icon-button--radius);
     border-start-start-radius: var(--sf-icon-button--border-top-left-radius, var(--sf-icon-button--radius));
-    -webkit-padding-start: var(--sf-icon-button--padding-inline-start);
-            padding-inline-start: var(--sf-icon-button--padding-inline-start);
-    padding-top: var(--sf-icon-button--padding-top);
-    -webkit-padding-end: var(--sf-icon-button--padding-inline-end);
-            padding-inline-end: var(--sf-icon-button--padding-inline-end);
-    padding-bottom: var(--sf-icon-button--padding-bottom);
+    -webkit-padding-start: calc(var(--sf-icon-button--padding-inline-start) - var(--sf-icon-button--border-inline-start-width));
+            padding-inline-start: calc(var(--sf-icon-button--padding-inline-start) - var(--sf-icon-button--border-inline-start-width));
+    padding-top: calc(var(--sf-icon-button--padding-top) - var(--sf-icon-button--border-top-width));
+    -webkit-padding-end: calc(var(--sf-icon-button--padding-inline-end) - var(--sf-icon-button--border-inline-end-width));
+            padding-inline-end: calc(var(--sf-icon-button--padding-inline-end) - var(--sf-icon-button--border-inline-end-width));
+    padding-bottom: calc(var(--sf-icon-button--padding-bottom) - var(--sf-icon-button--border-bottom-width));
     background-color: var(--sf-icon-button--background-color);
     border-color: transparent;
     border-color: var(--sf-icon-button--border-color, transparent);
