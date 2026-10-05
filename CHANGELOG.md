@@ -34,6 +34,9 @@
 
 ### Изменено
 
+- Form fields (input, textarea, dropdown, quantity, verification, country code, file upload) have three sizes: 1/2, 1 and 2. Sizes 1/3 and 3 are retired; a retired value renders at the nearest kept size (1/3 → 1/2, 3 → 2) and warns once in the console. Buttons, icon buttons, tags, badges and list items keep their full scale.
+- Dropdown field: a flag takes the line height and no field picture can grow the field; a tag stays on one line with an ellipsis; avatar initials fit; a long value ends in an ellipsis.
+- List items: flags and colour dots keep their shape when a label wraps.
 - A chosen avatar in the dropdown field is line-sized again, like the icon,
   colour dot and flag, with the ordinary field padding.
 - A filled field turns into the ordinary field while focus is inside: input,
