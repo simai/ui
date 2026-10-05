@@ -834,6 +834,19 @@
   .sf-country-code-item:hover {
     background: var(--sf-surface-container-hover);
   }
+  /* The field is as tall as a text field of its size, by the same rule. */
+  .sf-country-code.sf-country-code--size-1\/2 .sf-country-code-field {
+    height: var(--sf-ui-1\/2--control-height);
+    block-size: var(--sf-ui-1\/2--control-height);
+  }
+  .sf-country-code.sf-country-code--size-1 .sf-country-code-field {
+    height: var(--sf-ui-1--control-height);
+    block-size: var(--sf-ui-1--control-height);
+  }
+  .sf-country-code.sf-country-code--size-2 .sf-country-code-field {
+    height: var(--sf-ui-2--control-height);
+    block-size: var(--sf-ui-2--control-height);
+  }
   /* The chevron beside the flag is no taller than the field line either. */
   .sf-country-code.sf-country-code--size-1\/2 .sf-country-code-left .sf-icon {
     --sf-icon--font-size: calc(var(--sf-text-height-1\/2) - 2 * var(--sf-px));
