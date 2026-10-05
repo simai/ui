@@ -34,6 +34,23 @@
 
 ### Изменено
 
+- A filled field turns into the ordinary field while focus is inside: input,
+  textarea, dropdown (also while its list is open) and code field take the
+  bordered surface (`--sf-surface-0`) and a visible boundary, and the fill
+  returns when focus leaves; error, disabled and read-only fields keep their
+  look. A filled code field now marks the current cell, which its fill rule had
+  hidden. A dropdown shows the picture of a single choice — flag, icon, colour
+  dot or avatar — in front of its label in the field. From size 1 up a dropdown
+  holding tags carries compact chips of its own size (32px with 16px text at
+  size 1) with 3px around them, still as tall as a text field; sizes 1/2 and 1/3
+  keep the smaller inline tag. Tags gain the inline and compact pairing.
+- A colour option in a dropdown list is a dot and a label, like an icon
+  option, instead of a tag pill inside the option; its dot, and an avatar in a
+  label group, also reach the field as the picture of the choice.
+- From size 1 up a chosen avatar shows at chip size in the field (32px at size
+  1) with compact field padding, like tags; other pictures stay within the
+  field line. A list item's wrap lays out its own row, so the selected mark sits
+  at the end even in markup without the flex utilities.
 - A dropdown tag's remove mark follows its label: 0.7 of the label's font size
   (about 10px in a size 1 field, 14px in size 3) instead of the generic 12px
   close mark, which read larger than the letters beside it. The remove button
