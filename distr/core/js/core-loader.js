@@ -2018,10 +2018,11 @@ SFLoaderPlugin.prototype.findShortCodes = function (node) {
     node.textContent = '';
   }
 
-  const shortcodeSegments = segments.filter(seg => seg.type === 'shortcode');
+  const shortcodeSegments = segments.filter(seg => seg.type === 'shortcode'); // requestIdleCallback is throttled in a hidden tab and rAF is paused there, so
+  // the fallback goes through the loader's own scheduler.
 
-  const schedule = window.requestIdleCallback || function (cb) {
-    return requestAnimationFrame(() => cb());
+  const schedule = (typeof document !== 'undefined' && document.hidden ? null : window.requestIdleCallback) || function (cb) {
+    return scheduleLoaderWork(() => cb());
   };
 
   const processShortcodes = () => {
@@ -5107,10 +5108,27 @@ SFLoaderPlugin.prototype.getTextNodes = function (node) {
   }
 
   return textNodes;
-};
+}; // A hidden tab pauses requestAnimationFrame, and a tab can be hidden for its
+// whole load: opened in the background, restored with a session, or behind
+// another window. Scheduling the loader's work through rAF alone meant such a
+// tab waited to be shown before anything was mutated -- the bootstrap included
+// -- so it showed un-upgraded markup indefinitely. A consumer found it as a
+// filter window whose rows had no radio and no label: their automation tab is
+// hidden, and the module arrived about five seconds after the window opened.
+// A timer runs in a hidden tab, so that is what a hidden tab gets. No caller
+// uses the handle either of them returns.
+
+
+function scheduleLoaderWork(fn) {
+  if (typeof document !== 'undefined' && document.hidden) {
+    return setTimeout(fn, 0);
+  }
+
+  return requestAnimationFrame(fn);
+}
 
 SFLoaderPlugin.prototype.mutate = function (fn) {
-  return requestAnimationFrame(fn);
+  return scheduleLoaderWork(fn);
 };
 
 SFLoaderPlugin.prototype.ensureLoadedModules = function () {
@@ -5204,10 +5222,10 @@ SFLoaderPlugin.prototype.init = function () {
   };
 
   if (document.readyState === 'complete' || document.readyState === 'interactive') {
-    requestAnimationFrame(bootstrapPrepare);
+    scheduleLoaderWork(bootstrapPrepare);
   } else {
     document.addEventListener('DOMContentLoaded', () => {
-      requestAnimationFrame(bootstrapPrepare);
+      scheduleLoaderWork(bootstrapPrepare);
     });
   } // Fallback: следим за появлением body и динамическими узлами
 
