@@ -442,8 +442,8 @@
   }
   .sf-textarea.sf-textarea--size-1 textarea {
     --sf-textarea-textarea--padding-bottom: calc(var(--sf-ui-1--space-y-tightness-default) - var(--sf-px));
-    --sf-textarea-textarea--padding-inline-end: var(--sf-ui-1--space-x);
-    --sf-textarea-textarea--padding-inline-start: var(--sf-ui-1--space-x);
+    --sf-textarea-textarea--padding-inline-end: calc(var(--sf-ui-1--space-x) + var(--sf-ui-1--text-space-x));
+    --sf-textarea-textarea--padding-inline-start: calc(var(--sf-ui-1--space-x) + var(--sf-ui-1--text-space-x));
     --sf-textarea-textarea--padding-top: calc(var(--sf-ui-1--space-y-tightness-default) - var(--sf-px));
   }
   .sf-textarea.sf-textarea--size-1 textarea[rows="1"] {
@@ -472,8 +472,8 @@
   }
   .sf-textarea.sf-textarea--size-2 textarea {
     --sf-textarea-textarea--padding-bottom: calc(var(--sf-ui-2--space-y-tightness-default) - var(--sf-px));
-    --sf-textarea-textarea--padding-inline-end: var(--sf-ui-2--space-x);
-    --sf-textarea-textarea--padding-inline-start: var(--sf-ui-2--space-x);
+    --sf-textarea-textarea--padding-inline-end: calc(var(--sf-ui-2--space-x) + var(--sf-ui-2--text-space-x));
+    --sf-textarea-textarea--padding-inline-start: calc(var(--sf-ui-2--space-x) + var(--sf-ui-2--text-space-x));
     --sf-textarea-textarea--padding-top: calc(var(--sf-ui-2--space-y-tightness-default) - var(--sf-px));
   }
   .sf-textarea.sf-textarea--size-2 textarea[rows="1"] {
@@ -502,8 +502,8 @@
   }
   .sf-textarea.sf-textarea--size-1\/2 textarea {
     --sf-textarea-textarea--padding-bottom: calc(var(--sf-ui-1\/2--space-y-tightness-default) - var(--sf-px));
-    --sf-textarea-textarea--padding-inline-end: var(--sf-ui-1\/2--space-x);
-    --sf-textarea-textarea--padding-inline-start: var(--sf-ui-1\/2--space-x);
+    --sf-textarea-textarea--padding-inline-end: calc(var(--sf-ui-1\/2--space-x) + var(--sf-ui-1\/2--text-space-x));
+    --sf-textarea-textarea--padding-inline-start: calc(var(--sf-ui-1\/2--space-x) + var(--sf-ui-1\/2--text-space-x));
     --sf-textarea-textarea--padding-top: calc(var(--sf-ui-1\/2--space-y-tightness-default) - var(--sf-px));
   }
   .sf-textarea.sf-textarea--size-1\/2 textarea[rows="1"] {

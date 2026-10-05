@@ -1820,6 +1820,13 @@
     border-end-end-radius: var(--sf-radius--ui);
     border-end-end-radius: var(--sf-tag--border-bottom-right-radius, var(--sf-radius--ui));
   }
+  /* The label row is a flex row whatever the markup says, so its height is its
+     text's line and not the surrounding line box: a label written without the
+     flex class stood 24px tall over a 20px text and put the field 4px further
+     from it than a text field's. */
+  .sf-dropdown .sf-dropdown-label {
+    display: flex;
+  }
   /* A tag in the field stays one line: a narrow field shortens the label with an
      ellipsis instead of breaking it, so the field keeps its height. */
   .sf-dropdown .sf-dropdown-tag-container .sf-tag {
