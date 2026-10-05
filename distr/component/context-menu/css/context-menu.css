@@ -469,30 +469,38 @@
      after a picture or text in a text-only row starts. */
   /* An item is a row that starts at the axis, whatever its markup says: a button
      written without the flex class is a block, and a block button centres its
-     text, so a short item's label sat further right than a long one's. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu .sf-context-menu-content > .sf-button{
+     text, so a short item's label sat further right than a long one's. A Smart
+     menu renders its items inside sf-button hosts, so both shapes are named. */
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu .sf-context-menu-content > .sf-button,html:not([dir="rtl"])
+  .sf-context-menu .sf-context-menu-content > sf-button > .sf-button{
     text-align: left;
   }
   @supports not (text-align: start){
-  html:not([dir="rtl"]) .sf-context-menu .sf-context-menu-content > .sf-button{
+  html:not([dir="rtl"]) .sf-context-menu .sf-context-menu-content > .sf-button,html:not([dir="rtl"])
+  .sf-context-menu .sf-context-menu-content > sf-button > .sf-button{
     text-align: left;
     }
   }
-  .sf-context-menu .sf-context-menu-content > .sf-button:where(:dir(ltr)){
+  .sf-context-menu .sf-context-menu-content > .sf-button:where(:dir(ltr)),
+  .sf-context-menu .sf-context-menu-content > sf-button > .sf-button:where(:dir(ltr)){
     text-align: left;
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu .sf-context-menu-content > .sf-button{
+  _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu .sf-context-menu-content > .sf-button,[dir="rtl"]
+  .sf-context-menu .sf-context-menu-content > sf-button > .sf-button{
     text-align: right;
   }
   @supports not (text-align: start){
-  [dir="rtl"] .sf-context-menu .sf-context-menu-content > .sf-button{
+  [dir="rtl"] .sf-context-menu .sf-context-menu-content > .sf-button,[dir="rtl"]
+  .sf-context-menu .sf-context-menu-content > sf-button > .sf-button{
     text-align: right;
     }
   }
-  .sf-context-menu .sf-context-menu-content > .sf-button:where(:dir(rtl)){
+  .sf-context-menu .sf-context-menu-content > .sf-button:where(:dir(rtl)),
+  .sf-context-menu .sf-context-menu-content > sf-button > .sf-button:where(:dir(rtl)){
     text-align: right;
   }
-  .sf-context-menu .sf-context-menu-content > .sf-button {
+  .sf-context-menu .sf-context-menu-content > .sf-button,
+  .sf-context-menu .sf-context-menu-content > sf-button > .sf-button {
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -511,15 +519,18 @@
     --sf-context-menu--item-inset-end-2: calc(var(--sf-ui-2--space-x) + var(--sf-px) - var(--sf-context-menu-content--padding-inline-end, 0px));
     --sf-context-menu--label-inset-2: calc(var(--sf-context-menu--item-inset-start-2) + var(--sf-ui-2--text-space-x));
   }
-  .sf-context-menu .sf-context-menu-content > .sf-button.sf-button--size-1\/2 {
+  .sf-context-menu .sf-context-menu-content > .sf-button.sf-button--size-1\/2,
+  .sf-context-menu .sf-context-menu-content > sf-button > .sf-button.sf-button--size-1\/2 {
     --sf-button--padding-inline-start: var(--sf-context-menu--item-inset-start-1\/2);
     --sf-button--padding-inline-end: var(--sf-context-menu--item-inset-end-1\/2);
   }
-  .sf-context-menu .sf-context-menu-content > .sf-button.sf-button--size-1 {
+  .sf-context-menu .sf-context-menu-content > .sf-button.sf-button--size-1,
+  .sf-context-menu .sf-context-menu-content > sf-button > .sf-button.sf-button--size-1 {
     --sf-button--padding-inline-start: var(--sf-context-menu--item-inset-start-1);
     --sf-button--padding-inline-end: var(--sf-context-menu--item-inset-end-1);
   }
-  .sf-context-menu .sf-context-menu-content > .sf-button.sf-button--size-2 {
+  .sf-context-menu .sf-context-menu-content > .sf-button.sf-button--size-2,
+  .sf-context-menu .sf-context-menu-content > sf-button > .sf-button.sf-button--size-2 {
     --sf-button--padding-inline-start: var(--sf-context-menu--item-inset-start-2);
     --sf-button--padding-inline-end: var(--sf-context-menu--item-inset-end-2);
   }

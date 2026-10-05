@@ -393,14 +393,16 @@
   .sf-switch.active .sf-switch-inner .sf-switch-icon--off:not(:only-child) {
     opacity: 0;
   }
+  /* The mark is the picture before a label: the label follows it at the size's
+     text step, as an option label follows its picture in a list. */
   .sf-switch--size-1\/2 {
-    --sf-switch--gap: var(--sf-space-1\/4);
+    --sf-switch--gap: var(--sf-ui-1\/2--text-space-x);
   }
   .sf-switch--size-1 {
-    --sf-switch--gap: var(--sf-space-1\/3);
+    --sf-switch--gap: var(--sf-ui-1--text-space-x);
   }
   .sf-switch--size-2 {
-    --sf-switch--gap: var(--sf-space-1\/2);
+    --sf-switch--gap: var(--sf-ui-2--text-space-x);
   }
   .sf-switch.disabled .sf-icon {
     --sf-icon--color: var(--sf-on-disable);
