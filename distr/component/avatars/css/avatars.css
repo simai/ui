@@ -828,6 +828,28 @@
   }
 }
 @layer sf.components {
+  /* An avatar beside a label takes the label's line of a form size, the way an
+     icon does, and its initials half of it. Its own sizes are control heights. */
+  .sf-avatar.sf-avatar--line-1\/2 {
+    --sf-avatar--height: var(--sf-text-height-1\/2);
+    --sf-avatar--width: var(--sf-text-height-1\/2);
+    --sf-avatar--font-size: min(var(--sf-text-size-1\/3), calc(var(--sf-text-height-1\/2) / 2));
+    --sf-avatar--line-height: var(--sf-text-height-1\/2);
+  }
+  .sf-avatar.sf-avatar--line-1 {
+    --sf-avatar--height: var(--sf-text-height-1);
+    --sf-avatar--width: var(--sf-text-height-1);
+    --sf-avatar--font-size: min(var(--sf-text-size-1\/3), calc(var(--sf-text-height-1) / 2));
+    --sf-avatar--line-height: var(--sf-text-height-1);
+  }
+  .sf-avatar.sf-avatar--line-2 {
+    --sf-avatar--height: var(--sf-text-height-2);
+    --sf-avatar--width: var(--sf-text-height-2);
+    --sf-avatar--font-size: min(var(--sf-text-size-1\/3), calc(var(--sf-text-height-2) / 2));
+    --sf-avatar--line-height: var(--sf-text-height-2);
+  }
+}
+@layer sf.components {
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) justify-content/flex-start (.justify-start) align-items/center (.items-center) */
   .sf-avatar-label-group {
     background-color: transparent;

@@ -44,13 +44,16 @@
     flex: 1 1 auto;
     align-items: center;
     gap: var(--sf-space-1\/3);
+    gap: var(--sf-reference-link--main-gap, var(--sf-space-1\/3));
     min-width: var(--sf-0);
     min-inline-size: var(--sf-0);
     color: var(--sf-on-surface);
     font-family: var(--sf-text--family);
     font-size: var(--sf-text-size-1);
+    font-size: var(--sf-reference-link--font-size, var(--sf-text-size-1));
     font-weight: var(--sf-font-weight-medium);
     line-height: var(--sf-text-height-1);
+    line-height: var(--sf-reference-link--line-height, var(--sf-text-height-1));
   }
   .sf-reference-link :where(.sf-reference-link__link, .sf-reference-link-left > a) {
     min-width: var(--sf-0);
@@ -74,10 +77,21 @@
     flex: none;
     height: var(--sf-text-height-1);
     block-size: var(--sf-text-height-1);
+    height: var(--sf-text-height-1);
+    height: var(--sf-reference-link--line-height, var(--sf-text-height-1));
+    block-size: var(--sf-reference-link--line-height, var(--sf-text-height-1));
     width: var(--sf-text-height-1);
     inline-size: var(--sf-text-height-1);
+    width: var(--sf-text-height-1);
+    width: var(--sf-reference-link--line-height, var(--sf-text-height-1));
+    inline-size: var(--sf-reference-link--line-height, var(--sf-text-height-1));
     color: var(--sf-primary);
     font-size: var(--sf-text-height-1);
+    font-size: var(--sf-reference-link--line-height, var(--sf-text-height-1));
+    /* The icon component sizes itself from these, so the line is passed on. */
+    --sf-icon--font-size: var(--sf-reference-link--line-height, var(--sf-text-height-1));
+    --sf-icon--height: var(--sf-reference-link--line-height, var(--sf-text-height-1));
+    --sf-icon--width: var(--sf-reference-link--line-height, var(--sf-text-height-1));
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-reference-link :where(.sf-reference-link__meta, .sf-reference-link-text) {
     text-align: right;
@@ -107,8 +121,10 @@
     color: var(--sf-on-surface-variant);
     font-family: var(--sf-text--family);
     font-size: var(--sf-text-size-1);
+    font-size: var(--sf-reference-link--font-size, var(--sf-text-size-1));
     font-weight: var(--sf-font-weight-regular);
     line-height: var(--sf-text-height-1);
+    line-height: var(--sf-reference-link--line-height, var(--sf-text-height-1));
     word-wrap: anywhere;
     text-align: end;
   }
@@ -170,55 +186,57 @@
     color: var(--sf-on-disable);
   }
   @media (max-width: 30rem) {
-    .sf-reference-link {
+    /* The card stacks on a narrow screen; a sized reference is a control in a
+       row or a cell and keeps its one line at the row's height. */
+    .sf-reference-link:not([class*=sf-reference-link--size-]) {
       align-items: flex-start;
       flex-direction: column;
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-reference-link :where(.sf-reference-link__meta, .sf-reference-link-text) {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-reference-link:not([class*=sf-reference-link--size-]) :where(.sf-reference-link__meta, .sf-reference-link-text) {
       padding-left: calc(var(--sf-text-height-1) + var(--sf-space-1\/3));
     }
     @supports not (padding-inline-start: initial) {
-    html:not([dir="rtl"]) .sf-reference-link :where(.sf-reference-link__meta, .sf-reference-link-text) {
+    html:not([dir="rtl"]) .sf-reference-link:not([class*=sf-reference-link--size-]) :where(.sf-reference-link__meta, .sf-reference-link-text) {
       padding-left: calc(var(--sf-text-height-1) + var(--sf-space-1\/3));
       }
     }
-    .sf-reference-link :where(.sf-reference-link__meta, .sf-reference-link-text):where(:dir(ltr)) {
+    .sf-reference-link:not([class*=sf-reference-link--size-]) :where(.sf-reference-link__meta, .sf-reference-link-text):where(:dir(ltr)) {
       padding-left: calc(var(--sf-text-height-1) + var(--sf-space-1\/3));
     }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-reference-link :where(.sf-reference-link__meta, .sf-reference-link-text) {
+    _:-ms-input-placeholder, [dir="rtl"] .sf-reference-link:not([class*=sf-reference-link--size-]) :where(.sf-reference-link__meta, .sf-reference-link-text) {
       padding-right: calc(var(--sf-text-height-1) + var(--sf-space-1\/3));
     }
     @supports not (padding-inline-start: initial) {
-    [dir="rtl"] .sf-reference-link :where(.sf-reference-link__meta, .sf-reference-link-text) {
+    [dir="rtl"] .sf-reference-link:not([class*=sf-reference-link--size-]) :where(.sf-reference-link__meta, .sf-reference-link-text) {
       padding-right: calc(var(--sf-text-height-1) + var(--sf-space-1\/3));
       }
     }
-    .sf-reference-link :where(.sf-reference-link__meta, .sf-reference-link-text):where(:dir(rtl)) {
+    .sf-reference-link:not([class*=sf-reference-link--size-]) :where(.sf-reference-link__meta, .sf-reference-link-text):where(:dir(rtl)) {
       padding-right: calc(var(--sf-text-height-1) + var(--sf-space-1\/3));
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-reference-link :where(.sf-reference-link__meta, .sf-reference-link-text) {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-reference-link:not([class*=sf-reference-link--size-]) :where(.sf-reference-link__meta, .sf-reference-link-text) {
       text-align: left;
     }
     @supports not (text-align: start) {
-    html:not([dir="rtl"]) .sf-reference-link :where(.sf-reference-link__meta, .sf-reference-link-text) {
+    html:not([dir="rtl"]) .sf-reference-link:not([class*=sf-reference-link--size-]) :where(.sf-reference-link__meta, .sf-reference-link-text) {
       text-align: left;
       }
     }
-    .sf-reference-link :where(.sf-reference-link__meta, .sf-reference-link-text):where(:dir(ltr)) {
+    .sf-reference-link:not([class*=sf-reference-link--size-]) :where(.sf-reference-link__meta, .sf-reference-link-text):where(:dir(ltr)) {
       text-align: left;
     }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-reference-link :where(.sf-reference-link__meta, .sf-reference-link-text) {
+    _:-ms-input-placeholder, [dir="rtl"] .sf-reference-link:not([class*=sf-reference-link--size-]) :where(.sf-reference-link__meta, .sf-reference-link-text) {
       text-align: right;
     }
     @supports not (text-align: start) {
-    [dir="rtl"] .sf-reference-link :where(.sf-reference-link__meta, .sf-reference-link-text) {
+    [dir="rtl"] .sf-reference-link:not([class*=sf-reference-link--size-]) :where(.sf-reference-link__meta, .sf-reference-link-text) {
       text-align: right;
       }
     }
-    .sf-reference-link :where(.sf-reference-link__meta, .sf-reference-link-text):where(:dir(rtl)) {
+    .sf-reference-link:not([class*=sf-reference-link--size-]) :where(.sf-reference-link__meta, .sf-reference-link-text):where(:dir(rtl)) {
       text-align: right;
     }
-    .sf-reference-link :where(.sf-reference-link__meta, .sf-reference-link-text) {
+    .sf-reference-link:not([class*=sf-reference-link--size-]) :where(.sf-reference-link__meta, .sf-reference-link-text) {
       -webkit-padding-start: calc(var(--sf-text-height-1) + var(--sf-space-1\/3));
               padding-inline-start: calc(var(--sf-text-height-1) + var(--sf-space-1\/3));
       text-align: start;
@@ -237,5 +255,35 @@
     .sf-reference-link:has(:where(.sf-reference-link__link, .sf-reference-link-left > a):focus-visible) {
       outline-color: Highlight;
     }
+  }
+}
+@layer sf.components {
+  /* A sized reference is a control of its size, so it sits in a row of fields
+     or in a table cell at the row's height: the text, the icon on the line, the
+     icon-to-label step and the block padding giving up the border. Without a
+     size it keeps its card spacing. */
+  .sf-reference-link.sf-reference-link--size-1\/2 {
+    --sf-reference-link--padding-block: calc(var(--sf-ui-1\/2--space-y-tightness-default) - var(--sf-px));
+    --sf-reference-link--padding-inline: var(--sf-ui-1\/2--space-x);
+    --sf-reference-link--gap: var(--sf-ui-1\/2--text-space-x);
+    --sf-reference-link--main-gap: var(--sf-ui-1\/2--text-space-x);
+    --sf-reference-link--font-size: var(--sf-text-size-1\/2);
+    --sf-reference-link--line-height: var(--sf-text-height-1\/2);
+  }
+  .sf-reference-link.sf-reference-link--size-1 {
+    --sf-reference-link--padding-block: calc(var(--sf-ui-1--space-y-tightness-default) - var(--sf-px));
+    --sf-reference-link--padding-inline: var(--sf-ui-1--space-x);
+    --sf-reference-link--gap: var(--sf-ui-1--text-space-x);
+    --sf-reference-link--main-gap: var(--sf-ui-1--text-space-x);
+    --sf-reference-link--font-size: var(--sf-text-size-1);
+    --sf-reference-link--line-height: var(--sf-text-height-1);
+  }
+  .sf-reference-link.sf-reference-link--size-2 {
+    --sf-reference-link--padding-block: calc(var(--sf-ui-2--space-y-tightness-default) - var(--sf-px));
+    --sf-reference-link--padding-inline: var(--sf-ui-2--space-x);
+    --sf-reference-link--gap: var(--sf-ui-2--text-space-x);
+    --sf-reference-link--main-gap: var(--sf-ui-2--text-space-x);
+    --sf-reference-link--font-size: var(--sf-text-size-2);
+    --sf-reference-link--line-height: var(--sf-text-height-2);
   }
 }

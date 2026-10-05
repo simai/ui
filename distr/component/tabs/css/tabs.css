@@ -706,3 +706,34 @@
     }
   }
 }
+@layer sf.components {
+  /* A tab is a control of its size: its indicator is a border inside that
+     height, and the padding gives the border back, so an underlined or full
+     tab row is as tall as a plain one (it was taller by its indicator). */
+  .sf-tabs--underline > .sf-tabs-top-container > .sf-tabs-top .sf-button {
+    padding-bottom: calc(var(--sf-button--padding-bottom) - var(--sf-button--border-bottom-width));
+    -webkit-padding-after: calc(var(--sf-button--padding-bottom) - var(--sf-button--border-bottom-width));
+            padding-block-end: calc(var(--sf-button--padding-bottom) - var(--sf-button--border-bottom-width));
+  }
+  .sf-tabs--underline > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button {
+    padding-bottom: calc(var(--sf-icon-button--padding-bottom) - var(--sf-icon-button--border-bottom-width));
+    -webkit-padding-after: calc(var(--sf-icon-button--padding-bottom) - var(--sf-icon-button--border-bottom-width));
+            padding-block-end: calc(var(--sf-icon-button--padding-bottom) - var(--sf-icon-button--border-bottom-width));
+  }
+  .sf-tabs.sf-tabs--full > .sf-tabs-top-container > .sf-tabs-top .sf-button {
+    padding-top: calc(var(--sf-button--padding-top) - var(--sf-button--border-top-width));
+    -webkit-padding-before: calc(var(--sf-button--padding-top) - var(--sf-button--border-top-width));
+            padding-block-start: calc(var(--sf-button--padding-top) - var(--sf-button--border-top-width));
+    padding-bottom: calc(var(--sf-button--padding-bottom) - var(--sf-button--border-bottom-width));
+    -webkit-padding-after: calc(var(--sf-button--padding-bottom) - var(--sf-button--border-bottom-width));
+            padding-block-end: calc(var(--sf-button--padding-bottom) - var(--sf-button--border-bottom-width));
+  }
+  .sf-tabs.sf-tabs--full > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button {
+    padding-top: calc(var(--sf-icon-button--padding-top) - var(--sf-icon-button--border-top-width));
+    -webkit-padding-before: calc(var(--sf-icon-button--padding-top) - var(--sf-icon-button--border-top-width));
+            padding-block-start: calc(var(--sf-icon-button--padding-top) - var(--sf-icon-button--border-top-width));
+    padding-bottom: calc(var(--sf-icon-button--padding-bottom) - var(--sf-icon-button--border-bottom-width));
+    -webkit-padding-after: calc(var(--sf-icon-button--padding-bottom) - var(--sf-icon-button--border-bottom-width));
+            padding-block-end: calc(var(--sf-icon-button--padding-bottom) - var(--sf-icon-button--border-bottom-width));
+  }
+}
