@@ -19,13 +19,18 @@
     position: relative;
     flex-shrink: 0;
   }
+  /* The native control is the hit area. It covers the mark and reaches at
+     least 24px on each axis (WCAG 2.2, 2.5.8) where the mark is smaller: a size
+     1/2 mark is 16px on mobile, a size 1 mark 20. The inset only goes negative,
+     evenly on both sides, so a larger mark keeps its own box and RTL needs
+     nothing. The mark itself does not change. */
   .sf-checkbox-box > input[type=checkbox] {
     position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    inset: 0;
+    top: min(0px, (100% - var(--sf-c2)) / 2);
+    right: min(0px, (100% - var(--sf-c2)) / 2);
+    bottom: min(0px, (100% - var(--sf-c2)) / 2);
+    left: min(0px, (100% - var(--sf-c2)) / 2);
+    inset: min(0px, (100% - var(--sf-c2)) / 2) min(0px, (100% - var(--sf-c2)) / 2);
     margin: 0;
     opacity: 0;
     cursor: inherit;
