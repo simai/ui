@@ -281,20 +281,22 @@
     max-width: 100%;
     max-inline-size: 100%;
     margin: var(--sf-0);
-    padding-top: var(--sf-space-1\/3);
-    -webkit-padding-before: var(--sf-space-1\/3);
-            padding-block-start: var(--sf-space-1\/3);
-    padding-top: var(--sf-space-1\/3);
-    padding-top: var(--sf-menu-element--padding-top, var(--sf-menu-element--padding-block, var(--sf-space-1\/3)));
-    -webkit-padding-before: var(--sf-menu-element--padding-top, var(--sf-menu-element--padding-block, var(--sf-space-1\/3)));
-            padding-block-start: var(--sf-menu-element--padding-top, var(--sf-menu-element--padding-block, var(--sf-space-1\/3)));
-    padding-bottom: var(--sf-space-1\/3);
-    -webkit-padding-after: var(--sf-space-1\/3);
-            padding-block-end: var(--sf-space-1\/3);
-    padding-bottom: var(--sf-space-1\/3);
-    padding-bottom: var(--sf-menu-element--padding-bottom, var(--sf-menu-element--padding-block, var(--sf-space-1\/3)));
-    -webkit-padding-after: var(--sf-menu-element--padding-bottom, var(--sf-menu-element--padding-block, var(--sf-space-1\/3)));
-            padding-block-end: var(--sf-menu-element--padding-bottom, var(--sf-menu-element--padding-block, var(--sf-space-1\/3)));
+    /* A row is a size 1 control: the padding gives up the border, so the
+       row is 40px like a field, not 42. */
+    padding-top: calc((var(--sf-ui-1--control-height) - var(--sf-text-height-1)) / 2 - var(--sf-menu-element--border-width));
+    -webkit-padding-before: calc((var(--sf-ui-1--control-height) - var(--sf-text-height-1)) / 2 - var(--sf-menu-element--border-width));
+            padding-block-start: calc((var(--sf-ui-1--control-height) - var(--sf-text-height-1)) / 2 - var(--sf-menu-element--border-width));
+    padding-top: calc((var(--sf-ui-1--control-height) - var(--sf-text-height-1)) / 2 - var(--sf-menu-element--border-width));
+    padding-top: var(--sf-menu-element--padding-top, var(--sf-menu-element--padding-block, calc((var(--sf-ui-1--control-height) - var(--sf-text-height-1)) / 2 - var(--sf-menu-element--border-width))));
+    -webkit-padding-before: var(--sf-menu-element--padding-top, var(--sf-menu-element--padding-block, calc((var(--sf-ui-1--control-height) - var(--sf-text-height-1)) / 2 - var(--sf-menu-element--border-width))));
+            padding-block-start: var(--sf-menu-element--padding-top, var(--sf-menu-element--padding-block, calc((var(--sf-ui-1--control-height) - var(--sf-text-height-1)) / 2 - var(--sf-menu-element--border-width))));
+    padding-bottom: calc((var(--sf-ui-1--control-height) - var(--sf-text-height-1)) / 2 - var(--sf-menu-element--border-width));
+    -webkit-padding-after: calc((var(--sf-ui-1--control-height) - var(--sf-text-height-1)) / 2 - var(--sf-menu-element--border-width));
+            padding-block-end: calc((var(--sf-ui-1--control-height) - var(--sf-text-height-1)) / 2 - var(--sf-menu-element--border-width));
+    padding-bottom: calc((var(--sf-ui-1--control-height) - var(--sf-text-height-1)) / 2 - var(--sf-menu-element--border-width));
+    padding-bottom: var(--sf-menu-element--padding-bottom, var(--sf-menu-element--padding-block, calc((var(--sf-ui-1--control-height) - var(--sf-text-height-1)) / 2 - var(--sf-menu-element--border-width))));
+    -webkit-padding-after: var(--sf-menu-element--padding-bottom, var(--sf-menu-element--padding-block, calc((var(--sf-ui-1--control-height) - var(--sf-text-height-1)) / 2 - var(--sf-menu-element--border-width))));
+            padding-block-end: var(--sf-menu-element--padding-bottom, var(--sf-menu-element--padding-block, calc((var(--sf-ui-1--control-height) - var(--sf-text-height-1)) / 2 - var(--sf-menu-element--border-width))));
     -webkit-padding-end: var(--sf-space-1);
             padding-inline-end: var(--sf-space-1);
     -webkit-padding-end: var(--sf-menu-element--padding-right, var(--sf-menu-element--padding-inline-end, var(--sf-space-1)));
