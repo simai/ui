@@ -309,13 +309,31 @@ const BOUND_FLAG = "sfDropdownBound";
 const CHECKMARK_SELECTOR = ".sf-list-item-selected-item"; // A selected tag sits on the field line: one size below the field (sizes 1/3
 // and 1/2 both take 1/3), rendered inline, so its label is one text step down
 // and it takes no block padding.
+// From size 1 up the field has room for a compact tag of its own size, with the
+// field's own text; sizes 1/2 and 1/3 do not (one pixel would be left), so
+// their tag goes one size down onto the field line.
 
-const FIELD_TAG_SIZE = Object.freeze({
-  "1/3": "1/3",
-  "1/2": "1/3",
-  "1": "1/2",
-  "2": "1",
-  "3": "2"
+const FIELD_TAG = Object.freeze({
+  "1/3": {
+    size: "1/3",
+    spacing: ""
+  },
+  "1/2": {
+    size: "1/3",
+    spacing: ""
+  },
+  "1": {
+    size: "1",
+    spacing: "compact"
+  },
+  "2": {
+    size: "2",
+    spacing: "compact"
+  },
+  "3": {
+    size: "3",
+    spacing: "compact"
+  }
 });
 
 function isTagDropdown(root) {
@@ -535,14 +553,16 @@ function createTagNode(root, item) {
   const value = getItemValue(item);
   const label = getItemLabel(item);
   const size = root.className.match(/sf-dropdown--size-([^\s]+)/)?.[1] || "1";
-  const tagSize = FIELD_TAG_SIZE[size] || "1/2";
+  const fieldTag = FIELD_TAG[size] || FIELD_TAG["1"];
+  const tagSize = fieldTag.size;
+  const tagSpacing = fieldTag.spacing ? ` spacing-${fieldTag.spacing}` : "";
   const isIconItem = item.classList.contains("sf-list-item--icon");
   const isAvatarItem = item.classList.contains("sf-list-item--avatar");
   const isColorItem = item.classList.contains("sf-list-item--color");
   const isDisabled = isDisabledDropdown(root);
   const tagType = isColorItem ? "color" : isAvatarItem ? "avatar" : "icon";
   const tag = document.createElement("div");
-  tag.className = `sf-tag transition sf-tag--${tagType} sf-tag--size-${tagSize} sf-tag--inline flex flex-row flex-nowrap items-center active`;
+  tag.className = `sf-tag transition sf-tag--${tagType} sf-tag--size-${tagSize} sf-tag--inline${tagSpacing} flex flex-row flex-nowrap items-center active`;
   tag.dataset.value = value;
 
   if (isDisabled) {
@@ -613,12 +633,43 @@ function setTriggerValue(root, value) {
   const input = getTriggerInput(root);
   if (!input) return;
   input.value = value;
+} // A single choice shows its picture in the field as well as its label: the
+// flag of a language, the icon, colour or avatar of an option. The option's
+// first visual is copied in front of the input; a flag is copied unmounted, so
+// the flag component loads it on its own.
+// Searched in document order inside the option, so a colour dot inside the tag
+// markup of a colour option and an avatar inside a label group are found too;
+// a checkbox indicator is never the picture.
+
+
+const FIELD_VISUAL_SELECTOR = ":scope > .sf-list-item-wrap :is(.sf-flag, .sf-icon, .sf-tag-color-icon, .sf-avatar):not(.sf-checkbox *)";
+
+function syncFieldVisual(root, selected) {
+  if (isTagDropdown(root)) return;
+  const field = getField(root);
+  const input = getTriggerInput(root);
+  if (!field || !input) return;
+  field.querySelector(":scope > .sf-dropdown-field-visual")?.remove();
+  if (isMultipleDropdown(root) || selected.length !== 1) return;
+  const source = selected[0].querySelector(FIELD_VISUAL_SELECTOR);
+  if (!source) return;
+  const visual = source.cloneNode(true);
+  visual.classList.add("sf-dropdown-field-visual");
+  visual.setAttribute("aria-hidden", "true");
+
+  if (visual.classList.contains("sf-flag")) {
+    delete visual.dataset.sfFlagReady;
+    visual.replaceChildren();
+  }
+
+  input.before(visual);
 }
 
 function syncSelectionPresentation(root) {
   const selected = getSelectedItems(root);
   const visible = isMultipleDropdown(root) ? selected : selected.slice(0, 1);
   setTriggerValue(root, visible.map(getItemLabel).join(', '));
+  syncFieldVisual(root, visible);
   root.dataset.selectedValue = visible.map(getItemValue).join(',');
   syncTags(root);
   syncHiddenInput(root);

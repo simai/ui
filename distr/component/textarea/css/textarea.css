@@ -732,3 +732,48 @@
     }
   }
 }
+/* A filled field reads as a field only by its fill, so while someone is typing
+   in it -- focus anywhere inside, by pointer or keyboard -- it becomes the
+   ordinary field: the surface of a bordered field and a visible boundary. The
+   fill comes back when focus leaves. Error, disabled and read-only fields keep
+   their own look. */
+@layer sf.components {
+  /* Focus anywhere within the field changes the fill, not the focus ring. */
+  .sf-textarea:not(.error).sf-textarea--filled[\:has\(textarea\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:not\(\:-moz-read-only\)\[focus-within\]\)] textarea {
+    --sf-textarea-textarea--background-color: var(--sf-surface-0);
+  }
+  .sf-textarea:not(.error).sf-textarea--filled[\:has\(textarea\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:not\(\:read-only\)\[focus-within\]\)] textarea {
+    --sf-textarea-textarea--background-color: var(--sf-surface-0);
+  }
+  .sf-textarea:not(.error).sf-textarea--filled:has(textarea:enabled:not(:disabled):not(.disabled):not(:-moz-read-only)[focus-within]) textarea {
+    --sf-textarea-textarea--background-color: var(--sf-surface-0);
+  }
+  .sf-textarea:not(.error).sf-textarea--filled:has(textarea:enabled:not(:disabled):not(.disabled):not(:read-only)[focus-within]) textarea {
+    --sf-textarea-textarea--background-color: var(--sf-surface-0);
+  }
+  .sf-textarea:not(.error).sf-textarea--filled[\:has\(textarea\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:not\(\:-moz-read-only\)\:focus-within\)] textarea {
+    --sf-textarea-textarea--background-color: var(--sf-surface-0);
+  }
+  .sf-textarea:not(.error).sf-textarea--filled[\:has\(textarea\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:not\(\:read-only\)\:focus-within\)] textarea {
+    --sf-textarea-textarea--background-color: var(--sf-surface-0);
+  }
+  .sf-textarea:not(.error).sf-textarea--filled:has(textarea:enabled:not(:disabled):not(.disabled):not(:-moz-read-only):focus-within) textarea {
+    --sf-textarea-textarea--background-color: var(--sf-surface-0);
+  }
+  .sf-textarea:not(.error).sf-textarea--filled:has(textarea:enabled:not(:disabled):not(.disabled):not(:read-only):focus-within) textarea {
+    --sf-textarea-textarea--background-color: var(--sf-surface-0);
+  }
+  /* The boundary of the ordinary field; lighter than the hover rule. */
+  .sf-textarea:not(.error).sf-textarea--filled[\:has\(textarea\[focus-within\]\)] textarea {
+    --sf-textarea-textarea--border-color: var(--sf-outline);
+  }
+  .sf-textarea:not(.error).sf-textarea--filled:has(textarea[focus-within]) textarea {
+    --sf-textarea-textarea--border-color: var(--sf-outline);
+  }
+  .sf-textarea:not(.error).sf-textarea--filled[\:has\(textarea\:focus-within\)] textarea {
+    --sf-textarea-textarea--border-color: var(--sf-outline);
+  }
+  .sf-textarea:not(.error).sf-textarea--filled:has(textarea:focus-within) textarea {
+    --sf-textarea-textarea--border-color: var(--sf-outline);
+  }
+}

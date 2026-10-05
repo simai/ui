@@ -176,6 +176,35 @@
     }
   }
 }
+/* A filled field reads as a field only by its fill, so while someone is typing
+   in it -- focus anywhere inside, by pointer or keyboard -- it becomes the
+   ordinary field: the surface of a bordered field and a visible boundary. The
+   fill comes back when focus leaves. Error, disabled and read-only fields keep
+   their own look. */
+@layer sf.components {
+  .sf-verification--filled:not(.error)[\:has\(.sf-verification-input\:enabled\:focus\)] .sf-verification-cell,
+  .sf-verification-form--filled:not(.error)[\:has\(input\:enabled\:focus\)] .sf-verification-form-wrap .sf-verification {
+    background: var(--sf-surface-0);
+    border-color: var(--sf-outline);
+  }
+  .sf-verification--filled:not(.error):has(.sf-verification-input:enabled:focus) .sf-verification-cell,
+  .sf-verification-form--filled:not(.error):has(input:enabled:focus) .sf-verification-form-wrap .sf-verification {
+    background: var(--sf-surface-0);
+    border-color: var(--sf-outline);
+  }
+  /* The cell the next character goes to. In a filled field the fill rule came
+     after .current and took its border away, so the caret had no place. */
+  .sf-verification--filled:not(.error) .sf-verification-cell.current,
+  .sf-verification--filled:not(.error)[\:has\(.sf-verification-input\:enabled\:focus\)] .sf-verification-cell.current,
+  .sf-verification-form--filled:not(.error)[\:has\(input\:enabled\:focus\)] .sf-verification-form-wrap .sf-verification[\:has\(input\:focus\)] {
+    border-color: var(--sf-primary);
+  }
+  .sf-verification--filled:not(.error) .sf-verification-cell.current,
+  .sf-verification--filled:not(.error):has(.sf-verification-input:enabled:focus) .sf-verification-cell.current,
+  .sf-verification-form--filled:not(.error):has(input:enabled:focus) .sf-verification-form-wrap .sf-verification:has(input:focus) {
+    border-color: var(--sf-primary);
+  }
+}
 @layer sf.components {
   .sf-verification-form {
     display: flex;

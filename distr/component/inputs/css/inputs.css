@@ -948,3 +948,55 @@
     }
   }
 }
+/* A filled field reads as a field only by its fill, so while someone is typing
+   in it -- focus anywhere inside, by pointer or keyboard -- it becomes the
+   ordinary field: the surface of a bordered field and a visible boundary. The
+   fill comes back when focus leaves. Error, disabled and read-only fields keep
+   their own look. */
+@layer sf.states {
+  /* In sf.states with the filled rest and hover rules it has to follow. */
+  /* Focus anywhere within the field changes the fill, not the focus ring,
+     which stays keyboard-only (:focus-visible) under the field focus
+     contract. */
+  .sf-input:not(.error).sf-input--filled[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:not\(\:-moz-read-only\)\[focus-within\]\)] .sf-input-field {
+    --sf-input-field--background-color: var(--sf-surface-0);
+  }
+  .sf-input:not(.error).sf-input--filled[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:not\(\:read-only\)\[focus-within\]\)] .sf-input-field {
+    --sf-input-field--background-color: var(--sf-surface-0);
+  }
+  .sf-input:not(.error).sf-input--filled:has(input:enabled:not(:disabled):not(.disabled):not(:-moz-read-only)[focus-within]) .sf-input-field {
+    --sf-input-field--background-color: var(--sf-surface-0);
+  }
+  .sf-input:not(.error).sf-input--filled:has(input:enabled:not(:disabled):not(.disabled):not(:read-only)[focus-within]) .sf-input-field {
+    --sf-input-field--background-color: var(--sf-surface-0);
+  }
+  .sf-input:not(.error).sf-input--filled[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:not\(\:-moz-read-only\)\:focus-within\)] .sf-input-field {
+    --sf-input-field--background-color: var(--sf-surface-0);
+  }
+  .sf-input:not(.error).sf-input--filled[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:not\(\:read-only\)\:focus-within\)] .sf-input-field {
+    --sf-input-field--background-color: var(--sf-surface-0);
+  }
+  .sf-input:not(.error).sf-input--filled:has(input:enabled:not(:disabled):not(.disabled):not(:-moz-read-only):focus-within) .sf-input-field {
+    --sf-input-field--background-color: var(--sf-surface-0);
+  }
+  .sf-input:not(.error).sf-input--filled:has(input:enabled:not(:disabled):not(.disabled):not(:read-only):focus-within) .sf-input-field {
+    --sf-input-field--background-color: var(--sf-surface-0);
+  }
+  /* The boundary of the ordinary field. Without it the field was the surface
+     with a transparent border: visible while the pointer hovered it, gone as
+     soon as the pointer left, with the caret still inside -- and invisible on a
+     surface-0 panel such as the dropdown list. Lighter than the hover rule, so
+     hover still colours it. */
+  .sf-input:not(.error).sf-input--filled[\:has\(input\[focus-within\]\)] .sf-input-field {
+    --sf-input-field--border-color: var(--sf-outline);
+  }
+  .sf-input:not(.error).sf-input--filled:has(input[focus-within]) .sf-input-field {
+    --sf-input-field--border-color: var(--sf-outline);
+  }
+  .sf-input:not(.error).sf-input--filled[\:has\(input\:focus-within\)] .sf-input-field {
+    --sf-input-field--border-color: var(--sf-outline);
+  }
+  .sf-input:not(.error).sf-input--filled:has(input:focus-within) .sf-input-field {
+    --sf-input-field--border-color: var(--sf-outline);
+  }
+}
