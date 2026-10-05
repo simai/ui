@@ -34,6 +34,9 @@
 
 ### Изменено
 
+- Checkbox, radio and switch: the label follows the mark at the size's text step (7/8/10 on desktop, 6/6/8 on mobile), the step a dropdown option keeps after its picture.
+- Context menu: Smart items rendered inside sf-button hosts take the start-aligned row and the panel axis too.
+- New browser probe tests/browser/choice-composition.cli.js.
 - Menus on the panel axis and the control height: context menu items start their content where a dropdown list's options do (the axis is published as --sf-context-menu--item-inset-*-S and --sf-context-menu--label-inset-S); items are start-aligned rows whatever their markup (short items were centred); a navigation menu row is a 40px size 1 control (it was 42); a Smart text field's leading icon takes the ladder.
 - New browser probe tests/browser/panel-composition.cli.js.
 - Form fields on one ladder and one set of axes: a text field's leading icon takes the line at every size; a textarea starts its text where a text field does; a dropdown stands 4px under its label like the other fields; the phone field's flag is three quarters of the line like a dropdown flag, and its country list has rows as tall as the field with the field's flag on the field flag's axis.
