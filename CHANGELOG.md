@@ -34,6 +34,8 @@
 
 ### Изменено
 
+- Tags on the button's ladder: a text-only label is centred; a picture-to-label step is the text step; icons, colour dots, avatars and counts take the size's line and text; a remove mark is always drawn (0.7 of the label's font size, also in plain markup without a close size class) with a 24px target.
+- New browser probe tests/browser/action-composition.cli.js.
 - Checkbox, radio and switch: the label follows the mark at the size's text step (7/8/10 on desktop, 6/6/8 on mobile), the step a dropdown option keeps after its picture.
 - Context menu: Smart items rendered inside sf-button hosts take the start-aligned row and the panel axis too.
 - New browser probe tests/browser/choice-composition.cli.js.
