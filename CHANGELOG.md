@@ -34,6 +34,8 @@
 
 ### Изменено
 
+- Dropdown: the field and its open list are one composition. Field pictures take the whole text line (24px at size 1 on desktop, as in the list) and the block padding gives up the border, so heights are unchanged; options compensate the list inset, so the picture, the label and the check sit on the field's picture, value and chevron axes; flags are three quarters of the line in both; a mobile size 1/2 field is 28px like a text field.
+- New standard docs/foundation-composition-geometry.md and the browser probe tests/browser/dropdown-alignment.cli.js (72 cases, zero tolerance).
 - Checkbox, radio and switch: the hit area reaches at least 24×24 px around a smaller mark (WCAG 2.2, 2.5.8); the mark itself does not change.
 - Country code: the field is as tall as other fields (32/40/48 instead of 34/42/50).
 - List options: colour options keep their row height and drop the tag padding at sizes 2 and 3; avatar options take the line height, so their rows are as tall as text rows.
