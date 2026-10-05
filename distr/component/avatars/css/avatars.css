@@ -536,6 +536,7 @@
     background-color: var(--sf-avatar--background-color);
     font-size: var(--sf-avatar--font-size);
     line-height: var(--sf-avatar--line-height);
+    white-space: nowrap;
     border-color: transparent;
     border-color: var(--sf-avatar--border-color, transparent);
     border-width: 0;

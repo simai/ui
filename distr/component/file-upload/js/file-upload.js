@@ -2,6 +2,58 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "e6d86f2cd058"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   FIELD_SIZES: () => (/* binding */ FIELD_SIZES),
+/* harmony export */   RETIRED_FIELD_SIZES: () => (/* binding */ RETIRED_FIELD_SIZES),
+/* harmony export */   fieldSize: () => (/* binding */ fieldSize),
+/* harmony export */   retireFieldSizeClass: () => (/* binding */ retireFieldSizeClass)
+/* harmony export */ });
+// Form fields come in three sizes. 1/3 and 3 were retired: no consumer used
+// them, and they could not hold a field's own pictures, tags and targets. A
+// page written for a retired size keeps rendering at the nearest kept size, and
+// says so once in the console so the markup can be updated.
+const FIELD_SIZES = Object.freeze(['1/2', '1', '2']);
+const RETIRED_FIELD_SIZES = Object.freeze({
+  '1/3': '1/2',
+  '3': '2'
+});
+const warned = new Set();
+function fieldSize(value, component = 'field', fallback = '1') {
+  const size = String(value ?? '').trim().toLowerCase();
+  if (FIELD_SIZES.includes(size)) return size;
+
+  if (Object.hasOwn(RETIRED_FIELD_SIZES, size)) {
+    const kept = RETIRED_FIELD_SIZES[size];
+    const key = `${component}:${size}`;
+
+    if (!warned.has(key) && typeof console !== 'undefined') {
+      warned.add(key);
+      console.warn(`[Simai Framework] ${component}: size ${size} is retired for form fields; rendering size ${kept}.`);
+    }
+
+    return kept;
+  }
+
+  return fallback;
+} // Markup written by hand carries its size as a class, so the binder moves a
+// retired size class to the kept one before anything measures the field.
+
+function retireFieldSizeClass(root, block) {
+  if (!root?.classList) return;
+
+  for (const [retired, kept] of Object.entries(RETIRED_FIELD_SIZES)) {
+    const name = `${block}--size-${retired}`;
+    if (!root.classList.contains(name)) continue;
+    root.classList.replace(name, `${block}--size-${fieldSize(retired, block)}`);
+  }
+}
+
+/***/ },
+
 /***/ "c43efa1014a6"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -17,6 +69,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d7f974466839");
 /* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("58661bec99a6");
+/* harmony import */ var _field_size__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e6d86f2cd058");
+
 
 
 const FILE_UPLOAD_SELECTOR = '.sf-file-upload';
@@ -29,9 +83,7 @@ function toBoolean(value, fallback = false) {
 }
 
 function normalizeSize(value) {
-  const normalized = String(value || '').toLowerCase();
-  const supported = ['1/3', '1/2', '1', '2', '3'];
-  return supported.includes(normalized) ? normalized : '1';
+  return (0,_field_size__WEBPACK_IMPORTED_MODULE_2__.fieldSize)(value, 'sf-file-upload');
 }
 
 function formatFileSize(bytes) {
@@ -475,6 +527,7 @@ function applySelectedFiles(root, files = [], source = 'input') {
 }
 
 function bindFileUpload(root) {
+  (0,_field_size__WEBPACK_IMPORTED_MODULE_2__.retireFieldSizeClass)(root, 'sf-file-upload');
   if (!root) return;
   const input = ensureInput(root);
   const filesContainer = getFilesContainer(root); // DOM markers survive cloneNode; listeners and selected File objects do not.

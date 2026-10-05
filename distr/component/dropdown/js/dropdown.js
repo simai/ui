@@ -301,23 +301,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _interaction__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("3a03d4610486");
 /* harmony import */ var _form_reset_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("67eed2647f47");
 /* harmony import */ var _portal__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("a0f23dca0b37");
+/* harmony import */ var _field_size__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("e6d86f2cd058");
+
 
 
 
 const DROPDOWN_SELECTOR = ".sf-dropdown";
 const BOUND_FLAG = "sfDropdownBound";
-const CHECKMARK_SELECTOR = ".sf-list-item-selected-item"; // A selected tag sits on the field line: one size below the field (sizes 1/3
-// and 1/2 both take 1/3), rendered inline, so its label is one text step down
-// and it takes no block padding.
-// From size 1 up the field has room for a compact tag of its own size, with the
-// field's own text; sizes 1/2 and 1/3 do not (one pixel would be left), so
-// their tag goes one size down onto the field line.
+const CHECKMARK_SELECTOR = ".sf-list-item-selected-item"; // From size 1 up the field has room for a compact tag of its own size, with the
+// field's own text. Size 1/2 does not (one pixel would be left), so its tag
+// goes one size down onto the field line, rendered inline: its label is one
+// text step down and it takes no block padding.
 
 const FIELD_TAG = Object.freeze({
-  "1/3": {
-    size: "1/3",
-    spacing: ""
-  },
   "1/2": {
     size: "1/3",
     spacing: ""
@@ -328,10 +324,6 @@ const FIELD_TAG = Object.freeze({
   },
   "2": {
     size: "2",
-    spacing: "compact"
-  },
-  "3": {
-    size: "3",
     spacing: "compact"
   }
 });
@@ -961,6 +953,7 @@ function onSearchInput(event) {
 }
 
 function bindDropdown(root) {
+  (0,_field_size__WEBPACK_IMPORTED_MODULE_3__.retireFieldSizeClass)(root, "sf-dropdown");
   if (isSmartDropdownRoot(root)) return;
   if (!root || root.dataset[BOUND_FLAG] === "1") return;
   const field = getField(root);
@@ -1362,6 +1355,58 @@ function closeDropdownPortal(list) {
     preventScroll: true
   });
   return true;
+}
+
+/***/ },
+
+/***/ "e6d86f2cd058"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   FIELD_SIZES: () => (/* binding */ FIELD_SIZES),
+/* harmony export */   RETIRED_FIELD_SIZES: () => (/* binding */ RETIRED_FIELD_SIZES),
+/* harmony export */   fieldSize: () => (/* binding */ fieldSize),
+/* harmony export */   retireFieldSizeClass: () => (/* binding */ retireFieldSizeClass)
+/* harmony export */ });
+// Form fields come in three sizes. 1/3 and 3 were retired: no consumer used
+// them, and they could not hold a field's own pictures, tags and targets. A
+// page written for a retired size keeps rendering at the nearest kept size, and
+// says so once in the console so the markup can be updated.
+const FIELD_SIZES = Object.freeze(['1/2', '1', '2']);
+const RETIRED_FIELD_SIZES = Object.freeze({
+  '1/3': '1/2',
+  '3': '2'
+});
+const warned = new Set();
+function fieldSize(value, component = 'field', fallback = '1') {
+  const size = String(value ?? '').trim().toLowerCase();
+  if (FIELD_SIZES.includes(size)) return size;
+
+  if (Object.hasOwn(RETIRED_FIELD_SIZES, size)) {
+    const kept = RETIRED_FIELD_SIZES[size];
+    const key = `${component}:${size}`;
+
+    if (!warned.has(key) && typeof console !== 'undefined') {
+      warned.add(key);
+      console.warn(`[Simai Framework] ${component}: size ${size} is retired for form fields; rendering size ${kept}.`);
+    }
+
+    return kept;
+  }
+
+  return fallback;
+} // Markup written by hand carries its size as a class, so the binder moves a
+// retired size class to the kept one before anything measures the field.
+
+function retireFieldSizeClass(root, block) {
+  if (!root?.classList) return;
+
+  for (const [retired, kept] of Object.entries(RETIRED_FIELD_SIZES)) {
+    const name = `${block}--size-${retired}`;
+    if (!root.classList.contains(name)) continue;
+    root.classList.replace(name, `${block}--size-${fieldSize(retired, block)}`);
+  }
 }
 
 /***/ },

@@ -324,18 +324,6 @@
     --sf-file-upload-text--font-size: var(--sf-text-size-2);
     --sf-file-upload-text--line-height: var(--sf-text-height-2);
   }
-  .sf-file-upload--size-3 .sf-file-upload-link {
-    --sf-file-upload-link--font-size: var(--sf-text-size-3);
-    --sf-file-upload-link--line-height: var(--sf-text-height-3);
-  }
-  .sf-file-upload--size-3 .sf-file-upload-block-text {
-    --sf-file-upload-block-text--font-size: var(--sf-text-size-3);
-    --sf-file-upload-block-text--line-height: var(--sf-text-height-3);
-  }
-  .sf-file-upload--size-3 .sf-file-upload-text {
-    --sf-file-upload-text--font-size: var(--sf-text-size-3);
-    --sf-file-upload-text--line-height: var(--sf-text-height-3);
-  }
   .sf-file-upload--size-1\/2 .sf-file-upload-link {
     --sf-file-upload-link--font-size: var(--sf-text-size-1\/2);
     --sf-file-upload-link--line-height: var(--sf-text-height-1\/2);
@@ -347,18 +335,6 @@
   .sf-file-upload--size-1\/2 .sf-file-upload-text {
     --sf-file-upload-text--font-size: var(--sf-text-size-1\/2);
     --sf-file-upload-text--line-height: var(--sf-text-height-1\/2);
-  }
-  .sf-file-upload--size-1\/3 .sf-file-upload-link {
-    --sf-file-upload-link--font-size: var(--sf-text-size-1\/3);
-    --sf-file-upload-link--line-height: var(--sf-text-height-1\/3);
-  }
-  .sf-file-upload--size-1\/3 .sf-file-upload-block-text {
-    --sf-file-upload-block-text--font-size: var(--sf-text-size-1\/3);
-    --sf-file-upload-block-text--line-height: var(--sf-text-height-1\/3);
-  }
-  .sf-file-upload--size-1\/3 .sf-file-upload-text {
-    --sf-file-upload-text--font-size: var(--sf-text-size-1\/3);
-    --sf-file-upload-text--line-height: var(--sf-text-height-1\/3);
   }
   .sf-file-upload--size-1 {
     --sf-file-upload--gap: var(--sf-space-1\/3);
@@ -374,22 +350,8 @@
     --sf-file-upload--padding-inline-start: var(--sf-space-4);
     --sf-file-upload--padding-top: var(--sf-space-2);
   }
-  .sf-file-upload--size-3 {
-    --sf-file-upload--gap: var(--sf-space-1);
-    --sf-file-upload--padding-bottom: var(--sf-space-2);
-    --sf-file-upload--padding-inline-end: var(--sf-space-4);
-    --sf-file-upload--padding-inline-start: var(--sf-space-4);
-    --sf-file-upload--padding-top: var(--sf-space-2);
-  }
   .sf-file-upload--size-1\/2 {
     --sf-file-upload--gap: var(--sf-space-1\/3);
-    --sf-file-upload--padding-bottom: var(--sf-space-1\/2);
-    --sf-file-upload--padding-inline-end: var(--sf-space-2);
-    --sf-file-upload--padding-inline-start: var(--sf-space-2);
-    --sf-file-upload--padding-top: var(--sf-space-1\/2);
-  }
-  .sf-file-upload--size-1\/3 {
-    --sf-file-upload--gap: var(--sf-space-1\/4);
     --sf-file-upload--padding-bottom: var(--sf-space-1\/2);
     --sf-file-upload--padding-inline-end: var(--sf-space-2);
     --sf-file-upload--padding-inline-start: var(--sf-space-2);
@@ -614,61 +576,61 @@
   .sf-upload-progress-top > .sf-icon {
     flex-shrink: 0;
   }
-  .sf-upload-progress--size-1 .sf-upload-progress-content, .sf-upload-progress--size-1\/3 .sf-upload-progress-content, .sf-upload-progress--size-1\/2 .sf-upload-progress-content {
+  .sf-upload-progress--size-1 .sf-upload-progress-content, .sf-upload-progress--size-1\/2 .sf-upload-progress-content {
     --sf-upload-progress-content--gap: var(--sf-space-1\/4);
   }
-  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/3 .sf-upload-progress-top, .sf-upload-progress.sf-upload-progress--done.sf-upload-progress--size-1\/3 .sf-upload-progress-top, .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/3 .sf-upload-progress-top, .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/2 .sf-upload-progress-top, .sf-upload-progress.sf-upload-progress--done.sf-upload-progress--size-1\/2 .sf-upload-progress-top, .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/2 .sf-upload-progress-top, .sf-upload-progress--size-1 .sf-upload-progress-top {
+  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/2 .sf-upload-progress-top, .sf-upload-progress.sf-upload-progress--done.sf-upload-progress--size-1\/2 .sf-upload-progress-top, .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/2 .sf-upload-progress-top, .sf-upload-progress--size-1 .sf-upload-progress-top {
     --sf-upload-progress-top--gap: var(--sf-space-1\/3);
   }
   .sf-upload-progress--size-1 .sf-upload-progress-name {
     --sf-upload-progress-name--font-size: var(--sf-text-size-1);
     --sf-upload-progress-name--line-height: var(--sf-text-height-1);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-3 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-3 .sf-button .sf-icon {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon {
     padding-right: var(--sf-ui-1\/3--space-y-tightness-default);
   }
   @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-3 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-3 .sf-button .sf-icon {
+  html:not([dir="rtl"]) .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon {
     padding-right: var(--sf-ui-1\/3--space-y-tightness-default);
     }
   }
-  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon:where(:dir(ltr)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon:where(:dir(ltr)), .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon:where(:dir(ltr)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon:where(:dir(ltr)), .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-3 .sf-button .sf-icon:where(:dir(ltr)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-3 .sf-button .sf-icon:where(:dir(ltr)) {
+  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon:where(:dir(ltr)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon:where(:dir(ltr)), .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon:where(:dir(ltr)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon:where(:dir(ltr)) {
     padding-right: var(--sf-ui-1\/3--space-y-tightness-default);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-3 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-3 .sf-button .sf-icon {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon {
     padding-left: var(--sf-ui-1\/3--space-y-tightness-default);
   }
   @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-3 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-3 .sf-button .sf-icon {
+  [dir="rtl"] .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon {
     padding-left: var(--sf-ui-1\/3--space-y-tightness-default);
     }
   }
-  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon:where(:dir(rtl)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon:where(:dir(rtl)), .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon:where(:dir(rtl)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon:where(:dir(rtl)), .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-3 .sf-button .sf-icon:where(:dir(rtl)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-3 .sf-button .sf-icon:where(:dir(rtl)) {
+  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon:where(:dir(rtl)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon:where(:dir(rtl)), .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon:where(:dir(rtl)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon:where(:dir(rtl)) {
     padding-left: var(--sf-ui-1\/3--space-y-tightness-default);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-3 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-3 .sf-button .sf-icon {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon {
     padding-left: var(--sf-ui-1\/3--space-y-tightness-default);
   }
   @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-3 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-3 .sf-button .sf-icon {
+  html:not([dir="rtl"]) .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon {
     padding-left: var(--sf-ui-1\/3--space-y-tightness-default);
     }
   }
-  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon:where(:dir(ltr)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon:where(:dir(ltr)), .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon:where(:dir(ltr)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon:where(:dir(ltr)), .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-3 .sf-button .sf-icon:where(:dir(ltr)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-3 .sf-button .sf-icon:where(:dir(ltr)) {
+  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon:where(:dir(ltr)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon:where(:dir(ltr)), .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon:where(:dir(ltr)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon:where(:dir(ltr)) {
     padding-left: var(--sf-ui-1\/3--space-y-tightness-default);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-3 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-3 .sf-button .sf-icon {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon {
     padding-right: var(--sf-ui-1\/3--space-y-tightness-default);
   }
   @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-3 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-3 .sf-button .sf-icon {
+  [dir="rtl"] .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon {
     padding-right: var(--sf-ui-1\/3--space-y-tightness-default);
     }
   }
-  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon:where(:dir(rtl)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon:where(:dir(rtl)), .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon:where(:dir(rtl)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon:where(:dir(rtl)), .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-3 .sf-button .sf-icon:where(:dir(rtl)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-3 .sf-button .sf-icon:where(:dir(rtl)) {
+  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon:where(:dir(rtl)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon:where(:dir(rtl)), .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon:where(:dir(rtl)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon:where(:dir(rtl)) {
     padding-right: var(--sf-ui-1\/3--space-y-tightness-default);
   }
-  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon, .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon, .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon, .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon, .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-3 .sf-button .sf-icon, .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-3 .sf-button .sf-icon {
+  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon, .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon, .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon, .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon {
     padding-bottom: var(--sf-ui-1\/2--space-y-tightness-default);
     -webkit-padding-end: var(--sf-ui-1\/3--space-y-tightness-default);
             padding-inline-end: var(--sf-ui-1\/3--space-y-tightness-default);
@@ -697,36 +659,6 @@
     --sf-upload-progress-repeat--padding-inline: var(--sf-ui-2--space-x);
     --sf-upload-progress-repeat--font-size: var(--sf-text-size-2);
     --sf-upload-progress-repeat--line-height: var(--sf-text-height-2);
-  }
-  .sf-upload-progress--size-3 .sf-upload-progress-content {
-    --sf-upload-progress-content--gap: var(--sf-space-1\/2);
-  }
-  .sf-upload-progress--size-3 .sf-upload-progress-top {
-    --sf-upload-progress-top--gap: var(--sf-space-1);
-  }
-  .sf-upload-progress--size-3 .sf-upload-progress-name {
-    --sf-upload-progress-name--font-size: var(--sf-text-size-3);
-    --sf-upload-progress-name--line-height: var(--sf-text-height-3);
-  }
-  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-3 .sf-upload-progress-repeat {
-    --sf-upload-progress-repeat--padding-block: var(--sf-ui-3--space-y-tightness-default);
-    --sf-upload-progress-repeat--padding-inline: var(--sf-ui-3--space-x);
-    --sf-upload-progress-repeat--font-size: var(--sf-text-size-3);
-    --sf-upload-progress-repeat--line-height: var(--sf-text-height-3);
-  }
-  .sf-upload-progress--size-1\/3 .sf-upload-progress-name {
-    --sf-upload-progress-name--font-size: var(--sf-text-size-1\/3);
-    --sf-upload-progress-name--line-height: var(--sf-text-height-1\/3);
-  }
-  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/3 .sf-button .sf-icon, .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/3 .sf-button .sf-icon {
-    padding-bottom: var(--sf-ui-1\/2--space-y-tightness-default);
-    padding-top: var(--sf-ui-1\/2--space-y-tightness-default);
-  }
-  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/3 .sf-upload-progress-repeat {
-    --sf-upload-progress-repeat--padding-block: var(--sf-ui-1\/3--space-y-tightness-default);
-    --sf-upload-progress-repeat--padding-inline: var(--sf-ui-1\/3--space-x);
-    --sf-upload-progress-repeat--font-size: var(--sf-text-size-1\/3);
-    --sf-upload-progress-repeat--line-height: var(--sf-text-height-1\/3);
   }
   .sf-upload-progress--size-1\/2 .sf-upload-progress-name {
     --sf-upload-progress-name--font-size: var(--sf-text-size-1\/2);
@@ -812,32 +744,11 @@
     --sf-upload-progress-text--font-size: var(--sf-text-size-1);
     --sf-upload-progress-text--line-height: var(--sf-text-height-1);
   }
-  .sf-upload-progress--size-3 {
-    --sf-upload-progress--gap: var(--sf-space-2);
-  }
-  .sf-upload-progress.sf-upload-progress--size-3 .sf-icon {
-    --sf-icon--font-size: var(--sf-text-size-5);
-    --sf-icon--height: var(--sf-text-size-5);
-    --sf-icon--width: var(--sf-text-size-5);
-  }
-  .sf-upload-progress.sf-upload-progress--size-3 .sf-upload-progress-text {
-    --sf-upload-progress-text--font-size: var(--sf-text-size-2);
-    --sf-upload-progress-text--line-height: var(--sf-text-height-2);
-  }
-  .sf-upload-progress--size-1\/3, .sf-upload-progress--size-1\/2 {
+  .sf-upload-progress--size-1\/2 {
     --sf-upload-progress--gap: var(--sf-space-1\/3);
   }
-  .sf-upload-progress.sf-upload-progress--size-1\/3 .sf-icon {
-    --sf-icon--font-size: var(--sf-text-size-1);
-    --sf-icon--height: var(--sf-text-size-1);
-    --sf-icon--width: var(--sf-text-size-1);
-  }
-  .sf-upload-progress--size-1\/3 .sf-upload-progress-top, .sf-upload-progress--size-1\/2 .sf-upload-progress-top {
+  .sf-upload-progress--size-1\/2 .sf-upload-progress-top {
     --sf-upload-progress-top--gap: var(--sf-upload-progress--gap);
-  }
-  .sf-upload-progress.sf-upload-progress--size-1\/3 .sf-upload-progress-text {
-    --sf-upload-progress-text--font-size: var(--sf-text-size-1\/4);
-    --sf-upload-progress-text--line-height: var(--sf-text-height-1\/4);
   }
   .sf-upload-progress.sf-upload-progress--size-1\/2 .sf-icon {
     --sf-icon--font-size: var(--sf-text-size-2);
