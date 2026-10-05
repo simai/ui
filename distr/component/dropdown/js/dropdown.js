@@ -306,7 +306,17 @@ __webpack_require__.r(__webpack_exports__);
 
 const DROPDOWN_SELECTOR = ".sf-dropdown";
 const BOUND_FLAG = "sfDropdownBound";
-const CHECKMARK_SELECTOR = ".sf-list-item-selected-item";
+const CHECKMARK_SELECTOR = ".sf-list-item-selected-item"; // A selected tag sits on the field line: one size below the field (sizes 1/3
+// and 1/2 both take 1/3), rendered inline, so its label is one text step down
+// and it takes no block padding.
+
+const FIELD_TAG_SIZE = Object.freeze({
+  "1/3": "1/3",
+  "1/2": "1/3",
+  "1": "1/2",
+  "2": "1",
+  "3": "2"
+});
 
 function isTagDropdown(root) {
   return root.classList.contains("sf-dropdown--tag");
@@ -525,14 +535,14 @@ function createTagNode(root, item) {
   const value = getItemValue(item);
   const label = getItemLabel(item);
   const size = root.className.match(/sf-dropdown--size-([^\s]+)/)?.[1] || "1";
-  const tagSize = size === "1/3" ? "1/2" : size === "1/2" ? "1/2" : "1";
+  const tagSize = FIELD_TAG_SIZE[size] || "1/2";
   const isIconItem = item.classList.contains("sf-list-item--icon");
   const isAvatarItem = item.classList.contains("sf-list-item--avatar");
   const isColorItem = item.classList.contains("sf-list-item--color");
   const isDisabled = isDisabledDropdown(root);
   const tagType = isColorItem ? "color" : isAvatarItem ? "avatar" : "icon";
   const tag = document.createElement("div");
-  tag.className = `sf-tag transition sf-tag--${tagType} sf-tag--size-${tagSize} flex flex-row flex-nowrap items-center active`;
+  tag.className = `sf-tag transition sf-tag--${tagType} sf-tag--size-${tagSize} sf-tag--inline flex flex-row flex-nowrap items-center active`;
   tag.dataset.value = value;
 
   if (isDisabled) {
