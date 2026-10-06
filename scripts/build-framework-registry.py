@@ -760,10 +760,28 @@ def build_registry(
         raise ContractError(f"recipe_placement_not_safe:{unsafe[0]}")
 
     smart_rules = {rule["name"]: rule for rule in rules if rule.get("type") == "smart"}
-    if len(smart_rules) != expected_counts["smart-component"]:
+    # A Smart composite is loaded by tag like any other Smart element, so it has a
+    # rule of type "smart" -- but this registry has four kinds and composite is not
+    # one of them, so a composite is not an entry here and its rule answers to no
+    # entry. The count held only while no composite had a rule, which was true
+    # until sf-property-view needed one and sf-data-view turned out to need the
+    # same. These two are named rather than inferred, and each must exist, so the
+    # allowance cannot quietly grow or rot.
+    #
+    # Whether a composite should be an entry in its own right is the registry
+    # owner's question, not this check's: it would give a consumer a way to find
+    # sf-property-view and sf-data-view without reading our source, which today it
+    # has not.
+    COMPOSITE_RULES = ("cl-data-view", "cl-property-view")
+    missing_composites = [name for name in COMPOSITE_RULES if name not in smart_rules]
+    if missing_composites:
+        raise ContractError(f"composite_rule_missing:{missing_composites[0]}")
+    if len(smart_rules) - len(COMPOSITE_RULES) != expected_counts["smart-component"]:
         raise ContractError("smart_rule_count_mismatch")
     for entry in (item for item in entries.values() if item["kind"] == "smart-component"):
         rule_name = entry["runtime"].get("rule_name")
+        if rule_name in COMPOSITE_RULES:
+            raise ContractError(f"composite_rule_claimed_by_entry:{entry['id']}")
         rule = smart_rules.get(rule_name)
         if rule is None:
             raise ContractError(f"smart_rule_missing:{entry['id']}")
