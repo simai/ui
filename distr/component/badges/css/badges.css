@@ -447,3 +447,29 @@
     --sf-badge--border-style: solid;
   }
 }
+@layer sf.components {
+  /* On a text line a badge is the line high, its label one text step down and
+     no block padding of its own, so a table row or a row of fields keeps its
+     control height (a size 1/2 badge stood taller than a size 1/2 row's line). */
+  .sf-badge.sf-badge--line-1\/2 {
+    --sf-badge--font-size: var(--sf-text-size-1\/3);
+    --sf-badge--line-height: var(--sf-text-height-1\/2);
+    --sf-badge--padding-block: calc(var(--sf-px) * 0);
+    --sf-badge--padding-inline-start: var(--sf-ui-1\/2--text-space-x);
+    --sf-badge--padding-inline-end: var(--sf-ui-1\/2--text-space-x);
+  }
+  .sf-badge.sf-badge--line-1 {
+    --sf-badge--font-size: var(--sf-text-size-1\/2);
+    --sf-badge--line-height: var(--sf-text-height-1);
+    --sf-badge--padding-block: calc(var(--sf-px) * 0);
+    --sf-badge--padding-inline-start: var(--sf-ui-1--text-space-x);
+    --sf-badge--padding-inline-end: var(--sf-ui-1--text-space-x);
+  }
+  .sf-badge.sf-badge--line-2 {
+    --sf-badge--font-size: var(--sf-text-size-1);
+    --sf-badge--line-height: var(--sf-text-height-2);
+    --sf-badge--padding-block: calc(var(--sf-px) * 0);
+    --sf-badge--padding-inline-start: var(--sf-ui-2--text-space-x);
+    --sf-badge--padding-inline-end: var(--sf-ui-2--text-space-x);
+  }
+}

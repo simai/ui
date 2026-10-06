@@ -103,8 +103,12 @@ function renderProgressScale(root) {
   const step = normalizeProgressScaleStep(value);
   const size = normalizeProgressScaleSize(root.dataset.size);
   const tone = normalizeProgressScaleTone(root.dataset.tone);
-  const showText = normalizeBoolean(root.dataset.showText, true);
-  root.classList.add('sf-progress-scale', 'flex', 'flex-col');
+  const showText = normalizeBoolean(root.dataset.showText, true); // A scale on a text line lays its track and value out in a row; any other
+  // scale stands its value under the track.
+
+  const onLine = /(^|\s)sf-progress-scale--line-/.test(root.className);
+  root.classList.add('sf-progress-scale', 'flex', onLine ? 'flex-row' : 'flex-col');
+  if (onLine) root.classList.remove('flex-col');
   syncScaleClasses(root, step, size, tone);
   root.dataset.value = String(value);
   root.dataset.size = size;
