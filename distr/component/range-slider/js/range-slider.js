@@ -472,12 +472,12 @@ function getNumericValues(unencoded = []) {
   return (Array.isArray(unencoded) ? unencoded : [unencoded]).map(Number);
 }
 
-function dispatchSliderEvent(root, name, unencoded = [], meta = {}) {
+function dispatchSliderEvent(root, name, unencoded = [], meta = {}, eventName = `sf-range-slider-${name}`) {
   const values = getNumericValues(unencoded);
   const eventValues = isMultipleRoot(root) ? values.slice(0, 2) : values.slice(0, 1);
   const eventValue = isMultipleRoot(root) ? eventValues : eventValues[0];
   root.dataset.value = Array.isArray(eventValue) ? eventValue.join(',') : String(eventValue ?? '');
-  root.dispatchEvent(new CustomEvent(`sf-range-slider-${name}`, {
+  root.dispatchEvent(new CustomEvent(eventName, {
     bubbles: true,
     composed: true,
     detail: {
@@ -540,7 +540,16 @@ function bindRangeSlider(root, accessibilityOwner) {
     });
     dispatchSliderEvent(root, 'change', unencoded, {
       handle
-    });
+    }); // `change` is the name every form value control reports a committed change
+    // by; sf-range-slider-change is its legacy name with the same detail. Like
+    // a native control, a value set from code is not a change. It bubbles to a
+    // Smart host, which does not repeat it.
+
+    if (!root._sfSettingValue) {
+      dispatchSliderEvent(root, 'change', unencoded, {
+        handle
+      }, 'change');
+    }
   });
   slider.on('start', (values, handle, unencoded) => {
     dispatchSliderEvent(root, 'start', unencoded, {
@@ -598,7 +607,14 @@ function setRangeSliderValue(root, value) {
   if (!(root instanceof HTMLElement) || !root.noUiSlider) return false;
   const multiple = isMultipleRoot(root);
   const nextValue = multiple && typeof value === 'string' && value.includes(',') ? value.split(',').map(item => item.trim()) : !multiple && Array.isArray(value) ? value[0] : value;
-  root.noUiSlider.set(nextValue);
+  root._sfSettingValue = true;
+
+  try {
+    root.noUiSlider.set(nextValue);
+  } finally {
+    root._sfSettingValue = false;
+  }
+
   return true;
 }
 
