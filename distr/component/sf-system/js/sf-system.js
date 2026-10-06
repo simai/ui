@@ -1139,7 +1139,7 @@ function Search(e = {
       position: 'bottom',
       // Положение
       overlay: 'absolute flex-col items-cross-start',
-      area: 'w-full bg-surface-0 overflow-auto p-4 shadow-3 border-1 radius-3 border-gray-3',
+      area: 'w-full overflow-auto p-4 elevation-3 border-1 radius-3 border-gray-3',
       content: 'w-full'
     },
     load: {

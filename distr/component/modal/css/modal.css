@@ -91,7 +91,10 @@
     padding: var(--sf-modal-surface-padding);
   }
   .sf-modal-surface--elevated {
-    --sf-modal-surface-shadow: var(--sf-ui-shadow-3);
+    /* Elevated is a step, not a shadow alone: surface and shadow of step 3. */
+    --sf-modal-surface-bg: var(--sf-elevation-3--surface);
+    --sf-on-surface-variant: var(--sf-on-elevation-3--variant);
+    --sf-modal-surface-shadow: var(--sf-elevation-3--shadow);
   }
   .sf-modal [data-sf-modal-overlay] {
     background-color: var(--sf-modal-overlay-background);

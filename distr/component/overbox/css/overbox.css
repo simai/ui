@@ -1,37 +1,38 @@
-@charset "UTF-8";
 @layer sf.components {
   .sf-overbox-pointer {
     top: calc(-1 * var(--sf-c1));
     height: var(--sf-c1);
     width: var(--sf-c6);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-overbox-pointer:before{
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-overbox-pointer:before {
     left: var(--sf-a8);
   }
-  @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) .sf-overbox-pointer:before{
+  @supports not (inset-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-overbox-pointer:before {
     left: var(--sf-a8);
     }
   }
-  .sf-overbox-pointer:before:where(:dir(ltr)){
+  .sf-overbox-pointer:before:where(:dir(ltr)) {
     left: var(--sf-a8);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-overbox-pointer:before{
+  _:-ms-input-placeholder, [dir="rtl"] .sf-overbox-pointer:before {
     right: var(--sf-a8);
   }
-  @supports not (inset-inline-start: initial){
-  [dir="rtl"] .sf-overbox-pointer:before{
+  @supports not (inset-inline-start: initial) {
+  [dir="rtl"] .sf-overbox-pointer:before {
     right: var(--sf-a8);
     }
   }
-  .sf-overbox-pointer:before:where(:dir(rtl)){
+  .sf-overbox-pointer:before:where(:dir(rtl)) {
     right: var(--sf-a8);
   }
   .sf-overbox-pointer:before {
     content: "";
-    background-color: #fff;
-    /* Роль вместо сырого цвета: она знает про обе темы. */
-    box-shadow: var(--sf-ui-shadow-2);
+    /* The pointer is part of the overbox, which floats on step 4:
+       white was white in the dark theme too. */
+    background-color: var(--sf-elevation-4--surface);
+    --sf-on-surface-variant: var(--sf-on-elevation-4--variant);
+    box-shadow: var(--sf-elevation-4--shadow);
     width: var(--sf-b6);
     height: var(--sf-b6);
     position: absolute;
@@ -42,26 +43,26 @@
     -webkit-transform-origin: 50% 50%;
     transform-origin: 50% 50%;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-overbox-right{
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-overbox-right {
     right: calc(-1 * var(--sf-c3));
   }
-  @supports not (inset-inline-end: initial){
-  html:not([dir="rtl"]) .sf-overbox-right{
+  @supports not (inset-inline-end: initial) {
+  html:not([dir="rtl"]) .sf-overbox-right {
     right: calc(-1 * var(--sf-c3));
     }
   }
-  .sf-overbox-right:where(:dir(ltr)){
+  .sf-overbox-right:where(:dir(ltr)) {
     right: calc(-1 * var(--sf-c3));
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-overbox-right{
+  _:-ms-input-placeholder, [dir="rtl"] .sf-overbox-right {
     left: calc(-1 * var(--sf-c3));
   }
-  @supports not (inset-inline-end: initial){
-  [dir="rtl"] .sf-overbox-right{
+  @supports not (inset-inline-end: initial) {
+  [dir="rtl"] .sf-overbox-right {
     left: calc(-1 * var(--sf-c3));
     }
   }
-  .sf-overbox-right:where(:dir(rtl)){
+  .sf-overbox-right:where(:dir(rtl)) {
     left: calc(-1 * var(--sf-c3));
   }
   .sf-overbox-right {
@@ -74,26 +75,26 @@
     top: auto;
     bottom: var(--sf-b6);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-overbox-left{
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-overbox-left {
     left: calc(-1 * var(--sf-c3));
   }
-  @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) .sf-overbox-left{
+  @supports not (inset-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-overbox-left {
     left: calc(-1 * var(--sf-c3));
     }
   }
-  .sf-overbox-left:where(:dir(ltr)){
+  .sf-overbox-left:where(:dir(ltr)) {
     left: calc(-1 * var(--sf-c3));
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-overbox-left{
+  _:-ms-input-placeholder, [dir="rtl"] .sf-overbox-left {
     right: calc(-1 * var(--sf-c3));
   }
-  @supports not (inset-inline-start: initial){
-  [dir="rtl"] .sf-overbox-left{
+  @supports not (inset-inline-start: initial) {
+  [dir="rtl"] .sf-overbox-left {
     right: calc(-1 * var(--sf-c3));
     }
   }
-  .sf-overbox-left:where(:dir(rtl)){
+  .sf-overbox-left:where(:dir(rtl)) {
     right: calc(-1 * var(--sf-c3));
   }
   .sf-overbox-left {

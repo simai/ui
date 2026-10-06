@@ -364,6 +364,17 @@
     --sf-elevation-3--surface: light-dark(var(--sf-surface-0), var(--sf-surface-4));
     --sf-elevation-4--surface: light-dark(var(--sf-surface-0), var(--sf-surface-5));
     --sf-elevation-5--surface: light-dark(var(--sf-surface-0), var(--sf-surface-5));
+    /* The shadow of each step, beside its surface: a panel that floats takes
+       both, so a theme or a product retunes height in one place (a dark theme
+       may drop the shadow and keep the surface, or the reverse). The rim is a
+       last layer a theme may switch on to outline raised panels in the dark;
+       it is off: 0 0 0 0 transparent. */
+    --sf-shadow--rim: 0 0 0 0 transparent;
+    --sf-elevation-1--shadow: var(--sf-ui-shadow-1), var(--sf-shadow--rim);
+    --sf-elevation-2--shadow: var(--sf-ui-shadow-2), var(--sf-shadow--rim);
+    --sf-elevation-3--shadow: var(--sf-ui-shadow-3), var(--sf-shadow--rim);
+    --sf-elevation-4--shadow: var(--sf-ui-shadow-4), var(--sf-shadow--rim);
+    --sf-elevation-5--shadow: var(--sf-ui-shadow-5), var(--sf-shadow--rim);
     /* Приглушённый текст на поднятой поверхности. В светлой теме поднятая
        поверхность остаётся обычной, поэтому значение то же, что у
        --sf-on-surface-variant. В тёмной поверхность светлеет со ступенью, и

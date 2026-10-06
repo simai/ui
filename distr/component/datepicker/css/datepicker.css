@@ -796,8 +796,11 @@
   }
   .sf-datepicker {
     --sf-datepicker--inline-size: calc(var(--sf-ui-1--control-height) * 7 + var(--sf-space-1));
-    background-color: var(--sf-surface-0);
-    background-color: var(--sf-datepicker--background-color, var(--sf-surface-0));
+    /* The whole calendar floats on step 3, not only its top band: on the plain
+       surface its body was the page's colour in the dark theme. */
+    background-color: var(--sf-elevation-3--surface);
+    background-color: var(--sf-datepicker--background-color, var(--sf-elevation-3--surface));
+    --sf-on-surface-variant: var(--sf-on-elevation-3--variant);
     border-end-end-radius: var(--sf-radius--surface);
     border-end-end-radius: var(--sf-datepicker--border-bottom-right-radius, var(--sf-radius--surface));
     border-end-start-radius: var(--sf-radius--surface);
@@ -806,8 +809,8 @@
     border-start-end-radius: var(--sf-datepicker--border-top-right-radius, var(--sf-radius--surface));
     border-start-start-radius: var(--sf-radius--surface);
     border-start-start-radius: var(--sf-datepicker--border-top-left-radius, var(--sf-radius--surface));
-    box-shadow: var(--sf-ui-shadow-3);
-    box-shadow: var(--sf-datepicker--box-shadow, var(--sf-ui-shadow-3));
+    box-shadow: var(--sf-elevation-3--shadow);
+    box-shadow: var(--sf-datepicker--box-shadow, var(--sf-elevation-3--shadow));
     width: min(var(--sf-datepicker--inline-size), 100vi - var(--sf-space-2));
     inline-size: min(var(--sf-datepicker--inline-size), 100vi - var(--sf-space-2));
     padding-bottom: var(--sf-space-1\/3);

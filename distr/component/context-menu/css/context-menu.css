@@ -652,8 +652,8 @@
   .sf-context-menu {
     background-color: transparent;
     background-color: var(--sf-context-menu--background-color, transparent);
-    box-shadow: var(--sf-ui-shadow-2);
-    box-shadow: var(--sf-context-menu--box-shadow, var(--sf-ui-shadow-2));
+    box-shadow: var(--sf-elevation-2--shadow);
+    box-shadow: var(--sf-context-menu--box-shadow, var(--sf-elevation-2--shadow));
     border-end-end-radius: var(--sf-radius--surface);
     border-end-end-radius: var(--sf-context-menu--border-end-end-radius, var(--sf-radius--surface));
     border-end-start-radius: var(--sf-radius--surface);
@@ -670,7 +670,7 @@
        подъём не виден — там чёрная тень ничего не даёт. */
     background-color: var(--sf-elevation-1--surface);
     --sf-on-surface-variant: var(--sf-on-elevation-1--variant);
-    box-shadow: var(--sf-ui-shadow-1);
+    box-shadow: var(--sf-elevation-1--shadow);
     height: var(--sf-b2);
     height: var(--sf-context-menu-tail-size, var(--sf-b2));
     width: var(--sf-b2);

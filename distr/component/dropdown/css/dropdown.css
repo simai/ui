@@ -1,3 +1,14 @@
+/* A row's divider is inside its control height: the bottom padding gives the
+   border back, so a standalone row and the same row in a list without
+   dividers stand equally tall. The width is registered as a length, so a
+   unitless 0 written by a list still subtracts; unregistered, it would
+   invalidate the padding. Measured before: a standalone row stood one pixel
+   taller than the control height at every size. */
+@property --sf-list-item--border-bottom-width {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0;
+}
 @layer sf.components {
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) justify-content/flex-start (.justify-start) align-items/center (.items-center) */
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list-item {
@@ -50,12 +61,11 @@
     padding-top: var(--sf-list-item--padding-top);
     -webkit-padding-end: var(--sf-list-item--padding-inline-end);
             padding-inline-end: var(--sf-list-item--padding-inline-end);
-    padding-bottom: var(--sf-list-item--padding-bottom);
+    padding-bottom: calc(var(--sf-list-item--padding-bottom) - var(--sf-list-item--border-bottom-width));
     background-color: var(--sf-list-item--background-color);
     border-color: transparent;
     border-color: var(--sf-list-item--border-color, transparent);
-    border-bottom-width: 0;
-    border-bottom-width: var(--sf-list-item--border-bottom-width, 0);
+    border-bottom-width: var(--sf-list-item--border-bottom-width);
     border-style: solid;
     border-style: var(--sf-list-item--border-style, solid);
     box-shadow: var(--sf-list-item--box-shadow);
@@ -799,7 +809,7 @@
        rule set the variable only under .open, a class the script never puts
        on the root -- it writes sf-dropdown--open, and the portal context drops
        the open modifiers altogether -- so the list never had a shadow. */
-    --sf-list--box-shadow: var(--sf-ui-shadow-2);
+    --sf-list--box-shadow: var(--sf-elevation-2--shadow);
   }
   .sf-dropdown .sf-list .sf-list-item {
     --sf-list-item--border-bottom-width: 0;
@@ -1367,10 +1377,6 @@
   }
   .sf-dropdown.sf-dropdown--filled.sf-dropdown--text:has(> .sf-dropdown-field > :disabled) > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > .sf-icon {
     --sf-icon--color: transparent;
-  }
-  /* utility-hint: flex/1 (.flex-1) */
-  .sf-dropdown.open.sf-dropdown--outlined.sf-dropdown--tag .sf-list, .sf-dropdown.open.sf-dropdown--outlined.sf-dropdown--text .sf-list, .sf-dropdown.open.sf-dropdown--filled.sf-dropdown--text .sf-list, .sf-dropdown.open.sf-dropdown--filled.sf-dropdown--tag .sf-list {
-    --sf-list--box-shadow: var(--sf-ui-shadow-1);
   }
   .sf-dropdown.sf-dropdown--outlined.sf-dropdown--tag[\:not-has\(\%3E\%20.sf-dropdown-field\%20\%3E\%20\:disabled\)][\:has\(\%3E\%20.sf-dropdown-field\:hover\)] .sf-dropdown-field, .sf-dropdown.sf-dropdown--outlined.sf-dropdown--text[\:not-has\(\%3E\%20.sf-dropdown-field\%20\%3E\%20\:disabled\)][\:has\(\%3E\%20.sf-dropdown-field\:hover\)] .sf-dropdown-field {
     --sf-dropdown-field--border-color: var(--sf-primary-hover);
