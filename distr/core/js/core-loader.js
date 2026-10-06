@@ -1701,7 +1701,7 @@ __webpack_require__.r(__webpack_exports__);
 
 const sfEvent = new CustomEvent('sf-loader-ready', {
   detail: {
-    message: 'Все компоненты успешно загружены!',
+    message: 'All components loaded.',
     timestamp: Date.now()
   }
 });
@@ -1821,11 +1821,11 @@ function SFLoaderPlugin(params) {
   this.usePreloader = true;
   this.debugStr = {
     initLoader: 'SFLoaderPlugin: script is run',
-    requiredPluginsNotEmpty: 'SFLoaderPlugin: Параметр обязательных плагинов не пустой',
-    regexpPlugins: 'SFLoaderPlugin: Список плагинов findPlugins ',
-    isExistFileOnreadystatechange: 'SFLoaderPlugin: Проверяем на существование файлов плагина',
-    isExistFilestatus200: 'SFLoaderPlugin: Статус 200',
-    isExistFilestatusNo200: 'SFLoaderPlugin: Статус не 200',
+    requiredPluginsNotEmpty: 'SFLoaderPlugin: the required plugins parameter is not empty',
+    regexpPlugins: 'SFLoaderPlugin: findPlugins list ',
+    isExistFileOnreadystatechange: 'SFLoaderPlugin: checking that the plugin files exist',
+    isExistFilestatus200: 'SFLoaderPlugin: status 200',
+    isExistFilestatusNo200: 'SFLoaderPlugin: status is not 200',
     isExistFileReadyStateNo4: 'SFLoaderPlugin: Ready State no 4',
     searchRegexpRun: 'SFLoaderPlugin: searchRegexp is run'
   };
@@ -3902,7 +3902,7 @@ SFLoaderPlugin.prototype.loadRelationPlugins = function (name, plugins, module, 
             });
           }
         } else {
-          console.warn(`Зависимый плагин находится в другой категории, чем ${module} или вовсе отсутствует - ${relationPlugin}`);
+          console.warn(`The dependent plugin is in a different category than ${module}, or missing: ${relationPlugin}`);
         }
       }
     });
@@ -4896,7 +4896,7 @@ SFLoaderPlugin.prototype.addStyle = async function (pluginURL) {
     });
     style.addEventListener('error', () => {
       style.remove();
-      reject(new Error(`Ошибка загрузки стилей - ${pluginURL}`));
+      reject(new Error(`Failed to load styles: ${pluginURL}`));
     }, {
       once: true
     });
@@ -4915,7 +4915,7 @@ SFLoaderPlugin.prototype.addScript = function (pluginURL, param = {}) {
       resolve();
     });
     script.addEventListener('error', () => {
-      reject(new Error(`Ошибка загрузки скрипта - ${pluginURL}`));
+      reject(new Error(`Failed to load script: ${pluginURL}`));
     });
 
     if (param && param.attributes) {

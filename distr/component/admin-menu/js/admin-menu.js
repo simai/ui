@@ -11,6 +11,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   initAdminMenus: () => (/* binding */ initAdminMenus)
 /* harmony export */ });
 /* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("58661bec99a6");
+/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("8489d1f5bab4");
+
 
 const SMART_TAG = 'SF-ADMIN-MENU';
 const ROOT_SELECTOR = ".sf-admin-menu, .sf-admin-menu-panel:not(.sf-admin-menu-panel-sub)";
@@ -183,7 +185,7 @@ class AdminMenu {
     }
 
     if (text) {
-      text.textContent = state ? "Свернуть" : "Развернуть";
+      text.textContent = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_1__.isRussianPage)(text) ? state ? "Свернуть" : "Развернуть" : state ? "Collapse" : "Expand";
     }
   }
 
@@ -454,6 +456,35 @@ function registerComponent(name, cls) {
   }
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (registerComponent);
+
+/***/ },
+
+/***/ "8489d1f5bab4"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   isRussianPage: () => (/* binding */ isRussianPage),
+/* harmony export */   pageLanguage: () => (/* binding */ pageLanguage),
+/* harmony export */   pageText: () => (/* binding */ pageText)
+/* harmony export */ });
+// The Framework speaks English by default and Russian on a Russian page: the
+// language is the nearest [lang] above the node, else the document's, else
+// English. One rule for every component, so a page never mixes the two
+// because two components looked in different places.
+function pageLanguage(node) {
+  const owner = node && typeof node.closest === 'function' ? node.closest('[lang]') : null;
+  const value = owner?.getAttribute('lang') || globalThis.document?.documentElement?.lang || 'en';
+  return String(value).trim().toLowerCase().split('-')[0] || 'en';
+}
+function isRussianPage(node) {
+  return pageLanguage(node) === 'ru';
+} // Text for `key` from a { en, ru } dictionary in the page's language; English
+// when the language has no entry.
+
+function pageText(dictionary, key, node) {
+  return dictionary[pageLanguage(node)]?.[key] ?? dictionary.en?.[key] ?? key;
+}
 
 /***/ },
 

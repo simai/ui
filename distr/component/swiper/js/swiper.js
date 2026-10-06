@@ -9,6 +9,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("8489d1f5bab4");
+
+
 const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
 
 const numeric = (value, fallback) => Number.isFinite(Number(value)) ? Number(value) : fallback;
@@ -156,7 +159,7 @@ class SimaiSlider {
       const bullet = document.createElement(options.bulletElement || 'span');
       bullet.className = options.bulletClass || 'swiper-pagination-bullet';
       if (bullet instanceof HTMLButtonElement) bullet.type = 'button';
-      bullet.setAttribute('aria-label', `Перейти к слайду ${index + 1}`);
+      bullet.setAttribute('aria-label', (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_0__.isRussianPage)(root) ? `Перейти к слайду ${index + 1}` : `Go to slide ${index + 1}`);
       if (options.clickable) bullet.addEventListener('click', () => this.slideTo(index));
       root.append(bullet);
     });
@@ -254,6 +257,35 @@ class SimaiSlider {
 
 if (typeof window !== 'undefined') window.Swiper = SimaiSlider;
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (SimaiSlider);
+
+/***/ },
+
+/***/ "8489d1f5bab4"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   isRussianPage: () => (/* binding */ isRussianPage),
+/* harmony export */   pageLanguage: () => (/* binding */ pageLanguage),
+/* harmony export */   pageText: () => (/* binding */ pageText)
+/* harmony export */ });
+// The Framework speaks English by default and Russian on a Russian page: the
+// language is the nearest [lang] above the node, else the document's, else
+// English. One rule for every component, so a page never mixes the two
+// because two components looked in different places.
+function pageLanguage(node) {
+  const owner = node && typeof node.closest === 'function' ? node.closest('[lang]') : null;
+  const value = owner?.getAttribute('lang') || globalThis.document?.documentElement?.lang || 'en';
+  return String(value).trim().toLowerCase().split('-')[0] || 'en';
+}
+function isRussianPage(node) {
+  return pageLanguage(node) === 'ru';
+} // Text for `key` from a { en, ru } dictionary in the page's language; English
+// when the language has no entry.
+
+function pageText(dictionary, key, node) {
+  return dictionary[pageLanguage(node)]?.[key] ?? dictionary.en?.[key] ?? key;
+}
 
 /***/ },
 

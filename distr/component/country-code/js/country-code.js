@@ -22,6 +22,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _form_reset_helper__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("67eed2647f47");
 /* harmony import */ var _core_js_position_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("2e9112dbdda9");
 /* harmony import */ var _field_size__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("e6d86f2cd058");
+/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("8489d1f5bab4");
+
 
 
 
@@ -76,7 +78,7 @@ function syncCountryFieldReferences(root, input) {
   if (label?.textContent.trim() || input.hasAttribute('aria-labelledby')) {
     if (generatedName && input.getAttribute('aria-label') === generatedName) input.removeAttribute('aria-label');
   } else if (!authorName) {
-    const name = root.__sfCountryConfig?.locale === 'en' ? 'Phone number' : 'Телефон';
+    const name = root.__sfCountryConfig?.locale === 'ru' ? 'Телефон' : 'Phone number';
     if (input.getAttribute('aria-label') !== name) input.setAttribute('aria-label', name);
     countryGeneratedNames.set(input, name);
   }
@@ -89,7 +91,7 @@ function syncCountryRequired(root, input) {
   const value = String(input.value || '').trim();
   const local = config.showCode ? extractLocalPart(value, root.dataset.dialCode) : value;
   const missing = input.required && value !== '' && !/\d/.test(local);
-  const message = missing ? config.locale === 'en' ? 'Enter a phone number.' : 'Введите номер телефона.' : '';
+  const message = missing ? config.locale === 'ru' ? 'Введите номер телефона.' : 'Enter a phone number.' : '';
   input.setCustomValidity(message);
   countryRequiredMessages.set(input, message);
 }
@@ -126,7 +128,7 @@ function syncCountryAccessibility(root) {
   const config = root.__sfCountryConfig || {};
   const open = root.classList.contains('open');
   const selected = root.__sfCountrySelected;
-  const countryName = config.locale === 'en' ? 'Country code' : 'Код страны';
+  const countryName = config.locale === 'ru' ? 'Код страны' : 'Country code';
   syncCountryFieldReferences(root, input);
   root.querySelectorAll('.sf-country-code-required, .sf-country-code-left .sf-icon').forEach(node => node.setAttribute('aria-hidden', 'true'));
 
@@ -392,11 +394,11 @@ function setOpenState(root, open) {
 }
 
 function resolveConfig(root, input) {
-  const locale = String(root.dataset.locale || input?.dataset.locale || 'ru').toLowerCase();
+  const locale = String(root.dataset.locale || input?.dataset.locale || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_7__.pageLanguage)(root)).toLowerCase();
   const rawMaskStyle = String(root.dataset.maskStyle ?? input?.dataset.maskStyle ?? 'native').toLowerCase();
   const maskStyle = rawMaskStyle === 'brackets' ? 'brackets' : 'native';
   return {
-    locale: locale === 'en' ? 'en' : 'ru',
+    locale: locale === 'ru' ? 'ru' : 'en',
     useMask: toBoolean(root.dataset.useMask ?? input?.dataset.useMask, false),
     useCountryMasks: toBoolean(root.dataset.useCountryMasks ?? input?.dataset.useCountryMasks, true),
     showCode: toBoolean(root.dataset.showCode ?? input?.dataset.showCode, true),
@@ -1647,6 +1649,35 @@ class ComponentObserver {
 
   destroyInternal() {}
 
+}
+
+/***/ },
+
+/***/ "8489d1f5bab4"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   isRussianPage: () => (/* binding */ isRussianPage),
+/* harmony export */   pageLanguage: () => (/* binding */ pageLanguage),
+/* harmony export */   pageText: () => (/* binding */ pageText)
+/* harmony export */ });
+// The Framework speaks English by default and Russian on a Russian page: the
+// language is the nearest [lang] above the node, else the document's, else
+// English. One rule for every component, so a page never mixes the two
+// because two components looked in different places.
+function pageLanguage(node) {
+  const owner = node && typeof node.closest === 'function' ? node.closest('[lang]') : null;
+  const value = owner?.getAttribute('lang') || globalThis.document?.documentElement?.lang || 'en';
+  return String(value).trim().toLowerCase().split('-')[0] || 'en';
+}
+function isRussianPage(node) {
+  return pageLanguage(node) === 'ru';
+} // Text for `key` from a { en, ru } dictionary in the page's language; English
+// when the language has no entry.
+
+function pageText(dictionary, key, node) {
+  return dictionary[pageLanguage(node)]?.[key] ?? dictionary.en?.[key] ?? key;
 }
 
 /***/ },
