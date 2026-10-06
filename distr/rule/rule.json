@@ -876,6 +876,42 @@
     "type": "smart"
   },
   {
+    "name": "cl-data-view",
+    "css": false,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "icons"
+      },
+      {
+        "name": "cl-table"
+      },
+      {
+        "name": "cl-pagination"
+      },
+      {
+        "name": "cl-toast"
+      },
+      {
+        "name": "cl-buttons"
+      },
+      {
+        "name": "cl-checkbox"
+      },
+      {
+        "name": "cl-dropdown"
+      },
+      {
+        "name": "cl-icon-buttons"
+      }
+    ],
+    "tags": [
+      "sf-data-view"
+    ],
+    "type": "smart"
+  },
+  {
     "name": "cl-datepicker",
     "js": true,
     "mode": "smart",
@@ -1200,6 +1236,81 @@
     ],
     "tags": [
       "sf-progress-scale"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-property-view",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "icons"
+      },
+      {
+        "name": "cl-buttons"
+      },
+      {
+        "name": "cl-icon-buttons"
+      },
+      {
+        "name": "cl-tree"
+      },
+      {
+        "name": "cl-tree-item"
+      },
+      {
+        "name": "cl-avatar"
+      },
+      {
+        "name": "cl-badges"
+      },
+      {
+        "name": "cl-tags"
+      },
+      {
+        "name": "cl-reference-link"
+      },
+      {
+        "name": "cl-progress-scale"
+      },
+      {
+        "name": "cl-file-preview"
+      },
+      {
+        "name": "cl-file-upload"
+      },
+      {
+        "name": "cl-inputs"
+      },
+      {
+        "name": "cl-textarea"
+      },
+      {
+        "name": "cl-dropdown"
+      },
+      {
+        "name": "cl-datepicker"
+      },
+      {
+        "name": "cl-switch"
+      },
+      {
+        "name": "cl-checkbox"
+      },
+      {
+        "name": "cl-button-group"
+      },
+      {
+        "name": "cl-list-item"
+      },
+      {
+        "name": "cl-spinner"
+      }
+    ],
+    "tags": [
+      "sf-property-view"
     ],
     "type": "smart"
   },
