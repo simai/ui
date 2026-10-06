@@ -145,7 +145,7 @@
   .sf-checkbox .sf-checkbox-box {
     --sf-checkbox-box--background-color: var(--sf-surface-0);
     --sf-checkbox-box--border: var(--sf-px) solid;
-    --sf-checkbox-box--border-color: var(--sf-outline);
+    --sf-checkbox-box--border-color: var(--sf-outline-control);
     --sf-checkbox-box--border-end-end-radius: var(--sf-radius--ui);
     --sf-checkbox-box--border-end-start-radius: var(--sf-radius--ui);
     --sf-checkbox-box--border-start-end-radius: var(--sf-radius--ui);

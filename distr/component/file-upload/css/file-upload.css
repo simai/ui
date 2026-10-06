@@ -249,7 +249,7 @@
     border-color: var(--sf-file-upload--border-color, transparent);
     box-shadow: var(--sf-file-upload--box-shadow);
     --sf-file-upload--background-color: var(--sf-surface-0);
-    --sf-file-upload--border-color: var(--sf-outline);
+    --sf-file-upload--border-color: var(--sf-outline-control);
   }
   /* utility-hint: flex/1 (.flex-1) display/flex (.flex) flex-direction/column (.flex-col) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-file-upload-bottom--gap) justify-content/flex-start (.justify-start) align-items/center (.items-center) */
   .sf-file-upload .sf-file-upload-bottom {

@@ -336,6 +336,11 @@
     --sf-on-surface-inverse-fixed: var(--sf-neutral-90);
     --sf-outline: light-dark(var(--sf-neutral-50), var(--sf-neutral-60));
     --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+    /* The resting boundary of a control a person fills in or presses: the
+       outline at the opacity that gives exactly WCAG 1.4.11's 3:1 on surface-0
+       (80% light, 64% dark; 3.10:1 and 3.12:1). Calmer than --sf-outline (4.47:1
+       and 5.95:1), still findable. Hover and focus turn it stronger. */
+    --sf-outline-control: light-dark(color-mix(in srgb, var(--sf-neutral-50) 80%, transparent), color-mix(in srgb, var(--sf-neutral-60) 64%, transparent));
     --sf-outline-secondary: light-dark(var(--sf-secondary-50), var(--sf-secondary-60));
     --sf-disable: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
     --sf-on-disable: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));

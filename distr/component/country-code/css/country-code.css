@@ -178,7 +178,7 @@
   .sf-country-code .sf-country-code-field {
     --sf-country-code-field--background-color: var(--sf-surface-0);
     --sf-country-code-field--border: var(--sf-px) solid;
-    --sf-country-code-field--border-color: var(--sf-outline);
+    --sf-country-code-field--border-color: var(--sf-outline-control);
     --sf-country-code-field--border-end-end-radius: var(--sf-ui-radius-default);
     --sf-country-code-field--border-end-start-radius: var(--sf-ui-radius-default);
     --sf-country-code-field--border-start-end-radius: var(--sf-ui-radius-default);
@@ -499,10 +499,10 @@
     --sf-country-code-field--padding-top: calc(var(--sf-ui-1--space-y-tightness-default) - var(--sf-px));
   }
   .sf-country-code[\:not-has\(input\:disabled\)] .sf-country-code-field {
-    --sf-country-code-field--border-color: var(--sf-outline);
+    --sf-country-code-field--border-color: var(--sf-outline-control);
   }
   .sf-country-code:not(:has(input:disabled)) .sf-country-code-field {
-    --sf-country-code-field--border-color: var(--sf-outline);
+    --sf-country-code-field--border-color: var(--sf-outline-control);
   }
   /* The flag and its chevron sit on the field's line less its two borders, the
      way a text field's input line does, so a phone field is as tall as the

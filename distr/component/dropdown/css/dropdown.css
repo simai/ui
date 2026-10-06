@@ -1301,11 +1301,11 @@
   }
   .sf-dropdown.sf-dropdown--outlined.sf-dropdown--text[\:not-has\(\%3E\%20.sf-dropdown-field\%20\%3E\%20\:disabled\)] .sf-dropdown-field, .sf-dropdown.sf-dropdown--outlined.sf-dropdown--tag[\:not-has\(\%3E\%20.sf-dropdown-field\%20\%3E\%20\:disabled\)] .sf-dropdown-field {
     --sf-dropdown-field--background-color: var(--sf-surface-0);
-    --sf-dropdown-field--border-color: var(--sf-outline);
+    --sf-dropdown-field--border-color: var(--sf-outline-control);
   }
   .sf-dropdown.sf-dropdown--outlined.sf-dropdown--text:not(:has(> .sf-dropdown-field > :disabled)) .sf-dropdown-field, .sf-dropdown.sf-dropdown--outlined.sf-dropdown--tag:not(:has(> .sf-dropdown-field > :disabled)) .sf-dropdown-field {
     --sf-dropdown-field--background-color: var(--sf-surface-0);
-    --sf-dropdown-field--border-color: var(--sf-outline);
+    --sf-dropdown-field--border-color: var(--sf-outline-control);
   }
   /* utility-hint: display/flex (.flex) */
   .sf-dropdown.sf-dropdown--size-1.sf-dropdown--outlined.sf-dropdown--text .sf-dropdown-field input, .sf-dropdown.sf-dropdown--size-1.sf-dropdown--filled.sf-dropdown--text .sf-dropdown-field input {

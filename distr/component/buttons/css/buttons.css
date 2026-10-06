@@ -565,7 +565,7 @@
   }
   .sf-button.sf-button--outline.sf-button--primary, .sf-button.sf-button--outline.sf-button--on-surface {
     --sf-button--background-color: transparent;
-    --sf-button--border-color: var(--sf-outline);
+    --sf-button--border-color: var(--sf-outline-control);
   }
   .sf-button.sf-button--link.sf-button--primary .sf-button-text-container {
     --sf-button-text-container--color: var(--sf-primary);

@@ -308,7 +308,7 @@
   }
   .sf-icon-button.sf-icon-button--outline.sf-icon-button--primary.sf-icon-button--icon, .sf-icon-button.sf-icon-button--outline.sf-icon-button--on-surface.sf-icon-button--icon, .sf-icon-button.sf-icon-button--outline.sf-icon-button--primary.sf-icon-button--close, .sf-icon-button.sf-icon-button--outline.sf-icon-button--on-surface.sf-icon-button--close {
     --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: var(--sf-outline);
+    --sf-icon-button--border-color: var(--sf-outline-control);
   }
   .sf-icon-button.sf-icon-button--outline.sf-icon-button--primary.sf-icon-button--icon {
     --sf-icon--color: var(--sf-primary);
