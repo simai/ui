@@ -3948,6 +3948,12 @@ SF.RuleLoader["cl-property-view"] = {
     name: "cl-list-item"
   }, {
     name: "cl-spinner"
+  }, // Configuring the view drags fields between groups and groups between
+  // sections, and the drag is sf-sortable's. Without the relation the lists
+  // would render as undefined elements -- present in the DOM, inert to a
+  // pointer, and indistinguishable from a feature that silently does nothing.
+  {
+    name: "cl-sortable"
   }]
 };
 

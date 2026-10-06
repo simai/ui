@@ -1313,6 +1313,9 @@
       },
       {
         "name": "cl-spinner"
+      },
+      {
+        "name": "cl-sortable"
       }
     ],
     "tags": [
