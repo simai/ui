@@ -34,6 +34,7 @@
 
 ### Изменено
 
+- sf-tag gains `line` (1/2, 1, 2): in a table cell it is rendered inline, one size down, on the text line of that form size, so a choices cell keeps the row's control height.
 - sf-badge, sf-progress-scale and sf-reference-link gain `line` (1/2, 1, 2): in a table cell or a row of fields they take the text line of that form size, so the row keeps its control height (a size 1/2 badge was 28px and a scale 26px against a 20px line).
 - Buttons and icon buttons keep every border inside their control height: outline, surface, segmented and grouped buttons are no longer 2px taller than their size. The side border widths are registered as lengths, so a bare 0 written by a group, tab row or host still works.
 - Tabs and pagination on the control height: every tab variant is a size 1 control with its indicator inside the height; a page number is a size 1 control like the arrows beside it (it was 28px on mobile).
