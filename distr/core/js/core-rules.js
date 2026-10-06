@@ -3920,6 +3920,8 @@ SF.RuleLoader["cl-property-view"] = {
   }, {
     name: "cl-file-upload"
   }, {
+    name: "cl-progress-bar"
+  }, {
     name: "cl-inputs"
   }, {
     name: "cl-textarea"
