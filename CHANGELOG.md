@@ -34,6 +34,8 @@
 
 ### Изменено
 
+- Every form value control reports a committed change as `change` on its host, once per change the user makes. sf-button-group and the range slider now emit it; the older names (`sf-button-group-change`, `sf-datepicker-change`, `sf-change`, `sf-dropdown:change`, `sf-range-slider-change`, `onSliderChange`) are still emitted with the same detail. Manifests mark `change` with `canonical: true` and each older name with `alias_of: "change"`; the table is in `contracts/public-api-axes.json` (`change_event`). A range-slider value set from code does not emit `change`, as for a native control.
+- `sf-tag kind="checkbox"` is interactive: the template received the raw `type` and rendered an inert box.
 - sf-tag gains `line` (1/2, 1, 2): in a table cell it is rendered inline, one size down, on the text line of that form size, so a choices cell keeps the row's control height.
 - sf-badge, sf-progress-scale and sf-reference-link gain `line` (1/2, 1, 2): in a table cell or a row of fields they take the text line of that form size, so the row keeps its control height (a size 1/2 badge was 28px and a scale 26px against a 20px line).
 - Buttons and icon buttons keep every border inside their control height: outline, surface, segmented and grouped buttons are no longer 2px taller than their size. The side border widths are registered as lengths, so a bare 0 written by a group, tab row or host still works.
