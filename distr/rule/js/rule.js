@@ -3909,6 +3909,8 @@ SF.RuleLoader["cl-property-view"] = {
   }, {
     name: "cl-icon-buttons"
   }, {
+    name: "cl-drawer"
+  }, {
     name: "cl-tree"
   }, {
     name: "cl-tree-item"

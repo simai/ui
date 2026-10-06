@@ -1255,6 +1255,9 @@
         "name": "cl-icon-buttons"
       },
       {
+        "name": "cl-drawer"
+      },
+      {
         "name": "cl-tree"
       },
       {
