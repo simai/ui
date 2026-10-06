@@ -2391,3 +2391,16 @@
     --sf-close-icon--height: calc(var(--sf-text-size-3) * 0.7);
   }
 }
+@layer sf.components {
+  /* A tag on a text line, in a table cell or beside other text, publishes that
+     line itself, the way a dropdown publishes its field line to its tags. */
+  .sf-tag.sf-tag--line-1\/2 {
+    --sf-tag--line: var(--sf-text-height-1\/2);
+  }
+  .sf-tag.sf-tag--line-1 {
+    --sf-tag--line: var(--sf-text-height-1);
+  }
+  .sf-tag.sf-tag--line-2 {
+    --sf-tag--line: var(--sf-text-height-2);
+  }
+}
