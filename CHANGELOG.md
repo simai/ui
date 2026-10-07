@@ -34,6 +34,7 @@
 
 ### Изменено
 
+- `sf-drawer` gains `gutter` (a length, empty for the drawer's own space-1): the head and the body share one inline gutter, so a title and the content start on one axis. A theme may set `--sf-drawer-gutter`. Composites that want a wider reading gutter set it on the drawer instead of insetting their own content inside the body.
 - `sf-drawer` gains `stack-offset` (a length, empty by default: drawers lie flush as before). Drawers open at one edge stand depth × offset in from it and keep their width, so the drawer below shows past the one above; the drawer counts its own depth from the open, undocked drawers at the same physical edge.
 - Fixed: in a right-to-left page a drawer at `inline-start` or `inline-end` opened off-screen, because the closed transform under `:dir(rtl)` outranked `.is-open`.
 - `sf-file-upload` names no formats it cannot know: the formats line is empty unless `formats` is given or derived from `accept` (it said "SVG, PNG, JPG or GIF" on every field).
