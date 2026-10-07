@@ -3954,6 +3954,12 @@ SF.RuleLoader["cl-property-view"] = {
   // pointer, and indistinguishable from a feature that silently does nothing.
   {
     name: "cl-sortable"
+  }, // A group of related records composes a data view, which brings its own table
+  // and page row through cl-data-view. Without the relation the group would hold
+  // an undefined element: present, empty, and indistinguishable from a host that
+  // answered with no records.
+  {
+    name: "cl-data-view"
   }]
 };
 

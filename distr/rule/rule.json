@@ -1316,6 +1316,9 @@
       },
       {
         "name": "cl-sortable"
+      },
+      {
+        "name": "cl-data-view"
       }
     ],
     "tags": [
