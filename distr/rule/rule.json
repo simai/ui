@@ -1319,6 +1319,9 @@
       },
       {
         "name": "cl-data-view"
+      },
+      {
+        "name": "cl-table"
       }
     ],
     "tags": [

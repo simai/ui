@@ -3960,6 +3960,12 @@ SF.RuleLoader["cl-property-view"] = {
   // answered with no records.
   {
     name: "cl-data-view"
+  }, // The table the related group slots into that data view. Slotted rather than
+  // left to the data view's own fallback, because fallback content lives in a
+  // shadow tree where the page's stylesheets do not reach -- a consumer saw a
+  // list with its icon ligatures showing as text.
+  {
+    name: "cl-table"
   }]
 };
 
