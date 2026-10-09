@@ -288,6 +288,9 @@
     border-block-width: var(--sf-px);
     border-inline-start-width: 0;
     border-inline-end-width: var(--sf-px);
+    /* The resting boundary of a control, the same role an outlined button
+       takes -- --sf-outline is a step stronger, so a segmented control stood
+       in a heavier line than the buttons beside it (owner, 2026-10-08). */
     border-top-color: var(--sf-outline);
     border-bottom-color: var(--sf-outline);
     border-block-color: var(--sf-outline);

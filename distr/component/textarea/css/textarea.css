@@ -307,7 +307,7 @@
   }
   .sf-textarea.sf-textarea--bordered textarea {
     --sf-textarea-textarea--background-color: var(--sf-surface-0);
-    --sf-textarea-textarea--border-color: var(--sf-outline-control);
+    --sf-textarea-textarea--border-color: var(--sf-outline);
   }
   .sf-textarea:not(.error).sf-textarea--size-1.sf-textarea--bordered[\:has\(textarea\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:not\(\:-moz-read-only\)\:active\)] textarea {
     --sf-textarea-textarea--border-color: var(--sf-primary);

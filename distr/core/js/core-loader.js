@@ -49,6 +49,7 @@ function initIconSubsetState(loader) {
   loader.iconSubsetHashes = new Map();
   loader.iconSubsetWarnings = new Set();
   loader.pendingIconScanCount = 0;
+  loader.pendingIconFlushQueued = false;
   loader.isSyncingStaticIconState = false;
   loader.staticIconDescriptorKeys = new WeakMap();
   return loader;
@@ -874,6 +875,21 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
     }
 
     if (defer) {
+      // Deferred, not dropped. The caller defers when the same batch of
+      // mutations also loads modules, so the fetch waits for them -- but the
+      // count stayed pending and nothing flushed it afterwards, so a glyph that
+      // appeared alongside a new component never arrived at all. Entering a mode
+      // that draws both at once is exactly that: the handles, the eyes and the
+      // arrows stayed blank squares until some later, unrelated mutation
+      // happened to flush them, and usually none did.
+      if (!this.pendingIconFlushQueued) {
+        this.pendingIconFlushQueued = true;
+        this.mutate(() => {
+          this.pendingIconFlushQueued = false;
+          this.flushPendingIconScan();
+        });
+      }
+
       return false;
     }
 

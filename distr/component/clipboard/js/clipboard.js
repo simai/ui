@@ -104,8 +104,14 @@ function legacyWriteText(text, documentRef) {
 
 async function writeText(text, documentRef = document) {
   if (window.isSecureContext && navigator.clipboard?.writeText) {
-    await navigator.clipboard.writeText(text);
-    return 'native';
+    try {
+      await navigator.clipboard.writeText(text);
+      return 'native';
+    } catch {// A secure page whose clipboard permission is denied -- a policy, an
+      // embedded frame, a browser that asks and was answered no. The API being
+      // present was read as the API being allowed, so the fallback that exists
+      // for exactly this was never reached and the copy simply failed.
+    }
   }
 
   legacyWriteText(text, documentRef);

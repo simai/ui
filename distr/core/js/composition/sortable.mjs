@@ -120,15 +120,64 @@ export function sortableIndexAt(boxes, coordinate, exclude = -1) {
   return index;
 }
 
+/**
+ * Whether the list flows in both axes -- two items standing side by side on one
+ * row. A list like that is neither vertical nor horizontal, and asking only the
+ * vertical axis cannot tell the left half of a row from the right half.
+ */
+function isWrapped(all) {
+  for (let position = 1; position < all.length; position += 1) {
+    const previous = all[position - 1].getBoundingClientRect();
+    const current = all[position].getBoundingClientRect();
+    if (current.top < previous.bottom - 1 && current.left >= previous.right - 1) return true;
+  }
+  return false;
+}
+
+/** Index where an item would land in a list that wraps, in reading order. */
+function wrappedIndexAt(all, x, y) {
+  let index = 0;
+  for (let position = 0; position < all.length; position += 1) {
+    const box = all[position].getBoundingClientRect();
+    const past = y > box.bottom ? true : y < box.top ? false : x > box.left + box.width / 2;
+    if (past) index = position + 1;
+  }
+  return index;
+}
+
 function listTarget(list, x, y) {
   const all = items(list);
   const horizontal = list.getAttribute('orientation') === 'horizontal';
+  if (!horizontal && isWrapped(all)) {
+    const index = wrappedIndexAt(all, x, y);
+    return { list, index, rect: wrappedIndicatorRect(list, all, index) };
+  }
   const boxes = all.map((item) => {
     const box = item.getBoundingClientRect();
     return horizontal ? { start: box.left, end: box.right } : { start: box.top, end: box.bottom };
   });
   const index = sortableIndexAt(boxes, horizontal ? x : y);
   return { list, index, rect: listIndicatorRect(list, all, index, horizontal) };
+}
+
+/**
+ * A line down the side of the place the item would take, not across the whole
+ * row: in a two-column list a full-width line cannot say which of the two halves
+ * the item is about to land in.
+ */
+function wrappedIndicatorRect(list, all, index) {
+  const box = list.getBoundingClientRect();
+  const before = all[index];
+  const after = all[index - 1];
+  if (before) {
+    const target = before.getBoundingClientRect();
+    return { left: target.left - 1, top: target.top, width: 2, height: target.height };
+  }
+  if (after) {
+    const target = after.getBoundingClientRect();
+    return { left: target.right - 1, top: target.top, width: 2, height: target.height };
+  }
+  return { left: box.left, top: box.top, width: 2, height: box.height };
 }
 
 function listIndicatorRect(list, all, index, horizontal) {

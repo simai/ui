@@ -314,11 +314,9 @@
   }
   .sf-toast.sf-toast--info > .sf-icon-button.sf-icon-button--link > .sf-close > .sf-close-icon {
     --sf-close-icon--background-color: var(--sf-on-primary-container);
-    --sf-close-icon--border-color: var(--sf-outline);
   }
   .sf-toast.sf-toast--primary > .sf-icon-button.sf-icon-button--link > .sf-close > .sf-close-icon {
     --sf-close-icon--background-color: var(--sf-on-primary-container);
-    --sf-close-icon--border-color: var(--sf-outline);
   }
   .sf-toast.sf-toast--info .sf-toast-supporting-text {
     --sf-toast-supporting-text--color: var(--sf-on-primary-container);
@@ -337,7 +335,6 @@
   }
   .sf-toast.sf-toast--error > .sf-icon-button.sf-icon-button--link > .sf-close > .sf-close-icon {
     --sf-close-icon--background-color: var(--sf-on-error-container);
-    --sf-close-icon--border-color: var(--sf-outline);
   }
   .sf-toast.sf-toast--error .sf-toast-supporting-text {
     --sf-toast-supporting-text--color: var(--sf-on-error-container);
@@ -350,7 +347,6 @@
   }
   .sf-toast.sf-toast--warning > .sf-icon-button.sf-icon-button--link > .sf-close > .sf-close-icon {
     --sf-close-icon--background-color: var(--sf-on-warning-container);
-    --sf-close-icon--border-color: var(--sf-outline);
   }
   .sf-toast.sf-toast--warning .sf-toast-supporting-text {
     --sf-toast-supporting-text--color: var(--sf-on-warning-container);
@@ -363,7 +359,6 @@
   }
   .sf-toast.sf-toast--success > .sf-icon-button.sf-icon-button--link > .sf-close > .sf-close-icon {
     --sf-close-icon--background-color: var(--sf-on-success-container);
-    --sf-close-icon--border-color: var(--sf-outline);
   }
   .sf-toast.sf-toast--success .sf-toast-supporting-text {
     --sf-toast-supporting-text--color: var(--sf-on-success-container);

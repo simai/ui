@@ -312,20 +312,43 @@
     --sf-outline-info: light-dark(var(--sf-info-50), var(--sf-info-60));
     --sf-surface-0: light-dark(var(--sf-white), var(--sf-neutral-5));
     --sf-surface-1: light-dark(var(--sf-neutral-98), var(--sf-neutral-10));
+    /* The veil over a scene, and the one translucent surface that keeps the pure
+       base: it darkens what is behind a modal rather than tinting a surface, and
+       on the neutral tone it came out 7.4 points lighter in the light theme --
+       a veil that does not veil. */
     --sf-surface-overlay: light-dark(var(--sf-black--alfa-8), var(--sf-white--alfa-8));
     --sf-surface-2: light-dark(var(--sf-neutral-95), var(--sf-neutral-15));
     --sf-surface-3: light-dark(var(--sf-neutral-90), var(--sf-neutral-20));
     --sf-surface-4: light-dark(var(--sf-neutral-85), var(--sf-neutral-25));
     --sf-surface-5: light-dark(var(--sf-neutral-80), var(--sf-neutral-30));
+    /* What a pointer does to a surface, on the neutral tone of the theme.
+       `active` at 12 is gone: nothing asked for it, and at 12 it was also the
+       colour a plate used to be (owner, 2026-10-08). `overlay` stays -- it is
+       asked for by name through the utilities rather than through var(), which
+       is how it read as unused at first: it is the backdrop of a modal. */
     --sf-surface-transparent-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
     --sf-surface-transparent-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
-    --sf-surface-transparent-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
-    --sf-surface-transparent-overlay: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+    /* A step above the strongest plate, and not because the ladder asks: a
+       plate sits on the page, a veil covers it. At 24 the two were the same
+       colour, and the backdrop of a modal was as strong as a pressed card
+       (owner, 2026-10-08). */
+    --sf-surface-transparent-overlay: light-dark(var(--sf-neutral-50--alfa-32), var(--sf-neutral-90--alfa-32));
     --sf-surface-inverse: light-dark(var(--sf-neutral-20), var(--sf-neutral-90));
     --sf-surface-inverse-fixed: var(--sf-neutral-20);
-    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-50--alfa-24));
-    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-50--alfa-28));
-    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-50--alfa-32));
+    /* A tinted plate on the surface, on the same neutral tone as the state
+       layer above: neutral-50 in the light theme, neutral-90 in the dark. It
+       used to be neutral-50 in both, which meant the dark theme lightened its
+       plates with a middle grey while every other translucent surface
+       lightened with a near-white -- two tones doing one job.
+
+       The steps are the same in both themes now, which they could not be while
+       the tone differed: 24, 28 and 32 in the dark were that darker tone
+       catching up. And they start at 16 rather than 12, because at 12 a plate
+       was the same colour as a pressed surface and the two could not be told
+       apart (owner, 2026-10-08). */
+    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-90--alfa-20));
+    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
     --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
     --sf-on-surface-fixed: var(--sf-neutral-10);
     --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
@@ -334,22 +357,46 @@
     --sf-on-surface-muted: light-dark(var(--sf-neutral-60), var(--sf-neutral-40));
     --sf-on-surface-inverse: light-dark(var(--sf-neutral-90), var(--sf-neutral-10));
     --sf-on-surface-inverse-fixed: var(--sf-neutral-90);
-    --sf-outline: light-dark(var(--sf-neutral-50), var(--sf-neutral-60));
+    /* The boundary of anything a person has to find: a control at rest, a
+       solid rule, the edge of a thing that is not a region. At the opacity
+       that gives exactly WCAG 1.4.11's 3:1 on surface-0 -- 80% light, 64%
+       dark; 3.10:1 and 3.12:1.
+
+       There were three neutral boundary roles for a while, and the third one
+       -- --sf-outline-control, the resting edge of a control -- was this value
+       under its own name. Two things were wrong with that. The system has two
+       neutral boundary roles and had always had two: this one and the variant
+       for the edge of a region. And in the light theme the third role came out
+       at exactly --sf-outline-disable, so a field at rest and a field nobody
+       can type in were drawn in the same line (owner, 2026-10-08).
+
+       So the value moved here and the third role is gone. What a boundary does
+       when it is touched is said in colour, not in a stronger grey: hover and
+       active take the primary roles, focus takes --sf-focus.
+
+       Both halves are steps of the alpha scale now. The dark one, 64, is on
+       the scale's own footing -- it climbs in fours -- and had simply never
+       been generated, which is why this role used to be written as a
+       color-mix of its own (owner, 2026-10-08). */
+    --sf-outline: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-60--alfa-64));
+    /* The edge of a region -- a panel, a card, a table, a row inside one.
+       Nothing is found by it, so it is not held to 1.4.11: 1.34:1 and 1.92:1. */
     --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
-    /* The resting boundary of a control a person fills in or presses: the
-       outline at the opacity that gives exactly WCAG 1.4.11's 3:1 on surface-0
-       (80% light, 64% dark; 3.10:1 and 3.12:1). Calmer than --sf-outline (4.47:1
-       and 5.95:1), still findable. Hover and focus turn it stronger. */
-    --sf-outline-control: light-dark(color-mix(in srgb, var(--sf-neutral-50) 80%, transparent), color-mix(in srgb, var(--sf-neutral-60) 64%, transparent));
     --sf-outline-secondary: light-dark(var(--sf-secondary-50), var(--sf-secondary-60));
     --sf-disable: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
     --sf-on-disable: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
-    --sf-outline-disable: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
+    /* The boundary of a control nobody can use, and the one role whose whole
+       job is to be weaker than another. It carried the same value as
+       --sf-outline in the light theme -- a field at rest and a field nobody
+       can type in drawn in the same line -- and in the dark theme it was
+       stronger than --sf-outline, 4.13:1 against 3.12:1, so the one that was
+       switched off was the one that stood out. It takes the ink scale's lower
+       step now, from the tone of the boundary rather than of the ink: 1.86:1
+       light and 2.26:1 dark, under the live boundary in both (owner,
+       2026-10-08). */
+    --sf-outline-disable: light-dark(var(--sf-neutral-50--alfa-48), var(--sf-neutral-60--alfa-48));
     --sf-link: light-dark(var(--sf-primary-40), var(--sf-primary-80));
-    --sf-focus-on-transparency: light-dark(rgba(0,0,0,0.50196), rgba(255,255,255,0.50196));
     --sf-mark: light-dark(var(--sf-warning-50--alfa-24), var(--sf-warning-90--alfa-24));
-    --sf-focus-on-primary: light-dark(rgba(255,255,255,0.25098), rgba(0,0,0,0.2));
-    --sf-focus-on-neutral: light-dark(rgba(255,255,255,0.25098), rgba(0,0,0,0.2));
     --sf-focus: light-dark(var(--sf-primary-50), var(--sf-primary-90));
     --sf-link-hover: light-dark(var(--sf-primary-35), var(--sf-primary-85));
     --sf-link-active: light-dark(var(--sf-primary-30), var(--sf-primary-90));
@@ -391,19 +438,20 @@
     --sf-on-elevation-3--variant: light-dark(var(--sf-neutral-40), var(--sf-neutral-70));
     --sf-on-elevation-4--variant: light-dark(var(--sf-neutral-40), var(--sf-neutral-80));
     --sf-on-elevation-5--variant: light-dark(var(--sf-neutral-40), var(--sf-neutral-80));
-    /* The neutral alpha ramp. The base branches per scheme — ink on a light
-       surface, light on a dark one — so a component asks for a degree of contrast
-       rather than for black or white, and every step above is one declaration
-       that is right in both themes. */
+    /* The neutral half of the alpha scale. The base branches per scheme — ink on
+       a light surface, light on a dark one — so a component asks for a degree of
+       contrast rather than for black or white, and every step above is one
+       declaration that is right in both themes.
+
+       The steps are the scale's own, in fours, and only the ones something asks
+       for: 2 and 6 were off the scale, 20 and 24 were on it and unused
+       (owner, 2026-10-08). The tinted half lives in the palette as
+       --sf-<tone>--alfa-N; the two halves are one scale and share its steps. */
     --sf-alpha-base: light-dark(var(--sf-black), var(--sf-white));
-    --sf-alpha-2: color-mix(in srgb, var(--sf-transparent), var(--sf-alpha-base) 2%);
     --sf-alpha-4: color-mix(in srgb, var(--sf-transparent), var(--sf-alpha-base) 4%);
-    --sf-alpha-6: color-mix(in srgb, var(--sf-transparent), var(--sf-alpha-base) 6%);
     --sf-alpha-8: color-mix(in srgb, var(--sf-transparent), var(--sf-alpha-base) 8%);
     --sf-alpha-12: color-mix(in srgb, var(--sf-transparent), var(--sf-alpha-base) 12%);
     --sf-alpha-16: color-mix(in srgb, var(--sf-transparent), var(--sf-alpha-base) 16%);
-    --sf-alpha-20: color-mix(in srgb, var(--sf-transparent), var(--sf-alpha-base) 20%);
-    --sf-alpha-24: color-mix(in srgb, var(--sf-transparent), var(--sf-alpha-base) 24%);
   }
 }
 /*
@@ -468,16 +516,14 @@
     --sf-ui-blur-medium: blur(var(--sf-blur-medium));
     --sf-ui-blur-large: blur(var(--sf-blur-large));
     --sf-ui-blur-surface-overlay: blur(var(--sf-surface-overlay--blur));
-    --sf-ui-focus: 0px 0px 0px var(--sf-focus-outline-width) var(--sf-focus);
-    --sf-ui-shadow-1: 0px 2px 4px 1px var(--sf-shadow--color-shading), 0px 1px 3px 0px var(--sf-shadow--color-outline), 0px 2px 2px -1px var(--sf-shadow--color-fill);
-    --sf-ui-shadow-2: 0px 4px 8px 2px var(--sf-shadow--color-shading), 0px 2px 6px 0px var(--sf-shadow--color-outline), 0px 4px 4px -2px var(--sf-shadow--color-fill);
-    --sf-ui-shadow-3: 0px 8px 16px 4px var(--sf-shadow--color-shading), 0px 4px 12px 0px var(--sf-shadow--color-outline), 0px 8px 8px -4px var(--sf-shadow--color-fill);
-    --sf-ui-shadow-4: 0px 16px 32px 4px var(--sf-shadow--color-shading), 0px 8px 24px 0px var(--sf-shadow--color-outline), 0px 16px 16px -8px var(--sf-shadow--color-fill);
-    --sf-ui-shadow-5: 0px 32px 64px 8px var(--sf-shadow--color-shading), 0px 16px 48px 0px var(--sf-shadow--color-outline), 0px 32px 32px -16px var(--sf-shadow--color-fill);
-    --sf-ui-shadow-top: 0px 0px 0.5px 0px var(--sf-shadow--color-fill), 0px -4px 10px 4px var(--sf-shadow--color-outline), 0px -2px 3px 1px var(--sf-shadow--color-shading);
-    --sf-ui-gradient-light: linear-gradient(0deg, rgba(212, 212, 217, 1) 0%, rgba(241, 240, 246, 1) 100%);
-    --sf-ui-gradient-dark: linear-gradient(0deg, rgba(58, 59, 64, 1) 0%, rgba(36, 38, 42, 1) 100%);
-    --sf-ui-skeleton: linear-gradient(179.99999990539914deg, rgba(204, 204, 204, 0.5) 0%, rgba(136, 136, 136, 0.5) 100%);
+    --sf-ui-focus: 0 0 0 var(--sf-focus-outline-width) var(--sf-focus);
+    --sf-ui-shadow-1: 0 var(--sf-a2) var(--sf-a4) var(--sf-px) var(--sf-shadow--color-shading), 0 var(--sf-px) var(--sf-a3) 0 var(--sf-shadow--color-outline), 0 var(--sf-a2) var(--sf-a2) calc(-1 * var(--sf-px)) var(--sf-shadow--color-fill);
+    --sf-ui-shadow-2: 0 var(--sf-a4) var(--sf-a8) var(--sf-a2) var(--sf-shadow--color-shading), 0 var(--sf-a2) var(--sf-a6) 0 var(--sf-shadow--color-outline), 0 var(--sf-a4) var(--sf-a4) calc(-1 * var(--sf-a2)) var(--sf-shadow--color-fill);
+    --sf-ui-shadow-3: 0 var(--sf-a8) var(--sf-b6) var(--sf-a4) var(--sf-shadow--color-shading), 0 var(--sf-a4) var(--sf-b2) 0 var(--sf-shadow--color-outline), 0 var(--sf-a8) var(--sf-a8) calc(-1 * var(--sf-a4)) var(--sf-shadow--color-fill);
+    --sf-ui-shadow-4: 0 var(--sf-b6) var(--sf-c6) var(--sf-a4) var(--sf-shadow--color-shading), 0 var(--sf-a8) var(--sf-c2) 0 var(--sf-shadow--color-outline), 0 var(--sf-b6) var(--sf-b6) calc(-1 * var(--sf-a8)) var(--sf-shadow--color-fill);
+    --sf-ui-shadow-5: 0 var(--sf-c6) var(--sf-d6) var(--sf-a8) var(--sf-shadow--color-shading), 0 var(--sf-b6) var(--sf-d2) 0 var(--sf-shadow--color-outline), 0 var(--sf-c6) var(--sf-c6) calc(-1 * var(--sf-b6)) var(--sf-shadow--color-fill);
+    --sf-ui-shadow-top: 0 0 var(--sf-px) 0 var(--sf-shadow--color-fill), 0 calc(-1 * var(--sf-a4)) var(--sf-b0) var(--sf-a4) var(--sf-shadow--color-outline), 0 calc(-1 * var(--sf-a2)) var(--sf-a3) var(--sf-px) var(--sf-shadow--color-shading);
+    --sf-ui-skeleton: linear-gradient(180deg, var(--sf-neutral-80--alfa-48) 0%, var(--sf-neutral-60--alfa-48) 100%);
   }
 }
 @layer sf.base {
@@ -706,33 +752,41 @@
        совпадало с намерением, класс работал по удаче. */
     --sf-current: currentColor;
     --sf-inherit: inherit;
-    --sf-transparent-for-focus: rgba(255,255,255,0);
+    --sf-transparent-for-focus: var(--sf-transparent);
     --sf-white: #ffffff;
-    --sf-white--alfa-4: rgba(255,255,255,0.03922);
     --sf-white--alfa-8: rgba(255,255,255,0.07843);
-    --sf-white--alfa-12: rgba(255,255,255,0.12157);
     --sf-white--alfa-24: rgba(255,255,255,0.23922);
-    --sf-white--alfa-48: rgba(255,255,255,0.47843);
     --sf-black: #000000;
     --sf-black--alfa-4: rgba(0,0,0,0.03922);
     --sf-black--alfa-8: rgba(0,0,0,0.07843);
     --sf-black--alfa-12: rgba(0,0,0,0.12157);
-    --sf-black--alfa-24: rgba(0,0,0,0.23922);
-    --sf-black--alfa-48: rgba(0,0,0,0.47843);
     --sf-neutral-98: #faf9fe;
     --sf-neutral-95: #f1f0f6;
     --sf-neutral-90: #e3e2e7;
-    --sf-neutral-90--alfa-10: rgba(227,226,231,0.10196);
-    --sf-neutral-90--alfa-15: rgba(227,226,231,0.14902);
     --sf-neutral-90--alfa-4: rgba(227,226,231,0.03922);
     --sf-neutral-90--alfa-8: rgba(227,226,231,0.07843);
     --sf-neutral-90--alfa-12: rgba(227,226,231,0.12157);
+    /* The plate steps in the dark theme. The plate used to be mixed from
+       neutral-50 there, a middle grey, while everything else translucent was
+       mixed from this near-white (owner, 2026-10-08). */
+    --sf-neutral-90--alfa-16: rgba(227,226,231,0.16078);
+    --sf-neutral-90--alfa-20: rgba(227,226,231,0.2);
     --sf-neutral-90--alfa-24: rgba(227,226,231,0.23922);
+    --sf-neutral-90--alfa-32: rgba(227,226,231,0.32157);
     --sf-neutral-90--alfa-48: rgba(227,226,231,0.47843);
     --sf-neutral-85: #d4d4d9;
     --sf-neutral-80: #c6c6cb;
     --sf-neutral-70: #ababb0;
     --sf-neutral-60: #909095;
+    /* The one alpha step neutral-60 has, and it is on the scale's own footing:
+       the run climbs in fours, and 64 is one of them -- it had simply never
+       been generated, so the boundary role carried a color-mix written in the
+       role itself. neutral-60 over the dark surface measures 5.95:1 at full
+       opacity, and 64% lands at 3.12:1, the WCAG 1.4.11 threshold the light
+       theme reaches at 80% (owner, 2026-10-08). */
+    --sf-neutral-60--alfa-48: rgba(144,144,149,0.47843);
+    --sf-neutral-80--alfa-48: rgba(198,198,203,0.47843);
+    --sf-neutral-60--alfa-64: rgba(144,144,149,0.63922);
     --sf-neutral-50: #76777c;
     /* Ступени 4 % и 8 %: на них стоят слои наведения и выбора этой палитры. */
     --sf-neutral-50--alfa-4: rgba(118,119,124,0.03922);
@@ -741,11 +795,10 @@
     --sf-neutral-50--alfa-16: rgba(118,119,124,0.16078);
     --sf-neutral-50--alfa-20: rgba(118,119,124,0.2);
     --sf-neutral-50--alfa-24: rgba(118,119,124,0.23922);
-    --sf-neutral-50--alfa-28: rgba(118,119,124,0.27843);
+    /* The veil over a scene: the backdrop of a modal and the bed of a
+       scrollbar. A step above the strongest plate, because a plate sits on the
+       page and a veil covers it (owner, 2026-10-08). */
     --sf-neutral-50--alfa-32: rgba(118,119,124,0.32157);
-    --sf-neutral-50--alfa-36: rgba(118,119,124,0.36078);
-    --sf-neutral-50--alfa-40: rgba(118,119,124,0.4);
-    --sf-neutral-50--alfa-44: rgba(118,119,124,0.43922);
     /* The scale climbs in fours and stops at 44, which is as far as a wash ever
        needed to go. This one step is far outside that run because it is not a
        wash: it is the ink of a disabled control in the light theme, and the
@@ -753,6 +806,10 @@
        neutral-50 over white measures 4.47:1 even at full opacity, so 80% lands
        at 3.10:1 -- level with the 4.12:1 the dark theme has always had. Nothing
        between 44 and 80 is declared, because nothing asks for it. */
+    /* The ink step of the scale on the light neutral: the boundary of a control
+       nobody can use. Weaker than the 80 the boundary of a live one takes, and
+       that is the whole of its work (owner, 2026-10-08). */
+    --sf-neutral-50--alfa-48: rgba(118,119,124,0.47843);
     --sf-neutral-50--alfa-80: rgba(118,119,124,0.8);
     --sf-neutral-40: #5d5e63;
     --sf-neutral-35: #515257;
@@ -771,7 +828,6 @@
     --sf-tertiary-90--alfa-8: rgba(253,214,255,0.07843);
     --sf-tertiary-90--alfa-12: rgba(253,214,255,0.12157);
     --sf-tertiary-90--alfa-24: rgba(253,214,255,0.23922);
-    --sf-tertiary-90--alfa-48: rgba(253,214,255,0.47843);
     --sf-tertiary-85: #f9c2ff;
     --sf-tertiary-80: #ecb3f4;
     --sf-tertiary-70: #cf98d8;
@@ -786,9 +842,6 @@
     --sf-tertiary-50--alfa-24: rgba(151,101,160,0.23922);
     --sf-tertiary-50--alfa-28: rgba(151,101,160,0.27843);
     --sf-tertiary-50--alfa-32: rgba(151,101,160,0.32157);
-    --sf-tertiary-50--alfa-36: rgba(151,101,160,0.36078);
-    --sf-tertiary-50--alfa-40: rgba(151,101,160,0.4);
-    --sf-tertiary-50--alfa-44: rgba(151,101,160,0.43922);
     --sf-tertiary-40: #7c4c86;
     --sf-tertiary-35: #6f4079;
     --sf-tertiary-30: #63356c;
@@ -803,7 +856,6 @@
     --sf-secondary-90--alfa-8: rgba(215,226,255,0.07843);
     --sf-secondary-90--alfa-12: rgba(215,226,255,0.12157);
     --sf-secondary-90--alfa-24: rgba(215,226,255,0.23922);
-    --sf-secondary-90--alfa-48: rgba(215,226,255,0.47843);
     --sf-secondary-85: #c9d4f1;
     --sf-secondary-80: #bbc6e3;
     --sf-secondary-70: #a0abc7;
@@ -818,9 +870,6 @@
     --sf-secondary-50--alfa-24: rgba(108,119,145,0.23922);
     --sf-secondary-50--alfa-28: rgba(108,119,145,0.27843);
     --sf-secondary-50--alfa-32: rgba(108,119,145,0.32157);
-    --sf-secondary-50--alfa-36: rgba(108,119,145,0.36078);
-    --sf-secondary-50--alfa-40: rgba(108,119,145,0.4);
-    --sf-secondary-50--alfa-44: rgba(108,119,145,0.43922);
     --sf-secondary-40: #535e77;
     --sf-secondary-35: #47526a;
     --sf-secondary-30: #3c475e;
@@ -836,17 +885,11 @@
     --sf-primary-90--alfa-12: rgba(215,226,255,0.12157);
     --sf-primary-90--alfa-24: rgba(215,226,255,0.23922);
     --sf-primary-90--alfa-24: rgba(215,226,255,0.23922);
-    --sf-primary-90--alfa-48: rgba(215,226,255,0.47843);
     --sf-primary-85: #c2d5ff;
     --sf-primary-80: #acc7ff;
     --sf-info-98: #f9f9ff;
     --sf-info-95: #edf0ff;
     --sf-info-90: #d7e2ff;
-    --sf-info-90--alfa-4: rgba(215,226,255,0.03922);
-    --sf-info-90--alfa-8: rgba(215,226,255,0.07843);
-    --sf-info-90--alfa-12: rgba(215,226,255,0.12157);
-    --sf-info-90--alfa-24: rgba(215,226,255,0.23922);
-    --sf-info-90--alfa-48: rgba(215,226,255,0.47843);
     --sf-info-85: #c2d5ff;
     --sf-info-80: #acc7ff;
     --sf-info-70: #7eabff;
@@ -858,9 +901,6 @@
     --sf-info-50--alfa-24: rgba(0,115,237,0.23922);
     --sf-info-50--alfa-28: rgba(0,115,237,0.27843);
     --sf-info-50--alfa-32: rgba(0,115,237,0.32157);
-    --sf-info-50--alfa-36: rgba(0,115,237,0.36078);
-    --sf-info-50--alfa-40: rgba(0,115,237,0.4);
-    --sf-info-50--alfa-44: rgba(0,115,237,0.43922);
     --sf-info-40: #005bbe;
     --sf-info-35: #0050a7;
     --sf-info-30: #004491;
@@ -881,24 +921,13 @@
     --sf-primary-50--alfa-24: rgba(0,115,237,0.23922);
     --sf-primary-50--alfa-28: rgba(0,115,237,0.27843);
     --sf-primary-50--alfa-32: rgba(0,115,237,0.32157);
-    --sf-primary-50--alfa-36: rgba(0,115,237,0.36078);
-    --sf-primary-50--alfa-40: rgba(0,115,237,0.4);
-    --sf-primary-50--alfa-44: rgba(0,115,237,0.43922);
     --sf-primary-40: #005bbe;
-    --sf-primary-40--alfa-20: rgba(0,91,190,0.2);
-    --sf-primary-40--alfa-30: rgba(0,91,190,0.30196);
-    --sf-primary-40--alfa-40: rgba(0,91,190,0.4);
     --sf-primary-35: #0050a7;
     --sf-primary-30: #004491;
     --sf-primary-25: #00397c;
     --sf-primary-20: #002f67;
     --sf-primary-15: #002453;
     --sf-primary-10: #001a40;
-    --sf-primary-10--alfa-4: rgba(0,26,64,0.03922);
-    --sf-primary-10--alfa-8: rgba(0,26,64,0.07843);
-    --sf-primary-10--alfa-12: rgba(0,26,64,0.12157);
-    --sf-primary-10--alfa-24: rgba(0,26,64,0.23922);
-    --sf-primary-10--alfa-48: rgba(0,26,64,0.47843);
     --sf-primary-5: #00102c;
     --sf-error-98: #fff8f7;
     --sf-error-95: #ffedea;
@@ -907,7 +936,6 @@
     --sf-error-90--alfa-8: rgba(255,218,214,0.07843);
     --sf-error-90--alfa-12: rgba(255,218,214,0.12157);
     --sf-error-90--alfa-24: rgba(255,218,214,0.23922);
-    --sf-error-90--alfa-48: rgba(255,218,214,0.47843);
     --sf-error-85: #ffc7c0;
     --sf-error-80: #ffb4ab;
     --sf-error-70: #ff897d;
@@ -922,9 +950,6 @@
     --sf-error-50--alfa-24: rgba(223,54,47,0.23922);
     --sf-error-50--alfa-28: rgba(223,54,47,0.27843);
     --sf-error-50--alfa-32: rgba(223,54,47,0.32157);
-    --sf-error-50--alfa-36: rgba(223,54,47,0.36078);
-    --sf-error-50--alfa-40: rgba(223,54,47,0.4);
-    --sf-error-50--alfa-44: rgba(223,54,47,0.43922);
     --sf-error-40: #bb1919;
     --sf-error-35: #a9040e;
     --sf-error-30: #93000a;
@@ -940,7 +965,6 @@
     --sf-warning-90--alfa-8: rgba(255,220,193,0.07843);
     --sf-warning-90--alfa-12: rgba(255,220,193,0.12157);
     --sf-warning-90--alfa-24: rgba(255,220,193,0.23922);
-    --sf-warning-90--alfa-48: rgba(255,220,193,0.47843);
     --sf-warning-85: #ffca9f;
     --sf-warning-80: #ffb779;
     --sf-warning-70: #fa911c;
@@ -955,9 +979,6 @@
     --sf-warning-50--alfa-24: rgba(178,99,0,0.23922);
     --sf-warning-50--alfa-28: rgba(178,99,0,0.27843);
     --sf-warning-50--alfa-32: rgba(178,99,0,0.32157);
-    --sf-warning-50--alfa-36: rgba(178,99,0,0.36078);
-    --sf-warning-50--alfa-40: rgba(178,99,0,0.4);
-    --sf-warning-50--alfa-44: rgba(178,99,0,0.43922);
     --sf-warning-40: #8f4e00;
     --sf-warning-35: #7d4400;
     --sf-warning-30: #6c3a00;
@@ -973,7 +994,6 @@
     --sf-success-90--alfa-8: rgba(143,250,136,0.07843);
     --sf-success-90--alfa-12: rgba(143,250,136,0.12157);
     --sf-success-90--alfa-24: rgba(143,250,136,0.23922);
-    --sf-success-90--alfa-48: rgba(143,250,136,0.47843);
     --sf-success-85: #81ec7c;
     --sf-success-80: #74dd6f;
     --sf-success-70: #58c157;
@@ -988,9 +1008,6 @@
     --sf-success-50--alfa-24: rgba(25,138,39,0.23922);
     --sf-success-50--alfa-28: rgba(25,138,39,0.27843);
     --sf-success-50--alfa-32: rgba(25,138,39,0.32157);
-    --sf-success-50--alfa-36: rgba(25,138,39,0.36078);
-    --sf-success-50--alfa-40: rgba(25,138,39,0.4);
-    --sf-success-50--alfa-44: rgba(25,138,39,0.43922);
     --sf-success-40: #006e17;
     --sf-success-35: #006013;
     --sf-success-30: #00530f;
@@ -1105,15 +1122,18 @@ body {
 @layer sf.base {
   :root {
     --sf-icon-size-1\/4: 0.625rem;
+    --sf-icon-size-1\/4: var(--sf-b0);
     --sf-icon-size-1\/3: 0.75rem;
+    --sf-icon-size-1\/3: var(--sf-b2);
     --sf-icon-size-1\/2: 0.875rem;
-    --sf-icon-size-1: 1rem;
-    --sf-icon-size-2: 1.25rem;
-    --sf-icon-size-3: 1.5rem;
-    --sf-icon-size-4: 1.75rem;
-    --sf-icon-size-5: 2rem;
-    --sf-icon-size-6: 2.25rem;
-    --sf-icon-size-7: 2.5rem;
+    --sf-icon-size-1\/2: var(--sf-b4);
+    --sf-icon-size-1: var(--sf-b6);
+    --sf-icon-size-2: var(--sf-c0);
+    --sf-icon-size-3: var(--sf-c2);
+    --sf-icon-size-4: var(--sf-c4);
+    --sf-icon-size-5: var(--sf-c6);
+    --sf-icon-size-6: var(--sf-c8);
+    --sf-icon-size-7: var(--sf-d0);
   }
 }
 /*
@@ -2615,7 +2635,7 @@ body {
    focus colour. Width and style stay the system's. */
 @layer sf.components {
   .sf-composition-regions {
-    --sf-composition-region-side: minmax(0, 16rem);
+    --sf-composition-region-side: minmax(0, var(--sf-f6));
     --sf-composition-region-gap: var(--sf-space-4, 1rem);
     container-type: inline-size;
     display: block;

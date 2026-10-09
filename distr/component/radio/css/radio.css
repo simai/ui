@@ -115,7 +115,7 @@
   .sf-radio-button .sf-radio-button-box {
     --sf-radio-button-box--background-color: transparent;
     --sf-radio-button-box--border: var(--sf-px) solid;
-    --sf-radio-button-box--border-color: var(--sf-outline-control);
+    --sf-radio-button-box--border-color: var(--sf-outline);
     --sf-radio-button-box--border-end-end-radius: var(--sf-radius-circle);
     --sf-radio-button-box--border-end-start-radius: var(--sf-radius-circle);
     --sf-radio-button-box--border-start-end-radius: var(--sf-radius-circle);

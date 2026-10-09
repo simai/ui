@@ -421,7 +421,11 @@
   }
   .sf-steps .sf-steps-container > .sf-icon {
     flex-shrink: 0;
-    --sf-icon--color: var(--sf-on-surface-muted);
+    /* A glyph is non-text graphics, and WCAG 1.4.11 asks 3:1 of it.
+       --sf-on-surface-muted is 3.18:1 light and 2.92:1 dark, so it sat on the
+       line in one theme and under it in the other. --sf-on-surface-variant is
+       the Framework's own paler-than-text role, 6.47 and 5.95. */
+    --sf-icon--color: var(--sf-on-surface-variant);
     color: var(--sf-icon--color);
     font-size: var(--sf-text-size-3);
     font-size: var(--sf-icon--font-size, var(--sf-text-size-3));

@@ -62,9 +62,11 @@ function createDropdownInteraction(root, adapter) {
     }
 
     assigned.set(node, previous);
-  };
+  }; // The dropdown's own field, or the trigger the consumer handed in: the
+  // keyboard, the focus and the aria state belong to whichever one is there.
 
-  const field = () => root.querySelector('.sf-dropdown-field');
+
+  const field = () => root.querySelector('.sf-dropdown-field, .sf-dropdown-trigger');
 
   const trigger = () => field()?.querySelector(':scope > button') || field();
 
@@ -1171,7 +1173,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   closeDropdownPortal: () => (/* binding */ closeDropdownPortal),
 /* harmony export */   openDropdownPortal: () => (/* binding */ openDropdownPortal),
-/* harmony export */   positionDropdownPortal: () => (/* binding */ positionDropdownPortal)
+/* harmony export */   positionDropdownPortal: () => (/* binding */ positionDropdownPortal),
+/* harmony export */   triggerOf: () => (/* binding */ triggerOf)
 /* harmony export */ });
 /* harmony import */ var _core_js_position_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2e9112dbdda9");
 // One placement/lifecycle contract for native and body-projected panels.
@@ -1201,12 +1204,20 @@ function syncFallbackContext(root, state) {
   }
 
   state.contextProperties = names;
-}
+} // What the list hangs from. Usually the dropdown's own field; where the
+// consumer handed a trigger in, that trigger. Looking only for the field, the
+// portal never opened for such a dropdown at all -- the list stayed in the page
+// where it was rendered, with no placement of its own and clipped by whatever
+// box it sat in.
 
+
+function triggerOf(root) {
+  return root?.querySelector('.sf-dropdown-field, .sf-dropdown-trigger') ?? null;
+}
 function positionDropdownPortal(root, list) {
   const state = portals.get(list);
   if (!state || !root.isConnected || list.hidden) return false;
-  const field = root.querySelector('.sf-dropdown-field');
+  const field = triggerOf(root);
   if (!field) return false;
 
   if (root.closest('[hidden], [inert], [aria-hidden="true"], dialog:not([open])') || !field.getClientRects().length || ['hidden', 'collapse'].includes(getComputedStyle(field).visibility)) {
@@ -1228,7 +1239,10 @@ function positionDropdownPortal(root, list) {
     state.anchor = position().anchor(field, list, {
       side: 'block-end',
       align: 'start',
-      matchWidth: true,
+      // A list matches the width of a field, because a field is as wide as the
+      // list it opens. A trigger of the consumer's own is not: an icon button
+      // would make the list the width of a glyph.
+      matchWidth: field.classList.contains('sf-dropdown-field'),
       fitHeight: true,
       autoUpdate: false,
       onPosition: ({
@@ -1246,7 +1260,7 @@ function positionDropdownPortal(root, list) {
   return true;
 }
 function openDropdownPortal(root, list, onUnavailable) {
-  if (!list?.isConnected || !root?.querySelector('.sf-dropdown-field')) return false;
+  if (!list?.isConnected || !triggerOf(root)) return false;
   const active = list.contains(document.activeElement) ? document.activeElement : null;
 
   if (!portals.has(list)) {
@@ -1301,7 +1315,7 @@ function openDropdownPortal(root, list, onUnavailable) {
 
     if (typeof ResizeObserver === 'function') {
       state.resize = new ResizeObserver(state.schedule);
-      state.resize.observe(root.querySelector('.sf-dropdown-field'));
+      state.resize.observe(triggerOf(root));
       state.resize.observe(list);
     }
 

@@ -418,7 +418,12 @@
     --sf-input-text--line-height: var(--sf-text-height-1);
   }
   .sf-input.sf-input--bordered > .sf-input-field > .sf-input-hint > .sf-icon, .sf-input.sf-input--filled > .sf-input-field > .sf-input-hint > .sf-icon {
-    --sf-icon--color: var(--sf-on-surface-muted);
+    /* A glyph is non-text graphics, and WCAG 1.4.11 asks 3:1 of it.
+     --sf-on-surface-muted is 3.18:1 light and 2.92:1 dark, so it sat on the
+     line in one theme and under it in the other. --sf-on-surface-variant is
+     the Framework's own paler-than-text role, 6.47 and 5.95, and the one a
+     label already reads in (owner, 2026-10-08). */
+    --sf-icon--color: var(--sf-on-surface-variant);
   }
   .sf-input.sf-input--size-1 > .sf-input-field > .sf-input-hint > .sf-icon, .sf-input.sf-input--size-1 > .sf-input-field > .sf-input-left .sf-icon, .sf-input.sf-input--size-1 > .sf-input-field > .sf-icon {
     --sf-icon--font-size: var(--sf-text-height-1);
@@ -621,11 +626,11 @@
 @layer sf.states {
   .sf-input:not(.error).sf-input--bordered[\:not-has\(input\:disabled\)] .sf-input-field {
     --sf-input-field--background-color: var(--sf-surface-0);
-    --sf-input-field--border-color: var(--sf-outline-control);
+    --sf-input-field--border-color: var(--sf-outline);
   }
   .sf-input:not(.error).sf-input--bordered:not(:has(input:disabled)) .sf-input-field {
     --sf-input-field--background-color: var(--sf-surface-0);
-    --sf-input-field--border-color: var(--sf-outline-control);
+    --sf-input-field--border-color: var(--sf-outline);
   }
   .sf-input:not(.error).sf-input--bordered[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:not\(\:-moz-read-only\)\:active\)] .sf-input-field {
     --sf-input-field--border-color: var(--sf-primary);

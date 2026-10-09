@@ -186,6 +186,10 @@
   .sf-tree .sf-tree-chevron {
     flex: 0 0 var(--sf-icon-size-3);
   }
+  /* A leaf keeps the chevron's column so names line up with the branches beside
+     them. Where nothing in the tree can be opened there are no branches to line
+     up with, and the column is an indent nobody chose: a list of destinations
+     then starts a chevron's width in from its own edge. */
   .sf-tree .sf-tree-toggle-spacer {
     display: inline-block;
     flex: 0 0 var(--sf-icon-size-3);
@@ -193,6 +197,9 @@
     block-size: var(--sf-icon-size-3);
     width: var(--sf-icon-size-3);
     inline-size: var(--sf-icon-size-3);
+  }
+  .sf-tree[data-sf-tree-flat=true] .sf-tree-toggle-spacer {
+    display: none;
   }
   .sf-tree .sf-tree-chevron .sf-icon,
   .sf-tree .sf-tree-chevron.sf-icon {

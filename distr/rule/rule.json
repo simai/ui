@@ -830,6 +830,24 @@
     "type": "smart"
   },
   {
+    "name": "cl-color",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "icons"
+      },
+      {
+        "name": "cl-icon-buttons"
+      }
+    ],
+    "tags": [
+      "sf-color"
+    ],
+    "type": "smart"
+  },
+  {
     "name": "cl-composition-overlay",
     "css": true,
     "js": true,
@@ -1212,6 +1230,17 @@
     "type": "smart"
   },
   {
+    "name": "cl-popover",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [],
+    "tags": [
+      "sf-popover"
+    ],
+    "type": "smart"
+  },
+  {
     "name": "cl-progress-bar",
     "js": true,
     "mode": "smart",
@@ -1279,6 +1308,9 @@
         "name": "cl-progress-scale"
       },
       {
+        "name": "cl-range-slider"
+      },
+      {
         "name": "cl-file-preview"
       },
       {
@@ -1318,10 +1350,22 @@
         "name": "cl-sortable"
       },
       {
+        "name": "cl-color"
+      },
+      {
+        "name": "cl-country-code"
+      },
+      {
         "name": "cl-data-view"
       },
       {
         "name": "cl-table"
+      },
+      {
+        "name": "cl-popover"
+      },
+      {
+        "name": "cl-tabs"
       }
     ],
     "tags": [
@@ -1478,6 +1522,12 @@
     "relation": [
       {
         "name": "cl-checkbox"
+      },
+      {
+        "name": "cl-color"
+      },
+      {
+        "name": "cl-country-code"
       },
       {
         "name": "cl-buttons"
