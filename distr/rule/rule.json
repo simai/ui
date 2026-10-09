@@ -1305,6 +1305,9 @@
         "name": "cl-tags"
       },
       {
+        "name": "accordion"
+      },
+      {
         "name": "cl-reference-link"
       },
       {

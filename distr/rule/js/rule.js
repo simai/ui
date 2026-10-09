@@ -3969,6 +3969,10 @@ SF.RuleLoader["cl-property-view"] = {
     name: "cl-badges"
   }, {
     name: "cl-tags"
+  }, // The not-placed bin is the Framework's accordion, and a component this one
+  // renders is a component this one fetches.
+  {
+    name: "accordion"
   }, {
     name: "cl-reference-link"
   }, {
