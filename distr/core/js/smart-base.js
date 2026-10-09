@@ -1,6 +1,80 @@
 "use strict";
 (self["webpackChunk"] = self["webpackChunk"] || []).push([[51805064141692],{
 
+/***/ "06e8cd089f28"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   clearDeprecations: () => (/* binding */ clearDeprecations),
+/* harmony export */   listDeprecations: () => (/* binding */ listDeprecations),
+/* harmony export */   noteDeprecated: () => (/* binding */ noteDeprecated)
+/* harmony export */ });
+// What a page still uses that the Framework keeps only for compatibility. Every
+// legacy attribute, value or name a component resolves is noted here once, so a
+// person, a probe or an AI upgrading a product can read the list off a running
+// page (SF.deprecations.list()) instead of searching the source for it. The
+// records behind the names are in contracts/changes/journal.json.
+//
+// Nothing is printed by default: a page opts in to console warnings with
+// <html data-sf-deprecations="warn"> or SF.deprecations.warn = true.
+const notes = new Map();
+
+function warnEnabled() {
+  const root = globalThis.document?.documentElement;
+  return root?.dataset?.sfDeprecations === 'warn' || globalThis.SF?.deprecations?.warn === true;
+}
+
+function noteDeprecated({
+  component = '',
+  kind = 'attribute',
+  attribute = '',
+  from,
+  to = null
+} = {}) {
+  if (!from) return;
+  const key = [component, kind, attribute, from].join('|');
+  const existing = notes.get(key);
+
+  if (existing) {
+    existing.count += 1;
+    return;
+  }
+
+  notes.set(key, {
+    component,
+    kind,
+    attribute,
+    from,
+    to,
+    count: 1
+  });
+
+  if (warnEnabled()) {
+    const where = component ? `${component}: ` : '';
+    const what = kind === 'value' ? `${attribute}="${from}"` : `${kind} ${from}`;
+    globalThis.console?.warn?.(`[Simai Framework] ${where}${what} is a legacy name${to ? `; write ${to}` : ''}. See contracts/changes/journal.json.`);
+  }
+}
+function listDeprecations() {
+  return [...notes.values()].map(note => ({ ...note
+  }));
+}
+function clearDeprecations() {
+  notes.clear();
+}
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.SF = globalThis.SF || {};
+  const api = globalThis.SF.deprecations || {};
+  api.list = listDeprecations;
+  api.clear = clearDeprecations;
+  api.note = noteDeprecated;
+  globalThis.SF.deprecations = api;
+}
+
+/***/ },
+
 /***/ "0845ef25b9de"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -16,9 +90,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   toBoolean: () => (/* binding */ toBoolean),
 /* harmony export */   toNumber: () => (/* binding */ toNumber)
 /* harmony export */ });
-/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("fef8077ac919");
-/* harmony import */ var lit_directives_ref_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("7fcbcc00731e");
-/* harmony import */ var lit_directive_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("69fcfee6f64b");
+/* harmony import */ var _deprecations_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("06e8cd089f28");
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("fef8077ac919");
+/* harmony import */ var lit_directives_ref_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("7fcbcc00731e");
+/* harmony import */ var lit_directive_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("69fcfee6f64b");
+
 
 
 
@@ -41,7 +117,7 @@ function toNumber(value, fallback = 0) {
 // is how a value can be renamed without breaking a consumer: {'1/2': ['small']}
 // keeps size="small" working while the canonical answer is 1/2.
 
-function normalizeEnum(value, allowed, fallback, valueAliases = null) {
+function normalizeEnum(value, allowed, fallback, valueAliases = null, onLegacy = null) {
   const normalized = String(value || fallback).trim().toLowerCase();
 
   if (Array.isArray(allowed) && allowed.includes(normalized)) {
@@ -53,6 +129,7 @@ function normalizeEnum(value, allowed, fallback, valueAliases = null) {
       const names = Array.isArray(legacy) ? legacy : [legacy];
 
       if (names.map(name => String(name).toLowerCase()).includes(normalized)) {
+        onLegacy?.(normalized, canonical);
         return canonical;
       }
     }
@@ -169,11 +246,11 @@ function applySmartProps(element, props = {}, previous = null) {
 // anything in the table changed -- fourteen nodes a row, changed row or not,
 // taking the control a person was interacting with with them.
 
-class SmartElementDirective extends lit_directive_js__WEBPACK_IMPORTED_MODULE_2__.Directive {
+class SmartElementDirective extends lit_directive_js__WEBPACK_IMPORTED_MODULE_3__.Directive {
   constructor(partInfo) {
     super(partInfo);
 
-    if (partInfo.type !== lit_directive_js__WEBPACK_IMPORTED_MODULE_2__.PartType.CHILD) {
+    if (partInfo.type !== lit_directive_js__WEBPACK_IMPORTED_MODULE_3__.PartType.CHILD) {
       throw new Error("renderSmartElement belongs in a child position of a template");
     }
 
@@ -197,7 +274,7 @@ class SmartElementDirective extends lit_directive_js__WEBPACK_IMPORTED_MODULE_2_
 
 }
 
-const smartElement = (0,lit_directive_js__WEBPACK_IMPORTED_MODULE_2__.directive)(SmartElementDirective); // The same element, outside a template. A caller that holds the element itself
+const smartElement = (0,lit_directive_js__WEBPACK_IMPORTED_MODULE_3__.directive)(SmartElementDirective); // The same element, outside a template. A caller that holds the element itself
 // -- a portal, a measurement, a test -- gets a fresh one, because there is no
 // position to keep it in.
 
@@ -469,6 +546,16 @@ class SfBaseElement extends HTMLElement {
     }
 
     const legacy = aliases.find(alias => this.hasAttribute(alias));
+
+    if (legacy) {
+      (0,_deprecations_js__WEBPACK_IMPORTED_MODULE_0__.noteDeprecated)({
+        component: this.localName,
+        kind: 'attribute',
+        from: legacy,
+        to: attribute || null
+      });
+    }
+
     return legacy || attribute;
   } // The same rule for a component that reads an enum directly. It may pass the
   // legacy attribute names it answers to, and — through the options form —
@@ -488,7 +575,13 @@ class SfBaseElement extends HTMLElement {
       aliases: (Array.isArray(options.aliases) ? options.aliases : [options.aliases]).filter(Boolean).map(alias => this.attributeName(alias))
     });
     const value = attr && this.hasAttribute(attr) ? this.getAttribute(attr) : undefined;
-    return normalizeEnum(value, options.values ?? [], options.fallback ?? "", options.valueAliases ?? null);
+    return normalizeEnum(value, options.values ?? [], options.fallback ?? "", options.valueAliases ?? null, (from, to) => (0,_deprecations_js__WEBPACK_IMPORTED_MODULE_0__.noteDeprecated)({
+      component: this.localName,
+      kind: 'value',
+      attribute: this.attributeName(name),
+      from,
+      to
+    }));
   }
 
   hasDeclaredProps() {
@@ -496,7 +589,7 @@ class SfBaseElement extends HTMLElement {
   }
 
   createRef() {
-    const ref = (0,lit_directives_ref_js__WEBPACK_IMPORTED_MODULE_1__.createRef)();
+    const ref = (0,lit_directives_ref_js__WEBPACK_IMPORTED_MODULE_2__.createRef)();
     ref.__sfOwner = this;
     return ref;
   }
@@ -641,7 +734,13 @@ class SfBaseElement extends HTMLElement {
       // The legacy values belong here, not only in a component's own getter: the
       // template reads the props context, so a legacy word that is normalised in
       // the getter alone would still reach the class list as the default.
-      return normalizeEnum(value, values, defaultValue || values[0] || "", valueAliases || null);
+      return normalizeEnum(value, values, defaultValue || values[0] || "", valueAliases || null, (from, to) => (0,_deprecations_js__WEBPACK_IMPORTED_MODULE_0__.noteDeprecated)({
+        component: this.localName,
+        kind: 'value',
+        attribute: config.attribute || config.key || '',
+        from,
+        to
+      }));
     }
 
     return value ?? this.clonePropDefault(defaultValue, type);
@@ -905,7 +1004,7 @@ class SfBaseElement extends HTMLElement {
 
     this.prepareRenderContainer(changedAttributes);
     this.markStylePending(this);
-    (0,lit__WEBPACK_IMPORTED_MODULE_0__.render)(templateResult, this);
+    (0,lit__WEBPACK_IMPORTED_MODULE_1__.render)(templateResult, this);
     this.flushRefEffects();
     await this.whenRenderedStylesReady(this);
 
@@ -1847,7 +1946,7 @@ class SfBaseElement extends HTMLElement {
     const slotContent = this._slotTemplates.get(name) || [];
 
     if (!slotContent.length) {
-      return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+      return lit__WEBPACK_IMPORTED_MODULE_1__.nothing;
     }
 
     if (slotContent.length === 1) {
@@ -1931,7 +2030,7 @@ class SfBaseElement extends HTMLElement {
     const externalModule = await this.resolveExternalTemplateModule(templateName);
 
     if (!this._isMounted || renderToken !== this._renderToken || templateName !== this.componentTemplateName) {
-      return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+      return lit__WEBPACK_IMPORTED_MODULE_1__.nothing;
     }
 
     if (externalModule !== this._externalTemplateModule) {
@@ -1947,8 +2046,8 @@ class SfBaseElement extends HTMLElement {
 
       if (renderFn) {
         return renderFn({
-          html: lit__WEBPACK_IMPORTED_MODULE_0__.html,
-          nothing: lit__WEBPACK_IMPORTED_MODULE_0__.nothing,
+          html: lit__WEBPACK_IMPORTED_MODULE_1__.html,
+          nothing: lit__WEBPACK_IMPORTED_MODULE_1__.nothing,
           context,
           component: this,
           changedAttributes
@@ -1969,8 +2068,8 @@ class SfBaseElement extends HTMLElement {
       return externalModule.mapContext({
         context,
         component: this,
-        html: lit__WEBPACK_IMPORTED_MODULE_0__.html,
-        nothing: lit__WEBPACK_IMPORTED_MODULE_0__.nothing
+        html: lit__WEBPACK_IMPORTED_MODULE_1__.html,
+        nothing: lit__WEBPACK_IMPORTED_MODULE_1__.nothing
       }) || context;
     }
 
@@ -2121,8 +2220,8 @@ class SfBaseElement extends HTMLElement {
       externalModule[hookName]({
         component: this,
         root: this,
-        html: lit__WEBPACK_IMPORTED_MODULE_0__.html,
-        nothing: lit__WEBPACK_IMPORTED_MODULE_0__.nothing,
+        html: lit__WEBPACK_IMPORTED_MODULE_1__.html,
+        nothing: lit__WEBPACK_IMPORTED_MODULE_1__.nothing,
         context: this.templateContext(),
         ...detail
       });
@@ -2148,7 +2247,7 @@ class SfBaseElement extends HTMLElement {
   }
 
   template() {
-    return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+    return lit__WEBPACK_IMPORTED_MODULE_1__.nothing;
   }
 
   beforeRender() {}
@@ -2175,23 +2274,23 @@ class SfBaseElement extends HTMLElement {
 
 if (typeof window !== "undefined") {
   window.SfBaseElement = SfBaseElement;
-  window.html = lit__WEBPACK_IMPORTED_MODULE_0__.html;
-  window.nothing = lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
-  window.render = lit__WEBPACK_IMPORTED_MODULE_0__.render;
+  window.html = lit__WEBPACK_IMPORTED_MODULE_1__.html;
+  window.nothing = lit__WEBPACK_IMPORTED_MODULE_1__.nothing;
+  window.render = lit__WEBPACK_IMPORTED_MODULE_1__.render;
 
   if (!window.SF) {
     window.SF = {};
   }
 
   window.SF.SfBaseElement = SfBaseElement;
-  window.SF.html = lit__WEBPACK_IMPORTED_MODULE_0__.html;
-  window.SF.nothing = lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
-  window.SF.render = lit__WEBPACK_IMPORTED_MODULE_0__.render;
+  window.SF.html = lit__WEBPACK_IMPORTED_MODULE_1__.html;
+  window.SF.nothing = lit__WEBPACK_IMPORTED_MODULE_1__.nothing;
+  window.SF.render = lit__WEBPACK_IMPORTED_MODULE_1__.render;
   window.SF.smart = { ...(window.SF.smart || {}),
     SfBaseElement,
-    html: lit__WEBPACK_IMPORTED_MODULE_0__.html,
-    nothing: lit__WEBPACK_IMPORTED_MODULE_0__.nothing,
-    render: lit__WEBPACK_IMPORTED_MODULE_0__.render,
+    html: lit__WEBPACK_IMPORTED_MODULE_1__.html,
+    nothing: lit__WEBPACK_IMPORTED_MODULE_1__.nothing,
+    render: lit__WEBPACK_IMPORTED_MODULE_1__.render,
     toBoolean,
     toAttributeName,
     toNumber,

@@ -1384,10 +1384,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   nearestFieldSize: () => (/* binding */ nearestFieldSize),
 /* harmony export */   retireFieldSizeClass: () => (/* binding */ retireFieldSizeClass)
 /* harmony export */ });
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("06e8cd089f28");
 // Form fields come in three sizes. 1/3 and 3 were retired: no consumer used
 // them, and they could not hold a field's own pictures, tags and targets. A
 // page written for a retired size keeps rendering at the nearest kept size, and
 // says so once in the console so the markup can be updated.
+
 const FIELD_SIZES = Object.freeze(['1/2', '1', '2']);
 const RETIRED_FIELD_SIZES = Object.freeze({
   '1/3': '1/2',
@@ -1407,6 +1409,13 @@ function fieldSize(value, component = 'field', fallback = '1') {
 
   if (Object.hasOwn(RETIRED_FIELD_SIZES, size)) {
     const kept = RETIRED_FIELD_SIZES[size];
+    (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__.noteDeprecated)({
+      component,
+      kind: 'value',
+      attribute: 'size',
+      from: size,
+      to: kept
+    });
     const key = `${component}:${size}`;
 
     if (!warned.has(key) && typeof console !== 'undefined') {
@@ -1469,6 +1478,80 @@ function bindFormReset(input, synchronize) {
   if (!callbacks) subscriptions.set(input, callbacks = new Set());
   callbacks.add(synchronize);
   return () => callbacks.delete(synchronize);
+}
+
+/***/ },
+
+/***/ "06e8cd089f28"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   clearDeprecations: () => (/* binding */ clearDeprecations),
+/* harmony export */   listDeprecations: () => (/* binding */ listDeprecations),
+/* harmony export */   noteDeprecated: () => (/* binding */ noteDeprecated)
+/* harmony export */ });
+// What a page still uses that the Framework keeps only for compatibility. Every
+// legacy attribute, value or name a component resolves is noted here once, so a
+// person, a probe or an AI upgrading a product can read the list off a running
+// page (SF.deprecations.list()) instead of searching the source for it. The
+// records behind the names are in contracts/changes/journal.json.
+//
+// Nothing is printed by default: a page opts in to console warnings with
+// <html data-sf-deprecations="warn"> or SF.deprecations.warn = true.
+const notes = new Map();
+
+function warnEnabled() {
+  const root = globalThis.document?.documentElement;
+  return root?.dataset?.sfDeprecations === 'warn' || globalThis.SF?.deprecations?.warn === true;
+}
+
+function noteDeprecated({
+  component = '',
+  kind = 'attribute',
+  attribute = '',
+  from,
+  to = null
+} = {}) {
+  if (!from) return;
+  const key = [component, kind, attribute, from].join('|');
+  const existing = notes.get(key);
+
+  if (existing) {
+    existing.count += 1;
+    return;
+  }
+
+  notes.set(key, {
+    component,
+    kind,
+    attribute,
+    from,
+    to,
+    count: 1
+  });
+
+  if (warnEnabled()) {
+    const where = component ? `${component}: ` : '';
+    const what = kind === 'value' ? `${attribute}="${from}"` : `${kind} ${from}`;
+    globalThis.console?.warn?.(`[Simai Framework] ${where}${what} is a legacy name${to ? `; write ${to}` : ''}. See contracts/changes/journal.json.`);
+  }
+}
+function listDeprecations() {
+  return [...notes.values()].map(note => ({ ...note
+  }));
+}
+function clearDeprecations() {
+  notes.clear();
+}
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.SF = globalThis.SF || {};
+  const api = globalThis.SF.deprecations || {};
+  api.list = listDeprecations;
+  api.clear = clearDeprecations;
+  api.note = noteDeprecated;
+  globalThis.SF.deprecations = api;
 }
 
 /***/ },
