@@ -321,13 +321,20 @@
     --sf-surface-3: light-dark(var(--sf-neutral-90), var(--sf-neutral-20));
     --sf-surface-4: light-dark(var(--sf-neutral-85), var(--sf-neutral-25));
     --sf-surface-5: light-dark(var(--sf-neutral-80), var(--sf-neutral-30));
-    /* What a pointer does to a surface, on the neutral tone of the theme.
-       `active` at 12 is gone: nothing asked for it, and at 12 it was also the
-       colour a plate used to be (owner, 2026-10-08). `overlay` stays -- it is
-       asked for by name through the utilities rather than through var(), which
-       is how it read as unused at first: it is the backdrop of a modal. */
+    /* What a pointer does to a surface, on the neutral tone of the theme: the
+       state family's three steps, 4, 8 and 12.
+       `active` was removed on 2026-10-08 as asked for by nothing. It was not:
+       the utility generator derives `active:bg-surface-transparent` from the
+       background list and reads this name bare, so the class painted nothing
+       on press for exactly one published pair. The sweep that called it dead
+       searched for `var(--sf-surface-transparent-active)` in the sources, and
+       a generated utility is in none of them (owner, 2026-10-09).
+       `overlay` stays for the same reason, and read as unused at first for the
+       same reason: it is the backdrop of a modal, asked for through the
+       utilities rather than through var(). */
     --sf-surface-transparent-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
     --sf-surface-transparent-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
+    --sf-surface-transparent-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
     /* A step above the strongest plate, and not because the ladder asks: a
        plate sits on the page, a veil covers it. At 24 the two were the same
        colour, and the backdrop of a modal was as strong as a pressed card
