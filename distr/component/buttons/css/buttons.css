@@ -328,6 +328,10 @@
     padding-right: var(--sf-button-text-container--padding-inline-start);
   }
   .sf-button .sf-button-text-container {
+    /* A control label wraps between words and never inside one. Prose in a
+       table breaks mid-word by design, and a button sitting in a cell used to
+       inherit that: "edit" came out on three lines and set the row height. */
+    word-break: normal;
     --sf-button-text-container--background-color: transparent;
     background-color: var(--sf-button-text-container--background-color);
     color: var(--sf-button-text-container--color);
