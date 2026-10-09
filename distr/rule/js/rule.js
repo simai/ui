@@ -3948,6 +3948,11 @@ SF.RuleLoader["cl-property-view"] = {
   css: true,
   relation: [{
     name: "icons"
+  }, // The panel draws an <sf-icon> of its own now -- the chevron that folds the
+  // not-placed bin -- and a tag the panel renders is a tag the panel has to
+  // fetch, whatever else on the page may already have fetched it.
+  {
+    name: "cl-icons"
   }, {
     name: "cl-buttons"
   }, {
