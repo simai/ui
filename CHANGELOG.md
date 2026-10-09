@@ -34,6 +34,7 @@
 
 ### Изменено
 
+- Legacy leaves on a calendar. A public name kept for compatibility is recorded in `contracts/changes/journal.json` (37 records, 130 old forms) with what to write instead, the date it was deprecated and the sweep day it goes; sweeps are on the 1st of a month for whatever has spent 30 days in compat (`contracts/lifecycle-policy.json`, standard `simai.change-lifecycle` 1.0.0). Pages note every legacy name they use in `SF.deprecations.list()`, silently unless `<html data-sf-deprecations="warn">`. `scripts/sf-upgrade.mjs` upgrades a product from the journal. First sweeps: 2026-11-01 (`sf-toggle`, `font-size-ext`, `--sf-radius-round`, `--sf-radius-default`) and 2026-12-01 (the rest). The loader's messages are unchanged; no runtime behaviour changes.
 - `sf-drawer` gains `gutter` (a length, empty for the drawer's own space-1): the head and the body share one inline gutter, so a title and the content start on one axis. A theme may set `--sf-drawer-gutter`. Composites that want a wider reading gutter set it on the drawer instead of insetting their own content inside the body.
 - `sf-drawer` gains `stack-offset` (a length, empty by default: drawers lie flush as before). Drawers open at one edge stand depth × offset in from it and keep their width, so the drawer below shows past the one above; the drawer counts its own depth from the open, undocked drawers at the same physical edge.
 - Fixed: in a right-to-left page a drawer at `inline-start` or `inline-end` opened off-screen, because the closed transform under `:dir(rtl)` outranked `.is-open`.
