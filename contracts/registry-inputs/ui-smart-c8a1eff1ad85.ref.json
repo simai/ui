@@ -1,0 +1,20 @@
+{
+  "schema_id": "simai.framework.owner-manifest-reference",
+  "schema_version": 1,
+  "owner": "simai/ui-smart",
+  "runtime": {
+    "tag": null,
+    "commit": "be002027976193a96e0b6bd83cbdef673547f1a8",
+    "tree": "b3cbde9a0add63dc17a5e3e357b02192c2421815",
+    "subtree": "3eabac9df12078852fd5d2747a51fc36ca4696f2",
+    "archive_sha256": "c11605920376fdf79684d3e1e36ca3ebd160b4d2c696c10e9654c478a4dad65c"
+  },
+  "manifest": {
+    "path": "contracts/owners/smart-component.manifest.json",
+    "hash_mode": "canonical-json-v1",
+    "sha256": "d298f3446cda88d366b8ee36dd59424438a50432ef79c86943a43cada5ee25d8",
+    "file_sha256": "1f9798600d48441473ea7ae6d7563134e744ff7939f601123450a6c1d55a58e9"
+  },
+  "contract_revision": "c8a1eff1ad85901c73bcb8c74e684275782f101b",
+  "status": "committed"
+}
