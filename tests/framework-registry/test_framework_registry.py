@@ -91,9 +91,9 @@ class FrameworkContractRegistryTest(unittest.TestCase):
             {
                 "utility": 227,
                 "component": 62,
-                "smart-component": 47,
+                "smart-component": 49,
                 "recipe": 1,
-                "total": 337,
+                "total": 339,
             },
         )
         # The pair names the two runtimes it was built from; that is the claim,
@@ -195,7 +195,11 @@ class FrameworkContractRegistryTest(unittest.TestCase):
                 "smart.badges",
                 "smart.buttons",
                 "smart.checkbox",
+                # The typed cells of the renderer set draw a colour swatch and
+                # a country code, so the data view fetches both.
+                "smart.color",
                 "smart.context-menu",
+                "smart.country-code",
                 "smart.datepicker",
                 "smart.dropdown",
                 "smart.icon-buttons",
