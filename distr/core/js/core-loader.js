@@ -1736,6 +1736,32 @@ function firstFilledValue(...values) {
   }
 
   return '';
+} // Where Smart is served from. From release ui-6b4a0c3887d6 the `ui`
+// distribution carries Smart in `distr/smart`, beside `distr/core`, so a page
+// that names only `sfPath` gets `<sfPath>/smart` -- that is the layout, not a
+// fallback. `sfSmartPath` stays for the pages that still serve the separate
+// ui-smart repository from its own root. An empty value counts as not set: a
+// lab writes `sfSmartPath = ''` and means the default, and an empty root would
+// otherwise resolve every Smart file against the page's own directory.
+
+
+function resolveSmartRoot(url, smartUrl) {
+  const own = typeof smartUrl === 'string' ? smartUrl.trim() : '';
+  return own || url;
+} // Component packages: bundles of Smart components served from their own base
+// and carrying their own rules (Framework Pro is the first). A page declares
+// them in `SF_BOOT_CONFIG.packages`; docs/developer/component-packages.md has
+// the contract. The name is also the prefix of the package's entries in the
+// missing-file cache, so it is kept to characters that cannot collide with a
+// rule name's own.
+
+
+const PACKAGE_NAME = /^[a-z][a-z0-9-]*$/;
+const PACKAGE_MISS_SEPARATOR = '::';
+
+function normalisePackageUrl(value) {
+  if (typeof value !== 'string') return '';
+  return value.trim().replace(/\/+$/, '');
 }
 
 function SFLoaderPlugin(params) {
@@ -1760,7 +1786,7 @@ function SFLoaderPlugin(params) {
   this.uniqueIcons = new Map();
   this.pendingRegex = true;
   this.url = params.url ?? '/simai/asset/simai.framework/sf5.master';
-  this.smartUrl = params.smartUrl ?? this.url;
+  this.smartUrl = resolveSmartRoot(this.url, params.smartUrl);
   this.observeElements = [];
   this.module = {};
   this.phpScriptsLoaded = [];
@@ -1847,16 +1873,190 @@ function SFLoaderPlugin(params) {
   };
   this.plugin = {};
   this.searchEnd = false;
+  this.packages = Object.create(null);
+  this.packageWarnings = new Set();
+  this.installPackageApi();
+  this.declarePackages({ ...(window.SF_BOOT_CONFIG?.packages || {}),
+    ...(params.packages || {})
+  }); // A declared package's rules are fetched before the first scan, so its tags
+  // are known when the page is first read and a cached plugin list never names
+  // a rule that has not arrived yet. A page without packages starts exactly as
+  // before, synchronously.
+
+  const packageRulesReady = this.loadDeclaredPackageRules();
+
+  const start = () => packageRulesReady ? packageRulesReady.then(() => this.init()) : this.init();
 
   if (this.smart.base === true) {
-    this.smartBaseReady = this.loadSmartBase().finally(() => {
-      this.init();
-    });
+    this.smartBaseReady = this.loadSmartBase().finally(start);
   } else {
     this.smartBaseReady = Promise.resolve(window.SF?.smart || null);
-    this.init();
+    start();
   }
 }
+
+SFLoaderPlugin.prototype.installPackageApi = function () {
+  const rules = this.findPlugins;
+  if (!rules || typeof rules !== 'object') return; // Not enumerable: everything that reads the rule map walks its entries, and
+  // a function among them would be read as a rule.
+
+  Object.defineProperty(rules, 'registerPackage', {
+    configurable: true,
+    enumerable: false,
+    writable: true,
+    value: (name, options) => this.registerPackage(name, options)
+  });
+};
+
+SFLoaderPlugin.prototype.warnPackage = function (key, message) {
+  if (this.packageWarnings.has(key)) return;
+  this.packageWarnings.add(key);
+  console.warn(`SFLoader: ${message}`);
+};
+
+SFLoaderPlugin.prototype.declarePackages = function (declared) {
+  Object.entries(declared || {}).forEach(([name, config]) => {
+    if (!PACKAGE_NAME.test(name)) {
+      this.warnPackage(`name:${name}`, `"${name}" in SF_BOOT_CONFIG.packages is not a package name ` + '(lower-case letters, digits and hyphens); it is ignored');
+      return;
+    }
+
+    const base = normalisePackageUrl(config?.base);
+
+    if (!base) {
+      this.warnPackage(`base:${name}`, `package "${name}" is declared without a base, so none of its ` + 'components can load; set SF_BOOT_CONFIG.packages.' + `${name}.base to the directory holding its component folders`);
+    }
+
+    this.packages[name] = {
+      name,
+      base,
+      rule: normalisePackageUrl(config?.rule) || (base ? `${base}/rule.js` : ''),
+      declared: true,
+      registered: false
+    };
+  });
+};
+
+SFLoaderPlugin.prototype.loadDeclaredPackageRules = function () {
+  const loads = Object.values(this.packages).filter(pkg => pkg.declared && pkg.rule).map(pkg => this.addScript(pkg.rule).then(() => {
+    if (!pkg.registered) {
+      this.warnPackage(`empty:${pkg.name}`, `${pkg.rule} loaded but registered nothing for package ` + `"${pkg.name}"; it must call SF.RuleLoader.registerPackage(` + `"${pkg.name}", {rules})`);
+    }
+  }).catch(() => {
+    this.warnPackage(`rule:${pkg.name}`, `the rules of package "${pkg.name}" could not be loaded from ` + `${pkg.rule}; its components stay undefined`);
+  }));
+  return loads.length ? Promise.all(loads) : null;
+}; // The one way a package adds rules. It may run before the first scan (the
+// rule file the Loader fetched for a declared package) or long after it (a
+// page registering a package of its own), so it rebuilds what the Loader
+// derived from the rule map and reads the page again.
+//
+// A package rule may replace a Core rule of the same name: while a component
+// moves into a package, Core still ships its old rule, and a page that
+// declared the package chose the package's bytes. A rule that has already
+// been loaded is not replaced -- a custom element cannot be defined twice.
+
+
+SFLoaderPlugin.prototype.registerPackage = function (name, options = {}) {
+  const packageName = String(name ?? '').trim();
+
+  if (!PACKAGE_NAME.test(packageName)) {
+    this.warnPackage(`name:${packageName}`, `"${packageName}" is not a package name (lower-case letters, digits ` + 'and hyphens); its rules are not registered');
+    return [];
+  }
+
+  const rules = options?.rules;
+
+  if (!rules || typeof rules !== 'object' || Array.isArray(rules)) {
+    this.warnPackage(`rules:${packageName}`, `package "${packageName}" was registered without a rules object`);
+    return [];
+  }
+
+  if (!this.packages[packageName]) {
+    this.packages[packageName] = {
+      name: packageName,
+      base: '',
+      rule: '',
+      declared: false,
+      registered: false
+    };
+  }
+
+  const pkg = this.packages[packageName]; // Where the bytes are served is the page's decision, so a base the page
+  // declared wins over the one a bundle suggests.
+
+  if (!pkg.base) pkg.base = normalisePackageUrl(options.base);
+  pkg.registered = true;
+  const added = [];
+  Object.entries(rules).forEach(([key, rule]) => {
+    if (!rule || typeof rule !== 'object' || Array.isArray(rule)) {
+      this.warnPackage(`rule:${packageName}:${key}`, `package "${packageName}" rule "${key}" is not an object; skipped`);
+      return;
+    }
+
+    const current = this.findPlugins[key];
+
+    if (current?.package && current.package !== packageName) {
+      this.warnPackage(`owner:${packageName}:${key}`, `rule "${key}" already belongs to package "${current.package}"; ` + `package "${packageName}" cannot take it`);
+      return;
+    }
+
+    if (current && (this.module[key] || this.loadedPlugins[key])) {
+      this.warnPackage(`loaded:${packageName}:${key}`, `rule "${key}" is already loaded from ` + `${current.package ? `package "${current.package}"` : 'the Smart base'}; ` + `the copy in package "${packageName}" is not used on this page`);
+      return;
+    }
+
+    this.findPlugins[key] = { ...rule,
+      package: packageName
+    };
+    added.push(key);
+  });
+  if (added.length) this.rulesChanged();
+  return added;
+}; // Everything the Loader derived from the rule map, dropped so the next read
+// sees the new rules, and the page read again so elements that were on it
+// before their rule arrived are loaded now. Before the first scan there is
+// nothing to read again: that scan reads the new rules itself.
+
+
+SFLoaderPlugin.prototype.rulesChanged = function () {
+  this.clearAttributeRuleIndex();
+  this.clearRegexpScanRules();
+  this.attrMatchCache.clear();
+  this.regexMatchCache.clear();
+
+  if (!this.prepareInit || typeof document === 'undefined' || !document.body) {
+    return;
+  }
+
+  this.mutate(() => {
+    this.scanCustomElements(document.body);
+    this.scanAttributes(document.body);
+    if (!this.pendingRegex) this.searchRegexp('');
+  });
+}; // The base a Smart rule's files are fetched from: its package's, or the Smart
+// base when it has none. A package rule whose package is unknown or has no
+// base resolves to nothing, said once per rule, and is never quietly fetched
+// from the Smart base -- that would load whatever an older Core shipped under
+// the same name, or 404 and be cached as missing there.
+
+
+SFLoaderPlugin.prototype.resolveSmartBase = function (name) {
+  const rule = this.findPlugins?.[name];
+  const packageName = rule && typeof rule === 'object' ? rule.package : '';
+  if (!packageName) return this.smartPath;
+  const pkg = this.packages[packageName];
+  if (pkg?.base) return pkg.base;
+  const tags = Array.isArray(rule.tags) && rule.tags.length ? rule.tags.map(tag => `<${tag}>`).join(', ') : name;
+  this.warnPackage(`resolve:${packageName}:${name}`, pkg ? `${tags} belongs to package "${packageName}", which has no base; ` + `set SF_BOOT_CONFIG.packages.${packageName}.base. It is not loaded ` + 'from the Smart base.' : `${tags} belongs to package "${packageName}", which this page has not ` + `declared; add SF_BOOT_CONFIG.packages.${packageName} = {base: ...}. ` + 'It is not loaded from the Smart base.');
+  return null;
+};
+
+SFLoaderPlugin.prototype.isPluginResolvable = function (name) {
+  const rule = this.findPlugins?.[name];
+  if (!rule || typeof rule !== 'object' || !rule.package) return true;
+  return this.resolveSmartBase(name) !== null;
+};
 
 SFLoaderPlugin.prototype.debug = function (str) {
   if (this.isDebug) {
@@ -3630,7 +3830,13 @@ SFLoaderPlugin.prototype.search = function () {
 };
 
 SFLoaderPlugin.prototype.setExistCookie = function (name, output = null, output2 = null) {
-  name = (0,_utilityModuleAliases__WEBPACK_IMPORTED_MODULE_4__.resolveUtilityModule)(name, _contracts_utility_module_aliases_v1_json__WEBPACK_IMPORTED_MODULE_3__.aliases, this.findPlugins, this.productionPlanActive);
+  name = (0,_utilityModuleAliases__WEBPACK_IMPORTED_MODULE_4__.resolveUtilityModule)(name, _contracts_utility_module_aliases_v1_json__WEBPACK_IMPORTED_MODULE_3__.aliases, this.findPlugins, this.productionPlanActive); // A package rule without a usable base is not marked for loading at all; the
+  // warning names it, and nothing is fetched from the Smart base in its place.
+
+  if (!this.isPluginResolvable(name)) {
+    return;
+  }
+
   let mode;
   const param = this.findPlugins[name] && typeof this.findPlugins[name] === 'object' ? this.findPlugins[name] : false;
   const pluginName = this.getPluginName(name + '/');
@@ -3680,7 +3886,7 @@ SFLoaderPlugin.prototype.setRelation = function (relation, name, output, visited
 
   visited.add(name);
   relation.forEach(rel => {
-    if (!rel?.name) {
+    if (!rel?.name || !this.isPluginResolvable(rel.name)) {
       return;
     }
 
@@ -3726,8 +3932,10 @@ SFLoaderPlugin.prototype.pathPluginJs = function (name, smart, point, type) {
   let pathPlugin;
 
   if (smart) {
+    const base = this.resolveSmartBase(name);
+    if (base === null) return null;
     name = name.substring(3);
-    pathPlugin = `${this.smartPath}/${name}`;
+    pathPlugin = `${base}/${name}`;
   } else {
     pathPlugin = `${type === 'component' ? this.componentPath : this.utilyPath}/${name}`;
   }
@@ -3744,9 +3952,13 @@ SFLoaderPlugin.prototype.pathPluginCss = function (name, type, point) {
       break;
 
     case 'smart':
-      url += this.smartPath;
-      name = name.substring(3);
-      break;
+      {
+        const base = this.resolveSmartBase(name);
+        if (base === null) return null;
+        url += base;
+        name = name.substring(3);
+        break;
+      }
 
     default:
       url += this.utilyPath;
@@ -3781,14 +3993,21 @@ SFLoaderPlugin.prototype.shouldSkipPluginCss = function (pluginName, module = {}
 SFLoaderPlugin.prototype.loadPlugin = function (pluginName, smart, point, module, plugins) {
   if (this.disableSmart && (module === 'smart' || smart)) {
     return;
+  } // A cached plugin list reaches here without passing setExistCookie, so the
+  // package check is repeated rather than trusted.
+
+
+  if (!this.isPluginResolvable(pluginName)) {
+    return;
   }
 
+  const missKey = this.getMissingFileKey(pluginName);
   const ruleMeta = SF.RuleLoader?.[pluginName];
   const skipJs = typeof ruleMeta?.js === 'undefined' || module && module.js === false || ruleMeta?.js === false;
   const skipCss = this.shouldSkipPluginCss(pluginName, module);
   const jsFile = skipJs ? null : this.pathPluginJs(pluginName, smart, point, module);
 
-  if (!skipJs && !this.notFoundFiles[pluginName] || this.notFoundFiles[pluginName] && !this.notFoundFiles[pluginName].js) {
+  if (!skipJs && !this.notFoundFiles[missKey] || this.notFoundFiles[missKey] && !this.notFoundFiles[missKey].js) {
     if (!this.pendingLoadPlugins.has(pluginName)) {
       this.pendingLoadPlugins.add(pluginName);
     }
@@ -3807,7 +4026,7 @@ SFLoaderPlugin.prototype.loadPlugin = function (pluginName, smart, point, module
   }
 
   if (!skipCss) {
-    if (!this.notFoundFiles[pluginName] || this.notFoundFiles[pluginName] && (!this.notFoundFiles[pluginName].css || !this.notFoundFiles[pluginName].missingMin)) {
+    if (!this.notFoundFiles[missKey] || this.notFoundFiles[missKey] && (!this.notFoundFiles[missKey].css || !this.notFoundFiles[missKey].missingMin)) {
       const cssFile = this.pathPluginCss(pluginName, module, point);
 
       if (module === 'component' || module === 'smart') {
@@ -4478,14 +4697,20 @@ SFLoaderPlugin.prototype.revalidateMissingPlugins = function () {
     const parsed = JSON.parse((0,_cacheCodec__WEBPACK_IMPORTED_MODULE_0__.decodeCacheValue)(stored));
     if (!parsed || typeof parsed !== 'object') return;
     const remaining = {};
-    Object.keys(parsed).forEach(name => {
-      if (!name) return;
+    Object.keys(parsed).forEach(key => {
+      if (!key) return; // An entry is dropped once its rule is known again in the same place:
+      // a package entry only by a rule of that package.
 
-      if (SF.RuleLoader?.[name] || this.loadedPlugins[name]) {
+      const at = key.indexOf(PACKAGE_MISS_SEPARATOR);
+      const packageName = at > 0 ? key.slice(0, at) : '';
+      const name = at > 0 ? key.slice(at + PACKAGE_MISS_SEPARATOR.length) : key;
+      const rule = SF.RuleLoader?.[name];
+
+      if (rule && (rule.package || '') === packageName || !packageName && this.loadedPlugins[name]) {
         return;
       }
 
-      remaining[name] = parsed[name];
+      remaining[key] = parsed[key];
     });
 
     if (Object.keys(remaining).length) {
@@ -4852,9 +5077,21 @@ SFLoaderPlugin.prototype.getPersistentMissingFiles = function (files = this.notF
   }
 
   return result;
+}; // A file is missing from one base, not everywhere. A package rule's entry is
+// kept under `<package>::<rule>`, so a 404 from a package base never marks the
+// same name missing in the Smart base -- or the other way round, which matters
+// while a component moves from Core into a package under the same rule name.
+// Smart-base entries keep their bare name, the format browsers already hold.
+
+
+SFLoaderPlugin.prototype.getMissingFileKey = function (name) {
+  const packageName = this.findPlugins?.[name]?.package;
+  return packageName ? `${packageName}${PACKAGE_MISS_SEPARATOR}${name}` : name;
 };
 
-SFLoaderPlugin.prototype.addToMissingFiles = function (name, type, missingMin = true) {
+SFLoaderPlugin.prototype.addToMissingFiles = function (pluginName, type, missingMin = true) {
+  const name = this.getMissingFileKey(pluginName);
+
   if (this.notFoundFiles[name]) {
     this.notFoundFiles[name][type] = true;
   } else {
