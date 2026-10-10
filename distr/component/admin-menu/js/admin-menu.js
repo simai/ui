@@ -13,7 +13,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("58661bec99a6");
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("8489d1f5bab4");
 
+ // Every word this part says. A product adds a language with
+// SF.language.register('sf-admin-menu', code, words); a ternary on «ru» allowed two
+// and no more.
 
+const ADMIN_MENU_ITEM_TEXT = {
+  en: {
+    collapse: 'Collapse',
+    expand: 'Expand'
+  },
+  ru: {
+    collapse: 'Свернуть',
+    expand: 'Развернуть'
+  }
+};
 const SMART_TAG = 'SF-ADMIN-MENU';
 const ROOT_SELECTOR = ".sf-admin-menu, .sf-admin-menu-panel:not(.sf-admin-menu-panel-sub)";
 const BOUND_FLAG = "sfAdminMenuBound";
@@ -185,7 +198,7 @@ class AdminMenu {
     }
 
     if (text) {
-      text.textContent = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_1__.isRussianPage)(text) ? state ? "Свернуть" : "Развернуть" : state ? "Collapse" : "Expand";
+      text.textContent = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_1__.pageText)(ADMIN_MENU_ITEM_TEXT, state ? 'collapse' : 'expand', text, 'sf-admin-menu');
     }
   }
 

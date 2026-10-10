@@ -10,7 +10,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("8489d1f5bab4");
+ // Every word this part says. A product adds a language with
+// SF.language.register('sf-swiper', code, words); a ternary on «ru» allowed two
+// and no more.
 
+const SWIPER_TEXT = {
+  en: {
+    goToSlide: 'Go to slide'
+  },
+  ru: {
+    goToSlide: 'Перейти к слайду'
+  }
+};
 
 const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
 
@@ -159,7 +170,7 @@ class SimaiSlider {
       const bullet = document.createElement(options.bulletElement || 'span');
       bullet.className = options.bulletClass || 'swiper-pagination-bullet';
       if (bullet instanceof HTMLButtonElement) bullet.type = 'button';
-      bullet.setAttribute('aria-label', (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_0__.isRussianPage)(root) ? `Перейти к слайду ${index + 1}` : `Go to slide ${index + 1}`);
+      bullet.setAttribute('aria-label', `${(0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_0__.pageText)(SWIPER_TEXT, 'goToSlide', root, 'sf-swiper')} ${index + 1}`);
       if (options.clickable) bullet.addEventListener('click', () => this.slideTo(index));
       root.append(bullet);
     });

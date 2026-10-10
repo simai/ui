@@ -30,7 +30,22 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
- // Prefer the helper Core published; an isolated bundle uses its own copy.
+ // Every word this part says. A product adds a language with
+// SF.language.register('sf-country-code', code, words); the locale here is
+// also what the number itself is formatted by, which is why it stays.
+
+const COUNTRY_CODE_TEXT = {
+  en: {
+    phoneLabel: 'Phone number',
+    phoneRequired: 'Enter a phone number.',
+    countryLabel: 'Country code'
+  },
+  ru: {
+    phoneLabel: 'Телефон',
+    phoneRequired: 'Введите номер телефона.',
+    countryLabel: 'Код страны'
+  }
+}; // Prefer the helper Core published; an isolated bundle uses its own copy.
 
 const positioning = () => globalThis.SF?.Position || _core_js_position_js__WEBPACK_IMPORTED_MODULE_5__["default"];
 
@@ -78,7 +93,7 @@ function syncCountryFieldReferences(root, input) {
   if (label?.textContent.trim() || input.hasAttribute('aria-labelledby')) {
     if (generatedName && input.getAttribute('aria-label') === generatedName) input.removeAttribute('aria-label');
   } else if (!authorName) {
-    const name = root.__sfCountryConfig?.locale === 'ru' ? 'Телефон' : 'Phone number';
+    const name = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_7__.pageText)(COUNTRY_CODE_TEXT, 'phoneLabel', root, 'sf-country-code');
     if (input.getAttribute('aria-label') !== name) input.setAttribute('aria-label', name);
     countryGeneratedNames.set(input, name);
   }
@@ -91,7 +106,7 @@ function syncCountryRequired(root, input) {
   const value = String(input.value || '').trim();
   const local = config.showCode ? extractLocalPart(value, root.dataset.dialCode) : value;
   const missing = input.required && value !== '' && !/\d/.test(local);
-  const message = missing ? config.locale === 'ru' ? 'Введите номер телефона.' : 'Enter a phone number.' : '';
+  const message = missing ? (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_7__.pageText)(COUNTRY_CODE_TEXT, 'phoneRequired', root, 'sf-country-code') : '';
   input.setCustomValidity(message);
   countryRequiredMessages.set(input, message);
 }
@@ -128,7 +143,7 @@ function syncCountryAccessibility(root) {
   const config = root.__sfCountryConfig || {};
   const open = root.classList.contains('open');
   const selected = root.__sfCountrySelected;
-  const countryName = config.locale === 'ru' ? 'Код страны' : 'Country code';
+  const countryName = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_7__.pageText)(COUNTRY_CODE_TEXT, 'countryLabel', root, 'sf-country-code');
   syncCountryFieldReferences(root, input);
   root.querySelectorAll('.sf-country-code-required, .sf-country-code-left .sf-icon').forEach(node => node.setAttribute('aria-hidden', 'true'));
 
