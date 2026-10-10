@@ -279,7 +279,7 @@ if (typeof window !== 'undefined') {
 
 /***/ },
 
-/***/ "aaa5e760767f"
+/***/ "b30ec5bc0edb"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -572,7 +572,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   renderViewField: () => (/* binding */ renderViewField)
 /* harmony export */ });
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("fef8077ac919");
-/* harmony import */ var _table_js_option_badge_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("aaa5e760767f");
+/* harmony import */ var _helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("b30ec5bc0edb");
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("8489d1f5bab4");
 
 
@@ -1084,7 +1084,7 @@ function renderChoiceCell(field, value) {
   if (!Array.isArray(options)) return null;
   const option = options.find(item => String(item?.value) === String(value));
   if (!option) return null;
-  const badge = (0,_table_js_option_badge_js__WEBPACK_IMPORTED_MODULE_1__.optionBadgeProps)(option);
+  const badge = (0,_helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_1__.optionBadgeProps)(option);
   return {
     component: {
       type: 'badge',
@@ -1835,7 +1835,7 @@ function renderChoiceView(field, value) {
   const options = field.options || field.filter?.options || field.constraints?.options;
   const option = Array.isArray(options) ? options.find(item => String(item?.value) === String(value)) : null;
   if (!option) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
-  const badge = (0,_table_js_option_badge_js__WEBPACK_IMPORTED_MODULE_1__.optionBadgeProps)(option);
+  const badge = (0,_helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_1__.optionBadgeProps)(option);
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <sf-badge
                 line=${VIEW_LINE}
