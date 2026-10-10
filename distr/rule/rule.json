@@ -4305,7 +4305,7 @@
   },
   {
     "name": "theme/default",
-    "regex": "/theme-(light|light-dim|dark|dark-dim|yellow|blue|green)/"
+    "regex": "/theme-(light|dark)\b/"
   },
   {
     "name": "title/default",

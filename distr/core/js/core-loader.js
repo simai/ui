@@ -3715,7 +3715,7 @@ SFLoaderPlugin.prototype.setRelation = function (relation, name, output, visited
 };
 
 SFLoaderPlugin.prototype.sortPlugins = function (module, arPathCss, arPathJs, plugin) {
-  const breakpoints = ['default', 'sm', 'md', 'lg', 'xl', 'xxl', 'hover', 'focus', 'active'];
+  const breakpoints = ['default', 'sm', 'md', 'lg', 'xl', 'xxl', 'hover', 'focus', 'focus-visible', 'active'];
 
   for (const point of breakpoints) {
     this.sortPlugin(plugin[point] || [], point, module, arPathCss, arPathJs);

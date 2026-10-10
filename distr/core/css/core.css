@@ -1,40 +1,10 @@
 @charset "UTF-8";
 /*
  *	SIMAI Framework
- *	Version: 5.0.0 alfa
- *	Project site: http://simai.io
+ *	https://simai.io
  *
- *  Author: Rim Zabarov (rim@zabarov.ru)
- *	Copyright: 2008-2022 SIMAI Ltd
- *	Company site: https://simai.studio
- *
- *	Licensed GPLv3 for open source applications
- *	or SIMAI Framework Commercial License for commercial use
- *
- * 	Modifier Reduction:
- * 	.a  - (absolute) absolute position modifiers;
- * 	.b  - (border) border modifiers;
- * 	.bg - (background) background modifiers;
- * 	.с  - (color) text color modifiers;
- * 	.d  - (display) display modifiers;
- * 	.f  - (fill) SVG fill color modifiers;
- * 	.h  - (height) object height modifiers;
- * 	.l  - (link) link modifiers;
- * 	.m  - (margin) margin modifiers;
- * 	.o  - (opacity) opacity modifiers;
- * 	.p  - (padding) padding modifiers;
- * 	.s  - (stroke) SVG stroke color modifiers;
- * 	.t  - (typography) text modifiers;
- * 	.w  - (width) width modifiers.
- *
- * 	Modifier Side Reduction:
- * 	l - (left) left-hand side;
- * 	r - (right) right-hand side;
- * 	t - (top) upper side;
- * 	b - (bottom) down side;
- * 	x - (X-axis) horizontally.
- * 	y - (Y-axis) vertically;
- *
+ *	Copyright (c) 2008-2026 Rim Zabarov and contributors
+ *	Released under the MIT License.
  */
 @layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.base {
@@ -80,11 +50,11 @@
 }
 @layer sf.base {
   :root {
-    --sf-focus-outline-width: var(--sf-a2);
+    --sf-focus-outline-width: calc(var(--sf-px) * 2);
   }
   @media (min-width: 960px) {
     :root {
-      --sf-focus-outline-width: var(--sf-a2);
+      --sf-focus-outline-width: calc(var(--sf-px) * 2);
     }
   }
 }
@@ -98,7 +68,7 @@
     --sf-radius--ui: var(--sf-radius-1\/2);
     --sf-radius--surface: var(--sf-radius-1);
     --sf-focus--color: var(--sf-focus);
-    --sf-focus--offset: var(--sf-a1);
+    --sf-focus--offset: var(--sf-px);
     --sf-focus--style: solid;
     --sf-focus--width: var(--sf-focus-outline-width);
     --sf-ui-focus-inset: inset 0 0 0 var(--sf-focus-outline-width) var(--sf-focus);
@@ -301,7 +271,7 @@
     --sf-on-neutral-container: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
     --sf-on-neutral-container-graphic: light-dark(var(--sf-neutral-50), var(--sf-neutral-60));
     --sf-info: light-dark(var(--sf-info-40), var(--sf-info-80));
-    --sf-info-hover: light-dark(var(--sf-info-35), var(--sf-primary-85));
+    --sf-info-hover: light-dark(var(--sf-info-35), var(--sf-info-85));
     --sf-info-active: light-dark(var(--sf-info-30), var(--sf-info-90));
     --sf-info-container: light-dark(var(--sf-info-50--alfa-12), var(--sf-info-50--alfa-24));
     --sf-info-container-hover: light-dark(var(--sf-info-50--alfa-16), var(--sf-info-50--alfa-28));
@@ -806,13 +776,10 @@
        scrollbar. A step above the strongest plate, because a plate sits on the
        page and a veil covers it (owner, 2026-10-08). */
     --sf-neutral-50--alfa-32: rgba(118,119,124,0.32157);
-    /* The scale climbs in fours and stops at 44, which is as far as a wash ever
-       needed to go. This one step is far outside that run because it is not a
-       wash: it is the ink of a disabled control in the light theme, and the
-       light theme cannot reach the dark one's legibility by small increments.
-       neutral-50 over white measures 4.47:1 even at full opacity, so 80% lands
-       at 3.10:1 -- level with the 4.12:1 the dark theme has always had. Nothing
-       between 44 and 80 is declared, because nothing asks for it. */
+    /* The ink family of the scale (48, 64, 80): marks drawn with the neutral
+       rather than washes laid under something. neutral-50 over white measures
+       4.47:1 at full opacity, so 80% lands at 3.10:1, level with the dark
+       theme. The state (4/8/12) and fill (12-32) families sit above. */
     /* The ink step of the scale on the light neutral: the boundary of a control
        nobody can use. Weaker than the 80 the boundary of a live one takes, and
        that is the whole of its work (owner, 2026-10-08). */
@@ -890,7 +857,6 @@
     --sf-primary-90--alfa-4: rgba(215,226,255,0.03922);
     --sf-primary-90--alfa-8: rgba(215,226,255,0.07843);
     --sf-primary-90--alfa-12: rgba(215,226,255,0.12157);
-    --sf-primary-90--alfa-24: rgba(215,226,255,0.23922);
     --sf-primary-90--alfa-24: rgba(215,226,255,0.23922);
     --sf-primary-85: #c2d5ff;
     --sf-primary-80: #acc7ff;

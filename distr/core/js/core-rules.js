@@ -9160,7 +9160,7 @@ SF.RuleLoader["text-wrap/default"] = new RegExp("^(?:text-(?:balance|nowrap|pret
 /***/ "e99c9562bc92"
 () {
 
-SF.RuleLoader['theme/default'] = /theme-(light|light-dim|dark|dark-dim|yellow|blue|green)/;
+SF.RuleLoader['theme/default'] = /theme-(light|dark)/;
 
 /***/ },
 

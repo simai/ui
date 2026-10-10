@@ -45,7 +45,11 @@
       padding-left: var(--sf-space-5);
     }
     .xxl\:container {
-      width: var(--sf-breakpoint-xxl);
+      /* The breakpoint step is wider than the media query that opens it
+         (sm opens at 520px, its step is 704px), so a fixed width overflowed
+         the window between the two. Fill, and stop at the step. */
+      width: 100%;
+      max-width: var(--sf-breakpoint-xxl);
       -webkit-padding-start: var(--sf-space-5);
               padding-inline-start: var(--sf-space-5);
       -webkit-padding-end: var(--sf-space-5);
