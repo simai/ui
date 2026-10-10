@@ -8,6 +8,9 @@
 
 ### Исправлено
 
+- Defects found while checking the unified guide against the source. `focus-visible:` utility classes are fetched by the Loader (it walked every condition but that one, so they worked only from the full utility sheet). `sm:` to `xxl:container` fill the window and stop at their step instead of overflowing it between the media query and the step (a 600px window held a 704px `sm:container`). The focus ring is drawn in pixels, 2px with a 1px gap, and no longer grows with the root font size. The dark side of `--sf-info-hover` comes from the info palette, not primary. `theme/default` no longer names five themes no stylesheet defines. The `core.css` header states the MIT licence.
+- The text steps `1/7`, `1/6` and `1/5` (and the skeleton sizes built on them) enter compatibility until 2026-12-01: they have no line height and no text role. Older `change` event names last as long as the change journal keeps them, not «until a major release».
+
 - The open search panel of `sf-admin-menu` stands over the menu. It read
   `translateX(100%)` and stood one menu width to the side, where the menu's own
   overflow clipped it away: the state said open, the field had a box, and a
