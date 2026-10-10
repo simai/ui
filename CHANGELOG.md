@@ -19,6 +19,8 @@
 
 ### Добавлено
 
+- Component packages. A page declares extra packages in `window.SF_BOOT_CONFIG.packages = {name: {base, rule?}}`; the Loader fetches each package's `rule.js` (default `<base>/rule.js`) before its first scan, the package registers its rules with `SF.RuleLoader.registerPackage(name, {rules})`, and the files of those components load from the package base. A package registered after load rescans the page. Failures warn once, naming the tag and the package, and never fall back to the Smart base; the missing-file cache keys package entries as `<package>::<rule>`. `sfSmartPath` is optional: with only `sfPath` set, Smart resolves to `<sfPath>/smart`. Language state stays on one shared global for every bundle, held by contract. See `docs/developer/component-packages.md`.
+
 - Tags get five sizes, density and an inline mode. Sizes `1/3`, `2` and `3`
   join `1/2` and `1` (text 12, 14, 16, 20 and 24px); every size publishes its
   text on the root as `--sf-tag--font-size` and `--sf-tag--line-height`.
