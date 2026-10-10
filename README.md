@@ -114,6 +114,9 @@ python3 scripts/plan-framework-assets.py \
   --smart-root ../ui-smart
 ```
 
+From release lock v2 on, Smart is published in `distr/smart` of this
+repository; without `--smart-root` the planner reads Smart from there.
+
 Когда страница передала `window.SF_PRELOADED`, Loader считает production-план
 единственным источником готовности первого кадра и не восстанавливает список
 модулей предыдущей страницы из `localStorage`. Это устраняет межстраничную

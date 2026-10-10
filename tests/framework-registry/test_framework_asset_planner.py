@@ -65,6 +65,26 @@ class FrameworkAssetPlannerTest(unittest.TestCase):
             ],
         )
 
+    def test_smart_published_into_ui_needs_no_smart_root(self) -> None:
+        """From lock v2 on Smart is laid into ui/distr/smart, and that is where
+        `smart/<name>/...` resolves when no Smart root is given."""
+        with tempfile.TemporaryDirectory() as temporary:
+            ui, smart = self.fixture(Path(temporary))
+            separate = PLANNER.build_plan('<sf-button>Save</sf-button>', ui, smart)
+            (smart / "smart").rename(ui / "distr/smart")
+            published = PLANNER.build_plan('<sf-button>Save</sf-button>', ui)
+        self.assertEqual(published["modules"], separate["modules"])
+        self.assertEqual(
+            [(asset["path"], asset["sha256"], asset["root"]) for asset in published["assets"]],
+            [(asset["path"], asset["sha256"], asset["root"]) for asset in separate["assets"]],
+        )
+
+    def test_without_distr_smart_a_smart_rule_still_needs_a_root(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            ui, _smart = self.fixture(Path(temporary))
+            with self.assertRaisesRegex(PLANNER.AssetPlanError, "smart_root_required"):
+                PLANNER.build_plan('<sf-button>Save</sf-button>', ui)
+
     def test_data_sf_require_covers_undetectable_first_frame_resource(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             ui, smart = self.fixture(Path(temporary))

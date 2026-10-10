@@ -18,7 +18,16 @@ PROFILE = "plain-assets-v1"
 KINDS = ("utility", "component", "smart-component", "recipe")
 HEX40 = re.compile(r"^[0-9a-f]{40}$")
 HEX64 = re.compile(r"^[0-9a-f]{64}$")
+# A v1 release names two repositories, so its id names two commits. A v2
+# release is one `ui` build commit, so its id names one; the v1-shaped id
+# survives as the lock's `pair` while `ui-smart` is kept as a mirror.
 COMPATIBILITY_ID = re.compile(r"^ui-[0-9a-f]{12}-smart-[0-9a-f]{12}$")
+PAIR_ID = COMPATIBILITY_ID
+COMPATIBILITY_ID_V2 = re.compile(r"^ui-[0-9a-f]{12}$")
+LOCK_VERSIONS = (1, 2)
+UI_OWNER = "simai/ui"
+MIRROR_OWNER = "simai/ui-smart"
+SMART_MANIFEST_PATH = "contracts/owners/smart-component.manifest.json"
 ENTRY_KEYS = {
     "id",
     "kind",
@@ -411,8 +420,123 @@ def validate_normalized_entry(entry: dict[str, Any]) -> None:
 
 
 def validate_lock(lock: dict[str, Any]) -> None:
-    if lock.get("schema_id") != "simai.framework.release-lock" or lock.get("schema_version") != 1:
+    """Validate a release lock by its own version.
+
+    The 192 v1 locks stay valid as they were written; a v2 lock is the shape
+    every release after the move of Smart into `ui` is written in.
+    """
+    if lock.get("schema_id") != "simai.framework.release-lock" or lock.get("schema_version") not in LOCK_VERSIONS:
         raise ContractError("release_lock_schema_invalid")
+    if lock["schema_version"] == 2:
+        validate_lock_v2(lock)
+    else:
+        validate_lock_v1(lock)
+
+
+def validate_runtime_source(source: Any, key: str, owner: str, runtime_path: str) -> None:
+    if not isinstance(source, dict):
+        raise ContractError(f"release_lock_source_invalid:{key}")
+    if source.get("owner") != owner or source.get("runtime_path") != runtime_path:
+        raise ContractError(f"release_lock_source_identity_invalid:{key}")
+    if source.get("tag") is not None or source.get("tag_object") is not None:
+        raise ContractError(f"release_lock_candidate_must_be_untagged:{key}")
+    if any(not HEX40.fullmatch(str(source.get(field, ""))) for field in ("commit", "tree", "runtime_tree")):
+        raise ContractError(f"release_lock_source_revision_invalid:{key}")
+    if not HEX64.fullmatch(str(source.get("archive_sha256", ""))):
+        raise ContractError(f"release_lock_source_hash_invalid:{key}")
+
+
+V2_SOURCE_KEYS = {
+    "owner",
+    "tag",
+    "tag_object",
+    "revision",
+    "commit",
+    "tree",
+    "runtime_path",
+    "runtime_tree",
+    "archive_sha256",
+}
+V2_MIRROR_KEYS = {
+    "owner",
+    "tag",
+    "tag_object",
+    "commit",
+    "tree",
+    "runtime_path",
+    "runtime_tree",
+    "archive_sha256",
+    "mirrors",
+}
+V2_TOP_KEYS = {
+    "schema_id",
+    "schema_version",
+    "compatibility_id",
+    "status",
+    "profile",
+    "runtime_sources",
+    "build_inputs",
+    "inventory",
+    "exclusions",
+    "claims",
+}
+
+
+def validate_lock_v2(lock: dict[str, Any]) -> None:
+    """One `ui` build commit is the release.
+
+    `revision` is that commit, the same for both trees. `commit` is the build
+    commit that last wrote the tree as of the release, which is what a consumer
+    resolves a release by (it reads `git log -1 -- <runtime_path>`): for Core it
+    is always the release itself, for Smart it is the release or an earlier
+    build commit whose Smart bytes this release did not change. The tree and the
+    archive are taken at `commit`, so each entry is self-consistent as in v1.
+    """
+    if set(lock) - {"mirror", "pair"} != V2_TOP_KEYS:
+        raise ContractError("release_lock_keys_invalid")
+    compatibility_id = lock.get("compatibility_id")
+    if not isinstance(compatibility_id, str) or not COMPATIBILITY_ID_V2.fullmatch(compatibility_id):
+        raise ContractError("release_lock_pair_invalid")
+    if lock.get("status") != "bounded" or lock.get("profile") != PROFILE:
+        raise ContractError("release_lock_profile_invalid")
+    sources = lock.get("runtime_sources")
+    if not isinstance(sources, dict) or set(sources) != {"core", "smart"}:
+        raise ContractError("release_lock_sources_invalid")
+    for key, runtime_path in (("core", "distr"), ("smart", "distr/smart")):
+        validate_runtime_source(sources[key], key, UI_OWNER, runtime_path)
+        if set(sources[key]) != V2_SOURCE_KEYS:
+            raise ContractError(f"release_lock_source_keys_invalid:{key}")
+        if not HEX40.fullmatch(str(sources[key].get("revision", ""))):
+            raise ContractError(f"release_lock_source_revision_invalid:{key}")
+    revision = sources["core"]["revision"]
+    if sources["smart"]["revision"] != revision:
+        raise ContractError("release_lock_revision_split")
+    # Core's tree contains Smart's, so the release commit is always the commit
+    # that last wrote `distr`.
+    if sources["core"]["commit"] != revision:
+        raise ContractError("release_lock_core_not_release")
+    if compatibility_id != f"ui-{revision[:12]}":
+        raise ContractError("release_lock_pair_invalid")
+    validate_build_inputs(lock.get("build_inputs"))
+    mirror = lock.get("mirror")
+    pair = lock.get("pair")
+    if mirror is None:
+        if pair is not None:
+            raise ContractError("release_lock_pair_without_mirror")
+    else:
+        validate_runtime_source(mirror, "mirror", MIRROR_OWNER, "smart")
+        if set(mirror) != V2_MIRROR_KEYS or mirror.get("mirrors") != "smart":
+            raise ContractError("release_lock_mirror_invalid")
+        # The two copies are one set of bytes: git gives byte-identical trees
+        # one object id.
+        if mirror["runtime_tree"] != sources["smart"]["runtime_tree"]:
+            raise ContractError("release_lock_mirror_tree_mismatch")
+        if pair != f"ui-{revision[:12]}-smart-{mirror['commit'][:12]}":
+            raise ContractError("release_lock_mirror_pair_invalid")
+    validate_lock_tail(lock)
+
+
+def validate_lock_v1(lock: dict[str, Any]) -> None:
     compatibility_id = lock.get("compatibility_id")
     if not isinstance(compatibility_id, str) or not COMPATIBILITY_ID.fullmatch(compatibility_id):
         raise ContractError("release_lock_pair_invalid")
@@ -422,21 +546,35 @@ def validate_lock(lock: dict[str, Any]) -> None:
     if not isinstance(sources, dict) or set(sources) != {"ui", "ui-smart"}:
         raise ContractError("release_lock_sources_invalid")
     for key, owner, runtime_path in (
-        ("ui", "simai/ui", "distr"),
-        ("ui-smart", "simai/ui-smart", "smart"),
+        ("ui", UI_OWNER, "distr"),
+        ("ui-smart", MIRROR_OWNER, "smart"),
     ):
-        source = sources[key]
-        if not isinstance(source, dict):
-            raise ContractError(f"release_lock_source_invalid:{key}")
-        if source.get("owner") != owner or source.get("runtime_path") != runtime_path:
-            raise ContractError(f"release_lock_source_identity_invalid:{key}")
-        if source.get("tag") is not None or source.get("tag_object") is not None:
-            raise ContractError(f"release_lock_candidate_must_be_untagged:{key}")
-        if any(not HEX40.fullmatch(str(source.get(field, ""))) for field in ("commit", "tree", "runtime_tree")):
-            raise ContractError(f"release_lock_source_revision_invalid:{key}")
-        if not HEX64.fullmatch(str(source.get("archive_sha256", ""))):
-            raise ContractError(f"release_lock_source_hash_invalid:{key}")
-    build_inputs = lock.get("build_inputs")
+        validate_runtime_source(sources[key], key, owner, runtime_path)
+    validate_build_inputs(lock.get("build_inputs"))
+    expected_id = (
+        f"ui-{sources['ui']['commit'][:12]}-smart-"
+        f"{sources['ui-smart']['commit'][:12]}"
+    )
+    if compatibility_id != expected_id:
+        raise ContractError("release_lock_pair_invalid")
+    validate_lock_tail(lock)
+
+
+def validate_lock_tail(lock: dict[str, Any]) -> None:
+    exclusions = lock.get("exclusions")
+    if not isinstance(exclusions, list):
+        raise ContractError("release_lock_exclusions_invalid")
+    if any(not isinstance(item, dict) for item in exclusions):
+        raise ContractError("release_lock_exclusion_invalid")
+    if lock.get("claims") != {
+        "full_compatible": False,
+        "production_ready": False,
+        "all_items_ready": False,
+    }:
+        raise ContractError("release_lock_claims_invalid")
+
+
+def validate_build_inputs(build_inputs: Any) -> None:
     if not isinstance(build_inputs, dict) or set(build_inputs) != {
         "source",
         "builder",
@@ -526,23 +664,12 @@ def validate_lock(lock: dict[str, Any]) -> None:
             "SF_LEGACY_COMPATIBILITY_MANIFEST": "legacy_compatibility.lineage_manifest",
         } or legacy_environment.get("SF_LEGACY_COMPATIBILITY_REVISION") not in supported_revision_bindings:
             raise ContractError("release_lock_legacy_invocation_binding_invalid")
-    expected_id = (
-        f"ui-{sources['ui']['commit'][:12]}-smart-"
-        f"{sources['ui-smart']['commit'][:12]}"
-    )
-    if compatibility_id != expected_id:
-        raise ContractError("release_lock_pair_invalid")
-    exclusions = lock.get("exclusions")
-    if not isinstance(exclusions, list):
-        raise ContractError("release_lock_exclusions_invalid")
-    if any(not isinstance(item, dict) for item in exclusions):
-        raise ContractError("release_lock_exclusion_invalid")
-    if lock.get("claims") != {
-        "full_compatible": False,
-        "production_ready": False,
-        "all_items_ready": False,
-    }:
-        raise ContractError("release_lock_claims_invalid")
+
+
+def lock_runtime(lock: dict[str, Any], side: str) -> dict[str, Any]:
+    """The runtime source of `core` or `smart`, whatever the lock version calls it."""
+    key = {"core": "ui", "smart": "ui-smart"}[side] if lock["schema_version"] == 1 else side
+    return lock["runtime_sources"][key]
 
 
 def validate_smart_reference(
@@ -569,7 +696,7 @@ def validate_smart_reference(
     if manifest.get("file_sha256") != file_sha256:
         raise ContractError("smart_reference_file_hash_invalid")
     runtime = reference.get("runtime")
-    locked = lock["runtime_sources"]["ui-smart"]
+    locked = lock_runtime(lock, "smart")
     if not isinstance(runtime, dict):
         raise ContractError("smart_reference_runtime_invalid")
     expected_runtime = {
@@ -606,21 +733,48 @@ def recipe_closure(recipe_id: str, entries: dict[str, dict[str, Any]]) -> list[s
     return sorted(visited)
 
 
+def smart_manifest_is_ui_owned(smart_manifest: dict[str, Any]) -> bool:
+    return smart_manifest.get("owner", {}).get("id") == UI_OWNER
+
+
+def default_smart_manifest(ui_root: Path) -> Path | None:
+    """Where the Smart owner manifest is when nobody says.
+
+    The manifest `ui` owns once Smart is published into `distr/smart`; until
+    then, the one `ui-smart` keeps beside `ui`.
+    """
+    for candidate in (ui_root / SMART_MANIFEST_PATH, ui_root.parent / "ui-smart" / SMART_MANIFEST_PATH):
+        if candidate.is_file():
+            return candidate
+    return None
+
+
 def current_pair_inputs(
     ui_root: Path,
     component_manifest: dict[str, Any],
     smart_manifest: dict[str, Any],
     smart_manifest_path: Path,
-) -> tuple[Path, Path]:
-    """Find the lock and the Smart reference that belong to the pair on disk.
+) -> tuple[Path, Path | None]:
+    """Find the lock (and, for v1, the Smart reference) of the release on disk.
 
     Both used to be named here literally, and both had to be retyped at every
     publication; a forgotten edit built the registry from the previous pair and
     the mismatch only surfaced later. The manifests already say which runtimes
-    this pair is, so the two files are looked up instead, and anything other
+    this release is, so the files are looked up instead, and anything other
     than exactly one match is an error rather than a guess.
+
+    A Smart manifest owned by `ui` means the release is v2: one `ui` build
+    commit, named by the Core manifest, is the release and its lock is
+    `ui-<12>.lock.json`. Its Smart manifest lives in the same tree as the lock,
+    so there is no cross-repository reference to look up.
     """
     core_commit = component_manifest["release"]["commit"]
+    if smart_manifest_is_ui_owned(smart_manifest):
+        release = f"ui-{core_commit[:12]}"
+        lock_path = ui_root / f"contracts/releases/{release}.lock.json"
+        if not lock_path.is_file():
+            raise ContractError(f"release_lock_missing:{release}")
+        return lock_path, None
     smart_commit = smart_manifest["release"]["commit"]
     pair = f"ui-{core_commit[:12]}-smart-{smart_commit[:12]}"
     lock_path = ui_root / f"contracts/releases/{pair}.lock.json"
@@ -675,20 +829,30 @@ def build_registry(
     lock = load_json(lock_path)
     validate_lock(lock)
     smart_file_sha256 = hashlib.sha256(smart_manifest_path.read_bytes()).hexdigest()
-    smart_reference = load_json(reference_path)
-    validate_smart_reference(
-        smart_reference,
-        manifests["smart-component"],
-        lock,
-        smart_file_sha256,
-    )
-    for kind, source_key in (
-        ("utility", "ui"),
-        ("component", "ui"),
-        ("smart-component", "ui-smart"),
+    ui_owned = smart_manifest_is_ui_owned(manifests["smart-component"])
+    if (lock["schema_version"] == 2) != ui_owned:
+        # A v2 release publishes Smart from `ui`; its manifest must be the one
+        # `ui` owns, and a v1 pair's must be the one `ui-smart` owns.
+        raise ContractError("smart_manifest_owner_lock_mismatch")
+    smart_reference = None
+    if ui_owned:
+        if manifests["smart-component"]["owner"]["manifest_path"] != SMART_MANIFEST_PATH:
+            raise ContractError("smart_manifest_path_invalid")
+    else:
+        smart_reference = load_json(reference_path)
+        validate_smart_reference(
+            smart_reference,
+            manifests["smart-component"],
+            lock,
+            smart_file_sha256,
+        )
+    for kind, side in (
+        ("utility", "core"),
+        ("component", "core"),
+        ("smart-component", "smart"),
     ):
         release = manifests[kind]["release"]
-        source = lock["runtime_sources"][source_key]
+        source = lock_runtime(lock, side)
         expected = {
             "tag": source["tag"],
             "commit": source["commit"],
@@ -810,7 +974,8 @@ def build_registry(
     smart_source = next(
         item for item in source_manifest_records if item["kind"] == "smart-component"
     )
-    smart_source["contract_revision"] = smart_reference["contract_revision"]
+    if smart_reference is not None:
+        smart_source["contract_revision"] = smart_reference["contract_revision"]
     smart_source["file_sha256"] = smart_file_sha256
     source_manifests = sorted(
         source_manifest_records,
@@ -821,20 +986,28 @@ def build_registry(
         kind: [entry["id"] for entry in sorted_entries if entry["kind"] == kind]
         for kind in KINDS
     }
+    compatibility = {
+        "id": lock["compatibility_id"],
+        "status": "bounded",
+        "profile": PROFILE,
+        "runtime_sources": [
+            lock["runtime_sources"][key] for key in sorted(lock["runtime_sources"])
+        ],
+        "build_inputs": lock["build_inputs"],
+        "exclusions": lock["exclusions"],
+        "claims": lock["claims"],
+    }
+    if lock["schema_version"] == 2:
+        # Said once so a reader can tell the shapes apart without counting
+        # owners; the mirror and its v1-shaped id ride along while they exist.
+        compatibility["release_lock_version"] = 2
+        for key in ("mirror", "pair"):
+            if key in lock:
+                compatibility[key] = lock[key]
     return {
         "schema_id": "simai.framework.contract-registry",
         "schema_version": 1,
-        "compatibility": {
-            "id": lock["compatibility_id"],
-            "status": "bounded",
-            "profile": PROFILE,
-            "runtime_sources": [
-                lock["runtime_sources"][key] for key in sorted(lock["runtime_sources"])
-            ],
-            "build_inputs": lock["build_inputs"],
-            "exclusions": lock["exclusions"],
-            "claims": lock["claims"],
-        },
+        "compatibility": compatibility,
         "source_manifests": source_manifests,
         "counts": counts,
         "entries": sorted_entries,
@@ -926,7 +1099,7 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument(
         "--smart-manifest",
         type=Path,
-        default=os.environ.get("SIMAI_UI_SMART_MANIFEST"),
+        default=os.environ.get("SIMAI_UI_SMART_MANIFEST") or None,
     )
     parser.add_argument("--utility-manifest", type=Path)
     parser.add_argument("--component-manifest", type=Path)
@@ -950,9 +1123,11 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
 
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv or sys.argv[1:])
+    ui_root = args.ui_root.resolve()
+    if args.smart_manifest is None:
+        args.smart_manifest = default_smart_manifest(ui_root)
     if args.smart_manifest is None:
         raise ContractError("smart_manifest_path_required")
-    ui_root = args.ui_root.resolve()
     registry = build_registry(
         ui_root,
         args.smart_manifest.resolve(),

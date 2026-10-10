@@ -47,3 +47,11 @@ SIMAI_UI_SMART_MANIFEST=/path/to/ui-smart/contracts/owners/smart-component.manif
 
 Команда fail closed проверяет оба generated-файла. Для воспроизводимой пары
 используйте owner manifest, закреплённый release lock текущего registry.
+
+From release lock v2 on (one `ui` build commit, id `ui-<12>`), the Smart owner
+manifest is `contracts/owners/smart-component.manifest.json` in this
+repository and is used when `SIMAI_UI_SMART_MANIFEST` is not set:
+
+```bash
+python3 scripts/build-framework-registry.py --check
+```

@@ -14,25 +14,6 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
-SMART_MANIFEST_INPUT = os.environ.get("SIMAI_UI_SMART_MANIFEST")
-if not SMART_MANIFEST_INPUT:
-    raise RuntimeError("SIMAI_UI_SMART_MANIFEST is required for cross-repository tests")
-SMART_MANIFEST = Path(SMART_MANIFEST_INPUT).resolve()
-GENERATED = ROOT / "contracts/generated/framework-contract-registry.json"
-DOCUMENTATION_SOURCE = ROOT / "contracts/generated/documentation-source.json"
-# The pair and the Smart contract revision move with every publication, so they
-# are read from the generated aggregate instead of being retyped here. The
-# assertions below then tie them back to the runtimes they name, which is the
-# part that has to hold; a pin in this file only ever went stale.
-GENERATED_REGISTRY = json.loads(GENERATED.read_text())
-PAIR_ID = GENERATED_REGISTRY["compatibility"]["id"]
-SMART_CONTRACT_REVISION = next(
-    item["contract_revision"]
-    for item in GENERATED_REGISTRY["source_manifests"]
-    if item["kind"] == "smart-component"
-)
-LOCK = ROOT / f"contracts/releases/{PAIR_ID}.lock.json"
-SMART_REFERENCE = ROOT / f"contracts/registry-inputs/ui-smart-{SMART_CONTRACT_REVISION[:12]}.ref.json"
 
 
 def load_builder():
@@ -46,6 +27,38 @@ def load_builder():
 
 
 BUILDER = load_builder()
+
+# The ui-owned Smart manifest once Smart is published into distr/smart (lock
+# v2); until then the one ui-smart keeps, named by SIMAI_UI_SMART_MANIFEST.
+SMART_MANIFEST_INPUT = os.environ.get("SIMAI_UI_SMART_MANIFEST") or BUILDER.default_smart_manifest(ROOT)
+if not SMART_MANIFEST_INPUT:
+    raise RuntimeError("SIMAI_UI_SMART_MANIFEST is required for cross-repository tests")
+SMART_MANIFEST = Path(SMART_MANIFEST_INPUT).resolve()
+GENERATED = ROOT / "contracts/generated/framework-contract-registry.json"
+DOCUMENTATION_SOURCE = ROOT / "contracts/generated/documentation-source.json"
+# The release and the Smart contract revision move with every publication, so
+# they are read from the generated aggregate instead of being retyped here. The
+# assertions below then tie them back to the runtimes they name, which is the
+# part that has to hold; a pin in this file only ever went stale.
+GENERATED_REGISTRY = json.loads(GENERATED.read_text())
+PAIR_ID = GENERATED_REGISTRY["compatibility"]["id"]
+LOCK = ROOT / f"contracts/releases/{PAIR_ID}.lock.json"
+LOCK_VERSION = json.loads(LOCK.read_text())["schema_version"]
+# A v1 pair's Smart manifest lives in ui-smart and is referenced from here; a v2
+# release's lives in this tree and needs no reference.
+SMART_CONTRACT_REVISION = next(
+    (
+        item.get("contract_revision")
+        for item in GENERATED_REGISTRY["source_manifests"]
+        if item["kind"] == "smart-component"
+    ),
+    None,
+)
+SMART_REFERENCE = (
+    ROOT / f"contracts/registry-inputs/ui-smart-{SMART_CONTRACT_REVISION[:12]}.ref.json"
+    if SMART_CONTRACT_REVISION
+    else None
+)
 
 
 class FrameworkContractRegistryTest(unittest.TestCase):
@@ -61,9 +74,10 @@ class FrameworkContractRegistryTest(unittest.TestCase):
 
     def test_exact_runtime_archives_and_precompressed_assets_are_reproducible(self) -> None:
         smart_root = SMART_MANIFEST.parents[2]
+        smart_runtime_path = "distr/smart" if LOCK_VERSION == 2 else "smart"
         for root, manifest_path, runtime_path in (
             (ROOT, ROOT / "contracts/owners/utility.manifest.json", "distr"),
-            (smart_root, SMART_MANIFEST, "smart"),
+            (smart_root, SMART_MANIFEST, smart_runtime_path),
         ):
             manifest = json.loads(manifest_path.read_text())
             release = manifest["release"]
@@ -96,20 +110,38 @@ class FrameworkContractRegistryTest(unittest.TestCase):
                 "total": 339,
             },
         )
-        # The pair names the two runtimes it was built from; that is the claim,
-        # not the literal string.
+        # The id names the runtimes it was built from; that is the claim, not
+        # the literal string.
         sources = {
-            item["owner"]: item
+            item["runtime_path"]: item
             for item in self.registry["compatibility"]["runtime_sources"]
         }
-        self.assertEqual(
-            self.registry["compatibility"]["id"],
-            "ui-{}-smart-{}".format(
-                sources["simai/ui"]["commit"][:12],
-                sources["simai/ui-smart"]["commit"][:12],
-            ),
-        )
-        self.assertRegex(self.registry["compatibility"]["id"], r"^ui-[0-9a-f]{12}-smart-[0-9a-f]{12}$")
+        if LOCK_VERSION == 2:
+            # One ui build commit is the release, for both trees.
+            self.assertEqual(set(sources), {"distr", "distr/smart"})
+            self.assertEqual({item["owner"] for item in sources.values()}, {"simai/ui"})
+            revision = sources["distr"]["revision"]
+            self.assertEqual(sources["distr/smart"]["revision"], revision)
+            self.assertEqual(sources["distr"]["commit"], revision)
+            self.assertEqual(self.registry["compatibility"]["id"], f"ui-{revision[:12]}")
+            self.assertRegex(self.registry["compatibility"]["id"], r"^ui-[0-9a-f]{12}$")
+            self.assertEqual(self.registry["compatibility"]["release_lock_version"], 2)
+            mirror = self.registry["compatibility"].get("mirror")
+            if mirror is not None:
+                self.assertEqual(mirror["runtime_tree"], sources["distr/smart"]["runtime_tree"])
+                self.assertEqual(
+                    self.registry["compatibility"]["pair"],
+                    f"ui-{revision[:12]}-smart-{mirror['commit'][:12]}",
+                )
+        else:
+            self.assertEqual(
+                self.registry["compatibility"]["id"],
+                "ui-{}-smart-{}".format(
+                    sources["distr"]["commit"][:12],
+                    sources["smart"]["commit"][:12],
+                ),
+            )
+            self.assertRegex(self.registry["compatibility"]["id"], r"^ui-[0-9a-f]{12}-smart-[0-9a-f]{12}$")
         self.assertEqual(self.registry["compatibility"]["status"], "bounded")
         self.assertEqual(self.registry["compatibility"]["profile"], "plain-assets-v1")
         lock = json.loads(LOCK.read_text())
@@ -336,11 +368,12 @@ class FrameworkContractRegistryTest(unittest.TestCase):
             with self.assertRaisesRegex(BUILDER.ContractError, "release_lock_pair_invalid"):
                 BUILDER.build_registry(ROOT, SMART_MANIFEST, release_lock_path=wrong_pair_path)
 
+            core_key = "core" if LOCK_VERSION == 2 else "ui"
             wrong_hash = copy.deepcopy(lock)
-            wrong_hash["runtime_sources"]["ui"]["archive_sha256"] = "invalid"
+            wrong_hash["runtime_sources"][core_key]["archive_sha256"] = "invalid"
             wrong_hash_path = self.write_json(directory, "wrong-hash.json", wrong_hash)
             with self.assertRaisesRegex(
-                BUILDER.ContractError, "release_lock_source_hash_invalid:ui"
+                BUILDER.ContractError, f"release_lock_source_hash_invalid:{core_key}"
             ):
                 BUILDER.build_registry(ROOT, SMART_MANIFEST, release_lock_path=wrong_hash_path)
 
@@ -397,7 +430,35 @@ class FrameworkContractRegistryTest(unittest.TestCase):
                     ROOT, SMART_MANIFEST, recipe_manifest_path=wrong_relation_path
                 )
 
+    def test_ui_owned_smart_manifest_names_ui_only(self) -> None:
+        if LOCK_VERSION != 2:
+            self.skipTest("the current release is a v1 pair; its Smart manifest is ui-smart's")
+        smart_manifest = json.loads(SMART_MANIFEST.read_text())
+        self.assertEqual(SMART_MANIFEST, (ROOT / BUILDER.SMART_MANIFEST_PATH).resolve())
+        self.assertEqual(smart_manifest["owner"]["id"], "simai/ui")
+        release = smart_manifest["release"]["commit"]
+        for entry in smart_manifest["entries"]:
+            self.assertEqual(entry["owner"], "simai/ui")
+            self.assertEqual(entry["provenance"]["commit"], release)
+            for ref in entry["runtime"]["asset_paths"]:
+                self.assertTrue(
+                    ref.startswith(f"simai/ui@{release}:distr/smart/"),
+                    f"{entry['id']} asset outside the published Smart tree: {ref}",
+                )
+        self.assertNotIn("simai/ui-smart", json.dumps(smart_manifest))
+        smart_source = next(
+            item
+            for item in self.registry["source_manifests"]
+            if item["kind"] == "smart-component"
+        )
+        self.assertEqual(
+            set(smart_source),
+            {"kind", "owner", "path", "hash_mode", "sha256", "file_sha256"},
+        )
+
     def test_no_copy_smart_pointer_and_wrong_reference_hash(self) -> None:
+        if SMART_REFERENCE is None:
+            self.skipTest("a v2 release has no cross-repository Smart reference")
         reference = json.loads(SMART_REFERENCE.read_text())
         smart_manifest = json.loads(SMART_MANIFEST.read_text())
         self.assertNotIn("entries", reference)

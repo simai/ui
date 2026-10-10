@@ -98,7 +98,9 @@ class Fixtures:
         smart = self.identity["smart_runtime"]
         return {
             "schemaVersion": 1,
-            "compatibilityId": self.identity["compatibility_id"],
+            # ui-play pins ui and ui-smart separately, so it carries the
+            # v1-shaped id: the release id for v1, the mirror pair for v2.
+            "compatibilityId": self.identity["pair_id"],
             "core": {"commit": ui["commit"]},
             "smart": {"commit": smart["commit"]},
         }
@@ -130,7 +132,8 @@ class Fixtures:
         )
 
     def aligned_larena_lock(self) -> dict:
-        compatibility_id = self.identity["compatibility_id"]
+        # Larena pins ui and ui-smart separately too (lock v3, distinct mounts).
+        compatibility_id = self.identity["pair_id"]
         ui_runtime = self.identity["ui_runtime"]
         smart_runtime = self.identity["smart_runtime"]
         return {
@@ -281,7 +284,7 @@ class FrameworkConsumerDriftValidatorTest(unittest.TestCase):
             lock = fixtures.aligned_larena_lock()
             lock["schema"] = "larena.ui.frontend_runtime_lock.v2"
             lock.pop("publication_profile")
-            lock["bundle_id"] = f"{fixtures.identity['compatibility_id']}-registry-{fixtures.aggregate_sha[:8]}"
+            lock["bundle_id"] = f"{fixtures.identity['pair_id']}-registry-{fixtures.aggregate_sha[:8]}"
             fixtures.larena_lock = fixtures.write("legacy-v2.json", lock)
             result = fixtures.validate()["consumers"]["larena"]
         self.assertEqual(result["schema"], "larena.ui.frontend_runtime_lock.v2")
@@ -303,13 +306,57 @@ class FrameworkConsumerDriftValidatorTest(unittest.TestCase):
             lock_path,
             source,
             aggregate_sha,
-            identity["compatibility_id"],
+            identity["pair_id"],
             identity["ui_runtime"],
             identity["smart_runtime"],
         )
         self.assertEqual(result["schema"], "larena.ui.frontend_runtime_lock.v3")
         self.assertEqual(result["publication_profile"], "exact-git-tree-v2")
         self.assertTrue(result["accepted"])
+
+    def test_v2_aggregate_reads_smart_from_the_mirror_for_v1_consumers(self) -> None:
+        """A v2 registry names one `ui` release; consumers still on `ui-smart`
+        are compared with the mirror and the v1-shaped pair."""
+        registry = json.loads(AGGREGATE.read_text(encoding="utf-8"))
+        compatibility = registry["compatibility"]
+        release, mirror_commit = "a" * 40, "b" * 40
+        source = {
+            "owner": "simai/ui", "tag": None, "tag_object": None, "revision": release,
+            "commit": release, "tree": "c" * 40, "runtime_path": "distr",
+            "runtime_tree": "d" * 40, "archive_sha256": "e" * 64,
+        }
+        compatibility.update(
+            {
+                "id": f"ui-{release[:12]}",
+                "release_lock_version": 2,
+                "runtime_sources": [source, {**source, "runtime_path": "distr/smart", "runtime_tree": "f" * 40}],
+                "mirror": {
+                    "owner": "simai/ui-smart", "tag": None, "tag_object": None, "commit": mirror_commit,
+                    "tree": "1" * 40, "runtime_path": "smart", "runtime_tree": "f" * 40,
+                    "archive_sha256": "2" * 64, "mirrors": "smart",
+                },
+                "pair": f"ui-{release[:12]}-smart-{mirror_commit[:12]}",
+            }
+        )
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Fixtures.write_path(Path(temporary) / "v2.json", registry)
+            _registry, identity = VALIDATOR.validate_aggregate(path)
+            self.assertEqual(identity["compatibility_id"], f"ui-{release[:12]}")
+            self.assertEqual(identity["pair_id"], compatibility["pair"])
+            self.assertEqual(identity["ui_runtime"]["commit"], release)
+            self.assertEqual(identity["smart_runtime"]["commit"], mirror_commit)
+            self.assertEqual(identity["smart_runtime"]["tree"], "smart")
+
+            compatibility["pair"] = "ui-" + "0" * 12
+            path = Fixtures.write_path(Path(temporary) / "v2-bad-pair.json", registry)
+            with self.assertRaisesRegex(VALIDATOR.DriftError, "registry_compatibility_invalid"):
+                VALIDATOR.validate_aggregate(path)
+
+            del compatibility["pair"], compatibility["mirror"]
+            path = Fixtures.write_path(Path(temporary) / "v2-no-mirror.json", registry)
+            _registry, identity = VALIDATOR.validate_aggregate(path)
+            self.assertEqual(identity["pair_id"], f"ui-{release[:12]}")
+            self.assertEqual(identity["smart_runtime"]["tree"], "distr/smart")
 
     def test_public_ids_and_recipe_utility_closure_fail_closed(self) -> None:
         registry = json.loads(AGGREGATE.read_text(encoding="utf-8"))

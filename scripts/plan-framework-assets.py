@@ -269,7 +269,20 @@ def conventional_asset_paths(rule: dict[str, Any]) -> list[tuple[str, Path]]:
     raise AssetPlanError(f"rule_type_unsupported:{name}:{kind}")
 
 
+def default_smart_root(ui_root: Path) -> Path | None:
+    """Where `smart/<name>/...` resolves when no Smart root is given.
+
+    Smart is published into `ui/distr/smart` from lock v2 on, so `ui/distr`
+    is a Smart root whose `smart/` is that tree. A plan made against a
+    separate `ui-smart` checkout still passes it explicitly.
+    """
+    candidate = ui_root / "distr"
+    return candidate if (candidate / "smart").is_dir() else None
+
+
 def build_plan(html: str, ui_root: Path, smart_root: Path | None = None) -> dict[str, Any]:
+    if smart_root is None:
+        smart_root = default_smart_root(ui_root)
     rules_path = ui_root / "distr/rule/rule.json"
     rules = with_relation_rules(load_rules(rules_path))
     scan_html = scannable_html(html)

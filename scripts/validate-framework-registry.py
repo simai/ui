@@ -23,17 +23,18 @@ def load_builder():
 
 
 def main() -> int:
-    smart_manifest = os.environ.get("SIMAI_UI_SMART_MANIFEST")
-    if not smart_manifest:
-        print("SIMAI_UI_SMART_MANIFEST is required", file=sys.stderr)
-        return 1
     builder = load_builder()
+    # The ui-owned manifest when there is one, else the one ui-smart keeps.
+    smart_manifest = os.environ.get("SIMAI_UI_SMART_MANIFEST") or builder.default_smart_manifest(ROOT)
+    if not smart_manifest:
+        print("SIMAI_UI_SMART_MANIFEST is required: no Smart owner manifest found", file=sys.stderr)
+        return 1
     return builder.main(
         [
             "--ui-root",
             str(ROOT),
             "--smart-manifest",
-            smart_manifest,
+            str(smart_manifest),
             "--check",
         ]
     )

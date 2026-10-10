@@ -25,7 +25,10 @@ LARENA_LOCK_PROFILES = {
     "larena.ui.frontend_runtime_lock.v2": None,
     "larena.ui.frontend_runtime_lock.v3": "exact-git-tree-v2",
 }
-COMPATIBILITY_ID = re.compile(r"^ui-[0-9a-f]{12}-smart-[0-9a-f]{12}$")
+# v1 pairs name two commits; a v2 release names one `ui` build commit and keeps
+# the v1-shaped id as `pair` while `ui-smart` is mirrored.
+COMPATIBILITY_ID = re.compile(r"^ui-[0-9a-f]{12}(?:-smart-[0-9a-f]{12})?$")
+PAIR_ID = re.compile(r"^ui-[0-9a-f]{12}-smart-[0-9a-f]{12}$")
 EXPECTED_RECIPE_UTILITIES = [
     "utility.display",
     "utility.flex-direction",
@@ -175,22 +178,46 @@ def validate_aggregate(path: Path) -> tuple[dict[str, Any], dict[str, Any]]:
     runtime_sources = compatibility.get("runtime_sources")
     if not isinstance(runtime_sources, list):
         raise DriftError("registry_runtime_sources_invalid")
-    by_owner = {item.get("owner"): item for item in runtime_sources if isinstance(item, dict)}
+    v2 = compatibility.get("release_lock_version") == 2
+    if v2 != (PAIR_ID.fullmatch(compatibility_id) is None):
+        raise DriftError("registry_compatibility_invalid")
+    # Keyed by owner and runtime path: from v2 on both trees are owned by
+    # simai/ui. The consumers below still read Smart from `ui-smart` until
+    # stage 3 of the split, so in v2 their Smart runtime is the mirror and
+    # their id is the v1-shaped `pair`.
+    by_source = {
+        (item.get("owner"), item.get("runtime_path")): item
+        for item in runtime_sources
+        if isinstance(item, dict)
+    }
+    if v2:
+        mirror = compatibility.get("mirror")
+        if isinstance(mirror, dict):
+            by_source[(mirror.get("owner"), mirror.get("runtime_path"))] = mirror
+        pair_id = compatibility.get("pair")
+        if mirror is not None and (not isinstance(pair_id, str) or not PAIR_ID.fullmatch(pair_id)):
+            raise DriftError("registry_compatibility_invalid")
+    else:
+        pair_id = compatibility_id
+    smart_source = ("simai/ui-smart", "smart")
+    if v2 and compatibility.get("mirror") is None:
+        # No mirror any more: Smart is read from ui itself.
+        smart_source = ("simai/ui", "distr/smart")
+        pair_id = compatibility_id
     runtime_contracts: dict[str, dict[str, Any]] = {}
-    for owner, runtime_path, mount in (
-        ("simai/ui", "distr", "ui"),
-        ("simai/ui-smart", "smart", "smart"),
+    for key, (owner, runtime_path), mount in (
+        ("ui", ("simai/ui", "distr"), "ui"),
+        ("smart", smart_source, "smart"),
     ):
-        source = by_owner.get(owner)
+        source = by_source.get((owner, runtime_path))
         if not isinstance(source, dict):
             raise DriftError(f"registry_runtime_source_missing:{owner}")
         if (
-            source.get("runtime_path") != runtime_path
-            or not HEX40.fullmatch(str(source.get("commit", "")))
+            not HEX40.fullmatch(str(source.get("commit", "")))
             or not HEX64.fullmatch(str(source.get("archive_sha256", "")))
         ):
             raise DriftError(f"registry_runtime_source_mismatch:{owner}")
-        runtime_contracts[owner] = {
+        runtime_contracts[key] = {
             "tag": source.get("tag"),
             "commit": source["commit"],
             "tree": runtime_path,
@@ -200,11 +227,14 @@ def validate_aggregate(path: Path) -> tuple[dict[str, Any], dict[str, Any]]:
 
     return registry, {
         "compatibility_id": compatibility_id,
+        # The id a consumer that pins `ui` and `ui-smart` separately carries:
+        # the release id for v1, the mirror pair for v2.
+        "pair_id": pair_id,
         "profile": PROFILE,
         "entry_count": len(entries),
         "counts": counts,
-        "ui_runtime": runtime_contracts["simai/ui"],
-        "smart_runtime": runtime_contracts["simai/ui-smart"],
+        "ui_runtime": runtime_contracts["ui"],
+        "smart_runtime": runtime_contracts["smart"],
         "file_sha256": sha256_file(path),
         "public_ids": ids,
         "recipe_closure": closure,
@@ -466,7 +496,7 @@ def validate_consumers(
             larena_runtime_lock,
             source,
             aggregate["file_sha256"],
-            aggregate["compatibility_id"],
+            aggregate["pair_id"],
             aggregate["ui_runtime"],
             aggregate["smart_runtime"],
         ),
