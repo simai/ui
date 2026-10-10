@@ -10,7 +10,7 @@ codex-local-check*
 *.bak_*
 *.bak-*
 *.codex-bak-*
-smart/
+/smart/
 stats/
 ai/
 __pycache__/
