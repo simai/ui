@@ -1,0 +1,288 @@
+{
+  "schema_version": 2,
+  "id": "smart.spinner",
+  "version": "1.0.0",
+  "title": "Spinner",
+  "summary": "Indeterminate waiting indicator with arc or dots presentation, optional polite status announcement and Framework-owned motion.",
+  "kind": "smart",
+  "reuse_mode": "whole",
+  "lifecycle": "experimental",
+  "tags": [
+    "spinner"
+  ],
+  "capabilities": [
+    "render",
+    "theme",
+    "responsive",
+    "loading-status",
+    "reduced-motion"
+  ],
+  "custom_element": "sf-spinner",
+  "templates": [
+    "default"
+  ],
+  "exported_parts": [],
+  "composition": {
+    "uses": [
+      "component.spinner"
+    ],
+    "public_parts": []
+  },
+  "inputs": {
+    "type": "object",
+    "properties": {
+      "size": {
+        "type": "string",
+        "default": "1",
+        "enum": [
+          "1/2",
+          "1",
+          "2",
+          "3"
+        ]
+      },
+      "width": {
+        "type": "string",
+        "default": ""
+      },
+      "height": {
+        "type": "string",
+        "default": ""
+      },
+      "label": {
+        "type": "string",
+        "default": "Loading..."
+      },
+      "kind": {
+        "type": "string",
+        "default": "arc",
+        "enum": [
+          "arc",
+          "dots"
+        ],
+        "description": "What the spinner is: an arc or a row of dots."
+      },
+      "dots": {
+        "type": "string",
+        "default": "16",
+        "pattern": "^(?:[3-9]|[12][0-9]|3[0-2])$"
+      },
+      "filled": {
+        "type": "string",
+        "default": "6",
+        "pattern": "^(?:[1-9]|[12][0-9]|3[0-2])$"
+      },
+      "stroke-width": {
+        "type": "string",
+        "default": ""
+      },
+      "dot-radius": {
+        "type": "string",
+        "default": ""
+      },
+      "infinite": {
+        "type": "boolean",
+        "default": false
+      },
+      "announce": {
+        "type": "boolean",
+        "default": false
+      },
+      "direction": {
+        "type": "string",
+        "default": "clockwise",
+        "enum": [
+          "clockwise",
+          "counterclockwise"
+        ]
+      },
+      "root-class": {
+        "type": "string",
+        "default": ""
+      },
+      "variant": {
+        "type": "string",
+        "default": "arc",
+        "description": "Legacy name for kind, still honoured. See contracts/public-api-axes.json.",
+        "enum": [
+          "arc",
+          "dots"
+        ]
+      }
+    },
+    "additionalProperties": false
+  },
+  "item_contract": {},
+  "contracts": {},
+  "methods": {
+    "getSpinnerRoot": {
+      "summary": "Public runtime method getSpinnerRoot.",
+      "arguments": [],
+      "returns": {
+        "type": [
+          "object",
+          "boolean",
+          "null"
+        ]
+      }
+    },
+    "refreshSpinner": {
+      "summary": "Public runtime method refreshSpinner.",
+      "arguments": [],
+      "returns": {
+        "type": [
+          "object",
+          "boolean",
+          "null"
+        ]
+      }
+    }
+  },
+  "events": {},
+  "state": {
+    "machines": {
+      "waiting": [
+        "active",
+        "complete"
+      ]
+    },
+    "visual_states": [
+      "default",
+      "active"
+    ]
+  },
+  "persistence": {
+    "mode": "none",
+    "source_of_truth": "component",
+    "network_owner": "none",
+    "revision_field": null
+  },
+  "ownership": {
+    "source": "simai/ui-source",
+    "data": "host",
+    "effects": "component",
+    "forbidden_client_responsibilities": [
+      "backend access decisions",
+      "host route invention",
+      "setting or clearing aria-busy on the containing region",
+      "inventing completion, error or timeout messages"
+    ]
+  },
+  "security": {
+    "permissions_owner": "none",
+    "untrusted_inputs": [
+      "props",
+      "children"
+    ],
+    "network_policy": "deny"
+  },
+  "accessibility": {
+    "role": "status when announce is true and label is non-empty; otherwise no widget role",
+    "accessible_name": "recommended",
+    "keyboard": [],
+    "focus": "Spinner is not interactive and never enters the focus order."
+  },
+  "presentation": {
+    "themes": [
+      "light",
+      "dark"
+    ],
+    "locales": [
+      "ru",
+      "en"
+    ],
+    "responsive": [
+      "desktop",
+      "mobile"
+    ]
+  },
+  "adapter": {
+    "kind": "generic",
+    "protocol": "simai.smart-studio-adapter.v1",
+    "module": null
+  },
+  "artifacts": {
+    "fixtures": [
+      "studio.fixture.json"
+    ],
+    "scenarios": [
+      "studio.scenario.json"
+    ]
+  },
+  "readiness": {
+    "level": "described",
+    "required_checks": [
+      "manifest",
+      "fixture",
+      "runtime-upgrade",
+      "scenario-smoke"
+    ]
+  },
+  "compatibility": {
+    "contract_schema": {
+      "id": "https://simai.io/contracts/smart-component-manifest.v2.schema.json",
+      "version": 2
+    },
+    "runtime_pair": {
+      "ui_revision": "7cf0838165160806619e3f0b2ec69cacb2de7e0b",
+      "ui_smart_revision": "696f1abe0e69a0f55b95e1137974e94d4a6ca717"
+    },
+    "aliases": [],
+    "deprecations": [],
+    "replacement": null,
+    "migrations": []
+  },
+  "provenance": {
+    "source_repository": "simai/ui-source",
+    "source_revision": "4139a570a86a23af49a152c8ab3f3e607be4ac97",
+    "source_artifacts": [
+      {
+        "path": "src/smart/spinner/index.js",
+        "sha256": "fafa87ca0dbd1cda7a26cb124f367e3838264df2b5e773c6fc5506161074df3a"
+      },
+      {
+        "path": "src/smart/spinner/js/templates/default.js",
+        "sha256": "667b3de3312617dd6e6bd0943f43ad3ffeade61b7ceff34ecd03ab72b45564aa"
+      },
+      {
+        "path": "src/smart/spinner/rule.js",
+        "sha256": "d313ccac9d906fbb9f767a4a67beefa9a4e249b2bbc102cd6cfee312fab81648"
+      },
+      {
+        "path": "src/smart/spinner/docs/docs.md",
+        "sha256": "7619ab4a661769084f4f072290ab17bf730dfa6a4690847c33c60e96d674101a"
+      }
+    ],
+    "generated_runtime": [
+      {
+        "repository": "simai/ui-smart",
+        "revision": "696f1abe0e69a0f55b95e1137974e94d4a6ca717",
+        "path": "smart/spinner/js/spinner.js",
+        "sha256": "27bff04ab12cfdf875143737f258e64b3e98f0ed12501ee8c158dd1d857080d8"
+      }
+    ]
+  },
+  "ai_guidance": {
+    "use_when": "Use sf-spinner for a bounded waiting state whose progress cannot be expressed as a meaningful percentage.",
+    "do_not": [
+      "Do not copy generated ui-smart code",
+      "Do not move host data or access decisions into the component",
+      "Do not use Spinner when determinate Progress or content-matched Skeleton is more accurate",
+      "Do not make Spinner focusable",
+      "Do not omit the containing region's aria-busy state",
+      "Do not announce an empty or non-localized label"
+    ],
+    "required_reads": [
+      "inputs",
+      "methods",
+      "events",
+      "ownership",
+      "provenance"
+    ],
+    "minimal_example": "<sf-spinner infinite announce label=\"Loading\"></sf-spinner>",
+    "owner_commands": [
+      "npm run contract:verify",
+      "npm test"
+    ]
+  }
+}

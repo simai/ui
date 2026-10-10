@@ -1,0 +1,36 @@
+@layer sf.components {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-tree > sf-tree-item > .sf-tree-item > .sf-tree-group {
+    padding-left: var(--sf-space-3);
+    padding-left: var(--sf-tree-item--nested-padding-inline-start, var(--sf-space-3));
+  }
+  @supports not (padding-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-tree > sf-tree-item > .sf-tree-item > .sf-tree-group {
+    padding-left: var(--sf-space-3);
+    padding-left: var(--sf-tree-item--nested-padding-inline-start, var(--sf-space-3));
+    }
+  }
+  .sf-tree > sf-tree-item > .sf-tree-item > .sf-tree-group:where(:dir(ltr)) {
+    padding-left: var(--sf-space-3);
+    padding-left: var(--sf-tree-item--nested-padding-inline-start, var(--sf-space-3));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-tree > sf-tree-item > .sf-tree-item > .sf-tree-group {
+    padding-right: var(--sf-space-3);
+    padding-right: var(--sf-tree-item--nested-padding-inline-start, var(--sf-space-3));
+  }
+  @supports not (padding-inline-start: initial) {
+  [dir="rtl"] .sf-tree > sf-tree-item > .sf-tree-item > .sf-tree-group {
+    padding-right: var(--sf-space-3);
+    padding-right: var(--sf-tree-item--nested-padding-inline-start, var(--sf-space-3));
+    }
+  }
+  .sf-tree > sf-tree-item > .sf-tree-item > .sf-tree-group:where(:dir(rtl)) {
+    padding-right: var(--sf-space-3);
+    padding-right: var(--sf-tree-item--nested-padding-inline-start, var(--sf-space-3));
+  }
+  .sf-tree > sf-tree-item > .sf-tree-item > .sf-tree-group {
+    -webkit-padding-start: var(--sf-space-3);
+            padding-inline-start: var(--sf-space-3);
+    -webkit-padding-start: var(--sf-tree-item--nested-padding-inline-start, var(--sf-space-3));
+            padding-inline-start: var(--sf-tree-item--nested-padding-inline-start, var(--sf-space-3));
+  }
+}

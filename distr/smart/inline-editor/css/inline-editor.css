@@ -1,0 +1,85 @@
+@charset "UTF-8";
+/* sf-focus-ring: editor — the editing canvas marks what is being edited in its
+   own colour, which is part of the editor's language rather than the product's
+   focus colour. Width and style stay the system's. */
+@layer sf.components {
+  [data-sf-inline-editing] {
+    outline: var(--sf-focus--width) var(--sf-focus--style) Highlight;
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-primary, Highlight);
+    outline-offset: 2px;
+    cursor: text;
+  }
+  .sf-inline-editor-toolbar {
+    position: fixed;
+    z-index: 80;
+    z-index: var(--sf-composition-overlay-z-index, var(--sf-z-index-8, 80));
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem;
+    gap: var(--sf-space-1, 0.25rem);
+    padding: 0.25rem;
+    padding: var(--sf-space-1, 0.25rem);
+    border-radius: 0.25rem;
+    border-radius: var(--sf-radius-1, 0.25rem);
+    /* A toolbar floats over the page: step 2's surface and shadow. */
+    background: Canvas;
+    background: var(--sf-elevation-2--surface, Canvas);
+    --sf-on-surface-variant: var(--sf-on-elevation-2--variant);
+    color: CanvasText;
+    color: var(--sf-on-surface, CanvasText);
+    box-shadow: var(--sf-elevation-2--shadow);
+  }
+  .sf-inline-editor-button,
+  .sf-inline-editor-url {
+    padding: 0.25rem 0.5rem;
+    padding: var(--sf-space-1, 0.25rem) var(--sf-space-2, 0.5rem);
+    border: 1px solid GrayText;
+    border: 1px solid var(--sf-outline, GrayText);
+    border-radius: 0.25rem;
+    border-radius: var(--sf-radius-1, 0.25rem);
+    background: Canvas;
+    background: var(--sf-surface-1, Canvas);
+    color: CanvasText;
+    color: var(--sf-on-surface, CanvasText);
+    font: inherit;
+  }
+  .sf-inline-editor-button[aria-pressed=true] {
+    background: Highlight;
+    background: var(--sf-primary, Highlight);
+    color: HighlightText;
+    color: var(--sf-on-primary, HighlightText);
+  }
+  .sf-inline-editor-button.focus-visible,
+  .sf-inline-editor-url.focus-visible {
+    outline: var(--sf-focus--width) var(--sf-focus--style) Highlight;
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-primary, Highlight);
+    outline-offset: 2px;
+  }
+  .sf-inline-editor-button.focus-visible,
+  .sf-inline-editor-url.focus-visible {
+    outline: var(--sf-focus--width) var(--sf-focus--style) Highlight;
+    outline: var(--sf-focus--width) var(--sf-focus--style) Highlight;
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-primary, Highlight);
+    outline-offset: 2px;
+  }
+  .sf-inline-editor-button:focus-visible,
+  .sf-inline-editor-url:focus-visible {
+    outline: var(--sf-focus--width) var(--sf-focus--style) Highlight;
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-primary, Highlight);
+    outline-offset: 2px;
+  }
+  .sf-inline-editor-link {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    gap: var(--sf-space-1, 0.25rem);
+  }
+  .sf-inline-editor-link[hidden] {
+    display: none;
+  }
+  .sf-inline-editor-error {
+    color: #b3261e;
+    color: var(--sf-error, #b3261e);
+  }
+}

@@ -1,0 +1,308 @@
+{
+  "schema_version": 2,
+  "id": "smart.tabs",
+  "version": "1.0.0",
+  "title": "Tabs",
+  "summary": "Tabs Smart Component from SIMAI Framework.",
+  "kind": "smart",
+  "reuse_mode": "whole",
+  "lifecycle": "experimental",
+  "tags": [
+    "tabs"
+  ],
+  "capabilities": [
+    "render",
+    "interaction",
+    "keyboard",
+    "theme",
+    "responsive"
+  ],
+  "custom_element": "sf-tabs",
+  "templates": [
+    "default"
+  ],
+  "exported_parts": [],
+  "composition": {
+    "uses": [
+      "component.tabs",
+      "smart.buttons",
+      "smart.icon-buttons"
+    ],
+    "public_parts": []
+  },
+  "inputs": {
+    "type": "object",
+    "properties": {
+      "template": {
+        "type": "string",
+        "default": "default",
+        "enum": [
+          "default"
+        ]
+      },
+      "type": {
+        "type": "string",
+        "default": null
+      },
+      "size": {
+        "type": "string",
+        "default": "1"
+      },
+      "variant": {
+        "type": "string",
+        "default": "buttons"
+      },
+      "scheme": {
+        "type": "string",
+        "default": "default",
+        "description": "Built-in button appearance: default, outline or link. Historical name retained; this is not a semantic color selector. Custom templates may interpret it separately."
+      },
+      "top-position": {
+        "type": "string",
+        "default": "start"
+      },
+      "active-index": {
+        "type": "number",
+        "default": 0
+      },
+      "items": {
+        "type": "string",
+        "default": []
+      },
+      "root-class": {
+        "type": "string",
+        "default": ""
+      },
+      "top-class": {
+        "type": "string",
+        "default": ""
+      },
+      "panel-class": {
+        "type": "string",
+        "default": ""
+      }
+    },
+    "additionalProperties": false
+  },
+  "item_contract": {},
+  "contracts": {},
+  "methods": {
+    "getData": {
+      "summary": "Public runtime method getData.",
+      "arguments": [],
+      "returns": {
+        "type": [
+          "object",
+          "boolean",
+          "null"
+        ]
+      }
+    },
+    "setData": {
+      "summary": "Public runtime method setData.",
+      "arguments": [],
+      "returns": {
+        "type": [
+          "object",
+          "boolean",
+          "null"
+        ]
+      }
+    },
+    "setItems": {
+      "summary": "Public runtime method setItems.",
+      "arguments": [],
+      "returns": {
+        "type": [
+          "object",
+          "boolean",
+          "null"
+        ]
+      }
+    },
+    "setPanels": {
+      "summary": "Public runtime method setPanels.",
+      "arguments": [],
+      "returns": {
+        "type": [
+          "object",
+          "boolean",
+          "null"
+        ]
+      }
+    },
+    "setState": {
+      "summary": "Public runtime method setState.",
+      "arguments": [],
+      "returns": {
+        "type": [
+          "object",
+          "boolean",
+          "null"
+        ]
+      }
+    },
+    "goTo": {
+      "summary": "Public runtime method goTo.",
+      "arguments": [],
+      "returns": {
+        "type": [
+          "object",
+          "boolean",
+          "null"
+        ]
+      }
+    },
+    "onTabChange": {
+      "summary": "Public runtime method onTabChange.",
+      "arguments": [],
+      "returns": {
+        "type": [
+          "object",
+          "boolean",
+          "null"
+        ]
+      }
+    }
+  },
+  "events": {
+    "sf-tab-change": {
+      "summary": "Runtime event sf-tab-change.",
+      "payload": {
+        "type": "object"
+      }
+    }
+  },
+  "state": {
+    "machines": {},
+    "visual_states": [
+      "default"
+    ]
+  },
+  "persistence": {
+    "mode": "none",
+    "source_of_truth": "component",
+    "network_owner": "none",
+    "revision_field": null
+  },
+  "ownership": {
+    "source": "simai/ui-source",
+    "data": "fixture",
+    "effects": "component",
+    "forbidden_client_responsibilities": [
+      "backend access decisions",
+      "host route invention"
+    ]
+  },
+  "security": {
+    "permissions_owner": "none",
+    "untrusted_inputs": [
+      "props",
+      "children"
+    ],
+    "network_policy": "deny"
+  },
+  "accessibility": {
+    "role": "tablist",
+    "accessible_name": "required",
+    "keyboard": [
+      "Tab",
+      "ArrowLeft",
+      "ArrowRight",
+      "ArrowUp",
+      "ArrowDown",
+      "Home",
+      "End",
+      "Enter",
+      "Space"
+    ],
+    "focus": "Built-in text/icon tabs use one enabled native tab stop and linked panels. Navigation arrows follow orientation and RTL, skip disabled tabs, wrap, focus and activate. Perpendicular arrows and nested widget keys remain local. A custom tab component descriptor is presentation-only: its named wrapper remains the single tab stop and the rendered Smart visual is inert."
+  },
+  "presentation": {
+    "themes": [
+      "light",
+      "dark"
+    ],
+    "locales": [
+      "ru",
+      "en"
+    ],
+    "responsive": [
+      "desktop",
+      "mobile"
+    ]
+  },
+  "adapter": {
+    "kind": "generic",
+    "protocol": "simai.smart-studio-adapter.v1",
+    "module": null
+  },
+  "artifacts": {
+    "fixtures": [
+      "studio.fixture.json"
+    ],
+    "scenarios": [
+      "studio.scenario.json"
+    ]
+  },
+  "readiness": {
+    "level": "described",
+    "required_checks": [
+      "manifest",
+      "fixture",
+      "runtime-upgrade",
+      "scenario-smoke"
+    ]
+  },
+  "compatibility": {
+    "contract_schema": {
+      "id": "https://simai.io/contracts/smart-component-manifest.v2.schema.json",
+      "version": 2
+    },
+    "runtime_pair": {
+      "ui_revision": "7cf0838165160806619e3f0b2ec69cacb2de7e0b",
+      "ui_smart_revision": "696f1abe0e69a0f55b95e1137974e94d4a6ca717"
+    },
+    "aliases": [],
+    "deprecations": [],
+    "replacement": null,
+    "migrations": []
+  },
+  "provenance": {
+    "source_repository": "simai/ui-source",
+    "source_revision": "4139a570a86a23af49a152c8ab3f3e607be4ac97",
+    "source_artifacts": [
+      {
+        "path": "src/smart/tabs/index.js",
+        "sha256": "bbdcf5f3d5e7a61541208ab5bd0db0dccf7d87cf03cbfb785f04e3cff0d8ce96"
+      }
+    ],
+    "generated_runtime": [
+      {
+        "repository": "simai/ui-smart",
+        "revision": "696f1abe0e69a0f55b95e1137974e94d4a6ca717",
+        "path": "smart/tabs/js/tabs.js",
+        "sha256": "cc8c1f2b5bc452c8c567399255b11073ebfd38a9f500804100953d91b3df6d5d"
+      }
+    ]
+  },
+  "ai_guidance": {
+    "use_when": "Use sf-tabs when the interface needs the tabs behavior.",
+    "do_not": [
+      "Do not copy generated ui-smart code",
+      "Do not move host data or access decisions into the component"
+    ],
+    "required_reads": [
+      "inputs",
+      "methods",
+      "events",
+      "ownership",
+      "provenance"
+    ],
+    "minimal_example": "<sf-tabs></sf-tabs>",
+    "owner_commands": [
+      "npm run contract:verify",
+      "npm test"
+    ]
+  }
+}

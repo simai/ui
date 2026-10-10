@@ -1,0 +1,163 @@
+@layer sf.components {
+  /* A colour sits on the control ladder like any other input, so a colour beside a
+     text field lines up with it rather than inventing its own height. */
+  sf-color {
+    display: block;
+  }
+  .sf-color {
+    display: flex;
+    align-items: center;
+    gap: var(--sf-space-1);
+    min-height: var(--sf-ui-1--control-height);
+    min-block-size: var(--sf-ui-1--control-height);
+  }
+  .sf-color--size-1\/2 {
+    min-height: var(--sf-ui-1\/2--control-height);
+    min-block-size: var(--sf-ui-1\/2--control-height);
+  }
+  .sf-color--size-2 {
+    min-height: var(--sf-ui-2--control-height);
+    min-block-size: var(--sf-ui-2--control-height);
+  }
+  .sf-color-swatch {
+    position: relative;
+    display: inline-flex;
+    cursor: pointer;
+  }
+  /* The native input opens the platform picker and is the thing a keyboard
+     reaches; the chip is what a person sees. The input is not hidden with
+     `display: none`, which would take it off the focus order -- it is laid over the
+     chip and made transparent, so focus and the focus ring stay where they are. */
+  .sf-color-input {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    inset: 0;
+    width: 100%;
+    inline-size: 100%;
+    height: 100%;
+    block-size: 100%;
+    opacity: 0;
+    cursor: pointer;
+  }
+  .sf-color-chip {
+    width: var(--sf-ui-1--control-height);
+    inline-size: var(--sf-ui-1--control-height);
+    height: var(--sf-ui-1--control-height);
+    block-size: var(--sf-ui-1--control-height);
+    border-radius: var(--sf-radius-1);
+    border: var(--sf-px) solid var(--sf-outline-variant);
+    background-color: transparent;
+    background-color: var(--sf-color-chip, transparent);
+  }
+  /* Nothing chosen and nothing inherited: a chip that is empty rather than black,
+     because black is a colour somebody may have meant. */
+  .sf-color-chip[data-empty] {
+    background-image: linear-gradient(45deg, transparent 45%, var(--sf-outline-variant) 45%, var(--sf-outline-variant) 55%, transparent 55%);
+  }
+  .sf-color-input.focus-visible + .sf-color-chip,
+  .sf-color-swatch[focus-within] .sf-color-chip {
+    /* The shared focus tokens, not invented ones: a contract holds every ring in
+       the Framework to the same width, style and colour, and a ring with its own
+       numbers is a ring that stops matching the rest the day the tokens move. */
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-px);
+  }
+  .sf-color-input.focus-visible + .sf-color-chip,
+  .sf-color-swatch:focus-within .sf-color-chip {
+    /* The shared focus tokens, not invented ones: a contract holds every ring in
+       the Framework to the same width, style and colour, and a ring with its own
+       numbers is a ring that stops matching the rest the day the tokens move. */
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-px);
+  }
+  .sf-color-input.focus-visible + .sf-color-chip,
+  .sf-color-swatch[focus-within] .sf-color-chip {
+    /* The shared focus tokens, not invented ones: a contract holds every ring in
+       the Framework to the same width, style and colour, and a ring with its own
+       numbers is a ring that stops matching the rest the day the tokens move. */
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-px);
+  }
+  .sf-color-input:focus-visible + .sf-color-chip,
+  .sf-color-swatch[focus-within] .sf-color-chip {
+    /* The shared focus tokens, not invented ones: a contract holds every ring in
+       the Framework to the same width, style and colour, and a ring with its own
+       numbers is a ring that stops matching the rest the day the tokens move. */
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-px);
+  }
+  .sf-color-input:focus-visible + .sf-color-chip,
+  .sf-color-swatch:focus-within .sf-color-chip {
+    /* The shared focus tokens, not invented ones: a contract holds every ring in
+       the Framework to the same width, style and colour, and a ring with its own
+       numbers is a ring that stops matching the rest the day the tokens move. */
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
+    outline-offset: var(--sf-px);
+  }
+  .sf-color-text code {
+    font-family: ui-monospace, monospace;
+    font-family: var(--sf-font-family-mono, ui-monospace, monospace);
+  }
+  .sf-color-inherited {
+    color: var(--sf-on-surface-variant);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-color-swatches {
+    margin-left: var(--sf-space-1);
+  }
+  @supports not (margin-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-color-swatches {
+    margin-left: var(--sf-space-1);
+    }
+  }
+  .sf-color-swatches:where(:dir(ltr)) {
+    margin-left: var(--sf-space-1);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-color-swatches {
+    margin-right: var(--sf-space-1);
+  }
+  @supports not (margin-inline-start: initial) {
+  [dir="rtl"] .sf-color-swatches {
+    margin-right: var(--sf-space-1);
+    }
+  }
+  .sf-color-swatches:where(:dir(rtl)) {
+    margin-right: var(--sf-space-1);
+  }
+  .sf-color-swatches {
+    display: inline-flex;
+    gap: 4px;
+    gap: var(--sf-space-1\/2, 4px);
+    -webkit-margin-start: var(--sf-space-1);
+            margin-inline-start: var(--sf-space-1);
+  }
+  .sf-color-preset {
+    width: var(--sf-ui-1\/2--control-height);
+    inline-size: var(--sf-ui-1\/2--control-height);
+    height: var(--sf-ui-1\/2--control-height);
+    block-size: var(--sf-ui-1\/2--control-height);
+    padding: 0;
+    border-radius: var(--sf-radius-1);
+    border: var(--sf-px) solid var(--sf-outline-variant);
+    background-color: var(--sf-color-chip);
+    cursor: pointer;
+  }
+  .sf-color-preset[aria-pressed=true] {
+    outline: calc(var(--sf-px) * 2) solid var(--sf-primary);
+    outline-offset: var(--sf-px);
+  }
+  .sf-color--plain .sf-color-chip {
+    border-color: transparent;
+  }
+  .sf-color--outlined .sf-color-chip {
+    border-color: var(--sf-outline);
+  }
+  @media (forced-colors: active) {
+    .sf-color-chip,
+    .sf-color-preset {
+      border-color: CanvasText;
+    }
+  }
+}

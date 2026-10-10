@@ -1,0 +1,77 @@
+@charset "UTF-8";
+/* sf-focus-ring: editor — the editing canvas marks what is being edited in its
+   own colour, which is part of the editor's language rather than the product's
+   focus colour. Width and style stay the system's. */
+@layer sf.base {
+  sf-sortable {
+    display: block;
+  }
+}
+@layer sf.components {
+  [data-sf-sortable-item][data-sf-sortable-dragging] {
+    opacity: 0.4;
+  }
+  [data-sf-sortable-item].focus-visible {
+    outline: var(--sf-focus--width) var(--sf-focus--style) Highlight;
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-primary, Highlight);
+    outline-offset: 2px;
+  }
+  [data-sf-sortable-item].focus-visible {
+    outline: var(--sf-focus--width) var(--sf-focus--style) Highlight;
+    outline: var(--sf-focus--width) var(--sf-focus--style) Highlight;
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-primary, Highlight);
+    outline-offset: 2px;
+  }
+  [data-sf-sortable-item]:focus-visible {
+    outline: var(--sf-focus--width) var(--sf-focus--style) Highlight;
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-primary, Highlight);
+    outline-offset: 2px;
+  }
+  [data-sf-sortable-handle] {
+    cursor: -webkit-grab;
+    cursor: grab;
+    touch-action: none;
+  }
+  .sf-sortable-ghost {
+    position: fixed;
+    z-index: 90;
+    z-index: var(--sf-sortable-ghost-z-index, var(--sf-z-index-9, 90));
+    margin: 0;
+    pointer-events: none;
+    opacity: 0.9;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    box-shadow: var(--sf-ui-shadow-4, 0 4px 12px rgba(0, 0, 0, 0.3));
+  }
+  .sf-sortable-indicator {
+    position: fixed;
+    z-index: 90;
+    z-index: var(--sf-sortable-ghost-z-index, var(--sf-z-index-9, 90));
+    border-radius: 2px;
+    background: Highlight;
+    background: var(--sf-primary, Highlight);
+    pointer-events: none;
+  }
+  .sf-sortable-indicator[hidden] {
+    display: none;
+  }
+  .sf-sortable-live {
+    position: absolute;
+    width: 1px;
+    inline-size: 1px;
+    height: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    -webkit-clip-path: inset(50%);
+            clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  html[data-sf-sortable-active],
+  html[data-sf-sortable-active] * {
+    cursor: -webkit-grabbing;
+    cursor: grabbing;
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+  }
+}
