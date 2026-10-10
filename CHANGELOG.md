@@ -444,6 +444,8 @@
 
 ### Удалено
 
+- `sf-table`, `sf-data-view`, `sf-property-view` and `sf-admin-menu` leave the free Framework for SIMAI Framework Pro (`simai/ui-pro`), a separate distribution a page declares as the package `pro` (`SF_BOOT_CONFIG.packages.pro = {base}`), released against a named free release. Their folders and rules are no longer in `distr/smart` or `distr/rule`; `contracts/packages/pro.package.json` names them. The public ports and conformance kits stay free and move to `distr/core/contracts/ports/<port>/<version>/`. The field renderer set and the composition editor parts stay free; `option-badge.js` moved into the free renderer set.
+
 - Ступень `--size-1/3` у флажка, радио и переключателя: в мобильном режиме она
   совпадает с соседней, а ступень мелкого контрола нужна, чтобы совпадать с
   полями и кнопками в той же форме. Замена — `--size-1` или `--size-2`.
