@@ -1,0 +1,118 @@
+{
+  "schema_id": "simai.framework.package-reference",
+  "schema_version": 1,
+  "package": "pro",
+  "title": "SIMAI Framework Pro",
+  "summary": "Smart components distributed apart from this repository, under the SIMAI Framework Pro licence (terms pending). A page loads them as a component package of the Loader: SF_BOOT_CONFIG.packages.pro = {base: '<ui-pro>/smart'}. This file names them, and what each needs (`requires`, its rule's relations as registry ids), so the free registry can say what a free entry needs from the package and keep what the package needs from the Framework; it carries no bytes and grants nothing. ui-builder's Pro release checks `requires` against the Pro rules it publishes.",
+  "distribution": {
+    "owner": "simai/ui-pro",
+    "repository": "https://github.com/simai/ui-pro",
+    "runtime_path": "smart",
+    "rule_file": "smart/rule.js",
+    "release_locks": "contracts/releases/pro-<12>.lock.json"
+  },
+  "provides": [
+    {
+      "id": "smart.admin-menu",
+      "element": "sf-admin-menu",
+      "rule_name": "cl-admin-menu",
+      "folder": "admin-menu",
+      "requires": [
+        "component.admin-menu",
+        "component.badges",
+        "component.icons",
+        "component.inputs",
+        "smart.badges",
+        "smart.buttons",
+        "smart.context-menu",
+        "smart.icon-buttons",
+        "smart.icons",
+        "smart.inputs"
+      ]
+    },
+    {
+      "id": "smart.data-view",
+      "element": "sf-table",
+      "rule_name": "cl-table",
+      "folder": "table",
+      "requires": [
+        "component.icons",
+        "smart.avatar",
+        "smart.badges",
+        "smart.buttons",
+        "smart.checkbox",
+        "smart.color",
+        "smart.context-menu",
+        "smart.country-code",
+        "smart.datepicker",
+        "smart.dropdown",
+        "smart.icon-buttons",
+        "smart.inputs",
+        "smart.list-item",
+        "smart.modal",
+        "smart.pagination",
+        "smart.range-slider",
+        "smart.spinner",
+        "smart.tabs",
+        "smart.tags"
+      ]
+    },
+    {
+      "id": "smart.data-view-composite",
+      "element": "sf-data-view",
+      "rule_name": "cl-data-view",
+      "folder": "data-view",
+      "requires": [
+        "component.icons",
+        "smart.buttons",
+        "smart.checkbox",
+        "smart.data-view",
+        "smart.dropdown",
+        "smart.icon-buttons",
+        "smart.pagination",
+        "smart.toast"
+      ]
+    },
+    {
+      "id": "smart.property-view",
+      "element": "sf-property-view",
+      "rule_name": "cl-property-view",
+      "folder": "property-view",
+      "requires": [
+        "component.accordion",
+        "component.icons",
+        "smart.avatar",
+        "smart.badges",
+        "smart.button-group",
+        "smart.buttons",
+        "smart.checkbox",
+        "smart.color",
+        "smart.country-code",
+        "smart.data-view",
+        "smart.data-view-composite",
+        "smart.datepicker",
+        "smart.drawer",
+        "smart.dropdown",
+        "smart.file-preview",
+        "smart.file-upload",
+        "smart.icon-buttons",
+        "smart.icons",
+        "smart.inputs",
+        "smart.list-item",
+        "smart.popover",
+        "smart.progress-bar",
+        "smart.progress-scale",
+        "smart.range-slider",
+        "smart.reference-link",
+        "smart.sortable",
+        "smart.spinner",
+        "smart.switch",
+        "smart.tabs",
+        "smart.tags",
+        "smart.textarea",
+        "smart.tree",
+        "smart.tree-item"
+      ]
+    }
+  ]
+}

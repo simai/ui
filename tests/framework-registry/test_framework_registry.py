@@ -105,9 +105,12 @@ class FrameworkContractRegistryTest(unittest.TestCase):
             {
                 "utility": 227,
                 "component": 62,
-                "smart-component": 49,
+                # 49 until the four SIMAI Framework Pro components left for
+                # ui-pro (two of them, sf-data-view and sf-property-view, were
+                # never entries here).
+                "smart-component": 47,
                 "recipe": 1,
-                "total": 339,
+                "total": 337,
             },
         )
         # The id names the runtimes it was built from; that is the claim, not
@@ -188,7 +191,32 @@ class FrameworkContractRegistryTest(unittest.TestCase):
         ):
             self.assertIn(utility_id, closure)
         self.assertIn("component.buttons", closure)
-        self.assertIn("smart.data-view", closure)
+        # The table the recipe places is a Pro component: it is not a free
+        # entry, so it is named, by package, in recipe_packages, and the walk
+        # goes on through what its package reference says it needs.
+        self.assertNotIn("smart.data-view", closure)
+        self.assertIn("smart.list-item", closure, "a dependency is in the closure even when it is not offered")
+        self.assertIn("smart.tags", closure, "reached through the Pro table's requirements")
+        self.assertEqual(
+            self.registry["indexes"]["recipe_packages"]["recipe.admin.collection"],
+            {"pro": ["smart.data-view"]},
+        )
+        self.assertEqual(
+            self.registry["indexes"]["packages"],
+            {
+                "pro": {
+                    "owner": "simai/ui-pro",
+                    "provides": [
+                        "smart.admin-menu",
+                        "smart.data-view",
+                        "smart.data-view-composite",
+                        "smart.property-view",
+                    ],
+                }
+            },
+        )
+        for public_id in self.registry["indexes"]["packages"]["pro"]["provides"]:
+            self.assertNotIn(public_id, self.by_id)
         for component_id in ("component.file-preview", "component.link"):
             self.assertIn(component_id, self.by_id)
             self.assertTrue(
@@ -200,9 +228,9 @@ class FrameworkContractRegistryTest(unittest.TestCase):
             all(
                 self.by_id[public_id]["readiness"]["safe_to_suggest"]
                 for public_id in self.by_id["recipe.admin.collection"]["requires"]
+                if public_id in self.by_id
             )
         )
-        self.assertIn("smart.list-item", closure, "a dependency is in the closure even when it is not offered")
         self.assertEqual(
             self.by_id["recipe.admin.collection"]["requires"],
             [
@@ -216,35 +244,8 @@ class FrameworkContractRegistryTest(unittest.TestCase):
                 "utility.width",
             ],
         )
-        self.assertEqual(
-            self.by_id["smart.data-view"]["requires"],
-            [
-                "component.icons",
-                # The avatar, badge, list item, modal and range slider were
-                # rendered by the table's templates and never fetched; the
-                # completeness rule in ui-source closed that.
-                "smart.avatar",
-                "smart.badges",
-                "smart.buttons",
-                "smart.checkbox",
-                # The typed cells of the renderer set draw a colour swatch and
-                # a country code, so the data view fetches both.
-                "smart.color",
-                "smart.context-menu",
-                "smart.country-code",
-                "smart.datepicker",
-                "smart.dropdown",
-                "smart.icon-buttons",
-                "smart.inputs",
-                "smart.list-item",
-                "smart.modal",
-                "smart.pagination",
-                "smart.range-slider",
-                "smart.spinner",
-                "smart.tabs",
-                "smart.tags",
-            ],
-        )
+        # What the table itself fetches is the Pro release's to state (ui-pro's
+        # owner manifest); this registry no longer holds it.
 
     def test_inventory_is_fail_closed_outside_curated_plan(self) -> None:
         safe = set(self.registry["indexes"]["safe_to_suggest"])
@@ -260,6 +261,7 @@ class FrameworkContractRegistryTest(unittest.TestCase):
             all(
                 self.by_id[public_id]["readiness"]["safe_to_suggest"]
                 for public_id in self.by_id["recipe.admin.collection"]["requires"]
+                if public_id in self.by_id
             ),
             "a recipe may only place components that are safe to suggest",
         )
@@ -297,7 +299,8 @@ class FrameworkContractRegistryTest(unittest.TestCase):
         entities = {entity["key"]: entity for entity in source["entities"]}
         self.assertIn("component.buttons", entities)
         self.assertIn("utility.display", entities)
-        self.assertIn("smart.data-view", entities)
+        self.assertIn("smart.pagination", entities)
+        self.assertNotIn("smart.data-view", entities, "a Pro component is not documented as a free entity")
         self.assertIn("sf-button", entities["component.buttons"]["public_contract"]["classes"])
         self.assertIn("sf-button--primary", entities["component.buttons"]["public_contract"]["classes"])
         self.assertIn("--sf-button--radius", entities["component.buttons"]["public_contract"]["custom_properties"])

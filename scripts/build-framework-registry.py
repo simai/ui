@@ -717,20 +717,82 @@ def validate_smart_reference(
         raise ContractError("smart_reference_status_invalid")
 
 
-def recipe_closure(recipe_id: str, entries: dict[str, dict[str, Any]]) -> list[str]:
+def recipe_walk(
+    recipe_id: str,
+    entries: dict[str, dict[str, Any]],
+    external: dict[str, dict[str, Any]] | None = None,
+) -> tuple[list[str], dict[str, list[str]]]:
+    """What a recipe needs, transitively: free entries, and package entries by package.
+
+    A package entry (`external`: id -> {package, requires}) is not a free
+    entry, but what it needs from the Framework is part of the recipe's plan,
+    so the walk goes on through the requirements its package reference names.
+    """
+    external = external or {}
     if recipe_id not in entries or entries[recipe_id]["kind"] != "recipe":
         raise ContractError(f"recipe_unknown:{recipe_id}")
     visited: set[str] = set()
+    reached: set[str] = set()
     pending = list(entries[recipe_id]["requires"])
     while pending:
         current = pending.pop()
-        if current in visited:
+        if current in visited or current in reached:
+            continue
+        if current in external:
+            reached.add(current)
+            pending.extend(external[current]["requires"])
             continue
         if current not in entries:
             raise ContractError(f"relation_unknown:{recipe_id}:{current}")
         visited.add(current)
         pending.extend(entries[current]["requires"])
-    return sorted(visited)
+    packages: dict[str, list[str]] = {}
+    for public_id in sorted(reached):
+        packages.setdefault(external[public_id]["package"], []).append(public_id)
+    return sorted(visited), packages
+
+
+def recipe_closure(
+    recipe_id: str,
+    entries: dict[str, dict[str, Any]],
+    external: dict[str, dict[str, Any]] | None = None,
+) -> list[str]:
+    """The free entries a recipe needs, transitively (see recipe_walk)."""
+    return recipe_walk(recipe_id, entries, external)[0]
+
+
+PACKAGE_REFERENCE_KEYS = {
+    "schema_id", "schema_version", "package", "title", "summary", "distribution", "provides",
+}
+
+
+def load_package_references(ui_root: Path) -> list[dict[str, Any]]:
+    """The component packages the free Framework names (contracts/packages).
+
+    A package (SIMAI Framework Pro is the first) ships its Smart components and
+    their rules from its own distribution. Its reference here holds no bytes:
+    it lets a free entry, such as a recipe, say that it needs a package entry,
+    and lets this registry check that none of the package's components, rules
+    or folders is in the free release.
+    """
+    references: list[dict[str, Any]] = []
+    directory = ui_root / "contracts/packages"
+    for path in sorted(directory.glob("*.package.json")) if directory.is_dir() else []:
+        reference = load_json(path)
+        if set(reference) != PACKAGE_REFERENCE_KEYS or reference["schema_id"] != "simai.framework.package-reference" or reference["schema_version"] != 1:
+            raise ContractError(f"package_reference_invalid:{path.name}")
+        if path.name != f"{reference['package']}.package.json" or not re.fullmatch(r"[a-z][a-z0-9-]*", reference["package"]):
+            raise ContractError(f"package_reference_name_invalid:{path.name}")
+        for item in reference["provides"]:
+            if set(item) != {"id", "element", "rule_name", "folder", "requires"}:
+                raise ContractError(f"package_reference_entry_invalid:{reference['package']}")
+            validate_public_id(item["id"], "smart-component")
+            if not isinstance(item["requires"], list) or item["requires"] != sorted(set(item["requires"])):
+                raise ContractError(f"package_reference_requires_invalid:{item['id']}")
+            for relation in item["requires"]:
+                validate_public_id(relation)
+        references.append(reference)
+    return references
 
 
 def smart_manifest_is_ui_owned(smart_manifest: dict[str, Any]) -> bool:
@@ -882,12 +944,36 @@ def build_registry(
             raise ContractError(f"entry_collision:{sorted(collisions)[0]}")
         entries.update(source_entries)
 
+    packages = load_package_references(ui_root)
+    external: dict[str, dict[str, Any]] = {}
+    for reference in packages:
+        for item in reference["provides"]:
+            if item["id"] in external or item["id"] in entries:
+                raise ContractError(f"package_entry_collision:{item['id']}")
+            external[item["id"]] = {"package": reference["package"], "requires": item["requires"]}
+            # A package component is not in the free release: neither its rule
+            # nor its runtime folder.
+            if any(rule.get("name") == item["rule_name"] for rule in rules):
+                raise ContractError(f"package_rule_in_free_release:{item['rule_name']}")
+            if (ui_root / "distr/smart" / item["folder"]).exists():
+                raise ContractError(f"package_folder_in_free_release:{item['folder']}")
+    # What a package needs from the Framework must be in it: a free release
+    # that dropped one of these would break the package.
+    for public_id, item in external.items():
+        for dependency in item["requires"]:
+            if dependency not in entries and dependency not in external:
+                raise ContractError(f"package_requires_unknown:{public_id}:{dependency}")
+
     for entry in entries.values():
         validate_normalized_entry(entry)
     for entry in entries.values():
         for dependency in entry["requires"]:
-            if dependency not in entries:
+            if dependency not in entries and dependency not in external:
                 raise ContractError(f"relation_unknown:{entry['id']}:{dependency}")
+            if dependency in external and entry["kind"] != "recipe":
+                # A free component never depends on a package; a recipe may
+                # place one, and says so through recipe_packages.
+                raise ContractError(f"free_entry_requires_package:{entry['id']}:{dependency}")
 
     expected_counts = {
         "utility": manifests["utility"]["inventory"]["expected"]["entries"],
@@ -903,7 +989,7 @@ def build_registry(
         raise ContractError(f"aggregate_count_mismatch:{counts}")
     counts["total"] = len(entries)
 
-    closure = recipe_closure("recipe.admin.collection", entries)
+    closure, closure_packages = recipe_walk("recipe.admin.collection", entries, external)
     closure_kinds = {entries[public_id]["kind"] for public_id in closure}
     if closure_kinds != {"utility", "component", "smart-component"}:
         raise ContractError(f"recipe_closure_kind_mismatch:{sorted(closure_kinds)}")
@@ -918,7 +1004,7 @@ def build_registry(
     unsafe = [
         public_id
         for public_id in entries["recipe.admin.collection"]["requires"]
-        if not entries[public_id]["readiness"]["safe_to_suggest"]
+        if public_id not in external and not entries[public_id]["readiness"]["safe_to_suggest"]
     ]
     if unsafe:
         raise ContractError(f"recipe_placement_not_safe:{unsafe[0]}")
@@ -936,7 +1022,12 @@ def build_registry(
     # owner's question, not this check's: it would give a consumer a way to find
     # sf-property-view and sf-data-view without reading our source, which today it
     # has not.
-    COMPOSITE_RULES = ("cl-data-view", "cl-property-view")
+    #
+    # Both composites are SIMAI Framework Pro components now (contracts/packages/
+    # pro.package.json), so the free release carries neither rule and the
+    # allowance is empty. It stays named, so a composite that comes back has to
+    # be listed here rather than slip past the count.
+    COMPOSITE_RULES: tuple[str, ...] = ()
     missing_composites = [name for name in COMPOSITE_RULES if name not in smart_rules]
     if missing_composites:
         raise ContractError(f"composite_rule_missing:{missing_composites[0]}")
@@ -1024,6 +1115,14 @@ def build_registry(
                 if entry["readiness"]["status"] == "blocked"
             ],
             "recipe_closure": {"recipe.admin.collection": closure},
+            "recipe_packages": {"recipe.admin.collection": closure_packages},
+            "packages": {
+                reference["package"]: {
+                    "owner": reference["distribution"]["owner"],
+                    "provides": sorted(item["id"] for item in reference["provides"]),
+                }
+                for reference in packages
+            },
         },
         "nonclaims": {
             "production_ready": False,
