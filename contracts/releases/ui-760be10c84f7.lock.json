@@ -1,0 +1,73 @@
+{
+  "schema_id": "simai.framework.release-lock",
+  "schema_version": 2,
+  "compatibility_id": "ui-760be10c84f7",
+  "status": "bounded",
+  "profile": "plain-assets-v1",
+  "runtime_sources": {
+    "core": {
+      "owner": "simai/ui",
+      "tag": null,
+      "tag_object": null,
+      "revision": "760be10c84f758235bfbecf2c07dfa098da083d6",
+      "commit": "760be10c84f758235bfbecf2c07dfa098da083d6",
+      "tree": "3606e81ce2f39b994b65a99274c3eef8ff3d9748",
+      "runtime_path": "distr",
+      "runtime_tree": "9467902220054289fab0b68ad07789e786ec58b1",
+      "archive_sha256": "e711eabbe215296ac82c40ee869669fc215cedb6366b5d07933a65ab7fd4d87c"
+    },
+    "smart": {
+      "owner": "simai/ui",
+      "tag": null,
+      "tag_object": null,
+      "revision": "760be10c84f758235bfbecf2c07dfa098da083d6",
+      "commit": "760be10c84f758235bfbecf2c07dfa098da083d6",
+      "tree": "3606e81ce2f39b994b65a99274c3eef8ff3d9748",
+      "runtime_path": "distr/smart",
+      "runtime_tree": "3676881d912cb6cfcb65c8b6a8bc724a97a20330",
+      "archive_sha256": "370d973cae3f8e6e9049fb5fb67f2a23a3170440efaf9914b7d8c2a1a0d1aefd"
+    }
+  },
+  "mirror": {
+    "owner": "simai/ui-smart",
+    "tag": null,
+    "tag_object": null,
+    "commit": "9be57b979b4007495767a20d15de45745dadc0d9",
+    "tree": "a031f581bd47b28570933460b74211bb1c04eac3",
+    "runtime_path": "smart",
+    "runtime_tree": "3676881d912cb6cfcb65c8b6a8bc724a97a20330",
+    "archive_sha256": "6df9829e3230645dfb112b01598708efbf39b210a0d58d6f9c822f9f80cda479",
+    "mirrors": "smart"
+  },
+  "pair": "ui-760be10c84f7-smart-9be57b979b40",
+  "build_inputs": {
+    "source": {
+      "owner": "simai/ui-source",
+      "commit": "d96e8c8b8267a2e47313c97d5a40adf88886cc8d",
+      "tree": "a54f86972c467fe6b1274cbc86e2c9a662388cca",
+      "archive_sha256": "5bce75614b91c38af313d0fca3b73e5799113cf28b7d1b913390a1aa97fcd484"
+    },
+    "builder": {
+      "owner": "simai/ui-builder",
+      "commit": "875b800681e37e333266a1dbff5e955dbfb6046d",
+      "tree": "5a6c79663068c2754c2acd3f9db23ec93a8cbe90",
+      "archive_sha256": "ff4c003bf3564831a06bc5ab988fbbc119c7b0094d66526a06ae6bf700ada47a"
+    },
+    "legacy_compatibility": {
+      "required": false
+    }
+  },
+  "inventory": {
+    "utility_rules": 737,
+    "utility_families": 227,
+    "components": 62,
+    "smart_components": 47,
+    "recipes": 1
+  },
+  "exclusions": [],
+  "claims": {
+    "full_compatible": false,
+    "production_ready": false,
+    "all_items_ready": false
+  }
+}
