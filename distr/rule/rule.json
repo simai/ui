@@ -1117,6 +1117,26 @@
     "type": "smart"
   },
   {
+    "name": "cl-page-header",
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "cl-badges"
+      },
+      {
+        "name": "cl-icon-buttons"
+      },
+      {
+        "name": "cl-icons"
+      }
+    ],
+    "tags": [
+      "sf-page-header"
+    ],
+    "type": "smart"
+  },
+  {
     "name": "cl-pagination",
     "js": true,
     "mode": "smart",

@@ -1749,7 +1749,8 @@ function resolveSmartRoot(url, smartUrl) {
   const own = typeof smartUrl === 'string' ? smartUrl.trim() : '';
   return own || url;
 } // Component packages: bundles of Smart components served from their own base
-// and carrying their own rules (Framework Pro is the first). A page declares
+// and carrying their own rules (Larena's components are the first; standard
+// simai.component-package). A page declares
 // them in `SF_BOOT_CONFIG.packages`; docs/developer/component-packages.md has
 // the contract. The name is also the prefix of the package's entries in the
 // missing-file cache, so it is kept to characters that cannot collide with a

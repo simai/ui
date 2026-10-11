@@ -917,7 +917,12 @@ const announce = () => {
 
 
 function pageLanguage(node) {
-  if (STORE.chosen) return STORE.chosen;
+  // The language without its region, whichever way it was set: a page that
+  // chose 'pt-BR' is a Portuguese page, as a page whose markup says
+  // lang="pt-BR" is. The chosen value kept its region and answered 'pt-br',
+  // which matched no dictionary keyed by language and made isRussianPage false
+  // on a page that chose 'ru-RU'. The region stays in pageLocale.
+  if (STORE.chosen) return STORE.chosen.split('-')[0];
   const owner = node && typeof node.closest === 'function' ? node.closest('[lang]') : null;
   const value = owner?.getAttribute('lang') || globalThis.document?.documentElement?.lang || 'en';
   return normalise(value).split('-')[0] || 'en';

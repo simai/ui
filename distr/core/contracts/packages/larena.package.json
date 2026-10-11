@@ -1,15 +1,15 @@
 {
   "schema_id": "simai.framework.package-reference",
   "schema_version": 1,
-  "package": "pro",
-  "title": "SIMAI Framework Pro",
-  "summary": "Smart components distributed apart from this repository, under the SIMAI Framework Pro licence (terms pending). A page loads them as a component package of the Loader: SF_BOOT_CONFIG.packages.pro = {base: '<ui-pro>/smart'}. This file names them, and what each needs (`requires`, its rule's relations as registry ids), so the free registry can say what a free entry needs from the package and keep what the package needs from the Framework; it carries no bytes and grants nothing. ui-builder's Pro release checks `requires` against the Pro rules it publishes.",
+  "package": "larena",
+  "title": "Larena components",
+  "summary": "Smart components that live with Larena, their owner (owner's decision 2026-10-11: a component lives with its owner; SIMAI Framework Pro is dropped). They are open, under Apache-2.0, built from the component folder in simai/larena-ui by the Framework builder over a pinned ui-source revision (standard simai.component-package 1.0.0), and delivered inside Larena's distribution. A page loads them as a component package of the Loader: SF_BOOT_CONFIG.packages.larena = {base: '<package base>'}. This file names them, and what each needs, so the free registry can place them in the one free recipe that still names them; it carries no bytes and grants nothing. It leaves the free Framework together with recipe.admin.collection, once Larena reads both from its own folder.",
   "distribution": {
-    "owner": "simai/ui-pro",
-    "repository": "https://github.com/simai/ui-pro",
+    "owner": "simai/larena-ui",
+    "repository": "https://github.com/simai/larena-ui",
     "runtime_path": "smart",
     "rule_file": "smart/rule.js",
-    "release_locks": "contracts/releases/pro-<12>.lock.json"
+    "receipt": "package-receipt.json"
   },
   "provides": [
     {
@@ -27,7 +27,8 @@
         "smart.context-menu",
         "smart.icon-buttons",
         "smart.icons",
-        "smart.inputs"
+        "smart.inputs",
+        "smart.sortable"
       ]
     },
     {
