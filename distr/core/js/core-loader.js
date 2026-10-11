@@ -3205,7 +3205,21 @@ SFLoaderPlugin.prototype.getAttributes = function (HtmlElement) {
     tagName: HtmlElement.tagName?.toLowerCase?.()
   });
   return result;
-};
+}; // A Smart tag is one a rule claims. The Framework's own are sf- names; a
+// component package may name its elements with its owner's prefix (standard
+// simai.component-package, own-element-prefix), and the rule it registers is
+// where it says so -- every rule lists its tags. Only a package rule may claim a
+// tag outside sf-, so the Framework's names stay its own (owner, 2026-10-12;
+// before that the Loader skipped every other tag and a package element with its
+// own prefix never loaded).
+
+
+const CUSTOM_ELEMENT_NAME = /^[a-z][a-z0-9]*-[a-z0-9-]*$/;
+
+function isClaimableTag(tagName, rule) {
+  if (tagName.startsWith('sf-')) return true;
+  return Boolean(rule?.package) && CUSTOM_ELEMENT_NAME.test(tagName);
+}
 
 SFLoaderPlugin.prototype.getCustomElementRules = function () {
   const tagRules = {};
@@ -3213,7 +3227,7 @@ SFLoaderPlugin.prototype.getCustomElementRules = function () {
     if (!rule || typeof rule !== 'object' || !Array.isArray(rule.tags)) return;
     rule.tags.forEach(tagName => {
       const normalizedTag = String(tagName || '').trim().toLowerCase();
-      if (!normalizedTag.startsWith('sf-')) return;
+      if (!isClaimableTag(normalizedTag, rule)) return;
       tagRules[normalizedTag] = componentName;
     });
   });
@@ -3223,7 +3237,7 @@ SFLoaderPlugin.prototype.getCustomElementRules = function () {
 SFLoaderPlugin.prototype.getSmartElementRuleName = function (el) {
   const tagName = el?.tagName?.toLowerCase?.() || '';
 
-  if (!tagName.startsWith('sf-')) {
+  if (!tagName.includes('-')) {
     return '';
   }
 
@@ -3328,7 +3342,7 @@ SFLoaderPlugin.prototype.scanCustomElements = function (root = null, autoLoad = 
     scannedNodes++;
     const tagName = el.tagName?.toLowerCase?.();
 
-    if (!tagName || !tagName.startsWith('sf-')) {
+    if (!tagName || !tagName.includes('-')) {
       return;
     }
 
@@ -3508,7 +3522,7 @@ SFLoaderPlugin.prototype.scanDom = function (root = null, autoLoad = true) {
     scannedNodes++;
     const tagName = el.tagName?.toLowerCase?.();
 
-    if (tagName?.startsWith('sf-')) {
+    if (tagName?.includes('-')) {
       const componentName = tagRules[tagName];
 
       if (componentName === 'cl-icons') {
@@ -5577,7 +5591,10 @@ function normalizeSmartTagName(name) {
     return '';
   }
 
-  return normalized.startsWith('sf-') ? normalized : `sf-${normalized}`;
+  if (normalized.startsWith('sf-')) return normalized; // A package's own element is named in full; a short name is a Framework one.
+
+  if (globalThis.SF?.Loader?.getCustomElementRules?.()[normalized]) return normalized;
+  return `sf-${normalized}`;
 }
 
 function normalizeWhenDefinedInput(input = []) {
@@ -5793,7 +5810,7 @@ function createSmartElement(name, params = {}) {
 SFLoaderPlugin.prototype.ensureSmartElementLoaded = function (tagName) {
   const normalizedTag = String(tagName || '').trim().toLowerCase();
 
-  if (!normalizedTag.startsWith('sf-')) {
+  if (!normalizedTag.includes('-')) {
     return false;
   }
 
@@ -5841,7 +5858,7 @@ SF.create = createSmartElement;
 SF.createAsync = createSmartElementAsync;
 
 SF.litHtml = (tagName, props = {}) => {
-  if (!/^sf-[a-z0-9-]+$/.test(tagName)) {
+  if (!/^sf-[a-z0-9-]+$/.test(tagName) && !SF.Loader.getCustomElementRules()[tagName]) {
     tagName = `sf-${tagName}`;
 
     if (!/^sf-[a-z0-9-]+$/.test(tagName)) {
