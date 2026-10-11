@@ -767,7 +767,7 @@ PACKAGE_REFERENCE_KEYS = {
 
 
 def load_package_references(ui_root: Path) -> list[dict[str, Any]]:
-    """The component packages the free Framework names (contracts/packages).
+    """The component packages the free Framework names (distr/core/contracts/packages).
 
     A package (SIMAI Framework Pro is the first) ships its Smart components and
     their rules from its own distribution. Its reference here holds no bytes:
@@ -776,7 +776,10 @@ def load_package_references(ui_root: Path) -> list[dict[str, Any]]:
     or folders is in the free release.
     """
     references: list[dict[str, Any]] = []
-    directory = ui_root / "contracts/packages"
+    # The reference ships in the runtime, beside the ports, so a consumer that
+    # has only the distribution can learn which elements need a package. Its
+    # source is ui-source src/core/contracts/packages; nothing here is authored.
+    directory = ui_root / "distr/core/contracts/packages"
     for path in sorted(directory.glob("*.package.json")) if directory.is_dir() else []:
         reference = load_json(path)
         if set(reference) != PACKAGE_REFERENCE_KEYS or reference["schema_id"] != "simai.framework.package-reference" or reference["schema_version"] != 1:
@@ -1023,7 +1026,7 @@ def build_registry(
     # sf-property-view and sf-data-view without reading our source, which today it
     # has not.
     #
-    # Both composites are SIMAI Framework Pro components now (contracts/packages/
+    # Both composites are SIMAI Framework Pro components now (distr/core/contracts/packages/
     # pro.package.json), so the free release carries neither rule and the
     # allowance is empty. It stays named, so a composite that comes back has to
     # be listed here rather than slip past the count.
