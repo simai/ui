@@ -105,10 +105,11 @@ class FrameworkContractRegistryTest(unittest.TestCase):
             {
                 "utility": 227,
                 "component": 62,
-                # 49 until the four SIMAI Framework Pro components left for
-                # ui-pro (two of them, sf-data-view and sf-property-view, were
-                # never entries here).
-                "smart-component": 47,
+                # 49 until the four components now in package larena left
+                # the free release (two of them, sf-data-view and
+                # sf-property-view, were never entries here); 48 with
+                # sf-page-header.
+                "smart-component": 48,
                 "recipe": 1,
                 "total": 337,
             },
@@ -191,21 +192,21 @@ class FrameworkContractRegistryTest(unittest.TestCase):
         ):
             self.assertIn(utility_id, closure)
         self.assertIn("component.buttons", closure)
-        # The table the recipe places is a Pro component: it is not a free
+        # The table the recipe places is Larena's (package larena): it is not a free
         # entry, so it is named, by package, in recipe_packages, and the walk
         # goes on through what its package reference says it needs.
         self.assertNotIn("smart.data-view", closure)
         self.assertIn("smart.list-item", closure, "a dependency is in the closure even when it is not offered")
-        self.assertIn("smart.tags", closure, "reached through the Pro table's requirements")
+        self.assertIn("smart.tags", closure, "reached through the package table's requirements")
         self.assertEqual(
             self.registry["indexes"]["recipe_packages"]["recipe.admin.collection"],
-            {"pro": ["smart.data-view"]},
+            {"larena": ["smart.data-view"]},
         )
         self.assertEqual(
             self.registry["indexes"]["packages"],
             {
-                "pro": {
-                    "owner": "simai/ui-pro",
+                "larena": {
+                    "owner": "simai/larena-ui",
                     "provides": [
                         "smart.admin-menu",
                         "smart.data-view",
@@ -215,7 +216,7 @@ class FrameworkContractRegistryTest(unittest.TestCase):
                 }
             },
         )
-        for public_id in self.registry["indexes"]["packages"]["pro"]["provides"]:
+        for public_id in self.registry["indexes"]["packages"]["larena"]["provides"]:
             self.assertNotIn(public_id, self.by_id)
         for component_id in ("component.file-preview", "component.link"):
             self.assertIn(component_id, self.by_id)
@@ -244,8 +245,8 @@ class FrameworkContractRegistryTest(unittest.TestCase):
                 "utility.width",
             ],
         )
-        # What the table itself fetches is the Pro release's to state (ui-pro's
-        # owner manifest); this registry no longer holds it.
+        # What the table itself fetches is the package's to state (its own
+        # manifests in larena-ui); this registry no longer holds it.
 
     def test_inventory_is_fail_closed_outside_curated_plan(self) -> None:
         safe = set(self.registry["indexes"]["safe_to_suggest"])

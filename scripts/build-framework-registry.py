@@ -769,7 +769,7 @@ PACKAGE_REFERENCE_KEYS = {
 def load_package_references(ui_root: Path) -> list[dict[str, Any]]:
     """The component packages the free Framework names (distr/core/contracts/packages).
 
-    A package (SIMAI Framework Pro is the first) ships its Smart components and
+    A package (larena is the first) ships its Smart components and
     their rules from its own distribution. Its reference here holds no bytes:
     it lets a free entry, such as a recipe, say that it needs a package entry,
     and lets this registry check that none of the package's components, rules
@@ -1026,8 +1026,8 @@ def build_registry(
     # sf-property-view and sf-data-view without reading our source, which today it
     # has not.
     #
-    # Both composites are SIMAI Framework Pro components now (distr/core/contracts/packages/
-    # pro.package.json), so the free release carries neither rule and the
+    # Both composites live in package larena now (distr/core/contracts/packages/
+    # larena.package.json), so the free release carries neither rule and the
     # allowance is empty. It stays named, so a composite that comes back has to
     # be listed here rather than slip past the count.
     COMPOSITE_RULES: tuple[str, ...] = ()
