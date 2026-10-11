@@ -8,6 +8,8 @@
 
 ### Исправлено
 
+- Every Smart manifest is valid against the manifest schema. `sf-contract` checked only part of the schema, so 21 manifests that passed it broke ui-studio, which validates the whole schema; it now validates strictly and refuses a keyword it does not implement. Schema 2.3.0 lets a `change` event be marked `canonical` and an older name `alias_of` it, which thirteen manifests already wrote. The visual-state list stays closed: `sf-page-header`'s starred state is `selected`. `sf-color` and `sf-popover` declare their methods with arguments and results, and slots are described in `contracts.slots`.
+
 - `sf-page-header` and `sf-file-preview` load. Both were in the generated rule list and in the distribution, but Core never registered their rules, so the Loader did not know the tags: `ui-9fb0297bb5c2` drew no page header, and `sf-file-preview` had not loaded on its own since the component foundation was consolidated. A contract now requires every Smart component's rule to be registered when Core starts.
 
 - Defects found while checking the unified guide against the source. `focus-visible:` utility classes are fetched by the Loader (it walked every condition but that one, so they worked only from the full utility sheet). `sm:` to `xxl:container` fill the window and stop at their step instead of overflowing it between the media query and the step (a 600px window held a 704px `sm:container`). The focus ring is drawn in pixels, 2px with a 1px gap, and no longer grows with the root font size. The dark side of `--sf-info-hover` comes from the info palette, not primary. `theme/default` no longer names five themes no stylesheet defines. The `core.css` header states the MIT licence.
