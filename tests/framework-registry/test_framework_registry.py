@@ -111,7 +111,7 @@ class FrameworkContractRegistryTest(unittest.TestCase):
                 # sf-page-header.
                 "smart-component": 48,
                 "recipe": 1,
-                "total": 337,
+                "total": 338,
             },
         )
         # The id names the runtimes it was built from; that is the claim, not

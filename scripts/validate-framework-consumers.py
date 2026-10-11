@@ -370,9 +370,14 @@ def validate_ui_play(
     path: Path,
     ui_runtime: dict[str, Any],
     smart_runtime: dict[str, Any],
+    pair_id: str | None = None,
 ) -> dict[str, Any]:
     lock = load_json(path)
-    expected_compatibility = f"ui-{ui_runtime['commit'][:12]}-smart-{smart_runtime['commit'][:12]}"
+    # The id ui-play carries is the one the registry identity already worked
+    # out: the mirror pair while ui-smart was mirrored, the release id once it
+    # is not. Rebuilding it here as ui-<12>-smart-<12> named a pair that does
+    # not exist without the mirror and called every consumer stale.
+    expected_compatibility = pair_id or f"ui-{ui_runtime['commit'][:12]}-smart-{smart_runtime['commit'][:12]}"
     drift: list[str] = []
     if lock.get("compatibilityId") != expected_compatibility:
         drift.append("compatibility_id_mismatch")
@@ -484,6 +489,7 @@ def validate_consumers(
             ui_play_asset_lock,
             aggregate["ui_runtime"],
             aggregate["smart_runtime"],
+            aggregate.get("pair_id"),
         ),
         "ui-doc": validate_ui_doc(ui_doc_root, aggregate["public_ids"]),
         "ai-skill": validate_ai_skill_inventory(
