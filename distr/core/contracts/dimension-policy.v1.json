@@ -22,7 +22,7 @@
     {
       "id": "third-party-sources",
       "category": "vendor-review",
-      "filePattern": "^(?:component/(?:fancybox|swiper|icon|jquery)/|plugin/)",
+      "filePattern": "^(?:component/swiper/|plugin/)",
       "contextPattern": ".*",
       "status": "accepted-vendor-owned",
       "reason": "Vendored source is inventoried but is changed only through an owned adapter or an upstream update."
@@ -70,7 +70,7 @@
     {
       "id": "smart-overlay-measured-geometry",
       "category": "runtime-review",
-      "filePattern": "^smart/(?:admin-menu|datepicker|drawer|dropdown|modal)/index\\.js$",
+      "filePattern": "^smart/(?:datepicker|drawer|dropdown|modal)/index\\.js$",
       "contextPattern": "(?:\\$\\{(?:[xy]|left|top)\\}|Math\\.(?:max|round)|box\\.|size\\.|offset[XY]|startRect|scrollbarWidth|\\$\\{gap\\})",
       "status": "accepted-runtime-geometry",
       "reason": "Overlay, drag, and scroll-lock coordinates are derived from the current viewport or rendered boxes."
@@ -82,22 +82,6 @@
       "contextPattern": "(?:startRect|\\$\\{left\\}|\\$\\{top\\})",
       "status": "accepted-runtime-geometry",
       "reason": "Drag placeholders and transforms preserve the exact DOMRect and pointer position."
-    },
-    {
-      "id": "smart-table-measured-geometry",
-      "category": "runtime-review",
-      "filePattern": "^smart/table/index\\.js$",
-      "contextPattern": "(?:\\$\\{[xy]\\}|Math\\.round\\(width\\)|deltaX|rect\\.|latestEvent|state\\.(?:width|shiftX|shiftY)|parentHeight)",
-      "status": "accepted-runtime-geometry",
-      "reason": "Table menus, resize, reorder, drag ghosts, and viewport height use measured DOM geometry."
-    },
-    {
-      "id": "numeric-table-column-api",
-      "category": "runtime-review",
-      "filePattern": "^smart/table/js/templates/default\\.js$",
-      "contextPattern": "typeof value === \"number\"",
-      "status": "accepted-compatibility-boundary",
-      "reason": "Numeric column widths retain their existing CSS-pixel meaning; string values support tokens and other valid CSS lengths."
     }
   ]
 }

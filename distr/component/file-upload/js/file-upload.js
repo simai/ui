@@ -1246,7 +1246,7 @@ const language = {
     return this;
   },
 
-  /** One language across many components: `{ 'sf-table': {...}, ... }`. */
+  /** One language across many components: `{ 'sf-datepicker': {...}, ... }`. */
   registerAll(value, byComponent = {}) {
     for (const [component, words] of Object.entries(byComponent)) {
       this.register(component, value, words);

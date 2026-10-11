@@ -3418,6 +3418,11 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
 
 // Published typed ports. Framework owns the element protocol; the product owns
 // what a request means, data access and authorization.
+//
+// sf-table answers this port and is a SIMAI Framework Pro component since
+// 2026-10-11 (ui-source-pro). The port stays here: it is a public contract of
+// the free Framework (composition-ports.v1.json, the routing contract lock),
+// and ui-source-pro's tests read it from this file in their overlay.
 const BUILTIN_PORT_MANIFESTS = Object.freeze([
   {
     schema: 'simai.composition.port-manifest.v1',

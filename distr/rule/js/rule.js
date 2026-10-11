@@ -16,6 +16,9 @@ SF.RuleLoader['accordion'] = {
 /***/ "5ffe950638de"
 () {
 
+// The styling of the admin menu. The sf-admin-menu element is SIMAI Framework
+// Pro (ui-source-pro); it requires this free component (component.admin-menu),
+// which also works on its own on markup with the class.
 SF.RuleLoader["admin-menu"] = {
   regex: /class\s*=\s*["'][^"']*\bsf-admin-menu\b/i,
   type: "component",
