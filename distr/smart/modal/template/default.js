@@ -124,7 +124,7 @@ export function renderModalTemplate(context) {
                                                                 'sf-icon-button sf-icon-button--icon sf-modal-header-action sf-modal-hide-button sf-modal-hide-button--inline-end sf-icon-button--link sf-icon-button--on-surface sf-icon-button--size-1/3 m-0',
                                                                 context.hideModifier,
                                                         )}
-                                                        aria-label="Minimize modal"
+                                                        aria-label=${context.minimizeText}
                                                         data-sf-modal-hide=${context.modalId}
                                                         @click=${context.onHideClick}
                                                 >
@@ -140,13 +140,13 @@ export function renderModalTemplate(context) {
                                                                 'sf-icon-button sf-modal-header-action sf-modal-close-button sf-modal-close-button--inline-end sf-icon-button--close sf-icon-button--link sf-icon-button--on-surface sf-icon-button--size-1/3 m-0',
                                                                 context.closeClass,
                                                         )}
-                                                        aria-label="Close modal"
+                                                        aria-label=${context.closeText}
                                                         data-sf-modal-close=${context.modalId}
                                                         @click=${context.onCloseClick}
                                                 >
                           <span
                                   class="sf-close sf-close--size-1/3 flex justify-center items-center"
-                                  aria-label="Close size 1/4"
+                                  aria-hidden="true"
                           >
                             <span class="sf-close-icon"></span>
                           </span>

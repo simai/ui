@@ -2719,7 +2719,7 @@ function renderCount(context) {
 }
 
 function renderClose(context) {
-  if (!context.closable || context.type === 'checkbox') return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  if (!context.closable) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
   return context.component?.hasSlotContent?.('close') ? context.component.getSlotContent('close') : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
                 <sf-icon-button
                         variant="close"
@@ -2748,7 +2748,31 @@ function renderTagTemplate(context) {
             <span class="sf-tag-container pointer-events-none">${textContent}</span>
             ${renderCount(context)}
             ${renderClose(context)}
-    `;
+    `; // A removable checkbox tag is two controls side by side, the toggle and
+  // the remove action, because a button cannot hold another button.
+
+  if (context.type === 'checkbox' && context.closable) {
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+            <div
+                    class=${classes.join(' ')}
+                    style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+            >
+                <button
+                        type="button"
+                        class="sf-tag-action inline-flex flex-row flex-nowrap items-center min-w-0"
+                        aria-label=${context.ariaLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                        aria-pressed=${String(context.active)}
+                        ?disabled=${context.disabled}
+                        @click=${() => context.component.onToggle()}
+                >
+                    ${renderLeading(context)}
+                    <span class="sf-tag-container pointer-events-none">${textContent}</span>
+                    ${renderCount(context)}
+                </button>
+                ${renderClose(context)}
+            </div>
+        `;
+  }
 
   if (context.type === 'checkbox') {
     return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
@@ -3407,10 +3431,13 @@ class SfTag extends _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__["default"] 
 
   get disabled() {
     return this.getBooleanAttr('disabled', false);
-  }
+  } // A checkbox tag removes only when asked: it is the default kind, and a remove
+  // action on every filter chip would be a surprise. Asked, it is honoured --
+  // it used to be dropped without a word (documentation trial, 2026-10-12).
+
 
   get closable() {
-    if (this.type === 'checkbox') return false;
+    if (this.type === 'checkbox') return this.hasAttribute('closable') && this.getBooleanAttr('closable', true);
 
     if (this.hasAttribute('closable')) {
       return this.getBooleanAttr('closable', true);

@@ -203,6 +203,15 @@ export function createRegistry(manifests = BUILTIN_TYPE_MANIFESTS, renderers = {
   return { types, renderers: new Map(Object.entries(renderers)) };
 }
 
+// A registry of the built-in types plus a product's own. createRegistry(list)
+// takes the list as the whole registry, which is what a test of one type wants
+// and what a product adding a type does not: the built-in layout types were
+// gone from every registry made from a product's list alone, and they were not
+// exported to add back (documentation trial, 2026-10-12).
+export function extendRegistry(manifests = [], renderers = {}) {
+  return createRegistry([...BUILTIN_TYPE_MANIFESTS, ...manifests], renderers);
+}
+
 export function compositionTypeFromSmartManifest(manifest) {
   const declaration = manifest?.composition?.declarative;
   if (!declaration) return null;
@@ -474,7 +483,9 @@ export const Composition = Object.freeze({
   startInlineEdit,
   normalizeInline,
   inlineText,
+  BUILTIN_TYPE_MANIFESTS,
   createRegistry,
+  extendRegistry,
   compositionTypeFromSmartManifest,
   describeRegions,
   normalize,
@@ -498,6 +509,7 @@ export default Composition;
 
 export { Recipe, parseRecipeJson, recipeDigest, recipeNodeId, resolveRecipe };
 export { BUILTIN_EDITOR_MANIFESTS, projectDocumentEditorFields, projectEditorFields, validateEditorManifest };
+export { BUILTIN_TYPE_MANIFESTS };
 export { describeRegions, stableStringify };
 export { BUILTIN_PORT_MANIFESTS, VALUE_TYPES, checkPortValue, createPortRegistry, defineCompositionScope };
 export { INLINE_MARKS, inlineText, marksIn, normalizeInline, replaceRange, setLink, startInlineEdit, toggleMark };

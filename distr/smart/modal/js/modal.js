@@ -3092,7 +3092,7 @@ function renderModalTemplate(context) {
                                                 <button
                                                         type="button"
                                                         class=${joinClasses('sf-icon-button sf-icon-button--icon sf-modal-header-action sf-modal-hide-button sf-modal-hide-button--inline-end sf-icon-button--link sf-icon-button--on-surface sf-icon-button--size-1/3 m-0', context.hideModifier)}
-                                                        aria-label="Minimize modal"
+                                                        aria-label=${context.minimizeText}
                                                         data-sf-modal-hide=${context.modalId}
                                                         @click=${context.onHideClick}
                                                 >
@@ -3103,13 +3103,13 @@ function renderModalTemplate(context) {
                                                 <button
                                                         type="button"
                                                         class=${joinClasses('sf-icon-button sf-modal-header-action sf-modal-close-button sf-modal-close-button--inline-end sf-icon-button--close sf-icon-button--link sf-icon-button--on-surface sf-icon-button--size-1/3 m-0', context.closeClass)}
-                                                        aria-label="Close modal"
+                                                        aria-label=${context.closeText}
                                                         data-sf-modal-close=${context.modalId}
                                                         @click=${context.onCloseClick}
                                                 >
                           <span
                                   class="sf-close sf-close--size-1/3 flex justify-center items-center"
-                                  aria-label="Close size 1/4"
+                                  aria-hidden="true"
                           >
                             <span class="sf-close-icon"></span>
                           </span>
@@ -3574,12 +3574,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("fef8077ac919");
 /* harmony import */ var lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5db1a272402f");
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("0845ef25b9de");
-/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("e45eac6c719d");
-/* harmony import */ var _component_modal_js_focus__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("c8d66dd2c299");
-/* harmony import */ var _component_modal_js_closing__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("3f3a6e2680d5");
-/* harmony import */ var _component_modal_js_motion__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("201fd0b17b8b");
-/* harmony import */ var _component_modal_js_scroll__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("ed3ae3576d0a");
-/* harmony import */ var _component_modal_js_stack__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("93025a68d8ab");
+/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("8489d1f5bab4");
+/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("e45eac6c719d");
+/* harmony import */ var _component_modal_js_focus__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("c8d66dd2c299");
+/* harmony import */ var _component_modal_js_closing__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("3f3a6e2680d5");
+/* harmony import */ var _component_modal_js_motion__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("201fd0b17b8b");
+/* harmony import */ var _component_modal_js_scroll__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("ed3ae3576d0a");
+/* harmony import */ var _component_modal_js_stack__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("93025a68d8ab");
 
 
 
@@ -3589,6 +3590,19 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+ // The header's two actions, named in the page's language: they were English on
+// every page (documentation trial, 2026-10-12).
+
+const MODAL_TEXT = {
+  en: {
+    close: "Close",
+    minimize: "Minimize"
+  },
+  ru: {
+    close: "Закрыть",
+    minimize: "Свернуть"
+  }
+};
 let modalUid = 0;
 
 function isBlurTypeValue(value) {
@@ -3605,7 +3619,7 @@ class SfModal extends _core_js_smart_base__WEBPACK_IMPORTED_MODULE_2__["default"
   static defaultTrueAttributes = new Set(["overlay", "show-close", "show-footer", "close-on-esc", "close-on-overlay", "preserve-scroll-gap", "preload"]);
 
   static getTopModal() {
-    return (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_8__.getTopModalLayer)();
+    return (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_9__.getTopModalLayer)();
   }
 
   static isTopModal(modal) {
@@ -3613,7 +3627,7 @@ class SfModal extends _core_js_smart_base__WEBPACK_IMPORTED_MODULE_2__["default"
   }
 
   static getStackIndex(modal) {
-    return (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_8__.getModalLayerIndex)(modal);
+    return (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_9__.getModalLayerIndex)(modal);
   }
 
   static addToStack(modal) {
@@ -3627,7 +3641,7 @@ class SfModal extends _core_js_smart_base__WEBPACK_IMPORTED_MODULE_2__["default"
     // and the document scroll lock.
 
     if (!modal.hiddenState) {
-      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_8__.addModalLayer)(modal, SfModal);
+      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_9__.addModalLayer)(modal, SfModal);
     }
   }
 
@@ -3638,7 +3652,7 @@ class SfModal extends _core_js_smart_base__WEBPACK_IMPORTED_MODULE_2__["default"
 
     SfModal.stack = SfModal.stack.filter(item => item !== modal);
     SfModal.openCount = SfModal.stack.length;
-    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_8__.removeModalLayer)(modal);
+    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_9__.removeModalLayer)(modal);
   }
 
   static bringToFront(modal) {
@@ -3648,11 +3662,11 @@ class SfModal extends _core_js_smart_base__WEBPACK_IMPORTED_MODULE_2__["default"
 
     SfModal.stack = SfModal.stack.filter(item => item !== modal);
     SfModal.stack.push(modal);
-    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_8__.raiseModalLayer)(modal);
+    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_9__.raiseModalLayer)(modal);
   }
 
   static updateStackStyles() {
-    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_8__.updateModalLayers)();
+    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_9__.updateModalLayers)();
   }
 
   static get props() {
@@ -4142,6 +4156,8 @@ class SfModal extends _core_js_smart_base__WEBPACK_IMPORTED_MODULE_2__["default"
     const props = this.getPropsContext();
     return this.createTemplateContext({ ...props,
       component: this,
+      closeText: (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(MODAL_TEXT, "close", this),
+      minimizeText: (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(MODAL_TEXT, "minimize", this),
       modalId: this.modalId,
       open: this.renderOpenState,
       modalState: this.renderModalState,
@@ -4214,7 +4230,7 @@ class SfModal extends _core_js_smart_base__WEBPACK_IMPORTED_MODULE_2__["default"
   }
 
   template() {
-    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_3__.renderModalTemplate)(this.templateContext());
+    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_4__.renderModalTemplate)(this.templateContext());
   }
 
   async renderComponent(changedAttributes = []) {
@@ -4341,7 +4357,7 @@ class SfModal extends _core_js_smart_base__WEBPACK_IMPORTED_MODULE_2__["default"
 
     if (!wasClosing) {
       this._lastActive = document.activeElement;
-      this._focusReturnAncestors = (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_8__.captureModalFocusAncestors)(this._lastActive);
+      this._focusReturnAncestors = (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_9__.captureModalFocusAncestors)(this._lastActive);
     }
 
     if (wasClosing) {
@@ -4362,7 +4378,7 @@ class SfModal extends _core_js_smart_base__WEBPACK_IMPORTED_MODULE_2__["default"
     }
 
     this.requestComponentUpdate("open");
-    (0,_component_modal_js_motion__WEBPACK_IMPORTED_MODULE_6__.scheduleModalFrame)(() => {
+    (0,_component_modal_js_motion__WEBPACK_IMPORTED_MODULE_7__.scheduleModalFrame)(() => {
       if (!this._isOpen || this._modalState === "closing") {
         return;
       }
@@ -4412,8 +4428,8 @@ class SfModal extends _core_js_smart_base__WEBPACK_IMPORTED_MODULE_2__["default"
     this._isOpen = false;
     this.requestComponentUpdate("close");
     const panel = this.getModalRoot()?.querySelector("[data-sf-modal-panel]");
-    this._releaseClosingContent = (0,_component_modal_js_closing__WEBPACK_IMPORTED_MODULE_5__.freezeModalContent)(panel, SfModal.isTopModal(this));
-    this._closeTransitionAbort = (0,_component_modal_js_motion__WEBPACK_IMPORTED_MODULE_6__.scheduleModalClose)(() => this.getModalRoot(), () => this.finishClose());
+    this._releaseClosingContent = (0,_component_modal_js_closing__WEBPACK_IMPORTED_MODULE_6__.freezeModalContent)(panel, SfModal.isTopModal(this));
+    this._closeTransitionAbort = (0,_component_modal_js_motion__WEBPACK_IMPORTED_MODULE_7__.scheduleModalClose)(() => this.getModalRoot(), () => this.finishClose());
     return this;
   }
 
@@ -4458,9 +4474,9 @@ class SfModal extends _core_js_smart_base__WEBPACK_IMPORTED_MODULE_2__["default"
 
     if (this.hiddenState) {
       const wasTop = SfModal.isTopModal(this);
-      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_8__.removeModalLayer)(this);
+      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_9__.removeModalLayer)(this);
       this.applyStackPosition();
-      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_8__.restoreModalLayerFocus)(wasTop, this._lastActive, this._focusReturnAncestors);
+      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_9__.restoreModalLayerFocus)(wasTop, this._lastActive, this._focusReturnAncestors);
 
       if (root) {
         root.inert = true;
@@ -4472,7 +4488,7 @@ class SfModal extends _core_js_smart_base__WEBPACK_IMPORTED_MODULE_2__["default"
         root.setAttribute("aria-hidden", "false");
       }
 
-      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_8__.addModalLayer)(this, SfModal);
+      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_9__.addModalLayer)(this, SfModal);
       SfModal.bringToFront(this);
       requestAnimationFrame(() => this.focusFirst());
     }
@@ -4509,7 +4525,7 @@ class SfModal extends _core_js_smart_base__WEBPACK_IMPORTED_MODULE_2__["default"
     }
 
     if (this.display !== "inline") {
-      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_8__.restoreModalLayerFocus)(wasTop, this._lastActive, this._focusReturnAncestors);
+      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_9__.restoreModalLayerFocus)(wasTop, this._lastActive, this._focusReturnAncestors);
     }
 
     this.requestComponentUpdate("after-close");
@@ -4553,7 +4569,7 @@ class SfModal extends _core_js_smart_base__WEBPACK_IMPORTED_MODULE_2__["default"
 
     if (this._modalState === "closing") {
       this._releaseClosingContent?.();
-      this._releaseClosingContent = (0,_component_modal_js_closing__WEBPACK_IMPORTED_MODULE_5__.freezeModalContent)(this.getModalRoot()?.querySelector("[data-sf-modal-panel]"), SfModal.isTopModal(this));
+      this._releaseClosingContent = (0,_component_modal_js_closing__WEBPACK_IMPORTED_MODULE_6__.freezeModalContent)(this.getModalRoot()?.querySelector("[data-sf-modal-panel]"), SfModal.isTopModal(this));
     }
 
     this._readyDetail = {
@@ -4592,7 +4608,7 @@ class SfModal extends _core_js_smart_base__WEBPACK_IMPORTED_MODULE_2__["default"
 
     this.applyStackPosition(); // Projection can replace the panel while an existing layer remains open.
 
-    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_8__.updateModalLayers)();
+    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_9__.updateModalLayers)();
 
     if (this.autoload && !this.openState && !this._hasAutoloaded) {
       this._hasAutoloaded = true;
@@ -4694,7 +4710,7 @@ class SfModal extends _core_js_smart_base__WEBPACK_IMPORTED_MODULE_2__["default"
     }
 
     const panel = this.getModalRoot()?.querySelector("[data-sf-modal-panel]");
-    (0,_component_modal_js_focus__WEBPACK_IMPORTED_MODULE_4__.trapModalFocus)(panel, event);
+    (0,_component_modal_js_focus__WEBPACK_IMPORTED_MODULE_5__.trapModalFocus)(panel, event);
   }
 
   focusFirst() {
@@ -4976,7 +4992,7 @@ class SfModal extends _core_js_smart_base__WEBPACK_IMPORTED_MODULE_2__["default"
     this.clearPortal();
     this._releaseClosingContent?.();
     this._releaseClosingContent = null;
-    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_8__.restoreModalLayerFocus)(wasTop, this._lastActive, this._focusReturnAncestors);
+    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_9__.restoreModalLayerFocus)(wasTop, this._lastActive, this._focusReturnAncestors);
   }
 
   clearPortal() {
@@ -5127,11 +5143,11 @@ class SfModal extends _core_js_smart_base__WEBPACK_IMPORTED_MODULE_2__["default"
   }
 
   static lockPage(preserveScrollGap = true) {
-    if (!SfModal.lockState) SfModal.lockState = (0,_component_modal_js_scroll__WEBPACK_IMPORTED_MODULE_7__.lockModalScroll)(preserveScrollGap);
+    if (!SfModal.lockState) SfModal.lockState = (0,_component_modal_js_scroll__WEBPACK_IMPORTED_MODULE_8__.lockModalScroll)(preserveScrollGap);
   }
 
   static unlockPage() {
-    (0,_component_modal_js_scroll__WEBPACK_IMPORTED_MODULE_7__.unlockModalScroll)(SfModal.lockState);
+    (0,_component_modal_js_scroll__WEBPACK_IMPORTED_MODULE_8__.unlockModalScroll)(SfModal.lockState);
     SfModal.lockState = null;
   }
 

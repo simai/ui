@@ -7114,30 +7114,25 @@ class SfDropdown extends _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__["defau
     }
 
     (0,_component_dropdown_portal__WEBPACK_IMPORTED_MODULE_5__.openDropdownPortal)(this._dropdownRoot, this._list, () => this.closeDropdown());
-  }
+  } // The selected machine value, as the manifest declares it: a string, values
+  // joined by commas for a multiple selection. It used to return every template
+  // setting as an object, so `dropdown.value` was never the value (documentation
+  // trial, 2026-10-12).
+
 
   get value() {
-    return {
-      template: this.templateName,
-      size: this.size,
-      type: this.type,
-      mode: this.mode,
-      multiple: this.multiple,
-      portal: this.portal,
-      value: this.hiddenValue,
-      name: this.name,
-      label: this.label,
-      required: this.required,
-      placeholder: this.placeholder,
-      searchPlaceholder: this.searchPlaceholder,
-      search: this.search,
-      disabled: this.disabled,
-      ariaLabel: this.ariaLabel
-    };
-  }
+    return this.hiddenValue;
+  } // A string or an array selects; an object still sets attributes, as it did.
+
 
   set value(nextValue) {
-    this.setValueAttributes(nextValue);
+    if (nextValue && typeof nextValue === 'object' && !Array.isArray(nextValue)) {
+      this.setValueAttributes(nextValue);
+      return;
+    }
+
+    const values = Array.isArray(nextValue) ? nextValue.map(String) : splitValues(nextValue == null ? '' : String(nextValue));
+    this.setAttributeValue('value', serializeValues(values));
   }
 
 }

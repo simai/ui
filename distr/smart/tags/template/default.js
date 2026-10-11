@@ -102,7 +102,7 @@ function renderCount(context) {
 }
 
 function renderClose(context) {
-    if (!context.closable || context.type === 'checkbox') return nothing;
+    if (!context.closable) return nothing;
 
     return context.component?.hasSlotContent?.('close')
         ? context.component.getSlotContent('close')
@@ -156,6 +156,31 @@ export function renderTagTemplate(context) {
             ${renderCount(context)}
             ${renderClose(context)}
     `;
+
+    // A removable checkbox tag is two controls side by side, the toggle and
+    // the remove action, because a button cannot hold another button.
+    if (context.type === 'checkbox' && context.closable) {
+        return html`
+            <div
+                    class=${classes.join(' ')}
+                    style=${context.rootStyle || nothing}
+            >
+                <button
+                        type="button"
+                        class="sf-tag-action inline-flex flex-row flex-nowrap items-center min-w-0"
+                        aria-label=${context.ariaLabel || nothing}
+                        aria-pressed=${String(context.active)}
+                        ?disabled=${context.disabled}
+                        @click=${() => context.component.onToggle()}
+                >
+                    ${renderLeading(context)}
+                    <span class="sf-tag-container pointer-events-none">${textContent}</span>
+                    ${renderCount(context)}
+                </button>
+                ${renderClose(context)}
+            </div>
+        `;
+    }
 
     if (context.type === 'checkbox') {
         return html`

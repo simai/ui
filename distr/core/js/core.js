@@ -4166,6 +4166,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   BUILTIN_EDITOR_MANIFESTS: () => (/* reexport safe */ _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_EDITOR_MANIFESTS),
 /* harmony export */   BUILTIN_FIELD_KINDS: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_3__.BUILTIN_FIELD_KINDS),
 /* harmony export */   BUILTIN_PORT_MANIFESTS: () => (/* reexport safe */ _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_PORT_MANIFESTS),
+/* harmony export */   BUILTIN_TYPE_MANIFESTS: () => (/* reexport safe */ _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_TYPE_MANIFESTS),
 /* harmony export */   Composition: () => (/* binding */ Composition),
 /* harmony export */   INLINE_MARKS: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_6__.INLINE_MARKS),
 /* harmony export */   Recipe: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_4__.Recipe),
@@ -4178,6 +4179,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
 /* harmony export */   defineCompositionScope: () => (/* reexport safe */ _routing_mjs__WEBPACK_IMPORTED_MODULE_7__.defineCompositionScope),
 /* harmony export */   describeRegions: () => (/* reexport safe */ _regions_mjs__WEBPACK_IMPORTED_MODULE_5__.describeRegions),
+/* harmony export */   extendRegistry: () => (/* binding */ extendRegistry),
 /* harmony export */   inlineText: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_6__.inlineText),
 /* harmony export */   marksIn: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_6__.marksIn),
 /* harmony export */   normalize: () => (/* binding */ normalize),
@@ -4396,6 +4398,15 @@ function createRegistry(manifests = _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.B
     types.set(manifest.type, (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_1__.canonical)(manifest));
   }
   return { types, renderers: new Map(Object.entries(renderers)) };
+}
+
+// A registry of the built-in types plus a product's own. createRegistry(list)
+// takes the list as the whole registry, which is what a test of one type wants
+// and what a product adding a type does not: the built-in layout types were
+// gone from every registry made from a product's list alone, and they were not
+// exported to add back (documentation trial, 2026-10-12).
+function extendRegistry(manifests = [], renderers = {}) {
+  return createRegistry([..._builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_TYPE_MANIFESTS, ...manifests], renderers);
 }
 
 function compositionTypeFromSmartManifest(manifest) {
@@ -4669,7 +4680,9 @@ const Composition = Object.freeze({
   startInlineEdit,
   normalizeInline: _inline_model_mjs__WEBPACK_IMPORTED_MODULE_6__.normalizeInline,
   inlineText: _inline_model_mjs__WEBPACK_IMPORTED_MODULE_6__.inlineText,
+  BUILTIN_TYPE_MANIFESTS: _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_TYPE_MANIFESTS,
   createRegistry,
+  extendRegistry,
   compositionTypeFromSmartManifest,
   describeRegions: _regions_mjs__WEBPACK_IMPORTED_MODULE_5__.describeRegions,
   normalize,
@@ -4690,6 +4703,7 @@ if (typeof globalThis !== 'undefined') {
 }
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Composition);
+
 
 
 
