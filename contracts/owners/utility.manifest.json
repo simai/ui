@@ -9,20 +9,20 @@
   },
   "release": {
     "tag": null,
-    "commit": "ec56cef08625058eaffe2050e1d79f8cbdd5c4f1",
-    "tree": "082de9644e6f5cef905f1fa124e617914490054f",
-    "runtime_subtree": "f7bf058d02ca7658814489fa00fda3dacfb46fef",
-    "archive_sha256": "eaccb1e3edd73794dc45c853f05bc94e90c5cdc1bd0d0704bc5cf180f3954c75"
+    "commit": "257f66def2b88e315931db8b4e887979ea284b3e",
+    "tree": "e119ecdbb53f65dea9c6513914e262310c0d1829",
+    "runtime_subtree": "eabd17435cc3f5477ad64e3d437618bdf57a9d3c",
+    "archive_sha256": "8c3783407cc9327bb2ffb5534688227a79fdf1c16043b1f5fbc6194385ed86c1"
   },
   "inventory": {
-    "source": "simai/ui@ec56cef08625058eaffe2050e1d79f8cbdd5c4f1:distr/rule/rule.json",
+    "source": "simai/ui@257f66def2b88e315931db8b4e887979ea284b3e:distr/rule/rule.json",
     "selector": {
       "mode": "utility-family",
       "rules_without_type": true
     },
     "expected": {
-      "rules": 737,
-      "entries": 227
+      "rules": 738,
+      "entries": 228
     }
   },
   "defaults": {
@@ -36,7 +36,7 @@
       "blockers": []
     },
     "documentation_refs": [
-      "simai/ui@ec56cef08625058eaffe2050e1d79f8cbdd5c4f1:README.md"
+      "simai/ui@257f66def2b88e315931db8b4e887979ea284b3e:README.md"
     ],
     "example_refs": []
   },
