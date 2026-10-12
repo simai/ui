@@ -312,9 +312,31 @@ if (typeof window !== 'undefined') {
   window.addEventListener('sf-loader-init', () => mo.disconnect(), {
     once: true
   });
-})();
+})(); // Core's own chunks are evaluated in order -- the rules, then the system
+// events, then the Loader, which reads the rules as it starts -- but nothing
+// makes them wait for each other on the wire. They were fetched one after
+// another, each after the previous had run: on a 10 Mbit/s line the Loader
+// started 160 ms after Core's rules had arrived (2026-10-13). The browser is
+// told about all three at once; each import then finds its file fetched.
+
+
+const preloadCoreChunks = () => {
+  const core = [...document.scripts].find(script => /\/core\/js\/core(?:\.min)?\.js(?:[?#]|$)/u.test(script.src));
+  if (!core || typeof document.createElement !== 'function') return;
+
+  for (const name of ['core-rules', 'core-system', 'core-loader']) {
+    const href = core.src.replace(/core(\.min)?\.js(?=[?#]|$)/u, (match, min) => `${name}${min || ''}.js`);
+    if (document.querySelector(`link[rel="preload"][href="${href}"]`)) continue;
+    const link = document.createElement('link');
+    link.rel = 'preload';
+    link.as = 'script';
+    link.href = href;
+    document.head.append(link);
+  }
+};
 
 (async () => {
+  preloadCoreChunks();
   await __webpack_require__.e(/* import() | core-rules */ 80841737880868).then(__webpack_require__.bind(__webpack_require__, "a216dbc16e89"));
   await __webpack_require__.e(/* import() | core-system */ 88616323197113).then(__webpack_require__.bind(__webpack_require__, "d55d5a9f332f"));
   await __webpack_require__.e(/* import() | core-system */ 88616323197113).then(__webpack_require__.bind(__webpack_require__, "fedbedd6b87f"));
