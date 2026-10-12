@@ -1860,7 +1860,14 @@ function SFLoaderPlugin(params) {
   this.backgroundPreloader = params.backgroundPreloader ? params.backgroundPreloader : (0,_preloader__WEBPACK_IMPORTED_MODULE_6__.getPreloaderBackground)();
   this.tempLoaderStyles = 'inset: 0;position: fixed;width: 100%;height: 100vh;opacity: 1;z-index: 1000;background-color: var(--sf-color--surface-highest, var(--sf-surface-0, #fff));text-align: center;';
   this.modifierPreloader = params.modifierPreloader ? params.modifierPreloader : 'loader-default';
-  this.isDebug = false;
+  this.isDebug = false; // Minified bundles unless someone is debugging: every bundle ships
+  // <name>.min.js and <name>.min.css beside the readable files, at about 40 %
+  // of the size, and the Loader used to fetch the readable ones on every page
+  // (measured on the admin: 7 MB of script where 3 would do). A page asks for
+  // the readable files with SF_BOOT_CONFIG.minified = false, ?sf-debug in its
+  // address, or data-sf-debug on <html>.
+
+  this.minified = resolveMinified(params);
   this.profileLoader = params.profileLoader ?? window.SF_BOOT_CONFIG?.profileLoader ?? this.isDebug;
   this.profileThreshold = params.profileThreshold ?? window.SF_BOOT_CONFIG?.profileThreshold ?? 2;
   this.usePreloader = true;
@@ -2728,15 +2735,38 @@ SFLoaderPlugin.prototype.setCacheContent = async function (templates, fake) {
   return true;
 };
 
+function resolveMinified(params = {}) {
+  if (typeof params.minified === 'boolean') return params.minified;
+  const configured = globalThis.window?.SF_BOOT_CONFIG?.minified;
+  if (typeof configured === 'boolean') return configured;
+
+  try {
+    if (new URLSearchParams(globalThis.location?.search || '').has('sf-debug')) return false;
+  } catch {}
+
+  return !globalThis.document?.documentElement?.hasAttribute?.('data-sf-debug');
+} // x.min.js <-> x.js, x.min.css <-> x.css; null for anything else.
+
+
+function otherForm(url) {
+  const value = String(url || '');
+  if (/\.min\.(js|css)(?=$|[?#])/.test(value)) return value.replace(/\.min\.(js|css)(?=$|[?#])/, '.$1');
+  if (/\.(js|css)(?=$|[?#])/.test(value)) return value.replace(/\.(js|css)(?=$|[?#])/, '.min.$1');
+  return null;
+}
+
+function minifiedToReadable(url) {
+  const value = String(url || '');
+  return /\.min\.(js|css)(?=$|[?#])/.test(value) ? value.replace(/\.min\.(js|css)(?=$|[?#])/, '.$1') : null;
+}
+
 SFLoaderPlugin.prototype.isLoaded = function (pluginURL, type) {
-  if (type === 'style') {
-    if (document.querySelector(`link[href*="${pluginURL}"]`) !== null) {
-      return true;
-    }
-  } else {
-    if (document.querySelector(`script[src*="${pluginURL}"]`) !== null) {
-      return true;
-    }
+  // Either form of a file counts: a page that included the readable file by
+  // hand has it, and the Loader must not fetch the minified one beside it.
+  for (const url of [pluginURL, otherForm(pluginURL)]) {
+    if (!url) continue;
+    const selector = type === 'style' ? `link[href*="${url}"]` : `script[src*="${url}"]`;
+    if (document.querySelector(selector) !== null) return true;
   }
 
   return false;
@@ -3952,9 +3982,12 @@ SFLoaderPlugin.prototype.pathPluginJs = function (name, smart, point, type) {
     pathPlugin = `${base}/${name}`;
   } else {
     pathPlugin = `${type === 'component' ? this.componentPath : this.utilyPath}/${name}`;
-  }
+  } // A component's or Smart element's script has a minified twin; a utility's
+  // script does not, and keeps its readable name.
 
-  return `${pathPlugin}/js/${type === 'component' || smart ? name : point}.js`;
+
+  const file = type === 'component' || smart ? name : point;
+  return `${pathPlugin}/js/${file}${this.minified && (type === 'component' || smart) ? '.min' : ''}.js`;
 };
 
 SFLoaderPlugin.prototype.pathPluginCss = function (name, type, point) {
@@ -3979,7 +4012,7 @@ SFLoaderPlugin.prototype.pathPluginCss = function (name, type, point) {
       break;
   }
 
-  return `${url}/${name}/css/${['component', 'smart'].includes(type) ? name : point}.css`;
+  return `${url}/${name}/css/${['component', 'smart'].includes(type) ? name : point}${this.minified ? '.min' : ''}.css`;
 };
 
 SFLoaderPlugin.prototype.shouldSkipPluginCss = function (pluginName, module = {}) {
@@ -4051,8 +4084,10 @@ SFLoaderPlugin.prototype.loadPlugin = function (pluginName, smart, point, module
         this.resolverAll[cssFile] = this.addStyle(`${cssFile}`).then(() => {
           this.loadedPlugins[pluginName].css = true;
         }).catch(() => {
-          this.addToMissingFiles(pluginName, 'css', false);
-          const min = cssFile.replace('.css', '.min.css');
+          this.addToMissingFiles(pluginName, 'css', false); // The other form of the file: the readable one when the minified
+          // was asked for and is missing, the minified one otherwise.
+
+          const min = otherForm(cssFile);
           this.resolverAll[min] = this.addStyle(`${min}`).then(() => {
             this.loadedPlugins[pluginName].minCss = true;
           }).catch(e => {
@@ -5189,6 +5224,14 @@ SFLoaderPlugin.prototype.addScript = function (pluginURL, param = {}) {
       resolve();
     });
     script.addEventListener('error', () => {
+      const readable = minifiedToReadable(pluginURL);
+
+      if (readable) {
+        script.remove();
+        this.addScript(readable, param).then(resolve, reject);
+        return;
+      }
+
       reject(new Error(`Failed to load script: ${pluginURL}`));
     });
 
