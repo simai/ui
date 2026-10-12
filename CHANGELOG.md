@@ -40,6 +40,8 @@
 
 ### Добавлено
 
+- The standard menu carries a profile menu: a `header` entry for the person (name, lines under it, picture or initials), a `choice` row of options side by side (the theme), marked at once while the menu stays open, a `note` line, and `search` on a menu or a submenu entry -- a field that narrows the rows by label, caption and keywords. A row takes `lang` for a language list written in each language's own name.
+
 - The standard action menu: `sf-context-menu` takes `entries` -- icon, label, caption, value, shortcut, check and radio rows, danger, disabled, link rows, submenus, separators and group headings -- and opens through `openFor(anchor)` / `toggleFor(anchor)` into the top layer, below its control and start-aligned, with no tail. Opened that way it owns its lifecycle: Escape closes a level, Tab and a press outside close the menu, a letter moves to the next item it starts, and a choice (`sf-context-menu-select`, at any depth) closes it and returns the focus. Its surface is the third elevation step with a hairline border. A menu the host renders and opens itself keeps the previous contract.
 - Highlight numbers lines from `data-start`.
 
