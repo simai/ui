@@ -578,6 +578,9 @@
     border-style: solid;
     box-sizing: border-box;
   }
+  [hidden]:not([hidden=until-found]) {
+    display: none !important;
+  }
   body {
     color: var(--sf-on-surface);
     background-color: var(--sf-surface-0);
@@ -2030,6 +2033,8 @@ body {
     [data-sf-density=compact] {
       --sf-text--size: var(--sf-text--size-1\/2);
       --sf-text--height: var(--sf-text--height-1\/2);
+    }
+    [data-sf-density=compact]:not(:root) {
       font-size: var(--sf-text--size);
       line-height: var(--sf-text--height);
     }
