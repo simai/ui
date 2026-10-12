@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
   "id": "smart.context-menu",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "title": "Context Menu",
   "summary": "The Framework's action menu: data entries with icon, caption, value, shortcut, check, submenu, separator and heading, opened by openFor() into the top layer, anchored, with keyboard, typeahead and focus return. A host may still render its own items and own the lifecycle.",
   "kind": "smart",
@@ -128,6 +128,11 @@
         "type": "boolean",
         "default": false,
         "description": "Not drawn until opened through openFor(). A menu without it is drawn in place, as before."
+      },
+      "search": {
+        "type": "object",
+        "default": null,
+        "description": "{placeholder, empty}: a search field above the rows (set as a property). A submenu entry passes it with `search`."
       }
     },
     "additionalProperties": false
@@ -150,7 +155,10 @@
           "current": "boolean, the place the person is",
           "href": "string, a link row",
           "submenu": "entries, opened beside the row",
-          "keepOpen": "boolean, a choice does not close the menu"
+          "keepOpen": "boolean, a choice does not close the menu",
+          "lang": "string, the language the label is written in",
+          "search": "{placeholder, empty}, a field above the submenu that narrows its rows by label, caption and keywords",
+          "keywords": "string, extra words a search matches"
         }
       },
       "separator": {
@@ -162,6 +170,29 @@
         "fields": {
           "type": "'heading'",
           "text": "string, names the items under it"
+        }
+      },
+      "header": {
+        "fields": {
+          "type": "'header'",
+          "text": "string, the name",
+          "caption": "string or string[], the lines under it",
+          "avatar": "string, a picture URL",
+          "initials": "string, drawn without a picture (from the name by default)"
+        }
+      },
+      "choice": {
+        "fields": {
+          "type": "'choice'",
+          "id": "string, reported as group",
+          "text": "string, the group's name",
+          "options": "[{id, text, icon, checked, disabled}], side by side; a choice is marked at once and the menu stays open unless keepOpen is false"
+        }
+      },
+      "note": {
+        "fields": {
+          "type": "'note'",
+          "text": "string, a line of explanation"
         }
       }
     }
@@ -287,6 +318,13 @@
               "null"
             ],
             "description": "The state a check or radio row asks for; null for a plain item."
+          },
+          "group": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The choice row's id when an option of it was chosen."
           }
         }
       }
@@ -349,7 +387,7 @@
       "Tab",
       "typeahead"
     ],
-    "focus": "Rows rendered from entries carry menuitem, menuitemcheckbox or menuitemradio with aria-checked, and aria-haspopup/aria-expanded for a submenu; one roving tab stop. Opened through openFor(): the anchor gets aria-haspopup=menu and aria-expanded; Escape closes one level and returns the focus to its row or the anchor; Tab closes the whole chain; a letter moves to the next item it starts. A host that renders the menu itself owns opening, Escape/Tab dismissal and focus return, as before."
+    "focus": "Rows rendered from entries carry menuitem, menuitemcheckbox or menuitemradio with aria-checked, and aria-haspopup/aria-expanded for a submenu; one roving tab stop. Opened through openFor(): the anchor gets aria-haspopup=menu and aria-expanded; Escape closes one level and returns the focus to its row or the anchor; Tab closes the whole chain; a letter moves to the next item it starts. A host that renders the menu itself owns opening, Escape/Tab dismissal and focus return, as before. A header and a note are text. The options of a choice row are menuitemradio in a group, walked by the side arrows. A searchable menu opens on its field, which keeps the letters and the side arrows; ArrowDown goes on to the rows."
   },
   "presentation": {
     "themes": [
@@ -411,15 +449,15 @@
     "source_artifacts": [
       {
         "path": "src/smart/context-menu/index.js",
-        "sha256": "a029d6f0db74331017350a9d1e705e8ed97fe9d84982a19c00c9ed7b3a91ac99"
+        "sha256": "142060c6e8f81a6b651cfd7d9c74b196d4e56d7443765324af6df7b52bf90c8e"
       },
       {
         "path": "src/smart/context-menu/js/templates/default.js",
-        "sha256": "66fe66d2a87efc1be68af83becb3513ff1fe7fbbc79f0b0affecc7766939dd0a"
+        "sha256": "b4805211f45d4da1eb4927df4030a8f68ea17a623cb477bb98e211b391df0b56"
       },
       {
         "path": "src/component/context-menu/scss/_css__context_menu.scss",
-        "sha256": "294f478c75a5964caed86a59cd3dbfcd80d4025e56690d4040821e88269c23e3"
+        "sha256": "a7cb6eeb423a9b27d848fdd72779f816acab0ce5e46cf8d9c78e16f4fa8fdd52"
       },
       {
         "path": "src/component/context-menu/scss/_css__context_menu_custom.scss",
@@ -436,7 +474,7 @@
     ]
   },
   "ai_guidance": {
-    "use_when": "Use sf-context-menu for every action menu: give it entries and open it with openFor(anchor). It opens below and start-aligned by default, with no tail, in the top layer, on the profile menu's surface. The tail (position) is for a host-placed menu that points at something.",
+    "use_when": "Use sf-context-menu for every action menu: give it entries and open it with openFor(anchor). It opens below and start-aligned by default, with no tail, in the top layer, on the profile menu's surface. The tail (position) is for a host-placed menu that points at something. A profile menu is one: a header for the person, a choice row for the theme, a submenu with search for the language.",
     "do_not": [
       "Do not copy generated ui-smart code",
       "Do not move host data or access decisions into the component",

@@ -2865,9 +2865,55 @@ const ROLE = {
 
 function icon(name, className) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<i class="sf-icon ${className}" aria-hidden="true">${name}</i>`;
+} // Initials for a person without a picture: the first letter of the first two
+// words, the way an avatar draws them.
+
+
+function initials(name = "") {
+  return String(name).trim().split(/\s+/u).slice(0, 2).map(word => word[0] ?? "").join("").toUpperCase();
+} // Who the menu is about -- the signed-in person at the top of a profile menu.
+// Text, not an item: it is read, not chosen.
+
+
+function renderHeader(entry) {
+  const picture = entry.avatar ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<img class="sf-context-menu-header-avatar" src=${entry.avatar} alt="">` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-context-menu-header-avatar" aria-hidden="true">${entry.initials ?? initials(entry.text)}</span>`;
+  const lines = Array.isArray(entry.caption) ? entry.caption : [entry.caption].filter(Boolean);
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-context-menu-header" role="presentation">
+        ${picture}
+        <span class="sf-context-menu-header-text">
+            <span class="sf-context-menu-header-name">${entry.text ?? ""}</span>
+            ${lines.map(line => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-context-menu-header-caption">${line}</span>`)}
+        </span>
+    </div>`;
+} // A choice of a few options side by side -- the theme in a profile menu. Each
+// option is a menuitemradio of the menu, so the arrows walk through them as
+// through any row.
+
+
+function renderChoice(entry, index) {
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-context-menu-choice" role="group" aria-label=${entry.text ?? lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
+        ${(entry.options ?? []).map((option, at) => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<button
+                type="button"
+                class="sf-context-menu-item sf-context-menu-choice-option"
+                role="menuitemradio"
+                data-sf-entry=${index}
+                data-sf-option=${at}
+                aria-checked=${String(Boolean(option.checked))}
+                aria-label=${option.text ?? lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                title=${option.text ?? lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                ?disabled=${Boolean(option.disabled)}
+        >${option.icon ? icon(option.icon, "") : option.text ?? ""}</button>`)}
+    </div>`;
 }
 
 function renderEntry(entry, index, lead) {
+  if (entry?.type === "header") return renderHeader(entry);
+  if (entry?.type === "choice") return renderChoice(entry, index);
+
+  if (entry?.type === "note") {
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<p class="sf-context-menu-note">${entry.text ?? ""}</p>`;
+  }
+
   if (entry?.type === "separator") {
     return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-context-menu-separator" role="separator"></div>`;
   }
@@ -2893,7 +2939,7 @@ function renderEntry(entry, index, lead) {
     `;
 
   if (entry.href && !submenu && !entry.disabled) {
-    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<a class=${classes} href=${entry.href} role=${role} data-sf-entry=${index}>${body}</a>`;
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<a class=${classes} href=${entry.href} role=${role} data-sf-entry=${index} lang=${entry.lang ?? lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>${body}</a>`;
   }
 
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<button
@@ -2901,6 +2947,7 @@ function renderEntry(entry, index, lead) {
             class=${classes}
             role=${role}
             data-sf-entry=${index}
+            lang=${entry.lang ?? lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
             aria-checked=${checkable ? String(Boolean(entry.checked)) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
             aria-haspopup=${submenu ? "menu" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
             aria-expanded=${submenu ? "false" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
@@ -2908,16 +2955,49 @@ function renderEntry(entry, index, lead) {
     >${body}</button>`;
 }
 
-function renderEntries(entries) {
-  // One leading column for the whole menu: when any item has an icon, every
+const ROWS = entry => entry && !["separator", "heading", "header", "choice", "note"].includes(entry.type); // What a search narrows to: the rows whose label or caption holds the query.
+
+
+function matches(entry, query) {
+  if (!query) return true;
+  if (!ROWS(entry)) return false;
+  const text = `${entry.text ?? ""} ${entry.caption ?? ""} ${entry.keywords ?? ""}`.toLowerCase();
+  return text.includes(query);
+}
+
+function renderSearch(context) {
+  const search = context.search;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-context-menu-search">
+        <input
+                class="sf-context-menu-search-input"
+                type="search"
+                autocomplete="off"
+                spellcheck="false"
+                placeholder=${search.placeholder ?? ""}
+                aria-label=${search.placeholder || context.ariaLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                .value=${context.query ?? ""}
+                @input=${event => context.component.setQuery(event.target.value)}
+        >
+    </div>`;
+}
+
+function renderEntries(context) {
+  const entries = context.entries;
+  const query = String(context.query ?? "").trim().toLowerCase(); // One leading column for the whole menu: when any item has an icon, every
   // item keeps the place, so the labels start on one line.
-  const lead = entries.some(entry => entry && entry.type !== "separator" && entry.type !== "heading" && entry.icon);
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${entries.map((entry, index) => renderEntry(entry, index, lead))}`;
+
+  const lead = entries.some(entry => ROWS(entry) && entry.icon);
+  const shown = entries.map((entry, index) => [entry, index]).filter(([entry]) => matches(entry, query));
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        ${context.search ? renderSearch(context) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        ${shown.map(([entry, index]) => renderEntry(entry, index, lead))}
+        ${context.search && query && !shown.length ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<p class="sf-context-menu-note" role="status">${context.search.empty ?? ""}</p>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    `;
 }
 
 function renderContent(context) {
   if (context.entries && context.entries.length) {
-    return renderEntries(context.entries);
+    return renderEntries(context);
   }
 
   if (context.items && context.items.length) {
@@ -5627,6 +5707,12 @@ class SfContextMenu extends _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__["de
       at: 0
     };
 
+    if (Object.prototype.hasOwnProperty.call(this, "search")) {
+      const early = this.search;
+      delete this.search;
+      this._search = early && typeof early === "object" ? early : null;
+    }
+
     if (Object.prototype.hasOwnProperty.call(this, "entries")) {
       const early = this.entries;
       delete this.entries;
@@ -5689,7 +5775,7 @@ class SfContextMenu extends _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__["de
     const content = this.querySelector(".sf-context-menu-content"); // Rendered from entries, every row is an item and carries its own role
     // (menuitem, menuitemcheckbox or menuitemradio).
 
-    if (this.entries.length) return Array.from(content?.querySelectorAll(":scope > .sf-context-menu-item") || []);
+    if (this.entries.length) return Array.from(content?.querySelectorAll(".sf-context-menu-item") || []);
     return Array.from(content?.children || []).flatMap(child => {
       const item = child.localName === "sf-button" ? child.querySelector("button, a[href]") : child;
       if (!item?.matches("button, a[href]")) return [];
@@ -5780,6 +5866,59 @@ class SfContextMenu extends _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__["de
     const row = element?.closest?.(".sf-context-menu-item");
     if (!row || !this.contains(row)) return null;
     return this.entries[Number(row.dataset.sfEntry)] ?? null;
+  } // A search over the entries: a submenu given `search` (or a menu given the
+  // property) draws a field above its rows and narrows them as one types.
+
+
+  get search() {
+    return this._search && typeof this._search === "object" ? this._search : null;
+  }
+
+  set search(value) {
+    this._search = value && typeof value === "object" ? value : null;
+    this.requestComponentUpdate("search");
+  }
+
+  get query() {
+    return this._query ?? "";
+  }
+
+  setQuery(value) {
+    this._query = String(value ?? "");
+    this.requestComponentUpdate("query");
+  }
+
+  searchField() {
+    return this.querySelector(".sf-context-menu-search-input");
+  } // One option of a choice row: the menu marks it at once, so the row shows
+  // the choice while the host applies it, and stays open -- a theme is tried,
+  // not committed.
+
+
+  chooseOption(row, entry) {
+    const at = Number(row.dataset.sfOption);
+    const option = entry.options?.[at];
+    if (!option || option.disabled) return;
+    const selected = this.dispatchEvent(new CustomEvent("sf-context-menu-select", {
+      bubbles: true,
+      composed: true,
+      cancelable: true,
+      detail: {
+        id: option.id ?? null,
+        entry: option,
+        checked: true,
+        group: entry.id ?? null
+      }
+    }));
+    if (!selected) return;
+    const index = this.entries.indexOf(entry);
+    const next = { ...entry,
+      options: entry.options.map((item, i) => ({ ...item,
+        checked: i === at
+      }))
+    };
+    this.entries = this.entries.map((item, i) => i === index ? next : item);
+    if (entry.keepOpen === false) this.closeAll();
   }
 
   handleEntryClick(event) {
@@ -5787,6 +5926,11 @@ class SfContextMenu extends _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__["de
     if (!row || !this.contains(row) || row.matches(":disabled")) return;
     const entry = this.entryOf(row);
     if (!entry) return;
+
+    if (row.dataset.sfOption !== undefined) {
+      this.chooseOption(row, entry);
+      return;
+    }
 
     if (Array.isArray(entry.submenu) && entry.submenu.length) {
       event.preventDefault();
@@ -5909,7 +6053,10 @@ class SfContextMenu extends _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__["de
     if (focus !== "none") {
       this.syncMenuItems();
       const items = this.availableMenuItems();
-      (focus === "last" ? items[items.length - 1] : items[0])?.focus({
+      const field = this.searchField();
+      if (field && focus !== "last") field.focus({
+        preventScroll: true
+      });else (focus === "last" ? items[items.length - 1] : items[0])?.focus({
         preventScroll: true
       });
     }
@@ -5927,6 +6074,7 @@ class SfContextMenu extends _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__["de
     });
     this._owned = null;
     this._hoverRow = null;
+    if (this._query) this.setQuery("");
     clearTimeout(this._hoverTimer);
     owned.position?.stop();
     document.removeEventListener("pointerdown", this._onOutsidePress, true);
@@ -5985,7 +6133,8 @@ class SfContextMenu extends _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__["de
     const child = document.createElement("sf-context-menu");
     child.setAttribute("aria-label", entry.text ?? "");
     child.setAttribute("popup", "");
-    child.entries = entry.submenu; // Selections in the submenu are the parent's to announce: a host listens
+    child.entries = entry.submenu;
+    if (entry.search) child.search = entry.search; // Selections in the submenu are the parent's to announce: a host listens
     // on one element whatever depth the item sits at.
 
     child.addEventListener("sf-context-menu-select", event => {
@@ -6041,7 +6190,30 @@ class SfContextMenu extends _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__["de
     if (!this.contains(event.target)) return;
     const rtl = getComputedStyle(this.surface() ?? document.documentElement).direction === "rtl";
     const inward = rtl ? "ArrowLeft" : "ArrowRight",
-          outward = rtl ? "ArrowRight" : "ArrowLeft";
+          outward = rtl ? "ArrowRight" : "ArrowLeft"; // Inside a choice row the side arrows move between its options.
+
+    const option = event.target?.closest?.(".sf-context-menu-choice-option");
+
+    if (option && (event.key === inward || event.key === outward)) {
+      const options = Array.from(option.parentElement.querySelectorAll(".sf-context-menu-choice-option:not(:disabled)"));
+      const at = options.indexOf(option);
+      const next = options[(at + (event.key === inward ? 1 : options.length - 1)) % options.length];
+      event.preventDefault();
+      next?.focus();
+      return;
+    } // In the search field the letters and the side arrows are the field's;
+    // ArrowDown goes on to the rows, and Escape still closes.
+
+
+    if (event.target === this.searchField() && event.key !== "Escape" && event.key !== "Tab") {
+      if (event.key === "ArrowDown") {
+        event.preventDefault();
+        this.syncMenuItems();
+        this.availableMenuItems()[0]?.focus();
+      }
+
+      return;
+    }
 
     if (event.key === "Escape" || event.key === outward && this._owned.parentMenu) {
       event.preventDefault();
@@ -6193,6 +6365,8 @@ class SfContextMenu extends _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__["de
     const props = this.getPropsContext();
     return this.createTemplateContext({ ...props,
       entries: this.entries,
+      search: this.search,
+      query: this.query,
       position: this.position,
       component: this,
       rootClass: this.getRootClass()

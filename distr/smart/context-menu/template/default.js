@@ -45,7 +45,53 @@ function icon(name, className) {
     return html`<i class="sf-icon ${className}" aria-hidden="true">${name}</i>`;
 }
 
+// Initials for a person without a picture: the first letter of the first two
+// words, the way an avatar draws them.
+function initials(name = "") {
+    return String(name).trim().split(/\s+/u).slice(0, 2).map((word) => word[0] ?? "").join("").toUpperCase();
+}
+
+// Who the menu is about -- the signed-in person at the top of a profile menu.
+// Text, not an item: it is read, not chosen.
+function renderHeader(entry) {
+    const picture = entry.avatar
+        ? html`<img class="sf-context-menu-header-avatar" src=${entry.avatar} alt="">`
+        : html`<span class="sf-context-menu-header-avatar" aria-hidden="true">${entry.initials ?? initials(entry.text)}</span>`;
+    const lines = Array.isArray(entry.caption) ? entry.caption : [entry.caption].filter(Boolean);
+    return html`<div class="sf-context-menu-header" role="presentation">
+        ${picture}
+        <span class="sf-context-menu-header-text">
+            <span class="sf-context-menu-header-name">${entry.text ?? ""}</span>
+            ${lines.map((line) => html`<span class="sf-context-menu-header-caption">${line}</span>`)}
+        </span>
+    </div>`;
+}
+
+// A choice of a few options side by side -- the theme in a profile menu. Each
+// option is a menuitemradio of the menu, so the arrows walk through them as
+// through any row.
+function renderChoice(entry, index) {
+    return html`<div class="sf-context-menu-choice" role="group" aria-label=${entry.text ?? nothing}>
+        ${(entry.options ?? []).map((option, at) => html`<button
+                type="button"
+                class="sf-context-menu-item sf-context-menu-choice-option"
+                role="menuitemradio"
+                data-sf-entry=${index}
+                data-sf-option=${at}
+                aria-checked=${String(Boolean(option.checked))}
+                aria-label=${option.text ?? nothing}
+                title=${option.text ?? nothing}
+                ?disabled=${Boolean(option.disabled)}
+        >${option.icon ? icon(option.icon, "") : option.text ?? ""}</button>`)}
+    </div>`;
+}
+
 function renderEntry(entry, index, lead) {
+    if (entry?.type === "header") return renderHeader(entry);
+    if (entry?.type === "choice") return renderChoice(entry, index);
+    if (entry?.type === "note") {
+        return html`<p class="sf-context-menu-note">${entry.text ?? ""}</p>`;
+    }
     if (entry?.type === "separator") {
         return html`<div class="sf-context-menu-separator" role="separator"></div>`;
     }
@@ -72,13 +118,14 @@ function renderEntry(entry, index, lead) {
         ${submenu ? icon("chevron_right", "sf-context-menu-item-chevron") : nothing}
     `;
     if (entry.href && !submenu && !entry.disabled) {
-        return html`<a class=${classes} href=${entry.href} role=${role} data-sf-entry=${index}>${body}</a>`;
+        return html`<a class=${classes} href=${entry.href} role=${role} data-sf-entry=${index} lang=${entry.lang ?? nothing}>${body}</a>`;
     }
     return html`<button
             type="button"
             class=${classes}
             role=${role}
             data-sf-entry=${index}
+            lang=${entry.lang ?? nothing}
             aria-checked=${checkable ? String(Boolean(entry.checked)) : nothing}
             aria-haspopup=${submenu ? "menu" : nothing}
             aria-expanded=${submenu ? "false" : nothing}
@@ -86,16 +133,49 @@ function renderEntry(entry, index, lead) {
     >${body}</button>`;
 }
 
-function renderEntries(entries) {
+const ROWS = (entry) => entry && !["separator", "heading", "header", "choice", "note"].includes(entry.type);
+
+// What a search narrows to: the rows whose label or caption holds the query.
+function matches(entry, query) {
+    if (!query) return true;
+    if (!ROWS(entry)) return false;
+    const text = `${entry.text ?? ""} ${entry.caption ?? ""} ${entry.keywords ?? ""}`.toLowerCase();
+    return text.includes(query);
+}
+
+function renderSearch(context) {
+    const search = context.search;
+    return html`<div class="sf-context-menu-search">
+        <input
+                class="sf-context-menu-search-input"
+                type="search"
+                autocomplete="off"
+                spellcheck="false"
+                placeholder=${search.placeholder ?? ""}
+                aria-label=${search.placeholder || context.ariaLabel || nothing}
+                .value=${context.query ?? ""}
+                @input=${(event) => context.component.setQuery(event.target.value)}
+        >
+    </div>`;
+}
+
+function renderEntries(context) {
+    const entries = context.entries;
+    const query = String(context.query ?? "").trim().toLowerCase();
     // One leading column for the whole menu: when any item has an icon, every
     // item keeps the place, so the labels start on one line.
-    const lead = entries.some((entry) => entry && entry.type !== "separator" && entry.type !== "heading" && entry.icon);
-    return html`${entries.map((entry, index) => renderEntry(entry, index, lead))}`;
+    const lead = entries.some((entry) => ROWS(entry) && entry.icon);
+    const shown = entries.map((entry, index) => [entry, index]).filter(([entry]) => matches(entry, query));
+    return html`
+        ${context.search ? renderSearch(context) : nothing}
+        ${shown.map(([entry, index]) => renderEntry(entry, index, lead))}
+        ${context.search && query && !shown.length ? html`<p class="sf-context-menu-note" role="status">${context.search.empty ?? ""}</p>` : nothing}
+    `;
 }
 
 function renderContent(context) {
     if (context.entries && context.entries.length) {
-        return renderEntries(context.entries);
+        return renderEntries(context);
     }
     if (context.items && context.items.length) {
         return renderItems(context.items);
