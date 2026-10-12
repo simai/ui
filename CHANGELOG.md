@@ -87,6 +87,8 @@
 
 ### Изменено
 
+- Core tells the browser about its own chunks -- the rules, the system events, the Loader -- as it starts, so they are fetched at once instead of one after another; they still run in order.
+
 - The shared Smart runtime: lit, smart-base and page-language are loaded once per page, from `core/js/smart-base.js` beside `core.js`, and the Smart bundles no longer carry a copy each (a bundle such as `close.min.js` went from 52 KB to 2.6 KB; the runtime is 78 KB, 25 KB gzipped, once). Core fetches the runtime the first time a Smart element is queued; a page that assembles its scripts by hand includes `core/js/smart-base.js` after `core.js` (or before Smart bundles when it has no Core).
 
 - The Loader fetches the minified twin of every component and Smart script and of every stylesheet, about 40 % of the readable size; a page being debugged asks for the readable files with `SF_BOOT_CONFIG.minified = false`, `?sf-debug` in its address or `data-sf-debug` on `<html>`. A bundle built without a minified twin falls back to its readable file once. Pages should include `core.min.js` and `core.min.css`, which load the minified core chunks.
