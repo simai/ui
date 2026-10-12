@@ -4142,7 +4142,13 @@ SFLoaderPlugin.prototype.loadRelationPlugins = function (name, plugins, module, 
       jsFile,
       skipJs,
       completed: {}
-    };
+    }; // An element waits for its relations before its script runs, and it used
+    // to wait for them before its script was even asked for: the admin's
+    // table was fetched after its relations had run, and the data view after
+    // the table (2026-10-13). The browser is told about the script now; it
+    // still runs after the relations, from the cache.
+
+    if (!skipJs && jsFile) this.preloadScript(jsFile);
   }
 
   if (this.totalRelationsPlugins[name].canLoad) {
@@ -5244,6 +5250,19 @@ SFLoaderPlugin.prototype.addStyle = async function (pluginURL) {
     });
     head.append(style);
   });
+};
+
+SFLoaderPlugin.prototype.preloadScript = function (pluginURL) {
+  if (typeof document === 'undefined' || !pluginURL) return;
+  const href = this.versionAssetUrl(pluginURL);
+  this.preloadedScripts = this.preloadedScripts || new Set();
+  if (this.preloadedScripts.has(href)) return;
+  this.preloadedScripts.add(href);
+  const link = document.createElement('link');
+  link.rel = 'preload';
+  link.as = 'script';
+  link.href = href;
+  document.head.append(link);
 };
 
 SFLoaderPlugin.prototype.addScript = function (pluginURL, param = {}) {
