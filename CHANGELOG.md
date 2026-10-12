@@ -8,6 +8,8 @@
 
 ### Исправлено
 
+- Standard menu rows keep their height in a short window and the list scrolls; a caption no longer runs into the next row. A searchable submenu opened by a pointer opens on its field, so the letters go into the search and Escape closes the submenu, not the whole menu.
+
 - Highlight line numbers (`data-lines`) are laid out one row per line, with the number in a column of its own; all the lines used to run into one.
 
 - Compact text density no longer moves rem: on `<html>` it sets `--sf-text--size` and `--sf-text--height` only and body reads them. Setting a font size on the root shrank every step of the ladder (body read 12.25px instead of 14px).
