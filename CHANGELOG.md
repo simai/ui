@@ -85,6 +85,8 @@
 
 ### Изменено
 
+- The Loader fetches the minified twin of every component and Smart script and of every stylesheet, about 40 % of the readable size; a page being debugged asks for the readable files with `SF_BOOT_CONFIG.minified = false`, `?sf-debug` in its address or `data-sf-debug` on `<html>`. A bundle built without a minified twin falls back to its readable file once. Pages should include `core.min.js` and `core.min.css`, which load the minified core chunks.
+
 - The package reference that names SIMAI Framework Pro's components ships in the runtime as `distr/core/contracts/packages/pro.package.json`, beside the ports, so a consumer holding only the distribution can tell which elements need the Pro package. The change journal records the move (`component-pro-package-move`), and `sf-upgrade` reports a Pro tag in a project that declares no Pro package. `sf-upgrade` had stopped on every project since 2026-10-09 (a journal pattern the `u` flag rejects, and an attribute retired without a replacement); both are fixed, and the gate now compiles every journal pattern the way `sf-upgrade` does.
 
 - One release, one place. Smart components are published in `ui` as `distr/smart`, beside `distr/core`, from the same build commit; a release is one `ui` commit with the id `ui-<12>` and the lock v2 `contracts/releases/ui-<12>.lock.json`. `ui-smart` still receives the same Smart bytes as a mirror while consumers move, and a v1 alias lock `ui-<12>-smart-<12>` is written beside each v2 lock for readers of the pair id. The Smart owner manifest lives in `contracts/owners/`. No runtime byte changes in this release: `distr/smart` is byte-identical to `ui-smart/smart`.
