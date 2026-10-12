@@ -8,6 +8,8 @@
 
 ### Исправлено
 
+- `sf-toast` stands on the third elevation surface with its status tint laid over it. It sat on a translucent container tone and could not be read over a table.
+
 - `sf-badge` loads the visually hidden label with itself, so a badge with an accessible name no longer reads it beside its text where the Loader's scan does not reach («Элементы: 7 7»).
 
 - A port column option's `scheme` colours its badge; only a filter option's `color` was read, so every port column's badges were neutral.
@@ -32,6 +34,8 @@
   always been `translateX(0)` when open, and the panel opens like a submenu.
 
 ### Добавлено
+
+- Compact text density: `data-sf-density="compact"` on `<html>` or on a region keeps the phone's body step on desktop (14px on a 20px line). A dense application -- an admin panel, a table page -- asks for it by attribute instead of overriding `--sf-text--size` with a pixel value of its own.
 
 - The data view host port 1.9.0: a tree node may name its icon (`icon`, and `icon_expanded` for an open node that looks different), drawn beside its open/close button. The host chooses it -- a page with pages under it is still a page; a host that names none gets a folder for a node with children and a document for a leaf.
 
