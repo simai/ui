@@ -1838,6 +1838,7 @@ function SFLoaderPlugin(params) {
   this.smartChildScanEventsBound = false;
   this.totalLoadPlugin = 0;
   this.notFoundFiles = {};
+  this.lazyRelations = new Set();
   this.cachedPlugins = [];
   this.loadedPlugins = {};
   this.attrMatchCache = new Map();
@@ -2576,6 +2577,7 @@ SFLoaderPlugin.prototype.dispatchReadyOnce = function () {
   try {
     window.dispatchEvent(createReadyEvent());
     this.eventSend = true;
+    this.prefetchLazyRelations();
     return true;
   } catch (e) {
     console.warn('sf-loader-ready dispatch failed', e);
@@ -3931,6 +3933,16 @@ SFLoaderPlugin.prototype.setRelation = function (relation, name, output, visited
   visited.add(name);
   relation.forEach(rel => {
     if (!rel?.name || !this.isPluginResolvable(rel.name)) {
+      return;
+    } // A lazy relation is something a component may render later -- a filter
+    // editor, a date picker, a cell renderer for a type the page may not hold.
+    // It does not hold up the page: it is fetched once the page is ready, in
+    // the browser's idle time, or at once when it is asked for (2026-10-12;
+    // the table's editors were a third of the admin's script at boot).
+
+
+    if (rel.lazy === true) {
+      this.lazyRelations.add(rel.name);
       return;
     }
 
@@ -5854,7 +5866,38 @@ function createSmartElement(name, params = {}) {
   }
 
   return element;
-}
+} // Loads a rule by its name -- a component, a Smart element, a lazy relation --
+// unless it is loaded or on its way.
+
+
+SFLoaderPlugin.prototype.ensurePlugin = function (name) {
+  const key = String(name || '').trim();
+  if (!key || !this.findPlugins?.[key]) return false;
+  if (this.module[key]) return true;
+  this.setExistCookie(key);
+  this.mutate(() => this.getLoader(this.module, true));
+  return true;
+}; // The lazy relations, fetched after the page is ready while the browser is
+// idle, a few at a time, so the first interaction finds them loaded.
+
+
+SFLoaderPlugin.prototype.prefetchLazyRelations = function () {
+  const pending = [...this.lazyRelations].filter(name => !this.module[name]);
+  if (!pending.length) return;
+  const idle = globalThis.requestIdleCallback ? fn => globalThis.requestIdleCallback(fn, {
+    timeout: 2000
+  }) : fn => setTimeout(fn, 200);
+
+  const step = () => {
+    const batch = pending.splice(0, 4);
+
+    for (const name of batch) this.ensurePlugin(name);
+
+    if (pending.length) idle(step);
+  };
+
+  idle(step);
+};
 
 SFLoaderPlugin.prototype.ensureSmartElementLoaded = function (tagName) {
   const normalizedTag = String(tagName || '').trim().toLowerCase();
