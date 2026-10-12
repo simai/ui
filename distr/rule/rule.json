@@ -688,6 +688,9 @@
     "relation": [
       {
         "name": "badges"
+      },
+      {
+        "name": "sr-only/default"
       }
     ],
     "tags": [

@@ -8,6 +8,8 @@
 
 ### Исправлено
 
+- `sf-badge` loads the visually hidden label with itself, so a badge with an accessible name no longer reads it beside its text where the Loader's scan does not reach («Элементы: 7 7»).
+
 - A port column option's `scheme` colours its badge; only a filter option's `color` was read, so every port column's badges were neutral.
 
 - The JavaScript API keeps the promises it makes. A class component's object (`SF.Toast`, `SF.Input`, `SF.ProgressBar` and the other 14) exists when `component:ready` says it is ready; it used to arrive just after. `SF.Toast.dismiss(null)` answers `false` instead of throwing. `SF.Toast.show` and `create` take `status`, and `SF.ProgressBar` and `SF.ProgressScale` take and report `status`; the retired `type` and `tone` are still read until their journal records leave. `SF.smartBaseReady` settles with the Smart base however it arrives, and the base announces `sf-smart-base-ready` once per page. `sf-loader-ready` carries the time it was sent. The inline editor, the composition overlay and sortable follow `SF.language.use()` and a product's dictionaries. Legacy `[sf-gallery]` markup no longer reaches a gallery no build publishes.
