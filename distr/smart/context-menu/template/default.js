@@ -51,6 +51,14 @@ function initials(name = "") {
     return String(name).trim().split(/\s+/u).slice(0, 2).map((word) => word[0] ?? "").join("").toUpperCase();
 }
 
+// What leads a row: an icon, or a picture of the thing itself -- a site's logo,
+// a person -- with its initials when there is no picture.
+function renderLead(entry) {
+    if (entry.avatar) return html`<img class="sf-context-menu-item-avatar" src=${entry.avatar} alt="">`;
+    if (entry.initials) return html`<span class="sf-context-menu-item-avatar" aria-hidden="true">${entry.initials}</span>`;
+    return entry.icon ? icon(entry.icon, "sf-context-menu-item-icon") : nothing;
+}
+
 // Who the menu is about -- the signed-in person at the top of a profile menu.
 // Text, not an item: it is read, not chosen.
 function renderHeader(entry) {
@@ -107,7 +115,7 @@ function renderEntry(entry, index, lead) {
         entry.current ? "sf-context-menu-item--current" : "",
     );
     const body = html`
-        ${lead ? html`<span class="sf-context-menu-item-lead">${entry.icon ? icon(entry.icon, "sf-context-menu-item-icon") : nothing}</span>` : nothing}
+        ${lead ? html`<span class="sf-context-menu-item-lead">${renderLead(entry)}</span>` : nothing}
         <span class="sf-context-menu-item-text">
             <span class="sf-context-menu-item-label">${entry.text ?? ""}</span>
             ${entry.caption ? html`<span class="sf-context-menu-item-caption">${entry.caption}</span>` : nothing}
@@ -164,12 +172,15 @@ function renderEntries(context) {
     const query = String(context.query ?? "").trim().toLowerCase();
     // One leading column for the whole menu: when any item has an icon, every
     // item keeps the place, so the labels start on one line.
-    const lead = entries.some((entry) => ROWS(entry) && entry.icon);
-    const shown = entries.map((entry, index) => [entry, index]).filter(([entry]) => matches(entry, query));
+    const lead = entries.some((entry) => ROWS(entry) && (entry.icon || entry.avatar || entry.initials));
+    // A search the host answers (search.remote) shows the entries as the host
+    // set them for the query; a local one narrows them here.
+    const remote = Boolean(context.search?.remote);
+    const shown = entries.map((entry, index) => [entry, index]).filter(([entry]) => remote || matches(entry, query));
     return html`
         ${context.search ? renderSearch(context) : nothing}
         ${shown.map(([entry, index]) => renderEntry(entry, index, lead))}
-        ${context.search && query && !shown.length ? html`<p class="sf-context-menu-note" role="status">${context.search.empty ?? ""}</p>` : nothing}
+        ${context.search && query && !shown.some(([entry]) => ROWS(entry)) ? html`<p class="sf-context-menu-note" role="status">${context.search.empty ?? ""}</p>` : nothing}
     `;
 }
 
@@ -188,17 +199,10 @@ function renderContent(context) {
     return context.text || nothing;
 }
 
-function renderTooltip(context) {
-    if (!context.position || !context.tooltip) {
-        return nothing;
-    }
-
-    if (context.component?.hasSlotContent?.("tooltip")) {
-        return context.component.getSlotContent("tooltip");
-    }
-
-    return html`
-        <div class="sf-context-menu-tooltip" aria-hidden="true"></div>`;
+// No tail (owner, 2026-10-12): it never read as one piece with the panel. The
+// position attribute is kept for its class and draws nothing.
+function renderTooltip() {
+    return nothing;
 }
 
 export function renderContextMenuTemplate(context) {

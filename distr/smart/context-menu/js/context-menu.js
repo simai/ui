@@ -2871,6 +2871,14 @@ function icon(name, className) {
 
 function initials(name = "") {
   return String(name).trim().split(/\s+/u).slice(0, 2).map(word => word[0] ?? "").join("").toUpperCase();
+} // What leads a row: an icon, or a picture of the thing itself -- a site's logo,
+// a person -- with its initials when there is no picture.
+
+
+function renderLead(entry) {
+  if (entry.avatar) return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<img class="sf-context-menu-item-avatar" src=${entry.avatar} alt="">`;
+  if (entry.initials) return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-context-menu-item-avatar" aria-hidden="true">${entry.initials}</span>`;
+  return entry.icon ? icon(entry.icon, "sf-context-menu-item-icon") : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
 } // Who the menu is about -- the signed-in person at the top of a profile menu.
 // Text, not an item: it is read, not chosen.
 
@@ -2927,7 +2935,7 @@ function renderEntry(entry, index, lead) {
   const submenu = Array.isArray(entry.submenu) && entry.submenu.length > 0;
   const classes = joinClasses("sf-context-menu-item", entry.danger ? "sf-context-menu-item--danger" : "", entry.current ? "sf-context-menu-item--current" : "");
   const body = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-        ${lead ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-context-menu-item-lead">${entry.icon ? icon(entry.icon, "sf-context-menu-item-icon") : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        ${lead ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-context-menu-item-lead">${renderLead(entry)}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         <span class="sf-context-menu-item-text">
             <span class="sf-context-menu-item-label">${entry.text ?? ""}</span>
             ${entry.caption ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-context-menu-item-caption">${entry.caption}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
@@ -2986,12 +2994,15 @@ function renderEntries(context) {
   const query = String(context.query ?? "").trim().toLowerCase(); // One leading column for the whole menu: when any item has an icon, every
   // item keeps the place, so the labels start on one line.
 
-  const lead = entries.some(entry => ROWS(entry) && entry.icon);
-  const shown = entries.map((entry, index) => [entry, index]).filter(([entry]) => matches(entry, query));
+  const lead = entries.some(entry => ROWS(entry) && (entry.icon || entry.avatar || entry.initials)); // A search the host answers (search.remote) shows the entries as the host
+  // set them for the query; a local one narrows them here.
+
+  const remote = Boolean(context.search?.remote);
+  const shown = entries.map((entry, index) => [entry, index]).filter(([entry]) => remote || matches(entry, query));
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         ${context.search ? renderSearch(context) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         ${shown.map(([entry, index]) => renderEntry(entry, index, lead))}
-        ${context.search && query && !shown.length ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<p class="sf-context-menu-note" role="status">${context.search.empty ?? ""}</p>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        ${context.search && query && !shown.some(([entry]) => ROWS(entry)) ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<p class="sf-context-menu-note" role="status">${context.search.empty ?? ""}</p>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     `;
 }
 
@@ -3009,19 +3020,12 @@ function renderContent(context) {
   }
 
   return context.text || lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
-}
+} // No tail (owner, 2026-10-12): it never read as one piece with the panel. The
+// position attribute is kept for its class and draws nothing.
 
-function renderTooltip(context) {
-  if (!context.position || !context.tooltip) {
-    return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
-  }
 
-  if (context.component?.hasSlotContent?.("tooltip")) {
-    return context.component.getSlotContent("tooltip");
-  }
-
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-        <div class="sf-context-menu-tooltip" aria-hidden="true"></div>`;
+function renderTooltip() {
+  return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
 }
 
 function renderContextMenuTemplate(context) {
@@ -5885,7 +5889,17 @@ class SfContextMenu extends _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__["de
 
   setQuery(value) {
     this._query = String(value ?? "");
-    this.requestComponentUpdate("query");
+    this.requestComponentUpdate("query"); // A search the host answers: it is told the query and sets the entries.
+
+    if (this.search?.remote) {
+      this.dispatchEvent(new CustomEvent("sf-context-menu-search", {
+        bubbles: true,
+        composed: true,
+        detail: {
+          query: this._query
+        }
+      }));
+    }
   }
 
   searchField() {
@@ -6016,11 +6030,18 @@ class SfContextMenu extends _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__["de
     });
     await this.whenRendered();
     const surface = this.surface();
-    if (!surface) return false;
+    if (!surface) return false; // Focus goes back where it was, or to the control that opened the menu
+    // when it was nowhere -- a press on an sf-button leaves it on the body in
+    // some browsers, and the menu returned it there. A host element is not
+    // itself focusable; its native control is.
+
+    const focusable = element => element?.matches?.("button, a[href], input, select, textarea, [tabindex]") ? element : element?.querySelector?.("button, a[href], input, select, textarea, [tabindex]") ?? element;
+
+    const active = document.activeElement;
     this._owned = {
       anchor,
       parentMenu,
-      returnTo: document.activeElement instanceof HTMLElement ? document.activeElement : anchor,
+      returnTo: active instanceof HTMLElement && active !== document.body && active !== document.documentElement ? active : focusable(anchor),
       expanded: anchor.getAttribute("aria-expanded"),
       haspopup: anchor.getAttribute("aria-haspopup")
     };
@@ -6075,8 +6096,14 @@ class SfContextMenu extends _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__["de
       restoreFocus: false
     });
     this._owned = null;
-    this._hoverRow = null;
-    if (this._query) this.setQuery("");
+    this._hoverRow = null; // Cleared for the next opening, without telling a host-searched list:
+    // closing is not a search.
+
+    if (this._query) {
+      this._query = "";
+      this.requestComponentUpdate("query");
+    }
+
     clearTimeout(this._hoverTimer);
     owned.position?.stop();
     document.removeEventListener("pointerdown", this._onOutsidePress, true);

@@ -3,9 +3,9 @@
   .sf-context-menu {
     --sf-context-menu-viewport-space: var(--sf-space-1\/2);
     scroll-behavior: auto;
-    --sf-context-menu-tail-size: var(--sf-b2);
-    --sf-context-menu-tail-half: calc(var(--sf-context-menu-tail-size) / 2);
-    --sf-context-menu-tail-corner-offset: var(--sf-space-1\/2);
+    --sf-context-menu-tail-size: 0px;
+    --sf-context-menu-tail-half: 0px;
+    --sf-context-menu-tail-corner-offset: 0px;
   }
   .sf-context-menu > .relative {
     display: flex;
@@ -23,438 +23,6 @@
     max-height: none;
     max-height: var(--sf-context-menu-available-block-size, none);
     max-block-size: var(--sf-context-menu-available-block-size, none);
-  }
-  .sf-context-menu[class*=sf-context-menu--position-] .sf-context-menu-content {
-    position: relative;
-  }
-  .sf-context-menu[class*=sf-context-menu--position-] .sf-context-menu-tooltip {
-    position: absolute;
-    width: var(--sf-context-menu-tail-size);
-    height: var(--sf-context-menu-tail-size);
-    -webkit-transform: rotate(45deg);
-            transform: rotate(45deg);
-    -webkit-transform-origin: center;
-            transform-origin: center;
-  }
-  /* Left / inline-start */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu--position-left .sf-context-menu-tooltip,html:not([dir="rtl"])
-  .sf-context-menu--position-inline-start .sf-context-menu-tooltip{
-    left: calc(-1 * var(--sf-context-menu-tail-half));
-  }
-  @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) .sf-context-menu--position-left .sf-context-menu-tooltip,html:not([dir="rtl"])
-  .sf-context-menu--position-inline-start .sf-context-menu-tooltip{
-    left: calc(-1 * var(--sf-context-menu-tail-half));
-    }
-  }
-  .sf-context-menu--position-left .sf-context-menu-tooltip:where(:dir(ltr)),
-  .sf-context-menu--position-inline-start .sf-context-menu-tooltip:where(:dir(ltr)){
-    left: calc(-1 * var(--sf-context-menu-tail-half));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu--position-left .sf-context-menu-tooltip,[dir="rtl"]
-  .sf-context-menu--position-inline-start .sf-context-menu-tooltip{
-    right: calc(-1 * var(--sf-context-menu-tail-half));
-  }
-  @supports not (inset-inline-start: initial){
-  [dir="rtl"] .sf-context-menu--position-left .sf-context-menu-tooltip,[dir="rtl"]
-  .sf-context-menu--position-inline-start .sf-context-menu-tooltip{
-    right: calc(-1 * var(--sf-context-menu-tail-half));
-    }
-  }
-  .sf-context-menu--position-left .sf-context-menu-tooltip:where(:dir(rtl)),
-  .sf-context-menu--position-inline-start .sf-context-menu-tooltip:where(:dir(rtl)){
-    right: calc(-1 * var(--sf-context-menu-tail-half));
-  }
-  .sf-context-menu--position-left .sf-context-menu-tooltip,
-  .sf-context-menu--position-inline-start .sf-context-menu-tooltip {
-    inset-inline-start: calc(-1 * var(--sf-context-menu-tail-half));
-    top: calc(50% - var(--sf-context-menu-tail-half));
-    inset-block-start: calc(50% - var(--sf-context-menu-tail-half));
-  }
-  /* Left top / inline-start top */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu--position-left-top .sf-context-menu-tooltip,html:not([dir="rtl"])
-  .sf-context-menu--position-inline-start-top .sf-context-menu-tooltip{
-    left: calc(-1 * var(--sf-context-menu-tail-half));
-  }
-  @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) .sf-context-menu--position-left-top .sf-context-menu-tooltip,html:not([dir="rtl"])
-  .sf-context-menu--position-inline-start-top .sf-context-menu-tooltip{
-    left: calc(-1 * var(--sf-context-menu-tail-half));
-    }
-  }
-  .sf-context-menu--position-left-top .sf-context-menu-tooltip:where(:dir(ltr)),
-  .sf-context-menu--position-inline-start-top .sf-context-menu-tooltip:where(:dir(ltr)){
-    left: calc(-1 * var(--sf-context-menu-tail-half));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu--position-left-top .sf-context-menu-tooltip,[dir="rtl"]
-  .sf-context-menu--position-inline-start-top .sf-context-menu-tooltip{
-    right: calc(-1 * var(--sf-context-menu-tail-half));
-  }
-  @supports not (inset-inline-start: initial){
-  [dir="rtl"] .sf-context-menu--position-left-top .sf-context-menu-tooltip,[dir="rtl"]
-  .sf-context-menu--position-inline-start-top .sf-context-menu-tooltip{
-    right: calc(-1 * var(--sf-context-menu-tail-half));
-    }
-  }
-  .sf-context-menu--position-left-top .sf-context-menu-tooltip:where(:dir(rtl)),
-  .sf-context-menu--position-inline-start-top .sf-context-menu-tooltip:where(:dir(rtl)){
-    right: calc(-1 * var(--sf-context-menu-tail-half));
-  }
-  .sf-context-menu--position-left-top .sf-context-menu-tooltip,
-  .sf-context-menu--position-inline-start-top .sf-context-menu-tooltip {
-    inset-inline-start: calc(-1 * var(--sf-context-menu-tail-half));
-    top: var(--sf-context-menu-tail-corner-offset);
-    inset-block-start: var(--sf-context-menu-tail-corner-offset);
-  }
-  /* Left bottom / inline-start bottom */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu--position-left-bottom .sf-context-menu-tooltip,html:not([dir="rtl"])
-  .sf-context-menu--position-inline-start-bottom .sf-context-menu-tooltip{
-    left: calc(-1 * var(--sf-context-menu-tail-half));
-  }
-  @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) .sf-context-menu--position-left-bottom .sf-context-menu-tooltip,html:not([dir="rtl"])
-  .sf-context-menu--position-inline-start-bottom .sf-context-menu-tooltip{
-    left: calc(-1 * var(--sf-context-menu-tail-half));
-    }
-  }
-  .sf-context-menu--position-left-bottom .sf-context-menu-tooltip:where(:dir(ltr)),
-  .sf-context-menu--position-inline-start-bottom .sf-context-menu-tooltip:where(:dir(ltr)){
-    left: calc(-1 * var(--sf-context-menu-tail-half));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu--position-left-bottom .sf-context-menu-tooltip,[dir="rtl"]
-  .sf-context-menu--position-inline-start-bottom .sf-context-menu-tooltip{
-    right: calc(-1 * var(--sf-context-menu-tail-half));
-  }
-  @supports not (inset-inline-start: initial){
-  [dir="rtl"] .sf-context-menu--position-left-bottom .sf-context-menu-tooltip,[dir="rtl"]
-  .sf-context-menu--position-inline-start-bottom .sf-context-menu-tooltip{
-    right: calc(-1 * var(--sf-context-menu-tail-half));
-    }
-  }
-  .sf-context-menu--position-left-bottom .sf-context-menu-tooltip:where(:dir(rtl)),
-  .sf-context-menu--position-inline-start-bottom .sf-context-menu-tooltip:where(:dir(rtl)){
-    right: calc(-1 * var(--sf-context-menu-tail-half));
-  }
-  .sf-context-menu--position-left-bottom .sf-context-menu-tooltip,
-  .sf-context-menu--position-inline-start-bottom .sf-context-menu-tooltip {
-    inset-inline-start: calc(-1 * var(--sf-context-menu-tail-half));
-    bottom: var(--sf-context-menu-tail-corner-offset);
-    inset-block-end: var(--sf-context-menu-tail-corner-offset);
-  }
-  /* Right / inline-end */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu--position-right .sf-context-menu-tooltip,html:not([dir="rtl"])
-  .sf-context-menu--position-inline-end .sf-context-menu-tooltip{
-    right: calc(-1 * var(--sf-context-menu-tail-half));
-  }
-  @supports not (inset-inline-end: initial){
-  html:not([dir="rtl"]) .sf-context-menu--position-right .sf-context-menu-tooltip,html:not([dir="rtl"])
-  .sf-context-menu--position-inline-end .sf-context-menu-tooltip{
-    right: calc(-1 * var(--sf-context-menu-tail-half));
-    }
-  }
-  .sf-context-menu--position-right .sf-context-menu-tooltip:where(:dir(ltr)),
-  .sf-context-menu--position-inline-end .sf-context-menu-tooltip:where(:dir(ltr)){
-    right: calc(-1 * var(--sf-context-menu-tail-half));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu--position-right .sf-context-menu-tooltip,[dir="rtl"]
-  .sf-context-menu--position-inline-end .sf-context-menu-tooltip{
-    left: calc(-1 * var(--sf-context-menu-tail-half));
-  }
-  @supports not (inset-inline-end: initial){
-  [dir="rtl"] .sf-context-menu--position-right .sf-context-menu-tooltip,[dir="rtl"]
-  .sf-context-menu--position-inline-end .sf-context-menu-tooltip{
-    left: calc(-1 * var(--sf-context-menu-tail-half));
-    }
-  }
-  .sf-context-menu--position-right .sf-context-menu-tooltip:where(:dir(rtl)),
-  .sf-context-menu--position-inline-end .sf-context-menu-tooltip:where(:dir(rtl)){
-    left: calc(-1 * var(--sf-context-menu-tail-half));
-  }
-  .sf-context-menu--position-right .sf-context-menu-tooltip,
-  .sf-context-menu--position-inline-end .sf-context-menu-tooltip {
-    inset-inline-end: calc(-1 * var(--sf-context-menu-tail-half));
-    top: calc(50% - var(--sf-context-menu-tail-half));
-    inset-block-start: calc(50% - var(--sf-context-menu-tail-half));
-  }
-  /* Right top / inline-end top */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu--position-right-top .sf-context-menu-tooltip,html:not([dir="rtl"])
-  .sf-context-menu--position-inline-end-top .sf-context-menu-tooltip{
-    right: calc(-1 * var(--sf-context-menu-tail-half));
-  }
-  @supports not (inset-inline-end: initial){
-  html:not([dir="rtl"]) .sf-context-menu--position-right-top .sf-context-menu-tooltip,html:not([dir="rtl"])
-  .sf-context-menu--position-inline-end-top .sf-context-menu-tooltip{
-    right: calc(-1 * var(--sf-context-menu-tail-half));
-    }
-  }
-  .sf-context-menu--position-right-top .sf-context-menu-tooltip:where(:dir(ltr)),
-  .sf-context-menu--position-inline-end-top .sf-context-menu-tooltip:where(:dir(ltr)){
-    right: calc(-1 * var(--sf-context-menu-tail-half));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu--position-right-top .sf-context-menu-tooltip,[dir="rtl"]
-  .sf-context-menu--position-inline-end-top .sf-context-menu-tooltip{
-    left: calc(-1 * var(--sf-context-menu-tail-half));
-  }
-  @supports not (inset-inline-end: initial){
-  [dir="rtl"] .sf-context-menu--position-right-top .sf-context-menu-tooltip,[dir="rtl"]
-  .sf-context-menu--position-inline-end-top .sf-context-menu-tooltip{
-    left: calc(-1 * var(--sf-context-menu-tail-half));
-    }
-  }
-  .sf-context-menu--position-right-top .sf-context-menu-tooltip:where(:dir(rtl)),
-  .sf-context-menu--position-inline-end-top .sf-context-menu-tooltip:where(:dir(rtl)){
-    left: calc(-1 * var(--sf-context-menu-tail-half));
-  }
-  .sf-context-menu--position-right-top .sf-context-menu-tooltip,
-  .sf-context-menu--position-inline-end-top .sf-context-menu-tooltip {
-    inset-inline-end: calc(-1 * var(--sf-context-menu-tail-half));
-    top: var(--sf-context-menu-tail-corner-offset);
-    inset-block-start: var(--sf-context-menu-tail-corner-offset);
-  }
-  /* Right bottom / inline-end bottom */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu--position-right-bottom .sf-context-menu-tooltip,html:not([dir="rtl"])
-  .sf-context-menu--position-inline-end-bottom .sf-context-menu-tooltip{
-    right: calc(-1 * var(--sf-context-menu-tail-half));
-  }
-  @supports not (inset-inline-end: initial){
-  html:not([dir="rtl"]) .sf-context-menu--position-right-bottom .sf-context-menu-tooltip,html:not([dir="rtl"])
-  .sf-context-menu--position-inline-end-bottom .sf-context-menu-tooltip{
-    right: calc(-1 * var(--sf-context-menu-tail-half));
-    }
-  }
-  .sf-context-menu--position-right-bottom .sf-context-menu-tooltip:where(:dir(ltr)),
-  .sf-context-menu--position-inline-end-bottom .sf-context-menu-tooltip:where(:dir(ltr)){
-    right: calc(-1 * var(--sf-context-menu-tail-half));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu--position-right-bottom .sf-context-menu-tooltip,[dir="rtl"]
-  .sf-context-menu--position-inline-end-bottom .sf-context-menu-tooltip{
-    left: calc(-1 * var(--sf-context-menu-tail-half));
-  }
-  @supports not (inset-inline-end: initial){
-  [dir="rtl"] .sf-context-menu--position-right-bottom .sf-context-menu-tooltip,[dir="rtl"]
-  .sf-context-menu--position-inline-end-bottom .sf-context-menu-tooltip{
-    left: calc(-1 * var(--sf-context-menu-tail-half));
-    }
-  }
-  .sf-context-menu--position-right-bottom .sf-context-menu-tooltip:where(:dir(rtl)),
-  .sf-context-menu--position-inline-end-bottom .sf-context-menu-tooltip:where(:dir(rtl)){
-    left: calc(-1 * var(--sf-context-menu-tail-half));
-  }
-  .sf-context-menu--position-right-bottom .sf-context-menu-tooltip,
-  .sf-context-menu--position-inline-end-bottom .sf-context-menu-tooltip {
-    inset-inline-end: calc(-1 * var(--sf-context-menu-tail-half));
-    bottom: var(--sf-context-menu-tail-corner-offset);
-    inset-block-end: var(--sf-context-menu-tail-corner-offset);
-  }
-  /* Top center */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu--position-top .sf-context-menu-tooltip,html:not([dir="rtl"])
-  .sf-context-menu--position-top-center .sf-context-menu-tooltip{
-    left: calc(50% - var(--sf-context-menu-tail-half));
-  }
-  @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) .sf-context-menu--position-top .sf-context-menu-tooltip,html:not([dir="rtl"])
-  .sf-context-menu--position-top-center .sf-context-menu-tooltip{
-    left: calc(50% - var(--sf-context-menu-tail-half));
-    }
-  }
-  .sf-context-menu--position-top .sf-context-menu-tooltip:where(:dir(ltr)),
-  .sf-context-menu--position-top-center .sf-context-menu-tooltip:where(:dir(ltr)){
-    left: calc(50% - var(--sf-context-menu-tail-half));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu--position-top .sf-context-menu-tooltip,[dir="rtl"]
-  .sf-context-menu--position-top-center .sf-context-menu-tooltip{
-    right: calc(50% - var(--sf-context-menu-tail-half));
-  }
-  @supports not (inset-inline-start: initial){
-  [dir="rtl"] .sf-context-menu--position-top .sf-context-menu-tooltip,[dir="rtl"]
-  .sf-context-menu--position-top-center .sf-context-menu-tooltip{
-    right: calc(50% - var(--sf-context-menu-tail-half));
-    }
-  }
-  .sf-context-menu--position-top .sf-context-menu-tooltip:where(:dir(rtl)),
-  .sf-context-menu--position-top-center .sf-context-menu-tooltip:where(:dir(rtl)){
-    right: calc(50% - var(--sf-context-menu-tail-half));
-  }
-  .sf-context-menu--position-top .sf-context-menu-tooltip,
-  .sf-context-menu--position-top-center .sf-context-menu-tooltip {
-    inset-inline-start: calc(50% - var(--sf-context-menu-tail-half));
-    top: calc(-1 * var(--sf-context-menu-tail-half));
-    inset-block-start: calc(-1 * var(--sf-context-menu-tail-half));
-  }
-  /* Bottom center */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu--position-bottom .sf-context-menu-tooltip,html:not([dir="rtl"])
-  .sf-context-menu--position-bottom-center .sf-context-menu-tooltip{
-    left: calc(50% - var(--sf-context-menu-tail-half));
-  }
-  @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) .sf-context-menu--position-bottom .sf-context-menu-tooltip,html:not([dir="rtl"])
-  .sf-context-menu--position-bottom-center .sf-context-menu-tooltip{
-    left: calc(50% - var(--sf-context-menu-tail-half));
-    }
-  }
-  .sf-context-menu--position-bottom .sf-context-menu-tooltip:where(:dir(ltr)),
-  .sf-context-menu--position-bottom-center .sf-context-menu-tooltip:where(:dir(ltr)){
-    left: calc(50% - var(--sf-context-menu-tail-half));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu--position-bottom .sf-context-menu-tooltip,[dir="rtl"]
-  .sf-context-menu--position-bottom-center .sf-context-menu-tooltip{
-    right: calc(50% - var(--sf-context-menu-tail-half));
-  }
-  @supports not (inset-inline-start: initial){
-  [dir="rtl"] .sf-context-menu--position-bottom .sf-context-menu-tooltip,[dir="rtl"]
-  .sf-context-menu--position-bottom-center .sf-context-menu-tooltip{
-    right: calc(50% - var(--sf-context-menu-tail-half));
-    }
-  }
-  .sf-context-menu--position-bottom .sf-context-menu-tooltip:where(:dir(rtl)),
-  .sf-context-menu--position-bottom-center .sf-context-menu-tooltip:where(:dir(rtl)){
-    right: calc(50% - var(--sf-context-menu-tail-half));
-  }
-  .sf-context-menu--position-bottom .sf-context-menu-tooltip,
-  .sf-context-menu--position-bottom-center .sf-context-menu-tooltip {
-    inset-inline-start: calc(50% - var(--sf-context-menu-tail-half));
-    bottom: calc(-1 * var(--sf-context-menu-tail-half));
-    inset-block-end: calc(-1 * var(--sf-context-menu-tail-half));
-  }
-  /* Top left / top inline-start */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu--position-top-left .sf-context-menu-tooltip,html:not([dir="rtl"])
-  .sf-context-menu--position-top-inline-start .sf-context-menu-tooltip{
-    left: var(--sf-context-menu-tail-corner-offset);
-  }
-  @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) .sf-context-menu--position-top-left .sf-context-menu-tooltip,html:not([dir="rtl"])
-  .sf-context-menu--position-top-inline-start .sf-context-menu-tooltip{
-    left: var(--sf-context-menu-tail-corner-offset);
-    }
-  }
-  .sf-context-menu--position-top-left .sf-context-menu-tooltip:where(:dir(ltr)),
-  .sf-context-menu--position-top-inline-start .sf-context-menu-tooltip:where(:dir(ltr)){
-    left: var(--sf-context-menu-tail-corner-offset);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu--position-top-left .sf-context-menu-tooltip,[dir="rtl"]
-  .sf-context-menu--position-top-inline-start .sf-context-menu-tooltip{
-    right: var(--sf-context-menu-tail-corner-offset);
-  }
-  @supports not (inset-inline-start: initial){
-  [dir="rtl"] .sf-context-menu--position-top-left .sf-context-menu-tooltip,[dir="rtl"]
-  .sf-context-menu--position-top-inline-start .sf-context-menu-tooltip{
-    right: var(--sf-context-menu-tail-corner-offset);
-    }
-  }
-  .sf-context-menu--position-top-left .sf-context-menu-tooltip:where(:dir(rtl)),
-  .sf-context-menu--position-top-inline-start .sf-context-menu-tooltip:where(:dir(rtl)){
-    right: var(--sf-context-menu-tail-corner-offset);
-  }
-  .sf-context-menu--position-top-left .sf-context-menu-tooltip,
-  .sf-context-menu--position-top-inline-start .sf-context-menu-tooltip {
-    inset-inline-start: var(--sf-context-menu-tail-corner-offset);
-    top: calc(-1 * var(--sf-context-menu-tail-half));
-    inset-block-start: calc(-1 * var(--sf-context-menu-tail-half));
-  }
-  /* Top right / top inline-end */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu--position-top-right .sf-context-menu-tooltip,html:not([dir="rtl"])
-  .sf-context-menu--position-top-inline-end .sf-context-menu-tooltip{
-    right: var(--sf-context-menu-tail-corner-offset);
-  }
-  @supports not (inset-inline-end: initial){
-  html:not([dir="rtl"]) .sf-context-menu--position-top-right .sf-context-menu-tooltip,html:not([dir="rtl"])
-  .sf-context-menu--position-top-inline-end .sf-context-menu-tooltip{
-    right: var(--sf-context-menu-tail-corner-offset);
-    }
-  }
-  .sf-context-menu--position-top-right .sf-context-menu-tooltip:where(:dir(ltr)),
-  .sf-context-menu--position-top-inline-end .sf-context-menu-tooltip:where(:dir(ltr)){
-    right: var(--sf-context-menu-tail-corner-offset);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu--position-top-right .sf-context-menu-tooltip,[dir="rtl"]
-  .sf-context-menu--position-top-inline-end .sf-context-menu-tooltip{
-    left: var(--sf-context-menu-tail-corner-offset);
-  }
-  @supports not (inset-inline-end: initial){
-  [dir="rtl"] .sf-context-menu--position-top-right .sf-context-menu-tooltip,[dir="rtl"]
-  .sf-context-menu--position-top-inline-end .sf-context-menu-tooltip{
-    left: var(--sf-context-menu-tail-corner-offset);
-    }
-  }
-  .sf-context-menu--position-top-right .sf-context-menu-tooltip:where(:dir(rtl)),
-  .sf-context-menu--position-top-inline-end .sf-context-menu-tooltip:where(:dir(rtl)){
-    left: var(--sf-context-menu-tail-corner-offset);
-  }
-  .sf-context-menu--position-top-right .sf-context-menu-tooltip,
-  .sf-context-menu--position-top-inline-end .sf-context-menu-tooltip {
-    inset-inline-end: var(--sf-context-menu-tail-corner-offset);
-    top: calc(-1 * var(--sf-context-menu-tail-half));
-    inset-block-start: calc(-1 * var(--sf-context-menu-tail-half));
-  }
-  /* Bottom left / bottom inline-start */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu--position-bottom-left .sf-context-menu-tooltip,html:not([dir="rtl"])
-  .sf-context-menu--position-bottom-inline-start .sf-context-menu-tooltip{
-    left: var(--sf-context-menu-tail-corner-offset);
-  }
-  @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) .sf-context-menu--position-bottom-left .sf-context-menu-tooltip,html:not([dir="rtl"])
-  .sf-context-menu--position-bottom-inline-start .sf-context-menu-tooltip{
-    left: var(--sf-context-menu-tail-corner-offset);
-    }
-  }
-  .sf-context-menu--position-bottom-left .sf-context-menu-tooltip:where(:dir(ltr)),
-  .sf-context-menu--position-bottom-inline-start .sf-context-menu-tooltip:where(:dir(ltr)){
-    left: var(--sf-context-menu-tail-corner-offset);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu--position-bottom-left .sf-context-menu-tooltip,[dir="rtl"]
-  .sf-context-menu--position-bottom-inline-start .sf-context-menu-tooltip{
-    right: var(--sf-context-menu-tail-corner-offset);
-  }
-  @supports not (inset-inline-start: initial){
-  [dir="rtl"] .sf-context-menu--position-bottom-left .sf-context-menu-tooltip,[dir="rtl"]
-  .sf-context-menu--position-bottom-inline-start .sf-context-menu-tooltip{
-    right: var(--sf-context-menu-tail-corner-offset);
-    }
-  }
-  .sf-context-menu--position-bottom-left .sf-context-menu-tooltip:where(:dir(rtl)),
-  .sf-context-menu--position-bottom-inline-start .sf-context-menu-tooltip:where(:dir(rtl)){
-    right: var(--sf-context-menu-tail-corner-offset);
-  }
-  .sf-context-menu--position-bottom-left .sf-context-menu-tooltip,
-  .sf-context-menu--position-bottom-inline-start .sf-context-menu-tooltip {
-    inset-inline-start: var(--sf-context-menu-tail-corner-offset);
-    bottom: calc(-1 * var(--sf-context-menu-tail-half));
-    inset-block-end: calc(-1 * var(--sf-context-menu-tail-half));
-  }
-  /* Bottom right / bottom inline-end */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu--position-bottom-right .sf-context-menu-tooltip,html:not([dir="rtl"])
-  .sf-context-menu--position-bottom-inline-end .sf-context-menu-tooltip{
-    right: var(--sf-context-menu-tail-corner-offset);
-  }
-  @supports not (inset-inline-end: initial){
-  html:not([dir="rtl"]) .sf-context-menu--position-bottom-right .sf-context-menu-tooltip,html:not([dir="rtl"])
-  .sf-context-menu--position-bottom-inline-end .sf-context-menu-tooltip{
-    right: var(--sf-context-menu-tail-corner-offset);
-    }
-  }
-  .sf-context-menu--position-bottom-right .sf-context-menu-tooltip:where(:dir(ltr)),
-  .sf-context-menu--position-bottom-inline-end .sf-context-menu-tooltip:where(:dir(ltr)){
-    right: var(--sf-context-menu-tail-corner-offset);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu--position-bottom-right .sf-context-menu-tooltip,[dir="rtl"]
-  .sf-context-menu--position-bottom-inline-end .sf-context-menu-tooltip{
-    left: var(--sf-context-menu-tail-corner-offset);
-  }
-  @supports not (inset-inline-end: initial){
-  [dir="rtl"] .sf-context-menu--position-bottom-right .sf-context-menu-tooltip,[dir="rtl"]
-  .sf-context-menu--position-bottom-inline-end .sf-context-menu-tooltip{
-    left: var(--sf-context-menu-tail-corner-offset);
-    }
-  }
-  .sf-context-menu--position-bottom-right .sf-context-menu-tooltip:where(:dir(rtl)),
-  .sf-context-menu--position-bottom-inline-end .sf-context-menu-tooltip:where(:dir(rtl)){
-    left: var(--sf-context-menu-tail-corner-offset);
-  }
-  .sf-context-menu--position-bottom-right .sf-context-menu-tooltip,
-  .sf-context-menu--position-bottom-inline-end .sf-context-menu-tooltip {
-    inset-inline-end: var(--sf-context-menu-tail-corner-offset);
-    bottom: calc(-1 * var(--sf-context-menu-tail-half));
-    inset-block-end: calc(-1 * var(--sf-context-menu-tail-half));
   }
 }
 @layer sf.states {
@@ -664,17 +232,10 @@
     border-start-start-radius: var(--sf-context-menu--border-start-start-radius, var(--sf-radius--surface));
     gap: var(--sf-d4);
   }
-  /* utility-hint: display/block */
+  /* Markup written for the tail it used to have draws none: a menu has no tail
+     (owner, 2026-10-12). */
   .sf-context-menu .sf-context-menu-tooltip {
-    /* Поднят: поверхность берёт ступень своей высоты, иначе в тёмной теме
-       подъём не виден — там чёрная тень ничего не даёт. */
-    background-color: var(--sf-elevation-3--surface);
-    --sf-on-surface-variant: var(--sf-on-elevation-3--variant);
-    box-shadow: var(--sf-elevation-3--shadow);
-    height: var(--sf-b2);
-    height: var(--sf-context-menu-tail-size, var(--sf-b2));
-    width: var(--sf-b2);
-    width: var(--sf-context-menu-tail-size, var(--sf-b2));
+    display: none;
   }
   /* utility-hint: display/flex (.flex) flex-direction/column (.flex-col) flex-wrap/nowrap (.flex-nowrap) justify-content/flex-start (.justify-start) align-items/flex-start (.items-start) */
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu .sf-context-menu-content{
@@ -780,11 +341,15 @@
   /* ─── entries: the standard rows ───────────────────────────────────────── */
   .sf-context-menu--entries .sf-context-menu-content {
     gap: var(--sf-px);
-    min-width: var(--sf-f8);
-    min-inline-size: var(--sf-f8);
-    min-width: var(--sf-f8);
-    min-width: var(--sf-context-menu--min-inline-size, var(--sf-f8));
-    min-inline-size: var(--sf-context-menu--min-inline-size, var(--sf-f8));
+    /* As wide as its longest line, from a modest floor: a row menu of three
+       short actions stood with a third of its width empty when the floor was the
+       profile menu's (owner, 2026-10-12). A menu that wants more sets the
+       variable. */
+    min-width: var(--sf-e8);
+    min-inline-size: var(--sf-e8);
+    min-width: var(--sf-e8);
+    min-width: var(--sf-context-menu--min-inline-size, var(--sf-e8));
+    min-inline-size: var(--sf-context-menu--min-inline-size, var(--sf-e8));
     max-width: min(var(--sf-g2), 100vw);
     max-inline-size: min(var(--sf-g2), 100vw);
     max-width: min(var(--sf-g2), 100vw);
@@ -911,6 +476,25 @@
     flex: none;
     width: var(--sf-icon-size-2);
     inline-size: var(--sf-icon-size-2);
+  }
+  /* A picture in the lead: a site's logo or a person, the icon's size, with
+     its initials on the secondary tone when there is no picture. */
+  .sf-context-menu-item-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--sf-icon-size-2);
+    inline-size: var(--sf-icon-size-2);
+    height: var(--sf-icon-size-2);
+    block-size: var(--sf-icon-size-2);
+    border-radius: var(--sf-radius--ui);
+    background-color: var(--sf-secondary-container);
+    color: var(--sf-on-secondary-container);
+    font-size: var(--sf-text-size-1\/4);
+    font-weight: var(--sf-font-weight-medium);
+    line-height: 1;
+    -o-object-fit: cover;
+       object-fit: cover;
   }
   .sf-context-menu-item-icon,
   .sf-context-menu-item-chevron {
@@ -1198,8 +782,7 @@
   }
 }
 @media (forced-colors: active) {
-  .sf-context-menu .sf-context-menu-content,
-  .sf-context-menu .sf-context-menu-tooltip {
+  .sf-context-menu .sf-context-menu-content {
     border: var(--sf-px) solid CanvasText;
   }
   .sf-context-menu-content > .sf-button:not(:disabled):not(.disabled).focus-visible,

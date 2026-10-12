@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
   "id": "smart.context-menu",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "title": "Context Menu",
   "summary": "The Framework's action menu: data entries with icon, caption, value, shortcut, check, submenu, separator and heading, opened by openFor() into the top layer, anchored, with keyboard, typeahead and focus return. A host may still render its own items and own the lifecycle.",
   "kind": "smart",
@@ -83,11 +83,13 @@
           "inline-start-end",
           "inline-end-start",
           "inline-end-end"
-        ]
+        ],
+        "description": "Deprecated: a menu has no tail since 1.3.0 (owner, 2026-10-12); the value is kept for its class and draws nothing."
       },
       "tooltip": {
         "type": "boolean",
-        "default": true
+        "default": true,
+        "description": "Deprecated: a menu has no tail since 1.3.0 (owner, 2026-10-12); the value is kept for its class and draws nothing."
       },
       "text": {
         "type": "string",
@@ -132,7 +134,7 @@
       "search": {
         "type": "object",
         "default": null,
-        "description": "{placeholder, empty}: a search field above the rows (set as a property). A submenu entry passes it with `search`."
+        "description": "{placeholder, empty, remote}: a search field above the rows (set as a property). Local by default; with remote: true the menu raises sf-context-menu-search {query} and shows the entries the host sets. A submenu entry passes it with `search`."
       }
     },
     "additionalProperties": false
@@ -158,7 +160,9 @@
           "keepOpen": "boolean, a choice does not close the menu",
           "lang": "string, the language the label is written in",
           "search": "{placeholder, empty}, a field above the submenu that narrows its rows by label, caption and keywords",
-          "keywords": "string, extra words a search matches"
+          "keywords": "string, extra words a search matches",
+          "avatar": "string, a picture URL drawn in the lead (a site's logo, a person)",
+          "initials": "string, drawn in the lead when there is no picture"
         }
       },
       "separator": {
@@ -215,7 +219,7 @@
       }
     },
     "openFor": {
-      "summary": "Open beside an element: top layer, anchored by SF.Position with flip and shift, focus on the first item (or 'last', or 'none'). The menu then owns its lifecycle: Escape, Tab, a press outside and a choice close it and return the focus.",
+      "summary": "Open beside an element: top layer, anchored by SF.Position with flip and shift, focus on the first item (or 'last', or 'none'). The menu then owns its lifecycle: Escape, Tab, a press outside and a choice close it and return the focus -- to where it was, or to the anchor's own control when it was nowhere.",
       "arguments": [
         {
           "name": "anchor",
@@ -250,8 +254,8 @@
         }
       ],
       "returns": {
-        "type": "boolean",
-        "description": "Whether it opened."
+        "type": "Promise<boolean>",
+        "description": "Resolves once the menu is rendered and open: whether it opened."
       }
     },
     "toggleFor": {
@@ -271,7 +275,8 @@
         }
       ],
       "returns": {
-        "type": "boolean"
+        "type": "Promise<boolean>",
+        "description": "Resolves to whether the menu is open afterwards."
       }
     },
     "close": {
@@ -339,6 +344,17 @@
       "summary": "Closed.",
       "payload": {
         "type": "object"
+      }
+    },
+    "sf-context-menu-search": {
+      "summary": "The query of a search the host answers (search.remote).",
+      "payload": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string"
+          }
+        }
       }
     }
   },
@@ -439,7 +455,18 @@
       "ui_smart_revision": "856fb5d751fad1c76104c32515f4c1869dd75b6c"
     },
     "aliases": [],
-    "deprecations": [],
+    "deprecations": [
+      {
+        "path": "position",
+        "since": "1.3.0",
+        "replacement": "openFor(anchor, {side, align}) places the menu; no tail is drawn"
+      },
+      {
+        "path": "tooltip",
+        "since": "1.3.0",
+        "replacement": "none: a menu has no tail"
+      }
+    ],
     "replacement": null,
     "migrations": []
   },
@@ -449,19 +476,19 @@
     "source_artifacts": [
       {
         "path": "src/smart/context-menu/index.js",
-        "sha256": "142060c6e8f81a6b651cfd7d9c74b196d4e56d7443765324af6df7b52bf90c8e"
+        "sha256": "e7f41db4188af765bf8ef40cac9353497d19d715d9d1dad74362c9ced2399c04"
       },
       {
         "path": "src/smart/context-menu/js/templates/default.js",
-        "sha256": "b4805211f45d4da1eb4927df4030a8f68ea17a623cb477bb98e211b391df0b56"
+        "sha256": "ae605e2d448f45e7e5d89f2d78f09d22b38b05f7a21aff0ea5cd340ef463d2a0"
       },
       {
         "path": "src/component/context-menu/scss/_css__context_menu.scss",
-        "sha256": "a7cb6eeb423a9b27d848fdd72779f816acab0ce5e46cf8d9c78e16f4fa8fdd52"
+        "sha256": "fbf5bbb54e7ee02a89f5837d749e931efffe2b02f95385e898ca770e6fff2ecc"
       },
       {
         "path": "src/component/context-menu/scss/_css__context_menu_custom.scss",
-        "sha256": "8f561a944ba45091acfff006c67467c93f7b9e47a31263f84a9472b2880db110"
+        "sha256": "0f79acc2e27a6f0cc924b9197f8662b0e2df16516d2d86ad9cafb6c8f3368058"
       }
     ],
     "generated_runtime": [
@@ -474,13 +501,12 @@
     ]
   },
   "ai_guidance": {
-    "use_when": "Use sf-context-menu for every action menu: give it entries and open it with openFor(anchor). It opens below and start-aligned by default, with no tail, in the top layer, on the profile menu's surface. The tail (position) is for a host-placed menu that points at something. A profile menu is one: a header for the person, a choice row for the theme, a submenu with search for the language.",
+    "use_when": "Use sf-context-menu for every action menu: give it entries and open it with openFor(anchor). It opens below and start-aligned by default, with no tail, in the top layer, on the profile menu's surface. A profile menu is one: a header for the person, a choice row for the theme, a submenu with search for the language.",
     "do_not": [
       "Do not copy generated ui-smart code",
       "Do not move host data or access decisions into the component",
-      "Do not use physical left/right position values in new direction-neutral markup",
       "Do not hand-make a menu of divs and buttons: the row geometry, roles, keyboard and focus return are this component's",
-      "Do not set position on a menu opened by openFor(); it draws a tail"
+      "Do not ask for a tail: position and tooltip are deprecated and draw nothing"
     ],
     "required_reads": [
       "inputs",

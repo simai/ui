@@ -58,8 +58,14 @@ function resolveIdTarget(button, value) {
 function readTargetText(target) {
   if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
     return target.value;
-  }
+  } // A numbered code block (Highlight data-lines) copies its code: one line per
+  // row and none of the numbers. Its text content ran the numbers into the
+  // code and the rows into one line («1.card {2  padding…»).
 
+
+  const rows = target?.querySelectorAll?.(':scope .sf-code-lines > .sf-code-line > .sf-code-line__content'); // An empty line is drawn as a space so its row keeps a height; it copies empty.
+
+  if (rows?.length) return Array.from(rows, row => row.textContent === ' ' ? '' : row.textContent).join('\n');
   return target?.textContent || '';
 }
 
