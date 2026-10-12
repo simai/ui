@@ -33,6 +33,8 @@
 
 ### Добавлено
 
+- The data view host port 1.9.0: a tree node may name its icon (`icon`, and `icon_expanded` for an open node that looks different), drawn beside its open/close button. The host chooses it -- a page with pages under it is still a page; a host that names none gets a folder for a node with children and a document for a leaf.
+
 - The data view host port 1.8.0: a list can be a tree. The host answers one level at a time (`tree.expand`), says where a node may move (`node.targets`, with labels, since most targets are not on screen) and moves it (`node.move`, at an index when reordering is allowed). A write it wants confirmed is answered `refused` with reason `confirm_required` and `data.confirm {summary, digest}`, and applied when raised again with the digest. `view.create_record` may carry a parent, and `data.row_actions` labels the host's own actions and groups them into submenus. Capabilities `tree` and `tree-move`; the kit has 37 cases. Larena's Groups and Site pages are the first hosts.
 - A choices column with `variant: "badges"` is a row of tonal badges coloured by each option's scheme, and a value may carry its own text. A file column the host says holds images draws `sf-file-preview` with the new `compact`: the thumbnail, or the extension in a tile, as tall as a list row.
 
