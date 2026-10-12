@@ -8,6 +8,10 @@
 
 ### Исправлено
 
+- A menu has no tail: it never read as one piece with the panel. `position` and `tooltip` are deprecated and draw nothing; markup that writes a tail has it hidden.
+- A menu returns the focus where it was, or to its anchor's own control when it was nowhere -- an `sf-button` anchor left it on the page body.
+- Copying a Highlight block with line numbers copies the code, one line per row, without the numbers.
+
 - Standard menu rows keep their height in a short window and the list scrolls; a caption no longer runs into the next row. A searchable submenu opened by a pointer opens on its field, so the letters go into the search and Escape closes the submenu, not the whole menu.
 
 - Highlight line numbers (`data-lines`) are laid out one row per line, with the number in a column of its own; all the lines used to run into one.
@@ -41,6 +45,9 @@
   always been `translateX(0)` when open, and the panel opens like a submenu.
 
 ### Добавлено
+
+- The standard menu's rows take a picture in the lead (`avatar`, or `initials` without one), and `search: {remote: true}` makes a list the host searches: the menu raises `sf-context-menu-search` with the query and shows the entries the host sets.
+- A menu is as wide as its content, from an e8 floor up to g2; a host raises the floor with `--sf-context-menu--min-inline-size`.
 
 - The standard menu carries a profile menu: a `header` entry for the person (name, lines under it, picture or initials), a `choice` row of options side by side (the theme), marked at once while the menu stays open, a `note` line, and `search` on a menu or a submenu entry -- a field that narrows the rows by label, caption and keywords. A row takes `lang` for a language list written in each language's own name.
 
