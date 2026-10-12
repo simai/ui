@@ -87,6 +87,8 @@
 
 ### Изменено
 
+- The shared Smart runtime: lit, smart-base and page-language are loaded once per page, from `core/js/smart-base.js` beside `core.js`, and the Smart bundles no longer carry a copy each (a bundle such as `close.min.js` went from 52 KB to 2.6 KB; the runtime is 78 KB, 25 KB gzipped, once). Core fetches the runtime the first time a Smart element is queued; a page that assembles its scripts by hand includes `core/js/smart-base.js` after `core.js` (or before Smart bundles when it has no Core).
+
 - The Loader fetches the minified twin of every component and Smart script and of every stylesheet, about 40 % of the readable size; a page being debugged asks for the readable files with `SF_BOOT_CONFIG.minified = false`, `?sf-debug` in its address or `data-sf-debug` on `<html>`. A bundle built without a minified twin falls back to its readable file once. Pages should include `core.min.js` and `core.min.css`, which load the minified core chunks.
 
 - The package reference that names SIMAI Framework Pro's components ships in the runtime as `distr/core/contracts/packages/pro.package.json`, beside the ports, so a consumer holding only the distribution can tell which elements need the Pro package. The change journal records the move (`component-pro-package-move`), and `sf-upgrade` reports a Pro tag in a project that declares no Pro package. `sf-upgrade` had stopped on every project since 2026-10-09 (a journal pattern the `u` flag rejects, and an attribute retired without a replacement); both are fixed, and the gate now compiles every journal pattern the way `sf-upgrade` does.
