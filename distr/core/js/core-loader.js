@@ -1713,9 +1713,11 @@ __webpack_require__.r(__webpack_exports__);
       }
     }
   });
-})();
+})(); // Made when it is sent: made once when this file ran, its timestamp was the
+// moment the Loader was evaluated, not the moment the page was ready.
 
-const sfEvent = new CustomEvent('sf-loader-ready', {
+
+const createReadyEvent = () => new CustomEvent('sf-loader-ready', {
   detail: {
     message: 'All components loaded.',
     timestamp: Date.now()
@@ -1891,7 +1893,14 @@ function SFLoaderPlugin(params) {
   if (this.smart.base === true) {
     this.smartBaseReady = this.loadSmartBase().finally(start);
   } else {
-    this.smartBaseReady = Promise.resolve(window.SF?.smart || null);
+    // Settles when the base arrives, however it arrives: SF.loadSmartBase() or
+    // the first Smart bundle. It used to resolve at once with null, so
+    // `await SF.smartBaseReady` waited for nothing (documentation trial).
+    this.smartBaseReady = window.SF?.smart?.SfBaseElement ? Promise.resolve(window.SF.smart) : new Promise(resolve => {
+      window.addEventListener('sf-smart-base-ready', () => resolve(window.SF?.smart || null), {
+        once: true
+      });
+    });
     start();
   }
 }
@@ -2104,18 +2113,8 @@ SFLoaderPlugin.prototype.loadSmartBase = function () {
   }
 
   this.smartBaseLoadPromise = Promise.all(/* import() | smart-base */[__webpack_require__.e(111949971785676), __webpack_require__.e(51805064141692)]).then(__webpack_require__.bind(__webpack_require__, "0845ef25b9de")).then(() => {
-    try {
-      window.dispatchEvent(new CustomEvent('sf-smart-base-ready', {
-        detail: {
-          smart: window.SF?.smart || null,
-          loader: this,
-          timestamp: Date.now()
-        }
-      }));
-    } catch (e) {
-      console.warn('sf-smart-base-ready dispatch failed', e);
-    }
-
+    // The base announces itself (sf-smart-base-ready) when it publishes
+    // SF.smart, once per page, so it is not announced again here.
     return window.SF?.smart || null;
   }).catch(error => {
     console.warn('smart base load failed', error);
@@ -2568,7 +2567,7 @@ SFLoaderPlugin.prototype.dispatchReadyOnce = function () {
   }
 
   try {
-    window.dispatchEvent(sfEvent);
+    window.dispatchEvent(createReadyEvent());
     this.eventSend = true;
     return true;
   } catch (e) {
@@ -4750,21 +4749,28 @@ SFLoaderPlugin.prototype.registerComponent = function (name, className) {
 
   if (lower && !this.ComponentRegistry[lower]) {
     this.ComponentRegistry[lower] = className;
-  }
+  } // Announced after the module that registered finishes its own synchronous
+  // work: every class component registers first and publishes SF.<Name> (its
+  // state API) on the next lines, so a listener told at once found no API --
+  // all 17 of them (documentation trial, 2026-10-12). The registry is filled
+  // now, so ready() resolves synchronously as before.
 
-  window.dispatchEvent(new CustomEvent(name + ':ready', {
-    detail: className
-  }));
 
-  try {
-    document.dispatchEvent(new CustomEvent('component:ready', {
-      detail: {
-        name
-      }
+  queueMicrotask(() => {
+    window.dispatchEvent(new CustomEvent(name + ':ready', {
+      detail: className
     }));
-  } catch (e) {
-    console.warn('component:ready dispatch failed', e);
-  }
+
+    try {
+      document.dispatchEvent(new CustomEvent('component:ready', {
+        detail: {
+          name
+        }
+      }));
+    } catch (e) {
+      console.warn('component:ready dispatch failed', e);
+    }
+  });
 };
 
 SFLoaderPlugin.prototype.ready = function (className, callback) {
@@ -5847,8 +5853,14 @@ async function createSmartElementAsync(name, params = {}) {
   return element;
 }
 
-SF.Loader = new SFLoaderPlugin(props);
-SF.smartBaseReady = SF.Loader.smartBaseReady || Promise.resolve(SF.smart || null);
+SF.Loader = new SFLoaderPlugin(props); // Read live: SF.loadSmartBase() replaces the Loader's promise, and a copy taken
+// here once would never see it.
+
+Object.defineProperty(SF, 'smartBaseReady', {
+  configurable: true,
+  enumerable: true,
+  get: () => SF.Loader.smartBaseReady || Promise.resolve(SF.smart || null)
+});
 
 SF.loadSmartBase = function loadSmartBase() {
   return SF.Loader.loadSmartBase();

@@ -1,4 +1,5 @@
 import { isPlainObject } from './canonical.mjs';
+import { pageText } from '../page-language.js';
 import { activeSortableSession, registerSortableDropTarget } from './sortable.mjs';
 
 // Editor canvas overlay. It draws hover and selection frames, a floating
@@ -76,8 +77,9 @@ export function defineCompositionOverlay(registry = globalThis.customElements) {
     }
 
     get messages() {
-      const lang = (globalThis.document.documentElement.lang || 'en').toLowerCase().startsWith('ru') ? 'ru' : 'en';
-      return { ...MESSAGES[lang], ...(this.customMessages || {}) };
+      // In the page's language through pageText, as every component's words are.
+      const words = Object.fromEntries(Object.keys(MESSAGES.en).map((key) => [key, pageText(MESSAGES, key, this, 'sf-composition-overlay')]));
+      return { ...words, ...(this.customMessages || {}) };
     }
 
     connectedCallback() {

@@ -215,10 +215,13 @@ function unbindToast(root) {
   delete root.__sfToastStartedAt;
   delete root.__sfToastRemovalTarget;
   delete root.dataset[TOAST_BOUND_FLAG];
-}
+} // The removal target is read after the guard: as a default parameter it was
+// read first, and dismiss(null) threw instead of answering false.
 
-function dismissToast(root, removalTarget = root.__sfToastRemovalTarget || root, trigger = null) {
+
+function dismissToast(root, removalTarget = null, trigger = null) {
   if (!(root instanceof HTMLElement) || root.classList.contains('closing')) return false;
+  removalTarget = removalTarget || root.__sfToastRemovalTarget || root;
   unbindToast(root);
   root.dispatchEvent(new CustomEvent('sf-toast-close', {
     bubbles: true,
@@ -229,10 +232,14 @@ function dismissToast(root, removalTarget = root.__sfToastRemovalTarget || root,
     }
   }));
   return (0,_dismiss__WEBPACK_IMPORTED_MODULE_2__.dismissToastElement)(root, removalTarget);
-}
+} // What a toast reports is its status (journal record attribute-type-to-status);
+// `type` is still read, as the attribute is, until that record leaves. Code
+// that had moved to `status` got a default toast from the JS API.
+
 
 function createToastElement(options = {}) {
   const {
+    status,
     type = 'default',
     icon = '',
     title = '',
@@ -245,7 +252,7 @@ function createToastElement(options = {}) {
     role = ''
   } = options;
   const root = document.createElement('div');
-  root.className = joinClasses('sf-toast', `sf-toast--${normalizeType(type)}`, 'flex', 'items-cross-start');
+  root.className = joinClasses('sf-toast', `sf-toast--${normalizeType(status ?? type)}`, 'flex', 'items-cross-start');
 
   if (Number.isFinite(Number(duration)) && Number(duration) > 0) {
     root.dataset.duration = String(Number(duration));
@@ -350,6 +357,7 @@ class Toast extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
   constructor(props) {
     super(props);
     const {
+      status,
       type = 'default',
       icon = '',
       title = '',
@@ -359,6 +367,7 @@ class Toast extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
       closable = true
     } = this.params || {};
     this.template = createToastElement({
+      status,
       type,
       icon,
       title,
@@ -3066,7 +3075,25 @@ if (typeof window !== "undefined") {
     toNumber,
     normalizeEnum,
     parseJsonAttribute
-  };
+  }; // Announced once per page, by whichever copy of the base arrives first --
+  // SF.loadSmartBase() or the first Smart bundle, each of which carries one --
+  // so SF.smartBaseReady settles however the base came.
+
+  if (!window.SF.smartBaseAnnounced) {
+    window.SF.smartBaseAnnounced = true;
+
+    try {
+      window.dispatchEvent(new CustomEvent("sf-smart-base-ready", {
+        detail: {
+          smart: window.SF.smart,
+          loader: window.SF.Loader || null,
+          timestamp: Date.now()
+        }
+      }));
+    } catch (error) {
+      console.warn("sf-smart-base-ready dispatch failed", error);
+    }
+  }
 }
 
 /***/ },

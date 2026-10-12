@@ -945,6 +945,11 @@ function Search(e = {
       map.set(key, obGallery);
       obGallery.container.append(obGallery.item(e));
     } else {
+      // The legacy attribute gallery is built by nothing (its module is
+      // not imported), so SF.Gallery is absent and [sf-gallery] markup
+      // is left alone, as [sf-modal] and [sf-overbox] are without their
+      // modules. It used to throw inside the sf-loader-ready handler.
+      if (!SF.Gallery) return;
       obGallery = new SF.Gallery(e.e, [e], _s.attrParamUpdate(e.e));
       obGallery.elements = [e];
       map.set(key, obGallery);

@@ -220,10 +220,12 @@ function setProgressScaleState(target, state = {}) {
 
   if (Object.prototype.hasOwnProperty.call(state, 'size')) {
     root.dataset.size = normalizeProgressScaleSize(state.size);
-  }
+  } // A progress indicator's colour role is its status (journal record
+  // attribute-tone-to-status); tone is still read until that record leaves.
 
-  if (Object.prototype.hasOwnProperty.call(state, 'tone')) {
-    root.dataset.tone = normalizeProgressScaleTone(state.tone);
+
+  if (Object.prototype.hasOwnProperty.call(state, 'status') || Object.prototype.hasOwnProperty.call(state, 'tone')) {
+    root.dataset.tone = normalizeProgressScaleTone(state.status ?? state.tone);
   }
 
   if (Object.prototype.hasOwnProperty.call(state, 'showText')) {
@@ -256,6 +258,7 @@ function getProgressScaleState(target) {
   return {
     value: normalizeProgressScaleValue(root.dataset.value),
     size: normalizeProgressScaleSize(root.dataset.size),
+    status: normalizeProgressScaleTone(root.dataset.tone),
     tone: normalizeProgressScaleTone(root.dataset.tone),
     showText: normalizeBoolean(root.dataset.showText, true),
     label: root.getAttribute('aria-label') || '',
@@ -272,6 +275,7 @@ class ProgressScale extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_
     const {
       size = '1',
       value = 0,
+      status,
       tone = 'primary',
       showText = true,
       label = '',
@@ -281,7 +285,7 @@ class ProgressScale extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_
     root.className = 'sf-progress-scale flex flex-col';
     root.dataset.size = normalizeProgressScaleSize(size);
     root.dataset.value = String(normalizeProgressScaleValue(value));
-    root.dataset.tone = normalizeProgressScaleTone(tone);
+    root.dataset.tone = normalizeProgressScaleTone(status ?? tone);
     root.dataset.showText = String(normalizeBoolean(showText, true));
     if (String(label).trim()) root.dataset.label = String(label).trim();
     if (String(valueText).trim()) root.dataset.valueText = String(valueText).trim();
@@ -3011,7 +3015,25 @@ if (typeof window !== "undefined") {
     toNumber,
     normalizeEnum,
     parseJsonAttribute
-  };
+  }; // Announced once per page, by whichever copy of the base arrives first --
+  // SF.loadSmartBase() or the first Smart bundle, each of which carries one --
+  // so SF.smartBaseReady settles however the base came.
+
+  if (!window.SF.smartBaseAnnounced) {
+    window.SF.smartBaseAnnounced = true;
+
+    try {
+      window.dispatchEvent(new CustomEvent("sf-smart-base-ready", {
+        detail: {
+          smart: window.SF.smart,
+          loader: window.SF.Loader || null,
+          timestamp: Date.now()
+        }
+      }));
+    } catch (error) {
+      console.warn("sf-smart-base-ready dispatch failed", error);
+    }
+  }
 }
 
 /***/ },

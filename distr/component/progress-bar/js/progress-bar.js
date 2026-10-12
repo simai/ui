@@ -180,10 +180,12 @@ function setProgressBarState(target, state = {}) {
 
   if (Object.prototype.hasOwnProperty.call(state, 'textPosition')) {
     root.dataset.position = normalizeTextPosition(state.textPosition);
-  }
+  } // A progress indicator's colour role is its status (journal record
+  // attribute-tone-to-status); tone is still read until that record leaves.
 
-  if (Object.prototype.hasOwnProperty.call(state, 'tone')) {
-    root.dataset.tone = normalizeTone(state.tone);
+
+  if (Object.prototype.hasOwnProperty.call(state, 'status') || Object.prototype.hasOwnProperty.call(state, 'tone')) {
+    root.dataset.tone = normalizeTone(state.status ?? state.tone);
   }
 
   if (Object.prototype.hasOwnProperty.call(state, 'label')) {
@@ -222,6 +224,7 @@ function getProgressBarState(target) {
   return {
     value: normalizeValue(root.dataset.value ?? 0),
     textPosition: normalizeTextPosition(root.dataset.position ?? root.dataset.textPosition, detectTextPosition(root)),
+    status: normalizeTone(root.dataset.tone),
     tone: normalizeTone(root.dataset.tone),
     label: root.getAttribute('aria-label') || '',
     valueText: root.getAttribute('aria-valuetext') || ''
@@ -238,6 +241,7 @@ class ProgressBar extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0_
       size = '1',
       value = 0,
       textPosition = 'none',
+      status,
       tone = 'primary',
       label = '',
       valueText = ''
@@ -257,7 +261,7 @@ class ProgressBar extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0_
 
     root.dataset.value = String(normalizeValue(value));
     root.dataset.position = normalizeTextPosition(textPosition);
-    root.dataset.tone = normalizeTone(tone);
+    root.dataset.tone = normalizeTone(status ?? tone);
     if (String(label).trim()) root.dataset.label = String(label).trim();
     if (String(valueText).trim()) root.dataset.valueText = String(valueText).trim();
     const main = document.createElement('div');

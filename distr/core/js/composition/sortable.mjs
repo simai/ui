@@ -2,6 +2,7 @@
 // external drop targets share one drag session. Pointer (mouse, pen, touch via
 // handles), keyboard and screen-reader paths all end in the same intent event;
 // the component never moves host DOM or data. The host applies the change.
+import { pageText } from '../page-language.js';
 
 export const SORTABLE_INTENT_EVENT = 'sf-sortable-intent';
 export const SORTABLE_STATE_EVENT = 'sf-sortable-state';
@@ -33,7 +34,9 @@ const MESSAGES = {
 };
 
 const format = (template, values) => template.replace(/\{(\w+)\}/gu, (_, key) => String(values[key] ?? ''));
-const messages = () => MESSAGES[(globalThis.document?.documentElement.lang || 'en').toLowerCase().startsWith('ru') ? 'ru' : 'en'];
+// In the page's language through pageText, as every component's words are;
+// <html lang> alone left SF.language.use() unheard (documentation trial).
+const messages = () => Object.fromEntries(Object.keys(MESSAGES.en).map((key) => [key, pageText(MESSAGES, key, undefined, 'sf-sortable')]));
 // Separate Smart bundles (sf-sortable, sf-composition-overlay) each carry a copy
 // of this module; the drag session and external targets live on one global
 // record so a library drag can land on the overlay. The key carries the record

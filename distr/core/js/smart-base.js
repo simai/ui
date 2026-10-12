@@ -2540,7 +2540,25 @@ if (typeof window !== "undefined") {
     toNumber,
     normalizeEnum,
     parseJsonAttribute
-  };
+  }; // Announced once per page, by whichever copy of the base arrives first --
+  // SF.loadSmartBase() or the first Smart bundle, each of which carries one --
+  // so SF.smartBaseReady settles however the base came.
+
+  if (!window.SF.smartBaseAnnounced) {
+    window.SF.smartBaseAnnounced = true;
+
+    try {
+      window.dispatchEvent(new CustomEvent("sf-smart-base-ready", {
+        detail: {
+          smart: window.SF.smart,
+          loader: window.SF.Loader || null,
+          timestamp: Date.now()
+        }
+      }));
+    } catch (error) {
+      console.warn("sf-smart-base-ready dispatch failed", error);
+    }
+  }
 }
 
 /***/ }

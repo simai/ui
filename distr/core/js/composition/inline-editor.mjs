@@ -1,3 +1,4 @@
+import { pageText } from '../page-language.js';
 import { INLINE_MARKS, fromSegments, inlineText, marksIn, normalizeInline, replaceRange, safeHref, setLink, toSegments, toggleMark } from './inline-model.mjs';
 
 // In-place editor for the Composition inline content model. The host starts
@@ -20,7 +21,11 @@ const SHORTCUTS = { strong: 'b', em: 'i', code: 'e' };
 const SKIP = new Set(['SCRIPT', 'STYLE', 'TEMPLATE', 'HEAD', 'TITLE', 'META', 'LINK', 'IMG', 'SVG', 'OBJECT', 'IFRAME', 'NOSCRIPT']);
 const BLOCK = new Set(['P', 'DIV', 'LI', 'UL', 'OL', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'TR', 'TABLE', 'BLOCKQUOTE', 'SECTION', 'ARTICLE']);
 const format = (template, values) => template.replace(/\{(\w+)\}/gu, (_, key) => String(values[key] ?? ''));
-const lang = () => ((globalThis.document?.documentElement.lang || 'en').toLowerCase().startsWith('ru') ? 'ru' : 'en');
+// Words in the page's language through pageText, as every component takes
+// them: the editor read <html lang> alone and offered only English or Russian,
+// so SF.language.use() and a product's own dictionary never reached it
+// (documentation trial, 2026-10-12).
+const words = (node) => Object.fromEntries(Object.keys(MESSAGES.en).map((key) => [key, pageText(MESSAGES, key, node, 'sf-inline-editor')]));
 
 /** Reads inline content from any DOM subtree; foreign markup and styles are dropped. */
 export function readInlineDom(root, { marks = INLINE_MARKS, links = true, collapse = false } = {}) {
@@ -140,7 +145,7 @@ export function startInlineEdit(element, options = {}) {
   if (!(element instanceof globalThis.Element)) throw new TypeError('Inline editing needs an element');
   if (element.hasAttribute('data-sf-inline-editing')) throw new TypeError('inline_edit_active');
   const doc = element.ownerDocument;
-  const text = { ...MESSAGES[lang()], ...(options.messages || {}) };
+  const text = { ...words(element), ...(options.messages || {}) };
   const marks = (options.marks || INLINE_MARKS).filter((mark) => INLINE_MARKS.includes(mark));
   const links = options.links !== false;
   const original = { html: element.innerHTML, attributes: ['contenteditable', 'role', 'aria-multiline', 'aria-label', 'spellcheck', 'tabindex'].map((name) => [name, element.getAttribute(name)]) };
