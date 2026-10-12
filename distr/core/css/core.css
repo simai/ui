@@ -2026,6 +2026,14 @@ body {
     -webkit-text-decoration-color: var(--sf-outline);
             text-decoration-color: var(--sf-outline);
   }
+  @media (min-width: 960px) {
+    [data-sf-density=compact] {
+      --sf-text--size: var(--sf-text--size-1\/2);
+      --sf-text--height: var(--sf-text--height-1\/2);
+      font-size: var(--sf-text--size);
+      line-height: var(--sf-text--height);
+    }
+  }
   p,
   table,
   ol,

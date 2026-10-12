@@ -210,7 +210,14 @@
             padding-inline-start: var(--sf-toast--padding-left, var(--sf-space-1));
     padding-top: var(--sf-space-1);
     padding-top: var(--sf-toast--padding-top, var(--sf-space-1));
-    background-color: var(--sf-toast--background-color);
+    /* A toast floats over the page, and the status containers are
+       translucent fills: painted alone they let the table under a toast read
+       through its text (owner, 2026-10-12). So the toast stands on the raised
+       surface of its step, with its shadow, and the status tints it. */
+    background-color: var(--sf-elevation-3--surface);
+    --sf-on-surface-variant: var(--sf-on-elevation-3--variant);
+    background-image: linear-gradient(var(--sf-toast--background-color), var(--sf-toast--background-color));
+    box-shadow: var(--sf-elevation-3--shadow);
     color: var(--sf-on-surface);
     color: var(--sf-toast--content-color, var(--sf-on-surface));
     opacity: 1;
