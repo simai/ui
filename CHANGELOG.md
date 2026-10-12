@@ -8,6 +8,9 @@
 
 ### Исправлено
 
+- Compact text density no longer moves rem: on `<html>` it sets `--sf-text--size` and `--sf-text--height` only and body reads them. Setting a font size on the root shrank every step of the ladder (body read 12.25px instead of 14px).
+- `hidden` hides a Smart element. A Smart host carries an inline `display: contents`, which outranked the user agent's `[hidden]` rule; the base preset now declares `[hidden] { display: none !important }`.
+
 - `sf-toast` stands on the third elevation surface with its status tint laid over it. It sat on a translucent container tone and could not be read over a table.
 
 - `sf-badge` loads the visually hidden label with itself, so a badge with an accessible name no longer reads it beside its text where the Loader's scan does not reach («Элементы: 7 7»).
