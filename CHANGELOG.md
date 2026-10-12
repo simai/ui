@@ -46,6 +46,8 @@
 
 ### Добавлено
 
+- A rule's relation may be marked `lazy: true`: the element does not wait for it and the page does not hold its first paint for it. The Loader fetches lazy relations after `sf-loader-ready`, a few at a time in idle time, and at once when asked (`SF.Loader.ensurePlugin(name)`) or when the element appears in the document.
+
 - The standard menu's rows take a picture in the lead (`avatar`, or `initials` without one), and `search: {remote: true}` makes a list the host searches: the menu raises `sf-context-menu-search` with the query and shows the entries the host sets.
 - A menu is as wide as its content, from an e8 floor up to g2; a host raises the floor with `--sf-context-menu--min-inline-size`.
 
