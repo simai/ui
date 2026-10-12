@@ -5933,9 +5933,11 @@ class SfContextMenu extends _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__["de
     }
 
     if (Array.isArray(entry.submenu) && entry.submenu.length) {
-      event.preventDefault();
+      event.preventDefault(); // A pointer leaves the focus where it is, unless the submenu is a search:
+      // whoever opened a list to find something is about to type.
+
       this.openSubmenu(row, entry, {
-        focus: event.detail === 0 ? "first" : "none"
+        focus: event.detail === 0 || entry.search ? "first" : "none"
       });
       return;
     }

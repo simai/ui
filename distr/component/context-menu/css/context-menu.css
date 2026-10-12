@@ -794,6 +794,12 @@
     --sf-icon--width: var(--sf-icon-size-2);
     --sf-icon--height: var(--sf-icon-size-2);
   }
+  /* The content scrolls when the window is shorter than the menu; its rows keep
+     their height and the list scrolls, instead of every row being squeezed until
+     a caption ran into the next row (a language list, 2026-10-12). */
+  .sf-context-menu--entries .sf-context-menu-content > * {
+    flex-shrink: 0;
+  }
   /* A row is as tall as a size-1/2 field -- a line and a6 above and below --
      and its content starts where that field's does. A caption makes it taller
      by its own line, never by padding. */
