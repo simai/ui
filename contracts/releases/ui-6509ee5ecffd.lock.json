@@ -1,0 +1,61 @@
+{
+  "schema_id": "simai.framework.release-lock",
+  "schema_version": 2,
+  "compatibility_id": "ui-6509ee5ecffd",
+  "status": "bounded",
+  "profile": "plain-assets-v1",
+  "runtime_sources": {
+    "core": {
+      "owner": "simai/ui",
+      "tag": null,
+      "tag_object": null,
+      "revision": "6509ee5ecffd2a59d80d18926e95db7441d29276",
+      "commit": "6509ee5ecffd2a59d80d18926e95db7441d29276",
+      "tree": "89eb1d919dd664dc209fe2cbcfa8b541e852463c",
+      "runtime_path": "distr",
+      "runtime_tree": "e28c12c3c287fcf6a1a4f18db61f8e04c79e03dc",
+      "archive_sha256": "8a28c352324c111771c699e13b58b163400deadff90ca9d8d34a67c647e8efc1"
+    },
+    "smart": {
+      "owner": "simai/ui",
+      "tag": null,
+      "tag_object": null,
+      "revision": "6509ee5ecffd2a59d80d18926e95db7441d29276",
+      "commit": "6509ee5ecffd2a59d80d18926e95db7441d29276",
+      "tree": "89eb1d919dd664dc209fe2cbcfa8b541e852463c",
+      "runtime_path": "distr/smart",
+      "runtime_tree": "c3918420dc350e015c536ebe9ffe7e18a3136e9c",
+      "archive_sha256": "7e95db208caac929698066595a5f5e4d5df7b4913049cc130e5637e3162c422d"
+    }
+  },
+  "build_inputs": {
+    "source": {
+      "owner": "simai/ui-source",
+      "commit": "915dea1559807ed2feaedd4891c7076391410d73",
+      "tree": "39a71a619cd90680d4e958396ffa97a7458130c0",
+      "archive_sha256": "757e9059f79ffc1c122d8bf68d20f9423d90cd0ab049cee57e48965a53cfd161"
+    },
+    "builder": {
+      "owner": "simai/ui-builder",
+      "commit": "412e55de40ffd95671b0b2abdcf09c86cab6a4fd",
+      "tree": "0bddbb3e6745fe7baf7702985306c038c4eeca34",
+      "archive_sha256": "4266f25b4819b15902619a6461ac0d0304a4a00afcdbaf7190492b170fd1659d"
+    },
+    "legacy_compatibility": {
+      "required": false
+    }
+  },
+  "inventory": {
+    "utility_rules": 738,
+    "utility_families": 228,
+    "components": 62,
+    "smart_components": 48,
+    "recipes": 1
+  },
+  "exclusions": [],
+  "claims": {
+    "full_compatible": false,
+    "production_ready": false,
+    "all_items_ready": false
+  }
+}

@@ -8,6 +8,8 @@
 
 ### Исправлено
 
+- Highlight line numbers (`data-lines`) are laid out one row per line, with the number in a column of its own; all the lines used to run into one.
+
 - Compact text density no longer moves rem: on `<html>` it sets `--sf-text--size` and `--sf-text--height` only and body reads them. Setting a font size on the root shrank every step of the ladder (body read 12.25px instead of 14px).
 - `hidden` hides a Smart element. A Smart host carries an inline `display: contents`, which outranked the user agent's `[hidden]` rule; the base preset now declares `[hidden] { display: none !important }`.
 
@@ -37,6 +39,9 @@
   always been `translateX(0)` when open, and the panel opens like a submenu.
 
 ### Добавлено
+
+- The standard action menu: `sf-context-menu` takes `entries` -- icon, label, caption, value, shortcut, check and radio rows, danger, disabled, link rows, submenus, separators and group headings -- and opens through `openFor(anchor)` / `toggleFor(anchor)` into the top layer, below its control and start-aligned, with no tail. Opened that way it owns its lifecycle: Escape closes a level, Tab and a press outside close the menu, a letter moves to the next item it starts, and a choice (`sf-context-menu-select`, at any depth) closes it and returns the focus. Its surface is the third elevation step with a hairline border. A menu the host renders and opens itself keeps the previous contract.
+- Highlight numbers lines from `data-start`.
 
 - Compact text density: `data-sf-density="compact"` on `<html>` or on a region keeps the phone's body step on desktop (14px on a 20px line). A dense application -- an admin panel, a table page -- asks for it by attribute instead of overriding `--sf-text--size` with a pixel value of its own.
 
