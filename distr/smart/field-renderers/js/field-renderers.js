@@ -300,9 +300,13 @@ const HEX_COLOR = /^#(?:[0-9a-f]{3}|[0-9a-f]{4}|[0-9a-f]{6}|[0-9a-f]{8})$/i;
  * colour tints the tonal background and keeps the text on the surface colour,
  * so the label stays readable in both themes. Anything else is neutral.
  */
+// The data view port names the badge look `scheme` on a column's options; a
+// filter option has always said `color`. Both are read: reading only `color`
+// left every port column's scheme unread and its badges neutral.
 
 function optionBadgeProps(option = {}) {
-  const color = typeof option?.color === "string" ? option.color.trim() : "";
+  const raw = option?.scheme ?? option?.color;
+  const color = typeof raw === "string" ? raw.trim() : "";
   const scheme = color.toLowerCase();
   if (_component_badges_js_contract_js__WEBPACK_IMPORTED_MODULE_0__.BADGE_SCHEMES.includes(scheme)) return {
     scheme,
@@ -1002,7 +1006,11 @@ function renderColorEdit(field, value, host) {
 }
 
 function renderFileCell(field, value) {
-  if (!value || typeof value !== 'object' || !value.label) return null;
+  if (!value || typeof value !== 'object' || !value.label) return null; // A column the host says holds images shows each as a thumbnail; any other
+  // file as a tile with its extension. Which files are images is the host's
+  // to say through the variant, never guessed from a name.
+
+  if (isImageField(field)) return renderFilePreviewCell(value);
   return {
     component: {
       type: 'reference-link',
@@ -1016,6 +1024,38 @@ function renderFileCell(field, value) {
       }
     }
   };
+} // A file as a thumbnail on the row's line: the image when the host gave its
+// address and its type is an image, the extension in a tile otherwise. It is
+// sf-file-preview told to show nothing but its leading visual, so a file looks
+// the same in a row as in the record that holds it.
+
+
+function renderFilePreviewCell(value) {
+  const mime = String(value.mime ?? value.mimeType ?? '');
+  const image = Boolean(value.href) && /^image\//u.test(mime);
+  return {
+    component: {
+      type: 'file-preview',
+      props: {
+        compact: true,
+        fileName: String(value.label),
+        mimeType: mime,
+        icon: fileIcon(mime),
+        ...(value.href ? {
+          href: String(value.href)
+        } : {}),
+        ...(image ? {
+          imageUrl: String(value.href),
+          kind: 'image'
+        } : {
+          kind: 'icon'
+        }),
+        actions: false,
+        downloadAction: false,
+        removeAction: false
+      }
+    }
+  };
 } // Several values in one cell: one tag per value, each on the row's text line.
 // The tag's `line` resolves its own size and inline mode, so neither is passed
 // -- the session that owns it fixed the template to read the resolved values
@@ -1024,6 +1064,7 @@ function renderFileCell(field, value) {
 
 function renderChoicesCell(field, value) {
   if (!Array.isArray(value) || !value.length) return null;
+  if (String(field.variant ?? '') === 'badges') return renderChoicesBadgesCell(field, value);
   const options = field.options || field.filter?.options || field.constraints?.options;
 
   const label = item => {
@@ -1041,6 +1082,36 @@ function renderChoicesCell(field, value) {
       }
     }
   }));
+} // Several values as tonal badges, each coloured by its option's scheme -- a
+// page's publication in each language. A value may be {value, text}: the host
+// says more in that one cell than the option's label («ru · 14.10 09:00»), which
+// is the host's to format, so the set does not.
+
+
+function renderChoicesBadgesCell(field, value) {
+  const options = field.options || field.filter?.options || field.constraints?.options;
+  return value.map(item => {
+    const key = item && typeof item === 'object' ? item.value : item;
+    const option = Array.isArray(options) ? options.find(candidate => String(candidate?.value) === String(key)) : null;
+    const badge = option ? (0,_helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_1__.optionBadgeProps)(option) : null;
+    const text = item && typeof item === 'object' && item.text !== undefined ? String(item.text) : String(option?.label ?? option?.text ?? key);
+    return {
+      component: {
+        type: 'badge',
+        props: {
+          line: CELL_LINE,
+          text,
+          appearance: field.badgeAppearance ?? CELL_BADGE_APPEARANCE,
+          ...(badge?.scheme ? {
+            scheme: badge.scheme
+          } : {}),
+          ...(badge?.rootStyle ? {
+            rootStyle: badge.rootStyle
+          } : {})
+        }
+      }
+    };
+  });
 }
 
 const CELL_RENDERERS = {

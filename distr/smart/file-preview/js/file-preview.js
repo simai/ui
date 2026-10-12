@@ -2593,9 +2593,22 @@ function renderAction({
       <i class="sf-icon" aria-hidden="true">${icon}</i>
     </button>
   `;
+} // Only the leading visual, named by the file: the image, or the extension in a
+// tile (the type's icon when the name has none). A link when the file has an
+// address, so a list row opens it the way the record does.
+
+
+function renderCompact(context) {
+  const visual = context.isImage ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<img class="sf-file-preview-thumbnail" src=${context.imageUrl || context.href} alt=${context.fileName}>` : context.extension ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-file-preview-extension" aria-hidden="true">${context.extension}</span>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<i class="sf-icon" aria-hidden="true">${context.icon}</i>`;
+  const classes = ['sf-file-preview', 'sf-file-preview--compact', context.rootClass].filter(Boolean).join(' ');
+  const name = context.isImage ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : context.fileName;
+  return context.href ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<a class=${classes} href=${context.href} target=${context.target || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} title=${context.fileName}
+              aria-label=${name} data-render-managed="1"><span class="sf-file-preview-holder">${visual}</span></a>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${classes} title=${context.fileName} role=${context.isImage ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : 'img'}
+              aria-label=${name} data-render-managed="1"><span class="sf-file-preview-holder">${visual}</span></span>`;
 }
 
 function renderFilePreviewTemplate(context) {
+  if (context.compact) return renderCompact(context);
   const rootClasses = ['sf-file-preview', context.surface ? 'sf-file-preview--surface' : '', context.disabled ? 'disabled' : '', context.rootClass].filter(Boolean);
   const hasActions = context.actions && (context.downloadAction || context.removeAction);
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
@@ -3114,6 +3127,10 @@ class SfFilePreview extends _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__["de
         type: Boolean,
         default: false
       },
+      compact: {
+        type: Boolean,
+        default: false
+      },
       ariaLabel: {
         attribute: 'aria-label',
         default: ''
@@ -3228,6 +3245,17 @@ class SfFilePreview extends _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__["de
 
   get removeLabel() {
     return this.getAttribute('remove-label') || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_2__.pageText)(FILE_PREVIEW_TEXT, "removeLabel", this);
+  } // Only the leading visual, on a row's line: a list of files shows each as a
+  // thumbnail or as its extension, and the record shows the rest.
+
+
+  get compact() {
+    return this.getBooleanAttr('compact', false);
+  }
+
+  get extension() {
+    const match = /\.([a-z0-9]{1,5})$/iu.exec(String(this.fileName || '').trim());
+    return match ? match[1].toUpperCase() : '';
   }
 
   get isImage() {
@@ -3251,6 +3279,8 @@ class SfFilePreview extends _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__["de
       mimeType: this.mimeType,
       imageUrl: this.imageUrl,
       isImage: this.isImage,
+      compact: this.compact,
+      extension: this.extension,
       surface: this.surface,
       download: this.download,
       target: this.target,

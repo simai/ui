@@ -203,6 +203,23 @@
     -o-object-fit: cover;
        object-fit: cover;
   }
+  /* Compact: the leading visual alone, as tall as a size-1/2 field, which is
+     a list row's line. */
+  .sf-file-preview.sf-file-preview--compact {
+    display: inline-flex;
+    vertical-align: middle;
+    color: inherit;
+    text-decoration: none;
+  }
+  .sf-file-preview.sf-file-preview--compact .sf-file-preview-holder {
+    --sf-file-preview-holder--size: calc(var(--sf-icon-size-2) + 2 * var(--sf-a6));
+  }
+  .sf-file-preview .sf-file-preview-extension {
+    font-size: var(--sf-text-size-1\/3);
+    line-height: var(--sf-text-height-1\/3);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
   .sf-file-preview .sf-file-preview-main {
     display: flex;
     min-width: 0;
