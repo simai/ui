@@ -2,235 +2,29 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "8489d1f5bab4"
-(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+/***/ "cae046a8699f"
+(module, __webpack_exports__, __webpack_require__) {
 
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   isRussianPage: () => (/* binding */ isRussianPage),
-/* harmony export */   language: () => (/* binding */ language),
-/* harmony export */   pageLanguage: () => (/* binding */ pageLanguage),
-/* harmony export */   pageLocale: () => (/* binding */ pageLocale),
-/* harmony export */   pageText: () => (/* binding */ pageText)
-/* harmony export */ });
-// What language a component speaks, and how a product adds one.
-//
-// The Framework speaks English by default and whatever the page says otherwise:
-// the language is the nearest [lang] above the node, else the document's, else
-// English. One rule for every component, so a page never mixes two because two
-// components looked in different places.
-//
-// Until 2026-10-10 that was the whole of it, and every component carried a
-// dictionary of exactly two languages written into its source. Adding a third
-// meant editing sixteen files, and a product that needed one could not add it
-// at all. There will be many more than two (owner, 2026-10-11), so the
-// dictionaries a component ships are now a FLOOR rather than the whole set:
-// anything can be registered beside them, for any language, including one the
-// Framework has never heard of.
-//
-// Where a word comes from, in order:
-//
-//   1. the component's own attribute — a consumer who names a word has named
-//      it, and no language changes it;
-//   2. a word registered for the resolved language;
-//   3. the word the component ships for that language;
-//   4. the same two again for the language without its region (`pt-BR` → `pt`);
-//   5. the same two again for English;
-//   6. the key itself, which is a visible defect rather than a blank.
-//
-// Registering is additive and reversible, and it does not require the
-// Framework to know the language exists.
-// The state is shared between every copy of this module, which there are
-// several of: core, each smart component and each composite are separate
-// bundles, and each one carries its own copy of this file. With the registry
-// in module scope the page had as many registries as bundles -- `SF.language`
-// was published from core's copy, the table read its own, and registering a
-// language changed nothing on screen. Only a browser shows that, and it did
-// (2026-10-11).
-const STORE = (() => {
-  const root = typeof globalThis !== 'undefined' ? globalThis : {};
-  const key = '__sfPageLanguage';
-
-  if (!root[key]) {
-    root[key] = {
-      listeners: new Set(),
-      registered: new Map(),
-      chosen: null
-    };
-  }
-
-  return root[key];
-})();
-
-const LISTENERS = STORE.listeners;
-const REGISTERED = STORE.registered;
-
-const normalise = value => String(value ?? '').trim().toLowerCase().replace('_', '-');
-/** The languages to try, most specific first, English last. */
+/* harmony import */ var _core_js_composition_overlay_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("dd1616d485c7");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("6c735f321fd9");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_composition_overlay_mjs__WEBPACK_IMPORTED_MODULE_0__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+_core_js_composition_overlay_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+// Smart entry for sf-composition-overlay, the editor canvas overlay. Library
+// drags from sf-sortable land here through the shared drag session.
 
 
-const chain = language => {
-  const wanted = normalise(language);
-  const base = wanted.split('-')[0];
-  const order = [];
-
-  for (const candidate of [wanted, base, 'en']) {
-    if (candidate && !order.includes(candidate)) order.push(candidate);
-  }
-
-  return order;
-};
-/** Which component a node belongs to, for words registered against one. */
-
-
-const componentOf = node => {
-  const tag = node?.tagName;
-  return typeof tag === 'string' ? tag.toLowerCase() : null;
-};
-
-const announce = () => {
-  for (const listener of [...LISTENERS]) {
-    try {
-      listener();
-    } catch {// A listener that throws is not allowed to stop the others: a page that
-      // half-changed language would be worse than one that did not change.
-    }
-  }
-};
-/**
- * The page's language for this node: the nearest [lang], else the document's,
- * else English — unless a product has chosen one explicitly.
- */
-
-
-function pageLanguage(node) {
-  // The language without its region, whichever way it was set: a page that
-  // chose 'pt-BR' is a Portuguese page, as a page whose markup says
-  // lang="pt-BR" is. The chosen value kept its region and answered 'pt-br',
-  // which matched no dictionary keyed by language and made isRussianPage false
-  // on a page that chose 'ru-RU'. The region stays in pageLocale.
-  if (STORE.chosen) return STORE.chosen.split('-')[0];
-  const owner = node && typeof node.closest === 'function' ? node.closest('[lang]') : null;
-  const value = owner?.getAttribute('lang') || globalThis.document?.documentElement?.lang || 'en';
-  return normalise(value).split('-')[0] || 'en';
-}
-/** The page's language with its region kept, which is what formatting wants. */
-
-function pageLocale(node) {
-  if (STORE.chosen) return STORE.chosen;
-  const owner = node && typeof node.closest === 'function' ? node.closest('[lang]') : null;
-  return normalise(owner?.getAttribute('lang') || globalThis.document?.documentElement?.lang || 'en');
-}
-function isRussianPage(node) {
-  return pageLanguage(node) === 'ru';
-}
-/**
- * Text for `key` in the page's language.
- *
- * `dictionary` is what the component ships; `component` names it for the
- * registry and defaults to the node's own tag, so a component calling with
- * `this` identifies itself without saying so twice.
- */
-
-function pageText(dictionary, key, node, component) {
-  const owner = component ?? componentOf(node);
-
-  for (const candidate of chain(pageLocale(node))) {
-    const added = owner ? REGISTERED.get(owner)?.get(candidate)?.[key] : undefined;
-    if (added !== undefined) return added;
-    const shipped = dictionary?.[candidate]?.[key];
-    if (shipped !== undefined) return shipped;
-  }
-
-  return key;
-}
-const language = {
-  /** What the page resolves to for this node, region and all. */
-  current(node = globalThis.document?.documentElement ?? null) {
-    return pageLocale(node);
-  },
-
-  /**
-   * Choose a language for the whole page, whatever its markup says. `null`
-   * returns to following the document, which is the default and what a
-   * server-rendered page wants.
-   */
-  use(value) {
-    const next = value === null || value === undefined ? null : normalise(value);
-    if (next === STORE.chosen) return STORE.chosen;
-    STORE.chosen = next;
-    announce();
-    return STORE.chosen;
-  },
-
-  /**
-   * Add or replace one component's words for one language.
-   *
-   * The words are merged, so a product can correct a single label without
-   * restating the rest, and `null` removes what it added.
-   */
-  register(component, value, words) {
-    const name = String(component ?? '').toLowerCase();
-    const code = normalise(value);
-    if (!name || !code) throw new TypeError('a component and a language are required');
-    if (!REGISTERED.has(name)) REGISTERED.set(name, new Map());
-    const byLanguage = REGISTERED.get(name);
-    if (words === null) byLanguage.delete(code);else byLanguage.set(code, { ...(byLanguage.get(code) ?? {}),
-      ...words
-    });
-    announce();
-    return this;
-  },
-
-  /** One language across many components: `{ 'sf-datepicker': {...}, ... }`. */
-  registerAll(value, byComponent = {}) {
-    for (const [component, words] of Object.entries(byComponent)) {
-      this.register(component, value, words);
-    }
-
-    return this;
-  },
-
-  /** The languages something has registered words for. */
-  known(component) {
-    const name = String(component ?? '').toLowerCase();
-    return [...(REGISTERED.get(name)?.keys() ?? [])];
-  },
-
-  /** Every component something has been registered for. */
-  components() {
-    return [...REGISTERED.keys()];
-  },
-
-  /**
-   * Called whenever the chosen language or the registered words change, so a
-   * component can draw itself again. Returns the way to stop listening.
-   */
-  onChange(listener) {
-    if (typeof listener !== 'function') return () => {};
-    LISTENERS.add(listener);
-    return () => LISTENERS.delete(listener);
-  },
-
-  /** Everything registered is forgotten. For tests, and for a product reset. */
-  forget() {
-    REGISTERED.clear();
-    STORE.chosen = null;
-    announce();
-    return this;
-  }
-
-}; // Reachable by a consumer, which it was not: `sf-admin-menu` had written its
-// own reading of the rule because the shared one was an internal module, and
-// the two then disagreed about a region that names its own language. A product
-// composing its own elements gets the same rule here.
-
-if (typeof window !== 'undefined') {
-  window.SF = window.SF || {};
-  window.SF.language = language;
-  window.SF.pageLanguage = pageLanguage;
-  window.SF.pageText = pageText;
-}
+globalThis.SF = globalThis.SF || {};
+globalThis.SF.CompositionOverlay = Object.freeze({
+  OVERLAY_EVENTS: _core_js_composition_overlay_mjs__WEBPACK_IMPORTED_MODULE_0__.OVERLAY_EVENTS,
+  checkOverlayActions: _core_js_composition_overlay_mjs__WEBPACK_IMPORTED_MODULE_0__.checkOverlayActions,
+  overlayNodes: _core_js_composition_overlay_mjs__WEBPACK_IMPORTED_MODULE_0__.overlayNodes
+});
+(0,_core_js_composition_overlay_mjs__WEBPACK_IMPORTED_MODULE_0__.defineCompositionOverlay)();
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ },
 
@@ -240,6 +34,13 @@ if (typeof window !== 'undefined') {
 __webpack_require__.r(__webpack_exports__);
 // extracted by mini-css-extract-plugin
 
+
+/***/ },
+
+/***/ "0d662e4d7d63"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("page-language") : new Promise((resolve) => globalThis.addEventListener("sf-runtime-ready", () => resolve(globalThis.SF.runtimeModule("page-language")), { once: true })));
 
 /***/ },
 
@@ -276,8 +77,9 @@ function stableStringify(value) {
 /***/ },
 
 /***/ "dd1616d485c7"
-(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
+__webpack_require__.a(__webpack_module__, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   OVERLAY_EVENTS: () => (/* binding */ OVERLAY_EVENTS),
@@ -287,8 +89,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   overlayNodes: () => (/* binding */ overlayNodes)
 /* harmony export */ });
 /* harmony import */ var _canonical_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("6f489cc65b77");
-/* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("8489d1f5bab4");
+/* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("0d662e4d7d63");
 /* harmony import */ var _sortable_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("7c1f9c2b36da");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_page_language_js__WEBPACK_IMPORTED_MODULE_1__, _sortable_mjs__WEBPACK_IMPORTED_MODULE_2__]);
+([_page_language_js__WEBPACK_IMPORTED_MODULE_1__, _sortable_mjs__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 
 
 
@@ -969,12 +773,15 @@ function defineCompositionOverlay(registry = globalThis.customElements) {
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ OVERLAY_EVENTS, checkOverlayActions, defineCompositionOverlay, overlayNodes });
 
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ },
 
 /***/ "7c1f9c2b36da"
-(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
+__webpack_require__.a(__webpack_module__, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   SORTABLE_INTENT_EVENT: () => (/* binding */ SORTABLE_INTENT_EVENT),
@@ -985,7 +792,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   registerSortableDropTarget: () => (/* binding */ registerSortableDropTarget),
 /* harmony export */   sortableIndexAt: () => (/* binding */ sortableIndexAt)
 /* harmony export */ });
-/* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("8489d1f5bab4");
+/* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("0d662e4d7d63");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_page_language_js__WEBPACK_IMPORTED_MODULE_0__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+_page_language_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 // Sortable drag-and-drop primitive. <sf-sortable> lists and registered
 // external drop targets share one drag session. Pointer (mouse, pen, touch via
 // handles), keyboard and screen-reader paths all end in the same intent event;
@@ -1535,6 +1345,8 @@ function defineSortable(registry = globalThis.customElements) {
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ activeSortableSession, defineSortable, registerSortableDropTarget, sortableIndexAt });
 
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ }
 
@@ -1571,6 +1383,82 @@ function defineSortable(registry = globalThis.customElements) {
 /******/ 	}
 /******/
 /************************************************************************/
+/******/ 	/* webpack/runtime/async module */
+/******/ 	(() => {
+/******/ 		const hasSymbol = typeof Symbol === "function";
+/******/ 		const webpackQueues = hasSymbol ? Symbol("webpack queues") : "__webpack_queues__";
+/******/ 		const webpackExports = hasSymbol ? Symbol("webpack exports") : "__webpack_exports__";
+/******/ 		const webpackError = hasSymbol ? Symbol("webpack error") : "__webpack_error__";
+/******/
+/******/ 		const resolveQueue = (queue) => {
+/******/ 			if(queue?.d < 1) {
+/******/ 				queue.d = 1;
+/******/ 				queue.forEach((fn) => (fn.r--));
+/******/ 				queue.forEach((fn) => (fn.r-- ? fn.r++ : fn()));
+/******/ 			}
+/******/ 		}
+/******/ 		const wrapDeps = (deps) => (deps.map((dep) => {
+/******/ 			if(dep !== null && typeof dep === "object") {
+/******/
+/******/ 				if(dep[webpackQueues]) return dep;
+/******/ 				if(dep.then) {
+/******/ 					const queue = [];
+/******/ 					queue.d = 0;
+/******/ 					dep.then((r) => {
+/******/ 						obj[webpackExports] = r;
+/******/ 						resolveQueue(queue);
+/******/ 					}, (e) => {
+/******/ 						obj[webpackError] = e;
+/******/ 						resolveQueue(queue);
+/******/ 					});
+/******/ 					const obj = {};
+/******/
+/******/ 					obj[webpackQueues] = (fn) => (fn(queue));
+/******/ 					return obj;
+/******/ 				}
+/******/ 			}
+/******/ 			const ret = {};
+/******/ 			ret[webpackQueues] = x => {};
+/******/ 			ret[webpackExports] = dep;
+/******/ 			return ret;
+/******/ 		}));
+/******/ 		__webpack_require__.a = (module, body, hasAwait) => {
+/******/ 			let queue;
+/******/ 			hasAwait && ((queue = []).d = -1);
+/******/ 			const depQueues = new Set();
+/******/ 			const exports = module.exports;
+/******/ 			let currentDeps;
+/******/ 			let outerResolve;
+/******/ 			let reject;
+/******/ 			const promise = new Promise((resolve, rej) => {
+/******/ 				reject = rej;
+/******/ 				outerResolve = resolve;
+/******/ 			});
+/******/ 			promise[webpackExports] = exports;
+/******/ 			promise[webpackQueues] = (fn) => (queue && fn(queue), depQueues.forEach(fn), promise["catch"](x => {}));
+/******/ 			module.exports = promise;
+/******/ 			const handle = (deps) => {
+/******/ 				currentDeps = wrapDeps(deps);
+/******/ 				let fn;
+/******/ 				const getResult = () => (currentDeps.map((d) => {
+/******/
+/******/ 					if(d[webpackError]) throw d[webpackError];
+/******/ 					return d[webpackExports];
+/******/ 				}))
+/******/ 				const promise = new Promise((resolve) => {
+/******/ 					fn = () => (resolve(getResult));
+/******/ 					fn.r = 0;
+/******/ 					const fnQueue = (q) => (q !== queue && !depQueues.has(q) && (depQueues.add(q), q && !q.d && (fn.r++, q.push(fn))));
+/******/ 					currentDeps.map((dep) => (dep[webpackQueues](fnQueue)));
+/******/ 				});
+/******/ 				return fn.r ? promise : getResult();
+/******/ 			}
+/******/ 			const done = (err) => ((err ? reject(promise[webpackError] = err) : outerResolve(exports)), resolveQueue(queue))
+/******/ 			body(handle, done);
+/******/ 			queue?.d < 0 && (queue.d = 0);
+/******/ 		};
+/******/ 	})();
+/******/
 /******/ 	/* webpack/runtime/define property getters */
 /******/ 	(() => {
 /******/ 		// define getter/value functions for harmony exports
@@ -1615,24 +1503,11 @@ function defineSortable(registry = globalThis.customElements) {
 /******/ 	})();
 /******/
 /************************************************************************/
-let __webpack_exports__ = {};
-// This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
-(() => {
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _core_js_composition_overlay_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("dd1616d485c7");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("6c735f321fd9");
-// Smart entry for sf-composition-overlay, the editor canvas overlay. Library
-// drags from sf-sortable land here through the shared drag session.
-
-
-globalThis.SF = globalThis.SF || {};
-globalThis.SF.CompositionOverlay = Object.freeze({
-  OVERLAY_EVENTS: _core_js_composition_overlay_mjs__WEBPACK_IMPORTED_MODULE_0__.OVERLAY_EVENTS,
-  checkOverlayActions: _core_js_composition_overlay_mjs__WEBPACK_IMPORTED_MODULE_0__.checkOverlayActions,
-  overlayNodes: _core_js_composition_overlay_mjs__WEBPACK_IMPORTED_MODULE_0__.overlayNodes
-});
-(0,_core_js_composition_overlay_mjs__WEBPACK_IMPORTED_MODULE_0__.defineCompositionOverlay)();
-})();
-
+/******/
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	// This entry module used 'module' so it can't be inlined
+/******/ 	let __webpack_exports__ = __webpack_require__("cae046a8699f");
+/******/
 /******/ })()
 ;

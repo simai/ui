@@ -19,7 +19,56 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+ // The shared Smart runtime: core/js/smart-base.js, a script of its own beside
+// core.js, holding the modules the Smart bundles are built against (they carry
+// no lit or smart-base of their own). Asked for by the bundles and by the
+// Loader as soon as it queues a Smart element. A page that included the script
+// by hand already has it.
 
+if (typeof window !== 'undefined') {
+  window.SF = window.SF || {};
+  const SF = window.SF;
+
+  if (!SF.loadRuntime) {
+    let loading = null;
+
+    const coreScript = () => [...document.scripts].find(script => /\/core\/js\/core(?:\.min)?\.js(?:[?#]|$)/u.test(script.src));
+
+    SF.loadRuntime = () => {
+      if (loading) return loading;
+
+      if (SF.runtimeModules) {
+        SF.runtimeSettled = true;
+        loading = Promise.resolve(SF.runtimeModules);
+      } else {
+        loading = new Promise((resolve, reject) => {
+          SF.runtimeArrived = modules => {
+            SF.runtimeSettled = true;
+            resolve(modules);
+          };
+
+          const core = coreScript();
+          if (!core) return; // included by hand: it calls runtimeArrived when it runs
+
+          const script = document.createElement('script'); // The same form as Core's own file, beside it.
+
+          script.src = core.src.replace(/core(\.min)?\.js(?=[?#]|$)/u, (match, min) => `smart-base${min || ''}.js`);
+          script.async = true;
+          script.addEventListener('error', () => reject(new Error(`SF runtime: ${script.src} did not load`)));
+          document.head.append(script);
+        });
+      }
+
+      SF.runtimeLoading = loading;
+      return loading;
+    };
+
+    SF.runtimeModule = id => SF.loadRuntime().then(modules => {
+      if (!modules[id]) throw new Error(`SF runtime: no shared module "${id}"`);
+      return modules[id];
+    });
+  }
+}
 
 (() => {
   const PLACEHOLDER_MARK = 'sf-shortcode ';
@@ -6275,7 +6324,7 @@ function routesAttribute(routes) {
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.u = (chunkId) => {
 /******/ 			// return url for filenames based on template
-/******/ 			return "js/" + ({"80841737880868":"core-rules","88616323197113":"core-system","66700837013363":"core-loader","51805064141692":"smart-base"}[chunkId] || chunkId) + ".js";
+/******/ 			return "js/" + {"80841737880868":"core-rules","88616323197113":"core-system","66700837013363":"core-loader"}[chunkId] + ".js";
 /******/ 		};
 /******/ 	})();
 /******/

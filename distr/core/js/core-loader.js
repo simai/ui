@@ -2118,9 +2118,11 @@ SFLoaderPlugin.prototype.loadSmartBase = function () {
 
   if (this.smartBaseLoadPromise) {
     return this.smartBaseLoadPromise;
-  }
+  } // The base arrives with the shared runtime, in one chunk with the modules the
+  // Smart bundles are built against.
 
-  this.smartBaseLoadPromise = Promise.all(/* import() | smart-base */[__webpack_require__.e(111949971785676), __webpack_require__.e(51805064141692)]).then(__webpack_require__.bind(__webpack_require__, "0845ef25b9de")).then(() => {
+
+  this.smartBaseLoadPromise = window.SF.loadRuntime().then(() => {
     // The base announces itself (sf-smart-base-ready) when it publishes
     // SF.smart, once per page, so it is not announced again here.
     return window.SF?.smart || null;
@@ -2571,6 +2573,22 @@ SFLoaderPlugin.prototype.stopPreloader = function () {
 
 SFLoaderPlugin.prototype.dispatchReadyOnce = function () {
   if (this.eventSend) {
+    return false;
+  } // The Smart bundles define their elements once the shared runtime has
+  // arrived; the page is ready when they have, not when their scripts have.
+
+
+  const runtime = window.SF?.runtimeLoading;
+
+  if (runtime && !window.SF.runtimeSettled) {
+    if (!this.readyWaitsForRuntime) {
+      this.readyWaitsForRuntime = true;
+      runtime.catch(() => null).then(() => new Promise(settle => setTimeout(settle, 0))).then(() => {
+        this.readyWaitsForRuntime = false;
+        this.dispatchReadyOnce();
+      });
+    }
+
     return false;
   }
 
@@ -3989,7 +4007,10 @@ SFLoaderPlugin.prototype.pathPluginJs = function (name, smart, point, type) {
 
   if (smart) {
     const base = this.resolveSmartBase(name);
-    if (base === null) return null;
+    if (base === null) return null; // A Smart bundle is built against the shared runtime; it is asked for now,
+    // so it arrives with the first bundle rather than after it.
+
+    globalThis.SF?.loadRuntime?.();
     name = name.substring(3);
     pathPlugin = `${base}/${name}`;
   } else {
