@@ -115,6 +115,12 @@ class SfPagination extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___def
         attribute: "template",
         default: "default"
       },
+      // The step of the size ladder its controls and labels take: 1, or the
+      // dense 1/2 of an admin, where a page row stands beside 32px controls.
+      size: {
+        default: "1",
+        values: ["1/2", "1"]
+      },
       top: {
         type: Boolean,
         default: true
@@ -1004,7 +1010,7 @@ function renderPageField(context, component) {
       style=${`--sf-pagination-page-input--digits: ${String(context.current).length}`}
     >
       <sf-input
-        size="1"
+        size=${context.size}
         appearance="bordered"
         root-class="sf-pagination-page-input"
         value=${String(context.current)}
@@ -1031,7 +1037,7 @@ function renderDirection(context, {
     <li class="sf-pagination-item">
       <sf-icon-button
         class=${`sf-pagination-direction sf-pagination-direction--${kind}`}
-        size="1"
+        size=${context.size}
         appearance="link"
         scheme="on-surface"
         icon=${icon}
@@ -1047,7 +1053,7 @@ function renderPaginationTemplate(context) {
   const {
     component
   } = context;
-  const rootClasses = joinClasses("sf-pagination", "flex", "flex-col", context.rootClass);
+  const rootClasses = joinClasses("sf-pagination", `sf-pagination--size-${context.size === "1/2" ? "1/2" : "1"}`, "flex", "flex-col", context.rootClass);
   const topClasses = joinClasses("sf-pagination-top", "flex", "content-main-center", context.topClass);
   const mainClasses = joinClasses("sf-pagination-main", "flex", "items-cross-center", "content-main-between", context.mainClass); // The row of bulk controls is a panel over the page while rows are marked,
   // not a row inside the pagination: the controls act on the selection, which
@@ -1087,14 +1093,14 @@ function renderPaginationTemplate(context) {
                       ` : context.counting ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
                           <div class="sf-pagination-total-text flex items-cross-center">
                             ${context.totalLabel}
-                            <sf-spinner size="1" aria-label=${context.countingLabel}></sf-spinner>
+                            <sf-spinner size=${context.size} aria-label=${context.countingLabel}></sf-spinner>
                           </div>
                         ` : context.canCount ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
                             <div class="sf-pagination-total-text flex items-cross-center">
                               ${context.totalLabel}
                               <sf-button
                                 class="sf-pagination-count-request"
-                                size="1"
+                                size=${context.size}
                                 appearance="link"
                                 scheme="primary"
                                 text=${context.showCountLabel}
@@ -1151,7 +1157,7 @@ function renderPaginationTemplate(context) {
               ${context.top && context.hasNext ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
                     <div class="sf-pagination-more flex items-cross-center">
                       <sf-button
-                        size="1"
+                        size=${context.size}
                         appearance="outline"
                         scheme="primary"
                         ?loading=${context.showMoreBusy}
@@ -1166,7 +1172,7 @@ function renderPaginationTemplate(context) {
                     <div class="sf-pagination-count flex items-cross-center">
                       <span>${context.pageSizeLabel}</span>
                       <sf-dropdown
-                        size="1"
+                        size=${context.size}
                         appearance="outlined"
                         search="false"
                         mode="select"
@@ -1175,7 +1181,7 @@ function renderPaginationTemplate(context) {
                         aria-label=${context.pageSizeLabel}
                         .options=${(context.pageSizes || []).map(size => ({
     type: "text",
-    size: "1",
+    size: context.size,
     text: String(size),
     value: String(size),
     selected: Number(size) === Number(context.pageSize)
@@ -1200,7 +1206,7 @@ function renderPaginationTemplate(context) {
               </span>
               <span class="sf-pagination-actions-separator" aria-hidden="true"></span>
               <sf-dropdown
-                size="1"
+                size=${context.size}
                 appearance="outlined"
                 search="false"
                 mode="select"
@@ -1214,13 +1220,13 @@ function renderPaginationTemplate(context) {
   // else.
   {
     type: "text",
-    size: "1",
+    size: context.size,
     text: context.actionChooseLabel,
     value: "",
     selected: !context.action
   }, ...context.actions.map(action => ({
     type: "text",
-    size: "1",
+    size: context.size,
     text: action.text,
     value: action.value,
     selected: action.value === context.action,
@@ -1229,7 +1235,7 @@ function renderPaginationTemplate(context) {
                 @change=${event => component.setAction(event.detail.value)}
               ></sf-dropdown>
               <sf-button
-                size="1"
+                size=${context.size}
                 appearance="default"
                 scheme="primary"
                 text=${context.actionApplyText}
@@ -1246,7 +1252,7 @@ function renderPaginationTemplate(context) {
                   ` : ""}
               <sf-icon-button
                 class="sf-pagination-actions-clear"
-                size="1"
+                size=${context.size}
                 appearance="link"
                 scheme="on-surface"
                 icon="close"

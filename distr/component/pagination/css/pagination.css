@@ -385,6 +385,22 @@
     min-width: 0;
     min-inline-size: 0;
   }
+  /* Step 1/2 of the size ladder (size="1/2"): the labels and the page numbers
+     take the step's text and control height, as its fields and buttons do. */
+  .sf-pagination.sf-pagination--size-1\/2 {
+    --sf-pagination-marked-text--font-size: var(--sf-text-size-1\/2);
+    --sf-pagination-marked-text--line-height: var(--sf-text-height-1\/2);
+    --sf-pagination-total--font-size: var(--sf-text-size-1\/2);
+    --sf-pagination-total--line-height: var(--sf-text-height-1\/2);
+    --sf-pagination-container--font-size: var(--sf-text-size-1\/2);
+    --sf-pagination-container--line-height: var(--sf-text-height-1\/2);
+    --sf-pagination-count--font-size: var(--sf-text-size-1\/2);
+    --sf-pagination-count--line-height: var(--sf-text-height-1\/2);
+    --sf-page-number--font-size: var(--sf-text-size-1\/2);
+    --sf-page-number--line-height: var(--sf-text-height-1\/2);
+    --sf-page-number--height: var(--sf-ui-1\/2--control-height);
+    --sf-page-number--width: var(--sf-ui-1\/2--control-height);
+  }
   /* utility-hint: flex/1 (.flex-1) display/flex (.flex) flex-direction/column (.flex-col) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-b0) justify-content/center (.justify-center) align-items/center (.items-center) */
   .sf-pagination .sf-pagination-top {
     --sf-pagination-top--background-color: transparent;
@@ -443,6 +459,12 @@
     --sf-pagination-marked-text--font-family: var(--sf-text--family);
     --sf-pagination-marked-text--font-size: var(--sf-text-size-1);
     --sf-pagination-marked-text--line-height: var(--sf-text-height-1);
+  }
+  .sf-pagination.sf-pagination--size-1\/2 .sf-pagination-marked-text {
+    --sf-pagination-marked-text--font-size: var(--sf-text-size-1\/2);
+    --sf-pagination-marked-text--line-height: var(--sf-text-height-1\/2);
+  }
+  .sf-pagination .sf-pagination-marked-text {
     color: var(--sf-pagination-marked-text--color);
     font-family: var(--sf-pagination-marked-text--font-family);
     font-size: var(--sf-pagination-marked-text--font-size);
