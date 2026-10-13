@@ -8,6 +8,10 @@
 
 ### Исправлено
 
+- The Studio generator keeps what a manifest says: the component's props fill only what the manifest does not say yet, and inputs only the manifest names are kept. A regeneration now writes the committed manifests (eleven differed).
+- `sf-upgrade` reports a class shared by two components' records once per use, not twice.
+- `sf-modal`'s manifest names the untitled window «Dialog» in English, as the runtime does.
+
 - A field's mask binds when Core arrives after the field's script (SF_PRELOADED, Docara's pages and example frames): it gave up for good when SF.Mask was not there yet. Core announces the service with `sf-mask-ready`.
 - Smart elements speak the page's language by default: an untitled `sf-modal` is «Окно» / «Dialog», not «Modal»; the `sf-dropdown` search reads «Поиск» / «Search», not «Placeholder». Manifests no longer state English text defaults the runtime never used.
 - `sf-dropdown` no longer lets its search field's native `change` reach listeners on the element.
