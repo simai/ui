@@ -87,6 +87,8 @@
 
 ### Изменено
 
+- Icons no longer download the full Material Symbols font (409 KB) while the subset font is on its way. A browser fetched the declared font for every icon waiting at font-size 0, and the subset's own wait for `document.fonts.ready` waited on it. The core runtime marks the root `data-sf-icons="subset-pending"` until the subset, a cached manifest or the full-font fallback is in place; a page with `SF_BOOT_CONFIG.icons.enabled = false` is not marked. The first subset request now waits for `sf-loader-ready` and carries every icon scanned by then, instead of asking for one glyph and making the rest wait for that whole font.
+
 - The Loader also fetches an element that waits on another element while that one loads (a data view and its table), instead of after it has run.
 
 - The Loader fetches an element's script while the element's relations load, instead of after they have run; the script still runs after them.
