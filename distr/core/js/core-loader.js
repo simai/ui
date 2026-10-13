@@ -4427,7 +4427,12 @@ SFLoaderPlugin.prototype.isRelationPlugin = function (pluginName, jsFile, smart,
           canLoad: false,
           jsFile: this.pathPluginJs(relationMainPlugin, relationMainSmart, point, relationMainModule),
           skipJs: typeof relationMainRule?.js === 'undefined' || relationMainRule?.js === false
-        };
+        }; // The element that waits on this relation is fetched now too (the
+        // same reason as in loadRelationPlugins: a data view waiting on its
+        // table was asked for only once the table had run).
+
+        const waiting = this.totalRelationsPlugins[relationMainPlugin];
+        if (!waiting.skipJs && waiting.jsFile) this.preloadScript(waiting.jsFile);
       }
 
       if (skipJs || !jsFile) {
