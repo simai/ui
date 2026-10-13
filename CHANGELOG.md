@@ -74,6 +74,8 @@
 
 ### Добавлено
 
+- `SF.Sortable.attach(container, options)` — the column mode of sf-sortable. Any row of items (a table's heading row) is made draggable in place: a ghost follows the pointer, the dragged column's cells are dimmed and a dashed outline the column's width and the table's height shows where it will land. Items move only within their group (`groupOf`), a drag can be refused (`canStart`), the row scrolls sideways near its edges, Escape cancels, and the click a drop ends with is swallowed. Nothing in the DOM is moved: `onIntent({item, from, index, group})` asks the host to reorder.
+
 - `SF.notify` raises a message in the page's one notification area: in the top layer at an edge of the window, four at a time with the rest queued, the same message counting up, a timer that pauses under the pointer or the focus, errors announced at once. Every message is announced as `sf-notification` for a notification centre; `SF.notifications.history()` keeps the last fifty.
 - `sf-sortable` shows where a dragged item lands: the item lifts out and an outline of its size opens at its new place (`preview="silhouette"`, the default; `preview="line"` keeps the line).
 - Public variables: badge, button, input and alert offer five to eight CSS variables each (`core/contracts/public-variables.v1.json`) for colours, border, radius, padding and gap; states still show over them. Other `--sf-<block>--*` variables are internal.
