@@ -566,7 +566,24 @@ const announce = () => {
       // half-changed language would be worse than one that did not change.
     }
   }
-};
+}; // The nearest element that says its language, looking past shadow roots: a
+// pagination drawn inside a data view's shadow root found no [lang] there,
+// fell back to <html lang> and spoke English inside a Russian admin whose
+// language was set on the shell around it.
+
+
+function langOwner(node) {
+  let current = node;
+
+  while (current) {
+    const owner = typeof current.closest === 'function' ? current.closest('[lang]') : null;
+    if (owner) return owner;
+    const root = typeof current.getRootNode === 'function' ? current.getRootNode() : null;
+    current = root && root !== current && root.host ? root.host : null;
+  }
+
+  return null;
+}
 /**
  * The page's language for this node: the nearest [lang], else the document's,
  * else English — unless a product has chosen one explicitly.
@@ -580,7 +597,7 @@ function pageLanguage(node) {
   // which matched no dictionary keyed by language and made isRussianPage false
   // on a page that chose 'ru-RU'. The region stays in pageLocale.
   if (STORE.chosen) return STORE.chosen.split('-')[0];
-  const owner = node && typeof node.closest === 'function' ? node.closest('[lang]') : null;
+  const owner = langOwner(node);
   const value = owner?.getAttribute('lang') || globalThis.document?.documentElement?.lang || 'en';
   return normalise(value).split('-')[0] || 'en';
 }
@@ -588,7 +605,7 @@ function pageLanguage(node) {
 
 function pageLocale(node) {
   if (STORE.chosen) return STORE.chosen;
-  const owner = node && typeof node.closest === 'function' ? node.closest('[lang]') : null;
+  const owner = langOwner(node);
   return normalise(owner?.getAttribute('lang') || globalThis.document?.documentElement?.lang || 'en');
 }
 function isRussianPage(node) {

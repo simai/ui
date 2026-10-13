@@ -483,7 +483,10 @@ function renderBadgeTemplate(context) {
   const textContent = hasTextSlot ? context.component.getSlotContent('text') : context.text;
   const classes = ['sf-badge', `sf-badge--${context.appearance ?? context.type}`, // One colour name, as the styles expect: the status when one is set, the
   // colour role otherwise.
-  `sf-badge--${context.status || context.scheme}`, `sf-badge--size-${context.size}`, context.line ? `sf-badge--line-${context.line}` : '', 'flex', 'flex-row', 'flex-nowrap', 'justify-center', 'items-center', context.rootClass].filter(Boolean);
+  `sf-badge--${context.status || context.scheme}`, `sf-badge--size-${context.size}`, context.line ? `sf-badge--line-${context.line}` : '', // Inline: a badge is as wide as its text. As a block-level flex box it
+  // filled whatever held it -- every status in a table cell was a bar the
+  // width of the column.
+  'inline-flex', 'flex-row', 'flex-nowrap', 'justify-center', 'items-center', context.rootClass].filter(Boolean);
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
     <span
       class=${classes.join(' ')}

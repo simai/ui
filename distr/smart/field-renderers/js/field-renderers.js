@@ -103,12 +103,20 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 // `size` on sf-file-preview is the file's size as text, not a rung of the
 // ladder, and `type` on sf-list-item answers `kind` while on sf-input it
 // answers `appearance`.
+// The filter controls take the size of the list they filter: the table's
+// size, when it has one. They were written at 1, so a table at the dense
+// step 1/2 opened filter fields, buttons and tabs a step larger than itself.
+
+function filterSize(host) {
+  const size = String(host?.size || '').trim();
+  return size || '1';
+}
 
 function renderTextFilterControl(field, host) {
   const value = host.getFilterControlValue(field.key);
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <sf-input
-                size="1"
+                size=${filterSize(host)}
                 appearance="filled"
                 placeholder="${setText(host, 'searchInList')}"
                 value="${value.value || ''}"
@@ -149,7 +157,7 @@ function renderRangeFilterControl(field, host) {
                 ></sf-range-slider>
             </div>
             <sf-dropdown
-                    size="1"
+                    size=${filterSize(host)}
                     appearance="outlined"
                     mode="select"
                     placeholder="${setText(host, 'operator')}"
@@ -165,7 +173,7 @@ function renderRangeFilterControl(field, host) {
                 ${operators.map(operator => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
                     <sf-list-item
                             kind="text"
-                            size="1"
+                            size=${filterSize(host)}
                             text="${host.getFilterOperatorLabel(operator)}"
                             value="${operator}"
                             ?selected=${operator === selectedOperator}
@@ -205,7 +213,7 @@ function renderNumberFilterControl(field, host) {
         <div class="flex gap-1/3 flex-col">
             <div class="sf-filter-operator-inputs flex gap-1/3 items-cross-center">
                 <sf-input
-                        size="1"
+                        size=${filterSize(host)}
                         appearance="bordered"
                         root-class="flex-1 min-w-0"
                         label="${isBetween ? setText(host, 'rangeFrom') : host.getFilterOperatorLabel(selectedOperator)}"
@@ -217,7 +225,7 @@ function renderNumberFilterControl(field, host) {
                 ></sf-input>
                 ${isBetween ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
                     <sf-input
-                            size="1"
+                            size=${filterSize(host)}
                             appearance="bordered"
                             label="${setText(host, 'rangeTo')}"
                             root-class="flex-1 min-w-0"
@@ -229,7 +237,7 @@ function renderNumberFilterControl(field, host) {
                     ></sf-input>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
             </div>
             <sf-dropdown
-                    size="1"
+                    size=${filterSize(host)}
                     appearance="outlined"
                     mode="select"
                     placeholder="${setText(host, 'operator')}"
@@ -245,7 +253,7 @@ function renderNumberFilterControl(field, host) {
                 ${operators.map(operator => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
                     <sf-list-item
                             kind="text"
-                            size="1"
+                            size=${filterSize(host)}
                             text="${host.getFilterOperatorLabel(operator)}"
                             value="${operator}"
                             ?selected=${operator === selectedOperator}
@@ -277,7 +285,7 @@ function renderDateFilterControl(field, host) {
   }}
             ></sf-datepicker>
             <sf-dropdown
-                    size="1"
+                    size=${filterSize(host)}
                     appearance="outlined"
                     mode="select"
                     placeholder="${setText(host, 'operator')}"
@@ -293,7 +301,7 @@ function renderDateFilterControl(field, host) {
                 ${operators.map(operator => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
                     <sf-list-item
                             kind="text"
-                            size="1"
+                            size=${filterSize(host)}
                             text="${host.getFilterOperatorLabel(operator)}"
                             value="${operator}"
                             ?selected=${operator === selectedOperator}
@@ -314,7 +322,7 @@ function renderMultiSelectFilterControl(field, host) {
         <div class="flex flex-col gap-1/2">
             ${field.filter?.searchable && (!endpointPage || endpointPage.searchable) ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
                 <sf-input
-                        size="1"
+                        size=${filterSize(host)}
                         appearance="filled"
                         placeholder="${setText(host, 'searchInList')}"
                         value="${search}"
@@ -334,9 +342,9 @@ function renderMultiSelectFilterControl(field, host) {
                 <div role="status" aria-live="polite" class="sf-text-1">
                     ${endpointPage.status === 'loading' ? setText(host, 'loadingOptions') : endpointPage.status === 'error' ? setText(host, 'optionsError') : ''}
                 </div>
-                ${endpointPage.status === 'error' ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button appearance="outline" size="1" text="${setText(host, 'retry')}"
+                ${endpointPage.status === 'error' ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button appearance="outline" size=${filterSize(host)} text="${setText(host, 'retry')}"
                     @click=${() => host.loadEndpointFilterPage(field, null, search)}></sf-button>` : ''}
-                ${endpointPage.nextCursor && endpointPage.status !== 'error' ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button appearance="outline" size="1" text="${setText(host, 'loadMore')}"
+                ${endpointPage.nextCursor && endpointPage.status !== 'error' ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button appearance="outline" size=${filterSize(host)} text="${setText(host, 'loadMore')}"
                     ?disabled=${endpointPage.status === 'loading'}
                     @click=${() => host.loadEndpointFilterPage(field, endpointPage.nextCursor, search)}></sf-button>` : ''}
             ` : ''}
@@ -700,7 +708,30 @@ function renderNumericCell(field, value, host) {
       }
     }
   };
-}
+} // A reference in a cell is a link and nothing else: the arrow a reference card
+// carries said «goes somewhere» a second time beside a label that is already a
+// link, and on a dense row it was the widest thing in the cell. Without an href
+// the label is plain text -- a link that leads nowhere is not drawn as one.
+
+
+function referenceLink(value) {
+  return {
+    component: {
+      type: 'reference-link',
+      props: {
+        line: CELL_LINE,
+        appearance: 'plain',
+        icon: '',
+        label: String(value.label),
+        ...(value.href ? {
+          href: String(value.href)
+        } : {})
+      }
+    }
+  };
+} // A person: the avatar and the name, the name a link to the profile when the
+// host gives its href.
+
 
 function renderUserCell(field, value) {
   if (!value || typeof value !== 'object' || !value.label) return null;
@@ -712,23 +743,12 @@ function renderUserCell(field, value) {
         text: value.avatarText || ''
       }
     }
-  }, String(value.label)];
+  }, value.href ? referenceLink(value) : String(value.label)];
 }
 
 function renderReferenceCell(field, value) {
   if (!value || typeof value !== 'object' || !value.label) return null;
-  return {
-    component: {
-      type: 'reference-link',
-      props: {
-        line: CELL_LINE,
-        label: String(value.label),
-        ...(value.href ? {
-          href: String(value.href)
-        } : {})
-      }
-    }
-  };
+  return referenceLink(value);
 } // What a cell should hold for a field, in the same shape a host would pass: a
 // string, an object with a component, or a list of those. Null means the value
 // is better off as itself. Returning the host's own shape is deliberate -- the

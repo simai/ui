@@ -43,7 +43,10 @@ export function renderBadgeTemplate(context) {
     `sf-badge--${context.status || context.scheme}`,
     `sf-badge--size-${context.size}`,
     context.line ? `sf-badge--line-${context.line}` : '',
-    'flex',
+    // Inline: a badge is as wide as its text. As a block-level flex box it
+    // filled whatever held it -- every status in a table cell was a bar the
+    // width of the column.
+    'inline-flex',
     'flex-row',
     'flex-nowrap',
     'justify-center',
