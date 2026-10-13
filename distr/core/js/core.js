@@ -92,6 +92,26 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
         root.removeAttribute('data-sf-icons');
       }
     }, 6000);
+  } // The subset is asked for once the page is ready; opening the connection
+  // now takes its DNS, TCP and TLS (some 350 ms to icons.simai.io) off that
+  // request. The fetch and the font are both anonymous CORS requests, which
+  // is the connection a crossorigin preconnect opens.
+
+
+  if (subsetEnabled && document.head) {
+    try {
+      const host = new URL(window.SF_BOOT_CONFIG?.icons?.subsetHost || window.SF_ICON_SUBSET_HOST || 'https://icons.simai.io', document.baseURI).origin;
+
+      if (host !== window.location.origin && !document.head.querySelector(`link[rel="preconnect"][href="${host}"]`)) {
+        const link = document.createElement('link');
+        link.rel = 'preconnect';
+        link.href = host;
+        link.crossOrigin = 'anonymous';
+        document.head.appendChild(link);
+      }
+    } catch {
+      /* A host that is not a URL is the request's problem, not the hint's. */
+    }
   }
 }
 
