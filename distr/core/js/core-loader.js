@@ -473,6 +473,65 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
     iconAttrs.set("loading", false);
     this.uniqueIcons.set(normalizedIcon, iconAttrs);
     return 1;
+  }; // Icons a page knows it will draw before it draws them: the ones that come
+  // with data, after the first request has gone. Each request returns one
+  // whole accumulated font, so an icon found late costs a second font; one
+  // declared here goes in the first request, tracked exactly as a scanned one
+  // so the scan that finds it later sees it already asked for. Entries are
+  // names or {icon, weight, filled, grade, opticalSize, type}.
+
+
+  const normalizeIconPreloadEntries = value => normalizeConfigList(value).map(entry => {
+    if (typeof entry === "string") {
+      return {
+        icon: entry.trim(),
+        attrs: {}
+      };
+    }
+
+    if (!entry || typeof entry !== "object") return null;
+    return {
+      icon: String(entry.icon || entry.name || "").trim(),
+      attrs: {
+        weight: entry.weight,
+        filled: isTruthyIconFlag(entry.filled ?? entry.fill) ? "1" : undefined,
+        grade: entry.grade,
+        "optical-size": entry.opticalSize ?? entry["optical-size"],
+        type: entry.type
+      }
+    };
+  }).filter(entry => entry?.icon);
+
+  SFLoaderPlugin.prototype.trackIconPreload = function (entries = []) {
+    let added = 0;
+    normalizeIconPreloadEntries(entries).forEach(({
+      icon,
+      attrs
+    }) => {
+      added += this.trackIconDescriptor(icon, { ...attrs,
+        weight: attrs.weight ?? defaultIconWeight,
+        type: this.normalizeIconType(attrs.type || this.getDefaultIconType())
+      });
+    });
+    return added;
+  };
+
+  SFLoaderPlugin.prototype.preloadIcons = function (entries = []) {
+    if (!this.isIconSubsetEnabled()) return 0;
+    const added = this.trackIconPreload(entries);
+
+    if (added) {
+      this.pendingIconScanCount += added;
+      this.flushPendingIconScan();
+    }
+
+    return added;
+  };
+
+  SFLoaderPlugin.prototype.preloadConfiguredIcons = function () {
+    if (this.iconPreloadApplied) return 0;
+    this.iconPreloadApplied = true;
+    return this.trackIconPreload(window.SF_BOOT_CONFIG?.icons?.preload ?? window.SF_ICON_PRELOAD);
   };
 
   SFLoaderPlugin.prototype.getStaticIconDescriptorKey = function (icon = "", attrs = {}) {
@@ -648,7 +707,7 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
     }
 
     const styleFill = String(el.style?.getPropertyValue?.("--sf-icon--fill") || "").trim();
-    const isFilled = el.classList.contains("sf-icon--filled") || el.classList.contains("sf-icon-filled") || el.hasAttribute("data-filled") && isTruthyIconFlag(el.getAttribute("data-filled")) || el.hasAttribute("filled") && isTruthyIconFlag(el.getAttribute("filled")) || isTruthyIconFlag(styleFill, false);
+    const isFilled = el.classList.contains("sf-icon--filled") || el.classList.contains("sf-icon-filled") || el.hasAttribute("data-filled") && isTruthyIconFlag(el.getAttribute("data-filled")) || el.hasAttribute("filled") && isTruthyIconFlag(el.getAttribute("filled")) || styleFill !== "" && isTruthyIconFlag(styleFill, false);
 
     if (isFilled) {
       attrs.filled = "1";
@@ -1647,6 +1706,7 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
     }
 
     this.ensureConfiguredIconSubsetState();
+    this.preloadConfiguredIcons();
 
     if (this.iconSubsetPending && this.iconSubsetPromise) {
       this.iconSubsetNeedsReload = true;
