@@ -59,6 +59,25 @@
   [data-sf-sortable-item][data-sf-sortable-lifted] {
     display: none !important;
   }
+  /* The column mode (SF.Sortable.attach): the place a column will take,
+     outlined the width of the column and the height of the table; the
+     column being moved is dimmed in every row. */
+  .sf-sortable-column-outline {
+    position: fixed;
+    z-index: 90;
+    z-index: var(--sf-sortable-ghost-z-index, var(--sf-z-index-9, 90));
+    box-sizing: border-box;
+    border: var(--sf-px) dashed Highlight;
+    border: var(--sf-px) dashed var(--sf-outline-primary, var(--sf-primary, Highlight));
+    border-radius: 4px;
+    border-radius: var(--sf-radius--ui, 4px);
+    background-color: transparent;
+    background-color: var(--sf-primary-transparent-select, transparent);
+    pointer-events: none;
+  }
+  [data-sf-sortable-column-source] {
+    opacity: 0.4;
+  }
   .sf-sortable-placeholder {
     box-sizing: border-box;
     flex: none;
