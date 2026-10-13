@@ -8,6 +8,10 @@
 
 ### Исправлено
 
+- Components from the first documentation pass: `SF.Toast.show` takes neutral and info; breadcrumbs stay expanded; a carousel keeps its slides' names and its height; a slider's thumbnails are visible and move it; a menu item written expanded is open and an admin-menu panel opens; a tree name takes its row's colour; calendar days are no longer dark cells; the light tooltip is raised; a default button at scheme secondary is styled; `<kbd>`, `.sf-link`, `.sf-outline` and `.sf-file-preview` load their CSS; `SF.whenDefined` waits for a package element named short; a spinner with `label=""` says nothing and takes its size class; progress keeps the info status.
+- Components built from code no longer default to «Label», «placeholder» and required; the toast's, window's, scrollbar's, quantity's, slider's and breadcrumbs' controls speak the page's language.
+- `.border-none` means `border-style: none` everywhere; component lifecycle events carry the component's name; the carousel, slider, spinner and swiper styles are in the components layer; `SF.Flag` joins `SF.flag`.
+
 - `sf-color` draws its chip and its clear button at its own size: at 1/2 the chip was the 40px square of step 1 and stood taller than the row it sat in.
 
 - The Studio generator keeps what a manifest says: the component's props fill only what the manifest does not say yet, and inputs only the manifest names are kept. A regeneration now writes the committed manifests (eleven differed).
