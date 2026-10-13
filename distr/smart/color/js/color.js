@@ -320,7 +320,7 @@ function renderColorTemplate(context) {
             ${context.clearable && isSet ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
                         <sf-icon-button
                                 appearance="link"
-                                size="1"
+                                size=${size}
                                 icon="restart_alt"
                                 data-action="clear"
                                 aria-label=${context.clearLabel}

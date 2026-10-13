@@ -56,7 +56,7 @@ export function renderColorTemplate(context) {
                     ? html`
                         <sf-icon-button
                                 appearance="link"
-                                size="1"
+                                size=${size}
                                 icon="restart_alt"
                                 data-action="clear"
                                 aria-label=${context.clearLabel}
