@@ -90,9 +90,9 @@ export function renderAlertTemplate(context) {
       ${context.closable
         ? html`
                   <sf-icon-button
-                          variant="close"
+                          kind="close"
                           size="1"
-                          type="link"
+                          appearance="link"
                           scheme="on-surface"
                           data-close
                           data-alert-close

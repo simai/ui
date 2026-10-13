@@ -788,12 +788,12 @@ function renderItem(item) {
     const click = props["@click"];
     return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
             <sf-button
-                    type=${props.type || "default"}
+                    appearance=${props.type || "default"}
                     scheme=${props.scheme || "primary"}
                     size=${props.size || "1"}
                     text=${props.text || ""}
-                    icon-left=${props.iconLeft || ""}
-                    icon-right=${props.iconRight || ""}
+                    icon-start=${props.iconLeft || ""}
+                    icon-end=${props.iconRight || ""}
                     aria-label=${props.ariaLabel || props.text || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                     ?disabled=${Boolean(props.disabled)}
                     @click=${typeof click === "function" ? click : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}

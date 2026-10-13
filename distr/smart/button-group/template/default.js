@@ -16,8 +16,8 @@ function renderItem(item, index, context) {
       text=${item.label}
       icon=${item.icon || nothing}
       size=${context.size}
-      tightness=${context.tightness || nothing}
-      type=${selected ? 'default' : 'outline'}
+      spacing=${context.spacing && context.spacing !== 'normal' ? context.spacing : nothing}
+      appearance=${selected ? 'default' : 'outline'}
       scheme=${selected ? context.scheme : 'on-surface'}
       segment=${segmentFor(index, context.items.length)}
       data-sf-button-group-value=${item.value}

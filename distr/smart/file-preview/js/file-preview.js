@@ -125,11 +125,11 @@ class SfFilePreview extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___de
       },
       downloadLabel: {
         attribute: 'download-label',
-        default: 'Download file'
+        default: ''
       },
       removeLabel: {
         attribute: 'remove-label',
-        default: 'Remove file'
+        default: ''
       }
     };
   }

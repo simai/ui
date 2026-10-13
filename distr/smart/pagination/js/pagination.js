@@ -138,43 +138,43 @@ class SfPagination extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___def
       },
       ariaLabel: {
         attribute: "aria-label",
-        default: "Result pages"
+        default: ""
       },
       pagesLabel: {
         attribute: "pages-label",
-        default: "Pages:"
+        default: ""
       },
       pageLabel: {
         attribute: "page-label",
-        default: "Page"
+        default: ""
       },
       previousLabel: {
         attribute: "previous-label",
-        default: "Previous page"
+        default: ""
       },
       nextLabel: {
         attribute: "next-label",
-        default: "Next page"
+        default: ""
       },
       lastLabel: {
         attribute: "last-label",
-        default: "Last"
+        default: ""
       },
       firstLabel: {
         attribute: "first-label",
-        default: "First"
+        default: ""
       },
       pageFieldLabel: {
         attribute: "page-field-label",
-        default: "Page:"
+        default: ""
       },
       totalLabel: {
         attribute: "total-label",
-        default: "Total:"
+        default: ""
       },
       selectedLabel: {
         attribute: "selected-label",
-        default: "Selected:"
+        default: ""
       },
       selectedCount: {
         attribute: "selected-count",
@@ -183,7 +183,7 @@ class SfPagination extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___def
       },
       showMoreText: {
         attribute: "show-more-text",
-        default: "Show more"
+        default: ""
       },
       countKnown: {
         attribute: "count-known",
@@ -206,11 +206,11 @@ class SfPagination extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___def
       },
       showCountLabel: {
         attribute: "show-count-label",
-        default: "Show the number"
+        default: ""
       },
       countingLabel: {
         attribute: "counting-label",
-        default: "Counting"
+        default: ""
       },
       showMoreBusy: {
         attribute: "show-more-busy",
@@ -246,7 +246,7 @@ class SfPagination extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___def
       },
       pageSizeLabel: {
         attribute: "page-size-label",
-        default: "Per page:"
+        default: ""
       },
       showActions: {
         attribute: "show-actions",
@@ -266,7 +266,7 @@ class SfPagination extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___def
       },
       actionApplyText: {
         attribute: "action-apply-text",
-        default: "Apply"
+        default: ""
       },
       showActionForAll: {
         attribute: "show-action-for-all",
@@ -280,23 +280,23 @@ class SfPagination extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___def
       },
       actionForAllLabel: {
         attribute: "action-for-all-label",
-        default: "For all"
+        default: ""
       },
       actionChooseLabel: {
         attribute: "action-choose-label",
-        default: "Choose an action"
+        default: ""
       },
       actionsRegionLabel: {
         attribute: "actions-region-label",
-        default: "Actions for the selected"
+        default: ""
       },
       clearSelectionLabel: {
         attribute: "clear-selection-label",
-        default: "Clear the selection"
+        default: ""
       },
       actionsLabel: {
         attribute: "actions-label",
-        default: "Action for the selected records"
+        default: ""
       }
     };
   }
@@ -1005,7 +1005,7 @@ function renderPageField(context, component) {
     >
       <sf-input
         size="1"
-        type="bordered"
+        appearance="bordered"
         root-class="sf-pagination-page-input"
         value=${String(context.current)}
         inputmode="numeric"
@@ -1032,7 +1032,7 @@ function renderDirection(context, {
       <sf-icon-button
         class=${`sf-pagination-direction sf-pagination-direction--${kind}`}
         size="1"
-        type="link"
+        appearance="link"
         scheme="on-surface"
         icon=${icon}
         title=${label}
@@ -1095,7 +1095,7 @@ function renderPaginationTemplate(context) {
                               <sf-button
                                 class="sf-pagination-count-request"
                                 size="1"
-                                type="link"
+                                appearance="link"
                                 scheme="primary"
                                 text=${context.showCountLabel}
                                 @click=${() => component.requestCount("total")}
@@ -1152,7 +1152,7 @@ function renderPaginationTemplate(context) {
                     <div class="sf-pagination-more flex items-cross-center">
                       <sf-button
                         size="1"
-                        type="outline"
+                        appearance="outline"
                         scheme="primary"
                         ?loading=${context.showMoreBusy}
                         ?disabled=${context.showMoreBusy}
@@ -1167,7 +1167,7 @@ function renderPaginationTemplate(context) {
                       <span>${context.pageSizeLabel}</span>
                       <sf-dropdown
                         size="1"
-                        type="outlined"
+                        appearance="outlined"
                         search="false"
                         mode="select"
                         portal="true"
@@ -1201,7 +1201,7 @@ function renderPaginationTemplate(context) {
               <span class="sf-pagination-actions-separator" aria-hidden="true"></span>
               <sf-dropdown
                 size="1"
-                type="outlined"
+                appearance="outlined"
                 search="false"
                 mode="select"
                 value=${context.action}
@@ -1230,7 +1230,7 @@ function renderPaginationTemplate(context) {
               ></sf-dropdown>
               <sf-button
                 size="1"
-                type="default"
+                appearance="default"
                 scheme="primary"
                 text=${context.actionApplyText}
                 ?disabled=${!context.action}
@@ -1247,7 +1247,7 @@ function renderPaginationTemplate(context) {
               <sf-icon-button
                 class="sf-pagination-actions-clear"
                 size="1"
-                type="link"
+                appearance="link"
                 scheme="on-surface"
                 icon="close"
                 title=${context.clearSelectionLabel}

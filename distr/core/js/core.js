@@ -471,6 +471,7 @@ function parsePattern(pattern) {
 function extractInput(value, tokens, options = {}, caret = -1) {
   const placeholder = options.placeholderChar || '_';
   const source = String(value ?? '');
+  const slots = tokens.filter(token => token.test);
   const accepted = [];
   let before = 0;
   let pointer = 0;
@@ -482,7 +483,17 @@ function extractInput(value, tokens, options = {}, caret = -1) {
       pointer += 1;
     }
 
-    if (pointer >= tokens.length) break;
+    if (pointer >= tokens.length) {
+      // Typed past the end of a shown template -- a caret left after the
+      // placeholders: the character fills the first empty slot, not nothing.
+      if (options.lazy === false && accepted.length < slots.length && slots[accepted.length].test(character)) {
+        accepted.push(character);
+        if (index < caret) before = accepted.length;
+      }
+
+      continue;
+    }
+
     const token = tokens[pointer];
 
     if (token.fixed !== undefined) {
@@ -724,28 +735,32 @@ function createNativeMask(element, options) {
   }; // With the template shown, a click lands anywhere in it -- usually past the
   // placeholders, where a typed character falls off the end of the pattern.
   // The caret goes to the first empty slot instead, as IMask puts it.
+  // A click has placed the caret by the time it fires; a focus from the
+  // keyboard or a pointer places it a moment later.
 
+
+  const settleCaretNow = () => {
+    if (state.destroyed || !tokens || options.lazy !== false) return;
+    const caret = caretOf(element);
+    const end = typeof element.selectionEnd === 'number' ? element.selectionEnd : caret;
+    if (caret < 0 || caret !== end) return;
+    const {
+      accepted
+    } = extractInput(element.value, tokens, options);
+    const rendered = renderPattern(accepted, tokens, options);
+    const filled = rendered.caretAfter[accepted.length] ?? rendered.display.length;
+    if (caret > filled) placeCaret(element, filled);
+  };
 
   const settleCaret = () => {
     if (state.destroyed || !tokens || options.lazy !== false) return;
-    setTimeout(() => {
-      if (state.destroyed) return;
-      const caret = caretOf(element);
-      const end = typeof element.selectionEnd === 'number' ? element.selectionEnd : caret;
-      if (caret < 0 || caret !== end) return;
-      const {
-        accepted
-      } = extractInput(element.value, tokens, options);
-      const rendered = renderPattern(accepted, tokens, options);
-      const filled = rendered.caretAfter[accepted.length] ?? rendered.display.length;
-      if (caret > filled) placeCaret(element, filled);
-    }, 0);
+    setTimeout(settleCaretNow, 0);
   };
 
   element.addEventListener('input', sync);
   element.addEventListener('blur', commit);
   element.addEventListener('focus', settleCaret);
-  element.addEventListener('click', settleCaret);
+  element.addEventListener('click', settleCaretNow);
 
   if (isNumberMask(options)) {
     if (element.value !== '') element.value = formatNumber(element.value, options);
@@ -805,7 +820,7 @@ function createNativeMask(element, options) {
       element.removeEventListener('input', sync);
       element.removeEventListener('blur', commit);
       element.removeEventListener('focus', settleCaret);
-      element.removeEventListener('click', settleCaret);
+      element.removeEventListener('click', settleCaretNow);
     }
 
   };
@@ -833,7 +848,12 @@ const Mask = {
   }
 
 };
-getGlobalRoot().Mask = Mask;
+getGlobalRoot().Mask = Mask; // Fields whose scripts ran before Core wait for this (component/mask-service).
+
+if (typeof window.dispatchEvent === 'function' && typeof CustomEvent === 'function') {
+  window.dispatchEvent(new CustomEvent('sf-mask-ready'));
+}
+
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Mask);
 

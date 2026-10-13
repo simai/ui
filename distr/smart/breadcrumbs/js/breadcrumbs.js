@@ -161,10 +161,10 @@ class SfBreadcrumbs extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___de
         default: ''
       },
       ariaLabel: {
-        default: 'Breadcrumb'
+        default: ''
       },
       expandLabel: {
-        default: 'Show hidden breadcrumbs'
+        default: ''
       },
       expandOnEllipsis: {
         default: true,

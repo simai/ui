@@ -261,6 +261,7 @@ export function renderDropdownTemplate(context) {
                     .value=${context.searchValue || ""}
                     ?disabled=${context.disabled}
                     @input=${(event) => context.component.handleSearchInput(event)}
+                    @change=${(event) => event.stopPropagation()}
                     @click=${(event) => event.stopPropagation()}
                   />
                   <i class="sf-icon sf-icon-hint" aria-hidden="true">search</i>

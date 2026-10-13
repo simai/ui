@@ -44,7 +44,7 @@ function renderPageField(context, component) {
     >
       <sf-input
         size="1"
-        type="bordered"
+        appearance="bordered"
         root-class="sf-pagination-page-input"
         value=${String(context.current)}
         inputmode="numeric"
@@ -66,7 +66,7 @@ function renderDirection(context, {kind, icon, label, page}) {
       <sf-icon-button
         class=${`sf-pagination-direction sf-pagination-direction--${kind}`}
         size="1"
-        type="link"
+        appearance="link"
         scheme="on-surface"
         icon=${icon}
         title=${label}
@@ -155,7 +155,7 @@ export function renderPaginationTemplate(context) {
                               <sf-button
                                 class="sf-pagination-count-request"
                                 size="1"
-                                type="link"
+                                appearance="link"
                                 scheme="primary"
                                 text=${context.showCountLabel}
                                 @click=${() => component.requestCount("total")}
@@ -220,7 +220,7 @@ export function renderPaginationTemplate(context) {
                     <div class="sf-pagination-more flex items-cross-center">
                       <sf-button
                         size="1"
-                        type="outline"
+                        appearance="outline"
                         scheme="primary"
                         ?loading=${context.showMoreBusy}
                         ?disabled=${context.showMoreBusy}
@@ -237,7 +237,7 @@ export function renderPaginationTemplate(context) {
                       <span>${context.pageSizeLabel}</span>
                       <sf-dropdown
                         size="1"
-                        type="outlined"
+                        appearance="outlined"
                         search="false"
                         mode="select"
                         portal="true"
@@ -275,7 +275,7 @@ export function renderPaginationTemplate(context) {
               <span class="sf-pagination-actions-separator" aria-hidden="true"></span>
               <sf-dropdown
                 size="1"
-                type="outlined"
+                appearance="outlined"
                 search="false"
                 mode="select"
                 value=${context.action}
@@ -307,7 +307,7 @@ export function renderPaginationTemplate(context) {
               ></sf-dropdown>
               <sf-button
                 size="1"
-                type="default"
+                appearance="default"
                 scheme="primary"
                 text=${context.actionApplyText}
                 ?disabled=${!context.action}
@@ -329,7 +329,7 @@ export function renderPaginationTemplate(context) {
               <sf-icon-button
                 class="sf-pagination-actions-clear"
                 size="1"
-                type="link"
+                appearance="link"
                 scheme="on-surface"
                 icon="close"
                 title=${context.clearSelectionLabel}

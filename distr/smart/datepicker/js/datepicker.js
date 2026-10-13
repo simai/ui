@@ -88,7 +88,23 @@ __webpack_require__.r(__webpack_exports__);
 //
 // Nothing is printed by default: a page opts in to console warnings with
 // <html data-sf-deprecations="warn"> or SF.deprecations.warn = true.
-const notes = new Map();
+//
+// Every bundle carries its own copy of this module, so a Map of its own made one
+// list per bundle, and SF.deprecations.list() answered with whichever bundle set
+// it last -- [] on a page printing seven warnings from others. The notes live on
+// one shared global instead, whichever copy writes or reads them.
+function sharedNotes() {
+  const root = globalThis.SF = globalThis.SF || {};
+
+  if (!(root.__deprecationNotes instanceof Map)) {
+    Object.defineProperty(root, '__deprecationNotes', {
+      value: new Map(),
+      configurable: true
+    });
+  }
+
+  return root.__deprecationNotes;
+}
 
 function warnEnabled() {
   const root = globalThis.document?.documentElement;
@@ -104,6 +120,7 @@ function noteDeprecated({
 } = {}) {
   if (!from) return;
   const key = [component, kind, attribute, from].join('|');
+  const notes = sharedNotes();
   const existing = notes.get(key);
 
   if (existing) {
@@ -127,11 +144,11 @@ function noteDeprecated({
   }
 }
 function listDeprecations() {
-  return [...notes.values()].map(note => ({ ...note
+  return [...sharedNotes().values()].map(note => ({ ...note
   }));
 }
 function clearDeprecations() {
-  notes.clear();
+  sharedNotes().clear();
 }
 
 if (typeof globalThis !== 'undefined') {
@@ -508,6 +525,11 @@ class SfDatepicker extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___def
       },
       inputName: {
         attribute: 'input-name',
+        default: ''
+      },
+      // Read by inputName after input-name; declared so the manifest names it.
+      name: {
+        attribute: 'name',
         default: ''
       },
       placeholder: {
@@ -1569,13 +1591,13 @@ function joinClasses(...tokens) {
 function renderYearTop(context) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <div class="sf-datepicker-top flex content-main-between items-cross-center">
-            <sf-icon-button type="link" scheme="on-surface" size="1"
+            <sf-icon-button appearance="link" scheme="on-surface" size="1"
                 icon=${context.previousIcon} aria-label=${context.labels.previousYears}
                 @click=${() => context.component.shiftYearPage(-1)}></sf-icon-button>
             <div class="sf-datepicker-range-title" aria-live="polite">
                 ${context.yearPageStart}–${context.yearPageEnd}
             </div>
-            <sf-icon-button type="link" scheme="on-surface" size="1"
+            <sf-icon-button appearance="link" scheme="on-surface" size="1"
                 icon=${context.nextIcon} aria-label=${context.labels.nextYears}
                 @click=${() => context.component.shiftYearPage(1)}></sf-icon-button>
         </div>`;
@@ -1585,20 +1607,20 @@ function renderTop(context) {
   if (context.context === 'year') return renderYearTop(context);
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <div class="sf-datepicker-top grid items-cross-center">
-            <sf-icon-button type="link" scheme="on-surface" size="1"
+            <sf-icon-button appearance="link" scheme="on-surface" size="1"
                 icon=${context.previousIcon} aria-label=${context.labels.previousMonth}
                 @click=${() => context.component.shiftMonth(-1)}></sf-icon-button>
             <div class="sf-datepicker-period flex content-main-center items-cross-center gap-1/4">
-                <sf-button class="sf-datepicker-month-toggle" type="link" scheme="on-surface" tightness="low"
+                <sf-button class="sf-datepicker-month-toggle" appearance="link" scheme="on-surface" spacing="compact"
                     text=${context.monthLabel}
                     aria-expanded=${context.context === 'month' ? 'true' : 'false'}
                     @click=${() => context.component.toggleContext('month')}></sf-button>
-                <sf-button class="sf-datepicker-year-toggle" type="link" scheme="on-surface" tightness="low"
+                <sf-button class="sf-datepicker-year-toggle" appearance="link" scheme="on-surface" spacing="compact"
                     text=${String(context.year)}
                     aria-expanded="false"
                     @click=${() => context.component.toggleContext('year')}></sf-button>
             </div>
-            <sf-icon-button type="link" scheme="on-surface" size="1"
+            <sf-icon-button appearance="link" scheme="on-surface" size="1"
                 icon=${context.nextIcon} aria-label=${context.labels.nextMonth}
                 @click=${() => context.component.shiftMonth(1)}></sf-icon-button>
         </div>`;
@@ -1639,7 +1661,7 @@ function renderContext(context) {
 function renderDatepickerInput(context) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <sf-input class="sf-datepicker-input" ${(0,lit_directives_ref_js__WEBPACK_IMPORTED_MODULE_1__.ref)(context.component.refs.input)}
-            type=${context.inputType} size=${context.inputSize}
+            appearance=${context.inputType} size=${context.inputSize}
             label=${context.label || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} name=${context.inputName || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
             placeholder=${context.placeholder || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} icon-start=${context.iconStart || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
             root-class=${context.inputRootClass || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} value=${context.displayValue || ''}

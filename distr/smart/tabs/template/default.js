@@ -76,13 +76,13 @@ function renderTab(item, context) {
   if(context.variant !== 'icons') {
       return html`
           <sf-button
-                  type="primary"
+                  appearance="primary"
                   size=${context.size}
                   scheme=${context.scheme}
                   text=${item.label}
                   icon=${item.icon || nothing}
-                  icon-left=${item.iconLeft || nothing}
-                  icon-right=${item.iconRight || nothing}
+                  icon-start=${item.iconLeft || nothing}
+                  icon-end=${item.iconRight || nothing}
                   root-class=${joinClasses(item.selected ? 'selected' : '')}
                   data-sf-tab-index=${String(item.index)}
                   data-tab=${String(item.index)}
@@ -94,7 +94,7 @@ function renderTab(item, context) {
   } else {
       return html`
           <sf-icon-button
-                  type="primary"
+                  appearance="primary"
                   size=${context.size}
                   scheme=${context.scheme}
                   icon=${item.icon || nothing}

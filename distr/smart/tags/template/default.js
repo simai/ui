@@ -108,9 +108,9 @@ function renderClose(context) {
         ? context.component.getSlotContent('close')
         : html`
                 <sf-icon-button
-                        variant="close"
+                        kind="close"
                         size="${closeSize(context.size)}"
-                        type="link"
+                        appearance="link"
                         scheme="on-surface"
                         ?disabled=${context.disabled}
                         aria-label=${context.closeLabel}

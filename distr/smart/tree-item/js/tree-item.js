@@ -49,7 +49,7 @@ function treeItemNodeToData(node) {
     href: node.getAttribute('href') || '',
     target: node.getAttribute('target') || '',
     rel: node.getAttribute('rel') || '',
-    type: node.getAttribute('type') || '',
+    type: node.getAttribute('kind') || node.getAttribute('type') || '',
     value: node.getAttribute('value') || '',
     open: node.hasAttribute('open'),
     selected: node.hasAttribute('selected'),
@@ -142,11 +142,11 @@ class SfTreeItem extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___defau
       },
       openLabel: {
         attribute: 'open-label',
-        default: 'Open item'
+        default: ''
       },
       closeLabel: {
         attribute: 'close-label',
-        default: 'Close item'
+        default: ''
       },
       rootClass: {
         default: ''
@@ -239,7 +239,7 @@ class SfTreeItem extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___defau
       href: this.getAttribute('href') || '',
       target: this.getAttribute('target') || '',
       rel: this.getAttribute('rel') || '',
-      type: this.getAttribute('type') || '',
+      type: this.getAttribute('kind') || this.getAttribute('type') || '',
       value: this.getAttribute('value') || '',
       open: this.hasAttribute('open'),
       selected: this.hasAttribute('selected'),
@@ -516,7 +516,7 @@ function renderTreeItemData(item = {}) {
       href=${item.href || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       target=${item.target || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       rel=${item.rel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-      type=${item.type || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      kind=${item.type || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       value=${item.value || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       open-icon=${item.openIcon || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       closed-icon=${item.closedIcon || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}

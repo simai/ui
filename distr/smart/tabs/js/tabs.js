@@ -563,13 +563,13 @@ function renderTab(item, context) {
   if (context.variant !== 'icons') {
     return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
           <sf-button
-                  type="primary"
+                  appearance="primary"
                   size=${context.size}
                   scheme=${context.scheme}
                   text=${item.label}
                   icon=${item.icon || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-                  icon-left=${item.iconLeft || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-                  icon-right=${item.iconRight || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                  icon-start=${item.iconLeft || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                  icon-end=${item.iconRight || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                   root-class=${joinClasses(item.selected ? 'selected' : '')}
                   data-sf-tab-index=${String(item.index)}
                   data-tab=${String(item.index)}
@@ -581,7 +581,7 @@ function renderTab(item, context) {
   } else {
     return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
           <sf-icon-button
-                  type="primary"
+                  appearance="primary"
                   size=${context.size}
                   scheme=${context.scheme}
                   icon=${item.icon || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}

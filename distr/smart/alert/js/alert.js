@@ -125,7 +125,7 @@ class SfAlert extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default(
         default: false
       },
       closeLabel: {
-        default: 'Close alert'
+        default: ''
       },
       rootClass: {
         default: ''
@@ -387,9 +387,9 @@ function renderAlertTemplate(context) {
 
       ${context.closable ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
                   <sf-icon-button
-                          variant="close"
+                          kind="close"
                           size="1"
-                          type="link"
+                          appearance="link"
                           scheme="on-surface"
                           data-close
                           data-alert-close

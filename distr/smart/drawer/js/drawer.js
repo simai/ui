@@ -250,7 +250,7 @@ class SfDrawer extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default
       },
       closeLabel: {
         attribute: 'close-label',
-        default: 'Close drawer'
+        default: ''
       },
       width: {
         default: ''

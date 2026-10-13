@@ -76,13 +76,13 @@ class SfSteps extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default(
       },
       ariaLabel: {
         attribute: 'aria-label',
-        default: 'Steps'
+        default: ''
       },
       completedLabel: {
-        default: 'Completed'
+        default: ''
       },
       errorLabel: {
-        default: 'Error'
+        default: ''
       },
       rootClass: {
         default: ''

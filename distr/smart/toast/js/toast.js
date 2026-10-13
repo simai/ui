@@ -596,7 +596,7 @@ class SfToast extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default(
         default: true
       },
       closeLabel: {
-        default: 'Close message'
+        default: ''
       },
       duration: {
         type: Number,

@@ -547,7 +547,7 @@ class SfSpinner extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___defaul
         default: ''
       },
       label: {
-        default: 'Loading...'
+        default: ''
       },
       // The axis is called kind, because that is the question it answers.
       // `variant` keeps working: see contracts/public-api-axes.json.

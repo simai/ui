@@ -629,7 +629,23 @@ __webpack_require__.r(__webpack_exports__);
 //
 // Nothing is printed by default: a page opts in to console warnings with
 // <html data-sf-deprecations="warn"> or SF.deprecations.warn = true.
-const notes = new Map();
+//
+// Every bundle carries its own copy of this module, so a Map of its own made one
+// list per bundle, and SF.deprecations.list() answered with whichever bundle set
+// it last -- [] on a page printing seven warnings from others. The notes live on
+// one shared global instead, whichever copy writes or reads them.
+function sharedNotes() {
+  const root = globalThis.SF = globalThis.SF || {};
+
+  if (!(root.__deprecationNotes instanceof Map)) {
+    Object.defineProperty(root, '__deprecationNotes', {
+      value: new Map(),
+      configurable: true
+    });
+  }
+
+  return root.__deprecationNotes;
+}
 
 function warnEnabled() {
   const root = globalThis.document?.documentElement;
@@ -645,6 +661,7 @@ function noteDeprecated({
 } = {}) {
   if (!from) return;
   const key = [component, kind, attribute, from].join('|');
+  const notes = sharedNotes();
   const existing = notes.get(key);
 
   if (existing) {
@@ -668,11 +685,11 @@ function noteDeprecated({
   }
 }
 function listDeprecations() {
-  return [...notes.values()].map(note => ({ ...note
+  return [...sharedNotes().values()].map(note => ({ ...note
   }));
 }
 function clearDeprecations() {
-  notes.clear();
+  sharedNotes().clear();
 }
 
 if (typeof globalThis !== 'undefined') {
@@ -692,23 +709,34 @@ if (typeof globalThis !== 'undefined') {
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("fbe0570fcc69");
-/* harmony import */ var _component_field_size__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("e6d86f2cd058");
-/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("5429d6e80991");
-/* harmony import */ var _component_dropdown_interaction__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("3a03d4610486");
-/* harmony import */ var _component_form_reset_helper__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("67eed2647f47");
-/* harmony import */ var _component_dropdown_portal__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("a0f23dca0b37");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _component_dropdown_portal__WEBPACK_IMPORTED_MODULE_5__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _component_dropdown_portal__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("0d662e4d7d63");
+/* harmony import */ var _component_field_size__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e6d86f2cd058");
+/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("5429d6e80991");
+/* harmony import */ var _component_dropdown_interaction__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("3a03d4610486");
+/* harmony import */ var _component_form_reset_helper__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("67eed2647f47");
+/* harmony import */ var _component_dropdown_portal__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("a0f23dca0b37");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _component_dropdown_portal__WEBPACK_IMPORTED_MODULE_6__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _component_dropdown_portal__WEBPACK_IMPORTED_MODULE_6__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language__WEBPACK_IMPORTED_MODULE_1__);
 
 
 
 
 
 
+
+const DROPDOWN_TEXT = {
+  en: {
+    search: 'Search'
+  },
+  ru: {
+    search: 'Поиск'
+  }
+};
 
 function normalizeSize(value) {
-  return (0,_component_field_size__WEBPACK_IMPORTED_MODULE_1__.fieldSize)(value, 'sf-dropdown');
+  return (0,_component_field_size__WEBPACK_IMPORTED_MODULE_2__.fieldSize)(value, 'sf-dropdown');
 }
 
 function normalizeListItemType(value) {
@@ -721,7 +749,7 @@ function parseOptionNode(node, dropdownSize = '1') {
   if (!(node instanceof HTMLElement)) return null;
   if (node.tagName.toLowerCase() !== 'sf-list-item') return null;
   return {
-    type: normalizeListItemType(node.getAttribute('type')),
+    type: normalizeListItemType(node.getAttribute('kind') || node.getAttribute('type')),
     size: normalizeSize(node.getAttribute('size') || dropdownSize),
     text: node.getAttribute('text') || '',
     icon: node.getAttribute('icon') || 'person',
@@ -748,7 +776,8 @@ function parseOptionData(option, dropdownSize = '1') {
   const value = option.value === undefined || option.value === null ? text : String(option.value);
   if (text === '' && value === '') return null;
   return {
-    type: normalizeListItemType(option.type),
+    // `kind` is the list item's axis; `type` its legacy name.
+    type: normalizeListItemType(option.kind || option.type),
     size: normalizeSize(option.size || dropdownSize),
     text,
     icon: option.icon ? String(option.icon) : 'person',
@@ -858,7 +887,7 @@ class SfDropdown extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___defau
         default: ''
       },
       searchPlaceholder: {
-        default: 'Placeholder'
+        default: ''
       },
       search: {
         type: Boolean,
@@ -965,7 +994,10 @@ class SfDropdown extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___defau
   }
 
   get searchPlaceholder() {
-    return this.getAttribute('search-placeholder') || 'Placeholder';
+    // The search field read «Placeholder» on every page; a native change it
+    // fires when left is stopped in the template, so the dropdown's own change
+    // is the only one a listener on it hears.
+    return this.getAttribute('search-placeholder') || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_1__.pageText)(DROPDOWN_TEXT, 'search', this);
   }
 
   get layout() {
@@ -1084,6 +1116,7 @@ class SfDropdown extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___defau
       value: this.hiddenValue,
       triggerText: this.triggerText,
       searchValue: this._searchValue,
+      searchPlaceholder: this.searchPlaceholder,
       selectedValues: this.selectedValues,
       selectedOptions: this.selectedOptions,
       options: this.visibleOptions
@@ -1091,7 +1124,7 @@ class SfDropdown extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___defau
   }
 
   template() {
-    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_2__.renderDropdownTemplate)(this.templateContext());
+    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_3__.renderDropdownTemplate)(this.templateContext());
   }
 
   beforeRender() {
@@ -1104,7 +1137,7 @@ class SfDropdown extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___defau
     this._dropdownRoot = this.querySelector('.sf-dropdown'); // Lit keeps references to this node even while the fallback projects it.
 
     this._list = this.querySelector('.sf-list') || (previousRoot === this._dropdownRoot ? previousList : null);
-    if (previousList !== this._list) (0,_component_dropdown_portal__WEBPACK_IMPORTED_MODULE_5__.closeDropdownPortal)(previousList);
+    if (previousList !== this._list) (0,_component_dropdown_portal__WEBPACK_IMPORTED_MODULE_6__.closeDropdownPortal)(previousList);
     this.syncDocumentListeners();
     this.syncPortalListeners();
     this.positionPortalList();
@@ -1115,7 +1148,7 @@ class SfDropdown extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___defau
     }
 
     if (this._dropdownRoot && !this._interaction) {
-      this._interaction = (0,_component_dropdown_interaction__WEBPACK_IMPORTED_MODULE_3__.createDropdownInteraction)(this._dropdownRoot, {
+      this._interaction = (0,_component_dropdown_interaction__WEBPACK_IMPORTED_MODULE_4__.createDropdownInteraction)(this._dropdownRoot, {
         owner: this,
         getList: () => this._list,
         isOpen: () => this._open,
@@ -1134,7 +1167,7 @@ class SfDropdown extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___defau
     if (this._resetControl !== resetControl) {
       this._releaseReset?.();
       this._resetControl = resetControl;
-      this._releaseReset = resetControl ? (0,_component_form_reset_helper__WEBPACK_IMPORTED_MODULE_4__.bindFormReset)(resetControl, () => {
+      this._releaseReset = resetControl ? (0,_component_form_reset_helper__WEBPACK_IMPORTED_MODULE_5__.bindFormReset)(resetControl, () => {
         this._interaction?.beforeClose();
         this._selectedValues = [...this._resetValues];
         this.setAttributeValue('value', serializeValues(this._selectedValues));
@@ -1150,7 +1183,7 @@ class SfDropdown extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___defau
   }
 
   onDisconnected() {
-    (0,_component_dropdown_portal__WEBPACK_IMPORTED_MODULE_5__.closeDropdownPortal)(this._list);
+    (0,_component_dropdown_portal__WEBPACK_IMPORTED_MODULE_6__.closeDropdownPortal)(this._list);
     this._releaseReset?.();
     this._releaseReset = null;
     this._resetControl = null;
@@ -1323,11 +1356,11 @@ class SfDropdown extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___defau
 
   positionPortalList() {
     if (!this._list || !this._dropdownRoot || !this.portal || !this._open) {
-      (0,_component_dropdown_portal__WEBPACK_IMPORTED_MODULE_5__.closeDropdownPortal)(this._list);
+      (0,_component_dropdown_portal__WEBPACK_IMPORTED_MODULE_6__.closeDropdownPortal)(this._list);
       return;
     }
 
-    (0,_component_dropdown_portal__WEBPACK_IMPORTED_MODULE_5__.openDropdownPortal)(this._dropdownRoot, this._list, () => this.closeDropdown());
+    (0,_component_dropdown_portal__WEBPACK_IMPORTED_MODULE_6__.openDropdownPortal)(this._dropdownRoot, this._list, () => this.closeDropdown());
   } // The selected machine value, as the manifest declares it: a string, values
   // joined by commas for a multiple selection. It used to return every template
   // setting as an object, so `dropdown.value` was never the value (documentation
@@ -1600,6 +1633,7 @@ function renderDropdownTemplate(context) {
                     .value=${context.searchValue || ""}
                     ?disabled=${context.disabled}
                     @input=${event => context.component.handleSearchInput(event)}
+                    @change=${event => event.stopPropagation()}
                     @click=${event => event.stopPropagation()}
                   />
                   <i class="sf-icon sf-icon-hint" aria-hidden="true">search</i>
@@ -1844,6 +1878,13 @@ __webpack_async_result__();
 (module) {
 
 module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("lit") : new Promise((resolve) => globalThis.addEventListener("sf-runtime-ready", () => resolve(globalThis.SF.runtimeModule("lit")), { once: true })));
+
+/***/ },
+
+/***/ "0d662e4d7d63"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("page-language") : new Promise((resolve) => globalThis.addEventListener("sf-runtime-ready", () => resolve(globalThis.SF.runtimeModule("page-language")), { once: true })));
 
 /***/ },
 

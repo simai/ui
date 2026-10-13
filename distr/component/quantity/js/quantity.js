@@ -211,6 +211,46 @@ function bindFormReset(input, synchronize) {
 
 /***/ },
 
+/***/ "0ab12d47912a"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   maskService: () => (/* binding */ maskService)
+/* harmony export */ });
+// SF.Mask belongs to Core. A page may run a field's script before Core --
+// SF_PRELOADED allows it, and Docara loads every page and example frame that
+// way (smart-base, the component scripts, then core.js) -- and a field that
+// found no SF.Mask at bind time gave up on its mask for good: the root was
+// bound and the input stayed unmasked. The fields ask for the service here
+// instead; it is there at once on an ordinary page, and otherwise arrives
+// with Core's sf-mask-ready (or is found at the Loader's ready or the window's
+// load, for a Core that predates the event). One promise per bundle.
+let pending = null;
+function maskService() {
+  const current = () => window.SF?.Mask?.create ? window.SF.Mask : null;
+
+  const service = current();
+  if (service) return Promise.resolve(service);
+  if (pending) return pending;
+  pending = new Promise(resolve => {
+    const events = [[window, 'sf-mask-ready'], [window, 'sf-loader-ready'], [window, 'load'], [document, 'DOMContentLoaded']];
+
+    const check = () => {
+      const found = current();
+      if (!found) return;
+      events.forEach(([target, type]) => target.removeEventListener(type, check));
+      pending = null;
+      resolve(found);
+    };
+
+    events.forEach(([target, type]) => target.addEventListener(type, check));
+  });
+  return pending;
+}
+
+/***/ },
+
 /***/ "a1ebeb48a6ab"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -221,7 +261,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _field_contract__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("e138a730fd7c");
 /* harmony import */ var _field_size__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("e6d86f2cd058");
 /* harmony import */ var _form_reset_helper__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("67eed2647f47");
-/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("8489d1f5bab4");
+/* harmony import */ var _mask_service__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("0ab12d47912a");
+/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("8489d1f5bab4");
+
 
 
 
@@ -278,7 +320,7 @@ function getQuantityOptions(root, input) {
   // because `ru-RU` and `ru` group differently. The old fallback chain ended at
   // `ru-RU`, which made Russian the default for everyone.
 
-  const locale = input.dataset.locale ?? root.dataset.locale ?? (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_6__.pageLocale)(input ?? root);
+  const locale = input.dataset.locale ?? root.dataset.locale ?? (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_7__.pageLocale)(input ?? root);
   return {
     precision,
     grouping,
@@ -434,10 +476,10 @@ function getCurrentRawValue(root, input, fallback = Number.NaN) {
 
 async function bindMask(root, input) {
   if (!isMaskEnabled(root, input)) return;
-  if (!window.SF?.Mask?.create) return;
-  const service = window.SF.Mask;
   const request = {};
   root.__sfQuantityMaskRequest = request;
+  const service = await (0,_mask_service__WEBPACK_IMPORTED_MODULE_6__.maskService)();
+  if (root.__sfQuantityMaskRequest !== request) return;
   const quantityOptions = getQuantityOptions(root, input);
   const behaviorOptions = getInputBehaviorOptions(root, input, quantityOptions);
   const min = input.min === '' ? Number.NaN : toNumber(input.min, Number.NaN);
@@ -1176,7 +1218,23 @@ __webpack_require__.r(__webpack_exports__);
 //
 // Nothing is printed by default: a page opts in to console warnings with
 // <html data-sf-deprecations="warn"> or SF.deprecations.warn = true.
-const notes = new Map();
+//
+// Every bundle carries its own copy of this module, so a Map of its own made one
+// list per bundle, and SF.deprecations.list() answered with whichever bundle set
+// it last -- [] on a page printing seven warnings from others. The notes live on
+// one shared global instead, whichever copy writes or reads them.
+function sharedNotes() {
+  const root = globalThis.SF = globalThis.SF || {};
+
+  if (!(root.__deprecationNotes instanceof Map)) {
+    Object.defineProperty(root, '__deprecationNotes', {
+      value: new Map(),
+      configurable: true
+    });
+  }
+
+  return root.__deprecationNotes;
+}
 
 function warnEnabled() {
   const root = globalThis.document?.documentElement;
@@ -1192,6 +1250,7 @@ function noteDeprecated({
 } = {}) {
   if (!from) return;
   const key = [component, kind, attribute, from].join('|');
+  const notes = sharedNotes();
   const existing = notes.get(key);
 
   if (existing) {
@@ -1215,11 +1274,11 @@ function noteDeprecated({
   }
 }
 function listDeprecations() {
-  return [...notes.values()].map(note => ({ ...note
+  return [...sharedNotes().values()].map(note => ({ ...note
   }));
 }
 function clearDeprecations() {
-  notes.clear();
+  sharedNotes().clear();
 }
 
 if (typeof globalThis !== 'undefined') {

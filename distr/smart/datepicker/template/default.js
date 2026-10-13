@@ -8,13 +8,13 @@ function joinClasses(...tokens) {
 function renderYearTop(context) {
     return html`
         <div class="sf-datepicker-top flex content-main-between items-cross-center">
-            <sf-icon-button type="link" scheme="on-surface" size="1"
+            <sf-icon-button appearance="link" scheme="on-surface" size="1"
                 icon=${context.previousIcon} aria-label=${context.labels.previousYears}
                 @click=${() => context.component.shiftYearPage(-1)}></sf-icon-button>
             <div class="sf-datepicker-range-title" aria-live="polite">
                 ${context.yearPageStart}–${context.yearPageEnd}
             </div>
-            <sf-icon-button type="link" scheme="on-surface" size="1"
+            <sf-icon-button appearance="link" scheme="on-surface" size="1"
                 icon=${context.nextIcon} aria-label=${context.labels.nextYears}
                 @click=${() => context.component.shiftYearPage(1)}></sf-icon-button>
         </div>`;
@@ -25,20 +25,20 @@ function renderTop(context) {
 
     return html`
         <div class="sf-datepicker-top grid items-cross-center">
-            <sf-icon-button type="link" scheme="on-surface" size="1"
+            <sf-icon-button appearance="link" scheme="on-surface" size="1"
                 icon=${context.previousIcon} aria-label=${context.labels.previousMonth}
                 @click=${() => context.component.shiftMonth(-1)}></sf-icon-button>
             <div class="sf-datepicker-period flex content-main-center items-cross-center gap-1/4">
-                <sf-button class="sf-datepicker-month-toggle" type="link" scheme="on-surface" tightness="low"
+                <sf-button class="sf-datepicker-month-toggle" appearance="link" scheme="on-surface" spacing="compact"
                     text=${context.monthLabel}
                     aria-expanded=${context.context === 'month' ? 'true' : 'false'}
                     @click=${() => context.component.toggleContext('month')}></sf-button>
-                <sf-button class="sf-datepicker-year-toggle" type="link" scheme="on-surface" tightness="low"
+                <sf-button class="sf-datepicker-year-toggle" appearance="link" scheme="on-surface" spacing="compact"
                     text=${String(context.year)}
                     aria-expanded="false"
                     @click=${() => context.component.toggleContext('year')}></sf-button>
             </div>
-            <sf-icon-button type="link" scheme="on-surface" size="1"
+            <sf-icon-button appearance="link" scheme="on-surface" size="1"
                 icon=${context.nextIcon} aria-label=${context.labels.nextMonth}
                 @click=${() => context.component.shiftMonth(1)}></sf-icon-button>
         </div>`;
@@ -79,7 +79,7 @@ function renderContext(context) {
 function renderDatepickerInput(context) {
     return html`
         <sf-input class="sf-datepicker-input" ${ref(context.component.refs.input)}
-            type=${context.inputType} size=${context.inputSize}
+            appearance=${context.inputType} size=${context.inputSize}
             label=${context.label || nothing} name=${context.inputName || nothing}
             placeholder=${context.placeholder || nothing} icon-start=${context.iconStart || nothing}
             root-class=${context.inputRootClass || nothing} value=${context.displayValue || ''}

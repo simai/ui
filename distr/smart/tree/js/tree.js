@@ -34,7 +34,7 @@ function treeItemNodeToData(node) {
     href: node.getAttribute('href') || '',
     target: node.getAttribute('target') || '',
     rel: node.getAttribute('rel') || '',
-    type: node.getAttribute('type') || '',
+    type: node.getAttribute('kind') || node.getAttribute('type') || '',
     value: node.getAttribute('value') || '',
     open: node.hasAttribute('open'),
     selected: node.hasAttribute('selected'),
@@ -61,7 +61,8 @@ function normalizeTreeItemData(item) {
     href: item.href ? String(item.href) : '',
     target: item.target ? String(item.target) : '',
     rel: item.rel ? String(item.rel) : '',
-    type: item.type ? String(item.type) : '',
+    // `kind` is the axis (port and manifest); `type` the legacy name.
+    type: item.kind || item.type ? String(item.kind || item.type) : '',
     value: item.value === undefined || item.value === null ? '' : String(item.value),
     open: Boolean(item.open),
     selected: Boolean(item.selected),
@@ -421,7 +422,7 @@ function renderTreeItemData(item = {}) {
       href=${item.href || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       target=${item.target || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       rel=${item.rel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-      type=${item.type || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      kind=${item.type || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       value=${item.value || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       open-icon=${item.openIcon || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       closed-icon=${item.closedIcon || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}

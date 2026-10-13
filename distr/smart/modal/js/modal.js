@@ -506,11 +506,13 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 const MODAL_TEXT = {
   en: {
     close: "Close",
-    minimize: "Minimize"
+    minimize: "Minimize",
+    title: "Dialog"
   },
   ru: {
     close: "Закрыть",
-    minimize: "Свернуть"
+    minimize: "Свернуть",
+    title: "Окно"
   }
 };
 let modalUid = 0;
@@ -589,7 +591,7 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
         default: ""
       },
       title: {
-        default: "Modal"
+        default: ""
       },
       ariaLabel: {
         attribute: "aria-label",
@@ -778,7 +780,9 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
   }
 
   get title() {
-    return this.getAttribute("title") || "Modal";
+    // An untitled window was headed and named «Modal» on every page; it
+    // takes the page language's word instead.
+    return this.getAttribute("title") || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(MODAL_TEXT, "title", this);
   }
 
   get ariaLabel() {
@@ -1068,6 +1072,9 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
       component: this,
       closeText: (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(MODAL_TEXT, "close", this),
       minimizeText: (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(MODAL_TEXT, "minimize", this),
+      // The props context holds the declared default; the getter holds the
+      // page language's word for an untitled window.
+      title: this.title,
       modalId: this.modalId,
       open: this.renderOpenState,
       modalState: this.renderModalState,
@@ -2187,7 +2194,7 @@ function renderModalTemplate(context) {
                                 data-sf-modal-body-viewport
                         >
                             <div
-                                    class=${joinClasses('sf-modal-body-scroll h-full max-h-80 min-w-0 overflow-y-auto flex flex-col gap-1 p-1/4', context.bodyClass)}
+                                    class=${joinClasses('sf-modal-body-scroll h-full min-w-0 overflow-y-auto flex flex-col gap-1 p-1/4', context.bodyClass)}
                                     data-sf-modal-body-scroll
                             >
                                 ${hasRemoteContent ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`

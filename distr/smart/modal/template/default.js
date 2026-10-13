@@ -167,7 +167,7 @@ export function renderModalTemplate(context) {
                         >
                             <div
                                     class=${joinClasses(
-                                            'sf-modal-body-scroll h-full max-h-80 min-w-0 overflow-y-auto flex flex-col gap-1 p-1/4',
+                                            'sf-modal-body-scroll h-full min-w-0 overflow-y-auto flex flex-col gap-1 p-1/4',
                                             context.bodyClass,
                                     )}
                                     data-sf-modal-body-scroll

@@ -20,9 +20,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _json_country_code_utility_json__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("8c672a55a76a");
 /* harmony import */ var _data_countries_json__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("c614c5e30b0d");
 /* harmony import */ var _form_reset_helper__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("67eed2647f47");
-/* harmony import */ var _core_js_position_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("2e9112dbdda9");
-/* harmony import */ var _field_size__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("e6d86f2cd058");
-/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("8489d1f5bab4");
+/* harmony import */ var _mask_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("0ab12d47912a");
+/* harmony import */ var _core_js_position_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("2e9112dbdda9");
+/* harmony import */ var _field_size__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("e6d86f2cd058");
+/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("8489d1f5bab4");
+
 
 
 
@@ -47,7 +49,7 @@ const COUNTRY_CODE_TEXT = {
   }
 }; // Prefer the helper Core published; an isolated bundle uses its own copy.
 
-const positioning = () => globalThis.SF?.Position || _core_js_position_js__WEBPACK_IMPORTED_MODULE_5__["default"];
+const positioning = () => globalThis.SF?.Position || _core_js_position_js__WEBPACK_IMPORTED_MODULE_6__["default"];
 
 const COUNTRY_CODE_SELECTOR = '.sf-country-code';
 const COUNTRY_CODE_BOUND_FLAG = 'sfCountryCodeBound';
@@ -93,7 +95,7 @@ function syncCountryFieldReferences(root, input) {
   if (label?.textContent.trim() || input.hasAttribute('aria-labelledby')) {
     if (generatedName && input.getAttribute('aria-label') === generatedName) input.removeAttribute('aria-label');
   } else if (!authorName) {
-    const name = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_7__.pageText)(COUNTRY_CODE_TEXT, 'phoneLabel', root, 'sf-country-code');
+    const name = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_8__.pageText)(COUNTRY_CODE_TEXT, 'phoneLabel', root, 'sf-country-code');
     if (input.getAttribute('aria-label') !== name) input.setAttribute('aria-label', name);
     countryGeneratedNames.set(input, name);
   }
@@ -106,7 +108,7 @@ function syncCountryRequired(root, input) {
   const value = String(input.value || '').trim();
   const local = config.showCode ? extractLocalPart(value, root.dataset.dialCode) : value;
   const missing = input.required && value !== '' && !/\d/.test(local);
-  const message = missing ? (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_7__.pageText)(COUNTRY_CODE_TEXT, 'phoneRequired', root, 'sf-country-code') : '';
+  const message = missing ? (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_8__.pageText)(COUNTRY_CODE_TEXT, 'phoneRequired', root, 'sf-country-code') : '';
   input.setCustomValidity(message);
   countryRequiredMessages.set(input, message);
 }
@@ -143,7 +145,7 @@ function syncCountryAccessibility(root) {
   const config = root.__sfCountryConfig || {};
   const open = root.classList.contains('open');
   const selected = root.__sfCountrySelected;
-  const countryName = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_7__.pageText)(COUNTRY_CODE_TEXT, 'countryLabel', root, 'sf-country-code');
+  const countryName = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_8__.pageText)(COUNTRY_CODE_TEXT, 'countryLabel', root, 'sf-country-code');
   syncCountryFieldReferences(root, input);
   root.querySelectorAll('.sf-country-code-required, .sf-country-code-left .sf-icon').forEach(node => node.setAttribute('aria-hidden', 'true'));
 
@@ -409,7 +411,7 @@ function setOpenState(root, open) {
 }
 
 function resolveConfig(root, input) {
-  const locale = String(root.dataset.locale || input?.dataset.locale || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_7__.pageLanguage)(root)).toLowerCase();
+  const locale = String(root.dataset.locale || input?.dataset.locale || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_8__.pageLanguage)(root)).toLowerCase();
   const rawMaskStyle = String(root.dataset.maskStyle ?? input?.dataset.maskStyle ?? 'native').toLowerCase();
   const maskStyle = rawMaskStyle === 'brackets' ? 'brackets' : 'native';
   return {
@@ -640,7 +642,8 @@ async function applyMaskForRoot(root, input, maskPattern, config = null) {
   }
 
   if (!maskPattern) return;
-  if (!window.SF?.Mask?.create) return;
+  const service = await (0,_mask_service__WEBPACK_IMPORTED_MODULE_5__.maskService)();
+  if (token !== root.__sfCountryMaskToken) return;
   const current = input.value;
 
   try {
@@ -653,7 +656,7 @@ async function applyMaskForRoot(root, input, maskPattern, config = null) {
       input.placeholder = buildPlaceholderFromMask(maskPattern, resolvedConfig.maskPlaceholderChar || '_', dialCode);
     }
 
-    const instance = await window.SF.Mask.create(input, {
+    const instance = await service.create(input, {
       mask: maskPattern,
       lazy: !showMaskTemplate,
       placeholderChar: resolvedConfig.maskPlaceholderChar || '_'
@@ -797,7 +800,7 @@ function bindCountryCode(root, {
   countries,
   maskPattern
 } = {}) {
-  (0,_field_size__WEBPACK_IMPORTED_MODULE_6__.retireFieldSizeClass)(root, 'sf-country-code'); // Both ordinary and Smart bundles may contain this module. Keep reattachment
+  (0,_field_size__WEBPACK_IMPORTED_MODULE_7__.retireFieldSizeClass)(root, 'sf-country-code'); // Both ordinary and Smart bundles may contain this module. Keep reattachment
   // with the original owner of WeakMap defaults and authored configuration.
 
   if (root?.__sfCountryCodeBind && root.__sfCountryCodeBind !== bindCountryCode) {
@@ -1243,7 +1246,7 @@ class CountryCode extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0_
     const className = this.attrs.class || this.attrs.className;
     this.template = document.createElement('label');
     if (this.id) this.template.id = this.id;
-    this.template.classList.add('sf-country-code', `sf-country-code--size-${(0,_field_size__WEBPACK_IMPORTED_MODULE_6__.fieldSize)(size, 'sf-country-code')}`);
+    this.template.classList.add('sf-country-code', `sf-country-code--size-${(0,_field_size__WEBPACK_IMPORTED_MODULE_7__.fieldSize)(size, 'sf-country-code')}`);
     if (toBoolean(disabled)) this.template.classList.add('disabled');
     if (toBoolean(open)) this.template.classList.add('open');
 
@@ -1537,6 +1540,46 @@ function bindFormReset(input, synchronize) {
 
 /***/ },
 
+/***/ "0ab12d47912a"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   maskService: () => (/* binding */ maskService)
+/* harmony export */ });
+// SF.Mask belongs to Core. A page may run a field's script before Core --
+// SF_PRELOADED allows it, and Docara loads every page and example frame that
+// way (smart-base, the component scripts, then core.js) -- and a field that
+// found no SF.Mask at bind time gave up on its mask for good: the root was
+// bound and the input stayed unmasked. The fields ask for the service here
+// instead; it is there at once on an ordinary page, and otherwise arrives
+// with Core's sf-mask-ready (or is found at the Loader's ready or the window's
+// load, for a Core that predates the event). One promise per bundle.
+let pending = null;
+function maskService() {
+  const current = () => window.SF?.Mask?.create ? window.SF.Mask : null;
+
+  const service = current();
+  if (service) return Promise.resolve(service);
+  if (pending) return pending;
+  pending = new Promise(resolve => {
+    const events = [[window, 'sf-mask-ready'], [window, 'sf-loader-ready'], [window, 'load'], [document, 'DOMContentLoaded']];
+
+    const check = () => {
+      const found = current();
+      if (!found) return;
+      events.forEach(([target, type]) => target.removeEventListener(type, check));
+      pending = null;
+      resolve(found);
+    };
+
+    events.forEach(([target, type]) => target.addEventListener(type, check));
+  });
+  return pending;
+}
+
+/***/ },
+
 /***/ "58661bec99a6"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -1694,7 +1737,23 @@ __webpack_require__.r(__webpack_exports__);
 //
 // Nothing is printed by default: a page opts in to console warnings with
 // <html data-sf-deprecations="warn"> or SF.deprecations.warn = true.
-const notes = new Map();
+//
+// Every bundle carries its own copy of this module, so a Map of its own made one
+// list per bundle, and SF.deprecations.list() answered with whichever bundle set
+// it last -- [] on a page printing seven warnings from others. The notes live on
+// one shared global instead, whichever copy writes or reads them.
+function sharedNotes() {
+  const root = globalThis.SF = globalThis.SF || {};
+
+  if (!(root.__deprecationNotes instanceof Map)) {
+    Object.defineProperty(root, '__deprecationNotes', {
+      value: new Map(),
+      configurable: true
+    });
+  }
+
+  return root.__deprecationNotes;
+}
 
 function warnEnabled() {
   const root = globalThis.document?.documentElement;
@@ -1710,6 +1769,7 @@ function noteDeprecated({
 } = {}) {
   if (!from) return;
   const key = [component, kind, attribute, from].join('|');
+  const notes = sharedNotes();
   const existing = notes.get(key);
 
   if (existing) {
@@ -1733,11 +1793,11 @@ function noteDeprecated({
   }
 }
 function listDeprecations() {
-  return [...notes.values()].map(note => ({ ...note
+  return [...sharedNotes().values()].map(note => ({ ...note
   }));
 }
 function clearDeprecations() {
-  notes.clear();
+  sharedNotes().clear();
 }
 
 if (typeof globalThis !== 'undefined') {

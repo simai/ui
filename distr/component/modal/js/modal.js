@@ -172,11 +172,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d7f974466839");
 /* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("58661bec99a6");
-/* harmony import */ var _focus__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("c8d66dd2c299");
-/* harmony import */ var _closing__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("3f3a6e2680d5");
-/* harmony import */ var _motion__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("201fd0b17b8b");
-/* harmony import */ var _scroll__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("ed3ae3576d0a");
-/* harmony import */ var _stack__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("93025a68d8ab");
+/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("8489d1f5bab4");
+/* harmony import */ var _focus__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("c8d66dd2c299");
+/* harmony import */ var _closing__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("3f3a6e2680d5");
+/* harmony import */ var _motion__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("201fd0b17b8b");
+/* harmony import */ var _scroll__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("ed3ae3576d0a");
+/* harmony import */ var _stack__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("93025a68d8ab");
+
 
 
 
@@ -219,7 +221,20 @@ function normalizeMode(value) {
 function normalizeDisplay(value) {
   const normalized = String(value || 'modal').trim().toLowerCase();
   return ['modal', 'inline'].includes(normalized) ? normalized : 'modal';
-}
+} // An untitled window was headed and named «Modal» on every page; it takes the
+// page language's word instead, as the Smart window does.
+
+
+const UNTITLED = {
+  en: {
+    title: 'Dialog'
+  },
+  ru: {
+    title: 'Окно'
+  }
+};
+
+const untitled = root => (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_2__.pageText)(UNTITLED, 'title', root);
 
 class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.ComponentObserver {
   static componentName = 'Modal';
@@ -232,7 +247,7 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
   static baseZIndex = 9000;
 
   static getTopModal() {
-    return (0,_stack__WEBPACK_IMPORTED_MODULE_6__.getTopModalLayer)();
+    return (0,_stack__WEBPACK_IMPORTED_MODULE_7__.getTopModalLayer)();
   }
 
   static isTopModal(modal) {
@@ -247,7 +262,7 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
     Modal.stack = Modal.stack.filter(item => item !== modal);
     Modal.stack.push(modal);
     Modal.openCount = Modal.stack.length;
-    (0,_stack__WEBPACK_IMPORTED_MODULE_6__.addModalLayer)(modal, Modal);
+    (0,_stack__WEBPACK_IMPORTED_MODULE_7__.addModalLayer)(modal, Modal);
   }
 
   static removeFromStack(modal) {
@@ -257,7 +272,7 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
 
     Modal.stack = Modal.stack.filter(item => item !== modal);
     Modal.openCount = Modal.stack.length;
-    (0,_stack__WEBPACK_IMPORTED_MODULE_6__.removeModalLayer)(modal);
+    (0,_stack__WEBPACK_IMPORTED_MODULE_7__.removeModalLayer)(modal);
   }
 
   static bringToFront(modal) {
@@ -267,11 +282,11 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
 
     Modal.stack = Modal.stack.filter(item => item !== modal);
     Modal.stack.push(modal);
-    (0,_stack__WEBPACK_IMPORTED_MODULE_6__.raiseModalLayer)(modal);
+    (0,_stack__WEBPACK_IMPORTED_MODULE_7__.raiseModalLayer)(modal);
   }
 
   static updateStackStyles() {
-    (0,_stack__WEBPACK_IMPORTED_MODULE_6__.updateModalLayers)();
+    (0,_stack__WEBPACK_IMPORTED_MODULE_7__.updateModalLayers)();
   }
 
   constructor(props) {
@@ -536,7 +551,7 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
     header.className = joinClasses('sf-modal-header flex items-start min-w-0 border-b border-outline-variant gap-1', params.headerClass);
 
     if (Array.isArray(params.headerNodes) && params.headerNodes.length) {
-      root.setAttribute('aria-label', params.title || 'Modal');
+      root.setAttribute('aria-label', params.title || untitled(root));
       params.headerNodes.forEach(node => {
         if (node instanceof Node) {
           header.append(node);
@@ -547,7 +562,7 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
       title.id = `${this.modalId}-title`;
       root.setAttribute('aria-labelledby', title.id);
       title.className = 'sf-modal-header-content title-3 m-0';
-      title.textContent = params.title || 'Modal';
+      title.textContent = params.title || untitled(root);
       header.append(title);
 
       if (this.showClose) {
@@ -568,7 +583,7 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
     bodyViewport.className = 'sf-modal-body-viewport min-w-0 overflow-visible';
     bodyViewport.setAttribute('data-sf-modal-body-viewport', '');
     const bodyScroll = document.createElement('div');
-    bodyScroll.className = joinClasses('sf-modal-body-scroll h-full max-h-80 min-w-0 overflow-y-auto flex flex-col gap-1 p-1/4', params.bodyClass);
+    bodyScroll.className = joinClasses('sf-modal-body-scroll h-full min-w-0 overflow-y-auto flex flex-col gap-1 p-1/4', params.bodyClass);
     bodyScroll.setAttribute('data-sf-modal-body-scroll', ''); // Placeholder для ajax-контента (loading/error)
 
     const contentPlaceholder = document.createElement('div');
@@ -991,7 +1006,7 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
     }
 
     const panel = this.template.querySelector('[data-sf-modal-panel]');
-    (0,_focus__WEBPACK_IMPORTED_MODULE_2__.trapModalFocus)(panel, event);
+    (0,_focus__WEBPACK_IMPORTED_MODULE_3__.trapModalFocus)(panel, event);
   }
 
   focusFirst() {
@@ -1009,7 +1024,7 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
     panel.focus();
   }
 
-  applyStackPosition(index = (0,_stack__WEBPACK_IMPORTED_MODULE_6__.getModalLayerIndex)(this)) {
+  applyStackPosition(index = (0,_stack__WEBPACK_IMPORTED_MODULE_7__.getModalLayerIndex)(this)) {
     this._stackIndex = index;
 
     if (!this.template || this.display === 'inline') {
@@ -1079,7 +1094,7 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
 
     if (this._modalState !== 'closing') {
       this.lastActive = document.activeElement;
-      this._focusReturnAncestors = (0,_stack__WEBPACK_IMPORTED_MODULE_6__.captureModalFocusAncestors)(this.lastActive);
+      this._focusReturnAncestors = (0,_stack__WEBPACK_IMPORTED_MODULE_7__.captureModalFocusAncestors)(this.lastActive);
     }
 
     this.cancelCloseTransition();
@@ -1099,7 +1114,7 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
       return;
     }
 
-    (0,_motion__WEBPACK_IMPORTED_MODULE_4__.scheduleModalFrame)(() => {
+    (0,_motion__WEBPACK_IMPORTED_MODULE_5__.scheduleModalFrame)(() => {
       if (!this.isOpen || this._modalState === 'closing') {
         return;
       }
@@ -1139,8 +1154,8 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
     this.template.setAttribute('data-sf-modal-state', 'closing');
     this.isOpen = false;
     const panel = this.template.querySelector('[data-sf-modal-panel]');
-    this._releaseClosingContent = (0,_closing__WEBPACK_IMPORTED_MODULE_3__.freezeModalContent)(panel, Modal.isTopModal(this));
-    this._closeTransitionAbort = (0,_motion__WEBPACK_IMPORTED_MODULE_4__.scheduleModalClose)(() => this.template, () => this.finishClose());
+    this._releaseClosingContent = (0,_closing__WEBPACK_IMPORTED_MODULE_4__.freezeModalContent)(panel, Modal.isTopModal(this));
+    this._closeTransitionAbort = (0,_motion__WEBPACK_IMPORTED_MODULE_5__.scheduleModalClose)(() => this.template, () => this.finishClose());
   }
 
   toggle() {
@@ -1241,7 +1256,7 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
     this._modalState = 'closed';
     const wasTop = Modal.isTopModal(this);
     Modal.removeFromStack(this);
-    (0,_stack__WEBPACK_IMPORTED_MODULE_6__.restoreModalLayerFocus)(wasTop, this.lastActive, this._focusReturnAncestors);
+    (0,_stack__WEBPACK_IMPORTED_MODULE_7__.restoreModalLayerFocus)(wasTop, this.lastActive, this._focusReturnAncestors);
     this.emitAfterClose();
   }
 
@@ -1299,11 +1314,11 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
   }
 
   static lockPage(preserveScrollGap = true) {
-    if (!Modal.lockState) Modal.lockState = (0,_scroll__WEBPACK_IMPORTED_MODULE_5__.lockModalScroll)(preserveScrollGap);
+    if (!Modal.lockState) Modal.lockState = (0,_scroll__WEBPACK_IMPORTED_MODULE_6__.lockModalScroll)(preserveScrollGap);
   }
 
   static unlockPage() {
-    (0,_scroll__WEBPACK_IMPORTED_MODULE_5__.unlockModalScroll)(Modal.lockState);
+    (0,_scroll__WEBPACK_IMPORTED_MODULE_6__.unlockModalScroll)(Modal.lockState);
     Modal.lockState = null;
   }
 
@@ -1766,6 +1781,238 @@ class ComponentObserver {
 
   destroyInternal() {}
 
+}
+
+/***/ },
+
+/***/ "8489d1f5bab4"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   isRussianPage: () => (/* binding */ isRussianPage),
+/* harmony export */   language: () => (/* binding */ language),
+/* harmony export */   pageLanguage: () => (/* binding */ pageLanguage),
+/* harmony export */   pageLocale: () => (/* binding */ pageLocale),
+/* harmony export */   pageText: () => (/* binding */ pageText)
+/* harmony export */ });
+// What language a component speaks, and how a product adds one.
+//
+// The Framework speaks English by default and whatever the page says otherwise:
+// the language is the nearest [lang] above the node, else the document's, else
+// English. One rule for every component, so a page never mixes two because two
+// components looked in different places.
+//
+// Until 2026-10-10 that was the whole of it, and every component carried a
+// dictionary of exactly two languages written into its source. Adding a third
+// meant editing sixteen files, and a product that needed one could not add it
+// at all. There will be many more than two (owner, 2026-10-11), so the
+// dictionaries a component ships are now a FLOOR rather than the whole set:
+// anything can be registered beside them, for any language, including one the
+// Framework has never heard of.
+//
+// Where a word comes from, in order:
+//
+//   1. the component's own attribute — a consumer who names a word has named
+//      it, and no language changes it;
+//   2. a word registered for the resolved language;
+//   3. the word the component ships for that language;
+//   4. the same two again for the language without its region (`pt-BR` → `pt`);
+//   5. the same two again for English;
+//   6. the key itself, which is a visible defect rather than a blank.
+//
+// Registering is additive and reversible, and it does not require the
+// Framework to know the language exists.
+// The state is shared between every copy of this module, which there are
+// several of: core, each smart component and each composite are separate
+// bundles, and each one carries its own copy of this file. With the registry
+// in module scope the page had as many registries as bundles -- `SF.language`
+// was published from core's copy, the table read its own, and registering a
+// language changed nothing on screen. Only a browser shows that, and it did
+// (2026-10-11).
+const STORE = (() => {
+  const root = typeof globalThis !== 'undefined' ? globalThis : {};
+  const key = '__sfPageLanguage';
+
+  if (!root[key]) {
+    root[key] = {
+      listeners: new Set(),
+      registered: new Map(),
+      chosen: null
+    };
+  }
+
+  return root[key];
+})();
+
+const LISTENERS = STORE.listeners;
+const REGISTERED = STORE.registered;
+
+const normalise = value => String(value ?? '').trim().toLowerCase().replace('_', '-');
+/** The languages to try, most specific first, English last. */
+
+
+const chain = language => {
+  const wanted = normalise(language);
+  const base = wanted.split('-')[0];
+  const order = [];
+
+  for (const candidate of [wanted, base, 'en']) {
+    if (candidate && !order.includes(candidate)) order.push(candidate);
+  }
+
+  return order;
+};
+/** Which component a node belongs to, for words registered against one. */
+
+
+const componentOf = node => {
+  const tag = node?.tagName;
+  return typeof tag === 'string' ? tag.toLowerCase() : null;
+};
+
+const announce = () => {
+  for (const listener of [...LISTENERS]) {
+    try {
+      listener();
+    } catch {// A listener that throws is not allowed to stop the others: a page that
+      // half-changed language would be worse than one that did not change.
+    }
+  }
+};
+/**
+ * The page's language for this node: the nearest [lang], else the document's,
+ * else English — unless a product has chosen one explicitly.
+ */
+
+
+function pageLanguage(node) {
+  // The language without its region, whichever way it was set: a page that
+  // chose 'pt-BR' is a Portuguese page, as a page whose markup says
+  // lang="pt-BR" is. The chosen value kept its region and answered 'pt-br',
+  // which matched no dictionary keyed by language and made isRussianPage false
+  // on a page that chose 'ru-RU'. The region stays in pageLocale.
+  if (STORE.chosen) return STORE.chosen.split('-')[0];
+  const owner = node && typeof node.closest === 'function' ? node.closest('[lang]') : null;
+  const value = owner?.getAttribute('lang') || globalThis.document?.documentElement?.lang || 'en';
+  return normalise(value).split('-')[0] || 'en';
+}
+/** The page's language with its region kept, which is what formatting wants. */
+
+function pageLocale(node) {
+  if (STORE.chosen) return STORE.chosen;
+  const owner = node && typeof node.closest === 'function' ? node.closest('[lang]') : null;
+  return normalise(owner?.getAttribute('lang') || globalThis.document?.documentElement?.lang || 'en');
+}
+function isRussianPage(node) {
+  return pageLanguage(node) === 'ru';
+}
+/**
+ * Text for `key` in the page's language.
+ *
+ * `dictionary` is what the component ships; `component` names it for the
+ * registry and defaults to the node's own tag, so a component calling with
+ * `this` identifies itself without saying so twice.
+ */
+
+function pageText(dictionary, key, node, component) {
+  const owner = component ?? componentOf(node);
+
+  for (const candidate of chain(pageLocale(node))) {
+    const added = owner ? REGISTERED.get(owner)?.get(candidate)?.[key] : undefined;
+    if (added !== undefined) return added;
+    const shipped = dictionary?.[candidate]?.[key];
+    if (shipped !== undefined) return shipped;
+  }
+
+  return key;
+}
+const language = {
+  /** What the page resolves to for this node, region and all. */
+  current(node = globalThis.document?.documentElement ?? null) {
+    return pageLocale(node);
+  },
+
+  /**
+   * Choose a language for the whole page, whatever its markup says. `null`
+   * returns to following the document, which is the default and what a
+   * server-rendered page wants.
+   */
+  use(value) {
+    const next = value === null || value === undefined ? null : normalise(value);
+    if (next === STORE.chosen) return STORE.chosen;
+    STORE.chosen = next;
+    announce();
+    return STORE.chosen;
+  },
+
+  /**
+   * Add or replace one component's words for one language.
+   *
+   * The words are merged, so a product can correct a single label without
+   * restating the rest, and `null` removes what it added.
+   */
+  register(component, value, words) {
+    const name = String(component ?? '').toLowerCase();
+    const code = normalise(value);
+    if (!name || !code) throw new TypeError('a component and a language are required');
+    if (!REGISTERED.has(name)) REGISTERED.set(name, new Map());
+    const byLanguage = REGISTERED.get(name);
+    if (words === null) byLanguage.delete(code);else byLanguage.set(code, { ...(byLanguage.get(code) ?? {}),
+      ...words
+    });
+    announce();
+    return this;
+  },
+
+  /** One language across many components: `{ 'sf-datepicker': {...}, ... }`. */
+  registerAll(value, byComponent = {}) {
+    for (const [component, words] of Object.entries(byComponent)) {
+      this.register(component, value, words);
+    }
+
+    return this;
+  },
+
+  /** The languages something has registered words for. */
+  known(component) {
+    const name = String(component ?? '').toLowerCase();
+    return [...(REGISTERED.get(name)?.keys() ?? [])];
+  },
+
+  /** Every component something has been registered for. */
+  components() {
+    return [...REGISTERED.keys()];
+  },
+
+  /**
+   * Called whenever the chosen language or the registered words change, so a
+   * component can draw itself again. Returns the way to stop listening.
+   */
+  onChange(listener) {
+    if (typeof listener !== 'function') return () => {};
+    LISTENERS.add(listener);
+    return () => LISTENERS.delete(listener);
+  },
+
+  /** Everything registered is forgotten. For tests, and for a product reset. */
+  forget() {
+    REGISTERED.clear();
+    STORE.chosen = null;
+    announce();
+    return this;
+  }
+
+}; // Reachable by a consumer, which it was not: `sf-admin-menu` had written its
+// own reading of the rule because the shared one was an internal module, and
+// the two then disagreed about a region that names its own language. A product
+// composing its own elements gets the same rule here.
+
+if (typeof window !== 'undefined') {
+  window.SF = window.SF || {};
+  window.SF.language = language;
+  window.SF.pageLanguage = pageLanguage;
+  window.SF.pageText = pageText;
 }
 
 /***/ },

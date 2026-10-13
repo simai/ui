@@ -144,7 +144,7 @@ function renderArrows(context) {
         root-class="sf-slider-button-prev"
         icon="keyboard_arrow_left"
         size=${buttonSize}
-        type=${buttonOptions.type}
+        appearance=${buttonOptions.type}
         scheme=${buttonOptions.scheme}
         aria-label="Previous slide"
       ></sf-icon-button>
@@ -152,7 +152,7 @@ function renderArrows(context) {
         root-class="sf-slider-button-next"
         icon="keyboard_arrow_right"
         size=${buttonSize}
-        type=${buttonOptions.type}
+        appearance=${buttonOptions.type}
         scheme=${buttonOptions.scheme}
         aria-label="Next slide"
       ></sf-icon-button>

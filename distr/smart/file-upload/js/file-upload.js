@@ -1006,7 +1006,23 @@ __webpack_require__.r(__webpack_exports__);
 //
 // Nothing is printed by default: a page opts in to console warnings with
 // <html data-sf-deprecations="warn"> or SF.deprecations.warn = true.
-const notes = new Map();
+//
+// Every bundle carries its own copy of this module, so a Map of its own made one
+// list per bundle, and SF.deprecations.list() answered with whichever bundle set
+// it last -- [] on a page printing seven warnings from others. The notes live on
+// one shared global instead, whichever copy writes or reads them.
+function sharedNotes() {
+  const root = globalThis.SF = globalThis.SF || {};
+
+  if (!(root.__deprecationNotes instanceof Map)) {
+    Object.defineProperty(root, '__deprecationNotes', {
+      value: new Map(),
+      configurable: true
+    });
+  }
+
+  return root.__deprecationNotes;
+}
 
 function warnEnabled() {
   const root = globalThis.document?.documentElement;
@@ -1022,6 +1038,7 @@ function noteDeprecated({
 } = {}) {
   if (!from) return;
   const key = [component, kind, attribute, from].join('|');
+  const notes = sharedNotes();
   const existing = notes.get(key);
 
   if (existing) {
@@ -1045,11 +1062,11 @@ function noteDeprecated({
   }
 }
 function listDeprecations() {
-  return [...notes.values()].map(note => ({ ...note
+  return [...sharedNotes().values()].map(note => ({ ...note
   }));
 }
 function clearDeprecations() {
-  notes.clear();
+  sharedNotes().clear();
 }
 
 if (typeof globalThis !== 'undefined') {
@@ -1121,7 +1138,7 @@ class SfFileUpload extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___def
         default: 'upload_file'
       },
       linkText: {
-        default: 'Click to upload'
+        default: ''
       },
       text: {
         default: 'or drag and drop'
