@@ -23,7 +23,7 @@
   .max-container-8 .container {
     width: 100%;
   }
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .max-container-1 .container {
       max-width: var(--sf-container-1--size-max);
     }

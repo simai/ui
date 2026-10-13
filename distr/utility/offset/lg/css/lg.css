@@ -1,5 +1,5 @@
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:offset-1\/12 {
       margin-left: 8.333333%;
     }

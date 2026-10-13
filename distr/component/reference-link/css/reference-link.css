@@ -218,7 +218,7 @@
   .sf-reference-link[aria-disabled=true] :where(.sf-reference-link__main, .sf-reference-link-left, .sf-reference-link__meta, .sf-reference-link-text, .sf-icon) {
     color: var(--sf-on-disable);
   }
-  @media (max-width: 30rem) {
+  @media (max-width: 31.999rem) {
     /* The card stacks on a narrow screen; a sized reference is a control in a
        row or a cell and keeps its one line at the row's height. */
     .sf-reference-link:not([class*=sf-reference-link--size-]):not([class*=sf-reference-link--line-]) {

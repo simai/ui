@@ -1,5 +1,5 @@
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:container {
       padding-left: var(--sf-space-4);
     }
@@ -45,9 +45,10 @@
       padding-left: var(--sf-space-4);
     }
     .lg\:container {
-      /* The breakpoint step is wider than the media query that opens it
-         (sm opens at 520px, its step is 704px), so a fixed width overflowed
-         the window between the two. Fill, and stop at the step. */
+      /* Fill, and stop at the step. The step and the query that opens it
+         were once apart (sm opened at 520px, its step was 704px) and a
+         fixed width overflowed between them; they are one step now, and
+         filling stays right whatever the gutter takes. */
       width: 100%;
       max-width: var(--sf-breakpoint-lg);
       -webkit-padding-start: var(--sf-space-4);

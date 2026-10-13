@@ -25,7 +25,7 @@
     --sf-radius-4: var(--sf-c2);
     --sf-radius-circle: 1000px;
   }
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     :root {
       --sf-radius-0: var(--sf-a0);
       --sf-radius-1\/3: 0.125rem;
@@ -52,7 +52,7 @@
   :root {
     --sf-focus-outline-width: calc(var(--sf-px) * 2);
   }
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     :root {
       --sf-focus-outline-width: calc(var(--sf-px) * 2);
     }
@@ -111,7 +111,7 @@
     outline-width: 0;
     outline-width: var(--sf-0);
   }
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:border {
       border: 1px var(--sf-outline-variant) solid;
       border: var(--sf-px) var(--sf-outline-variant) solid;
@@ -120,7 +120,7 @@
       border-style: none;
     }
   }
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:border {
       border: 1px var(--sf-outline-variant) solid;
       border: var(--sf-px) var(--sf-outline-variant) solid;
@@ -129,7 +129,7 @@
       border-style: none;
     }
   }
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:border {
       border: 1px var(--sf-outline-variant) solid;
       border: var(--sf-px) var(--sf-outline-variant) solid;
@@ -138,7 +138,7 @@
       border-style: none;
     }
   }
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:border {
       border: 1px var(--sf-outline-variant) solid;
       border: var(--sf-px) var(--sf-outline-variant) solid;
@@ -451,7 +451,7 @@
     --sf-space-7: var(--sf-d0);
     --sf-space-8: var(--sf-d2);
   }
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     :root {
       --sf-space-0: 0;
       --sf-space-1\/4: 0.25rem;
@@ -1035,7 +1035,7 @@ body {
   }
 }
 @layer sf.base {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     :root {
       --sf-container-1--size-max: var(--sf-h5);
       --sf-container-2--size-max: var(--sf-h6);
@@ -1058,7 +1058,7 @@ body {
     --sf-floating-the-others-2-space-y: var(--sf-c1);
     --sf-floating-the-others-3-space-y: var(--sf-c6);
   }
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     :root {
       --sf-floating-the-others-1\/3-space-y: 0.75rem;
       --sf-floating-the-others-1\/3-space-y: var(--sf-b2);
@@ -1080,7 +1080,7 @@ body {
     --sf-floating-active-2-space-y: var(--sf-b2);
     --sf-floating-active-3-space-y: var(--sf-c1);
   }
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     :root {
       --sf-floating-active-1\/3-space-y: 0.375rem;
       --sf-floating-active-1\/3-space-y: var(--sf-a6);
@@ -1159,7 +1159,7 @@ body {
     --sf-text-size-11: var(--sf-text--size-11);
     --sf-text-size-12: var(--sf-text--size-12);
   }
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     :root {
       --sf-text--size-1\/7: 0.25rem;
       --sf-text--size-1\/7: var(--sf-a4);
@@ -1247,7 +1247,7 @@ body {
     --sf-text-height-11: var(--sf-text--height-11);
     --sf-text-height-12: var(--sf-text--height-12);
   }
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     :root {
       --sf-text--height-1\/4: 0.75rem;
       --sf-text--height-1\/4: var(--sf-b2);
@@ -1317,7 +1317,7 @@ body {
     --sf-title-height-11: var(--sf-title--height-11);
     --sf-title-height-12: var(--sf-title--height-12);
   }
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     :root {
       --sf-title--height-1: var(--sf-b8);
       --sf-title--height-2: var(--sf-c2);
@@ -1414,7 +1414,7 @@ body {
     --sf-ui-2--text-space-x: var(--sf-a8);
     --sf-ui-3--text-space-x: var(--sf-b0);
   }
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     :root {
       --sf-ui-1\/3--text-space-x: 0.375rem;
       --sf-ui-1\/3--text-space-x: var(--sf-a6);
@@ -1436,7 +1436,7 @@ body {
     --sf-ui-2--space-x: var(--sf-b8);
     --sf-ui-3--space-x: var(--sf-c1);
   }
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     :root {
       --sf-ui-1\/3--space-x: 0.75rem;
       --sf-ui-1\/3--space-x: var(--sf-b2);
@@ -1452,7 +1452,7 @@ body {
   :root {
     --sf-ui-radius-default: var(--sf-radius--ui);
   }
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     :root {
       --sf-ui-radius-default: var(--sf-radius--ui);
     }
@@ -1473,7 +1473,7 @@ body {
     --sf-ui-2--space-y-tightness-default: var(--sf-b0);
     --sf-ui-3--space-y-tightness-default: var(--sf-b4);
   }
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     :root {
       --sf-ui-1\/3--space-y-tightness-default: 0.25rem;
       --sf-ui-1\/3--space-y-tightness-default: var(--sf-a4);
@@ -1500,7 +1500,7 @@ body {
     --sf-ui-2--space-y-tightness-low: var(--sf-a6);
     --sf-ui-3--space-y-tightness-low: var(--sf-b0);
   }
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     :root {
       --sf-ui-1\/3--space-y-tightness-low: 0.25rem;
       --sf-ui-1\/3--space-y-tightness-low: var(--sf-a4);
@@ -1527,7 +1527,7 @@ body {
     --sf-ui-2--space-y-tightness-high: var(--sf-b4);
     --sf-ui-3--space-y-tightness-high: var(--sf-c0);
   }
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     :root {
       --sf-ui-1\/3--space-y-tightness-high: 0.5rem;
       --sf-ui-1\/3--space-y-tightness-high: var(--sf-a8);
@@ -1554,7 +1554,7 @@ body {
     --sf-ui-2--space-y-tightness-highest: var(--sf-c0);
     --sf-ui-3--space-y-tightness-highest: var(--sf-c3);
   }
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     :root {
       --sf-ui-1\/3--space-y-tightness-highest: 0.75rem;
       --sf-ui-1\/3--space-y-tightness-highest: var(--sf-b2);
@@ -1597,7 +1597,7 @@ body {
     --sf-ui-2--space-y: var(--sf-a6);
     --sf-ui-3--space-y: var(--sf-a6);
   }
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     :root {
       --sf-ui-1\/3--space-y: 0.375rem;
       --sf-ui-1\/3--space-y: var(--sf-a6);
@@ -2026,7 +2026,7 @@ body {
     -webkit-text-decoration-color: var(--sf-outline);
             text-decoration-color: var(--sf-outline);
   }
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     [data-sf-density=compact] {
       --sf-text--size: var(--sf-text--size-1\/2);
       --sf-text--height: var(--sf-text--height-1\/2);
@@ -2263,29 +2263,29 @@ body {
   }
 }
 @layer sf.base {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     :root {
-      --sf-breakpoint-sm: var(--sf-h1);
+      --sf-breakpoint-sm: var(--sf-g6);
     }
   }
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     :root {
-      --sf-breakpoint-md: var(--sf-h2);
+      --sf-breakpoint-md: var(--sf-h1);
     }
   }
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     :root {
       --sf-breakpoint-lg: var(--sf-h5);
     }
   }
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     :root {
       --sf-breakpoint-xl: var(--sf-h8);
     }
   }
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     :root {
-      --sf-breakpoint-xxl: var(--sf-i2);
+      --sf-breakpoint-xxl: var(--sf-i0);
     }
   }
 }
@@ -2485,7 +2485,7 @@ body {
     --sf-blur-large: var(--sf-a8);
     --sf-surface-overlay--blur: var(--sf-d6);
   }
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     :root {
       --sf-blur-none: var(--sf-a0);
       --sf-blur-small: var(--sf-a2);
@@ -2514,7 +2514,7 @@ body {
     max-height: 1.5rem;
     max-height: var(--sf-c2, 26px);
   }
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .sf-logo svg {
       max-height: 1.75rem;
       max-height: var(--sf-c4, 32px);

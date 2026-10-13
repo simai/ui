@@ -1,5 +1,5 @@
 @layer sf.utilities {
-  @container (min-width: 520px) {
+  @container (min-width: 32rem) {
     .cq-sm\:block {
       display: block;
     }
@@ -247,7 +247,7 @@
               column-gap: var(--sf-space-8);
     }
   }
-  @container sidebar (min-width: 520px) {
+  @container sidebar (min-width: 32rem) {
     .cq-sm\/sidebar\:block {
       display: block;
     }
@@ -495,7 +495,7 @@
               column-gap: var(--sf-space-8);
     }
   }
-  @container (min-width: 720px) {
+  @container (min-width: 44rem) {
     .cq-md\:block {
       display: block;
     }
@@ -743,7 +743,7 @@
               column-gap: var(--sf-space-8);
     }
   }
-  @container sidebar (min-width: 720px) {
+  @container sidebar (min-width: 44rem) {
     .cq-md\/sidebar\:block {
       display: block;
     }
@@ -991,7 +991,7 @@
               column-gap: var(--sf-space-8);
     }
   }
-  @container (min-width: 960px) {
+  @container (min-width: 60rem) {
     .cq-lg\:block {
       display: block;
     }
@@ -1239,7 +1239,7 @@
               column-gap: var(--sf-space-8);
     }
   }
-  @container sidebar (min-width: 960px) {
+  @container sidebar (min-width: 60rem) {
     .cq-lg\/sidebar\:block {
       display: block;
     }
@@ -1487,7 +1487,7 @@
               column-gap: var(--sf-space-8);
     }
   }
-  @container (min-width: 1140px) {
+  @container (min-width: 72rem) {
     .cq-xl\:block {
       display: block;
     }
@@ -1735,7 +1735,7 @@
               column-gap: var(--sf-space-8);
     }
   }
-  @container sidebar (min-width: 1140px) {
+  @container sidebar (min-width: 72rem) {
     .cq-xl\/sidebar\:block {
       display: block;
     }

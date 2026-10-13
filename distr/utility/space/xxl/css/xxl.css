@@ -1,5 +1,5 @@
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     _:-ms-input-placeholder, html:not([dir="rtl"]) .xxl\:space-x-0 > * + * {
       margin-right: calc(var(--sf-space-0) * var(--sf-space--reverse-x));
     }

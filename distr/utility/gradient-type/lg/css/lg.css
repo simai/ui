@@ -1,5 +1,5 @@
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:gr-line-2 {
       background-image: linear-gradient(var(--sf-gradient--angle), var(--sf-gradient--color-1), var(--sf-gradient--color-1));
       background-image: linear-gradient(var(--sf-gradient--angle), var(--sf-gradient--color-1), var(--sf-gradient--color-2, var(--sf-gradient--color-3, var(--sf-gradient--color-1))));

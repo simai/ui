@@ -1,5 +1,5 @@
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:gap-0,
     .lg\:g-0 {
       gap: var(--sf-space-0);

@@ -1,5 +1,5 @@
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:max-h-a0 {
       max-height: var(--sf-a0);
     }

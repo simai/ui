@@ -8846,7 +8846,7 @@
     -webkit-padding-end: var(--sf-space-1);
             padding-inline-end: var(--sf-space-1);
   }
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     _:-ms-input-placeholder, html:not([dir="rtl"]) .container {
       padding-left: var(--sf-space-2);
     }
@@ -8900,7 +8900,7 @@
               padding-inline-end: var(--sf-space-2);
     }
   }
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     _:-ms-input-placeholder, html:not([dir="rtl"]) .container {
       padding-left: var(--sf-space-3);
     }
@@ -8954,7 +8954,7 @@
               padding-inline-end: var(--sf-space-3);
     }
   }
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     _:-ms-input-placeholder, html:not([dir="rtl"]) .container {
       padding-left: var(--sf-space-4);
     }
@@ -9008,7 +9008,7 @@
               padding-inline-end: var(--sf-space-4);
     }
   }
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     _:-ms-input-placeholder, html:not([dir="rtl"]) .container {
       padding-left: var(--sf-space-5);
     }
@@ -9062,7 +9062,7 @@
               padding-inline-end: var(--sf-space-5);
     }
   }
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     _:-ms-input-placeholder, html:not([dir="rtl"]) .container {
       padding-left: var(--sf-space-6);
     }
@@ -9127,7 +9127,7 @@
   }
 }
 @layer sf.utilities {
-  @container (min-width: 520px) {
+  @container (min-width: 32rem) {
     .cq-sm\:block {
       display: block;
     }
@@ -9375,7 +9375,7 @@
               column-gap: var(--sf-space-8);
     }
   }
-  @container sidebar (min-width: 520px) {
+  @container sidebar (min-width: 32rem) {
     .cq-sm\/sidebar\:block {
       display: block;
     }
@@ -9623,7 +9623,7 @@
               column-gap: var(--sf-space-8);
     }
   }
-  @container (min-width: 720px) {
+  @container (min-width: 44rem) {
     .cq-md\:block {
       display: block;
     }
@@ -9871,7 +9871,7 @@
               column-gap: var(--sf-space-8);
     }
   }
-  @container sidebar (min-width: 720px) {
+  @container sidebar (min-width: 44rem) {
     .cq-md\/sidebar\:block {
       display: block;
     }
@@ -10119,7 +10119,7 @@
               column-gap: var(--sf-space-8);
     }
   }
-  @container (min-width: 960px) {
+  @container (min-width: 60rem) {
     .cq-lg\:block {
       display: block;
     }
@@ -10367,7 +10367,7 @@
               column-gap: var(--sf-space-8);
     }
   }
-  @container sidebar (min-width: 960px) {
+  @container sidebar (min-width: 60rem) {
     .cq-lg\/sidebar\:block {
       display: block;
     }
@@ -10615,7 +10615,7 @@
               column-gap: var(--sf-space-8);
     }
   }
-  @container (min-width: 1140px) {
+  @container (min-width: 72rem) {
     .cq-xl\:block {
       display: block;
     }
@@ -10863,7 +10863,7 @@
               column-gap: var(--sf-space-8);
     }
   }
-  @container sidebar (min-width: 1140px) {
+  @container sidebar (min-width: 72rem) {
     .cq-xl\/sidebar\:block {
       display: block;
     }
@@ -41954,7 +41954,7 @@
   .max-container-8 .container {
     width: 100%;
   }
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .max-container-1 .container {
       max-width: var(--sf-container-1--size-max);
     }
@@ -42314,19 +42314,19 @@
     max-width: none;
   }
   .max-w-sm {
-    max-width: 520px;
+    max-width: 32rem;
   }
   .max-w-md {
-    max-width: 720px;
+    max-width: 44rem;
   }
   .max-w-lg {
-    max-width: 960px;
+    max-width: 60rem;
   }
   .max-w-xl {
-    max-width: 1140px;
+    max-width: 72rem;
   }
   .max-w-xxl {
-    max-width: 1320px;
+    max-width: 80rem;
   }
 }
 @layer sf.utilities {
@@ -64724,7 +64724,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:content-cross-start {
       align-content: flex-start;
     }
@@ -64749,7 +64749,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:items-cross-start {
       align-items: start;
     }
@@ -64768,7 +64768,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:self-cross-auto {
       align-self: auto;
     }
@@ -64790,7 +64790,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:aspect-1x1 {
       aspect-ratio: 1 / 1;
     }
@@ -64827,7 +64827,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:bg-fixed {
       background-attachment: fixed;
     }
@@ -64840,7 +64840,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:bg-clip-border {
       background-clip: border-box;
     }
@@ -64857,7 +64857,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:bg-origin-border {
       background-origin: border-box;
     }
@@ -64870,7 +64870,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:bg-bottom {
       background-position: bottom;
     }
@@ -64931,7 +64931,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:bg-repeat {
       background-repeat: repeat;
     }
@@ -64953,7 +64953,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:bg-auto {
       background-size: auto;
     }
@@ -64966,7 +64966,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:bg-size-a0 {
       background-size: var(--sf-a0);
     }
@@ -65543,7 +65543,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:radius-0 {
       border-radius: var(--sf-radius-0);
     }
@@ -69382,7 +69382,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:border-1 {
       border-width: var(--sf-a1);
     }
@@ -70607,7 +70607,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:break-after-auto {
       page-break-after: auto;
       -webkit-column-break-after: auto;
@@ -70658,7 +70658,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:break-before-auto {
       page-break-before: auto;
       -webkit-column-break-before: auto;
@@ -70709,7 +70709,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:break-inside-auto {
       page-break-inside: auto;
       -webkit-column-break-inside: auto;
@@ -70734,7 +70734,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:clear-inline-start {
       clear: left;
     }
@@ -70750,7 +70750,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:layout-col-1 {
       -webkit-column-count: 1;
          -moz-column-count: 1;
@@ -70819,7 +70819,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:container {
       padding-left: var(--sf-space-2);
     }
@@ -70865,9 +70865,10 @@
       padding-left: var(--sf-space-2);
     }
     .sm\:container {
-      /* The breakpoint step is wider than the media query that opens it
-         (sm opens at 520px, its step is 704px), so a fixed width overflowed
-         the window between the two. Fill, and stop at the step. */
+      /* Fill, and stop at the step. The step and the query that opens it
+         were once apart (sm opened at 520px, its step was 704px) and a
+         fixed width overflowed between them; they are one step now, and
+         filling stays right whatever the gutter takes. */
       width: 100%;
       max-width: var(--sf-breakpoint-sm);
       -webkit-padding-start: var(--sf-space-2);
@@ -70878,7 +70879,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:block {
       display: block;
     }
@@ -70948,7 +70949,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:top-0 {
       top: 0;
     }
@@ -72704,7 +72705,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:top-a0 {
       top: var(--sf-a0);
     }
@@ -84228,7 +84229,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:flex-1 {
       flex: 1 1 0%;
     }
@@ -84247,7 +84248,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:start-start {
       justify-content: flex-start;
       align-items: flex-start;
@@ -84287,7 +84288,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:basis-auto {
       flex-basis: auto;
     }
@@ -84384,7 +84385,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:basis-1 {
       flex-basis: 1%;
     }
@@ -84688,7 +84689,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:flex-row {
       flex-direction: row;
     }
@@ -84704,7 +84705,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:grow {
       flex-grow: 1;
     }
@@ -84714,7 +84715,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:shrink {
       flex-shrink: 1;
     }
@@ -84724,7 +84725,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:flex-wrap {
       flex-wrap: wrap;
     }
@@ -84737,7 +84738,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:float-inline-end {
       float: right;
     }
@@ -84794,7 +84795,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:text-a0 {
       font-size: var(--sf-a0);
       line-height: var(--sf-a0);
@@ -85158,7 +85159,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:regular {
       font-weight: normal;
     }
@@ -85201,7 +85202,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:gap-0,
     .sm\:g-0 {
       gap: var(--sf-space-0);
@@ -85397,7 +85398,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:gr-line-2 {
       background-image: linear-gradient(var(--sf-gradient--angle), var(--sf-gradient--color-1), var(--sf-gradient--color-1));
       background-image: linear-gradient(var(--sf-gradient--angle), var(--sf-gradient--color-1), var(--sf-gradient--color-2, var(--sf-gradient--color-3, var(--sf-gradient--color-1))));
@@ -85425,7 +85426,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:auto-cols {
       grid-auto-columns: auto;
     }
@@ -85443,7 +85444,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:grid-flow-row {
       grid-auto-flow: row;
     }
@@ -85459,7 +85460,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:auto-rows {
       grid-auto-rows: auto;
     }
@@ -85477,7 +85478,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:col-auto {
       grid-column: auto;
     }
@@ -85523,7 +85524,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:col-end-1 {
       grid-column-end: 1;
     }
@@ -85569,7 +85570,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:col-start-1 {
       grid-column-start: 1;
     }
@@ -85615,7 +85616,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:row-auto,
     .sm\:grid-row-auto {
       grid-row: auto;
@@ -85651,7 +85652,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:row-end-1,
     .sm\:grid-row-end-1 {
       grid-row-end: 1;
@@ -85687,7 +85688,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:row-start-1,
     .sm\:grid-row-start-1 {
       grid-row-start: 1;
@@ -85723,7 +85724,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:grid-col-1 {
       grid-template-columns: repeat(1, minmax(0, 1fr));
     }
@@ -85769,7 +85770,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:grid-row-1 {
       grid-template-rows: repeat(1, minmax(0, 1fr));
     }
@@ -85797,7 +85798,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:h-auto {
       height: auto;
     }
@@ -85913,7 +85914,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:h-a0 {
       height: var(--sf-a0);
     }
@@ -86187,7 +86188,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:isolate {
       isolation: isolate;
     }
@@ -86200,7 +86201,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:justify-start,
     .sm\:content-main-start {
       justify-content: flex-start;
@@ -86228,7 +86229,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:items-main-start {
       justify-items: start;
     }
@@ -86244,7 +86245,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:self-main-auto {
       justify-self: auto;
     }
@@ -86263,7 +86264,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:line-1\/4 {
       line-height: var(--sf-text-height-1\/4);
     }
@@ -86330,7 +86331,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:m-auto {
       margin: var(--sf-space-auto);
     }
@@ -88180,7 +88181,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:m-a0 {
       margin: var(--sf-a0);
     }
@@ -99164,7 +99165,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:max-h-full {
       max-height: 100%;
     }
@@ -99195,7 +99196,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:max-h-a0 {
       max-height: var(--sf-a0);
     }
@@ -99469,7 +99470,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:max-w-full {
       max-width: 100%;
     }
@@ -99501,24 +99502,24 @@
       max-width: none;
     }
     .sm\:max-w-sm {
-      max-width: 520px;
+      max-width: 32rem;
     }
     .sm\:max-w-md {
-      max-width: 720px;
+      max-width: 44rem;
     }
     .sm\:max-w-lg {
-      max-width: 960px;
+      max-width: 60rem;
     }
     .sm\:max-w-xl {
-      max-width: 1140px;
+      max-width: 72rem;
     }
     .sm\:max-w-xxl {
-      max-width: 1320px;
+      max-width: 80rem;
     }
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:max-w-a0 {
       max-width: var(--sf-a0);
     }
@@ -99792,7 +99793,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:min-h-full {
       min-height: 100%;
     }
@@ -99820,7 +99821,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:min-w-min {
       min-width: -webkit-min-content;
       min-width: -moz-min-content;
@@ -99845,7 +99846,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:object-contain {
       -o-object-fit: contain;
          object-fit: contain;
@@ -99869,7 +99870,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:object-bottom {
       -o-object-position: bottom;
          object-position: bottom;
@@ -99909,7 +99910,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:offset-1\/12 {
       margin-left: 8.333333%;
     }
@@ -100199,7 +100200,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:order-1 {
       order: 1;
     }
@@ -100248,7 +100249,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:overflow-auto {
       overflow: auto;
     }
@@ -100288,7 +100289,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:p-0 {
       padding: var(--sf-space-0);
     }
@@ -101672,7 +101673,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:p-a0 {
       padding: var(--sf-a0);
     }
@@ -107166,7 +107167,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:pattern-1 {
       background: url("data:image/svg+xml;utf8,<svg xmlns=%27http://www.w3.org/2000/svg%27 width=%272%27 height=%272%27><rect x=%270%27 y=%270%27 width=%271%27 height=%272%27/></svg>");
     }
@@ -107197,7 +107198,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:content-center {
       align-content: center;
       justify-content: center;
@@ -107236,7 +107237,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:items-start {
       align-items: start;
       justify-items: start;
@@ -107260,7 +107261,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:self-auto {
       align-self: auto;
       justify-self: auto;
@@ -107289,7 +107290,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:static {
       position: static;
     }
@@ -107308,7 +107309,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:space-x-0 > * + * {
       margin-right: calc(var(--sf-space-0) * var(--sf-space--reverse-x));
     }
@@ -107990,7 +107991,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:stripe-1 {
       background-image: linear-gradient(90deg, var(--sf-stripe--color) 1%, transparent 1%, transparent 49%, var(--sf-stripe--color) 49%, var(--sf-stripe--color) 51%, transparent 51%, transparent 99%, var(--sf-stripe--color) 99%);
       background-size: var(--sf-stripe--size) var(--sf-stripe--size);
@@ -108010,7 +108011,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:stripe-size-1 {
       --sf-stripe--size: var(--sf-a2);
     }
@@ -108026,7 +108027,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:stroke-1 {
       stroke-width: var(--sf-a1);
     }
@@ -108063,7 +108064,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:svg-1\/4 {
       width: var(--sf-text-size-1\/4);
       height: var(--sf-text-size-1\/4);
@@ -108142,7 +108143,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:text-start {
       text-align: left;
     }
@@ -108202,7 +108203,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:measure {
       max-width: var(--sf-text--measure);
     }
@@ -108215,7 +108216,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:delay-1 {
       transition-delay: 75ms;
     }
@@ -108249,7 +108250,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:transition-none {
       transition-property: none;
     }
@@ -108337,7 +108338,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:visible {
       visibility: visible;
     }
@@ -108347,7 +108348,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:w-auto {
       width: auto;
     }
@@ -108471,7 +108472,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:w-a0 {
       width: var(--sf-a0);
     }
@@ -109042,7 +109043,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 520px) {
+  @media (min-width: 32rem) {
     .sm\:z-auto {
       z-index: auto;
     }
@@ -109082,7 +109083,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:content-cross-start {
       align-content: flex-start;
     }
@@ -109107,7 +109108,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:items-cross-start {
       align-items: start;
     }
@@ -109126,7 +109127,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:self-cross-auto {
       align-self: auto;
     }
@@ -109148,7 +109149,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:aspect-1x1 {
       aspect-ratio: 1 / 1;
     }
@@ -109185,7 +109186,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:bg-fixed {
       background-attachment: fixed;
     }
@@ -109198,7 +109199,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:bg-clip-border {
       background-clip: border-box;
     }
@@ -109215,7 +109216,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:bg-origin-border {
       background-origin: border-box;
     }
@@ -109228,7 +109229,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:bg-bottom {
       background-position: bottom;
     }
@@ -109289,7 +109290,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:bg-repeat {
       background-repeat: repeat;
     }
@@ -109311,7 +109312,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:bg-auto {
       background-size: auto;
     }
@@ -109324,7 +109325,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:bg-size-a0 {
       background-size: var(--sf-a0);
     }
@@ -109901,7 +109902,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:radius-0 {
       border-radius: var(--sf-radius-0);
     }
@@ -113740,7 +113741,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:border-1 {
       border-width: var(--sf-a1);
     }
@@ -114965,7 +114966,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:break-after-auto {
       page-break-after: auto;
       -webkit-column-break-after: auto;
@@ -115016,7 +115017,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:break-before-auto {
       page-break-before: auto;
       -webkit-column-break-before: auto;
@@ -115067,7 +115068,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:break-inside-auto {
       page-break-inside: auto;
       -webkit-column-break-inside: auto;
@@ -115092,7 +115093,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:clear-inline-start {
       clear: left;
     }
@@ -115108,7 +115109,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:layout-col-1 {
       -webkit-column-count: 1;
          -moz-column-count: 1;
@@ -115177,7 +115178,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     _:-ms-input-placeholder, html:not([dir="rtl"]) .md\:container {
       padding-left: var(--sf-space-3);
     }
@@ -115223,9 +115224,10 @@
       padding-left: var(--sf-space-3);
     }
     .md\:container {
-      /* The breakpoint step is wider than the media query that opens it
-         (sm opens at 520px, its step is 704px), so a fixed width overflowed
-         the window between the two. Fill, and stop at the step. */
+      /* Fill, and stop at the step. The step and the query that opens it
+         were once apart (sm opened at 520px, its step was 704px) and a
+         fixed width overflowed between them; they are one step now, and
+         filling stays right whatever the gutter takes. */
       width: 100%;
       max-width: var(--sf-breakpoint-md);
       -webkit-padding-start: var(--sf-space-3);
@@ -115236,7 +115238,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:block {
       display: block;
     }
@@ -115306,7 +115308,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:top-0 {
       top: 0;
     }
@@ -117062,7 +117064,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:top-a0 {
       top: var(--sf-a0);
     }
@@ -128586,7 +128588,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:flex-1 {
       flex: 1 1 0%;
     }
@@ -128605,7 +128607,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:start-start {
       justify-content: flex-start;
       align-items: flex-start;
@@ -128645,7 +128647,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:basis-auto {
       flex-basis: auto;
     }
@@ -128742,7 +128744,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:basis-1 {
       flex-basis: 1%;
     }
@@ -129046,7 +129048,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:flex-row {
       flex-direction: row;
     }
@@ -129062,7 +129064,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:grow {
       flex-grow: 1;
     }
@@ -129072,7 +129074,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:shrink {
       flex-shrink: 1;
     }
@@ -129082,7 +129084,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:flex-wrap {
       flex-wrap: wrap;
     }
@@ -129095,7 +129097,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     _:-ms-input-placeholder, html:not([dir="rtl"]) .md\:float-inline-end {
       float: right;
     }
@@ -129152,7 +129154,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:text-a0 {
       font-size: var(--sf-a0);
       line-height: var(--sf-a0);
@@ -129516,7 +129518,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:regular {
       font-weight: normal;
     }
@@ -129559,7 +129561,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:gap-0,
     .md\:g-0 {
       gap: var(--sf-space-0);
@@ -129755,7 +129757,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:gr-line-2 {
       background-image: linear-gradient(var(--sf-gradient--angle), var(--sf-gradient--color-1), var(--sf-gradient--color-1));
       background-image: linear-gradient(var(--sf-gradient--angle), var(--sf-gradient--color-1), var(--sf-gradient--color-2, var(--sf-gradient--color-3, var(--sf-gradient--color-1))));
@@ -129783,7 +129785,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:auto-cols {
       grid-auto-columns: auto;
     }
@@ -129801,7 +129803,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:grid-flow-row {
       grid-auto-flow: row;
     }
@@ -129817,7 +129819,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:auto-rows {
       grid-auto-rows: auto;
     }
@@ -129835,7 +129837,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:col-auto {
       grid-column: auto;
     }
@@ -129881,7 +129883,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:col-end-1 {
       grid-column-end: 1;
     }
@@ -129927,7 +129929,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:col-start-1 {
       grid-column-start: 1;
     }
@@ -129973,7 +129975,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:row-auto,
     .md\:grid-row-auto {
       grid-row: auto;
@@ -130009,7 +130011,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:row-end-1,
     .md\:grid-row-end-1 {
       grid-row-end: 1;
@@ -130045,7 +130047,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:row-start-1,
     .md\:grid-row-start-1 {
       grid-row-start: 1;
@@ -130081,7 +130083,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:grid-col-1 {
       grid-template-columns: repeat(1, minmax(0, 1fr));
     }
@@ -130127,7 +130129,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:grid-row-1 {
       grid-template-rows: repeat(1, minmax(0, 1fr));
     }
@@ -130155,7 +130157,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:h-auto {
       height: auto;
     }
@@ -130271,7 +130273,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:h-a0 {
       height: var(--sf-a0);
     }
@@ -130545,7 +130547,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:isolate {
       isolation: isolate;
     }
@@ -130558,7 +130560,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:justify-start,
     .md\:content-main-start {
       justify-content: flex-start;
@@ -130586,7 +130588,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:items-main-start {
       justify-items: start;
     }
@@ -130602,7 +130604,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:self-main-auto {
       justify-self: auto;
     }
@@ -130621,7 +130623,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:line-1\/4 {
       line-height: var(--sf-text-height-1\/4);
     }
@@ -130688,7 +130690,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:m-auto {
       margin: var(--sf-space-auto);
     }
@@ -132538,7 +132540,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:m-a0 {
       margin: var(--sf-a0);
     }
@@ -143522,7 +143524,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:max-h-full {
       max-height: 100%;
     }
@@ -143553,7 +143555,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:max-h-a0 {
       max-height: var(--sf-a0);
     }
@@ -143827,7 +143829,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:max-w-full {
       max-width: 100%;
     }
@@ -143859,24 +143861,24 @@
       max-width: none;
     }
     .md\:max-w-sm {
-      max-width: 520px;
+      max-width: 32rem;
     }
     .md\:max-w-md {
-      max-width: 720px;
+      max-width: 44rem;
     }
     .md\:max-w-lg {
-      max-width: 960px;
+      max-width: 60rem;
     }
     .md\:max-w-xl {
-      max-width: 1140px;
+      max-width: 72rem;
     }
     .md\:max-w-xxl {
-      max-width: 1320px;
+      max-width: 80rem;
     }
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:max-w-a0 {
       max-width: var(--sf-a0);
     }
@@ -144150,7 +144152,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:min-h-full {
       min-height: 100%;
     }
@@ -144178,7 +144180,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:min-w-min {
       min-width: -webkit-min-content;
       min-width: -moz-min-content;
@@ -144203,7 +144205,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:object-contain {
       -o-object-fit: contain;
          object-fit: contain;
@@ -144227,7 +144229,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:object-bottom {
       -o-object-position: bottom;
          object-position: bottom;
@@ -144267,7 +144269,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     _:-ms-input-placeholder, html:not([dir="rtl"]) .md\:offset-1\/12 {
       margin-left: 8.333333%;
     }
@@ -144557,7 +144559,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:order-1 {
       order: 1;
     }
@@ -144606,7 +144608,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:overflow-auto {
       overflow: auto;
     }
@@ -144646,7 +144648,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:p-0 {
       padding: var(--sf-space-0);
     }
@@ -146030,7 +146032,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:p-a0 {
       padding: var(--sf-a0);
     }
@@ -151524,7 +151526,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:pattern-1 {
       background: url("data:image/svg+xml;utf8,<svg xmlns=%27http://www.w3.org/2000/svg%27 width=%272%27 height=%272%27><rect x=%270%27 y=%270%27 width=%271%27 height=%272%27/></svg>");
     }
@@ -151555,7 +151557,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:content-center {
       align-content: center;
       justify-content: center;
@@ -151594,7 +151596,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:items-start {
       align-items: start;
       justify-items: start;
@@ -151618,7 +151620,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:self-auto {
       align-self: auto;
       justify-self: auto;
@@ -151647,7 +151649,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:static {
       position: static;
     }
@@ -151666,7 +151668,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     _:-ms-input-placeholder, html:not([dir="rtl"]) .md\:space-x-0 > * + * {
       margin-right: calc(var(--sf-space-0) * var(--sf-space--reverse-x));
     }
@@ -152348,7 +152350,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:stripe-1 {
       background-image: linear-gradient(90deg, var(--sf-stripe--color) 1%, transparent 1%, transparent 49%, var(--sf-stripe--color) 49%, var(--sf-stripe--color) 51%, transparent 51%, transparent 99%, var(--sf-stripe--color) 99%);
       background-size: var(--sf-stripe--size) var(--sf-stripe--size);
@@ -152368,7 +152370,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:stripe-size-1 {
       --sf-stripe--size: var(--sf-a2);
     }
@@ -152384,7 +152386,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:stroke-1 {
       stroke-width: var(--sf-a1);
     }
@@ -152421,7 +152423,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:svg-1\/4 {
       width: var(--sf-text-size-1\/4);
       height: var(--sf-text-size-1\/4);
@@ -152500,7 +152502,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     _:-ms-input-placeholder, html:not([dir="rtl"]) .md\:text-start {
       text-align: left;
     }
@@ -152560,7 +152562,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:measure {
       max-width: var(--sf-text--measure);
     }
@@ -152573,7 +152575,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:delay-1 {
       transition-delay: 75ms;
     }
@@ -152607,7 +152609,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:transition-none {
       transition-property: none;
     }
@@ -152695,7 +152697,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:visible {
       visibility: visible;
     }
@@ -152705,7 +152707,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:w-auto {
       width: auto;
     }
@@ -152829,7 +152831,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:w-a0 {
       width: var(--sf-a0);
     }
@@ -153400,7 +153402,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 720px) {
+  @media (min-width: 44rem) {
     .md\:z-auto {
       z-index: auto;
     }
@@ -153440,7 +153442,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:content-cross-start {
       align-content: flex-start;
     }
@@ -153465,7 +153467,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:items-cross-start {
       align-items: start;
     }
@@ -153484,7 +153486,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:self-cross-auto {
       align-self: auto;
     }
@@ -153506,7 +153508,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:aspect-1x1 {
       aspect-ratio: 1 / 1;
     }
@@ -153543,7 +153545,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:bg-fixed {
       background-attachment: fixed;
     }
@@ -153556,7 +153558,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:bg-clip-border {
       background-clip: border-box;
     }
@@ -153573,7 +153575,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:bg-origin-border {
       background-origin: border-box;
     }
@@ -153586,7 +153588,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:bg-bottom {
       background-position: bottom;
     }
@@ -153647,7 +153649,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:bg-repeat {
       background-repeat: repeat;
     }
@@ -153669,7 +153671,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:bg-auto {
       background-size: auto;
     }
@@ -153682,7 +153684,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:bg-size-a0 {
       background-size: var(--sf-a0);
     }
@@ -154259,7 +154261,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:radius-0 {
       border-radius: var(--sf-radius-0);
     }
@@ -158098,7 +158100,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:border-1 {
       border-width: var(--sf-a1);
     }
@@ -159323,7 +159325,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:break-after-auto {
       page-break-after: auto;
       -webkit-column-break-after: auto;
@@ -159374,7 +159376,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:break-before-auto {
       page-break-before: auto;
       -webkit-column-break-before: auto;
@@ -159425,7 +159427,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:break-inside-auto {
       page-break-inside: auto;
       -webkit-column-break-inside: auto;
@@ -159450,7 +159452,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:clear-inline-start {
       clear: left;
     }
@@ -159466,7 +159468,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:layout-col-1 {
       -webkit-column-count: 1;
          -moz-column-count: 1;
@@ -159535,7 +159537,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:container {
       padding-left: var(--sf-space-4);
     }
@@ -159581,9 +159583,10 @@
       padding-left: var(--sf-space-4);
     }
     .lg\:container {
-      /* The breakpoint step is wider than the media query that opens it
-         (sm opens at 520px, its step is 704px), so a fixed width overflowed
-         the window between the two. Fill, and stop at the step. */
+      /* Fill, and stop at the step. The step and the query that opens it
+         were once apart (sm opened at 520px, its step was 704px) and a
+         fixed width overflowed between them; they are one step now, and
+         filling stays right whatever the gutter takes. */
       width: 100%;
       max-width: var(--sf-breakpoint-lg);
       -webkit-padding-start: var(--sf-space-4);
@@ -159594,7 +159597,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:block {
       display: block;
     }
@@ -159664,7 +159667,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:top-0 {
       top: 0;
     }
@@ -161420,7 +161423,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:top-a0 {
       top: var(--sf-a0);
     }
@@ -172944,7 +172947,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:flex-1 {
       flex: 1 1 0%;
     }
@@ -172963,7 +172966,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:start-start {
       justify-content: flex-start;
       align-items: flex-start;
@@ -173003,7 +173006,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:basis-auto {
       flex-basis: auto;
     }
@@ -173100,7 +173103,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:basis-1 {
       flex-basis: 1%;
     }
@@ -173404,7 +173407,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:flex-row {
       flex-direction: row;
     }
@@ -173420,7 +173423,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:grow {
       flex-grow: 1;
     }
@@ -173430,7 +173433,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:shrink {
       flex-shrink: 1;
     }
@@ -173440,7 +173443,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:flex-wrap {
       flex-wrap: wrap;
     }
@@ -173453,7 +173456,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:float-inline-end {
       float: right;
     }
@@ -173510,7 +173513,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:text-a0 {
       font-size: var(--sf-a0);
       line-height: var(--sf-a0);
@@ -173874,7 +173877,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:regular {
       font-weight: normal;
     }
@@ -173917,7 +173920,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:gap-0,
     .lg\:g-0 {
       gap: var(--sf-space-0);
@@ -174113,7 +174116,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:gr-line-2 {
       background-image: linear-gradient(var(--sf-gradient--angle), var(--sf-gradient--color-1), var(--sf-gradient--color-1));
       background-image: linear-gradient(var(--sf-gradient--angle), var(--sf-gradient--color-1), var(--sf-gradient--color-2, var(--sf-gradient--color-3, var(--sf-gradient--color-1))));
@@ -174141,7 +174144,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:auto-cols {
       grid-auto-columns: auto;
     }
@@ -174159,7 +174162,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:grid-flow-row {
       grid-auto-flow: row;
     }
@@ -174175,7 +174178,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:auto-rows {
       grid-auto-rows: auto;
     }
@@ -174193,7 +174196,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:col-auto {
       grid-column: auto;
     }
@@ -174239,7 +174242,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:col-end-1 {
       grid-column-end: 1;
     }
@@ -174285,7 +174288,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:col-start-1 {
       grid-column-start: 1;
     }
@@ -174331,7 +174334,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:row-auto,
     .lg\:grid-row-auto {
       grid-row: auto;
@@ -174367,7 +174370,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:row-end-1,
     .lg\:grid-row-end-1 {
       grid-row-end: 1;
@@ -174403,7 +174406,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:row-start-1,
     .lg\:grid-row-start-1 {
       grid-row-start: 1;
@@ -174439,7 +174442,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:grid-col-1 {
       grid-template-columns: repeat(1, minmax(0, 1fr));
     }
@@ -174485,7 +174488,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:grid-row-1 {
       grid-template-rows: repeat(1, minmax(0, 1fr));
     }
@@ -174513,7 +174516,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:h-auto {
       height: auto;
     }
@@ -174629,7 +174632,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:h-a0 {
       height: var(--sf-a0);
     }
@@ -174903,7 +174906,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:isolate {
       isolation: isolate;
     }
@@ -174916,7 +174919,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:justify-start,
     .lg\:content-main-start {
       justify-content: flex-start;
@@ -174944,7 +174947,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:items-main-start {
       justify-items: start;
     }
@@ -174960,7 +174963,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:self-main-auto {
       justify-self: auto;
     }
@@ -174979,7 +174982,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:line-1\/4 {
       line-height: var(--sf-text-height-1\/4);
     }
@@ -175046,7 +175049,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:m-auto {
       margin: var(--sf-space-auto);
     }
@@ -176896,7 +176899,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:m-a0 {
       margin: var(--sf-a0);
     }
@@ -187880,7 +187883,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:max-h-full {
       max-height: 100%;
     }
@@ -187911,7 +187914,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:max-h-a0 {
       max-height: var(--sf-a0);
     }
@@ -188185,7 +188188,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:max-w-full {
       max-width: 100%;
     }
@@ -188217,24 +188220,24 @@
       max-width: none;
     }
     .lg\:max-w-sm {
-      max-width: 520px;
+      max-width: 32rem;
     }
     .lg\:max-w-md {
-      max-width: 720px;
+      max-width: 44rem;
     }
     .lg\:max-w-lg {
-      max-width: 960px;
+      max-width: 60rem;
     }
     .lg\:max-w-xl {
-      max-width: 1140px;
+      max-width: 72rem;
     }
     .lg\:max-w-xxl {
-      max-width: 1320px;
+      max-width: 80rem;
     }
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:max-w-a0 {
       max-width: var(--sf-a0);
     }
@@ -188508,7 +188511,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:min-h-full {
       min-height: 100%;
     }
@@ -188536,7 +188539,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:min-w-min {
       min-width: -webkit-min-content;
       min-width: -moz-min-content;
@@ -188561,7 +188564,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:object-contain {
       -o-object-fit: contain;
          object-fit: contain;
@@ -188585,7 +188588,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:object-bottom {
       -o-object-position: bottom;
          object-position: bottom;
@@ -188625,7 +188628,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:offset-1\/12 {
       margin-left: 8.333333%;
     }
@@ -188915,7 +188918,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:order-1 {
       order: 1;
     }
@@ -188964,7 +188967,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:overflow-auto {
       overflow: auto;
     }
@@ -189004,7 +189007,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:p-0 {
       padding: var(--sf-space-0);
     }
@@ -190388,7 +190391,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:p-a0 {
       padding: var(--sf-a0);
     }
@@ -195882,7 +195885,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:pattern-1 {
       background: url("data:image/svg+xml;utf8,<svg xmlns=%27http://www.w3.org/2000/svg%27 width=%272%27 height=%272%27><rect x=%270%27 y=%270%27 width=%271%27 height=%272%27/></svg>");
     }
@@ -195913,7 +195916,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:content-center {
       align-content: center;
       justify-content: center;
@@ -195952,7 +195955,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:items-start {
       align-items: start;
       justify-items: start;
@@ -195976,7 +195979,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:self-auto {
       align-self: auto;
       justify-self: auto;
@@ -196005,7 +196008,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:static {
       position: static;
     }
@@ -196024,7 +196027,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:space-x-0 > * + * {
       margin-right: calc(var(--sf-space-0) * var(--sf-space--reverse-x));
     }
@@ -196706,7 +196709,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:stripe-1 {
       background-image: linear-gradient(90deg, var(--sf-stripe--color) 1%, transparent 1%, transparent 49%, var(--sf-stripe--color) 49%, var(--sf-stripe--color) 51%, transparent 51%, transparent 99%, var(--sf-stripe--color) 99%);
       background-size: var(--sf-stripe--size) var(--sf-stripe--size);
@@ -196726,7 +196729,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:stripe-size-1 {
       --sf-stripe--size: var(--sf-a2);
     }
@@ -196742,7 +196745,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:stroke-1 {
       stroke-width: var(--sf-a1);
     }
@@ -196779,7 +196782,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:svg-1\/4 {
       width: var(--sf-text-size-1\/4);
       height: var(--sf-text-size-1\/4);
@@ -196858,7 +196861,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:text-start {
       text-align: left;
     }
@@ -196918,7 +196921,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:measure {
       max-width: var(--sf-text--measure);
     }
@@ -196931,7 +196934,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:delay-1 {
       transition-delay: 75ms;
     }
@@ -196965,7 +196968,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:transition-none {
       transition-property: none;
     }
@@ -197053,7 +197056,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:visible {
       visibility: visible;
     }
@@ -197063,7 +197066,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:w-auto {
       width: auto;
     }
@@ -197187,7 +197190,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:w-a0 {
       width: var(--sf-a0);
     }
@@ -197758,7 +197761,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:z-auto {
       z-index: auto;
     }
@@ -197798,7 +197801,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:content-cross-start {
       align-content: flex-start;
     }
@@ -197823,7 +197826,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:content-cross-start {
       align-content: flex-start;
     }
@@ -197848,7 +197851,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:items-cross-start {
       align-items: start;
     }
@@ -197867,7 +197870,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:items-cross-start {
       align-items: start;
     }
@@ -197886,7 +197889,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:self-cross-auto {
       align-self: auto;
     }
@@ -197908,7 +197911,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:self-cross-auto {
       align-self: auto;
     }
@@ -197930,7 +197933,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:aspect-1x1 {
       aspect-ratio: 1 / 1;
     }
@@ -197967,7 +197970,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:aspect-1x1 {
       aspect-ratio: 1 / 1;
     }
@@ -198004,7 +198007,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:bg-fixed {
       background-attachment: fixed;
     }
@@ -198017,7 +198020,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:bg-fixed {
       background-attachment: fixed;
     }
@@ -198030,7 +198033,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:bg-clip-border {
       background-clip: border-box;
     }
@@ -198047,7 +198050,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:bg-clip-border {
       background-clip: border-box;
     }
@@ -198064,7 +198067,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:bg-origin-border {
       background-origin: border-box;
     }
@@ -198077,7 +198080,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:bg-origin-border {
       background-origin: border-box;
     }
@@ -198090,7 +198093,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:bg-bottom {
       background-position: bottom;
     }
@@ -198151,7 +198154,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:bg-bottom {
       background-position: bottom;
     }
@@ -198212,7 +198215,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:bg-repeat {
       background-repeat: repeat;
     }
@@ -198234,7 +198237,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:bg-repeat {
       background-repeat: repeat;
     }
@@ -198256,7 +198259,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:bg-auto {
       background-size: auto;
     }
@@ -198269,7 +198272,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:bg-auto {
       background-size: auto;
     }
@@ -198282,7 +198285,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:bg-size-a0 {
       background-size: var(--sf-a0);
     }
@@ -198859,7 +198862,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:bg-size-a0 {
       background-size: var(--sf-a0);
     }
@@ -199436,7 +199439,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:radius-0 {
       border-radius: var(--sf-radius-0);
     }
@@ -203275,7 +203278,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:radius-0 {
       border-radius: var(--sf-radius-0);
     }
@@ -207114,7 +207117,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:border-1 {
       border-width: var(--sf-a1);
     }
@@ -208339,7 +208342,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:border-1 {
       border-width: var(--sf-a1);
     }
@@ -209564,7 +209567,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:break-after-auto {
       page-break-after: auto;
       -webkit-column-break-after: auto;
@@ -209615,7 +209618,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:break-after-auto {
       page-break-after: auto;
       -webkit-column-break-after: auto;
@@ -209666,7 +209669,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:break-before-auto {
       page-break-before: auto;
       -webkit-column-break-before: auto;
@@ -209717,7 +209720,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:break-before-auto {
       page-break-before: auto;
       -webkit-column-break-before: auto;
@@ -209768,7 +209771,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:break-inside-auto {
       page-break-inside: auto;
       -webkit-column-break-inside: auto;
@@ -209793,7 +209796,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:break-inside-auto {
       page-break-inside: auto;
       -webkit-column-break-inside: auto;
@@ -209818,7 +209821,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:clear-inline-start {
       clear: left;
     }
@@ -209834,7 +209837,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:clear-inline-start {
       clear: left;
     }
@@ -209850,7 +209853,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:layout-col-1 {
       -webkit-column-count: 1;
          -moz-column-count: 1;
@@ -209919,7 +209922,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:layout-col-1 {
       -webkit-column-count: 1;
          -moz-column-count: 1;
@@ -209988,7 +209991,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:container {
       padding-left: var(--sf-space-5);
     }
@@ -210034,9 +210037,10 @@
       padding-left: var(--sf-space-5);
     }
     .xl\:container {
-      /* The breakpoint step is wider than the media query that opens it
-         (sm opens at 520px, its step is 704px), so a fixed width overflowed
-         the window between the two. Fill, and stop at the step. */
+      /* Fill, and stop at the step. The step and the query that opens it
+         were once apart (sm opened at 520px, its step was 704px) and a
+         fixed width overflowed between them; they are one step now, and
+         filling stays right whatever the gutter takes. */
       width: 100%;
       max-width: var(--sf-breakpoint-xl);
       -webkit-padding-start: var(--sf-space-5);
@@ -210047,7 +210051,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     _:-ms-input-placeholder, html:not([dir="rtl"]) .xxl\:container {
       padding-left: var(--sf-space-5);
     }
@@ -210093,9 +210097,10 @@
       padding-left: var(--sf-space-5);
     }
     .xxl\:container {
-      /* The breakpoint step is wider than the media query that opens it
-         (sm opens at 520px, its step is 704px), so a fixed width overflowed
-         the window between the two. Fill, and stop at the step. */
+      /* Fill, and stop at the step. The step and the query that opens it
+         were once apart (sm opened at 520px, its step was 704px) and a
+         fixed width overflowed between them; they are one step now, and
+         filling stays right whatever the gutter takes. */
       width: 100%;
       max-width: var(--sf-breakpoint-xxl);
       -webkit-padding-start: var(--sf-space-5);
@@ -210106,7 +210111,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:block {
       display: block;
     }
@@ -210176,7 +210181,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:block {
       display: block;
     }
@@ -210246,7 +210251,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:top-0 {
       top: 0;
     }
@@ -212002,7 +212007,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:top-0 {
       top: 0;
     }
@@ -213758,7 +213763,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:top-a0 {
       top: var(--sf-a0);
     }
@@ -225282,7 +225287,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:top-a0 {
       top: var(--sf-a0);
     }
@@ -236806,7 +236811,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:flex-1 {
       flex: 1 1 0%;
     }
@@ -236825,7 +236830,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:flex-1 {
       flex: 1 1 0%;
     }
@@ -236844,7 +236849,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:start-start {
       justify-content: flex-start;
       align-items: flex-start;
@@ -236884,7 +236889,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:start-start {
       justify-content: flex-start;
       align-items: flex-start;
@@ -236924,7 +236929,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:basis-auto {
       flex-basis: auto;
     }
@@ -237021,7 +237026,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:basis-auto {
       flex-basis: auto;
     }
@@ -237118,7 +237123,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:basis-1 {
       flex-basis: 1%;
     }
@@ -237422,7 +237427,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:basis-1 {
       flex-basis: 1%;
     }
@@ -237726,7 +237731,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:flex-row {
       flex-direction: row;
     }
@@ -237742,7 +237747,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:flex-row {
       flex-direction: row;
     }
@@ -237758,7 +237763,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:grow {
       flex-grow: 1;
     }
@@ -237768,7 +237773,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:grow {
       flex-grow: 1;
     }
@@ -237778,7 +237783,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:shrink {
       flex-shrink: 1;
     }
@@ -237788,7 +237793,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:shrink {
       flex-shrink: 1;
     }
@@ -237798,7 +237803,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:flex-wrap {
       flex-wrap: wrap;
     }
@@ -237811,7 +237816,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:flex-wrap {
       flex-wrap: wrap;
     }
@@ -237824,7 +237829,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:float-inline-end {
       float: right;
     }
@@ -237881,7 +237886,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     _:-ms-input-placeholder, html:not([dir="rtl"]) .xxl\:float-inline-end {
       float: right;
     }
@@ -237938,7 +237943,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:text-a0 {
       font-size: var(--sf-a0);
       line-height: var(--sf-a0);
@@ -238302,7 +238307,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:text-a0 {
       font-size: var(--sf-a0);
       line-height: var(--sf-a0);
@@ -238666,7 +238671,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:regular {
       font-weight: normal;
     }
@@ -238709,7 +238714,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:regular {
       font-weight: normal;
     }
@@ -238752,7 +238757,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:gap-0,
     .xl\:g-0 {
       gap: var(--sf-space-0);
@@ -238948,7 +238953,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:gap-0,
     .xxl\:g-0 {
       gap: var(--sf-space-0);
@@ -239144,7 +239149,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:gr-line-2 {
       background-image: linear-gradient(var(--sf-gradient--angle), var(--sf-gradient--color-1), var(--sf-gradient--color-1));
       background-image: linear-gradient(var(--sf-gradient--angle), var(--sf-gradient--color-1), var(--sf-gradient--color-2, var(--sf-gradient--color-3, var(--sf-gradient--color-1))));
@@ -239172,7 +239177,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:gr-line-2 {
       background-image: linear-gradient(var(--sf-gradient--angle), var(--sf-gradient--color-1), var(--sf-gradient--color-1));
       background-image: linear-gradient(var(--sf-gradient--angle), var(--sf-gradient--color-1), var(--sf-gradient--color-2, var(--sf-gradient--color-3, var(--sf-gradient--color-1))));
@@ -239200,7 +239205,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:auto-cols {
       grid-auto-columns: auto;
     }
@@ -239218,7 +239223,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:auto-cols {
       grid-auto-columns: auto;
     }
@@ -239236,7 +239241,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:grid-flow-row {
       grid-auto-flow: row;
     }
@@ -239252,7 +239257,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:grid-flow-row {
       grid-auto-flow: row;
     }
@@ -239268,7 +239273,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:auto-rows {
       grid-auto-rows: auto;
     }
@@ -239286,7 +239291,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:auto-rows {
       grid-auto-rows: auto;
     }
@@ -239304,7 +239309,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:col-auto {
       grid-column: auto;
     }
@@ -239350,7 +239355,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:col-auto {
       grid-column: auto;
     }
@@ -239396,7 +239401,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:col-end-1 {
       grid-column-end: 1;
     }
@@ -239442,7 +239447,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:col-end-1 {
       grid-column-end: 1;
     }
@@ -239488,7 +239493,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:col-start-1 {
       grid-column-start: 1;
     }
@@ -239534,7 +239539,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:col-start-1 {
       grid-column-start: 1;
     }
@@ -239580,7 +239585,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:row-auto,
     .xl\:grid-row-auto {
       grid-row: auto;
@@ -239616,7 +239621,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:row-auto,
     .xxl\:grid-row-auto {
       grid-row: auto;
@@ -239652,7 +239657,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:row-end-1,
     .xl\:grid-row-end-1 {
       grid-row-end: 1;
@@ -239688,7 +239693,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:row-end-1,
     .xxl\:grid-row-end-1 {
       grid-row-end: 1;
@@ -239724,7 +239729,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:row-start-1,
     .xl\:grid-row-start-1 {
       grid-row-start: 1;
@@ -239760,7 +239765,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:row-start-1,
     .xxl\:grid-row-start-1 {
       grid-row-start: 1;
@@ -239796,7 +239801,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:grid-col-1 {
       grid-template-columns: repeat(1, minmax(0, 1fr));
     }
@@ -239842,7 +239847,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:grid-col-1 {
       grid-template-columns: repeat(1, minmax(0, 1fr));
     }
@@ -239888,7 +239893,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:grid-row-1 {
       grid-template-rows: repeat(1, minmax(0, 1fr));
     }
@@ -239916,7 +239921,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:grid-row-1 {
       grid-template-rows: repeat(1, minmax(0, 1fr));
     }
@@ -239944,7 +239949,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:h-auto {
       height: auto;
     }
@@ -240060,7 +240065,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:h-auto {
       height: auto;
     }
@@ -240176,7 +240181,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:h-a0 {
       height: var(--sf-a0);
     }
@@ -240450,7 +240455,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:h-a0 {
       height: var(--sf-a0);
     }
@@ -240724,7 +240729,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:isolate {
       isolation: isolate;
     }
@@ -240737,7 +240742,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:isolate {
       isolation: isolate;
     }
@@ -240750,7 +240755,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:justify-start,
     .xl\:content-main-start {
       justify-content: flex-start;
@@ -240778,7 +240783,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:justify-start,
     .xxl\:content-main-start {
       justify-content: flex-start;
@@ -240806,7 +240811,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:items-main-start {
       justify-items: start;
     }
@@ -240822,7 +240827,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:items-main-start {
       justify-items: start;
     }
@@ -240838,7 +240843,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:self-main-auto {
       justify-self: auto;
     }
@@ -240857,7 +240862,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:self-main-auto {
       justify-self: auto;
     }
@@ -240876,7 +240881,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:line-1\/4 {
       line-height: var(--sf-text-height-1\/4);
     }
@@ -240943,7 +240948,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:line-1\/4 {
       line-height: var(--sf-text-height-1\/4);
     }
@@ -241010,7 +241015,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:m-auto {
       margin: var(--sf-space-auto);
     }
@@ -242860,7 +242865,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:m-auto {
       margin: var(--sf-space-auto);
     }
@@ -244710,7 +244715,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:m-a0 {
       margin: var(--sf-a0);
     }
@@ -255694,7 +255699,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:m-a0 {
       margin: var(--sf-a0);
     }
@@ -266678,7 +266683,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:max-h-full {
       max-height: 100%;
     }
@@ -266709,7 +266714,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:max-h-full {
       max-height: 100%;
     }
@@ -266740,7 +266745,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:max-h-a0 {
       max-height: var(--sf-a0);
     }
@@ -267014,7 +267019,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:max-h-a0 {
       max-height: var(--sf-a0);
     }
@@ -267288,7 +267293,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:max-w-full {
       max-width: 100%;
     }
@@ -267320,24 +267325,24 @@
       max-width: none;
     }
     .xl\:max-w-sm {
-      max-width: 520px;
+      max-width: 32rem;
     }
     .xl\:max-w-md {
-      max-width: 720px;
+      max-width: 44rem;
     }
     .xl\:max-w-lg {
-      max-width: 960px;
+      max-width: 60rem;
     }
     .xl\:max-w-xl {
-      max-width: 1140px;
+      max-width: 72rem;
     }
     .xl\:max-w-xxl {
-      max-width: 1320px;
+      max-width: 80rem;
     }
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:max-w-full {
       max-width: 100%;
     }
@@ -267369,24 +267374,24 @@
       max-width: none;
     }
     .xxl\:max-w-sm {
-      max-width: 520px;
+      max-width: 32rem;
     }
     .xxl\:max-w-md {
-      max-width: 720px;
+      max-width: 44rem;
     }
     .xxl\:max-w-lg {
-      max-width: 960px;
+      max-width: 60rem;
     }
     .xxl\:max-w-xl {
-      max-width: 1140px;
+      max-width: 72rem;
     }
     .xxl\:max-w-xxl {
-      max-width: 1320px;
+      max-width: 80rem;
     }
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:max-w-a0 {
       max-width: var(--sf-a0);
     }
@@ -267660,7 +267665,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:max-w-a0 {
       max-width: var(--sf-a0);
     }
@@ -267934,7 +267939,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:min-h-full {
       min-height: 100%;
     }
@@ -267962,7 +267967,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:min-h-full {
       min-height: 100%;
     }
@@ -267990,7 +267995,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:min-w-min {
       min-width: -webkit-min-content;
       min-width: -moz-min-content;
@@ -268015,7 +268020,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:min-w-min {
       min-width: -webkit-min-content;
       min-width: -moz-min-content;
@@ -268040,7 +268045,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:object-contain {
       -o-object-fit: contain;
          object-fit: contain;
@@ -268064,7 +268069,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:object-contain {
       -o-object-fit: contain;
          object-fit: contain;
@@ -268088,7 +268093,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:object-bottom {
       -o-object-position: bottom;
          object-position: bottom;
@@ -268128,7 +268133,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:object-bottom {
       -o-object-position: bottom;
          object-position: bottom;
@@ -268168,7 +268173,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:offset-1\/12 {
       margin-left: 8.333333%;
     }
@@ -268458,7 +268463,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     _:-ms-input-placeholder, html:not([dir="rtl"]) .xxl\:offset-1\/12 {
       margin-left: 8.333333%;
     }
@@ -268748,7 +268753,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:order-1 {
       order: 1;
     }
@@ -268797,7 +268802,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:order-1 {
       order: 1;
     }
@@ -268846,7 +268851,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:overflow-auto {
       overflow: auto;
     }
@@ -268886,7 +268891,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:overflow-auto {
       overflow: auto;
     }
@@ -268926,7 +268931,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:p-0 {
       padding: var(--sf-space-0);
     }
@@ -270310,7 +270315,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:p-0 {
       padding: var(--sf-space-0);
     }
@@ -271694,7 +271699,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:p-a0 {
       padding: var(--sf-a0);
     }
@@ -277188,7 +277193,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:p-a0 {
       padding: var(--sf-a0);
     }
@@ -282682,7 +282687,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:pattern-1 {
       background: url("data:image/svg+xml;utf8,<svg xmlns=%27http://www.w3.org/2000/svg%27 width=%272%27 height=%272%27><rect x=%270%27 y=%270%27 width=%271%27 height=%272%27/></svg>");
     }
@@ -282713,7 +282718,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:pattern-1 {
       background: url("data:image/svg+xml;utf8,<svg xmlns=%27http://www.w3.org/2000/svg%27 width=%272%27 height=%272%27><rect x=%270%27 y=%270%27 width=%271%27 height=%272%27/></svg>");
     }
@@ -282744,7 +282749,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:content-center {
       align-content: center;
       justify-content: center;
@@ -282783,7 +282788,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:content-center {
       align-content: center;
       justify-content: center;
@@ -282822,7 +282827,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:items-start {
       align-items: start;
       justify-items: start;
@@ -282846,7 +282851,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:items-start {
       align-items: start;
       justify-items: start;
@@ -282870,7 +282875,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:self-auto {
       align-self: auto;
       justify-self: auto;
@@ -282899,7 +282904,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:self-auto {
       align-self: auto;
       justify-self: auto;
@@ -282928,7 +282933,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:static {
       position: static;
     }
@@ -282947,7 +282952,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:static {
       position: static;
     }
@@ -282966,7 +282971,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:space-x-0 > * + * {
       margin-right: calc(var(--sf-space-0) * var(--sf-space--reverse-x));
     }
@@ -283648,7 +283653,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     _:-ms-input-placeholder, html:not([dir="rtl"]) .xxl\:space-x-0 > * + * {
       margin-right: calc(var(--sf-space-0) * var(--sf-space--reverse-x));
     }
@@ -284330,7 +284335,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:stripe-1 {
       background-image: linear-gradient(90deg, var(--sf-stripe--color) 1%, transparent 1%, transparent 49%, var(--sf-stripe--color) 49%, var(--sf-stripe--color) 51%, transparent 51%, transparent 99%, var(--sf-stripe--color) 99%);
       background-size: var(--sf-stripe--size) var(--sf-stripe--size);
@@ -284350,7 +284355,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:stripe-1 {
       background-image: linear-gradient(90deg, var(--sf-stripe--color) 1%, transparent 1%, transparent 49%, var(--sf-stripe--color) 49%, var(--sf-stripe--color) 51%, transparent 51%, transparent 99%, var(--sf-stripe--color) 99%);
       background-size: var(--sf-stripe--size) var(--sf-stripe--size);
@@ -284370,7 +284375,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:stripe-size-1 {
       --sf-stripe--size: var(--sf-a2);
     }
@@ -284386,7 +284391,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:stripe-size-1 {
       --sf-stripe--size: var(--sf-a2);
     }
@@ -284402,7 +284407,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:stroke-1 {
       stroke-width: var(--sf-a1);
     }
@@ -284439,7 +284444,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:stroke-1 {
       stroke-width: var(--sf-a1);
     }
@@ -284476,7 +284481,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:svg-1\/4 {
       width: var(--sf-text-size-1\/4);
       height: var(--sf-text-size-1\/4);
@@ -284555,7 +284560,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:svg-1\/4 {
       width: var(--sf-text-size-1\/4);
       height: var(--sf-text-size-1\/4);
@@ -284634,7 +284639,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:text-start {
       text-align: left;
     }
@@ -284694,7 +284699,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     _:-ms-input-placeholder, html:not([dir="rtl"]) .xxl\:text-start {
       text-align: left;
     }
@@ -284754,7 +284759,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:measure {
       max-width: var(--sf-text--measure);
     }
@@ -284767,7 +284772,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:measure {
       max-width: var(--sf-text--measure);
     }
@@ -284780,7 +284785,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:delay-1 {
       transition-delay: 75ms;
     }
@@ -284814,7 +284819,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:delay-1 {
       transition-delay: 75ms;
     }
@@ -284848,7 +284853,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:transition-none {
       transition-property: none;
     }
@@ -284936,7 +284941,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:transition-none {
       transition-property: none;
     }
@@ -285024,7 +285029,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:visible {
       visibility: visible;
     }
@@ -285034,7 +285039,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:visible {
       visibility: visible;
     }
@@ -285044,7 +285049,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:w-auto {
       width: auto;
     }
@@ -285168,7 +285173,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:w-auto {
       width: auto;
     }
@@ -285292,7 +285297,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:w-a0 {
       width: var(--sf-a0);
     }
@@ -285863,7 +285868,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:w-a0 {
       width: var(--sf-a0);
     }
@@ -286434,7 +286439,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:z-auto {
       z-index: auto;
     }
@@ -286474,7 +286479,7 @@
   }
 }
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:z-auto {
       z-index: auto;
     }

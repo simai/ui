@@ -784,7 +784,7 @@
     --sf-pagination-marked-text--color: var(--sf-on-surface);
     --sf-pagination-marked-text--font-weight: var(--sf-font-weight-medium);
   }
-  @media (max-width: 720px) {
+  @media (max-width: 44rem) {
     .sf-pagination .sf-pagination-main {
       align-items: stretch;
       flex-direction: column;

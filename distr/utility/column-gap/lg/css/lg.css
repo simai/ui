@@ -1,5 +1,5 @@
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:col-gap-0 {
       -webkit-column-gap: var(--sf-space-0);
          -moz-column-gap: var(--sf-space-0);

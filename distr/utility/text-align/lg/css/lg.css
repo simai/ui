@@ -1,5 +1,5 @@
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     _:-ms-input-placeholder, html:not([dir="rtl"]) .lg\:text-start {
       text-align: left;
     }

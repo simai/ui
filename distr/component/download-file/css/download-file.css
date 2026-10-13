@@ -178,7 +178,7 @@
   .sf-download-file[aria-disabled=true] :where(.sf-download-file__main, .sf-download-file-container, .sf-download-file__size, .sf-download-file-file-size, .sf-icon) {
     color: var(--sf-on-disable);
   }
-  @media (max-width: 30rem) {
+  @media (max-width: 31.999rem) {
     .sf-download-file :where(.sf-download-file__body, .sf-download-file-wrap) {
       align-items: flex-start;
     }

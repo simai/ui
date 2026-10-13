@@ -1,5 +1,5 @@
 @layer sf.utilities {
-  @media (min-width: 1140px) {
+  @media (min-width: 72rem) {
     .xl\:m-a0 {
       margin: var(--sf-a0);
     }

@@ -1,5 +1,5 @@
 @layer sf.utilities {
-  @media (min-width: 960px) {
+  @media (min-width: 60rem) {
     .lg\:pattern-1 {
       background: url("data:image/svg+xml;utf8,<svg xmlns=%27http://www.w3.org/2000/svg%27 width=%272%27 height=%272%27><rect x=%270%27 y=%270%27 width=%271%27 height=%272%27/></svg>");
     }

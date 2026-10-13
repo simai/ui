@@ -1,5 +1,5 @@
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:break-after-auto {
       page-break-after: auto;
       -webkit-column-break-after: auto;

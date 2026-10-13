@@ -1,5 +1,5 @@
 @layer sf.utilities {
-  @media (min-width: 1320px) {
+  @media (min-width: 80rem) {
     .xxl\:justify-start,
     .xxl\:content-main-start {
       justify-content: flex-start;
