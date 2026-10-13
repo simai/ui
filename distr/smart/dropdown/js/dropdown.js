@@ -1512,8 +1512,15 @@ function renderTag(context, option) {
       </button>
     </div>
   `;
-}
+} // A grid cell is as tall as a field of the dropdown's size: a size-1/2 icon
+// picker drew size-1 cells around its size-1/2 search (owner, 2026-10-14).
 
+
+const CELL = {
+  "1/2": "var(--sf-ui-1\\/2--control-height)",
+  "1": "var(--sf-ui-1--control-height)",
+  "2": "var(--sf-ui-2--control-height)"
+};
 function renderDropdownTemplate(context) {
   const rootClasses = ["sf-dropdown", context.rootClass, context.open ? "open" : "", context.open ? "sf-dropdown--open" : "", `sf-dropdown--size-${context.size}`, `sf-dropdown--${context.appearance ?? context.type}`, context.mode === "tag" ? "sf-dropdown--tag" : "", context.layout === "grid" ? "sf-dropdown--grid" : "", context.mode !== "tag" ? "sf-dropdown--text" : "", context.disabled ? "disabled" : "", "flex", "flex-col"].filter(Boolean);
   const fieldClasses = ["sf-dropdown-field", !context.disabled ? "cursor-pointer" : "", "items-cross-center", "relative", "transition", "flex"].filter(Boolean);
@@ -1624,6 +1631,7 @@ function renderDropdownTemplate(context) {
 
       <div
         class=${`sf-list flex flex-col${context.component?.hasSlotContent?.('trigger') ? " sf-list--free-width" : ""}`}
+        style=${`--sf-list--cell: ${CELL[context.size] || CELL["1"]}`}
         ?hidden=${!context.open}
       >
         ${context.search ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`

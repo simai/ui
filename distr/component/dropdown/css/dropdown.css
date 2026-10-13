@@ -911,52 +911,52 @@
     /* A grid asks for the width its columns need: the list otherwise takes the
        width of the control it hangs from, and a chooser narrow enough to hold a
        glyph made six columns of eleven pixels each. */
-    min-width: calc(6 * 2.25rem);
-    min-inline-size: calc(6 * 2.25rem);
-    min-width: calc(6 * 2.25rem);
-    min-width: calc(var(--sf-list-container--columns, 6) * var(--sf-ui-1--control-height, 2.25rem));
-    min-inline-size: calc(var(--sf-list-container--columns, 6) * var(--sf-ui-1--control-height, 2.25rem));
+    min-width: calc(6 * var(--sf-ui-1--control-height));
+    min-inline-size: calc(6 * var(--sf-ui-1--control-height));
+    min-width: calc(6 * var(--sf-ui-1--control-height));
+    min-width: calc(var(--sf-list-container--columns, 6) * var(--sf-list--cell, var(--sf-ui-1--control-height)));
+    min-inline-size: calc(var(--sf-list-container--columns, 6) * var(--sf-list--cell, var(--sf-ui-1--control-height)));
   }
   /* The surface holding a grid asks for the same width. The list is sized from
      the control it hangs from, which for a chooser the width of one glyph left
      six columns two glyphs wide. */
   .sf-list[\:has\(.sf-list-container--grid\)] {
-    min-width: calc(6 * 2.25rem + var(--sf-space-1));
-    min-inline-size: calc(6 * 2.25rem + var(--sf-space-1));
-    min-width: calc(6 * 2.25rem + var(--sf-space-1));
-    min-width: calc(var(--sf-list-container--columns, 6) * var(--sf-ui-1--control-height, 2.25rem) + var(--sf-space-1));
-    min-inline-size: calc(var(--sf-list-container--columns, 6) * var(--sf-ui-1--control-height, 2.25rem) + var(--sf-space-1));
+    min-width: calc(6 * var(--sf-ui-1--control-height) + var(--sf-space-1));
+    min-inline-size: calc(6 * var(--sf-ui-1--control-height) + var(--sf-space-1));
+    min-width: calc(6 * var(--sf-ui-1--control-height) + var(--sf-space-1));
+    min-width: calc(var(--sf-list-container--columns, 6) * var(--sf-list--cell, var(--sf-ui-1--control-height)) + var(--sf-space-1));
+    min-inline-size: calc(var(--sf-list-container--columns, 6) * var(--sf-list--cell, var(--sf-ui-1--control-height)) + var(--sf-space-1));
   }
   .sf-list[\:has\(.sf-list-container--grid\)] {
-    min-width: calc(6 * 2.25rem + var(--sf-space-1));
-    min-inline-size: calc(6 * 2.25rem + var(--sf-space-1));
-    min-width: calc(6 * 2.25rem + var(--sf-space-1));
-    min-width: calc(var(--sf-list-container--columns, 6) * var(--sf-ui-1--control-height, 2.25rem) + var(--sf-space-1));
-    min-width: calc(6 * 2.25rem + var(--sf-space-1));
-    min-inline-size: calc(6 * 2.25rem + var(--sf-space-1));
-    min-width: calc(6 * 2.25rem + var(--sf-space-1));
-    min-width: calc(var(--sf-list-container--columns, 6) * var(--sf-ui-1--control-height, 2.25rem) + var(--sf-space-1));
-    min-inline-size: calc(var(--sf-list-container--columns, 6) * var(--sf-ui-1--control-height, 2.25rem) + var(--sf-space-1));
+    min-width: calc(6 * var(--sf-ui-1--control-height) + var(--sf-space-1));
+    min-inline-size: calc(6 * var(--sf-ui-1--control-height) + var(--sf-space-1));
+    min-width: calc(6 * var(--sf-ui-1--control-height) + var(--sf-space-1));
+    min-width: calc(var(--sf-list-container--columns, 6) * var(--sf-list--cell, var(--sf-ui-1--control-height)) + var(--sf-space-1));
+    min-width: calc(6 * var(--sf-ui-1--control-height) + var(--sf-space-1));
+    min-inline-size: calc(6 * var(--sf-ui-1--control-height) + var(--sf-space-1));
+    min-width: calc(6 * var(--sf-ui-1--control-height) + var(--sf-space-1));
+    min-width: calc(var(--sf-list-container--columns, 6) * var(--sf-list--cell, var(--sf-ui-1--control-height)) + var(--sf-space-1));
+    min-inline-size: calc(var(--sf-list-container--columns, 6) * var(--sf-list--cell, var(--sf-ui-1--control-height)) + var(--sf-space-1));
   }
   .sf-list[\:has\(.sf-list-container--grid\)] {
-    min-width: calc(6 * 2.25rem + var(--sf-space-1));
-    min-width: calc(6 * 2.25rem + var(--sf-space-1));
-    min-inline-size: calc(6 * 2.25rem + var(--sf-space-1));
-    min-width: calc(6 * 2.25rem + var(--sf-space-1));
-    min-width: calc(6 * 2.25rem + var(--sf-space-1));
-    min-width: calc(var(--sf-list-container--columns, 6) * var(--sf-ui-1--control-height, 2.25rem) + var(--sf-space-1));
-    min-width: calc(6 * 2.25rem + var(--sf-space-1));
-    min-inline-size: calc(6 * 2.25rem + var(--sf-space-1));
-    min-width: calc(6 * 2.25rem + var(--sf-space-1));
-    min-width: calc(var(--sf-list-container--columns, 6) * var(--sf-ui-1--control-height, 2.25rem) + var(--sf-space-1));
-    min-inline-size: calc(var(--sf-list-container--columns, 6) * var(--sf-ui-1--control-height, 2.25rem) + var(--sf-space-1));
+    min-width: calc(6 * var(--sf-ui-1--control-height) + var(--sf-space-1));
+    min-width: calc(6 * var(--sf-ui-1--control-height) + var(--sf-space-1));
+    min-inline-size: calc(6 * var(--sf-ui-1--control-height) + var(--sf-space-1));
+    min-width: calc(6 * var(--sf-ui-1--control-height) + var(--sf-space-1));
+    min-width: calc(6 * var(--sf-ui-1--control-height) + var(--sf-space-1));
+    min-width: calc(var(--sf-list-container--columns, 6) * var(--sf-list--cell, var(--sf-ui-1--control-height)) + var(--sf-space-1));
+    min-width: calc(6 * var(--sf-ui-1--control-height) + var(--sf-space-1));
+    min-inline-size: calc(6 * var(--sf-ui-1--control-height) + var(--sf-space-1));
+    min-width: calc(6 * var(--sf-ui-1--control-height) + var(--sf-space-1));
+    min-width: calc(var(--sf-list-container--columns, 6) * var(--sf-list--cell, var(--sf-ui-1--control-height)) + var(--sf-space-1));
+    min-inline-size: calc(var(--sf-list-container--columns, 6) * var(--sf-list--cell, var(--sf-ui-1--control-height)) + var(--sf-space-1));
   }
   .sf-list:has(.sf-list-container--grid) {
-    min-width: calc(6 * 2.25rem + var(--sf-space-1));
-    min-inline-size: calc(6 * 2.25rem + var(--sf-space-1));
-    min-width: calc(6 * 2.25rem + var(--sf-space-1));
-    min-width: calc(var(--sf-list-container--columns, 6) * var(--sf-ui-1--control-height, 2.25rem) + var(--sf-space-1));
-    min-inline-size: calc(var(--sf-list-container--columns, 6) * var(--sf-ui-1--control-height, 2.25rem) + var(--sf-space-1));
+    min-width: calc(6 * var(--sf-ui-1--control-height) + var(--sf-space-1));
+    min-inline-size: calc(6 * var(--sf-ui-1--control-height) + var(--sf-space-1));
+    min-width: calc(6 * var(--sf-ui-1--control-height) + var(--sf-space-1));
+    min-width: calc(var(--sf-list-container--columns, 6) * var(--sf-list--cell, var(--sf-ui-1--control-height)) + var(--sf-space-1));
+    min-inline-size: calc(var(--sf-list-container--columns, 6) * var(--sf-list--cell, var(--sf-ui-1--control-height)) + var(--sf-space-1));
   }
   .sf-list-container--grid .sf-list-item {
     justify-content: center;
@@ -1043,6 +1043,104 @@
     width: 18rem;
     width: var(--sf-dropdown--list-width, 18rem);
     inline-size: var(--sf-dropdown--list-width, 18rem);
+  }
+  /* A grid is as wide as its columns: a picker of size-1/2 icons stood in an
+     18rem panel with a third of it empty (owner, 2026-10-14). */
+  .sf-list--free-width[\:has\(.sf-list-container--grid\)] {
+    width: -webkit-min-content;
+    width: -moz-min-content;
+    width: min-content;
+    inline-size: -webkit-min-content;
+    inline-size: -moz-min-content;
+    inline-size: min-content;
+    width: min-content;
+    width: var(--sf-dropdown--list-width, -webkit-min-content);
+    width: var(--sf-dropdown--list-width, -moz-min-content);
+    width: var(--sf-dropdown--list-width, min-content);
+    inline-size: var(--sf-dropdown--list-width, -webkit-min-content);
+    inline-size: var(--sf-dropdown--list-width, -moz-min-content);
+    inline-size: var(--sf-dropdown--list-width, min-content);
+  }
+  .sf-list--free-width[\:has\(.sf-list-container--grid\)] {
+    width: -webkit-min-content;
+    width: -moz-min-content;
+    width: min-content;
+    inline-size: -webkit-min-content;
+    inline-size: -moz-min-content;
+    inline-size: min-content;
+    width: min-content;
+    width: var(--sf-dropdown--list-width, -webkit-min-content);
+    width: var(--sf-dropdown--list-width, -moz-min-content);
+    width: var(--sf-dropdown--list-width, min-content);
+    width: min-content;
+    inline-size: min-content;
+    width: min-content;
+    width: var(--sf-dropdown--list-width, min-content);
+    inline-size: var(--sf-dropdown--list-width, -webkit-min-content);
+    inline-size: var(--sf-dropdown--list-width, -moz-min-content);
+    inline-size: var(--sf-dropdown--list-width, min-content);
+  }
+  .sf-list--free-width[\:has\(.sf-list-container--grid\)] {
+    width: -webkit-min-content;
+    width: -moz-min-content;
+    width: min-content;
+    width: min-content;
+    inline-size: -webkit-min-content;
+    inline-size: -moz-min-content;
+    inline-size: min-content;
+    width: min-content;
+    width: min-content;
+    width: var(--sf-dropdown--list-width, -webkit-min-content);
+    width: var(--sf-dropdown--list-width, -moz-min-content);
+    width: var(--sf-dropdown--list-width, min-content);
+    width: min-content;
+    inline-size: min-content;
+    width: min-content;
+    width: var(--sf-dropdown--list-width, min-content);
+    inline-size: var(--sf-dropdown--list-width, -webkit-min-content);
+    inline-size: var(--sf-dropdown--list-width, -moz-min-content);
+    inline-size: var(--sf-dropdown--list-width, min-content);
+  }
+  .sf-list--free-width:has(.sf-list-container--grid) {
+    width: -webkit-min-content;
+    width: -moz-min-content;
+    width: min-content;
+    inline-size: -webkit-min-content;
+    inline-size: -moz-min-content;
+    inline-size: min-content;
+    width: min-content;
+    width: var(--sf-dropdown--list-width, -webkit-min-content);
+    width: var(--sf-dropdown--list-width, -moz-min-content);
+    width: var(--sf-dropdown--list-width, min-content);
+    inline-size: var(--sf-dropdown--list-width, -webkit-min-content);
+    inline-size: var(--sf-dropdown--list-width, -moz-min-content);
+    inline-size: var(--sf-dropdown--list-width, min-content);
+  }
+  /* Its columns are as wide as a cell, so the search field above them -- which
+     takes the panel's width and asks for none -- cannot stretch them. */
+  .sf-list--free-width[\:has\(.sf-list-container--grid\)] > .sf-input {
+    width: 0;
+    inline-size: 0;
+    min-width: 100%;
+    min-inline-size: 100%;
+  }
+  .sf-list--free-width[\:has\(.sf-list-container--grid\)] > .sf-input {
+    width: 0;
+    width: 0;
+    inline-size: 0;
+    min-width: 100%;
+    min-width: 100%;
+    min-inline-size: 100%;
+  }
+  .sf-list--free-width:has(.sf-list-container--grid) > .sf-input {
+    width: 0;
+    inline-size: 0;
+    min-width: 100%;
+    min-inline-size: 100%;
+  }
+  .sf-list--free-width .sf-list-container--grid {
+    grid-template-columns: repeat(6, var(--sf-ui-1--control-height));
+    grid-template-columns: repeat(var(--sf-list-container--columns, 6), var(--sf-list--cell, var(--sf-ui-1--control-height)));
   }
 }
 @layer sf.components {

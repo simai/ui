@@ -86,6 +86,22 @@
     --sf-context-menu--item-inset-start-2: calc(var(--sf-ui-2--space-x) + var(--sf-px) - var(--sf-context-menu-content--padding-inline-start, 0px));
     --sf-context-menu--item-inset-end-2: calc(var(--sf-ui-2--space-x) + var(--sf-px) - var(--sf-context-menu-content--padding-inline-end, 0px));
     --sf-context-menu--label-inset-2: calc(var(--sf-context-menu--item-inset-start-2) + var(--sf-ui-2--text-space-x));
+    --sf-context-menu--line: var(--sf-text-height-1\/2);
+    --sf-context-menu--text-size: var(--sf-text-size-1\/2);
+    --sf-context-menu--space-y: var(--sf-ui-1\/2--space-y);
+    --sf-context-menu--field-space-x: var(--sf-ui-1\/2--space-x);
+    --sf-context-menu--block-space: var(--sf-space-1\/3);
+    --sf-context-menu--inset-start: var(--sf-context-menu--item-inset-start-1\/2);
+    --sf-context-menu--inset-end: var(--sf-context-menu--item-inset-end-1\/2);
+  }
+  .sf-context-menu.sf-context-menu--size-1 .sf-context-menu-content {
+    --sf-context-menu--line: var(--sf-text-height-1);
+    --sf-context-menu--text-size: var(--sf-text-size-1);
+    --sf-context-menu--space-y: var(--sf-ui-1--space-y);
+    --sf-context-menu--field-space-x: var(--sf-ui-1--space-x);
+    --sf-context-menu--block-space: var(--sf-space-1\/2);
+    --sf-context-menu--inset-start: var(--sf-context-menu--item-inset-start-1);
+    --sf-context-menu--inset-end: var(--sf-context-menu--item-inset-end-1);
   }
   .sf-context-menu .sf-context-menu-content > .sf-button.sf-button--size-1\/2,
   .sf-context-menu .sf-context-menu-content > sf-button > .sf-button.sf-button--size-1\/2 {
@@ -355,9 +371,11 @@
     max-width: min(var(--sf-g2), 100vw);
     max-width: min(var(--sf-context-menu--max-inline-size, var(--sf-g2)), var(--sf-context-menu-available-inline-size, 100vw));
     max-inline-size: min(var(--sf-context-menu--max-inline-size, var(--sf-g2)), var(--sf-context-menu-available-inline-size, 100vw));
-    --sf-icon--font-size: var(--sf-icon-size-2);
-    --sf-icon--width: var(--sf-icon-size-2);
-    --sf-icon--height: var(--sf-icon-size-2);
+    font-size: var(--sf-context-menu--text-size);
+    line-height: var(--sf-context-menu--line);
+    --sf-icon--font-size: var(--sf-context-menu--line);
+    --sf-icon--width: var(--sf-context-menu--line);
+    --sf-icon--height: var(--sf-context-menu--line);
   }
   /* The content scrolls when the window is shorter than the menu; its rows keep
      their height and the list scrolls, instead of every row being squeezed until
@@ -365,48 +383,49 @@
   .sf-context-menu--entries .sf-context-menu-content > * {
     flex-shrink: 0;
   }
-  /* A row is as tall as a size-1/2 field -- a line and a6 above and below --
-     and its content starts where that field's does. A caption makes it taller
-     by its own line, never by padding. */
+  /* A row is as tall as a field of the menu's size -- its line and the field's
+     block padding above and below, 32px at 1/2 and 40px at 1 -- and its content
+     starts where that field's does. A caption makes it taller by its own line,
+     never by padding. */
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu-item{
-    padding-left: var(--sf-context-menu--item-inset-start-1\/2);
+    padding-left: var(--sf-context-menu--inset-start);
   }
   @supports not (padding-inline-start: initial){
   html:not([dir="rtl"]) .sf-context-menu-item{
-    padding-left: var(--sf-context-menu--item-inset-start-1\/2);
+    padding-left: var(--sf-context-menu--inset-start);
     }
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu-item{
-    padding-right: var(--sf-context-menu--item-inset-end-1\/2);
+    padding-right: var(--sf-context-menu--inset-end);
   }
   @supports not (padding-inline-end: initial){
   html:not([dir="rtl"]) .sf-context-menu-item{
-    padding-right: var(--sf-context-menu--item-inset-end-1\/2);
+    padding-right: var(--sf-context-menu--inset-end);
     }
   }
   .sf-context-menu-item:where(:dir(ltr)){
-    padding-left: var(--sf-context-menu--item-inset-start-1\/2);
-    padding-right: var(--sf-context-menu--item-inset-end-1\/2);
+    padding-left: var(--sf-context-menu--inset-start);
+    padding-right: var(--sf-context-menu--inset-end);
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu-item{
-    padding-right: var(--sf-context-menu--item-inset-start-1\/2);
+    padding-right: var(--sf-context-menu--inset-start);
   }
   @supports not (padding-inline-start: initial){
   [dir="rtl"] .sf-context-menu-item{
-    padding-right: var(--sf-context-menu--item-inset-start-1\/2);
+    padding-right: var(--sf-context-menu--inset-start);
     }
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu-item{
-    padding-left: var(--sf-context-menu--item-inset-end-1\/2);
+    padding-left: var(--sf-context-menu--inset-end);
   }
   @supports not (padding-inline-end: initial){
   [dir="rtl"] .sf-context-menu-item{
-    padding-left: var(--sf-context-menu--item-inset-end-1\/2);
+    padding-left: var(--sf-context-menu--inset-end);
     }
   }
   .sf-context-menu-item:where(:dir(rtl)){
-    padding-right: var(--sf-context-menu--item-inset-start-1\/2);
-    padding-left: var(--sf-context-menu--item-inset-end-1\/2);
+    padding-right: var(--sf-context-menu--inset-start);
+    padding-left: var(--sf-context-menu--inset-end);
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu-item{
     text-align: left;
@@ -436,12 +455,12 @@
     gap: var(--sf-space-1\/2);
     width: 100%;
     inline-size: 100%;
-    min-height: calc(var(--sf-icon-size-2) + 2 * var(--sf-a6));
-    min-block-size: calc(var(--sf-icon-size-2) + 2 * var(--sf-a6));
+    min-height: calc(var(--sf-context-menu--line) + 2 * var(--sf-context-menu--space-y));
+    min-block-size: calc(var(--sf-context-menu--line) + 2 * var(--sf-context-menu--space-y));
     padding-top: var(--sf-a2);
     padding-bottom: var(--sf-a2);
     padding-block: var(--sf-a2);
-    padding-inline: var(--sf-context-menu--item-inset-start-1\/2) var(--sf-context-menu--item-inset-end-1\/2);
+    padding-inline: var(--sf-context-menu--inset-start) var(--sf-context-menu--inset-end);
     border: 0;
     border-radius: var(--sf-radius--ui);
     background: none;
@@ -474,8 +493,8 @@
   .sf-context-menu-item-check {
     display: flex;
     flex: none;
-    width: var(--sf-icon-size-2);
-    inline-size: var(--sf-icon-size-2);
+    width: var(--sf-context-menu--line);
+    inline-size: var(--sf-context-menu--line);
   }
   /* A picture in the lead: a site's logo or a person, the icon's size, with
      its initials on the secondary tone when there is no picture. */
@@ -483,10 +502,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: var(--sf-icon-size-2);
-    inline-size: var(--sf-icon-size-2);
-    height: var(--sf-icon-size-2);
-    block-size: var(--sf-icon-size-2);
+    width: var(--sf-context-menu--line);
+    inline-size: var(--sf-context-menu--line);
+    height: var(--sf-context-menu--line);
+    block-size: var(--sf-context-menu--line);
     border-radius: var(--sf-radius--ui);
     background-color: var(--sf-secondary-container);
     color: var(--sf-on-secondary-container);
@@ -562,7 +581,7 @@
     display: flex;
     align-items: center;
     gap: var(--sf-space-1\/2);
-    padding: var(--sf-a6) var(--sf-context-menu--item-inset-end-1\/2) var(--sf-a6) var(--sf-context-menu--item-inset-start-1\/2);
+    padding: var(--sf-context-menu--space-y) var(--sf-context-menu--inset-end) var(--sf-context-menu--space-y) var(--sf-context-menu--inset-start);
   }
   .sf-context-menu-header-avatar {
     display: flex;
@@ -603,48 +622,48 @@
   }
   /* A few options side by side, one segment each, in a hairline frame. */
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu-choice{
-    margin-left: var(--sf-context-menu--item-inset-start-1\/2);
+    margin-left: var(--sf-context-menu--inset-start);
   }
   @supports not (margin-inline-start: initial){
   html:not([dir="rtl"]) .sf-context-menu-choice{
-    margin-left: var(--sf-context-menu--item-inset-start-1\/2);
+    margin-left: var(--sf-context-menu--inset-start);
     }
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu-choice{
-    margin-right: var(--sf-context-menu--item-inset-end-1\/2);
+    margin-right: var(--sf-context-menu--inset-end);
   }
   @supports not (margin-inline-end: initial){
   html:not([dir="rtl"]) .sf-context-menu-choice{
-    margin-right: var(--sf-context-menu--item-inset-end-1\/2);
+    margin-right: var(--sf-context-menu--inset-end);
     }
   }
   .sf-context-menu-choice:where(:dir(ltr)){
-    margin-left: var(--sf-context-menu--item-inset-start-1\/2);
-    margin-right: var(--sf-context-menu--item-inset-end-1\/2);
+    margin-left: var(--sf-context-menu--inset-start);
+    margin-right: var(--sf-context-menu--inset-end);
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu-choice{
-    margin-right: var(--sf-context-menu--item-inset-start-1\/2);
+    margin-right: var(--sf-context-menu--inset-start);
   }
   @supports not (margin-inline-start: initial){
   [dir="rtl"] .sf-context-menu-choice{
-    margin-right: var(--sf-context-menu--item-inset-start-1\/2);
+    margin-right: var(--sf-context-menu--inset-start);
     }
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu-choice{
-    margin-left: var(--sf-context-menu--item-inset-end-1\/2);
+    margin-left: var(--sf-context-menu--inset-end);
   }
   @supports not (margin-inline-end: initial){
   [dir="rtl"] .sf-context-menu-choice{
-    margin-left: var(--sf-context-menu--item-inset-end-1\/2);
+    margin-left: var(--sf-context-menu--inset-end);
     }
   }
   .sf-context-menu-choice:where(:dir(rtl)){
-    margin-right: var(--sf-context-menu--item-inset-start-1\/2);
-    margin-left: var(--sf-context-menu--item-inset-end-1\/2);
+    margin-right: var(--sf-context-menu--inset-start);
+    margin-left: var(--sf-context-menu--inset-end);
   }
   .sf-context-menu-choice {
     display: flex;
-    margin-inline: var(--sf-context-menu--item-inset-start-1\/2) var(--sf-context-menu--item-inset-end-1\/2);
+    margin-inline: var(--sf-context-menu--inset-start) var(--sf-context-menu--inset-end);
     margin-top: var(--sf-a2);
     margin-bottom: var(--sf-a2);
     margin-block: var(--sf-a2);
@@ -693,13 +712,14 @@
   }
   .sf-context-menu-note {
     margin: 0;
-    padding: var(--sf-a6) var(--sf-context-menu--item-inset-end-1\/2) var(--sf-a6) var(--sf-context-menu--item-inset-start-1\/2);
+    padding: var(--sf-context-menu--space-y) var(--sf-context-menu--inset-end) var(--sf-context-menu--space-y) var(--sf-context-menu--inset-start);
     color: var(--sf-on-surface-variant);
     font-size: var(--sf-text-size-1\/3);
     line-height: var(--sf-text-height-1\/3);
     white-space: normal;
   }
-  /* The search field is a size-1/2 field: its text starts on the rows' axis. */
+  /* The search field is a field of the menu's size: its text starts on the
+     rows' axis. */
   .sf-context-menu-search {
     padding-bottom: var(--sf-a4);
     -webkit-padding-after: var(--sf-a4);
@@ -708,11 +728,11 @@
   .sf-context-menu-search-input {
     width: 100%;
     inline-size: 100%;
-    min-height: calc(var(--sf-icon-size-2) + 2 * var(--sf-a6));
-    min-block-size: calc(var(--sf-icon-size-2) + 2 * var(--sf-a6));
-    padding-left: var(--sf-ui-1\/2--space-x);
-    padding-right: var(--sf-ui-1\/2--space-x);
-    padding-inline: var(--sf-ui-1\/2--space-x);
+    min-height: calc(var(--sf-context-menu--line) + 2 * var(--sf-context-menu--space-y));
+    min-block-size: calc(var(--sf-context-menu--line) + 2 * var(--sf-context-menu--space-y));
+    padding-left: var(--sf-context-menu--field-space-x);
+    padding-right: var(--sf-context-menu--field-space-x);
+    padding-inline: var(--sf-context-menu--field-space-x);
     border: var(--sf-px) solid var(--sf-outline);
     border-radius: var(--sf-radius--ui);
     background-color: transparent;
@@ -735,11 +755,72 @@
     color: var(--sf-on-surface-variant);
   }
   .sf-context-menu-heading {
-    padding: var(--sf-a6) var(--sf-context-menu--item-inset-end-1\/2) var(--sf-a2) var(--sf-context-menu--item-inset-start-1\/2);
+    padding: var(--sf-context-menu--space-y) var(--sf-context-menu--inset-end) var(--sf-a2) var(--sf-context-menu--inset-start);
     color: var(--sf-on-surface-variant);
     font-size: var(--sf-text-size-1\/3);
     line-height: var(--sf-text-height-1\/3);
     font-weight: var(--sf-font-weight-medium);
+  }
+  /* The parts a window built in the menu shares with every other: a block on
+     top (a search, a title), the body, and a footer of actions -- Reset and
+     Apply, Save. Every window that drops down had its own paddings and its own
+     strip of buttons (owner, 2026-10-14); these are the one set. The footer
+     stays at the bottom while the body scrolls. Its buttons share the width. */
+  .sf-context-menu-top,
+  .sf-context-menu-footer {
+    display: flex;
+    flex: none;
+    gap: var(--sf-space-1\/3);
+    padding: var(--sf-context-menu--block-space) var(--sf-context-menu--inset-end) var(--sf-context-menu--block-space) var(--sf-context-menu--inset-start);
+  }
+  .sf-context-menu-top {
+    flex-direction: column;
+    padding-top: var(--sf-a4);
+    -webkit-padding-before: var(--sf-a4);
+            padding-block-start: var(--sf-a4);
+  }
+  .sf-context-menu-body {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: var(--sf-px);
+    min-height: 0;
+    min-block-size: 0;
+    overflow: auto;
+  }
+  .sf-context-menu-footer {
+    position: sticky;
+    bottom: calc(-1 * 0px);
+    inset-block-end: calc(-1 * 0px);
+    bottom: calc(-1 * 0px);
+    bottom: calc(-1 * var(--sf-context-menu-content--padding-bottom, 0px));
+    inset-block-end: calc(-1 * var(--sf-context-menu-content--padding-bottom, 0px));
+    margin-top: var(--sf-a4);
+    -webkit-margin-before: var(--sf-a4);
+            margin-block-start: var(--sf-a4);
+    margin-bottom: calc(-1 * 0px);
+    -webkit-margin-after: calc(-1 * 0px);
+            margin-block-end: calc(-1 * 0px);
+    margin-bottom: calc(-1 * 0px);
+    margin-bottom: calc(-1 * var(--sf-context-menu-content--padding-bottom, 0px));
+    -webkit-margin-after: calc(-1 * var(--sf-context-menu-content--padding-bottom, 0px));
+            margin-block-end: calc(-1 * var(--sf-context-menu-content--padding-bottom, 0px));
+    padding-bottom: calc(var(--sf-context-menu--block-space) + 0px);
+    -webkit-padding-after: calc(var(--sf-context-menu--block-space) + 0px);
+            padding-block-end: calc(var(--sf-context-menu--block-space) + 0px);
+    padding-bottom: calc(var(--sf-context-menu--block-space) + 0px);
+    padding-bottom: calc(var(--sf-context-menu--block-space) + var(--sf-context-menu-content--padding-bottom, 0px));
+    -webkit-padding-after: calc(var(--sf-context-menu--block-space) + var(--sf-context-menu-content--padding-bottom, 0px));
+            padding-block-end: calc(var(--sf-context-menu--block-space) + var(--sf-context-menu-content--padding-bottom, 0px));
+    border-top: var(--sf-px) solid var(--sf-outline-variant);
+    -webkit-border-before: var(--sf-px) solid var(--sf-outline-variant);
+            border-block-start: var(--sf-px) solid var(--sf-outline-variant);
+    background-color: var(--sf-context-menu-content--background-color);
+  }
+  .sf-context-menu-footer > * {
+    flex: 1 1 0;
+    min-width: 0;
+    min-inline-size: 0;
   }
   /* An item is one line. A menu opened from a control near the inline edge was
      capped to the free space beside that control, and the labels wrapped to two

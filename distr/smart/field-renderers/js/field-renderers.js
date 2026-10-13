@@ -785,8 +785,12 @@ function renderCellField(field = {}, value, host) {
 // event this file still binds under its own name is sf-file-upload:select,
 // which is not a value change but a selection; the `change` on that component
 // is its inner input's.
+// The size the controls are drawn at: 1, or 1/2 when the host asks for it
+// with renderEditField(…, {size: '1/2'}) -- a record view beside a table at
+// 1/2 read a step larger than it (owner, 2026-10-14). Set for the duration of
+// one synchronous render.
 
-const EDIT_SIZE = '1';
+let EDIT_SIZE = '1';
 const EDIT_RENDERERS = {
   record: renderRecordPicker,
   relation: renderRecordPicker,
@@ -1334,11 +1338,20 @@ function renderFileEdit(field, value, host) {
 // type yet.
 
 
-function renderEditField(field = {}, value, host) {
+const sizeOption = options => options?.size === '1/2' ? '1/2' : '1';
+
+function renderEditField(field = {}, value, host, options = {}) {
   const asked = field.propertyType || field.type || field.dataType;
   const renderer = EDIT_RENDERERS[asked];
   if (!renderer || !host?.setFieldValue) return null;
-  return renderer(field, value, host);
+  const outer = EDIT_SIZE;
+  EDIT_SIZE = sizeOption(options);
+
+  try {
+    return renderer(field, value, host);
+  } finally {
+    EDIT_SIZE = outer;
+  }
 } // The view template: a field shown and not edited, which is the fourth of the
 // four the assignment names and the last one the set was missing.
 //
@@ -1354,8 +1367,9 @@ function renderEditField(field = {}, value, host) {
 // not inline keep their own scale: a scale bar is a control, and a file preview
 // has no visual size at all, its `size` being a legacy name for the file's size
 // as text.
+// The line a viewed value is drawn on: 1, or 1/2 with {size: '1/2'}, as above.
 
-const VIEW_LINE = '1'; // A scalar may arrive as the value itself or as {value, text}: the data and the
+let VIEW_LINE = '1'; // A scalar may arrive as the value itself or as {value, text}: the data and the
 // host's own formatting of it. The consumer asked for the second and they are
 // right -- the Framework has no locale and should not acquire one through a field
 // renderer. They already hold the localised text, the viewer's locale and the
@@ -1445,14 +1459,18 @@ function renderChoicesView(field, value) {
             ${value.map(item => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-tag line=${VIEW_LINE} kind="default" text=${label(item)}></sf-tag>`)}
         </span>
     `;
-}
+} // A person, as in a cell: the name links to the person when the host gives
+// the href -- every value that points at a record opens it (owner,
+// 2026-10-14). Plain, as a reference read in a record's field is.
+
 
 function renderUserView(field, value) {
   if (!value || typeof value !== 'object' || !value.label) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <span class="sf-field-view flex items-cross-center gap-1/3">
             <sf-avatar line=${VIEW_LINE} text=${value.avatarText || ''}></sf-avatar>
-            <span>${String(value.label)}</span>
+            ${value.href ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-reference-link appearance="plain" icon="" line=${VIEW_LINE}
+                        label=${String(value.label)} href=${String(value.href)}></sf-reference-link>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span>${String(value.label)}</span>`}
         </span>
     `;
 }
@@ -1526,11 +1544,18 @@ const VIEW_RENDERERS = {
 // only -- formatFieldValue, where a consumer's own formatting of a number or a
 // date belongs. Null when the set has no view for that type.
 
-function renderViewField(field = {}, value, host) {
+function renderViewField(field = {}, value, host, options = {}) {
   const asked = field.propertyType || field.type || field.dataType;
   const renderer = VIEW_RENDERERS[asked];
   if (!renderer) return null;
-  return renderer(field, value, host);
+  const outer = VIEW_LINE;
+  VIEW_LINE = sizeOption(options);
+
+  try {
+    return renderer(field, value, host);
+  } finally {
+    VIEW_LINE = outer;
+  }
 } // A host has to be able to reach the set, and a module is not an element: there
 // is no tag to place and no attribute to set. The Framework already has one
 // place for what a page may call -- window.SF, where the base element, `html`,

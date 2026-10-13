@@ -364,14 +364,19 @@ class SfContextMenu extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___de
 
   surface() {
     return this.querySelector(":scope > .sf-context-menu");
-  }
+  } // width: "content" (the default) lets the menu be as wide as its longest
+  // line; "trigger" makes it exactly as wide as the control that opened it --
+  // a site switcher, a profile button (owner, 2026-10-14) -- a long line ending
+  // in an ellipsis; a CSS length fixes it. The attribute gives the default.
+
 
   async openFor(anchor, {
     side = "block-end",
     align = "start",
     focus = "first",
     parentMenu = null,
-    alignmentOffset = 0
+    alignmentOffset = 0,
+    width = this.width
   } = {}) {
     if (!(anchor instanceof Element)) throw new TypeError("A menu opens for an element");
     if (this._owned) this.close({
@@ -408,13 +413,25 @@ class SfContextMenu extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___de
       surface.style.zIndex = "var(--sf-z-index-9)";
     }
 
+    const content = this.querySelector(".sf-context-menu-content");
+    const sized = width && width !== "content";
+
+    if (sized && content) {
+      const length = width === "trigger" ? `${anchor.getBoundingClientRect().width}px` : width;
+      content.style.setProperty("--sf-context-menu--min-inline-size", length);
+      content.style.setProperty("--sf-context-menu--max-inline-size", length);
+      content.style.setProperty("inline-size", length);
+      this._owned.sizedContent = content;
+    }
+
     this._owned.position = position().anchor(anchor, surface, {
       side,
       align,
       alignmentOffset,
       flip: true,
       shift: true,
-      fitHeight: true
+      fitHeight: true,
+      matchWidth: width === "trigger"
     });
     document.addEventListener("pointerdown", this._onOutsidePress, true);
     this.dispatchEvent(new CustomEvent("sf-context-menu-open", {
@@ -455,6 +472,11 @@ class SfContextMenu extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___de
 
     clearTimeout(this._hoverTimer);
     owned.position?.stop();
+
+    for (const name of ["--sf-context-menu--min-inline-size", "--sf-context-menu--max-inline-size", "inline-size"]) {
+      owned.sizedContent?.style.removeProperty(name);
+    }
+
     document.removeEventListener("pointerdown", this._onOutsidePress, true);
     const surface = this.surface();
 
@@ -510,7 +532,9 @@ class SfContextMenu extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___de
     });
     const child = document.createElement("sf-context-menu");
     child.setAttribute("aria-label", entry.text ?? "");
-    child.setAttribute("popup", "");
+    child.setAttribute("popup", ""); // A submenu is the size of the menu it opens from.
+
+    if (this.size === "1") child.setAttribute("size", "1");
     child.entries = entry.submenu;
     if (entry.search) child.search = entry.search; // Selections in the submenu are the parent's to announce: a host listens
     // on one element whatever depth the item sits at.
@@ -707,6 +731,15 @@ class SfContextMenu extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___de
       },
       rootClass: {
         default: ""
+      },
+      // The menu's size: "1/2" (32px rows, the default) or "1" (40px rows).
+      size: {
+        default: "1/2"
+      },
+      // How wide the menu opens: "content" (its longest line, the default),
+      // "trigger" (exactly the control that opened it) or a CSS length.
+      width: {
+        default: "content"
       }
     };
   }
@@ -735,6 +768,14 @@ class SfContextMenu extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___de
     return this.getAttribute("role") || "menu";
   }
 
+  get size() {
+    return this.getAttribute("size") === "1" ? "1" : "1/2";
+  }
+
+  get width() {
+    return this.getAttribute("width") || "content";
+  }
+
   get contentClass() {
     return this.getAttribute("content-class") || "";
   }
@@ -746,6 +787,7 @@ class SfContextMenu extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___de
       search: this.search,
       query: this.query,
       position: this.position,
+      size: this.size,
       component: this,
       rootClass: this.getRootClass()
     });
@@ -977,6 +1019,13 @@ function renderContent(context) {
   }
 
   return context.text || lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+} // The footer of actions: what is slotted as "footer" stands under the rows,
+// at the bottom while they scroll, its buttons sharing the width.
+
+
+function renderFooter(context) {
+  if (!context.component?.hasSlotContent?.("footer")) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-context-menu-footer">${context.component.getSlotContent("footer")}</div>`;
 } // No tail (owner, 2026-10-12): it never read as one piece with the panel. The
 // position attribute is kept for its class and draws nothing.
 
@@ -986,7 +1035,7 @@ function renderTooltip() {
 }
 
 function renderContextMenuTemplate(context) {
-  const rootClasses = joinClasses("sf-context-menu", context.position ? `sf-context-menu--position-${context.position}` : "", context.entries && context.entries.length ? "sf-context-menu--entries" : "", "flex", context.rootClass);
+  const rootClasses = joinClasses("sf-context-menu", context.position ? `sf-context-menu--position-${context.position}` : "", context.entries && context.entries.length ? "sf-context-menu--entries" : "", context.size === "1" ? "sf-context-menu--size-1" : "", "flex", context.rootClass);
   const contentClasses = joinClasses("sf-context-menu-content", "flex", "flex-col", "flex-1", context.contentClass);
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <div
@@ -997,7 +1046,7 @@ function renderContextMenuTemplate(context) {
         >
             <div class="relative">
                 ${renderTooltip(context)}
-                <div class=${contentClasses}>${renderContent(context)}</div>
+                <div class=${contentClasses}>${renderContent(context)}${renderFooter(context)}</div>
             </div>
         </div>
     `;
