@@ -529,15 +529,27 @@ function syncDisabledState(root) {
   const isDisabled = Boolean(input.disabled || input.readOnly);
   const value = getCurrentRawValue(root, input, Number.NaN);
   const min = input.min === '' ? Number.NaN : toNumber(input.min, Number.NaN);
-  const max = input.max === '' ? Number.NaN : toNumber(input.max, Number.NaN);
+  const max = input.max === '' ? Number.NaN : toNumber(input.max, Number.NaN); // A step button that reaches the limit while it has focus is disabled under
+  // the focus, and a disabled button drops it to <body>: the keyboard user who
+  // pressed Enter to the limit is thrown out of the field. Focus moves to the
+  // value first, as the stepper pattern does; the field's own state (disabled
+  // or read-only) is not a limit and is left alone.
 
-  if (minusButton instanceof HTMLButtonElement) {
-    minusButton.disabled = isDisabled || Number.isFinite(value) && Number.isFinite(min) && value <= min;
-  }
+  const limit = (button, reached) => {
+    if (!(button instanceof HTMLButtonElement)) return;
+    const next = isDisabled || reached;
 
-  if (plusButton instanceof HTMLButtonElement) {
-    plusButton.disabled = isDisabled || Number.isFinite(value) && Number.isFinite(max) && value >= max;
-  }
+    if (next && !button.disabled && !isDisabled && button.ownerDocument?.activeElement === button) {
+      input.focus({
+        preventScroll: true
+      });
+    }
+
+    button.disabled = next;
+  };
+
+  limit(minusButton, Number.isFinite(value) && Number.isFinite(min) && value <= min);
+  limit(plusButton, Number.isFinite(value) && Number.isFinite(max) && value >= max);
 }
 
 function adjustValue(root, deltaSign) {

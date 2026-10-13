@@ -3981,6 +3981,13 @@ SFLoaderPlugin.prototype.search = function () {
     } else {
       _this.observeElements.push(...relevantChanges);
     }
+  }; // Changes met while the search was still running wait in observeElements;
+  // they are processed when it ends, not dropped.
+
+
+  this.flushObservedChanges = () => {
+    if (!_this.observeElements.length) return;
+    processChanges(_this.observeElements.splice(0));
   };
 
   this.mutationObserver = new MutationObserver(callback);
@@ -5452,10 +5459,37 @@ SFLoaderPlugin.prototype.onWindowLoad = function (fn) {
   }
 };
 
+SFLoaderPlugin.prototype.endSearch = function () {
+  this.searchEnd = true;
+  this.flushObservedChanges?.();
+}; // The search ends at the window's load. The Loader is a chunk of its own and
+// can prepare after load has fired -- and a Turbo visit prepares with no load
+// to come -- and listening for it then waited forever: searchEnd stayed false
+// and every element added to the page from then on was queued where nothing
+// read it. A component inserted later never loaded, one page in two
+// (loader-packages.browser.mjs saw it as a flaky case). A load already past
+// ends the search on the next task.
+
+
+SFLoaderPlugin.prototype.scheduleSearchEnd = function () {
+  if (document.readyState === 'complete') {
+    setTimeout(() => this.endSearch(), 0);
+  } else if (!this.searchEndListening) {
+    this.searchEndListening = true;
+    window.addEventListener('load', () => {
+      this.searchEndListening = false;
+      this.endSearch();
+    }, {
+      once: true
+    });
+  }
+};
+
 SFLoaderPlugin.prototype.prepare = function (observer = null) {
   let PluginList = [];
   this.logTiming('prepare start');
   this.searchEnd = false;
+  this.scheduleSearchEnd();
   this.checkTheme();
 
   if (this.standAlone) {
@@ -5648,7 +5682,7 @@ SFLoaderPlugin.prototype.ensureLoadedModules = function () {
 
     if (!this.eventSend && Object.keys(this.loadedPlugins || {}).length) {
       if (this.dispatchReadyOnce()) {
-        this.searchEnd = true;
+        this.endSearch();
       }
     }
   }
@@ -5747,9 +5781,7 @@ SFLoaderPlugin.prototype.init = function () {
     characterData: false,
     attributes: false
   });
-  window.addEventListener('load', () => {
-    this.searchEnd = true;
-  });
+  this.scheduleSearchEnd();
 
   if (this.turboEnabled) {
     this.prepareTurboEvents();
