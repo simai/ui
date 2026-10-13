@@ -46,6 +46,9 @@
 
 ### Добавлено
 
+- `SF_BOOT_CONFIG.icons.preload` declares icons a page will draw before it draws them -- the ones that come with data -- so they go in the first subset request instead of costing a second whole font. Entries are names or `{icon, weight, filled, grade, opticalSize, type}`; a component that learns its icons at run time calls `SF.Loader.preloadIcons([...])`.
+- A plain `.sf-icon` is no longer tracked as filled. An unset `--sf-icon--fill` was read as a bare flag, so the subset was asked for the FILL axis it never drew (385 KB instead of 250 KB on the admin), and icons scanned after the first request forced a second one.
+
 - A rule's relation may be marked `lazy: true`: the element does not wait for it and the page does not hold its first paint for it. The Loader fetches lazy relations after `sf-loader-ready`, a few at a time in idle time, and at once when asked (`SF.Loader.ensurePlugin(name)`) or when the element appears in the document.
 
 - The standard menu's rows take a picture in the lead (`avatar`, or `initials` without one), and `search: {remote: true}` makes a list the host searches: the menu raises `sf-context-menu-search` with the query and shows the entries the host sets.
