@@ -8,6 +8,8 @@
 
 ### Исправлено
 
+- `sf-color` draws its chip and its clear button at its own size: at 1/2 the chip was the 40px square of step 1 and stood taller than the row it sat in.
+
 - The Studio generator keeps what a manifest says: the component's props fill only what the manifest does not say yet, and inputs only the manifest names are kept. A regeneration now writes the committed manifests (eleven differed).
 - `sf-upgrade` reports a class shared by two components' records once per use, not twice.
 - `sf-modal`'s manifest names the untitled window «Dialog» in English, as the runtime does.
