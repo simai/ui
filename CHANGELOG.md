@@ -63,6 +63,8 @@
 
 ### Добавлено
 
+- `sf-pagination` takes `size`: `1` (default) or `1/2`, the dense step of an admin. At 1/2 its fields, buttons and menus draw at 32px and its labels and page numbers take the step's 14/20 text and control height.
+
 - Data view host port 1.10.0: creating a record and saving personal column settings are capabilities a host announces (`create-record`, `personal-column-settings`); a host that declares an earlier version keeps both as before. The port describes the host's answer (`answer`, `reason`, `data`) and what each intent's data carries. Property view host port 1.11.0 describes its answer, whose fields sit beside `answer`; it changes nothing a host does. The host port schema takes the optional `answer` and `answer_data`.
 
 - `SF_BOOT_CONFIG.icons.preload` declares icons a page will draw before it draws them -- the ones that come with data -- so they go in the first subset request instead of costing a second whole font. Entries are names or `{icon, weight, filled, grade, opticalSize, type}`; a component that learns its icons at run time calls `SF.Loader.preloadIcons([...])`.
