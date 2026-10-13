@@ -21,9 +21,11 @@ class UiRadiusContractTest(unittest.TestCase):
 
     def test_small_controls_inherit_native_component_aliases(self) -> None:
         expected = {
-            "distr/component/buttons/css/buttons.css": "--sf-button--radius: var(--sf-radius--ui);",
+            # A public variable (core/contracts/public-variables.v1.json) wraps
+            # the alias: the role is still what it falls back to.
+            "distr/component/buttons/css/buttons.css": "--sf-button--radius: var(--sf-button-radius, var(--sf-radius--ui));",
             "distr/component/icon-buttons/css/icon-buttons.css": "--sf-icon-button--radius: var(--sf-radius--ui);",
-            "distr/component/inputs/css/inputs.css": "--sf-input--radius: var(--sf-radius--ui);",
+            "distr/component/inputs/css/inputs.css": "--sf-input--radius: var(--sf-input-radius, var(--sf-radius--ui));",
             "distr/component/dropdown/css/dropdown.css": "var(--sf-dropdown--radius, var(--sf-radius--ui))",
         }
         for relative, declaration in expected.items():
