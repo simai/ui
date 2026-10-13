@@ -122,6 +122,9 @@
 
 ### Изменено
 
+- The breakpoints are steps of the size ladder, in rem, and `--sf-breakpoint-*` name the same steps: sm 32rem (512px), md 44rem (704px), lg 60rem (960px), xl 72rem (1152px), xxl 80rem (1280px). They were 520/720/960/1140/1320px against variables of 704/768/960/1152/1536px. Layouts that switch at sm, md, xl or xxl now switch up to 40px earlier or later.
+- The Framework is licensed under the Apache License 2.0 (LICENSE, NOTICE); releases before this one remain available under the MIT License.
+
 - The core runtime opens the connection to the icon subset host (`SF_BOOT_CONFIG.icons.subsetHost`, by default `https://icons.simai.io`) as it starts, with a crossorigin preconnect, so the subset request that follows the page's ready does not pay for DNS, TCP and TLS. A page with the subset off gets no hint.
 
 - Icons no longer download the full Material Symbols font (409 KB) while the subset font is on its way. A browser fetched the declared font for every icon waiting at font-size 0, and the subset's own wait for `document.fonts.ready` waited on it. The core runtime marks the root `data-sf-icons="subset-pending"` until the subset, a cached manifest or the full-font fallback is in place; a page with `SF_BOOT_CONFIG.icons.enabled = false` is not marked. The first subset request now waits for `sf-loader-ready` and carries every icon scanned by then, instead of asking for one glyph and making the rest wait for that whole font.
