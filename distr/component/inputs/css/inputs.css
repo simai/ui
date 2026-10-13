@@ -23,7 +23,7 @@
   .sf-input {
     min-width: 0;
     min-inline-size: 0;
-    --sf-input--radius: var(--sf-radius--ui);
+    --sf-input--radius: var(--sf-input-radius, var(--sf-radius--ui));
     background-color: transparent;
     background-color: var(--sf-input--background-color, transparent);
     gap: var(--sf-space-1\/4);
@@ -255,6 +255,7 @@
     --sf-input-input--background-color: transparent;
     background-color: var(--sf-input-input--background-color);
     color: var(--sf-input-input--color);
+    color: var(--sf-input-color, var(--sf-input-input--color));
     font-family: var(--sf-input-input--font-family);
     font-size: var(--sf-input-input--font-size);
     line-height: var(--sf-input-input--line-height);
@@ -538,10 +539,10 @@
   .sf-input.sf-input--size-1 .sf-input-field {
     height: var(--sf-ui-1--control-height);
     block-size: var(--sf-ui-1--control-height);
-    --sf-input-field--padding-bottom: calc(var(--sf-ui-1--space-y-tightness-default) - var(--sf-px));
-    --sf-input-field--padding-inline-end: var(--sf-ui-1--space-x);
-    --sf-input-field--padding-inline-start: var(--sf-ui-1--space-x);
-    --sf-input-field--padding-top: calc(var(--sf-ui-1--space-y-tightness-default) - var(--sf-px));
+    --sf-input-field--padding-bottom: var(--sf-input-padding-block, calc(var(--sf-ui-1--space-y-tightness-default) - var(--sf-px)));
+    --sf-input-field--padding-inline-end: var(--sf-input-padding-inline, var(--sf-ui-1--space-x));
+    --sf-input-field--padding-inline-start: var(--sf-input-padding-inline, var(--sf-ui-1--space-x));
+    --sf-input-field--padding-top: var(--sf-input-padding-block, calc(var(--sf-ui-1--space-y-tightness-default) - var(--sf-px)));
   }
   .sf-input.sf-input--size-1 .sf-input-field input::-webkit-input-placeholder {
     --sf-input-placeholder--font-size: var(--sf-text-size-1);
@@ -566,10 +567,10 @@
   .sf-input.sf-input--size-2 .sf-input-field {
     height: var(--sf-ui-2--control-height);
     block-size: var(--sf-ui-2--control-height);
-    --sf-input-field--padding-bottom: calc(var(--sf-ui-2--space-y-tightness-default) - var(--sf-px));
-    --sf-input-field--padding-inline-end: var(--sf-ui-2--space-x);
-    --sf-input-field--padding-inline-start: var(--sf-ui-2--space-x);
-    --sf-input-field--padding-top: calc(var(--sf-ui-2--space-y-tightness-default) - var(--sf-px));
+    --sf-input-field--padding-bottom: var(--sf-input-padding-block, calc(var(--sf-ui-2--space-y-tightness-default) - var(--sf-px)));
+    --sf-input-field--padding-inline-end: var(--sf-input-padding-inline, var(--sf-ui-2--space-x));
+    --sf-input-field--padding-inline-start: var(--sf-input-padding-inline, var(--sf-ui-2--space-x));
+    --sf-input-field--padding-top: var(--sf-input-padding-block, calc(var(--sf-ui-2--space-y-tightness-default) - var(--sf-px)));
   }
   .sf-input.sf-input--size-2 .sf-input-field input::-webkit-input-placeholder {
     --sf-input-placeholder--font-size: var(--sf-text-size-2);
@@ -594,10 +595,10 @@
   .sf-input.sf-input--size-1\/2 .sf-input-field {
     height: var(--sf-ui-1\/2--control-height);
     block-size: var(--sf-ui-1\/2--control-height);
-    --sf-input-field--padding-bottom: calc(var(--sf-ui-1\/2--space-y-tightness-default) - var(--sf-px));
-    --sf-input-field--padding-inline-end: var(--sf-ui-1\/2--space-x);
-    --sf-input-field--padding-inline-start: var(--sf-ui-1\/2--space-x);
-    --sf-input-field--padding-top: calc(var(--sf-ui-1\/2--space-y-tightness-default) - var(--sf-px));
+    --sf-input-field--padding-bottom: var(--sf-input-padding-block, calc(var(--sf-ui-1\/2--space-y-tightness-default) - var(--sf-px)));
+    --sf-input-field--padding-inline-end: var(--sf-input-padding-inline, var(--sf-ui-1\/2--space-x));
+    --sf-input-field--padding-inline-start: var(--sf-input-padding-inline, var(--sf-ui-1\/2--space-x));
+    --sf-input-field--padding-top: var(--sf-input-padding-block, calc(var(--sf-ui-1\/2--space-y-tightness-default) - var(--sf-px)));
   }
   .sf-input.sf-input--size-1\/2 .sf-input-field input::-webkit-input-placeholder {
     --sf-input-placeholder--font-size: var(--sf-text-size-1\/2);
@@ -625,12 +626,12 @@
 }
 @layer sf.states {
   .sf-input:not(.error).sf-input--bordered[\:not-has\(input\:disabled\)] .sf-input-field {
-    --sf-input-field--background-color: var(--sf-surface-0);
-    --sf-input-field--border-color: var(--sf-outline);
+    --sf-input-field--background-color: var(--sf-input-background-color, var(--sf-surface-0));
+    --sf-input-field--border-color: var(--sf-input-border-color, var(--sf-outline));
   }
   .sf-input:not(.error).sf-input--bordered:not(:has(input:disabled)) .sf-input-field {
-    --sf-input-field--background-color: var(--sf-surface-0);
-    --sf-input-field--border-color: var(--sf-outline);
+    --sf-input-field--background-color: var(--sf-input-background-color, var(--sf-surface-0));
+    --sf-input-field--border-color: var(--sf-input-border-color, var(--sf-outline));
   }
   .sf-input:not(.error).sf-input--bordered[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:not\(\:-moz-read-only\)\:active\)] .sf-input-field {
     --sf-input-field--border-color: var(--sf-primary);
@@ -663,12 +664,12 @@
     --sf-input-field--background-color: var(--sf-disable);
   }
   .sf-input:not(.error).sf-input--filled[\:not-has\(input\:disabled\)] .sf-input-field {
-    --sf-input-field--background-color: var(--sf-surface-container);
-    --sf-input-field--border-color: var(--sf-transparent-for-focus);
+    --sf-input-field--background-color: var(--sf-input-background-color, var(--sf-surface-container));
+    --sf-input-field--border-color: var(--sf-input-border-color, var(--sf-transparent-for-focus));
   }
   .sf-input:not(.error).sf-input--filled:not(:has(input:disabled)) .sf-input-field {
-    --sf-input-field--background-color: var(--sf-surface-container);
-    --sf-input-field--border-color: var(--sf-transparent-for-focus);
+    --sf-input-field--background-color: var(--sf-input-background-color, var(--sf-surface-container));
+    --sf-input-field--border-color: var(--sf-input-border-color, var(--sf-transparent-for-focus));
   }
   .sf-input:not(.error).sf-input--filled[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:not\(\:-moz-read-only\)\:hover\)] .sf-input-field {
     --sf-input-field--background-color: var(--sf-surface-container-hover);
