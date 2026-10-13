@@ -87,6 +87,8 @@
 
 ### Изменено
 
+- The Loader also fetches an element that waits on another element while that one loads (a data view and its table), instead of after it has run.
+
 - The Loader fetches an element's script while the element's relations load, instead of after they have run; the script still runs after them.
 
 - Core tells the browser about its own chunks -- the rules, the system events, the Loader -- as it starts, so they are fetched at once instead of one after another; they still run in order.
