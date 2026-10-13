@@ -5,7 +5,7 @@ require these notices to travel with the files, so the same list ships inside
 the distribution as `core/contracts/third-party-notices.v1.json`; this file is
 rendered from it.
 
-The distribution itself is MIT. Copyright (c) 2008-2026 Rim Zabarov and contributors. See LICENSE.
+The distribution itself is Apache-2.0. Copyright (c) 2008-2026 Rim Zabarov and contributors. See LICENSE.
 
 | Component | Version | Licence | Where it lands |
 | --- | --- | --- | --- |
