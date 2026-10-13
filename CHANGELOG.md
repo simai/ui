@@ -59,6 +59,8 @@
 
 ### Добавлено
 
+- Data view host port 1.10.0: creating a record and saving personal column settings are capabilities a host announces (`create-record`, `personal-column-settings`); a host that declares an earlier version keeps both as before. The port describes the host's answer (`answer`, `reason`, `data`) and what each intent's data carries. Property view host port 1.11.0 describes its answer, whose fields sit beside `answer`; it changes nothing a host does. The host port schema takes the optional `answer` and `answer_data`.
+
 - `SF_BOOT_CONFIG.icons.preload` declares icons a page will draw before it draws them -- the ones that come with data -- so they go in the first subset request instead of costing a second whole font. Entries are names or `{icon, weight, filled, grade, opticalSize, type}`; a component that learns its icons at run time calls `SF.Loader.preloadIcons([...])`.
 - A plain `.sf-icon` is no longer tracked as filled. An unset `--sf-icon--fill` was read as a bare flag, so the subset was asked for the FILL axis it never drew (385 KB instead of 250 KB on the admin), and icons scanned after the first request forced a second one.
 
