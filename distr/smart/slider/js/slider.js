@@ -203,6 +203,34 @@ function createNavigationOptions(prevEl, nextEl) {
     nextEl,
     prevEl
   };
+} // The Framework's slider takes no `thumbs` option, so a thumbnail was a picture
+// that did nothing. A thumbnail moves the main slider to its slide, and the one
+// shown is marked.
+
+
+function linkThumbnails(slider, thumbs) {
+  if (!slider || !thumbs?.slides?.length) return () => {};
+
+  const mark = () => {
+    thumbs.slides.forEach((slide, index) => {
+      const active = index === slider.activeIndex;
+      slide.classList.toggle('swiper-slide-thumb-active', active);
+      if (active) slide.setAttribute('aria-current', 'true');else slide.removeAttribute('aria-current');
+    });
+  };
+
+  const listeners = thumbs.slides.map((slide, index) => {
+    const listener = () => slider.slideTo(index);
+
+    slide.addEventListener('click', listener);
+    return [slide, listener];
+  });
+  slider.on?.('slideChange', mark);
+  mark();
+  return () => {
+    listeners.forEach(([slide, listener]) => slide.removeEventListener('click', listener));
+    slider.off?.('slideChange', mark);
+  };
 }
 
 function getNavigationLabels(prevEl, nextEl) {
@@ -436,7 +464,7 @@ function bindSlider(root) {
   const navigationLabels = getNavigationLabels(prevEl, nextEl);
   applyNavigationLabelDefaults(sliderOptions, navigationLabels);
   const slider = new window.Swiper(mainEl, sliderOptions);
-  root._sfSliderCleanup = [createSlideInteractivityGuard(slider), createAutoplayGuard(root, slider)];
+  root._sfSliderCleanup = [createSlideInteractivityGuard(slider), createAutoplayGuard(root, slider), linkThumbnails(slider, thumbs)];
   root._sfSliderNavigationLabels = navigationLabels.map(label => ({ ...label,
     applied: label.element.getAttribute('aria-label')
   }));
@@ -535,12 +563,26 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("fbe0570fcc69");
 /* harmony import */ var _component_slider_js_slider__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("9e5aefb3c7c5");
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("c43a175b4439");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("0d662e4d7d63");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__);
 
 
 
+ // The arrows were named in English on every page.
+
+const SLIDER_TEXT = {
+  en: {
+    previous: 'Previous slide',
+    next: 'Next slide'
+  },
+  ru: {
+    previous: 'Предыдущий слайд',
+    next: 'Следующий слайд'
+  }
+};
 const FORWARDED_SLIDER_DATA_ATTRIBUTES = new Set(['data-autoplay', 'data-autoplay-delay', 'data-autoplay-disable-on-interaction', 'data-autoplay-pause-on-mouse-enter', 'data-autoplay-reverse-direction', 'data-autoplay-stop-on-last-slide', 'data-centered-slides', 'data-loop', 'data-slides-per-view', 'data-space-between', 'data-speed']);
 
 class SfSlider extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()) {
@@ -665,7 +707,9 @@ class SfSlider extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default
     return this.createTemplateContext({ ...props,
       component: this,
       rootClass: this.getRootClass(),
-      slides: this.slides
+      slides: this.slides,
+      previousLabel: (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(SLIDER_TEXT, 'previous', this),
+      nextLabel: (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(SLIDER_TEXT, 'next', this)
     });
   }
 
@@ -995,7 +1039,7 @@ function renderArrows(context) {
         size=${buttonSize}
         appearance=${buttonOptions.type}
         scheme=${buttonOptions.scheme}
-        aria-label="Previous slide"
+        aria-label=${context.previousLabel}
       ></sf-icon-button>
       <sf-icon-button
         root-class="sf-slider-button-next"
@@ -1003,7 +1047,7 @@ function renderArrows(context) {
         size=${buttonSize}
         appearance=${buttonOptions.type}
         scheme=${buttonOptions.scheme}
-        aria-label="Next slide"
+        aria-label=${context.nextLabel}
       ></sf-icon-button>
     </div>
   `;
@@ -1053,6 +1097,13 @@ __webpack_async_result__();
 (module) {
 
 module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("lit") : new Promise((resolve) => globalThis.addEventListener("sf-runtime-ready", () => resolve(globalThis.SF.runtimeModule("lit")), { once: true })));
+
+/***/ },
+
+/***/ "0d662e4d7d63"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("page-language") : new Promise((resolve) => globalThis.addEventListener("sf-runtime-ready", () => resolve(globalThis.SF.runtimeModule("page-language")), { once: true })));
 
 /***/ },
 

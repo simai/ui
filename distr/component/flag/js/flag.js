@@ -193,12 +193,15 @@ if (typeof document !== 'undefined') {
     });
   }
 
-  window.SF = window.SF || {};
-  window.SF.flag = {
+  window.SF = window.SF || {}; // SF.Flag, as every other service is named (SF.Toast, SF.Input, SF.Mask);
+  // SF.flag stays for pages written against it.
+
+  window.SF.Flag = {
     mount,
     mountAll,
     render
   };
+  window.SF.flag = window.SF.Flag;
 }
 
 

@@ -366,7 +366,11 @@ function initMenuItem(root) {
   const usesRowController = isBranch && !isNativeInteractive(element) && !suppliedToggle;
   root.dataset[BOUND_FLAG] = 'true';
   root.classList.add('sf-menu-item');
-  root.classList.toggle('sf-menu-item--has-submenu', isBranch);
+  root.classList.toggle('sf-menu-item--has-submenu', isBranch); // The stylesheet opens an item by its .open class. An item written expanded
+  // (expanded, aria-expanded="true") got its state on the element and the
+  // submenu, never the class, and stayed shut.
+
+  root.classList.toggle('open', expanded && isBranch);
 
   if (usesRowController && !element.hasAttribute('role')) {
     element.setAttribute('role', 'button');

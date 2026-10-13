@@ -271,6 +271,16 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+const QUANTITY_TEXT = {
+  en: {
+    decrement: 'Decrease value',
+    increment: 'Increase value'
+  },
+  ru: {
+    decrement: 'Уменьшить значение',
+    increment: 'Увеличить значение'
+  }
+};
 const QUANTITY_SELECTOR = '.sf-quantity';
 const BOUND_FLAG = 'sfQuantityBound';
 const formattedChanges = new WeakSet();
@@ -901,8 +911,10 @@ class Quantity extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.C
     super(props);
     const {
       size = '1',
-      label = 'Label',
-      required = true,
+      // No invented defaults: a field built from code had «Label», «placeholder»
+      // and required set unless the caller said otherwise.
+      label = '',
+      required = false,
       value,
       min,
       max,
@@ -918,8 +930,8 @@ class Quantity extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.C
       disabled = false,
       readonly = false,
       placeholder = '',
-      decrementLabel = 'Decrease value',
-      incrementLabel = 'Increase value',
+      decrementLabel = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_7__.pageText)(QUANTITY_TEXT, 'decrement', document.documentElement),
+      incrementLabel = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_7__.pageText)(QUANTITY_TEXT, 'increment', document.documentElement),
       decrementIcon = 'remove',
       incrementIcon = 'add'
     } = this.params || {};
@@ -1103,13 +1115,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   ComponentObserver: () => (/* binding */ ComponentObserver)
 /* harmony export */ });
 class ComponentObserver {
+  // Components name themselves with a static field (static componentName =
+  // 'Modal'), and the Loader writes the name on the prototype only when it
+  // registers the class; the lifecycle events read the instance, so an
+  // instance made before that announced itself as `undefined:render`. Not a
+  // getter: the Loader assigns the prototype property, and an accessor
+  // without a setter made that assignment throw.
+  lifecycleName() {
+    return this.componentName ?? this.constructor.componentName;
+  }
+
   constructor(props) {
     this.props = props;
     this.id = props?.id;
     this.params = props?.param;
     this.attrs = props?.attrs || {};
     this.template = null;
-    window.dispatchEvent(new CustomEvent(`${this.componentName}:beforeRender`, {
+    window.dispatchEvent(new CustomEvent(`${this.lifecycleName()}:beforeRender`, {
       detail: this
     }));
   }
@@ -1170,7 +1192,7 @@ class ComponentObserver {
     }
 
     if (this.html) {
-      window.dispatchEvent(new CustomEvent(`${this.componentName}:render`, {
+      window.dispatchEvent(new CustomEvent(`${this.lifecycleName()}:render`, {
         detail: this
       }));
     }
@@ -1190,7 +1212,7 @@ class ComponentObserver {
       this.html = null;
     }
 
-    window.dispatchEvent(new CustomEvent(`${this.componentName}:destroy`, {
+    window.dispatchEvent(new CustomEvent(`${this.lifecycleName()}:destroy`, {
       detail: this
     }));
   }

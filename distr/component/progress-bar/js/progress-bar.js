@@ -39,11 +39,15 @@ function normalizeValue(value) {
 function normalizeTextPosition(value, fallback = 'none') {
   const normalized = String(value || fallback).toLowerCase();
   return ['none', 'right', 'inline-end', 'bottom'].includes(normalized) ? normalized : fallback;
-}
+} // The shared status words. `primary` was the old word for no status: it has no
+// colour of its own and draws the default, as before; `info` was turned into it.
+
+
+const TONES = ['info', 'success', 'warning', 'error'];
 
 function normalizeTone(value) {
   const normalized = String(value || '').toLowerCase();
-  return ['primary', 'success', 'warning', 'error'].includes(normalized) ? normalized : 'primary';
+  return TONES.includes(normalized) ? normalized : '';
 }
 
 function getProgressNode(root) {
@@ -114,10 +118,10 @@ function syncProgressAccessibility(root, value) {
 }
 
 function syncTone(root, tone) {
-  ['primary', 'success', 'warning', 'error'].forEach(name => {
+  ['primary', ...TONES].forEach(name => {
     root.classList.toggle(`sf-progress-bar--${name}`, name === tone);
   });
-  root.dataset.tone = tone;
+  if (tone) root.dataset.tone = tone;else delete root.dataset.tone;
 }
 
 function renderProgressBar(root) {
@@ -378,13 +382,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   ComponentObserver: () => (/* binding */ ComponentObserver)
 /* harmony export */ });
 class ComponentObserver {
+  // Components name themselves with a static field (static componentName =
+  // 'Modal'), and the Loader writes the name on the prototype only when it
+  // registers the class; the lifecycle events read the instance, so an
+  // instance made before that announced itself as `undefined:render`. Not a
+  // getter: the Loader assigns the prototype property, and an accessor
+  // without a setter made that assignment throw.
+  lifecycleName() {
+    return this.componentName ?? this.constructor.componentName;
+  }
+
   constructor(props) {
     this.props = props;
     this.id = props?.id;
     this.params = props?.param;
     this.attrs = props?.attrs || {};
     this.template = null;
-    window.dispatchEvent(new CustomEvent(`${this.componentName}:beforeRender`, {
+    window.dispatchEvent(new CustomEvent(`${this.lifecycleName()}:beforeRender`, {
       detail: this
     }));
   }
@@ -445,7 +459,7 @@ class ComponentObserver {
     }
 
     if (this.html) {
-      window.dispatchEvent(new CustomEvent(`${this.componentName}:render`, {
+      window.dispatchEvent(new CustomEvent(`${this.lifecycleName()}:render`, {
         detail: this
       }));
     }
@@ -465,7 +479,7 @@ class ComponentObserver {
       this.html = null;
     }
 
-    window.dispatchEvent(new CustomEvent(`${this.componentName}:destroy`, {
+    window.dispatchEvent(new CustomEvent(`${this.lifecycleName()}:destroy`, {
       detail: this
     }));
   }

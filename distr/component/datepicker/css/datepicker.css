@@ -200,7 +200,9 @@
     width: var(--sf-datepicker-day--width, 100%);
     inline-size: var(--sf-datepicker-day--width, 100%);
     background-color: var(--sf-datepicker-day--background-color);
-    --sf-datepicker-day--background-color: var(--sf-surface-0);
+    /* A day sits on the panel's own surface (elevation 3); surface-0 drew every
+       day as a darker cell on it in the dark theme. */
+    --sf-datepicker-day--background-color: var(--sf-transparent);
   }
   .sf-datepicker-day .sf-datepicker-day-date {
     --sf-datepicker-day-date--color: var(--sf-on-surface);
@@ -911,8 +913,10 @@
     text-align: center;
   }
   .sf-datepicker .sf-datepicker-context {
-    --sf-datepicker-context--background-color: var(--sf-surface-0);
+    /* Opaque, to cover the days under it, in the panel's own colour. */
+    --sf-datepicker-context--background-color: var(--sf-datepicker--background-color, var(--sf-elevation-3--surface));
     background: var(--sf-datepicker-context--background-color);
+    --sf-on-surface-variant: var(--sf-on-elevation-3--variant);
     z-index: var(--sf-z-index-2);
   }
 }

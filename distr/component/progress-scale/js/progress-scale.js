@@ -21,8 +21,10 @@ __webpack_require__.r(__webpack_exports__);
 
 const PROGRESS_SCALE_SELECTOR = '.sf-progress-scale';
 const BOUND_FLAG = 'sfProgressScaleBound';
-const SIZE_VALUES = ['1/3', '1/2', '1', '2', '3'];
-const TONE_VALUES = ['primary', 'success', 'warning', 'error'];
+const SIZE_VALUES = ['1/3', '1/2', '1', '2', '3']; // The shared status words. `primary` was the old word for no status: it has no
+// colour of its own and draws the default, as before; `info` was turned into it.
+
+const TONE_VALUES = ['info', 'success', 'warning', 'error'];
 
 function normalizeProgressScaleValue(value) {
   const parsed = Number(value);
@@ -41,7 +43,7 @@ function normalizeProgressScaleSize(value) {
 
 function normalizeProgressScaleTone(value) {
   const normalized = String(value || '').toLowerCase();
-  return TONE_VALUES.includes(normalized) ? normalized : 'primary';
+  return TONE_VALUES.includes(normalized) ? normalized : '';
 }
 
 function normalizeBoolean(value, fallback = true) {
@@ -324,13 +326,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   ComponentObserver: () => (/* binding */ ComponentObserver)
 /* harmony export */ });
 class ComponentObserver {
+  // Components name themselves with a static field (static componentName =
+  // 'Modal'), and the Loader writes the name on the prototype only when it
+  // registers the class; the lifecycle events read the instance, so an
+  // instance made before that announced itself as `undefined:render`. Not a
+  // getter: the Loader assigns the prototype property, and an accessor
+  // without a setter made that assignment throw.
+  lifecycleName() {
+    return this.componentName ?? this.constructor.componentName;
+  }
+
   constructor(props) {
     this.props = props;
     this.id = props?.id;
     this.params = props?.param;
     this.attrs = props?.attrs || {};
     this.template = null;
-    window.dispatchEvent(new CustomEvent(`${this.componentName}:beforeRender`, {
+    window.dispatchEvent(new CustomEvent(`${this.lifecycleName()}:beforeRender`, {
       detail: this
     }));
   }
@@ -391,7 +403,7 @@ class ComponentObserver {
     }
 
     if (this.html) {
-      window.dispatchEvent(new CustomEvent(`${this.componentName}:render`, {
+      window.dispatchEvent(new CustomEvent(`${this.lifecycleName()}:render`, {
         detail: this
       }));
     }
@@ -411,7 +423,7 @@ class ComponentObserver {
       this.html = null;
     }
 
-    window.dispatchEvent(new CustomEvent(`${this.componentName}:destroy`, {
+    window.dispatchEvent(new CustomEvent(`${this.lifecycleName()}:destroy`, {
       detail: this
     }));
   }

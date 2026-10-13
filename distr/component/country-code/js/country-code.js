@@ -1217,7 +1217,7 @@ class CountryCode extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0_
     super(props);
     const {
       size = '1',
-      label = 'Label',
+      label = '',
       required = false,
       name = '',
       form = '',
@@ -1622,13 +1622,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   ComponentObserver: () => (/* binding */ ComponentObserver)
 /* harmony export */ });
 class ComponentObserver {
+  // Components name themselves with a static field (static componentName =
+  // 'Modal'), and the Loader writes the name on the prototype only when it
+  // registers the class; the lifecycle events read the instance, so an
+  // instance made before that announced itself as `undefined:render`. Not a
+  // getter: the Loader assigns the prototype property, and an accessor
+  // without a setter made that assignment throw.
+  lifecycleName() {
+    return this.componentName ?? this.constructor.componentName;
+  }
+
   constructor(props) {
     this.props = props;
     this.id = props?.id;
     this.params = props?.param;
     this.attrs = props?.attrs || {};
     this.template = null;
-    window.dispatchEvent(new CustomEvent(`${this.componentName}:beforeRender`, {
+    window.dispatchEvent(new CustomEvent(`${this.lifecycleName()}:beforeRender`, {
       detail: this
     }));
   }
@@ -1689,7 +1699,7 @@ class ComponentObserver {
     }
 
     if (this.html) {
-      window.dispatchEvent(new CustomEvent(`${this.componentName}:render`, {
+      window.dispatchEvent(new CustomEvent(`${this.lifecycleName()}:render`, {
         detail: this
       }));
     }
@@ -1709,7 +1719,7 @@ class ComponentObserver {
       this.html = null;
     }
 
-    window.dispatchEvent(new CustomEvent(`${this.componentName}:destroy`, {
+    window.dispatchEvent(new CustomEvent(`${this.lifecycleName()}:destroy`, {
       detail: this
     }));
   }

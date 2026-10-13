@@ -118,6 +118,12 @@ class AdminMenu {
         requestAnimationFrame(() => {
           this.observeSubMenu(panel);
           requestAnimationFrame(() => {
+            // The stylesheet opens a panel by .open; only the
+            // offset classes were toggled, so a data-menu button
+            // opened nothing and said nothing.
+            const open = !panel.classList.contains("open");
+            panel.classList.toggle("open", open);
+            button.setAttribute("aria-expanded", String(open));
             panel.classList.toggle("inline-end-full");
             panel.classList.toggle("inline-end-0");
           });

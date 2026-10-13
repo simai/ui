@@ -144,6 +144,11 @@
     padding-inline: var(--sf-tree-item--padding-inline, var(--sf-space-1\/2));
     border-radius: inherit;
   }
+  /* Inside a tree a name takes its row's colour, a disabled row's muted one
+     included. sf-tree-item's own rule (.sf-tree-item .sf-tree-item-name,
+     primary) had the same weight, so which colour a name got depended on which
+     stylesheet loaded last, and the disabled dimming never reached the name. */
+  .sf-tree .sf-tree-item .sf-tree-item-name,
   .sf-tree .sf-tree-item-name {
     flex: 1 1 auto;
     min-width: 0;

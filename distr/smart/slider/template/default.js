@@ -146,7 +146,7 @@ function renderArrows(context) {
         size=${buttonSize}
         appearance=${buttonOptions.type}
         scheme=${buttonOptions.scheme}
-        aria-label="Previous slide"
+        aria-label=${context.previousLabel}
       ></sf-icon-button>
       <sf-icon-button
         root-class="sf-slider-button-next"
@@ -154,7 +154,7 @@ function renderArrows(context) {
         size=${buttonSize}
         appearance=${buttonOptions.type}
         scheme=${buttonOptions.scheme}
-        aria-label="Next slide"
+        aria-label=${context.nextLabel}
       ></sf-icon-button>
     </div>
   `;

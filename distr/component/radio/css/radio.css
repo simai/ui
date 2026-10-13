@@ -7,6 +7,18 @@
 *
 */
 @layer sf.components {
+  /* The native input of a radio drawn by the component (the font variant among
+     them): kept in the form and the focus order, out of sight. */
+  .sf-radio-native {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+    width: 0;
+    inline-size: 0;
+    height: 0;
+    block-size: 0;
+    margin: 0;
+  }
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) justify-content/flex-start (.justify-start) align-items/flex-start (.items-start) */
   .sf-radio-button {
     background-color: transparent;

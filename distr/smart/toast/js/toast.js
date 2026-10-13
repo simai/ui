@@ -79,8 +79,9 @@ function dismissToastElement(toast, removalTarget = toast) {
 /***/ },
 
 /***/ "2e6d67465f5f"
-(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+(module, __webpack_exports__, __webpack_require__) {
 
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   bindToast: () => (/* binding */ bindToast),
@@ -92,19 +93,42 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d7f974466839");
 /* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("58661bec99a6");
 /* harmony import */ var _dismiss__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("ab7da13ee130");
+/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("0d662e4d7d63");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__);
 
 
 
+
+const TOAST_TEXT = {
+  en: {
+    close: 'Close message'
+  },
+  ru: {
+    close: 'Закрыть сообщение'
+  }
+};
 const TOAST_SELECTOR = '.sf-toast';
-const TOAST_BOUND_FLAG = 'sfToastBound';
-const TOAST_TYPES = new Set(['default', 'primary', 'error', 'warning', 'success']);
+const TOAST_BOUND_FLAG = 'sfToastBound'; // The shared status vocabulary (neutral, info, success, warning, error). The
+// words this component used before -- default and primary -- are still taken
+// and mean neutral and info (journal class-status-aliases); SF.Toast.show
+// refused the new words and drew them as default.
+
+const TOAST_TYPES = new Set(['neutral', 'info', 'success', 'warning', 'error']);
+const LEGACY_TOAST_TYPES = {
+  default: 'neutral',
+  primary: 'info'
+};
 
 function joinClasses(...tokens) {
   return tokens.flat().filter(Boolean).join(' ');
 }
 
 function normalizeType(value) {
-  return TOAST_TYPES.has(value) ? value : 'default';
+  const status = LEGACY_TOAST_TYPES[value] ?? value;
+  return TOAST_TYPES.has(status) ? status : 'neutral';
 }
 
 function readDuration(root) {
@@ -247,7 +271,7 @@ function createToastElement(options = {}) {
     actionText = '',
     action = '',
     closable = true,
-    closeLabel = 'Close message',
+    closeLabel = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(TOAST_TEXT, 'close', document.documentElement),
     duration = 0,
     role = ''
   } = options;
@@ -427,6 +451,8 @@ toastObserver.observe(document.documentElement, {
   subtree: true
 });
 
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ },
 
@@ -438,13 +464,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   ComponentObserver: () => (/* binding */ ComponentObserver)
 /* harmony export */ });
 class ComponentObserver {
+  // Components name themselves with a static field (static componentName =
+  // 'Modal'), and the Loader writes the name on the prototype only when it
+  // registers the class; the lifecycle events read the instance, so an
+  // instance made before that announced itself as `undefined:render`. Not a
+  // getter: the Loader assigns the prototype property, and an accessor
+  // without a setter made that assignment throw.
+  lifecycleName() {
+    return this.componentName ?? this.constructor.componentName;
+  }
+
   constructor(props) {
     this.props = props;
     this.id = props?.id;
     this.params = props?.param;
     this.attrs = props?.attrs || {};
     this.template = null;
-    window.dispatchEvent(new CustomEvent(`${this.componentName}:beforeRender`, {
+    window.dispatchEvent(new CustomEvent(`${this.lifecycleName()}:beforeRender`, {
       detail: this
     }));
   }
@@ -505,7 +541,7 @@ class ComponentObserver {
     }
 
     if (this.html) {
-      window.dispatchEvent(new CustomEvent(`${this.componentName}:render`, {
+      window.dispatchEvent(new CustomEvent(`${this.lifecycleName()}:render`, {
         detail: this
       }));
     }
@@ -525,7 +561,7 @@ class ComponentObserver {
       this.html = null;
     }
 
-    window.dispatchEvent(new CustomEvent(`${this.componentName}:destroy`, {
+    window.dispatchEvent(new CustomEvent(`${this.lifecycleName()}:destroy`, {
       detail: this
     }));
   }
@@ -545,8 +581,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _component_toast_js_toast__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("2e6d67465f5f");
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("9560d0717f6e");
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("0d662e4d7d63");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _component_toast_js_toast__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _component_toast_js_toast__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__);
 

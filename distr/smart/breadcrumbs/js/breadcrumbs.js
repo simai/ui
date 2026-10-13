@@ -353,7 +353,7 @@ class SfBreadcrumbs extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___de
 
   getDisplayItems(items = []) {
     const maxItems = this.getNumberAttr('maxItems', 4);
-    const expandLabel = this.getProp('expandLabel') || 'Show hidden breadcrumbs';
+    const expandLabel = this.getAttribute('expand-label') || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_2__.pageText)(BREADCRUMBS_TEXT, 'expandLabel', this);
 
     if (this._ellipsisExpanded || maxItems < 3 || items.length <= maxItems) {
       return this.reindexItems(items);

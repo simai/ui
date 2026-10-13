@@ -89,9 +89,11 @@
     border: 1px var(--sf-outline-variant) solid;
     border: var(--sf-px) var(--sf-outline-variant) solid;
   }
+  /* One meaning for the name: the border-style utility's, border-style: none.
+     Core drew a transparent 1px border under the same class, so which one a page
+     got depended on whether the utility sheet had loaded yet. */
   .border-none {
-    border: 1px var(--sf-transparent) solid;
-    border: var(--sf-px) var(--sf-transparent) solid;
+    border-style: none;
   }
   .divider > :not([hidden]) ~ :not([hidden]) {
     border: 1px var(--sf-outline-variant) solid;
@@ -115,8 +117,7 @@
       border: var(--sf-px) var(--sf-outline-variant) solid;
     }
     .sm\:border-none {
-      border: 1px var(--sf-transparent) solid;
-      border: var(--sf-px) var(--sf-transparent) solid;
+      border-style: none;
     }
   }
   @media (min-width: 720px) {
@@ -125,8 +126,7 @@
       border: var(--sf-px) var(--sf-outline-variant) solid;
     }
     .md\:border-none {
-      border: 1px var(--sf-transparent) solid;
-      border: var(--sf-px) var(--sf-transparent) solid;
+      border-style: none;
     }
   }
   @media (min-width: 960px) {
@@ -135,8 +135,7 @@
       border: var(--sf-px) var(--sf-outline-variant) solid;
     }
     .lg\:border-none {
-      border: 1px var(--sf-transparent) solid;
-      border: var(--sf-px) var(--sf-transparent) solid;
+      border-style: none;
     }
   }
   @media (min-width: 1140px) {
@@ -145,8 +144,7 @@
       border: var(--sf-px) var(--sf-outline-variant) solid;
     }
     .xl\:border-none {
-      border: 1px var(--sf-transparent) solid;
-      border: var(--sf-px) var(--sf-transparent) solid;
+      border-style: none;
     }
   }
   .hover\:border:hover {
@@ -154,8 +152,7 @@
     border: var(--sf-px) var(--sf-outline-variant) solid;
   }
   .hover\:border-none:hover {
-    border: 1px var(--sf-transparent) solid;
-    border: var(--sf-px) var(--sf-transparent) solid;
+    border-style: none;
   }
 }
 @layer sf.base {

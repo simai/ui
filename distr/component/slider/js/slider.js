@@ -183,6 +183,34 @@ function createNavigationOptions(prevEl, nextEl) {
     nextEl,
     prevEl
   };
+} // The Framework's slider takes no `thumbs` option, so a thumbnail was a picture
+// that did nothing. A thumbnail moves the main slider to its slide, and the one
+// shown is marked.
+
+
+function linkThumbnails(slider, thumbs) {
+  if (!slider || !thumbs?.slides?.length) return () => {};
+
+  const mark = () => {
+    thumbs.slides.forEach((slide, index) => {
+      const active = index === slider.activeIndex;
+      slide.classList.toggle('swiper-slide-thumb-active', active);
+      if (active) slide.setAttribute('aria-current', 'true');else slide.removeAttribute('aria-current');
+    });
+  };
+
+  const listeners = thumbs.slides.map((slide, index) => {
+    const listener = () => slider.slideTo(index);
+
+    slide.addEventListener('click', listener);
+    return [slide, listener];
+  });
+  slider.on?.('slideChange', mark);
+  mark();
+  return () => {
+    listeners.forEach(([slide, listener]) => slide.removeEventListener('click', listener));
+    slider.off?.('slideChange', mark);
+  };
 }
 
 function getNavigationLabels(prevEl, nextEl) {
@@ -416,7 +444,7 @@ function bindSlider(root) {
   const navigationLabels = getNavigationLabels(prevEl, nextEl);
   applyNavigationLabelDefaults(sliderOptions, navigationLabels);
   const slider = new window.Swiper(mainEl, sliderOptions);
-  root._sfSliderCleanup = [createSlideInteractivityGuard(slider), createAutoplayGuard(root, slider)];
+  root._sfSliderCleanup = [createSlideInteractivityGuard(slider), createAutoplayGuard(root, slider), linkThumbnails(slider, thumbs)];
   root._sfSliderNavigationLabels = navigationLabels.map(label => ({ ...label,
     applied: label.element.getAttribute('aria-label')
   }));

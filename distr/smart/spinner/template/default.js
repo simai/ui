@@ -27,7 +27,7 @@ export function renderSpinnerTemplate(context) {
       data-variant=${valueOrNothing(context.kind ?? context.variant)}
       data-width=${valueOrNothing(context.width)}
       data-height=${valueOrNothing(context.height)}
-      data-label=${valueOrNothing(context.label)}
+      data-label=${context.label ?? nothing}
       data-dots=${valueOrNothing(context.dots)}
       data-filled=${valueOrNothing(context.filled)}
       data-stroke-width=${valueOrNothing(context.strokeWidth)}

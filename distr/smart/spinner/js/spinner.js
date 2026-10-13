@@ -37,8 +37,9 @@ function registerComponent(name, cls) {
 /***/ },
 
 /***/ "eecc41af23fd"
-(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+(module, __webpack_exports__, __webpack_require__) {
 
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   bindSpinner: () => (/* binding */ bindSpinner),
@@ -49,8 +50,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d7f974466839");
 /* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("58661bec99a6");
+/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("0d662e4d7d63");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_page_language__WEBPACK_IMPORTED_MODULE_2__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+_core_js_page_language__WEBPACK_IMPORTED_MODULE_2__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language__WEBPACK_IMPORTED_MODULE_2__);
 
 
+
+const SPINNER_TEXT = {
+  en: {
+    label: 'Loading…'
+  },
+  ru: {
+    label: 'Загрузка…'
+  }
+};
 const SVG_NS = 'http://www.w3.org/2000/svg';
 const SPINNER_SELECTOR = '.sf-loader-container';
 const SPINNER_BOUND_FLAG = 'sfSpinnerBound';
@@ -307,9 +322,11 @@ class Spinner extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Co
   constructor(props) {
     super(props);
     const {
-      width = 58,
-      height = 58,
-      label = 'Loading...',
+      // No size unless one is asked for: a written 58 counted as explicit and
+      // overrode every size class.
+      width,
+      height,
+      label = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_2__.pageText)(SPINNER_TEXT, 'label', props?.root ?? document.documentElement),
       variant = 'arc',
       dots = 16,
       filled = 6,
@@ -336,8 +353,8 @@ class Spinner extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Co
       if (value === undefined || value === null) return;
       this.template.setAttribute(attr, value);
     });
-    this.template.dataset.width = String(width);
-    this.template.dataset.height = String(height);
+    if (width !== undefined && width !== null && width !== '') this.template.dataset.width = String(width);
+    if (height !== undefined && height !== null && height !== '') this.template.dataset.height = String(height);
     this.template.dataset.label = String(label ?? '');
     this.template.dataset.variant = String(variant);
     this.template.dataset.dots = String(dots);
@@ -397,6 +414,8 @@ spinnerObserver.observe(document.documentElement, {
   subtree: true
 });
 
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ },
 
@@ -408,13 +427,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   ComponentObserver: () => (/* binding */ ComponentObserver)
 /* harmony export */ });
 class ComponentObserver {
+  // Components name themselves with a static field (static componentName =
+  // 'Modal'), and the Loader writes the name on the prototype only when it
+  // registers the class; the lifecycle events read the instance, so an
+  // instance made before that announced itself as `undefined:render`. Not a
+  // getter: the Loader assigns the prototype property, and an accessor
+  // without a setter made that assignment throw.
+  lifecycleName() {
+    return this.componentName ?? this.constructor.componentName;
+  }
+
   constructor(props) {
     this.props = props;
     this.id = props?.id;
     this.params = props?.param;
     this.attrs = props?.attrs || {};
     this.template = null;
-    window.dispatchEvent(new CustomEvent(`${this.componentName}:beforeRender`, {
+    window.dispatchEvent(new CustomEvent(`${this.lifecycleName()}:beforeRender`, {
       detail: this
     }));
   }
@@ -475,7 +504,7 @@ class ComponentObserver {
     }
 
     if (this.html) {
-      window.dispatchEvent(new CustomEvent(`${this.componentName}:render`, {
+      window.dispatchEvent(new CustomEvent(`${this.lifecycleName()}:render`, {
         detail: this
       }));
     }
@@ -495,7 +524,7 @@ class ComponentObserver {
       this.html = null;
     }
 
-    window.dispatchEvent(new CustomEvent(`${this.componentName}:destroy`, {
+    window.dispatchEvent(new CustomEvent(`${this.lifecycleName()}:destroy`, {
       detail: this
     }));
   }
@@ -515,8 +544,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _component_spinner_js_spinner__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("eecc41af23fd");
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("f4cc1d3fd22e");
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("0d662e4d7d63");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _component_spinner_js_spinner__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _component_spinner_js_spinner__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__);
 
@@ -600,10 +629,13 @@ class SfSpinner extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___defaul
 
   get height() {
     return this.getAttribute('height') || '';
-  }
+  } // label="" is a spinner with no words -- the table's, which names its busy
+  // state elsewhere -- and it read as unset, so the page language's «Загрузка…»
+  // appeared under it. Only an absent label takes the dictionary's.
+
 
   get label() {
-    return this.getAttribute('label') || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(SPINNER_TEXT, "label", this);
+    return this.hasAttribute('label') ? this.getAttribute('label') : (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(SPINNER_TEXT, "label", this);
   }
 
   get kind() {
@@ -646,7 +678,7 @@ class SfSpinner extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___defaul
   templateContext() {
     const props = this.getPropsContext();
     return this.createTemplateContext({ ...props,
-      label: this.getAttribute("label") || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(SPINNER_TEXT, "label", this),
+      label: this.label,
       component: this,
       rootClass: this.getRootClass()
     });
@@ -739,7 +771,7 @@ function renderSpinnerTemplate(context) {
       data-variant=${valueOrNothing(context.kind ?? context.variant)}
       data-width=${valueOrNothing(context.width)}
       data-height=${valueOrNothing(context.height)}
-      data-label=${valueOrNothing(context.label)}
+      data-label=${context.label ?? lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       data-dots=${valueOrNothing(context.dots)}
       data-filled=${valueOrNothing(context.filled)}
       data-stroke-width=${valueOrNothing(context.strokeWidth)}

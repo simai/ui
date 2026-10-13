@@ -5849,20 +5849,37 @@ function normalizeWhenDefinedInput(input = []) {
   }
 
   return Array.from(arguments).filter(Boolean);
+} // A short name the rules do not know yet may be a package's own element whose
+// rules have not loaded (acme-counter) or a Framework one (data-view ->
+// sf-data-view). It used to be read as the Framework's, and
+// SF.whenDefined('acme-counter') waited forever for sf-acme-counter. Until the
+// rules say, whichever of the two is defined first is the element; a name with
+// no hyphen can only be the Framework's.
+
+
+function definedTag(input) {
+  const tag = normalizeSmartTagName(input);
+  const short = String(input || '').trim().toLowerCase();
+
+  if (!tag || tag === short || !short.includes('-')) {
+    return window.customElements.whenDefined(tag).then(() => tag);
+  }
+
+  return Promise.race([window.customElements.whenDefined(short).then(() => short), window.customElements.whenDefined(tag).then(() => tag)]);
 }
 
 function whenSmartDefined() {
-  const tags = normalizeWhenDefinedInput.apply(null, arguments).map(normalizeSmartTagName).filter(Boolean);
+  const inputs = normalizeWhenDefinedInput.apply(null, arguments).filter(input => normalizeSmartTagName(input));
 
-  if (!tags.length) {
+  if (!inputs.length) {
     return Promise.resolve([]);
   }
 
   if (!window.customElements?.whenDefined) {
-    return Promise.resolve(tags);
+    return Promise.resolve(inputs.map(normalizeSmartTagName));
   }
 
-  return Promise.all(tags.map(tag => window.customElements.whenDefined(tag))).then(() => tags);
+  return Promise.all(inputs.map(definedTag));
 }
 
 function toAttributeName(key) {

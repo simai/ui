@@ -149,8 +149,14 @@ class SimaiSlider {
     const slidesPerView = Math.max(1, numeric(this.params.slidesPerView, 1));
     slides.forEach((slide, index) => {
       slide.dataset.swiperSlideIndex = String(index);
-      slide.setAttribute('role', 'group');
-      slide.setAttribute('aria-label', `${index + 1} / ${slides.length}`);
+      slide.setAttribute('role', 'group'); // A slide the page named keeps its name («Закат»); it used to be replaced
+      // by «1 / 2» on every update, before the carousel could even remember it.
+
+      if (slide.__sfAuthoredLabel === undefined) {
+        slide.__sfAuthoredLabel = slide.getAttribute('aria-label') ?? '';
+      }
+
+      slide.setAttribute('aria-label', slide.__sfAuthoredLabel || `${index + 1} / ${slides.length}`);
       slide.style.flexBasis = `${100 / slidesPerView}%`;
     });
     this.activeIndex = clamp(this.activeIndex, 0, Math.max(0, slides.length - Math.ceil(slidesPerView)));
