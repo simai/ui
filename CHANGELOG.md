@@ -74,6 +74,11 @@
 
 ### Добавлено
 
+- `sf-context-menu` comes in two sizes: `size="1/2"` (the default, 32px rows) and `size="1"` (40px rows), with text, icons, search, headings, notes and footer to match; a submenu takes its parent's size. `openFor(anchor, {width})` and the `width` attribute open it as wide as its content, exactly as wide as the trigger (`trigger`), or at a CSS length. A slotted `footer` of actions stays under the rows, its buttons sharing the width; `.sf-context-menu-top` and `.sf-context-menu-body` are the parts of a window built in the menu.
+- `sf-dropdown` grid cells follow the dropdown's size, and a grid behind a supplied trigger is as wide as its columns instead of 18rem.
+- A skeleton text bar is as tall as the text size in the middle of a line of that size (`--sf-skeleton-text--height`, `--sf-skeleton-text--line`), with no gap between lines, so a loading block is as tall as the text it stands for.
+- `renderViewField` / `renderEditField` take `{size: '1/2'}`; a viewed person links to its `href`.
+
 - `SF.Sortable.attach(container, options)` — the column mode of sf-sortable. Any row of items (a table's heading row) is made draggable in place: a ghost follows the pointer, the dragged column's cells are dimmed and a dashed outline the column's width and the table's height shows where it will land. Items move only within their group (`groupOf`), a drag can be refused (`canStart`), the row scrolls sideways near its edges, Escape cancels, and the click a drop ends with is swallowed. Nothing in the DOM is moved: `onIntent({item, from, index, group})` asks the host to reorder.
 
 - `SF.notify` raises a message in the page's one notification area: in the top layer at an edge of the window, four at a time with the rest queued, the same message counting up, a timer that pauses under the pointer or the focus, errors announced at once. Every message is announced as `sf-notification` for a notification centre; `SF.notifications.history()` keeps the last fifty.
