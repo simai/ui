@@ -70,7 +70,11 @@
             "uniqueItems": true,
             "items": {"enum": ["applied", "conflict", "refused", "unavailable"]}
           },
-          "capability": {"type": ["string", "null"]}
+          "capability": {"type": ["string", "null"]},
+          "answer_data": {
+            "type": "object",
+            "description": "What an applied answer to this intent carries: a JSON schema of the part the port's answer names for the intent's data. Optional."
+          }
         }
       }
     },
@@ -114,6 +118,16 @@
         "kit": {"type": "string", "minLength": 1},
         "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
         "cases": {"type": "integer", "minimum": 1}
+      }
+    },
+    "answer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["summary", "schema"],
+      "description": "The shape of every answer the host returns: what carries the outcome, the reason and the intent's own data. Optional; earlier ports described it in their kit cases only.",
+      "properties": {
+        "summary": {"type": "string", "minLength": 1},
+        "schema": {"type": "object"}
       }
     },
     "compatibility": {
