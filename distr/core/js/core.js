@@ -68,6 +68,31 @@ if (typeof window !== 'undefined') {
       return modules[id];
     });
   }
+} // Icons wait for the subset font. The icons stylesheet declares the full
+// Material Symbols font so a page without the runtime still draws its icons,
+// and a browser fetches a declared font for any text set in it -- an icon at
+// font-size 0, waiting for its glyph, included. So every first visit paid for
+// the full font (409 KB) that the subset replaces a moment later, and the
+// subset's own wait for document.fonts.ready waited on it too. While the
+// attribute stands, icons are set in the subset family instead; the loader
+// lifts it once the subset font or the full-font fallback is in place, and a
+// timer lifts it on a page where neither ever comes.
+
+
+if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+  const configValue = window.SF_BOOT_CONFIG?.icons?.enabled;
+  const globalValue = window.SF_ICON_SUBSET_ENABLED;
+  const subsetEnabled = typeof configValue === 'boolean' ? configValue : typeof globalValue === 'boolean' ? globalValue : true;
+  const root = document.documentElement;
+
+  if (subsetEnabled && root && !root.hasAttribute('data-sf-icons')) {
+    root.setAttribute('data-sf-icons', 'subset-pending');
+    setTimeout(() => {
+      if (root.getAttribute('data-sf-icons') === 'subset-pending') {
+        root.removeAttribute('data-sf-icons');
+      }
+    }, 6000);
+  }
 }
 
 (() => {

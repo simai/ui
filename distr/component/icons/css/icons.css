@@ -86,6 +86,11 @@
 .sf-icon:not(.hidden) {
   display: inline-flex;
 }
+:root[data-sf-icons=subset-pending] .sf-icon {
+  --sf-icon--font-family: "Material Symbols Outlined Subset";
+  -webkit-text-fill-color: transparent;
+  overflow: hidden;
+}
 .sf-icon--size-1\/4 {
   --sf-icon--font-size: var(--sf-icon-size-1\/4);
   --sf-icon--width: var(--sf-icon-size-1\/4);

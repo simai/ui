@@ -137,6 +137,17 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
     }
 
     return "outlined";
+  }; // The core runtime sets data-sf-icons="subset-pending" so icons wait in the
+  // subset family instead of fetching the full font; lifted here once a font
+  // that draws them -- the subset or the full-font fallback -- is in place.
+
+
+  SFLoaderPlugin.prototype.liftIconSubsetPending = function () {
+    const root = document.documentElement;
+
+    if (root?.getAttribute("data-sf-icons") === "subset-pending") {
+      root.removeAttribute("data-sf-icons");
+    }
   };
 
   SFLoaderPlugin.prototype.isIconSubsetEnabled = function () {
@@ -1050,6 +1061,7 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
     this.iconSubsetPending = false;
     this.iconSubsetReady = true;
     this.iconFontReady = true;
+    this.liftIconSubsetPending();
     document.body?.classList?.add("sf-icons-loaded");
     this.syncStaticIconLoadedState();
     const warningKey = `fallback:${type}`;
@@ -1174,6 +1186,7 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
       this.loadedIcons = loadedDescriptorKeys;
       this.iconSubsetPending = false;
       this.iconSubsetReady = true;
+      this.liftIconSubsetPending();
       await new Promise(resolve => requestAnimationFrame(resolve));
       await new Promise(resolve => requestAnimationFrame(resolve));
 
@@ -1581,6 +1594,7 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
       }
 
       if (document.fonts?.ready) await document.fonts.ready;
+      this.liftIconSubsetPending();
       await new Promise(resolve => requestAnimationFrame(resolve));
       await new Promise(resolve => requestAnimationFrame(resolve));
       previous?.remove?.();
@@ -1600,6 +1614,36 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
   SFLoaderPlugin.prototype.loadFonts = async function () {
     if (!this.isIconSubsetEnabled()) {
       return false;
+    } // The first request waits for the page's first ready. Sent with the first
+    // icon scanned, it asked for one glyph; the page's other icons, scanned a
+    // moment later, then waited for that font to arrive before they could be
+    // asked for, and every request returns a whole font -- two fonts in a row
+    // before the page showed its icons. A frame after ready, the elements have
+    // drawn theirs and one request carries them all. A page that is slow to
+    // become ready sends it on the timer.
+
+
+    if (this.eventSend === false && !this.iconFirstRequestReleased) {
+      if (!this.iconFirstRequestHeld) {
+        this.iconFirstRequestHeld = new Promise(resolve => {
+          let timer = 0;
+
+          const release = () => {
+            window.removeEventListener("sf-loader-ready", release);
+            clearTimeout(timer);
+            requestAnimationFrame(() => setTimeout(resolve, 0));
+          };
+
+          timer = setTimeout(release, 2500);
+          window.addEventListener("sf-loader-ready", release);
+        }).then(() => {
+          this.iconFirstRequestReleased = true;
+          this.iconFirstRequestHeld = null;
+          return this.loadFonts();
+        });
+      }
+
+      return this.iconFirstRequestHeld;
     }
 
     this.ensureConfiguredIconSubsetState();
