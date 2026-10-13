@@ -1263,7 +1263,11 @@ class SfDropdown extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___defau
 
     if (!option || option.disabled) {
       return this;
-    }
+    } // Picking the item already chosen changes nothing, so it sends no change --
+    // as a native select does. It sent one per pick, the same value again.
+
+
+    const unchanged = !this.multiple && this.selectedValues.length === 1 && this.selectedValues[0] === String(option.value);
 
     if (this.multiple) {
       const selected = new Set(this.selectedValues);
@@ -1281,7 +1285,7 @@ class SfDropdown extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___defau
 
     const nextValues = [...this._selectedValues];
     this.setAttributeValue('value', serializeValues(nextValues));
-    this.dispatchDropdownChange(option, nextValues);
+    if (!unchanged) this.dispatchDropdownChange(option, nextValues);
 
     if (!this.multiple) {
       this._interaction?.beforeClose();

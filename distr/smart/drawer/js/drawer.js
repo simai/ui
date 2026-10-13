@@ -771,9 +771,9 @@ class SfDrawer extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default
 
   onKeyDown(event) {
     // An editor or drag operation that handled Escape keeps it.
-    if (event.defaultPrevented || !this.openState || !drawerManager.isTop(this)) return;
+    if (event.defaultPrevented || !this.openState || !drawerManager.isTop(this)) return; // An open popover takes Escape first; the drawer behind it stays.
 
-    if (event.key === 'Escape' && this.closeOnEsc) {
+    if (event.key === 'Escape' && this.closeOnEsc && !document.documentElement?.dataset?.sfPopoverOpen) {
       event.preventDefault();
       event.stopImmediatePropagation();
       this.close();

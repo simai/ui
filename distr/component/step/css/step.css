@@ -371,6 +371,45 @@
   .sf-step.sf-step--stage-error .sf-icon {
     --sf-icon--color: var(--sf-error);
   }
+  /* A disabled step dims all of it, whatever its stage and however it is
+     disabled. The dimming lived on stage-scoped rules for the class alone: a
+     default-stage icon kept its colour, a step disabled natively or by
+     aria-disabled dimmed only its border, and the error stage's icon rule, later
+     in the sheet, outranked the disabled one. Last in the layer and one class
+     heavier than the selected and stage rules, so it wins over both. */
+  .sf-step.sf-step.disabled {
+    --sf-step--border-color: var(--sf-outline-disable);
+    --sf-step--color: var(--sf-on-disable);
+    cursor: default;
+  }
+  .sf-step.sf-step:disabled {
+    --sf-step--border-color: var(--sf-outline-disable);
+    --sf-step--color: var(--sf-on-disable);
+    cursor: default;
+  }
+  .sf-step.sf-step[aria-disabled=true] {
+    --sf-step--border-color: var(--sf-outline-disable);
+    --sf-step--color: var(--sf-on-disable);
+    cursor: default;
+  }
+  .sf-step.sf-step.disabled .sf-step-container {
+    --sf-step-container--color: var(--sf-on-disable);
+  }
+  .sf-step.sf-step:disabled .sf-step-container {
+    --sf-step-container--color: var(--sf-on-disable);
+  }
+  .sf-step.sf-step[aria-disabled=true] .sf-step-container {
+    --sf-step-container--color: var(--sf-on-disable);
+  }
+  .sf-step.sf-step.disabled .sf-icon {
+    --sf-icon--color: var(--sf-on-disable);
+  }
+  .sf-step.sf-step:disabled .sf-icon {
+    --sf-icon--color: var(--sf-on-disable);
+  }
+  .sf-step.sf-step[aria-disabled=true] .sf-icon {
+    --sf-icon--color: var(--sf-on-disable);
+  }
 }
 @layer sf.states {
   .sf-step:not(:disabled):not(.disabled):not([aria-disabled=true]).focus-visible {

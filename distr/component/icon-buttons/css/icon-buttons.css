@@ -1464,3 +1464,60 @@
     --sf-icon-button--border-inline-start-width: var(--sf-px);
   }
 }
+/* An icon button sets .loading as a button does (sf-icon-button loading) and
+   had no rule for it: it went disabled with no sign of work. The same stripes
+   as .sf-button.loading, defined here so the icon-button sheet alone draws them. */
+@layer sf.components {
+  .sf-icon-button {
+    --sf-icon-button-loading-stripe: var(--sf-alpha-8);
+  }
+  .sf-icon-button > * {
+    position: relative;
+    z-index: 1;
+  }
+  .sf-icon-button.loading {
+    pointer-events: none;
+    position: relative;
+    overflow: hidden;
+  }
+  .sf-icon-button.loading::after {
+    content: "";
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    bottom: -50%;
+    left: -50%;
+    inset: -50%;
+    background-image: repeating-linear-gradient(135deg, var(--sf-icon-button-loading-stripe) 0, var(--sf-icon-button-loading-stripe) var(--sf-space-1\/2), transparent var(--sf-space-1\/2), transparent var(--sf-space-1));
+    -webkit-animation: sf-icon-button-stripes-slide calc(var(--sf-duration-slow) * 2) linear infinite;
+            animation: sf-icon-button-stripes-slide calc(var(--sf-duration-slow) * 2) linear infinite;
+    will-change: transform;
+    pointer-events: none;
+  }
+  @-webkit-keyframes sf-icon-button-stripes-slide {
+    from {
+      -webkit-transform: translateX(0);
+              transform: translateX(0);
+    }
+    to {
+      -webkit-transform: translateX(calc(var(--sf-space-1) * 1.41421356));
+              transform: translateX(calc(var(--sf-space-1) * 1.41421356));
+    }
+  }
+  @keyframes sf-icon-button-stripes-slide {
+    from {
+      -webkit-transform: translateX(0);
+              transform: translateX(0);
+    }
+    to {
+      -webkit-transform: translateX(calc(var(--sf-space-1) * 1.41421356));
+              transform: translateX(calc(var(--sf-space-1) * 1.41421356));
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sf-icon-button.loading::after {
+      -webkit-animation: none;
+              animation: none;
+    }
+  }
+}

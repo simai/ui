@@ -2155,12 +2155,20 @@ function anchor(reference, floating, options = {}) {
     maxHeight: floating.style.getPropertyValue('max-height')
   }; // Stylesheet caps (max-height, max-width) are read before this helper writes
   // inline values, so fitting the viewport never loosens them.
+  // A percentage cap is kept as written by getComputedStyle; read as pixels,
+  // max-inline-size: 100% made every tooltip 100px wide. The panel is fixed, so
+  // a percentage is of the viewport.
 
   const floatingStyle = getComputedStyle(floating);
-  const computedCap = parseFloat(floatingStyle.maxHeight);
-  const heightCap = Number.isFinite(computedCap) ? computedCap : Infinity;
-  const computedWidthCap = parseFloat(floatingStyle.maxWidth);
-  const widthCap = Number.isFinite(computedWidthCap) ? computedWidthCap : Infinity;
+
+  const cap = (value, whole) => {
+    const number = parseFloat(value);
+    if (!Number.isFinite(number)) return Infinity;
+    return String(value).trim().endsWith('%') ? number / 100 * whole : number;
+  };
+
+  const heightCap = cap(floatingStyle.maxHeight, document.documentElement.clientHeight);
+  const widthCap = cap(floatingStyle.maxWidth, document.documentElement.clientWidth);
   const controller = {
     side: settings.side,
     stopped: false

@@ -1,177 +1,151 @@
 import { html, nothing } from 'lit';
+import { avatarClasses, avatarContent, statusBadge } from '../../../avatar/js/templates/shared';
 
-const SIZE_MAP = {
+// The combinations are drawn from the avatar's own parts -- sf-avatar,
+// sf-avatar-group, sf-avatar-label-group, the online indicator and the verified
+// badge -- the classes the avatars sheet styles. The templates wrote an older
+// set (sf-avatar-round, sf-avatar--image, sf-avatar-cir, sf-avatar-check,
+// sf-avatar-profile) that no sheet in the release answered: every avatar was
+// drawn with no shape and no size. Each avatar was also a button with no name
+// and nothing to do; an avatar here is a picture, and the visible text names the
+// person.
+
+const SIZES = ['1/4', '1/3', '1/2', '1', '2', '3'];
+
+const SIZE_NAMES = {
   tiny: '1/4',
   extra_small: '1/3',
   extraSmall: '1/3',
   small: '1/2',
-  default: '',
+  default: '1',
   big: '2',
   extra_big: '3',
   extraBig: '3',
 };
 
-const PROFILE_CHECK_SIZE_MAP = {
-  small: '3',
-  big: '5',
+const PROFILE_SIZES = {
+  small: '2',
+  big: '3',
 };
 
-function normalizeSize(value) {
-  const normalized = String(value || '').trim();
-  return SIZE_MAP[normalized] ?? normalized;
+function step(value, fallback = '1') {
+  const text = String(value ?? '').trim();
+  const named = SIZE_NAMES[text] ?? text;
+  return SIZES.includes(named) ? named : fallback;
 }
 
-function roundClass(size) {
-  const normalized = normalizeSize(size);
-  return normalized ? `sf-avatar-round--${normalized}` : '';
+// How far the avatars of a group overlap, by the size they are drawn at.
+function groupStep(size) {
+  if (size === '1/4' || size === '1/3') return 'xs';
+  if (size === '1/2') return 'sm';
+  return 'md';
 }
 
-function indicatorClass(size, prefix) {
-  const normalized = normalizeSize(size);
-  return normalized ? `${prefix}--${normalized}` : '';
-}
-
-function imageStyle(imageUrl) {
-  return imageUrl ? `background-image: url(${imageUrl});` : nothing;
-}
-
-function checkIcon() {
-  return html`<i class="sf-icon">check</i>`;
-}
-
-function renderDefaultTemplate(context) {
-  const size = context.roundSize || context.avatarSize;
-  const avatarClasses = [
-    'sf-avatar',
-    'sf-avatar-round',
-    roundClass(size),
-    context.rootClass,
-  ].filter(Boolean);
-  const activeClass = indicatorClass(size, 'sf-avatar-cir');
-  const checkClass = indicatorClass(size, 'sf-avatar-check');
-
+function avatar(options) {
+  const imageUrl = options.imageUrl || '';
+  const context = {
+    size: options.size,
+    line: '',
+    shape: 'circle',
+    imageUrl,
+    isImage: Boolean(imageUrl),
+    text: options.text || '',
+    isText: !imageUrl && Boolean(options.text),
+    status: options.status || 'none',
+    rootClass: options.rootClass || '',
+    component: options.component,
+  };
   return html`
-    <div class=${avatarClasses.join(' ')} style=${context.rootStyle || nothing}>
-      <button
-        type="button"
-        class="sf-avatar--image"
-        style=${imageStyle(context.imageUrl)}
-      >
-        ${context.active
-          ? html`<span
-              class=${['sf-avatar-cir', 'sf-avatar-cir-green', activeClass]
-                .filter(Boolean)
-                .join(' ')}
-            ></span>`
-          : nothing}
-        ${context.check
-          ? html`<span
-              class=${['sf-avatar-check', checkClass].filter(Boolean).join(' ')}
-            >
-              ${checkIcon()}
-            </span>`
-          : nothing}
-      </button>
-    </div>
+    <span class=${avatarClasses(context)} style=${options.rootStyle || nothing}>
+      ${avatarContent(context)} ${statusBadge(context)}
+    </span>
   `;
 }
 
-function renderUserTemplate(context) {
+function status(context) {
+  if (context.check) return 'verified';
+  if (context.active) return 'online';
+  return 'none';
+}
+
+function renderDefaultTemplate(context) {
+  return avatar({
+    size: step(context.roundSize || context.avatarSize),
+    imageUrl: context.imageUrl,
+    status: status(context),
+    rootClass: context.rootClass,
+    rootStyle: context.rootStyle,
+    component: context.component,
+  });
+}
+
+function labelGroup(context, {size, imageUrl, title, text, icon}) {
   return html`
-    <div class=${['sf-avatar', 'sf-avatar--user', context.rootClass]
+    <div class=${['sf-avatar-label-group', `sf-avatar-label-group--size-${size}`, 'flex', 'items-cross-center', context.rootClass]
       .filter(Boolean)
       .join(' ')} style=${context.rootStyle || nothing}>
-      ${context.imageUrl ? html`<img src=${context.imageUrl} alt="" />` : nothing}
-      <div class="sf-avatar--user-description">
-        <span class="sf-avatar--name">${context.name}</span>
-        <span class="sf-avatar--additional">
-          <i class="sf-icon">link</i>
-          <span>${context.source}</span>
-        </span>
+      ${avatar({ size, imageUrl, component: context.component })}
+      <div class="sf-avatar-label-group-container flex flex-col">
+        ${title ? html`<div class="sf-avatar-label-group-title">${title}</div>` : nothing}
+        ${text
+          ? html`<div class="sf-avatar-label-group-text">
+              ${icon ? html`<i class="sf-icon" aria-hidden="true">${icon}</i>` : nothing}
+              <span>${text}</span>
+            </div>`
+          : nothing}
       </div>
     </div>
   `;
 }
 
-function renderGroupTemplate(context) {
-  const groupClasses = [
-    'sf-avatar-group',
-    roundClass(context.roundSize).replace('sf-avatar-round', 'sf-avatar-group'),
-    context.rootClass,
-  ].filter(Boolean);
-
-  return html`
-    <div class=${groupClasses.join(' ')} style=${context.rootStyle || nothing}>
-      ${context.avatars.map((avatar) => html`
-        <div class=${['sf-avatar', 'sf-avatar-round', roundClass(context.roundSize)]
-          .filter(Boolean)
-          .join(' ')}>
-          <button
-            type="button"
-            class="sf-avatar--image"
-            style=${imageStyle(avatar.imageUrl || avatar.image_url)}
-          ></button>
-        </div>
-      `)}
-      ${context.avatarsMore
-        ? html`
-            <div class=${['sf-avatar-round', roundClass(context.roundSize)]
-              .filter(Boolean)
-              .join(' ')}>
-              <button type="button" class="sf-avatar--image">
-                <span>${context.avatarsMore}&gt;</span>
-              </button>
-            </div>
-          `
-        : nothing}
-    </div>
-  `;
+function renderUserTemplate(context) {
+  return labelGroup(context, {
+    size: step(context.avatarSize),
+    imageUrl: context.imageUrl,
+    title: context.name,
+    text: context.source,
+    icon: context.source ? 'link' : '',
+  });
 }
 
 function renderLabelTemplate(context) {
-  const labelClasses = [
-    'sf-avatar-label',
-    context.labelSize ? `sf-avatar-label--${normalizeSize(context.labelSize)}` : '',
-    context.rootClass,
-  ].filter(Boolean);
+  return labelGroup(context, {
+    size: step(context.labelSize || context.avatarSize),
+    imageUrl: context.avatarUrl,
+    title: context.labelText,
+    text: context.labelSecondText,
+  });
+}
 
+function renderGroupTemplate(context) {
+  const size = step(context.roundSize, '1/2');
+  const more = String(context.avatarsMore ?? '').trim();
   return html`
-    <div class=${labelClasses.join(' ')} style=${context.rootStyle || nothing}>
-      ${renderDefaultTemplate({
-        ...context,
-        imageUrl: context.avatarUrl,
-        roundSize: context.avatarSize,
-        active: false,
-        check: false,
-        rootClass: '',
-        rootStyle: '',
-      })}
-      <div class="sf-avatar-label--text">
-        <span>${context.labelText}</span>
-        <span>${context.labelSecondText}</span>
+    <div class=${['sf-avatar-group', `sf-avatar-group--size-${groupStep(size)}`, 'flex', 'items-cross-center', context.rootClass]
+      .filter(Boolean)
+      .join(' ')} style=${context.rootStyle || nothing}>
+      <div class="sf-avatar-group-avatars flex">
+        ${context.avatars.map((item) => avatar({
+          size,
+          imageUrl: item.imageUrl || item.image_url,
+          text: item.text || item.initials,
+          component: context.component,
+        }))}
+        ${more ? avatar({ size, text: /^\d+$/u.test(more) ? `+${more}` : more, component: context.component }) : nothing}
       </div>
     </div>
   `;
 }
 
 function renderProfileTemplate(context) {
-  const profileSize = context.profileSize;
-  const checkSize = PROFILE_CHECK_SIZE_MAP[profileSize] || '4';
-  const profileClasses = [
-    'sf-avatar',
-    'sf-avatar-profile',
-    profileSize ? `sf-avatar-profile--${normalizeSize(profileSize)}` : '',
-    context.rootClass,
-  ].filter(Boolean);
-
-  return html`
-    <div class=${profileClasses.join(' ')} style=${context.rootStyle || nothing}>
-      ${context.imageUrl ? html`<img src=${context.imageUrl} alt="" />` : nothing}
-      <span class=${['sf-avatar-check', `sf-avatar-check--${checkSize}`].join(' ')}>
-        ${checkIcon()}
-      </span>
-    </div>
-  `;
+  return avatar({
+    size: PROFILE_SIZES[context.profileSize] || step(context.profileSize, '3'),
+    imageUrl: context.imageUrl,
+    status: 'verified',
+    rootClass: context.rootClass,
+    rootStyle: context.rootStyle,
+    component: context.component,
+  });
 }
 
 export function renderAvatarsTemplate(context) {

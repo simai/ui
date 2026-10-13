@@ -218,9 +218,12 @@ class DownloadFile extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0
       }
     } else {
       root.type = 'button';
-    }
+    } // Size 1 is the block's own rule; there is no --size-1 class to write, and
+    // writing one left a class no sheet answers.
 
-    root.classList.add('sf-download-file', `sf-download-file--size-${normalizeSize(size)}`);
+
+    root.classList.add('sf-download-file');
+    if (normalizeSize(size) !== '1') root.classList.add(`sf-download-file--size-${normalizeSize(size)}`);
 
     if (!isDisabled) {
       root.classList.add('cursor-pointer', 'transition');
@@ -314,6 +317,17 @@ if (typeof document !== 'undefined') {
   } else {
     initExistingDownloadFiles();
   }
+} // A public bind, as the other bound components have: markup added by a script
+// that the observer has not reached yet, or a root rebound after a change. The
+// binders were exported for bundles only, so a page had none.
+
+
+if (typeof window !== 'undefined') {
+  window.SF = window.SF || {};
+  window.SF.DownloadFile = window.SF.DownloadFile || {};
+  window.SF.DownloadFile.bind = bindDownloadFile;
+  window.SF.DownloadFile.unbind = unbindDownloadFile;
+  window.SF.DownloadFile.initAll = initExistingDownloadFiles;
 }
 
 

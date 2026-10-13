@@ -283,9 +283,69 @@ function setValue(target, value = '') {
   return Boolean(inputs.length);
 }
 
+const SIZES = ['1/2', '1', '2'];
+const MODES = ['numeric', 'alphanumeric', 'text']; // The classes built nothing: template stayed null, so render() returned null and
+// `new SF.VerificationForm({...}).render()` put no field on the page. They now
+// build the canonical markup -- one native input, the cells projected by bind().
+
+function settingsOf(params = {}) {
+  const size = SIZES.includes(String(params.size)) ? String(params.size) : '1';
+  const mode = MODES.includes(String(params.mode)) ? String(params.mode) : 'numeric';
+  const length = Math.min(12, Math.max(1, Number.parseInt(params.length, 10) || 6));
+  return { ...params,
+    size,
+    mode,
+    length,
+    filled: params.appearance === 'filled' || params.filled === true
+  };
+}
+
+function buildControl(settings, id) {
+  const control = document.createElement('div');
+  control.className = `sf-verification sf-verification--size-${settings.size}`;
+  if (settings.filled) control.classList.add('sf-verification--filled');
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.className = 'sf-verification-input';
+  if (id) input.id = id;
+  if (settings.name) input.name = settings.name;
+  if (settings.mode === 'numeric') input.inputMode = 'numeric';
+  input.autocomplete = 'one-time-code';
+  input.maxLength = settings.length;
+  if (settings.value) input.value = String(settings.value);
+  if (settings.disabled) input.disabled = true;
+  if (settings.required) input.required = true;
+  control.append(input);
+  return control;
+}
+
+function applyAttrs(node, attrs = {}) {
+  const className = attrs.class || attrs.className;
+  if (className) node.classList.add(...String(className).split(' ').filter(Boolean));
+}
+
 class Verification extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.ComponentObserver {
   static componentName = 'Verification';
-  html = null;
+
+  constructor(props) {
+    super(props);
+    const settings = settingsOf(this.params || {});
+    this.template = buildControl(settings, this.id);
+    this.template.dataset.length = String(settings.length);
+    this.template.dataset.mode = settings.mode; // Without a visible label the input is named by what the host passes.
+
+    if (settings.label) this.template.querySelector('input').setAttribute('aria-label', settings.label);
+    applyAttrs(this.template, this.attrs);
+  }
+
+  init() {
+    bind(this.template);
+  }
+
+  destroyInternal() {
+    unbind(this.template);
+  }
+
 }
 
 Verification.utilityMap = _json_verification_utility_json__WEBPACK_IMPORTED_MODULE_2__;
@@ -293,7 +353,35 @@ Verification.utilityMap = _json_verification_utility_json__WEBPACK_IMPORTED_MODU
 
 class VerificationForm extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.ComponentObserver {
   static componentName = 'VerificationForm';
-  html = null;
+
+  constructor(props) {
+    super(props);
+    const settings = settingsOf(this.params || {});
+    const root = document.createElement('label');
+    root.className = `sf-verification-form sf-verification-form--size-${settings.size}`;
+    if (settings.filled) root.classList.add('sf-verification-form--filled');
+    root.dataset.length = String(settings.length);
+    root.dataset.mode = settings.mode;
+
+    if (settings.label) {
+      const label = document.createElement('span');
+      label.className = 'sf-verification-form-label';
+      label.textContent = settings.label;
+      root.append(label);
+    }
+
+    root.append(buildControl(settings, this.id));
+
+    if (settings.hint) {
+      const hint = document.createElement('span');
+      hint.className = 'sf-verification-form-hint';
+      hint.textContent = settings.hint;
+      root.append(hint);
+    }
+
+    applyAttrs(root, this.attrs);
+    this.template = root;
+  }
 
   init() {
     bind(this.template);

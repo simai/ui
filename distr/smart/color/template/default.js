@@ -20,13 +20,19 @@ export function renderColorTemplate(context) {
                 <input
                         type="color"
                         class="sf-color-input"
-                        name=${context.name || nothing}
                         .value=${shown || '#000000'}
                         ?disabled=${disabled}
                         aria-label=${context.label || context.chooseLabel}
-                        @input=${(event) => context.component.setValue(event.target.value)}
+                        @input=${(event) => context.component._pickerInput(event)}
+                        @change=${(event) => context.component._pickerChange(event)}
                 >
             </label>
+            ${context.name
+                    // The form gets the value, empty while the inherited colour
+                    // applies. The colour input cannot hold «nothing»: named, it
+                    // submitted #000000 for every colour nobody had chosen.
+                    ? html`<input type="hidden" name=${context.name} .value=${context.value}>`
+                    : nothing}
 
             <span class="sf-color-text">
                 ${isSet

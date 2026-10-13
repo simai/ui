@@ -168,14 +168,18 @@ class SfColor extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default(
 
   get customText() {
     return (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_1__.pageText)(COLOR_TEXT, "custom", this);
-  } // The colours a product already has. A space or comma separated list, each one
-  // a hex, optionally `#hex|Name` so a swatch can say what it is.
+  } // The colours a product already has. A comma separated list, each one a hex,
+  // optionally `#hex|Name` so a swatch can say what it is. A name may hold
+  // spaces («#1f6feb|Brand blue»): splitting on spaces too cut it into a swatch
+  // named «Brand» and a word that is not a colour. A piece without a name may
+  // still list several colours by spaces, as the first lists did.
 
 
   get swatchList() {
-    return String(this.getAttribute("swatches") || "").split(/[\s,]+/u).filter(Boolean).map(entry => {
-      const [color, name] = entry.split("|");
+    return String(this.getAttribute("swatches") || "").split(",").flatMap(piece => piece.includes("|") ? [piece.trim()] : piece.trim().split(/\s+/u)).filter(Boolean).map(entry => {
+      const [color, ...rest] = entry.split("|");
       const hex = normalise(color);
+      const name = rest.join("|").trim();
       return hex ? {
         value: hex,
         name: name || hex
@@ -194,21 +198,66 @@ class SfColor extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default(
   }
 
   setValue(next) {
+    const changed = this._write(next);
+
+    this._commit();
+
+    return changed;
+  } // `input` while the value moves (a drag across the platform picker), `change`
+  // once when it is committed. The picker fires its own input on every step of a
+  // drag, so a change per input was a change per pixel.
+
+
+  _write(next) {
     const value = normalise(next);
     if (value === this.value) return false;
     if (value) this.setAttribute("value", value);else this.removeAttribute("value");
-    this.requestComponentUpdate("value"); // `change` on the host, once per change a person makes, which is what the
-    // Framework calls a committed value change.
+    this.requestComponentUpdate("value");
 
-    this.dispatchEvent(new CustomEvent("change", {
+    this._emit("input");
+
+    return true;
+  }
+
+  _commit() {
+    const value = this.value;
+    if (value === (this._committed ?? normalise(this._initialValue))) return;
+    this._committed = value;
+
+    this._emit("change");
+  }
+
+  _emit(type) {
+    this.dispatchEvent(new CustomEvent(type, {
       bubbles: true,
       composed: true,
       detail: {
-        value,
+        value: this.value,
         name: this.name
       }
     }));
-    return true;
+  }
+
+  connectedCallback() {
+    if (this._initialValue === undefined) this._initialValue = this.getAttribute("value") ?? "";
+    super.connectedCallback?.();
+  } // The platform picker's own events. Its input moves the value; its change
+  // commits it. Its change also bubbles out of the host as a plain Event with no
+  // detail, a second change for every one this dispatches, so it stops here.
+
+
+  _pickerInput(event) {
+    event.stopPropagation();
+
+    this._write(event.target.value);
+  }
+
+  _pickerChange(event) {
+    event.stopPropagation();
+
+    this._write(event.target.value);
+
+    this._commit();
   }
 
   clear() {
@@ -289,13 +338,17 @@ function renderColorTemplate(context) {
                 <input
                         type="color"
                         class="sf-color-input"
-                        name=${context.name || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                         .value=${shown || '#000000'}
                         ?disabled=${disabled}
                         aria-label=${context.label || context.chooseLabel}
-                        @input=${event => context.component.setValue(event.target.value)}
+                        @input=${event => context.component._pickerInput(event)}
+                        @change=${event => context.component._pickerChange(event)}
                 >
             </label>
+            ${context.name // The form gets the value, empty while the inherited colour
+  // applies. The colour input cannot hold «nothing»: named, it
+  // submitted #000000 for every colour nobody had chosen.
+  ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<input type="hidden" name=${context.name} .value=${context.value}>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
 
             <span class="sf-color-text">
                 ${isSet ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<code>${context.value}</code>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-color-inherited">${context.inheritedText}</span>`}

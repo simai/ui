@@ -54,6 +54,8 @@ export function renderModalTemplate(context) {
                 class=${joinClasses(
                         'sf-modal',
                         `sf-modal--position-${context.position}`,
+                        // Legacy alias: the misspelt class the modal wrote before;
+                        // kept until contracts/changes/journal.json removes it.
                         `sf-modal--positon-${context.position}`,
                         isInline
                                 ? 'sf-modal--inline inline-block w-full'

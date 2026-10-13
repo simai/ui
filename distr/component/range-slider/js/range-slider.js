@@ -755,9 +755,12 @@ function createNativeSlider(root, options) {
       handle.setAttribute('aria-valuetext', options.ariaFormat?.to?.(values[index]) || String(values[index]));
     });
     const start = values.length > 1 ? percents[0] : options.connect === 'upper' ? percents[0] : 0;
-    const end = values.length > 1 ? percents[1] : options.connect === false ? percents[0] : options.connect === 'upper' ? 100 : percents[0];
-    connect.style.insetInlineStart = `${Math.min(start, end)}%`;
-    connect.style.inlineSize = `${Math.abs(end - start)}%`;
+    const end = values.length > 1 ? percents[1] : options.connect === false ? percents[0] : options.connect === 'upper' ? 100 : percents[0]; // connect: false draws no fill at all; it drew one from the start of the
+    // track, which is what connect: 'lower' means.
+
+    const none = options.connect === false;
+    connect.style.insetInlineStart = `${none ? 0 : Math.min(start, end)}%`;
+    connect.style.inlineSize = `${none ? 0 : Math.abs(end - start)}%`;
   };
 
   const setHandle = (index, value, final = false) => {

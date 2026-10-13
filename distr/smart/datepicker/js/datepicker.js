@@ -1435,8 +1435,11 @@ class SfDatepicker extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___def
       bubbles: true,
       composed: true,
       detail
-    }));
-    this.emitComponentEvent('change', this.data);
+    })); // The legacy sf-change carries the change detail, as its manifest says; it
+    // carried the whole state (open, portal, locale, month...), which no
+    // handler of a change wants and which changed with every refactor.
+
+    this.emitComponentEvent('change', detail);
   }
 
   templateContext() {

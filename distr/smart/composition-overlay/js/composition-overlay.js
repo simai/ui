@@ -1031,7 +1031,9 @@ function defineSortable(registry = globalThis.customElements) {
       if (!this.live) {
         this.live = globalThis.document.createElement('div');
         this.live.className = 'sf-sortable-live';
-        this.live.setAttribute('aria-live', 'assertive');
+        // Pick-up, move and drop are routine steps the person caused; polite
+        // waits for the reader instead of cutting across what it was saying.
+        this.live.setAttribute('aria-live', 'polite');
         this.instructions = globalThis.document.createElement('div');
         this.instructions.className = 'sf-sortable-live';
         this.instructions.id = `sf-sortable-help-${Math.random().toString(36).slice(2, 10)}`;

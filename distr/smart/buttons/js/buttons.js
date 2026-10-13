@@ -31,6 +31,8 @@ function applyButtonAttributes(host, button) {
   });
 }
 
+const BUTTON_APPEARANCES = ["default", "tonal", "outline", "link", "surface", "ghost"];
+
 class SfButton extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()) {
   constructor() {
     super();
@@ -131,10 +133,14 @@ class SfButton extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default
 
   get size() {
     return this.getAttribute("size") || "1";
-  }
+  } // A value outside the list draws the default button. It drew none: an unknown
+  // appearance (type="primary", a scheme written where the appearance goes) gave
+  // the class sf-button--primary twice and no fill, no border, no padding.
+
 
   get appearance() {
-    return this.getAttribute("appearance") || this.getAttribute("type") || "default";
+    const value = this.getAttribute("appearance") || this.getAttribute("type") || "default";
+    return BUTTON_APPEARANCES.includes(value) ? value : "default";
   } // The legacy name, kept so a consumer reading el.type still gets an answer.
 
 

@@ -98,11 +98,17 @@ __webpack_require__.r(__webpack_exports__);
 const FILE_UPLOAD_ITEM_TEXT = {
   en: {
     remove: 'Remove',
-    uploading: 'Uploading'
+    uploading: 'Uploading',
+    retry: 'Try again',
+    linkText: 'Click to upload',
+    text: 'or drag and drop'
   },
   ru: {
     remove: 'Удалить',
-    uploading: 'Загрузка'
+    uploading: 'Загрузка',
+    retry: 'Повторить',
+    linkText: 'Выберите файл',
+    text: 'или перетащите его сюда'
   }
 };
 const FILE_UPLOAD_SELECTOR = '.sf-file-upload';
@@ -298,14 +304,14 @@ function syncFileUploadInteraction(root) {
   });
 }
 
-function createUploadProgressItem(item, size = '1') {
+function createUploadProgressItem(item, size = '1', owner = null) {
   const normalizedSize = normalizeSize(size);
   const state = String(item.state || item.status || 'done').toLowerCase();
   const fileName = String(item.name || item.fileName || 'File');
   const fileSize = String(item.fileSize || item.sizeText || '');
   const progress = Math.max(0, Math.min(100, Number(item.progress ?? 100) || 0));
   const iconName = String(item.icon || 'cloud_upload');
-  const errorMessage = String(item.errorMessage || item.retryText || 'Try again');
+  const errorMessage = String(item.errorMessage || item.retryText || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(FILE_UPLOAD_ITEM_TEXT, 'retry', owner, 'sf-file-upload'));
   const root = document.createElement('div');
   root.className = ['sf-upload-progress', `sf-upload-progress--size-${normalizedSize}`, `sf-upload-progress--${state}`, 'flex', 'items-main-start', 'items-cross-start'].join(' ');
   const leftIcon = document.createElement('i');
@@ -392,7 +398,7 @@ function renderFileUploadItems(root, items = []) {
   container.innerHTML = '';
   const size = normalizeSize(Array.from(root.classList).find(cls => cls.startsWith('sf-file-upload--size-'))?.replace('sf-file-upload--size-', '') || '1');
   items.forEach((item, index) => {
-    const node = createUploadProgressItem(item, size);
+    const node = createUploadProgressItem(item, size, root);
     node.dataset.index = String(index);
     container.append(node);
   });
@@ -532,6 +538,21 @@ function retryFileUploadItem(root, index) {
     }
   }));
   return true;
+} // Whether a file is one the accept list names: `.ext`, `type/*` or `type/sub`,
+// as the platform dialog reads it. The dialog filters what a person may pick; a
+// drop went past it and took any file at all.
+
+
+function acceptsFile(accept, file) {
+  const tokens = String(accept || '').split(',').map(token => token.trim().toLowerCase()).filter(Boolean);
+  if (!tokens.length) return true;
+  const name = String(file?.name || '').toLowerCase();
+  const type = String(file?.type || '').toLowerCase();
+  return tokens.some(token => {
+    if (token.startsWith('.')) return name.endsWith(token);
+    if (token.endsWith('/*')) return type.startsWith(token.slice(0, -1));
+    return type === token;
+  });
 }
 
 function emitSelect(root, files, source = 'input') {
@@ -643,8 +664,32 @@ function bindFileUpload(root) {
     if (!files.length && !Array.from(event.dataTransfer?.types || []).includes('Files')) return;
     event.preventDefault();
     if (isDisabledRoot(root) || !files.length) return;
-    const normalized = getMultiple(root) ? files : files.slice(0, 1);
-    applySelectedFiles(root, normalized, 'drop');
+    const accepted = files.filter(file => acceptsFile(getAccept(root), file));
+    const rejected = files.filter(file => !accepted.includes(file));
+
+    if (rejected.length) {
+      root.dispatchEvent(new CustomEvent('sf-file-upload:reject', {
+        bubbles: true,
+        detail: {
+          files: rejected,
+          accept: getAccept(root),
+          source: 'drop'
+        }
+      }));
+    }
+
+    if (!accepted.length) return;
+    const normalized = getMultiple(root) ? accepted : accepted.slice(0, 1);
+    applySelectedFiles(root, normalized, 'drop'); // A pick sends change from the native input; a drop sent none, so a form
+    // listening for change never heard of a dropped file.
+
+    root.dispatchEvent(new CustomEvent('change', {
+      bubbles: true,
+      detail: {
+        files: normalized,
+        source: 'drop'
+      }
+    }));
   };
 
   const onFilesClick = event => {
@@ -778,18 +823,80 @@ function setFileUploadItems(target, items = []) {
 
 function clearFileUpload(target) {
   return setFileUploadItems(target, []);
-}
+} // The class built nothing: template stayed null and render() returned null. It
+// builds the drop area and its list now, the markup the Smart template draws.
+
 
 class FileUpload extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.ComponentObserver {
   static componentName = 'FileUpload';
-  html = null;
+
+  constructor(props) {
+    super(props);
+    const {
+      size = '1',
+      accept = '',
+      multiple = false,
+      disabled = false,
+      icon = 'cloud_upload',
+      linkText,
+      text,
+      supportingText = '',
+      label = ''
+    } = this.params || {};
+    const step = normalizeSize(size);
+    const wrapper = document.createElement('div');
+    wrapper.className = 'sf-file-upload-wrap flex flex-col gap-1';
+    const root = document.createElement('div');
+    if (this.id) root.id = this.id;
+    root.className = `sf-file-upload sf-file-upload--size-${step} flex flex-col items-cross-center cursor-pointer`;
+    const className = this.attrs.class || this.attrs.className;
+    if (className) root.classList.add(...String(className).split(' ').filter(Boolean));
+    if (accept) root.dataset.accept = accept;
+    root.dataset.multiple = toBoolean(multiple) ? 'true' : 'false';
+    if (toBoolean(multiple)) root.setAttribute('multiple', '');
+    if (toBoolean(disabled)) root.setAttribute('disabled', '');
+    if (label) root.setAttribute('aria-label', label);
+    root.tabIndex = 0;
+    const featured = document.createElement('div');
+    featured.className = `sf-featured-icon sf-featured-icon--size-${step} sf-featured-icon--soft sf-featured-icon--circle sf-featured-icon--neutral`;
+    const glyph = document.createElement('i');
+    glyph.className = 'sf-icon';
+    glyph.textContent = icon;
+    featured.append(glyph);
+    const bottom = document.createElement('div');
+    bottom.className = 'sf-file-upload-bottom flex flex-col items-cross-center';
+    const block = document.createElement('div');
+    block.className = 'sf-file-upload-block flex';
+    const blockText = document.createElement('div');
+    blockText.className = 'sf-file-upload-block-text';
+    const link = document.createElement('span');
+    link.className = 'sf-file-upload-link';
+    link.textContent = linkText ?? (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(FILE_UPLOAD_ITEM_TEXT, 'linkText', root, 'sf-file-upload');
+    blockText.append(link, ` ${text ?? (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(FILE_UPLOAD_ITEM_TEXT, 'text', root, 'sf-file-upload')}`);
+    block.append(blockText);
+    bottom.append(block);
+
+    if (supportingText) {
+      const support = document.createElement('span');
+      support.className = 'sf-file-upload-text';
+      support.textContent = supportingText;
+      bottom.append(support);
+    }
+
+    root.append(featured, bottom);
+    const files = document.createElement('div');
+    files.className = 'sf-file-upload-files grid grid-col-1 gap-1 w-full';
+    wrapper.append(root, files);
+    this.root = root;
+    this.template = wrapper;
+  }
 
   init() {
-    bindFileUpload(this.template);
+    bindFileUpload(this.root);
   }
 
   destroyInternal() {
-    unbindFileUpload(this.template);
+    unbindFileUpload(this.root);
   }
 
 }

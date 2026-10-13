@@ -514,7 +514,9 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
 
   buildTemplate(params) {
     const isInline = this.display === 'inline';
-    const root = document.createElement('div');
+    const root = document.createElement('div'); // sf-modal--positon-* is the legacy misspelt alias of sf-modal--position-*,
+    // written beside it until contracts/changes/journal.json removes it.
+
     root.className = isInline ? `sf-modal sf-modal--inline sf-modal--position-${this.position} sf-modal--positon-${this.position} inline-block w-full` : `sf-modal sf-modal--position-${this.position} sf-modal--positon-${this.position} hidden fixed top-0 inline-start-0 w-full h-full z-9 p-3 items-cross-center content-main-center`;
     root.setAttribute('role', isInline ? 'region' : 'dialog');
     root.setAttribute('aria-modal', isInline ? 'false' : 'true');
@@ -990,9 +992,10 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
 
     if (!Modal.isTopModal(this)) {
       return;
-    }
+    } // An open popover takes Escape first; the window behind it stays.
 
-    if (event.key === 'Escape' && this.closeOnEsc && this._modalState !== 'closing') {
+
+    if (event.key === 'Escape' && this.closeOnEsc && this._modalState !== 'closing' && !event.defaultPrevented && !document.documentElement?.dataset?.sfPopoverOpen) {
       event.preventDefault();
       event.stopImmediatePropagation();
       this.close();

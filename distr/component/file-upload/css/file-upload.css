@@ -376,6 +376,15 @@
   .sf-file-upload:not([disabled]):not(.disabled):hover {
     --sf-file-upload--border-color: var(--sf-outline-primary);
   }
+  /* A file held over the area: the script set .dragover and nothing drew it, so a
+     person dropping had no sign the area would take the file. */
+  .sf-file-upload.dragover:not([disabled]):not(.disabled) {
+    --sf-file-upload--background-color: var(--sf-primary-transparent-select);
+    --sf-file-upload--border-color: var(--sf-outline-primary);
+  }
+  .sf-file-upload.dragover:not([disabled]):not(.disabled) .sf-featured-icon .sf-icon {
+    color: var(--sf-primary);
+  }
   .sf-file-upload[disabled] {
     --sf-file-upload--background-color: var(--sf-disable);
     --sf-file-upload--border-color: var(--sf-outline-disable);

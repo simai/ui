@@ -1603,9 +1603,10 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
 
     if (this.hiddenState) {
       return;
-    }
+    } // An open popover takes Escape first; the window behind it stays.
 
-    if (event.key === "Escape" && this.closeOnEsc && !this.unclose && this._modalState !== "closing") {
+
+    if (event.key === "Escape" && this.closeOnEsc && !this.unclose && this._modalState !== "closing" && !event.defaultPrevented && !document.documentElement?.dataset?.sfPopoverOpen) {
       event.preventDefault();
       event.stopImmediatePropagation();
       this.close();
@@ -2115,7 +2116,9 @@ function renderModalTemplate(context) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <div
                 id=${context.modalId}
-                class=${joinClasses('sf-modal', `sf-modal--position-${context.position}`, `sf-modal--positon-${context.position}`, isInline ? 'sf-modal--inline inline-block w-full' : 'fixed top-0 inline-start-0 w-full h-full z-9 p-3 items-cross-center content-main-center', context.open ? 'flex' : 'hidden', !isInline && context.animate && 'animate', context.rootClass)}
+                class=${joinClasses('sf-modal', `sf-modal--position-${context.position}`, // Legacy alias: the misspelt class the modal wrote before;
+  // kept until contracts/changes/journal.json removes it.
+  `sf-modal--positon-${context.position}`, isInline ? 'sf-modal--inline inline-block w-full' : 'fixed top-0 inline-start-0 w-full h-full z-9 p-3 items-cross-center content-main-center', context.open ? 'flex' : 'hidden', !isInline && context.animate && 'animate', context.rootClass)}
                 style=${modalStyle}
                 role=${isInline ? 'region' : 'dialog'}
                 aria-modal=${isInline || context.minimized ? 'false' : 'true'}

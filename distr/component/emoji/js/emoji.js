@@ -52,7 +52,7 @@ class Emoji extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
 
       this.element.setAttribute(attr, value);
     });
-    const content = this.resolveEmoji(name, emoji, fallback);
+    const content = this.withSkin(this.resolveEmoji(name, emoji, fallback), skin);
     this.element.textContent = content;
     const hidden = decorative || this.element.getAttribute('aria-hidden') === 'true';
     const labelledBy = this.element.getAttribute('aria-labelledby');
@@ -98,7 +98,19 @@ class Emoji extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
     normalize(utilities).filter(Boolean).forEach(cls => target.classList.add(cls));
   }
 
-  init() {}
+  init() {} // A skin tone is a character, not a style: the Fitzpatrick modifier after an
+  // emoji that takes one. The class sf-emoji--skin-* had no rule behind it, so
+  // skin changed nothing. Written only after a base that takes a modifier --
+  // after any other emoji the modifier shows as a separate colour swatch.
+
+
+  withSkin(content, skin) {
+    const modifier = SKIN_TONES[String(skin ?? '').toLowerCase()];
+    if (!modifier || !content) return content;
+    const [first, ...rest] = Array.from(content.replace(/[\u{1F3FB}-\u{1F3FF}]/gu, ''));
+    if (!/\p{Emoji_Modifier_Base}/u.test(first)) return content;
+    return [first, modifier, ...rest.filter(char => char !== '\uFE0F')].join('');
+  }
 
   normalizeShortcode(value) {
     if (!value) return '';
@@ -117,6 +129,18 @@ class Emoji extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
 
 }
 
+const SKIN_TONES = {
+  1: '\u{1F3FB}',
+  light: '\u{1F3FB}',
+  2: '\u{1F3FC}',
+  'medium-light': '\u{1F3FC}',
+  3: '\u{1F3FD}',
+  medium: '\u{1F3FD}',
+  4: '\u{1F3FE}',
+  'medium-dark': '\u{1F3FE}',
+  5: '\u{1F3FF}',
+  dark: '\u{1F3FF}'
+};
 const SHORTCODES = {
   smile: '😊',
   grin: '😁',

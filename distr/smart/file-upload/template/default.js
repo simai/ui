@@ -20,13 +20,13 @@ function normalizeProgress(value) {
     return Math.max(0, Math.min(100, parsed));
 }
 
-function renderUploadItem(item, size, index) {
+function renderUploadItem(item, size, index, retryText) {
     const state = normalizeState(item.state || item.status);
     const progress = normalizeProgress(item.progress ?? (state === 'done' ? 100 : 0));
     const icon = item.icon || 'cloud_upload';
     const name = item.name || item.fileName || 'File';
     const fileSize = item.fileSize || item.sizeText || '';
-    const errorMessage = item.errorMessage || item.retryText || 'Try again';
+    const errorMessage = item.errorMessage || item.retryText || retryText;
 
     return html`
         <div
@@ -128,7 +128,7 @@ export function renderFileUploadTemplate(context) {
 
         <div class="sf-file-upload-files grid grid-col-1 gap-1 w-full">
             ${Array.isArray(context.items)
-                    ? context.items.map((item, index) => renderUploadItem(item, size, index))
+                    ? context.items.map((item, index) => renderUploadItem(item, size, index, context.retryText))
                     : nothing}
         </div>
     `;

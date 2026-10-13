@@ -28,6 +28,8 @@ function applyButtonAttributes(host, button) {
   });
 }
 
+const ICON_BUTTON_APPEARANCES = ['default', 'tonal', 'outline', 'link', 'surface', 'ghost'];
+
 class SfIconButton extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()) {
   constructor() {
     super();
@@ -124,10 +126,13 @@ class SfIconButton extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___def
 
   get variant() {
     return this.kind;
-  }
+  } // A value outside the list draws the default button, as sf-button does; an
+  // unknown appearance drew a button with no fill and no border.
+
 
   get appearance() {
-    return this.getAttribute('appearance') || this.getAttribute('type') || 'default';
+    const value = this.getAttribute('appearance') || this.getAttribute('type') || 'default';
+    return ICON_BUTTON_APPEARANCES.includes(value) ? value : 'default';
   } // The legacy name, kept so a consumer reading el.type still gets an answer.
 
 

@@ -63,7 +63,11 @@ class SfPopover extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___defaul
       label: {
         default: ''
       },
-      role: {
+      // What the surface is to a reader. `role` was the name, and a role
+      // attribute on the host made the host itself a menu or a dialog
+      // beside its surface; it is still read once and moved off the host.
+      surfaceRole: {
+        attribute: 'surface-role',
         default: 'dialog',
         values: ['dialog', 'menu', 'listbox', 'group']
       },
@@ -105,8 +109,30 @@ class SfPopover extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___defaul
     return this.getAttribute('label') || '';
   }
 
+  get surfaceRole() {
+    const values = ['dialog', 'menu', 'listbox', 'group'];
+    if (this.hasAttribute('surface-role')) return this.getEnumAttr('surface-role', values, 'dialog');
+    return values.includes(this._legacyRole) ? this._legacyRole : 'dialog';
+  } // The legacy name, kept so a consumer reading el.role still gets an answer.
+
+
   get role() {
-    return this.getEnumAttr('role', ['dialog', 'menu', 'listbox', 'group'], 'dialog');
+    return this.surfaceRole;
+  } // A role written on the host is the surface's: it is taken once and removed,
+  // so the host is not a second menu or dialog around the real one.
+
+
+  _adoptLegacyRole() {
+    if (!this.hasAttribute('role')) return;
+    this._legacyRole = String(this.getAttribute('role') || '').trim().toLowerCase();
+    this.removeAttribute('role');
+    globalThis.SF?.deprecations?.note?.({
+      component: 'sf-popover',
+      kind: 'attribute',
+      attribute: 'role',
+      from: 'role',
+      to: 'surface-role'
+    });
   }
 
   get width() {
@@ -142,6 +168,8 @@ class SfPopover extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___defaul
   }
 
   onConnected() {
+    this._adoptLegacyRole();
+
     super.onConnected?.();
 
     this._bindDismissal();
@@ -263,9 +291,21 @@ class SfPopover extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___defaul
   updateDom() {
     this.dataset.placement = this.placement;
     this.dataset.open = this.open ? 'true' : 'false';
+
+    this._adoptLegacyRole(); // The control that opens it says that it does and whether it has.
+
+
+    const trigger = this.querySelector('[slot="trigger"]');
+    const control = trigger?.matches?.('button, a[href], [tabindex]') ? trigger : trigger?.querySelector?.('button, a[href], [tabindex], sf-button, sf-icon-button');
+
+    if (control) {
+      control.setAttribute('aria-expanded', this.open ? 'true' : 'false');
+      control.setAttribute('aria-haspopup', this.surfaceRole === 'group' ? 'true' : this.surfaceRole);
+    }
+
     const surface = this.querySelector('[slot="content"]');
     if (!surface) return true;
-    surface.setAttribute('role', this.role);
+    surface.setAttribute('role', this.surfaceRole);
     if (this.label) surface.setAttribute('aria-label', this.label);else surface.removeAttribute('aria-label');
     surface.style.setProperty('--sf-popover--width', this.width || '');
     return true;
