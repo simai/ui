@@ -8,6 +8,11 @@
 
 ### Исправлено
 
+- The input mask reads the documented grammar: `0` digit, `a` letter, `*` any, `{...}` a fixed part that belongs to the value, `\` escape. `+{7} (000) 000-00-00` printed its braces and re-read its own 7 as input; `mask-lazy="false"` and `mask-placeholder-char` were ignored; `"mask": "Number"` from JSON printed the word. A Number mask now groups thousands while it is typed and clamps, scales and pads when the field is left. `SF.Mask` is unchanged.
+- The Loader loads elements inserted after the page has loaded. When it prepared after the window's load (its chunk arrives on its own) or after a Turbo visit, its search never ended and later elements waited in a queue nothing read.
+- `sf-quantity` keeps focus on the value when a focused step button reaches the limit; it fell to `<body>`.
+- The `template` input of Smart manifests is no longer limited to the shipped templates (any name loads from the external template base), and the button's composition type accepts `appearance` and `tightness`.
+
 - A menu has no tail: it never read as one piece with the panel. `position` and `tooltip` are deprecated and draw nothing; markup that writes a tail has it hidden.
 - A menu returns the focus where it was, or to its anchor's own control when it was nowhere -- an `sf-button` anchor left it on the page body.
 - Copying a Highlight block with line numbers copies the code, one line per row, without the numbers.
