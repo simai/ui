@@ -8,6 +8,14 @@
 
 ### Исправлено
 
+- A field's mask binds when Core arrives after the field's script (SF_PRELOADED, Docara's pages and example frames): it gave up for good when SF.Mask was not there yet. Core announces the service with `sf-mask-ready`.
+- Smart elements speak the page's language by default: an untitled `sf-modal` is «Окно» / «Dialog», not «Modal»; the `sf-dropdown` search reads «Поиск» / «Search», not «Placeholder». Manifests no longer state English text defaults the runtime never used.
+- `sf-dropdown` no longer lets its search field's native `change` reach listeners on the element.
+- `SF.Input.setState({invalid: false, errorMessage: hint})` restores a hint as a hint.
+- `SF.deprecations.list()` lists the notes of every bundle on the page, not of the last one loaded.
+- The Framework's own templates write `appearance`, `kind`, `spacing`, `icon-start` and `icon-end` on the elements they draw, so a page using nothing legacy no longer collects the Framework's own deprecation notes; tree and dropdown items read `kind` before `type`.
+- Manifests declare `sf-modal`'s before/after events, the full `change` detail of `sf-datepicker` and `sf-dropdown`, and `sf-datepicker`'s `name`; the change journal records the status class aliases and the `tightness-*` classes.
+
 - The input mask reads the documented grammar: `0` digit, `a` letter, `*` any, `{...}` a fixed part that belongs to the value, `\` escape. `+{7} (000) 000-00-00` printed its braces and re-read its own 7 as input; `mask-lazy="false"` and `mask-placeholder-char` were ignored; `"mask": "Number"` from JSON printed the word. A Number mask now groups thousands while it is typed and clamps, scales and pads when the field is left. `SF.Mask` is unchanged.
 - The Loader loads elements inserted after the page has loaded. When it prepared after the window's load (its chunk arrives on its own) or after a Turbo visit, its search never ended and later elements waited in a queue nothing read.
 - `sf-quantity` keeps focus on the value when a focused step button reaches the limit; it fell to `<body>`.
