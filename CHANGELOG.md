@@ -8,6 +8,8 @@
 
 ### Исправлено
 
+- The larena package's table requires `smart.radio`: its filter window's templates are a radio list.
+
 - `sf-sortable` opens the silhouette in a list that wraps into a grid as well: the outline is one of its cells, in reading order, instead of a line.
 
 - A badge is as wide as its text: in a table cell it filled the column. A reference in a cell is a plain link without the card's arrow, and a person's name links to the profile when the host gives its href. Filter controls take the size of the list they filter. The page language is read past shadow roots, so a pagination inside a data view speaks the admin's language.
