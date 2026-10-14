@@ -78,6 +78,8 @@
 
 ### Добавлено
 
+- `sf-copy-button` — copies a `value` or a `target`'s text and says so: the icon turns to a check and «Скопировано» is announced; `label` names what is copied. A refused clipboard selects the text and announces «Выделено — нажмите Ctrl+C». Events `sf-copy` and `sf-copy-error {code}`; `copy()` from code.
+
 - `sf-empty-state` — what a list, a panel or a page says when it has nothing to show: `kind="no-data|nothing-found|no-access|error"` with its icon, a heading at `heading-level`, a sentence in the page language and actions (slot `actions`, or the `actions` property raising `sf-empty-state-action`; «Повторить» for an error without its own). Sizes 1/2, 1, 2; nothing-found and error are a polite status.
 - The `sf-sortable` manifest says a list that wraps into a grid opens the outline as one of its cells.
 
