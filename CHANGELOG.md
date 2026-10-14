@@ -148,6 +148,8 @@
 
 ### Изменено
 
+- The larena package's admin menu and record view require `smart.profile-picker`.
+
 - The `larena` package reference lets the table relate to `sf-sortable` and the admin menu to `sf-dropdown`: the table's windows reorder their lists with `sf-sortable`, and the menu's edit mode chooses a row's glyph with the grid dropdown. The public source's CI reads ui-doc's main and the published distribution.
 
 - The breakpoints are steps of the size ladder, in rem, and `--sf-breakpoint-*` name the same steps: sm 32rem (512px), md 44rem (704px), lg 60rem (960px), xl 72rem (1152px), xxl 80rem (1280px). They were 520/720/960/1140/1320px against variables of 704/768/960/1152/1536px. Layouts that switch at sm, md, xl or xxl now switch up to 40px earlier or later.
