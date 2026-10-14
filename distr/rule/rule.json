@@ -1186,6 +1186,24 @@
     "type": "smart"
   },
   {
+    "name": "cl-profile-picker",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "cl-buttons"
+      },
+      {
+        "name": "cl-icons"
+      }
+    ],
+    "tags": [
+      "sf-profile-picker"
+    ],
+    "type": "smart"
+  },
+  {
     "name": "cl-progress-bar",
     "js": true,
     "mode": "smart",
