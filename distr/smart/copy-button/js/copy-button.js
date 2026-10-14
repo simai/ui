@@ -25,7 +25,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 const SIZES = ['1/3', '1/2', '1', '2'];
-const APPEARANCES = ['link', 'ghost', 'outline'];
+const APPEARANCES = ['link', 'ghost', 'outline', 'tonal'];
 const COPY_TEXT = {
   en: {
     copy: 'Copy',
@@ -378,14 +378,18 @@ function renderCopyButtonTemplate(context) {
     size: context.size,
     appearance: context.appearance,
     scheme: context.phase === 'error' ? 'on-surface' : 'on-surface'
-  };
+  }; // The root style is the control's: the wrapper only frames the control and
+  // its status, so a host styling the button reaches it.
+
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
     <span class=${['sf-copy-button', `sf-copy-button--${context.phase}`, context.rootClass].filter(Boolean).join(' ')}>
       ${context.text ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button size=${common.size} appearance=${common.appearance} scheme=${common.scheme}
                  icon-start=${icon} text=${context.text} aria-label=${context.name}
+                 root-style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                  aria-disabled=${context.phase === 'pending' ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                  @click=${() => context.component.copy()}></sf-button>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-icon-button size=${common.size} appearance=${common.appearance} scheme=${common.scheme}
                  icon=${icon} aria-label=${context.name} title=${context.name}
+                 root-style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                  aria-disabled=${context.phase === 'pending' ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                  @click=${() => context.component.copy()}></sf-icon-button>`}
       <span class="sf-copy-button-status" role="status" aria-live="polite" aria-atomic="true">${context.message}</span>
