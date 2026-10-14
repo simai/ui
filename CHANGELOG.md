@@ -8,6 +8,8 @@
 
 ### Исправлено
 
+- `sf-tabs` — the «Ещё (n)» trigger no longer wraps onto two lines and stands on the tab row like a tab, its bottom on the underline divider.
+
 - The larena package's table requires `smart.radio`: its filter window's templates are a radio list.
 
 - `sf-sortable` opens the silhouette in a list that wraps into a grid as well: the outline is one of its cells, in reading order, instead of a line.
