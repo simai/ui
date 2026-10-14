@@ -7,12 +7,45 @@
 
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("fbe0570fcc69");
-/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("795a53b0bbe9");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _js_templates_default__WEBPACK_IMPORTED_MODULE_1__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _js_templates_default__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
-/* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("ddf1cdb42ecc");
+/* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("fbe0570fcc69");
+/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("0d662e4d7d63");
+/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("795a53b0bbe9");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language__WEBPACK_IMPORTED_MODULE_2__);
 
+
+
+
+const TABS_TEXT = {
+  en: {
+    more: 'More',
+    customize: 'Customize tabs',
+    reset: 'Reset',
+    visible: 'Shown',
+    pinned: 'Always shown',
+    moved: 'Moved'
+  },
+  ru: {
+    more: 'Ещё',
+    customize: 'Настроить вкладки',
+    reset: 'Сбросить',
+    visible: 'Показывать',
+    pinned: 'Всегда на месте',
+    moved: 'Перемещено'
+  }
+};
+const OVERFLOWS = ['scroll', 'wrap', 'more']; // Which item a tab in the list draws. An sf-button moves its data attributes
+// to the button inside it, so the index is read wherever it landed.
+
+function tabIndexOf(element) {
+  const own = element?.dataset?.sfTabIndex ?? element?.querySelector?.(':scope > [data-sf-tab-index]')?.dataset?.sfTabIndex;
+  const index = Number(own);
+  return own !== undefined && Number.isInteger(index) ? index : null;
+}
 
 let tabsSequence = 0;
 
@@ -45,7 +78,7 @@ function parseItems(items = '') {
 }
 
 function normalizeIndex(index, total) {
-  const value = (0,_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__.toNumber)(index, 0);
+  const value = (0,_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__.toNumber)(index, 0);
 
   if (!Number.isFinite(value) || value < 0 || value >= total) {
     return 0;
@@ -99,7 +132,7 @@ function normalizePanelItem(item = {}) {
   };
 }
 
-class SfTabs extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()) {
+class SfTabs extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default()) {
   static get props() {
     return {
       templateName: {
@@ -120,6 +153,17 @@ class SfTabs extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()
       },
       topPosition: {
         default: 'start'
+      },
+      // scroll (the default), wrap, or more: what does not fit goes into
+      // «Ещё» (owner, 2026-10-14).
+      overflow: {
+        default: 'scroll'
+      },
+      // A gear at the end of the tabs: the person orders and hides them; the
+      // host keeps the choice (sf-tabs-settings-change, setSettings).
+      configurable: {
+        type: Boolean,
+        default: false
       },
       activeIndex: {
         type: Number,
@@ -154,6 +198,11 @@ class SfTabs extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()
     };
     this.addEventListener('click', this.handleRootClick);
     this.addEventListener('keydown', this.handleRootKeyDown);
+    this._settings = {
+      order: [],
+      hidden: []
+    };
+    this._resizeObserver = typeof ResizeObserver === 'function' ? new ResizeObserver(() => this.scheduleOverflow()) : null;
     this.addEventListener('sf-after-render', event => {
       // Built-in Smart buttons can finish rendering after their owning Tabs.
       if (event.target !== this && event.target.parentElement === this.tabList) {
@@ -164,25 +213,67 @@ class SfTabs extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()
 
   get tabList() {
     return this.querySelector(':scope > .sf-tabs > .sf-tabs-top-container > [role="tablist"]');
-  }
+  } // The tab of each item, by the item's index: the tabs are drawn in the
+  // person's order, and a hidden one is not drawn at all.
+
 
   get tabTargets() {
-    return Array.from(this.tabList?.children || []).map(element => {
-      return element.matches('sf-button,sf-icon-button') ? element.querySelector(':scope > button') : element.matches('[role="tab"]') ? element : null;
-    });
+    const targets = [];
+
+    for (const element of Array.from(this.tabList?.children || [])) {
+      const target = element.matches('sf-button,sf-icon-button') ? element.querySelector(':scope > button') : element.matches('[role="tab"]') ? element : null;
+      const index = tabIndexOf(element);
+      if (Number.isInteger(index)) targets[index] = target;
+    }
+
+    return targets;
   }
 
   afterRender(callback) {
     if (typeof callback === 'function') return super.afterRender(callback);
     this.syncTabSemantics();
+
+    if (this._resizeObserver && this.tabList && !this._observed) {
+      this._resizeObserver.observe(this);
+
+      this._observed = true;
+    }
+
+    this.scheduleOverflow();
+  }
+
+  disconnectedCallback() {
+    this._resizeObserver?.disconnect();
+    this._observed = false;
+    this._moreMenu?.close?.({
+      restoreFocus: false
+    });
+    this._moreMenu?.remove?.();
+    this._settingsMenu?.close?.({
+      restoreFocus: false
+    });
+    this._settingsMenu?.remove?.();
+    super.disconnectedCallback?.();
+  }
+
+  text(key) {
+    return (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_2__.pageText)(TABS_TEXT, key, this, 'sf-tabs');
+  } // The menus the tabs open («Ещё», the settings) are a step the tabs are: 1/2
+  // for tabs at 1/2, 1 otherwise.
+
+
+  menuSize() {
+    return (this.getAttribute('size') ?? '1') === '1/2' ? '1/2' : '1';
   }
 
   syncTabSemantics() {
     const items = this.computedItems;
-    const tabStop = items.find(item => item.selected && !item.disabled) || items.find(item => !item.disabled);
+    const shown = new Set(this.displayItems.map(item => item.index));
+    const tabStop = items.find(item => item.selected && !item.disabled && shown.has(item.index)) || items.find(item => !item.disabled && shown.has(item.index));
     this.tabTargets.forEach((tab, index) => {
       const item = items[index];
       if (!tab || !item) return;
+      if (item.href && item.selected) tab.setAttribute('aria-current', 'page');else tab.removeAttribute?.('aria-current');
       tab.id = `${this._tabsId}-tab-${index}`;
       tab.setAttribute('role', 'tab');
       tab.setAttribute('aria-controls', `${this._tabsId}-panel-${index}`);
@@ -293,7 +384,7 @@ class SfTabs extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()
       });
     });
     return Array.from(names).sort((a, b) => {
-      return (0,_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__.toNumber)(a.replace('panel-', ''), 0) - (0,_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__.toNumber)(b.replace('panel-', ''), 0);
+      return (0,_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__.toNumber)(a.replace('panel-', ''), 0) - (0,_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__.toNumber)(b.replace('panel-', ''), 0);
     });
   }
 
@@ -311,6 +402,10 @@ class SfTabs extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()
       const item = items[index] || {};
       return { ...item,
         label: item.label || `Tab ${index + 1}`,
+        key: String(item.key ?? index),
+        pinned: Boolean(item.pinned),
+        count: item.count ?? null,
+        href: item.href || '',
         disabled: Boolean(item.disabled),
         icon: item.icon || '',
         iconStart: item.iconStart ?? (item.iconLeft || item.icon || ''),
@@ -332,12 +427,333 @@ class SfTabs extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()
     return normalizeIndex(rawValue, Math.max(this.tabCount, 1));
   }
 
+  get overflow() {
+    const value = this.getAttribute('overflow');
+    return OVERFLOWS.includes(value) ? value : 'scroll';
+  }
+
+  get configurable() {
+    return this.getBooleanAttr('configurable', false);
+  } // ─── the person's arrangement ─────────────────────────────────────────────
+  // {order: [keys], hidden: [keys]}, kept by the host. A key the items no
+  // longer have is ignored; an item the order does not name follows, visible,
+  // in its declared place; a pinned tab is never hidden.
+
+
+  get settings() {
+    return {
+      order: [...this._settings.order],
+      hidden: [...this._settings.hidden]
+    };
+  }
+
+  setSettings(settings = {}) {
+    const order = Array.isArray(settings?.order) ? settings.order.map(String) : [];
+    const hidden = Array.isArray(settings?.hidden) ? settings.hidden.map(String) : [];
+    this._settings = {
+      order,
+      hidden
+    };
+    this.requestComponentUpdate('settings');
+    this.renderSettingsList();
+    return this;
+  } // The tabs as the person arranged them: in their order, without the hidden
+  // ones -- except the active one, which is shown in place while it is active,
+  // so a panel never stands without its tab.
+
+
+  get displayItems() {
+    const items = this.computedItems;
+    const byKey = new Map(items.map(item => [item.key, item]));
+    const ordered = [];
+
+    for (const key of this._settings.order) {
+      const item = byKey.get(key);
+      if (item && !ordered.includes(item)) ordered.push(item);
+    }
+
+    for (const item of items) if (!ordered.includes(item)) ordered.push(item);
+
+    const hidden = new Set(this._settings.hidden);
+    return ordered.filter(item => item.pinned || item.selected || !hidden.has(item.key));
+  } // The arrangement as the settings list shows it: every tab, in order.
+
+
+  get arrangedItems() {
+    const items = this.computedItems;
+    const byKey = new Map(items.map(item => [item.key, item]));
+    const ordered = [];
+
+    for (const key of this._settings.order) {
+      const item = byKey.get(key);
+      if (item && !ordered.includes(item)) ordered.push(item);
+    }
+
+    for (const item of items) if (!ordered.includes(item)) ordered.push(item);
+
+    return ordered;
+  }
+
+  changeSettings(next, reason) {
+    // A pinned tab is never hidden, so it is not said to be.
+    const pinned = new Set(this.computedItems.filter(item => item.pinned).map(item => item.key));
+    this._settings = {
+      order: next.order.map(String),
+      hidden: next.hidden.map(String).filter(key => !pinned.has(key))
+    };
+    this.requestComponentUpdate('settings');
+    this.renderSettingsList();
+    this.emitComponentEvent('tabs-settings-change', { ...this.settings,
+      reason
+    });
+  }
+
+  resetSettings() {
+    this._settings = {
+      order: [],
+      hidden: []
+    };
+    this.requestComponentUpdate('settings-reset');
+    this.renderSettingsList();
+    this.emitComponentEvent('tabs-settings-reset', {});
+  } // ─── «Ещё» ────────────────────────────────────────────────────────────────
+
+
+  scheduleOverflow() {
+    if (this._overflowFrame) return;
+    this._overflowFrame = requestAnimationFrame(() => {
+      this._overflowFrame = 0;
+      this.layoutOverflow();
+    });
+  }
+
+  layoutOverflow() {
+    const list = this.tabList;
+    const more = this.querySelector(':scope > .sf-tabs > .sf-tabs-top-container > .sf-tabs-more');
+    if (!list) return;
+    const hosts = Array.from(list.children).filter(element => Number.isInteger(tabIndexOf(element)));
+
+    for (const host of hosts) host.classList.remove('sf-tabs-overflowed');
+
+    this._overflowed = [];
+    const container = list.parentElement;
+
+    const showMore = shown => {
+      if (shown) container?.setAttribute('data-sf-tabs-more', '');else container?.removeAttribute('data-sf-tabs-more');
+    };
+
+    if (this.overflow !== 'more' || this.getAttribute('type') === 'vertical') {
+      showMore(false);
+      return;
+    }
+
+    const width = host => {
+      const box = host.matches('sf-button,sf-icon-button') ? host.querySelector(':scope > .sf-button, :scope > .sf-icon-button, :scope > button') : host;
+      return box?.getBoundingClientRect().width ?? 0;
+    };
+
+    const widths = hosts.map(width);
+    const gap = parseFloat(getComputedStyle(list).columnGap) || 0;
+
+    const fits = available => {
+      const kept = [];
+      let used = 0;
+      hosts.forEach((host, at) => {
+        const next = used + (kept.length ? gap : 0) + widths[at];
+
+        if (next <= available + 0.5) {
+          kept.push(at);
+          used = next;
+        }
+      });
+      return kept.length === hosts.length ? null : kept;
+    };
+
+    showMore(false);
+    let kept = fits(list.clientWidth);
+
+    if (kept) {
+      showMore(true);
+      kept = fits(list.clientWidth) ?? hosts.map((_, at) => at); // The active tab always stays: the last kept one gives way to it.
+
+      const active = hosts.findIndex(host => tabIndexOf(host) === this.activeIndex);
+
+      if (active >= 0 && !kept.includes(active)) {
+        let used = kept.reduce((sum, at, n) => sum + widths[at] + (n ? gap : 0), 0);
+
+        while (kept.length && used + gap + widths[active] > list.clientWidth + 0.5) {
+          const dropped = kept.pop();
+          used -= widths[dropped] + (kept.length ? gap : 0);
+        }
+
+        kept.push(active);
+        kept.sort((a, b) => a - b);
+      }
+
+      hosts.forEach((host, at) => {
+        // A class, not a data attribute: sf-button moves its data attributes
+        // to the button inside it, and only class and style stay on the host.
+        if (!kept.includes(at)) host.classList.add('sf-tabs-overflowed');
+      });
+      this._overflowed = hosts.filter((_, at) => !kept.includes(at)).map(host => tabIndexOf(host));
+
+      if (more) {
+        const label = `${this.text('more')} (${this._overflowed.length})`;
+        more.setAttribute('text', label);
+        more.setAttribute('aria-label', label);
+      }
+    }
+  }
+
+  async openMore(anchor) {
+    const items = this.computedItems;
+    const entries = (this._overflowed ?? []).map(index => items[index]).filter(Boolean).map(item => ({
+      id: String(item.index),
+      text: item.label,
+      icon: item.icon || undefined,
+      disabled: item.disabled,
+      value: item.count === null || item.count === undefined ? undefined : String(item.count)
+    }));
+    if (!entries.length) return;
+    const menu = await this.standardMenu('_moreMenu', id => this.activate(Number(id)));
+    menu.setAttribute('aria-label', this.text('more'));
+    menu.setAttribute('size', this.menuSize());
+    menu.entries = entries;
+    menu.toggleFor(anchor);
+  }
+
+  async standardMenu(field, select) {
+    if (!customElements.get('sf-context-menu')) {
+      globalThis.SF?.Loader?.ensurePlugin?.('cl-context-menu');
+      await Promise.race([customElements.whenDefined('sf-context-menu'), new Promise(done => setTimeout(done, 3000))]);
+    }
+
+    if (this[field]?.isConnected) return this[field];
+    const menu = document.createElement('sf-context-menu');
+    menu.setAttribute('popup', '');
+    menu.addEventListener('sf-context-menu-select', event => select?.(event.detail?.id, event));
+    (this.closest('dialog[open]') || document.body).append(menu);
+    this[field] = menu;
+    return menu;
+  } // A tab chosen anywhere -- its own button, «Ещё» -- is activated the same
+  // way; a tab that is a link goes to its address.
+
+
+  activate(index, event = null) {
+    const item = this.computedItems[index];
+    if (!item || item.disabled) return;
+
+    if (item.href) {
+      if (event && (event.metaKey || event.ctrlKey || event.shiftKey || event.button === 1)) {
+        globalThis.open?.(item.href, '_blank', 'noopener');
+        return;
+      }
+
+      this.goTo(index);
+      if (globalThis.location && item.href !== globalThis.location.href) globalThis.location.assign(item.href);
+      return;
+    }
+
+    this.goTo(index);
+  } // ─── the settings ─────────────────────────────────────────────────────────
+
+
+  async openSettings(anchor) {
+    const menu = await this.settingsMenu();
+    menu.setAttribute('size', this.menuSize());
+    this.renderSettingsList();
+    menu.toggleFor(anchor, {
+      width: 'content'
+    });
+  }
+
+  async settingsMenu() {
+    if (this._settingsMenu?.isConnected) return this._settingsMenu;
+
+    if (!customElements.get('sf-context-menu')) {
+      globalThis.SF?.Loader?.ensurePlugin?.('cl-context-menu');
+      await Promise.race([customElements.whenDefined('sf-context-menu'), new Promise(done => setTimeout(done, 3000))]);
+    }
+
+    globalThis.SF?.Loader?.ensureSmartElementLoaded?.('sf-sortable');
+    globalThis.SF?.Loader?.ensureSmartElementLoaded?.('sf-checkbox');
+    const menu = document.createElement('sf-context-menu');
+    menu.setAttribute('popup', '');
+    menu.setAttribute('aria-label', this.text('customize'));
+    menu.setAttribute('role', 'dialog');
+    const body = document.createElement('div');
+    body.slot = 'content';
+    body.className = 'sf-context-menu-body sf-tabs-settings-body';
+    const reset = document.createElement('sf-button');
+    reset.slot = 'footer';
+    reset.setAttribute('appearance', 'outline');
+    reset.setAttribute('scheme', 'on-surface');
+    reset.setAttribute('size', this.menuSize());
+    reset.setAttribute('text', this.text('reset'));
+    reset.addEventListener('click', () => this.resetSettings());
+    menu.append(body, reset);
+    (this.closest('dialog[open]') || document.body).append(menu);
+    this._settingsMenu = menu;
+    this._settingsBody = body;
+    return menu;
+  }
+
+  renderSettingsList() {
+    const body = this._settingsBody;
+    if (!body) return;
+    const items = this.arrangedItems;
+    const hidden = new Set(this._settings.hidden);
+    const size = this.menuSize();
+
+    const onIntent = event => {
+      const {
+        item,
+        index
+      } = event.detail ?? {};
+      const keys = items.map(entry => entry.key);
+      const from = keys.indexOf(String(item));
+      if (from < 0) return;
+      keys.splice(from, 1);
+      keys.splice(Math.max(0, Math.min(index, keys.length)), 0, String(item));
+      this.changeSettings({
+        order: keys,
+        hidden: [...hidden]
+      }, 'order');
+    };
+
+    const toggle = (key, shown) => {
+      const next = new Set(hidden);
+      if (shown) next.delete(key);else next.add(key);
+      this.changeSettings({
+        order: items.map(entry => entry.key),
+        hidden: [...next]
+      }, 'visibility');
+    };
+
+    (0,lit__WEBPACK_IMPORTED_MODULE_0__.render)((0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+      <sf-sortable class="sf-tabs-settings-list" group="sf-tabs-settings" label=${this.text('customize')}
+                   @sf-sortable-intent=${onIntent}>
+        ${items.map(item => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+          <div class="sf-tabs-settings-row" data-sf-sortable-item=${item.key}>
+            <span class="sf-tabs-settings-handle" data-sf-sortable-handle aria-hidden="true"><i class="sf-icon">drag_indicator</i></span>
+            <span class="sf-tabs-settings-label">${item.label}</span>
+            ${item.pinned ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<i class="sf-icon sf-tabs-settings-pin" title=${this.text('pinned')} aria-label=${this.text('pinned')}>push_pin</i>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-checkbox size=${size} .checked=${!hidden.has(item.key)} aria-label=${`${this.text('visible')}: ${item.label}`}
+                       @change=${event => toggle(item.key, Boolean(event.target?.checked ?? event.detail?.checked))}></sf-checkbox>`}
+          </div>`)}
+      </sf-sortable>`, body);
+  }
+
   templateContext() {
     const props = this.getPropsContext();
     return this.createTemplateContext({ ...props,
       component: this,
       tabsId: this._tabsId,
       activeIndex: this.activeIndex,
+      displayItems: this.displayItems,
+      overflow: this.overflow,
+      configurable: this.configurable,
+      moreText: this.text('more'),
+      customizeText: this.text('customize'),
       rootClass: this.getRootClass(),
       items: this.computedItems,
       data: this.getData()
@@ -345,7 +761,7 @@ class SfTabs extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()
   }
 
   template() {
-    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_1__.renderTabsTemplate)(this.templateContext());
+    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_3__.renderTabsTemplate)(this.templateContext());
   }
 
   get state() {
@@ -360,7 +776,7 @@ class SfTabs extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()
 
   setState(nextState = {}) {
     Object.entries(nextState || {}).forEach(([key, value]) => {
-      const attr = (0,_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__.toAttributeName)(key);
+      const attr = (0,_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__.toAttributeName)(key);
 
       if (!attr) {
         return;
@@ -445,9 +861,17 @@ class SfTabs extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()
   }
 
   handleRootClick = event => {
+    const tool = event.target?.closest?.('.sf-tabs-more, .sf-tabs-settings');
+
+    if (tool && tool.closest('sf-tabs') === this) {
+      const anchor = tool.querySelector('button') ?? tool;
+      if (tool.classList.contains('sf-tabs-more')) this.openMore(anchor);else this.openSettings(anchor);
+      return;
+    }
+
     const tab = this.ownedTab(event);
     if (!tab) return;
-    this.goTo(tab.dataset.sfTabIndex);
+    this.activate(Number(tab.dataset.sfTabIndex), event);
   };
   handleRootKeyDown = event => {
     if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey) return;
@@ -466,8 +890,11 @@ class SfTabs extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()
     }
 
     let direction = event.key === arrows[0] ? -1 : 1;
-    if (!vertical && getComputedStyle(this.tabList).direction === 'rtl') direction *= -1;
-    const enabledItems = this.computedItems.filter(item => !item.disabled);
+    if (!vertical && getComputedStyle(this.tabList).direction === 'rtl') direction *= -1; // The arrows walk the tabs in the order they stand, past the ones in
+    // «Ещё» and the hidden ones.
+
+    const overflowed = new Set(this._overflowed ?? []);
+    const enabledItems = this.displayItems.filter(item => !item.disabled && !overflowed.has(item.index));
 
     if (!enabledItems.length) {
       return;
@@ -558,7 +985,10 @@ function renderTab(item, context) {
         </span>
       </span>
     `;
-  }
+  } // A count after the label, when the item has one; the tab's own slot wins.
+
+
+  const counted = tabContent === lit__WEBPACK_IMPORTED_MODULE_0__.nothing && item.count !== null && item.count !== undefined && item.count !== '' ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span slot="text" class="sf-tabs-label">${item.label}<span class="sf-tabs-count">${String(item.count)}</span></span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
 
   if (context.variant !== 'icons') {
     return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
@@ -575,7 +1005,7 @@ function renderTab(item, context) {
                   data-tab=${String(item.index)}
                   ?disabled=${item.disabled}
           >
-              ${tabContent === lit__WEBPACK_IMPORTED_MODULE_0__.nothing ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span slot="text">${tabContent}</span>`}
+              ${tabContent === lit__WEBPACK_IMPORTED_MODULE_0__.nothing ? counted : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span slot="text">${tabContent}</span>`}
           </sf-button>
       `;
   } else {
@@ -598,7 +1028,8 @@ function renderTab(item, context) {
 
 function renderTabsTemplate(context) {
   const vertical = context.type === 'vertical';
-  const rootClasses = joinClasses('sf-tabs', context.type ? `sf-tabs--${context.type}` : '', vertical ? 'sf-tabs--vertical flex' : 'flex flex-col', context.rootClass);
+  const sizeClass = `sf-tabs--size-${String(context.size || '1').replace('/', '-')}`;
+  const rootClasses = joinClasses('sf-tabs', sizeClass, context.overflow && context.overflow !== 'scroll' ? `sf-tabs--overflow-${context.overflow}` : '', context.type ? `sf-tabs--${context.type}` : '', vertical ? 'sf-tabs--vertical flex' : 'flex flex-col', context.rootClass);
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
     <div
       class=${rootClasses}
@@ -606,7 +1037,7 @@ function renderTabsTemplate(context) {
       data-active-index=${String(context.activeIndex)}
       role="group"
     >
-      <div class="sf-tabs-top-container">
+      <div class=${joinClasses('sf-tabs-top-container', context.overflow === 'more' || context.configurable ? 'sf-tabs-top-container--tools' : '')}>
         <div
           class=${joinClasses(`sf-tabs-top flex content-main-${context.topPosition}`, context.type === 'vertical' ? 'flex-col' : '', context.topClass)}
           role="tablist"
@@ -614,8 +1045,13 @@ function renderTabsTemplate(context) {
           aria-labelledby=${context.component?.getAttribute('aria-labelledby') || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
           aria-orientation=${vertical ? 'vertical' : 'horizontal'}
         >
-          ${context.items.map(item => renderTab(item, context))}
+          ${(context.displayItems ?? context.items).map(item => renderTab(item, context))}
         </div>
+        ${context.overflow === 'more' && !vertical ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button class="sf-tabs-more" appearance="link" scheme="on-surface" size=${context.size}
+                            icon-end="expand_more" text=${context.moreText} aria-haspopup="menu"></sf-button>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        ${context.configurable ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-icon-button class="sf-tabs-settings" appearance="link" scheme="on-surface" size=${context.size}
+                                 icon="tune" aria-label=${context.customizeText} title=${context.customizeText}
+                                 aria-haspopup="dialog"></sf-icon-button>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       </div>
 
       <div class="sf-tabs-main-container">
@@ -642,6 +1078,13 @@ __webpack_require__.r(__webpack_exports__);
 (module) {
 
 module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("lit") : new Promise((resolve) => globalThis.addEventListener("sf-runtime-ready", () => resolve(globalThis.SF.runtimeModule("lit")), { once: true })));
+
+/***/ },
+
+/***/ "0d662e4d7d63"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("page-language") : new Promise((resolve) => globalThis.addEventListener("sf-runtime-ready", () => resolve(globalThis.SF.runtimeModule("page-language")), { once: true })));
 
 /***/ },
 
