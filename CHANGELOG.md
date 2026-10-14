@@ -170,6 +170,8 @@
 
 ### Изменено
 
+- The larena package reference: the record view requires `smart.empty-state`.
+
 - The larena package reference: the table requires `smart.empty-state`.
 
 - The larena package reference: the record view requires `smart.copy-button`.
