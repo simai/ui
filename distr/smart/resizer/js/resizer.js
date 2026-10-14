@@ -9,6 +9,169 @@ __webpack_require__.r(__webpack_exports__);
 // extracted by mini-css-extract-plugin
 
 
+/***/ },
+
+/***/ "bffb4b61998b"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   attachResizer: () => (/* binding */ attachResizer),
+/* harmony export */   setResizerValue: () => (/* binding */ setValue)
+/* harmony export */ });
+// The width a person changes by an edge, as one behaviour: a drag, the arrow
+// keys (Shift: four steps; Home and End: the limits; PageUp and PageDown: four
+// steps), Enter or Space and a double click back to the default, a separator's
+// role and value, the resize cursor over the whole page while it lasts. What
+// the width is the width of -- a panel, a table's column -- and where it is
+// kept is the caller's (owner, 2026-10-14: the admin menu's columns and a
+// table's columns are the same gesture).
+//
+// attach(root, options) -> detach()
+//   options.handles   a selector: the handles are root's descendants matching
+//                     it, found when used (a table redraws its headers);
+//                     without it, root is the one handle.
+//   options.session(handle) -> {
+//     measure(): the width now, in pixels
+//     limits(): {min, max} in pixels
+//     apply(width, phase): writes it, returns the width written
+//     commit(width): the width a drag or a key ended at
+//     reset(): back to the default (Enter, Space, a double click)
+//     direction(): +1 when a pointer moving right widens, -1 otherwise
+//     step: pixels an arrow moves (default 16)
+//     start(), end(): around a drag
+//   } -- or null, when this handle does not resize now.
+const ACTIVE = 'data-sf-resizer-active';
+
+function setValue(handle, session, width = session.measure()) {
+  const {min, max} = session.limits();
+  handle.setAttribute('aria-valuemin', String(Math.round(min)));
+  handle.setAttribute('aria-valuemax', String(Math.round(max)));
+  if (width) handle.setAttribute('aria-valuenow', String(Math.round(width)));
+}
+
+function clamp(session, width) {
+  const {min, max} = session.limits();
+  return Math.round(Math.min(Math.max(min, max), Math.max(min, width)));
+}
+
+function attachResizer(root, options = {}) {
+  const handleOf = (target) => (options.handles ? target?.closest?.(options.handles) : root);
+  const owns = (handle) => handle && (handle === root || root.contains(handle));
+  const sessionOf = (handle) => (owns(handle) ? options.session?.(handle) ?? null : null);
+  let drag = null;
+
+  const finish = (commit) => {
+    const current = drag;
+    if (!current) return;
+    drag = null;
+    globalThis.removeEventListener('pointermove', current.move, true);
+    globalThis.removeEventListener('pointerup', current.up, true);
+    globalThis.removeEventListener('pointercancel', current.up, true);
+    document.documentElement.removeAttribute(ACTIVE);
+    delete current.handle.dataset.sfResizing;
+    current.session.end?.();
+    if (commit && current.width !== Math.round(current.from)) current.session.commit?.(current.width);
+  };
+
+  const onPointerDown = (event) => {
+    if (event.button > 0 || drag) return;
+    const handle = handleOf(event.target);
+    const session = sessionOf(handle);
+    if (!session) return;
+    event.preventDefault();
+    event.stopPropagation();
+    handle.focus?.({preventScroll: true});
+    const from = session.measure();
+    const current = {handle, session, pointer: event.pointerId, x: event.clientX, from, width: Math.round(from)};
+    current.move = (next) => {
+      if (next.pointerId !== current.pointer) return;
+      const width = clamp(session, current.from + (next.clientX - current.x) * (session.direction?.() ?? 1));
+      if (width === current.width) return;
+      current.width = session.apply(width, 'move') ?? width;
+      setValue(handle, session, current.width);
+    };
+    current.up = (next) => {
+      if (next.pointerId === current.pointer) finish(true);
+    };
+    drag = current;
+    session.start?.();
+    handle.dataset.sfResizing = '';
+    document.documentElement.setAttribute(ACTIVE, '');
+    globalThis.addEventListener('pointermove', current.move, true);
+    globalThis.addEventListener('pointerup', current.up, true);
+    globalThis.addEventListener('pointercancel', current.up, true);
+  };
+
+  const onKeyDown = (event) => {
+    if (event.altKey || event.ctrlKey || event.metaKey) return;
+    const handle = handleOf(event.target);
+    if (handle !== event.target) return;
+    const session = sessionOf(handle);
+    if (!session) return;
+    const {min, max} = session.limits();
+    const now = session.measure();
+    const rtl = getComputedStyle(handle).direction === 'rtl';
+    const sign = session.direction?.() ?? 1;
+    const step = (session.step ?? 16) * (event.shiftKey ? 4 : 1);
+    const right = (rtl ? -1 : 1) * sign;
+    let next = null;
+    if (event.key === 'ArrowRight') next = now + step * right;
+    else if (event.key === 'ArrowLeft') next = now - step * right;
+    else if (event.key === 'PageUp') next = now + step * 4;
+    else if (event.key === 'PageDown') next = now - step * 4;
+    else if (event.key === 'Home') next = min;
+    else if (event.key === 'End') next = max;
+    else if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      event.stopPropagation();
+      session.reset?.();
+      return;
+    }
+    if (next === null) return;
+    event.preventDefault();
+    event.stopPropagation();
+    const width = session.apply(clamp(session, next), 'end') ?? clamp(session, next);
+    setValue(handle, session, width);
+    session.commit?.(width);
+  };
+
+  const onDoubleClick = (event) => {
+    const handle = handleOf(event.target);
+    const session = sessionOf(handle);
+    if (!session) return;
+    event.preventDefault();
+    event.stopPropagation();
+    session.reset?.();
+  };
+
+  // The value is read when the handle is reached, so a redrawn handle says it.
+  const onFocusIn = (event) => {
+    const handle = handleOf(event.target);
+    const session = sessionOf(handle);
+    if (session) setValue(handle, session);
+  };
+
+  root.addEventListener('pointerdown', onPointerDown);
+  root.addEventListener('keydown', onKeyDown);
+  root.addEventListener('dblclick', onDoubleClick);
+  root.addEventListener('focusin', onFocusIn);
+  if (!options.handles) {
+    root.setAttribute('role', 'separator');
+    root.setAttribute('aria-orientation', 'vertical');
+  }
+  return () => {
+    finish(false);
+    root.removeEventListener('pointerdown', onPointerDown);
+    root.removeEventListener('keydown', onKeyDown);
+    root.removeEventListener('dblclick', onDoubleClick);
+    root.removeEventListener('focusin', onFocusIn);
+  };
+}
+
+
+
+
 /***/ }
 
 /******/ 	});
@@ -95,7 +258,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   SfResizer: () => (/* binding */ SfResizer)
 /* harmony export */ });
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d4f7aa048f0e");
+/* harmony import */ var _engine_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("bffb4b61998b");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("d4f7aa048f0e");
 // sf-resizer: a handle on the edge of a panel that changes its width by a
 // drag, the keyboard or a double click back to the default (owner,
 // 2026-10-14: the admin menu's columns are widened and narrowed by their
@@ -105,6 +269,7 @@ __webpack_require__.r(__webpack_exports__);
 // ancestor matching `target`), as a custom property when `property` names one,
 // otherwise as inline-size. With `storage-key` the width is remembered in this
 // browser and restored the next time.
+
 
 const TEXT = {
   en: {
@@ -155,51 +320,50 @@ function writeStored(key, value) {
 
 class SfResizer extends HTMLElement {
   static get observedAttributes() {
-    return ['min', 'max', 'label', 'disabled'];
+    return ['min', 'max', 'label', 'disabled', 'value'];
   }
 
   constructor() {
     super();
 
-    this._onPointerDown = event => this.pointerDown(event);
-
-    this._onKeyDown = event => this.keyDown(event);
-
-    this._onDoubleClick = () => this.reset();
-
     this._onWindowResize = () => this.clampToLimits();
   }
 
   connectedCallback() {
-    this.setAttribute('role', 'separator');
-    this.setAttribute('aria-orientation', 'vertical');
     if (!this.hasAttribute('tabindex')) this.tabIndex = 0;
-    this.syncLabel();
-    this.addEventListener('pointerdown', this._onPointerDown);
-    this.addEventListener('keydown', this._onKeyDown);
-    this.addEventListener('dblclick', this._onDoubleClick);
+    this.syncLabel(); // The gesture is the shared one (attachResizer): the element only says
+    // what the width is the width of and where it is kept.
+
+    this._detach = (0,_engine_mjs__WEBPACK_IMPORTED_MODULE_0__.attachResizer)(this, {
+      session: () => this.disabled ? null : this.session()
+    });
     globalThis.addEventListener('resize', this._onWindowResize); // Restored after the target has laid out, so a percentage limit is read
     // against a real width.
 
     requestAnimationFrame(() => {
       if (!this.isConnected) return;
       const target = this.target();
-      if (target && getComputedStyle(target).position === 'static') target.style.position = 'relative';
-      const stored = readStored(this.storageKey);
-      if (stored) this.apply(stored);
+      if (target && getComputedStyle(target).position === 'static') target.style.position = 'relative'; // A width the host keeps for the person (value) wins over this
+      // browser's memory of it.
+
+      const kept = Number(this.getAttribute('value')) || readStored(this.storageKey);
+      if (kept) this.apply(kept);
       this.syncValue();
     });
   }
 
   disconnectedCallback() {
-    this.removeEventListener('pointerdown', this._onPointerDown);
-    this.removeEventListener('keydown', this._onKeyDown);
-    this.removeEventListener('dblclick', this._onDoubleClick);
+    this._detach?.();
+    this._detach = null;
     globalThis.removeEventListener('resize', this._onWindowResize);
-    this.endDrag(false);
   }
 
-  attributeChangedCallback() {
+  attributeChangedCallback(name, before, after) {
+    if (name === 'value' && after && after !== before && this.isConnected) {
+      this.restore(after);
+      return;
+    }
+
     if (this.isConnected) {
       this.syncLabel();
       this.syncValue();
@@ -239,14 +403,27 @@ class SfResizer extends HTMLElement {
 
   width() {
     return this.target()?.getBoundingClientRect().width ?? 0;
-  } // The direction a pointer moving right widens the panel: a handle on the
-  // inline end widens it rightwards in a left-to-right page.
+  }
 
-
-  direction() {
-    const rtl = getComputedStyle(this).direction === 'rtl';
-    const start = this.getAttribute('edge') === 'inline-start';
-    return (rtl ? -1 : 1) * (start ? -1 : 1);
+  session() {
+    return {
+      measure: () => this.width(),
+      limits: () => this.limits(),
+      apply: (width, phase) => {
+        const written = this.apply(width);
+        if (phase === 'move' && written !== null) this.announce(written, 'move');
+        return written;
+      },
+      commit: width => this.commit(width),
+      reset: () => this.reset(),
+      // A handle on the inline end widens the panel rightwards in a
+      // left-to-right page; on the start, leftwards.
+      direction: () => {
+        const rtl = getComputedStyle(this).direction === 'rtl';
+        return (rtl ? -1 : 1) * (this.getAttribute('edge') === 'inline-start' ? -1 : 1);
+      },
+      step: this.step
+    };
   }
 
   apply(value) {
@@ -290,6 +467,16 @@ class SfResizer extends HTMLElement {
       this.syncValue(width);
       this.announce(width, 'reset');
     });
+  } // A width the host keeps (a person's settings): written as if dragged,
+  // within the limits, and remembered as the browser's too.
+
+
+  restore(width) {
+    const number = Number(width);
+    if (!Number.isFinite(number) || number <= 0) return null;
+    const written = this.apply(number);
+    if (written !== null) writeStored(this.storageKey, written);
+    return written;
   } // A window narrowed under a remembered width brings it back within limits.
 
 
@@ -306,82 +493,6 @@ class SfResizer extends HTMLElement {
     if (now > max || now < min) this.apply(now);
   }
 
-  pointerDown(event) {
-    if (this.disabled || event.button > 0) return;
-    event.preventDefault();
-    this.focus({
-      preventScroll: true
-    });
-    this._drag = {
-      pointer: event.pointerId,
-      x: event.clientX,
-      from: this.width(),
-      width: this.width()
-    };
-    this.setPointerCapture?.(event.pointerId);
-    this.dataset.sfResizing = '';
-    document.documentElement.setAttribute('data-sf-resizer-active', '');
-
-    const move = next => {
-      if (!this._drag || next.pointerId !== this._drag.pointer) return;
-      const width = this.apply(this._drag.from + (next.clientX - this._drag.x) * this.direction());
-
-      if (width !== null && width !== this._drag.width) {
-        this._drag.width = width;
-        this.announce(width, 'move');
-      }
-    };
-
-    const up = next => {
-      if (!this._drag || next.pointerId !== this._drag.pointer) return;
-      this.endDrag(true);
-    };
-
-    this._drag.listeners = {
-      move,
-      up
-    };
-    this.addEventListener('pointermove', move);
-    this.addEventListener('pointerup', up);
-    this.addEventListener('pointercancel', up);
-  }
-
-  endDrag(commit) {
-    const drag = this._drag;
-    if (!drag) return;
-    this._drag = null;
-    this.removeEventListener('pointermove', drag.listeners?.move);
-    this.removeEventListener('pointerup', drag.listeners?.up);
-    this.removeEventListener('pointercancel', drag.listeners?.up);
-    delete this.dataset.sfResizing;
-    document.documentElement.removeAttribute('data-sf-resizer-active');
-    if (commit && Math.round(drag.width) !== Math.round(drag.from)) this.commit(drag.width);
-  }
-
-  keyDown(event) {
-    if (this.disabled || event.altKey || event.ctrlKey || event.metaKey) return;
-    const {
-      min,
-      max
-    } = this.limits();
-    const now = this.width();
-    const rtl = getComputedStyle(this).direction === 'rtl';
-    const wider = rtl ? 'ArrowLeft' : 'ArrowRight';
-    const narrower = rtl ? 'ArrowRight' : 'ArrowLeft';
-    const step = this.step * (event.shiftKey ? 4 : 1);
-    const sign = this.getAttribute('edge') === 'inline-start' ? -1 : 1;
-    let next = null;
-    if (event.key === wider) next = now + step * sign;else if (event.key === narrower) next = now - step * sign;else if (event.key === 'PageUp') next = now + step * 4;else if (event.key === 'PageDown') next = now - step * 4;else if (event.key === 'Home') next = min;else if (event.key === 'End') next = max;else if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      this.reset();
-      return;
-    }
-    if (next === null) return;
-    event.preventDefault();
-    const width = this.apply(next);
-    if (width !== null) this.commit(width);
-  }
-
   syncLabel() {
     const text = TEXT[pageLanguage(this)];
 
@@ -395,20 +506,20 @@ class SfResizer extends HTMLElement {
   }
 
   syncValue(width = this.width()) {
-    const {
-      min,
-      max
-    } = this.limits();
-    this.setAttribute('aria-valuemin', String(Math.round(min)));
-    this.setAttribute('aria-valuemax', String(Math.round(max)));
-    if (width) this.setAttribute('aria-valuenow', String(Math.round(width)));
+    (0,_engine_mjs__WEBPACK_IMPORTED_MODULE_0__.setResizerValue)(this, {
+      limits: () => this.limits(),
+      measure: () => width
+    }, width);
   }
 
 }
 if (!customElements.get('sf-resizer')) customElements.define('sf-resizer', SfResizer);
-globalThis.SF = globalThis.SF || {};
+globalThis.SF = globalThis.SF || {}; // attach: the same gesture on any handle -- a table's column edges use it.
+
 globalThis.SF.Resizer = Object.freeze({
-  SfResizer
+  SfResizer,
+  attach: _engine_mjs__WEBPACK_IMPORTED_MODULE_0__.attachResizer,
+  attachResizer: _engine_mjs__WEBPACK_IMPORTED_MODULE_0__.attachResizer
 });
 })();
 
