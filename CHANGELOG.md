@@ -74,6 +74,9 @@
 
 ### Добавлено
 
+- `SF.Resizer.attach(root, {handles, session})` — the resize gesture of `sf-resizer` for any edge a page draws itself, such as a table's column edges: the same drag, keys (arrows, Shift, Home, End, PageUp, PageDown; Enter and Space reset), double click, page-wide cursor and separator value, with the caller saying what the width belongs to and where it is kept.
+- `sf-resizer` takes `value`, a width the host keeps for the person; it wins over the browser's memory.
+
 - `sf-resizer` — a handle on a panel's edge that changes its width by a drag, the arrow keys (Shift: four steps; Home and End: the limits) or a double click back to the stylesheet's width, between `min` and `max`. The width is written to the custom property named in `property`, or to the panel's `inline-size`; with `storage-key` it is remembered in the browser. It is a separator with its value in pixels; `sf-resize {width, phase}` reports `move`, `end` and `reset`.
 
 - `sf-context-menu` comes in two sizes: `size="1/2"` (the default, 32px rows) and `size="1"` (40px rows), with text, icons, search, headings, notes and footer to match; a submenu takes its parent's size. `openFor(anchor, {width})` and the `width` attribute open it as wide as its content, exactly as wide as the trigger (`trigger`), or at a CSS length. A slotted `footer` of actions stays under the rows, its buttons sharing the width; `.sf-context-menu-top` and `.sf-context-menu-body` are the parts of a window built in the menu.
