@@ -624,7 +624,9 @@ function renderLeading(context) {
 
 function renderCount(context) {
   if (context.type !== 'default') return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
-  return context.component?.hasSlotContent?.('count') ? context.component.getSlotContent('count') : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-tag-count pointer-events-none flex">${context.count || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</span>`;
+  return context.component?.hasSlotContent?.('count') ? context.component.getSlotContent('count') // No count, no element: an empty one kept its padding and the gap
+  // before it, an empty band at the end of every tag (owner, 2026-10-14).
+  : context.count ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-tag-count pointer-events-none flex">${context.count}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
 }
 
 function renderClose(context) {
