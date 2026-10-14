@@ -80,6 +80,8 @@
 
 ### Добавлено
 
+- `sf-copy-button` — `appearance="tonal"`; `root-style` lands on the button itself, so a host can style it like its neighbours.
+
 - `sf-copy-button` — `icon` sets the resting glyph (`content_copy` by default; `link`, `key`) and `success-icon` the glyph after a copy (`check` by default).
 
 - `sf-help-mark` — a «?» beside a label that opens a short explanation on a press (a toggletip), announced politely; Escape, a second press or a click outside close it; an explanation with a link follows the button in the focus order.
