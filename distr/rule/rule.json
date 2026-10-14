@@ -948,6 +948,27 @@
     "type": "smart"
   },
   {
+    "name": "cl-empty-state",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "featured-icon"
+      },
+      {
+        "name": "cl-buttons"
+      },
+      {
+        "name": "cl-icons"
+      }
+    ],
+    "tags": [
+      "sf-empty-state"
+    ],
+    "type": "smart"
+  },
+  {
     "name": "cl-file-preview",
     "js": true,
     "mode": "smart",
