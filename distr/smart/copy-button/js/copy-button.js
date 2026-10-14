@@ -111,6 +111,13 @@ class SfCopyButton extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___def
       appearance: {
         default: 'link'
       },
+      icon: {
+        default: 'content_copy'
+      },
+      successIcon: {
+        attribute: 'success-icon',
+        default: 'check'
+      },
       successText: {
         attribute: 'success-text',
         default: ''
@@ -152,6 +159,16 @@ class SfCopyButton extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___def
   get appearance() {
     const value = this.getAttribute('appearance');
     return APPEARANCES.includes(value) ? value : 'link';
+  } // The resting glyph says what is copied -- a link, a key -- and the success
+  // glyph what happened.
+
+
+  get icon() {
+    return this.getAttribute('icon') || 'content_copy';
+  }
+
+  get successIcon() {
+    return this.getAttribute('success-icon') || 'check';
   }
 
   get successText() {
@@ -316,6 +333,8 @@ class SfCopyButton extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___def
       size: this.size,
       appearance: this.appearance,
       text: this.text,
+      icon: this.icon,
+      successIcon: this.successIcon,
       // The name says what is copied when the host says so.
       name: this.label || this.text || this.words('copy'),
       phase: this.state.phase,
@@ -350,12 +369,11 @@ var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then
 lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
 
-const ICONS = {
-  success: 'check',
-  error: 'error'
-};
 function renderCopyButtonTemplate(context) {
-  const icon = ICONS[context.phase] ?? 'content_copy';
+  const icon = {
+    success: context.successIcon,
+    error: 'error'
+  }[context.phase] ?? context.icon;
   const common = {
     size: context.size,
     appearance: context.appearance,
