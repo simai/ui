@@ -78,6 +78,8 @@
 
 ### Добавлено
 
+- `simai.property-view-port` 1.12.0: the record's `actions` name `record.edit` (the fields may be changed) beside the lifecycle acts, so a reader is sent nothing to change; `record.load` with `mode: create` answers an empty object of the collection laid out by its arrangement; `record.create` makes it; `record.save` saves the whole object as one revision. Six new conformance cases (42).
+
 - `SF.Resizer.attach(root, {handles, session})` — the resize gesture of `sf-resizer` for any edge a page draws itself, such as a table's column edges: the same drag, keys (arrows, Shift, Home, End, PageUp, PageDown; Enter and Space reset), double click, page-wide cursor and separator value, with the caller saying what the width belongs to and where it is kept.
 - `sf-resizer` takes `value`, a width the host keeps for the person; it wins over the browser's memory.
 
