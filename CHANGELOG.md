@@ -74,6 +74,8 @@
 
 ### Добавлено
 
+- `sf-resizer` — a handle on a panel's edge that changes its width by a drag, the arrow keys (Shift: four steps; Home and End: the limits) or a double click back to the stylesheet's width, between `min` and `max`. The width is written to the custom property named in `property`, or to the panel's `inline-size`; with `storage-key` it is remembered in the browser. It is a separator with its value in pixels; `sf-resize {width, phase}` reports `move`, `end` and `reset`.
+
 - `sf-context-menu` comes in two sizes: `size="1/2"` (the default, 32px rows) and `size="1"` (40px rows), with text, icons, search, headings, notes and footer to match; a submenu takes its parent's size. `openFor(anchor, {width})` and the `width` attribute open it as wide as its content, exactly as wide as the trigger (`trigger`), or at a CSS length. A slotted `footer` of actions stays under the rows, its buttons sharing the width; `.sf-context-menu-top` and `.sf-context-menu-body` are the parts of a window built in the menu.
 - `sf-dropdown` grid cells follow the dropdown's size, and a grid behind a supplied trigger is as wide as its columns instead of 18rem.
 - A skeleton text bar is as tall as the text size in the middle of a line of that size (`--sf-skeleton-text--height`, `--sf-skeleton-text--line`), with no gap between lines, so a loading block is as tall as the text it stands for.
