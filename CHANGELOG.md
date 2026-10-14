@@ -78,6 +78,9 @@
 
 ### Добавлено
 
+- `sf-empty-state` — what a list, a panel or a page says when it has nothing to show: `kind="no-data|nothing-found|no-access|error"` with its icon, a heading at `heading-level`, a sentence in the page language and actions (slot `actions`, or the `actions` property raising `sf-empty-state-action`; «Повторить» for an error without its own). Sizes 1/2, 1, 2; nothing-found and error are a polite status.
+- The `sf-sortable` manifest says a list that wraps into a grid opens the outline as one of its cells.
+
 - `sf-tabs`: underline tabs carry no inline padding, with one gap between tabs by size (20, 24, 32px at 1/2, 1, 2), the control heights as the hit area and a 2, 2, 3px line; the tab's own font is its size's text role. `overflow="wrap|more"`: `more` moves the tabs that do not fit into a trailing «Ещё (n)» menu, the active one always staying. Items take `key`, `count`, `href` and `pinned`. `configurable` adds «Настроить вкладки»: a sortable list with a visibility checkbox per tab and «Сбросить», announced as `sf-tabs-settings-change {order, hidden}` / `sf-tabs-settings-reset` and given back with `setSettings`.
 
 - `sf-profile-picker` — one place to choose, make, rename, remove and reset a profile (the admin menu's profiles, a record's views). Folded it is a field-like button naming the profile in use; open, its panel lists the profiles with the current one checked, rename and remove on the row (a lock where the person may not change one), a new profile made inline as a copy of the current one, personal or for everyone, and a reset at the foot. The host keeps the profiles and the rights; the component raises `sf-profile-select`, `-create`, `-rename`, `-delete` and `-reset`.
