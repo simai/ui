@@ -78,6 +78,8 @@
 
 ### Добавлено
 
+- `sf-profile-picker` — one place to choose, make, rename, remove and reset a profile (the admin menu's profiles, a record's views). Folded it is a field-like button naming the profile in use; open, its panel lists the profiles with the current one checked, rename and remove on the row (a lock where the person may not change one), a new profile made inline as a copy of the current one, personal or for everyone, and a reset at the foot. The host keeps the profiles and the rights; the component raises `sf-profile-select`, `-create`, `-rename`, `-delete` and `-reset`.
+
 - `simai.property-view-port` 1.12.0: the record's `actions` name `record.edit` (the fields may be changed) beside the lifecycle acts, so a reader is sent nothing to change; `record.load` with `mode: create` answers an empty object of the collection laid out by its arrangement; `record.create` makes it; `record.save` saves the whole object as one revision. Six new conformance cases (42).
 
 - `SF.Resizer.attach(root, {handles, session})` — the resize gesture of `sf-resizer` for any edge a page draws itself, such as a table's column edges: the same drag, keys (arrows, Shift, Home, End, PageUp, PageDown; Enter and Space reset), double click, page-wide cursor and separator value, with the caller saying what the width belongs to and where it is kept.
