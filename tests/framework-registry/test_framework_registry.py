@@ -109,9 +109,9 @@ class FrameworkContractRegistryTest(unittest.TestCase):
                 # the free release (two of them, sf-data-view and
                 # sf-property-view, were never entries here); 48 with
                 # sf-page-header.
-                "smart-component": 52,
+                "smart-component": 53,
                 "recipe": 1,
-                "total": 343,
+                "total": 344,
             },
         )
         # The id names the runtimes it was built from; that is the claim, not
