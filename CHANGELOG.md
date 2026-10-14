@@ -167,6 +167,8 @@
 
 ### Изменено
 
+- The larena package reference: the table requires `smart.empty-state`.
+
 - The larena package reference: the record view requires `smart.copy-button`.
 
 - The larena package's admin menu and record view require `smart.profile-picker`.
