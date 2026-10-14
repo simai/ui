@@ -85,6 +85,8 @@
 
 ### Добавлено
 
+- `SF.Preferences` — one store for view preferences: read before the first paint, kept in the browser and, with `useHost()`, for the person on the server; `<script type="application/json" data-sf-preferences>` preloads the host's values. `sf-resizer` keeps its width there.
+
 - `sf-empty-state` — `layout="inline"` (and `size="1/3"`): one line for a list inside a menu, a dropdown or a search, no heading, at most one link action; `live` = `auto` | `alert` | `off`.
 
 - `sf-copy-button` — `appearance="tonal"`; `root-style` lands on the button itself, so a host can style it like its neighbours.
