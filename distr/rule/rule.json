@@ -841,6 +841,27 @@
     "type": "smart"
   },
   {
+    "name": "cl-copy-button",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "cl-buttons"
+      },
+      {
+        "name": "cl-icon-buttons"
+      },
+      {
+        "name": "cl-icons"
+      }
+    ],
+    "tags": [
+      "sf-copy-button"
+    ],
+    "type": "smart"
+  },
+  {
     "name": "cl-country-code",
     "js": true,
     "mode": "smart",
