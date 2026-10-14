@@ -163,6 +163,8 @@
 
 ### Изменено
 
+- The larena package reference: the record view requires `smart.copy-button`.
+
 - The larena package's admin menu and record view require `smart.profile-picker`.
 
 - The `larena` package reference lets the table relate to `sf-sortable` and the admin menu to `sf-dropdown`: the table's windows reorder their lists with `sf-sortable`, and the menu's edit mode chooses a row's glyph with the grid dropdown. The public source's CI reads ui-doc's main and the published distribution.
