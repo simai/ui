@@ -1052,6 +1052,24 @@
     "type": "smart"
   },
   {
+    "name": "cl-help-mark",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "cl-icon-buttons"
+      },
+      {
+        "name": "cl-icons"
+      }
+    ],
+    "tags": [
+      "sf-help-mark"
+    ],
+    "type": "smart"
+  },
+  {
     "name": "cl-icon-buttons",
     "css": true,
     "js": true,
