@@ -8,6 +8,9 @@
 
 ### Исправлено
 
+- `sf-tag` — no empty count element (and no band at the end of the tag) when there is no count.
+- `sf-pagination` — «Показать ещё» stretches between the pages and the page size.
+
 - `sf-datepicker` — a day caption (`sf-datepicker-day-info`) no longer lifts the number above the row; days of the neighbouring month are muted again (the colour now reaches the number), a neighbouring weekend is a muted red; the weekday row is a 1/2 control high.
 
 - `sf-tabs` — the «Ещё (n)» trigger no longer wraps onto two lines and stands on the tab row like a tab, its bottom on the underline divider.
