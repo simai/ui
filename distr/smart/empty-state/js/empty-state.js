@@ -25,7 +25,9 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 const KINDS = ['no-data', 'nothing-found', 'no-access', 'error'];
-const SIZES = ['1/2', '1', '2'];
+const SIZES = ['1/3', '1/2', '1', '2'];
+const LAYOUTS = ['block', 'inline'];
+const LIVE = ['auto', 'alert', 'off'];
 const EMPTY_STATE_TEXT = {
   en: {
     'no-data-title': 'Nothing here yet',
@@ -94,6 +96,12 @@ class SfEmptyState extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___def
         attribute: 'heading-level',
         default: '3'
       },
+      layout: {
+        default: 'block'
+      },
+      live: {
+        default: 'auto'
+      },
       rootClass: {
         default: ''
       }
@@ -119,6 +127,29 @@ class SfEmptyState extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___def
   get size() {
     const value = this.getAttribute('size');
     return SIZES.includes(value) ? value : '1';
+  } // inline: one line for a list inside a menu, a dropdown or a search -- a
+  // small icon, the words and at most one link action, no heading. Size 1/3
+  // is always inline (owner, 2026-10-14).
+
+
+  get layout() {
+    if (this.getAttribute('size') === '1/3') return 'inline';
+    const value = this.getAttribute('layout');
+    return LAYOUTS.includes(value) ? value : 'block';
+  } // auto: nothing-found and error are a polite status, the others say
+  // nothing; alert: an error the person caused, such as a search that failed
+  // as they typed; off: the host announces it itself.
+
+
+  get live() {
+    const value = this.getAttribute('live');
+    return LIVE.includes(value) ? value : 'auto';
+  }
+
+  liveRole() {
+    if (this.live === 'off') return null;
+    if (this.live === 'alert') return 'alert';
+    return this.kind === 'nothing-found' || this.kind === 'error' ? 'status' : null;
   }
 
   get icon() {
@@ -175,7 +206,10 @@ class SfEmptyState extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___def
       shownTitle: this.title || this.words(`${kind}-title`),
       shownText: this.text || this.words(`${kind}-text`),
       resolvedActions: this.resolvedActions(),
-      announces: kind === 'nothing-found' || kind === 'error',
+      layout: this.layout,
+      liveRole: this.liveRole(),
+      // The line of the inline form: the host's words, else the kind's title.
+      shownLine: this.text || this.title || this.words(`${kind}-title`),
       rootClass: this.getRootClass()
     });
   }
@@ -219,15 +253,34 @@ const BUTTON_SIZE = {
   '1/2': '1/2',
   1: '1',
   2: '1'
-};
+}; // The inline form: one line, the icon at the text's size, the words and the
+// first action as a link. No heading, so a list inside a menu or a dropdown
+// gains no outline entry and no item.
+
+function renderInline(context) {
+  const size = context.size === '1' ? '1' : '1-2';
+  const [action] = context.resolvedActions ?? [];
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+    <div class=${['sf-empty-state', 'sf-empty-state--inline', `sf-empty-state--size-${size}`, `sf-empty-state--${context.kind}`, context.rootClass].filter(Boolean).join(' ')}
+         role=${context.liveRole ?? lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
+      <i class="sf-icon sf-empty-state-icon" aria-hidden="true">${context.shownIcon}</i>
+      <span class="sf-empty-state-line">${context.shownLine}</span>
+      ${action ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button class="sf-empty-state-link" size=${size === '1' ? '1' : '1/2'} appearance="link" scheme="primary" spacing="compact"
+                 text=${action.text ?? ''} data-action=${String(action.id)}
+                 @click=${() => context.component.act(action.id)}></sf-button>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    </div>
+  `;
+}
+
 function renderEmptyStateTemplate(context) {
+  if (context.layout === 'inline') return renderInline(context);
   const tag = (0,lit_static_html_js__WEBPACK_IMPORTED_MODULE_1__.unsafeStatic)(`h${context.headingLevel}`);
   const size = String(context.size).replace('/', '-');
   const actions = context.resolvedActions ?? [];
   const slotted = context.component?.hasSlotContent?.('actions') ? context.component.getSlotContent('actions') : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
     <div class=${['sf-empty-state', `sf-empty-state--size-${size}`, `sf-empty-state--${context.kind}`, context.rootClass].filter(Boolean).join(' ')}
-         role=${context.announces ? 'status' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
+         role=${context.liveRole ?? lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
       <span class=${`sf-featured-icon sf-featured-icon--size-${ICON_SIZE[context.size] ?? '2'} sf-featured-icon--${context.tone} sf-featured-icon--soft sf-empty-state-icon`}
             aria-hidden="true"><i class="sf-icon">${context.shownIcon}</i></span>
       ${(0,lit_static_html_js__WEBPACK_IMPORTED_MODULE_1__.html)`<${tag} class="sf-empty-state-title">${context.shownTitle}</${tag}>`}
