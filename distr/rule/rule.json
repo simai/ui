@@ -1265,6 +1265,17 @@
     "type": "smart"
   },
   {
+    "name": "cl-resizer",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [],
+    "tags": [
+      "sf-resizer"
+    ],
+    "type": "smart"
+  },
+  {
     "name": "cl-skeleton",
     "js": true,
     "mode": "smart",
