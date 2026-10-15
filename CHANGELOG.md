@@ -8,6 +8,8 @@
 
 ### Исправлено
 
+- The Loader works in a sandboxed iframe out of view (a documentation example below the fold): its work no longer waits for an animation frame that never comes, and it no longer stops on `localStorage` in a document sandboxed without `allow-same-origin` (it keeps its caches in memory there).
+
 - The property registry lists only what the field renderers read, and they read all of it: `readonly` shows a field instead of a refusing control for every type; string and text take `placeholder`; date, choice, choices, the record picker and code take `required`. No longer listed: `multiple` for record, relation and user, `formats` for colour, `constraints` beyond a choice's options, `required` for a file. `SF.whenFieldRenderers()` loads the renderer set on demand and settles with `SF.fieldRenderers`.
 
 - The Loader checks only the element whose attribute changed, not everything inside it: a list marking itself loading no longer makes the Loader walk all of its rows. Added nodes are deduplicated by walking up the parents. On the admin polygon a search spent about 56 ms in the Loader after the rows came; the probe `loader-attribute-scan` holds the rule.
