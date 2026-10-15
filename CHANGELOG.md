@@ -95,6 +95,8 @@
 
 ### Добавлено
 
+- `simai.dataview-port` 1.11.0: capabilities `inline-edit` (`record.set`, a field written in its cell) and `row-reorder` (`record.reorder`, a flat list put in order by dragging), a record's `editable`, and three more conformance cases.
+
 - The page host as an endpoint (`sf-page-host`, `SF.Composition.publishEffects`): effects a product's port answer carries go out on typed outputs and the page's routes deliver them. The fragment boundary (`sf-fragment`): a fragment that fails to draw or to load is replaced by the error state with «Повторить», and the rest of the page keeps working. A Smart component that throws while drawing now reports `sf-component-error`.
 
 - Region navigation in the core, `SF.RegionNavigation`: a link inside the shell changes the content region instead of the page — the address goes into the history, Back and Forward work and Back returns the scroll, focus goes to the new heading, assets come once, and anything unexpected (another shell revision, a redirect, a failure) loads the page in full.
