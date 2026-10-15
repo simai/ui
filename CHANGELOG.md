@@ -8,6 +8,8 @@
 
 ### Исправлено
 
+- The Loader checks only the element whose attribute changed, not everything inside it: a list marking itself loading no longer makes the Loader walk all of its rows. Added nodes are deduplicated by walking up the parents. On the admin polygon a search spent about 56 ms in the Loader after the rows came; the probe `loader-attribute-scan` holds the rule.
+
 - Field renderers: a text filter reads «Содержит…»; an options list in a filter window scrolls down only.
 
 - `sf-tag` — no empty count element (and no band at the end of the tag) when there is no count.
