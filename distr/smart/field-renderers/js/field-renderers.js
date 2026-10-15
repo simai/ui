@@ -59,6 +59,8 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   FILTER_RENDERERS: () => (/* binding */ FILTER_RENDERERS),
+/* harmony export */   PROPERTY_TYPES: () => (/* reexport safe */ _registry_js__WEBPACK_IMPORTED_MODULE_3__.PROPERTY_TYPES),
+/* harmony export */   propertyModes: () => (/* binding */ propertyModes),
 /* harmony export */   renderCellField: () => (/* binding */ renderCellField),
 /* harmony export */   renderEditField: () => (/* binding */ renderEditField),
 /* harmony export */   renderFilterField: () => (/* binding */ renderFilterField),
@@ -67,10 +69,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("ddf1cdb42ecc");
 /* harmony import */ var _helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("b30ec5bc0edb");
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("0d662e4d7d63");
+/* harmony import */ var _registry_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("fc654eb7fab0");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_2__]);
 ([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language__WEBPACK_IMPORTED_MODULE_2__);
+
 
 
  // The Framework's field renderers, addressed by a property type and a template
@@ -1544,6 +1548,15 @@ const VIEW_RENDERERS = {
 // only -- formatFieldValue, where a consumer's own formatting of a number or a
 // date belongs. Null when the set has no view for that type.
 
+function propertyModes(type) {
+  return (0,_registry_js__WEBPACK_IMPORTED_MODULE_3__.modesOf)(type, {
+    view: VIEW_RENDERERS,
+    edit: EDIT_RENDERERS,
+    cell: CELL_RENDERERS,
+    filter: FILTER_RENDERERS
+  });
+}
+
 function renderViewField(field = {}, value, host, options = {}) {
   const asked = field.propertyType || field.type || field.dataType;
   const renderer = VIEW_RENDERERS[asked];
@@ -1574,11 +1587,201 @@ if (typeof window !== 'undefined') {
     renderEditField,
     renderFilterField,
     renderViewField,
-    FILTER_RENDERERS
+    FILTER_RENDERERS,
+    // The universal properties, each with the modes the set draws for it.
+    registry: _registry_js__WEBPACK_IMPORTED_MODULE_3__.PROPERTY_TYPES.map(entry => ({ ...entry,
+      modes: propertyModes(entry.type)
+    }))
   };
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "fc654eb7fab0"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   PROPERTY_TYPES: () => (/* binding */ PROPERTY_TYPES),
+/* harmony export */   modesOf: () => (/* binding */ modesOf)
+/* harmony export */ });
+// The registry of universal properties (owner, 2026-10-15): every property
+// type the Framework renders, its variants and the parameters a field of it
+// reads -- one list a host (Larena's fields and settings), the property
+// workbench and the documentation read, instead of each learning the types
+// from the renderers' source. Which modes a type has is not written here: it
+// is read from the renderer maps themselves (modesOf), so the registry cannot
+// claim a mode the set does not draw. A contract keeps the two the same.
+const PROPERTY_TYPES = Object.freeze([{
+  type: 'string',
+  label: {
+    ru: 'Строка',
+    en: 'String'
+  },
+  variants: [{
+    id: 'phone',
+    label: {
+      ru: 'Телефон',
+      en: 'Phone'
+    }
+  }],
+  params: ['placeholder', 'required', 'readonly', 'constraints']
+}, {
+  type: 'text',
+  label: {
+    ru: 'Текст',
+    en: 'Text'
+  },
+  variants: [],
+  params: ['placeholder', 'required', 'readonly', 'constraints']
+}, {
+  type: 'integer',
+  label: {
+    ru: 'Целое число',
+    en: 'Integer'
+  },
+  variants: [],
+  params: ['unit', 'required', 'readonly', 'constraints']
+}, {
+  type: 'number',
+  label: {
+    ru: 'Число',
+    en: 'Number'
+  },
+  variants: [{
+    id: 'scale',
+    label: {
+      ru: 'Шкала 0–100',
+      en: 'Scale 0–100'
+    }
+  }],
+  params: ['unit', 'required', 'readonly', 'constraints']
+}, {
+  type: 'date',
+  label: {
+    ru: 'Дата',
+    en: 'Date'
+  },
+  variants: [],
+  params: ['required', 'readonly', 'constraints']
+}, {
+  type: 'datetime',
+  label: {
+    ru: 'Дата и время',
+    en: 'Date and time'
+  },
+  variants: [],
+  params: ['required', 'readonly', 'constraints']
+}, {
+  type: 'boolean',
+  label: {
+    ru: 'Да или нет',
+    en: 'Yes or no'
+  },
+  variants: [],
+  params: ['trueText', 'falseText', 'readonly']
+}, {
+  type: 'choice',
+  label: {
+    ru: 'Одно из списка',
+    en: 'One of a list'
+  },
+  variants: [],
+  params: ['options', 'badgeAppearance', 'required', 'readonly']
+}, {
+  type: 'choices',
+  label: {
+    ru: 'Несколько из списка',
+    en: 'Several of a list'
+  },
+  variants: [{
+    id: 'badges',
+    label: {
+      ru: 'Значками',
+      en: 'As badges'
+    }
+  }],
+  params: ['options', 'badgeAppearance', 'required', 'readonly']
+}, {
+  type: 'user',
+  label: {
+    ru: 'Пользователь',
+    en: 'User'
+  },
+  variants: [],
+  params: ['options', 'multiple', 'searchPlaceholder', 'required', 'readonly']
+}, {
+  type: 'record',
+  label: {
+    ru: 'Запись',
+    en: 'Record'
+  },
+  variants: [],
+  params: ['options', 'multiple', 'searchPlaceholder', 'required', 'readonly']
+}, {
+  type: 'relation',
+  label: {
+    ru: 'Связь',
+    en: 'Relation'
+  },
+  variants: [],
+  params: ['options', 'multiple', 'searchPlaceholder', 'required', 'readonly']
+}, {
+  type: 'file',
+  label: {
+    ru: 'Файл',
+    en: 'File'
+  },
+  variants: [{
+    id: 'image',
+    label: {
+      ru: 'Изображение',
+      en: 'Image'
+    }
+  }, {
+    id: 'image-card',
+    label: {
+      ru: 'Изображение карточкой',
+      en: 'Image card'
+    }
+  }, {
+    id: 'image-list',
+    label: {
+      ru: 'Изображения списком',
+      en: 'Image list'
+    }
+  }],
+  params: ['accept', 'multiple', 'formats', 'uploadText', 'uploadSupportingText', 'uploadHint', 'required', 'readonly']
+}, {
+  type: 'color',
+  label: {
+    ru: 'Цвет',
+    en: 'Colour'
+  },
+  variants: [],
+  params: ['swatches', 'formats', 'required', 'readonly']
+}, {
+  type: 'include',
+  label: {
+    ru: 'Код',
+    en: 'Code'
+  },
+  variants: [],
+  params: ['language', 'required', 'readonly']
+}]); // The modes a type has, read from the renderer maps: view and edit (a record),
+// cell (a table) and filter -- `own` when the set has a filter control for the
+// type, `text` when a filter falls back to a text search.
+
+function modesOf(type, maps) {
+  return {
+    view: Boolean(maps.view?.[type]),
+    edit: Boolean(maps.edit?.[type]),
+    cell: maps.cell?.[type] ? 'own' : 'text',
+    filter: maps.filter?.[type] ? 'own' : 'text'
+  };
+}
 
 /***/ },
 
