@@ -2956,12 +2956,21 @@ SFLoaderPlugin.prototype.excludedTags = function (tag) {
   return ['script', 'style', 'yamap', 'svg', 'path', 'g', 'head', 'meta', 'link'].indexOf(tag) === -1;
 };
 
-const OBSERVER_IGNORE_SELECTOR = '[data-sf-observer="ignore"]';
+const OBSERVER_IGNORE_SELECTOR = '[data-sf-observer="ignore"]'; // The host is checked by the caller, and a rejected node takes its subtree
+// with it -- so a node the walker reaches has no ignored ancestor inside the
+// host, and needs only its own test, not a `closest()` up to the document for
+// every one of a table's two thousand nodes.
 
 SFLoaderPlugin.prototype.createFilteredElementWalker = function (host) {
   return document.createTreeWalker(host, NodeFilter.SHOW_ELEMENT, {
-    acceptNode: node => this.shouldSkipNode(node) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT
+    acceptNode: node => this.shouldSkipOwnNode(node) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT
   });
+};
+
+SFLoaderPlugin.prototype.shouldSkipOwnNode = function (node) {
+  if (!node?.tagName) return true;
+  if (node.matches?.(OBSERVER_IGNORE_SELECTOR)) return true;
+  return !this.excludedTags(node.tagName.toLowerCase());
 };
 
 SFLoaderPlugin.prototype.shouldSkipNode = function (node) {
@@ -3442,7 +3451,9 @@ SFLoaderPlugin.prototype.prepareSmartChildScanEvents = function () {
   });
 };
 
-SFLoaderPlugin.prototype.scanCustomElements = function (root = null, autoLoad = true) {
+SFLoaderPlugin.prototype.scanCustomElements = function (root = null, autoLoad = true, {
+  subtree = true
+} = {}) {
   const profile = this.profileStart('scanCustomElements');
   const host = root || document.body;
 
@@ -3487,8 +3498,8 @@ SFLoaderPlugin.prototype.scanCustomElements = function (root = null, autoLoad = 
   let iconItemCount = 0;
   let scannedNodes = 0;
 
-  const processNode = el => {
-    if (!el || el.nodeType !== Node.ELEMENT_NODE || this.shouldSkipNode(el)) {
+  const processNode = (el, filtered = false) => {
+    if (!el || el.nodeType !== Node.ELEMENT_NODE || !filtered && this.shouldSkipNode(el)) {
       return;
     }
 
@@ -3518,10 +3529,12 @@ SFLoaderPlugin.prototype.scanCustomElements = function (root = null, autoLoad = 
     processNode(host);
   }
 
-  const walker = this.createFilteredElementWalker(host);
+  if (subtree) {
+    const walker = this.createFilteredElementWalker(host);
 
-  while (walker.nextNode()) {
-    processNode(walker.currentNode);
+    while (walker.nextNode()) {
+      processNode(walker.currentNode, true);
+    }
   }
 
   const result = this.handleCustomElementScanResult({
@@ -3767,10 +3780,29 @@ SFLoaderPlugin.prototype.doesMutationRootCoverNode = function (root, node) {
   }
 
   return rootHost.contains(nodeHost);
+}; // Whether a node is one of the roots or inside one: up the parents, a few
+// steps, instead of asking every root -- a list re-rendered adds hundreds of
+// roots, and asking each of them about each of the others was a hundred
+// thousand `contains` calls for one search (rules of the road, 2026-10-15).
+
+
+SFLoaderPlugin.prototype.isCoveredByMutationRoots = function (node, rootSet, {
+  self = true
+} = {}) {
+  if (!node || !rootSet.size) return false;
+  if (self && rootSet.has(node)) return true;
+  let parent = node.parentNode;
+
+  while (parent) {
+    if (rootSet.has(parent)) return true;
+    parent = parent.parentNode;
+  }
+
+  return false;
 };
 
 SFLoaderPlugin.prototype.collectUniqueAddedMutationRoots = function (changeList = []) {
-  const roots = [];
+  const candidates = new Set();
 
   for (let index = 0; index < changeList.length; index++) {
     const change = changeList[index];
@@ -3782,22 +3814,14 @@ SFLoaderPlugin.prototype.collectUniqueAddedMutationRoots = function (changeList 
     for (let nodeIndex = 0; nodeIndex < change.addedNodes.length; nodeIndex++) {
       const node = change.addedNodes[nodeIndex];
       if (!node || this.shouldSkipNode(node)) continue;
-
-      if (roots.some(root => this.doesMutationRootCoverNode(root, node))) {
-        continue;
-      }
-
-      for (let rootIndex = roots.length - 1; rootIndex >= 0; rootIndex--) {
-        if (this.doesMutationRootCoverNode(node, roots[rootIndex])) {
-          roots.splice(rootIndex, 1);
-        }
-      }
-
-      roots.push(node);
+      candidates.add(node);
     }
-  }
+  } // A root inside another root is scanned with it.
 
-  return roots;
+
+  return [...candidates].filter(node => !this.isCoveredByMutationRoots(node, candidates, {
+    self: false
+  }));
 };
 
 SFLoaderPlugin.prototype.search = function () {
@@ -3824,6 +3848,7 @@ SFLoaderPlugin.prototype.search = function () {
 
     const profile = this.profileStart('MutationObserver.processChanges');
     const addedRoots = this.collectUniqueAddedMutationRoots(changeList);
+    const addedRootSet = new Set(addedRoots);
     let processedAddedRoots = 0;
     let processedAttributeTargetsCount = 0;
 
@@ -3900,7 +3925,7 @@ SFLoaderPlugin.prototype.search = function () {
 
         case 'attributes':
           {
-            if (processedAttributeTargets.has(change.target) || addedRoots.some(root => this.doesMutationRootCoverNode(root, change.target))) {
+            if (processedAttributeTargets.has(change.target) || this.isCoveredByMutationRoots(change.target, addedRootSet)) {
               continue;
             }
 
@@ -3911,11 +3936,19 @@ SFLoaderPlugin.prototype.search = function () {
             if (staticIconMutation.handled) {
               this.trackPendingIconScan(staticIconMutation);
               continue;
-            }
+            } // An attribute changes the element, not what is inside it: its
+            // children were scanned when they were added, and stay as they were.
+            // Only the ignore marker opens a subtree that was not scanned. Scanning
+            // everything below for any attribute made a table's «loading» mark a
+            // walk over its two thousand nodes, several times a search.
 
-            const customScan = this.scanCustomElements(change.target, false);
+
+            const opensSubtree = change.attributeName === 'data-sf-observer';
+            const customScan = this.scanCustomElements(change.target, false, {
+              subtree: opensSubtree
+            });
             this.trackPendingIconScan(customScan);
-            this.trackPendingIconScan(this.scanStaticIcons(change.target, false));
+            if (opensSubtree) this.trackPendingIconScan(this.scanStaticIcons(change.target, false));
             const {
               count,
               keys
