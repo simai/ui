@@ -93,6 +93,8 @@
 
 ### Добавлено
 
+- Region navigation in the core, `SF.RegionNavigation`: a link inside the shell changes the content region instead of the page — the address goes into the history, Back and Forward work and Back returns the scroll, focus goes to the new heading, assets come once, and anything unexpected (another shell revision, a redirect, a failure) loads the page in full.
+
 - The standard `simai.interface-fragment` 1.0.0: a page built from fragments that update one another through declared contracts, with a fragment descriptor (`interface-fragment.v1`, checked by `SF.Composition.checkFragmentDescriptor`) and seven new value types for composition routes: `record-changed.v1`, `record-removed.v1`, `collection-changed.v1`, `files-moved.v1`, `counter.v1`, `navigation.v1`, `preference-changed.v1`.
 
 - `sf-context-menu` as a panel with tabs: `tabs`, `active-tab` and `closable` give a head (the tabs and a close button) that never scrolls, a body that does, a footer that stays, and a fixed width that does not follow what a tab holds. `sf-context-menu-tab` says which tab was chosen; `.sf-context-menu-row` is a panel's row.
