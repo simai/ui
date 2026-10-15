@@ -5790,7 +5790,10 @@ function fieldKindRegistry() {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   FRAGMENT_DESCRIPTOR_SCHEMA: () => (/* binding */ FRAGMENT_DESCRIPTOR_SCHEMA),
-/* harmony export */   checkFragmentDescriptor: () => (/* binding */ checkFragmentDescriptor)
+/* harmony export */   checkFragmentDescriptor: () => (/* binding */ checkFragmentDescriptor),
+/* harmony export */   defineFragmentBoundary: () => (/* binding */ defineFragmentBoundary),
+/* harmony export */   definePageHost: () => (/* binding */ definePageHost),
+/* harmony export */   publishEffects: () => (/* binding */ publishEffects)
 /* harmony export */ });
 /* harmony import */ var _canonical_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("6f489cc65b77");
 /* harmony import */ var _routing_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("4aea5d6d49c7");
@@ -5852,6 +5855,182 @@ function checkFragmentDescriptor(descriptor) {
   return problems;
 }
 
+// The page host as an endpoint (simai.interface-fragment, host-is-an-endpoint).
+// A product's port answers carry `effects` -- [{type: 'record-changed.v1',
+// value}, ...] -- and the page publishes them on this element's outputs, one
+// output per value type, named by the type without its version
+// (record-changed, files-moved ...). The routes the page declares deliver them
+// to the fragments that listen; the host never calls a fragment itself.
+//
+//   <sf-composition-scope data-sf-routes='[{"id": "files-refresh",
+//       "from": {"endpoint": "host", "port": "collection-changed", "value": "collection-changed.v1"},
+//       "to": {"endpoint": "files", "port": "changed", "value": "collection-changed.v1"}}]'>
+//     <sf-page-host data-sf-endpoint="host"></sf-page-host>
+//     ...
+//   </sf-composition-scope>
+const PAGE_EFFECT_TYPES = ['record-changed.v1', 'record-removed.v1', 'collection-changed.v1', 'files-moved.v1', 'counter.v1', 'navigation.v1', 'preference-changed.v1'];
+const effectPort = (type) => type.replace(/\.v\d+$/u, '');
+
+function definePageHost(registry = globalThis.customElements) {
+  if (!registry || typeof globalThis.HTMLElement !== 'function') return null;
+  const existing = registry.get('sf-page-host');
+  if (existing) return existing;
+  class SfPageHost extends globalThis.HTMLElement {
+    static sfPorts = Object.freeze({
+      outputs: Object.freeze(Object.fromEntries(PAGE_EFFECT_TYPES.map((type) => [effectPort(type), type]))),
+      inputs: Object.freeze({}),
+    });
+
+    connectedCallback() {
+      this.hidden = true;
+    }
+
+    // The host takes nothing in: what it says, it says from the product.
+    sfPortInput() {
+      throw new TypeError('sf-page-host has no inputs');
+    }
+
+    // Each effect is checked against its value type and published; one that
+    // fails its check, or names a type the host does not publish, is refused
+    // and reported, and the others still go.
+    publish(effects = []) {
+      const published = [];
+      const refused = [];
+      for (const effect of Array.isArray(effects) ? effects : []) {
+        const type = effect?.type;
+        if (!PAGE_EFFECT_TYPES.includes(type)) {
+          refused.push({type: type ?? null, reason: 'type_not_published'});
+          continue;
+        }
+        let value;
+        try {
+          value = _routing_mjs__WEBPACK_IMPORTED_MODULE_1__.VALUE_TYPES[type].check(effect.value);
+        } catch (error) {
+          refused.push({type, reason: 'value_invalid', message: String(error?.message ?? error)});
+          continue;
+        }
+        this.dispatchEvent(new globalThis.CustomEvent('sf-port-output', {bubbles: true, detail: {port: effectPort(type), value}}));
+        published.push(type);
+      }
+      if (refused.length) this.dispatchEvent(new globalThis.CustomEvent('sf-page-host-refused', {bubbles: true, detail: {refused}}));
+      return {published, refused};
+    }
+  }
+  registry.define('sf-page-host', SfPageHost);
+  return SfPageHost;
+}
+
+// Effects from wherever an answer arrived: the page host of the scope the
+// origin stands in, or the page's only host when the origin stands in none.
+function publishEffects(effects, {origin = null} = {}) {
+  if (!Array.isArray(effects) || !effects.length) return {published: [], refused: []};
+  const document = globalThis.document;
+  const scope = origin?.closest?.('sf-composition-scope');
+  const hosts = scope
+    ? [...scope.querySelectorAll('sf-page-host')].filter((host) => host.parentElement?.closest('sf-composition-scope') === scope)
+    : [...(document?.querySelectorAll('sf-page-host') ?? [])];
+  const host = hosts.length === 1 ? hosts[0] : null;
+  if (!host || typeof host.publish !== 'function') return {published: [], refused: effects.map((effect) => ({type: effect?.type ?? null, reason: 'no_page_host'}))};
+  return host.publish(effects);
+}
+
+// The fragment boundary (simai.interface-fragment, failure-is-contained). A
+// fragment that throws while it draws (sf-component-error), or whose element
+// does not arrive within its load time, is replaced in its place by the error
+// state with a retry; the rest of the page and its routes keep working.
+// Retry puts the fragment's own markup back and lets it start again.
+//
+//   <sf-fragment data-sf-fragment="larena.file-manager" load-timeout="10000">
+//     <sf-file-manager ...></sf-file-manager>
+//   </sf-fragment>
+const FRAGMENT_TEXT = {
+  ru: {heading: 'Не удалось показать этот блок'},
+  en: {heading: 'This block could not be shown'},
+};
+
+function defineFragmentBoundary(registry = globalThis.customElements) {
+  if (!registry || typeof globalThis.HTMLElement !== 'function') return null;
+  const existing = registry.get('sf-fragment');
+  if (existing) return existing;
+  class SfFragment extends globalThis.HTMLElement {
+    constructor() {
+      super();
+      this.markup = null;
+      this.failed = null;
+      this.timer = null;
+      this.onError = (event) => {
+        if (this.failed) return;
+        event.stopPropagation();
+        this.fail(event.detail?.phase ?? 'render', event.detail?.message ?? '');
+      };
+      this.onAction = (event) => {
+        if (!this.failed || event.detail?.id !== 'retry') return;
+        event.stopPropagation();
+        this.retry();
+      };
+    }
+
+    connectedCallback() {
+      if (this.markup === null) this.markup = this.innerHTML;
+      this.addEventListener('sf-component-error', this.onError);
+      this.addEventListener('sf-empty-state-action', this.onAction);
+      if (!this.failed) this.watchLoad();
+    }
+
+    disconnectedCallback() {
+      clearTimeout(this.timer);
+      this.removeEventListener('sf-component-error', this.onError);
+      this.removeEventListener('sf-empty-state-action', this.onAction);
+    }
+
+    // The fragment's own element: the first custom element it holds.
+    get fragmentElement() {
+      return [...this.children].find((child) => child.localName.includes('-')) ?? null;
+    }
+
+    watchLoad() {
+      clearTimeout(this.timer);
+      const element = this.fragmentElement;
+      if (!element || globalThis.customElements.get(element.localName)) return;
+      const limit = Number(this.getAttribute('load-timeout')) || 10000;
+      this.timer = setTimeout(() => {
+        if (!globalThis.customElements.get(element.localName) && element.isConnected) this.fail('load', `${element.localName} did not load`);
+      }, limit);
+    }
+
+    text(key) {
+      const lang = (this.closest('[lang]')?.getAttribute('lang') || 'en').slice(0, 2);
+      return (FRAGMENT_TEXT[lang] ?? FRAGMENT_TEXT.en)[key];
+    }
+
+    fail(phase, message) {
+      clearTimeout(this.timer);
+      this.failed = {phase, message};
+      this.setAttribute('data-sf-fragment-state', 'error');
+      // The fragment leaves: its elements are disconnected, so its routes and
+      // listeners go with it, and what stands in its place is the error state.
+      const state = globalThis.document.createElement('sf-empty-state');
+      state.setAttribute('kind', 'error');
+      state.setAttribute('title', this.text('heading'));
+      this.replaceChildren(state);
+      this.dispatchEvent(new globalThis.CustomEvent('sf-fragment-error', {
+        bubbles: true, composed: true,
+        detail: {fragment: this.getAttribute('data-sf-fragment'), phase, message},
+      }));
+    }
+
+    retry() {
+      this.failed = null;
+      this.removeAttribute('data-sf-fragment-state');
+      this.innerHTML = this.markup ?? '';
+      this.watchLoad();
+      this.dispatchEvent(new globalThis.CustomEvent('sf-fragment-retry', {bubbles: true, composed: true, detail: {fragment: this.getAttribute('data-sf-fragment')}}));
+    }
+  }
+  registry.define('sf-fragment', SfFragment);
+  return SfFragment;
+}
+
 
 /***/ },
 
@@ -5878,6 +6057,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   createRegistry: () => (/* binding */ createRegistry),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
 /* harmony export */   defineCompositionScope: () => (/* reexport safe */ _routing_mjs__WEBPACK_IMPORTED_MODULE_7__.defineCompositionScope),
+/* harmony export */   defineFragmentBoundary: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_8__.defineFragmentBoundary),
+/* harmony export */   definePageHost: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_8__.definePageHost),
 /* harmony export */   describeRegions: () => (/* reexport safe */ _regions_mjs__WEBPACK_IMPORTED_MODULE_5__.describeRegions),
 /* harmony export */   extendRegistry: () => (/* binding */ extendRegistry),
 /* harmony export */   inlineText: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_6__.inlineText),
@@ -5888,6 +6069,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   parseRecipeJson: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_4__.parseRecipeJson),
 /* harmony export */   projectDocumentEditorFields: () => (/* reexport safe */ _editor_mjs__WEBPACK_IMPORTED_MODULE_2__.projectDocumentEditorFields),
 /* harmony export */   projectEditorFields: () => (/* reexport safe */ _editor_mjs__WEBPACK_IMPORTED_MODULE_2__.projectEditorFields),
+/* harmony export */   publishEffects: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_8__.publishEffects),
 /* harmony export */   recipeDigest: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_4__.recipeDigest),
 /* harmony export */   recipeNodeId: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_4__.recipeNodeId),
 /* harmony export */   render: () => (/* binding */ render),
@@ -6379,6 +6561,7 @@ const Composition = Object.freeze({
   checkPortValue: _routing_mjs__WEBPACK_IMPORTED_MODULE_7__.checkPortValue,
   checkFragmentDescriptor: _fragments_mjs__WEBPACK_IMPORTED_MODULE_8__.checkFragmentDescriptor,
   FRAGMENT_DESCRIPTOR_SCHEMA: _fragments_mjs__WEBPACK_IMPORTED_MODULE_8__.FRAGMENT_DESCRIPTOR_SCHEMA,
+  publishEffects: _fragments_mjs__WEBPACK_IMPORTED_MODULE_8__.publishEffects,
   createPortRegistry: _routing_mjs__WEBPACK_IMPORTED_MODULE_7__.createPortRegistry,
   defineCompositionScope: _routing_mjs__WEBPACK_IMPORTED_MODULE_7__.defineCompositionScope,
   startInlineEdit,
@@ -6404,6 +6587,8 @@ if (typeof globalThis !== 'undefined') {
   globalThis.SF = globalThis.SF || {};
   globalThis.SF.Composition = Composition;
   (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_7__.defineCompositionScope)();
+  (0,_fragments_mjs__WEBPACK_IMPORTED_MODULE_8__.definePageHost)();
+  (0,_fragments_mjs__WEBPACK_IMPORTED_MODULE_8__.defineFragmentBoundary)();
 }
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Composition);
