@@ -664,10 +664,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var lit_directives_ref_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("7fcbcc00731e");
 /* harmony import */ var lit_directives_keyed_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("707122d76f9d");
 /* harmony import */ var lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("5db1a272402f");
-/* harmony import */ var _smart_base__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("0845ef25b9de");
-/* harmony import */ var _page_language__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("8489d1f5bab4");
-/* harmony import */ var _position_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("2e9112dbdda9");
-/* harmony import */ var _control_spacing__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("dbc0a3d46697");
+/* harmony import */ var lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("fbb4a24bb301");
+/* harmony import */ var _smart_base__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("0845ef25b9de");
+/* harmony import */ var _page_language__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("8489d1f5bab4");
+/* harmony import */ var _position_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("2e9112dbdda9");
+/* harmony import */ var _control_spacing__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("dbc0a3d46697");
 // The shared Smart runtime: the modules every Smart element is built on,
 // loaded once per page by Core and handed to the Smart bundles, which are
 // built without their own copies (2026-10-13). Each Smart bundle used to
@@ -682,6 +683,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+ // Lists that reorder -- a table's rows after a sort -- move their rows rather
+// than drawing them again (owner, 2026-10-15).
 
 
 
@@ -702,10 +706,11 @@ const RUNTIME_MODULES = Object.freeze({
   "lit/directives/ref.js": asModule(lit_directives_ref_js__WEBPACK_IMPORTED_MODULE_3__),
   "lit/directives/keyed.js": asModule(lit_directives_keyed_js__WEBPACK_IMPORTED_MODULE_4__),
   "lit/directives/unsafe-html.js": asModule(lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_5__),
-  "smart-base": asModule(_smart_base__WEBPACK_IMPORTED_MODULE_6__),
-  "page-language": asModule(_page_language__WEBPACK_IMPORTED_MODULE_7__),
-  "position": asModule(_position_js__WEBPACK_IMPORTED_MODULE_8__),
-  "control-spacing": asModule(_control_spacing__WEBPACK_IMPORTED_MODULE_9__)
+  "lit/directives/repeat.js": asModule(lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_6__),
+  "smart-base": asModule(_smart_base__WEBPACK_IMPORTED_MODULE_7__),
+  "page-language": asModule(_page_language__WEBPACK_IMPORTED_MODULE_8__),
+  "position": asModule(_position_js__WEBPACK_IMPORTED_MODULE_9__),
+  "control-spacing": asModule(_control_spacing__WEBPACK_IMPORTED_MODULE_10__)
 });
 
 /***/ },
@@ -5412,6 +5417,28 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ },
 
+/***/ "9c2479980d94"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   repeat: () => (/* binding */ c)
+/* harmony export */ });
+/* harmony import */ var _lit_html_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("f550d360fd36");
+/* harmony import */ var _directive_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("0e2a9b296d0b");
+/* harmony import */ var _directive_helpers_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("a5a956c9f619");
+
+/**
+ * @license
+ * Copyright 2017 Google LLC
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+const u=(e,s,t)=>{const r=new Map;for(let l=s;l<=t;l++)r.set(e[l],l);return r},c=(0,_directive_js__WEBPACK_IMPORTED_MODULE_1__.directive)(class extends _directive_js__WEBPACK_IMPORTED_MODULE_1__.Directive{constructor(e){if(super(e),e.type!==_directive_js__WEBPACK_IMPORTED_MODULE_1__.PartType.CHILD)throw Error("repeat() can only be used in text expressions")}dt(e,s,t){let r;void 0===t?t=s:void 0!==s&&(r=s);const l=[],o=[];let i=0;for(const s of e)l[i]=r?r(s,i):i,o[i]=t(s,i),i++;return{values:o,keys:l}}render(e,s,t){return this.dt(e,s,t).values}update(s,[t,r,c]){const d=(0,_directive_helpers_js__WEBPACK_IMPORTED_MODULE_2__.getCommittedValue)(s),{values:p,keys:a}=this.dt(t,r,c);if(!Array.isArray(d))return this.ut=a,p;const h=this.ut??=[],v=[];let m,y,x=0,j=d.length-1,k=0,w=p.length-1;for(;x<=j&&k<=w;)if(null===d[x])x++;else if(null===d[j])j--;else if(h[x]===a[k])v[k]=(0,_directive_helpers_js__WEBPACK_IMPORTED_MODULE_2__.setChildPartValue)(d[x],p[k]),x++,k++;else if(h[j]===a[w])v[w]=(0,_directive_helpers_js__WEBPACK_IMPORTED_MODULE_2__.setChildPartValue)(d[j],p[w]),j--,w--;else if(h[x]===a[w])v[w]=(0,_directive_helpers_js__WEBPACK_IMPORTED_MODULE_2__.setChildPartValue)(d[x],p[w]),(0,_directive_helpers_js__WEBPACK_IMPORTED_MODULE_2__.insertPart)(s,v[w+1],d[x]),x++,w--;else if(h[j]===a[k])v[k]=(0,_directive_helpers_js__WEBPACK_IMPORTED_MODULE_2__.setChildPartValue)(d[j],p[k]),(0,_directive_helpers_js__WEBPACK_IMPORTED_MODULE_2__.insertPart)(s,d[x],d[j]),j--,k++;else if(void 0===m&&(m=u(a,k,w),y=u(h,x,j)),m.has(h[x]))if(m.has(h[j])){const e=y.get(a[k]),t=void 0!==e?d[e]:null;if(null===t){const e=(0,_directive_helpers_js__WEBPACK_IMPORTED_MODULE_2__.insertPart)(s,d[x]);(0,_directive_helpers_js__WEBPACK_IMPORTED_MODULE_2__.setChildPartValue)(e,p[k]),v[k]=e}else v[k]=(0,_directive_helpers_js__WEBPACK_IMPORTED_MODULE_2__.setChildPartValue)(t,p[k]),(0,_directive_helpers_js__WEBPACK_IMPORTED_MODULE_2__.insertPart)(s,d[x],t),d[e]=null;k++}else (0,_directive_helpers_js__WEBPACK_IMPORTED_MODULE_2__.removePart)(d[j]),j--;else (0,_directive_helpers_js__WEBPACK_IMPORTED_MODULE_2__.removePart)(d[x]),x++;for(;k<=w;){const e=(0,_directive_helpers_js__WEBPACK_IMPORTED_MODULE_2__.insertPart)(s,v[w+1]);(0,_directive_helpers_js__WEBPACK_IMPORTED_MODULE_2__.setChildPartValue)(e,p[k]),v[k++]=e}for(;x<=j;){const e=d[x++];null!==e&&(0,_directive_helpers_js__WEBPACK_IMPORTED_MODULE_2__.removePart)(e)}return this.ut=a,(0,_directive_helpers_js__WEBPACK_IMPORTED_MODULE_2__.setCommittedValue)(s,v),_lit_html_js__WEBPACK_IMPORTED_MODULE_0__.noChange}});
+//# sourceMappingURL=repeat.js.map
+
+
+/***/ },
+
 /***/ "0e8f2d7ea176"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
@@ -5542,6 +5569,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var lit_html_directives_ref_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("59df0b19b37c");
 
 //# sourceMappingURL=ref.js.map
+
+
+/***/ },
+
+/***/ "fbb4a24bb301"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   repeat: () => (/* reexport safe */ lit_html_directives_repeat_js__WEBPACK_IMPORTED_MODULE_0__.repeat)
+/* harmony export */ });
+/* harmony import */ var lit_html_directives_repeat_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("9c2479980d94");
+
+//# sourceMappingURL=repeat.js.map
 
 
 /***/ },
