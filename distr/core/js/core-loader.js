@@ -34,6 +34,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   installIconSubsetRuntime: () => (/* binding */ installIconSubsetRuntime),
 /* harmony export */   normalizeIconFontLoadWeight: () => (/* binding */ normalizeIconFontLoadWeight)
 /* harmony export */ });
+/* harmony import */ var _page_storage_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("cda569e6042b");
+
 function initIconSubsetState(loader) {
   loader.iconFontReady = false;
   loader.iconSubsetPending = false;
@@ -1007,7 +1009,7 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
   };
 
   SFLoaderPlugin.prototype.getStoredIconManifest = function (type = "") {
-    const raw = localStorage.getItem(this.getIconManifestStorageKey(type));
+    const raw = (0,_page_storage_js__WEBPACK_IMPORTED_MODULE_0__["default"])().getItem(this.getIconManifestStorageKey(type));
     if (!raw) return null;
 
     try {
@@ -1768,12 +1770,14 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _cacheCodec__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d0f4f6f9dbe0");
 /* harmony import */ var _stableHash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("af3c1d41479b");
-/* harmony import */ var _tailwind_map__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("3f02a73d71b2");
-/* harmony import */ var _contracts_utility_module_aliases_v1_json__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("b3ed17287563");
-/* harmony import */ var _utilityModuleAliases__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("98e08d2c9eb6");
-/* harmony import */ var _iconSubsetRuntime__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("09d27e26e137");
-/* harmony import */ var _preloader__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("6c7f357fe960");
-/* harmony import */ var lit_static_html_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("ee5035470810");
+/* harmony import */ var _page_storage_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("cda569e6042b");
+/* harmony import */ var _tailwind_map__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("3f02a73d71b2");
+/* harmony import */ var _contracts_utility_module_aliases_v1_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("b3ed17287563");
+/* harmony import */ var _utilityModuleAliases__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("98e08d2c9eb6");
+/* harmony import */ var _iconSubsetRuntime__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("09d27e26e137");
+/* harmony import */ var _preloader__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("6c7f357fe960");
+/* harmony import */ var lit_static_html_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("ee5035470810");
+
 
 
 
@@ -1888,7 +1892,7 @@ function SFLoaderPlugin(params) {
   };
   this.componentTemplates = {};
   this.prepareInit = false;
-  (0,_iconSubsetRuntime__WEBPACK_IMPORTED_MODULE_5__.initIconSubsetState)(this);
+  (0,_iconSubsetRuntime__WEBPACK_IMPORTED_MODULE_6__.initIconSubsetState)(this);
   this.eventSend = false;
   this.uniqueIcons = new Map();
   this.pendingRegex = true;
@@ -1933,9 +1937,9 @@ function SFLoaderPlugin(params) {
   this.heavyModules = params.heavyModules || [];
   this.priorityModules = params.priorityModules || ['container', 'display', 'flex', 'grid', 'gap', 'column', 'width', 'height', 'aspect-ratio', 'element-position', 'element-position-ext', 'headers', 'theme', 'skeleton'];
   this.preloader = {
-    color: (0,_preloader__WEBPACK_IMPORTED_MODULE_6__.getPreloaderColor)(),
-    width: _preloader__WEBPACK_IMPORTED_MODULE_6__.DEFAULT_PRELOADER.width,
-    height: _preloader__WEBPACK_IMPORTED_MODULE_6__.DEFAULT_PRELOADER.height
+    color: (0,_preloader__WEBPACK_IMPORTED_MODULE_7__.getPreloaderColor)(),
+    width: _preloader__WEBPACK_IMPORTED_MODULE_7__.DEFAULT_PRELOADER.width,
+    height: _preloader__WEBPACK_IMPORTED_MODULE_7__.DEFAULT_PRELOADER.height
   };
   this.timingStart = typeof performance !== 'undefined' && performance.now ? performance.now() : Date.now();
   this.turboEventsBound = false;
@@ -1962,7 +1966,7 @@ function SFLoaderPlugin(params) {
   this.contentPreloaderText = params.contentPreloaderText ? params.contentPreloaderText : 'LOADING';
   this.arrowInterval = null;
   this.contentPreloader = '';
-  this.backgroundPreloader = params.backgroundPreloader ? params.backgroundPreloader : (0,_preloader__WEBPACK_IMPORTED_MODULE_6__.getPreloaderBackground)();
+  this.backgroundPreloader = params.backgroundPreloader ? params.backgroundPreloader : (0,_preloader__WEBPACK_IMPORTED_MODULE_7__.getPreloaderBackground)();
   this.tempLoaderStyles = 'inset: 0;position: fixed;width: 100%;height: 100vh;opacity: 1;z-index: 1000;background-color: var(--sf-color--surface-highest, var(--sf-surface-0, #fff));text-align: center;';
   this.modifierPreloader = params.modifierPreloader ? params.modifierPreloader : 'loader-default';
   this.isDebug = false; // Minified bundles unless someone is debugging: every bundle ships
@@ -2546,7 +2550,7 @@ function normalizeToNodes(value) {
 
 function safeSetItem(key, value) {
   try {
-    localStorage.setItem(key, value);
+    (0,_page_storage_js__WEBPACK_IMPORTED_MODULE_2__["default"])().setItem(key, value);
   } catch (e) {
     console.warn('localStorage setItem failed', key, e);
   }
@@ -2554,13 +2558,13 @@ function safeSetItem(key, value) {
 
 function safeRemoveItem(key) {
   try {
-    localStorage.removeItem(key);
+    (0,_page_storage_js__WEBPACK_IMPORTED_MODULE_2__["default"])().removeItem(key);
   } catch (e) {
     console.warn('localStorage removeItem failed', key, e);
   }
 }
 
-(0,_iconSubsetRuntime__WEBPACK_IMPORTED_MODULE_5__.installIconSubsetRuntime)(SFLoaderPlugin, {
+(0,_iconSubsetRuntime__WEBPACK_IMPORTED_MODULE_6__.installIconSubsetRuntime)(SFLoaderPlugin, {
   safeSetItem,
   safeRemoveItem
 });
@@ -2648,13 +2652,13 @@ SFLoaderPlugin.prototype.runPreloader = function () {
 };
 
 SFLoaderPlugin.prototype.rotatePreloader = function () {
-  (0,_preloader__WEBPACK_IMPORTED_MODULE_6__.startPreloaderMotion)(this.preloaderWrap, () => this.preloaderRun, this.preloader);
+  (0,_preloader__WEBPACK_IMPORTED_MODULE_7__.startPreloaderMotion)(this.preloaderWrap, () => this.preloaderRun, this.preloader);
 };
 
 SFLoaderPlugin.prototype.stopAnimation = function () {
   clearInterval(this.arrowInterval);
   if (!this.preloaderWrap) return;
-  (0,_preloader__WEBPACK_IMPORTED_MODULE_6__.stopPreloaderMotion)(this.preloaderWrap);
+  (0,_preloader__WEBPACK_IMPORTED_MODULE_7__.stopPreloaderMotion)(this.preloaderWrap);
 };
 
 SFLoaderPlugin.prototype.stopPreloader = function () {
@@ -2804,14 +2808,23 @@ SFLoaderPlugin.prototype.checkCookie = function (name) {
 };
 
 SFLoaderPlugin.prototype.getApartCookie = function (name) {
-  if (document.cookie.length > 0) {
-    let start = document.cookie.indexOf(name + '=');
+  // A sandboxed document throws on reading its cookies, as getCookie knows.
+  let cookies = '';
+
+  try {
+    cookies = document.cookie;
+  } catch {
+    cookies = '';
+  }
+
+  if (cookies.length > 0) {
+    let start = cookies.indexOf(name + '=');
 
     if (start !== -1) {
       start = start + name.length + 1;
-      let end = document.cookie.indexOf(';', start);
-      if (end === -1) end = document.cookie.length;
-      return encodeURI(document.cookie.substring(start, end)).split(',');
+      let end = cookies.indexOf(';', start);
+      if (end === -1) end = cookies.length;
+      return encodeURI(cookies.substring(start, end)).split(',');
     }
   }
 
@@ -3259,7 +3272,7 @@ SFLoaderPlugin.prototype.getAttributes = function (HtmlElement) {
       let nextValue = value;
 
       if (attrName === 'class' && value) {
-        const converted = (0,_tailwind_map__WEBPACK_IMPORTED_MODULE_2__.convertTailwindClasses)(value);
+        const converted = (0,_tailwind_map__WEBPACK_IMPORTED_MODULE_3__.convertTailwindClasses)(value);
 
         if (converted !== value) {
           HtmlElement.setAttribute('class', converted);
@@ -4038,7 +4051,7 @@ SFLoaderPlugin.prototype.search = function () {
 };
 
 SFLoaderPlugin.prototype.setExistCookie = function (name, output = null, output2 = null) {
-  name = (0,_utilityModuleAliases__WEBPACK_IMPORTED_MODULE_4__.resolveUtilityModule)(name, _contracts_utility_module_aliases_v1_json__WEBPACK_IMPORTED_MODULE_3__.aliases, this.findPlugins, this.productionPlanActive); // A package rule without a usable base is not marked for loading at all; the
+  name = (0,_utilityModuleAliases__WEBPACK_IMPORTED_MODULE_5__.resolveUtilityModule)(name, _contracts_utility_module_aliases_v1_json__WEBPACK_IMPORTED_MODULE_4__.aliases, this.findPlugins, this.productionPlanActive); // A package rule without a usable base is not marked for loading at all; the
   // warning names it, and nothing is fetched from the Smart base in its place.
 
   if (!this.isPluginResolvable(name)) {
@@ -4710,7 +4723,7 @@ SFLoaderPlugin.prototype.splitPluginPoint = plugins => {
 };
 
 SFLoaderPlugin.prototype.checkSmartCache = function () {
-  const smartCache = localStorage.getItem(`SF_SMART_LIST-${this.urlHash}`);
+  const smartCache = (0,_page_storage_js__WEBPACK_IMPORTED_MODULE_2__["default"])().getItem(`SF_SMART_LIST-${this.urlHash}`);
 
   if (smartCache) {
     try {
@@ -4856,8 +4869,8 @@ SFLoaderPlugin.prototype.checkTheme = function (body = null) {
 };
 
 SFLoaderPlugin.prototype.checkForCache = function () {
-  for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i);
+  for (let i = 0; i < (0,_page_storage_js__WEBPACK_IMPORTED_MODULE_2__["default"])().length; i++) {
+    const key = (0,_page_storage_js__WEBPACK_IMPORTED_MODULE_2__["default"])().key(i);
 
     if (key.startsWith('SF_PLUGIN_LIST-')) {
       return false;
@@ -4872,8 +4885,8 @@ SFLoaderPlugin.prototype.randomId = function (length = 8) {
 };
 
 SFLoaderPlugin.prototype.clearCache = function () {
-  for (let i = localStorage.length - 1; i >= 0; i--) {
-    const key = localStorage.key(i);
+  for (let i = (0,_page_storage_js__WEBPACK_IMPORTED_MODULE_2__["default"])().length - 1; i >= 0; i--) {
+    const key = (0,_page_storage_js__WEBPACK_IMPORTED_MODULE_2__["default"])().key(i);
 
     if (key.startsWith('SF_PLUGIN_LIST-') || key.startsWith('SF_SMART_LIST-')) {
       safeRemoveItem(key);
@@ -4884,8 +4897,8 @@ SFLoaderPlugin.prototype.clearCache = function () {
 };
 
 SFLoaderPlugin.prototype.clearAllSfCache = function () {
-  for (let i = localStorage.length - 1; i >= 0; i--) {
-    const key = localStorage.key(i);
+  for (let i = (0,_page_storage_js__WEBPACK_IMPORTED_MODULE_2__["default"])().length - 1; i >= 0; i--) {
+    const key = (0,_page_storage_js__WEBPACK_IMPORTED_MODULE_2__["default"])().key(i);
 
     if (key && key.startsWith('SF_')) {
       safeRemoveItem(key);
@@ -4895,7 +4908,7 @@ SFLoaderPlugin.prototype.clearAllSfCache = function () {
 
 SFLoaderPlugin.prototype.ensureCacheVersion = function () {
   const versionKey = 'SF_CACHE_VERSION';
-  const storedVersion = localStorage.getItem(versionKey);
+  const storedVersion = (0,_page_storage_js__WEBPACK_IMPORTED_MODULE_2__["default"])().getItem(versionKey);
   const currentVersion = this.cacheVersion;
 
   if (!currentVersion) {
@@ -4912,7 +4925,7 @@ SFLoaderPlugin.prototype.ensureCacheVersion = function () {
 
 SFLoaderPlugin.prototype.ensurePluginListVersion = function () {
   const versionKey = 'SF_PLUGIN_LIST_VERSION';
-  const storedVersion = localStorage.getItem(versionKey);
+  const storedVersion = (0,_page_storage_js__WEBPACK_IMPORTED_MODULE_2__["default"])().getItem(versionKey);
   const currentVersion = this.pluginListVersion;
 
   if (!currentVersion) {
@@ -4929,7 +4942,7 @@ SFLoaderPlugin.prototype.ensurePluginListVersion = function () {
 
 SFLoaderPlugin.prototype.revalidateMissingPlugins = function () {
   try {
-    const stored = localStorage.getItem('SF_MISSING_PLUGINS');
+    const stored = (0,_page_storage_js__WEBPACK_IMPORTED_MODULE_2__["default"])().getItem('SF_MISSING_PLUGINS');
     if (!stored) return;
     const parsed = JSON.parse((0,_cacheCodec__WEBPACK_IMPORTED_MODULE_0__.decodeCacheValue)(stored));
     if (!parsed || typeof parsed !== 'object') return;
@@ -4951,9 +4964,9 @@ SFLoaderPlugin.prototype.revalidateMissingPlugins = function () {
     });
 
     if (Object.keys(remaining).length) {
-      localStorage.setItem('SF_MISSING_PLUGINS', (0,_cacheCodec__WEBPACK_IMPORTED_MODULE_0__.encodeCacheValue)(JSON.stringify(remaining)));
+      (0,_page_storage_js__WEBPACK_IMPORTED_MODULE_2__["default"])().setItem('SF_MISSING_PLUGINS', (0,_cacheCodec__WEBPACK_IMPORTED_MODULE_0__.encodeCacheValue)(JSON.stringify(remaining)));
     } else {
-      localStorage.removeItem('SF_MISSING_PLUGINS');
+      (0,_page_storage_js__WEBPACK_IMPORTED_MODULE_2__["default"])().removeItem('SF_MISSING_PLUGINS');
     }
   } catch (e) {
     console.warn('revalidateMissingPlugins failed', e);
@@ -5133,7 +5146,7 @@ SFLoaderPlugin.prototype.getLoader = async function (PluginList, temp = false, s
     PluginList = this.getObjectArray(PluginList || {});
   }
 
-  PluginList = [...new Set(PluginList.map(name => (0,_utilityModuleAliases__WEBPACK_IMPORTED_MODULE_4__.resolveUtilityModule)(name, _contracts_utility_module_aliases_v1_json__WEBPACK_IMPORTED_MODULE_3__.aliases, this.findPlugins, this.productionPlanActive)))];
+  PluginList = [...new Set(PluginList.map(name => (0,_utilityModuleAliases__WEBPACK_IMPORTED_MODULE_5__.resolveUtilityModule)(name, _contracts_utility_module_aliases_v1_json__WEBPACK_IMPORTED_MODULE_4__.aliases, this.findPlugins, this.productionPlanActive)))];
 
   if (!this.productionPlanActive) {
     PluginList.forEach(name => this.setModule(name));
@@ -5453,7 +5466,7 @@ SFLoaderPlugin.prototype.setPreloaderParams = function () {
     }
   }
 
-  this.contentPreloader = this.params.contentPreloader ? this.params.contentPreloader : (0,_preloader__WEBPACK_IMPORTED_MODULE_6__.createPreloaderContent)(this.preloader);
+  this.contentPreloader = this.params.contentPreloader ? this.params.contentPreloader : (0,_preloader__WEBPACK_IMPORTED_MODULE_7__.createPreloaderContent)(this.preloader);
 };
 
 SFLoaderPlugin.prototype.getCurrentUrl = function () {
@@ -5526,7 +5539,7 @@ SFLoaderPlugin.prototype.prepare = function (observer = null) {
   this.checkTheme();
 
   if (this.standAlone) {
-    const localMissingPlugins = localStorage.getItem('SF_MISSING_PLUGINS');
+    const localMissingPlugins = (0,_page_storage_js__WEBPACK_IMPORTED_MODULE_2__["default"])().getItem('SF_MISSING_PLUGINS');
 
     try {
       this.notFoundFiles = localMissingPlugins ? this.getPersistentMissingFiles(JSON.parse((0,_cacheCodec__WEBPACK_IMPORTED_MODULE_0__.decodeCacheValue)(localMissingPlugins))) : {};
@@ -5535,10 +5548,10 @@ SFLoaderPlugin.prototype.prepare = function (observer = null) {
     }
   }
 
-  let plugins = this.productionPlanActive ? null : localStorage.getItem(`SF_PLUGIN_LIST-${this.urlHash}`); // fallback: если есть bundle-id, пробуем его ключ даже в standAlone
+  let plugins = this.productionPlanActive ? null : (0,_page_storage_js__WEBPACK_IMPORTED_MODULE_2__["default"])().getItem(`SF_PLUGIN_LIST-${this.urlHash}`); // fallback: если есть bundle-id, пробуем его ключ даже в standAlone
 
   if (!this.productionPlanActive && !plugins && window.BUNDLE_ID) {
-    plugins = localStorage.getItem(`SF_PLUGIN_LIST-${window.BUNDLE_ID}`);
+    plugins = (0,_page_storage_js__WEBPACK_IMPORTED_MODULE_2__["default"])().getItem(`SF_PLUGIN_LIST-${window.BUNDLE_ID}`);
   }
 
   if (!this.standAlone) {
@@ -5662,14 +5675,35 @@ SFLoaderPlugin.prototype.getTextNodes = function (node) {
 // hidden, and the module arrived about five seconds after the window opened.
 // A timer runs in a hidden tab, so that is what a hidden tab gets. No caller
 // uses the handle either of them returns.
+//
+// A frame is not promised either: an iframe out of view (a documentation
+// example below the fold) gets none while its document is still «visible», and
+// the work waited for a frame that never came -- tags created there stayed
+// undefined until someone scrolled (DEV, 2026-10-15). So the work runs on the
+// frame or on a short timer, whichever comes first, and once.
 
+
+const LOADER_FRAME_FALLBACK_MS = 100;
 
 function scheduleLoaderWork(fn) {
   if (typeof document !== 'undefined' && document.hidden) {
     return setTimeout(fn, 0);
   }
 
-  return requestAnimationFrame(fn);
+  let done = false;
+  let timer = null;
+
+  const run = () => {
+    if (done) return;
+    done = true;
+    clearTimeout(timer);
+    cancelAnimationFrame(frame);
+    fn();
+  };
+
+  const frame = requestAnimationFrame(run);
+  timer = setTimeout(run, LOADER_FRAME_FALLBACK_MS);
+  return frame;
 }
 
 SFLoaderPlugin.prototype.mutate = function (fn) {
@@ -6228,8 +6262,8 @@ SF.litHtml = (tagName, props = {}) => {
     }
   }
 
-  const tag = (0,lit_static_html_js__WEBPACK_IMPORTED_MODULE_7__.unsafeStatic)(tagName);
-  return (0,lit_static_html_js__WEBPACK_IMPORTED_MODULE_7__.html)`<${tag} ...=${props}></${tag}>`;
+  const tag = (0,lit_static_html_js__WEBPACK_IMPORTED_MODULE_8__.unsafeStatic)(tagName);
+  return (0,lit_static_html_js__WEBPACK_IMPORTED_MODULE_8__.html)`<${tag} ...=${props}></${tag}>`;
 };
 
 SF.whenDefine = whenSmartDefined;
@@ -6258,6 +6292,48 @@ if (Array.isArray(window.SF_PENDING_COMPONENTS)) {
       console.warn('pending component register failed', n, err);
     }
   }
+}
+
+/***/ },
+
+/***/ "cda569e6042b"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ pageStorage)
+/* harmony export */ });
+// The page's localStorage, or a store in memory where there is none to have.
+//
+// A sandboxed document without allow-same-origin -- a documentation example in
+// an iframe -- throws on the mere read of window.localStorage, and the Loader,
+// which reads it to cache its plugin lists, stopped there: nothing it found was
+// ever fetched (DEV, 2026-10-15). In memory the caches live as long as the
+// page, which is all such a page can keep anyway.
+const memory = new Map();
+const memoryStorage = {
+  get length() {
+    return memory.size;
+  },
+
+  key: index => [...memory.keys()][index] ?? null,
+  getItem: key => memory.has(key) ? memory.get(key) : null,
+  setItem: (key, value) => {
+    memory.set(String(key), String(value));
+  },
+  removeItem: key => {
+    memory.delete(String(key));
+  },
+  clear: () => memory.clear()
+};
+function pageStorage() {
+  try {
+    const storage = globalThis.localStorage;
+    if (storage) return storage;
+  } catch {// Sandboxed: fall through to memory.
+  }
+
+  return memoryStorage;
 }
 
 /***/ },
