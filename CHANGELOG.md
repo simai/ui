@@ -85,6 +85,8 @@
 
 ### Добавлено
 
+- `SF.fieldRenderers.registry`: the registry of universal properties — every type, its variants, the parameters it reads and its modes (view, edit, cell, filter: own or text).
+
 - Placeholder shapes in core: an element not defined yet with `data-sf-skeleton="rows|record|menu|block|line"` takes its final room and shows skeleton bars until its code arrives. Manifest schema 2.4.0: `presentation.skeleton {shape, while_loading}`.
 
 - `SF.Preferences` — one store for view preferences: read before the first paint, kept in the browser and, with `useHost()`, for the person on the server; `<script type="application/json" data-sf-preferences>` preloads the host's values. `sf-resizer` keeps its width there.
