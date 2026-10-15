@@ -869,6 +869,90 @@
     padding-top: var(--sf-space-1\/3);
     padding-top: var(--sf-datepicker--padding-top, var(--sf-space-1\/3));
   }
+  /* Quick ranges beside the grid, at its inline start; where the panel has no
+     room for both, a wrapping row above it. The panel is the container, so the
+     list follows the room the panel has, not the window. */
+  .sf-datepicker.sf-datepicker--presets {
+    /* Five days wide: the list measures in the grid's own unit, and «Последние
+       30 дней» fits it. */
+    --sf-datepicker-presets--inline-size: calc(var(--sf-ui-1--control-height) * 5);
+    container: sf-datepicker/inline-size;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    -webkit-column-gap: var(--sf-space-1\/3);
+       -moz-column-gap: var(--sf-space-1\/3);
+            column-gap: var(--sf-space-1\/3);
+    row-gap: var(--sf-space-1\/3);
+    width: min(var(--sf-datepicker--inline-size) + var(--sf-datepicker-presets--inline-size) + var(--sf-space-1\/3), 100vi - var(--sf-space-2));
+    inline-size: min(var(--sf-datepicker--inline-size) + var(--sf-datepicker-presets--inline-size) + var(--sf-space-1\/3), 100vi - var(--sf-space-2));
+  }
+  .sf-datepicker.sf-datepicker--presets > .sf-datepicker-container {
+    flex: 1 1 calc(var(--sf-ui-1--control-height) * 7);
+    min-width: 0;
+    min-inline-size: 0;
+  }
+  .sf-datepicker .sf-datepicker-presets {
+    flex: 0 0 var(--sf-datepicker-presets--inline-size);
+    min-width: 0;
+    min-inline-size: 0;
+    padding-top: var(--sf-space-1\/3);
+    -webkit-padding-before: var(--sf-space-1\/3);
+            padding-block-start: var(--sf-space-1\/3);
+  }
+  /* A month, a year or a quick range lies on the panel, not on the page: the
+     page's surface under it drew a dark box round every one of them in the
+     dark theme (light hid it, the two are the same white there). Hover and
+     the chosen one still paint, from the states layer. */
+  .sf-datepicker .sf-datepicker-text {
+    --sf-datepicker-text--background-color: var(--sf-transparent);
+  }
+  /* A list row is a control's height, the height of a day beside it. */
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-datepicker .sf-datepicker-preset{
+    text-align: left;
+  }
+  @supports not (text-align: start){
+  html:not([dir="rtl"]) .sf-datepicker .sf-datepicker-preset{
+    text-align: left;
+    }
+  }
+  .sf-datepicker .sf-datepicker-preset:where(:dir(ltr)){
+    text-align: left;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-datepicker .sf-datepicker-preset{
+    text-align: right;
+  }
+  @supports not (text-align: start){
+  [dir="rtl"] .sf-datepicker .sf-datepicker-preset{
+    text-align: right;
+    }
+  }
+  .sf-datepicker .sf-datepicker-preset:where(:dir(rtl)){
+    text-align: right;
+  }
+  .sf-datepicker .sf-datepicker-preset {
+    min-height: var(--sf-ui-1--control-height);
+    min-block-size: var(--sf-ui-1--control-height);
+    text-align: start;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  /* Beside the grid the panel's content is about 28rem wide (twelve 40px
+     days and a gap); any less and the list wraps above it. */
+  @container sf-datepicker (inline-size < 27rem) {
+    .sf-datepicker .sf-datepicker-presets {
+      flex: 1 1 100%;
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+    .sf-datepicker .sf-datepicker-preset {
+      min-height: var(--sf-ui-1\/2--control-height);
+      min-block-size: var(--sf-ui-1\/2--control-height);
+      padding-top: 0;
+      padding-bottom: 0;
+      padding-block: 0;
+    }
+  }
   .sf-datepicker .sf-datepicker-main {
     --sf-datepicker-main--background-color: var(--sf-transparent);
     background-color: var(--sf-datepicker-main--background-color);
