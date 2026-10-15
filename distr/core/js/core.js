@@ -5405,6 +5405,78 @@ function fieldKindRegistry() {
 
 /***/ },
 
+/***/ "c2e3ed8498dc"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   FRAGMENT_DESCRIPTOR_SCHEMA: () => (/* binding */ FRAGMENT_DESCRIPTOR_SCHEMA),
+/* harmony export */   checkFragmentDescriptor: () => (/* binding */ checkFragmentDescriptor)
+/* harmony export */ });
+/* harmony import */ var _canonical_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("6f489cc65b77");
+/* harmony import */ var _routing_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("4aea5d6d49c7");
+
+
+
+// The interface fragment descriptor (simai.interface-fragment 1.0.0): checked
+// here so a package gate, a page and a test read one rule. Returns the list of
+// problems, empty when the descriptor holds; never coerces.
+const FRAGMENT_DESCRIPTOR_SCHEMA = 'simai.interface-fragment.v1';
+
+const FIELDS = ['schema', 'id', 'element', 'regions', 'port', 'outputs', 'inputs', 'operation', 'url_state', 'budget'];
+const ID = /^[a-z][a-z0-9-]*(?:\.[a-z][a-z0-9-]*)+$/u;
+const ELEMENT = /^[a-z][a-z0-9]*-[a-z0-9-]+$/u;
+const NAME = /^[a-z][a-z0-9-]{0,31}$/u;
+const STANDARD = /^[a-z][a-z0-9.-]*$/u;
+const VERSION = /^[0-9]+\.[0-9]+\.[0-9]+$/u;
+const OPERATION = /^[a-z][a-z0-9._:-]{0,127}$/u;
+const URL_KEY = /^[a-z][a-z0-9_-]{0,63}$/u;
+
+const closed = (value, allowed) => (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(value) && Object.keys(value).every((key) => allowed.includes(key));
+const uniqueList = (value, max, test) => Array.isArray(value) && value.length <= max
+  && new Set(value).size === value.length && value.every(test);
+
+function portProblems(ports, where) {
+  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(ports)) return [`${where}: not an object`];
+  const names = Object.keys(ports);
+  const problems = names.length > 16 ? [`${where}: more than 16 ports`] : [];
+  for (const name of names) {
+    const port = ports[name];
+    if (!NAME.test(name)) problems.push(`${where}.${name}: name`);
+    if (!closed(port, ['value', 'summary'])) { problems.push(`${where}.${name}: undeclared keys`); continue; }
+    if (!Object.hasOwn(_routing_mjs__WEBPACK_IMPORTED_MODULE_1__.VALUE_TYPES, port.value)) problems.push(`${where}.${name}: unknown value type ${port.value}`);
+    if (typeof port.summary !== 'string' || !port.summary.trim() || port.summary.length > 1000) problems.push(`${where}.${name}: summary`);
+  }
+  return problems;
+}
+
+function checkFragmentDescriptor(descriptor) {
+  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(descriptor)) return ['descriptor: not an object'];
+  const problems = [];
+  const keys = Object.keys(descriptor);
+  for (const field of FIELDS) if (!keys.includes(field)) problems.push(`${field}: required`);
+  for (const key of keys) if (!FIELDS.includes(key)) problems.push(`${key}: undeclared`);
+  if (descriptor.schema !== FRAGMENT_DESCRIPTOR_SCHEMA) problems.push('schema: not simai.interface-fragment.v1');
+  if (typeof descriptor.id !== 'string' || !ID.test(descriptor.id)) problems.push('id: a dotted identity');
+  if (typeof descriptor.element !== 'string' || !ELEMENT.test(descriptor.element)) problems.push('element: a custom element name');
+  if (!uniqueList(descriptor.regions, 8, (region) => typeof region === 'string' && NAME.test(region)) || !descriptor.regions.length) problems.push('regions: one to eight region names');
+  const port = descriptor.port;
+  if (!closed(port, ['standard', 'version']) || !STANDARD.test(port?.standard ?? '') || !VERSION.test(port?.version ?? '')) problems.push('port: {standard, version}');
+  if ('outputs' in descriptor) problems.push(...portProblems(descriptor.outputs, 'outputs'));
+  if ('inputs' in descriptor) problems.push(...portProblems(descriptor.inputs, 'inputs'));
+  if (typeof descriptor.operation !== 'string' || !OPERATION.test(descriptor.operation)) problems.push('operation: an access operation token');
+  if (!uniqueList(descriptor.url_state, 16, (key) => typeof key === 'string' && URL_KEY.test(key))) problems.push('url_state: up to sixteen query keys');
+  const budget = descriptor.budget;
+  if (!closed(budget, ['kb', 'first_answer_ms'])
+    || !Number.isSafeInteger(budget.kb) || budget.kb < 0 || budget.kb > 2048
+    || !Number.isSafeInteger(budget.first_answer_ms) || budget.first_answer_ms < 0 || budget.first_answer_ms > 10000) problems.push('budget: {kb 0-2048, first_answer_ms 0-10000}');
+  return problems;
+}
+
+
+/***/ },
+
 /***/ "32dfc4431a24"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
@@ -5416,10 +5488,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   BUILTIN_PORT_MANIFESTS: () => (/* reexport safe */ _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_PORT_MANIFESTS),
 /* harmony export */   BUILTIN_TYPE_MANIFESTS: () => (/* reexport safe */ _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_TYPE_MANIFESTS),
 /* harmony export */   Composition: () => (/* binding */ Composition),
+/* harmony export */   FRAGMENT_DESCRIPTOR_SCHEMA: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_8__.FRAGMENT_DESCRIPTOR_SCHEMA),
 /* harmony export */   INLINE_MARKS: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_6__.INLINE_MARKS),
 /* harmony export */   Recipe: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_4__.Recipe),
 /* harmony export */   VALUE_TYPES: () => (/* reexport safe */ _routing_mjs__WEBPACK_IMPORTED_MODULE_7__.VALUE_TYPES),
 /* harmony export */   applyFieldValue: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_3__.applyFieldValue),
+/* harmony export */   checkFragmentDescriptor: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_8__.checkFragmentDescriptor),
 /* harmony export */   checkPortValue: () => (/* reexport safe */ _routing_mjs__WEBPACK_IMPORTED_MODULE_7__.checkPortValue),
 /* harmony export */   compositionTypeFromSmartManifest: () => (/* binding */ compositionTypeFromSmartManifest),
 /* harmony export */   createPortRegistry: () => (/* reexport safe */ _routing_mjs__WEBPACK_IMPORTED_MODULE_7__.createPortRegistry),
@@ -5460,6 +5534,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _regions_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("68efac8c1b57");
 /* harmony import */ var _inline_model_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("e66d878fb4f8");
 /* harmony import */ var _routing_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("4aea5d6d49c7");
+/* harmony import */ var _fragments_mjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("c2e3ed8498dc");
+
 
 
 
@@ -5923,6 +5999,8 @@ const Composition = Object.freeze({
   validateFieldValue: _fields_mjs__WEBPACK_IMPORTED_MODULE_3__.validateFieldValue,
   VALUE_TYPES: _routing_mjs__WEBPACK_IMPORTED_MODULE_7__.VALUE_TYPES,
   checkPortValue: _routing_mjs__WEBPACK_IMPORTED_MODULE_7__.checkPortValue,
+  checkFragmentDescriptor: _fragments_mjs__WEBPACK_IMPORTED_MODULE_8__.checkFragmentDescriptor,
+  FRAGMENT_DESCRIPTOR_SCHEMA: _fragments_mjs__WEBPACK_IMPORTED_MODULE_8__.FRAGMENT_DESCRIPTOR_SCHEMA,
   createPortRegistry: _routing_mjs__WEBPACK_IMPORTED_MODULE_7__.createPortRegistry,
   defineCompositionScope: _routing_mjs__WEBPACK_IMPORTED_MODULE_7__.defineCompositionScope,
   startInlineEdit,
@@ -5951,6 +6029,7 @@ if (typeof globalThis !== 'undefined') {
 }
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Composition);
+
 
 
 
@@ -6969,6 +7048,29 @@ function freezeList(list) {
   return Object.freeze([...list]);
 }
 
+// The page-level value types (interface fragments, 2026-10-15) are closed
+// objects: a key a type does not name is refused, never carried through.
+function closedObject(value, required, optional, type) {
+  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(value)) throw new TypeError(`${type} value is not an object`);
+  const keys = Object.keys(value);
+  if (!required.every((key) => keys.includes(key))) throw new TypeError(`${type} value misses a required key`);
+  if (!keys.every((key) => required.includes(key) || optional.includes(key))) throw new TypeError(`${type} value has an undeclared key`);
+}
+
+const TOKEN = /^[a-z][a-z0-9._:-]{0,127}$/u;
+const isToken = (value) => typeof value === 'string' && TOKEN.test(value);
+const isCollection = (value) => typeof value === 'string' && value.length > 0 && value.length <= 128 && !CONTROL.test(value);
+const isRevision = (value) => (typeof value === 'string' && value.length > 0 && value.length <= 128 && !CONTROL.test(value)) || Number.isSafeInteger(value);
+const PREFERENCE_KEY = /^[\w.*:-]+(?:\/[\w.*:/-]+)?$/u;
+// An address inside the same site: a path, never a scheme of its own, never
+// another origin's protocol-relative form.
+const isLocalUrl = (value) => typeof value === 'string' && value.length > 0 && value.length <= 2048
+  && !CONTROL.test(value) && value.startsWith('/') && !value.startsWith('//');
+const COLLECTION_SCHEMA = { type: 'string', minLength: 1, maxLength: 128 };
+const RECORD_ID_SCHEMA = { oneOf: [{ type: 'string', minLength: 1, maxLength: 256 }, { type: 'integer', minimum: -9007199254740991, maximum: 9007199254740991 }] };
+const REVISION_SCHEMA = { oneOf: [{ type: 'string', minLength: 1, maxLength: 128 }, { type: 'integer', minimum: -9007199254740991, maximum: 9007199254740991 }] };
+const TOKEN_SCHEMA = { type: 'string', pattern: '^[a-z][a-z0-9._:-]{0,127}$' };
+
 // Closed value-type vocabulary. Each validator returns an immutable copy or
 // throws TypeError; there is no coercion between types.
 const VALUE_TYPES = Object.freeze({
@@ -7009,6 +7111,92 @@ const VALUE_TYPES = Object.freeze({
     check(value) {
       if (typeof value !== 'boolean') throw new TypeError('boolean.v1 value is invalid');
       return value;
+    },
+  }),
+  'record-changed.v1': Object.freeze({
+    summary: 'A record changed: its collection, identity and new revision, and optionally the keys of the fields that changed (up to 256). Says what changed, never the values.',
+    schema: {
+      type: 'object', additionalProperties: false, required: ['collection', 'id', 'revision'],
+      properties: {
+        collection: COLLECTION_SCHEMA, id: RECORD_ID_SCHEMA, revision: REVISION_SCHEMA,
+        fields: { type: 'array', maxItems: 256, uniqueItems: true, items: { type: 'string', minLength: 1, maxLength: 128 } },
+      },
+    },
+    check(value) {
+      closedObject(value, ['collection', 'id', 'revision'], ['fields'], 'record-changed.v1');
+      if (!isCollection(value.collection) || !checkedRecordId(value.id) || !isRevision(value.revision)) throw new TypeError('record-changed.v1 value is invalid');
+      const out = { collection: value.collection, id: value.id, revision: value.revision };
+      if (value.fields !== undefined) {
+        const fields = value.fields;
+        if (!Array.isArray(fields) || fields.length > 256 || !fields.every(isCollection) || new Set(fields).size !== fields.length) throw new TypeError('record-changed.v1 fields are invalid');
+        out.fields = freezeList(fields);
+      }
+      return Object.freeze(out);
+    },
+  }),
+  'record-removed.v1': Object.freeze({
+    summary: 'A record was removed from its collection.',
+    schema: { type: 'object', additionalProperties: false, required: ['collection', 'id'], properties: { collection: COLLECTION_SCHEMA, id: RECORD_ID_SCHEMA } },
+    check(value) {
+      closedObject(value, ['collection', 'id'], [], 'record-removed.v1');
+      if (!isCollection(value.collection) || !checkedRecordId(value.id)) throw new TypeError('record-removed.v1 value is invalid');
+      return Object.freeze({ collection: value.collection, id: value.id });
+    },
+  }),
+  'collection-changed.v1': Object.freeze({
+    summary: 'Something in a collection changed that a list should read again; reason is a short token (created, imported, reordered, settings ...).',
+    schema: { type: 'object', additionalProperties: false, required: ['collection', 'reason'], properties: { collection: COLLECTION_SCHEMA, reason: TOKEN_SCHEMA } },
+    check(value) {
+      closedObject(value, ['collection', 'reason'], [], 'collection-changed.v1');
+      if (!isCollection(value.collection) || !isToken(value.reason)) throw new TypeError('collection-changed.v1 value is invalid');
+      return Object.freeze({ collection: value.collection, reason: value.reason });
+    },
+  }),
+  'files-moved.v1': Object.freeze({
+    summary: 'Files moved between folders: their identities (1 to 1000, unique), the folder they left and the one they went to; null is the root.',
+    schema: {
+      type: 'object', additionalProperties: false, required: ['ids', 'from', 'to'],
+      properties: {
+        ids: { type: 'array', minItems: 1, maxItems: 1000, uniqueItems: true, items: RECORD_ID_SCHEMA },
+        from: { oneOf: [{ type: 'null' }, ...RECORD_ID_SCHEMA.oneOf] },
+        to: { oneOf: [{ type: 'null' }, ...RECORD_ID_SCHEMA.oneOf] },
+      },
+    },
+    check(value) {
+      closedObject(value, ['ids', 'from', 'to'], [], 'files-moved.v1');
+      const ids = value.ids;
+      if (!Array.isArray(ids) || ids.length === 0 || ids.length > 1000 || !ids.every(checkedRecordId)) throw new TypeError('files-moved.v1 ids are invalid');
+      if (new Set(ids.map((entry) => `${typeof entry}:${entry}`)).size !== ids.length) throw new TypeError('files-moved.v1 ids have duplicates');
+      const folder = (entry) => entry === null || checkedRecordId(entry);
+      if (!folder(value.from) || !folder(value.to)) throw new TypeError('files-moved.v1 folder is invalid');
+      return Object.freeze({ ids: freezeList(ids), from: value.from, to: value.to });
+    },
+  }),
+  'counter.v1': Object.freeze({
+    summary: 'A named count changed: key is a token (notifications, requests.new ...), value a non-negative safe integer.',
+    schema: { type: 'object', additionalProperties: false, required: ['key', 'value'], properties: { key: TOKEN_SCHEMA, value: { type: 'integer', minimum: 0, maximum: 9007199254740991 } } },
+    check(value) {
+      closedObject(value, ['key', 'value'], [], 'counter.v1');
+      if (!isToken(value.key) || !Number.isSafeInteger(value.value) || value.value < 0) throw new TypeError('counter.v1 value is invalid');
+      return Object.freeze({ key: value.key, value: value.value });
+    },
+  }),
+  'navigation.v1': Object.freeze({
+    summary: 'Go to an address of the same site, in a named region: url is a path (starting with one slash, up to 2048 code units), region a region name.',
+    schema: { type: 'object', additionalProperties: false, required: ['url', 'region'], properties: { url: { type: 'string', minLength: 1, maxLength: 2048, pattern: '^/(?!/)' }, region: { type: 'string', pattern: '^[a-z][a-z0-9-]{0,31}$' } } },
+    check(value) {
+      closedObject(value, ['url', 'region'], [], 'navigation.v1');
+      if (!isLocalUrl(value.url) || typeof value.region !== 'string' || !NAME_PATTERN.test(value.region)) throw new TypeError('navigation.v1 value is invalid');
+      return Object.freeze({ url: value.url, region: value.region });
+    },
+  }),
+  'preference-changed.v1': Object.freeze({
+    summary: 'A person changed a view preference: the SF.Preferences key (sf-table/<key>, sf-table/*, sf-admin-menu/main ...). Says which, never the value.',
+    schema: { type: 'object', additionalProperties: false, required: ['key'], properties: { key: { type: 'string', minLength: 1, maxLength: 256, pattern: '^[\\w.*:-]+(?:/[\\w.*:/-]+)?$' } } },
+    check(value) {
+      closedObject(value, ['key'], [], 'preference-changed.v1');
+      if (typeof value.key !== 'string' || value.key.length > 256 || !PREFERENCE_KEY.test(value.key)) throw new TypeError('preference-changed.v1 value is invalid');
+      return Object.freeze({ key: value.key });
     },
   }),
 });
