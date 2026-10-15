@@ -8,6 +8,8 @@
 
 ### Исправлено
 
+- Field renderers: a text filter reads «Содержит…»; an options list in a filter window scrolls down only.
+
 - `sf-tag` — no empty count element (and no band at the end of the tag) when there is no count.
 - `sf-pagination` — «Показать ещё» stretches between the pages and the page size.
 
