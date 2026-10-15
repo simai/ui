@@ -10,13 +10,24 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("fbe0570fcc69");
 /* harmony import */ var _core_js_position_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5c1dc214bb5e");
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("1197ac823db7");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("0d662e4d7d63");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_position_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_position_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__);
 
 
- // Prefer the helper Core published; a bundle loaded without core.js still
+
+
+const CONTEXT_MENU_TEXT = {
+  en: {
+    close: "Close"
+  },
+  ru: {
+    close: "Закрыть"
+  }
+}; // Prefer the helper Core published; a bundle loaded without core.js still
 // positions with its own copy.
 
 const position = () => globalThis.SF?.Position || (_core_js_position_js__WEBPACK_IMPORTED_MODULE_1___default());
@@ -740,8 +751,97 @@ class SfContextMenu extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___de
       // "trigger" (exactly the control that opened it) or a CSS length.
       width: {
         default: "content"
+      },
+      // A panel with tabs (owner, 2026-10-15): the tabs and the way out on a
+      // head that never scrolls, the rows of the chosen tab in a body that
+      // does, the actions in a footer that stays. "A|B" or [{id, label}].
+      tabs: {
+        default: ""
+      },
+      // The chosen tab's id (or index); the host shows that tab's rows.
+      activeTab: {
+        attribute: "active-tab",
+        default: ""
+      },
+      // A close button at the end of the head.
+      closable: {
+        type: Boolean,
+        default: false
       }
     };
+  } // The tabs as [{id, label}]: a string list names each tab by its label.
+
+
+  get tabs() {
+    const raw = Array.isArray(this._tabs) ? this._tabs : this.getAttribute("tabs") || "";
+    const list = Array.isArray(raw) ? raw : String(raw).split("|").map(label => label.trim()).filter(Boolean);
+    return list.map((tab, index) => typeof tab === "string" ? {
+      id: tab,
+      label: tab,
+      index
+    } : {
+      id: String(tab.id ?? index),
+      label: String(tab.label ?? tab.id ?? index),
+      index
+    });
+  }
+
+  set tabs(value) {
+    if (Array.isArray(value)) {
+      this._tabs = value;
+      this.requestComponentUpdate("tabs");
+      return;
+    }
+
+    this._tabs = null;
+    this.setState({
+      tabs: value ? String(value) : ""
+    });
+  }
+
+  get activeTab() {
+    const tabs = this.tabs;
+    const asked = this.getAttribute("active-tab") ?? "";
+    return tabs.find(tab => tab.id === asked) ?? tabs[Number(asked)] ?? tabs[0] ?? null;
+  }
+
+  get closable() {
+    return this.getBooleanAttr("closable", false);
+  }
+
+  get panel() {
+    return this.tabs.length > 0;
+  } // A tab chosen: the head marks it and says so; the host puts that tab's
+  // rows in the body. The panel keeps its width -- it is fixed, never the
+  // width of what a tab holds.
+
+
+  chooseTab(index) {
+    const tab = this.tabs[index];
+    if (!tab || tab.id === this.activeTab?.id) return this;
+    this.setState({
+      activeTab: tab.id
+    });
+    this.dispatchEvent(new CustomEvent("sf-context-menu-tab", {
+      bubbles: true,
+      composed: true,
+      detail: {
+        id: tab.id,
+        index: tab.index
+      }
+    }));
+    return this;
+  } // The head's close button: an owned menu closes itself; a menu its host
+  // placed is closed by the host, which hears the same event either way.
+
+
+  requestClose() {
+    if (this._owned) return this.close();
+    this.dispatchEvent(new CustomEvent("sf-context-menu-close", {
+      bubbles: true,
+      composed: true
+    }));
+    return true;
   }
 
   get templateName() {
@@ -786,6 +886,11 @@ class SfContextMenu extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___de
       entries: this.entries,
       search: this.search,
       query: this.query,
+      tabs: this.tabs,
+      activeTab: this.activeTab,
+      closable: this.closable,
+      closeLabel: (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(CONTEXT_MENU_TEXT, "close", this, "sf-context-menu"),
+      panel: this.panel,
       position: this.position,
       size: this.size,
       component: this,
@@ -1026,6 +1131,25 @@ function renderContent(context) {
 function renderFooter(context) {
   if (!context.component?.hasSlotContent?.("footer")) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-context-menu-footer">${context.component.getSlotContent("footer")}</div>`;
+} // A panel's head: the tabs, and the way out at its end. It never scrolls --
+// the body under it does (owner, 2026-10-15).
+
+
+function renderPanelHead(context) {
+  const active = context.activeTab;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-context-menu-head">
+        <sf-tabs class="sf-context-menu-tabs" type="underline" size=${context.size === "1" ? "1" : "1/2"}
+                items=${context.tabs.map(tab => tab.label).join("|")}
+                active-index=${String(active?.index ?? 0)}
+                @sf-tab-change=${event => {
+    event.stopPropagation();
+    context.component.chooseTab(Number(event.detail?.current ?? 0));
+  }}></sf-tabs>
+        ${context.closable ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-icon-button class="sf-context-menu-close" appearance="link" scheme="on-surface"
+                size=${context.size === "1" ? "1" : "1/2"} icon="close"
+                aria-label=${context.closeLabel} title=${context.closeLabel}
+                @click=${() => context.component.requestClose()}></sf-icon-button>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    </div>`;
 } // No tail (owner, 2026-10-12): it never read as one piece with the panel. The
 // position attribute is kept for its class and draws nothing.
 
@@ -1035,7 +1159,7 @@ function renderTooltip() {
 }
 
 function renderContextMenuTemplate(context) {
-  const rootClasses = joinClasses("sf-context-menu", context.position ? `sf-context-menu--position-${context.position}` : "", context.entries && context.entries.length ? "sf-context-menu--entries" : "", context.size === "1" ? "sf-context-menu--size-1" : "", "flex", context.rootClass);
+  const rootClasses = joinClasses("sf-context-menu", context.position ? `sf-context-menu--position-${context.position}` : "", context.entries && context.entries.length ? "sf-context-menu--entries" : "", context.size === "1" ? "sf-context-menu--size-1" : "", context.panel ? "sf-context-menu--panel" : "", "flex", context.rootClass);
   const contentClasses = joinClasses("sf-context-menu-content", "flex", "flex-col", "flex-1", context.contentClass);
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <div
@@ -1046,7 +1170,11 @@ function renderContextMenuTemplate(context) {
         >
             <div class="relative">
                 ${renderTooltip(context)}
-                <div class=${contentClasses}>${renderContent(context)}${renderFooter(context)}</div>
+                ${context.panel ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class=${contentClasses}>
+                        ${renderPanelHead(context)}
+                        <div class="sf-context-menu-body" role="tabpanel" aria-label=${context.activeTab?.label ?? lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>${renderContent(context)}</div>
+                        ${renderFooter(context)}
+                    </div>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class=${contentClasses}>${renderContent(context)}${renderFooter(context)}</div>`}
             </div>
         </div>
     `;
@@ -1060,6 +1188,13 @@ __webpack_async_result__();
 (module) {
 
 module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("lit") : new Promise((resolve) => globalThis.addEventListener("sf-runtime-ready", () => resolve(globalThis.SF.runtimeModule("lit")), { once: true })));
+
+/***/ },
+
+/***/ "0d662e4d7d63"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("page-language") : new Promise((resolve) => globalThis.addEventListener("sf-runtime-ready", () => resolve(globalThis.SF.runtimeModule("page-language")), { once: true })));
 
 /***/ },
 

@@ -833,6 +833,14 @@
       },
       {
         "name": "cl-buttons"
+      },
+      {
+        "lazy": true,
+        "name": "cl-tabs"
+      },
+      {
+        "lazy": true,
+        "name": "cl-icon-buttons"
       }
     ],
     "tags": [
