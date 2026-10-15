@@ -93,6 +93,8 @@
 
 ### Добавлено
 
+- The page host as an endpoint (`sf-page-host`, `SF.Composition.publishEffects`): effects a product's port answer carries go out on typed outputs and the page's routes deliver them. The fragment boundary (`sf-fragment`): a fragment that fails to draw or to load is replaced by the error state with «Повторить», and the rest of the page keeps working. A Smart component that throws while drawing now reports `sf-component-error`.
+
 - Region navigation in the core, `SF.RegionNavigation`: a link inside the shell changes the content region instead of the page — the address goes into the history, Back and Forward work and Back returns the scroll, focus goes to the new heading, assets come once, and anything unexpected (another shell revision, a redirect, a failure) loads the page in full.
 
 - The standard `simai.interface-fragment` 1.0.0: a page built from fragments that update one another through declared contracts, with a fragment descriptor (`interface-fragment.v1`, checked by `SF.Composition.checkFragmentDescriptor`) and seven new value types for composition routes: `record-changed.v1`, `record-removed.v1`, `collection-changed.v1`, `files-moved.v1`, `counter.v1`, `navigation.v1`, `preference-changed.v1`.
