@@ -93,6 +93,8 @@
 
 ### Добавлено
 
+- `sf-context-menu` as a panel with tabs: `tabs`, `active-tab` and `closable` give a head (the tabs and a close button) that never scrolls, a body that does, a footer that stays, and a fixed width that does not follow what a tab holds. `sf-context-menu-tab` says which tab was chosen; `.sf-context-menu-row` is a panel's row.
+
 - `sf-datepicker` quick ranges: `presets` in range mode puts ready ranges beside the grid (today, yesterday, last 7 and 30 days, this week, this and last month, or your own list). The `change` detail carries `preset`, so a host can store «last 7 days»; `preset` given back is resolved for today and emits nothing. Month, year and range buttons no longer draw a dark box on the panel in the dark theme.
 
 - `sf-tree`: `accept-records` and `accept-files` — a node takes records dragged from a list or files from the computer and says so with `sf-tree-records-drop {value, ids, source}` / `sf-tree-files-drop {value, files}`.
