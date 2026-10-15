@@ -87,6 +87,8 @@
 
 ### Добавлено
 
+- Field renderers: a file is filtered by its kind (images, documents, archives, other files), a colour by the field's palette; values go with the operator «in».
+
 - `SF.fieldRenderers.registry`: the registry of universal properties — every type, its variants, the parameters it reads and its modes (view, edit, cell, filter: own or text).
 
 - Placeholder shapes in core: an element not defined yet with `data-sf-skeleton="rows|record|menu|block|line"` takes its final room and shows skeleton bars until its code arrives. Manifest schema 2.4.0: `presentation.skeleton {shape, while_loading}`.
