@@ -2902,4 +2902,11 @@ body {
   [data-sf-region-loading] > * {
     visibility: hidden;
   }
+  /* Still for a person who asked for less motion, as the element shapes are. */
+  @media (prefers-reduced-motion: reduce) {
+    [data-sf-region-loading] {
+      -webkit-animation: none;
+              animation: none;
+    }
+  }
 }
