@@ -87,6 +87,8 @@
 
 ### Добавлено
 
+- `sf-tree`: `accept-records` and `accept-files` — a node takes records dragged from a list or files from the computer and says so with `sf-tree-records-drop {value, ids, source}` / `sf-tree-files-drop {value, files}`.
+
 - Field renderers: a file is filtered by its kind (images, documents, archives, other files), a colour by the field's palette; values go with the operator «in».
 
 - `SF.fieldRenderers.registry`: the registry of universal properties — every type, its variants, the parameters it reads and its modes (view, edit, cell, filter: own or text).
