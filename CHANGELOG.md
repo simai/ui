@@ -172,6 +172,8 @@
 
 ### Изменено
 
+- The Smart runtime shares `lit/directives/repeat.js`: a list that reorders moves its rows instead of drawing them again.
+
 - The larena package reference: the record view requires `smart.empty-state`.
 
 - The larena package reference: the table requires `smart.empty-state`.
