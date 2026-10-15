@@ -918,6 +918,7 @@ function renderIncludeEdit(field, value, host) {
                 value=${scalarValue(value) ?? ''}
                 rows="8"
                 spellcheck="false"
+                ?required=${Boolean(field.required)}
                 aria-label=${field.label || field.key || ''}
                 ?disabled=${field.readonly === true}
                 @change=${event => host.setFieldValue(field, event.target?.value ?? '')}
@@ -944,6 +945,7 @@ function renderTextEdit(field, value, host) {
                 appearance="bordered"
                 name=${fieldName(field)}
                 value=${value ?? ''}
+                placeholder=${field.placeholder || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 ?required=${Boolean(field.required)}
                 aria-label=${field.label || field.key || ''}
                 @input=${event => host.setFieldValue(field, event.target?.value ?? '')}
@@ -960,6 +962,7 @@ function renderTextAreaEdit(field, value, host) {
                 appearance="bordered"
                 name=${fieldName(field)}
                 value=${value ?? ''}
+                placeholder=${field.placeholder || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 ?required=${Boolean(field.required)}
                 aria-label=${field.label || field.key || ''}
                 @input=${event => host.setFieldValue(field, event.target?.value ?? '')}
@@ -1030,6 +1033,7 @@ function renderDateEdit(field, value, host) {
                 name=${fieldName(field)}
                 value=${date ?? ''}
                 label=${field.label || ''}
+                ?required=${Boolean(field.required)}
                 @change=${event => {
     const next = event.detail?.value ?? event.target?.value ?? null;
     host.setFieldValue(field, next && suffix ? `${next}${suffix}` : next);
@@ -1101,6 +1105,7 @@ function renderChoiceEdit(field, value, host) {
                 mode="select"
                 search="false"
                 name=${fieldName(field)}
+                ?required=${Boolean(field.required)}
                 value=${value ?? ''}
                 aria-label=${field.label || field.key || ''}
                 .options=${editOptions(field, value, false)}
@@ -1118,6 +1123,7 @@ function renderChoicesEdit(field, value, host) {
                 multiple
                 search="false"
                 name=${fieldName(field)}
+                ?required=${Boolean(field.required)}
                 aria-label=${field.label || field.key || ''}
                 .options=${editOptions(field, value, true)}
                 @change=${event => {
@@ -1259,6 +1265,7 @@ function renderRecordPicker(field, value, host) {
                     mode="select"
                     search="true"
                     name=${fieldName(field)}
+                    ?required=${Boolean(field.required)}
                     value=${chosen ? String(chosen.value) : ''}
                     placeholder=${field.placeholder || setText(host, 'pickRecord')}
                     search-placeholder=${field.searchPlaceholder || setText(host, 'searchRecords')}
@@ -1398,7 +1405,11 @@ function renderFileEdit(field, value, host) {
 const sizeOption = options => options?.size === '1/2' ? '1/2' : '1';
 
 function renderEditField(field = {}, value, host, options = {}) {
-  const asked = field.propertyType || field.type || field.dataType;
+  const asked = field.propertyType || field.type || field.dataType; // A field the person may not change is shown, not offered as a control that
+  // refuses: the same rule for every type, so `readonly` means one thing
+  // wherever the registry lists it.
+
+  if (field.readonly === true && VIEW_RENDERERS[asked]) return renderViewField(field, value, host, options);
   const renderer = EDIT_RENDERERS[asked];
   if (!renderer || !host?.setFieldValue) return null;
   const outer = EDIT_SIZE;
@@ -1645,7 +1656,9 @@ if (typeof window !== 'undefined') {
     registry: _registry_js__WEBPACK_IMPORTED_MODULE_3__.PROPERTY_TYPES.map(entry => ({ ...entry,
       modes: propertyModes(entry.type)
     }))
-  };
+  }; // SF.whenFieldRenderers() settles on this, whichever bundle published the set.
+
+  globalThis.document?.dispatchEvent?.(new CustomEvent('sf-field-renderers-ready'));
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -1667,6 +1680,12 @@ __webpack_require__.r(__webpack_exports__);
 // from the renderers' source. Which modes a type has is not written here: it
 // is read from the renderer maps themselves (modesOf), so the registry cannot
 // claim a mode the set does not draw. A contract keeps the two the same.
+//
+// `params` are the field keys the type's renderers read -- each one, and no
+// other (the probe field-renderer-params calls them with a field that records
+// what is read). A record, a relation and a user hold one value and take their
+// candidates from the host, not from `options`; a constraint other than a
+// choice's options is the host's to enforce, not a renderer's.
 const PROPERTY_TYPES = Object.freeze([{
   type: 'string',
   label: {
@@ -1680,7 +1699,7 @@ const PROPERTY_TYPES = Object.freeze([{
       en: 'Phone'
     }
   }],
-  params: ['placeholder', 'required', 'readonly', 'constraints']
+  params: ['placeholder', 'required', 'readonly']
 }, {
   type: 'text',
   label: {
@@ -1688,7 +1707,7 @@ const PROPERTY_TYPES = Object.freeze([{
     en: 'Text'
   },
   variants: [],
-  params: ['placeholder', 'required', 'readonly', 'constraints']
+  params: ['placeholder', 'required', 'readonly']
 }, {
   type: 'integer',
   label: {
@@ -1696,7 +1715,7 @@ const PROPERTY_TYPES = Object.freeze([{
     en: 'Integer'
   },
   variants: [],
-  params: ['unit', 'required', 'readonly', 'constraints']
+  params: ['unit', 'required', 'readonly']
 }, {
   type: 'number',
   label: {
@@ -1710,7 +1729,7 @@ const PROPERTY_TYPES = Object.freeze([{
       en: 'Scale 0–100'
     }
   }],
-  params: ['unit', 'required', 'readonly', 'constraints']
+  params: ['unit', 'required', 'readonly']
 }, {
   type: 'date',
   label: {
@@ -1718,7 +1737,7 @@ const PROPERTY_TYPES = Object.freeze([{
     en: 'Date'
   },
   variants: [],
-  params: ['required', 'readonly', 'constraints']
+  params: ['required', 'readonly']
 }, {
   type: 'datetime',
   label: {
@@ -1726,7 +1745,7 @@ const PROPERTY_TYPES = Object.freeze([{
     en: 'Date and time'
   },
   variants: [],
-  params: ['required', 'readonly', 'constraints']
+  params: ['required', 'readonly']
 }, {
   type: 'boolean',
   label: {
@@ -1734,7 +1753,7 @@ const PROPERTY_TYPES = Object.freeze([{
     en: 'Yes or no'
   },
   variants: [],
-  params: ['trueText', 'falseText', 'readonly']
+  params: ['trueText', 'falseText', 'required', 'readonly']
 }, {
   type: 'choice',
   label: {
@@ -1764,7 +1783,7 @@ const PROPERTY_TYPES = Object.freeze([{
     en: 'User'
   },
   variants: [],
-  params: ['options', 'multiple', 'searchPlaceholder', 'required', 'readonly']
+  params: ['placeholder', 'searchPlaceholder', 'required', 'readonly']
 }, {
   type: 'record',
   label: {
@@ -1772,7 +1791,7 @@ const PROPERTY_TYPES = Object.freeze([{
     en: 'Record'
   },
   variants: [],
-  params: ['options', 'multiple', 'searchPlaceholder', 'required', 'readonly']
+  params: ['placeholder', 'searchPlaceholder', 'required', 'readonly']
 }, {
   type: 'relation',
   label: {
@@ -1780,7 +1799,7 @@ const PROPERTY_TYPES = Object.freeze([{
     en: 'Relation'
   },
   variants: [],
-  params: ['options', 'multiple', 'searchPlaceholder', 'required', 'readonly']
+  params: ['placeholder', 'searchPlaceholder', 'required', 'readonly']
 }, {
   type: 'file',
   label: {
@@ -1806,7 +1825,7 @@ const PROPERTY_TYPES = Object.freeze([{
       en: 'Image list'
     }
   }],
-  params: ['accept', 'multiple', 'formats', 'uploadText', 'uploadSupportingText', 'uploadHint', 'required', 'readonly']
+  params: ['accept', 'multiple', 'formats', 'uploadText', 'uploadSupportingText', 'uploadHint', 'readonly']
 }, {
   type: 'color',
   label: {
@@ -1814,7 +1833,7 @@ const PROPERTY_TYPES = Object.freeze([{
     en: 'Colour'
   },
   variants: [],
-  params: ['swatches', 'formats', 'required', 'readonly']
+  params: ['swatches', 'required', 'readonly']
 }, {
   type: 'include',
   label: {
