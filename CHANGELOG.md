@@ -89,6 +89,8 @@
 
 ### Добавлено
 
+- `sf-datepicker` quick ranges: `presets` in range mode puts ready ranges beside the grid (today, yesterday, last 7 and 30 days, this week, this and last month, or your own list). The `change` detail carries `preset`, so a host can store «last 7 days»; `preset` given back is resolved for today and emits nothing. Month, year and range buttons no longer draw a dark box on the panel in the dark theme.
+
 - `sf-tree`: `accept-records` and `accept-files` — a node takes records dragged from a list or files from the computer and says so with `sf-tree-records-drop {value, ids, source}` / `sf-tree-files-drop {value, files}`.
 
 - Field renderers: a file is filtered by its kind (images, documents, archives, other files), a colour by the field's palette; values go with the operator «in».
