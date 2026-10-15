@@ -588,7 +588,9 @@
       },
       "requires": [
         "component.context-menu",
-        "smart.buttons"
+        "smart.buttons",
+        "smart.icon-buttons",
+        "smart.tabs"
       ],
       "curated_for": [
         "recipe.admin.collection"
