@@ -93,6 +93,8 @@
 
 ### Добавлено
 
+- The standard `simai.interface-fragment` 1.0.0: a page built from fragments that update one another through declared contracts, with a fragment descriptor (`interface-fragment.v1`, checked by `SF.Composition.checkFragmentDescriptor`) and seven new value types for composition routes: `record-changed.v1`, `record-removed.v1`, `collection-changed.v1`, `files-moved.v1`, `counter.v1`, `navigation.v1`, `preference-changed.v1`.
+
 - `sf-context-menu` as a panel with tabs: `tabs`, `active-tab` and `closable` give a head (the tabs and a close button) that never scrolls, a body that does, a footer that stays, and a fixed width that does not follow what a tab holds. `sf-context-menu-tab` says which tab was chosen; `.sf-context-menu-row` is a panel's row.
 
 - `sf-datepicker` quick ranges: `presets` in range mode puts ready ranges beside the grid (today, yesterday, last 7 and 30 days, this week, this and last month, or your own list). The `change` detail carries `preset`, so a host can store «last 7 days»; `preset` given back is resolved for today and emits nothing. Month, year and range buttons no longer draw a dark box on the panel in the dark theme.
