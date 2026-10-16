@@ -105,6 +105,8 @@
 
 ### Добавлено
 
+- `simai.dataview-port` 1.12.0: the answer names its `sequence`; a conflict carries `current_revision` (and `columns` or `conflicts`) beside `answer`; `column_settings` is required only with column-settings capabilities; the kit's reset note is corrected and a sequence case added. `sf-tabs` keeps pinned tabs in a narrow row.
+
 - Standards `simai.interaction-rules` 1.0.0 (how every Smart component loads, talks and draws) and `simai.effect` 1.0.0 (animated backgrounds: `effect.json`, `SF.Effects` with `mountEffect` and checked settings, and a kit, `scripts/effect-kit.mjs`, that checks an effect before it is listed).
 
 - `simai.dataview-port` 1.11.0: capabilities `inline-edit` (`record.set`, a field written in its cell) and `row-reorder` (`record.reorder`, a flat list put in order by dragging), a record's `editable`, and three more conformance cases.
