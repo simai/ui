@@ -11,7 +11,12 @@
     document.querySelectorAll('.sf-theme-button').forEach(button => {
       const requested = button.dataset.theme;
       const pressed = requested ? requested === preference : isDark;
-      button.setAttribute('aria-pressed', String(pressed));
+      button.setAttribute('aria-pressed', String(pressed)); // The look says it too: a button shows itself pressed with .active, and
+      // aria-pressed alone left the chosen mode looking unchosen (docs trial
+      // 4, 2026-10-15). On an sf-button host the button is the one inside.
+
+      button.classList.toggle('active', pressed);
+      button.querySelector?.(':scope > .sf-button')?.classList.toggle('active', pressed);
     });
   };
 

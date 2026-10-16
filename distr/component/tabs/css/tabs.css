@@ -845,7 +845,8 @@
     min-width: 0;
     min-inline-size: 0;
   }
-  .sf-tabs-top-container--tools:not([data-sf-tabs-more]) > .sf-tabs-more {
+  .sf-tabs-top-container--tools:not([data-sf-tabs-more]) > .sf-tabs-more,
+  .sf-tabs-top-container--tools:not([data-sf-tabs-more]) > .sf-tabs-more > button {
     display: none;
   }
   .sf-tabs-settings-list {

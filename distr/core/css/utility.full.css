@@ -9209,22 +9209,22 @@
     .cq-sm\:grid-col-subgrid {
       grid-template-columns: subgrid;
     }
-    .cq-sm\:justify-start {
+    .cq-sm\:content-main-start {
       justify-content: flex-start;
     }
-    .cq-sm\:justify-end {
+    .cq-sm\:content-main-end {
       justify-content: flex-end;
     }
-    .cq-sm\:justify-center {
+    .cq-sm\:content-main-center {
       justify-content: center;
     }
-    .cq-sm\:justify-between {
+    .cq-sm\:content-main-between {
       justify-content: space-between;
     }
-    .cq-sm\:justify-around {
+    .cq-sm\:content-main-around {
       justify-content: space-around;
     }
-    .cq-sm\:justify-evenly {
+    .cq-sm\:content-main-evenly {
       justify-content: space-evenly;
     }
     .cq-sm\:items-cross-start {
@@ -9457,22 +9457,22 @@
     .cq-sm\/sidebar\:grid-col-subgrid {
       grid-template-columns: subgrid;
     }
-    .cq-sm\/sidebar\:justify-start {
+    .cq-sm\/sidebar\:content-main-start {
       justify-content: flex-start;
     }
-    .cq-sm\/sidebar\:justify-end {
+    .cq-sm\/sidebar\:content-main-end {
       justify-content: flex-end;
     }
-    .cq-sm\/sidebar\:justify-center {
+    .cq-sm\/sidebar\:content-main-center {
       justify-content: center;
     }
-    .cq-sm\/sidebar\:justify-between {
+    .cq-sm\/sidebar\:content-main-between {
       justify-content: space-between;
     }
-    .cq-sm\/sidebar\:justify-around {
+    .cq-sm\/sidebar\:content-main-around {
       justify-content: space-around;
     }
-    .cq-sm\/sidebar\:justify-evenly {
+    .cq-sm\/sidebar\:content-main-evenly {
       justify-content: space-evenly;
     }
     .cq-sm\/sidebar\:items-cross-start {
@@ -9705,22 +9705,22 @@
     .cq-md\:grid-col-subgrid {
       grid-template-columns: subgrid;
     }
-    .cq-md\:justify-start {
+    .cq-md\:content-main-start {
       justify-content: flex-start;
     }
-    .cq-md\:justify-end {
+    .cq-md\:content-main-end {
       justify-content: flex-end;
     }
-    .cq-md\:justify-center {
+    .cq-md\:content-main-center {
       justify-content: center;
     }
-    .cq-md\:justify-between {
+    .cq-md\:content-main-between {
       justify-content: space-between;
     }
-    .cq-md\:justify-around {
+    .cq-md\:content-main-around {
       justify-content: space-around;
     }
-    .cq-md\:justify-evenly {
+    .cq-md\:content-main-evenly {
       justify-content: space-evenly;
     }
     .cq-md\:items-cross-start {
@@ -9953,22 +9953,22 @@
     .cq-md\/sidebar\:grid-col-subgrid {
       grid-template-columns: subgrid;
     }
-    .cq-md\/sidebar\:justify-start {
+    .cq-md\/sidebar\:content-main-start {
       justify-content: flex-start;
     }
-    .cq-md\/sidebar\:justify-end {
+    .cq-md\/sidebar\:content-main-end {
       justify-content: flex-end;
     }
-    .cq-md\/sidebar\:justify-center {
+    .cq-md\/sidebar\:content-main-center {
       justify-content: center;
     }
-    .cq-md\/sidebar\:justify-between {
+    .cq-md\/sidebar\:content-main-between {
       justify-content: space-between;
     }
-    .cq-md\/sidebar\:justify-around {
+    .cq-md\/sidebar\:content-main-around {
       justify-content: space-around;
     }
-    .cq-md\/sidebar\:justify-evenly {
+    .cq-md\/sidebar\:content-main-evenly {
       justify-content: space-evenly;
     }
     .cq-md\/sidebar\:items-cross-start {
@@ -10201,22 +10201,22 @@
     .cq-lg\:grid-col-subgrid {
       grid-template-columns: subgrid;
     }
-    .cq-lg\:justify-start {
+    .cq-lg\:content-main-start {
       justify-content: flex-start;
     }
-    .cq-lg\:justify-end {
+    .cq-lg\:content-main-end {
       justify-content: flex-end;
     }
-    .cq-lg\:justify-center {
+    .cq-lg\:content-main-center {
       justify-content: center;
     }
-    .cq-lg\:justify-between {
+    .cq-lg\:content-main-between {
       justify-content: space-between;
     }
-    .cq-lg\:justify-around {
+    .cq-lg\:content-main-around {
       justify-content: space-around;
     }
-    .cq-lg\:justify-evenly {
+    .cq-lg\:content-main-evenly {
       justify-content: space-evenly;
     }
     .cq-lg\:items-cross-start {
@@ -10449,22 +10449,22 @@
     .cq-lg\/sidebar\:grid-col-subgrid {
       grid-template-columns: subgrid;
     }
-    .cq-lg\/sidebar\:justify-start {
+    .cq-lg\/sidebar\:content-main-start {
       justify-content: flex-start;
     }
-    .cq-lg\/sidebar\:justify-end {
+    .cq-lg\/sidebar\:content-main-end {
       justify-content: flex-end;
     }
-    .cq-lg\/sidebar\:justify-center {
+    .cq-lg\/sidebar\:content-main-center {
       justify-content: center;
     }
-    .cq-lg\/sidebar\:justify-between {
+    .cq-lg\/sidebar\:content-main-between {
       justify-content: space-between;
     }
-    .cq-lg\/sidebar\:justify-around {
+    .cq-lg\/sidebar\:content-main-around {
       justify-content: space-around;
     }
-    .cq-lg\/sidebar\:justify-evenly {
+    .cq-lg\/sidebar\:content-main-evenly {
       justify-content: space-evenly;
     }
     .cq-lg\/sidebar\:items-cross-start {
@@ -10697,22 +10697,22 @@
     .cq-xl\:grid-col-subgrid {
       grid-template-columns: subgrid;
     }
-    .cq-xl\:justify-start {
+    .cq-xl\:content-main-start {
       justify-content: flex-start;
     }
-    .cq-xl\:justify-end {
+    .cq-xl\:content-main-end {
       justify-content: flex-end;
     }
-    .cq-xl\:justify-center {
+    .cq-xl\:content-main-center {
       justify-content: center;
     }
-    .cq-xl\:justify-between {
+    .cq-xl\:content-main-between {
       justify-content: space-between;
     }
-    .cq-xl\:justify-around {
+    .cq-xl\:content-main-around {
       justify-content: space-around;
     }
-    .cq-xl\:justify-evenly {
+    .cq-xl\:content-main-evenly {
       justify-content: space-evenly;
     }
     .cq-xl\:items-cross-start {
@@ -10945,22 +10945,22 @@
     .cq-xl\/sidebar\:grid-col-subgrid {
       grid-template-columns: subgrid;
     }
-    .cq-xl\/sidebar\:justify-start {
+    .cq-xl\/sidebar\:content-main-start {
       justify-content: flex-start;
     }
-    .cq-xl\/sidebar\:justify-end {
+    .cq-xl\/sidebar\:content-main-end {
       justify-content: flex-end;
     }
-    .cq-xl\/sidebar\:justify-center {
+    .cq-xl\/sidebar\:content-main-center {
       justify-content: center;
     }
-    .cq-xl\/sidebar\:justify-between {
+    .cq-xl\/sidebar\:content-main-between {
       justify-content: space-between;
     }
-    .cq-xl\/sidebar\:justify-around {
+    .cq-xl\/sidebar\:content-main-around {
       justify-content: space-around;
     }
-    .cq-xl\/sidebar\:justify-evenly {
+    .cq-xl\/sidebar\:content-main-evenly {
       justify-content: space-evenly;
     }
     .cq-xl\/sidebar\:items-cross-start {

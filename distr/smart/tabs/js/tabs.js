@@ -231,12 +231,18 @@ class SfTabs extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default()
 
   afterRender(callback) {
     if (typeof callback === 'function') return super.afterRender(callback);
-    this.syncTabSemantics();
+    this.syncTabSemantics(); // The box that has a size: sf-tabs is display:contents, so observing the
+    // element itself never fired and «Ещё» was laid out once, wrong after any
+    // resize (docs trial 4, 2026-10-15).
 
-    if (this._resizeObserver && this.tabList && !this._observed) {
-      this._resizeObserver.observe(this);
+    const container = this.tabList?.parentElement;
 
-      this._observed = true;
+    if (this._resizeObserver && container && this._observed !== container) {
+      this._resizeObserver.disconnect();
+
+      this._resizeObserver.observe(container);
+
+      this._observed = container;
     }
 
     this.scheduleOverflow();
@@ -244,7 +250,7 @@ class SfTabs extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default()
 
   disconnectedCallback() {
     this._resizeObserver?.disconnect();
-    this._observed = false;
+    this._observed = null;
     this._moreMenu?.close?.({
       restoreFocus: false
     });
@@ -924,11 +930,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   renderTabsTemplate: () => (/* binding */ renderTabsTemplate)
 /* harmony export */ });
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("ddf1cdb42ecc");
-/* harmony import */ var _default_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("7502a1c8ab1e");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__]);
-var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
-lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("0d9131aa10ba");
+/* harmony import */ var _default_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("7502a1c8ab1e");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__);
+
 
 
 
@@ -1045,7 +1053,10 @@ function renderTabsTemplate(context) {
           aria-labelledby=${context.component?.getAttribute('aria-labelledby') || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
           aria-orientation=${vertical ? 'vertical' : 'horizontal'}
         >
-          ${(context.displayItems ?? context.items).map(item => renderTab(item, context))}
+          ${(0,lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__.repeat)(context.displayItems ?? context.items, // Keyed by the tab, so a reordered tab keeps its own button: by
+  // position, the buttons kept their old labels and counts while the
+  // hosts' text was already the new one (docs trial 4).
+  item => item.key ?? item.index, item => renderTab(item, context))}
         </div>
         ${context.overflow === 'more' && !vertical ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button class="sf-tabs-more" appearance="link" scheme="on-surface" size=${context.size}
                             icon-end="expand_more" text=${context.moreText} aria-haspopup="menu"></sf-button>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
@@ -1071,6 +1082,13 @@ __webpack_async_result__();
 __webpack_require__.r(__webpack_exports__);
 // extracted by mini-css-extract-plugin
 
+
+/***/ },
+
+/***/ "0d9131aa10ba"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("lit/directives/repeat.js") : new Promise((resolve) => globalThis.addEventListener("sf-runtime-ready", () => resolve(globalThis.SF.runtimeModule("lit/directives/repeat.js")), { once: true })));
 
 /***/ },
 

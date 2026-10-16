@@ -2,6 +2,97 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "06e8cd089f28"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   clearDeprecations: () => (/* binding */ clearDeprecations),
+/* harmony export */   listDeprecations: () => (/* binding */ listDeprecations),
+/* harmony export */   noteDeprecated: () => (/* binding */ noteDeprecated)
+/* harmony export */ });
+// What a page still uses that the Framework keeps only for compatibility. Every
+// legacy attribute, value or name a component resolves is noted here once, so a
+// person, a probe or an AI upgrading a product can read the list off a running
+// page (SF.deprecations.list()) instead of searching the source for it. The
+// records behind the names are in contracts/changes/journal.json.
+//
+// Nothing is printed by default: a page opts in to console warnings with
+// <html data-sf-deprecations="warn"> or SF.deprecations.warn = true.
+//
+// Every bundle carries its own copy of this module, so a Map of its own made one
+// list per bundle, and SF.deprecations.list() answered with whichever bundle set
+// it last -- [] on a page printing seven warnings from others. The notes live on
+// one shared global instead, whichever copy writes or reads them.
+function sharedNotes() {
+  const root = globalThis.SF = globalThis.SF || {};
+
+  if (!(root.__deprecationNotes instanceof Map)) {
+    Object.defineProperty(root, '__deprecationNotes', {
+      value: new Map(),
+      configurable: true
+    });
+  }
+
+  return root.__deprecationNotes;
+}
+
+function warnEnabled() {
+  const root = globalThis.document?.documentElement;
+  return root?.dataset?.sfDeprecations === 'warn' || globalThis.SF?.deprecations?.warn === true;
+}
+
+function noteDeprecated({
+  component = '',
+  kind = 'attribute',
+  attribute = '',
+  from,
+  to = null
+} = {}) {
+  if (!from) return;
+  const key = [component, kind, attribute, from].join('|');
+  const notes = sharedNotes();
+  const existing = notes.get(key);
+
+  if (existing) {
+    existing.count += 1;
+    return;
+  }
+
+  notes.set(key, {
+    component,
+    kind,
+    attribute,
+    from,
+    to,
+    count: 1
+  });
+
+  if (warnEnabled()) {
+    const where = component ? `${component}: ` : '';
+    const what = kind === 'value' ? `${attribute}="${from}"` : `${kind} ${from}`;
+    globalThis.console?.warn?.(`[Simai Framework] ${where}${what} is a legacy name${to ? `; write ${to}` : ''}. See contracts/changes/journal.json.`);
+  }
+}
+function listDeprecations() {
+  return [...sharedNotes().values()].map(note => ({ ...note
+  }));
+}
+function clearDeprecations() {
+  sharedNotes().clear();
+}
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.SF = globalThis.SF || {};
+  const api = globalThis.SF.deprecations || {};
+  api.list = listDeprecations;
+  api.clear = clearDeprecations;
+  api.note = noteDeprecated;
+  globalThis.SF.deprecations = api;
+}
+
+/***/ },
+
 /***/ "c76f8895b630"
 (module, __webpack_exports__, __webpack_require__) {
 
@@ -11,11 +102,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5168bdf4a1f9");
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("ddf1cdb42ecc");
 /* harmony import */ var _core_js_control_spacing__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("2feae72af89f");
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("06e8cd089f28");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _js_templates_default__WEBPACK_IMPORTED_MODULE_1__, lit__WEBPACK_IMPORTED_MODULE_2__, _core_js_control_spacing__WEBPACK_IMPORTED_MODULE_3__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _js_templates_default__WEBPACK_IMPORTED_MODULE_1__, lit__WEBPACK_IMPORTED_MODULE_2__, _core_js_control_spacing__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _core_js_control_spacing__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_core_js_control_spacing__WEBPACK_IMPORTED_MODULE_3__);
+
 
 
 
@@ -29,9 +122,16 @@ function applyButtonAttributes(host, button) {
     storageKey: "__sfButtonForwardedDataAttributes",
     targetStorageKey: "__sfButtonAttributeKeys"
   });
-}
+} // Ghost is the link appearance under its old name: the class sf-button--ghost
+// already reads as sf-button--link (journal class-button-ghost-to-link), and
+// the Smart value now says the same instead of drawing the retired class
+// (docs trial 4, 2026-10-15; journal value-button-ghost-to-link).
 
-const BUTTON_APPEARANCES = ["default", "tonal", "outline", "link", "surface", "ghost"];
+
+const BUTTON_APPEARANCES = ["default", "tonal", "outline", "link", "surface"];
+const APPEARANCE_ALIASES = {
+  ghost: "link"
+};
 
 class SfButton extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()) {
   constructor() {
@@ -140,6 +240,18 @@ class SfButton extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default
 
   get appearance() {
     const value = this.getAttribute("appearance") || this.getAttribute("type") || "default";
+
+    if (Object.hasOwn(APPEARANCE_ALIASES, value)) {
+      (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_4__.noteDeprecated)({
+        component: this.localName,
+        kind: 'value',
+        attribute: 'appearance',
+        from: value,
+        to: APPEARANCE_ALIASES[value]
+      });
+      return APPEARANCE_ALIASES[value];
+    }
+
     return BUTTON_APPEARANCES.includes(value) ? value : "default";
   } // The legacy name, kept so a consumer reading el.type still gets an answer.
 
@@ -238,6 +350,9 @@ class SfButton extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default
       iconStart: this.iconStart,
       iconEnd: this.iconEnd,
       type: this.type,
+      // A legacy appearance reaches the template under its current name, as the
+      // getter reports it (journal value-button-ghost-to-link).
+      appearance: props.appearance === 'ghost' ? 'link' : props.appearance,
       ...(0,_core_js_control_spacing__WEBPACK_IMPORTED_MODULE_3__.resolveControlSpacing)({
         spacing: this.getAttribute('spacing'),
         tightness: this.getAttribute('tightness')
@@ -393,7 +508,7 @@ function renderButtonTemplate(context) {
     iconLeft,
     iconRight,
     iconPosition,
-    tightness,
+    spacing,
     radius,
     rootClass,
     textPosition,
@@ -416,7 +531,9 @@ function renderButtonTemplate(context) {
   // scheme otherwise. A status says what the control is about -- an error
   // for something destructive -- and a scheme says which colour family it
   // takes; they cannot both paint it.
-  `sf-button--${status || scheme}`, 'flex', 'items-cross-center', segment ? `segment-${segment}` : '', tightness ? `tightness-${tightness}` : '', radius ? `radius-${radius}` : '', rootClass, loading ? 'loading sf-button-state-loading' : ''].filter(Boolean);
+  `sf-button--${status || scheme}`, 'flex', 'items-cross-center', segment ? `segment-${segment}` : '', // The spacing class, not its retired tightness name (journal
+  // class-tightness-to-spacing; docs trial 4).
+  spacing && spacing !== 'normal' ? `spacing-${spacing}` : '', radius ? `radius-${radius}` : '', rootClass, loading ? 'loading sf-button-state-loading' : ''].filter(Boolean);
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <button
                 type=${nativeType}
