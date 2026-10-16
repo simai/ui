@@ -8,6 +8,8 @@
 
 ### Исправлено
 
+- The rest of documentation trial 4: `sf-datepicker` range `change` gives `date` and `isoValue` as the ISO interval `start/end`; `sf-copy-button` properties can be written; `sf-help-mark` no longer makes its label line taller; manifest examples use `status` instead of the deprecated `type`; the resizer manifest names its `sf-resizer/<key>` preference; `--sf-heading--font-*` are deprecated (read by no rule, compat until 2026-12-01).
+
 - Fixes from documentation trial 4: theme buttons show the chosen mode; `cq-*:justify-*` works (the family is `cq-*:content-main-*`); `sf-resizer` keeps the remembered width after a stacked layout; `sf-tabs` lays «Ещё» out again on resize, hides an empty «Ещё» and keeps labels right after reordering; `sf-button appearance="ghost"` draws as `link` (compat name); the class tooltip does not repeat a trigger's name; `sf-datepicker`'s week follows the page's language when `week-start` is not set.
 
 - A filter's option list says why it is empty («ничего не найдено» under a search, «нет данных» without one), and a list that could not load offers «Повторить», both as the inline `sf-empty-state`.
