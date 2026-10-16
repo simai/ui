@@ -97,6 +97,8 @@
 
 ### Добавлено
 
+- Standards `simai.interaction-rules` 1.0.0 (how every Smart component loads, talks and draws) and `simai.effect` 1.0.0 (animated backgrounds: `effect.json`, `SF.Effects` with `mountEffect` and checked settings, and a kit, `scripts/effect-kit.mjs`, that checks an effect before it is listed).
+
 - `simai.dataview-port` 1.11.0: capabilities `inline-edit` (`record.set`, a field written in its cell) and `row-reorder` (`record.reorder`, a flat list put in order by dragging), a record's `editable`, and three more conformance cases.
 
 - The page host as an endpoint (`sf-page-host`, `SF.Composition.publishEffects`): effects a product's port answer carries go out on typed outputs and the page's routes deliver them. The fragment boundary (`sf-fragment`): a fragment that fails to draw or to load is replaced by the error state with «Повторить», and the rest of the page keeps working. A Smart component that throws while drawing now reports `sf-component-error`.

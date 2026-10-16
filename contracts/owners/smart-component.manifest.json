@@ -52,11 +52,11 @@
         "commit": "79089818fcbb150a9589732ba48156fd829929ed",
         "source_refs": [
           "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/smart/alert",
-          "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/rule/rule.json#name=cl-alert"
+          "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:distr/rule/rule.json#name=cl-alert"
         ]
       },
       "documentation_refs": [
-        "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:README.md"
+        "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -103,11 +103,11 @@
         "commit": "79089818fcbb150a9589732ba48156fd829929ed",
         "source_refs": [
           "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/smart/avatar",
-          "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/rule/rule.json#name=cl-avatar"
+          "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:distr/rule/rule.json#name=cl-avatar"
         ]
       },
       "documentation_refs": [
-        "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:README.md"
+        "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -154,11 +154,11 @@
         "commit": "79089818fcbb150a9589732ba48156fd829929ed",
         "source_refs": [
           "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/smart/avatars",
-          "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/rule/rule.json#name=cl-avatars"
+          "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:distr/rule/rule.json#name=cl-avatars"
         ]
       },
       "documentation_refs": [
-        "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:README.md"
+        "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -210,11 +210,11 @@
         "commit": "79089818fcbb150a9589732ba48156fd829929ed",
         "source_refs": [
           "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/smart/badges",
-          "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/rule/rule.json#name=cl-badges"
+          "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:distr/rule/rule.json#name=cl-badges"
         ]
       },
       "documentation_refs": [
-        "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:README.md"
+        "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -259,11 +259,11 @@
         "commit": "79089818fcbb150a9589732ba48156fd829929ed",
         "source_refs": [
           "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/smart/breadcrumbs",
-          "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/rule/rule.json#name=cl-breadcrumbs"
+          "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:distr/rule/rule.json#name=cl-breadcrumbs"
         ]
       },
       "documentation_refs": [
-        "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:README.md"
+        "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -309,11 +309,11 @@
         "commit": "79089818fcbb150a9589732ba48156fd829929ed",
         "source_refs": [
           "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/smart/button-group",
-          "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/rule/rule.json#name=cl-button-group"
+          "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:distr/rule/rule.json#name=cl-button-group"
         ]
       },
       "documentation_refs": [
-        "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:README.md"
+        "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -358,11 +358,11 @@
         "commit": "79089818fcbb150a9589732ba48156fd829929ed",
         "source_refs": [
           "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/smart/buttons",
-          "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/rule/rule.json#name=cl-buttons"
+          "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:distr/rule/rule.json#name=cl-buttons"
         ]
       },
       "documentation_refs": [
-        "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:README.md"
+        "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -411,11 +411,11 @@
         "commit": "79089818fcbb150a9589732ba48156fd829929ed",
         "source_refs": [
           "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/smart/checkbox",
-          "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/rule/rule.json#name=cl-checkbox"
+          "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:distr/rule/rule.json#name=cl-checkbox"
         ]
       },
       "documentation_refs": [
-        "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:README.md"
+        "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -465,11 +465,11 @@
         "commit": "79089818fcbb150a9589732ba48156fd829929ed",
         "source_refs": [
           "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/smart/close",
-          "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/rule/rule.json#name=cl-close"
+          "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:distr/rule/rule.json#name=cl-close"
         ]
       },
       "documentation_refs": [
-        "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:README.md"
+        "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -515,11 +515,11 @@
         "commit": "79089818fcbb150a9589732ba48156fd829929ed",
         "source_refs": [
           "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/smart/composition-overlay",
-          "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/rule/rule.json#name=cl-composition-overlay"
+          "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:distr/rule/rule.json#name=cl-composition-overlay"
         ]
       },
       "documentation_refs": [
-        "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:README.md"
+        "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -564,11 +564,11 @@
         "commit": "79089818fcbb150a9589732ba48156fd829929ed",
         "source_refs": [
           "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/smart/context-menu",
-          "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/rule/rule.json#name=cl-context-menu"
+          "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:distr/rule/rule.json#name=cl-context-menu"
         ]
       },
       "documentation_refs": [
-        "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:README.md"
+        "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -617,11 +617,11 @@
         "commit": "79089818fcbb150a9589732ba48156fd829929ed",
         "source_refs": [
           "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/smart/country-code",
-          "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/rule/rule.json#name=cl-country-code"
+          "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:distr/rule/rule.json#name=cl-country-code"
         ]
       },
       "documentation_refs": [
-        "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:README.md"
+        "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -665,11 +665,11 @@
         "commit": "79089818fcbb150a9589732ba48156fd829929ed",
         "source_refs": [
           "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/smart/datepicker",
-          "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/rule/rule.json#name=cl-datepicker"
+          "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:distr/rule/rule.json#name=cl-datepicker"
         ]
       },
       "documentation_refs": [
-        "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:README.md"
+        "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -719,11 +719,11 @@
         "commit": "79089818fcbb150a9589732ba48156fd829929ed",
         "source_refs": [
           "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/smart/download-file",
-          "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/rule/rule.json#name=cl-download-file"
+          "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:distr/rule/rule.json#name=cl-download-file"
         ]
       },
       "documentation_refs": [
-        "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:README.md"
+        "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -769,11 +769,11 @@
         "commit": "79089818fcbb150a9589732ba48156fd829929ed",
         "source_refs": [
           "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/smart/drawer",
-          "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/rule/rule.json#name=cl-drawer"
+          "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:distr/rule/rule.json#name=cl-drawer"
         ]
       },
       "documentation_refs": [
-        "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:README.md"
+        "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -819,11 +819,11 @@
         "commit": "79089818fcbb150a9589732ba48156fd829929ed",
         "source_refs": [
           "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/smart/dropdown",
-          "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/rule/rule.json#name=cl-dropdown"
+          "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:distr/rule/rule.json#name=cl-dropdown"
         ]
       },
       "documentation_refs": [
-        "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:README.md"
+        "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -874,11 +874,11 @@
         "commit": "79089818fcbb150a9589732ba48156fd829929ed",
         "source_refs": [
           "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/smart/file-preview",
-          "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/rule/rule.json#name=cl-file-preview"
+          "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:distr/rule/rule.json#name=cl-file-preview"
         ]
       },
       "documentation_refs": [
-        "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:README.md"
+        "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -924,11 +924,11 @@
         "commit": "79089818fcbb150a9589732ba48156fd829929ed",
         "source_refs": [
           "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/smart/file-upload",
-          "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/rule/rule.json#name=cl-file-upload"
+          "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:distr/rule/rule.json#name=cl-file-upload"
         ]
       },
       "documentation_refs": [
-        "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:README.md"
+        "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -975,11 +975,11 @@
         "commit": "79089818fcbb150a9589732ba48156fd829929ed",
         "source_refs": [
           "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/smart/gallery",
-          "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/rule/rule.json#name=cl-gallery"
+          "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:distr/rule/rule.json#name=cl-gallery"
         ]
       },
       "documentation_refs": [
-        "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:README.md"
+        "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -1027,11 +1027,11 @@
         "commit": "79089818fcbb150a9589732ba48156fd829929ed",
         "source_refs": [
           "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/smart/icon-buttons",
-          "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/rule/rule.json#name=cl-icon-buttons"
+          "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:distr/rule/rule.json#name=cl-icon-buttons"
         ]
       },
       "documentation_refs": [
-        "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:README.md"
+        "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -1083,11 +1083,11 @@
         "commit": "79089818fcbb150a9589732ba48156fd829929ed",
         "source_refs": [
           "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/smart/icons",
-          "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/rule/rule.json#name=cl-icons"
+          "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:distr/rule/rule.json#name=cl-icons"
         ]
       },
       "documentation_refs": [
-        "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:README.md"
+        "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -1133,11 +1133,11 @@
         "commit": "79089818fcbb150a9589732ba48156fd829929ed",
         "source_refs": [
           "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/smart/inline-editor",
-          "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/rule/rule.json#name=cl-inline-editor"
+          "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:distr/rule/rule.json#name=cl-inline-editor"
         ]
       },
       "documentation_refs": [
-        "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:README.md"
+        "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -1180,11 +1180,11 @@
         "commit": "79089818fcbb150a9589732ba48156fd829929ed",
         "source_refs": [
           "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/smart/inputs",
-          "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/rule/rule.json#name=cl-inputs"
+          "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:distr/rule/rule.json#name=cl-inputs"
         ]
       },
       "documentation_refs": [
-        "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:README.md"
+        "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -1234,11 +1234,11 @@
         "commit": "79089818fcbb150a9589732ba48156fd829929ed",
         "source_refs": [
           "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/smart/list-item",
-          "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/rule/rule.json#name=cl-list-item"
+          "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:distr/rule/rule.json#name=cl-list-item"
         ]
       },
       "documentation_refs": [
-        "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:README.md"
+        "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -1286,11 +1286,11 @@
         "commit": "79089818fcbb150a9589732ba48156fd829929ed",
         "source_refs": [
           "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/smart/modal",
-          "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/rule/rule.json#name=cl-modal"
+          "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:distr/rule/rule.json#name=cl-modal"
         ]
       },
       "documentation_refs": [
-        "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:README.md"
+        "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -1335,11 +1335,11 @@
         "commit": "79089818fcbb150a9589732ba48156fd829929ed",
         "source_refs": [
           "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/smart/pagination",
-          "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/rule/rule.json#name=cl-pagination"
+          "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:distr/rule/rule.json#name=cl-pagination"
         ]
       },
       "documentation_refs": [
-        "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:README.md"
+        "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -1392,11 +1392,11 @@
         "commit": "79089818fcbb150a9589732ba48156fd829929ed",
         "source_refs": [
           "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/smart/progress-bar",
-          "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/rule/rule.json#name=cl-progress-bar"
+          "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:distr/rule/rule.json#name=cl-progress-bar"
         ]
       },
       "documentation_refs": [
-        "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:README.md"
+        "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -1440,11 +1440,11 @@
         "commit": "79089818fcbb150a9589732ba48156fd829929ed",
         "source_refs": [
           "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/smart/progress-scale",
-          "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/rule/rule.json#name=cl-progress-scale"
+          "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:distr/rule/rule.json#name=cl-progress-scale"
         ]
       },
       "documentation_refs": [
-        "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:README.md"
+        "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -1488,11 +1488,11 @@
         "commit": "79089818fcbb150a9589732ba48156fd829929ed",
         "source_refs": [
           "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/smart/radio",
-          "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/rule/rule.json#name=cl-radio"
+          "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:distr/rule/rule.json#name=cl-radio"
         ]
       },
       "documentation_refs": [
-        "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:README.md"
+        "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -1537,11 +1537,11 @@
         "commit": "79089818fcbb150a9589732ba48156fd829929ed",
         "source_refs": [
           "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/smart/range-slider",
-          "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/rule/rule.json#name=cl-range-slider"
+          "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:distr/rule/rule.json#name=cl-range-slider"
         ]
       },
       "documentation_refs": [
-        "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:README.md"
+        "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -1585,11 +1585,11 @@
         "commit": "79089818fcbb150a9589732ba48156fd829929ed",
         "source_refs": [
           "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/smart/reference-link",
-          "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/rule/rule.json#name=cl-reference-link"
+          "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:distr/rule/rule.json#name=cl-reference-link"
         ]
       },
       "documentation_refs": [
-        "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:README.md"
+        "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -1635,11 +1635,11 @@
         "commit": "79089818fcbb150a9589732ba48156fd829929ed",
         "source_refs": [
           "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/smart/skeleton",
-          "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/rule/rule.json#name=cl-skeleton"
+          "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:distr/rule/rule.json#name=cl-skeleton"
         ]
       },
       "documentation_refs": [
-        "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:README.md"
+        "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -1683,11 +1683,11 @@
         "commit": "79089818fcbb150a9589732ba48156fd829929ed",
         "source_refs": [
           "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/smart/slider",
-          "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/rule/rule.json#name=cl-slider"
+          "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:distr/rule/rule.json#name=cl-slider"
         ]
       },
       "documentation_refs": [
-        "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:README.md"
+        "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -1733,11 +1733,11 @@
         "commit": "79089818fcbb150a9589732ba48156fd829929ed",
         "source_refs": [
           "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/smart/sortable",
-          "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/rule/rule.json#name=cl-sortable"
+          "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:distr/rule/rule.json#name=cl-sortable"
         ]
       },
       "documentation_refs": [
-        "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:README.md"
+        "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -1780,11 +1780,11 @@
         "commit": "79089818fcbb150a9589732ba48156fd829929ed",
         "source_refs": [
           "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/smart/spinner",
-          "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/rule/rule.json#name=cl-spinner"
+          "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:distr/rule/rule.json#name=cl-spinner"
         ]
       },
       "documentation_refs": [
-        "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:README.md"
+        "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -1830,11 +1830,11 @@
         "commit": "79089818fcbb150a9589732ba48156fd829929ed",
         "source_refs": [
           "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/smart/steps",
-          "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/rule/rule.json#name=cl-steps"
+          "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:distr/rule/rule.json#name=cl-steps"
         ]
       },
       "documentation_refs": [
-        "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:README.md"
+        "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -1879,11 +1879,11 @@
         "commit": "79089818fcbb150a9589732ba48156fd829929ed",
         "source_refs": [
           "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/smart/switch",
-          "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/rule/rule.json#name=cl-switch"
+          "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:distr/rule/rule.json#name=cl-switch"
         ]
       },
       "documentation_refs": [
-        "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:README.md"
+        "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -1928,11 +1928,11 @@
         "commit": "79089818fcbb150a9589732ba48156fd829929ed",
         "source_refs": [
           "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/smart/tabs",
-          "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/rule/rule.json#name=cl-tabs"
+          "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:distr/rule/rule.json#name=cl-tabs"
         ]
       },
       "documentation_refs": [
-        "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:README.md"
+        "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -1986,11 +1986,11 @@
         "commit": "79089818fcbb150a9589732ba48156fd829929ed",
         "source_refs": [
           "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/smart/tags",
-          "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/rule/rule.json#name=cl-tags"
+          "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:distr/rule/rule.json#name=cl-tags"
         ]
       },
       "documentation_refs": [
-        "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:README.md"
+        "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -2043,11 +2043,11 @@
         "commit": "79089818fcbb150a9589732ba48156fd829929ed",
         "source_refs": [
           "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/smart/textarea",
-          "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/rule/rule.json#name=cl-textarea"
+          "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:distr/rule/rule.json#name=cl-textarea"
         ]
       },
       "documentation_refs": [
-        "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:README.md"
+        "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -2091,11 +2091,11 @@
         "commit": "79089818fcbb150a9589732ba48156fd829929ed",
         "source_refs": [
           "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/smart/toast",
-          "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/rule/rule.json#name=cl-toast"
+          "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:distr/rule/rule.json#name=cl-toast"
         ]
       },
       "documentation_refs": [
-        "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:README.md"
+        "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -2143,11 +2143,11 @@
         "commit": "79089818fcbb150a9589732ba48156fd829929ed",
         "source_refs": [
           "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/smart/toggle",
-          "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/rule/rule.json#name=cl-toggle"
+          "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:distr/rule/rule.json#name=cl-toggle"
         ]
       },
       "documentation_refs": [
-        "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:README.md"
+        "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -2193,11 +2193,11 @@
         "commit": "79089818fcbb150a9589732ba48156fd829929ed",
         "source_refs": [
           "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/smart/tooltip",
-          "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/rule/rule.json#name=cl-tooltip"
+          "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:distr/rule/rule.json#name=cl-tooltip"
         ]
       },
       "documentation_refs": [
-        "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:README.md"
+        "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -2241,11 +2241,11 @@
         "commit": "79089818fcbb150a9589732ba48156fd829929ed",
         "source_refs": [
           "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/smart/tree",
-          "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/rule/rule.json#name=cl-tree"
+          "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:distr/rule/rule.json#name=cl-tree"
         ]
       },
       "documentation_refs": [
-        "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:README.md"
+        "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -2293,11 +2293,11 @@
         "commit": "79089818fcbb150a9589732ba48156fd829929ed",
         "source_refs": [
           "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/smart/tree-item",
-          "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/rule/rule.json#name=cl-tree-item"
+          "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:distr/rule/rule.json#name=cl-tree-item"
         ]
       },
       "documentation_refs": [
-        "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:README.md"
+        "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -2343,11 +2343,11 @@
         "commit": "79089818fcbb150a9589732ba48156fd829929ed",
         "source_refs": [
           "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/smart/color",
-          "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/rule/rule.json#name=cl-color"
+          "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:distr/rule/rule.json#name=cl-color"
         ]
       },
       "documentation_refs": [
-        "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:README.md"
+        "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -2395,11 +2395,11 @@
         "commit": "79089818fcbb150a9589732ba48156fd829929ed",
         "source_refs": [
           "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/smart/popover",
-          "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/rule/rule.json#name=cl-popover"
+          "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:distr/rule/rule.json#name=cl-popover"
         ]
       },
       "documentation_refs": [
-        "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:README.md"
+        "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -2444,11 +2444,11 @@
         "commit": "79089818fcbb150a9589732ba48156fd829929ed",
         "source_refs": [
           "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/smart/page-header",
-          "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/rule/rule.json#name=cl-page-header"
+          "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:distr/rule/rule.json#name=cl-page-header"
         ]
       },
       "documentation_refs": [
-        "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:README.md"
+        "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -2494,11 +2494,11 @@
         "commit": "79089818fcbb150a9589732ba48156fd829929ed",
         "source_refs": [
           "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/smart/resizer",
-          "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/rule/rule.json#name=cl-resizer"
+          "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:distr/rule/rule.json#name=cl-resizer"
         ]
       },
       "documentation_refs": [
-        "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:README.md"
+        "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -2541,11 +2541,11 @@
         "commit": "79089818fcbb150a9589732ba48156fd829929ed",
         "source_refs": [
           "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/smart/profile-picker",
-          "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/rule/rule.json#name=cl-profile-picker"
+          "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:distr/rule/rule.json#name=cl-profile-picker"
         ]
       },
       "documentation_refs": [
-        "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:README.md"
+        "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -2592,11 +2592,11 @@
         "commit": "79089818fcbb150a9589732ba48156fd829929ed",
         "source_refs": [
           "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/smart/empty-state",
-          "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/rule/rule.json#name=cl-empty-state"
+          "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:distr/rule/rule.json#name=cl-empty-state"
         ]
       },
       "documentation_refs": [
-        "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:README.md"
+        "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -2645,11 +2645,11 @@
         "commit": "79089818fcbb150a9589732ba48156fd829929ed",
         "source_refs": [
           "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/smart/copy-button",
-          "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/rule/rule.json#name=cl-copy-button"
+          "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:distr/rule/rule.json#name=cl-copy-button"
         ]
       },
       "documentation_refs": [
-        "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:README.md"
+        "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -2697,11 +2697,11 @@
         "commit": "79089818fcbb150a9589732ba48156fd829929ed",
         "source_refs": [
           "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/smart/help-mark",
-          "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:distr/rule/rule.json#name=cl-help-mark"
+          "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:distr/rule/rule.json#name=cl-help-mark"
         ]
       },
       "documentation_refs": [
-        "simai/ui@79089818fcbb150a9589732ba48156fd829929ed:README.md"
+        "simai/ui@2cc712424489c73947caed36a0b9a61a211ebc2a:README.md"
       ],
       "example_refs": [],
       "runtime": {
