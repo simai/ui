@@ -30,7 +30,11 @@
     bottom: 0;
     inset-block: 0;
     inset-inline-end: calc(-1 * var(--sf-resizer--hit) / 2);
-    z-index: 2;
+    /* Above the panel's own positioned layers -- a menu that lifts itself to
+       z-6 covered the handle and the drag and double-click never reached it
+       (docs trial 5) -- and below the page's overlays (z-9). */
+    z-index: 70;
+    z-index: var(--sf-z-index-7, 70);
     display: block;
     width: var(--sf-resizer--hit);
     inline-size: var(--sf-resizer--hit);

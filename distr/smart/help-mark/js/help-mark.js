@@ -255,7 +255,7 @@ function renderHelpMarkTemplate(context) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
     <span class=${['sf-help-mark', context.rootClass].filter(Boolean).join(' ')}>
       <sf-icon-button class="sf-help-mark-button" size=${context.size} appearance="link" scheme="on-surface"
-                      icon="help" aria-label=${context.name} title=${context.name}
+                      icon="help" aria-label=${context.name}
                       aria-expanded=${String(Boolean(context.open))} aria-controls=${panelId}
                       @click=${() => context.component.toggle()}></sf-icon-button>
       <div class="sf-help-mark-panel" id=${panelId} ?hidden=${!context.open}>
