@@ -8,6 +8,8 @@
 
 ### Исправлено
 
+- Fixes from documentation trial 4: theme buttons show the chosen mode; `cq-*:justify-*` works (the family is `cq-*:content-main-*`); `sf-resizer` keeps the remembered width after a stacked layout; `sf-tabs` lays «Ещё» out again on resize, hides an empty «Ещё» and keeps labels right after reordering; `sf-button appearance="ghost"` draws as `link` (compat name); the class tooltip does not repeat a trigger's name; `sf-datepicker`'s week follows the page's language when `week-start` is not set.
+
 - A filter's option list says why it is empty («ничего не найдено» under a search, «нет данных» without one), and a list that could not load offers «Повторить», both as the inline `sf-empty-state`.
 
 - A panel's head (`sf-context-menu` with tabs) is a row of its own — a control's height with space above it — and its line runs across the whole panel, under the close button too.
