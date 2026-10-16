@@ -8,6 +8,8 @@
 
 ### Исправлено
 
+- A filter's option list says why it is empty («ничего не найдено» under a search, «нет данных» without one), and a list that could not load offers «Повторить», both as the inline `sf-empty-state`.
+
 - A panel's head (`sf-context-menu` with tabs) is a row of its own — a control's height with space above it — and its line runs across the whole panel, under the close button too.
 
 - The region skeleton (`[data-sf-region-loading]`) no longer pulses for a person who asked for reduced motion. Gzip files in the distribution are now the same bytes on every platform (ui-builder writes them with a fixed header and a pure-JavaScript deflate).
