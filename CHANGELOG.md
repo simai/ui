@@ -8,6 +8,8 @@
 
 ### Исправлено
 
+- `simai.dataview-port` 1.12.0 pins the digest of its own conformance kit (44 cases); every port edition is now checked for it.
+
 - Fixes from documentation trial 5: pinned `sf-tabs` stay first and cannot be dragged; the arrow keys reach «Ещё»; `sf-help-mark` does not make a field label row taller and has no duplicate title; the Loader keeps `items-*` as the Framework's place-items classes; `SF.Preferences` does not send an unchanged value to the host (the resizer no longer re-saves its width on load); the `sf-resizer` handle stands above a menu in its panel.
 
 - The rest of documentation trial 4: `sf-datepicker` range `change` gives `date` and `isoValue` as the ISO interval `start/end`; `sf-copy-button` properties can be written; `sf-help-mark` no longer makes its label line taller; manifest examples use `status` instead of the deprecated `type`; the resizer manifest names its `sf-resizer/<key>` preference; `--sf-heading--font-*` are deprecated (read by no rule, compat until 2026-12-01).
