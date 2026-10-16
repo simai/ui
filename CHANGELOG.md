@@ -107,6 +107,8 @@
 
 ### Добавлено
 
+- The Smart manifest schema 2.5.0 adds `persistence.view_preference`: the key, versioned shape and fields of a component's view preference, and which fields a server may seed for the first paint; `sf-resizer` declares its own.
+
 - `simai.dataview-port` 1.12.0: the answer names its `sequence`; a conflict carries `current_revision` (and `columns` or `conflicts`) beside `answer`; `column_settings` is required only with column-settings capabilities; the kit's reset note is corrected and a sequence case added. `sf-tabs` keeps pinned tabs in a narrow row.
 
 - Standards `simai.interaction-rules` 1.0.0 (how every Smart component loads, talks and draws) and `simai.effect` 1.0.0 (animated backgrounds: `effect.json`, `SF.Effects` with `mountEffect` and checked settings, and a kit, `scripts/effect-kit.mjs`, that checks an effect before it is listed).
