@@ -850,6 +850,10 @@
     -webkit-padding-before: 0;
             padding-block-start: 0;
   }
+  /* The head is a row of its own, as tall as a control and a step of space
+     above it: it read narrower than the rows under it (owner, 2026-10-16). Its
+     line is one line across the whole panel, under the close button too; the
+     tabs' own track, which stopped short of the button, is taken off. */
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu-head{
     padding-left: var(--sf-context-menu--inset-start);
   }
@@ -859,16 +863,16 @@
     }
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu-head{
-    padding-right: var(--sf-space-1\/4);
+    padding-right: var(--sf-space-1\/3);
   }
   @supports not (padding-inline-end: initial){
   html:not([dir="rtl"]) .sf-context-menu-head{
-    padding-right: var(--sf-space-1\/4);
+    padding-right: var(--sf-space-1\/3);
     }
   }
   .sf-context-menu-head:where(:dir(ltr)){
     padding-left: var(--sf-context-menu--inset-start);
-    padding-right: var(--sf-space-1\/4);
+    padding-right: var(--sf-space-1\/3);
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu-head{
     padding-right: var(--sf-context-menu--inset-start);
@@ -879,26 +883,35 @@
     }
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu-head{
-    padding-left: var(--sf-space-1\/4);
+    padding-left: var(--sf-space-1\/3);
   }
   @supports not (padding-inline-end: initial){
   [dir="rtl"] .sf-context-menu-head{
-    padding-left: var(--sf-space-1\/4);
+    padding-left: var(--sf-space-1\/3);
     }
   }
   .sf-context-menu-head:where(:dir(rtl)){
     padding-right: var(--sf-context-menu--inset-start);
-    padding-left: var(--sf-space-1\/4);
+    padding-left: var(--sf-space-1\/3);
   }
   .sf-context-menu-head {
+    --sf-tabs-top-container--border-width: 0;
     display: flex;
     flex: none;
-    align-items: center;
+    align-items: flex-end;
     gap: var(--sf-space-1\/3);
-    padding-inline: var(--sf-context-menu--inset-start) var(--sf-space-1\/4);
+    min-height: calc(var(--sf-ui-1--control-height) + var(--sf-space-1\/3));
+    min-block-size: calc(var(--sf-ui-1--control-height) + var(--sf-space-1\/3));
+    padding-top: var(--sf-space-1\/3);
+    -webkit-padding-before: var(--sf-space-1\/3);
+            padding-block-start: var(--sf-space-1\/3);
+    padding-inline: var(--sf-context-menu--inset-start) var(--sf-space-1\/3);
     border-bottom: var(--sf-px) solid var(--sf-outline-variant);
     -webkit-border-after: var(--sf-px) solid var(--sf-outline-variant);
             border-block-end: var(--sf-px) solid var(--sf-outline-variant);
+  }
+  .sf-context-menu-head > .sf-context-menu-close {
+    align-self: center;
   }
   .sf-context-menu-head > .sf-context-menu-tabs,
   .sf-context-menu-head > .sf-context-menu-tabs > .sf-tabs {
