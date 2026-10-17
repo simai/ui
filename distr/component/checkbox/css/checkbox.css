@@ -143,13 +143,17 @@
     border-top-right-radius: var(--sf-checkbox-box--border-start-start-radius);
   }
   .sf-checkbox .sf-checkbox-box {
-    --sf-checkbox-box--background-color: var(--sf-surface-0);
-    --sf-checkbox-box--border: var(--sf-px) solid;
-    --sf-checkbox-box--border-color: var(--sf-outline);
-    --sf-checkbox-box--border-end-end-radius: var(--sf-radius--ui);
-    --sf-checkbox-box--border-end-start-radius: var(--sf-radius--ui);
-    --sf-checkbox-box--border-start-end-radius: var(--sf-radius--ui);
-    --sf-checkbox-box--border-start-start-radius: var(--sf-radius--ui);
+    /* Public variables (core/contracts/public-variables.v1.json): names with a
+       single dash after the block, never set by the Framework, read where the
+       resting box is drawn -- here and by size -- and not by checked, hover,
+       pressed, error or disabled, so states still show. */
+    --sf-checkbox-box--background-color: var(--sf-checkbox-background-color, var(--sf-surface-0));
+    --sf-checkbox-box--border: var(--sf-checkbox-border-width, var(--sf-px)) solid;
+    --sf-checkbox-box--border-color: var(--sf-checkbox-border-color, var(--sf-outline));
+    --sf-checkbox-box--border-end-end-radius: var(--sf-checkbox-radius, var(--sf-radius--ui));
+    --sf-checkbox-box--border-end-start-radius: var(--sf-checkbox-radius, var(--sf-radius--ui));
+    --sf-checkbox-box--border-start-end-radius: var(--sf-checkbox-radius, var(--sf-radius--ui));
+    --sf-checkbox-box--border-start-start-radius: var(--sf-checkbox-radius, var(--sf-radius--ui));
     background-color: var(--sf-checkbox-box--background-color);
     border: 0 solid;
     border: var(--sf-checkbox-box--border, 0 solid);
@@ -211,12 +215,12 @@
     width: var(--sf-icon--width, var(--sf-icon-size-3));
   }
   .sf-checkbox.sf-checkbox--size-1\/2 .sf-checkbox-box {
-    --sf-checkbox-box--height: var(--sf-text-height-1\/2);
-    --sf-checkbox-box--width: var(--sf-text-height-1\/2);
+    --sf-checkbox-box--height: var(--sf-checkbox-size, var(--sf-text-height-1\/2));
+    --sf-checkbox-box--width: var(--sf-checkbox-size, var(--sf-text-height-1\/2));
   }
   .sf-checkbox.sf-checkbox--size-1 .sf-checkbox-box {
-    --sf-checkbox-box--height: var(--sf-text-height-1);
-    --sf-checkbox-box--width: var(--sf-text-height-1);
+    --sf-checkbox-box--height: var(--sf-checkbox-size, var(--sf-text-height-1));
+    --sf-checkbox-box--width: var(--sf-checkbox-size, var(--sf-text-height-1));
   }
   .sf-checkbox.sf-checkbox--size-1\/2 > .sf-checkbox-container > .sf-checkbox-top > .sf-icon {
     --sf-icon--height: var(--sf-text-height-1\/2);
@@ -267,10 +271,10 @@
   /* The mark is the picture before a label: the label follows it at the size's
      text step, as an option label follows its picture in a list. */
   .sf-checkbox--size-1\/2 {
-    --sf-checkbox--gap: var(--sf-ui-1\/2--text-space-x);
+    --sf-checkbox--gap: var(--sf-checkbox-gap, var(--sf-ui-1\/2--text-space-x));
   }
   .sf-checkbox--size-1 {
-    --sf-checkbox--gap: var(--sf-ui-1--text-space-x);
+    --sf-checkbox--gap: var(--sf-checkbox-gap, var(--sf-ui-1--text-space-x));
   }
   .sf-checkbox.error .sf-checkbox-box {
     --sf-checkbox-box--border-color: var(--sf-error);
@@ -314,8 +318,8 @@
     --sf-icon--width: var(--sf-text-height-1);
   }
   .sf-checkbox.sf-checkbox--size-2 .sf-checkbox-box {
-    --sf-checkbox-box--height: var(--sf-text-height-2);
-    --sf-checkbox-box--width: var(--sf-text-height-2);
+    --sf-checkbox-box--height: var(--sf-checkbox-size, var(--sf-text-height-2));
+    --sf-checkbox-box--width: var(--sf-checkbox-size, var(--sf-text-height-2));
   }
   .sf-checkbox.sf-checkbox--size-2 > .sf-checkbox-container > .sf-checkbox-top > .sf-icon {
     --sf-icon--height: var(--sf-text-height-2);
@@ -341,7 +345,7 @@
     --sf-icon--width: var(--sf-text-height-2);
   }
   .sf-checkbox--size-2 {
-    --sf-checkbox--gap: var(--sf-ui-2--text-space-x);
+    --sf-checkbox--gap: var(--sf-checkbox-gap, var(--sf-ui-2--text-space-x));
   }
   .sf-checkbox:not(.error).sf-checkbox--size-2[\:has\(input\:indeterminate\)] > .sf-checkbox-box .sf-icon {
     --sf-icon--height: var(--sf-text-height-2);

@@ -238,9 +238,14 @@
     border-right-width: var(--sf-icon-button--border-inline-start-width, 0);
   }
   .sf-icon-button {
+    /* Public variables (core/contracts/public-variables.v1.json): names with a
+       single dash after the block, never set by the Framework, read where a
+       resting look is defined -- base, size, spacing, appearance, scheme -- and
+       not by hover, focus, pressed, disabled, loading or a group's segments, so
+       states and joined groups still show. */
     color: var(--sf-on-surface-variant);
-    color: var(--sf-icon--color, var(--sf-on-surface-variant));
-    --sf-icon-button--radius: var(--sf-radius--ui);
+    color: var(--sf-icon--color, var(--sf-icon-button-color, var(--sf-on-surface-variant)));
+    --sf-icon-button--radius: var(--sf-icon-button-radius, var(--sf-radius--ui));
     border-end-end-radius: var(--sf-icon-button--radius);
     border-end-end-radius: var(--sf-icon-button--border-bottom-right-radius, var(--sf-icon-button--radius));
     border-end-start-radius: var(--sf-icon-button--radius);
@@ -255,9 +260,16 @@
     -webkit-padding-end: calc(var(--sf-icon-button--padding-inline-end) - var(--sf-icon-button--border-inline-end-width));
             padding-inline-end: calc(var(--sf-icon-button--padding-inline-end) - var(--sf-icon-button--border-inline-end-width));
     padding-bottom: calc(var(--sf-icon-button--padding-bottom) - var(--sf-icon-button--border-bottom-width));
+    /* The public border reaches every appearance, as on sf-button: the side
+       widths are registered lengths inside the control height. Outline,
+       surface and a group's segments set them after this, and win. */
+    --sf-icon-button--border-top-width: var(--sf-icon-button-border-width, 0);
+    --sf-icon-button--border-bottom-width: var(--sf-icon-button-border-width, 0);
+    --sf-icon-button--border-inline-start-width: var(--sf-icon-button-border-width, 0);
+    --sf-icon-button--border-inline-end-width: var(--sf-icon-button-border-width, 0);
     background-color: var(--sf-icon-button--background-color);
     border-color: transparent;
-    border-color: var(--sf-icon-button--border-color, transparent);
+    border-color: var(--sf-icon-button--border-color, var(--sf-icon-button-border-color, transparent));
     border-width: 0;
     border-width: var(--sf-icon-button--border-width, 0);
     border-top-width: 0;
@@ -280,7 +292,7 @@
   }
   .sf-icon-button .sf-icon {
     color: var(--sf-on-surface-variant);
-    color: var(--sf-icon--color, var(--sf-on-surface-variant));
+    color: var(--sf-icon--color, var(--sf-icon-button-color, var(--sf-on-surface-variant)));
     font-size: var(--sf-icon-size-3);
     font-size: var(--sf-icon--font-size, var(--sf-icon-size-3));
     height: var(--sf-icon-size-3);
@@ -289,101 +301,101 @@
     width: var(--sf-icon--width, var(--sf-icon-size-3));
   }
   .sf-icon-button.sf-icon-button--default.sf-icon-button--primary.sf-icon-button--icon, .sf-icon-button.sf-icon-button--default.sf-icon-button--primary.sf-icon-button--close {
-    --sf-icon-button--background-color: var(--sf-primary);
+    --sf-icon-button--background-color: var(--sf-icon-button-background-color, var(--sf-primary));
   }
   .sf-icon-button.sf-icon-button--default.sf-icon-button--primary.sf-icon-button--icon {
-    --sf-icon--color: var(--sf-on-primary);
+    --sf-icon--color: var(--sf-icon-button-color, var(--sf-on-primary));
   }
   .sf-icon-button.sf-icon-button--tonal.sf-icon-button--secondary.sf-icon-button--icon, .sf-icon-button.sf-icon-button--tonal.sf-icon-button--secondary.sf-icon-button--close {
-    --sf-icon-button--background-color: var(--sf-secondary-container);
+    --sf-icon-button--background-color: var(--sf-icon-button-background-color, var(--sf-secondary-container));
   }
   .sf-icon-button.sf-icon-button--tonal.sf-icon-button--primary.sf-icon-button--icon, .sf-icon-button.sf-icon-button--tonal.sf-icon-button--primary.sf-icon-button--close {
-    --sf-icon-button--background-color: var(--sf-primary-container);
+    --sf-icon-button--background-color: var(--sf-icon-button-background-color, var(--sf-primary-container));
   }
   .sf-icon-button.sf-icon-button--tonal.sf-icon-button--secondary.sf-icon-button--icon {
-    --sf-icon--color: var(--sf-on-secondary-container);
+    --sf-icon--color: var(--sf-icon-button-color, var(--sf-on-secondary-container));
   }
   .sf-icon-button.sf-icon-button--tonal.sf-icon-button--primary.sf-icon-button--icon {
-    --sf-icon--color: var(--sf-on-primary-container);
+    --sf-icon--color: var(--sf-icon-button-color, var(--sf-on-primary-container));
   }
   .sf-icon-button.sf-icon-button--outline.sf-icon-button--primary.sf-icon-button--icon, .sf-icon-button.sf-icon-button--outline.sf-icon-button--on-surface.sf-icon-button--icon, .sf-icon-button.sf-icon-button--outline.sf-icon-button--primary.sf-icon-button--close, .sf-icon-button.sf-icon-button--outline.sf-icon-button--on-surface.sf-icon-button--close {
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: var(--sf-outline);
+    --sf-icon-button--background-color: var(--sf-icon-button-background-color, transparent);
+    --sf-icon-button--border-color: var(--sf-icon-button-border-color, var(--sf-outline));
   }
   .sf-icon-button.sf-icon-button--outline.sf-icon-button--primary.sf-icon-button--icon {
-    --sf-icon--color: var(--sf-primary);
+    --sf-icon--color: var(--sf-icon-button-color, var(--sf-primary));
   }
   .sf-icon-button.sf-icon-button--link.sf-icon-button--primary.sf-icon-button--icon {
-    --sf-icon-button--background-color: transparent;
+    --sf-icon-button--background-color: var(--sf-icon-button-background-color, transparent);
   }
   .sf-icon-button.sf-icon-button--ghost.sf-icon-button--primary.sf-icon-button--icon {
-    --sf-icon-button--background-color: transparent;
+    --sf-icon-button--background-color: var(--sf-icon-button-background-color, transparent);
   }
   .sf-icon-button.sf-icon-button--link.sf-icon-button--on-surface.sf-icon-button--icon {
-    --sf-icon-button--background-color: transparent;
+    --sf-icon-button--background-color: var(--sf-icon-button-background-color, transparent);
   }
   .sf-icon-button.sf-icon-button--ghost.sf-icon-button--on-surface.sf-icon-button--icon {
-    --sf-icon-button--background-color: transparent;
+    --sf-icon-button--background-color: var(--sf-icon-button-background-color, transparent);
   }
   .sf-icon-button.sf-icon-button--link.sf-icon-button--primary.sf-icon-button--close {
-    --sf-icon-button--background-color: transparent;
+    --sf-icon-button--background-color: var(--sf-icon-button-background-color, transparent);
   }
   .sf-icon-button.sf-icon-button--ghost.sf-icon-button--primary.sf-icon-button--close {
-    --sf-icon-button--background-color: transparent;
+    --sf-icon-button--background-color: var(--sf-icon-button-background-color, transparent);
   }
   .sf-icon-button.sf-icon-button--link.sf-icon-button--on-surface.sf-icon-button--close {
-    --sf-icon-button--background-color: transparent;
+    --sf-icon-button--background-color: var(--sf-icon-button-background-color, transparent);
   }
   .sf-icon-button.sf-icon-button--ghost.sf-icon-button--on-surface.sf-icon-button--close {
-    --sf-icon-button--background-color: transparent;
+    --sf-icon-button--background-color: var(--sf-icon-button-background-color, transparent);
   }
   .sf-icon-button.sf-icon-button--link.sf-icon-button--primary.sf-icon-button--icon {
-    --sf-icon--color: var(--sf-primary-active);
+    --sf-icon--color: var(--sf-icon-button-color, var(--sf-primary-active));
   }
   .sf-icon-button.sf-icon-button--ghost.sf-icon-button--primary.sf-icon-button--icon {
-    --sf-icon--color: var(--sf-primary-active);
+    --sf-icon--color: var(--sf-icon-button-color, var(--sf-primary-active));
   }
   .sf-icon-button.sf-icon-button--link.sf-icon-button--on-surface.sf-icon-button--icon {
-    --sf-icon--color: var(--sf-on-surface);
+    --sf-icon--color: var(--sf-icon-button-color, var(--sf-on-surface));
   }
   .sf-icon-button.sf-icon-button--ghost.sf-icon-button--on-surface.sf-icon-button--icon {
-    --sf-icon--color: var(--sf-on-surface);
+    --sf-icon--color: var(--sf-icon-button-color, var(--sf-on-surface));
   }
   .sf-icon-button.sf-icon-button--outline.sf-icon-button--on-surface.sf-icon-button--icon, .sf-icon-button.sf-icon-button--tonal.sf-icon-button--on-surface.sf-icon-button--icon {
-    --sf-icon--color: var(--sf-on-surface);
+    --sf-icon--color: var(--sf-icon-button-color, var(--sf-on-surface));
   }
   .sf-icon-button.sf-icon-button--tonal.sf-icon-button--on-surface.sf-icon-button--icon, .sf-icon-button.sf-icon-button--tonal.sf-icon-button--on-surface.sf-icon-button--close {
-    --sf-icon-button--background-color: var(--sf-surface-container);
+    --sf-icon-button--background-color: var(--sf-icon-button-background-color, var(--sf-surface-container));
   }
   .sf-icon-button.sf-icon-button--default.sf-icon-button--on-surface.sf-icon-button--icon, .sf-icon-button.sf-icon-button--default.sf-icon-button--on-surface.sf-icon-button--close {
-    --sf-icon-button--background-color: var(--sf-on-surface);
+    --sf-icon-button--background-color: var(--sf-icon-button-background-color, var(--sf-on-surface));
   }
   .sf-icon-button.sf-icon-button--default.sf-icon-button--on-surface.sf-icon-button--icon {
-    --sf-icon--color: var(--sf-on-surface-inverse);
+    --sf-icon--color: var(--sf-icon-button-color, var(--sf-on-surface-inverse));
   }
   .sf-icon-button.sf-icon-button--default.sf-icon-button--primary.sf-icon-button--close > .sf-close > .sf-close-icon {
-    --sf-close-icon--background-color: var(--sf-on-primary);
+    --sf-close-icon--background-color: var(--sf-icon-button-color, var(--sf-on-primary));
   }
   .sf-icon-button.sf-icon-button--tonal.sf-icon-button--secondary.sf-icon-button--close > .sf-close > .sf-close-icon {
-    --sf-close-icon--background-color: var(--sf-on-secondary-container);
+    --sf-close-icon--background-color: var(--sf-icon-button-color, var(--sf-on-secondary-container));
   }
   .sf-icon-button.sf-icon-button--tonal.sf-icon-button--primary.sf-icon-button--close > .sf-close > .sf-close-icon {
-    --sf-close-icon--background-color: var(--sf-on-primary-container);
+    --sf-close-icon--background-color: var(--sf-icon-button-color, var(--sf-on-primary-container));
   }
   .sf-icon-button.sf-icon-button--outline.sf-icon-button--primary.sf-icon-button--close > .sf-close > .sf-close-icon {
-    --sf-close-icon--background-color: var(--sf-primary);
+    --sf-close-icon--background-color: var(--sf-icon-button-color, var(--sf-primary));
   }
   .sf-icon-button.sf-icon-button--link.sf-icon-button--primary.sf-icon-button--close > .sf-close > .sf-close-icon {
-    --sf-close-icon--background-color: var(--sf-primary-active);
+    --sf-close-icon--background-color: var(--sf-icon-button-color, var(--sf-primary-active));
   }
   .sf-icon-button.sf-icon-button--ghost.sf-icon-button--primary.sf-icon-button--close > .sf-close > .sf-close-icon {
-    --sf-close-icon--background-color: var(--sf-primary-active);
+    --sf-close-icon--background-color: var(--sf-icon-button-color, var(--sf-primary-active));
   }
   .sf-icon-button.sf-icon-button--close > .sf-close > .sf-close-icon {
-    --sf-close-icon--background-color: var(--sf-on-surface);
+    --sf-close-icon--background-color: var(--sf-icon-button-color, var(--sf-on-surface));
   }
   .sf-icon-button.sf-icon-button--default.sf-icon-button--on-surface.sf-icon-button--close > .sf-close > .sf-close-icon {
-    --sf-close-icon--background-color: var(--sf-on-surface-inverse);
+    --sf-close-icon--background-color: var(--sf-icon-button-color, var(--sf-on-surface-inverse));
   }
   .sf-icon-button.sf-icon-button--size-2.sf-icon-button--icon .sf-icon:not(does-not-exist) {
     --sf-icon--font-size: var(--sf-text-height-2);
@@ -436,222 +448,222 @@
     --sf-icon--width: var(--sf-text-height-1);
   }
   .sf-icon-button--size-1 {
-    --sf-icon-button--padding-bottom: var(--sf-ui-1--space-y-tightness-default);
-    --sf-icon-button--padding-inline-end: var(--sf-ui-1--space-y-tightness-default);
-    --sf-icon-button--padding-inline-start: var(--sf-ui-1--space-y-tightness-default);
-    --sf-icon-button--padding-top: var(--sf-ui-1--space-y-tightness-default);
+    --sf-icon-button--padding-bottom: var(--sf-icon-button-padding-block, var(--sf-ui-1--space-y-tightness-default));
+    --sf-icon-button--padding-inline-end: var(--sf-icon-button-padding-inline, var(--sf-ui-1--space-y-tightness-default));
+    --sf-icon-button--padding-inline-start: var(--sf-icon-button-padding-inline, var(--sf-ui-1--space-y-tightness-default));
+    --sf-icon-button--padding-top: var(--sf-icon-button-padding-block, var(--sf-ui-1--space-y-tightness-default));
   }
   .sf-icon-button--size-1.tightness-low {
-    --sf-icon-button--padding-top: var(--sf-ui-1--space-y-tightness-low);
-    --sf-icon-button--padding-bottom: var(--sf-ui-1--space-y-tightness-low);
-    --sf-icon-button--padding-inline-start: var(--sf-ui-1--space-y-tightness-low);
-    --sf-icon-button--padding-inline-end: var(--sf-ui-1--space-y-tightness-low);
+    --sf-icon-button--padding-top: var(--sf-icon-button-padding-block, var(--sf-ui-1--space-y-tightness-low));
+    --sf-icon-button--padding-bottom: var(--sf-icon-button-padding-block, var(--sf-ui-1--space-y-tightness-low));
+    --sf-icon-button--padding-inline-start: var(--sf-icon-button-padding-inline, var(--sf-ui-1--space-y-tightness-low));
+    --sf-icon-button--padding-inline-end: var(--sf-icon-button-padding-inline, var(--sf-ui-1--space-y-tightness-low));
   }
   .sf-icon-button--size-1.spacing-compact {
-    --sf-icon-button--padding-top: var(--sf-ui-1--space-y-tightness-low);
-    --sf-icon-button--padding-bottom: var(--sf-ui-1--space-y-tightness-low);
-    --sf-icon-button--padding-inline-start: var(--sf-ui-1--space-y-tightness-low);
-    --sf-icon-button--padding-inline-end: var(--sf-ui-1--space-y-tightness-low);
+    --sf-icon-button--padding-top: var(--sf-icon-button-padding-block, var(--sf-ui-1--space-y-tightness-low));
+    --sf-icon-button--padding-bottom: var(--sf-icon-button-padding-block, var(--sf-ui-1--space-y-tightness-low));
+    --sf-icon-button--padding-inline-start: var(--sf-icon-button-padding-inline, var(--sf-ui-1--space-y-tightness-low));
+    --sf-icon-button--padding-inline-end: var(--sf-icon-button-padding-inline, var(--sf-ui-1--space-y-tightness-low));
   }
   .sf-icon-button--size-1.tightness-high {
-    --sf-icon-button--padding-top: var(--sf-ui-1--space-y-tightness-high);
-    --sf-icon-button--padding-bottom: var(--sf-ui-1--space-y-tightness-high);
-    --sf-icon-button--padding-inline-start: var(--sf-ui-1--space-y-tightness-high);
-    --sf-icon-button--padding-inline-end: var(--sf-ui-1--space-y-tightness-high);
+    --sf-icon-button--padding-top: var(--sf-icon-button-padding-block, var(--sf-ui-1--space-y-tightness-high));
+    --sf-icon-button--padding-bottom: var(--sf-icon-button-padding-block, var(--sf-ui-1--space-y-tightness-high));
+    --sf-icon-button--padding-inline-start: var(--sf-icon-button-padding-inline, var(--sf-ui-1--space-y-tightness-high));
+    --sf-icon-button--padding-inline-end: var(--sf-icon-button-padding-inline, var(--sf-ui-1--space-y-tightness-high));
   }
   .sf-icon-button--size-1.spacing-comfortable {
-    --sf-icon-button--padding-top: var(--sf-ui-1--space-y-tightness-high);
-    --sf-icon-button--padding-bottom: var(--sf-ui-1--space-y-tightness-high);
-    --sf-icon-button--padding-inline-start: var(--sf-ui-1--space-y-tightness-high);
-    --sf-icon-button--padding-inline-end: var(--sf-ui-1--space-y-tightness-high);
+    --sf-icon-button--padding-top: var(--sf-icon-button-padding-block, var(--sf-ui-1--space-y-tightness-high));
+    --sf-icon-button--padding-bottom: var(--sf-icon-button-padding-block, var(--sf-ui-1--space-y-tightness-high));
+    --sf-icon-button--padding-inline-start: var(--sf-icon-button-padding-inline, var(--sf-ui-1--space-y-tightness-high));
+    --sf-icon-button--padding-inline-end: var(--sf-icon-button-padding-inline, var(--sf-ui-1--space-y-tightness-high));
   }
   .sf-icon-button--size-1.tightness-highest {
-    --sf-icon-button--padding-top: var(--sf-ui-1--space-y-tightness-highest);
-    --sf-icon-button--padding-bottom: var(--sf-ui-1--space-y-tightness-highest);
-    --sf-icon-button--padding-inline-start: var(--sf-ui-1--space-y-tightness-highest);
-    --sf-icon-button--padding-inline-end: var(--sf-ui-1--space-y-tightness-highest);
+    --sf-icon-button--padding-top: var(--sf-icon-button-padding-block, var(--sf-ui-1--space-y-tightness-highest));
+    --sf-icon-button--padding-bottom: var(--sf-icon-button-padding-block, var(--sf-ui-1--space-y-tightness-highest));
+    --sf-icon-button--padding-inline-start: var(--sf-icon-button-padding-inline, var(--sf-ui-1--space-y-tightness-highest));
+    --sf-icon-button--padding-inline-end: var(--sf-icon-button-padding-inline, var(--sf-ui-1--space-y-tightness-highest));
   }
   .sf-icon-button--size-1.spacing-spacious {
-    --sf-icon-button--padding-top: var(--sf-ui-1--space-y-tightness-highest);
-    --sf-icon-button--padding-bottom: var(--sf-ui-1--space-y-tightness-highest);
-    --sf-icon-button--padding-inline-start: var(--sf-ui-1--space-y-tightness-highest);
-    --sf-icon-button--padding-inline-end: var(--sf-ui-1--space-y-tightness-highest);
+    --sf-icon-button--padding-top: var(--sf-icon-button-padding-block, var(--sf-ui-1--space-y-tightness-highest));
+    --sf-icon-button--padding-bottom: var(--sf-icon-button-padding-block, var(--sf-ui-1--space-y-tightness-highest));
+    --sf-icon-button--padding-inline-start: var(--sf-icon-button-padding-inline, var(--sf-ui-1--space-y-tightness-highest));
+    --sf-icon-button--padding-inline-end: var(--sf-icon-button-padding-inline, var(--sf-ui-1--space-y-tightness-highest));
   }
   .sf-icon-button--size-2 {
-    --sf-icon-button--padding-bottom: var(--sf-ui-2--space-y-tightness-default);
-    --sf-icon-button--padding-inline-end: var(--sf-ui-2--space-y-tightness-default);
-    --sf-icon-button--padding-inline-start: var(--sf-ui-2--space-y-tightness-default);
-    --sf-icon-button--padding-top: var(--sf-ui-2--space-y-tightness-default);
+    --sf-icon-button--padding-bottom: var(--sf-icon-button-padding-block, var(--sf-ui-2--space-y-tightness-default));
+    --sf-icon-button--padding-inline-end: var(--sf-icon-button-padding-inline, var(--sf-ui-2--space-y-tightness-default));
+    --sf-icon-button--padding-inline-start: var(--sf-icon-button-padding-inline, var(--sf-ui-2--space-y-tightness-default));
+    --sf-icon-button--padding-top: var(--sf-icon-button-padding-block, var(--sf-ui-2--space-y-tightness-default));
   }
   .sf-icon-button--size-2.tightness-low {
-    --sf-icon-button--padding-top: var(--sf-ui-2--space-y-tightness-low);
-    --sf-icon-button--padding-bottom: var(--sf-ui-2--space-y-tightness-low);
-    --sf-icon-button--padding-inline-start: var(--sf-ui-2--space-y-tightness-low);
-    --sf-icon-button--padding-inline-end: var(--sf-ui-2--space-y-tightness-low);
+    --sf-icon-button--padding-top: var(--sf-icon-button-padding-block, var(--sf-ui-2--space-y-tightness-low));
+    --sf-icon-button--padding-bottom: var(--sf-icon-button-padding-block, var(--sf-ui-2--space-y-tightness-low));
+    --sf-icon-button--padding-inline-start: var(--sf-icon-button-padding-inline, var(--sf-ui-2--space-y-tightness-low));
+    --sf-icon-button--padding-inline-end: var(--sf-icon-button-padding-inline, var(--sf-ui-2--space-y-tightness-low));
   }
   .sf-icon-button--size-2.spacing-compact {
-    --sf-icon-button--padding-top: var(--sf-ui-2--space-y-tightness-low);
-    --sf-icon-button--padding-bottom: var(--sf-ui-2--space-y-tightness-low);
-    --sf-icon-button--padding-inline-start: var(--sf-ui-2--space-y-tightness-low);
-    --sf-icon-button--padding-inline-end: var(--sf-ui-2--space-y-tightness-low);
+    --sf-icon-button--padding-top: var(--sf-icon-button-padding-block, var(--sf-ui-2--space-y-tightness-low));
+    --sf-icon-button--padding-bottom: var(--sf-icon-button-padding-block, var(--sf-ui-2--space-y-tightness-low));
+    --sf-icon-button--padding-inline-start: var(--sf-icon-button-padding-inline, var(--sf-ui-2--space-y-tightness-low));
+    --sf-icon-button--padding-inline-end: var(--sf-icon-button-padding-inline, var(--sf-ui-2--space-y-tightness-low));
   }
   .sf-icon-button--size-2.tightness-high {
-    --sf-icon-button--padding-top: var(--sf-ui-2--space-y-tightness-high);
-    --sf-icon-button--padding-bottom: var(--sf-ui-2--space-y-tightness-high);
-    --sf-icon-button--padding-inline-start: var(--sf-ui-2--space-y-tightness-high);
-    --sf-icon-button--padding-inline-end: var(--sf-ui-2--space-y-tightness-high);
+    --sf-icon-button--padding-top: var(--sf-icon-button-padding-block, var(--sf-ui-2--space-y-tightness-high));
+    --sf-icon-button--padding-bottom: var(--sf-icon-button-padding-block, var(--sf-ui-2--space-y-tightness-high));
+    --sf-icon-button--padding-inline-start: var(--sf-icon-button-padding-inline, var(--sf-ui-2--space-y-tightness-high));
+    --sf-icon-button--padding-inline-end: var(--sf-icon-button-padding-inline, var(--sf-ui-2--space-y-tightness-high));
   }
   .sf-icon-button--size-2.spacing-comfortable {
-    --sf-icon-button--padding-top: var(--sf-ui-2--space-y-tightness-high);
-    --sf-icon-button--padding-bottom: var(--sf-ui-2--space-y-tightness-high);
-    --sf-icon-button--padding-inline-start: var(--sf-ui-2--space-y-tightness-high);
-    --sf-icon-button--padding-inline-end: var(--sf-ui-2--space-y-tightness-high);
+    --sf-icon-button--padding-top: var(--sf-icon-button-padding-block, var(--sf-ui-2--space-y-tightness-high));
+    --sf-icon-button--padding-bottom: var(--sf-icon-button-padding-block, var(--sf-ui-2--space-y-tightness-high));
+    --sf-icon-button--padding-inline-start: var(--sf-icon-button-padding-inline, var(--sf-ui-2--space-y-tightness-high));
+    --sf-icon-button--padding-inline-end: var(--sf-icon-button-padding-inline, var(--sf-ui-2--space-y-tightness-high));
   }
   .sf-icon-button--size-2.tightness-highest {
-    --sf-icon-button--padding-top: var(--sf-ui-2--space-y-tightness-highest);
-    --sf-icon-button--padding-bottom: var(--sf-ui-2--space-y-tightness-highest);
-    --sf-icon-button--padding-inline-start: var(--sf-ui-2--space-y-tightness-highest);
-    --sf-icon-button--padding-inline-end: var(--sf-ui-2--space-y-tightness-highest);
+    --sf-icon-button--padding-top: var(--sf-icon-button-padding-block, var(--sf-ui-2--space-y-tightness-highest));
+    --sf-icon-button--padding-bottom: var(--sf-icon-button-padding-block, var(--sf-ui-2--space-y-tightness-highest));
+    --sf-icon-button--padding-inline-start: var(--sf-icon-button-padding-inline, var(--sf-ui-2--space-y-tightness-highest));
+    --sf-icon-button--padding-inline-end: var(--sf-icon-button-padding-inline, var(--sf-ui-2--space-y-tightness-highest));
   }
   .sf-icon-button--size-2.spacing-spacious {
-    --sf-icon-button--padding-top: var(--sf-ui-2--space-y-tightness-highest);
-    --sf-icon-button--padding-bottom: var(--sf-ui-2--space-y-tightness-highest);
-    --sf-icon-button--padding-inline-start: var(--sf-ui-2--space-y-tightness-highest);
-    --sf-icon-button--padding-inline-end: var(--sf-ui-2--space-y-tightness-highest);
+    --sf-icon-button--padding-top: var(--sf-icon-button-padding-block, var(--sf-ui-2--space-y-tightness-highest));
+    --sf-icon-button--padding-bottom: var(--sf-icon-button-padding-block, var(--sf-ui-2--space-y-tightness-highest));
+    --sf-icon-button--padding-inline-start: var(--sf-icon-button-padding-inline, var(--sf-ui-2--space-y-tightness-highest));
+    --sf-icon-button--padding-inline-end: var(--sf-icon-button-padding-inline, var(--sf-ui-2--space-y-tightness-highest));
   }
   .sf-icon-button--size-3 {
-    --sf-icon-button--padding-bottom: var(--sf-ui-3--space-y-tightness-default);
-    --sf-icon-button--padding-inline-end: var(--sf-ui-3--space-y-tightness-default);
-    --sf-icon-button--padding-inline-start: var(--sf-ui-3--space-y-tightness-default);
-    --sf-icon-button--padding-top: var(--sf-ui-3--space-y-tightness-default);
+    --sf-icon-button--padding-bottom: var(--sf-icon-button-padding-block, var(--sf-ui-3--space-y-tightness-default));
+    --sf-icon-button--padding-inline-end: var(--sf-icon-button-padding-inline, var(--sf-ui-3--space-y-tightness-default));
+    --sf-icon-button--padding-inline-start: var(--sf-icon-button-padding-inline, var(--sf-ui-3--space-y-tightness-default));
+    --sf-icon-button--padding-top: var(--sf-icon-button-padding-block, var(--sf-ui-3--space-y-tightness-default));
   }
   .sf-icon-button--size-3.tightness-low {
-    --sf-icon-button--padding-top: var(--sf-ui-3--space-y-tightness-low);
-    --sf-icon-button--padding-bottom: var(--sf-ui-3--space-y-tightness-low);
-    --sf-icon-button--padding-inline-start: var(--sf-ui-3--space-y-tightness-low);
-    --sf-icon-button--padding-inline-end: var(--sf-ui-3--space-y-tightness-low);
+    --sf-icon-button--padding-top: var(--sf-icon-button-padding-block, var(--sf-ui-3--space-y-tightness-low));
+    --sf-icon-button--padding-bottom: var(--sf-icon-button-padding-block, var(--sf-ui-3--space-y-tightness-low));
+    --sf-icon-button--padding-inline-start: var(--sf-icon-button-padding-inline, var(--sf-ui-3--space-y-tightness-low));
+    --sf-icon-button--padding-inline-end: var(--sf-icon-button-padding-inline, var(--sf-ui-3--space-y-tightness-low));
   }
   .sf-icon-button--size-3.spacing-compact {
-    --sf-icon-button--padding-top: var(--sf-ui-3--space-y-tightness-low);
-    --sf-icon-button--padding-bottom: var(--sf-ui-3--space-y-tightness-low);
-    --sf-icon-button--padding-inline-start: var(--sf-ui-3--space-y-tightness-low);
-    --sf-icon-button--padding-inline-end: var(--sf-ui-3--space-y-tightness-low);
+    --sf-icon-button--padding-top: var(--sf-icon-button-padding-block, var(--sf-ui-3--space-y-tightness-low));
+    --sf-icon-button--padding-bottom: var(--sf-icon-button-padding-block, var(--sf-ui-3--space-y-tightness-low));
+    --sf-icon-button--padding-inline-start: var(--sf-icon-button-padding-inline, var(--sf-ui-3--space-y-tightness-low));
+    --sf-icon-button--padding-inline-end: var(--sf-icon-button-padding-inline, var(--sf-ui-3--space-y-tightness-low));
   }
   .sf-icon-button--size-3.tightness-high {
-    --sf-icon-button--padding-top: var(--sf-ui-3--space-y-tightness-high);
-    --sf-icon-button--padding-bottom: var(--sf-ui-3--space-y-tightness-high);
-    --sf-icon-button--padding-inline-start: var(--sf-ui-3--space-y-tightness-high);
-    --sf-icon-button--padding-inline-end: var(--sf-ui-3--space-y-tightness-high);
+    --sf-icon-button--padding-top: var(--sf-icon-button-padding-block, var(--sf-ui-3--space-y-tightness-high));
+    --sf-icon-button--padding-bottom: var(--sf-icon-button-padding-block, var(--sf-ui-3--space-y-tightness-high));
+    --sf-icon-button--padding-inline-start: var(--sf-icon-button-padding-inline, var(--sf-ui-3--space-y-tightness-high));
+    --sf-icon-button--padding-inline-end: var(--sf-icon-button-padding-inline, var(--sf-ui-3--space-y-tightness-high));
   }
   .sf-icon-button--size-3.spacing-comfortable {
-    --sf-icon-button--padding-top: var(--sf-ui-3--space-y-tightness-high);
-    --sf-icon-button--padding-bottom: var(--sf-ui-3--space-y-tightness-high);
-    --sf-icon-button--padding-inline-start: var(--sf-ui-3--space-y-tightness-high);
-    --sf-icon-button--padding-inline-end: var(--sf-ui-3--space-y-tightness-high);
+    --sf-icon-button--padding-top: var(--sf-icon-button-padding-block, var(--sf-ui-3--space-y-tightness-high));
+    --sf-icon-button--padding-bottom: var(--sf-icon-button-padding-block, var(--sf-ui-3--space-y-tightness-high));
+    --sf-icon-button--padding-inline-start: var(--sf-icon-button-padding-inline, var(--sf-ui-3--space-y-tightness-high));
+    --sf-icon-button--padding-inline-end: var(--sf-icon-button-padding-inline, var(--sf-ui-3--space-y-tightness-high));
   }
   .sf-icon-button--size-3.tightness-highest {
-    --sf-icon-button--padding-top: var(--sf-ui-3--space-y-tightness-highest);
-    --sf-icon-button--padding-bottom: var(--sf-ui-3--space-y-tightness-highest);
-    --sf-icon-button--padding-inline-start: var(--sf-ui-3--space-y-tightness-highest);
-    --sf-icon-button--padding-inline-end: var(--sf-ui-3--space-y-tightness-highest);
+    --sf-icon-button--padding-top: var(--sf-icon-button-padding-block, var(--sf-ui-3--space-y-tightness-highest));
+    --sf-icon-button--padding-bottom: var(--sf-icon-button-padding-block, var(--sf-ui-3--space-y-tightness-highest));
+    --sf-icon-button--padding-inline-start: var(--sf-icon-button-padding-inline, var(--sf-ui-3--space-y-tightness-highest));
+    --sf-icon-button--padding-inline-end: var(--sf-icon-button-padding-inline, var(--sf-ui-3--space-y-tightness-highest));
   }
   .sf-icon-button--size-3.spacing-spacious {
-    --sf-icon-button--padding-top: var(--sf-ui-3--space-y-tightness-highest);
-    --sf-icon-button--padding-bottom: var(--sf-ui-3--space-y-tightness-highest);
-    --sf-icon-button--padding-inline-start: var(--sf-ui-3--space-y-tightness-highest);
-    --sf-icon-button--padding-inline-end: var(--sf-ui-3--space-y-tightness-highest);
+    --sf-icon-button--padding-top: var(--sf-icon-button-padding-block, var(--sf-ui-3--space-y-tightness-highest));
+    --sf-icon-button--padding-bottom: var(--sf-icon-button-padding-block, var(--sf-ui-3--space-y-tightness-highest));
+    --sf-icon-button--padding-inline-start: var(--sf-icon-button-padding-inline, var(--sf-ui-3--space-y-tightness-highest));
+    --sf-icon-button--padding-inline-end: var(--sf-icon-button-padding-inline, var(--sf-ui-3--space-y-tightness-highest));
   }
   .sf-icon-button--size-1\/2 {
-    --sf-icon-button--padding-bottom: var(--sf-ui-1\/2--space-y-tightness-default);
-    --sf-icon-button--padding-inline-end: var(--sf-ui-1\/2--space-y-tightness-default);
-    --sf-icon-button--padding-inline-start: var(--sf-ui-1\/2--space-y-tightness-default);
-    --sf-icon-button--padding-top: var(--sf-ui-1\/2--space-y-tightness-default);
+    --sf-icon-button--padding-bottom: var(--sf-icon-button-padding-block, var(--sf-ui-1\/2--space-y-tightness-default));
+    --sf-icon-button--padding-inline-end: var(--sf-icon-button-padding-inline, var(--sf-ui-1\/2--space-y-tightness-default));
+    --sf-icon-button--padding-inline-start: var(--sf-icon-button-padding-inline, var(--sf-ui-1\/2--space-y-tightness-default));
+    --sf-icon-button--padding-top: var(--sf-icon-button-padding-block, var(--sf-ui-1\/2--space-y-tightness-default));
   }
   .sf-icon-button--size-1\/2.tightness-low {
-    --sf-icon-button--padding-top: var(--sf-ui-1\/2--space-y-tightness-low);
-    --sf-icon-button--padding-bottom: var(--sf-ui-1\/2--space-y-tightness-low);
-    --sf-icon-button--padding-inline-start: var(--sf-ui-1\/2--space-y-tightness-low);
-    --sf-icon-button--padding-inline-end: var(--sf-ui-1\/2--space-y-tightness-low);
+    --sf-icon-button--padding-top: var(--sf-icon-button-padding-block, var(--sf-ui-1\/2--space-y-tightness-low));
+    --sf-icon-button--padding-bottom: var(--sf-icon-button-padding-block, var(--sf-ui-1\/2--space-y-tightness-low));
+    --sf-icon-button--padding-inline-start: var(--sf-icon-button-padding-inline, var(--sf-ui-1\/2--space-y-tightness-low));
+    --sf-icon-button--padding-inline-end: var(--sf-icon-button-padding-inline, var(--sf-ui-1\/2--space-y-tightness-low));
   }
   .sf-icon-button--size-1\/2.spacing-compact {
-    --sf-icon-button--padding-top: var(--sf-ui-1\/2--space-y-tightness-low);
-    --sf-icon-button--padding-bottom: var(--sf-ui-1\/2--space-y-tightness-low);
-    --sf-icon-button--padding-inline-start: var(--sf-ui-1\/2--space-y-tightness-low);
-    --sf-icon-button--padding-inline-end: var(--sf-ui-1\/2--space-y-tightness-low);
+    --sf-icon-button--padding-top: var(--sf-icon-button-padding-block, var(--sf-ui-1\/2--space-y-tightness-low));
+    --sf-icon-button--padding-bottom: var(--sf-icon-button-padding-block, var(--sf-ui-1\/2--space-y-tightness-low));
+    --sf-icon-button--padding-inline-start: var(--sf-icon-button-padding-inline, var(--sf-ui-1\/2--space-y-tightness-low));
+    --sf-icon-button--padding-inline-end: var(--sf-icon-button-padding-inline, var(--sf-ui-1\/2--space-y-tightness-low));
   }
   .sf-icon-button--size-1\/2.tightness-high {
-    --sf-icon-button--padding-top: var(--sf-ui-1\/2--space-y-tightness-high);
-    --sf-icon-button--padding-bottom: var(--sf-ui-1\/2--space-y-tightness-high);
-    --sf-icon-button--padding-inline-start: var(--sf-ui-1\/2--space-y-tightness-high);
-    --sf-icon-button--padding-inline-end: var(--sf-ui-1\/2--space-y-tightness-high);
+    --sf-icon-button--padding-top: var(--sf-icon-button-padding-block, var(--sf-ui-1\/2--space-y-tightness-high));
+    --sf-icon-button--padding-bottom: var(--sf-icon-button-padding-block, var(--sf-ui-1\/2--space-y-tightness-high));
+    --sf-icon-button--padding-inline-start: var(--sf-icon-button-padding-inline, var(--sf-ui-1\/2--space-y-tightness-high));
+    --sf-icon-button--padding-inline-end: var(--sf-icon-button-padding-inline, var(--sf-ui-1\/2--space-y-tightness-high));
   }
   .sf-icon-button--size-1\/2.spacing-comfortable {
-    --sf-icon-button--padding-top: var(--sf-ui-1\/2--space-y-tightness-high);
-    --sf-icon-button--padding-bottom: var(--sf-ui-1\/2--space-y-tightness-high);
-    --sf-icon-button--padding-inline-start: var(--sf-ui-1\/2--space-y-tightness-high);
-    --sf-icon-button--padding-inline-end: var(--sf-ui-1\/2--space-y-tightness-high);
+    --sf-icon-button--padding-top: var(--sf-icon-button-padding-block, var(--sf-ui-1\/2--space-y-tightness-high));
+    --sf-icon-button--padding-bottom: var(--sf-icon-button-padding-block, var(--sf-ui-1\/2--space-y-tightness-high));
+    --sf-icon-button--padding-inline-start: var(--sf-icon-button-padding-inline, var(--sf-ui-1\/2--space-y-tightness-high));
+    --sf-icon-button--padding-inline-end: var(--sf-icon-button-padding-inline, var(--sf-ui-1\/2--space-y-tightness-high));
   }
   .sf-icon-button--size-1\/2.tightness-highest {
-    --sf-icon-button--padding-top: var(--sf-ui-1\/2--space-y-tightness-highest);
-    --sf-icon-button--padding-bottom: var(--sf-ui-1\/2--space-y-tightness-highest);
-    --sf-icon-button--padding-inline-start: var(--sf-ui-1\/2--space-y-tightness-highest);
-    --sf-icon-button--padding-inline-end: var(--sf-ui-1\/2--space-y-tightness-highest);
+    --sf-icon-button--padding-top: var(--sf-icon-button-padding-block, var(--sf-ui-1\/2--space-y-tightness-highest));
+    --sf-icon-button--padding-bottom: var(--sf-icon-button-padding-block, var(--sf-ui-1\/2--space-y-tightness-highest));
+    --sf-icon-button--padding-inline-start: var(--sf-icon-button-padding-inline, var(--sf-ui-1\/2--space-y-tightness-highest));
+    --sf-icon-button--padding-inline-end: var(--sf-icon-button-padding-inline, var(--sf-ui-1\/2--space-y-tightness-highest));
   }
   .sf-icon-button--size-1\/2.spacing-spacious {
-    --sf-icon-button--padding-top: var(--sf-ui-1\/2--space-y-tightness-highest);
-    --sf-icon-button--padding-bottom: var(--sf-ui-1\/2--space-y-tightness-highest);
-    --sf-icon-button--padding-inline-start: var(--sf-ui-1\/2--space-y-tightness-highest);
-    --sf-icon-button--padding-inline-end: var(--sf-ui-1\/2--space-y-tightness-highest);
+    --sf-icon-button--padding-top: var(--sf-icon-button-padding-block, var(--sf-ui-1\/2--space-y-tightness-highest));
+    --sf-icon-button--padding-bottom: var(--sf-icon-button-padding-block, var(--sf-ui-1\/2--space-y-tightness-highest));
+    --sf-icon-button--padding-inline-start: var(--sf-icon-button-padding-inline, var(--sf-ui-1\/2--space-y-tightness-highest));
+    --sf-icon-button--padding-inline-end: var(--sf-icon-button-padding-inline, var(--sf-ui-1\/2--space-y-tightness-highest));
   }
   .sf-icon-button--size-1\/3 {
-    --sf-icon-button--padding-bottom: var(--sf-ui-1\/3--space-y-tightness-default);
-    --sf-icon-button--padding-inline-end: var(--sf-ui-1\/3--space-y-tightness-default);
-    --sf-icon-button--padding-inline-start: var(--sf-ui-1\/3--space-y-tightness-default);
-    --sf-icon-button--padding-top: var(--sf-ui-1\/3--space-y-tightness-default);
+    --sf-icon-button--padding-bottom: var(--sf-icon-button-padding-block, var(--sf-ui-1\/3--space-y-tightness-default));
+    --sf-icon-button--padding-inline-end: var(--sf-icon-button-padding-inline, var(--sf-ui-1\/3--space-y-tightness-default));
+    --sf-icon-button--padding-inline-start: var(--sf-icon-button-padding-inline, var(--sf-ui-1\/3--space-y-tightness-default));
+    --sf-icon-button--padding-top: var(--sf-icon-button-padding-block, var(--sf-ui-1\/3--space-y-tightness-default));
   }
   .sf-icon-button--size-1\/3.tightness-low {
-    --sf-icon-button--padding-top: var(--sf-ui-1\/3--space-y-tightness-low);
-    --sf-icon-button--padding-bottom: var(--sf-ui-1\/3--space-y-tightness-low);
-    --sf-icon-button--padding-inline-start: var(--sf-ui-1\/3--space-y-tightness-low);
-    --sf-icon-button--padding-inline-end: var(--sf-ui-1\/3--space-y-tightness-low);
+    --sf-icon-button--padding-top: var(--sf-icon-button-padding-block, var(--sf-ui-1\/3--space-y-tightness-low));
+    --sf-icon-button--padding-bottom: var(--sf-icon-button-padding-block, var(--sf-ui-1\/3--space-y-tightness-low));
+    --sf-icon-button--padding-inline-start: var(--sf-icon-button-padding-inline, var(--sf-ui-1\/3--space-y-tightness-low));
+    --sf-icon-button--padding-inline-end: var(--sf-icon-button-padding-inline, var(--sf-ui-1\/3--space-y-tightness-low));
   }
   .sf-icon-button--size-1\/3.spacing-compact {
-    --sf-icon-button--padding-top: var(--sf-ui-1\/3--space-y-tightness-low);
-    --sf-icon-button--padding-bottom: var(--sf-ui-1\/3--space-y-tightness-low);
-    --sf-icon-button--padding-inline-start: var(--sf-ui-1\/3--space-y-tightness-low);
-    --sf-icon-button--padding-inline-end: var(--sf-ui-1\/3--space-y-tightness-low);
+    --sf-icon-button--padding-top: var(--sf-icon-button-padding-block, var(--sf-ui-1\/3--space-y-tightness-low));
+    --sf-icon-button--padding-bottom: var(--sf-icon-button-padding-block, var(--sf-ui-1\/3--space-y-tightness-low));
+    --sf-icon-button--padding-inline-start: var(--sf-icon-button-padding-inline, var(--sf-ui-1\/3--space-y-tightness-low));
+    --sf-icon-button--padding-inline-end: var(--sf-icon-button-padding-inline, var(--sf-ui-1\/3--space-y-tightness-low));
   }
   .sf-icon-button--size-1\/3.tightness-high {
-    --sf-icon-button--padding-top: var(--sf-ui-1\/3--space-y-tightness-high);
-    --sf-icon-button--padding-bottom: var(--sf-ui-1\/3--space-y-tightness-high);
-    --sf-icon-button--padding-inline-start: var(--sf-ui-1\/3--space-y-tightness-high);
-    --sf-icon-button--padding-inline-end: var(--sf-ui-1\/3--space-y-tightness-high);
+    --sf-icon-button--padding-top: var(--sf-icon-button-padding-block, var(--sf-ui-1\/3--space-y-tightness-high));
+    --sf-icon-button--padding-bottom: var(--sf-icon-button-padding-block, var(--sf-ui-1\/3--space-y-tightness-high));
+    --sf-icon-button--padding-inline-start: var(--sf-icon-button-padding-inline, var(--sf-ui-1\/3--space-y-tightness-high));
+    --sf-icon-button--padding-inline-end: var(--sf-icon-button-padding-inline, var(--sf-ui-1\/3--space-y-tightness-high));
   }
   .sf-icon-button--size-1\/3.spacing-comfortable {
-    --sf-icon-button--padding-top: var(--sf-ui-1\/3--space-y-tightness-high);
-    --sf-icon-button--padding-bottom: var(--sf-ui-1\/3--space-y-tightness-high);
-    --sf-icon-button--padding-inline-start: var(--sf-ui-1\/3--space-y-tightness-high);
-    --sf-icon-button--padding-inline-end: var(--sf-ui-1\/3--space-y-tightness-high);
+    --sf-icon-button--padding-top: var(--sf-icon-button-padding-block, var(--sf-ui-1\/3--space-y-tightness-high));
+    --sf-icon-button--padding-bottom: var(--sf-icon-button-padding-block, var(--sf-ui-1\/3--space-y-tightness-high));
+    --sf-icon-button--padding-inline-start: var(--sf-icon-button-padding-inline, var(--sf-ui-1\/3--space-y-tightness-high));
+    --sf-icon-button--padding-inline-end: var(--sf-icon-button-padding-inline, var(--sf-ui-1\/3--space-y-tightness-high));
   }
   .sf-icon-button--size-1\/3.tightness-highest {
-    --sf-icon-button--padding-top: var(--sf-ui-1\/3--space-y-tightness-highest);
-    --sf-icon-button--padding-bottom: var(--sf-ui-1\/3--space-y-tightness-highest);
-    --sf-icon-button--padding-inline-start: var(--sf-ui-1\/3--space-y-tightness-highest);
-    --sf-icon-button--padding-inline-end: var(--sf-ui-1\/3--space-y-tightness-highest);
+    --sf-icon-button--padding-top: var(--sf-icon-button-padding-block, var(--sf-ui-1\/3--space-y-tightness-highest));
+    --sf-icon-button--padding-bottom: var(--sf-icon-button-padding-block, var(--sf-ui-1\/3--space-y-tightness-highest));
+    --sf-icon-button--padding-inline-start: var(--sf-icon-button-padding-inline, var(--sf-ui-1\/3--space-y-tightness-highest));
+    --sf-icon-button--padding-inline-end: var(--sf-icon-button-padding-inline, var(--sf-ui-1\/3--space-y-tightness-highest));
   }
   .sf-icon-button--size-1\/3.spacing-spacious {
-    --sf-icon-button--padding-top: var(--sf-ui-1\/3--space-y-tightness-highest);
-    --sf-icon-button--padding-bottom: var(--sf-ui-1\/3--space-y-tightness-highest);
-    --sf-icon-button--padding-inline-start: var(--sf-ui-1\/3--space-y-tightness-highest);
-    --sf-icon-button--padding-inline-end: var(--sf-ui-1\/3--space-y-tightness-highest);
+    --sf-icon-button--padding-top: var(--sf-icon-button-padding-block, var(--sf-ui-1\/3--space-y-tightness-highest));
+    --sf-icon-button--padding-bottom: var(--sf-icon-button-padding-block, var(--sf-ui-1\/3--space-y-tightness-highest));
+    --sf-icon-button--padding-inline-start: var(--sf-icon-button-padding-inline, var(--sf-ui-1\/3--space-y-tightness-highest));
+    --sf-icon-button--padding-inline-end: var(--sf-icon-button-padding-inline, var(--sf-ui-1\/3--space-y-tightness-highest));
   }
   .sf-icon-button--outline {
-    --sf-icon-button--border-bottom-width: var(--sf-px);
-    --sf-icon-button--border-inline-end-width: var(--sf-px);
-    --sf-icon-button--border-inline-start-width: var(--sf-px);
+    --sf-icon-button--border-bottom-width: var(--sf-icon-button-border-width, var(--sf-px));
+    --sf-icon-button--border-inline-end-width: var(--sf-icon-button-border-width, var(--sf-px));
+    --sf-icon-button--border-inline-start-width: var(--sf-icon-button-border-width, var(--sf-px));
     --sf-icon-button--border-style: solid;
-    --sf-icon-button--border-top-width: var(--sf-px);
-    --sf-icon-button--border-width: var(--sf-px);
+    --sf-icon-button--border-top-width: var(--sf-icon-button-border-width, var(--sf-px));
+    --sf-icon-button--border-width: var(--sf-icon-button-border-width, var(--sf-px));
   }
   .sf-icon-button.radius-default {
     border-radius: var(--sf-radius-default);
@@ -845,26 +857,26 @@
     --sf-icon-button--background-color: transparent;
   }
   .sf-icon-button.sf-icon-button--surface {
-    --sf-icon-button--background-color: var(--sf-alpha-4);
-    --sf-icon-button--border-color: var(--sf-alpha-8);
-    --sf-icon-button--border-bottom-width: var(--sf-px);
-    --sf-icon-button--border-inline-end-width: var(--sf-px);
-    --sf-icon-button--border-inline-start-width: var(--sf-px);
+    --sf-icon-button--background-color: var(--sf-icon-button-background-color, var(--sf-alpha-4));
+    --sf-icon-button--border-color: var(--sf-icon-button-border-color, var(--sf-alpha-8));
+    --sf-icon-button--border-bottom-width: var(--sf-icon-button-border-width, var(--sf-px));
+    --sf-icon-button--border-inline-end-width: var(--sf-icon-button-border-width, var(--sf-px));
+    --sf-icon-button--border-inline-start-width: var(--sf-icon-button-border-width, var(--sf-px));
     --sf-icon-button--border-style: solid;
-    --sf-icon-button--border-top-width: var(--sf-px);
-    --sf-icon-button--border-width: var(--sf-px);
+    --sf-icon-button--border-top-width: var(--sf-icon-button-border-width, var(--sf-px));
+    --sf-icon-button--border-width: var(--sf-icon-button-border-width, var(--sf-px));
   }
   .sf-icon-button.sf-icon-button--surface.sf-icon-button--on-surface {
-    --sf-icon--color: var(--sf-on-surface);
+    --sf-icon--color: var(--sf-icon-button-color, var(--sf-on-surface));
   }
   .sf-icon-button.sf-icon-button--surface.sf-icon-button--on-surface.sf-icon-button--close > .sf-close > .sf-close-icon {
-    --sf-close-icon--background-color: var(--sf-on-surface);
+    --sf-close-icon--background-color: var(--sf-icon-button-color, var(--sf-on-surface));
   }
   .sf-icon-button.sf-icon-button--surface.sf-icon-button--primary {
-    --sf-icon--color: var(--sf-primary);
+    --sf-icon--color: var(--sf-icon-button-color, var(--sf-primary));
   }
   .sf-icon-button.sf-icon-button--surface.sf-icon-button--primary.sf-icon-button--close > .sf-close > .sf-close-icon {
-    --sf-close-icon--background-color: var(--sf-primary);
+    --sf-close-icon--background-color: var(--sf-icon-button-color, var(--sf-primary));
   }
 }
 @layer sf.states {
@@ -1205,58 +1217,58 @@
 @layer sf.components {
   .sf-icon-button.sf-icon-button--default.sf-icon-button--error.sf-icon-button--icon,
   .sf-icon-button.sf-icon-button--default.sf-icon-button--error.sf-icon-button--close {
-    --sf-icon-button--background-color: var(--sf-error);
+    --sf-icon-button--background-color: var(--sf-icon-button-background-color, var(--sf-error));
   }
   .sf-icon-button.sf-icon-button--default.sf-icon-button--error.sf-icon-button--icon {
-    --sf-icon--color: var(--sf-on-error);
+    --sf-icon--color: var(--sf-icon-button-color, var(--sf-on-error));
   }
   .sf-icon-button.sf-icon-button--tonal.sf-icon-button--error.sf-icon-button--icon,
   .sf-icon-button.sf-icon-button--tonal.sf-icon-button--error.sf-icon-button--close {
-    --sf-icon-button--background-color: var(--sf-error-container);
+    --sf-icon-button--background-color: var(--sf-icon-button-background-color, var(--sf-error-container));
   }
   .sf-icon-button.sf-icon-button--tonal.sf-icon-button--error.sf-icon-button--icon {
-    --sf-icon--color: var(--sf-on-error-container);
+    --sf-icon--color: var(--sf-icon-button-color, var(--sf-on-error-container));
   }
   .sf-icon-button.sf-icon-button--outline.sf-icon-button--error.sf-icon-button--icon,
   .sf-icon-button.sf-icon-button--outline.sf-icon-button--error.sf-icon-button--close {
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: var(--sf-outline);
+    --sf-icon-button--background-color: var(--sf-icon-button-background-color, transparent);
+    --sf-icon-button--border-color: var(--sf-icon-button-border-color, var(--sf-outline));
   }
   .sf-icon-button.sf-icon-button--outline.sf-icon-button--error.sf-icon-button--icon {
-    --sf-icon--color: var(--sf-error);
+    --sf-icon--color: var(--sf-icon-button-color, var(--sf-error));
   }
   .sf-icon-button.sf-icon-button--link.sf-icon-button--error.sf-icon-button--icon {
-    --sf-icon-button--background-color: transparent;
+    --sf-icon-button--background-color: var(--sf-icon-button-background-color, transparent);
   }
   .sf-icon-button.sf-icon-button--ghost.sf-icon-button--error.sf-icon-button--icon {
-    --sf-icon-button--background-color: transparent;
+    --sf-icon-button--background-color: var(--sf-icon-button-background-color, transparent);
   }
   .sf-icon-button.sf-icon-button--link.sf-icon-button--error.sf-icon-button--close {
-    --sf-icon-button--background-color: transparent;
+    --sf-icon-button--background-color: var(--sf-icon-button-background-color, transparent);
   }
   .sf-icon-button.sf-icon-button--ghost.sf-icon-button--error.sf-icon-button--close {
-    --sf-icon-button--background-color: transparent;
+    --sf-icon-button--background-color: var(--sf-icon-button-background-color, transparent);
   }
   .sf-icon-button.sf-icon-button--link.sf-icon-button--error.sf-icon-button--icon {
-    --sf-icon--color: var(--sf-error-active);
+    --sf-icon--color: var(--sf-icon-button-color, var(--sf-error-active));
   }
   .sf-icon-button.sf-icon-button--ghost.sf-icon-button--error.sf-icon-button--icon {
-    --sf-icon--color: var(--sf-error-active);
+    --sf-icon--color: var(--sf-icon-button-color, var(--sf-error-active));
   }
   .sf-icon-button.sf-icon-button--default.sf-icon-button--error.sf-icon-button--close > .sf-close > .sf-close-icon {
-    --sf-close-icon--background-color: var(--sf-on-error);
+    --sf-close-icon--background-color: var(--sf-icon-button-color, var(--sf-on-error));
   }
   .sf-icon-button.sf-icon-button--tonal.sf-icon-button--error.sf-icon-button--close > .sf-close > .sf-close-icon {
-    --sf-close-icon--background-color: var(--sf-on-error-container);
+    --sf-close-icon--background-color: var(--sf-icon-button-color, var(--sf-on-error-container));
   }
   .sf-icon-button.sf-icon-button--outline.sf-icon-button--error.sf-icon-button--close > .sf-close > .sf-close-icon {
-    --sf-close-icon--background-color: var(--sf-error);
+    --sf-close-icon--background-color: var(--sf-icon-button-color, var(--sf-error));
   }
   .sf-icon-button.sf-icon-button--link.sf-icon-button--error.sf-icon-button--close > .sf-close > .sf-close-icon {
-    --sf-close-icon--background-color: var(--sf-error-active);
+    --sf-close-icon--background-color: var(--sf-icon-button-color, var(--sf-error-active));
   }
   .sf-icon-button.sf-icon-button--ghost.sf-icon-button--error.sf-icon-button--close > .sf-close > .sf-close-icon {
-    --sf-close-icon--background-color: var(--sf-error-active);
+    --sf-close-icon--background-color: var(--sf-icon-button-color, var(--sf-error-active));
   }
 }
 @layer sf.states {

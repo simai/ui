@@ -350,115 +350,115 @@
   /* utility-hint: display/block */
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-avatar {
     border-bottom-right-radius: var(--sf-radius-circle);
-    border-bottom-right-radius: var(--sf-avatar--border-bottom-right-radius, var(--sf-radius-circle));
+    border-bottom-right-radius: var(--sf-avatar--border-bottom-right-radius, var(--sf-avatar-radius, var(--sf-radius-circle)));
   }
   @supports not (border-end-end-radius: initial) {
   html:not([dir="rtl"]) .sf-avatar {
     border-bottom-right-radius: var(--sf-radius-circle);
-    border-bottom-right-radius: var(--sf-avatar--border-bottom-right-radius, var(--sf-radius-circle));
+    border-bottom-right-radius: var(--sf-avatar--border-bottom-right-radius, var(--sf-avatar-radius, var(--sf-radius-circle)));
     }
   }
   .sf-avatar:where(:dir(ltr)) {
     border-bottom-right-radius: var(--sf-radius-circle);
-    border-bottom-right-radius: var(--sf-avatar--border-bottom-right-radius, var(--sf-radius-circle));
+    border-bottom-right-radius: var(--sf-avatar--border-bottom-right-radius, var(--sf-avatar-radius, var(--sf-radius-circle)));
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-avatar {
     border-bottom-left-radius: var(--sf-radius-circle);
-    border-bottom-left-radius: var(--sf-avatar--border-bottom-right-radius, var(--sf-radius-circle));
+    border-bottom-left-radius: var(--sf-avatar--border-bottom-right-radius, var(--sf-avatar-radius, var(--sf-radius-circle)));
   }
   @supports not (border-end-end-radius: initial) {
   [dir="rtl"] .sf-avatar {
     border-bottom-left-radius: var(--sf-radius-circle);
-    border-bottom-left-radius: var(--sf-avatar--border-bottom-right-radius, var(--sf-radius-circle));
+    border-bottom-left-radius: var(--sf-avatar--border-bottom-right-radius, var(--sf-avatar-radius, var(--sf-radius-circle)));
     }
   }
   .sf-avatar:where(:dir(rtl)) {
     border-bottom-left-radius: var(--sf-radius-circle);
-    border-bottom-left-radius: var(--sf-avatar--border-bottom-right-radius, var(--sf-radius-circle));
+    border-bottom-left-radius: var(--sf-avatar--border-bottom-right-radius, var(--sf-avatar-radius, var(--sf-radius-circle)));
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-avatar {
     border-bottom-left-radius: var(--sf-radius-circle);
-    border-bottom-left-radius: var(--sf-avatar--border-bottom-left-radius, var(--sf-radius-circle));
+    border-bottom-left-radius: var(--sf-avatar--border-bottom-left-radius, var(--sf-avatar-radius, var(--sf-radius-circle)));
   }
   @supports not (border-end-start-radius: initial) {
   html:not([dir="rtl"]) .sf-avatar {
     border-bottom-left-radius: var(--sf-radius-circle);
-    border-bottom-left-radius: var(--sf-avatar--border-bottom-left-radius, var(--sf-radius-circle));
+    border-bottom-left-radius: var(--sf-avatar--border-bottom-left-radius, var(--sf-avatar-radius, var(--sf-radius-circle)));
     }
   }
   .sf-avatar:where(:dir(ltr)) {
     border-bottom-left-radius: var(--sf-radius-circle);
-    border-bottom-left-radius: var(--sf-avatar--border-bottom-left-radius, var(--sf-radius-circle));
+    border-bottom-left-radius: var(--sf-avatar--border-bottom-left-radius, var(--sf-avatar-radius, var(--sf-radius-circle)));
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-avatar {
     border-bottom-right-radius: var(--sf-radius-circle);
-    border-bottom-right-radius: var(--sf-avatar--border-bottom-left-radius, var(--sf-radius-circle));
+    border-bottom-right-radius: var(--sf-avatar--border-bottom-left-radius, var(--sf-avatar-radius, var(--sf-radius-circle)));
   }
   @supports not (border-end-start-radius: initial) {
   [dir="rtl"] .sf-avatar {
     border-bottom-right-radius: var(--sf-radius-circle);
-    border-bottom-right-radius: var(--sf-avatar--border-bottom-left-radius, var(--sf-radius-circle));
+    border-bottom-right-radius: var(--sf-avatar--border-bottom-left-radius, var(--sf-avatar-radius, var(--sf-radius-circle)));
     }
   }
   .sf-avatar:where(:dir(rtl)) {
     border-bottom-right-radius: var(--sf-radius-circle);
-    border-bottom-right-radius: var(--sf-avatar--border-bottom-left-radius, var(--sf-radius-circle));
+    border-bottom-right-radius: var(--sf-avatar--border-bottom-left-radius, var(--sf-avatar-radius, var(--sf-radius-circle)));
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-avatar {
     border-top-right-radius: var(--sf-radius-circle);
-    border-top-right-radius: var(--sf-avatar--border-top-right-radius, var(--sf-radius-circle));
+    border-top-right-radius: var(--sf-avatar--border-top-right-radius, var(--sf-avatar-radius, var(--sf-radius-circle)));
   }
   @supports not (border-start-end-radius: initial) {
   html:not([dir="rtl"]) .sf-avatar {
     border-top-right-radius: var(--sf-radius-circle);
-    border-top-right-radius: var(--sf-avatar--border-top-right-radius, var(--sf-radius-circle));
+    border-top-right-radius: var(--sf-avatar--border-top-right-radius, var(--sf-avatar-radius, var(--sf-radius-circle)));
     }
   }
   .sf-avatar:where(:dir(ltr)) {
     border-top-right-radius: var(--sf-radius-circle);
-    border-top-right-radius: var(--sf-avatar--border-top-right-radius, var(--sf-radius-circle));
+    border-top-right-radius: var(--sf-avatar--border-top-right-radius, var(--sf-avatar-radius, var(--sf-radius-circle)));
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-avatar {
     border-top-left-radius: var(--sf-radius-circle);
-    border-top-left-radius: var(--sf-avatar--border-top-right-radius, var(--sf-radius-circle));
+    border-top-left-radius: var(--sf-avatar--border-top-right-radius, var(--sf-avatar-radius, var(--sf-radius-circle)));
   }
   @supports not (border-start-end-radius: initial) {
   [dir="rtl"] .sf-avatar {
     border-top-left-radius: var(--sf-radius-circle);
-    border-top-left-radius: var(--sf-avatar--border-top-right-radius, var(--sf-radius-circle));
+    border-top-left-radius: var(--sf-avatar--border-top-right-radius, var(--sf-avatar-radius, var(--sf-radius-circle)));
     }
   }
   .sf-avatar:where(:dir(rtl)) {
     border-top-left-radius: var(--sf-radius-circle);
-    border-top-left-radius: var(--sf-avatar--border-top-right-radius, var(--sf-radius-circle));
+    border-top-left-radius: var(--sf-avatar--border-top-right-radius, var(--sf-avatar-radius, var(--sf-radius-circle)));
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-avatar {
     border-top-left-radius: var(--sf-radius-circle);
-    border-top-left-radius: var(--sf-avatar--border-top-left-radius, var(--sf-radius-circle));
+    border-top-left-radius: var(--sf-avatar--border-top-left-radius, var(--sf-avatar-radius, var(--sf-radius-circle)));
   }
   @supports not (border-start-start-radius: initial) {
   html:not([dir="rtl"]) .sf-avatar {
     border-top-left-radius: var(--sf-radius-circle);
-    border-top-left-radius: var(--sf-avatar--border-top-left-radius, var(--sf-radius-circle));
+    border-top-left-radius: var(--sf-avatar--border-top-left-radius, var(--sf-avatar-radius, var(--sf-radius-circle)));
     }
   }
   .sf-avatar:where(:dir(ltr)) {
     border-top-left-radius: var(--sf-radius-circle);
-    border-top-left-radius: var(--sf-avatar--border-top-left-radius, var(--sf-radius-circle));
+    border-top-left-radius: var(--sf-avatar--border-top-left-radius, var(--sf-avatar-radius, var(--sf-radius-circle)));
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-avatar {
     border-top-right-radius: var(--sf-radius-circle);
-    border-top-right-radius: var(--sf-avatar--border-top-left-radius, var(--sf-radius-circle));
+    border-top-right-radius: var(--sf-avatar--border-top-left-radius, var(--sf-avatar-radius, var(--sf-radius-circle)));
   }
   @supports not (border-start-start-radius: initial) {
   [dir="rtl"] .sf-avatar {
     border-top-right-radius: var(--sf-radius-circle);
-    border-top-right-radius: var(--sf-avatar--border-top-left-radius, var(--sf-radius-circle));
+    border-top-right-radius: var(--sf-avatar--border-top-left-radius, var(--sf-avatar-radius, var(--sf-radius-circle)));
     }
   }
   .sf-avatar:where(:dir(rtl)) {
     border-top-right-radius: var(--sf-radius-circle);
-    border-top-right-radius: var(--sf-avatar--border-top-left-radius, var(--sf-radius-circle));
+    border-top-right-radius: var(--sf-avatar--border-top-left-radius, var(--sf-avatar-radius, var(--sf-radius-circle)));
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-avatar {
     border-right-width: 0;
@@ -518,15 +518,15 @@
   }
   .sf-avatar {
     border-end-end-radius: var(--sf-radius-circle);
-    border-end-end-radius: var(--sf-avatar--border-bottom-right-radius, var(--sf-radius-circle));
+    border-end-end-radius: var(--sf-avatar--border-bottom-right-radius, var(--sf-avatar-radius, var(--sf-radius-circle)));
     border-end-start-radius: var(--sf-radius-circle);
-    border-end-start-radius: var(--sf-avatar--border-bottom-left-radius, var(--sf-radius-circle));
+    border-end-start-radius: var(--sf-avatar--border-bottom-left-radius, var(--sf-avatar-radius, var(--sf-radius-circle)));
     border-start-end-radius: var(--sf-radius-circle);
-    border-start-end-radius: var(--sf-avatar--border-top-right-radius, var(--sf-radius-circle));
+    border-start-end-radius: var(--sf-avatar--border-top-right-radius, var(--sf-avatar-radius, var(--sf-radius-circle)));
     border-start-start-radius: var(--sf-radius-circle);
-    border-start-start-radius: var(--sf-avatar--border-top-left-radius, var(--sf-radius-circle));
+    border-start-start-radius: var(--sf-avatar--border-top-left-radius, var(--sf-avatar-radius, var(--sf-radius-circle)));
     color: var(--sf-on-surface-variant);
-    color: var(--sf-avatar--color, var(--sf-on-surface-variant));
+    color: var(--sf-avatar--color, var(--sf-avatar-color, var(--sf-on-surface-variant)));
     font-family: var(--sf-text--family);
     font-family: var(--sf-avatar--font-family, var(--sf-text--family));
     font-weight: var(--sf-font-weight-regular);
@@ -538,7 +538,7 @@
     line-height: var(--sf-avatar--line-height);
     white-space: nowrap;
     border-color: transparent;
-    border-color: var(--sf-avatar--border-color, transparent);
+    border-color: var(--sf-avatar--border-color, var(--sf-avatar-border-color, transparent));
     border-width: 0;
     border-width: var(--sf-avatar--border-width, 0);
     border-top-width: 0;
@@ -552,11 +552,11 @@
     border-style: solid;
     border-style: var(--sf-avatar--border-style, solid);
     box-shadow: var(--sf-avatar--box-shadow);
-    --sf-avatar--background-color: transparent;
-    --sf-avatar--border-top-width: var(--sf-px);
-    --sf-avatar--border-bottom-width: var(--sf-px);
-    --sf-avatar--border-inline-start-width: var(--sf-px);
-    --sf-avatar--border-inline-end-width: var(--sf-px);
+    --sf-avatar--background-color: var(--sf-avatar-background-color, transparent);
+    --sf-avatar--border-top-width: var(--sf-avatar-border-width, var(--sf-px));
+    --sf-avatar--border-bottom-width: var(--sf-avatar-border-width, var(--sf-px));
+    --sf-avatar--border-inline-start-width: var(--sf-avatar-border-width, var(--sf-px));
+    --sf-avatar--border-inline-end-width: var(--sf-avatar-border-width, var(--sf-px));
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-avatar .sf-avatar-badge {
     border-bottom-right-radius: var(--sf-avatar-badge--border-end-end-radius);
@@ -743,13 +743,13 @@
     --sf-avatar--width: var(--sf-text-height-1\/2);
   }
   .sf-avatar--placeholder, .sf-avatar--text {
-    --sf-avatar--background-color: var(--sf-surface-container);
+    --sf-avatar--background-color: var(--sf-avatar-background-color, var(--sf-surface-container));
   }
   .sf-avatar--square {
-    --sf-avatar--border-bottom-right-radius: var(--sf-radius--ui);
-    --sf-avatar--border-bottom-left-radius: var(--sf-radius--ui);
-    --sf-avatar--border-top-right-radius: var(--sf-radius--ui);
-    --sf-avatar--border-top-left-radius: var(--sf-radius--ui);
+    --sf-avatar--border-bottom-right-radius: var(--sf-avatar-radius, var(--sf-radius--ui));
+    --sf-avatar--border-bottom-left-radius: var(--sf-avatar-radius, var(--sf-radius--ui));
+    --sf-avatar--border-top-right-radius: var(--sf-avatar-radius, var(--sf-radius--ui));
+    --sf-avatar--border-top-left-radius: var(--sf-avatar-radius, var(--sf-radius--ui));
   }
   .sf-avatar-image {
     width: 100%;

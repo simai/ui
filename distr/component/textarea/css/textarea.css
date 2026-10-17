@@ -11,7 +11,7 @@
   .sf-textarea {
     min-width: 0;
     min-inline-size: 0;
-    --sf-textarea--radius: var(--sf-radius--ui);
+    --sf-textarea--radius: var(--sf-textarea-radius, var(--sf-radius--ui));
     background-color: transparent;
     background-color: var(--sf-textarea--background-color, transparent);
     gap: var(--sf-space-1\/4);
@@ -303,11 +303,11 @@
     --sf-textarea-textarea--font-weight: var(--sf-font-weight-regular);
   }
   .sf-textarea.sf-textarea--bordered textarea, .sf-textarea.sf-textarea--filled textarea {
-    --sf-textarea-textarea--color: var(--sf-on-surface);
+    --sf-textarea-textarea--color: var(--sf-textarea-color, var(--sf-on-surface));
   }
   .sf-textarea.sf-textarea--bordered textarea {
-    --sf-textarea-textarea--background-color: var(--sf-surface-0);
-    --sf-textarea-textarea--border-color: var(--sf-outline);
+    --sf-textarea-textarea--background-color: var(--sf-textarea-background-color, var(--sf-surface-0));
+    --sf-textarea-textarea--border-color: var(--sf-textarea-border-color, var(--sf-outline));
   }
   .sf-textarea:not(.error).sf-textarea--size-1.sf-textarea--bordered[\:has\(textarea\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:not\(\:-moz-read-only\)\:active\)] textarea {
     --sf-textarea-textarea--border-color: var(--sf-primary);
@@ -363,8 +363,8 @@
     --sf-textarea-textarea--border-color: var(--sf-error);
   }
   .sf-textarea.sf-textarea--filled textarea {
-    --sf-textarea-textarea--background-color: var(--sf-surface-container);
-    --sf-textarea-textarea--border-color: var(--sf-transparent-for-focus);
+    --sf-textarea-textarea--background-color: var(--sf-textarea-background-color, var(--sf-surface-container));
+    --sf-textarea-textarea--border-color: var(--sf-textarea-border-color, var(--sf-transparent-for-focus));
   }
   .sf-textarea:not(.error).sf-textarea--filled[\:has\(textarea\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:not\(\:-moz-read-only\)\:hover\)] textarea {
     --sf-textarea-textarea--background-color: var(--sf-surface-container-hover);
@@ -441,10 +441,10 @@
     --sf-textarea-textarea--line-height: var(--sf-text-height-1\/2);
   }
   .sf-textarea.sf-textarea--size-1 textarea {
-    --sf-textarea-textarea--padding-bottom: calc(var(--sf-ui-1--space-y-tightness-default) - var(--sf-px));
-    --sf-textarea-textarea--padding-inline-end: calc(var(--sf-ui-1--space-x) + var(--sf-ui-1--text-space-x));
-    --sf-textarea-textarea--padding-inline-start: calc(var(--sf-ui-1--space-x) + var(--sf-ui-1--text-space-x));
-    --sf-textarea-textarea--padding-top: calc(var(--sf-ui-1--space-y-tightness-default) - var(--sf-px));
+    --sf-textarea-textarea--padding-bottom: var(--sf-textarea-padding-block, calc(var(--sf-ui-1--space-y-tightness-default) - var(--sf-px)));
+    --sf-textarea-textarea--padding-inline-end: var(--sf-textarea-padding-inline, calc(var(--sf-ui-1--space-x) + var(--sf-ui-1--text-space-x)));
+    --sf-textarea-textarea--padding-inline-start: var(--sf-textarea-padding-inline, calc(var(--sf-ui-1--space-x) + var(--sf-ui-1--text-space-x)));
+    --sf-textarea-textarea--padding-top: var(--sf-textarea-padding-block, calc(var(--sf-ui-1--space-y-tightness-default) - var(--sf-px)));
   }
   .sf-textarea.sf-textarea--size-1 textarea[rows="1"] {
     height: var(--sf-ui-1--control-height);
@@ -471,10 +471,10 @@
     --sf-textarea-placeholder--line-height: var(--sf-text-height-1);
   }
   .sf-textarea.sf-textarea--size-2 textarea {
-    --sf-textarea-textarea--padding-bottom: calc(var(--sf-ui-2--space-y-tightness-default) - var(--sf-px));
-    --sf-textarea-textarea--padding-inline-end: calc(var(--sf-ui-2--space-x) + var(--sf-ui-2--text-space-x));
-    --sf-textarea-textarea--padding-inline-start: calc(var(--sf-ui-2--space-x) + var(--sf-ui-2--text-space-x));
-    --sf-textarea-textarea--padding-top: calc(var(--sf-ui-2--space-y-tightness-default) - var(--sf-px));
+    --sf-textarea-textarea--padding-bottom: var(--sf-textarea-padding-block, calc(var(--sf-ui-2--space-y-tightness-default) - var(--sf-px)));
+    --sf-textarea-textarea--padding-inline-end: var(--sf-textarea-padding-inline, calc(var(--sf-ui-2--space-x) + var(--sf-ui-2--text-space-x)));
+    --sf-textarea-textarea--padding-inline-start: var(--sf-textarea-padding-inline, calc(var(--sf-ui-2--space-x) + var(--sf-ui-2--text-space-x)));
+    --sf-textarea-textarea--padding-top: var(--sf-textarea-padding-block, calc(var(--sf-ui-2--space-y-tightness-default) - var(--sf-px)));
   }
   .sf-textarea.sf-textarea--size-2 textarea[rows="1"] {
     height: var(--sf-ui-2--control-height);
@@ -501,10 +501,10 @@
     --sf-textarea-placeholder--line-height: var(--sf-text-height-2);
   }
   .sf-textarea.sf-textarea--size-1\/2 textarea {
-    --sf-textarea-textarea--padding-bottom: calc(var(--sf-ui-1\/2--space-y-tightness-default) - var(--sf-px));
-    --sf-textarea-textarea--padding-inline-end: calc(var(--sf-ui-1\/2--space-x) + var(--sf-ui-1\/2--text-space-x));
-    --sf-textarea-textarea--padding-inline-start: calc(var(--sf-ui-1\/2--space-x) + var(--sf-ui-1\/2--text-space-x));
-    --sf-textarea-textarea--padding-top: calc(var(--sf-ui-1\/2--space-y-tightness-default) - var(--sf-px));
+    --sf-textarea-textarea--padding-bottom: var(--sf-textarea-padding-block, calc(var(--sf-ui-1\/2--space-y-tightness-default) - var(--sf-px)));
+    --sf-textarea-textarea--padding-inline-end: var(--sf-textarea-padding-inline, calc(var(--sf-ui-1\/2--space-x) + var(--sf-ui-1\/2--text-space-x)));
+    --sf-textarea-textarea--padding-inline-start: var(--sf-textarea-padding-inline, calc(var(--sf-ui-1\/2--space-x) + var(--sf-ui-1\/2--text-space-x)));
+    --sf-textarea-textarea--padding-top: var(--sf-textarea-padding-block, calc(var(--sf-ui-1\/2--space-y-tightness-default) - var(--sf-px)));
   }
   .sf-textarea.sf-textarea--size-1\/2 textarea[rows="1"] {
     height: var(--sf-ui-1\/2--control-height);
