@@ -109,6 +109,8 @@
 
 ### Добавлено
 
+- Public CSS variables for twelve more components (tag, icon-button, checkbox, radio-button, switch, textarea, toast, modal, tooltip, tabs, avatar, context-menu); the border variables of `sf-button` and `sf-icon-button` work on every appearance; a browser probe checks that every public variable takes effect.
+
 - Every Smart component declares `presentation.skeleton`: the shape server markup writes before its code arrives (block, menu, line, or none for inline controls and overlays); a contract requires it.
 
 - The Smart manifest schema 2.5.0 adds `persistence.view_preference`: the key, versioned shape and fields of a component's view preference, and which fields a server may seed for the first paint; `sf-resizer` declares its own.
