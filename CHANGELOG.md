@@ -109,6 +109,8 @@
 
 ### Добавлено
 
+- `sf-theme-generator`: a whole theme from one colour (the eight palettes as the 128 primitives; `SF.ThemePalette`); `core/contracts/public-js-api.json`, the reference of `window.SF`; the standard `simai.ai-development` 1.0.0; a long `choices` field is edited as a checklist; format names are read in both forms (with and without a version).
+
 - Public CSS variables for twelve more components (tag, icon-button, checkbox, radio-button, switch, textarea, toast, modal, tooltip, tabs, avatar, context-menu); the border variables of `sf-button` and `sf-icon-button` work on every appearance; a browser probe checks that every public variable takes effect.
 
 - Every Smart component declares `presentation.skeleton`: the shape server markup writes before its code arrives (block, menu, line, or none for inline controls and overlays); a contract requires it.
