@@ -1525,6 +1525,33 @@
     "type": "smart"
   },
   {
+    "name": "cl-theme-generator",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "cl-color"
+      },
+      {
+        "name": "cl-inputs"
+      },
+      {
+        "name": "cl-buttons"
+      },
+      {
+        "name": "cl-icon-buttons"
+      },
+      {
+        "name": "cl-icons"
+      }
+    ],
+    "tags": [
+      "sf-theme-generator"
+    ],
+    "type": "smart"
+  },
+  {
     "name": "cl-toast",
     "js": true,
     "mode": "smart",
