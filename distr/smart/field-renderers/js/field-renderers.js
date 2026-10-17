@@ -1517,7 +1517,14 @@ function renderChoiceView(field, value) {
                 text=${String(option.label ?? option.text ?? value)}
         ></sf-badge>
     `;
-}
+} // The values wrap, each tag as wide as its text: on one unwrapping line a
+// role's 137 rights shrank every tag to a letter and the text ran down the
+// panel (Larena, 2026-10-17). The tag's painted root is the flex item (the
+// host is display: contents), so it is told not to shrink through root-class.
+// No disclosure for a long list here: a record's
+// field in view is the button that opens its group, and a control inside a
+// button is not one.
+
 
 function renderChoicesView(field, value) {
   if (!Array.isArray(value) || !value.length) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
@@ -1529,8 +1536,8 @@ function renderChoicesView(field, value) {
   };
 
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-        <span class="sf-field-view flex items-cross-center gap-1/3">
-            ${value.map(item => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-tag line=${VIEW_LINE} kind="default" text=${label(item)}></sf-tag>`)}
+        <span class="sf-field-view flex flex-wrap items-cross-center gap-1/3 min-w-0">
+            ${value.map(item => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-tag root-class="flex-none" line=${VIEW_LINE} kind="default" text=${label(item)}></sf-tag>`)}
         </span>
     `;
 } // A person, as in a cell: the name links to the person when the host gives
