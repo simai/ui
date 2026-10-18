@@ -948,7 +948,7 @@ function renderItem(item) {
         `;
   }
 
-  return SF.litHtml(item.component, item.props);
+  return SF.__internal.litHtml(item.component, item.props);
 }
 
 function renderItems(items) {

@@ -2686,9 +2686,9 @@ SFLoaderPlugin.prototype.dispatchReadyOnce = function () {
   // arrived; the page is ready when they have, not when their scripts have.
 
 
-  const runtime = window.SF?.runtimeLoading;
+  const runtime = window.SF?.__internal?.runtimeLoading;
 
-  if (runtime && !window.SF.runtimeSettled) {
+  if (runtime && !window.SF.__internal.runtimeSettled) {
     if (!this.readyWaitsForRuntime) {
       this.readyWaitsForRuntime = true;
       runtime.catch(() => null).then(() => new Promise(settle => setTimeout(settle, 0))).then(() => {
@@ -6253,7 +6253,7 @@ SF.whenFieldRenderers = function whenFieldRenderers() {
 SF.create = createSmartElement;
 SF.createAsync = createSmartElementAsync;
 
-SF.litHtml = (tagName, props = {}) => {
+SF.__internal.litHtml = (tagName, props = {}) => {
   if (!/^sf-[a-z0-9-]+$/.test(tagName) && !SF.Loader.getCustomElementRules()[tagName]) {
     tagName = `sf-${tagName}`;
 

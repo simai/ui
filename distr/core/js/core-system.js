@@ -32,7 +32,7 @@ async function send(event, element) {
     resolve(true);
   });
 }
-SF.send = send;
+SF.__internal.send = send;
 function receive(event, el, handler) {
   if (window.addEventListener) {
     el.addEventListener(event, handler, false);
@@ -40,7 +40,7 @@ function receive(event, el, handler) {
     el.attachEvent(event, handler);
   }
 }
-SF.receive = receive;
+SF.__internal.receive = receive;
 
 /***/ },
 

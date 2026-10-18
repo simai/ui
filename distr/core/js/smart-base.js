@@ -147,6 +147,84 @@ if (typeof globalThis !== 'undefined') {
 
 /***/ },
 
+/***/ "364eb185ca94"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   INTERNAL_NAMES: () => (/* binding */ INTERNAL_NAMES),
+/* harmony export */   installInternal: () => (/* binding */ installInternal)
+/* harmony export */ });
+/* harmony import */ var _deprecations_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("06e8cd089f28");
+// The runtime's own names on window.SF moved under SF.__internal (week audit,
+// 2026-10-18; journal global-sf-internal). They were never a promise to a page
+// -- the message bus (send, receive), the runtime module registry's own state
+// (runtimeModules, runtimeArrived, runtimeLoading, runtimeSettled), the Smart
+// base's announcement (smartBaseAnnounced) and litHtml -- but they stood beside
+// the public API (core/contracts/
+// public-js-api.json marks them internal) and a page could lean on them.
+//
+// The old names keep working until the journal's sweep: each is an accessor on
+// window.SF that reads and writes SF.__internal, and a read through it is
+// noted as a deprecation (SF.deprecations.list(), a console warning under
+// <html data-sf-deprecations="warn">). The Framework's own code uses
+// SF.__internal. Every bundle carries a copy of this module; the store and the
+// accessors live on the shared global, so the first copy installs them and the
+// rest find them in place.
+ // SF.loadSmartBase, SF.smart, SF.smartBaseReady, SF.loadRuntime and
+// SF.runtimeModule stay where they are: the documentation promises them to a
+// page (a project's own Smart component extends SF.smart.SfBaseElement after
+// `await SF.loadSmartBase()`), so they are public, not the runtime's.
+
+const INTERNAL_NAMES = Object.freeze(['send', 'receive', 'runtimeModules', 'runtimeArrived', 'runtimeLoading', 'runtimeSettled', 'smartBaseAnnounced', 'litHtml']);
+function installInternal(root = globalThis) {
+  const SF = root.SF = root.SF || {};
+
+  if (!SF.__internal || typeof SF.__internal !== 'object') {
+    Object.defineProperty(SF, '__internal', {
+      value: {},
+      configurable: true,
+      enumerable: false,
+      writable: false
+    });
+  }
+
+  const store = SF.__internal;
+
+  for (const name of INTERNAL_NAMES) {
+    const own = Object.getOwnPropertyDescriptor(SF, name);
+    if (own?.get?.sfInternalAlias) continue; // A value a page or an older bundle put there first is kept.
+
+    if (own && 'value' in own && !(name in store)) store[name] = own.value;
+
+    const get = () => {
+      (0,_deprecations_js__WEBPACK_IMPORTED_MODULE_0__.noteDeprecated)({
+        kind: 'global',
+        from: `SF.${name}`,
+        to: `SF.__internal.${name}`
+      });
+      return store[name];
+    };
+
+    get.sfInternalAlias = true;
+    Object.defineProperty(SF, name, {
+      configurable: true,
+      enumerable: false,
+      get,
+
+      set(value) {
+        store[name] = value;
+      }
+
+    });
+  }
+
+  return store;
+}
+if (typeof globalThis !== 'undefined') installInternal(globalThis);
+
+/***/ },
+
 /***/ "8489d1f5bab4"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -731,10 +809,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   toNumber: () => (/* binding */ toNumber)
 /* harmony export */ });
 /* harmony import */ var _deprecations_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("06e8cd089f28");
-/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("fef8077ac919");
-/* harmony import */ var lit_directives_ref_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("7fcbcc00731e");
-/* harmony import */ var lit_directive_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("69fcfee6f64b");
-/* harmony import */ var _page_language__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("8489d1f5bab4");
+/* harmony import */ var _internal_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("364eb185ca94");
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("fef8077ac919");
+/* harmony import */ var lit_directives_ref_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("7fcbcc00731e");
+/* harmony import */ var lit_directive_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("69fcfee6f64b");
+/* harmony import */ var _page_language__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("8489d1f5bab4");
+
 
 
 
@@ -888,11 +968,11 @@ function applySmartProps(element, props = {}, previous = null) {
 // anything in the table changed -- fourteen nodes a row, changed row or not,
 // taking the control a person was interacting with with them.
 
-class SmartElementDirective extends lit_directive_js__WEBPACK_IMPORTED_MODULE_3__.Directive {
+class SmartElementDirective extends lit_directive_js__WEBPACK_IMPORTED_MODULE_4__.Directive {
   constructor(partInfo) {
     super(partInfo);
 
-    if (partInfo.type !== lit_directive_js__WEBPACK_IMPORTED_MODULE_3__.PartType.CHILD) {
+    if (partInfo.type !== lit_directive_js__WEBPACK_IMPORTED_MODULE_4__.PartType.CHILD) {
       throw new Error("renderSmartElement belongs in a child position of a template");
     }
 
@@ -916,7 +996,7 @@ class SmartElementDirective extends lit_directive_js__WEBPACK_IMPORTED_MODULE_3_
 
 }
 
-const smartElement = (0,lit_directive_js__WEBPACK_IMPORTED_MODULE_3__.directive)(SmartElementDirective); // The same element, outside a template. A caller that holds the element itself
+const smartElement = (0,lit_directive_js__WEBPACK_IMPORTED_MODULE_4__.directive)(SmartElementDirective); // The same element, outside a template. A caller that holds the element itself
 // -- a portal, a measurement, a test -- gets a fresh one, because there is no
 // position to keep it in.
 
@@ -1109,7 +1189,7 @@ class SfBaseElement extends HTMLElement {
     // the shared rule itself -- sixteen subscriptions would be sixteen chances
     // to forget one (owner, 2026-10-11: «языков будет гораздо больше чем два»).
 
-    this.__sfLanguageOff = _page_language__WEBPACK_IMPORTED_MODULE_4__.language.onChange(() => {
+    this.__sfLanguageOff = _page_language__WEBPACK_IMPORTED_MODULE_5__.language.onChange(() => {
       if (this._isMounted) this.requestComponentUpdate("language");
     });
     this.emitComponentEvent("connected");
@@ -1241,7 +1321,7 @@ class SfBaseElement extends HTMLElement {
   }
 
   createRef() {
-    const ref = (0,lit_directives_ref_js__WEBPACK_IMPORTED_MODULE_2__.createRef)();
+    const ref = (0,lit_directives_ref_js__WEBPACK_IMPORTED_MODULE_3__.createRef)();
     ref.__sfOwner = this;
     return ref;
   }
@@ -1674,7 +1754,7 @@ class SfBaseElement extends HTMLElement {
 
     this.prepareRenderContainer(changedAttributes);
     this.markStylePending(this);
-    (0,lit__WEBPACK_IMPORTED_MODULE_1__.render)(templateResult, this);
+    (0,lit__WEBPACK_IMPORTED_MODULE_2__.render)(templateResult, this);
     this.flushRefEffects();
     await this.whenRenderedStylesReady(this);
 
@@ -2616,7 +2696,7 @@ class SfBaseElement extends HTMLElement {
     const slotContent = this._slotTemplates.get(name) || [];
 
     if (!slotContent.length) {
-      return lit__WEBPACK_IMPORTED_MODULE_1__.nothing;
+      return lit__WEBPACK_IMPORTED_MODULE_2__.nothing;
     }
 
     if (slotContent.length === 1) {
@@ -2700,7 +2780,7 @@ class SfBaseElement extends HTMLElement {
     const externalModule = await this.resolveExternalTemplateModule(templateName);
 
     if (!this._isMounted || renderToken !== this._renderToken || templateName !== this.componentTemplateName) {
-      return lit__WEBPACK_IMPORTED_MODULE_1__.nothing;
+      return lit__WEBPACK_IMPORTED_MODULE_2__.nothing;
     }
 
     if (externalModule !== this._externalTemplateModule) {
@@ -2716,8 +2796,8 @@ class SfBaseElement extends HTMLElement {
 
       if (renderFn) {
         return renderFn({
-          html: lit__WEBPACK_IMPORTED_MODULE_1__.html,
-          nothing: lit__WEBPACK_IMPORTED_MODULE_1__.nothing,
+          html: lit__WEBPACK_IMPORTED_MODULE_2__.html,
+          nothing: lit__WEBPACK_IMPORTED_MODULE_2__.nothing,
           context,
           component: this,
           changedAttributes
@@ -2738,8 +2818,8 @@ class SfBaseElement extends HTMLElement {
       return externalModule.mapContext({
         context,
         component: this,
-        html: lit__WEBPACK_IMPORTED_MODULE_1__.html,
-        nothing: lit__WEBPACK_IMPORTED_MODULE_1__.nothing
+        html: lit__WEBPACK_IMPORTED_MODULE_2__.html,
+        nothing: lit__WEBPACK_IMPORTED_MODULE_2__.nothing
       }) || context;
     }
 
@@ -2890,8 +2970,8 @@ class SfBaseElement extends HTMLElement {
       externalModule[hookName]({
         component: this,
         root: this,
-        html: lit__WEBPACK_IMPORTED_MODULE_1__.html,
-        nothing: lit__WEBPACK_IMPORTED_MODULE_1__.nothing,
+        html: lit__WEBPACK_IMPORTED_MODULE_2__.html,
+        nothing: lit__WEBPACK_IMPORTED_MODULE_2__.nothing,
         context: this.templateContext(),
         ...detail
       });
@@ -2917,7 +2997,7 @@ class SfBaseElement extends HTMLElement {
   }
 
   template() {
-    return lit__WEBPACK_IMPORTED_MODULE_1__.nothing;
+    return lit__WEBPACK_IMPORTED_MODULE_2__.nothing;
   }
 
   beforeRender() {}
@@ -2944,23 +3024,23 @@ class SfBaseElement extends HTMLElement {
 
 if (typeof window !== "undefined") {
   window.SfBaseElement = SfBaseElement;
-  window.html = lit__WEBPACK_IMPORTED_MODULE_1__.html;
-  window.nothing = lit__WEBPACK_IMPORTED_MODULE_1__.nothing;
-  window.render = lit__WEBPACK_IMPORTED_MODULE_1__.render;
+  window.html = lit__WEBPACK_IMPORTED_MODULE_2__.html;
+  window.nothing = lit__WEBPACK_IMPORTED_MODULE_2__.nothing;
+  window.render = lit__WEBPACK_IMPORTED_MODULE_2__.render;
 
   if (!window.SF) {
     window.SF = {};
   }
 
   window.SF.SfBaseElement = SfBaseElement;
-  window.SF.html = lit__WEBPACK_IMPORTED_MODULE_1__.html;
-  window.SF.nothing = lit__WEBPACK_IMPORTED_MODULE_1__.nothing;
-  window.SF.render = lit__WEBPACK_IMPORTED_MODULE_1__.render;
+  window.SF.html = lit__WEBPACK_IMPORTED_MODULE_2__.html;
+  window.SF.nothing = lit__WEBPACK_IMPORTED_MODULE_2__.nothing;
+  window.SF.render = lit__WEBPACK_IMPORTED_MODULE_2__.render;
   window.SF.smart = { ...(window.SF.smart || {}),
     SfBaseElement,
-    html: lit__WEBPACK_IMPORTED_MODULE_1__.html,
-    nothing: lit__WEBPACK_IMPORTED_MODULE_1__.nothing,
-    render: lit__WEBPACK_IMPORTED_MODULE_1__.render,
+    html: lit__WEBPACK_IMPORTED_MODULE_2__.html,
+    nothing: lit__WEBPACK_IMPORTED_MODULE_2__.nothing,
+    render: lit__WEBPACK_IMPORTED_MODULE_2__.render,
     toBoolean,
     toAttributeName,
     toNumber,
@@ -2970,8 +3050,8 @@ if (typeof window !== "undefined") {
   // SF.loadSmartBase() or the first Smart bundle, each of which carries one --
   // so SF.smartBaseReady settles however the base came.
 
-  if (!window.SF.smartBaseAnnounced) {
-    window.SF.smartBaseAnnounced = true;
+  if (!window.SF.__internal.smartBaseAnnounced) {
+    window.SF.__internal.smartBaseAnnounced = true;
 
     try {
       window.dispatchEvent(new CustomEvent("sf-smart-base-ready", {
@@ -5737,20 +5817,22 @@ let __webpack_exports__ = {};
 (() => {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _js_runtime__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("943c9bc1e8bc");
+/* harmony import */ var _js_internal_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("364eb185ca94");
 // The shared Smart runtime as a script of its own: core/js/smart-base.js.
 // Core loads it beside core.js the first time a Smart element is wanted; a
 // page or a test may also include it by hand, before or after core.js. It
 // publishes the modules the Smart bundles are built against, and the runtime's
 // lookup when Core has not (a page that runs Smart elements without Core).
 
+
 const SF = window.SF = window.SF || {};
-SF.runtimeModules = _js_runtime__WEBPACK_IMPORTED_MODULE_0__.RUNTIME_MODULES;
+SF.__internal.runtimeModules = _js_runtime__WEBPACK_IMPORTED_MODULE_0__.RUNTIME_MODULES;
 
 if (!SF.runtimeModule) {
   SF.runtimeModule = id => _js_runtime__WEBPACK_IMPORTED_MODULE_0__.RUNTIME_MODULES[id] ? Promise.resolve(_js_runtime__WEBPACK_IMPORTED_MODULE_0__.RUNTIME_MODULES[id]) : Promise.reject(new Error(`SF runtime: no shared module "${id}"`));
 }
 
-if (typeof SF.runtimeArrived === 'function') SF.runtimeArrived(_js_runtime__WEBPACK_IMPORTED_MODULE_0__.RUNTIME_MODULES);
+if (typeof SF.__internal.runtimeArrived === 'function') SF.__internal.runtimeArrived(_js_runtime__WEBPACK_IMPORTED_MODULE_0__.RUNTIME_MODULES);
 
 try {
   window.dispatchEvent(new CustomEvent('sf-runtime-ready', {

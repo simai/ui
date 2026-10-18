@@ -1,6 +1,98 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "06e8cd089f28"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   clearDeprecations: () => (/* binding */ clearDeprecations),
+/* harmony export */   listDeprecations: () => (/* binding */ listDeprecations),
+/* harmony export */   noteDeprecated: () => (/* binding */ noteDeprecated)
+/* harmony export */ });
+// What a page still uses that the Framework keeps only for compatibility. Every
+// legacy attribute, value or name a component resolves is noted here once, so a
+// person, a probe or an AI upgrading a product can read the list off a running
+// page (SF.deprecations.list()) instead of searching the source for it. The
+// records behind the names are in contracts/changes/journal.json.
+//
+// Nothing is printed by default: a page opts in to console warnings with
+// <html data-sf-deprecations="warn"> or SF.deprecations.warn = true.
+//
+// Every bundle carries its own copy of this module, so a Map of its own made one
+// list per bundle, and SF.deprecations.list() answered with whichever bundle set
+// it last -- [] on a page printing seven warnings from others. The notes live on
+// one shared global instead, whichever copy writes or reads them.
+function sharedNotes() {
+  const root = globalThis.SF = globalThis.SF || {};
+
+  if (!(root.__deprecationNotes instanceof Map)) {
+    Object.defineProperty(root, '__deprecationNotes', {
+      value: new Map(),
+      configurable: true
+    });
+  }
+
+  return root.__deprecationNotes;
+}
+
+function warnEnabled() {
+  const root = globalThis.document?.documentElement;
+  return root?.dataset?.sfDeprecations === 'warn' || globalThis.SF?.deprecations?.warn === true;
+}
+
+function noteDeprecated({
+  component = '',
+  kind = 'attribute',
+  attribute = '',
+  from,
+  to = null
+} = {}) {
+  if (!from) return;
+  const key = [component, kind, attribute, from].join('|');
+  const notes = sharedNotes();
+  const existing = notes.get(key);
+
+  if (existing) {
+    existing.count += 1;
+    return;
+  }
+
+  notes.set(key, {
+    component,
+    kind,
+    attribute,
+    from,
+    to,
+    count: 1
+  });
+
+  if (warnEnabled()) {
+    const where = component ? `${component}: ` : '';
+    const what = kind === 'value' ? `${attribute}="${from}"` : `${kind} ${from}`;
+    globalThis.console?.warn?.(`[Simai Framework] ${where}${what} is a legacy name${to ? `; write ${to}` : ''}. See contracts/changes/journal.json.`);
+  }
+}
+function listDeprecations() {
+  return [...sharedNotes().values()].map(note => ({ ...note
+  }));
+}
+function clearDeprecations() {
+  sharedNotes().clear();
+}
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.SF = globalThis.SF || {};
+  const api = globalThis.SF.deprecations || {};
+  api.list = listDeprecations;
+  api.clear = clearDeprecations;
+  api.note = noteDeprecated;
+  globalThis.SF.deprecations = api;
+}
+
+/***/ },
+
 /***/ "4f52f56c9555"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -13,7 +105,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   effectSettings: () => (/* binding */ effectSettings),
 /* harmony export */   mountEffect: () => (/* binding */ mountEffect)
 /* harmony export */ });
-/* harmony import */ var _schema_name_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("c220929cdca6");
+/* harmony import */ var _composition_schema_name_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("ac24888e7d3e");
 // Background effects (simai.effect 1.0.0; Larena's design of 2026-10-14,
 // larena-specs docs/architecture/2026-10-14-background-effects.md). An effect
 // is an animated background drawn into one area of a page; its manifest
@@ -52,7 +144,7 @@ function checkEffectManifest(manifest) {
 
   for (const key of Object.keys(manifest)) if (!allowed.includes(key)) problems.push(`${key}: undeclared`);
 
-  if (!(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_0__.isSchema)(manifest, 'simai.effect', 1)) problems.push('schema: not simai.effect, schema_version 1');
+  if (!(0,_composition_schema_name_mjs__WEBPACK_IMPORTED_MODULE_0__.isSchema)(manifest, 'simai.effect', 1)) problems.push('schema: not simai.effect, schema_version 1');
   if (typeof manifest.id !== 'string' || !ID.test(manifest.id)) problems.push('id');
   if (typeof manifest.version !== 'string' || !VERSION.test(manifest.version)) problems.push('version');
   if (!isText(manifest.label)) problems.push('label');
@@ -319,16 +411,18 @@ if (typeof window !== 'undefined') {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _public_path__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("3924cca3566b");
 /* harmony import */ var _public_path__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_public_path__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _rule__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("987c832cfe13");
-/* harmony import */ var _rule__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_rule__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _mask__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("9770341d4bfa");
-/* harmony import */ var _composition_index_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("32dfc4431a24");
-/* harmony import */ var _position_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("2e9112dbdda9");
-/* harmony import */ var _preferences_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("51250bf01ab0");
-/* harmony import */ var _region_navigation_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("9edc14a11fec");
-/* harmony import */ var _effects_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("4f52f56c9555");
-/* harmony import */ var _notify_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("b4bff8456ce0");
-/* harmony import */ var _preloader__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("6c7f357fe960");
+/* harmony import */ var _internal_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("364eb185ca94");
+/* harmony import */ var _rule__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("987c832cfe13");
+/* harmony import */ var _rule__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_rule__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _mask__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("9770341d4bfa");
+/* harmony import */ var _composition_index_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("32dfc4431a24");
+/* harmony import */ var _position_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("2e9112dbdda9");
+/* harmony import */ var _preferences_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("51250bf01ab0");
+/* harmony import */ var _region_navigation_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("9edc14a11fec");
+/* harmony import */ var _effects_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("4f52f56c9555");
+/* harmony import */ var _notify_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("b4bff8456ce0");
+/* harmony import */ var _preloader__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("6c7f357fe960");
+
 
 
 
@@ -356,13 +450,13 @@ if (typeof window !== 'undefined') {
     SF.loadRuntime = () => {
       if (loading) return loading;
 
-      if (SF.runtimeModules) {
-        SF.runtimeSettled = true;
-        loading = Promise.resolve(SF.runtimeModules);
+      if (SF.__internal.runtimeModules) {
+        SF.__internal.runtimeSettled = true;
+        loading = Promise.resolve(SF.__internal.runtimeModules);
       } else {
         loading = new Promise((resolve, reject) => {
-          SF.runtimeArrived = modules => {
-            SF.runtimeSettled = true;
+          SF.__internal.runtimeArrived = modules => {
+            SF.__internal.runtimeSettled = true;
             resolve(modules);
           };
 
@@ -378,7 +472,7 @@ if (typeof window !== 'undefined') {
         });
       }
 
-      SF.runtimeLoading = loading;
+      SF.__internal.runtimeLoading = loading;
       return loading;
     };
 
@@ -526,18 +620,18 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
   const mountPreloader = () => {
     const cfg = {
       enabled: true,
-      background: (0,_preloader__WEBPACK_IMPORTED_MODULE_9__.getPreloaderBackground)(),
+      background: (0,_preloader__WEBPACK_IMPORTED_MODULE_10__.getPreloaderBackground)(),
       modifier: 'loader-default',
       tempStyles: 'inset: 0;position: fixed;width: 100%;height: 100vh;opacity: 1;z-index: 1000;background-color: var(--sf-color--surface-highest, var(--sf-surface-0, #fff));text-align: center;',
-      color: (0,_preloader__WEBPACK_IMPORTED_MODULE_9__.getPreloaderColor)(),
-      width: _preloader__WEBPACK_IMPORTED_MODULE_9__.DEFAULT_PRELOADER.width,
-      height: _preloader__WEBPACK_IMPORTED_MODULE_9__.DEFAULT_PRELOADER.height,
+      color: (0,_preloader__WEBPACK_IMPORTED_MODULE_10__.getPreloaderColor)(),
+      width: _preloader__WEBPACK_IMPORTED_MODULE_10__.DEFAULT_PRELOADER.width,
+      height: _preloader__WEBPACK_IMPORTED_MODULE_10__.DEFAULT_PRELOADER.height,
       content: '',
       delay: 300,
       ...(window.SF_BOOT_CONFIG?.preloader || {})
     };
     if (cfg.enabled === false || document.querySelector('.sf-loader')) return;
-    const svgContent = cfg.content || (0,_preloader__WEBPACK_IMPORTED_MODULE_9__.createPreloaderContent)(cfg);
+    const svgContent = cfg.content || (0,_preloader__WEBPACK_IMPORTED_MODULE_10__.createPreloaderContent)(cfg);
     let wrap = null;
     let preloaderWrap = null;
     let preloaderRun = false;
@@ -551,7 +645,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
 
     const stopAnimation = () => {
       if (preloaderWrap) {
-        (0,_preloader__WEBPACK_IMPORTED_MODULE_9__.stopPreloaderMotion)(preloaderWrap);
+        (0,_preloader__WEBPACK_IMPORTED_MODULE_10__.stopPreloaderMotion)(preloaderWrap);
       }
     };
 
@@ -578,7 +672,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
         wrap: wrap,
         preloaderActive: true
       };
-      (0,_preloader__WEBPACK_IMPORTED_MODULE_9__.startPreloaderMotion)(preloaderWrap, () => preloaderRun, cfg);
+      (0,_preloader__WEBPACK_IMPORTED_MODULE_10__.startPreloaderMotion)(preloaderWrap, () => preloaderRun, cfg);
     };
 
     const cancelBuild = () => {
@@ -706,6 +800,85 @@ const preloadCoreChunks = () => {
   await __webpack_require__.e(/* import() | core-system */ 88616323197113).then(__webpack_require__.bind(__webpack_require__, "fedbedd6b87f"));
   await __webpack_require__.e(/* import() | core-loader */ 66700837013363).then(__webpack_require__.bind(__webpack_require__, "eb03d104e275"));
 })();
+
+/***/ },
+
+/***/ "364eb185ca94"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   INTERNAL_NAMES: () => (/* binding */ INTERNAL_NAMES),
+/* harmony export */   installInternal: () => (/* binding */ installInternal)
+/* harmony export */ });
+/* harmony import */ var _deprecations_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("06e8cd089f28");
+// The runtime's own names on window.SF moved under SF.__internal (week audit,
+// 2026-10-18; journal global-sf-internal). They were never a promise to a page
+// -- the message bus (send, receive), the runtime module registry's own state
+// (runtimeModules, runtimeArrived, runtimeLoading, runtimeSettled), the Smart
+// base's announcement (smartBaseAnnounced) and litHtml -- but they stood beside
+// the public API (core/contracts/
+// public-js-api.json marks them internal) and a page could lean on them.
+//
+// The old names keep working until the journal's sweep: each is an accessor on
+// window.SF that reads and writes SF.__internal, and a read through it is
+// noted as a deprecation (SF.deprecations.list(), a console warning under
+// <html data-sf-deprecations="warn">). The Framework's own code uses
+// SF.__internal. Every bundle carries a copy of this module; the store and the
+// accessors live on the shared global, so the first copy installs them and the
+// rest find them in place.
+ // SF.loadSmartBase, SF.smart, SF.smartBaseReady, SF.loadRuntime and
+// SF.runtimeModule stay where they are: the documentation promises them to a
+// page (a project's own Smart component extends SF.smart.SfBaseElement after
+// `await SF.loadSmartBase()`), so they are public, not the runtime's.
+
+const INTERNAL_NAMES = Object.freeze(['send', 'receive', 'runtimeModules', 'runtimeArrived', 'runtimeLoading', 'runtimeSettled', 'smartBaseAnnounced', 'litHtml']);
+function installInternal(root = globalThis) {
+  const SF = root.SF = root.SF || {};
+
+  if (!SF.__internal || typeof SF.__internal !== 'object') {
+    Object.defineProperty(SF, '__internal', {
+      value: {},
+      configurable: true,
+      enumerable: false,
+      writable: false
+    });
+  }
+
+  const store = SF.__internal;
+
+  for (const name of INTERNAL_NAMES) {
+    const own = Object.getOwnPropertyDescriptor(SF, name);
+    if (own?.get?.sfInternalAlias) continue; // A value a page or an older bundle put there first is kept.
+
+    if (own && 'value' in own && !(name in store)) store[name] = own.value;
+
+    const get = () => {
+      (0,_deprecations_js__WEBPACK_IMPORTED_MODULE_0__.noteDeprecated)({
+        kind: 'global',
+        from: `SF.${name}`,
+        to: `SF.__internal.${name}`
+      });
+      return store[name];
+    };
+
+    get.sfInternalAlias = true;
+    Object.defineProperty(SF, name, {
+      configurable: true,
+      enumerable: false,
+      get,
+
+      set(value) {
+        store[name] = value;
+      }
+
+    });
+  }
+
+  return store;
+}
+if (typeof globalThis !== 'undefined') installInternal(globalThis);
 
 /***/ },
 
@@ -5580,7 +5753,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   validateEditorManifest: () => (/* binding */ validateEditorManifest)
 /* harmony export */ });
 /* harmony import */ var _canonical_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("6f489cc65b77");
-/* harmony import */ var _schema_name_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("c220929cdca6");
+/* harmony import */ var _schema_name_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("ac24888e7d3e");
 
 
 
@@ -6115,7 +6288,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   publishEffects: () => (/* binding */ publishEffects)
 /* harmony export */ });
 /* harmony import */ var _canonical_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("6f489cc65b77");
-/* harmony import */ var _schema_name_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("c220929cdca6");
+/* harmony import */ var _schema_name_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("ac24888e7d3e");
 /* harmony import */ var _routing_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("4aea5d6d49c7");
 
 
@@ -6411,7 +6584,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("08e5033c490a");
 /* harmony import */ var _canonical_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("6f489cc65b77");
-/* harmony import */ var _schema_name_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("c220929cdca6");
+/* harmony import */ var _schema_name_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("ac24888e7d3e");
 /* harmony import */ var _editor_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("3765e2c966fd");
 /* harmony import */ var _fields_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("4e6fc63bed81");
 /* harmony import */ var _recipe_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("6770fb69bd04");
@@ -7108,7 +7281,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   resolveRecipe: () => (/* binding */ resolveRecipe)
 /* harmony export */ });
 /* harmony import */ var _canonical_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("6f489cc65b77");
-/* harmony import */ var _schema_name_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("c220929cdca6");
+/* harmony import */ var _schema_name_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("ac24888e7d3e");
 
 
 
@@ -7906,7 +8079,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   routesAttribute: () => (/* binding */ routesAttribute)
 /* harmony export */ });
 /* harmony import */ var _canonical_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("6f489cc65b77");
-/* harmony import */ var _schema_name_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("c220929cdca6");
+/* harmony import */ var _schema_name_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("ac24888e7d3e");
 
 
 
@@ -8513,7 +8686,7 @@ function routesAttribute(routes) {
 
 /***/ },
 
-/***/ "c220929cdca6"
+/***/ "ac24888e7d3e"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";

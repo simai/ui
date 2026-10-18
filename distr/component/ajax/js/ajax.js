@@ -321,19 +321,22 @@ function Ajax(param, callback = function () {}, calbackAfter = function () {}) {
 
   this.emulateOnLoad = function (DATA) {
     if (this.param.emulateOnload) {
-      SF.receive('SFAjaxLoadedResouce', window, function () {
+      SF.__internal.receive('SFAjaxLoadedResouce', window, function () {
         if (_this.lengthCSS <= 0 && _this.lengthJS <= 0) {
           _this.loadJSDoc(DATA.SCRIPT);
 
-          SF.send('DOMContentLoaded', window);
-          SF.send('load', window);
+          SF.__internal.send('DOMContentLoaded', window);
+
+          SF.__internal.send('load', window);
         }
       });
 
       if (this.lengthCSS <= 0 && this.lengthJS <= 0) {
         this.loadJSDoc(DATA.SCRIPT);
-        SF.send('DOMContentLoaded', window);
-        SF.send('load', window);
+
+        SF.__internal.send('DOMContentLoaded', window);
+
+        SF.__internal.send('load', window);
       }
     }
   };
