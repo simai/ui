@@ -1523,13 +1523,17 @@ function getModalLayerIndex(modal) {
 function updateModalLayers() {
   state().items.forEach((modal, index) => modal.applyStackPosition(index));
   (0,_focus__WEBPACK_IMPORTED_MODULE_0__.syncModalFocusGuards)(getTopModalLayer());
-}
+} // A modal inside an overlay container covers that box, not the page, so the
+// page stays scrollable while it is open.
+
+
+const locksPage = modal => !modal.inContainer;
 
 function addModalLayer(modal, owner) {
   const stack = state();
   if (stack.items.includes(modal)) return;
 
-  if (!stack.items.length) {
+  if (locksPage(modal) && !stack.lockOwner) {
     stack.lockOwner = owner;
     owner.lockPage(modal.preserveScrollGap);
   }
@@ -1544,8 +1548,8 @@ function removeModalLayer(modal) {
   if (index < 0) return;
   stack.items.splice(index, 1);
 
-  if (!stack.items.length) {
-    stack.lockOwner?.unlockPage();
+  if (stack.lockOwner && !stack.items.some(locksPage)) {
+    stack.lockOwner.unlockPage();
     stack.lockOwner = null;
   }
 

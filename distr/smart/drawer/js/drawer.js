@@ -42,7 +42,10 @@ const asksFor = (node, slot) => node.nodeType === 1 && node.getAttribute('slot')
 
 const asksForArea = node => DRAWER_AREAS.some(slot => asksFor(node, slot));
 
-const PORTAL_ATTRIBUTE = 'data-sf-drawer-portal';
+const PORTAL_ATTRIBUTE = 'data-sf-drawer-portal'; // A box that holds its own overlays (sf-drawer, sf-modal); the drawer's own
+// name came first and is read until the change journal retires it.
+
+const OVERLAY_CONTAINER = '[data-sf-overlay-container], [data-sf-drawer-container]';
 const FOCUSABLE_SELECTOR = ['a[href]', 'button:not([disabled])', 'input:not([disabled])', 'select:not([disabled])', 'textarea:not([disabled])', '[tabindex]:not([tabindex="-1"])'].join(',');
 const drawerStack = []; // Below this width of the dock host (or of the window, when the page names no
 // host) docked panels overlay the page instead of
@@ -164,7 +167,8 @@ const drawerManager = {
   },
 
   syncPageLock() {
-    const modalDrawer = drawerStack.find(drawer => drawer.openState && drawer.modal);
+    // A drawer inside an overlay container covers that box, not the page.
+    const modalDrawer = drawerStack.find(drawer => drawer.openState && drawer.modal && !drawer.closest(OVERLAY_CONTAINER));
     if (modalDrawer) this.lockPage(modalDrawer.preserveScrollGap);else this.unlockPage();
   },
 
@@ -534,7 +538,8 @@ class SfDrawer extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default
     (0,lit__WEBPACK_IMPORTED_MODULE_0__.render)(result, this.resolvePortalRoot());
     this.afterRender();
   } // The panel is rendered at the end of the body, above the page -- or, when the
-  // drawer stands inside a [data-sf-drawer-container], at the end of that box,
+  // drawer stands inside a [data-sf-overlay-container] (or the older
+  // [data-sf-drawer-container]), at the end of that box,
   // which then frames it (contain: layout makes it the panel's containing
   // block): an editor pane or a documentation example holds its own drawer
   // without a stage of its own (DEV, 2026-10-18).
@@ -542,7 +547,7 @@ class SfDrawer extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default
 
   resolvePortalRoot() {
     if (this._portalRoot?.isConnected) return this._portalRoot;
-    const home = this.closest('[data-sf-drawer-container]') || document.body;
+    const home = this.closest(OVERLAY_CONTAINER) || document.body;
     const selector = `[${PORTAL_ATTRIBUTE}="${escapeSelector(this.drawerId)}"]`;
     this._portalRoot = home.querySelector(selector) || document.createElement('div');
 

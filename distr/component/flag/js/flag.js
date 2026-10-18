@@ -67,7 +67,18 @@ function shapeOf(element) {
 
 
 function loadCatalogue(base) {
-  if (catalogue) return Promise.resolve(catalogue);
+  if (catalogue) return Promise.resolve(catalogue); // A sandboxed frame has an opaque origin: every fetch from it is
+  // cross-origin and fails with a console error no catch can silence. The
+  // shapes are then not checked, and a missing one falls back to the other
+  // by the image's own error (ui-doc crawl, 2026-10-18).
+
+  if (globalThis.origin === 'null') {
+    catalogue = {
+      rect: null,
+      circle: null
+    };
+    return Promise.resolve(catalogue);
+  }
 
   if (!catalogueRequest) {
     catalogueRequest = fetch(`${base}/index.json`).then(response => response.ok ? response.json() : null).then(data => {

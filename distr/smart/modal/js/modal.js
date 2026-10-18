@@ -350,13 +350,17 @@ function getModalLayerIndex(modal) {
 function updateModalLayers() {
   state().items.forEach((modal, index) => modal.applyStackPosition(index));
   (0,_focus__WEBPACK_IMPORTED_MODULE_0__.syncModalFocusGuards)(getTopModalLayer());
-}
+} // A modal inside an overlay container covers that box, not the page, so the
+// page stays scrollable while it is open.
+
+
+const locksPage = modal => !modal.inContainer;
 
 function addModalLayer(modal, owner) {
   const stack = state();
   if (stack.items.includes(modal)) return;
 
-  if (!stack.items.length) {
+  if (locksPage(modal) && !stack.lockOwner) {
     stack.lockOwner = owner;
     owner.lockPage(modal.preserveScrollGap);
   }
@@ -371,8 +375,8 @@ function removeModalLayer(modal) {
   if (index < 0) return;
   stack.items.splice(index, 1);
 
-  if (!stack.items.length) {
-    stack.lockOwner?.unlockPage();
+  if (stack.lockOwner && !stack.items.some(locksPage)) {
+    stack.lockOwner.unlockPage();
     stack.lockOwner = null;
   }
 
@@ -499,7 +503,10 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 
 
 
+ // A box that holds its own overlays (sf-modal, sf-drawer); the drawer's own
+// name came first and is read until the change journal retires it.
 
+const OVERLAY_CONTAINER = "[data-sf-overlay-container], [data-sf-drawer-container]";
  // The header's two actions, named in the page's language: they were English on
 // every page (documentation trial, 2026-10-12).
 
@@ -1202,10 +1209,24 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
     this.dedupePortalRoots();
     this._renderTarget = this._portalRoot;
     return this._portalRoot;
+  } // The box the modal is rendered into: the end of the body, above the page --
+  // or, when the modal stands inside a [data-sf-overlay-container], the end of
+  // that box, which then frames its backdrop and surface (contain: layout makes
+  // it their containing block) and whose page is not locked: a documentation
+  // example or an editor pane holds its own modal (DEV, 2026-10-18).
+
+
+  get overlayHome() {
+    return this.closest(OVERLAY_CONTAINER) || document.body;
+  }
+
+  get inContainer() {
+    return this.overlayHome !== document.body;
   }
 
   resolvePortalRoot() {
-    const existingPortal = document.body.querySelector(`[data-sf-modal-portal="${this.modalId}"]`);
+    const home = this.overlayHome;
+    const existingPortal = home.querySelector(`[data-sf-modal-portal="${this.modalId}"]`);
 
     if (existingPortal) {
       return existingPortal;
@@ -1213,12 +1234,12 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
 
     const portal = document.createElement("div");
     portal.setAttribute("data-sf-modal-portal", this.modalId);
-    document.body.append(portal);
+    home.append(portal);
     return portal;
   }
 
   dedupePortalRoots() {
-    const portals = Array.from(document.body.querySelectorAll(`[data-sf-modal-portal="${this.modalId}"]`));
+    const portals = Array.from(document.querySelectorAll(`[data-sf-modal-portal="${this.modalId}"]`));
     portals.forEach(portal => {
       if (portal === this._portalRoot) {
         return;
@@ -1231,7 +1252,7 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
     if (!this._portalRoot.isConnected) {
       this._portalRoot.setAttribute("data-sf-modal-portal", this.modalId);
 
-      document.body.append(this._portalRoot);
+      this.overlayHome.append(this._portalRoot);
     }
   }
 
