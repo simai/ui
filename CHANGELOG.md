@@ -8,6 +8,8 @@
 
 ### Исправлено
 
+- Fixed: the composition modules shipped as source (`core/js/composition/*.mjs`) imported files the distribution did not hold (`schema-name.mjs`; `page-language.js` for inline-editor, overlay and sortable); they ship together now, and the build checks every such import. The runtime's own names on `window.SF` (`send`, `receive`, `runtimeModules`, `runtimeArrived`, `runtimeLoading`, `runtimeSettled`, `smartBaseAnnounced`, `litHtml`) live under `SF.__internal`, the old names noted as deprecated until 2026-12-01.
+
 - A record field with many values (`choices`) wraps them, and no tag shrinks below its text.
 
 - `simai.dataview-port` 1.12.0 pins the digest of its own conformance kit (44 cases); every port edition is now checked for it.
