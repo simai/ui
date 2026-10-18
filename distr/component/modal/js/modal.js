@@ -184,7 +184,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+ // A box that holds its own overlays; a modal in it covers the box, not the
+// viewport, and leaves the page scrollable (sf-modal and sf-drawer read the
+// same attribute; the drawer's older name until 2026-12-01).
 
+const OVERLAY_CONTAINER = '[data-sf-overlay-container], [data-sf-drawer-container]';
 
 
 function joinClasses(...parts) {
@@ -297,7 +301,11 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
     this.modalId = this.id || params.id || `sf-modal-${++Modal.uid}`;
     this.isOpen = false;
     this.lastActive = null;
-    this.root = params.root || null;
+    this.root = params.root || null; // The box the modal covers: an element or a selector. Without one the
+    // modal covers the viewport -- or, when it is opened from inside an
+    // overlay container, that box (DEV, 2026-10-18).
+
+    this.container = params.container || null;
     this.overlay = this.toBoolean(params.overlay, true);
     this.unclose = this.toBoolean(params.unclose, false);
     this.showClose = this.toBoolean(params.showClose, true) && !this.unclose;
@@ -332,6 +340,34 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
     this.template.setAttribute('data-sf-modal-id', this.modalId);
     this.template.setAttribute('aria-hidden', 'true');
     this.init();
+  } // The box given as `container`, or the overlay container `opener` stands in,
+  // or the body.
+
+
+  overlayHomeFor(opener = null) {
+    let box = this.container;
+    if (typeof box === 'string') box = document.querySelector(box);
+
+    if (box instanceof Element) {
+      if (!box.matches(OVERLAY_CONTAINER)) box.setAttribute('data-sf-overlay-container', '');
+      return box;
+    }
+
+    const from = opener instanceof Element ? opener.closest(OVERLAY_CONTAINER) : null;
+    return from || document.body;
+  }
+
+  get overlayHome() {
+    return this.overlayHomeFor();
+  }
+
+  get inContainer() {
+    return Boolean(this.template?.parentElement?.closest(OVERLAY_CONTAINER));
+  }
+
+  placeIn(home) {
+    if (this.display === 'inline' || this.root || !this.template || !home) return;
+    if (this.template.parentElement !== home) home.append(this.template);
   }
 
   emitEvent(eventName, {
@@ -920,8 +956,8 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
       return;
     }
 
-    if (!document.body.contains(this.template)) {
-      document.body.append(this.template);
+    if (!this.template.isConnected) {
+      this.overlayHome.append(this.template);
     } // Inline mode — не привязываем глобальные события, не добавляем в body
 
 
@@ -1102,6 +1138,7 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
     if (this._modalState !== 'closing') {
       this.lastActive = document.activeElement;
       this._focusReturnAncestors = (0,_stack__WEBPACK_IMPORTED_MODULE_7__.captureModalFocusAncestors)(this.lastActive);
+      this.placeIn(this.overlayHomeFor(this.lastActive));
     }
 
     this.cancelCloseTransition();
