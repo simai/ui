@@ -8,6 +8,7 @@
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   DEFAULT_THEME_COLOR: () => (/* binding */ DEFAULT_THEME_COLOR),
+/* harmony export */   THEME_ALPHA: () => (/* binding */ THEME_ALPHA),
 /* harmony export */   THEME_PALETTES: () => (/* binding */ THEME_PALETTES),
 /* harmony export */   THEME_RULES: () => (/* binding */ THEME_RULES),
 /* harmony export */   THEME_TONES: () => (/* binding */ THEME_TONES),
@@ -89,7 +90,52 @@ const THEME_RULES = Object.freeze({
     chroma: source => source.chroma
   }
 });
-const THEME_PALETTES = Object.freeze(Object.keys(THEME_RULES)); // The Framework's own primary: the theme every page has until one is chosen.
+const THEME_PALETTES = Object.freeze(Object.keys(THEME_RULES)); // The translucent steps core defines on a tone: --sf-<palette>-<tone>--alfa-<n>,
+// the tone with n% opacity (the alpha scale: state 4/8/12, fill 12-32, ink
+// 48/64/80). Core writes them as literal colours, so a theme that set the tones
+// alone left every container fill and hover in the old hue (DEV, 2026-10-18:
+// a tonal button stayed blue under a green theme). The theme writes them from
+// its own tones; tests/theme-palette.contract.test.mjs holds this list to the
+// one core declares.
+
+const THEME_ALPHA = Object.freeze({
+  primary: {
+    50: [4, 8, 12, 16, 20, 24, 28, 32],
+    90: [4, 8, 12, 24]
+  },
+  secondary: {
+    50: [4, 8, 12, 16, 20, 24, 28, 32],
+    90: [4, 8, 12, 24]
+  },
+  tertiary: {
+    50: [4, 8, 12, 16, 20, 24, 28, 32],
+    90: [4, 8, 12, 24]
+  },
+  neutral: {
+    50: [4, 8, 12, 16, 20, 24, 32, 48, 80],
+    60: [48, 64],
+    80: [48],
+    90: [4, 8, 12, 16, 20, 24, 32, 48]
+  },
+  error: {
+    50: [4, 8, 12, 16, 20, 24, 28, 32],
+    90: [4, 8, 12, 24]
+  },
+  warning: {
+    50: [4, 8, 12, 16, 20, 24, 28, 32],
+    90: [4, 8, 12, 24]
+  },
+  success: {
+    50: [4, 8, 12, 16, 20, 24, 28, 32],
+    90: [4, 8, 12, 24]
+  },
+  info: {
+    50: [12, 16, 20, 24, 28, 32]
+  }
+});
+
+const alphaHex = percent => Math.round(percent * 255 / 100).toString(16).padStart(2, '0'); // The Framework's own primary: the theme every page has until one is chosen.
+
 
 const DEFAULT_THEME_COLOR = '#005bbe';
 const HEX = /^#?(?:[0-9a-f]{3}|[0-9a-f]{6})$/iu;
@@ -185,6 +231,15 @@ function themeVariables(theme) {
     for (const [tone, value] of Object.entries(palette.tones ?? {})) variables[`--sf-${name}-${tone}`] = value;
   }
 
+  for (const [name, palette] of Object.entries(theme?.palettes ?? {})) {
+    for (const [tone, steps] of Object.entries(THEME_ALPHA[name] ?? {})) {
+      const base = palette.tones?.[tone];
+      if (!base) continue;
+
+      for (const step of steps) variables[`--sf-${name}-${tone}--alfa-${step}`] = `${base}${alphaHex(step)}`;
+    }
+  }
+
   return variables;
 }
 /** The theme as a stylesheet rule, for a page's or a site's own CSS. */
@@ -224,6 +279,7 @@ if (typeof window !== 'undefined') {
     isThemeColor,
     THEME_TONES,
     THEME_PALETTES,
+    THEME_ALPHA,
     DEFAULT_THEME_COLOR
   });
 }
@@ -492,7 +548,13 @@ class SfThemeGenerator extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__
   }
 
   _emitChange() {
-    this.emitComponentEvent('theme-change', this._detail());
+    // sf-theme-generator-change, and its first name sf-theme-change, which the
+    // Loader's own light/dark event also bears (journal
+    // event-theme-generator-names, until 2026-12-01).
+    const detail = this._detail();
+
+    this.emitComponentEvent('theme-generator-change', detail);
+    this.emitComponentEvent('theme-change', detail);
   } // Committed once per distinct theme: Enter and the field's own change that
   // follows it are one commit, not two.
 
@@ -502,7 +564,11 @@ class SfThemeGenerator extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__
 
     if (!force && key === this._committedKey) return;
     this._committedKey = key;
-    this.emitComponentEvent('theme-apply', this._detail());
+
+    const detail = this._detail();
+
+    this.emitComponentEvent('theme-generator-apply', detail);
+    this.emitComponentEvent('theme-apply', detail);
   } // Several attributes as one change: the page is re-themed once.
 
 

@@ -44,10 +44,12 @@ const asksForArea = node => DRAWER_AREAS.some(slot => asksFor(node, slot));
 
 const PORTAL_ATTRIBUTE = 'data-sf-drawer-portal';
 const FOCUSABLE_SELECTOR = ['a[href]', 'button:not([disabled])', 'input:not([disabled])', 'select:not([disabled])', 'textarea:not([disabled])', '[tabindex]:not([tabindex="-1"])'].join(',');
-const drawerStack = []; // Below this viewport width docked panels overlay the page instead of
+const drawerStack = []; // Below this width of the dock host (or of the window, when the page names no
+// host) docked panels overlay the page instead of
 // narrowing it.
 
-const DOCK_MEDIA_QUERY = '(min-width: 48rem)';
+const DOCK_MIN_REM = 48;
+const DOCK_MEDIA_QUERY = `(min-width: ${DOCK_MIN_REM}rem)`;
 
 function joinClasses(...parts) {
   return parts.flat().filter(Boolean).join(' ');
@@ -103,7 +105,7 @@ const drawerManager = {
       start: 0,
       end: 0
     };
-    const reserve = this.dockMedia ? this.dockMedia.matches : true;
+    const reserve = this.reservesDock();
 
     for (const drawer of reserve ? drawerStack : []) {
       if (!drawer.openState || !drawer.docked) continue;
@@ -119,9 +121,46 @@ const drawerManager = {
   },
 
   bindDockMedia() {
-    if (this.dockMedia !== undefined) return;
-    this.dockMedia = typeof globalThis.matchMedia === 'function' ? globalThis.matchMedia(DOCK_MEDIA_QUERY) : null;
-    this.dockMedia?.addEventListener?.('change', () => this.syncDock());
+    if (this.dockMedia === undefined) {
+      this.dockMedia = typeof globalThis.matchMedia === 'function' ? globalThis.matchMedia(DOCK_MEDIA_QUERY) : null;
+      this.dockMedia?.addEventListener?.('change', () => this.syncDock());
+    } // The host's own width decides, when the page names a host: a docked
+    // drawer inside an editor pane or a documentation example docks by the
+    // room that box has, not by the window's (DEV, 2026-10-18).
+
+
+    const host = document.querySelector('[data-sf-drawer-dock-host]');
+
+    if (host !== this.dockHost) {
+      this.dockHostObserver?.disconnect();
+      this.dockHost = host;
+      this.dockHostObserver = host && typeof ResizeObserver === 'function' ? new ResizeObserver(() => {
+        // Only a change of the answer redraws: syncDock pads the host, and
+        // the padding must not wake this observer into a loop.
+        const before = this.dockReserved;
+        if (this.reservesDock() !== before) this.syncDock();
+      }) : null;
+      this.dockHostObserver?.observe(host, {
+        box: 'border-box'
+      });
+    }
+  },
+
+  // Whether docked drawers take room from the page: the dock host is at least
+  // 48rem wide, or -- with no host on the page -- the window is.
+  reservesDock() {
+    const host = this.dockHost;
+    let reserve;
+
+    if (host?.isConnected) {
+      const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+      reserve = host.getBoundingClientRect().width >= DOCK_MIN_REM * rem;
+    } else {
+      reserve = this.dockMedia ? this.dockMedia.matches : true;
+    }
+
+    this.dockReserved = reserve;
+    return reserve;
   },
 
   syncPageLock() {
@@ -494,16 +533,22 @@ class SfDrawer extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default
     if (!this._isMounted || token !== this._renderToken) return;
     (0,lit__WEBPACK_IMPORTED_MODULE_0__.render)(result, this.resolvePortalRoot());
     this.afterRender();
-  }
+  } // The panel is rendered at the end of the body, above the page -- or, when the
+  // drawer stands inside a [data-sf-drawer-container], at the end of that box,
+  // which then frames it (contain: layout makes it the panel's containing
+  // block): an editor pane or a documentation example holds its own drawer
+  // without a stage of its own (DEV, 2026-10-18).
+
 
   resolvePortalRoot() {
     if (this._portalRoot?.isConnected) return this._portalRoot;
+    const home = this.closest('[data-sf-drawer-container]') || document.body;
     const selector = `[${PORTAL_ATTRIBUTE}="${escapeSelector(this.drawerId)}"]`;
-    this._portalRoot = document.body.querySelector(selector) || document.createElement('div');
+    this._portalRoot = home.querySelector(selector) || document.createElement('div');
 
     this._portalRoot.setAttribute(PORTAL_ATTRIBUTE, this.drawerId);
 
-    if (!this._portalRoot.isConnected) document.body.append(this._portalRoot);
+    if (!this._portalRoot.isConnected) home.append(this._portalRoot);
     return this._portalRoot;
   } // A consumer's bar or edge control may appear long after the drawer connected
   // -- when a record becomes editable, say. The content is captured once, and

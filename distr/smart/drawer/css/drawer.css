@@ -55,7 +55,10 @@
     width: min(var(--sf-g2), 100vi);
     width: min(var(--sf-drawer-width, var(--sf-g2)), 100vi);
     max-width: 100vi;
-    height: 100vb;
+    /* The block size is the containing block's, from inset-block: 0: the
+       viewport on a page, and the box of an ancestor that contains its fixed
+       descendants (an editor pane, a documentation example). A height of 100vb
+       tied it to the viewport and ran it out of such a box (DEV, 2026-10-18). */
     box-sizing: border-box;
     /* The panel scrolls, not the body inside it. A scroller on the body put its
        scrollbar inside the body's own inline padding: the content ended a
@@ -595,6 +598,11 @@
     height: auto;
     border-radius: var(--sf-0);
     box-shadow: none;
+  }
+  /* A box that holds its own drawers: the panel is rendered inside it and
+     placed against it rather than the viewport. */
+  [data-sf-drawer-container] {
+    contain: layout;
   }
   /* The host layout reserves the width of open docked panels on each side. */
   _:-ms-input-placeholder, html:not([dir="rtl"]) [data-sf-drawer-dock-host]{

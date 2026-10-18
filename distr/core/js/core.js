@@ -13,6 +13,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   effectSettings: () => (/* binding */ effectSettings),
 /* harmony export */   mountEffect: () => (/* binding */ mountEffect)
 /* harmony export */ });
+/* harmony import */ var _schema_name_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("c220929cdca6");
 // Background effects (simai.effect 1.0.0; Larena's design of 2026-10-14,
 // larena-specs docs/architecture/2026-10-14-background-effects.md). An effect
 // is an animated background drawn into one area of a page; its manifest
@@ -28,6 +29,9 @@ __webpack_require__.r(__webpack_exports__);
 // way, and everything gone after destroy. Running a foreign effect in a
 // sandbox is the product's (an iframe without allow-same-origin); this module
 // is what runs inside it as well.
+ // The label a writer emits. A reader takes either form of the format name
+// (simai.effect.v1, or simai.effect with schema_version 1): schema-name.mjs.
+
 const EFFECT_SCHEMA = 'simai.effect.v1';
 const SETTING_TYPES = new Set(['choice', 'integer', 'number', 'boolean', 'string', 'text', 'color', 'file']);
 const ID = /^[a-z][a-z0-9-]{1,40}$/u;
@@ -44,11 +48,11 @@ const isText = value => isObject(value) && Object.keys(value).length > 0 && Obje
 function checkEffectManifest(manifest) {
   if (!isObject(manifest)) return ['manifest: not an object'];
   const problems = [];
-  const allowed = ['schema', 'id', 'version', 'label', 'author', 'entry', 'styles', 'preview', 'surfaces', 'settings', 'needs'];
+  const allowed = ['schema', 'schema_version', 'id', 'version', 'label', 'author', 'entry', 'styles', 'preview', 'surfaces', 'settings', 'needs'];
 
   for (const key of Object.keys(manifest)) if (!allowed.includes(key)) problems.push(`${key}: undeclared`);
 
-  if (manifest.schema !== EFFECT_SCHEMA) problems.push('schema: not simai.effect.v1');
+  if (!(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_0__.isSchema)(manifest, 'simai.effect', 1)) problems.push('schema: not simai.effect, schema_version 1');
   if (typeof manifest.id !== 'string' || !ID.test(manifest.id)) problems.push('id');
   if (typeof manifest.version !== 'string' || !VERSION.test(manifest.version)) problems.push('version');
   if (!isText(manifest.label)) problems.push('label');
@@ -5576,10 +5580,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   validateEditorManifest: () => (/* binding */ validateEditorManifest)
 /* harmony export */ });
 /* harmony import */ var _canonical_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("6f489cc65b77");
+/* harmony import */ var _schema_name_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("c220929cdca6");
+
 
 
 const SCHEMA = 'simai.composition.editor-manifest.v1';
-const MANIFEST_FIELDS = new Set(['schema', 'type', 'type_version', 'applies_to', 'fields']);
+const MANIFEST_FIELDS = new Set(['schema', 'schema_version', 'type', 'type_version', 'applies_to', 'fields']);
 const APPLIES_FIELDS = new Set(['views', 'presets', 'modifiers']);
 const FIELD_FIELDS = new Set([
   'key', 'plane', 'target', 'property', 'constraints', 'group', 'visibility',
@@ -5679,7 +5685,7 @@ function validateEditorManifest(editorManifest, typeManifest, options = {}) {
   if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(editorManifest)) return { valid: false, diagnostics: [diagnostic('editor_manifest_invalid', '$', 'Editor manifest must be an object')] };
   unknownFields(editorManifest, MANIFEST_FIELDS, '$', diagnostics);
   scanForbidden(editorManifest, '$', diagnostics);
-  if (editorManifest.schema !== SCHEMA) diagnostics.push(diagnostic('editor_schema_unknown', '$.schema', `Expected ${SCHEMA}`));
+  if (!(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_1__.isSchema)(editorManifest, 'simai.composition.editor-manifest', 1)) diagnostics.push(diagnostic('editor_schema_unknown', '$.schema', `Expected ${SCHEMA}, or simai.composition.editor-manifest with schema_version 1`));
   if (!componentType(editorManifest.type)) diagnostics.push(diagnostic('editor_type_invalid', '$.type', 'Component type is invalid'));
   if (!version(editorManifest.type_version)) diagnostics.push(diagnostic('editor_type_version_invalid', '$.type_version', 'Component type version is invalid'));
   if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(typeManifest) || typeManifest.type !== editorManifest.type || typeManifest.version !== editorManifest.type_version) {
@@ -6109,7 +6115,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   publishEffects: () => (/* binding */ publishEffects)
 /* harmony export */ });
 /* harmony import */ var _canonical_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("6f489cc65b77");
-/* harmony import */ var _routing_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("4aea5d6d49c7");
+/* harmony import */ var _schema_name_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("c220929cdca6");
+/* harmony import */ var _routing_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("4aea5d6d49c7");
+
 
 
 
@@ -6139,7 +6147,7 @@ function portProblems(ports, where) {
     const port = ports[name];
     if (!NAME.test(name)) problems.push(`${where}.${name}: name`);
     if (!closed(port, ['value', 'summary'])) { problems.push(`${where}.${name}: undeclared keys`); continue; }
-    if (!Object.hasOwn(_routing_mjs__WEBPACK_IMPORTED_MODULE_1__.VALUE_TYPES, port.value)) problems.push(`${where}.${name}: unknown value type ${port.value}`);
+    if (!Object.hasOwn(_routing_mjs__WEBPACK_IMPORTED_MODULE_2__.VALUE_TYPES, port.value)) problems.push(`${where}.${name}: unknown value type ${port.value}`);
     if (typeof port.summary !== 'string' || !port.summary.trim() || port.summary.length > 1000) problems.push(`${where}.${name}: summary`);
   }
   return problems;
@@ -6150,8 +6158,10 @@ function checkFragmentDescriptor(descriptor) {
   const problems = [];
   const keys = Object.keys(descriptor);
   for (const field of FIELDS) if (!keys.includes(field)) problems.push(`${field}: required`);
-  for (const key of keys) if (!FIELDS.includes(key)) problems.push(`${key}: undeclared`);
-  if (descriptor.schema !== FRAGMENT_DESCRIPTOR_SCHEMA) problems.push('schema: not simai.interface-fragment.v1');
+  for (const key of keys) if (!FIELDS.includes(key) && key !== 'schema_version') problems.push(`${key}: undeclared`);
+  // Either form of the format name: simai.interface-fragment.v1, or
+  // simai.interface-fragment with schema_version 1 (schema-name.mjs).
+  if (!(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_1__.isSchema)(descriptor, 'simai.interface-fragment', 1)) problems.push('schema: not simai.interface-fragment, schema_version 1');
   if (typeof descriptor.id !== 'string' || !ID.test(descriptor.id)) problems.push('id: a dotted identity');
   if (typeof descriptor.element !== 'string' || !ELEMENT.test(descriptor.element)) problems.push('element: a custom element name');
   if (!uniqueList(descriptor.regions, 8, (region) => typeof region === 'string' && NAME.test(region)) || !descriptor.regions.length) problems.push('regions: one to eight region names');
@@ -6217,7 +6227,7 @@ function definePageHost(registry = globalThis.customElements) {
         }
         let value;
         try {
-          value = _routing_mjs__WEBPACK_IMPORTED_MODULE_1__.VALUE_TYPES[type].check(effect.value);
+          value = _routing_mjs__WEBPACK_IMPORTED_MODULE_2__.VALUE_TYPES[type].check(effect.value);
         } catch (error) {
           refused.push({type, reason: 'value_invalid', message: String(error?.message ?? error)});
           continue;
@@ -6354,60 +6364,62 @@ function defineFragmentBoundary(registry = globalThis.customElements) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   BUILTIN_EDITOR_MANIFESTS: () => (/* reexport safe */ _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_EDITOR_MANIFESTS),
-/* harmony export */   BUILTIN_FIELD_KINDS: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_3__.BUILTIN_FIELD_KINDS),
+/* harmony export */   BUILTIN_FIELD_KINDS: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_4__.BUILTIN_FIELD_KINDS),
 /* harmony export */   BUILTIN_PORT_MANIFESTS: () => (/* reexport safe */ _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_PORT_MANIFESTS),
 /* harmony export */   BUILTIN_TYPE_MANIFESTS: () => (/* reexport safe */ _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_TYPE_MANIFESTS),
 /* harmony export */   Composition: () => (/* binding */ Composition),
-/* harmony export */   FRAGMENT_DESCRIPTOR_SCHEMA: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_8__.FRAGMENT_DESCRIPTOR_SCHEMA),
-/* harmony export */   INLINE_MARKS: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_6__.INLINE_MARKS),
-/* harmony export */   Recipe: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_4__.Recipe),
-/* harmony export */   VALUE_TYPES: () => (/* reexport safe */ _routing_mjs__WEBPACK_IMPORTED_MODULE_7__.VALUE_TYPES),
-/* harmony export */   applyFieldValue: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_3__.applyFieldValue),
-/* harmony export */   checkFragmentDescriptor: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_8__.checkFragmentDescriptor),
-/* harmony export */   checkPortValue: () => (/* reexport safe */ _routing_mjs__WEBPACK_IMPORTED_MODULE_7__.checkPortValue),
+/* harmony export */   FRAGMENT_DESCRIPTOR_SCHEMA: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_9__.FRAGMENT_DESCRIPTOR_SCHEMA),
+/* harmony export */   INLINE_MARKS: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_7__.INLINE_MARKS),
+/* harmony export */   Recipe: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_5__.Recipe),
+/* harmony export */   VALUE_TYPES: () => (/* reexport safe */ _routing_mjs__WEBPACK_IMPORTED_MODULE_8__.VALUE_TYPES),
+/* harmony export */   applyFieldValue: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_4__.applyFieldValue),
+/* harmony export */   checkFragmentDescriptor: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_9__.checkFragmentDescriptor),
+/* harmony export */   checkPortValue: () => (/* reexport safe */ _routing_mjs__WEBPACK_IMPORTED_MODULE_8__.checkPortValue),
 /* harmony export */   compositionTypeFromSmartManifest: () => (/* binding */ compositionTypeFromSmartManifest),
-/* harmony export */   createPortRegistry: () => (/* reexport safe */ _routing_mjs__WEBPACK_IMPORTED_MODULE_7__.createPortRegistry),
+/* harmony export */   createPortRegistry: () => (/* reexport safe */ _routing_mjs__WEBPACK_IMPORTED_MODULE_8__.createPortRegistry),
 /* harmony export */   createRegistry: () => (/* binding */ createRegistry),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
-/* harmony export */   defineCompositionScope: () => (/* reexport safe */ _routing_mjs__WEBPACK_IMPORTED_MODULE_7__.defineCompositionScope),
-/* harmony export */   defineFragmentBoundary: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_8__.defineFragmentBoundary),
-/* harmony export */   definePageHost: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_8__.definePageHost),
-/* harmony export */   describeRegions: () => (/* reexport safe */ _regions_mjs__WEBPACK_IMPORTED_MODULE_5__.describeRegions),
+/* harmony export */   defineCompositionScope: () => (/* reexport safe */ _routing_mjs__WEBPACK_IMPORTED_MODULE_8__.defineCompositionScope),
+/* harmony export */   defineFragmentBoundary: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_9__.defineFragmentBoundary),
+/* harmony export */   definePageHost: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_9__.definePageHost),
+/* harmony export */   describeRegions: () => (/* reexport safe */ _regions_mjs__WEBPACK_IMPORTED_MODULE_6__.describeRegions),
 /* harmony export */   extendRegistry: () => (/* binding */ extendRegistry),
-/* harmony export */   inlineText: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_6__.inlineText),
-/* harmony export */   marksIn: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_6__.marksIn),
+/* harmony export */   inlineText: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_7__.inlineText),
+/* harmony export */   marksIn: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_7__.marksIn),
 /* harmony export */   normalize: () => (/* binding */ normalize),
-/* harmony export */   normalizeInline: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_6__.normalizeInline),
-/* harmony export */   parseFieldSubmission: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_3__.parseFieldSubmission),
-/* harmony export */   parseRecipeJson: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_4__.parseRecipeJson),
-/* harmony export */   projectDocumentEditorFields: () => (/* reexport safe */ _editor_mjs__WEBPACK_IMPORTED_MODULE_2__.projectDocumentEditorFields),
-/* harmony export */   projectEditorFields: () => (/* reexport safe */ _editor_mjs__WEBPACK_IMPORTED_MODULE_2__.projectEditorFields),
-/* harmony export */   publishEffects: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_8__.publishEffects),
-/* harmony export */   recipeDigest: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_4__.recipeDigest),
-/* harmony export */   recipeNodeId: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_4__.recipeNodeId),
+/* harmony export */   normalizeInline: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_7__.normalizeInline),
+/* harmony export */   parseFieldSubmission: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_4__.parseFieldSubmission),
+/* harmony export */   parseRecipeJson: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_5__.parseRecipeJson),
+/* harmony export */   projectDocumentEditorFields: () => (/* reexport safe */ _editor_mjs__WEBPACK_IMPORTED_MODULE_3__.projectDocumentEditorFields),
+/* harmony export */   projectEditorFields: () => (/* reexport safe */ _editor_mjs__WEBPACK_IMPORTED_MODULE_3__.projectEditorFields),
+/* harmony export */   publishEffects: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_9__.publishEffects),
+/* harmony export */   recipeDigest: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_5__.recipeDigest),
+/* harmony export */   recipeNodeId: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_5__.recipeNodeId),
 /* harmony export */   render: () => (/* binding */ render),
-/* harmony export */   renderFieldFallback: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_3__.renderFieldFallback),
-/* harmony export */   replaceRange: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_6__.replaceRange),
-/* harmony export */   resolveFieldKind: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_3__.resolveFieldKind),
-/* harmony export */   resolveRecipe: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_4__.resolveRecipe),
-/* harmony export */   setLink: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_6__.setLink),
+/* harmony export */   renderFieldFallback: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_4__.renderFieldFallback),
+/* harmony export */   replaceRange: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_7__.replaceRange),
+/* harmony export */   resolveFieldKind: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_4__.resolveFieldKind),
+/* harmony export */   resolveRecipe: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_5__.resolveRecipe),
+/* harmony export */   setLink: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_7__.setLink),
 /* harmony export */   stableStringify: () => (/* reexport safe */ _canonical_mjs__WEBPACK_IMPORTED_MODULE_1__.stableStringify),
 /* harmony export */   startInlineEdit: () => (/* binding */ startInlineEdit),
-/* harmony export */   toggleMark: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_6__.toggleMark),
+/* harmony export */   toggleMark: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_7__.toggleMark),
 /* harmony export */   validate: () => (/* binding */ validate),
-/* harmony export */   validateEditorManifest: () => (/* reexport safe */ _editor_mjs__WEBPACK_IMPORTED_MODULE_2__.validateEditorManifest),
-/* harmony export */   validateFieldKinds: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_3__.validateFieldKinds),
-/* harmony export */   validateFieldValue: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_3__.validateFieldValue)
+/* harmony export */   validateEditorManifest: () => (/* reexport safe */ _editor_mjs__WEBPACK_IMPORTED_MODULE_3__.validateEditorManifest),
+/* harmony export */   validateFieldKinds: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_4__.validateFieldKinds),
+/* harmony export */   validateFieldValue: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_4__.validateFieldValue)
 /* harmony export */ });
 /* harmony import */ var _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("08e5033c490a");
 /* harmony import */ var _canonical_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("6f489cc65b77");
-/* harmony import */ var _editor_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("3765e2c966fd");
-/* harmony import */ var _fields_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("4e6fc63bed81");
-/* harmony import */ var _recipe_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("6770fb69bd04");
-/* harmony import */ var _regions_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("68efac8c1b57");
-/* harmony import */ var _inline_model_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("e66d878fb4f8");
-/* harmony import */ var _routing_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("4aea5d6d49c7");
-/* harmony import */ var _fragments_mjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("c2e3ed8498dc");
+/* harmony import */ var _schema_name_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("c220929cdca6");
+/* harmony import */ var _editor_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("3765e2c966fd");
+/* harmony import */ var _fields_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("4e6fc63bed81");
+/* harmony import */ var _recipe_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("6770fb69bd04");
+/* harmony import */ var _regions_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("68efac8c1b57");
+/* harmony import */ var _inline_model_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("e66d878fb4f8");
+/* harmony import */ var _routing_mjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("4aea5d6d49c7");
+/* harmony import */ var _fragments_mjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("c2e3ed8498dc");
+
 
 
 
@@ -6429,7 +6441,7 @@ function startInlineEdit(element, options) {
   return editor.startInlineEdit(element, options);
 }
 const PROFILES = new Set(['ui-layout', 'structured-content']);
-const DOCUMENT_FIELDS = new Set(['schema', 'id', 'profile', 'locale', 'root', 'extensions']);
+const DOCUMENT_FIELDS = new Set(['schema', 'schema_version', 'id', 'profile', 'locale', 'root', 'extensions']);
 const NODE_FIELDS = new Set(['id', 'type', 'data', 'props', 'slots', 'presentation', 'bindings', 'extensions']);
 const PRESENTATION_FIELDS = new Set(['view', 'preset', 'modifiers']);
 const BINDING_FIELDS = new Set(['owner', 'ref', 'target', 'revision']);
@@ -6576,9 +6588,9 @@ let defaultPorts = null;
 
 function normalizePorts(ports) {
   if (ports?.elements instanceof Map) return ports;
-  if (Array.isArray(ports)) return (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_7__.createPortRegistry)(ports);
-  if (ports && Array.isArray(ports.manifests)) return (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_7__.createPortRegistry)(ports.manifests, { bindings: ports.bindings });
-  defaultPorts = defaultPorts || (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_7__.createPortRegistry)(_builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_PORT_MANIFESTS);
+  if (Array.isArray(ports)) return (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_8__.createPortRegistry)(ports);
+  if (ports && Array.isArray(ports.manifests)) return (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_8__.createPortRegistry)(ports.manifests, { bindings: ports.bindings });
+  defaultPorts = defaultPorts || (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_8__.createPortRegistry)(_builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_PORT_MANIFESTS);
   return defaultPorts;
 }
 
@@ -6590,7 +6602,8 @@ function normalizeRegistry(registry) {
 function createRegistry(manifests = _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_TYPE_MANIFESTS, renderers = {}) {
   const types = new Map();
   for (const manifest of manifests) {
-    if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_1__.isPlainObject)(manifest) || manifest.schema !== 'simai.composition.type-manifest.v1') throw new TypeError('composition_manifest_invalid');
+    // Either form of the format name (schema-name.mjs).
+    if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_1__.isPlainObject)(manifest) || !(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_2__.isSchema)(manifest, 'simai.composition.type-manifest', 1)) throw new TypeError('composition_manifest_invalid');
     if (types.has(manifest.type)) throw new TypeError(`composition_manifest_duplicate:${manifest.type}`);
     types.set(manifest.type, (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_1__.canonical)(manifest));
   }
@@ -6656,7 +6669,7 @@ function validate(document, registry = undefined, options = {}) {
   const diagnostics = [];
   const resolvedRegistry = normalizeRegistry(registry);
   const limits = { ...DEFAULT_LIMITS, ...(options.limits || {}) };
-  const supportedExtensions = new Set([_routing_mjs__WEBPACK_IMPORTED_MODULE_7__.ENDPOINT_EXTENSION, ...(options.supportedExtensions || [])]);
+  const supportedExtensions = new Set([_routing_mjs__WEBPACK_IMPORTED_MODULE_8__.ENDPOINT_EXTENSION, ...(options.supportedExtensions || [])]);
   let serialized;
   try {
     serialized = JSON.stringify(document);
@@ -6666,7 +6679,7 @@ function validate(document, registry = undefined, options = {}) {
   if (new globalThis.TextEncoder().encode(serialized).byteLength > limits.maxDocumentBytes) diagnostics.push(diagnostic('document_too_large', '$', 'Document exceeds the byte limit'));
   if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_1__.isPlainObject)(document)) return { valid: false, diagnostics: [diagnostic('document_invalid', '$', 'Document must be an object')] };
   pushUnknownFields(document, DOCUMENT_FIELDS, '$', diagnostics);
-  if (document.schema !== DOCUMENT_SCHEMA) diagnostics.push(diagnostic('schema_unknown', '$.schema', `Expected ${DOCUMENT_SCHEMA}`));
+  if (!(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_2__.isSchema)(document, 'simai.composition.document', 1)) diagnostics.push(diagnostic('schema_unknown', '$.schema', `Expected ${DOCUMENT_SCHEMA}, or simai.composition.document with schema_version 1`));
   if (typeof document.id !== 'string' || !/^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,119}$/u.test(document.id)) diagnostics.push(diagnostic('document_id_invalid', '$.id', 'Document id is invalid'));
   if (!PROFILES.has(document.profile)) diagnostics.push(diagnostic('profile_unknown', '$.profile', 'Profile is not supported'));
   if (document.locale !== undefined && (typeof document.locale !== 'string' || !/^[a-zA-Z]{2,8}(?:-[a-zA-Z0-9]{1,8})*$/u.test(document.locale))) diagnostics.push(diagnostic('locale_invalid', '$.locale', 'Locale is invalid'));
@@ -6753,8 +6766,8 @@ function validate(document, registry = undefined, options = {}) {
   visit(document.root, '$.root', 1);
   if (nodeCount > limits.maxNodes) diagnostics.push(diagnostic('node_limit', '$.root', 'Composition has too many nodes'));
   else {
-    (0,_regions_mjs__WEBPACK_IMPORTED_MODULE_5__.validateRegionRules)(document.root, resolvedRegistry, diagnostics);
-    (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_7__.resolveRoutes)(document.root, resolvedRegistry, normalizePorts(options.ports), diagnostics);
+    (0,_regions_mjs__WEBPACK_IMPORTED_MODULE_6__.validateRegionRules)(document.root, resolvedRegistry, diagnostics);
+    (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_8__.resolveRoutes)(document.root, resolvedRegistry, normalizePorts(options.ports), diagnostics);
   }
   return { valid: diagnostics.length === 0, diagnostics };
 }
@@ -6811,12 +6824,12 @@ const BUILTIN_RENDERERS = {
   'layout.regions': ({ node, slots }) => `<div class="sf-composition-regions" data-sf-composition-id="${escapeHtml(node.id)}"><div class="sf-composition-regions-grid">${slots.regions || ''}</div></div>`,
   'layout.region': ({ node, slots }) => {
     const props = node.props;
-    const element = _regions_mjs__WEBPACK_IMPORTED_MODULE_5__.REGION_ELEMENTS[props.landmark];
+    const element = _regions_mjs__WEBPACK_IMPORTED_MODULE_6__.REGION_ELEMENTS[props.landmark];
     const sticky = props.sticky === true ? ' data-sf-region-sticky=""' : '';
     const label = props.label !== undefined ? ` aria-label="${escapeHtml(props.label)}"` : '';
     return `<${element} class="sf-composition-region" data-sf-composition-id="${escapeHtml(node.id)}" data-sf-region="${escapeHtml(props.name)}" data-sf-region-placement="${escapeHtml(props.placement ?? 'block')}"${sticky}${label}>${slots.default || ''}</${element}>`;
   },
-  'layout.scope': ({ node, slots, routes }) => `<sf-composition-scope data-sf-composition-id="${escapeHtml(node.id)}" data-sf-routes="${escapeHtml((0,_routing_mjs__WEBPACK_IMPORTED_MODULE_7__.routesAttribute)(routes || []))}">${slots.default || ''}</sf-composition-scope>`,
+  'layout.scope': ({ node, slots, routes }) => `<sf-composition-scope data-sf-composition-id="${escapeHtml(node.id)}" data-sf-routes="${escapeHtml((0,_routing_mjs__WEBPACK_IMPORTED_MODULE_8__.routesAttribute)(routes || []))}">${slots.default || ''}</sf-composition-scope>`,
 };
 
 async function render(document, context = {}) {
@@ -6825,7 +6838,7 @@ async function render(document, context = {}) {
   if (!normalized.document) return { html: '', assets: [], hydration: [], diagnostics: normalized.diagnostics, digest: null };
   const diagnostics = [];
   const hydration = [];
-  const routes = (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_7__.resolveRoutes)(normalized.document.root, registry, normalizePorts(context.options?.ports), []);
+  const routes = (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_8__.resolveRoutes)(normalized.document.root, registry, normalizePorts(context.options?.ports), []);
   const renderNode = async (node) => {
     const manifest = registry.types.get(node.type);
     const slots = {};
@@ -6853,7 +6866,7 @@ async function render(document, context = {}) {
       return '';
     }
     if (node.type === 'layout.scope') hydration.push({ id: node.id, type: node.type, element: 'sf-composition-scope' });
-    return renderer({ node, slots, context, resolvedBindings, manifest, routes: routes.get(node.id), endpoint: (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_7__.endpointName)(node) });
+    return renderer({ node, slots, context, resolvedBindings, manifest, routes: routes.get(node.id), endpoint: (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_8__.endpointName)(node) });
   };
   const html = await renderNode(normalized.document.root);
   return { html, assets: normalized.dependencies.assets, hydration, diagnostics, digest: normalized.digest };
@@ -6861,47 +6874,47 @@ async function render(document, context = {}) {
 
 const Composition = Object.freeze({
   BUILTIN_EDITOR_MANIFESTS: _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_EDITOR_MANIFESTS,
-  BUILTIN_FIELD_KINDS: _fields_mjs__WEBPACK_IMPORTED_MODULE_3__.BUILTIN_FIELD_KINDS,
+  BUILTIN_FIELD_KINDS: _fields_mjs__WEBPACK_IMPORTED_MODULE_4__.BUILTIN_FIELD_KINDS,
   BUILTIN_PORT_MANIFESTS: _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_PORT_MANIFESTS,
-  Recipe: _recipe_mjs__WEBPACK_IMPORTED_MODULE_4__.Recipe,
-  applyFieldValue: _fields_mjs__WEBPACK_IMPORTED_MODULE_3__.applyFieldValue,
-  parseFieldSubmission: _fields_mjs__WEBPACK_IMPORTED_MODULE_3__.parseFieldSubmission,
-  renderFieldFallback: _fields_mjs__WEBPACK_IMPORTED_MODULE_3__.renderFieldFallback,
-  resolveFieldKind: _fields_mjs__WEBPACK_IMPORTED_MODULE_3__.resolveFieldKind,
-  validateFieldKinds: _fields_mjs__WEBPACK_IMPORTED_MODULE_3__.validateFieldKinds,
-  validateFieldValue: _fields_mjs__WEBPACK_IMPORTED_MODULE_3__.validateFieldValue,
-  VALUE_TYPES: _routing_mjs__WEBPACK_IMPORTED_MODULE_7__.VALUE_TYPES,
-  checkPortValue: _routing_mjs__WEBPACK_IMPORTED_MODULE_7__.checkPortValue,
-  checkFragmentDescriptor: _fragments_mjs__WEBPACK_IMPORTED_MODULE_8__.checkFragmentDescriptor,
-  FRAGMENT_DESCRIPTOR_SCHEMA: _fragments_mjs__WEBPACK_IMPORTED_MODULE_8__.FRAGMENT_DESCRIPTOR_SCHEMA,
-  publishEffects: _fragments_mjs__WEBPACK_IMPORTED_MODULE_8__.publishEffects,
-  createPortRegistry: _routing_mjs__WEBPACK_IMPORTED_MODULE_7__.createPortRegistry,
-  defineCompositionScope: _routing_mjs__WEBPACK_IMPORTED_MODULE_7__.defineCompositionScope,
+  Recipe: _recipe_mjs__WEBPACK_IMPORTED_MODULE_5__.Recipe,
+  applyFieldValue: _fields_mjs__WEBPACK_IMPORTED_MODULE_4__.applyFieldValue,
+  parseFieldSubmission: _fields_mjs__WEBPACK_IMPORTED_MODULE_4__.parseFieldSubmission,
+  renderFieldFallback: _fields_mjs__WEBPACK_IMPORTED_MODULE_4__.renderFieldFallback,
+  resolveFieldKind: _fields_mjs__WEBPACK_IMPORTED_MODULE_4__.resolveFieldKind,
+  validateFieldKinds: _fields_mjs__WEBPACK_IMPORTED_MODULE_4__.validateFieldKinds,
+  validateFieldValue: _fields_mjs__WEBPACK_IMPORTED_MODULE_4__.validateFieldValue,
+  VALUE_TYPES: _routing_mjs__WEBPACK_IMPORTED_MODULE_8__.VALUE_TYPES,
+  checkPortValue: _routing_mjs__WEBPACK_IMPORTED_MODULE_8__.checkPortValue,
+  checkFragmentDescriptor: _fragments_mjs__WEBPACK_IMPORTED_MODULE_9__.checkFragmentDescriptor,
+  FRAGMENT_DESCRIPTOR_SCHEMA: _fragments_mjs__WEBPACK_IMPORTED_MODULE_9__.FRAGMENT_DESCRIPTOR_SCHEMA,
+  publishEffects: _fragments_mjs__WEBPACK_IMPORTED_MODULE_9__.publishEffects,
+  createPortRegistry: _routing_mjs__WEBPACK_IMPORTED_MODULE_8__.createPortRegistry,
+  defineCompositionScope: _routing_mjs__WEBPACK_IMPORTED_MODULE_8__.defineCompositionScope,
   startInlineEdit,
-  normalizeInline: _inline_model_mjs__WEBPACK_IMPORTED_MODULE_6__.normalizeInline,
-  inlineText: _inline_model_mjs__WEBPACK_IMPORTED_MODULE_6__.inlineText,
+  normalizeInline: _inline_model_mjs__WEBPACK_IMPORTED_MODULE_7__.normalizeInline,
+  inlineText: _inline_model_mjs__WEBPACK_IMPORTED_MODULE_7__.inlineText,
   BUILTIN_TYPE_MANIFESTS: _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_TYPE_MANIFESTS,
   createRegistry,
   extendRegistry,
   compositionTypeFromSmartManifest,
-  describeRegions: _regions_mjs__WEBPACK_IMPORTED_MODULE_5__.describeRegions,
+  describeRegions: _regions_mjs__WEBPACK_IMPORTED_MODULE_6__.describeRegions,
   normalize,
-  projectDocumentEditorFields: _editor_mjs__WEBPACK_IMPORTED_MODULE_2__.projectDocumentEditorFields,
-  projectEditorFields: _editor_mjs__WEBPACK_IMPORTED_MODULE_2__.projectEditorFields,
+  projectDocumentEditorFields: _editor_mjs__WEBPACK_IMPORTED_MODULE_3__.projectDocumentEditorFields,
+  projectEditorFields: _editor_mjs__WEBPACK_IMPORTED_MODULE_3__.projectEditorFields,
   render,
-  resolveRecipe: _recipe_mjs__WEBPACK_IMPORTED_MODULE_4__.resolveRecipe,
-  parseRecipeJson: _recipe_mjs__WEBPACK_IMPORTED_MODULE_4__.parseRecipeJson,
+  resolveRecipe: _recipe_mjs__WEBPACK_IMPORTED_MODULE_5__.resolveRecipe,
+  parseRecipeJson: _recipe_mjs__WEBPACK_IMPORTED_MODULE_5__.parseRecipeJson,
   stableStringify: _canonical_mjs__WEBPACK_IMPORTED_MODULE_1__.stableStringify,
   validate,
-  validateEditorManifest: _editor_mjs__WEBPACK_IMPORTED_MODULE_2__.validateEditorManifest,
+  validateEditorManifest: _editor_mjs__WEBPACK_IMPORTED_MODULE_3__.validateEditorManifest,
 });
 
 if (typeof globalThis !== 'undefined') {
   globalThis.SF = globalThis.SF || {};
   globalThis.SF.Composition = Composition;
-  (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_7__.defineCompositionScope)();
-  (0,_fragments_mjs__WEBPACK_IMPORTED_MODULE_8__.definePageHost)();
-  (0,_fragments_mjs__WEBPACK_IMPORTED_MODULE_8__.defineFragmentBoundary)();
+  (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_8__.defineCompositionScope)();
+  (0,_fragments_mjs__WEBPACK_IMPORTED_MODULE_9__.definePageHost)();
+  (0,_fragments_mjs__WEBPACK_IMPORTED_MODULE_9__.defineFragmentBoundary)();
 }
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Composition);
@@ -7095,11 +7108,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   resolveRecipe: () => (/* binding */ resolveRecipe)
 /* harmony export */ });
 /* harmony import */ var _canonical_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("6f489cc65b77");
+/* harmony import */ var _schema_name_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("c220929cdca6");
 
 
-const RECIPE_SCHEMA = 'simai.composition.recipe.v1';
+
+// Readers take either form of a format name (simai.composition.recipe.v1, or
+// simai.composition.recipe with schema_version 1): schema-name.mjs. The labels
+// below are what this module writes.
 const INPUTS_SCHEMA = 'simai.composition.inputs.v1';
-const MANIFEST_SCHEMA = 'simai.composition.recipe-manifest.v1';
 const DEPENDENCIES_SCHEMA = 'simai.composition.dependencies.v1';
 const CANONICALIZATION = 'simai.recipe.canonical-json.v1';
 const SAFE_INTEGER_MIN = -9007199254740991;
@@ -7131,9 +7147,9 @@ const ENTRY_FIELDS = {
   insertSlot: new Set(['id', 'insertSlot']),
 };
 const NODE_FIELDS = new Set(['type', 'data', 'props', 'presentation', 'slots', 'bindings', 'extensions']);
-const RECIPE_FIELDS = new Set(['schema', 'id', 'profile', 'locale', 'inputs', 'root', 'extensions']);
-const INPUT_ENVELOPE_FIELDS = new Set(['schema', 'scope', 'values', 'extensions']);
-const MANIFEST_FIELDS = new Set(['schema', 'id', 'parameters', 'slots', 'body', 'extensions']);
+const RECIPE_FIELDS = new Set(['schema', 'schema_version', 'id', 'profile', 'locale', 'inputs', 'root', 'extensions']);
+const INPUT_ENVELOPE_FIELDS = new Set(['schema', 'schema_version', 'scope', 'values', 'extensions']);
+const MANIFEST_FIELDS = new Set(['schema', 'schema_version', 'id', 'parameters', 'slots', 'body', 'extensions']);
 const INPUT_DECLARATION_FIELDS = new Set(['kind', 'schema', 'default', 'expectedOrigin', 'extensions']);
 const ID = /^[A-Za-z0-9][A-Za-z0-9._:-]{0,119}$/u;
 
@@ -7414,7 +7430,7 @@ async function resolveRecipe(recipe, context = {}) {
     const limits = normalizeLimits(context.limits);
     assertCanonicalValue(recipe);
     if (utf8Size(recipe) > limits.maxRecipeBytes) throw Object.assign(new RangeError('Recipe byte limit exceeded'), { code: 'limit_exceeded', sourcePath: '$' });
-    if (!isObject(recipe) || recipe.schema !== RECIPE_SCHEMA) throw Object.assign(new TypeError('Unsupported recipe schema'), { code: 'invalid_value', sourcePath: '/schema' });
+    if (!isObject(recipe) || !(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_1__.isSchema)(recipe, 'simai.composition.recipe', 1)) throw Object.assign(new TypeError('Unsupported recipe schema'), { code: 'invalid_value', sourcePath: '/schema' });
     assertFields(recipe, RECIPE_FIELDS, '');
     if (!ID.test(recipe.id || '') || !['ui-layout', 'structured-content'].includes(recipe.profile)) throw Object.assign(new TypeError('Recipe identity or profile is invalid'), { code: 'invalid_value', sourcePath: '/' });
     const supportedExtensions = new Set(context.supportedExtensions || []);
@@ -7434,7 +7450,7 @@ async function resolveRecipe(recipe, context = {}) {
     const inputsEnvelope = context.inputs || { schema: INPUTS_SCHEMA, scope, values: {} };
     assertCanonicalValue(inputsEnvelope, '/inputs');
     assertFields(inputsEnvelope, INPUT_ENVELOPE_FIELDS, '/inputs');
-    if (inputsEnvelope.schema !== INPUTS_SCHEMA || inputsEnvelope.scope !== scope) throw Object.assign(new TypeError('Input scope mismatch'), { code: 'input_origin_mismatch', sourcePath: '/inputs' });
+    if (!(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_1__.isSchema)(inputsEnvelope, 'simai.composition.inputs', 1) || inputsEnvelope.scope !== scope) throw Object.assign(new TypeError('Input scope mismatch'), { code: 'input_origin_mismatch', sourcePath: '/inputs' });
 
     const recipeHash = await recipeDigest(recipe);
     const limitsState = { steps: 0, sourceBytes: 0, inputBytes: 0, nodes: 0, intermediateBytes: 0 };
@@ -7564,7 +7580,7 @@ async function resolveRecipe(recipe, context = {}) {
             validateEntrySyntax(resolved.source, `${sourcePath}/source`, { localIds: new Set(), maxSelectCases: limits.maxSelectCases, supportedExtensions });
             return await expand(resolved.source, { ...state, segments: [...state.segments, ['placement', entry.id]] }, `${sourcePath}/source`);
           }
-          if (resolved.source.schema !== MANIFEST_SCHEMA) throw Object.assign(new Error('Template manifest is invalid'), { code: 'invalid_value', sourcePath });
+          if (!(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_1__.isSchema)(resolved.source, 'simai.composition.recipe-manifest', 1)) throw Object.assign(new Error('Template manifest is invalid'), { code: 'invalid_value', sourcePath });
           assertFields(resolved.source, MANIFEST_FIELDS, `${sourcePath}/source`);
           assertExtensions(resolved.source.extensions, `${sourcePath}/source/extensions`, supportedExtensions);
           validateEntrySyntax(resolved.source.body, `${sourcePath}/source/body`, { localIds: new Set(), maxSelectCases: limits.maxSelectCases, supportedExtensions });
@@ -7890,6 +7906,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   routesAttribute: () => (/* binding */ routesAttribute)
 /* harmony export */ });
 /* harmony import */ var _canonical_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("6f489cc65b77");
+/* harmony import */ var _schema_name_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("c220929cdca6");
+
 
 
 // Generic cross-composite routing. A layout.scope node is the common parent
@@ -8091,7 +8109,8 @@ function checkPortValue(valueType, value) {
 function createPortRegistry(manifests = [], options = {}) {
   const elements = new Map();
   for (const manifest of manifests) {
-    if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(manifest) || manifest.schema !== 'simai.composition.port-manifest.v1') throw new TypeError('composition_port_manifest_invalid');
+    // Either form of the format name (schema-name.mjs).
+    if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(manifest) || !(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_1__.isSchema)(manifest, 'simai.composition.port-manifest', 1)) throw new TypeError('composition_port_manifest_invalid');
     if (elements.has(manifest.element)) throw new TypeError(`composition_port_manifest_duplicate:${manifest.element}`);
     for (const port of [...Object.values(manifest.outputs || {}), ...Object.values(manifest.inputs || {})]) {
       if (!knownValueType(port.value)) throw new TypeError(`composition_port_value_type_unknown:${port.value}`);
@@ -8490,6 +8509,68 @@ function routesAttribute(routes) {
 }
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ CompositionRouteController, checkPortValue, createPortRegistry, defineCompositionScope, resolveRoutes });
+
+
+/***/ },
+
+/***/ "c220929cdca6"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   isSchema: () => (/* binding */ isSchema),
+/* harmony export */   readSchema: () => (/* binding */ readSchema),
+/* harmony export */   schemaFields: () => (/* binding */ schemaFields),
+/* harmony export */   withUnversionedSchema: () => (/* binding */ withUnversionedSchema)
+/* harmony export */ });
+// Names carry no version (owner, 2026-10-11; ui-control
+// control/NAMES-WITHOUT-VERSIONS-DECISION-2026-10-11.md). A data format is
+// `"schema": "simai.<name>"` with `"schema_version": <major>` beside it; the
+// older form put the major in the name, `"simai.<name>.v<major>"`. Through the
+// change journal's compatibility window every reader accepts both, and writers
+// emit the new one. This is the one place that reads them.
+
+const VERSIONED = /^(.+)\.v([0-9]+)$/u;
+
+/**
+ * The format a document declares, in either form: {name, version}, or null
+ * when it declares none. `version` is the major, an integer; null when the
+ * new form leaves schema_version out.
+ */
+function readSchema(document) {
+  const label = document?.schema ?? document?.schema_id;
+  if (typeof label !== 'string' || !label) return null;
+  const versioned = label.match(VERSIONED);
+  if (versioned) return {name: versioned[1], version: Number(versioned[2]), form: 'versioned-name'};
+  const version = document?.schema_version;
+  return {name: label, version: Number.isInteger(version) ? version : null, form: 'name'};
+}
+
+/**
+ * Whether a document is the format `name` at major `version`, in either form.
+ * A schema_version beside the older label must agree with it.
+ */
+function isSchema(document, name, version) {
+  const read = readSchema(document);
+  if (!read || read.name !== name || read.version !== version) return false;
+  return document.schema_version === undefined || document.schema_version === version;
+}
+
+/** The new form of a format's fields, for a writer: {schema, schema_version}. */
+function schemaFields(name, version) {
+  if (VERSIONED.test(name)) throw new TypeError(`A format name carries no version: ${name}`);
+  if (!Number.isInteger(version) || version < 1) throw new TypeError(`A format's version is a whole major: ${version}`);
+  return {schema: name, schema_version: version};
+}
+
+/** A document's format moved to the new form, everything else as it was. */
+function withUnversionedSchema(document) {
+  const read = readSchema(document);
+  if (!read || read.form === 'name') return document;
+  const {schema, schema_id, schema_version, ...rest} = document;
+  return {...schemaFields(read.name, read.version), ...rest};
+}
 
 
 /***/ }
