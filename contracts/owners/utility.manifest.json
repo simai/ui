@@ -9,13 +9,13 @@
   },
   "release": {
     "tag": null,
-    "commit": "9a4b9cc82edf6c5247832022f4e56f49911c2ec7",
-    "tree": "489a1f5c6b70d2fb213835e0aaa249daab5f44e8",
-    "runtime_subtree": "78a941625cb987cb7d82b4947f12f2b8c69f169e",
-    "archive_sha256": "3cb07309e83650d195cc1ee072c301202f0c64ca6923cc96e63e591552c69a5b"
+    "commit": "73fdc9e767ae39ffbee22d57e505692b3fcd2430",
+    "tree": "fb0ebd2568e6135b7a95629a590caffc5135668c",
+    "runtime_subtree": "5f4a819e7099973e401179816acd0f47a8c53731",
+    "archive_sha256": "1bc0fa612956124d655bcc6e58fb368fa4f1246b3ef2133c190b4e13bc182808"
   },
   "inventory": {
-    "source": "simai/ui@9a4b9cc82edf6c5247832022f4e56f49911c2ec7:distr/rule/rule.json",
+    "source": "simai/ui@73fdc9e767ae39ffbee22d57e505692b3fcd2430:distr/rule/rule.json",
     "selector": {
       "mode": "utility-family",
       "rules_without_type": true
@@ -36,7 +36,7 @@
       "blockers": []
     },
     "documentation_refs": [
-      "simai/ui@9a4b9cc82edf6c5247832022f4e56f49911c2ec7:README.md"
+      "simai/ui@73fdc9e767ae39ffbee22d57e505692b3fcd2430:README.md"
     ],
     "example_refs": []
   },

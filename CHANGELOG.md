@@ -234,6 +234,8 @@
 
 ### Изменено
 
+- Changed: what is written inside `<sf-modal>` without a slot is the window's content, after anything slotted as `content`, as `sf-drawer` takes it; it used to be dropped, leaving an empty window.
+
 - Changed: a modal made by script (the `Modal` component class) takes `param.container`, an element or a selector, and covers that box instead of the viewport; without one, a modal opened from inside a `data-sf-overlay-container` covers that box. The page stays scrollable in both cases, as for `sf-modal`.
 
 - Changed: `sf-modal` inside an element with `data-sf-overlay-container` renders its backdrop and surface inside that element and covers it alone (the box gets `contain: layout`); the page is not scroll-locked. One attribute serves `sf-modal` and `sf-drawer`; `data-sf-drawer-container` is read until 2026-12-01. A modal drawer inside such a box no longer locks the page either.
