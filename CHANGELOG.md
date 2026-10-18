@@ -234,6 +234,9 @@
 
 ### Изменено
 
+- Changed: `sf-modal` inside an element with `data-sf-overlay-container` renders its backdrop and surface inside that element and covers it alone (the box gets `contain: layout`); the page is not scroll-locked. One attribute serves `sf-modal` and `sf-drawer`; `data-sf-drawer-container` is read until 2026-12-01. A modal drawer inside such a box no longer locks the page either.
+- Fixed: in a sandboxed frame (opaque origin) the flag component no longer fetches its catalogue, a request that always failed with a console error; flags fall back by the image's own error as before.
+
 - Changed: the Composition editor manifest registry (`core/contracts/composition-editor-manifests.v1.json`) names its format without a version, `"schema": "simai.composition.editor-manifest-registry"` with `"schema_version": 1`; Larena's backend reads both forms.
 
 - Changed: the Framework writes data format names without a version, `"schema": "simai.<name>"` with `"schema_version": <major>` beside it: composition type, editor and port manifests, field kinds, the type and port registries, capability fixtures, the dependency receipt, the technology packet and the repository's own data files. Every reader takes both forms (since ui-1cb0739a8423). A Document resolved from a recipe keeps the recipe's form, so Recipe 1.0.1 digests do not move. Left in the old form until their strict readers take both: the editor-manifest registry's label, the Smart contract registry, host-port documents and kits, the capability and recipe contract locks, the Recipe 1.0.1 contract files, and the Studio fixtures and scenarios.
