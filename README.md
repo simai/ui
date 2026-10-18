@@ -2,7 +2,9 @@
 
 SIMAI UI Core - статический дистрибутив SIMAI Framework UI для standalone-подключения без серверной сборки.
 
-Репозиторий содержит уже собранные JS/CSS/JSON/font-артефакты в каталоге `distr/`. Рекомендуемый способ использования в проектах - подключать фиксированную версию по git tag, а не ветку `main`.
+Репозиторий содержит уже собранные JS/CSS/JSON/font-артефакты в каталоге `distr/`. Рекомендуемый способ использования в проектах — подключать фиксированный выпуск по его коммиту (выпуск `ui-<12 знаков>` — это коммит этого репозитория; тегов нет), а не ветку `main`.
+
+Документация: https://simai.github.io/ui-doc/
 
 ## Текущая версия
 
@@ -18,18 +20,18 @@ SIMAI UI Core - статический дистрибутив SIMAI Framework UI
 
 ```html
 <script>
-  window.sfPath = 'https://cdn.jsdelivr.net/gh/simai/ui@<release-tag>/distr';
+  window.sfPath = 'https://cdn.jsdelivr.net/gh/simai/ui@<release-commit>/distr';
 </script>
 
-<script src="https://cdn.jsdelivr.net/gh/simai/ui@<release-tag>/distr/core/js/core.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/simai/ui@<release-tag>/distr/core/css/core.css">
+<script src="https://cdn.jsdelivr.net/gh/simai/ui@<release-commit>/distr/core/js/core.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/simai/ui@<release-commit>/distr/core/css/core.css">
 ```
 
 Если используются smart-компоненты из отдельного пути, можно явно указать `window.sfSmartPath`:
 
 ```html
 <script>
-  window.sfPath = 'https://cdn.jsdelivr.net/gh/simai/ui@<ui-release-tag>/distr';
+  window.sfPath = 'https://cdn.jsdelivr.net/gh/simai/ui@<release-commit>/distr';
   window.sfSmartPath = 'https://cdn.jsdelivr.net/gh/simai/ui-smart@<smart-release-tag>';
 </script>
 ```
@@ -171,7 +173,7 @@ Utility-стили дистрибутива размещаются в слое `
 
 ## Рекомендации для проектов
 
-- Используйте конкретный pinned tag из соответствующего release note.
+- Используйте конкретный коммит выпуска (`ui-<12 знаков>`) из журнала изменений.
 - Не подключайте `@main` в production, чтобы избежать непредсказуемых обновлений.
 - При обновлении версии очищайте кеш CDN/браузера, если проект использует долгоживущий cache.
 - Для локальной поставки храните структуру `distr/` без переименования внутренних директорий.
