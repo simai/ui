@@ -234,6 +234,8 @@
 
 ### Изменено
 
+- Changed: the loader asks for the utility classes a Smart component's templates draw with in the same wave as the component, from a table generated from the templates (`core/js/template-utilities.generated.json`). They used to arrive in a last wave of their own after the component had drawn without them; a page with tabs, a help mark and a date picker now finishes loading in five waves instead of six (290 ms against 503 ms at 40 ms per answer).
+
 - The Smart runtime shares `lit/directives/repeat.js`: a list that reorders moves its rows instead of drawing them again.
 
 - The larena package reference: the record view requires `smart.empty-state`.
