@@ -109,6 +109,8 @@
 
 ### Добавлено
 
+- Format names are read without their version (`simai.<name>` + `schema_version`) as well as with it; the change journal records the move. `sf-drawer` can live inside a `[data-sf-drawer-container]` and takes its height; a docked drawer reserves room by its host's width. `sf-theme-generator` also writes the translucent steps of the palettes, and its events are `sf-theme-generator-change`/`-apply`.
+
 - `simai.property-view-port` 1.13.0: the view a person chooses is theirs, kept by the host per collection; `record.load` and `record.open` answer through it.
 
 - `sf-theme-generator`: a whole theme from one colour (the eight palettes as the 128 primitives; `SF.ThemePalette`); `core/contracts/public-js-api.json`, the reference of `window.SF`; the standard `simai.ai-development` 1.0.0; a long `choices` field is edited as a checklist; format names are read in both forms (with and without a version).
