@@ -1,179 +1,140 @@
-﻿# SIMAI UI Core
+﻿# SIMAI Framework — distribution
 
-SIMAI UI Core - статический дистрибутив SIMAI Framework UI для standalone-подключения без серверной сборки.
+`simai/ui` is the built SIMAI Framework: Core and the Loader, components,
+utilities and Smart Components, ready to serve as static files from `distr/`.
+Nothing here is edited by hand. The source is
+[`simai/ui-source`](https://github.com/simai/ui-source), and
+[`simai/ui-builder`](https://github.com/simai/ui-builder) builds it
+reproducibly into this repository.
 
-Репозиторий содержит уже собранные JS/CSS/JSON/font-артефакты в каталоге `distr/`. Рекомендуемый способ использования в проектах — подключать фиксированный выпуск по его коммиту (выпуск `ui-<12 знаков>` — это коммит этого репозитория; тегов нет), а не ветку `main`.
+Documentation (Russian): https://simai.github.io/ui-doc/
 
-Документация: https://simai.github.io/ui-doc/
+## Releases
 
-## Текущая версия
+A release is a commit of this repository, named `ui-<first 12 hex digits>`:
+the `Build: …` commit that wrote `distr/`. There are no tags and no version
+numbers to pick from. To find a release:
 
-Текущая локальная версия-кандидат: `5.9.0`. Она предназначена для проверки до публикации; последняя опубликованная версия — `5.7.0`.
+- `git log --grep '^Build:'` lists them, newest first;
+- `contracts/releases/ui-<id>.lock.json` records what each one was built from
+  (the ui-source and ui-builder revisions) and the digests of what it holds;
+- [CHANGELOG.md](CHANGELOG.md) says what changed, newest first.
 
-См. также:
+Pin a release, never `main`: `main` moves with every release, and a page that
+follows it changes without notice.
 
-- [CHANGELOG.md](CHANGELOG.md)
-- [docs/releases/5.7.0.md](docs/releases/5.7.0.md)
-- [Documentation source contract](docs/documentation-source-contract.md)
+## Connecting a page
 
-## Установка через CDN
+From jsDelivr, at a release commit:
 
 ```html
-<script>
-  window.sfPath = 'https://cdn.jsdelivr.net/gh/simai/ui@<release-commit>/distr';
-</script>
-
-<script src="https://cdn.jsdelivr.net/gh/simai/ui@<release-commit>/distr/core/js/core.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/simai/ui@<release-commit>/distr/core/css/core.css">
+<script>
+  window.sfPath = 'https://cdn.jsdelivr.net/gh/simai/ui@<release-commit>/distr/';
+</script>
+<script src="https://cdn.jsdelivr.net/gh/simai/ui@<release-commit>/distr/core/js/core.js"></script>
 ```
 
-Если используются smart-компоненты из отдельного пути, можно явно указать `window.sfSmartPath`:
+Or from your own copy: serve `distr/` as it is, without renaming anything
+inside it, and point `sfPath` at it:
 
 ```html
-<script>
-  window.sfPath = 'https://cdn.jsdelivr.net/gh/simai/ui@<release-commit>/distr';
-  window.sfSmartPath = 'https://cdn.jsdelivr.net/gh/simai/ui-smart@<smart-release-tag>';
-</script>
-```
-
-## Локальная установка
-
-1. Скопируйте каталог `distr/` в публичную директорию проекта.
-2. Укажите базовый путь до дистрибутива.
-3. Подключите core JS и core CSS.
-
-```html
-<script>
-  window.sfPath = '/distr';
-</script>
-
-<script src="/distr/core/js/core.js"></script>
 <link rel="stylesheet" href="/distr/core/css/core.css">
+<script>window.sfPath = '/distr/';</script>
+<script src="/distr/core/js/core.js"></script>
 ```
 
-## Что входит в дистрибутив
+`core.css` is linked by the page: the Loader does not add it, and without it
+every component draws without the theme's tokens. `sfPath` is set before
+`core.js`; a page that leaves it out falls back to `main` on jsDelivr and says
+so in the console.
 
-Основные директории:
-
-- `distr/core/` - базовый runtime, loader, core CSS и smart runtime assets.
-- `distr/component/` - обычные UI-компоненты и component assets, включая компоненты, используемые smart-слоем.
-- `distr/utility/` - utility CSS/JS модули.
-- `distr/rule/` - правила загрузчика.
-
-Smart-компоненты поставляются через `distr/smart-component-meta.json`, `distr/rule/` и core runtime assets.
-
-Core также публикует схемы декларативной композиции в `distr/core/contracts/` и браузерный API `SF.Composition`.
-
-Состав локальной версии-кандидата `5.9.0`:
-
-- всего файлов: `5061`;
-- CSS-файлов: `1591`;
-- JS-файлов: `884`;
-- gzip-артефактов: `2508`;
-- JSON-файлов: `26`;
-- общий размер: около `48 MiB`.
-
-## Пример HTML
+Then write the markup. The Loader finds the components and utility classes
+the page uses — including ones added later — and loads only their files:
 
 ```html
-<nav class="sf-breadcrumbs flex">
-  <a class="sf-breadcrumbs-item sf-breadcrumbs-item--text flex items-center" href="/">
-    Главная
-  </a>
-</nav>
-
-<sf-button type="default" scheme="primary" text="Сохранить"></sf-button>
+<sf-button text="Сохранить"></sf-button>
+<div class="flex gap-1 p-2 bg-surface-1 radius-2">…</div>
 ```
 
-Loader автоматически находит используемые компоненты и utility-классы в DOM, загружает нужные JS/CSS-файлы из `window.sfPath` и инициализирует компоненты.
+Smart Components are in `distr/smart` and are found under `sfPath` without
+further configuration. `window.sfSmartPath` remains only for pages that still
+serve the archived `simai/ui-smart` from its own root.
 
-Стандартный загрузчик использует компактную анимацию, которая следует теме,
-не зависит от внешних ресурсов и остаётся статичной при включённом
-`prefers-reduced-motion`.
+## Component packages
 
-## Production Asset Planner
+Components owned by a product are shipped as component packages, outside this
+distribution, and declared by the page:
 
-Проекты со статической или серверной сборкой могут подготовить ресурсы первого
-кадра командой `scripts/plan-framework-assets.py`. Планировщик анализирует
-готовый HTML по тем же правилам `distr/rule/rule.json`, раскрывает зависимости
-и возвращает детерминированный JSON со списком точных CSS/JS-файлов и данными
-для `window.SF_PRELOADED`.
+```html
+<script>
+  window.SF_BOOT_CONFIG = {packages: {larena: {base: '/distr-larena/'}}};
+</script>
+```
 
-Это необязательное build-time улучшение: обычное подключение через `sfPath`,
-`sfSmartPath`, `core.css` и `core.js` не меняется, а Loader продолжает
-обслуживать компоненты, добавленные в DOM позднее. Редкий ресурс первого кадра,
-который невозможно увидеть в итоговой разметке, можно объявить атрибутом
-`data-sf-require="utility.<name>|component.<name>|smart.<name>"`.
+The first one is Larena's (`sf-table`, `sf-data-view`, `sf-property-view`,
+`sf-admin-menu`), built from `simai/larena-ui` and published as an archive with
+its receipt on that repository's GitHub releases. A package is built against
+one Framework release; serve the two together.
 
-Компоненты с серверной оболочкой могут пометить контейнер подсветки
-`data-sf-highlight-chrome="static"`. В этом режиме Highlight сохраняет готовый
-заголовок и размеры блока, добавляя только подсветку синтаксиса.
+## What `distr/` holds
+
+- `distr/core/` — the runtime: Core, the Loader, the Smart base, core CSS
+  (`core.css`, and `utility.full.css` for pages that want every utility at
+  once), and the public contracts in `distr/core/contracts/` (composition
+  formats, ports, public CSS variables, the public JS API);
+- `distr/component/` — components and the assets Smart Components draw with;
+- `distr/smart/` — Smart Components;
+- `distr/utility/` — one module per utility family;
+- `distr/rule/` — the Loader's rules (`rule.json`).
+
+Every text file has a `.gz` twin, byte-identical whoever builds it.
+
+## Planning the first frame
+
+A site with a build step may plan the assets of its first frame instead of
+letting the Loader discover them:
 
 ```bash
-python3 scripts/plan-framework-assets.py \
-  --html build/index.html \
-  --ui-root . \
-  --smart-root ../ui-smart
+python3 scripts/plan-framework-assets.py --html build/index.html --ui-root .
 ```
 
-From release lock v2 on, Smart is published in `distr/smart` of this
-repository; without `--smart-root` the planner reads Smart from there.
+The planner reads the built HTML by the same rules (`distr/rule/rule.json`),
+resolves their dependencies and prints a deterministic list of CSS and JS files
+and the value for `window.SF_PRELOADED`. A page that passes it is ready from
+that plan alone; what is added to the page later is still found by the Loader.
+A resource the markup cannot show may be declared with
+`data-sf-require="utility.<name>|component.<name>|smart.<name>"`.
 
-Когда страница передала `window.SF_PRELOADED`, Loader считает production-план
-единственным источником готовности первого кадра и не восстанавливает список
-модулей предыдущей страницы из `localStorage`. Это устраняет межстраничную
-гонку ресурсов; динамическое обнаружение нового DOM после старта сохраняется.
-В обычном режиме без production-плана прежний кеш Loader продолжает работать.
+## Cascade layers
 
-## CSS cascade layers
-
-Utility-стили дистрибутива размещаются в слое `sf.utilities`. Это нужно, чтобы utility-классы участвовали в общей системе CSS cascade layers SF и не перекрывали компонентные стили вне ожидаемого порядка.
-
-Рекомендуемый порядок слоев для проектов:
+The Framework's CSS lives in named layers. A project that adds its own declares
+them deliberately around these:
 
 ```css
 @layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.states;
 ```
 
-Если проект добавляет свои слои, их нужно объявлять осознанно относительно слоев SF, чтобы сохранить предсказуемый приоритет utilities, components и states.
+## Upgrading
 
-## Изменения 5.3.0
+What a release renames or retires is recorded in the change journal of
+`simai/ui-source` (`contracts/changes/journal.json`), with the date the old
+name leaves. Run its `scripts/sf-upgrade.mjs` on a project to find every old
+name, rewrite what is mechanical and list the rest. Names in use are noted at
+runtime in `SF.deprecations`.
 
-- Обновлен собранный SF5-дистрибутив из sf5.webpack.
-- Добавлены component assets для `file-preview` и `link`.
-- Добавлен новый core runtime chunk `556`.
-- Обновлены core loader/rules/runtime assets, правила загрузчика и metadata.
-- Обновлены component assets для `avatars`, `country-code`, `dropdown`, `featured-icon`, `file-upload`, `inputs`, `toggle`.
+## Repository contents
 
-## Изменения 5.3.1
+- `distr/` — the distribution;
+- `contracts/` — release locks, the Framework registry and its owner inputs,
+  generated by the release;
+- `scripts/` — the release gate and its checks, and the asset planner;
+- `docs/releases/` — notes of the numbered releases before release commits;
+  [docs/documentation-source-contract.md](docs/documentation-source-contract.md)
+  describes the registry projection documentation systems read.
 
-- Добавлена единая promise-карта загрузок JS/CSS в SFLoader.
-- Параллельные relation-цепочки smart-компонентов больше не добавляют
-  одинаковые `script` и `link` повторно.
-- Ошибочная загрузка удаляется из карты, поэтому явный повтор после network
-  failure остаётся возможным.
+## Licence
 
-## Изменения 5.2.0
-
-- Обновлен собранный SF5-дистрибутив из sf5.webpack.
-- Обновлены core/component/smart/utility assets и правила загрузчика.
-- Сохранен фикс cl-table: без relation на несуществующий обычный 	able, CSS грузится из smart-слоя.
-
-## Изменения 5.1.2
-
-- Исправлено правило загрузки cl-table.
-- Убрана relation на несуществующий обычный компонент 	able.
-- CSS для sf-table теперь грузится через smart-правило cl-table.
-
-## Изменения 5.1.0
-
-- Добавлены собранные компоненты `admin-menu`, `datepicker`, `tree`, `tree-item`.
-- Обновлены smart metadata, loader/runtime assets и правила загрузчика.
-- Расширены utility-модули `flex`, `align-content`, `headers`, `transform-translate`, `transform-translate-ext`, `transition-property`.
-
-## Рекомендации для проектов
-
-- Используйте конкретный коммит выпуска (`ui-<12 знаков>`) из журнала изменений.
-- Не подключайте `@main` в production, чтобы избежать непредсказуемых обновлений.
-- При обновлении версии очищайте кеш CDN/браузера, если проект использует долгоживущий cache.
-- Для локальной поставки храните структуру `distr/` без переименования внутренних директорий.
+Apache License 2.0 ([LICENSE](LICENSE), [NOTICE](NOTICE)); code published
+before the change keeps its MIT terms, as NOTICE says. Third-party components
+are listed in [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
