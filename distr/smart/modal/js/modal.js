@@ -815,10 +815,13 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
 
   get text() {
     return this.getAttribute("text") || "";
-  }
+  } // An inline window stands in the page's flow, so it is shown without
+  // `open` until close() puts it away; it needed the attribute to show at all,
+  // while the script Modal opens an inline one by itself (owner, 2026-10-18).
+
 
   get openState() {
-    return this._isOpen || this.hasAttribute("open");
+    return this._isOpen || this.hasAttribute("open") || this.display === "inline" && !this._inlineClosed;
   }
 
   get autoload() {
@@ -1300,7 +1303,7 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
     } : options;
     const wasClosing = this._modalState === "closing";
 
-    if (this._isOpen && !wasClosing) {
+    if ((this._isOpen || this.display === "inline" && this.openState) && !wasClosing) {
       this.cancelCloseTransition();
       SfModal.bringToFront(this);
       return this;
@@ -1322,6 +1325,7 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
     }
 
     this._isOpen = true;
+    this._inlineClosed = false;
     this._animatePanel = Boolean(animate);
     this._modalState = animate && this.display !== "inline" ? "opening" : "open";
     this.syncOpenAttribute(true);
@@ -1461,6 +1465,7 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
     const wasTop = SfModal.isTopModal(this);
     this.cancelCloseTransition();
     this._isOpen = false;
+    if (this.display === "inline") this._inlineClosed = true;
     this._isHidden = false;
     this._modalState = "closed";
     this.removeAttribute("minimized");
