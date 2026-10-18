@@ -242,6 +242,9 @@
 
 ### Изменено
 
+- Changed: an inline `sf-modal` (`display="inline"`) is shown without `open`, as it stands in the page's flow; `close()` puts it away and `open()` brings it back. The script Modal already opened an inline window by itself.
+- Changed: the standard `simai.component-package` is at 1.1.0 and pins the Smart component manifest schema 2.5.0; 1.0.0 keeps its bytes under `contracts/standards/history`.
+
 - Changed: what is written inside `<sf-modal>` without a slot is the window's content, after anything slotted as `content`, as `sf-drawer` takes it; it used to be dropped, leaving an empty window.
 
 - Changed: a modal made by script (the `Modal` component class) takes `param.container`, an element or a selector, and covers that box instead of the viewport; without one, a modal opened from inside a `data-sf-overlay-container` covers that box. The page stays scrollable in both cases, as for `sf-modal`.
