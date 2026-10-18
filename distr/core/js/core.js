@@ -5273,6 +5273,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _regions_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("68efac8c1b57");
+/* harmony import */ var _schema_name_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("ac24888e7d3e");
+
 
 
 const inlineContentSchema = {
@@ -5342,7 +5344,7 @@ const emptyObjectSchema = {
 
 const BUILTIN_TYPE_MANIFESTS = Object.freeze([
   {
-    schema: 'simai.composition.type-manifest.v1',
+    ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_1__.schemaFields)('simai.composition.type-manifest', 1),
     type: 'layout.page',
     version: '1.0.0',
     category: 'layout',
@@ -5359,7 +5361,7 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
     capabilities: ['html'],
   },
   {
-    schema: 'simai.composition.type-manifest.v1',
+    ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_1__.schemaFields)('simai.composition.type-manifest', 1),
     type: 'layout.section',
     version: '1.0.0',
     category: 'layout',
@@ -5380,7 +5382,7 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
     capabilities: ['html'],
   },
   {
-    schema: 'simai.composition.type-manifest.v1',
+    ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_1__.schemaFields)('simai.composition.type-manifest', 1),
     type: 'layout.columns',
     version: '1.0.0',
     category: 'layout',
@@ -5403,7 +5405,7 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
     capabilities: ['html'],
   },
   {
-    schema: 'simai.composition.type-manifest.v1',
+    ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_1__.schemaFields)('simai.composition.type-manifest', 1),
     type: 'content.heading',
     version: '1.0.0',
     category: 'content',
@@ -5426,7 +5428,7 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
     capabilities: ['html', 'rich-text'],
   },
   {
-    schema: 'simai.composition.type-manifest.v1',
+    ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_1__.schemaFields)('simai.composition.type-manifest', 1),
     type: 'content.paragraph',
     version: '1.0.0',
     category: 'content',
@@ -5446,7 +5448,7 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
     capabilities: ['html', 'rich-text'],
   },
   {
-    schema: 'simai.composition.type-manifest.v1',
+    ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_1__.schemaFields)('simai.composition.type-manifest', 1),
     type: 'layout.regions',
     version: '1.0.0',
     category: 'layout',
@@ -5463,7 +5465,7 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
     capabilities: ['html', 'regions'],
   },
   {
-    schema: 'simai.composition.type-manifest.v1',
+    ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_1__.schemaFields)('simai.composition.type-manifest', 1),
     type: 'layout.region',
     version: '1.0.0',
     category: 'layout',
@@ -5493,7 +5495,7 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
     assets: [],
     capabilities: ['html', 'regions'],
   },  {
-    schema: 'simai.composition.type-manifest.v1',
+    ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_1__.schemaFields)('simai.composition.type-manifest', 1),
     type: 'layout.scope',
     version: '1.0.0',
     category: 'layout',
@@ -5542,7 +5544,7 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
 // their overlay of ui-source.
 const BUILTIN_PORT_MANIFESTS = Object.freeze([
   {
-    schema: 'simai.composition.port-manifest.v1',
+    ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_1__.schemaFields)('simai.composition.port-manifest', 1),
     element: 'sf-table',
     version: '1.0.0',
     component: 'smart.data-view',
@@ -5569,7 +5571,7 @@ const BUILTIN_PORT_MANIFESTS = Object.freeze([
 
 const BUILTIN_EDITOR_MANIFESTS = Object.freeze([
   {
-    schema: 'simai.composition.editor-manifest.v1',
+    ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_1__.schemaFields)('simai.composition.editor-manifest', 1),
     type: 'layout.section',
     type_version: '1.0.0',
     fields: [
@@ -5592,7 +5594,7 @@ const BUILTIN_EDITOR_MANIFESTS = Object.freeze([
     ],
   },
   {
-    schema: 'simai.composition.editor-manifest.v1',
+    ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_1__.schemaFields)('simai.composition.editor-manifest', 1),
     type: 'layout.columns',
     type_version: '1.0.0',
     fields: [
@@ -5614,7 +5616,7 @@ const BUILTIN_EDITOR_MANIFESTS = Object.freeze([
     ],
   },
   {
-    schema: 'simai.composition.editor-manifest.v1',
+    ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_1__.schemaFields)('simai.composition.editor-manifest', 1),
     type: 'content.heading',
     type_version: '1.0.0',
     fields: [
@@ -5635,7 +5637,7 @@ const BUILTIN_EDITOR_MANIFESTS = Object.freeze([
       },
     ],
   },  {
-    schema: 'simai.composition.editor-manifest.v1',
+    ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_1__.schemaFields)('simai.composition.editor-manifest', 1),
     type: 'layout.region',
     type_version: '1.0.0',
     fields: [
@@ -5999,6 +6001,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   validateFieldValue: () => (/* binding */ validateFieldValue)
 /* harmony export */ });
 /* harmony import */ var _canonical_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("6f489cc65b77");
+/* harmony import */ var _schema_name_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("ac24888e7d3e");
+
 
 
 // Editor field kinds. A kind is derived from the exact host Property identity
@@ -6012,7 +6016,7 @@ const INTEGER_TEXT = /^-?(?:0|[1-9][0-9]*)$/u;
 
 const BUILTIN_FIELD_KINDS = Object.freeze([
   {
-    schema: 'simai.composition.editor-field-kind.v1',
+    ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_1__.schemaFields)('simai.composition.editor-field-kind', 1),
     kind: 'choice',
     version: 1,
     status: 'formalized-existing',
@@ -6028,7 +6032,7 @@ const BUILTIN_FIELD_KINDS = Object.freeze([
     server_fallback: { element: 'select', value: 'option value', enhanced_control: 'sf-dropdown' },
   },
   {
-    schema: 'simai.composition.editor-field-kind.v1',
+    ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_1__.schemaFields)('simai.composition.editor-field-kind', 1),
     kind: 'integer',
     version: 1,
     status: 'formalized-existing',
@@ -6044,7 +6048,7 @@ const BUILTIN_FIELD_KINDS = Object.freeze([
     server_fallback: { element: 'input', type: 'number', attributes: ['min', 'max', 'step=1', 'inputmode=numeric'], enhanced_control: 'sf-input' },
   },
   {
-    schema: 'simai.composition.editor-field-kind.v1',
+    ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_1__.schemaFields)('simai.composition.editor-field-kind', 1),
     kind: 'text',
     version: 1,
     status: 'new',
@@ -6060,7 +6064,7 @@ const BUILTIN_FIELD_KINDS = Object.freeze([
     server_fallback: { element: 'input', type: 'text', attributes: ['maxlength', 'dir=auto'], enhanced_control: 'sf-input' },
   },
   {
-    schema: 'simai.composition.editor-field-kind.v1',
+    ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_1__.schemaFields)('simai.composition.editor-field-kind', 1),
     kind: 'toggle',
     version: 1,
     status: 'new',
@@ -6267,7 +6271,7 @@ function renderFieldFallback(field, { instance, messages = {} } = {}) {
 }
 
 function fieldKindRegistry() {
-  return JSON.parse((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.stableStringify)({ schema: 'simai.composition.editor-field-kind-registry.v1', entries: BUILTIN_FIELD_KINDS }));
+  return JSON.parse((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.stableStringify)({ ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_1__.schemaFields)('simai.composition.editor-field-kind-registry', 1), entries: BUILTIN_FIELD_KINDS }));
 }
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ BUILTIN_FIELD_KINDS, applyFieldValue, parseFieldSubmission, renderFieldFallback, resolveFieldKind, validateFieldKinds, validateFieldValue });
@@ -6820,7 +6824,7 @@ function compositionTypeFromSmartManifest(manifest) {
     }
     : undefined;
   return {
-    schema: 'simai.composition.type-manifest.v1',
+    ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_2__.schemaFields)('simai.composition.type-manifest', 1),
     type: declaration.type,
     version: manifest.version,
     category: 'smart',
@@ -7286,11 +7290,21 @@ __webpack_require__.r(__webpack_exports__);
 
 
 // Readers take either form of a format name (simai.composition.recipe.v1, or
-// simai.composition.recipe with schema_version 1): schema-name.mjs. The labels
-// below are what this module writes.
-const INPUTS_SCHEMA = 'simai.composition.inputs.v1';
-const DEPENDENCIES_SCHEMA = 'simai.composition.dependencies.v1';
+// simai.composition.recipe with schema_version 1): schema-name.mjs. Writers
+// emit the new form. The resolved Document and its dependency receipt take
+// the form of the recipe they came from: a recipe in the older form resolves
+// to a simai.composition.document.v1 Document and a
+// simai.composition.dependencies.v1 receipt, as Recipe 1.0.1 fixes
+// (fixtures/header-switch.json, whose expected Document, receipt and
+// documentDigest are published bytes); a recipe named without a version
+// resolves to a Document and a receipt named without one.
 const CANONICALIZATION = 'simai.recipe.canonical-json.v1';
+
+function namedLike(recipe, name) {
+  return (0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_1__.readSchema)(recipe)?.form === 'name' ? (0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_1__.schemaFields)(name, 1) : { schema: `${name}.v1` };
+}
+
+const documentSchemaFor = (recipe) => namedLike(recipe, 'simai.composition.document');
 const SAFE_INTEGER_MIN = -9007199254740991;
 const SAFE_INTEGER_MAX = 9007199254740991;
 
@@ -7620,7 +7634,7 @@ async function resolveRecipe(recipe, context = {}) {
     if (Object.keys(recipe.inputs || {}).length > limits.maxInputs) throw Object.assign(new RangeError('Input limit exceeded'), { code: 'limit_exceeded', sourcePath: '/inputs' });
     const scope = context.trustedContext?.scope;
     if (typeof scope !== 'string' || !scope) throw Object.assign(new TypeError('Trusted scope is required'), { code: 'invalid_value', sourcePath: '/trustedContext/scope' });
-    const inputsEnvelope = context.inputs || { schema: INPUTS_SCHEMA, scope, values: {} };
+    const inputsEnvelope = context.inputs || { ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_1__.schemaFields)('simai.composition.inputs', 1), scope, values: {} };
     assertCanonicalValue(inputsEnvelope, '/inputs');
     assertFields(inputsEnvelope, INPUT_ENVELOPE_FIELDS, '/inputs');
     if (!(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_1__.isSchema)(inputsEnvelope, 'simai.composition.inputs', 1) || inputsEnvelope.scope !== scope) throw Object.assign(new TypeError('Input scope mismatch'), { code: 'input_origin_mismatch', sourcePath: '/inputs' });
@@ -7826,7 +7840,7 @@ async function resolveRecipe(recipe, context = {}) {
 
     const root = await expand(recipe.root, { parameters: new Map(), callSlots: {}, slotDefaults: {}, segments: [] }, '/root');
     if (Array.isArray(root)) throw Object.assign(new Error('Root must resolve to one node'), { code: 'invalid_resolved_document', sourcePath: '/root' });
-    const document = { schema: 'simai.composition.document.v1', id: recipe.id, profile: recipe.profile, ...(recipe.locale ? { locale: recipe.locale } : {}), root };
+    const document = { ...documentSchemaFor(recipe), id: recipe.id, profile: recipe.profile, ...(recipe.locale ? { locale: recipe.locale } : {}), root };
     const outputDepth = (node) => 1 + Math.max(0, ...Object.values(node.slots || {}).flat().map(outputDepth));
     if (outputDepth(root) > limits.maxOutputDepth) throw Object.assign(new RangeError('Output depth limit exceeded'), { code: 'limit_exceeded', sourcePath: '/root' });
     const outputBytes = utf8Size(document);
@@ -7837,7 +7851,7 @@ async function resolveRecipe(recipe, context = {}) {
     const executionContract = context.executionContract;
     if (!executionContract?.contractDigest || !executionContract?.registryDigest || !executionContract?.rendererDigest) throw Object.assign(new Error('Execution contract is required'), { code: 'invalid_value', sourcePath: '/executionContract' });
     const dependencyReceipt = {
-      schema: DEPENDENCIES_SCHEMA,
+      ...namedLike(recipe, 'simai.composition.dependencies'),
       scope,
       recipeDigest: recipeHash,
       documentDigest: `sha256:${normalized.digest}`,
