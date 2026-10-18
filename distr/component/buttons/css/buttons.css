@@ -1542,6 +1542,7 @@
     --sf-button-text-container--line-height: var(--sf-text-height-1);
   }
   .sf-button.sf-button--size-1.sf-button--default.sf-button--error .sf-button-text-container,
+  .sf-button.sf-button--size-1.sf-button--tonal.sf-button--error .sf-button-text-container,
   .sf-button.sf-button--size-1.sf-button--outline.sf-button--error .sf-button-text-container {
     --sf-button-text-container--font-size: var(--sf-text-size-1);
     --sf-button-text-container--line-height: var(--sf-text-height-1);
@@ -1587,14 +1588,19 @@
     --sf-button-text-container--font-weight: var(--sf-font-weight-medium);
   }
   .sf-button.sf-button--size-1.sf-button--default.sf-button--error .sf-button-text-container,
+  .sf-button.sf-button--size-1.sf-button--tonal.sf-button--error .sf-button-text-container,
   .sf-button.sf-button--size-1.sf-button--outline.sf-button--error .sf-button-text-container,
   .sf-button.sf-button--size-2.sf-button--default.sf-button--error .sf-button-text-container,
+  .sf-button.sf-button--size-2.sf-button--tonal.sf-button--error .sf-button-text-container,
   .sf-button.sf-button--size-2.sf-button--outline.sf-button--error .sf-button-text-container,
   .sf-button.sf-button--size-3.sf-button--default.sf-button--error .sf-button-text-container,
+  .sf-button.sf-button--size-3.sf-button--tonal.sf-button--error .sf-button-text-container,
   .sf-button.sf-button--size-3.sf-button--outline.sf-button--error .sf-button-text-container,
   .sf-button.sf-button--size-1\/2.sf-button--default.sf-button--error .sf-button-text-container,
+  .sf-button.sf-button--size-1\/2.sf-button--tonal.sf-button--error .sf-button-text-container,
   .sf-button.sf-button--size-1\/2.sf-button--outline.sf-button--error .sf-button-text-container,
   .sf-button.sf-button--size-1\/3.sf-button--default.sf-button--error .sf-button-text-container,
+  .sf-button.sf-button--size-1\/3.sf-button--tonal.sf-button--error .sf-button-text-container,
   .sf-button.sf-button--size-1\/3.sf-button--outline.sf-button--error .sf-button-text-container {
     --sf-button-text-container--font-family: var(--sf-text--family);
     --sf-button-text-container--font-weight: var(--sf-font-weight-medium);
@@ -1654,6 +1660,7 @@
     --sf-button-text-container--line-height: var(--sf-text-height-2);
   }
   .sf-button.sf-button--size-2.sf-button--default.sf-button--error .sf-button-text-container,
+  .sf-button.sf-button--size-2.sf-button--tonal.sf-button--error .sf-button-text-container,
   .sf-button.sf-button--size-2.sf-button--outline.sf-button--error .sf-button-text-container {
     --sf-button-text-container--font-size: var(--sf-text-size-2);
     --sf-button-text-container--line-height: var(--sf-text-height-2);
@@ -1667,6 +1674,7 @@
     --sf-button-text-container--line-height: var(--sf-text-height-3);
   }
   .sf-button.sf-button--size-3.sf-button--default.sf-button--error .sf-button-text-container,
+  .sf-button.sf-button--size-3.sf-button--tonal.sf-button--error .sf-button-text-container,
   .sf-button.sf-button--size-3.sf-button--outline.sf-button--error .sf-button-text-container {
     --sf-button-text-container--font-size: var(--sf-text-size-3);
     --sf-button-text-container--line-height: var(--sf-text-height-3);
@@ -1680,6 +1688,7 @@
     --sf-button-text-container--line-height: var(--sf-text-height-1\/2);
   }
   .sf-button.sf-button--size-1\/2.sf-button--default.sf-button--error .sf-button-text-container,
+  .sf-button.sf-button--size-1\/2.sf-button--tonal.sf-button--error .sf-button-text-container,
   .sf-button.sf-button--size-1\/2.sf-button--outline.sf-button--error .sf-button-text-container {
     --sf-button-text-container--font-size: var(--sf-text-size-1\/2);
     --sf-button-text-container--line-height: var(--sf-text-height-1\/2);
@@ -1693,6 +1702,7 @@
     --sf-button-text-container--line-height: var(--sf-text-height-1\/3);
   }
   .sf-button.sf-button--size-1\/3.sf-button--default.sf-button--error .sf-button-text-container,
+  .sf-button.sf-button--size-1\/3.sf-button--tonal.sf-button--error .sf-button-text-container,
   .sf-button.sf-button--size-1\/3.sf-button--outline.sf-button--error .sf-button-text-container {
     --sf-button-text-container--font-size: var(--sf-text-size-1\/3);
     --sf-button-text-container--line-height: var(--sf-text-height-1\/3);
@@ -1726,7 +1736,8 @@
   .sf-button.sf-button--outline.sf-button--error:not(:disabled):not(.disabled):focus-visible {
     --sf-button--background-color: var(--sf-transparent-for-focus);
   }
-  .sf-button.sf-button--default.sf-button--error:disabled {
+  .sf-button.sf-button--default.sf-button--error:disabled,
+  .sf-button.sf-button--tonal.sf-button--error:disabled {
     --sf-button--background-color: var(--sf-disable);
   }
   .sf-button.sf-button--link.sf-button--error:disabled .sf-button-text-container {
@@ -1736,6 +1747,7 @@
     --sf-button-text-container--color: var(--sf-on-disable);
   }
   .sf-button.sf-button--default.sf-button--error:disabled .sf-button-text-container,
+  .sf-button.sf-button--tonal.sf-button--error:disabled .sf-button-text-container,
   .sf-button.sf-button--outline.sf-button--error:disabled .sf-button-text-container {
     --sf-button-text-container--color: var(--sf-on-disable);
   }
@@ -1850,17 +1862,19 @@
        on a transparent link or outline, and in either theme without shouting
        over the label. */
     --sf-button-loading-stripe: var(--sf-alpha-8);
+    /* sf-button-state-loading is the documented state class; the generic
+       `loading` beside it is kept for existing markup. */
   }
   .sf-button > * {
     position: relative;
     z-index: 1;
   }
-  .sf-button.loading {
+  .sf-button.loading, .sf-button.sf-button-state-loading {
     pointer-events: none;
     position: relative;
     overflow: hidden;
   }
-  .sf-button.loading::after {
+  .sf-button.loading::after, .sf-button.sf-button-state-loading::after {
     content: "";
     position: absolute;
     top: -50%;
@@ -1903,7 +1917,8 @@
     .sf-icon-button {
       transition-duration: 0s;
     }
-    .sf-button.loading::after {
+    .sf-button.loading::after,
+    .sf-button.sf-button-state-loading::after {
       -webkit-animation: none;
               animation: none;
     }

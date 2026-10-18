@@ -1487,12 +1487,12 @@
     position: relative;
     z-index: 1;
   }
-  .sf-icon-button.loading {
+  .sf-icon-button.loading, .sf-icon-button.sf-icon-button-state-loading {
     pointer-events: none;
     position: relative;
     overflow: hidden;
   }
-  .sf-icon-button.loading::after {
+  .sf-icon-button.loading::after, .sf-icon-button.sf-icon-button-state-loading::after {
     content: "";
     position: absolute;
     top: -50%;
@@ -1527,7 +1527,8 @@
     }
   }
   @media (prefers-reduced-motion: reduce) {
-    .sf-icon-button.loading::after {
+    .sf-icon-button.loading::after,
+    .sf-icon-button.sf-icon-button-state-loading::after {
       -webkit-animation: none;
               animation: none;
     }

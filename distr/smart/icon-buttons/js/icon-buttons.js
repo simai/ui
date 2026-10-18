@@ -393,6 +393,7 @@ lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
 
 
+const ICON_BUTTON_SIZES = new Set(['1/3', '1/2', '1', '2', '3']);
 function renderIconButtonTemplate(context) {
   const {
     size,
@@ -413,7 +414,10 @@ function renderIconButtonTemplate(context) {
     nativeType,
     ariaLabel
   } = context;
-  const rootClasses = ['sf-icon-button', `sf-icon-button--size-${size || '1'}`, `sf-icon-button--${kind ?? variant ?? 'icon'}`, `sf-icon-button--${appearance || type || 'default'}`, 'flex', 'items-cross-center', segment ? `segment-${segment}` : '', // One colour name, as the styles expect: the status when one is set, the
+  const rootClasses = ['sf-icon-button', // The sizes the icon button draws; a close may be smaller (1/4, the
+  // closable tag's), and then sf-close sizes it alone: the class it got
+  // here had no rule (documentation trial 6, 2026-10-18).
+  ICON_BUTTON_SIZES.has(size || '1') ? `sf-icon-button--size-${size || '1'}` : '', `sf-icon-button--${kind ?? variant ?? 'icon'}`, `sf-icon-button--${appearance || type || 'default'}`, 'flex', 'items-cross-center', segment ? `segment-${segment}` : '', // One colour name, as the styles expect: the status when one is set, the
   // scheme otherwise. A status says what the control is about -- an error
   // for something destructive -- and a scheme says which colour family it
   // takes; they cannot both paint it.

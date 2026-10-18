@@ -132,6 +132,10 @@ const BUTTON_APPEARANCES = ["default", "tonal", "outline", "link", "surface"];
 const APPEARANCE_ALIASES = {
   ghost: "link"
 };
+const STATUS_ALIASES = {
+  danger: "error",
+  critical: "error"
+};
 
 class SfButton extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()) {
   constructor() {
@@ -262,10 +266,27 @@ class SfButton extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default
 
   get scheme() {
     return this.getAttribute("scheme") || "primary";
-  }
+  } // danger and critical are the shared vocabulary's old names for error
+  // (journal value-status-danger-critical-to-error). The button dropped them and
+  // drew a primary button, so a destructive control written that way looked
+  // like a safe one (documentation trial 6, 2026-10-18).
+
 
   get status() {
-    return this.getAttribute("status") || "";
+    const value = this.getAttribute("status") || "";
+
+    if (STATUS_ALIASES[value]) {
+      (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_4__.noteDeprecated)({
+        component: this.localName,
+        kind: 'value',
+        attribute: 'status',
+        from: value,
+        to: STATUS_ALIASES[value]
+      });
+      return STATUS_ALIASES[value];
+    }
+
+    return value;
   }
 
   get text() {
@@ -284,10 +305,22 @@ class SfButton extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default
 
 
   get iconLeft() {
+    if (this.hasAttribute('icon-left')) (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_4__.noteDeprecated)({
+      component: this.localName,
+      kind: 'attribute',
+      from: 'icon-left',
+      to: 'icon-start'
+    });
     return this.getAttribute('icon-start') ?? this.getAttribute('icon-left');
   }
 
   get iconRight() {
+    if (this.hasAttribute('icon-right')) (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_4__.noteDeprecated)({
+      component: this.localName,
+      kind: 'attribute',
+      from: 'icon-right',
+      to: 'icon-end'
+    });
     return this.getAttribute('icon-end') ?? this.getAttribute('icon-right');
   }
 
@@ -301,6 +334,17 @@ class SfButton extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default
 
   get iconPosition() {
     return this.getAttribute("icon-position") || "start";
+  } // Notes the legacy attribute names the template reads without a getter.
+
+
+  noteLegacyNames() {
+    if (this.hasAttribute('tightness')) (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_4__.noteDeprecated)({
+      component: this.localName,
+      kind: 'attribute',
+      from: 'tightness',
+      to: 'spacing'
+    });
+    return {};
   }
 
   get tightness() {
@@ -353,10 +397,15 @@ class SfButton extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default
       // A legacy appearance reaches the template under its current name, as the
       // getter reports it (journal value-button-ghost-to-link).
       appearance: props.appearance === 'ghost' ? 'link' : props.appearance,
+      // Through the getter, which reads the legacy names and notes them: the
+      // props context knows only the current values (danger and critical
+      // fell to no status there).
+      status: this.status,
       ...(0,_core_js_control_spacing__WEBPACK_IMPORTED_MODULE_3__.resolveControlSpacing)({
         spacing: this.getAttribute('spacing'),
         tightness: this.getAttribute('tightness')
       }),
+      ...this.noteLegacyNames?.(),
       component: this
     });
   }
