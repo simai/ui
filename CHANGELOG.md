@@ -8,6 +8,14 @@
 
 ### Исправлено
 
+- Fixed: classes on inline SVG (`svg`, `g` and the shapes) load their utilities: `svg-*`, `fill-*`, `stroke-*`; the Loader used to skip `svg`, `path` and `g`.
+- Fixed: a tonal error button (`sf-button--tonal sf-button--error`) takes the type and height of its size and the disabled look; `sf-button-state-loading` and `sf-icon-button-state-loading` draw the loading stripes.
+- Fixed: `sf-button` reads `status="danger"` and `status="critical"` as `error` and notes them in `SF.deprecations`, as it now notes `icon-left`, `icon-right` and `tightness`.
+- Fixed: `sf-datepicker` opens the week on any day, 0 (Sunday) to 6 (Saturday), by `week-start` or the page language (a Saturday-first locale got Monday).
+- Fixed: an icon button sets a size class only for the sizes it draws (the closable tag's close is sized by `sf-close`).
+- Changed: a role `--sf-surface-inverse-hover`; the carousel reads it instead of palette tones.
+- Changed: the public JS API contract says when each name exists: the Loader's names (`SF.Loader`, `SF.create`, `SF.whenDefined`, `SF.loadSmartBase`, ...) at `sf-loader-init` (`core-loader`), not right after `core.js`. The `sfPath` warning names a released commit instead of a tag.
+
 - Fixed: the composition modules shipped as source (`core/js/composition/*.mjs`) imported files the distribution did not hold (`schema-name.mjs`; `page-language.js` for inline-editor, overlay and sortable); they ship together now, and the build checks every such import. The runtime's own names on `window.SF` (`send`, `receive`, `runtimeModules`, `runtimeArrived`, `runtimeLoading`, `runtimeSettled`, `smartBaseAnnounced`, `litHtml`) live under `SF.__internal`, the old names noted as deprecated until 2026-12-01.
 
 - A record field with many values (`choices`) wraps them, and no tag shrinks below its text.
