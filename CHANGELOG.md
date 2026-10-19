@@ -8,6 +8,10 @@
 
 ### Исправлено
 
+- Fixed: `--sf-on-surface-container--variant` is neutral-35 (light) and neutral-80 (dark) and holds 4.5:1 on a container fill over any of the surfaces 0 to 3; the 40/70 pair fell to 4.25:1 over the brighter surfaces (simai/ui-source#3). The `bg-surface-container` utility switches the dimmed role over it, as `elevation-N` does.
+- Fixed: initials in an avatar inside a tag take the primary role; two container fills stacked measured 3.6:1 in the dark theme (simai/ui-source#1).
+- Fixed: `sf-quantity`'s steppers no longer flash the browser's grey button before the icon-button styles apply (simai/ui-source#2).
+
 - Fixed: dimmed text on a container fill reads in the dark theme. A new role `--sf-on-surface-container--variant` (light neutral-40, dark neutral-70), and every component that lays `--sf-surface-container` under its content (avatar initials, tags, alerts, accordion, inputs, file preview, kbd and others) redefines `--sf-on-surface-variant` for it: neutral-60 there measured 4.0:1 over the page and 3.5:1 over surface-1, short of 4.5:1.
 - Fixed: `sf-quantity` loads the icon-button styles of its steppers on a page planned from markup alone.
 
