@@ -8,6 +8,9 @@
 
 ### Исправлено
 
+- Fixed: dimmed text on a container fill reads in the dark theme. A new role `--sf-on-surface-container--variant` (light neutral-40, dark neutral-70), and every component that lays `--sf-surface-container` under its content (avatar initials, tags, alerts, accordion, inputs, file preview, kbd and others) redefines `--sf-on-surface-variant` for it: neutral-60 there measured 4.0:1 over the page and 3.5:1 over surface-1, short of 4.5:1.
+- Fixed: `sf-quantity` loads the icon-button styles of its steppers on a page planned from markup alone.
+
 - Fixed: classes on inline SVG (`svg`, `g` and the shapes) load their utilities: `svg-*`, `fill-*`, `stroke-*`; the Loader used to skip `svg`, `path` and `g`.
 - Fixed: a tonal error button (`sf-button--tonal sf-button--error`) takes the type and height of its size and the disabled look; `sf-button-state-loading` and `sf-icon-button-state-loading` draw the loading stripes.
 - Fixed: `sf-button` reads `status="danger"` and `status="critical"` as `error` and notes them in `SF.deprecations`, as it now notes `icon-left`, `icon-right` and `tightness`.
