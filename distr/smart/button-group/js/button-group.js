@@ -2,6 +2,46 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "67eed2647f47"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   bindFormReset: () => (/* binding */ bindFormReset)
+/* harmony export */ });
+// Reset fires before the browser restores default values. Synchronize afterwards
+// without synthesizing input/change events or retaining detached controls.
+const subscriptions = new WeakMap();
+const listeningDocuments = new WeakSet();
+function bindFormReset(input, synchronize) {
+  const doc = input.ownerDocument;
+
+  if (!listeningDocuments.has(doc)) {
+    doc.addEventListener('reset', event => {
+      const form = event.target;
+      if (form?.tagName !== 'FORM') return;
+      const controls = Array.from(form.elements);
+      setTimeout(() => {
+        if (event.defaultPrevented) return;
+
+        for (const control of controls) {
+          if (!control.isConnected || control.form !== form) continue;
+
+          for (const callback of subscriptions.get(control) || []) callback();
+        }
+      }, 0);
+    }, true);
+    listeningDocuments.add(doc);
+  }
+
+  let callbacks = subscriptions.get(input);
+  if (!callbacks) subscriptions.set(input, callbacks = new Set());
+  callbacks.add(synchronize);
+  return () => callbacks.delete(synchronize);
+}
+
+/***/ },
+
 /***/ "18333410c461"
 (module, __webpack_exports__, __webpack_require__) {
 
@@ -14,13 +54,46 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("fbe0570fcc69");
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("2c8db2795ace");
 /* harmony import */ var _core_js_control_spacing__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("2feae72af89f");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _js_templates_default__WEBPACK_IMPORTED_MODULE_1__, _core_js_control_spacing__WEBPACK_IMPORTED_MODULE_2__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _js_templates_default__WEBPACK_IMPORTED_MODULE_1__, _core_js_control_spacing__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _component_form_reset_helper__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("67eed2647f47");
+/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("0d662e4d7d63");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _js_templates_default__WEBPACK_IMPORTED_MODULE_1__, _core_js_control_spacing__WEBPACK_IMPORTED_MODULE_2__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_4__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _js_templates_default__WEBPACK_IMPORTED_MODULE_1__, _core_js_control_spacing__WEBPACK_IMPORTED_MODULE_2__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_control_spacing__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_control_spacing__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language__WEBPACK_IMPORTED_MODULE_4__);
 
 
 
+
+ // The theme switch's own words: the three Loader preferences, and the group's
+// name when the page gives none.
+
+const THEME_SWITCH_TEXT = {
+  en: {
+    group: 'Theme',
+    system: 'System',
+    light: 'Light',
+    dark: 'Dark'
+  },
+  ru: {
+    group: 'Тема',
+    system: 'Как в системе',
+    light: 'Светлая',
+    dark: 'Тёмная'
+  }
+};
+const THEME_PREFERENCES = ['system', 'light', 'dark'];
+const THEME_ICONS = {
+  system: 'brightness_auto',
+  light: 'light_mode',
+  dark: 'dark_mode'
+}; // The Loader's theme preference: what the person chose, not the theme drawn,
+// so system stays selected while the system is dark.
+
+function themePreference() {
+  const preference = globalThis.SF?.Loader?.themePreference;
+  return THEME_PREFERENCES.includes(preference) ? preference : 'system';
+}
 
 function parseItems(value = []) {
   if (Array.isArray(value)) return value;
@@ -91,6 +164,17 @@ class SfButtonGroup extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___de
       value: {
         default: ''
       },
+      // A form field name: the group submits its value with its form.
+      name: {
+        default: ''
+      },
+      // The theme switch: the group draws its own three items (system, light,
+      // dark), selects the Loader's theme preference and sets it on change.
+      themeSwitch: {
+        attribute: 'theme-switch',
+        type: Boolean,
+        default: false
+      },
       size: {
         default: '1',
         values: ['1/3', '1/2', '1', '2', '3']
@@ -124,6 +208,11 @@ class SfButtonGroup extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___de
         type: Boolean,
         default: false
       },
+      // The corner radius, as on sf-button: empty is the UI radius.
+      radius: {
+        default: '',
+        values: ['', 'default', 'square', 'rounded']
+      },
       orientation: {
         default: 'horizontal',
         values: ['horizontal', 'vertical']
@@ -155,8 +244,21 @@ class SfButtonGroup extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___de
     });
   }
 
+  get themeSwitch() {
+    return this.getBooleanAttr('theme-switch', false);
+  }
+
+  get themeItems() {
+    return THEME_PREFERENCES.map(value => ({
+      value,
+      label: (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_4__.pageText)(THEME_SWITCH_TEXT, value, this),
+      icon: THEME_ICONS[value],
+      iconOnly: true
+    }));
+  }
+
   get normalizedItems() {
-    const items = normalizeItems(this.getProp('items'));
+    const items = normalizeItems(this.themeSwitch ? this.themeItems : this.getProp('items'));
     const firstEnabledIndex = items.findIndex(item => !item.disabled);
     return items.map((item, index) => ({ ...item,
       firstEnabled: index === firstEnabledIndex
@@ -180,8 +282,47 @@ class SfButtonGroup extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___de
     return this.getBooleanAttr('disabled', false);
   }
 
+  get name() {
+    return this.getAttribute('name') || '';
+  }
+
+  connectedCallback() {
+    // The value a form reset returns to: the one the group was written with.
+    if (!Object.prototype.hasOwnProperty.call(this, '_resetValue')) this._resetValue = this.value;
+    super.connectedCallback();
+  }
+
+  onConnected() {
+    window.addEventListener('sf-theme-change', this.handleThemeChange);
+    this.syncThemePreference();
+  }
+
+  onDisconnected() {
+    window.removeEventListener('sf-theme-change', this.handleThemeChange);
+    this._releaseReset?.();
+    this._releaseReset = null;
+    this._resetInput = null;
+    super.onDisconnected();
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    super.attributeChangedCallback(name, oldValue, newValue);
+    if (name === 'theme-switch' && oldValue !== newValue && this._isMounted) this.syncThemePreference();
+  } // A theme switch shows the preference wherever it was set: here, another
+  // switch, a Theme component button or SF.Loader.setTheme itself.
+
+
+  syncThemePreference() {
+    if (!this.themeSwitch) return;
+    const preference = themePreference();
+    if (this.value !== preference) this.value = preference;
+  }
+
+  handleThemeChange = () => this.syncThemePreference();
+
   templateContext() {
     return this.createTemplateContext({ ...this.getPropsContext(),
+      ariaLabel: this.getAttribute('aria-label') || (this.themeSwitch ? (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_4__.pageText)(THEME_SWITCH_TEXT, 'group', this) : ''),
       ...(0,_core_js_control_spacing__WEBPACK_IMPORTED_MODULE_2__.resolveControlSpacing)({
         spacing: this.getAttribute('spacing'),
         tightness: this.getAttribute('tightness')
@@ -220,7 +361,14 @@ class SfButtonGroup extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___de
       return this;
     }
 
-    const previous = this.value;
+    const previous = this.value; // A theme switch sets the Loader's preference first, so a listener of
+    // change already finds the page in the theme it chose; a Loader that cannot
+    // change the theme (absent, or SF_BOOT_CONFIG.theme false) selects nothing.
+
+    if (this.themeSwitch && globalThis.SF?.Loader?.setTheme?.(value) !== true) {
+      return this;
+    }
+
     this.value = value;
     this.emitValueChange({
       previous,
@@ -232,6 +380,21 @@ class SfButtonGroup extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___de
 
   afterRender() {
     this.syncButtonSemantics();
+    this.bindReset();
+  } // Form participation as every Smart field does it: a hidden input carries
+  // the name and value (and is disabled with the group), and a form reset
+  // brings back the value the group was written with.
+
+
+  bindReset() {
+    const input = this.querySelector(':scope > .sf-button-group-input');
+    if (this._resetInput === input) return;
+    this._releaseReset?.();
+    this._resetInput = input;
+    this._releaseReset = input ? (0,_component_form_reset_helper__WEBPACK_IMPORTED_MODULE_3__.bindFormReset)(input, () => {
+      if (this.themeSwitch) return;
+      this.value = this._resetValue;
+    }) : null;
   }
 
   syncButtonSemantics() {
@@ -253,7 +416,8 @@ class SfButtonGroup extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___de
   }
 
   clear() {
-    if (!this.value || this.disabled) return this;
+    // A theme preference is never empty.
+    if (!this.value || this.disabled || this.themeSwitch) return this;
     const previous = this.value;
     this.value = '';
     this.emitValueChange({
@@ -373,7 +537,7 @@ function renderSegment(item, context) {
 
 function renderButtonGroupTemplate(context) {
   const segmented = context.appearance === 'segmented';
-  const classes = ['sf-button-group', segmented ? 'sf-button-group--segmented' : '', segmented ? `sf-button-group--size-${context.size}` : '', segmented && context.plate === 'raised' ? 'sf-button-group--plate-raised' : '', segmented ? `sf-button-group--${context.scheme}` : '', segmented && context.fullWidth ? 'sf-button-group--full-width' : '', context.rootClass].filter(Boolean).join(' ');
+  const classes = ['sf-button-group', segmented ? 'sf-button-group--segmented' : '', segmented ? `sf-button-group--size-${context.size}` : '', segmented && context.plate === 'raised' ? 'sf-button-group--plate-raised' : '', segmented ? `sf-button-group--${context.scheme}` : '', segmented && context.fullWidth ? 'sf-button-group--full-width' : '', context.radius ? `sf-button-group--radius-${context.radius}` : '', context.rootClass].filter(Boolean).join(' ');
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
     <div
       class=${classes}
@@ -385,6 +549,7 @@ function renderButtonGroupTemplate(context) {
     >
       ${context.items.map((item, index) => segmented ? renderSegment(item, context) : renderItem(item, index, context))}
     </div>
+    ${context.name ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<input class="sf-button-group-input" type="hidden" name=${context.name} value=${context.value || ''} ?disabled=${context.disabled}>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
   `;
 }
 __webpack_async_result__();
@@ -403,6 +568,13 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 (module) {
 
 module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("lit") : new Promise((resolve) => globalThis.addEventListener("sf-runtime-ready", () => resolve(globalThis.SF.runtimeModule("lit")), { once: true })));
+
+/***/ },
+
+/***/ "0d662e4d7d63"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("page-language") : new Promise((resolve) => globalThis.addEventListener("sf-runtime-ready", () => resolve(globalThis.SF.runtimeModule("page-language")), { once: true })));
 
 /***/ },
 

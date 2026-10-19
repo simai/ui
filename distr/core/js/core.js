@@ -99,6 +99,7 @@ if (typeof globalThis !== 'undefined') {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   EFFECT_FORMAT: () => (/* binding */ EFFECT_FORMAT),
 /* harmony export */   EFFECT_SCHEMA: () => (/* binding */ EFFECT_SCHEMA),
 /* harmony export */   FRAME_RUNNER: () => (/* binding */ FRAME_RUNNER),
 /* harmony export */   FRAME_RUNNER_SHA256: () => (/* binding */ FRAME_RUNNER_SHA256),
@@ -117,6 +118,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   resolveTheme: () => (/* binding */ resolveTheme)
 /* harmony export */ });
 /* harmony import */ var _composition_schema_name_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("ac24888e7d3e");
+/* harmony import */ var _deprecations_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("06e8cd089f28");
 // Background effects (simai.effect 1.1.0; Larena's design of 2026-10-14,
 // larena-specs docs/architecture/2026-10-14-background-effects.md). An effect
 // is an animated background drawn into one area of a page; its manifest
@@ -145,8 +147,15 @@ __webpack_require__.r(__webpack_exports__);
 // it runs in a sandboxed frame of its own (an opaque origin under a strict
 // content security policy, its checked settings sent by message), or, with
 // SF_BOOT_CONFIG.effects.foreign = 'refuse', not at all.
- // The label a writer emits. A reader takes either form of the format name
-// (simai.effect.v1, or simai.effect with schema_version 1): schema-name.mjs.
+
+ // The fields a writer of an effect.json emits: the format named without a
+// version, with schema_version beside it (format-names-without-version). A
+// reader takes either form: schema-name.mjs.
+
+const EFFECT_FORMAT = Object.freeze((0,_composition_schema_name_mjs__WEBPACK_IMPORTED_MODULE_0__.schemaFields)('simai.effect', 1)); // The older label of the same format, which readers still take until the
+// journal retires it (global-effect-schema-constant). Its value stays: a
+// writer that put it alone in "schema" would otherwise emit a name with no
+// schema_version.
 
 const EFFECT_SCHEMA = 'simai.effect.v1';
 const SETTING_TYPES = new Set(['choice', 'integer', 'number', 'boolean', 'string', 'text', 'color', 'file']);
@@ -832,13 +841,19 @@ function resolveTheme(manifest, {
     reason: themeMode === 'auto' ? 'light-only-on-dark' : 'mode-not-drawable'
   });
 } // The areas a placement draws under take the theme it is drawn in
-// (area-takes-the-drawn-theme); what they had before comes back after.
+// (area-takes-the-drawn-theme); what they had before comes back after. A
+// theme class changes the tokens but not the ink the area inherited from the
+// page, so an area also takes AREA_CLASS, which core's sheet gives the drawn
+// theme's text colour (color: var(--sf-on-surface), in sf.base, so an
+// author's colour utility on the area still wins).
+
+const AREA_CLASS = 'sf-effect-area';
 
 function themeAreas() {
   const before = new Map();
 
   const restore = (element, had) => {
-    element.classList.remove(...THEME_CLASSES);
+    element.classList.remove(...THEME_CLASSES, AREA_CLASS);
     if (had.length) element.classList.add(...had);
   };
 
@@ -847,7 +862,8 @@ function themeAreas() {
       const wanted = `theme-${scheme}`;
 
       for (const element of elements) {
-        if (!before.has(element)) before.set(element, THEME_CLASSES.filter(name => element.classList.contains(name))); // Touched only when it changes, so an observer of the class sees no churn.
+        if (!before.has(element)) before.set(element, [...THEME_CLASSES, AREA_CLASS].filter(name => element.classList.contains(name)));
+        if (!element.classList.contains(AREA_CLASS)) element.classList.add(AREA_CLASS); // Touched only when it changes, so an observer of the class sees no churn.
 
         const other = THEME_CLASSES.find(name => name !== wanted);
         if (element.classList.contains(other)) element.classList.remove(other);
@@ -1930,8 +1946,18 @@ if (typeof window !== 'undefined') {
     mountWindows,
     loadEffect,
     placeEffect,
-    EFFECT_SCHEMA,
-    SANDBOX_RUNNER_SHA256: FRAME_RUNNER_SHA256
+    EFFECT_FORMAT,
+    SANDBOX_RUNNER_SHA256: FRAME_RUNNER_SHA256,
+
+    get EFFECT_SCHEMA() {
+      (0,_deprecations_js__WEBPACK_IMPORTED_MODULE_1__.noteDeprecated)({
+        kind: 'global',
+        from: 'SF.Effects.EFFECT_SCHEMA',
+        to: 'SF.Effects.EFFECT_FORMAT'
+      });
+      return EFFECT_SCHEMA;
+    }
+
   });
 
   if (typeof document !== 'undefined' && document.documentElement) {

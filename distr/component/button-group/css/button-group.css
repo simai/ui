@@ -1443,6 +1443,20 @@
       --sf-button--box-shadow: none;
     }
   }
+  /* radius on the joined group: the outer corners of its one perimeter take
+     the named radius, as a single sf-button would. */
+  .sf-button-group.sf-button-group--radius-default:not(.sf-button-group--segmented) > sf-button > .sf-button,
+  .sf-button-group.sf-button-group--radius-default:not(.sf-button-group--segmented) > .sf-button {
+    --sf-button--radius: var(--sf-radius-default);
+  }
+  .sf-button-group.sf-button-group--radius-square:not(.sf-button-group--segmented) > sf-button > .sf-button,
+  .sf-button-group.sf-button-group--radius-square:not(.sf-button-group--segmented) > .sf-button {
+    --sf-button--radius: var(--sf-radius-square);
+  }
+  .sf-button-group.sf-button-group--radius-rounded:not(.sf-button-group--segmented) > sf-button > .sf-button,
+  .sf-button-group.sf-button-group--radius-rounded:not(.sf-button-group--segmented) > .sf-button {
+    --sf-button--radius: var(--sf-radius-rounded);
+  }
   .sf-button-group > sf-button > .sf-button,
   .sf-button-group > .sf-button {
     transition-property: color, background-color;
@@ -1461,27 +1475,34 @@
    button sheet's own size, spacing and text classes, so a segment is exactly
    as tall as a button of the same size and the track adds only its padding.
    The track pads by the gap between segments, and the plate's radius is the
-   track's minus that padding, so the corners are concentric.
+   track's minus that padding, so the corners are concentric. The plate is a
+   button-sized segment, so it takes the button's radius for the value
+   (radius="default|square|rounded" as sf-button reads it) and the track is
+   that radius plus the padding: rounded makes both pills.
 
    In a narrow container the track scrolls inside itself, as every button group
    does; it never widens the page. full-width shares the width equally instead.
 
    Public variables (core/contracts/public-variables.v1.json), read here and
    never set by the Framework: --sf-button-group-background-color (the track),
-   --sf-button-group-padding, --sf-button-group-color (a segment's ink),
+   --sf-button-group-padding, --sf-button-group-radius (the plate's corners),
+   --sf-button-group-color (a segment's ink),
    --sf-button-group-plate-background-color, --sf-button-group-plate-color and
    --sf-button-group-count-color. */
 @layer sf.components {
   .sf-button-group.sf-button-group--segmented {
     --sf-button-group--padding: var(--sf-button-group-padding, var(--sf-a4));
-    --sf-button-group--plate-radius: var(--sf-button-radius, var(--sf-radius--ui));
+    /* The plate is a button-sized segment and takes a button's radius; the
+       track is that radius plus its padding, so the corners are concentric. */
+    --sf-button-group--plate-radius: var(--sf-button-group-radius, var(--sf-button-radius, var(--sf-radius--ui)));
+    --sf-button-group--radius: calc(var(--sf-button-group--plate-radius) + var(--sf-button-group--padding));
     --sf-button-group--count-gap: var(--sf-ui-1--text-space-x);
     --sf-button-group--text-size: var(--sf-text-size-1);
     --sf-button-group--text-height: var(--sf-text-height-1);
     box-sizing: border-box;
     gap: var(--sf-button-group--padding);
     padding: var(--sf-button-group--padding);
-    border-radius: calc(var(--sf-button-group--plate-radius) + var(--sf-button-group--padding));
+    border-radius: var(--sf-button-group--radius);
     /* The track is a translucent container fill, so the dimmed ink on it is the
        container's: 4.5:1 over the surfaces 0 to 3 in both themes. */
     background-color: var(--sf-surface-container);
@@ -1518,6 +1539,20 @@
     display: flex;
     width: 100%;
     inline-size: 100%;
+  }
+  /* radius, as on sf-button: the plate takes the radius a button of that
+     value reads, and the track follows it concentrically. The attribute wins
+     over --sf-button-group-radius, as a button's class wins over its variable. */
+  .sf-button-group--segmented.sf-button-group--radius-default {
+    --sf-button-group--plate-radius: var(--sf-radius-default);
+  }
+  /* --sf-radius-square is a unitless 0, which calc() cannot add to the
+     padding; the plate takes a zero length instead. */
+  .sf-button-group--segmented.sf-button-group--radius-square {
+    --sf-button-group--plate-radius: calc(var(--sf-px) * 0);
+  }
+  .sf-button-group--segmented.sf-button-group--radius-rounded {
+    --sf-button-group--plate-radius: var(--sf-radius-rounded);
   }
 }
 @layer sf.override {
