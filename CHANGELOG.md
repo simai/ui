@@ -128,6 +128,8 @@
 
 ### Добавлено
 
+- Added: foreign background effects (an effect.json address outside the pinned catalogue, or a pair given by address) run in a sandboxed frame instead of being refused: an `<iframe sandbox="allow-scripts">` with an opaque origin and a strict content security policy (no network, no storage, no page or top access), the module delivered over a MessagePort and imported inside the frame, checked settings and palette tones passed by message. `SF_BOOT_CONFIG.effects.foreign = 'sandbox' | 'refuse'` (default `sandbox`); handles report `sandboxed`; `SF.Effects.foreignMode` and `SANDBOX_RUNNER_SHA256` (a page with its own CSP allows that hash and `blob:` in `script-src`). A catalogue effect's pair given by address runs in the sandbox, never inline. The effect kit takes `--sandbox`.
+
 - Added: a write-only password field, `propertyType: "string"` with `variant: "password"`. Editing shows an empty password input (`autocomplete="new-password"`) with a show/hide button; viewing, a table cell and read-only show only «Задан / Не задан». The host sends `value: {set: true|false}` and never the password; an untouched field sends nothing, a typed one sends the new value.
 
 - Added: `sf-button-group appearance="segmented"`: a sunken track, borderless segments and a selected plate (`plate="scheme|raised"`), a per-item `count`, icon-only items (`icon-only` with an accessible name), `full-width`, the button size ladder, and unselected text at 4.5:1 or more over the track on the surfaces 0 to 3 (simai/ui-source#4). The group keeps its radiogroup behaviour. Six public CSS variables (`--sf-button-group-background-color`, `-padding`, `-color`, `-plate-background-color`, `-plate-color`, `-count-color`).
