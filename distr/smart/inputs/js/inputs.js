@@ -149,7 +149,7 @@ function fieldSize(value, component = 'field', fallback = '1') {
 
     if (!warned.has(key) && typeof console !== 'undefined') {
       warned.add(key);
-      console.warn(`[Simai Framework] ${component}: size ${size} is retired for form fields; rendering size ${kept}.`);
+      console.warn(`[SIMAI Framework] ${component}: size ${size} is retired for form fields; rendering size ${kept}.`);
     }
 
     return kept;
@@ -922,7 +922,7 @@ function noteDeprecated({
   if (warnEnabled()) {
     const where = component ? `${component}: ` : '';
     const what = kind === 'value' ? `${attribute}="${from}"` : `${kind} ${from}`;
-    globalThis.console?.warn?.(`[Simai Framework] ${where}${what} is a legacy name${to ? `; write ${to}` : ''}. See contracts/changes/journal.json.`);
+    globalThis.console?.warn?.(`[SIMAI Framework] ${where}${what} is a legacy name${to ? `; write ${to}` : ''}. See contracts/changes/journal.json.`);
   }
 }
 function listDeprecations() {

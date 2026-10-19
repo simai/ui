@@ -71,7 +71,7 @@ function noteDeprecated({
   if (warnEnabled()) {
     const where = component ? `${component}: ` : '';
     const what = kind === 'value' ? `${attribute}="${from}"` : `${kind} ${from}`;
-    globalThis.console?.warn?.(`[Simai Framework] ${where}${what} is a legacy name${to ? `; write ${to}` : ''}. See contracts/changes/journal.json.`);
+    globalThis.console?.warn?.(`[SIMAI Framework] ${where}${what} is a legacy name${to ? `; write ${to}` : ''}. See contracts/changes/journal.json.`);
   }
 }
 function listDeprecations() {

@@ -1907,7 +1907,7 @@ function SFLoaderPlugin(params) {
   this.lastLoadHash = null;
   this.theme = 'light';
   this.themeEnabled = params.theme !== false;
-  this.preloaderWrap = window.SF_BOOT_CONFIG.preloader?.wrap || null; // Simai Framework 5 resolves versioned static assets in the browser.
+  this.preloaderWrap = window.SF_BOOT_CONFIG.preloader?.wrap || null; // SIMAI Framework 5 resolves versioned static assets in the browser.
   // Keep the public flag for compatibility, but do not enable the retired
   // server-side PHP bundler when callers pass `standAlone: false`.
 
@@ -2892,11 +2892,6 @@ function otherForm(url) {
   if (/\.min\.(js|css)(?=$|[?#])/.test(value)) return value.replace(/\.min\.(js|css)(?=$|[?#])/, '.$1');
   if (/\.(js|css)(?=$|[?#])/.test(value)) return value.replace(/\.(js|css)(?=$|[?#])/, '.min.$1');
   return null;
-}
-
-function minifiedToReadable(url) {
-  const value = String(url || '');
-  return /\.min\.(js|css)(?=$|[?#])/.test(value) ? value.replace(/\.min\.(js|css)(?=$|[?#])/, '.$1') : null;
 }
 
 SFLoaderPlugin.prototype.isLoaded = function (pluginURL, type) {
@@ -5454,11 +5449,18 @@ SFLoaderPlugin.prototype.addScript = function (pluginURL, param = {}) {
       resolve();
     });
     script.addEventListener('error', () => {
-      const readable = minifiedToReadable(pluginURL);
+      // The other form of the file, once: the readable one when the minified
+      // was asked for and is missing, the minified one when debug asked for
+      // the readable one and the distribution ships only the minified (the
+      // npm package does, simai/ui-source#8). Sheets already did this; scripts
+      // went one way only, so ?sf-debug left every Smart tag undefined.
+      const other = param?.otherFormTried ? null : otherForm(pluginURL);
 
-      if (readable) {
+      if (other) {
         script.remove();
-        this.addScript(readable, param).then(resolve, reject);
+        this.addScript(other, { ...param,
+          otherFormTried: true
+        }).then(resolve, reject);
         return;
       }
 

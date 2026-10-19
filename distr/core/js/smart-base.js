@@ -125,7 +125,7 @@ function noteDeprecated({
   if (warnEnabled()) {
     const where = component ? `${component}: ` : '';
     const what = kind === 'value' ? `${attribute}="${from}"` : `${kind} ${from}`;
-    globalThis.console?.warn?.(`[Simai Framework] ${where}${what} is a legacy name${to ? `; write ${to}` : ''}. See contracts/changes/journal.json.`);
+    globalThis.console?.warn?.(`[SIMAI Framework] ${where}${what} is a legacy name${to ? `; write ${to}` : ''}. See contracts/changes/journal.json.`);
   }
 }
 function listDeprecations() {
@@ -1088,7 +1088,7 @@ class SfBaseElement extends HTMLElement {
   } // One component can reach a page twice: as its own file and inside a bundle
   // that carries it. Those are two class objects with the same tag, and
   // re-registering is a no-op, not a mistake worth a warning. A tag taken by a
-  // different component, or by a class that is not a Simai element at all, is
+  // different component, or by a class that is not a SIMAI element at all, is
   // a real conflict and still warns.
 
 
