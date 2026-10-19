@@ -3514,6 +3514,8 @@ SF.RuleLoader['cl-button-group'] = {
     name: 'button-group'
   }, {
     name: 'cl-buttons'
+  }, {
+    name: 'cl-icons'
   }]
 };
 

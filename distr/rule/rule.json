@@ -728,6 +728,9 @@
       },
       {
         "name": "cl-buttons"
+      },
+      {
+        "name": "cl-icons"
       }
     ],
     "tags": [

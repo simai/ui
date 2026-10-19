@@ -65,10 +65,13 @@ function syncButtonGroup(root) {
     }
   } else if (root.hasAttribute('aria-orientation')) {
     root.removeAttribute('aria-orientation');
-  }
+  } // Segmented segments are separate plates on a track, not joined buttons:
+  // they take no join position, so no join border reaches them.
 
+
+  const segmented = root.classList.contains('sf-button-group--segmented');
   items.forEach((item, index) => {
-    const segment = items.length === 1 ? '' : index === 0 ? 'start' : index === items.length - 1 ? 'end' : 'middle';
+    const segment = segmented || items.length === 1 ? '' : index === 0 ? 'start' : index === items.length - 1 ? 'end' : 'middle';
     setSegment(item, segment);
   });
   return root;
@@ -84,7 +87,7 @@ function bindButtonGroup(root) {
   root[OBSERVER_KEY].observe(root, {
     childList: true,
     attributes: true,
-    attributeFilter: ['role', 'data-orientation', 'aria-orientation']
+    attributeFilter: ['role', 'data-orientation', 'aria-orientation', 'class']
   });
   return root;
 }
