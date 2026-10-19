@@ -7,7 +7,7 @@ Nothing here is edited by hand. The source is
 [`simai/ui-builder`](https://github.com/simai/ui-builder) builds it
 reproducibly into this repository.
 
-Documentation (Russian): https://simai.github.io/ui-doc/
+Documentation (Russian): https://ui.simai.io/
 
 ## Releases
 
