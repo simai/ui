@@ -3622,6 +3622,11 @@
     "css": true,
     "js": true,
     "regex": "/sf-quantity/",
+    "relation": [
+      {
+        "name": "icon-buttons"
+      }
+    ],
     "type": "component"
   },
   {

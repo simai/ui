@@ -93,6 +93,7 @@
   .sf-verification-form--filled .sf-verification-form-wrap .sf-verification {
     border-color: transparent;
     background: var(--sf-surface-container);
+    --sf-on-surface-variant: var(--sf-on-surface-container--variant);
   }
   .sf-verification:hover .sf-verification-cell,
   .sf-verification-form-wrap .sf-verification:hover {

@@ -665,10 +665,12 @@
   }
   .sf-input:not(.error).sf-input--filled[\:not-has\(input\:disabled\)] .sf-input-field {
     --sf-input-field--background-color: var(--sf-input-background-color, var(--sf-surface-container));
+    --sf-on-surface-variant: var(--sf-on-surface-container--variant);
     --sf-input-field--border-color: var(--sf-input-border-color, var(--sf-transparent-for-focus));
   }
   .sf-input:not(.error).sf-input--filled:not(:has(input:disabled)) .sf-input-field {
     --sf-input-field--background-color: var(--sf-input-background-color, var(--sf-surface-container));
+    --sf-on-surface-variant: var(--sf-on-surface-container--variant);
     --sf-input-field--border-color: var(--sf-input-border-color, var(--sf-transparent-for-focus));
   }
   .sf-input:not(.error).sf-input--filled[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:not\(\:-moz-read-only\)\:hover\)] .sf-input-field {
@@ -798,15 +800,19 @@
   }
   .sf-input:not(.error).sf-input--bordered[\:has\(input\:-moz-read-only\:not\(\:disabled\)\)] .sf-input-field {
     --sf-input-field--background-color: var(--sf-surface-container);
+    --sf-on-surface-variant: var(--sf-on-surface-container--variant);
   }
   .sf-input:not(.error).sf-input--bordered[\:has\(input\:read-only\:not\(\:disabled\)\)] .sf-input-field {
     --sf-input-field--background-color: var(--sf-surface-container);
+    --sf-on-surface-variant: var(--sf-on-surface-container--variant);
   }
   .sf-input:not(.error).sf-input--bordered:has(input:-moz-read-only:not(:disabled)) .sf-input-field {
     --sf-input-field--background-color: var(--sf-surface-container);
+    --sf-on-surface-variant: var(--sf-on-surface-container--variant);
   }
   .sf-input:not(.error).sf-input--bordered:has(input:read-only:not(:disabled)) .sf-input-field {
     --sf-input-field--background-color: var(--sf-surface-container);
+    --sf-on-surface-variant: var(--sf-on-surface-container--variant);
   }
 }
 @layer sf.states {
