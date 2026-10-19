@@ -296,8 +296,8 @@
       "owner": "simai/ui",
       "lifecycle": "experimental",
       "readiness": {
-        "status": "discoverable",
-        "safe_to_suggest": false,
+        "status": "ready",
+        "safe_to_suggest": true,
         "profiles": [
           "plain-assets-v1"
         ],
@@ -1126,7 +1126,9 @@
         "profiles": [
           "plain-assets-v1"
         ],
-        "blockers": []
+        "blockers": [
+          "no-declared-inputs"
+        ]
       },
       "provenance": {
         "repository": "https://github.com/simai/ui",
@@ -2136,7 +2138,9 @@
         "profiles": [
           "plain-assets-v1"
         ],
-        "blockers": []
+        "blockers": [
+          "deprecated:use-smart.switch"
+        ]
       },
       "provenance": {
         "repository": "https://github.com/simai/ui",

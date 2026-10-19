@@ -263,6 +263,12 @@ class FrameworkContractRegistryTest(unittest.TestCase):
             ]
         )
         self.assertLessEqual(safe, closure | {"recipe.admin.collection"} | promoted)
+        # A reviewed and held entry carries its reason, so a consumer can tell
+        # it from one nobody has reviewed.
+        held = json.loads((ROOT / "contracts/owners/promotion.json").read_text())["held"]
+        for public_id in held:
+            self.assertNotIn(public_id, safe, public_id)
+            self.assertNotEqual(self.by_id[public_id]["readiness"]["blockers"], [], public_id)
         for public_id in promoted:
             self.assertIn(public_id, safe, public_id)
             self.assertEqual(self.by_id[public_id]["readiness"]["status"], "ready")

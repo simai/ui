@@ -111,6 +111,17 @@
       }
     },
     {
+      "id": "component.button-group",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      }
+    },
+    {
       "id": "component.buttons",
       "readiness": {
         "status": "ready",
@@ -721,6 +732,19 @@
           "plain-assets-v1"
         ],
         "blockers": []
+      }
+    },
+    {
+      "id": "component.toggle",
+      "readiness": {
+        "status": "discoverable",
+        "safe_to_suggest": false,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": [
+          "deprecated:use-component.switch"
+        ]
       }
     },
     {

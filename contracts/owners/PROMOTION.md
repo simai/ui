@@ -24,6 +24,9 @@ when all of these hold at the revisions recorded in `promotion.json`:
   in its source `smart.manifest.json`.
 
 Promotion changes readiness only; lifecycle stays as the source declares it.
-An entry that fails a condition stays `discoverable`; `promotion.json` names
-the held ones and why. To demote, remove the entry from `promotion.json` and set
+An entry that was reviewed and held stays `discoverable` with the reason in
+`readiness.blockers`, so a registry consumer can tell a held entry from one
+nobody has reviewed and explain it: `open-issue:<repo>#<n>`,
+`no-declared-inputs`, `deprecated:use-<id>`. `promotion.json` names the held
+ones too. When the reason is gone, the entry is promoted by the rule above. To demote, remove the entry from `promotion.json` and set
 its readiness back to the manifest default in the same commit.

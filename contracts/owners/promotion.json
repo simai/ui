@@ -6,7 +6,11 @@
     "simai/ui-doc": "75cd6166b0c8e25907dd06a4be4b45d9c23ff51c",
     "simai/ui-source": "369d8c3c443bfb3acbad03cc93498f030691effa",
     "simai/ui-admin": "4f06ba6e84a44f6f6f2c40632bc82f4a560fd2e4",
-    "open_issues": "simai/ui-source #4 #7 #8 #9 (2026-10-19)"
+    "open_issues": "simai/ui-source #4 #7 #8 #9 (2026-10-19)",
+    "button-group": {
+      "simai/ui-doc": "d1958cc5fb1bf2cba74adcce4c7e83c4d3cf4722",
+      "open_issues": "none (simai/ui-source#4 closed 2026-10-20)"
+    }
   },
   "promoted": [
     "component.accordion",
@@ -14,6 +18,7 @@
     "component.alerts",
     "component.badges",
     "component.breadcrumbs",
+    "component.button-group",
     "component.carousel",
     "component.clipboard",
     "component.content-divider",
@@ -59,6 +64,7 @@
     "smart.avatars",
     "smart.badges",
     "smart.breadcrumbs",
+    "smart.button-group",
     "smart.color",
     "smart.composition-overlay",
     "smart.copy-button",
@@ -192,6 +198,16 @@
       "docs_usages": 75,
       "tests": {
         "ui_source": 5,
+        "ui_admin": 0
+      }
+    },
+    "component.button-group": {
+      "docs": [
+        "content/ru/components/actions/button-group.md"
+      ],
+      "docs_usages": 8,
+      "tests": {
+        "ui_source": 10,
         "ui_admin": 0
       }
     },
@@ -643,6 +659,17 @@
       "tests": {
         "ui_source": 12,
         "ui_admin": 5
+      }
+    },
+    "smart.button-group": {
+      "docs": [
+        "content/ru/smart-components/actions/button-group.md",
+        "content/ru/smart-components/actions/segmented.md"
+      ],
+      "docs_usages": 12,
+      "tests": {
+        "ui_source": 20,
+        "ui_admin": 1
       }
     },
     "smart.color": {
@@ -1526,8 +1553,6 @@
     }
   },
   "held": {
-    "smart.button-group": "open simai/ui-source#4 and #9",
-    "component.button-group": "open simai/ui-source#4 and #9",
     "smart.inline-editor": "declares no inputs: no stable public API",
     "smart.toggle": "deprecated in its source manifest (sf-switch replaces it)",
     "component.toggle": "deprecated: its docs page is the migration to sf-switch"
