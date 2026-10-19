@@ -126,6 +126,8 @@
 
 ### Добавлено
 
+- Added: the standard `simai.effect` 1.1.0 and its effect schema 1.2.0. A manifest may declare `schemes` (the themes it is drawn for, the first its home), a `pair` of the other scheme (a catalogue id, or an https URL that is foreign and runs only in the sandbox) and `capabilities: ["windows"]`. `SF.Effects` passes the scheme as `context.scheme` and switches it through `update`, and gains `effectSchemes` and `pairIsForeign`. The effect kit runs each declared scheme, the scheme switch, a windows check and a contrast check at the default settings: the primary text role at 4.5:1 and the dimmed role at 3:1, so dimmed text over an effect is large. 1.0.0 keeps its bytes under `contracts/standards/history`.
+
 - Format names are read without their version (`simai.<name>` + `schema_version`) as well as with it; the change journal records the move. `sf-drawer` can live inside a `[data-sf-drawer-container]` and takes its height; a docked drawer reserves room by its host's width. `sf-theme-generator` also writes the translucent steps of the palettes, and its events are `sf-theme-generator-change`/`-apply`.
 
 - `simai.property-view-port` 1.13.0: the view a person chooses is theirs, kept by the host per collection; `record.load` and `record.open` answer through it.
