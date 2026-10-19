@@ -663,6 +663,9 @@ function renderChoicesBadgesCell(field, value) {
 }
 
 const CELL_RENDERERS = {
+  // A string is its own text in a row -- except a password, which is never
+  // shown anywhere: a row says whether one is set.
+  string: renderStringCell,
   // A date in a row used to be whatever the host had stored, printed --
   // «2026-09-25T07:12:00+03:00» beside the same value reading «25 сентября
   // 2026» in the record panel, with no way for a consumer to change the
@@ -883,6 +886,96 @@ function renderPhoneEdit(field, value, host) {
                 @change=${event => host.setFieldValue(field, event.detail?.value ?? event.target?.value ?? '')}
         ></sf-country-code>
     `;
+} // A password is a string the set never shows (owner, 2026-10-19; Larena's
+// storage settings). The host never sends one: the value of a `password`
+// variant is {set: true} or {set: false}, and null or an absent value reads as
+// not set. View, cell and a read-only field say «задан» or «не задан» in the
+// page's language and nothing else. A host that sends a string by mistake gets
+// «задан» for it, and the string is still not drawn.
+//
+// The edit control starts empty whatever is stored, and it writes only what a
+// person types: an untouched field calls nothing, so a save carries no value for
+// it and can neither clear nor echo a password. Typing and then erasing writes
+// `undefined` -- the person took the change back, and a host drops the key.
+// Clearing a set password is not offered: an empty field means «keep».
+//
+// The typed text lives in the input and nowhere else: no `value` attribute on
+// sf-input, no data-*, no text node, no log. «Показать» is an icon button that
+// switches the input's type and says so with aria-pressed; it changes the DOM
+// directly, so a host's re-render (its attributes are static in the template)
+// leaves the person's choice as it is.
+
+
+function isPasswordField(field) {
+  return String(field.variant ?? '') === 'password';
+}
+
+function passwordIsSet(value) {
+  if (value && typeof value === 'object' && !Array.isArray(value)) return value.set === true;
+  return typeof value === 'string' && value !== '';
+}
+
+function passwordState(host, value) {
+  return setText(host, passwordIsSet(value) ? 'passwordSet' : 'passwordUnset');
+}
+
+function togglePasswordShown(event) {
+  const button = event.currentTarget;
+  const input = button?.closest?.('.sf-field-password')?.querySelector?.('sf-input');
+  if (!input) return;
+  const shown = button.getAttribute('aria-pressed') !== 'true';
+  input.setAttribute('input-type', shown ? 'text' : 'password');
+  button.setAttribute('aria-pressed', shown ? 'true' : 'false');
+  button.setAttribute('icon', shown ? 'visibility_off' : 'visibility');
+}
+
+function renderPasswordEdit(field, value, host) {
+  const set = passwordIsSet(value);
+  const placeholder = field.placeholder || (set ? setText(host, 'passwordKeep') : '');
+
+  const write = event => {
+    const typed = event.target?.value ?? '';
+    host.setFieldValue(field, typed === '' ? undefined : typed);
+  }; // A set password is not required again: an empty field keeps it. Spellcheck
+  // is off on the wrapper: the attribute is inherited, and sf-input does not
+  // declare it (a shown password would otherwise be sent to a spellchecker).
+
+
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <span class="sf-field-password flex items-cross-center gap-1/3 min-w-0" spellcheck="false">
+            <sf-input
+                    size=${EDIT_SIZE}
+                    appearance="bordered"
+                    root-class="flex-1 min-w-0"
+                    input-type="password"
+                    autocomplete="new-password"
+                    name=${fieldName(field)}
+                    placeholder=${placeholder || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                    ?required=${Boolean(field.required) && !set}
+                    aria-label=${field.label || field.key || ''}
+                    @input=${write}
+                    @change=${write}
+            ></sf-input>
+            <sf-icon-button
+                    size=${EDIT_SIZE}
+                    appearance="link"
+                    scheme="on-surface"
+                    icon="visibility"
+                    aria-pressed="false"
+                    aria-label=${setText(host, 'showPassword')}
+                    @click=${togglePasswordShown}
+            ></sf-icon-button>
+        </span>
+    `;
+}
+
+function renderStringCell(field, value, host) {
+  return isPasswordField(field) ? passwordState(host, value) : null;
+}
+
+function renderStringView(field, value, host) {
+  if (isPasswordField(field)) return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-field-view">${passwordState(host, value)}</span>`;
+  return renderTextView(field, value, host);
 } // A file shown as what it is. The site keeps logos, so a file whose variant says
 // image is drawn as the image rather than as a row with a paperclip -- the same
 // stored file, told apart by the host rather than guessed from a file name.
@@ -944,6 +1037,7 @@ function renderIncludeCell(field, value) {
 
 function renderTextEdit(field, value, host) {
   if (String(field.variant ?? '') === 'phone') return renderPhoneEdit(field, value, host);
+  if (isPasswordField(field)) return renderPasswordEdit(field, value, host);
   value = scalarValue(value);
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <sf-input
@@ -1225,7 +1319,11 @@ const SET_TEXT = {
     recordsError: 'The records could not be loaded',
     retry: 'Try again',
     loadMore: 'Load more',
-    removeFile: 'Remove'
+    removeFile: 'Remove',
+    passwordSet: 'Set',
+    passwordUnset: 'Not set',
+    passwordKeep: 'Set; type a new one to replace it',
+    showPassword: 'Show password'
   },
   ru: {
     yes: 'Да',
@@ -1247,7 +1345,11 @@ const SET_TEXT = {
     recordsError: 'Не удалось загрузить записи',
     retry: 'Повторить',
     loadMore: 'Загрузить ещё',
-    removeFile: 'Удалить'
+    removeFile: 'Удалить',
+    passwordSet: 'Задан',
+    passwordUnset: 'Не задан',
+    passwordKeep: 'Задан; введите новый, чтобы заменить',
+    showPassword: 'Показать пароль'
   }
 }; // The host's word wins, as it always did; the set's own fallback now follows
 // the page's language instead of being Russian whatever the page is. `host` is
@@ -1642,7 +1744,7 @@ function renderFileView(field, value) {
 }
 
 const VIEW_RENDERERS = {
-  string: renderTextView,
+  string: renderStringView,
   text: renderTextView,
   integer: renderNumberView,
   number: renderNumberView,
@@ -1741,12 +1843,23 @@ const PROPERTY_TYPES = Object.freeze([{
     ru: 'Строка',
     en: 'String'
   },
+  // password: write-only. The host never sends the password; the value it
+  // sends is {set: true} or {set: false} (null reads as not set), and the
+  // set shows only «задан»/«не задан». An edit writes the typed text through
+  // setFieldValue and writes nothing for a field nobody typed in.
   variants: [{
     id: 'phone',
     label: {
       ru: 'Телефон',
       en: 'Phone'
     }
+  }, {
+    id: 'password',
+    label: {
+      ru: 'Пароль',
+      en: 'Password'
+    },
+    writeOnly: true
   }],
   params: ['placeholder', 'required', 'readonly']
 }, {
