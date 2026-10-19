@@ -128,6 +128,9 @@
 
 ### Добавлено
 
+- Added: `sf-button-group` takes `radius="default|square|rounded"` (in the segmented look the plate takes the button's radius and the track adds its padding; `--sf-button-group-radius`), `name` (the value is submitted with its form and restored on reset), and `theme-switch`: `<sf-button-group appearance="segmented" theme-switch>` draws three icon-only items (system, light, dark), shows the Loader's theme preference and sets it through `SF.Loader.setTheme`.
+- Fixed: an effect area or window card that takes a theme also sets the text colour of that theme (`sf-effect-area`), so text over a dark effect on a light page is light (simai/ui-source#7). `SF.Effects.EFFECT_FORMAT` gives the effect format as a name and `schema_version`; `EFFECT_SCHEMA` is deprecated until 2026-12-01.
+
 - Added: foreign background effects (an effect.json address outside the pinned catalogue, or a pair given by address) run in a sandboxed frame instead of being refused: an `<iframe sandbox="allow-scripts">` with an opaque origin and a strict content security policy (no network, no storage, no page or top access), the module delivered over a MessagePort and imported inside the frame, checked settings and palette tones passed by message. `SF_BOOT_CONFIG.effects.foreign = 'sandbox' | 'refuse'` (default `sandbox`); handles report `sandboxed`; `SF.Effects.foreignMode` and `SANDBOX_RUNNER_SHA256` (a page with its own CSP allows that hash and `blob:` in `script-src`). A catalogue effect's pair given by address runs in the sandbox, never inline. The effect kit takes `--sandbox`.
 
 - Added: a write-only password field, `propertyType: "string"` with `variant: "password"`. Editing shows an empty password input (`autocomplete="new-password"`) with a show/hide button; viewing, a table cell and read-only show only «Задан / Не задан». The host sends `value: {set: true|false}` and never the password; an untouched field sends nothing, a typed one sends the new value.
