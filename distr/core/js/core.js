@@ -100,11 +100,14 @@ if (typeof globalThis !== 'undefined') {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   EFFECT_SCHEMA: () => (/* binding */ EFFECT_SCHEMA),
+/* harmony export */   FRAME_RUNNER: () => (/* binding */ FRAME_RUNNER),
+/* harmony export */   FRAME_RUNNER_SHA256: () => (/* binding */ FRAME_RUNNER_SHA256),
 /* harmony export */   allowedModes: () => (/* binding */ allowedModes),
 /* harmony export */   checkEffectManifest: () => (/* binding */ checkEffectManifest),
 /* harmony export */   checkSetting: () => (/* binding */ checkSetting),
 /* harmony export */   effectSchemes: () => (/* binding */ effectSchemes),
 /* harmony export */   effectSettings: () => (/* binding */ effectSettings),
+/* harmony export */   foreignMode: () => (/* binding */ foreignMode),
 /* harmony export */   loadEffect: () => (/* binding */ loadEffect),
 /* harmony export */   mountEffect: () => (/* binding */ mountEffect),
 /* harmony export */   mountWindows: () => (/* binding */ mountWindows),
@@ -138,8 +141,10 @@ __webpack_require__.r(__webpack_exports__);
 // for a person who asked for less motion, nothing drawn while the tab is
 // hidden, the host out of the accessibility tree and out of the pointer's
 // way, and everything gone after destroy. A foreign effect -- one not in the
-// pinned catalogue, or a pair given as an address -- is refused here: it runs
-// only in a sandbox runner, which is a later step.
+// pinned catalogue, or a pair given as an address -- never runs in the page:
+// it runs in a sandboxed frame of its own (an opaque origin under a strict
+// content security policy, its checked settings sent by message), or, with
+// SF_BOOT_CONFIG.effects.foreign = 'refuse', not at all.
  // The label a writer emits. A reader takes either form of the format name
 // (simai.effect.v1, or simai.effect with schema_version 1): schema-name.mjs.
 
@@ -334,11 +339,279 @@ const capabilities = manifest => Array.isArray(manifest?.capabilities) ? manifes
 
 const STATE = 'data-sf-effect-state';
 const REASON = 'data-sf-effect-reason';
-const WINDOW = '[data-sf-effect-window]'; // One effect's module in one host under the 1.0 rules: one still frame for a
+const WINDOW = '[data-sf-effect-window]'; // Foreign effects in a sandbox (foreign-effects-sandboxed) ------------------
+//
+// An effect from outside the pinned catalogue has no index to check it
+// against, so nothing vouches for its code: the trust boundary is the frame
+// it runs in. The frame is sandboxed with allow-scripts alone -- no
+// allow-same-origin, so its origin is opaque and it reaches neither the
+// page, its cookies nor its storage; no allow-top-navigation, allow-popups,
+// allow-forms or allow-modals. Its document is written here (srcdoc) under a
+// content security policy that lets in one script, the frame's own runner
+// (by its SHA-256), and the module it is handed (a Blob URL made inside the
+// frame); it may connect nowhere and load no image but data: and blob:. A
+// hash, not a nonce: a module imported by a nonced script inherits the nonce
+// for its own import(), which would let an effect import from anywhere. The
+// module's text was fetched once by the page and is delivered by message,
+// with the settings already checked against the manifest; the frame then
+// hears of its size, scheme, palette tones, pause, resume, update and
+// destroy the same way.
+
+const SANDBOXED = new WeakSet();
+
+function effectsConfig() {
+  return globalThis.SF_BOOT_CONFIG?.effects ?? {};
+} // SF_BOOT_CONFIG.effects.foreign: 'sandbox' (the default) or 'refuse'. Any
+// other value refuses: a switch mistyped fails closed.
+
+
+function foreignMode(value = effectsConfig().foreign) {
+  return value === undefined || value === 'sandbox' ? 'sandbox' : 'refuse';
+}
+
+const FRAME_POLICY = () => ["default-src 'none'", `script-src 'sha256-${FRAME_RUNNER_SHA256}' blob:`, "style-src 'unsafe-inline'", 'img-src data: blob:', 'media-src data: blob:', 'font-src data:', "connect-src 'none'", "worker-src 'none'", "frame-src 'none'", "child-src 'none'", "object-src 'none'", "manifest-src 'none'", "form-action 'none'", "base-uri 'none'"].join('; '); // The runner inside the frame. A plain string, so no build step rewrites it:
+// it takes one port from the page and nothing else, imports the module from
+// a Blob URL of the text it is sent, and answers only "mounted" and "error".
+
+
+const FRAME_RUNNER = String.raw`(() => {
+  'use strict';
+  const root = document.documentElement;
+  const host = document.getElementById('host');
+  let port = null;
+  let handle = null;
+  let queue = Promise.resolve();
+  const send = (message) => { try { port.postMessage(message); } catch (error) { /* closed */ } };
+  const fail = (phase, error) => send({type: 'error', phase, message: String((error && error.message) || error).slice(0, 500)});
+  const call = (name, ...args) => {
+    try { if (handle && typeof handle[name] === 'function') handle[name](...args); } catch (error) { fail(name, error); }
+  };
+  const look = (scheme, tones) => {
+    const light = scheme === 'light';
+    root.classList.remove('theme-dark', 'theme-light');
+    root.classList.add(light ? 'theme-light' : 'theme-dark');
+    root.style.colorScheme = light ? 'light' : 'dark';
+    for (const [name, value] of Object.entries(tones || {})) root.style.setProperty(name, value);
+  };
+  const size = (box) => {
+    if (!box) return;
+    host.style.inlineSize = box.width + 'px';
+    host.style.blockSize = box.height + 'px';
+  };
+  const handlers = {
+    async mount(data) {
+      look(data.context.scheme, data.tones);
+      size(data.size);
+      for (const css of data.styles) {
+        const style = document.createElement('style');
+        style.textContent = css;
+        document.head.append(style);
+      }
+      const url = URL.createObjectURL(new Blob([data.source], {type: 'text/javascript'}));
+      let module;
+      try { module = await import(url); } catch (error) { fail('module', error); return; } finally { URL.revokeObjectURL(url); }
+      if (!module || typeof module.mount !== 'function') { fail('module', 'no mount export'); return; }
+      try { handle = module.mount(host, data.settings, Object.freeze(data.context)) || {}; } catch (error) { fail('mount', error); return; }
+      send({type: 'mounted'});
+    },
+    update(data) {
+      look(data.context.scheme, data.tones);
+      call('update', data.settings, Object.freeze(data.context));
+    },
+    pause() { call('pause'); },
+    resume() { call('resume'); },
+    size(data) { size(data.size); },
+    destroy() {
+      call('destroy');
+      handle = null;
+      host.replaceChildren();
+      port.close();
+    },
+  };
+  addEventListener('message', function first(event) {
+    if (event.source !== parent || event.data !== 'sf-effect-sandbox' || !event.ports[0]) return;
+    removeEventListener('message', first);
+    port = event.ports[0];
+    port.onmessage = ({data}) => {
+      const run = data && Object.hasOwn(handlers, data.type) ? handlers[data.type] : null;
+      if (run) queue = queue.then(() => run(data)).catch((error) => fail(data.type, error));
+    };
+  });
+})();`; // The runner's SHA-256 (base64), the one script the frame's policy admits by
+// content. The contract test effect-manifest recomputes it from the text.
+
+const FRAME_RUNNER_SHA256 = 'VOLJzSJh85fxDvhl9WytjdmjtDAUN8JT5veHYwFCVPA=';
+
+function frameDocument() {
+  return '<!doctype html><html><head><meta charset="utf-8">' + `<meta http-equiv="Content-Security-Policy" content="${FRAME_POLICY()}">` + '<style>html,body{margin:0;block-size:100%;overflow:hidden;background:transparent}#host{position:absolute;inset:0;overflow:hidden}</style>' + `</head><body><div id="host"></div><script>${FRAME_RUNNER}</script></body></html>`;
+} // The palette tones as the page resolves them at the host (fixed across
+// themes, drawn-with-palette-tones), handed to the frame, which has no sheet.
+
+
+const PALETTES = ['primary', 'secondary', 'tertiary', 'neutral', 'neutral-variant', 'error', 'warning', 'success', 'info'];
+
+function paletteTones(host) {
+  const style = globalThis.getComputedStyle(host);
+  const tones = {};
+
+  for (const palette of PALETTES) {
+    for (let tone = 0; tone <= 100; tone += 1) {
+      const name = `--sf-${palette}-${tone}`;
+      const value = style.getPropertyValue(name).trim();
+      if (value && value.length <= 200) tones[name] = value;
+    }
+  }
+
+  return tones;
+} // A module whose mount draws the effect in a sandboxed frame filling the
+// host. It is mounted like any module, so every rule of mountModule (still
+// frame, hidden tab, off screen, aria-hidden, destroy) holds for it too.
+
+
+function sandboxModule({
+  id,
+  source,
+  styles = []
+}) {
+  const module = Object.freeze({
+    mount(host, settings, context) {
+      const document = host.ownerDocument;
+      const frame = document.createElement('iframe');
+      frame.setAttribute('sandbox', 'allow-scripts');
+      frame.setAttribute('referrerpolicy', 'no-referrer');
+      frame.setAttribute('tabindex', '-1');
+      frame.setAttribute('aria-hidden', 'true');
+      frame.setAttribute('title', '');
+      frame.setAttribute('data-sf-effect-sandbox', 'loading');
+      frame.style.cssText = 'position:absolute;inset:0;inline-size:100%;block-size:100%;border:0;margin:0;padding:0;display:block;pointer-events:none;background:transparent';
+      frame.srcdoc = frameDocument();
+      const channel = new globalThis.MessageChannel();
+      const port = channel.port1;
+      const pending = [];
+      let ready = false;
+      let loads = 0;
+      let destroyed = false;
+
+      const box = () => {
+        const rect = host.getBoundingClientRect();
+        return {
+          width: rect.width,
+          height: rect.height
+        };
+      };
+
+      const post = message => {
+        if (destroyed) return;
+        if (ready) port.postMessage(message);else pending.push(message);
+      };
+
+      const failed = (phase, message) => host.dispatchEvent(new globalThis.CustomEvent('sf-effect-error', {
+        bubbles: true,
+        detail: {
+          effect: id,
+          phase,
+          message,
+          sandboxed: true
+        }
+      }));
+
+      const sizes = globalThis.ResizeObserver ? new globalThis.ResizeObserver(() => post({
+        type: 'size',
+        size: box()
+      })) : null;
+
+      const teardown = () => {
+        destroyed = true;
+        sizes?.disconnect();
+        port.close();
+        frame.remove();
+      }; // What the frame says is data: two kinds of message, strings cut short.
+
+
+      port.onmessage = ({
+        data
+      }) => {
+        if (destroyed || !isObject(data)) return;
+        if (data.type === 'mounted') frame.setAttribute('data-sf-effect-sandbox', 'mounted');else if (data.type === 'error') failed(String(data.phase).slice(0, 40), String(data.message).slice(0, 500));
+      };
+
+      port.start();
+      frame.addEventListener('load', () => {
+        if (destroyed) return;
+        loads += 1; // The frame's document is the one written here, once. A second load
+        // means the frame went somewhere else: it is no longer the runner.
+
+        if (loads > 1) {
+          failed('sandbox', 'the sandbox frame navigated away and was removed');
+          teardown();
+          return;
+        }
+
+        frame.contentWindow?.postMessage('sf-effect-sandbox', '*', [channel.port2]);
+        ready = true;
+
+        for (const message of pending.splice(0)) port.postMessage(message);
+      });
+      post({
+        type: 'mount',
+        source,
+        styles: [...styles],
+        settings: { ...settings
+        },
+        context: { ...context
+        },
+        tones: paletteTones(host),
+        size: box()
+      });
+      host.append(frame);
+      sizes?.observe(host);
+      return {
+        update(next, nextContext) {
+          post({
+            type: 'update',
+            settings: { ...next
+            },
+            context: { ...nextContext
+            },
+            tones: paletteTones(host)
+          });
+        },
+
+        pause() {
+          post({
+            type: 'pause'
+          });
+        },
+
+        resume() {
+          post({
+            type: 'resume'
+          });
+        },
+
+        destroy() {
+          if (destroyed) return;
+          post({
+            type: 'destroy'
+          });
+          teardown();
+        }
+
+      };
+    }
+
+  });
+  SANDBOXED.add(module);
+  return module;
+} // Whether a module handed to SF.Effects is one the core made to run in the sandbox.
+
+
+const isSandboxed = module => Boolean(module) && SANDBOXED.has(module); // One effect's module in one host under the 1.0 rules: one still frame for a
 // person who asked for less motion, nothing drawn while the tab is hidden or
 // the host is off screen, the host out of the accessibility tree and out of
 // the pointer's way, and everything gone after destroy. The handle's methods
 // are safe to call in any order and more than once.
+
 
 function mountModule(host, {
   manifest,
@@ -446,6 +719,11 @@ function mountModule(host, {
       return drawn;
     },
 
+    // Whether it runs in the sandbox (a foreign effect) rather than in the page.
+    get sandboxed() {
+      return isSandboxed(module);
+    },
+
     pause() {
       held = true;
       sync();
@@ -482,31 +760,36 @@ function pageScheme(document = globalThis.document) {
   if (root?.classList.contains('theme-dark')) return 'dark';
   if (root?.classList.contains('theme-light')) return 'light';
   return globalThis.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-}
+} // A pair that can be drawn: one by catalogue id, or one by address while
+// foreign effects run in the sandbox.
 
-const trustedPair = manifest => typeof manifest?.pair === 'string' && !pairIsForeign(manifest); // The theme modes an editor may offer for a placement: auto always, a fixed
-// mode only when the effect -- or its pair, under the catalogue's trust --
-// draws that scheme. `pair` is the pair's manifest when it is known; without
-// it a pair is taken to draw the other scheme, as a pair does.
+const drawablePair = (manifest, foreign) => typeof manifest?.pair === 'string' && (!pairIsForeign(manifest) || foreignMode(foreign) === 'sandbox'); // The theme modes an editor may offer for a placement: auto always, a fixed
+// mode only when the effect -- or its pair, a catalogue pair or a foreign one
+// run in the sandbox -- draws that scheme. `pair` is the pair's manifest when
+// it is known; without it a pair is taken to draw the other scheme, as a pair
+// does. `foreign` overrides SF_BOOT_CONFIG.effects.foreign.
 
 
 function allowedModes(manifest, {
-  pair
+  pair,
+  foreign
 } = {}) {
   const drawn = new Set(effectSchemes(manifest));
-  if (trustedPair(manifest)) for (const scheme of pair ? effectSchemes(pair) : SCHEMES) drawn.add(scheme);
+  if (drawablePair(manifest, foreign)) for (const scheme of pair ? effectSchemes(pair) : SCHEMES) drawn.add(scheme);
   return ['auto', ...SCHEMES.filter(scheme => drawn.has(scheme))];
 } // Which effect a placement draws, and in which scheme: {effect: 'self' |
 // 'pair', scheme} or {hidden: true, reason}. The order: the effect in the
 // target scheme; its pair in the target scheme; in auto, a dark-only effect
 // kept dark on a light page; nothing -- a light-only effect is not shown on a
-// dark target. A pair given as an address is foreign and is never drawn
-// inline: while there is no sandbox runner the placement is hidden.
+// dark target. A pair given as an address is foreign: it is drawn only in the
+// sandbox (sandboxed: true), and with foreign effects refused the placement
+// is hidden.
 
 function resolveTheme(manifest, {
   pageScheme: page,
   themeMode = 'auto',
-  pair
+  pair,
+  foreign
 } = {}) {
   if (!THEME_MODES.includes(themeMode)) return Object.freeze({
     hidden: true,
@@ -520,15 +803,24 @@ function resolveTheme(manifest, {
   });
 
   if (typeof manifest?.pair === 'string') {
-    if (pairIsForeign(manifest)) return Object.freeze({
+    const outside = pairIsForeign(manifest);
+    if (outside && foreignMode(foreign) !== 'sandbox') return Object.freeze({
       hidden: true,
       reason: 'foreign-pair-needs-sandbox'
     });
-    if (!pair || effectSchemes(pair).includes(target)) return Object.freeze({
-      effect: 'pair',
-      scheme: target,
-      pair: manifest.pair
-    });
+
+    if (!pair || effectSchemes(pair).includes(target)) {
+      return Object.freeze(outside ? {
+        effect: 'pair',
+        scheme: target,
+        pair: manifest.pair,
+        sandboxed: true
+      } : {
+        effect: 'pair',
+        scheme: target,
+        pair: manifest.pair
+      });
+    }
   }
 
   if (themeMode === 'auto' && target === 'light' && own.includes('dark')) return Object.freeze({
@@ -648,12 +940,16 @@ function place({
   stored = {},
   locale,
   themeMode = 'auto',
-  windows = false
+  windows = false,
+  foreign
 }) {
   const problems = checkEffectManifest(manifest);
-  if (problems.length) throw new TypeError(`Effect manifest is invalid: ${problems.join('; ')}`); // A trusted effect never pulls an untrusted pair inline; a pair is the one it names.
+  if (problems.length) throw new TypeError(`Effect manifest is invalid: ${problems.join('; ')}`); // A trusted effect never pulls an untrusted pair inline: a pair by catalogue
+  // id is the one it names; a pair by address runs only as the sandbox module
+  // the core made for it (loadEffect), never as a module handed in.
 
-  const usable = pair && !pairIsForeign(manifest) && pair.manifest?.id === manifest.pair && !checkEffectManifest(pair.manifest).length ? pair : null;
+  const outside = pairIsForeign(manifest);
+  const usable = pair && isObject(pair.manifest) && !checkEffectManifest(pair.manifest).length && (outside ? isSandboxed(pair.module) : pair.manifest.id === manifest.pair) ? pair : null;
   const theme = themeAreas();
   let mode = themeMode;
   let values = stored;
@@ -668,15 +964,21 @@ function place({
     let next = resolveTheme(manifest, {
       pageScheme: page,
       themeMode: mode,
-      pair: usable?.manifest
+      pair: usable?.manifest,
+      foreign
     });
-    if (next.effect === 'pair' && !usable) next = {
-      hidden: true,
-      reason: pairRefused ? 'pair-refused' : 'pair-not-loaded'
-    };else if (next.effect === 'pair' && windows && !capabilities(usable.manifest).includes('windows')) next = {
+
+    if (next.effect === 'pair' && !usable) {
+      const reason = outside && pair ? 'foreign-pair-needs-sandbox' : pairRefused ? 'pair-refused' : 'pair-not-loaded';
+      next = {
+        hidden: true,
+        reason
+      };
+    } else if (next.effect === 'pair' && windows && !capabilities(usable.manifest).includes('windows')) next = {
       hidden: true,
       reason: 'pair-without-windows'
     };
+
     const target = mode === 'dark' || mode === 'light' ? mode : page;
     return {
       next: Object.freeze(next),
@@ -799,6 +1101,10 @@ function place({
 
     get themeMode() {
       return mode;
+    },
+
+    get sandboxed() {
+      return current?.sandboxed ?? false;
     }
 
   });
@@ -849,7 +1155,8 @@ function mountEffect(host, options = {}) {
     pair,
     stored,
     locale,
-    themeMode
+    themeMode,
+    foreign
   } = options;
   return place({
     element: area,
@@ -860,7 +1167,8 @@ function mountEffect(host, options = {}) {
     pair,
     stored,
     locale,
-    themeMode
+    themeMode,
+    foreign
   }).handle;
 } // Windows mode (windows-are-mask-safe) -------------------------------------
 
@@ -1001,6 +1309,10 @@ function placeWindows(group, {
 
     get themeMode() {
       return handle.themeMode;
+    },
+
+    get sandboxed() {
+      return handle.sandboxed;
     }
 
   });
@@ -1020,7 +1332,8 @@ function mountWindows(group, options = {}) {
     stored,
     locale,
     themeMode = 'auto',
-    windows
+    windows,
+    foreign
   } = options;
   return placeWindows(group, {
     manifest,
@@ -1029,7 +1342,8 @@ function mountWindows(group, options = {}) {
     stored,
     locale,
     themeMode,
-    windows
+    windows,
+    foreign
   });
 } // Catalogue loading with integrity (pair-under-the-same-trust) --------------
 
@@ -1042,8 +1356,6 @@ class EffectRefused extends Error {
   }
 
 }
-
-const effectsConfig = () => globalThis.SF_BOOT_CONFIG?.effects ?? {};
 
 const decode = bytes => new globalThis.TextDecoder().decode(bytes);
 
@@ -1077,7 +1389,8 @@ async function fetchBytes(url) {
 
   try {
     response = await globalThis.fetch(url, {
-      credentials: 'omit'
+      credentials: 'omit',
+      referrerPolicy: 'no-referrer'
     });
   } catch {
     throw new EffectRefused('fetch-failed', {
@@ -1207,13 +1520,64 @@ async function loadVerified(base, id) {
     url: `${folder}effect.json`,
     manifest,
     module,
-    styles: Object.freeze(styles)
+    styles: Object.freeze(styles),
+    sandboxed: false
   });
-} // Where a reference points: a catalogue id, or the address of an effect.json
-// under the pinned catalogue base. Anything else is foreign.
+} // A foreign effect: its manifest and files fetched once, with no index to
+// check them against -- the sandbox is the trust boundary. The manifest must
+// still hold; the module never runs in the page, only in its frame.
 
 
-async function locate(reference, base) {
+async function loadForeign(url) {
+  const manifestBytes = await fetchBytes(url);
+  let manifest;
+
+  try {
+    manifest = JSON.parse(decode(manifestBytes));
+  } catch {
+    throw new EffectRefused('invalid-manifest', {
+      url
+    });
+  }
+
+  const problems = checkEffectManifest(manifest);
+  if (problems.length) throw new EffectRefused('invalid-manifest', {
+    url,
+    problems
+  });
+  const source = decode(await fetchBytes(new URL(manifest.entry, url).href));
+  const styles = [];
+
+  for (const name of manifest.styles ?? []) styles.push(decode(await fetchBytes(new URL(name, url).href)));
+
+  const module = sandboxModule({
+    id: manifest.id,
+    source,
+    styles
+  });
+  return Object.freeze({
+    id: manifest.id,
+    url,
+    manifest,
+    module,
+    styles: Object.freeze([]),
+    sandboxed: true
+  });
+} // The address of a foreign effect.json: https, or the page's own origin.
+
+
+function foreignAddress(url) {
+  const address = new URL(url);
+  const own = new URL(pageAddress()).origin;
+  if (address.protocol !== 'https:' && address.origin !== own || !address.pathname.endsWith('/effect.json') || address.username || address.password) return null;
+  address.hash = '';
+  return address.href;
+} // Where a reference points: {id} of the pinned catalogue (an id, or the
+// address of an effect.json under its base), or {foreign: url} for any other
+// effect.json, which runs only in the sandbox.
+
+
+async function locate(reference, base, foreign) {
   if (typeof reference !== 'string' || !reference.trim()) throw new EffectRefused('no-effect');
   const value = reference.trim();
 
@@ -1221,46 +1585,66 @@ async function locate(reference, base) {
     if (!base) throw new EffectRefused('no-catalogue', {
       id: value
     });
-    return value;
+    return {
+      id: value
+    };
   }
 
+  const sandbox = foreignMode(foreign) === 'sandbox';
   let url;
 
   try {
     url = new URL(value, pageAddress()).href;
   } catch {
-    throw new EffectRefused('foreign-effect-needs-sandbox', {
+    throw new EffectRefused(sandbox ? 'invalid-reference' : 'foreign-effect-needs-sandbox', {
       url: value
     });
   }
 
-  if (!base || !url.startsWith(base)) throw new EffectRefused('foreign-effect-needs-sandbox', {
-    url
-  });
+  if (!base || !url.startsWith(base)) {
+    if (!sandbox) throw new EffectRefused('foreign-effect-needs-sandbox', {
+      url
+    });
+    const address = foreignAddress(url);
+    if (!address) throw new EffectRefused('invalid-reference', {
+      url
+    });
+    return {
+      foreign: address
+    };
+  }
+
   const index = await catalogueIndex(base);
   const entry = index.effects.find(candidate => typeof candidate?.path === 'string' && new URL(`${candidate.path}effect.json`, base).href === url);
   if (!entry) throw new EffectRefused('not-in-catalogue', {
     url
   });
-  return entry.id;
+  return {
+    id: entry.id
+  };
 }
 
-const loaded = new Map(); // Load an effect from the pinned catalogue: its id, or the address of its
-// effect.json under the catalogue base (`catalogue`, or
-// SF_BOOT_CONFIG.effects.catalogue). Every file is checked against the
-// index's SHA-256 before anything runs. Answers {id, url, manifest, module,
-// styles}; rejects with an error whose `reason` names the refusal.
+const loaded = new Map(); // Load an effect: from the pinned catalogue by its id, or by the address of
+// its effect.json under the catalogue base (`catalogue`, or
+// SF_BOOT_CONFIG.effects.catalogue), every file checked against the index's
+// SHA-256 before anything runs; or, by any other https address of an
+// effect.json, as a foreign effect whose module runs only in the sandbox
+// (sandboxed: true) -- unless foreign effects are refused (`foreign`, or
+// SF_BOOT_CONFIG.effects.foreign = 'refuse'). Answers {id, url, manifest,
+// module, styles, sandboxed}; rejects with an error whose `reason` names the
+// refusal.
 
 function loadEffect(reference, {
-  catalogue
+  catalogue,
+  foreign
 } = {}) {
   const base = catalogueBase(catalogue);
   return (async () => {
-    const id = await locate(reference, base);
-    const key = `${base}\n${id}`;
+    const where = await locate(reference, base, foreign);
+    const key = where.foreign ? `foreign\n${where.foreign}` : `${base}\n${where.id}`;
 
     if (!loaded.has(key)) {
-      const loading = loadVerified(base, id);
+      const loading = where.foreign ? loadForeign(where.foreign) : loadVerified(base, where.id);
       loading.catch(() => loaded.delete(key));
       loaded.set(key, loading);
     }
@@ -1319,7 +1703,8 @@ async function placeEffect(element, options = {}) {
     themeMode = 'auto',
     windows = false,
     catalogue,
-    locale
+    locale,
+    foreign
   } = options;
   placements.get(element)?.destroy();
   element.setAttribute(STATE, 'loading');
@@ -1327,7 +1712,8 @@ async function placeEffect(element, options = {}) {
 
   try {
     const main = await loadEffect(reference, {
-      catalogue
+      catalogue,
+      foreign
     });
     if (windows && !capabilities(main.manifest).includes('windows')) throw new EffectRefused('windows-not-declared', {
       id: main.id
@@ -1335,17 +1721,30 @@ async function placeEffect(element, options = {}) {
     let pair = null;
     let pairRefused = null;
 
-    if (typeof main.manifest.pair === 'string' && !pairIsForeign(main.manifest)) {
-      try {
-        pair = await loadEffect(main.manifest.pair, {
-          catalogue
-        });
-      } catch (error) {
-        pairRefused = error?.reason ?? 'pair-failed';
+    if (typeof main.manifest.pair === 'string') {
+      // A pair by address is foreign, loaded for the sandbox (or not at all
+      // when foreign effects are refused); a pair by id is the catalogue's,
+      // and a foreign effect's id names nothing in this catalogue.
+      const outside = pairIsForeign(main.manifest);
+
+      if (!outside && main.sandboxed) {
+        pairRefused = 'pair-of-foreign-effect';
         report(element, main.manifest.pair, pairRefused, {
-          pairOf: main.id,
-          ...(error?.detail ?? {})
+          pairOf: main.id
         });
+      } else if (!outside || foreignMode(foreign) === 'sandbox') {
+        try {
+          pair = await loadEffect(main.manifest.pair, {
+            catalogue,
+            foreign
+          });
+        } catch (error) {
+          pairRefused = error?.reason ?? 'pair-failed';
+          report(element, main.manifest.pair, pairRefused, {
+            pairOf: main.id,
+            ...(error?.detail ?? {})
+          });
+        }
       }
     }
 
@@ -1368,7 +1767,8 @@ async function placeEffect(element, options = {}) {
       pairRefused,
       stored: settings,
       locale,
-      themeMode
+      themeMode,
+      foreign
     };
     let handle;
     let layer = null;
@@ -1421,6 +1821,10 @@ async function placeEffect(element, options = {}) {
 
       get themeMode() {
         return handle.themeMode;
+      },
+
+      get sandboxed() {
+        return handle.sandboxed;
       }
 
     });
@@ -1490,12 +1894,12 @@ function scan(root) {
 }
 
 function watchDeclared(document) {
-  scan(document); // A declared effect runs only from a configured catalogue (anything else is
-  // foreign and waits for the sandbox), so a page without one has nothing a
-  // later node could start: it is scanned once, for the refusals, and the
-  // document is not watched on every change of every page.
+  const declared = document.querySelector(DECLARED);
+  scan(document); // A page that configures no catalogue and declares no effect when it loads
+  // is not watched on every change: a foreign effect it adds later is placed
+  // with placeEffect.
 
-  if (!effectsConfig().catalogue) return;
+  if (!effectsConfig().catalogue && !declared) return;
   new globalThis.MutationObserver(records => {
     for (const record of records) {
       for (const node of record.addedNodes) if (node.nodeType === 1) scan(node);
@@ -1518,6 +1922,7 @@ if (typeof window !== 'undefined') {
     effectSettings,
     effectSchemes,
     pairIsForeign,
+    foreignMode,
     allowedModes,
     resolveTheme,
     pageScheme,
@@ -1525,7 +1930,8 @@ if (typeof window !== 'undefined') {
     mountWindows,
     loadEffect,
     placeEffect,
-    EFFECT_SCHEMA
+    EFFECT_SCHEMA,
+    SANDBOX_RUNNER_SHA256: FRAME_RUNNER_SHA256
   });
 
   if (typeof document !== 'undefined' && document.documentElement) {
