@@ -8,6 +8,10 @@
 
 ### Исправлено
 
+- Fixed: without `window.sfPath` Core finds its `distr/` from the address of its own script (the npm package, a copy of `distr/` on the site), and the warning that remains for the rare case it cannot recommends the npm form (simai/ui-source#8). `?sf-debug` falls back to the minified form of any script that has no readable copy, so a page served from the npm package defines its Smart Components in debug.
+- Fixed: the pagination wraps in a narrow column instead of putting «Показать ещё» over «Последняя».
+- Changed: SIMAI is written in capitals in the live sources, schemas and messages.
+
 - Fixed: a first visit sets bold Latin bold. The metric fallback `Inter Fallback`, used while Inter (`font-display: optional`) has not arrived, now has a bold face (Arial Bold at 550-1000) beside the regular one; bold Latin was drawn at 400 until Inter was cached.
 
 - Fixed: `--sf-on-surface-container--variant` is neutral-35 (light) and neutral-80 (dark) and holds 4.5:1 on a container fill over any of the surfaces 0 to 3; the 40/70 pair fell to 4.25:1 over the brighter surfaces (simai/ui-source#3). The `bg-surface-container` utility switches the dimmed role over it, as `elevation-N` does.
