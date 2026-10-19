@@ -249,6 +249,8 @@
 
 ### Изменено
 
+- Changed: composition value types are read without a version as well: `record-changed`, `record-removed`, `collection-changed`, `files-moved`, `counter`, `navigation`, `preference-changed`, `record-id`, `record-ids`, `text`, `boolean`, beside their `.v1` names (compat until 2026-12-01, journal `value-types-without-version`). A route between a bare name and its `.v1` label is one type; `sf-page-host` publishes a host's effect named either way. The routing contract is at 1.1.0, the fragment descriptor schema at 1.2.0, and `simai.interface-fragment` at 1.0.2; old-form digests are unchanged.
+
 - Changed: the Composition Recipe contract is at 1.1.0: recipe, recipe manifest, inputs and the dependency receipt accept the format name without a version (`"schema": "simai.composition.recipe"` with `"schema_version": 1`) as well as the old label, and the canonical-JSON profile accepts `simai.recipe.canonical-json`. A recipe in the old form resolves to the same Document and digests as under 1.0.1. The standards that pin the contract follow with new editions, requirements unchanged: `simai.composite-component` 1.0.3, `simai.dynamic-composite-component` 1.0.3, `simai.composite-host-port` 1.0.4, `simai.interface-fragment` 1.0.1, `simai.component-package` 1.1.1.
 
 - Changed: an inline `sf-modal` (`display="inline"`) is shown without `open`, as it stands in the page's flow; `close()` puts it away and `open()` brings it back. The script Modal already opened an inline window by itself.
