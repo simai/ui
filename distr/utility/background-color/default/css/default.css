@@ -119,6 +119,9 @@
   .bg-success-transparent-overlay {
     background-color: var(--sf-success-transparent-overlay);
   }
+  .bg-surface-container {
+    --sf-on-surface-variant: var(--sf-on-surface-container--variant);
+  }
   .active\:bg-surface-container:active {
     background-color: var(--sf-surface-container-active);
   }
