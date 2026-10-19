@@ -8,6 +8,8 @@
 
 ### Исправлено
 
+- Fixed: a first visit sets bold Latin bold. The metric fallback `Inter Fallback`, used while Inter (`font-display: optional`) has not arrived, now has a bold face (Arial Bold at 550-1000) beside the regular one; bold Latin was drawn at 400 until Inter was cached.
+
 - Fixed: `--sf-on-surface-container--variant` is neutral-35 (light) and neutral-80 (dark) and holds 4.5:1 on a container fill over any of the surfaces 0 to 3; the 40/70 pair fell to 4.25:1 over the brighter surfaces (simai/ui-source#3). The `bg-surface-container` utility switches the dimmed role over it, as `elevation-N` does.
 - Fixed: initials in an avatar inside a tag take the primary role; two container fills stacked measured 3.6:1 in the dark theme (simai/ui-source#1).
 - Fixed: `sf-quantity`'s steppers no longer flash the browser's grey button before the icon-button styles apply (simai/ui-source#2).
