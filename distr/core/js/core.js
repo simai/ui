@@ -6325,7 +6325,7 @@ function portProblems(ports, where) {
     const port = ports[name];
     if (!NAME.test(name)) problems.push(`${where}.${name}: name`);
     if (!closed(port, ['value', 'summary'])) { problems.push(`${where}.${name}: undeclared keys`); continue; }
-    if (!Object.hasOwn(_routing_mjs__WEBPACK_IMPORTED_MODULE_2__.VALUE_TYPES, port.value)) problems.push(`${where}.${name}: unknown value type ${port.value}`);
+    if ((0,_routing_mjs__WEBPACK_IMPORTED_MODULE_2__.valueTypeName)(port.value) === null) problems.push(`${where}.${name}: unknown value type ${port.value}`);
     if (typeof port.summary !== 'string' || !port.summary.trim() || port.summary.length > 1000) problems.push(`${where}.${name}: summary`);
   }
   return problems;
@@ -6357,11 +6357,15 @@ function checkFragmentDescriptor(descriptor) {
 }
 
 // The page host as an endpoint (simai.interface-fragment, host-is-an-endpoint).
-// A product's port answers carry `effects` -- [{type: 'record-changed.v1',
+// A product's port answers carry `effects` -- [{type: 'record-changed',
 // value}, ...] -- and the page publishes them on this element's outputs, one
 // output per value type, named by the type without its version
 // (record-changed, files-moved ...). The routes the page declares deliver them
-// to the fragments that listen; the host never calls a fragment itself.
+// to the fragments that listen; the host never calls a fragment itself. An
+// effect's type is read in either form, the bare name or the older label with
+// the version (record-changed.v1), until the change journal retires the older
+// one (value-types-without-version); both publish the same value on the same
+// output. The host's own declared outputs keep the older labels.
 //
 //   <sf-composition-scope data-sf-routes='[{"id": "files-refresh",
 //       "from": {"endpoint": "host", "port": "collection-changed", "value": "collection-changed.v1"},
@@ -6370,7 +6374,8 @@ function checkFragmentDescriptor(descriptor) {
 //     ...
 //   </sf-composition-scope>
 const PAGE_EFFECT_TYPES = ['record-changed.v1', 'record-removed.v1', 'collection-changed.v1', 'files-moved.v1', 'counter.v1', 'navigation.v1', 'preference-changed.v1'];
-const effectPort = (type) => type.replace(/\.v\d+$/u, '');
+const effectPort = (type) => (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_2__.valueTypeName)(type);
+const PAGE_EFFECT_PORTS = PAGE_EFFECT_TYPES.map(effectPort);
 
 function definePageHost(registry = globalThis.customElements) {
   if (!registry || typeof globalThis.HTMLElement !== 'function') return null;
@@ -6399,13 +6404,13 @@ function definePageHost(registry = globalThis.customElements) {
       const refused = [];
       for (const effect of Array.isArray(effects) ? effects : []) {
         const type = effect?.type;
-        if (!PAGE_EFFECT_TYPES.includes(type)) {
+        if (!PAGE_EFFECT_PORTS.includes((0,_routing_mjs__WEBPACK_IMPORTED_MODULE_2__.valueTypeName)(type))) {
           refused.push({type: type ?? null, reason: 'type_not_published'});
           continue;
         }
         let value;
         try {
-          value = _routing_mjs__WEBPACK_IMPORTED_MODULE_2__.VALUE_TYPES[type].check(effect.value);
+          value = (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_2__.valueTypeEntry)(type).check(effect.value);
         } catch (error) {
           refused.push({type, reason: 'value_invalid', message: String(error?.message ?? error)});
           continue;
@@ -8099,7 +8104,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   parseRoutesAttribute: () => (/* binding */ parseRoutesAttribute),
 /* harmony export */   portsForType: () => (/* binding */ portsForType),
 /* harmony export */   resolveRoutes: () => (/* binding */ resolveRoutes),
-/* harmony export */   routesAttribute: () => (/* binding */ routesAttribute)
+/* harmony export */   routesAttribute: () => (/* binding */ routesAttribute),
+/* harmony export */   sameValueType: () => (/* binding */ sameValueType),
+/* harmony export */   valueTypeEntry: () => (/* binding */ valueTypeEntry),
+/* harmony export */   valueTypeName: () => (/* binding */ valueTypeName)
 /* harmony export */ });
 /* harmony import */ var _canonical_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("6f489cc65b77");
 /* harmony import */ var _schema_name_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("ac24888e7d3e");
@@ -8292,11 +8300,41 @@ const VALUE_TYPES = Object.freeze({
 });
 
 const own = (object, key) => (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(object) && typeof key === 'string' && Object.hasOwn(object, key);
-const knownValueType = (name) => own(VALUE_TYPES, name);
+
+// Names carry no version (owner, 2026-10-19; journal record
+// value-types-without-version). A value type is read by its bare name
+// (record-removed) or by the older label with the version (record-removed.v1)
+// until the change journal retires the older one. VALUE_TYPES and the
+// registries keep the older labels as keys, so published bytes and digests do
+// not move; this is the one place that reads either form.
+const VALUE_TYPE_LABELS = Object.freeze(Object.assign(Object.create(null),
+  Object.fromEntries(Object.keys(VALUE_TYPES).map((label) => [label.replace(/\.v1$/u, ''), label]))));
+
+/** The bare name of a value type given in either form, or null when the vocabulary has no such type. */
+function valueTypeName(name) {
+  if (typeof name !== 'string') return null;
+  if (Object.hasOwn(VALUE_TYPE_LABELS, name)) return name;
+  if (Object.hasOwn(VALUE_TYPES, name)) return name.replace(/\.v1$/u, '');
+  return null;
+}
+
+/** Whether two value types are the same type, whichever form each is named in. */
+function sameValueType(left, right) {
+  const name = valueTypeName(left);
+  return name !== null && name === valueTypeName(right);
+}
+
+/** The vocabulary entry {summary, schema, check} of a value type named in either form, or null. */
+function valueTypeEntry(name) {
+  const bare = valueTypeName(name);
+  return bare === null ? null : VALUE_TYPES[VALUE_TYPE_LABELS[bare]];
+}
+
+const knownValueType = (name) => valueTypeName(name) !== null;
 
 function checkPortValue(valueType, value) {
   if (!knownValueType(valueType)) throw new TypeError(`Unknown value type ${valueType}`);
-  const type = VALUE_TYPES[valueType];
+  const type = valueTypeEntry(valueType);
   const checked = type.check(value);
   if (new globalThis.TextEncoder().encode(JSON.stringify(checked)).byteLength > ROUTING_LIMITS.maxValueBytes) throw new TypeError('Port value is too large');
   return checked;
@@ -8441,7 +8479,7 @@ function resolveRoutes(root, registry, ports, diagnostics = []) {
         if (fanOut.get(outputKey) > ROUTING_LIMITS.maxFanOut) diagnostics.push(diagnostic('route_fanout_limit', `${routePath}.from`, `Output ${outputKey} feeds too many routes`));
         edges.push([route.from.endpoint, route.to.endpoint]);
         if (ends.from && ends.to) {
-          if (ends.from.value !== ends.to.value) diagnostics.push(diagnostic('route_type_mismatch', routePath, `${ends.from.value} cannot feed ${ends.to.value}`));
+          if (!sameValueType(ends.from.value, ends.to.value)) diagnostics.push(diagnostic('route_type_mismatch', routePath, `${ends.from.value} cannot feed ${ends.to.value}`));
           else typed.push({ id: route.id, from: ends.from, to: ends.to });
         }
       });
@@ -8559,7 +8597,7 @@ class CompositionRouteController {
         return;
       }
       const declared = target.constructor?.sfPorts?.inputs?.[route.to.port];
-      if (declared !== route.to.value) {
+      if (!sameValueType(declared, route.to.value)) {
         this.counters.rejected += 1;
         this.setState(route.id, { status: 'error', error: 'port_mismatch', sequence });
         return;
@@ -8633,7 +8671,7 @@ function parseRoutesAttribute(value) {
       if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(end) || typeof end.endpoint !== 'string' || typeof end.port !== 'string'
         || !NAME_PATTERN.test(end.endpoint) || !NAME_PATTERN.test(end.port) || !knownValueType(end.value)) return null;
     }
-    if (route.from.value !== route.to.value || ids.has(route.id)) return null;
+    if (!sameValueType(route.from.value, route.to.value) || ids.has(route.id)) return null;
     ids.add(route.id);
   }
   return parsed;
