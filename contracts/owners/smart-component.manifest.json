@@ -39,8 +39,8 @@
       "owner": "simai/ui",
       "lifecycle": "experimental",
       "readiness": {
-        "status": "discoverable",
-        "safe_to_suggest": false,
+        "status": "ready",
+        "safe_to_suggest": true,
         "profiles": [
           "plain-assets-v1"
         ],
@@ -90,8 +90,8 @@
       "owner": "simai/ui",
       "lifecycle": "experimental",
       "readiness": {
-        "status": "discoverable",
-        "safe_to_suggest": false,
+        "status": "ready",
+        "safe_to_suggest": true,
         "profiles": [
           "plain-assets-v1"
         ],
@@ -141,8 +141,8 @@
       "owner": "simai/ui",
       "lifecycle": "experimental",
       "readiness": {
-        "status": "discoverable",
-        "safe_to_suggest": false,
+        "status": "ready",
+        "safe_to_suggest": true,
         "profiles": [
           "plain-assets-v1"
         ],
@@ -197,8 +197,8 @@
       "owner": "simai/ui",
       "lifecycle": "experimental",
       "readiness": {
-        "status": "discoverable",
-        "safe_to_suggest": false,
+        "status": "ready",
+        "safe_to_suggest": true,
         "profiles": [
           "plain-assets-v1"
         ],
@@ -246,8 +246,8 @@
       "owner": "simai/ui",
       "lifecycle": "experimental",
       "readiness": {
-        "status": "discoverable",
-        "safe_to_suggest": false,
+        "status": "ready",
+        "safe_to_suggest": true,
         "profiles": [
           "plain-assets-v1"
         ],
@@ -503,8 +503,8 @@
       "owner": "simai/ui",
       "lifecycle": "experimental",
       "readiness": {
-        "status": "discoverable",
-        "safe_to_suggest": false,
+        "status": "ready",
+        "safe_to_suggest": true,
         "profiles": [
           "plain-assets-v1"
         ],
@@ -605,8 +605,8 @@
       "owner": "simai/ui",
       "lifecycle": "experimental",
       "readiness": {
-        "status": "discoverable",
-        "safe_to_suggest": false,
+        "status": "ready",
+        "safe_to_suggest": true,
         "profiles": [
           "plain-assets-v1"
         ],
@@ -707,8 +707,8 @@
       "owner": "simai/ui",
       "lifecycle": "experimental",
       "readiness": {
-        "status": "discoverable",
-        "safe_to_suggest": false,
+        "status": "ready",
+        "safe_to_suggest": true,
         "profiles": [
           "plain-assets-v1"
         ],
@@ -757,8 +757,8 @@
       "owner": "simai/ui",
       "lifecycle": "experimental",
       "readiness": {
-        "status": "discoverable",
-        "safe_to_suggest": false,
+        "status": "ready",
+        "safe_to_suggest": true,
         "profiles": [
           "plain-assets-v1"
         ],
@@ -862,8 +862,8 @@
       "owner": "simai/ui",
       "lifecycle": "experimental",
       "readiness": {
-        "status": "discoverable",
-        "safe_to_suggest": false,
+        "status": "ready",
+        "safe_to_suggest": true,
         "profiles": [
           "plain-assets-v1"
         ],
@@ -912,8 +912,8 @@
       "owner": "simai/ui",
       "lifecycle": "experimental",
       "readiness": {
-        "status": "discoverable",
-        "safe_to_suggest": false,
+        "status": "ready",
+        "safe_to_suggest": true,
         "profiles": [
           "plain-assets-v1"
         ],
@@ -963,8 +963,8 @@
       "owner": "simai/ui",
       "lifecycle": "experimental",
       "readiness": {
-        "status": "discoverable",
-        "safe_to_suggest": false,
+        "status": "ready",
+        "safe_to_suggest": true,
         "profiles": [
           "plain-assets-v1"
         ],
@@ -1222,8 +1222,8 @@
       "owner": "simai/ui",
       "lifecycle": "experimental",
       "readiness": {
-        "status": "discoverable",
-        "safe_to_suggest": false,
+        "status": "ready",
+        "safe_to_suggest": true,
         "profiles": [
           "plain-assets-v1"
         ],
@@ -1274,8 +1274,8 @@
       "owner": "simai/ui",
       "lifecycle": "experimental",
       "readiness": {
-        "status": "discoverable",
-        "safe_to_suggest": false,
+        "status": "ready",
+        "safe_to_suggest": true,
         "profiles": [
           "plain-assets-v1"
         ],
@@ -1380,8 +1380,8 @@
       "owner": "simai/ui",
       "lifecycle": "experimental",
       "readiness": {
-        "status": "discoverable",
-        "safe_to_suggest": false,
+        "status": "ready",
+        "safe_to_suggest": true,
         "profiles": [
           "plain-assets-v1"
         ],
@@ -1428,8 +1428,8 @@
       "owner": "simai/ui",
       "lifecycle": "experimental",
       "readiness": {
-        "status": "discoverable",
-        "safe_to_suggest": false,
+        "status": "ready",
+        "safe_to_suggest": true,
         "profiles": [
           "plain-assets-v1"
         ],
@@ -1476,8 +1476,8 @@
       "owner": "simai/ui",
       "lifecycle": "experimental",
       "readiness": {
-        "status": "discoverable",
-        "safe_to_suggest": false,
+        "status": "ready",
+        "safe_to_suggest": true,
         "profiles": [
           "plain-assets-v1"
         ],
@@ -1525,8 +1525,8 @@
       "owner": "simai/ui",
       "lifecycle": "experimental",
       "readiness": {
-        "status": "discoverable",
-        "safe_to_suggest": false,
+        "status": "ready",
+        "safe_to_suggest": true,
         "profiles": [
           "plain-assets-v1"
         ],
@@ -1573,8 +1573,8 @@
       "owner": "simai/ui",
       "lifecycle": "experimental",
       "readiness": {
-        "status": "discoverable",
-        "safe_to_suggest": false,
+        "status": "ready",
+        "safe_to_suggest": true,
         "profiles": [
           "plain-assets-v1"
         ],
@@ -1623,8 +1623,8 @@
       "owner": "simai/ui",
       "lifecycle": "experimental",
       "readiness": {
-        "status": "discoverable",
-        "safe_to_suggest": false,
+        "status": "ready",
+        "safe_to_suggest": true,
         "profiles": [
           "plain-assets-v1"
         ],
@@ -1671,8 +1671,8 @@
       "owner": "simai/ui",
       "lifecycle": "experimental",
       "readiness": {
-        "status": "discoverable",
-        "safe_to_suggest": false,
+        "status": "ready",
+        "safe_to_suggest": true,
         "profiles": [
           "plain-assets-v1"
         ],
@@ -1721,8 +1721,8 @@
       "owner": "simai/ui",
       "lifecycle": "experimental",
       "readiness": {
-        "status": "discoverable",
-        "safe_to_suggest": false,
+        "status": "ready",
+        "safe_to_suggest": true,
         "profiles": [
           "plain-assets-v1"
         ],
@@ -1818,8 +1818,8 @@
       "owner": "simai/ui",
       "lifecycle": "experimental",
       "readiness": {
-        "status": "discoverable",
-        "safe_to_suggest": false,
+        "status": "ready",
+        "safe_to_suggest": true,
         "profiles": [
           "plain-assets-v1"
         ],
@@ -1867,8 +1867,8 @@
       "owner": "simai/ui",
       "lifecycle": "experimental",
       "readiness": {
-        "status": "discoverable",
-        "safe_to_suggest": false,
+        "status": "ready",
+        "safe_to_suggest": true,
         "profiles": [
           "plain-assets-v1"
         ],
@@ -2031,8 +2031,8 @@
       "owner": "simai/ui",
       "lifecycle": "experimental",
       "readiness": {
-        "status": "discoverable",
-        "safe_to_suggest": false,
+        "status": "ready",
+        "safe_to_suggest": true,
         "profiles": [
           "plain-assets-v1"
         ],
@@ -2079,8 +2079,8 @@
       "owner": "simai/ui",
       "lifecycle": "experimental",
       "readiness": {
-        "status": "discoverable",
-        "safe_to_suggest": false,
+        "status": "ready",
+        "safe_to_suggest": true,
         "profiles": [
           "plain-assets-v1"
         ],
@@ -2181,8 +2181,8 @@
       "owner": "simai/ui",
       "lifecycle": "released",
       "readiness": {
-        "status": "discoverable",
-        "safe_to_suggest": false,
+        "status": "ready",
+        "safe_to_suggest": true,
         "profiles": [
           "plain-assets-v1"
         ],
@@ -2229,8 +2229,8 @@
       "owner": "simai/ui",
       "lifecycle": "experimental",
       "readiness": {
-        "status": "discoverable",
-        "safe_to_suggest": false,
+        "status": "ready",
+        "safe_to_suggest": true,
         "profiles": [
           "plain-assets-v1"
         ],
@@ -2281,8 +2281,8 @@
       "owner": "simai/ui",
       "lifecycle": "experimental",
       "readiness": {
-        "status": "discoverable",
-        "safe_to_suggest": false,
+        "status": "ready",
+        "safe_to_suggest": true,
         "profiles": [
           "plain-assets-v1"
         ],
@@ -2331,8 +2331,8 @@
       "owner": "simai/ui",
       "lifecycle": "experimental",
       "readiness": {
-        "status": "discoverable",
-        "safe_to_suggest": false,
+        "status": "ready",
+        "safe_to_suggest": true,
         "profiles": [
           "plain-assets-v1"
         ],
@@ -2383,8 +2383,8 @@
       "owner": "simai/ui",
       "lifecycle": "experimental",
       "readiness": {
-        "status": "discoverable",
-        "safe_to_suggest": false,
+        "status": "ready",
+        "safe_to_suggest": true,
         "profiles": [
           "plain-assets-v1"
         ],
@@ -2432,8 +2432,8 @@
       "owner": "simai/ui",
       "lifecycle": "experimental",
       "readiness": {
-        "status": "discoverable",
-        "safe_to_suggest": false,
+        "status": "ready",
+        "safe_to_suggest": true,
         "profiles": [
           "plain-assets-v1"
         ],
@@ -2482,8 +2482,8 @@
       "owner": "simai/ui",
       "lifecycle": "experimental",
       "readiness": {
-        "status": "discoverable",
-        "safe_to_suggest": false,
+        "status": "ready",
+        "safe_to_suggest": true,
         "profiles": [
           "plain-assets-v1"
         ],
@@ -2529,8 +2529,8 @@
       "owner": "simai/ui",
       "lifecycle": "experimental",
       "readiness": {
-        "status": "discoverable",
-        "safe_to_suggest": false,
+        "status": "ready",
+        "safe_to_suggest": true,
         "profiles": [
           "plain-assets-v1"
         ],
@@ -2580,8 +2580,8 @@
       "owner": "simai/ui",
       "lifecycle": "experimental",
       "readiness": {
-        "status": "discoverable",
-        "safe_to_suggest": false,
+        "status": "ready",
+        "safe_to_suggest": true,
         "profiles": [
           "plain-assets-v1"
         ],
@@ -2633,8 +2633,8 @@
       "owner": "simai/ui",
       "lifecycle": "experimental",
       "readiness": {
-        "status": "discoverable",
-        "safe_to_suggest": false,
+        "status": "ready",
+        "safe_to_suggest": true,
         "profiles": [
           "plain-assets-v1"
         ],
@@ -2685,8 +2685,8 @@
       "owner": "simai/ui",
       "lifecycle": "experimental",
       "readiness": {
-        "status": "discoverable",
-        "safe_to_suggest": false,
+        "status": "ready",
+        "safe_to_suggest": true,
         "profiles": [
           "plain-assets-v1"
         ],
@@ -2736,8 +2736,8 @@
       "owner": "simai/ui",
       "lifecycle": "experimental",
       "readiness": {
-        "status": "discoverable",
-        "safe_to_suggest": false,
+        "status": "ready",
+        "safe_to_suggest": true,
         "profiles": [
           "plain-assets-v1"
         ],

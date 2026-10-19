@@ -42,6 +42,39 @@
   },
   "entries": [
     {
+      "id": "component.accordion",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      }
+    },
+    {
+      "id": "component.admin-menu",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      }
+    },
+    {
+      "id": "component.alerts",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      }
+    },
+    {
       "id": "component.avatars",
       "readiness": {
         "status": "ready",
@@ -54,6 +87,28 @@
       "curated_for": [
         "recipe.admin.collection"
       ]
+    },
+    {
+      "id": "component.badges",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      }
+    },
+    {
+      "id": "component.breadcrumbs",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      }
     },
     {
       "id": "component.buttons",
@@ -73,6 +128,17 @@
       ]
     },
     {
+      "id": "component.carousel",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      }
+    },
+    {
       "id": "component.checkbox",
       "readiness": {
         "status": "ready",
@@ -90,6 +156,17 @@
       ]
     },
     {
+      "id": "component.clipboard",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      }
+    },
+    {
       "id": "component.close",
       "readiness": {
         "status": "ready",
@@ -102,6 +179,17 @@
       "curated_for": [
         "recipe.admin.collection"
       ]
+    },
+    {
+      "id": "component.content-divider",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      }
     },
     {
       "id": "component.context-menu",
@@ -118,6 +206,17 @@
       ]
     },
     {
+      "id": "component.country-code",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      }
+    },
+    {
       "id": "component.datepicker",
       "readiness": {
         "status": "ready",
@@ -132,6 +231,17 @@
       ]
     },
     {
+      "id": "component.doc",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      }
+    },
+    {
       "id": "component.dot",
       "readiness": {
         "status": "ready",
@@ -144,6 +254,17 @@
       "curated_for": [
         "recipe.admin.collection"
       ]
+    },
+    {
+      "id": "component.download-file",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      }
     },
     {
       "id": "component.dropdown",
@@ -161,6 +282,94 @@
       "curated_for": [
         "recipe.admin.collection"
       ]
+    },
+    {
+      "id": "component.emoji",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      }
+    },
+    {
+      "id": "component.fab",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      }
+    },
+    {
+      "id": "component.featured-icon",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      }
+    },
+    {
+      "id": "component.file-preview",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      }
+    },
+    {
+      "id": "component.file-upload",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      }
+    },
+    {
+      "id": "component.flag",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      }
+    },
+    {
+      "id": "component.hide-show",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      }
+    },
+    {
+      "id": "component.highlight",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      }
     },
     {
       "id": "component.icon-buttons",
@@ -211,6 +420,61 @@
       ]
     },
     {
+      "id": "component.kbd",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      }
+    },
+    {
+      "id": "component.link",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      }
+    },
+    {
+      "id": "component.menu",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      }
+    },
+    {
+      "id": "component.modal",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      }
+    },
+    {
+      "id": "component.outline",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      }
+    },
+    {
       "id": "component.pagination",
       "readiness": {
         "status": "ready",
@@ -228,6 +492,116 @@
       ]
     },
     {
+      "id": "component.placeholder",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      }
+    },
+    {
+      "id": "component.progress-bar",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      }
+    },
+    {
+      "id": "component.progress-scale",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      }
+    },
+    {
+      "id": "component.quantity",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      }
+    },
+    {
+      "id": "component.radio",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      }
+    },
+    {
+      "id": "component.range-slider",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      }
+    },
+    {
+      "id": "component.reference-link",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      }
+    },
+    {
+      "id": "component.scrollbar",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      }
+    },
+    {
+      "id": "component.skeleton",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      }
+    },
+    {
+      "id": "component.slider",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      }
+    },
+    {
       "id": "component.spinner",
       "readiness": {
         "status": "ready",
@@ -240,6 +614,50 @@
       "curated_for": [
         "recipe.admin.collection"
       ]
+    },
+    {
+      "id": "component.step",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      }
+    },
+    {
+      "id": "component.swiper",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      }
+    },
+    {
+      "id": "component.switch",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      }
+    },
+    {
+      "id": "component.tab",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      }
     },
     {
       "id": "component.tabs",
@@ -271,6 +689,83 @@
       "curated_for": [
         "recipe.admin.collection"
       ]
+    },
+    {
+      "id": "component.textarea",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      }
+    },
+    {
+      "id": "component.theme",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      }
+    },
+    {
+      "id": "component.toast",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      }
+    },
+    {
+      "id": "component.tooltip",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      }
+    },
+    {
+      "id": "component.tree",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      }
+    },
+    {
+      "id": "component.tree-item",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      }
+    },
+    {
+      "id": "component.verification",
+      "readiness": {
+        "status": "ready",
+        "safe_to_suggest": true,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      }
     }
   ]
 }

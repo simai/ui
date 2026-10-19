@@ -253,11 +253,20 @@ class FrameworkContractRegistryTest(unittest.TestCase):
         closure = set(
             self.registry["indexes"]["recipe_closure"]["recipe.admin.collection"]
         )
-        # Nothing is advertised outside the curated plan. The two sets are not
-        # equal, because the closure also holds what those components are built
-        # out of: the dropdown renders list items, and the list item is
-        # deliberately not offered on its own.
-        self.assertLessEqual(safe, closure | {"recipe.admin.collection"})
+        # The recipe's curated plan is suggestable. Outside it, an entry is
+        # suggested only when it was promoted by the rule in
+        # contracts/owners/PROMOTION.md (owner, 2026-10-19, after the
+        # ui-vscode audit): ready, unblocked, and named in the promotion record.
+        promoted = set(
+            json.loads((ROOT / "contracts/owners/promotion.json").read_text())[
+                "promoted"
+            ]
+        )
+        self.assertLessEqual(safe, closure | {"recipe.admin.collection"} | promoted)
+        for public_id in promoted:
+            self.assertIn(public_id, safe, public_id)
+            self.assertEqual(self.by_id[public_id]["readiness"]["status"], "ready")
+            self.assertEqual(self.by_id[public_id]["readiness"]["blockers"], [])
         self.assertTrue(
             all(
                 self.by_id[public_id]["readiness"]["safe_to_suggest"]

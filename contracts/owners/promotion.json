@@ -1,0 +1,1535 @@
+{
+  "schema": "simai.registry-promotion",
+  "schema_version": 1,
+  "summary": "Entries promoted to ready and safe_to_suggest outside the recipe's curated plan, by the rule in PROMOTION.md (owner, 2026-10-19, after the ui-vscode audit). Evidence was read at the revisions below.",
+  "evidence_revisions": {
+    "simai/ui-doc": "75cd6166b0c8e25907dd06a4be4b45d9c23ff51c",
+    "simai/ui-source": "369d8c3c443bfb3acbad03cc93498f030691effa",
+    "simai/ui-admin": "4f06ba6e84a44f6f6f2c40632bc82f4a560fd2e4",
+    "open_issues": "simai/ui-source #4 #7 #8 #9 (2026-10-19)"
+  },
+  "promoted": [
+    "component.accordion",
+    "component.admin-menu",
+    "component.alerts",
+    "component.badges",
+    "component.breadcrumbs",
+    "component.carousel",
+    "component.clipboard",
+    "component.content-divider",
+    "component.country-code",
+    "component.doc",
+    "component.download-file",
+    "component.emoji",
+    "component.fab",
+    "component.featured-icon",
+    "component.file-preview",
+    "component.file-upload",
+    "component.flag",
+    "component.hide-show",
+    "component.highlight",
+    "component.kbd",
+    "component.link",
+    "component.menu",
+    "component.modal",
+    "component.outline",
+    "component.placeholder",
+    "component.progress-bar",
+    "component.progress-scale",
+    "component.quantity",
+    "component.radio",
+    "component.range-slider",
+    "component.reference-link",
+    "component.scrollbar",
+    "component.skeleton",
+    "component.slider",
+    "component.step",
+    "component.swiper",
+    "component.switch",
+    "component.tab",
+    "component.textarea",
+    "component.theme",
+    "component.toast",
+    "component.tooltip",
+    "component.tree",
+    "component.tree-item",
+    "component.verification",
+    "smart.alert",
+    "smart.avatar",
+    "smart.avatars",
+    "smart.badges",
+    "smart.breadcrumbs",
+    "smart.color",
+    "smart.composition-overlay",
+    "smart.copy-button",
+    "smart.country-code",
+    "smart.download-file",
+    "smart.drawer",
+    "smart.empty-state",
+    "smart.file-preview",
+    "smart.file-upload",
+    "smart.gallery",
+    "smart.help-mark",
+    "smart.list-item",
+    "smart.modal",
+    "smart.page-header",
+    "smart.popover",
+    "smart.profile-picker",
+    "smart.progress-bar",
+    "smart.progress-scale",
+    "smart.radio",
+    "smart.range-slider",
+    "smart.reference-link",
+    "smart.resizer",
+    "smart.skeleton",
+    "smart.slider",
+    "smart.sortable",
+    "smart.steps",
+    "smart.switch",
+    "smart.textarea",
+    "smart.theme-generator",
+    "smart.toast",
+    "smart.tooltip",
+    "smart.tree",
+    "smart.tree-item",
+    "utility.align-items",
+    "utility.background-color",
+    "utility.border-color",
+    "utility.border-radius",
+    "utility.border-width",
+    "utility.box-shadow",
+    "utility.box-shadow-color",
+    "utility.container",
+    "utility.cursor",
+    "utility.divider-color",
+    "utility.element-position",
+    "utility.elevation",
+    "utility.fill",
+    "utility.flex",
+    "utility.flex-grow",
+    "utility.flex-wrap",
+    "utility.font-size",
+    "utility.font-weight",
+    "utility.grid-template-columns",
+    "utility.height",
+    "utility.height-ext",
+    "utility.justify-content",
+    "utility.letter-spacing",
+    "utility.list-style-type",
+    "utility.margin",
+    "utility.max-container",
+    "utility.max-height",
+    "utility.max-height-ext",
+    "utility.max-width",
+    "utility.max-width-ext",
+    "utility.min-height",
+    "utility.min-width",
+    "utility.padding",
+    "utility.place-items",
+    "utility.position",
+    "utility.query-container",
+    "utility.resize",
+    "utility.scroll-hover",
+    "utility.scroll-subtle",
+    "utility.sr-only",
+    "utility.stripe",
+    "utility.stroke-color",
+    "utility.svg-size",
+    "utility.table",
+    "utility.text-color",
+    "utility.text-wrap",
+    "utility.title",
+    "utility.transform-scale",
+    "utility.transition-property",
+    "utility.width-ext",
+    "utility.z-index"
+  ],
+  "evidence": {
+    "component.accordion": {
+      "docs": [
+        "content/ru/components/content/accordion.md"
+      ],
+      "docs_usages": 111,
+      "tests": {
+        "ui_source": 7,
+        "ui_admin": 0
+      }
+    },
+    "component.admin-menu": {
+      "docs": [
+        "content/ru/components/internal/admin-menu.md"
+      ],
+      "docs_usages": 88,
+      "tests": {
+        "ui_source": 2,
+        "ui_admin": 0
+      }
+    },
+    "component.alerts": {
+      "docs": [
+        "content/ru/components/feedback/alerts.md"
+      ],
+      "docs_usages": 342,
+      "tests": {
+        "ui_source": 16,
+        "ui_admin": 0
+      }
+    },
+    "component.badges": {
+      "docs": [
+        "content/ru/components/feedback/badges.md"
+      ],
+      "docs_usages": 124,
+      "tests": {
+        "ui_source": 10,
+        "ui_admin": 0
+      }
+    },
+    "component.breadcrumbs": {
+      "docs": [
+        "content/ru/components/navigation/breadcrumbs.md"
+      ],
+      "docs_usages": 75,
+      "tests": {
+        "ui_source": 5,
+        "ui_admin": 0
+      }
+    },
+    "component.carousel": {
+      "docs": [
+        "content/ru/components/overlays-media/carousel.md"
+      ],
+      "docs_usages": 214,
+      "tests": {
+        "ui_source": 5,
+        "ui_admin": 0
+      }
+    },
+    "component.clipboard": {
+      "docs": [
+        "content/ru/components/actions/clipboard.md"
+      ],
+      "docs_usages": 74,
+      "tests": {
+        "ui_source": 8,
+        "ui_admin": 0
+      }
+    },
+    "component.content-divider": {
+      "docs": [
+        "content/ru/components/content/content-divider.md"
+      ],
+      "docs_usages": 28,
+      "tests": {
+        "ui_source": 2,
+        "ui_admin": 0
+      }
+    },
+    "component.country-code": {
+      "docs": [
+        "content/ru/components/forms/country-code.md"
+      ],
+      "docs_usages": 94,
+      "tests": {
+        "ui_source": 33,
+        "ui_admin": 0
+      }
+    },
+    "component.doc": {
+      "docs": [
+        "content/ru/components/content/doc.md"
+      ],
+      "docs_usages": 25,
+      "tests": {
+        "ui_source": 230,
+        "ui_admin": 4
+      }
+    },
+    "component.download-file": {
+      "docs": [
+        "content/ru/components/actions/download-file.md"
+      ],
+      "docs_usages": 50,
+      "tests": {
+        "ui_source": 4,
+        "ui_admin": 0
+      }
+    },
+    "component.emoji": {
+      "docs": [
+        "content/ru/components/content/emoji.md"
+      ],
+      "docs_usages": 9,
+      "tests": {
+        "ui_source": 3,
+        "ui_admin": 0
+      }
+    },
+    "component.fab": {
+      "docs": [
+        "content/ru/components/actions/fab.md"
+      ],
+      "docs_usages": 117,
+      "tests": {
+        "ui_source": 4,
+        "ui_admin": 0
+      }
+    },
+    "component.featured-icon": {
+      "docs": [
+        "content/ru/components/content/featured-icon.md"
+      ],
+      "docs_usages": 33,
+      "tests": {
+        "ui_source": 5,
+        "ui_admin": 0
+      }
+    },
+    "component.file-preview": {
+      "docs": [
+        "content/ru/components/content/file-preview.md"
+      ],
+      "docs_usages": 38,
+      "tests": {
+        "ui_source": 7,
+        "ui_admin": 0
+      }
+    },
+    "component.file-upload": {
+      "docs": [
+        "content/ru/components/forms/file-upload.md"
+      ],
+      "docs_usages": 69,
+      "tests": {
+        "ui_source": 24,
+        "ui_admin": 0
+      }
+    },
+    "component.flag": {
+      "docs": [
+        "content/ru/components/content/flag.md"
+      ],
+      "docs_usages": 31,
+      "tests": {
+        "ui_source": 2,
+        "ui_admin": 0
+      }
+    },
+    "component.hide-show": {
+      "docs": [
+        "content/ru/components/tools/hide-show.md"
+      ],
+      "docs_usages": 10,
+      "tests": {
+        "ui_source": 2,
+        "ui_admin": 0
+      }
+    },
+    "component.highlight": {
+      "docs": [
+        "content/ru/components/content/highlight.md"
+      ],
+      "docs_usages": 9,
+      "tests": {
+        "ui_source": 6,
+        "ui_admin": 0
+      }
+    },
+    "component.kbd": {
+      "docs": [
+        "content/ru/components/content/kbd.md"
+      ],
+      "docs_usages": 78,
+      "tests": {
+        "ui_source": 8,
+        "ui_admin": 0
+      }
+    },
+    "component.link": {
+      "docs": [
+        "content/ru/components/navigation/link.md"
+      ],
+      "docs_usages": 21,
+      "tests": {
+        "ui_source": 5,
+        "ui_admin": 0
+      }
+    },
+    "component.menu": {
+      "docs": [
+        "content/ru/components/navigation/menu.md"
+      ],
+      "docs_usages": 94,
+      "tests": {
+        "ui_source": 15,
+        "ui_admin": 0
+      }
+    },
+    "component.modal": {
+      "docs": [
+        "content/ru/components/overlays-media/modal.md"
+      ],
+      "docs_usages": 177,
+      "tests": {
+        "ui_source": 47,
+        "ui_admin": 1
+      }
+    },
+    "component.outline": {
+      "docs": [
+        "content/ru/components/tools/outline.md"
+      ],
+      "docs_usages": 307,
+      "tests": {
+        "ui_source": 25,
+        "ui_admin": 4
+      }
+    },
+    "component.placeholder": {
+      "docs": [
+        "content/ru/components/feedback/placeholder.md"
+      ],
+      "docs_usages": 3,
+      "tests": {
+        "ui_source": 3,
+        "ui_admin": 0
+      }
+    },
+    "component.progress-bar": {
+      "docs": [
+        "content/ru/components/feedback/progress-bar.md"
+      ],
+      "docs_usages": 60,
+      "tests": {
+        "ui_source": 8,
+        "ui_admin": 0
+      }
+    },
+    "component.progress-scale": {
+      "docs": [
+        "content/ru/components/feedback/progress-scale.md"
+      ],
+      "docs_usages": 79,
+      "tests": {
+        "ui_source": 9,
+        "ui_admin": 3
+      }
+    },
+    "component.quantity": {
+      "docs": [
+        "content/ru/components/forms/quantity.md"
+      ],
+      "docs_usages": 273,
+      "tests": {
+        "ui_source": 20,
+        "ui_admin": 0
+      }
+    },
+    "component.radio": {
+      "docs": [
+        "content/ru/components/forms/radio.md"
+      ],
+      "docs_usages": 151,
+      "tests": {
+        "ui_source": 13,
+        "ui_admin": 0
+      }
+    },
+    "component.range-slider": {
+      "docs": [
+        "content/ru/components/forms/range-slider.md"
+      ],
+      "docs_usages": 22,
+      "tests": {
+        "ui_source": 14,
+        "ui_admin": 0
+      }
+    },
+    "component.reference-link": {
+      "docs": [
+        "content/ru/components/content/reference-link.md"
+      ],
+      "docs_usages": 38,
+      "tests": {
+        "ui_source": 7,
+        "ui_admin": 0
+      }
+    },
+    "component.scrollbar": {
+      "docs": [
+        "content/ru/components/tools/scrollbar.md"
+      ],
+      "docs_usages": 11,
+      "tests": {
+        "ui_source": 6,
+        "ui_admin": 0
+      }
+    },
+    "component.skeleton": {
+      "docs": [
+        "content/ru/components/feedback/skeleton.md"
+      ],
+      "docs_usages": 265,
+      "tests": {
+        "ui_source": 10,
+        "ui_admin": 1
+      }
+    },
+    "component.slider": {
+      "docs": [
+        "content/ru/components/forms/slider.md"
+      ],
+      "docs_usages": 337,
+      "tests": {
+        "ui_source": 23,
+        "ui_admin": 0
+      }
+    },
+    "component.step": {
+      "docs": [
+        "content/ru/components/navigation/step.md"
+      ],
+      "docs_usages": 32,
+      "tests": {
+        "ui_source": 6,
+        "ui_admin": 0
+      }
+    },
+    "component.swiper": {
+      "docs": [
+        "content/ru/components/overlays-media/swiper.md"
+      ],
+      "docs_usages": 22,
+      "tests": {
+        "ui_source": 22,
+        "ui_admin": 0
+      }
+    },
+    "component.switch": {
+      "docs": [
+        "content/ru/components/forms/switch.md"
+      ],
+      "docs_usages": 492,
+      "tests": {
+        "ui_source": 19,
+        "ui_admin": 0
+      }
+    },
+    "component.tab": {
+      "docs": [
+        "content/ru/components/navigation/tab.md"
+      ],
+      "docs_usages": 5,
+      "tests": {
+        "ui_source": 3,
+        "ui_admin": 0
+      }
+    },
+    "component.textarea": {
+      "docs": [
+        "content/ru/components/forms/textarea.md"
+      ],
+      "docs_usages": 78,
+      "tests": {
+        "ui_source": 16,
+        "ui_admin": 0
+      }
+    },
+    "component.theme": {
+      "docs": [
+        "content/ru/components/tools/theme.md"
+      ],
+      "docs_usages": 4,
+      "tests": {
+        "ui_source": 3,
+        "ui_admin": 0
+      }
+    },
+    "component.toast": {
+      "docs": [
+        "content/ru/components/feedback/toast.md"
+      ],
+      "docs_usages": 57,
+      "tests": {
+        "ui_source": 9,
+        "ui_admin": 0
+      }
+    },
+    "component.tooltip": {
+      "docs": [
+        "content/ru/components/overlays-media/tooltip.md"
+      ],
+      "docs_usages": 102,
+      "tests": {
+        "ui_source": 11,
+        "ui_admin": 0
+      }
+    },
+    "component.tree": {
+      "docs": [
+        "content/ru/components/navigation/tree.md"
+      ],
+      "docs_usages": 27,
+      "tests": {
+        "ui_source": 8,
+        "ui_admin": 0
+      }
+    },
+    "component.tree-item": {
+      "docs": [
+        "content/ru/components/navigation/tree-item.md"
+      ],
+      "docs_usages": 61,
+      "tests": {
+        "ui_source": 7,
+        "ui_admin": 1
+      }
+    },
+    "component.verification": {
+      "docs": [
+        "content/ru/components/forms/verification.md"
+      ],
+      "docs_usages": 28,
+      "tests": {
+        "ui_source": 5,
+        "ui_admin": 0
+      }
+    },
+    "smart.alert": {
+      "docs": [
+        "content/ru/smart-components/feedback/alert.md"
+      ],
+      "docs_usages": 6,
+      "tests": {
+        "ui_source": 13,
+        "ui_admin": 0
+      }
+    },
+    "smart.avatar": {
+      "docs": [
+        "content/ru/smart-components/content/avatar.md"
+      ],
+      "docs_usages": 11,
+      "tests": {
+        "ui_source": 22,
+        "ui_admin": 6
+      }
+    },
+    "smart.avatars": {
+      "docs": [
+        "content/ru/smart-components/content/avatars.md"
+      ],
+      "docs_usages": 7,
+      "tests": {
+        "ui_source": 3,
+        "ui_admin": 0
+      }
+    },
+    "smart.badges": {
+      "docs": [
+        "content/ru/smart-components/feedback/badges.md"
+      ],
+      "docs_usages": 9,
+      "tests": {
+        "ui_source": 16,
+        "ui_admin": 1
+      }
+    },
+    "smart.breadcrumbs": {
+      "docs": [
+        "content/ru/smart-components/navigation/breadcrumbs.md"
+      ],
+      "docs_usages": 12,
+      "tests": {
+        "ui_source": 12,
+        "ui_admin": 5
+      }
+    },
+    "smart.color": {
+      "docs": [
+        "content/ru/smart-components/forms/color.md"
+      ],
+      "docs_usages": 7,
+      "tests": {
+        "ui_source": 3,
+        "ui_admin": 0
+      }
+    },
+    "smart.composition-overlay": {
+      "docs": [
+        "content/ru/smart-components/editor/composition-overlay.md"
+      ],
+      "docs_usages": 9,
+      "tests": {
+        "ui_source": 7,
+        "ui_admin": 0
+      }
+    },
+    "smart.copy-button": {
+      "docs": [
+        "content/ru/smart-components/actions/copy-button.md"
+      ],
+      "docs_usages": 13,
+      "tests": {
+        "ui_source": 3,
+        "ui_admin": 0
+      }
+    },
+    "smart.country-code": {
+      "docs": [
+        "content/ru/smart-components/forms/country-code.md"
+      ],
+      "docs_usages": 16,
+      "tests": {
+        "ui_source": 31,
+        "ui_admin": 0
+      }
+    },
+    "smart.download-file": {
+      "docs": [
+        "content/ru/smart-components/actions/download-file.md"
+      ],
+      "docs_usages": 7,
+      "tests": {
+        "ui_source": 6,
+        "ui_admin": 0
+      }
+    },
+    "smart.drawer": {
+      "docs": [
+        "content/ru/smart-components/overlays/drawer.md"
+      ],
+      "docs_usages": 14,
+      "tests": {
+        "ui_source": 19,
+        "ui_admin": 0
+      }
+    },
+    "smart.empty-state": {
+      "docs": [
+        "content/ru/smart-components/feedback/empty-state.md"
+      ],
+      "docs_usages": 15,
+      "tests": {
+        "ui_source": 4,
+        "ui_admin": 0
+      }
+    },
+    "smart.file-preview": {
+      "docs": [
+        "content/ru/smart-components/content/file-preview.md"
+      ],
+      "docs_usages": 6,
+      "tests": {
+        "ui_source": 8,
+        "ui_admin": 0
+      }
+    },
+    "smart.file-upload": {
+      "docs": [
+        "content/ru/smart-components/forms/file-upload.md"
+      ],
+      "docs_usages": 12,
+      "tests": {
+        "ui_source": 23,
+        "ui_admin": 0
+      }
+    },
+    "smart.gallery": {
+      "docs": [
+        "content/ru/smart-components/content/gallery.md"
+      ],
+      "docs_usages": 7,
+      "tests": {
+        "ui_source": 18,
+        "ui_admin": 0
+      }
+    },
+    "smart.help-mark": {
+      "docs": [
+        "content/ru/smart-components/feedback/help-mark.md"
+      ],
+      "docs_usages": 8,
+      "tests": {
+        "ui_source": 4,
+        "ui_admin": 0
+      }
+    },
+    "smart.list-item": {
+      "docs": [
+        "content/ru/smart-components/content/list-item.md"
+      ],
+      "docs_usages": 19,
+      "tests": {
+        "ui_source": 56,
+        "ui_admin": 0
+      }
+    },
+    "smart.modal": {
+      "docs": [
+        "content/ru/smart-components/overlays/modal.md"
+      ],
+      "docs_usages": 27,
+      "tests": {
+        "ui_source": 49,
+        "ui_admin": 1
+      }
+    },
+    "smart.page-header": {
+      "docs": [
+        "content/ru/smart-components/composite/page-header.md"
+      ],
+      "docs_usages": 9,
+      "tests": {
+        "ui_source": 3,
+        "ui_admin": 3
+      }
+    },
+    "smart.popover": {
+      "docs": [
+        "content/ru/smart-components/overlays/popover.md"
+      ],
+      "docs_usages": 8,
+      "tests": {
+        "ui_source": 2,
+        "ui_admin": 1
+      }
+    },
+    "smart.profile-picker": {
+      "docs": [
+        "content/ru/smart-components/composite/profile-picker.md"
+      ],
+      "docs_usages": 5,
+      "tests": {
+        "ui_source": 3,
+        "ui_admin": 0
+      }
+    },
+    "smart.progress-bar": {
+      "docs": [
+        "content/ru/smart-components/feedback/progress-bar.md"
+      ],
+      "docs_usages": 6,
+      "tests": {
+        "ui_source": 12,
+        "ui_admin": 0
+      }
+    },
+    "smart.progress-scale": {
+      "docs": [
+        "content/ru/smart-components/feedback/progress-scale.md"
+      ],
+      "docs_usages": 6,
+      "tests": {
+        "ui_source": 9,
+        "ui_admin": 3
+      }
+    },
+    "smart.radio": {
+      "docs": [
+        "content/ru/smart-components/forms/radio.md"
+      ],
+      "docs_usages": 9,
+      "tests": {
+        "ui_source": 6,
+        "ui_admin": 0
+      }
+    },
+    "smart.range-slider": {
+      "docs": [
+        "content/ru/smart-components/forms/range-slider.md"
+      ],
+      "docs_usages": 7,
+      "tests": {
+        "ui_source": 22,
+        "ui_admin": 0
+      }
+    },
+    "smart.reference-link": {
+      "docs": [
+        "content/ru/smart-components/content/reference-link.md"
+      ],
+      "docs_usages": 7,
+      "tests": {
+        "ui_source": 9,
+        "ui_admin": 0
+      }
+    },
+    "smart.resizer": {
+      "docs": [
+        "content/ru/smart-components/overlays/resizer.md"
+      ],
+      "docs_usages": 12,
+      "tests": {
+        "ui_source": 4,
+        "ui_admin": 0
+      }
+    },
+    "smart.skeleton": {
+      "docs": [
+        "content/ru/smart-components/feedback/skeleton.md"
+      ],
+      "docs_usages": 6,
+      "tests": {
+        "ui_source": 10,
+        "ui_admin": 1
+      }
+    },
+    "smart.slider": {
+      "docs": [
+        "content/ru/smart-components/forms/slider.md"
+      ],
+      "docs_usages": 7,
+      "tests": {
+        "ui_source": 26,
+        "ui_admin": 0
+      }
+    },
+    "smart.sortable": {
+      "docs": [
+        "content/ru/smart-components/editor/sortable.md"
+      ],
+      "docs_usages": 12,
+      "tests": {
+        "ui_source": 8,
+        "ui_admin": 0
+      }
+    },
+    "smart.steps": {
+      "docs": [
+        "content/ru/smart-components/navigation/steps.md"
+      ],
+      "docs_usages": 7,
+      "tests": {
+        "ui_source": 10,
+        "ui_admin": 0
+      }
+    },
+    "smart.switch": {
+      "docs": [
+        "content/ru/smart-components/forms/switch.md"
+      ],
+      "docs_usages": 20,
+      "tests": {
+        "ui_source": 11,
+        "ui_admin": 0
+      }
+    },
+    "smart.textarea": {
+      "docs": [
+        "content/ru/smart-components/forms/textarea.md"
+      ],
+      "docs_usages": 9,
+      "tests": {
+        "ui_source": 26,
+        "ui_admin": 0
+      }
+    },
+    "smart.theme-generator": {
+      "docs": [
+        "content/ru/smart-components/forms/theme-generator.md"
+      ],
+      "docs_usages": 7,
+      "tests": {
+        "ui_source": 4,
+        "ui_admin": 0
+      }
+    },
+    "smart.toast": {
+      "docs": [
+        "content/ru/smart-components/feedback/toast.md"
+      ],
+      "docs_usages": 8,
+      "tests": {
+        "ui_source": 10,
+        "ui_admin": 0
+      }
+    },
+    "smart.tooltip": {
+      "docs": [
+        "content/ru/smart-components/feedback/tooltip.md"
+      ],
+      "docs_usages": 8,
+      "tests": {
+        "ui_source": 14,
+        "ui_admin": 0
+      }
+    },
+    "smart.tree": {
+      "docs": [
+        "content/ru/smart-components/navigation/tree.md"
+      ],
+      "docs_usages": 14,
+      "tests": {
+        "ui_source": 9,
+        "ui_admin": 0
+      }
+    },
+    "smart.tree-item": {
+      "docs": [
+        "content/ru/smart-components/navigation/tree-item.md"
+      ],
+      "docs_usages": 26,
+      "tests": {
+        "ui_source": 9,
+        "ui_admin": 3
+      }
+    },
+    "utility.align-items": {
+      "docs": [
+        "content/ru/utilities/grid-and-flexbox-utilities/align-items.md",
+        "content/en/utilities/grid-and-flexbox-utilities/align-items.md"
+      ],
+      "docs_usages": 608,
+      "tests": {
+        "ui_source": 26,
+        "ui_admin": 5
+      }
+    },
+    "utility.background-color": {
+      "docs": [
+        "content/ru/utilities/background/background-color.md"
+      ],
+      "docs_usages": 2350,
+      "tests": {
+        "ui_source": 15,
+        "ui_admin": 1
+      }
+    },
+    "utility.border-color": {
+      "docs": [
+        "content/ru/utilities/border/border-color.md",
+        "content/en/utilities/border/border-color.md"
+      ],
+      "docs_usages": 1213,
+      "tests": {
+        "ui_source": 2,
+        "ui_admin": 2
+      }
+    },
+    "utility.border-radius": {
+      "docs": [
+        "content/ru/utilities/border/border-radius.md",
+        "content/en/utilities/border/border-radius.md"
+      ],
+      "docs_usages": 2921,
+      "tests": {
+        "ui_source": 16,
+        "ui_admin": 0
+      }
+    },
+    "utility.border-width": {
+      "docs": [
+        "content/ru/utilities/border/border-width.md",
+        "content/en/utilities/border/border-width.md"
+      ],
+      "docs_usages": 175,
+      "tests": {
+        "ui_source": 2,
+        "ui_admin": 0
+      }
+    },
+    "utility.box-shadow": {
+      "docs": [
+        "content/ru/utilities/shadows/element-shadow.md",
+        "content/en/utilities/shadows/element-shadow.md"
+      ],
+      "docs_usages": 36,
+      "tests": {
+        "ui_source": 1,
+        "ui_admin": 0
+      }
+    },
+    "utility.box-shadow-color": {
+      "docs": [
+        "content/ru/utilities/shadows/element-color.md",
+        "content/en/utilities/shadows/element-color.md"
+      ],
+      "docs_usages": 13,
+      "tests": {
+        "ui_source": 1,
+        "ui_admin": 0
+      }
+    },
+    "utility.container": {
+      "docs": [
+        "content/ru/utilities/layout/container.md",
+        "content/en/utilities/layout/container.md"
+      ],
+      "docs_usages": 17,
+      "tests": {
+        "ui_source": 1,
+        "ui_admin": 0
+      }
+    },
+    "utility.cursor": {
+      "docs": [
+        "content/ru/utilities/interactivity/cursor.md",
+        "content/en/utilities/interactivity/cursor.md"
+      ],
+      "docs_usages": 146,
+      "tests": {
+        "ui_source": 7,
+        "ui_admin": 0
+      }
+    },
+    "utility.divider-color": {
+      "docs": [
+        "content/ru/utilities/divider/divider-color.md",
+        "content/en/utilities/divider/divider-color.md"
+      ],
+      "docs_usages": 36,
+      "tests": {
+        "ui_source": 1,
+        "ui_admin": 0
+      }
+    },
+    "utility.element-position": {
+      "docs": [
+        "content/ru/utilities/layout/element-position.md",
+        "content/en/utilities/layout/element-position.md"
+      ],
+      "docs_usages": 145,
+      "tests": {
+        "ui_source": 1,
+        "ui_admin": 0
+      }
+    },
+    "utility.elevation": {
+      "docs": [
+        "content/ru/utilities/shadows/elevation.md"
+      ],
+      "docs_usages": 10,
+      "tests": {
+        "ui_source": 2,
+        "ui_admin": 0
+      }
+    },
+    "utility.fill": {
+      "docs": [
+        "content/ru/utilities/svg/svg-fill-type.md",
+        "content/en/utilities/svg/svg-fill-type.md"
+      ],
+      "docs_usages": 121,
+      "tests": {
+        "ui_source": 1,
+        "ui_admin": 0
+      }
+    },
+    "utility.flex": {
+      "docs": [
+        "content/ru/utilities/flex/flexibility.md",
+        "content/en/utilities/flex/flexibility.md"
+      ],
+      "docs_usages": 254,
+      "tests": {
+        "ui_source": 8,
+        "ui_admin": 4
+      }
+    },
+    "utility.flex-grow": {
+      "docs": [
+        "content/ru/utilities/flex/flex-grow.md",
+        "content/en/utilities/flex/flex-grow.md"
+      ],
+      "docs_usages": 31,
+      "tests": {
+        "ui_source": 0,
+        "ui_admin": 1
+      }
+    },
+    "utility.flex-wrap": {
+      "docs": [
+        "content/ru/utilities/flex/flex-wrap.md",
+        "content/en/utilities/flex/flex-wrap.md"
+      ],
+      "docs_usages": 487,
+      "tests": {
+        "ui_source": 16,
+        "ui_admin": 0
+      }
+    },
+    "utility.font-size": {
+      "docs": [
+        "content/ru/utilities/typography/text-size.md"
+      ],
+      "docs_usages": 2698,
+      "tests": {
+        "ui_source": 2,
+        "ui_admin": 0
+      }
+    },
+    "utility.font-weight": {
+      "docs": [
+        "content/ru/utilities/typography/font-weight.md",
+        "content/en/utilities/typography/font-weight.md"
+      ],
+      "docs_usages": 134,
+      "tests": {
+        "ui_source": 2,
+        "ui_admin": 0
+      }
+    },
+    "utility.grid-template-columns": {
+      "docs": [
+        "content/ru/utilities/grid/grid-template-columns.md",
+        "content/en/utilities/grid/grid-template-columns.md"
+      ],
+      "docs_usages": 676,
+      "tests": {
+        "ui_source": 10,
+        "ui_admin": 0
+      }
+    },
+    "utility.height": {
+      "docs": [
+        "content/ru/utilities/sizes/height.md",
+        "content/en/utilities/sizes/height.md"
+      ],
+      "docs_usages": 340,
+      "tests": {
+        "ui_source": 0,
+        "ui_admin": 6
+      }
+    },
+    "utility.height-ext": {
+      "docs": [
+        "content/ru/utilities/sizes/height.md",
+        "content/ru/utilities/sizes/min-height.md"
+      ],
+      "docs_usages": 1278,
+      "tests": {
+        "ui_source": 1,
+        "ui_admin": 0
+      }
+    },
+    "utility.justify-content": {
+      "docs": [
+        "content/ru/utilities/grid-and-flexbox-utilities/justify-content.md",
+        "content/en/utilities/grid-and-flexbox-utilities/justify-content.md"
+      ],
+      "docs_usages": 519,
+      "tests": {
+        "ui_source": 19,
+        "ui_admin": 2
+      }
+    },
+    "utility.letter-spacing": {
+      "docs": [
+        "content/ru/utilities/typography/letter-spacing.md",
+        "content/en/utilities/typography/letter-spacing.md"
+      ],
+      "docs_usages": 15,
+      "tests": {
+        "ui_source": 1,
+        "ui_admin": 0
+      }
+    },
+    "utility.list-style-type": {
+      "docs": [
+        "content/ru/utilities/typography/list-style-type.md",
+        "content/en/utilities/typography/list-style-type.md"
+      ],
+      "docs_usages": 29,
+      "tests": {
+        "ui_source": 2,
+        "ui_admin": 0
+      }
+    },
+    "utility.margin": {
+      "docs": [
+        "content/ru/utilities/indents/margin.md",
+        "content/en/utilities/indents/margin.md"
+      ],
+      "docs_usages": 657,
+      "tests": {
+        "ui_source": 7,
+        "ui_admin": 4
+      }
+    },
+    "utility.max-container": {
+      "docs": [
+        "content/ru/utilities/layout/max-container.md",
+        "content/en/utilities/layout/max-container.md"
+      ],
+      "docs_usages": 5,
+      "tests": {
+        "ui_source": 1,
+        "ui_admin": 0
+      }
+    },
+    "utility.max-height": {
+      "docs": [
+        "content/ru/utilities/sizes/max-height.md",
+        "content/en/utilities/sizes/max-height.md"
+      ],
+      "docs_usages": 4,
+      "tests": {
+        "ui_source": 0,
+        "ui_admin": 4
+      }
+    },
+    "utility.max-height-ext": {
+      "docs": [
+        "content/ru/utilities/sizes/max-height.md"
+      ],
+      "docs_usages": 21,
+      "tests": {
+        "ui_source": 1,
+        "ui_admin": 0
+      }
+    },
+    "utility.max-width": {
+      "docs": [
+        "content/ru/utilities/sizes/max-width.md",
+        "content/en/utilities/sizes/max-width.md"
+      ],
+      "docs_usages": 55,
+      "tests": {
+        "ui_source": 13,
+        "ui_admin": 0
+      }
+    },
+    "utility.max-width-ext": {
+      "docs": [
+        "content/ru/utilities/sizes/max-width.md"
+      ],
+      "docs_usages": 20,
+      "tests": {
+        "ui_source": 1,
+        "ui_admin": 0
+      }
+    },
+    "utility.min-height": {
+      "docs": [
+        "content/ru/utilities/sizes/min-height.md",
+        "content/en/utilities/sizes/min-height.md"
+      ],
+      "docs_usages": 14,
+      "tests": {
+        "ui_source": 0,
+        "ui_admin": 4
+      }
+    },
+    "utility.min-width": {
+      "docs": [
+        "content/ru/utilities/sizes/min-width.md",
+        "content/en/utilities/sizes/min-width.md"
+      ],
+      "docs_usages": 23,
+      "tests": {
+        "ui_source": 0,
+        "ui_admin": 4
+      }
+    },
+    "utility.padding": {
+      "docs": [
+        "content/ru/utilities/indents/padding.md",
+        "content/en/utilities/indents/padding.md"
+      ],
+      "docs_usages": 2635,
+      "tests": {
+        "ui_source": 66,
+        "ui_admin": 6
+      }
+    },
+    "utility.place-items": {
+      "docs": [
+        "content/ru/utilities/grid-and-flexbox-utilities/place-items.md",
+        "content/en/utilities/grid-and-flexbox-utilities/place-items.md"
+      ],
+      "docs_usages": 1870,
+      "tests": {
+        "ui_source": 22,
+        "ui_admin": 0
+      }
+    },
+    "utility.position": {
+      "docs": [
+        "content/ru/utilities/layout/element-position.md"
+      ],
+      "docs_usages": 367,
+      "tests": {
+        "ui_source": 9,
+        "ui_admin": 0
+      }
+    },
+    "utility.query-container": {
+      "docs": [
+        "content/ru/utilities/layout/query-container.md"
+      ],
+      "docs_usages": 15,
+      "tests": {
+        "ui_source": 1,
+        "ui_admin": 0
+      }
+    },
+    "utility.resize": {
+      "docs": [
+        "content/ru/utilities/forms/resize.md",
+        "content/en/utilities/forms/resize.md"
+      ],
+      "docs_usages": 17,
+      "tests": {
+        "ui_source": 3,
+        "ui_admin": 0
+      }
+    },
+    "utility.scroll-hover": {
+      "docs": [
+        "content/ru/utilities/overscroll/scroll-hover.md",
+        "content/en/utilities/overscroll/scroll-hover.md"
+      ],
+      "docs_usages": 3,
+      "tests": {
+        "ui_source": 1,
+        "ui_admin": 0
+      }
+    },
+    "utility.scroll-subtle": {
+      "docs": [
+        "content/ru/utilities/overscroll/scroll-subtle.md"
+      ],
+      "docs_usages": 2,
+      "tests": {
+        "ui_source": 2,
+        "ui_admin": 0
+      }
+    },
+    "utility.sr-only": {
+      "docs": [
+        "content/ru/utilities/interactivity/sr-only.md"
+      ],
+      "docs_usages": 30,
+      "tests": {
+        "ui_source": 7,
+        "ui_admin": 0
+      }
+    },
+    "utility.stripe": {
+      "docs": [
+        "content/ru/utilities/stripes/stripes.md",
+        "content/en/utilities/stripes/stripes.md"
+      ],
+      "docs_usages": 36,
+      "tests": {
+        "ui_source": 1,
+        "ui_admin": 0
+      }
+    },
+    "utility.stroke-color": {
+      "docs": [
+        "content/ru/utilities/svg/svg-stroke-color.md",
+        "content/en/utilities/svg/svg-stroke-color.md"
+      ],
+      "docs_usages": 54,
+      "tests": {
+        "ui_source": 1,
+        "ui_admin": 0
+      }
+    },
+    "utility.svg-size": {
+      "docs": [
+        "content/ru/utilities/svg/svg-image-size.md",
+        "content/en/utilities/svg/svg-image-size.md"
+      ],
+      "docs_usages": 117,
+      "tests": {
+        "ui_source": 1,
+        "ui_admin": 0
+      }
+    },
+    "utility.table": {
+      "docs": [
+        "content/ru/utilities/tables/tables-default-parameters.md",
+        "content/en/utilities/tables/tables-default-parameters.md"
+      ],
+      "docs_usages": 30,
+      "tests": {
+        "ui_source": 1,
+        "ui_admin": 0
+      }
+    },
+    "utility.text-color": {
+      "docs": [
+        "content/ru/utilities/text-formatting/text-color.md",
+        "content/en/utilities/text-formatting/text-color.md"
+      ],
+      "docs_usages": 4375,
+      "tests": {
+        "ui_source": 4,
+        "ui_admin": 5
+      }
+    },
+    "utility.text-wrap": {
+      "docs": [
+        "content/ru/utilities/typography/text-wrap.md"
+      ],
+      "docs_usages": 23,
+      "tests": {
+        "ui_source": 1,
+        "ui_admin": 0
+      }
+    },
+    "utility.title": {
+      "docs": [
+        "content/ru/utilities/typography/title-size.md"
+      ],
+      "docs_usages": 18,
+      "tests": {
+        "ui_source": 0,
+        "ui_admin": 1
+      }
+    },
+    "utility.transform-scale": {
+      "docs": [
+        "content/ru/utilities/transform/transform-scale.md",
+        "content/en/utilities/transform/transform-scale.md"
+      ],
+      "docs_usages": 37,
+      "tests": {
+        "ui_source": 1,
+        "ui_admin": 0
+      }
+    },
+    "utility.transition-property": {
+      "docs": [
+        "content/ru/utilities/animation/animation-transition-property.md",
+        "content/en/utilities/animation/animation-transition-property.md"
+      ],
+      "docs_usages": 278,
+      "tests": {
+        "ui_source": 16,
+        "ui_admin": 0
+      }
+    },
+    "utility.width-ext": {
+      "docs": [
+        "content/ru/utilities/sizes/width.md"
+      ],
+      "docs_usages": 889,
+      "tests": {
+        "ui_source": 2,
+        "ui_admin": 0
+      }
+    },
+    "utility.z-index": {
+      "docs": [
+        "content/ru/utilities/layout/z-index.md",
+        "content/en/utilities/layout/z-index.md"
+      ],
+      "docs_usages": 17,
+      "tests": {
+        "ui_source": 0,
+        "ui_admin": 1
+      }
+    }
+  },
+  "held": {
+    "smart.button-group": "open simai/ui-source#4 and #9",
+    "component.button-group": "open simai/ui-source#4 and #9",
+    "smart.inline-editor": "declares no inputs: no stable public API",
+    "smart.toggle": "deprecated in its source manifest (sf-switch replaces it)",
+    "component.toggle": "deprecated: its docs page is the migration to sf-switch"
+  }
+}
