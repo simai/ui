@@ -78,6 +78,7 @@
     background: var(--sf-elevation-4--surface);
     background: var(--sf-drawer-background, var(--sf-elevation-4--surface));
     --sf-on-surface-variant: var(--sf-on-elevation-4--variant);
+    --sf-badge--surface: var(--sf-drawer-background, var(--sf-elevation-4--surface));
     color: var(--sf-on-surface);
     color: var(--sf-drawer-color, var(--sf-on-surface));
     box-shadow: var(--sf-elevation-4--shadow);

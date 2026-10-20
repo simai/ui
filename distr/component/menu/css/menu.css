@@ -525,6 +525,7 @@
     background: var(--sf-elevation-2--surface);
     background: var(--sf-menu-horizontal-submenu--background-color, var(--sf-elevation-2--surface));
     --sf-on-surface-variant: var(--sf-on-elevation-2--variant);
+    --sf-badge--surface: var(--sf-menu-horizontal-submenu--background-color, var(--sf-elevation-2--surface));
     box-shadow: var(--sf-elevation-2--shadow);
     box-shadow: var(--sf-menu-horizontal-submenu--box-shadow, var(--sf-elevation-2--shadow));
   }
@@ -638,5 +639,199 @@
   .sf-menu.sf-menu--documentation-tree .sf-menu-element-wrap:focus-visible {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
     outline-offset: calc(var(--sf-focus--width) * -1);
+  }
+}
+@property --sf-badge--anchor-radius {
+  syntax: "<length-percentage>";
+  inherits: false;
+  initial-value: 0px;
+}
+@property --sf-badge--anchor-border {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+@layer sf.components {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu-element-wrap > .sf-badge {
+    margin-left: auto;
+  }
+  @supports not (margin-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-menu-element-wrap > .sf-badge {
+    margin-left: auto;
+    }
+  }
+  .sf-menu-element-wrap > .sf-badge:where(:dir(ltr)) {
+    margin-left: auto;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu-element-wrap > .sf-badge {
+    margin-right: auto;
+  }
+  @supports not (margin-inline-start: initial) {
+  [dir="rtl"] .sf-menu-element-wrap > .sf-badge {
+    margin-right: auto;
+    }
+  }
+  .sf-menu-element-wrap > .sf-badge:where(:dir(rtl)) {
+    margin-right: auto;
+  }
+  .sf-menu-element-wrap > .sf-badge {
+    flex: none;
+    -webkit-margin-start: auto;
+            margin-inline-start: auto;
+  }
+  .sf-menu.sf-menu--compact .sf-menu-element {
+    justify-content: center;
+    padding-left: var(--sf-space-1);
+    padding-right: var(--sf-space-1);
+    padding-inline: var(--sf-space-1);
+    padding-left: var(--sf-space-1);
+    padding-left: var(--sf-menu-element--padding-inline-end, var(--sf-space-1));
+    padding-right: var(--sf-space-1);
+    padding-right: var(--sf-menu-element--padding-inline-end, var(--sf-space-1));
+    padding-inline: var(--sf-menu-element--padding-inline-end, var(--sf-space-1));
+  }
+  .sf-menu.sf-menu--compact .sf-menu-element-wrap {
+    position: relative;
+    flex: none;
+  }
+  .sf-menu.sf-menu--compact .sf-menu-element-text {
+    position: absolute;
+    width: var(--sf-px);
+    inline-size: var(--sf-px);
+    height: var(--sf-px);
+    block-size: var(--sf-px);
+    margin: calc(var(--sf-px) * -1);
+    padding: 0;
+    overflow: hidden;
+    -webkit-clip-path: inset(50%);
+            clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+  .sf-menu.sf-menu--compact .sf-menu-element > .sf-icon-button,
+  .sf-menu.sf-menu--compact .sf-menu-item > .sf-menu {
+    display: none;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--compact .sf-menu-element-wrap > .sf-badge {
+    left: calc(100% + var(--sf-badge--anchor-border) - var(--sf-badge--anchored-inset));
+  }
+  @supports not (inset-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-menu.sf-menu--compact .sf-menu-element-wrap > .sf-badge {
+    left: calc(100% + var(--sf-badge--anchor-border) - var(--sf-badge--anchored-inset));
+    }
+  }
+  .sf-menu.sf-menu--compact .sf-menu-element-wrap > .sf-badge:where(:dir(ltr)) {
+    left: calc(100% + var(--sf-badge--anchor-border) - var(--sf-badge--anchored-inset));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--compact .sf-menu-element-wrap > .sf-badge {
+    right: calc(100% + var(--sf-badge--anchor-border) - var(--sf-badge--anchored-inset));
+  }
+  @supports not (inset-inline-start: initial) {
+  [dir="rtl"] .sf-menu.sf-menu--compact .sf-menu-element-wrap > .sf-badge {
+    right: calc(100% + var(--sf-badge--anchor-border) - var(--sf-badge--anchored-inset));
+    }
+  }
+  .sf-menu.sf-menu--compact .sf-menu-element-wrap > .sf-badge:where(:dir(rtl)) {
+    right: calc(100% + var(--sf-badge--anchor-border) - var(--sf-badge--anchored-inset));
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--compact .sf-menu-element-wrap > .sf-badge {
+    margin-left: 0;
+  }
+  @supports not (margin-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-menu.sf-menu--compact .sf-menu-element-wrap > .sf-badge {
+    margin-left: 0;
+    }
+  }
+  .sf-menu.sf-menu--compact .sf-menu-element-wrap > .sf-badge:where(:dir(ltr)) {
+    margin-left: 0;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--compact .sf-menu-element-wrap > .sf-badge {
+    margin-right: 0;
+  }
+  @supports not (margin-inline-start: initial) {
+  [dir="rtl"] .sf-menu.sf-menu--compact .sf-menu-element-wrap > .sf-badge {
+    margin-right: 0;
+    }
+  }
+  .sf-menu.sf-menu--compact .sf-menu-element-wrap > .sf-badge:where(:dir(rtl)) {
+    margin-right: 0;
+  }
+  .sf-menu.sf-menu--compact .sf-menu-element-wrap > .sf-badge {
+    --sf-badge--anchored-count: var(--sf-b6);
+    --sf-badge--anchored-dot: var(--sf-b0);
+    --sf-badge--anchored-font-size: var(--sf-text-size-1\/4);
+    --sf-badge--anchored-padding: var(--sf-a4);
+    --sf-badge--ring-width: var(--sf-a2);
+    --sf-badge--anchored-size: var(--sf-badge--anchored-count);
+    --sf-badge--anchored-max: none;
+    --sf-badge--anchored-size: var(--sf-badge--anchored-count);
+    --sf-badge--anchored-max: none;
+    --sf-badge--anchored-inset: calc(min(var(--sf-badge--anchor-radius), 50% + var(--sf-badge--anchor-border)) * 0.29289);
+    --sf-badge--ring: var(--sf-badge-ring-color, var(--sf-badge--surface, var(--sf-surface-0)));
+    --sf-badge--background-color: var(--sf-badge-background-color, var(--sf-error));
+    --sf-badge--color: var(--sf-badge-color, var(--sf-on-error));
+    position: absolute;
+    top: calc(var(--sf-badge--anchored-inset) - var(--sf-badge--anchor-border));
+    inset-block-start: calc(var(--sf-badge--anchored-inset) - var(--sf-badge--anchor-border));
+    inset-inline-start: calc(100% + var(--sf-badge--anchor-border) - var(--sf-badge--anchored-inset));
+    translate: -50% -50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    height: var(--sf-badge--anchored-size);
+    block-size: var(--sf-badge--anchored-size);
+    min-height: var(--sf-badge--anchored-size);
+    min-block-size: var(--sf-badge--anchored-size);
+    min-width: var(--sf-badge--anchored-size);
+    min-inline-size: var(--sf-badge--anchored-size);
+    max-width: var(--sf-badge--anchored-max);
+    max-inline-size: var(--sf-badge--anchored-max);
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-block: 0;
+    padding-left: var(--sf-badge--anchored-padding);
+    padding-right: var(--sf-badge--anchored-padding);
+    padding-inline: var(--sf-badge--anchored-padding);
+    overflow: hidden;
+    font-size: var(--sf-badge--anchored-font-size);
+    line-height: var(--sf-badge--anchored-size);
+    -webkit-font-feature-settings: "tnum";
+            font-feature-settings: "tnum";
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    box-shadow: 0 0 0 var(--sf-badge--ring-width) var(--sf-badge--ring);
+    -webkit-margin-start: 0;
+            margin-inline-start: 0;
+  }
+  .sf-menu.sf-menu--compact .sf-menu-element-wrap > .sf-badge:dir(rtl) {
+    translate: 50% -50%;
+  }
+  @media (forced-colors: active) {
+    .sf-menu.sf-menu--compact .sf-menu-element-wrap > .sf-badge {
+      forced-color-adjust: none;
+      background-color: Highlight;
+      color: HighlightText;
+      box-shadow: none;
+      outline: var(--sf-badge--ring-width) solid Canvas;
+    }
+  }
+  .sf-menu.sf-menu--compact .sf-menu-element-wrap[\:has\(\%3E\%20.sf-avatar\:not\(.sf-avatar--square\)\)] > .sf-badge {
+    --sf-badge--anchor-radius: var(--sf-radius-circle);
+  }
+  .sf-menu.sf-menu--compact .sf-menu-element-wrap:has(> .sf-avatar:not(.sf-avatar--square)) > .sf-badge {
+    --sf-badge--anchor-radius: var(--sf-radius-circle);
+  }
+  .sf-menu.sf-menu--compact .sf-menu-element-wrap[\:has\(\%3E\%20.sf-avatar--square\)] > .sf-badge {
+    --sf-badge--anchor-radius: var(--sf-radius--ui);
+  }
+  .sf-menu.sf-menu--compact .sf-menu-element-wrap:has(> .sf-avatar--square) > .sf-badge {
+    --sf-badge--anchor-radius: var(--sf-radius--ui);
+  }
+  .sf-menu.sf-menu--compact .sf-menu-element-wrap > .sf-badge.sf-badge--dot {
+    --sf-badge--anchored-size: var(--sf-badge--anchored-dot);
+    --sf-badge--anchored-max: var(--sf-badge--anchored-dot);
+    --sf-badge--anchored-padding: var(--sf-a0);
+    --sf-badge--anchored-font-size: var(--sf-a0);
   }
 }

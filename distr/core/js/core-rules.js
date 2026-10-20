@@ -3443,8 +3443,12 @@ SF.RuleLoader['cl-avatar'] = {
   type: 'smart',
   mode: 'smart',
   js: true,
+  // The badge sheet places a count or a dot on the avatar
+  // (simai/ui-source#12).
   relation: [{
     name: 'avatars'
+  }, {
+    name: 'badges'
   }]
 };
 
@@ -3886,6 +3890,9 @@ SF.RuleLoader['cl-icon-buttons'] = {
     name: 'cl-close'
   }, {
     name: 'pointer-events/default'
+  }, // The badge sheet places a count or a dot on the button (simai/ui-source#12).
+  {
+    name: 'badges'
   }, // The spinner a loading icon button shows, fetched after the page is ready.
   {
     name: 'spinner',
@@ -3903,8 +3910,14 @@ SF.RuleLoader['cl-icons'] = {
   type: 'smart',
   mode: 'smart',
   js: true,
+  // The badge sheet places a count or a dot on an icon (simai/ui-source#12).
+  // Icons are everywhere and badges on them are few: it is fetched when the
+  // page is idle, or at once by an icon that has a badge to show.
   relation: [{
     name: 'icons'
+  }, {
+    name: 'badges',
+    lazy: true
   }]
 };
 

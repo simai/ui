@@ -662,6 +662,9 @@
     "relation": [
       {
         "name": "avatars"
+      },
+      {
+        "name": "badges"
       }
     ],
     "tags": [
@@ -1113,6 +1116,9 @@
         "name": "pointer-events/default"
       },
       {
+        "name": "badges"
+      },
+      {
         "lazy": true,
         "name": "spinner"
       }
@@ -1129,6 +1135,10 @@
     "relation": [
       {
         "name": "icons"
+      },
+      {
+        "lazy": true,
+        "name": "badges"
       }
     ],
     "tags": [

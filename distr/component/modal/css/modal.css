@@ -88,6 +88,7 @@
     --sf-modal-surface-radius: var(--sf-modal-radius, var(--sf-radius--surface));
     --sf-modal-surface-shadow: none;
     background-color: var(--sf-modal-surface-bg);
+    --sf-badge--surface: var(--sf-modal-surface-bg);
     border: var(--sf-modal-surface-border-width) var(--sf-modal-surface-border-style) var(--sf-modal-surface-border-color);
     border-radius: var(--sf-modal-surface-radius);
     box-shadow: var(--sf-modal-surface-shadow);
