@@ -601,6 +601,12 @@
     "css": true,
     "js": true,
     "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-button\\b/i",
+    "relation": [
+      {
+        "lazy": true,
+        "name": "spinner"
+      }
+    ],
     "type": "component"
   },
   {
@@ -731,6 +737,10 @@
       },
       {
         "name": "cl-icons"
+      },
+      {
+        "lazy": true,
+        "name": "spinner"
       }
     ],
     "tags": [
@@ -754,6 +764,10 @@
       },
       {
         "name": "cl-icons"
+      },
+      {
+        "lazy": true,
+        "name": "spinner"
       }
     ],
     "tags": [
@@ -1097,6 +1111,10 @@
       },
       {
         "name": "pointer-events/default"
+      },
+      {
+        "lazy": true,
+        "name": "spinner"
       }
     ],
     "tags": [
@@ -2787,6 +2805,12 @@
     "css": true,
     "js": true,
     "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-icon-button\\b/i",
+    "relation": [
+      {
+        "lazy": true,
+        "name": "spinner"
+      }
+    ],
     "type": "component"
   },
   {

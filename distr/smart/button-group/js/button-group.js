@@ -42,6 +42,102 @@ function bindFormReset(input, synchronize) {
 
 /***/ },
 
+/***/ "50d2a204ba4c"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   SPINNER_GRID: () => (/* binding */ SPINNER_GRID),
+/* harmony export */   SPINNER_STROKE: () => (/* binding */ SPINNER_STROKE),
+/* harmony export */   createInlineSpinner: () => (/* binding */ createInlineSpinner),
+/* harmony export */   createLadderArcSvg: () => (/* binding */ createLadderArcSvg),
+/* harmony export */   createSvgNode: () => (/* binding */ createSvgNode)
+/* harmony export */ });
+// The spinner's drawing, without the component's side effects (no registry, no
+// observer), so a control that shows work in place of its icon -- a button, an
+// icon button, a group's segment -- draws the one spinner of the Framework
+// without loading or binding the spinner component (simai/ui-source#10).
+//
+// The ladder: a spinner is drawn on the icon grid. Material Symbols are drawn on
+// 24 units and, at the regular weight the Framework's controls use, stroke 2 of
+// them; a spinner on the same grid, scaled to the icon box of a step, strokes as
+// the icons of that step do, and needs no stroke of its own per step.
+const SVG_NS = 'http://www.w3.org/2000/svg';
+const SPINNER_GRID = 24;
+const SPINNER_STROKE = 2;
+function createSvgNode(tagName, attributes = {}) {
+  const node = document.createElementNS(SVG_NS, tagName);
+  Object.entries(attributes).forEach(([key, value]) => {
+    if (value === undefined || value === null || value === '') {
+      return;
+    }
+
+    node.setAttribute(key, String(value));
+  });
+  return node;
+} // The arc on the icon grid. The circles carry presentation attributes as well
+// as their classes: the spinner sheet styles them (track colour, the arc's
+// motion, the still arc under reduced motion), and until that sheet has arrived
+// they draw a faint ring in the current ink rather than a filled black disc.
+
+function createLadderArcSvg() {
+  const centre = SPINNER_GRID / 2;
+  const radius = centre - SPINNER_STROKE / 2;
+  const svg = createSvgNode('svg', {
+    class: 'sf-loader-svg',
+    viewBox: `0 0 ${SPINNER_GRID} ${SPINNER_GRID}`,
+    'aria-hidden': 'true',
+    focusable: 'false'
+  });
+  const filled = createSvgNode('circle', {
+    class: 'sf-loader-ring-filled',
+    cx: centre,
+    cy: centre,
+    r: radius,
+    fill: 'none',
+    stroke: 'currentColor',
+    'stroke-width': SPINNER_STROKE,
+    opacity: '0.3'
+  });
+  const accent = createSvgNode('circle', {
+    class: 'sf-loader-ring-accent',
+    cx: centre,
+    cy: centre,
+    r: radius,
+    fill: 'none',
+    stroke: 'currentColor',
+    'stroke-width': SPINNER_STROKE,
+    'stroke-linecap': 'round',
+    pathLength: 100,
+    'stroke-dasharray': '0 100',
+    transform: `rotate(90 ${centre} ${centre})`
+  });
+  svg.append(filled, accent);
+  return svg;
+} // A spinner that stands in a control: an endless arc, decorative (the control
+// keeps its label and says aria-busy), and marked bound so the spinner
+// component, when it is on the page, leaves it as drawn. `className` names the
+// control's slot for it; `overlay` lays it over the control's hidden label
+// instead of in the place of an icon.
+
+function createInlineSpinner({
+  className = '',
+  overlay = false
+} = {}) {
+  const root = document.createElement('span');
+  root.className = ['sf-loader-container', 'sf-loader--infinite', className, className && overlay ? `${className}--overlay` : ''].filter(Boolean).join(' ');
+  root.dataset.sfSpinnerBound = '1';
+  root.dataset.infinite = 'true';
+  root.setAttribute('aria-hidden', 'true');
+  const indicator = document.createElement('span');
+  indicator.className = 'sf-loader--loading-indicator';
+  indicator.append(createLadderArcSvg());
+  root.append(indicator);
+  return root;
+}
+
+/***/ },
+
 /***/ "18333410c461"
 (module, __webpack_exports__, __webpack_require__) {
 
@@ -117,6 +213,7 @@ function parseItems(value = []) {
       value: valuePart.trim(),
       label: (labelPart || valuePart).trim(),
       disabled: flags.includes('disabled'),
+      loading: flags.includes('loading'),
       icon: iconFlag ? iconFlag.slice('icon='.length) : ''
     };
   });
@@ -144,7 +241,10 @@ function normalizeItems(items = []) {
       count: source.count === null || typeof source.count === 'undefined' ? '' : String(source.count).trim(),
       // Only an icon can stand alone; the label stays as the accessible name.
       iconOnly: Boolean((source.iconOnly ?? source['icon-only']) && source.icon),
-      disabled: Boolean(source.disabled)
+      // A loading item shows the spinner and is disabled while it works, as
+      // a loading button is (simai/ui-source#10).
+      loading: Boolean(source.loading),
+      disabled: Boolean(source.disabled || source.loading)
     };
   }).filter(Boolean);
 }
@@ -473,10 +573,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   renderButtonGroupTemplate: () => (/* binding */ renderButtonGroupTemplate)
 /* harmony export */ });
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("ddf1cdb42ecc");
+/* harmony import */ var _component_spinner_js_spinner_draw__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("50d2a204ba4c");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__]);
 var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+
 
 
 function segmentFor(index, total) {
@@ -502,6 +604,7 @@ function renderItem(item, index, context) {
       aria-label=${item.ariaLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       class=${selected ? 'active' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       ?disabled=${disabled}
+      ?loading=${item.loading}
     ></sf-button>
   `;
 } // The segmented appearance draws each segment as a native button with the
@@ -514,12 +617,19 @@ function renderItem(item, index, context) {
 function renderSegment(item, context) {
   const selected = item.value === context.value;
   const disabled = context.disabled || item.disabled;
-  const classes = ['sf-button', `sf-button--size-${context.size}`, 'sf-button--link', 'sf-button--on-surface', 'flex', 'items-cross-center', 'sf-button-group-segment', item.iconOnly ? 'sf-button-group-icon-only' : '', context.spacing && context.spacing !== 'normal' ? `spacing-${context.spacing}` : '', selected ? 'active' : ''].filter(Boolean).join(' '); // The count stands next to the label with no space between the two nodes, so
+  const classes = ['sf-button', `sf-button--size-${context.size}`, 'sf-button--link', 'sf-button--on-surface', 'flex', 'items-cross-center', 'sf-button-group-segment', item.iconOnly ? 'sf-button-group-icon-only' : '', context.spacing && context.spacing !== 'normal' ? `spacing-${context.spacing}` : '', selected ? 'active' : '', item.loading ? 'loading sf-button-state-loading' : ''].filter(Boolean).join(' '); // The count stands next to the label with no space between the two nodes, so
   // the name is composed here: the label (or the item's aria-label), then the
   // count, as it is read on screen.
 
-  const ariaLabel = item.count !== '' || item.ariaLabel ? [item.ariaLabel || item.label, item.count].filter(part => part !== '').join(' ') : '';
-  const icon = item.icon ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-icon icon=${item.icon} root-class="pointer-event-none" weight="400" aria-hidden="true"></sf-icon>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  const ariaLabel = item.count !== '' || item.ariaLabel ? [item.ariaLabel || item.label, item.count].filter(part => part !== '').join(' ') : ''; // A loading segment shows the spinner as a loading button does
+  // (simai/ui-source#10): in place of its icon, or over its label, which keeps
+  // its place and its name.
+
+  const spinner = item.loading ? (0,_component_spinner_js_spinner_draw__WEBPACK_IMPORTED_MODULE_1__.createInlineSpinner)({
+    className: 'sf-button-spinner',
+    overlay: !item.icon
+  }) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  const icon = item.loading && item.icon ? spinner : item.icon ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-icon icon=${item.icon} root-class="pointer-event-none" weight="400" aria-hidden="true"></sf-icon>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
   const count = item.count !== '' ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-button-group-count">${item.count}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
     <button
@@ -527,8 +637,10 @@ function renderSegment(item, context) {
       class=${classes}
       data-sf-button-group-value=${item.value}
       aria-label=${ariaLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      aria-busy=${item.loading ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       ?disabled=${disabled}
     >
+      ${item.loading && !item.icon ? spinner : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       ${icon}
       ${item.iconOnly ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-button-group-label--hidden">${item.label}</span>${count}` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-button-text-container text-center pointer-event-none">${item.label}${count}</span>`}
     </button>

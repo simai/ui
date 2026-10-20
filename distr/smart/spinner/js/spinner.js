@@ -36,6 +36,102 @@ function registerComponent(name, cls) {
 
 /***/ },
 
+/***/ "50d2a204ba4c"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   SPINNER_GRID: () => (/* binding */ SPINNER_GRID),
+/* harmony export */   SPINNER_STROKE: () => (/* binding */ SPINNER_STROKE),
+/* harmony export */   createInlineSpinner: () => (/* binding */ createInlineSpinner),
+/* harmony export */   createLadderArcSvg: () => (/* binding */ createLadderArcSvg),
+/* harmony export */   createSvgNode: () => (/* binding */ createSvgNode)
+/* harmony export */ });
+// The spinner's drawing, without the component's side effects (no registry, no
+// observer), so a control that shows work in place of its icon -- a button, an
+// icon button, a group's segment -- draws the one spinner of the Framework
+// without loading or binding the spinner component (simai/ui-source#10).
+//
+// The ladder: a spinner is drawn on the icon grid. Material Symbols are drawn on
+// 24 units and, at the regular weight the Framework's controls use, stroke 2 of
+// them; a spinner on the same grid, scaled to the icon box of a step, strokes as
+// the icons of that step do, and needs no stroke of its own per step.
+const SVG_NS = 'http://www.w3.org/2000/svg';
+const SPINNER_GRID = 24;
+const SPINNER_STROKE = 2;
+function createSvgNode(tagName, attributes = {}) {
+  const node = document.createElementNS(SVG_NS, tagName);
+  Object.entries(attributes).forEach(([key, value]) => {
+    if (value === undefined || value === null || value === '') {
+      return;
+    }
+
+    node.setAttribute(key, String(value));
+  });
+  return node;
+} // The arc on the icon grid. The circles carry presentation attributes as well
+// as their classes: the spinner sheet styles them (track colour, the arc's
+// motion, the still arc under reduced motion), and until that sheet has arrived
+// they draw a faint ring in the current ink rather than a filled black disc.
+
+function createLadderArcSvg() {
+  const centre = SPINNER_GRID / 2;
+  const radius = centre - SPINNER_STROKE / 2;
+  const svg = createSvgNode('svg', {
+    class: 'sf-loader-svg',
+    viewBox: `0 0 ${SPINNER_GRID} ${SPINNER_GRID}`,
+    'aria-hidden': 'true',
+    focusable: 'false'
+  });
+  const filled = createSvgNode('circle', {
+    class: 'sf-loader-ring-filled',
+    cx: centre,
+    cy: centre,
+    r: radius,
+    fill: 'none',
+    stroke: 'currentColor',
+    'stroke-width': SPINNER_STROKE,
+    opacity: '0.3'
+  });
+  const accent = createSvgNode('circle', {
+    class: 'sf-loader-ring-accent',
+    cx: centre,
+    cy: centre,
+    r: radius,
+    fill: 'none',
+    stroke: 'currentColor',
+    'stroke-width': SPINNER_STROKE,
+    'stroke-linecap': 'round',
+    pathLength: 100,
+    'stroke-dasharray': '0 100',
+    transform: `rotate(90 ${centre} ${centre})`
+  });
+  svg.append(filled, accent);
+  return svg;
+} // A spinner that stands in a control: an endless arc, decorative (the control
+// keeps its label and says aria-busy), and marked bound so the spinner
+// component, when it is on the page, leaves it as drawn. `className` names the
+// control's slot for it; `overlay` lays it over the control's hidden label
+// instead of in the place of an icon.
+
+function createInlineSpinner({
+  className = '',
+  overlay = false
+} = {}) {
+  const root = document.createElement('span');
+  root.className = ['sf-loader-container', 'sf-loader--infinite', className, className && overlay ? `${className}--overlay` : ''].filter(Boolean).join(' ');
+  root.dataset.sfSpinnerBound = '1';
+  root.dataset.infinite = 'true';
+  root.setAttribute('aria-hidden', 'true');
+  const indicator = document.createElement('span');
+  indicator.className = 'sf-loader--loading-indicator';
+  indicator.append(createLadderArcSvg());
+  root.append(indicator);
+  return root;
+}
+
+/***/ },
+
 /***/ "eecc41af23fd"
 (module, __webpack_exports__, __webpack_require__) {
 
@@ -51,10 +147,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d7f974466839");
 /* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("58661bec99a6");
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("0d662e4d7d63");
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("06e8cd089f28");
+/* harmony import */ var _spinner_draw__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("50d2a204ba4c");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_page_language__WEBPACK_IMPORTED_MODULE_2__]);
 var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 _core_js_page_language__WEBPACK_IMPORTED_MODULE_2__ = __webpack_async_dependencies_result__[0];
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language__WEBPACK_IMPORTED_MODULE_2__);
+
+
 
 
 
@@ -66,7 +166,6 @@ const SPINNER_TEXT = {
     label: 'Загрузка…'
   }
 };
-const SVG_NS = 'http://www.w3.org/2000/svg';
 const SPINNER_SELECTOR = '.sf-loader-container';
 const SPINNER_BOUND_FLAG = 'sfSpinnerBound';
 
@@ -82,21 +181,45 @@ function clamp(value, min, max) {
 function normalizeChoice(value, allowed, fallback) {
   const normalized = String(value || '').trim().toLowerCase();
   return allowed.includes(normalized) ? normalized : fallback;
-}
+} // The size ladder decides a spinner's diameter and stroke (simai/ui-source#10).
+// The pixel attributes that let a page draw its own spinner -- data-width (and
+// its short data-w), data-height (data-h), data-stroke-width and
+// data-dot-radius, and the sf-spinner attributes that write them -- are still
+// read until the sweep of journal attribute-spinner-pixel-geometry, and noted
+// in SF.deprecations whenever a spinner is drawn with them.
 
-function createSvgNode(tagName, attributes = {}) {
-  const node = document.createElementNS(SVG_NS, tagName);
-  Object.entries(attributes).forEach(([key, value]) => {
-    if (value === undefined || value === null || value === '') {
-      return;
-    }
 
-    node.setAttribute(key, String(value));
+const PIXEL_ATTRIBUTES = [['width', 'data-width', 'width'], ['w', 'data-w', 'width'], ['height', 'data-height', 'height'], ['h', 'data-h', 'height'], ['strokeWidth', 'data-stroke-width', 'stroke-width'], ['dotRadius', 'data-dot-radius', 'dot-radius']];
+
+function notePixelAttributes(root) {
+  const smart = root.closest?.('sf-spinner');
+  const written = PIXEL_ATTRIBUTES.filter(([key]) => {
+    const value = root.dataset[key];
+    return value !== undefined && value !== '';
   });
-  return node;
+  written.forEach(([, attribute, smartAttribute]) => {
+    (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_3__.noteDeprecated)({
+      component: smart ? 'sf-spinner' : 'spinner',
+      kind: 'attribute',
+      from: smart ? smartAttribute : attribute,
+      // sf-spinner takes size; the ordinary spinner a sf-loader--size-* class.
+      to: smart ? 'size' : null
+    });
+  });
+  return written.length > 0;
+} // Without pixel options the arc is drawn on the icon grid, its size and stroke
+// set by the ladder; with any of them it is drawn as before, in pixels.
+
+
+function createSpinnerArcSvg(options = {}) {
+  const pixel = ['width', 'height', 'strokeWidth'].some(key => {
+    const value = options?.[key];
+    return value !== undefined && value !== null && value !== '';
+  });
+  return pixel ? createPixelArcSvg(options) : (0,_spinner_draw__WEBPACK_IMPORTED_MODULE_4__.createLadderArcSvg)();
 }
 
-function createSpinnerArcSvg({
+function createPixelArcSvg({
   width = 58,
   height = 58,
   strokeWidth = 4
@@ -107,20 +230,20 @@ function createSpinnerArcSvg({
   const radius = Math.max(1, Math.min(safeWidth, safeHeight) / 2 - safeStroke / 2);
   const cx = safeWidth / 2;
   const cy = safeHeight / 2;
-  const svg = createSvgNode('svg', {
+  const svg = (0,_spinner_draw__WEBPACK_IMPORTED_MODULE_4__.createSvgNode)('svg', {
     class: 'sf-loader-svg',
     viewBox: `0 0 ${safeWidth} ${safeHeight}`,
     width: safeWidth,
     height: safeHeight,
     'aria-hidden': 'true'
   });
-  const filled = createSvgNode('circle', {
+  const filled = (0,_spinner_draw__WEBPACK_IMPORTED_MODULE_4__.createSvgNode)('circle', {
     class: 'sf-loader-ring-filled',
     cx,
     cy,
     r: radius
   });
-  const accent = createSvgNode('circle', {
+  const accent = (0,_spinner_draw__WEBPACK_IMPORTED_MODULE_4__.createSvgNode)('circle', {
     class: 'sf-loader-ring-accent',
     cx,
     cy,
@@ -149,7 +272,7 @@ function createSpinnerDotsSvg({
   const orbitRadius = Math.max(resolvedDotRadius, Math.min(safeWidth, safeHeight) / 2 - resolvedDotRadius - 1);
   const cx = safeWidth / 2;
   const cy = safeHeight / 2;
-  const svg = createSvgNode('svg', {
+  const svg = (0,_spinner_draw__WEBPACK_IMPORTED_MODULE_4__.createSvgNode)('svg', {
     class: 'sf-loader-svg',
     viewBox: `0 0 ${safeWidth} ${safeHeight}`,
     width: safeWidth,
@@ -163,7 +286,7 @@ function createSpinnerDotsSvg({
     const dotCx = cx + orbitRadius * Math.cos(angle);
     const dotCy = cy + orbitRadius * Math.sin(angle);
     const animationIndex = direction === 'counterclockwise' ? index : (count - index) % count;
-    const dot = createSvgNode('circle', {
+    const dot = (0,_spinner_draw__WEBPACK_IMPORTED_MODULE_4__.createSvgNode)('circle', {
       class: `sf-loader-dot${index < activeDots ? ' sf-loader-dot--active' : ''}`,
       cx: dotCx,
       cy: dotCy,
@@ -182,6 +305,7 @@ function getSpinnerConfig(root) {
   const labelNode = root.querySelector('.sf-loader--text');
   const hasExplicitWidth = Object.prototype.hasOwnProperty.call(root.dataset, 'width') || Object.prototype.hasOwnProperty.call(root.dataset, 'w');
   const hasExplicitHeight = Object.prototype.hasOwnProperty.call(root.dataset, 'height') || Object.prototype.hasOwnProperty.call(root.dataset, 'h');
+  const pixel = notePixelAttributes(root);
   const width = clamp(toNumber(root.dataset.width, toNumber(root.dataset.w, 58)), 16, 256);
   const height = clamp(toNumber(root.dataset.height, toNumber(root.dataset.h, width)), 16, 256);
   const strokeWidth = root.dataset.strokeWidth ? clamp(toNumber(root.dataset.strokeWidth, 4), 1, Math.min(width, height) / 2) : null;
@@ -192,6 +316,7 @@ function getSpinnerConfig(root) {
   let variant = String(root.dataset.variant || '').toLowerCase();
   variant = normalizeChoice(variant, ['arc', 'dots'], circles ? 'dots' : 'arc');
   return {
+    pixel,
     width,
     height,
     strokeWidth,
@@ -257,13 +382,13 @@ function renderSpinner(root) {
     root.classList.remove('sf-loader--infinite');
   }
 
-  if (config.hasExplicitWidth) {
+  if (config.pixel && config.hasExplicitWidth) {
     root.style.setProperty('--sf-loader-svg-width', `${config.width}px`);
   } else {
     root.style.removeProperty('--sf-loader-svg-width');
   }
 
-  if (config.hasExplicitHeight || config.hasExplicitWidth) {
+  if (config.pixel && (config.hasExplicitHeight || config.hasExplicitWidth)) {
     root.style.setProperty('--sf-loader-svg-height', `${config.height}px`);
   } else {
     root.style.removeProperty('--sf-loader-svg-height');
@@ -273,12 +398,20 @@ function renderSpinner(root) {
     root.style.setProperty('--sf-loader-stroke-width', `${config.strokeWidth}px`);
   } else {
     root.style.removeProperty('--sf-loader-stroke-width');
-  }
+  } // A spinner drawn in pixels keeps the pixel strokes it had; one on the ladder
+  // strokes on the icon grid.
 
+
+  root.classList.toggle('sf-loader--pixel-geometry', config.pixel);
   const visualClass = config.variant === 'dots' ? 'sf-loader--circles' : 'sf-loader--loading-indicator';
   const visual = ensureSpinnerPart(root, `.${visualClass}`, visualClass);
   const label = config.label || config.labelNode ? ensureSpinnerPart(root, '.sf-loader--text', 'sf-loader--text') : null;
-  const svg = config.variant === 'dots' ? createSpinnerDotsSvg(config) : createSpinnerArcSvg(config);
+  const geometry = config.pixel ? config : { ...config,
+    width: _spinner_draw__WEBPACK_IMPORTED_MODULE_4__.SPINNER_GRID,
+    height: _spinner_draw__WEBPACK_IMPORTED_MODULE_4__.SPINNER_GRID,
+    strokeWidth: null
+  };
+  const svg = config.variant === 'dots' ? createSpinnerDotsSvg(geometry) : config.pixel ? createPixelArcSvg(config) : (0,_spinner_draw__WEBPACK_IMPORTED_MODULE_4__.createLadderArcSvg)();
   visual.append(svg);
   const obsoleteClass = config.variant === 'dots' ? '.sf-loader--loading-indicator' : '.sf-loader--circles';
   root.querySelector(obsoleteClass)?.remove();
@@ -535,6 +668,97 @@ class ComponentObserver {
 
 /***/ },
 
+/***/ "06e8cd089f28"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   clearDeprecations: () => (/* binding */ clearDeprecations),
+/* harmony export */   listDeprecations: () => (/* binding */ listDeprecations),
+/* harmony export */   noteDeprecated: () => (/* binding */ noteDeprecated)
+/* harmony export */ });
+// What a page still uses that the Framework keeps only for compatibility. Every
+// legacy attribute, value or name a component resolves is noted here once, so a
+// person, a probe or an AI upgrading a product can read the list off a running
+// page (SF.deprecations.list()) instead of searching the source for it. The
+// records behind the names are in contracts/changes/journal.json.
+//
+// Nothing is printed by default: a page opts in to console warnings with
+// <html data-sf-deprecations="warn"> or SF.deprecations.warn = true.
+//
+// Every bundle carries its own copy of this module, so a Map of its own made one
+// list per bundle, and SF.deprecations.list() answered with whichever bundle set
+// it last -- [] on a page printing seven warnings from others. The notes live on
+// one shared global instead, whichever copy writes or reads them.
+function sharedNotes() {
+  const root = globalThis.SF = globalThis.SF || {};
+
+  if (!(root.__deprecationNotes instanceof Map)) {
+    Object.defineProperty(root, '__deprecationNotes', {
+      value: new Map(),
+      configurable: true
+    });
+  }
+
+  return root.__deprecationNotes;
+}
+
+function warnEnabled() {
+  const root = globalThis.document?.documentElement;
+  return root?.dataset?.sfDeprecations === 'warn' || globalThis.SF?.deprecations?.warn === true;
+}
+
+function noteDeprecated({
+  component = '',
+  kind = 'attribute',
+  attribute = '',
+  from,
+  to = null
+} = {}) {
+  if (!from) return;
+  const key = [component, kind, attribute, from].join('|');
+  const notes = sharedNotes();
+  const existing = notes.get(key);
+
+  if (existing) {
+    existing.count += 1;
+    return;
+  }
+
+  notes.set(key, {
+    component,
+    kind,
+    attribute,
+    from,
+    to,
+    count: 1
+  });
+
+  if (warnEnabled()) {
+    const where = component ? `${component}: ` : '';
+    const what = kind === 'value' ? `${attribute}="${from}"` : `${kind} ${from}`;
+    globalThis.console?.warn?.(`[SIMAI Framework] ${where}${what} is a legacy name${to ? `; write ${to}` : ''}. See contracts/changes/journal.json.`);
+  }
+}
+function listDeprecations() {
+  return [...sharedNotes().values()].map(note => ({ ...note
+  }));
+}
+function clearDeprecations() {
+  sharedNotes().clear();
+}
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.SF = globalThis.SF || {};
+  const api = globalThis.SF.deprecations || {};
+  api.list = listDeprecations;
+  api.clear = clearDeprecations;
+  api.note = noteDeprecated;
+  globalThis.SF.deprecations = api;
+}
+
+/***/ },
+
 /***/ "100381bfa317"
 (module, __webpack_exports__, __webpack_require__) {
 
@@ -763,7 +987,10 @@ function normalizeChoice(value, allowed, fallback) {
 }
 
 function renderSpinnerTemplate(context) {
-  const rootClasses = joinClasses('sf-loader-container', `sf-loader--size-${normalizeChoice(context.size, ['1/2', '1', '2', '3'], '1')}`, context.rootClass);
+  const rootClasses = joinClasses('sf-loader-container', `sf-loader--size-${normalizeChoice(context.size, ['1/3', '1/2', '1', '2', '3'], '1')}`, context.rootClass); // width, height, stroke-width and dot-radius are the deprecated pixel geometry
+  // (journal attribute-spinner-pixel-geometry): still written through to the
+  // spinner, which reads and notes them until the sweep.
+
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
     <div
       class=${rootClasses}

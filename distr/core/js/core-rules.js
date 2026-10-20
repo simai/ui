@@ -94,7 +94,12 @@ SF.RuleLoader['buttons'] = {
   regex: /class\s*=\s*["'][^"']*\bsf-button\b/i,
   type: 'component',
   css: true,
-  js: true
+  js: true,
+  // The spinner a loading button shows, fetched after the page is ready.
+  relation: [{
+    name: 'spinner',
+    lazy: true
+  }]
 };
 
 /***/ },
@@ -367,7 +372,12 @@ SF.RuleLoader['icon-buttons'] = {
   regex: /class\s*=\s*["'][^"']*\bsf-icon-button\b/i,
   type: 'component',
   css: true,
-  js: true
+  js: true,
+  // The spinner a loading button shows, fetched after the page is ready.
+  relation: [{
+    name: 'spinner',
+    lazy: true
+  }]
 };
 
 /***/ },
@@ -3501,12 +3511,16 @@ SF.RuleLoader['cl-button-group'] = {
   type: 'smart',
   mode: 'smart',
   js: true,
+  // spinner: a loading item shows it, fetched after the page is ready.
   relation: [{
     name: 'button-group'
   }, {
     name: 'cl-buttons'
   }, {
     name: 'cl-icons'
+  }, {
+    name: 'spinner',
+    lazy: true
   }]
 };
 
@@ -3528,6 +3542,11 @@ SF.RuleLoader['cl-buttons'] = {
     name: 'text-align/default'
   }, {
     name: 'cl-icons'
+  }, // The spinner a loading button shows: its slot is drawn by the button sheet,
+  // the motion by the spinner's, fetched after the page is ready.
+  {
+    name: 'spinner',
+    lazy: true
   }]
 };
 
@@ -3862,6 +3881,10 @@ SF.RuleLoader['cl-icon-buttons'] = {
     name: 'cl-close'
   }, {
     name: 'pointer-events/default'
+  }, // The spinner a loading icon button shows, fetched after the page is ready.
+  {
+    name: 'spinner',
+    lazy: true
   }]
 };
 

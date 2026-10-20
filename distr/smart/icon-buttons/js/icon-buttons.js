@@ -2,6 +2,102 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "50d2a204ba4c"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   SPINNER_GRID: () => (/* binding */ SPINNER_GRID),
+/* harmony export */   SPINNER_STROKE: () => (/* binding */ SPINNER_STROKE),
+/* harmony export */   createInlineSpinner: () => (/* binding */ createInlineSpinner),
+/* harmony export */   createLadderArcSvg: () => (/* binding */ createLadderArcSvg),
+/* harmony export */   createSvgNode: () => (/* binding */ createSvgNode)
+/* harmony export */ });
+// The spinner's drawing, without the component's side effects (no registry, no
+// observer), so a control that shows work in place of its icon -- a button, an
+// icon button, a group's segment -- draws the one spinner of the Framework
+// without loading or binding the spinner component (simai/ui-source#10).
+//
+// The ladder: a spinner is drawn on the icon grid. Material Symbols are drawn on
+// 24 units and, at the regular weight the Framework's controls use, stroke 2 of
+// them; a spinner on the same grid, scaled to the icon box of a step, strokes as
+// the icons of that step do, and needs no stroke of its own per step.
+const SVG_NS = 'http://www.w3.org/2000/svg';
+const SPINNER_GRID = 24;
+const SPINNER_STROKE = 2;
+function createSvgNode(tagName, attributes = {}) {
+  const node = document.createElementNS(SVG_NS, tagName);
+  Object.entries(attributes).forEach(([key, value]) => {
+    if (value === undefined || value === null || value === '') {
+      return;
+    }
+
+    node.setAttribute(key, String(value));
+  });
+  return node;
+} // The arc on the icon grid. The circles carry presentation attributes as well
+// as their classes: the spinner sheet styles them (track colour, the arc's
+// motion, the still arc under reduced motion), and until that sheet has arrived
+// they draw a faint ring in the current ink rather than a filled black disc.
+
+function createLadderArcSvg() {
+  const centre = SPINNER_GRID / 2;
+  const radius = centre - SPINNER_STROKE / 2;
+  const svg = createSvgNode('svg', {
+    class: 'sf-loader-svg',
+    viewBox: `0 0 ${SPINNER_GRID} ${SPINNER_GRID}`,
+    'aria-hidden': 'true',
+    focusable: 'false'
+  });
+  const filled = createSvgNode('circle', {
+    class: 'sf-loader-ring-filled',
+    cx: centre,
+    cy: centre,
+    r: radius,
+    fill: 'none',
+    stroke: 'currentColor',
+    'stroke-width': SPINNER_STROKE,
+    opacity: '0.3'
+  });
+  const accent = createSvgNode('circle', {
+    class: 'sf-loader-ring-accent',
+    cx: centre,
+    cy: centre,
+    r: radius,
+    fill: 'none',
+    stroke: 'currentColor',
+    'stroke-width': SPINNER_STROKE,
+    'stroke-linecap': 'round',
+    pathLength: 100,
+    'stroke-dasharray': '0 100',
+    transform: `rotate(90 ${centre} ${centre})`
+  });
+  svg.append(filled, accent);
+  return svg;
+} // A spinner that stands in a control: an endless arc, decorative (the control
+// keeps its label and says aria-busy), and marked bound so the spinner
+// component, when it is on the page, leaves it as drawn. `className` names the
+// control's slot for it; `overlay` lays it over the control's hidden label
+// instead of in the place of an icon.
+
+function createInlineSpinner({
+  className = '',
+  overlay = false
+} = {}) {
+  const root = document.createElement('span');
+  root.className = ['sf-loader-container', 'sf-loader--infinite', className, className && overlay ? `${className}--overlay` : ''].filter(Boolean).join(' ');
+  root.dataset.sfSpinnerBound = '1';
+  root.dataset.infinite = 'true';
+  root.setAttribute('aria-hidden', 'true');
+  const indicator = document.createElement('span');
+  indicator.className = 'sf-loader--loading-indicator';
+  indicator.append(createLadderArcSvg());
+  root.append(indicator);
+  return root;
+}
+
+/***/ },
+
 /***/ "2557e7cf84cc"
 (module, __webpack_exports__, __webpack_require__) {
 
@@ -217,7 +313,9 @@ class SfIconButton extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___def
   }
 
   resolveUpdateMode(changedAttributes = []) {
-    const directPatchAttributes = ['disabled', 'aria-label', 'icon', 'loading'];
+    // loading is drawn by the template, not patched: it puts the spinner in
+    // place of the icon (simai/ui-source#10).
+    const directPatchAttributes = ['disabled', 'aria-label', 'icon'];
 
     if (changedAttributes.length > 0 && changedAttributes.every(attr => directPatchAttributes.includes(attr))) {
       return 'dom';
@@ -230,7 +328,7 @@ class SfIconButton extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___def
     const button = this.querySelector('.sf-icon-button');
     if (!button) return false;
 
-    if (changedAttributes.includes('disabled') || changedAttributes.includes('loading')) {
+    if (changedAttributes.includes('disabled')) {
       button.disabled = this.disabled || this.loading;
     }
 
@@ -247,17 +345,6 @@ class SfIconButton extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___def
 
       if (iconNode) {
         iconNode.textContent = this.icon;
-      }
-    }
-
-    if (changedAttributes.includes('loading')) {
-      button.classList.toggle('loading', this.loading);
-      button.classList.toggle('sf-icon-button-state-loading', this.loading);
-
-      if (this.loading) {
-        button.setAttribute('aria-busy', 'true');
-      } else {
-        button.removeAttribute('aria-busy');
       }
     }
 
@@ -387,10 +474,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("ddf1cdb42ecc");
 /* harmony import */ var _default_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("9a0682afab99");
+/* harmony import */ var _component_spinner_js_spinner_draw__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("50d2a204ba4c");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__]);
 var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+
 
 
 const ICON_BUTTON_SIZES = new Set(['1/3', '1/2', '1', '2', '3']);
@@ -421,8 +510,12 @@ function renderIconButtonTemplate(context) {
   // scheme otherwise. A status says what the control is about -- an error
   // for something destructive -- and a scheme says which colour family it
   // takes; they cannot both paint it.
-  `sf-icon-button--${status || scheme || 'primary'}`, tightness ? `tightness-${tightness}` : '', radius ? `radius-${radius}` : '', rootClass, loading ? 'loading sf-icon-button-state-loading' : ''].filter(Boolean);
-  const iconContent = context.component?.hasSlotContent?.('icon') ? context.component.getSlotContent('icon') : (kind ?? variant) === 'close' ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+  `sf-icon-button--${status || scheme || 'primary'}`, tightness ? `tightness-${tightness}` : '', radius ? `radius-${radius}` : '', rootClass, loading ? 'loading sf-icon-button-state-loading' : ''].filter(Boolean); // Loading shows the spinner in place of the icon, at the icon's size
+  // (simai/ui-source#10); the button keeps its name and says aria-busy.
+
+  const iconContent = loading ? (0,_component_spinner_js_spinner_draw__WEBPACK_IMPORTED_MODULE_2__.createInlineSpinner)({
+    className: 'sf-icon-button-spinner'
+  }) : context.component?.hasSlotContent?.('icon') ? context.component.getSlotContent('icon') : (kind ?? variant) === 'close' ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
                             <sf-close root-class="pointer-event-none" size="${size || '1'}"></sf-close>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
                             <sf-icon filled="${filled}" root-class="pointer-event-none" icon="${icon}" weight="400" aria-hidden="true"></sf-icon>`;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`

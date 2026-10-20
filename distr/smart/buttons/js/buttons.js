@@ -2,6 +2,102 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "50d2a204ba4c"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   SPINNER_GRID: () => (/* binding */ SPINNER_GRID),
+/* harmony export */   SPINNER_STROKE: () => (/* binding */ SPINNER_STROKE),
+/* harmony export */   createInlineSpinner: () => (/* binding */ createInlineSpinner),
+/* harmony export */   createLadderArcSvg: () => (/* binding */ createLadderArcSvg),
+/* harmony export */   createSvgNode: () => (/* binding */ createSvgNode)
+/* harmony export */ });
+// The spinner's drawing, without the component's side effects (no registry, no
+// observer), so a control that shows work in place of its icon -- a button, an
+// icon button, a group's segment -- draws the one spinner of the Framework
+// without loading or binding the spinner component (simai/ui-source#10).
+//
+// The ladder: a spinner is drawn on the icon grid. Material Symbols are drawn on
+// 24 units and, at the regular weight the Framework's controls use, stroke 2 of
+// them; a spinner on the same grid, scaled to the icon box of a step, strokes as
+// the icons of that step do, and needs no stroke of its own per step.
+const SVG_NS = 'http://www.w3.org/2000/svg';
+const SPINNER_GRID = 24;
+const SPINNER_STROKE = 2;
+function createSvgNode(tagName, attributes = {}) {
+  const node = document.createElementNS(SVG_NS, tagName);
+  Object.entries(attributes).forEach(([key, value]) => {
+    if (value === undefined || value === null || value === '') {
+      return;
+    }
+
+    node.setAttribute(key, String(value));
+  });
+  return node;
+} // The arc on the icon grid. The circles carry presentation attributes as well
+// as their classes: the spinner sheet styles them (track colour, the arc's
+// motion, the still arc under reduced motion), and until that sheet has arrived
+// they draw a faint ring in the current ink rather than a filled black disc.
+
+function createLadderArcSvg() {
+  const centre = SPINNER_GRID / 2;
+  const radius = centre - SPINNER_STROKE / 2;
+  const svg = createSvgNode('svg', {
+    class: 'sf-loader-svg',
+    viewBox: `0 0 ${SPINNER_GRID} ${SPINNER_GRID}`,
+    'aria-hidden': 'true',
+    focusable: 'false'
+  });
+  const filled = createSvgNode('circle', {
+    class: 'sf-loader-ring-filled',
+    cx: centre,
+    cy: centre,
+    r: radius,
+    fill: 'none',
+    stroke: 'currentColor',
+    'stroke-width': SPINNER_STROKE,
+    opacity: '0.3'
+  });
+  const accent = createSvgNode('circle', {
+    class: 'sf-loader-ring-accent',
+    cx: centre,
+    cy: centre,
+    r: radius,
+    fill: 'none',
+    stroke: 'currentColor',
+    'stroke-width': SPINNER_STROKE,
+    'stroke-linecap': 'round',
+    pathLength: 100,
+    'stroke-dasharray': '0 100',
+    transform: `rotate(90 ${centre} ${centre})`
+  });
+  svg.append(filled, accent);
+  return svg;
+} // A spinner that stands in a control: an endless arc, decorative (the control
+// keeps its label and says aria-busy), and marked bound so the spinner
+// component, when it is on the page, leaves it as drawn. `className` names the
+// control's slot for it; `overlay` lays it over the control's hidden label
+// instead of in the place of an icon.
+
+function createInlineSpinner({
+  className = '',
+  overlay = false
+} = {}) {
+  const root = document.createElement('span');
+  root.className = ['sf-loader-container', 'sf-loader--infinite', className, className && overlay ? `${className}--overlay` : ''].filter(Boolean).join(' ');
+  root.dataset.sfSpinnerBound = '1';
+  root.dataset.infinite = 'true';
+  root.setAttribute('aria-hidden', 'true');
+  const indicator = document.createElement('span');
+  indicator.className = 'sf-loader--loading-indicator';
+  indicator.append(createLadderArcSvg());
+  root.append(indicator);
+  return root;
+}
+
+/***/ },
+
 /***/ "06e8cd089f28"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -540,10 +636,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   renderButtonTemplate: () => (/* binding */ renderButtonTemplate)
 /* harmony export */ });
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("ddf1cdb42ecc");
+/* harmony import */ var _component_spinner_js_spinner_draw__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("50d2a204ba4c");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__]);
 var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+
 
 function renderButtonTemplate(context) {
   const {
@@ -575,7 +673,24 @@ function renderButtonTemplate(context) {
   const leftIconContent = component?.hasSlotContent?.('icon-start') ? component.getSlotContent('icon-start') : component?.hasSlotContent?.('icon-left') ? component.getSlotContent('icon-left') : component.createIcon(leftIconName);
   const rightIconContent = component?.hasSlotContent?.('icon-end') ? component.getSlotContent('icon-end') : component?.hasSlotContent?.('icon-right') ? component.getSlotContent('icon-right') : component.createIcon(rightIconName);
   const textContent = component?.hasSlotContent?.('text') ? component.getSlotContent('text') : text;
-  const fullText = !leftIconContent && !rightIconContent;
+  const fullText = !leftIconContent && !rightIconContent; // Loading shows the spinner at the icon's size (simai/ui-source#10): in
+  // place of the start icon, else of the end icon; a button without an icon
+  // lays it over its label, which keeps its place (and the button its width)
+  // and stays the accessible name. Icon-only is the first case.
+
+  let startContent = leftIconContent;
+  let endContent = rightIconContent;
+  let overlayContent = '';
+
+  if (loading) {
+    const spinner = overlay => (0,_component_spinner_js_spinner_draw__WEBPACK_IMPORTED_MODULE_1__.createInlineSpinner)({
+      className: 'sf-button-spinner',
+      overlay
+    });
+
+    if (leftIconContent) startContent = spinner(false);else if (rightIconContent) endContent = spinner(false);else overlayContent = spinner(true);
+  }
+
   const rootClasses = ['sf-button', `sf-button--size-${size}`, `sf-button--${appearance || type}`, // One colour name, as the styles expect: the status when one is set, the
   // scheme otherwise. A status says what the control is about -- an error
   // for something destructive -- and a scheme says which colour family it
@@ -592,12 +707,13 @@ function renderButtonTemplate(context) {
                 aria-label=${ariaLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 aria-busy=${loading ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         >
-            ${leftIconContent}
+            ${overlayContent}
+            ${startContent}
             ${textContent ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span
                     class="sf-button-text-container text-${textPosition} pointer-event-none${fullText ? ' flex-1' : ''}">
         ${textContent}
       </span>` : ''}
-            ${rightIconContent}
+            ${endContent}
         </button>
     `;
 }

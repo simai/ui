@@ -1477,13 +1477,10 @@
     --sf-icon-button--border-inline-start-width: var(--sf-px);
   }
 }
-/* An icon button sets .loading as a button does (sf-icon-button loading) and
-   had no rule for it: it went disabled with no sign of work. The same stripes
-   as .sf-button.loading, defined here so the icon-button sheet alone draws them. */
+/* An icon button shows work as a button does (simai/ui-source#10): the
+   spinner, in place of its icon and exactly its size. A loading icon button is
+   also disabled, so it wears the disabled look and takes the disabled ink. */
 @layer sf.components {
-  .sf-icon-button {
-    --sf-icon-button-loading-stripe: var(--sf-alpha-8);
-  }
   .sf-icon-button > * {
     position: relative;
     z-index: 1;
@@ -1491,47 +1488,82 @@
   .sf-icon-button.loading, .sf-icon-button.sf-icon-button-state-loading {
     pointer-events: none;
     position: relative;
-    overflow: hidden;
+    /* The stripes that were the loading look are gone. A page that set
+       --sf-icon-button-loading-stripe still gets them, still and in its
+       colour, until the sweep of journal token-button-loading-stripe; unset,
+       the layer paints nothing. */
   }
   .sf-icon-button.loading::after, .sf-icon-button.sf-icon-button-state-loading::after {
     content: "";
     position: absolute;
-    top: -50%;
-    right: -50%;
-    bottom: -50%;
-    left: -50%;
-    inset: -50%;
-    background-image: repeating-linear-gradient(135deg, var(--sf-icon-button-loading-stripe) 0, var(--sf-icon-button-loading-stripe) var(--sf-space-1\/2), transparent var(--sf-space-1\/2), transparent var(--sf-space-1));
-    -webkit-animation: sf-icon-button-stripes-slide calc(var(--sf-duration-slow) * 2) linear infinite;
-            animation: sf-icon-button-stripes-slide calc(var(--sf-duration-slow) * 2) linear infinite;
-    will-change: transform;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    inset: 0;
+    background-image: repeating-linear-gradient(135deg, transparent 0, transparent var(--sf-space-1\/2), transparent var(--sf-space-1\/2), transparent var(--sf-space-1));
+    background-image: repeating-linear-gradient(135deg, var(--sf-icon-button-loading-stripe, transparent) 0, var(--sf-icon-button-loading-stripe, transparent) var(--sf-space-1\/2), transparent var(--sf-space-1\/2), transparent var(--sf-space-1));
+    border-radius: inherit;
     pointer-events: none;
   }
-  @-webkit-keyframes sf-icon-button-stripes-slide {
-    from {
-      -webkit-transform: translateX(0);
-              transform: translateX(0);
-    }
-    to {
-      -webkit-transform: translateX(calc(var(--sf-space-1) * 1.41421356));
-              transform: translateX(calc(var(--sf-space-1) * 1.41421356));
-    }
+  /* The spinner's slot is the icon's box at every step (.sf-icon-button--icon
+     .sf-icon in the main sheet), drawn by this sheet so it is right before the
+     spinner sheet arrives. */
+  .sf-icon-button {
+    --sf-icon-button-spinner--size: var(--sf-icon-size-3);
   }
-  @keyframes sf-icon-button-stripes-slide {
-    from {
-      -webkit-transform: translateX(0);
-              transform: translateX(0);
-    }
-    to {
-      -webkit-transform: translateX(calc(var(--sf-space-1) * 1.41421356));
-              transform: translateX(calc(var(--sf-space-1) * 1.41421356));
-    }
+  .sf-icon-button.sf-icon-button--size-1\/3 {
+    --sf-icon-button-spinner--size: var(--sf-text-height-1\/3);
   }
-  @media (prefers-reduced-motion: reduce) {
-    .sf-icon-button.loading::after,
-    .sf-icon-button.sf-icon-button-state-loading::after {
-      -webkit-animation: none;
-              animation: none;
-    }
+  .sf-icon-button.sf-icon-button--size-1\/2 {
+    --sf-icon-button-spinner--size: var(--sf-text-height-1\/2);
+  }
+  .sf-icon-button.sf-icon-button--size-1 {
+    --sf-icon-button-spinner--size: var(--sf-text-height-1);
+  }
+  .sf-icon-button.sf-icon-button--size-2 {
+    --sf-icon-button-spinner--size: var(--sf-text-height-2);
+  }
+  .sf-icon-button.sf-icon-button--size-3 {
+    --sf-icon-button-spinner--size: var(--sf-text-height-3);
+  }
+  .sf-icon-button .sf-icon-button-spinner {
+    --sf-loader-svg-width: var(--sf-icon-button-spinner--size);
+    --sf-loader-svg-height: var(--sf-icon-button-spinner--size);
+    display: inline-flex;
+    /* As the icon's: the slot sits on the line as the icon did, so a button
+       laid out without flex is no taller with the spinner than with its icon. */
+    vertical-align: bottom;
+    flex: none;
+    width: var(--sf-icon-button-spinner--size);
+    inline-size: var(--sf-icon-button-spinner--size);
+    height: var(--sf-icon-button-spinner--size);
+    block-size: var(--sf-icon-button-spinner--size);
+    color: currentColor;
+    color: var(--sf-loader--color, currentColor);
+  }
+  .sf-icon-button .sf-icon-button-spinner .sf-loader--loading-indicator {
+    display: block;
+    width: 100%;
+    inline-size: 100%;
+    height: 100%;
+    block-size: 100%;
+  }
+  .sf-icon-button .sf-icon-button-spinner .sf-loader-svg {
+    display: block;
+    width: 100%;
+    inline-size: 100%;
+    height: 100%;
+    block-size: 100%;
+  }
+}
+@layer sf.states {
+  .sf-icon-button:disabled .sf-icon-button-spinner {
+    color: var(--sf-on-disable);
+    color: var(--sf-loader--color, var(--sf-on-disable));
+  }
+  .sf-icon-button.disabled .sf-icon-button-spinner {
+    color: var(--sf-on-disable);
+    color: var(--sf-loader--color, var(--sf-on-disable));
   }
 }
