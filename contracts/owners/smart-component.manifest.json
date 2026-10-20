@@ -333,6 +333,7 @@
       },
       "requires": [
         "component.button-group",
+        "component.spinner",
         "smart.buttons",
         "smart.icons"
       ],
@@ -383,6 +384,7 @@
       },
       "requires": [
         "component.buttons",
+        "component.spinner",
         "smart.icons",
         "utility.pointer-events",
         "utility.text-align"
@@ -1055,6 +1057,7 @@
       },
       "requires": [
         "component.icon-buttons",
+        "component.spinner",
         "smart.close",
         "smart.icons",
         "utility.pointer-events"
