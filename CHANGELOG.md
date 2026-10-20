@@ -268,6 +268,9 @@
 
 ### Изменено
 
+- One spinner, four looks on the #10 ladder: `arc` (default), `breathing`, `comet` and `dots`, chosen once for the page with `data-sf-spinner="<look>"` on `html` or `body` (or `SF_BOOT_CONFIG.spinner`), overridable on any block; a spinner's own `data-variant` / `kind` wins. Every spinner the SIMAI Framework draws follows it: `sf-spinner`, button, icon-button and button-group loading, the pagination count and the modal loading state. Each look keeps the button-icon box, the current ink and a still frame under reduced motion (simai/ui-source#11).
+- `sf-spinner` without `kind` now follows the page (arc when nothing is set); dots default to 8 with 3 lit, sized from the step; the modal loading state draws the Framework spinner at step 3.
+
 - The spinner is the one loading indicator, on the full size ladder (`1/3` added): at each step `sf-spinner` is exactly the icon of a button of that size, its stroke that of a regular-weight icon, its colour the current ink (`--sf-loader--color` overrides). Buttons in the `loading` state show it instead of the stripes: in place of the icon, over the label without changing the width, or in place of the icon of an icon-only button; `aria-busy` and the label stay, reduced motion shows a still arc. This covers `sf-button`, `sf-icon-button` and the buttons of `sf-button-group`, segmented included (simai/ui-source#10).
 - Deprecated, removed after 2026-12-01: the spinner's pixel attributes (`data-width`, `data-height`, `data-stroke-width`, `data-dot-radius` and their short forms) and `--sf-button-loading-stripe` / `--sf-icon-button-loading-stripe`.
 - The contract registry records why a reviewed entry is not suggested (`readiness.blockers`); `sf-button-group` is suggested, 172 of 345 entries. The documentation address is https://ui.simai.io/.
