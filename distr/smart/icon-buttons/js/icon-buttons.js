@@ -74,7 +74,9 @@ const round = value => Math.round(value * 1000) / 1000; // The four looks in one
 // as well as their classes: the spinner sheet styles them (track colour, the
 // motion of each look, the still frame under reduced motion), and until that
 // sheet has arrived they draw a faint ring and the arc in the current ink
-// rather than a filled black disc; the comet and the dots wait hidden.
+// rather than a filled black disc; the comet and the dots wait hidden. The arc
+// is a fixed 30% of the ring (simai/ui-source#13): the sheet turns the drawing,
+// the arc itself never changes length.
 
 
 function createSpinnerSvg({
@@ -117,7 +119,7 @@ function createSpinnerSvg({
     ...ring,
     'stroke-linecap': 'round',
     pathLength: 100,
-    'stroke-dasharray': '0 100',
+    'stroke-dasharray': '30 70',
     transform: `rotate(90 ${cx} ${cy})`
   }); // The comet starts at the top and runs clockwise: segment 0 is the end of the
   // tail, the last one the head, drawn last and with a round cap.
