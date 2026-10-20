@@ -1201,6 +1201,10 @@
       },
       {
         "name": "icon-buttons"
+      },
+      {
+        "lazy": true,
+        "name": "spinner"
       }
     ],
     "tags": [
@@ -3238,6 +3242,10 @@
       },
       {
         "name": "close"
+      },
+      {
+        "lazy": true,
+        "name": "spinner"
       }
     ],
     "type": "component"

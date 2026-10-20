@@ -46,6 +46,11 @@
     --sf-loader-text-size: var(--sf-text-size-1);
     --sf-loader-cycle-duration: calc(var(--sf-duration-slow) * 6);
     --sf-loader-dot-duration: calc(var(--sf-duration-slow) * 3);
+    /* The turn of the breathing and comet looks, and the breath itself
+       (simai/ui-source#11). */
+    --sf-loader-spin-duration: calc(var(--sf-duration-slow) * 4);
+    --sf-loader-breath-duration: calc(var(--sf-duration-slow) * 3);
+    --sf-loader-comet-duration: calc(var(--sf-duration-slow) * 2);
     color: currentColor;
     color: var(--sf-loader--color, currentColor);
     display: flex;
@@ -120,6 +125,12 @@
 * - Base styles (_css__component_name.scss)
 *
 */
+/* The looks (simai/ui-source#11). Every spinner draws the four on one ring;
+   which one shows, and how it moves, is a set of variables, so that it
+   inherits: data-sf-spinner on html, body or any block sets them for
+   everything inside it, the nearest such block winning, and data-variant on a
+   spinner sets them for that spinner above both. With none set, the fallbacks
+   where they are read are the arc's. An unknown name is the arc too. */
 /* In the components layer, as every other component: outside it these rules
    outranked every utility, whatever its layer. */
 @layer sf.components {
@@ -135,7 +146,119 @@
     overflow: visible;
     width: 100%;
   }
+  /* The page's look, inherited from the nearest block that names one; a name
+     that is not a look is the arc (that rule weighs nothing, so a named look on
+     the same block wins). An empty name sets nothing and inherits. */
+  :where([data-sf-spinner]:not([data-sf-spinner=""])) {
+    --sf-loader--look-track: inline;
+    --sf-loader--look-accent: inline;
+    --sf-loader--look-comet: none;
+    --sf-loader--look-dots: none;
+    --sf-loader--look-motion: sf-loader-ring-accent-fill;
+    --sf-loader--look-motion-duration: var(--sf-loader-cycle-duration);
+    --sf-loader--look-motion-easing: linear;
+    --sf-loader--look-spin: none;
+    --sf-loader--look-spin-duration: var(--sf-loader-spin-duration);
+  }
+  [data-sf-spinner=breathing] {
+    --sf-loader--look-track: inline;
+    --sf-loader--look-accent: inline;
+    --sf-loader--look-comet: none;
+    --sf-loader--look-dots: none;
+    --sf-loader--look-motion: sf-loader-breathing;
+    --sf-loader--look-motion-duration: var(--sf-loader-breath-duration);
+    --sf-loader--look-motion-easing: var(--sf-animation);
+    --sf-loader--look-spin: sf-loader-svg-rotate;
+    --sf-loader--look-spin-duration: var(--sf-loader-spin-duration);
+  }
+  [data-sf-spinner=comet] {
+    --sf-loader--look-track: inline;
+    --sf-loader--look-accent: none;
+    --sf-loader--look-comet: inline;
+    --sf-loader--look-dots: none;
+    --sf-loader--look-motion: none;
+    --sf-loader--look-motion-duration: var(--sf-loader-cycle-duration);
+    --sf-loader--look-motion-easing: linear;
+    --sf-loader--look-spin: sf-loader-svg-rotate;
+    --sf-loader--look-spin-duration: var(--sf-loader-comet-duration);
+  }
+  [data-sf-spinner=dots] {
+    --sf-loader--look-track: none;
+    --sf-loader--look-accent: none;
+    --sf-loader--look-comet: none;
+    --sf-loader--look-dots: inline;
+    --sf-loader--look-motion: none;
+    --sf-loader--look-motion-duration: var(--sf-loader-cycle-duration);
+    --sf-loader--look-motion-easing: linear;
+    --sf-loader--look-spin: none;
+    --sf-loader--look-spin-duration: var(--sf-loader-spin-duration);
+  }
+  /* The spinner's own look, above the page's. Written after it, so a spinner
+     that also carries data-sf-spinner is still ruled by its data-variant. */
+  .sf-loader-container:where([data-variant]:not([data-variant=""])) {
+    --sf-loader--look-track: inline;
+    --sf-loader--look-accent: inline;
+    --sf-loader--look-comet: none;
+    --sf-loader--look-dots: none;
+    --sf-loader--look-motion: sf-loader-ring-accent-fill;
+    --sf-loader--look-motion-duration: var(--sf-loader-cycle-duration);
+    --sf-loader--look-motion-easing: linear;
+    --sf-loader--look-spin: none;
+    --sf-loader--look-spin-duration: var(--sf-loader-spin-duration);
+  }
+  .sf-loader-container[data-variant=breathing] {
+    --sf-loader--look-track: inline;
+    --sf-loader--look-accent: inline;
+    --sf-loader--look-comet: none;
+    --sf-loader--look-dots: none;
+    --sf-loader--look-motion: sf-loader-breathing;
+    --sf-loader--look-motion-duration: var(--sf-loader-breath-duration);
+    --sf-loader--look-motion-easing: var(--sf-animation);
+    --sf-loader--look-spin: sf-loader-svg-rotate;
+    --sf-loader--look-spin-duration: var(--sf-loader-spin-duration);
+  }
+  .sf-loader-container[data-variant=comet] {
+    --sf-loader--look-track: inline;
+    --sf-loader--look-accent: none;
+    --sf-loader--look-comet: inline;
+    --sf-loader--look-dots: none;
+    --sf-loader--look-motion: none;
+    --sf-loader--look-motion-duration: var(--sf-loader-cycle-duration);
+    --sf-loader--look-motion-easing: linear;
+    --sf-loader--look-spin: sf-loader-svg-rotate;
+    --sf-loader--look-spin-duration: var(--sf-loader-comet-duration);
+  }
+  .sf-loader-container[data-variant=dots] {
+    --sf-loader--look-track: none;
+    --sf-loader--look-accent: none;
+    --sf-loader--look-comet: none;
+    --sf-loader--look-dots: inline;
+    --sf-loader--look-motion: none;
+    --sf-loader--look-motion-duration: var(--sf-loader-cycle-duration);
+    --sf-loader--look-motion-easing: linear;
+    --sf-loader--look-spin: none;
+    --sf-loader--look-spin-duration: var(--sf-loader-spin-duration);
+  }
+  /* Breathing and comet turn the whole drawing; the track is a full ring and
+     does not show it. */
+  /* In longhands: in the shorthand a name of none reads as the fill mode. */
+  .sf-loader-container .sf-loader-svg {
+    -webkit-animation-name: none;
+            animation-name: none;
+    -webkit-animation-name: var(--sf-loader--look-spin, none);
+            animation-name: var(--sf-loader--look-spin, none);
+    -webkit-animation-duration: var(--sf-loader-spin-duration);
+            animation-duration: var(--sf-loader-spin-duration);
+    -webkit-animation-duration: var(--sf-loader--look-spin-duration, var(--sf-loader-spin-duration));
+            animation-duration: var(--sf-loader--look-spin-duration, var(--sf-loader-spin-duration));
+    -webkit-animation-timing-function: linear;
+            animation-timing-function: linear;
+    -webkit-animation-fill-mode: both;
+            animation-fill-mode: both;
+  }
   .sf-loader-container .sf-loader-ring-filled {
+    display: inline;
+    display: var(--sf-loader--look-track, inline);
     fill: none;
     opacity: var(--sf-opacity-30);
     stroke: var(--sf-surface-container);
@@ -144,6 +267,8 @@
     stroke-width: var(--sf-loader-stroke-width);
   }
   .sf-loader-container .sf-loader-ring-accent {
+    display: inline;
+    display: var(--sf-loader--look-accent, inline);
     fill: none;
     stroke: currentColor;
     stroke-linecap: round;
@@ -151,12 +276,38 @@
     stroke-width: var(--sf-loader-stroke-width);
   }
   .sf-loader-container .sf-loader--loading-indicator .sf-loader-ring-accent {
-    -webkit-animation: sf-loader-ring-accent-fill var(--sf-loader-cycle-duration) linear both;
-            animation: sf-loader-ring-accent-fill var(--sf-loader-cycle-duration) linear both;
+    -webkit-animation-name: sf-loader-ring-accent-fill;
+            animation-name: sf-loader-ring-accent-fill;
+    -webkit-animation-name: var(--sf-loader--look-motion, sf-loader-ring-accent-fill);
+            animation-name: var(--sf-loader--look-motion, sf-loader-ring-accent-fill);
+    -webkit-animation-duration: var(--sf-loader-cycle-duration);
+            animation-duration: var(--sf-loader-cycle-duration);
+    -webkit-animation-duration: var(--sf-loader--look-motion-duration, var(--sf-loader-cycle-duration));
+            animation-duration: var(--sf-loader--look-motion-duration, var(--sf-loader-cycle-duration));
+    -webkit-animation-timing-function: linear;
+            animation-timing-function: linear;
+    -webkit-animation-timing-function: var(--sf-loader--look-motion-easing, linear);
+            animation-timing-function: var(--sf-loader--look-motion-easing, linear);
+    -webkit-animation-fill-mode: both;
+            animation-fill-mode: both;
   }
-  .sf-loader-container.sf-loader--infinite .sf-loader--loading-indicator .sf-loader-ring-accent {
+  .sf-loader-container.sf-loader--infinite .sf-loader--loading-indicator .sf-loader-ring-accent,
+  .sf-loader-container.sf-loader--infinite .sf-loader-svg {
     -webkit-animation-iteration-count: infinite;
             animation-iteration-count: infinite;
+  }
+  .sf-loader-container .sf-loader-comet {
+    display: none;
+    display: var(--sf-loader--look-comet, none);
+  }
+  .sf-loader-container .sf-loader-comet-segment {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: var(--sf-loader-stroke-width);
+  }
+  .sf-loader-container .sf-loader-dots {
+    display: none;
+    display: var(--sf-loader--look-dots, none);
   }
   .sf-loader-container .sf-loader-dot {
     fill: currentColor;
@@ -221,7 +372,11 @@
       opacity: var(--sf-opacity-20);
     }
   }
+  /* Reduced motion: a still frame of every look -- the arc (breathing's too) a
+     quarter of the ring, the comet where it is drawn, the dots with their lit
+     ones brighter. */
   @media (prefers-reduced-motion: reduce) {
+    .sf-loader-container .sf-loader-svg,
     .sf-loader-container .sf-loader-ring-accent,
     .sf-loader-container .sf-loader-dot {
       -webkit-animation: none !important;
@@ -230,6 +385,37 @@
     .sf-loader-container .sf-loader-ring-accent {
       opacity: 1;
       stroke-dasharray: 24 76;
+    }
+  }
+  /* Breathing: the arc grows to most of the ring and shrinks back while its
+     start runs ahead, as Material's indeterminate circular indicator does; the
+     drawing turns underneath at its own pace. */
+  @-webkit-keyframes sf-loader-breathing {
+    0% {
+      stroke-dasharray: 4 96;
+      stroke-dashoffset: 0;
+    }
+    50% {
+      stroke-dasharray: 70 30;
+      stroke-dashoffset: -15;
+    }
+    100% {
+      stroke-dasharray: 4 96;
+      stroke-dashoffset: -100;
+    }
+  }
+  @keyframes sf-loader-breathing {
+    0% {
+      stroke-dasharray: 4 96;
+      stroke-dashoffset: 0;
+    }
+    50% {
+      stroke-dasharray: 70 30;
+      stroke-dashoffset: -15;
+    }
+    100% {
+      stroke-dasharray: 4 96;
+      stroke-dashoffset: -100;
     }
   }
   @-webkit-keyframes sf-loader-ring-accent-fill {

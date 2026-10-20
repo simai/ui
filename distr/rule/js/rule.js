@@ -462,6 +462,11 @@ SF.RuleLoader['modal'] = {
     name: 'icon-buttons'
   }, {
     name: 'close'
+  }, // The spinner a modal shows while its content loads, fetched after the
+  // page is ready; the modal sheet draws its slot.
+  {
+    name: 'spinner',
+    lazy: true
   }]
 };
 
@@ -3977,10 +3982,14 @@ SF.RuleLoader['cl-modal'] = {
   type: 'smart',
   mode: 'smart',
   js: true,
+  // spinner: the remote content's loading state shows it, fetched after the page is ready.
   relation: [{
     name: 'modal'
   }, {
     name: 'icon-buttons'
+  }, {
+    name: 'spinner',
+    lazy: true
   }]
 };
 

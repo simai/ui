@@ -278,6 +278,37 @@
     }
   }
 }
+/* The spinner a modal shows while its content loads (simai/ui-source#11): the
+   Framework's one spinner, at step 3 of the ladder, its slot drawn here so the
+   box is right before the spinner sheet has arrived. */
+@layer sf.components {
+  .sf-modal-loading .sf-modal-spinner {
+    --sf-loader-svg-width: var(--sf-text-height-3);
+    --sf-loader-svg-height: var(--sf-text-height-3);
+    display: inline-flex;
+    flex: none;
+    width: var(--sf-text-height-3);
+    inline-size: var(--sf-text-height-3);
+    height: var(--sf-text-height-3);
+    block-size: var(--sf-text-height-3);
+    color: currentColor;
+    color: var(--sf-loader--color, currentColor);
+  }
+  .sf-modal-loading .sf-modal-spinner .sf-loader--loading-indicator {
+    display: block;
+    width: 100%;
+    inline-size: 100%;
+    height: 100%;
+    block-size: 100%;
+  }
+  .sf-modal-loading .sf-modal-spinner .sf-loader-svg {
+    display: block;
+    width: 100%;
+    inline-size: 100%;
+    height: 100%;
+    block-size: 100%;
+  }
+}
 @layer sf.components {
   .sf-modal-header-content {
     flex: 1 1 auto;
