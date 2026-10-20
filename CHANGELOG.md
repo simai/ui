@@ -8,6 +8,8 @@
 
 ### Исправлено
 
+- Fixed: the `arc` spinner look is a fixed arc of 30% of the ring with round caps on the faint track, turning linearly once a second; its length never changes, which tells it from `breathing`. Reduced motion shows the same arc, still (simai/ui-source#13).
+
 - The modal loading state speaks the page language: «Загрузка…» / "Loading…", and its load-error fallbacks are localised too, in both `sf-modal` and the component modal. The loading block is a status with that name. The English spinner label is "Loading…" with a real ellipsis.
 - Fixed: a modal opened while its content was still preloading never showed the loading state, because the cancelled request cleared the new one's state.
 
