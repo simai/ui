@@ -268,6 +268,10 @@
 
 ### Изменено
 
+- The spinner is the one loading indicator, on the full size ladder (`1/3` added): at each step `sf-spinner` is exactly the icon of a button of that size, its stroke that of a regular-weight icon, its colour the current ink (`--sf-loader--color` overrides). Buttons in the `loading` state show it instead of the stripes: in place of the icon, over the label without changing the width, or in place of the icon of an icon-only button; `aria-busy` and the label stay, reduced motion shows a still arc. This covers `sf-button`, `sf-icon-button` and the buttons of `sf-button-group`, segmented included (simai/ui-source#10).
+- Deprecated, removed after 2026-12-01: the spinner's pixel attributes (`data-width`, `data-height`, `data-stroke-width`, `data-dot-radius` and their short forms) and `--sf-button-loading-stripe` / `--sf-icon-button-loading-stripe`.
+- The contract registry records why a reviewed entry is not suggested (`readiness.blockers`); `sf-button-group` is suggested, 172 of 345 entries. The documentation address is https://ui.simai.io/.
+
 - Segmented `sf-button-group` and the theme switch stand on the button ladder: the track is as tall as an `sf-button` of the same size and spacing, and the segments inside take the compact step (simai/ui-source#9).
 - The contract registry suggests 134 more entries (170 of 345), promoted by a written rule: documented with an example, exercised by a test, probe or the polygon, no open issue, not deprecated (`contracts/owners/PROMOTION.md`).
 
