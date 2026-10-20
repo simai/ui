@@ -1316,7 +1316,8 @@
       },
       "requires": [
         "component.icon-buttons",
-        "component.modal"
+        "component.modal",
+        "component.spinner"
       ],
       "curated_for": []
     },
