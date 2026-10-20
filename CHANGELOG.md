@@ -8,6 +8,9 @@
 
 ### Исправлено
 
+- The modal loading state speaks the page language: «Загрузка…» / "Loading…", and its load-error fallbacks are localised too, in both `sf-modal` and the component modal. The loading block is a status with that name. The English spinner label is "Loading…" with a real ellipsis.
+- Fixed: a modal opened while its content was still preloading never showed the loading state, because the cancelled request cleared the new one's state.
+
 - Fixed: without `window.sfPath` Core finds its `distr/` from the address of its own script (the npm package, a copy of `distr/` on the site), and the warning that remains for the rare case it cannot recommends the npm form (simai/ui-source#8). `?sf-debug` falls back to the minified form of any script that has no readable copy, so a page served from the npm package defines its Smart Components in debug.
 - Fixed: the pagination wraps in a narrow column instead of putting «Показать ещё» over «Последняя».
 - Changed: SIMAI is written in capitals in the live sources, schemas and messages.
