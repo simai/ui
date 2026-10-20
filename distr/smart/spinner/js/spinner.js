@@ -897,7 +897,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 const SPINNER_TEXT = {
   en: {
-    label: 'Loading...'
+    label: 'Loading…'
   },
   ru: {
     label: 'Загрузка…'

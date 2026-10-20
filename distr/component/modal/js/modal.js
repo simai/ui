@@ -229,18 +229,30 @@ function normalizeDisplay(value) {
   return ['modal', 'inline'].includes(normalized) ? normalized : 'modal';
 } // An untitled window was headed and named «Modal» on every page; it takes the
 // page language's word instead, as the Smart window does.
+// The loading state and its failure speak the page's language too: they said
+// "Loading..." and "Failed to load content" on every page (simai/ui-source#11
+// follow-up). The words are sf-modal's, so one registration covers both.
 
 
 const UNTITLED = {
   en: {
     title: 'Dialog',
-    close: 'Close'
+    close: 'Close',
+    loading: 'Loading…',
+    loadFailed: 'Failed to load content',
+    frameFailed: 'Failed to load iframe content'
   },
   ru: {
     title: 'Окно',
-    close: 'Закрыть'
+    close: 'Закрыть',
+    loading: 'Загрузка…',
+    loadFailed: 'Не удалось загрузить содержимое',
+    frameFailed: 'Не удалось загрузить встроенную страницу'
   }
-};
+}; // The node the words are looked up from: the modal once it is on the page,
+// else the document, which is where a modal not yet attached will be.
+
+const modalText = (key, node) => (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_2__.pageText)(UNTITLED, key, node?.isConnected ? node : document.documentElement, 'sf-modal');
 
 const untitled = root => (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_2__.pageText)(UNTITLED, 'title', root);
 
@@ -705,9 +717,13 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
     const loading = document.createElement('div');
     loading.className = 'sf-modal-loading flex flex-col gap-2 items-cross-center content-main-center p-4';
     loading.setAttribute('data-sf-modal-state', 'loading');
-    loading.innerHTML = `
-      <p class="m-0 text-2 color-on-surface-variant">Loading...</p>
-    `; // The Framework's one spinner, in the page's look (simai/ui-source#11);
+    const words = modalText('loading', this.template);
+    loading.setAttribute('role', 'status');
+    loading.setAttribute('aria-label', words);
+    const text = document.createElement('p');
+    text.className = 'm-0 text-2 color-on-surface-variant';
+    text.textContent = words;
+    loading.append(text); // The Framework's one spinner, in the page's look (simai/ui-source#11);
     // the modal sheet draws its slot.
 
     loading.prepend((0,_spinner_js_spinner_draw__WEBPACK_IMPORTED_MODULE_7__.createInlineSpinner)({
@@ -723,7 +739,7 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
     error.setAttribute('data-sf-modal-state', 'error');
     error.innerHTML = `
       <div class="sf-modal-error-icon text-4 color-error">⚠</div>
-      <p class="sf-modal-error-text m-0 text-2 color-error">${this.escapeHtml(message || 'Failed to load content')}</p>
+      <p class="sf-modal-error-text m-0 text-2 color-error">${this.escapeHtml(message || modalText('loadFailed', this.template))}</p>
     `;
     container.append(error);
   }
@@ -784,13 +800,14 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
 
     this._abortFetch();
 
-    this._fetchController = new AbortController();
+    const controller = new AbortController();
+    this._fetchController = controller;
 
     try {
       this._emitBeforeContentUpload();
 
       const response = await fetch(this.src, {
-        signal: this._fetchController.signal
+        signal: controller.signal
       });
 
       if (!response.ok) {
@@ -809,7 +826,12 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
       this._emitAfterContentUpload();
     } catch (error) {
       if (error.name === 'AbortError') {
-        this._finishLoading();
+        // Aborted by a newer load (open() reloads what the constructor began
+        // to preload): the loading state is that load's, and cancelling its
+        // timer here meant a modal opened during the preload never showed it.
+        if (!this._fetchController || this._fetchController === controller) {
+          this._finishLoading();
+        }
 
         return; // Загрузка отменена — не показываем ошибку
       }
@@ -848,7 +870,7 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
       this._emitAfterContentUpload();
     });
     iframe.addEventListener('error', () => {
-      this._contentError = 'Failed to load iframe content';
+      this._contentError = modalText('frameFailed', this.template);
 
       this._finishLoading();
 
@@ -898,7 +920,7 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
     error.setAttribute('data-sf-modal-state', 'error');
     error.innerHTML = `
       <div class="sf-modal-error-icon text-4 color-error">⚠</div>
-      <p class="sf-modal-error-text m-0 text-2 color-error">${this.escapeHtml(this._contentError || 'Failed to load content')}</p>
+      <p class="sf-modal-error-text m-0 text-2 color-error">${this.escapeHtml(this._contentError || modalText('loadFailed', this.template))}</p>
     `;
     bodyScroll.append(error);
   }
