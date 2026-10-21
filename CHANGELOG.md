@@ -8,6 +8,12 @@
 
 ### Исправлено
 
+- Fixed: info is a status palette of #005bbe with a fixed hue and chroma, like error, warning and success, instead of a copy of the brand colour; under a red primary it read as danger. Every primary gives the same sixteen info tones (simai/ui-source#14).
+- Fixed: `sf-resizer` takes its name and hint through the shared page language: it follows `SF.language.use()` live, reads words added with `SF.language.register('sf-resizer', …)`, and a name given in `label` stays the author's.
+- Fixed: `sf-button` and `sf-icon-button` keep the `data-*` attributes written on the host (they are copied to the inner button, no longer moved), so `sf-button[data-…]` and `host.dataset` answer. A text child of `sf-button` is its label, after slot `text` and the `text` attribute.
+- Fixed: `sf-sortable` puts its live region and instructions back when the host redraws the list, and after a keyboard drop returns focus to the moved item when it fell to the page.
+- Docs: the `sf-file-upload` item shape and a browser-only import; what `type="pills"` paints and that a two-option switch is the segmented `sf-button-group`; how an app serves its own icons (`SF_BOOT_CONFIG.icons.enabled = false`). Reported by SIMAI Email Editor.
+
 - Fixed: the Loader inserted a script once per plugin that named it, and every copy of the anchored-badge runtime ran its own observer, so a badge inside an aria-labelled link, button or avatar could append «, N непрочитанных» to its name without end until the tab stopped (ui-020f4a1acc31). Scripts and sheets now load once per URL through a registry shared by every bundle, the badge runtime runs once per page, and a name is written only when it changes.
 - Fixed: the compact admin menu panel hides item words visually only, so items keep their names, and initials stay visible.
 
