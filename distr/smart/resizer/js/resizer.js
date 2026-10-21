@@ -267,12 +267,341 @@ const Preferences = globalThis.SF?.Preferences;
 
 /***/ },
 
+/***/ "f7b9ec5790a0"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   SfResizer: () => (/* binding */ SfResizer)
+/* harmony export */ });
+/* harmony import */ var _engine_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("bffb4b61998b");
+/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("0d662e4d7d63");
+/* harmony import */ var _core_js_preferences_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("51250bf01ab0");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("d4f7aa048f0e");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_page_language__WEBPACK_IMPORTED_MODULE_1__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+_core_js_page_language__WEBPACK_IMPORTED_MODULE_1__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language__WEBPACK_IMPORTED_MODULE_1__);
+// sf-resizer: a handle on the edge of a panel that changes its width by a
+// drag, the keyboard or a double click back to the default (owner,
+// 2026-10-14: the admin menu's columns are widened and narrowed by their
+// edges). It is a separator in the accessibility sense -- role="separator",
+// focusable, its value the width in pixels between min and max -- and it owns
+// nothing but the width it writes: on its target (its parent, or the closest
+// ancestor matching `target`), as a custom property when `property` names one,
+// otherwise as inline-size. With `storage-key` the width is remembered in this
+// browser and restored the next time.
+
+
+
+ // The two languages the handle ships are the floor, not the whole set: the
+// words go through the shared reader, so SF.language.use() chooses the
+// language and SF.language.register('sf-resizer', ...) adds one the Framework
+// has never heard of. Until then the handle kept a private reading of the
+// page's [lang] and a private dictionary, so it ignored both and could say
+// nothing but English and Russian (ui-mail feedback ui-mail.resizer-language,
+// 2026-10-21).
+
+const RESIZER_TEXT = {
+  en: {
+    label: 'Resize',
+    hint: 'Drag, or use the arrow keys; a double click restores the width.'
+  },
+  ru: {
+    label: 'Изменить ширину',
+    hint: 'Тяните или нажимайте стрелки; двойной щелчок возвращает ширину.'
+  }
+};
+
+const text = (node, key) => (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_1__.pageText)(RESIZER_TEXT, key, node, 'sf-resizer'); // A CSS length (tokens included) in pixels, read in the target's context.
+
+
+function pixels(value, context) {
+  if (value === null || value === undefined || value === '') return null;
+  const number = Number(value);
+  if (Number.isFinite(number)) return number;
+  const probe = document.createElement('span');
+  probe.style.cssText = 'position:absolute;visibility:hidden;pointer-events:none;block-size:0;padding:0;border:0';
+  probe.style.inlineSize = String(value);
+  (context?.isConnected ? context : document.body).append(probe);
+  const width = parseFloat(getComputedStyle(probe).width);
+  probe.remove();
+  return Number.isFinite(width) ? width : null;
+} // The width is a view preference (SF.Preferences, owner 2026-10-14): kept in
+// this browser, and for the person when the host keeps preferences.
+
+
+const preferences = () => globalThis.SF?.Preferences || _core_js_preferences_js__WEBPACK_IMPORTED_MODULE_2__["default"];
+
+const preferenceKey = key => `sf-resizer/${String(key).replace(/[^\w.:-]+/gu, '-')}`;
+
+function readStored(key) {
+  if (!key) return null;
+  const kept = preferences()?.read(preferenceKey(key));
+  if (Number.isFinite(kept?.width)) return kept.width; // A width this browser kept before the standard, taken over once.
+
+  try {
+    const legacy = Number(globalThis.localStorage?.getItem(`sf-resizer:${key}`)) || null;
+
+    if (legacy) {
+      preferences()?.write(preferenceKey(key), {
+        v: 1,
+        width: legacy
+      });
+      globalThis.localStorage?.removeItem(`sf-resizer:${key}`);
+    }
+
+    return legacy;
+  } catch {
+    return null;
+  }
+}
+
+function writeStored(key, value) {
+  if (!key) return;
+  if (value === null) preferences()?.remove(preferenceKey(key));else preferences()?.write(preferenceKey(key), {
+    v: 1,
+    width: Math.round(value)
+  });
+}
+
+class SfResizer extends HTMLElement {
+  static get observedAttributes() {
+    return ['min', 'max', 'label', 'disabled', 'value'];
+  }
+
+  constructor() {
+    super();
+
+    this._onWindowResize = () => this.clampToLimits();
+  }
+
+  connectedCallback() {
+    if (!this.hasAttribute('tabindex')) this.tabIndex = 0;
+    this.syncLabel(); // The gesture is the shared one (attachResizer): the element only says
+    // what the width is the width of and where it is kept.
+
+    this._detach = (0,_engine_mjs__WEBPACK_IMPORTED_MODULE_0__.attachResizer)(this, {
+      session: () => this.disabled ? null : this.session()
+    });
+    globalThis.addEventListener('resize', this._onWindowResize); // A language announced after the handle drew itself -- SF.language.use(),
+    // or a word registered for it -- renames it where it stands. A Lit
+    // component gets this from smart-base; this one is an ordinary element, so
+    // it listens for itself, as the anchored badges do.
+
+    this._languageOff = _core_js_page_language__WEBPACK_IMPORTED_MODULE_1__.language.onChange(() => {
+      if (this.isConnected) this.syncLabel();
+    }); // Restored after the target has laid out, so a percentage limit is read
+    // against a real width.
+
+    requestAnimationFrame(() => {
+      if (!this.isConnected) return;
+      const target = this.target();
+      if (target && getComputedStyle(target).position === 'static') target.style.position = 'relative'; // A width the host keeps for the person (value) wins over this
+      // browser's memory of it.
+
+      const kept = Number(this.getAttribute('value')) || readStored(this.storageKey);
+      if (kept) this.apply(kept);
+      this.syncValue();
+    });
+  }
+
+  disconnectedCallback() {
+    this._detach?.();
+    this._detach = null;
+    this._languageOff?.();
+    this._languageOff = null;
+    globalThis.removeEventListener('resize', this._onWindowResize);
+  }
+
+  attributeChangedCallback(name, before, after) {
+    if (name === 'value' && after && after !== before && this.isConnected) {
+      this.restore(after);
+      return;
+    }
+
+    if (this.isConnected) {
+      this.syncLabel();
+      this.syncValue();
+    }
+  }
+
+  get storageKey() {
+    return this.getAttribute('storage-key') || '';
+  }
+
+  get property() {
+    return this.getAttribute('property') || '';
+  }
+
+  get step() {
+    return Math.max(1, Number(this.getAttribute('step')) || 16);
+  }
+
+  get disabled() {
+    return this.hasAttribute('disabled');
+  }
+
+  target() {
+    const selector = this.getAttribute('target');
+    return (selector ? this.parentElement?.closest(selector) : this.parentElement) ?? null;
+  }
+
+  limits() {
+    const context = this.target()?.parentElement ?? document.body;
+    const min = pixels(this.getAttribute('min') || '12rem', context) ?? 0;
+    const max = pixels(this.getAttribute('max') || '40rem', context) ?? Infinity;
+    return {
+      min,
+      max: Math.max(min, max)
+    };
+  }
+
+  width() {
+    return this.target()?.getBoundingClientRect().width ?? 0;
+  }
+
+  session() {
+    return {
+      measure: () => this.width(),
+      limits: () => this.limits(),
+      apply: (width, phase) => {
+        const written = this.apply(width);
+        if (phase === 'move' && written !== null) this.announce(written, 'move');
+        return written;
+      },
+      commit: width => this.commit(width),
+      reset: () => this.reset(),
+      // A handle on the inline end widens the panel rightwards in a
+      // left-to-right page; on the start, leftwards.
+      direction: () => {
+        const rtl = getComputedStyle(this).direction === 'rtl';
+        return (rtl ? -1 : 1) * (this.getAttribute('edge') === 'inline-start' ? -1 : 1);
+      },
+      step: this.step
+    };
+  }
+
+  apply(value) {
+    const target = this.target();
+    if (!target) return null;
+    const {
+      min,
+      max
+    } = this.limits();
+    const width = Math.round(Math.min(max, Math.max(min, value)));
+    if (this.property) target.style.setProperty(this.property, `${width}px`);else target.style.inlineSize = `${width}px`;
+    this.syncValue(width);
+    return width;
+  }
+
+  announce(width, phase) {
+    this.dispatchEvent(new CustomEvent('sf-resize', {
+      bubbles: true,
+      composed: true,
+      detail: {
+        width,
+        phase
+      }
+    }));
+  }
+
+  commit(width) {
+    writeStored(this.storageKey, width);
+    this.announce(width, 'end');
+  } // Back to the width the page's stylesheet gives, and forgotten.
+
+
+  reset() {
+    if (this.disabled) return;
+    const target = this.target();
+    if (!target) return;
+    if (this.property) target.style.removeProperty(this.property);else target.style.removeProperty('inline-size');
+    writeStored(this.storageKey, null);
+    requestAnimationFrame(() => {
+      const width = Math.round(this.width());
+      this.syncValue(width);
+      this.announce(width, 'reset');
+    });
+  } // A width the host keeps (a person's settings): written as if dragged,
+  // within the limits, and remembered as the browser's too.
+
+
+  restore(width) {
+    const number = Number(width);
+    if (!Number.isFinite(number) || number <= 0) return null;
+    const written = this.apply(number);
+    if (written !== null) writeStored(this.storageKey, written);
+    return written;
+  } // A window narrowed under a remembered width brings it back within limits.
+
+
+  clampToLimits() {
+    const target = this.target();
+    if (!target) return;
+    const written = this.property ? target.style.getPropertyValue(this.property) : target.style.inlineSize;
+    if (!written) return; // The value written is what is clamped, not the panel as measured: in a
+    // stacked layout the panel is the window's width whatever is written, and
+    // clamping that measurement wrote the maximum over the remembered width
+    // (docs trial 4, 2026-10-15).
+
+    const {
+      min,
+      max
+    } = this.limits();
+    const value = Number.parseFloat(written);
+    if (!Number.isFinite(value)) return;
+    if (value > max || value < min) this.apply(value);
+  }
+
+  syncLabel() {
+    const label = text(this, 'label');
+    const hint = text(this, 'hint');
+
+    if (!this.getAttribute('aria-label') || this._ownLabel) {
+      this.setAttribute('aria-label', this.getAttribute('label') || label);
+      this._ownLabel = true;
+    }
+
+    this.title = this.getAttribute('label') ? `${this.getAttribute('label')}. ${hint}` : hint;
+    if (this.disabled) this.setAttribute('aria-disabled', 'true');else this.removeAttribute('aria-disabled');
+  }
+
+  syncValue(width = this.width()) {
+    (0,_engine_mjs__WEBPACK_IMPORTED_MODULE_0__.setResizerValue)(this, {
+      limits: () => this.limits(),
+      measure: () => width
+    }, width);
+  }
+
+}
+if (!customElements.get('sf-resizer')) customElements.define('sf-resizer', SfResizer);
+globalThis.SF = globalThis.SF || {}; // attach: the same gesture on any handle -- a table's column edges use it.
+
+globalThis.SF.Resizer = Object.freeze({
+  SfResizer,
+  attach: _engine_mjs__WEBPACK_IMPORTED_MODULE_0__.attachResizer,
+  attachResizer: _engine_mjs__WEBPACK_IMPORTED_MODULE_0__.attachResizer
+});
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
 /***/ "d4f7aa048f0e"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 // extracted by mini-css-extract-plugin
 
+
+/***/ },
+
+/***/ "0d662e4d7d63"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("page-language") : new Promise((resolve) => globalThis.addEventListener("sf-runtime-ready", () => resolve(globalThis.SF.runtimeModule("page-language")), { once: true })));
 
 /***/ },
 
@@ -472,6 +801,94 @@ function attachResizer(root, options = {}) {
 /******/ 	}
 /******/
 /************************************************************************/
+/******/ 	/* webpack/runtime/async module */
+/******/ 	(() => {
+/******/ 		const hasSymbol = typeof Symbol === "function";
+/******/ 		const webpackQueues = hasSymbol ? Symbol("webpack queues") : "__webpack_queues__";
+/******/ 		const webpackExports = hasSymbol ? Symbol("webpack exports") : "__webpack_exports__";
+/******/ 		const webpackError = hasSymbol ? Symbol("webpack error") : "__webpack_error__";
+/******/
+/******/ 		const resolveQueue = (queue) => {
+/******/ 			if(queue?.d < 1) {
+/******/ 				queue.d = 1;
+/******/ 				queue.forEach((fn) => (fn.r--));
+/******/ 				queue.forEach((fn) => (fn.r-- ? fn.r++ : fn()));
+/******/ 			}
+/******/ 		}
+/******/ 		const wrapDeps = (deps) => (deps.map((dep) => {
+/******/ 			if(dep !== null && typeof dep === "object") {
+/******/
+/******/ 				if(dep[webpackQueues]) return dep;
+/******/ 				if(dep.then) {
+/******/ 					const queue = [];
+/******/ 					queue.d = 0;
+/******/ 					dep.then((r) => {
+/******/ 						obj[webpackExports] = r;
+/******/ 						resolveQueue(queue);
+/******/ 					}, (e) => {
+/******/ 						obj[webpackError] = e;
+/******/ 						resolveQueue(queue);
+/******/ 					});
+/******/ 					const obj = {};
+/******/
+/******/ 					obj[webpackQueues] = (fn) => (fn(queue));
+/******/ 					return obj;
+/******/ 				}
+/******/ 			}
+/******/ 			const ret = {};
+/******/ 			ret[webpackQueues] = x => {};
+/******/ 			ret[webpackExports] = dep;
+/******/ 			return ret;
+/******/ 		}));
+/******/ 		__webpack_require__.a = (module, body, hasAwait) => {
+/******/ 			let queue;
+/******/ 			hasAwait && ((queue = []).d = -1);
+/******/ 			const depQueues = new Set();
+/******/ 			const exports = module.exports;
+/******/ 			let currentDeps;
+/******/ 			let outerResolve;
+/******/ 			let reject;
+/******/ 			const promise = new Promise((resolve, rej) => {
+/******/ 				reject = rej;
+/******/ 				outerResolve = resolve;
+/******/ 			});
+/******/ 			promise[webpackExports] = exports;
+/******/ 			promise[webpackQueues] = (fn) => (queue && fn(queue), depQueues.forEach(fn), promise["catch"](x => {}));
+/******/ 			module.exports = promise;
+/******/ 			const handle = (deps) => {
+/******/ 				currentDeps = wrapDeps(deps);
+/******/ 				let fn;
+/******/ 				const getResult = () => (currentDeps.map((d) => {
+/******/
+/******/ 					if(d[webpackError]) throw d[webpackError];
+/******/ 					return d[webpackExports];
+/******/ 				}))
+/******/ 				const promise = new Promise((resolve) => {
+/******/ 					fn = () => (resolve(getResult));
+/******/ 					fn.r = 0;
+/******/ 					const fnQueue = (q) => (q !== queue && !depQueues.has(q) && (depQueues.add(q), q && !q.d && (fn.r++, q.push(fn))));
+/******/ 					currentDeps.map((dep) => (dep[webpackQueues](fnQueue)));
+/******/ 				});
+/******/ 				return fn.r ? promise : getResult();
+/******/ 			}
+/******/ 			const done = (err) => ((err ? reject(promise[webpackError] = err) : outerResolve(exports)), resolveQueue(queue))
+/******/ 			body(handle, done);
+/******/ 			queue?.d < 0 && (queue.d = 0);
+/******/ 		};
+/******/ 	})();
+/******/
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	(() => {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__webpack_require__.n = (module) => {
+/******/ 			const getter = module && module.__esModule ?
+/******/ 				() => (module['default']) :
+/******/ 				() => (module);
+/******/ 			__webpack_require__.d(getter, { a: getter });
+/******/ 			return getter;
+/******/ 		};
+/******/ 	})();
+/******/
 /******/ 	/* webpack/runtime/define property getters */
 /******/ 	(() => {
 /******/ 		// define getter/value functions for harmony exports
@@ -516,303 +933,11 @@ function attachResizer(root, options = {}) {
 /******/ 	})();
 /******/
 /************************************************************************/
-let __webpack_exports__ = {};
-// This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
-(() => {
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   SfResizer: () => (/* binding */ SfResizer)
-/* harmony export */ });
-/* harmony import */ var _engine_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("bffb4b61998b");
-/* harmony import */ var _core_js_preferences_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("51250bf01ab0");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("d4f7aa048f0e");
-// sf-resizer: a handle on the edge of a panel that changes its width by a
-// drag, the keyboard or a double click back to the default (owner,
-// 2026-10-14: the admin menu's columns are widened and narrowed by their
-// edges). It is a separator in the accessibility sense -- role="separator",
-// focusable, its value the width in pixels between min and max -- and it owns
-// nothing but the width it writes: on its target (its parent, or the closest
-// ancestor matching `target`), as a custom property when `property` names one,
-// otherwise as inline-size. With `storage-key` the width is remembered in this
-// browser and restored the next time.
-
-
-
-const TEXT = {
-  en: {
-    label: 'Resize',
-    hint: 'Drag, or use the arrow keys; a double click restores the width.'
-  },
-  ru: {
-    label: 'Изменить ширину',
-    hint: 'Тяните или нажимайте стрелки; двойной щелчок возвращает ширину.'
-  }
-};
-
-function pageLanguage(element) {
-  const lang = (element.closest('[lang]')?.getAttribute('lang') || document.documentElement.lang || 'en').slice(0, 2).toLowerCase();
-  return TEXT[lang] ? lang : 'en';
-} // A CSS length (tokens included) in pixels, read in the target's context.
-
-
-function pixels(value, context) {
-  if (value === null || value === undefined || value === '') return null;
-  const number = Number(value);
-  if (Number.isFinite(number)) return number;
-  const probe = document.createElement('span');
-  probe.style.cssText = 'position:absolute;visibility:hidden;pointer-events:none;block-size:0;padding:0;border:0';
-  probe.style.inlineSize = String(value);
-  (context?.isConnected ? context : document.body).append(probe);
-  const width = parseFloat(getComputedStyle(probe).width);
-  probe.remove();
-  return Number.isFinite(width) ? width : null;
-} // The width is a view preference (SF.Preferences, owner 2026-10-14): kept in
-// this browser, and for the person when the host keeps preferences.
-
-
-const preferences = () => globalThis.SF?.Preferences || _core_js_preferences_js__WEBPACK_IMPORTED_MODULE_1__["default"];
-
-const preferenceKey = key => `sf-resizer/${String(key).replace(/[^\w.:-]+/gu, '-')}`;
-
-function readStored(key) {
-  if (!key) return null;
-  const kept = preferences()?.read(preferenceKey(key));
-  if (Number.isFinite(kept?.width)) return kept.width; // A width this browser kept before the standard, taken over once.
-
-  try {
-    const legacy = Number(globalThis.localStorage?.getItem(`sf-resizer:${key}`)) || null;
-
-    if (legacy) {
-      preferences()?.write(preferenceKey(key), {
-        v: 1,
-        width: legacy
-      });
-      globalThis.localStorage?.removeItem(`sf-resizer:${key}`);
-    }
-
-    return legacy;
-  } catch {
-    return null;
-  }
-}
-
-function writeStored(key, value) {
-  if (!key) return;
-  if (value === null) preferences()?.remove(preferenceKey(key));else preferences()?.write(preferenceKey(key), {
-    v: 1,
-    width: Math.round(value)
-  });
-}
-
-class SfResizer extends HTMLElement {
-  static get observedAttributes() {
-    return ['min', 'max', 'label', 'disabled', 'value'];
-  }
-
-  constructor() {
-    super();
-
-    this._onWindowResize = () => this.clampToLimits();
-  }
-
-  connectedCallback() {
-    if (!this.hasAttribute('tabindex')) this.tabIndex = 0;
-    this.syncLabel(); // The gesture is the shared one (attachResizer): the element only says
-    // what the width is the width of and where it is kept.
-
-    this._detach = (0,_engine_mjs__WEBPACK_IMPORTED_MODULE_0__.attachResizer)(this, {
-      session: () => this.disabled ? null : this.session()
-    });
-    globalThis.addEventListener('resize', this._onWindowResize); // Restored after the target has laid out, so a percentage limit is read
-    // against a real width.
-
-    requestAnimationFrame(() => {
-      if (!this.isConnected) return;
-      const target = this.target();
-      if (target && getComputedStyle(target).position === 'static') target.style.position = 'relative'; // A width the host keeps for the person (value) wins over this
-      // browser's memory of it.
-
-      const kept = Number(this.getAttribute('value')) || readStored(this.storageKey);
-      if (kept) this.apply(kept);
-      this.syncValue();
-    });
-  }
-
-  disconnectedCallback() {
-    this._detach?.();
-    this._detach = null;
-    globalThis.removeEventListener('resize', this._onWindowResize);
-  }
-
-  attributeChangedCallback(name, before, after) {
-    if (name === 'value' && after && after !== before && this.isConnected) {
-      this.restore(after);
-      return;
-    }
-
-    if (this.isConnected) {
-      this.syncLabel();
-      this.syncValue();
-    }
-  }
-
-  get storageKey() {
-    return this.getAttribute('storage-key') || '';
-  }
-
-  get property() {
-    return this.getAttribute('property') || '';
-  }
-
-  get step() {
-    return Math.max(1, Number(this.getAttribute('step')) || 16);
-  }
-
-  get disabled() {
-    return this.hasAttribute('disabled');
-  }
-
-  target() {
-    const selector = this.getAttribute('target');
-    return (selector ? this.parentElement?.closest(selector) : this.parentElement) ?? null;
-  }
-
-  limits() {
-    const context = this.target()?.parentElement ?? document.body;
-    const min = pixels(this.getAttribute('min') || '12rem', context) ?? 0;
-    const max = pixels(this.getAttribute('max') || '40rem', context) ?? Infinity;
-    return {
-      min,
-      max: Math.max(min, max)
-    };
-  }
-
-  width() {
-    return this.target()?.getBoundingClientRect().width ?? 0;
-  }
-
-  session() {
-    return {
-      measure: () => this.width(),
-      limits: () => this.limits(),
-      apply: (width, phase) => {
-        const written = this.apply(width);
-        if (phase === 'move' && written !== null) this.announce(written, 'move');
-        return written;
-      },
-      commit: width => this.commit(width),
-      reset: () => this.reset(),
-      // A handle on the inline end widens the panel rightwards in a
-      // left-to-right page; on the start, leftwards.
-      direction: () => {
-        const rtl = getComputedStyle(this).direction === 'rtl';
-        return (rtl ? -1 : 1) * (this.getAttribute('edge') === 'inline-start' ? -1 : 1);
-      },
-      step: this.step
-    };
-  }
-
-  apply(value) {
-    const target = this.target();
-    if (!target) return null;
-    const {
-      min,
-      max
-    } = this.limits();
-    const width = Math.round(Math.min(max, Math.max(min, value)));
-    if (this.property) target.style.setProperty(this.property, `${width}px`);else target.style.inlineSize = `${width}px`;
-    this.syncValue(width);
-    return width;
-  }
-
-  announce(width, phase) {
-    this.dispatchEvent(new CustomEvent('sf-resize', {
-      bubbles: true,
-      composed: true,
-      detail: {
-        width,
-        phase
-      }
-    }));
-  }
-
-  commit(width) {
-    writeStored(this.storageKey, width);
-    this.announce(width, 'end');
-  } // Back to the width the page's stylesheet gives, and forgotten.
-
-
-  reset() {
-    if (this.disabled) return;
-    const target = this.target();
-    if (!target) return;
-    if (this.property) target.style.removeProperty(this.property);else target.style.removeProperty('inline-size');
-    writeStored(this.storageKey, null);
-    requestAnimationFrame(() => {
-      const width = Math.round(this.width());
-      this.syncValue(width);
-      this.announce(width, 'reset');
-    });
-  } // A width the host keeps (a person's settings): written as if dragged,
-  // within the limits, and remembered as the browser's too.
-
-
-  restore(width) {
-    const number = Number(width);
-    if (!Number.isFinite(number) || number <= 0) return null;
-    const written = this.apply(number);
-    if (written !== null) writeStored(this.storageKey, written);
-    return written;
-  } // A window narrowed under a remembered width brings it back within limits.
-
-
-  clampToLimits() {
-    const target = this.target();
-    if (!target) return;
-    const written = this.property ? target.style.getPropertyValue(this.property) : target.style.inlineSize;
-    if (!written) return; // The value written is what is clamped, not the panel as measured: in a
-    // stacked layout the panel is the window's width whatever is written, and
-    // clamping that measurement wrote the maximum over the remembered width
-    // (docs trial 4, 2026-10-15).
-
-    const {
-      min,
-      max
-    } = this.limits();
-    const value = Number.parseFloat(written);
-    if (!Number.isFinite(value)) return;
-    if (value > max || value < min) this.apply(value);
-  }
-
-  syncLabel() {
-    const text = TEXT[pageLanguage(this)];
-
-    if (!this.getAttribute('aria-label') || this._ownLabel) {
-      this.setAttribute('aria-label', this.getAttribute('label') || text.label);
-      this._ownLabel = true;
-    }
-
-    this.title = this.getAttribute('label') ? `${this.getAttribute('label')}. ${text.hint}` : text.hint;
-    if (this.disabled) this.setAttribute('aria-disabled', 'true');else this.removeAttribute('aria-disabled');
-  }
-
-  syncValue(width = this.width()) {
-    (0,_engine_mjs__WEBPACK_IMPORTED_MODULE_0__.setResizerValue)(this, {
-      limits: () => this.limits(),
-      measure: () => width
-    }, width);
-  }
-
-}
-if (!customElements.get('sf-resizer')) customElements.define('sf-resizer', SfResizer);
-globalThis.SF = globalThis.SF || {}; // attach: the same gesture on any handle -- a table's column edges use it.
-
-globalThis.SF.Resizer = Object.freeze({
-  SfResizer,
-  attach: _engine_mjs__WEBPACK_IMPORTED_MODULE_0__.attachResizer,
-  attachResizer: _engine_mjs__WEBPACK_IMPORTED_MODULE_0__.attachResizer
-});
-})();
-
+/******/
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	// This entry module used 'module' so it can't be inlined
+/******/ 	let __webpack_exports__ = __webpack_require__("f7b9ec5790a0");
+/******/
 /******/ })()
 ;

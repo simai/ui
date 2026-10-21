@@ -84,10 +84,16 @@ const THEME_RULES = Object.freeze({
     hue: 145,
     chroma: 65
   },
-  // Information is told in the brand's own colour.
+  // Information is a status, not the brand (owner, 2026-10-21,
+  // simai/ui-source#14): told in the brand's own colour, info turned red under
+  // a red primary and read as danger. It is its own fixed palette of #005bbe,
+  // like error, warning and success. #005bbe is HCT hue 265.1, chroma 58.5;
+  // the chroma here is the nearest tenth above, the one whose palette is the
+  // owner-approved list byte for byte -- it puts tone 40 on #005bbe itself,
+  // where 58.5 lands a unit away on #015bbe.
   info: {
-    hue: source => source.hue,
-    chroma: source => source.chroma
+    hue: 265.1,
+    chroma: 58.6
   }
 });
 const THEME_PALETTES = Object.freeze(Object.keys(THEME_RULES)); // The translucent steps core defines on a tone: --sf-<palette>-<tone>--alfa-<n>,
