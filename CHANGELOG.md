@@ -8,6 +8,9 @@
 
 ### Исправлено
 
+- Fixed: the Loader inserted a script once per plugin that named it, and every copy of the anchored-badge runtime ran its own observer, so a badge inside an aria-labelled link, button or avatar could append «, N непрочитанных» to its name without end until the tab stopped (ui-020f4a1acc31). Scripts and sheets now load once per URL through a registry shared by every bundle, the badge runtime runs once per page, and a name is written only when it changes.
+- Fixed: the compact admin menu panel hides item words visually only, so items keep their names, and initials stay visible.
+
 - Fixed: the `arc` spinner look is a fixed arc of 30% of the ring with round caps on the faint track, turning linearly once a second; its length never changes, which tells it from `breathing`. Reduced motion shows the same arc, still (simai/ui-source#13).
 
 - The modal loading state speaks the page language: «Загрузка…» / "Loading…", and its load-error fallbacks are localised too, in both `sf-modal` and the component modal. The loading block is a status with that name. The English spinner label is "Loading…" with a real ellipsis.
