@@ -153,6 +153,8 @@
 
 ### Добавлено
 
+- `SF.ready` can be awaited: `await SF.ready` (or `SF.ready.then(fn)`) resolves with `window.SF` once the Loader has initialised (at `sf-loader-init`), so a module loaded after `core.js` finds `SF.loadSmartBase`; a late caller gets it already resolved. `SF.ready(fn)` keeps working and runs `fn` once the Loader is up and the document is parsed. Scripts that run before core queue a function with `(window.SF_ON_READY = window.SF_ON_READY || []).push(fn)`. One `SF.ready` per page however many core bundles load (simai/ui-source#16).
+
 - Anchored badges: a count or a dot attached to an avatar, an icon, an icon button or any element wrapped in `.sf-badge-anchor`, placed by the SIMAI Framework at the top end — on the circle at 45° for a round anchor, at the corner for a square one — with a ring in the surface colour. The size follows the anchor (1/3 and 1/2 show a dot, 1–3 small, medium and large counts), `99+` by default (`data-cap`), `0` hides it, and the count joins the anchor's accessible name («Анна Белова, 3 непрочитанных»). `sf-avatar`, `sf-icon` and `sf-icon-button` take `badge-count`, `badge-dot`, `badge-cap` and `badge-label`; `sf-menu--compact` and the compact admin menu panel move an item's counter onto its icon (simai/ui-source#12).
 
 - Added: `sf-button-group` takes `radius="default|square|rounded"` (in the segmented look the plate takes the button's radius and the track adds its padding; `--sf-button-group-radius`), `name` (the value is submitted with its form and restored on reset), and `theme-switch`: `<sf-button-group appearance="segmented" theme-switch>` draws three icon-only items (system, light, dark), shows the Loader's theme preference and sets it through `SF.Loader.setTheme`.
