@@ -601,6 +601,15 @@ class SfDatepicker extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___def
       label: {
         default: ''
       },
+      ariaLabel: {
+        attribute: 'aria-label',
+        default: ''
+      },
+      // A date can be typed; a host that wants the grid alone says so.
+      readonly: {
+        type: Boolean,
+        default: false
+      },
       disabled: {
         type: Boolean,
         default: false
@@ -996,6 +1005,30 @@ class SfDatepicker extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___def
 
   get format() {
     return this.getAttribute('format') || 'DD.MM.YYYY';
+  } // The name for a field whose label is drawn outside it -- a record panel
+  // prints the label itself, and passing it to the control printed it twice.
+
+
+  get ariaLabel() {
+    return this.getProp('ariaLabel') || '';
+  } // Read-only as the field draws it, not just the attribute: a range is always
+  // chosen on the grid (one field holding two dates has no single format to
+  // read back), so `range` alone makes the field read-only. The template reads
+  // this same value -- it once read `!this.typed`, which also counted
+  // `disabled`, so a range or disabled field drew read-only while the
+  // component said it was not.
+
+
+  get readonly() {
+    return this.range || this.getBooleanAttr('readonly', false);
+  } // A date can be typed. The field was hard-readonly, so a host that edits a
+  // date could only pick one on the grid -- and the mask properties beside it
+  // reached a field nobody could type in (Larena storage QA, 2026-10-22).
+  // A range is still chosen on the grid -- `readonly` already says so.
+
+
+  get typed() {
+    return !this.readonly && !this.disabled;
   }
 
   get formattedValue() {
@@ -1294,6 +1327,71 @@ class SfDatepicker extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___def
 
   togglePanel() {
     return this.open ? this.closePanel() : this.openPanel();
+  } // What is typed is read through the declared format, so «14.10.2026» and
+  // «2026-10-14» both land. Text that is not a date, or a date outside the
+  // allowed range, puts the field back to the value it held: a half-typed date
+  // must not clear a stored one. An emptied field clears the value, because
+  // deleting the text is how a person says there is no date.
+
+
+  handleInputChange(event) {
+    if (!this.typed) return; // The field's own change belongs to the component, not to the page: it
+    // carries the display text, and a host reading `event.target.value` on
+    // it would store «14.10.2026» where it expects the ISO value. The
+    // component says the change itself, once, through emitChange.
+
+    if (event?.type === 'change') event.stopPropagation();
+    const field = event?.target;
+    const text = String(field?.value ?? '').trim();
+
+    const restore = () => {
+      const input = field?.querySelector?.('input') || field;
+      if (input && 'value' in input) input.value = this.displayValue;
+    };
+
+    if (!text) {
+      if (!this.date) return;
+      this.setState({
+        date: '',
+        context: ''
+      });
+      this.emitChange();
+      return;
+    }
+
+    const date = parseDateValue(text, this.format);
+    const minDate = this.setMinDate();
+    const maxDate = this.setMaxDate();
+    const outOfRange = Boolean(date) && (minDate && compareDates(date, minDate) < 0 || maxDate && compareDates(date, maxDate) > 0);
+
+    if (!date || outOfRange) {
+      restore();
+      return;
+    }
+
+    const value = formatIsoDate(date);
+
+    if (value === this.date) {
+      restore();
+      return;
+    }
+
+    this.setState({
+      year: date.getFullYear(),
+      month: date.getMonth(),
+      date: value,
+      context: ''
+    });
+    this.set({
+      activeDate: value
+    });
+    this.emitChange();
+  } // Typing is not a change: the value is read when the field says it changed,
+  // so the keystrokes stay inside the component too.
+
+
+  handleInputInput(event) {
+    if (this.typed) event?.stopPropagation?.();
   }
 
   handleInputClick(event) {
@@ -1303,6 +1401,23 @@ class SfDatepicker extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___def
   }
 
   handleInputKeydown(event) {
+    // In a field that can be typed in, Enter commits the text and the space
+    // bar belongs to the text; ArrowDown still opens the grid.
+    if (this.typed) {
+      if (event.key !== 'ArrowDown' && event.key !== 'Enter') return;
+      event.preventDefault();
+
+      if (event.key === 'Enter') {
+        this.handleInputChange(event);
+        return;
+      }
+
+      this.openPanel({
+        focusCalendar: true
+      });
+      return;
+    }
+
     if (!['ArrowDown', 'Enter', ' '].includes(event.key)) return;
     event.preventDefault();
     this.openPanel({
@@ -1729,6 +1844,8 @@ class SfDatepicker extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___def
       inputName: this.inputName,
       placeholder: this.placeholder,
       label: this.label,
+      ariaLabel: this.ariaLabel,
+      readonly: this.readonly,
       disabled: this.disabled,
       required: this.required,
       leftIcon: this.leftIcon,
@@ -1922,13 +2039,16 @@ function renderDatepickerInput(context) {
         <sf-input class="sf-datepicker-input" ${(0,lit_directives_ref_js__WEBPACK_IMPORTED_MODULE_1__.ref)(context.component.refs.input)}
             appearance=${context.inputType} size=${context.inputSize}
             label=${context.label || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} name=${context.inputName || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+            aria-label=${context.label ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : context.ariaLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
             placeholder=${context.placeholder || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} icon-start=${context.iconStart || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
             root-class=${context.inputRootClass || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} value=${context.displayValue || ''}
             ?disabled=${context.disabled} ?required=${context.required} ?mask=${context.mask}
             mask-pattern=${context.maskPattern || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} mask-lazy=${String(context.maskLazy)}
             mask-placeholder-char=${context.maskPlaceholderChar || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-            mask-options=${context.maskOptions || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} readonly
+            mask-options=${context.maskOptions || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} ?readonly=${context.readonly}
             @click=${event => context.component.handleInputClick(event)}
+            @change=${event => context.component.handleInputChange(event)}
+            @input=${event => context.component.handleInputInput(event)}
             @keydown=${event => context.component.handleInputKeydown(event)}></sf-input>`;
 }
 

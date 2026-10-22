@@ -313,8 +313,9 @@ class SfIcon extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()
     this.onIconSubsetReady = event => {
       const icon = this.getProp("icon");
       const icons = event.detail?.icons || [];
-      const hasIcon = icons instanceof Set ? icons.has(icon) : Array.isArray(icons) && icons.includes(icon);
-      if (icon && !hasIcon) return;
+      const hasIcon = icons instanceof Set ? icons.has(icon) : Array.isArray(icons) && icons.includes(icon); // The local full font (icons.enabled = false) draws every icon at once.
+
+      if (icon && !hasIcon && !event.detail?.all) return;
       this.syncLoadedState();
     };
   }

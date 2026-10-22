@@ -1846,6 +1846,10 @@ class SfCountryCode extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_3___de
       label: {
         default: ''
       },
+      ariaLabel: {
+        attribute: 'aria-label',
+        default: ''
+      },
       required: {
         type: Boolean,
         default: false
@@ -1938,6 +1942,13 @@ class SfCountryCode extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_3___de
 
   get label() {
     return this.getAttribute('label') || '';
+  } // A telephone inside a field that is already labelled -- a record panel draws
+  // the label -- gets its name from the host instead of printing the label a
+  // second time above the control.
+
+
+  get ariaLabel() {
+    return this.getProp('ariaLabel') || '';
   }
 
   get required() {
@@ -2166,7 +2177,8 @@ function renderCountryCodeTemplate(context) {
     lazyFlags,
     showMaskPlaceholder,
     maskPlaceholderChar,
-    maxItems
+    maxItems,
+    ariaLabel
   } = context;
   const rootClasses = ['sf-country-code', `sf-country-code--size-${size}`, 'flex', 'flex-col'];
   if (context.rootClass) rootClasses.push(context.rootClass);
@@ -2191,10 +2203,14 @@ function renderCountryCodeTemplate(context) {
       data-flag-base=${flagBase || ''}
       data-max-items=${String(maxItems || 0)}
     >
-      <span class="sf-country-code-label flex">
-        <span class="sf-country-code-text">${label}</span>
-        ${required ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-country-code-required">*</span>` : ''}
-      </span>
+      ${label // No label, no label row: a lone star over a control names nothing, and
+  // the row left an empty line above every phone field in a panel that
+  // draws the labels itself.
+  ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+          <span class="sf-country-code-label flex">
+            <span class="sf-country-code-text">${label}</span>
+            ${required ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-country-code-required">*</span>` : ''}
+          </span>` : ''}
 
       <span class="sf-country-code-field transition flex items-center">
         <span class="sf-country-code-left flex items-center">
@@ -2210,6 +2226,7 @@ function renderCountryCodeTemplate(context) {
           .value=${value}
           placeholder=${placeholder}
           ?disabled=${disabled}
+          aria-label=${!label && ariaLabel ? ariaLabel : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         />
       </span>
 

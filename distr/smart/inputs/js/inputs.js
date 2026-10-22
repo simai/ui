@@ -1073,6 +1073,10 @@ class SfInput extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default(
       },
       maskOptions: {
         default: ''
+      },
+      ariaLabel: {
+        attribute: 'aria-label',
+        default: ''
       }
     };
   }
@@ -1229,6 +1233,14 @@ class SfInput extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default(
 
   get maskOptions() {
     return this.getAttribute('mask-options') || '';
+  } // A field whose label is drawn outside the control -- a record panel prints
+  // it, a toolbar has no room for one -- still owes a name. The host's
+  // aria-label reaches the native input, which is what assistive technology
+  // reads: on the host it named nothing, because the host is not the control.
+
+
+  get ariaLabel() {
+    return this.getProp('ariaLabel') || '';
   }
 
   templateContext() {
@@ -1396,7 +1408,8 @@ function renderInputTemplate(context) {
     maskPattern,
     maskLazy,
     maskPlaceholderChar,
-    maskOptions
+    maskOptions,
+    ariaLabel
   } = context;
   const maskLazyValue = maskLazy === '' ? '' : String(maskLazy);
   const inputValue = hasControlledValue ? value : defaultValue;
@@ -1441,7 +1454,12 @@ function renderInputTemplate(context) {
         `;
   const hintContent = context.component?.hasSlotContent?.('hint') ? context.component.getSlotContent('hint') : hint;
   const errorContent = context.component?.hasSlotContent?.('error') ? context.component.getSlotContent('error') : errorMessage;
-  const messageContent = field.invalid && errorContent ? errorContent : hintContent;
+  const messageContent = field.invalid && errorContent ? errorContent : hintContent; // The visible label names the control through the wrapping <label>; with no
+  // visible label there is nothing to name it, so the host's aria-label lands on
+  // the native input. Both at once would make the name say one thing and the
+  // page another.
+
+  const accessibleName = !labelContent && ariaLabel ? ariaLabel : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
     <label
       class=${rootClasses.join(' ')}
@@ -1476,6 +1494,7 @@ function renderInputTemplate(context) {
                 ?disabled=${disabled}
                 ?readonly=${readonly}
                 ?required=${field.required}
+                aria-label=${accessibleName}
                 aria-invalid=${field.invalid ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 aria-describedby=${messageContent ? field.messageId : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 aria-errormessage=${field.invalid && errorContent ? field.messageId : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
@@ -1501,6 +1520,7 @@ function renderInputTemplate(context) {
                 ?disabled=${disabled}
                 ?readonly=${readonly}
                 ?required=${field.required}
+                aria-label=${accessibleName}
                 aria-invalid=${field.invalid ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 aria-describedby=${messageContent ? field.messageId : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 aria-errormessage=${field.invalid && errorContent ? field.messageId : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}

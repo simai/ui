@@ -550,6 +550,10 @@ class SfSwitch extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default
       },
       value: {
         default: ''
+      },
+      ariaLabel: {
+        attribute: 'aria-label',
+        default: ''
       }
     };
   }
@@ -565,6 +569,14 @@ class SfSwitch extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default
 
   get label() {
     return this.getAttribute('label') || '';
+  } // A switch inside a field that is already labelled -- a record panel draws the
+  // label beside the control -- still needs a name. Like sf-checkbox and
+  // sf-button, it comes from the host's aria-label or the ariaLabel prop and
+  // lands on the native input, so the label is not printed a second time.
+
+
+  get ariaLabel() {
+    return this.getProp('ariaLabel') || '';
   }
 
   get description() {
@@ -797,7 +809,8 @@ function renderSwitchTemplate(context) {
     checked,
     disabled,
     name,
-    value
+    value,
+    ariaLabel
   } = context;
   const rootClasses = ['sf-switch', `sf-switch--size-${size}`, 'flex', context.rootClass];
   const labelContent = context.component?.hasSlotContent?.('label') ? context.component.getSlotContent('label') : label ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-switch-text">${label}</span>` : '';
@@ -814,6 +827,7 @@ function renderSwitchTemplate(context) {
           .value=${value || ''}
           .checked=${checked}
           ?disabled=${disabled}
+          aria-label=${!labelContent && ariaLabel ? ariaLabel : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         />
         <span class="sf-switch-inner transition" aria-hidden="true"></span>
       </span>

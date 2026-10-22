@@ -703,6 +703,62 @@ if (typeof globalThis !== 'undefined') {
 
 /***/ },
 
+/***/ "421676f72963"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   OPEN_SURFACE_MARK: () => (/* binding */ OPEN_SURFACE_MARK),
+/* harmony export */   holdOpenSurfaceMark: () => (/* binding */ holdOpenSurfaceMark),
+/* harmony export */   isOpenSurfaceMarked: () => (/* binding */ isOpenSurfaceMarked)
+/* harmony export */ });
+// While a transient surface is open the root says so, and a component whose own
+// Escape closes something larger -- a drawer, a modal, a record panel -- stands
+// back. They all listen on the document in capture, where stopPropagation
+// cannot reach a listener on the same node and the one registered first wins
+// whatever it is: without a shared mark, one press closed the surface and the
+// window behind it together.
+//
+// The mark started inside sf-popover, which made it that component's state
+// instead of the protocol it is: a dropdown list is the same kind of surface and
+// raised nothing, so Escape over an open list closed the record panel behind it
+// (Larena storage QA, 2026-10-22) -- and a drawer and a modal read the same mark,
+// so the same press closed those too. It lives here now, raised by every surface
+// that owns Escape while it is open and read by every component that owns Escape
+// for something larger.
+//
+// The attribute name is unchanged, because it is already the published protocol:
+// `document.documentElement.dataset.sfPopoverOpen`.
+const OPEN_MARK = 'sfPopoverOpen'; // A count, not a flag: two surfaces can be open at once -- a dropdown inside a
+// popover -- and the first to close must not clear the mark the second needs.
+
+const held = new WeakSet();
+
+function step(delta) {
+  const root = globalThis.document?.documentElement;
+  if (!root) return;
+  const next = Math.max(0, Number(root.dataset[OPEN_MARK] || 0) + delta);
+  if (next) root.dataset[OPEN_MARK] = String(next);else delete root.dataset[OPEN_MARK];
+} // Idempotent for one owner, so a component can call it from every update with
+// its own open state and only a change moves the count. An owner that is removed
+// while open releases it the same way, from wherever it tears down.
+
+
+function holdOpenSurfaceMark(owner, open) {
+  if (!owner) return;
+  const wanted = Boolean(open);
+  if (wanted === held.has(owner)) return;
+  if (wanted) held.add(owner);else held.delete(owner);
+  step(wanted ? 1 : -1);
+} // What a component asks before its own Escape closes something larger.
+
+function isOpenSurfaceMarked() {
+  return Boolean(globalThis.document?.documentElement?.dataset?.[OPEN_MARK]);
+}
+const OPEN_SURFACE_MARK = OPEN_MARK;
+
+/***/ },
+
 /***/ "50a1017ded91"
 (module, __webpack_exports__, __webpack_require__) {
 
@@ -715,10 +771,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _component_dropdown_interaction__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("3a03d4610486");
 /* harmony import */ var _component_form_reset_helper__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("67eed2647f47");
 /* harmony import */ var _component_dropdown_portal__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("a0f23dca0b37");
+/* harmony import */ var _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("421676f72963");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _component_dropdown_portal__WEBPACK_IMPORTED_MODULE_6__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _component_dropdown_portal__WEBPACK_IMPORTED_MODULE_6__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language__WEBPACK_IMPORTED_MODULE_1__);
+
 
 
 
@@ -1140,6 +1198,7 @@ class SfDropdown extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___defau
     if (previousList !== this._list) (0,_component_dropdown_portal__WEBPACK_IMPORTED_MODULE_6__.closeDropdownPortal)(previousList);
     this.syncDocumentListeners();
     this.syncPortalListeners();
+    this.syncOpenSurfaceMark();
     this.positionPortalList();
 
     if (previousRoot !== this._dropdownRoot) {
@@ -1183,6 +1242,7 @@ class SfDropdown extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___defau
   }
 
   onDisconnected() {
+    (0,_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_7__.holdOpenSurfaceMark)(this, false);
     (0,_component_dropdown_portal__WEBPACK_IMPORTED_MODULE_6__.closeDropdownPortal)(this._list);
     this._releaseReset?.();
     this._releaseReset = null;
@@ -1328,6 +1388,15 @@ class SfDropdown extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___defau
       composed: true,
       detail
     }));
+  } // An open list owns Escape, so the root says a surface is open and a drawer, a
+  // modal or a record panel leaves that press alone -- they listen on the
+  // document in capture and would otherwise close before the list saw the key.
+  // Synced from the rendered state, because `_open` is set from several places
+  // and every one of them ends in an update.
+
+
+  syncOpenSurfaceMark() {
+    (0,_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_7__.holdOpenSurfaceMark)(this, this._open);
   }
 
   syncDocumentListeners() {
@@ -1418,7 +1487,7 @@ function getOptionLabel(option = {}) {
 // above it once instead of after every name in it.
 
 
-function renderOptions(options = []) {
+function renderOptions(options = [], multiple = false) {
   const parts = [];
   let group = null;
 
@@ -1428,9 +1497,18 @@ function renderOptions(options = []) {
     if (next !== group) {
       group = next;
       if (next) parts.push((0,_list_item_js_templates_default__WEBPACK_IMPORTED_MODULE_1__.renderListItemHeading)(next, option.size));
-    }
+    } // Where several options may be chosen, each one carries the box that says
+    // so: a plain row said it was chosen with a class and aria-selected alone,
+    // so on a long list nothing on screen told the person what they had picked
+    // (Larena storage QA, 2026-10-22). An option that draws a picture of its
+    // own -- an icon, a colour, an avatar -- keeps it, because that is the
+    // place the box would take.
 
-    parts.push((0,_list_item_js_templates_default__WEBPACK_IMPORTED_MODULE_1__.renderListItemOption)(option));
+
+    const withBox = multiple && (!option.type || option.type === "text");
+    parts.push((0,_list_item_js_templates_default__WEBPACK_IMPORTED_MODULE_1__.renderListItemOption)(withBox ? { ...option,
+      type: "checkbox"
+    } : option));
   }
 
   return parts;
@@ -1659,7 +1737,7 @@ function renderDropdownTemplate(context) {
             @click=${event => context.component.handleOptionClick(event)}
             @keydown=${event => context.component.handleOptionKeydown(event)}
           >
-            ${renderOptions(context.options)}
+            ${renderOptions(context.options, context.multiple)}
           </div>
         </div>
       </div>
