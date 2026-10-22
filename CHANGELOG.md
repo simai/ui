@@ -153,6 +153,10 @@
 
 ### Добавлено
 
+- `sf-textarea` takes `appearance="flush"` (plain markup `sf-textarea--flush`): no border, fill, shadow, radius, inline padding or own focus ring, for a field inside a composite control whose wrapper draws the surface and shows focus with `:has(:focus-visible)`; auto-grow and the size ladder are unchanged (one row = the control height).
+- The shared field set edits `datetime` fields as a day (`sf-datepicker`) and a time (`sf-input`, mask 00:00) on one row, labelled for assistive tech; ISO 8601 back, an untouched field writes nothing, partial input is a field error (`setFieldError`); `SF.fieldRenderers.dateTime` exposes split, compose and normalizeTime.
+- Fixed: a `sf-datepicker` date given by the `value` attribute can be cleared (change with an empty value); typed dates must be one valid date in the field's format with a year of 1000–9999, so two glued dates are invalid input instead of a wrong date.
+
 - `sf-textarea` can grow with its text: `auto-grow`, `min-rows`, `max-rows` (plain markup: `data-auto-grow`, `data-min-rows`, `data-max-rows`). One row is exactly the height of an input of the same size, each row adds that size's line height, the field scrolls inside past `max-rows` and shrinks back when text is deleted; CSS `field-sizing: content` where supported, a script fallback elsewhere; nothing changes during an IME composition (simai/ui-source#17).
 - Fixed: Esc closes only the innermost open layer. With a datepicker calendar, a popover, a help mark, a context menu, a profile picker or the country-code list open inside a drawer, a modal or the property-view panel, Esc closes that popup and returns focus to its field; the next Esc closes the panel.
 
