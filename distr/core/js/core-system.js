@@ -49,37 +49,17 @@ SF.__internal.receive = receive;
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (/* binding */ ready),
-/* harmony export */   isReady: () => (/* binding */ isReady)
+/* harmony export */   "default": () => (/* binding */ readyCallback)
 /* harmony export */ });
-let stack = [];
-let isReady = false;
-function ready(handler = function () {}) {
-  switch (document.readyState) {
-    case 'loading':
-      stack.push(handler);
-      break;
+/* harmony import */ var _core_js_ready_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("5effd0d9c238");
+// The callback form of SF.ready, kept for the components that call it. SF.ready
+// itself lives on the shared global, created once by whichever bundle runs
+// first (core.js does, before this chunk): src/core/js/ready.js.
 
-    case 'interactive':
-    case 'complete':
-      if (typeof handler == 'function') {
-        handler();
-      }
-
-      isReady = true;
-      break;
-
-    default:
-      break;
-  }
+const ready = (0,_core_js_ready_js__WEBPACK_IMPORTED_MODULE_0__.installReady)();
+function readyCallback(handler) {
+  return (window.SF?.ready || ready)?.(handler);
 }
-document.addEventListener('readystatechange', () => {
-  if (!isReady) {
-    stack.forEach(ready);
-    stack = [];
-  }
-});
-SF.ready = ready;
 
 /***/ }
 
