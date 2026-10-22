@@ -2,6 +2,106 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "421676f72963"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   OPEN_SURFACE_MARK: () => (/* binding */ OPEN_SURFACE_MARK),
+/* harmony export */   holdOpenSurfaceMark: () => (/* binding */ holdOpenSurfaceMark),
+/* harmony export */   isOpenSurfaceMarked: () => (/* binding */ isOpenSurfaceMarked),
+/* harmony export */   isTopOpenSurface: () => (/* binding */ isTopOpenSurface)
+/* harmony export */ });
+// While a transient surface is open the root says so, and a component whose own
+// Escape closes something larger -- a drawer, a modal, a record panel -- stands
+// back. They all listen on the document in capture, where stopPropagation
+// cannot reach a listener on the same node and the one registered first wins
+// whatever it is: without a shared mark, one press closed the surface and the
+// window behind it together.
+//
+// The mark started inside sf-popover, which made it that component's state
+// instead of the protocol it is: a dropdown list is the same kind of surface and
+// raised nothing, so Escape over an open list closed the record panel behind it
+// (Larena storage QA, 2026-10-22) -- and a drawer and a modal read the same mark,
+// so the same press closed those too. It lives here now, raised by every surface
+// that owns Escape while it is open and read by every component that owns Escape
+// for something larger.
+//
+// The attribute name is unchanged, because it is already the published protocol:
+// `document.documentElement.dataset.sfPopoverOpen`.
+const OPEN_MARK = 'sfPopoverOpen'; // A count, not a flag: two surfaces can be open at once -- a dropdown inside a
+// popover -- and the first to close must not clear the mark the second needs.
+
+const held = new WeakSet(); // The same holders in the order they opened, so the one opened last -- the
+// innermost layer -- is known. The mark answers "is anything open"; this answers
+// "is it me". Two surfaces that both listen on the document in capture cannot
+// settle it with stopPropagation, which does not reach a listener on the same
+// node: a calendar opened inside a popover closed together with the popover, and
+// a popover closed over a dropdown list it held and left the list open.
+//
+// Kept on a shared global, not in module scope: every Smart bundle carries its
+// own copy of this module, so a module-scope list in the popover's bundle never
+// saw the calendar the datepicker's bundle opened. The count lives on the root
+// for the same reason.
+
+const LAYERS_KEY = Symbol.for('sf.openSurfaceLayers');
+
+function openLayers() {
+  const scope = globalThis;
+  if (!Array.isArray(scope[LAYERS_KEY])) scope[LAYERS_KEY] = [];
+  return scope[LAYERS_KEY];
+}
+
+function step(delta) {
+  const root = globalThis.document?.documentElement;
+  if (!root) return;
+  const next = Math.max(0, Number(root.dataset[OPEN_MARK] || 0) + delta);
+  if (next) root.dataset[OPEN_MARK] = String(next);else delete root.dataset[OPEN_MARK];
+} // Idempotent for one owner, so a component can call it from every update with
+// its own open state and only a change moves the count. An owner that is removed
+// while open releases it the same way, from wherever it tears down.
+
+
+function holdOpenSurfaceMark(owner, open) {
+  if (!owner) return;
+  const wanted = Boolean(open);
+  if (wanted === held.has(owner)) return;
+  const layers = openLayers();
+
+  if (wanted) {
+    held.add(owner);
+    layers.push(owner);
+  } else {
+    held.delete(owner);
+    const at = layers.lastIndexOf(owner);
+    if (at >= 0) layers.splice(at, 1);
+  }
+
+  step(wanted ? 1 : -1);
+} // What a surface asks before its own Escape closes it: whether it is the
+// innermost open layer. A holder that left the document without releasing is
+// passed over rather than allowed to hold every Escape on the page. An owner
+// that holds nothing is the top only when nothing else is open.
+
+function isTopOpenSurface(owner) {
+  const layers = openLayers();
+
+  for (let at = layers.length - 1; at >= 0; at -= 1) {
+    const layer = layers[at];
+    if (layer?.isConnected === false) continue;
+    return layer === owner;
+  }
+
+  return true;
+} // What a component asks before its own Escape closes something larger.
+
+function isOpenSurfaceMarked() {
+  return Boolean(globalThis.document?.documentElement?.dataset?.[OPEN_MARK]);
+}
+const OPEN_SURFACE_MARK = OPEN_MARK;
+
+/***/ },
+
 /***/ "6723cc45152d"
 (module, __webpack_exports__, __webpack_require__) {
 
@@ -10,10 +110,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("fbe0570fcc69");
 /* harmony import */ var _core_js_position_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5c1dc214bb5e");
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("0d662e4d7d63");
-/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("eaf281324a90");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("48eb1fd0f69f");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("421676f72963");
+/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("eaf281324a90");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("48eb1fd0f69f");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_position_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_position_js__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language__WEBPACK_IMPORTED_MODULE_2__);
@@ -23,6 +124,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 // explanation is announced politely when it opens, so a screen reader hears it
 // without leaving the button. An explanation holding a link or a control
 // follows the button in the focus order and closes when the focus leaves both.
+
 
 
 
@@ -61,10 +163,13 @@ class SfHelpMark extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___defau
       this.close({
         restoreFocus: false
       });
-    };
+    }; // An open explanation owns Escape as the innermost open layer, and says so
+    // on the root through the shared mark, so a record panel listening in
+    // capture before it stands back instead of closing with it.
+
 
     this._onKey = event => {
-      if (!this.isOpen || event.key !== 'Escape') return;
+      if (!this.isOpen || event.key !== 'Escape' || event.defaultPrevented || !(0,_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_3__.isTopOpenSurface)(this)) return;
       event.preventDefault();
       event.stopPropagation();
       this.close();
@@ -150,7 +255,9 @@ class SfHelpMark extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___defau
     if (this.isOpen) return;
     this.isOpen = true;
     this.requestComponentUpdate('open');
-    await this.whenRendered?.();
+    await this.whenRendered?.(); // Closed while it was drawing: it must not raise a mark nobody releases.
+
+    if (!this.isOpen) return;
     const panel = this.panel();
     const button = this.button();
     if (!panel || !button) return;
@@ -166,6 +273,7 @@ class SfHelpMark extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___defau
       flip: true,
       shift: true
     });
+    (0,_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_3__.holdOpenSurfaceMark)(this, true);
     document.addEventListener('pointerdown', this._onOutside, true);
     document.addEventListener('keydown', this._onKey, true); // Said once it is open: the text a screen reader hears is the text shown.
 
@@ -190,6 +298,7 @@ class SfHelpMark extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___defau
     this.announcement = '';
     this._position?.stop();
     this._position = null;
+    (0,_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_3__.holdOpenSurfaceMark)(this, false);
     document.removeEventListener('pointerdown', this._onOutside, true);
     document.removeEventListener('keydown', this._onKey, true);
     const panel = this.panel();
@@ -225,7 +334,7 @@ class SfHelpMark extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___defau
   }
 
   template() {
-    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_3__.renderHelpMarkTemplate)(this.templateContext());
+    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_4__.renderHelpMarkTemplate)(this.templateContext());
   }
 
 }

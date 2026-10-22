@@ -25,10 +25,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_position_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("5c1dc214bb5e");
 /* harmony import */ var _field_size__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("e6d86f2cd058");
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("0d662e4d7d63");
+/* harmony import */ var _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("421676f72963");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_position_js__WEBPACK_IMPORTED_MODULE_6__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_8__]);
 ([_core_js_position_js__WEBPACK_IMPORTED_MODULE_6__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_8__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_position_js__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_core_js_position_js__WEBPACK_IMPORTED_MODULE_6__);
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language__WEBPACK_IMPORTED_MODULE_8__);
+
 
 
 
@@ -410,7 +412,10 @@ function setOpenState(root, open) {
     input
   } = getNodes(root);
   if (input?.disabled || root.classList.contains('disabled') || root.__sfCountryConfig?.multiCountry === false) open = false;
-  if (open) root.classList.add('open');else root.classList.remove('open');
+  if (open) root.classList.add('open');else root.classList.remove('open'); // An open list of countries owns Escape: the root says so, and a drawer, a
+  // modal or a record panel behind it stands back.
+
+  (0,_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_9__.holdOpenSurfaceMark)(root, open);
   syncCountryAccessibility(root);
   root.__sfCountryViewport?.(open);
 }
@@ -892,9 +897,13 @@ function bindCountryCode(root, {
       event.preventDefault();
       if (!root.classList.contains('open')) onToggleClick(event);
       focusItem(event.key === 'ArrowUp' ? -1 : undefined);
-    }
+    } // Escape over an open list closes the list and is consumed; it closed the
+    // list and then, travelling on, the drawer the field sat in.
 
-    if (event.key === 'Escape') {
+
+    if (event.key === 'Escape' && root.classList.contains('open')) {
+      event.preventDefault();
+      event.stopPropagation();
       setOpenState(root, false);
     }
   };
@@ -962,6 +971,7 @@ function bindCountryCode(root, {
 
     if (event.key === 'Escape') {
       event.preventDefault();
+      event.stopPropagation();
       setOpenState(root, false);
       toggle?.focus({
         preventScroll: true
@@ -1098,7 +1108,9 @@ function unbindCountryCode(root) {
   root.__sfCountryRequiredObserver?.disconnect();
   delete root.__sfCountryRequiredObserver;
   root.__sfCountryViewport?.(false);
-  delete root.__sfCountryViewport;
+  delete root.__sfCountryViewport; // Removed while open, it must not leave the mark raised for the whole page.
+
+  (0,_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_9__.holdOpenSurfaceMark)(root, false);
   root.querySelectorAll('img[data-flag-src]').forEach(img => flagObserver?.unobserve(img));
 
   if (toggle && root.__sfCountryCodeToggleClick) {
@@ -1810,6 +1822,106 @@ if (typeof globalThis !== 'undefined') {
   api.note = noteDeprecated;
   globalThis.SF.deprecations = api;
 }
+
+/***/ },
+
+/***/ "421676f72963"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   OPEN_SURFACE_MARK: () => (/* binding */ OPEN_SURFACE_MARK),
+/* harmony export */   holdOpenSurfaceMark: () => (/* binding */ holdOpenSurfaceMark),
+/* harmony export */   isOpenSurfaceMarked: () => (/* binding */ isOpenSurfaceMarked),
+/* harmony export */   isTopOpenSurface: () => (/* binding */ isTopOpenSurface)
+/* harmony export */ });
+// While a transient surface is open the root says so, and a component whose own
+// Escape closes something larger -- a drawer, a modal, a record panel -- stands
+// back. They all listen on the document in capture, where stopPropagation
+// cannot reach a listener on the same node and the one registered first wins
+// whatever it is: without a shared mark, one press closed the surface and the
+// window behind it together.
+//
+// The mark started inside sf-popover, which made it that component's state
+// instead of the protocol it is: a dropdown list is the same kind of surface and
+// raised nothing, so Escape over an open list closed the record panel behind it
+// (Larena storage QA, 2026-10-22) -- and a drawer and a modal read the same mark,
+// so the same press closed those too. It lives here now, raised by every surface
+// that owns Escape while it is open and read by every component that owns Escape
+// for something larger.
+//
+// The attribute name is unchanged, because it is already the published protocol:
+// `document.documentElement.dataset.sfPopoverOpen`.
+const OPEN_MARK = 'sfPopoverOpen'; // A count, not a flag: two surfaces can be open at once -- a dropdown inside a
+// popover -- and the first to close must not clear the mark the second needs.
+
+const held = new WeakSet(); // The same holders in the order they opened, so the one opened last -- the
+// innermost layer -- is known. The mark answers "is anything open"; this answers
+// "is it me". Two surfaces that both listen on the document in capture cannot
+// settle it with stopPropagation, which does not reach a listener on the same
+// node: a calendar opened inside a popover closed together with the popover, and
+// a popover closed over a dropdown list it held and left the list open.
+//
+// Kept on a shared global, not in module scope: every Smart bundle carries its
+// own copy of this module, so a module-scope list in the popover's bundle never
+// saw the calendar the datepicker's bundle opened. The count lives on the root
+// for the same reason.
+
+const LAYERS_KEY = Symbol.for('sf.openSurfaceLayers');
+
+function openLayers() {
+  const scope = globalThis;
+  if (!Array.isArray(scope[LAYERS_KEY])) scope[LAYERS_KEY] = [];
+  return scope[LAYERS_KEY];
+}
+
+function step(delta) {
+  const root = globalThis.document?.documentElement;
+  if (!root) return;
+  const next = Math.max(0, Number(root.dataset[OPEN_MARK] || 0) + delta);
+  if (next) root.dataset[OPEN_MARK] = String(next);else delete root.dataset[OPEN_MARK];
+} // Idempotent for one owner, so a component can call it from every update with
+// its own open state and only a change moves the count. An owner that is removed
+// while open releases it the same way, from wherever it tears down.
+
+
+function holdOpenSurfaceMark(owner, open) {
+  if (!owner) return;
+  const wanted = Boolean(open);
+  if (wanted === held.has(owner)) return;
+  const layers = openLayers();
+
+  if (wanted) {
+    held.add(owner);
+    layers.push(owner);
+  } else {
+    held.delete(owner);
+    const at = layers.lastIndexOf(owner);
+    if (at >= 0) layers.splice(at, 1);
+  }
+
+  step(wanted ? 1 : -1);
+} // What a surface asks before its own Escape closes it: whether it is the
+// innermost open layer. A holder that left the document without releasing is
+// passed over rather than allowed to hold every Escape on the page. An owner
+// that holds nothing is the top only when nothing else is open.
+
+function isTopOpenSurface(owner) {
+  const layers = openLayers();
+
+  for (let at = layers.length - 1; at >= 0; at -= 1) {
+    const layer = layers[at];
+    if (layer?.isConnected === false) continue;
+    return layer === owner;
+  }
+
+  return true;
+} // What a component asks before its own Escape closes something larger.
+
+function isOpenSurfaceMarked() {
+  return Boolean(globalThis.document?.documentElement?.dataset?.[OPEN_MARK]);
+}
+const OPEN_SURFACE_MARK = OPEN_MARK;
 
 /***/ },
 
