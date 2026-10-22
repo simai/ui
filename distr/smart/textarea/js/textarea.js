@@ -310,7 +310,7 @@ __webpack_require__.r(__webpack_exports__);
 
 const TEXTAREA_SELECTOR = 'label.sf-textarea';
 const TEXTAREA_BOUND_FLAG = 'sfTextareaBound';
-const TEXTAREA_VARIANTS = new Set(['bordered', 'filled']);
+const TEXTAREA_VARIANTS = new Set(['bordered', 'filled', 'flush']);
 const TEXTAREA_INPUT_MODES = new Set(['', 'none', 'text', 'tel', 'url', 'email', 'numeric', 'decimal', 'search']);
 const TEXTAREA_WRAP_VALUES = new Set(['soft', 'hard']);
 
@@ -1075,7 +1075,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
-const TEXTAREA_VARIANTS = new Set(['bordered', 'filled']);
+const TEXTAREA_VARIANTS = new Set(['bordered', 'filled', 'flush']);
 const TEXTAREA_INPUT_MODES = new Set(['', 'none', 'text', 'tel', 'url', 'email', 'numeric', 'decimal', 'search']);
 const TEXTAREA_WRAP_VALUES = new Set(['soft', 'hard']);
 
@@ -1092,9 +1092,10 @@ class SfTextarea extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___defau
       },
       // The axis is called appearance, because that is the question it answers.
       // `type` keeps working: see contracts/public-api-axes.json.
+      // flush: inside a composite control that draws the box and the focus.
       appearance: {
         default: 'bordered',
-        values: ['bordered', 'filled'],
+        values: ['bordered', 'filled', 'flush'],
         aliases: ['type']
       },
       label: {

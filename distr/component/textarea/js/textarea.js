@@ -310,7 +310,7 @@ __webpack_require__.r(__webpack_exports__);
 
 const TEXTAREA_SELECTOR = 'label.sf-textarea';
 const TEXTAREA_BOUND_FLAG = 'sfTextareaBound';
-const TEXTAREA_VARIANTS = new Set(['bordered', 'filled']);
+const TEXTAREA_VARIANTS = new Set(['bordered', 'filled', 'flush']);
 const TEXTAREA_INPUT_MODES = new Set(['', 'none', 'text', 'tel', 'url', 'email', 'numeric', 'decimal', 'search']);
 const TEXTAREA_WRAP_VALUES = new Set(['soft', 'hard']);
 

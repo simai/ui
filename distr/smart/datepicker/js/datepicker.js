@@ -312,6 +312,26 @@ function formatDateValue(date, format = 'YYYY.MM.DD') {
 
 function isValidDate(date) {
   return date instanceof Date && !Number.isNaN(date.getTime());
+} // A year has four digits: 1000 to 9999. Without the bound a glued paste such
+// as «20.11.202630.10.2026» read as year 202630 and was stored as a date
+// nobody meant.
+
+
+const MIN_YEAR = 1000;
+const MAX_YEAR = 9999;
+
+function calendarDate(year, month, day) {
+  if (!Number.isInteger(year) || year < MIN_YEAR || year > MAX_YEAR) {
+    return null;
+  }
+
+  const date = new Date(year, month - 1, day); // new Date reads years below 100 as 19xx; the bound above keeps them out.
+
+  if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) {
+    return null;
+  }
+
+  return date;
 }
 
 function parseDate(value) {
@@ -326,13 +346,36 @@ function parseDate(value) {
   }
 
   const [, year, month, day] = match;
-  const date = new Date(Number(year), Number(month) - 1, Number(day));
+  return calendarDate(Number(year), Number(month), Number(day));
+} // The declared format as an anchored pattern: YYYY is four digits, YY two,
+// DD and MM one or two, and whatever stands between them in the format is a
+// separator -- any of . / - , or a space, so «20/11/2026» lands in a
+// DD.MM.YYYY field. The whole text has to be one date: it read every run of
+// digits it found and took the first three, so two dates glued together, a
+// date with something after it or a five-digit year all made a date.
 
-  if (date.getFullYear() !== Number(year) || date.getMonth() !== Number(month) - 1 || date.getDate() !== Number(day)) {
-    return null;
-  }
 
-  return date;
+const FORMAT_TOKEN_RE = /YYYY|YY|MM|DD/g;
+const formatPatterns = new Map();
+
+function formatPattern(format) {
+  const key = String(format || 'DD.MM.YYYY');
+  if (formatPatterns.has(key)) return formatPatterns.get(key);
+  const tokens = key.match(FORMAT_TOKEN_RE) || [];
+  const digits = {
+    YYYY: '(\\d{4})',
+    YY: '(\\d{2})',
+    MM: '(\\d{1,2})',
+    DD: '(\\d{1,2})'
+  };
+  const source = key.split(FORMAT_TOKEN_RE).map(literal => literal ? '[\\s./,-]+' : '').reduce((pattern, literal, index) => pattern + literal + (index < tokens.length ? digits[tokens[index]] : ''), '');
+  const usable = tokens.length === 3 && tokens.includes('MM') && tokens.includes('DD') && (tokens.includes('YYYY') || tokens.includes('YY'));
+  const pattern = usable ? {
+    re: new RegExp(`^${source}$`),
+    tokens
+  } : null;
+  formatPatterns.set(key, pattern);
+  return pattern;
 }
 
 function parseDateValue(value, format = 'DD.MM.YYYY') {
@@ -345,43 +388,24 @@ function parseDateValue(value, format = 'DD.MM.YYYY') {
   }
 
   const text = String(value).trim();
-  const isoDate = parseDate(text);
 
-  if (isoDate) {
-    return isoDate;
+  if (ISO_DATE_RE.test(text)) {
+    return parseDate(text);
   }
 
-  const parts = text.match(/\d+/g);
-  const tokens = String(format || 'DD.MM.YYYY').match(/YYYY|YY|MM|DD/g);
+  const pattern = formatPattern(format);
+  const match = pattern ? text.match(pattern.re) : null;
 
-  if (!parts || !tokens || parts.length < 3 || tokens.length < 3) {
+  if (!match) {
     return null;
   }
 
   const values = {};
-  tokens.slice(0, 3).forEach((token, index) => {
-    values[token] = Number(parts[index]);
+  pattern.tokens.forEach((token, index) => {
+    values[token] = Number(match[index + 1]);
   });
-  let year = values.YYYY;
-
-  if (!year && values.YY) {
-    year = values.YY + 2000;
-  }
-
-  const month = values.MM;
-  const day = values.DD;
-
-  if (!year || !month || !day) {
-    return null;
-  }
-
-  const date = new Date(year, month - 1, day);
-
-  if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) {
-    return null;
-  }
-
-  return date;
+  const year = values.YYYY ?? values.YY + 2000;
+  return calendarDate(year, values.MM, values.DD);
 }
 
 function normalizeMonth(value, fallback = 0) {
@@ -879,10 +903,26 @@ class SfDatepicker extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___def
 
   get endDate() {
     return parseDateValue(this.endValue, this.format);
-  }
+  } // `value` is the initial value; `date` is the component's own. The getter
+  // read `date || value`, so once a date set by the `value` attribute was
+  // cleared -- the person emptied the field, or code set '' -- the attribute
+  // came back and the old date with it: the value could not be cleared, and
+  // the change said the old date (field renderers' date editor, ui-admin's
+  // datetime). A present `date`, even empty, is the value now.
+
 
   get date() {
-    return this.getAttribute('date') || this.getAttribute('value') || '';
+    if (this.hasAttribute('date')) return this.getAttribute('date') || '';
+    return this.getAttribute('value') || '';
+  } // An empty date removes the `date` attribute, which let `value` back in; a
+  // cleared value over an initial one is kept as date="".
+
+
+  setState(nextState = {}, callback = null) {
+    super.setState(nextState, callback);
+    const clears = nextState && typeof nextState === 'object' && Object.prototype.hasOwnProperty.call(nextState, 'date') && !nextState.date;
+    if (clears && this.hasAttribute('value')) this.setAttribute('date', '');
+    return this;
   }
 
   get value() {

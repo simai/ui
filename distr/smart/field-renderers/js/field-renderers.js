@@ -52,6 +52,119 @@ function normalizeBadgeContract({
 
 /***/ },
 
+/***/ "9ce1a42b2a85"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   DATE_TIME_RE: () => (/* binding */ DATE_TIME_RE),
+/* harmony export */   composeDateTime: () => (/* binding */ composeDateTime),
+/* harmony export */   normalizeTime: () => (/* binding */ normalizeTime),
+/* harmony export */   splitDateTime: () => (/* binding */ splitDateTime)
+/* harmony export */ });
+// A datetime's value, read and written back: plain functions, no rendering.
+// The edit renderer (renderDateTimeEdit in index.js) uses them, the contract
+// test runs them without a DOM, and SF.fieldRenderers.dateTime publishes them
+// so a host that draws its own pair reads and writes the same way.
+//
+// Lifted from ui-admin's property view (src/smart/property-view/js/
+// datetime-value.js, Larena acceptance 2026-10-22: «Дата и время» kept only
+// the day, so a new record could not get a time and «15.11.2026 10:30» was
+// saved as «15.11.2026»).
+//
+// The value is the host's text, in the host's time zone, as it reads it. The
+// round trip is lossless: a field whose day and time come back to what they
+// were writes back exactly the text it read. A changed day keeps the record's
+// clock (seconds, fraction) and zone; a changed time is hh:mm:00 with the
+// record's zone; a new value has no zone and is the host's local time.
+// The forms a datetime arrives in: a day, or a day and a time separated by T or
+// a space, with optional seconds, fraction and zone.
+const DATE_TIME_RE = /^(\d{4}-\d{2}-\d{2})(?:[T ](\d{2}):(\d{2})((?::\d{2})(?:\.\d+)?)?(Z|[+-]\d{2}:?\d{2})?)?$/u;
+const DAY_RE = /^\d{4}-\d{2}-\d{2}$/u; // The value without the host's formatting ({value, text} carries both).
+
+function rawValue(value) {
+  if (value && typeof value === 'object' && !Array.isArray(value) && 'value' in value) return value.value;
+  return value;
+} // What a stored value is made of. `known` is false for a value that is not a
+// datetime at all: the controls start empty and, untouched, nothing is written.
+
+
+function splitDateTime(value) {
+  const raw = rawValue(value);
+  if (raw === null || raw === undefined || raw === '') return {
+    raw: raw ?? null,
+    known: true,
+    date: '',
+    time: '',
+    rest: '',
+    zone: ''
+  };
+  const match = typeof raw === 'string' ? raw.trim().match(DATE_TIME_RE) : null;
+  if (!match) return {
+    raw,
+    known: false,
+    date: '',
+    time: '',
+    rest: '',
+    zone: ''
+  };
+  return {
+    raw,
+    known: true,
+    date: match[1],
+    time: match[2] ? `${match[2]}:${match[3]}` : '',
+    rest: match[4] || '',
+    zone: match[5] || ''
+  };
+} // A time as the person typed it, as hh:mm, or null when it is not one. The
+// mask gives «10:30»; without it «1030», «9:30» and «9.30» are read too.
+
+function normalizeTime(text) {
+  const value = String(text ?? '').trim().replace(/[_\s]/gu, '');
+  if (value === '' || value === ':') return '';
+  const match = value.match(/^(\d{1,2})[:.]?(\d{2})$/u);
+  if (!match) return null;
+  const hours = Number(match[1]);
+  const minutes = Number(match[2]);
+  if (hours > 23 || minutes > 59) return null;
+  return `${String(hours).padStart(2, '0')}:${match[2]}`;
+} // The value to write for a day and a time, against what the field held.
+// {value} -- the text to write (null clears), or {error} -- the key of the
+// sentence that says what is missing: dateMissing, dateInvalid, timeMissing,
+// timeInvalid.
+
+function composeDateTime(original, draft) {
+  const date = String(draft?.date ?? '').trim();
+  const time = normalizeTime(draft?.time);
+  if (time === null) return {
+    error: 'timeInvalid'
+  };
+  if (!date && !time) return {
+    value: null
+  };
+  if (!DAY_RE.test(date)) return {
+    error: date ? 'dateInvalid' : 'dateMissing'
+  };
+  if (!time) return {
+    error: 'timeMissing'
+  };
+  const before = original?.known ? original : null; // Back to what it was: the very text it read, separator and all.
+
+  if (before && before.date === date && before.time === time) return {
+    value: before.raw
+  }; // The clock below the minute and the zone are the record's while the
+  // person did not change the time; a time they typed is to the minute.
+
+  const sameTime = before && before.time === time;
+  const rest = sameTime ? before.rest : ':00';
+  const zone = before && before.time ? before.zone : '';
+  return {
+    value: `${date}T${time}${rest}${zone}`
+  };
+}
+
+/***/ },
+
 /***/ "e5483002f3ea"
 (module, __webpack_exports__, __webpack_require__) {
 
@@ -70,10 +183,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("b30ec5bc0edb");
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("0d662e4d7d63");
 /* harmony import */ var _registry_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("fc654eb7fab0");
+/* harmony import */ var _datetime_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("9ce1a42b2a85");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_2__]);
 ([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language__WEBPACK_IMPORTED_MODULE_2__);
+
 
 
 
@@ -855,7 +970,7 @@ const EDIT_RENDERERS = {
   integer: renderNumberEdit,
   number: renderNumberEdit,
   date: renderDateEdit,
-  datetime: renderDateEdit,
+  datetime: renderDateTimeEdit,
   boolean: renderBooleanEdit,
   choice: renderChoiceEdit,
   choices: renderChoicesEdit,
@@ -1100,7 +1215,9 @@ function renderNumberEdit(field, value, host) {
 // input. Split the value instead: the control edits the day, and the time the
 // record already held is put back on the way out. Without that, editing the day
 // of a datetime would write a value with the clock silently zeroed, which is
-// worse than the empty control, because it looks like it worked.
+// worse than the empty control, because it looks like it worked. A `datetime`
+// field has its own editor now (renderDateTimeEdit); this keeps the clock of a
+// `date` field whose value carries one.
 
 
 const DATE_TIME_RE = /^(\d{4}-\d{2}-\d{2})[T ](\d{2}:\d{2}(?::\d{2})?(?:\.\d+)?)(Z|[+-]\d{2}:?\d{2})?$/;
@@ -1139,6 +1256,114 @@ function renderDateEdit(field, value, host) {
     host.setFieldValue(field, next && suffix ? `${next}${suffix}` : next);
   }}
         ></sf-datepicker>
+    `;
+} // A datetime is edited as what it is: a day and a time of day. The date
+// editor above edits the day alone and puts the record's clock back, so a new
+// record could not get a time and «15.11.2026 10:30» typed nowhere was saved
+// as «15.11.2026» (Larena acceptance, 2026-10-22; ui-admin drew the pair
+// itself, and this is that design lifted into the set so the kit can switch).
+//
+// The day is sf-datepicker; the time is sf-input masked to hh:mm, because
+// sf-input has no time type (its types are text, email, password, search,
+// tel, url) and a raw <input type="time"> would be the one unstyled control
+// in a form. Both are drawn at the field's size, on one row, each named for
+// assistive technology («Начало: дата», «Начало: время») inside a group named
+// by the label.
+//
+// The value round trip (datetime.js): ISO 8601 with the time; an untouched
+// field writes nothing; a changed day keeps the stored time and zone; a new
+// value has no zone (the host's local time); both cleared write null; coming
+// back to what was stored writes undefined -- no change. A day without a time,
+// a time without a day or a time that is not one is a field error: the
+// message stands under the row, the time control is marked invalid, the host
+// hears it through the optional setFieldError(field, message) -- null once it
+// is put right -- and the change is withdrawn with undefined, so a save never
+// carries a value the person did not finish. The controls keep what was
+// typed: the day is bound as a property and nothing else is bound that a
+// host's re-render would put back.
+
+
+let dateTimeSequence = 0;
+
+function renderDateTimeEdit(field, value, host) {
+  const stored = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_4__.splitDateTime)(value);
+  const label = String(field.label || field.key || '');
+  const name = fieldName(field);
+  const messageId = `sf-field-datetime-message-${++dateTimeSequence}`;
+
+  const named = key => setText(host, key).replace('{label}', label);
+
+  const commit = (event, part) => {
+    // The datepicker's own change, not a native one bubbling from its field.
+    if (part === 'date' && event.target !== event.currentTarget) return;
+    const group = event.currentTarget?.closest?.('.sf-field-datetime');
+    if (!group) return;
+    const picker = group.querySelector('sf-datepicker'); // Not the datepicker's own field, which is an sf-input too.
+
+    const clock = group.querySelector('sf-input.sf-field-datetime-time');
+    const date = part === 'date' ? String(event.detail?.value ?? picker?.value ?? '') : String(picker?.value ?? '');
+    const typed = String(clock?.value ?? '');
+    const result = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_4__.composeDateTime)(stored, {
+      date,
+      time: typed
+    });
+    const message = result.error ? setText(host, `dateTime_${result.error}`) : '';
+    const note = group.querySelector('.sf-field-datetime-message');
+
+    if (note) {
+      note.textContent = message;
+      note.hidden = !message;
+    }
+
+    group.toggleAttribute('data-invalid', Boolean(message));
+    const timeWrong = result.error === 'timeMissing' || result.error === 'timeInvalid';
+    clock?.toggleAttribute('invalid', timeWrong);
+    host.setFieldError?.(field, message || null);
+
+    if (result.error) {
+      host.setFieldValue(field, undefined);
+      return;
+    } // A time typed without the mask («930») shows as it is read («09:30»).
+
+
+    const time = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_4__.normalizeTime)(typed);
+    if (clock && time && time !== typed) clock.value = time;
+    const same = result.value === null ? stored.known && !stored.date : result.value === stored.raw;
+    host.setFieldValue(field, same ? undefined : result.value);
+  };
+
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <div class="sf-field-datetime flex flex-col gap-1/4 min-w-0" role="group" aria-label=${label}
+                aria-describedby=${messageId} data-datetime=${field.key || 'value'}>
+            <div class="flex flex-nowrap items-cross-center gap-1/3 min-w-0">
+                <sf-datepicker
+                        size=${EDIT_SIZE}
+                        name=${`${name}_date`}
+                        .value=${stored.date}
+                        aria-label=${named('dateTimeDate')}
+                        ?required=${Boolean(field.required)}
+                        @change=${event => commit(event, 'date')}
+                ></sf-datepicker>
+                <sf-input
+                        class="sf-field-datetime-time"
+                        size=${EDIT_SIZE}
+                        appearance="bordered"
+                        root-style="flex: 0 0 6.5em; min-inline-size: 0"
+                        name=${`${name}_time`}
+                        value=${stored.time}
+                        inputmode="numeric"
+                        autocomplete="off"
+                        placeholder=${setText(host, 'dateTimePlaceholder')}
+                        mask
+                        mask-pattern="00:00"
+                        ?required=${Boolean(field.required)}
+                        aria-label=${named('dateTimeTime')}
+                        @change=${event => commit(event, 'time')}
+                ></sf-input>
+            </div>
+            <span id=${messageId} class=${`sf-field-datetime-message color-error text-${EDIT_SIZE === '1/2' ? '1/3' : '1/2'}`}
+                    aria-live="polite" hidden></span>
+        </div>
     `;
 } // A required boolean is a switch: two states are all it has. An optional one is
 // a pair of buttons with nothing chosen while the value is absent -- the
@@ -1323,7 +1548,14 @@ const SET_TEXT = {
     passwordSet: 'Set',
     passwordUnset: 'Not set',
     passwordKeep: 'Set; type a new one to replace it',
-    showPassword: 'Show password'
+    showPassword: 'Show password',
+    dateTimeDate: '{label}: date',
+    dateTimeTime: '{label}: time',
+    dateTimePlaceholder: 'hh:mm',
+    dateTime_dateMissing: 'Enter the date',
+    dateTime_dateInvalid: 'The date is not a calendar date',
+    dateTime_timeMissing: 'Enter the time',
+    dateTime_timeInvalid: 'Enter the time as hh:mm, from 00:00 to 23:59'
   },
   ru: {
     yes: 'Да',
@@ -1349,7 +1581,14 @@ const SET_TEXT = {
     passwordSet: 'Задан',
     passwordUnset: 'Не задан',
     passwordKeep: 'Задан; введите новый, чтобы заменить',
-    showPassword: 'Показать пароль'
+    showPassword: 'Показать пароль',
+    dateTimeDate: '{label}: дата',
+    dateTimeTime: '{label}: время',
+    dateTimePlaceholder: 'чч:мм',
+    dateTime_dateMissing: 'Укажите дату',
+    dateTime_dateInvalid: 'Дата указана неверно',
+    dateTime_timeMissing: 'Укажите время',
+    dateTime_timeInvalid: 'Укажите время в виде чч:мм, от 00:00 до 23:59'
   }
 }; // The host's word wins, as it always did; the set's own fallback now follows
 // the page's language instead of being Russian whatever the page is. `host` is
@@ -1803,6 +2042,13 @@ if (typeof window !== 'undefined') {
     renderFilterField,
     renderViewField,
     FILTER_RENDERERS,
+    // A datetime's value read and written back, for a host that draws its
+    // own pair: split(value), compose(stored, {date, time}), normalizeTime(text).
+    dateTime: {
+      split: _datetime_js__WEBPACK_IMPORTED_MODULE_4__.splitDateTime,
+      compose: _datetime_js__WEBPACK_IMPORTED_MODULE_4__.composeDateTime,
+      normalizeTime: _datetime_js__WEBPACK_IMPORTED_MODULE_4__.normalizeTime
+    },
     // The universal properties, each with the modes the set draws for it.
     registry: _registry_js__WEBPACK_IMPORTED_MODULE_3__.PROPERTY_TYPES.map(entry => ({ ...entry,
       modes: propertyModes(entry.type)
