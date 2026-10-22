@@ -221,8 +221,13 @@ function ensureStructure(block) {
   };
 
   if (!root) {
-    root = block.ownerDocument.createElement('div');
-    root.className = 'sf-highlight source';
+    root = block.ownerDocument.createElement('div'); // Only the canonical class. The generated root carried the compatibility
+    // alias `source` too, and that word is also the Doc component's source
+    // block: the Loader fetched component/doc for it, and the Doc rule painted
+    // the code surface an inverse colour, so in the dark theme plain code was
+    // invisible (ui-chat). An authored `.source` root is still read as a root.
+
+    root.className = 'sf-highlight';
     pre.replaceWith(root);
     root.append(pre);
   } else root.classList.add('sf-highlight');

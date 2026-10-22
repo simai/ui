@@ -346,6 +346,9 @@
   .theme-light .hljs {
     padding: 0 !important;
   }
+  .sf-highlight + * {
+    margin-top: var(--sf-space-4);
+  }
   .source + * {
     margin-top: var(--sf-space-4);
   }

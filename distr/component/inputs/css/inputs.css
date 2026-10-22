@@ -263,6 +263,13 @@
             padding-inline-end: var(--sf-input-input--padding-inline-end);
     -webkit-padding-start: var(--sf-input-input--padding-inline-start);
             padding-inline-start: var(--sf-input-input--padding-inline-start);
+    /* The field is as tall as the line box: the reset's height: 100% resolved
+       against the centred flex line, and with a height given the browser
+       centred the text in it by the font's own line, a pixel below where the
+       line box sets it. The value stood a pixel under an sf-textarea's and an
+       sf-button's text at sizes 1/2 and 1 (simai/ui-source#23). */
+    height: auto;
+    block-size: auto;
   }
   .sf-input .sf-input-field input::-webkit-input-placeholder {
     --sf-input-placeholder--color: var(--sf-on-surface-variant);
