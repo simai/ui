@@ -157,6 +157,12 @@
 
 ### Добавлено
 
+- `sf-accordion` sizes: `sf-accordion--size-1/3|1/2|1|2|3`, the header exactly the control height of the size, title, chevron and inline padding from the size (simai/ui-source#19).
+- Theme roles `--sf-paper` / `--sf-on-paper` (the same in both themes, for an email or document canvas) and `--sf-surface-well` (a recessed surface behind a canvas) (simai/ui-source#24).
+- Fixed: tab elements take their label's ink in both themes (no raw black/white); an `sf-input` value sits on the same line as `sf-textarea` and `sf-button` text at sizes 1/2 and 1 (simai/ui-source#23).
+- Fixed: highlighted code no longer pulls the Doc component's styles, so its surface stays `--sf-surface-container` in the dark theme and plain identifiers are readable.
+- Docs: `sf-file-upload` events are `:remove` / `:retry`; the dropdown `change` detail's `item` is the option's data.
+
 - `sf-textarea` takes `appearance="flush"` (plain markup `sf-textarea--flush`): no border, fill, shadow, radius, inline padding or own focus ring, for a field inside a composite control whose wrapper draws the surface and shows focus with `:has(:focus-visible)`; auto-grow and the size ladder are unchanged (one row = the control height).
 - The shared field set edits `datetime` fields as a day (`sf-datepicker`) and a time (`sf-input`, mask 00:00) on one row, labelled for assistive tech; ISO 8601 back, an untouched field writes nothing, partial input is a field error (`setFieldError`); `SF.fieldRenderers.dateTime` exposes split, compose and normalizeTime.
 - Fixed: a `sf-datepicker` date given by the `value` attribute can be cleared (change with an empty value); typed dates must be one valid date in the field's format with a year of 1000–9999, so two glued dates are invalid input instead of a wrong date.
