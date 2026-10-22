@@ -8,6 +8,8 @@
 
 ### Исправлено
 
+- Fixed: the package reference for `larena` declares that the property view requires `smart.help-mark` (a field hint opens on a press), so the package built against this release is accepted.
+
 - Fixed four defects Larena's storage QA found (typed fields keep their own change, the closing modal is read correctly, and two more diagnosed from the sources).
 - Fixed: a host data attribute (`data-*`) names one element, the one with a box, and that element can be focused; a change detail names its emitter.
 - Fixed: the datepicker's template reads the read-only state the component resolves (a range field is always read-only).
