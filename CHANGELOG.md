@@ -8,6 +8,11 @@
 
 ### Исправлено
 
+- Fixed four defects Larena's storage QA found (typed fields keep their own change, the closing modal is read correctly, and two more diagnosed from the sources).
+- Fixed: a host data attribute (`data-*`) names one element, the one with a box, and that element can be focused; a change detail names its emitter.
+- Fixed: the datepicker's template reads the read-only state the component resolves (a range field is always read-only).
+- Fixed: with the icon subset disabled (`SF_BOOT_CONFIG.icons.enabled = false`), icons are drawn once the local font has loaded instead of staying invisible (simai/ui-source#15).
+
 - Fixed: info is a status palette of #005bbe with a fixed hue and chroma, like error, warning and success, instead of a copy of the brand colour; under a red primary it read as danger. Every primary gives the same sixteen info tones (simai/ui-source#14).
 - Fixed: `sf-resizer` takes its name and hint through the shared page language: it follows `SF.language.use()` live, reads words added with `SF.language.register('sf-resizer', …)`, and a name given in `label` stays the author's.
 - Fixed: `sf-button` and `sf-icon-button` keep the `data-*` attributes written on the host (they are copied to the inner button, no longer moved), so `sf-button[data-…]` and `host.dataset` answer. A text child of `sf-button` is its label, after slot `text` and the `text` attribute.
