@@ -8,6 +8,10 @@
 
 ### Исправлено
 
+- Fixed: taking an error back from `sf-input` (`invalid`, `error`, `setState({invalid})`) restores the valid border and removes `aria-invalid`; the shared field set's datetime editor marks and clears both of its fields.
+- `sf-datepicker` takes `invalid` and `error-message`, and its calendar opens on the month of the value (a typed whole date is taken first; a range opens on its start; with no value, today's month; within min-date and max-date).
+- The package reference for `larena`: the admin menu requires the empty state.
+
 - Fixed: the package reference for `larena` declares that the property view requires `smart.help-mark` (a field hint opens on a press), so the package built against this release is accepted.
 
 - Fixed four defects Larena's storage QA found (typed fields keep their own change, the closing modal is read correctly, and two more diagnosed from the sources).
