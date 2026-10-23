@@ -1820,8 +1820,17 @@ function renderListItemTemplate(context) {
   const isOption = context.option === true;
   const textContent = context.component?.hasSlotContent?.("text") ? context.component.getSlotContent("text") : context.text;
   const leadingContent = context.component?.hasSlotContent?.("leading") ? context.component.getSlotContent("leading") : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
-  const trailingContent = context.component?.hasSlotContent?.("trailing") ? context.component.getSlotContent("trailing") : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
-  const classes = ["sf-list-item", "flex", "items-cross-center", `sf-list-item--${context.kind ?? context.type}`, `sf-list-item--size-${context.size}`, isOption ? "cursor-pointer" : "", context.selected ? "selected" : "", context.disabled ? "disabled" : "", context.rootClass].filter(Boolean);
+  const trailingContent = context.component?.hasSlotContent?.("trailing") ? context.component.getSlotContent("trailing") : lit__WEBPACK_IMPORTED_MODULE_0__.nothing; // A general list row (simai/ui-source#18): a second, supporting line under
+  // the title; a row a person acts on (interactive); a row of an sf-sortable
+  // list, which carries the list's item id and a drag handle, or is pinned and
+  // carries neither. None of these exist for an option, which Dropdown owns.
+
+  const supportingContent = !isOption && context.component?.hasSlotContent?.("supporting") ? context.component.getSlotContent("supporting") : !isOption && context.supporting || lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  const twoLine = supportingContent !== lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  const sortableItem = !isOption && !context.pinned ? context.sortableItem || "" : "";
+  const handleSlot = !isOption && Boolean(context.sortableItem || context.pinned);
+  const roving = !isOption && Boolean(context.interactive || sortableItem);
+  const classes = ["sf-list-item", "flex", "items-cross-center", `sf-list-item--${context.kind ?? context.type}`, `sf-list-item--size-${context.size}`, isOption ? "cursor-pointer" : "", context.selected ? "selected" : "", context.disabled ? "disabled" : "", twoLine ? "sf-list-item--two-line" : "", !isOption && context.interactive ? "sf-list-item--interactive" : "", handleSlot ? "sf-list-item--sortable" : "", !isOption && context.pinned ? "sf-list-item--pinned" : "", context.rootClass].filter(Boolean);
   const wrapClasses = ["sf-list-item-wrap", "flex", "flex-1"];
   const isDecoratedType = ["icon", "checkbox", "avatar", "color"].includes(context.type);
 
@@ -1896,7 +1905,19 @@ function renderListItemTemplate(context) {
   const renderText = () => {
     if (context.type === "color") return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
     if (context.type === "avatar") return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+
+    if (twoLine) {
+      return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-list-item-container"><span class="sf-list-item-title">${textContent}</span><span class="sf-list-item-supporting">${supportingContent}</span></div>`;
+    }
+
     return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-list-item-container">${textContent}</div>`;
+  }; // The handle stands in a slot of its own before everything else; a pinned
+  // row keeps the slot empty, so its text starts where its neighbours' does.
+
+
+  const renderHandle = () => {
+    if (!handleSlot) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-list-item-handle" ?data-sf-sortable-handle=${Boolean(sortableItem)} aria-hidden="true">${sortableItem ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<i class="sf-icon">drag_indicator</i>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</span>`;
   };
 
   const renderTrailing = () => {
@@ -1931,11 +1952,15 @@ function renderListItemTemplate(context) {
       role=${isOption ? "option" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       tabindex=${isOption ? "-1" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       data-value=${isOption ? context.value || lit__WEBPACK_IMPORTED_MODULE_0__.nothing : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-      aria-label=${isOption ? context.ariaLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      aria-label=${isOption || roving ? context.ariaLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       title=${isOption ? context.ariaLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-      aria-disabled=${isOption && context.disabled ? "true" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      aria-disabled=${(isOption || roving) && context.disabled ? "true" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       aria-selected=${isOption ? context.selected ? "true" : "false" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      data-sf-sortable-item=${sortableItem || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      ?data-sf-list-roving=${roving}
+      aria-current=${roving && context.selected ? "true" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     >
+      ${renderHandle()}
       <div class=${wrapClasses.join(" ")}>
         ${renderLeading()} ${renderText()} ${renderTrailing()}
       </div>

@@ -175,7 +175,64 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 
 
+ // A row a person reaches by keyboard (interactive, or an item of an sf-sortable
+// list) is one stop of its list: the list is a single Tab stop and the arrows,
+// Home and End move between its rows (simai/ui-source#29, ui-mail P-14: twenty
+// blocks were forty Tab stops). The list is the nearest sf-sortable, listbox,
+// list or [data-sf-list] around the row, else the row's parent.
 
+const ROVING = '[data-sf-list-roving]';
+const LIST = 'sf-sortable, [role="listbox"], [role="list"], [data-sf-list]';
+const INTERACTIVE = 'a[href], button, input, select, textarea, summary, [contenteditable]:not([contenteditable="false"]), [tabindex]:not([data-sf-list-roving])';
+const pendingLists = new Set();
+
+function listOf(row) {
+  const host = row.closest('sf-list-item') || row;
+  return host.parentElement?.closest(LIST) || host.parentElement;
+}
+
+function rowsOf(list) {
+  return [...list.querySelectorAll(ROVING)].filter(row => listOf(row) === list);
+} // A keyboard reorder in progress owns the arrows: the shared session of every
+// sf-sortable bundle lives on this global.
+
+
+function reordering() {
+  return Boolean(globalThis.__sfSortableSharedV1?.session);
+} // The one row of a list that takes Tab: the one that last had the focus, else
+// the selected one, else the first that is not disabled.
+
+
+function syncRoving(list) {
+  if (!list?.isConnected) return;
+  const rows = rowsOf(list);
+  const usable = rows.filter(row => !row.classList.contains('disabled'));
+  const current = usable.find(row => row.dataset.sfListCurrent === 'true') || usable.find(row => row.classList.contains('selected')) || usable[0];
+
+  for (const row of rows) {
+    row.tabIndex = row === current ? 0 : -1;
+    if (row !== current) delete row.dataset.sfListCurrent;
+  }
+}
+
+function scheduleRoving(list) {
+  if (!list || pendingLists.has(list)) return;
+  pendingLists.add(list);
+  queueMicrotask(() => {
+    pendingLists.delete(list);
+    syncRoving(list);
+  });
+}
+
+function moveTo(row) {
+  const list = listOf(row);
+
+  for (const other of rowsOf(list)) delete other.dataset.sfListCurrent;
+
+  row.dataset.sfListCurrent = 'true';
+  syncRoving(list);
+  row.focus();
+}
 
 function normalizeSizeGroup(value) {
   const size = value;
@@ -248,8 +305,134 @@ class SfListItem extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___defau
       },
       ariaLabel: {
         default: ''
+      },
+      // The general row (simai/ui-source#18): a supporting line under the
+      // title, a row a person acts on, a row of an sf-sortable list (its item
+      // id), and a pinned row of such a list that has no handle and does not move.
+      supporting: {
+        default: ''
+      },
+      interactive: {
+        type: Boolean,
+        default: false
+      },
+      sortableItem: {
+        attribute: 'sortable-item',
+        default: ''
+      },
+      pinned: {
+        type: Boolean,
+        default: false
       }
     };
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    if (this._rowBound) return;
+    this._rowBound = true;
+    this.addEventListener('sf-after-render', () => {
+      const row = this.querySelector(':scope > .sf-list-item');
+      if (row?.matches(ROVING)) scheduleRoving(listOf(row));
+    });
+    this.addEventListener('keydown', event => this.onRowKeyDown(event));
+    this.addEventListener('click', event => this.onRowClick(event));
+    this.addEventListener('focusin', event => {
+      const row = this.querySelector(':scope > .sf-list-item');
+
+      if (row?.matches(ROVING) && event.target === row && row.tabIndex !== 0) {
+        for (const other of rowsOf(listOf(row))) delete other.dataset.sfListCurrent;
+
+        row.dataset.sfListCurrent = 'true';
+        syncRoving(listOf(row));
+      }
+    });
+  }
+
+  disconnectedCallback() {
+    const row = this.querySelector(':scope > .sf-list-item');
+    const list = row?.matches(ROVING) ? listOf(row) : null;
+    super.disconnectedCallback?.();
+    if (list) scheduleRoving(list);
+  } // The row takes focus on the host's behalf: the host is boxless.
+
+
+  focusDelegate() {
+    const row = this.querySelector(':scope > .sf-list-item');
+    return row?.matches(ROVING) ? row : null;
+  }
+
+  onRowKeyDown(event) {
+    const row = this.querySelector(':scope > .sf-list-item');
+    if (!row?.matches(ROVING) || event.target !== row || event.defaultPrevented || reordering()) return;
+    if (event.altKey || event.ctrlKey || event.metaKey) return;
+    const rows = rowsOf(listOf(row)).filter(entry => !entry.classList.contains('disabled'));
+    const at = rows.indexOf(row);
+    const target = {
+      ArrowDown: rows[at + 1],
+      ArrowUp: rows[at - 1],
+      Home: rows[0],
+      End: rows.at(-1)
+    }[event.key];
+
+    if (target !== undefined) {
+      event.preventDefault();
+      if (target && target !== row) moveTo(target);
+      return;
+    } // Enter acts on a row, unless the row is an item of an sf-sortable list:
+    // there Space and Enter pick it up, as the list's instructions say.
+
+
+    if (event.key === 'Enter' && this.interactive && !row.hasAttribute('data-sf-sortable-item')) {
+      event.preventDefault();
+      this.activate(event);
+    }
+  }
+
+  onRowClick(event) {
+    const row = this.querySelector(':scope > .sf-list-item');
+    if (!this.interactive || !row || !row.contains(event.target)) return; // A control inside the row (a trailing action) acts for itself.
+
+    const control = event.target.closest(INTERACTIVE);
+    if (control && control !== row && row.contains(control)) return;
+
+    if (row.matches(ROVING) && listOf(row)) {
+      for (const other of rowsOf(listOf(row))) delete other.dataset.sfListCurrent;
+
+      row.dataset.sfListCurrent = 'true';
+      syncRoving(listOf(row));
+    }
+
+    this.activate(event);
+  }
+
+  activate(event) {
+    if (this.disabled) return;
+    this.dispatchEvent(new CustomEvent('sf-list-item-activate', {
+      bubbles: true,
+      composed: true,
+      detail: {
+        value: this.itemValue,
+        item: this,
+        trigger: event?.type === 'keydown' ? 'keyboard' : 'pointer'
+      }
+    }));
+  }
+
+  get supporting() {
+    return this.getAttribute('supporting') || '';
+  }
+
+  get interactive() {
+    return this.getBooleanAttr('interactive', false);
+  }
+
+  get sortableItem() {
+    return this.getAttribute('sortable-item') || '';
+  }
+
+  get pinned() {
+    return this.getBooleanAttr('pinned', false);
   }
 
   get componentName() {
@@ -323,6 +506,10 @@ class SfListItem extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___defau
       component: this,
       sizeGroup: this.sizeGroup,
       avatarTitle: this.avatarTitle,
+      supporting: this.supporting,
+      interactive: this.interactive,
+      sortableItem: this.sortableItem,
+      pinned: this.pinned,
       // Resolved names the template reads (contracts/template-context.json).
       type: this.type,
       value: this.itemValue,
@@ -335,7 +522,7 @@ class SfListItem extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___defau
   }
 
   resolveUpdateMode(changedAttributes = []) {
-    if (changedAttributes.length > 0 && changedAttributes.every(attr => ['text', 'aria-label', 'disabled', 'selected', 'checked'].includes(attr))) {
+    if (changedAttributes.length > 0 && !this.supporting && !this.interactive && !this.sortableItem && changedAttributes.every(attr => ['text', 'aria-label', 'disabled', 'selected', 'checked'].includes(attr))) {
       return 'dom';
     }
 
@@ -385,7 +572,11 @@ class SfListItem extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___defau
       colorClass: this.colorClass,
       avatarImageUrl: this.avatarImageUrl,
       avatarTitle: this.avatarTitle,
-      ariaLabel: this.ariaLabel
+      ariaLabel: this.ariaLabel,
+      supporting: this.supporting,
+      interactive: this.interactive,
+      sortableItem: this.sortableItem,
+      pinned: this.pinned
     };
   }
 
@@ -438,8 +629,17 @@ function renderListItemTemplate(context) {
   const isOption = context.option === true;
   const textContent = context.component?.hasSlotContent?.("text") ? context.component.getSlotContent("text") : context.text;
   const leadingContent = context.component?.hasSlotContent?.("leading") ? context.component.getSlotContent("leading") : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
-  const trailingContent = context.component?.hasSlotContent?.("trailing") ? context.component.getSlotContent("trailing") : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
-  const classes = ["sf-list-item", "flex", "items-cross-center", `sf-list-item--${context.kind ?? context.type}`, `sf-list-item--size-${context.size}`, isOption ? "cursor-pointer" : "", context.selected ? "selected" : "", context.disabled ? "disabled" : "", context.rootClass].filter(Boolean);
+  const trailingContent = context.component?.hasSlotContent?.("trailing") ? context.component.getSlotContent("trailing") : lit__WEBPACK_IMPORTED_MODULE_0__.nothing; // A general list row (simai/ui-source#18): a second, supporting line under
+  // the title; a row a person acts on (interactive); a row of an sf-sortable
+  // list, which carries the list's item id and a drag handle, or is pinned and
+  // carries neither. None of these exist for an option, which Dropdown owns.
+
+  const supportingContent = !isOption && context.component?.hasSlotContent?.("supporting") ? context.component.getSlotContent("supporting") : !isOption && context.supporting || lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  const twoLine = supportingContent !== lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  const sortableItem = !isOption && !context.pinned ? context.sortableItem || "" : "";
+  const handleSlot = !isOption && Boolean(context.sortableItem || context.pinned);
+  const roving = !isOption && Boolean(context.interactive || sortableItem);
+  const classes = ["sf-list-item", "flex", "items-cross-center", `sf-list-item--${context.kind ?? context.type}`, `sf-list-item--size-${context.size}`, isOption ? "cursor-pointer" : "", context.selected ? "selected" : "", context.disabled ? "disabled" : "", twoLine ? "sf-list-item--two-line" : "", !isOption && context.interactive ? "sf-list-item--interactive" : "", handleSlot ? "sf-list-item--sortable" : "", !isOption && context.pinned ? "sf-list-item--pinned" : "", context.rootClass].filter(Boolean);
   const wrapClasses = ["sf-list-item-wrap", "flex", "flex-1"];
   const isDecoratedType = ["icon", "checkbox", "avatar", "color"].includes(context.type);
 
@@ -514,7 +714,19 @@ function renderListItemTemplate(context) {
   const renderText = () => {
     if (context.type === "color") return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
     if (context.type === "avatar") return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+
+    if (twoLine) {
+      return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-list-item-container"><span class="sf-list-item-title">${textContent}</span><span class="sf-list-item-supporting">${supportingContent}</span></div>`;
+    }
+
     return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-list-item-container">${textContent}</div>`;
+  }; // The handle stands in a slot of its own before everything else; a pinned
+  // row keeps the slot empty, so its text starts where its neighbours' does.
+
+
+  const renderHandle = () => {
+    if (!handleSlot) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-list-item-handle" ?data-sf-sortable-handle=${Boolean(sortableItem)} aria-hidden="true">${sortableItem ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<i class="sf-icon">drag_indicator</i>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</span>`;
   };
 
   const renderTrailing = () => {
@@ -549,11 +761,15 @@ function renderListItemTemplate(context) {
       role=${isOption ? "option" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       tabindex=${isOption ? "-1" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       data-value=${isOption ? context.value || lit__WEBPACK_IMPORTED_MODULE_0__.nothing : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-      aria-label=${isOption ? context.ariaLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      aria-label=${isOption || roving ? context.ariaLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       title=${isOption ? context.ariaLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-      aria-disabled=${isOption && context.disabled ? "true" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      aria-disabled=${(isOption || roving) && context.disabled ? "true" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       aria-selected=${isOption ? context.selected ? "true" : "false" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      data-sf-sortable-item=${sortableItem || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      ?data-sf-list-roving=${roving}
+      aria-current=${roving && context.selected ? "true" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     >
+      ${renderHandle()}
       <div class=${wrapClasses.join(" ")}>
         ${renderLeading()} ${renderText()} ${renderTrailing()}
       </div>
