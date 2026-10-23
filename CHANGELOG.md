@@ -157,6 +157,9 @@
 
 ### Добавлено
 
+- Host port `simai.property-view-port` 1.14.0, backwards compatible with 1.13.0: a `lookup` field type (value `{value, label}`, a list when `multiple`; `field.source` names the host's reference source; inline `options` for short lists), `field.options` with optional `source` and `limit`, a save the host may ask to confirm (`refused` with reason `confirm_required` and `confirm: {summary, digest}`, re-sent with `confirm: "<digest>"`), and conditional fields `field.when` with `visible`, `required` and `enabled` condition trees.
+- The renderer set `smart/field-renderers` draws `lookup` in view, table cell, edit and filter.
+
 - A docked `sf-drawer` with room is a page column on `--sf-surface-0` without a shadow; when the host is too narrow it floats with the raised surface and a shadow. The docked-to-overlay point is set by `dock-breakpoint` or `--sf-drawer-dock-breakpoint` (default 48rem), and a `data-drawer="toggle"` button with `aria-controls` hides and shows a docked panel (simai/ui-source#26, #25).
 - `sf-modal` footer actions sit at the end with `--sf-modal-footer-gap` between them (simai/ui-source#26).
 - Paper state colours from the light scheme in both themes: `--sf-paper-primary`, `--sf-paper-outline`, `--sf-paper-hover`, `--sf-paper-select`; a single-section `sf-accordion` renders as a plain section (simai/ui-source#29).
