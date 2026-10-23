@@ -2498,7 +2498,7 @@ function renderModalTemplate(context) {
 
                         ${hasFooterSlot ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
                                     <div
-                                            class=${joinClasses('sf-modal-footer flex flex-wrap gap-2', context.footerClass)}
+                                            class=${joinClasses('sf-modal-footer flex flex-wrap', context.footerClass)}
                                     >
                                         ${context.footerContent}
                                     </div>

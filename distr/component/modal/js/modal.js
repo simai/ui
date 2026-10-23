@@ -664,7 +664,7 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
 
     if (Array.isArray(params.footerNodes) && params.footerNodes.length && this.showFooter) {
       const footer = document.createElement('div');
-      footer.className = joinClasses('sf-modal-footer flex flex-wrap gap-2', params.footerClass);
+      footer.className = joinClasses('sf-modal-footer flex flex-wrap', params.footerClass);
       params.footerNodes.forEach(node => {
         if (node instanceof Node) {
           footer.append(node);
