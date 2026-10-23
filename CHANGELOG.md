@@ -157,6 +157,11 @@
 
 ### Добавлено
 
+- A docked `sf-drawer` with room is a page column on `--sf-surface-0` without a shadow; when the host is too narrow it floats with the raised surface and a shadow. The docked-to-overlay point is set by `dock-breakpoint` or `--sf-drawer-dock-breakpoint` (default 48rem), and a `data-drawer="toggle"` button with `aria-controls` hides and shows a docked panel (simai/ui-source#26, #25).
+- `sf-modal` footer actions sit at the end with `--sf-modal-footer-gap` between them (simai/ui-source#26).
+- Paper state colours from the light scheme in both themes: `--sf-paper-primary`, `--sf-paper-outline`, `--sf-paper-hover`, `--sf-paper-select`; a single-section `sf-accordion` renders as a plain section (simai/ui-source#29).
+- Layout tokens `--sf-layout-reading-width` (48rem) and `--sf-layout-floating-panel-width` / `-height` (400×680) (simai/ui-source#25).
+
 - `sf-list-item` is the general list row: an optional supporting line, roving focus with one Tab stop (arrows, Home, End), rows that reorder inside `sf-sortable` and pinned rows without a handle (simai/ui-source#18, #29).
 - `sf-drawer` opens as a bottom sheet, its panels stay under the app bar, and its close button yields to an outside switch that controls the panel (simai/ui-source#20, #29).
 - Accessibility (simai/ui-source#25): field text is at least 16px on a touch phone, so iOS does not zoom on focus; default and tonal buttons keep an edge in forced colours; context-menu rows are 44px touch targets under a coarse pointer.
