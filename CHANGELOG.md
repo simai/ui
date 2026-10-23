@@ -157,6 +157,10 @@
 
 ### Добавлено
 
+- `sf-list-item` is the general list row: an optional supporting line, roving focus with one Tab stop (arrows, Home, End), rows that reorder inside `sf-sortable` and pinned rows without a handle (simai/ui-source#18, #29).
+- `sf-drawer` opens as a bottom sheet, its panels stay under the app bar, and its close button yields to an outside switch that controls the panel (simai/ui-source#20, #29).
+- Accessibility (simai/ui-source#25): field text is at least 16px on a touch phone, so iOS does not zoom on focus; default and tonal buttons keep an edge in forced colours; context-menu rows are 44px touch targets under a coarse pointer.
+
 - `sf-accordion` sizes: `sf-accordion--size-1/3|1/2|1|2|3`, the header exactly the control height of the size, title, chevron and inline padding from the size (simai/ui-source#19).
 - Theme roles `--sf-paper` / `--sf-on-paper` (the same in both themes, for an email or document canvas) and `--sf-surface-well` (a recessed surface behind a canvas) (simai/ui-source#24).
 - Fixed: tab elements take their label's ink in both themes (no raw black/white); an `sf-input` value sits on the same line as `sf-textarea` and `sf-button` text at sizes 1/2 and 1 (simai/ui-source#23).
