@@ -1,0 +1,22 @@
+.sf-accordion .sf-accordion-heading .sf-accordion-trigger .sf-icon.sf-accordion-lead {
+  -webkit-transform: none;
+          transform: none;
+}
+
+.sf-accordion .sf-accordion-trigger .sf-accordion-badge {
+  flex: 0 0 auto;
+}
+
+.sf-accordion.sf-accordion--disabled .sf-accordion-trigger:disabled {
+  --sf-icon--color: var(--sf-on-disable);
+  color: var(--sf-on-disable);
+  cursor: not-allowed;
+}
+
+.sf-accordion.sf-accordion--disabled .sf-accordion-trigger:disabled:hover {
+  background-color: transparent;
+}
+
+.sf-accordion.sf-accordion--disabled .sf-accordion-trigger:disabled:active {
+  background-color: transparent;
+}

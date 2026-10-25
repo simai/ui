@@ -261,12 +261,14 @@
     text-align: right;
   }
   .sf-menu-element {
-    --sf-menu-element--background-color: var(--sf-transparent);
-    --sf-menu-element--border-color: var(--sf-surface-container);
+    /* A row's public variables wrap the values it drew before them; hover,
+       open, focus and disabled write their own over them. */
+    --sf-menu-element--background-color: var(--sf-menu-item-background-color, var(--sf-transparent));
+    --sf-menu-element--border-color: var(--sf-menu-item-border-color, var(--sf-surface-container));
     --sf-menu-element--border-width: var(--sf-px);
-    --sf-menu-element--color: var(--sf-on-surface);
+    --sf-menu-element--color: var(--sf-menu-item-color, var(--sf-on-surface));
     --sf-menu-element--gap: var(--sf-space-1\/3);
-    --sf-menu-element--radius: var(--sf-radius--ui);
+    --sf-menu-element--radius: var(--sf-menu-item-radius, var(--sf-radius--ui));
     display: flex;
     box-sizing: border-box;
     align-items: center;
@@ -458,10 +460,13 @@
     max-width: 100%;
     max-width: 100%;
     max-inline-size: 100%;
+    /* The public variables (src/core/contracts/public-variables.v1.json) wrap
+       the values the menu drew before them, so a page that sets none sees no
+       change. */
     background-color: transparent;
-    background-color: var(--sf-menu--background-color, transparent);
+    background-color: var(--sf-menu--background-color, var(--sf-menu-background-color, transparent));
     gap: var(--sf-space-1\/3);
-    gap: var(--sf-menu--gap, var(--sf-space-1\/3));
+    gap: var(--sf-menu--gap, var(--sf-menu-gap, var(--sf-space-1\/3)));
   }
   /* utility-hint: display/flex (.flex) flex-direction/column (.flex-col) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-menu-item--gap) justify-content/flex-start (.justify-start) align-items/flex-start (.items-start) */
   .sf-menu .sf-menu-item {
@@ -519,13 +524,13 @@
     padding: var(--sf-space-1\/3);
     padding: var(--sf-menu-horizontal-submenu--padding, var(--sf-space-1\/3));
     border: var(--sf-px) solid var(--sf-outline-variant);
-    border: var(--sf-px) solid var(--sf-menu-horizontal-submenu--border-color, var(--sf-outline-variant));
+    border: var(--sf-px) solid var(--sf-menu-horizontal-submenu--border-color, var(--sf-menu-submenu-border-color, var(--sf-outline-variant)));
     border-radius: var(--sf-radius--ui);
-    border-radius: var(--sf-menu-horizontal-submenu--radius, var(--sf-radius--ui));
+    border-radius: var(--sf-menu-horizontal-submenu--radius, var(--sf-menu-submenu-radius, var(--sf-radius--ui)));
     background: var(--sf-elevation-2--surface);
-    background: var(--sf-menu-horizontal-submenu--background-color, var(--sf-elevation-2--surface));
+    background: var(--sf-menu-horizontal-submenu--background-color, var(--sf-menu-submenu-background-color, var(--sf-elevation-2--surface)));
     --sf-on-surface-variant: var(--sf-on-elevation-2--variant);
-    --sf-badge--surface: var(--sf-menu-horizontal-submenu--background-color, var(--sf-elevation-2--surface));
+    --sf-badge--surface: var(--sf-menu-horizontal-submenu--background-color, var(--sf-menu-submenu-background-color, var(--sf-elevation-2--surface)));
     box-shadow: var(--sf-elevation-2--shadow);
     box-shadow: var(--sf-menu-horizontal-submenu--box-shadow, var(--sf-elevation-2--shadow));
   }

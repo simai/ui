@@ -633,6 +633,28 @@
     "type": "component"
   },
   {
+    "name": "cl-accordion",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "accordion"
+      },
+      {
+        "name": "icons"
+      },
+      {
+        "lazy": true,
+        "name": "cl-badges"
+      }
+    ],
+    "tags": [
+      "sf-accordion"
+    ],
+    "type": "smart"
+  },
+  {
     "name": "cl-alert",
     "js": true,
     "mode": "smart",
@@ -807,6 +829,24 @@
     ],
     "tags": [
       "sf-close"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-code-input",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "verification"
+      },
+      {
+        "name": "sr-only/default"
+      }
+    ],
+    "tags": [
+      "sf-code-input"
     ],
     "type": "smart"
   },
@@ -1224,6 +1264,30 @@
     "type": "smart"
   },
   {
+    "name": "cl-menu",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "menu"
+      },
+      {
+        "name": "icons"
+      },
+      {
+        "name": "icon-buttons"
+      },
+      {
+        "name": "badges"
+      }
+    ],
+    "tags": [
+      "sf-menu"
+    ],
+    "type": "smart"
+  },
+  {
     "name": "cl-modal",
     "js": true,
     "mode": "smart",
@@ -1353,6 +1417,27 @@
     ],
     "tags": [
       "sf-progress-scale"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-quantity",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "quantity"
+      },
+      {
+        "name": "icons"
+      },
+      {
+        "name": "icon-buttons"
+      }
+    ],
+    "tags": [
+      "sf-quantity"
     ],
     "type": "smart"
   },

@@ -1196,9 +1196,58 @@ function renderTextAreaEdit(field, value, host) {
                 @change=${event => host.setFieldValue(field, event.target?.value ?? '')}
         ></sf-textarea>
     `;
+} // A number edited with steps (owner, 2026-10-25): an integer or a number whose
+// variant is `stepper` gets sf-quantity -- «−» and «+», the arrow keys, the
+// bounds the field names -- and every other number keeps the plain sf-input
+// below. The bounds, the step and (for a number) the digits are the field's
+// own keys, read by this variant alone: a renderer still does not enforce a
+// constraint, the stepper only stops at it and the host validates the record.
+//
+// An integer has no digits after the point, whatever the field says. A number
+// takes `precision`, else the digits its `step` implies, else two: a number
+// field whose stepper could not take a decimal mark would be an integer field.
+// The value goes out as the stepper's number, or null when the field is
+// emptied; the panel prints the label, so the control takes it as its
+// accessible name only.
+
+
+function isStepperField(field) {
+  return String(field.variant ?? '') === 'stepper';
+}
+
+function stepperNumber(raw) {
+  if (raw === null || raw === undefined || raw === '') return '';
+  const number = Number(raw);
+  return Number.isFinite(number) ? String(number) : '';
+}
+
+function renderStepperEdit(field, value, host) {
+  const decimal = (field.propertyType || field.type) === 'number';
+  const step = stepperNumber(field.step);
+  const precision = decimal ? stepperNumber(field.precision) || (step ? '' : '2') : '0';
+
+  const write = event => host.setFieldValue(field, event.detail?.value ?? null);
+
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <sf-quantity
+                size=${EDIT_SIZE}
+                name=${fieldName(field)}
+                value=${stepperNumber(scalarValue(value))}
+                min=${stepperNumber(field.min) || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                max=${stepperNumber(field.max) || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                step=${step || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                precision=${precision || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                aria-label=${field.label || field.key || ''}
+                ?required=${Boolean(field.required)}
+                ?disabled=${field.readonly === true}
+                @input=${write}
+                @change=${write}
+        ></sf-quantity>
+    `;
 }
 
 function renderNumberEdit(field, value, host) {
+  if (isStepperField(field)) return renderStepperEdit(field, value, host);
   const decimal = (field.propertyType || field.type) === 'number';
   value = scalarValue(value);
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
@@ -2342,14 +2391,22 @@ const PROPERTY_TYPES = Object.freeze([{
   },
   variants: [],
   params: ['placeholder', 'required', 'readonly']
-}, {
+}, // stepper: edited with sf-quantity, «−» and «+» and the arrow keys; min,
+// max and step (and a number's precision) are read by that variant alone.
+{
   type: 'integer',
   label: {
     ru: 'Целое число',
     en: 'Integer'
   },
-  variants: [],
-  params: ['unit', 'required', 'readonly']
+  variants: [{
+    id: 'stepper',
+    label: {
+      ru: 'Кнопками «−» и «+»',
+      en: 'With steppers'
+    }
+  }],
+  params: ['unit', 'min', 'max', 'step', 'required', 'readonly']
 }, {
   type: 'number',
   label: {
@@ -2362,8 +2419,14 @@ const PROPERTY_TYPES = Object.freeze([{
       ru: 'Шкала 0–100',
       en: 'Scale 0–100'
     }
+  }, {
+    id: 'stepper',
+    label: {
+      ru: 'Кнопками «−» и «+»',
+      en: 'With steppers'
+    }
   }],
-  params: ['unit', 'required', 'readonly']
+  params: ['unit', 'min', 'max', 'step', 'precision', 'required', 'readonly']
 }, {
   type: 'date',
   label: {

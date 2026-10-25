@@ -22,7 +22,17 @@ const generatedElements = new WeakSet();
 const generatedLeadingIcons = new WeakSet();
 const generatedTrailingControls = new WeakSet();
 const legacyExpandedOwners = new WeakSet();
-let submenuId = 0;
+let submenuId = 0; // sf-menu (src/smart/menu) draws this markup from data and keeps its state
+// itself -- open branches, the current page, the panels of a row. It marks
+// what it draws with data-sf-menu-owned, and this runtime, loaded beside it
+// for the sheet, leaves that markup alone, so two owners never toggle one
+// branch.
+
+const OWNED_SELECTOR = '[data-sf-menu-owned]';
+
+function isOwned(element) {
+  return Boolean(element?.closest?.(OWNED_SELECTOR));
+}
 
 function isNativeInteractive(element) {
   return element.matches('button, a[href], input, select, textarea');
@@ -356,7 +366,7 @@ function toggleMenuItem(root) {
 }
 
 function initMenuItem(root) {
-  if (!root) return;
+  if (!root || isOwned(root)) return;
   if (root.hasAttribute('expanded')) legacyExpandedOwners.add(root);
   const expanded = isExpanded(root);
   const isBranch = hasSubmenu(root);
@@ -457,8 +467,9 @@ function bindMenuEvents() {
     const target = event.target;
     if (!(target instanceof Element)) return;
     document.querySelectorAll('.sf-menu.sf-menu--horizontal > .sf-menu-item.open').forEach(root => {
-      if (!root.contains(target)) setMenuItemOpen(root, false);
+      if (!isOwned(root) && !root.contains(target)) setMenuItemOpen(root, false);
     });
+    if (isOwned(target)) return;
     const button = target.closest('.sf-menu-item > .sf-menu-element > .sf-icon-button');
 
     if (button) {
@@ -476,7 +487,7 @@ function bindMenuEvents() {
   });
   document.addEventListener('keydown', event => {
     const target = event.target;
-    if (!(target instanceof Element)) return;
+    if (!(target instanceof Element) || isOwned(target)) return;
 
     if (event.key === 'Escape') {
       const root = target.closest('.sf-menu-item.open');
