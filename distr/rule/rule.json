@@ -969,6 +969,7 @@
   },
   {
     "name": "cl-dropdown",
+    "css": true,
     "js": true,
     "mode": "smart",
     "relation": [
@@ -1147,6 +1148,24 @@
     "type": "smart"
   },
   {
+    "name": "cl-image-field",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "cl-buttons"
+      },
+      {
+        "name": "cl-icons"
+      }
+    ],
+    "tags": [
+      "sf-image-field"
+    ],
+    "type": "smart"
+  },
+  {
     "name": "cl-inline-editor",
     "css": true,
     "js": true,
@@ -1168,6 +1187,9 @@
       },
       {
         "name": "cl-icons"
+      },
+      {
+        "name": "icon-buttons"
       }
     ],
     "tags": [
@@ -1432,7 +1454,20 @@
     "css": true,
     "js": true,
     "mode": "smart",
-    "relation": [],
+    "relation": [
+      {
+        "lazy": true,
+        "name": "icon-buttons"
+      },
+      {
+        "lazy": true,
+        "name": "icons"
+      },
+      {
+        "lazy": true,
+        "name": "cl-context-menu"
+      }
+    ],
     "tags": [
       "sf-sortable"
     ],
@@ -1471,6 +1506,7 @@
   },
   {
     "name": "cl-switch",
+    "css": true,
     "js": true,
     "mode": "smart",
     "relation": [
@@ -1479,6 +1515,9 @@
       },
       {
         "name": "icons"
+      },
+      {
+        "name": "icon-buttons"
       }
     ],
     "tags": [
@@ -1547,11 +1586,18 @@
   },
   {
     "name": "cl-textarea",
+    "css": true,
     "js": true,
     "mode": "smart",
     "relation": [
       {
         "name": "textarea"
+      },
+      {
+        "name": "icons"
+      },
+      {
+        "name": "icon-buttons"
       }
     ],
     "tags": [

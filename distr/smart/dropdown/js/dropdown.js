@@ -816,10 +816,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _component_form_reset_helper__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("67eed2647f47");
 /* harmony import */ var _component_dropdown_portal__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("a0f23dca0b37");
 /* harmony import */ var _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("421676f72963");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _component_dropdown_portal__WEBPACK_IMPORTED_MODULE_6__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _component_dropdown_portal__WEBPACK_IMPORTED_MODULE_6__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("778671c79fa6");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _component_dropdown_portal__WEBPACK_IMPORTED_MODULE_6__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_8__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _component_dropdown_portal__WEBPACK_IMPORTED_MODULE_6__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_8__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language__WEBPACK_IMPORTED_MODULE_1__);
+
 
 
 
@@ -929,7 +931,7 @@ function getOptionLabel(option = {}) {
   return option.text || option.avatarTitle || option.value || '';
 }
 
-class SfDropdown extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()) {
+class SfDropdown extends (0,_helpers_inherited_value__WEBPACK_IMPORTED_MODULE_8__.InheritedValueField)((_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default())) {
   constructor() {
     super();
     this._options = [];
@@ -1010,6 +1012,20 @@ class SfDropdown extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___defau
         default: false
       },
       ariaLabel: {
+        default: ''
+      },
+      // The option value the field falls back to while nothing is chosen
+      // (simai/ui-source#28): its label is shown as inherited, in select mode.
+      inheritedValue: {
+        attribute: 'inherited-value',
+        default: ''
+      },
+      inheritedText: {
+        attribute: 'inherited-text',
+        default: ''
+      },
+      resetLabel: {
+        attribute: 'reset-label',
         default: ''
       }
     };
@@ -1093,6 +1109,23 @@ class SfDropdown extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___defau
 
   get placeholder() {
     return this.getAttribute('placeholder') || '';
+  } // The control a person reaches is the readonly input inside the trigger, and
+  // nothing named it (simai/ui-source#32, axe «label», critical, in ui-mail):
+  // the visible label is a sibling span, not the wrapping <label>, and a name
+  // given to the host -- aria-label, a <label for> or aria-labelledby pointing
+  // at it -- names the host, which is not the control. The name is taken in
+  // that order of precedence: the drawn label, then what the page said about
+  // the host.
+
+
+  accessibleName() {
+    if (this.getProp('label')) return this.getProp('label');
+    const own = this.getAttribute('aria-label');
+    if (own) return own;
+    const byIds = (this.getAttribute('aria-labelledby') || '').split(/\s+/u).filter(Boolean).map(id => this.ownerDocument?.getElementById(id)?.textContent?.trim() || '').filter(Boolean).join(' ');
+    if (byIds) return byIds;
+    const labels = this.id && this.ownerDocument ? [...this.ownerDocument.querySelectorAll('label[for]')].filter(label => label.htmlFor === this.id) : [];
+    return labels.map(label => label.textContent.trim()).filter(Boolean).join(' ');
   }
 
   get searchPlaceholder() {
@@ -1219,10 +1252,42 @@ class SfDropdown extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___defau
       triggerText: this.triggerText,
       searchValue: this._searchValue,
       searchPlaceholder: this.searchPlaceholder,
+      accessibleName: this.accessibleName(),
       selectedValues: this.selectedValues,
       selectedOptions: this.selectedOptions,
-      options: this.visibleOptions
+      options: this.visibleOptions,
+      inheritedValue: this.inheritedValue,
+      inheritedLabel: this.hasInheritedValue ? this.inheritedDisplayValue() : ''
     });
+  } // The inherited-value seam. The value is the selection; what the inherited
+  // value reads as is its options' labels, as a chosen value reads -- a machine
+  // value in the field would be a value nobody can recognise.
+
+
+  inheritedOwnValue() {
+    return this.hiddenValue;
+  }
+
+  inheritedDisplayValue() {
+    const options = this.options;
+    return splitValues(this.inheritedValue).map(value => {
+      const option = options.find(item => String(item.value) === value);
+      return option ? getOptionLabel(option) : value;
+    }).join(', ');
+  } // The trigger is what a keyboard reaches and what names the field.
+
+
+  inheritedFocusTarget() {
+    return this.querySelector('.sf-dropdown-field > button');
+  } // A reset is a change the person made: said as change, once, like removing
+  // the last tag.
+
+
+  clearOwnValue() {
+    this._selectedValues = [];
+    this.setAttributeValue('value', '');
+    this.dispatchDropdownChange(null, []);
+    this.requestComponentUpdate('reset-to-inherited');
   }
 
   template() {
@@ -1265,6 +1330,7 @@ class SfDropdown extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___defau
     }
 
     this._interaction?.refresh();
+    this.syncInheritedState();
     const resetControl = this.querySelector('.sf-dropdown-hidden-input') || this.querySelector('.sf-dropdown-field > button');
 
     if (this._resetControl !== resetControl) {
@@ -1516,10 +1582,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   renderDropdownTemplate: () => (/* binding */ renderDropdownTemplate)
 /* harmony export */ });
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("ddf1cdb42ecc");
-/* harmony import */ var _list_item_js_templates_default__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("c22590307c6c");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _list_item_js_templates_default__WEBPACK_IMPORTED_MODULE_1__]);
-([lit__WEBPACK_IMPORTED_MODULE_0__, _list_item_js_templates_default__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("778671c79fa6");
+/* harmony import */ var _list_item_js_templates_default__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("c22590307c6c");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_1__, _list_item_js_templates_default__WEBPACK_IMPORTED_MODULE_2__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_1__, _list_item_js_templates_default__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+
 
 
 
@@ -1540,7 +1608,7 @@ function renderOptions(options = [], multiple = false) {
 
     if (next !== group) {
       group = next;
-      if (next) parts.push((0,_list_item_js_templates_default__WEBPACK_IMPORTED_MODULE_1__.renderListItemHeading)(next, option.size));
+      if (next) parts.push((0,_list_item_js_templates_default__WEBPACK_IMPORTED_MODULE_2__.renderListItemHeading)(next, option.size));
     } // Where several options may be chosen, each one carries the box that says
     // so: a plain row said it was chosen with a class and aria-selected alone,
     // so on a long list nothing on screen told the person what they had picked
@@ -1550,7 +1618,7 @@ function renderOptions(options = [], multiple = false) {
 
 
     const withBox = multiple && (!option.type || option.type === "text");
-    parts.push((0,_list_item_js_templates_default__WEBPACK_IMPORTED_MODULE_1__.renderListItemOption)(withBox ? { ...option,
+    parts.push((0,_list_item_js_templates_default__WEBPACK_IMPORTED_MODULE_2__.renderListItemOption)(withBox ? { ...option,
       type: "checkbox"
     } : option));
   }
@@ -1716,13 +1784,18 @@ function renderDropdownTemplate(context) {
         ${hiddenInput}
         ${renderFieldVisual(context)}
         <input
-          placeholder=${context.placeholder}
+          placeholder=${context.inheritedLabel || context.placeholder}
           type="text"
           class="cursor-pointer"
+          aria-label=${context.accessibleName || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
           .value=${context.triggerText || ""}
           readonly
           ?disabled=${context.disabled}
         />
+        ${(0,_helpers_inherited_value__WEBPACK_IMPORTED_MODULE_1__.renderInheritedSlot)(context.component, {
+      size: context.size,
+      disabled: context.disabled
+    })}
         <button
           type="button"
           class="sf-icon-button sf-icon-button--icon sf-icon-button--on-surface sf-icon-button--link sf-icon-button--size-${iconButtonSize} absolute"
@@ -1763,6 +1836,7 @@ function renderDropdownTemplate(context) {
                 <span class="sf-input-field items-cross-center transition flex">
                   <input
                     placeholder=${context.searchPlaceholder}
+                    aria-label=${context.searchPlaceholder || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                     type="text"
                     .value=${context.searchValue || ""}
                     ?disabled=${context.disabled}
@@ -1786,6 +1860,253 @@ function renderDropdownTemplate(context) {
         </div>
       </div>
     </div>
+  `;
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "778671c79fa6"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   INHERITED_RESET_EVENT: () => (/* binding */ INHERITED_RESET_EVENT),
+/* harmony export */   INHERITED_TEXT: () => (/* binding */ INHERITED_TEXT),
+/* harmony export */   InheritedValueField: () => (/* binding */ InheritedValueField),
+/* harmony export */   inheritedStepDown: () => (/* binding */ inheritedStepDown),
+/* harmony export */   renderInheritedSlot: () => (/* binding */ renderInheritedSlot)
+/* harmony export */ });
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("ddf1cdb42ecc");
+/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("0d662e4d7d63");
+/* harmony import */ var _inherited_value_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("c6c9dfe31af4");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_1__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language__WEBPACK_IMPORTED_MODULE_1__);
+
+
+ // An inherited value, for every field of the input family (simai/ui-source#28).
+//
+// A setting whose empty value means «use what the parent says» -- a letter's
+// colour from the brand, a page's font from the theme -- has two states a field
+// must tell apart: «not set, so the parent's value applies» and «set, to
+// something that may even equal it». Only the first follows the parent when the
+// parent changes. A placeholder alone draws the first as if it were a value
+// (ui-mail polish audit B2, P-15), and there was no way back to it once a
+// person had typed.
+//
+// So a field that opts in takes `inherited-value`: while it holds no value of
+// its own it shows that value in the placeholder ink with a small «inherited»
+// marker, and the form gets an empty value. Once it holds a value of its own,
+// the marker gives way to a reset button that empties the field again. The
+// record views of package larena already draw a field's `inheritedValue` this
+// way (property-view port 1.8.0 and later); this is the same state on the
+// controls themselves, so a record view can hand it down rather than draw it
+// beside them.
+//
+// Written once here and opted into by each control, which says only what its
+// own value is, how to empty it and what takes focus: sf-input, sf-textarea,
+// sf-dropdown, sf-color and sf-switch.
+
+const INHERITED_RESET_EVENT = 'sf-field:reset'; // The marker and the reset, in the page's language. A product names its own
+// words with `inherited-text` and `reset-label`, or registers a language.
+
+const INHERITED_TEXT = {
+  en: {
+    inherited: 'inherited',
+    reset: 'Reset to inherited',
+    described: 'Inherited: {value}'
+  },
+  ru: {
+    inherited: 'наследуется',
+    reset: 'Сбросить к наследуемому',
+    described: 'Наследуется: {value}'
+  }
+}; // Each control declares the three in its own props -- inherited-value,
+// inherited-text and reset-label -- written out rather than spread from here, so
+// the manifest check that reads a component's props sees them.
+// The marker and the reset are one step down the ladder from the field they
+// sit in, so they fit inside its box: a size 1 field (40px) holds a size 1/2
+// button (32px) with the same inset on every side.
+
+const STEP_DOWN = Object.freeze({
+  '1/2': '1/3',
+  '1': '1/2',
+  '2': '1'
+});
+const inheritedStepDown = size => STEP_DOWN[String(size)] || '1/2';
+/**
+ * The mixin a control opts in with. The control supplies:
+ *   - `inheritedOwnValue()` -- its own value as a string, '' when it has none;
+ *   - `clearOwnValue()` -- empties it, firing the control's own input/change;
+ *   - `inheritedFocusTarget()` -- the element that takes focus after a reset;
+ * and may override `inheritedDisplayValue()` (what the inherited value reads
+ * as -- a dropdown shows the option's label, not its machine value).
+ */
+
+const InheritedValueField = Base => class extends Base {
+  constructor() {
+    super(); // Typing changes the state without a redraw: the native field holds the
+    // text, and redrawing on every key would fight it.
+
+    this.__sfInheritedSync = () => this.syncInheritedState();
+
+    this.addEventListener('input', this.__sfInheritedSync);
+    this.addEventListener('change', this.__sfInheritedSync);
+  }
+
+  get inheritedValue() {
+    return this.getAttribute('inherited-value') || '';
+  }
+
+  set inheritedValue(next) {
+    if (next === null || next === undefined || next === '') this.removeAttribute('inherited-value');else this.setAttribute('inherited-value', String(next));
+  }
+
+  get inheritedText() {
+    return this.getAttribute('inherited-text') || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_1__.pageText)(INHERITED_TEXT, 'inherited', this);
+  }
+
+  get resetLabel() {
+    return this.getAttribute('reset-label') || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_1__.pageText)(INHERITED_TEXT, 'reset', this);
+  }
+
+  get hasInheritedValue() {
+    return this.inheritedValue !== '';
+  } // True while the field holds nothing of its own and the inherited value
+  // applies. False without an inherited value: an empty field is then empty.
+
+
+  get isInherited() {
+    return this.hasInheritedValue && this.inheritedOwnValue() === '';
+  }
+
+  inheritedOwnValue() {
+    return String(this.value ?? '');
+  }
+
+  inheritedDisplayValue() {
+    return this.inheritedValue;
+  }
+
+  inheritedFocusTarget() {
+    return null;
+  }
+
+  clearOwnValue() {
+    this.value = '';
+  } // What a screen reader hears beside the name while the value is inherited.
+
+
+  inheritedDescription() {
+    return (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_1__.pageText)(INHERITED_TEXT, 'described', this).replace('{value}', this.inheritedDisplayValue());
+  }
+  /**
+   * Back to the inherited value. Fires `sf-field:reset` first, cancellable:
+   * a host that must confirm or refuse calls preventDefault and nothing
+   * changes. Returns whether the field was reset.
+   */
+
+
+  resetToInherited() {
+    if (!this.hasInheritedValue || this.inheritedOwnValue() === '') return false;
+    if (this.hasAttribute('disabled') || this.hasAttribute('readonly')) return false;
+    const event = new CustomEvent(INHERITED_RESET_EVENT, {
+      bubbles: true,
+      composed: true,
+      cancelable: true,
+      detail: {
+        value: this.inheritedOwnValue(),
+        inheritedValue: this.inheritedValue,
+        name: this.getAttribute('name') || ''
+      }
+    });
+    if (!this.dispatchEvent(event)) return false;
+    this.clearOwnValue();
+    this.syncInheritedState(); // The button that was pressed is gone, so focus goes where the person
+    // works: the control itself. Left on a hidden button, it would fall to the
+    // page and a keyboard user would start over from the top.
+
+    const focus = () => this.inheritedFocusTarget()?.focus?.({
+      preventScroll: true
+    });
+
+    focus();
+    if (!this.contains(document.activeElement)) requestAnimationFrame(focus);
+    return true;
+  } // The state, drawn without a redraw: the host says it, the marker and the
+  // reset swap, and the control carries the description. Each control calls it
+  // at the end of its own afterRender, which the controls override without
+  // calling up, so the mixin cannot hook it for them.
+
+
+  syncInheritedState() {
+    if (!this.hasInheritedValue && !this.__sfInheritedDescribed) {
+      this.removeAttribute('data-inherited');
+      return;
+    }
+
+    const inherited = this.isInherited;
+    const own = this.hasInheritedValue && !inherited;
+    if (inherited) this.setAttribute('data-inherited', 'true');else this.removeAttribute('data-inherited');
+    this.querySelectorAll(':scope [data-inherited-marker]').forEach(node => {
+      node.hidden = !inherited;
+    });
+    this.querySelectorAll(':scope [data-inherited-reset]').forEach(node => {
+      node.hidden = !own;
+    });
+    const control = this.inheritedFocusTarget();
+    if (!control) return;
+
+    if (inherited) {
+      control.setAttribute('aria-description', this.inheritedDescription());
+      this.__sfInheritedDescribed = control;
+    } else if (this.__sfInheritedDescribed === control) {
+      control.removeAttribute('aria-description');
+      this.__sfInheritedDescribed = null;
+    }
+  }
+
+};
+/**
+ * The marker and the reset, for a control's trailing slot. Nothing at all
+ * without an inherited value, so a field that does not use it is unchanged.
+ */
+
+function renderInheritedSlot(component, {
+  size = '1',
+  disabled = false,
+  className = ''
+} = {}) {
+  if (!component?.hasInheritedValue) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  const step = inheritedStepDown(size);
+  const inherited = component.isInherited;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+    <span class="sf-field-inherited-slot sf-field-inherited-slot--size-${size} flex items-cross-center ${className}">
+      <span class="sf-field-inherited sf-field-inherited--size-${step}"
+            data-inherited-marker
+            aria-hidden="true"
+            ?hidden=${!inherited}>${component.inheritedText}</span>
+      <button
+        type="button"
+        class="sf-field-reset sf-icon-button sf-icon-button--icon sf-icon-button--on-surface sf-icon-button--link sf-icon-button--size-${step}"
+        data-inherited-reset
+        aria-label=${component.resetLabel}
+        title=${component.resetLabel}
+        ?hidden=${inherited}
+        ?disabled=${disabled}
+        @click=${event => {
+    // Inside a field's <label>, a press would also reach the control the
+    // label is for -- a dropdown would open, a switch would flip.
+    event.preventDefault();
+    event.stopPropagation();
+    component.resetToInherited();
+  }}
+      ><i class="sf-icon" aria-hidden="true">restart_alt</i></button>
+    </span>
   `;
 }
 __webpack_async_result__();
@@ -2030,6 +2351,15 @@ function optionSizeGroup(value) {
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "c6c9dfe31af4"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
 
 /***/ },
 

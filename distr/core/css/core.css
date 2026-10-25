@@ -3,8 +3,9 @@
  *	SIMAI Framework
  *	https://simai.io
  *
- *	Copyright (c) 2008-2026 Rim Zabarov and contributors
- *	Released under the MIT License.
+ *	Author: Rim Zabarov
+ *	Copyright (c) 2008-2026 Rim Zabarov
+ *	Released under the Apache License, Version 2.0.
  */
 @layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.base {

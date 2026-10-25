@@ -225,4 +225,14 @@
     pointer-events: auto;
     touch-action: none;
   }
+  .sf-composition-overlay[data-sf-overlay-mode=frame] .sf-composition-overlay-frame {
+    transition: none;
+  }
+  .sf-composition-overlay[data-sf-overlay-mode=frame] .sf-composition-overlay-frame--selected .sf-composition-overlay-label {
+    cursor: default;
+    pointer-events: none;
+  }
+  .sf-composition-overlay[data-sf-overlay-editing] .sf-composition-overlay-frame--hover {
+    display: none;
+  }
 }
