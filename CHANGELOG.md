@@ -157,6 +157,14 @@
 
 ### Добавлено
 
+- `sf-sortable` insertion point: with `inserter-items`, a «+» between rows (hover, focus, keyboard) opens a searchable inserter and fires a cancellable `sf-sortable-insert` with `{index, item, to}` (simai/ui-source#21).
+- `sf-composition-overlay` framed mode: over a same-origin iframe canvas fed a flat node list (`frame`, `attachFrame`, `setNodes`), with hover and selection frames, a block toolbar, insertion points, plain-string inline editing (`sf-composition-overlay-edit`), scroll and resize sync and keyboard selection (simai/ui-source#22).
+- New `sf-image-field`: one image in a form — thumbnail, name and size, «Заменить…», «Убрать», drag a file to replace — with ten public CSS variables; field-renderers edit a single `file` field with variant `image` through it (simai/ui-source#27).
+- Inherited value across the input family (`sf-input`, `sf-textarea`, `sf-dropdown`, `sf-color`, `sf-switch`): `inherited-value` shows what the field falls back to, and a reset button fires a cancellable `sf-field:reset` (simai/ui-source#28).
+- `sf-dropdown`'s trigger input carries the field's name from its label or the host's `aria-label`, `aria-labelledby` or `<label for>` (simai/ui-source#32).
+- The selected segment of a segmented `sf-button-group` keeps `Highlight` / `HighlightText` in forced colours for every scheme (simai/ui-source#33).
+- Authorship: the notice, the package author and the copyright in the distribution name Rim Zabarov as author and sole rightholder; the Core stylesheet header states the Apache License 2.0; `AUTHORS`, `CITATION.cff` and `REUSE.toml` in the source.
+
 - Host port `simai.property-view-port` 1.14.0, backwards compatible with 1.13.0: a `lookup` field type (value `{value, label}`, a list when `multiple`; `field.source` names the host's reference source; inline `options` for short lists), `field.options` with optional `source` and `limit`, a save the host may ask to confirm (`refused` with reason `confirm_required` and `confirm: {summary, digest}`, re-sent with `confirm: "<digest>"`), and conditional fields `field.when` with `visible`, `required` and `enabled` condition trees.
 - The renderer set `smart/field-renderers` draws `lookup` in view, table cell, edit and filter.
 
