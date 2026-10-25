@@ -157,6 +157,9 @@
 
 ### Добавлено
 
+- New Smart components over existing class components, each with five to ten public CSS variables and nothing drawn differently: `sf-accordion` (sections from data or from `<details>`, single mode, sizes, WAI-ARIA accordion keyboard, `sf-accordion:toggle`), `sf-quantity` (a number field with steppers: spinbutton, locale-aware strict typing, bounds, hold to repeat, inherited value; the class quantity now sits on the size ladder; field-renderers variant `stepper`), `sf-code-input` (a one-time code over the class verification: one native input under the cells, paste and autofill, `sf-code-input:complete`), `sf-menu` (site navigation from data or nested links: vertical and horizontal, current page, collapse, disclosure keyboard, `sf-menu:navigate`, `sf-menu:toggle`).
+- Package reference `larena` names `sf-message-log`, `sf-thread-list` and `sf-change-confirm`, the conversation components of simai/ui-pro.
+
 - `sf-sortable` insertion point: with `inserter-items`, a «+» between rows (hover, focus, keyboard) opens a searchable inserter and fires a cancellable `sf-sortable-insert` with `{index, item, to}` (simai/ui-source#21).
 - `sf-composition-overlay` framed mode: over a same-origin iframe canvas fed a flat node list (`frame`, `attachFrame`, `setNodes`), with hover and selection frames, a block toolbar, insertion points, plain-string inline editing (`sf-composition-overlay-edit`), scroll and resize sync and keyboard selection (simai/ui-source#22).
 - New `sf-image-field`: one image in a form — thumbnail, name and size, «Заменить…», «Убрать», drag a file to replace — with ten public CSS variables; field-renderers edit a single `file` field with variant `image` through it (simai/ui-source#27).
