@@ -109,9 +109,9 @@ class FrameworkContractRegistryTest(unittest.TestCase):
                 # the free release (two of them, sf-data-view and
                 # sf-property-view, were never entries here); 48 with
                 # sf-page-header.
-                "smart-component": 55,
+                "smart-component": 59,
                 "recipe": 1,
-                "total": 346,
+                "total": 350,
             },
         )
         # The id names the runtimes it was built from; that is the claim, not
@@ -209,9 +209,12 @@ class FrameworkContractRegistryTest(unittest.TestCase):
                     "owner": "simai/larena-ui",
                     "provides": [
                         "smart.admin-menu",
+                        "smart.change-confirm",
                         "smart.data-view",
                         "smart.data-view-composite",
+                        "smart.message-log",
                         "smart.property-view",
+                        "smart.thread-list",
                     ],
                 }
             },
