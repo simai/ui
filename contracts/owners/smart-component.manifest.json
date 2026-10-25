@@ -842,7 +842,7 @@
         ],
         "declared": {
           "js": true,
-          "css": false
+          "css": true
         }
       },
       "requires": [
@@ -1215,6 +1215,7 @@
         }
       },
       "requires": [
+        "component.icon-buttons",
         "component.inputs",
         "smart.icons"
       ],
@@ -1766,7 +1767,11 @@
           "css": true
         }
       },
-      "requires": [],
+      "requires": [
+        "component.icon-buttons",
+        "component.icons",
+        "smart.context-menu"
+      ],
       "curated_for": []
     },
     {
@@ -1908,10 +1913,11 @@
         ],
         "declared": {
           "js": true,
-          "css": false
+          "css": true
         }
       },
       "requires": [
+        "component.icon-buttons",
         "component.icons",
         "component.switch"
       ],
@@ -2072,10 +2078,12 @@
         ],
         "declared": {
           "js": true,
-          "css": false
+          "css": true
         }
       },
       "requires": [
+        "component.icon-buttons",
+        "component.icons",
         "component.textarea"
       ],
       "curated_for": []
@@ -2791,6 +2799,58 @@
         "smart.icon-buttons",
         "smart.icons",
         "smart.inputs"
+      ],
+      "curated_for": []
+    },
+    {
+      "id": "smart.image-field",
+      "kind": "smart-component",
+      "name": "image-field",
+      "title": "Image field",
+      "owner": "simai/ui",
+      "lifecycle": "experimental",
+      "readiness": {
+        "status": "discoverable",
+        "safe_to_suggest": false,
+        "profiles": [
+          "plain-assets-v1"
+        ],
+        "blockers": []
+      },
+      "provenance": {
+        "repository": "https://github.com/simai/ui",
+        "tag": null,
+        "commit": "720203c5b5e5186e2d44f6e1f8d9c23a0e410cc1",
+        "source_refs": [
+          "simai/ui@720203c5b5e5186e2d44f6e1f8d9c23a0e410cc1:distr/smart/image-field",
+          "simai/ui@720203c5b5e5186e2d44f6e1f8d9c23a0e410cc1:distr/rule/rule.json#name=cl-image-field"
+        ]
+      },
+      "documentation_refs": [
+        "simai/ui@720203c5b5e5186e2d44f6e1f8d9c23a0e410cc1:README.md"
+      ],
+      "example_refs": [],
+      "runtime": {
+        "rule_name": "cl-image-field",
+        "tags": [
+          "sf-image-field"
+        ],
+        "asset_paths": [
+          "simai/ui@720203c5b5e5186e2d44f6e1f8d9c23a0e410cc1:distr/smart/image-field/css/image-field.css",
+          "simai/ui@720203c5b5e5186e2d44f6e1f8d9c23a0e410cc1:distr/smart/image-field/css/image-field.min.css",
+          "simai/ui@720203c5b5e5186e2d44f6e1f8d9c23a0e410cc1:distr/smart/image-field/js/image-field.js",
+          "simai/ui@720203c5b5e5186e2d44f6e1f8d9c23a0e410cc1:distr/smart/image-field/js/image-field.min.js",
+          "simai/ui@720203c5b5e5186e2d44f6e1f8d9c23a0e410cc1:distr/smart/image-field/js/image-field.min.js.LICENSE.txt",
+          "simai/ui@720203c5b5e5186e2d44f6e1f8d9c23a0e410cc1:distr/smart/image-field/template/default.js"
+        ],
+        "declared": {
+          "js": true,
+          "css": true
+        }
+      },
+      "requires": [
+        "smart.buttons",
+        "smart.icons"
       ],
       "curated_for": []
     }
