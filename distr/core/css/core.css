@@ -2776,6 +2776,10 @@ body {
   sf-composition-scope {
     display: contents;
   }
+  [data-sf-layout],
+  x-role {
+    display: contents;
+  }
 }
 @layer sf.components {
   .sf-editor-field {

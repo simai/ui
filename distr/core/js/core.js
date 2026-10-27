@@ -2973,14 +2973,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _rule__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_rule__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _mask__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("9770341d4bfa");
 /* harmony import */ var _composition_index_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("32dfc4431a24");
-/* harmony import */ var _position_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("2e9112dbdda9");
-/* harmony import */ var _preferences_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("51250bf01ab0");
-/* harmony import */ var _region_navigation_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("9edc14a11fec");
-/* harmony import */ var _effects_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("4f52f56c9555");
-/* harmony import */ var _notify_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("b4bff8456ce0");
-/* harmony import */ var _ready_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("5effd0d9c238");
-/* harmony import */ var _pending_tags_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("3c79afd07eeb");
-/* harmony import */ var _preloader__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("6c7f357fe960");
+/* harmony import */ var _assembly_index_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("ff34a74152a4");
+/* harmony import */ var _position_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("2e9112dbdda9");
+/* harmony import */ var _preferences_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("51250bf01ab0");
+/* harmony import */ var _region_navigation_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("9edc14a11fec");
+/* harmony import */ var _effects_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("4f52f56c9555");
+/* harmony import */ var _notify_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("b4bff8456ce0");
+/* harmony import */ var _ready_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("5effd0d9c238");
+/* harmony import */ var _pending_tags_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("3c79afd07eeb");
+/* harmony import */ var _preloader__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("6c7f357fe960");
+
 
 
 
@@ -3004,7 +3006,7 @@ if (typeof window !== 'undefined') {
   window.SF = window.SF || {};
   const SF = window.SF; // SF.ready, before the Loader chunk is even asked for (simai/ui-source#16).
 
-  (0,_ready_js__WEBPACK_IMPORTED_MODULE_11__.installReady)(window);
+  (0,_ready_js__WEBPACK_IMPORTED_MODULE_12__.installReady)(window);
 
   if (!SF.loadRuntime) {
     let loading = null;
@@ -3170,8 +3172,8 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
       return;
     }
 
-    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_12__.installPendingTags)(window);
-    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_12__.holdUndefinedElements)(window);
+    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_13__.installPendingTags)(window);
+    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_13__.holdUndefinedElements)(window);
   };
 
   holdUndefinedUntilDefined();
@@ -3179,18 +3181,18 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
   const mountPreloader = () => {
     const cfg = {
       enabled: true,
-      background: (0,_preloader__WEBPACK_IMPORTED_MODULE_13__.getPreloaderBackground)(),
+      background: (0,_preloader__WEBPACK_IMPORTED_MODULE_14__.getPreloaderBackground)(),
       modifier: 'loader-default',
       tempStyles: 'inset: 0;position: fixed;width: 100%;height: 100vh;opacity: 1;z-index: 1000;background-color: var(--sf-color--surface-highest, var(--sf-surface-0, #fff));text-align: center;',
-      color: (0,_preloader__WEBPACK_IMPORTED_MODULE_13__.getPreloaderColor)(),
-      width: _preloader__WEBPACK_IMPORTED_MODULE_13__.DEFAULT_PRELOADER.width,
-      height: _preloader__WEBPACK_IMPORTED_MODULE_13__.DEFAULT_PRELOADER.height,
+      color: (0,_preloader__WEBPACK_IMPORTED_MODULE_14__.getPreloaderColor)(),
+      width: _preloader__WEBPACK_IMPORTED_MODULE_14__.DEFAULT_PRELOADER.width,
+      height: _preloader__WEBPACK_IMPORTED_MODULE_14__.DEFAULT_PRELOADER.height,
       content: '',
       delay: 300,
       ...(window.SF_BOOT_CONFIG?.preloader || {})
     };
     if (cfg.enabled === false || document.querySelector('.sf-loader')) return;
-    const svgContent = cfg.content || (0,_preloader__WEBPACK_IMPORTED_MODULE_13__.createPreloaderContent)(cfg);
+    const svgContent = cfg.content || (0,_preloader__WEBPACK_IMPORTED_MODULE_14__.createPreloaderContent)(cfg);
     let wrap = null;
     let preloaderWrap = null;
     let preloaderRun = false;
@@ -3204,7 +3206,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
 
     const stopAnimation = () => {
       if (preloaderWrap) {
-        (0,_preloader__WEBPACK_IMPORTED_MODULE_13__.stopPreloaderMotion)(preloaderWrap);
+        (0,_preloader__WEBPACK_IMPORTED_MODULE_14__.stopPreloaderMotion)(preloaderWrap);
       }
     };
 
@@ -3213,7 +3215,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
       // preloader over them (§5.4). Read when the preloader would show, after
       // its delay, when the server's markup has been parsed.
 
-      if ((0,_preloader__WEBPACK_IMPORTED_MODULE_13__.pageHasFirstPaint)(document)) return;
+      if ((0,_preloader__WEBPACK_IMPORTED_MODULE_14__.pageHasFirstPaint)(document)) return;
       wrap = document.createElement('div');
       const inner = document.createElement('div');
       wrap.classList.add('sf-loader', cfg.modifier);
@@ -3235,7 +3237,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
         wrap: wrap,
         preloaderActive: true
       };
-      (0,_preloader__WEBPACK_IMPORTED_MODULE_13__.startPreloaderMotion)(preloaderWrap, () => preloaderRun, cfg);
+      (0,_preloader__WEBPACK_IMPORTED_MODULE_14__.startPreloaderMotion)(preloaderWrap, () => preloaderRun, cfg);
     };
 
     const cancelBuild = () => {
@@ -3272,7 +3274,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
 
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', () => {
-        if (!(0,_preloader__WEBPACK_IMPORTED_MODULE_13__.pageHasFirstPaint)(document)) return;
+        if (!(0,_preloader__WEBPACK_IMPORTED_MODULE_14__.pageHasFirstPaint)(document)) return;
         cancelBuild();
         preloaderRun = false;
         stopAnimation();
@@ -8825,6 +8827,2821 @@ function rectToClientRect(rect) {
 }
 
 
+
+
+/***/ },
+
+/***/ "b60c1434b0be"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   AssemblyCore: () => (/* binding */ AssemblyCore),
+/* harmony export */   activity: () => (/* binding */ activity),
+/* harmony export */   headlessView: () => (/* binding */ headlessView),
+/* harmony export */   whenIdle: () => (/* binding */ whenIdle)
+/* harmony export */ });
+/* harmony import */ var _definition_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("9ee717a9c619");
+/* harmony import */ var _link_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("dfdb640e668b");
+/* harmony import */ var _journal_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("6d4272a67a74");
+/* harmony import */ var _logic_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("eb7fe3498c26");
+/* harmony import */ var _words_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("ff707ab72ad6");
+/* harmony import */ var _values_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("8cf8ac8cb59d");
+// The bus of one assembly instance (standard simai.smart-component 1.3.8 §7,
+// §9, §10): keys with one writer, derived keys, parts in roles and their
+// bindings, rules and turns. It knows nothing of the DOM: what it needs of the
+// page — a part's element, a layout, the address — it asks of its view
+// (host.mjs on a page; a plain object in tests and in Node).
+//
+// A part joins through a link (link.mjs): set a setting, read a value, ask an
+// action, hand a port, start, dispose. The part answers through its context:
+// report its values, emit its events, say its words. A nested assembly is a
+// part like any other: its frame is its parent's context.
+
+
+
+
+
+
+
+
+const ACTIVITY = (() => {
+  const root = typeof globalThis !== 'undefined' ? globalThis : {};
+  const key = '__sfAssemblyActivity';
+  if (!root[key]) root[key] = {turns: 0, waiting: 0, timers: 0, seq: 0, idle: new Set()};
+  return root[key];
+})();
+
+/** What the buses of the page are doing: turns running, steps waiting, debounce timers pending. */
+const activity = () => ({turns: ACTIVITY.turns, waiting: ACTIVITY.waiting, timers: ACTIVITY.timers});
+
+const settleIdle = () => {
+  if (ACTIVITY.turns || ACTIVITY.waiting || ACTIVITY.timers) return;
+  for (const resolve of [...ACTIVITY.idle]) resolve(true);
+  ACTIVITY.idle.clear();
+};
+const count = (field, by) => {
+  ACTIVITY[field] += by;
+  if (by < 0) settleIdle();
+};
+
+/** A promise that settles when no bus has a turn, a wait or a timer (tests, probes, the Studio). */
+function whenIdle() {
+  if (!ACTIVITY.turns && !ACTIVITY.waiting && !ACTIVITY.timers) return Promise.resolve(true);
+  return new Promise((resolve) => ACTIVITY.idle.add(resolve));
+}
+
+const thenable = (value) => value !== null && typeof value === 'object' && typeof value.then === 'function';
+const then = (value, next) => (thenable(value) ? value.then(next) : next(value));
+const STREAM_FACTS = new Set(['begun', 'chunk', 'completed', 'failed', 'cancelled']);
+const STREAM_ENDS = new Set(['completed', 'failed', 'cancelled']);
+
+/** A controller aborted with any of the given signals, and on its own. */
+function linked(...signals) {
+  const controller = new globalThis.AbortController();
+  const parents = signals.filter(Boolean);
+  for (const parent of parents) if (parent.aborted) { controller.abort(parent.reason); return {controller, signal: controller.signal}; }
+  if (typeof globalThis.AbortSignal.any === 'function') return {controller, signal: globalThis.AbortSignal.any([controller.signal, ...parents])};
+  const abort = (event) => controller.abort(event?.target?.reason);
+  for (const parent of parents) parent.addEventListener('abort', abort, {once: true, signal: controller.signal});
+  return {controller, signal: controller.signal};
+}
+
+/** An answer, raced against an abort (cancelled) and a timeout (unavailable, reason timeout) (§10.3, §10.7). */
+function race(promise, signal, timeout, onLate) {
+  return new Promise((resolve) => {
+    let done = false;
+    let timer = null;
+    const finish = (outcome) => {
+      if (done) return;
+      done = true;
+      if (timer) globalThis.clearTimeout(timer);
+      signal.removeEventListener('abort', aborted);
+      resolve(outcome);
+    };
+    const aborted = () => finish({answer: 'cancelled', reason: String(signal.reason?.message ?? signal.reason ?? 'aborted')});
+    if (signal.aborted) { aborted(); return; }
+    signal.addEventListener('abort', aborted, {once: true});
+    if (timeout > 0) timer = globalThis.setTimeout(() => finish({answer: 'unavailable', reason: 'timeout', message: ''}), timeout);
+    Promise.resolve(promise).then(
+      (value) => { if (done) onLate?.((0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.outcomeOf)(value)); else finish((0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.outcomeOf)(value)); },
+      (error) => { if (done) onLate?.({answer: 'refused', reason: 'error'}); else finish({answer: 'refused', reason: 'error', message: String(error?.message ?? error)}); },
+    );
+  });
+}
+
+const sleep = (ms, signal) => new Promise((resolve) => {
+  if (signal.aborted) { resolve(false); return; }
+  const timer = globalThis.setTimeout(() => { signal.removeEventListener('abort', stop); resolve(true); }, ms);
+  const stop = () => { globalThis.clearTimeout(timer); resolve(false); };
+  signal.addEventListener('abort', stop, {once: true});
+});
+
+/**
+ * A view that has no page (Node, tests, a worker): a leaf's link comes from
+ * `createLink(rec, context)`; a nested assembly whose definition is in
+ * `definitions` runs as a headless bus of its own.
+ */
+function headlessView({createLink = null, definitions = null, locale = 'en'} = {}) {
+  const view = {
+    interfaceOf: (tag) => _definition_mjs__WEBPACK_IMPORTED_MODULE_0__.interfaces.of(tag),
+    isAssembly: (tag) => Boolean(definitions?.has(tag)),
+    roleFlags: () => [],
+    locale: () => locale,
+    createPart(rec, context) {
+      const child = definitions?.get(rec.def.tag);
+      if (!child) return createLink?.(rec, context) ?? null;
+      const core = new AssemblyCore(child, {
+        instanceId: rec.instanceId, signal: context.signal, view: headlessView({createLink, definitions, locale}),
+        frame: {report: (values) => context.report(values), emit: (verb, detail, options) => context.emit(verb, detail, options)},
+      });
+      rec.child = core;
+      return (0,_link_mjs__WEBPACK_IMPORTED_MODULE_1__.assemblyLink)(core);
+    },
+  };
+  return view;
+}
+
+class AssemblyCore {
+  /**
+   * @param definition compiled manifest (definition.mjs)
+   * @param options.instanceId  the instance's role path (§7.1.1)
+   * @param options.frame       what is outside: `report(values, {origin})`, `emit(verb, detail, {chain})`
+   * @param options.view        the page side (host.mjs) or headlessView()
+   * @param options.signal      the scope of the parent, if any (§7.7)
+   * @param options.settings    the first values of the settings (writer parent)
+   */
+  constructor(definition, options = {}) {
+    this.def = definition;
+    this.id = options.instanceId ?? `page/${definition.tag}`;
+    this.frame = options.frame ?? {report() {}, emit() {}};
+    this.view = options.view ?? headlessView({createLink: options.createLink, definitions: options.definitions});
+    this.chainLimit = options.chainLimit ?? _values_mjs__WEBPACK_IMPORTED_MODULE_5__.CAUSE_CHAIN_DEPTH;
+    this.scope = linked(options.signal);
+    this.keys = Object.create(null);
+    this.out = Object.create(null);
+    this.roles = new Map(); // role → {role, parts: Map(entry id | '' → rec), flags: [...]}
+    this.ports = new Map();
+    this.runs = new Map(); // rule id → {active: Set(run), tail}
+    this.calls = new Map(); // outside action → {active: Set, tail}
+    this.turns = 0;
+    this.waiting = 0;
+    this.running = false;
+    this.disposed = false;
+    this.initialSettings = options.settings ?? {};
+  }
+
+  // ---------- the journal and errors ----------
+  log(kind, text, data, level) { return (0,_journal_mjs__WEBPACK_IMPORTED_MODULE_2__.record)(this.id, kind, text, data, level); }
+  error(kind, text, data = {}) {
+    (0,_journal_mjs__WEBPACK_IMPORTED_MODULE_2__.record)(this.id, kind, text, data, 'error');
+    this.view.error?.(kind, text, data);
+  }
+
+  // ---------- start (§7, §7.2.1) ----------
+  start() {
+    if (this.running || this.disposed) return this;
+    this.running = true;
+    for (const problem of this.def.problems) this.error('definition', `${problem.section}: ${problem.text}`, problem);
+    for (const note of this.def.notes ?? []) this.log('warn', `${note.section}: ${note.text}`, note, 'warn');
+    for (const [name, def] of this.def.keys) {
+      if (def.writer === 'logic') this.keys[name] = this.def.initial(name);
+      else if (def.writer === 'parent') {
+        const given = this.initialSettings[name];
+        const value = given !== undefined ? given : (0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.clone)(this.def.manifest.settings?.[name]?.default ?? null);
+        this.keys[name] = (0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.fits)(def, value) ? value : null;
+        if (!(0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.fits)(def, value)) this.error('type', `setting "${name}" (${(0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.typeOf)(def)}) refused ${(0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.show)(value)}`);
+      } else this.keys[name] = null;
+    }
+    this.view.build?.(this);
+    for (const [name, value] of this.view.restore?.(this.def.persisted) ?? []) {
+      if ((0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.fits)(this.def.keys.get(name), value)) this.keys[name] = value;
+    }
+    for (const [name, role] of this.def.roles) {
+      this.roles.set(name, {role, parts: new Map(), flags: [role.if, ...(this.view.roleFlags?.(name) ?? [])].filter(Boolean)});
+    }
+    this.computeDerived(null);
+    this.computeAggregates();
+    this.log('start', `${this.def.tag} starts as ${this.id}`, {tag: this.def.tag});
+    for (const [name, state] of this.roles) {
+      if (state.role.each) this.syncEach(name);
+      else this.placePart(state, null);
+    }
+    this.syncShown(null);
+    this.computeAggregates();
+    const first = {};
+    for (const [name, key] of this.def.values) {
+      this.out[name] = this.keys[key];
+      if (this.keys[key] !== null) first[name] = this.keys[key];
+    }
+    if (Object.keys(first).length) this.frame.report(first, {origin: 'start'});
+    this.view.started?.(this);
+    return this;
+  }
+
+  // ---------- parts (§7.2) ----------
+  placePart(state, entry) {
+    const {role} = state;
+    const entryId = entry ? String(entry.id) : '';
+    const instanceId = `${this.id}/${role.name}${entry ? `[${entryId}]` : ''}`;
+    const iface = this.view.interfaceOf?.(role.tag) ?? null;
+    const refusal = (0,_definition_mjs__WEBPACK_IMPORTED_MODULE_0__.checkRole)(this.def, role, iface);
+    if (refusal) {
+      this.error('refused', `role "${role.name}" refuses its part: ${refusal.text}`, {role: role.name, reason: refusal.reason});
+      this.view.refuse?.(role.name, refusal.reason, refusal.text);
+      return null;
+    }
+    const scope = linked(this.scope.signal);
+    const rec = {
+      role: role.name, def: role, entry, entryId, instanceId, iface, scope, link: null,
+      started: false, closed: false, passed: new Map(), pending: new Map(), timers: new Map(),
+      calls: new Map(), causes: [], streams: new Map(), isAssembly: Boolean(this.view.isAssembly?.(role.tag)),
+    };
+    const core = this;
+    rec.context = {
+      get instanceId() { return rec.instanceId; },
+      role: role.name,
+      get entry() { return rec.entry; },
+      signal: scope.signal,
+      iface,
+      get started() { return rec.started; },
+      report: (values, options) => core.reportFromPart(rec, values, options),
+      emit: (verb, detail, options) => core.emitFromPart(rec, verb, detail, options),
+      word: (path, n) => core.word(rec, path, n),
+      journal: (kind, text, data, level) => (0,_journal_mjs__WEBPACK_IMPORTED_MODULE_2__.record)(rec.instanceId, kind, text, data, level),
+      id: (local) => `${rec.instanceId.replace(/\W+/g, '-')}--${local}`,
+    };
+    rec.link = this.view.createPart(rec, rec.context);
+    if (!rec.link) {
+      this.error('part', `role "${role.name}": part ${role.tag} could not be placed`, {role: role.name});
+      scope.controller.abort('not placed');
+      return null;
+    }
+    state.parts.set(entryId, rec);
+    if (entry) this.log('entry', `${role.name}[${entryId}] placed`, {role: role.name, entry: entryId});
+    if (role.start === 'now') this.startPart(rec, 'now');
+    else this.view.awaitStart?.(rec, role.start);
+    return rec;
+  }
+
+  /** The assembly starts a part, never the part itself (§7.2.1). */
+  startPart(rec, why = 'now') {
+    if (rec.started || this.disposed || rec.scope.signal.aborted) return;
+    rec.started = true;
+    (0,_journal_mjs__WEBPACK_IMPORTED_MODULE_2__.record)(rec.instanceId, 'start', `${rec.instanceId} starts${why !== 'now' ? ` (${why})` : ''}`, {role: rec.role, mode: rec.def.start, why});
+    this.view.startPart?.(rec);
+    rec.pending.clear(); // superseded: the part reads the current values now
+    this.pushAll(rec);
+    for (const port of this.ports.values()) if (rec.isAssembly || rec.iface.port?.id === port.id) rec.link.connectPort?.(port);
+    rec.link.start?.();
+  }
+
+  /** Everything a part reads: its constants, its words, its entry and its keys. */
+  pushAll(rec) {
+    const {def: role} = rec;
+    for (const [name, value] of Object.entries(role.constants)) this.pushSetting(rec, name, this.withListWords(rec, name, value));
+    for (const [name, value] of this.wordSettings(rec)) this.pushSetting(rec, name, value);
+    for (const binding of role.entryBinds) this.pushSetting(rec, binding.member, rec.entry?.[binding.entryField] ?? null);
+    for (const binding of role.binds) {
+      if (this.keys[binding.key] === null) continue; // unset is not passed to a new part
+      this.pushSetting(rec, binding.member, this.keys[binding.key]);
+    }
+  }
+
+  /** The constant word settings of a role from the language file: `roles.<role>.settings.<setting>` (§7.2, §11). */
+  wordSettings(rec) {
+    const out = [];
+    const locale = this.view.locale?.(rec) ?? 'en';
+    const settings = this.def.words.find(locale, `roles.${rec.role}.settings`).word;
+    if (!(0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.isObject)(settings)) return out;
+    for (const [name, word] of Object.entries(settings)) {
+      if (!(name in rec.iface.settings)) continue; // a word the part does not take: the part asks it by word()
+      if (typeof word === 'string') out.push([name, word]);
+    }
+    return out;
+  }
+
+  /** The words of a constant list's entries: `roles.<role>.items.<value>`, `roles.<role>.columns.<key>` (§11.3). */
+  withListWords(rec, name, value) {
+    if (!Array.isArray(value) || !value.some(_values_mjs__WEBPACK_IMPORTED_MODULE_5__.isObject)) return value;
+    const locale = this.view.locale?.(rec) ?? 'en';
+    const field = rec.iface.settings[name]?.of?.text !== undefined && rec.iface.settings[name]?.of?.label === undefined ? 'text' : 'label';
+    const columns = name === 'columns';
+    return value.map((entry) => {
+      if (!(0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.isObject)(entry) || entry[field] !== undefined) return entry;
+      const id = columns ? entry.key : (entry.value ?? entry.id);
+      if (id === undefined) return entry;
+      const word = this.def.words.text(locale, `roles.${rec.role}.${columns ? 'columns' : 'items'}.${id}`);
+      return word === null ? entry : {...entry, [field]: word};
+    });
+  }
+
+  /** The language changed: constant words are given again (§11.1). */
+  relanguage() {
+    for (const state of this.roles.values()) for (const rec of state.parts.values()) {
+      if (!rec.started) continue;
+      for (const [name, value] of Object.entries(rec.def.constants)) this.pushSetting(rec, name, this.withListWords(rec, name, value));
+      for (const [name, value] of this.wordSettings(rec)) this.pushSetting(rec, name, value);
+    }
+  }
+
+  /** A setting carried to a part (§7.2): checked, debounced, deferred, and never passed twice. */
+  pushSetting(rec, member, value, debounce = 0) {
+    if (rec.scope.signal.aborted) return;
+    if (debounce > 0) {
+      if (rec.timers.has(member)) { globalThis.clearTimeout(rec.timers.get(member)); count('timers', -1); }
+      count('timers', 1);
+      rec.timers.set(member, globalThis.setTimeout(() => {
+        rec.timers.delete(member);
+        count('timers', -1);
+        this.pushSetting(rec, member, value, 0);
+      }, debounce));
+      return;
+    }
+    const def = rec.iface.settings[member] ?? rec.iface.values[member];
+    if (!(0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.fits)(def, value)) { this.error('type', `${rec.instanceId}: setting "${member}" (${(0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.typeOf)(def)}) refused ${(0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.show)(value)}`, {role: rec.role}); return; }
+    if (!rec.started || rec.closed) { // §7.2.1: not started yet, or its container is closed: one read when it opens
+      if (rec.started && (!rec.passed.has(member) || !(0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.same)(rec.passed.get(member), value))) {
+        rec.pending.set(member, value);
+        this.view.busy?.(rec, true);
+      } else if (!rec.started) rec.pending.set(member, value);
+      else rec.pending.delete(member);
+      return;
+    }
+    if (rec.passed.has(member) && (0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.same)(rec.passed.get(member), value)) return;
+    rec.passed.set(member, value);
+    rec.link.set(member, value);
+    return true;
+  }
+
+  /** A started part's container closed or opened again (§7.2.1): reads wait until it opens. */
+  setClosed(rec, closed) {
+    if (rec.closed === closed) return;
+    rec.closed = closed;
+    if (closed || !rec.started) {
+      if (closed) this.log('defer', `${rec.instanceId}: its container closed; the reads its bindings cause wait`, {role: rec.role});
+      return;
+    }
+    const pending = [...rec.pending];
+    rec.pending.clear();
+    if (pending.length) this.log('defer', `${rec.instanceId}: its container opened; one read with ${pending.map(([name]) => name).join(', ')}`, {role: rec.role});
+    for (const [member, value] of pending) this.pushSetting(rec, member, value);
+    this.view.busy?.(rec, false);
+  }
+
+  /** Keys read back from where they persist (the address after Back, §7.5): one turn of writes. */
+  restore(values) {
+    const turn = this.newTurn('persist', {}, {fromAddress: true});
+    for (const [name, value] of values) {
+      const def = this.def.keys.get(name);
+      if (def && (def.writer === 'logic' || def.writer === 'parent')) turn.writes.set(name, {value, writer: def.writer});
+    }
+    this.log('turn', `turn ${turn.n} · the address changed: ${[...turn.writes.keys()].join(', ') || 'nothing'}`, {turn: turn.n, on: 'persist'});
+    return this.endTurn(turn);
+  }
+
+  partsOf(name) { return [...(this.roles.get(name)?.parts.values() ?? [])]; }
+
+  /** A key read as a flag, `<key>` or `!<key>` (§7.2.2). */
+  flag(name) {
+    const negate = name.startsWith('!');
+    const value = this.keys[name.slice(negate ? 1 : 0)] === true;
+    return negate ? !value : value;
+  }
+  present(name) {
+    const state = this.roles.get(name);
+    return !state || state.flags.every((flag) => this.flag(flag));
+  }
+  hidden(name) {
+    const hidden = this.roles.get(name)?.role.hidden;
+    return typeof hidden === 'string' ? this.flag(hidden) : false;
+  }
+
+  /** `if` and `hidden` of every role reading a changed key (§7.2.2). */
+  syncShown(changed) {
+    for (const [name, state] of this.roles) {
+      const flags = [...state.flags, state.role.hidden].filter(Boolean).map((flag) => flag.replace(/^!/, ''));
+      if (!flags.length || (changed && !flags.some((key) => changed.has(key)))) continue;
+      const present = this.present(name);
+      const hidden = this.hidden(name);
+      if (state.shownAs && state.shownAs.present === present && state.shownAs.hidden === hidden) continue;
+      if (state.shownAs) this.log('shown', `${name} ${!present ? 'leaves the DOM, the form value and the validity' : hidden ? 'is hidden, its controls disabled' : 'is shown'}`, {role: name, present, hidden});
+      state.shownAs = {present, hidden};
+      this.view.show?.(name, present, hidden);
+    }
+  }
+
+  /** A role per entry: one part per entry, kept by id, in entry order (§7.2.3). */
+  syncEach(name) {
+    const state = this.roles.get(name);
+    const list = Array.isArray(this.keys[state.role.each]) ? this.keys[state.role.each] : [];
+    const seen = new Set();
+    const ordered = [];
+    for (const entry of list) {
+      if (!(0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.isObject)(entry) || entry.id === undefined || entry.id === null) { this.error('each', `an entry of ${state.role.each} has no id`, {role: name}); continue; }
+      const id = String(entry.id);
+      if (seen.has(id)) { this.error('each', `two entries of ${state.role.each} have the id ${id}`, {role: name}); continue; }
+      seen.add(id);
+      let rec = state.parts.get(id);
+      if (!rec) rec = this.placePart(state, entry);
+      else if (!(0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.same)(rec.entry, entry)) {
+        rec.entry = entry;
+        for (const binding of rec.def.entryBinds) this.pushSetting(rec, binding.member, entry[binding.entryField] ?? null);
+      }
+      if (rec) ordered.push(rec);
+    }
+    for (const [id, rec] of state.parts) if (!seen.has(id)) {
+      state.parts.delete(id);
+      this.disposePart(rec);
+      this.log('entry', `${name}[${id}] removed; its scope ends`, {role: name, entry: id});
+    }
+    this.view.order?.(name, ordered);
+  }
+
+  disposePart(rec) {
+    for (const [id, state] of rec.streams) if (state === 'open') this.log('stream', `${rec.instanceId}: stream ${id} ends cancelled with its scope`, {role: rec.role});
+    for (const timer of rec.timers.values()) { globalThis.clearTimeout(timer); count('timers', -1); }
+    rec.timers.clear();
+    rec.scope.controller.abort('removed');
+    try { rec.link.dispose?.(); } catch (error) { this.error('part', `${rec.instanceId}: dispose failed: ${error?.message ?? error}`); }
+    this.view.removePart?.(rec);
+  }
+
+  // ---------- derived keys and aggregates (§7.1.2, §17.4) ----------
+  computeDerived(dirty) {
+    const changed = [];
+    if (!this.def.derived.length) return changed;
+    const reader = (0,_logic_mjs__WEBPACK_IMPORTED_MODULE_3__.createReader)({key: (name) => this.keys[name], from: {}, fail: (text) => this.error('reading', text)});
+    const due = dirty ? new Set() : null;
+    if (dirty) for (const key of dirty) for (const name of this.def.dependents.get(key) ?? []) due.add(name);
+    for (const name of this.def.derived) {
+      if (due && !due.has(name)) continue;
+      const def = this.def.keys.get(name);
+      const value = reader.read(def.from) ?? null;
+      if (!(0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.fits)(def, value)) { this.error('type', `derived "${name}" (${(0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.typeOf)(def)}) computed ${(0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.show)(value)}`); continue; }
+      if ((0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.same)(this.keys[name], value)) continue;
+      changed.push([name, this.keys[name]]);
+      this.keys[name] = value;
+      if (due) for (const next of this.def.dependents.get(name) ?? []) due.add(next);
+    }
+    return changed;
+  }
+
+  computeAggregates() {
+    const changed = [];
+    if (!this.def.aggregates.length) return changed;
+    const value = {};
+    let valid = true;
+    for (const [name, state] of this.roles) {
+      if (!this.present(name) || this.hidden(name)) continue;
+      for (const rec of state.parts.values()) {
+        const values = rec.iface.values;
+        if (!('value' in values) && !('checked' in values)) continue; // not a form control
+        if (rec.link.valid?.() === false) valid = false;
+        value[rec.entry ? `${name}[${rec.entryId}]` : name] = rec.link.get?.('value' in values ? 'value' : 'checked') ?? null;
+      }
+    }
+    for (const [name, which] of this.def.aggregates) {
+      const next = which === 'valid' ? valid : value;
+      if ((0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.same)(this.keys[name], next)) continue;
+      changed.push([name, this.keys[name]]);
+      this.keys[name] = next;
+    }
+    return changed;
+  }
+
+  // ---------- turns (§10) ----------
+  newTurn(on, payload, options = {}) {
+    const parent = options.signal ?? this.scope.signal;
+    return {
+      n: ++ACTIVITY.seq, on, payload: payload ?? {}, chain: options.chain ?? [], entry: options.entry ?? null,
+      source: options.source ?? null, writes: new Map((options.preset ?? []).map(([key, value, writer]) => [key, {value, writer}])),
+      after: [], refused: null, outcome: null, cancel: options.cancel ?? null, origin: options.origin ?? null, parentSignal: parent, ownScope: null,
+      get scope() { return this.ownScope ?? (this.ownScope = linked(this.parentSignal)); },
+      fromAddress: Boolean(options.fromAddress),
+    };
+  }
+
+  /**
+   * One turn: one event and every rule hearing it, in list order; the writes
+   * apply together at its end (§10.1, §10.2). Runs synchronously until the
+   * first step that waits, so a `refuse` reaches a cancelable request in time.
+   */
+  fire(on, payload = {}, options = {}) {
+    if (this.disposed) return Promise.resolve(null);
+    const turn = this.newTurn(on, payload, options);
+    const rules = this.def.byTrigger.get(on) ?? [];
+    this.log('turn', `turn ${turn.n} · ${on}${Object.keys(turn.payload).length ? ` ${(0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.show)(turn.payload)}` : ''}${rules.length ? '' : ' — no rules'}`, {turn: turn.n, on, chain: turn.chain.length});
+    if (turn.chain.length >= this.chainLimit) {
+      this.error('cut', `the cause chain is cut at depth ${this.chainLimit} in ${this.id} (§10.5)`, {turn: turn.n, chain: turn.chain});
+      return Promise.resolve(turn);
+    }
+    const [head] = (0,_definition_mjs__WEBPACK_IMPORTED_MODULE_0__.splitTrigger)(on);
+    if (rules.length && this.roles.has(head) && !this.present(head)) {
+      this.log('skip', `${head} is out under if; its rules do not run`, {turn: turn.n});
+      return this.endTurn(turn);
+    }
+    if (this.waiting > 0) this.log('overlap', `turn ${turn.n} starts while ${this.waiting} step(s) of this bus wait`, {turn: turn.n});
+    this.turns += 1;
+    count('turns', 1);
+    let result;
+    try {
+      result = this.runRules(turn, rules, 0);
+    } catch (error) {
+      this.error('turn', `turn ${turn.n} failed: ${error?.message ?? error}`);
+    }
+    const finish = () => {
+      this.turns -= 1;
+      count('turns', -1);
+      return this.endTurn(turn);
+    };
+    return thenable(result)
+      ? result.catch((error) => this.error('turn', `turn ${turn.n} failed: ${error?.message ?? error}`)).then(finish)
+      : finish();
+  }
+
+  endTurn(turn) {
+    this.commit(turn);
+    turn.ownScope?.controller.abort('turn ended');
+    const after = turn.after.splice(0);
+    let chain = null;
+    for (const next of after) chain = chain ? chain.then(next) : then(null, next);
+    return Promise.resolve(chain).then(() => turn, (error) => { this.error('turn', `after turn ${turn.n}: ${error?.message ?? error}`); return turn; });
+  }
+
+  runRules(turn, rules, index) {
+    for (let i = index; i < rules.length; i += 1) {
+      const result = this.runRule(turn, rules[i]);
+      if (thenable(result)) return result.then(() => this.runRules(turn, rules, i + 1));
+    }
+    return null;
+  }
+
+  readerFor(turn, run) {
+    return (0,_logic_mjs__WEBPACK_IMPORTED_MODULE_3__.createReader)({
+      key: (name) => (turn.writes.has(name) ? turn.writes.get(name).value : this.keys[name]),
+      from: turn.payload,
+      entry: turn.entry,
+      get outcome() { return run?.inOtherwise ? run.outcome : null; },
+      fail: (text) => this.error('reading', `${run?.rule.id ?? 'rule'}: ${text}`, {turn: turn.n}),
+    });
+  }
+
+  runRule(turn, rule) {
+    const tag = `${this.id}:${rule.id}`;
+    if (turn.chain.includes(tag)) { this.error('cut', `${rule.id} already ran for this cause (a loop, §10.5)`, {turn: turn.n, rule: rule.id}); return null; }
+    if (turn.chain.length + 1 > this.chainLimit) { this.error('cut', `the cause chain is cut at depth ${this.chainLimit} at ${tag} (§10.5)`, {turn: turn.n, rule: rule.id}); return null; }
+    if (rule.if && !this.readerFor(turn, null).test(rule.if)) { this.log('skip', `${rule.id}: if does not hold`, {turn: turn.n, rule: rule.id}); return null; }
+    const policy = rule.concurrency ?? 'parallel';
+    let state = this.runs.get(rule.id);
+    if (!state) { state = {active: new Set(), tail: null}; this.runs.set(rule.id, state); }
+    if (state.active.size) {
+      if (policy === 'drop') {
+        this.log('concurrency', `${rule.id}: dropped while a run waits (drop)`, {turn: turn.n, rule: rule.id, policy});
+        if (!turn.refused) { turn.refused = 'busy'; turn.cancel?.('busy'); }
+        return null;
+      }
+      if (policy === 'latest') {
+        this.log('concurrency', `${rule.id}: replaces the run that waits (latest); its step answers cancelled`, {turn: turn.n, rule: rule.id, policy});
+        for (const earlier of state.active) earlier.scope.controller.abort('latest');
+      }
+      if (policy === 'queue') this.log('concurrency', `${rule.id}: queued behind the run that waits (queue)`, {turn: turn.n, rule: rule.id, policy});
+      if (policy === 'parallel') this.log('concurrency', `${rule.id}: runs beside the run that waits (parallel)`, {turn: turn.n, rule: rule.id, policy});
+    }
+    const run = {rule, cause: [...turn.chain, tag], scope: linked(turn.scope.signal), waited: false, outcome: null, inOtherwise: false};
+    run.read = this.readerFor(turn, run);
+    const go = () => {
+      this.log('rule', `${rule.id} runs`, {turn: turn.n, rule: rule.id, tag: this.def.tag});
+      let result;
+      try {
+        result = this.runSteps(run, turn, rule.steps ?? [], 0);
+      } catch (error) {
+        this.error('rule', `${rule.id} failed: ${error?.message ?? error}`, {rule: rule.id});
+        result = 'stop';
+      }
+      return then(result, (ended) => {
+        if (run.outcome && !turn.outcome) turn.outcome = run.outcome; // the rule ended without applied: its outcome
+        if (ended !== 'fail' || !Array.isArray(rule.otherwise)) return ended;
+        run.inOtherwise = true;
+        this.log('otherwise', `${rule.id}: otherwise runs (${run.outcome?.answer})`, {turn: turn.n, rule: rule.id, tag: this.def.tag});
+        return this.runSteps(run, turn, rule.otherwise, 0);
+      });
+    };
+    const settle = () => { state.active.delete(run); run.scope.controller.abort('run ended'); };
+    let result;
+    if (state.active.size && policy === 'queue') {
+      const before = state.tail;
+      result = Promise.resolve(before).then(go);
+    } else {
+      result = go();
+    }
+    state.active.add(run);
+    if (!thenable(result)) { settle(); return null; }
+    const tail = result.catch((error) => this.error('rule', `${rule.id} failed: ${error?.message ?? error}`)).then(settle);
+    state.tail = tail;
+    return tail;
+  }
+
+  runSteps(run, turn, steps, index) {
+    for (let i = index; i < steps.length; i += 1) {
+      const step = steps[i];
+      const result = this.step(run, turn, step);
+      if (thenable(result)) {
+        return result.then((answer) => {
+          this.log('stepped', run.rule.id, {rule: run.rule.id, tag: this.def.tag, step: stepKind(step), otherwise: run.inOtherwise});
+          return answer === 'go' ? this.runSteps(run, turn, steps, i + 1) : answer;
+        });
+      }
+      this.log('stepped', run.rule.id, {rule: run.rule.id, tag: this.def.tag, step: stepKind(step), otherwise: run.inOtherwise});
+      if (result !== 'go') return result;
+    }
+    return 'go';
+  }
+
+  /** One step: 'go' on, 'stop' (a check failed, cancelled, an error) or 'fail' (otherwise runs) (§9, §10.3). */
+  step(run, turn, step) {
+    const {rule} = run;
+    if (!(0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.isObject)(step)) { this.error('step', `${rule.id}: ${JSON.stringify(step)} is not a step`); return 'stop'; }
+    const read = run.read.read;
+    if ('set' in step) return this.writeLogic(turn, step.set, read(step.to), rule, run.cause);
+    if ('add' in step) return this.addLogic(turn, step.add, Number(read(step.by) ?? 0), rule, run.cause);
+    if ('reset' in step) return this.writeLogic(turn, step.reset, this.def.initial(step.reset), rule, run.cause);
+    if ('append' in step) {
+      const list = read({key: step.append});
+      const item = read(step.item);
+      if (!(0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.isObject)(item) || item.id === undefined || item.id === null) { this.error('append', `${rule.id}: the appended entry has no id`); return 'stop'; }
+      return this.writeLogic(turn, step.append, [...(Array.isArray(list) ? list : []), item], rule, run.cause);
+    }
+    if ('remove' in step) {
+      const list = read({key: step.remove});
+      const id = read(step.id);
+      return this.writeLogic(turn, step.remove, (Array.isArray(list) ? list : []).filter((one) => String(one?.id) !== String(id)), rule, run.cause);
+    }
+    if ('emit' in step) return this.emitStep(run, turn, step);
+    if ('check' in step) {
+      if (run.read.test(step.check)) return 'go';
+      this.log('check', `${rule.id}: a check does not hold; the rule ends`, {turn: turn.n, rule: rule.id});
+      return 'stop';
+    }
+    if ('refuse' in step) {
+      if (run.waited) { this.error('refuse', `${rule.id}: refuse after a wait reaches no request (§9)`, {rule: rule.id}); return 'stop'; }
+      const reason = read(step.refuse?.reason ?? {value: ''});
+      turn.refused = reason ?? '';
+      this.log('refuse', `${rule.id} refuses: ${(0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.show)(turn.refused)}`, {turn: turn.n, rule: rule.id});
+      turn.cancel?.(turn.refused);
+      return 'go';
+    }
+    if ('do' in step || 'ask' in step) return this.callStep(run, turn, step);
+    this.error('step', `${rule.id}: ${JSON.stringify(step)} is not a step (gate 5)`);
+    return 'stop';
+  }
+
+  argsOf(run, step) {
+    const args = {};
+    for (const [name, reading] of (0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.own)(step.with)) args[name] = run.read.read(reading);
+    return args;
+  }
+
+  writeLogic(turn, key, value, rule, cause = null) {
+    const def = this.def.keys.get(key);
+    if (!def) { this.error('write', `${rule.id} writes the undeclared key "${key}"`, {rule: rule.id}); return 'stop'; }
+    if (def.writer !== 'logic') { this.error('write', `${rule.id} writes "${key}", whose writer is ${def.writer}`, {rule: rule.id}); return 'stop'; }
+    if (!(0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.fits)(def, value)) { this.error('type', `${rule.id}: "${key}" (${(0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.typeOf)(def)}) refused ${(0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.show)(value)}`, {rule: rule.id}); return 'stop'; }
+    turn.writes.set(key, {value, writer: 'logic', cause});
+    return 'go';
+  }
+
+  /**
+   * `add` (§9) applies against the key's value at apply time, not at the time
+   * the step ran: two runs of a rule under `parallel` that both add are never
+   * lost to each other (dispatcher decision 2026-10-27). Within one turn an
+   * add on top of a value the turn already wrote adds to that value.
+   */
+  addLogic(turn, key, by, rule, cause = null) {
+    const def = this.def.keys.get(key);
+    if (!def) { this.error('write', `${rule.id} writes the undeclared key "${key}"`, {rule: rule.id}); return 'stop'; }
+    if (def.writer !== 'logic') { this.error('write', `${rule.id} writes "${key}", whose writer is ${def.writer}`, {rule: rule.id}); return 'stop'; }
+    if (!Number.isFinite(by)) { this.error('type', `${rule.id}: add ${key} by ${(0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.show)(by)}, not a number`, {rule: rule.id}); return 'stop'; }
+    const written = turn.writes.get(key);
+    if (written && written.add === undefined) return this.writeLogic(turn, key, Number(written.value ?? 0) + by, rule, cause);
+    const add = (written?.add ?? 0) + by;
+    const keys = this.keys;
+    turn.writes.set(key, {add, writer: 'logic', cause, get value() { return Number(keys[key] ?? 0) + this.add; }});
+    return 'go';
+  }
+
+  emitStep(run, turn, step) {
+    const {rule} = run;
+    const event = this.def.manifest.events?.[step.emit];
+    if (!event) { this.error('emit', `${rule.id} emits "${step.emit}", not an event of ${this.def.tag}`, {rule: rule.id}); return 'stop'; }
+    const args = this.argsOf(run, step);
+    if ((0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.isObject)(event.carries)) for (const field of Object.keys(event.carries)) if (!(field in args)) this.error('emit', `${rule.id}: ${step.emit} does not carry "${field}"`, {rule: rule.id});
+    const cause = run.cause;
+    turn.after.push(() => {
+      this.log('cross', `⇡ event ${step.emit} goes out of ${this.id}`, {emit: step.emit});
+      return this.frame.emit(step.emit, args, {chain: cause});
+    });
+    return 'go';
+  }
+
+  /** The part of a role a step asks: a role per entry is asked through the entry that sent the event (§7.2.3). */
+  partFor(name, turn) {
+    const state = this.roles.get(name);
+    if (!state) return {problem: `"${name}" is not a role`};
+    if (!state.role.each) return {rec: state.parts.get('') ?? null};
+    const [head] = (0,_definition_mjs__WEBPACK_IMPORTED_MODULE_0__.splitTrigger)(turn.on);
+    if (head === name && turn.source) return {rec: turn.source};
+    return {problem: `"${name}" is a role per entry; only an event of one of its parts says which entry to ask`};
+  }
+
+  callStep(run, turn, step) {
+    const {rule} = run;
+    const asking = 'ask' in step;
+    const target = String(asking ? step.ask : step.do);
+    const dot = target.indexOf('.');
+    const roleName = target.slice(0, dot);
+    const action = target.slice(dot + 1);
+    const found = this.partFor(roleName, turn);
+    if (found.problem) { this.error('do', `${rule.id}: ${found.problem}`, {rule: rule.id}); return 'stop'; }
+    const rec = found.rec;
+    const fail = (answer, reason) => {
+      run.outcome = {answer, reason, message: ''};
+      this.log('answer', `${target} → ${answer} (${reason})`, {turn: turn.n, rule: rule.id, answer, reason});
+      return 'fail';
+    };
+    if (!rec) return fail('unavailable', 'part-refused');
+    if (!this.present(roleName)) return fail('unavailable', 'not-present');
+    const def = rec.iface.actions[action] ?? (_values_mjs__WEBPACK_IMPORTED_MODULE_5__.BASE_ACTIONS.has(action) ? {} : null);
+    if (!def) { this.error('do', `${rule.id}: ${rec.def.tag} has no action "${action}"`, {rule: rule.id}); return fail('refused', 'no-action'); }
+    const args = this.argsOf(run, step);
+    const timeout = Number(def.timeout ?? rule.timeout) || 0;
+    const retry = def.retry ?? rule.retry ?? null;
+    const waits = asking || rec.isAssembly || Boolean(def.waits) || _values_mjs__WEBPACK_IMPORTED_MODULE_5__.WRITE_VERBS.has(action) || Boolean(rec.iface.port) || Boolean(def.concurrency) || timeout > 0;
+    if (waits && turn.writes.size) { // §10.2: a waiting step first applies the writes made so far
+      this.log('step', `${rule.id}: applies the turn's writes before it waits`, {turn: turn.n, rule: rule.id});
+      this.commit(turn);
+    }
+    if (rec.iface.port && action !== 'connect-port' && !this.ports.has(rec.iface.port.id)) return fail('unavailable', 'port-not-connected');
+    if (!rec.started) { // a step asks a part that has not started: it starts first, then is asked (dispatcher decision 2026-10-27)
+      this.log('start', `${rule.id}: ${target} asks a part that has not started; it starts first`, {rule: rule.id, role: rec.role});
+      this.startPart(rec, 'asked');
+    }
+    if (waits) run.waited = true;
+    this.log('step', `${rule.id}: ${asking ? 'ask' : 'do'} ${target} ${(0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.show)(args)}`, {turn: turn.n, rule: rule.id});
+    const answer = this.invoke(rec, action, args, {run, def, timeout, retry});
+    return then(answer, (outcome) => this.settle(run, turn, step, target, outcome));
+  }
+
+  settle(run, turn, step, target, outcome) {
+    const {rule} = run;
+    if (outcome.answer === 'cancelled') {
+      run.outcome = {answer: 'cancelled', reason: outcome.reason ?? '', message: outcome.message ?? ''};
+      this.log('answer', `${target} → cancelled: an act, not a failure; no otherwise (§10.3)`, {turn: turn.n, rule: rule.id, answer: 'cancelled'});
+      return 'stop';
+    }
+    if (outcome.answer !== 'applied') {
+      run.outcome = {answer: outcome.answer, reason: outcome.reason ?? '', message: outcome.message ?? ''};
+      this.log('answer', `${target} → ${outcome.answer}${outcome.reason ? ` (${outcome.reason})` : ''}${outcome.message ? `: ${outcome.message}` : ''}`, {turn: turn.n, rule: rule.id, answer: outcome.answer, reason: outcome.reason ?? ''});
+      return 'fail';
+    }
+    if ('ask' in step) {
+      if (!step.answer) return 'go';
+      return this.writeLogic(turn, step.answer, outcome.value ?? null, rule, run.cause);
+    }
+    return 'go';
+  }
+
+  /** Ask a part's action under its policy: concurrency, timeout, retry (§10.7). */
+  invoke(rec, action, args, {run, def, timeout, retry}) {
+    const policy = def.concurrency ?? 'parallel';
+    let state = rec.calls.get(action);
+    if (!state) { state = {active: new Set(), tail: null}; rec.calls.set(action, state); }
+    if (state.active.size) {
+      if (policy === 'drop') { this.log('concurrency', `${rec.instanceId}.${action}: dropped while a call waits (drop)`, {role: rec.role}); return {answer: 'refused', reason: 'busy', message: ''}; }
+      if (policy === 'latest') {
+        this.log('concurrency', `${rec.instanceId}.${action}: replaces the call that waits (latest)`, {role: rec.role});
+        for (const earlier of state.active) earlier.controller.abort('latest');
+      }
+    }
+    const call = linked(run.scope.signal, rec.scope.signal);
+    state.active.add(call);
+    const write = _values_mjs__WEBPACK_IMPORTED_MODULE_5__.WRITE_VERBS.has(action);
+    const attempt = (left) => then(this.callOnce(rec, action, args, call.signal, timeout, run.cause), (outcome) => {
+      const repeatable = outcome.answer === 'unavailable' && left > 0 && (!write || args['client-key'] !== undefined);
+      if (!repeatable) return outcome;
+      this.log('retry', `${rec.instanceId}.${action}: unavailable; tries again (${left} left)`, {role: rec.role});
+      count('waiting', 1);
+      return sleep(Number(retry?.delay) || 0, call.signal).then((slept) => {
+        count('waiting', -1);
+        return slept ? attempt(left - 1) : {answer: 'cancelled', reason: 'aborted'};
+      });
+    });
+    const go = () => attempt(Number(retry?.times) || 0);
+    const done = (outcome) => { state.active.delete(call); call.controller.abort('call ended'); return outcome; };
+    const result = state.active.size > 1 && policy === 'queue' ? Promise.resolve(state.tail).then(go) : go();
+    if (!thenable(result)) return done(result);
+    const tail = result.then(done, (error) => done({answer: 'refused', reason: 'error', message: String(error?.message ?? error)}));
+    state.tail = tail;
+    return tail;
+  }
+
+  callOnce(rec, action, args, signal, timeout, chain) {
+    rec.causes.push(chain);
+    const release = () => { const at = rec.causes.lastIndexOf(chain); if (at >= 0) rec.causes.splice(at, 1); };
+    let raw;
+    try {
+      raw = rec.link.act(action, args, {signal, chain});
+    } catch (error) {
+      release();
+      this.error('action', `${rec.instanceId}.${action} threw: ${error?.message ?? error}`, {role: rec.role});
+      return {answer: 'refused', reason: 'error', message: String(error?.message ?? error)};
+    }
+    if (!thenable(raw)) { release(); return (0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.outcomeOf)(raw); }
+    this.waiting += 1;
+    count('waiting', 1);
+    return race(raw, signal, timeout, (late) => this.log('late', `${rec.instanceId}.${action}: a late answer ${late.answer} is dropped`, {role: rec.role})).then((outcome) => {
+      release();
+      this.waiting -= 1;
+      count('waiting', -1);
+      return outcome;
+    });
+  }
+
+  // ---------- what parts say (§7.2, §8, §10.6, §10.8) ----------
+  /** A part's values changed: written by its role, one turn of writes (§7.1). */
+  reportFromPart(rec, values, options = {}) {
+    if (this.disposed || rec.scope.signal.aborted || !(0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.isObject)(values)) return;
+    const turn = this.newTurn(`${rec.role}.values`, {}, {origin: options.origin ?? null});
+    const first = options.origin === 'start';
+    for (const [name, given] of Object.entries(values)) {
+      if (!(name in rec.iface.values)) { this.error('value', `${rec.instanceId}: ${rec.def.tag} has no value "${name}"`, {role: rec.role}); continue; }
+      // A part's first value with no declared default reaches its key as null, not "" (dispatcher decision 2026-10-27).
+      const value = first && given === '' && rec.iface.values[name]?.default === undefined ? null : given;
+      const key = rec.def.valueBinds.get(name);
+      if (key) turn.writes.set(key, {value, writer: rec.role});
+    }
+    if (!turn.writes.size && !this.def.aggregates.length) return;
+    this.endTurn(turn);
+  }
+
+  /** A part's event: a turn of this bus; it stops at the frame (§7.4). */
+  emitFromPart(rec, verb, detail = {}, options = {}) {
+    if (this.disposed || rec.scope.signal.aborted) return Promise.resolve({refused: null});
+    const event = rec.iface.events[verb];
+    if (!event) { this.error('event', `${rec.instanceId}: ${rec.def.tag} has no event "${verb}"`, {role: rec.role}); return Promise.resolve({refused: null}); }
+    if (!rec.started) { this.log('skip', `${rec.instanceId} has not started; its event ${verb} is not queued (§7.2.1)`, {role: rec.role}); return Promise.resolve({refused: null}); }
+    const payload = (0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.isObject)(detail) ? detail : {};
+    if ((0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.isObject)(event.carries)) for (const field of Object.keys(event.carries)) if (!(field in payload)) this.error('event', `${rec.instanceId}: ${verb} does not carry "${field}"`, {role: rec.role});
+    if (STREAM_FACTS.has(verb) && payload.id !== undefined) this.watchStream(rec, verb, String(payload.id));
+    const chain = options.chain ?? rec.causes.at(-1) ?? []; // an answer carries the chain of the turn that asked (§10.6)
+    return this.fire(`${rec.role}.${verb}`, payload, {chain, entry: rec.entry, source: rec, cancel: options.cancel ?? null})
+      .then((turn) => ({refused: turn?.refused ?? null}));
+  }
+
+  /** The lifecycle of a stream: begun, chunks, exactly one end (§10.8). */
+  watchStream(rec, fact, id) {
+    const now = rec.streams.get(id);
+    if (fact === 'begun') {
+      if (now === 'open') this.error('stream', `${rec.instanceId}: stream ${id} began twice`, {role: rec.role});
+      rec.streams.set(id, 'open');
+      return;
+    }
+    if (now !== 'open') { this.error('stream', `${rec.instanceId}: ${fact} of stream ${id}, which ${now ? 'has ended' : 'never began'}`, {role: rec.role}); return; }
+    if (STREAM_ENDS.has(fact)) rec.streams.set(id, 'ended');
+    if (rec.streams.size > 256) for (const [key, state] of rec.streams) { if (state === 'ended') rec.streams.delete(key); if (rec.streams.size <= 128) break; }
+  }
+
+  /** A word of the assembly's language file for a part (§11.2). */
+  word(rec, path, n) {
+    const locale = this.view.locale?.(rec) ?? 'en';
+    const full = `roles.${rec.role}.${path}`;
+    const found = this.def.words.find(locale, full);
+    if (found.word === null) { this.log('warn', `no word ${full} in the language files of ${this.def.tag}`, {role: rec.role}, 'warn'); return null; }
+    if (found.fallback) this.log('warn', `${full} falls back to ${found.from}`, {role: rec.role}, 'warn');
+    return (0,_words_mjs__WEBPACK_IMPORTED_MODULE_4__.say)(found.word, n, locale);
+  }
+
+  // ---------- commit (§10.2) ----------
+  commit(turn) {
+    const changed = [];
+    const causes = new Map();
+    for (const [key, {value, writer, cause}] of turn.writes) {
+      const def = this.def.keys.get(key);
+      if (!def) { this.error('write', `a write of the undeclared key "${key}"`, {turn: turn.n}); continue; }
+      if (def.writer !== writer) { this.error('write', `${writer} writes "${key}", whose writer is ${def.writer}`, {turn: turn.n}); continue; }
+      if (!(0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.fits)(def, value)) { this.error('type', `"${key}" (${(0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.typeOf)(def)}) refused ${(0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.show)(value)}`, {turn: turn.n}); continue; }
+      if ((0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.same)(this.keys[key], value)) continue;
+      changed.push([key, this.keys[key]]);
+      if (cause) causes.set(key, cause);
+      this.keys[key] = value;
+    }
+    turn.writes = new Map();
+    const dirty = new Set(changed.map(([key]) => key));
+    const derived = this.computeDerived(dirty);
+    for (const [key] of derived) dirty.add(key);
+    if (dirty.size) {
+      for (const [name, state] of this.roles) if (state.role.each && dirty.has(state.role.each)) this.syncEach(name);
+      this.syncShown(dirty);
+    }
+    const aggregated = this.computeAggregates();
+    for (const [key] of aggregated) dirty.add(key);
+    const all = [...changed, ...derived, ...aggregated];
+    if (!all.length) return;
+    this.log('commit', `applied ${all.map(([key]) => `${key} = ${(0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.show)(this.keys[key])}`).join(', ')}`, {
+      turn: turn.n, keys: all.map(([key]) => key), derived: [...derived, ...aggregated].map(([key]) => key), tag: this.def.tag,
+      snapshot: (0,_journal_mjs__WEBPACK_IMPORTED_MODULE_2__.journalOn)() ? JSON.stringify(this.keys) : undefined,
+    });
+    this.view.persist?.(this, dirty, turn.fromAddress);
+    const carried = [];
+    for (const key of dirty) {
+      let parts = 0;
+      for (const reader of this.def.readers.get(key) ?? []) {
+        for (const rec of this.roles.get(reader.role)?.parts.values() ?? []) if (this.pushSetting(rec, reader.member, this.keys[key], reader.debounce)) parts += 1;
+      }
+      if (parts) carried.push(`${key} → ${parts}`);
+    }
+    if (carried.length) this.log('carry', `bindings carry ${carried.join(', ')} part(s)`, {turn: turn.n});
+    this.view.keysChanged?.(this, dirty);
+    const out = {};
+    let any = false;
+    for (const [name, key] of this.def.values) {
+      if (!dirty.has(key)) continue;
+      this.out[name] = this.keys[key];
+      out[name] = this.keys[key];
+      any = true;
+    }
+    if (any) {
+      this.log('cross', `⇡ values ${Object.keys(out).join(', ')} go out of ${this.id}`, {values: Object.keys(out)});
+      this.frame.report(out, {origin: turn.origin});
+    }
+    for (const [key, previous] of all) {
+      if (this.def.keys.get(key).writer === 'parent') continue;
+      const on = `data.${key}`;
+      if (!this.def.byTrigger.has(on)) continue;
+      const value = this.keys[key];
+      // the turn of data.<key> carries the chain of the rule that wrote the key, or of a derived key's turn (§10.5)
+      const chain = causes.get(key) ?? (derived.some(([name]) => name === key) ? [...new Set([...turn.chain, ...causes.values()].flat())] : turn.chain);
+      turn.after.push(() => this.fire(on, {value, previous}, {chain}));
+    }
+  }
+
+  // ---------- the frame: settings, values, actions, ports (§7.4, §4.9) ----------
+  setSetting(name, value) {
+    const def = this.def.keys.get(name);
+    if (!def || def.writer !== 'parent') { this.error('setting', `${this.def.tag} has no setting "${name}"`); return Promise.resolve(null); }
+    if (!(0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.fits)(def, value)) { this.error('type', `setting "${name}" (${(0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.typeOf)(def)}) refused ${(0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.show)(value)}`); return Promise.resolve(null); }
+    if (!this.running) { this.initialSettings[name] = value; return Promise.resolve(null); }
+    if ((0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.same)(this.keys[name], value)) return Promise.resolve(null);
+    this.log('cross', `⇣ setting ${name} = ${(0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.show)(value)} comes into ${this.id}`, {setting: name});
+    return this.fire(`outside.${name}`, {value, previous: this.keys[name]}, {preset: [[name, value, 'parent']], origin: 'outside'});
+  }
+
+  value(name) { return this.out[name]; }
+
+  /** An action asked from outside: only rules handle it; an unhandled one is reported, not passed up (§7.4). */
+  act(action, args = {}, options = {}) {
+    if (action === 'connect-port') return this.connectPort(args?.port ?? args);
+    if (action === 'focus' || action === 'blur') { this.view.focus?.(action); return {answer: 'applied'}; }
+    const on = `outside.${action}`;
+    const handled = this.def.byTrigger.has(on);
+    if (!handled && this.def.aggregates.length && (action === 'check-validity' || action === 'reset')) {
+      if (action === 'check-validity') return this.keys.valid === false ? {answer: 'refused', reason: 'invalid'} : {answer: 'applied'};
+      return {answer: 'applied'};
+    }
+    const def = this.def.manifest.actions?.[action];
+    if (!def) { this.error('action', `${this.def.tag} has no action "${action}"`); return {answer: 'refused', reason: 'no-action'}; }
+    if (!handled) { this.error('unhandled', `action "${action}" is handled by no rule: reported, not passed up (§7.4)`); return {answer: 'refused', reason: 'unhandled'}; }
+    const policy = def.concurrency ?? 'parallel';
+    let state = this.calls.get(action);
+    if (!state) { state = {active: new Set(), tail: null}; this.calls.set(action, state); }
+    if (state.active.size && policy === 'drop') { this.log('concurrency', `outside.${action}: dropped while it runs (drop)`); return {answer: 'refused', reason: 'busy'}; }
+    if (state.active.size && policy === 'latest') for (const earlier of state.active) earlier.controller.abort('latest');
+    const scope = linked(options.signal ?? this.scope.signal);
+    state.active.add(scope);
+    this.log('cross', `⇣ action ${action} comes into ${this.id}`, {action});
+    const go = () => this.fire(on, (0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.isObject)(args) ? args : {}, {chain: options.chain ?? [], origin: 'outside', signal: scope.signal});
+    const turn = state.active.size > 1 && policy === 'queue' ? Promise.resolve(state.tail).then(go) : go();
+    const result = turn.then((ended) => {
+      state.active.delete(scope);
+      scope.controller.abort('done');
+      if (ended?.refused !== null && ended?.refused !== undefined) return {answer: 'refused', reason: ended.refused};
+      // A rule that ended without applied answers its outcome (dispatcher decision 2026-10-27).
+      if (ended?.outcome) return {...ended.outcome};
+      return {answer: 'applied'};
+    });
+    state.tail = result;
+    return result;
+  }
+
+  /** `connect-port`: kept, and handed to every part that declares the port, at any depth, later ones too (§4.9). */
+  connectPort(port) {
+    if (!(0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.isObject)(port) || !port.id) { this.error('port', 'connect-port needs a port with an id'); return {answer: 'refused', reason: 'no-port'}; }
+    this.ports.set(port.id, port);
+    let handed = 0;
+    for (const state of this.roles.values()) for (const rec of state.parts.values()) {
+      if (!rec.started) continue;
+      if (rec.isAssembly || rec.iface.port?.id === port.id) { rec.link.connectPort?.(port); if (!rec.isAssembly) handed += 1; }
+    }
+    this.log('port', `connect-port ${port.id}: handed to ${handed} part(s) of ${this.id}`, {port: port.id, handed});
+    return {answer: 'applied'};
+  }
+
+  /** The keys, their writers and readers (§14 «a map of keys»). */
+  keyMap() {
+    const map = {};
+    for (const [name, def] of this.def.keys) {
+      map[name] = {writer: def.writer, type: def.type, value: this.keys[name], readers: (this.def.readers.get(name) ?? []).map((one) => `${one.role}.${one.member}`)};
+    }
+    return map;
+  }
+
+  /** The scope ends: everything the instance started is cancelled at once (§7.7). */
+  dispose() {
+    if (this.disposed) return;
+    this.disposed = true;
+    for (const state of this.roles.values()) for (const rec of state.parts.values()) this.disposePart(rec);
+    this.roles.clear();
+    this.scope.controller.abort('removed');
+    this.view.dispose?.(this);
+    this.log('dispose', `${this.id} is removed; its scope ends`);
+  }
+}
+
+const stepKind = (step) => ((0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.isObject)(step) ? Object.keys(step).find((field) => field !== 'with' && field !== '$comment') : 'step');
+
+
+
+/***/ },
+
+/***/ "9ee717a9c619"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   checkRole: () => (/* binding */ checkRole),
+/* harmony export */   compile: () => (/* binding */ compile),
+/* harmony export */   interfaces: () => (/* binding */ interfaces),
+/* harmony export */   normaliseInterface: () => (/* binding */ normaliseInterface),
+/* harmony export */   ruleWrites: () => (/* binding */ ruleWrites),
+/* harmony export */   splitTrigger: () => (/* binding */ splitTrigger)
+/* harmony export */ });
+/* harmony import */ var _logic_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("eb7fe3498c26");
+/* harmony import */ var _values_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("8cf8ac8cb59d");
+/* harmony import */ var _words_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("ff707ab72ad6");
+// An assembly's manifest compiled once per tag (standard simai.smart-component
+// 1.3.8 §7, §9): its keys with their one writer and the order of its derived
+// keys, its roles and their bindings, its rules indexed by what they hear, its
+// layouts and its words. Problems found here are the load-time half of gates 4
+// and 5: they are reported, and what they touch does not run.
+//
+// The interfaces of the parts are kept in one registry on the shared global:
+// a part's interface is what the runtime checks a role against, wires and
+// asks, whatever class the element is (§4).
+
+
+
+
+
+const REGISTRY = (() => {
+  const root = typeof globalThis !== 'undefined' ? globalThis : {};
+  const key = '__sfAssemblyInterfaces';
+  if (!root[key]) root[key] = {parts: new Map(), traits: new Map(), assemblies: new Map()};
+  return root[key];
+})();
+
+const PARTS = ['settings', 'values', 'events', 'actions'];
+
+/** An interface in one shape: `{tag, version, settings, values, events, actions, port, implements, layer}`. */
+function normaliseInterface(tag, source = {}) {
+  const iface = {tag, version: source.version ?? null, port: source.port ?? null, layer: source.layer ?? null,
+    implements: [...(source.implements ?? [])], traits: [...(source.traits ?? [])], words: [...(source.words ?? [])]};
+  for (const part of PARTS) iface[part] = Object.fromEntries((0,_values_mjs__WEBPACK_IMPORTED_MODULE_1__.own)(source[part]));
+  // A part's word settings are listed apart, by name (§15.1): they are string settings all the same (§7.2).
+  for (const name of iface.words) if (!(name in iface.settings)) iface.settings[name] = {type: 'string', word: true};
+  for (const trait of iface.traits) {
+    const brought = REGISTRY.traits.get(trait);
+    if (!brought) continue;
+    for (const part of PARTS) for (const [name, def] of (0,_values_mjs__WEBPACK_IMPORTED_MODULE_1__.own)(brought[part])) if (!(name in iface[part])) iface[part][name] = def;
+  }
+  return iface;
+}
+
+const interfaces = {
+  /** Register a part's interface: its manifest, or the registry entry the build writes (§4). */
+  register(tag, source) {
+    const name = String(tag).toLowerCase();
+    REGISTRY.parts.set(name, normaliseInterface(name, source));
+    return this;
+  },
+  registerAll(map = {}) {
+    for (const [tag, source] of (0,_values_mjs__WEBPACK_IMPORTED_MODULE_1__.own)(map)) this.register(tag, source);
+    return this;
+  },
+  /** Register a trait's interface slice, `<name>@<major>` (§20). */
+  registerTrait(name, source) {
+    REGISTRY.traits.set(String(name), source);
+    return this;
+  },
+  /** The interface of a tag: registered, declared by its class, or an assembly's own (§7.4). */
+  of(tag) {
+    const name = String(tag).toLowerCase();
+    if (REGISTRY.parts.has(name)) return REGISTRY.parts.get(name);
+    if (REGISTRY.assemblies.has(name)) return REGISTRY.assemblies.get(name);
+    const declared = globalThis.customElements?.get?.(name)?.sfInterface;
+    if (declared) {
+      const iface = normaliseInterface(name, declared);
+      REGISTRY.parts.set(name, iface);
+      return iface;
+    }
+    return null;
+  },
+  has(tag) { return Boolean(this.of(tag)); },
+  forget(tag) {
+    if (tag) REGISTRY.parts.delete(String(tag).toLowerCase());
+    else REGISTRY.parts.clear();
+    return this;
+  },
+};
+
+/** A trigger `<head>.<rest>`: `outside.x`, `data.x` or `<role>.<event>`. */
+function splitTrigger(on) {
+  const text = String(on);
+  const dot = text.indexOf('.');
+  return dot < 0 ? [text, ''] : [text.slice(0, dot), text.slice(dot + 1)];
+}
+
+const triggersOf = (rule) => (Array.isArray(rule.on) ? rule.on : [rule.on]).filter((on) => typeof on === 'string');
+
+/** Every `from` reading of a rule, first field only: what its triggers must carry (§9, gate 5). */
+function fromFields(node, into = new Set()) {
+  if (Array.isArray(node)) { for (const one of node) fromFields(one, into); return into; }
+  if (!(0,_values_mjs__WEBPACK_IMPORTED_MODULE_1__.isObject)(node)) return into;
+  if (typeof node.from === 'string') into.add(node.from.split('.')[0]);
+  for (const [field, inner] of Object.entries(node)) if (field !== 'value' && typeof inner === 'object') fromFields(inner, into);
+  return into;
+}
+
+function bindingOf(left, target) {
+  const [side, ...rest] = String(left).split('.');
+  const member = rest.join('.');
+  const key = (0,_values_mjs__WEBPACK_IMPORTED_MODULE_1__.isObject)(target) ? target.key : target;
+  const debounce = (0,_values_mjs__WEBPACK_IMPORTED_MODULE_1__.isObject)(target) ? Number(target.debounce) || 0 : 0;
+  if (typeof key !== 'string') return null;
+  if (key.startsWith('entry.')) return {side, member, entryField: key.slice(6), debounce};
+  return {side, member, key, debounce};
+}
+
+const flagKey = (flag) => (typeof flag === 'string' ? flag.replace(/^!/, '') : null);
+
+/**
+ * Compile a manifest. `options.layouts` maps a layout name to its HTML,
+ * `options.lang` a locale to its language file.
+ */
+function compile(manifest, options = {}) {
+  const problems = [];
+  const notes = [];
+  const problem = (section, text, data = {}) => problems.push({section, text, ...data});
+  const slots = new Map((0,_values_mjs__WEBPACK_IMPORTED_MODULE_1__.own)(manifest.slots));
+  const tag = String(manifest?.tag ?? '').toLowerCase();
+  if (!tag.includes('-')) throw new TypeError(`an assembly needs a custom element tag, got "${manifest?.tag}"`);
+
+  // Keys (§7.1), with what form.aggregates adds (§17.4).
+  const keys = new Map((0,_values_mjs__WEBPACK_IMPORTED_MODULE_1__.own)(manifest.keys).map(([name, def]) => [name, {...def}]));
+  // `undoable` (an undo/redo history per key) is postponed (dispatcher decision 2026-10-27): the key works without it.
+  for (const [name, def] of keys) if (def.undoable) notes.push({section: '§7.5', text: `key "${name}" is undoable: undo is postponed in this runtime; the key keeps its current value only`});
+  if (manifest.form?.aggregates === true) {
+    if (!keys.has('valid')) keys.set('valid', {type: 'boolean', writer: 'derived', aggregate: 'valid'});
+    if (!keys.has('value')) keys.set('value', {type: 'object', writer: 'derived', aggregate: 'value'});
+  }
+  const roles = new Map((0,_values_mjs__WEBPACK_IMPORTED_MODULE_1__.own)(manifest.roles));
+  for (const [name, def] of keys) {
+    if (!def.writer) problem('§7.1', `key "${name}" has no writer`);
+    else if (!['parent', 'logic', 'derived'].includes(def.writer) && !roles.has(def.writer)) problem('§7.1', `key "${name}" is written by "${def.writer}", which is not a role`);
+    if (def.writer === 'logic' && !('initial' in def)) problem('§7.1', `key "${name}" (writer logic) has no initial value`);
+    if (def.writer === 'logic' && 'initial' in def && !(0,_values_mjs__WEBPACK_IMPORTED_MODULE_1__.fits)(def, def.initial)) problem('§7.1', `the initial value of "${name}" is not a ${(0,_values_mjs__WEBPACK_IMPORTED_MODULE_1__.typeOf)(def)}`);
+    if (def.writer === 'derived' && !def.from && !def.aggregate) problem('§7.1.2', `derived key "${name}" has no from`);
+  }
+
+  // Derived keys in the order they are computed; a cycle fails gate 4 (§7.1.2).
+  const deps = new Map();
+  for (const [name, def] of keys) if (def.writer === 'derived' && def.from) deps.set(name, [...(0,_logic_mjs__WEBPACK_IMPORTED_MODULE_0__.keysOf)(def.from)].filter((key) => keys.has(key)));
+  const order = [];
+  const state = new Map();
+  const cycle = new Set();
+  const visit = (name, trail) => {
+    if (state.get(name) === 'done') return;
+    if (state.get(name) === 'busy') { for (const one of trail.slice(trail.indexOf(name))) cycle.add(one); return; }
+    state.set(name, 'busy');
+    for (const dep of deps.get(name) ?? []) if (deps.has(dep)) visit(dep, [...trail, name]);
+    state.set(name, 'done');
+    order.push(name);
+  };
+  for (const name of deps.keys()) visit(name, []);
+  if (cycle.size) problem('§7.1.2', `derived keys form a cycle: ${[...cycle].join(' → ')}`, {gate: 4});
+  const derived = order.filter((name) => !cycle.has(name));
+  const dependents = new Map(); // key → derived keys reading it, in computing order
+  for (const name of derived) for (const dep of deps.get(name)) {
+    if (!dependents.has(dep)) dependents.set(dep, []);
+    dependents.get(dep).push(name);
+  }
+  const aggregates = [...keys].filter(([, def]) => def.writer === 'derived' && def.aggregate).map(([name, def]) => [name, def.aggregate]);
+
+  // Roles and bindings (§7.2).
+  const compiledRoles = new Map();
+  const readers = new Map(); // key → [{role, member, debounce}]
+  for (const [name, def] of roles) {
+    const [partTag, major] = String(def.part ?? '').split('@');
+    const role = {name, def, tag: partTag.toLowerCase(), major: major ? Number(major) : null, accepts: def.accepts ?? null,
+      each: def.each ?? null, start: def.start ?? 'now', if: def.if ?? null, hidden: def.hidden ?? null,
+      constants: Object.fromEntries((0,_values_mjs__WEBPACK_IMPORTED_MODULE_1__.own)(def.settings)), binds: [], entryBinds: [], valueBinds: new Map()};
+    if (!role.tag) problem('§7.2', `role "${name}" names no part`);
+    if (!['now', 'visible', 'opened'].includes(role.start)) problem('§7.2.1', `role "${name}" has start "${role.start}"`);
+    if (role.each) {
+      const list = keys.get(role.each);
+      if (!list) problem('§7.2.3', `role "${name}" repeats per "${role.each}", which is not a key`);
+      else if ((0,_values_mjs__WEBPACK_IMPORTED_MODULE_1__.typeOf)(list) !== 'list') problem('§7.2.3', `role "${name}" repeats per "${role.each}", which is not a list`);
+    }
+    for (const flag of [role.if, role.hidden]) {
+      const key = flagKey(flag);
+      if (key && (0,_values_mjs__WEBPACK_IMPORTED_MODULE_1__.typeOf)(keys.get(key)) !== 'boolean') problem('§7.2.2', `role "${name}" reads "${flag}", which is not a boolean key`);
+    }
+    for (const [left, target] of (0,_values_mjs__WEBPACK_IMPORTED_MODULE_1__.own)(def.bind)) {
+      const binding = bindingOf(left, target);
+      if (!binding || !['settings', 'values'].includes(binding.side)) { problem('§7.2', `role "${name}": "${left}" is not a binding`); continue; }
+      if (binding.entryField !== undefined) {
+        if (binding.side !== 'settings' || !role.each) problem('§7.2.3', `role "${name}": "${left}" reads an entry, but the role is not per entry`);
+        else role.entryBinds.push(binding);
+        continue;
+      }
+      if (!keys.has(binding.key)) { problem('§7.2', `role "${name}" binds "${left}" to "${binding.key}", which is not a key`); continue; }
+      if (binding.side === 'values') {
+        const owner = keys.get(binding.key).writer;
+        if (owner !== name) problem('§7.1', `role "${name}" writes "${binding.key}", whose writer is ${owner}`);
+        role.valueBinds.set(binding.member, binding.key);
+        continue;
+      }
+      role.binds.push(binding);
+      if (!readers.has(binding.key)) readers.set(binding.key, []);
+      readers.get(binding.key).push({role: name, member: binding.member, debounce: binding.debounce});
+    }
+    compiledRoles.set(name, role);
+  }
+
+  // Rules (§9), indexed by what they hear; a rule hears each trigger once.
+  const rules = [];
+  const byTrigger = new Map();
+  const ids = new Set();
+  for (const rule of Array.isArray(manifest.rules) ? manifest.rules : []) {
+    if (!rule || typeof rule !== 'object') continue;
+    if (!rule.id) problem('§9', 'a rule has no id');
+    else if (ids.has(rule.id)) problem('§9', `two rules have the id "${rule.id}"`);
+    ids.add(rule.id);
+    const triggers = triggersOf(rule);
+    if (!triggers.length) problem('§9', `rule "${rule.id}" hears nothing`);
+    if (new Set(triggers).size !== triggers.length) problem('§9', `rule "${rule.id}" names a trigger twice`);
+    if (rule.concurrency === 'latest' && ruleWrites(rule)) problem('§10.7', `rule "${rule.id}" waits on a write and may not be latest`, {gate: 5});
+    const compiled = {...rule, triggers, reads: fromFields([rule.if, rule.steps, rule.otherwise])};
+    rules.push(compiled);
+    for (const on of new Set(triggers)) {
+      const [head, rest] = splitTrigger(on);
+      if (head === 'outside') {
+        if (!(rest in (manifest.actions ?? {})) && keys.get(rest)?.writer !== 'parent') problem('§9', `rule "${rule.id}" hears ${on}: not an action or a setting of the assembly`, {gate: 5});
+      } else if (head === 'data') {
+        if (!keys.has(rest)) problem('§9', `rule "${rule.id}" hears ${on}: not a key`, {gate: 5});
+        else if (keys.get(rest).writer === 'parent') problem('§9', `rule "${rule.id}" hears ${on}: a parent's key is heard as outside.${rest}`, {gate: 5});
+      } else if (slots.get(head)?.accepts) {
+        notes.push({section: '§4.5.1', text: `rule "${rule.id}" hears ${on}: a part in slot "${head}" is not wired by this runtime`});
+      } else if (!compiledRoles.has(head)) problem('§9', `rule "${rule.id}" hears ${on}: "${head}" is not a role`, {gate: 5});
+      if (!byTrigger.has(on)) byTrigger.set(on, []);
+      byTrigger.get(on).push(compiled);
+    }
+  }
+
+  // The assembly's own interface (§7.4): what a parent sees.
+  const values = (0,_values_mjs__WEBPACK_IMPORTED_MODULE_1__.own)(manifest.values).map(([name, def]) => [name, def.value]);
+  for (const [name, key] of values) if (!keys.has(key)) problem('§7.4', `value "${name}" names "${key}", which is not a key`);
+  for (const [name] of (0,_values_mjs__WEBPACK_IMPORTED_MODULE_1__.own)(manifest.settings)) if (keys.get(name)?.writer !== 'parent') problem('§7.4', `setting "${name}" has no key with writer parent`);
+  const iface = normaliseInterface(tag, {...manifest, events: manifest.events, actions: manifest.actions});
+  REGISTRY.assemblies.set(tag, iface);
+
+  return {
+    tag, manifest, problems, notes, keys, derived, dependents, aggregates, roles: compiledRoles, readers, rules, byTrigger, values, iface,
+    layouts: {...(options.layouts ?? {})},
+    words: (0,_words_mjs__WEBPACK_IMPORTED_MODULE_2__.createWords)(options.lang ?? {}, options.sourceLocale ?? null),
+    persisted: [...keys].filter(([, def]) => def.persist).map(([name, def]) => [name, def.persist]),
+    settingProps: (0,_values_mjs__WEBPACK_IMPORTED_MODULE_1__.own)(manifest.settings).map(([name, def]) => ({name, def, prop: (0,_values_mjs__WEBPACK_IMPORTED_MODULE_1__.camel)(name)})),
+    initial(name) { return (0,_values_mjs__WEBPACK_IMPORTED_MODULE_1__.clone)(keys.get(name)?.initial ?? null); },
+  };
+}
+
+/** Whether a rule waits on a write (vocabulary §5.3): such a rule is never `latest` (§10.7). */
+function ruleWrites(rule) {
+  const writes = new Set(['save', 'delete', 'create', 'rename', 'archive', 'restore', 'move', 'apply', 'submit', 'retry', 'attach', 'detach', 'answer', 'rate', 'read']);
+  return [...(rule.steps ?? []), ...(rule.otherwise ?? [])].some((step) => typeof step?.do === 'string' && writes.has(step.do.split('.').pop()));
+}
+
+/**
+ * Check a role against the interface of the part placed in it (§7.2, §4.10
+ * gate 5 at load). Answers `null` when it fits, else `{reason, text}` with a
+ * reason of §4.5.1.
+ */
+function checkRole(definition, role, iface) {
+  if (!iface) return {reason: 'no-interface', text: `${role.tag} has no interface registered`};
+  const major = (version) => (version ? Number(String(version).split('.')[0]) : null);
+  if (role.major !== null && iface.version && major(iface.version) !== role.major) {
+    return {reason: 'major-mismatch', text: `role "${role.name}" asks ${role.tag}@${role.major}, the part is ${iface.version}`};
+  }
+  if (role.accepts) {
+    const [name, wanted] = String(role.accepts).split('@');
+    const offered = iface.implements.find((one) => one.split('@')[0] === name);
+    if (!offered) return {reason: iface.implements.length ? 'other-interface' : 'no-interface', text: `${role.tag} does not implement ${role.accepts}`};
+    if (offered.split('@')[1] !== wanted) return {reason: 'major-mismatch', text: `${role.tag} implements ${offered}, the role asks ${role.accepts}`};
+  }
+  for (const binding of [...role.binds, ...role.entryBinds]) {
+    if (!(binding.member in iface.settings) && !(binding.member in iface.values)) return {reason: 'missing-setting', text: `${role.tag} has no setting "${binding.member}" (role "${role.name}")`};
+  }
+  for (const member of role.valueBinds.keys()) {
+    if (!(member in iface.values)) return {reason: 'missing-setting', text: `${role.tag} has no value "${member}" (role "${role.name}")`};
+  }
+  for (const [name, value] of Object.entries(role.constants)) {
+    const def = iface.settings[name] ?? iface.values[name];
+    if (!def) return {reason: 'missing-setting', text: `${role.tag} has no setting "${name}" (role "${role.name}", a constant)`};
+    if (!(0,_values_mjs__WEBPACK_IMPORTED_MODULE_1__.fits)(def, value)) return {reason: 'carries-mismatch', text: `the constant ${name} of role "${role.name}" is not a ${(0,_values_mjs__WEBPACK_IMPORTED_MODULE_1__.typeOf)(def)}`};
+  }
+  for (const rule of definition.rules) {
+    const heard = rule.triggers.filter((on) => splitTrigger(on)[0] === role.name);
+    for (const on of heard) {
+      const event = iface.events[splitTrigger(on)[1]];
+      if (!event) return {reason: 'missing-event', text: `rule "${rule.id}" hears ${on}, but ${role.tag} has no event "${splitTrigger(on)[1]}"`};
+      if (event.carries === 'native' || !rule.reads.size) continue;
+      const carries = (0,_values_mjs__WEBPACK_IMPORTED_MODULE_1__.isObject)(event.carries) ? event.carries : {};
+      for (const field of rule.reads) {
+        if (!(field in carries)) return {reason: 'carries-mismatch', text: `rule "${rule.id}" reads "${field}" from ${on}, which does not carry it`};
+      }
+    }
+  }
+  return null;
+}
+
+
+/***/ },
+
+/***/ "8258b7112fb6"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   HostView: () => (/* binding */ HostView),
+/* harmony export */   OWNED: () => (/* binding */ OWNED),
+/* harmony export */   PART_LINK: () => (/* reexport safe */ _link_mjs__WEBPACK_IMPORTED_MODULE_4__.PART_LINK),
+/* harmony export */   definitions: () => (/* binding */ definitions),
+/* harmony export */   elementClass: () => (/* binding */ elementClass),
+/* harmony export */   instances: () => (/* binding */ instances)
+/* harmony export */ });
+/* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("8489d1f5bab4");
+/* harmony import */ var _core_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("b60c1434b0be");
+/* harmony import */ var _definition_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("9ee717a9c619");
+/* harmony import */ var _journal_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("6d4272a67a74");
+/* harmony import */ var _link_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("dfdb640e668b");
+/* harmony import */ var _values_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("8cf8ac8cb59d");
+// The page side of an assembly (standard simai.smart-component 1.3.8 §7):
+// the custom element an assembly's tag defines, and the view its bus asks for
+// what lives in the DOM — the layout and its `<x-role>` places (§7.3), a
+// panel repeated per entry (§7.2.3), `if` and `hidden` (§7.2.2), when a part
+// starts and when a closed container defers its reads (§7.2.1), keys kept in
+// the address (§7.5), the live region (§7.4.1), and errors as the base event
+// `sf-component-error` (§4.1).
+//
+// CSP: no eval, no inline handlers, no style attributes; a layout is parsed by
+// a <template> and only text is written from keys.
+
+
+
+
+
+
+
+
+const STORE = (() => {
+  const root = typeof globalThis !== 'undefined' ? globalThis : {};
+  const key = '__sfAssemblyHosts';
+  if (!root[key]) root[key] = {definitions: new Map(), instances: new Map()};
+  return root[key];
+})();
+
+/** The definitions of the page's assembly tags and the running instances by path (§7.1.1). */
+const definitions = STORE.definitions;
+const instances = STORE.instances;
+
+const OWNED = Symbol.for('sf.assembly.owned');
+const EARLY = Symbol('sf.assembly.early');
+const CONTROLS = 'input, select, textarea, button, fieldset';
+const PANELS = '[role="tabpanel"], details, [data-sf-panel]';
+const nextFrame = (fn) => (typeof globalThis.requestAnimationFrame === 'function' ? globalThis.requestAnimationFrame(() => fn()) : globalThis.setTimeout(fn, 0));
+
+/** The default way a part's module is fetched when the part starts (§7.2.1): the Loader's. */
+/** DOM events a part's form controls send as any control does: they reach the page. */
+const NATIVE_EVENTS = new Set(['change', 'input']);
+
+function loadByLoader(tag) {
+  const loader = globalThis.SF?.Loader;
+  if (typeof loader?.ensureSmartElementLoaded === 'function') loader.ensureSmartElementLoaded(tag);
+}
+
+class HostView {
+  constructor(host, definition, options = {}) {
+    this.host = host;
+    this.def = definition;
+    this.loadPart = options.loadPart ?? loadByLoader;
+    this.places = new Map();
+    this.repeats = new Map();
+    this.ifs = [];
+    this.texts = new Map();
+    this.deferred = new Set();
+    this.watched = new Set();
+    this.stopped = new Set();
+    this.disabled = new Map();
+    this.checkQueued = false;
+    this.top = !host[OWNED];
+  }
+
+  // ---------- the layout (§7.3) ----------
+  build(core) {
+    this.core = core;
+    const {host} = this;
+    host.setAttribute('data-sf-assembly', this.def.tag);
+    host.setAttribute('data-sf-instance', core.id);
+    const names = Object.keys(this.def.layouts);
+    const wanted = host.getAttribute('layout');
+    const name = wanted && this.def.layouts[wanted] !== undefined ? wanted : (this.def.layouts.default !== undefined ? 'default' : names[0]);
+    if (wanted && name !== wanted) core.error('layout', `${this.def.tag} has no layout "${wanted}"`);
+    this.layoutName = name ?? null;
+    this.box = this.parse(name);
+    this.findPlaces(this.box, Boolean(name));
+    this.mountAnnouncer();
+    host.append(this.box);
+    this.unlanguage = _page_language_js__WEBPACK_IMPORTED_MODULE_0__.language.onChange(() => core.relanguage());
+    core.scope.signal.addEventListener('abort', () => this.unlanguage?.(), {once: true});
+  }
+
+  parse(name) {
+    const box = globalThis.document.createElement('div');
+    box.setAttribute('data-sf-layout', name ?? '');
+    const html = name ? this.def.layouts[name] : '';
+    if (html) {
+      const template = globalThis.document.createElement('template');
+      template.innerHTML = html;
+      box.append(template.content.cloneNode(true));
+    }
+    return box;
+  }
+
+  findPlaces(box, hasLayout) {
+    const all = [...box.querySelectorAll('x-role')];
+    for (const [roleName, role] of this.def.roles) {
+      let place = all.find((one) => one.getAttribute('name') === roleName);
+      if (!place) {
+        place = globalThis.document.createElement('x-role');
+        place.setAttribute('name', roleName);
+        box.append(place);
+        if (hasLayout) this.core.log('warn', `the layout has no <x-role name="${roleName}">; the part is placed at the end`, {}, 'warn');
+      }
+      place.setAttribute('data-sf-place', roleName);
+      this.places.set(roleName, place);
+      if (role.each) {
+        const panel = place.parentElement?.closest(PANELS);
+        if (panel && box.contains(panel)) { // §7.2.3: the panel around <x-role> repeats per entry
+          const marker = globalThis.document.createComment(`sf-repeat ${roleName}`);
+          panel.replaceWith(marker);
+          this.repeats.set(roleName, {template: panel, marker});
+        }
+      }
+    }
+    for (const element of box.querySelectorAll('[if]')) {
+      if (element.localName === 'x-role') continue;
+      this.ifs.push({element, flag: element.getAttribute('if'), marker: globalThis.document.createComment(`sf-if ${element.getAttribute('if')}`)});
+    }
+    this.bindTexts(box);
+  }
+
+  /** `{{key}}` in a layout's text: the key's value as text, nothing else (§7.3). */
+  bindTexts(box) {
+    const walker = globalThis.document.createTreeWalker(box, globalThis.NodeFilter.SHOW_TEXT);
+    const found = [];
+    for (let node = walker.nextNode(); node; node = walker.nextNode()) if (node.data.includes('{{')) found.push(node);
+    for (const node of found) {
+      const parts = node.data.split(/(\{\{\s*[\w-]+\s*\}\})/);
+      const nodes = parts.map((part) => {
+        const match = /^\{\{\s*([\w-]+)\s*\}\}$/.exec(part);
+        const text = globalThis.document.createTextNode(match ? '' : part);
+        if (match) {
+          if (!this.def.keys.has(match[1])) this.core.error('layout', `the layout shows {{${match[1]}}}, which is not a key`);
+          if (!this.texts.has(match[1])) this.texts.set(match[1], []);
+          this.texts.get(match[1]).push(text);
+        }
+        return text;
+      });
+      node.replaceWith(...nodes);
+    }
+  }
+
+  roleFlags(roleName) {
+    const place = this.places.get(roleName);
+    return this.ifs.filter(({element}) => element.contains(place)).map(({flag}) => flag);
+  }
+
+  mountAnnouncer() {
+    const announces = this.def.manifest.accessibility?.announces ?? this.def.manifest.announces;
+    if (!(0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.isObject)(announces)) return;
+    this.announces = Object.fromEntries((0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.own)(announces));
+    this.live = globalThis.document.createElement('div');
+    this.live.className = 'sr-only';
+    this.live.setAttribute('data-sf-announce', '');
+    this.live.setAttribute('aria-live', Object.values(this.announces).includes('assertive') ? 'assertive' : 'polite');
+    this.box.append(this.live);
+  }
+
+  /** Switching a layout moves the parts with their state (§7.3). */
+  useLayout(name) {
+    if (this.def.layouts[name] === undefined) { this.core.error('layout', `${this.def.tag} has no layout "${name}"`); return false; }
+    const parts = [];
+    for (const state of this.core.roles.values()) for (const rec of state.parts.values()) parts.push(rec);
+    const oldBox = this.box;
+    const oldPlaces = new Map(this.places);
+    this.places.clear();
+    this.repeats.clear();
+    this.ifs = [];
+    this.texts.clear();
+    this.layoutName = name;
+    this.box = this.parse(name);
+    this.findPlaces(this.box, true);
+    if (this.live) this.box.append(this.live);
+    for (const rec of parts) {
+      const repeat = this.repeats.get(rec.role);
+      if (repeat && rec.entry) {
+        const panel = rec.panel ?? this.panelFor(rec, repeat);
+        repeat.marker.before(panel);
+      } else {
+        this.places.get(rec.role).append(rec.element);
+        rec.panel?.remove();
+        rec.panel = null;
+      }
+      const old = oldPlaces.get(rec.role);
+      if (old?.hidden) this.places.get(rec.role).hidden = true;
+    }
+    oldBox.replaceWith(this.box);
+    for (const [roleName] of this.def.roles) {
+      const state = this.core.roles.get(roleName);
+      if (state) state.flags = [state.role.if, ...this.roleFlags(roleName)].filter(Boolean);
+    }
+    this.core.syncShown(null);
+    this.keysChanged(this.core, new Set(this.def.keys.keys()));
+    this.host.setAttribute('layout', name);
+    this.queueCheck();
+    return true;
+  }
+
+  // ---------- parts ----------
+  interfaceOf(tag) { return _definition_mjs__WEBPACK_IMPORTED_MODULE_2__.interfaces.of(tag); }
+  isAssembly(tag) { return definitions.has(tag); }
+
+  panelFor(rec, repeat) {
+    const panel = repeat.template.cloneNode(true);
+    panel.setAttribute('data-entry', rec.entryId);
+    if (panel.localName === 'details') panel.open = false; else panel.hidden = true;
+    const place = [...panel.querySelectorAll('x-role')].find((one) => one.getAttribute('name') === rec.role) ?? panel;
+    place.append(rec.element);
+    rec.panel = panel;
+    return panel;
+  }
+
+  createPart(rec, context) {
+    const tag = rec.def.tag;
+    const element = globalThis.document.createElement(tag);
+    rec.element = element;
+    element[OWNED] = true;
+    element.setAttribute('data-sf-role', rec.entry ? `${rec.role}[${rec.entryId}]` : rec.role);
+    element.setAttribute('data-sf-instance', rec.instanceId);
+    if (rec.def.start !== 'now') {
+      element.setAttribute('data-sf-start', rec.def.start);
+      element.setAttribute('aria-busy', 'true');
+    }
+    this.stopAtFrame(rec.iface, tag);
+    const repeat = this.repeats.get(rec.role);
+    if (repeat && rec.entry) repeat.marker.before(this.panelFor(rec, repeat));
+    else {
+      const place = this.places.get(rec.role);
+      if (!rec.entry && place.firstChild) element.append(...place.childNodes); // a container's panels from the layout
+      place.append(element);
+    }
+    if (definitions.has(tag)) {
+      const child = adopt(element, definitions.get(tag), {
+        instanceId: rec.instanceId,
+        signal: context.signal,
+        frame: {
+          report: (values, options) => context.report(values, options),
+          emit: (verb, detail, options) => context.emit(verb, detail, options),
+        },
+      });
+      return child ? (0,_link_mjs__WEBPACK_IMPORTED_MODULE_4__.assemblyLink)(child) : null;
+    }
+    return (0,_link_mjs__WEBPACK_IMPORTED_MODULE_4__.createLink)(element, rec.iface, context);
+  }
+
+  /**
+   * A part's interface events stop at the assembly: the page sees the
+   * assembly's own events (§7.4). A native event of a form control inside
+   * (`change`, `input`, `click`, ...) is the page's DOM event, not an
+   * interface event, and goes on (dispatcher decision 2026-10-27).
+   */
+  stopAtFrame(iface, tag) {
+    for (const [verb, def] of Object.entries(iface.events ?? {})) {
+      for (const name of (0,_link_mjs__WEBPACK_IMPORTED_MODULE_4__.domNames)(tag, verb, def)) {
+        if (def.carries === 'native' || NATIVE_EVENTS.has(name)) continue;
+        if (this.stopped.has(name)) continue;
+        this.stopped.add(name);
+        this.host.addEventListener(name, (event) => { if (event.target !== this.host) event.stopPropagation(); }, {signal: this.core.scope.signal});
+      }
+    }
+  }
+
+  // ---------- when a part starts (§7.2.1) ----------
+  awaitStart(rec, mode) {
+    this.deferred.add(rec);
+    if (mode === 'visible' && !this.visible && typeof globalThis.IntersectionObserver === 'function') {
+      this.visible = new globalThis.IntersectionObserver((seen) => {
+        for (const one of seen) {
+          if (!one.isIntersecting) continue;
+          const rec = [...this.deferred].find((candidate) => candidate.element === one.target);
+          this.visible.unobserve(one.target);
+          if (rec && !this.closed(rec.element)) this.core.startPart(rec, 'visible');
+        }
+      });
+    }
+    this.observe();
+    this.queueCheck();
+  }
+
+  observe() {
+    if (this.mutations || typeof globalThis.MutationObserver !== 'function') return;
+    this.mutations = new globalThis.MutationObserver(() => this.queueCheck());
+    this.mutations.observe(this.host, {subtree: true, childList: true, attributes: true, attributeFilter: ['hidden', 'inert', 'open', 'aria-expanded']});
+  }
+
+  queueCheck() {
+    if (this.checkQueued) return;
+    this.checkQueued = true;
+    globalThis.queueMicrotask(() => { this.checkQueued = false; this.check(); });
+  }
+
+  /** Whether something between the part and the assembly host is closed (§7.2.1). */
+  closed(element) {
+    if (!element?.isConnected || !this.host.isConnected) return true;
+    for (let node = element.parentElement; node && node !== this.host; node = node.parentElement) {
+      if (node.hidden || node.inert || node.getAttribute('aria-expanded') === 'false') return true;
+      if ((node.localName === 'details' || node.localName === 'dialog') && !node.open) return true;
+    }
+    return false;
+  }
+
+  check() {
+    if (!this.core || this.core.disposed) return;
+    for (const rec of [...this.deferred]) {
+      if (rec.started) { this.deferred.delete(rec); this.watched.add(rec); continue; }
+      if (rec.scope.signal.aborted) { this.deferred.delete(rec); continue; }
+      if (rec.def.start === 'opened' && !this.closed(rec.element)) {
+        this.deferred.delete(rec);
+        this.watched.add(rec);
+        this.core.startPart(rec, 'opened');
+      } else if (rec.def.start === 'visible' && this.visible && !rec.observed && !this.closed(rec.element)) {
+        rec.observed = true;
+        this.visible.observe(rec.element);
+      }
+    }
+    for (const rec of [...this.watched]) {
+      if (rec.scope.signal.aborted) { this.watched.delete(rec); continue; }
+      if (rec.element?.isConnected || !this.host.isConnected) this.core.setClosed(rec, this.closed(rec.element));
+    }
+  }
+
+  startPart(rec) {
+    const element = rec.element;
+    element.removeAttribute('aria-busy');
+    element.setAttribute('data-sf-started', '');
+    if (rec.def.start !== 'now') this.watched.add(rec);
+    if (!definitions.has(rec.def.tag) && !globalThis.customElements?.get(rec.def.tag)) this.loadPart(rec.def.tag);
+  }
+
+  busy(rec, on) {
+    if (on) rec.element?.setAttribute('aria-busy', 'true');
+    else rec.element?.removeAttribute('aria-busy');
+  }
+
+  // ---------- if, hidden, entries (§7.2.2, §7.2.3) ----------
+  show(roleName, present, hidden) {
+    const place = this.places.get(roleName);
+    if (!place) return;
+    place.sfMarker ??= globalThis.document.createComment(`sf-if ${roleName}`);
+    if (!present && place.parentNode) place.replaceWith(place.sfMarker);
+    if (present && !place.parentNode && place.sfMarker.parentNode) place.sfMarker.replaceWith(place);
+    if (place.hidden !== hidden) {
+      place.hidden = hidden;
+      this.disableControls(roleName, place, hidden);
+    }
+    this.queueCheck();
+  }
+
+  /** A part hidden by `hidden` submits nothing and does not block the submit (§7.2.2). */
+  disableControls(roleName, place, hidden) {
+    if (hidden) {
+      const changed = [];
+      for (const control of place.querySelectorAll('*')) {
+        const formControl = control.matches(CONTROLS) || control.constructor?.formAssociated === true;
+        if (formControl && 'disabled' in control && !control.disabled) { control.disabled = true; changed.push(control); }
+      }
+      this.disabled.set(roleName, changed);
+    } else {
+      for (const control of this.disabled.get(roleName) ?? []) control.disabled = false;
+      this.disabled.delete(roleName);
+    }
+  }
+
+  order(roleName, recs) {
+    const repeat = this.repeats.get(roleName);
+    const nodes = recs.map((rec) => (repeat ? rec.panel : rec.element)).filter(Boolean);
+    if (!nodes.length) return;
+    const parent = repeat ? repeat.marker.parentNode : this.places.get(roleName);
+    if (!parent) return;
+    const present = [...parent.childNodes].filter((node) => nodes.includes(node));
+    if (present.length === nodes.length && present.every((node, i) => node === nodes[i])) return; // moving a part reconnects it: only when needed
+    for (const node of nodes) {
+      if (repeat) repeat.marker.before(node);
+      else parent.append(node);
+    }
+  }
+
+  removePart(rec) {
+    this.deferred.delete(rec);
+    this.watched.delete(rec);
+    if (rec.element && this.visible) this.visible.unobserve(rec.element);
+    (rec.panel ?? rec.element)?.remove();
+  }
+
+  refuse(roleName, reason) {
+    const place = this.places.get(roleName);
+    place?.setAttribute('data-sf-refused', reason);
+  }
+
+  // ---------- keys shown, kept, announced ----------
+  keysChanged(core, dirty) {
+    for (const key of dirty) {
+      for (const node of this.texts.get(key) ?? []) {
+        const value = core.keys[key];
+        node.data = value === null || value === undefined ? '' : (typeof value === 'object' ? '' : String(value));
+      }
+    }
+    for (const one of this.ifs) {
+      const key = one.flag.replace(/^!/, '');
+      if (!dirty.has(key) && one.applied !== undefined) continue;
+      const on = core.flag(one.flag);
+      one.applied = on;
+      if (!on && one.element.parentNode) one.element.replaceWith(one.marker);
+      if (on && !one.element.parentNode && one.marker.parentNode) one.marker.replaceWith(one.element);
+    }
+    if (this.announces) this.announce(core, dirty);
+    if (this.ifs.length) this.queueCheck();
+  }
+
+  announce(core, dirty) {
+    const locale = (0,_page_language_js__WEBPACK_IMPORTED_MODULE_0__.pageLocale)(this.host);
+    const said = [];
+    for (const [name, key] of core.def.values) {
+      if (!this.announces[name] || !dirty.has(key)) continue;
+      const value = core.keys[key];
+      if (value === null || value === undefined) continue;
+      const label = core.def.words.text(locale, `values.${name}`);
+      const shown = (0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.typeOf)(core.def.keys.get(key)) === 'state' ? core.def.words.text(locale, `runtime.states.${value}`) : String(value);
+      if (shown === null) continue; // a data state is never announced as is (§7.4.1)
+      said.push(label ? `${label}: ${shown}` : shown);
+    }
+    if (said.length) this.live.textContent = said.join('. ');
+  }
+
+  /** Keys kept in the address or in the browser (§7.5); read once at start. */
+  restore(persisted) {
+    const out = [];
+    if (!persisted.length) return out;
+    if (!this.top) { (0,_journal_mjs__WEBPACK_IMPORTED_MODULE_3__.record)(this.core.id, 'warn', 'persist is kept by the top assembly only; a nested one keeps its keys in memory', {}, 'warn'); return out; }
+    this.persisted = persisted;
+    const url = persisted.filter(([, where]) => where === 'url').map(([name]) => name);
+    const local = persisted.filter(([, where]) => where === 'local').map(([name]) => name);
+    for (const [name, where] of persisted) if (where !== 'url' && where !== 'local') (0,_journal_mjs__WEBPACK_IMPORTED_MODULE_3__.record)(this.core.id, 'warn', `persist "${where}" of "${name}" needs the host; kept in memory`, {}, 'warn');
+    out.push(...this.readAddress(url));
+    for (const name of local) {
+      try {
+        const raw = globalThis.localStorage?.getItem(this.storageKey(name));
+        if (raw !== null && raw !== undefined) out.push([name, JSON.parse(raw)]);
+      } catch {
+        // storage blocked: the key starts from its initial value
+      }
+    }
+    this.urlKeys = url;
+    if (url.length && typeof globalThis.addEventListener === 'function') {
+      globalThis.addEventListener('popstate', () => { // Back and Forward bring the keys back (§7.5)
+        const changed = this.readAddress(url, true);
+        if (changed.length) this.core.restore(changed);
+      }, {signal: this.core.scope.signal});
+    }
+    return out;
+  }
+
+  storageKey(name) { return `sf-assembly:${this.core.id}:${name}`; }
+
+  readAddress(names, all = false) {
+    const out = [];
+    if (!names.length) return out;
+    let query;
+    try { query = new globalThis.URLSearchParams(globalThis.location?.search ?? ''); } catch { return out; }
+    for (const name of names) {
+      const def = this.def.keys.get(name);
+      const raw = query.get(name);
+      if (raw === null) { if (all) out.push([name, this.def.initial(name)]); continue; }
+      const value = (0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.typeOf)(def) === 'list' || (0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.typeOf)(def) === 'object' ? safeJson(raw) : (0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.fromAttribute)(def, raw);
+      out.push([name, value]);
+    }
+    return out;
+  }
+
+  persist(core, dirty, fromAddress) {
+    if (!this.persisted || !this.top) return;
+    let address = false;
+    for (const [name, where] of this.persisted) {
+      if (!dirty.has(name)) continue;
+      if (where === 'url') address = true;
+      if (where === 'local') {
+        try { globalThis.localStorage?.setItem(this.storageKey(name), JSON.stringify(core.keys[name])); } catch { /* storage blocked */ }
+      }
+    }
+    if (!address || fromAddress || !globalThis.history?.pushState) return;
+    const query = new globalThis.URLSearchParams(globalThis.location.search);
+    for (const name of this.urlKeys ?? []) {
+      const value = core.keys[name];
+      const initial = this.def.keys.get(name).initial ?? null;
+      if (value === null || value === undefined || JSON.stringify(value) === JSON.stringify(initial)) query.delete(name);
+      else query.set(name, typeof value === 'object' ? JSON.stringify(value) : String(value));
+    }
+    const text = query.toString();
+    const next = `${globalThis.location.pathname}${text ? `?${text}` : ''}${globalThis.location.hash}`;
+    if (next !== `${globalThis.location.pathname}${globalThis.location.search}${globalThis.location.hash}`) {
+      globalThis.history.pushState(globalThis.history.state, '', next);
+      core.log('address', `the address is ${next}`);
+    }
+  }
+
+  // ---------- the rest ----------
+  locale(rec) { return (0,_page_language_js__WEBPACK_IMPORTED_MODULE_0__.pageLocale)(rec?.element?.isConnected ? rec.element : this.host); }
+
+  error(kind, text, data = {}) {
+    this.host.dispatchEvent(new globalThis.CustomEvent('sf-component-error', {bubbles: true, composed: true, detail: {kind, text, instance: this.core?.id ?? null, ...pick(data)}}));
+  }
+
+  focus(which) { this.host[which]?.(); }
+
+  started(core) {
+    this.keysChanged(core, new Set(this.def.keys.keys())); // the layout's {{key}} and if from the first values
+    this.queueCheck();
+  }
+
+  dispose() {
+    this.mutations?.disconnect();
+    this.visible?.disconnect();
+    this.deferred.clear();
+    this.watched.clear();
+    this.unlanguage?.();
+  }
+}
+
+const pick = (data) => Object.fromEntries(Object.entries(data).filter(([, value]) => value === null || typeof value !== 'object'));
+const safeJson = (raw) => { try { return JSON.parse(raw); } catch { return null; } };
+
+/** Start an assembly element that a parent placed: its parent runs it and ends it (§7.7). */
+function adopt(element, definition, options) {
+  const registry = globalThis.customElements;
+  if (registry && !registry.get(definition.tag)) return null;
+  registry?.upgrade?.(element);
+  if (typeof element.sfAdopt !== 'function') return null;
+  return element.sfAdopt(options);
+}
+
+/** The custom element class of an assembly tag (§7.4: an assembly has the same interface as a leaf). */
+function elementClass(definition, options = {}) {
+  const Base = globalThis.HTMLElement;
+  const scalar = definition.settingProps.filter(({def}) => !['list', 'object'].includes((0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.typeOf)(def)));
+  const attributes = new Map(scalar.map((one) => [one.name, one]));
+
+  class SfAssembly extends Base {
+    static get observedAttributes() { return [...attributes.keys()]; }
+    static sfDefinition = definition;
+    static sfInterface = definition.iface;
+
+    #core = null;
+    #leaving = false;
+
+    get [EARLY]() { return (this._sfEarly ??= Object.create(null)); }
+
+    get sfCore() { return this.#core; }
+
+    connectedCallback() {
+      if (this[OWNED]) return; // its parent runs it
+      if (this.#core && !this.#core.disposed) { this.#leaving = false; return; }
+      this.#startTop();
+    }
+
+    disconnectedCallback() {
+      if (this[OWNED] || !this.#core) return;
+      this.#leaving = true;
+      nextFrame(() => { // taken out and not placed again in the same frame: its scope ends (§7.7)
+        if (!this.#leaving || this.isConnected) return;
+        this.#leaving = false;
+        this.#end();
+      });
+    }
+
+    attributeChangedCallback(name, previous, value) {
+      const one = attributes.get(name);
+      if (!one || previous === value) return;
+      const parsed = (0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.fromAttribute)(one.def, value);
+      if (this.#core) this.#core.setSetting(name, parsed);
+      else this[EARLY][name] = parsed;
+    }
+
+    /** The parent placed this element in a role: it runs the instance (§7.1.1, §7.4). */
+    sfAdopt({instanceId, frame, signal}) {
+      if (this.#core) return this.#core;
+      this[OWNED] = true;
+      const view = new HostView(this, definition, options);
+      this.#core = new _core_mjs__WEBPACK_IMPORTED_MODULE_1__.AssemblyCore(definition, {instanceId, frame, view, signal, settings: {...this[EARLY]}});
+      if (instances.has(instanceId)) this.#core.error('instance', `two instances have the path ${instanceId}`);
+      instances.set(instanceId, this.#core);
+      signal?.addEventListener('abort', () => { if (instances.get(instanceId) === this.#core) instances.delete(instanceId); }, {once: true});
+      return this.#core;
+    }
+
+    #startTop() {
+      let role = this.getAttribute('data-sf-role') || this.id;
+      if (!role) {
+        const same = [...globalThis.document.querySelectorAll(this.localName)].filter((one) => !one[OWNED]);
+        role = `${this.localName}[${same.indexOf(this) + 1}]`;
+        (0,_journal_mjs__WEBPACK_IMPORTED_MODULE_3__.record)(`page/${role}`, 'warn', `an instance with neither an id nor data-sf-role takes ${role} (§7.1.1)`, {}, 'warn');
+      }
+      const instanceId = `page/${role}`;
+      if (instances.has(instanceId) && instances.get(instanceId) !== this.#core) {
+        (0,_journal_mjs__WEBPACK_IMPORTED_MODULE_3__.record)(instanceId, 'instance', `two instances have the path ${instanceId}; the second does not start (§7.1.1)`, {}, 'error');
+        this.dispatchEvent(new globalThis.CustomEvent('sf-component-error', {bubbles: true, composed: true, detail: {kind: 'instance', text: `two instances have the path ${instanceId}`, instance: instanceId}}));
+        return;
+      }
+      const settings = {...this[EARLY]};
+      for (const [name, one] of attributes) if (this.hasAttribute(name)) settings[name] = (0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.fromAttribute)(one.def, this.getAttribute(name));
+      const host = this;
+      const frame = {
+        report(values, {origin} = {}) {
+          if (origin === 'outside' || origin === 'start') return;
+          host.dispatchEvent(new globalThis.CustomEvent('change', {bubbles: true, detail: Object.fromEntries(Object.entries(values).map(([name, value]) => [(0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.camel)(name), value]))}));
+        },
+        emit(verb, detail) {
+          host.dispatchEvent(new globalThis.CustomEvent(`${definition.tag}-${verb}`, {bubbles: true, composed: true, detail: {...detail}}));
+        },
+      };
+      this.#core = new _core_mjs__WEBPACK_IMPORTED_MODULE_1__.AssemblyCore(definition, {instanceId, frame, view: new HostView(this, definition, options), settings});
+      instances.set(instanceId, this.#core);
+      this.#core.start();
+    }
+
+    #end() {
+      const core = this.#core;
+      if (!core) return;
+      if (instances.get(core.id) === core) instances.delete(core.id);
+      core.dispose();
+      this.#core = null;
+      this.replaceChildren();
+    }
+
+    /** Run an action of the assembly (§4.4): `with` arrives as one object. */
+    sfAct(action, args = {}) {
+      if (!this.#core) return Promise.resolve({answer: 'unavailable', reason: 'not-started'});
+      return Promise.resolve(this.#core.act(action, args));
+    }
+
+    act(action, args) { return this.sfAct(action, args); }
+    connectPort(port) { return this.sfAct('connect-port', {port}); }
+    /** The alias of connect-port (§4.1). */
+    setHostPort(port) { return this.connectPort(port); }
+
+    get layout() { return this.getAttribute('layout') ?? 'default'; }
+    set layout(name) { this.#core?.view.useLayout(name); }
+
+    /** The keys, their writers and readers (§14). */
+    sfKeyMap() { return this.#core?.keyMap() ?? null; }
+  }
+
+  // Settings, values and actions as properties and methods (§4.2): camelCase, never over a native member.
+  const taken = (name) => name in Base.prototype || name in SfAssembly.prototype;
+  for (const {name, def, prop} of definition.settingProps) {
+    if (taken(prop)) { (0,_journal_mjs__WEBPACK_IMPORTED_MODULE_3__.record)(definition.tag, 'warn', `setting "${name}" is no property: ${prop} is a member of HTMLElement`, {}, 'warn'); continue; }
+    Object.defineProperty(SfAssembly.prototype, prop, {
+      configurable: true,
+      get() { return this.sfCore ? this.sfCore.keys[name] : (this[EARLY][name] ?? def.default ?? null); },
+      set(value) {
+        if (this.sfCore) this.sfCore.setSetting(name, value);
+        else this[EARLY][name] = value; // read when the instance starts
+      },
+    });
+  }
+  for (const [name] of (0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.own)(definition.manifest.values)) {
+    const prop = (0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.camel)(name);
+    if (taken(prop)) continue;
+    Object.defineProperty(SfAssembly.prototype, prop, {configurable: true, get() { return this.sfCore?.value(name); }});
+  }
+  for (const [name] of (0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.own)(definition.manifest.actions)) {
+    const prop = (0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.camel)(name);
+    if (taken(prop)) continue;
+    Object.defineProperty(SfAssembly.prototype, prop, {configurable: true, writable: true, value(args = {}) { return this.sfAct(name, args); }});
+  }
+  return SfAssembly;
+}
+
+
+
+
+/***/ },
+
+/***/ "ff34a74152a4"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   Assembly: () => (/* binding */ Assembly),
+/* harmony export */   AssemblyCore: () => (/* reexport safe */ _core_mjs__WEBPACK_IMPORTED_MODULE_0__.AssemblyCore),
+/* harmony export */   PART_LINK: () => (/* reexport safe */ _link_mjs__WEBPACK_IMPORTED_MODULE_4__.PART_LINK),
+/* harmony export */   activity: () => (/* reexport safe */ _core_mjs__WEBPACK_IMPORTED_MODULE_0__.activity),
+/* harmony export */   adaptElement: () => (/* reexport safe */ _link_mjs__WEBPACK_IMPORTED_MODULE_4__.adaptElement),
+/* harmony export */   compile: () => (/* reexport safe */ _definition_mjs__WEBPACK_IMPORTED_MODULE_1__.compile),
+/* harmony export */   createLink: () => (/* reexport safe */ _link_mjs__WEBPACK_IMPORTED_MODULE_4__.createLink),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   define: () => (/* binding */ define),
+/* harmony export */   headlessView: () => (/* reexport safe */ _core_mjs__WEBPACK_IMPORTED_MODULE_0__.headlessView),
+/* harmony export */   interfaces: () => (/* reexport safe */ _definition_mjs__WEBPACK_IMPORTED_MODULE_1__.interfaces),
+/* harmony export */   journal: () => (/* reexport safe */ _journal_mjs__WEBPACK_IMPORTED_MODULE_3__.journal),
+/* harmony export */   whenIdle: () => (/* reexport safe */ _core_mjs__WEBPACK_IMPORTED_MODULE_0__.whenIdle)
+/* harmony export */ });
+/* harmony import */ var _core_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("b60c1434b0be");
+/* harmony import */ var _definition_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("9ee717a9c619");
+/* harmony import */ var _host_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("8258b7112fb6");
+/* harmony import */ var _journal_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("6d4272a67a74");
+/* harmony import */ var _link_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("dfdb640e668b");
+// SF.Assembly: the assembly runtime of standard simai.smart-component 1.3.8
+// (§7 assemblies, §9 rules, §10 execution, §11.2 words a rule picks, §14 the
+// journal). An assembly is defined by its manifest alone — no code of its own:
+//
+//   SF.Assembly.interfaces.registerAll(registry.parts);   // the parts' interfaces
+//   SF.Assembly.define(manifest, {layouts: {default: html}, lang: {ru: words}});
+//   document.body.append(document.createElement(manifest.tag));
+//
+// Its parts are any custom elements with a declared interface: the runtime
+// does not depend on the Smart base class (link.mjs). The state that must be
+// one per page — definitions, instances, interfaces, the journal, activity —
+// lives on the shared global, so every bundle that carries this module meets
+// the same registry.
+
+
+
+
+
+
+
+/**
+ * Define an assembly from its manifest. `options.layouts` maps a layout name
+ * to its HTML; `options.lang` a locale to its language file; `options.loadPart`
+ * fetches a part's module when the part starts (the Loader by default).
+ */
+function define(manifest, options = {}) {
+  const tag = String(manifest?.tag ?? '').toLowerCase();
+  if (_host_mjs__WEBPACK_IMPORTED_MODULE_2__.definitions.has(tag)) return _host_mjs__WEBPACK_IMPORTED_MODULE_2__.definitions.get(tag);
+  const definition = (0,_definition_mjs__WEBPACK_IMPORTED_MODULE_1__.compile)(manifest, options);
+  _host_mjs__WEBPACK_IMPORTED_MODULE_2__.definitions.set(tag, definition);
+  const registry = globalThis.customElements;
+  if (registry && typeof globalThis.HTMLElement === 'function' && !registry.get(tag)) registry.define(tag, (0,_host_mjs__WEBPACK_IMPORTED_MODULE_2__.elementClass)(definition, options));
+  return definition;
+}
+
+const Assembly = Object.freeze({
+  define,
+  defined: (tag) => _host_mjs__WEBPACK_IMPORTED_MODULE_2__.definitions.get(String(tag).toLowerCase()) ?? null,
+  interfaces: _definition_mjs__WEBPACK_IMPORTED_MODULE_1__.interfaces,
+  journal: _journal_mjs__WEBPACK_IMPORTED_MODULE_3__.journal,
+  /** Turn the journal on or off whatever the page says (§14); `null` follows the page. */
+  debug: (on = true) => { _journal_mjs__WEBPACK_IMPORTED_MODULE_3__.journal.force(on); return _journal_mjs__WEBPACK_IMPORTED_MODULE_3__.journal.on; },
+  activity: _core_mjs__WEBPACK_IMPORTED_MODULE_0__.activity,
+  whenIdle: _core_mjs__WEBPACK_IMPORTED_MODULE_0__.whenIdle,
+  /** A running instance by its role path (§7.1.1). */
+  instance: (path) => _host_mjs__WEBPACK_IMPORTED_MODULE_2__.instances.get(path) ?? null,
+  instances: () => [..._host_mjs__WEBPACK_IMPORTED_MODULE_2__.instances.keys()],
+  PART_LINK: _link_mjs__WEBPACK_IMPORTED_MODULE_4__.PART_LINK,
+  adaptElement: _link_mjs__WEBPACK_IMPORTED_MODULE_4__.adaptElement,
+  createLink: _link_mjs__WEBPACK_IMPORTED_MODULE_4__.createLink,
+  compile: _definition_mjs__WEBPACK_IMPORTED_MODULE_1__.compile,
+  AssemblyCore: _core_mjs__WEBPACK_IMPORTED_MODULE_0__.AssemblyCore,
+  headlessView: _core_mjs__WEBPACK_IMPORTED_MODULE_0__.headlessView,
+});
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.SF = globalThis.SF || {};
+  if (!globalThis.SF.Assembly) globalThis.SF.Assembly = Assembly;
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Assembly);
+
+
+
+/***/ },
+
+/***/ "6d4272a67a74"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   journal: () => (/* binding */ journal),
+/* harmony export */   journalOn: () => (/* binding */ journalOn),
+/* harmony export */   record: () => (/* binding */ record)
+/* harmony export */ });
+// The debugging journal of every bus (standard simai.smart-component 1.3.8
+// §14). In development mode — `?sf-debug` in the address, `data-sf-debug` on
+// <html> (the Loader's switch) or `SF_BOOT_CONFIG.debug.scope` — every turn,
+// rule, step, host answer, write and crossing of the frame is recorded as one
+// entry. Nothing is recorded in production; errors still reach the page as the
+// base event `sf-component-error` on the host that met them (§4.1).
+//
+// The store lives on the shared global, like SF.language's: every bundle that
+// carries a copy of this module records into the one journal.
+
+const STORE = (() => {
+  const root = typeof globalThis !== 'undefined' ? globalThis : {};
+  const key = '__sfAssemblyJournal';
+  if (!root[key]) root[key] = {entries: [], listeners: new Set(), seq: 0, forced: null, limit: 5000};
+  return root[key];
+})();
+
+/** Whether the journal records: development mode only (§14). */
+function journalOn() {
+  if (STORE.forced !== null) return STORE.forced;
+  const root = globalThis;
+  if (root.SF_BOOT_CONFIG?.debug?.scope) return true;
+  try {
+    if (new globalThis.URLSearchParams(root.location?.search || '').has('sf-debug')) return true;
+  } catch {
+    // no address: Node, a worker
+  }
+  return Boolean(root.document?.documentElement?.hasAttribute?.('data-sf-debug'));
+}
+
+/**
+ * Record one entry: `{seq, time, instance, kind, level, text, …data}`.
+ * Returns the entry, or null when the journal is off.
+ */
+function record(instance, kind, text, data = {}, level = 'info') {
+  if (!journalOn()) return null;
+  const entry = {seq: ++STORE.seq, time: Date.now(), instance: instance ?? 'page', kind, level, text, ...data};
+  STORE.entries.push(entry);
+  if (STORE.entries.length > STORE.limit) STORE.entries.splice(0, STORE.entries.length - STORE.limit);
+  for (const listener of [...STORE.listeners]) {
+    try {
+      listener(entry);
+    } catch {
+      // a listener that throws does not stop the journal
+    }
+  }
+  return entry;
+}
+
+const journal = {
+  /** Turn the journal on or off whatever the page says; `null` follows the page again. */
+  force(on) { STORE.forced = on === null || on === undefined ? null : Boolean(on); return this; },
+  get on() { return journalOn(); },
+  /** The entries, optionally of one instance (its path, or a path prefix ending with `/`). */
+  entries(instance) {
+    if (!instance) return [...STORE.entries];
+    return STORE.entries.filter((entry) => entry.instance === instance || (instance.endsWith('/') && entry.instance.startsWith(instance)));
+  },
+  /** The journal as JSON (§14 «exports as JSON»). */
+  export(instance) { return JSON.stringify(this.entries(instance)); },
+  /** The keys of an instance as they were after a journal entry: the time machine (§14). */
+  keysAt(instance, seq) {
+    let found = null;
+    for (const entry of STORE.entries) {
+      if (entry.seq > seq) break;
+      if (entry.instance === instance && entry.kind === 'commit' && entry.snapshot) found = entry.snapshot;
+    }
+    return found ? JSON.parse(found) : null;
+  },
+  subscribe(listener) {
+    if (typeof listener !== 'function') return () => {};
+    STORE.listeners.add(listener);
+    return () => STORE.listeners.delete(listener);
+  },
+  clear() { STORE.entries.length = 0; return this; },
+  /** How many entries are kept before the oldest are dropped. */
+  limit(count) { STORE.limit = Math.max(100, Number(count) || 5000); return this; },
+};
+
+
+/***/ },
+
+/***/ "dfdb640e668b"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   DEFINITION_WAIT_MS: () => (/* binding */ DEFINITION_WAIT_MS),
+/* harmony export */   PART_LINK: () => (/* binding */ PART_LINK),
+/* harmony export */   adaptElement: () => (/* binding */ adaptElement),
+/* harmony export */   assemblyLink: () => (/* binding */ assemblyLink),
+/* harmony export */   createLink: () => (/* binding */ createLink),
+/* harmony export */   domNames: () => (/* binding */ domNames)
+/* harmony export */ });
+/* harmony import */ var _values_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("8cf8ac8cb59d");
+// How a part joins an assembly (standard simai.smart-component 1.3.8 §4, §7.2).
+//
+// The runtime never depends on a part's base class. It talks to a part through
+// a link with six members:
+//
+//   set(name, value)                 a setting, or a value writable as one (§4)
+//   get(name)                        a value the part holds
+//   act(action, args, {signal})      an action; answers an outcome (§4.4)
+//   connectPort(port)                the port it declares (§4.9)
+//   start()                          the assembly started it (§7.2.1)
+//   dispose()                        its scope ended (§7.7)
+//
+// and the part answers through the context the runtime gives it: `report`
+// for its values, `emit` for its events, `word` for its words, `signal` for its
+// scope.
+//
+// A part that speaks this protocol itself returns its link from
+// `element[PART_LINK](context)`. Every other element — the SIMAI Framework's
+// components today — is wired by `adaptElement` from its declared interface:
+// settings as properties (lists and objects) or attributes, values read from
+// its properties, events as DOM events (`<tag>-<verb>`, or the native name for
+// a native event, §8), actions as its methods.
+
+
+
+const PART_LINK = Symbol.for('sf.assembly.part-link');
+
+/** How long an action waits for a part whose module has not arrived (the quality profile's slot wait, §4.5.1). */
+const DEFINITION_WAIT_MS = 1500;
+
+const RE_READ = ['change', 'input', 'sf-props-change'];
+
+/** The DOM names of a declared event: the native name, or `<tag>-<verb>` and its dated aliases (§8). */
+function domNames(tag, verb, def = {}) {
+  if (def.carries === 'native') return [verb];
+  return [def.dom ?? `${tag}-${verb}`, ...(Array.isArray(def.aliases) ? def.aliases : [])];
+}
+
+/** A link for any element: its own, or one adapted from its interface; deferred until its tag is defined. */
+function createLink(element, iface, context) {
+  const registry = globalThis.customElements;
+  const tag = element.localName;
+  if (!registry || registry.get(tag)) return linkOf(element, iface, context);
+  return lateLink(element, iface, context, registry);
+}
+
+function linkOf(element, iface, context) {
+  if (typeof element[PART_LINK] === 'function') return element[PART_LINK](context);
+  return adaptElement(element, iface, context);
+}
+
+/** A link that queues what it is told until the part's module arrives (§7.2.1: the module is fetched on start). */
+function lateLink(element, iface, context, registry) {
+  let real = null;
+  let started = false;
+  let port = null;
+  const settings = new Map();
+  const tag = element.localName;
+  const ready = registry.whenDefined(tag).then(() => {
+    if (context.signal.aborted) return null;
+    registry.upgrade?.(element);
+    real = linkOf(element, iface, context);
+    for (const [name, value] of settings) real.set(name, value);
+    settings.clear();
+    if (port) real.connectPort?.(port);
+    if (started) real.start?.();
+    return real;
+  });
+  return {
+    set(name, value) { if (real) real.set(name, value); else settings.set(name, value); },
+    get(name) { return real ? real.get(name) : undefined; },
+    valid() { return real?.valid?.(); },
+    act(action, args, options = {}) {
+      if (real) return real.act(action, args, options);
+      return new Promise((resolve) => {
+        const timer = globalThis.setTimeout(() => resolve({answer: 'unavailable', reason: 'not-defined', message: ''}), DEFINITION_WAIT_MS);
+        ready.then((link) => {
+          globalThis.clearTimeout(timer);
+          resolve(link ? link.act(action, args, options) : {answer: 'cancelled', reason: 'removed'});
+        });
+      });
+    },
+    connectPort(given) { if (real) real.connectPort?.(given); else port = given; },
+    start() { if (real) real.start?.(); else started = true; },
+    dispose() { real?.dispose?.(); },
+  };
+}
+
+/** The interface adapter for today's components (§4): attributes, properties, DOM events, methods. */
+function adaptElement(element, iface, context) {
+  const signal = context.signal;
+  const known = new Map();
+  const values = Object.keys(iface.values ?? {});
+  const tag = element.localName;
+
+  const readValues = (origin = null) => {
+    let changes = null;
+    for (const name of values) {
+      const value = element[(0,_values_mjs__WEBPACK_IMPORTED_MODULE_0__.camel)(name)];
+      if (value === undefined || (known.has(name) && (0,_values_mjs__WEBPACK_IMPORTED_MODULE_0__.same)(known.get(name), value))) continue;
+      known.set(name, value);
+      (changes ??= {})[name] = value;
+    }
+    if (changes) context.report(changes, {origin});
+  };
+
+  const heard = new Set();
+  for (const [verb, def] of Object.entries(iface.events ?? {})) {
+    for (const name of domNames(tag, verb, def)) {
+      heard.add(name);
+      element.addEventListener(name, (event) => {
+        if (event.target !== element) return; // an event of a component inside the part is not the part's
+        readValues();
+        const detail = def.carries === 'native' || !(0,_values_mjs__WEBPACK_IMPORTED_MODULE_0__.isObject)(event.detail) ? {} : event.detail;
+        context.emit(verb, detail, {cancel: event.cancelable ? () => event.preventDefault() : null});
+      }, {signal});
+    }
+  }
+  if (values.length) {
+    for (const name of RE_READ) {
+      if (heard.has(name)) continue;
+      element.addEventListener(name, (event) => { if (event.target === element) readValues(); }, {signal});
+    }
+  }
+
+  const write = (name, value) => {
+    const def = iface.settings?.[name] ?? iface.values?.[name];
+    const prop = (0,_values_mjs__WEBPACK_IMPORTED_MODULE_0__.camel)(name);
+    const type = (0,_values_mjs__WEBPACK_IMPORTED_MODULE_0__.typeOf)(def);
+    if (name in (iface.values ?? {})) known.set(name, value); // a value set from outside is not reported back (§8)
+    if (type === 'list' || type === 'object' || prop in element) { element[prop] = value; return; }
+    if (value === null || value === undefined) { element.removeAttribute(name); return; }
+    if (type === 'boolean') {
+      if (value === true) element.setAttribute(name, '');
+      else if (def?.optional) element.setAttribute(name, 'false');
+      else element.removeAttribute(name);
+      return;
+    }
+    element.setAttribute(name, String(value));
+  };
+
+  return {
+    set: write,
+    get: (name) => element[(0,_values_mjs__WEBPACK_IMPORTED_MODULE_0__.camel)(name)],
+    valid: () => (element.validity ? element.validity.valid : undefined),
+    act(action, args = {}, options = {}) {
+      if (action === 'connect-port') { this.connectPort(args?.port ?? args); return {answer: 'applied'}; }
+      const method = element[(0,_values_mjs__WEBPACK_IMPORTED_MODULE_0__.camel)(action)];
+      if (typeof method !== 'function') {
+        if (action === 'focus' || action === 'blur') { element[action]?.(); return {answer: 'applied'}; }
+        return {answer: 'refused', reason: 'no-action', message: ''};
+      }
+      let given = (0,_values_mjs__WEBPACK_IMPORTED_MODULE_0__.isObject)(args) ? args : {};
+      // §11.2: a part asked with a code says the assembly's word for it; today's components take text.
+      // The word by code wins over the host's message; the message is said only when the code has no word
+      // (dispatcher decision 2026-10-27).
+      if (typeof given.code === 'string') {
+        const word = context.word(`words.${given.code}`, given.count);
+        if (word !== null) given = {...given, text: word};
+      }
+      const answer = method.call(element, given, {signal: options.signal});
+      return answer && typeof answer.then === 'function' ? answer.then(_values_mjs__WEBPACK_IMPORTED_MODULE_0__.outcomeOf) : (0,_values_mjs__WEBPACK_IMPORTED_MODULE_0__.outcomeOf)(answer);
+    },
+    connectPort(port) {
+      const connect = element.connectPort ?? element.setHostPort;
+      if (typeof connect === 'function') connect.call(element, port);
+    },
+    start: () => readValues('start'), // the part's first values are not a person's change (§8)
+    dispose() {},
+  };
+}
+
+/** The link to a nested assembly: an ordinary part (§7.4). */
+function assemblyLink(core) {
+  return {
+    set: (name, value) => { core.setSetting(name, value); },
+    get: (name) => core.value(name),
+    valid: () => (core.keys.valid === false ? false : undefined),
+    act: (action, args, options = {}) => core.act(action, args, options),
+    connectPort: (port) => { core.connectPort(port); },
+    start: () => { core.start(); },
+    dispose: () => { core.dispose(); },
+  };
+}
+
+
+/***/ },
+
+/***/ "eb7fe3498c26"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   OPERATIONS: () => (/* binding */ OPERATIONS),
+/* harmony export */   OUTCOME_FIELDS: () => (/* binding */ OUTCOME_FIELDS),
+/* harmony export */   READINGS: () => (/* binding */ READINGS),
+/* harmony export */   createReader: () => (/* binding */ createReader),
+/* harmony export */   isCondition: () => (/* binding */ isCondition),
+/* harmony export */   keysOf: () => (/* binding */ keysOf)
+/* harmony export */ });
+/* harmony import */ var _values_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("8cf8ac8cb59d");
+// Readings and conditions of a rule (standard simai.smart-component 1.3.8
+// §9): the closed lists a rule, a derived key (§7.1.2) and a role's `if`
+// are built from. There are no expressions, no string building and no
+// functions: a reading is data, and this file only walks it.
+
+
+
+const READINGS = Object.freeze(['from', 'key', 'value', 'entry', 'new', 'object', 'sum', 'difference', 'product', 'count', 'choose', 'outcome']);
+const OPERATIONS = Object.freeze(['eq', 'ne', 'gt', 'lt', 'has', 'filled', 'empty', 'yes', 'no']);
+const OUTCOME_FIELDS = Object.freeze(['answer', 'reason', 'message']);
+
+const isCondition = (node) => (0,_values_mjs__WEBPACK_IMPORTED_MODULE_0__.isObject)(node) && ('op' in node || 'all' in node || 'any' in node);
+
+const filled = (value) => !(value === null || value === undefined || value === '' || (Array.isArray(value) && value.length === 0));
+
+/**
+ * A reader over one context. The context gives what a reading may look at:
+ *   key(name)       a key, the turn's pending writes first (§10.2)
+ *   from            what the event carries
+ *   entry           the entry whose part sent the event (§7.2.3)
+ *   outcome         the outcome that ended the rule, inside `otherwise` only
+ *   fail(text)      a reading that is not one
+ * and returns `read(reading)` and `test(condition)`.
+ */
+function createReader(context) {
+  const fail = context.fail ?? (() => {});
+  const numbers = (list) => {
+    if (!Array.isArray(list)) { fail(`${JSON.stringify(list)} is not a list of readings`); return null; }
+    const got = list.map(read);
+    if (got.some((n) => n === null || n === undefined)) return null; // an unset operand gives null (§9)
+    const numeric = got.map(Number);
+    return numeric.some((n) => !Number.isFinite(n)) ? null : numeric;
+  };
+
+  function read(reading) {
+    if (!(0,_values_mjs__WEBPACK_IMPORTED_MODULE_0__.isObject)(reading)) { fail(`${JSON.stringify(reading)} is not a reading`); return undefined; }
+    if (isCondition(reading)) return test(reading); // a condition stands wherever a boolean is read
+    if ('value' in reading) return reading.value;
+    if ('key' in reading) {
+      const [head, ...path] = String(reading.key).split('.');
+      const value = context.key(head);
+      return path.length ? (0,_values_mjs__WEBPACK_IMPORTED_MODULE_0__.at)(value, path.join('.')) : value;
+    }
+    if ('from' in reading) return (0,_values_mjs__WEBPACK_IMPORTED_MODULE_0__.at)(context.from, reading.from);
+    if ('entry' in reading) return context.entry ? (0,_values_mjs__WEBPACK_IMPORTED_MODULE_0__.at)(context.entry, reading.entry) : undefined;
+    if ('new' in reading) return (0,_values_mjs__WEBPACK_IMPORTED_MODULE_0__.freshId)();
+    if ('object' in reading) {
+      const out = {};
+      for (const [field, inner] of Object.entries(reading.object ?? {})) if (field !== '$comment') out[field] = read(inner);
+      return out;
+    }
+    if ('sum' in reading) { const n = numbers(reading.sum); return n && n.reduce((a, b) => a + b, 0); }
+    if ('product' in reading) { const n = numbers(reading.product); return n && n.reduce((a, b) => a * b, 1); }
+    if ('difference' in reading) {
+      const n = numbers(reading.difference);
+      if (n && n.length !== 2) { fail('difference takes two readings'); return null; }
+      return n && n[0] - n[1];
+    }
+    if ('count' in reading) { const list = read(reading.count); return Array.isArray(list) ? list.length : 0; }
+    if ('choose' in reading) return test(reading.choose) ? read(reading.then) : read(reading.else);
+    if ('outcome' in reading) {
+      if (!context.outcome) { fail(`{"outcome": "${reading.outcome}"} is read outside otherwise`); return undefined; }
+      if (!OUTCOME_FIELDS.includes(reading.outcome)) { fail(`"${reading.outcome}" is not a field of an outcome`); return undefined; }
+      return context.outcome[reading.outcome] ?? '';
+    }
+    fail(`${JSON.stringify(reading)} is not a reading`);
+    return undefined;
+  }
+
+  function test(condition) {
+    if (!(0,_values_mjs__WEBPACK_IMPORTED_MODULE_0__.isObject)(condition)) { fail(`${JSON.stringify(condition)} is not a condition`); return false; }
+    if (Array.isArray(condition.all)) return condition.all.every(test);
+    if (Array.isArray(condition.any)) return condition.any.some(test);
+    const left = read(condition.left);
+    const right = condition.right === undefined ? undefined : read(condition.right);
+    switch (condition.op) {
+      case 'eq': return (0,_values_mjs__WEBPACK_IMPORTED_MODULE_0__.same)(left ?? null, right ?? null);
+      case 'ne': return !(0,_values_mjs__WEBPACK_IMPORTED_MODULE_0__.same)(left ?? null, right ?? null);
+      case 'gt': return left !== null && left !== undefined && right !== null && right !== undefined && left > right;
+      case 'lt': return left !== null && left !== undefined && right !== null && right !== undefined && left < right;
+      case 'has':
+        if (Array.isArray(left)) return left.some((one) => (0,_values_mjs__WEBPACK_IMPORTED_MODULE_0__.same)(one, right));
+        return typeof left === 'string' && right !== null && right !== undefined && left.includes(String(right));
+      case 'filled': return filled(left);
+      case 'empty': return !filled(left);
+      case 'yes': return left === true;
+      case 'no': return left === false;
+      default: fail(`op "${condition.op}" is not an operation`); return false;
+    }
+  }
+
+  return {read, test};
+}
+
+/** The keys a reading or a condition reads: the dependencies of a derived key (§7.1.2). */
+function keysOf(node, into = new Set()) {
+  if (Array.isArray(node)) { for (const one of node) keysOf(one, into); return into; }
+  if (!(0,_values_mjs__WEBPACK_IMPORTED_MODULE_0__.isObject)(node)) return into;
+  if (Array.isArray(node.all) || Array.isArray(node.any)) return keysOf(node.all ?? node.any, into);
+  if ('op' in node) return keysOf([node.left, node.right], into);
+  if ('value' in node) return into; // a constant reads nothing
+  if (typeof node.key === 'string') into.add(node.key.split('.')[0]);
+  else if ((0,_values_mjs__WEBPACK_IMPORTED_MODULE_0__.isObject)(node.object)) keysOf(Object.values(node.object), into);
+  else if ('choose' in node) keysOf([node.choose, node.then, node.else], into);
+  else for (const kind of ['sum', 'difference', 'product', 'count']) if (kind in node) keysOf(node[kind], into);
+  return into;
+}
+
+
+/***/ },
+
+/***/ "8cf8ac8cb59d"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   ANSWERS: () => (/* binding */ ANSWERS),
+/* harmony export */   BASE_ACTIONS: () => (/* binding */ BASE_ACTIONS),
+/* harmony export */   CAUSE_CHAIN_DEPTH: () => (/* binding */ CAUSE_CHAIN_DEPTH),
+/* harmony export */   STATES: () => (/* binding */ STATES),
+/* harmony export */   WRITE_VERBS: () => (/* binding */ WRITE_VERBS),
+/* harmony export */   at: () => (/* binding */ at),
+/* harmony export */   camel: () => (/* binding */ camel),
+/* harmony export */   clone: () => (/* binding */ clone),
+/* harmony export */   fits: () => (/* binding */ fits),
+/* harmony export */   freshId: () => (/* binding */ freshId),
+/* harmony export */   fromAttribute: () => (/* binding */ fromAttribute),
+/* harmony export */   isObject: () => (/* binding */ isObject),
+/* harmony export */   outcomeOf: () => (/* binding */ outcomeOf),
+/* harmony export */   own: () => (/* binding */ own),
+/* harmony export */   same: () => (/* binding */ same),
+/* harmony export */   show: () => (/* binding */ show),
+/* harmony export */   typeOf: () => (/* binding */ typeOf)
+/* harmony export */ });
+// The values an assembly holds: the types of standard simai.smart-component
+// 1.3.8 §4.2 and §7.1, and the small helpers every other module of the
+// assembly runtime shares. No DOM here: the whole file runs in Node as well.
+
+/** The data states a key of type `state` holds (§7.1). */
+const STATES = Object.freeze(['idle', 'loading', 'ready', 'empty', 'error', 'refused', 'unavailable']);
+
+/** The verbs that write to the host (vocabulary 1.1.5 §5.3). */
+const WRITE_VERBS = new Set([
+  'save', 'delete', 'create', 'rename', 'archive', 'restore', 'move', 'apply',
+  'submit', 'retry', 'attach', 'detach', 'answer', 'rate', 'read',
+]);
+
+/** The answers a waiting step can give (§10.3, vocabulary §3.1). */
+const ANSWERS = Object.freeze(['applied', 'conflict', 'refused', 'unavailable', 'cancelled']);
+
+/** The cause chain limit of the quality profile (`runtime.cause_chain_depth`, §10.5). */
+const CAUSE_CHAIN_DEPTH = 32;
+
+/** The base actions every element has (§4.1). */
+const BASE_ACTIONS = new Set(['focus', 'blur', 'connect-port']);
+
+const typeOf = (def) => (typeof def === 'string' ? def : def?.type);
+
+/** `page-size` → `pageSize`: the property of a setting or a value (§4.2). */
+const camel = (name) => String(name).replace(/-([a-z0-9])/g, (_, c) => c.toUpperCase());
+
+/** The entries of a manifest object, without `$comment` and the tools' `x-` fields (§3.3). */
+function own(object) {
+  if (!object || typeof object !== 'object') return [];
+  return Object.entries(object).filter(([name]) => name !== '$comment' && !name.startsWith('x-'));
+}
+
+const isObject = (value) => value !== null && typeof value === 'object' && !Array.isArray(value);
+
+/** Whether a value fits a declared type; unset (null, undefined) always fits (§4.2). */
+function fits(def, value) {
+  if (value === null || value === undefined) return true;
+  const type = typeOf(def);
+  switch (type) {
+    case 'string': case 'icon': case 'date': return typeof value === 'string';
+    case 'id': return typeof value === 'string' || Number.isInteger(value);
+    case 'enum': return !def?.values || def.values.includes(value);
+    case 'boolean': return typeof value === 'boolean';
+    case 'number': return typeof value === 'number' && Number.isFinite(value);
+    case 'list': return Array.isArray(value);
+    case 'object': return isObject(value);
+    case 'state': return STATES.includes(value);
+    default: return true;
+  }
+}
+
+/** Structural equality of data: «an equal value is not passed again» (§7.2, §10.5). */
+function same(a, b) {
+  if (a === b) return true;
+  if (a === null || b === null || typeof a !== 'object' || typeof b !== 'object') {
+    return Number.isNaN(a) && Number.isNaN(b);
+  }
+  if (Array.isArray(a)) {
+    if (!Array.isArray(b) || a.length !== b.length) return false;
+    for (let i = 0; i < a.length; i += 1) if (!same(a[i], b[i])) return false;
+    return true;
+  }
+  if (Array.isArray(b)) return false;
+  const left = Object.keys(a);
+  if (left.length !== Object.keys(b).length) return false;
+  for (const name of left) if (!Object.prototype.hasOwnProperty.call(b, name) || !same(a[name], b[name])) return false;
+  return true;
+}
+
+/** A copy of data, so a key's initial value is never shared between instances. */
+function clone(value) {
+  if (value === null || typeof value !== 'object') return value;
+  return typeof globalThis.structuredClone === 'function' ? globalThis.structuredClone(value) : JSON.parse(JSON.stringify(value));
+}
+
+/** A field of a value along a dotted path (`answer.accepted`, `query.search`). */
+function at(value, path) {
+  let current = value;
+  for (const step of String(path).split('.')) {
+    if (current === null || current === undefined) return undefined;
+    current = current[step];
+  }
+  return current;
+}
+
+/** A short form of a value for the journal. */
+function show(value) {
+  if (Array.isArray(value)) return `[${value.length}]`;
+  if (value === undefined) return 'undefined';
+  try {
+    const text = JSON.stringify(value);
+    return text.length > 80 ? `${text.slice(0, 77)}…` : text;
+  } catch {
+    return String(value);
+  }
+}
+
+/** The value of an attribute read as a declared type (§4.2: the attribute form of a boolean is absent / present / "false"). */
+function fromAttribute(def, raw) {
+  if (raw === null) return typeOf(def) === 'boolean' && !def?.optional ? false : null;
+  switch (typeOf(def)) {
+    case 'boolean': return raw !== 'false';
+    case 'number': {
+      if (raw.trim() === '') return null;
+      const number = Number(raw);
+      return Number.isFinite(number) ? number : null;
+    }
+    default: return raw;
+  }
+}
+
+/** A fresh id for a new entry: unique on the page, never a counter (§9 `new`, §7.1.1). */
+function freshId() {
+  const crypto = globalThis.crypto;
+  if (typeof crypto?.randomUUID === 'function') return crypto.randomUUID();
+  const bytes = new Uint8Array(16);
+  if (typeof crypto?.getRandomValues === 'function') crypto.getRandomValues(bytes);
+  else for (let i = 0; i < bytes.length; i += 1) bytes[i] = Math.floor(Math.random() * 256);
+  return [...bytes].map((byte) => byte.toString(16).padStart(2, '0')).join('');
+}
+
+/** An outcome in its one shape `{answer, reason, message, …}` (§4.4, vocabulary §3.1). */
+function outcomeOf(value) {
+  if (value === undefined || value === null || value === true) return {answer: 'applied'};
+  if (value === false) return {answer: 'refused', reason: '', message: ''};
+  if (typeof value === 'string') return ANSWERS.includes(value) ? {answer: value} : {answer: 'applied'};
+  if (isObject(value) && typeof value.answer === 'string') {
+    return ANSWERS.includes(value.answer) ? value : {...value, answer: 'refused', reason: value.reason ?? 'unknown-answer'};
+  }
+  return {answer: 'applied'};
+}
+
+
+/***/ },
+
+/***/ "ff707ab72ad6"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   createWords: () => (/* binding */ createWords),
+/* harmony export */   say: () => (/* binding */ say)
+/* harmony export */ });
+/* harmony import */ var _values_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("8cf8ac8cb59d");
+// The words of an assembly (standard simai.smart-component 1.3.8 §11): its
+// language files, `lang/<locale>.json`, keyed by locale. A rule passes codes
+// and numbers, never words (§9); the words a part says because of a rule are
+// `roles.<role>.words.<code>`, a word or plural forms with `{n}` (§11.2); a
+// role's constant word settings are `roles.<role>.settings.<setting>` (§7.2);
+// the words of a constant list's entries are `roles.<role>.items.<value>` and
+// `roles.<role>.columns.<key>` (§11.3).
+//
+// Missing words fall back to English, then to the source language, then to
+// nothing; the last two are reported (§11.1).
+
+
+
+const PLURALS = new Map();
+const NUMBERS = new Map();
+
+const normalise = (locale) => String(locale ?? '').trim().toLowerCase().replace('_', '-');
+
+function plural(locale) {
+  if (!PLURALS.has(locale)) {
+    let rules = null;
+    try { rules = new Intl.PluralRules(locale); } catch { rules = new Intl.PluralRules('en'); }
+    PLURALS.set(locale, rules);
+  }
+  return PLURALS.get(locale);
+}
+
+function number(locale, n) {
+  if (!NUMBERS.has(locale)) {
+    let format = null;
+    try { format = new Intl.NumberFormat(locale); } catch { format = new Intl.NumberFormat('en'); }
+    NUMBERS.set(locale, format);
+  }
+  return NUMBERS.get(locale).format(n);
+}
+
+/** A word, or plural forms chosen by `n` in `locale`, with `{n}` in the page's number format (§11.1, §11.2). */
+function say(word, n, locale = 'en') {
+  if (word === null || word === undefined) return null;
+  let text = word;
+  if (typeof word === 'object') {
+    const count = Number(n ?? 0);
+    const form = n === 0 && word.zero !== undefined ? 'zero' : plural(locale).select(Number.isFinite(count) ? count : 0);
+    text = word[form] ?? word.other;
+    if (text === undefined) return null;
+  }
+  text = String(text);
+  if (n === undefined || n === null || !text.includes('{n}')) return text;
+  const count = Number(n);
+  return text.split('{n}').join(Number.isFinite(count) ? number(locale, count) : String(n));
+}
+
+/**
+ * The words of one assembly. `files` is `{<locale>: <language file>}`;
+ * `source` is the language the assembly was written in (its first file when
+ * not given).
+ */
+function createWords(files = {}, source = null) {
+  const byLocale = new Map(Object.entries(files ?? {}).map(([locale, file]) => [normalise(locale), file]));
+  const sourceLocale = normalise(source ?? byLocale.keys().next().value ?? 'en');
+
+  /** `{word, from}` for a dotted path: `from` is the locale it came from, or null. */
+  function find(locale, path) {
+    const wanted = normalise(locale) || 'en';
+    const order = [];
+    for (const candidate of [wanted, wanted.split('-')[0], 'en', sourceLocale]) if (candidate && !order.includes(candidate)) order.push(candidate);
+    for (const candidate of order) {
+      const word = (0,_values_mjs__WEBPACK_IMPORTED_MODULE_0__.at)(byLocale.get(candidate), path);
+      if (word !== undefined && word !== null) return {word, from: candidate, fallback: candidate !== wanted && candidate !== wanted.split('-')[0] && candidate !== 'en'};
+    }
+    return {word: null, from: null, fallback: true};
+  }
+
+  return {
+    locales: () => [...byLocale.keys()],
+    source: sourceLocale,
+    find,
+    /** The word at `path` said in `locale` with the number `n`; null when there is none. */
+    text(locale, path, n) {
+      const {word} = find(locale, path);
+      return say(word, n, normalise(locale) || 'en');
+    },
+  };
+}
 
 
 /***/ },
