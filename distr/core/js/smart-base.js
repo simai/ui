@@ -2142,11 +2142,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _deprecations_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("06e8cd089f28");
 /* harmony import */ var _internal_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("364eb185ca94");
 /* harmony import */ var _aliases_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("28b603686dcc");
-/* harmony import */ var _host_port_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("f171c5ece4b4");
-/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("fef8077ac919");
-/* harmony import */ var lit_directives_ref_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("7fcbcc00731e");
-/* harmony import */ var lit_directive_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("69fcfee6f64b");
-/* harmony import */ var _page_language__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("8489d1f5bab4");
+/* harmony import */ var _upgrade_properties_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("695761d67e81");
+/* harmony import */ var _host_port_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("f171c5ece4b4");
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("fef8077ac919");
+/* harmony import */ var lit_directives_ref_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("7fcbcc00731e");
+/* harmony import */ var lit_directive_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("69fcfee6f64b");
+/* harmony import */ var _page_language__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("8489d1f5bab4");
+
 
 
 
@@ -2303,11 +2305,11 @@ function applySmartProps(element, props = {}, previous = null) {
 // anything in the table changed -- fourteen nodes a row, changed row or not,
 // taking the control a person was interacting with with them.
 
-class SmartElementDirective extends lit_directive_js__WEBPACK_IMPORTED_MODULE_6__.Directive {
+class SmartElementDirective extends lit_directive_js__WEBPACK_IMPORTED_MODULE_7__.Directive {
   constructor(partInfo) {
     super(partInfo);
 
-    if (partInfo.type !== lit_directive_js__WEBPACK_IMPORTED_MODULE_6__.PartType.CHILD) {
+    if (partInfo.type !== lit_directive_js__WEBPACK_IMPORTED_MODULE_7__.PartType.CHILD) {
       throw new Error("renderSmartElement belongs in a child position of a template");
     }
 
@@ -2331,7 +2333,7 @@ class SmartElementDirective extends lit_directive_js__WEBPACK_IMPORTED_MODULE_6_
 
 }
 
-const smartElement = (0,lit_directive_js__WEBPACK_IMPORTED_MODULE_6__.directive)(SmartElementDirective); // The marks the runtime keeps on a Smart host (SF.Assembly, the first paint,
+const smartElement = (0,lit_directive_js__WEBPACK_IMPORTED_MODULE_7__.directive)(SmartElementDirective); // The marks the runtime keeps on a Smart host (SF.Assembly, the first paint,
 // the Loader): forwardHostAttributes leaves them on the host.
 
 const HOST_RUNTIME_MARKS = new Set(["data-sf-role", "data-sf-instance", "data-sf-start", "data-sf-started", "data-sf-assembly", "data-sf-static", "data-sf-first-paint", "data-sf-held", "data-sf-skeleton", "data-sf-observer"]); // The same element, outside a template. A caller that holds the element itself
@@ -2523,7 +2525,14 @@ class SfBaseElement extends HTMLElement {
     // What it started then would have no disconnect to end it (gate 36: a
     // language listener per sf-slider of a gallery's lightbox, 2026-10-27).
     // It is placed again later, and that placing connects it.
-    if (!this.isConnected) return;
+    if (!this.isConnected) return; // Values a page or a parent's template set before this class was defined
+    // reach their setters now, once, before anything is drawn from them.
+
+    if (!this.__sfPropertiesUpgraded) {
+      this.__sfPropertiesUpgraded = true;
+      (0,_upgrade_properties_js__WEBPACK_IMPORTED_MODULE_3__.upgradeOwnProperties)(this);
+    }
+
     this.constructor.ensureStyleReadinessCss();
     this.captureHostStyle();
     this.applyHostDisplayStyle();
@@ -2556,12 +2565,12 @@ class SfBaseElement extends HTMLElement {
     // the shared rule itself -- sixteen subscriptions would be sixteen chances
     // to forget one (owner, 2026-10-11: «языков будет гораздо больше чем два»).
 
-    this.__sfLanguageOff = _page_language__WEBPACK_IMPORTED_MODULE_7__.language.onChange(() => {
+    this.__sfLanguageOff = _page_language__WEBPACK_IMPORTED_MODULE_8__.language.onChange(() => {
       if (this._isMounted) this.requestComponentUpdate("language");
     }); // A [lang] changed on the page redraws the elements under it (standard
     // 1.3.8 §11.1; simai/ui-source#45): one observer for the document.
 
-    this.__sfLanguageUnwatch = (0,_page_language__WEBPACK_IMPORTED_MODULE_7__.followLanguage)(this, () => {
+    this.__sfLanguageUnwatch = (0,_page_language__WEBPACK_IMPORTED_MODULE_8__.followLanguage)(this, () => {
       if (this._isMounted) this.requestComponentUpdate("language");
     });
     this.emitComponentEvent("connected");
@@ -2583,7 +2592,7 @@ class SfBaseElement extends HTMLElement {
 
 
   connectPort(port) {
-    return (0,_host_port_js__WEBPACK_IMPORTED_MODULE_3__.connectPort)(this, port, SfBaseElement.prototype.setHostPort);
+    return (0,_host_port_js__WEBPACK_IMPORTED_MODULE_4__.connectPort)(this, port, SfBaseElement.prototype.setHostPort);
   }
 
   setHostPort(port) {
@@ -2593,7 +2602,7 @@ class SfBaseElement extends HTMLElement {
 
 
   get sfPort() {
-    return (0,_host_port_js__WEBPACK_IMPORTED_MODULE_3__.portOf)(this);
+    return (0,_host_port_js__WEBPACK_IMPORTED_MODULE_4__.portOf)(this);
   }
 
   sfOpenScope() {
@@ -2744,7 +2753,7 @@ class SfBaseElement extends HTMLElement {
   }
 
   createRef() {
-    const ref = (0,lit_directives_ref_js__WEBPACK_IMPORTED_MODULE_5__.createRef)();
+    const ref = (0,lit_directives_ref_js__WEBPACK_IMPORTED_MODULE_6__.createRef)();
     ref.__sfOwner = this;
     return ref;
   }
@@ -3192,7 +3201,7 @@ class SfBaseElement extends HTMLElement {
     const printed = this._hasRendered ? [] : this.staticMarkup();
     this.prepareRenderContainer(changedAttributes);
     this.markStylePending(this);
-    (0,lit__WEBPACK_IMPORTED_MODULE_4__.render)(templateResult, this);
+    (0,lit__WEBPACK_IMPORTED_MODULE_5__.render)(templateResult, this);
 
     if (printed.length) {
       this.handOverStaticMarkup(printed); // Page children the first paint held out of view are placed now.
@@ -4276,7 +4285,7 @@ class SfBaseElement extends HTMLElement {
     const slotContent = this._slotTemplates.get(name) || [];
 
     if (!slotContent.length) {
-      return lit__WEBPACK_IMPORTED_MODULE_4__.nothing;
+      return lit__WEBPACK_IMPORTED_MODULE_5__.nothing;
     }
 
     if (slotContent.length === 1) {
@@ -4360,7 +4369,7 @@ class SfBaseElement extends HTMLElement {
     const externalModule = await this.resolveExternalTemplateModule(templateName);
 
     if (!this._isMounted || renderToken !== this._renderToken || templateName !== this.componentTemplateName) {
-      return lit__WEBPACK_IMPORTED_MODULE_4__.nothing;
+      return lit__WEBPACK_IMPORTED_MODULE_5__.nothing;
     }
 
     if (externalModule !== this._externalTemplateModule) {
@@ -4376,8 +4385,8 @@ class SfBaseElement extends HTMLElement {
 
       if (renderFn) {
         return renderFn({
-          html: lit__WEBPACK_IMPORTED_MODULE_4__.html,
-          nothing: lit__WEBPACK_IMPORTED_MODULE_4__.nothing,
+          html: lit__WEBPACK_IMPORTED_MODULE_5__.html,
+          nothing: lit__WEBPACK_IMPORTED_MODULE_5__.nothing,
           context,
           component: this,
           changedAttributes
@@ -4398,8 +4407,8 @@ class SfBaseElement extends HTMLElement {
       return externalModule.mapContext({
         context,
         component: this,
-        html: lit__WEBPACK_IMPORTED_MODULE_4__.html,
-        nothing: lit__WEBPACK_IMPORTED_MODULE_4__.nothing
+        html: lit__WEBPACK_IMPORTED_MODULE_5__.html,
+        nothing: lit__WEBPACK_IMPORTED_MODULE_5__.nothing
       }) || context;
     }
 
@@ -4550,8 +4559,8 @@ class SfBaseElement extends HTMLElement {
       externalModule[hookName]({
         component: this,
         root: this,
-        html: lit__WEBPACK_IMPORTED_MODULE_4__.html,
-        nothing: lit__WEBPACK_IMPORTED_MODULE_4__.nothing,
+        html: lit__WEBPACK_IMPORTED_MODULE_5__.html,
+        nothing: lit__WEBPACK_IMPORTED_MODULE_5__.nothing,
         context: this.templateContext(),
         ...detail
       });
@@ -4663,7 +4672,7 @@ class SfBaseElement extends HTMLElement {
   }
 
   template() {
-    return lit__WEBPACK_IMPORTED_MODULE_4__.nothing;
+    return lit__WEBPACK_IMPORTED_MODULE_5__.nothing;
   }
 
   beforeRender() {}
@@ -4690,23 +4699,23 @@ class SfBaseElement extends HTMLElement {
 
 if (typeof window !== "undefined") {
   window.SfBaseElement = SfBaseElement;
-  window.html = lit__WEBPACK_IMPORTED_MODULE_4__.html;
-  window.nothing = lit__WEBPACK_IMPORTED_MODULE_4__.nothing;
-  window.render = lit__WEBPACK_IMPORTED_MODULE_4__.render;
+  window.html = lit__WEBPACK_IMPORTED_MODULE_5__.html;
+  window.nothing = lit__WEBPACK_IMPORTED_MODULE_5__.nothing;
+  window.render = lit__WEBPACK_IMPORTED_MODULE_5__.render;
 
   if (!window.SF) {
     window.SF = {};
   }
 
   window.SF.SfBaseElement = SfBaseElement;
-  window.SF.html = lit__WEBPACK_IMPORTED_MODULE_4__.html;
-  window.SF.nothing = lit__WEBPACK_IMPORTED_MODULE_4__.nothing;
-  window.SF.render = lit__WEBPACK_IMPORTED_MODULE_4__.render;
+  window.SF.html = lit__WEBPACK_IMPORTED_MODULE_5__.html;
+  window.SF.nothing = lit__WEBPACK_IMPORTED_MODULE_5__.nothing;
+  window.SF.render = lit__WEBPACK_IMPORTED_MODULE_5__.render;
   window.SF.smart = { ...(window.SF.smart || {}),
     SfBaseElement,
-    html: lit__WEBPACK_IMPORTED_MODULE_4__.html,
-    nothing: lit__WEBPACK_IMPORTED_MODULE_4__.nothing,
-    render: lit__WEBPACK_IMPORTED_MODULE_4__.render,
+    html: lit__WEBPACK_IMPORTED_MODULE_5__.html,
+    nothing: lit__WEBPACK_IMPORTED_MODULE_5__.nothing,
+    render: lit__WEBPACK_IMPORTED_MODULE_5__.render,
     toBoolean,
     toAttributeName,
     toNumber,
@@ -4730,6 +4739,39 @@ if (typeof window !== "undefined") {
     } catch (error) {
       console.warn("sf-smart-base-ready dispatch failed", error);
     }
+  }
+}
+
+/***/ },
+
+/***/ "695761d67e81"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   upgradeOwnProperties: () => (/* binding */ upgradeOwnProperties)
+/* harmony export */ });
+// A property set on an element before its class was defined lands on the
+// element itself, as a plain value. Once the class arrives, that own value
+// hides the class's setter: every later assignment changes the plain value and
+// the component never hears of it. A template that binds `.profiles` to a child
+// registered lazily therefore drew an empty sf-profile-picker inside
+// sf-property-view (simai.main, 2026-10-28). Each such value is taken off the
+// element and assigned again, so it reaches the setter.
+function upgradeOwnProperties(element) {
+  for (const name of Object.keys(element)) {
+    let proto = Object.getPrototypeOf(element);
+    let setter = null;
+
+    while (proto && proto !== Object.prototype && !setter) {
+      setter = Object.getOwnPropertyDescriptor(proto, name)?.set ?? null;
+      proto = Object.getPrototypeOf(proto);
+    }
+
+    if (!setter) continue;
+    const value = element[name];
+    delete element[name];
+    element[name] = value;
   }
 }
 
