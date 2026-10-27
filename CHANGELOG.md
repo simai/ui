@@ -333,6 +333,8 @@
 
 ### Изменено
 
+- The first paint follows standard simai.smart-component 1.3.8 §5.4 (simai/ui-source#39, #40, #47). Core no longer hides the page (`body` opacity) until the Loader is ready: it hides only the undefined Smart elements the Loader is fetching that carry no `data-sf-static` markup and no `data-sf-skeleton` shape, keeps their box, and lets go of each tag when it is defined (or after 10 s, with a warning). A Smart element replaces its `data-sf-static` children in its first render, in the same task, so printed markup is never shown twice nor followed by a blank frame. The Loader fetches no code for a Smart element inside a closed container (`[hidden]`, `[inert]`, a closed `<details>` or `<dialog>`) until it opens, no longer prefetches lazy relations in idle time (`SF_BOOT_CONFIG.prefetchLazyRelations = true` restores it), and skeleton bars load their sheet only — the skeleton script loads when `[!skeleton]` or `SF.Loader.ensurePlugin('skeleton')` asks for it.
+
 - One spinner, four looks on the #10 ladder: `arc` (default), `breathing`, `comet` and `dots`, chosen once for the page with `data-sf-spinner="<look>"` on `html` or `body` (or `SF_BOOT_CONFIG.spinner`), overridable on any block; a spinner's own `data-variant` / `kind` wins. Every spinner the SIMAI Framework draws follows it: `sf-spinner`, button, icon-button and button-group loading, the pagination count and the modal loading state. Each look keeps the button-icon box, the current ink and a still frame under reduced motion (simai/ui-source#11).
 - `sf-spinner` without `kind` now follows the page (arc when nothing is set); dots default to 8 with 3 lit, sized from the step; the modal loading state draws the Framework spinner at step 3.
 
