@@ -32,11 +32,7 @@
     --sf-scrollbar-active-size: var(--sf-a6);
     --sf-scrollbar-min-thumb-size: var(--sf-d1);
     --sf-scrollbar-keyboard-step: var(--sf-d0);
-    --sf-scrollbar-thumb-color: color-mix(
-      in srgb,
-      var(--sf-on-surface) 34%,
-      var(--sf-transparent)
-    );
+    --sf-scrollbar-thumb-color: var(--sf-on-neutral-container-graphic);
     position: relative;
     min-height: 0;
     min-block-size: 0;
@@ -105,11 +101,11 @@
     display: none;
   }
   .sf-scrollbar[data-mode=standard]:not(.does-not-exist) .sf-scrollbar__viewport {
-    scrollbar-color: var(--sf-outline) var(--sf-transparent);
+    scrollbar-color: var(--sf-on-neutral-container-graphic) var(--sf-transparent);
     scrollbar-width: auto;
   }
   .sf-scrollbar[data-sf-scrollbar=standard]:not([data-mode]) .sf-scrollbar__viewport {
-    scrollbar-color: var(--sf-outline) var(--sf-transparent);
+    scrollbar-color: var(--sf-on-neutral-container-graphic) var(--sf-transparent);
     scrollbar-width: auto;
   }
   .sf-scrollbar[data-mode=standard]:not(.does-not-exist) .sf-scrollbar__viewport::-webkit-scrollbar {
@@ -143,7 +139,7 @@
     min-inline-size: var(--sf-scroll-thumb-size);
     border: var(--sf-scroll-thumb-inset) solid var(--sf-transparent);
     border-radius: var(--sf-scroll-radius);
-    background: var(--sf-outline);
+    background: var(--sf-on-neutral-container-graphic);
     background-clip: padding-box;
   }
   .sf-scrollbar[data-sf-scrollbar=standard]:not([data-mode]) .sf-scrollbar__viewport::-webkit-scrollbar-thumb {
@@ -153,14 +149,14 @@
     min-inline-size: var(--sf-scroll-thumb-size);
     border: var(--sf-scroll-thumb-inset) solid var(--sf-transparent);
     border-radius: var(--sf-scroll-radius);
-    background: var(--sf-outline);
+    background: var(--sf-on-neutral-container-graphic);
     background-clip: padding-box;
   }
   .sf-scrollbar[data-mode=standard]:not(.does-not-exist) .sf-scrollbar__viewport:hover::-webkit-scrollbar-thumb {
-    background-color: var(--sf-on-surface-variant);
+    background-color: var(--sf-on-surface);
   }
   .sf-scrollbar[data-sf-scrollbar=standard]:not([data-mode]) .sf-scrollbar__viewport:hover::-webkit-scrollbar-thumb {
-    background-color: var(--sf-on-surface-variant);
+    background-color: var(--sf-on-surface);
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-scrollbar__track {
     right: 0;
@@ -505,11 +501,15 @@
   .scrollbar::-webkit-scrollbar-track {
     background: transparent;
   }
+  /* The legacy .scrollbar class, published in the component sheet and named
+     in no document: --sf-surface-4 read 1.30-1.69:1. Repainted with the same
+     pair as the standard preset; whether it is removed is a separate
+     question about a public class. */
   .scrollbar::-webkit-scrollbar-thumb {
-    background: var(--sf-surface-4);
+    background: var(--sf-on-neutral-container-graphic);
   }
   .scrollbar::-webkit-scrollbar-thumb:hover {
-    background: var(--sf-on-surface-variant);
+    background: var(--sf-on-surface);
   }
   @media (pointer: coarse) {
     .sf-scrollbar__track,

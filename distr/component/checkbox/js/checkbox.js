@@ -16,6 +16,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d7f974466839");
 /* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("58661bec99a6");
 /* harmony import */ var _form_reset_helper__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("67eed2647f47");
+/* harmony import */ var _json_checkbox_utility_json__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("2eddfed602cd");
+
 
 
 
@@ -250,7 +252,16 @@ class Checkbox extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.C
       }
 
       this.template.append(this.container);
-    }
+    } // The layout lives in utility hints (the stylesheet draws no display):
+    // without these classes the label drew inline -- a 26x21 mark, no gap and a
+    // 21px row (simai/ui-source#49). Optional parts are skipped by the helper.
+
+
+    this.applyLayoutUtilities(this.template, '.sf-checkbox');
+    this.applyLayoutUtilities(this.box, '.sf-checkbox .sf-checkbox-box');
+    this.applyLayoutUtilities(this.container, '.sf-checkbox .sf-checkbox-container');
+    this.applyLayoutUtilities(this.top, '.sf-checkbox .sf-checkbox-top');
+    this.applyLayoutUtilities(this.label, '.sf-checkbox .sf-checkbox-label');
   }
 
   init() {
@@ -264,6 +275,7 @@ class Checkbox extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.C
 
 }
 
+Checkbox.utilityMap = _json_checkbox_utility_json__WEBPACK_IMPORTED_MODULE_3__;
 (0,_register_helper__WEBPACK_IMPORTED_MODULE_1__["default"])('Checkbox', Checkbox);
 
 if (typeof window !== 'undefined') {
@@ -505,6 +517,13 @@ class ComponentObserver {
 __webpack_require__.r(__webpack_exports__);
 // extracted by mini-css-extract-plugin
 
+
+/***/ },
+
+/***/ "2eddfed602cd"
+(module) {
+
+module.exports = /*#__PURE__*/JSON.parse('{".sf-checkbox":["display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","justify-content/flex-start (.justify-start)","align-items/flex-start (.items-start)"],".sf-checkbox .sf-checkbox-box":["display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","justify-content/center (.justify-center)","align-items/center (.items-center)"],".sf-checkbox .sf-checkbox-container":["display/flex (.flex)","flex-direction/column (.flex-col)","flex-wrap/nowrap (.flex-nowrap)","justify-content/flex-start (.justify-start)","align-items/flex-start (.items-start)"],".sf-checkbox .sf-checkbox-top":["display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","gap/var(--sf-checkbox-top--gap)","justify-content/flex-start (.justify-start)","align-items/flex-start (.items-start)"],".sf-checkbox .sf-checkbox-label":["display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","justify-content/center (.justify-center)","align-items/center (.items-center)"]}');
 
 /***/ }
 

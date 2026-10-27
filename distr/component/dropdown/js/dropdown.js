@@ -964,6 +964,15 @@ function onSearchInput(event) {
   const root = event.currentTarget.__sfDropdownRoot || event.currentTarget.closest(DROPDOWN_SELECTOR);
   if (!root || isDisabledDropdown(root)) return;
   filterItems(root, event.currentTarget.value);
+} // The search box is a text input, so leaving it after typing fires its own
+// native `change`. That event is the box's, not the dropdown's: let out, it
+// reached form and host listeners as a selection change with no detail, beside
+// the real one (simai/ui-source#53). sf-dropdown stops it in its template; the
+// Native dropdown stops it here, so only a selection change leaves the component.
+
+
+function onSearchChange(event) {
+  event.stopPropagation();
 }
 
 function bindDropdown(root) {
@@ -1059,8 +1068,10 @@ function bindDropdown(root) {
   if (searchInput) {
     root.__sfDropdownSearchInput = searchInput;
     root.__sfDropdownOnSearchInput = onSearchInput;
+    root.__sfDropdownOnSearchChange = onSearchChange;
     searchInput.__sfDropdownRoot = root;
     searchInput.addEventListener("input", onSearchInput);
+    searchInput.addEventListener("change", onSearchChange);
   }
 
   root.__sfDropdownInteraction = (0,_interaction__WEBPACK_IMPORTED_MODULE_0__.createDropdownInteraction)(root, {
@@ -1113,6 +1124,8 @@ function unbindDropdown(root) {
   if (root.__sfDropdownSearchInput && root.__sfDropdownOnSearchInput) {
     root.__sfDropdownSearchInput.removeEventListener("input", root.__sfDropdownOnSearchInput);
 
+    root.__sfDropdownSearchInput.removeEventListener("change", root.__sfDropdownOnSearchChange);
+
     delete root.__sfDropdownSearchInput.__sfDropdownRoot;
   }
 
@@ -1122,6 +1135,7 @@ function unbindDropdown(root) {
   delete root.__sfDropdownPortalKeydown;
   delete root.__sfDropdownSearchInput;
   delete root.__sfDropdownOnSearchInput;
+  delete root.__sfDropdownOnSearchChange;
   delete root.__sfDropdownItemsObserver;
   delete root.__sfDropdownStateObserver;
   delete root.__sfDropdownDisabledState;

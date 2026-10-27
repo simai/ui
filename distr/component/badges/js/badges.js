@@ -524,6 +524,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _json_badge_utility_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("22cb9d3aeb2b");
 /* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("58661bec99a6");
 /* harmony import */ var _contract__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("a2a9d3c2841e");
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("06e8cd089f28");
+
 
 
 
@@ -541,12 +543,33 @@ class Badges extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Com
       iconLeft,
       iconRight,
       iconPosition = 'start'
-    } = this.params || {};
+    } = this.params || {}; // The same axes as sf-badge: appearance (type is its former name) and
+    // the status, or the colour role in scheme. A former scheme name such as
+    // danger draws its canonical class and is noted in SF.deprecations.
+
+    const params = this.params || {};
+    const requestedScheme = params.status || params.scheme;
+    const formerScheme = String(requestedScheme ?? '').trim().toLowerCase();
+
+    if (_contract__WEBPACK_IMPORTED_MODULE_3__.BADGE_SCHEME_ALIASES[formerScheme]) {
+      (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_4__.noteDeprecated)({
+        component: 'badges',
+        kind: 'value',
+        attribute: 'scheme',
+        from: formerScheme,
+        to: _contract__WEBPACK_IMPORTED_MODULE_3__.BADGE_SCHEME_ALIASES[formerScheme]
+      });
+    }
+
     const {
       size,
       type,
       scheme
-    } = (0,_contract__WEBPACK_IMPORTED_MODULE_3__.normalizeBadgeContract)(this.params);
+    } = (0,_contract__WEBPACK_IMPORTED_MODULE_3__.normalizeBadgeContract)({
+      type: params.appearance ?? params.type,
+      scheme: requestedScheme,
+      size: params.size
+    });
     const className = this.attrs.class || this.attrs.className;
     const accessibleLabel = this.attrs['aria-label'] || '';
     this.badge = document.createElement('span');
@@ -678,13 +701,23 @@ Badges.utilityMap = _json_badge_utility_json__WEBPACK_IMPORTED_MODULE_1__;
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   BADGE_SCHEMES: () => (/* binding */ BADGE_SCHEMES),
+/* harmony export */   BADGE_SCHEME_ALIASES: () => (/* binding */ BADGE_SCHEME_ALIASES),
 /* harmony export */   BADGE_SIZES: () => (/* binding */ BADGE_SIZES),
 /* harmony export */   BADGE_TYPES: () => (/* binding */ BADGE_TYPES),
 /* harmony export */   BADGE_VARIANTS: () => (/* binding */ BADGE_VARIANTS),
+/* harmony export */   canonicalBadgeScheme: () => (/* binding */ canonicalBadgeScheme),
 /* harmony export */   normalizeBadgeContract: () => (/* binding */ normalizeBadgeContract)
 /* harmony export */ });
 const BADGE_TYPES = Object.freeze(['main', 'tonal', 'outline']);
-const BADGE_SCHEMES = Object.freeze(['neutral', 'primary', 'secondary', 'tertiary', 'info', 'success', 'warning', 'danger', 'on-surface']);
+const BADGE_SCHEMES = Object.freeze(['neutral', 'primary', 'secondary', 'tertiary', 'info', 'success', 'warning', 'error', 'on-surface']); // Former scheme names that still draw: `danger` was this component's word for
+// the error status before the shared vocabulary (contracts/public-api-axes.json,
+// journal class-status-aliases, until 2026-12-01). It is read as `error`, so the
+// Native constructor emits the canonical class, as sf-badge does; the
+// stylesheet matches `.sf-badge--danger` beside it for markup written by hand.
+
+const BADGE_SCHEME_ALIASES = Object.freeze({
+  danger: 'error'
+});
 const BADGE_SIZES = Object.freeze(['1/3', '1/2', '1']);
 const DEFAULT_BADGE_TYPE = 'main';
 const DEFAULT_BADGE_SCHEME = 'neutral';
@@ -693,8 +726,15 @@ const DEFAULT_BADGE_SIZE = '1/3';
 const normalizeEnum = (value, allowed, fallback) => {
   const normalized = String(value ?? fallback).trim().toLowerCase();
   return allowed.includes(normalized) ? normalized : fallback;
-};
+}; // The canonical scheme for a name, a former one included; '' when the name is
+// not a badge scheme.
 
+
+function canonicalBadgeScheme(value) {
+  const name = String(value ?? '').trim().toLowerCase();
+  const canonical = BADGE_SCHEME_ALIASES[name] ?? name;
+  return BADGE_SCHEMES.includes(canonical) ? canonical : '';
+}
 const BADGE_VARIANTS = Object.freeze(BADGE_SCHEMES.flatMap(scheme => BADGE_TYPES.filter(type => !(scheme === 'on-surface' && type === 'tonal')).flatMap(type => BADGE_SIZES.map(size => Object.freeze({
   type,
   scheme,
@@ -706,7 +746,7 @@ function normalizeBadgeContract({
   size
 } = {}) {
   let normalizedType = normalizeEnum(type, BADGE_TYPES, DEFAULT_BADGE_TYPE);
-  const normalizedScheme = normalizeEnum(scheme, BADGE_SCHEMES, DEFAULT_BADGE_SCHEME);
+  const normalizedScheme = canonicalBadgeScheme(scheme ?? DEFAULT_BADGE_SCHEME) || DEFAULT_BADGE_SCHEME;
   const normalizedSize = normalizeEnum(size, BADGE_SIZES, DEFAULT_BADGE_SIZE);
 
   if (normalizedType === 'tonal' && normalizedScheme === 'on-surface') {
@@ -886,6 +926,125 @@ class ComponentObserver {
 
   destroyInternal() {}
 
+}
+
+/***/ },
+
+/***/ "06e8cd089f28"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   clearDeprecations: () => (/* binding */ clearDeprecations),
+/* harmony export */   listDeprecations: () => (/* binding */ listDeprecations),
+/* harmony export */   noteDeprecated: () => (/* binding */ noteDeprecated)
+/* harmony export */ });
+// What a page still uses that the Framework keeps only for compatibility. Every
+// legacy attribute, value or name a component resolves is noted here once, so a
+// person, a probe or an AI upgrading a product can read the list off a running
+// page (SF.deprecations.list()) instead of searching the source for it. The
+// records behind the names are in contracts/changes/journal.json.
+//
+// Nothing is printed by default: a page opts in to console warnings with
+// <html data-sf-deprecations="warn"> or SF.deprecations.warn = true. A dated
+// alias (core/js/aliases.js, standard simai.smart-component §16.20) also
+// records `tag`, `since` and `remove_after`; once its date has passed the
+// record turns `expired` and that is printed once whatever the page opted
+// into, because the name can leave with the next sweep.
+//
+// Every bundle carries its own copy of this module, so a Map of its own made one
+// list per bundle, and SF.deprecations.list() answered with whichever bundle set
+// it last -- [] on a page printing seven warnings from others. The notes live on
+// one shared global instead, whichever copy writes or reads them.
+function sharedNotes() {
+  const root = globalThis.SF = globalThis.SF || {};
+
+  if (!(root.__deprecationNotes instanceof Map)) {
+    Object.defineProperty(root, '__deprecationNotes', {
+      value: new Map(),
+      configurable: true
+    });
+  }
+
+  return root.__deprecationNotes;
+}
+
+function warnEnabled() {
+  const root = globalThis.document?.documentElement;
+  return root?.dataset?.sfDeprecations === 'warn' || globalThis.SF?.deprecations?.warn === true;
+}
+
+function noteDeprecated({
+  component = '',
+  kind = 'attribute',
+  attribute = '',
+  from,
+  to = null,
+  tag,
+  since,
+  remove_after: removeAfter,
+  expired
+} = {}) {
+  if (!from) return;
+  const key = [component, kind, attribute, from].join('|');
+  const notes = sharedNotes();
+  let note = notes.get(key);
+  const firstExpiry = expired === true && note?.expired !== true;
+
+  if (note) {
+    note.count += 1;
+  } else {
+    note = {
+      component,
+      kind,
+      attribute,
+      from,
+      to,
+      count: 1
+    };
+    notes.set(key, note);
+  } // The dated fields are kept only when a caller knows them, so the records of
+  // the Framework's undated aliases keep their shape.
+
+
+  if (tag !== undefined) note.tag = tag;
+  if (since !== undefined) note.since = since;
+  if (removeAfter !== undefined) note.remove_after = removeAfter;
+  if (expired === true) note.expired = true;
+
+  if (firstExpiry) {
+    globalThis.console?.warn?.(`[SIMAI Framework] ${describe(note)} was due to leave after ${note.remove_after || 'its date'}${to ? `; write ${to}` : ''}. See contracts/changes/journal.json.`);
+  } else if (note.count === 1 && warnEnabled()) {
+    globalThis.console?.warn?.(`[SIMAI Framework] ${describe(note)} is a legacy name${note.remove_after ? ` until ${note.remove_after}` : ''}${to ? `; write ${to}` : ''}. See contracts/changes/journal.json.`);
+  }
+}
+
+function describe({
+  component,
+  kind,
+  attribute,
+  from
+}) {
+  const where = component ? `${component}: ` : '';
+  const what = kind === 'value' ? `${attribute}="${from}"` : `${kind} ${from}`;
+  return `${where}${what}`;
+}
+
+function listDeprecations() {
+  return [...sharedNotes().values()].map(note => ({ ...note
+  }));
+}
+function clearDeprecations() {
+  sharedNotes().clear();
+}
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.SF = globalThis.SF || {};
+  const api = globalThis.SF.deprecations || {};
+  api.list = listDeprecations;
+  api.clear = clearDeprecations;
+  api.note = noteDeprecated;
+  globalThis.SF.deprecations = api;
 }
 
 /***/ },
@@ -1318,7 +1477,7 @@ __webpack_require__.r(__webpack_exports__);
 /***/ "22cb9d3aeb2b"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{".sf-badge":["display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","gap/var(--sf-a0)","justify-content/center (.justify-center)","align-items/center (.items-center)"],".sf-badge .sf-badge-icon-container":["display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","justify-content/center (.justify-center)","align-items/center (.items-center)"],".sf-badge .sf-badge-icon-container .sf-icon":["display/flex (.flex)","justify-content/center (.justify-center)","align-items/center (.items-center)"],".sf-badge .sf-badge-text-container":["display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","justify-content/center (.justify-center)","align-items/center (.items-center)"]}');
+module.exports = /*#__PURE__*/JSON.parse('{".sf-badge":["display/inline-flex (.inline-flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","gap/var(--sf-a0)","justify-content/center (.justify-center)","align-items/center (.items-center)"],".sf-badge .sf-badge-icon-container":["display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","justify-content/center (.justify-center)","align-items/center (.items-center)"],".sf-badge .sf-badge-icon-container .sf-icon":["display/flex (.flex)","justify-content/center (.justify-center)","align-items/center (.items-center)"],".sf-badge .sf-badge-text-container":["display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","justify-content/center (.justify-center)","align-items/center (.items-center)"]}');
 
 /***/ }
 

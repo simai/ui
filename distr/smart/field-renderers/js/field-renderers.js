@@ -8,13 +8,23 @@
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   BADGE_SCHEMES: () => (/* binding */ BADGE_SCHEMES),
+/* harmony export */   BADGE_SCHEME_ALIASES: () => (/* binding */ BADGE_SCHEME_ALIASES),
 /* harmony export */   BADGE_SIZES: () => (/* binding */ BADGE_SIZES),
 /* harmony export */   BADGE_TYPES: () => (/* binding */ BADGE_TYPES),
 /* harmony export */   BADGE_VARIANTS: () => (/* binding */ BADGE_VARIANTS),
+/* harmony export */   canonicalBadgeScheme: () => (/* binding */ canonicalBadgeScheme),
 /* harmony export */   normalizeBadgeContract: () => (/* binding */ normalizeBadgeContract)
 /* harmony export */ });
 const BADGE_TYPES = Object.freeze(['main', 'tonal', 'outline']);
-const BADGE_SCHEMES = Object.freeze(['neutral', 'primary', 'secondary', 'tertiary', 'info', 'success', 'warning', 'danger', 'on-surface']);
+const BADGE_SCHEMES = Object.freeze(['neutral', 'primary', 'secondary', 'tertiary', 'info', 'success', 'warning', 'error', 'on-surface']); // Former scheme names that still draw: `danger` was this component's word for
+// the error status before the shared vocabulary (contracts/public-api-axes.json,
+// journal class-status-aliases, until 2026-12-01). It is read as `error`, so the
+// Native constructor emits the canonical class, as sf-badge does; the
+// stylesheet matches `.sf-badge--danger` beside it for markup written by hand.
+
+const BADGE_SCHEME_ALIASES = Object.freeze({
+  danger: 'error'
+});
 const BADGE_SIZES = Object.freeze(['1/3', '1/2', '1']);
 const DEFAULT_BADGE_TYPE = 'main';
 const DEFAULT_BADGE_SCHEME = 'neutral';
@@ -23,8 +33,15 @@ const DEFAULT_BADGE_SIZE = '1/3';
 const normalizeEnum = (value, allowed, fallback) => {
   const normalized = String(value ?? fallback).trim().toLowerCase();
   return allowed.includes(normalized) ? normalized : fallback;
-};
+}; // The canonical scheme for a name, a former one included; '' when the name is
+// not a badge scheme.
 
+
+function canonicalBadgeScheme(value) {
+  const name = String(value ?? '').trim().toLowerCase();
+  const canonical = BADGE_SCHEME_ALIASES[name] ?? name;
+  return BADGE_SCHEMES.includes(canonical) ? canonical : '';
+}
 const BADGE_VARIANTS = Object.freeze(BADGE_SCHEMES.flatMap(scheme => BADGE_TYPES.filter(type => !(scheme === 'on-surface' && type === 'tonal')).flatMap(type => BADGE_SIZES.map(size => Object.freeze({
   type,
   scheme,
@@ -36,7 +53,7 @@ function normalizeBadgeContract({
   size
 } = {}) {
   let normalizedType = normalizeEnum(type, BADGE_TYPES, DEFAULT_BADGE_TYPE);
-  const normalizedScheme = normalizeEnum(scheme, BADGE_SCHEMES, DEFAULT_BADGE_SCHEME);
+  const normalizedScheme = canonicalBadgeScheme(scheme ?? DEFAULT_BADGE_SCHEME) || DEFAULT_BADGE_SCHEME;
   const normalizedSize = normalizeEnum(size, BADGE_SIZES, DEFAULT_BADGE_SIZE);
 
   if (normalizedType === 'tonal' && normalizedScheme === 'on-surface') {
@@ -2596,7 +2613,7 @@ __webpack_require__.r(__webpack_exports__);
 const HEX_COLOR = /^#(?:[0-9a-f]{3}|[0-9a-f]{4}|[0-9a-f]{6}|[0-9a-f]{8})$/i;
 /**
  * Badge look for a filter option with optionRenderer 'badge'. option.color is
- * a Framework badge scheme (success, danger, info...) or a hex colour; a hex
+ * a Framework badge scheme (success, error, info...) or a hex colour; a hex
  * colour tints the tonal background and keeps the text on the surface colour,
  * so the label stays readable in both themes. Anything else is neutral.
  */
@@ -2606,9 +2623,10 @@ const HEX_COLOR = /^#(?:[0-9a-f]{3}|[0-9a-f]{4}|[0-9a-f]{6}|[0-9a-f]{8})$/i;
 
 function optionBadgeProps(option = {}) {
   const raw = option?.scheme ?? option?.color;
-  const color = typeof raw === "string" ? raw.trim() : "";
-  const scheme = color.toLowerCase();
-  if (_component_badges_js_contract_js__WEBPACK_IMPORTED_MODULE_0__.BADGE_SCHEMES.includes(scheme)) return {
+  const color = typeof raw === "string" ? raw.trim() : ""; // A former name (danger) reads as its canonical scheme (error).
+
+  const scheme = (0,_component_badges_js_contract_js__WEBPACK_IMPORTED_MODULE_0__.canonicalBadgeScheme)(color);
+  if (scheme) return {
     scheme,
     rootStyle: ""
   };

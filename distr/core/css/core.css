@@ -1065,7 +1065,7 @@ body {
   }
   * {
     --sf-scroll-bg-track: var(--sf-transparent);
-    --sf-scroll-bg-thumb: var(--sf-surface-1);
+    --sf-scroll-bg-thumb: var(--sf-on-neutral-container-graphic);
     --sf-scroll-bg-width: var(--sf-b4);
     --sf-scroll-thumb-size: var(--sf-a6);
     --sf-scroll-thumb-width: var(--sf-scroll-thumb-size);

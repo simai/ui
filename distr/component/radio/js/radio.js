@@ -55,6 +55,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d7f974466839");
 /* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("58661bec99a6");
 /* harmony import */ var _form_reset_helper__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("67eed2647f47");
+/* harmony import */ var _json_radio_utility_json__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("48d00b6bd847");
+
 
 
 
@@ -334,11 +336,11 @@ class Radio extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
 
     if (title || descriptionText || help) {
       this.container = document.createElement('span');
-      this.container.classList.add('sf-radio-button-container', 'flex', 'flex-col');
+      this.container.classList.add('sf-radio-button-container');
 
       if (title || help) {
         this.top = document.createElement('span');
-        this.top.classList.add('sf-radio-button-top', 'flex');
+        this.top.classList.add('sf-radio-button-top');
 
         if (title) {
           this.text = document.createElement('span');
@@ -366,7 +368,17 @@ class Radio extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
       }
 
       this.template.append(this.container);
-    }
+    } // The layout lives in utility hints (the stylesheet draws no display):
+    // without these classes the ring was an inline span 2px wide and the
+    // selected mark 0px (simai/ui-source#50). Optional parts are skipped by
+    // the helper.
+
+
+    this.applyLayoutUtilities(this.template, '.sf-radio-button');
+    this.applyLayoutUtilities(this.box, '.sf-radio-button .sf-radio-button-box');
+    this.applyLayoutUtilities(this.container, '.sf-radio-button .sf-radio-button-container');
+    this.applyLayoutUtilities(this.top, '.sf-radio-button .sf-radio-button-top');
+    this.applyLayoutUtilities(this.text, '.sf-radio-button .sf-radio-button-text');
   }
 
   init() {
@@ -506,6 +518,7 @@ class Radio extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
 
 }
 
+Radio.utilityMap = _json_radio_utility_json__WEBPACK_IMPORTED_MODULE_3__;
 (0,_register_helper__WEBPACK_IMPORTED_MODULE_1__["default"])('Radio', Radio);
 
 if (typeof window !== 'undefined') {
@@ -707,6 +720,13 @@ class ComponentObserver {
 __webpack_require__.r(__webpack_exports__);
 // extracted by mini-css-extract-plugin
 
+
+/***/ },
+
+/***/ "48d00b6bd847"
+(module) {
+
+module.exports = /*#__PURE__*/JSON.parse('{".sf-radio-button":["display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","justify-content/flex-start (.justify-start)","align-items/flex-start (.items-start)"],".sf-radio-button .sf-radio-button-box":["display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","gap/var(--sf-radio-button-box--gap)","justify-content/center (.justify-center)","align-items/center (.items-center)"],".sf-radio-button .sf-radio-button-container":["display/flex (.flex)","flex-direction/column (.flex-col)","flex-wrap/nowrap (.flex-nowrap)","justify-content/flex-start (.justify-start)","align-items/flex-start (.items-start)"],".sf-radio-button .sf-radio-button-top":["display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","justify-content/flex-start (.justify-start)","align-items/flex-start (.items-start)","gap/var(--sf-radio-button-top--gap)"],".sf-radio-button .sf-radio-button-text":["display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","justify-content/center (.justify-center)","align-items/center (.items-center)"]}');
 
 /***/ }
 
