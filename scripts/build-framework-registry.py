@@ -468,6 +468,9 @@ V2_MIRROR_KEYS = {
     "archive_sha256",
     "mirrors",
 }
+# Keys a v2 lock may carry beyond the required ones: the mirror and its
+# v1-shaped id while ui-smart is mirrored, and the simai.linkage pointer.
+V2_OPTIONAL_KEYS = {"mirror", "pair", "unit_inventory"}
 V2_TOP_KEYS = {
     "schema_id",
     "schema_version",
@@ -492,7 +495,7 @@ def validate_lock_v2(lock: dict[str, Any]) -> None:
     build commit whose Smart bytes this release did not change. The tree and the
     archive are taken at `commit`, so each entry is self-consistent as in v1.
     """
-    if set(lock) - {"mirror", "pair"} != V2_TOP_KEYS:
+    if set(lock) - V2_OPTIONAL_KEYS != V2_TOP_KEYS:
         raise ContractError("release_lock_keys_invalid")
     compatibility_id = lock.get("compatibility_id")
     if not isinstance(compatibility_id, str) or not COMPATIBILITY_ID_V2.fullmatch(compatibility_id):
@@ -533,7 +536,38 @@ def validate_lock_v2(lock: dict[str, Any]) -> None:
             raise ContractError("release_lock_mirror_tree_mismatch")
         if pair != f"ui-{revision[:12]}-smart-{mirror['commit'][:12]}":
             raise ContractError("release_lock_mirror_pair_invalid")
+    if "unit_inventory" in lock:
+        validate_unit_inventory_pointer(lock["unit_inventory"], compatibility_id)
     validate_lock_tail(lock)
+
+
+UNIT_INVENTORY_KEYS = {"schema", "path", "sha256", "units", "change_report"}
+CHANGE_REPORT_KEYS = {"path", "sha256", "from"}
+
+
+def validate_unit_inventory_pointer(pointer: Any, compatibility_id: str) -> None:
+    """simai.linkage 1.0.0: the release's unit inventory sits beside its lock.
+
+    Additive: a lock without the field stays valid; readers that do not know it
+    read the other fields as before.
+    """
+    if not isinstance(pointer, dict) or set(pointer) != UNIT_INVENTORY_KEYS:
+        raise ContractError("release_lock_unit_inventory_invalid")
+    if pointer["schema"] != "simai.framework.unit-inventory":
+        raise ContractError("release_lock_unit_inventory_invalid")
+    if pointer["path"] != f"contracts/releases/{compatibility_id}.inventory.json":
+        raise ContractError("release_lock_unit_inventory_path_invalid")
+    if not HEX64.fullmatch(str(pointer["sha256"])) or not isinstance(pointer["units"], int) or pointer["units"] < 1:
+        raise ContractError("release_lock_unit_inventory_invalid")
+    report = pointer["change_report"]
+    if report is None:
+        return
+    if not isinstance(report, dict) or set(report) != CHANGE_REPORT_KEYS:
+        raise ContractError("release_lock_change_report_invalid")
+    if report["path"] != f"contracts/releases/{compatibility_id}.changes.json":
+        raise ContractError("release_lock_change_report_invalid")
+    if not HEX64.fullmatch(str(report["sha256"])) or not COMPATIBILITY_ID_V2.fullmatch(str(report["from"])):
+        raise ContractError("release_lock_change_report_invalid")
 
 
 def validate_lock_v1(lock: dict[str, Any]) -> None:

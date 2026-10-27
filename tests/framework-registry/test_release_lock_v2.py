@@ -215,7 +215,7 @@ class ReleaseLockV2ValidationTest(unittest.TestCase):
         self.assertEqual(v1["properties"]["schema_version"], {"const": 1})
         self.assertEqual(v2["properties"]["schema_version"], {"const": 2})
         self.assertEqual(set(v2["required"]), BUILDER.V2_TOP_KEYS)
-        self.assertEqual(set(v2["properties"]) - {"mirror", "pair"}, BUILDER.V2_TOP_KEYS)
+        self.assertEqual(set(v2["properties"]) - BUILDER.V2_OPTIONAL_KEYS, BUILDER.V2_TOP_KEYS)
         for side in ("core", "smart"):
             self.assertEqual(set(v2["properties"]["runtime_sources"]["properties"][side]["required"]), BUILDER.V2_SOURCE_KEYS)
         self.assertEqual(set(v2["properties"]["mirror"]["required"]), BUILDER.V2_MIRROR_KEYS)

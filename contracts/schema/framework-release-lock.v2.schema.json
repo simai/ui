@@ -360,6 +360,63 @@
           "const": false
         }
       }
+    },
+    "unit_inventory": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema",
+        "path",
+        "sha256",
+        "units",
+        "change_report"
+      ],
+      "description": "simai.linkage 1.0.0: the release's unit inventory beside this lock (contracts/releases/<compatibility_id>.inventory.json) and its change report against the previous released inventory. Optional and additive.",
+      "properties": {
+        "schema": {
+          "const": "simai.framework.unit-inventory"
+        },
+        "path": {
+          "type": "string",
+          "pattern": "^contracts/releases/ui-[0-9a-f]{12}\\.inventory\\.json$"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "units": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "change_report": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "path",
+                "sha256",
+                "from"
+              ],
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "pattern": "^contracts/releases/ui-[0-9a-f]{12}\\.changes\\.json$"
+                },
+                "sha256": {
+                  "$ref": "#/$defs/sha256"
+                },
+                "from": {
+                  "type": "string",
+                  "pattern": "^ui-[0-9a-f]{12}$"
+                }
+              }
+            }
+          ]
+        }
+      }
     }
   },
   "$defs": {

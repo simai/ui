@@ -107,6 +107,24 @@ def check_alias(releases: Path, lock: dict[str, Any]) -> None:
             raise LockError(f"alias_lock_field_mismatch:{lock['pair']}:{key}")
 
 
+def check_unit_inventory(releases: Path, ui_root: Path, lock: dict[str, Any]) -> None:
+    """simai.linkage: the inventory and change report the lock points at are the bytes beside it."""
+    pointer = lock["unit_inventory"]
+    release_id = lock["compatibility_id"]
+    entries = [("inventory", pointer)] + ([("change_report", pointer["change_report"])] if pointer["change_report"] else [])
+    for name, entry in entries:
+        path = ui_root / entry["path"]
+        if not path.is_file():
+            raise LockError(f"unit_{name}_missing:{release_id}")
+        if hashlib.sha256(path.read_bytes()).hexdigest() != entry["sha256"]:
+            raise LockError(f"unit_{name}_sha256_mismatch:{release_id}")
+    inventory = BUILDER.load_json(ui_root / pointer["path"])
+    if inventory.get("release") != release_id or len(inventory.get("units", [])) != pointer["units"]:
+        raise LockError(f"unit_inventory_release_mismatch:{release_id}")
+    if lock["build_inputs"]["source"]["commit"] != inventory.get("revision"):
+        raise LockError(f"unit_inventory_source_mismatch:{release_id}")
+
+
 def current_release(ui_root: Path) -> str | None:
     """The release the checkout carries: the last commit that wrote `distr`."""
     try:
@@ -154,6 +172,8 @@ def check_locks(ui_root: Path, mirror_root: Path | None) -> dict[str, Any]:
             elif release_id == current:
                 raise LockError(f"mirror_checkout_required:{release_id}:set SIMAI_UI_SMART_ROOT")
             check_alias(releases, lock)
+        if "unit_inventory" in lock:
+            check_unit_inventory(releases, ui_root, lock)
         checked.append(release_id)
 
     if current in locks and locks[current]["schema_version"] == 2:
