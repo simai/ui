@@ -8,6 +8,10 @@
 
 ### Исправлено
 
+- `sf-tree` 2.0.1: the manifest's `selection` enum is `none | one | many`, as the element takes since 2.0.0; `single` and `multiple` are declared former values until 2026-12-01, so the shared allowed-values check accepts `one`.
+- `sf-pagination` 1.2.1: words a product registered under the old camelCase keys (`totalLabel`, …) through `SF.language.register` are said again until 2026-12-01, each old key noted once in `SF.deprecations`; register the kebab-case keys (`total-label`). Core: `pageWord` `former`, `elementFromManifest` `formerWords`.
+- The former bundles `smart/inputs`, `buttons`, `icon-buttons`, `icons`, `badges` and `tags` load their element's new bundle until 2026-12-01 even when linked as a module script; link the new path or use the Loader.
+
 - Studio fixtures give what their manifests declare (sf-badge appearance, sf-drawer size, sf-range-slider label, sf-accordion and sf-menu items as arrays), held by a contract test; every manifest's provenance names a public source revision (simai/ui-source#54).
 - `sf-radio`: the selected mark is half its ring at every size (it was 12px at all three).
 
