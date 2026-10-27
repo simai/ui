@@ -8,6 +8,9 @@
 
 ### Исправлено
 
+- Studio fixtures give what their manifests declare (sf-badge appearance, sf-drawer size, sf-range-slider label, sf-accordion and sf-menu items as arrays), held by a contract test; every manifest's provenance names a public source revision (simai/ui-source#54).
+- `sf-radio`: the selected mark is half its ring at every size (it was 12px at all three).
+
 - Native (class-built) `checkbox` and `radio` apply the layout their stylesheets hint (utility maps, as buttons and inputs do): they draw like `sf-checkbox` and `sf-radio` — a 24×24 box and a selected mark on the line, an 8px gap — instead of a 2px ring and an empty mark (simai/ui-source#49, #50). Every `sf-checkbox` mark is its size's line at size 2 and 1/2 (#49).
 - Native badge accepts `error` (`danger` stays as its former name) and is only as wide as its text, as `sf-badge` is (simai/ui-source#51).
 - `sf-button-group` joins are 1px again: the join rules match `appearance` as well as the former `type` (simai/ui-source#52).
