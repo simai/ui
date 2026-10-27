@@ -1791,8 +1791,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _aliases_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("28b603686dcc");
 /* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("0d662e4d7d63");
-/* harmony import */ var _page_actions_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("51e3a200cf5f");
-/* harmony import */ var _host_port_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("f171c5ece4b4");
+/* harmony import */ var _deprecations_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("06e8cd089f28");
+/* harmony import */ var _page_actions_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("51e3a200cf5f");
+/* harmony import */ var _host_port_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("f171c5ece4b4");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_page_language_js__WEBPACK_IMPORTED_MODULE_1__]);
 var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 _page_language_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_async_dependencies_result__[0];
@@ -1852,6 +1853,7 @@ _page_language_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_async_dependencies_re
 //
 // Members the runtime adds start with `sf`, which no manifest name may
 // (§3.1), so a generated setting or action never collides with them.
+
 
 
 
@@ -2241,7 +2243,13 @@ function isShown(element) {
  *   source    the language the component was written in (the fallback before
  *             the key; default the first file that `lang` names);
  *   aliases   the component's aliases.json;
- *   actions   `{<action>(params, {signal}) => outcome}`, the actions' code.
+ *   actions   `{<action>(params, {signal}) => outcome}`, the actions' code;
+ *   formerWords
+ *             `{since, remove_after, words: {<key>: <old key>}}`: the keys
+ *             a product may still have registered its words under (the
+ *             camelCase keys before §11's language files). A word registered
+ *             under an old key is said until the day, noted once in
+ *             SF.deprecations.
  */
 
 
@@ -2250,7 +2258,8 @@ function elementFromManifest(manifest, {
   lang = {},
   source,
   aliases,
-  actions = {}
+  actions = {},
+  formerWords
 } = {}) {
   const Base = base || globalThis.SF?.smart?.SfBaseElement;
   if (typeof Base !== 'function') throw new TypeError('elementFromManifest: a base class is required');
@@ -2259,6 +2268,7 @@ function elementFromManifest(manifest, {
   const words = Object.fromEntries(Object.entries(lang).map(([locale, file]) => [locale.toLowerCase(), { ...(file?.runtime || {})
   }]));
   const sourceLanguage = source || Object.keys(words)[0] || '';
+  const formerKeys = formerWords?.words || {};
   const formAssociated = Boolean(read.form) && typeof globalThis.ElementInternals === 'function' && typeof globalThis.ElementInternals.prototype?.setFormValue === 'function';
 
   class ManifestElement extends Base {
@@ -2343,11 +2353,23 @@ function elementFromManifest(manifest, {
       count,
       vars
     } = {}) {
+      const former = Object.hasOwn(formerKeys, key) ? formerKeys[key] : undefined;
+      const onFormer = former === undefined ? undefined : old => (0,_deprecations_js__WEBPACK_IMPORTED_MODULE_2__.noteDeprecated)({
+        component: this.localName,
+        tag: this.localName,
+        kind: 'word',
+        from: old,
+        to: key,
+        since: formerWords.since,
+        remove_after: formerWords.remove_after
+      });
       return (0,_page_language_js__WEBPACK_IMPORTED_MODULE_1__.pageWord)(words, key, this, {
         component: this.localName,
         source: sourceLanguage,
         count,
-        vars
+        vars,
+        former,
+        onFormer
       });
     }
     /** Writes a declared host state (§5.3). */
@@ -2449,10 +2471,10 @@ function elementFromManifest(manifest, {
 
   defineMembers(ManifestElement.prototype, read.members); // connect-port is the base's (§4.1): a base without it gets it here.
 
-  (0,_host_port_js__WEBPACK_IMPORTED_MODULE_3__.installPortAction)(ManifestElement.prototype);
+  (0,_host_port_js__WEBPACK_IMPORTED_MODULE_4__.installPortAction)(ManifestElement.prototype);
   defineActions(ManifestElement.prototype, read.actions, actions, read.events); // data-sf-action="<id>.<action>" runs a declared action (§8 one page trigger).
 
-  if (read.actions.length) (0,_page_actions_js__WEBPACK_IMPORTED_MODULE_2__.bindPageActions)();
+  if (read.actions.length) (0,_page_actions_js__WEBPACK_IMPORTED_MODULE_3__.bindPageActions)();
   if (aliases) ManifestElement.aliases = aliases;
   return ManifestElement;
 }
