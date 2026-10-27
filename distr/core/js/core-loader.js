@@ -1904,6 +1904,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _iconSubsetRuntime__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("09d27e26e137");
 /* harmony import */ var _preloader__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("6c7f357fe960");
 /* harmony import */ var lit_static_html_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("ee5035470810");
+/* harmony import */ var _pending_tags_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("3c79afd07eeb");
+
 
 
 
@@ -2521,6 +2523,7 @@ SFLoaderPlugin.prototype.findShortCodes = function (node) {
         return Promise.resolve(null);
       }
 
+      this.loadScriptOnCall(originItem);
       const targetName = originItem || entry.name;
       const cacheKey = originItem || entry.name || targetName;
       const names = Array.from(new Set([targetName, originItem, entry.name].filter(Boolean))); // Fast path: если класс уже зарегистрирован — рендерим сразу
@@ -2830,8 +2833,15 @@ SFLoaderPlugin.prototype.dispatchReadyOnce = function () {
 
   try {
     window.dispatchEvent(createReadyEvent());
-    this.eventSend = true;
-    this.prefetchLazyRelations();
+    this.eventSend = true; // A lazy relation is fetched when it is first used, not in idle time
+    // (standard simai.smart-component 1.3.8 §7.2.1; simai/ui-source#47). A
+    // page that wants the old warm-up asks for it:
+    // SF_BOOT_CONFIG.prefetchLazyRelations = true.
+
+    if (this.params?.prefetchLazyRelations === true || window.SF_BOOT_CONFIG?.prefetchLazyRelations === true) {
+      this.prefetchLazyRelations();
+    }
+
     return true;
   } catch (e) {
     console.warn('sf-loader-ready dispatch failed', e);
@@ -3007,7 +3017,9 @@ function resolveMinified(params = {}) {
 
   try {
     if (new URLSearchParams(globalThis.location?.search || '').has('sf-debug')) return false;
-  } catch {}
+  } catch {
+    /* no readable address: the attribute decides */
+  }
 
   return !globalThis.document?.documentElement?.hasAttribute?.('data-sf-debug');
 } // x.min.js <-> x.js, x.min.css <-> x.css; null for anything else.
@@ -3507,7 +3519,31 @@ SFLoaderPlugin.prototype.getAttributes = function (HtmlElement) {
     tagName: HtmlElement.tagName?.toLowerCase?.()
   });
   return result;
-}; // A Smart tag is one a rule claims. The Framework's own are sf- names; a
+}; // A Smart element inside a closed container is not a reason to fetch its code
+// (standard simai.smart-component 1.3.8 §7.2.1, simai/ui-source#47): a tab
+// panel or anything else with `hidden`, an `inert` subtree (a closed sf-modal's
+// root, a slide out of view), a closed <details> past its summary, a closed
+// <dialog>. The Loader watches the container and reads it again when it opens;
+// the module is fetched then, once.
+
+
+const CLOSED_CONTAINER = '[hidden], [inert], details:not([open]), dialog:not([open])';
+const CLOSED_CONTAINER_ATTRIBUTES = ['hidden', 'inert', 'open'];
+
+function isClosedContainer(node) {
+  return node?.nodeType === 1 && node.matches(CLOSED_CONTAINER);
+}
+
+function closedContainerOf(el) {
+  for (let node = el?.parentElement; node; node = node.parentElement) {
+    if (!isClosedContainer(node)) continue; // A closed <details> still shows its summary.
+
+    if (node.localName === 'details' && el.closest('summary')?.parentElement === node) continue;
+    return node;
+  }
+
+  return null;
+} // A Smart tag is one a rule claims. The Framework's own are sf- names; a
 // component package may name its elements with its owner's prefix (standard
 // simai.component-package, own-element-prefix), and the rule it registers is
 // where it says so -- every rule lists its tags. Only a package rule may claim a
@@ -3572,6 +3608,51 @@ SFLoaderPlugin.prototype.shouldDeferNestedSmartElement = function (el) {
   }
 
   return parentSmart.__sfSourceCaptured !== true;
+}; // Leaves the element for later when it sits in a closed container: the
+// container is watched, and read again when it opens. The element's tag is
+// held meanwhile (pending-tags.js), in case the container is one that still
+// shows it (an inert region).
+
+
+SFLoaderPlugin.prototype.deferClosedSmartElement = function (el) {
+  const container = closedContainerOf(el);
+  if (!container) return false;
+  (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_10__.installPendingTags)(window).hold(el.localName);
+  this.watchClosedContainer(container);
+  return true;
+};
+
+SFLoaderPlugin.prototype.watchClosedContainer = function (container) {
+  if (!this.closedContainers) {
+    this.closedContainers = new WeakSet();
+    this.closedContainerObserver = new MutationObserver(records => {
+      const opened = new Set();
+      records.forEach(({
+        target
+      }) => {
+        if (this.closedContainers.has(target) && !isClosedContainer(target)) opened.add(target);
+      });
+      opened.forEach(target => {
+        this.closedContainers.delete(target);
+        if (target.isConnected) this.scanCustomElements(target);
+      });
+    });
+  }
+
+  if (this.closedContainers.has(container)) return;
+  this.closedContainers.add(container);
+  this.closedContainerObserver.observe(container, {
+    attributes: true,
+    attributeFilter: CLOSED_CONTAINER_ATTRIBUTES
+  });
+}; // The tag's elements stay invisible while its module is on the way, unless
+// they carry static markup or a skeleton shape (pending-tags.js).
+
+
+SFLoaderPlugin.prototype.holdSmartTag = function (tagName) {
+  (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_10__.installPendingTags)(window).hold(tagName, {
+    asked: true
+  });
 };
 
 SFLoaderPlugin.prototype.prepareSmartChildScanEvents = function () {
@@ -3656,10 +3737,11 @@ SFLoaderPlugin.prototype.scanCustomElements = function (root = null, autoLoad = 
       iconItemCount += this.trackIconElement(el);
     }
 
-    if (!componentName || this.module[componentName] || this.shouldDeferNestedSmartElement(el)) {
+    if (!componentName || this.module[componentName] || this.shouldDeferNestedSmartElement(el) || this.deferClosedSmartElement(el)) {
       return;
     }
 
+    this.holdSmartTag(tagName);
     keys.push(componentName);
     totalItemCount++;
     this.setExistCookie(componentName);
@@ -3835,7 +3917,8 @@ SFLoaderPlugin.prototype.scanDom = function (root = null, autoLoad = true) {
         customIconCount += this.trackIconElement(el);
       }
 
-      if (componentName && !this.module[componentName] && !this.shouldDeferNestedSmartElement(el)) {
+      if (componentName && !this.module[componentName] && !this.shouldDeferNestedSmartElement(el) && !this.deferClosedSmartElement(el)) {
+        this.holdSmartTag(tagName);
         customKeys.push(componentName);
         customCount++;
         this.setExistCookie(componentName);
@@ -5258,7 +5341,19 @@ SFLoaderPlugin.prototype.getObserverFilteredHTML = function (node) {
   if (this.shouldSkipNode(node)) return '';
   const clone = node.cloneNode(true);
   const ignoredNodes = clone.querySelectorAll?.(OBSERVER_IGNORE_SELECTOR) || [];
-  ignoredNodes.forEach(ignoredNode => ignoredNode.remove());
+  ignoredNodes.forEach(ignoredNode => ignoredNode.remove()); // A Smart element left for later (in a closed container) is not read here
+  // either: its tag would match a class component's rule by name (`sf-modal`
+  // matches the modal's) and fetch that code before the container opens.
+
+  const tags = Object.keys(this.getCustomElementRules());
+
+  if (tags.length && clone.querySelectorAll) {
+    const hostClosed = node.nodeType === Node.ELEMENT_NODE && Boolean(closedContainerOf(node) || isClosedContainer(node));
+    clone.querySelectorAll(tags.join(',')).forEach(el => {
+      if (hostClosed || closedContainerOf(el)) el.remove();
+    });
+  }
+
   if (clone.innerHTML !== undefined) return clone.innerHTML;
   if (clone.outerHTML !== undefined) return clone.outerHTML;
   if (clone.textContent !== undefined) return clone.textContent;
@@ -6337,12 +6432,30 @@ function createSmartElement(name, params = {}) {
 SFLoaderPlugin.prototype.ensurePlugin = function (name) {
   const key = String(name || '').trim();
   if (!key || !this.findPlugins?.[key]) return false;
+  this.loadScriptOnCall(key);
   if (this.module[key]) return true;
   this.setExistCookie(key);
   this.mutate(() => this.getLoader(this.module, true));
   return true;
+}; // A rule whose script serves only an API (`js: false, jsOnCall: true`): its
+// class on the page fetches the sheet alone, and the script comes when the API
+// is called -- a shortcode, or SF.Loader.ensurePlugin(name). The skeleton is
+// the first: its bars are CSS and show before any code; the script is the
+// constructor behind [!skeleton ...] (simai/ui-source#47).
+
+
+SFLoaderPlugin.prototype.loadScriptOnCall = function (name) {
+  const rule = this.findPlugins?.[name];
+  if (!rule || rule.jsOnCall !== true || this.ComponentRegistry?.[name]) return false;
+  const type = rule.type === 'component' || rule.type === 'attribute' ? 'component' : 'utility';
+  const file = this.pathPluginJs(name, false, name, type);
+  if (!file) return false;
+  this.addScript(file).catch(error => console.warn(error));
+  return true;
 }; // The lazy relations, fetched after the page is ready while the browser is
-// idle, a few at a time, so the first interaction finds them loaded.
+// idle, a few at a time. Only on a page that asks for it
+// (SF_BOOT_CONFIG.prefetchLazyRelations = true): by default a lazy relation is
+// fetched when it is first used.
 
 
 SFLoaderPlugin.prototype.prefetchLazyRelations = function () {

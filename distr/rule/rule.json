@@ -4015,7 +4015,8 @@
   {
     "name": "skeleton",
     "css": true,
-    "js": true,
+    "js": false,
+    "jsOnCall": true,
     "regex": "/sf-skeleton/",
     "type": "component"
   },
