@@ -2053,7 +2053,10 @@ function elementFromManifest(manifest, {
   const Base = base || globalThis.SF?.smart?.SfBaseElement;
   if (typeof Base !== 'function') throw new TypeError('elementFromManifest: a base class is required');
   const read = readManifest(manifest);
-  const generatedProps = propsFromManifest(manifest);
+  const generatedProps = propsFromManifest(manifest); // Settings that arrive after the first paint (§5.4): their skeleton holds
+  // the box until they do.
+
+  const late = [].concat(manifest.presentation?.skeleton?.late ?? []).map(name => read.members.find(member => member.name === name)).filter(Boolean);
   const words = Object.fromEntries(Object.entries(lang).map(([locale, file]) => [locale.toLowerCase(), { ...(file?.runtime || {})
   }]));
   const sourceLanguage = source || Object.keys(words)[0] || '';
@@ -2095,9 +2098,63 @@ function elementFromManifest(manifest, {
     }
 
     connectedCallback() {
+      this.sfReadIsland();
       super.connectedCallback(); // A leaf outside an assembly starts with the page (§7.2.1 `now`).
 
       this.toggleAttribute('data-sf-started', true);
+    }
+    /**
+     * The first values of the settings an attribute cannot hold, lists and
+     * objects, from the JSON island a server prints in the host (§5.4):
+     * `<script type="application/json" data-sf-settings>{"items": [...]}</script>`.
+     * Read once, before the first render; an attribute or a property the page
+     * set first wins. The island is taken out, so a component that reads its
+     * children never meets it.
+     */
+
+
+    sfReadIsland() {
+      const island = Array.from(this.children ?? []).find(child => child.localName === 'script' && child.hasAttribute('data-sf-settings') && /^application\/json$/iu.test(child.type));
+      if (!island) return;
+      island.remove();
+      let data;
+
+      try {
+        data = JSON.parse(island.textContent || '{}');
+      } catch (error) {
+        globalThis.console?.warn?.(`[SIMAI Framework] ${this.localName}: the data-sf-settings island is not JSON`, error);
+        return;
+      }
+
+      for (const [name, value] of Object.entries(isPlainObject(data) ? data : {})) {
+        const member = read.members.find(one => one.name === name);
+
+        if (!member || !member.writable || member.native) {
+          globalThis.console?.warn?.(`[SIMAI Framework] ${this.localName}: the island's "${name}" is not a setting`);
+          continue;
+        }
+
+        if (member.attribute ? this.hasAttribute(member.attribute) : Object.prototype.hasOwnProperty.call(this.__sfManifestData ?? {}, name)) continue;
+        this[member.property] = value;
+      }
+    }
+    /**
+     * Whether the element keeps its printed skeleton (§5.4, §7.3 phase 3):
+     * the host was printed with data-sf-first-paint="skeleton" and a setting
+     * declared late (presentation.skeleton.late) has not arrived. The first
+     * render waits for it, so the skeleton turns into content in one frame.
+     * A component whose data comes another way (a port) overrides this.
+     */
+
+
+    sfAwaitingData() {
+      if (!late.length || this.getAttribute('data-sf-first-paint') !== 'skeleton') return false;
+      return late.some(member => {
+        if (member.attribute && this.hasAttribute(member.attribute)) return false; // Read through the property: a component may keep the setting itself.
+
+        const value = this[member.property];
+        return value === undefined || value === null || Array.isArray(value) && !value.length;
+      });
     }
     /** §4.1: the element has a box in an opened container. */
 
@@ -2810,7 +2867,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-progr
 /***/ "14aa46a01a05"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$comment":"The source of sf-progress-scale\'s element plumbing (core/js/element-manifest.js). Taken from simai/ui-control control/smart-architecture/migration/out/progress-scale (migration/convert-1.3.8.mjs over simai/ui-source@5100227); standard simai.smart-component 1.3.8, vocabulary 1.1.5. Every x-todo of the conversion is decided: x-decisions says how.","id":"smart.progress-scale","tag":"sf-progress-scale","version":"1.1.0","kind":"leaf","family":"progress","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"value":{"type":"number","default":0,"min":0,"max":100},"show-text":{"type":"boolean","default":true},"status":{"type":"enum","values":["neutral","info","success","warning","error"],"default":"neutral"},"label":{"type":"string","default":""},"value-text":{"type":"string","default":""}},"values":{},"events":{},"actions":{"chunk":{"with":{"done":"number","total":"number"},"x-outcomes":["applied","refused"],"x-summary":"Shows a part of a job (vocabulary §5.2 chunk {done, total}): value becomes done of total in per cent; total defaults to 100"}},"templates":{"default":{"file":"js/templates/default.js","$comment":"The Lit template in JavaScript, the migration form of §5.2 (§16)."}},"examples":"examples.json","docs":"docs/docs.md","lang":"lang/","accessibility":{"role":"progressbar","name":{"from":["label","aria-label"]},"keys":{},"$comment":"The root carries role progressbar with aria-valuemin 0, aria-valuemax 100, aria-valuenow the value and aria-valuetext the value-text when given; it takes no focus and no keys."},"css-variables":{"--sf-progress-scale-fill-color":{"type":"color","state":"default"},"--sf-progress-scale-track-color":{"type":"color","state":"default"},"--sf-progress-scale-segment-gap":{"type":"length","state":"default"},"--sf-progress-scale-radius":{"type":"length","state":"default"},"--sf-progress-scale-color":{"type":"color","state":"default"},"--sf-progress-scale-gap":{"type":"length","state":"default"}},"x-summary":"Segmented determinate progress with exact accessible value, explicit semantic tone and ten visual steps.","x-source":{"package":"framework","folder":"progress-scale","manifest":"simai/ui-source@5100227 src/smart/progress-scale/smart.manifest.json","converted":"control/smart-architecture/stands/17-ports-migration/out/progress-scale.component.json"},"x-words":["label","value-text"],"x-kept":{"security":{"permissions_owner":"none","untrusted_inputs":["props","children"],"network_policy":"deny"},"ownership":{"source":"simai/ui-source","data":"host","effects":"component","forbidden_client_responsibilities":["backend access decisions","host route invention","running, cancelling or retrying the task","inferring semantic state from the current segment count","inventing the accessible process label"]},"presentation":{"themes":["light","dark"],"locales":["ru","en"],"responsive":["desktop","mobile"],"skeleton":{"shape":"none","while_loading":"none"}},"ai_guidance":{"use_when":"Use sf-progress-scale when a known progress value is meaningfully represented by ten coarse or staged segments.","do_not":["Do not copy generated ui-smart code","Do not move host data or access decisions into the component","Do not use segmented progress when continuous Progress Bar is clearer","Do not use Progress Scale for an unknown value; use Spinner","Do not infer error, warning or success from the percentage","Do not omit a localized accessible label"],"required_reads":["inputs","methods","events","ownership","provenance"],"minimal_example":"<sf-progress-scale label=\\"Подготовка проекта\\" value=\\"40\\"></sf-progress-scale>","owner_commands":["npm run contract:verify","npm test"]}},"x-target":{"added":{"actions":["chunk"]}},"x-renamed":["settings.tone: the status axis\'s old name, a dated setting alias of status","settings.progress: an object read off setProgress by the conversion, not a setting; it leaves (the value is value, a job\'s part is the action chunk)","methods.setProgress → actions.chunk: a dated action alias; setProgress(n) is chunk(n), n of 100","methods.getProgress: a reader retires (§4.4), kept and noted until the date"],"x-decisions":["version: 1.0.0 → 1.1.0: tone and setProgress are dated aliases, value is a number, chunk is added; a minor while the aliases hold (§4.10).","setter: setProgress was a set-<name> method of the writable setting value (§4.4); a page writes value. A job\'s progress reaches the bar as the stream fact chunk {done, total} of vocabulary 1.1.5 §5.2, so the action a rule asks is chunk: a rule on <source>.chunk asks <bar>.chunk with the carried done and total. setProgress(n) is its dated alias (n of 100).","number-type: value holds a percentage, 0..100, clamped by the template; it is a number (§16 item 29) and an attribute that is no number reads 0.","a11y-role: progressbar on the root with aria-valuenow (the value), aria-valuemin 0, aria-valuemax 100 and aria-valuetext (value-text); the name is label, else the host\'s aria-label (§3.1, §4.8); no keys and no focus.","template: templates.default names the Lit template js/templates/default.js, the migration form §5.2 allows.","examples: examples.json from studio.fixture.json and studio.scenario.json plus a status and a value text; probe.json drives value, chunk and the aliases.","skeleton: none; the bar has no port and no late data: its static markup is its first paint (§5.4).","css-variables: 6 public variables read by the class sheet with the role token as fallback (src/core/contracts/public-variables.v1.json).","settings: tone leaves for its dated alias row (status answers), and progress, an object the conversion read off setProgress, is no setting: value is the setting and chunk the action.","line: a form size of the text line the scale stands on (a row, a cell), kept as it is."]}');
+module.exports = /*#__PURE__*/JSON.parse('{"$comment":"The source of sf-progress-scale\'s element plumbing (core/js/element-manifest.js). Taken from simai/ui-control control/smart-architecture/migration/out/progress-scale (migration/convert-1.3.8.mjs over simai/ui-source@5100227); standard simai.smart-component 1.3.8, vocabulary 1.1.5. Every x-todo of the conversion is decided: x-decisions says how.","id":"smart.progress-scale","tag":"sf-progress-scale","version":"1.1.0","kind":"leaf","family":"progress","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"value":{"type":"number","default":0,"min":0,"max":100},"show-text":{"type":"boolean","default":true},"status":{"type":"enum","values":["neutral","info","success","warning","error"],"default":"neutral"},"label":{"type":"string","default":""},"value-text":{"type":"string","default":""}},"values":{},"events":{},"actions":{"chunk":{"with":{"done":"number","total":"number"},"x-outcomes":["applied","refused"],"x-summary":"Shows a part of a job (vocabulary §5.2 chunk {done, total}): value becomes done of total in per cent; total defaults to 100"}},"templates":{"default":{"file":"js/templates/default.js","$comment":"The Lit template in JavaScript, the migration form of §5.2 (§16)."}},"examples":"examples.json","docs":"docs/docs.md","lang":"lang/","accessibility":{"role":"progressbar","name":{"from":["label","aria-label"]},"keys":{},"$comment":"The root carries role progressbar with aria-valuemin 0, aria-valuemax 100, aria-valuenow the value and aria-valuetext the value-text when given; it takes no focus and no keys."},"css-variables":{"--sf-progress-scale-fill-color":{"type":"color","state":"default"},"--sf-progress-scale-track-color":{"type":"color","state":"default"},"--sf-progress-scale-segment-gap":{"type":"length","state":"default"},"--sf-progress-scale-radius":{"type":"length","state":"default"},"--sf-progress-scale-color":{"type":"color","state":"default"},"--sf-progress-scale-gap":{"type":"length","state":"default"}},"x-summary":"Segmented determinate progress with exact accessible value, explicit semantic tone and ten visual steps.","x-source":{"package":"framework","folder":"progress-scale","manifest":"simai/ui-source@5100227 src/smart/progress-scale/smart.manifest.json","converted":"control/smart-architecture/stands/17-ports-migration/out/progress-scale.component.json"},"x-words":["label","value-text"],"x-kept":{"security":{"permissions_owner":"none","untrusted_inputs":["props","children"],"network_policy":"deny"},"ownership":{"source":"simai/ui-source","data":"host","effects":"component","forbidden_client_responsibilities":["backend access decisions","host route invention","running, cancelling or retrying the task","inferring semantic state from the current segment count","inventing the accessible process label"]},"presentation":{"themes":["light","dark"],"locales":["ru","en"],"responsive":["desktop","mobile"]},"ai_guidance":{"use_when":"Use sf-progress-scale when a known progress value is meaningfully represented by ten coarse or staged segments.","do_not":["Do not copy generated ui-smart code","Do not move host data or access decisions into the component","Do not use segmented progress when continuous Progress Bar is clearer","Do not use Progress Scale for an unknown value; use Spinner","Do not infer error, warning or success from the percentage","Do not omit a localized accessible label"],"required_reads":["inputs","methods","events","ownership","provenance"],"minimal_example":"<sf-progress-scale label=\\"Подготовка проекта\\" value=\\"40\\"></sf-progress-scale>","owner_commands":["npm run contract:verify","npm test"]}},"x-target":{"added":{"actions":["chunk"]}},"x-renamed":["settings.tone: the status axis\'s old name, a dated setting alias of status","settings.progress: an object read off setProgress by the conversion, not a setting; it leaves (the value is value, a job\'s part is the action chunk)","methods.setProgress → actions.chunk: a dated action alias; setProgress(n) is chunk(n), n of 100","methods.getProgress: a reader retires (§4.4), kept and noted until the date"],"x-decisions":["version: 1.0.0 → 1.1.0: tone and setProgress are dated aliases, value is a number, chunk is added; a minor while the aliases hold (§4.10).","setter: setProgress was a set-<name> method of the writable setting value (§4.4); a page writes value. A job\'s progress reaches the bar as the stream fact chunk {done, total} of vocabulary 1.1.5 §5.2, so the action a rule asks is chunk: a rule on <source>.chunk asks <bar>.chunk with the carried done and total. setProgress(n) is its dated alias (n of 100).","number-type: value holds a percentage, 0..100, clamped by the template; it is a number (§16 item 29) and an attribute that is no number reads 0.","a11y-role: progressbar on the root with aria-valuenow (the value), aria-valuemin 0, aria-valuemax 100 and aria-valuetext (value-text); the name is label, else the host\'s aria-label (§3.1, §4.8); no keys and no focus.","template: templates.default names the Lit template js/templates/default.js, the migration form §5.2 allows.","examples: examples.json from studio.fixture.json and studio.scenario.json plus a status and a value text; probe.json drives value, chunk and the aliases.","skeleton: none; the bar has no port and no late data: its static markup is its first paint (§5.4).","css-variables: 6 public variables read by the class sheet with the role token as fallback (src/core/contracts/public-variables.v1.json).","settings: tone leaves for its dated alias row (status answers), and progress, an object the conversion read off setProgress, is no setting: value is the setting and chunk the action.","line: a form size of the text line the scale stands on (a row, a cell), kept as it is."]}');
 
 /***/ },
 

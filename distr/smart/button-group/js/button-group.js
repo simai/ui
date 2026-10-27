@@ -1811,7 +1811,10 @@ function elementFromManifest(manifest, {
   const Base = base || globalThis.SF?.smart?.SfBaseElement;
   if (typeof Base !== 'function') throw new TypeError('elementFromManifest: a base class is required');
   const read = readManifest(manifest);
-  const generatedProps = propsFromManifest(manifest);
+  const generatedProps = propsFromManifest(manifest); // Settings that arrive after the first paint (§5.4): their skeleton holds
+  // the box until they do.
+
+  const late = [].concat(manifest.presentation?.skeleton?.late ?? []).map(name => read.members.find(member => member.name === name)).filter(Boolean);
   const words = Object.fromEntries(Object.entries(lang).map(([locale, file]) => [locale.toLowerCase(), { ...(file?.runtime || {})
   }]));
   const sourceLanguage = source || Object.keys(words)[0] || '';
@@ -1853,9 +1856,63 @@ function elementFromManifest(manifest, {
     }
 
     connectedCallback() {
+      this.sfReadIsland();
       super.connectedCallback(); // A leaf outside an assembly starts with the page (§7.2.1 `now`).
 
       this.toggleAttribute('data-sf-started', true);
+    }
+    /**
+     * The first values of the settings an attribute cannot hold, lists and
+     * objects, from the JSON island a server prints in the host (§5.4):
+     * `<script type="application/json" data-sf-settings>{"items": [...]}</script>`.
+     * Read once, before the first render; an attribute or a property the page
+     * set first wins. The island is taken out, so a component that reads its
+     * children never meets it.
+     */
+
+
+    sfReadIsland() {
+      const island = Array.from(this.children ?? []).find(child => child.localName === 'script' && child.hasAttribute('data-sf-settings') && /^application\/json$/iu.test(child.type));
+      if (!island) return;
+      island.remove();
+      let data;
+
+      try {
+        data = JSON.parse(island.textContent || '{}');
+      } catch (error) {
+        globalThis.console?.warn?.(`[SIMAI Framework] ${this.localName}: the data-sf-settings island is not JSON`, error);
+        return;
+      }
+
+      for (const [name, value] of Object.entries(isPlainObject(data) ? data : {})) {
+        const member = read.members.find(one => one.name === name);
+
+        if (!member || !member.writable || member.native) {
+          globalThis.console?.warn?.(`[SIMAI Framework] ${this.localName}: the island's "${name}" is not a setting`);
+          continue;
+        }
+
+        if (member.attribute ? this.hasAttribute(member.attribute) : Object.prototype.hasOwnProperty.call(this.__sfManifestData ?? {}, name)) continue;
+        this[member.property] = value;
+      }
+    }
+    /**
+     * Whether the element keeps its printed skeleton (§5.4, §7.3 phase 3):
+     * the host was printed with data-sf-first-paint="skeleton" and a setting
+     * declared late (presentation.skeleton.late) has not arrived. The first
+     * render waits for it, so the skeleton turns into content in one frame.
+     * A component whose data comes another way (a port) overrides this.
+     */
+
+
+    sfAwaitingData() {
+      if (!late.length || this.getAttribute('data-sf-first-paint') !== 'skeleton') return false;
+      return late.some(member => {
+        if (member.attribute && this.hasAttribute(member.attribute)) return false; // Read through the property: a component may keep the setting itself.
+
+        const value = this[member.property];
+        return value === undefined || value === null || Array.isArray(value) && !value.length;
+      });
     }
     /** §4.1: the element has a box in an opened container. */
 
@@ -2524,7 +2581,9 @@ class SfButtonGroup extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.
   }
 
   connectedCallback() {
-    // The value a form reset returns to: the one the group was written with.
+    // A printed JSON island first (standard 1.3.8 §5.4): what is read below may be in it.
+    this.sfReadIsland(); // The value a form reset returns to: the one the group was written with.
+
     if (!Object.prototype.hasOwnProperty.call(this, '_resetValue')) this._resetValue = this.value;
     super.connectedCallback();
   }
@@ -3021,7 +3080,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shi
 /***/ "b4279d32e6ce"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$comment":"The source of sf-button-group\'s element plumbing (core/js/element-manifest.js). Taken from simai/ui-control control/smart-architecture/migration/out/button-group (migration/convert-1.3.8.mjs from simai/ui-source@5100227 src/smart/button-group/smart.manifest.json); standard simai.smart-component 1.3.8, vocabulary 1.1.5. Its x-todo are decided in x-decisions.","id":"smart.button-group","tag":"sf-button-group","version":"1.1.0","kind":"leaf","family":"button","settings":{"items":{"type":"list","default":[],"of":{"id":"id","value":"string","label":"string","icon":{"type":"icon","optional":true},"count":{"type":"string","optional":true},"icon-only":{"type":"boolean","optional":true},"loading":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true}},"x-shape":"ui-source src/smart/button-group/index.js normalizeItems: the attribute takes JSON or value::label::flags|…, the property a list; aria-label of an entry names an icon-only item"},"name":{"type":"string","default":""},"theme-switch":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"tightness":{"type":"enum","values":["","low","high","highest"],"default":""},"scheme":{"type":"enum","values":["primary","secondary","on-surface"],"default":"primary"},"appearance":{"type":"enum","values":["default","segmented"],"default":"default"},"plate":{"type":"enum","values":["scheme","raised"],"default":"scheme"},"full-width":{"type":"boolean","default":false},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"orientation":{"type":"enum","values":["horizontal","vertical"],"default":"horizontal"},"disabled":{"type":"boolean","default":false}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":{"previous":"string","value":"string","item":"object"}}},"actions":{"select":{"with":{"value":"string"},"x-outcomes":["applied","refused"]},"clear":{"x-outcomes":["applied","refused"]}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"keyboard":{"host":{"Tab":"reach","ArrowLeft":"focus:prev","ArrowRight":"focus:next","ArrowUp":"focus:prev","ArrowDown":"focus:next","Home":"focus:first","End":"focus:last"}},"templates":{"default":{"file":"js/templates/default.js"}},"examples":"examples.json","docs":"docs.md","lang":"lang/","accessibility":{"role":"radiogroup","name":{"from":["aria-label","runtime.group"]},"keys":{"Tab":"reach","ArrowLeft":"focus:prev","ArrowRight":"focus:next","ArrowUp":"focus:prev","ArrowDown":"focus:next","Home":"focus:first","End":"focus:last"}},"css-variables":{"--sf-button-group-background-color":{"type":"color","state":"rest"},"--sf-button-group-padding":{"type":"length"},"--sf-button-group-radius":{"type":"length"},"--sf-button-group-color":{"type":"color","state":"rest"},"--sf-button-group-plate-background-color":{"type":"color","state":"selected"},"--sf-button-group-plate-color":{"type":"color","state":"selected"},"--sf-button-group-count-color":{"type":"color","state":"rest"}},"x-summary":"A controlled single-selection group built from SF5 buttons.","x-source":{"package":"framework","folder":"button-group","manifest":"simai/ui-source@5100227 src/smart/button-group/smart.manifest.json","converted":"control/smart-architecture/stands/17-ports-migration/out/button-group.component.json"},"x-renamed":["settings.aria-label: a host attribute, read by the base, never a setting (§3.1)","events.change: 1 carried field(s) held the element, not data (§8)"],"x-kept":{"security":{"permissions_owner":"none","untrusted_inputs":["items","value"],"network_policy":"deny"},"ownership":{"source":"simai/ui-source","data":"fixture","effects":"component","forbidden_client_responsibilities":["backend access decisions","preference persistence","host route invention"]},"presentation":{"themes":["light","dark"],"locales":["ru","en"],"responsive":["desktop","mobile"],"skeleton":{"shape":"none","while_loading":"none"}},"ai_guidance":{"use_when":"Use sf-button-group for one compact mutually exclusive choice; appearance=\\"segmented\\" for a filter, period, view or theme switch drawn as a segmented control (not tabs: no panels).","do_not":["Do not copy generated ui-smart code","Do not persist selection inside the component","Do not use it for independent multi-select actions"],"required_reads":["inputs","methods","events","ownership","provenance"],"minimal_example":"<sf-button-group aria-label=\\"View\\" items=\'[{\\"value\\":\\"list\\",\\"label\\":\\"List\\"},{\\"value\\":\\"grid\\",\\"label\\":\\"Grid\\"}]\' value=\\"list\\"></sf-button-group>","owner_commands":["npm run contract:verify","npm test"]}},"x-decisions":["version: 1.1.0 -- sf-button-group-change follows change behind a dated alias, and the element leaves the change detail (§8); a minor while the alias holds (§4.10)","template: the default template stays the Lit module js/templates/default.js, the migration form §5.2 allows; template.html follows when the build compiles HTML templates","examples: examples.json from studio.fixture.json and studio.scenario.json","css-variables: the seven public variables the group already had (2026-10-19), now declared in the manifest","item-shape: items name id, value, label, icon, count, icon-only, loading and disabled; the attribute keeps its JSON and value::label::flags forms","actions: select {value} and clear answer an outcome (§4.4): applied, or refused with unknown, disabled, unchanged or theme (a Loader that cannot change the theme); chaining is gone. Both are a person\'s request in code and send change, as before","form: the host is the form control through ElementInternals (§17.1): the selected value, nothing while disabled; form.reset() returns the value the group was written with (a theme switch keeps the preference). The hidden input is drawn only without ElementInternals","accessibility.name: the host\'s aria-label, or the theme switch\'s own word «Тема»"]}');
+module.exports = /*#__PURE__*/JSON.parse('{"$comment":"The source of sf-button-group\'s element plumbing (core/js/element-manifest.js). Taken from simai/ui-control control/smart-architecture/migration/out/button-group (migration/convert-1.3.8.mjs from simai/ui-source@5100227 src/smart/button-group/smart.manifest.json); standard simai.smart-component 1.3.8, vocabulary 1.1.5. Its x-todo are decided in x-decisions.","id":"smart.button-group","tag":"sf-button-group","version":"1.1.0","kind":"leaf","family":"button","settings":{"items":{"type":"list","default":[],"of":{"id":"id","value":"string","label":"string","icon":{"type":"icon","optional":true},"count":{"type":"string","optional":true},"icon-only":{"type":"boolean","optional":true},"loading":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true}},"x-shape":"ui-source src/smart/button-group/index.js normalizeItems: the attribute takes JSON or value::label::flags|…, the property a list; aria-label of an entry names an icon-only item"},"name":{"type":"string","default":""},"theme-switch":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"tightness":{"type":"enum","values":["","low","high","highest"],"default":""},"scheme":{"type":"enum","values":["primary","secondary","on-surface"],"default":"primary"},"appearance":{"type":"enum","values":["default","segmented"],"default":"default"},"plate":{"type":"enum","values":["scheme","raised"],"default":"scheme"},"full-width":{"type":"boolean","default":false},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"orientation":{"type":"enum","values":["horizontal","vertical"],"default":"horizontal"},"disabled":{"type":"boolean","default":false}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":{"previous":"string","value":"string","item":"object"}}},"actions":{"select":{"with":{"value":"string"},"x-outcomes":["applied","refused"]},"clear":{"x-outcomes":["applied","refused"]}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"keyboard":{"host":{"Tab":"reach","ArrowLeft":"focus:prev","ArrowRight":"focus:next","ArrowUp":"focus:prev","ArrowDown":"focus:next","Home":"focus:first","End":"focus:last"}},"templates":{"default":{"file":"js/templates/default.js"}},"examples":"examples.json","docs":"docs.md","lang":"lang/","accessibility":{"role":"radiogroup","name":{"from":["aria-label","runtime.group"]},"keys":{"Tab":"reach","ArrowLeft":"focus:prev","ArrowRight":"focus:next","ArrowUp":"focus:prev","ArrowDown":"focus:next","Home":"focus:first","End":"focus:last"}},"css-variables":{"--sf-button-group-background-color":{"type":"color","state":"rest"},"--sf-button-group-padding":{"type":"length"},"--sf-button-group-radius":{"type":"length"},"--sf-button-group-color":{"type":"color","state":"rest"},"--sf-button-group-plate-background-color":{"type":"color","state":"selected"},"--sf-button-group-plate-color":{"type":"color","state":"selected"},"--sf-button-group-count-color":{"type":"color","state":"rest"}},"x-summary":"A controlled single-selection group built from SF5 buttons.","x-source":{"package":"framework","folder":"button-group","manifest":"simai/ui-source@5100227 src/smart/button-group/smart.manifest.json","converted":"control/smart-architecture/stands/17-ports-migration/out/button-group.component.json"},"x-renamed":["settings.aria-label: a host attribute, read by the base, never a setting (§3.1)","events.change: 1 carried field(s) held the element, not data (§8)"],"x-kept":{"security":{"permissions_owner":"none","untrusted_inputs":["items","value"],"network_policy":"deny"},"ownership":{"source":"simai/ui-source","data":"fixture","effects":"component","forbidden_client_responsibilities":["backend access decisions","preference persistence","host route invention"]},"presentation":{"themes":["light","dark"],"locales":["ru","en"],"responsive":["desktop","mobile"]},"ai_guidance":{"use_when":"Use sf-button-group for one compact mutually exclusive choice; appearance=\\"segmented\\" for a filter, period, view or theme switch drawn as a segmented control (not tabs: no panels).","do_not":["Do not copy generated ui-smart code","Do not persist selection inside the component","Do not use it for independent multi-select actions"],"required_reads":["inputs","methods","events","ownership","provenance"],"minimal_example":"<sf-button-group aria-label=\\"View\\" items=\'[{\\"value\\":\\"list\\",\\"label\\":\\"List\\"},{\\"value\\":\\"grid\\",\\"label\\":\\"Grid\\"}]\' value=\\"list\\"></sf-button-group>","owner_commands":["npm run contract:verify","npm test"]}},"x-decisions":["version: 1.1.0 -- sf-button-group-change follows change behind a dated alias, and the element leaves the change detail (§8); a minor while the alias holds (§4.10)","template: the default template stays the Lit module js/templates/default.js, the migration form §5.2 allows; template.html follows when the build compiles HTML templates","examples: examples.json from studio.fixture.json and studio.scenario.json","css-variables: the seven public variables the group already had (2026-10-19), now declared in the manifest","item-shape: items name id, value, label, icon, count, icon-only, loading and disabled; the attribute keeps its JSON and value::label::flags forms","actions: select {value} and clear answer an outcome (§4.4): applied, or refused with unknown, disabled, unchanged or theme (a Loader that cannot change the theme); chaining is gone. Both are a person\'s request in code and send change, as before","form: the host is the form control through ElementInternals (§17.1): the selected value, nothing while disabled; form.reset() returns the value the group was written with (a theme switch keeps the preference). The hidden input is drawn only without ElementInternals","accessibility.name: the host\'s aria-label, or the theme switch\'s own word «Тема»"]}');
 
 /***/ },
 

@@ -1567,7 +1567,10 @@ function elementFromManifest(manifest, {
   const Base = base || globalThis.SF?.smart?.SfBaseElement;
   if (typeof Base !== 'function') throw new TypeError('elementFromManifest: a base class is required');
   const read = readManifest(manifest);
-  const generatedProps = propsFromManifest(manifest);
+  const generatedProps = propsFromManifest(manifest); // Settings that arrive after the first paint (§5.4): their skeleton holds
+  // the box until they do.
+
+  const late = [].concat(manifest.presentation?.skeleton?.late ?? []).map(name => read.members.find(member => member.name === name)).filter(Boolean);
   const words = Object.fromEntries(Object.entries(lang).map(([locale, file]) => [locale.toLowerCase(), { ...(file?.runtime || {})
   }]));
   const sourceLanguage = source || Object.keys(words)[0] || '';
@@ -1609,9 +1612,63 @@ function elementFromManifest(manifest, {
     }
 
     connectedCallback() {
+      this.sfReadIsland();
       super.connectedCallback(); // A leaf outside an assembly starts with the page (§7.2.1 `now`).
 
       this.toggleAttribute('data-sf-started', true);
+    }
+    /**
+     * The first values of the settings an attribute cannot hold, lists and
+     * objects, from the JSON island a server prints in the host (§5.4):
+     * `<script type="application/json" data-sf-settings>{"items": [...]}</script>`.
+     * Read once, before the first render; an attribute or a property the page
+     * set first wins. The island is taken out, so a component that reads its
+     * children never meets it.
+     */
+
+
+    sfReadIsland() {
+      const island = Array.from(this.children ?? []).find(child => child.localName === 'script' && child.hasAttribute('data-sf-settings') && /^application\/json$/iu.test(child.type));
+      if (!island) return;
+      island.remove();
+      let data;
+
+      try {
+        data = JSON.parse(island.textContent || '{}');
+      } catch (error) {
+        globalThis.console?.warn?.(`[SIMAI Framework] ${this.localName}: the data-sf-settings island is not JSON`, error);
+        return;
+      }
+
+      for (const [name, value] of Object.entries(isPlainObject(data) ? data : {})) {
+        const member = read.members.find(one => one.name === name);
+
+        if (!member || !member.writable || member.native) {
+          globalThis.console?.warn?.(`[SIMAI Framework] ${this.localName}: the island's "${name}" is not a setting`);
+          continue;
+        }
+
+        if (member.attribute ? this.hasAttribute(member.attribute) : Object.prototype.hasOwnProperty.call(this.__sfManifestData ?? {}, name)) continue;
+        this[member.property] = value;
+      }
+    }
+    /**
+     * Whether the element keeps its printed skeleton (§5.4, §7.3 phase 3):
+     * the host was printed with data-sf-first-paint="skeleton" and a setting
+     * declared late (presentation.skeleton.late) has not arrived. The first
+     * render waits for it, so the skeleton turns into content in one frame.
+     * A component whose data comes another way (a port) overrides this.
+     */
+
+
+    sfAwaitingData() {
+      if (!late.length || this.getAttribute('data-sf-first-paint') !== 'skeleton') return false;
+      return late.some(member => {
+        if (member.attribute && this.hasAttribute(member.attribute)) return false; // Read through the property: a component may keep the setting itself.
+
+        const value = this[member.property];
+        return value === undefined || value === null || Array.isArray(value) && !value.length;
+      });
     }
     /** §4.1: the element has a box in an opened container. */
 
@@ -2998,7 +3055,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-popov
 /***/ "fcb18992f3bb"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$comment":"The source of sf-popover\'s element plumbing (core/js/element-manifest.js). Taken from simai/ui-control control/smart-architecture/migration/out/popover (migration/convert-1.3.8.mjs over simai/ui-source@5100227); standard simai.smart-component 1.3.8, vocabulary 1.1.5. Every x-todo of the conversion is decided: x-decisions says how.","id":"smart.popover","tag":"sf-popover","version":"1.1.0","kind":"leaf","family":"popover","settings":{"placement":{"type":"enum","values":["bottom-start","bottom-end","top-start","top-end","inline-start","inline-end"],"default":"bottom-end"},"label":{"type":"string","default":""},"width":{"type":"string","default":""},"dismissible":{"type":"boolean","default":true},"surface-role":{"type":"enum","values":["dialog","menu","listbox","group"],"default":"dialog"},"unsaved":{"type":"boolean","default":false}},"values":{"open":{"type":"boolean","default":false,"reflect":true}},"events":{"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}}},"actions":{"toggle":{"with":{"force":{"type":"boolean","optional":true}},"x-outcomes":["applied","refused"]},"show":{"emits":"open","x-outcomes":["applied","refused"]},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"emits":"close","x-outcomes":["applied","refused"]},"return-focus":{"x-outcomes":["applied","refused"]}},"slots":{"trigger":{},"content":{"default":true}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"keyboard":{"host":{"Enter":"toggle","Space":"toggle","Escape":"close","Tab":"reach"}},"templates":{"default":{"file":"js/templates/default.js","$comment":"The Lit template in JavaScript, the migration form of §5.2 (§16); it draws nothing: the trigger and the content are the page\'s own nodes, placed where they were written."}},"styles":"js/templates/default.css","examples":"examples.json","lang":"lang/","accessibility":{"role":"dialog","name":{"from":["label"]},"keys":{"Enter":"toggle:open","Space":"toggle:open","Escape":{"effect":"close","when":{"dismissible":true}},"Tab":"reach"}},"css-variables":{"--sf-popover-background-color":{"type":"color","state":"default"},"--sf-popover-color":{"type":"color","state":"default"},"--sf-popover-radius":{"type":"length","state":"default"},"--sf-popover-shadow":{"type":"shadow","state":"default"},"--sf-popover-max-width":{"type":"length","state":"default"},"--sf-popover-max-height":{"type":"length","state":"default"}},"x-summary":"A surface anchored to a control the consumer supplies, with its own open state, dismissal and returned focus. Built as a general part because the Framework had the surface and not the behaviour: two composites wrote it by hand within a week, the second copying the first.","x-source":{"package":"framework","folder":"popover","manifest":"simai/ui-source@5100227 src/smart/popover/smart.manifest.json","converted":"control/smart-architecture/stands/17-ports-migration/out/popover.component.json"},"x-words":["label"],"x-renamed":["settings.role → surface-role: a host attribute, never a setting (§3.1); the attribute is a dated alias and leaves the host","events sf-popover-open, sf-popover-close: were facts sent after the state changed; by §19.3 and vocabulary §4 they are the cancelable requests now, and the facts are sf-popover-opened and sf-popover-closed"],"x-kept":{"security":{"permissions_owner":"none","untrusted_inputs":["props","children"],"network_policy":"deny"},"ownership":{"source":"simai/ui-source","data":"fixture","effects":"component","forbidden_client_responsibilities":["backend access decisions","host route invention"]},"presentation":{"themes":["light","dark"],"locales":["ru","en"],"responsive":["desktop","mobile"],"skeleton":{"shape":"none","while_loading":"none"}},"ai_guidance":{"use_when":"Use sf-popover for a surface anchored to a control the consumer supplies -- a field\'s settings, a filter, a list of things to add -- that opens on its trigger and closes on Escape or outside.","do_not":["Do not use it for a blocking task; that is sf-modal","Do not write role on the host; use surface-role","Do not copy generated ui-smart code","Do not move host data or access decisions into the component"],"required_reads":["inputs","methods","events","ownership","provenance"],"minimal_example":"<sf-popover label=\\"Settings\\"><button slot=\\"trigger\\" type=\\"button\\">Settings</button><div slot=\\"content\\">…</div></sf-popover>","owner_commands":["npm run contract:verify","npm test"]}},"x-decisions":["events: a layer asks before it closes (§19.3): sf-popover-close {reason, unsaved} is the cancelable request and sf-popover-closed {reason} the fact; sf-popover-open and sf-popover-opened likewise. The old names were facts with the same DOM names, so no alias can carry them: a listener of sf-popover-close now hears it just before the surface closes, without the element in detail (§8). No Framework code listened to them.","key-effects: the trigger is the page\'s own control; Enter and Space press it and toggle the surface (toggle:open); Escape closes while dismissible; Tab leaves it (the surface does not trap focus).","version: 1.0.0 → 1.1.0: the attribute role is a dated alias of surface-role; added unsaved and the facts.","template: the template draws nothing; trigger and content stay the page\'s nodes where they were written (§4.5 place, never copy), and the stylesheet places them by data-open and data-placement.","examples: examples.json (a settings surface, a menu, a wide list); probe.json drives Enter, Escape and an outside press (gate 16).","css-variables: six public variables of the surface (background, colour, radius, shadow, max width, max height) read by default.css with the old internal --sf-popover--max-* and the elevation tokens as fallbacks (§6).","side-effects: none. The surface is drawn in place, absolutely positioned against the host, not at the end of body; it registers as a surface layer of the one stack (core open-surface-mark), so Escape and an outside press reach it only while it is the top layer.","dismissing: reasons escape (Escape), outside (a press outside), close (the trigger pressed again), api (a script); dismissible=false removes escape and outside.","docs: the folder has no docs.md yet (the page lives in ui-doc); a leftover for the docs fold of §16 item 30."]}');
+module.exports = /*#__PURE__*/JSON.parse('{"$comment":"The source of sf-popover\'s element plumbing (core/js/element-manifest.js). Taken from simai/ui-control control/smart-architecture/migration/out/popover (migration/convert-1.3.8.mjs over simai/ui-source@5100227); standard simai.smart-component 1.3.8, vocabulary 1.1.5. Every x-todo of the conversion is decided: x-decisions says how.","id":"smart.popover","tag":"sf-popover","version":"1.1.0","kind":"leaf","family":"popover","settings":{"placement":{"type":"enum","values":["bottom-start","bottom-end","top-start","top-end","inline-start","inline-end"],"default":"bottom-end"},"label":{"type":"string","default":""},"width":{"type":"string","default":""},"dismissible":{"type":"boolean","default":true},"surface-role":{"type":"enum","values":["dialog","menu","listbox","group"],"default":"dialog"},"unsaved":{"type":"boolean","default":false}},"values":{"open":{"type":"boolean","default":false,"reflect":true}},"events":{"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}}},"actions":{"toggle":{"with":{"force":{"type":"boolean","optional":true}},"x-outcomes":["applied","refused"]},"show":{"emits":"open","x-outcomes":["applied","refused"]},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"emits":"close","x-outcomes":["applied","refused"]},"return-focus":{"x-outcomes":["applied","refused"]}},"slots":{"trigger":{},"content":{"default":true}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"keyboard":{"host":{"Enter":"toggle","Space":"toggle","Escape":"close","Tab":"reach"}},"templates":{"default":{"file":"js/templates/default.js","$comment":"The Lit template in JavaScript, the migration form of §5.2 (§16); it draws nothing: the trigger and the content are the page\'s own nodes, placed where they were written."}},"styles":"js/templates/default.css","examples":"examples.json","lang":"lang/","accessibility":{"role":"dialog","name":{"from":["label"]},"keys":{"Enter":"toggle:open","Space":"toggle:open","Escape":{"effect":"close","when":{"dismissible":true}},"Tab":"reach"}},"css-variables":{"--sf-popover-background-color":{"type":"color","state":"default"},"--sf-popover-color":{"type":"color","state":"default"},"--sf-popover-radius":{"type":"length","state":"default"},"--sf-popover-shadow":{"type":"shadow","state":"default"},"--sf-popover-max-width":{"type":"length","state":"default"},"--sf-popover-max-height":{"type":"length","state":"default"}},"x-summary":"A surface anchored to a control the consumer supplies, with its own open state, dismissal and returned focus. Built as a general part because the Framework had the surface and not the behaviour: two composites wrote it by hand within a week, the second copying the first.","x-source":{"package":"framework","folder":"popover","manifest":"simai/ui-source@5100227 src/smart/popover/smart.manifest.json","converted":"control/smart-architecture/stands/17-ports-migration/out/popover.component.json"},"x-words":["label"],"x-renamed":["settings.role → surface-role: a host attribute, never a setting (§3.1); the attribute is a dated alias and leaves the host","events sf-popover-open, sf-popover-close: were facts sent after the state changed; by §19.3 and vocabulary §4 they are the cancelable requests now, and the facts are sf-popover-opened and sf-popover-closed"],"x-kept":{"security":{"permissions_owner":"none","untrusted_inputs":["props","children"],"network_policy":"deny"},"ownership":{"source":"simai/ui-source","data":"fixture","effects":"component","forbidden_client_responsibilities":["backend access decisions","host route invention"]},"presentation":{"themes":["light","dark"],"locales":["ru","en"],"responsive":["desktop","mobile"]},"ai_guidance":{"use_when":"Use sf-popover for a surface anchored to a control the consumer supplies -- a field\'s settings, a filter, a list of things to add -- that opens on its trigger and closes on Escape or outside.","do_not":["Do not use it for a blocking task; that is sf-modal","Do not write role on the host; use surface-role","Do not copy generated ui-smart code","Do not move host data or access decisions into the component"],"required_reads":["inputs","methods","events","ownership","provenance"],"minimal_example":"<sf-popover label=\\"Settings\\"><button slot=\\"trigger\\" type=\\"button\\">Settings</button><div slot=\\"content\\">…</div></sf-popover>","owner_commands":["npm run contract:verify","npm test"]}},"x-decisions":["events: a layer asks before it closes (§19.3): sf-popover-close {reason, unsaved} is the cancelable request and sf-popover-closed {reason} the fact; sf-popover-open and sf-popover-opened likewise. The old names were facts with the same DOM names, so no alias can carry them: a listener of sf-popover-close now hears it just before the surface closes, without the element in detail (§8). No Framework code listened to them.","key-effects: the trigger is the page\'s own control; Enter and Space press it and toggle the surface (toggle:open); Escape closes while dismissible; Tab leaves it (the surface does not trap focus).","version: 1.0.0 → 1.1.0: the attribute role is a dated alias of surface-role; added unsaved and the facts.","template: the template draws nothing; trigger and content stay the page\'s nodes where they were written (§4.5 place, never copy), and the stylesheet places them by data-open and data-placement.","examples: examples.json (a settings surface, a menu, a wide list); probe.json drives Enter, Escape and an outside press (gate 16).","css-variables: six public variables of the surface (background, colour, radius, shadow, max width, max height) read by default.css with the old internal --sf-popover--max-* and the elevation tokens as fallbacks (§6).","side-effects: none. The surface is drawn in place, absolutely positioned against the host, not at the end of body; it registers as a surface layer of the one stack (core open-surface-mark), so Escape and an outside press reach it only while it is the top layer.","dismissing: reasons escape (Escape), outside (a press outside), close (the trigger pressed again), api (a script); dismissible=false removes escape and outside.","docs: the folder has no docs.md yet (the page lives in ui-doc); a leftover for the docs fold of §16 item 30."]}');
 
 /***/ },
 

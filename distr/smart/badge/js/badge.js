@@ -1703,7 +1703,10 @@ function elementFromManifest(manifest, {
   const Base = base || globalThis.SF?.smart?.SfBaseElement;
   if (typeof Base !== 'function') throw new TypeError('elementFromManifest: a base class is required');
   const read = readManifest(manifest);
-  const generatedProps = propsFromManifest(manifest);
+  const generatedProps = propsFromManifest(manifest); // Settings that arrive after the first paint (§5.4): their skeleton holds
+  // the box until they do.
+
+  const late = [].concat(manifest.presentation?.skeleton?.late ?? []).map(name => read.members.find(member => member.name === name)).filter(Boolean);
   const words = Object.fromEntries(Object.entries(lang).map(([locale, file]) => [locale.toLowerCase(), { ...(file?.runtime || {})
   }]));
   const sourceLanguage = source || Object.keys(words)[0] || '';
@@ -1745,9 +1748,63 @@ function elementFromManifest(manifest, {
     }
 
     connectedCallback() {
+      this.sfReadIsland();
       super.connectedCallback(); // A leaf outside an assembly starts with the page (§7.2.1 `now`).
 
       this.toggleAttribute('data-sf-started', true);
+    }
+    /**
+     * The first values of the settings an attribute cannot hold, lists and
+     * objects, from the JSON island a server prints in the host (§5.4):
+     * `<script type="application/json" data-sf-settings>{"items": [...]}</script>`.
+     * Read once, before the first render; an attribute or a property the page
+     * set first wins. The island is taken out, so a component that reads its
+     * children never meets it.
+     */
+
+
+    sfReadIsland() {
+      const island = Array.from(this.children ?? []).find(child => child.localName === 'script' && child.hasAttribute('data-sf-settings') && /^application\/json$/iu.test(child.type));
+      if (!island) return;
+      island.remove();
+      let data;
+
+      try {
+        data = JSON.parse(island.textContent || '{}');
+      } catch (error) {
+        globalThis.console?.warn?.(`[SIMAI Framework] ${this.localName}: the data-sf-settings island is not JSON`, error);
+        return;
+      }
+
+      for (const [name, value] of Object.entries(isPlainObject(data) ? data : {})) {
+        const member = read.members.find(one => one.name === name);
+
+        if (!member || !member.writable || member.native) {
+          globalThis.console?.warn?.(`[SIMAI Framework] ${this.localName}: the island's "${name}" is not a setting`);
+          continue;
+        }
+
+        if (member.attribute ? this.hasAttribute(member.attribute) : Object.prototype.hasOwnProperty.call(this.__sfManifestData ?? {}, name)) continue;
+        this[member.property] = value;
+      }
+    }
+    /**
+     * Whether the element keeps its printed skeleton (§5.4, §7.3 phase 3):
+     * the host was printed with data-sf-first-paint="skeleton" and a setting
+     * declared late (presentation.skeleton.late) has not arrived. The first
+     * render waits for it, so the skeleton turns into content in one frame.
+     * A component whose data comes another way (a port) overrides this.
+     */
+
+
+    sfAwaitingData() {
+      if (!late.length || this.getAttribute('data-sf-first-paint') !== 'skeleton') return false;
+      return late.some(member => {
+        if (member.attribute && this.hasAttribute(member.attribute)) return false; // Read through the property: a component may keep the setting itself.
+
+        const value = this[member.property];
+        return value === undefined || value === null || Array.isArray(value) && !value.length;
+      });
     }
     /** §4.1: the element has a box in an opened container. */
 
@@ -2444,7 +2501,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-badge
 /***/ "55155acfa4cc"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$comment":"The source of sf-badge\'s element plumbing (core/js/element-manifest.js). Taken from simai/ui-control control/smart-architecture/migration/out/badge (migration/convert-1.3.8.mjs over simai/ui-source@5100227); standard simai.smart-component 1.3.8, vocabulary 1.1.5. Every x-todo of the conversion is decided: x-decisions says how.","id":"smart.badge","tag":"sf-badge","version":"1.1.0","kind":"leaf","family":"badge","settings":{"size":{"type":"enum","values":["1/3","1/2","1"],"default":"1/3"},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"appearance":{"type":"enum","values":["main","tonal","outline"],"default":"main"},"scheme":{"type":"enum","values":["neutral","primary","secondary","tertiary","on-surface"],"default":"neutral"},"status":{"type":"enum","values":["","info","success","warning","error"],"default":""},"text":{"type":"string","default":""},"icon":{"type":"icon","default":""},"icon-start":{"type":"icon","optional":true},"icon-end":{"type":"icon","optional":true},"icon-position":{"type":"enum","values":["start","end"],"default":"start"}},"values":{},"events":{},"actions":{},"templates":{"default":{"file":"js/templates/default.js","$comment":"The Lit template in JavaScript, the migration form of §5.2 (§16): the build does not compile template.html yet, so a second copy of the markup would only drift from the one that draws."}},"examples":"examples.json","docs":"docs/docs.md","lang":"lang/","accessibility":{"$comment":"No role of its own: the badge is text. With aria-label the label is said through a visually hidden span and the visible text is hidden from assistive technology; with neither text nor aria-label the badge is decorative and aria-hidden.","role":"none","name":{"from":["aria-label","text","slot:text"]}},"css-variables":{"--sf-badge-background-color":{"type":"color","state":"default"},"--sf-badge-color":{"type":"color","state":"default"},"--sf-badge-border-color":{"type":"color","state":"default"},"--sf-badge-border-width":{"type":"length","state":"default"},"--sf-badge-radius":{"type":"length","state":"default"},"--sf-badge-padding-inline":{"type":"length","state":"default"},"--sf-badge-padding-block":{"type":"length","state":"default"},"--sf-badge-gap":{"type":"length","state":"default"},"--sf-badge-ring-color":{"type":"color","state":"default"}},"x-summary":"A short non-interactive label for a status, category, version or count beside an object, drawn in a size, appearance and colour role or status. It adds no keyboard or pointer behaviour.","x-source":{"package":"framework","folder":"badges","manifest":"simai/ui-source@5100227 src/smart/badges/smart.manifest.json","converted":"control/smart-architecture/stands/17-ports-migration/out/badges.component.json"},"x-words":["text"],"x-renamed":["settings.aria-label: a host attribute, read by the base, never a setting (§3.1)"],"x-kept":{"security":{"permissions_owner":"none","untrusted_inputs":["props","children"],"network_policy":"deny"},"ownership":{"source":"simai/ui-source","data":"fixture","effects":"component","forbidden_client_responsibilities":["backend access decisions","host route invention"]},"presentation":{"themes":["light","dark"],"locales":["ru","en"],"responsive":["desktop","mobile"],"skeleton":{"shape":"none","while_loading":"none"}},"ai_guidance":{"use_when":"Use sf-badge for a short non-interactive status, category, version or count beside an object.","do_not":["Do not use Badge as a button, filter chip or notification","Do not communicate status by colour alone","Do not copy generated ui-smart code","Do not move host data or access decisions into the component"],"required_reads":["inputs","methods","events","ownership","provenance"],"minimal_example":"<sf-badge></sf-badge>","owner_commands":["npm run contract:verify","npm test"]}},"x-decisions":["a11y-role: none -- the badge is text, drawn in a span; it takes no role. The name is the host\'s aria-label (said through a visually hidden span, the visible text then hidden from assistive technology), else its text or text slot; with neither, the badge is decorative and aria-hidden (§4.8).","legacy names: type -> appearance, icon-left -> icon-start and icon-right -> icon-end leave the settings and are dated setting aliases (aliases.json, until 2026-12-01; journal attribute-icon-left-right-to-start-end); the values danger -> error (status) and left/right -> start/end (icon-position) are dated value aliases.","scheme keeps routing a status word (info, success, warning, error, danger) to the status axis in code: scheme stays its own axis for the colour role (journal attribute-badge-scheme-to-status, public-api-axes legacy_input_remains_its_own_axis), which a setting alias, one name for another, cannot say.","icon-start and icon-end are optional (§4.2) and keep their own getters: an empty attribute («no icon here») suppresses the icon shortcut, an absent one lets it through.","aria-label is a host attribute, never a setting (§3.1); the template reads it from the host.","template: templates.default names the Lit template js/templates/default.js, the migration form §5.2 allows; no template.html until the build compiles one (a copy nothing draws would drift).","examples: examples.json from studio.fixture.json (Новый, primary; its type=\\"fill\\" is not an appearance and reads as main) plus tonal and outline, the statuses, icons, a labelled count and the line sizes.","css-variables: the nine public variables of src/core/contracts/public-variables.v1.json the class sheet already reads (§6).","folder: badges takes the tag\'s name, badge (§3, §21, §16 item 16); the loader bundle is cl-badge, cl-badges is a Loader forward (src/core/contracts/smart-rule-forwards.v1.json) and smart/badges/js/badges.js a forwarding script until 2026-12-01 (change journal path-smart-badges-to-badge). The registry id follows the folder: smart.badge (smart.badges is its dated alias in the same record).","version 1.1.0: renamed members behind dated aliases are a minor (§4.10, §16.20)."]}');
+module.exports = /*#__PURE__*/JSON.parse('{"$comment":"The source of sf-badge\'s element plumbing (core/js/element-manifest.js). Taken from simai/ui-control control/smart-architecture/migration/out/badge (migration/convert-1.3.8.mjs over simai/ui-source@5100227); standard simai.smart-component 1.3.8, vocabulary 1.1.5. Every x-todo of the conversion is decided: x-decisions says how.","id":"smart.badge","tag":"sf-badge","version":"1.1.0","kind":"leaf","family":"badge","settings":{"size":{"type":"enum","values":["1/3","1/2","1"],"default":"1/3"},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"appearance":{"type":"enum","values":["main","tonal","outline"],"default":"main"},"scheme":{"type":"enum","values":["neutral","primary","secondary","tertiary","on-surface"],"default":"neutral"},"status":{"type":"enum","values":["","info","success","warning","error"],"default":""},"text":{"type":"string","default":""},"icon":{"type":"icon","default":""},"icon-start":{"type":"icon","optional":true},"icon-end":{"type":"icon","optional":true},"icon-position":{"type":"enum","values":["start","end"],"default":"start"}},"values":{},"events":{},"actions":{},"templates":{"default":{"file":"js/templates/default.js","$comment":"The Lit template in JavaScript, the migration form of §5.2 (§16): the build does not compile template.html yet, so a second copy of the markup would only drift from the one that draws."}},"examples":"examples.json","docs":"docs/docs.md","lang":"lang/","accessibility":{"$comment":"No role of its own: the badge is text. With aria-label the label is said through a visually hidden span and the visible text is hidden from assistive technology; with neither text nor aria-label the badge is decorative and aria-hidden.","role":"none","name":{"from":["aria-label","text","slot:text"]}},"css-variables":{"--sf-badge-background-color":{"type":"color","state":"default"},"--sf-badge-color":{"type":"color","state":"default"},"--sf-badge-border-color":{"type":"color","state":"default"},"--sf-badge-border-width":{"type":"length","state":"default"},"--sf-badge-radius":{"type":"length","state":"default"},"--sf-badge-padding-inline":{"type":"length","state":"default"},"--sf-badge-padding-block":{"type":"length","state":"default"},"--sf-badge-gap":{"type":"length","state":"default"},"--sf-badge-ring-color":{"type":"color","state":"default"}},"x-summary":"A short non-interactive label for a status, category, version or count beside an object, drawn in a size, appearance and colour role or status. It adds no keyboard or pointer behaviour.","x-source":{"package":"framework","folder":"badges","manifest":"simai/ui-source@5100227 src/smart/badges/smart.manifest.json","converted":"control/smart-architecture/stands/17-ports-migration/out/badges.component.json"},"x-words":["text"],"x-renamed":["settings.aria-label: a host attribute, read by the base, never a setting (§3.1)"],"x-kept":{"security":{"permissions_owner":"none","untrusted_inputs":["props","children"],"network_policy":"deny"},"ownership":{"source":"simai/ui-source","data":"fixture","effects":"component","forbidden_client_responsibilities":["backend access decisions","host route invention"]},"presentation":{"themes":["light","dark"],"locales":["ru","en"],"responsive":["desktop","mobile"]},"ai_guidance":{"use_when":"Use sf-badge for a short non-interactive status, category, version or count beside an object.","do_not":["Do not use Badge as a button, filter chip or notification","Do not communicate status by colour alone","Do not copy generated ui-smart code","Do not move host data or access decisions into the component"],"required_reads":["inputs","methods","events","ownership","provenance"],"minimal_example":"<sf-badge></sf-badge>","owner_commands":["npm run contract:verify","npm test"]}},"x-decisions":["a11y-role: none -- the badge is text, drawn in a span; it takes no role. The name is the host\'s aria-label (said through a visually hidden span, the visible text then hidden from assistive technology), else its text or text slot; with neither, the badge is decorative and aria-hidden (§4.8).","legacy names: type -> appearance, icon-left -> icon-start and icon-right -> icon-end leave the settings and are dated setting aliases (aliases.json, until 2026-12-01; journal attribute-icon-left-right-to-start-end); the values danger -> error (status) and left/right -> start/end (icon-position) are dated value aliases.","scheme keeps routing a status word (info, success, warning, error, danger) to the status axis in code: scheme stays its own axis for the colour role (journal attribute-badge-scheme-to-status, public-api-axes legacy_input_remains_its_own_axis), which a setting alias, one name for another, cannot say.","icon-start and icon-end are optional (§4.2) and keep their own getters: an empty attribute («no icon here») suppresses the icon shortcut, an absent one lets it through.","aria-label is a host attribute, never a setting (§3.1); the template reads it from the host.","template: templates.default names the Lit template js/templates/default.js, the migration form §5.2 allows; no template.html until the build compiles one (a copy nothing draws would drift).","examples: examples.json from studio.fixture.json (Новый, primary; its type=\\"fill\\" is not an appearance and reads as main) plus tonal and outline, the statuses, icons, a labelled count and the line sizes.","css-variables: the nine public variables of src/core/contracts/public-variables.v1.json the class sheet already reads (§6).","folder: badges takes the tag\'s name, badge (§3, §21, §16 item 16); the loader bundle is cl-badge, cl-badges is a Loader forward (src/core/contracts/smart-rule-forwards.v1.json) and smart/badges/js/badges.js a forwarding script until 2026-12-01 (change journal path-smart-badges-to-badge). The registry id follows the folder: smart.badge (smart.badges is its dated alias in the same record).","version 1.1.0: renamed members behind dated aliases are a minor (§4.10, §16.20)."]}');
 
 /***/ },
 

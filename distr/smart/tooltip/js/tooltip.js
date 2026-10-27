@@ -1567,7 +1567,10 @@ function elementFromManifest(manifest, {
   const Base = base || globalThis.SF?.smart?.SfBaseElement;
   if (typeof Base !== 'function') throw new TypeError('elementFromManifest: a base class is required');
   const read = readManifest(manifest);
-  const generatedProps = propsFromManifest(manifest);
+  const generatedProps = propsFromManifest(manifest); // Settings that arrive after the first paint (§5.4): their skeleton holds
+  // the box until they do.
+
+  const late = [].concat(manifest.presentation?.skeleton?.late ?? []).map(name => read.members.find(member => member.name === name)).filter(Boolean);
   const words = Object.fromEntries(Object.entries(lang).map(([locale, file]) => [locale.toLowerCase(), { ...(file?.runtime || {})
   }]));
   const sourceLanguage = source || Object.keys(words)[0] || '';
@@ -1609,9 +1612,63 @@ function elementFromManifest(manifest, {
     }
 
     connectedCallback() {
+      this.sfReadIsland();
       super.connectedCallback(); // A leaf outside an assembly starts with the page (§7.2.1 `now`).
 
       this.toggleAttribute('data-sf-started', true);
+    }
+    /**
+     * The first values of the settings an attribute cannot hold, lists and
+     * objects, from the JSON island a server prints in the host (§5.4):
+     * `<script type="application/json" data-sf-settings>{"items": [...]}</script>`.
+     * Read once, before the first render; an attribute or a property the page
+     * set first wins. The island is taken out, so a component that reads its
+     * children never meets it.
+     */
+
+
+    sfReadIsland() {
+      const island = Array.from(this.children ?? []).find(child => child.localName === 'script' && child.hasAttribute('data-sf-settings') && /^application\/json$/iu.test(child.type));
+      if (!island) return;
+      island.remove();
+      let data;
+
+      try {
+        data = JSON.parse(island.textContent || '{}');
+      } catch (error) {
+        globalThis.console?.warn?.(`[SIMAI Framework] ${this.localName}: the data-sf-settings island is not JSON`, error);
+        return;
+      }
+
+      for (const [name, value] of Object.entries(isPlainObject(data) ? data : {})) {
+        const member = read.members.find(one => one.name === name);
+
+        if (!member || !member.writable || member.native) {
+          globalThis.console?.warn?.(`[SIMAI Framework] ${this.localName}: the island's "${name}" is not a setting`);
+          continue;
+        }
+
+        if (member.attribute ? this.hasAttribute(member.attribute) : Object.prototype.hasOwnProperty.call(this.__sfManifestData ?? {}, name)) continue;
+        this[member.property] = value;
+      }
+    }
+    /**
+     * Whether the element keeps its printed skeleton (§5.4, §7.3 phase 3):
+     * the host was printed with data-sf-first-paint="skeleton" and a setting
+     * declared late (presentation.skeleton.late) has not arrived. The first
+     * render waits for it, so the skeleton turns into content in one frame.
+     * A component whose data comes another way (a port) overrides this.
+     */
+
+
+    sfAwaitingData() {
+      if (!late.length || this.getAttribute('data-sf-first-paint') !== 'skeleton') return false;
+      return late.some(member => {
+        if (member.attribute && this.hasAttribute(member.attribute)) return false; // Read through the property: a component may keep the setting itself.
+
+        const value = this[member.property];
+        return value === undefined || value === null || Array.isArray(value) && !value.length;
+      });
     }
     /** §4.1: the element has a box in an opened container. */
 
@@ -2173,7 +2230,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-toolt
 /***/ "9279cc82ea5a"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$comment":"The source of sf-tooltip\'s element plumbing (core/js/element-manifest.js). Taken from simai/ui-control control/smart-architecture/migration/out/tooltip (migration/convert-1.3.8.mjs over simai/ui-source@5100227); standard simai.smart-component 1.3.8, vocabulary 1.1.5. Every x-todo of the conversion is decided: x-decisions says how.","id":"smart.tooltip","tag":"sf-tooltip","version":"1.1.0","kind":"leaf","family":"hint","settings":{"appearance":{"type":"enum","values":["light","dark"],"default":"light"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"arrow":{"type":"enum","values":["none","top-center","bottom-center","inline-start","inline-end","bottom-inline-start","bottom-inline-end"],"default":"none"},"text":{"type":"string","default":""},"supporting-text":{"type":"string","default":""}},"values":{},"events":{},"actions":{},"slots":{"content":{},"text":{"replaces":"text"},"supporting-text":{"replaces":"supporting-text"},"tail":{}},"templates":{"default":{"file":"js/templates/default.js","$comment":"The Lit template in JavaScript, the migration form of §5.2 (§16)."}},"examples":"examples.json","docs":"docs/docs.md","lang":"lang/","accessibility":{"role":"tooltip","name":{"from":["text","slot:text"]},"keys":{}},"css-variables":{"--sf-tooltip-background-color":{"type":"color","state":"default"},"--sf-tooltip-color":{"type":"color","state":"default"},"--sf-tooltip-border-color":{"type":"color","state":"default"},"--sf-tooltip-border-width":{"type":"length","state":"default"},"--sf-tooltip-radius":{"type":"length","state":"default"},"--sf-tooltip-padding-inline":{"type":"length","state":"default"},"--sf-tooltip-padding-block":{"type":"length","state":"default"},"--sf-tooltip-gap":{"type":"length","state":"default"}},"x-summary":"Tooltip surface that can join the ordinary data-tooltip trigger composition.","x-source":{"package":"framework","folder":"tooltip","manifest":"simai/ui-source@5100227 src/smart/tooltip/smart.manifest.json","converted":"control/smart-architecture/stands/17-ports-migration/out/tooltip.component.json"},"x-words":["text","supporting-text"],"x-kept":{"security":{"permissions_owner":"none","untrusted_inputs":["props","children"],"network_policy":"deny"},"ownership":{"source":"simai/ui-source","data":"fixture","effects":"component","forbidden_client_responsibilities":["backend access decisions","host route invention"]},"presentation":{"themes":["light","dark"],"locales":["ru","en"],"responsive":["desktop","mobile"],"skeleton":{"shape":"none","while_loading":"none"}},"ai_guidance":{"use_when":"Use sf-tooltip for a short non-interactive description. Link it to a native trigger with the ordinary data-tooltip composition when Framework should own hover, focus and Escape behavior.","do_not":["Do not copy generated ui-smart code","Do not move host data or access decisions into the component","Do not place links, buttons or fields inside a tooltip","Do not use aria-expanded or aria-haspopup for tooltip visibility"],"required_reads":["inputs","methods","events","ownership","provenance"],"minimal_example":"<sf-tooltip text=\\"Hint\\"></sf-tooltip>","owner_commands":["npm run contract:verify","npm test"]}},"x-renamed":["settings.type → appearance: the axis\'s old name (contracts/public-api-axes.json), alias dated"],"x-decisions":["a11y-role: tooltip, one role; the name is the text (the setting, or the text slot). The data-tooltip controller of the class component links a trigger to it with aria-describedby.","a11y-name: from text, then slot:text (the old shape \\"internal\\" said the same).","layer: none. sf-tooltip is the tooltip\'s look, drawn where it stands; it neither opens nor closes and takes no keys. The tooltip that floats over the page is the class controller\'s ([data-tooltip], component/tooltip/js/_tooltip.js), a layer for its own migration.","version: 1.0.0 → 1.1.0: type is a dated alias of appearance.","template: templates.default names the Lit template js/templates/default.js, the migration form §5.2 allows; the slots content, text, supporting-text and tail are the page\'s nodes, placed.","examples: examples.json from studio.fixture.json and studio.scenario.json plus the dark look, an arrow and supporting text; probe.json reads the drawn markup.","css-variables: the eight public variables the sheet already reads (src/core/contracts/public-variables.v1.json).","side-effects: none."]}');
+module.exports = /*#__PURE__*/JSON.parse('{"$comment":"The source of sf-tooltip\'s element plumbing (core/js/element-manifest.js). Taken from simai/ui-control control/smart-architecture/migration/out/tooltip (migration/convert-1.3.8.mjs over simai/ui-source@5100227); standard simai.smart-component 1.3.8, vocabulary 1.1.5. Every x-todo of the conversion is decided: x-decisions says how.","id":"smart.tooltip","tag":"sf-tooltip","version":"1.1.0","kind":"leaf","family":"hint","settings":{"appearance":{"type":"enum","values":["light","dark"],"default":"light"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"arrow":{"type":"enum","values":["none","top-center","bottom-center","inline-start","inline-end","bottom-inline-start","bottom-inline-end"],"default":"none"},"text":{"type":"string","default":""},"supporting-text":{"type":"string","default":""}},"values":{},"events":{},"actions":{},"slots":{"content":{},"text":{"replaces":"text"},"supporting-text":{"replaces":"supporting-text"},"tail":{}},"templates":{"default":{"file":"js/templates/default.js","$comment":"The Lit template in JavaScript, the migration form of §5.2 (§16)."}},"examples":"examples.json","docs":"docs/docs.md","lang":"lang/","accessibility":{"role":"tooltip","name":{"from":["text","slot:text"]},"keys":{}},"css-variables":{"--sf-tooltip-background-color":{"type":"color","state":"default"},"--sf-tooltip-color":{"type":"color","state":"default"},"--sf-tooltip-border-color":{"type":"color","state":"default"},"--sf-tooltip-border-width":{"type":"length","state":"default"},"--sf-tooltip-radius":{"type":"length","state":"default"},"--sf-tooltip-padding-inline":{"type":"length","state":"default"},"--sf-tooltip-padding-block":{"type":"length","state":"default"},"--sf-tooltip-gap":{"type":"length","state":"default"}},"x-summary":"Tooltip surface that can join the ordinary data-tooltip trigger composition.","x-source":{"package":"framework","folder":"tooltip","manifest":"simai/ui-source@5100227 src/smart/tooltip/smart.manifest.json","converted":"control/smart-architecture/stands/17-ports-migration/out/tooltip.component.json"},"x-words":["text","supporting-text"],"x-kept":{"security":{"permissions_owner":"none","untrusted_inputs":["props","children"],"network_policy":"deny"},"ownership":{"source":"simai/ui-source","data":"fixture","effects":"component","forbidden_client_responsibilities":["backend access decisions","host route invention"]},"presentation":{"themes":["light","dark"],"locales":["ru","en"],"responsive":["desktop","mobile"]},"ai_guidance":{"use_when":"Use sf-tooltip for a short non-interactive description. Link it to a native trigger with the ordinary data-tooltip composition when Framework should own hover, focus and Escape behavior.","do_not":["Do not copy generated ui-smart code","Do not move host data or access decisions into the component","Do not place links, buttons or fields inside a tooltip","Do not use aria-expanded or aria-haspopup for tooltip visibility"],"required_reads":["inputs","methods","events","ownership","provenance"],"minimal_example":"<sf-tooltip text=\\"Hint\\"></sf-tooltip>","owner_commands":["npm run contract:verify","npm test"]}},"x-renamed":["settings.type → appearance: the axis\'s old name (contracts/public-api-axes.json), alias dated"],"x-decisions":["a11y-role: tooltip, one role; the name is the text (the setting, or the text slot). The data-tooltip controller of the class component links a trigger to it with aria-describedby.","a11y-name: from text, then slot:text (the old shape \\"internal\\" said the same).","layer: none. sf-tooltip is the tooltip\'s look, drawn where it stands; it neither opens nor closes and takes no keys. The tooltip that floats over the page is the class controller\'s ([data-tooltip], component/tooltip/js/_tooltip.js), a layer for its own migration.","version: 1.0.0 → 1.1.0: type is a dated alias of appearance.","template: templates.default names the Lit template js/templates/default.js, the migration form §5.2 allows; the slots content, text, supporting-text and tail are the page\'s nodes, placed.","examples: examples.json from studio.fixture.json and studio.scenario.json plus the dark look, an arrow and supporting text; probe.json reads the drawn markup.","css-variables: the eight public variables the sheet already reads (src/core/contracts/public-variables.v1.json).","side-effects: none."]}');
 
 /***/ },
 

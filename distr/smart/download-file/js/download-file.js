@@ -2068,7 +2068,10 @@ function elementFromManifest(manifest, {
   const Base = base || globalThis.SF?.smart?.SfBaseElement;
   if (typeof Base !== 'function') throw new TypeError('elementFromManifest: a base class is required');
   const read = readManifest(manifest);
-  const generatedProps = propsFromManifest(manifest);
+  const generatedProps = propsFromManifest(manifest); // Settings that arrive after the first paint (§5.4): their skeleton holds
+  // the box until they do.
+
+  const late = [].concat(manifest.presentation?.skeleton?.late ?? []).map(name => read.members.find(member => member.name === name)).filter(Boolean);
   const words = Object.fromEntries(Object.entries(lang).map(([locale, file]) => [locale.toLowerCase(), { ...(file?.runtime || {})
   }]));
   const sourceLanguage = source || Object.keys(words)[0] || '';
@@ -2110,9 +2113,63 @@ function elementFromManifest(manifest, {
     }
 
     connectedCallback() {
+      this.sfReadIsland();
       super.connectedCallback(); // A leaf outside an assembly starts with the page (§7.2.1 `now`).
 
       this.toggleAttribute('data-sf-started', true);
+    }
+    /**
+     * The first values of the settings an attribute cannot hold, lists and
+     * objects, from the JSON island a server prints in the host (§5.4):
+     * `<script type="application/json" data-sf-settings>{"items": [...]}</script>`.
+     * Read once, before the first render; an attribute or a property the page
+     * set first wins. The island is taken out, so a component that reads its
+     * children never meets it.
+     */
+
+
+    sfReadIsland() {
+      const island = Array.from(this.children ?? []).find(child => child.localName === 'script' && child.hasAttribute('data-sf-settings') && /^application\/json$/iu.test(child.type));
+      if (!island) return;
+      island.remove();
+      let data;
+
+      try {
+        data = JSON.parse(island.textContent || '{}');
+      } catch (error) {
+        globalThis.console?.warn?.(`[SIMAI Framework] ${this.localName}: the data-sf-settings island is not JSON`, error);
+        return;
+      }
+
+      for (const [name, value] of Object.entries(isPlainObject(data) ? data : {})) {
+        const member = read.members.find(one => one.name === name);
+
+        if (!member || !member.writable || member.native) {
+          globalThis.console?.warn?.(`[SIMAI Framework] ${this.localName}: the island's "${name}" is not a setting`);
+          continue;
+        }
+
+        if (member.attribute ? this.hasAttribute(member.attribute) : Object.prototype.hasOwnProperty.call(this.__sfManifestData ?? {}, name)) continue;
+        this[member.property] = value;
+      }
+    }
+    /**
+     * Whether the element keeps its printed skeleton (§5.4, §7.3 phase 3):
+     * the host was printed with data-sf-first-paint="skeleton" and a setting
+     * declared late (presentation.skeleton.late) has not arrived. The first
+     * render waits for it, so the skeleton turns into content in one frame.
+     * A component whose data comes another way (a port) overrides this.
+     */
+
+
+    sfAwaitingData() {
+      if (!late.length || this.getAttribute('data-sf-first-paint') !== 'skeleton') return false;
+      return late.some(member => {
+        if (member.attribute && this.hasAttribute(member.attribute)) return false; // Read through the property: a component may keep the setting itself.
+
+        const value = this[member.property];
+        return value === undefined || value === null || Array.isArray(value) && !value.length;
+      });
     }
     /** §4.1: the element has a box in an opened container. */
 
@@ -2728,7 +2785,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-downl
 /***/ "971e5dedf197"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$comment":"The source of sf-download-file\'s element plumbing (core/js/element-manifest.js). Taken from simai/ui-control control/smart-architecture/migration/out/download-file (migration/convert-1.3.8.mjs over simai/ui-source@5100227); standard simai.smart-component 1.3.8, vocabulary 1.1.5. Every x-todo of the conversion is decided: x-decisions says how.","id":"smart.download-file","tag":"sf-download-file","version":"1.1.0","kind":"leaf","family":"file","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"file-name":{"type":"string","default":"File.pdf"},"file-size":{"type":"string","default":"","summary":"The size as text (2,4 МБ); empty with href, the size is asked with one HEAD request"},"icon":{"type":"icon","default":"download"},"href":{"type":"string","default":""},"download":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"target":{"type":"string","default":"_blank"}},"values":{},"events":{"download":{"carries":{"href":"string","file-name":"string","download":"boolean"},"cancelable":true}},"actions":{},"side-effects":["network"],"keyboard":{"host":{"Tab":"reach"}},"templates":{"default":{"file":"js/templates/default.js","$comment":"The Lit template in JavaScript, the migration form of §5.2 (§16): the build does not compile template.html yet, so a second copy of the markup would only drift from the one that draws."}},"examples":"examples.json","docs":"docs/docs.md","lang":"lang/","accessibility":{"$comment":"A native <a> while href is set and the file is not disabled, a native <button> otherwise; the file name is the visible text.","role":"link","name":{"from":["aria-label","file-name"]},"keys":{"Tab":"reach"}},"css-variables":{"--sf-download-file-background-color":{"type":"color","state":"default"},"--sf-download-file-border-color":{"type":"color","state":"default"},"--sf-download-file-radius":{"type":"length","state":"default"},"--sf-download-file-padding":{"type":"length","state":"default"},"--sf-download-file-gap":{"type":"length","state":"default"},"--sf-download-file-icon-size":{"type":"length","state":"default"},"--sf-download-file-icon-color":{"type":"color","state":"default"}},"x-summary":"Native file download or application-owned file preparation action.","x-source":{"package":"framework","folder":"download-file","manifest":"simai/ui-source@5100227 src/smart/download-file/smart.manifest.json","converted":"control/smart-architecture/stands/17-ports-migration/out/download-file.component.json"},"x-renamed":["settings.aria-label: a host attribute, read by the base, never a setting (§3.1)","events.sf-download-file-click → download (vocabulary §5.1)"],"x-kept":{"security":{"permissions_owner":"none","untrusted_inputs":["props","children"],"network_policy":"deny"},"ownership":{"source":"simai/ui-source","data":"fixture","effects":"component","forbidden_client_responsibilities":["backend access decisions","host route invention"]},"presentation":{"themes":["light","dark"],"locales":["ru","en"],"responsive":["desktop","mobile"],"skeleton":{"shape":"none","while_loading":"none"}},"ai_guidance":{"use_when":"Use sf-download-file for one downloadable resource or an application-owned file preparation action.","do_not":["Do not use a button when a stable resource href already exists","Do not leave href on an unavailable file","Do not use the decorative icon as the accessible name","Do not copy generated ui-smart code","Do not move host data or access decisions into the component"],"required_reads":["inputs","methods","events","ownership","provenance"],"minimal_example":"<sf-download-file file-name=\\"Report.pdf\\" file-size=\\"2.4 MB\\" href=\\"/files/report.pdf\\" download></sf-download-file>","owner_commands":["npm run contract:verify","npm test"]}},"x-decisions":["alias-conflict: the request is download (sf-download-file-download), as vocabulary 1.1.5 §5.1 writes it; the old sf-download-file:click is its dated same-detail alias (aliases.json, until 2026-12-01; bx-simai.main listens to it, vocabulary §9.2). The alias table\'s earlier sf-download-file-click was never shipped, so it gets no row.","events (§8): download is cancelable -- a page or a rule that refuses it (preventDefault) stops the browser\'s download -- and carries {href, fileName, download}; it is sent on the host, not the inner link, so the shim sends the old name after it. The class binder (component/download-file) takes it as onActivate and no longer sends its own event for the Smart element.","side-effects: network. With href and no file-size the class binder asks the file\'s size with one HEAD request (same origin credentials) and writes it; §4.7 says so now.","version 1.1.0: the event is renamed behind a dated alias and made cancelable (§4.10).","a11y-role: link, the native <a> the template draws while href is set and the file is not disabled; without href, or disabled, a native button (disabled: aria-disabled, not focusable). The name is the host\'s aria-label, else the file name (§4.8). Enter follows the link or presses the button.","aria-label is a host attribute, never a setting (§3.1); the template reads it from the host.","size takes the ladder the class binder draws (1/3 to 3); a value off it reads as 1.","template: templates.default names the Lit template js/templates/default.js, the migration form §5.2 allows; no template.html until the build compiles one (a copy nothing draws would drift).","examples: examples.json from studio.fixture.json (Отчёт за август.pdf, 2,4 МБ, a download) plus a link that opens, a size, an icon and disabled.","css-variables: seven public variables (fill and border at rest, radius, padding, gap, icon size and colour), read by the class sheet with the internal token as fallback (§6) and listed in src/core/contracts/public-variables.v1.json."]}');
+module.exports = /*#__PURE__*/JSON.parse('{"$comment":"The source of sf-download-file\'s element plumbing (core/js/element-manifest.js). Taken from simai/ui-control control/smart-architecture/migration/out/download-file (migration/convert-1.3.8.mjs over simai/ui-source@5100227); standard simai.smart-component 1.3.8, vocabulary 1.1.5. Every x-todo of the conversion is decided: x-decisions says how.","id":"smart.download-file","tag":"sf-download-file","version":"1.1.0","kind":"leaf","family":"file","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"file-name":{"type":"string","default":"File.pdf"},"file-size":{"type":"string","default":"","summary":"The size as text (2,4 МБ); empty with href, the size is asked with one HEAD request"},"icon":{"type":"icon","default":"download"},"href":{"type":"string","default":""},"download":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"target":{"type":"string","default":"_blank"}},"values":{},"events":{"download":{"carries":{"href":"string","file-name":"string","download":"boolean"},"cancelable":true}},"actions":{},"side-effects":["network"],"keyboard":{"host":{"Tab":"reach"}},"templates":{"default":{"file":"js/templates/default.js","$comment":"The Lit template in JavaScript, the migration form of §5.2 (§16): the build does not compile template.html yet, so a second copy of the markup would only drift from the one that draws."}},"examples":"examples.json","docs":"docs/docs.md","lang":"lang/","accessibility":{"$comment":"A native <a> while href is set and the file is not disabled, a native <button> otherwise; the file name is the visible text.","role":"link","name":{"from":["aria-label","file-name"]},"keys":{"Tab":"reach"}},"css-variables":{"--sf-download-file-background-color":{"type":"color","state":"default"},"--sf-download-file-border-color":{"type":"color","state":"default"},"--sf-download-file-radius":{"type":"length","state":"default"},"--sf-download-file-padding":{"type":"length","state":"default"},"--sf-download-file-gap":{"type":"length","state":"default"},"--sf-download-file-icon-size":{"type":"length","state":"default"},"--sf-download-file-icon-color":{"type":"color","state":"default"}},"x-summary":"Native file download or application-owned file preparation action.","x-source":{"package":"framework","folder":"download-file","manifest":"simai/ui-source@5100227 src/smart/download-file/smart.manifest.json","converted":"control/smart-architecture/stands/17-ports-migration/out/download-file.component.json"},"x-renamed":["settings.aria-label: a host attribute, read by the base, never a setting (§3.1)","events.sf-download-file-click → download (vocabulary §5.1)"],"x-kept":{"security":{"permissions_owner":"none","untrusted_inputs":["props","children"],"network_policy":"deny"},"ownership":{"source":"simai/ui-source","data":"fixture","effects":"component","forbidden_client_responsibilities":["backend access decisions","host route invention"]},"presentation":{"themes":["light","dark"],"locales":["ru","en"],"responsive":["desktop","mobile"]},"ai_guidance":{"use_when":"Use sf-download-file for one downloadable resource or an application-owned file preparation action.","do_not":["Do not use a button when a stable resource href already exists","Do not leave href on an unavailable file","Do not use the decorative icon as the accessible name","Do not copy generated ui-smart code","Do not move host data or access decisions into the component"],"required_reads":["inputs","methods","events","ownership","provenance"],"minimal_example":"<sf-download-file file-name=\\"Report.pdf\\" file-size=\\"2.4 MB\\" href=\\"/files/report.pdf\\" download></sf-download-file>","owner_commands":["npm run contract:verify","npm test"]}},"x-decisions":["alias-conflict: the request is download (sf-download-file-download), as vocabulary 1.1.5 §5.1 writes it; the old sf-download-file:click is its dated same-detail alias (aliases.json, until 2026-12-01; bx-simai.main listens to it, vocabulary §9.2). The alias table\'s earlier sf-download-file-click was never shipped, so it gets no row.","events (§8): download is cancelable -- a page or a rule that refuses it (preventDefault) stops the browser\'s download -- and carries {href, fileName, download}; it is sent on the host, not the inner link, so the shim sends the old name after it. The class binder (component/download-file) takes it as onActivate and no longer sends its own event for the Smart element.","side-effects: network. With href and no file-size the class binder asks the file\'s size with one HEAD request (same origin credentials) and writes it; §4.7 says so now.","version 1.1.0: the event is renamed behind a dated alias and made cancelable (§4.10).","a11y-role: link, the native <a> the template draws while href is set and the file is not disabled; without href, or disabled, a native button (disabled: aria-disabled, not focusable). The name is the host\'s aria-label, else the file name (§4.8). Enter follows the link or presses the button.","aria-label is a host attribute, never a setting (§3.1); the template reads it from the host.","size takes the ladder the class binder draws (1/3 to 3); a value off it reads as 1.","template: templates.default names the Lit template js/templates/default.js, the migration form §5.2 allows; no template.html until the build compiles one (a copy nothing draws would drift).","examples: examples.json from studio.fixture.json (Отчёт за август.pdf, 2,4 МБ, a download) plus a link that opens, a size, an icon and disabled.","css-variables: seven public variables (fill and border at rest, radius, padding, gap, icon size and colour), read by the class sheet with the internal token as fallback (§6) and listed in src/core/contracts/public-variables.v1.json."]}');
 
 /***/ },
 

@@ -2350,7 +2350,10 @@ function elementFromManifest(manifest, {
   const Base = base || globalThis.SF?.smart?.SfBaseElement;
   if (typeof Base !== 'function') throw new TypeError('elementFromManifest: a base class is required');
   const read = readManifest(manifest);
-  const generatedProps = propsFromManifest(manifest);
+  const generatedProps = propsFromManifest(manifest); // Settings that arrive after the first paint (§5.4): their skeleton holds
+  // the box until they do.
+
+  const late = [].concat(manifest.presentation?.skeleton?.late ?? []).map(name => read.members.find(member => member.name === name)).filter(Boolean);
   const words = Object.fromEntries(Object.entries(lang).map(([locale, file]) => [locale.toLowerCase(), { ...(file?.runtime || {})
   }]));
   const sourceLanguage = source || Object.keys(words)[0] || '';
@@ -2392,9 +2395,63 @@ function elementFromManifest(manifest, {
     }
 
     connectedCallback() {
+      this.sfReadIsland();
       super.connectedCallback(); // A leaf outside an assembly starts with the page (§7.2.1 `now`).
 
       this.toggleAttribute('data-sf-started', true);
+    }
+    /**
+     * The first values of the settings an attribute cannot hold, lists and
+     * objects, from the JSON island a server prints in the host (§5.4):
+     * `<script type="application/json" data-sf-settings>{"items": [...]}</script>`.
+     * Read once, before the first render; an attribute or a property the page
+     * set first wins. The island is taken out, so a component that reads its
+     * children never meets it.
+     */
+
+
+    sfReadIsland() {
+      const island = Array.from(this.children ?? []).find(child => child.localName === 'script' && child.hasAttribute('data-sf-settings') && /^application\/json$/iu.test(child.type));
+      if (!island) return;
+      island.remove();
+      let data;
+
+      try {
+        data = JSON.parse(island.textContent || '{}');
+      } catch (error) {
+        globalThis.console?.warn?.(`[SIMAI Framework] ${this.localName}: the data-sf-settings island is not JSON`, error);
+        return;
+      }
+
+      for (const [name, value] of Object.entries(isPlainObject(data) ? data : {})) {
+        const member = read.members.find(one => one.name === name);
+
+        if (!member || !member.writable || member.native) {
+          globalThis.console?.warn?.(`[SIMAI Framework] ${this.localName}: the island's "${name}" is not a setting`);
+          continue;
+        }
+
+        if (member.attribute ? this.hasAttribute(member.attribute) : Object.prototype.hasOwnProperty.call(this.__sfManifestData ?? {}, name)) continue;
+        this[member.property] = value;
+      }
+    }
+    /**
+     * Whether the element keeps its printed skeleton (§5.4, §7.3 phase 3):
+     * the host was printed with data-sf-first-paint="skeleton" and a setting
+     * declared late (presentation.skeleton.late) has not arrived. The first
+     * render waits for it, so the skeleton turns into content in one frame.
+     * A component whose data comes another way (a port) overrides this.
+     */
+
+
+    sfAwaitingData() {
+      if (!late.length || this.getAttribute('data-sf-first-paint') !== 'skeleton') return false;
+      return late.some(member => {
+        if (member.attribute && this.hasAttribute(member.attribute)) return false; // Read through the property: a component may keep the setting itself.
+
+        const value = this[member.property];
+        return value === undefined || value === null || Array.isArray(value) && !value.length;
+      });
     }
     /** §4.1: the element has a box in an opened container. */
 
@@ -3044,7 +3101,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-spinn
 /***/ "4f18051b2e24"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$comment":"The source of sf-spinner\'s element plumbing (core/js/element-manifest.js). Taken from simai/ui-control control/smart-architecture/migration/out/spinner (migration/convert-1.3.8.mjs over simai/ui-source@5100227); standard simai.smart-component 1.3.8, vocabulary 1.1.5. Every x-todo of the conversion is decided: x-decisions says how.","id":"smart.spinner","tag":"sf-spinner","version":"1.2.0","kind":"leaf","family":"spinner","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"label":{"type":"string","default-from":"runtime.label"},"kind":{"type":"enum","values":["","arc","breathing","comet","dots"],"default":""},"dots":{"type":"number","default":8,"integer":true,"min":1},"filled":{"type":"number","default":3,"integer":true,"min":0},"infinite":{"type":"boolean","default":false},"announce":{"type":"boolean","default":false},"direction":{"type":"enum","values":["clockwise","counterclockwise"],"default":"clockwise"}},"values":{},"events":{},"actions":{"refresh-spinner":{"x-outcomes":["applied"],"x-summary":"Draws the spinner again from its settings (after the page changed data-sf-spinner around it)"}},"templates":{"default":{"file":"js/templates/default.js","$comment":"The Lit template in JavaScript, the migration form of §5.2 (§16)."}},"examples":"examples.json","docs":"docs/docs.md","lang":"lang/","accessibility":{"role":"status","when":{"announce":true},"otherwise":"none","name":{"from":["label"]},"keys":{},"$comment":"role status (a polite, atomic live region) only while announce is on and the label is not empty; otherwise the drawing is aria-hidden and has no role. It takes no focus."},"css-variables":{"--sf-spinner-color":{"type":"color","state":"default"},"--sf-spinner-track-color":{"type":"color","state":"default"},"--sf-spinner-size":{"type":"length","state":"default"},"--sf-spinner-stroke-width":{"type":"number","state":"default"},"--sf-spinner-gap":{"type":"length","state":"default"},"--sf-spinner-text-color":{"type":"color","state":"default"}},"x-summary":"Indeterminate waiting indicator in one of four looks on the size ladder (arc, breathing, comet, dots), following the page\'s data-sf-spinner, with optional polite status announcement and Framework-owned motion.","x-source":{"package":"framework","folder":"spinner","manifest":"simai/ui-source@5100227 src/smart/spinner/smart.manifest.json","converted":"control/smart-architecture/stands/17-ports-migration/out/spinner.component.json"},"x-words":["label"],"x-renamed":["settings.dots: type string with the numeral default \\"8\\" → number (§16 item 29)","settings.filled: type string with the numeral default \\"3\\" → number (§16 item 29)","lang runtime also holds the words of SPINNER_TEXT (ui-source/src/component/spinner/js/_spinner.js): a shared script this component draws with (§11: no word lives only inside a bundle)","settings.variant: the kind axis\'s old name, a dated setting alias of kind","settings.width, height, stroke-width, dot-radius: the pixel geometry deprecated since 1.1.0 (journal attribute-spinner-pixel-geometry) leaves the interface; still drawn and noted until 2026-12-01","methods.getSpinnerRoot: a reader retires (§4.4), kept and noted until the date"],"x-kept":{"security":{"permissions_owner":"none","untrusted_inputs":["props","children"],"network_policy":"deny"},"ownership":{"source":"simai/ui-source","data":"host","effects":"component","forbidden_client_responsibilities":["backend access decisions","host route invention","setting or clearing aria-busy on the containing region","inventing completion, error or timeout messages"]},"presentation":{"themes":["light","dark"],"locales":["ru","en"],"responsive":["desktop","mobile"],"skeleton":{"shape":"none","while_loading":"none"}},"ai_guidance":{"use_when":"Use sf-spinner for a bounded waiting state whose progress cannot be expressed as a meaningful percentage.","do_not":["Do not copy generated ui-smart code","Do not move host data or access decisions into the component","Do not use Spinner when determinate Progress or content-matched Skeleton is more accurate","Do not make Spinner focusable","Do not omit the containing region\'s aria-busy state","Do not announce an empty or non-localized label","Do not give every spinner its own kind to restyle a page: set data-sf-spinner on html (or a block) and every spinner the Framework draws follows it"],"required_reads":["inputs","methods","events","ownership","provenance"],"minimal_example":"<sf-spinner infinite announce label=\\"Loading\\"></sf-spinner>","owner_commands":["npm run contract:verify","npm test"]}},"x-decisions":["version: 1.1.0 → 1.2.0: variant is a dated alias, the pixel geometry and getSpinnerRoot retire behind dated rows, dots and filled are numbers; a minor while the rows hold (§4.10).","a11y-role: one role, status, written with when {announce: true}: the root is a polite atomic live region only while announce is on and the label is not empty; otherwise it is aria-hidden and has no role. The name is the label (an empty label is a spinner with no words, as the table\'s).","existing-aliases: compatibility.deprecations (width, height, stroke-width, dot-radius → size) fold into aliases.json as retired attribute rows with the dates; the shared class spinner still reads and notes them until the sweep, and the element observes them.","number-type: dots and filled are integers (§16 item 29); the shared drawing clamps them.","refresh-spinner: kept, the element\'s own redraw (it is not the vocabulary\'s refresh, which re-reads data); it answers applied.","template: templates.default names the Lit template js/templates/default.js, the migration form §5.2 allows.","examples: examples.json from studio.fixture.json plus the looks, an announced spinner and one with no words; probe.json drives the role, the name and the aliases.","skeleton: none; the spinner is itself what stands in while something loads, with no port and no late data (§5.4).","css-variables: six public variables read by the class sheet with the role token as fallback (src/core/contracts/public-variables.v1.json)."]}');
+module.exports = /*#__PURE__*/JSON.parse('{"$comment":"The source of sf-spinner\'s element plumbing (core/js/element-manifest.js). Taken from simai/ui-control control/smart-architecture/migration/out/spinner (migration/convert-1.3.8.mjs over simai/ui-source@5100227); standard simai.smart-component 1.3.8, vocabulary 1.1.5. Every x-todo of the conversion is decided: x-decisions says how.","id":"smart.spinner","tag":"sf-spinner","version":"1.2.0","kind":"leaf","family":"spinner","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"label":{"type":"string","default-from":"runtime.label"},"kind":{"type":"enum","values":["","arc","breathing","comet","dots"],"default":""},"dots":{"type":"number","default":8,"integer":true,"min":1},"filled":{"type":"number","default":3,"integer":true,"min":0},"infinite":{"type":"boolean","default":false},"announce":{"type":"boolean","default":false},"direction":{"type":"enum","values":["clockwise","counterclockwise"],"default":"clockwise"}},"values":{},"events":{},"actions":{"refresh-spinner":{"x-outcomes":["applied"],"x-summary":"Draws the spinner again from its settings (after the page changed data-sf-spinner around it)"}},"templates":{"default":{"file":"js/templates/default.js","$comment":"The Lit template in JavaScript, the migration form of §5.2 (§16)."}},"examples":"examples.json","docs":"docs/docs.md","lang":"lang/","accessibility":{"role":"status","when":{"announce":true},"otherwise":"none","name":{"from":["label"]},"keys":{},"$comment":"role status (a polite, atomic live region) only while announce is on and the label is not empty; otherwise the drawing is aria-hidden and has no role. It takes no focus."},"css-variables":{"--sf-spinner-color":{"type":"color","state":"default"},"--sf-spinner-track-color":{"type":"color","state":"default"},"--sf-spinner-size":{"type":"length","state":"default"},"--sf-spinner-stroke-width":{"type":"number","state":"default"},"--sf-spinner-gap":{"type":"length","state":"default"},"--sf-spinner-text-color":{"type":"color","state":"default"}},"x-summary":"Indeterminate waiting indicator in one of four looks on the size ladder (arc, breathing, comet, dots), following the page\'s data-sf-spinner, with optional polite status announcement and Framework-owned motion.","x-source":{"package":"framework","folder":"spinner","manifest":"simai/ui-source@5100227 src/smart/spinner/smart.manifest.json","converted":"control/smart-architecture/stands/17-ports-migration/out/spinner.component.json"},"x-words":["label"],"x-renamed":["settings.dots: type string with the numeral default \\"8\\" → number (§16 item 29)","settings.filled: type string with the numeral default \\"3\\" → number (§16 item 29)","lang runtime also holds the words of SPINNER_TEXT (ui-source/src/component/spinner/js/_spinner.js): a shared script this component draws with (§11: no word lives only inside a bundle)","settings.variant: the kind axis\'s old name, a dated setting alias of kind","settings.width, height, stroke-width, dot-radius: the pixel geometry deprecated since 1.1.0 (journal attribute-spinner-pixel-geometry) leaves the interface; still drawn and noted until 2026-12-01","methods.getSpinnerRoot: a reader retires (§4.4), kept and noted until the date"],"x-kept":{"security":{"permissions_owner":"none","untrusted_inputs":["props","children"],"network_policy":"deny"},"ownership":{"source":"simai/ui-source","data":"host","effects":"component","forbidden_client_responsibilities":["backend access decisions","host route invention","setting or clearing aria-busy on the containing region","inventing completion, error or timeout messages"]},"presentation":{"themes":["light","dark"],"locales":["ru","en"],"responsive":["desktop","mobile"]},"ai_guidance":{"use_when":"Use sf-spinner for a bounded waiting state whose progress cannot be expressed as a meaningful percentage.","do_not":["Do not copy generated ui-smart code","Do not move host data or access decisions into the component","Do not use Spinner when determinate Progress or content-matched Skeleton is more accurate","Do not make Spinner focusable","Do not omit the containing region\'s aria-busy state","Do not announce an empty or non-localized label","Do not give every spinner its own kind to restyle a page: set data-sf-spinner on html (or a block) and every spinner the Framework draws follows it"],"required_reads":["inputs","methods","events","ownership","provenance"],"minimal_example":"<sf-spinner infinite announce label=\\"Loading\\"></sf-spinner>","owner_commands":["npm run contract:verify","npm test"]}},"x-decisions":["version: 1.1.0 → 1.2.0: variant is a dated alias, the pixel geometry and getSpinnerRoot retire behind dated rows, dots and filled are numbers; a minor while the rows hold (§4.10).","a11y-role: one role, status, written with when {announce: true}: the root is a polite atomic live region only while announce is on and the label is not empty; otherwise it is aria-hidden and has no role. The name is the label (an empty label is a spinner with no words, as the table\'s).","existing-aliases: compatibility.deprecations (width, height, stroke-width, dot-radius → size) fold into aliases.json as retired attribute rows with the dates; the shared class spinner still reads and notes them until the sweep, and the element observes them.","number-type: dots and filled are integers (§16 item 29); the shared drawing clamps them.","refresh-spinner: kept, the element\'s own redraw (it is not the vocabulary\'s refresh, which re-reads data); it answers applied.","template: templates.default names the Lit template js/templates/default.js, the migration form §5.2 allows.","examples: examples.json from studio.fixture.json plus the looks, an announced spinner and one with no words; probe.json drives the role, the name and the aliases.","skeleton: none; the spinner is itself what stands in while something loads, with no port and no late data (§5.4).","css-variables: six public variables read by the class sheet with the role token as fallback (src/core/contracts/public-variables.v1.json)."]}');
 
 /***/ },
 

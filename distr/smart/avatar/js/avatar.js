@@ -1844,7 +1844,10 @@ function elementFromManifest(manifest, {
   const Base = base || globalThis.SF?.smart?.SfBaseElement;
   if (typeof Base !== 'function') throw new TypeError('elementFromManifest: a base class is required');
   const read = readManifest(manifest);
-  const generatedProps = propsFromManifest(manifest);
+  const generatedProps = propsFromManifest(manifest); // Settings that arrive after the first paint (§5.4): their skeleton holds
+  // the box until they do.
+
+  const late = [].concat(manifest.presentation?.skeleton?.late ?? []).map(name => read.members.find(member => member.name === name)).filter(Boolean);
   const words = Object.fromEntries(Object.entries(lang).map(([locale, file]) => [locale.toLowerCase(), { ...(file?.runtime || {})
   }]));
   const sourceLanguage = source || Object.keys(words)[0] || '';
@@ -1886,9 +1889,63 @@ function elementFromManifest(manifest, {
     }
 
     connectedCallback() {
+      this.sfReadIsland();
       super.connectedCallback(); // A leaf outside an assembly starts with the page (§7.2.1 `now`).
 
       this.toggleAttribute('data-sf-started', true);
+    }
+    /**
+     * The first values of the settings an attribute cannot hold, lists and
+     * objects, from the JSON island a server prints in the host (§5.4):
+     * `<script type="application/json" data-sf-settings>{"items": [...]}</script>`.
+     * Read once, before the first render; an attribute or a property the page
+     * set first wins. The island is taken out, so a component that reads its
+     * children never meets it.
+     */
+
+
+    sfReadIsland() {
+      const island = Array.from(this.children ?? []).find(child => child.localName === 'script' && child.hasAttribute('data-sf-settings') && /^application\/json$/iu.test(child.type));
+      if (!island) return;
+      island.remove();
+      let data;
+
+      try {
+        data = JSON.parse(island.textContent || '{}');
+      } catch (error) {
+        globalThis.console?.warn?.(`[SIMAI Framework] ${this.localName}: the data-sf-settings island is not JSON`, error);
+        return;
+      }
+
+      for (const [name, value] of Object.entries(isPlainObject(data) ? data : {})) {
+        const member = read.members.find(one => one.name === name);
+
+        if (!member || !member.writable || member.native) {
+          globalThis.console?.warn?.(`[SIMAI Framework] ${this.localName}: the island's "${name}" is not a setting`);
+          continue;
+        }
+
+        if (member.attribute ? this.hasAttribute(member.attribute) : Object.prototype.hasOwnProperty.call(this.__sfManifestData ?? {}, name)) continue;
+        this[member.property] = value;
+      }
+    }
+    /**
+     * Whether the element keeps its printed skeleton (§5.4, §7.3 phase 3):
+     * the host was printed with data-sf-first-paint="skeleton" and a setting
+     * declared late (presentation.skeleton.late) has not arrived. The first
+     * render waits for it, so the skeleton turns into content in one frame.
+     * A component whose data comes another way (a port) overrides this.
+     */
+
+
+    sfAwaitingData() {
+      if (!late.length || this.getAttribute('data-sf-first-paint') !== 'skeleton') return false;
+      return late.some(member => {
+        if (member.attribute && this.hasAttribute(member.attribute)) return false; // Read through the property: a component may keep the setting itself.
+
+        const value = this[member.property];
+        return value === undefined || value === null || Array.isArray(value) && !value.length;
+      });
     }
     /** §4.1: the element has a box in an opened container. */
 
@@ -2927,7 +2984,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-avata
 /***/ "488a9707ea64"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$comment":"The source of sf-avatar\'s element plumbing (core/js/element-manifest.js). Taken from simai/ui-control control/smart-architecture/migration/out/avatar (migration/convert-1.3.8.mjs over simai/ui-source@5100227); standard simai.smart-component 1.3.8, vocabulary 1.1.5. Every x-todo of the conversion is decided: x-decisions says how.","id":"smart.avatar","tag":"sf-avatar","version":"1.1.0","kind":"leaf","family":"avatar","settings":{"size":{"type":"enum","values":["1/4","1/3","1/2","1","2","3"],"default":"1"},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"shape":{"type":"enum","values":["circle","square"],"default":"circle"},"image-url":{"type":"string","default":""},"image-alt":{"type":"string","default":""},"no-wrap":{"type":"boolean","default":false},"text":{"type":"string","default":""},"status":{"type":"enum","values":["none","online","offline","company","verified"],"default":"none"},"heading":{"type":"string","default":""},"description":{"type":"string","default":""},"meta":{"type":"string","default":""},"meta-icon":{"type":"icon","default":""},"card-variant":{"type":"enum","values":["square","portrait"],"default":"square"},"disabled":{"type":"boolean","default":false},"badge-count":{"type":"string","default":""},"badge-dot":{"type":"boolean","default":false},"badge-cap":{"type":"number","integer":true,"min":1,"default":99},"badge-label":{"type":"string","default":""}},"values":{},"events":{},"actions":{},"keyboard":{"host":{"Tab":"reach"}},"templates":{"default":{"file":"js/templates/default.js","$comment":"The Lit template in JavaScript, the migration form of §5.2 (§16): the build does not compile template.html yet, so a second copy of the markup would only drift from the one that draws."},"label":{"file":"js/templates/label.js","$comment":"The avatar beside a heading and a description, the Lit template in JavaScript (§5.2 migration form)."},"card":{"file":"js/templates/card.js","$comment":"The avatar on a card with a heading, a description and a meta line, the Lit template in JavaScript (§5.2 migration form)."}},"examples":"examples.json","docs":"docs/docs.md","lang":"lang/","accessibility":{"$comment":"The avatar is a native button (every template draws one), named by the host\'s aria-label, «Аватар» / \\"Avatar\\" when unset, with the badge phrase after it.","role":"button","name":{"from":["aria-label"]},"keys":{"Tab":"reach"}},"css-variables":{"--sf-avatar-background-color":{"type":"color","state":"default"},"--sf-avatar-color":{"type":"color","state":"default"},"--sf-avatar-border-color":{"type":"color","state":"default"},"--sf-avatar-border-width":{"type":"length","state":"default"},"--sf-avatar-radius":{"type":"length","state":"default"}},"x-summary":"Shows a person or organisation as a photo or initials, with an optional availability or verification mark. The default and label templates render a native button whose aria-label names its action; the card template is static and adds a title, description and meta line.","x-source":{"package":"framework","folder":"avatar","manifest":"simai/ui-source@5100227 src/smart/avatar/smart.manifest.json","converted":"control/smart-architecture/stands/17-ports-migration/out/avatar.component.json"},"x-words":["text","badge-label"],"x-renamed":["settings.aria-label: a host attribute, read by the base, never a setting (§3.1)","settings.title → heading: \\"title\\" is a property of HTMLElement.prototype (§3.1, §16 item 26), alias dated"],"x-kept":{"security":{"permissions_owner":"none","untrusted_inputs":["props","children"],"network_policy":"deny"},"ownership":{"source":"simai/ui-source","data":"fixture","effects":"component","forbidden_client_responsibilities":["backend access decisions","host route invention"]},"presentation":{"themes":["light","dark"],"locales":["ru","en"],"responsive":["desktop","mobile"],"skeleton":{"shape":"none","while_loading":"none"}},"ai_guidance":{"use_when":"Use sf-avatar when the interface needs the avatar behavior.","do_not":["Do not copy generated ui-smart code","Do not move host data or access decisions into the component"],"required_reads":["inputs","methods","events","ownership","provenance"],"minimal_example":"<sf-avatar></sf-avatar>","owner_commands":["npm run contract:verify","npm test"]}},"x-decisions":["a11y-role: button -- every template draws the avatar as a native button (Enter and Space press it, Tab reaches it). The name is the host\'s aria-label, the language file\'s runtime aria-label («Аватар», \\"Avatar\\") when unset, with the badge phrase after it (§4.8); the label and card templates print the heading beside it.","title -> heading: title is a property of every element (§3.1, §16 item 26), so the setting is heading and title its dated setting alias (aliases.json, until 2026-12-01). The browser\'s own title property is left alone (the component no longer overrides it); the attribute still maps. Initials fall back to the heading.","version 1.1.0: a renamed member behind a dated alias is a minor (§4.10, §16.20).","words: the default name is runtime aria-label of the language files, read with sfWord; AVATAR_TEXT is gone. The element keeps answering el.ariaLabel with that word, as it did.","templates: default, label and card name their Lit templates in JavaScript, the migration form §5.2 allows; no template.html until the build compiles them (a copy nothing draws would drift).","badge-cap is a number with min 1; badge-count stays a string capped by badge-cap.","examples: examples.json from studio.fixture.json (the label template: AZ, Анна Захарова, online, size 2) plus an image, initials from the heading, the card, a count badge, verified and disabled.","css-variables: the five public variables of src/core/contracts/public-variables.v1.json the class sheet already reads (§6)."]}');
+module.exports = /*#__PURE__*/JSON.parse('{"$comment":"The source of sf-avatar\'s element plumbing (core/js/element-manifest.js). Taken from simai/ui-control control/smart-architecture/migration/out/avatar (migration/convert-1.3.8.mjs over simai/ui-source@5100227); standard simai.smart-component 1.3.8, vocabulary 1.1.5. Every x-todo of the conversion is decided: x-decisions says how.","id":"smart.avatar","tag":"sf-avatar","version":"1.1.0","kind":"leaf","family":"avatar","settings":{"size":{"type":"enum","values":["1/4","1/3","1/2","1","2","3"],"default":"1"},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"shape":{"type":"enum","values":["circle","square"],"default":"circle"},"image-url":{"type":"string","default":""},"image-alt":{"type":"string","default":""},"no-wrap":{"type":"boolean","default":false},"text":{"type":"string","default":""},"status":{"type":"enum","values":["none","online","offline","company","verified"],"default":"none"},"heading":{"type":"string","default":""},"description":{"type":"string","default":""},"meta":{"type":"string","default":""},"meta-icon":{"type":"icon","default":""},"card-variant":{"type":"enum","values":["square","portrait"],"default":"square"},"disabled":{"type":"boolean","default":false},"badge-count":{"type":"string","default":""},"badge-dot":{"type":"boolean","default":false},"badge-cap":{"type":"number","integer":true,"min":1,"default":99},"badge-label":{"type":"string","default":""}},"values":{},"events":{},"actions":{},"keyboard":{"host":{"Tab":"reach"}},"templates":{"default":{"file":"js/templates/default.js","$comment":"The Lit template in JavaScript, the migration form of §5.2 (§16): the build does not compile template.html yet, so a second copy of the markup would only drift from the one that draws."},"label":{"file":"js/templates/label.js","$comment":"The avatar beside a heading and a description, the Lit template in JavaScript (§5.2 migration form)."},"card":{"file":"js/templates/card.js","$comment":"The avatar on a card with a heading, a description and a meta line, the Lit template in JavaScript (§5.2 migration form)."}},"examples":"examples.json","docs":"docs/docs.md","lang":"lang/","accessibility":{"$comment":"The avatar is a native button (every template draws one), named by the host\'s aria-label, «Аватар» / \\"Avatar\\" when unset, with the badge phrase after it.","role":"button","name":{"from":["aria-label"]},"keys":{"Tab":"reach"}},"css-variables":{"--sf-avatar-background-color":{"type":"color","state":"default"},"--sf-avatar-color":{"type":"color","state":"default"},"--sf-avatar-border-color":{"type":"color","state":"default"},"--sf-avatar-border-width":{"type":"length","state":"default"},"--sf-avatar-radius":{"type":"length","state":"default"}},"x-summary":"Shows a person or organisation as a photo or initials, with an optional availability or verification mark. The default and label templates render a native button whose aria-label names its action; the card template is static and adds a title, description and meta line.","x-source":{"package":"framework","folder":"avatar","manifest":"simai/ui-source@5100227 src/smart/avatar/smart.manifest.json","converted":"control/smart-architecture/stands/17-ports-migration/out/avatar.component.json"},"x-words":["text","badge-label"],"x-renamed":["settings.aria-label: a host attribute, read by the base, never a setting (§3.1)","settings.title → heading: \\"title\\" is a property of HTMLElement.prototype (§3.1, §16 item 26), alias dated"],"x-kept":{"security":{"permissions_owner":"none","untrusted_inputs":["props","children"],"network_policy":"deny"},"ownership":{"source":"simai/ui-source","data":"fixture","effects":"component","forbidden_client_responsibilities":["backend access decisions","host route invention"]},"presentation":{"themes":["light","dark"],"locales":["ru","en"],"responsive":["desktop","mobile"]},"ai_guidance":{"use_when":"Use sf-avatar when the interface needs the avatar behavior.","do_not":["Do not copy generated ui-smart code","Do not move host data or access decisions into the component"],"required_reads":["inputs","methods","events","ownership","provenance"],"minimal_example":"<sf-avatar></sf-avatar>","owner_commands":["npm run contract:verify","npm test"]}},"x-decisions":["a11y-role: button -- every template draws the avatar as a native button (Enter and Space press it, Tab reaches it). The name is the host\'s aria-label, the language file\'s runtime aria-label («Аватар», \\"Avatar\\") when unset, with the badge phrase after it (§4.8); the label and card templates print the heading beside it.","title -> heading: title is a property of every element (§3.1, §16 item 26), so the setting is heading and title its dated setting alias (aliases.json, until 2026-12-01). The browser\'s own title property is left alone (the component no longer overrides it); the attribute still maps. Initials fall back to the heading.","version 1.1.0: a renamed member behind a dated alias is a minor (§4.10, §16.20).","words: the default name is runtime aria-label of the language files, read with sfWord; AVATAR_TEXT is gone. The element keeps answering el.ariaLabel with that word, as it did.","templates: default, label and card name their Lit templates in JavaScript, the migration form §5.2 allows; no template.html until the build compiles them (a copy nothing draws would drift).","badge-cap is a number with min 1; badge-count stays a string capped by badge-cap.","examples: examples.json from studio.fixture.json (the label template: AZ, Анна Захарова, online, size 2) plus an image, initials from the heading, the card, a count badge, verified and disabled.","css-variables: the five public variables of src/core/contracts/public-variables.v1.json the class sheet already reads (§6)."]}');
 
 /***/ },
 

@@ -2146,7 +2146,10 @@ function elementFromManifest(manifest, {
   const Base = base || globalThis.SF?.smart?.SfBaseElement;
   if (typeof Base !== 'function') throw new TypeError('elementFromManifest: a base class is required');
   const read = readManifest(manifest);
-  const generatedProps = propsFromManifest(manifest);
+  const generatedProps = propsFromManifest(manifest); // Settings that arrive after the first paint (§5.4): their skeleton holds
+  // the box until they do.
+
+  const late = [].concat(manifest.presentation?.skeleton?.late ?? []).map(name => read.members.find(member => member.name === name)).filter(Boolean);
   const words = Object.fromEntries(Object.entries(lang).map(([locale, file]) => [locale.toLowerCase(), { ...(file?.runtime || {})
   }]));
   const sourceLanguage = source || Object.keys(words)[0] || '';
@@ -2188,9 +2191,63 @@ function elementFromManifest(manifest, {
     }
 
     connectedCallback() {
+      this.sfReadIsland();
       super.connectedCallback(); // A leaf outside an assembly starts with the page (§7.2.1 `now`).
 
       this.toggleAttribute('data-sf-started', true);
+    }
+    /**
+     * The first values of the settings an attribute cannot hold, lists and
+     * objects, from the JSON island a server prints in the host (§5.4):
+     * `<script type="application/json" data-sf-settings>{"items": [...]}</script>`.
+     * Read once, before the first render; an attribute or a property the page
+     * set first wins. The island is taken out, so a component that reads its
+     * children never meets it.
+     */
+
+
+    sfReadIsland() {
+      const island = Array.from(this.children ?? []).find(child => child.localName === 'script' && child.hasAttribute('data-sf-settings') && /^application\/json$/iu.test(child.type));
+      if (!island) return;
+      island.remove();
+      let data;
+
+      try {
+        data = JSON.parse(island.textContent || '{}');
+      } catch (error) {
+        globalThis.console?.warn?.(`[SIMAI Framework] ${this.localName}: the data-sf-settings island is not JSON`, error);
+        return;
+      }
+
+      for (const [name, value] of Object.entries(isPlainObject(data) ? data : {})) {
+        const member = read.members.find(one => one.name === name);
+
+        if (!member || !member.writable || member.native) {
+          globalThis.console?.warn?.(`[SIMAI Framework] ${this.localName}: the island's "${name}" is not a setting`);
+          continue;
+        }
+
+        if (member.attribute ? this.hasAttribute(member.attribute) : Object.prototype.hasOwnProperty.call(this.__sfManifestData ?? {}, name)) continue;
+        this[member.property] = value;
+      }
+    }
+    /**
+     * Whether the element keeps its printed skeleton (§5.4, §7.3 phase 3):
+     * the host was printed with data-sf-first-paint="skeleton" and a setting
+     * declared late (presentation.skeleton.late) has not arrived. The first
+     * render waits for it, so the skeleton turns into content in one frame.
+     * A component whose data comes another way (a port) overrides this.
+     */
+
+
+    sfAwaitingData() {
+      if (!late.length || this.getAttribute('data-sf-first-paint') !== 'skeleton') return false;
+      return late.some(member => {
+        if (member.attribute && this.hasAttribute(member.attribute)) return false; // Read through the property: a component may keep the setting itself.
+
+        const value = this[member.property];
+        return value === undefined || value === null || Array.isArray(value) && !value.length;
+      });
     }
     /** §4.1: the element has a box in an opened container. */
 
@@ -2978,7 +3035,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-toast
 /***/ "b3afcae54093"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$comment":"The source of sf-toast\'s element plumbing (core/js/element-manifest.js). Taken from simai/ui-control control/smart-architecture/migration/out/toast (migration/convert-1.3.8.mjs over simai/ui-source@5100227); standard simai.smart-component 1.3.8, vocabulary 1.1.5. Every x-todo of the conversion is decided: x-decisions says how.","id":"smart.toast","tag":"sf-toast","version":"1.1.0","kind":"leaf","family":"toast","settings":{"status":{"type":"enum","values":["neutral","info","success","warning","error"],"default":"neutral"},"icon":{"type":"icon","default":""},"heading":{"type":"string","default":""},"supporting-text":{"type":"string","default":""},"action-text":{"type":"string","default":""},"action":{"type":"string","default":"action"},"closable":{"type":"boolean","default":true},"close-label":{"type":"string","default-from":"runtime.close-label"},"duration":{"type":"number","default":0}},"values":{},"events":{"action":{"carries":{"action":"string"},"own-verb":true},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}}},"actions":{"close":{"emits":"close","x-outcomes":["applied","refused"]},"show":{"with":{"text":"string","code":"string","count":"number","tone":{"type":"enum","values":["info","success","warning","error"]}},"x-outcomes":["applied","refused"],"x-summary":"Says a message: text (or the assembly\'s word for code and count, §11.2) becomes the heading, tone the status"}},"layer":{"kind":"toast","locks-page":false,"traps-focus":false},"keyboard":{"host":{"Tab":"reach"}},"templates":{"default":{"file":"js/templates/default.js","$comment":"The Lit template in JavaScript, the migration form of §5.2 (§16)."}},"examples":"examples.json","docs":"docs/docs.md","lang":"lang/","accessibility":{"role":"status","name":{"from":["heading"]},"keys":{"Tab":"reach"},"$comment":"role is the host\'s role attribute when it says status or alert, written on the toast\'s root; without one the toast is a plain group inside the notification region, which announces"},"css-variables":{"--sf-toast-background-color":{"type":"color","state":"default"},"--sf-toast-color":{"type":"color","state":"default"},"--sf-toast-border-color":{"type":"color","state":"default"},"--sf-toast-border-width":{"type":"length","state":"default"},"--sf-toast-radius":{"type":"length","state":"default"},"--sf-toast-padding-inline":{"type":"length","state":"default"},"--sf-toast-padding-block":{"type":"length","state":"default"},"--sf-toast-gap":{"type":"length","state":"default"}},"x-summary":"Transient overlay feedback with semantic roles, optional action, pause-safe lifetime and dismiss behavior.","x-source":{"package":"framework","folder":"toast","manifest":"simai/ui-source@5100227 src/smart/toast/smart.manifest.json","converted":"control/smart-architecture/stands/17-ports-migration/out/toast.component.json"},"x-words":["supporting-text","action-text","close-label"],"x-target":{"added":{"actions":["show"]}},"x-renamed":["settings.title → heading: \\"title\\" is a property of HTMLElement.prototype (§3.1, §16 item 26), alias dated","settings.type → status: the axis\'s old name, alias dated","settings.role: a host attribute, read by the base, never a setting (§3.1)","events sf-toast-action, sf-toast-close: the DOM names stay; detail carries data only (action, reason), the elements toast and trigger leave it (§8); close is a cancelable request and closed the fact (§19.3)"],"x-kept":{"security":{"permissions_owner":"none","untrusted_inputs":["props","children"],"network_policy":"deny"},"ownership":{"source":"simai/ui-source","data":"fixture","effects":"component","forbidden_client_responsibilities":["backend access decisions","host route invention"]},"presentation":{"themes":["light","dark"],"locales":["ru","en"],"responsive":["desktop","mobile"],"skeleton":{"shape":"none","while_loading":"none"}},"ai_guidance":{"use_when":"Use sf-toast for concise transient overlay feedback that does not block the current task.","do_not":["Do not use Toast for persistent inline guidance; use Alert","Do not auto-dismiss a message whose content or action must not be missed","Do not use role=alert for routine success feedback","Do not choose a semantic type only for its color","Do not copy generated ui-smart code","Do not move host data or access decisions into the component"],"required_reads":["inputs","methods","events","ownership","provenance"],"minimal_example":"<sf-toast status=\\"success\\" title=\\"Saved\\" supporting-text=\\"Your changes are available.\\" role=\\"status\\" close-label=\\"Close message\\"></sf-toast>","owner_commands":["npm run contract:verify","npm test"]}},"x-decisions":["own-verb-words: action is a verb of the toast alone (the person pressed the toast\'s action button); its word is lang events.action.label.","version: 1.0.0 → 1.1.0: title and type are dated aliases, close becomes cancelable, closed and show are added.","a11y-role: the toast takes the host\'s role attribute when it is status or alert and writes it on its root; without it the notification region that holds the toast announces (SF.notify).","template: templates.default names the Lit template js/templates/default.js, the migration form §5.2 allows.","examples: examples.json from studio.fixture.json and studio.scenario.json plus the statuses, an action and a timed toast; probe.json drives the close and action buttons and Tab.","css-variables: the eight public variables the sheet already reads (src/core/contracts/public-variables.v1.json).","side-effects: none. sf-toast draws where it stands; the toast layer of the one stack is the notification region SF.notify places it in (core/js/notify.js, kind toast: it takes no keys and no presses).","events: the shared class toast (component/toast/js/_toast.js) sends sf-toast-close and sf-toast-action on its root with the elements in detail; sf-toast stops them at its host and sends its own from the host with data only. The class close is cancelable now, so a refused sf-toast-close keeps the toast. Reasons: close (its own close button), api (dismiss(), close(), the timer).","show: an assembly\'s rule says a message through the toast: text (the word of code and count, §11.2) becomes the heading and tone the status."]}');
+module.exports = /*#__PURE__*/JSON.parse('{"$comment":"The source of sf-toast\'s element plumbing (core/js/element-manifest.js). Taken from simai/ui-control control/smart-architecture/migration/out/toast (migration/convert-1.3.8.mjs over simai/ui-source@5100227); standard simai.smart-component 1.3.8, vocabulary 1.1.5. Every x-todo of the conversion is decided: x-decisions says how.","id":"smart.toast","tag":"sf-toast","version":"1.1.0","kind":"leaf","family":"toast","settings":{"status":{"type":"enum","values":["neutral","info","success","warning","error"],"default":"neutral"},"icon":{"type":"icon","default":""},"heading":{"type":"string","default":""},"supporting-text":{"type":"string","default":""},"action-text":{"type":"string","default":""},"action":{"type":"string","default":"action"},"closable":{"type":"boolean","default":true},"close-label":{"type":"string","default-from":"runtime.close-label"},"duration":{"type":"number","default":0}},"values":{},"events":{"action":{"carries":{"action":"string"},"own-verb":true},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}}},"actions":{"close":{"emits":"close","x-outcomes":["applied","refused"]},"show":{"with":{"text":"string","code":"string","count":"number","tone":{"type":"enum","values":["info","success","warning","error"]}},"x-outcomes":["applied","refused"],"x-summary":"Says a message: text (or the assembly\'s word for code and count, §11.2) becomes the heading, tone the status"}},"layer":{"kind":"toast","locks-page":false,"traps-focus":false},"keyboard":{"host":{"Tab":"reach"}},"templates":{"default":{"file":"js/templates/default.js","$comment":"The Lit template in JavaScript, the migration form of §5.2 (§16)."}},"examples":"examples.json","docs":"docs/docs.md","lang":"lang/","accessibility":{"role":"status","name":{"from":["heading"]},"keys":{"Tab":"reach"},"$comment":"role is the host\'s role attribute when it says status or alert, written on the toast\'s root; without one the toast is a plain group inside the notification region, which announces"},"css-variables":{"--sf-toast-background-color":{"type":"color","state":"default"},"--sf-toast-color":{"type":"color","state":"default"},"--sf-toast-border-color":{"type":"color","state":"default"},"--sf-toast-border-width":{"type":"length","state":"default"},"--sf-toast-radius":{"type":"length","state":"default"},"--sf-toast-padding-inline":{"type":"length","state":"default"},"--sf-toast-padding-block":{"type":"length","state":"default"},"--sf-toast-gap":{"type":"length","state":"default"}},"x-summary":"Transient overlay feedback with semantic roles, optional action, pause-safe lifetime and dismiss behavior.","x-source":{"package":"framework","folder":"toast","manifest":"simai/ui-source@5100227 src/smart/toast/smart.manifest.json","converted":"control/smart-architecture/stands/17-ports-migration/out/toast.component.json"},"x-words":["supporting-text","action-text","close-label"],"x-target":{"added":{"actions":["show"]}},"x-renamed":["settings.title → heading: \\"title\\" is a property of HTMLElement.prototype (§3.1, §16 item 26), alias dated","settings.type → status: the axis\'s old name, alias dated","settings.role: a host attribute, read by the base, never a setting (§3.1)","events sf-toast-action, sf-toast-close: the DOM names stay; detail carries data only (action, reason), the elements toast and trigger leave it (§8); close is a cancelable request and closed the fact (§19.3)"],"x-kept":{"security":{"permissions_owner":"none","untrusted_inputs":["props","children"],"network_policy":"deny"},"ownership":{"source":"simai/ui-source","data":"fixture","effects":"component","forbidden_client_responsibilities":["backend access decisions","host route invention"]},"presentation":{"themes":["light","dark"],"locales":["ru","en"],"responsive":["desktop","mobile"]},"ai_guidance":{"use_when":"Use sf-toast for concise transient overlay feedback that does not block the current task.","do_not":["Do not use Toast for persistent inline guidance; use Alert","Do not auto-dismiss a message whose content or action must not be missed","Do not use role=alert for routine success feedback","Do not choose a semantic type only for its color","Do not copy generated ui-smart code","Do not move host data or access decisions into the component"],"required_reads":["inputs","methods","events","ownership","provenance"],"minimal_example":"<sf-toast status=\\"success\\" title=\\"Saved\\" supporting-text=\\"Your changes are available.\\" role=\\"status\\" close-label=\\"Close message\\"></sf-toast>","owner_commands":["npm run contract:verify","npm test"]}},"x-decisions":["own-verb-words: action is a verb of the toast alone (the person pressed the toast\'s action button); its word is lang events.action.label.","version: 1.0.0 → 1.1.0: title and type are dated aliases, close becomes cancelable, closed and show are added.","a11y-role: the toast takes the host\'s role attribute when it is status or alert and writes it on its root; without it the notification region that holds the toast announces (SF.notify).","template: templates.default names the Lit template js/templates/default.js, the migration form §5.2 allows.","examples: examples.json from studio.fixture.json and studio.scenario.json plus the statuses, an action and a timed toast; probe.json drives the close and action buttons and Tab.","css-variables: the eight public variables the sheet already reads (src/core/contracts/public-variables.v1.json).","side-effects: none. sf-toast draws where it stands; the toast layer of the one stack is the notification region SF.notify places it in (core/js/notify.js, kind toast: it takes no keys and no presses).","events: the shared class toast (component/toast/js/_toast.js) sends sf-toast-close and sf-toast-action on its root with the elements in detail; sf-toast stops them at its host and sends its own from the host with data only. The class close is cancelable now, so a refused sf-toast-close keeps the toast. Reasons: close (its own close button), api (dismiss(), close(), the timer).","show: an assembly\'s rule says a message through the toast: text (the word of code and count, §11.2) becomes the heading and tone the status."]}');
 
 /***/ },
 

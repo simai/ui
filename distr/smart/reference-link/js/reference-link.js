@@ -1636,7 +1636,10 @@ function elementFromManifest(manifest, {
   const Base = base || globalThis.SF?.smart?.SfBaseElement;
   if (typeof Base !== 'function') throw new TypeError('elementFromManifest: a base class is required');
   const read = readManifest(manifest);
-  const generatedProps = propsFromManifest(manifest);
+  const generatedProps = propsFromManifest(manifest); // Settings that arrive after the first paint (§5.4): their skeleton holds
+  // the box until they do.
+
+  const late = [].concat(manifest.presentation?.skeleton?.late ?? []).map(name => read.members.find(member => member.name === name)).filter(Boolean);
   const words = Object.fromEntries(Object.entries(lang).map(([locale, file]) => [locale.toLowerCase(), { ...(file?.runtime || {})
   }]));
   const sourceLanguage = source || Object.keys(words)[0] || '';
@@ -1678,9 +1681,63 @@ function elementFromManifest(manifest, {
     }
 
     connectedCallback() {
+      this.sfReadIsland();
       super.connectedCallback(); // A leaf outside an assembly starts with the page (§7.2.1 `now`).
 
       this.toggleAttribute('data-sf-started', true);
+    }
+    /**
+     * The first values of the settings an attribute cannot hold, lists and
+     * objects, from the JSON island a server prints in the host (§5.4):
+     * `<script type="application/json" data-sf-settings>{"items": [...]}</script>`.
+     * Read once, before the first render; an attribute or a property the page
+     * set first wins. The island is taken out, so a component that reads its
+     * children never meets it.
+     */
+
+
+    sfReadIsland() {
+      const island = Array.from(this.children ?? []).find(child => child.localName === 'script' && child.hasAttribute('data-sf-settings') && /^application\/json$/iu.test(child.type));
+      if (!island) return;
+      island.remove();
+      let data;
+
+      try {
+        data = JSON.parse(island.textContent || '{}');
+      } catch (error) {
+        globalThis.console?.warn?.(`[SIMAI Framework] ${this.localName}: the data-sf-settings island is not JSON`, error);
+        return;
+      }
+
+      for (const [name, value] of Object.entries(isPlainObject(data) ? data : {})) {
+        const member = read.members.find(one => one.name === name);
+
+        if (!member || !member.writable || member.native) {
+          globalThis.console?.warn?.(`[SIMAI Framework] ${this.localName}: the island's "${name}" is not a setting`);
+          continue;
+        }
+
+        if (member.attribute ? this.hasAttribute(member.attribute) : Object.prototype.hasOwnProperty.call(this.__sfManifestData ?? {}, name)) continue;
+        this[member.property] = value;
+      }
+    }
+    /**
+     * Whether the element keeps its printed skeleton (§5.4, §7.3 phase 3):
+     * the host was printed with data-sf-first-paint="skeleton" and a setting
+     * declared late (presentation.skeleton.late) has not arrived. The first
+     * render waits for it, so the skeleton turns into content in one frame.
+     * A component whose data comes another way (a port) overrides this.
+     */
+
+
+    sfAwaitingData() {
+      if (!late.length || this.getAttribute('data-sf-first-paint') !== 'skeleton') return false;
+      return late.some(member => {
+        if (member.attribute && this.hasAttribute(member.attribute)) return false; // Read through the property: a component may keep the setting itself.
+
+        const value = this[member.property];
+        return value === undefined || value === null || Array.isArray(value) && !value.length;
+      });
     }
     /** §4.1: the element has a box in an opened container. */
 
@@ -2300,7 +2357,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-refer
 /***/ "02ab397b5f7e"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$comment":"The source of sf-reference-link\'s element plumbing (core/js/element-manifest.js). Taken from simai/ui-control control/smart-architecture/migration/out/reference-link (migration/convert-1.3.8.mjs over simai/ui-source@5100227); standard simai.smart-component 1.3.8, vocabulary 1.1.5. Every x-todo of the conversion is decided: x-decisions says how.","id":"smart.reference-link","tag":"sf-reference-link","version":"1.0.0","kind":"leaf","family":"link","settings":{"appearance":{"type":"enum","values":["card","plain"],"default":"card"},"disabled":{"type":"boolean","default":false},"href":{"type":"string","default":""},"icon":{"type":"icon","optional":true,"default":"arrow_forward","summary":"Absent: the arrow; empty: no icon at all"},"label":{"type":"string","default":""},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"size":{"type":"enum","values":["","1/2","1","2"],"default":""},"target":{"type":"string","default":"_self"},"text":{"type":"string","default":""}},"values":{},"events":{},"actions":{},"keyboard":{"host":{"Tab":"reach"}},"templates":{"default":{"file":"js/templates/default.js","$comment":"The Lit template in JavaScript, the migration form of §5.2 (§16): the build does not compile template.html yet, so a second copy of the markup would only drift from the one that draws."}},"examples":"examples.json","docs":"docs/docs.md","lang":"lang/","accessibility":{"$comment":"The link is a native <a> inside the card while href is set and the reference is not disabled; otherwise the label is plain text and the card says aria-disabled when disabled.","role":"link","name":{"from":["aria-label","label","slot:label"]},"keys":{"Tab":"reach"}},"css-variables":{"--sf-reference-link-background-color":{"type":"color","state":"default"},"--sf-reference-link-border-color":{"type":"color","state":"default"},"--sf-reference-link-radius":{"type":"length","state":"default"},"--sf-reference-link-link-color":{"type":"color","state":"default"},"--sf-reference-link-padding-inline":{"type":"length","state":"default"},"--sf-reference-link-padding-block":{"type":"length","state":"default"},"--sf-reference-link-gap":{"type":"length","state":"default"}},"x-summary":"Navigation surface that pairs a real destination with a compact reference.","x-source":{"package":"framework","folder":"reference-link","manifest":"simai/ui-source@5100227 src/smart/reference-link/smart.manifest.json","converted":"control/smart-architecture/stands/17-ports-migration/out/reference-link.component.json"},"x-words":["label","text"],"x-renamed":["settings.aria-label: a host attribute, read by the base, never a setting (§3.1)"],"x-kept":{"security":{"permissions_owner":"none","untrusted_inputs":["props","children"],"network_policy":"deny"},"ownership":{"source":"simai/ui-source","data":"fixture","effects":"component","forbidden_client_responsibilities":["backend access decisions","host route invention"]},"presentation":{"themes":["light","dark"],"locales":["ru","en"],"responsive":["desktop","mobile"],"skeleton":{"shape":"none","while_loading":"none"}},"ai_guidance":{"use_when":"Use sf-reference-link when a real destination benefits from a visible route, source or other compact reference.","do_not":["Do not use Reference Link for a generic action or a plain text link","Do not render an enabled reference without href","Do not leave href on a disabled reference","Do not open a new context without disclosing it in the accessible name","Do not copy generated ui-smart code","Do not move host data or access decisions into the component"],"required_reads":["inputs","methods","events","ownership","provenance"],"minimal_example":"<sf-reference-link label=\\"Installation guide\\" text=\\"/start/install/\\" href=\\"/start/install/\\"></sf-reference-link>","owner_commands":["npm run contract:verify","npm test"]}},"x-decisions":["a11y-role: link, the native <a> the template draws while href is set and the reference is not disabled (Enter follows it, Tab reaches it); without href, or disabled, the label is plain text and nothing takes focus. The name is the host\'s aria-label, else the label or its slot (§4.8).","icon is optional (§4.2) and keeps its getter: absent is the arrow, an empty attribute is no icon at all, which a string default cannot say.","size and line keep their getters: they map a form size onto the field-size ladder (fieldSize) before the class list reads it.","aria-label is a host attribute, never a setting (§3.1); the template reads it from the host.","template: templates.default names the Lit template js/templates/default.js, the migration form §5.2 allows; no template.html until the build compiles one (a copy nothing draws would drift).","examples: examples.json from studio.fixture.json (Документация, #) plus a label and text, plain, no icon, a size, a line and disabled.","css-variables: seven public variables (fill and border at rest, radius, link colour, padding inline and block, gap), read by the class sheet with the internal token as fallback (§6) and listed in src/core/contracts/public-variables.v1.json.","version 1.0.0: the interface is unchanged; nothing is renamed, so aliases.json holds only the host attribute aria-label."]}');
+module.exports = /*#__PURE__*/JSON.parse('{"$comment":"The source of sf-reference-link\'s element plumbing (core/js/element-manifest.js). Taken from simai/ui-control control/smart-architecture/migration/out/reference-link (migration/convert-1.3.8.mjs over simai/ui-source@5100227); standard simai.smart-component 1.3.8, vocabulary 1.1.5. Every x-todo of the conversion is decided: x-decisions says how.","id":"smart.reference-link","tag":"sf-reference-link","version":"1.0.0","kind":"leaf","family":"link","settings":{"appearance":{"type":"enum","values":["card","plain"],"default":"card"},"disabled":{"type":"boolean","default":false},"href":{"type":"string","default":""},"icon":{"type":"icon","optional":true,"default":"arrow_forward","summary":"Absent: the arrow; empty: no icon at all"},"label":{"type":"string","default":""},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"size":{"type":"enum","values":["","1/2","1","2"],"default":""},"target":{"type":"string","default":"_self"},"text":{"type":"string","default":""}},"values":{},"events":{},"actions":{},"keyboard":{"host":{"Tab":"reach"}},"templates":{"default":{"file":"js/templates/default.js","$comment":"The Lit template in JavaScript, the migration form of §5.2 (§16): the build does not compile template.html yet, so a second copy of the markup would only drift from the one that draws."}},"examples":"examples.json","docs":"docs/docs.md","lang":"lang/","accessibility":{"$comment":"The link is a native <a> inside the card while href is set and the reference is not disabled; otherwise the label is plain text and the card says aria-disabled when disabled.","role":"link","name":{"from":["aria-label","label","slot:label"]},"keys":{"Tab":"reach"}},"css-variables":{"--sf-reference-link-background-color":{"type":"color","state":"default"},"--sf-reference-link-border-color":{"type":"color","state":"default"},"--sf-reference-link-radius":{"type":"length","state":"default"},"--sf-reference-link-link-color":{"type":"color","state":"default"},"--sf-reference-link-padding-inline":{"type":"length","state":"default"},"--sf-reference-link-padding-block":{"type":"length","state":"default"},"--sf-reference-link-gap":{"type":"length","state":"default"}},"x-summary":"Navigation surface that pairs a real destination with a compact reference.","x-source":{"package":"framework","folder":"reference-link","manifest":"simai/ui-source@5100227 src/smart/reference-link/smart.manifest.json","converted":"control/smart-architecture/stands/17-ports-migration/out/reference-link.component.json"},"x-words":["label","text"],"x-renamed":["settings.aria-label: a host attribute, read by the base, never a setting (§3.1)"],"x-kept":{"security":{"permissions_owner":"none","untrusted_inputs":["props","children"],"network_policy":"deny"},"ownership":{"source":"simai/ui-source","data":"fixture","effects":"component","forbidden_client_responsibilities":["backend access decisions","host route invention"]},"presentation":{"themes":["light","dark"],"locales":["ru","en"],"responsive":["desktop","mobile"]},"ai_guidance":{"use_when":"Use sf-reference-link when a real destination benefits from a visible route, source or other compact reference.","do_not":["Do not use Reference Link for a generic action or a plain text link","Do not render an enabled reference without href","Do not leave href on a disabled reference","Do not open a new context without disclosing it in the accessible name","Do not copy generated ui-smart code","Do not move host data or access decisions into the component"],"required_reads":["inputs","methods","events","ownership","provenance"],"minimal_example":"<sf-reference-link label=\\"Installation guide\\" text=\\"/start/install/\\" href=\\"/start/install/\\"></sf-reference-link>","owner_commands":["npm run contract:verify","npm test"]}},"x-decisions":["a11y-role: link, the native <a> the template draws while href is set and the reference is not disabled (Enter follows it, Tab reaches it); without href, or disabled, the label is plain text and nothing takes focus. The name is the host\'s aria-label, else the label or its slot (§4.8).","icon is optional (§4.2) and keeps its getter: absent is the arrow, an empty attribute is no icon at all, which a string default cannot say.","size and line keep their getters: they map a form size onto the field-size ladder (fieldSize) before the class list reads it.","aria-label is a host attribute, never a setting (§3.1); the template reads it from the host.","template: templates.default names the Lit template js/templates/default.js, the migration form §5.2 allows; no template.html until the build compiles one (a copy nothing draws would drift).","examples: examples.json from studio.fixture.json (Документация, #) plus a label and text, plain, no icon, a size, a line and disabled.","css-variables: seven public variables (fill and border at rest, radius, link colour, padding inline and block, gap), read by the class sheet with the internal token as fallback (§6) and listed in src/core/contracts/public-variables.v1.json.","version 1.0.0: the interface is unchanged; nothing is renamed, so aliases.json holds only the host attribute aria-label."]}');
 
 /***/ },
 

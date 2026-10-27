@@ -1567,7 +1567,10 @@ function elementFromManifest(manifest, {
   const Base = base || globalThis.SF?.smart?.SfBaseElement;
   if (typeof Base !== 'function') throw new TypeError('elementFromManifest: a base class is required');
   const read = readManifest(manifest);
-  const generatedProps = propsFromManifest(manifest);
+  const generatedProps = propsFromManifest(manifest); // Settings that arrive after the first paint (§5.4): their skeleton holds
+  // the box until they do.
+
+  const late = [].concat(manifest.presentation?.skeleton?.late ?? []).map(name => read.members.find(member => member.name === name)).filter(Boolean);
   const words = Object.fromEntries(Object.entries(lang).map(([locale, file]) => [locale.toLowerCase(), { ...(file?.runtime || {})
   }]));
   const sourceLanguage = source || Object.keys(words)[0] || '';
@@ -1609,9 +1612,63 @@ function elementFromManifest(manifest, {
     }
 
     connectedCallback() {
+      this.sfReadIsland();
       super.connectedCallback(); // A leaf outside an assembly starts with the page (§7.2.1 `now`).
 
       this.toggleAttribute('data-sf-started', true);
+    }
+    /**
+     * The first values of the settings an attribute cannot hold, lists and
+     * objects, from the JSON island a server prints in the host (§5.4):
+     * `<script type="application/json" data-sf-settings>{"items": [...]}</script>`.
+     * Read once, before the first render; an attribute or a property the page
+     * set first wins. The island is taken out, so a component that reads its
+     * children never meets it.
+     */
+
+
+    sfReadIsland() {
+      const island = Array.from(this.children ?? []).find(child => child.localName === 'script' && child.hasAttribute('data-sf-settings') && /^application\/json$/iu.test(child.type));
+      if (!island) return;
+      island.remove();
+      let data;
+
+      try {
+        data = JSON.parse(island.textContent || '{}');
+      } catch (error) {
+        globalThis.console?.warn?.(`[SIMAI Framework] ${this.localName}: the data-sf-settings island is not JSON`, error);
+        return;
+      }
+
+      for (const [name, value] of Object.entries(isPlainObject(data) ? data : {})) {
+        const member = read.members.find(one => one.name === name);
+
+        if (!member || !member.writable || member.native) {
+          globalThis.console?.warn?.(`[SIMAI Framework] ${this.localName}: the island's "${name}" is not a setting`);
+          continue;
+        }
+
+        if (member.attribute ? this.hasAttribute(member.attribute) : Object.prototype.hasOwnProperty.call(this.__sfManifestData ?? {}, name)) continue;
+        this[member.property] = value;
+      }
+    }
+    /**
+     * Whether the element keeps its printed skeleton (§5.4, §7.3 phase 3):
+     * the host was printed with data-sf-first-paint="skeleton" and a setting
+     * declared late (presentation.skeleton.late) has not arrived. The first
+     * render waits for it, so the skeleton turns into content in one frame.
+     * A component whose data comes another way (a port) overrides this.
+     */
+
+
+    sfAwaitingData() {
+      if (!late.length || this.getAttribute('data-sf-first-paint') !== 'skeleton') return false;
+      return late.some(member => {
+        if (member.attribute && this.hasAttribute(member.attribute)) return false; // Read through the property: a component may keep the setting itself.
+
+        const value = this[member.property];
+        return value === undefined || value === null || Array.isArray(value) && !value.length;
+      });
     }
     /** §4.1: the element has a box in an opened container. */
 
@@ -2384,7 +2441,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-copy-
 /***/ "54287badf298"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$comment":"The source of sf-copy-button\'s element plumbing (core/js/element-manifest.js). Taken from simai/ui-control control/smart-architecture/migration/out/copy-button (migration/convert-1.3.8.mjs over simai/ui-source@5100227); standard simai.smart-component 1.3.8, vocabulary 1.1.5. Every x-todo of the conversion is decided: x-decisions says how.","id":"smart.copy-button","tag":"sf-copy-button","version":"1.1.0","kind":"leaf","family":"button","settings":{"value":{"type":"string","default":""},"target":{"type":"string","default":""},"text":{"type":"string","default":""},"label":{"type":"string","default":""},"size":{"type":"enum","values":["1/3","1/2","1","2"],"default":"1/2"},"appearance":{"type":"enum","values":["link","ghost","outline","tonal"],"default":"link"},"icon":{"type":"icon","default":"content_copy"},"success-icon":{"type":"icon","default":"check"},"success-text":{"type":"string","default":""},"error-text":{"type":"string","default":""},"duration":{"type":"number","integer":true,"min":0,"default":2000,"summary":"Milliseconds the result stays shown"}},"values":{},"events":{"copied":{"carries":{"text":"string","method":{"type":"enum","values":["native","legacy"]}},"own-verb":true},"copy-failed":{"carries":{"code":{"type":"enum","values":["empty_source","missing_target","ambiguous_source","denied"]}},"own-verb":true}},"actions":{"copy":{"waits":true,"x-outcomes":["applied","refused","cancelled"]}},"keyboard":{"host":{"Tab":"reach"}},"templates":{"default":{"file":"js/templates/default.js","$comment":"The Lit template in JavaScript, the migration form of §5.2 (§16): the build does not compile template.html yet, so a second copy of the markup would only drift from the one that draws."}},"examples":"examples.json","docs":"docs.md","lang":"lang/","accessibility":{"$comment":"The control is the native button of the sf-button (with text) or the sf-icon-button (icon only) the template draws; the result is said by a polite status. Enter and Space press the native button.","role":"button","name":{"from":["label","text"]},"keys":{"Tab":"reach"}},"css-variables":{"--sf-copy-button-display":{"type":"keyword","state":"default"},"--sf-copy-button-vertical-align":{"type":"keyword","state":"default"},"--sf-copy-button-pending-opacity":{"type":"number","state":"pending"},"--sf-copy-button-success-color":{"type":"color","state":"success"},"--sf-copy-button-error-color":{"type":"color","state":"error"}},"x-summary":"Copies a value or a target\'s text, confirms with a check and a polite announcement, and selects the text for Ctrl+C when the browser refuses the clipboard.","x-source":{"package":"framework","folder":"copy-button","manifest":"simai/ui-source@5100227 src/smart/copy-button/smart.manifest.json","converted":"control/smart-architecture/stands/17-ports-migration/out/copy-button.component.json"},"x-words":["text","label","success-text","error-text"],"x-kept":{"security":{"permissions_owner":"host","untrusted_inputs":["props","children"],"network_policy":"deny"},"ownership":{"source":"simai/ui-source","data":"host","effects":"host","forbidden_client_responsibilities":["backend access decisions","saving the width on a server"]},"presentation":{"themes":["light","dark"],"locales":["ru","en"],"responsive":["desktop","mobile","ltr","rtl","reduced-motion"],"skeleton":{"shape":"none","while_loading":"none"}},"ai_guidance":{"use_when":"Use sf-copy-button to copy an identifier, a key, a command or a code block, naming each button by what it copies.","do_not":["Do not copy generated ui-smart code","Do not leave several icon-only copy buttons named only «Копировать»"],"required_reads":["inputs","events","accessibility","provenance"],"minimal_example":"<sf-copy-button value=\\"npm i @simai/ui\\" label=\\"Скопировать команду\\"></sf-copy-button>","owner_commands":["npm run contract:verify","npm test"]}},"x-renamed":["events.sf-copy → copied: a fact takes the past form (vocabulary §5.1); sf-copy-button-copied, the old sf-copy its dated alias","events.sf-copy-error → copy-failed: the fact of a refused copy; sf-copy-button-copy-failed, the old sf-copy-error its dated alias","settings.duration: type string with the numeral default \\"2000\\" → number (§16 item 29)"],"x-decisions":["own-verb-words: the copy happened is a fact, so it takes the past form (vocabulary §5.1): copied {text, method}; a refused copy is copy-failed {code} -- the vocabulary\'s failed is a stream\'s end with {id, reason, message}, not this. Both are own verbs whose words are events.<name>.label of the language files. The old sf-copy and sf-copy-error are dated same-detail aliases (aliases.json, until 2026-12-01).","version 1.1.0: the events are renamed behind dated aliases, and copy() answers an outcome (§4.4) where it answered {text, method} or null.","copy is the action (waits): it answers {outcome: applied, text, method}, {outcome: refused, reason: <code> | busy}, or cancelled when the element is removed while the clipboard is asked. The template\'s press calls it.","key-effects: the control is the native button of the sf-button or sf-icon-button the template draws; Enter and Space press it (native activation, not an effect of the closed list), Tab reach.","words: the runtime words (copy, copied, failed, selected) are the language files\', read with sfWord; the module\'s COPY_TEXT is gone.","duration is a number (integer, min 0, default 2000); its getter keeps a negative or empty value at 2000.","template: templates.default names the Lit template js/templates/default.js, the migration form §5.2 allows; no template.html until the build compiles one (a copy nothing draws would drift).","examples: examples.json from studio.fixture.json (a command, labelled) plus a target, a visible text, an icon of its own and a size.","css-variables: five public variables of the copy button\'s own sheet (the host\'s display and alignment, the pending opacity, the success and error ink), listed in src/core/contracts/public-variables.v1.json; the control\'s own look is sf-button\'s and sf-icon-button\'s variables."]}');
+module.exports = /*#__PURE__*/JSON.parse('{"$comment":"The source of sf-copy-button\'s element plumbing (core/js/element-manifest.js). Taken from simai/ui-control control/smart-architecture/migration/out/copy-button (migration/convert-1.3.8.mjs over simai/ui-source@5100227); standard simai.smart-component 1.3.8, vocabulary 1.1.5. Every x-todo of the conversion is decided: x-decisions says how.","id":"smart.copy-button","tag":"sf-copy-button","version":"1.1.0","kind":"leaf","family":"button","settings":{"value":{"type":"string","default":""},"target":{"type":"string","default":""},"text":{"type":"string","default":""},"label":{"type":"string","default":""},"size":{"type":"enum","values":["1/3","1/2","1","2"],"default":"1/2"},"appearance":{"type":"enum","values":["link","ghost","outline","tonal"],"default":"link"},"icon":{"type":"icon","default":"content_copy"},"success-icon":{"type":"icon","default":"check"},"success-text":{"type":"string","default":""},"error-text":{"type":"string","default":""},"duration":{"type":"number","integer":true,"min":0,"default":2000,"summary":"Milliseconds the result stays shown"}},"values":{},"events":{"copied":{"carries":{"text":"string","method":{"type":"enum","values":["native","legacy"]}},"own-verb":true},"copy-failed":{"carries":{"code":{"type":"enum","values":["empty_source","missing_target","ambiguous_source","denied"]}},"own-verb":true}},"actions":{"copy":{"waits":true,"x-outcomes":["applied","refused","cancelled"]}},"keyboard":{"host":{"Tab":"reach"}},"templates":{"default":{"file":"js/templates/default.js","$comment":"The Lit template in JavaScript, the migration form of §5.2 (§16): the build does not compile template.html yet, so a second copy of the markup would only drift from the one that draws."}},"examples":"examples.json","docs":"docs.md","lang":"lang/","accessibility":{"$comment":"The control is the native button of the sf-button (with text) or the sf-icon-button (icon only) the template draws; the result is said by a polite status. Enter and Space press the native button.","role":"button","name":{"from":["label","text"]},"keys":{"Tab":"reach"}},"css-variables":{"--sf-copy-button-display":{"type":"keyword","state":"default"},"--sf-copy-button-vertical-align":{"type":"keyword","state":"default"},"--sf-copy-button-pending-opacity":{"type":"number","state":"pending"},"--sf-copy-button-success-color":{"type":"color","state":"success"},"--sf-copy-button-error-color":{"type":"color","state":"error"}},"x-summary":"Copies a value or a target\'s text, confirms with a check and a polite announcement, and selects the text for Ctrl+C when the browser refuses the clipboard.","x-source":{"package":"framework","folder":"copy-button","manifest":"simai/ui-source@5100227 src/smart/copy-button/smart.manifest.json","converted":"control/smart-architecture/stands/17-ports-migration/out/copy-button.component.json"},"x-words":["text","label","success-text","error-text"],"x-kept":{"security":{"permissions_owner":"host","untrusted_inputs":["props","children"],"network_policy":"deny"},"ownership":{"source":"simai/ui-source","data":"host","effects":"host","forbidden_client_responsibilities":["backend access decisions","saving the width on a server"]},"presentation":{"themes":["light","dark"],"locales":["ru","en"],"responsive":["desktop","mobile","ltr","rtl","reduced-motion"]},"ai_guidance":{"use_when":"Use sf-copy-button to copy an identifier, a key, a command or a code block, naming each button by what it copies.","do_not":["Do not copy generated ui-smart code","Do not leave several icon-only copy buttons named only «Копировать»"],"required_reads":["inputs","events","accessibility","provenance"],"minimal_example":"<sf-copy-button value=\\"npm i @simai/ui\\" label=\\"Скопировать команду\\"></sf-copy-button>","owner_commands":["npm run contract:verify","npm test"]}},"x-renamed":["events.sf-copy → copied: a fact takes the past form (vocabulary §5.1); sf-copy-button-copied, the old sf-copy its dated alias","events.sf-copy-error → copy-failed: the fact of a refused copy; sf-copy-button-copy-failed, the old sf-copy-error its dated alias","settings.duration: type string with the numeral default \\"2000\\" → number (§16 item 29)"],"x-decisions":["own-verb-words: the copy happened is a fact, so it takes the past form (vocabulary §5.1): copied {text, method}; a refused copy is copy-failed {code} -- the vocabulary\'s failed is a stream\'s end with {id, reason, message}, not this. Both are own verbs whose words are events.<name>.label of the language files. The old sf-copy and sf-copy-error are dated same-detail aliases (aliases.json, until 2026-12-01).","version 1.1.0: the events are renamed behind dated aliases, and copy() answers an outcome (§4.4) where it answered {text, method} or null.","copy is the action (waits): it answers {outcome: applied, text, method}, {outcome: refused, reason: <code> | busy}, or cancelled when the element is removed while the clipboard is asked. The template\'s press calls it.","key-effects: the control is the native button of the sf-button or sf-icon-button the template draws; Enter and Space press it (native activation, not an effect of the closed list), Tab reach.","words: the runtime words (copy, copied, failed, selected) are the language files\', read with sfWord; the module\'s COPY_TEXT is gone.","duration is a number (integer, min 0, default 2000); its getter keeps a negative or empty value at 2000.","template: templates.default names the Lit template js/templates/default.js, the migration form §5.2 allows; no template.html until the build compiles one (a copy nothing draws would drift).","examples: examples.json from studio.fixture.json (a command, labelled) plus a target, a visible text, an icon of its own and a size.","css-variables: five public variables of the copy button\'s own sheet (the host\'s display and alignment, the pending opacity, the success and error ink), listed in src/core/contracts/public-variables.v1.json; the control\'s own look is sf-button\'s and sf-icon-button\'s variables."]}');
 
 /***/ },
 

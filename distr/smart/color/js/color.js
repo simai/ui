@@ -1567,7 +1567,10 @@ function elementFromManifest(manifest, {
   const Base = base || globalThis.SF?.smart?.SfBaseElement;
   if (typeof Base !== 'function') throw new TypeError('elementFromManifest: a base class is required');
   const read = readManifest(manifest);
-  const generatedProps = propsFromManifest(manifest);
+  const generatedProps = propsFromManifest(manifest); // Settings that arrive after the first paint (§5.4): their skeleton holds
+  // the box until they do.
+
+  const late = [].concat(manifest.presentation?.skeleton?.late ?? []).map(name => read.members.find(member => member.name === name)).filter(Boolean);
   const words = Object.fromEntries(Object.entries(lang).map(([locale, file]) => [locale.toLowerCase(), { ...(file?.runtime || {})
   }]));
   const sourceLanguage = source || Object.keys(words)[0] || '';
@@ -1609,9 +1612,63 @@ function elementFromManifest(manifest, {
     }
 
     connectedCallback() {
+      this.sfReadIsland();
       super.connectedCallback(); // A leaf outside an assembly starts with the page (§7.2.1 `now`).
 
       this.toggleAttribute('data-sf-started', true);
+    }
+    /**
+     * The first values of the settings an attribute cannot hold, lists and
+     * objects, from the JSON island a server prints in the host (§5.4):
+     * `<script type="application/json" data-sf-settings>{"items": [...]}</script>`.
+     * Read once, before the first render; an attribute or a property the page
+     * set first wins. The island is taken out, so a component that reads its
+     * children never meets it.
+     */
+
+
+    sfReadIsland() {
+      const island = Array.from(this.children ?? []).find(child => child.localName === 'script' && child.hasAttribute('data-sf-settings') && /^application\/json$/iu.test(child.type));
+      if (!island) return;
+      island.remove();
+      let data;
+
+      try {
+        data = JSON.parse(island.textContent || '{}');
+      } catch (error) {
+        globalThis.console?.warn?.(`[SIMAI Framework] ${this.localName}: the data-sf-settings island is not JSON`, error);
+        return;
+      }
+
+      for (const [name, value] of Object.entries(isPlainObject(data) ? data : {})) {
+        const member = read.members.find(one => one.name === name);
+
+        if (!member || !member.writable || member.native) {
+          globalThis.console?.warn?.(`[SIMAI Framework] ${this.localName}: the island's "${name}" is not a setting`);
+          continue;
+        }
+
+        if (member.attribute ? this.hasAttribute(member.attribute) : Object.prototype.hasOwnProperty.call(this.__sfManifestData ?? {}, name)) continue;
+        this[member.property] = value;
+      }
+    }
+    /**
+     * Whether the element keeps its printed skeleton (§5.4, §7.3 phase 3):
+     * the host was printed with data-sf-first-paint="skeleton" and a setting
+     * declared late (presentation.skeleton.late) has not arrived. The first
+     * render waits for it, so the skeleton turns into content in one frame.
+     * A component whose data comes another way (a port) overrides this.
+     */
+
+
+    sfAwaitingData() {
+      if (!late.length || this.getAttribute('data-sf-first-paint') !== 'skeleton') return false;
+      return late.some(member => {
+        if (member.attribute && this.hasAttribute(member.attribute)) return false; // Read through the property: a component may keep the setting itself.
+
+        const value = this[member.property];
+        return value === undefined || value === null || Array.isArray(value) && !value.length;
+      });
     }
     /** §4.1: the element has a box in an opened container. */
 
@@ -2947,7 +3004,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shi
 /***/ "9a1741f2071b"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$comment":"The source of sf-color\'s element plumbing (core/js/element-manifest.js). Taken from simai/ui-control control/smart-architecture/migration/out/color (migration/convert-1.3.8.mjs from simai/ui-source@5100227 src/smart/color/smart.manifest.json); standard simai.smart-component 1.3.8, vocabulary 1.1.5. Its x-todo are decided in x-decisions.","id":"smart.color","tag":"sf-color","version":"1.2.0","kind":"leaf","family":"field","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"appearance":{"type":"enum","values":["bordered","outlined","plain"],"default":"bordered"},"swatches":{"type":"string","default":""},"clearable":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"name":{"type":"string","default":""},"label":{"type":"string","default":""},"choose-label":{"type":"string","default-from":"runtime.choose"},"clear-label":{"type":"string","default-from":"runtime.clear"}},"values":{"value":{"type":"string","default":""},"effective-value":{"type":"string","summary":"What is painted: the value when there is one, the inherited colour when there is not (§4.3); it was the getter `shown`, which the base value shown (§4.1) now names"}},"events":{"change":{"carries":{"value":"string","name":"string"}},"input":{"carries":{"value":"string","name":"string"}}},"actions":{"clear":{"x-outcomes":["applied","refused"]}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"keyboard":{"host":{"Tab":"reach","Enter":"select","Space":"select"}},"templates":{"default":{"file":"js/templates/default.js"}},"examples":"examples.json","docs":"docs.md","lang":"lang/","accessibility":{"role":"group","name":{"from":["label","choose-label"]},"keys":{"Tab":"reach","Enter":"select","Space":"select"}},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-color-gap":{"type":"length"},"--sf-color-chip-radius":{"type":"length"},"--sf-color-chip-border-color":{"type":"color","state":"rest"},"--sf-color-swatches-gap":{"type":"length"},"--sf-color-inherited-color":{"type":"color","state":"inherited"}},"x-summary":"A colour control: a swatch that opens the platform picker, the colours a product already has as presets, and a way back to an inherited colour. Built as a general part because a colour is set in a theme, in a site look, on a label and on a chart series, not only on a record.","x-source":{"package":"framework","folder":"color","manifest":"simai/ui-source@5100227 src/smart/color/smart.manifest.json","converted":"control/smart-architecture/stands/17-ports-migration/out/color.component.json"},"x-words":["label","choose-label","clear-label"],"x-kept":{"security":{"permissions_owner":"none","untrusted_inputs":["props","children"],"network_policy":"deny"},"ownership":{"source":"simai/ui-source","data":"fixture","effects":"component","forbidden_client_responsibilities":["backend access decisions","host route invention"]},"presentation":{"themes":["light","dark"],"locales":["ru","en"],"responsive":["desktop","mobile"],"skeleton":{"shape":"block","while_loading":"none"}},"ai_guidance":{"use_when":"Use sf-color wherever a colour is set -- a theme, a site look, a label, a chart series -- and especially when the colour may be left unset to inherit one.","do_not":["Do not draw the inherited colour as the value: pass it as inherited-value so «not set» stays distinguishable","Do not listen to input for saving; save on change, which fires once per committed colour","Do not copy generated ui-smart code","Do not move host data or access decisions into the component"],"required_reads":["inputs","methods","events","ownership","provenance"],"minimal_example":"<sf-color label=\\"Brand colour\\" clearable inherited-value=\\"#1f6feb\\" swatches=\\"#1f6feb|Brand blue, #e5534b|Alert\\"></sf-color>","owner_commands":["npm run contract:verify","npm test"]}},"x-renamed":["the getter shown -> the value effective-value: shown is the base value of every element (§4.1), a boolean; the colour it returned is effective-value (§4.3), a dated documentary row in aliases.json"],"x-decisions":["trait-words: the field-inherit@1 words (inherited, reset, described) live in this component\'s lang runtime until a trait folder holds them (Annex A item 13); the shared INHERITED_TEXT stays the class components\' fallback","key-effects: Enter and Space on a swatch select its colour; on the platform picker input they open it (the browser\'s own)","template: the default template stays the Lit module js/templates/default.js, the migration form §5.2 allows; template.html follows when the build compiles HTML templates","examples: examples.json written from the docs (the folder had no Studio fixture)","css-variables: five public variables read by js/templates/default.css with the role token as fallback (§6); a state the public-variables probe cannot draw at rest (hover, an outline) takes no variable of its own yet","version: 1.2.0 -- the value effective-value is added and the getter shown leaves for the base value behind a dated row; a minor (§4.10)","shown: renamed effective-value; the shim cannot serve the old name, because shown is the base value (§4.1) on every element, so the row is documentary (shim none)","actions.clear answers an outcome (§4.4): applied, or refused with reason unchanged when there was nothing to clear; setValue stays a method of the class outside the interface (a person-like write that sends input and change)","form: the host is the form control through ElementInternals (§17.1); it submits the chosen hex, empty while the inherited colour applies (§20.2); the hidden input is drawn only without ElementInternals"]}');
+module.exports = /*#__PURE__*/JSON.parse('{"$comment":"The source of sf-color\'s element plumbing (core/js/element-manifest.js). Taken from simai/ui-control control/smart-architecture/migration/out/color (migration/convert-1.3.8.mjs from simai/ui-source@5100227 src/smart/color/smart.manifest.json); standard simai.smart-component 1.3.8, vocabulary 1.1.5. Its x-todo are decided in x-decisions.","id":"smart.color","tag":"sf-color","version":"1.2.0","kind":"leaf","family":"field","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"appearance":{"type":"enum","values":["bordered","outlined","plain"],"default":"bordered"},"swatches":{"type":"string","default":""},"clearable":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"name":{"type":"string","default":""},"label":{"type":"string","default":""},"choose-label":{"type":"string","default-from":"runtime.choose"},"clear-label":{"type":"string","default-from":"runtime.clear"}},"values":{"value":{"type":"string","default":""},"effective-value":{"type":"string","summary":"What is painted: the value when there is one, the inherited colour when there is not (§4.3); it was the getter `shown`, which the base value shown (§4.1) now names"}},"events":{"change":{"carries":{"value":"string","name":"string"}},"input":{"carries":{"value":"string","name":"string"}}},"actions":{"clear":{"x-outcomes":["applied","refused"]}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"keyboard":{"host":{"Tab":"reach","Enter":"select","Space":"select"}},"templates":{"default":{"file":"js/templates/default.js"}},"examples":"examples.json","docs":"docs.md","lang":"lang/","accessibility":{"role":"group","name":{"from":["label","choose-label"]},"keys":{"Tab":"reach","Enter":"select","Space":"select"}},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-color-gap":{"type":"length"},"--sf-color-chip-radius":{"type":"length"},"--sf-color-chip-border-color":{"type":"color","state":"rest"},"--sf-color-swatches-gap":{"type":"length"},"--sf-color-inherited-color":{"type":"color","state":"inherited"}},"x-summary":"A colour control: a swatch that opens the platform picker, the colours a product already has as presets, and a way back to an inherited colour. Built as a general part because a colour is set in a theme, in a site look, on a label and on a chart series, not only on a record.","x-source":{"package":"framework","folder":"color","manifest":"simai/ui-source@5100227 src/smart/color/smart.manifest.json","converted":"control/smart-architecture/stands/17-ports-migration/out/color.component.json"},"x-words":["label","choose-label","clear-label"],"x-kept":{"security":{"permissions_owner":"none","untrusted_inputs":["props","children"],"network_policy":"deny"},"ownership":{"source":"simai/ui-source","data":"fixture","effects":"component","forbidden_client_responsibilities":["backend access decisions","host route invention"]},"presentation":{"themes":["light","dark"],"locales":["ru","en"],"responsive":["desktop","mobile"]},"ai_guidance":{"use_when":"Use sf-color wherever a colour is set -- a theme, a site look, a label, a chart series -- and especially when the colour may be left unset to inherit one.","do_not":["Do not draw the inherited colour as the value: pass it as inherited-value so «not set» stays distinguishable","Do not listen to input for saving; save on change, which fires once per committed colour","Do not copy generated ui-smart code","Do not move host data or access decisions into the component"],"required_reads":["inputs","methods","events","ownership","provenance"],"minimal_example":"<sf-color label=\\"Brand colour\\" clearable inherited-value=\\"#1f6feb\\" swatches=\\"#1f6feb|Brand blue, #e5534b|Alert\\"></sf-color>","owner_commands":["npm run contract:verify","npm test"]}},"x-renamed":["the getter shown -> the value effective-value: shown is the base value of every element (§4.1), a boolean; the colour it returned is effective-value (§4.3), a dated documentary row in aliases.json"],"x-decisions":["trait-words: the field-inherit@1 words (inherited, reset, described) live in this component\'s lang runtime until a trait folder holds them (Annex A item 13); the shared INHERITED_TEXT stays the class components\' fallback","key-effects: Enter and Space on a swatch select its colour; on the platform picker input they open it (the browser\'s own)","template: the default template stays the Lit module js/templates/default.js, the migration form §5.2 allows; template.html follows when the build compiles HTML templates","examples: examples.json written from the docs (the folder had no Studio fixture)","css-variables: five public variables read by js/templates/default.css with the role token as fallback (§6); a state the public-variables probe cannot draw at rest (hover, an outline) takes no variable of its own yet","version: 1.2.0 -- the value effective-value is added and the getter shown leaves for the base value behind a dated row; a minor (§4.10)","shown: renamed effective-value; the shim cannot serve the old name, because shown is the base value (§4.1) on every element, so the row is documentary (shim none)","actions.clear answers an outcome (§4.4): applied, or refused with reason unchanged when there was nothing to clear; setValue stays a method of the class outside the interface (a person-like write that sends input and change)","form: the host is the form control through ElementInternals (§17.1); it submits the chosen hex, empty while the inherited colour applies (§20.2); the hidden input is drawn only without ElementInternals"]}');
 
 /***/ },
 

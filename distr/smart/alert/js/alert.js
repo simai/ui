@@ -1615,7 +1615,10 @@ function elementFromManifest(manifest, {
   const Base = base || globalThis.SF?.smart?.SfBaseElement;
   if (typeof Base !== 'function') throw new TypeError('elementFromManifest: a base class is required');
   const read = readManifest(manifest);
-  const generatedProps = propsFromManifest(manifest);
+  const generatedProps = propsFromManifest(manifest); // Settings that arrive after the first paint (§5.4): their skeleton holds
+  // the box until they do.
+
+  const late = [].concat(manifest.presentation?.skeleton?.late ?? []).map(name => read.members.find(member => member.name === name)).filter(Boolean);
   const words = Object.fromEntries(Object.entries(lang).map(([locale, file]) => [locale.toLowerCase(), { ...(file?.runtime || {})
   }]));
   const sourceLanguage = source || Object.keys(words)[0] || '';
@@ -1657,9 +1660,63 @@ function elementFromManifest(manifest, {
     }
 
     connectedCallback() {
+      this.sfReadIsland();
       super.connectedCallback(); // A leaf outside an assembly starts with the page (§7.2.1 `now`).
 
       this.toggleAttribute('data-sf-started', true);
+    }
+    /**
+     * The first values of the settings an attribute cannot hold, lists and
+     * objects, from the JSON island a server prints in the host (§5.4):
+     * `<script type="application/json" data-sf-settings>{"items": [...]}</script>`.
+     * Read once, before the first render; an attribute or a property the page
+     * set first wins. The island is taken out, so a component that reads its
+     * children never meets it.
+     */
+
+
+    sfReadIsland() {
+      const island = Array.from(this.children ?? []).find(child => child.localName === 'script' && child.hasAttribute('data-sf-settings') && /^application\/json$/iu.test(child.type));
+      if (!island) return;
+      island.remove();
+      let data;
+
+      try {
+        data = JSON.parse(island.textContent || '{}');
+      } catch (error) {
+        globalThis.console?.warn?.(`[SIMAI Framework] ${this.localName}: the data-sf-settings island is not JSON`, error);
+        return;
+      }
+
+      for (const [name, value] of Object.entries(isPlainObject(data) ? data : {})) {
+        const member = read.members.find(one => one.name === name);
+
+        if (!member || !member.writable || member.native) {
+          globalThis.console?.warn?.(`[SIMAI Framework] ${this.localName}: the island's "${name}" is not a setting`);
+          continue;
+        }
+
+        if (member.attribute ? this.hasAttribute(member.attribute) : Object.prototype.hasOwnProperty.call(this.__sfManifestData ?? {}, name)) continue;
+        this[member.property] = value;
+      }
+    }
+    /**
+     * Whether the element keeps its printed skeleton (§5.4, §7.3 phase 3):
+     * the host was printed with data-sf-first-paint="skeleton" and a setting
+     * declared late (presentation.skeleton.late) has not arrived. The first
+     * render waits for it, so the skeleton turns into content in one frame.
+     * A component whose data comes another way (a port) overrides this.
+     */
+
+
+    sfAwaitingData() {
+      if (!late.length || this.getAttribute('data-sf-first-paint') !== 'skeleton') return false;
+      return late.some(member => {
+        if (member.attribute && this.hasAttribute(member.attribute)) return false; // Read through the property: a component may keep the setting itself.
+
+        const value = this[member.property];
+        return value === undefined || value === null || Array.isArray(value) && !value.length;
+      });
     }
     /** §4.1: the element has a box in an opened container. */
 
@@ -2409,7 +2466,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-alert
 /***/ "e69facaaef5a"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$comment":"The source of sf-alert\'s element plumbing (core/js/element-manifest.js). Taken from simai/ui-control control/smart-architecture/migration/out/alert (migration/convert-1.3.8.mjs over simai/ui-source@5100227); standard simai.smart-component 1.3.8, vocabulary 1.1.5. Every x-todo of the conversion is decided: x-decisions says how.","id":"smart.alert","tag":"sf-alert","version":"1.1.0","kind":"leaf","family":"alert","settings":{"status":{"type":"enum","values":["neutral","info","success","warning","error"],"default":"neutral"},"appearance":{"type":"enum","values":["default","outlined","flat"],"default":"default"},"icon":{"type":"icon","default":""},"heading":{"type":"string","default":""},"supporting-text":{"type":"string","default":""},"action-text":{"type":"string","default":""},"action":{"type":"string","default":"action"},"secondary-action-text":{"type":"string","default":""},"secondary-action":{"type":"string","default":"secondary"},"closable":{"type":"boolean","default":false},"close-label":{"type":"string","default-from":"runtime.close-label"}},"values":{},"events":{"action":{"carries":{"action":"string"},"own-verb":true},"close":{"carries":{"reason":{"type":"enum","values":["close","api"]}},"cancelable":true}},"actions":{"close":{"emits":"close","x-outcomes":["applied","refused"],"x-summary":"Dismisses the alert with reason api: sends the cancelable request close first; a page that prevents it keeps the alert"}},"keyboard":{"host":{"Tab":"reach"}},"templates":{"default":{"file":"js/templates/default.js","$comment":"The Lit template in JavaScript, the migration form of §5.2 (§16)."}},"examples":"examples.json","docs":"docs/docs.md","lang":"lang/","accessibility":{"role":"status","when":{"status":["neutral","info","success"]},"otherwise":"alert","name":{"from":["heading","aria-label"]},"keys":{"Tab":"reach"},"$comment":"The root is a live region (§4.8, §7.4.1): role status (polite) for neutral, info and success, role alert (assertive) for warning and error. Its name is the heading, else the host\'s aria-label. Tab reaches its action and close buttons."},"css-variables":{"--sf-alert-background-color":{"type":"color","state":"default"},"--sf-alert-border-color":{"type":"color","state":"default"},"--sf-alert-color":{"type":"color","state":"default"},"--sf-alert-border-width":{"type":"length","state":"default"},"--sf-alert-radius":{"type":"length","state":"default"},"--sf-alert-padding-inline":{"type":"length","state":"default"},"--sf-alert-padding-block":{"type":"length","state":"default"},"--sf-alert-gap":{"type":"length","state":"default"}},"x-summary":"Persistent inline notice with semantic roles, optional actions and dismiss behavior.","x-source":{"package":"framework","folder":"alert","manifest":"simai/ui-source@5100227 src/smart/alert/smart.manifest.json","converted":"control/smart-architecture/stands/17-ports-migration/out/alert.component.json"},"x-words":["supporting-text","action-text","secondary-action-text","close-label","text"],"x-target":{"added":{"settings":["text","tone"],"events":["press"]}},"x-renamed":["settings.title → heading: \\"title\\" is a property of HTMLElement.prototype (§3.1, §16 item 26), alias dated","events.action: 1 carried field(s) held the element, not data (§8)","events.sf-alert-action → action (the DOM name without sf-<tag>-)","events.close: 1 carried field(s) held the element, not data (§8)","events.sf-alert-close → close (the DOM name without sf-<tag>-)","settings.type → status, settings.variant → appearance: the axes\' old names, dated setting aliases","actions.dismiss → close: one action for one act, a dated action alias"],"x-kept":{"security":{"permissions_owner":"none","untrusted_inputs":["props","children"],"network_policy":"deny"},"ownership":{"source":"simai/ui-source","data":"fixture","effects":"component","forbidden_client_responsibilities":["backend access decisions","host route invention"]},"presentation":{"themes":["light","dark"],"locales":["ru","en"],"responsive":["desktop","mobile"],"skeleton":{"shape":"block","while_loading":"none"}},"ai_guidance":{"use_when":"Use sf-alert for persistent inline guidance, warning, error or success feedback inside the page flow.","do_not":["Do not use Alert for transient overlay feedback; use Toast","Do not choose a semantic type only for its color","Do not add role=alert to a static message that is already present on page load","Do not copy generated ui-smart code","Do not move host data or access decisions into the component"],"required_reads":["inputs","methods","events","ownership","provenance"],"minimal_example":"<sf-alert status=\\"info\\" title=\\"Update available\\" supporting-text=\\"Save your changes before refreshing.\\"></sf-alert>","owner_commands":["npm run contract:verify","npm test"]}},"x-decisions":["own-verb-words: action is a verb of the alert alone (the person pressed one of its two action buttons; detail.action names which); its word is lang events.action.label. It is a report, not a request the alert waits on, so it is not cancelable.","version: 1.0.0 → 1.1.0: title, type, variant and dismiss are dated aliases, close becomes a cancelable request with a reason; a minor while the aliases hold (§4.10).","a11y-role: one live region on the root (§4.8, §7.4.1): status (polite) for neutral, info and success, alert (assertive) for warning and error, written with when on status. The name is the heading, else the host\'s aria-label (§3.1).","events: close is the request the alert sends before it leaves (cancelable, reason close from its own button or api from close()); a page that prevents it keeps the alert and close() answers refused. The detail carries data only (§8): the element alert leaves it.","x-target text, tone and press (stand 24\'s record panel note): not added. text and tone would be second names of supporting-text and status, which §4 does not give one setting; a rule binds settings.supporting-text and writes status. press is the alert\'s action event (action), not a press of the alert.","template: templates.default names the Lit template js/templates/default.js, the migration form §5.2 allows.","examples: examples.json from studio.fixture.json and studio.scenario.json plus the statuses and both actions; probe.json drives the close and action buttons, the refused close and the aliases.","skeleton: none; the alert has no port and no late data: its static markup is its first paint (§5.4).","css-variables: the eight public variables the alert sheet already reads (src/core/contracts/public-variables.v1.json)."]}');
+module.exports = /*#__PURE__*/JSON.parse('{"$comment":"The source of sf-alert\'s element plumbing (core/js/element-manifest.js). Taken from simai/ui-control control/smart-architecture/migration/out/alert (migration/convert-1.3.8.mjs over simai/ui-source@5100227); standard simai.smart-component 1.3.8, vocabulary 1.1.5. Every x-todo of the conversion is decided: x-decisions says how.","id":"smart.alert","tag":"sf-alert","version":"1.1.0","kind":"leaf","family":"alert","settings":{"status":{"type":"enum","values":["neutral","info","success","warning","error"],"default":"neutral"},"appearance":{"type":"enum","values":["default","outlined","flat"],"default":"default"},"icon":{"type":"icon","default":""},"heading":{"type":"string","default":""},"supporting-text":{"type":"string","default":""},"action-text":{"type":"string","default":""},"action":{"type":"string","default":"action"},"secondary-action-text":{"type":"string","default":""},"secondary-action":{"type":"string","default":"secondary"},"closable":{"type":"boolean","default":false},"close-label":{"type":"string","default-from":"runtime.close-label"}},"values":{},"events":{"action":{"carries":{"action":"string"},"own-verb":true},"close":{"carries":{"reason":{"type":"enum","values":["close","api"]}},"cancelable":true}},"actions":{"close":{"emits":"close","x-outcomes":["applied","refused"],"x-summary":"Dismisses the alert with reason api: sends the cancelable request close first; a page that prevents it keeps the alert"}},"keyboard":{"host":{"Tab":"reach"}},"templates":{"default":{"file":"js/templates/default.js","$comment":"The Lit template in JavaScript, the migration form of §5.2 (§16)."}},"examples":"examples.json","docs":"docs/docs.md","lang":"lang/","accessibility":{"role":"status","when":{"status":["neutral","info","success"]},"otherwise":"alert","name":{"from":["heading","aria-label"]},"keys":{"Tab":"reach"},"$comment":"The root is a live region (§4.8, §7.4.1): role status (polite) for neutral, info and success, role alert (assertive) for warning and error. Its name is the heading, else the host\'s aria-label. Tab reaches its action and close buttons."},"css-variables":{"--sf-alert-background-color":{"type":"color","state":"default"},"--sf-alert-border-color":{"type":"color","state":"default"},"--sf-alert-color":{"type":"color","state":"default"},"--sf-alert-border-width":{"type":"length","state":"default"},"--sf-alert-radius":{"type":"length","state":"default"},"--sf-alert-padding-inline":{"type":"length","state":"default"},"--sf-alert-padding-block":{"type":"length","state":"default"},"--sf-alert-gap":{"type":"length","state":"default"}},"x-summary":"Persistent inline notice with semantic roles, optional actions and dismiss behavior.","x-source":{"package":"framework","folder":"alert","manifest":"simai/ui-source@5100227 src/smart/alert/smart.manifest.json","converted":"control/smart-architecture/stands/17-ports-migration/out/alert.component.json"},"x-words":["supporting-text","action-text","secondary-action-text","close-label","text"],"x-target":{"added":{"settings":["text","tone"],"events":["press"]}},"x-renamed":["settings.title → heading: \\"title\\" is a property of HTMLElement.prototype (§3.1, §16 item 26), alias dated","events.action: 1 carried field(s) held the element, not data (§8)","events.sf-alert-action → action (the DOM name without sf-<tag>-)","events.close: 1 carried field(s) held the element, not data (§8)","events.sf-alert-close → close (the DOM name without sf-<tag>-)","settings.type → status, settings.variant → appearance: the axes\' old names, dated setting aliases","actions.dismiss → close: one action for one act, a dated action alias"],"x-kept":{"security":{"permissions_owner":"none","untrusted_inputs":["props","children"],"network_policy":"deny"},"ownership":{"source":"simai/ui-source","data":"fixture","effects":"component","forbidden_client_responsibilities":["backend access decisions","host route invention"]},"presentation":{"themes":["light","dark"],"locales":["ru","en"],"responsive":["desktop","mobile"]},"ai_guidance":{"use_when":"Use sf-alert for persistent inline guidance, warning, error or success feedback inside the page flow.","do_not":["Do not use Alert for transient overlay feedback; use Toast","Do not choose a semantic type only for its color","Do not add role=alert to a static message that is already present on page load","Do not copy generated ui-smart code","Do not move host data or access decisions into the component"],"required_reads":["inputs","methods","events","ownership","provenance"],"minimal_example":"<sf-alert status=\\"info\\" title=\\"Update available\\" supporting-text=\\"Save your changes before refreshing.\\"></sf-alert>","owner_commands":["npm run contract:verify","npm test"]}},"x-decisions":["own-verb-words: action is a verb of the alert alone (the person pressed one of its two action buttons; detail.action names which); its word is lang events.action.label. It is a report, not a request the alert waits on, so it is not cancelable.","version: 1.0.0 → 1.1.0: title, type, variant and dismiss are dated aliases, close becomes a cancelable request with a reason; a minor while the aliases hold (§4.10).","a11y-role: one live region on the root (§4.8, §7.4.1): status (polite) for neutral, info and success, alert (assertive) for warning and error, written with when on status. The name is the heading, else the host\'s aria-label (§3.1).","events: close is the request the alert sends before it leaves (cancelable, reason close from its own button or api from close()); a page that prevents it keeps the alert and close() answers refused. The detail carries data only (§8): the element alert leaves it.","x-target text, tone and press (stand 24\'s record panel note): not added. text and tone would be second names of supporting-text and status, which §4 does not give one setting; a rule binds settings.supporting-text and writes status. press is the alert\'s action event (action), not a press of the alert.","template: templates.default names the Lit template js/templates/default.js, the migration form §5.2 allows.","examples: examples.json from studio.fixture.json and studio.scenario.json plus the statuses and both actions; probe.json drives the close and action buttons, the refused close and the aliases.","skeleton: none; the alert has no port and no late data: its static markup is its first paint (§5.4).","css-variables: the eight public variables the alert sheet already reads (src/core/contracts/public-variables.v1.json)."]}');
 
 /***/ },
 

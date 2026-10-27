@@ -1567,7 +1567,10 @@ function elementFromManifest(manifest, {
   const Base = base || globalThis.SF?.smart?.SfBaseElement;
   if (typeof Base !== 'function') throw new TypeError('elementFromManifest: a base class is required');
   const read = readManifest(manifest);
-  const generatedProps = propsFromManifest(manifest);
+  const generatedProps = propsFromManifest(manifest); // Settings that arrive after the first paint (§5.4): their skeleton holds
+  // the box until they do.
+
+  const late = [].concat(manifest.presentation?.skeleton?.late ?? []).map(name => read.members.find(member => member.name === name)).filter(Boolean);
   const words = Object.fromEntries(Object.entries(lang).map(([locale, file]) => [locale.toLowerCase(), { ...(file?.runtime || {})
   }]));
   const sourceLanguage = source || Object.keys(words)[0] || '';
@@ -1609,9 +1612,63 @@ function elementFromManifest(manifest, {
     }
 
     connectedCallback() {
+      this.sfReadIsland();
       super.connectedCallback(); // A leaf outside an assembly starts with the page (§7.2.1 `now`).
 
       this.toggleAttribute('data-sf-started', true);
+    }
+    /**
+     * The first values of the settings an attribute cannot hold, lists and
+     * objects, from the JSON island a server prints in the host (§5.4):
+     * `<script type="application/json" data-sf-settings>{"items": [...]}</script>`.
+     * Read once, before the first render; an attribute or a property the page
+     * set first wins. The island is taken out, so a component that reads its
+     * children never meets it.
+     */
+
+
+    sfReadIsland() {
+      const island = Array.from(this.children ?? []).find(child => child.localName === 'script' && child.hasAttribute('data-sf-settings') && /^application\/json$/iu.test(child.type));
+      if (!island) return;
+      island.remove();
+      let data;
+
+      try {
+        data = JSON.parse(island.textContent || '{}');
+      } catch (error) {
+        globalThis.console?.warn?.(`[SIMAI Framework] ${this.localName}: the data-sf-settings island is not JSON`, error);
+        return;
+      }
+
+      for (const [name, value] of Object.entries(isPlainObject(data) ? data : {})) {
+        const member = read.members.find(one => one.name === name);
+
+        if (!member || !member.writable || member.native) {
+          globalThis.console?.warn?.(`[SIMAI Framework] ${this.localName}: the island's "${name}" is not a setting`);
+          continue;
+        }
+
+        if (member.attribute ? this.hasAttribute(member.attribute) : Object.prototype.hasOwnProperty.call(this.__sfManifestData ?? {}, name)) continue;
+        this[member.property] = value;
+      }
+    }
+    /**
+     * Whether the element keeps its printed skeleton (§5.4, §7.3 phase 3):
+     * the host was printed with data-sf-first-paint="skeleton" and a setting
+     * declared late (presentation.skeleton.late) has not arrived. The first
+     * render waits for it, so the skeleton turns into content in one frame.
+     * A component whose data comes another way (a port) overrides this.
+     */
+
+
+    sfAwaitingData() {
+      if (!late.length || this.getAttribute('data-sf-first-paint') !== 'skeleton') return false;
+      return late.some(member => {
+        if (member.attribute && this.hasAttribute(member.attribute)) return false; // Read through the property: a component may keep the setting itself.
+
+        const value = this[member.property];
+        return value === undefined || value === null || Array.isArray(value) && !value.length;
+      });
     }
     /** §4.1: the element has a box in an opened container. */
 
@@ -2338,7 +2395,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-skele
 /***/ "1b576216d612"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$comment":"The source of sf-skeleton\'s element plumbing (core/js/element-manifest.js). Taken from simai/ui-control control/smart-architecture/migration/out/skeleton (migration/convert-1.3.8.mjs over simai/ui-source@5100227); standard simai.smart-component 1.3.8, vocabulary 1.1.5. Every x-todo of the conversion is decided: x-decisions says how.","id":"smart.skeleton","tag":"sf-skeleton","version":"1.1.0","kind":"leaf","family":"skeleton","settings":{"size":{"type":"enum","values":["1/7","1/6","1/5","1/4","1/3","1/2","1","2","3","4","5","6","7"],"default":"1"},"width":{"type":"string","default":"100%"},"height":{"type":"string","default":""},"count":{"type":"number","default":1,"integer":true,"min":1,"max":20},"animation":{"type":"enum","values":["pulse","wave","none"],"default":"pulse"},"kind":{"type":"enum","values":["text","circle","square","rounded"],"default":"text"},"type":{"type":"enum","values":["","icon"],"default":""},"items":{"type":"string","default":""}},"values":{},"events":{},"actions":{},"templates":{"default":{"file":"js/templates/default.js","$comment":"The Lit template in JavaScript, the migration form of §5.2 (§16)."}},"examples":"examples.json","docs":"docs/docs.md","lang":"lang/","accessibility":{"role":"none","name":"none","keys":{},"$comment":"The placeholder geometry is aria-hidden: it has no role and no name. The region that waits for data says it is busy (aria-busy) and names itself; the skeleton draws only."},"css-variables":{"--sf-skeleton-background-color":{"type":"color","state":"default"},"--sf-skeleton-highlight-color":{"type":"color","state":"default"},"--sf-skeleton-radius":{"type":"length","state":"default"},"--sf-skeleton-gap":{"type":"length","state":"default"},"--sf-skeleton-animation-duration":{"type":"time","state":"default"}},"x-summary":"Decorative loading placeholder that reserves source-backed content geometry with semantic tokens and reduced-motion support.","x-source":{"package":"framework","folder":"skeleton","manifest":"simai/ui-source@5100227 src/smart/skeleton/smart.manifest.json","converted":"control/smart-architecture/stands/17-ports-migration/out/skeleton.component.json"},"x-kept":{"security":{"permissions_owner":"none","untrusted_inputs":["props","children"],"network_policy":"deny"},"ownership":{"source":"simai/ui-source","data":"fixture","effects":"component","forbidden_client_responsibilities":["backend access decisions","host route invention"]},"presentation":{"themes":["light","dark"],"locales":["ru","en"],"responsive":["desktop","mobile","reduced motion","content-matched geometry"],"skeleton":{"shape":"none","while_loading":"none"}},"ai_guidance":{"use_when":"Use sf-skeleton while content with predictable geometry is loading. Match the expected text, avatar, media or card shape closely and set aria-busy on the host content region until replacement is complete.","do_not":["Do not copy generated ui-smart code","Do not move host data or access decisions into the component","Do not use Skeleton as progress, empty, success or error feedback","Do not make placeholder geometry focusable or announce each shape","Do not use literal dimensions when a Framework token exists","Do not keep aria-busy true after real content is ready"],"required_reads":["inputs","methods","events","ownership","provenance"],"minimal_example":"<sf-skeleton></sf-skeleton>","owner_commands":["npm run contract:verify","npm test"]}},"x-renamed":["settings.variant: the kind axis\'s old name, a dated setting alias of kind"],"x-decisions":["version: 1.0.0 → 1.1.0: variant is a dated alias of kind; a minor while it holds (§4.10).","a11y-role: none. The generated placeholder geometry is aria-hidden; the region that waits says aria-busy and names itself.","a11y-name: none, for the same reason: nothing is read out (§4.8 allows \\"none\\").","number-type: count is an integer from 1 to 20, as the template clamps it.","template: templates.default names the Lit template js/templates/default.js, the migration form §5.2 allows.","skeleton: sf-skeleton is CSS bars drawn from settings only; it needs no skeleton.html of its own, its static markup is its first paint (§5.4). A component with late data writes its own skeleton.html; sf-skeleton is what a page draws by hand.","items: kept as a string of attribute sets (name=value, … | …); only aria-* and data-* attributes reach the bars.","examples: examples.json from studio.fixture.json plus the shapes and the animations; probe.json checks the count, the hidden geometry and the alias.","css-variables: five public variables read by the class sheet with the role token as fallback (src/core/contracts/public-variables.v1.json)."]}');
+module.exports = /*#__PURE__*/JSON.parse('{"$comment":"The source of sf-skeleton\'s element plumbing (core/js/element-manifest.js). Taken from simai/ui-control control/smart-architecture/migration/out/skeleton (migration/convert-1.3.8.mjs over simai/ui-source@5100227); standard simai.smart-component 1.3.8, vocabulary 1.1.5. Every x-todo of the conversion is decided: x-decisions says how.","id":"smart.skeleton","tag":"sf-skeleton","version":"1.1.0","kind":"leaf","family":"skeleton","settings":{"size":{"type":"enum","values":["1/7","1/6","1/5","1/4","1/3","1/2","1","2","3","4","5","6","7"],"default":"1"},"width":{"type":"string","default":"100%"},"height":{"type":"string","default":""},"count":{"type":"number","default":1,"integer":true,"min":1,"max":20},"animation":{"type":"enum","values":["pulse","wave","none"],"default":"pulse"},"kind":{"type":"enum","values":["text","circle","square","rounded"],"default":"text"},"type":{"type":"enum","values":["","icon"],"default":""},"items":{"type":"string","default":""}},"values":{},"events":{},"actions":{},"templates":{"default":{"file":"js/templates/default.js","$comment":"The Lit template in JavaScript, the migration form of §5.2 (§16)."}},"examples":"examples.json","docs":"docs/docs.md","lang":"lang/","accessibility":{"role":"none","name":"none","keys":{},"$comment":"The placeholder geometry is aria-hidden: it has no role and no name. The region that waits for data says it is busy (aria-busy) and names itself; the skeleton draws only."},"css-variables":{"--sf-skeleton-background-color":{"type":"color","state":"default"},"--sf-skeleton-highlight-color":{"type":"color","state":"default"},"--sf-skeleton-radius":{"type":"length","state":"default"},"--sf-skeleton-gap":{"type":"length","state":"default"},"--sf-skeleton-animation-duration":{"type":"time","state":"default"}},"x-summary":"Decorative loading placeholder that reserves source-backed content geometry with semantic tokens and reduced-motion support.","x-source":{"package":"framework","folder":"skeleton","manifest":"simai/ui-source@5100227 src/smart/skeleton/smart.manifest.json","converted":"control/smart-architecture/stands/17-ports-migration/out/skeleton.component.json"},"x-kept":{"security":{"permissions_owner":"none","untrusted_inputs":["props","children"],"network_policy":"deny"},"ownership":{"source":"simai/ui-source","data":"fixture","effects":"component","forbidden_client_responsibilities":["backend access decisions","host route invention"]},"presentation":{"themes":["light","dark"],"locales":["ru","en"],"responsive":["desktop","mobile","reduced motion","content-matched geometry"]},"ai_guidance":{"use_when":"Use sf-skeleton while content with predictable geometry is loading. Match the expected text, avatar, media or card shape closely and set aria-busy on the host content region until replacement is complete.","do_not":["Do not copy generated ui-smart code","Do not move host data or access decisions into the component","Do not use Skeleton as progress, empty, success or error feedback","Do not make placeholder geometry focusable or announce each shape","Do not use literal dimensions when a Framework token exists","Do not keep aria-busy true after real content is ready"],"required_reads":["inputs","methods","events","ownership","provenance"],"minimal_example":"<sf-skeleton></sf-skeleton>","owner_commands":["npm run contract:verify","npm test"]}},"x-renamed":["settings.variant: the kind axis\'s old name, a dated setting alias of kind"],"x-decisions":["version: 1.0.0 → 1.1.0: variant is a dated alias of kind; a minor while it holds (§4.10).","a11y-role: none. The generated placeholder geometry is aria-hidden; the region that waits says aria-busy and names itself.","a11y-name: none, for the same reason: nothing is read out (§4.8 allows \\"none\\").","number-type: count is an integer from 1 to 20, as the template clamps it.","template: templates.default names the Lit template js/templates/default.js, the migration form §5.2 allows.","skeleton: sf-skeleton is CSS bars drawn from settings only; it needs no skeleton.html of its own, its static markup is its first paint (§5.4). A component with late data writes its own skeleton.html; sf-skeleton is what a page draws by hand.","items: kept as a string of attribute sets (name=value, … | …); only aria-* and data-* attributes reach the bars.","examples: examples.json from studio.fixture.json plus the shapes and the animations; probe.json checks the count, the hidden geometry and the alias.","css-variables: five public variables read by the class sheet with the role token as fallback (src/core/contracts/public-variables.v1.json)."]}');
 
 /***/ },
 

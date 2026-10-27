@@ -1567,7 +1567,10 @@ function elementFromManifest(manifest, {
   const Base = base || globalThis.SF?.smart?.SfBaseElement;
   if (typeof Base !== 'function') throw new TypeError('elementFromManifest: a base class is required');
   const read = readManifest(manifest);
-  const generatedProps = propsFromManifest(manifest);
+  const generatedProps = propsFromManifest(manifest); // Settings that arrive after the first paint (§5.4): their skeleton holds
+  // the box until they do.
+
+  const late = [].concat(manifest.presentation?.skeleton?.late ?? []).map(name => read.members.find(member => member.name === name)).filter(Boolean);
   const words = Object.fromEntries(Object.entries(lang).map(([locale, file]) => [locale.toLowerCase(), { ...(file?.runtime || {})
   }]));
   const sourceLanguage = source || Object.keys(words)[0] || '';
@@ -1609,9 +1612,63 @@ function elementFromManifest(manifest, {
     }
 
     connectedCallback() {
+      this.sfReadIsland();
       super.connectedCallback(); // A leaf outside an assembly starts with the page (§7.2.1 `now`).
 
       this.toggleAttribute('data-sf-started', true);
+    }
+    /**
+     * The first values of the settings an attribute cannot hold, lists and
+     * objects, from the JSON island a server prints in the host (§5.4):
+     * `<script type="application/json" data-sf-settings>{"items": [...]}</script>`.
+     * Read once, before the first render; an attribute or a property the page
+     * set first wins. The island is taken out, so a component that reads its
+     * children never meets it.
+     */
+
+
+    sfReadIsland() {
+      const island = Array.from(this.children ?? []).find(child => child.localName === 'script' && child.hasAttribute('data-sf-settings') && /^application\/json$/iu.test(child.type));
+      if (!island) return;
+      island.remove();
+      let data;
+
+      try {
+        data = JSON.parse(island.textContent || '{}');
+      } catch (error) {
+        globalThis.console?.warn?.(`[SIMAI Framework] ${this.localName}: the data-sf-settings island is not JSON`, error);
+        return;
+      }
+
+      for (const [name, value] of Object.entries(isPlainObject(data) ? data : {})) {
+        const member = read.members.find(one => one.name === name);
+
+        if (!member || !member.writable || member.native) {
+          globalThis.console?.warn?.(`[SIMAI Framework] ${this.localName}: the island's "${name}" is not a setting`);
+          continue;
+        }
+
+        if (member.attribute ? this.hasAttribute(member.attribute) : Object.prototype.hasOwnProperty.call(this.__sfManifestData ?? {}, name)) continue;
+        this[member.property] = value;
+      }
+    }
+    /**
+     * Whether the element keeps its printed skeleton (§5.4, §7.3 phase 3):
+     * the host was printed with data-sf-first-paint="skeleton" and a setting
+     * declared late (presentation.skeleton.late) has not arrived. The first
+     * render waits for it, so the skeleton turns into content in one frame.
+     * A component whose data comes another way (a port) overrides this.
+     */
+
+
+    sfAwaitingData() {
+      if (!late.length || this.getAttribute('data-sf-first-paint') !== 'skeleton') return false;
+      return late.some(member => {
+        if (member.attribute && this.hasAttribute(member.attribute)) return false; // Read through the property: a component may keep the setting itself.
+
+        const value = this[member.property];
+        return value === undefined || value === null || Array.isArray(value) && !value.length;
+      });
     }
     /** §4.1: the element has a box in an opened container. */
 
@@ -2359,7 +2416,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-empty
 /***/ "91caf1e1e58a"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$comment":"The source of sf-empty-state\'s element plumbing (core/js/element-manifest.js). Taken from simai/ui-control control/smart-architecture/migration/out/empty-state (migration/convert-1.3.8.mjs over simai/ui-source@5100227); standard simai.smart-component 1.3.8, vocabulary 1.1.5. Every x-todo of the conversion is decided: x-decisions says how.","id":"smart.empty-state","tag":"sf-empty-state","version":"1.1.0","kind":"leaf","family":"state","settings":{"kind":{"type":"enum","values":["no-data","nothing-found","no-access","error"],"default":"no-data"},"size":{"type":"enum","values":["1/3","1/2","1","2"],"default":"1"},"icon":{"type":"icon","default":""},"heading":{"type":"string","default":""},"text":{"type":"string","default":""},"heading-level":{"type":"number","default":3,"integer":true,"min":2,"max":6},"layout":{"type":"enum","values":["block","inline"],"default":"block"},"live":{"type":"enum","values":["auto","alert","off"],"default":"auto"},"actions":{"type":"list","of":{"id":"id","text":"string","appearance":"string"},"x-summary":"The buttons to draw, each sending action {id}; unset, an error offers «Повторить» (id retry)"}},"values":{},"events":{"action":{"carries":{"id":"string"},"own-verb":true}},"actions":{},"slots":{"actions":{"$comment":"Plain page buttons drawn before the actions list; they ask through the page\'s own handlers (§4.5)."}},"keyboard":{"host":{"Tab":"reach"}},"templates":{"default":{"file":"js/templates/default.js","$comment":"The Lit template in JavaScript, the migration form of §5.2 (§16)."}},"examples":"examples.json","docs":"docs.md","lang":"lang/","accessibility":{"role":"status","when":{"live":"auto","kind":["nothing-found","error"]},"otherwise":"none","name":{"from":["heading"]},"keys":{"Tab":"reach"},"$comment":"live auto: nothing-found and error are a polite status, the others say nothing; live alert: role alert (an error the person caused); live off: no role, the host announces. The name is the heading, the kind\'s words of the language file when unset; it is a real heading at heading-level in the block form, none in the inline form. Enter and Space belong to the action buttons (role button), not to the empty state."},"css-variables":{"--sf-empty-state-max-inline-size":{"type":"length","state":"default"},"--sf-empty-state-color":{"type":"color","state":"default"},"--sf-empty-state-text-color":{"type":"color","state":"default"},"--sf-empty-state-gap":{"type":"length","state":"default"},"--sf-empty-state-padding-block":{"type":"length","state":"default"},"--sf-empty-state-actions-gap":{"type":"length","state":"default"}},"x-summary":"What a list, a panel or a page says when it has nothing to show: no data, nothing found, no access or an error, with an icon, a real heading, a sentence and actions.","x-source":{"package":"framework","folder":"empty-state","manifest":"simai/ui-source@5100227 src/smart/empty-state/smart.manifest.json","converted":"control/smart-architecture/stands/17-ports-migration/out/empty-state.component.json"},"x-words":["text"],"x-renamed":["settings.title → heading: \\"title\\" is a property of HTMLElement.prototype (§3.1, §16 item 26), alias dated","events.sf-empty-state-action → action (the DOM name without sf-<tag>-)"],"x-kept":{"security":{"permissions_owner":"host","untrusted_inputs":["props","children"],"network_policy":"deny"},"ownership":{"source":"simai/ui-source","data":"host","effects":"host","forbidden_client_responsibilities":["backend access decisions","saving the width on a server"]},"presentation":{"themes":["light","dark"],"locales":["ru","en"],"responsive":["desktop","mobile","ltr","rtl","reduced-motion"],"skeleton":{"shape":"block","while_loading":"none"}},"ai_guidance":{"use_when":"Use sf-empty-state wherever a list, panel or page has nothing to show, choosing the kind for the reason.","do_not":["Do not copy generated ui-smart code","Do not show an empty state while data is still loading; that is the skeleton\'s","Do not hand-build an empty message with a paragraph"],"required_reads":["inputs","contracts","events","accessibility","provenance"],"minimal_example":"<sf-empty-state kind=\\"nothing-found\\" size=\\"1/2\\" heading-level=\\"4\\"></sf-empty-state>","owner_commands":["npm run contract:verify","npm test"]}},"x-decisions":["own-verb-words: action is a verb of the empty state alone (the person pressed one of its buttons; detail.id names which, retry for the default of an error); its word is lang events.action.label. The vocabulary\'s retry repeats one write with its key, which this is not.","version: 1.0.0 → 1.1.0: title is a dated alias of heading, heading-level is a number, actions is declared; a minor while the alias holds (§4.10).","key-effects: the role is status (a live region) and gives no keys; Enter and Space press the action buttons, which are buttons of their own (sf-button), so the empty state maps only Tab: reach.","a11y-role: status written with when {live: auto, kind: nothing-found | error}; live alert gives role alert, live off and the other kinds no role (otherwise none). The name is the heading, else the kind\'s words of the language file.","number-type: heading-level is an integer 2..6 (§16 item 29; §7.4.1 a heading takes its level from heading-level).","actions: the list setting the element already had as a property, declared with its entries {id, text, appearance}; the slot actions holds plain page buttons.","template: templates.default names the Lit template js/templates/default.js, the migration form §5.2 allows.","examples: examples.json from studio.fixture.json plus each kind, the inline form and the actions; probe.json drives the retry button, the live roles, the heading level and the alias.","skeleton: none; the empty state is what shows when data came and was empty; it has no port and no late data of its own (§5.4).","css-variables: six public variables read by its own sheet with the role token as fallback (src/core/contracts/public-variables.v1.json)."]}');
+module.exports = /*#__PURE__*/JSON.parse('{"$comment":"The source of sf-empty-state\'s element plumbing (core/js/element-manifest.js). Taken from simai/ui-control control/smart-architecture/migration/out/empty-state (migration/convert-1.3.8.mjs over simai/ui-source@5100227); standard simai.smart-component 1.3.8, vocabulary 1.1.5. Every x-todo of the conversion is decided: x-decisions says how.","id":"smart.empty-state","tag":"sf-empty-state","version":"1.1.0","kind":"leaf","family":"state","settings":{"kind":{"type":"enum","values":["no-data","nothing-found","no-access","error"],"default":"no-data"},"size":{"type":"enum","values":["1/3","1/2","1","2"],"default":"1"},"icon":{"type":"icon","default":""},"heading":{"type":"string","default":""},"text":{"type":"string","default":""},"heading-level":{"type":"number","default":3,"integer":true,"min":2,"max":6},"layout":{"type":"enum","values":["block","inline"],"default":"block"},"live":{"type":"enum","values":["auto","alert","off"],"default":"auto"},"actions":{"type":"list","of":{"id":"id","text":"string","appearance":"string"},"x-summary":"The buttons to draw, each sending action {id}; unset, an error offers «Повторить» (id retry)"}},"values":{},"events":{"action":{"carries":{"id":"string"},"own-verb":true}},"actions":{},"slots":{"actions":{"$comment":"Plain page buttons drawn before the actions list; they ask through the page\'s own handlers (§4.5)."}},"keyboard":{"host":{"Tab":"reach"}},"templates":{"default":{"file":"js/templates/default.js","$comment":"The Lit template in JavaScript, the migration form of §5.2 (§16)."}},"examples":"examples.json","docs":"docs.md","lang":"lang/","accessibility":{"role":"status","when":{"live":"auto","kind":["nothing-found","error"]},"otherwise":"none","name":{"from":["heading"]},"keys":{"Tab":"reach"},"$comment":"live auto: nothing-found and error are a polite status, the others say nothing; live alert: role alert (an error the person caused); live off: no role, the host announces. The name is the heading, the kind\'s words of the language file when unset; it is a real heading at heading-level in the block form, none in the inline form. Enter and Space belong to the action buttons (role button), not to the empty state."},"css-variables":{"--sf-empty-state-max-inline-size":{"type":"length","state":"default"},"--sf-empty-state-color":{"type":"color","state":"default"},"--sf-empty-state-text-color":{"type":"color","state":"default"},"--sf-empty-state-gap":{"type":"length","state":"default"},"--sf-empty-state-padding-block":{"type":"length","state":"default"},"--sf-empty-state-actions-gap":{"type":"length","state":"default"}},"x-summary":"What a list, a panel or a page says when it has nothing to show: no data, nothing found, no access or an error, with an icon, a real heading, a sentence and actions.","x-source":{"package":"framework","folder":"empty-state","manifest":"simai/ui-source@5100227 src/smart/empty-state/smart.manifest.json","converted":"control/smart-architecture/stands/17-ports-migration/out/empty-state.component.json"},"x-words":["text"],"x-renamed":["settings.title → heading: \\"title\\" is a property of HTMLElement.prototype (§3.1, §16 item 26), alias dated","events.sf-empty-state-action → action (the DOM name without sf-<tag>-)"],"x-kept":{"security":{"permissions_owner":"host","untrusted_inputs":["props","children"],"network_policy":"deny"},"ownership":{"source":"simai/ui-source","data":"host","effects":"host","forbidden_client_responsibilities":["backend access decisions","saving the width on a server"]},"presentation":{"themes":["light","dark"],"locales":["ru","en"],"responsive":["desktop","mobile","ltr","rtl","reduced-motion"]},"ai_guidance":{"use_when":"Use sf-empty-state wherever a list, panel or page has nothing to show, choosing the kind for the reason.","do_not":["Do not copy generated ui-smart code","Do not show an empty state while data is still loading; that is the skeleton\'s","Do not hand-build an empty message with a paragraph"],"required_reads":["inputs","contracts","events","accessibility","provenance"],"minimal_example":"<sf-empty-state kind=\\"nothing-found\\" size=\\"1/2\\" heading-level=\\"4\\"></sf-empty-state>","owner_commands":["npm run contract:verify","npm test"]}},"x-decisions":["own-verb-words: action is a verb of the empty state alone (the person pressed one of its buttons; detail.id names which, retry for the default of an error); its word is lang events.action.label. The vocabulary\'s retry repeats one write with its key, which this is not.","version: 1.0.0 → 1.1.0: title is a dated alias of heading, heading-level is a number, actions is declared; a minor while the alias holds (§4.10).","key-effects: the role is status (a live region) and gives no keys; Enter and Space press the action buttons, which are buttons of their own (sf-button), so the empty state maps only Tab: reach.","a11y-role: status written with when {live: auto, kind: nothing-found | error}; live alert gives role alert, live off and the other kinds no role (otherwise none). The name is the heading, else the kind\'s words of the language file.","number-type: heading-level is an integer 2..6 (§16 item 29; §7.4.1 a heading takes its level from heading-level).","actions: the list setting the element already had as a property, declared with its entries {id, text, appearance}; the slot actions holds plain page buttons.","template: templates.default names the Lit template js/templates/default.js, the migration form §5.2 allows.","examples: examples.json from studio.fixture.json plus each kind, the inline form and the actions; probe.json drives the retry button, the live roles, the heading level and the alias.","skeleton: none; the empty state is what shows when data came and was empty; it has no port and no late data of its own (§5.4).","css-variables: six public variables read by its own sheet with the role token as fallback (src/core/contracts/public-variables.v1.json)."]}');
 
 /***/ },
 
