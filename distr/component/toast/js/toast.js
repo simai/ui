@@ -585,11 +585,13 @@ class ComponentObserver {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   followLanguage: () => (/* binding */ followLanguage),
 /* harmony export */   isRussianPage: () => (/* binding */ isRussianPage),
 /* harmony export */   language: () => (/* binding */ language),
 /* harmony export */   pageLanguage: () => (/* binding */ pageLanguage),
 /* harmony export */   pageLocale: () => (/* binding */ pageLocale),
-/* harmony export */   pageText: () => (/* binding */ pageText)
+/* harmony export */   pageText: () => (/* binding */ pageText),
+/* harmony export */   pageWord: () => (/* binding */ pageWord)
 /* harmony export */ });
 // What language a component speaks, and how a product adds one.
 //
@@ -691,10 +693,27 @@ function langOwner(node) {
   }
 
   return null;
+} // The language of a part of the page wins over the language chosen for the
+// whole page (owner, 2026-10-26; standard simai.smart-component 1.3.8 §11.1):
+//   1. a word given on the element itself (the component's own attribute);
+//   2. the nearest [lang] below <html>;
+//   3. the page's choice, SF.language.use(), which also sets <html lang>;
+//   4. <html lang>;
+//   5. English.
+// Until 2026-10-27 the choice won over a section's [lang], so an English
+// section inside a Russian page that had called use('ru') spoke Russian.
+
+
+function languageSource(node) {
+  const owner = langOwner(node);
+  const root = globalThis.document?.documentElement ?? null;
+  if (owner && owner !== root) return owner.getAttribute('lang');
+  if (STORE.chosen) return STORE.chosen;
+  return owner?.getAttribute('lang') || root?.lang || 'en';
 }
 /**
- * The page's language for this node: the nearest [lang], else the document's,
- * else English — unless a product has chosen one explicitly.
+ * The page's language for this node: the nearest [lang] below <html>, else
+ * the language the page chose, else <html lang>, else English.
  */
 
 
@@ -704,18 +723,68 @@ function pageLanguage(node) {
   // lang="pt-BR" is. The chosen value kept its region and answered 'pt-br',
   // which matched no dictionary keyed by language and made isRussianPage false
   // on a page that chose 'ru-RU'. The region stays in pageLocale.
-  if (STORE.chosen) return STORE.chosen.split('-')[0];
-  const owner = langOwner(node);
-  const value = owner?.getAttribute('lang') || globalThis.document?.documentElement?.lang || 'en';
-  return normalise(value).split('-')[0] || 'en';
+  return normalise(languageSource(node)).split('-')[0] || 'en';
 }
 /** The page's language with its region kept, which is what formatting wants. */
 
 function pageLocale(node) {
-  if (STORE.chosen) return STORE.chosen;
-  const owner = langOwner(node);
-  return normalise(owner?.getAttribute('lang') || globalThis.document?.documentElement?.lang || 'en');
+  return normalise(languageSource(node)) || 'en';
 }
+/**
+ * Follows `lang` in the document (§11.1 «changes are followed»): one observer
+ * for the page, whichever bundle starts it, and the elements under a changed
+ * [lang] draw again. `element.requestComponentUpdate('language')` is what a
+ * Smart element does; anything else passes its own `redraw`. Returns the way
+ * to stop following.
+ */
+
+function followLanguage(element, redraw = () => element.requestComponentUpdate?.('language')) {
+  const root = typeof globalThis !== 'undefined' ? globalThis : {};
+  const doc = element?.ownerDocument ?? root.document;
+  const Observer = doc?.defaultView?.MutationObserver ?? root.MutationObserver;
+  if (!doc?.documentElement || typeof Observer !== 'function') return () => {};
+
+  if (!root.__sfLanguageWatch || root.__sfLanguageWatch.document !== doc) {
+    const watch = {
+      document: doc,
+      elements: new Map(),
+      observer: null
+    };
+    watch.observer = new Observer(records => {
+      const changed = [...new Set(records.map(record => record.target))];
+
+      for (const [one, again] of [...watch.elements]) {
+        if (changed.some(target => within(target, one))) {
+          try {
+            again();
+          } catch {// One element that fails to draw does not keep the others in the
+            // old language.
+          }
+        }
+      }
+    });
+    watch.observer.observe(doc.documentElement, {
+      attributes: true,
+      attributeFilter: ['lang'],
+      subtree: true
+    });
+    root.__sfLanguageWatch = watch;
+  }
+
+  const watch = root.__sfLanguageWatch;
+  watch.elements.set(element, redraw);
+  return () => watch.elements.delete(element);
+} // Whether `node` is `target` or below it, across shadow roots.
+
+function within(target, node) {
+  for (let current = node; current;) {
+    if (current === target) return true;
+    current = current.parentNode || current.host || null;
+  }
+
+  return false;
+}
+
 function isRussianPage(node) {
   return pageLanguage(node) === 'ru';
 }
@@ -738,6 +807,87 @@ function pageText(dictionary, key, node, component) {
   }
 
   return key;
+} // Missing words are said once per component, word and language: a page that
+// draws a hundred rows must not print a hundred warnings. The marks are kept on
+// the shared global, because every bundle carries this module.
+
+function warnWord(owner, key, locale, said) {
+  const root = typeof globalThis !== 'undefined' ? globalThis : {};
+  if (!(root.__sfWordWarnings instanceof Set)) root.__sfWordWarnings = new Set();
+  const mark = `${owner}|${key}|${locale}|${said}`;
+  if (root.__sfWordWarnings.has(mark)) return;
+
+  root.__sfWordWarnings.add(mark);
+
+  globalThis.console?.warn?.(`[SIMAI Framework] ${owner || 'component'}: no word "${key}" for ${locale}${said === 'key' ? '; the key is shown' : `; said in ${said}`}`);
+}
+
+function fill(text, locale, count, vars) {
+  return String(text).replace(/\{([a-z][\w-]*)\}/giu, (whole, name) => {
+    if (name === 'n' && count !== undefined) {
+      try {
+        return new Intl.NumberFormat(locale).format(count);
+      } catch {
+        return String(count);
+      }
+    }
+
+    return vars && Object.prototype.hasOwnProperty.call(vars, name) ? String(vars[name]) : whole;
+  });
+}
+/**
+ * A component's own word (standard simai.smart-component 1.3.8 §11, §11.1).
+ *
+ * `dictionary` is `{<locale>: {<key>: word}}` from the component's language
+ * files. A word given on the element itself is the caller's to prefer; this
+ * resolves the rest: words registered for the element's language, then the
+ * shipped ones, the language without its region, English, the component's
+ * source language and, last, the key. The last two warn once. A word that
+ * takes a number is an object of plural forms chosen by Intl.PluralRules of
+ * the language the word was found in; `{n}` is the number in that language's
+ * format and `{name}` takes `vars.name`.
+ */
+
+
+function pageWord(dictionary, key, node, {
+  component,
+  source = '',
+  count,
+  vars
+} = {}) {
+  const owner = component ?? componentOf(node);
+  const locale = pageLocale(node);
+  const order = chain(locale);
+  const sourceLanguage = normalise(source);
+  if (sourceLanguage && !order.includes(sourceLanguage)) order.push(sourceLanguage);
+
+  for (const candidate of order) {
+    const added = owner ? REGISTERED.get(owner)?.get(candidate)?.[key] : undefined;
+    const word = added !== undefined ? added : dictionary?.[candidate]?.[key];
+    if (word === undefined || word === null) continue;
+    if (candidate === sourceLanguage && !chain(locale).includes(candidate)) warnWord(owner, key, locale, candidate);
+
+    if (typeof word === 'object') {
+      let form = 'other';
+
+      if (count !== undefined) {
+        try {
+          form = new Intl.PluralRules(candidate).select(Number(count));
+        } catch {
+          form = 'other';
+        }
+      }
+
+      const picked = word[form] ?? word.other;
+      if (picked === undefined) continue;
+      return fill(picked, candidate, count, vars);
+    }
+
+    return fill(word, candidate, count, vars);
+  }
+
+  warnWord(owner, key, locale, 'key');
+  return key;
 }
 const language = {
   /** What the page resolves to for this node, region and all. */
@@ -753,7 +903,24 @@ const language = {
   use(value) {
     const next = value === null || value === undefined ? null : normalise(value);
     if (next === STORE.chosen) return STORE.chosen;
-    STORE.chosen = next;
+    STORE.chosen = next; // The choice is the page's language: <html lang> says it too (§11.1), so
+    // the browser, a screen reader and CSS :lang() agree with the words.
+    // use(null) gives the markup's own language back.
+
+    const root = globalThis.document?.documentElement;
+
+    if (root) {
+      const holder = globalThis;
+
+      if (next) {
+        if (holder.__sfMarkupLanguage === undefined) holder.__sfMarkupLanguage = root.getAttribute('lang');
+        if (root.getAttribute('lang') !== next) root.setAttribute('lang', next);
+      } else if (holder.__sfMarkupLanguage !== undefined) {
+        if (holder.__sfMarkupLanguage === null) root.removeAttribute('lang');else root.setAttribute('lang', holder.__sfMarkupLanguage);
+        holder.__sfMarkupLanguage = undefined;
+      }
+    }
+
     announce();
     return STORE.chosen;
   },

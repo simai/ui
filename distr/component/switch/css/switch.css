@@ -283,16 +283,16 @@
     --sf-switch-description--font-size: var(--sf-text-size-1);
     --sf-switch-description--line-height: var(--sf-text-height-1);
   }
-  .sf-switch.active[\:not-has\(input\:disabled\)] .sf-switch-inner {
+  .sf-switch[\:has\(input\:checked\)][\:not-has\(input\:disabled\)] .sf-switch-inner {
     --sf-switch-inner--background-color: var(--sf-on-primary);
   }
-  .sf-switch.active:not(:has(input:disabled)) .sf-switch-inner {
+  .sf-switch:has(input:checked):not(:has(input:disabled)) .sf-switch-inner {
     --sf-switch-inner--background-color: var(--sf-on-primary);
   }
-  .sf-switch.active[\:not-has\(input\:disabled\)] .sf-switch-toggler {
+  .sf-switch[\:has\(input\:checked\)][\:not-has\(input\:disabled\)] .sf-switch-toggler {
     --sf-switch-toggler--background-color: var(--sf-primary);
   }
-  .sf-switch.active:not(:has(input:disabled)) .sf-switch-toggler {
+  .sf-switch:has(input:checked):not(:has(input:disabled)) .sf-switch-toggler {
     --sf-switch-toggler--background-color: var(--sf-primary);
   }
   /* The track stands as tall as the line of its size, which is the rule the
@@ -353,7 +353,10 @@
     transition: transform var(--sf-switch--duration) var(--sf-animation), background-color var(--sf-switch--duration) var(--sf-animation);
     transition: transform var(--sf-switch--duration) var(--sf-animation), background-color var(--sf-switch--duration) var(--sf-animation), -webkit-transform var(--sf-switch--duration) var(--sf-animation);
   }
-  .sf-switch.active .sf-switch-inner {
+  .sf-switch[\:has\(input\:checked\)] .sf-switch-inner {
+    --sf-switch-inner--travel: calc(var(--sf-switch--track-height) * (var(--sf-switch--ratio) - 1));
+  }
+  .sf-switch:has(input:checked) .sf-switch-inner {
     --sf-switch-inner--travel: calc(var(--sf-switch--track-height) * (var(--sf-switch--ratio) - 1));
   }
   [dir=rtl] .sf-switch .sf-switch-inner {
@@ -387,10 +390,16 @@
   .sf-switch .sf-switch-inner .sf-switch-icon--on {
     opacity: 0;
   }
-  .sf-switch.active .sf-switch-inner .sf-switch-icon--on {
+  .sf-switch[\:has\(input\:checked\)] .sf-switch-inner .sf-switch-icon--on {
     opacity: 1;
   }
-  .sf-switch.active .sf-switch-inner .sf-switch-icon--off:not(:only-child) {
+  .sf-switch:has(input:checked) .sf-switch-inner .sf-switch-icon--on {
+    opacity: 1;
+  }
+  .sf-switch[\:has\(input\:checked\)] .sf-switch-inner .sf-switch-icon--off:not(:only-child) {
+    opacity: 0;
+  }
+  .sf-switch:has(input:checked) .sf-switch-inner .sf-switch-icon--off:not(:only-child) {
     opacity: 0;
   }
   /* The mark is the picture before a label: the label follows it at the size's

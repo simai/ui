@@ -2,6 +2,964 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "f49a716b86bd"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   ALIAS_KINDS: () => (/* binding */ ALIAS_KINDS),
+/* harmony export */   ALIAS_MODES: () => (/* binding */ ALIAS_MODES),
+/* harmony export */   aliasExpired: () => (/* binding */ aliasExpired),
+/* harmony export */   propertyOf: () => (/* binding */ propertyOf),
+/* harmony export */   readAliasTable: () => (/* binding */ readAliasTable)
+/* harmony export */ });
+// The dated alias table of one component (standard simai.smart-component
+// 1.3.8 §16.20, vocabulary 1.1.5 §9): what the migration converter writes as
+// <component>/aliases.json, read and checked here before core/js/aliases.js
+// installs it on an element. Pure data, no DOM, so a build, a lint and the
+// runtime share one reading of it.
+//
+// A table is a list of rows, or {tag, aliases: [rows]}. A row:
+//
+//   {from, to, kind, since, remove_after, mode?, when?, setting?, tag?}
+//
+//   kind      event | setting | attribute | action | value
+//   since     the first day the new name exists, YYYY-MM-DD
+//   remove_after
+//             the last day the old name is promised, YYYY-MM-DD
+//   mode      events only: same-detail (default) | detail-adds | split
+//   when      events only, optional: {<detail field>: <value>}; the old name
+//             is sent only for a new event whose detail matches (two old
+//             names folded into one new name, as modal:after-hide and
+//             modal:after-show into change)
+//   setting   values only: the attribute the value belongs to
+//
+// A row that does not hold is refused with a reason, never thrown: the rest of
+// the table still installs, and the refusals are reported.
+const ALIAS_KINDS = Object.freeze(['event', 'setting', 'attribute', 'action', 'value']);
+const ALIAS_MODES = Object.freeze(['same-detail', 'detail-adds', 'split']);
+const DAY = 86400000;
+const DATE = /^\d{4}-\d{2}-\d{2}$/u;
+const ATTRIBUTE = /^[a-z][a-z0-9-]*$/u;
+const MEMBER = /^[A-Za-z_$][\w$]*$/u;
+
+function dateOf(text) {
+  if (typeof text !== 'string' || !DATE.test(text)) return NaN;
+  const time = Date.parse(`${text}T00:00:00Z`); // 2026-02-30 parses in some engines; it must print back as itself.
+
+  return Number.isNaN(time) || new Date(time).toISOString().slice(0, 10) !== text ? NaN : time;
+} // `remove_after` is the last promised day, whole, in UTC: the old name is
+// open until the end of it and expired from the next midnight.
+
+
+function aliasExpired(row, now = Date.now()) {
+  const last = dateOf(row?.remove_after);
+  return Number.isFinite(last) && now >= last + DAY;
+} // kebab-case attribute -> camelCase property: backdrop-blur -> backdropBlur.
+
+function propertyOf(attribute) {
+  return String(attribute).replace(/-([a-z0-9])/gu, (_, letter) => letter.toUpperCase());
+}
+
+function primitive(value) {
+  return value === null || ['string', 'number', 'boolean'].includes(typeof value);
+}
+
+function checkRow(row) {
+  if (!row || typeof row !== 'object' || Array.isArray(row)) return 'not-an-object';
+  const {
+    from,
+    to,
+    kind,
+    since,
+    mode = 'same-detail',
+    when,
+    setting
+  } = row;
+  if (!ALIAS_KINDS.includes(kind)) return 'unknown-kind';
+  if (typeof from !== 'string' || !from) return 'no-from';
+  if (to === null || to === undefined || to === '') return 'no-new-name';
+  if (typeof to !== 'string') return 'no-to';
+  if (from === to) return 'same-name';
+  const start = dateOf(since);
+  const end = dateOf(row.remove_after);
+  if (Number.isNaN(start)) return 'bad-since';
+  if (Number.isNaN(end)) return 'bad-remove-after';
+  if (end < start) return 'remove-after-before-since';
+  if (!ALIAS_MODES.includes(mode)) return 'unknown-mode';
+  if (kind !== 'event' && mode !== 'same-detail') return 'mode-on-non-event';
+
+  if (when !== undefined) {
+    if (kind !== 'event') return 'when-on-non-event';
+    if (!when || typeof when !== 'object' || Array.isArray(when) || !Object.values(when).every(primitive)) return 'bad-when';
+  }
+
+  if (kind === 'setting' || kind === 'attribute') {
+    if (!ATTRIBUTE.test(from) || !ATTRIBUTE.test(to)) return 'bad-attribute-name';
+  }
+
+  if (kind === 'action' && (!MEMBER.test(from) || !MEMBER.test(to))) return 'bad-member-name';
+
+  if (kind === 'value') {
+    if (typeof setting !== 'string' || !ATTRIBUTE.test(setting)) return 'value-needs-setting';
+  } else if (setting !== undefined) {
+    return 'setting-on-non-value';
+  }
+
+  return null;
+}
+
+function normal(row, tag) {
+  const out = {
+    kind: row.kind,
+    from: row.from,
+    to: row.to,
+    since: row.since,
+    remove_after: row.remove_after,
+    tag: typeof row.tag === 'string' && row.tag ? row.tag : tag
+  };
+
+  if (row.kind === 'event') {
+    out.mode = row.mode || 'same-detail';
+    if (row.when) out.when = { ...row.when
+    };
+  }
+
+  if (row.kind === 'value') out.setting = row.setting;
+  return Object.freeze(out);
+} // -> {tag, rows: [frozen rows], refused: [{index, from, to, kind, reason}]}
+
+
+function readAliasTable(table, {
+  tag = ''
+} = {}) {
+  const list = Array.isArray(table) ? table : table?.aliases;
+  const owner = !Array.isArray(table) && typeof table?.tag === 'string' && table.tag || tag || '';
+  const rows = [];
+  const refused = [];
+
+  if (!Array.isArray(list)) {
+    refused.push({
+      index: -1,
+      from: null,
+      to: null,
+      kind: null,
+      reason: 'not-a-table'
+    });
+    return {
+      tag: owner,
+      rows,
+      refused
+    };
+  }
+
+  const refuse = (index, row, reason) => refused.push({
+    index,
+    from: row?.from ?? null,
+    to: row?.to ?? null,
+    kind: row?.kind ?? null,
+    reason
+  });
+
+  const seen = new Map();
+  list.forEach((row, index) => {
+    const reason = checkRow(row);
+    if (reason) return refuse(index, row, reason);
+    const one = normal(row, owner); // An attribute, a property or a method has one new name; an event's old
+    // name may be sent beside several new ones (split, folded names).
+
+    const identity = one.kind === 'event' ? `event|${one.from}|${one.to}|${JSON.stringify(one.when ?? null)}` : one.kind === 'value' ? `value|${one.setting}|${one.from}` : `${one.kind === 'action' ? 'action' : 'name'}|${one.from}`;
+    const before = seen.get(identity);
+    if (before) return refuse(index, row, before.to === one.to ? 'duplicate' : 'conflict');
+    seen.set(identity, one);
+    rows.push({
+      index,
+      row: one
+    });
+  }); // Two old names folded into one new name by their detail: without `when`
+  // each would be sent on every new event, the wrong one among them.
+
+  const folded = new Map();
+
+  for (const entry of rows) {
+    const {
+      row
+    } = entry;
+    if (row.kind !== 'event' || row.mode === 'same-detail' || row.when) continue;
+    folded.set(row.to, [...(folded.get(row.to) ?? []), entry]);
+  }
+
+  const ambiguous = new Set();
+
+  for (const group of folded.values()) if (group.length > 1) for (const entry of group) ambiguous.add(entry);
+
+  const kept = [];
+
+  for (const entry of rows) {
+    if (ambiguous.has(entry)) refuse(entry.index, entry.row, 'needs-when');else kept.push(entry.row);
+  }
+
+  refused.sort((a, b) => a.index - b.index);
+  return {
+    tag: owner,
+    rows: kept,
+    refused
+  };
+}
+
+/***/ },
+
+/***/ "28b603686dcc"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   aliasExpired: () => (/* reexport safe */ _alias_table_js__WEBPACK_IMPORTED_MODULE_1__.aliasExpired),
+/* harmony export */   aliasesOf: () => (/* binding */ aliasesOf),
+/* harmony export */   aliasesStrict: () => (/* binding */ aliasesStrict),
+/* harmony export */   dispatchAliased: () => (/* binding */ dispatchAliased),
+/* harmony export */   installAliases: () => (/* binding */ installAliases),
+/* harmony export */   readAliasTable: () => (/* reexport safe */ _alias_table_js__WEBPACK_IMPORTED_MODULE_1__.readAliasTable),
+/* harmony export */   setAliasClock: () => (/* binding */ setAliasClock),
+/* harmony export */   uninstallAliases: () => (/* binding */ uninstallAliases)
+/* harmony export */ });
+/* harmony import */ var _deprecations_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("06e8cd089f28");
+/* harmony import */ var _alias_table_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("f49a716b86bd");
+// Dated aliases on an element (standard simai.smart-component 1.3.8 §16.20,
+// §8, §16 items 6, 7, 13, 26, 32, 41; vocabulary 1.1.5 §9). When a component
+// renames an event, a setting, an attribute, an action or a value, the old
+// name keeps working until its `remove_after` day, and each use of it is
+// noted in SF.deprecations with its dates, so a person, a probe or an AI can
+// read off a running page which old names it still leans on.
+//
+//   const handle = SF.aliases.install(element, table, {signal});
+//   SF.aliases.dispatch(element, 'sf-menu-navigate', {detail, cancelable: true});
+//   handle.uninstall();   // or abort `signal`
+//
+// The table is a component's aliases.json (core/js/alias-table.js reads it).
+// What an installed element does:
+//
+// Events.
+//   - One dispatch sends the new name first, then each open old name, with
+//     the same `detail` object and the same bubbles / composed / cancelable.
+//   - Cancel is shared: preventDefault() on any of them cancels all at once,
+//     so a listener that runs later on the other name already sees
+//     defaultPrevented, and the dispatch answers false.
+//   - stopPropagation() is not shared: the names have different listeners.
+//   - It works for today's components without a change in them: the element's
+//     own dispatchEvent is wrapped, so a component that still sends the old
+//     name (sf-accordion:toggle) sends the new one first through the shim, and
+//     a component that sends the new name has the old ones follow. The event
+//     object the component made is the one dispatched under its name, so a
+//     component that reads its own event's defaultPrevented sees the shared
+//     cancel.
+//   - A use is a listener that touches the old event (its detail, target,
+//     currentTarget, composedPath, preventDefault or the stop methods). It is
+//     noted once per dispatch, into one record per name. An old event that
+//     nobody listens to is not a use, so a page that moved is not reported.
+//     No global prototype is patched to learn this.
+//   - `detail-adds` sends the new, larger detail to the old name too: the old
+//     fields are all there. `when` sends an old name only for a matching
+//     detail (two old names folded into one new name). `split` needs an
+//     adapter that makes the old detail from the new one; without it the row
+//     is refused. A component that sends the old name of a `detail-adds` or
+//     `split` row is not promoted: its old detail cannot make the new one.
+//
+// Settings and attributes. Writing the old attribute writes the new one (the
+// component hears the new one); writing the new one updates the old one when
+// the page still has it, so getAttribute(old) stays true. Equal values are
+// never written again, which is what ends a round. A setting also gets its
+// property: the old property reads and writes the new one.
+//
+// Actions. The old method calls the new one with the same arguments.
+//
+// Values. An attribute set to an old value is written with the new one.
+//
+// A name that the browser's own element owns (title, blur, spellcheck,
+// remove, …) is not shadowed as a property or a method unless the component
+// already overrides it: the attribute alias still works.
+//
+// Expiry (decision, §16.20 "after that date the old name is expired"). After
+// `remove_after` an old name is `expired`: it is still delivered in 1.x, its
+// record carries `expired: true` and a console warning is printed once
+// whatever the page opted into. A date passing in a running page must not
+// break it between two deploys, and dropping a name inside a major is the
+// sweep's job: the release that deletes the row is the removal, under the
+// change journal. A page or a host that wants to rehearse the sweep sets
+// strict mode, <html data-sf-aliases="strict"> or SF.aliases.strict = true:
+// an expired old name is then not delivered — its events are not sent, its
+// attribute is not mapped, its property reads undefined, its method throws.
+//
+// Every bundle carries its own copy of this module, so all state lives on the
+// shared global (SF.__aliases, not enumerable) and the first copy's API stays
+// on SF.aliases; nothing else is added to the page. Per element state is in a
+// WeakMap, the wrappers are own properties of the element and leave with
+// uninstall(), and the only listener is on the caller's AbortSignal, itself
+// removed by an AbortController of the install.
+
+
+
+const VERSION = 1;
+const WRAPPED = ['dispatchEvent', 'setAttribute', 'removeAttribute', 'toggleAttribute'];
+const TOUCH_GETTERS = ['detail', 'target', 'currentTarget', 'srcElement'];
+const TOUCH_METHODS = ['composedPath', 'preventDefault', 'stopPropagation', 'stopImmediatePropagation'];
+
+function shared() {
+  const SF = globalThis.SF = globalThis.SF || {};
+
+  if (!SF.__aliases || typeof SF.__aliases !== 'object') {
+    Object.defineProperty(SF, '__aliases', {
+      configurable: true,
+      enumerable: false,
+      writable: false,
+      value: {
+        elements: new WeakMap(),
+        ours: new WeakSet(),
+        now: () => Date.now()
+      }
+    });
+  }
+
+  return SF.__aliases;
+} // A test or a sweep rehearsal sets the clock; null puts the real one back.
+
+
+function setAliasClock(clock) {
+  shared().now = typeof clock === 'function' ? clock : () => Date.now();
+}
+function aliasesStrict() {
+  return globalThis.document?.documentElement?.dataset?.sfAliases === 'strict' || globalThis.SF?.aliases?.strict === true;
+}
+
+function life(row) {
+  const expired = (0,_alias_table_js__WEBPACK_IMPORTED_MODULE_1__.aliasExpired)(row, shared().now());
+  return {
+    expired,
+    usable: !expired || !aliasesStrict()
+  };
+}
+
+function note(row, expired) {
+  const attribute = row.kind === 'value' ? row.setting : row.kind === 'setting' || row.kind === 'attribute' ? row.from : '';
+  (0,_deprecations_js__WEBPACK_IMPORTED_MODULE_0__.noteDeprecated)({
+    component: row.tag,
+    tag: row.tag,
+    kind: row.kind,
+    attribute,
+    from: row.from,
+    to: row.to,
+    since: row.since,
+    remove_after: row.remove_after,
+    ...(expired ? {
+      expired: true
+    } : {})
+  });
+} // --- events ---------------------------------------------------------------
+
+
+const eventGet = name => Object.getOwnPropertyDescriptor(globalThis.Event.prototype, name)?.get;
+
+const nativePrevent = () => globalThis.Event.prototype.preventDefault;
+
+function flagsOf(event) {
+  return {
+    bubbles: eventGet('bubbles').call(event),
+    cancelable: eventGet('cancelable').call(event),
+    composed: eventGet('composed').call(event)
+  };
+}
+
+function detailOf(event) {
+  const get = globalThis.CustomEvent && Object.getOwnPropertyDescriptor(globalThis.CustomEvent.prototype, 'detail')?.get;
+  return get && event instanceof globalThis.CustomEvent ? get.call(event) : null;
+}
+
+function matches(detail, when) {
+  if (!when) return true;
+  if (!detail || typeof detail !== 'object') return false;
+  return Object.entries(when).every(([field, value]) => detail[field] === value);
+}
+
+function makeEvent(element, type, detail, flags) {
+  const Custom = element.ownerDocument?.defaultView?.CustomEvent ?? globalThis.CustomEvent;
+  return new Custom(type, { ...flags,
+    detail
+  });
+} // The first touch of an old event by a listener is a use of the old name.
+
+
+function instrument(event, row, expired, detail) {
+  let used = false;
+
+  const use = () => {
+    if (used) return;
+    used = true;
+    note(row, expired);
+  };
+
+  for (const name of TOUCH_GETTERS) {
+    const get = name === 'detail' ? () => detail : eventGet(name);
+    if (!get) continue;
+    Object.defineProperty(event, name, {
+      configurable: true,
+
+      get() {
+        use();
+        return get.call(this);
+      }
+
+    });
+  }
+
+  for (const name of TOUCH_METHODS) {
+    const method = event[name];
+    if (typeof method !== 'function') continue;
+    Object.defineProperty(event, name, {
+      configurable: true,
+      writable: true,
+
+      value(...args) {
+        use();
+        return method.apply(this, args);
+      }
+
+    });
+  }
+}
+
+function shareCancel(events) {
+  const cancel = nativePrevent();
+
+  for (const event of events) {
+    Object.defineProperty(event, 'preventDefault', {
+      configurable: true,
+      writable: true,
+
+      value() {
+        for (const one of events) cancel.call(one);
+      }
+
+    });
+  }
+} // The old events that go with one new event: open (or expired outside strict)
+// rows whose `when` matches, made from the same detail, or from the adapter's
+// detail for a split row. `own` is the component's own event when it sent an
+// old name: it is reused under that name.
+
+
+function oldEventsFor(state, element, newType, detail, flags, own) {
+  const out = [];
+  const names = new Set();
+
+  for (const row of state.byNew.get(newType) ?? []) {
+    if (names.has(row.from) || !matches(detail, row.when)) continue;
+    const {
+      expired,
+      usable
+    } = life(row);
+    if (!usable) continue;
+    let oldDetail = detail;
+
+    if (row.mode === 'split') {
+      oldDetail = state.adapters[row.from]?.(detail, newType);
+      if (oldDetail === undefined) continue;
+    }
+
+    names.add(row.from);
+    const event = own && own.type === row.from && oldDetail === detail ? own : makeEvent(element, row.from, oldDetail, flags);
+    out.push({
+      event,
+      row,
+      expired,
+      detail: oldDetail
+    });
+  }
+
+  return out;
+} // Sends the new event, then the old ones, with one cancel. The cancel is
+// shared first and the old events instrumented after, so a listener's
+// preventDefault() on an old name both cancels all and counts as a use.
+
+
+function deliver(state, element, first, olds, alsoCancel = []) {
+  const ours = shared().ours;
+  const events = [first, ...olds.map(one => one.event)];
+  const all = [...events, ...alsoCancel.filter(event => !events.includes(event))];
+  if (all.some(event => eventGet('cancelable').call(event))) shareCancel(all);
+
+  for (const one of olds) instrument(one.event, one.row, one.expired, one.detail);
+
+  for (const event of events) {
+    ours.add(event);
+    state.native.dispatchEvent.call(element, event);
+  }
+
+  const prevented = eventGet('defaultPrevented');
+  return !all.some(event => prevented.call(event));
+}
+
+function wrappedDispatch(state, element, event) {
+  const native = state.native.dispatchEvent;
+  if (!event || shared().ours.has(event)) return native.call(element, event);
+  const type = event.type;
+
+  if (state.byNew.has(type)) {
+    const detail = detailOf(event);
+    return deliver(state, element, event, oldEventsFor(state, element, type, detail, flagsOf(event), null));
+  }
+
+  const rows = state.byOld.get(type);
+  if (!rows) return native.call(element, event);
+  const detail = detailOf(event);
+  const flags = flagsOf(event); // An old name with one plain new name is promoted: the new name first.
+
+  const targets = new Set(rows.filter(row => row.mode === 'same-detail' && !row.when).map(row => row.to));
+
+  if (targets.size === 1 && rows.every(row => row.mode === 'same-detail' && !row.when)) {
+    const [to] = targets;
+    const fresh = makeEvent(element, to, detail, flags);
+    const olds = oldEventsFor(state, element, to, detail, flags, event); // A strict page whose old name expired still has the component's own
+    // event in the cancel group, though it is not sent.
+
+    return deliver(state, element, fresh, olds, [event]);
+  } // Not promotable (detail-adds, split, folded): delivered as it is, a use
+  // noted when touched.
+
+
+  const {
+    expired,
+    usable
+  } = life(rows[0]);
+  if (!usable) return true;
+  instrument(event, rows[0], expired, detail);
+  shared().ours.add(event);
+  return native.call(element, event);
+} // --- attributes, values -----------------------------------------------------
+
+
+function mapValue(state, attribute, value, {
+  quiet = false
+} = {}) {
+  const row = state.values.get(attribute)?.get(String(value));
+  if (!row) return value;
+  const {
+    expired,
+    usable
+  } = life(row);
+  if (!quiet) note(row, expired);
+  return usable ? row.to : value;
+}
+
+function writeIfDifferent(state, element, name, value) {
+  const text = String(value);
+  if (state.native.getAttribute.call(element, name) !== text) state.native.setAttribute.call(element, name, text);
+}
+
+function removeIfPresent(state, element, name) {
+  if (state.native.hasAttribute.call(element, name)) state.native.removeAttribute.call(element, name);
+}
+
+function wrappedSet(state, element, name, value) {
+  const attribute = String(name).toLowerCase();
+  const row = state.attrByOld.get(attribute);
+
+  if (row) {
+    const {
+      expired,
+      usable
+    } = life(row);
+    note(row, expired);
+    state.native.setAttribute.call(element, attribute, value);
+    if (usable) writeIfDifferent(state, element, row.to, mapValue(state, row.to, value));
+    return;
+  }
+
+  const mapped = mapValue(state, attribute, value);
+  state.native.setAttribute.call(element, attribute, mapped);
+
+  for (const old of state.attrByNew.get(attribute) ?? []) {
+    if (state.native.hasAttribute.call(element, old.from)) writeIfDifferent(state, element, old.from, mapped);
+  }
+}
+
+function wrappedRemove(state, element, name) {
+  const attribute = String(name).toLowerCase();
+  const row = state.attrByOld.get(attribute);
+  state.native.removeAttribute.call(element, attribute);
+
+  if (row) {
+    const {
+      expired,
+      usable
+    } = life(row);
+    note(row, expired);
+    if (usable) removeIfPresent(state, element, row.to);
+    return;
+  }
+
+  for (const old of state.attrByNew.get(attribute) ?? []) removeIfPresent(state, element, old.from);
+}
+
+function wrappedToggle(state, element, name, force) {
+  const attribute = String(name).toLowerCase();
+  const has = state.native.hasAttribute.call(element, attribute);
+  const want = force === undefined ? !has : Boolean(force);
+  if (want && !has) wrappedSet(state, element, attribute, '');
+  if (!want && has) wrappedRemove(state, element, attribute);
+  return want;
+} // Changes that did not come through the element's own methods (the parser,
+// an Attr node, a framework that calls the prototype): the later change of
+// each name wins, and only differing values are written.
+
+
+function reconcile(state, element, records) {
+  const last = new Map();
+  records.forEach((record, order) => last.set(record.attributeName, order));
+  const names = [...last.keys()].sort((a, b) => last.get(a) - last.get(b));
+
+  const has = name => state.native.hasAttribute.call(element, name);
+
+  const get = name => state.native.getAttribute.call(element, name);
+
+  for (const name of names) {
+    const row = state.attrByOld.get(name);
+
+    if (row) {
+      const {
+        expired,
+        usable
+      } = life(row);
+      if (!usable) continue;
+
+      if (has(name)) {
+        if (get(row.to) !== mapValue(state, row.to, get(name), {
+          quiet: true
+        })) {
+          note(row, expired);
+          writeIfDifferent(state, element, row.to, mapValue(state, row.to, get(name)));
+        }
+      } else {
+        removeIfPresent(state, element, row.to);
+      }
+
+      continue;
+    }
+
+    if (state.values.has(name) && has(name)) {
+      const mapped = mapValue(state, name, get(name));
+      if (mapped !== get(name)) writeIfDifferent(state, element, name, mapped);
+    }
+
+    for (const old of state.attrByNew.get(name) ?? []) {
+      // The old name changed after this one: its own turn decides.
+      if (!has(old.from) || (last.get(old.from) ?? -1) > last.get(name)) continue;
+      if (has(name)) writeIfDifferent(state, element, old.from, get(name));else state.native.removeAttribute.call(element, old.from);
+    }
+  }
+} // What the markup already holds: an old attribute is a use and fills the new
+// one when that is absent (a new one the page also wrote wins); an old value
+// is rewritten.
+
+
+function adopt(state, element) {
+  const has = name => state.native.hasAttribute.call(element, name);
+
+  const get = name => state.native.getAttribute.call(element, name);
+
+  for (const [name, row] of state.attrByOld) {
+    if (!has(name)) continue;
+    const {
+      expired,
+      usable
+    } = life(row);
+    note(row, expired);
+    if (usable && !has(row.to)) writeIfDifferent(state, element, row.to, mapValue(state, row.to, get(name)));
+  }
+
+  for (const name of state.values.keys()) {
+    if (has(name)) writeIfDifferent(state, element, name, mapValue(state, name, get(name)));
+  }
+} // --- members -----------------------------------------------------------------
+
+
+function nativePrototypes() {
+  const protos = new Set([Object.prototype]);
+
+  for (let proto = globalThis.HTMLElement?.prototype; proto; proto = Object.getPrototypeOf(proto)) protos.add(proto);
+
+  if (globalThis.EventTarget) protos.add(globalThis.EventTarget.prototype);
+  return protos;
+} // May `name` be defined on the element? Not when the browser's element owns
+// it and the component does not override it.
+
+
+function ownableMember(element, name) {
+  const natives = nativePrototypes();
+
+  for (let proto = Object.getPrototypeOf(element); proto; proto = Object.getPrototypeOf(proto)) {
+    if (Object.prototype.hasOwnProperty.call(proto, name)) return !natives.has(proto);
+  }
+
+  return true;
+}
+
+function defineOwn(state, element, name, descriptor) {
+  const before = Object.getOwnPropertyDescriptor(element, name);
+  state.restore.push(() => {
+    delete element[name];
+    if (before) Object.defineProperty(element, name, before);
+  });
+  Object.defineProperty(element, name, {
+    configurable: true,
+    enumerable: false,
+    ...descriptor
+  });
+  return before;
+}
+
+function writable(element, name) {
+  for (let object = element; object; object = Object.getPrototypeOf(object)) {
+    const own = Object.getOwnPropertyDescriptor(object, name);
+    if (own) return Boolean(own.set) || own.writable === true;
+  }
+
+  return true;
+} // Today's Smart base exposes a setting as a read-only property over its
+// attribute; such a setting is written through the attribute.
+
+
+function writeSetting(state, element, row, property, value) {
+  if (writable(element, property)) {
+    element[property] = value;
+  } else if (value === null || value === undefined || value === false) {
+    removeIfPresent(state, element, row.to);
+  } else {
+    writeIfDifferent(state, element, row.to, value === true ? '' : typeof value === 'object' ? JSON.stringify(value) : value);
+  }
+}
+
+function installProperty(state, element, row, refuse) {
+  const from = (0,_alias_table_js__WEBPACK_IMPORTED_MODULE_1__.propertyOf)(row.from);
+  const to = (0,_alias_table_js__WEBPACK_IMPORTED_MODULE_1__.propertyOf)(row.to);
+  if (!ownableMember(element, from)) return refuse(row, 'native-member');
+  if (!(to in element)) return refuse(row, 'no-new-property');
+  const before = defineOwn(state, element, from, {
+    get() {
+      const {
+        expired,
+        usable
+      } = life(row);
+      note(row, expired);
+      return usable ? element[to] : undefined;
+    },
+
+    set(value) {
+      const {
+        expired,
+        usable
+      } = life(row);
+      note(row, expired);
+      if (usable) writeSetting(state, element, row, to, value);
+    }
+
+  }); // A value the page set before the element was installed moves to the new name.
+
+  if (before && 'value' in before && before.value !== undefined) element[from] = before.value;
+  return true;
+}
+
+function installAction(state, element, row, refuse) {
+  if (!ownableMember(element, row.from)) return refuse(row, 'native-member');
+  if (typeof element[row.to] !== 'function') return refuse(row, 'no-new-action');
+  defineOwn(state, element, row.from, {
+    writable: true,
+
+    value(...args) {
+      const {
+        expired,
+        usable
+      } = life(row);
+      note(row, expired);
+      if (!usable) throw new TypeError(`[SIMAI Framework] ${row.tag || element.localName}: ${row.from}() was removed after ${row.remove_after}; call ${row.to}().`);
+      return element[row.to](...args);
+    }
+
+  });
+  return true;
+} // --- install ----------------------------------------------------------------
+
+
+function uninstallAliases(element) {
+  const store = shared();
+  const state = element && store.elements.get(element);
+  if (!state) return false;
+  store.elements.delete(element);
+  state.observer?.disconnect();
+  state.controller.abort();
+
+  for (const restore of state.restore.reverse()) restore();
+
+  return true;
+}
+function installAliases(element, table, {
+  signal,
+  adapters = {},
+  tag
+} = {}) {
+  if (!element || typeof element.dispatchEvent !== 'function') throw new TypeError('[SIMAI Framework] SF.aliases.install needs an element');
+  uninstallAliases(element);
+  const read = (0,_alias_table_js__WEBPACK_IMPORTED_MODULE_1__.readAliasTable)(table, {
+    tag: tag || element.localName || ''
+  });
+  const refused = [...read.refused];
+  const handle = {
+    installed: 0,
+    refused,
+    uninstall: () => uninstallAliases(element)
+  };
+  if (signal?.aborted) return handle;
+  const state = {
+    rows: read.rows,
+    adapters,
+    byNew: new Map(),
+    byOld: new Map(),
+    attrByOld: new Map(),
+    attrByNew: new Map(),
+    values: new Map(),
+    restore: [],
+    controller: new AbortController(),
+    observer: null,
+    native: {}
+  };
+
+  for (const name of [...WRAPPED, 'getAttribute', 'hasAttribute']) state.native[name] = element[name];
+
+  const refuse = (row, reason) => {
+    refused.push({
+      index: -1,
+      from: row.from,
+      to: row.to,
+      kind: row.kind,
+      reason
+    });
+    return false;
+  };
+
+  const push = (map, key, row) => map.set(key, [...(map.get(key) ?? []), row]);
+
+  for (const row of read.rows) {
+    if (row.kind === 'event') {
+      if (row.mode === 'split' && typeof adapters[row.from] !== 'function') {
+        refuse(row, 'needs-adapter');
+        continue;
+      }
+
+      push(state.byNew, row.to, row);
+      push(state.byOld, row.from, row);
+      handle.installed += 1;
+    } else if (row.kind === 'setting' || row.kind === 'attribute') {
+      if (typeof state.native.setAttribute !== 'function') {
+        refuse(row, 'no-attributes');
+        continue;
+      }
+
+      state.attrByOld.set(row.from, row);
+      push(state.attrByNew, row.to, row);
+      handle.installed += 1;
+      if (row.kind === 'setting') installProperty(state, element, row, refuse);
+    } else if (row.kind === 'value') {
+      if (!state.values.has(row.setting)) state.values.set(row.setting, new Map());
+      state.values.get(row.setting).set(row.from, row);
+      handle.installed += 1;
+    } else if (row.kind === 'action' && installAction(state, element, row, refuse)) {
+      handle.installed += 1;
+    }
+  }
+
+  if (state.byNew.size) {
+    defineOwn(state, element, 'dispatchEvent', {
+      writable: true,
+      value: event => wrappedDispatch(state, element, event)
+    });
+  }
+
+  const attributes = state.attrByOld.size || state.values.size;
+
+  if (attributes) {
+    defineOwn(state, element, 'setAttribute', {
+      writable: true,
+      value: (name, value) => wrappedSet(state, element, name, value)
+    });
+    defineOwn(state, element, 'removeAttribute', {
+      writable: true,
+      value: name => wrappedRemove(state, element, name)
+    });
+
+    if (typeof state.native.toggleAttribute === 'function') {
+      defineOwn(state, element, 'toggleAttribute', {
+        writable: true,
+        value: (name, force) => wrappedToggle(state, element, name, force)
+      });
+    }
+
+    adopt(state, element);
+    const Observer = element.ownerDocument?.defaultView?.MutationObserver ?? globalThis.MutationObserver;
+
+    if (typeof Observer === 'function') {
+      const filter = [...new Set([...state.attrByOld.keys(), ...state.attrByNew.keys(), ...state.values.keys()])];
+      state.observer = new Observer(records => reconcile(state, element, records));
+      state.observer.observe(element, {
+        attributes: true,
+        attributeFilter: filter
+      });
+    }
+  }
+
+  shared().elements.set(element, state);
+  signal?.addEventListener?.('abort', () => uninstallAliases(element), {
+    once: true,
+    signal: state.controller.signal
+  });
+  return handle;
+} // For code that sends an event by name: through the element's aliases when
+// it has them, a plain dispatch when it has none. Answers false when cancelled.
+
+function dispatchAliased(element, name, {
+  detail = null,
+  bubbles = true,
+  composed = true,
+  cancelable = false
+} = {}) {
+  return element.dispatchEvent(makeEvent(element, name, detail, {
+    bubbles,
+    composed,
+    cancelable
+  }));
+}
+function aliasesOf(element) {
+  return [...(shared().elements.get(element)?.rows ?? [])];
+} // The first copy's API stays; every copy shares the state.
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.SF = globalThis.SF || {};
+  const current = globalThis.SF.aliases;
+
+  if (!current || typeof current.install !== 'function') {
+    globalThis.SF.aliases = {
+      version: VERSION,
+      strict: current?.strict === true,
+      install: installAliases,
+      uninstall: uninstallAliases,
+      dispatch: dispatchAliased,
+      of: aliasesOf,
+      read: _alias_table_js__WEBPACK_IMPORTED_MODULE_1__.readAliasTable,
+      expired: (row, now) => (0,_alias_table_js__WEBPACK_IMPORTED_MODULE_1__.aliasExpired)(row, now ?? shared().now())
+    };
+  }
+}
+
+/***/ },
+
 /***/ "dbc0a3d46697"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -72,7 +1030,11 @@ __webpack_require__.r(__webpack_exports__);
 // records behind the names are in contracts/changes/journal.json.
 //
 // Nothing is printed by default: a page opts in to console warnings with
-// <html data-sf-deprecations="warn"> or SF.deprecations.warn = true.
+// <html data-sf-deprecations="warn"> or SF.deprecations.warn = true. A dated
+// alias (core/js/aliases.js, standard simai.smart-component §16.20) also
+// records `tag`, `since` and `remove_after`; once its date has passed the
+// record turns `expired` and that is printed once whatever the page opted
+// into, because the name can leave with the next sweep.
 //
 // Every bundle carries its own copy of this module, so a Map of its own made one
 // list per bundle, and SF.deprecations.list() answered with whichever bundle set
@@ -101,33 +1063,57 @@ function noteDeprecated({
   kind = 'attribute',
   attribute = '',
   from,
-  to = null
+  to = null,
+  tag,
+  since,
+  remove_after: removeAfter,
+  expired
 } = {}) {
   if (!from) return;
   const key = [component, kind, attribute, from].join('|');
   const notes = sharedNotes();
-  const existing = notes.get(key);
+  let note = notes.get(key);
+  const firstExpiry = expired === true && note?.expired !== true;
 
-  if (existing) {
-    existing.count += 1;
-    return;
-  }
+  if (note) {
+    note.count += 1;
+  } else {
+    note = {
+      component,
+      kind,
+      attribute,
+      from,
+      to,
+      count: 1
+    };
+    notes.set(key, note);
+  } // The dated fields are kept only when a caller knows them, so the records of
+  // the Framework's undated aliases keep their shape.
 
-  notes.set(key, {
-    component,
-    kind,
-    attribute,
-    from,
-    to,
-    count: 1
-  });
 
-  if (warnEnabled()) {
-    const where = component ? `${component}: ` : '';
-    const what = kind === 'value' ? `${attribute}="${from}"` : `${kind} ${from}`;
-    globalThis.console?.warn?.(`[SIMAI Framework] ${where}${what} is a legacy name${to ? `; write ${to}` : ''}. See contracts/changes/journal.json.`);
+  if (tag !== undefined) note.tag = tag;
+  if (since !== undefined) note.since = since;
+  if (removeAfter !== undefined) note.remove_after = removeAfter;
+  if (expired === true) note.expired = true;
+
+  if (firstExpiry) {
+    globalThis.console?.warn?.(`[SIMAI Framework] ${describe(note)} was due to leave after ${note.remove_after || 'its date'}${to ? `; write ${to}` : ''}. See contracts/changes/journal.json.`);
+  } else if (note.count === 1 && warnEnabled()) {
+    globalThis.console?.warn?.(`[SIMAI Framework] ${describe(note)} is a legacy name${note.remove_after ? ` until ${note.remove_after}` : ''}${to ? `; write ${to}` : ''}. See contracts/changes/journal.json.`);
   }
 }
+
+function describe({
+  component,
+  kind,
+  attribute,
+  from
+}) {
+  const where = component ? `${component}: ` : '';
+  const what = kind === 'value' ? `${attribute}="${from}"` : `${kind} ${from}`;
+  return `${where}${what}`;
+}
+
 function listDeprecations() {
   return [...sharedNotes().values()].map(note => ({ ...note
   }));
@@ -230,11 +1216,13 @@ if (typeof globalThis !== 'undefined') installInternal(globalThis);
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   followLanguage: () => (/* binding */ followLanguage),
 /* harmony export */   isRussianPage: () => (/* binding */ isRussianPage),
 /* harmony export */   language: () => (/* binding */ language),
 /* harmony export */   pageLanguage: () => (/* binding */ pageLanguage),
 /* harmony export */   pageLocale: () => (/* binding */ pageLocale),
-/* harmony export */   pageText: () => (/* binding */ pageText)
+/* harmony export */   pageText: () => (/* binding */ pageText),
+/* harmony export */   pageWord: () => (/* binding */ pageWord)
 /* harmony export */ });
 // What language a component speaks, and how a product adds one.
 //
@@ -336,10 +1324,27 @@ function langOwner(node) {
   }
 
   return null;
+} // The language of a part of the page wins over the language chosen for the
+// whole page (owner, 2026-10-26; standard simai.smart-component 1.3.8 §11.1):
+//   1. a word given on the element itself (the component's own attribute);
+//   2. the nearest [lang] below <html>;
+//   3. the page's choice, SF.language.use(), which also sets <html lang>;
+//   4. <html lang>;
+//   5. English.
+// Until 2026-10-27 the choice won over a section's [lang], so an English
+// section inside a Russian page that had called use('ru') spoke Russian.
+
+
+function languageSource(node) {
+  const owner = langOwner(node);
+  const root = globalThis.document?.documentElement ?? null;
+  if (owner && owner !== root) return owner.getAttribute('lang');
+  if (STORE.chosen) return STORE.chosen;
+  return owner?.getAttribute('lang') || root?.lang || 'en';
 }
 /**
- * The page's language for this node: the nearest [lang], else the document's,
- * else English — unless a product has chosen one explicitly.
+ * The page's language for this node: the nearest [lang] below <html>, else
+ * the language the page chose, else <html lang>, else English.
  */
 
 
@@ -349,18 +1354,68 @@ function pageLanguage(node) {
   // lang="pt-BR" is. The chosen value kept its region and answered 'pt-br',
   // which matched no dictionary keyed by language and made isRussianPage false
   // on a page that chose 'ru-RU'. The region stays in pageLocale.
-  if (STORE.chosen) return STORE.chosen.split('-')[0];
-  const owner = langOwner(node);
-  const value = owner?.getAttribute('lang') || globalThis.document?.documentElement?.lang || 'en';
-  return normalise(value).split('-')[0] || 'en';
+  return normalise(languageSource(node)).split('-')[0] || 'en';
 }
 /** The page's language with its region kept, which is what formatting wants. */
 
 function pageLocale(node) {
-  if (STORE.chosen) return STORE.chosen;
-  const owner = langOwner(node);
-  return normalise(owner?.getAttribute('lang') || globalThis.document?.documentElement?.lang || 'en');
+  return normalise(languageSource(node)) || 'en';
 }
+/**
+ * Follows `lang` in the document (§11.1 «changes are followed»): one observer
+ * for the page, whichever bundle starts it, and the elements under a changed
+ * [lang] draw again. `element.requestComponentUpdate('language')` is what a
+ * Smart element does; anything else passes its own `redraw`. Returns the way
+ * to stop following.
+ */
+
+function followLanguage(element, redraw = () => element.requestComponentUpdate?.('language')) {
+  const root = typeof globalThis !== 'undefined' ? globalThis : {};
+  const doc = element?.ownerDocument ?? root.document;
+  const Observer = doc?.defaultView?.MutationObserver ?? root.MutationObserver;
+  if (!doc?.documentElement || typeof Observer !== 'function') return () => {};
+
+  if (!root.__sfLanguageWatch || root.__sfLanguageWatch.document !== doc) {
+    const watch = {
+      document: doc,
+      elements: new Map(),
+      observer: null
+    };
+    watch.observer = new Observer(records => {
+      const changed = [...new Set(records.map(record => record.target))];
+
+      for (const [one, again] of [...watch.elements]) {
+        if (changed.some(target => within(target, one))) {
+          try {
+            again();
+          } catch {// One element that fails to draw does not keep the others in the
+            // old language.
+          }
+        }
+      }
+    });
+    watch.observer.observe(doc.documentElement, {
+      attributes: true,
+      attributeFilter: ['lang'],
+      subtree: true
+    });
+    root.__sfLanguageWatch = watch;
+  }
+
+  const watch = root.__sfLanguageWatch;
+  watch.elements.set(element, redraw);
+  return () => watch.elements.delete(element);
+} // Whether `node` is `target` or below it, across shadow roots.
+
+function within(target, node) {
+  for (let current = node; current;) {
+    if (current === target) return true;
+    current = current.parentNode || current.host || null;
+  }
+
+  return false;
+}
+
 function isRussianPage(node) {
   return pageLanguage(node) === 'ru';
 }
@@ -383,6 +1438,87 @@ function pageText(dictionary, key, node, component) {
   }
 
   return key;
+} // Missing words are said once per component, word and language: a page that
+// draws a hundred rows must not print a hundred warnings. The marks are kept on
+// the shared global, because every bundle carries this module.
+
+function warnWord(owner, key, locale, said) {
+  const root = typeof globalThis !== 'undefined' ? globalThis : {};
+  if (!(root.__sfWordWarnings instanceof Set)) root.__sfWordWarnings = new Set();
+  const mark = `${owner}|${key}|${locale}|${said}`;
+  if (root.__sfWordWarnings.has(mark)) return;
+
+  root.__sfWordWarnings.add(mark);
+
+  globalThis.console?.warn?.(`[SIMAI Framework] ${owner || 'component'}: no word "${key}" for ${locale}${said === 'key' ? '; the key is shown' : `; said in ${said}`}`);
+}
+
+function fill(text, locale, count, vars) {
+  return String(text).replace(/\{([a-z][\w-]*)\}/giu, (whole, name) => {
+    if (name === 'n' && count !== undefined) {
+      try {
+        return new Intl.NumberFormat(locale).format(count);
+      } catch {
+        return String(count);
+      }
+    }
+
+    return vars && Object.prototype.hasOwnProperty.call(vars, name) ? String(vars[name]) : whole;
+  });
+}
+/**
+ * A component's own word (standard simai.smart-component 1.3.8 §11, §11.1).
+ *
+ * `dictionary` is `{<locale>: {<key>: word}}` from the component's language
+ * files. A word given on the element itself is the caller's to prefer; this
+ * resolves the rest: words registered for the element's language, then the
+ * shipped ones, the language without its region, English, the component's
+ * source language and, last, the key. The last two warn once. A word that
+ * takes a number is an object of plural forms chosen by Intl.PluralRules of
+ * the language the word was found in; `{n}` is the number in that language's
+ * format and `{name}` takes `vars.name`.
+ */
+
+
+function pageWord(dictionary, key, node, {
+  component,
+  source = '',
+  count,
+  vars
+} = {}) {
+  const owner = component ?? componentOf(node);
+  const locale = pageLocale(node);
+  const order = chain(locale);
+  const sourceLanguage = normalise(source);
+  if (sourceLanguage && !order.includes(sourceLanguage)) order.push(sourceLanguage);
+
+  for (const candidate of order) {
+    const added = owner ? REGISTERED.get(owner)?.get(candidate)?.[key] : undefined;
+    const word = added !== undefined ? added : dictionary?.[candidate]?.[key];
+    if (word === undefined || word === null) continue;
+    if (candidate === sourceLanguage && !chain(locale).includes(candidate)) warnWord(owner, key, locale, candidate);
+
+    if (typeof word === 'object') {
+      let form = 'other';
+
+      if (count !== undefined) {
+        try {
+          form = new Intl.PluralRules(candidate).select(Number(count));
+        } catch {
+          form = 'other';
+        }
+      }
+
+      const picked = word[form] ?? word.other;
+      if (picked === undefined) continue;
+      return fill(picked, candidate, count, vars);
+    }
+
+    return fill(word, candidate, count, vars);
+  }
+
+  warnWord(owner, key, locale, 'key');
+  return key;
 }
 const language = {
   /** What the page resolves to for this node, region and all. */
@@ -398,7 +1534,24 @@ const language = {
   use(value) {
     const next = value === null || value === undefined ? null : normalise(value);
     if (next === STORE.chosen) return STORE.chosen;
-    STORE.chosen = next;
+    STORE.chosen = next; // The choice is the page's language: <html lang> says it too (§11.1), so
+    // the browser, a screen reader and CSS :lang() agree with the words.
+    // use(null) gives the markup's own language back.
+
+    const root = globalThis.document?.documentElement;
+
+    if (root) {
+      const holder = globalThis;
+
+      if (next) {
+        if (holder.__sfMarkupLanguage === undefined) holder.__sfMarkupLanguage = root.getAttribute('lang');
+        if (root.getAttribute('lang') !== next) root.setAttribute('lang', next);
+      } else if (holder.__sfMarkupLanguage !== undefined) {
+        if (holder.__sfMarkupLanguage === null) root.removeAttribute('lang');else root.setAttribute('lang', holder.__sfMarkupLanguage);
+        holder.__sfMarkupLanguage = undefined;
+      }
+    }
+
     announce();
     return STORE.chosen;
   },
@@ -810,10 +1963,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _deprecations_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("06e8cd089f28");
 /* harmony import */ var _internal_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("364eb185ca94");
-/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("fef8077ac919");
-/* harmony import */ var lit_directives_ref_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("7fcbcc00731e");
-/* harmony import */ var lit_directive_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("69fcfee6f64b");
-/* harmony import */ var _page_language__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("8489d1f5bab4");
+/* harmony import */ var _aliases_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("28b603686dcc");
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("fef8077ac919");
+/* harmony import */ var lit_directives_ref_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("7fcbcc00731e");
+/* harmony import */ var lit_directive_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("69fcfee6f64b");
+/* harmony import */ var _page_language__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("8489d1f5bab4");
+
 
 
 
@@ -968,11 +2123,11 @@ function applySmartProps(element, props = {}, previous = null) {
 // anything in the table changed -- fourteen nodes a row, changed row or not,
 // taking the control a person was interacting with with them.
 
-class SmartElementDirective extends lit_directive_js__WEBPACK_IMPORTED_MODULE_4__.Directive {
+class SmartElementDirective extends lit_directive_js__WEBPACK_IMPORTED_MODULE_5__.Directive {
   constructor(partInfo) {
     super(partInfo);
 
-    if (partInfo.type !== lit_directive_js__WEBPACK_IMPORTED_MODULE_4__.PartType.CHILD) {
+    if (partInfo.type !== lit_directive_js__WEBPACK_IMPORTED_MODULE_5__.PartType.CHILD) {
       throw new Error("renderSmartElement belongs in a child position of a template");
     }
 
@@ -996,7 +2151,7 @@ class SmartElementDirective extends lit_directive_js__WEBPACK_IMPORTED_MODULE_4_
 
 }
 
-const smartElement = (0,lit_directive_js__WEBPACK_IMPORTED_MODULE_4__.directive)(SmartElementDirective); // The same element, outside a template. A caller that holds the element itself
+const smartElement = (0,lit_directive_js__WEBPACK_IMPORTED_MODULE_5__.directive)(SmartElementDirective); // The same element, outside a template. A caller that holds the element itself
 // -- a portal, a measurement, a test -- gets a fresh one, because there is no
 // position to keep it in.
 
@@ -1182,24 +2337,75 @@ class SfBaseElement extends HTMLElement {
     this.applyHostDisplayStyle();
     this.captureSlotTemplates();
     this.__sfSourceCaptured = true;
-    this._isMounted = true;
+    this._isMounted = true; // Dated aliases (standard 1.3.8 §16.20): the component's aliases.json,
+    // installed once per element and kept while it is detached, so a page
+    // that moves it keeps its old names. Before onConnected, so the old
+    // attributes in the markup have filled the new ones when it draws.
+
+    this.sfOpenScope();
+
+    if (this.constructor.aliases && !this.__sfAliases) {
+      this.__sfAliases = (0,_aliases_js__WEBPACK_IMPORTED_MODULE_2__.installAliases)(this, this.constructor.aliases, {
+        tag: this.localName,
+        signal: this.sfScope
+      });
+    }
+
     this.onConnected(); // A component chooses its words when it draws and would otherwise keep
     // them for ever: changing the page's language used to mean reloading it.
     // Subscribing here rather than in each component is the same argument as
     // the shared rule itself -- sixteen subscriptions would be sixteen chances
     // to forget one (owner, 2026-10-11: «языков будет гораздо больше чем два»).
 
-    this.__sfLanguageOff = _page_language__WEBPACK_IMPORTED_MODULE_5__.language.onChange(() => {
+    this.__sfLanguageOff = _page_language__WEBPACK_IMPORTED_MODULE_6__.language.onChange(() => {
+      if (this._isMounted) this.requestComponentUpdate("language");
+    }); // A [lang] changed on the page redraws the elements under it (standard
+    // 1.3.8 §11.1; simai/ui-source#45): one observer for the document.
+
+    this.__sfLanguageUnwatch = (0,_page_language__WEBPACK_IMPORTED_MODULE_6__.followLanguage)(this, () => {
       if (this._isMounted) this.requestComponentUpdate("language");
     });
     this.emitComponentEvent("connected");
     this.requestComponentUpdate("connected");
+  } // The instance's scope (standard 1.3.8 §7.7): one abort signal for
+  // everything the instance starts -- listeners on other nodes, timers,
+  // requests, observers, its aliases. It ends when the instance is removed:
+  // taken out and not placed again before the next task, so a page that
+  // moves an element keeps it. A new scope opens when it is placed again.
+
+
+  get sfScope() {
+    if (!this.__sfScope) this.__sfScope = new AbortController();
+    return this.__sfScope.signal;
+  }
+
+  sfOpenScope() {
+    clearTimeout(this.__sfScopeEnd);
+    this.__sfScopeEnd = null;
+
+    if (this.__sfScope?.signal.aborted) {
+      this.__sfScope = null;
+      this.__sfAliases = null;
+    }
+
+    return this.sfScope;
+  }
+
+  sfCloseScope() {
+    clearTimeout(this.__sfScopeEnd);
+    this.__sfScopeEnd = setTimeout(() => {
+      this.__sfScopeEnd = null;
+      if (!this.isConnected) this.__sfScope?.abort();
+    }, 0);
   }
 
   disconnectedCallback() {
     this._isMounted = false;
+    this.sfCloseScope?.();
     this.__sfLanguageOff?.();
     this.__sfLanguageOff = null;
+    this.__sfLanguageUnwatch?.();
+    this.__sfLanguageUnwatch = null;
 
     try {
       this.onDisconnected();
@@ -1321,7 +2527,7 @@ class SfBaseElement extends HTMLElement {
   }
 
   createRef() {
-    const ref = (0,lit_directives_ref_js__WEBPACK_IMPORTED_MODULE_3__.createRef)();
+    const ref = (0,lit_directives_ref_js__WEBPACK_IMPORTED_MODULE_4__.createRef)();
     ref.__sfOwner = this;
     return ref;
   }
@@ -1754,7 +2960,7 @@ class SfBaseElement extends HTMLElement {
 
     this.prepareRenderContainer(changedAttributes);
     this.markStylePending(this);
-    (0,lit__WEBPACK_IMPORTED_MODULE_2__.render)(templateResult, this);
+    (0,lit__WEBPACK_IMPORTED_MODULE_3__.render)(templateResult, this);
     this.flushRefEffects();
     await this.whenRenderedStylesReady(this);
 
@@ -2816,7 +4022,7 @@ class SfBaseElement extends HTMLElement {
     const slotContent = this._slotTemplates.get(name) || [];
 
     if (!slotContent.length) {
-      return lit__WEBPACK_IMPORTED_MODULE_2__.nothing;
+      return lit__WEBPACK_IMPORTED_MODULE_3__.nothing;
     }
 
     if (slotContent.length === 1) {
@@ -2900,7 +4106,7 @@ class SfBaseElement extends HTMLElement {
     const externalModule = await this.resolveExternalTemplateModule(templateName);
 
     if (!this._isMounted || renderToken !== this._renderToken || templateName !== this.componentTemplateName) {
-      return lit__WEBPACK_IMPORTED_MODULE_2__.nothing;
+      return lit__WEBPACK_IMPORTED_MODULE_3__.nothing;
     }
 
     if (externalModule !== this._externalTemplateModule) {
@@ -2916,8 +4122,8 @@ class SfBaseElement extends HTMLElement {
 
       if (renderFn) {
         return renderFn({
-          html: lit__WEBPACK_IMPORTED_MODULE_2__.html,
-          nothing: lit__WEBPACK_IMPORTED_MODULE_2__.nothing,
+          html: lit__WEBPACK_IMPORTED_MODULE_3__.html,
+          nothing: lit__WEBPACK_IMPORTED_MODULE_3__.nothing,
           context,
           component: this,
           changedAttributes
@@ -2938,8 +4144,8 @@ class SfBaseElement extends HTMLElement {
       return externalModule.mapContext({
         context,
         component: this,
-        html: lit__WEBPACK_IMPORTED_MODULE_2__.html,
-        nothing: lit__WEBPACK_IMPORTED_MODULE_2__.nothing
+        html: lit__WEBPACK_IMPORTED_MODULE_3__.html,
+        nothing: lit__WEBPACK_IMPORTED_MODULE_3__.nothing
       }) || context;
     }
 
@@ -3090,8 +4296,8 @@ class SfBaseElement extends HTMLElement {
       externalModule[hookName]({
         component: this,
         root: this,
-        html: lit__WEBPACK_IMPORTED_MODULE_2__.html,
-        nothing: lit__WEBPACK_IMPORTED_MODULE_2__.nothing,
+        html: lit__WEBPACK_IMPORTED_MODULE_3__.html,
+        nothing: lit__WEBPACK_IMPORTED_MODULE_3__.nothing,
         context: this.templateContext(),
         ...detail
       });
@@ -3135,7 +4341,7 @@ class SfBaseElement extends HTMLElement {
   }
 
   template() {
-    return lit__WEBPACK_IMPORTED_MODULE_2__.nothing;
+    return lit__WEBPACK_IMPORTED_MODULE_3__.nothing;
   }
 
   beforeRender() {}
@@ -3162,23 +4368,23 @@ class SfBaseElement extends HTMLElement {
 
 if (typeof window !== "undefined") {
   window.SfBaseElement = SfBaseElement;
-  window.html = lit__WEBPACK_IMPORTED_MODULE_2__.html;
-  window.nothing = lit__WEBPACK_IMPORTED_MODULE_2__.nothing;
-  window.render = lit__WEBPACK_IMPORTED_MODULE_2__.render;
+  window.html = lit__WEBPACK_IMPORTED_MODULE_3__.html;
+  window.nothing = lit__WEBPACK_IMPORTED_MODULE_3__.nothing;
+  window.render = lit__WEBPACK_IMPORTED_MODULE_3__.render;
 
   if (!window.SF) {
     window.SF = {};
   }
 
   window.SF.SfBaseElement = SfBaseElement;
-  window.SF.html = lit__WEBPACK_IMPORTED_MODULE_2__.html;
-  window.SF.nothing = lit__WEBPACK_IMPORTED_MODULE_2__.nothing;
-  window.SF.render = lit__WEBPACK_IMPORTED_MODULE_2__.render;
+  window.SF.html = lit__WEBPACK_IMPORTED_MODULE_3__.html;
+  window.SF.nothing = lit__WEBPACK_IMPORTED_MODULE_3__.nothing;
+  window.SF.render = lit__WEBPACK_IMPORTED_MODULE_3__.render;
   window.SF.smart = { ...(window.SF.smart || {}),
     SfBaseElement,
-    html: lit__WEBPACK_IMPORTED_MODULE_2__.html,
-    nothing: lit__WEBPACK_IMPORTED_MODULE_2__.nothing,
-    render: lit__WEBPACK_IMPORTED_MODULE_2__.render,
+    html: lit__WEBPACK_IMPORTED_MODULE_3__.html,
+    nothing: lit__WEBPACK_IMPORTED_MODULE_3__.nothing,
+    render: lit__WEBPACK_IMPORTED_MODULE_3__.render,
     toBoolean,
     toAttributeName,
     toNumber,

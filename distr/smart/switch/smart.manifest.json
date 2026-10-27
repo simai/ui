@@ -71,7 +71,8 @@
       },
       "value": {
         "type": "string",
-        "default": ""
+        "default": "on",
+        "description": "What a checked switch submits; without it, \"on\", as a native checkbox (simai/ui-source#38)."
       },
       "aria-label": {
         "type": "string",
@@ -364,7 +365,7 @@
     "source_artifacts": [
       {
         "path": "src/smart/switch/index.js",
-        "sha256": "723a1d29d51937a06e5f38d1601232709b06a7c02f3dac192fffa1e62dae1782"
+        "sha256": "456d57b4a4b435da0a79707bc56c1b36d773d4f3f063918435421b574f937e69"
       },
       {
         "path": "src/smart/switch/rule.js",
@@ -372,7 +373,7 @@
       },
       {
         "path": "src/smart/switch/js/templates/default.js",
-        "sha256": "1ae5f62efa31e5ab80e763d416e0b57d4a861a8d1e117921b849b70f6afaa0af"
+        "sha256": "a9c4c27256cf96362920a1347492599de08a734aecf851434c08cfe008c2f062"
       },
       {
         "path": "src/smart/helpers/inherited-value.js",
