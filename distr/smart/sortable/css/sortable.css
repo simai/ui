@@ -13,8 +13,12 @@
   }
 }
 @layer sf.components {
+  /* The public variables (standard 1.3.8 §6): the dragged item's and the
+     ghost's opacity, the drop line's and the silhouette's colours, the
+     layer the ghost and the line stand on. */
   [data-sf-sortable-item][data-sf-sortable-dragging] {
     opacity: 0.4;
+    opacity: var(--sf-sortable-dragging-opacity, 0.4);
   }
   [data-sf-sortable-item].focus-visible {
     outline: var(--sf-focus--width) var(--sf-focus--style) Highlight;
@@ -44,6 +48,7 @@
     margin: 0;
     pointer-events: none;
     opacity: 0.9;
+    opacity: var(--sf-sortable-ghost-opacity, 0.9);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     box-shadow: var(--sf-ui-shadow-4, 0 4px 12px rgba(0, 0, 0, 0.3));
   }
@@ -53,7 +58,7 @@
     z-index: var(--sf-sortable-ghost-z-index, var(--sf-z-index-9, 90));
     border-radius: 2px;
     background: Highlight;
-    background: var(--sf-primary, Highlight);
+    background: var(--sf-sortable-indicator-color, var(--sf-primary, Highlight));
     pointer-events: none;
   }
   .sf-sortable-indicator[hidden] {
@@ -87,7 +92,7 @@
     box-sizing: border-box;
     flex: none;
     border: var(--sf-px) dashed Highlight;
-    border: var(--sf-px) dashed var(--sf-outline-primary, var(--sf-primary, Highlight));
+    border: var(--sf-px) dashed var(--sf-sortable-placeholder-border-color, var(--sf-outline-primary, var(--sf-primary, Highlight)));
     border-radius: 4px;
     border-radius: var(--sf-radius--ui, 4px);
     background-color: transparent;

@@ -151,6 +151,7 @@
   ],
   "cl-empty-state": [
     "display/default",
+    "isolate/default",
     "position/default"
   ],
   "cl-file-preview": [
@@ -228,8 +229,7 @@
     "flex/default",
     "gap/default",
     "justify-content/default",
-    "place-items/default",
-    "position/default"
+    "place-items/default"
   ],
   "cl-menu": [
     "display/default",
@@ -269,10 +269,8 @@
     "flex-direction/default",
     "flex-grow/default",
     "flex-wrap/default",
-    "gap/default",
     "margin/default",
     "min-width/default",
-    "position/default",
     "text-overflow/default"
   ],
   "cl-pagination": [
@@ -396,9 +394,6 @@
     "position/default",
     "transition-property/default"
   ],
-  "cl-theme-generator": [
-    "position/default"
-  ],
   "cl-toast": [
     "align-items/default",
     "display/default",
@@ -422,8 +417,9 @@
   "cl-tree": [
     "display/default",
     "flex-direction/default",
-    "position/default",
-    "visibility/default"
+    "isolate/default",
+    "resize/default",
+    "text-max-width/default"
   ],
   "cl-tree-item": [
     "align-items/default",

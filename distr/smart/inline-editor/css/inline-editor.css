@@ -5,7 +5,7 @@
 @layer sf.components {
   [data-sf-inline-editing] {
     outline: var(--sf-focus--width) var(--sf-focus--style) Highlight;
-    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-primary, Highlight);
+    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-inline-editor-outline-color, var(--sf-primary, Highlight));
     outline-offset: 2px;
     cursor: text;
   }
@@ -17,14 +17,14 @@
     flex-wrap: wrap;
     align-items: center;
     gap: 0.25rem;
-    gap: var(--sf-space-1, 0.25rem);
+    gap: var(--sf-inline-editor-toolbar-gap, var(--sf-space-1, 0.25rem));
     padding: 0.25rem;
-    padding: var(--sf-space-1, 0.25rem);
+    padding: var(--sf-inline-editor-toolbar-padding, var(--sf-space-1, 0.25rem));
     border-radius: 0.25rem;
-    border-radius: var(--sf-radius-1, 0.25rem);
+    border-radius: var(--sf-inline-editor-toolbar-radius, var(--sf-radius-1, 0.25rem));
     /* A toolbar floats over the page: step 2's surface and shadow. */
     background: Canvas;
-    background: var(--sf-elevation-2--surface, Canvas);
+    background: var(--sf-inline-editor-toolbar-background-color, var(--sf-elevation-2--surface, Canvas));
     --sf-on-surface-variant: var(--sf-on-elevation-2--variant);
     color: CanvasText;
     color: var(--sf-on-surface, CanvasText);

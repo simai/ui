@@ -1310,6 +1310,7 @@
   },
   {
     "name": "cl-page-header",
+    "css": true,
     "js": true,
     "mode": "smart",
     "relation": [
@@ -1784,6 +1785,15 @@
         "name": "tree"
       },
       {
+        "name": "tree-item"
+      },
+      {
+        "name": "icon-buttons"
+      },
+      {
+        "name": "icons"
+      },
+      {
         "name": "cl-tree-item"
       }
     ],
@@ -1804,7 +1814,7 @@
         "name": "icon-buttons"
       },
       {
-        "name": "cl-icon"
+        "name": "icons"
       }
     ],
     "tags": [

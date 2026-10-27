@@ -2788,6 +2788,222 @@
           "since": "2026-10-27"
         }
       ]
+    },
+    {
+      "component": "page-header",
+      "selector": "sf-page-header, .sf-page-header",
+      "variables": [
+        {
+          "name": "--sf-page-header-gap",
+          "role": "gap",
+          "summary": "The space between the path and the line under it.",
+          "default": "var(--sf-space-1\\/2)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-page-header-line-gap",
+          "role": "gap",
+          "summary": "The space between the heading, its marks, the star and the actions.",
+          "default": "var(--sf-space-1)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-page-header-actions-gap",
+          "role": "gap",
+          "summary": "The space between the actions.",
+          "default": "var(--sf-space-1\\/2)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-page-header-heading-color",
+          "role": "color",
+          "summary": "The heading's ink.",
+          "default": "inherit",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-page-header-star-color",
+          "role": "color",
+          "summary": "The star's ink while the page is a favourite.",
+          "default": "var(--sf-warning)",
+          "state": "on",
+          "since": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "component": "list-item",
+      "selector": "sf-list-item, .sf-list-item",
+      "variables": [
+        {
+          "name": "--sf-list-item-background-color",
+          "role": "background",
+          "summary": "The row's fill.",
+          "default": "var(--sf-elevation-1--surface)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-list-item-border-color",
+          "role": "border-color",
+          "summary": "The divider under the row; seen where the row has one.",
+          "default": "var(--sf-outline-variant)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-list-item-color",
+          "role": "color",
+          "summary": "The title's ink in a text, icon or checkbox row.",
+          "default": "var(--sf-on-surface)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-list-item-supporting-color",
+          "role": "color",
+          "summary": "The supporting line's ink.",
+          "default": "var(--sf-on-surface-variant)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-list-item-handle-color",
+          "role": "color",
+          "summary": "The drag handle's ink in an sf-sortable list.",
+          "default": "var(--sf-on-surface-variant)",
+          "since": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "component": "tree-item",
+      "selector": "sf-tree-item, .sf-tree-item",
+      "variables": [
+        {
+          "name": "--sf-tree-item-gap",
+          "role": "gap",
+          "summary": "The space between the chevron, the icon and the name.",
+          "default": "var(--sf-space-1\\/3)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-tree-item-name-color",
+          "role": "color",
+          "summary": "The name's ink outside a tree; inside one the name takes its row's colour.",
+          "default": "var(--sf-primary)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-tree-item-icon-color",
+          "role": "color",
+          "summary": "The chevron's and the icon's ink.",
+          "default": "currentColor",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-tree-item-drop-background-color",
+          "role": "background",
+          "summary": "The fill of a node a drag would drop on.",
+          "default": "var(--sf-primary-container)",
+          "state": "drop-target",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-tree-item-drop-outline-color",
+          "role": "outline-color",
+          "summary": "The dashed ring of a node a drag would drop on.",
+          "default": "var(--sf-primary)",
+          "state": "drop-target",
+          "since": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "component": "tree",
+      "selector": "sf-tree, .sf-tree",
+      "variables": [
+        {
+          "name": "--sf-tree-gap",
+          "role": "gap",
+          "summary": "The space between rows.",
+          "default": "var(--sf-space-1\\/3)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-tree-padding-inline",
+          "role": "padding-inline",
+          "summary": "The space inside the tree on either side of its rows.",
+          "default": "var(--sf-space-1)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-tree-indent",
+          "role": "indent",
+          "summary": "How far each level stands in from the one above.",
+          "default": "var(--sf-space-3)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-tree-radius",
+          "role": "radius",
+          "summary": "A row's corner radius.",
+          "default": "var(--sf-radius--ui)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-tree-color",
+          "role": "color",
+          "summary": "A row's ink.",
+          "default": "var(--sf-on-surface)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-tree-selected-background-color",
+          "role": "background",
+          "summary": "The fill of a selected or current row.",
+          "default": "var(--sf-surface-container-active)",
+          "state": "selected",
+          "since": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "component": "theme-generator",
+      "selector": "sf-theme-generator, .sf-theme-generator",
+      "variables": [
+        {
+          "name": "--sf-theme-generator-gap",
+          "role": "gap",
+          "summary": "The space between the choice, the fine tuning and the preview, and inside them.",
+          "default": "var(--sf-space-1)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-theme-generator-color",
+          "role": "color",
+          "summary": "The text's ink.",
+          "default": "var(--sf-on-surface)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-theme-generator-label-color",
+          "role": "color",
+          "summary": "The labels' and the palette names' ink.",
+          "default": "var(--sf-on-surface-variant)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-theme-generator-swatch-radius",
+          "role": "radius",
+          "summary": "The corner radius of a palette's row of tones.",
+          "default": "var(--sf-radius--ui)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-theme-generator-swatch-border-color",
+          "role": "border-color",
+          "summary": "The border of a palette's row of tones.",
+          "default": "var(--sf-outline-variant)",
+          "since": "2026-10-27"
+        }
+      ]
     }
   ]
 }

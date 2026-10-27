@@ -2973,7 +2973,7 @@ class SfTabs extends TabsElement {
 
     (0,lit__WEBPACK_IMPORTED_MODULE_0__.render)((0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
       <sf-sortable class="sf-tabs-settings-list" group="sf-tabs-settings" label=${this.text('customize')}
-                   @sf-sortable-intent=${onIntent}>
+                   @sf-sortable-move=${onIntent}>
         ${items.map(item => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
           <div class=${item.pinned ? 'sf-tabs-settings-row sf-tabs-settings-row--pinned' : 'sf-tabs-settings-row'}
                data-sf-sortable-item=${item.pinned ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : item.key}>
