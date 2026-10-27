@@ -2235,7 +2235,7 @@
         ],
         "declared": {
           "js": true,
-          "css": false
+          "css": true
         }
       },
       "requires": [
