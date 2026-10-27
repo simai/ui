@@ -10,7 +10,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   createDropdownInteraction: () => (/* binding */ createDropdownInteraction),
 /* harmony export */   syncDropdownCheckbox: () => (/* binding */ syncDropdownCheckbox)
 /* harmony export */ });
-let sequence = 0; // Option checkboxes are selection indicators, not independent form controls.
+/* harmony import */ var _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("695f21e50358");
+ // Option checkboxes are selection indicators, not independent form controls.
 // Use Checkbox's silent public state adapter when it is available; late-loaded
 // Checkbox initializes from the already synchronized native checked property.
 
@@ -27,19 +28,15 @@ function syncDropdownCheckbox(item, selected) {
     checked: selected,
     indeterminate: false
   });
-}
+} // A part's id is its owner's path id and its local name (standard 1.3.8
+// §7.1.1, simai/ui-source#41): <path>--<local>, the same in every bundle and
+// in server markup. A module counter gave a class and a Smart dropdown on one
+// page ids that followed creation order.
 
-function identify(node, prefix) {
-  if (!node.id) {
-    let id;
-
-    do {
-      id = `${prefix}-${++sequence}`;
-    } while (document.getElementById(id));
-
-    node.id = id;
-  }
-
+function identify(node, owner, local) {
+  if (!node.id) node.id = (0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__.partId)((0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__.instancePath)(owner, {
+    kind: 'sf-dropdown'
+  }), local);
   return node.id;
 } // Shared keyboard/name adapter; selection and rendering remain with each owner.
 
@@ -187,10 +184,11 @@ function createDropdownInteraction(root, adapter) {
     });
   };
 
+  const owner = adapter.owner || root;
   let summary = document.createElement('span');
   summary.className = 'sf-dropdown-value';
   root.append(summary);
-  identify(summary, 'sf-dropdown-value');
+  identify(summary, owner, 'value');
 
   const refresh = () => {
     if (released) return;
@@ -209,11 +207,10 @@ function createDropdownInteraction(root, adapter) {
     if (!button || !container) return;
     if (!summary.isConnected) root.append(summary);
     const label = root.querySelector('.sf-dropdown-label .sf-dropdown-text');
-    const owner = adapter.owner || root;
-    const labelId = label?.textContent.trim() ? identify(label, 'sf-dropdown-label') : '';
+    const labelId = label?.textContent.trim() ? identify(label, owner, 'label') : '';
     const ownerLabel = owner.getAttribute('aria-label') || root.getAttribute('aria-label');
     const ownerRefs = owner.getAttribute('aria-labelledby') || root.getAttribute('aria-labelledby');
-    const buttonId = identify(button, 'sf-dropdown-trigger');
+    const buttonId = identify(button, owner, 'trigger');
     const authorButtonLabel = button.hasAttribute('aria-label') && assigned.get(button)?.['aria-label'] !== button.getAttribute('aria-label');
     own(button, 'aria-labelledby', ownerRefs || (!ownerLabel && labelId ? authorButtonLabel ? `${buttonId} ${labelId}` : labelId : ''));
     own(button, 'aria-label', ownerLabel);
@@ -221,7 +218,7 @@ function createDropdownInteraction(root, adapter) {
     button.tabIndex = adapter.isDisabled() ? -1 : 0;
     button.setAttribute('aria-expanded', String(adapter.isOpen()));
     button.setAttribute('aria-haspopup', 'listbox');
-    button.setAttribute('aria-controls', identify(container, 'sf-dropdown-listbox'));
+    button.setAttribute('aria-controls', identify(container, owner, 'listbox'));
     button.querySelectorAll('.sf-icon').forEach(icon => icon.setAttribute('aria-hidden', 'true'));
     if (field() !== button) field().tabIndex = -1;
     if (input()) input().tabIndex = -1;
@@ -1616,6 +1613,103 @@ if (typeof globalThis !== 'undefined') {
   api.clear = clearDeprecations;
   api.note = noteDeprecated;
   globalThis.SF.deprecations = api;
+}
+
+/***/ },
+
+/***/ "695f21e50358"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   instancePath: () => (/* binding */ instancePath),
+/* harmony export */   partId: () => (/* binding */ partId),
+/* harmony export */   pathIsSettled: () => (/* binding */ pathIsSettled)
+/* harmony export */ });
+// An instance's id is its role path (standard simai.smart-component 1.3.8
+// §7.1.1; simai/ui-source#41).
+//
+//   - at the top of the page: `page/<host id or data-sf-role>`;
+//   - a part with `data-sf-role` inside another instance:
+//     `<parent path>/<role>`;
+//   - neither: `<kind>[<n>]`, n counted in document order among the
+//     instances of the same kind that have neither.
+//
+// Ids that templates write (`for`, `aria-controls`, `aria-labelledby`) are
+// `<path with every non-word run as ->--<local name>`. A counter is never an
+// id: the field ids used to come from a module-scope counter, and every
+// bundle that carries the field code (eight of them) had its own, so a class
+// sf-quantity and an <sf-quantity> on one page both took
+// `sf-quantity-1-control` and a label pointed at the other field. Ids that
+// follow creation order also swap when two instances swap, and server markup
+// (§5.4) cannot repeat them. A path is read from the page, so every bundle
+// gives the same answer.
+//
+// `kind` is the element's tag for a Smart element; class markup passes its
+// root class and is told apart as `class.<root class>`.
+const isElement = node => node && node.nodeType === 1 && typeof node.getAttribute === 'function';
+
+const isCustom = node => isElement(node) && String(node.localName || '').includes('-');
+
+function parentInstance(node) {
+  for (let current = node.parentNode || node.host || null; current; current = current.parentNode || current.host || null) {
+    if (isCustom(current)) return current;
+  }
+
+  return null;
+}
+
+function kindOf(owner, kind) {
+  const tag = String(owner?.localName || '').toLowerCase();
+  if (tag && tag.includes('-')) return tag;
+  return `class.${kind || tag || 'element'}`;
+}
+
+function documentIndex(owner, kind) {
+  const doc = owner?.ownerDocument;
+  if (!owner?.isConnected || typeof doc?.querySelectorAll !== 'function') return 0;
+  const selector = kind.startsWith('class.') ? `.${kind.slice('class.'.length)}` : kind;
+  let index = 0;
+
+  for (const one of doc.querySelectorAll(selector)) {
+    if (kind.startsWith('class.') && isCustom(one)) continue;
+    if (one.id || one.getAttribute('data-sf-role')) continue;
+    index += 1;
+    if (one === owner) return index;
+  }
+
+  return 0;
+}
+/** The role path of an instance (§7.1.1). */
+
+
+function instancePath(owner, {
+  kind = ''
+} = {}) {
+  const id = isElement(owner) ? String(owner.id || '').trim() : String(owner?.id || '').trim();
+  if (id) return `page/${id}`;
+  const role = isElement(owner) ? String(owner.getAttribute('data-sf-role') || '').trim() : '';
+
+  if (role) {
+    const parent = parentInstance(owner);
+    return parent ? `${instancePath(parent, {
+      kind: parent.localName
+    })}/${role}` : `page/${role}`;
+  }
+
+  const resolved = kindOf(owner, kind);
+  return `${resolved}[${documentIndex(owner, resolved)}]`;
+}
+/** An id a template writes for one of its parts: `<path as a word>--<local name>`. */
+
+function partId(path, local) {
+  const base = String(path).replace(/\W+/gu, '-').replace(/^-+|-+$/gu, '');
+  return local ? `${base}--${local}` : base;
+}
+/** Whether the path is final: an instance in the page, or one with an id. */
+
+function pathIsSettled(owner) {
+  return Boolean(owner?.isConnected || String(owner?.id || '').trim());
 }
 
 /***/ },

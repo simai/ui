@@ -60,7 +60,7 @@ const FOCUSABLE_SELECTOR = ['a[href]', 'area[href]', 'button', 'input', 'select'
 const GUARDS_KEY = Symbol.for('simai.modal.focus-guards');
 
 function syncModalFocusGuards(modal) {
-  const root = modal?.getModalRoot?.() || modal?.template;
+  const root = (modal && 'modalRoot' in modal ? modal.modalRoot : modal?.getModalRoot?.()) || modal?.template;
   const panel = root?.querySelector?.('[data-sf-modal-panel]');
   const previous = document[GUARDS_KEY];
   if (previous && previous.panel === panel && previous.before.isConnected && previous.after.isConnected) return;
@@ -329,9 +329,10 @@ __webpack_require__.r(__webpack_exports__);
 // and gives focus back into the drawer when it closes (simai/ui-source#36,
 // #37). Registries, public instance APIs and rendering stay separate.
 
+ // sf-modal's window is its modalRoot (its reader getModalRoot retires, standard
+// 1.3.8 §16.13); the class Modal holds its markup in `template`.
 
-
-const modalRoot = modal => modal?.getModalRoot?.() || modal?.template || null; // The highest modal open: what Modal.getTopModal() names. A drawer or a list
+const modalRoot = modal => (modal && 'modalRoot' in modal ? modal.modalRoot : modal?.getModalRoot?.()) || modal?.template || null; // The highest modal open: what Modal.getTopModal() names. A drawer or a list
 // may stand above it; isTopLayer answers whether it is the top of everything.
 
 
@@ -617,6 +618,1846 @@ function createInlineSpinner({
   indicator.append(createLadderSpinnerSvg());
   root.append(indicator);
   return root;
+}
+
+/***/ },
+
+/***/ "f49a716b86bd"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   ALIAS_KINDS: () => (/* binding */ ALIAS_KINDS),
+/* harmony export */   ALIAS_MODES: () => (/* binding */ ALIAS_MODES),
+/* harmony export */   aliasExpired: () => (/* binding */ aliasExpired),
+/* harmony export */   propertyOf: () => (/* binding */ propertyOf),
+/* harmony export */   readAliasTable: () => (/* binding */ readAliasTable)
+/* harmony export */ });
+// The dated alias table of one component (standard simai.smart-component
+// 1.3.8 §16.20, vocabulary 1.1.5 §9): what the migration converter writes as
+// <component>/aliases.json, read and checked here before core/js/aliases.js
+// installs it on an element. Pure data, no DOM, so a build, a lint and the
+// runtime share one reading of it.
+//
+// A table is a list of rows, or {tag, aliases: [rows]}. A row:
+//
+//   {from, to, kind, since, remove_after, mode?, when?, setting?, tag?}
+//
+//   kind      event | setting | attribute | action | value
+//   since     the first day the new name exists, YYYY-MM-DD
+//   remove_after
+//             the last day the old name is promised, YYYY-MM-DD
+//   mode      events only: same-detail (default) | detail-adds | split
+//   when      events only, optional: {<detail field>: <value>}; the old name
+//             is sent only for a new event whose detail matches (two old
+//             names folded into one new name, as modal:after-hide and
+//             modal:after-show into change)
+//   setting   values only: the attribute the value belongs to
+//
+// A row that does not hold is refused with a reason, never thrown: the rest of
+// the table still installs, and the refusals are reported.
+const ALIAS_KINDS = Object.freeze(['event', 'setting', 'attribute', 'action', 'value']);
+const ALIAS_MODES = Object.freeze(['same-detail', 'detail-adds', 'split']);
+const DAY = 86400000;
+const DATE = /^\d{4}-\d{2}-\d{2}$/u;
+const ATTRIBUTE = /^[a-z][a-z0-9-]*$/u;
+const MEMBER = /^[A-Za-z_$][\w$]*$/u;
+
+function dateOf(text) {
+  if (typeof text !== 'string' || !DATE.test(text)) return NaN;
+  const time = Date.parse(`${text}T00:00:00Z`); // 2026-02-30 parses in some engines; it must print back as itself.
+
+  return Number.isNaN(time) || new Date(time).toISOString().slice(0, 10) !== text ? NaN : time;
+} // `remove_after` is the last promised day, whole, in UTC: the old name is
+// open until the end of it and expired from the next midnight.
+
+
+function aliasExpired(row, now = Date.now()) {
+  const last = dateOf(row?.remove_after);
+  return Number.isFinite(last) && now >= last + DAY;
+} // kebab-case attribute -> camelCase property: backdrop-blur -> backdropBlur.
+
+function propertyOf(attribute) {
+  return String(attribute).replace(/-([a-z0-9])/gu, (_, letter) => letter.toUpperCase());
+}
+
+function primitive(value) {
+  return value === null || ['string', 'number', 'boolean'].includes(typeof value);
+}
+
+function checkRow(row) {
+  if (!row || typeof row !== 'object' || Array.isArray(row)) return 'not-an-object';
+  const {
+    from,
+    to,
+    kind,
+    since,
+    mode = 'same-detail',
+    when,
+    setting
+  } = row;
+  if (!ALIAS_KINDS.includes(kind)) return 'unknown-kind';
+  if (typeof from !== 'string' || !from) return 'no-from';
+  if (to === null || to === undefined || to === '') return 'no-new-name';
+  if (typeof to !== 'string') return 'no-to';
+  if (from === to) return 'same-name';
+  const start = dateOf(since);
+  const end = dateOf(row.remove_after);
+  if (Number.isNaN(start)) return 'bad-since';
+  if (Number.isNaN(end)) return 'bad-remove-after';
+  if (end < start) return 'remove-after-before-since';
+  if (!ALIAS_MODES.includes(mode)) return 'unknown-mode';
+  if (kind !== 'event' && mode !== 'same-detail') return 'mode-on-non-event';
+
+  if (when !== undefined) {
+    if (kind !== 'event') return 'when-on-non-event';
+    if (!when || typeof when !== 'object' || Array.isArray(when) || !Object.values(when).every(primitive)) return 'bad-when';
+  }
+
+  if (kind === 'setting' || kind === 'attribute') {
+    if (!ATTRIBUTE.test(from) || !ATTRIBUTE.test(to)) return 'bad-attribute-name';
+  }
+
+  if (kind === 'action' && (!MEMBER.test(from) || !MEMBER.test(to))) return 'bad-member-name';
+
+  if (kind === 'value') {
+    if (typeof setting !== 'string' || !ATTRIBUTE.test(setting)) return 'value-needs-setting';
+  } else if (setting !== undefined) {
+    return 'setting-on-non-value';
+  }
+
+  return null;
+}
+
+function normal(row, tag) {
+  const out = {
+    kind: row.kind,
+    from: row.from,
+    to: row.to,
+    since: row.since,
+    remove_after: row.remove_after,
+    tag: typeof row.tag === 'string' && row.tag ? row.tag : tag
+  };
+
+  if (row.kind === 'event') {
+    out.mode = row.mode || 'same-detail';
+    if (row.when) out.when = { ...row.when
+    };
+  }
+
+  if (row.kind === 'value') out.setting = row.setting;
+  return Object.freeze(out);
+} // -> {tag, rows: [frozen rows], refused: [{index, from, to, kind, reason}]}
+
+
+function readAliasTable(table, {
+  tag = ''
+} = {}) {
+  const list = Array.isArray(table) ? table : table?.aliases;
+  const owner = !Array.isArray(table) && typeof table?.tag === 'string' && table.tag || tag || '';
+  const rows = [];
+  const refused = [];
+
+  if (!Array.isArray(list)) {
+    refused.push({
+      index: -1,
+      from: null,
+      to: null,
+      kind: null,
+      reason: 'not-a-table'
+    });
+    return {
+      tag: owner,
+      rows,
+      refused
+    };
+  }
+
+  const refuse = (index, row, reason) => refused.push({
+    index,
+    from: row?.from ?? null,
+    to: row?.to ?? null,
+    kind: row?.kind ?? null,
+    reason
+  });
+
+  const seen = new Map();
+  list.forEach((row, index) => {
+    const reason = checkRow(row);
+    if (reason) return refuse(index, row, reason);
+    const one = normal(row, owner); // An attribute, a property or a method has one new name; an event's old
+    // name may be sent beside several new ones (split, folded names).
+
+    const identity = one.kind === 'event' ? `event|${one.from}|${one.to}|${JSON.stringify(one.when ?? null)}` : one.kind === 'value' ? `value|${one.setting}|${one.from}` : `${one.kind === 'action' ? 'action' : 'name'}|${one.from}`;
+    const before = seen.get(identity);
+    if (before) return refuse(index, row, before.to === one.to ? 'duplicate' : 'conflict');
+    seen.set(identity, one);
+    rows.push({
+      index,
+      row: one
+    });
+  }); // Two old names folded into one new name by their detail: without `when`
+  // each would be sent on every new event, the wrong one among them.
+
+  const folded = new Map();
+
+  for (const entry of rows) {
+    const {
+      row
+    } = entry;
+    if (row.kind !== 'event' || row.mode === 'same-detail' || row.when) continue;
+    folded.set(row.to, [...(folded.get(row.to) ?? []), entry]);
+  }
+
+  const ambiguous = new Set();
+
+  for (const group of folded.values()) if (group.length > 1) for (const entry of group) ambiguous.add(entry);
+
+  const kept = [];
+
+  for (const entry of rows) {
+    if (ambiguous.has(entry)) refuse(entry.index, entry.row, 'needs-when');else kept.push(entry.row);
+  }
+
+  refused.sort((a, b) => a.index - b.index);
+  return {
+    tag: owner,
+    rows: kept,
+    refused
+  };
+}
+
+/***/ },
+
+/***/ "28b603686dcc"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   aliasExpired: () => (/* reexport safe */ _alias_table_js__WEBPACK_IMPORTED_MODULE_1__.aliasExpired),
+/* harmony export */   aliasesOf: () => (/* binding */ aliasesOf),
+/* harmony export */   aliasesStrict: () => (/* binding */ aliasesStrict),
+/* harmony export */   dispatchAliased: () => (/* binding */ dispatchAliased),
+/* harmony export */   installAliases: () => (/* binding */ installAliases),
+/* harmony export */   readAliasTable: () => (/* reexport safe */ _alias_table_js__WEBPACK_IMPORTED_MODULE_1__.readAliasTable),
+/* harmony export */   setAliasClock: () => (/* binding */ setAliasClock),
+/* harmony export */   uninstallAliases: () => (/* binding */ uninstallAliases)
+/* harmony export */ });
+/* harmony import */ var _deprecations_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("06e8cd089f28");
+/* harmony import */ var _alias_table_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("f49a716b86bd");
+// Dated aliases on an element (standard simai.smart-component 1.3.8 §16.20,
+// §8, §16 items 6, 7, 13, 26, 32, 41; vocabulary 1.1.5 §9). When a component
+// renames an event, a setting, an attribute, an action or a value, the old
+// name keeps working until its `remove_after` day, and each use of it is
+// noted in SF.deprecations with its dates, so a person, a probe or an AI can
+// read off a running page which old names it still leans on.
+//
+//   const handle = SF.aliases.install(element, table, {signal});
+//   SF.aliases.dispatch(element, 'sf-menu-navigate', {detail, cancelable: true});
+//   handle.uninstall();   // or abort `signal`
+//
+// The table is a component's aliases.json (core/js/alias-table.js reads it).
+// What an installed element does:
+//
+// Events.
+//   - One dispatch sends the new name first, then each open old name, with
+//     the same `detail` object and the same bubbles / composed / cancelable.
+//   - Cancel is shared: preventDefault() on any of them cancels all at once,
+//     so a listener that runs later on the other name already sees
+//     defaultPrevented, and the dispatch answers false.
+//   - stopPropagation() is not shared: the names have different listeners.
+//   - It works for today's components without a change in them: the element's
+//     own dispatchEvent is wrapped, so a component that still sends the old
+//     name (sf-accordion:toggle) sends the new one first through the shim, and
+//     a component that sends the new name has the old ones follow. The event
+//     object the component made is the one dispatched under its name, so a
+//     component that reads its own event's defaultPrevented sees the shared
+//     cancel.
+//   - A use is a listener that touches the old event (its detail, target,
+//     currentTarget, composedPath, preventDefault or the stop methods). It is
+//     noted once per dispatch, into one record per name. An old event that
+//     nobody listens to is not a use, so a page that moved is not reported.
+//     No global prototype is patched to learn this.
+//   - `detail-adds` sends the new, larger detail to the old name too: the old
+//     fields are all there. `when` sends an old name only for a matching
+//     detail (two old names folded into one new name). `split` needs an
+//     adapter that makes the old detail from the new one; without it the row
+//     is refused. A component that sends the old name of a `detail-adds` or
+//     `split` row is not promoted: its old detail cannot make the new one.
+//
+// Settings and attributes. Writing the old attribute writes the new one (the
+// component hears the new one); writing the new one updates the old one when
+// the page still has it, so getAttribute(old) stays true. Equal values are
+// never written again, which is what ends a round. A setting also gets its
+// property: the old property reads and writes the new one.
+//
+// Actions. The old method calls the new one with the same arguments.
+//
+// Values. An attribute set to an old value is written with the new one.
+//
+// A name that the browser's own element owns (title, blur, spellcheck,
+// remove, …) is not shadowed as a property or a method unless the component
+// already overrides it: the attribute alias still works.
+//
+// Expiry (decision, §16.20 "after that date the old name is expired"). After
+// `remove_after` an old name is `expired`: it is still delivered in 1.x, its
+// record carries `expired: true` and a console warning is printed once
+// whatever the page opted into. A date passing in a running page must not
+// break it between two deploys, and dropping a name inside a major is the
+// sweep's job: the release that deletes the row is the removal, under the
+// change journal. A page or a host that wants to rehearse the sweep sets
+// strict mode, <html data-sf-aliases="strict"> or SF.aliases.strict = true:
+// an expired old name is then not delivered — its events are not sent, its
+// attribute is not mapped, its property reads undefined, its method throws.
+//
+// Every bundle carries its own copy of this module, so all state lives on the
+// shared global (SF.__aliases, not enumerable) and the first copy's API stays
+// on SF.aliases; nothing else is added to the page. Per element state is in a
+// WeakMap, the wrappers are own properties of the element and leave with
+// uninstall(), and the only listener is on the caller's AbortSignal, itself
+// removed by an AbortController of the install.
+
+
+
+const VERSION = 1;
+const WRAPPED = ['dispatchEvent', 'setAttribute', 'removeAttribute', 'toggleAttribute'];
+const TOUCH_GETTERS = ['detail', 'target', 'currentTarget', 'srcElement'];
+const TOUCH_METHODS = ['composedPath', 'preventDefault', 'stopPropagation', 'stopImmediatePropagation'];
+
+function shared() {
+  const SF = globalThis.SF = globalThis.SF || {};
+
+  if (!SF.__aliases || typeof SF.__aliases !== 'object') {
+    Object.defineProperty(SF, '__aliases', {
+      configurable: true,
+      enumerable: false,
+      writable: false,
+      value: {
+        elements: new WeakMap(),
+        ours: new WeakSet(),
+        now: () => Date.now()
+      }
+    });
+  }
+
+  return SF.__aliases;
+} // A test or a sweep rehearsal sets the clock; null puts the real one back.
+
+
+function setAliasClock(clock) {
+  shared().now = typeof clock === 'function' ? clock : () => Date.now();
+}
+function aliasesStrict() {
+  return globalThis.document?.documentElement?.dataset?.sfAliases === 'strict' || globalThis.SF?.aliases?.strict === true;
+}
+
+function life(row) {
+  const expired = (0,_alias_table_js__WEBPACK_IMPORTED_MODULE_1__.aliasExpired)(row, shared().now());
+  return {
+    expired,
+    usable: !expired || !aliasesStrict()
+  };
+}
+
+function note(row, expired) {
+  const attribute = row.kind === 'value' ? row.setting : row.kind === 'setting' || row.kind === 'attribute' ? row.from : '';
+  (0,_deprecations_js__WEBPACK_IMPORTED_MODULE_0__.noteDeprecated)({
+    component: row.tag,
+    tag: row.tag,
+    kind: row.kind,
+    attribute,
+    from: row.from,
+    to: row.to,
+    since: row.since,
+    remove_after: row.remove_after,
+    ...(expired ? {
+      expired: true
+    } : {})
+  });
+} // --- events ---------------------------------------------------------------
+
+
+const eventGet = name => Object.getOwnPropertyDescriptor(globalThis.Event.prototype, name)?.get;
+
+const nativePrevent = () => globalThis.Event.prototype.preventDefault;
+
+function flagsOf(event) {
+  return {
+    bubbles: eventGet('bubbles').call(event),
+    cancelable: eventGet('cancelable').call(event),
+    composed: eventGet('composed').call(event)
+  };
+}
+
+function detailOf(event) {
+  const get = globalThis.CustomEvent && Object.getOwnPropertyDescriptor(globalThis.CustomEvent.prototype, 'detail')?.get;
+  return get && event instanceof globalThis.CustomEvent ? get.call(event) : null;
+}
+
+function matches(detail, when) {
+  if (!when) return true;
+  if (!detail || typeof detail !== 'object') return false;
+  return Object.entries(when).every(([field, value]) => detail[field] === value);
+}
+
+function makeEvent(element, type, detail, flags) {
+  const Custom = element.ownerDocument?.defaultView?.CustomEvent ?? globalThis.CustomEvent;
+  return new Custom(type, { ...flags,
+    detail
+  });
+} // The first touch of an old event by a listener is a use of the old name.
+
+
+function instrument(event, row, expired, detail) {
+  let used = false;
+
+  const use = () => {
+    if (used) return;
+    used = true;
+    note(row, expired);
+  };
+
+  for (const name of TOUCH_GETTERS) {
+    const get = name === 'detail' ? () => detail : eventGet(name);
+    if (!get) continue;
+    Object.defineProperty(event, name, {
+      configurable: true,
+
+      get() {
+        use();
+        return get.call(this);
+      }
+
+    });
+  }
+
+  for (const name of TOUCH_METHODS) {
+    const method = event[name];
+    if (typeof method !== 'function') continue;
+    Object.defineProperty(event, name, {
+      configurable: true,
+      writable: true,
+
+      value(...args) {
+        use();
+        return method.apply(this, args);
+      }
+
+    });
+  }
+}
+
+function shareCancel(events) {
+  const cancel = nativePrevent();
+
+  for (const event of events) {
+    Object.defineProperty(event, 'preventDefault', {
+      configurable: true,
+      writable: true,
+
+      value() {
+        for (const one of events) cancel.call(one);
+      }
+
+    });
+  }
+} // The old events that go with one new event: open (or expired outside strict)
+// rows whose `when` matches, made from the same detail, or from the adapter's
+// detail for a split row. `own` is the component's own event when it sent an
+// old name: it is reused under that name.
+
+
+function oldEventsFor(state, element, newType, detail, flags, own) {
+  const out = [];
+  const names = new Set();
+
+  for (const row of state.byNew.get(newType) ?? []) {
+    if (names.has(row.from) || !matches(detail, row.when)) continue;
+    const {
+      expired,
+      usable
+    } = life(row);
+    if (!usable) continue;
+    let oldDetail = detail;
+
+    if (row.mode === 'split') {
+      oldDetail = state.adapters[row.from]?.(detail, newType);
+      if (oldDetail === undefined) continue;
+    }
+
+    names.add(row.from);
+    const event = own && own.type === row.from && oldDetail === detail ? own : makeEvent(element, row.from, oldDetail, flags);
+    out.push({
+      event,
+      row,
+      expired,
+      detail: oldDetail
+    });
+  }
+
+  return out;
+} // Sends the new event, then the old ones, with one cancel. The cancel is
+// shared first and the old events instrumented after, so a listener's
+// preventDefault() on an old name both cancels all and counts as a use.
+
+
+function deliver(state, element, first, olds, alsoCancel = []) {
+  const ours = shared().ours;
+  const events = [first, ...olds.map(one => one.event)];
+  const all = [...events, ...alsoCancel.filter(event => !events.includes(event))];
+  if (all.some(event => eventGet('cancelable').call(event))) shareCancel(all);
+
+  for (const one of olds) instrument(one.event, one.row, one.expired, one.detail);
+
+  for (const event of events) {
+    ours.add(event);
+    state.native.dispatchEvent.call(element, event);
+  }
+
+  const prevented = eventGet('defaultPrevented');
+  return !all.some(event => prevented.call(event));
+}
+
+function wrappedDispatch(state, element, event) {
+  const native = state.native.dispatchEvent;
+  if (!event || shared().ours.has(event)) return native.call(element, event);
+  const type = event.type;
+
+  if (state.byNew.has(type)) {
+    const detail = detailOf(event);
+    return deliver(state, element, event, oldEventsFor(state, element, type, detail, flagsOf(event), null));
+  }
+
+  const rows = state.byOld.get(type);
+  if (!rows) return native.call(element, event);
+  const detail = detailOf(event);
+  const flags = flagsOf(event); // An old name with one plain new name is promoted: the new name first.
+
+  const targets = new Set(rows.filter(row => row.mode === 'same-detail' && !row.when).map(row => row.to));
+
+  if (targets.size === 1 && rows.every(row => row.mode === 'same-detail' && !row.when)) {
+    const [to] = targets;
+    const fresh = makeEvent(element, to, detail, flags);
+    const olds = oldEventsFor(state, element, to, detail, flags, event); // A strict page whose old name expired still has the component's own
+    // event in the cancel group, though it is not sent.
+
+    return deliver(state, element, fresh, olds, [event]);
+  } // Not promotable (detail-adds, split, folded): delivered as it is, a use
+  // noted when touched.
+
+
+  const {
+    expired,
+    usable
+  } = life(rows[0]);
+  if (!usable) return true;
+  instrument(event, rows[0], expired, detail);
+  shared().ours.add(event);
+  return native.call(element, event);
+} // --- attributes, values -----------------------------------------------------
+
+
+function mapValue(state, attribute, value, {
+  quiet = false
+} = {}) {
+  const row = state.values.get(attribute)?.get(String(value));
+  if (!row) return value;
+  const {
+    expired,
+    usable
+  } = life(row);
+  if (!quiet) note(row, expired);
+  return usable ? row.to : value;
+}
+
+function writeIfDifferent(state, element, name, value) {
+  const text = String(value);
+  if (state.native.getAttribute.call(element, name) !== text) state.native.setAttribute.call(element, name, text);
+}
+
+function removeIfPresent(state, element, name) {
+  if (state.native.hasAttribute.call(element, name)) state.native.removeAttribute.call(element, name);
+}
+
+function wrappedSet(state, element, name, value) {
+  const attribute = String(name).toLowerCase();
+  const row = state.attrByOld.get(attribute);
+
+  if (row) {
+    const {
+      expired,
+      usable
+    } = life(row);
+    note(row, expired);
+    state.native.setAttribute.call(element, attribute, value);
+    if (usable) writeIfDifferent(state, element, row.to, mapValue(state, row.to, value));
+    return;
+  }
+
+  const mapped = mapValue(state, attribute, value);
+  state.native.setAttribute.call(element, attribute, mapped);
+
+  for (const old of state.attrByNew.get(attribute) ?? []) {
+    if (state.native.hasAttribute.call(element, old.from)) writeIfDifferent(state, element, old.from, mapped);
+  }
+}
+
+function wrappedRemove(state, element, name) {
+  const attribute = String(name).toLowerCase();
+  const row = state.attrByOld.get(attribute);
+  state.native.removeAttribute.call(element, attribute);
+
+  if (row) {
+    const {
+      expired,
+      usable
+    } = life(row);
+    note(row, expired);
+    if (usable) removeIfPresent(state, element, row.to);
+    return;
+  }
+
+  for (const old of state.attrByNew.get(attribute) ?? []) removeIfPresent(state, element, old.from);
+}
+
+function wrappedToggle(state, element, name, force) {
+  const attribute = String(name).toLowerCase();
+  const has = state.native.hasAttribute.call(element, attribute);
+  const want = force === undefined ? !has : Boolean(force);
+  if (want && !has) wrappedSet(state, element, attribute, '');
+  if (!want && has) wrappedRemove(state, element, attribute);
+  return want;
+} // Changes that did not come through the element's own methods (the parser,
+// an Attr node, a framework that calls the prototype): the later change of
+// each name wins, and only differing values are written.
+
+
+function reconcile(state, element, records) {
+  const last = new Map();
+  records.forEach((record, order) => last.set(record.attributeName, order));
+  const names = [...last.keys()].sort((a, b) => last.get(a) - last.get(b));
+
+  const has = name => state.native.hasAttribute.call(element, name);
+
+  const get = name => state.native.getAttribute.call(element, name);
+
+  for (const name of names) {
+    const row = state.attrByOld.get(name);
+
+    if (row) {
+      const {
+        expired,
+        usable
+      } = life(row);
+      if (!usable) continue;
+
+      if (has(name)) {
+        if (get(row.to) !== mapValue(state, row.to, get(name), {
+          quiet: true
+        })) {
+          note(row, expired);
+          writeIfDifferent(state, element, row.to, mapValue(state, row.to, get(name)));
+        }
+      } else {
+        removeIfPresent(state, element, row.to);
+      }
+
+      continue;
+    }
+
+    if (state.values.has(name) && has(name)) {
+      const mapped = mapValue(state, name, get(name));
+      if (mapped !== get(name)) writeIfDifferent(state, element, name, mapped);
+    }
+
+    for (const old of state.attrByNew.get(name) ?? []) {
+      // The old name changed after this one: its own turn decides.
+      if (!has(old.from) || (last.get(old.from) ?? -1) > last.get(name)) continue;
+      if (has(name)) writeIfDifferent(state, element, old.from, get(name));else state.native.removeAttribute.call(element, old.from);
+    }
+  }
+} // What the markup already holds: an old attribute is a use and fills the new
+// one when that is absent (a new one the page also wrote wins); an old value
+// is rewritten.
+
+
+function adopt(state, element) {
+  const has = name => state.native.hasAttribute.call(element, name);
+
+  const get = name => state.native.getAttribute.call(element, name);
+
+  for (const [name, row] of state.attrByOld) {
+    if (!has(name)) continue;
+    const {
+      expired,
+      usable
+    } = life(row);
+    note(row, expired);
+    if (usable && !has(row.to)) writeIfDifferent(state, element, row.to, mapValue(state, row.to, get(name)));
+  }
+
+  for (const name of state.values.keys()) {
+    if (has(name)) writeIfDifferent(state, element, name, mapValue(state, name, get(name)));
+  }
+} // --- members -----------------------------------------------------------------
+
+
+function nativePrototypes() {
+  const protos = new Set([Object.prototype]);
+
+  for (let proto = globalThis.HTMLElement?.prototype; proto; proto = Object.getPrototypeOf(proto)) protos.add(proto);
+
+  if (globalThis.EventTarget) protos.add(globalThis.EventTarget.prototype);
+  return protos;
+} // May `name` be defined on the element? Not when the browser's element owns
+// it and the component does not override it.
+
+
+function ownableMember(element, name) {
+  const natives = nativePrototypes();
+
+  for (let proto = Object.getPrototypeOf(element); proto; proto = Object.getPrototypeOf(proto)) {
+    if (Object.prototype.hasOwnProperty.call(proto, name)) return !natives.has(proto);
+  }
+
+  return true;
+}
+
+function defineOwn(state, element, name, descriptor) {
+  const before = Object.getOwnPropertyDescriptor(element, name);
+  state.restore.push(() => {
+    delete element[name];
+    if (before) Object.defineProperty(element, name, before);
+  });
+  Object.defineProperty(element, name, {
+    configurable: true,
+    enumerable: false,
+    ...descriptor
+  });
+  return before;
+}
+
+function writable(element, name) {
+  for (let object = element; object; object = Object.getPrototypeOf(object)) {
+    const own = Object.getOwnPropertyDescriptor(object, name);
+    if (own) return Boolean(own.set) || own.writable === true;
+  }
+
+  return true;
+} // Today's Smart base exposes a setting as a read-only property over its
+// attribute; such a setting is written through the attribute.
+
+
+function writeSetting(state, element, row, property, value) {
+  if (writable(element, property)) {
+    element[property] = value;
+  } else if (value === null || value === undefined || value === false) {
+    removeIfPresent(state, element, row.to);
+  } else {
+    writeIfDifferent(state, element, row.to, value === true ? '' : typeof value === 'object' ? JSON.stringify(value) : value);
+  }
+}
+
+function installProperty(state, element, row, refuse) {
+  const from = (0,_alias_table_js__WEBPACK_IMPORTED_MODULE_1__.propertyOf)(row.from);
+  const to = (0,_alias_table_js__WEBPACK_IMPORTED_MODULE_1__.propertyOf)(row.to);
+  if (!ownableMember(element, from)) return refuse(row, 'native-member');
+  if (!(to in element)) return refuse(row, 'no-new-property');
+  const before = defineOwn(state, element, from, {
+    get() {
+      const {
+        expired,
+        usable
+      } = life(row);
+      note(row, expired);
+      return usable ? element[to] : undefined;
+    },
+
+    set(value) {
+      const {
+        expired,
+        usable
+      } = life(row);
+      note(row, expired);
+      if (usable) writeSetting(state, element, row, to, value);
+    }
+
+  }); // A value the page set before the element was installed moves to the new name.
+
+  if (before && 'value' in before && before.value !== undefined) element[from] = before.value;
+  return true;
+}
+
+function installAction(state, element, row, refuse) {
+  if (!ownableMember(element, row.from)) return refuse(row, 'native-member');
+  if (typeof element[row.to] !== 'function') return refuse(row, 'no-new-action');
+  defineOwn(state, element, row.from, {
+    writable: true,
+
+    value(...args) {
+      const {
+        expired,
+        usable
+      } = life(row);
+      note(row, expired);
+      if (!usable) throw new TypeError(`[SIMAI Framework] ${row.tag || element.localName}: ${row.from}() was removed after ${row.remove_after}; call ${row.to}().`);
+      return element[row.to](...args);
+    }
+
+  });
+  return true;
+} // --- install ----------------------------------------------------------------
+
+
+function uninstallAliases(element) {
+  const store = shared();
+  const state = element && store.elements.get(element);
+  if (!state) return false;
+  store.elements.delete(element);
+  state.observer?.disconnect();
+  state.controller.abort();
+
+  for (const restore of state.restore.reverse()) restore();
+
+  return true;
+}
+function installAliases(element, table, {
+  signal,
+  adapters = {},
+  tag
+} = {}) {
+  if (!element || typeof element.dispatchEvent !== 'function') throw new TypeError('[SIMAI Framework] SF.aliases.install needs an element');
+  uninstallAliases(element);
+  const read = (0,_alias_table_js__WEBPACK_IMPORTED_MODULE_1__.readAliasTable)(table, {
+    tag: tag || element.localName || ''
+  });
+  const refused = [...read.refused];
+  const handle = {
+    installed: 0,
+    refused,
+    uninstall: () => uninstallAliases(element)
+  };
+  if (signal?.aborted) return handle;
+  const state = {
+    rows: read.rows,
+    adapters,
+    byNew: new Map(),
+    byOld: new Map(),
+    attrByOld: new Map(),
+    attrByNew: new Map(),
+    values: new Map(),
+    restore: [],
+    controller: new AbortController(),
+    observer: null,
+    native: {}
+  };
+
+  for (const name of [...WRAPPED, 'getAttribute', 'hasAttribute']) state.native[name] = element[name];
+
+  const refuse = (row, reason) => {
+    refused.push({
+      index: -1,
+      from: row.from,
+      to: row.to,
+      kind: row.kind,
+      reason
+    });
+    return false;
+  };
+
+  const push = (map, key, row) => map.set(key, [...(map.get(key) ?? []), row]);
+
+  for (const row of read.rows) {
+    if (row.kind === 'event') {
+      if (row.mode === 'split' && typeof adapters[row.from] !== 'function') {
+        refuse(row, 'needs-adapter');
+        continue;
+      }
+
+      push(state.byNew, row.to, row);
+      push(state.byOld, row.from, row);
+      handle.installed += 1;
+    } else if (row.kind === 'setting' || row.kind === 'attribute') {
+      if (typeof state.native.setAttribute !== 'function') {
+        refuse(row, 'no-attributes');
+        continue;
+      }
+
+      state.attrByOld.set(row.from, row);
+      push(state.attrByNew, row.to, row);
+      handle.installed += 1;
+      if (row.kind === 'setting') installProperty(state, element, row, refuse);
+    } else if (row.kind === 'value') {
+      if (!state.values.has(row.setting)) state.values.set(row.setting, new Map());
+      state.values.get(row.setting).set(row.from, row);
+      handle.installed += 1;
+    } else if (row.kind === 'action' && installAction(state, element, row, refuse)) {
+      handle.installed += 1;
+    }
+  }
+
+  if (state.byNew.size) {
+    defineOwn(state, element, 'dispatchEvent', {
+      writable: true,
+      value: event => wrappedDispatch(state, element, event)
+    });
+  }
+
+  const attributes = state.attrByOld.size || state.values.size;
+
+  if (attributes) {
+    defineOwn(state, element, 'setAttribute', {
+      writable: true,
+      value: (name, value) => wrappedSet(state, element, name, value)
+    });
+    defineOwn(state, element, 'removeAttribute', {
+      writable: true,
+      value: name => wrappedRemove(state, element, name)
+    });
+
+    if (typeof state.native.toggleAttribute === 'function') {
+      defineOwn(state, element, 'toggleAttribute', {
+        writable: true,
+        value: (name, force) => wrappedToggle(state, element, name, force)
+      });
+    }
+
+    adopt(state, element);
+    const Observer = element.ownerDocument?.defaultView?.MutationObserver ?? globalThis.MutationObserver;
+
+    if (typeof Observer === 'function') {
+      const filter = [...new Set([...state.attrByOld.keys(), ...state.attrByNew.keys(), ...state.values.keys()])];
+      state.observer = new Observer(records => reconcile(state, element, records));
+      state.observer.observe(element, {
+        attributes: true,
+        attributeFilter: filter
+      });
+    }
+  }
+
+  shared().elements.set(element, state);
+  signal?.addEventListener?.('abort', () => uninstallAliases(element), {
+    once: true,
+    signal: state.controller.signal
+  });
+  return handle;
+} // For code that sends an event by name: through the element's aliases when
+// it has them, a plain dispatch when it has none. Answers false when cancelled.
+
+function dispatchAliased(element, name, {
+  detail = null,
+  bubbles = true,
+  composed = true,
+  cancelable = false
+} = {}) {
+  return element.dispatchEvent(makeEvent(element, name, detail, {
+    bubbles,
+    composed,
+    cancelable
+  }));
+}
+function aliasesOf(element) {
+  return [...(shared().elements.get(element)?.rows ?? [])];
+} // The first copy's API stays; every copy shares the state.
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.SF = globalThis.SF || {};
+  const current = globalThis.SF.aliases;
+
+  if (!current || typeof current.install !== 'function') {
+    globalThis.SF.aliases = {
+      version: VERSION,
+      strict: current?.strict === true,
+      install: installAliases,
+      uninstall: uninstallAliases,
+      dispatch: dispatchAliased,
+      of: aliasesOf,
+      read: _alias_table_js__WEBPACK_IMPORTED_MODULE_1__.readAliasTable,
+      expired: (row, now) => (0,_alias_table_js__WEBPACK_IMPORTED_MODULE_1__.aliasExpired)(row, now ?? shared().now())
+    };
+  }
+}
+
+/***/ },
+
+/***/ "06e8cd089f28"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   clearDeprecations: () => (/* binding */ clearDeprecations),
+/* harmony export */   listDeprecations: () => (/* binding */ listDeprecations),
+/* harmony export */   noteDeprecated: () => (/* binding */ noteDeprecated)
+/* harmony export */ });
+// What a page still uses that the Framework keeps only for compatibility. Every
+// legacy attribute, value or name a component resolves is noted here once, so a
+// person, a probe or an AI upgrading a product can read the list off a running
+// page (SF.deprecations.list()) instead of searching the source for it. The
+// records behind the names are in contracts/changes/journal.json.
+//
+// Nothing is printed by default: a page opts in to console warnings with
+// <html data-sf-deprecations="warn"> or SF.deprecations.warn = true. A dated
+// alias (core/js/aliases.js, standard simai.smart-component §16.20) also
+// records `tag`, `since` and `remove_after`; once its date has passed the
+// record turns `expired` and that is printed once whatever the page opted
+// into, because the name can leave with the next sweep.
+//
+// Every bundle carries its own copy of this module, so a Map of its own made one
+// list per bundle, and SF.deprecations.list() answered with whichever bundle set
+// it last -- [] on a page printing seven warnings from others. The notes live on
+// one shared global instead, whichever copy writes or reads them.
+function sharedNotes() {
+  const root = globalThis.SF = globalThis.SF || {};
+
+  if (!(root.__deprecationNotes instanceof Map)) {
+    Object.defineProperty(root, '__deprecationNotes', {
+      value: new Map(),
+      configurable: true
+    });
+  }
+
+  return root.__deprecationNotes;
+}
+
+function warnEnabled() {
+  const root = globalThis.document?.documentElement;
+  return root?.dataset?.sfDeprecations === 'warn' || globalThis.SF?.deprecations?.warn === true;
+}
+
+function noteDeprecated({
+  component = '',
+  kind = 'attribute',
+  attribute = '',
+  from,
+  to = null,
+  tag,
+  since,
+  remove_after: removeAfter,
+  expired
+} = {}) {
+  if (!from) return;
+  const key = [component, kind, attribute, from].join('|');
+  const notes = sharedNotes();
+  let note = notes.get(key);
+  const firstExpiry = expired === true && note?.expired !== true;
+
+  if (note) {
+    note.count += 1;
+  } else {
+    note = {
+      component,
+      kind,
+      attribute,
+      from,
+      to,
+      count: 1
+    };
+    notes.set(key, note);
+  } // The dated fields are kept only when a caller knows them, so the records of
+  // the Framework's undated aliases keep their shape.
+
+
+  if (tag !== undefined) note.tag = tag;
+  if (since !== undefined) note.since = since;
+  if (removeAfter !== undefined) note.remove_after = removeAfter;
+  if (expired === true) note.expired = true;
+
+  if (firstExpiry) {
+    globalThis.console?.warn?.(`[SIMAI Framework] ${describe(note)} was due to leave after ${note.remove_after || 'its date'}${to ? `; write ${to}` : ''}. See contracts/changes/journal.json.`);
+  } else if (note.count === 1 && warnEnabled()) {
+    globalThis.console?.warn?.(`[SIMAI Framework] ${describe(note)} is a legacy name${note.remove_after ? ` until ${note.remove_after}` : ''}${to ? `; write ${to}` : ''}. See contracts/changes/journal.json.`);
+  }
+}
+
+function describe({
+  component,
+  kind,
+  attribute,
+  from
+}) {
+  const where = component ? `${component}: ` : '';
+  const what = kind === 'value' ? `${attribute}="${from}"` : `${kind} ${from}`;
+  return `${where}${what}`;
+}
+
+function listDeprecations() {
+  return [...sharedNotes().values()].map(note => ({ ...note
+  }));
+}
+function clearDeprecations() {
+  sharedNotes().clear();
+}
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.SF = globalThis.SF || {};
+  const api = globalThis.SF.deprecations || {};
+  api.list = listDeprecations;
+  api.clear = clearDeprecations;
+  api.note = noteDeprecated;
+  globalThis.SF.deprecations = api;
+}
+
+/***/ },
+
+/***/ "59da34819c8b"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   camelName: () => (/* binding */ camelName),
+/* harmony export */   elementFromManifest: () => (/* binding */ elementFromManifest),
+/* harmony export */   eventName: () => (/* binding */ eventName),
+/* harmony export */   propsFromManifest: () => (/* binding */ propsFromManifest),
+/* harmony export */   readManifest: () => (/* binding */ readManifest),
+/* harmony export */   toOutcome: () => (/* binding */ toOutcome)
+/* harmony export */ });
+/* harmony import */ var _aliases_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("28b603686dcc");
+/* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("0d662e4d7d63");
+/* harmony import */ var _page_actions_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("51e3a200cf5f");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_page_language_js__WEBPACK_IMPORTED_MODULE_1__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+_page_language_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_page_language_js__WEBPACK_IMPORTED_MODULE_1__);
+// An element from its manifest (standard simai.smart-component 1.3.8 §3, §4,
+// §4.1, §4.4, §7.7, §8, §11, §17.1).
+//
+// A component folder holds component.json, its language files and its
+// aliases.json; the element's attribute and property code, the methods of its
+// actions and the names of its events are not written by hand but made from
+// them here:
+//
+//   import manifest from './component.json';
+//   import en from './lang/en.json';
+//   import ru from './lang/ru.json';
+//   import aliases from './aliases.json';
+//   const Base = elementFromManifest(manifest, {base: SfBaseElement, lang: {en, ru}, aliases, actions: {...}});
+//   class SfThing extends Base { ...behaviour only... }
+//
+// Why at load and not in the build: ui-builder compiles a Smart component's
+// index.js with webpack and babel and transforms nothing of its own, so the
+// JSON files are bundled as they are (webpack reads JSON imports) and the
+// plumbing is made once per class when the bundle runs. A build step can take
+// this over later without a change in the components: the input is the same
+// manifest.
+//
+// What the class gets:
+//
+// - settings (§4): an attribute and a property per setting, typed (`string`,
+//   `enum`, `boolean`, `number`, `icon`, `date`, `id`; `list`, `object` and
+//   `state` are properties only); a setting with `"default-from":
+//   "runtime.<word>"` defaults to that word in the element's language;
+// - values (§4, §4.3): a value with a default is also a setting of the same
+//   name; the others are read-only properties that a component overrides with
+//   its own getter;
+// - events (§8): `sfEmit(verb, detail)` sends `<tag>-<verb>`, or the native
+//   name for `"carries": "native"`, through the dated aliases, so the old
+//   names follow;
+// - actions (§4.4): one method per action that takes its `with` parameters as
+//   one object or in declared order and answers an outcome, `{outcome:
+//   'applied'}` or `{outcome: 'refused', reason}`; `"emits"` sends its event
+//   once first, and a page that cancels it makes the action refused; a
+//   waiting action whose instance is removed answers `cancelled`;
+// - the base values `shown` and `started` (§4.1) and the host state
+//   `data-sf-started`; `sfHostState(name, on)` writes the declared
+//   `host-states` (§5.3);
+// - static `aliases` from aliases.json (§16.20), installed by the base;
+// - words (§11, §11.1): `sfWord(key, {count, vars})`, with the element's own
+//   word first, then the nearest [lang], the page's choice, <html lang>,
+//   English, the source language and the key;
+// - a form control (§17.1): `formAssociated` and ElementInternals where the
+//   browser has them; `sfFormValue()` is what the form gets.
+//
+// Members the runtime adds start with `sf`, which no manifest name may
+// (§3.1), so a generated setting or action never collides with them.
+
+
+
+const RESERVED = new Set(['props', 'api', 'view', 'scope', 'parts', 'receive', 'render', 'connected', 'disconnected', 'updated', 'outside', 'data', 'template', 'root-class', 'root-style', 'focus', 'blur', 'connect-port', 'shown', 'started']);
+const PROPERTY_ONLY = new Set(['list', 'object', 'state']); // core/js/smart-base.js toBoolean: what an attribute value means as true.
+
+const TRUE_WORDS = new Set(['1', 'true', 'yes', 'on', 'checked', 'disabled', 'download', 'indeterminate', 'multiple']);
+const camelName = name => String(name).replace(/-([a-z0-9])/gu, (_, letter) => letter.toUpperCase());
+
+const isPlainObject = value => value !== null && typeof value === 'object' && !Array.isArray(value) && Object.getPrototypeOf(value) === Object.prototype; // The browser's own members (§3.1): read from the prototype, never from a copy.
+
+
+function isNativeMember(property) {
+  let proto = globalThis.HTMLElement?.prototype;
+
+  while (proto) {
+    if (Object.prototype.hasOwnProperty.call(proto, property)) return true;
+    proto = Object.getPrototypeOf(proto);
+  }
+
+  return false;
+}
+/** The DOM name of an event the manifest declares by its verb (§8). */
+
+
+function eventName(manifest, verb) {
+  const declared = manifest?.events?.[verb];
+  if (declared?.carries === 'native') return verb;
+  return `${manifest.tag}-${verb}`;
+}
+/** An action's answer as an outcome (§4.4, vocabulary §3.1). */
+
+function toOutcome(result) {
+  if (result === undefined || result === null || result === true) return {
+    outcome: 'applied'
+  };
+  if (result === false) return {
+    outcome: 'refused',
+    reason: 'refused'
+  };
+
+  if (typeof result === 'string') {
+    return ['applied', 'cancelled', 'conflict', 'unavailable'].includes(result) ? {
+      outcome: result
+    } : {
+      outcome: 'refused',
+      reason: result
+    };
+  }
+
+  if (typeof result === 'object' && typeof result.outcome === 'string') return result;
+  return {
+    outcome: 'applied',
+    value: result
+  };
+}
+
+function typedDefault(spec) {
+  if (Object.prototype.hasOwnProperty.call(spec, 'default')) return spec.default;
+
+  switch (spec.type) {
+    case 'boolean':
+      return false;
+
+    case 'number':
+      return 0;
+
+    case 'list':
+      return [];
+
+    case 'object':
+    case 'state':
+      return {};
+
+    case 'enum':
+      return spec.values?.[0] ?? '';
+
+    default:
+      return '';
+  }
+}
+
+function runtimeWordOf(spec) {
+  const from = spec?.['default-from'];
+  return typeof from === 'string' && from.startsWith('runtime.') ? from.slice('runtime.'.length) : '';
+}
+/**
+ * The members a manifest declares, read once: what the element exposes and
+ * how each name is spelled on it.
+ */
+
+
+function readManifest(manifest) {
+  if (!manifest || typeof manifest !== 'object' || !manifest.tag) {
+    throw new TypeError('elementFromManifest: a manifest with a tag is required');
+  }
+
+  const members = [];
+  const refused = [];
+
+  const take = (part, name, spec, writable) => {
+    const property = camelName(name);
+
+    if (RESERVED.has(name) || name.startsWith('_') || name.startsWith('sf')) {
+      refused.push({
+        part,
+        name,
+        reason: 'reserved'
+      });
+      return;
+    }
+
+    members.push({
+      part,
+      name,
+      property,
+      type: spec.type || 'string',
+      values: Array.isArray(spec.values) ? spec.values : null,
+      default: typedDefault(spec),
+      optional: spec.optional === true,
+      attribute: PROPERTY_ONLY.has(spec.type) ? '' : name,
+      writable,
+      word: runtimeWordOf(spec),
+      native: isNativeMember(property)
+    });
+  };
+
+  for (const [name, spec] of Object.entries(manifest.settings || {})) take('settings', name, spec || {}, true);
+
+  for (const [name, spec] of Object.entries(manifest.values || {})) {
+    // A value a person changes is also writable as a setting (§4); one that
+    // only shows (effective-*) is read.
+    const writable = Object.prototype.hasOwnProperty.call(spec || {}, 'default') || Boolean(spec?.['default-from']);
+    take('values', name, spec || {}, writable && !name.startsWith('effective-'));
+  }
+
+  const events = Object.fromEntries(Object.entries(manifest.events || {}).map(([verb, spec]) => [verb, {
+    verb,
+    name: eventName(manifest, verb),
+    cancelable: spec?.cancelable === true,
+    native: spec?.carries === 'native'
+  }]));
+  const actions = Object.entries(manifest.actions || {}).map(([name, spec]) => ({
+    name,
+    method: camelName(name),
+    with: Object.keys(spec?.with || {}),
+    emits: spec?.emits || ''
+  }));
+  return {
+    tag: manifest.tag,
+    members,
+    events,
+    actions,
+    refused,
+    hostStates: { ...(manifest['host-states'] || {})
+    },
+    form: manifest.form || null
+  };
+}
+/** The base's `props` for the members that live in attributes or properties. */
+
+function propsFromManifest(manifest) {
+  const {
+    members
+  } = readManifest(manifest);
+  const props = {};
+
+  for (const member of members) {
+    if (!member.writable) continue;
+    const config = {
+      default: member.default,
+      attribute: member.attribute || false
+    };
+    if (member.type === 'boolean') config.type = Boolean;else if (member.type === 'number') config.type = Number;else if (member.type === 'list') config.type = Array;else if (PROPERTY_ONLY.has(member.type)) config.type = Object;
+    if (member.values) config.values = member.values;
+
+    if (PROPERTY_ONLY.has(member.type)) {
+      config.parser = function readProperty(raw, fallback, element) {
+        const store = element?.__sfManifestData;
+        return store && Object.prototype.hasOwnProperty.call(store, member.name) ? store[member.name] : fallback;
+      };
+    } else if (member.word) {
+      config.parser = function readWord(raw, fallback, element) {
+        return raw !== undefined && raw !== null ? raw : element.sfWord(member.word);
+      };
+    }
+
+    props[member.property] = config;
+  }
+
+  return props;
+}
+
+function readAttribute(element, member) {
+  const raw = element.getAttribute(member.attribute);
+
+  if (member.type === 'boolean') {
+    if (raw === null) return member.optional && member.default === undefined ? undefined : Boolean(member.default); // The base's reading, so the template and the property agree: present
+    // and empty is true, then the words the base takes for true.
+
+    return raw === '' || TRUE_WORDS.has(raw.toLowerCase());
+  }
+
+  if (raw === null) return member.word ? element.sfWord(member.word) : member.default;
+
+  if (member.type === 'number') {
+    const number = Number(raw);
+    return raw.trim() !== '' && Number.isFinite(number) ? number : member.default;
+  }
+
+  if (member.values && !member.values.includes(raw)) return member.default;
+  return raw;
+}
+
+function writeAttribute(element, member, value) {
+  if (value === null || value === undefined) {
+    element.removeAttribute(member.attribute);
+    return;
+  }
+
+  if (member.type === 'boolean') {
+    // An optional boolean keeps «off» as a value of its own (§4.2).
+    if (value) element.setAttribute(member.attribute, '');else if (member.optional) element.setAttribute(member.attribute, 'false');else element.removeAttribute(member.attribute);
+    return;
+  }
+
+  element.setAttribute(member.attribute, String(value));
+}
+
+function defineMembers(target, members) {
+  for (const member of members) {
+    // The browser's own members stay the browser's (§3.1); a component that
+    // must answer one writes its own accessor.
+    if (member.native) continue;
+
+    if (!member.writable) {
+      Object.defineProperty(target, member.property, {
+        configurable: true,
+
+        get() {
+          return member.default;
+        }
+
+      });
+      continue;
+    }
+
+    if (!member.attribute) {
+      Object.defineProperty(target, member.property, {
+        configurable: true,
+
+        get() {
+          const store = this.__sfManifestData;
+          return store && Object.prototype.hasOwnProperty.call(store, member.name) ? store[member.name] : member.default;
+        },
+
+        set(value) {
+          if (!this.__sfManifestData) this.__sfManifestData = {};
+          this.__sfManifestData[member.name] = value;
+          this.requestComponentUpdate?.(member.name);
+        }
+
+      });
+      continue;
+    }
+
+    Object.defineProperty(target, member.property, {
+      configurable: true,
+
+      get() {
+        return readAttribute(this, member);
+      },
+
+      set(value) {
+        writeAttribute(this, member, value);
+      }
+
+    });
+  }
+}
+
+function parameters(action, args) {
+  if (args.length === 1 && isPlainObject(args[0]) && (action.with.length !== 1 || Object.keys(args[0]).every(key => action.with.includes(key)))) {
+    return { ...args[0]
+    };
+  }
+
+  return Object.fromEntries(action.with.map((name, index) => [name, args[index]]));
+}
+
+function defineActions(target, actions, implementations, events) {
+  for (const action of actions) {
+    if (isNativeMember(action.method)) continue;
+    const run = implementations?.[action.name];
+    Object.defineProperty(target, action.method, {
+      configurable: true,
+      writable: true,
+      value: function generatedAction(...args) {
+        const params = parameters(action, args);
+
+        if (action.emits) {
+          const event = events[action.emits];
+          const allowed = this.sfEmit(action.emits, params, {
+            cancelable: event?.cancelable ?? true
+          });
+          if (!allowed) return {
+            outcome: 'refused',
+            reason: 'prevented'
+          };
+        }
+
+        if (typeof run !== 'function') {
+          globalThis.console?.warn?.(`[SIMAI Framework] ${this.localName}: action ${action.name} has no code`);
+          return {
+            outcome: 'refused',
+            reason: 'not-implemented'
+          };
+        }
+
+        let result;
+
+        try {
+          result = run.call(this, params, {
+            signal: this.sfScope
+          });
+        } catch (error) {
+          this.reportComponentError?.(error, `action ${action.name}`);
+          return {
+            outcome: 'refused',
+            reason: 'error'
+          };
+        }
+
+        if (result && typeof result.then === 'function') {
+          const signal = this.sfScope;
+          return Promise.resolve(result).then(value => signal?.aborted ? {
+            outcome: 'cancelled'
+          } : toOutcome(value), error => {
+            if (signal?.aborted || error?.name === 'AbortError') return {
+              outcome: 'cancelled'
+            };
+            this.reportComponentError?.(error, `action ${action.name}`);
+            return {
+              outcome: 'refused',
+              reason: 'error'
+            };
+          });
+        }
+
+        return toOutcome(result);
+      }
+    });
+  }
+} // The nearest closed container (§7.2.1): `hidden`, a closed <details> or
+// <dialog>. What has no box in an opened container is not shown.
+
+
+function isShown(element) {
+  if (!element.isConnected) return false;
+
+  for (let node = element; node && node.nodeType === 1; node = node.parentElement || node.getRootNode?.()?.host) {
+    if (node.hidden) return false;
+    const tag = node.localName;
+    if (node !== element && (tag === 'details' || tag === 'dialog') && !node.open) return false;
+  }
+
+  return true;
+}
+/**
+ * The class a component extends: its manifest's plumbing over `base`.
+ *
+ * options:
+ *   base      the class to extend (the Smart base, or a trait over it);
+ *   lang      `{<locale>: <lang file>}`; the `runtime` words are the element's;
+ *   source    the language the component was written in (the fallback before
+ *             the key; default the first file that `lang` names);
+ *   aliases   the component's aliases.json;
+ *   actions   `{<action>(params, {signal}) => outcome}`, the actions' code.
+ */
+
+
+function elementFromManifest(manifest, {
+  base,
+  lang = {},
+  source,
+  aliases,
+  actions = {}
+} = {}) {
+  const Base = base || globalThis.SF?.smart?.SfBaseElement;
+  if (typeof Base !== 'function') throw new TypeError('elementFromManifest: a base class is required');
+  const read = readManifest(manifest);
+  const generatedProps = propsFromManifest(manifest);
+  const words = Object.fromEntries(Object.entries(lang).map(([locale, file]) => [locale.toLowerCase(), { ...(file?.runtime || {})
+  }]));
+  const sourceLanguage = source || Object.keys(words)[0] || '';
+  const formAssociated = Boolean(read.form) && typeof globalThis.ElementInternals === 'function' && typeof globalThis.ElementInternals.prototype?.setFormValue === 'function';
+
+  class ManifestElement extends Base {
+    static get manifest() {
+      return manifest;
+    } // What SF.Assembly reads of a part it places (assembly/definition.mjs
+    // interfaces.of): the same manifest, so a rule can ask its actions.
+
+
+    static get sfInterface() {
+      return manifest;
+    }
+
+    static get sfManifest() {
+      return read;
+    }
+
+    static get sfWords() {
+      return words;
+    }
+
+    static get formAssociated() {
+      return formAssociated;
+    }
+
+    static get props() {
+      return { ...super.props,
+        ...generatedProps
+      };
+    }
+
+    constructor() {
+      super();
+      this.sfInternals = formAssociated && typeof this.attachInternals === 'function' ? this.attachInternals() : null;
+    }
+
+    connectedCallback() {
+      super.connectedCallback(); // A leaf outside an assembly starts with the page (§7.2.1 `now`).
+
+      this.toggleAttribute('data-sf-started', true);
+    }
+    /** §4.1: the element has a box in an opened container. */
+
+
+    get shown() {
+      return isShown(this);
+    }
+    /** §4.1: its assembly has started it (a leaf on a page, once connected). */
+
+
+    get started() {
+      return this.hasAttribute('data-sf-started');
+    }
+    /** The DOM name of a declared event (§8). */
+
+
+    sfEventName(verb) {
+      return read.events[verb]?.name ?? eventName(manifest, verb);
+    }
+    /**
+     * Sends a declared event by its verb. Answers false when a listener
+     * refused a cancelable one.
+     */
+
+
+    sfEmit(verb, detail = {}, {
+      cancelable
+    } = {}) {
+      const event = read.events[verb];
+      if (!event) globalThis.console?.warn?.(`[SIMAI Framework] ${this.localName}: event ${verb} is not declared`);
+      return (0,_aliases_js__WEBPACK_IMPORTED_MODULE_0__.dispatchAliased)(this, this.sfEventName(verb), {
+        detail,
+        bubbles: true,
+        composed: true,
+        cancelable: cancelable ?? event?.cancelable ?? false
+      });
+    }
+    /** A word of the element's own, in its language (§11, §11.1). */
+
+
+    sfWord(key, {
+      count,
+      vars
+    } = {}) {
+      return (0,_page_language_js__WEBPACK_IMPORTED_MODULE_1__.pageWord)(words, key, this, {
+        component: this.localName,
+        source: sourceLanguage,
+        count,
+        vars
+      });
+    }
+    /** Writes a declared host state (§5.3). */
+
+
+    sfHostState(name, value) {
+      const type = read.hostStates[name];
+
+      if (!type) {
+        globalThis.console?.warn?.(`[SIMAI Framework] ${this.localName}: host state ${name} is not declared`);
+        return;
+      }
+
+      if (type === 'boolean') {
+        if (value) this.setAttribute(name, 'true');else this.removeAttribute(name);
+      } else if (value === null || value === undefined || value === '') {
+        this.removeAttribute(name);
+      } else {
+        this.setAttribute(name, String(value));
+      }
+    }
+    /**
+     * What a form gets (§17.1): the value named by `form.submits` while the
+     * value named by `form.value` holds, nothing while disabled. A boolean
+     * value submits only when true. A component overrides it for a value of
+     * its own shape.
+     */
+
+
+    sfFormValue() {
+      const form = read.form;
+      if (!form) return null;
+      if (form.disabled && this[camelName(form.disabled)]) return null;
+      const value = this[camelName(form.value)];
+
+      if (form.submits && form.submits !== form.value) {
+        if (!value) return null;
+        const submitted = this[camelName(form.submits)];
+        return submitted === undefined || submitted === null ? null : String(submitted);
+      }
+
+      if (value === undefined || value === null || value === false) return null;
+      return typeof value === 'object' ? JSON.stringify(value) : String(value);
+    }
+    /** Tells the form what the element holds now. */
+
+
+    sfSyncForm() {
+      if (!this.sfInternals) return;
+
+      try {
+        this.sfInternals.setFormValue(this.sfFormValue());
+      } catch (error) {
+        this.reportComponentError?.(error, 'form');
+      }
+    }
+
+    get form() {
+      return this.sfInternals?.form ?? null;
+    }
+
+    get labels() {
+      return this.sfInternals?.labels ?? null;
+    }
+
+    get validity() {
+      return this.sfInternals?.validity;
+    }
+
+    get validationMessage() {
+      return this.sfInternals?.validationMessage ?? '';
+    }
+
+    get willValidate() {
+      return this.sfInternals?.willValidate ?? false;
+    }
+
+    checkValidity() {
+      return this.sfInternals ? this.sfInternals.checkValidity() : true;
+    }
+
+    reportValidity() {
+      return this.sfInternals ? this.sfInternals.reportValidity() : true;
+    }
+
+    setCustomValidity(message = '') {
+      if (!this.sfInternals) return;
+      if (message) this.sfInternals.setValidity({
+        customError: true
+      }, String(message));else this.sfInternals.setValidity({});
+    }
+
+    formDisabledCallback(disabled) {
+      this.sfFormDisabled = Boolean(disabled);
+      this.requestComponentUpdate?.('form-disabled');
+    }
+
+  }
+
+  defineMembers(ManifestElement.prototype, read.members);
+  defineActions(ManifestElement.prototype, read.actions, actions, read.events); // data-sf-action="<id>.<action>" runs a declared action (§8 one page trigger).
+
+  if (read.actions.length) (0,_page_actions_js__WEBPACK_IMPORTED_MODULE_2__.bindPageActions)();
+  if (aliases) ManifestElement.aliases = aliases;
+  return ManifestElement;
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "695f21e50358"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   instancePath: () => (/* binding */ instancePath),
+/* harmony export */   partId: () => (/* binding */ partId),
+/* harmony export */   pathIsSettled: () => (/* binding */ pathIsSettled)
+/* harmony export */ });
+// An instance's id is its role path (standard simai.smart-component 1.3.8
+// §7.1.1; simai/ui-source#41).
+//
+//   - at the top of the page: `page/<host id or data-sf-role>`;
+//   - a part with `data-sf-role` inside another instance:
+//     `<parent path>/<role>`;
+//   - neither: `<kind>[<n>]`, n counted in document order among the
+//     instances of the same kind that have neither.
+//
+// Ids that templates write (`for`, `aria-controls`, `aria-labelledby`) are
+// `<path with every non-word run as ->--<local name>`. A counter is never an
+// id: the field ids used to come from a module-scope counter, and every
+// bundle that carries the field code (eight of them) had its own, so a class
+// sf-quantity and an <sf-quantity> on one page both took
+// `sf-quantity-1-control` and a label pointed at the other field. Ids that
+// follow creation order also swap when two instances swap, and server markup
+// (§5.4) cannot repeat them. A path is read from the page, so every bundle
+// gives the same answer.
+//
+// `kind` is the element's tag for a Smart element; class markup passes its
+// root class and is told apart as `class.<root class>`.
+const isElement = node => node && node.nodeType === 1 && typeof node.getAttribute === 'function';
+
+const isCustom = node => isElement(node) && String(node.localName || '').includes('-');
+
+function parentInstance(node) {
+  for (let current = node.parentNode || node.host || null; current; current = current.parentNode || current.host || null) {
+    if (isCustom(current)) return current;
+  }
+
+  return null;
+}
+
+function kindOf(owner, kind) {
+  const tag = String(owner?.localName || '').toLowerCase();
+  if (tag && tag.includes('-')) return tag;
+  return `class.${kind || tag || 'element'}`;
+}
+
+function documentIndex(owner, kind) {
+  const doc = owner?.ownerDocument;
+  if (!owner?.isConnected || typeof doc?.querySelectorAll !== 'function') return 0;
+  const selector = kind.startsWith('class.') ? `.${kind.slice('class.'.length)}` : kind;
+  let index = 0;
+
+  for (const one of doc.querySelectorAll(selector)) {
+    if (kind.startsWith('class.') && isCustom(one)) continue;
+    if (one.id || one.getAttribute('data-sf-role')) continue;
+    index += 1;
+    if (one === owner) return index;
+  }
+
+  return 0;
+}
+/** The role path of an instance (§7.1.1). */
+
+
+function instancePath(owner, {
+  kind = ''
+} = {}) {
+  const id = isElement(owner) ? String(owner.id || '').trim() : String(owner?.id || '').trim();
+  if (id) return `page/${id}`;
+  const role = isElement(owner) ? String(owner.getAttribute('data-sf-role') || '').trim() : '';
+
+  if (role) {
+    const parent = parentInstance(owner);
+    return parent ? `${instancePath(parent, {
+      kind: parent.localName
+    })}/${role}` : `page/${role}`;
+  }
+
+  const resolved = kindOf(owner, kind);
+  return `${resolved}[${documentIndex(owner, resolved)}]`;
+}
+/** An id a template writes for one of its parts: `<path as a word>--<local name>`. */
+
+function partId(path, local) {
+  const base = String(path).replace(/\W+/gu, '-').replace(/^-+|-+$/gu, '');
+  return local ? `${base}--${local}` : base;
+}
+/** Whether the path is final: an instance in the page, or one with an id. */
+
+function pathIsSettled(owner) {
+  return Boolean(owner?.isConnected || String(owner?.id || '').trim());
 }
 
 /***/ },
@@ -1087,6 +2928,78 @@ function carryLayerOrigin(portal, host, {
 
 /***/ },
 
+/***/ "51e3a200cf5f"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   bindPageActions: () => (/* binding */ bindPageActions),
+/* harmony export */   readPageAction: () => (/* binding */ readPageAction),
+/* harmony export */   runPageAction: () => (/* binding */ runPageAction)
+/* harmony export */ });
+// One page trigger (standard simai.smart-component 1.3.8 §8, §16.10, §19.4):
+// `data-sf-action="<element id>.<action>"` on a page control runs that action
+// of the element, the same method a script or a rule calls. It replaces the
+// per-component triggers (`data-sf-modal-open`, `data-sf-drawer-close`, …),
+// which stay as their aliases.
+//
+//   <button data-sf-action="confirm-delete.open">Delete</button>
+//   <sf-modal id="confirm-delete">… <button data-sf-action="confirm-delete.confirm">Yes</button></sf-modal>
+//
+// Only an action the element's manifest declares is run: a page trigger can
+// not reach the element's other methods. The action gets no parameters; a
+// trigger that needs some is a script.
+//
+// One click listener for the document, on a shared global: every Smart bundle
+// carries its own copy of this module, and a second listener would run each
+// action twice.
+const KEY = Symbol.for('sf.pageActions');
+
+const camel = name => String(name).replace(/-([a-z0-9])/gu, (_, letter) => letter.toUpperCase());
+/** `<id>.<action>` -> {id, action}; the action is the part after the last dot. */
+
+
+function readPageAction(text) {
+  const value = String(text || '').trim();
+  const at = value.lastIndexOf('.');
+  if (at <= 0 || at === value.length - 1) return null;
+  return {
+    id: value.slice(0, at),
+    action: value.slice(at + 1)
+  };
+}
+/** Runs a page trigger; answers the action's outcome, or null when nothing ran. */
+
+function runPageAction(trigger) {
+  const read = readPageAction(trigger?.getAttribute?.('data-sf-action'));
+  if (!read) return null; // The element's id, or its instance id: a part an assembly placed is named
+  // by its role path (§7.1.1, data-sf-instance="page/form/dialog").
+
+  const doc = trigger.ownerDocument;
+  const element = doc?.getElementById(read.id) ?? [...(doc?.querySelectorAll('[data-sf-instance]') ?? [])].find(one => one.getAttribute('data-sf-instance') === read.id);
+  const declared = element?.constructor?.sfManifest?.actions ?? [];
+  if (!declared.some(action => action.name === read.action)) return null;
+  const method = element[camel(read.action)];
+  return typeof method === 'function' ? method.call(element, {}) : null;
+}
+function bindPageActions(doc = globalThis.document) {
+  if (!doc || typeof doc.addEventListener !== 'function') return;
+  const scope = globalThis;
+  if (!scope[KEY]) Object.defineProperty(scope, KEY, {
+    value: new WeakSet(),
+    configurable: true
+  });
+  if (scope[KEY].has(doc)) return;
+  scope[KEY].add(doc);
+  doc.addEventListener('click', event => {
+    const trigger = event.target?.closest?.('[data-sf-action]');
+    if (!trigger || trigger.matches(':disabled, [aria-disabled="true"]')) return;
+    runPageAction(trigger);
+  });
+}
+
+/***/ },
+
 /***/ "f98b7a216869"
 (module, __webpack_exports__, __webpack_require__) {
 
@@ -1095,21 +3008,32 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("ddf1cdb42ecc");
 /* harmony import */ var lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("7b69af8ef2e5");
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("fbe0570fcc69");
-/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("0d662e4d7d63");
-/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("e45eac6c719d");
-/* harmony import */ var _component_modal_js_focus__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("c8d66dd2c299");
-/* harmony import */ var _component_modal_js_closing__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("3f3a6e2680d5");
-/* harmony import */ var _component_modal_js_motion__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("201fd0b17b8b");
-/* harmony import */ var _component_modal_js_scroll__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("ed3ae3576d0a");
-/* harmony import */ var _component_spinner_js_spinner_draw__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("50d2a204ba4c");
-/* harmony import */ var _component_modal_js_stack__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("93025a68d8ab");
-/* harmony import */ var _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("78628e837a32");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_2__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__]);
-([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_2__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("59da34819c8b");
+/* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("06e8cd089f28");
+/* harmony import */ var _core_js_instance_path__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("695f21e50358");
+/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("e45eac6c719d");
+/* harmony import */ var _component_modal_js_focus__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("c8d66dd2c299");
+/* harmony import */ var _component_modal_js_closing__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("3f3a6e2680d5");
+/* harmony import */ var _component_modal_js_motion__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("201fd0b17b8b");
+/* harmony import */ var _component_modal_js_scroll__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("ed3ae3576d0a");
+/* harmony import */ var _component_spinner_js_spinner_draw__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("50d2a204ba4c");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("afc57055d2cc");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("85cdf307b188");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("66be591d2d06");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("be0bc1a67e65");
+/* harmony import */ var _component_modal_js_stack__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__("93025a68d8ab");
+/* harmony import */ var _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__("78628e837a32");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_2__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_2__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__);
+
+
+
+
+
+
 
 
 
@@ -1124,36 +3048,91 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 
 const OVERLAY_CONTAINER = "[data-sf-overlay-container], [data-sf-drawer-container]";
 
- // The header's two actions, named in the page's language: they were English on
-// every page (documentation trial, 2026-10-12). The loading state and its
-// failure said "Loading..." and "Failed to load content" on every page too
-// (simai/ui-source#11 follow-up); they speak the page's language as well.
+ // sf-modal from its component.json (standard simai.smart-component 1.3.8 §3,
+// §4, §8, §19): the settings are attributes and properties made by
+// core/js/element-manifest.js, the words are lang/<locale>.json (the header's
+// two actions, the untitled window's name and the loading state speak the
+// page's language), and the old names -- title, blur, hide, unclose, the
+// modal:* events, hide() and show() -- are dated aliases in aliases.json.
 
-const MODAL_TEXT = {
-  en: {
-    close: "Close",
-    minimize: "Minimize",
-    title: "Dialog",
-    loading: "Loading…",
-    loadFailed: "Failed to load content",
-    frameFailed: "Failed to load iframe content"
+const ModalElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_12__, {
+  base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default()),
+  lang: {
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_14__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_15__
   },
-  ru: {
-    close: "Закрыть",
-    minimize: "Свернуть",
-    title: "Окно",
-    loading: "Загрузка…",
-    loadFailed: "Не удалось загрузить содержимое",
-    frameFailed: "Не удалось загрузить встроенную страницу"
-  }
+  source: "ru",
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_13__
+}); // The public variables the manifest declares; a window drawn at the end of the
+// body carries their values from where its host stands (§19.1).
+
+const MODAL_VARIABLES = Object.keys(_component_json__WEBPACK_IMPORTED_MODULE_12__["css-variables"] || {}); // What retires without a new name (aliases.json rows with `to: null`): kept
+// until the date, and each use is noted with it.
+
+function noteRetired(kind, from) {
+  (0,_core_js_deprecations__WEBPACK_IMPORTED_MODULE_4__.noteDeprecated)({
+    component: "sf-modal",
+    tag: "sf-modal",
+    kind,
+    from,
+    to: null,
+    since: _aliases_json__WEBPACK_IMPORTED_MODULE_13__.since,
+    remove_after: _aliases_json__WEBPACK_IMPORTED_MODULE_13__.remove_after
+  });
+} // A lifecycle copy (modal:ready, modal:update) is still sent until its date; a
+// listener that reads it is a use (§4.1, §16.13).
+
+
+function retiredEvent(type, detail) {
+  const event = new CustomEvent(type, {
+    bubbles: true,
+    composed: true,
+    detail
+  });
+  let used = false;
+  Object.defineProperty(event, "detail", {
+    configurable: true,
+
+    get() {
+      if (!used) {
+        used = true;
+        noteRetired("event", type);
+      }
+
+      return detail;
+    }
+
+  });
+  return event;
+}
+
+const OLD_EVENT_NAMES = {
+  "modal:before-open": "open",
+  "modal:after-open": "opened",
+  "modal:before-close": "close",
+  "modal:after-close": "closed",
+  "modal:before-hide": "minimize",
+  "modal:after-hide": "minimized",
+  "modal:before-show": "expand",
+  "modal:after-show": "expanded",
+  "modal:before-content-upload": "content-upload",
+  "modal:after-content-upload": "content-uploaded"
 };
-let modalUid = 0;
+
+const applied = () => ({
+  outcome: "applied"
+});
+
+const refused = reason => ({
+  outcome: "refused",
+  reason
+});
 
 function isBlurTypeValue(value) {
   return ["none", "small", "medium", "large"].includes(String(value || "").trim().toLowerCase());
 }
 
-class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default()) {
+class SfModal extends ModalElement {
   static registry = new Map();
   static globalBound = false;
   static stack = [];
@@ -1162,20 +3141,20 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
   // the core now (--sf-z-index-layer, whose default is this same 9000).
 
   static baseZIndex = 9000;
-  static defaultTrueAttributes = new Set(["overlay", "show-close", "show-footer", "close-on-esc", "close-on-overlay", "preserve-scroll-gap", "preload"]);
+  static defaultTrueAttributes = new Set(["overlay", "show-close", "show-footer", "close-on-esc", "close-on-overlay", "preserve-scroll-gap", "preload", "dismissible"]);
 
   static getTopModal() {
-    return (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_10__.getTopModalLayer)();
+    return (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_16__.getTopModalLayer)();
   } // Whether this modal is the top layer of the document: a drawer or a list
   // opened from it stands above it and takes the keys while it does.
 
 
   static isTopModal(modal) {
-    return (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_10__.isTopModalLayer)(modal);
+    return (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_16__.isTopModalLayer)(modal);
   }
 
   static getStackIndex(modal) {
-    return (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_10__.getModalLayerIndex)(modal);
+    return (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_16__.getModalLayerIndex)(modal);
   }
 
   static addToStack(modal) {
@@ -1189,7 +3168,7 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
     // and the document scroll lock.
 
     if (!modal.hiddenState) {
-      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_10__.addModalLayer)(modal, SfModal);
+      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_16__.addModalLayer)(modal, SfModal);
     }
   }
 
@@ -1200,7 +3179,7 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
 
     SfModal.stack = SfModal.stack.filter(item => item !== modal);
     SfModal.openCount = SfModal.stack.length;
-    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_10__.removeModalLayer)(modal);
+    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_16__.removeModalLayer)(modal);
   }
 
   static bringToFront(modal) {
@@ -1210,151 +3189,21 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
 
     SfModal.stack = SfModal.stack.filter(item => item !== modal);
     SfModal.stack.push(modal);
-    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_10__.raiseModalLayer)(modal);
+    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_16__.raiseModalLayer)(modal);
   }
 
   static updateStackStyles() {
-    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_10__.updateModalLayers)();
-  }
+    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_16__.updateModalLayers)();
+  } // The manifest's settings, and the base's own template name.
+
 
   static get props() {
-    return {
+    return { ...super.props,
       templateName: {
         attribute: "template",
         default: "default"
       },
-      modalId: {
-        default: ""
-      },
-      title: {
-        default: ""
-      },
-      ariaLabel: {
-        attribute: "aria-label",
-        default: ""
-      },
-      text: {
-        default: ""
-      },
-      open: {
-        type: Boolean,
-        default: false
-      },
-      autoload: {
-        type: Boolean,
-        default: false
-      },
-      unclose: {
-        type: Boolean,
-        default: false
-      },
-      hide: {
-        type: Boolean,
-        default: false
-      },
-      hideModifier: {
-        default: ""
-      },
-      minimized: {
-        type: Boolean,
-        default: false
-      },
-      overlay: {
-        type: Boolean,
-        default: true
-      },
-      showHeader: {
-        type: Boolean,
-        default: true
-      },
-      showClose: {
-        type: Boolean,
-        default: true
-      },
-      showFooter: {
-        type: Boolean,
-        default: true
-      },
-      closeOnEsc: {
-        type: Boolean,
-        default: true
-      },
-      closeOnOverlay: {
-        type: Boolean,
-        default: true
-      },
-      preserveScrollGap: {
-        type: Boolean,
-        default: true
-      },
-      position: {
-        default: "center",
-        values: ["center", "left", "right", "inline-start", "inline-end", "top", "bottom"]
-      },
-      mode: {
-        default: "inline",
-        values: ["inline", "ajax", "iframe"]
-      },
-      display: {
-        default: "modal",
-        values: ["modal", "inline"]
-      },
-      src: {
-        default: ""
-      },
       rootClass: {
-        default: ""
-      },
-      preload: {
-        type: Boolean,
-        default: true
-      },
-      fullscreen: {
-        type: Boolean,
-        default: false
-      },
-      width: {
-        default: ""
-      },
-      height: {
-        default: ""
-      },
-      blur: {
-        default: ""
-      },
-      blurType: {
-        default: "medium",
-        values: ["none", "small", "medium", "large"]
-      },
-      overlayPreset: {
-        default: "default",
-        values: ["default", "focus"]
-      },
-      overlayClass: {
-        default: ""
-      },
-      closeClass: {
-        default: ""
-      },
-      surfaceClass: {
-        default: ""
-      },
-      surfacePadding: {
-        default: ""
-      },
-      panelClass: {
-        default: ""
-      },
-      headerClass: {
-        default: ""
-      },
-      bodyClass: {
-        default: ""
-      },
-      contentClass: {
-        default: ""
-      },
-      footerClass: {
         default: ""
       }
     };
@@ -1385,6 +3234,8 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
     this._remoteError = "";
     this._isLoadingRemote = false;
     this._remoteLoaded = false;
+    this._asks = [];
+    this._answer = null;
     this.onKeyDown = this.onKeyDown.bind(this);
     this.handleOverlayClick = this.handleOverlayClick.bind(this);
     this.handleCloseClick = this.handleCloseClick.bind(this);
@@ -1393,12 +3244,26 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
 
   connectedCallback() {
     if (!this._modalId) {
-      this._modalId = this.getAttribute("modal-id") || this.id || `sf-modal-${++modalUid}`;
+      // A window without modal-id or id takes its path id (§7.1.1): sf-modal-<n>
+      // in document order, not a module counter (simai/ui-source#41).
+      this._modalId = this.getAttribute("modal-id") || this.id || (0,_core_js_instance_path__WEBPACK_IMPORTED_MODULE_5__.partId)((0,_core_js_instance_path__WEBPACK_IMPORTED_MODULE_5__.instancePath)(this));
     }
 
     super.connectedCallback();
     SfModal.registry.set(this.modalId, this);
     SfModal.bindGlobalEvents();
+  } // The old modal:* names keep their old detail (§16.20 split rows): the new
+  // names carry data only (§8), the old ones also the element and its window.
+
+
+  sfAliasAdapters() {
+    const add = detail => ({ ...detail,
+      component: this,
+      modal: this,
+      root: this._root()
+    });
+
+    return Object.fromEntries(Object.keys(OLD_EVENT_NAMES).map(name => [name, add]));
   } // What the author writes inside <sf-modal> without a slot is the window's
   // content, after anything slotted as content -- as sf-drawer takes it. It
   // used to be dropped without a word: an unslotted paragraph gave an empty
@@ -1430,20 +3295,6 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
 
   get modalId() {
     return this.getAttribute("modal-id") || this._modalId || this.id || "";
-  }
-
-  get title() {
-    // An untitled window was headed and named «Modal» on every page; it
-    // takes the page language's word instead.
-    return this.getAttribute("title") || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(MODAL_TEXT, "title", this);
-  }
-
-  get ariaLabel() {
-    return this.getAttribute("aria-label") || "";
-  }
-
-  get text() {
-    return this.getAttribute("text") || "";
   } // An inline window stands in the page's flow, so it is shown without
   // `open` until close() puts it away; it needed the attribute to show at all,
   // while the script Modal opens an inline one by itself (owner, 2026-10-18).
@@ -1451,160 +3302,93 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
 
   get openState() {
     return this._isOpen || this.hasAttribute("open") || this.display === "inline" && !this._inlineClosed;
+  } // dismissible=false turns off Escape and the overlay (§19.3); `unclose` is
+  // its old, inverted name, read until its date.
+
+
+  get dismissible() {
+    if (this.hasAttribute("unclose") && this.getAttribute("unclose") !== "false") {
+      (0,_core_js_deprecations__WEBPACK_IMPORTED_MODULE_4__.noteDeprecated)({
+        component: "sf-modal",
+        tag: "sf-modal",
+        kind: "attribute",
+        attribute: "unclose",
+        from: "unclose",
+        to: "dismissible",
+        since: _aliases_json__WEBPACK_IMPORTED_MODULE_13__.since,
+        remove_after: _aliases_json__WEBPACK_IMPORTED_MODULE_13__.remove_after
+      });
+      return false;
+    }
+
+    return this.getBooleanAttr("dismissible", true);
   }
 
-  get autoload() {
-    return this.getBooleanAttr("autoload", false);
+  set dismissible(value) {
+    if (value === false) this.setAttribute("dismissible", "false");else this.removeAttribute("dismissible");
   }
 
   get unclose() {
-    return this.getBooleanAttr("unclose", false);
-  }
-
-  get hideButton() {
-    return this.getBooleanAttr("hide", false);
-  }
-
-  get hideModifier() {
-    return this.getAttribute("hide-modifier") || "";
+    return !this.dismissible;
   }
 
   get hiddenState() {
     return this.display !== "inline" && (this._isHidden || this.hasAttribute("minimized"));
+  } // The value minimized (§4): the window is open but out of the visible stack.
+  // The attribute's presence says so, whatever it holds, as the template reads.
+
+
+  get minimized() {
+    return this.hiddenState;
   }
 
-  get overlay() {
-    return this.getBooleanAttr("overlay", true);
-  }
-
-  get closeOnEsc() {
-    return this.getBooleanAttr("close-on-esc", true);
+  set minimized(value) {
+    this.toggleAttribute("minimized", Boolean(value));
   }
 
   get showClose() {
     const showClose = this.getBooleanAttr("show-close", true);
-    return showClose && !this.unclose;
-  }
-
-  get showHeader() {
-    return this.getBooleanAttr("show-header", true);
-  }
-
-  get showFooter() {
-    return this.getBooleanAttr("show-footer", true);
-  }
-
-  get closeOnOverlay() {
-    return this.getBooleanAttr("close-on-overlay", true);
-  }
-
-  get preserveScrollGap() {
-    return this.getBooleanAttr("preserve-scroll-gap", true);
-  }
-
-  get position() {
-    return this.getEnumAttr("position", ["center", "left", "right", "inline-start", "inline-end", "top", "bottom"], "center");
-  }
-
-  get mode() {
-    return this.getEnumAttr("mode", ["inline", "ajax", "iframe"], "inline");
-  }
-
-  get display() {
-    return this.getEnumAttr("display", ["modal", "inline"], "modal");
-  }
-
-  get src() {
-    return this.getAttribute("src") || "";
-  }
-
-  get preload() {
-    return this.getBooleanAttr("preload", true);
-  }
-
-  get fullscreen() {
-    return this.getBooleanAttr("fullscreen", false);
-  }
-
-  get width() {
-    return this.getAttribute("width") || "";
-  }
-
-  get height() {
-    return this.getAttribute("height") || "";
-  } // blur="small" turns the blur on and names its type; blur="false" turns it
-  // off. The template used to read the raw attribute, so any value, "false"
-  // included, turned the blur on.
+    return showClose && this.dismissible;
+  } // backdrop-blur="small" turns the blur on and names its type;
+  // backdrop-blur="false" turns it off. Its old name is `blur`, a method of
+  // every element (§3.1), mapped by the alias table.
 
 
-  get blur() {
-    return isBlurTypeValue(this.getAttribute("blur")) || this.getBooleanAttr("blur", false);
+  get hasBackdropBlur() {
+    const value = this.getAttribute("backdrop-blur");
+    return isBlurTypeValue(value) || this.getBooleanAttr("backdrop-blur", false);
   }
 
   get blurType() {
-    const blurValue = this.getAttribute("blur");
+    const blurValue = this.getAttribute("backdrop-blur");
     const value = this.getAttribute("blur-type") || (isBlurTypeValue(blurValue) ? blurValue : "medium");
     return this.normalizeEnum(value, ["none", "small", "medium", "large"], "medium");
   }
 
   get hasCustomBlurType() {
-    return this.hasAttribute("blur-type") || isBlurTypeValue(this.getAttribute("blur"));
-  }
+    return this.hasAttribute("blur-type") || isBlurTypeValue(this.getAttribute("backdrop-blur"));
+  } // The rendered window: the component's own, not a reader of the interface.
 
-  get overlayPreset() {
-    return this.normalizeEnum(this.getAttribute("overlay-preset") || "default", ["default", "focus"], "default");
-  }
 
-  get headerClass() {
-    return this.getAttribute("header-class") || "";
-  }
-
-  get overlayClass() {
-    return this.getAttribute("overlay-class") || "";
-  }
-
-  get closeClass() {
-    return this.getAttribute("close-class") || "";
-  }
-
-  get surfaceClass() {
-    return this.getAttribute("surface-class") || "";
-  }
-
-  get surfacePadding() {
-    return this.getAttribute("surface-padding") || "";
-  }
-
-  get panelClass() {
-    return this.getAttribute("panel-class") || "";
-  }
-
-  get bodyClass() {
-    return this.getAttribute("body-class") || "";
-  }
-
-  get contentClass() {
-    return this.getAttribute("content-class") || "";
-  }
-
-  get footerClass() {
-    return this.getAttribute("footer-class") || "";
+  _root() {
+    return this._renderTarget?.querySelector?.(".sf-modal") || null;
   }
 
   get modalRoot() {
-    return this._renderTarget?.querySelector?.(".sf-modal") || null;
+    return this._root();
   }
 
   get state() {
     return {
       modalId: this.modalId,
-      title: this.title,
-      ariaLabel: this.ariaLabel,
+      heading: this.heading,
+      ariaLabel: this.getAttribute("aria-label") || "",
       text: this.text,
       open: this.openState,
       autoload: this.autoload,
-      unclose: this.unclose,
-      hide: this.hideButton,
+      dismissible: this.dismissible,
+      unsaved: this.unsaved,
+      minimizable: this.minimizable,
       hideModifier: this.hideModifier,
       minimized: this.hiddenState,
       overlay: this.overlay,
@@ -1622,7 +3406,7 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
       fullscreen: this.fullscreen,
       width: this.width,
       height: this.height,
-      blur: this.blur,
+      backdropBlur: this.hasBackdropBlur,
       blurType: this.blurType,
       overlayPreset: this.overlayPreset,
       overlayClass: this.overlayClass,
@@ -1664,7 +3448,7 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
       return "";
     }
 
-    return (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_11__.layerZIndexAt)(this._stackIndex);
+    return (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_17__.layerZIndexAt)(this._stackIndex);
   }
 
   get remoteContent() {
@@ -1707,7 +3491,7 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
       // kept across renders so its motion does not restart; the modal sheet
       // draws its slot. The words are the page's language's, and the state
       // is a status region named by them, so it is announced, not only seen.
-      const loading = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(MODAL_TEXT, "loading", this);
+      const loading = this.sfWord("loading");
       return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <div
           class="sf-modal-loading flex flex-col gap-2 items-cross-center content-main-center p-4"
@@ -1726,7 +3510,7 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
 
   _loadingSpinnerNode() {
     if (!this._loadingSpinner) {
-      this._loadingSpinner = (0,_component_spinner_js_spinner_draw__WEBPACK_IMPORTED_MODULE_9__.createInlineSpinner)({
+      this._loadingSpinner = (0,_component_spinner_js_spinner_draw__WEBPACK_IMPORTED_MODULE_11__.createInlineSpinner)({
         className: "sf-modal-spinner"
       });
     }
@@ -1741,12 +3525,14 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
     const props = this.getPropsContext();
     return this.createTemplateContext({ ...props,
       component: this,
-      closeText: (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(MODAL_TEXT, "close", this),
-      minimizeText: (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(MODAL_TEXT, "minimize", this),
-      // The props context holds the declared default; the getter holds the
-      // page language's word for an untitled window.
-      title: this.title,
+      closeText: this.sfWord("close"),
+      minimizeText: this.sfWord("minimize"),
+      // The heading, or the page language's word for an untitled window.
+      title: this.heading,
+      ariaLabel: this.getAttribute("aria-label") || "",
       modalId: this.modalId,
+      // The ids the template writes are the path's (§7.1.1), not the modal id's.
+      titleId: (0,_core_js_instance_path__WEBPACK_IMPORTED_MODULE_5__.partId)((0,_core_js_instance_path__WEBPACK_IMPORTED_MODULE_5__.instancePath)(this), "title"),
       // The window's root takes the modal id only when the element does not
       // already hold it: <sf-modal id="x"> gave the page two elements with id x
       // (simai/ui-source#42).
@@ -1755,10 +3541,10 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
       modalState: this.renderModalState,
       animate: this._animatePanel && this.display !== "inline",
       modalZIndex: this.modalZIndex,
-      hide: this.hideButton,
+      hide: this.minimizable,
       minimized: this.hiddenState,
       showClose: this.showClose,
-      blur: this.blur,
+      blur: this.hasBackdropBlur,
       blurType: this.blurType,
       hasCustomBlurType: this.hasCustomBlurType,
       hasHeaderContent: this.hasSlotContent("header"),
@@ -1800,10 +3586,12 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
       }
     }
   } // The HTML of a slot's content, for reading. Drawing does not use it: the
-  // window places the nodes themselves.
+  // window places the nodes themselves. A reader retires (§4.4, §16.13): kept
+  // until its date, each call noted.
 
 
   getSlotHtml(name) {
+    noteRetired("action", "getSlotHtml");
     const slotContent = [...(this._liveSlotNodes.get(name) || []), ...(this._slotTemplates.get(name) || [])];
     return slotContent.map(node => {
       if (node instanceof HTMLElement) {
@@ -1852,7 +3640,7 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
   }
 
   template() {
-    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_4__.renderModalTemplate)(this.templateContext());
+    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_6__.renderModalTemplate)(this.templateContext());
   }
 
   async renderComponent(changedAttributes = []) {
@@ -1906,12 +3694,13 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
 
     this.dedupePortalRoots(); // The portal stands at the end of the body; it speaks and looks as the
     // element does where it stands (standard 1.3.8 §19.1): lang, dir and the
-    // theme of its area. Variables are carried by name once the manifest
-    // declares its css-variables; a prefix would also carry what an outer
-    // window sets on its own panel (--sf-modal-width) into a window opened
-    // from it.
+    // theme of its area, and the values of the public variables its manifest
+    // declares, by name: a prefix would also carry what an outer window sets
+    // on its own panel (--sf-modal-width) into a window opened from it.
 
-    (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_11__.carryLayerOrigin)(this._portalRoot, this);
+    (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_17__.carryLayerOrigin)(this._portalRoot, this, {
+      variables: MODAL_VARIABLES
+    });
     this._renderTarget = this._portalRoot;
     return this._portalRoot;
   } // The box the modal is rendered into: the end of the body, above the page --
@@ -1963,7 +3752,8 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
 
   applyStackPosition(index = SfModal.getStackIndex(this)) {
     this._stackIndex = index;
-    const root = this.getModalRoot();
+
+    const root = this._root();
 
     if (!root || this.display === "inline") {
       return this;
@@ -1978,29 +3768,39 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
     root.style.setProperty("--sf-modal-stack-index", String(index));
     root.style.zIndex = String(this.modalZIndex);
     return this;
-  }
+  } // Opens the window, or raises an open one to the top. Answers an outcome
+  // (§4.4): refused when a listener prevents sf-modal-open. Asked by an
+  // assembly -- a call that hands a signal -- it answers when the window
+  // closes, with the person's answer {accepted, reason, value} (§19.4).
 
-  open(options = {}) {
+
+  open(options = {}, {
+    signal
+  } = {}) {
     const {
       animate = true
     } = typeof options === "boolean" ? {
       animate: options
-    } : options;
+    } : options || {};
     const wasClosing = this._modalState === "closing";
+    const asked = Boolean(signal);
 
     if ((this._isOpen || this.display === "inline" && this.openState) && !wasClosing) {
       this.cancelCloseTransition();
       SfModal.bringToFront(this);
-      return this;
+      return asked ? this.waitForAnswer(signal) : applied();
     }
 
-    if (!this.emitBeforeOpen()) {
-      return this;
+    if (!this.emitModalEvent("open", {
+      cancelable: true,
+      phase: "before-open"
+    })) {
+      return refused("prevented");
     }
 
     if (!wasClosing) {
       this._lastActive = document.activeElement;
-      this._focusReturnAncestors = (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_10__.captureModalFocusAncestors)(this._lastActive);
+      this._focusReturnAncestors = (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_16__.captureModalFocusAncestors)(this._lastActive);
     }
 
     if (wasClosing) {
@@ -2011,6 +3811,7 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
 
     this._isOpen = true;
     this._closeReason = "";
+    this._answer = null;
     this._inlineClosed = false;
     this._animatePanel = Boolean(animate);
     this._modalState = animate && this.display !== "inline" ? "opening" : "open";
@@ -2023,7 +3824,7 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
     }
 
     this.requestComponentUpdate("open");
-    (0,_component_modal_js_motion__WEBPACK_IMPORTED_MODULE_7__.scheduleModalFrame)(() => {
+    (0,_component_modal_js_motion__WEBPACK_IMPORTED_MODULE_9__.scheduleModalFrame)(() => {
       if (!this._isOpen || this._modalState === "closing") {
         return;
       }
@@ -2048,73 +3849,144 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
         }
 
         this.focusFirst();
-        this.emitAfterOpen();
+        this.emitModalEvent("opened", {
+          phase: "after-open"
+        });
         this.loadRemoteContentIfNeeded();
       });
     });
-    return this;
+    return asked ? this.waitForAnswer(signal) : applied();
+  } // The person's answer to an assembly's ask (§19.4), when the window closes:
+  // {accepted, reason, value}. A scope that ends first answers cancelled.
+
+
+  waitForAnswer(signal) {
+    return new Promise(resolve => {
+      const ask = {
+        resolve
+      };
+
+      this._asks.push(ask);
+
+      signal?.addEventListener?.("abort", () => {
+        this._asks = this._asks.filter(one => one !== ask);
+        resolve({
+          outcome: "cancelled"
+        });
+      }, {
+        once: true
+      });
+    });
+  }
+
+  settleAsks(reason) {
+    const value = {
+      accepted: Boolean(this._answer?.accepted),
+      reason,
+      value: this._answer?.value ?? null
+    };
+    const asks = this._asks;
+    this._asks = [];
+
+    for (const ask of asks) ask.resolve({
+      outcome: "applied",
+      value
+    });
   } // options.reason says why (standard 1.3.8 §19.3): close (its own close
   // control), escape, outside (the overlay), cancelled (a page control that
-  // closes it) or api, the default.
+  // closes it) or api, the default. A listener that prevents sf-modal-close
+  // keeps it open, and the action answers refused (§8).
 
 
   close(options = {}) {
     if (!this.openState || this._modalState === "closing") {
-      return this;
+      return refused("closed");
     }
 
     const reason = typeof options?.reason === "string" ? options.reason : "api";
 
-    if (!this.emitBeforeClose(reason)) {
-      return this;
+    if (!this.emitModalEvent("close", {
+      cancelable: true,
+      phase: "before-close",
+      reason,
+      unsaved: Boolean(this.unsaved)
+    })) {
+      this._answer = null;
+      return refused("prevented");
     }
 
     this._closeReason = reason;
 
     if (this.display === "inline") {
       this.finishClose();
-      return this;
+      return applied();
     }
 
     this._modalState = "closing";
     this._isOpen = false;
     this.requestComponentUpdate("close");
-    const panel = this.getModalRoot()?.querySelector("[data-sf-modal-panel]");
-    this._releaseClosingContent = (0,_component_modal_js_closing__WEBPACK_IMPORTED_MODULE_6__.freezeModalContent)(panel, SfModal.isTopModal(this));
-    this._closeTransitionAbort = (0,_component_modal_js_motion__WEBPACK_IMPORTED_MODULE_7__.scheduleModalClose)(() => this.getModalRoot(), () => this.finishClose());
-    return this;
-  }
+    const panel = this._root()?.querySelector("[data-sf-modal-panel]");
+    this._releaseClosingContent = (0,_component_modal_js_closing__WEBPACK_IMPORTED_MODULE_8__.freezeModalContent)(panel, SfModal.isTopModal(this));
+    this._closeTransitionAbort = (0,_component_modal_js_motion__WEBPACK_IMPORTED_MODULE_9__.scheduleModalClose)(() => this._root(), () => this.finishClose());
+    return applied();
+  } // The person accepts: the window closes and an assembly's ask answers
+  // {accepted: true, reason: "close", value} (§19.4). A page button reaches it
+  // with data-sf-action="<id>.confirm".
 
-  hide() {
+
+  confirm(params = {}) {
+    if (!this.openState) return refused("closed");
+    this._answer = {
+      accepted: true,
+      value: params?.value ?? null
+    };
+    return this.close({
+      reason: "close"
+    });
+  } // Minimizes an open window (vocabulary §5 minimize; its old name is hide()).
+
+
+  minimize() {
     if (!this.openState || this.display === "inline" || this.hiddenState) {
-      return this;
+      return refused(this.openState ? "minimized" : "closed");
     }
 
-    if (!this.emitBeforeHide()) {
-      return this;
+    if (!this.emitModalEvent("minimize", {
+      cancelable: true,
+      phase: "before-hide"
+    })) {
+      return refused("prevented");
     }
 
     this._isHidden = true;
     this.setAttribute("minimized", "");
     this.requestComponentUpdate("hide");
-    this.emitAfterHide();
-    return this;
-  }
+    this.emitModalEvent("minimized", {
+      phase: "after-hide"
+    });
+    return applied();
+  } // Brings a minimized window back (its old name is show()).
 
-  show() {
+
+  expand() {
     if (!this.openState || this.display === "inline" || !this.hiddenState) {
-      return this;
+      return refused(this.openState ? "expanded" : "closed");
     }
 
-    if (!this.emitBeforeShow()) {
-      return this;
+    if (!this.emitModalEvent("expand", {
+      cancelable: true,
+      phase: "before-show"
+    })) {
+      return refused("prevented");
     }
 
     this._isHidden = false;
     this.removeAttribute("minimized");
     this.requestComponentUpdate("show");
-    this.emitAfterShow();
-    return this;
+    this.emitModalEvent("expanded", {
+      phase: "after-show"
+    });
+    return applied();
   }
 
   syncMinimizedLayer() {
@@ -2122,13 +3994,13 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
       return;
     }
 
-    const root = this.getModalRoot();
+    const root = this._root();
 
     if (this.hiddenState) {
       const wasTop = SfModal.isTopModal(this);
-      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_10__.removeModalLayer)(this);
+      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_16__.removeModalLayer)(this);
       this.applyStackPosition();
-      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_10__.restoreModalLayerFocus)(wasTop, this._lastActive, this._focusReturnAncestors);
+      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_16__.restoreModalLayerFocus)(wasTop, this._lastActive, this._focusReturnAncestors);
 
       if (root) {
         root.inert = true;
@@ -2140,7 +4012,7 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
         root.setAttribute("aria-hidden", "false");
       }
 
-      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_10__.addModalLayer)(this, SfModal);
+      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_16__.addModalLayer)(this, SfModal);
       SfModal.bringToFront(this);
       requestAnimationFrame(() => this.focusFirst());
     }
@@ -2163,7 +4035,8 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
     this._modalState = "closed";
     this.removeAttribute("minimized");
     this.syncOpenAttribute(false);
-    const root = this.getModalRoot();
+
+    const root = this._root();
 
     if (root) {
       root.inert = true;
@@ -2178,11 +4051,18 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
     }
 
     if (this.display !== "inline") {
-      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_10__.restoreModalLayerFocus)(wasTop, this._lastActive, this._focusReturnAncestors);
+      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_16__.restoreModalLayerFocus)(wasTop, this._lastActive, this._focusReturnAncestors);
     }
 
     this.requestComponentUpdate("after-close");
-    this.emitAfterClose();
+    const reason = this._closeReason || "api";
+    this.emitModalEvent("closed", {
+      phase: "after-close",
+      reason,
+      accepted: Boolean(this._answer?.accepted)
+    });
+    this.settleAsks(reason);
+    this._answer = null;
     return this;
   }
 
@@ -2209,11 +4089,13 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
   reloadContent() {
     this.resetRemoteContent();
     this.loadRemoteContentIfNeeded(true);
-    return this;
-  }
+    return applied();
+  } // A reader retires (§4.4, §16.13): kept until its date, each call noted.
+
 
   getModalRoot() {
-    return this.modalRoot;
+    noteRetired("action", "getModalRoot");
+    return this._root();
   }
 
   afterRender() {
@@ -2222,29 +4104,23 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
 
     if (this._modalState === "closing") {
       this._releaseClosingContent?.();
-      this._releaseClosingContent = (0,_component_modal_js_closing__WEBPACK_IMPORTED_MODULE_6__.freezeModalContent)(this.getModalRoot()?.querySelector("[data-sf-modal-panel]"), SfModal.isTopModal(this));
+      this._releaseClosingContent = (0,_component_modal_js_closing__WEBPACK_IMPORTED_MODULE_8__.freezeModalContent)(this._root()?.querySelector("[data-sf-modal-panel]"), SfModal.isTopModal(this));
     }
 
     this._readyDetail = {
       component: this,
       modal: this,
       modalId: this.modalId,
-      root: this.getModalRoot()
-    };
+      root: this._root()
+    }; // Lifecycle copies retire (§4.1, §16.13): sf-after-render is the base's.
+    // They are still sent until their date, and a listener that reads one is
+    // noted.
 
     if (!this._hasEmittedReady) {
       this._hasEmittedReady = true;
-      this.dispatchEvent(new CustomEvent("modal:ready", {
-        bubbles: true,
-        composed: true,
-        detail: this._readyDetail
-      }));
+      this.dispatchEvent(retiredEvent("modal:ready", this._readyDetail));
     } else {
-      this.dispatchEvent(new CustomEvent("modal:update", {
-        bubbles: true,
-        composed: true,
-        detail: this._readyDetail
-      }));
+      this.dispatchEvent(retiredEvent("modal:update", this._readyDetail));
     }
 
     if (this.hasAttribute("open") && !this._isOpen && this._modalState !== "closing") {
@@ -2261,7 +4137,7 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
 
     this.applyStackPosition(); // Projection can replace the panel while an existing layer remains open.
 
-    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_10__.updateModalLayers)();
+    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_16__.updateModalLayers)();
 
     if (this.autoload && !this.openState && !this._hasAutoloaded) {
       this._hasAutoloaded = true;
@@ -2274,7 +4150,7 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
 
 
   bindRenderedEvents() {
-    const root = this.getModalRoot();
+    const root = this._root();
 
     if (!root) {
       return;
@@ -2285,7 +4161,7 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
   }
 
   bindSlotEventHandlers() {
-    const root = this.getModalRoot();
+    const root = this._root();
 
     if (!root || !this._slotEventHandlers.size) {
       return;
@@ -2308,9 +4184,9 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
   }
 
   handleOverlayClick(event) {
-    const isOverlay = event.target === this.getModalRoot()?.querySelector("[data-sf-modal-overlay]"); // A press outside is the top layer's only.
+    const isOverlay = event.target === this._root()?.querySelector("[data-sf-modal-overlay]"); // A press outside is the top layer's only.
 
-    if (isOverlay && this.closeOnOverlay && !this.unclose && SfModal.isTopModal(this)) {
+    if (isOverlay && this.closeOnOverlay && this.dismissible && SfModal.isTopModal(this)) {
       this.close({
         reason: "outside"
       });
@@ -2320,7 +4196,7 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
   handleCloseClick(event) {
     event.preventDefault();
 
-    if (!this.unclose) {
+    if (this.dismissible) {
       this.close({
         reason: "close"
       });
@@ -2329,7 +4205,7 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
 
   handleHideClick(event) {
     event.preventDefault();
-    this.hide();
+    this.minimize();
   } // The layer stack hands the window Escape and Tab while it is the top layer
   // -- above a drawer it was opened from, below a list or a drawer opened from
   // it. Answers true when it took Escape; the stack then stops the press.
@@ -2348,7 +4224,7 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
       return false;
     }
 
-    if (event.key === "Escape" && this.closeOnEsc && !this.unclose && this._modalState !== "closing" && !event.defaultPrevented) {
+    if (event.key === "Escape" && this.closeOnEsc && this.dismissible && this._modalState !== "closing" && !event.defaultPrevented) {
       this.close({
         reason: "escape"
       });
@@ -2371,8 +4247,8 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
       return;
     }
 
-    const panel = this.getModalRoot()?.querySelector("[data-sf-modal-panel]");
-    (0,_component_modal_js_focus__WEBPACK_IMPORTED_MODULE_5__.trapModalFocus)(panel, event);
+    const panel = this._root()?.querySelector("[data-sf-modal-panel]");
+    (0,_component_modal_js_focus__WEBPACK_IMPORTED_MODULE_7__.trapModalFocus)(panel, event);
   }
 
   focusFirst() {
@@ -2388,7 +4264,7 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
       return;
     }
 
-    const panel = this.getModalRoot()?.querySelector("[data-sf-modal-panel]");
+    const panel = this._root()?.querySelector("[data-sf-modal-panel]");
 
     if (panel) {
       panel.focus();
@@ -2439,7 +4315,7 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
     this._remoteError = "";
     let aborted = false;
     this.requestComponentUpdate("remote-loading");
-    this.emitContentEvent("modal:before-content-upload");
+    this.emitContentEvent("content-upload");
     const controller = new AbortController();
     this._fetchController = controller;
 
@@ -2469,7 +4345,7 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
       if (error.name === "AbortError") {
         aborted = true;
       } else {
-        this._remoteError = error.message || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(MODAL_TEXT, "loadFailed", this);
+        this._remoteError = error.message || this.sfWord("load-failed");
       }
     } finally {
       // A load aborted by a newer one leaves the state to it: clearing it here
@@ -2482,7 +4358,7 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
         this.requestComponentUpdate("remote-content");
 
         if (!aborted) {
-          this.emitContentEvent("modal:after-content-upload");
+          this.emitContentEvent("content-uploaded");
         }
       }
     }
@@ -2490,117 +4366,34 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
 
   handleIframeLoad = () => {
     this._remoteLoaded = true;
-    this.emitContentEvent("modal:after-content-upload");
+    this.emitContentEvent("content-uploaded");
   };
   handleIframeError = () => {
-    this._remoteError = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(MODAL_TEXT, "frameFailed", this);
+    this._remoteError = this.sfWord("frame-failed");
     this.requestComponentUpdate("remote-content");
-  };
+  }; // The content events are the component's own verbs (lang events.*.label).
 
-  emitContentEvent(eventName) {
-    this.dispatchEvent(new CustomEvent(eventName, {
-      bubbles: true,
-      composed: true,
-      detail: {
-        component: this,
-        modal: this,
-        modalId: this.modalId,
-        src: this.src,
-        remote: this.state.remote
-      }
-    }));
-  }
+  emitContentEvent(verb) {
+    this.sfEmit(verb, {
+      modalId: this.modalId,
+      src: this.src,
+      remote: this.state.remote
+    });
+  } // Sends one of the window's events by its verb (§8): the new name
+  // (sf-modal-<verb>) first, then its old modal:* name with the old detail
+  // through the alias table. Data only in detail; answers false when a
+  // listener refused a cancelable one.
 
-  emitModalEvent(eventName, {
+
+  emitModalEvent(verb, {
     cancelable = false,
-    detail = {}
+    ...detail
   } = {}) {
-    const event = new CustomEvent(eventName, {
-      bubbles: true,
-      composed: true,
-      cancelable,
-      detail: {
-        component: this,
-        modal: this,
-        modalId: this.modalId,
-        root: this.getModalRoot(),
-        ...detail
-      }
-    });
-    this.dispatchEvent(event);
-    return !event.defaultPrevented;
-  }
-
-  emitBeforeOpen() {
-    return this.emitModalEvent("modal:before-open", {
-      cancelable: true,
-      detail: {
-        phase: "before-open"
-      }
-    });
-  }
-
-  emitAfterOpen() {
-    this.emitModalEvent("modal:after-open", {
-      detail: {
-        phase: "after-open"
-      }
-    });
-  } // The close request carries why and whether something is unsaved
-  // (standard 1.3.8 §19.3); the window has no unsaved setting yet.
-
-
-  emitBeforeClose(reason = "api") {
-    return this.emitModalEvent("modal:before-close", {
-      cancelable: true,
-      detail: {
-        phase: "before-close",
-        reason,
-        unsaved: false
-      }
-    });
-  }
-
-  emitAfterClose() {
-    this.emitModalEvent("modal:after-close", {
-      detail: {
-        phase: "after-close",
-        reason: this._closeReason || "api"
-      }
-    });
-  }
-
-  emitBeforeHide() {
-    return this.emitModalEvent("modal:before-hide", {
-      cancelable: true,
-      detail: {
-        phase: "before-hide"
-      }
-    });
-  }
-
-  emitAfterHide() {
-    this.emitModalEvent("modal:after-hide", {
-      detail: {
-        phase: "after-hide"
-      }
-    });
-  }
-
-  emitBeforeShow() {
-    return this.emitModalEvent("modal:before-show", {
-      cancelable: true,
-      detail: {
-        phase: "before-show"
-      }
-    });
-  }
-
-  emitAfterShow() {
-    this.emitModalEvent("modal:after-show", {
-      detail: {
-        phase: "after-show"
-      }
+    return this.sfEmit(verb, {
+      modalId: this.modalId,
+      ...detail
+    }, {
+      cancelable
     });
   }
 
@@ -2667,7 +4460,7 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
     if (this.display !== "inline") this.returnSlotNodes();
     this._releaseClosingContent?.();
     this._releaseClosingContent = null;
-    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_10__.restoreModalLayerFocus)(wasTop, this._lastActive, this._focusReturnAncestors);
+    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_16__.restoreModalLayerFocus)(wasTop, this._lastActive, this._focusReturnAncestors);
   }
 
   clearPortal() {
@@ -2681,77 +4474,54 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
 
     this._portalRoot = null;
   } // Modal events bubble like the base modal component and sf-drawer; the on*
-  // helpers keep their meaning and receive only this modal's own events.
+  // helpers keep their meaning and receive only this modal's own events, by
+  // their new names (§8).
 
 
   ownModalHandler(handler) {
     return event => {
-      if (event.detail?.modal === this) handler.call(this, event);
+      if (event.target === this) handler.call(this, event);
     };
   }
 
-  onBeforeOpen(handler, options) {
+  onModalEvent(verb, handler, options) {
     if (typeof handler === "function") {
-      this.addEventListener("modal:before-open", this.ownModalHandler(handler), options);
+      this.addEventListener(this.sfEventName(verb), this.ownModalHandler(handler), options);
     }
 
     return this;
+  }
+
+  onBeforeOpen(handler, options) {
+    return this.onModalEvent("open", handler, options);
   }
 
   onAfterOpen(handler, options) {
-    if (typeof handler === "function") {
-      this.addEventListener("modal:after-open", this.ownModalHandler(handler), options);
-    }
-
-    return this;
+    return this.onModalEvent("opened", handler, options);
   }
 
   onBeforeClose(handler, options) {
-    if (typeof handler === "function") {
-      this.addEventListener("modal:before-close", this.ownModalHandler(handler), options);
-    }
-
-    return this;
+    return this.onModalEvent("close", handler, options);
   }
 
   onAfterClose(handler, options) {
-    if (typeof handler === "function") {
-      this.addEventListener("modal:after-close", this.ownModalHandler(handler), options);
-    }
-
-    return this;
+    return this.onModalEvent("closed", handler, options);
   }
 
   onBeforeHide(handler, options) {
-    if (typeof handler === "function") {
-      this.addEventListener("modal:before-hide", this.ownModalHandler(handler), options);
-    }
-
-    return this;
+    return this.onModalEvent("minimize", handler, options);
   }
 
   onAfterHide(handler, options) {
-    if (typeof handler === "function") {
-      this.addEventListener("modal:after-hide", this.ownModalHandler(handler), options);
-    }
-
-    return this;
+    return this.onModalEvent("minimized", handler, options);
   }
 
   onBeforeShow(handler, options) {
-    if (typeof handler === "function") {
-      this.addEventListener("modal:before-show", this.ownModalHandler(handler), options);
-    }
-
-    return this;
+    return this.onModalEvent("expand", handler, options);
   }
 
   onAfterShow(handler, options) {
-    if (typeof handler === "function") {
-      this.addEventListener("modal:after-show", this.ownModalHandler(handler), options);
-    }
-
-    return this;
+    return this.onModalEvent("expanded", handler, options);
   }
 
   onModalReady(handler, options) {
@@ -2760,9 +4530,7 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
     }
 
     if (this._readyDetail) {
-      handler(new CustomEvent("modal:ready", {
-        detail: this._readyDetail
-      }));
+      handler(retiredEvent("modal:ready", this._readyDetail));
       return this;
     }
 
@@ -2781,7 +4549,9 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
   static bindGlobalEvents() {
     if (SfModal.globalBound || typeof document === "undefined") {
       return;
-    }
+    } // The window's own page triggers, aliases of data-sf-action (§8, §16.10):
+    // data-sf-modal-open="<modal id>" is data-sf-action="<id>.open", and so on.
+
 
     document.addEventListener("click", event => {
       const openEl = event.target.closest("[data-sf-modal-open]");
@@ -2794,14 +4564,14 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
       const showEl = event.target.closest("[data-sf-modal-show]");
 
       if (showEl) {
-        SfModal.registry.get(showEl.getAttribute("data-sf-modal-show"))?.show();
+        SfModal.registry.get(showEl.getAttribute("data-sf-modal-show"))?.expand();
         return;
       }
 
       const hideEl = event.target.closest("[data-sf-modal-hide]");
 
       if (hideEl) {
-        SfModal.registry.get(hideEl.getAttribute("data-sf-modal-hide"))?.hide();
+        SfModal.registry.get(hideEl.getAttribute("data-sf-modal-hide"))?.minimize();
         return;
       }
 
@@ -2822,11 +4592,11 @@ class SfModal extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default(
   }
 
   static lockPage(preserveScrollGap = true) {
-    if (!SfModal.lockState) SfModal.lockState = (0,_component_modal_js_scroll__WEBPACK_IMPORTED_MODULE_8__.lockModalScroll)(preserveScrollGap);
+    if (!SfModal.lockState) SfModal.lockState = (0,_component_modal_js_scroll__WEBPACK_IMPORTED_MODULE_10__.lockModalScroll)(preserveScrollGap);
   }
 
   static unlockPage() {
-    (0,_component_modal_js_scroll__WEBPACK_IMPORTED_MODULE_8__.unlockModalScroll)(SfModal.lockState);
+    (0,_component_modal_js_scroll__WEBPACK_IMPORTED_MODULE_10__.unlockModalScroll)(SfModal.lockState);
     SfModal.lockState = null;
   }
 
@@ -2866,8 +4636,10 @@ function renderModalTemplate(context) {
   const isInline = context.display === 'inline';
   const hasRemoteContent = Boolean(context.src) && (context.mode === 'ajax' || context.mode === 'iframe');
   const showHeader = context.showHeader !== false;
-  const hasHeaderSlot = context.hasHeaderContent;
-  const titleId = `${context.modalId}-title`;
+  const hasHeaderSlot = context.hasHeaderContent; // A path id (standard 1.3.8 §7.1.1), not the modal id: two windows with
+  // one modal-id, or a page id equal to it, gave two elements one id (#41).
+
+  const titleId = context.titleId || `${context.modalId}-title`;
   const accessibleLabel = context.ariaLabel || (hasHeaderSlot || !showHeader ? context.title : '');
   const hasContentSlot = context.hasContentContent;
   const hasFooterSlot = context.hasFooterContent && context.showFooter;
@@ -3021,6 +4793,34 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 (module) {
 
 module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("smart-base") : new Promise((resolve) => globalThis.addEventListener("sf-runtime-ready", () => resolve(globalThis.SF.runtimeModule("smart-base")), { once: true })));
+
+/***/ },
+
+/***/ "85cdf307b188"
+(module) {
+
+module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-modal for the shim (core/js/aliases.js, standard §16 item 20). mode: same-detail (the shim sends the new and the old name), split (the old detail from the element\'s adapter), attribute-and-property, host-attribute (no shim), inverted (read by the component), retired (no new name; kept and noted by the component until the date).","component":"sf-modal","since":"2026-10-27","remove_after":"2026-12-01","aliases":[{"from":"title","to":"heading","kind":"setting","component":"sf-modal","since":"2026-10-27","remove_after":"2026-12-01","mode":"same-detail","section":"§3.1, §16 item 26"},{"from":"blur","to":"backdrop-blur","kind":"setting","component":"sf-modal","since":"2026-10-27","remove_after":"2026-12-01","section":"§3.1, §4.1, §16 item 26","note":"blur is a method of HTMLElement and the base action; the attribute is mapped, the property stays the browser\'s"},{"from":"hide","to":"minimizable","kind":"attribute","component":"sf-modal","since":"2026-10-27","remove_after":"2026-12-01","section":"§3.1","note":"the attribute only: the property name hide is the old method, an action alias of minimize"},{"from":"unclose","to":"dismissible","kind":"attribute","component":"sf-modal","since":"2026-10-27","remove_after":"2026-12-01","mode":"inverted","section":"§19.3","note":"inverted: unclose present means dismissible false; the shim maps values one to one, so it refuses this row (mode-on-non-event) and sf-modal reads the attribute itself, noting it with these dates"},{"from":"aria-label","to":null,"kind":"attribute","component":"sf-modal","since":"2026-10-27","remove_after":"2026-12-01","mode":"host-attribute","section":"§3.1","note":"stays a host attribute, read by the base (§3.1, §4.8); no shim"},{"from":"modal:before-open","to":"sf-modal-open","kind":"event","component":"sf-modal","since":"2026-10-27","remove_after":"2026-12-01","mode":"split","cancelable":true,"section":"§8, vocabulary §5, §9","note":"the old detail adds component, modal and root (page elements, which §8 takes out of the new detail): the element\'s detail adapter makes it"},{"from":"modal:after-open","to":"sf-modal-opened","kind":"event","component":"sf-modal","since":"2026-10-27","remove_after":"2026-12-01","mode":"split","cancelable":false,"section":"§8, vocabulary §5, §9","note":"the old detail adds component, modal and root (page elements, which §8 takes out of the new detail): the element\'s detail adapter makes it"},{"from":"modal:before-close","to":"sf-modal-close","kind":"event","component":"sf-modal","since":"2026-10-27","remove_after":"2026-12-01","mode":"split","cancelable":true,"section":"§8, vocabulary §5, §9","note":"the old detail adds component, modal and root (page elements, which §8 takes out of the new detail): the element\'s detail adapter makes it"},{"from":"modal:after-close","to":"sf-modal-closed","kind":"event","component":"sf-modal","since":"2026-10-27","remove_after":"2026-12-01","mode":"split","cancelable":false,"section":"§8, vocabulary §5, §9","note":"the old detail adds component, modal and root (page elements, which §8 takes out of the new detail): the element\'s detail adapter makes it"},{"from":"modal:before-hide","to":"sf-modal-minimize","kind":"event","component":"sf-modal","since":"2026-10-27","remove_after":"2026-12-01","mode":"split","cancelable":true,"section":"§8, vocabulary §5, §9","note":"the old detail adds component, modal and root (page elements, which §8 takes out of the new detail): the element\'s detail adapter makes it"},{"from":"modal:after-hide","to":"sf-modal-minimized","kind":"event","component":"sf-modal","since":"2026-10-27","remove_after":"2026-12-01","mode":"split","cancelable":false,"section":"§8, vocabulary §5, §9","note":"the old detail adds component, modal and root (page elements, which §8 takes out of the new detail): the element\'s detail adapter makes it"},{"from":"modal:before-show","to":"sf-modal-expand","kind":"event","component":"sf-modal","since":"2026-10-27","remove_after":"2026-12-01","mode":"split","cancelable":true,"section":"§8, vocabulary §5, §9","note":"the old detail adds component, modal and root (page elements, which §8 takes out of the new detail): the element\'s detail adapter makes it"},{"from":"modal:after-show","to":"sf-modal-expanded","kind":"event","component":"sf-modal","since":"2026-10-27","remove_after":"2026-12-01","mode":"split","cancelable":false,"section":"§8, vocabulary §5, §9","note":"the old detail adds component, modal and root (page elements, which §8 takes out of the new detail): the element\'s detail adapter makes it"},{"from":"modal:before-content-upload","to":"sf-modal-content-upload","kind":"event","component":"sf-modal","since":"2026-10-27","remove_after":"2026-12-01","mode":"split","cancelable":false,"section":"§8, vocabulary §5, §9","note":"the old detail adds component, modal and root (page elements, which §8 takes out of the new detail): the element\'s detail adapter makes it"},{"from":"modal:after-content-upload","to":"sf-modal-content-uploaded","kind":"event","component":"sf-modal","since":"2026-10-27","remove_after":"2026-12-01","mode":"split","cancelable":false,"section":"§8, vocabulary §5, §9","note":"the old detail adds component, modal and root (page elements, which §8 takes out of the new detail): the element\'s detail adapter makes it"},{"from":"hide","to":"minimize","kind":"action","component":"sf-modal","since":"2026-10-27","remove_after":"2026-12-01","section":"vocabulary §5 minimize"},{"from":"show","to":"expand","kind":"action","component":"sf-modal","since":"2026-10-27","remove_after":"2026-12-01","section":"vocabulary §5 expand"},{"from":"getModalRoot","to":null,"kind":"action","component":"sf-modal","since":"2026-10-27","remove_after":"2026-12-01","mode":"retired","section":"§4.4, §16.13","note":"a reader retires; the method stays until the date and notes each call"},{"from":"getSlotHtml","to":null,"kind":"action","component":"sf-modal","since":"2026-10-27","remove_after":"2026-12-01","mode":"retired","section":"§4.4, §4.5, §16.13","note":"a reader retires; slots are placed, never copied; the method stays until the date and notes each call"},{"from":"modal:ready","to":null,"kind":"event","component":"sf-modal","since":"2026-10-27","remove_after":"2026-12-01","mode":"retired","section":"§4.1, §16.13","note":"a lifecycle copy; sf-after-render is the base\'s; still sent until the date, noted when a listener reads it"},{"from":"modal:update","to":null,"kind":"event","component":"sf-modal","since":"2026-10-27","remove_after":"2026-12-01","mode":"retired","section":"§4.1, §16.13","note":"a lifecycle copy; sf-after-render is the base\'s; still sent until the date, noted when a listener reads it"}]}');
+
+/***/ },
+
+/***/ "afc57055d2cc"
+(module) {
+
+module.exports = /*#__PURE__*/JSON.parse('{"$comment":"The source of sf-modal\'s element plumbing (core/js/element-manifest.js). Taken from simai/ui-control control/smart-architecture/migration/out/modal (migration/convert-1.3.8.mjs over simai/ui-source@5100227); standard simai.smart-component 1.3.8, vocabulary 1.1.5. Every x-todo of the conversion is decided: x-decisions says how.","id":"smart.modal","tag":"sf-modal","version":"1.4.0","kind":"leaf","family":"modal","settings":{"modal-id":{"type":"id","default":""},"heading":{"type":"string","default-from":"runtime.title"},"text":{"type":"string","default":""},"autoload":{"type":"boolean","default":false},"minimizable":{"type":"boolean","default":false},"hide-modifier":{"type":"string","default":""},"overlay":{"type":"boolean","default":true},"show-header":{"type":"boolean","default":true},"show-close":{"type":"boolean","default":true},"show-footer":{"type":"boolean","default":true},"close-on-esc":{"type":"boolean","default":true},"close-on-overlay":{"type":"boolean","default":true},"preserve-scroll-gap":{"type":"boolean","default":true},"position":{"type":"enum","values":["center","left","right","inline-start","inline-end","top","bottom"],"default":"center"},"mode":{"type":"enum","values":["inline","ajax","iframe"],"default":"inline"},"display":{"type":"enum","values":["modal","inline"],"default":"modal"},"src":{"type":"string","default":""},"preload":{"type":"boolean","default":true},"fullscreen":{"type":"boolean","default":false},"width":{"type":"string","default":""},"height":{"type":"string","default":""},"backdrop-blur":{"type":"string","default":""},"blur-type":{"type":"enum","values":["none","small","medium","large"],"default":"medium"},"overlay-preset":{"type":"enum","values":["default","focus"],"default":"default"},"overlay-class":{"type":"string","default":""},"close-class":{"type":"string","default":""},"surface-class":{"type":"string","default":""},"surface-padding":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"header-class":{"type":"string","default":""},"body-class":{"type":"string","default":""},"content-class":{"type":"string","default":""},"footer-class":{"type":"string","default":""},"unsaved":{"type":"boolean","default":false},"dismissible":{"type":"boolean","default":true}},"values":{"open":{"type":"boolean","default":false,"reflect":true},"minimized":{"type":"boolean","default":false,"reflect":true}},"events":{"open":{"carries":{"modal-id":"string","phase":"string"},"cancelable":true},"opened":{"carries":{"modal-id":"string","phase":"string"}},"close":{"carries":{"modal-id":"string","phase":"string","reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"modal-id":"string","phase":"string","reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"accepted":"boolean"}},"minimize":{"carries":{"modal-id":"string","phase":"string"},"cancelable":true},"minimized":{"carries":{"modal-id":"string","phase":"string"}},"expand":{"carries":{"modal-id":"string","phase":"string"},"cancelable":true},"expanded":{"carries":{"modal-id":"string","phase":"string"}},"content-upload":{"carries":{"modal-id":"string","src":"string","remote":"object"},"own-verb":true},"content-uploaded":{"carries":{"modal-id":"string","src":"string","remote":"object"},"own-verb":true}},"actions":{"open":{"with":{"animate":{"type":"boolean","optional":true}},"emits":"open","x-outcomes":["applied","refused"],"x-answer":"asked by an assembly (ask, §19.4) it answers when the window closes, with value {accepted, reason, value}"},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"emits":"close","x-outcomes":["applied","refused"]},"minimize":{"emits":"minimize","x-outcomes":["applied","refused"]},"expand":{"emits":"expand","x-outcomes":["applied","refused"]},"toggle":{"x-outcomes":["applied","refused"]},"reload-content":{"x-outcomes":["applied","refused"]},"confirm":{"with":{"value":{"type":"object","optional":true}},"x-outcomes":["applied","refused"],"x-summary":"Closes the window as the person\'s acceptance: the answer of ask is {accepted: true, reason: close, value} (§19.4)"}},"slots":{"header":{"replaces":"heading"},"content":{"default":true},"footer":{}},"layer":{"kind":"modal","locks-page":true,"traps-focus":true},"side-effects":["network","locks-page","portal"],"keyboard":{"host":{"Tab":"reach","Shift+Tab":"reach","Escape":"close"}},"templates":{"default":{"file":"js/templates/default.js","$comment":"The Lit template in JavaScript, the migration form of §5.2 (§16): the build does not compile template.html yet, so a second copy of the markup would only drift from the one that draws."}},"examples":"examples.json","docs":"docs/docs.md","lang":"lang/","accessibility":{"role":"dialog","name":{"from":["aria-label","heading"]},"keys":{"Tab":"reach","Shift+Tab":"reach","Escape":{"effect":"close","when":{"dismissible":true,"close-on-esc":true}}}},"css-variables":{"--sf-modal-background-color":{"type":"color","state":"default"},"--sf-modal-border-color":{"type":"color","state":"default"},"--sf-modal-border-width":{"type":"length","state":"default"},"--sf-modal-radius":{"type":"length","state":"default"},"--sf-modal-padding-inline":{"type":"length","state":"default"},"--sf-modal-padding-block":{"type":"length","state":"default"},"--sf-modal-gap":{"type":"length","state":"default"},"--sf-modal-footer-gap":{"type":"length","state":"default"}},"x-summary":"A dialog window over the page in the shared modal stack: centered or at a side, top or bottom edge, with header, content and footer slots, focus trap, scroll lock and focus return. It can also be minimized, load its content by Ajax or into an iframe, or render inline in the page flow.","x-source":{"package":"framework","folder":"modal","manifest":"simai/ui-source@5100227 src/smart/modal/smart.manifest.json","converted":"control/smart-architecture/stands/17-ports-migration/out/modal.component.json"},"x-words":["text"],"x-target":{"added":{"settings":["unsaved","dismissible","minimizable"],"actions":["confirm","minimize","expand"]},"replaced":{"events":["close","closed"],"actions":["open","close"]}},"x-renamed":["settings.title → heading: \\"title\\" is a property of HTMLElement.prototype (§3.1, §16 item 26), alias dated","settings.blur → backdrop-blur: \\"blur\\" is a method of HTMLElement.prototype and the base action (§3.1, §4.1, §16 item 26), alias dated","settings.hide → minimizable: one name meant a setting (show the minimize button) and an action (minimize); the attribute is a dated alias","settings.unclose → dismissible (inverted): §19.3; the attribute is read until 2026-12-01","settings.aria-label: a host attribute, read by the base, never a setting (§3.1)","settings.minimized → values.minimized: a person changes it (the minimize button), §4","actions.hide → minimize, actions.show → expand: vocabulary §5 minimize; dated action aliases","events modal:before-open/after-open/before-close/after-close → sf-modal-open/-opened/-close/-closed (vocabulary §5, §7)","events modal:before-hide/after-hide → sf-modal-minimize/-minimized; modal:before-show/after-show → sf-modal-expand/-expanded","events modal:before-content-upload/after-content-upload → sf-modal-content-upload/-uploaded (own verbs)","events modal:ready, modal:update retire (§4.1, §16.13); readers getModalRoot, getSlotHtml retire (§4.4, §16.13)"],"x-kept":{"security":{"permissions_owner":"none","untrusted_inputs":["props","children"],"network_policy":"deny"},"ownership":{"source":"simai/ui-source","data":"fixture","effects":"component","forbidden_client_responsibilities":["backend access decisions","host route invention"]},"presentation":{"themes":["light","dark"],"locales":["ru","en"],"responsive":["desktop","mobile"],"skeleton":{"shape":"none","while_loading":"none"}},"ai_guidance":{"use_when":"Use sf-modal for one bounded task that temporarily owns the top interaction layer. It shares stack, focus return and scroll-lock ownership with ordinary Modal. Prefer center or logical inline-start/inline-end/top/bottom positions; left/right are compatibility aliases. The dialog and iframe are large surfaces on --sf-radius--surface, while compact header actions retain --sf-radius--ui. Inline display stays in document flow and does not capture focus. Minimized instances remain open but leave the visible interaction stack.","do_not":["Do not copy generated ui-smart code","Do not use Modal for a long independent workflow that belongs on its own page","Do not replace semantic spacing, motion, color or radius tokens with absolute design values","Do not assume remote or iframe content is trusted; the host owns CSP, permissions, errors and data decisions","Do not move host data or access decisions into the component"],"required_reads":["inputs","methods","events","ownership","provenance"],"minimal_example":"<sf-modal></sf-modal>","owner_commands":["npm run contract:verify","npm test"]}},"x-decisions":["own-verb-words: minimize is a verb of vocabulary §5 (modal `hide`), so minimize/minimized are not own verbs; content-upload and content-uploaded stay own verbs with their words in lang events.<verb>.label (§8, vocabulary §5.1).","alias-conflict: vocabulary 1.1.5 decides. modal:after-hide → sf-modal-minimized and modal:after-show → sf-modal-expanded (the facts of minimize and expand, vocabulary §4; `change` reports a person\'s value change only, §8), modal:before-show → sf-modal-expand (the table\'s sf-modal-minimize is the reverse act), the content events → sf-modal-content-upload(ed) (loading is not a value change). The converter\'s sf-modal-hidden/-shown/-hide/-show never shipped and get no rows.","detail-adapter: §8 takes page elements out of detail, so the new names carry {modalId, phase, …} only; each old modal:* name keeps its old detail (component, modal, root added) through a split row and the element\'s detail adapter (sfAliasAdapters), sent after the new name with one shared cancel.","version: 1.3.0 → 1.4.0, a minor while the renamed members hold dated aliases (§4.10); the major comes with the sweep after 2026-12-01.","existing-aliases: compatibility.migrations lists no alias; its note (events bubble, detail.modal names the emitter) is kept by the old names\' adapters. The undated page triggers data-sf-modal-open/close/show/hide stay as aliases of data-sf-action (§16.10).","template: templates.default names the Lit template js/templates/default.js, the migration form §5.2 allows; no template.html until the build compiles one.","examples: examples.json from studio.fixture.json and studio.scenario.json (the default window, an unclosable one, a minimizable one, a side panel); probe.json drives Tab, Shift+Tab and Escape (gate 16).","css-variables: the eight public variables the sheet already reads (src/core/contracts/public-variables.v1.json); the portal carries their computed values from the host (§19.1).","side-effects: the window draws at the end of body or of its [data-sf-overlay-container] (portal), locks the page (locks-page, one lease of the layer stack) and fetches src in mode ajax (network).","layer: kind modal, locks-page, traps-focus (§19.1, §19.2); Escape, an outside press and Tab reach it only while it is the top layer.","dismissing: the close request carries {reason, unsaved} (§19.3): close (its own button), escape, outside (the overlay), cancelled (a page control, data-sf-modal-close), api (a script); unsaved is the setting unsaved; dismissible=false (alias unclose) removes escape and outside, never an explicit action.","asking a person (§19.4): open asked by an assembly (a call with a signal) answers when the window closes with value {accepted, reason, value}; accepted is true only through the action confirm (data-sf-action=\\"<id>.confirm\\"). A page\'s own call answers at once.","instance ids (§7.1.1, simai/ui-source#41): a window without modal-id or id takes its path id (sf-modal-<n> in document order, not a module counter); the title id is <path>--title.","accessibility.name: aria-label on the host wins, else the heading (aria-labelledby the title, or aria-label when the header is a slot)."]}');
+
+/***/ },
+
+/***/ "66be591d2d06"
+(module) {
+
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Modal","runtime":{"close":"Close","frame-failed":"Failed to load iframe content","load-failed":"Failed to load content","loading":"Loading…","minimize":"Minimize","title":"Dialog"},"events":{"content-upload":{"label":"Load content"},"content-uploaded":{"label":"Content loaded"}}}');
+
+/***/ },
+
+/***/ "be0bc1a67e65"
+(module) {
+
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Модальное окно","runtime":{"close":"Закрыть","frame-failed":"Не удалось загрузить встроенную страницу","load-failed":"Не удалось загрузить содержимое","loading":"Загрузка…","minimize":"Свернуть","title":"Окно"},"events":{"content-upload":{"label":"Загрузить содержимое"},"content-uploaded":{"label":"Содержимое загружено"}}}');
 
 /***/ }
 

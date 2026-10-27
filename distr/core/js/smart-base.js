@@ -2345,9 +2345,13 @@ class SfBaseElement extends HTMLElement {
     this.sfOpenScope();
 
     if (this.constructor.aliases && !this.__sfAliases) {
+      // A component whose old event names carried more than the new ones
+      // (page elements, which §8 takes out of detail) gives the shim one
+      // detail adapter per old name: sfAliasAdapters() -> {old: (detail) => old detail}.
       this.__sfAliases = (0,_aliases_js__WEBPACK_IMPORTED_MODULE_2__.installAliases)(this, this.constructor.aliases, {
         tag: this.localName,
-        signal: this.sfScope
+        signal: this.sfScope,
+        adapters: this.sfAliasAdapters?.() ?? {}
       });
     }
 

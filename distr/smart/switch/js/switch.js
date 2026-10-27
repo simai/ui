@@ -1571,6 +1571,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _aliases_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("28b603686dcc");
 /* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("0d662e4d7d63");
+/* harmony import */ var _page_actions_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("51e3a200cf5f");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_page_language_js__WEBPACK_IMPORTED_MODULE_1__]);
 var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 _page_language_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_async_dependencies_result__[0];
@@ -1626,6 +1627,7 @@ _page_language_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_async_dependencies_re
 //
 // Members the runtime adds start with `sf`, which no manifest name may
 // (§3.1), so a generated setting or action never collides with them.
+
 
 
 const RESERVED = new Set(['props', 'api', 'view', 'scope', 'parts', 'receive', 'render', 'connected', 'disconnected', 'updated', 'outside', 'data', 'template', 'root-class', 'root-style', 'focus', 'blur', 'connect-port', 'shown', 'started']);
@@ -2025,6 +2027,12 @@ function elementFromManifest(manifest, {
   class ManifestElement extends Base {
     static get manifest() {
       return manifest;
+    } // What SF.Assembly reads of a part it places (assembly/definition.mjs
+    // interfaces.of): the same manifest, so a rule can ask its actions.
+
+
+    static get sfInterface() {
+      return manifest;
     }
 
     static get sfManifest() {
@@ -2203,12 +2211,86 @@ function elementFromManifest(manifest, {
   }
 
   defineMembers(ManifestElement.prototype, read.members);
-  defineActions(ManifestElement.prototype, read.actions, actions, read.events);
+  defineActions(ManifestElement.prototype, read.actions, actions, read.events); // data-sf-action="<id>.<action>" runs a declared action (§8 one page trigger).
+
+  if (read.actions.length) (0,_page_actions_js__WEBPACK_IMPORTED_MODULE_2__.bindPageActions)();
   if (aliases) ManifestElement.aliases = aliases;
   return ManifestElement;
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "51e3a200cf5f"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   bindPageActions: () => (/* binding */ bindPageActions),
+/* harmony export */   readPageAction: () => (/* binding */ readPageAction),
+/* harmony export */   runPageAction: () => (/* binding */ runPageAction)
+/* harmony export */ });
+// One page trigger (standard simai.smart-component 1.3.8 §8, §16.10, §19.4):
+// `data-sf-action="<element id>.<action>"` on a page control runs that action
+// of the element, the same method a script or a rule calls. It replaces the
+// per-component triggers (`data-sf-modal-open`, `data-sf-drawer-close`, …),
+// which stay as their aliases.
+//
+//   <button data-sf-action="confirm-delete.open">Delete</button>
+//   <sf-modal id="confirm-delete">… <button data-sf-action="confirm-delete.confirm">Yes</button></sf-modal>
+//
+// Only an action the element's manifest declares is run: a page trigger can
+// not reach the element's other methods. The action gets no parameters; a
+// trigger that needs some is a script.
+//
+// One click listener for the document, on a shared global: every Smart bundle
+// carries its own copy of this module, and a second listener would run each
+// action twice.
+const KEY = Symbol.for('sf.pageActions');
+
+const camel = name => String(name).replace(/-([a-z0-9])/gu, (_, letter) => letter.toUpperCase());
+/** `<id>.<action>` -> {id, action}; the action is the part after the last dot. */
+
+
+function readPageAction(text) {
+  const value = String(text || '').trim();
+  const at = value.lastIndexOf('.');
+  if (at <= 0 || at === value.length - 1) return null;
+  return {
+    id: value.slice(0, at),
+    action: value.slice(at + 1)
+  };
+}
+/** Runs a page trigger; answers the action's outcome, or null when nothing ran. */
+
+function runPageAction(trigger) {
+  const read = readPageAction(trigger?.getAttribute?.('data-sf-action'));
+  if (!read) return null; // The element's id, or its instance id: a part an assembly placed is named
+  // by its role path (§7.1.1, data-sf-instance="page/form/dialog").
+
+  const doc = trigger.ownerDocument;
+  const element = doc?.getElementById(read.id) ?? [...(doc?.querySelectorAll('[data-sf-instance]') ?? [])].find(one => one.getAttribute('data-sf-instance') === read.id);
+  const declared = element?.constructor?.sfManifest?.actions ?? [];
+  if (!declared.some(action => action.name === read.action)) return null;
+  const method = element[camel(read.action)];
+  return typeof method === 'function' ? method.call(element, {}) : null;
+}
+function bindPageActions(doc = globalThis.document) {
+  if (!doc || typeof doc.addEventListener !== 'function') return;
+  const scope = globalThis;
+  if (!scope[KEY]) Object.defineProperty(scope, KEY, {
+    value: new WeakSet(),
+    configurable: true
+  });
+  if (scope[KEY].has(doc)) return;
+  scope[KEY].add(doc);
+  doc.addEventListener('click', event => {
+    const trigger = event.target?.closest?.('[data-sf-action]');
+    if (!trigger || trigger.matches(':disabled, [aria-disabled="true"]')) return;
+    runPageAction(trigger);
+  });
+}
 
 /***/ },
 

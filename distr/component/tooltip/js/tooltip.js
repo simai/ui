@@ -45,6 +45,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("58661bec99a6");
 /* harmony import */ var _core_js_position_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("2e9112dbdda9");
+/* harmony import */ var _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("695f21e50358");
+
 
  // Prefer the helper Core published; an isolated bundle uses its own copy.
 
@@ -171,7 +173,6 @@ function arrowPlacement(arrow, rtl) {
 const tooltipInstances = new WeakMap();
 const TRIGGER_SELECTOR = '[data-tooltip]';
 const SURFACE_SELECTOR = '.sf-tooltip, sf-tooltip';
-let tooltipId = 0;
 
 function descriptionTokens(trigger) {
   return (trigger.getAttribute('aria-describedby') || '').split(/\s+/).filter(Boolean);
@@ -212,11 +213,15 @@ class SfTooltipController {
   init() {
     if (!this.trigger || tooltipInstances.has(this.trigger)) return;
     this.surface = this.resolveSurface();
-    if (!this.surface) return;
+    if (!this.surface) return; // A path id (standard 1.3.8 §7.1.1, simai/ui-source#41), not a module
+    // counter: the trigger's path -- its id, else its place among the page's
+    // [data-tooltip] triggers, which no id written here moves -- and the local
+    // name tooltip.
 
     if (!this.surface.id) {
-      tooltipId += 1;
-      this.surface.id = `sf-tooltip-${tooltipId}`;
+      const doc = this.trigger.ownerDocument;
+      const path = this.trigger.id ? `page/${this.trigger.id}` : `data-tooltip[${[...doc.querySelectorAll(TRIGGER_SELECTOR)].indexOf(this.trigger) + 1}]`;
+      this.surface.id = (0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_2__.partId)(path, 'tooltip');
     }
 
     this.originalDescription = this.trigger.getAttribute('aria-describedby');
@@ -473,6 +478,103 @@ __webpack_require__.r(__webpack_exports__);
 * - Base function component (_component_name.js)
 */
 
+
+/***/ },
+
+/***/ "695f21e50358"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   instancePath: () => (/* binding */ instancePath),
+/* harmony export */   partId: () => (/* binding */ partId),
+/* harmony export */   pathIsSettled: () => (/* binding */ pathIsSettled)
+/* harmony export */ });
+// An instance's id is its role path (standard simai.smart-component 1.3.8
+// §7.1.1; simai/ui-source#41).
+//
+//   - at the top of the page: `page/<host id or data-sf-role>`;
+//   - a part with `data-sf-role` inside another instance:
+//     `<parent path>/<role>`;
+//   - neither: `<kind>[<n>]`, n counted in document order among the
+//     instances of the same kind that have neither.
+//
+// Ids that templates write (`for`, `aria-controls`, `aria-labelledby`) are
+// `<path with every non-word run as ->--<local name>`. A counter is never an
+// id: the field ids used to come from a module-scope counter, and every
+// bundle that carries the field code (eight of them) had its own, so a class
+// sf-quantity and an <sf-quantity> on one page both took
+// `sf-quantity-1-control` and a label pointed at the other field. Ids that
+// follow creation order also swap when two instances swap, and server markup
+// (§5.4) cannot repeat them. A path is read from the page, so every bundle
+// gives the same answer.
+//
+// `kind` is the element's tag for a Smart element; class markup passes its
+// root class and is told apart as `class.<root class>`.
+const isElement = node => node && node.nodeType === 1 && typeof node.getAttribute === 'function';
+
+const isCustom = node => isElement(node) && String(node.localName || '').includes('-');
+
+function parentInstance(node) {
+  for (let current = node.parentNode || node.host || null; current; current = current.parentNode || current.host || null) {
+    if (isCustom(current)) return current;
+  }
+
+  return null;
+}
+
+function kindOf(owner, kind) {
+  const tag = String(owner?.localName || '').toLowerCase();
+  if (tag && tag.includes('-')) return tag;
+  return `class.${kind || tag || 'element'}`;
+}
+
+function documentIndex(owner, kind) {
+  const doc = owner?.ownerDocument;
+  if (!owner?.isConnected || typeof doc?.querySelectorAll !== 'function') return 0;
+  const selector = kind.startsWith('class.') ? `.${kind.slice('class.'.length)}` : kind;
+  let index = 0;
+
+  for (const one of doc.querySelectorAll(selector)) {
+    if (kind.startsWith('class.') && isCustom(one)) continue;
+    if (one.id || one.getAttribute('data-sf-role')) continue;
+    index += 1;
+    if (one === owner) return index;
+  }
+
+  return 0;
+}
+/** The role path of an instance (§7.1.1). */
+
+
+function instancePath(owner, {
+  kind = ''
+} = {}) {
+  const id = isElement(owner) ? String(owner.id || '').trim() : String(owner?.id || '').trim();
+  if (id) return `page/${id}`;
+  const role = isElement(owner) ? String(owner.getAttribute('data-sf-role') || '').trim() : '';
+
+  if (role) {
+    const parent = parentInstance(owner);
+    return parent ? `${instancePath(parent, {
+      kind: parent.localName
+    })}/${role}` : `page/${role}`;
+  }
+
+  const resolved = kindOf(owner, kind);
+  return `${resolved}[${documentIndex(owner, resolved)}]`;
+}
+/** An id a template writes for one of its parts: `<path as a word>--<local name>`. */
+
+function partId(path, local) {
+  const base = String(path).replace(/\W+/gu, '-').replace(/^-+|-+$/gu, '');
+  return local ? `${base}--${local}` : base;
+}
+/** Whether the path is final: an instance in the page, or one with an id. */
+
+function pathIsSettled(owner) {
+  return Boolean(owner?.isConnected || String(owner?.id || '').trim());
+}
 
 /***/ },
 

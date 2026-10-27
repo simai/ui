@@ -1,3 +1,4 @@
+@charset "UTF-8";
 /* A row's divider is inside its control height: the bottom padding gives the
    border back, so a standalone row and the same row in a list without
    dividers stand equally tall. The width is registered as a length, so a
@@ -11,48 +12,48 @@
 }
 @layer sf.components {
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) justify-content/flex-start (.justify-start) align-items/center (.items-center) */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list-item {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list-item{
     padding-left: var(--sf-list-item--padding-inline-start);
   }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .sf-list-item {
+  @supports not (padding-inline-start: initial){
+  html:not([dir="rtl"]) .sf-list-item{
     padding-left: var(--sf-list-item--padding-inline-start);
     }
   }
-  .sf-list-item:where(:dir(ltr)) {
+  .sf-list-item:where(:dir(ltr)){
     padding-left: var(--sf-list-item--padding-inline-start);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-list-item {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-list-item{
     padding-right: var(--sf-list-item--padding-inline-start);
   }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .sf-list-item {
+  @supports not (padding-inline-start: initial){
+  [dir="rtl"] .sf-list-item{
     padding-right: var(--sf-list-item--padding-inline-start);
     }
   }
-  .sf-list-item:where(:dir(rtl)) {
+  .sf-list-item:where(:dir(rtl)){
     padding-right: var(--sf-list-item--padding-inline-start);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list-item {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list-item{
     padding-right: var(--sf-list-item--padding-inline-end);
   }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .sf-list-item {
+  @supports not (padding-inline-end: initial){
+  html:not([dir="rtl"]) .sf-list-item{
     padding-right: var(--sf-list-item--padding-inline-end);
     }
   }
-  .sf-list-item:where(:dir(ltr)) {
+  .sf-list-item:where(:dir(ltr)){
     padding-right: var(--sf-list-item--padding-inline-end);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-list-item {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-list-item{
     padding-left: var(--sf-list-item--padding-inline-end);
   }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .sf-list-item {
+  @supports not (padding-inline-end: initial){
+  [dir="rtl"] .sf-list-item{
     padding-left: var(--sf-list-item--padding-inline-end);
     }
   }
-  .sf-list-item:where(:dir(rtl)) {
+  .sf-list-item:where(:dir(rtl)){
     padding-left: var(--sf-list-item--padding-inline-end);
   }
   .sf-list-item {
@@ -92,48 +93,48 @@
     min-width: 0;
     min-inline-size: 0;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list-item .sf-list-item-container {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list-item .sf-list-item-container{
     padding-right: var(--sf-list-item-container--padding-inline-end);
   }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .sf-list-item .sf-list-item-container {
+  @supports not (padding-inline-end: initial){
+  html:not([dir="rtl"]) .sf-list-item .sf-list-item-container{
     padding-right: var(--sf-list-item-container--padding-inline-end);
     }
   }
-  .sf-list-item .sf-list-item-container:where(:dir(ltr)) {
+  .sf-list-item .sf-list-item-container:where(:dir(ltr)){
     padding-right: var(--sf-list-item-container--padding-inline-end);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-list-item .sf-list-item-container {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-list-item .sf-list-item-container{
     padding-left: var(--sf-list-item-container--padding-inline-end);
   }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .sf-list-item .sf-list-item-container {
+  @supports not (padding-inline-end: initial){
+  [dir="rtl"] .sf-list-item .sf-list-item-container{
     padding-left: var(--sf-list-item-container--padding-inline-end);
     }
   }
-  .sf-list-item .sf-list-item-container:where(:dir(rtl)) {
+  .sf-list-item .sf-list-item-container:where(:dir(rtl)){
     padding-left: var(--sf-list-item-container--padding-inline-end);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list-item .sf-list-item-container {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list-item .sf-list-item-container{
     padding-left: var(--sf-list-item-container--padding-inline-start);
   }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .sf-list-item .sf-list-item-container {
+  @supports not (padding-inline-start: initial){
+  html:not([dir="rtl"]) .sf-list-item .sf-list-item-container{
     padding-left: var(--sf-list-item-container--padding-inline-start);
     }
   }
-  .sf-list-item .sf-list-item-container:where(:dir(ltr)) {
+  .sf-list-item .sf-list-item-container:where(:dir(ltr)){
     padding-left: var(--sf-list-item-container--padding-inline-start);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-list-item .sf-list-item-container {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-list-item .sf-list-item-container{
     padding-right: var(--sf-list-item-container--padding-inline-start);
   }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .sf-list-item .sf-list-item-container {
+  @supports not (padding-inline-start: initial){
+  [dir="rtl"] .sf-list-item .sf-list-item-container{
     padding-right: var(--sf-list-item-container--padding-inline-start);
     }
   }
-  .sf-list-item .sf-list-item-container:where(:dir(rtl)) {
+  .sf-list-item .sf-list-item-container:where(:dir(rtl)){
     padding-right: var(--sf-list-item-container--padding-inline-start);
   }
   .sf-list-item .sf-list-item-container {
@@ -700,26 +701,26 @@
     .sf-list-item[data-sf-list-roving]:focus-visible {
       outline-color: Highlight;
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list-item.selected[data-sf-list-roving] {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list-item.selected[data-sf-list-roving]{
       border-left: var(--sf-px) solid Highlight;
     }
-    @supports not (border-inline-start: initial) {
-    html:not([dir="rtl"]) .sf-list-item.selected[data-sf-list-roving] {
+    @supports not (border-inline-start: initial){
+    html:not([dir="rtl"]) .sf-list-item.selected[data-sf-list-roving]{
       border-left: var(--sf-px) solid Highlight;
       }
     }
-    .sf-list-item.selected[data-sf-list-roving]:where(:dir(ltr)) {
+    .sf-list-item.selected[data-sf-list-roving]:where(:dir(ltr)){
       border-left: var(--sf-px) solid Highlight;
     }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-list-item.selected[data-sf-list-roving] {
+    _:-ms-input-placeholder, [dir="rtl"] .sf-list-item.selected[data-sf-list-roving]{
       border-right: var(--sf-px) solid Highlight;
     }
-    @supports not (border-inline-start: initial) {
-    [dir="rtl"] .sf-list-item.selected[data-sf-list-roving] {
+    @supports not (border-inline-start: initial){
+    [dir="rtl"] .sf-list-item.selected[data-sf-list-roving]{
       border-right: var(--sf-px) solid Highlight;
       }
     }
-    .sf-list-item.selected[data-sf-list-roving]:where(:dir(rtl)) {
+    .sf-list-item.selected[data-sf-list-roving]:where(:dir(rtl)){
       border-right: var(--sf-px) solid Highlight;
     }
     .sf-list-item.selected[data-sf-list-roving] {
@@ -730,227 +731,227 @@
 }
 @layer sf.components {
   /* utility-hint: display/flex (.flex) flex-direction/column (.flex-col) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-space-1\/3) justify-content/flex-start (.justify-start) align-items/flex-end (.items-end) */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list{
     border-bottom-right-radius: var(--sf-radius--surface);
     border-bottom-right-radius: var(--sf-list--border-bottom-right-radius, var(--sf-radius--surface));
   }
-  @supports not (border-end-end-radius: initial) {
-  html:not([dir="rtl"]) .sf-list {
+  @supports not (border-end-end-radius: initial){
+  html:not([dir="rtl"]) .sf-list{
     border-bottom-right-radius: var(--sf-radius--surface);
     border-bottom-right-radius: var(--sf-list--border-bottom-right-radius, var(--sf-radius--surface));
     }
   }
-  .sf-list:where(:dir(ltr)) {
+  .sf-list:where(:dir(ltr)){
     border-bottom-right-radius: var(--sf-radius--surface);
     border-bottom-right-radius: var(--sf-list--border-bottom-right-radius, var(--sf-radius--surface));
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-list {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-list{
     border-bottom-left-radius: var(--sf-radius--surface);
     border-bottom-left-radius: var(--sf-list--border-bottom-right-radius, var(--sf-radius--surface));
   }
-  @supports not (border-end-end-radius: initial) {
-  [dir="rtl"] .sf-list {
+  @supports not (border-end-end-radius: initial){
+  [dir="rtl"] .sf-list{
     border-bottom-left-radius: var(--sf-radius--surface);
     border-bottom-left-radius: var(--sf-list--border-bottom-right-radius, var(--sf-radius--surface));
     }
   }
-  .sf-list:where(:dir(rtl)) {
+  .sf-list:where(:dir(rtl)){
     border-bottom-left-radius: var(--sf-radius--surface);
     border-bottom-left-radius: var(--sf-list--border-bottom-right-radius, var(--sf-radius--surface));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list{
     border-bottom-left-radius: var(--sf-radius--surface);
     border-bottom-left-radius: var(--sf-list--border-bottom-left-radius, var(--sf-radius--surface));
   }
-  @supports not (border-end-start-radius: initial) {
-  html:not([dir="rtl"]) .sf-list {
+  @supports not (border-end-start-radius: initial){
+  html:not([dir="rtl"]) .sf-list{
     border-bottom-left-radius: var(--sf-radius--surface);
     border-bottom-left-radius: var(--sf-list--border-bottom-left-radius, var(--sf-radius--surface));
     }
   }
-  .sf-list:where(:dir(ltr)) {
+  .sf-list:where(:dir(ltr)){
     border-bottom-left-radius: var(--sf-radius--surface);
     border-bottom-left-radius: var(--sf-list--border-bottom-left-radius, var(--sf-radius--surface));
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-list {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-list{
     border-bottom-right-radius: var(--sf-radius--surface);
     border-bottom-right-radius: var(--sf-list--border-bottom-left-radius, var(--sf-radius--surface));
   }
-  @supports not (border-end-start-radius: initial) {
-  [dir="rtl"] .sf-list {
+  @supports not (border-end-start-radius: initial){
+  [dir="rtl"] .sf-list{
     border-bottom-right-radius: var(--sf-radius--surface);
     border-bottom-right-radius: var(--sf-list--border-bottom-left-radius, var(--sf-radius--surface));
     }
   }
-  .sf-list:where(:dir(rtl)) {
+  .sf-list:where(:dir(rtl)){
     border-bottom-right-radius: var(--sf-radius--surface);
     border-bottom-right-radius: var(--sf-list--border-bottom-left-radius, var(--sf-radius--surface));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list{
     border-right-width: var(--sf-px);
     border-right-width: var(--sf-list--border-right-width, var(--sf-list--border-width, var(--sf-px)));
   }
-  @supports not (border-inline-end-width: initial) {
-  html:not([dir="rtl"]) .sf-list {
+  @supports not (border-inline-end-width: initial){
+  html:not([dir="rtl"]) .sf-list{
     border-right-width: var(--sf-px);
     border-right-width: var(--sf-list--border-right-width, var(--sf-list--border-width, var(--sf-px)));
     }
   }
-  .sf-list:where(:dir(ltr)) {
+  .sf-list:where(:dir(ltr)){
     border-right-width: var(--sf-px);
     border-right-width: var(--sf-list--border-right-width, var(--sf-list--border-width, var(--sf-px)));
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-list {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-list{
     border-left-width: var(--sf-px);
     border-left-width: var(--sf-list--border-right-width, var(--sf-list--border-width, var(--sf-px)));
   }
-  @supports not (border-inline-end-width: initial) {
-  [dir="rtl"] .sf-list {
+  @supports not (border-inline-end-width: initial){
+  [dir="rtl"] .sf-list{
     border-left-width: var(--sf-px);
     border-left-width: var(--sf-list--border-right-width, var(--sf-list--border-width, var(--sf-px)));
     }
   }
-  .sf-list:where(:dir(rtl)) {
+  .sf-list:where(:dir(rtl)){
     border-left-width: var(--sf-px);
     border-left-width: var(--sf-list--border-right-width, var(--sf-list--border-width, var(--sf-px)));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list{
     border-left-width: var(--sf-px);
     border-left-width: var(--sf-list--border-left-width, var(--sf-list--border-width, var(--sf-px)));
   }
-  @supports not (border-inline-start-width: initial) {
-  html:not([dir="rtl"]) .sf-list {
+  @supports not (border-inline-start-width: initial){
+  html:not([dir="rtl"]) .sf-list{
     border-left-width: var(--sf-px);
     border-left-width: var(--sf-list--border-left-width, var(--sf-list--border-width, var(--sf-px)));
     }
   }
-  .sf-list:where(:dir(ltr)) {
+  .sf-list:where(:dir(ltr)){
     border-left-width: var(--sf-px);
     border-left-width: var(--sf-list--border-left-width, var(--sf-list--border-width, var(--sf-px)));
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-list {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-list{
     border-right-width: var(--sf-px);
     border-right-width: var(--sf-list--border-left-width, var(--sf-list--border-width, var(--sf-px)));
   }
-  @supports not (border-inline-start-width: initial) {
-  [dir="rtl"] .sf-list {
+  @supports not (border-inline-start-width: initial){
+  [dir="rtl"] .sf-list{
     border-right-width: var(--sf-px);
     border-right-width: var(--sf-list--border-left-width, var(--sf-list--border-width, var(--sf-px)));
     }
   }
-  .sf-list:where(:dir(rtl)) {
+  .sf-list:where(:dir(rtl)){
     border-right-width: var(--sf-px);
     border-right-width: var(--sf-list--border-left-width, var(--sf-list--border-width, var(--sf-px)));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list{
     border-top-right-radius: var(--sf-radius--surface);
     border-top-right-radius: var(--sf-list--border-top-right-radius, var(--sf-radius--surface));
   }
-  @supports not (border-start-end-radius: initial) {
-  html:not([dir="rtl"]) .sf-list {
+  @supports not (border-start-end-radius: initial){
+  html:not([dir="rtl"]) .sf-list{
     border-top-right-radius: var(--sf-radius--surface);
     border-top-right-radius: var(--sf-list--border-top-right-radius, var(--sf-radius--surface));
     }
   }
-  .sf-list:where(:dir(ltr)) {
+  .sf-list:where(:dir(ltr)){
     border-top-right-radius: var(--sf-radius--surface);
     border-top-right-radius: var(--sf-list--border-top-right-radius, var(--sf-radius--surface));
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-list {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-list{
     border-top-left-radius: var(--sf-radius--surface);
     border-top-left-radius: var(--sf-list--border-top-right-radius, var(--sf-radius--surface));
   }
-  @supports not (border-start-end-radius: initial) {
-  [dir="rtl"] .sf-list {
+  @supports not (border-start-end-radius: initial){
+  [dir="rtl"] .sf-list{
     border-top-left-radius: var(--sf-radius--surface);
     border-top-left-radius: var(--sf-list--border-top-right-radius, var(--sf-radius--surface));
     }
   }
-  .sf-list:where(:dir(rtl)) {
+  .sf-list:where(:dir(rtl)){
     border-top-left-radius: var(--sf-radius--surface);
     border-top-left-radius: var(--sf-list--border-top-right-radius, var(--sf-radius--surface));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list{
     border-top-left-radius: var(--sf-radius--surface);
     border-top-left-radius: var(--sf-list--border-top-left-radius, var(--sf-radius--surface));
   }
-  @supports not (border-start-start-radius: initial) {
-  html:not([dir="rtl"]) .sf-list {
+  @supports not (border-start-start-radius: initial){
+  html:not([dir="rtl"]) .sf-list{
     border-top-left-radius: var(--sf-radius--surface);
     border-top-left-radius: var(--sf-list--border-top-left-radius, var(--sf-radius--surface));
     }
   }
-  .sf-list:where(:dir(ltr)) {
+  .sf-list:where(:dir(ltr)){
     border-top-left-radius: var(--sf-radius--surface);
     border-top-left-radius: var(--sf-list--border-top-left-radius, var(--sf-radius--surface));
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-list {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-list{
     border-top-right-radius: var(--sf-radius--surface);
     border-top-right-radius: var(--sf-list--border-top-left-radius, var(--sf-radius--surface));
   }
-  @supports not (border-start-start-radius: initial) {
-  [dir="rtl"] .sf-list {
+  @supports not (border-start-start-radius: initial){
+  [dir="rtl"] .sf-list{
     border-top-right-radius: var(--sf-radius--surface);
     border-top-right-radius: var(--sf-list--border-top-left-radius, var(--sf-radius--surface));
     }
   }
-  .sf-list:where(:dir(rtl)) {
+  .sf-list:where(:dir(rtl)){
     border-top-right-radius: var(--sf-radius--surface);
     border-top-right-radius: var(--sf-list--border-top-left-radius, var(--sf-radius--surface));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list{
     padding-right: var(--sf-space-1\/3);
     padding-right: var(--sf-list--padding-right, var(--sf-space-1\/3));
   }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .sf-list {
+  @supports not (padding-inline-end: initial){
+  html:not([dir="rtl"]) .sf-list{
     padding-right: var(--sf-space-1\/3);
     padding-right: var(--sf-list--padding-right, var(--sf-space-1\/3));
     }
   }
-  .sf-list:where(:dir(ltr)) {
+  .sf-list:where(:dir(ltr)){
     padding-right: var(--sf-space-1\/3);
     padding-right: var(--sf-list--padding-right, var(--sf-space-1\/3));
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-list {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-list{
     padding-left: var(--sf-space-1\/3);
     padding-left: var(--sf-list--padding-right, var(--sf-space-1\/3));
   }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .sf-list {
+  @supports not (padding-inline-end: initial){
+  [dir="rtl"] .sf-list{
     padding-left: var(--sf-space-1\/3);
     padding-left: var(--sf-list--padding-right, var(--sf-space-1\/3));
     }
   }
-  .sf-list:where(:dir(rtl)) {
+  .sf-list:where(:dir(rtl)){
     padding-left: var(--sf-space-1\/3);
     padding-left: var(--sf-list--padding-right, var(--sf-space-1\/3));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list{
     padding-left: var(--sf-space-1\/3);
     padding-left: var(--sf-list--padding-left, var(--sf-space-1\/3));
   }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .sf-list {
+  @supports not (padding-inline-start: initial){
+  html:not([dir="rtl"]) .sf-list{
     padding-left: var(--sf-space-1\/3);
     padding-left: var(--sf-list--padding-left, var(--sf-space-1\/3));
     }
   }
-  .sf-list:where(:dir(ltr)) {
+  .sf-list:where(:dir(ltr)){
     padding-left: var(--sf-space-1\/3);
     padding-left: var(--sf-list--padding-left, var(--sf-space-1\/3));
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-list {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-list{
     padding-right: var(--sf-space-1\/3);
     padding-right: var(--sf-list--padding-left, var(--sf-space-1\/3));
   }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .sf-list {
+  @supports not (padding-inline-start: initial){
+  [dir="rtl"] .sf-list{
     padding-right: var(--sf-space-1\/3);
     padding-right: var(--sf-list--padding-left, var(--sf-space-1\/3));
     }
   }
-  .sf-list:where(:dir(rtl)) {
+  .sf-list:where(:dir(rtl)){
     padding-right: var(--sf-space-1\/3);
     padding-right: var(--sf-list--padding-left, var(--sf-space-1\/3));
   }
@@ -1028,9 +1029,10 @@
   .sf-dropdown .sf-list,
   .sf-list--menu {
     --sf-list--border-width: 0;
-    --sf-list--background-color: var(--sf-elevation-2--surface);
+    /* The open list's public variable (sf-dropdown component.json, §6). */
+    --sf-list--background-color: var(--sf-dropdown-list-background-color, var(--sf-elevation-2--surface));
     --sf-on-surface-variant: var(--sf-on-elevation-2--variant);
-    --sf-badge--surface: var(--sf-elevation-2--surface);
+    --sf-badge--surface: var(--sf-dropdown-list-background-color, var(--sf-elevation-2--surface));
     --sf-list--padding-top: var(--sf-space-1\/4);
     --sf-list--padding-bottom: var(--sf-space-1\/4);
     --sf-list--padding-left: var(--sf-space-1\/4);
@@ -1373,163 +1375,163 @@
     background-color: transparent;
     background-color: var(--sf-dropdown--background-color, transparent);
     gap: var(--sf-space-1\/4);
-    gap: var(--sf-dropdown--gap, var(--sf-space-1\/4));
+    gap: var(--sf-dropdown-gap, var(--sf-dropdown--gap, var(--sf-space-1\/4)));
   }
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) justify-content/flex-start (.justify-start) align-items/center (.items-center) gap/var(--sf-dropdown-field--gap) */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field{
     border-bottom-right-radius: var(--sf-radius--ui);
-    border-bottom-right-radius: var(--sf-dropdown-field--border-end-end-radius, var(--sf-dropdown--radius, var(--sf-radius--ui)));
+    border-bottom-right-radius: var(--sf-dropdown-field--border-end-end-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
   }
-  @supports not (border-end-end-radius: initial) {
-  html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field {
+  @supports not (border-end-end-radius: initial){
+  html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field{
     border-bottom-right-radius: var(--sf-radius--ui);
-    border-bottom-right-radius: var(--sf-dropdown-field--border-end-end-radius, var(--sf-dropdown--radius, var(--sf-radius--ui)));
+    border-bottom-right-radius: var(--sf-dropdown-field--border-end-end-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
     }
   }
-  .sf-dropdown .sf-dropdown-field:where(:dir(ltr)) {
+  .sf-dropdown .sf-dropdown-field:where(:dir(ltr)){
     border-bottom-right-radius: var(--sf-radius--ui);
-    border-bottom-right-radius: var(--sf-dropdown-field--border-end-end-radius, var(--sf-dropdown--radius, var(--sf-radius--ui)));
+    border-bottom-right-radius: var(--sf-dropdown-field--border-end-end-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-dropdown-field {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-dropdown-field{
     border-bottom-left-radius: var(--sf-radius--ui);
-    border-bottom-left-radius: var(--sf-dropdown-field--border-end-end-radius, var(--sf-dropdown--radius, var(--sf-radius--ui)));
+    border-bottom-left-radius: var(--sf-dropdown-field--border-end-end-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
   }
-  @supports not (border-end-end-radius: initial) {
-  [dir="rtl"] .sf-dropdown .sf-dropdown-field {
+  @supports not (border-end-end-radius: initial){
+  [dir="rtl"] .sf-dropdown .sf-dropdown-field{
     border-bottom-left-radius: var(--sf-radius--ui);
-    border-bottom-left-radius: var(--sf-dropdown-field--border-end-end-radius, var(--sf-dropdown--radius, var(--sf-radius--ui)));
+    border-bottom-left-radius: var(--sf-dropdown-field--border-end-end-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
     }
   }
-  .sf-dropdown .sf-dropdown-field:where(:dir(rtl)) {
+  .sf-dropdown .sf-dropdown-field:where(:dir(rtl)){
     border-bottom-left-radius: var(--sf-radius--ui);
-    border-bottom-left-radius: var(--sf-dropdown-field--border-end-end-radius, var(--sf-dropdown--radius, var(--sf-radius--ui)));
+    border-bottom-left-radius: var(--sf-dropdown-field--border-end-end-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field{
     border-bottom-left-radius: var(--sf-radius--ui);
-    border-bottom-left-radius: var(--sf-dropdown-field--border-end-start-radius, var(--sf-dropdown--radius, var(--sf-radius--ui)));
+    border-bottom-left-radius: var(--sf-dropdown-field--border-end-start-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
   }
-  @supports not (border-end-start-radius: initial) {
-  html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field {
+  @supports not (border-end-start-radius: initial){
+  html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field{
     border-bottom-left-radius: var(--sf-radius--ui);
-    border-bottom-left-radius: var(--sf-dropdown-field--border-end-start-radius, var(--sf-dropdown--radius, var(--sf-radius--ui)));
+    border-bottom-left-radius: var(--sf-dropdown-field--border-end-start-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
     }
   }
-  .sf-dropdown .sf-dropdown-field:where(:dir(ltr)) {
+  .sf-dropdown .sf-dropdown-field:where(:dir(ltr)){
     border-bottom-left-radius: var(--sf-radius--ui);
-    border-bottom-left-radius: var(--sf-dropdown-field--border-end-start-radius, var(--sf-dropdown--radius, var(--sf-radius--ui)));
+    border-bottom-left-radius: var(--sf-dropdown-field--border-end-start-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-dropdown-field {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-dropdown-field{
     border-bottom-right-radius: var(--sf-radius--ui);
-    border-bottom-right-radius: var(--sf-dropdown-field--border-end-start-radius, var(--sf-dropdown--radius, var(--sf-radius--ui)));
+    border-bottom-right-radius: var(--sf-dropdown-field--border-end-start-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
   }
-  @supports not (border-end-start-radius: initial) {
-  [dir="rtl"] .sf-dropdown .sf-dropdown-field {
+  @supports not (border-end-start-radius: initial){
+  [dir="rtl"] .sf-dropdown .sf-dropdown-field{
     border-bottom-right-radius: var(--sf-radius--ui);
-    border-bottom-right-radius: var(--sf-dropdown-field--border-end-start-radius, var(--sf-dropdown--radius, var(--sf-radius--ui)));
+    border-bottom-right-radius: var(--sf-dropdown-field--border-end-start-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
     }
   }
-  .sf-dropdown .sf-dropdown-field:where(:dir(rtl)) {
+  .sf-dropdown .sf-dropdown-field:where(:dir(rtl)){
     border-bottom-right-radius: var(--sf-radius--ui);
-    border-bottom-right-radius: var(--sf-dropdown-field--border-end-start-radius, var(--sf-dropdown--radius, var(--sf-radius--ui)));
+    border-bottom-right-radius: var(--sf-dropdown-field--border-end-start-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field{
     border-top-right-radius: var(--sf-radius--ui);
-    border-top-right-radius: var(--sf-dropdown-field--border-start-end-radius, var(--sf-dropdown--radius, var(--sf-radius--ui)));
+    border-top-right-radius: var(--sf-dropdown-field--border-start-end-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
   }
-  @supports not (border-start-end-radius: initial) {
-  html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field {
+  @supports not (border-start-end-radius: initial){
+  html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field{
     border-top-right-radius: var(--sf-radius--ui);
-    border-top-right-radius: var(--sf-dropdown-field--border-start-end-radius, var(--sf-dropdown--radius, var(--sf-radius--ui)));
+    border-top-right-radius: var(--sf-dropdown-field--border-start-end-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
     }
   }
-  .sf-dropdown .sf-dropdown-field:where(:dir(ltr)) {
+  .sf-dropdown .sf-dropdown-field:where(:dir(ltr)){
     border-top-right-radius: var(--sf-radius--ui);
-    border-top-right-radius: var(--sf-dropdown-field--border-start-end-radius, var(--sf-dropdown--radius, var(--sf-radius--ui)));
+    border-top-right-radius: var(--sf-dropdown-field--border-start-end-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-dropdown-field {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-dropdown-field{
     border-top-left-radius: var(--sf-radius--ui);
-    border-top-left-radius: var(--sf-dropdown-field--border-start-end-radius, var(--sf-dropdown--radius, var(--sf-radius--ui)));
+    border-top-left-radius: var(--sf-dropdown-field--border-start-end-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
   }
-  @supports not (border-start-end-radius: initial) {
-  [dir="rtl"] .sf-dropdown .sf-dropdown-field {
+  @supports not (border-start-end-radius: initial){
+  [dir="rtl"] .sf-dropdown .sf-dropdown-field{
     border-top-left-radius: var(--sf-radius--ui);
-    border-top-left-radius: var(--sf-dropdown-field--border-start-end-radius, var(--sf-dropdown--radius, var(--sf-radius--ui)));
+    border-top-left-radius: var(--sf-dropdown-field--border-start-end-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
     }
   }
-  .sf-dropdown .sf-dropdown-field:where(:dir(rtl)) {
+  .sf-dropdown .sf-dropdown-field:where(:dir(rtl)){
     border-top-left-radius: var(--sf-radius--ui);
-    border-top-left-radius: var(--sf-dropdown-field--border-start-end-radius, var(--sf-dropdown--radius, var(--sf-radius--ui)));
+    border-top-left-radius: var(--sf-dropdown-field--border-start-end-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field{
     border-top-left-radius: var(--sf-radius--ui);
-    border-top-left-radius: var(--sf-dropdown-field--border-start-start-radius, var(--sf-dropdown--radius, var(--sf-radius--ui)));
+    border-top-left-radius: var(--sf-dropdown-field--border-start-start-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
   }
-  @supports not (border-start-start-radius: initial) {
-  html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field {
+  @supports not (border-start-start-radius: initial){
+  html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field{
     border-top-left-radius: var(--sf-radius--ui);
-    border-top-left-radius: var(--sf-dropdown-field--border-start-start-radius, var(--sf-dropdown--radius, var(--sf-radius--ui)));
+    border-top-left-radius: var(--sf-dropdown-field--border-start-start-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
     }
   }
-  .sf-dropdown .sf-dropdown-field:where(:dir(ltr)) {
+  .sf-dropdown .sf-dropdown-field:where(:dir(ltr)){
     border-top-left-radius: var(--sf-radius--ui);
-    border-top-left-radius: var(--sf-dropdown-field--border-start-start-radius, var(--sf-dropdown--radius, var(--sf-radius--ui)));
+    border-top-left-radius: var(--sf-dropdown-field--border-start-start-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-dropdown-field {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-dropdown-field{
     border-top-right-radius: var(--sf-radius--ui);
-    border-top-right-radius: var(--sf-dropdown-field--border-start-start-radius, var(--sf-dropdown--radius, var(--sf-radius--ui)));
+    border-top-right-radius: var(--sf-dropdown-field--border-start-start-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
   }
-  @supports not (border-start-start-radius: initial) {
-  [dir="rtl"] .sf-dropdown .sf-dropdown-field {
+  @supports not (border-start-start-radius: initial){
+  [dir="rtl"] .sf-dropdown .sf-dropdown-field{
     border-top-right-radius: var(--sf-radius--ui);
-    border-top-right-radius: var(--sf-dropdown-field--border-start-start-radius, var(--sf-dropdown--radius, var(--sf-radius--ui)));
+    border-top-right-radius: var(--sf-dropdown-field--border-start-start-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
     }
   }
-  .sf-dropdown .sf-dropdown-field:where(:dir(rtl)) {
+  .sf-dropdown .sf-dropdown-field:where(:dir(rtl)){
     border-top-right-radius: var(--sf-radius--ui);
-    border-top-right-radius: var(--sf-dropdown-field--border-start-start-radius, var(--sf-dropdown--radius, var(--sf-radius--ui)));
+    border-top-right-radius: var(--sf-dropdown-field--border-start-start-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field{
     padding-right: var(--sf-dropdown-field--padding-inline-end);
   }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field {
+  @supports not (padding-inline-end: initial){
+  html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field{
     padding-right: var(--sf-dropdown-field--padding-inline-end);
     }
   }
-  .sf-dropdown .sf-dropdown-field:where(:dir(ltr)) {
+  .sf-dropdown .sf-dropdown-field:where(:dir(ltr)){
     padding-right: var(--sf-dropdown-field--padding-inline-end);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-dropdown-field {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-dropdown-field{
     padding-left: var(--sf-dropdown-field--padding-inline-end);
   }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .sf-dropdown .sf-dropdown-field {
+  @supports not (padding-inline-end: initial){
+  [dir="rtl"] .sf-dropdown .sf-dropdown-field{
     padding-left: var(--sf-dropdown-field--padding-inline-end);
     }
   }
-  .sf-dropdown .sf-dropdown-field:where(:dir(rtl)) {
+  .sf-dropdown .sf-dropdown-field:where(:dir(rtl)){
     padding-left: var(--sf-dropdown-field--padding-inline-end);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field{
     padding-left: var(--sf-dropdown-field--padding-inline-start);
   }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field {
+  @supports not (padding-inline-start: initial){
+  html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field{
     padding-left: var(--sf-dropdown-field--padding-inline-start);
     }
   }
-  .sf-dropdown .sf-dropdown-field:where(:dir(ltr)) {
+  .sf-dropdown .sf-dropdown-field:where(:dir(ltr)){
     padding-left: var(--sf-dropdown-field--padding-inline-start);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-dropdown-field {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-dropdown-field{
     padding-right: var(--sf-dropdown-field--padding-inline-start);
   }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .sf-dropdown .sf-dropdown-field {
+  @supports not (padding-inline-start: initial){
+  [dir="rtl"] .sf-dropdown .sf-dropdown-field{
     padding-right: var(--sf-dropdown-field--padding-inline-start);
     }
   }
-  .sf-dropdown .sf-dropdown-field:where(:dir(rtl)) {
+  .sf-dropdown .sf-dropdown-field:where(:dir(rtl)){
     padding-right: var(--sf-dropdown-field--padding-inline-start);
   }
   .sf-dropdown .sf-dropdown-field {
@@ -1539,13 +1541,13 @@
     border-color: transparent;
     border-color: var(--sf-dropdown-field--border-color, transparent);
     border-end-end-radius: var(--sf-radius--ui);
-    border-end-end-radius: var(--sf-dropdown-field--border-end-end-radius, var(--sf-dropdown--radius, var(--sf-radius--ui)));
+    border-end-end-radius: var(--sf-dropdown-field--border-end-end-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
     border-end-start-radius: var(--sf-radius--ui);
-    border-end-start-radius: var(--sf-dropdown-field--border-end-start-radius, var(--sf-dropdown--radius, var(--sf-radius--ui)));
+    border-end-start-radius: var(--sf-dropdown-field--border-end-start-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
     border-start-end-radius: var(--sf-radius--ui);
-    border-start-end-radius: var(--sf-dropdown-field--border-start-end-radius, var(--sf-dropdown--radius, var(--sf-radius--ui)));
+    border-start-end-radius: var(--sf-dropdown-field--border-start-end-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
     border-start-start-radius: var(--sf-radius--ui);
-    border-start-start-radius: var(--sf-dropdown-field--border-start-start-radius, var(--sf-dropdown--radius, var(--sf-radius--ui)));
+    border-start-start-radius: var(--sf-dropdown-field--border-start-start-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
     box-shadow: var(--sf-dropdown-field--box-shadow);
     gap: var(--sf-dropdown-field--gap);
     padding-bottom: var(--sf-dropdown-field--padding-bottom);
@@ -1555,48 +1557,48 @@
             padding-inline-start: var(--sf-dropdown-field--padding-inline-start);
     padding-top: var(--sf-dropdown-field--padding-top);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-icon-button {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-icon-button{
     padding-right: var(--sf-icon-button--padding-inline-end);
   }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .sf-dropdown .sf-icon-button {
+  @supports not (padding-inline-end: initial){
+  html:not([dir="rtl"]) .sf-dropdown .sf-icon-button{
     padding-right: var(--sf-icon-button--padding-inline-end);
     }
   }
-  .sf-dropdown .sf-icon-button:where(:dir(ltr)) {
+  .sf-dropdown .sf-icon-button:where(:dir(ltr)){
     padding-right: var(--sf-icon-button--padding-inline-end);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-icon-button {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-icon-button{
     padding-left: var(--sf-icon-button--padding-inline-end);
   }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .sf-dropdown .sf-icon-button {
+  @supports not (padding-inline-end: initial){
+  [dir="rtl"] .sf-dropdown .sf-icon-button{
     padding-left: var(--sf-icon-button--padding-inline-end);
     }
   }
-  .sf-dropdown .sf-icon-button:where(:dir(rtl)) {
+  .sf-dropdown .sf-icon-button:where(:dir(rtl)){
     padding-left: var(--sf-icon-button--padding-inline-end);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-icon-button {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-icon-button{
     padding-left: var(--sf-icon-button--padding-inline-start);
   }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .sf-dropdown .sf-icon-button {
+  @supports not (padding-inline-start: initial){
+  html:not([dir="rtl"]) .sf-dropdown .sf-icon-button{
     padding-left: var(--sf-icon-button--padding-inline-start);
     }
   }
-  .sf-dropdown .sf-icon-button:where(:dir(ltr)) {
+  .sf-dropdown .sf-icon-button:where(:dir(ltr)){
     padding-left: var(--sf-icon-button--padding-inline-start);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-icon-button {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-icon-button{
     padding-right: var(--sf-icon-button--padding-inline-start);
   }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .sf-dropdown .sf-icon-button {
+  @supports not (padding-inline-start: initial){
+  [dir="rtl"] .sf-dropdown .sf-icon-button{
     padding-right: var(--sf-icon-button--padding-inline-start);
     }
   }
-  .sf-dropdown .sf-icon-button:where(:dir(rtl)) {
+  .sf-dropdown .sf-icon-button:where(:dir(rtl)){
     padding-right: var(--sf-icon-button--padding-inline-start);
   }
   .sf-dropdown .sf-icon-button {
@@ -1611,48 +1613,48 @@
             padding-inline-start: var(--sf-icon-button--padding-inline-start);
     padding-top: var(--sf-icon-button--padding-top);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown input {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown input{
     padding-right: var(--sf-dropdown-input--padding-inline-end);
   }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .sf-dropdown input {
+  @supports not (padding-inline-end: initial){
+  html:not([dir="rtl"]) .sf-dropdown input{
     padding-right: var(--sf-dropdown-input--padding-inline-end);
     }
   }
-  .sf-dropdown input:where(:dir(ltr)) {
+  .sf-dropdown input:where(:dir(ltr)){
     padding-right: var(--sf-dropdown-input--padding-inline-end);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown input {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown input{
     padding-left: var(--sf-dropdown-input--padding-inline-end);
   }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .sf-dropdown input {
+  @supports not (padding-inline-end: initial){
+  [dir="rtl"] .sf-dropdown input{
     padding-left: var(--sf-dropdown-input--padding-inline-end);
     }
   }
-  .sf-dropdown input:where(:dir(rtl)) {
+  .sf-dropdown input:where(:dir(rtl)){
     padding-left: var(--sf-dropdown-input--padding-inline-end);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown input {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown input{
     padding-left: var(--sf-dropdown-input--padding-inline-start);
   }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .sf-dropdown input {
+  @supports not (padding-inline-start: initial){
+  html:not([dir="rtl"]) .sf-dropdown input{
     padding-left: var(--sf-dropdown-input--padding-inline-start);
     }
   }
-  .sf-dropdown input:where(:dir(ltr)) {
+  .sf-dropdown input:where(:dir(ltr)){
     padding-left: var(--sf-dropdown-input--padding-inline-start);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown input {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown input{
     padding-right: var(--sf-dropdown-input--padding-inline-start);
   }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .sf-dropdown input {
+  @supports not (padding-inline-start: initial){
+  [dir="rtl"] .sf-dropdown input{
     padding-right: var(--sf-dropdown-input--padding-inline-start);
     }
   }
-  .sf-dropdown input:where(:dir(rtl)) {
+  .sf-dropdown input:where(:dir(rtl)){
     padding-right: var(--sf-dropdown-input--padding-inline-start);
   }
   .sf-dropdown input {
@@ -1718,59 +1720,59 @@
   .sf-dropdown .sf-list {
     box-shadow: var(--sf-list--box-shadow);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-tag {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-tag{
     padding-right: var(--sf-tag--padding-inline-end);
     padding-right: var(--sf-tag--inline-end, var(--sf-tag--padding-inline-end));
   }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .sf-dropdown .sf-tag {
+  @supports not (padding-inline-end: initial){
+  html:not([dir="rtl"]) .sf-dropdown .sf-tag{
     padding-right: var(--sf-tag--padding-inline-end);
     padding-right: var(--sf-tag--inline-end, var(--sf-tag--padding-inline-end));
     }
   }
-  .sf-dropdown .sf-tag:where(:dir(ltr)) {
+  .sf-dropdown .sf-tag:where(:dir(ltr)){
     padding-right: var(--sf-tag--padding-inline-end);
     padding-right: var(--sf-tag--inline-end, var(--sf-tag--padding-inline-end));
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-tag {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-tag{
     padding-left: var(--sf-tag--padding-inline-end);
     padding-left: var(--sf-tag--inline-end, var(--sf-tag--padding-inline-end));
   }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .sf-dropdown .sf-tag {
+  @supports not (padding-inline-end: initial){
+  [dir="rtl"] .sf-dropdown .sf-tag{
     padding-left: var(--sf-tag--padding-inline-end);
     padding-left: var(--sf-tag--inline-end, var(--sf-tag--padding-inline-end));
     }
   }
-  .sf-dropdown .sf-tag:where(:dir(rtl)) {
+  .sf-dropdown .sf-tag:where(:dir(rtl)){
     padding-left: var(--sf-tag--padding-inline-end);
     padding-left: var(--sf-tag--inline-end, var(--sf-tag--padding-inline-end));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-tag {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-tag{
     padding-left: var(--sf-tag--padding-inline-start);
     padding-left: var(--sf-tag--inline-start, var(--sf-tag--padding-inline-start));
   }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .sf-dropdown .sf-tag {
+  @supports not (padding-inline-start: initial){
+  html:not([dir="rtl"]) .sf-dropdown .sf-tag{
     padding-left: var(--sf-tag--padding-inline-start);
     padding-left: var(--sf-tag--inline-start, var(--sf-tag--padding-inline-start));
     }
   }
-  .sf-dropdown .sf-tag:where(:dir(ltr)) {
+  .sf-dropdown .sf-tag:where(:dir(ltr)){
     padding-left: var(--sf-tag--padding-inline-start);
     padding-left: var(--sf-tag--inline-start, var(--sf-tag--padding-inline-start));
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-tag {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-tag{
     padding-right: var(--sf-tag--padding-inline-start);
     padding-right: var(--sf-tag--inline-start, var(--sf-tag--padding-inline-start));
   }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .sf-dropdown .sf-tag {
+  @supports not (padding-inline-start: initial){
+  [dir="rtl"] .sf-dropdown .sf-tag{
     padding-right: var(--sf-tag--padding-inline-start);
     padding-right: var(--sf-tag--inline-start, var(--sf-tag--padding-inline-start));
     }
   }
-  .sf-dropdown .sf-tag:where(:dir(rtl)) {
+  .sf-dropdown .sf-tag:where(:dir(rtl)){
     padding-right: var(--sf-tag--padding-inline-start);
     padding-right: var(--sf-tag--inline-start, var(--sf-tag--padding-inline-start));
   }
@@ -1785,48 +1787,48 @@
     -webkit-padding-start: var(--sf-tag--inline-start, var(--sf-tag--padding-inline-start));
             padding-inline-start: var(--sf-tag--inline-start, var(--sf-tag--padding-inline-start));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-tag-alt {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-tag-alt{
     padding-right: var(--sf-tag-alt--padding-inline-end);
   }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .sf-dropdown .sf-tag-alt {
+  @supports not (padding-inline-end: initial){
+  html:not([dir="rtl"]) .sf-dropdown .sf-tag-alt{
     padding-right: var(--sf-tag-alt--padding-inline-end);
     }
   }
-  .sf-dropdown .sf-tag-alt:where(:dir(ltr)) {
+  .sf-dropdown .sf-tag-alt:where(:dir(ltr)){
     padding-right: var(--sf-tag-alt--padding-inline-end);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-tag-alt {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-tag-alt{
     padding-left: var(--sf-tag-alt--padding-inline-end);
   }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .sf-dropdown .sf-tag-alt {
+  @supports not (padding-inline-end: initial){
+  [dir="rtl"] .sf-dropdown .sf-tag-alt{
     padding-left: var(--sf-tag-alt--padding-inline-end);
     }
   }
-  .sf-dropdown .sf-tag-alt:where(:dir(rtl)) {
+  .sf-dropdown .sf-tag-alt:where(:dir(rtl)){
     padding-left: var(--sf-tag-alt--padding-inline-end);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-tag-alt {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-tag-alt{
     padding-left: var(--sf-tag-alt--padding-inline-start);
   }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .sf-dropdown .sf-tag-alt {
+  @supports not (padding-inline-start: initial){
+  html:not([dir="rtl"]) .sf-dropdown .sf-tag-alt{
     padding-left: var(--sf-tag-alt--padding-inline-start);
     }
   }
-  .sf-dropdown .sf-tag-alt:where(:dir(ltr)) {
+  .sf-dropdown .sf-tag-alt:where(:dir(ltr)){
     padding-left: var(--sf-tag-alt--padding-inline-start);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-tag-alt {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-tag-alt{
     padding-right: var(--sf-tag-alt--padding-inline-start);
   }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .sf-dropdown .sf-tag-alt {
+  @supports not (padding-inline-start: initial){
+  [dir="rtl"] .sf-dropdown .sf-tag-alt{
     padding-right: var(--sf-tag-alt--padding-inline-start);
     }
   }
-  .sf-dropdown .sf-tag-alt:where(:dir(rtl)) {
+  .sf-dropdown .sf-tag-alt:where(:dir(rtl)){
     padding-right: var(--sf-tag-alt--padding-inline-start);
   }
   .sf-dropdown .sf-tag-alt {
@@ -1836,13 +1838,16 @@
     -webkit-padding-start: var(--sf-tag-alt--padding-inline-start);
             padding-inline-start: var(--sf-tag-alt--padding-inline-start);
   }
+  /* The resting look reads the public variables (standard 1.3.8 §6:
+     --sf-dropdown-background-color, --sf-dropdown-border-color) over the role
+     tokens; hover, focus, disabled and error keep their own. */
   .sf-dropdown.sf-dropdown--outlined.sf-dropdown--text[\:not-has\(\%3E\%20.sf-dropdown-field\%20\%3E\%20\:disabled\)] .sf-dropdown-field, .sf-dropdown.sf-dropdown--outlined.sf-dropdown--tag[\:not-has\(\%3E\%20.sf-dropdown-field\%20\%3E\%20\:disabled\)] .sf-dropdown-field {
-    --sf-dropdown-field--background-color: var(--sf-surface-0);
-    --sf-dropdown-field--border-color: var(--sf-outline);
+    --sf-dropdown-field--background-color: var(--sf-dropdown-background-color, var(--sf-surface-0));
+    --sf-dropdown-field--border-color: var(--sf-dropdown-border-color, var(--sf-outline));
   }
   .sf-dropdown.sf-dropdown--outlined.sf-dropdown--text:not(:has(> .sf-dropdown-field > :disabled)) .sf-dropdown-field, .sf-dropdown.sf-dropdown--outlined.sf-dropdown--tag:not(:has(> .sf-dropdown-field > :disabled)) .sf-dropdown-field {
-    --sf-dropdown-field--background-color: var(--sf-surface-0);
-    --sf-dropdown-field--border-color: var(--sf-outline);
+    --sf-dropdown-field--background-color: var(--sf-dropdown-background-color, var(--sf-surface-0));
+    --sf-dropdown-field--border-color: var(--sf-dropdown-border-color, var(--sf-outline));
   }
   /* utility-hint: display/flex (.flex) */
   .sf-dropdown.sf-dropdown--size-1.sf-dropdown--outlined.sf-dropdown--text .sf-dropdown-field input, .sf-dropdown.sf-dropdown--size-1.sf-dropdown--filled.sf-dropdown--text .sf-dropdown-field input {
@@ -1922,14 +1927,14 @@
     --sf-dropdown-field--border-color: var(--sf-primary-hover);
   }
   .sf-dropdown.sf-dropdown--filled.sf-dropdown--text[\:not-has\(\%3E\%20.sf-dropdown-field\%20\%3E\%20\:disabled\)] .sf-dropdown-field, .sf-dropdown.sf-dropdown--filled.sf-dropdown--tag[\:not-has\(\%3E\%20.sf-dropdown-field\%20\%3E\%20\:disabled\)] .sf-dropdown-field {
-    --sf-dropdown-field--background-color: var(--sf-surface-container);
+    --sf-dropdown-field--background-color: var(--sf-dropdown-background-color, var(--sf-surface-container));
     --sf-on-surface-variant: var(--sf-on-surface-container--variant);
-    --sf-dropdown-field--border-color: var(--sf-transparent-for-focus);
+    --sf-dropdown-field--border-color: var(--sf-dropdown-border-color, var(--sf-transparent-for-focus));
   }
   .sf-dropdown.sf-dropdown--filled.sf-dropdown--text:not(:has(> .sf-dropdown-field > :disabled)) .sf-dropdown-field, .sf-dropdown.sf-dropdown--filled.sf-dropdown--tag:not(:has(> .sf-dropdown-field > :disabled)) .sf-dropdown-field {
-    --sf-dropdown-field--background-color: var(--sf-surface-container);
+    --sf-dropdown-field--background-color: var(--sf-dropdown-background-color, var(--sf-surface-container));
     --sf-on-surface-variant: var(--sf-on-surface-container--variant);
-    --sf-dropdown-field--border-color: var(--sf-transparent-for-focus);
+    --sf-dropdown-field--border-color: var(--sf-dropdown-border-color, var(--sf-transparent-for-focus));
   }
   .sf-dropdown.sf-dropdown--filled.sf-dropdown--tag .sf-dropdown-field .sf-dropdown-tag-container .sf-tag {
     --sf-tag--background-color: var(--sf-primary-container);
@@ -2239,115 +2244,115 @@
   .sf-dropdown .sf-dropdown-tag-container {
     flex: 1;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-tag-container > .sf-tag {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-tag-container > .sf-tag{
     border-top-left-radius: var(--sf-radius--ui);
     border-top-left-radius: var(--sf-tag--border-top-left-radius, var(--sf-radius--ui));
   }
-  @supports not (border-start-start-radius: initial) {
-  html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-tag-container > .sf-tag {
+  @supports not (border-start-start-radius: initial){
+  html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-tag-container > .sf-tag{
     border-top-left-radius: var(--sf-radius--ui);
     border-top-left-radius: var(--sf-tag--border-top-left-radius, var(--sf-radius--ui));
     }
   }
-  .sf-dropdown .sf-dropdown-tag-container > .sf-tag:where(:dir(ltr)) {
+  .sf-dropdown .sf-dropdown-tag-container > .sf-tag:where(:dir(ltr)){
     border-top-left-radius: var(--sf-radius--ui);
     border-top-left-radius: var(--sf-tag--border-top-left-radius, var(--sf-radius--ui));
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-dropdown-tag-container > .sf-tag {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-dropdown-tag-container > .sf-tag{
     border-top-right-radius: var(--sf-radius--ui);
     border-top-right-radius: var(--sf-tag--border-top-left-radius, var(--sf-radius--ui));
   }
-  @supports not (border-start-start-radius: initial) {
-  [dir="rtl"] .sf-dropdown .sf-dropdown-tag-container > .sf-tag {
+  @supports not (border-start-start-radius: initial){
+  [dir="rtl"] .sf-dropdown .sf-dropdown-tag-container > .sf-tag{
     border-top-right-radius: var(--sf-radius--ui);
     border-top-right-radius: var(--sf-tag--border-top-left-radius, var(--sf-radius--ui));
     }
   }
-  .sf-dropdown .sf-dropdown-tag-container > .sf-tag:where(:dir(rtl)) {
+  .sf-dropdown .sf-dropdown-tag-container > .sf-tag:where(:dir(rtl)){
     border-top-right-radius: var(--sf-radius--ui);
     border-top-right-radius: var(--sf-tag--border-top-left-radius, var(--sf-radius--ui));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-tag-container > .sf-tag {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-tag-container > .sf-tag{
     border-top-right-radius: var(--sf-radius--ui);
     border-top-right-radius: var(--sf-tag--border-top-right-radius, var(--sf-radius--ui));
   }
-  @supports not (border-start-end-radius: initial) {
-  html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-tag-container > .sf-tag {
+  @supports not (border-start-end-radius: initial){
+  html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-tag-container > .sf-tag{
     border-top-right-radius: var(--sf-radius--ui);
     border-top-right-radius: var(--sf-tag--border-top-right-radius, var(--sf-radius--ui));
     }
   }
-  .sf-dropdown .sf-dropdown-tag-container > .sf-tag:where(:dir(ltr)) {
+  .sf-dropdown .sf-dropdown-tag-container > .sf-tag:where(:dir(ltr)){
     border-top-right-radius: var(--sf-radius--ui);
     border-top-right-radius: var(--sf-tag--border-top-right-radius, var(--sf-radius--ui));
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-dropdown-tag-container > .sf-tag {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-dropdown-tag-container > .sf-tag{
     border-top-left-radius: var(--sf-radius--ui);
     border-top-left-radius: var(--sf-tag--border-top-right-radius, var(--sf-radius--ui));
   }
-  @supports not (border-start-end-radius: initial) {
-  [dir="rtl"] .sf-dropdown .sf-dropdown-tag-container > .sf-tag {
+  @supports not (border-start-end-radius: initial){
+  [dir="rtl"] .sf-dropdown .sf-dropdown-tag-container > .sf-tag{
     border-top-left-radius: var(--sf-radius--ui);
     border-top-left-radius: var(--sf-tag--border-top-right-radius, var(--sf-radius--ui));
     }
   }
-  .sf-dropdown .sf-dropdown-tag-container > .sf-tag:where(:dir(rtl)) {
+  .sf-dropdown .sf-dropdown-tag-container > .sf-tag:where(:dir(rtl)){
     border-top-left-radius: var(--sf-radius--ui);
     border-top-left-radius: var(--sf-tag--border-top-right-radius, var(--sf-radius--ui));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-tag-container > .sf-tag {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-tag-container > .sf-tag{
     border-bottom-left-radius: var(--sf-radius--ui);
     border-bottom-left-radius: var(--sf-tag--border-bottom-left-radius, var(--sf-radius--ui));
   }
-  @supports not (border-end-start-radius: initial) {
-  html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-tag-container > .sf-tag {
+  @supports not (border-end-start-radius: initial){
+  html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-tag-container > .sf-tag{
     border-bottom-left-radius: var(--sf-radius--ui);
     border-bottom-left-radius: var(--sf-tag--border-bottom-left-radius, var(--sf-radius--ui));
     }
   }
-  .sf-dropdown .sf-dropdown-tag-container > .sf-tag:where(:dir(ltr)) {
+  .sf-dropdown .sf-dropdown-tag-container > .sf-tag:where(:dir(ltr)){
     border-bottom-left-radius: var(--sf-radius--ui);
     border-bottom-left-radius: var(--sf-tag--border-bottom-left-radius, var(--sf-radius--ui));
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-dropdown-tag-container > .sf-tag {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-dropdown-tag-container > .sf-tag{
     border-bottom-right-radius: var(--sf-radius--ui);
     border-bottom-right-radius: var(--sf-tag--border-bottom-left-radius, var(--sf-radius--ui));
   }
-  @supports not (border-end-start-radius: initial) {
-  [dir="rtl"] .sf-dropdown .sf-dropdown-tag-container > .sf-tag {
+  @supports not (border-end-start-radius: initial){
+  [dir="rtl"] .sf-dropdown .sf-dropdown-tag-container > .sf-tag{
     border-bottom-right-radius: var(--sf-radius--ui);
     border-bottom-right-radius: var(--sf-tag--border-bottom-left-radius, var(--sf-radius--ui));
     }
   }
-  .sf-dropdown .sf-dropdown-tag-container > .sf-tag:where(:dir(rtl)) {
+  .sf-dropdown .sf-dropdown-tag-container > .sf-tag:where(:dir(rtl)){
     border-bottom-right-radius: var(--sf-radius--ui);
     border-bottom-right-radius: var(--sf-tag--border-bottom-left-radius, var(--sf-radius--ui));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-tag-container > .sf-tag {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-tag-container > .sf-tag{
     border-bottom-right-radius: var(--sf-radius--ui);
     border-bottom-right-radius: var(--sf-tag--border-bottom-right-radius, var(--sf-radius--ui));
   }
-  @supports not (border-end-end-radius: initial) {
-  html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-tag-container > .sf-tag {
+  @supports not (border-end-end-radius: initial){
+  html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-tag-container > .sf-tag{
     border-bottom-right-radius: var(--sf-radius--ui);
     border-bottom-right-radius: var(--sf-tag--border-bottom-right-radius, var(--sf-radius--ui));
     }
   }
-  .sf-dropdown .sf-dropdown-tag-container > .sf-tag:where(:dir(ltr)) {
+  .sf-dropdown .sf-dropdown-tag-container > .sf-tag:where(:dir(ltr)){
     border-bottom-right-radius: var(--sf-radius--ui);
     border-bottom-right-radius: var(--sf-tag--border-bottom-right-radius, var(--sf-radius--ui));
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-dropdown-tag-container > .sf-tag {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-dropdown-tag-container > .sf-tag{
     border-bottom-left-radius: var(--sf-radius--ui);
     border-bottom-left-radius: var(--sf-tag--border-bottom-right-radius, var(--sf-radius--ui));
   }
-  @supports not (border-end-end-radius: initial) {
-  [dir="rtl"] .sf-dropdown .sf-dropdown-tag-container > .sf-tag {
+  @supports not (border-end-end-radius: initial){
+  [dir="rtl"] .sf-dropdown .sf-dropdown-tag-container > .sf-tag{
     border-bottom-left-radius: var(--sf-radius--ui);
     border-bottom-left-radius: var(--sf-tag--border-bottom-right-radius, var(--sf-radius--ui));
     }
   }
-  .sf-dropdown .sf-dropdown-tag-container > .sf-tag:where(:dir(rtl)) {
+  .sf-dropdown .sf-dropdown-tag-container > .sf-tag:where(:dir(rtl)){
     border-bottom-left-radius: var(--sf-radius--ui);
     border-bottom-left-radius: var(--sf-tag--border-bottom-right-radius, var(--sf-radius--ui));
   }
@@ -2438,54 +2443,54 @@
   .sf-dropdown .sf-dropdown-tag-container .sf-tag > .sf-tag-color-icon {
     flex-shrink: 0;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown-field > button {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown-field > button{
     right: calc(var(--sf-dropdown-field--padding-inline-end) - 0px);
     right: calc(var(--sf-dropdown-field--padding-inline-end) - var(--sf-icon-button--padding-inline-end, 0px));
   }
-  @supports not (inset-inline-end: initial) {
-  html:not([dir="rtl"]) .sf-dropdown-field > button {
+  @supports not (inset-inline-end: initial){
+  html:not([dir="rtl"]) .sf-dropdown-field > button{
     right: calc(var(--sf-dropdown-field--padding-inline-end) - 0px);
     right: calc(var(--sf-dropdown-field--padding-inline-end) - var(--sf-icon-button--padding-inline-end, 0px));
     }
   }
-  .sf-dropdown-field > button:where(:dir(ltr)) {
+  .sf-dropdown-field > button:where(:dir(ltr)){
     right: calc(var(--sf-dropdown-field--padding-inline-end) - 0px);
     right: calc(var(--sf-dropdown-field--padding-inline-end) - var(--sf-icon-button--padding-inline-end, 0px));
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown-field > button {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown-field > button{
     left: calc(var(--sf-dropdown-field--padding-inline-end) - 0px);
     left: calc(var(--sf-dropdown-field--padding-inline-end) - var(--sf-icon-button--padding-inline-end, 0px));
   }
-  @supports not (inset-inline-end: initial) {
-  [dir="rtl"] .sf-dropdown-field > button {
+  @supports not (inset-inline-end: initial){
+  [dir="rtl"] .sf-dropdown-field > button{
     left: calc(var(--sf-dropdown-field--padding-inline-end) - 0px);
     left: calc(var(--sf-dropdown-field--padding-inline-end) - var(--sf-icon-button--padding-inline-end, 0px));
     }
   }
-  .sf-dropdown-field > button:where(:dir(rtl)) {
+  .sf-dropdown-field > button:where(:dir(rtl)){
     left: calc(var(--sf-dropdown-field--padding-inline-end) - 0px);
     left: calc(var(--sf-dropdown-field--padding-inline-end) - var(--sf-icon-button--padding-inline-end, 0px));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown-field > button {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown-field > button{
     right: calc(var(--sf-dropdown-field--padding-inline-end) - 0px);
   }
-  @supports not (inset-inline-end: initial) {
-  html:not([dir="rtl"]) .sf-dropdown-field > button {
+  @supports not (inset-inline-end: initial){
+  html:not([dir="rtl"]) .sf-dropdown-field > button{
     right: calc(var(--sf-dropdown-field--padding-inline-end) - 0px);
     }
   }
-  .sf-dropdown-field > button:where(:dir(ltr)) {
+  .sf-dropdown-field > button:where(:dir(ltr)){
     right: calc(var(--sf-dropdown-field--padding-inline-end) - 0px);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown-field > button {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown-field > button{
     left: calc(var(--sf-dropdown-field--padding-inline-end) - 0px);
   }
-  @supports not (inset-inline-end: initial) {
-  [dir="rtl"] .sf-dropdown-field > button {
+  @supports not (inset-inline-end: initial){
+  [dir="rtl"] .sf-dropdown-field > button{
     left: calc(var(--sf-dropdown-field--padding-inline-end) - 0px);
     }
   }
-  .sf-dropdown-field > button:where(:dir(rtl)) {
+  .sf-dropdown-field > button:where(:dir(rtl)){
     left: calc(var(--sf-dropdown-field--padding-inline-end) - 0px);
   }
   .sf-dropdown-field > button {
@@ -2667,78 +2672,78 @@
        -moz-column-gap: 0;
             column-gap: 0;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field > .sf-dropdown-field-visual {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field > .sf-dropdown-field-visual{
     margin-right: var(--sf-ui-1\/2--text-space-x);
   }
-  @supports not (margin-inline-end: initial) {
-  html:not([dir="rtl"]) .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field > .sf-dropdown-field-visual {
+  @supports not (margin-inline-end: initial){
+  html:not([dir="rtl"]) .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field > .sf-dropdown-field-visual{
     margin-right: var(--sf-ui-1\/2--text-space-x);
     }
   }
-  .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field > .sf-dropdown-field-visual:where(:dir(ltr)) {
+  .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field > .sf-dropdown-field-visual:where(:dir(ltr)){
     margin-right: var(--sf-ui-1\/2--text-space-x);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field > .sf-dropdown-field-visual {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field > .sf-dropdown-field-visual{
     margin-left: var(--sf-ui-1\/2--text-space-x);
   }
-  @supports not (margin-inline-end: initial) {
-  [dir="rtl"] .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field > .sf-dropdown-field-visual {
+  @supports not (margin-inline-end: initial){
+  [dir="rtl"] .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field > .sf-dropdown-field-visual{
     margin-left: var(--sf-ui-1\/2--text-space-x);
     }
   }
-  .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field > .sf-dropdown-field-visual:where(:dir(rtl)) {
+  .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field > .sf-dropdown-field-visual:where(:dir(rtl)){
     margin-left: var(--sf-ui-1\/2--text-space-x);
   }
   .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field > .sf-dropdown-field-visual {
     -webkit-margin-end: var(--sf-ui-1\/2--text-space-x);
             margin-inline-end: var(--sf-ui-1\/2--text-space-x);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown.sf-dropdown--size-1 .sf-dropdown-field > .sf-dropdown-field-visual {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown.sf-dropdown--size-1 .sf-dropdown-field > .sf-dropdown-field-visual{
     margin-right: var(--sf-ui-1--text-space-x);
   }
-  @supports not (margin-inline-end: initial) {
-  html:not([dir="rtl"]) .sf-dropdown.sf-dropdown--size-1 .sf-dropdown-field > .sf-dropdown-field-visual {
+  @supports not (margin-inline-end: initial){
+  html:not([dir="rtl"]) .sf-dropdown.sf-dropdown--size-1 .sf-dropdown-field > .sf-dropdown-field-visual{
     margin-right: var(--sf-ui-1--text-space-x);
     }
   }
-  .sf-dropdown.sf-dropdown--size-1 .sf-dropdown-field > .sf-dropdown-field-visual:where(:dir(ltr)) {
+  .sf-dropdown.sf-dropdown--size-1 .sf-dropdown-field > .sf-dropdown-field-visual:where(:dir(ltr)){
     margin-right: var(--sf-ui-1--text-space-x);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown.sf-dropdown--size-1 .sf-dropdown-field > .sf-dropdown-field-visual {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown.sf-dropdown--size-1 .sf-dropdown-field > .sf-dropdown-field-visual{
     margin-left: var(--sf-ui-1--text-space-x);
   }
-  @supports not (margin-inline-end: initial) {
-  [dir="rtl"] .sf-dropdown.sf-dropdown--size-1 .sf-dropdown-field > .sf-dropdown-field-visual {
+  @supports not (margin-inline-end: initial){
+  [dir="rtl"] .sf-dropdown.sf-dropdown--size-1 .sf-dropdown-field > .sf-dropdown-field-visual{
     margin-left: var(--sf-ui-1--text-space-x);
     }
   }
-  .sf-dropdown.sf-dropdown--size-1 .sf-dropdown-field > .sf-dropdown-field-visual:where(:dir(rtl)) {
+  .sf-dropdown.sf-dropdown--size-1 .sf-dropdown-field > .sf-dropdown-field-visual:where(:dir(rtl)){
     margin-left: var(--sf-ui-1--text-space-x);
   }
   .sf-dropdown.sf-dropdown--size-1 .sf-dropdown-field > .sf-dropdown-field-visual {
     -webkit-margin-end: var(--sf-ui-1--text-space-x);
             margin-inline-end: var(--sf-ui-1--text-space-x);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown.sf-dropdown--size-2 .sf-dropdown-field > .sf-dropdown-field-visual {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown.sf-dropdown--size-2 .sf-dropdown-field > .sf-dropdown-field-visual{
     margin-right: var(--sf-ui-2--text-space-x);
   }
-  @supports not (margin-inline-end: initial) {
-  html:not([dir="rtl"]) .sf-dropdown.sf-dropdown--size-2 .sf-dropdown-field > .sf-dropdown-field-visual {
+  @supports not (margin-inline-end: initial){
+  html:not([dir="rtl"]) .sf-dropdown.sf-dropdown--size-2 .sf-dropdown-field > .sf-dropdown-field-visual{
     margin-right: var(--sf-ui-2--text-space-x);
     }
   }
-  .sf-dropdown.sf-dropdown--size-2 .sf-dropdown-field > .sf-dropdown-field-visual:where(:dir(ltr)) {
+  .sf-dropdown.sf-dropdown--size-2 .sf-dropdown-field > .sf-dropdown-field-visual:where(:dir(ltr)){
     margin-right: var(--sf-ui-2--text-space-x);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown.sf-dropdown--size-2 .sf-dropdown-field > .sf-dropdown-field-visual {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown.sf-dropdown--size-2 .sf-dropdown-field > .sf-dropdown-field-visual{
     margin-left: var(--sf-ui-2--text-space-x);
   }
-  @supports not (margin-inline-end: initial) {
-  [dir="rtl"] .sf-dropdown.sf-dropdown--size-2 .sf-dropdown-field > .sf-dropdown-field-visual {
+  @supports not (margin-inline-end: initial){
+  [dir="rtl"] .sf-dropdown.sf-dropdown--size-2 .sf-dropdown-field > .sf-dropdown-field-visual{
     margin-left: var(--sf-ui-2--text-space-x);
     }
   }
-  .sf-dropdown.sf-dropdown--size-2 .sf-dropdown-field > .sf-dropdown-field-visual:where(:dir(rtl)) {
+  .sf-dropdown.sf-dropdown--size-2 .sf-dropdown-field > .sf-dropdown-field-visual:where(:dir(rtl)){
     margin-left: var(--sf-ui-2--text-space-x);
   }
   .sf-dropdown.sf-dropdown--size-2 .sf-dropdown-field > .sf-dropdown-field-visual {

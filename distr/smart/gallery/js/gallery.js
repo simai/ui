@@ -676,7 +676,7 @@ class SfGallery extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___defaul
   _bindNestedComponents() {
     this._inlineSlider = this.querySelector('[data-sf-gallery-slider="inline"]');
     this._modal = this.querySelector('[data-sf-gallery-modal]');
-    this._lightboxSlider = this.querySelector('[data-sf-gallery-slider="lightbox"]') || this._modal?.getModalRoot?.()?.querySelector?.('[data-sf-gallery-slider="lightbox"]');
+    this._lightboxSlider = this.querySelector('[data-sf-gallery-slider="lightbox"]') || this._modal?.modalRoot?.querySelector?.('[data-sf-gallery-slider="lightbox"]');
   }
 
   _attachNestedListeners() {
@@ -686,8 +686,8 @@ class SfGallery extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___defaul
     this._lightboxSlider?.addEventListener?.('pointerdown', this._handleLightboxBackgroundPointerDown, true);
     this._lightboxSlider?.addEventListener?.('pointerup', this._handleLightboxBackgroundPointerUp, true);
     this._lightboxSlider?.addEventListener?.('click', this._handleLightboxBackgroundClick, true);
-    this._modal?.addEventListener?.('modal:after-open', this._handleModalAfterOpen);
-    this._modal?.addEventListener?.('modal:after-close', this._handleModalAfterClose);
+    this._modal?.addEventListener?.('sf-modal-opened', this._handleModalAfterOpen);
+    this._modal?.addEventListener?.('sf-modal-closed', this._handleModalAfterClose);
   }
 
   _detachNestedListeners() {
@@ -697,8 +697,8 @@ class SfGallery extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___defaul
     this._lightboxSlider?.removeEventListener?.('pointerdown', this._handleLightboxBackgroundPointerDown, true);
     this._lightboxSlider?.removeEventListener?.('pointerup', this._handleLightboxBackgroundPointerUp, true);
     this._lightboxSlider?.removeEventListener?.('click', this._handleLightboxBackgroundClick, true);
-    this._modal?.removeEventListener?.('modal:after-open', this._handleModalAfterOpen);
-    this._modal?.removeEventListener?.('modal:after-close', this._handleModalAfterClose);
+    this._modal?.removeEventListener?.('sf-modal-opened', this._handleModalAfterOpen);
+    this._modal?.removeEventListener?.('sf-modal-closed', this._handleModalAfterClose);
   }
 
   _syncSliderSlots() {
@@ -962,7 +962,7 @@ class SfGallery extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___defaul
       return;
     }
 
-    const slider = this._modal?.getModalRoot?.()?.querySelector?.('[data-sf-gallery-slider="lightbox"]');
+    const slider = this._modal?.modalRoot?.querySelector?.('[data-sf-gallery-slider="lightbox"]');
 
     if (!slider || slider === this._lightboxSlider) {
       return;

@@ -241,15 +241,24 @@ function unbindToast(root) {
 function dismissToast(root, removalTarget = null, trigger = null) {
   if (!(root instanceof HTMLElement) || root.classList.contains('closing')) return false;
   removalTarget = removalTarget || root.__sfToastRemovalTarget || root;
-  unbindToast(root);
-  root.dispatchEvent(new CustomEvent('sf-toast-close', {
+  unbindToast(root); // A cancelable request (standard 1.3.8 §19.3, §8): a listener that prevents
+  // it keeps the toast, bound as it was.
+
+  const allowed = root.dispatchEvent(new CustomEvent('sf-toast-close', {
     bubbles: true,
     composed: true,
+    cancelable: true,
     detail: {
       toast: root,
       trigger
     }
   }));
+
+  if (!allowed) {
+    bindToast(root, removalTarget);
+    return false;
+  }
+
   return (0,_dismiss__WEBPACK_IMPORTED_MODULE_2__.dismissToastElement)(root, removalTarget);
 } // What a toast reports is its status (journal record attribute-type-to-status);
 // `type` is still read, as the attribute is, until that record leaves. Code

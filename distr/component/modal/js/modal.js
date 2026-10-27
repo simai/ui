@@ -60,7 +60,7 @@ const FOCUSABLE_SELECTOR = ['a[href]', 'area[href]', 'button', 'input', 'select'
 const GUARDS_KEY = Symbol.for('simai.modal.focus-guards');
 
 function syncModalFocusGuards(modal) {
-  const root = modal?.getModalRoot?.() || modal?.template;
+  const root = (modal && 'modalRoot' in modal ? modal.modalRoot : modal?.getModalRoot?.()) || modal?.template;
   const panel = root?.querySelector?.('[data-sf-modal-panel]');
   const previous = document[GUARDS_KEY];
   if (previous && previous.panel === panel && previous.before.isConnected && previous.after.isConnected) return;
@@ -1573,9 +1573,10 @@ __webpack_require__.r(__webpack_exports__);
 // and gives focus back into the drawer when it closes (simai/ui-source#36,
 // #37). Registries, public instance APIs and rendering stay separate.
 
+ // sf-modal's window is its modalRoot (its reader getModalRoot retires, standard
+// 1.3.8 §16.13); the class Modal holds its markup in `template`.
 
-
-const modalRoot = modal => modal?.getModalRoot?.() || modal?.template || null; // The highest modal open: what Modal.getTopModal() names. A drawer or a list
+const modalRoot = modal => (modal && 'modalRoot' in modal ? modal.modalRoot : modal?.getModalRoot?.()) || modal?.template || null; // The highest modal open: what Modal.getTopModal() names. A drawer or a list
 // may stand above it; isTopLayer answers whether it is the top of everything.
 
 
