@@ -341,6 +341,8 @@
 
 ### Изменено
 
+- The editors and screens on their manifests (standard simai.smart-component 1.3.8, vocabulary 1.1.5): `sf-list-item`, `sf-tree-item`, `sf-tree`, `sf-sortable`, `sf-inline-editor`, `sf-composition-overlay`, `sf-page-header`, `sf-theme-generator`. `sf-tree` draws its entries flat and keyed by id, and only those in view over 300: 2 000 nodes draw in a frame where they took 14 s, a change in a frame where it took 7.5 s (simai/ui-source#43). Renamed events follow by their former names until 2026-12-01: `sf-tree-open`, `-select`, `-toggle`, `-move`, `-attach`; `sf-list-item-open`; `sf-tree-item-open`; `sf-sortable-move`; `sf-inline-editor-input`, `-change`, `-cancel`; `sf-composition-overlay-apply`, `-change`; `sf-page-header-toggle`; the theme generator's `change` and `sf-theme-generator-committed`.
+
 - Changed: `sf-pagination` takes `total-exact` (default true). While the host says the total is an estimate, the page row reads «Всего: ~450», offers the count link to ask for the exact number, and neither the last page nor the page count is offered as exact (standard simai.smart-component 1.3.8 gate 29).
 - Changed: every Smart element has the base action `connect-port {port}` — `connectPort(port)`, with `setHostPort` as its alias; the port is kept for the instance and read as `sfPort`, and `SF.Assembly` hands a port to the parts that declare it through that action.
 
