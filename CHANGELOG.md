@@ -8,6 +8,12 @@
 
 ### Исправлено
 
+- Native (class-built) `checkbox` and `radio` apply the layout their stylesheets hint (utility maps, as buttons and inputs do): they draw like `sf-checkbox` and `sf-radio` — a 24×24 box and a selected mark on the line, an 8px gap — instead of a 2px ring and an empty mark (simai/ui-source#49, #50). Every `sf-checkbox` mark is its size's line at size 2 and 1/2 (#49).
+- Native badge accepts `error` (`danger` stays as its former name) and is only as wide as its text, as `sf-badge` is (simai/ui-source#51).
+- `sf-button-group` joins are 1px again: the join rules match `appearance` as well as the former `type` (simai/ui-source#52).
+- The Native dropdown's search box no longer lets its own `change` out of the component (simai/ui-source#53).
+- Scrollbar thumbs take one role and clear the 3:1 threshold.
+
 - Fixed: taking an error back from `sf-input` (`invalid`, `error`, `setState({invalid})`) restores the valid border and removes `aria-invalid`; the shared field set's datetime editor marks and clears both of its fields.
 - `sf-datepicker` takes `invalid` and `error-message`, and its calendar opens on the month of the value (a typed whole date is taken first; a range opens on its start; with no value, today's month; within min-date and max-date).
 - The package reference for `larena`: the admin menu requires the empty state.
