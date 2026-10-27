@@ -1,0 +1,31 @@
+{
+  "schema": "simai.framework.unit-change-report",
+  "schema_version": 1,
+  "source": "simai/ui-source",
+  "from": {
+    "revision": "46fdaa55e3e8fef33e43a0f025b936ad856aef4c",
+    "release": "ui-5b5b8543358e"
+  },
+  "to": {
+    "revision": "170d551cedd5993498398a268b0cf3e00a486639",
+    "release": "ui-352b472995b1"
+  },
+  "added": [],
+  "removed": [],
+  "changed": [
+    {
+      "id": "module.smart-field-renderers",
+      "from_version": "1.0.0",
+      "to_version": "1.1.0",
+      "step": "minor"
+    },
+    {
+      "id": "port.simai.property-view-port",
+      "from_version": "1.15.0",
+      "to_version": "1.16.0",
+      "step": "minor"
+    }
+  ],
+  "dependencies_changed": [],
+  "violations": []
+}
