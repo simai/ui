@@ -7,6 +7,7 @@
     display: flex;
     flex-direction: column;
     gap: 0;
+    gap: var(--sf-skeleton-gap, 0);
   }
   /* A bar stands for a line of text, so it takes a line's room: the text's
      line height, with the bar -- as tall as the letters, the text size -- in
@@ -18,7 +19,9 @@
     position: relative;
     overflow: hidden;
     background: var(--sf-skeleton-base);
+    background: var(--sf-skeleton-background-color, var(--sf-skeleton-base));
     border-radius: var(--sf-radius--ui);
+    border-radius: var(--sf-skeleton-radius, var(--sf-radius--ui));
     height: var(--sf-skeleton-text--height);
     block-size: var(--sf-skeleton-text--height);
     flex: none;
@@ -38,6 +41,8 @@
   .sf-skeleton--animation-pulse .sf-skeleton-text {
     -webkit-animation: sf-skeleton-pulse var(--sf-skeleton-duration) var(--sf-animation) infinite;
             animation: sf-skeleton-pulse var(--sf-skeleton-duration) var(--sf-animation) infinite;
+    -webkit-animation: sf-skeleton-pulse var(--sf-skeleton-animation-duration, var(--sf-skeleton-duration)) var(--sf-animation) infinite;
+            animation: sf-skeleton-pulse var(--sf-skeleton-animation-duration, var(--sf-skeleton-duration)) var(--sf-animation) infinite;
   }
   .sf-skeleton--animation-wave .sf-skeleton-text::after {
     content: "";
@@ -50,8 +55,11 @@
     -webkit-transform: translateX(-100%);
             transform: translateX(-100%);
     background-image: linear-gradient(90deg, var(--sf-transparent), var(--sf-skeleton-highlight), var(--sf-transparent));
+    background-image: linear-gradient(90deg, var(--sf-transparent), var(--sf-skeleton-highlight-color, var(--sf-skeleton-highlight)), var(--sf-transparent));
     -webkit-animation: sf-skeleton-wave var(--sf-skeleton-duration) var(--sf-animation) infinite;
             animation: sf-skeleton-wave var(--sf-skeleton-duration) var(--sf-animation) infinite;
+    -webkit-animation: sf-skeleton-wave var(--sf-skeleton-animation-duration, var(--sf-skeleton-duration)) var(--sf-animation) infinite;
+            animation: sf-skeleton-wave var(--sf-skeleton-animation-duration, var(--sf-skeleton-duration)) var(--sf-animation) infinite;
   }
   .sf-skeleton--animation-none .sf-skeleton-text,
   .sf-skeleton--animation-none .sf-skeleton-text::after {

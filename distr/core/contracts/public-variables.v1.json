@@ -2296,6 +2296,498 @@
           "since": "2026-10-27"
         }
       ]
+    },
+    {
+      "component": "progress-bar",
+      "selector": ".sf-progress-bar",
+      "variables": [
+        {
+          "name": "--sf-progress-bar-fill-color",
+          "role": "background",
+          "summary": "The filled part; a status gives its own colour unless this is set.",
+          "default": "var(--sf-primary)",
+          "varies_with": [
+            "status"
+          ],
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-progress-bar-track-color",
+          "role": "background",
+          "summary": "The track under the filled part.",
+          "default": "var(--sf-surface-container)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-progress-bar-height",
+          "role": "size",
+          "summary": "The thickness of the track.",
+          "default": "var(--sf-text-size-1/5)",
+          "varies_with": [
+            "size"
+          ],
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-progress-bar-radius",
+          "role": "radius",
+          "summary": "The corners of the track and the filled part.",
+          "default": "var(--sf-radius--ui)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-progress-bar-color",
+          "role": "color",
+          "summary": "The visible percentage.",
+          "default": "var(--sf-on-surface)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-progress-bar-gap",
+          "role": "gap",
+          "summary": "Space between the track and the percentage.",
+          "default": "var(--sf-space-1/3)",
+          "varies_with": [
+            "size"
+          ],
+          "since": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "component": "progress-scale",
+      "selector": ".sf-progress-scale",
+      "variables": [
+        {
+          "name": "--sf-progress-scale-fill-color",
+          "role": "background",
+          "summary": "The filled segments; a status gives its own colour unless this is set.",
+          "default": "var(--sf-primary)",
+          "varies_with": [
+            "status"
+          ],
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-progress-scale-track-color",
+          "role": "background",
+          "summary": "The segments not yet filled.",
+          "default": "var(--sf-surface-container)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-progress-scale-segment-gap",
+          "role": "gap",
+          "summary": "Space between the ten segments.",
+          "default": "var(--sf-a1)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-progress-scale-radius",
+          "role": "radius",
+          "summary": "The corners of the segment row.",
+          "default": "var(--sf-radius--ui)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-progress-scale-color",
+          "role": "color",
+          "summary": "The visible percentage.",
+          "default": "var(--sf-on-surface-variant)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-progress-scale-gap",
+          "role": "gap",
+          "summary": "Space between the segments and the percentage.",
+          "default": "var(--sf-space-1/4)",
+          "varies_with": [
+            "size"
+          ],
+          "since": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "component": "spinner",
+      "selector": ".sf-loader-container",
+      "variables": [
+        {
+          "name": "--sf-spinner-color",
+          "role": "color",
+          "summary": "The arc, the dots or the comet: the current ink unless set.",
+          "default": "currentColor",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-spinner-track-color",
+          "role": "stroke",
+          "summary": "The ring under the arc.",
+          "default": "var(--sf-surface-container)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-spinner-size",
+          "role": "size",
+          "summary": "The drawing's box, the icon of a button of the same size by default.",
+          "default": "var(--sf-text-height-1)",
+          "varies_with": [
+            "size"
+          ],
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-spinner-stroke-width",
+          "role": "stroke-width",
+          "summary": "The ring's stroke, in units of the 24-unit icon grid.",
+          "default": "2",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-spinner-gap",
+          "role": "gap",
+          "summary": "Space between the drawing and its words.",
+          "default": "var(--sf-space-1/2)",
+          "varies_with": [
+            "size"
+          ],
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-spinner-text-color",
+          "role": "color",
+          "summary": "The words under the drawing.",
+          "default": "var(--sf-on-surface)",
+          "since": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "component": "skeleton",
+      "selector": ".sf-skeleton",
+      "variables": [
+        {
+          "name": "--sf-skeleton-background-color",
+          "role": "background",
+          "summary": "The placeholder bars and shapes.",
+          "default": "var(--sf-ui-skeleton)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-skeleton-highlight-color",
+          "role": "background",
+          "summary": "The light that runs over a bar in the wave animation.",
+          "default": "var(--sf-surface-container-active)",
+          "varies_with": [
+            "animation"
+          ],
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-skeleton-radius",
+          "role": "radius",
+          "summary": "The corners of a bar; a circle stays round.",
+          "default": "var(--sf-radius--ui)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-skeleton-gap",
+          "role": "gap",
+          "summary": "Space between repeated bars (lines follow one another with none).",
+          "default": "0",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-skeleton-animation-duration",
+          "role": "animation-duration",
+          "summary": "One pulse or one wave.",
+          "default": "calc(var(--sf-duration-slow) * 3)",
+          "varies_with": [
+            "animation"
+          ],
+          "since": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "component": "empty-state",
+      "selector": ".sf-empty-state",
+      "variables": [
+        {
+          "name": "--sf-empty-state-max-inline-size",
+          "role": "max-inline-size",
+          "summary": "The widest the block form grows.",
+          "default": "var(--sf-g4)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-empty-state-color",
+          "role": "color",
+          "summary": "The heading and the block form's ink.",
+          "default": "var(--sf-on-surface)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-empty-state-text-color",
+          "role": "color",
+          "summary": "The sentence under the heading.",
+          "default": "var(--sf-on-surface-variant)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-empty-state-gap",
+          "role": "gap",
+          "summary": "Space between the icon, the heading and the sentence.",
+          "default": "var(--sf-space-1/2)",
+          "varies_with": [
+            "size"
+          ],
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-empty-state-padding-block",
+          "role": "padding-block",
+          "summary": "Room above and below the block form.",
+          "default": "var(--sf-space-1)",
+          "varies_with": [
+            "size"
+          ],
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-empty-state-actions-gap",
+          "role": "gap",
+          "summary": "Space between the action buttons.",
+          "default": "var(--sf-space-1/3)",
+          "since": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "component": "file-preview",
+      "selector": ".sf-file-preview",
+      "variables": [
+        {
+          "name": "--sf-file-preview-background-color",
+          "role": "background",
+          "summary": "The row's fill: none at rest, the container colour with surface.",
+          "default": "transparent",
+          "varies_with": [
+            "surface"
+          ],
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-file-preview-padding",
+          "role": "padding-block",
+          "summary": "Room inside the row: none at rest, a step with surface.",
+          "default": "var(--sf-space-0)",
+          "varies_with": [
+            "surface"
+          ],
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-file-preview-radius",
+          "role": "radius",
+          "summary": "The row's corners.",
+          "default": "var(--sf-radius--ui)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-file-preview-gap",
+          "role": "gap",
+          "summary": "Space between the thumbnail, the name and the actions.",
+          "default": "var(--sf-space-1/2)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-file-preview-holder-size",
+          "role": "size",
+          "summary": "The thumbnail's square.",
+          "default": "var(--sf-ui-2--control-height)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-file-preview-holder-background-color",
+          "role": "background",
+          "summary": "The thumbnail's fill behind an icon.",
+          "default": "var(--sf-surface-container)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-file-preview-holder-color",
+          "role": "color",
+          "summary": "The file icon in the thumbnail.",
+          "default": "var(--sf-on-surface-variant)",
+          "since": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "component": "slider",
+      "selector": ".sf-slider",
+      "variables": [
+        {
+          "name": "--sf-slider-gap",
+          "role": "gap",
+          "summary": "Space between the slides, the controls and the thumbnails.",
+          "default": "var(--sf-space-1)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-slider-arrow-offset-inline",
+          "role": "inset-inline",
+          "summary": "How far the arrows stand in from the edges.",
+          "default": "var(--sf-space-1)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-slider-dots-offset-block",
+          "role": "inset-block-end",
+          "summary": "How far the dots stand up from the bottom edge.",
+          "default": "var(--sf-space-1)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-slider-thumbnail-size",
+          "role": "size",
+          "summary": "The side of a thumbnail.",
+          "default": "var(--sf-d2)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-slider-thumbnail-radius",
+          "role": "radius",
+          "summary": "The corners of a thumbnail.",
+          "default": "var(--sf-radius-square)",
+          "since": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "component": "gallery",
+      "selector": ".sf-gallery",
+      "variables": [
+        {
+          "name": "--sf-gallery-min-inline-size",
+          "role": "min-inline-size",
+          "summary": "The narrowest the gallery's root may be as a grid or flex item.",
+          "default": "0",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-gallery-media-max-height",
+          "role": "max-block-size",
+          "summary": "The tallest an image may be in the lightbox.",
+          "default": "calc(100dvh - var(--sf-space-6) * 2)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-gallery-object-fit",
+          "role": "object-fit",
+          "summary": "How an image fits its slide in the lightbox.",
+          "default": "contain",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-gallery-slide-min-height",
+          "role": "min-block-size",
+          "summary": "The lowest a lightbox slide may be.",
+          "default": "0",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-gallery-caption-color",
+          "role": "color",
+          "summary": "A caption under an image in the lightbox.",
+          "default": "inherit",
+          "since": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "component": "resizer",
+      "selector": "sf-resizer",
+      "variables": [
+        {
+          "name": "--sf-resizer-hit-size",
+          "role": "inline-size",
+          "summary": "The strip a pointer finds, wider than the line it draws.",
+          "default": "var(--sf-a8)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-resizer-line-width",
+          "role": "inline-size",
+          "summary": "The line drawn in the middle of the strip.",
+          "default": "calc(2 * var(--sf-px))",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-resizer-line-color",
+          "role": "background",
+          "summary": "The line at rest: none by default.",
+          "default": "transparent",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-resizer-hover-line-color",
+          "role": "background",
+          "summary": "The line while hovered or dragged.",
+          "default": "var(--sf-primary)",
+          "state": "hover",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-resizer-z-index",
+          "role": "z-index",
+          "summary": "The layer the handle stands in, above the panel's own layers and below overlays.",
+          "default": "var(--sf-z-index-7)",
+          "since": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "component": "profile-picker",
+      "selector": ".sf-profile-picker",
+      "variables": [
+        {
+          "name": "--sf-profile-picker-background-color",
+          "role": "background",
+          "summary": "The folded trigger's fill.",
+          "default": "transparent",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-profile-picker-border-color",
+          "role": "border-color",
+          "summary": "The folded trigger's border at rest; open keeps its own.",
+          "default": "var(--sf-outline-variant)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-profile-picker-radius",
+          "role": "radius",
+          "summary": "The folded trigger's corners.",
+          "default": "var(--sf-radius--ui)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-profile-picker-color",
+          "role": "color",
+          "summary": "The trigger's words.",
+          "default": "var(--sf-on-surface)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-profile-picker-panel-background-color",
+          "role": "background",
+          "summary": "The open panel's fill.",
+          "default": "var(--sf-elevation-3--surface)",
+          "since": "2026-10-27"
+        }
+      ]
     }
   ]
 }

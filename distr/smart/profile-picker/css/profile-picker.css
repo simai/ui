@@ -1,3 +1,4 @@
+@charset "UTF-8";
 @layer sf.components {
   /* The profile picker (owner, 2026-10-14): a field-like button, and a panel
      with the standard menu's surface -- elevation 3, a hairline, 4px padding,
@@ -24,26 +25,26 @@
     --sf-profile-picker--space-y: var(--sf-ui-1--space-y);
     --sf-profile-picker--space-x: var(--sf-ui-1--space-x);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-profile-picker-trigger {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-profile-picker-trigger{
     text-align: left;
   }
-  @supports not (text-align: start) {
-  html:not([dir="rtl"]) .sf-profile-picker-trigger {
+  @supports not (text-align: start){
+  html:not([dir="rtl"]) .sf-profile-picker-trigger{
     text-align: left;
     }
   }
-  .sf-profile-picker-trigger:where(:dir(ltr)) {
+  .sf-profile-picker-trigger:where(:dir(ltr)){
     text-align: left;
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-profile-picker-trigger {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-profile-picker-trigger{
     text-align: right;
   }
-  @supports not (text-align: start) {
-  [dir="rtl"] .sf-profile-picker-trigger {
+  @supports not (text-align: start){
+  [dir="rtl"] .sf-profile-picker-trigger{
     text-align: right;
     }
   }
-  .sf-profile-picker-trigger:where(:dir(rtl)) {
+  .sf-profile-picker-trigger:where(:dir(rtl)){
     text-align: right;
   }
   .sf-profile-picker-trigger {
@@ -58,9 +59,13 @@
     padding-right: var(--sf-profile-picker--space-x);
     padding-inline: var(--sf-profile-picker--space-x);
     border: var(--sf-px) solid var(--sf-outline-variant);
+    border: var(--sf-px) solid var(--sf-profile-picker-border-color, var(--sf-outline-variant));
     border-radius: var(--sf-radius--ui);
+    border-radius: var(--sf-profile-picker-radius, var(--sf-radius--ui));
     background-color: transparent;
+    background-color: var(--sf-profile-picker-background-color, transparent);
     color: var(--sf-on-surface);
+    color: var(--sf-profile-picker-color, var(--sf-on-surface));
     font: inherit;
     text-align: start;
     cursor: pointer;
@@ -104,6 +109,7 @@
     border: var(--sf-px) solid var(--sf-outline-variant);
     border-radius: var(--sf-radius--surface);
     background-color: var(--sf-elevation-3--surface);
+    background-color: var(--sf-profile-picker-panel-background-color, var(--sf-elevation-3--surface));
     --sf-on-surface-variant: var(--sf-on-elevation-3--variant);
     box-shadow: var(--sf-elevation-3--shadow);
     color: var(--sf-on-surface);
@@ -112,43 +118,43 @@
   .sf-profile-picker-panel[hidden] {
     display: none;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-profile-picker-row {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-profile-picker-row{
     padding-left: calc(var(--sf-profile-picker--space-x) - var(--sf-space-1\/4));
   }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .sf-profile-picker-row {
+  @supports not (padding-inline-start: initial){
+  html:not([dir="rtl"]) .sf-profile-picker-row{
     padding-left: calc(var(--sf-profile-picker--space-x) - var(--sf-space-1\/4));
     }
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-profile-picker-row {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-profile-picker-row{
     padding-right: var(--sf-a4);
   }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .sf-profile-picker-row {
+  @supports not (padding-inline-end: initial){
+  html:not([dir="rtl"]) .sf-profile-picker-row{
     padding-right: var(--sf-a4);
     }
   }
-  .sf-profile-picker-row:where(:dir(ltr)) {
+  .sf-profile-picker-row:where(:dir(ltr)){
     padding-left: calc(var(--sf-profile-picker--space-x) - var(--sf-space-1\/4));
     padding-right: var(--sf-a4);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-profile-picker-row {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-profile-picker-row{
     padding-right: calc(var(--sf-profile-picker--space-x) - var(--sf-space-1\/4));
   }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .sf-profile-picker-row {
+  @supports not (padding-inline-start: initial){
+  [dir="rtl"] .sf-profile-picker-row{
     padding-right: calc(var(--sf-profile-picker--space-x) - var(--sf-space-1\/4));
     }
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-profile-picker-row {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-profile-picker-row{
     padding-left: var(--sf-a4);
   }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .sf-profile-picker-row {
+  @supports not (padding-inline-end: initial){
+  [dir="rtl"] .sf-profile-picker-row{
     padding-left: var(--sf-a4);
     }
   }
-  .sf-profile-picker-row:where(:dir(rtl)) {
+  .sf-profile-picker-row:where(:dir(rtl)){
     padding-right: calc(var(--sf-profile-picker--space-x) - var(--sf-space-1\/4));
     padding-left: var(--sf-a4);
   }
@@ -318,26 +324,26 @@
     font: inherit;
     cursor: pointer;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-profile-picker-segmented > button + button {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-profile-picker-segmented > button + button{
     border-left: var(--sf-px) solid var(--sf-outline-variant);
   }
-  @supports not (border-inline-start: initial) {
-  html:not([dir="rtl"]) .sf-profile-picker-segmented > button + button {
+  @supports not (border-inline-start: initial){
+  html:not([dir="rtl"]) .sf-profile-picker-segmented > button + button{
     border-left: var(--sf-px) solid var(--sf-outline-variant);
     }
   }
-  .sf-profile-picker-segmented > button + button:where(:dir(ltr)) {
+  .sf-profile-picker-segmented > button + button:where(:dir(ltr)){
     border-left: var(--sf-px) solid var(--sf-outline-variant);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-profile-picker-segmented > button + button {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-profile-picker-segmented > button + button{
     border-right: var(--sf-px) solid var(--sf-outline-variant);
   }
-  @supports not (border-inline-start: initial) {
-  [dir="rtl"] .sf-profile-picker-segmented > button + button {
+  @supports not (border-inline-start: initial){
+  [dir="rtl"] .sf-profile-picker-segmented > button + button{
     border-right: var(--sf-px) solid var(--sf-outline-variant);
     }
   }
-  .sf-profile-picker-segmented > button + button:where(:dir(rtl)) {
+  .sf-profile-picker-segmented > button + button:where(:dir(rtl)){
     border-right: var(--sf-px) solid var(--sf-outline-variant);
   }
   .sf-profile-picker-segmented > button + button {
@@ -389,5 +395,22 @@
   .sf-profile-picker-segmented > button:focus-visible {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
     outline-offset: calc(-1 * var(--sf-focus--width));
+  }
+}
+@layer sf.components {
+  /* The skeleton (skeleton.html, standard 1.3.8 §5.4): the folded trigger with
+     a bar where the profile's name will stand, the same box before the host's
+     profiles arrive. */
+  .sf-profile-picker-skeleton-bar {
+    display: inline-block;
+    vertical-align: middle;
+    width: 8em;
+    inline-size: 8em;
+    max-width: 100%;
+    max-inline-size: 100%;
+    height: var(--sf-profile-picker--text);
+    block-size: var(--sf-profile-picker--text);
+    border-radius: var(--sf-radius--ui);
+    background: var(--sf-ui-skeleton);
   }
 }
