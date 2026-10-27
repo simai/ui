@@ -70,7 +70,7 @@
         "utility.gap",
         "utility.overflow",
         "utility.width",
-        "smart.buttons",
+        "smart.button",
         "smart.pagination",
         "smart.data-view"
       ],

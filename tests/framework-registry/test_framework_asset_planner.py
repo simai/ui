@@ -31,7 +31,7 @@ class FrameworkAssetPlannerTest(unittest.TestCase):
         rules = [
             {"name": "display/default", "regex": "/class=[\"'][^\"']*\\bflex\\b/i"},
             {"name": "buttons", "type": "component", "css": True, "js": True, "regex": "/sf-button/"},
-            {"name": "cl-buttons", "type": "smart", "mode": "smart", "js": True, "tags": ["sf-button"], "relation": [{"name": "buttons"}]},
+            {"name": "cl-button", "type": "smart", "mode": "smart", "js": True, "tags": ["sf-button"], "relation": [{"name": "buttons"}]},
         ]
         (ui / "distr/rule").mkdir(parents=True)
         (ui / "distr/rule/rule.json").write_text(json.dumps(rules), encoding="utf-8")
@@ -39,7 +39,7 @@ class FrameworkAssetPlannerTest(unittest.TestCase):
             ui / "distr/utility/display/default/css/default.css": ".flex{display:flex}",
             ui / "distr/component/buttons/css/buttons.css": ".sf-button{display:inline-flex}",
             ui / "distr/component/buttons/js/buttons.js": "window.SFButton=true;",
-            smart / "smart/buttons/js/buttons.js": "customElements.define('sf-button',class extends HTMLElement{});",
+            smart / "smart/button/js/button.js": "customElements.define('sf-button',class extends HTMLElement{});",
         }
         for path, content in files.items():
             path.parent.mkdir(parents=True, exist_ok=True)
@@ -54,14 +54,14 @@ class FrameworkAssetPlannerTest(unittest.TestCase):
             second = PLANNER.build_plan(html, ui, smart)
         self.assertEqual(first, second)
         self.assertEqual(first["schema"], "simai.framework.asset_plan.v1")
-        self.assertEqual(first["modules"], ["display/default", "buttons", "cl-buttons"])
+        self.assertEqual(first["modules"], ["display/default", "buttons", "cl-button"])
         self.assertEqual(
             [(asset["module"], asset["kind"]) for asset in first["assets"]],
             [
                 ("display/default", "css"),
                 ("buttons", "css"),
                 ("buttons", "javascript"),
-                ("cl-buttons", "smart_javascript"),
+                ("cl-button", "smart_javascript"),
             ],
         )
 
@@ -88,8 +88,8 @@ class FrameworkAssetPlannerTest(unittest.TestCase):
     def test_data_sf_require_covers_undetectable_first_frame_resource(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             ui, smart = self.fixture(Path(temporary))
-            plan = PLANNER.build_plan('<div data-sf-require="smart.buttons"></div>', ui, smart)
-        self.assertEqual(plan["modules"], ["buttons", "cl-buttons"])
+            plan = PLANNER.build_plan('<div data-sf-require="smart.button"></div>', ui, smart)
+        self.assertEqual(plan["modules"], ["buttons", "cl-button"])
 
     def test_no_build_contract_is_unchanged_when_nothing_matches(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -129,11 +129,11 @@ class FrameworkAssetPlannerTest(unittest.TestCase):
     def test_registry_declares_smart_template_dependencies_without_visibility_false_positive(self) -> None:
         rules = PLANNER.load_rules(ROOT / "distr/rule/rule.json")
         by_name = {rule["name"]: rule for rule in rules}
-        button_relations = {item["name"] for item in by_name["cl-buttons"]["relation"]}
-        icon_button_relations = {item["name"] for item in by_name["cl-icon-buttons"]["relation"]}
+        button_relations = {item["name"] for item in by_name["cl-button"]["relation"]}
+        icon_button_relations = {item["name"] for item in by_name["cl-icon-button"]["relation"]}
         clipboard_relations = {item["name"] for item in by_name["clipboard"]["relation"]}
         self.assertTrue({"buttons", "pointer-events/default", "text-align/default"} <= button_relations)
-        self.assertTrue({"icon-buttons", "cl-icons", "pointer-events/default"} <= icon_button_relations)
+        self.assertTrue({"icon-buttons", "cl-icon", "pointer-events/default"} <= icon_button_relations)
         self.assertEqual(clipboard_relations, {"buttons", "icon-buttons", "icons"})
         self.assertNotIn(
             "visibility/default",

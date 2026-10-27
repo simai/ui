@@ -197,7 +197,7 @@ class FrameworkContractRegistryTest(unittest.TestCase):
         # goes on through what its package reference says it needs.
         self.assertNotIn("smart.data-view", closure)
         self.assertIn("smart.list-item", closure, "a dependency is in the closure even when it is not offered")
-        self.assertIn("smart.tags", closure, "reached through the package table's requirements")
+        self.assertIn("smart.tag", closure, "reached through the package table's requirements")
         self.assertEqual(
             self.registry["indexes"]["recipe_packages"]["recipe.admin.collection"],
             {"larena": ["smart.data-view"]},
@@ -238,7 +238,7 @@ class FrameworkContractRegistryTest(unittest.TestCase):
         self.assertEqual(
             self.by_id["recipe.admin.collection"]["requires"],
             [
-                "smart.buttons",
+                "smart.button",
                 "smart.data-view",
                 "smart.pagination",
                 "utility.display",

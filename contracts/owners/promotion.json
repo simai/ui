@@ -62,7 +62,7 @@
     "smart.alert",
     "smart.avatar",
     "smart.avatars",
-    "smart.badges",
+    "smart.badge",
     "smart.breadcrumbs",
     "smart.button-group",
     "smart.color",
@@ -641,7 +641,7 @@
         "ui_admin": 0
       }
     },
-    "smart.badges": {
+    "smart.badge": {
       "docs": [
         "content/ru/smart-components/feedback/badges.md"
       ],
