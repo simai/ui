@@ -201,10 +201,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("0d662e4d7d63");
 /* harmony import */ var _registry_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("fc654eb7fab0");
 /* harmony import */ var _datetime_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("9ce1a42b2a85");
+/* harmony import */ var _mask_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("dd6973f77245");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_2__]);
 ([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language__WEBPACK_IMPORTED_MODULE_2__);
+
 
 
 
@@ -1180,8 +1182,10 @@ function renderIncludeCell(field, value) {
 }
 
 function renderTextEdit(field, value, host) {
+  const mask = (0,_mask_js__WEBPACK_IMPORTED_MODULE_5__.maskPattern)(field);
   if (String(field.variant ?? '') === 'phone') return renderPhoneEdit(field, value, host);
   if (isPasswordField(field)) return renderPasswordEdit(field, value, host);
+  if (mask) return renderMaskedEdit(field, value, host, mask);
   value = scalarValue(value);
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <sf-input
@@ -1194,6 +1198,87 @@ function renderTextEdit(field, value, host) {
                 aria-label=${field.label || field.key || ''}
                 @input=${event => host.setFieldValue(field, event.target?.value ?? '')}
                 @change=${event => host.setFieldValue(field, event.target?.value ?? '')}
+        ></sf-input>
+    `;
+} // A string typed through a mask (simai.property-view-port 1.16.0, field.mask;
+// consumer simai.main, agreed contract q-b0de123841). The control is the stock
+// sf-input with its own mask -- the Framework grammar, the same mask-pattern a
+// page writes by hand -- so the typing, the caret and the fixed parts are the
+// field's and nothing here formats a character.
+//
+// What the set adds is the one thing sf-input does not say: whether the text
+// fills the pattern (./mask.js). The value written is the text as shown, fixed
+// parts included («+7 (912) 345-67-89»): the host stores what it gets. Empty is
+// not incomplete -- an optional masked field may be cleared, and writes null,
+// or "" for a field that declares `nullable: false`. Required stays a mark: an
+// empty required field is written as cleared and the host validates it.
+//
+// An incomplete text is not a value. The host hears it through the optional
+// setFieldError(field, message) on every keystroke -- null once the text is
+// complete or empty -- so a panel can hold both of its saves while any masked
+// field in it is incomplete, each field on its own. The control marks itself
+// invalid with the stock message only once the person leaves it (change):
+// shouting «Заполните поле полностью» at the first digit of a phone would be
+// an error for typing. A completed or cleared text takes the mark off at once.
+//
+// What is written while incomplete depends on the host. A host that hears
+// errors gets the text as typed, because it re-renders with the value it was
+// given and anything else would put an older text over the person's typing (a
+// value attribute that moves is written into the input). A host that does not
+// hear errors cannot hold a save, so the change is withdrawn with undefined,
+// as the datetime pair does: what it saves is never the half-typed text.
+
+
+function renderMaskedEdit(field, value, host, mask) {
+  value = scalarValue(value);
+  const cleared = field.nullable === false ? '' : null;
+
+  const write = (event, left) => {
+    const input = event.currentTarget;
+    const text = String(input?.value ?? '');
+    const state = (0,_mask_js__WEBPACK_IMPORTED_MODULE_5__.maskState)(text, mask);
+
+    if (state === 'incomplete') {
+      const message = setText(host, 'maskIncomplete');
+
+      if (left && input) {
+        input.setAttribute('error-message', message);
+        input.toggleAttribute('invalid', true);
+      }
+
+      if (typeof host.setFieldError === 'function') {
+        host.setFieldError(field, message);
+        host.setFieldValue(field, text);
+      } else {
+        host.setFieldValue(field, undefined);
+      }
+
+      return;
+    }
+
+    if (input?.hasAttribute('invalid')) {
+      input.toggleAttribute('invalid', false);
+      input.removeAttribute('error-message');
+    }
+
+    host.setFieldError?.(field, null);
+    host.setFieldValue(field, state === 'empty' ? cleared : text);
+  };
+
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <sf-input
+                size=${EDIT_SIZE}
+                appearance="bordered"
+                name=${fieldName(field)}
+                value=${value ?? ''}
+                placeholder=${field.placeholder || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                autocomplete="off"
+                mask
+                mask-pattern=${mask}
+                ?required=${Boolean(field.required)}
+                aria-label=${field.label || field.key || ''}
+                @input=${event => write(event, false)}
+                @change=${event => write(event, true)}
         ></sf-input>
     `;
 }
@@ -1499,9 +1584,120 @@ function editOptions(field, value, multiple) {
     value: String(option.value),
     selected: chosen.has(String(option.value))
   }));
+} // A choice as buttons (simai.property-view-port 1.16.0, variant `buttons`;
+// consumer simai.main, agreed contract q-b0de123841): one segmented
+// sf-button-group, a button per option, for a short list a person reads at a
+// glance -- a kind, a tier, a yes-no-maybe. The group is the stock one: Tab
+// enters it, the arrows move and choose, Space and Enter choose, and it is a
+// radiogroup to assistive technology. It wraps when it does not fit and is
+// never replaced by a dropdown: a field that changes its control with the
+// width of a window is two fields.
+//
+// `size` is the field's own step on the ladder ("1/2", "1", "2"), absent the
+// panel's: the track of a segmented group is exactly as tall as an sf-button of
+// the same size, so the buttons stand on the line the fields beside them do.
+//
+// The value is the option's own, in its own type -- the group speaks strings,
+// so a chosen "2" is written back as the 2 the option carries -- or null.
+// Pressing the chosen button again clears it when the field is not required;
+// the group itself keeps a chosen button chosen (its select answers
+// unchanged), so the press is read in the capture phase, before the group's
+// own listener, where the value it is about to be compared with is still the
+// one shown. A required field keeps the stock behaviour: the chosen button
+// stays chosen.
+//
+// Read-only shows the chosen button chosen, in its own colours, and lets none
+// be pressed: pointer events are off on the track and a key that would choose
+// is stopped before the group hears it. Disabled is the group's own disabled,
+// in the on-disable colours. The two are different facts -- «not yours to
+// change» and «not available now» -- and drawn as the group draws them.
+
+
+const CHOICE_BUTTON_SIZES = new Set(['1/2', '1', '2']);
+const CHOOSING_KEYS = new Set(['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End', ' ', 'Enter']);
+
+function isChoiceButtons(field) {
+  return String(field.variant ?? '') === 'buttons';
+}
+
+function renderChoiceButtons(field, value, host) {
+  value = scalarValue(value);
+  const options = (field.options || field.filter?.options || field.constraints?.options || []).filter(option => option && option.value !== null && option.value !== undefined && String(option.value) !== '');
+  const items = options.map(option => ({
+    value: String(option.value),
+    label: String(option.label ?? option.text ?? option.value),
+    ...(option.icon ? {
+      icon: String(option.icon)
+    } : {}),
+    ...(option.disabled ? {
+      disabled: true
+    } : {})
+  }));
+  const asked = String(field.size ?? '');
+  const size = CHOICE_BUTTON_SIZES.has(asked) ? asked : EDIT_SIZE;
+  const disabled = EDIT_DISABLED;
+  const locked = !disabled && field.readonly === true;
+  const clearable = field.required !== true && !locked && !disabled;
+  const chosen = value === null || value === undefined ? '' : String(value);
+
+  const optionValue = text => options.find(option => String(option.value) === text)?.value ?? text;
+
+  const press = {
+    capture: true,
+
+    handleEvent(event) {
+      const group = event.currentTarget;
+      const segment = event.target?.closest?.('[data-sf-button-group-value]');
+      if (!group || !segment || !group.contains(segment)) return;
+
+      if (locked) {
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+      }
+
+      if (!clearable || segment.disabled) return;
+      if (segment.getAttribute('data-sf-button-group-value') !== group.value) return;
+      event.preventDefault();
+      event.stopPropagation();
+      group.clear?.();
+    }
+
+  };
+  const keys = {
+    capture: true,
+
+    handleEvent(event) {
+      if (!locked || !CHOOSING_KEYS.has(event.key)) return;
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+  };
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <sf-button-group
+                class="sf-field-choice-buttons"
+                appearance="segmented"
+                size=${size}
+                root-class=${locked ? 'flex-wrap pointer-event-none' : 'flex-wrap'}
+                name=${fieldName(field)}
+                items=${JSON.stringify(items)}
+                value=${chosen || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                ?disabled=${disabled}
+                data-readonly=${locked ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                aria-label=${field.label || field.key || ''}
+                @click=${press}
+                @keydown=${keys}
+                @change=${event => {
+    const next = String(event.detail?.value ?? '');
+    host.setFieldValue(field, next === '' ? null : optionValue(next));
+  }}
+        ></sf-button-group>
+    `;
 }
 
 function renderChoiceEdit(field, value, host) {
+  if (isChoiceButtons(field)) return renderChoiceButtons(field, value, host);
   value = scalarValue(value);
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <sf-dropdown
@@ -1636,7 +1832,8 @@ const SET_TEXT = {
     dateTime_dateMissing: 'Enter the date',
     dateTime_dateInvalid: 'The date is not a calendar date',
     dateTime_timeMissing: 'Enter the time',
-    dateTime_timeInvalid: 'Enter the time as hh:mm, from 00:00 to 23:59'
+    dateTime_timeInvalid: 'Enter the time as hh:mm, from 00:00 to 23:59',
+    maskIncomplete: 'Complete the field'
   },
   ru: {
     yes: 'Да',
@@ -1670,7 +1867,8 @@ const SET_TEXT = {
     dateTime_dateMissing: 'Укажите дату',
     dateTime_dateInvalid: 'Дата указана неверно',
     dateTime_timeMissing: 'Укажите время',
-    dateTime_timeInvalid: 'Укажите время в виде чч:мм, от 00:00 до 23:59'
+    dateTime_timeInvalid: 'Укажите время в виде чч:мм, от 00:00 до 23:59',
+    maskIncomplete: 'Заполните поле полностью'
   }
 }; // The host's word wins, as it always did; the set's own fallback now follows
 // the page's language instead of being Russian whatever the page is. `host` is
@@ -2062,23 +2260,40 @@ function renderFileEdit(field, value, host) {
 // type yet.
 
 
-const sizeOption = options => options?.size === '1/2' ? '1/2' : '1';
+const sizeOption = options => options?.size === '1/2' ? '1/2' : '1'; // A control that stays a control when it may not be changed: a choice as
+// buttons shows which button is chosen, which is what it is for, where the
+// view's badge would show a different thing (port 1.16.0).
 
+
+const keepsControlWhenLocked = (asked, field) => asked === 'choice' && isChoiceButtons(field); // `options.disabled`: the control is drawn disabled, not read-only -- a field a
+// condition turns off for now (port 1.14.0 `when.enabled`), which the host
+// knows and the field does not carry. Read by the controls that draw the two
+// differently; for every other one a disabled field is a read-only one.
+
+
+let EDIT_DISABLED = false;
 function renderEditField(field = {}, value, host, options = {}) {
-  const asked = field.propertyType || field.type || field.dataType; // A field the person may not change is shown, not offered as a control that
+  const asked = field.propertyType || field.type || field.dataType;
+  const disabled = options?.disabled === true; // A field the person may not change is shown, not offered as a control that
   // refuses: the same rule for every type, so `readonly` means one thing
   // wherever the registry lists it.
 
-  if (field.readonly === true && VIEW_RENDERERS[asked]) return renderViewField(field, value, host, options);
+  if ((field.readonly === true || disabled) && VIEW_RENDERERS[asked] && !keepsControlWhenLocked(asked, field)) {
+    return renderViewField(field, value, host, options);
+  }
+
   const renderer = EDIT_RENDERERS[asked];
   if (!renderer || !host?.setFieldValue) return null;
   const outer = EDIT_SIZE;
+  const outerDisabled = EDIT_DISABLED;
   EDIT_SIZE = sizeOption(options);
+  EDIT_DISABLED = disabled;
 
   try {
     return renderer(field, value, host);
   } finally {
     EDIT_SIZE = outer;
+    EDIT_DISABLED = outerDisabled;
   }
 } // The view template: a field shown and not edited, which is the fourth of the
 // four the assignment names and the last one the set was missing.
@@ -2354,6 +2569,127 @@ __webpack_async_result__();
 
 /***/ },
 
+/***/ "dd6973f77245"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   maskPattern: () => (/* binding */ maskPattern),
+/* harmony export */   maskState: () => (/* binding */ maskState)
+/* harmony export */ });
+// Whether a masked string is complete (simai.property-view-port 1.16.0,
+// field.mask). sf-input formats what a person types through the Framework's
+// mask (core/js/mask.js) and reports the text as shown; what the set still has
+// to know is whether that text fills every place of the pattern, because an
+// incomplete value is not a value -- «+7 (912) 3» is neither a phone nor
+// nothing -- and a panel must not send it.
+//
+// The grammar is core/js/mask.js's, read the same way: `0` a digit, `a` a
+// letter, `*` any character, `\` escapes the next character, `{` `}` mark a
+// fixed part that belongs to the value and `[` `]` an optional tail, both
+// dropped from what is shown, and every other character is a fixed part shown
+// in the field. The pattern is compiled into one expression over the shown
+// text rather than re-running the formatter: the formatter's job is to make a
+// valid prefix out of anything typed, which is exactly the question it cannot
+// answer -- every prefix is valid while it is typed. A pattern's optional tail
+// is not optional here: the contract names no optional places, and a tail
+// that may be left empty would make «complete» mean two lengths.
+//
+// The text is compared as shown, fixed parts included, because that is the
+// value the host receives. A text with the template's placeholders (a
+// mask-lazy="false" field shows «+7 (___) ___-__-__») is incomplete, and a
+// template with nothing typed into it is empty.
+const SLOT = {
+  0: '\\d',
+  a: '\\p{L}',
+  '*': '[\\s\\S]'
+};
+const TEST = {
+  0: character => /\d/u.test(character),
+  a: character => /\p{L}/u.test(character),
+  '*': () => true
+}; // Unicode mode refuses an escaped character that is not syntax, so only these.
+
+const escape = character => character.replace(/[\\^$.*+?()[\]{}|/]/gu, '\\$&');
+
+function compile(pattern) {
+  let source = '';
+  const tokens = [];
+
+  for (let index = 0; index < pattern.length; index += 1) {
+    const character = pattern[index];
+
+    if (character === '\\') {
+      index += 1;
+
+      if (index < pattern.length) {
+        source += escape(pattern[index]);
+        tokens.push({
+          fixed: pattern[index]
+        });
+      }
+    } else if (character === '{' || character === '}' || character === '[' || character === ']') {// Markers of the grammar, never shown.
+    } else if (SLOT[character]) {
+      source += SLOT[character];
+      tokens.push({
+        test: TEST[character]
+      });
+    } else {
+      source += escape(character);
+      tokens.push({
+        fixed: character
+      });
+    }
+  }
+
+  return {
+    complete: new RegExp(`^${source}$`, 'u'),
+    tokens
+  };
+} // How many places the text fills, read as core/js/mask.js reads it: a
+// character that is the fixed part expected there is that fixed part, a
+// placeholder in a place is an empty place, anything else fills the next place
+// that takes it. A «7» typed into «+7 (000)» is a digit, not the fixed 7.
+
+
+function filled(value, tokens, placeholder) {
+  let count = 0;
+  let pointer = 0;
+
+  for (const character of value) {
+    while (pointer < tokens.length && tokens[pointer].fixed !== undefined && tokens[pointer].fixed !== character) pointer += 1;
+
+    if (pointer >= tokens.length) break;
+    const token = tokens[pointer];
+    if (token.fixed !== undefined) pointer += 1;else if (character === placeholder) pointer += 1;else if (token.test(character)) {
+      count += 1;
+      pointer += 1;
+    }
+  }
+
+  return count;
+}
+
+const COMPILED = new Map();
+function maskPattern(field) {
+  const mask = field?.mask;
+  return typeof mask === 'string' && mask !== '' ? mask : null;
+} // 'empty', 'complete' or 'incomplete'. Empty is a text with nothing typed into
+// it: no text, or only the pattern's fixed parts and placeholders.
+
+function maskState(text, pattern, placeholder = '_') {
+  const value = String(text ?? '');
+  if (!COMPILED.has(pattern)) COMPILED.set(pattern, compile(pattern));
+  const {
+    complete,
+    tokens
+  } = COMPILED.get(pattern);
+  if (complete.test(value)) return 'complete';
+  return filled(value, tokens, placeholder) === 0 ? 'empty' : 'incomplete';
+}
+
+/***/ },
+
 /***/ "fc654eb7fab0"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -2399,7 +2735,12 @@ const PROPERTY_TYPES = Object.freeze([{
     },
     writeOnly: true
   }],
-  params: ['placeholder', 'required', 'readonly']
+  // mask (property-view port 1.16.0): the Framework mask grammar of
+  // sf-input's mask-pattern; the value is the text as shown, fixed parts
+  // included, and an incomplete one is reported, not written as a value.
+  // nullable: false makes a cleared masked field write "" instead of null.
+  // Read by the plain string alone: phone and password keep their controls.
+  params: ['placeholder', 'mask', 'nullable', 'required', 'readonly']
 }, {
   type: 'text',
   label: {
@@ -2468,14 +2809,24 @@ const PROPERTY_TYPES = Object.freeze([{
   },
   variants: [],
   params: ['trueText', 'falseText', 'required', 'readonly']
-}, {
+}, // buttons (property-view port 1.16.0): one segmented button group, a
+// button per option, sized by `size` on the ladder ("1/2", "1", "2"; absent,
+// the field's); pressing the chosen one again clears a field that is not
+// required. The dropdown stays the default.
+{
   type: 'choice',
   label: {
     ru: 'Одно из списка',
     en: 'One of a list'
   },
-  variants: [],
-  params: ['options', 'badgeAppearance', 'required', 'readonly']
+  variants: [{
+    id: 'buttons',
+    label: {
+      ru: 'Кнопками',
+      en: 'As buttons'
+    }
+  }],
+  params: ['options', 'badgeAppearance', 'size', 'required', 'readonly']
 }, {
   type: 'choices',
   label: {
