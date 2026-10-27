@@ -290,18 +290,19 @@
     transition-property: background-color, border-color, box-shadow, color;
     transition-duration: var(--sf-duration-fast);
     transition-timing-function: var(--sf-animation);
-    --sf-page-number--background-color: var(--sf-surface-0);
-    --sf-page-number--color: var(--sf-on-surface-variant);
+    /* sf-pagination's public variables (standard 1.3.8 §6) over the role tokens. */
+    --sf-page-number--background-color: var(--sf-pagination-page-background-color, var(--sf-surface-0));
+    --sf-page-number--color: var(--sf-pagination-page-color, var(--sf-on-surface-variant));
     --sf-page-number--border-top-width: var(--sf-px);
     --sf-page-number--border-bottom-width: var(--sf-px);
     --sf-page-number--border-inline-start-width: var(--sf-px);
     --sf-page-number--border-inline-end-width: var(--sf-px);
   }
   .sf-page-number--square {
-    --sf-page-number--border-end-end-radius: var(--sf-radius--ui);
-    --sf-page-number--border-end-start-radius: var(--sf-radius--ui);
-    --sf-page-number--border-start-end-radius: var(--sf-radius--ui);
-    --sf-page-number--border-start-start-radius: var(--sf-radius--ui);
+    --sf-page-number--border-end-end-radius: var(--sf-pagination-page-radius, var(--sf-radius--ui));
+    --sf-page-number--border-end-start-radius: var(--sf-pagination-page-radius, var(--sf-radius--ui));
+    --sf-page-number--border-start-end-radius: var(--sf-pagination-page-radius, var(--sf-radius--ui));
+    --sf-page-number--border-start-start-radius: var(--sf-pagination-page-radius, var(--sf-radius--ui));
   }
   .sf-page-number--circle {
     --sf-page-number--border-end-end-radius: var(--sf-radius-circle);
@@ -323,11 +324,11 @@
     --sf-page-number--color: var(--sf-on-surface);
   }
   .sf-page-number:not(:disabled):not(.disabled):active, .sf-page-number.selected {
-    --sf-page-number--background-color: var(--sf-primary-container-active);
+    --sf-page-number--background-color: var(--sf-pagination-current-background-color, var(--sf-primary-container-active));
     --sf-page-number--border-color: var(--sf-primary-active);
     --sf-page-number--border-style: solid;
     --sf-page-number--border-width: var(--sf-px);
-    --sf-page-number--color: var(--sf-primary-active);
+    --sf-page-number--color: var(--sf-pagination-current-color, var(--sf-primary-active));
     --sf-page-number--font-weight: var(--sf-font-weight-medium);
   }
   .sf-page-number--ellipsis {
@@ -381,8 +382,10 @@
 @layer sf.components {
   /* utility-hint: display/flex (.flex) flex-direction/column (.flex-col) flex-wrap/nowrap (.flex-nowrap) justify-content/flex-start (.justify-start) align-items/center (.items-center) */
   .sf-pagination {
+    /* The public variables of sf-pagination (component.json css-variables,
+       standard 1.3.8 §6) over the role tokens. */
     background-color: transparent;
-    background-color: var(--sf-pagination--background-color, transparent);
+    background-color: var(--sf-pagination-background-color, var(--sf-pagination--background-color, transparent));
     min-width: 0;
     min-inline-size: 0;
   }
@@ -406,7 +409,7 @@
   .sf-pagination .sf-pagination-top {
     --sf-pagination-top--background-color: transparent;
     --sf-pagination-top--border-bottom-width: var(--sf-px);
-    --sf-pagination-top--border-color: var(--sf-outline-variant);
+    --sf-pagination-top--border-color: var(--sf-pagination-divider-color, var(--sf-outline-variant));
     --sf-pagination-top--border-style: solid;
     /* The row with Show more sits between the table above it and the page row
        below it, and the two gaps have to read the same. A card spaces its parts
@@ -485,7 +488,7 @@
     --sf-pagination-total--gap: var(--sf-space-1\/3);
     background-color: var(--sf-pagination-total--background-color);
     color: var(--sf-on-surface-variant);
-    color: var(--sf-pagination-total--color, var(--sf-on-surface-variant));
+    color: var(--sf-pagination-total--color, var(--sf-pagination-color, var(--sf-on-surface-variant)));
     font-family: var(--sf-text--family);
     font-family: var(--sf-pagination-total--font-family, var(--sf-text--family));
     font-size: var(--sf-text-size-1);
@@ -502,10 +505,10 @@
   .sf-pagination .sf-pagination-container {
     flex-wrap: wrap;
     --sf-pagination-container--background-color: transparent;
-    --sf-pagination-container--gap: var(--sf-space-1\/3);
+    --sf-pagination-container--gap: var(--sf-pagination-gap, var(--sf-space-1\/3));
     background-color: var(--sf-pagination-container--background-color);
     color: var(--sf-on-surface-variant);
-    color: var(--sf-pagination-container--color, var(--sf-on-surface-variant));
+    color: var(--sf-pagination-container--color, var(--sf-pagination-color, var(--sf-on-surface-variant)));
     font-family: var(--sf-text--family);
     font-family: var(--sf-pagination-container--font-family, var(--sf-text--family));
     font-size: var(--sf-text-size-1);

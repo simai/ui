@@ -230,6 +230,14 @@
           "varies_with": [
             "size"
           ]
+        },
+        {
+          "name": "--sf-input-invalid-border-color",
+          "role": "border-color",
+          "summary": "The field's border while it is invalid (bordered appearance).",
+          "default": "var(--sf-error)",
+          "state": "invalid",
+          "since": "2026-10-27"
         }
       ]
     },
@@ -500,6 +508,22 @@
           "varies_with": [
             "size"
           ]
+        },
+        {
+          "name": "--sf-checkbox-checked-background-color",
+          "role": "background",
+          "summary": "The box's fill and border when checked, indeterminate or pressed; error and disabled keep their own.",
+          "default": "var(--sf-primary)",
+          "state": "checked",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-checkbox-invalid-border-color",
+          "role": "border-color",
+          "summary": "The box's border while the box is invalid.",
+          "default": "var(--sf-error)",
+          "state": "invalid",
+          "since": "2026-10-27"
         }
       ]
     },
@@ -554,6 +578,22 @@
           "varies_with": [
             "size"
           ]
+        },
+        {
+          "name": "--sf-radio-button-checked-color",
+          "role": "border-color",
+          "summary": "The ring and the mark when checked (the ring's border, the mark's fill); disabled keeps its own.",
+          "default": "var(--sf-primary)",
+          "state": "checked",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-radio-button-invalid-border-color",
+          "role": "border-color",
+          "summary": "The ring while the radio is invalid.",
+          "default": "var(--sf-error)",
+          "state": "invalid",
+          "since": "2026-10-27"
         }
       ]
     },
@@ -665,6 +705,14 @@
           "varies_with": [
             "size"
           ]
+        },
+        {
+          "name": "--sf-textarea-invalid-border-color",
+          "role": "border-color",
+          "summary": "The field's border while it is invalid (bordered appearance).",
+          "default": "var(--sf-error)",
+          "state": "invalid",
+          "since": "2026-10-27"
         }
       ]
     },
@@ -1372,6 +1420,14 @@
           "summary": "The corner radius of «−» and «+».",
           "default": "var(--sf-radius-1\\/2)",
           "since": "2026-10-25"
+        },
+        {
+          "name": "--sf-quantity-invalid-border-color",
+          "role": "border-color",
+          "summary": "The field's border while it is invalid.",
+          "default": "var(--sf-error)",
+          "state": "invalid",
+          "since": "2026-10-27"
         }
       ]
     },
@@ -1514,6 +1570,388 @@
           "summary": "Space between the cells.",
           "default": "var(--sf-space-1/3)",
           "since": "2026-10-25"
+        },
+        {
+          "name": "--sf-verification-invalid-border-color",
+          "role": "border-color",
+          "summary": "A cell's border while the code is invalid.",
+          "default": "var(--sf-error)",
+          "state": "invalid",
+          "since": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "component": "toggle",
+      "selector": ".sf-toggle",
+      "variables": [
+        {
+          "name": "--sf-toggle-background-color",
+          "role": "background",
+          "summary": "The track's fill when off; hover, pressed and disabled keep their own.",
+          "default": "var(--sf-surface-container)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-toggle-checked-background-color",
+          "role": "background",
+          "summary": "The track's fill and outline when on (the checked state).",
+          "default": "var(--sf-primary)",
+          "state": "checked",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-toggle-border-color",
+          "role": "outline-color",
+          "summary": "The track's outline at rest (an outline, not a border); checked and disabled keep their own.",
+          "default": "var(--sf-outline)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-toggle-color",
+          "role": "color",
+          "summary": "The label colour; pressed and disabled keep their own.",
+          "default": "var(--sf-on-surface-variant)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-toggle-gap",
+          "role": "gap",
+          "summary": "Space between the track and the label.",
+          "default": "var(--sf-space-1/3)",
+          "varies_with": [
+            "size"
+          ],
+          "since": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "component": "country-code",
+      "selector": ".sf-country-code",
+      "variables": [
+        {
+          "name": "--sf-country-code-background-color",
+          "role": "background",
+          "summary": "The field's fill at rest.",
+          "default": "var(--sf-surface-0)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-country-code-border-color",
+          "role": "border-color",
+          "summary": "The field's boundary at rest; hover, focus, error and disabled keep their own.",
+          "default": "var(--sf-outline)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-country-code-radius",
+          "role": "radius",
+          "summary": "The field's corner radius.",
+          "default": "var(--sf-ui-radius-default)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-country-code-color",
+          "role": "color",
+          "summary": "The number's ink at rest; disabled keeps its own.",
+          "default": "var(--sf-on-surface)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-country-code-list-background-color",
+          "role": "background",
+          "summary": "The fill of the open list of countries.",
+          "default": "var(--sf-elevation-3--surface)",
+          "since": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "component": "color",
+      "selector": ".sf-color",
+      "variables": [
+        {
+          "name": "--sf-color-gap",
+          "role": "gap",
+          "summary": "The space between the swatch, the hex and the presets.",
+          "default": "var(--sf-space-1)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-color-chip-radius",
+          "role": "radius",
+          "summary": "The corner radius of the swatch and of each preset.",
+          "default": "var(--sf-radius-1)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-color-chip-border-color",
+          "role": "border-color",
+          "summary": "The border of the swatch and of each preset at rest; the outlined and plain appearances keep their own.",
+          "default": "var(--sf-outline-variant)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-color-swatches-gap",
+          "role": "gap",
+          "summary": "The space between presets.",
+          "default": "var(--sf-space-1\\/2, 4px)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-color-inherited-color",
+          "role": "color",
+          "summary": "The ink of the word that says the colour is inherited.",
+          "default": "var(--sf-on-surface-variant)",
+          "since": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "component": "range-slider",
+      "selector": ".sf-range-slider",
+      "variables": [
+        {
+          "name": "--sf-range-slider-track-color",
+          "role": "background",
+          "summary": "The track's fill outside the chosen part.",
+          "default": "var(--sf-surface-container)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-range-slider-fill-color",
+          "role": "background",
+          "summary": "The fill of the chosen part of the track.",
+          "default": "var(--sf-primary)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-range-slider-handle-color",
+          "role": "background",
+          "summary": "A handle's ring at rest; disabled keeps its own.",
+          "default": "var(--sf-primary)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-range-slider-handle-inner-color",
+          "role": "background",
+          "summary": "The centre of a handle.",
+          "default": "var(--sf-surface-0)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-range-slider-value-color",
+          "role": "color",
+          "summary": "The ink of a value shown as text or in a tooltip.",
+          "default": "var(--sf-on-surface)",
+          "since": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "component": "file-upload",
+      "selector": ".sf-file-upload",
+      "variables": [
+        {
+          "name": "--sf-file-upload-background-color",
+          "role": "background",
+          "summary": "The area's fill at rest; hover, focus, dragged-over and disabled keep their own.",
+          "default": "var(--sf-surface-0)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-file-upload-border-color",
+          "role": "border-color",
+          "summary": "The area's boundary at rest.",
+          "default": "var(--sf-outline)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-file-upload-radius",
+          "role": "radius",
+          "summary": "The area's corner radius; the per-corner hooks still win.",
+          "default": "var(--sf-radius--surface)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-file-upload-link-color",
+          "role": "color",
+          "summary": "The ink of the words that open the file dialog.",
+          "default": "var(--sf-primary)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-file-upload-text-color",
+          "role": "color",
+          "summary": "The ink of the words after the link.",
+          "default": "var(--sf-on-surface-variant)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-file-upload-dragged-over-background-color",
+          "role": "background",
+          "summary": "The area's fill while files are held over it.",
+          "default": "var(--sf-primary-transparent-select)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-file-upload-dragged-over-border-color",
+          "role": "border-color",
+          "summary": "The area's boundary while files are held over it.",
+          "default": "var(--sf-outline-primary)",
+          "since": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "component": "datepicker",
+      "selector": ".sf-datepicker",
+      "variables": [
+        {
+          "name": "--sf-datepicker-background-color",
+          "role": "background",
+          "summary": "The calendar's surface, and its month and year lists.",
+          "default": "var(--sf-elevation-3--surface)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-datepicker-day-color",
+          "role": "color",
+          "summary": "A day's number at rest; another month, a weekend, disabled and selected days keep their own.",
+          "default": "var(--sf-on-surface)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-datepicker-selected-background-color",
+          "role": "background",
+          "summary": "The chosen day, and the ends of a chosen range.",
+          "default": "var(--sf-primary)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-datepicker-selected-color",
+          "role": "color",
+          "summary": "The number on the chosen day.",
+          "default": "var(--sf-on-primary)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-datepicker-range-background-color",
+          "role": "background",
+          "summary": "The days inside a chosen range.",
+          "default": "var(--sf-primary-container-active)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-datepicker-weekday-color",
+          "role": "color",
+          "summary": "The weekday names over the grid.",
+          "default": "var(--sf-on-surface-variant)",
+          "since": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "component": "breadcrumbs",
+      "selector": ".sf-breadcrumbs",
+      "variables": [
+        {
+          "name": "--sf-breadcrumbs-gap",
+          "role": "gap",
+          "summary": "The space between the crumbs and their separators.",
+          "default": "var(--sf-space-1/3)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-breadcrumbs-color",
+          "role": "color",
+          "summary": "A crumb that is neither a link nor the current page.",
+          "default": "var(--sf-on-surface-variant)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-breadcrumbs-link-color",
+          "role": "color",
+          "summary": "A crumb that links to its page, at rest.",
+          "default": "var(--sf-primary)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-breadcrumbs-link-hover-color",
+          "role": "hover-color",
+          "summary": "A linked crumb under the pointer.",
+          "default": "var(--sf-primary-hover)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-breadcrumbs-current-color",
+          "role": "color",
+          "summary": "The crumb of the current page.",
+          "default": "var(--sf-on-surface)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-breadcrumbs-separator-color",
+          "role": "color",
+          "summary": "The separator icon between two crumbs.",
+          "default": "var(--sf-on-surface-variant)",
+          "since": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "component": "steps",
+      "selector": ".sf-steps",
+      "variables": [
+        {
+          "name": "--sf-steps-gap",
+          "role": "gap",
+          "summary": "The space between a step and the separator next to it.",
+          "default": "var(--sf-steps-container--gap)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-steps-separator-color",
+          "role": "color",
+          "summary": "The separator icon between two steps.",
+          "default": "var(--sf-on-surface-variant)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-steps-step-color",
+          "role": "color",
+          "summary": "A step's label and number at rest.",
+          "default": "var(--sf-on-surface-variant)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-steps-step-border-color",
+          "role": "border-color",
+          "summary": "The outline of a step at rest.",
+          "default": "var(--sf-outline-variant)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-steps-step-radius",
+          "role": "radius",
+          "summary": "The corner radius of a step.",
+          "default": "var(--sf-radius-circle)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-steps-current-border-color",
+          "role": "border-color",
+          "summary": "The outline of the current step.",
+          "default": "var(--sf-outline-primary)",
+          "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-steps-completed-icon-color",
+          "role": "color",
+          "summary": "The check icon of a completed step.",
+          "default": "var(--sf-success)",
+          "since": "2026-10-27"
         }
       ]
     }

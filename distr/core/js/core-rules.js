@@ -2385,8 +2385,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _smart_image_field_rule_js__WEBPACK_IMPORTED_MODULE_766___default = /*#__PURE__*/__webpack_require__.n(_smart_image_field_rule_js__WEBPACK_IMPORTED_MODULE_766__);
 /* harmony import */ var _smart_inline_editor_rule_js__WEBPACK_IMPORTED_MODULE_767__ = __webpack_require__("8427cfb332c0");
 /* harmony import */ var _smart_inline_editor_rule_js__WEBPACK_IMPORTED_MODULE_767___default = /*#__PURE__*/__webpack_require__.n(_smart_inline_editor_rule_js__WEBPACK_IMPORTED_MODULE_767__);
-/* harmony import */ var _smart_inputs_rule_js__WEBPACK_IMPORTED_MODULE_768__ = __webpack_require__("b8910f11e893");
-/* harmony import */ var _smart_inputs_rule_js__WEBPACK_IMPORTED_MODULE_768___default = /*#__PURE__*/__webpack_require__.n(_smart_inputs_rule_js__WEBPACK_IMPORTED_MODULE_768__);
+/* harmony import */ var _smart_input_rule_js__WEBPACK_IMPORTED_MODULE_768__ = __webpack_require__("f77d07dd1e11");
+/* harmony import */ var _smart_input_rule_js__WEBPACK_IMPORTED_MODULE_768___default = /*#__PURE__*/__webpack_require__.n(_smart_input_rule_js__WEBPACK_IMPORTED_MODULE_768__);
 /* harmony import */ var _smart_list_item_rule_js__WEBPACK_IMPORTED_MODULE_769__ = __webpack_require__("8fa237379b9d");
 /* harmony import */ var _smart_list_item_rule_js__WEBPACK_IMPORTED_MODULE_769___default = /*#__PURE__*/__webpack_require__.n(_smart_list_item_rule_js__WEBPACK_IMPORTED_MODULE_769__);
 /* harmony import */ var _smart_menu_rule_js__WEBPACK_IMPORTED_MODULE_770__ = __webpack_require__("9fd1fe165c81");
@@ -3771,7 +3771,7 @@ SF.RuleLoader['cl-datepicker'] = {
   relation: [{
     name: 'datepicker'
   }, {
-    name: 'cl-inputs'
+    name: 'cl-input'
   }, {
     name: 'cl-buttons'
   }, {
@@ -3839,7 +3839,7 @@ SF.RuleLoader['cl-dropdown'] = {
   }, {
     name: 'cl-list-item'
   }, {
-    name: 'cl-inputs'
+    name: 'cl-input'
   }, {
     name: 'cl-icon-buttons'
   }]
@@ -4031,10 +4031,10 @@ SF.RuleLoader['cl-inline-editor'] = {
 
 /***/ },
 
-/***/ "b8910f11e893"
+/***/ "f77d07dd1e11"
 () {
 
-SF.RuleLoader['cl-inputs'] = {
+SF.RuleLoader['cl-input'] = {
   tags: ['sf-input'],
   type: 'smart',
   mode: 'smart',
@@ -4048,7 +4048,11 @@ SF.RuleLoader['cl-inputs'] = {
   {
     name: 'icon-buttons'
   }]
-};
+}; // The bundle's former name cl-inputs (the folder was `inputs` until standard
+// 1.3.8 §3, §21 gave it the tag's name) is not a rule here: a rule of type
+// smart is a Smart component to the registry, and this one has no element. The
+// Loader forwards it to cl-input from src/core/contracts/
+// smart-rule-forwards.v1.json until 2026-12-01.
 
 /***/ },
 
@@ -4163,7 +4167,7 @@ SF.RuleLoader['cl-pagination'] = {
   }, {
     name: 'cl-icon-buttons'
   }, {
-    name: 'cl-inputs'
+    name: 'cl-input'
   }, {
     name: 'cl-list-item'
   }, {
@@ -4532,7 +4536,7 @@ SF.RuleLoader['cl-theme-generator'] = {
   relation: [{
     name: 'cl-color'
   }, {
-    name: 'cl-inputs'
+    name: 'cl-input'
   }, {
     name: 'cl-buttons'
   }, {

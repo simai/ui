@@ -42,6 +42,8 @@ function registerComponent(name, cls) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d7f974466839");
 /* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("58661bec99a6");
+/* harmony import */ var _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("695f21e50358");
+
 
 
 const TABS_SELECTOR = '.sf-tabs';
@@ -49,7 +51,6 @@ const TABS_BOUND_FLAG = 'sfTabsBound';
 const SELECTED_CLASS = 'selected';
 const boundTabs = new WeakSet();
 const generatedLabels = new WeakMap();
-let tabsIdentity = 0;
 
 function isSmartTabsRoot(root) {
   return root?.parentElement?.localName === 'sf-tabs';
@@ -65,19 +66,19 @@ function getTabButtons(root) {
 
 function isDisabled(button) {
   return button.disabled || button.classList.contains('disabled') || button.getAttribute('aria-disabled') === 'true';
-}
+} // A part's id is the tab group's path id and a local name (standard 1.3.8
+// §7.1.1, simai/ui-source#41): <path>--tab-<n>, --panel-<n>, --label-<n>, the
+// same in every bundle and in server markup. A module counter numbered them
+// in creation order; an id the counter gave that repeats is replaced.
 
-function ensureId(element, part) {
-  const duplicateGeneratedId = /^sf-tabs-(?:tab|panel|label)-\d+$/.test(element.id) && document.querySelectorAll(`#${CSS.escape(element.id)}`).length > 1;
+
+function ensureId(root, element, part, index) {
+  const duplicateGeneratedId = /^sf-tabs-(?:tab|panel|label)-\d+$|--(?:tab|panel|label)-\d+$/.test(element.id) && document.querySelectorAll(`#${CSS.escape(element.id)}`).length > 1;
 
   if (!element.id || duplicateGeneratedId) {
-    let id;
-
-    do {
-      id = `sf-tabs-${part}-${++tabsIdentity}`;
-    } while (document.getElementById(id));
-
-    element.id = id;
+    element.id = (0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_2__.partId)((0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_2__.instancePath)(root, {
+      kind: 'sf-tabs'
+    }), `${part}-${index}`);
   }
 
   return element.id;
@@ -98,14 +99,14 @@ function syncSemantics(root, buttons, panels) {
   setIndex(buttons);
   setIndex(panels);
   buttons.forEach((button, index) => {
-    ensureId(button, 'tab');
+    ensureId(root, button, 'tab', index);
     button.setAttribute('role', 'tab');
-    if (panels[index]) button.setAttribute('aria-controls', ensureId(panels[index], 'panel'));
+    if (panels[index]) button.setAttribute('aria-controls', ensureId(root, panels[index], 'panel', index));
     const label = button.querySelector('.sf-button-text-container');
     const previous = generatedLabels.get(button);
 
-    if (label && !button.hasAttribute('aria-label') && (!button.hasAttribute('aria-labelledby') || button.getAttribute('aria-labelledby') === previous || /^sf-tabs-label-\d+$/.test(button.getAttribute('aria-labelledby')))) {
-      const labelId = ensureId(label, 'label');
+    if (label && !button.hasAttribute('aria-label') && (!button.hasAttribute('aria-labelledby') || button.getAttribute('aria-labelledby') === previous || /^sf-tabs-label-\d+$|--label-\d+$/.test(button.getAttribute('aria-labelledby')))) {
+      const labelId = ensureId(root, label, 'label', index);
       button.setAttribute('aria-labelledby', labelId);
       generatedLabels.set(button, labelId);
     }
@@ -404,6 +405,103 @@ class ComponentObserver {
 
   destroyInternal() {}
 
+}
+
+/***/ },
+
+/***/ "695f21e50358"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   instancePath: () => (/* binding */ instancePath),
+/* harmony export */   partId: () => (/* binding */ partId),
+/* harmony export */   pathIsSettled: () => (/* binding */ pathIsSettled)
+/* harmony export */ });
+// An instance's id is its role path (standard simai.smart-component 1.3.8
+// §7.1.1; simai/ui-source#41).
+//
+//   - at the top of the page: `page/<host id or data-sf-role>`;
+//   - a part with `data-sf-role` inside another instance:
+//     `<parent path>/<role>`;
+//   - neither: `<kind>[<n>]`, n counted in document order among the
+//     instances of the same kind that have neither.
+//
+// Ids that templates write (`for`, `aria-controls`, `aria-labelledby`) are
+// `<path with every non-word run as ->--<local name>`. A counter is never an
+// id: the field ids used to come from a module-scope counter, and every
+// bundle that carries the field code (eight of them) had its own, so a class
+// sf-quantity and an <sf-quantity> on one page both took
+// `sf-quantity-1-control` and a label pointed at the other field. Ids that
+// follow creation order also swap when two instances swap, and server markup
+// (§5.4) cannot repeat them. A path is read from the page, so every bundle
+// gives the same answer.
+//
+// `kind` is the element's tag for a Smart element; class markup passes its
+// root class and is told apart as `class.<root class>`.
+const isElement = node => node && node.nodeType === 1 && typeof node.getAttribute === 'function';
+
+const isCustom = node => isElement(node) && String(node.localName || '').includes('-');
+
+function parentInstance(node) {
+  for (let current = node.parentNode || node.host || null; current; current = current.parentNode || current.host || null) {
+    if (isCustom(current)) return current;
+  }
+
+  return null;
+}
+
+function kindOf(owner, kind) {
+  const tag = String(owner?.localName || '').toLowerCase();
+  if (tag && tag.includes('-')) return tag;
+  return `class.${kind || tag || 'element'}`;
+}
+
+function documentIndex(owner, kind) {
+  const doc = owner?.ownerDocument;
+  if (!owner?.isConnected || typeof doc?.querySelectorAll !== 'function') return 0;
+  const selector = kind.startsWith('class.') ? `.${kind.slice('class.'.length)}` : kind;
+  let index = 0;
+
+  for (const one of doc.querySelectorAll(selector)) {
+    if (kind.startsWith('class.') && isCustom(one)) continue;
+    if (one.id || one.getAttribute('data-sf-role')) continue;
+    index += 1;
+    if (one === owner) return index;
+  }
+
+  return 0;
+}
+/** The role path of an instance (§7.1.1). */
+
+
+function instancePath(owner, {
+  kind = ''
+} = {}) {
+  const id = isElement(owner) ? String(owner.id || '').trim() : String(owner?.id || '').trim();
+  if (id) return `page/${id}`;
+  const role = isElement(owner) ? String(owner.getAttribute('data-sf-role') || '').trim() : '';
+
+  if (role) {
+    const parent = parentInstance(owner);
+    return parent ? `${instancePath(parent, {
+      kind: parent.localName
+    })}/${role}` : `page/${role}`;
+  }
+
+  const resolved = kindOf(owner, kind);
+  return `${resolved}[${documentIndex(owner, resolved)}]`;
+}
+/** An id a template writes for one of its parts: `<path as a word>--<local name>`. */
+
+function partId(path, local) {
+  const base = String(path).replace(/\W+/gu, '-').replace(/^-+|-+$/gu, '');
+  return local ? `${base}--${local}` : base;
+}
+/** Whether the path is final: an instance in the page, or one with an id. */
+
+function pathIsSettled(owner) {
+  return Boolean(owner?.isConnected || String(owner?.id || '').trim());
 }
 
 /***/ },

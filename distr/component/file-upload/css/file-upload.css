@@ -1,3 +1,4 @@
+@charset "UTF-8";
 /*
 * Main SCSS file for including styles for component.
 *
@@ -8,233 +9,233 @@
 */
 @layer sf.components {
   /* utility-hint: display/flex (.flex) flex-direction/column (.flex-col) flex-wrap/nowrap (.flex-nowrap) justify-content/flex-start (.justify-start) align-items/center (.items-center) */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-file-upload {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-file-upload{
     border-bottom-right-radius: var(--sf-radius--surface);
-    border-bottom-right-radius: var(--sf-file-upload--border-bottom-right-radius, var(--sf-radius--surface));
+    border-bottom-right-radius: var(--sf-file-upload--border-bottom-right-radius, var(--sf-file-upload-radius, var(--sf-radius--surface)));
   }
-  @supports not (border-end-end-radius: initial) {
-  html:not([dir="rtl"]) .sf-file-upload {
+  @supports not (border-end-end-radius: initial){
+  html:not([dir="rtl"]) .sf-file-upload{
     border-bottom-right-radius: var(--sf-radius--surface);
-    border-bottom-right-radius: var(--sf-file-upload--border-bottom-right-radius, var(--sf-radius--surface));
+    border-bottom-right-radius: var(--sf-file-upload--border-bottom-right-radius, var(--sf-file-upload-radius, var(--sf-radius--surface)));
     }
   }
-  .sf-file-upload:where(:dir(ltr)) {
+  .sf-file-upload:where(:dir(ltr)){
     border-bottom-right-radius: var(--sf-radius--surface);
-    border-bottom-right-radius: var(--sf-file-upload--border-bottom-right-radius, var(--sf-radius--surface));
+    border-bottom-right-radius: var(--sf-file-upload--border-bottom-right-radius, var(--sf-file-upload-radius, var(--sf-radius--surface)));
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-file-upload {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-file-upload{
     border-bottom-left-radius: var(--sf-radius--surface);
-    border-bottom-left-radius: var(--sf-file-upload--border-bottom-right-radius, var(--sf-radius--surface));
+    border-bottom-left-radius: var(--sf-file-upload--border-bottom-right-radius, var(--sf-file-upload-radius, var(--sf-radius--surface)));
   }
-  @supports not (border-end-end-radius: initial) {
-  [dir="rtl"] .sf-file-upload {
+  @supports not (border-end-end-radius: initial){
+  [dir="rtl"] .sf-file-upload{
     border-bottom-left-radius: var(--sf-radius--surface);
-    border-bottom-left-radius: var(--sf-file-upload--border-bottom-right-radius, var(--sf-radius--surface));
+    border-bottom-left-radius: var(--sf-file-upload--border-bottom-right-radius, var(--sf-file-upload-radius, var(--sf-radius--surface)));
     }
   }
-  .sf-file-upload:where(:dir(rtl)) {
+  .sf-file-upload:where(:dir(rtl)){
     border-bottom-left-radius: var(--sf-radius--surface);
-    border-bottom-left-radius: var(--sf-file-upload--border-bottom-right-radius, var(--sf-radius--surface));
+    border-bottom-left-radius: var(--sf-file-upload--border-bottom-right-radius, var(--sf-file-upload-radius, var(--sf-radius--surface)));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-file-upload {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-file-upload{
     border-bottom-left-radius: var(--sf-radius--surface);
-    border-bottom-left-radius: var(--sf-file-upload--border-bottom-left-radius, var(--sf-radius--surface));
+    border-bottom-left-radius: var(--sf-file-upload--border-bottom-left-radius, var(--sf-file-upload-radius, var(--sf-radius--surface)));
   }
-  @supports not (border-end-start-radius: initial) {
-  html:not([dir="rtl"]) .sf-file-upload {
+  @supports not (border-end-start-radius: initial){
+  html:not([dir="rtl"]) .sf-file-upload{
     border-bottom-left-radius: var(--sf-radius--surface);
-    border-bottom-left-radius: var(--sf-file-upload--border-bottom-left-radius, var(--sf-radius--surface));
+    border-bottom-left-radius: var(--sf-file-upload--border-bottom-left-radius, var(--sf-file-upload-radius, var(--sf-radius--surface)));
     }
   }
-  .sf-file-upload:where(:dir(ltr)) {
+  .sf-file-upload:where(:dir(ltr)){
     border-bottom-left-radius: var(--sf-radius--surface);
-    border-bottom-left-radius: var(--sf-file-upload--border-bottom-left-radius, var(--sf-radius--surface));
+    border-bottom-left-radius: var(--sf-file-upload--border-bottom-left-radius, var(--sf-file-upload-radius, var(--sf-radius--surface)));
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-file-upload {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-file-upload{
     border-bottom-right-radius: var(--sf-radius--surface);
-    border-bottom-right-radius: var(--sf-file-upload--border-bottom-left-radius, var(--sf-radius--surface));
+    border-bottom-right-radius: var(--sf-file-upload--border-bottom-left-radius, var(--sf-file-upload-radius, var(--sf-radius--surface)));
   }
-  @supports not (border-end-start-radius: initial) {
-  [dir="rtl"] .sf-file-upload {
+  @supports not (border-end-start-radius: initial){
+  [dir="rtl"] .sf-file-upload{
     border-bottom-right-radius: var(--sf-radius--surface);
-    border-bottom-right-radius: var(--sf-file-upload--border-bottom-left-radius, var(--sf-radius--surface));
+    border-bottom-right-radius: var(--sf-file-upload--border-bottom-left-radius, var(--sf-file-upload-radius, var(--sf-radius--surface)));
     }
   }
-  .sf-file-upload:where(:dir(rtl)) {
+  .sf-file-upload:where(:dir(rtl)){
     border-bottom-right-radius: var(--sf-radius--surface);
-    border-bottom-right-radius: var(--sf-file-upload--border-bottom-left-radius, var(--sf-radius--surface));
+    border-bottom-right-radius: var(--sf-file-upload--border-bottom-left-radius, var(--sf-file-upload-radius, var(--sf-radius--surface)));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-file-upload {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-file-upload{
     border-right-width: var(--sf-px);
     border-right-width: var(--sf-file-upload--border-right-width, var(--sf-px));
   }
-  @supports not (border-inline-end-width: initial) {
-  html:not([dir="rtl"]) .sf-file-upload {
+  @supports not (border-inline-end-width: initial){
+  html:not([dir="rtl"]) .sf-file-upload{
     border-right-width: var(--sf-px);
     border-right-width: var(--sf-file-upload--border-right-width, var(--sf-px));
     }
   }
-  .sf-file-upload:where(:dir(ltr)) {
+  .sf-file-upload:where(:dir(ltr)){
     border-right-width: var(--sf-px);
     border-right-width: var(--sf-file-upload--border-right-width, var(--sf-px));
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-file-upload {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-file-upload{
     border-left-width: var(--sf-px);
     border-left-width: var(--sf-file-upload--border-right-width, var(--sf-px));
   }
-  @supports not (border-inline-end-width: initial) {
-  [dir="rtl"] .sf-file-upload {
+  @supports not (border-inline-end-width: initial){
+  [dir="rtl"] .sf-file-upload{
     border-left-width: var(--sf-px);
     border-left-width: var(--sf-file-upload--border-right-width, var(--sf-px));
     }
   }
-  .sf-file-upload:where(:dir(rtl)) {
+  .sf-file-upload:where(:dir(rtl)){
     border-left-width: var(--sf-px);
     border-left-width: var(--sf-file-upload--border-right-width, var(--sf-px));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-file-upload {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-file-upload{
     border-left-width: var(--sf-px);
     border-left-width: var(--sf-file-upload--border-left-width, var(--sf-px));
   }
-  @supports not (border-inline-start-width: initial) {
-  html:not([dir="rtl"]) .sf-file-upload {
+  @supports not (border-inline-start-width: initial){
+  html:not([dir="rtl"]) .sf-file-upload{
     border-left-width: var(--sf-px);
     border-left-width: var(--sf-file-upload--border-left-width, var(--sf-px));
     }
   }
-  .sf-file-upload:where(:dir(ltr)) {
+  .sf-file-upload:where(:dir(ltr)){
     border-left-width: var(--sf-px);
     border-left-width: var(--sf-file-upload--border-left-width, var(--sf-px));
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-file-upload {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-file-upload{
     border-right-width: var(--sf-px);
     border-right-width: var(--sf-file-upload--border-left-width, var(--sf-px));
   }
-  @supports not (border-inline-start-width: initial) {
-  [dir="rtl"] .sf-file-upload {
+  @supports not (border-inline-start-width: initial){
+  [dir="rtl"] .sf-file-upload{
     border-right-width: var(--sf-px);
     border-right-width: var(--sf-file-upload--border-left-width, var(--sf-px));
     }
   }
-  .sf-file-upload:where(:dir(rtl)) {
+  .sf-file-upload:where(:dir(rtl)){
     border-right-width: var(--sf-px);
     border-right-width: var(--sf-file-upload--border-left-width, var(--sf-px));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-file-upload {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-file-upload{
     border-top-right-radius: var(--sf-radius--surface);
-    border-top-right-radius: var(--sf-file-upload--border-top-right-radius, var(--sf-radius--surface));
+    border-top-right-radius: var(--sf-file-upload--border-top-right-radius, var(--sf-file-upload-radius, var(--sf-radius--surface)));
   }
-  @supports not (border-start-end-radius: initial) {
-  html:not([dir="rtl"]) .sf-file-upload {
+  @supports not (border-start-end-radius: initial){
+  html:not([dir="rtl"]) .sf-file-upload{
     border-top-right-radius: var(--sf-radius--surface);
-    border-top-right-radius: var(--sf-file-upload--border-top-right-radius, var(--sf-radius--surface));
+    border-top-right-radius: var(--sf-file-upload--border-top-right-radius, var(--sf-file-upload-radius, var(--sf-radius--surface)));
     }
   }
-  .sf-file-upload:where(:dir(ltr)) {
+  .sf-file-upload:where(:dir(ltr)){
     border-top-right-radius: var(--sf-radius--surface);
-    border-top-right-radius: var(--sf-file-upload--border-top-right-radius, var(--sf-radius--surface));
+    border-top-right-radius: var(--sf-file-upload--border-top-right-radius, var(--sf-file-upload-radius, var(--sf-radius--surface)));
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-file-upload {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-file-upload{
     border-top-left-radius: var(--sf-radius--surface);
-    border-top-left-radius: var(--sf-file-upload--border-top-right-radius, var(--sf-radius--surface));
+    border-top-left-radius: var(--sf-file-upload--border-top-right-radius, var(--sf-file-upload-radius, var(--sf-radius--surface)));
   }
-  @supports not (border-start-end-radius: initial) {
-  [dir="rtl"] .sf-file-upload {
+  @supports not (border-start-end-radius: initial){
+  [dir="rtl"] .sf-file-upload{
     border-top-left-radius: var(--sf-radius--surface);
-    border-top-left-radius: var(--sf-file-upload--border-top-right-radius, var(--sf-radius--surface));
+    border-top-left-radius: var(--sf-file-upload--border-top-right-radius, var(--sf-file-upload-radius, var(--sf-radius--surface)));
     }
   }
-  .sf-file-upload:where(:dir(rtl)) {
+  .sf-file-upload:where(:dir(rtl)){
     border-top-left-radius: var(--sf-radius--surface);
-    border-top-left-radius: var(--sf-file-upload--border-top-right-radius, var(--sf-radius--surface));
+    border-top-left-radius: var(--sf-file-upload--border-top-right-radius, var(--sf-file-upload-radius, var(--sf-radius--surface)));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-file-upload {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-file-upload{
     border-top-left-radius: var(--sf-radius--surface);
-    border-top-left-radius: var(--sf-file-upload--border-top-left-radius, var(--sf-radius--surface));
+    border-top-left-radius: var(--sf-file-upload--border-top-left-radius, var(--sf-file-upload-radius, var(--sf-radius--surface)));
   }
-  @supports not (border-start-start-radius: initial) {
-  html:not([dir="rtl"]) .sf-file-upload {
+  @supports not (border-start-start-radius: initial){
+  html:not([dir="rtl"]) .sf-file-upload{
     border-top-left-radius: var(--sf-radius--surface);
-    border-top-left-radius: var(--sf-file-upload--border-top-left-radius, var(--sf-radius--surface));
+    border-top-left-radius: var(--sf-file-upload--border-top-left-radius, var(--sf-file-upload-radius, var(--sf-radius--surface)));
     }
   }
-  .sf-file-upload:where(:dir(ltr)) {
+  .sf-file-upload:where(:dir(ltr)){
     border-top-left-radius: var(--sf-radius--surface);
-    border-top-left-radius: var(--sf-file-upload--border-top-left-radius, var(--sf-radius--surface));
+    border-top-left-radius: var(--sf-file-upload--border-top-left-radius, var(--sf-file-upload-radius, var(--sf-radius--surface)));
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-file-upload {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-file-upload{
     border-top-right-radius: var(--sf-radius--surface);
-    border-top-right-radius: var(--sf-file-upload--border-top-left-radius, var(--sf-radius--surface));
+    border-top-right-radius: var(--sf-file-upload--border-top-left-radius, var(--sf-file-upload-radius, var(--sf-radius--surface)));
   }
-  @supports not (border-start-start-radius: initial) {
-  [dir="rtl"] .sf-file-upload {
+  @supports not (border-start-start-radius: initial){
+  [dir="rtl"] .sf-file-upload{
     border-top-right-radius: var(--sf-radius--surface);
-    border-top-right-radius: var(--sf-file-upload--border-top-left-radius, var(--sf-radius--surface));
+    border-top-right-radius: var(--sf-file-upload--border-top-left-radius, var(--sf-file-upload-radius, var(--sf-radius--surface)));
     }
   }
-  .sf-file-upload:where(:dir(rtl)) {
+  .sf-file-upload:where(:dir(rtl)){
     border-top-right-radius: var(--sf-radius--surface);
-    border-top-right-radius: var(--sf-file-upload--border-top-left-radius, var(--sf-radius--surface));
+    border-top-right-radius: var(--sf-file-upload--border-top-left-radius, var(--sf-file-upload-radius, var(--sf-radius--surface)));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-file-upload {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-file-upload{
     padding-left: var(--sf-file-upload--padding-inline-start);
   }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .sf-file-upload {
+  @supports not (padding-inline-start: initial){
+  html:not([dir="rtl"]) .sf-file-upload{
     padding-left: var(--sf-file-upload--padding-inline-start);
     }
   }
-  .sf-file-upload:where(:dir(ltr)) {
+  .sf-file-upload:where(:dir(ltr)){
     padding-left: var(--sf-file-upload--padding-inline-start);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-file-upload {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-file-upload{
     padding-right: var(--sf-file-upload--padding-inline-start);
   }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .sf-file-upload {
+  @supports not (padding-inline-start: initial){
+  [dir="rtl"] .sf-file-upload{
     padding-right: var(--sf-file-upload--padding-inline-start);
     }
   }
-  .sf-file-upload:where(:dir(rtl)) {
+  .sf-file-upload:where(:dir(rtl)){
     padding-right: var(--sf-file-upload--padding-inline-start);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-file-upload {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-file-upload{
     padding-right: var(--sf-file-upload--padding-inline-end);
   }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .sf-file-upload {
+  @supports not (padding-inline-end: initial){
+  html:not([dir="rtl"]) .sf-file-upload{
     padding-right: var(--sf-file-upload--padding-inline-end);
     }
   }
-  .sf-file-upload:where(:dir(ltr)) {
+  .sf-file-upload:where(:dir(ltr)){
     padding-right: var(--sf-file-upload--padding-inline-end);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-file-upload {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-file-upload{
     padding-left: var(--sf-file-upload--padding-inline-end);
   }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .sf-file-upload {
+  @supports not (padding-inline-end: initial){
+  [dir="rtl"] .sf-file-upload{
     padding-left: var(--sf-file-upload--padding-inline-end);
     }
   }
-  .sf-file-upload:where(:dir(rtl)) {
+  .sf-file-upload:where(:dir(rtl)){
     padding-left: var(--sf-file-upload--padding-inline-end);
   }
   .sf-file-upload {
     border-bottom-width: var(--sf-px);
     border-bottom-width: var(--sf-file-upload--border-bottom-width, var(--sf-px));
     border-end-end-radius: var(--sf-radius--surface);
-    border-end-end-radius: var(--sf-file-upload--border-bottom-right-radius, var(--sf-radius--surface));
+    border-end-end-radius: var(--sf-file-upload--border-bottom-right-radius, var(--sf-file-upload-radius, var(--sf-radius--surface)));
     border-end-start-radius: var(--sf-radius--surface);
-    border-end-start-radius: var(--sf-file-upload--border-bottom-left-radius, var(--sf-radius--surface));
+    border-end-start-radius: var(--sf-file-upload--border-bottom-left-radius, var(--sf-file-upload-radius, var(--sf-radius--surface)));
     border-inline-end-width: var(--sf-px);
     border-inline-end-width: var(--sf-file-upload--border-right-width, var(--sf-px));
     border-inline-start-width: var(--sf-px);
     border-inline-start-width: var(--sf-file-upload--border-left-width, var(--sf-px));
     border-start-end-radius: var(--sf-radius--surface);
-    border-start-end-radius: var(--sf-file-upload--border-top-right-radius, var(--sf-radius--surface));
+    border-start-end-radius: var(--sf-file-upload--border-top-right-radius, var(--sf-file-upload-radius, var(--sf-radius--surface)));
     border-start-start-radius: var(--sf-radius--surface);
-    border-start-start-radius: var(--sf-file-upload--border-top-left-radius, var(--sf-radius--surface));
+    border-start-start-radius: var(--sf-file-upload--border-top-left-radius, var(--sf-file-upload-radius, var(--sf-radius--surface)));
     border-top-width: var(--sf-px);
     border-top-width: var(--sf-file-upload--border-top-width, var(--sf-px));
     gap: var(--sf-file-upload--gap);
@@ -248,8 +249,8 @@
     border-color: transparent;
     border-color: var(--sf-file-upload--border-color, transparent);
     box-shadow: var(--sf-file-upload--box-shadow);
-    --sf-file-upload--background-color: var(--sf-surface-0);
-    --sf-file-upload--border-color: var(--sf-outline);
+    --sf-file-upload--background-color: var(--sf-file-upload-background-color, var(--sf-surface-0));
+    --sf-file-upload--border-color: var(--sf-file-upload-border-color, var(--sf-outline));
   }
   /* utility-hint: flex/1 (.flex-1) display/flex (.flex) flex-direction/column (.flex-col) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-file-upload-bottom--gap) justify-content/flex-start (.justify-start) align-items/center (.items-center) */
   .sf-file-upload .sf-file-upload-bottom {
@@ -266,7 +267,7 @@
     gap: var(--sf-file-upload-block--gap);
   }
   .sf-file-upload .sf-file-upload-link {
-    --sf-file-upload-link--color: var(--sf-primary);
+    --sf-file-upload-link--color: var(--sf-file-upload-link-color, var(--sf-primary));
     --sf-file-upload-link--font-family: var(--sf-text--family);
     --sf-file-upload-link--font-weight: var(--sf-font-weight-medium);
     --sf-file-upload-link--margin-bottom: var(--sf-text--margin);
@@ -278,7 +279,7 @@
     margin-bottom: var(--sf-file-upload-link--margin-bottom);
   }
   .sf-file-upload .sf-file-upload-block-text {
-    --sf-file-upload-block-text--color: var(--sf-on-surface-variant);
+    --sf-file-upload-block-text--color: var(--sf-file-upload-text-color, var(--sf-on-surface-variant));
     --sf-file-upload-block-text--font-family: var(--sf-text--family);
     --sf-file-upload-block-text--font-weight: var(--sf-font-weight-regular);
     color: var(--sf-file-upload-block-text--color);
@@ -377,12 +378,16 @@
     --sf-file-upload--border-color: var(--sf-outline-primary);
   }
   /* A file held over the area: the script set .dragover and nothing drew it, so a
-     person dropping had no sign the area would take the file. */
-  .sf-file-upload.dragover:not([disabled]):not(.disabled) {
-    --sf-file-upload--background-color: var(--sf-primary-transparent-select);
-    --sf-file-upload--border-color: var(--sf-outline-primary);
+     person dropping had no sign the area would take the file. sf-file-upload
+     says it on its host as data-dragged-over (standard 1.3.8 §5.3); the class
+     component keeps its .dragover. */
+  .sf-file-upload.dragover:not([disabled]):not(.disabled),
+  sf-file-upload[data-dragged-over] > .sf-file-upload:not([disabled]):not(.disabled) {
+    --sf-file-upload--background-color: var(--sf-file-upload-dragged-over-background-color, var(--sf-primary-transparent-select));
+    --sf-file-upload--border-color: var(--sf-file-upload-dragged-over-border-color, var(--sf-outline-primary));
   }
-  .sf-file-upload.dragover:not([disabled]):not(.disabled) .sf-featured-icon .sf-icon {
+  .sf-file-upload.dragover:not([disabled]):not(.disabled) .sf-featured-icon .sf-icon,
+  sf-file-upload[data-dragged-over] > .sf-file-upload:not([disabled]):not(.disabled) .sf-featured-icon .sf-icon {
     color: var(--sf-primary);
   }
   .sf-file-upload[disabled] {
@@ -511,48 +516,48 @@
     height: var(--sf-icon--height);
     width: var(--sf-icon--width);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-upload-progress .sf-icon-button {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-upload-progress .sf-icon-button{
     padding-right: var(--sf-icon-button--padding-inline-end);
   }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .sf-upload-progress .sf-icon-button {
+  @supports not (padding-inline-end: initial){
+  html:not([dir="rtl"]) .sf-upload-progress .sf-icon-button{
     padding-right: var(--sf-icon-button--padding-inline-end);
     }
   }
-  .sf-upload-progress .sf-icon-button:where(:dir(ltr)) {
+  .sf-upload-progress .sf-icon-button:where(:dir(ltr)){
     padding-right: var(--sf-icon-button--padding-inline-end);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-upload-progress .sf-icon-button {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-upload-progress .sf-icon-button{
     padding-left: var(--sf-icon-button--padding-inline-end);
   }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .sf-upload-progress .sf-icon-button {
+  @supports not (padding-inline-end: initial){
+  [dir="rtl"] .sf-upload-progress .sf-icon-button{
     padding-left: var(--sf-icon-button--padding-inline-end);
     }
   }
-  .sf-upload-progress .sf-icon-button:where(:dir(rtl)) {
+  .sf-upload-progress .sf-icon-button:where(:dir(rtl)){
     padding-left: var(--sf-icon-button--padding-inline-end);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-upload-progress .sf-icon-button {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-upload-progress .sf-icon-button{
     padding-left: var(--sf-icon-button--padding-inline-start);
   }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .sf-upload-progress .sf-icon-button {
+  @supports not (padding-inline-start: initial){
+  html:not([dir="rtl"]) .sf-upload-progress .sf-icon-button{
     padding-left: var(--sf-icon-button--padding-inline-start);
     }
   }
-  .sf-upload-progress .sf-icon-button:where(:dir(ltr)) {
+  .sf-upload-progress .sf-icon-button:where(:dir(ltr)){
     padding-left: var(--sf-icon-button--padding-inline-start);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-upload-progress .sf-icon-button {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-upload-progress .sf-icon-button{
     padding-right: var(--sf-icon-button--padding-inline-start);
   }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .sf-upload-progress .sf-icon-button {
+  @supports not (padding-inline-start: initial){
+  [dir="rtl"] .sf-upload-progress .sf-icon-button{
     padding-right: var(--sf-icon-button--padding-inline-start);
     }
   }
-  .sf-upload-progress .sf-icon-button:where(:dir(rtl)) {
+  .sf-upload-progress .sf-icon-button:where(:dir(rtl)){
     padding-right: var(--sf-icon-button--padding-inline-start);
   }
   .sf-upload-progress .sf-icon-button {
@@ -595,48 +600,48 @@
     --sf-upload-progress-name--font-size: var(--sf-text-size-1);
     --sf-upload-progress-name--line-height: var(--sf-text-height-1);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon{
     padding-right: var(--sf-ui-1\/3--space-y-tightness-default);
   }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon {
-    padding-right: var(--sf-ui-1\/3--space-y-tightness-default);
-    }
-  }
-  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon:where(:dir(ltr)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon:where(:dir(ltr)), .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon:where(:dir(ltr)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon:where(:dir(ltr)) {
-    padding-right: var(--sf-ui-1\/3--space-y-tightness-default);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon {
-    padding-left: var(--sf-ui-1\/3--space-y-tightness-default);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon {
-    padding-left: var(--sf-ui-1\/3--space-y-tightness-default);
-    }
-  }
-  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon:where(:dir(rtl)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon:where(:dir(rtl)), .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon:where(:dir(rtl)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon:where(:dir(rtl)) {
-    padding-left: var(--sf-ui-1\/3--space-y-tightness-default);
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon {
-    padding-left: var(--sf-ui-1\/3--space-y-tightness-default);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon {
-    padding-left: var(--sf-ui-1\/3--space-y-tightness-default);
-    }
-  }
-  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon:where(:dir(ltr)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon:where(:dir(ltr)), .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon:where(:dir(ltr)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon:where(:dir(ltr)) {
-    padding-left: var(--sf-ui-1\/3--space-y-tightness-default);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon {
-    padding-right: var(--sf-ui-1\/3--space-y-tightness-default);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon {
+  @supports not (padding-inline-end: initial){
+  html:not([dir="rtl"]) .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon{
     padding-right: var(--sf-ui-1\/3--space-y-tightness-default);
     }
   }
-  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon:where(:dir(rtl)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon:where(:dir(rtl)), .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon:where(:dir(rtl)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon:where(:dir(rtl)) {
+  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon:where(:dir(ltr)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon:where(:dir(ltr)), .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon:where(:dir(ltr)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon:where(:dir(ltr)){
+    padding-right: var(--sf-ui-1\/3--space-y-tightness-default);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon{
+    padding-left: var(--sf-ui-1\/3--space-y-tightness-default);
+  }
+  @supports not (padding-inline-end: initial){
+  [dir="rtl"] .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon{
+    padding-left: var(--sf-ui-1\/3--space-y-tightness-default);
+    }
+  }
+  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon:where(:dir(rtl)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon:where(:dir(rtl)), .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon:where(:dir(rtl)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon:where(:dir(rtl)){
+    padding-left: var(--sf-ui-1\/3--space-y-tightness-default);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon{
+    padding-left: var(--sf-ui-1\/3--space-y-tightness-default);
+  }
+  @supports not (padding-inline-start: initial){
+  html:not([dir="rtl"]) .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon{
+    padding-left: var(--sf-ui-1\/3--space-y-tightness-default);
+    }
+  }
+  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon:where(:dir(ltr)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon:where(:dir(ltr)), .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon:where(:dir(ltr)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon:where(:dir(ltr)){
+    padding-left: var(--sf-ui-1\/3--space-y-tightness-default);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon{
+    padding-right: var(--sf-ui-1\/3--space-y-tightness-default);
+  }
+  @supports not (padding-inline-start: initial){
+  [dir="rtl"] .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon{
+    padding-right: var(--sf-ui-1\/3--space-y-tightness-default);
+    }
+  }
+  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon:where(:dir(rtl)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon:where(:dir(rtl)), .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon:where(:dir(rtl)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon:where(:dir(rtl)){
     padding-right: var(--sf-ui-1\/3--space-y-tightness-default);
   }
   .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1 .sf-button .sf-icon, .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1 .sf-button .sf-icon, .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-2 .sf-button .sf-icon, .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-2 .sf-button .sf-icon {
@@ -673,48 +678,48 @@
     --sf-upload-progress-name--font-size: var(--sf-text-size-1\/2);
     --sf-upload-progress-name--line-height: var(--sf-text-height-1\/2);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/2 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/2 .sf-button .sf-icon {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/2 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/2 .sf-button .sf-icon{
     padding-right: var(--sf-ui-1\/3--space-y-tightness-default);
   }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/2 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/2 .sf-button .sf-icon {
-    padding-right: var(--sf-ui-1\/3--space-y-tightness-default);
-    }
-  }
-  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/2 .sf-button .sf-icon:where(:dir(ltr)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/2 .sf-button .sf-icon:where(:dir(ltr)) {
-    padding-right: var(--sf-ui-1\/3--space-y-tightness-default);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/2 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/2 .sf-button .sf-icon {
-    padding-left: var(--sf-ui-1\/3--space-y-tightness-default);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/2 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/2 .sf-button .sf-icon {
-    padding-left: var(--sf-ui-1\/3--space-y-tightness-default);
-    }
-  }
-  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/2 .sf-button .sf-icon:where(:dir(rtl)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/2 .sf-button .sf-icon:where(:dir(rtl)) {
-    padding-left: var(--sf-ui-1\/3--space-y-tightness-default);
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/2 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/2 .sf-button .sf-icon {
-    padding-left: var(--sf-ui-1\/3--space-y-tightness-default);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/2 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/2 .sf-button .sf-icon {
-    padding-left: var(--sf-ui-1\/3--space-y-tightness-default);
-    }
-  }
-  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/2 .sf-button .sf-icon:where(:dir(ltr)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/2 .sf-button .sf-icon:where(:dir(ltr)) {
-    padding-left: var(--sf-ui-1\/3--space-y-tightness-default);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/2 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/2 .sf-button .sf-icon {
-    padding-right: var(--sf-ui-1\/3--space-y-tightness-default);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/2 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/2 .sf-button .sf-icon {
+  @supports not (padding-inline-end: initial){
+  html:not([dir="rtl"]) .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/2 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/2 .sf-button .sf-icon{
     padding-right: var(--sf-ui-1\/3--space-y-tightness-default);
     }
   }
-  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/2 .sf-button .sf-icon:where(:dir(rtl)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/2 .sf-button .sf-icon:where(:dir(rtl)) {
+  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/2 .sf-button .sf-icon:where(:dir(ltr)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/2 .sf-button .sf-icon:where(:dir(ltr)){
+    padding-right: var(--sf-ui-1\/3--space-y-tightness-default);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/2 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/2 .sf-button .sf-icon{
+    padding-left: var(--sf-ui-1\/3--space-y-tightness-default);
+  }
+  @supports not (padding-inline-end: initial){
+  [dir="rtl"] .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/2 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/2 .sf-button .sf-icon{
+    padding-left: var(--sf-ui-1\/3--space-y-tightness-default);
+    }
+  }
+  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/2 .sf-button .sf-icon:where(:dir(rtl)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/2 .sf-button .sf-icon:where(:dir(rtl)){
+    padding-left: var(--sf-ui-1\/3--space-y-tightness-default);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/2 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/2 .sf-button .sf-icon{
+    padding-left: var(--sf-ui-1\/3--space-y-tightness-default);
+  }
+  @supports not (padding-inline-start: initial){
+  html:not([dir="rtl"]) .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/2 .sf-button .sf-icon,html:not([dir="rtl"])  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/2 .sf-button .sf-icon{
+    padding-left: var(--sf-ui-1\/3--space-y-tightness-default);
+    }
+  }
+  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/2 .sf-button .sf-icon:where(:dir(ltr)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/2 .sf-button .sf-icon:where(:dir(ltr)){
+    padding-left: var(--sf-ui-1\/3--space-y-tightness-default);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/2 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/2 .sf-button .sf-icon{
+    padding-right: var(--sf-ui-1\/3--space-y-tightness-default);
+  }
+  @supports not (padding-inline-start: initial){
+  [dir="rtl"] .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/2 .sf-button .sf-icon,[dir="rtl"]  .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/2 .sf-button .sf-icon{
+    padding-right: var(--sf-ui-1\/3--space-y-tightness-default);
+    }
+  }
+  .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/2 .sf-button .sf-icon:where(:dir(rtl)), .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/2 .sf-button .sf-icon:where(:dir(rtl)){
     padding-right: var(--sf-ui-1\/3--space-y-tightness-default);
   }
   .sf-upload-progress.sf-upload-progress--process.sf-upload-progress--size-1\/2 .sf-button .sf-icon, .sf-upload-progress.sf-upload-progress--error.sf-upload-progress--size-1\/2 .sf-button .sf-icon {

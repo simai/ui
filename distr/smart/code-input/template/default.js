@@ -29,7 +29,7 @@ export function renderCodeInputTemplate(context) {
     required,
     disabled,
     readonly,
-    name,
+    controlName,
     value,
     defaultCode,
     mode,
@@ -42,8 +42,8 @@ export function renderCodeInputTemplate(context) {
     messageContent,
     messageIsError,
   } = context;
-  const labelId = `${id}-label`;
-  const positionId = `${id}-position`;
+  const labelId = `${id}--label`;
+  const positionId = `${id}--position`;
   const describedBy = [positionId, messageContent ? field.messageId : ''].filter(Boolean).join(' ');
   const cells = Array.from({length}, (_, index) => index);
 
@@ -82,7 +82,7 @@ export function renderCodeInputTemplate(context) {
           spellcheck="false"
           dir="ltr"
           pattern=${pattern}
-          name=${name || nothing}
+          name=${controlName || nothing}
           .defaultValue=${defaultCode}
           .value=${live(value)}
           ?disabled=${disabled}

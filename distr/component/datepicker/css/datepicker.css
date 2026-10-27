@@ -206,7 +206,7 @@
     --sf-datepicker-day--background-color: var(--sf-transparent);
   }
   .sf-datepicker-day .sf-datepicker-day-date {
-    --sf-datepicker-day-date--color: var(--sf-on-surface);
+    --sf-datepicker-day-date--color: var(--sf-datepicker-day-color, var(--sf-on-surface));
     --sf-datepicker-day-date--font-family: var(--sf-text--family);
     --sf-datepicker-day-date--font-size: var(--sf-text--size);
     --sf-datepicker-day-date--font-weight: var(--sf-font-weight-regular);
@@ -279,13 +279,13 @@
     z-index: var(--sf-z-index-1);
   }
   .sf-datepicker-day:not(:disabled):not(.disabled):active .sf-datepicker-day-date, .sf-datepicker-day.active .sf-datepicker-day-date {
-    --sf-datepicker-day-date--color: var(--sf-on-primary);
+    --sf-datepicker-day-date--color: var(--sf-datepicker-selected-color, var(--sf-on-primary));
   }
   .sf-datepicker-day:not(:disabled):not(.disabled):active .sf-datepicker-day-info, .sf-datepicker-day.active .sf-datepicker-day-info {
     --sf-datepicker-day-info--color: var(--sf-on-primary);
   }
   .sf-datepicker-day:not(:disabled):not(.disabled):active, .sf-datepicker-day:not(:disabled):not(.disabled).active {
-    --sf-datepicker-day--background-color: var(--sf-primary);
+    --sf-datepicker-day--background-color: var(--sf-datepicker-selected-background-color, var(--sf-primary));
   }
   .sf-datepicker-day:disabled .sf-datepicker-day-date {
     --sf-datepicker-day-date--color: var(--sf-on-disable);
@@ -575,7 +575,7 @@
 }
 @layer sf.overrides {
   .sf-datepicker-day.sf-datepicker-day-start, .sf-datepicker-day.sf-datepicker-day-end {
-    --sf-datepicker-day--background-color: var(--sf-primary);
+    --sf-datepicker-day--background-color: var(--sf-datepicker-selected-background-color, var(--sf-primary));
   }
   .sf-datepicker-day.sf-datepicker-day-start:not(.sf-datepicker-day.sf-datepicker-day-end) {
     --sf-datepicker-day--border-end-end-radius: 0;
@@ -621,7 +621,7 @@
     --sf-datepicker-day--border-start-end-radius: 0;
     --sf-datepicker-day--border-start-start-radius: 0;
     --sf-datepicker-day--border-end-start-radius: 0;
-    --sf-datepicker-day--background-color: var(--sf-primary-container-active);
+    --sf-datepicker-day--background-color: var(--sf-datepicker-range-background-color, var(--sf-primary-container-active));
   }
   .sf-datepicker-day.sf-datepicker-day-selected .sf-datepicker-day-date {
     --sf-datepicker-day-date--color: var(--sf-on-primary-container);
@@ -843,7 +843,7 @@
     /* The whole calendar floats on step 3, not only its top band: on the plain
        surface its body was the page's colour in the dark theme. */
     background-color: var(--sf-elevation-3--surface);
-    background-color: var(--sf-datepicker--background-color, var(--sf-elevation-3--surface));
+    background-color: var(--sf-datepicker--background-color, var(--sf-datepicker-background-color, var(--sf-elevation-3--surface)));
     --sf-on-surface-variant: var(--sf-on-elevation-3--variant);
     border-end-end-radius: var(--sf-radius--surface);
     border-end-end-radius: var(--sf-datepicker--border-bottom-right-radius, var(--sf-radius--surface));
@@ -1028,7 +1028,7 @@
   }
   .sf-datepicker .sf-datepicker-weekday {
     color: var(--sf-on-surface-variant);
-    color: var(--sf-datepicker-weekday--color, var(--sf-on-surface-variant));
+    color: var(--sf-datepicker-weekday--color, var(--sf-datepicker-weekday-color, var(--sf-on-surface-variant)));
     font-family: var(--sf-text--family);
     font-size: var(--sf-text-size-1\/2);
     font-weight: var(--sf-font-weight-medium);
@@ -1043,7 +1043,7 @@
   }
   .sf-datepicker .sf-datepicker-context {
     /* Opaque, to cover the days under it, in the panel's own colour. */
-    --sf-datepicker-context--background-color: var(--sf-datepicker--background-color, var(--sf-elevation-3--surface));
+    --sf-datepicker-context--background-color: var(--sf-datepicker--background-color, var(--sf-datepicker-background-color, var(--sf-elevation-3--surface)));
     background: var(--sf-datepicker-context--background-color);
     --sf-on-surface-variant: var(--sf-on-elevation-3--variant);
     z-index: var(--sf-z-index-2);

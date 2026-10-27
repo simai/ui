@@ -406,7 +406,7 @@
   }
   .sf-thumb .sf-thumb-handle {
     background-color: var(--sf-primary);
-    background-color: var(--sf-thumb-handle--background-color, var(--sf-primary));
+    background-color: var(--sf-thumb-handle--background-color, var(--sf-range-slider-handle-color, var(--sf-primary)));
     border-end-end-radius: var(--sf-radius-circle);
     border-end-end-radius: var(--sf-thumb-handle--border-end-end-radius, var(--sf-radius-circle));
     border-end-start-radius: var(--sf-radius-circle);
@@ -426,7 +426,7 @@
   }
   .sf-thumb .sf-thumb-inner {
     background-color: var(--sf-surface-0);
-    background-color: var(--sf-thumb-inner--background-color, var(--sf-surface-0));
+    background-color: var(--sf-thumb-inner--background-color, var(--sf-range-slider-handle-inner-color, var(--sf-surface-0)));
     border-radius: var(--sf-radius-circle);
     border-radius: var(--sf-thumb-inner--border-radius, var(--sf-radius-circle));
     height: 50%;
@@ -439,7 +439,7 @@
   }
   .sf-thumb .sf-thumb-text {
     color: var(--sf-on-surface);
-    color: var(--sf-thumb-text--color, var(--sf-on-surface));
+    color: var(--sf-thumb-text--color, var(--sf-range-slider-value-color, var(--sf-on-surface)));
     font-family: var(--sf-text--family);
     font-family: var(--sf-thumb-text--font-family, var(--sf-text--family));
     font-size: var(--sf-text-small--size);
@@ -638,7 +638,7 @@
   }
   .sf-range-slider .sf-range-slider-progress-line {
     background-color: var(--sf-primary);
-    background-color: var(--sf-range-slider-progress-line--background-color, var(--sf-primary));
+    background-color: var(--sf-range-slider-progress-line--background-color, var(--sf-range-slider-fill-color, var(--sf-primary)));
     border-end-end-radius: var(--sf-radius--ui);
     border-end-end-radius: var(--sf-range-slider-progress-line--border-end-end-radius, var(--sf-radius--ui));
     border-end-start-radius: var(--sf-radius--ui);
@@ -764,7 +764,7 @@
   }
   .sf-range-slider .sf-range-slider-track {
     background-color: var(--sf-surface-container);
-    background-color: var(--sf-range-slider-track--background-color, var(--sf-surface-container));
+    background-color: var(--sf-range-slider-track--background-color, var(--sf-range-slider-track-color, var(--sf-surface-container)));
     border-end-end-radius: var(--sf-radius--ui);
     border-end-end-radius: var(--sf-range-slider-track--border-end-end-radius, var(--sf-radius--ui));
     border-end-start-radius: var(--sf-radius--ui);

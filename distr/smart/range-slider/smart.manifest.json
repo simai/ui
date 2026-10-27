@@ -116,6 +116,10 @@
       "root-class": {
         "type": "string",
         "default": ""
+      },
+      "prefix-text": {
+        "type": "string",
+        "default": ""
       }
     },
     "additionalProperties": false
@@ -581,7 +585,7 @@
     "source_artifacts": [
       {
         "path": "src/smart/range-slider/index.js",
-        "sha256": "5463eef03e9f9ff7afd631716f9ae32644f546c5acfa6ac7d0353daf4edf2a3b"
+        "sha256": "93d1a367556eb01f2ca411c0ca149503f47f8953ec481c1349f1cb44d54f7d20"
       }
     ],
     "generated_runtime": [

@@ -14,11 +14,11 @@ export function renderTextareaTemplate(context) {
     inputmode,
     minlength,
     maxlength,
-    spellcheck,
+    spellCheck,
     wrap,
     hint,
     value,
-    name,
+    controlName,
     rows,
     disabled,
     readonly,
@@ -92,11 +92,11 @@ export function renderTextareaTemplate(context) {
         inputmode=${inputmode || nothing}
         minlength=${minlength ?? nothing}
         maxlength=${maxlength ?? nothing}
-        .spellcheck=${spellcheck}
+        .spellcheck=${spellCheck}
         wrap=${wrap}
         .value=${value}
         .defaultValue=${value}
-        name=${name || ''}
+        name=${controlName || nothing}
         rows=${autoGrow ? minRows : rows}
         ?disabled=${disabled}
         ?readonly=${readonly}

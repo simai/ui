@@ -112,6 +112,7 @@
   .sf-verification-form.error .sf-verification-form-wrap .sf-verification,
   .sf-verification.error {
     border-color: var(--sf-error);
+    border-color: var(--sf-verification-invalid-border-color, var(--sf-error));
     color: var(--sf-error);
   }
   .sf-verification[\:has\(input\:disabled\)] .sf-verification-cell,

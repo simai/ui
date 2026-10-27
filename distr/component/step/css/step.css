@@ -1,3 +1,4 @@
+@charset "UTF-8";
 /*
  * Main SCSS file for including styles for component.
  *
@@ -6,227 +7,227 @@
  */
 @layer sf.components {
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-space-1\/4) justify-content/center (.justify-center) align-items/center (.items-center) */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-step {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-step{
     border-bottom-right-radius: var(--sf-radius-circle);
-    border-bottom-right-radius: var(--sf-step--border-bottom-right-radius, var(--sf-radius-circle));
+    border-bottom-right-radius: var(--sf-step--border-bottom-right-radius, var(--sf-steps-step-radius, var(--sf-radius-circle)));
   }
-  @supports not (border-end-end-radius: initial) {
-  html:not([dir="rtl"]) .sf-step {
+  @supports not (border-end-end-radius: initial){
+  html:not([dir="rtl"]) .sf-step{
     border-bottom-right-radius: var(--sf-radius-circle);
-    border-bottom-right-radius: var(--sf-step--border-bottom-right-radius, var(--sf-radius-circle));
+    border-bottom-right-radius: var(--sf-step--border-bottom-right-radius, var(--sf-steps-step-radius, var(--sf-radius-circle)));
     }
   }
-  .sf-step:where(:dir(ltr)) {
+  .sf-step:where(:dir(ltr)){
     border-bottom-right-radius: var(--sf-radius-circle);
-    border-bottom-right-radius: var(--sf-step--border-bottom-right-radius, var(--sf-radius-circle));
+    border-bottom-right-radius: var(--sf-step--border-bottom-right-radius, var(--sf-steps-step-radius, var(--sf-radius-circle)));
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-step {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-step{
     border-bottom-left-radius: var(--sf-radius-circle);
-    border-bottom-left-radius: var(--sf-step--border-bottom-right-radius, var(--sf-radius-circle));
+    border-bottom-left-radius: var(--sf-step--border-bottom-right-radius, var(--sf-steps-step-radius, var(--sf-radius-circle)));
   }
-  @supports not (border-end-end-radius: initial) {
-  [dir="rtl"] .sf-step {
+  @supports not (border-end-end-radius: initial){
+  [dir="rtl"] .sf-step{
     border-bottom-left-radius: var(--sf-radius-circle);
-    border-bottom-left-radius: var(--sf-step--border-bottom-right-radius, var(--sf-radius-circle));
+    border-bottom-left-radius: var(--sf-step--border-bottom-right-radius, var(--sf-steps-step-radius, var(--sf-radius-circle)));
     }
   }
-  .sf-step:where(:dir(rtl)) {
+  .sf-step:where(:dir(rtl)){
     border-bottom-left-radius: var(--sf-radius-circle);
-    border-bottom-left-radius: var(--sf-step--border-bottom-right-radius, var(--sf-radius-circle));
+    border-bottom-left-radius: var(--sf-step--border-bottom-right-radius, var(--sf-steps-step-radius, var(--sf-radius-circle)));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-step {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-step{
     border-bottom-left-radius: var(--sf-radius-circle);
-    border-bottom-left-radius: var(--sf-step--border-bottom-left-radius, var(--sf-radius-circle));
+    border-bottom-left-radius: var(--sf-step--border-bottom-left-radius, var(--sf-steps-step-radius, var(--sf-radius-circle)));
   }
-  @supports not (border-end-start-radius: initial) {
-  html:not([dir="rtl"]) .sf-step {
+  @supports not (border-end-start-radius: initial){
+  html:not([dir="rtl"]) .sf-step{
     border-bottom-left-radius: var(--sf-radius-circle);
-    border-bottom-left-radius: var(--sf-step--border-bottom-left-radius, var(--sf-radius-circle));
+    border-bottom-left-radius: var(--sf-step--border-bottom-left-radius, var(--sf-steps-step-radius, var(--sf-radius-circle)));
     }
   }
-  .sf-step:where(:dir(ltr)) {
+  .sf-step:where(:dir(ltr)){
     border-bottom-left-radius: var(--sf-radius-circle);
-    border-bottom-left-radius: var(--sf-step--border-bottom-left-radius, var(--sf-radius-circle));
+    border-bottom-left-radius: var(--sf-step--border-bottom-left-radius, var(--sf-steps-step-radius, var(--sf-radius-circle)));
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-step {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-step{
     border-bottom-right-radius: var(--sf-radius-circle);
-    border-bottom-right-radius: var(--sf-step--border-bottom-left-radius, var(--sf-radius-circle));
+    border-bottom-right-radius: var(--sf-step--border-bottom-left-radius, var(--sf-steps-step-radius, var(--sf-radius-circle)));
   }
-  @supports not (border-end-start-radius: initial) {
-  [dir="rtl"] .sf-step {
+  @supports not (border-end-start-radius: initial){
+  [dir="rtl"] .sf-step{
     border-bottom-right-radius: var(--sf-radius-circle);
-    border-bottom-right-radius: var(--sf-step--border-bottom-left-radius, var(--sf-radius-circle));
+    border-bottom-right-radius: var(--sf-step--border-bottom-left-radius, var(--sf-steps-step-radius, var(--sf-radius-circle)));
     }
   }
-  .sf-step:where(:dir(rtl)) {
+  .sf-step:where(:dir(rtl)){
     border-bottom-right-radius: var(--sf-radius-circle);
-    border-bottom-right-radius: var(--sf-step--border-bottom-left-radius, var(--sf-radius-circle));
+    border-bottom-right-radius: var(--sf-step--border-bottom-left-radius, var(--sf-steps-step-radius, var(--sf-radius-circle)));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-step {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-step{
     border-right-width: var(--sf-px);
     border-right-width: var(--sf-step--border-right-width, var(--sf-px));
   }
-  @supports not (border-inline-end-width: initial) {
-  html:not([dir="rtl"]) .sf-step {
+  @supports not (border-inline-end-width: initial){
+  html:not([dir="rtl"]) .sf-step{
     border-right-width: var(--sf-px);
     border-right-width: var(--sf-step--border-right-width, var(--sf-px));
     }
   }
-  .sf-step:where(:dir(ltr)) {
+  .sf-step:where(:dir(ltr)){
     border-right-width: var(--sf-px);
     border-right-width: var(--sf-step--border-right-width, var(--sf-px));
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-step {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-step{
     border-left-width: var(--sf-px);
     border-left-width: var(--sf-step--border-right-width, var(--sf-px));
   }
-  @supports not (border-inline-end-width: initial) {
-  [dir="rtl"] .sf-step {
+  @supports not (border-inline-end-width: initial){
+  [dir="rtl"] .sf-step{
     border-left-width: var(--sf-px);
     border-left-width: var(--sf-step--border-right-width, var(--sf-px));
     }
   }
-  .sf-step:where(:dir(rtl)) {
+  .sf-step:where(:dir(rtl)){
     border-left-width: var(--sf-px);
     border-left-width: var(--sf-step--border-right-width, var(--sf-px));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-step {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-step{
     border-left-width: var(--sf-px);
     border-left-width: var(--sf-step--border-left-width, var(--sf-px));
   }
-  @supports not (border-inline-start-width: initial) {
-  html:not([dir="rtl"]) .sf-step {
+  @supports not (border-inline-start-width: initial){
+  html:not([dir="rtl"]) .sf-step{
     border-left-width: var(--sf-px);
     border-left-width: var(--sf-step--border-left-width, var(--sf-px));
     }
   }
-  .sf-step:where(:dir(ltr)) {
+  .sf-step:where(:dir(ltr)){
     border-left-width: var(--sf-px);
     border-left-width: var(--sf-step--border-left-width, var(--sf-px));
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-step {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-step{
     border-right-width: var(--sf-px);
     border-right-width: var(--sf-step--border-left-width, var(--sf-px));
   }
-  @supports not (border-inline-start-width: initial) {
-  [dir="rtl"] .sf-step {
+  @supports not (border-inline-start-width: initial){
+  [dir="rtl"] .sf-step{
     border-right-width: var(--sf-px);
     border-right-width: var(--sf-step--border-left-width, var(--sf-px));
     }
   }
-  .sf-step:where(:dir(rtl)) {
+  .sf-step:where(:dir(rtl)){
     border-right-width: var(--sf-px);
     border-right-width: var(--sf-step--border-left-width, var(--sf-px));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-step {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-step{
     border-top-right-radius: var(--sf-radius-circle);
-    border-top-right-radius: var(--sf-step--border-top-right-radius, var(--sf-radius-circle));
+    border-top-right-radius: var(--sf-step--border-top-right-radius, var(--sf-steps-step-radius, var(--sf-radius-circle)));
   }
-  @supports not (border-start-end-radius: initial) {
-  html:not([dir="rtl"]) .sf-step {
+  @supports not (border-start-end-radius: initial){
+  html:not([dir="rtl"]) .sf-step{
     border-top-right-radius: var(--sf-radius-circle);
-    border-top-right-radius: var(--sf-step--border-top-right-radius, var(--sf-radius-circle));
+    border-top-right-radius: var(--sf-step--border-top-right-radius, var(--sf-steps-step-radius, var(--sf-radius-circle)));
     }
   }
-  .sf-step:where(:dir(ltr)) {
+  .sf-step:where(:dir(ltr)){
     border-top-right-radius: var(--sf-radius-circle);
-    border-top-right-radius: var(--sf-step--border-top-right-radius, var(--sf-radius-circle));
+    border-top-right-radius: var(--sf-step--border-top-right-radius, var(--sf-steps-step-radius, var(--sf-radius-circle)));
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-step {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-step{
     border-top-left-radius: var(--sf-radius-circle);
-    border-top-left-radius: var(--sf-step--border-top-right-radius, var(--sf-radius-circle));
+    border-top-left-radius: var(--sf-step--border-top-right-radius, var(--sf-steps-step-radius, var(--sf-radius-circle)));
   }
-  @supports not (border-start-end-radius: initial) {
-  [dir="rtl"] .sf-step {
+  @supports not (border-start-end-radius: initial){
+  [dir="rtl"] .sf-step{
     border-top-left-radius: var(--sf-radius-circle);
-    border-top-left-radius: var(--sf-step--border-top-right-radius, var(--sf-radius-circle));
+    border-top-left-radius: var(--sf-step--border-top-right-radius, var(--sf-steps-step-radius, var(--sf-radius-circle)));
     }
   }
-  .sf-step:where(:dir(rtl)) {
+  .sf-step:where(:dir(rtl)){
     border-top-left-radius: var(--sf-radius-circle);
-    border-top-left-radius: var(--sf-step--border-top-right-radius, var(--sf-radius-circle));
+    border-top-left-radius: var(--sf-step--border-top-right-radius, var(--sf-steps-step-radius, var(--sf-radius-circle)));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-step {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-step{
     border-top-left-radius: var(--sf-radius-circle);
-    border-top-left-radius: var(--sf-step--border-top-left-radius, var(--sf-radius-circle));
+    border-top-left-radius: var(--sf-step--border-top-left-radius, var(--sf-steps-step-radius, var(--sf-radius-circle)));
   }
-  @supports not (border-start-start-radius: initial) {
-  html:not([dir="rtl"]) .sf-step {
+  @supports not (border-start-start-radius: initial){
+  html:not([dir="rtl"]) .sf-step{
     border-top-left-radius: var(--sf-radius-circle);
-    border-top-left-radius: var(--sf-step--border-top-left-radius, var(--sf-radius-circle));
+    border-top-left-radius: var(--sf-step--border-top-left-radius, var(--sf-steps-step-radius, var(--sf-radius-circle)));
     }
   }
-  .sf-step:where(:dir(ltr)) {
+  .sf-step:where(:dir(ltr)){
     border-top-left-radius: var(--sf-radius-circle);
-    border-top-left-radius: var(--sf-step--border-top-left-radius, var(--sf-radius-circle));
+    border-top-left-radius: var(--sf-step--border-top-left-radius, var(--sf-steps-step-radius, var(--sf-radius-circle)));
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-step {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-step{
     border-top-right-radius: var(--sf-radius-circle);
-    border-top-right-radius: var(--sf-step--border-top-left-radius, var(--sf-radius-circle));
+    border-top-right-radius: var(--sf-step--border-top-left-radius, var(--sf-steps-step-radius, var(--sf-radius-circle)));
   }
-  @supports not (border-start-start-radius: initial) {
-  [dir="rtl"] .sf-step {
+  @supports not (border-start-start-radius: initial){
+  [dir="rtl"] .sf-step{
     border-top-right-radius: var(--sf-radius-circle);
-    border-top-right-radius: var(--sf-step--border-top-left-radius, var(--sf-radius-circle));
+    border-top-right-radius: var(--sf-step--border-top-left-radius, var(--sf-steps-step-radius, var(--sf-radius-circle)));
     }
   }
-  .sf-step:where(:dir(rtl)) {
+  .sf-step:where(:dir(rtl)){
     border-top-right-radius: var(--sf-radius-circle);
-    border-top-right-radius: var(--sf-step--border-top-left-radius, var(--sf-radius-circle));
+    border-top-right-radius: var(--sf-step--border-top-left-radius, var(--sf-steps-step-radius, var(--sf-radius-circle)));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-step {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-step{
     padding-right: var(--sf-space-1\/4);
     padding-right: var(--sf-step--padding-right, var(--sf-space-1\/4));
   }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .sf-step {
+  @supports not (padding-inline-end: initial){
+  html:not([dir="rtl"]) .sf-step{
     padding-right: var(--sf-space-1\/4);
     padding-right: var(--sf-step--padding-right, var(--sf-space-1\/4));
     }
   }
-  .sf-step:where(:dir(ltr)) {
+  .sf-step:where(:dir(ltr)){
     padding-right: var(--sf-space-1\/4);
     padding-right: var(--sf-step--padding-right, var(--sf-space-1\/4));
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-step {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-step{
     padding-left: var(--sf-space-1\/4);
     padding-left: var(--sf-step--padding-right, var(--sf-space-1\/4));
   }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .sf-step {
+  @supports not (padding-inline-end: initial){
+  [dir="rtl"] .sf-step{
     padding-left: var(--sf-space-1\/4);
     padding-left: var(--sf-step--padding-right, var(--sf-space-1\/4));
     }
   }
-  .sf-step:where(:dir(rtl)) {
+  .sf-step:where(:dir(rtl)){
     padding-left: var(--sf-space-1\/4);
     padding-left: var(--sf-step--padding-right, var(--sf-space-1\/4));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-step {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-step{
     padding-left: var(--sf-space-1\/4);
     padding-left: var(--sf-step--padding-left, var(--sf-space-1\/4));
   }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .sf-step {
+  @supports not (padding-inline-start: initial){
+  html:not([dir="rtl"]) .sf-step{
     padding-left: var(--sf-space-1\/4);
     padding-left: var(--sf-step--padding-left, var(--sf-space-1\/4));
     }
   }
-  .sf-step:where(:dir(ltr)) {
+  .sf-step:where(:dir(ltr)){
     padding-left: var(--sf-space-1\/4);
     padding-left: var(--sf-step--padding-left, var(--sf-space-1\/4));
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-step {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-step{
     padding-right: var(--sf-space-1\/4);
     padding-right: var(--sf-step--padding-left, var(--sf-space-1\/4));
   }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .sf-step {
+  @supports not (padding-inline-start: initial){
+  [dir="rtl"] .sf-step{
     padding-right: var(--sf-space-1\/4);
     padding-right: var(--sf-step--padding-left, var(--sf-space-1\/4));
     }
   }
-  .sf-step:where(:dir(rtl)) {
+  .sf-step:where(:dir(rtl)){
     padding-right: var(--sf-space-1\/4);
     padding-right: var(--sf-step--padding-left, var(--sf-space-1\/4));
   }
@@ -237,17 +238,17 @@
     border-bottom-width: var(--sf-px);
     border-bottom-width: var(--sf-step--border-bottom-width, var(--sf-px));
     border-end-end-radius: var(--sf-radius-circle);
-    border-end-end-radius: var(--sf-step--border-bottom-right-radius, var(--sf-radius-circle));
+    border-end-end-radius: var(--sf-step--border-bottom-right-radius, var(--sf-steps-step-radius, var(--sf-radius-circle)));
     border-end-start-radius: var(--sf-radius-circle);
-    border-end-start-radius: var(--sf-step--border-bottom-left-radius, var(--sf-radius-circle));
+    border-end-start-radius: var(--sf-step--border-bottom-left-radius, var(--sf-steps-step-radius, var(--sf-radius-circle)));
     border-inline-end-width: var(--sf-px);
     border-inline-end-width: var(--sf-step--border-right-width, var(--sf-px));
     border-inline-start-width: var(--sf-px);
     border-inline-start-width: var(--sf-step--border-left-width, var(--sf-px));
     border-start-end-radius: var(--sf-radius-circle);
-    border-start-end-radius: var(--sf-step--border-top-right-radius, var(--sf-radius-circle));
+    border-start-end-radius: var(--sf-step--border-top-right-radius, var(--sf-steps-step-radius, var(--sf-radius-circle)));
     border-start-start-radius: var(--sf-radius-circle);
-    border-start-start-radius: var(--sf-step--border-top-left-radius, var(--sf-radius-circle));
+    border-start-start-radius: var(--sf-step--border-top-left-radius, var(--sf-steps-step-radius, var(--sf-radius-circle)));
     border-style: solid;
     border-style: var(--sf-step--border-style, solid);
     border-top-width: var(--sf-px);
@@ -281,7 +282,9 @@
     transition-duration: var(--sf-duration-fast);
     transition-property: background-color, border-color, box-shadow, color;
     transition-timing-function: var(--sf-animation);
-    --sf-step--border-color: var(--sf-outline-variant);
+    /* The public variables of sf-steps (component.json css-variables, standard
+       1.3.8 §6) over the role tokens. */
+    --sf-step--border-color: var(--sf-steps-step-border-color, var(--sf-outline-variant));
     --sf-step--background-color: transparent;
     --sf-step--color: var(--sf-on-surface-variant);
   }
@@ -314,10 +317,10 @@
     --sf-step-container--line-height: var(--sf-text-height-1);
   }
   .sf-step.sf-step--stage-default .sf-step-container, .sf-step.sf-step--stage-completed .sf-step-container, .sf-step.sf-step--stage-error .sf-step-container {
-    --sf-step-container--color: var(--sf-on-surface-variant);
+    --sf-step-container--color: var(--sf-steps-step-color, var(--sf-on-surface-variant));
   }
   .sf-step.sf-step--stage-completed .sf-icon {
-    --sf-icon--color: var(--sf-success);
+    --sf-icon--color: var(--sf-steps-completed-icon-color, var(--sf-success));
   }
   .sf-step.selected.sf-step--stage-default .sf-step-container, .sf-step.selected.sf-step--stage-completed .sf-step-container, .sf-step.selected.sf-step--stage-error .sf-step-container {
     --sf-step-container--color: var(--sf-on-surface);
@@ -362,7 +365,7 @@
     --sf-on-surface-variant: var(--sf-on-surface-container--variant);
   }
   .sf-step.selected {
-    --sf-step--border-color: var(--sf-outline-primary);
+    --sf-step--border-color: var(--sf-steps-current-border-color, var(--sf-outline-primary));
     --sf-step--color: var(--sf-on-surface);
   }
   .sf-step.disabled,
@@ -460,6 +463,7 @@
     --sf-steps-container--background-color: transparent;
     background-color: var(--sf-steps-container--background-color);
     gap: var(--sf-steps-container--gap);
+    gap: var(--sf-steps-gap, var(--sf-steps-container--gap));
   }
   .sf-steps .sf-steps-container > .sf-icon {
     flex-shrink: 0;
@@ -467,7 +471,7 @@
        --sf-on-surface-muted is 3.18:1 light and 2.92:1 dark, so it sat on the
        line in one theme and under it in the other. --sf-on-surface-variant is
        the Framework's own paler-than-text role, 6.47 and 5.95. */
-    --sf-icon--color: var(--sf-on-surface-variant);
+    --sf-icon--color: var(--sf-steps-separator-color, var(--sf-on-surface-variant));
     color: var(--sf-icon--color);
     font-size: var(--sf-text-size-3);
     font-size: var(--sf-icon--font-size, var(--sf-text-size-3));

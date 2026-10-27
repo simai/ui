@@ -20,7 +20,7 @@
     color: var(--sf-toggle--color);
     font-size: var(--sf-toggle--font-size);
     line-height: var(--sf-toggle--line-height);
-    --sf-toggle--color: var(--sf-on-surface-variant);
+    --sf-toggle--color: var(--sf-toggle-color, var(--sf-on-surface-variant));
   }
   .sf-toggle .sf-icon {
     color: var(--sf-on-surface-variant);
@@ -165,7 +165,7 @@
     padding-right: var(--sf-toggle-container--padding-inline-start);
   }
   .sf-toggle .sf-toggle-container {
-    --sf-toggle-container--background-color: var(--sf-surface-container);
+    --sf-toggle-container--background-color: var(--sf-toggle-background-color, var(--sf-surface-container));
     --sf-toggle-container--border-end-end-radius: var(--sf-radius-circle);
     --sf-toggle-container--border-end-start-radius: var(--sf-radius-circle);
     --sf-toggle-container--border-start-end-radius: var(--sf-radius-circle);
@@ -177,7 +177,7 @@
     border-start-start-radius: var(--sf-toggle-container--border-start-start-radius);
     box-shadow: var(--sf-toggle-container--box-shadow);
     outline: var(--sf-px) solid var(--sf-outline);
-    outline: var(--sf-px) solid var(--sf-toggle-container--outline-color, var(--sf-outline));
+    outline: var(--sf-px) solid var(--sf-toggle-container--outline-color, var(--sf-toggle-border-color, var(--sf-outline)));
     outline-offset: calc(-1 * var(--sf-px));
     height: var(--sf-toggle-container--height);
     padding-bottom: var(--sf-toggle-container--padding-bottom);
@@ -469,7 +469,7 @@
   .sf-toggle.sf-toggle--short .sf-toggle-inner-wrap {
     --sf-toggle-inner-wrap--background-color: var(--sf-surface-container);
     outline: var(--sf-px) solid var(--sf-outline);
-    outline: var(--sf-px) solid var(--sf-toggle-container--outline-color, var(--sf-outline));
+    outline: var(--sf-px) solid var(--sf-toggle-container--outline-color, var(--sf-toggle-border-color, var(--sf-outline)));
     outline-offset: calc(-1 * var(--sf-px));
     --sf-toggle-inner-wrap--border-end-end-radius: var(--sf-radius-circle);
     --sf-toggle-inner-wrap--border-end-start-radius: var(--sf-radius-circle);
@@ -518,21 +518,21 @@
   .sf-toggle input:focus-visible {
     outline: none;
   }
-  .sf-toggle.active[\:not-has\(input\:disabled\)].sf-toggle--short .sf-toggle-container, .sf-toggle.active[\:not-has\(input\:disabled\)].sf-toggle--simple .sf-toggle-container, .sf-toggle.active[\:not-has\(input\:disabled\)].sf-toggle--icon .sf-toggle-container {
-    --sf-toggle-container--background-color: var(--sf-primary);
-    --sf-toggle-container--outline-color: var(--sf-primary);
+  .sf-toggle[\:has\(input\:checked\)][\:not-has\(input\:disabled\)].sf-toggle--short .sf-toggle-container, .sf-toggle[\:has\(input\:checked\)][\:not-has\(input\:disabled\)].sf-toggle--simple .sf-toggle-container, .sf-toggle[\:has\(input\:checked\)][\:not-has\(input\:disabled\)].sf-toggle--icon .sf-toggle-container {
+    --sf-toggle-container--background-color: var(--sf-toggle-checked-background-color, var(--sf-primary));
+    --sf-toggle-container--outline-color: var(--sf-toggle-checked-background-color, var(--sf-primary));
   }
-  .sf-toggle.active:not(:has(input:disabled)).sf-toggle--short .sf-toggle-container, .sf-toggle.active:not(:has(input:disabled)).sf-toggle--simple .sf-toggle-container, .sf-toggle.active:not(:has(input:disabled)).sf-toggle--icon .sf-toggle-container {
-    --sf-toggle-container--background-color: var(--sf-primary);
-    --sf-toggle-container--outline-color: var(--sf-primary);
+  .sf-toggle:has(input:checked):not(:has(input:disabled)).sf-toggle--short .sf-toggle-container, .sf-toggle:has(input:checked):not(:has(input:disabled)).sf-toggle--simple .sf-toggle-container, .sf-toggle:has(input:checked):not(:has(input:disabled)).sf-toggle--icon .sf-toggle-container {
+    --sf-toggle-container--background-color: var(--sf-toggle-checked-background-color, var(--sf-primary));
+    --sf-toggle-container--outline-color: var(--sf-toggle-checked-background-color, var(--sf-primary));
   }
   .sf-toggle:not(:disabled):not(.disabled):active.sf-toggle--short .sf-toggle-inner-wrap {
     --sf-toggle-inner-wrap--background-color: var(--sf-primary);
   }
-  .sf-toggle.active[\:not-has\(input\:disabled\)].sf-toggle--short .sf-toggle-inner-wrap {
+  .sf-toggle[\:has\(input\:checked\)][\:not-has\(input\:disabled\)].sf-toggle--short .sf-toggle-inner-wrap {
     --sf-toggle-inner-wrap--background-color: var(--sf-primary);
   }
-  .sf-toggle.active:not(:has(input:disabled)).sf-toggle--short .sf-toggle-inner-wrap {
+  .sf-toggle:has(input:checked):not(:has(input:disabled)).sf-toggle--short .sf-toggle-inner-wrap {
     --sf-toggle-inner-wrap--background-color: var(--sf-primary);
   }
   .sf-toggle.sf-toggle--short[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:hover\)] .sf-toggle-inner-wrap {
@@ -548,28 +548,28 @@
   .sf-toggle:not(:disabled):not(.disabled):active.sf-toggle--simple .sf-toggle-inner {
     --sf-toggle-inner--background-color: var(--sf-on-primary);
   }
-  .sf-toggle.active[\:not-has\(input\:disabled\)].sf-toggle--simple .sf-toggle-inner {
+  .sf-toggle[\:has\(input\:checked\)][\:not-has\(input\:disabled\)].sf-toggle--simple .sf-toggle-inner {
     --sf-toggle-inner--background-color: var(--sf-on-primary);
   }
-  .sf-toggle.active:not(:has(input:disabled)).sf-toggle--simple .sf-toggle-inner {
+  .sf-toggle:has(input:checked):not(:has(input:disabled)).sf-toggle--simple .sf-toggle-inner {
     --sf-toggle-inner--background-color: var(--sf-on-primary);
   }
   .sf-toggle:not(:disabled):not(.disabled):active.sf-toggle--icon .sf-icon {
     --sf-icon--color: var(--sf-primary);
   }
-  .sf-toggle.active[\:not-has\(input\:disabled\)].sf-toggle--icon .sf-icon {
+  .sf-toggle[\:has\(input\:checked\)][\:not-has\(input\:disabled\)].sf-toggle--icon .sf-icon {
     --sf-icon--color: var(--sf-primary);
   }
-  .sf-toggle.active:not(:has(input:disabled)).sf-toggle--icon .sf-icon {
+  .sf-toggle:has(input:checked):not(:has(input:disabled)).sf-toggle--icon .sf-icon {
     --sf-icon--color: var(--sf-primary);
   }
   .sf-toggle:not(:disabled):not(.disabled):active.sf-toggle--icon .sf-toggle-inner-wrap {
     --sf-toggle-inner-wrap--background-color: var(--sf-on-primary);
   }
-  .sf-toggle.active[\:not-has\(input\:disabled\)].sf-toggle--icon .sf-toggle-inner-wrap {
+  .sf-toggle[\:has\(input\:checked\)][\:not-has\(input\:disabled\)].sf-toggle--icon .sf-toggle-inner-wrap {
     --sf-toggle-inner-wrap--background-color: var(--sf-on-primary);
   }
-  .sf-toggle.active:not(:has(input:disabled)).sf-toggle--icon .sf-toggle-inner-wrap {
+  .sf-toggle:has(input:checked):not(:has(input:disabled)).sf-toggle--icon .sf-toggle-inner-wrap {
     --sf-toggle-inner-wrap--background-color: var(--sf-on-primary);
   }
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) justify-content/flex-start (.justify-start) align-items/flex-start (.items-start) align-items/center (.items-center) */
@@ -597,12 +597,12 @@
   }
   .sf-toggle--size-1 {
     --sf-toggle--font-size: var(--sf-text-size-1);
-    --sf-toggle--gap: var(--sf-space-1\/3);
+    --sf-toggle--gap: var(--sf-toggle-gap, var(--sf-space-1\/3));
     --sf-toggle--line-height: var(--sf-text-height-1);
   }
   .sf-toggle--size-2 {
     --sf-toggle--font-size: var(--sf-text-size-2);
-    --sf-toggle--gap: var(--sf-space-1\/2);
+    --sf-toggle--gap: var(--sf-toggle-gap, var(--sf-space-1\/2));
     --sf-toggle--line-height: var(--sf-text-height-2);
   }
   .sf-toggle[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:hover\)] .sf-toggle-container {

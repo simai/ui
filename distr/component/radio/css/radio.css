@@ -301,10 +301,10 @@
      and its label marked the text, which no control here does (owner,
      2026-10-13). */
   .sf-radio-button[\:has\(input\:checked\)][\:not-has\(input\:disabled\)] .sf-radio-button-box {
-    --sf-radio-button-box--border-color: var(--sf-primary);
+    --sf-radio-button-box--border-color: var(--sf-radio-button-checked-color, var(--sf-primary));
   }
   .sf-radio-button:has(input:checked):not(:has(input:disabled)) .sf-radio-button-box {
-    --sf-radio-button-box--border-color: var(--sf-primary);
+    --sf-radio-button-box--border-color: var(--sf-radio-button-checked-color, var(--sf-primary));
   }
   .sf-radio-button[\:has\(input\:checked\)] .sf-radio-button-mark {
     --sf-radio-button-mark--border-radius: var(--sf-radius-circle);
@@ -313,10 +313,10 @@
     --sf-radio-button-mark--border-radius: var(--sf-radius-circle);
   }
   .sf-radio-button[\:has\(input\:checked\)][\:not-has\(input\:disabled\)] .sf-radio-button-mark {
-    --sf-radio-button-mark--background-color: var(--sf-primary);
+    --sf-radio-button-mark--background-color: var(--sf-radio-button-checked-color, var(--sf-primary));
   }
   .sf-radio-button:has(input:checked):not(:has(input:disabled)) .sf-radio-button-mark {
-    --sf-radio-button-mark--background-color: var(--sf-primary);
+    --sf-radio-button-mark--background-color: var(--sf-radio-button-checked-color, var(--sf-primary));
   }
   .sf-radio-button[\:has\(input\:not\(\:disabled\)\:not\(.disabled\).focus-visible\)] .sf-radio-button-box {
     --sf-radio-button-box--background-color: var(--sf-transparent-for-focus);
@@ -373,7 +373,7 @@
     --sf-radio-button-description--color: var(--sf-on-disable);
   }
   .sf-radio-button.error .sf-radio-button-box {
-    --sf-radio-button-box--border-color: var(--sf-error);
+    --sf-radio-button-box--border-color: var(--sf-radio-button-invalid-border-color, var(--sf-error));
   }
 }
 @layer sf.states {

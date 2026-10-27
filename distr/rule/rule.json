@@ -952,7 +952,7 @@
         "name": "datepicker"
       },
       {
-        "name": "cl-inputs"
+        "name": "cl-input"
       },
       {
         "name": "cl-buttons"
@@ -1026,7 +1026,7 @@
         "name": "cl-list-item"
       },
       {
-        "name": "cl-inputs"
+        "name": "cl-input"
       },
       {
         "name": "cl-icon-buttons"
@@ -1217,7 +1217,7 @@
     "type": "smart"
   },
   {
-    "name": "cl-inputs",
+    "name": "cl-input",
     "css": true,
     "js": true,
     "mode": "smart",
@@ -1349,7 +1349,7 @@
         "name": "cl-icon-buttons"
       },
       {
-        "name": "cl-inputs"
+        "name": "cl-input"
       },
       {
         "name": "cl-list-item"
@@ -1700,7 +1700,7 @@
         "name": "cl-color"
       },
       {
-        "name": "cl-inputs"
+        "name": "cl-input"
       },
       {
         "name": "cl-buttons"
