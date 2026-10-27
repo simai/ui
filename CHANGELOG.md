@@ -8,6 +8,8 @@
 
 ### Исправлено
 
+- Smart base (`core.runtime` 1.0.5): a property set on an element before its class was defined now reaches the class's setter on the first connect. Before, the value stayed on the element and hid the setter, so a lazily registered child bound by a parent's template (`sf-profile-picker` inside `sf-property-view`'s configure bar) drew empty. A page that defined such components ahead of time as a workaround (`SF.createAsync` before the host renders, UI Chat q-a49e2045c1 item 1) can drop it.
+
 - `sf-tree` 2.0.1: the manifest's `selection` enum is `none | one | many`, as the element takes since 2.0.0; `single` and `multiple` are declared former values until 2026-12-01, so the shared allowed-values check accepts `one`.
 - `sf-pagination` 1.2.1: words a product registered under the old camelCase keys (`totalLabel`, …) through `SF.language.register` are said again until 2026-12-01, each old key noted once in `SF.deprecations`; register the kebab-case keys (`total-label`). Core: `pageWord` `former`, `elementFromManifest` `formerWords`.
 - The former bundles `smart/inputs`, `buttons`, `icon-buttons`, `icons`, `badges` and `tags` load their element's new bundle until 2026-12-01 even when linked as a module script; link the new path or use the Loader.
