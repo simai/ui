@@ -646,7 +646,7 @@
       },
       {
         "lazy": true,
-        "name": "cl-badges"
+        "name": "cl-badge"
       }
     ],
     "tags": [
@@ -666,10 +666,10 @@
         "name": "buttons"
       },
       {
-        "name": "cl-icon-buttons"
+        "name": "cl-icon-button"
       },
       {
-        "name": "cl-icons"
+        "name": "cl-icon"
       }
     ],
     "tags": [
@@ -713,7 +713,7 @@
     "type": "smart"
   },
   {
-    "name": "cl-badges",
+    "name": "cl-badge",
     "js": true,
     "mode": "smart",
     "relation": [
@@ -741,7 +741,7 @@
         "name": "icons"
       },
       {
-        "name": "cl-icons"
+        "name": "cl-icon"
       }
     ],
     "tags": [
@@ -750,31 +750,7 @@
     "type": "smart"
   },
   {
-    "name": "cl-button-group",
-    "js": true,
-    "mode": "smart",
-    "relation": [
-      {
-        "name": "button-group"
-      },
-      {
-        "name": "cl-buttons"
-      },
-      {
-        "name": "cl-icons"
-      },
-      {
-        "lazy": true,
-        "name": "spinner"
-      }
-    ],
-    "tags": [
-      "sf-button-group"
-    ],
-    "type": "smart"
-  },
-  {
-    "name": "cl-buttons",
+    "name": "cl-button",
     "js": true,
     "mode": "smart",
     "relation": [
@@ -788,7 +764,7 @@
         "name": "text-align/default"
       },
       {
-        "name": "cl-icons"
+        "name": "cl-icon"
       },
       {
         "lazy": true,
@@ -797,6 +773,30 @@
     ],
     "tags": [
       "sf-button"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-button-group",
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "button-group"
+      },
+      {
+        "name": "cl-button"
+      },
+      {
+        "name": "cl-icon"
+      },
+      {
+        "lazy": true,
+        "name": "spinner"
+      }
+    ],
+    "tags": [
+      "sf-button-group"
     ],
     "type": "smart"
   },
@@ -810,7 +810,7 @@
         "name": "checkbox"
       },
       {
-        "name": "cl-icons"
+        "name": "cl-icon"
       }
     ],
     "tags": [
@@ -860,7 +860,7 @@
         "name": "icons"
       },
       {
-        "name": "cl-icon-buttons"
+        "name": "cl-icon-button"
       }
     ],
     "tags": [
@@ -892,7 +892,7 @@
         "name": "context-menu"
       },
       {
-        "name": "cl-buttons"
+        "name": "cl-button"
       },
       {
         "lazy": true,
@@ -900,7 +900,7 @@
       },
       {
         "lazy": true,
-        "name": "cl-icon-buttons"
+        "name": "cl-icon-button"
       }
     ],
     "tags": [
@@ -915,13 +915,13 @@
     "mode": "smart",
     "relation": [
       {
-        "name": "cl-buttons"
+        "name": "cl-button"
       },
       {
-        "name": "cl-icon-buttons"
+        "name": "cl-icon-button"
       },
       {
-        "name": "cl-icons"
+        "name": "cl-icon"
       }
     ],
     "tags": [
@@ -955,13 +955,13 @@
         "name": "cl-input"
       },
       {
-        "name": "cl-buttons"
+        "name": "cl-button"
       },
       {
-        "name": "cl-icon-buttons"
+        "name": "cl-icon-button"
       },
       {
-        "name": "cl-icons"
+        "name": "cl-icon"
       }
     ],
     "tags": [
@@ -981,7 +981,7 @@
         "name": "icons"
       },
       {
-        "name": "cl-icons"
+        "name": "cl-icon"
       }
     ],
     "tags": [
@@ -1029,7 +1029,7 @@
         "name": "cl-input"
       },
       {
-        "name": "cl-icon-buttons"
+        "name": "cl-icon-button"
       }
     ],
     "tags": [
@@ -1047,10 +1047,10 @@
         "name": "featured-icon"
       },
       {
-        "name": "cl-buttons"
+        "name": "cl-button"
       },
       {
-        "name": "cl-icons"
+        "name": "cl-icon"
       }
     ],
     "tags": [
@@ -1127,10 +1127,10 @@
     "mode": "smart",
     "relation": [
       {
-        "name": "cl-icon-buttons"
+        "name": "cl-icon-button"
       },
       {
-        "name": "cl-icons"
+        "name": "cl-icon"
       }
     ],
     "tags": [
@@ -1139,7 +1139,25 @@
     "type": "smart"
   },
   {
-    "name": "cl-icon-buttons",
+    "name": "cl-icon",
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "icons"
+      },
+      {
+        "lazy": true,
+        "name": "badges"
+      }
+    ],
+    "tags": [
+      "sf-icon"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-icon-button",
     "css": true,
     "js": true,
     "mode": "smart",
@@ -1148,7 +1166,7 @@
         "name": "icon-buttons"
       },
       {
-        "name": "cl-icons"
+        "name": "cl-icon"
       },
       {
         "name": "cl-close"
@@ -1170,34 +1188,16 @@
     "type": "smart"
   },
   {
-    "name": "cl-icons",
-    "js": true,
-    "mode": "smart",
-    "relation": [
-      {
-        "name": "icons"
-      },
-      {
-        "lazy": true,
-        "name": "badges"
-      }
-    ],
-    "tags": [
-      "sf-icon"
-    ],
-    "type": "smart"
-  },
-  {
     "name": "cl-image-field",
     "css": true,
     "js": true,
     "mode": "smart",
     "relation": [
       {
-        "name": "cl-buttons"
+        "name": "cl-button"
       },
       {
-        "name": "cl-icons"
+        "name": "cl-icon"
       }
     ],
     "tags": [
@@ -1226,7 +1226,7 @@
         "name": "inputs"
       },
       {
-        "name": "cl-icons"
+        "name": "cl-icon"
       },
       {
         "name": "icon-buttons"
@@ -1314,13 +1314,13 @@
     "mode": "smart",
     "relation": [
       {
-        "name": "cl-badges"
+        "name": "cl-badge"
       },
       {
-        "name": "cl-icon-buttons"
+        "name": "cl-icon-button"
       },
       {
-        "name": "cl-icons"
+        "name": "cl-icon"
       }
     ],
     "tags": [
@@ -1337,7 +1337,7 @@
         "name": "pagination"
       },
       {
-        "name": "cl-buttons"
+        "name": "cl-button"
       },
       {
         "name": "cl-checkbox"
@@ -1346,7 +1346,7 @@
         "name": "cl-dropdown"
       },
       {
-        "name": "cl-icon-buttons"
+        "name": "cl-icon-button"
       },
       {
         "name": "cl-input"
@@ -1381,10 +1381,10 @@
     "mode": "smart",
     "relation": [
       {
-        "name": "cl-buttons"
+        "name": "cl-button"
       },
       {
-        "name": "cl-icons"
+        "name": "cl-icon"
       }
     ],
     "tags": [
@@ -1484,7 +1484,7 @@
         "name": "icons"
       },
       {
-        "name": "cl-icons"
+        "name": "cl-icon"
       }
     ],
     "tags": [
@@ -1526,7 +1526,7 @@
         "name": "slider"
       },
       {
-        "name": "cl-icon-buttons"
+        "name": "cl-icon-button"
       }
     ],
     "tags": [
@@ -1619,10 +1619,10 @@
         "name": "tabs"
       },
       {
-        "name": "cl-buttons"
+        "name": "cl-button"
       },
       {
-        "name": "cl-icon-buttons"
+        "name": "cl-icon-button"
       },
       {
         "lazy": true,
@@ -1643,7 +1643,7 @@
     "type": "smart"
   },
   {
-    "name": "cl-tags",
+    "name": "cl-tag",
     "css": true,
     "js": true,
     "mode": "smart",
@@ -1661,7 +1661,7 @@
         "name": "dot"
       },
       {
-        "name": "cl-icon-buttons"
+        "name": "cl-icon-button"
       }
     ],
     "tags": [
@@ -1703,13 +1703,13 @@
         "name": "cl-input"
       },
       {
-        "name": "cl-buttons"
+        "name": "cl-button"
       },
       {
-        "name": "cl-icon-buttons"
+        "name": "cl-icon-button"
       },
       {
-        "name": "cl-icons"
+        "name": "cl-icon"
       }
     ],
     "tags": [
@@ -1729,10 +1729,10 @@
         "name": "buttons"
       },
       {
-        "name": "cl-icon-buttons"
+        "name": "cl-icon-button"
       },
       {
-        "name": "cl-icons"
+        "name": "cl-icon"
       },
       {
         "name": "close"
@@ -1804,7 +1804,7 @@
         "name": "icon-buttons"
       },
       {
-        "name": "cl-icons"
+        "name": "cl-icon"
       }
     ],
     "tags": [

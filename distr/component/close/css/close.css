@@ -2,57 +2,75 @@
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) justify-content/center (.justify-center) align-items/center (.items-center) */
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-close {
     padding-left: var(--sf-close--padding-inline-start);
+    padding-left: var(--sf-close-padding-inline, var(--sf-close--padding-inline-start));
   }
   @supports not (padding-inline-start: initial) {
   html:not([dir="rtl"]) .sf-close {
     padding-left: var(--sf-close--padding-inline-start);
+    padding-left: var(--sf-close-padding-inline, var(--sf-close--padding-inline-start));
     }
   }
   .sf-close:where(:dir(ltr)) {
     padding-left: var(--sf-close--padding-inline-start);
+    padding-left: var(--sf-close-padding-inline, var(--sf-close--padding-inline-start));
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-close {
     padding-right: var(--sf-close--padding-inline-start);
+    padding-right: var(--sf-close-padding-inline, var(--sf-close--padding-inline-start));
   }
   @supports not (padding-inline-start: initial) {
   [dir="rtl"] .sf-close {
     padding-right: var(--sf-close--padding-inline-start);
+    padding-right: var(--sf-close-padding-inline, var(--sf-close--padding-inline-start));
     }
   }
   .sf-close:where(:dir(rtl)) {
     padding-right: var(--sf-close--padding-inline-start);
+    padding-right: var(--sf-close-padding-inline, var(--sf-close--padding-inline-start));
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-close {
     padding-right: var(--sf-close--padding-inline-end);
+    padding-right: var(--sf-close-padding-inline, var(--sf-close--padding-inline-end));
   }
   @supports not (padding-inline-end: initial) {
   html:not([dir="rtl"]) .sf-close {
     padding-right: var(--sf-close--padding-inline-end);
+    padding-right: var(--sf-close-padding-inline, var(--sf-close--padding-inline-end));
     }
   }
   .sf-close:where(:dir(ltr)) {
     padding-right: var(--sf-close--padding-inline-end);
+    padding-right: var(--sf-close-padding-inline, var(--sf-close--padding-inline-end));
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-close {
     padding-left: var(--sf-close--padding-inline-end);
+    padding-left: var(--sf-close-padding-inline, var(--sf-close--padding-inline-end));
   }
   @supports not (padding-inline-end: initial) {
   [dir="rtl"] .sf-close {
     padding-left: var(--sf-close--padding-inline-end);
+    padding-left: var(--sf-close-padding-inline, var(--sf-close--padding-inline-end));
     }
   }
   .sf-close:where(:dir(rtl)) {
     padding-left: var(--sf-close--padding-inline-end);
+    padding-left: var(--sf-close-padding-inline, var(--sf-close--padding-inline-end));
   }
   .sf-close {
     background-color: transparent;
-    background-color: var(--sf-close--background-color, transparent);
+    background-color: var(--sf-close--background-color, var(--sf-close-background-color, transparent));
     -webkit-padding-start: var(--sf-close--padding-inline-start);
             padding-inline-start: var(--sf-close--padding-inline-start);
+    -webkit-padding-start: var(--sf-close-padding-inline, var(--sf-close--padding-inline-start));
+            padding-inline-start: var(--sf-close-padding-inline, var(--sf-close--padding-inline-start));
     padding-top: var(--sf-close--padding-top);
+    padding-top: var(--sf-close-padding-block, var(--sf-close--padding-top));
     -webkit-padding-end: var(--sf-close--padding-inline-end);
             padding-inline-end: var(--sf-close--padding-inline-end);
+    -webkit-padding-end: var(--sf-close-padding-inline, var(--sf-close--padding-inline-end));
+            padding-inline-end: var(--sf-close-padding-inline, var(--sf-close--padding-inline-end));
     padding-bottom: var(--sf-close--padding-bottom);
+    padding-bottom: var(--sf-close-padding-block, var(--sf-close--padding-bottom));
   }
   .sf-close .sf-close-icon {
     --sf-close-icon---webkit-mask-repeat: no-repeat;
@@ -61,7 +79,7 @@
        boundary, 4.47:1, and a theme retuning its borders would have moved it.
        The paler of the two roles for what stands on a surface is 6.47:1 light
        and 5.95:1 dark (owner, 2026-10-08). */
-    --sf-close-icon--background-color: var(--sf-on-surface-variant);
+    --sf-close-icon--background-color: var(--sf-close-color, var(--sf-on-surface-variant));
     --sf-close-icon--mask-repeat: no-repeat;
     --sf-close-icon--mask-size: contain;
     -webkit-mask-image: var(--sf-close-icon---webkit-mask-image);
@@ -72,6 +90,7 @@
     border-color: var(--sf-close-icon--border-color, transparent);
     font-size: var(--sf-close-icon--font-size);
     height: var(--sf-close-icon--height);
+    height: var(--sf-close-glyph-size, var(--sf-close-icon--height));
     -webkit-mask-image: var(--sf-close-icon--mask-image);
             mask-image: var(--sf-close-icon--mask-image);
     -webkit-mask-repeat: var(--sf-close-icon--mask-repeat);
@@ -79,6 +98,7 @@
     -webkit-mask-size: var(--sf-close-icon--mask-size);
             mask-size: var(--sf-close-icon--mask-size);
     width: var(--sf-close-icon--width);
+    width: var(--sf-close-glyph-size, var(--sf-close-icon--width));
   }
   .sf-close.sf-close--size-1 .sf-close-icon {
     --sf-close-icon---webkit-mask-image: url("data:image/svg+xml,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Cpath%20fill-rule%3D%22evenodd%22%20clip-rule%3D%22evenodd%22%20d%3D%22M15.998%201.41504L9.41309%208L15.998%2014.5859L14.584%2016.001L7.99902%209.41504L1.41406%2016.001L0%2014.5859L6.58398%208L0%201.41504L1.41406%200.000976562L7.99805%206.58594L14.584%200L15.998%201.41504Z%22%20fill%3D%22%2376777C%22%2F%3E%0A%3C%2Fsvg%3E%0A");

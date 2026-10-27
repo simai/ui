@@ -2342,14 +2342,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _smart_avatar_rule_js__WEBPACK_IMPORTED_MODULE_740___default = /*#__PURE__*/__webpack_require__.n(_smart_avatar_rule_js__WEBPACK_IMPORTED_MODULE_740__);
 /* harmony import */ var _smart_avatars_rule_js__WEBPACK_IMPORTED_MODULE_741__ = __webpack_require__("c415334d6e8b");
 /* harmony import */ var _smart_avatars_rule_js__WEBPACK_IMPORTED_MODULE_741___default = /*#__PURE__*/__webpack_require__.n(_smart_avatars_rule_js__WEBPACK_IMPORTED_MODULE_741__);
-/* harmony import */ var _smart_badges_rule_js__WEBPACK_IMPORTED_MODULE_742__ = __webpack_require__("fd168ee98883");
-/* harmony import */ var _smart_badges_rule_js__WEBPACK_IMPORTED_MODULE_742___default = /*#__PURE__*/__webpack_require__.n(_smart_badges_rule_js__WEBPACK_IMPORTED_MODULE_742__);
+/* harmony import */ var _smart_badge_rule_js__WEBPACK_IMPORTED_MODULE_742__ = __webpack_require__("3108f0673fc9");
+/* harmony import */ var _smart_badge_rule_js__WEBPACK_IMPORTED_MODULE_742___default = /*#__PURE__*/__webpack_require__.n(_smart_badge_rule_js__WEBPACK_IMPORTED_MODULE_742__);
 /* harmony import */ var _smart_breadcrumbs_rule_js__WEBPACK_IMPORTED_MODULE_743__ = __webpack_require__("a22c716ce769");
 /* harmony import */ var _smart_breadcrumbs_rule_js__WEBPACK_IMPORTED_MODULE_743___default = /*#__PURE__*/__webpack_require__.n(_smart_breadcrumbs_rule_js__WEBPACK_IMPORTED_MODULE_743__);
 /* harmony import */ var _smart_button_group_rule_js__WEBPACK_IMPORTED_MODULE_744__ = __webpack_require__("c160176ec1b1");
 /* harmony import */ var _smart_button_group_rule_js__WEBPACK_IMPORTED_MODULE_744___default = /*#__PURE__*/__webpack_require__.n(_smart_button_group_rule_js__WEBPACK_IMPORTED_MODULE_744__);
-/* harmony import */ var _smart_buttons_rule_js__WEBPACK_IMPORTED_MODULE_745__ = __webpack_require__("bd5d17d237b0");
-/* harmony import */ var _smart_buttons_rule_js__WEBPACK_IMPORTED_MODULE_745___default = /*#__PURE__*/__webpack_require__.n(_smart_buttons_rule_js__WEBPACK_IMPORTED_MODULE_745__);
+/* harmony import */ var _smart_button_rule_js__WEBPACK_IMPORTED_MODULE_745__ = __webpack_require__("be716f2de823");
+/* harmony import */ var _smart_button_rule_js__WEBPACK_IMPORTED_MODULE_745___default = /*#__PURE__*/__webpack_require__.n(_smart_button_rule_js__WEBPACK_IMPORTED_MODULE_745__);
 /* harmony import */ var _smart_checkbox_rule_js__WEBPACK_IMPORTED_MODULE_746__ = __webpack_require__("3846103def0f");
 /* harmony import */ var _smart_checkbox_rule_js__WEBPACK_IMPORTED_MODULE_746___default = /*#__PURE__*/__webpack_require__.n(_smart_checkbox_rule_js__WEBPACK_IMPORTED_MODULE_746__);
 /* harmony import */ var _smart_color_rule_js__WEBPACK_IMPORTED_MODULE_747__ = __webpack_require__("c33a0ccce492");
@@ -2386,10 +2386,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _smart_gallery_rule_js__WEBPACK_IMPORTED_MODULE_762___default = /*#__PURE__*/__webpack_require__.n(_smart_gallery_rule_js__WEBPACK_IMPORTED_MODULE_762__);
 /* harmony import */ var _smart_help_mark_rule_js__WEBPACK_IMPORTED_MODULE_763__ = __webpack_require__("8461118277d9");
 /* harmony import */ var _smart_help_mark_rule_js__WEBPACK_IMPORTED_MODULE_763___default = /*#__PURE__*/__webpack_require__.n(_smart_help_mark_rule_js__WEBPACK_IMPORTED_MODULE_763__);
-/* harmony import */ var _smart_icon_buttons_rule_js__WEBPACK_IMPORTED_MODULE_764__ = __webpack_require__("50b300a68219");
-/* harmony import */ var _smart_icon_buttons_rule_js__WEBPACK_IMPORTED_MODULE_764___default = /*#__PURE__*/__webpack_require__.n(_smart_icon_buttons_rule_js__WEBPACK_IMPORTED_MODULE_764__);
-/* harmony import */ var _smart_icons_rule_js__WEBPACK_IMPORTED_MODULE_765__ = __webpack_require__("6f7e789a04e4");
-/* harmony import */ var _smart_icons_rule_js__WEBPACK_IMPORTED_MODULE_765___default = /*#__PURE__*/__webpack_require__.n(_smart_icons_rule_js__WEBPACK_IMPORTED_MODULE_765__);
+/* harmony import */ var _smart_icon_button_rule_js__WEBPACK_IMPORTED_MODULE_764__ = __webpack_require__("65e45478c50e");
+/* harmony import */ var _smart_icon_button_rule_js__WEBPACK_IMPORTED_MODULE_764___default = /*#__PURE__*/__webpack_require__.n(_smart_icon_button_rule_js__WEBPACK_IMPORTED_MODULE_764__);
+/* harmony import */ var _smart_icon_rule_js__WEBPACK_IMPORTED_MODULE_765__ = __webpack_require__("17348334b6e2");
+/* harmony import */ var _smart_icon_rule_js__WEBPACK_IMPORTED_MODULE_765___default = /*#__PURE__*/__webpack_require__.n(_smart_icon_rule_js__WEBPACK_IMPORTED_MODULE_765__);
 /* harmony import */ var _smart_image_field_rule_js__WEBPACK_IMPORTED_MODULE_766__ = __webpack_require__("a3aa80badcfa");
 /* harmony import */ var _smart_image_field_rule_js__WEBPACK_IMPORTED_MODULE_766___default = /*#__PURE__*/__webpack_require__.n(_smart_image_field_rule_js__WEBPACK_IMPORTED_MODULE_766__);
 /* harmony import */ var _smart_inline_editor_rule_js__WEBPACK_IMPORTED_MODULE_767__ = __webpack_require__("8427cfb332c0");
@@ -2436,8 +2436,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _smart_switch_rule_js__WEBPACK_IMPORTED_MODULE_787___default = /*#__PURE__*/__webpack_require__.n(_smart_switch_rule_js__WEBPACK_IMPORTED_MODULE_787__);
 /* harmony import */ var _smart_tabs_rule_js__WEBPACK_IMPORTED_MODULE_788__ = __webpack_require__("6dd62213def6");
 /* harmony import */ var _smart_tabs_rule_js__WEBPACK_IMPORTED_MODULE_788___default = /*#__PURE__*/__webpack_require__.n(_smart_tabs_rule_js__WEBPACK_IMPORTED_MODULE_788__);
-/* harmony import */ var _smart_tags_rule_js__WEBPACK_IMPORTED_MODULE_789__ = __webpack_require__("59ac84f587fd");
-/* harmony import */ var _smart_tags_rule_js__WEBPACK_IMPORTED_MODULE_789___default = /*#__PURE__*/__webpack_require__.n(_smart_tags_rule_js__WEBPACK_IMPORTED_MODULE_789__);
+/* harmony import */ var _smart_tag_rule_js__WEBPACK_IMPORTED_MODULE_789__ = __webpack_require__("4a74c232d5a5");
+/* harmony import */ var _smart_tag_rule_js__WEBPACK_IMPORTED_MODULE_789___default = /*#__PURE__*/__webpack_require__.n(_smart_tag_rule_js__WEBPACK_IMPORTED_MODULE_789__);
 /* harmony import */ var _smart_textarea_rule_js__WEBPACK_IMPORTED_MODULE_790__ = __webpack_require__("5412fcbf1ab1");
 /* harmony import */ var _smart_textarea_rule_js__WEBPACK_IMPORTED_MODULE_790___default = /*#__PURE__*/__webpack_require__.n(_smart_textarea_rule_js__WEBPACK_IMPORTED_MODULE_790__);
 /* harmony import */ var _smart_theme_generator_rule_js__WEBPACK_IMPORTED_MODULE_791__ = __webpack_require__("616881f8c003");
@@ -3463,7 +3463,7 @@ SF.RuleLoader['cl-accordion'] = {
   }, {
     name: 'icons'
   }, {
-    name: 'cl-badges',
+    name: 'cl-badge',
     lazy: true
   }]
 };
@@ -3483,9 +3483,9 @@ SF.RuleLoader['cl-alert'] = {
   }, {
     name: 'buttons'
   }, {
-    name: 'cl-icon-buttons'
+    name: 'cl-icon-button'
   }, {
-    name: 'cl-icons'
+    name: 'cl-icon'
   }]
 };
 
@@ -3528,10 +3528,10 @@ SF.RuleLoader['cl-avatars'] = {
 
 /***/ },
 
-/***/ "fd168ee98883"
+/***/ "3108f0673fc9"
 () {
 
-SF.RuleLoader['cl-badges'] = {
+SF.RuleLoader['cl-badge'] = {
   tags: ['sf-badge'],
   type: 'smart',
   mode: 'smart',
@@ -3545,7 +3545,11 @@ SF.RuleLoader['cl-badges'] = {
   }, {
     name: 'sr-only/default'
   }]
-};
+}; // The bundle's former name cl-badges (the folder was `badges` until standard
+// 1.3.8 §3, §21 gave it the tag's name) is not a rule here: a rule of type
+// smart is a Smart component to the registry, and this one has no element. The
+// Loader forwards it to cl-badge from src/core/contracts/
+// smart-rule-forwards.v1.json until 2026-12-01.
 
 /***/ },
 
@@ -3562,7 +3566,7 @@ SF.RuleLoader['cl-breadcrumbs'] = {
   }, {
     name: 'icons'
   }, {
-    name: 'cl-icons'
+    name: 'cl-icon'
   }]
 };
 
@@ -3580,9 +3584,9 @@ SF.RuleLoader['cl-button-group'] = {
   relation: [{
     name: 'button-group'
   }, {
-    name: 'cl-buttons'
+    name: 'cl-button'
   }, {
-    name: 'cl-icons'
+    name: 'cl-icon'
   }, {
     name: 'spinner',
     lazy: true
@@ -3591,10 +3595,10 @@ SF.RuleLoader['cl-button-group'] = {
 
 /***/ },
 
-/***/ "bd5d17d237b0"
+/***/ "be716f2de823"
 () {
 
-SF.RuleLoader['cl-buttons'] = {
+SF.RuleLoader['cl-button'] = {
   tags: ['sf-button'],
   type: 'smart',
   mode: 'smart',
@@ -3606,14 +3610,18 @@ SF.RuleLoader['cl-buttons'] = {
   }, {
     name: 'text-align/default'
   }, {
-    name: 'cl-icons'
+    name: 'cl-icon'
   }, // The spinner a loading button shows: its slot is drawn by the button sheet,
   // the motion by the spinner's, fetched after the page is ready.
   {
     name: 'spinner',
     lazy: true
   }]
-};
+}; // The bundle's former name cl-buttons (the folder was `buttons` until standard
+// 1.3.8 §3, §21 gave it the tag's name) is not a rule here: a rule of type
+// smart is a Smart component to the registry, and this one has no element. The
+// Loader forwards it to cl-button from src/core/contracts/
+// smart-rule-forwards.v1.json until 2026-12-01.
 
 /***/ },
 
@@ -3629,7 +3637,7 @@ SF.RuleLoader['cl-checkbox'] = {
   relation: [{
     name: 'checkbox'
   }, {
-    name: 'cl-icons'
+    name: 'cl-icon'
   }]
 };
 
@@ -3687,7 +3695,7 @@ SF.RuleLoader['cl-color'] = {
   relation: [{
     name: 'icons'
   }, {
-    name: 'cl-icon-buttons'
+    name: 'cl-icon-button'
   }]
 };
 
@@ -3722,12 +3730,12 @@ SF.RuleLoader['cl-context-menu'] = {
   relation: [{
     name: 'context-menu'
   }, {
-    name: 'cl-buttons'
+    name: 'cl-button'
   }, {
     name: 'cl-tabs',
     lazy: true
   }, {
-    name: 'cl-icon-buttons',
+    name: 'cl-icon-button',
     lazy: true
   }]
 };
@@ -3744,11 +3752,11 @@ SF.RuleLoader['cl-copy-button'] = {
   js: true,
   css: true,
   relation: [{
-    name: 'cl-buttons'
+    name: 'cl-button'
   }, {
-    name: 'cl-icon-buttons'
+    name: 'cl-icon-button'
   }, {
-    name: 'cl-icons'
+    name: 'cl-icon'
   }]
 };
 
@@ -3782,11 +3790,11 @@ SF.RuleLoader['cl-datepicker'] = {
   }, {
     name: 'cl-input'
   }, {
-    name: 'cl-buttons'
+    name: 'cl-button'
   }, {
-    name: 'cl-icon-buttons'
+    name: 'cl-icon-button'
   }, {
-    name: 'cl-icons'
+    name: 'cl-icon'
   }]
 };
 
@@ -3805,7 +3813,7 @@ SF.RuleLoader['cl-download-file'] = {
   }, {
     name: 'icons'
   }, {
-    name: 'cl-icons'
+    name: 'cl-icon'
   }]
 };
 
@@ -3850,7 +3858,7 @@ SF.RuleLoader['cl-dropdown'] = {
   }, {
     name: 'cl-input'
   }, {
-    name: 'cl-icon-buttons'
+    name: 'cl-icon-button'
   }]
 };
 
@@ -3868,9 +3876,9 @@ SF.RuleLoader['cl-empty-state'] = {
   relation: [{
     name: 'featured-icon'
   }, {
-    name: 'cl-buttons'
+    name: 'cl-button'
   }, {
-    name: 'cl-icons'
+    name: 'cl-icon'
   }]
 };
 
@@ -3945,18 +3953,18 @@ SF.RuleLoader['cl-help-mark'] = {
   js: true,
   css: true,
   relation: [{
-    name: 'cl-icon-buttons'
+    name: 'cl-icon-button'
   }, {
-    name: 'cl-icons'
+    name: 'cl-icon'
   }]
 };
 
 /***/ },
 
-/***/ "50b300a68219"
+/***/ "65e45478c50e"
 () {
 
-SF.RuleLoader['cl-icon-buttons'] = {
+SF.RuleLoader['cl-icon-button'] = {
   tags: ['sf-icon-button'],
   type: 'smart',
   mode: 'smart',
@@ -3965,7 +3973,7 @@ SF.RuleLoader['cl-icon-buttons'] = {
   relation: [{
     name: 'icon-buttons'
   }, {
-    name: 'cl-icons'
+    name: 'cl-icon'
   }, {
     name: 'cl-close'
   }, {
@@ -3978,14 +3986,18 @@ SF.RuleLoader['cl-icon-buttons'] = {
     name: 'spinner',
     lazy: true
   }]
-};
+}; // The bundle's former name cl-icon-buttons (the folder was `icon-buttons` until standard
+// 1.3.8 §3, §21 gave it the tag's name) is not a rule here: a rule of type
+// smart is a Smart component to the registry, and this one has no element. The
+// Loader forwards it to cl-icon-button from src/core/contracts/
+// smart-rule-forwards.v1.json until 2026-12-01.
 
 /***/ },
 
-/***/ "6f7e789a04e4"
+/***/ "17348334b6e2"
 () {
 
-SF.RuleLoader['cl-icons'] = {
+SF.RuleLoader['cl-icon'] = {
   tags: ['sf-icon'],
   type: 'smart',
   mode: 'smart',
@@ -3999,7 +4011,11 @@ SF.RuleLoader['cl-icons'] = {
     name: 'badges',
     lazy: true
   }]
-};
+}; // The bundle's former name cl-icons (the folder was `icons` until standard
+// 1.3.8 §3, §21 gave it the tag's name) is not a rule here: a rule of type
+// smart is a Smart component to the registry, and this one has no element. The
+// Loader forwards it to cl-icon from src/core/contracts/
+// smart-rule-forwards.v1.json until 2026-12-01.
 
 /***/ },
 
@@ -4018,9 +4034,9 @@ SF.RuleLoader['cl-image-field'] = {
   js: true,
   css: true,
   relation: [{
-    name: 'cl-buttons'
+    name: 'cl-button'
   }, {
-    name: 'cl-icons'
+    name: 'cl-icon'
   }]
 };
 
@@ -4052,7 +4068,7 @@ SF.RuleLoader['cl-input'] = {
   relation: [{
     name: 'inputs'
   }, {
-    name: 'cl-icons'
+    name: 'cl-icon'
   }, // The reset back to an inherited value is an icon button (simai/ui-source#28).
   {
     name: 'icon-buttons'
@@ -4147,11 +4163,11 @@ SF.RuleLoader['cl-page-header'] = {
   mode: 'smart',
   js: true,
   relation: [{
-    name: 'cl-badges'
+    name: 'cl-badge'
   }, {
-    name: 'cl-icon-buttons'
+    name: 'cl-icon-button'
   }, {
-    name: 'cl-icons'
+    name: 'cl-icon'
   }]
 };
 
@@ -4168,13 +4184,13 @@ SF.RuleLoader['cl-pagination'] = {
   relation: [{
     name: 'pagination'
   }, {
-    name: 'cl-buttons'
+    name: 'cl-button'
   }, {
     name: 'cl-checkbox'
   }, {
     name: 'cl-dropdown'
   }, {
-    name: 'cl-icon-buttons'
+    name: 'cl-icon-button'
   }, {
     name: 'cl-input'
   }, {
@@ -4213,9 +4229,9 @@ SF.RuleLoader['cl-profile-picker'] = {
   js: true,
   css: true,
   relation: [{
-    name: 'cl-buttons'
+    name: 'cl-button'
   }, {
-    name: 'cl-icons'
+    name: 'cl-icon'
   }]
 };
 
@@ -4321,7 +4337,7 @@ SF.RuleLoader['cl-reference-link'] = {
   }, {
     name: 'icons'
   }, {
-    name: 'cl-icons'
+    name: 'cl-icon'
   }]
 };
 
@@ -4367,7 +4383,7 @@ SF.RuleLoader['cl-slider'] = {
   relation: [{
     name: 'slider'
   }, {
-    name: 'cl-icon-buttons'
+    name: 'cl-icon-button'
   }]
 };
 
@@ -4466,9 +4482,9 @@ SF.RuleLoader['cl-tabs'] = {
   relation: [{
     name: 'tabs'
   }, {
-    name: 'cl-buttons'
+    name: 'cl-button'
   }, {
-    name: 'cl-icon-buttons'
+    name: 'cl-icon-button'
   }, // «Ещё» and the settings open the standard menu; the settings reorder with
   // sf-sortable and show and hide with sf-checkbox (owner, 2026-10-14).
   {
@@ -4485,10 +4501,10 @@ SF.RuleLoader['cl-tabs'] = {
 
 /***/ },
 
-/***/ "59ac84f587fd"
+/***/ "4a74c232d5a5"
 () {
 
-SF.RuleLoader['cl-tags'] = {
+SF.RuleLoader['cl-tag'] = {
   tags: ['sf-tag'],
   type: 'smart',
   mode: 'smart',
@@ -4503,9 +4519,13 @@ SF.RuleLoader['cl-tags'] = {
   }, {
     name: 'dot'
   }, {
-    name: 'cl-icon-buttons'
+    name: 'cl-icon-button'
   }]
-};
+}; // The bundle's former name cl-tags (the folder was `tags` until standard
+// 1.3.8 §3, §21 gave it the tag's name) is not a rule here: a rule of type
+// smart is a Smart component to the registry, and this one has no element. The
+// Loader forwards it to cl-tag from src/core/contracts/
+// smart-rule-forwards.v1.json until 2026-12-01.
 
 /***/ },
 
@@ -4547,11 +4567,11 @@ SF.RuleLoader['cl-theme-generator'] = {
   }, {
     name: 'cl-input'
   }, {
-    name: 'cl-buttons'
+    name: 'cl-button'
   }, {
-    name: 'cl-icon-buttons'
+    name: 'cl-icon-button'
   }, {
-    name: 'cl-icons'
+    name: 'cl-icon'
   }]
 };
 
@@ -4570,9 +4590,9 @@ SF.RuleLoader['cl-toast'] = {
   }, {
     name: 'buttons'
   }, {
-    name: 'cl-icon-buttons'
+    name: 'cl-icon-button'
   }, {
-    name: 'cl-icons'
+    name: 'cl-icon'
   }, {
     name: 'close'
   }]
@@ -4625,7 +4645,7 @@ SF.RuleLoader['cl-tree-item'] = {
   }, {
     name: 'icon-buttons'
   }, {
-    name: 'cl-icons'
+    name: 'cl-icon'
   }]
 };
 

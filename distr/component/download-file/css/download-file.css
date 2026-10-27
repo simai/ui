@@ -33,8 +33,8 @@
     /* The card sits on whatever surface holds it; hover and press add the
        container overlay. --sf-surface is not a token, so this was transparent
        already -- now it says so. */
-    --sf-download-file--background-color: transparent;
-    --sf-download-file--border-color: var(--sf-outline-variant);
+    --sf-download-file--background-color: var(--sf-download-file-background-color, transparent);
+    --sf-download-file--border-color: var(--sf-download-file-border-color, var(--sf-outline-variant));
     --sf-download-file--padding: var(--sf-space-1\/3);
     --sf-download-file--text-size: var(--sf-text-size-1);
     --sf-download-file--text-height: var(--sf-text-height-1);
@@ -49,10 +49,12 @@
     max-width: 100%;
     max-inline-size: 100%;
     padding: var(--sf-download-file--padding);
+    padding: var(--sf-download-file-padding, var(--sf-download-file--padding));
     color: var(--sf-primary);
     background-color: var(--sf-download-file--background-color);
     border: var(--sf-px) solid var(--sf-download-file--border-color);
     border-radius: var(--sf-radius--ui);
+    border-radius: var(--sf-download-file-radius, var(--sf-radius--ui));
     font-family: var(--sf-text--family);
     font-size: var(--sf-download-file--text-size);
     font-weight: var(--sf-font-weight-regular);
@@ -70,6 +72,7 @@
     align-items: center;
     justify-content: space-between;
     gap: var(--sf-download-file--gap);
+    gap: var(--sf-download-file-gap, var(--sf-download-file--gap));
     min-width: var(--sf-0);
     min-inline-size: var(--sf-0);
   }
@@ -98,10 +101,23 @@
     flex: none;
     height: var(--sf-download-file--icon-size);
     block-size: var(--sf-download-file--icon-size);
+    height: var(--sf-download-file--icon-size);
+    height: var(--sf-download-file-icon-size, var(--sf-download-file--icon-size));
+    block-size: var(--sf-download-file-icon-size, var(--sf-download-file--icon-size));
     width: var(--sf-download-file--icon-size);
     inline-size: var(--sf-download-file--icon-size);
+    width: var(--sf-download-file--icon-size);
+    width: var(--sf-download-file-icon-size, var(--sf-download-file--icon-size));
+    inline-size: var(--sf-download-file-icon-size, var(--sf-download-file--icon-size));
     color: var(--sf-primary);
+    color: var(--sf-download-file-icon-color, var(--sf-primary));
     font-size: var(--sf-download-file--icon-size);
+    font-size: var(--sf-download-file-icon-size, var(--sf-download-file--icon-size));
+    /* The glyph's own sheet is unlayered and sizes .sf-icon from these, so the
+       size reaches it (as in reference-link). */
+    --sf-icon--font-size: var(--sf-download-file-icon-size, var(--sf-download-file--icon-size));
+    --sf-icon--height: var(--sf-download-file-icon-size, var(--sf-download-file--icon-size));
+    --sf-icon--width: var(--sf-download-file-icon-size, var(--sf-download-file--icon-size));
   }
   .sf-download-file--size-1\/3 {
     --sf-download-file--padding: var(--sf-space-1\/4);

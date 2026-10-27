@@ -28,9 +28,9 @@
     "uses": [
       "smart.color",
       "smart.input",
-      "smart.buttons",
-      "smart.icon-buttons",
-      "smart.icons"
+      "smart.button",
+      "smart.icon-button",
+      "smart.icon"
     ],
     "public_parts": []
   },
@@ -369,7 +369,7 @@
       },
       {
         "path": "src/smart/theme-generator/rule.js",
-        "sha256": "042e8fc6cc2b2d27b522169bad9eacc7fca579ed213de8ff50654bb09f01390b"
+        "sha256": "911ee2daf002f5e3719e7efefbe1641a1f8d6aeb80424ed7ee45f9c49847f9e9"
       },
       {
         "path": "src/smart/theme-generator/docs.md",

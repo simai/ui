@@ -36,7 +36,7 @@
     "flex-direction/default",
     "position/default"
   ],
-  "cl-badges": [
+  "cl-badge": [
     "display/default",
     "flex-direction/default",
     "flex-wrap/default",
@@ -52,6 +52,12 @@
     "position/default",
     "visibility/default"
   ],
+  "cl-button": [
+    "align-items/default",
+    "display/default",
+    "flex/default",
+    "pointer-events/default"
+  ],
   "cl-button-group": [
     "align-items/default",
     "display/default",
@@ -59,13 +65,6 @@
     "pointer-events/default",
     "position/default",
     "text-align/default"
-  ],
-  "cl-buttons": [
-    "align-items/default",
-    "display/default",
-    "flex/default",
-    "pointer-events/default",
-    "position/default"
   ],
   "cl-checkbox": [
     "cursor/default",
@@ -77,8 +76,7 @@
   "cl-close": [
     "display/default",
     "justify-content/default",
-    "place-items/default",
-    "position/default"
+    "place-items/default"
   ],
   "cl-code-input": [
     "position/default",
@@ -124,7 +122,6 @@
   "cl-download-file": [
     "cursor/default",
     "display/default",
-    "position/default",
     "transition-property/default"
   ],
   "cl-drawer": [
@@ -198,18 +195,16 @@
   ],
   "cl-help-mark": [
     "display/default",
-    "isolate/default",
-    "position/default"
+    "isolate/default"
   ],
-  "cl-icon-buttons": [
-    "align-items/default",
-    "display/default",
-    "pointer-events/default",
-    "position/default"
-  ],
-  "cl-icons": [
+  "cl-icon": [
     "font-weight/default",
     "position/default"
+  ],
+  "cl-icon-button": [
+    "align-items/default",
+    "display/default",
+    "pointer-events/default"
   ],
   "cl-image-field": [
     "position/default"
@@ -334,8 +329,7 @@
   ],
   "cl-reference-link": [
     "align-items/default",
-    "display/default",
-    "position/default"
+    "display/default"
   ],
   "cl-resizer": [
     "display/default",
@@ -386,7 +380,7 @@
     "resize/default",
     "visibility/default"
   ],
-  "cl-tags": [
+  "cl-tag": [
     "background-size/default",
     "display/default",
     "flex-direction/default",
