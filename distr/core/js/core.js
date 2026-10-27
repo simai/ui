@@ -9076,6 +9076,7 @@ class AssemblyCore {
     const scope = linked(this.scope.signal);
     const rec = {
       role: role.name, def: role, entry, entryId, instanceId, iface, scope, link: null,
+      held: role.start === 'now' && !this.present(role.name), // `if` is false: placed, not started (§7.2.1)
       started: false, closed: false, passed: new Map(), pending: new Map(), timers: new Map(),
       calls: new Map(), causes: [], streams: new Map(), isAssembly: Boolean(this.view.isAssembly?.(role.tag)),
     };
@@ -9101,8 +9102,10 @@ class AssemblyCore {
     }
     state.parts.set(entryId, rec);
     if (entry) this.log('entry', `${role.name}[${entryId}] placed`, {role: role.name, entry: entryId});
-    if (role.start === 'now') this.startPart(rec, 'now');
-    else this.view.awaitStart?.(rec, role.start);
+    // A part whose `if` is false is placed, not started: it fetches no code
+    // and asks nothing until its `if` first turns true (§7.2.1, §7.2.2).
+    if (role.start === 'now' && this.present(role.name)) this.startPart(rec, 'now');
+    else if (role.start !== 'now') this.view.awaitStart?.(rec, role.start);
     return rec;
   }
 
@@ -9250,6 +9253,12 @@ class AssemblyCore {
       if (state.shownAs) this.log('shown', `${name} ${!present ? 'leaves the DOM, the form value and the validity' : hidden ? 'is hidden, its controls disabled' : 'is shown'}`, {role: name, present, hidden});
       state.shownAs = {present, hidden};
       this.view.show?.(name, present, hidden);
+      // The first true `if` starts a part it held (§7.2.1): its code and its
+      // reads come now, once. A part with start opened or visible waits for
+      // its own start as before.
+      if (present && state.role.start === 'now') {
+        for (const rec of state.parts.values()) if (!rec.started) this.startPart(rec, 'if');
+      }
     }
   }
 
@@ -10357,9 +10366,17 @@ class HostView {
   /** The printed host of a role's part, taken once (§7.3 phase 2). */
   takePrinted(rec) {
     if (!this.printed || rec.entry) return null;
-    const element = this.printed.get(rec.role);
+    let element = this.printed.get(rec.role);
     this.printed.delete(rec.role);
-    if (!element || element.localName !== rec.def.tag) return null;
+    // A first paint composed by an older pair printed a forwarding part's
+    // role on its inner control (sf-button moved every data-* to its
+    // <button>, stand 24 F2): the part is the host around it.
+    if (element && element.localName !== rec.def.tag) {
+      const control = element;
+      element = control.parentElement?.closest(rec.def.tag) ?? null;
+      if (element) for (const name of ['data-sf-role', 'data-sf-instance']) control.removeAttribute(name);
+    }
+    if (!element) return null;
     // What the layout put inside the part when it was printed (a container's
     // panels) comes again from the live layout; its static markup stays.
     for (const child of Array.from(element.children)) {
@@ -10506,7 +10523,9 @@ class HostView {
     element[OWNED] = true;
     element.setAttribute('data-sf-role', rec.entry ? `${rec.role}[${rec.entryId}]` : rec.role);
     element.setAttribute('data-sf-instance', rec.instanceId);
-    if (rec.def.start !== 'now') {
+    // An unstarted part is a closed container for the Loader (loader.js
+    // UNSTARTED_PART): a deferred start, or a part its `if` holds (§7.2.1).
+    if (rec.def.start !== 'now' || rec.held) {
       element.setAttribute('data-sf-start', rec.def.start);
       element.setAttribute('aria-busy', 'true');
     }
