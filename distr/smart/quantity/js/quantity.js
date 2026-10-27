@@ -1310,6 +1310,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _aliases_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("28b603686dcc");
 /* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("0d662e4d7d63");
 /* harmony import */ var _page_actions_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("51e3a200cf5f");
+/* harmony import */ var _host_port_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("f171c5ece4b4");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_page_language_js__WEBPACK_IMPORTED_MODULE_1__]);
 var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 _page_language_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_async_dependencies_result__[0];
@@ -1353,6 +1354,10 @@ _page_language_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_async_dependencies_re
 //   'applied'}` or `{outcome: 'refused', reason}`; `"emits"` sends its event
 //   once first, and a page that cancels it makes the action refused; a
 //   waiting action whose instance is removed answers `cancelled`;
+// - the base action `connect-port {port}` (§4.1, §4.9): `connectPort(port)`,
+//   `setHostPort` its alias, the port kept on the instance's scope and read
+//   as `sfPort`, the component's `onPortConnected(port, {signal})` its hook
+//   (core/js/host-port.js; the Smart base has it, another base gets it here);
 // - the base values `shown` and `started` (§4.1) and the host state
 //   `data-sf-started`; `sfHostState(name, on)` writes the declared
 //   `host-states` (§5.3);
@@ -1365,6 +1370,7 @@ _page_language_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_async_dependencies_re
 //
 // Members the runtime adds start with `sf`, which no manifest name may
 // (§3.1), so a generated setting or action never collides with them.
+
 
 
 
@@ -1595,8 +1601,10 @@ function writeAttribute(element, member, value) {
   }
 
   if (member.type === 'boolean') {
-    // An optional boolean keeps «off» as a value of its own (§4.2).
-    if (value) element.setAttribute(member.attribute, '');else if (member.optional) element.setAttribute(member.attribute, 'false');else element.removeAttribute(member.attribute);
+    // An optional boolean keeps «off» as a value of its own (§4.2), and so
+    // does one that is on by default: taking the attribute away would read
+    // as the default, on (sf-pagination's count-known, total-exact).
+    if (value) element.setAttribute(member.attribute, '');else if (member.optional || member.default === true) element.setAttribute(member.attribute, 'false');else element.removeAttribute(member.attribute);
     return;
   }
 
@@ -1957,7 +1965,9 @@ function elementFromManifest(manifest, {
 
   }
 
-  defineMembers(ManifestElement.prototype, read.members);
+  defineMembers(ManifestElement.prototype, read.members); // connect-port is the base's (§4.1): a base without it gets it here.
+
+  (0,_host_port_js__WEBPACK_IMPORTED_MODULE_3__.installPortAction)(ManifestElement.prototype);
   defineActions(ManifestElement.prototype, read.actions, actions, read.events); // data-sf-action="<id>.<action>" runs a declared action (§8 one page trigger).
 
   if (read.actions.length) (0,_page_actions_js__WEBPACK_IMPORTED_MODULE_2__.bindPageActions)();
@@ -1966,6 +1976,163 @@ function elementFromManifest(manifest, {
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "f171c5ece4b4"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   connectPort: () => (/* binding */ connectPort),
+/* harmony export */   installPortAction: () => (/* binding */ installPortAction),
+/* harmony export */   portFromParams: () => (/* binding */ portFromParams),
+/* harmony export */   portIdOf: () => (/* binding */ portIdOf),
+/* harmony export */   portOf: () => (/* binding */ portOf)
+/* harmony export */ });
+// The base action connect-port {port} (standard simai.smart-component 1.3.8
+// §4.1, §4.9): every element takes the host port it is handed, from the page
+// or from the assembly it is a part of, by one method, `connectPort(port)`;
+// `setHostPort(port)` is its alias.
+//
+// The port is kept on the instance, for its scope (§7.7): it lasts while the
+// instance does and is let go when its scope ends, so an element taken out of
+// the page holds no host. A component reacts through an optional hook,
+// `onPortConnected(port, {signal})`, run after the port is kept; a component
+// written before the base action, which overrides `setHostPort(port)` itself,
+// has that override run as the hook, so it needs no change to be reached.
+//
+// Answers an outcome (§4.4): `{outcome: 'applied'}`; `refused` with
+// `no-port` when nothing was handed, `other-port` when the port names an id
+// other than the one the manifest declares, and `port-unsupported` when the
+// hook throws -- the port is then not kept.
+// A host adapter names its port by `id` (SF.Assembly, the port contracts) or
+// by `port` (`{port, version, capabilities, raise}`, ui-pro's adapters).
+function portIdOf(port) {
+  if (!port || typeof port !== 'object') return '';
+  if (typeof port.id === 'string' && port.id) return port.id;
+  if (typeof port.port === 'string' && port.port) return port.port;
+  return '';
+} // connect-port takes its parameters as one object, `{port}`, or the port
+// itself. An adapter whose `port` is its id (a string) is the port.
+
+function portFromParams(params) {
+  if (params && typeof params === 'object' && params.port && typeof params.port === 'object') return params.port;
+  return params;
+} // The port id the element's manifest declares, if any (§4.9).
+
+function declaredPortId(element) {
+  const declared = element?.constructor?.manifest?.port ?? element?.constructor?.sfInterface?.port;
+  return portIdOf(declared);
+}
+/** The port an element holds now, or null. */
+
+
+function portOf(element) {
+  return element?.__sfPortEntry?.port ?? null;
+}
+/** connect-port {port} on `element`, with `alias` the base's own setHostPort. */
+
+function connectPort(element, params, alias) {
+  const port = portFromParams(params);
+  if (!port || typeof port !== 'object') return {
+    outcome: 'refused',
+    reason: 'no-port'
+  };
+  const declared = declaredPortId(element);
+  const given = portIdOf(port);
+  if (declared && given && declared !== given) return {
+    outcome: 'refused',
+    reason: 'other-port'
+  };
+  const previous = element.__sfPortEntry ?? null; // Kept on the element, not in a module map: every bundle carries its own
+  // copy of this module, and the element is what they share.
+
+  const signal = element.sfScope;
+  const entry = {
+    port,
+    signal
+  };
+  element.__sfPortEntry = entry; // The port lives as long as the scope it was handed in (§7.7).
+
+  if (signal && typeof signal.addEventListener === 'function' && !signal.aborted) {
+    signal.addEventListener('abort', () => {
+      if (element.__sfPortEntry === entry) element.__sfPortEntry = null;
+    }, {
+      once: true
+    });
+  } // The hook. A component's own setHostPort (written before the base action)
+  // is the hook when there is no onPortConnected; the guard lets such an
+  // override call super.setHostPort without running itself again.
+
+
+  if (element.__sfConnectingPort) return {
+    outcome: 'applied'
+  };
+  element.__sfConnectingPort = true;
+
+  try {
+    if (typeof element.onPortConnected === 'function') {
+      element.onPortConnected(port, {
+        signal
+      });
+    } else if (typeof element.setHostPort === 'function' && element.setHostPort !== alias) {
+      element.setHostPort(port);
+    }
+  } catch (error) {
+    element.__sfPortEntry = previous;
+    return {
+      outcome: 'refused',
+      reason: 'port-unsupported'
+    };
+  } finally {
+    element.__sfConnectingPort = false;
+  }
+
+  element.requestComponentUpdate?.('port');
+  return {
+    outcome: 'applied'
+  };
+}
+/**
+ * Gives a class the base action where its base has none: `connectPort`,
+ * `setHostPort` and the read-only `sfPort`.
+ */
+
+function installPortAction(proto) {
+  if (!proto || typeof proto.connectPort === 'function') return;
+
+  function setHostPort(port) {
+    return connectPort(this, port, setHostPort);
+  }
+
+  Object.defineProperty(proto, 'connectPort', {
+    configurable: true,
+    writable: true,
+    value: function connectPortAction(port) {
+      return connectPort(this, port, setHostPort);
+    }
+  });
+
+  if (typeof proto.setHostPort !== 'function') {
+    Object.defineProperty(proto, 'setHostPort', {
+      configurable: true,
+      writable: true,
+      value: setHostPort
+    });
+  }
+
+  if (!Object.prototype.hasOwnProperty.call(proto, 'sfPort')) {
+    Object.defineProperty(proto, 'sfPort', {
+      configurable: true,
+
+      get() {
+        return portOf(this);
+      }
+
+    });
+  }
+}
 
 /***/ },
 

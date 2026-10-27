@@ -9093,7 +9093,7 @@ class AssemblyCore {
     this.view.startPart?.(rec);
     rec.pending.clear(); // superseded: the part reads the current values now
     this.pushAll(rec);
-    for (const port of this.ports.values()) if (rec.isAssembly || rec.iface.port?.id === port.id) rec.link.connectPort?.(port);
+    for (const [id, port] of this.ports) if (rec.isAssembly || (0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.portId)(rec.iface.port) === id) this.handPort(rec, port);
     rec.link.start?.();
   }
 
@@ -9582,7 +9582,7 @@ class AssemblyCore {
       this.log('step', `${rule.id}: applies the turn's writes before it waits`, {turn: turn.n, rule: rule.id});
       this.commit(turn);
     }
-    if (rec.iface.port && action !== 'connect-port' && !this.ports.has(rec.iface.port.id)) return fail('unavailable', 'port-not-connected');
+    if (rec.iface.port && action !== 'connect-port' && !this.ports.has((0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.portId)(rec.iface.port))) return fail('unavailable', 'port-not-connected');
     if (!rec.started) { // a step asks a part that has not started: it starts first, then is asked (dispatcher decision 2026-10-27)
       this.log('start', `${rule.id}: ${target} asks a part that has not started; it starts first`, {rule: rule.id, role: rec.role});
       this.startPart(rec, 'asked');
@@ -9801,7 +9801,7 @@ class AssemblyCore {
 
   /** An action asked from outside: only rules handle it; an unhandled one is reported, not passed up (§7.4). */
   act(action, args = {}, options = {}) {
-    if (action === 'connect-port') return this.connectPort(args?.port ?? args);
+    if (action === 'connect-port') return this.connectPort((0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.portOfParams)(args));
     if (action === 'focus' || action === 'blur') { this.view.focus?.(action); return {answer: 'applied'}; }
     const on = `outside.${action}`;
     const handled = this.def.byTrigger.has(on);
@@ -9835,16 +9835,36 @@ class AssemblyCore {
   }
 
   /** `connect-port`: kept, and handed to every part that declares the port, at any depth, later ones too (§4.9). */
-  connectPort(port) {
-    if (!(0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.isObject)(port) || !port.id) { this.error('port', 'connect-port needs a port with an id'); return {answer: 'refused', reason: 'no-port'}; }
-    this.ports.set(port.id, port);
+  // A port is named by its id, or by `port` for a host adapter shaped
+  // {port, version, capabilities, raise} (ui-pro's adapters).
+  connectPort(given) {
+    const port = (0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.portOfParams)(given);
+    const id = (0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.portId)(port);
+    if (!id) { this.error('port', 'connect-port needs a port with an id'); return {answer: 'refused', reason: 'no-port'}; }
+    this.ports.set(id, port);
     let handed = 0;
     for (const state of this.roles.values()) for (const rec of state.parts.values()) {
       if (!rec.started) continue;
-      if (rec.isAssembly || rec.iface.port?.id === port.id) { rec.link.connectPort?.(port); if (!rec.isAssembly) handed += 1; }
+      if (rec.isAssembly || (0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.portId)(rec.iface.port) === id) { this.handPort(rec, port); if (!rec.isAssembly) handed += 1; }
     }
-    this.log('port', `connect-port ${port.id}: handed to ${handed} part(s) of ${this.id}`, {port: port.id, handed});
+    this.log('port', `connect-port ${id}: handed to ${handed} part(s) of ${this.id}`, {port: id, handed});
     return {answer: 'applied'};
+  }
+
+  /**
+   * Hands a port to a part through its link: the part's base action
+   * connect-port (§4.1). A part that refuses it is reported, not failed: the
+   * assembly keeps the port for the parts that take it.
+   */
+  handPort(rec, port) {
+    const answer = rec.link.connectPort?.(port);
+    const settle = (outcome) => {
+      if (outcome && outcome.answer && outcome.answer !== 'applied') {
+        this.error('port', `${rec.instanceId} refused port ${(0,_values_mjs__WEBPACK_IMPORTED_MODULE_5__.portId)(port)}: ${outcome.reason ?? outcome.answer}`, {role: rec.role, reason: outcome.reason ?? ''});
+      }
+    };
+    if (answer && typeof answer.then === 'function') answer.then(settle, () => {});
+    else settle(answer);
   }
 
   /** The keys, their writers and readers (§14 «a map of keys»). */
@@ -11209,7 +11229,7 @@ function adaptElement(element, iface, context) {
     if (value === null || value === undefined) { element.removeAttribute(name); return; }
     if (type === 'boolean') {
       if (value === true) element.setAttribute(name, '');
-      else if (def?.optional) element.setAttribute(name, 'false');
+      else if (def?.optional || def?.default === true) element.setAttribute(name, 'false'); // off, not the default on
       else element.removeAttribute(name);
       return;
     }
@@ -11221,7 +11241,7 @@ function adaptElement(element, iface, context) {
     get: (name) => element[(0,_values_mjs__WEBPACK_IMPORTED_MODULE_0__.camel)(name)],
     valid: () => (element.validity ? element.validity.valid : undefined),
     act(action, args = {}, options = {}) {
-      if (action === 'connect-port') { this.connectPort(args?.port ?? args); return {answer: 'applied'}; }
+      if (action === 'connect-port') return this.connectPort((0,_values_mjs__WEBPACK_IMPORTED_MODULE_0__.portOfParams)(args));
       const method = element[(0,_values_mjs__WEBPACK_IMPORTED_MODULE_0__.camel)(action)];
       if (typeof method !== 'function') {
         if (action === 'focus' || action === 'blur') { element[action]?.(); return {answer: 'applied'}; }
@@ -11238,9 +11258,13 @@ function adaptElement(element, iface, context) {
       const answer = method.call(element, given, {signal: options.signal});
       return answer && typeof answer.then === 'function' ? answer.then(_values_mjs__WEBPACK_IMPORTED_MODULE_0__.outcomeOf) : (0,_values_mjs__WEBPACK_IMPORTED_MODULE_0__.outcomeOf)(answer);
     },
+    // The part's base action connect-port (§4.1, §4.9): an element made by
+    // elementFromManifest or on the Smart base keeps the port and runs its
+    // hook; an older element without it is handed the port by setHostPort.
     connectPort(port) {
-      const connect = element.connectPort ?? element.setHostPort;
-      if (typeof connect === 'function') connect.call(element, port);
+      const connect = typeof element.connectPort === 'function' ? element.connectPort : element.setHostPort;
+      if (typeof connect !== 'function') return {answer: 'refused', reason: 'no-action', message: ''};
+      return (0,_values_mjs__WEBPACK_IMPORTED_MODULE_0__.outcomeOf)(connect.call(element, port));
     },
     start: () => readValues('start'), // the part's first values are not a person's change (§8)
     dispose() {},
@@ -11408,6 +11432,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   isObject: () => (/* binding */ isObject),
 /* harmony export */   outcomeOf: () => (/* binding */ outcomeOf),
 /* harmony export */   own: () => (/* binding */ own),
+/* harmony export */   portId: () => (/* binding */ portId),
+/* harmony export */   portOfParams: () => (/* binding */ portOfParams),
 /* harmony export */   same: () => (/* binding */ same),
 /* harmony export */   show: () => (/* binding */ show),
 /* harmony export */   typeOf: () => (/* binding */ typeOf)
@@ -11532,6 +11558,22 @@ function freshId() {
   if (typeof crypto?.getRandomValues === 'function') crypto.getRandomValues(bytes);
   else for (let i = 0; i < bytes.length; i += 1) bytes[i] = Math.floor(Math.random() * 256);
   return [...bytes].map((byte) => byte.toString(16).padStart(2, '0')).join('');
+}
+
+/**
+ * A port's id (§4.9): `id`, or `port` for a host adapter shaped
+ * `{port, version, capabilities, raise}`; '' when it names none.
+ */
+function portId(port) {
+  if (!isObject(port)) return '';
+  if (typeof port.id === 'string' && port.id) return port.id;
+  if (typeof port.port === 'string' && port.port) return port.port;
+  return '';
+}
+
+/** connect-port's parameters, `{port}` or the port itself (§4.1). */
+function portOfParams(args) {
+  return isObject(args) && isObject(args.port) ? args.port : args;
 }
 
 /** An outcome in its one shape `{answer, reason, message, …}` (§4.4, vocabulary §3.1). */

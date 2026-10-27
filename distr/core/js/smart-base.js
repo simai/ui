@@ -1133,6 +1133,163 @@ if (typeof globalThis !== 'undefined') {
 
 /***/ },
 
+/***/ "f171c5ece4b4"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   connectPort: () => (/* binding */ connectPort),
+/* harmony export */   installPortAction: () => (/* binding */ installPortAction),
+/* harmony export */   portFromParams: () => (/* binding */ portFromParams),
+/* harmony export */   portIdOf: () => (/* binding */ portIdOf),
+/* harmony export */   portOf: () => (/* binding */ portOf)
+/* harmony export */ });
+// The base action connect-port {port} (standard simai.smart-component 1.3.8
+// §4.1, §4.9): every element takes the host port it is handed, from the page
+// or from the assembly it is a part of, by one method, `connectPort(port)`;
+// `setHostPort(port)` is its alias.
+//
+// The port is kept on the instance, for its scope (§7.7): it lasts while the
+// instance does and is let go when its scope ends, so an element taken out of
+// the page holds no host. A component reacts through an optional hook,
+// `onPortConnected(port, {signal})`, run after the port is kept; a component
+// written before the base action, which overrides `setHostPort(port)` itself,
+// has that override run as the hook, so it needs no change to be reached.
+//
+// Answers an outcome (§4.4): `{outcome: 'applied'}`; `refused` with
+// `no-port` when nothing was handed, `other-port` when the port names an id
+// other than the one the manifest declares, and `port-unsupported` when the
+// hook throws -- the port is then not kept.
+// A host adapter names its port by `id` (SF.Assembly, the port contracts) or
+// by `port` (`{port, version, capabilities, raise}`, ui-pro's adapters).
+function portIdOf(port) {
+  if (!port || typeof port !== 'object') return '';
+  if (typeof port.id === 'string' && port.id) return port.id;
+  if (typeof port.port === 'string' && port.port) return port.port;
+  return '';
+} // connect-port takes its parameters as one object, `{port}`, or the port
+// itself. An adapter whose `port` is its id (a string) is the port.
+
+function portFromParams(params) {
+  if (params && typeof params === 'object' && params.port && typeof params.port === 'object') return params.port;
+  return params;
+} // The port id the element's manifest declares, if any (§4.9).
+
+function declaredPortId(element) {
+  const declared = element?.constructor?.manifest?.port ?? element?.constructor?.sfInterface?.port;
+  return portIdOf(declared);
+}
+/** The port an element holds now, or null. */
+
+
+function portOf(element) {
+  return element?.__sfPortEntry?.port ?? null;
+}
+/** connect-port {port} on `element`, with `alias` the base's own setHostPort. */
+
+function connectPort(element, params, alias) {
+  const port = portFromParams(params);
+  if (!port || typeof port !== 'object') return {
+    outcome: 'refused',
+    reason: 'no-port'
+  };
+  const declared = declaredPortId(element);
+  const given = portIdOf(port);
+  if (declared && given && declared !== given) return {
+    outcome: 'refused',
+    reason: 'other-port'
+  };
+  const previous = element.__sfPortEntry ?? null; // Kept on the element, not in a module map: every bundle carries its own
+  // copy of this module, and the element is what they share.
+
+  const signal = element.sfScope;
+  const entry = {
+    port,
+    signal
+  };
+  element.__sfPortEntry = entry; // The port lives as long as the scope it was handed in (§7.7).
+
+  if (signal && typeof signal.addEventListener === 'function' && !signal.aborted) {
+    signal.addEventListener('abort', () => {
+      if (element.__sfPortEntry === entry) element.__sfPortEntry = null;
+    }, {
+      once: true
+    });
+  } // The hook. A component's own setHostPort (written before the base action)
+  // is the hook when there is no onPortConnected; the guard lets such an
+  // override call super.setHostPort without running itself again.
+
+
+  if (element.__sfConnectingPort) return {
+    outcome: 'applied'
+  };
+  element.__sfConnectingPort = true;
+
+  try {
+    if (typeof element.onPortConnected === 'function') {
+      element.onPortConnected(port, {
+        signal
+      });
+    } else if (typeof element.setHostPort === 'function' && element.setHostPort !== alias) {
+      element.setHostPort(port);
+    }
+  } catch (error) {
+    element.__sfPortEntry = previous;
+    return {
+      outcome: 'refused',
+      reason: 'port-unsupported'
+    };
+  } finally {
+    element.__sfConnectingPort = false;
+  }
+
+  element.requestComponentUpdate?.('port');
+  return {
+    outcome: 'applied'
+  };
+}
+/**
+ * Gives a class the base action where its base has none: `connectPort`,
+ * `setHostPort` and the read-only `sfPort`.
+ */
+
+function installPortAction(proto) {
+  if (!proto || typeof proto.connectPort === 'function') return;
+
+  function setHostPort(port) {
+    return connectPort(this, port, setHostPort);
+  }
+
+  Object.defineProperty(proto, 'connectPort', {
+    configurable: true,
+    writable: true,
+    value: function connectPortAction(port) {
+      return connectPort(this, port, setHostPort);
+    }
+  });
+
+  if (typeof proto.setHostPort !== 'function') {
+    Object.defineProperty(proto, 'setHostPort', {
+      configurable: true,
+      writable: true,
+      value: setHostPort
+    });
+  }
+
+  if (!Object.prototype.hasOwnProperty.call(proto, 'sfPort')) {
+    Object.defineProperty(proto, 'sfPort', {
+      configurable: true,
+
+      get() {
+        return portOf(this);
+      }
+
+    });
+  }
+}
+
+/***/ },
+
 /***/ "364eb185ca94"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -1964,10 +2121,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _deprecations_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("06e8cd089f28");
 /* harmony import */ var _internal_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("364eb185ca94");
 /* harmony import */ var _aliases_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("28b603686dcc");
-/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("fef8077ac919");
-/* harmony import */ var lit_directives_ref_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("7fcbcc00731e");
-/* harmony import */ var lit_directive_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("69fcfee6f64b");
-/* harmony import */ var _page_language__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("8489d1f5bab4");
+/* harmony import */ var _host_port_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("f171c5ece4b4");
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("fef8077ac919");
+/* harmony import */ var lit_directives_ref_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("7fcbcc00731e");
+/* harmony import */ var lit_directive_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("69fcfee6f64b");
+/* harmony import */ var _page_language__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("8489d1f5bab4");
+
 
 
 
@@ -2123,11 +2282,11 @@ function applySmartProps(element, props = {}, previous = null) {
 // anything in the table changed -- fourteen nodes a row, changed row or not,
 // taking the control a person was interacting with with them.
 
-class SmartElementDirective extends lit_directive_js__WEBPACK_IMPORTED_MODULE_5__.Directive {
+class SmartElementDirective extends lit_directive_js__WEBPACK_IMPORTED_MODULE_6__.Directive {
   constructor(partInfo) {
     super(partInfo);
 
-    if (partInfo.type !== lit_directive_js__WEBPACK_IMPORTED_MODULE_5__.PartType.CHILD) {
+    if (partInfo.type !== lit_directive_js__WEBPACK_IMPORTED_MODULE_6__.PartType.CHILD) {
       throw new Error("renderSmartElement belongs in a child position of a template");
     }
 
@@ -2151,7 +2310,7 @@ class SmartElementDirective extends lit_directive_js__WEBPACK_IMPORTED_MODULE_5_
 
 }
 
-const smartElement = (0,lit_directive_js__WEBPACK_IMPORTED_MODULE_5__.directive)(SmartElementDirective); // The same element, outside a template. A caller that holds the element itself
+const smartElement = (0,lit_directive_js__WEBPACK_IMPORTED_MODULE_6__.directive)(SmartElementDirective); // The same element, outside a template. A caller that holds the element itself
 // -- a portal, a measurement, a test -- gets a fresh one, because there is no
 // position to keep it in.
 
@@ -2361,12 +2520,12 @@ class SfBaseElement extends HTMLElement {
     // the shared rule itself -- sixteen subscriptions would be sixteen chances
     // to forget one (owner, 2026-10-11: «языков будет гораздо больше чем два»).
 
-    this.__sfLanguageOff = _page_language__WEBPACK_IMPORTED_MODULE_6__.language.onChange(() => {
+    this.__sfLanguageOff = _page_language__WEBPACK_IMPORTED_MODULE_7__.language.onChange(() => {
       if (this._isMounted) this.requestComponentUpdate("language");
     }); // A [lang] changed on the page redraws the elements under it (standard
     // 1.3.8 §11.1; simai/ui-source#45): one observer for the document.
 
-    this.__sfLanguageUnwatch = (0,_page_language__WEBPACK_IMPORTED_MODULE_6__.followLanguage)(this, () => {
+    this.__sfLanguageUnwatch = (0,_page_language__WEBPACK_IMPORTED_MODULE_7__.followLanguage)(this, () => {
       if (this._isMounted) this.requestComponentUpdate("language");
     });
     this.emitComponentEvent("connected");
@@ -2381,6 +2540,24 @@ class SfBaseElement extends HTMLElement {
   get sfScope() {
     if (!this.__sfScope) this.__sfScope = new AbortController();
     return this.__sfScope.signal;
+  } // The base action connect-port {port} (standard 1.3.8 §4.1, §4.9), with
+  // setHostPort as its alias: the port is kept on the instance's scope and the
+  // component's optional onPortConnected(port, {signal}) runs; a component's
+  // own older setHostPort override runs in its place (core/js/host-port.js).
+
+
+  connectPort(port) {
+    return (0,_host_port_js__WEBPACK_IMPORTED_MODULE_3__.connectPort)(this, port, SfBaseElement.prototype.setHostPort);
+  }
+
+  setHostPort(port) {
+    return this.connectPort(port);
+  }
+  /** The host port the instance holds now (§4.9), or null. */
+
+
+  get sfPort() {
+    return (0,_host_port_js__WEBPACK_IMPORTED_MODULE_3__.portOf)(this);
   }
 
   sfOpenScope() {
@@ -2531,7 +2708,7 @@ class SfBaseElement extends HTMLElement {
   }
 
   createRef() {
-    const ref = (0,lit_directives_ref_js__WEBPACK_IMPORTED_MODULE_4__.createRef)();
+    const ref = (0,lit_directives_ref_js__WEBPACK_IMPORTED_MODULE_5__.createRef)();
     ref.__sfOwner = this;
     return ref;
   }
@@ -2964,7 +3141,7 @@ class SfBaseElement extends HTMLElement {
 
     this.prepareRenderContainer(changedAttributes);
     this.markStylePending(this);
-    (0,lit__WEBPACK_IMPORTED_MODULE_3__.render)(templateResult, this);
+    (0,lit__WEBPACK_IMPORTED_MODULE_4__.render)(templateResult, this);
     this.flushRefEffects();
     await this.whenRenderedStylesReady(this);
 
@@ -4026,7 +4203,7 @@ class SfBaseElement extends HTMLElement {
     const slotContent = this._slotTemplates.get(name) || [];
 
     if (!slotContent.length) {
-      return lit__WEBPACK_IMPORTED_MODULE_3__.nothing;
+      return lit__WEBPACK_IMPORTED_MODULE_4__.nothing;
     }
 
     if (slotContent.length === 1) {
@@ -4110,7 +4287,7 @@ class SfBaseElement extends HTMLElement {
     const externalModule = await this.resolveExternalTemplateModule(templateName);
 
     if (!this._isMounted || renderToken !== this._renderToken || templateName !== this.componentTemplateName) {
-      return lit__WEBPACK_IMPORTED_MODULE_3__.nothing;
+      return lit__WEBPACK_IMPORTED_MODULE_4__.nothing;
     }
 
     if (externalModule !== this._externalTemplateModule) {
@@ -4126,8 +4303,8 @@ class SfBaseElement extends HTMLElement {
 
       if (renderFn) {
         return renderFn({
-          html: lit__WEBPACK_IMPORTED_MODULE_3__.html,
-          nothing: lit__WEBPACK_IMPORTED_MODULE_3__.nothing,
+          html: lit__WEBPACK_IMPORTED_MODULE_4__.html,
+          nothing: lit__WEBPACK_IMPORTED_MODULE_4__.nothing,
           context,
           component: this,
           changedAttributes
@@ -4148,8 +4325,8 @@ class SfBaseElement extends HTMLElement {
       return externalModule.mapContext({
         context,
         component: this,
-        html: lit__WEBPACK_IMPORTED_MODULE_3__.html,
-        nothing: lit__WEBPACK_IMPORTED_MODULE_3__.nothing
+        html: lit__WEBPACK_IMPORTED_MODULE_4__.html,
+        nothing: lit__WEBPACK_IMPORTED_MODULE_4__.nothing
       }) || context;
     }
 
@@ -4300,8 +4477,8 @@ class SfBaseElement extends HTMLElement {
       externalModule[hookName]({
         component: this,
         root: this,
-        html: lit__WEBPACK_IMPORTED_MODULE_3__.html,
-        nothing: lit__WEBPACK_IMPORTED_MODULE_3__.nothing,
+        html: lit__WEBPACK_IMPORTED_MODULE_4__.html,
+        nothing: lit__WEBPACK_IMPORTED_MODULE_4__.nothing,
         context: this.templateContext(),
         ...detail
       });
@@ -4345,7 +4522,7 @@ class SfBaseElement extends HTMLElement {
   }
 
   template() {
-    return lit__WEBPACK_IMPORTED_MODULE_3__.nothing;
+    return lit__WEBPACK_IMPORTED_MODULE_4__.nothing;
   }
 
   beforeRender() {}
@@ -4372,23 +4549,23 @@ class SfBaseElement extends HTMLElement {
 
 if (typeof window !== "undefined") {
   window.SfBaseElement = SfBaseElement;
-  window.html = lit__WEBPACK_IMPORTED_MODULE_3__.html;
-  window.nothing = lit__WEBPACK_IMPORTED_MODULE_3__.nothing;
-  window.render = lit__WEBPACK_IMPORTED_MODULE_3__.render;
+  window.html = lit__WEBPACK_IMPORTED_MODULE_4__.html;
+  window.nothing = lit__WEBPACK_IMPORTED_MODULE_4__.nothing;
+  window.render = lit__WEBPACK_IMPORTED_MODULE_4__.render;
 
   if (!window.SF) {
     window.SF = {};
   }
 
   window.SF.SfBaseElement = SfBaseElement;
-  window.SF.html = lit__WEBPACK_IMPORTED_MODULE_3__.html;
-  window.SF.nothing = lit__WEBPACK_IMPORTED_MODULE_3__.nothing;
-  window.SF.render = lit__WEBPACK_IMPORTED_MODULE_3__.render;
+  window.SF.html = lit__WEBPACK_IMPORTED_MODULE_4__.html;
+  window.SF.nothing = lit__WEBPACK_IMPORTED_MODULE_4__.nothing;
+  window.SF.render = lit__WEBPACK_IMPORTED_MODULE_4__.render;
   window.SF.smart = { ...(window.SF.smart || {}),
     SfBaseElement,
-    html: lit__WEBPACK_IMPORTED_MODULE_3__.html,
-    nothing: lit__WEBPACK_IMPORTED_MODULE_3__.nothing,
-    render: lit__WEBPACK_IMPORTED_MODULE_3__.render,
+    html: lit__WEBPACK_IMPORTED_MODULE_4__.html,
+    nothing: lit__WEBPACK_IMPORTED_MODULE_4__.nothing,
+    render: lit__WEBPACK_IMPORTED_MODULE_4__.render,
     toBoolean,
     toAttributeName,
     toNumber,
