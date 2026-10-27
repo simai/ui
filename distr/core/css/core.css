@@ -744,6 +744,8 @@
   --sf-z-index-8: 80;
   --sf-z-index-9: 90;
   --sf-z-index-0: 0;
+  --sf-z-index-layer: 9000;
+  --sf-z-index-layer-step: 2;
 }
 
 @layer sf.base {

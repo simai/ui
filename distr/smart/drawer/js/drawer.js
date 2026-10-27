@@ -2,6 +2,472 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "78628e837a32"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   carryLayerOrigin: () => (/* binding */ carryLayerOrigin),
+/* harmony export */   closeLayer: () => (/* binding */ closeLayer),
+/* harmony export */   hasLayer: () => (/* binding */ hasLayer),
+/* harmony export */   hasLayerAbove: () => (/* binding */ hasLayerAbove),
+/* harmony export */   isOutsideTopLayer: () => (/* binding */ isOutsideTopLayer),
+/* harmony export */   isTopLayer: () => (/* binding */ isTopLayer),
+/* harmony export */   landmarksAround: () => (/* binding */ landmarksAround),
+/* harmony export */   layerIndex: () => (/* binding */ layerIndex),
+/* harmony export */   layerZIndex: () => (/* binding */ layerZIndex),
+/* harmony export */   layerZIndexAt: () => (/* binding */ layerZIndexAt),
+/* harmony export */   openLayer: () => (/* binding */ openLayer),
+/* harmony export */   openLayers: () => (/* binding */ openLayers),
+/* harmony export */   raiseLayer: () => (/* binding */ raiseLayer),
+/* harmony export */   returnLayerFocus: () => (/* binding */ returnLayerFocus),
+/* harmony export */   topLayer: () => (/* binding */ topLayer),
+/* harmony export */   tryFocus: () => (/* binding */ tryFocus),
+/* harmony export */   updateLayer: () => (/* binding */ updateLayer)
+/* harmony export */ });
+// The one document layer stack (standard simai.smart-component 1.3.8 §19).
+//
+// Everything that draws above the page -- a modal, a drawer, a popover, a
+// dropdown list, a menu, a calendar, the toast area -- registers here when it
+// opens and leaves when it closes. The stack answers three questions the
+// components used to answer each for itself, from three lists and two z-index
+// bases:
+//
+//   - which layer is on top: the one opened last. Only that layer acts on
+//     Escape, an outside press and Tab; a layer below stands back
+//     (simai/ui-source#36: Escape over a modal opened from a drawer closed the
+//     drawer, because each kept its own stack and the drawer listened first);
+//   - how high each layer is drawn: one z-index scale in opening order, read
+//     from the tokens --sf-z-index-layer and --sf-z-index-layer-step
+//     (simai/ui-source#37: a drawer opened from a modal was drawn under it,
+//     at 90 + 2i against the modal's 9000 + 2i);
+//   - where focus goes when a layer closes: back to what was active when it
+//     opened; if that is gone or outside the new top layer, into the new top
+//     layer; else the nearest landmark; else the body. A layer that closes
+//     while another stands above it moves no focus.
+//
+// Kept on a shared global, not in module scope: every Smart bundle carries its
+// own copy of this module, and the modal's bundle has to see the drawer the
+// drawer's bundle opened. Each document (an iframe too) has its own stack.
+//
+// A layer is any object: a custom element, or the root element of a component
+// without one. One whose `isConnected` is false is passed over, so a layer
+// removed without closing cannot hold every key on the page.
+const STACK_KEY = Symbol.for('sf.layerStack'); // The scale's defaults, the same as core's tokens: 9000 is where the modal
+// stack always started, so nothing a page draws below it changes place.
+
+const LAYER_BASE = 9000;
+const LAYER_STEP = 2;
+const LANDMARKS = 'main, section, article, [role="main"], [role="region"]';
+
+function stack() {
+  const scope = globalThis;
+
+  if (!scope[STACK_KEY]) {
+    Object.defineProperty(scope, STACK_KEY, {
+      value: {
+        layers: [],
+        bound: false,
+        lease: null,
+        pressTop: new WeakMap()
+      },
+      configurable: true
+    });
+  }
+
+  return scope[STACK_KEY];
+}
+
+const isLive = entry => entry?.owner?.isConnected !== false; // A toast does not take keys or presses: the window under it keeps them.
+
+
+const takesInput = entry => entry.kind !== 'toast';
+
+function find(owner) {
+  return stack().layers.find(entry => entry.owner === owner) || null;
+}
+
+function readToken(name, fallback) {
+  const root = globalThis.document?.documentElement;
+  if (!root || typeof globalThis.getComputedStyle !== 'function') return fallback;
+  const value = parseInt(globalThis.getComputedStyle(root).getPropertyValue(name), 10);
+  return Number.isFinite(value) ? value : fallback;
+}
+/** The z-index of the layer at a place in the stack, as a number. */
+
+
+function layerZIndexAt(index) {
+  if (index < 0) return '';
+  return readToken('--sf-z-index-layer', LAYER_BASE) + index * readToken('--sf-z-index-layer-step', LAYER_STEP);
+} // The page lock is one lease for the whole stack, taken by the first layer
+// that locks the page and given back when no such layer is left -- whichever
+// kind opened first and whichever closes last. A modal and a drawer held two
+// locks before, and closing them out of order unlocked the page under an open
+// window.
+
+function syncPageLock() {
+  const state = stack();
+  const locker = state.layers.find(entry => entry.locksPage && isLive(entry));
+
+  if (locker && !state.lease) {
+    const release = locker.lockPage?.();
+    state.lease = typeof release === 'function' ? release : () => {};
+  } else if (!locker && state.lease) {
+    const release = state.lease;
+    state.lease = null;
+    release();
+  }
+}
+
+function sync() {
+  const state = stack();
+  const top = topLayer();
+  state.layers.forEach((entry, index) => {
+    entry.place?.({
+      index,
+      zIndex: layerZIndexAt(index),
+      top: entry === top
+    });
+  });
+  syncPageLock();
+}
+/** The layer on top: the last opened that takes keys and presses. */
+
+
+function topLayer() {
+  const {
+    layers
+  } = stack();
+
+  for (let at = layers.length - 1; at >= 0; at -= 1) {
+    if (isLive(layers[at]) && takesInput(layers[at])) return layers[at];
+  }
+
+  return null;
+}
+/** Whether this owner is the top layer. One that is not open is top only when nothing is. */
+
+function isTopLayer(owner) {
+  const top = topLayer();
+  return top ? top.owner === owner : !find(owner);
+}
+function hasLayer(owner) {
+  return Boolean(find(owner));
+}
+/** Whether a layer of one of these kinds stands above this owner. */
+
+function hasLayerAbove(owner, kinds = ['modal', 'panel']) {
+  const {
+    layers
+  } = stack();
+  const at = layers.findIndex(entry => entry.owner === owner);
+  if (at < 0) return false;
+  return layers.slice(at + 1).some(entry => isLive(entry) && kinds.includes(entry.kind));
+}
+/** The place of this owner in the stack, -1 when it is not open. */
+
+function layerIndex(owner) {
+  return stack().layers.findIndex(entry => entry.owner === owner);
+}
+/** This owner's z-index, '' when it is not open. */
+
+function layerZIndex(owner) {
+  return layerZIndexAt(layerIndex(owner));
+}
+/** The open layers, bottom first; of one kind when `kind` is given. */
+
+function openLayers(kind = '') {
+  return stack().layers.filter(entry => !kind || entry.kind === kind).map(entry => entry.owner);
+}
+/**
+ * Registers a layer, or raises it to the top when it is already open.
+ *
+ * options:
+ *   kind        'modal' | 'panel' | 'surface' | 'toast'
+ *   locksPage   true to hold the page lock while open; lockPage() takes it and
+ *               returns the function that gives it back
+ *   trapsFocus  true to keep Tab inside and to return focus on close
+ *   root()      the element the layer draws, for focus and outside presses
+ *   onEscape(event)  closes the layer and answers true when it took the press
+ *   onTab(event)     keeps focus inside
+ *   focusIn()        moves focus inside
+ *   place({index, zIndex, top})  draws the layer at its height
+ *   returnTo    what was active at open (default: the active element now)
+ */
+
+function openLayer(owner, options = {}) {
+  if (!owner) return null;
+  const state = stack();
+  bindKeys();
+  let entry = find(owner);
+
+  if (entry) {
+    state.layers.splice(state.layers.indexOf(entry), 1);
+    Object.assign(entry, options);
+  } else {
+    const returnTo = options.returnTo !== undefined ? options.returnTo : globalThis.document?.activeElement ?? null;
+    entry = {
+      kind: 'surface',
+      locksPage: false,
+      trapsFocus: false,
+      ...options,
+      owner,
+      returnTo,
+      returnAncestors: landmarksAround(returnTo)
+    };
+  }
+
+  state.layers.push(entry);
+  sync();
+  return entry;
+}
+/** Changes what a layer declares without moving it in the stack. */
+
+function updateLayer(owner, options = {}) {
+  const entry = find(owner);
+  if (!entry) return null;
+  Object.assign(entry, options);
+  sync();
+  return entry;
+}
+/** Raises an open layer to the top. */
+
+function raiseLayer(owner) {
+  const entry = find(owner);
+  if (!entry) return;
+  const {
+    layers
+  } = stack();
+  layers.splice(layers.indexOf(entry), 1);
+  layers.push(entry);
+  sync();
+}
+/**
+ * Removes a layer. Answers whether it was the top one. With `restoreFocus`
+ * (the default) a top layer that traps focus gives focus back by §19.2.
+ */
+
+function closeLayer(owner, {
+  restoreFocus = true
+} = {}) {
+  const entry = find(owner);
+  if (!entry) return false;
+  const wasTop = topLayer() === entry;
+  const {
+    layers
+  } = stack();
+  layers.splice(layers.indexOf(entry), 1);
+  sync();
+
+  if (restoreFocus && wasTop && entry.trapsFocus) {
+    returnLayerFocus(true, entry.returnTo, entry.returnAncestors);
+  }
+
+  return wasTop;
+}
+/** The landmarks around a node, nearest first: where focus falls back to. */
+
+function landmarksAround(node) {
+  const found = [];
+
+  for (let parent = node?.parentElement; parent; parent = parent.parentElement) {
+    if (parent.matches?.(LANDMARKS)) found.push(parent);
+  }
+
+  return found;
+}
+/** Focuses a node if a person could reach it; answers whether it took focus. */
+
+function tryFocus(node, temporaryTabIndex = false) {
+  if (!node?.isConnected || typeof node.focus !== 'function' || node.matches?.(':disabled') || node.closest?.('[inert], [hidden], [aria-hidden="true"]') || !node.getClientRects?.().length || node.ownerDocument.defaultView.getComputedStyle(node).visibility !== 'visible') {
+    return false;
+  }
+
+  const addTabIndex = temporaryTabIndex && !node.hasAttribute('tabindex');
+  let observer;
+
+  const cleanup = () => {
+    observer?.disconnect();
+    node.removeEventListener('blur', cleanup); // Keep an author's own change to the temporary attribute.
+
+    if (addTabIndex && node.getAttribute('tabindex') === '-1') node.removeAttribute('tabindex');
+  };
+
+  if (addTabIndex) {
+    node.setAttribute('tabindex', '-1');
+    node.addEventListener('blur', cleanup, {
+      once: true
+    });
+    observer = new node.ownerDocument.defaultView.MutationObserver(() => {
+      if (!node.isConnected) cleanup();
+    });
+    observer.observe(node.ownerDocument.documentElement, {
+      childList: true,
+      subtree: true
+    });
+  }
+
+  let focused = false;
+
+  try {
+    node.focus({
+      preventScroll: true
+    });
+    focused = node.ownerDocument.activeElement === node;
+    return focused;
+  } catch {
+    return false;
+  } finally {
+    // Removing tabindex while a non-native target is focused blurs it.
+    if (addTabIndex && !focused) cleanup();
+  }
+} // The layer that owns focus now: the topmost one that traps it. A docked
+// panel or an open list under the window does not.
+
+function focusOwner() {
+  const {
+    layers
+  } = stack();
+
+  for (let at = layers.length - 1; at >= 0; at -= 1) {
+    if (isLive(layers[at]) && layers[at].trapsFocus) return layers[at];
+  }
+
+  return null;
+}
+/**
+ * Gives focus back after a layer closed (§19.2): to `target` when it is still
+ * there and inside the layer that now owns focus (or nothing does); else into
+ * that layer; else the nearest landmark; else the body. Nothing moves when the
+ * closed layer was not the top one.
+ */
+
+
+function returnLayerFocus(wasTop, target, ancestors = []) {
+  if (!wasTop) return;
+  const owner = focusOwner();
+  const root = owner?.root?.();
+  if ((!owner || root?.contains(target)) && tryFocus(target)) return;
+
+  if (owner) {
+    owner.focusIn?.();
+    return;
+  }
+
+  const doc = globalThis.document;
+  if (!doc) return;
+  const candidates = new Set([...ancestors, ...doc.querySelectorAll('main, [role="main"]'), doc.body]);
+
+  for (const candidate of candidates) {
+    if (tryFocus(candidate, true)) return;
+  }
+} // One listener pair for the whole document, whichever bundle binds it first.
+// The top layer is read when the press starts (window, capture -- before any
+// component's listener) and acted on when it has passed through the page
+// (window, bubble): a control inside that handled Escape keeps it, and a
+// surface that closed itself on the way down does not hand the same press to
+// the layer under it.
+
+function bindKeys() {
+  const state = stack();
+  if (state.bound || typeof globalThis.addEventListener !== 'function') return;
+  state.bound = true;
+  globalThis.addEventListener('keydown', event => {
+    if (event.key === 'Escape' || event.key === 'Tab') state.pressTop.set(event, topLayer());
+  }, true);
+  globalThis.addEventListener('keydown', event => {
+    if (event.key !== 'Escape' && event.key !== 'Tab' || event.defaultPrevented) return;
+    const top = state.pressTop.has(event) ? state.pressTop.get(event) : topLayer();
+    if (!top || top !== topLayer()) return;
+
+    if (event.key === 'Escape') {
+      if (top.onEscape?.(event)) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+      }
+
+      return;
+    }
+
+    top.onTab?.(event);
+  });
+} // A press outside the top layer, read in capture: what a layer below would
+// call outside is ignored there.
+
+
+function isOutsideTopLayer(event) {
+  const top = topLayer();
+  const root = top?.root?.();
+  if (!root) return false;
+  const path = event.composedPath?.() ?? [];
+  return !path.includes(root) && !path.includes(top.owner);
+}
+const THEMES = ['theme-dark', 'theme-light'];
+/**
+ * A layer drawn outside its host (a portal) keeps where it came from (§19.1):
+ * the host's resolved lang and dir, the theme of its nearest themed ancestor,
+ * and the computed values of the host's variables that differ from those
+ * where the portal stands -- `variables` by name, `prefixes` by the start of
+ * the name. It looks and speaks as if it stood where its host stands.
+ */
+
+function carryLayerOrigin(portal, host, {
+  variables = [],
+  prefixes = []
+} = {}) {
+  if (!portal || !host?.isConnected) return;
+  const doc = host.ownerDocument;
+  const view = doc.defaultView;
+  const lang = host.closest('[lang]')?.getAttribute('lang') ?? doc.documentElement.getAttribute('lang') ?? '';
+  if (lang) portal.setAttribute('lang', lang);else portal.removeAttribute('lang');
+  const declared = host.closest('[dir]')?.getAttribute('dir');
+  const dir = declared && declared !== 'auto' ? declared : view.getComputedStyle(host).direction;
+  if (dir) portal.setAttribute('dir', dir); // The theme only when the host's differs from the portal's place: a page
+  // that retunes tokens on html.theme-dark keeps them, as the class would
+  // otherwise declare the core's values again on the portal.
+
+  const parent = portal.parentElement;
+
+  const theme = node => {
+    const area = node?.closest?.(THEMES.map(name => `.${name}`).join(', '));
+    return area ? THEMES.find(name => area.classList.contains(name)) : '';
+  };
+
+  const carried = portal.dataset.sfLayerTheme || '';
+  const wanted = theme(host) !== theme(parent) ? theme(host) : '';
+  if (carried && carried !== wanted) portal.classList.remove(carried);
+  if (wanted) portal.classList.add(wanted);
+  if (wanted) portal.dataset.sfLayerTheme = wanted;else delete portal.dataset.sfLayerTheme;
+  if (!variables.length && !prefixes.length) return;
+  const own = view.getComputedStyle(host);
+  const there = parent ? view.getComputedStyle(parent) : null;
+  const names = new Set(variables);
+
+  if (prefixes.length) {
+    for (const name of own) {
+      if (prefixes.some(prefix => name.startsWith(prefix))) names.add(name);
+    }
+  }
+
+  const previous = (portal.dataset.sfLayerVariables || '').split(' ').filter(Boolean);
+  const kept = [];
+
+  for (const name of names) {
+    const value = own.getPropertyValue(name).trim();
+
+    if (value && value !== there?.getPropertyValue(name).trim()) {
+      portal.style.setProperty(name, value);
+      kept.push(name);
+    }
+  }
+
+  for (const name of previous) if (!kept.includes(name)) portal.style.removeProperty(name);
+
+  if (kept.length) portal.dataset.sfLayerVariables = kept.join(' ');else delete portal.dataset.sfLayerVariables;
+}
+
+/***/ },
+
 /***/ "5f0529568b98"
 (module, __webpack_exports__, __webpack_require__) {
 
@@ -10,12 +476,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("ddf1cdb42ecc");
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("fbe0570fcc69");
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("0d662e4d7d63");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("fefa0c5c3ed9");
+/* harmony import */ var _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("78628e837a32");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("fefa0c5c3ed9");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_2__]);
 ([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language__WEBPACK_IMPORTED_MODULE_2__);
+
 
 
  // Every word this component says, in the languages it ships with. A product
@@ -48,10 +516,16 @@ const PORTAL_ATTRIBUTE = 'data-sf-drawer-portal'; // A box that holds its own ov
 // name came first and is read until the change journal retires it.
 
 const OVERLAY_CONTAINER = '[data-sf-overlay-container], [data-sf-drawer-container]';
-const FOCUSABLE_SELECTOR = ['a[href]', 'button:not([disabled])', 'input:not([disabled])', 'select:not([disabled])', 'textarea:not([disabled])', '[tabindex]:not([tabindex="-1"])'].join(',');
-const drawerStack = []; // Below this width of the dock host (or of the window, when the page names no
+const FOCUSABLE_SELECTOR = ['a[href]', 'button:not([disabled])', 'input:not([disabled])', 'select:not([disabled])', 'textarea:not([disabled])', '[tabindex]:not([tabindex="-1"])'].join(','); // The open drawers, in the order they opened: the panels of the one document
+// layer stack (layer-stack.js, standard 1.3.8 §19.1). The drawer kept an array
+// of its own, so a modal opened from a drawer did not know it was above it
+// (simai/ui-source#36) and a drawer opened from a modal was drawn under it
+// (simai/ui-source#37).
+
+const openDrawers = () => (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_3__.openLayers)('panel').filter(owner => owner?.localName === DRAWER_SELECTOR); // Below this width of the dock host (or of the window, when the page names no
 // host) docked panels overlay the page instead of narrowing it, unless the
 // drawer names its own (dock-breakpoint, or --sf-drawer-dock-breakpoint).
+
 
 const DOCK_MIN_REM = 48;
 const PLACEMENTS = ['left', 'right', 'inline-start', 'inline-end', 'bottom']; // The heights a bottom sheet rests at, smallest first: its content (auto, up
@@ -85,35 +559,62 @@ const drawerManager = {
   globalBound: false,
   lockState: null,
 
+  // Opening raises a drawer that is open already: it is the last opened.
   add(drawer) {
-    this.remove(drawer, false);
-    drawerStack.push(drawer);
-    this.sync();
-    this.syncPageLock();
+    (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_3__.openLayer)(drawer, {
+      kind: 'panel',
+      ...this.declares(drawer),
+      returnTo: drawer._lastActive ?? null,
+      lockPage: () => {
+        this.lockPage(drawer.preserveScrollGap);
+        return () => this.unlockPage();
+      },
+      root: () => drawer.getDrawerRoot(),
+      focusIn: () => drawer.focusFirst(),
+      onEscape: event => drawer.onKeyDown(event),
+      onTab: event => drawer.onKeyDown(event),
+      place: ({
+        index
+      }) => drawer.applyStackPosition(index)
+    });
+    this.syncDock();
     drawer.syncSwitches();
   },
 
-  remove(drawer, unlock = true) {
-    const index = drawerStack.indexOf(drawer);
-    if (index >= 0) drawerStack.splice(index, 1);
+  // What the drawer declares to the stack (§19.1): a modal drawer locks the
+  // page -- unless it stands in an overlay container, which it covers instead
+  // -- and holds the focus.
+  declares(drawer) {
+    return {
+      locksPage: drawer.modal && !drawer.closest(OVERLAY_CONTAINER),
+      trapsFocus: drawer.modal
+    };
+  },
+
+  // Answers whether the drawer was the top layer.
+  remove(drawer) {
+    const wasTop = (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_3__.closeLayer)(drawer, {
+      restoreFocus: false
+    });
+    drawer.applyStackPosition(-1);
     this.sync();
-    if (unlock) this.syncPageLock();
     drawer.syncSwitches();
+    return wasTop;
   },
 
   bringToFront(drawer) {
-    if (!drawerStack.includes(drawer)) return;
-    this.remove(drawer, false);
-    drawerStack.push(drawer);
+    if ((0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_3__.layerIndex)(drawer) < 0) return;
+    (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_3__.raiseLayer)(drawer);
     this.sync();
   },
 
   isTop(drawer) {
-    return drawerStack.at(-1) === drawer;
+    return (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_3__.isTopLayer)(drawer);
   },
 
   sync() {
-    drawerStack.forEach((drawer, index) => drawer.applyStackPosition(index));
+    for (const drawer of openDrawers()) drawer.applyStackPosition((0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_3__.layerIndex)(drawer));
+
     this.syncDock();
   },
 
@@ -133,7 +634,7 @@ const drawerManager = {
       end: 0
     };
 
-    for (const drawer of drawerStack) {
+    for (const drawer of openDrawers()) {
       if (!drawer.openState || !drawer.docked) continue;
       const column = this.reservesDock(drawer);
       drawer.setDockColumn(column);
@@ -168,7 +669,7 @@ const drawerManager = {
   // Redraws only when some open docked drawer's answer changed: syncDock pads
   // the host, and the padding must not wake the host's observer into a loop.
   syncDockIfChanged() {
-    if (drawerStack.some(drawer => drawer.openState && drawer.docked && this.reservesDock(drawer) !== drawer.dockColumn)) {
+    if (openDrawers().some(drawer => drawer.openState && drawer.docked && this.reservesDock(drawer) !== drawer.dockColumn)) {
       this.syncDock();
     }
   },
@@ -205,10 +706,11 @@ const drawerManager = {
     return media ? media.matches : true;
   },
 
+  // The page lock is the layer stack's one lease, taken while any layer that
+  // locks the page is open, a modal's too; a drawer whose `modal` or `docked`
+  // changed while open says so again.
   syncPageLock() {
-    // A drawer inside an overlay container covers that box, not the page.
-    const modalDrawer = drawerStack.find(drawer => drawer.openState && drawer.modal && !drawer.closest(OVERLAY_CONTAINER));
-    if (modalDrawer) this.lockPage(modalDrawer.preserveScrollGap);else this.unlockPage();
+    for (const drawer of openDrawers()) (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_3__.updateLayer)(drawer, this.declares(drawer));
   },
 
   lockPage(preserveScrollGap) {
@@ -433,7 +935,6 @@ class SfDrawer extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default
     this.drawerId = this.resolveDrawerId();
     super.connectedCallback();
     drawerManager.bindGlobalEvents();
-    document.addEventListener('keydown', this.onKeyDown);
     globalThis.addEventListener?.('resize', this.onWindowResize, {
       passive: true
     });
@@ -450,7 +951,6 @@ class SfDrawer extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default
   disconnectedCallback() {
     this._areaObserver?.disconnect();
     this._areaObserver = null;
-    document.removeEventListener('keydown', this.onKeyDown);
     globalThis.removeEventListener?.('resize', this.onWindowResize);
     this._dockObserver?.disconnect();
     this._dockObserver = null;
@@ -672,10 +1172,15 @@ class SfDrawer extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default
       bodyClass: this.getAttribute('body-class') || '',
       closeClass: this.getAttribute('close-class') || ''
     });
-  }
+  } // Its place in the one layer scale (--sf-z-index-layer, in opening order
+  // with every other layer); a page's --sf-drawer-z-index moves the base, the
+  // z-index attribute replaces it.
+
 
   get drawerZIndex() {
-    return this.getAttribute('z-index') || `calc(var(--sf-drawer-z-index, var(--sf-z-index-9)) + ${Math.max(0, this._stackIndex) * 2})`;
+    const base = (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_3__.layerZIndexAt)(0);
+    const rise = this._stackIndex > 0 ? (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_3__.layerZIndexAt)(this._stackIndex) - base : 0;
+    return this.getAttribute('z-index') || `calc(var(--sf-drawer-z-index, ${base}) + ${rise})`;
   } // The shared rule, not a second reading of it. This asked the document
   // directly, which misses a region that names its own language and leaves a
   // product unable to register a third -- the same two faults admin-menu had.
@@ -689,7 +1194,11 @@ class SfDrawer extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default
     const token = ++this._renderToken;
     const result = await this.resolveTemplateResult(changedAttributes);
     if (!this._isMounted || token !== this._renderToken) return;
-    (0,lit__WEBPACK_IMPORTED_MODULE_0__.render)(result, this.resolvePortalRoot());
+    const portal = this.resolvePortalRoot(); // The portal stands at the end of the body; it speaks and looks as the
+    // drawer does where it stands (standard 1.3.8 §19.1).
+
+    (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_3__.carryLayerOrigin)(portal, this);
+    (0,lit__WEBPACK_IMPORTED_MODULE_0__.render)(result, portal);
     this.afterRender();
   } // The panel is rendered at the end of the body, above the page -- or, when the
   // drawer stands inside a [data-sf-overlay-container] (or the older
@@ -856,23 +1365,40 @@ class SfDrawer extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default
 
     if (options.emit !== false && !this.emitDrawerEvent('drawer:before-open', true)) return this;
     this._lastActive = document.activeElement;
+    this._focusReturnAncestors = (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_3__.landmarksAround)(this._lastActive);
     this.syncOpenAttribute(true);
     drawerManager.add(this);
     this._focusAfterRender = this.modal;
     this._emitAfterOpen = options.emit !== false;
     this.requestComponentUpdate('open');
     return this;
-  }
+  } // options.reason says why (standard 1.3.8 §19.3): close, escape, outside,
+  // cancelled or api, the default.
+
 
   close(options = {}) {
     if (!this.openState) return this;
-    if (options.emit !== false && !this.emitDrawerEvent('drawer:before-close', true)) return this;
+    const reason = typeof options.reason === 'string' ? options.reason : 'api';
+    if (options.emit !== false && !this.emitDrawerEvent('drawer:before-close', true, {
+      reason,
+      unsaved: false
+    })) return this;
     this.syncOpenAttribute(false);
-    drawerManager.remove(this);
+    const wasTop = drawerManager.remove(this);
     this.requestComponentUpdate('close');
-    this.restoreFocus();
-    if (options.emit !== false) this.emitDrawerEvent('drawer:after-close');
+    this.returnFocus(wasTop);
+    if (options.emit !== false) this.emitDrawerEvent('drawer:after-close', false, {
+      reason
+    });
     return this;
+  } // A drawer that closes under another layer moves no focus (§19.2). A modal
+  // drawer on top gives it back by the stack's rule; a modeless one to what
+  // was active when it opened, as before.
+
+
+  returnFocus(wasTop) {
+    if (!wasTop) return;
+    if (this.modal) (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_3__.returnLayerFocus)(true, this._lastActive, this._focusReturnAncestors);else this.restoreFocus();
   }
 
   toggle() {
@@ -901,11 +1427,11 @@ class SfDrawer extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default
   syncExternalOpenState(open) {
     if (open) {
       this._lastActive = document.activeElement;
+      this._focusReturnAncestors = (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_3__.landmarksAround)(this._lastActive);
       this._focusAfterRender = this.modal;
       drawerManager.add(this);
     } else {
-      drawerManager.remove(this);
-      this.restoreFocus();
+      this.returnFocus(drawerManager.remove(this));
     }
 
     this.requestComponentUpdate(open ? 'open' : 'close');
@@ -940,7 +1466,7 @@ class SfDrawer extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default
     drawerManager.syncDock();
   }
 
-  applyStackPosition(index = drawerStack.indexOf(this)) {
+  applyStackPosition(index = (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_3__.layerIndex)(this)) {
     this._stackIndex = index;
     const root = this.getDrawerRoot();
 
@@ -949,7 +1475,8 @@ class SfDrawer extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default
       // same edge; the panel stands that many stack offsets in from the edge.
 
       const edge = this.stackEdge;
-      const depth = this.docked || index < 0 ? 0 : drawerStack.slice(0, index).filter(drawer => drawer.openState && !drawer.docked && drawer.stackEdge === edge).length;
+      const drawers = openDrawers();
+      const depth = this.docked || index < 0 ? 0 : drawers.slice(0, Math.max(0, drawers.indexOf(this))).filter(drawer => drawer.openState && !drawer.docked && drawer.stackEdge === edge).length;
       root.style.setProperty('--sf-drawer-stack-depth', String(depth));
     }
 
@@ -1051,39 +1578,47 @@ class SfDrawer extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default
     if (event.target instanceof Element && event.target.closest('[data-sf-drawer-handle]')) {
       this.setSnap(this.snap === 'full' ? 'half' : 'full');
       return;
-    }
+    } // A press outside is the top layer's only.
 
-    if (event.target === root?.querySelector('[data-sf-drawer-overlay]') && this.closeOnOverlay) {
-      this.close();
+
+    if (event.target === root?.querySelector('[data-sf-drawer-overlay]') && this.closeOnOverlay && drawerManager.isTop(this)) {
+      this.close({
+        reason: 'outside'
+      });
       return;
     }
 
     if (event.target instanceof Element && event.target.closest('[data-sf-drawer-close]')) {
       event.preventDefault();
-      this.close();
+      this.close({
+        reason: 'close'
+      });
     }
-  }
+  } // The layer stack hands the drawer Escape and Tab while it is the top layer:
+  // a modal, a list or a drawer opened from it takes them instead. Answers
+  // true when it took Escape; the stack then stops the press.
+
 
   onKeyDown(event) {
     // An editor or drag operation that handled Escape keeps it.
-    if (event.defaultPrevented || !this.openState || !drawerManager.isTop(this)) return; // An open popover takes Escape first; the drawer behind it stays.
+    if (event.defaultPrevented || !this.openState || !drawerManager.isTop(this)) return false;
 
-    if (event.key === 'Escape' && this.closeOnEsc && !document.documentElement?.dataset?.sfPopoverOpen) {
-      event.preventDefault();
-      event.stopImmediatePropagation();
-      this.close();
-      return;
+    if (event.key === 'Escape' && this.closeOnEsc) {
+      this.close({
+        reason: 'escape'
+      });
+      return true;
     }
 
-    if (!this.modal) return;
-    if (event.key !== 'Tab') return;
+    if (!this.modal) return false;
+    if (event.key !== 'Tab') return false;
     const panel = this.getDrawerRoot()?.querySelector('[data-sf-drawer-panel]');
     const focusable = Array.from(panel?.querySelectorAll(FOCUSABLE_SELECTOR) || []).filter(element => element.getClientRects().length > 0);
 
     if (focusable.length === 0) {
       event.preventDefault();
       panel?.focus();
-      return;
+      return false;
     }
 
     const first = focusable[0];
@@ -1099,9 +1634,11 @@ class SfDrawer extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default
       event.preventDefault();
       first.focus();
     }
+
+    return false;
   }
 
-  emitDrawerEvent(type, cancelable = false) {
+  emitDrawerEvent(type, cancelable = false, extra = {}) {
     // Drawer events bubble like other sf-* events, so hosts can listen on the
     // document. detail.drawer names the panel; nested drawers bubble through
     // their ancestors.
@@ -1113,7 +1650,8 @@ class SfDrawer extends (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default
         component: this,
         drawer: this,
         drawerId: this.drawerId,
-        root: this.getDrawerRoot()
+        root: this.getDrawerRoot(),
+        ...extra
       }
     }));
   } // The on* helpers keep their original meaning: only this drawer's events,
