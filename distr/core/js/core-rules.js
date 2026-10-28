@@ -3438,6 +3438,7 @@ __webpack_require__.r(__webpack_exports__);
 /***/ "fe3d6ead36d0"
 () {
 
+// Generated from component.json by scripts/generate-component-files.mjs; do not edit.
 // sf-accordion loads on demand like any other Smart element. It draws the
 // class accordion's markup, so the class accordion is what it draws with: its
 // sheet (and its runtime, which leaves the element's sections alone), the
@@ -3485,25 +3486,26 @@ SF.RuleLoader['cl-alert'] = {
 /***/ "6144b33b7ddb"
 () {
 
+// Generated from component.json by scripts/generate-component-files.mjs; do not edit.
 SF.RuleLoader['cl-avatar'] = {
   tags: ['sf-avatar'],
   type: 'smart',
   mode: 'smart',
   js: true,
-  // The badge sheet places a count or a dot on the avatar
-  // (simai/ui-source#12).
   relation: [{
     name: 'avatars'
   }, {
     name: 'badges'
   }]
-};
+}; // The badge sheet places a count or a dot on the avatar
+// (simai/ui-source#12).
 
 /***/ },
 
 /***/ "c415334d6e8b"
 () {
 
+// Generated from component.json by scripts/generate-component-files.mjs; do not edit.
 SF.RuleLoader['cl-avatars'] = {
   tags: ['sf-avatars'],
   regex: /<sf-avatars\b/i,
@@ -3547,6 +3549,7 @@ SF.RuleLoader['cl-badge'] = {
 /***/ "a22c716ce769"
 () {
 
+// Generated from component.json by scripts/generate-component-files.mjs; do not edit.
 SF.RuleLoader['cl-breadcrumbs'] = {
   tags: ['sf-breadcrumbs'],
   type: 'smart',
@@ -3619,6 +3622,7 @@ SF.RuleLoader['cl-button'] = {
 /***/ "3846103def0f"
 () {
 
+// Generated from component.json by scripts/generate-component-files.mjs; do not edit.
 SF.RuleLoader['cl-checkbox'] = {
   tags: ['sf-checkbox'],
   type: 'smart',
@@ -3637,6 +3641,7 @@ SF.RuleLoader['cl-checkbox'] = {
 /***/ "6e6c7d0a29f5"
 () {
 
+// Generated from component.json by scripts/generate-component-files.mjs; do not edit.
 SF.RuleLoader['cl-close'] = {
   tags: ['sf-close'],
   type: 'smart',
@@ -3652,6 +3657,7 @@ SF.RuleLoader['cl-close'] = {
 /***/ "a13da3060ec0"
 () {
 
+// Generated from component.json by scripts/generate-component-files.mjs; do not edit.
 // sf-code-input loads on demand like any other Smart element. It draws the
 // class verification's markup, so the class verification is what it draws
 // with: its sheet (and its runtime, which leaves the element's field alone),
@@ -3674,6 +3680,7 @@ SF.RuleLoader['cl-code-input'] = {
 /***/ "c33a0ccce492"
 () {
 
+// Generated from component.json by scripts/generate-component-files.mjs; do not edit.
 // The colour control loads on demand like any other Smart element. Its relation is
 // the icon button it uses to return to an inherited colour; the native picker it
 // opens is the platform's and brings nothing.
@@ -3736,6 +3743,7 @@ SF.RuleLoader['cl-context-menu'] = {
 /***/ "18fc4dd89d21"
 () {
 
+// Generated from component.json by scripts/generate-component-files.mjs; do not edit.
 SF.RuleLoader['cl-copy-button'] = {
   tags: ['sf-copy-button'],
   type: 'smart',
@@ -3771,6 +3779,7 @@ SF.RuleLoader['cl-country-code'] = {
 /***/ "52a84f3938ba"
 () {
 
+// Generated from component.json by scripts/generate-component-files.mjs; do not edit.
 SF.RuleLoader['cl-datepicker'] = {
   tags: ['sf-datepicker'],
   type: 'smart',
@@ -3794,6 +3803,7 @@ SF.RuleLoader['cl-datepicker'] = {
 /***/ "fe91a41e53a0"
 () {
 
+// Generated from component.json by scripts/generate-component-files.mjs; do not edit.
 SF.RuleLoader['cl-download-file'] = {
   tags: ['sf-download-file'],
   type: 'smart',
@@ -3858,6 +3868,7 @@ SF.RuleLoader['cl-dropdown'] = {
 /***/ "4c1c6bac1a46"
 () {
 
+// Generated from component.json by scripts/generate-component-files.mjs; do not edit.
 SF.RuleLoader['cl-empty-state'] = {
   tags: ['sf-empty-state'],
   type: 'smart',
@@ -3918,9 +3929,10 @@ SF.RuleLoader['cl-file-upload'] = {
 /***/ "ec112217d663"
 () {
 
+// Generated from component.json by scripts/generate-component-files.mjs; do not edit.
 SF.RuleLoader['cl-gallery'] = {
-  regex: /data-sf-gallery(?:\s|=|>|$)/,
   tags: ['sf-gallery'],
+  regex: /data-sf-gallery(?:\s|=|>|$)/,
   type: 'smart',
   mode: 'smart',
   js: true,
@@ -3937,6 +3949,7 @@ SF.RuleLoader['cl-gallery'] = {
 /***/ "8461118277d9"
 () {
 
+// Generated from component.json by scripts/generate-component-files.mjs; do not edit.
 SF.RuleLoader['cl-help-mark'] = {
   tags: ['sf-help-mark'],
   type: 'smart',
@@ -3988,14 +4001,12 @@ SF.RuleLoader['cl-icon-button'] = {
 /***/ "17348334b6e2"
 () {
 
+// Generated from component.json by scripts/generate-component-files.mjs; do not edit.
 SF.RuleLoader['cl-icon'] = {
   tags: ['sf-icon'],
   type: 'smart',
   mode: 'smart',
   js: true,
-  // The badge sheet places a count or a dot on an icon (simai/ui-source#12).
-  // Icons are everywhere and badges on them are few: it is fetched when the
-  // page is idle, or at once by an icon that has a badge to show.
   relation: [{
     name: 'icons'
   }, {
@@ -4036,6 +4047,7 @@ SF.RuleLoader['cl-image-field'] = {
 /***/ "8427cfb332c0"
 () {
 
+// Generated from component.json by scripts/generate-component-files.mjs; do not edit.
 SF.RuleLoader['cl-inline-editor'] = {
   tags: ['sf-inline-editor'],
   type: 'smart',
@@ -4098,6 +4110,7 @@ SF.RuleLoader['cl-list-item'] = {
 /***/ "9fd1fe165c81"
 () {
 
+// Generated from component.json by scripts/generate-component-files.mjs; do not edit.
 // sf-menu loads on demand like any other Smart element. It draws the class
 // menu's markup, so the class menu is what it draws with: its sheet (and its
 // runtime, which leaves the element's markup alone), the icon font for the
@@ -4146,6 +4159,7 @@ SF.RuleLoader['cl-modal'] = {
 /***/ "c02c1fc95621"
 () {
 
+// Generated from component.json by scripts/generate-component-files.mjs; do not edit.
 // The header draws a badge for its count and its install mark, and an icon
 // button for its star; a tag it renders is a tag it fetches.
 SF.RuleLoader['cl-page-header'] = {
@@ -4214,6 +4228,7 @@ SF.RuleLoader['cl-popover'] = {
 /***/ "07b366e60203"
 () {
 
+// Generated from component.json by scripts/generate-component-files.mjs; do not edit.
 SF.RuleLoader['cl-profile-picker'] = {
   tags: ['sf-profile-picker'],
   type: 'smart',
@@ -4287,6 +4302,7 @@ SF.RuleLoader['cl-quantity'] = {
 /***/ "e2b64f1f6336"
 () {
 
+// Generated from component.json by scripts/generate-component-files.mjs; do not edit.
 SF.RuleLoader['cl-radio'] = {
   tags: ['sf-radio'],
   type: 'smart',
@@ -4304,6 +4320,7 @@ SF.RuleLoader['cl-radio'] = {
 /***/ "1956ec00f5ad"
 () {
 
+// Generated from component.json by scripts/generate-component-files.mjs; do not edit.
 SF.RuleLoader['cl-range-slider'] = {
   tags: ['sf-range-slider'],
   type: 'smart',
@@ -4319,6 +4336,7 @@ SF.RuleLoader['cl-range-slider'] = {
 /***/ "dff091080f9d"
 () {
 
+// Generated from component.json by scripts/generate-component-files.mjs; do not edit.
 SF.RuleLoader['cl-reference-link'] = {
   tags: ['sf-reference-link'],
   type: 'smart',
@@ -4338,6 +4356,7 @@ SF.RuleLoader['cl-reference-link'] = {
 /***/ "be87d2f319a6"
 () {
 
+// Generated from component.json by scripts/generate-component-files.mjs; do not edit.
 SF.RuleLoader['cl-resizer'] = {
   tags: ['sf-resizer'],
   type: 'smart',
@@ -4367,6 +4386,7 @@ SF.RuleLoader['cl-skeleton'] = {
 /***/ "33c7a33d7561"
 () {
 
+// Generated from component.json by scripts/generate-component-files.mjs; do not edit.
 SF.RuleLoader['cl-slider'] = {
   tags: ['sf-slider'],
   type: 'smart',
@@ -4384,6 +4404,7 @@ SF.RuleLoader['cl-slider'] = {
 /***/ "5f3996d77434"
 () {
 
+// Generated from component.json by scripts/generate-component-files.mjs; do not edit.
 // The insertion point (inserter-items) is a native icon button of the
 // Framework's own look with an icon glyph, and the inserter it opens is the
 // standard menu: all three are
@@ -4427,6 +4448,7 @@ SF.RuleLoader['cl-spinner'] = {
 /***/ "21b28a766919"
 () {
 
+// Generated from component.json by scripts/generate-component-files.mjs; do not edit.
 SF.RuleLoader['cl-steps'] = {
   tags: ['sf-steps'],
   type: 'smart',
@@ -4444,13 +4466,12 @@ SF.RuleLoader['cl-steps'] = {
 /***/ "f53c94f2f919"
 () {
 
+// Generated from component.json by scripts/generate-component-files.mjs; do not edit.
 SF.RuleLoader['cl-switch'] = {
   tags: ['sf-switch'],
   type: 'smart',
   mode: 'smart',
   js: true,
-  // Its own sheet and the icon button carry the reset back to an inherited
-  // value (simai/ui-source#28).
   css: true,
   relation: [{
     name: 'switch'
@@ -4466,6 +4487,7 @@ SF.RuleLoader['cl-switch'] = {
 /***/ "6dd62213def6"
 () {
 
+// Generated from component.json by scripts/generate-component-files.mjs; do not edit.
 SF.RuleLoader['cl-tabs'] = {
   tags: ['sf-tabs'],
   type: 'smart',
@@ -4546,6 +4568,7 @@ SF.RuleLoader['cl-textarea'] = {
 /***/ "616881f8c003"
 () {
 
+// Generated from component.json by scripts/generate-component-files.mjs; do not edit.
 // The generator draws a colour control, two number fields and a reset button;
 // a tag it renders is a tag it fetches, with the icons they show.
 SF.RuleLoader['cl-theme-generator'] = {
@@ -4648,6 +4671,7 @@ SF.RuleLoader['cl-tree-item'] = {
 /***/ "43c5ede74fa1"
 () {
 
+// Generated from component.json by scripts/generate-component-files.mjs; do not edit.
 // The tree draws its entries as rows of class markup (simai/ui-source#43): the
 // tree and tree-item sheets, the icon font's icons and the icon button's sheet
 // for the chevron. sf-tree-item children are read as data, not drawn; the
