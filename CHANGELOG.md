@@ -355,6 +355,9 @@
 
 ### Изменено
 
+- The Loader no longer links a sheet the page already links (`core.runtime` 1.0.9): a page that links its first paint's sheets in `<head>`, as standard 1.3.10 asks, had each sheet a part named linked a second time (62 of 73 on the admin's list), and every style recalculation of the opening read each rule twice. The Loader waits for the page's link of the same sheet, in either form. Rendered Smart elements are scanned for parts once per task, not once per element inside each other (stand 25: the admin's list is ready to ask for its data about 0.8 s earlier at 4× CPU).
+- The Loader does not fetch a Smart part again when the page has already defined it (`core.runtime` 1.0.9): a page that loads a part's bundle itself (`<script defer>` in `<head>`) had the Loader fetch and run the same part from its own path (about 190 KB gzipped for the table and the data view on Larena's admin list). Its sheets and relations are asked for as before.
+
 - `sf-pagination` 1.3.0 (`component.pagination` 1.1.0): the page row publishes its box on `:root`, `--sf-pagination-block-size-1\/2` and `--sf-pagination-block-size-1` (`2 × --sf-space-1` + the step's control height + 1px; 65px and 73px on a wide screen in the default theme), so a page can hold the room of a list and its pages before they draw. The row's minimum height is the same sum: a row of text alone is as tall as one with the arrows.
 - `sf-copy-button` 1.1.3: the control sits in a line of text by its middle (`--sf-copy-button-vertical-align`, default `middle`, now on the wrapper; the host is `display: contents`). Aligned by the icon glyph's baseline it rode 1px lower until the icon runtime marked the icon loaded.
 
