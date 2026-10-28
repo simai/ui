@@ -1,0 +1,46 @@
+{
+  "schema": "simai.framework.unit-change-report",
+  "schema_version": 1,
+  "source": "simai/ui-source",
+  "from": {
+    "revision": "12c1bfa444fde3d171669e7fda204b1526cbc0c7",
+    "release": "ui-1d45c724313c"
+  },
+  "to": {
+    "revision": "8583e3787dc5e4c0bf090d85e7000160978c52cd",
+    "release": "ui-36116c01a792"
+  },
+  "added": [],
+  "removed": [],
+  "changed": [
+    {
+      "id": "component.pagination",
+      "from_version": "1.0.0",
+      "to_version": "1.1.0",
+      "step": "minor"
+    },
+    {
+      "id": "smart.copy-button",
+      "from_version": "1.1.2",
+      "to_version": "1.1.3",
+      "step": "patch"
+    },
+    {
+      "id": "smart.pagination",
+      "from_version": "1.2.3",
+      "to_version": "1.3.0",
+      "step": "minor"
+    }
+  ],
+  "dependencies_changed": [
+    {
+      "id": "smart.pagination",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "component.pagination"
+      ]
+    }
+  ],
+  "violations": []
+}
