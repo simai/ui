@@ -3818,13 +3818,14 @@ function pendingDefinitions() {
   }
 
   return globalThis[DEFINITIONS].queue;
-} // Defines what is queued, in the order the bundles ran.
+} // Defines what is queued, in the order the bundles ran; `only`, when given,
+// defines those tags alone and leaves the rest queued.
 
 
-function defineQueued() {
+function defineQueued(only = null) {
   const state = globalThis[DEFINITIONS];
-  const batch = [...state.queue];
-  state.queue.clear();
+  const batch = [...state.queue].filter(([tagName]) => !only || only.has(tagName));
+  batch.forEach(([tagName]) => state.queue.delete(tagName));
   batch.forEach(([tagName, constructor]) => {
     if (customElements.get(tagName)) return;
 
@@ -3834,24 +3835,45 @@ function defineQueued() {
       console.error(`${tagName}: definition failed`, error);
     }
   });
+} // The parts of an element holding a declared port (standard §4.9, §7.3; stand
+// 27): the element, the parts inside it and their relations (core
+// early-port.js, SF.EarlyPort.firstTags). Defined in a batch of their own,
+// before the rest of the page's: the element is handed its port and draws its
+// first answer in that task, and the other definitions follow in the next
+// frame instead of standing in front of it.
+
+
+function firstTags() {
+  try {
+    const tags = globalThis.SF?.EarlyPort?.firstTags?.();
+    return tags instanceof Set ? tags : new Set();
+  } catch {
+    return new Set();
+  }
 }
 
 function flushDefinitions() {
-  globalThis[DEFINITIONS].scheduled = false;
-  defineQueued();
-}
+  const state = globalThis[DEFINITIONS];
+  state.scheduled = false;
+  const first = firstTags();
 
-function queueDefinition(tagName, constructor) {
-  // Only on a page the Loader drives: a bundle included by hand beside the
-  // Smart base alone is defined at once, as its page expects.
-  const batching = typeof window !== "undefined" && typeof requestAnimationFrame === "function" && Boolean(window.SF?.Loader) && window.SF_BOOT_CONFIG?.batchDefinitions !== false;
+  if (first.size) {
+    const queued = [...state.queue.keys()];
+    const mine = new Set(queued.filter(tagName => first.has(tagName)));
 
-  if (!batching) {
-    customElements.define(tagName, constructor);
-    return;
+    if (mine.size && mine.size < queued.length) {
+      defineQueued(mine);
+      scheduleFlush();
+      return;
+    }
   }
 
-  pendingDefinitions().set(tagName, constructor);
+  defineQueued();
+} // A frame, or a short timer when none comes (an iframe out of view); a timer
+// in a hidden tab, which has no frames.
+
+
+function scheduleFlush() {
   const state = globalThis[DEFINITIONS];
   if (state.scheduled) return;
   state.scheduled = true;
@@ -3859,8 +3881,7 @@ function queueDefinition(tagName, constructor) {
   if (document.hidden) {
     setTimeout(flushDefinitions, 0);
     return;
-  } // A frame, or a short timer when none comes (an iframe out of view).
-
+  }
 
   let done = false;
 
@@ -3874,6 +3895,20 @@ function queueDefinition(tagName, constructor) {
 
   const frame = requestAnimationFrame(run);
   const timer = setTimeout(run, 100);
+}
+
+function queueDefinition(tagName, constructor) {
+  // Only on a page the Loader drives: a bundle included by hand beside the
+  // Smart base alone is defined at once, as its page expects.
+  const batching = typeof window !== "undefined" && typeof requestAnimationFrame === "function" && Boolean(window.SF?.Loader) && window.SF_BOOT_CONFIG?.batchDefinitions !== false;
+
+  if (!batching) {
+    customElements.define(tagName, constructor);
+    return;
+  }
+
+  pendingDefinitions().set(tagName, constructor);
+  scheduleFlush();
 }
 
 function smartTagName(type) {
