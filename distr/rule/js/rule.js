@@ -5803,7 +5803,7 @@ SF.RuleLoader['column/xxl'] = new RegExp("^(?:xxl:layout-col-(?:1(?:(?:0|1|2))?|
 /***/ "bebc2c3a76b9"
 () {
 
-SF.RuleLoader['container/default'] = new RegExp("^(?:container)(?![\\s\\S])");
+SF.RuleLoader['container/default'] = new RegExp("^(?:container|container-flush)(?![\\s\\S])");
 
 /***/ },
 

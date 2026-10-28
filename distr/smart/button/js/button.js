@@ -272,10 +272,15 @@ class SfButton extends ButtonElement {
 
   get templateName() {
     return this.getAttribute("template") || "default";
-  }
+  } // A text attribute, even an empty one, is the label: emptying it empties
+  // the button. Before, an empty attribute fell through to the text captured
+  // from children, and a toolbar that cleared a label kept the old one
+  // (simai.main, Main's isolated toolbar on ui-36116c01a792, 2026-10-28).
+
 
   get text() {
-    return this.getAttribute("text") || this._textFromChildren || "";
+    if (this.hasAttribute("text")) return this.getAttribute("text") || "";
+    return this._textFromChildren || "";
   }
 
   set text(value) {
@@ -655,7 +660,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-butto
 /***/ "5bb33fb22db3"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button","tag":"sf-button","version":"1.1.3","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"appearance":{"type":"enum","values":["default","tonal","outline","link","surface"],"default":"default"},"scheme":{"type":"enum","values":["primary","secondary","on-surface"],"default":"primary"},"status":{"type":"enum","values":["","error"],"default":""},"text-position":{"type":"string","default":"center"},"text":{"type":"string","default":""},"segment":{"type":"string","default":""},"icon":{"type":"icon","default":""},"icon-start":{"type":"icon","default":""},"icon-end":{"type":"icon","default":""},"icon-position":{"type":"enum","values":["start","end"],"default":"start"},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"loading":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"native-type":{"type":"enum","values":["button","submit","reset"],"default":"button"},"expanded":{"type":"boolean","optional":true,"summary":"Whether the panel this button opens is open: aria-expanded on the native button; absent says nothing"}},"values":{},"events":{"press":{"carries":{}}},"actions":{},"css-variables":{"--sf-button-background-color":{"type":"color","state":"default"},"--sf-button-color":{"type":"color","state":"default"},"--sf-button-border-color":{"type":"color","state":"default"},"--sf-button-border-width":{"type":"length","state":"default"},"--sf-button-radius":{"type":"length","state":"default"},"--sf-button-padding-inline":{"type":"length","state":"default"},"--sf-button-padding-block":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button","tag":"sf-button","version":"1.1.4","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"appearance":{"type":"enum","values":["default","tonal","outline","link","surface"],"default":"default"},"scheme":{"type":"enum","values":["primary","secondary","on-surface"],"default":"primary"},"status":{"type":"enum","values":["","error"],"default":""},"text-position":{"type":"string","default":"center"},"text":{"type":"string","default":""},"segment":{"type":"string","default":""},"icon":{"type":"icon","default":""},"icon-start":{"type":"icon","default":""},"icon-end":{"type":"icon","default":""},"icon-position":{"type":"enum","values":["start","end"],"default":"start"},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"loading":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"native-type":{"type":"enum","values":["button","submit","reset"],"default":"button"},"expanded":{"type":"boolean","optional":true,"summary":"Whether the panel this button opens is open: aria-expanded on the native button; absent says nothing"}},"values":{},"events":{"press":{"carries":{}}},"actions":{},"css-variables":{"--sf-button-background-color":{"type":"color","state":"default"},"--sf-button-color":{"type":"color","state":"default"},"--sf-button-border-color":{"type":"color","state":"default"},"--sf-button-border-width":{"type":"length","state":"default"},"--sf-button-radius":{"type":"length","state":"default"},"--sf-button-padding-inline":{"type":"length","state":"default"},"--sf-button-padding-block":{"type":"length","state":"default"}}}');
 
 /***/ },
 

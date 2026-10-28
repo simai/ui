@@ -1920,7 +1920,7 @@
   },
   {
     "name": "container/default",
-    "regex": "/^(?:container)(?![\\s\\S])/"
+    "regex": "/^(?:container|container-flush)(?![\\s\\S])/"
   },
   {
     "name": "container/lg",
