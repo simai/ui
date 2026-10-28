@@ -196,9 +196,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   renderFilterField: () => (/* binding */ renderFilterField),
 /* harmony export */   renderViewField: () => (/* binding */ renderViewField)
 /* harmony export */ });
-/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("ddf1cdb42ecc");
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
 /* harmony import */ var _helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("b30ec5bc0edb");
-/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("0d662e4d7d63");
+/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("43090d1c8307");
 /* harmony import */ var _registry_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("fc654eb7fab0");
 /* harmony import */ var _datetime_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("9ce1a42b2a85");
 /* harmony import */ var _mask_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("dd6973f77245");
@@ -2997,17 +2997,17 @@ function optionBadgeProps(option = {}) {
 
 /***/ },
 
-/***/ "ddf1cdb42ecc"
+/***/ "2a080a730149"
 (module) {
 
-module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("lit") : new Promise((resolve) => globalThis.addEventListener("sf-runtime-ready", () => resolve(globalThis.SF.runtimeModule("lit")), { once: true })));
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("lit", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("lit", 1).then(resolve, reject), { once: true })));
 
 /***/ },
 
-/***/ "0d662e4d7d63"
+/***/ "43090d1c8307"
 (module) {
 
-module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("page-language") : new Promise((resolve) => globalThis.addEventListener("sf-runtime-ready", () => resolve(globalThis.SF.runtimeModule("page-language")), { once: true })));
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("page-language", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("page-language", 1).then(resolve, reject), { once: true })));
 
 /***/ }
 

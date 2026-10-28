@@ -961,6 +961,79 @@ if (typeof globalThis !== 'undefined') {
 
 /***/ },
 
+/***/ "6734a1a77ea7"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   CORE_MODULES: () => (/* binding */ CORE_MODULES),
+/* harmony export */   publishCoreModules: () => (/* binding */ publishCoreModules)
+/* harmony export */ });
+/* harmony import */ var _aliases_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("28b603686dcc");
+/* harmony import */ var _alias_table_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("f49a716b86bd");
+/* harmony import */ var _deprecations_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("06e8cd089f28");
+/* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("8489d1f5bab4");
+/* harmony import */ var _layer_stack_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("78628e837a32");
+/* harmony import */ var _position_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("2e9112dbdda9");
+// The modules Core and the shared Smart runtime both stand on, published once
+// per page by Core (2026-10-28). Core runs them for itself -- aliases,
+// deprecations, the page language, the layer stack, positioning -- and the
+// runtime hands these instances to the Smart bundles that ask for the ids
+// (core/js/runtime.js sharedModule): Core and every Smart element on the page
+// share one. The runtime keeps its own copies for a page without Core.
+//
+// The ids are the runtime's (core/contracts/shared-runtime.v1.json).
+
+
+
+
+
+ // webpack reads a default import off an external as `.default` only when the
+// value says it is an ES module.
+
+const asModule = namespace => Object.freeze({
+  __esModule: true,
+  ...namespace
+});
+
+const CORE_MODULES = Object.freeze({
+  'aliases': asModule(_aliases_js__WEBPACK_IMPORTED_MODULE_0__),
+  'alias-table': asModule(_alias_table_js__WEBPACK_IMPORTED_MODULE_1__),
+  'deprecations': asModule(_deprecations_js__WEBPACK_IMPORTED_MODULE_2__),
+  'page-language': asModule(_page_language_js__WEBPACK_IMPORTED_MODULE_3__),
+  'layer-stack': asModule(_layer_stack_js__WEBPACK_IMPORTED_MODULE_4__),
+  'position': asModule(_position_js__WEBPACK_IMPORTED_MODULE_5__)
+});
+function publishCoreModules(root = globalThis) {
+  const SF = root.SF = root.SF || {};
+  const internal = SF.__internal; // The first Core on the page keeps its modules: a second copy of core.js
+  // (a page that includes it twice) does not swap the instances under the
+  // runtime that already took them.
+
+  if (!internal || internal.coreModules) return internal?.coreModules ?? null;
+  Object.defineProperty(internal, 'coreModules', {
+    value: CORE_MODULES,
+    configurable: false,
+    enumerable: false,
+    writable: false
+  });
+
+  try {
+    root.dispatchEvent?.(new root.CustomEvent('sf-core-modules', {
+      detail: {
+        modules: Object.keys(CORE_MODULES)
+      }
+    }));
+  } catch {// A page without CustomEvent (a test realm) still has the modules on SF.
+  }
+
+  return CORE_MODULES;
+}
+if (typeof window !== 'undefined') publishCoreModules(window);
+
+/***/ },
+
 /***/ "06e8cd089f28"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -2968,21 +3041,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _public_path__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("3924cca3566b");
 /* harmony import */ var _public_path__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_public_path__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _internal_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("364eb185ca94");
-/* harmony import */ var _aliases_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("28b603686dcc");
-/* harmony import */ var _rule__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("987c832cfe13");
-/* harmony import */ var _rule__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_rule__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _mask__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("9770341d4bfa");
-/* harmony import */ var _composition_index_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("32dfc4431a24");
-/* harmony import */ var _assembly_index_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("ff34a74152a4");
-/* harmony import */ var _position_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("2e9112dbdda9");
-/* harmony import */ var _preferences_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("51250bf01ab0");
-/* harmony import */ var _region_navigation_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("9edc14a11fec");
-/* harmony import */ var _effects_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("4f52f56c9555");
-/* harmony import */ var _notify_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("b4bff8456ce0");
-/* harmony import */ var _sanitize_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("20db70d35f32");
-/* harmony import */ var _ready_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("5effd0d9c238");
-/* harmony import */ var _pending_tags_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("3c79afd07eeb");
-/* harmony import */ var _preloader__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("6c7f357fe960");
+/* harmony import */ var _core_modules_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("6734a1a77ea7");
+/* harmony import */ var _aliases_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("28b603686dcc");
+/* harmony import */ var _rule__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("987c832cfe13");
+/* harmony import */ var _rule__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_rule__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _mask__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("9770341d4bfa");
+/* harmony import */ var _composition_index_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("32dfc4431a24");
+/* harmony import */ var _assembly_index_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("ff34a74152a4");
+/* harmony import */ var _position_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("2e9112dbdda9");
+/* harmony import */ var _preferences_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("51250bf01ab0");
+/* harmony import */ var _region_navigation_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("9edc14a11fec");
+/* harmony import */ var _effects_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("4f52f56c9555");
+/* harmony import */ var _notify_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("b4bff8456ce0");
+/* harmony import */ var _sanitize_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("20db70d35f32");
+/* harmony import */ var _ready_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("5effd0d9c238");
+/* harmony import */ var _pending_tags_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("3c79afd07eeb");
+/* harmony import */ var _preloader__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__("6c7f357fe960");
+
 
 
 
@@ -3008,12 +3083,14 @@ if (typeof window !== 'undefined') {
   window.SF = window.SF || {};
   const SF = window.SF; // SF.ready, before the Loader chunk is even asked for (simai/ui-source#16).
 
-  (0,_ready_js__WEBPACK_IMPORTED_MODULE_13__.installReady)(window);
+  (0,_ready_js__WEBPACK_IMPORTED_MODULE_14__.installReady)(window);
 
   if (!SF.loadRuntime) {
     let loading = null;
 
     const coreScript = () => [...document.scripts].find(script => /\/core\/js\/core(?:\.min)?\.js(?:[?#]|$)/u.test(script.src));
+
+    const runtimeScript = () => [...document.scripts].find(script => /\/core\/js\/smart-base(?:\.min)?\.js(?:[?#]|$)/u.test(script.src));
 
     SF.loadRuntime = () => {
       if (loading) return loading;
@@ -3026,8 +3103,12 @@ if (typeof window !== 'undefined') {
           SF.__internal.runtimeArrived = modules => {
             SF.__internal.runtimeSettled = true;
             resolve(modules);
-          };
+          }; // Included by hand (a <script> of the runtime on the page, run or
+          // not yet): it calls runtimeArrived when it runs. A second copy
+          // would be a second set of shared modules.
 
+
+          if (runtimeScript()) return;
           const core = coreScript();
           if (!core) return; // included by hand: it calls runtimeArrived when it runs
 
@@ -3042,12 +3123,55 @@ if (typeof window !== 'undefined') {
 
       SF.__internal.runtimeLoading = loading;
       return loading;
-    };
+    }; // A bundle asks with the runtime ABI it was built against (ui-builder
+    // libs/sharedRuntime.js); one built against another ABI is refused, loudly
+    // (core/js/runtime.js checkRuntimeAbi), not handed modules it does not know.
 
-    SF.runtimeModule = id => SF.loadRuntime().then(modules => {
+
+    SF.runtimeModule = (id, abi) => SF.loadRuntime().then(modules => {
+      const have = SF.__internal.runtimeAbi;
+
+      if (abi !== undefined && abi !== null && abi !== have) {
+        const error = new Error(`SF runtime: a bundle built for runtime ABI ${abi} asks for "${id}"; this page's runtime is ABI ${have ?? 'unknown'}. Rebuild the package against the SIMAI Framework release the page runs.`);
+        console.error(error);
+        throw error;
+      }
+
       if (!modules[id]) throw new Error(`SF runtime: no shared module "${id}"`);
       return modules[id];
-    });
+    }); // A page that already holds a Smart part (printed by the server, waiting
+    // for its definition) preloads the runtime now, with Core, rather than
+    // when the Loader's own chunk arrives and queues the part (stand 25): the
+    // bytes are fetched early, the script runs when the Loader asks for it.
+    // Running it early as well let the bundles define their elements before
+    // the page's sheets arrived, and the first paint went unseen (first-paint
+    // gate 24, admin-head and document-browser at 390 and 1280).
+
+
+    const smartPartWaiting = () => {
+      for (const element of document.querySelectorAll(':not(:defined)')) {
+        if (element.localName.startsWith('sf-')) return true;
+      }
+
+      return false;
+    };
+
+    const startEarly = () => {
+      if (SF.__internal.runtimeModules || runtimeScript() || !smartPartWaiting()) return;
+      const core = coreScript();
+      if (!core) return;
+      const href = core.src.replace(/core(\.min)?\.js(?=[?#]|$)/u, (match, min) => `smart-base${min || ''}.js`);
+      if ([...document.querySelectorAll('link[rel="preload"]')].some(link => link.href === href)) return;
+      const link = document.createElement('link');
+      link.rel = 'preload';
+      link.as = 'script';
+      link.href = href;
+      document.head.append(link);
+    };
+
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', startEarly, {
+      once: true
+    });else startEarly();
   }
 } // Icons wait for the subset font. The icons stylesheet declares the full
 // Material Symbols font so a page without the runtime still draws its icons,
@@ -3174,8 +3298,8 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
       return;
     }
 
-    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_14__.installPendingTags)(window);
-    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_14__.holdUndefinedElements)(window);
+    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_15__.installPendingTags)(window);
+    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_15__.holdUndefinedElements)(window);
   };
 
   holdUndefinedUntilDefined();
@@ -3183,18 +3307,18 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
   const mountPreloader = () => {
     const cfg = {
       enabled: true,
-      background: (0,_preloader__WEBPACK_IMPORTED_MODULE_15__.getPreloaderBackground)(),
+      background: (0,_preloader__WEBPACK_IMPORTED_MODULE_16__.getPreloaderBackground)(),
       modifier: 'loader-default',
       tempStyles: 'inset: 0;position: fixed;width: 100%;height: 100vh;opacity: 1;z-index: 1000;background-color: var(--sf-color--surface-highest, var(--sf-surface-0, #fff));text-align: center;',
-      color: (0,_preloader__WEBPACK_IMPORTED_MODULE_15__.getPreloaderColor)(),
-      width: _preloader__WEBPACK_IMPORTED_MODULE_15__.DEFAULT_PRELOADER.width,
-      height: _preloader__WEBPACK_IMPORTED_MODULE_15__.DEFAULT_PRELOADER.height,
+      color: (0,_preloader__WEBPACK_IMPORTED_MODULE_16__.getPreloaderColor)(),
+      width: _preloader__WEBPACK_IMPORTED_MODULE_16__.DEFAULT_PRELOADER.width,
+      height: _preloader__WEBPACK_IMPORTED_MODULE_16__.DEFAULT_PRELOADER.height,
       content: '',
       delay: 300,
       ...(window.SF_BOOT_CONFIG?.preloader || {})
     };
     if (cfg.enabled === false || document.querySelector('.sf-loader')) return;
-    const svgContent = cfg.content || (0,_preloader__WEBPACK_IMPORTED_MODULE_15__.createPreloaderContent)(cfg);
+    const svgContent = cfg.content || (0,_preloader__WEBPACK_IMPORTED_MODULE_16__.createPreloaderContent)(cfg);
     let wrap = null;
     let preloaderWrap = null;
     let preloaderRun = false;
@@ -3208,7 +3332,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
 
     const stopAnimation = () => {
       if (preloaderWrap) {
-        (0,_preloader__WEBPACK_IMPORTED_MODULE_15__.stopPreloaderMotion)(preloaderWrap);
+        (0,_preloader__WEBPACK_IMPORTED_MODULE_16__.stopPreloaderMotion)(preloaderWrap);
       }
     };
 
@@ -3217,7 +3341,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
       // preloader over them (§5.4). Read when the preloader would show, after
       // its delay, when the server's markup has been parsed.
 
-      if ((0,_preloader__WEBPACK_IMPORTED_MODULE_15__.pageHasFirstPaint)(document)) return;
+      if ((0,_preloader__WEBPACK_IMPORTED_MODULE_16__.pageHasFirstPaint)(document)) return;
       wrap = document.createElement('div');
       const inner = document.createElement('div');
       wrap.classList.add('sf-loader', cfg.modifier);
@@ -3239,7 +3363,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
         wrap: wrap,
         preloaderActive: true
       };
-      (0,_preloader__WEBPACK_IMPORTED_MODULE_15__.startPreloaderMotion)(preloaderWrap, () => preloaderRun, cfg);
+      (0,_preloader__WEBPACK_IMPORTED_MODULE_16__.startPreloaderMotion)(preloaderWrap, () => preloaderRun, cfg);
     };
 
     const cancelBuild = () => {
@@ -3276,7 +3400,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
 
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', () => {
-        if (!(0,_preloader__WEBPACK_IMPORTED_MODULE_15__.pageHasFirstPaint)(document)) return;
+        if (!(0,_preloader__WEBPACK_IMPORTED_MODULE_16__.pageHasFirstPaint)(document)) return;
         cancelBuild();
         preloaderRun = false;
         stopAnimation();
