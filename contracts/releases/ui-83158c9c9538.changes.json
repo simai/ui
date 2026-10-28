@@ -1,0 +1,395 @@
+{
+  "schema": "simai.framework.unit-change-report",
+  "schema_version": 1,
+  "source": "simai/ui-source",
+  "from": {
+    "revision": "59ee83728bad8285862868f2c28cd1f405bcac61",
+    "release": "ui-1349891b9c72"
+  },
+  "to": {
+    "revision": "1be383c3b5cc9274998b476800290149ea267481",
+    "release": "ui-83158c9c9538"
+  },
+  "added": [],
+  "removed": [],
+  "changed": [
+    {
+      "id": "smart.accordion",
+      "from_version": "1.1.1",
+      "to_version": "1.1.2",
+      "step": "patch"
+    },
+    {
+      "id": "smart.avatar",
+      "from_version": "1.1.1",
+      "to_version": "1.1.2",
+      "step": "patch"
+    },
+    {
+      "id": "smart.avatars",
+      "from_version": "1.1.1",
+      "to_version": "1.1.2",
+      "step": "patch"
+    },
+    {
+      "id": "smart.breadcrumbs",
+      "from_version": "1.1.3",
+      "to_version": "1.1.4",
+      "step": "patch"
+    },
+    {
+      "id": "smart.checkbox",
+      "from_version": "1.1.3",
+      "to_version": "1.1.4",
+      "step": "patch"
+    },
+    {
+      "id": "smart.close",
+      "from_version": "1.0.0",
+      "to_version": "1.0.1",
+      "step": "patch"
+    },
+    {
+      "id": "smart.code-input",
+      "from_version": "1.1.0",
+      "to_version": "1.1.1",
+      "step": "patch"
+    },
+    {
+      "id": "smart.color",
+      "from_version": "1.2.1",
+      "to_version": "1.2.2",
+      "step": "patch"
+    },
+    {
+      "id": "smart.copy-button",
+      "from_version": "1.1.3",
+      "to_version": "1.1.4",
+      "step": "patch"
+    },
+    {
+      "id": "smart.datepicker",
+      "from_version": "1.1.2",
+      "to_version": "1.1.3",
+      "step": "patch"
+    },
+    {
+      "id": "smart.download-file",
+      "from_version": "1.1.2",
+      "to_version": "1.1.3",
+      "step": "patch"
+    },
+    {
+      "id": "smart.empty-state",
+      "from_version": "1.1.2",
+      "to_version": "1.1.3",
+      "step": "patch"
+    },
+    {
+      "id": "smart.gallery",
+      "from_version": "1.1.2",
+      "to_version": "1.1.3",
+      "step": "patch"
+    },
+    {
+      "id": "smart.help-mark",
+      "from_version": "1.1.2",
+      "to_version": "1.1.3",
+      "step": "patch"
+    },
+    {
+      "id": "smart.icon",
+      "from_version": "1.1.1",
+      "to_version": "1.1.2",
+      "step": "patch"
+    },
+    {
+      "id": "smart.inline-editor",
+      "from_version": "1.1.0",
+      "to_version": "1.1.1",
+      "step": "patch"
+    },
+    {
+      "id": "smart.menu",
+      "from_version": "1.1.1",
+      "to_version": "1.1.2",
+      "step": "patch"
+    },
+    {
+      "id": "smart.page-header",
+      "from_version": "1.1.3",
+      "to_version": "1.1.4",
+      "step": "patch"
+    },
+    {
+      "id": "smart.profile-picker",
+      "from_version": "1.1.3",
+      "to_version": "1.1.4",
+      "step": "patch"
+    },
+    {
+      "id": "smart.radio",
+      "from_version": "1.1.1",
+      "to_version": "1.1.2",
+      "step": "patch"
+    },
+    {
+      "id": "smart.range-slider",
+      "from_version": "1.1.0",
+      "to_version": "1.1.1",
+      "step": "patch"
+    },
+    {
+      "id": "smart.reference-link",
+      "from_version": "1.0.2",
+      "to_version": "1.0.3",
+      "step": "patch"
+    },
+    {
+      "id": "smart.resizer",
+      "from_version": "1.1.0",
+      "to_version": "1.1.1",
+      "step": "patch"
+    },
+    {
+      "id": "smart.slider",
+      "from_version": "1.1.2",
+      "to_version": "1.1.3",
+      "step": "patch"
+    },
+    {
+      "id": "smart.sortable",
+      "from_version": "1.1.1",
+      "to_version": "1.1.2",
+      "step": "patch"
+    },
+    {
+      "id": "smart.steps",
+      "from_version": "1.1.1",
+      "to_version": "1.1.2",
+      "step": "patch"
+    },
+    {
+      "id": "smart.switch",
+      "from_version": "1.1.0",
+      "to_version": "1.1.1",
+      "step": "patch"
+    },
+    {
+      "id": "smart.tabs",
+      "from_version": "1.1.3",
+      "to_version": "1.1.4",
+      "step": "patch"
+    },
+    {
+      "id": "smart.theme-generator",
+      "from_version": "1.1.2",
+      "to_version": "1.1.3",
+      "step": "patch"
+    },
+    {
+      "id": "smart.tree",
+      "from_version": "2.0.3",
+      "to_version": "2.0.4",
+      "step": "patch"
+    }
+  ],
+  "dependencies_changed": [
+    {
+      "id": "smart.alert",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "smart.icon"
+      ]
+    },
+    {
+      "id": "smart.avatars",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "smart.avatar"
+      ]
+    },
+    {
+      "id": "smart.breadcrumbs",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "smart.icon"
+      ]
+    },
+    {
+      "id": "smart.button",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "smart.icon"
+      ]
+    },
+    {
+      "id": "smart.button-group",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "smart.icon"
+      ]
+    },
+    {
+      "id": "smart.checkbox",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "smart.icon"
+      ]
+    },
+    {
+      "id": "smart.composition-overlay",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "smart.sortable"
+      ]
+    },
+    {
+      "id": "smart.context-menu",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "smart.tabs"
+      ]
+    },
+    {
+      "id": "smart.copy-button",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "smart.icon"
+      ]
+    },
+    {
+      "id": "smart.datepicker",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "smart.icon"
+      ]
+    },
+    {
+      "id": "smart.download-file",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "smart.icon"
+      ]
+    },
+    {
+      "id": "smart.empty-state",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "smart.icon"
+      ]
+    },
+    {
+      "id": "smart.gallery",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "smart.slider"
+      ]
+    },
+    {
+      "id": "smart.help-mark",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "smart.icon"
+      ]
+    },
+    {
+      "id": "smart.icon-button",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "smart.close",
+        "smart.icon"
+      ]
+    },
+    {
+      "id": "smart.image-field",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "smart.icon"
+      ]
+    },
+    {
+      "id": "smart.input",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "smart.icon"
+      ]
+    },
+    {
+      "id": "smart.page-header",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "smart.icon"
+      ]
+    },
+    {
+      "id": "smart.pagination",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "smart.checkbox"
+      ]
+    },
+    {
+      "id": "smart.profile-picker",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "smart.icon"
+      ]
+    },
+    {
+      "id": "smart.reference-link",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "smart.icon"
+      ]
+    },
+    {
+      "id": "smart.tabs",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "smart.checkbox",
+        "smart.sortable"
+      ]
+    },
+    {
+      "id": "smart.theme-generator",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "smart.color",
+        "smart.icon"
+      ]
+    },
+    {
+      "id": "smart.toast",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "smart.icon"
+      ]
+    }
+  ],
+  "violations": []
+}
