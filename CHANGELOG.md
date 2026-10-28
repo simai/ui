@@ -8,6 +8,8 @@
 
 ### Исправлено
 
+- The `larena` package reference: `cl-table` requires `smart.file-preview` and `smart.reference-link`, which the ui-pro table now loads with its rows instead of lazily (`core.runtime` 1.0.6). A package built on an earlier pair is refused by its receipt check.
+
 - Smart base (`core.runtime` 1.0.5): a property set on an element before its class was defined now reaches the class's setter on the first connect. Before, the value stayed on the element and hid the setter, so a lazily registered child bound by a parent's template (`sf-profile-picker` inside `sf-property-view`'s configure bar) drew empty. A page that defined such components ahead of time as a workaround (`SF.createAsync` before the host renders, UI Chat q-a49e2045c1 item 1) can drop it.
 
 - `sf-tree` 2.0.1: the manifest's `selection` enum is `none | one | many`, as the element takes since 2.0.0; `single` and `multiple` are declared former values until 2026-12-01, so the shared allowed-values check accepts `one`.
