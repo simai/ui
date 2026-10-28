@@ -8,6 +8,11 @@
 
 ### Исправлено
 
+- Background effects (simai.effect 1.2.0): in auto a light-only effect stays light on a dark page, its area light, as a dark-only effect already stayed dark on a light one. The reason light-only-on-dark is gone; a fixed mode the effect cannot draw is still hidden (mode-not-drawable).
+- Container (utility.container 1.1.0): a public --sf-container-gutter sets the gutter of every container and breakpoint container at once; unset, each keeps its width step. container-flush takes the gutter off one container (a nested one), and a container inside it keeps its own.
+- sf-empty-state 1.1.5: the no-data wording is a finished sentence (ru «Записей пока нет» / «Они появятся здесь, когда их добавят»; en «No records yet» / «They will appear here once added»).
+- sf-button 1.1.4: an emptied text attribute empties the button instead of falling back to a label taken from text children.
+
 - The `larena` package reference: `cl-table` requires `smart.file-preview` and `smart.reference-link`, which the ui-pro table now loads with its rows instead of lazily (`core.runtime` 1.0.6). A package built on an earlier pair is refused by its receipt check.
 
 - Smart base (`core.runtime` 1.0.5): a property set on an element before its class was defined now reaches the class's setter on the first connect. Before, the value stayed on the element and hid the setter, so a lazily registered child bound by a parent's template (`sf-profile-picker` inside `sf-property-view`'s configure bar) drew empty. A page that defined such components ahead of time as a workaround (`SF.createAsync` before the host renders, UI Chat q-a49e2045c1 item 1) can drop it.

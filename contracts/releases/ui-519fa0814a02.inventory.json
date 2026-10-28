@@ -1,0 +1,7426 @@
+{
+  "schema": "simai.framework.unit-inventory",
+  "schema_version": 1,
+  "source": "simai/ui-source",
+  "revision": "7389e4d84d8104c8c9bda816c0255f0f9b623bfb",
+  "release": "ui-519fa0814a02",
+  "units": [
+    {
+      "id": "component.accordion",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "00b47c835800399c2177810360a9fbb64995bd85e2cf76a0a620d9f53d48da56",
+      "dependencies": [
+        {
+          "id": "core.runtime",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "module.component-shared",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.motion",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.radius",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.admin-menu",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "bbbb9bf1d3e44fc7aadcc29f79a4902e7b32720ef8f8bd6f1cec8fe13ba06838",
+      "dependencies": [
+        {
+          "id": "component.badges",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "module.component-shared",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.elevation",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.radius",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.ajax",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "60fac37ce78634551bbea1d2d01d0b432c93d26331f43623b92a8eb1d4ea7889",
+      "dependencies": [
+        {
+          "id": "component.sf-system",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.ajaxload",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "6d31cd927ecce1c0d432e3d268bcb7fa718bc5431b8825b5be6875c22eed62e5",
+      "dependencies": []
+    },
+    {
+      "id": "component.alerts",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "323d4e8f6697ec2ecf3771ff83ebd075ac6e334c3c727073176f73c9a9d0a7ec",
+      "dependencies": [
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.motion",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.avatars",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "6ebc6c437f8ba1de0b9c4e613b3ecbdf17a659a77be114f013f4d6fba0e75c83",
+      "dependencies": [
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.radius",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.badges",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "3fc8564c0e14ea76a30c1a22860694e3b15ac0454b04002285cf655c280a84c3",
+      "dependencies": [
+        {
+          "id": "core.runtime",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "module.component-shared",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.radius",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.breadcrumbs",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "d9adde380930a0eb7582c52f93ee54c073ab22d7f5294e3e0226558313da0fa6",
+      "dependencies": [
+        {
+          "id": "core.runtime",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.button-group",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "baccf400f3cdf1fa842157f6530dc8df701c2f651d8e416e4ec35e0a15be96ae",
+      "dependencies": [
+        {
+          "id": "core.runtime",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "module.component-shared",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.radius",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.buttons",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "5752df52ea70cb96f20bef24deec3575b721c2dcf52c16ebf9049c8486c3ceed",
+      "dependencies": [
+        {
+          "id": "component.spinner",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "module.component-shared",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.motion",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.radius",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.carousel",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "67089466521d353ace8aeca7ba2add4d9babf3865748e51bc1c43aab71ac1801",
+      "dependencies": [
+        {
+          "id": "component.swiper",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.opacity",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.radius",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.checkbox",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "eba3e9787766634703d9b3908a955ee0dd343bcfe2e1040c8b800be3c5a66e23",
+      "dependencies": [
+        {
+          "id": "core.runtime",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "module.component-shared",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.motion",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.clipboard",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "7759cadd43ce35bf32aa90572294469ee306ab26efe7733a88dcf85f8083f242",
+      "dependencies": [
+        {
+          "id": "component.buttons",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.icon-buttons",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.icons",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "module.component-shared",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.motion",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.opacity",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.close",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "d89a42e50803b4a3256ed1eac73fea3949c6b04f68066c5aae90f69c76476d48",
+      "dependencies": [
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.content-divider",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "5243da79723c11268b82f5510b2261465a1eebf15e09b9f57afbc5ed2046e472",
+      "dependencies": [
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.radius",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.context-menu",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "e2d662a1c0c0e19a3844941c85bef2f764fcad0841e8fcc8603162e008eb5cdb",
+      "dependencies": [
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.country-code",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "30d35151087de8d6c80ffc5e1b850c4b785fc33ba6de033c37c36338cf2687cf",
+      "dependencies": [
+        {
+          "id": "core.runtime",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "module.component-shared",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.opacity",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.radius",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.datepicker",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "d0e320c98ec1fbd607d55d5e8b8d07c0050c8c83f70272ae1075be7104b76ed1",
+      "dependencies": [
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.radius",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.doc",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "db8c2a0ee3965c361d971f67848f549e60ff21ab7b53b08734f5442ce7f473d3",
+      "dependencies": [
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.radius",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.dot",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "6f82883871a46892f738b7e07da6a987f7e96e3741d056d69e9371630af856cf",
+      "dependencies": [
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.radius",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.download-file",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "f292d3de0cb9a8dea592e4a2137ca4feabfea98ca5c230b773f751f078ecbfec",
+      "dependencies": [
+        {
+          "id": "core.runtime",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "module.component-shared",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.dropdown",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "83abb5f8b7506b40864ba85ab785b4c3b7451992fbd9d89f206d57fef653e160",
+      "dependencies": [
+        {
+          "id": "component.icon-buttons",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "module.component-shared",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.motion",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.opacity",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.radius",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.emoji",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "fe8caa1413198a2e0aa86b44643934ecaeabe46e72632a97968a5abcfa1c7341",
+      "dependencies": [
+        {
+          "id": "core.runtime",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "module.component-shared",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.fab",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "5c2c6b03888755ccab198a464218040652f5c394817941fc5b8b98cdf59eccfa",
+      "dependencies": [
+        {
+          "id": "core.runtime",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "module.component-shared",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.radius",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.featured-icon",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "58db1d4327e8246244c1282c1bd4358c80503f1aa32f73f28e6f4aaf7d5d4a09",
+      "dependencies": [
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.elevation",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.radius",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.file-preview",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "2f4587c59336e24554c6e04ea14819ecee65fb599f7c9ffc1e9688e8e53bd8f1",
+      "dependencies": [
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.opacity",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.file-upload",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "f4ad55c00bdce8bec346ba78cede0ebf8ec088a8607f0027bd7b59654617a2ac",
+      "dependencies": [
+        {
+          "id": "core.runtime",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "module.component-shared",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.flag",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "e2e1d1484b9a498b67840df577f4e40b89edea5636cf725aec754e3af6ed4e01",
+      "dependencies": [
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.radius",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.hide-show",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "72454de4238c4499e4cc90fe2a2017a558534373657cf535f9a7f17a565d03e1",
+      "dependencies": [
+        {
+          "id": "module.component-shared",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.highlight",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "2696af747d5785375f8e92021b95f7b7a06ed12302a5a9ee40561c2ab6f7380a",
+      "dependencies": [
+        {
+          "id": "component.clipboard",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.icon-buttons",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.icons",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.scrollbar",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "module.component-shared",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.icon-buttons",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "9d04c7e316503d979c132e12f9b52c900c21e724f84e553cc224d30e21bfe65d",
+      "dependencies": [
+        {
+          "id": "component.spinner",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "module.component-shared",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.radius",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.icons",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "37b120d7f4874fbd9ccc748af3e513f1ad1bc663c2ce8ad84f38bddb52fea9d1",
+      "dependencies": [
+        {
+          "id": "icons.material-symbols",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.inputs",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "44faa5f1bcfd973ffa89b82cb201b1e8ad4ff4cc7cf06cd6136bddc58f08f078",
+      "dependencies": [
+        {
+          "id": "core.runtime",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "module.component-shared",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.motion",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.kbd",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "1fe1d6f9b4fa760ee60487108b017cdf099b5a8ddc49294808ee5550582f4feb",
+      "dependencies": [
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.lazy-load",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "2116f27f411624f58a02b288933bab3cfba390f7189e722ff883f6ea89d733a3",
+      "dependencies": []
+    },
+    {
+      "id": "component.link",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "66b1e1655c2fde423e03dd75aa53b85edd06fb3d2f3ef7fb3d35f9920929d043",
+      "dependencies": [
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.menu",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "7e50c45541ace72fc46b103737a47ec807dcfac0561f42269c6de212d9320429",
+      "dependencies": [
+        {
+          "id": "component.badges",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.icon-buttons",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.icons",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.radius",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.modal",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "52ff27684537f49ca094a941d1eb512f65452dd52c448f13570dca73463f5e51",
+      "dependencies": [
+        {
+          "id": "component.close",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.icon-buttons",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.spinner",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "module.component-shared",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.motion",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.opacity",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "utility.backdrop-filter-blur",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.outline",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "dab28d214c03be4b6ee4e8d3dbe6a2a43385603703ba9347bc37faa1b64394cb",
+      "dependencies": [
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.overbox",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "38e53d733ce89ba0ba371059d46104357989ae267f0334f0074027a855abf948",
+      "dependencies": [
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.overcard",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "68068683041f0f5fb7ac1b2f6419bd5107bad1202ee086ac151889825086ba4e",
+      "dependencies": []
+    },
+    {
+      "id": "component.pagination",
+      "kind": "component",
+      "version": "1.1.0",
+      "content_sha256": "4675d4d30fb5bbe9a72a6c55e64961ec1456ab5efe1ad89b7a66bf2ff84e6235",
+      "dependencies": [
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.motion",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.radius",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.placeholder",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "14ec09ba4c98bb16c79dee3afe8d26d161efe904c033e83e11318b395cc24f88",
+      "dependencies": [
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.progress-bar",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "9c310c3d54bae1dd5a5f28dadf0f5a1e10767b7bb3f4a9d2779bc1d06191903d",
+      "dependencies": [
+        {
+          "id": "core.runtime",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "module.component-shared",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.progress-scale",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "78a3b9c2488cefe9f840b3195324bc46fac7ebb9a284e19355c1ed117f665896",
+      "dependencies": [
+        {
+          "id": "core.runtime",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "module.component-shared",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.quantity",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "8938faa7f305b88b9c0c808241a8143bde668f2d3f491ebe2d78f1c36de028c9",
+      "dependencies": [
+        {
+          "id": "component.icon-buttons",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "module.component-shared",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.motion",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.radius",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.radio",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "62909e6b04c8c859660428121723d1d624ca2a40fec0e2e507c70d13935e4291",
+      "dependencies": [
+        {
+          "id": "core.runtime",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "module.component-shared",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.motion",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.radius",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.range-slider",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "ab68c9dc0bd536e55d3949b876e7dafa6f0bf167886a63822fcb430c54fdc206",
+      "dependencies": [
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.elevation",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.motion",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.radius",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.reference-link",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "bc2d4f51f43cb72d8aaceff1c4c2df6f005158258f3da355b029ca736ff3b11d",
+      "dependencies": [
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.scrollbar",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "28232007b577df4e50812e6a7de017efa42bca572169453272c98aff4391c726",
+      "dependencies": [
+        {
+          "id": "core.runtime",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.motion",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.sf-system",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "5d93955604949c5a4bb081673022691ddaa42340bff519ff3434d8626dc26ab7",
+      "dependencies": [
+        {
+          "id": "core.runtime",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "module.component-shared",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.share",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "d0a16d60090fe3251140e5175d506981f8c2c40ada0b64a87193b07fd6313851",
+      "dependencies": []
+    },
+    {
+      "id": "component.skeleton",
+      "kind": "component",
+      "version": "1.0.1",
+      "content_sha256": "9413fb59ad6adc87db46c6244bf82a8a19ceeb489589276368628417adeeb406",
+      "dependencies": [
+        {
+          "id": "core.runtime",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "module.component-shared",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.elevation",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.motion",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.opacity",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.radius",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.slider",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "600dff54f920f6d61242ff70a1b862f8bea45d60eb86a3f03848adff761d2cc8",
+      "dependencies": [
+        {
+          "id": "component.swiper",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.elevation",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.radius",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.special",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "90e88c72aa26a5cc44a0d415518b1b5e05746f6bc1f0ac09b05e1864711dbbef",
+      "dependencies": [
+        {
+          "id": "component.sf-system",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.spinner",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "d7fdf5ddfc73d01bbd7c3faa3298ac5beb0a21dcb6a67930f6fa68f70193caca",
+      "dependencies": [
+        {
+          "id": "core.runtime",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "module.component-shared",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.motion",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.opacity",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.step",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "39c98ccb605160934ab31e9a7a2099246786dbbb8246549980de253e52159845",
+      "dependencies": [
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.motion",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.radius",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.swiper",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "155d8a5313caa74fdf1c0255e1ab18a546af11e38729cda0f2171fdb29b39875",
+      "dependencies": [
+        {
+          "id": "core.runtime",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.switch",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "bfe254688024eaa32c74f896d5ba72b0811269b615e46fca6ca1b619d0be32df",
+      "dependencies": [
+        {
+          "id": "core.runtime",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "module.component-shared",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.motion",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.radius",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.tab",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "9604739c71726d4d8d27897590096fe5de6b60eeb9600c689c8fa71096fc7524",
+      "dependencies": [
+        {
+          "id": "core.runtime",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "module.component-shared",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.tabs",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "b8799dffc22251c08f5a13ef63f008f661bbd19311cf812073761870be9548da",
+      "dependencies": [
+        {
+          "id": "core.runtime",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "module.component-shared",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.radius",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.tags",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "015848a399e3bb3bef70ef22597dcd23dfe32c2efe6e8eb35e717c9572451a3f",
+      "dependencies": [
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.motion",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.opacity",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.radius",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.textarea",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "d6e36e05f8c340c4d0774c440e4bebc31a40c710f9750d1f92146597721aca20",
+      "dependencies": [
+        {
+          "id": "core.runtime",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "module.component-shared",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.motion",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.theme",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "62918981b6cc9f117a28044fe2f7c9217ba69bb58c713e1c7eefa3cc89097a57",
+      "dependencies": []
+    },
+    {
+      "id": "component.toast",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "76246222adc7d28cd1e3548b86edc4bd628d8fc2808d9c9d950f99d9277c4859",
+      "dependencies": [
+        {
+          "id": "core.runtime",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "module.component-shared",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.motion",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.radius",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.toggle",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "83a51ebbde2fea00aacb45c41176b48e0b21fa273d3f0a46d81cd9d60076de6d",
+      "dependencies": [
+        {
+          "id": "core.runtime",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "module.component-shared",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.radius",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.tooltip",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "70d7bdba83ae3bdb8c7f34164250fe0bcebbcb2452fc719b3a0da666976c7c81",
+      "dependencies": [
+        {
+          "id": "core.runtime",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "module.component-shared",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.tree",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "588e20d305cf669288fb45f15b24dbc3ba34dd4e3e22871c83fceaa7f3f328ea",
+      "dependencies": [
+        {
+          "id": "component.icon-buttons",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.icons",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.tree-item",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "module.component-shared",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.tree-item",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "3700a57a387005e0aa8887562c46f16b3c9929ccf6a080b12ff2c6b3d335865e",
+      "dependencies": [
+        {
+          "id": "component.icons",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "module.component-shared",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.verification",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "2857b9cd401d1889d52d8c2de08e750f0878dfa2ec55456b9b63e4ef15c022e4",
+      "dependencies": [
+        {
+          "id": "core.runtime",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "module.component-shared",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "component.viewbox",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "4318764487ccc8ee2c87b795c3bacbd4a8db8c70f473016de9d0d50d752f26de",
+      "dependencies": []
+    },
+    {
+      "id": "component.wow",
+      "kind": "component",
+      "version": "1.0.0",
+      "content_sha256": "35fc89f6f90273f6c789f2d54e4159ab4311904164f03412e9c911c3b2a4f596",
+      "dependencies": []
+    },
+    {
+      "id": "core.runtime",
+      "kind": "core",
+      "version": "1.3.0",
+      "content_sha256": "7acb946f9cbaf97d7f31fa6db6263a06064109b5dd3992a636b1f579d15daf49",
+      "dependencies": [
+        {
+          "id": "core.styles",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "core.styles",
+      "kind": "core",
+      "version": "1.0.1",
+      "content_sha256": "0ac802b41e8919bfc82b6b234602634bb27ed86b57b9d5a3f4b3cc6014e4351a",
+      "dependencies": [
+        {
+          "id": "font.inter",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.elevation",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.motion",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.opacity",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.radius",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "font.inter",
+      "kind": "font",
+      "version": "1.0.0",
+      "content_sha256": "7345240d9de42bb1d21f4b6fab6a45e9c90457ac28b61bac2f4e0c7fd34bef8f",
+      "dependencies": []
+    },
+    {
+      "id": "icons.material-icons",
+      "kind": "icons",
+      "version": "1.0.0",
+      "content_sha256": "389039a51619006a74f74dd280bd6f3463ebc2a5a33617df24c536407fcf57a6",
+      "dependencies": []
+    },
+    {
+      "id": "icons.material-symbols",
+      "kind": "icons",
+      "version": "1.0.0",
+      "content_sha256": "d0c8bda02b43a8feadb1e67b4093a50460a952720888ac1775d97c122fdbf029",
+      "dependencies": []
+    },
+    {
+      "id": "module.component-shared",
+      "kind": "module",
+      "version": "1.0.0",
+      "content_sha256": "1cbf52e1951def82204d790ea8ca606617906d705bcb78935e120ec40f61ee2d",
+      "dependencies": [
+        {
+          "id": "component.badges",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.buttons",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.clipboard",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.emoji",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.fab",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.highlight",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.icon-buttons",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.radio",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.sf-system",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.skeleton",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.switch",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.tab",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "module.smart-field-renderers",
+      "kind": "module",
+      "version": "1.1.0",
+      "content_sha256": "72a95e09f3d9b7ed556f6a6de4fd28b79c08c6a82f65f9cd762d0272a1cf467b",
+      "dependencies": [
+        {
+          "id": "core.runtime",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "module.smart-helpers",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "module.smart-helpers",
+      "kind": "module",
+      "version": "1.0.0",
+      "content_sha256": "e417301ca6d01cfd0fc871aa810fb2435745c40eb86fa3bfbe6acbf61848797d",
+      "dependencies": [
+        {
+          "id": "component.badges",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "module.component-shared",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "plugin.plugin1",
+      "kind": "plugin",
+      "version": "1.0.0",
+      "content_sha256": "b5d89bc68a0d971111f40ac20fa147cc39538baa8397d0920d53f4d153d3e669",
+      "dependencies": []
+    },
+    {
+      "id": "plugin.plugin2",
+      "kind": "plugin",
+      "version": "1.0.0",
+      "content_sha256": "bf44e5332b597b1beb292a7c890b3fbb886323aab8a5a87c0706c798adf6da86",
+      "dependencies": []
+    },
+    {
+      "id": "plugin.plugin3",
+      "kind": "plugin",
+      "version": "1.0.0",
+      "content_sha256": "5835b77e7a7b79745e406a1e03f3f3d69a8fbdbb99c8a0b48cf169b73fb8efa4",
+      "dependencies": []
+    },
+    {
+      "id": "port.simai.admin-navigation-port",
+      "kind": "port",
+      "version": "1.0.0",
+      "content_sha256": "6264903873cd7eeb72872e1319711207c441ca0fae13914cebe91c5acd1f5b79",
+      "dependencies": []
+    },
+    {
+      "id": "port.simai.chat-port",
+      "kind": "port",
+      "version": "1.0.0",
+      "content_sha256": "9d967c483b8803e5d5771c8bd084a61b20f26634cdd315d3a87073c9b5bf8486",
+      "dependencies": []
+    },
+    {
+      "id": "port.simai.dataview-port",
+      "kind": "port",
+      "version": "1.12.0",
+      "content_sha256": "917a85608463d973ca90bc361ff45b884dfe0436b8555987386f294c78d7ed89",
+      "dependencies": []
+    },
+    {
+      "id": "port.simai.property-view-port",
+      "kind": "port",
+      "version": "1.16.0",
+      "content_sha256": "ed04871c660fd46cee9d6247e13e6011e4ff6a7953bef82903230723000d3656",
+      "dependencies": []
+    },
+    {
+      "id": "smart.accordion",
+      "kind": "smart",
+      "version": "1.1.3",
+      "content_sha256": "5b86039ab4028d2df659511ba0bcb877b2b61f6cc4c26019a52b5f2afcfa8057",
+      "dependencies": [
+        {
+          "id": "component.accordion",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.icons",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        },
+        {
+          "id": "smart.badge",
+          "range": "^1.1.2"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "smart.alert",
+      "kind": "smart",
+      "version": "1.1.3",
+      "content_sha256": "3667ddd853f85362eb132b1c203d5975429252a0918479d563e8f54318cd4348",
+      "dependencies": [
+        {
+          "id": "component.alerts",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.buttons",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        },
+        {
+          "id": "smart.icon",
+          "range": "^1.1.3"
+        },
+        {
+          "id": "smart.icon-button",
+          "range": "^1.1.3"
+        }
+      ]
+    },
+    {
+      "id": "smart.avatar",
+      "kind": "smart",
+      "version": "1.1.3",
+      "content_sha256": "546570598a573b0e8fc0418aedf7fa49574cefd5938a5b321c895de72985455e",
+      "dependencies": [
+        {
+          "id": "component.avatars",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.badges",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        },
+        {
+          "id": "module.component-shared",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "module.smart-helpers",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "smart.avatars",
+      "kind": "smart",
+      "version": "1.1.3",
+      "content_sha256": "ffa25809a05fd9aaeebd4728986620d6ff47675a020d7c06a8d869b038da6515",
+      "dependencies": [
+        {
+          "id": "component.avatars",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.icons",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        },
+        {
+          "id": "smart.avatar",
+          "range": "^1.1.3"
+        }
+      ]
+    },
+    {
+      "id": "smart.badge",
+      "kind": "smart",
+      "version": "1.1.2",
+      "content_sha256": "4c54eb2de80a3885e0b680da38a9d47cf3e2b08834d47efc5320a470e0d139c9",
+      "dependencies": [
+        {
+          "id": "component.badges",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        },
+        {
+          "id": "module.component-shared",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "utility.sr-only",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "smart.breadcrumbs",
+      "kind": "smart",
+      "version": "1.1.5",
+      "content_sha256": "1e270a56bbedcd9310e545388826be57db73fb3a4a0d75937e89d7326c442594",
+      "dependencies": [
+        {
+          "id": "component.breadcrumbs",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.icons",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        },
+        {
+          "id": "smart.icon",
+          "range": "^1.1.3"
+        }
+      ]
+    },
+    {
+      "id": "smart.button",
+      "kind": "smart",
+      "version": "1.1.4",
+      "content_sha256": "962ef486f944251e44d8f3b9d7591a45577dcf423d1725f86c395d67beeddbd7",
+      "dependencies": [
+        {
+          "id": "component.buttons",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.spinner",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        },
+        {
+          "id": "smart.icon",
+          "range": "^1.1.3"
+        },
+        {
+          "id": "utility.pointer-events",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "utility.text-align",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "smart.button-group",
+      "kind": "smart",
+      "version": "1.1.2",
+      "content_sha256": "b1392d8093600702dc9932a49e1d51be0dd9bc4064a240467b1e20278e545588",
+      "dependencies": [
+        {
+          "id": "component.button-group",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.spinner",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        },
+        {
+          "id": "module.component-shared",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "module.smart-helpers",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "smart.button",
+          "range": "^1.1.4"
+        },
+        {
+          "id": "smart.icon",
+          "range": "^1.1.3"
+        }
+      ]
+    },
+    {
+      "id": "smart.checkbox",
+      "kind": "smart",
+      "version": "1.1.5",
+      "content_sha256": "679d8689df9441ddcf933c206de248595e965742c4644d86e34819f60090b6e0",
+      "dependencies": [
+        {
+          "id": "component.checkbox",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        },
+        {
+          "id": "module.smart-helpers",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "smart.icon",
+          "range": "^1.1.3"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "smart.close",
+      "kind": "smart",
+      "version": "1.0.2",
+      "content_sha256": "27f451e63715d2bcb416dc352e7a71c2da12b6c6c75c3f191edd4db798659879",
+      "dependencies": [
+        {
+          "id": "component.close",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        }
+      ]
+    },
+    {
+      "id": "smart.code-input",
+      "kind": "smart",
+      "version": "1.1.2",
+      "content_sha256": "b0b61129c9b3cc17fce4d2bbcdde3529804e1a0088bb19f851f8da2d6c733bd6",
+      "dependencies": [
+        {
+          "id": "component.verification",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        },
+        {
+          "id": "module.component-shared",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "module.smart-helpers",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "utility.sr-only",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "smart.color",
+      "kind": "smart",
+      "version": "1.2.3",
+      "content_sha256": "a6fb2e737c0665d47c9c3e9754a2d18f12cf1ec679de0c7041b6d9741069537e",
+      "dependencies": [
+        {
+          "id": "component.icons",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        },
+        {
+          "id": "module.smart-helpers",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "smart.icon-button",
+          "range": "^1.1.3"
+        },
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.radius",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "smart.composition-overlay",
+      "kind": "smart",
+      "version": "1.2.2",
+      "content_sha256": "8c28ba53b4963bfd5fa810a48192147fc2040f9d632e3743f985a9ea4ba31afd",
+      "dependencies": [
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        },
+        {
+          "id": "smart.sortable",
+          "range": "^1.1.3"
+        },
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.radius",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "smart.context-menu",
+      "kind": "smart",
+      "version": "1.4.3",
+      "content_sha256": "17f9c57dee114a670225dd912acf5b46d9afc4f0cfb288aea9bc777396e25c63",
+      "dependencies": [
+        {
+          "id": "component.context-menu",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        },
+        {
+          "id": "smart.button",
+          "range": "^1.1.4"
+        },
+        {
+          "id": "smart.icon-button",
+          "range": "^1.1.3"
+        },
+        {
+          "id": "smart.tabs",
+          "range": "^1.1.5"
+        }
+      ]
+    },
+    {
+      "id": "smart.copy-button",
+      "kind": "smart",
+      "version": "1.1.5",
+      "content_sha256": "ea15b23b686c73c342f62cfef5145cfcebd42248e3692ce3606fc0084b0fa348",
+      "dependencies": [
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        },
+        {
+          "id": "smart.button",
+          "range": "^1.1.4"
+        },
+        {
+          "id": "smart.icon",
+          "range": "^1.1.3"
+        },
+        {
+          "id": "smart.icon-button",
+          "range": "^1.1.3"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "smart.country-code",
+      "kind": "smart",
+      "version": "1.1.2",
+      "content_sha256": "0ebc6b111331a15c028ccbdef8c612a39b8b3d3f515ec0f09814ef11520c2283",
+      "dependencies": [
+        {
+          "id": "component.country-code",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        },
+        {
+          "id": "module.component-shared",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "module.smart-helpers",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "smart.datepicker",
+      "kind": "smart",
+      "version": "1.1.4",
+      "content_sha256": "104ed015be1473f8db3d4051bce5d8532194e52e58cbe63e3da4bb8d87ce78ba",
+      "dependencies": [
+        {
+          "id": "component.datepicker",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        },
+        {
+          "id": "module.component-shared",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "module.smart-helpers",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "smart.button",
+          "range": "^1.1.4"
+        },
+        {
+          "id": "smart.icon",
+          "range": "^1.1.3"
+        },
+        {
+          "id": "smart.icon-button",
+          "range": "^1.1.3"
+        },
+        {
+          "id": "smart.input",
+          "range": "^1.3.3"
+        }
+      ]
+    },
+    {
+      "id": "smart.download-file",
+      "kind": "smart",
+      "version": "1.1.4",
+      "content_sha256": "e3d3a6100093e2ad24a29dc50e1f7320d593269266c2b6d4ad0e4c508e682642",
+      "dependencies": [
+        {
+          "id": "component.download-file",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.icons",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        },
+        {
+          "id": "smart.icon",
+          "range": "^1.1.3"
+        }
+      ]
+    },
+    {
+      "id": "smart.drawer",
+      "kind": "smart",
+      "version": "1.8.1",
+      "content_sha256": "1f6a00f1816e86d9b4ea273a082032e56d8b499d7c08c84ce182cd92f642920f",
+      "dependencies": [
+        {
+          "id": "component.close",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.icon-buttons",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        },
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.motion",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.opacity",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.radius",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "smart.dropdown",
+      "kind": "smart",
+      "version": "1.4.3",
+      "content_sha256": "95e2fb2a108f8a28a123fa8df87ea7e9e36789634b9089f93ae0cf0c2d46d229",
+      "dependencies": [
+        {
+          "id": "component.dropdown",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.icon-buttons",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.inputs",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        },
+        {
+          "id": "module.component-shared",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "module.smart-helpers",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "smart.icon-button",
+          "range": "^1.1.3"
+        },
+        {
+          "id": "smart.input",
+          "range": "^1.3.3"
+        },
+        {
+          "id": "smart.list-item",
+          "range": "^1.2.2"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "smart.empty-state",
+      "kind": "smart",
+      "version": "1.1.5",
+      "content_sha256": "ad127be306be45d1cf0e625980f3ea42e5646a41c979253720e74c8fc455b051",
+      "dependencies": [
+        {
+          "id": "component.featured-icon",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        },
+        {
+          "id": "smart.button",
+          "range": "^1.1.4"
+        },
+        {
+          "id": "smart.icon",
+          "range": "^1.1.3"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "smart.file-preview",
+      "kind": "smart",
+      "version": "1.1.2",
+      "content_sha256": "e7f43adc4f1a99ff98def11423cee9cbafb9123060f6f77761aff1ba09840289",
+      "dependencies": [
+        {
+          "id": "component.file-preview",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.icon-buttons",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.icons",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        }
+      ]
+    },
+    {
+      "id": "smart.file-upload",
+      "kind": "smart",
+      "version": "1.1.3",
+      "content_sha256": "4b7ee29d27594ede311426f287173d1930ee2196dfca4e02c041079c095ccc3e",
+      "dependencies": [
+        {
+          "id": "component.featured-icon",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.file-upload",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.icon-buttons",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        },
+        {
+          "id": "module.component-shared",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "smart.progress-bar",
+          "range": "^1.1.1"
+        }
+      ]
+    },
+    {
+      "id": "smart.gallery",
+      "kind": "smart",
+      "version": "1.1.4",
+      "content_sha256": "d126892009fc8697e7337bb525fd22d6c252a7dbd1a21fc0ce877ba290d8e792",
+      "dependencies": [
+        {
+          "id": "component.slider",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        },
+        {
+          "id": "smart.modal",
+          "range": "^1.4.1"
+        },
+        {
+          "id": "smart.slider",
+          "range": "^1.1.4"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "smart.help-mark",
+      "kind": "smart",
+      "version": "1.1.4",
+      "content_sha256": "66fa2e219d3fbc9530960ba54bd3dddefecaa738316e784106a1bc7f53bff5ce",
+      "dependencies": [
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        },
+        {
+          "id": "smart.icon",
+          "range": "^1.1.3"
+        },
+        {
+          "id": "smart.icon-button",
+          "range": "^1.1.3"
+        },
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "smart.icon",
+      "kind": "smart",
+      "version": "1.1.3",
+      "content_sha256": "e0396a3ec0cae47945910acbb97e666a4de11af371abf1e3a2c4a0f9bfcfeff5",
+      "dependencies": [
+        {
+          "id": "component.badges",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.icons",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        },
+        {
+          "id": "module.smart-helpers",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "smart.icon-button",
+      "kind": "smart",
+      "version": "1.1.3",
+      "content_sha256": "775b4310217248084fd9426203d6759d1ccd2fdab378b1364f3dc7d213aeae17",
+      "dependencies": [
+        {
+          "id": "component.badges",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.icon-buttons",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.spinner",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        },
+        {
+          "id": "module.smart-helpers",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "smart.close",
+          "range": "^1.0.2"
+        },
+        {
+          "id": "smart.icon",
+          "range": "^1.1.3"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "utility.pointer-events",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "smart.image-field",
+      "kind": "smart",
+      "version": "1.1.3",
+      "content_sha256": "6da7d35a40836001deb9c7758481fef408a54425ada11d9b5e5ebe64fac02bad",
+      "dependencies": [
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        },
+        {
+          "id": "module.component-shared",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "module.smart-helpers",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "smart.button",
+          "range": "^1.1.4"
+        },
+        {
+          "id": "smart.icon",
+          "range": "^1.1.3"
+        },
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.motion",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "smart.inline-editor",
+      "kind": "smart",
+      "version": "1.1.2",
+      "content_sha256": "dc9eb6c5c06269044628ba3ce82630c0e44e1373fb8f7757eed8295ba6d00742",
+      "dependencies": [
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        },
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.radius",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "smart.input",
+      "kind": "smart",
+      "version": "1.3.3",
+      "content_sha256": "e3a28eef4a1863031307b60ffe75e38d90d03665610a6d55f5c040f881a62810",
+      "dependencies": [
+        {
+          "id": "component.icon-buttons",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.inputs",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        },
+        {
+          "id": "module.component-shared",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "module.smart-helpers",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "smart.icon",
+          "range": "^1.1.3"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "smart.list-item",
+      "kind": "smart",
+      "version": "1.2.2",
+      "content_sha256": "72f7e14d24120612fc0adc902b4269a6981716d473c570e89dc6162ca362d0a4",
+      "dependencies": [
+        {
+          "id": "component.avatars",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.checkbox",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.dropdown",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.icons",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.tags",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        },
+        {
+          "id": "module.component-shared",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "smart.menu",
+      "kind": "smart",
+      "version": "1.1.3",
+      "content_sha256": "76b38eed395147bdb36306dcb871d0b591834dc993015f35f8366646c206bcf9",
+      "dependencies": [
+        {
+          "id": "component.badges",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.icon-buttons",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.icons",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.menu",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        },
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "smart.modal",
+      "kind": "smart",
+      "version": "1.4.1",
+      "content_sha256": "1d88296dc692a5934a43fece795e4c7ad3c3af91259b068a33b094f0b1f318c4",
+      "dependencies": [
+        {
+          "id": "component.icon-buttons",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.modal",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.spinner",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        }
+      ]
+    },
+    {
+      "id": "smart.page-header",
+      "kind": "smart",
+      "version": "1.1.5",
+      "content_sha256": "38611964d5d6b89fb9ef32b5870f7fe19bd262a105595ad3f555d7f995cc8f5a",
+      "dependencies": [
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        },
+        {
+          "id": "smart.badge",
+          "range": "^1.1.2"
+        },
+        {
+          "id": "smart.icon",
+          "range": "^1.1.3"
+        },
+        {
+          "id": "smart.icon-button",
+          "range": "^1.1.3"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "smart.pagination",
+      "kind": "smart",
+      "version": "1.3.1",
+      "content_sha256": "5cfb1825e1505eaef40b818a337781e166a01e0b379c3bdcacde5dc53260aaa2",
+      "dependencies": [
+        {
+          "id": "component.pagination",
+          "range": "^1.1.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        },
+        {
+          "id": "smart.button",
+          "range": "^1.1.4"
+        },
+        {
+          "id": "smart.checkbox",
+          "range": "^1.1.5"
+        },
+        {
+          "id": "smart.dropdown",
+          "range": "^1.4.3"
+        },
+        {
+          "id": "smart.icon-button",
+          "range": "^1.1.3"
+        },
+        {
+          "id": "smart.input",
+          "range": "^1.3.3"
+        },
+        {
+          "id": "smart.list-item",
+          "range": "^1.2.2"
+        },
+        {
+          "id": "smart.spinner",
+          "range": "^1.2.1"
+        }
+      ]
+    },
+    {
+      "id": "smart.popover",
+      "kind": "smart",
+      "version": "1.1.1",
+      "content_sha256": "d887d91ba74cce7dc9077aafef6104feb7fe8a22e9b50a7003f686f6d9eb09a0",
+      "dependencies": [
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        },
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "smart.profile-picker",
+      "kind": "smart",
+      "version": "1.1.5",
+      "content_sha256": "149078289eb8189dbf8d7a5c90f01cb09ae1b724e5fcb7ba7997156b293bdcfd",
+      "dependencies": [
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        },
+        {
+          "id": "smart.button",
+          "range": "^1.1.4"
+        },
+        {
+          "id": "smart.icon",
+          "range": "^1.1.3"
+        },
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.elevation",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "smart.progress-bar",
+      "kind": "smart",
+      "version": "1.1.1",
+      "content_sha256": "1b3408920eea5ee8b11a624d999e751ab6580b2dab914a3e338ebdf705dc9b13",
+      "dependencies": [
+        {
+          "id": "component.progress-bar",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        }
+      ]
+    },
+    {
+      "id": "smart.progress-scale",
+      "kind": "smart",
+      "version": "1.1.1",
+      "content_sha256": "6256eb7ead6575ff08b8ffc6013600a1296e3cdced58b401d10d92f2c07eb1fa",
+      "dependencies": [
+        {
+          "id": "component.progress-scale",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        },
+        {
+          "id": "module.component-shared",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "smart.quantity",
+      "kind": "smart",
+      "version": "1.1.2",
+      "content_sha256": "6a9b310ba685659e0feb2af6441d118d2ef9ce6b73811365feca2aa1acb76632",
+      "dependencies": [
+        {
+          "id": "component.icon-buttons",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.icons",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.quantity",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        },
+        {
+          "id": "module.component-shared",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "module.smart-helpers",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "smart.radio",
+      "kind": "smart",
+      "version": "1.1.3",
+      "content_sha256": "973a1bd2950f10f98a4b31f36a2d3da209a9f5a014076ff08b3d063170a03f60",
+      "dependencies": [
+        {
+          "id": "component.icons",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.radio",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        },
+        {
+          "id": "module.smart-helpers",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "smart.range-slider",
+      "kind": "smart",
+      "version": "1.1.2",
+      "content_sha256": "8b656d80b7998aa07489a5d6d91367039d6d7d4474cfe2ae367dbf2e7b3fe999",
+      "dependencies": [
+        {
+          "id": "component.range-slider",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        },
+        {
+          "id": "module.smart-helpers",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "smart.reference-link",
+      "kind": "smart",
+      "version": "1.0.4",
+      "content_sha256": "e6a8ec66e5647198d313a4db37fe75a93edb750040d6f79007b2d334ded707f0",
+      "dependencies": [
+        {
+          "id": "component.icons",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.reference-link",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        },
+        {
+          "id": "module.component-shared",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "smart.icon",
+          "range": "^1.1.3"
+        }
+      ]
+    },
+    {
+      "id": "smart.resizer",
+      "kind": "smart",
+      "version": "1.1.2",
+      "content_sha256": "000d48d4a744f73bb58e68b927d01ad9bf72f27388ce75f79782b6ec857a079b",
+      "dependencies": [
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        },
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.motion",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "smart.skeleton",
+      "kind": "smart",
+      "version": "1.1.1",
+      "content_sha256": "f15ca039f8fed35e2333a06722dce6935dafe99bdfc762f4174c4f57c27315bc",
+      "dependencies": [
+        {
+          "id": "component.skeleton",
+          "range": "^1.0.1"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        }
+      ]
+    },
+    {
+      "id": "smart.slider",
+      "kind": "smart",
+      "version": "1.1.4",
+      "content_sha256": "1aba07f8c4e8b83f39805413ded0d094d8b8adc2590d6c45cfde3dfed1bb6d99",
+      "dependencies": [
+        {
+          "id": "component.slider",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        },
+        {
+          "id": "smart.icon-button",
+          "range": "^1.1.3"
+        }
+      ]
+    },
+    {
+      "id": "smart.sortable",
+      "kind": "smart",
+      "version": "1.1.3",
+      "content_sha256": "e68992c72d49e50cd7d6478dfbee36c9db0edaaca452947ad017466f0b0c9bbb",
+      "dependencies": [
+        {
+          "id": "component.icon-buttons",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.icons",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        },
+        {
+          "id": "smart.context-menu",
+          "range": "^1.4.3"
+        },
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.elevation",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "smart.spinner",
+      "kind": "smart",
+      "version": "1.2.1",
+      "content_sha256": "39bc88ff8e61780c395b02d2724d5f5f8f2f42e9fa32e97e5c88ec27e366bed3",
+      "dependencies": [
+        {
+          "id": "component.spinner",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        }
+      ]
+    },
+    {
+      "id": "smart.steps",
+      "kind": "smart",
+      "version": "1.1.3",
+      "content_sha256": "fac55ce1ce1c0fb7093d6909e652dfc0e5e49cab7ce915f7d49d0f79ecf33d6b",
+      "dependencies": [
+        {
+          "id": "component.icons",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.step",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        }
+      ]
+    },
+    {
+      "id": "smart.switch",
+      "kind": "smart",
+      "version": "1.1.2",
+      "content_sha256": "7e894d4a0711a1711b3c36cbeff81356cef46738c943d6d19461fd9f9b33b82f",
+      "dependencies": [
+        {
+          "id": "component.icon-buttons",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.icons",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.switch",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        },
+        {
+          "id": "module.smart-helpers",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "smart.tabs",
+      "kind": "smart",
+      "version": "1.1.5",
+      "content_sha256": "90ea589f3d362d08ff36afa20ca74aa77d460b4ac4d9f65bf6a05c1d4ee974be",
+      "dependencies": [
+        {
+          "id": "component.tabs",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        },
+        {
+          "id": "smart.button",
+          "range": "^1.1.4"
+        },
+        {
+          "id": "smart.checkbox",
+          "range": "^1.1.5"
+        },
+        {
+          "id": "smart.context-menu",
+          "range": "^1.4.3"
+        },
+        {
+          "id": "smart.icon-button",
+          "range": "^1.1.3"
+        },
+        {
+          "id": "smart.sortable",
+          "range": "^1.1.3"
+        }
+      ]
+    },
+    {
+      "id": "smart.tag",
+      "kind": "smart",
+      "version": "1.1.3",
+      "content_sha256": "e5de1b13676a75f5beedc95a3ae653d45342d1ba3749b08a6029efa369a117ab",
+      "dependencies": [
+        {
+          "id": "component.avatars",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.dot",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.icon-buttons",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.tags",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        },
+        {
+          "id": "module.component-shared",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "smart.icon-button",
+          "range": "^1.1.3"
+        },
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "smart.textarea",
+      "kind": "smart",
+      "version": "1.5.2",
+      "content_sha256": "1ba682238c1a5a330a5876fe904bbd209a12584a6219af2c1b2a49dd86cd2096",
+      "dependencies": [
+        {
+          "id": "component.icon-buttons",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.icons",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.textarea",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        },
+        {
+          "id": "module.component-shared",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "module.smart-helpers",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "smart.theme-generator",
+      "kind": "smart",
+      "version": "1.1.4",
+      "content_sha256": "9db0471e727b7c008ef0d6fef1a86e2a6586df6aee6531712054133ce44640fa",
+      "dependencies": [
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        },
+        {
+          "id": "smart.button",
+          "range": "^1.1.4"
+        },
+        {
+          "id": "smart.color",
+          "range": "^1.2.3"
+        },
+        {
+          "id": "smart.icon",
+          "range": "^1.1.3"
+        },
+        {
+          "id": "smart.icon-button",
+          "range": "^1.1.3"
+        },
+        {
+          "id": "smart.input",
+          "range": "^1.3.3"
+        },
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "smart.toast",
+      "kind": "smart",
+      "version": "1.1.2",
+      "content_sha256": "6fec7c7b1050b6484c6e612d34744daf13e4063e2c5fcbb9f9c713a3dc775251",
+      "dependencies": [
+        {
+          "id": "component.buttons",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.close",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.toast",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        },
+        {
+          "id": "smart.icon",
+          "range": "^1.1.3"
+        },
+        {
+          "id": "smart.icon-button",
+          "range": "^1.1.3"
+        }
+      ]
+    },
+    {
+      "id": "smart.toggle",
+      "kind": "smart",
+      "version": "1.1.2",
+      "content_sha256": "418c593be3c30b9f673404fa09cb0de185c88fca24998c529ca45e747d03c295",
+      "dependencies": [
+        {
+          "id": "component.icons",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.toggle",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        },
+        {
+          "id": "module.smart-helpers",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.elevation",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.radius",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "smart.tooltip",
+      "kind": "smart",
+      "version": "1.1.1",
+      "content_sha256": "4d895a5ecbba67fc81e6e25fad806bf5d2179209d584f577a7e10553e93790ba",
+      "dependencies": [
+        {
+          "id": "component.tooltip",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        }
+      ]
+    },
+    {
+      "id": "smart.tree",
+      "kind": "smart",
+      "version": "2.0.5",
+      "content_sha256": "8900dc5e849ecdf5d3fc9e6c68a3219aa4a17f09ced4257a2eb075eaa393e827",
+      "dependencies": [
+        {
+          "id": "component.icon-buttons",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.icons",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.tree",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.tree-item",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        },
+        {
+          "id": "smart.tree-item",
+          "range": "^1.1.2"
+        }
+      ]
+    },
+    {
+      "id": "smart.tree-item",
+      "kind": "smart",
+      "version": "1.1.2",
+      "content_sha256": "bf8e9fe56349855879d8311830173fb4bbde99f589fdbfa8fef97139cdbe7cbc",
+      "dependencies": [
+        {
+          "id": "component.icon-buttons",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.icons",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "component.tree-item",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "core.runtime",
+          "range": "^1.3.0"
+        }
+      ]
+    },
+    {
+      "id": "tokens.border",
+      "kind": "tokens",
+      "version": "1.0.0",
+      "content_sha256": "2527e360d7a6b0a79ccc93586017c95f6a2d0fdd8abf8440d9f59bdd70d51771",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.radius",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "tokens.breakpoint",
+      "kind": "tokens",
+      "version": "1.0.0",
+      "content_sha256": "2871468d538018a188a78d081dbd50970da417a92fcf78cd3dcd8eb642d3b9d1",
+      "dependencies": []
+    },
+    {
+      "id": "tokens.colour",
+      "kind": "tokens",
+      "version": "1.0.0",
+      "content_sha256": "0261ff84a1aeafa9132c3b97db6e60c2e7340a5d0192bce2c705114896600462",
+      "dependencies": [
+        {
+          "id": "tokens.elevation",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "tokens.elevation",
+      "kind": "tokens",
+      "version": "1.0.0",
+      "content_sha256": "6bbd3ecda2c9b8e8a00c6bf1ac53a55cfa8fa91e047f63d10309f1943cf20da0",
+      "dependencies": [
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "tokens.motion",
+      "kind": "tokens",
+      "version": "1.0.0",
+      "content_sha256": "7066e8ed9656e92cf7c6f628c4de07705e667ddf12782d7e74550e66e9093206",
+      "dependencies": []
+    },
+    {
+      "id": "tokens.opacity",
+      "kind": "tokens",
+      "version": "1.0.0",
+      "content_sha256": "a38d03e2a410706552aaceb5213463a9fb2dd60d5825949f4207874e7d82485d",
+      "dependencies": [
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "tokens.radius",
+      "kind": "tokens",
+      "version": "1.0.0",
+      "content_sha256": "d1e5d291cedcf61a5c28ddc7aa35c4e0d60fb70d120032e5cb2ae220a246cda5",
+      "dependencies": [
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "tokens.size",
+      "kind": "tokens",
+      "version": "1.0.0",
+      "content_sha256": "c1f177cffe17b7c880851281e87f908fb39ed07f01f801ef186fc5c4b59a85e7",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "utility.z-index",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "tokens.space",
+      "kind": "tokens",
+      "version": "1.0.0",
+      "content_sha256": "a4b5560f11822c0fffbe73737f9101ad203cc87f1a37ee2dcf1214bad0be7218",
+      "dependencies": []
+    },
+    {
+      "id": "tokens.typography",
+      "kind": "tokens",
+      "version": "1.0.0",
+      "content_sha256": "ef3ead84cb2f49b4c0eddde3d4ca7628760daf940696d8c1d2736b2c8d604685",
+      "dependencies": [
+        {
+          "id": "font.inter",
+          "range": "^1.0.0",
+          "manual": true
+        },
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.radius",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "utility.font-weight",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "utility.letter-spacing",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "utility.line-height",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "utility.text-max-width",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.accent-color",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "4bf1ff750e3f41e8bfe59495b7069c55899745ddc1eb1bcae70349ba002bb086",
+      "dependencies": []
+    },
+    {
+      "id": "utility.align-content",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "180a75adc8e5b2b4192cdeda6c370f0120b230e514439262ed0e0e92f751b894",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.align-items",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "73c6bba770823c97a5e9212e7b3b7d9da5b26b75454f51655fc2b9b7bdd74e6e",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.align-self",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "20b7922705244e53292859658d1afd356ed30b77f03d0d8cfdc055f942f4fa47",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.animation",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "7eebee72207d641a206c29f2cdb1f4e4c2f2e9e08c0cc66c7e3552831cf58bf2",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.motion",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.animation-duration",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "f4f5a965e90e0a9476fbde875c91f9706a17eff1529095c8de349cb91341128b",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.appearance",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "0f6f9f8b0c4b979d9c7947a5f9c6ddac4dbebc7c000b2664dfe3e83e251a890f",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.aspect-ratio",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "ff2dd462115ce85700dfc47dddb034a38be08474a1f9f7fe5f4a5e12627eea01",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.backdrop-filer-hue-rotate",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "602656d46d8232fa9d287dde56b8ae45e09c0372670483e3123ba5b9e937cfb5",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.backdrop-filter-blur",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "94e8aae76508ddf6fd5fd9d754c226cd8f99788e698ab439ca0cc1aa7e6c628f",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.backdrop-filter-brightness",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "7b345ce5081bada55b0a60bd06cca5c1e0cb0916bca704ab1c01014c85a452b7",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.backdrop-filter-contrast",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "1d944c744c8762592b381bbf0fcf9f3ca60562526a93aeabf0db369e35d6ce93",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.backdrop-filter-grayscale",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "203ca14eb63572c9b540940f7051dacdacd158c1aca33e7fac43885d903f954f",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.backdrop-filter-invert",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "9a2d8c1201489dfa2be51728ab7f5bbf07685fbd0465631e7271cb4ab093f2d6",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.backdrop-filter-opacity",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "4e685076e370894384749250b6a0782c05cfb53ec71db1ab55aa3b57af5132c3",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.backdrop-filter-saturate",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "5f0f0615634ebd2c201f6a23deed2267bc58814489eaac4d51520e6072e33088",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.backdrop-filter-sepia",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "6b0fe3dedd1d87878329026052c6a46945009a9bd848a9d1c2ff8eb57ed77d8e",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.background-attachment",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "2cbc16d0f0e539b41335721334e6994ce1b9f14a86cfdaff8859d438b4bfa966",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.background-clip",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "96b94c5d69475f6883f0e6d5da489b9dce485b31b58b0a4df77e11c71b19aa2e",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.background-color",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "accc4b780b3de7023ca32f7842a772f372dd1523c6d33d40acdf6177b0c1c126",
+      "dependencies": [
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.background-color-brand",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "d628e1de9f45440225abc4d0a1c4584429ad10a73df783ef7114ec2670622c55",
+      "dependencies": []
+    },
+    {
+      "id": "utility.background-gradient",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "9feec747ca480a397ae11a70f529cb903431e2f73eb4a7dbe6be22639f5e2234",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.background-origin",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "103472e1ed15c65f7f6f2bad3265b98d12a5822f73b47e75a84df5c47790569e",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.background-position",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "5d3980888b7409816c4e910ea2461c1371c35f9b234b2a8e417bbab66717870f",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.background-repeat",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "8a67281b334e60965fcf61216c4b90e3526f8ffccb1ef4724d21cd1a358b53b3",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.background-size",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "25f94d52971c80e71490ca77f3228fbf61bb8d557513afcd644cb19174618a1a",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.background-size-ext",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "34da305462bddc2ffa53b280d896aa2d87cb5e2dd10574eb5a591fa15f9a22cb",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.border-collapse",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "df1c4ecba40bdb0264ada774b4a4c177349c5a1223b4365e848ad63b43637b6c",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.border-color",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "cf21de74a951f0f212677d4d21e9b669f4b91500b839bb49bc42d95300f3b49a",
+      "dependencies": [
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "utility.background-color",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.border-radius",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "5f51a081f5ee81b6f828f91ed9bb02da0987bc9c38e3b69a81a874cc9f66e3ed",
+      "dependencies": [
+        {
+          "id": "tokens.border",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.border-spacing",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "67d061c05347309e0aca422709c8ff9309824b90cb1befae12b4588735673429",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "utility.space",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.border-style",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "adbd69f2380fab570e614289997ea5f9d7e51017ea93acabd2f94c089c21f118",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.border-width",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "b5353cb6e9daa20a5420fade0c62976fd1677f9b8a3447917ec0aa732445d912",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.box-decoration-break",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "70bc3f0c37af1d14d1e5bccfa99c9ae6d7f3297cfc29cd9e72dc3e7bbb12d32c",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.box-shadow",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "966bcbda42b52d59282c4c8aa7d53bdbf07ee5d59855f820d3a82d12924697e8",
+      "dependencies": [
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.elevation",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.box-shadow-color",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "a82599d149455dfb922a80866b404c768a1df5192dccea089db4f8eaae3e0270",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.elevation",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.box-sizing",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "54288d642ded58dc3380736d8e1fd7a89d4fa1362312adaebc77c551ced40bbc",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.break-after",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "c098bb7166b5de00cdbfa76ee35ffe190c74d8ba01012c5a98186f4fbda34010",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.break-before",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "370bf2a120813f37d9b0a3e1cf76ce1d6fbe51fac6424be9ee56fe3468555549",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.break-inside",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "8c1ae78d2bfd1e34d554a3831d8334d9d44a11a89027652d8695e2182c80cd44",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.caret-color",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "0720c810bee8f09782ae8d973e90359090579c1995d013f0f3c4132c869cdfbe",
+      "dependencies": []
+    },
+    {
+      "id": "utility.clear",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "8711b74d552c6bd57af5237759290783bbd642684dad202cb71d0c6ebdde5542",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.column",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "7cddf31c8fb9f706820f31a44fc813a4ce28bab763f1dbadcf195ce548cb3101",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.column-gap",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "2314306fabb62bfc9e784de14c509f4ad515d6c9a51eab11a55423ed6e054add",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "utility.padding",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.container",
+      "kind": "utility",
+      "version": "1.1.0",
+      "content_sha256": "929183a54d4696b13088a6e843c76148165e6feba95d2a20232b25e53a8718df",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.content",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "0b9c6bf9497b8fb9272c8697fd76a2fd925cf382473cf7a6ae67d458f6e56713",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.cursor",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "546818caf498cbdebd1bb7a2658ace68b79765ffb922c72ae1be97070a761d19",
+      "dependencies": []
+    },
+    {
+      "id": "utility.display",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "c0659c3403a88ce1b1097f0bf1214a78363610fd301ef7ba55616b0208c67a5a",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.display-print",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "27e8fb6522247c6105025c8e594b6d83e81d5e0236013bad7fd5fb010883e853",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.divider-color",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "b2f850619d4fda36f39987ddadacb12f36730aa4112bc5299ff10ca8c80b3d2a",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.opacity",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.divider-opacity",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "36e87fcb734d9210de17eda69d1f23af2571ec11e0ec29e85e401c25f4d07d5a",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "utility.opacity",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.divider-style",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "3cba619609d5b678161bfde04d7241e36b750c7776d348e907c8900b6cbc4e35",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.divider-width",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "983933528bd69ee0c86b305fcda3a8f1d407f706a2d77f8dc7b23f593f451f17",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.drop-shadow",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "46ae00162e740f3edda70c1a2bb34cfedc8d61476d446c9607cde58d681fba1f",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.drop-shadow-color",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "76324052b2a2ca7192d50ab7174ff337021c0278aab192cb001662fddc64c13f",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.elevation",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.editor",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "61ff04eac8dd59891132ec03dc615d73c3f6ea704a9961fa5b93694a67f46ca6",
+      "dependencies": []
+    },
+    {
+      "id": "utility.element-position",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "8384f245b9ac4b15a7a2de8c430c6544183377269e0c14db88fc0f6a02912823",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.element-position-ext",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "a9db0443d3e30a886e1553de8cbea199e5707d21dbae170554002bd284566884",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.elevation",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "151e4a874e2e7dfb6f408c85b9bc5226e5245094e5d8470505ac3b16d83e4d09",
+      "dependencies": [
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.fill",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "7093738401a498a6c390fbd320ad83db0e24898dfd0ac77c0b02eec56bfbbdc4",
+      "dependencies": []
+    },
+    {
+      "id": "utility.fill-brand",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "a930d284afffac41252cd94d468e6834f14a9a228d8aa640044d7d59e48e7028",
+      "dependencies": []
+    },
+    {
+      "id": "utility.fill-rule",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "2fe627f81ffeb29c67c17bb887aae834f2d4acbb9e4697c0152eba20a18d0eb0",
+      "dependencies": []
+    },
+    {
+      "id": "utility.filter-blur",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "f48686cc934e440ec505445c1e75893fa5a63b58dfa73740a3f424a286ad7300",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.filter-brightness",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "5ca446cd2dee916f9d971efa4944bf51f05c0bbd98ae9eb1d22f84c21f99fe0f",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.filter-contrast",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "14fcc75a2abf25a0149d2f9ab4433147b1d83dfb04fdb4866886181025f24056",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.filter-grayscale",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "239d950d5a6cf801807cac1d200a4a69e8e0b5d25f07f02a496b6d31f3962b2e",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.filter-hue-rotate",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "9840baa35ecbd452f8209f863d5dc44e93d7eecd67891115a1da64794c08feb0",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.filter-invert",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "115c81c7e4d86d0ef6ceab97445c8cea5d5a2c9a21aa91c716f2f11ee31017b0",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.filter-opacity",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "050ec66a8454804f13b2792bd0ac8b4c95464023b949643b8bfb1ed90ba53eee",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.filter-saturate",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "6b7aad301cd19876343d7b79d6c30f838111ba0e36cf4bad1e590ad89596b21a",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.filter-sepia",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "72fcc08269c0e99c4c4b98e768bd92c968bd64600341c372b992e6ba0b372fb3",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.flex",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "74cf92959e1b3f8cc24d7f67f61290c768740045282bb6556ebc52296ff94413",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.flex-align",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "f066aa614eaeee11afc173b38e95e1b796a6e18d62eba3b72b3d314fefbd4b52",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.flex-basis",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "b0bb9edf84ad144b7fb4a88b96265a9f21d12db5e0050535ad2f8d00ff57a604",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.flex-basis-ext",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "c862a6807a56019a84e1c1788262c05b9758aa28286b8ed60b9048b0e7380f8e",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.flex-direction",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "56dfeaa19b5118c26138168c7d9197c12ab905a368ff11be32cc424b8bde9b09",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.flex-grow",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "52387ccc6ae48bb1200e6426cbb4f2aa50eb15e23ba1b3fa961ef54ae2bcd5d1",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.flex-shrink",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "1bd3fd1c4c3a28b9f6a2ec051924897afd69b4e0730f1330c728957562f073f6",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.flex-wrap",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "db1b799551be6426b1299e5659567ef8fcc82c2ea8e468cc5cc4541aa42569ee",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.float",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "a40683df79bd61770cb94400ab55701077625e4847663346a892e4e7b830bdd7",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.font-family",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "423440ea63f499da9f1116fab1c24be1ff7da3cb85f055510c30553c1cdcffae",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.font-size",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "c3f921a5bd770d3e4f73c1916a49ecdb890fcb08e07cc9d9ac252185fd87aed6",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "utility.title",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.font-size-ext",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "d32de391e55d3b7f509767ca3aff363a1868db2db78b979b16572491bdcfdba6",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.font-smoothing",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "0f079dd4a97d232094a949c2071f63328cb98c3a14bc48cd17107121438c679b",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.font-style",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "7b2b4faa2e03f6b20f68ed560ffc3069f1880651a96f2d282937ed5ba1ba42c3",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.font-transform",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "bb81c40238d49d13edbb09793f93945b7e198817c8ecfee9d1125bdcf5717673",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.font-variant",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "c9fdb593bd90bdd115bff45a5acfea190919cf2aa79bc7358c95d809735e428d",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.font-variant-numeric",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "7b26929570c2283397476bb3325f4aa383bc870eeec025e26466e1f6e95a2005",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.font-weight",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "f7e322f1cc82fb89468f83adf67ada64389330312f1ebd2278985c7ea9674afd",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.gap",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "993278e83f592f512096a5ceb1dddd8dfca1cb57fdc7c4d5d1c12e7549e0abc1",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "utility.padding",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.gradient-color",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "7d90e96be40c2b1455c2b5f9d0447e30b58c33cc0fcf56358940931b65a27d0b",
+      "dependencies": [
+        {
+          "id": "utility.background-color",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.gradient-stops",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "9eedb539231e53ae94a65bd27f82a6c0b262307bee0657ae3372b8e838b3fedc",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "utility.gradient-color",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.gradient-type",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "2e68cfa97f7fbf0d4205198c0cbb6e0ea5af40cb94d2f3ed9d8efb725f41d77f",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.opacity",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.grid-auto-columns",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "beaae646ece0e16fc8b84afedaf312d966e914b02ce4277a0bca8e30f68fcac6",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.grid-auto-flow",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "1f55493806e34b8d69e4cbe32f5bb473c2cee71dff6945c6f1c15b0f409cc07f",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.grid-auto-rows",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "537d89ecf365c8269f82dc3db38c49a5c252d9d81c4e70e0dbd10abb892ded08",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.grid-column",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "c32fe877a468369b77129fe0ab705df96649e2e124914fb4bdbdea6812820b91",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.grid-column-end",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "9b0a032565f5c515113fc41b0e4fbba8d02f932a35192d0eb4e93735c85c1da0",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.grid-column-start",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "50d88c115937da7412d4495787a2eb49e9250e33d726d9b65ff72b547d6db69b",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.grid-row",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "6f8e6e02898386e6601704f9ec3764aad3895586c597c1356c0533a88157ed7a",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.grid-row-end",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "e1b24baec4fe8a5e1e12eaab0711226ea1f179d7ed875aa2b5b546d846ea8a30",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.grid-row-start",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "08496aebacaecf6acda826b5a8c50b043fae443d0625c78d63d89703b1c33fcd",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.grid-template-columns",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "e78fc583a36fc7bca33a96b7a6a6a939ea3dbe495ffbadcdf6b08d9ff5bed7ca",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.grid-template-rows",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "c76f7bdd4ebb610c138024ff435c7814336dc327a2a7ad687cf5ce976ab5f46a",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.headers",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "10df2b875ccff3055e71578a2611b0579d6ba20e5f907cef95c21b875778090c",
+      "dependencies": [
+        {
+          "id": "core.styles",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.typography",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.height",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "2da64dbb388b46174dfa1666a879dd1763c4128ffb37b7d16ee5bb81166afb51",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.height-ext",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "d362ddb63c9ef1bc63b0dc2775aa4fae1803c2e58e9a054ee31a88b380df152c",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.isolate",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "fa106ff9fc2a40ad44aef783637918db35008fd43d08542a301f36d0f30a38b9",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.justify-content",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "90f0316b08aa0c94c443dca34cc5ca865e925d51acba3979ae1ccd4f9938db30",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.justify-items",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "38d385eba295ec8b576aa9c3fb93445193b63f4d098f383542ccfd028ec55f0c",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.justify-self",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "ea75ff7183b47609c051e20634688e429a26e8b6ed56f242d4f7fd12c43518d2",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.letter-spacing",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "562726316f1ce106372fcde00d09f2cc07ce5ba6dad32fa7967395ad38342fbd",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.line-clamp",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "fd135ee18424a9d7092048604dc671d04156d9c0db48cd419cba9c30e454dabc",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.line-height",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "b71dcaf03315ef5a16784d84657c59c983dda8e4e1b3f75bb36528d0595fde5a",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.list-style-position",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "fe8cafe7e3be135b07e4867186bd0a2081d9821449895af57c5caf6a53addc61",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.list-style-type",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "daa58f2527c53d31d76ff1422f4d8b31a8eff4e97b42b35dfdac430bd3faac47",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.margin",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "2c5e7e830bdb854bbd6c74d9f1782cf93757535b782b62e169ac385f42443d69",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.margin-ext",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "a88ea746a4aac277b6ba4c840eb2d3f7befdb4a80c4a75355861105438a5deff",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.mask-clip",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "6a38f853e9226f05e24b59f073a93091de825bee50771718dae0810087558365",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.mask-composite",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "52cdbbfcd0504abd0b85c329ed7b59039120df53fdf3b2da89daa3d40bb72108",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.mask-mode",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "be7143947607ce9333ebf9915972c8006101079d2d545edcd92fa37bb8db04dd",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.mask-origin",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "a0936c7b9714c90ebc85066b2b54c38f89f72b09603bd93ad3008c78112148cc",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.mask-position",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "9d4c7995556fe26d0b7bc743c20bc8d68e4c22d3aa420ad9bafdfb2ff0b87ab2",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.mask-repeat",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "9ac2c4c797c0e1ea3f0d688eedc5f659be721c110a60414f3d5708f9365530c1",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.mask-size",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "bab390f48b9719596e6871c8a60af518eaada72c299c2daa37770f9e1e158f7a",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.mask-type",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "2a7aa53e9dfcb10f7b3503994cad27ce7938026bdfd73ca9a43419c669cd288a",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.max-container",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "0fb3fa7e7172e3f0545e4331ee18b05fc7ce6aa68e2d230c3c2c9350d516ef21",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.max-height",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "6eac780dcf09261f341e1201899013d2425be9b5e0d01e206c79651cfe365bd4",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.max-height-ext",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "2373186c47807278dfc44f3db8377edae4bce4ca44c9f8a947b52bec9d187471",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.max-width",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "0f93796adcf018b3137c2c73d827d4ec3376245bf06529f0ebaab4bc37de4475",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.max-width-ext",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "f9dd839835786eba02a0e87ed9af29c11378f0c28d7dc2635ba06d7a0e0e814e",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.min-height",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "a00ac95137049ef14493695c4a805fd79621989767d115132fa7145ad166ed91",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.min-width",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "9d8a1bc8b5bd044e6ec765f8162e45d662be1e962d3c50fc0de49021ea01bd89",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.mix-blend-mode",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "097544806e8bdef74563e5ccb6befc95fa5f4e9682d6bf04091476983a70840c",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.object-fit",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "5aab61d225dd97ec470b231c9cad014592a3aec5ed37cc58d302110ec5eded09",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.object-position",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "d0b05c96ea40c3340387f4a173e89a62102c297245f647034f6505c06fccd2fe",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.offset",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "7885f6eec0c2287907e2cb0909a36bd202eca227d85c2c3c964119601e5ff7eb",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.opacity",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "edc3c4ca58f1c5ae318afd06db4d1847dce5606a78df2a8a7310c143ad7d6e9f",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.opacity",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.order",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "4413e4957aa1a11ca8a45667888a5174ce69192a5625b8d7ad8c3d751c89a67c",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.outline-color",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "34b83e9e23ea47df4d6f32903a85a56d07fc73ea76395a8a5e9ee62fa1a473db",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.outline-offset",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "0ee3043bec3c92894032d4fec7aa125e15177b1664b99dfa0258c455e9ff9765",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.outline-style",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "199ba2c01fbf891204d3513d492419762fac618d11de0507bfe42c7300446ef5",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.outline-width",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "2600787adfb82cb989ab1f4ac8e4f17435a6eb65fc9fa5811cbec9c29290df36",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.overflow",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "0886b2e650901202c59e1a75f0dcb6cf44b7b9cbcc0e9f13cacf9c365c81c6a0",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.overscroll-behavior",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "d8097a05a4a90d787f52d3f47f4d7b1453a4e46bd834efb1b1355f147cfcfd48",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.padding",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "79c3064c24434ea5eac29d12a3afdaa8b8355eef0be490e6fd9e578144de2237",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.padding-ext",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "6fdd3f2bcc6d9a44463cf5325bbce5a38b0fe7ff2b0d0353fb5e1f516011adae",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.pattern",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "13d8b75caa4aef3ce21d4f45dbea47b831196300bd97f390f78f73d750c6a684",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.place-content",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "84bd4a2115e77418a6457850ebdd64a4c878d21c6ed9a89e60726f08846b9814",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.place-items",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "208e6846557e8c5634ad88d2b023e0748e920721ea4709b9257e9f9ff74f27cb",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.place-self",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "5ae335d9a0c4d3144a8f62e058dda6a57809077bef441671931e387a992d487e",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.placeholder-color",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "d3bf0b7f0742b9d208ba09b00107013a8a0ddfd49ffd598a7f1e8d668b29178a",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "utility.text-color",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.placeholder-opacity",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "5975aeca86745f0a4598628d78a498d0464e57e6834d4c70c77ff7808c36c5db",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "utility.opacity",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.pointer-events",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "4d75294d2ecc156e60f6dfd1eb4f58fd81817dc867643f633241ecae45667926",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.position",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "6dcc569344960eed9affac75ce05259f126f373de4cb90d48ad1b4cdb26f1bb0",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.query-container",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "10022df39dae82bd44305a4b113757b07ac800e6c672aaf5123ca98d9e3699e9",
+      "dependencies": []
+    },
+    {
+      "id": "utility.query-layout",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "ccbc801b28849cdd555218230c430b357789e7b1b8d25ed3e6f1c60b43566795",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.space",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "utility.align-items",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "utility.display",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "utility.flex-direction",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "utility.flex-wrap",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "utility.grid-template-columns",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "utility.justify-content",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "utility.query-container",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.resize",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "550682e758448af5c46f0a8bb704860c98cf6d928e186f7e7906f4bf64f6057a",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.ring-color",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "b7d0ee2fde8ad988389413f2c1a3e9d575cb6dc5e820705a265e9e6b0b8be72a",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "utility.border-color",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.ring-inset",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "68b37e88e2cd89aeb19d1dd2b7bcbd893ea3c2638eacf3d7a85dacceadab5423",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.ring-offset-color",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "671dde660c65e82f046ddddd74f1f227892d8394a8d05f5f8e44f5c8ef0f3cbb",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "utility.border-color",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.ring-offset-width",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "677186b217f0ac3271c58ff4a36714fefea0199eaf88296a753c032585a479cd",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "utility.ring-width",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.ring-opacity",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "95374c93582b8f324fff2a23c82cf1efe37374f199f172d9f26d693d5013c62c",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "utility.opacity",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.ring-width",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "60419b59f4897f9965c64d14a35278376e3c812132f10390e0f9ddc42eee7fee",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.opacity",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.scroll-backdrop-color",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "5eae517905959954e0c1b08a7d81b9c5d2e063a002e2eb2af7217de88f025751",
+      "dependencies": []
+    },
+    {
+      "id": "utility.scroll-backdrop-radius",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "cf1c2b4a07b1433f68dac0c1deab26832c1b3b510ba9f37d3b8fda1003a31265",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.scroll-backdrop-width",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "e3c3af72f1a96a169c1487ff4631f343535d95ca5f163a60b16d9d0a83497f51",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.scroll-behavior",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "97e9471ad66556456602888ce1fb69f7696a7cd514ff5bc8da26de0233057935",
+      "dependencies": []
+    },
+    {
+      "id": "utility.scroll-hover",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "6bd3539cc730fea8abeadd4dd682fd5f9db7cb51fd6f4589f7d9661a9bfb5bcc",
+      "dependencies": [
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.motion",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.scroll-margin",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "af63af2e0e0661221816fa3f1e63c7d92add1b76e437728d75c4810987b4d3df",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.scroll-margin-ext",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "83634ce2a5be5477bd887a584d163109fb2200c7eaa085a630ea12642ab6d8b2",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.scroll-padding",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "208ae787a515fe487bc040d36d1e94ea269080a3ebc6ee872251ac838e82cd92",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.scroll-padding-ext",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "18dcadf6906f9fcdeb7f2427c2e7af849ce97d8629d69bc1c07ccc3586b7c92d",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.scroll-slider-color",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "838923b983cc2889f00a4b1ea442a1042dc23785f41702b2c4812472fb00de9e",
+      "dependencies": []
+    },
+    {
+      "id": "utility.scroll-slider-radius",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "8e5983e5aeaca9ab6edc6c7336d3ce06f2aedca4a5fd6808487bb38166188c04",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.scroll-slider-width",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "67b0badc9a828e335fe34fec6e2b67055176c7642b787e089cddc3e897c8111f",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.scroll-snap-align",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "f76bc090135762af01a54c55568e44797e822e974d9b28dadf819093c93223c9",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.scroll-snap-stop",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "728b3794b2921c989bb839233fe593eb72a16fb64bcaaf90086744e5b9366f99",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.scroll-snap-type",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "3cee20f876472fef400baebbe3a85d56ffc874f1272c62ab29f783c068a2ad66",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.scroll-subtle",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "2d1bbaf7793fb5d028d2452b8ca7cf91df8c2e5075a08f201bf8335b58d8c01f",
+      "dependencies": [
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.space",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "6f657bc08d40b6bb6e92f9d1024a5931a6c7a6dd96dbef6ac98ac22179c64a50",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.sr-only",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "d0dc84db41f4d6ccd6201492169f724553387766da14188e94f87a0dded7303e",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.stripe",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "1d6296bf59484860e8b112af90dcd6d749f5cbba78df6ae43c3502536bb6327f",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.opacity",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.stripe-color",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "2dcd1c448e34a70a986487cdc5fef2314c0776a147d0b5e90095b625a4322b3b",
+      "dependencies": []
+    },
+    {
+      "id": "utility.stripe-width",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "66e8d879c8dcb7ef5761f2e2c298ae915711eeb9ba3056e0ff725f83cc1dbb8d",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.stroke-color",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "c4eeff73cad4d0cae55e75ba9801a3fa439fee5e18876f1905454051223ce241",
+      "dependencies": []
+    },
+    {
+      "id": "utility.stroke-linecap",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "f9159a48c3783ab5aae67a92413955dde681b32c47632fab066f106fec8e1860",
+      "dependencies": []
+    },
+    {
+      "id": "utility.stroke-linejoin",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "1bf6442f4532a30a83aef9ac5d14a1f69d3c78d8b7b5bd5207766f584a5a27a5",
+      "dependencies": []
+    },
+    {
+      "id": "utility.stroke-width",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "abe617cbd6f6e4cbc16532e0590d9209e5c95448904eee483572787a5d928a19",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.svg-size",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "d33f5bd61dcc85d5af84b3e9d3d240e5d0efb300296b118d05a759c7a5c40429",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.table",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "0cb5461c12c0f4f5ab4e9694cfbdb40ae31b19f74c75f610412718ac2390d6fa",
+      "dependencies": [
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.table-active",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "ccc77eef2070fd67105ecbb687cdb35e1e9c5aa407dfbe8ef33ebc39d22d03bf",
+      "dependencies": [
+        {
+          "id": "utility.table",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.table-border",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "dbde3b0cc8a7fb9cfa21f1036deec67464f6e1075f423ed061b54490c2d9242e",
+      "dependencies": [
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "utility.table",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.table-hover",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "0f1072b7b0fdcc5f73e4ac924e93fb44620714f0d52f2d764dc87dc76330e234",
+      "dependencies": [
+        {
+          "id": "utility.table",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.table-layout",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "09a8c9964bfb34e6bd6e8dab53124ff6154f3e151fc207aaa86c8b503a121120",
+      "dependencies": [
+        {
+          "id": "utility.table",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.table-stripe",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "d80bb4bba222e47e24fa1ba9884aa212c0f6ff075f8d6b5fdb9ccc2a26e75601",
+      "dependencies": [
+        {
+          "id": "utility.table",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.text-align",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "6cf120f7d734826868483a16a9e96e67441ed338a4ca801a1e9f89e8fb32412b",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.text-color",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "4fa2f75d68c82292945d52dc3c345f48558a719371662cdb9926a9a864bfc9ca",
+      "dependencies": [
+        {
+          "id": "tokens.colour",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.opacity",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.text-decoration",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "be1cd6edaa8375f50a50150ab24627c5fa825106931f98f98fc7f5b552f13ef7",
+      "dependencies": []
+    },
+    {
+      "id": "utility.text-decoration-color",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "5547719aa4f8208452b1b19913deebe9026f00fe28342c91cd28292e47fe2bde",
+      "dependencies": [
+        {
+          "id": "utility.text-color",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.text-decoration-offset",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "6045f2d953c163f24c0c6a22f44b4bd1e0e7137d0980614244b6a10b53813487",
+      "dependencies": []
+    },
+    {
+      "id": "utility.text-decoration-style",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "dbef5e589953493d91d77993129793e20dd2508ec9ab185166bdac3615a3ee62",
+      "dependencies": []
+    },
+    {
+      "id": "utility.text-decoration-thickness",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "d8e1d4db87d052c895b1ba9a5e245be47dfb02658637504ea86a10eb6bd2875f",
+      "dependencies": []
+    },
+    {
+      "id": "utility.text-indent",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "33b94faf45d16db06a6ea3daa99aa094c4a1ecc7daf799d067d1152759fb0361",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.text-max-width",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "0faf61e8bae9ee98a28777b2fedb861ce3fff7f59e63d6da2fa91735e03fa442",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.text-overflow",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "3dc15243ee54d52b5a0486aeb7f42cb0cda82e9cf5fdd98d5ec98e70d939c2b7",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.text-wrap",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "5d75b29bf425776f7898f004462e22411baea9f94d740f32f9071f3f4bca0f96",
+      "dependencies": []
+    },
+    {
+      "id": "utility.theme",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "c2ce529ddc1f604d691fab27d143eb17ce5b3433d9f19e5a7fca6b47a4cfdac7",
+      "dependencies": []
+    },
+    {
+      "id": "utility.title",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "6164b21d76a8be5ba395dfbd00f12a8e8d3276477c005f55d59553ec2b5a0ed5",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.touch-action",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "c47d68b987c040758c9d6ca7f6cd525eb74eb2d0508897aa7d30c36ef2a0f143",
+      "dependencies": []
+    },
+    {
+      "id": "utility.transform-origin",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "05f71d8fc037b2d472ae1f51bb256b2f5e9889330fd9048d62b87a7245858578",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.transform-rotate",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "dd6d964d1a024db9a86e3f188b5dde604b01bfaa89ea0abaeebe88e6ee2f61fb",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.transform-scale",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "69c7a548736e8f69a0b36544cdba04a0905cbc40112978b181127bb27aa20982",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.transform-skew",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "1ed0e8620b77cdb2657e1b9e689ea73867ca74ed022d7fa99c73547e373b4b8b",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.transform-translate",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "13aaa63560511616ec056e0245032c5cdbd93264eb0cdddaf6a39339dde6a14c",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.transform-translate-ext",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "30186705791f2ce6c876cf2fa6abf112e55e9e99f7ae9fecdaceacf69d46651c",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.transition-delay",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "f8df870c8a1633df27206aa4badc7d7f3ccb10520a28fdacede1a59bae472557",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.transition-duration",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "fd1d70a73a01172d35e19527c6bf173566828d903e5252adda74d967b2d08fe9",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.transition-property",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "52cd6458388cd509f1191459e08b87ba8cbd0c54f3f707962ab957b847fb8ca0",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.motion",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.transition-timing-function",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "cefc9495ccfa37fe024e8de014163ef45e54a6517bfd2b154e8104589fec7fa1",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.user-select",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "263d9e57d4a6ae69348a234a2bcf6c38916527564568bb0bcf5d4210127ebcba",
+      "dependencies": []
+    },
+    {
+      "id": "utility.vertical-align",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "cc26ecbdeee34e176e3406d7aeeb8ccd54be6539a2f51af88b55cf699ceff9fa",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.visibility",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "87e5eae57dd6f429bb056f7cd3028d6d1b7115e390d7f576dcd734a9414e6ad8",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.white-space",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "c5e12e93af617a6fca1e6b6abd760be6cc49841b4bf96e0ffe381a56fbf10983",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.width",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "26bf49b0ff697f857bac696abb19ea18711c8bed7d41f132e0f09b5d9420db80",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.width-ext",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "c4237b459bd25eda96e6481c972524ec434bc6a80e240931dd862264cf91295d",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        },
+        {
+          "id": "tokens.size",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.will-change",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "1913ab273fad58fbe5497edfff46db905b3cc54b62c10192188858307d9f9482",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.word-break",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "dae57b16e0ca6f087812b446192b38f89fcf581986f2699c4a6a8e04220d9d2e",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    },
+    {
+      "id": "utility.z-index",
+      "kind": "utility",
+      "version": "1.0.0",
+      "content_sha256": "62391354a8cc987c86118e5cb98bdc2f91bc953ff3d52fda0ba417ddcc017a4c",
+      "dependencies": [
+        {
+          "id": "tokens.breakpoint",
+          "range": "^1.0.0"
+        }
+      ]
+    }
+  ]
+}
