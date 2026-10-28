@@ -1,4 +1,5 @@
 @charset "UTF-8";
+@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.components {
   /* The trigger keeps its own shape and stays in the flow. */
   sf-popover > [slot=trigger] {

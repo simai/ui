@@ -1,4 +1,5 @@
 @charset "UTF-8";
+@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.components {
   /* A colour and a reset on one row, the fine tuning folded below them, and the
      palettes under that: one row each, a name and six tones. Sizes follow the

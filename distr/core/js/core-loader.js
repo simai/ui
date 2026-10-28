@@ -3844,7 +3844,20 @@ SFLoaderPlugin.prototype.prepareSmartChildScanEvents = function () {
     return;
   }
 
-  this.smartChildScanEventsBound = true;
+  this.smartChildScanEventsBound = true; // Collected and scanned once per task: a table's render renders the
+  // elements in its cells, each one announced its own render, and its
+  // subtree was scanned again inside the table's -- 104 scans for the first
+  // page of the admin's list (stand 25). An element inside another collected
+  // one is covered by that one's scan.
+
+  const rendered = new Set();
+
+  const scanRendered = () => {
+    const targets = [...rendered].filter(target => target.isConnected);
+    rendered.clear();
+    targets.filter(target => !targets.some(other => other !== target && other.contains(target))).forEach(target => this.scanCustomElements(target, true));
+  };
+
   document.addEventListener('sf-after-render', event => {
     const target = event.target;
 
@@ -3852,7 +3865,8 @@ SFLoaderPlugin.prototype.prepareSmartChildScanEvents = function () {
       return;
     }
 
-    this.scanCustomElements(target, true);
+    if (!rendered.size) queueMicrotask(scanRendered);
+    rendered.add(target);
   });
 };
 
@@ -4712,7 +4726,18 @@ SFLoaderPlugin.prototype.shouldSkipPluginCss = function (pluginName, module = {}
   }
 
   return false;
-};
+}; // Whether every tag of a Smart rule is already defined: a page that loads a
+// part's bundle itself (Larena's admin: the table and the data view as
+// <script defer> in <head>) had the Loader fetch and run the same part's
+// bundle again -- 190 KB gzipped at fast-4G, the table's and the data view's
+// code run twice, on the admin's list (stand 25). Its script is not asked for
+// again; its sheets and relations are, as before.
+
+
+function smartTagsDefined(rule) {
+  const tags = Array.isArray(rule?.tags) ? rule.tags : [];
+  return tags.length > 0 && typeof customElements !== 'undefined' && tags.every(tag => Boolean(customElements.get(String(tag).toLowerCase())));
+}
 
 SFLoaderPlugin.prototype.loadPlugin = function (pluginName, smart, point, module, plugins) {
   if (this.disableSmart && (module === 'smart' || smart)) {
@@ -4727,7 +4752,7 @@ SFLoaderPlugin.prototype.loadPlugin = function (pluginName, smart, point, module
 
   const missKey = this.getMissingFileKey(pluginName);
   const ruleMeta = SF.RuleLoader?.[pluginName];
-  const skipJs = typeof ruleMeta?.js === 'undefined' || module && module.js === false || ruleMeta?.js === false;
+  const skipJs = typeof ruleMeta?.js === 'undefined' || module && module.js === false || ruleMeta?.js === false || (module === 'smart' || smart) && smartTagsDefined(ruleMeta);
   const skipCss = this.shouldSkipPluginCss(pluginName, module);
   const jsFile = skipJs ? null : this.pathPluginJs(pluginName, smart, point, module);
 
@@ -5080,7 +5105,7 @@ SFLoaderPlugin.prototype.isRelationPlugin = function (pluginName, jsFile, smart,
           total: this.relationPlugins[relationMainPlugin]?.length || 0,
           canLoad: false,
           jsFile: this.pathPluginJs(relationMainPlugin, relationMainSmart, point, relationMainModule),
-          skipJs: typeof relationMainRule?.js === 'undefined' || relationMainRule?.js === false
+          skipJs: typeof relationMainRule?.js === 'undefined' || relationMainRule?.js === false || relationMainSmart && smartTagsDefined(relationMainRule)
         }; // The element that waits on this relation is fetched now too (the
         // same reason as in loadRelationPlugins: a data view waiting on its
         // table was asked for only once the table had run).
@@ -5946,9 +5971,33 @@ SFLoaderPlugin.prototype.versionAssetUrl = function (pluginURL) {
 };
 
 SFLoaderPlugin.prototype.addStyle = async function (pluginURL) {
-  const src = this.versionAssetUrl(pluginURL);
-  return onceByUrl('styles', src, () => this.insertStyle(src, pluginURL));
-};
+  const src = this.versionAssetUrl(pluginURL); // A sheet the page already links (in either form) is not linked again: a
+  // standard page links the sheets its first paint needs in <head>, and the
+  // Loader added a second <link> for each one its parts named -- 62 of 73 on
+  // the admin's list, every rule twice in every style recalculation of the
+  // opening (stand 25). The Loader waits for the page's link instead.
+  // Only the page's own links: one the Loader inserted is its own load, and
+  // a failed one is tried again in its other form (insertStyle's callers).
+
+  return onceByUrl('styles', src, () => {
+    const linked = typeof document !== 'undefined' ? linkedSheet(src) : null;
+    return linked && !linked.hasAttribute?.('data-sf-loader-link') ? pageSheetLoaded(linked, pluginURL) : this.insertStyle(src, pluginURL);
+  });
+}; // A sheet the page linked: settled when it is applied, refused when it failed
+// (the caller then asks for its other form, as for a sheet the Loader links).
+
+
+function pageSheetLoaded(link, pluginURL) {
+  if (link.sheet) return Promise.resolve();
+  return new Promise((resolve, reject) => {
+    link.addEventListener('load', () => resolve(), {
+      once: true
+    });
+    link.addEventListener('error', () => reject(new Error(`Failed to load styles: ${pluginURL}`)), {
+      once: true
+    });
+  });
+}
 
 SFLoaderPlugin.prototype.insertStyle = function (src, pluginURL) {
   return new Promise((resolve, reject) => {
@@ -5957,6 +6006,7 @@ SFLoaderPlugin.prototype.insertStyle = function (src, pluginURL) {
     style.href = src;
     style.type = 'text/css';
     style.rel = 'stylesheet';
+    style.setAttribute?.('data-sf-loader-link', '');
     style.addEventListener('load', () => {
       resolve();
     }, {

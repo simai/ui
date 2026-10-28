@@ -1,1 +1,2 @@
+@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.utilities{.lowercase{text-transform:lowercase}.uppercase{text-transform:uppercase}.capitalize{text-transform:capitalize}.normalcase{text-transform:none}}

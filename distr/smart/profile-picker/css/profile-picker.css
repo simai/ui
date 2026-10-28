@@ -1,4 +1,5 @@
 @charset "UTF-8";
+@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.components {
   /* The profile picker (owner, 2026-10-14): a field-like button, and a panel
      with the standard menu's surface -- elevation 3, a hairline, 4px padding,

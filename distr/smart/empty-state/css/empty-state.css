@@ -1,3 +1,4 @@
+@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.components {
   /* A centred column, at most 28rem wide: the icon, the title at the size's
      title role, a sentence, and the actions, wrapping when they must. */

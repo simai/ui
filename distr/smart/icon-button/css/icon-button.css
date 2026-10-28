@@ -1,3 +1,4 @@
+@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.components {
   .sf-icon-button.sf-icon-button--default.sf-icon-button--primary.sf-icon-button--close > sf-close > .sf-close > .sf-close-icon {
     --sf-close-icon--background-color: var(--sf-on-primary);

@@ -1,3 +1,4 @@
+@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
 /* Gallery owns composition, Slider owns slides and Modal owns scrolling.
    Source content receives defaults through the cascade, never inline writes. */
 @layer sf.components {

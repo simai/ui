@@ -1,4 +1,5 @@
 @charset "UTF-8";
+@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.components {
   /* sf-image-field: one image in a form, on one row -- the thumbnail, the file
      name and size, then «Заменить…» and «Убрать» -- with the label above and the

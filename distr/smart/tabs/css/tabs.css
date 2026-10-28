@@ -1,3 +1,4 @@
+@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.components {
   sf-tabs > .sf-tabs > .sf-tabs-top-container > .sf-tabs-top > sf-button,
   sf-tabs > .sf-tabs > .sf-tabs-top-container > .sf-tabs-top > sf-icon-button,
