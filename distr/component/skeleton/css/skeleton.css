@@ -38,11 +38,20 @@
     margin-bottom: calc((var(--sf-skeleton-text--line, var(--sf-skeleton-text--height)) - var(--sf-skeleton-text--height)) / 2);
     margin-block: calc((var(--sf-skeleton-text--line, var(--sf-skeleton-text--height)) - var(--sf-skeleton-text--height)) / 2);
   }
-  .sf-skeleton--animation-pulse .sf-skeleton-text {
+  /* One pulse per skeleton, not one per bar: the container's opacity, which
+     the compositor runs, so its bars pulse together exactly as before. A list's
+     skeleton is hundreds of bars, and an animation each slowed the whole
+     opening on a slow CPU: rows at 7.7 s against 4.1 s with the bars still
+     (stand 25, D7). A skeleton inside a pulsing one does not pulse again. */
+  .sf-skeleton--animation-pulse {
     -webkit-animation: sf-skeleton-pulse var(--sf-skeleton-duration) var(--sf-animation) infinite;
             animation: sf-skeleton-pulse var(--sf-skeleton-duration) var(--sf-animation) infinite;
     -webkit-animation: sf-skeleton-pulse var(--sf-skeleton-animation-duration, var(--sf-skeleton-duration)) var(--sf-animation) infinite;
             animation: sf-skeleton-pulse var(--sf-skeleton-animation-duration, var(--sf-skeleton-duration)) var(--sf-animation) infinite;
+  }
+  .sf-skeleton--animation-pulse .sf-skeleton--animation-pulse {
+    -webkit-animation: none;
+            animation: none;
   }
   .sf-skeleton--animation-wave .sf-skeleton-text::after {
     content: "";
@@ -61,6 +70,7 @@
     -webkit-animation: sf-skeleton-wave var(--sf-skeleton-animation-duration, var(--sf-skeleton-duration)) var(--sf-animation) infinite;
             animation: sf-skeleton-wave var(--sf-skeleton-animation-duration, var(--sf-skeleton-duration)) var(--sf-animation) infinite;
   }
+  .sf-skeleton--animation-none,
   .sf-skeleton--animation-none .sf-skeleton-text,
   .sf-skeleton--animation-none .sf-skeleton-text::after {
     -webkit-animation: none;
@@ -162,7 +172,7 @@
     }
   }
   @media (prefers-reduced-motion: reduce) {
-    .sf-skeleton--animation-pulse .sf-skeleton-text,
+    .sf-skeleton--animation-pulse,
     .sf-skeleton--animation-wave .sf-skeleton-text::after {
       -webkit-animation: none;
               animation: none;
