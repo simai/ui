@@ -210,6 +210,10 @@ class FrameworkContractRegistryTest(unittest.TestCase):
                     "provides": [
                         "smart.admin-menu",
                         "smart.change-confirm",
+                        "smart.chat-composer",
+                        "smart.chat-interlocutor",
+                        "smart.chat-message",
+                        "smart.chat-window",
                         "smart.data-view",
                         "smart.data-view-composite",
                         "smart.message-log",
