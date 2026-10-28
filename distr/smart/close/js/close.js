@@ -116,7 +116,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-close
 /***/ "34e93754c62d"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.close","tag":"sf-close","version":"1.0.2","kind":"leaf","settings":{"size":{"type":"enum","values":["1/4","1/3","1/2","1","2","3","4","5","6","7"],"default":"1/3","summary":"Decorative close-glyph size token."}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-close-color":{"type":"color","state":"default"},"--sf-close-background-color":{"type":"color","state":"default"},"--sf-close-glyph-size":{"type":"length","state":"default"},"--sf-close-padding-inline":{"type":"length","state":"default"},"--sf-close-padding-block":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.close","tag":"sf-close","version":"1.0.2","kind":"leaf","settings":{"size":{"type":"enum","values":["1/4","1/3","1/2","1","2","3","4","5","6","7"],"default":"1/3"}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-close-color":{"type":"color","state":"default"},"--sf-close-background-color":{"type":"color","state":"default"},"--sf-close-glyph-size":{"type":"length","state":"default"},"--sf-close-padding-inline":{"type":"length","state":"default"},"--sf-close-padding-block":{"type":"length","state":"default"}}}');
 
 /***/ },
 

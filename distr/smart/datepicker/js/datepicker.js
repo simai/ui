@@ -454,6 +454,7 @@ const DatepickerElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_
     'choose-preset'({
       item
     } = {}) {
+      if (this.disabled) return 'disabled';
       if (!item || item.disabled || !this.range) return 'unavailable-preset';
 
       this._choosePreset(item);
@@ -462,6 +463,7 @@ const DatepickerElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_
     },
 
     'choose-custom-range'() {
+      if (this.disabled) return 'disabled';
       if (!this.range) return 'not-a-range';
 
       this._chooseCustomRange();
@@ -904,7 +906,13 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
 
   get value() {
     return this.range ? [this.startValue, this.endValue] : this.date;
-  }
+  } // The value property takes what its getter gives back (component.json
+  // x-registry.inputs.value): an ISO date string, or [start, end] for a range.
+  // The object {start|startValue|date, end|endValue} older callers pass is
+  // still read as that pair, but it is outside the contract. Anything else is
+  // read as text (a number, a boolean) or, for any other object, cleared, and
+  // a console warning names the shape once per element.
+
 
   set value(nextValue) {
     if (Array.isArray(nextValue)) {
@@ -921,6 +929,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
     if (nextValue && typeof nextValue === 'object') {
       const startValue = nextValue.start || nextValue.startValue || nextValue.date || '';
       const endValue = nextValue.end || nextValue.endValue || '';
+      if (!startValue && !endValue) this.warnValueShape(nextValue);
       this.setState({
         date: nextValue.date || startValue || '',
         startValue,
@@ -930,12 +939,20 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
       return;
     }
 
+    if (nextValue != null && typeof nextValue !== 'string') this.warnValueShape(nextValue);
     this.setState({
       date: nextValue ? String(nextValue) : '',
       startValue: '',
       endValue: '',
       ...this.monthOf(nextValue)
     });
+  }
+
+  warnValueShape(nextValue) {
+    if (this._valueShapeWarned) return;
+    this._valueShapeWarned = true;
+    const shape = nextValue instanceof Date ? 'Date' : typeof nextValue;
+    globalThis.console?.warn?.(`[SIMAI Framework] sf-datepicker: value takes an ISO date string or [start, end]; a ${shape} was read as ${shape === 'object' || shape === 'Date' ? 'empty' : 'text'}.`);
   }
 
   setMaxDate() {
@@ -1296,8 +1313,10 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
       length: 42
     }).map((_, index) => {
       const date = new Date(gridStartDate.getFullYear(), gridStartDate.getMonth(), gridStartDate.getDate() + index);
-      const time = date.getTime();
-      const disabled = Boolean(minDate && time < minDate.getTime() || maxDate && time > maxDate.getTime());
+      const time = date.getTime(); // A disabled field disables every day: a panel a host holds open,
+      // or the inline one, takes no choice (see panelDisabled).
+
+      const disabled = Boolean(this.disabled || minDate && time < minDate.getTime() || maxDate && time > maxDate.getTime());
       return {
         date,
         value: formatIsoDate(date),
@@ -1327,7 +1346,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
     }).map((_, index) => {
       const date = new Date(this.year, index, 1);
       const time = date.getTime();
-      const disabled = Boolean(minMonth && time < minMonth.getTime() || maxMonth && time > maxMonth.getTime());
+      const disabled = Boolean(this.disabled || minMonth && time < minMonth.getTime() || maxMonth && time > maxMonth.getTime());
       return {
         index,
         label: getMonthLabel(index, this.locale),
@@ -1345,7 +1364,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
       length: YEARS_PAGE_SIZE
     }).map((_, index) => {
       const year = start + index;
-      const disabled = Boolean(minDate && year < minDate.getFullYear() || maxDate && year > maxDate.getFullYear());
+      const disabled = Boolean(this.disabled || minDate && year < minDate.getFullYear() || maxDate && year > maxDate.getFullYear());
       return {
         year,
         disabled: disabled,
@@ -1385,6 +1404,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
   }
 
   toggleContext(nextContext) {
+    if (this.disabled) return this;
     const nextMode = this.contextMode === nextContext ? '' : nextContext;
     const nextState = {
       context: nextMode
@@ -1399,6 +1419,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
   }
 
   shiftYearPage(direction = 1) {
+    if (this.disabled) return this;
     this.set({
       yearPageStart: this.yearPageStart + YEARS_PAGE_SIZE * direction
     });
@@ -1406,6 +1427,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
   }
 
   shiftMonth(direction = 1) {
+    if (this.disabled) return this;
     const next = new Date(this.year, this.month + direction, 1);
     const minDate = this.setMinDate();
     const maxDate = this.setMaxDate();
@@ -1591,6 +1613,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
   }
 
   handleDayKeydown(event, day) {
+    if (this.disabled) return;
     const horizontal = this.isRtl ? -1 : 1;
     const keySteps = {
       ArrowLeft: -horizontal,
@@ -1752,7 +1775,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
   }
 
   selectDate(day) {
-    if (!day?.date || day.disabled) {
+    if (this.disabled || !day?.date || day.disabled) {
       return this;
     }
 
@@ -1826,7 +1849,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
 
 
   _choosePreset(item) {
-    if (!item || item.disabled) return this;
+    if (this.disabled || !item || item.disabled) return this;
     const from = formatIsoDate(item.from);
     const to = formatIsoDate(item.to);
     this.setState({
@@ -1850,6 +1873,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
 
 
   _chooseCustomRange() {
+    if (this.disabled) return this;
     if (this.preset) this.setState({
       preset: '',
       startValue: '',
@@ -1882,7 +1906,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
   }
 
   selectMonth(month) {
-    if (!month || month.disabled) {
+    if (this.disabled || !month || month.disabled) {
       return this;
     }
 
@@ -1897,7 +1921,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
   }
 
   selectYear(year) {
-    if (!year || year.disabled) {
+    if (this.disabled || !year || year.disabled) {
       return this;
     }
 
@@ -2149,13 +2173,13 @@ function joinClasses(...tokens) {
 function renderYearTop(context) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <div class="sf-datepicker-top flex content-main-between items-cross-center">
-            <sf-icon-button appearance="link" scheme="on-surface" size="1"
+            <sf-icon-button appearance="link" scheme="on-surface" size="1" ?disabled=${context.disabled}
                 icon=${context.previousIcon} aria-label=${context.labels.previousYears}
                 @click=${() => context.component.shiftYearPage(-1)}></sf-icon-button>
             <div class="sf-datepicker-range-title" aria-live="polite">
                 ${context.yearPageStart}–${context.yearPageEnd}
             </div>
-            <sf-icon-button appearance="link" scheme="on-surface" size="1"
+            <sf-icon-button appearance="link" scheme="on-surface" size="1" ?disabled=${context.disabled}
                 icon=${context.nextIcon} aria-label=${context.labels.nextYears}
                 @click=${() => context.component.shiftYearPage(1)}></sf-icon-button>
         </div>`;
@@ -2165,20 +2189,22 @@ function renderTop(context) {
   if (context.context === 'year') return renderYearTop(context);
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <div class="sf-datepicker-top grid items-cross-center">
-            <sf-icon-button appearance="link" scheme="on-surface" size="1"
+            <sf-icon-button appearance="link" scheme="on-surface" size="1" ?disabled=${context.disabled}
                 icon=${context.previousIcon} aria-label=${context.labels.previousMonth}
                 @click=${() => context.component.shiftMonth(-1)}></sf-icon-button>
             <div class="sf-datepicker-period flex content-main-center items-cross-center gap-1/4">
                 <sf-button class="sf-datepicker-month-toggle" appearance="link" scheme="on-surface" spacing="compact"
+                    ?disabled=${context.disabled}
                     text=${context.monthLabel}
                     aria-expanded=${context.context === 'month' ? 'true' : 'false'}
                     @click=${() => context.component.toggleContext('month')}></sf-button>
                 <sf-button class="sf-datepicker-year-toggle" appearance="link" scheme="on-surface" spacing="compact"
+                    ?disabled=${context.disabled}
                     text=${String(context.year)}
                     aria-expanded="false"
                     @click=${() => context.component.toggleContext('year')}></sf-button>
             </div>
-            <sf-icon-button appearance="link" scheme="on-surface" size="1"
+            <sf-icon-button appearance="link" scheme="on-surface" size="1" ?disabled=${context.disabled}
                 icon=${context.nextIcon} aria-label=${context.labels.nextMonth}
                 @click=${() => context.component.shiftMonth(1)}></sf-icon-button>
         </div>`;
@@ -2252,8 +2278,9 @@ function renderDay(day, context) {
 function renderPresets(context) {
   const items = context.presetItems;
   if (!items.length) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing; // One tab stop: the pressed range, or the first one that can be chosen.
+  // A disabled field disables every quick range and «Свой период» with them.
 
-  const focusable = items.find(item => item.pressed && !item.disabled) ?? items.find(item => !item.disabled); // «Свой период» is pressed for a range picked on the grid, not for no range.
+  const focusable = context.disabled ? null : items.find(item => item.pressed && !item.disabled) ?? items.find(item => !item.disabled); // «Свой период» is pressed for a range picked on the grid, not for no range.
 
   const custom = !items.some(item => item.pressed) && Boolean(context.startValue);
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
@@ -2261,11 +2288,11 @@ function renderPresets(context) {
             @keydown=${event => context.component.handlePresetKeydown(event)}>
             ${items.map(item => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
                 <button class=${joinClasses('sf-datepicker-text sf-datepicker-preset flex items-cross-center', item.pressed ? 'active' : '')}
-                    type="button" ?disabled=${item.disabled} aria-pressed=${item.pressed ? 'true' : 'false'}
+                    type="button" ?disabled=${item.disabled || context.disabled} aria-pressed=${item.pressed ? 'true' : 'false'}
                     tabindex=${item === focusable ? '0' : '-1'} data-preset=${item.id}
                     @click=${() => context.component.choosePreset(item)}>${item.label}</button>`)}
             <button class=${joinClasses('sf-datepicker-text sf-datepicker-preset flex items-cross-center', custom ? 'active' : '')}
-                type="button" aria-pressed=${custom ? 'true' : 'false'} tabindex=${focusable ? '-1' : '0'} data-preset=""
+                type="button" ?disabled=${context.disabled} aria-pressed=${custom ? 'true' : 'false'} tabindex=${focusable || context.disabled ? '-1' : '0'} data-preset=""
                 @click=${() => context.component.chooseCustomRange()}>${context.labels.customRange}</button>
         </div>`;
 }
@@ -2276,6 +2303,7 @@ function renderDatepickerPanel(context) {
         <div ${(0,lit_directives_ref_js__WEBPACK_IMPORTED_MODULE_1__.ref)(context.component.refs.datePickerPanel)} id=${context.panelId}
             class=${rootClasses} style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
             role=${context.input ? 'dialog' : 'group'} aria-label=${context.calendarLabel}
+            aria-disabled=${context.disabled ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
             @click=${event => context.component.handlePanelClick(event)}>
             ${renderPresets(context)}
             <div class="sf-datepicker-container flex flex-col">
@@ -2596,7 +2624,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shi
 /***/ "ef6661f4d1bb"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.datepicker","tag":"sf-datepicker","version":"1.1.4","kind":"leaf","settings":{"date":{"type":"string","default":"","summary":"The ISO date (yyyy-mm-dd) chosen; value is read only when date is absent, so date=\\"\\" is a cleared value."},"start-value":{"type":"string","default":"","summary":"Range only: the ISO start date."},"end-value":{"type":"string","default":"","summary":"Range only: the ISO end date."},"max-date":{"type":"string","default":"","summary":"The latest ISO date that can be chosen; later days are disabled."},"min-date":{"type":"string","default":"","summary":"The earliest ISO date that can be chosen; earlier days are disabled."},"range":{"type":"boolean","default":false,"summary":"Pick a start and an end instead of one date."},"month":{"type":"number","optional":true,"integer":true,"min":0,"max":11,"summary":"The month shown when the panel opens, 0-11; defaults to the chosen date\'s month, else the current one."},"year":{"type":"number","optional":true,"integer":true,"summary":"The year shown when the panel opens; defaults to the chosen date\'s year, else the current one."},"context":{"type":"enum","values":["","month","year"],"default":"","summary":"Which grid the panel opens on: days (empty), month or year."},"week-start":{"type":"number","optional":true,"integer":true,"min":0,"max":6,"summary":"The first day of the week, 0 Sunday to 6 Saturday (1 Monday). Without the attribute it follows the page\'s language (ru: Monday, en-US: Sunday, ar-EG: Saturday)."},"locale":{"type":"string","default":"","summary":"The language of month and day names; defaults to the page language."},"format":{"type":"string","default":"DD.MM.YYYY","summary":"How the date is shown in the field and read when typed, e.g. DD.MM.YYYY: the whole text one date, a four-digit year from 1000 to 9999. The value stays ISO."},"close-on-select":{"type":"boolean","default":true,"summary":"Close the panel once a date (or a range end) is chosen."},"input":{"type":"boolean","default":true,"summary":"Draw the text field; without it only the panel is drawn."},"portal":{"type":"boolean","default":true,"summary":"Draw the panel at the end of the document so no clipping ancestor cuts it."},"input-type":{"type":"string","default":"bordered","summary":"The field\'s appearance (bordered by default), as on sf-inputs."},"size":{"type":"enum","values":["1/2","1","2"],"default":"1","summary":"Form size of the field."},"input-size":{"type":"enum","values":["1/2","1","2"],"default":"1","summary":"Legacy name for size, still honoured; size wins when both are set. See contracts/public-api-axes.json."},"input-name":{"type":"string","default":"","summary":"The form field name of the value; wins over name."},"placeholder":{"type":"string","default":"","summary":"The field\'s placeholder text."},"label":{"type":"string","default":"","summary":"The field\'s visible label."},"disabled":{"type":"boolean","default":false,"summary":"Disable the field and the panel."},"required":{"type":"boolean","default":false,"summary":"Mark the field required in its form."},"invalid":{"type":"boolean","default":false,"summary":"Draw the field invalid: the error border and aria-invalid on the native input. Removing it restores the valid field."},"error-message":{"type":"string","default":"","summary":"The message under an invalid field; ignored while the field is valid."},"icon-start":{"type":"icon","default":"calendar_today","summary":"The icon at the start of the field; the canonical name for left-icon."},"left-icon":{"type":"icon","default":"calendar_today","summary":"Legacy name for icon-start, still honoured; icon-start wins when both are set."},"input-root-class":{"type":"string","default":"","summary":"Classes added to the field\'s root."},"mask":{"type":"boolean","default":false,"summary":"Mask what can be typed in the field to the format."},"mask-pattern":{"type":"string","default":"00.00.0000","summary":"Input mask; when not set it is derived from format, so the default format DD.MM.YYYY gives 00.00.0000."},"mask-lazy":{"type":"boolean","default":false,"summary":"Show the mask\'s placeholder characters only as they are typed."},"mask-placeholder-char":{"type":"string","default":"_","summary":"The character that stands for a position not yet typed."},"mask-options":{"type":"string","default":"","summary":"Further mask options as JSON, passed to the field\'s mask."},"name":{"type":"string","default":"","summary":"The form field name of the value. input-name is the same and wins when both are set."},"preset":{"type":"string","default":"","summary":"The chosen quick range\'s id. Set by a host it wins over start-value and end-value, and a relative one is resolved against today in the person\'s time zone when drawn; nothing is emitted for it."},"readonly":{"type":"boolean","default":false,"summary":"Keeps the field read-only: the date is chosen on the grid only. A single date can be typed by default; a range is always chosen on the grid."},"presets":{"type":"list","default":[],"of":{"id":"id","label":{"type":"string","optional":true},"relative":{"type":"enum","values":["today","yesterday","last-7-days","last-30-days","this-week","this-month","last-month"],"optional":true},"range":{"type":"list","optional":true}},"summary":"Quick ranges, range mode only; the attribute keeps its comma list of built-in ids"}},"values":{"value":{"type":"string","default":"","summary":"The ISO date (yyyy-mm-dd). As a property, [start, end] for a range. The attribute is the initial value: once the date is cleared it stays empty."},"open":{"type":"boolean","default":false,"summary":"Whether the panel is open."}},"events":{"change":{"carries":{"value":"object","date":"string","start-value":"string","end-value":"string","formatted-value":"string","iso-value":"string","range":"boolean","format":"string","preset":"object"},"summary":"A date or range endpoint was selected; dispatched on the host. The name to bind."}},"actions":{"open-panel":{"with":{"options":"object"},"x-outcomes":["applied","refused"],"summary":"Open the popup; optionally move focus into the calendar."},"close-panel":{"with":{"options":"object"},"x-outcomes":["applied","refused"],"summary":"Close the popup; optionally restore focus to the field."},"toggle-panel":{"x-outcomes":["applied","refused"],"summary":"Toggle the popup without changing the selected value."},"choose-preset":{"with":{"item":"object"},"x-outcomes":["applied","refused"],"summary":"Choose a quick range: set its dates, show the month it ends in and emit change once."},"choose-custom-range":{"x-outcomes":["applied","refused"],"summary":"Let go of the quick range and move focus to the grid."}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","custom-error"]},"layer":{"kind":"surface","traps-focus":false},"css-variables":{"--sf-datepicker-background-color":{"type":"color","state":"open"},"--sf-datepicker-day-color":{"type":"color","state":"rest"},"--sf-datepicker-selected-background-color":{"type":"color","state":"selected"},"--sf-datepicker-selected-color":{"type":"color","state":"selected"},"--sf-datepicker-range-background-color":{"type":"color","state":"in-range"},"--sf-datepicker-weekday-color":{"type":"color","state":"rest"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.datepicker","tag":"sf-datepicker","version":"1.1.5","kind":"leaf","settings":{"date":{"type":"string","default":""},"start-value":{"type":"string","default":""},"end-value":{"type":"string","default":""},"max-date":{"type":"string","default":""},"min-date":{"type":"string","default":""},"range":{"type":"boolean","default":false},"month":{"type":"number","optional":true,"integer":true,"min":0,"max":11},"year":{"type":"number","optional":true,"integer":true},"context":{"type":"enum","values":["","month","year"],"default":""},"week-start":{"type":"number","optional":true,"integer":true,"min":0,"max":6},"locale":{"type":"string","default":""},"format":{"type":"string","default":"DD.MM.YYYY"},"close-on-select":{"type":"boolean","default":true},"input":{"type":"boolean","default":true},"portal":{"type":"boolean","default":true},"input-type":{"type":"string","default":"bordered"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"input-size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"input-name":{"type":"string","default":""},"placeholder":{"type":"string","default":""},"label":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"required":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"icon-start":{"type":"icon","default":"calendar_today"},"left-icon":{"type":"icon","default":"calendar_today"},"input-root-class":{"type":"string","default":""},"mask":{"type":"boolean","default":false},"mask-pattern":{"type":"string","default":"00.00.0000"},"mask-lazy":{"type":"boolean","default":false},"mask-placeholder-char":{"type":"string","default":"_"},"mask-options":{"type":"string","default":""},"name":{"type":"string","default":""},"preset":{"type":"string","default":""},"readonly":{"type":"boolean","default":false},"presets":{"type":"list","default":[],"of":{"id":"id","label":{"type":"string","optional":true},"relative":{"type":"enum","values":["today","yesterday","last-7-days","last-30-days","this-week","this-month","last-month"],"optional":true},"range":{"type":"list","optional":true}}}},"values":{"value":{"type":"string","default":""},"open":{"type":"boolean","default":false}},"events":{"change":{"carries":{"value":"object","date":"string","start-value":"string","end-value":"string","formatted-value":"string","iso-value":"string","range":"boolean","format":"string","preset":"object"}}},"actions":{"open-panel":{"with":{"options":"object"}},"close-panel":{"with":{"options":"object"}},"toggle-panel":{},"choose-preset":{"with":{"item":"object"}},"choose-custom-range":{}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","custom-error"]},"layer":{"kind":"surface","traps-focus":false},"css-variables":{"--sf-datepicker-background-color":{"type":"color","state":"open"},"--sf-datepicker-day-color":{"type":"color","state":"rest"},"--sf-datepicker-selected-background-color":{"type":"color","state":"selected"},"--sf-datepicker-selected-color":{"type":"color","state":"selected"},"--sf-datepicker-range-background-color":{"type":"color","state":"in-range"},"--sf-datepicker-weekday-color":{"type":"color","state":"rest"}}}');
 
 /***/ },
 

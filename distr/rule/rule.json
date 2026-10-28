@@ -1408,6 +1408,20 @@
     "type": "smart"
   },
   {
+    "name": "cl-progress-ring",
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "progress-ring"
+      }
+    ],
+    "tags": [
+      "sf-progress-ring"
+    ],
+    "type": "smart"
+  },
+  {
     "name": "cl-progress-scale",
     "js": true,
     "mode": "smart",
@@ -3794,6 +3808,13 @@
     "css": true,
     "js": true,
     "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-progress-bar\\b/i",
+    "type": "component"
+  },
+  {
+    "name": "progress-ring",
+    "css": true,
+    "js": false,
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-progress-ring\\b/i",
     "type": "component"
   },
   {

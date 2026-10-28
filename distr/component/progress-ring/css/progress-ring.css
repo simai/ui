@@ -1,0 +1,152 @@
+@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@property --sf-progress-ring--value {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+@property --sf-progress-ring--size {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
+@property --sf-progress-ring--line-width {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
+@property --sf-progress-ring--gap {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
+@layer sf.components {
+  .sf-progress-ring {
+    --sf-progress-ring--size: var(--sf-progress-ring-size, var(--sf-progress-ring--step-size));
+    --sf-progress-ring--line-width: var(--sf-progress-ring-line-width, var(--sf-progress-ring--step-line-width));
+    --sf-progress-ring--gap: var(--sf-progress-ring-gap, var(--sf-a2));
+    --sf-progress-ring--fill: var(--sf-progress-ring-fill-color, var(--sf-primary));
+    --sf-progress-ring--track: var(--sf-progress-ring-track-color, var(--sf-outline-variant));
+    --sf-progress-ring--step-size: var(--sf-ui-1--control-height);
+    --sf-progress-ring--step-line-width: var(--sf-a2);
+    --sf-progress-ring--font-size: var(--sf-text-size-1\/4);
+    position: relative;
+    display: inline-grid;
+    flex: none;
+    align-items: center;
+    justify-items: center;
+    place-items: center;
+    box-sizing: border-box;
+    width: var(--sf-progress-ring--size);
+    inline-size: var(--sf-progress-ring--size);
+    height: var(--sf-progress-ring--size);
+    block-size: var(--sf-progress-ring--size);
+    border-radius: var(--sf-radius-circle);
+    color: var(--sf-on-surface);
+    color: var(--sf-progress-ring-color, var(--sf-on-surface));
+    font-family: var(--sf-text--family);
+    font-size: var(--sf-progress-ring--font-size);
+    -webkit-font-feature-settings: "tnum";
+            font-feature-settings: "tnum";
+    font-variant-numeric: tabular-nums;
+    font-weight: var(--sf-font-weight-regular);
+    line-height: 1;
+    vertical-align: middle;
+    transition-property: --sf-progress-ring--value;
+    transition-duration: var(--sf-duration-normal);
+    transition-timing-function: ease;
+    transition-timing-function: var(--sf-animation, ease);
+  }
+  /* The ring: the track and the filled part in one drawing, the line cut out
+     of a disc. The cut is soft across one pixel centred on the line's inner
+     edge, so the line is as wide as it says and its inner edge is smooth. */
+  .sf-progress-ring .sf-progress-ring-indicator {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    inset: 0;
+    border-radius: inherit;
+    background: conic-gradient(var(--sf-progress-ring--fill) calc(var(--sf-progress-ring--value) * 1%), var(--sf-progress-ring--track) 0);
+    -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - var(--sf-progress-ring--line-width) - 0.5px), #000 calc(100% - var(--sf-progress-ring--line-width) + 0.5px));
+            mask: radial-gradient(farthest-side, transparent calc(100% - var(--sf-progress-ring--line-width) - 0.5px), #000 calc(100% - var(--sf-progress-ring--line-width) + 0.5px));
+    pointer-events: none;
+  }
+  /* The middle: the ring's box less the line and the gap on every side. */
+  .sf-progress-ring .sf-progress-ring-content {
+    position: relative;
+    display: grid;
+    align-items: center;
+    justify-items: center;
+    place-items: center;
+    width: calc(var(--sf-progress-ring--size) - 2 * (var(--sf-progress-ring--line-width) + var(--sf-progress-ring--gap)));
+    inline-size: calc(var(--sf-progress-ring--size) - 2 * (var(--sf-progress-ring--line-width) + var(--sf-progress-ring--gap)));
+    height: calc(var(--sf-progress-ring--size) - 2 * (var(--sf-progress-ring--line-width) + var(--sf-progress-ring--gap)));
+    block-size: calc(var(--sf-progress-ring--size) - 2 * (var(--sf-progress-ring--line-width) + var(--sf-progress-ring--gap)));
+    border-radius: var(--sf-radius-circle);
+    white-space: nowrap;
+  }
+  /* A picture in the middle fills the content box, so the gap between it and
+     the line is the gap at every size: an avatar a step smaller than the ring
+     is that box already at sizes 1 and 2; elsewhere it is fitted to it. */
+  .sf-progress-ring .sf-progress-ring-content > .sf-avatar,
+  .sf-progress-ring .sf-progress-ring-content > sf-avatar > .sf-avatar {
+    width: 100%;
+    height: 100%;
+  }
+  .sf-progress-ring.sf-progress-ring--info {
+    --sf-progress-ring--fill: var(--sf-progress-ring-fill-color, var(--sf-info));
+  }
+  .sf-progress-ring.sf-progress-ring--success {
+    --sf-progress-ring--fill: var(--sf-progress-ring-fill-color, var(--sf-success));
+  }
+  .sf-progress-ring.sf-progress-ring--warning {
+    --sf-progress-ring--fill: var(--sf-progress-ring-fill-color, var(--sf-warning));
+  }
+  .sf-progress-ring.sf-progress-ring--error {
+    --sf-progress-ring--fill: var(--sf-progress-ring-fill-color, var(--sf-error));
+  }
+  /* The ladder: the box is the control height of the size, the line and the
+     text steps of their own scales. */
+  .sf-progress-ring.sf-progress-ring--size-1\/2 {
+    --sf-progress-ring--step-size: var(--sf-ui-1\/2--control-height);
+    --sf-progress-ring--font-size: var(--sf-text-size-1\/5);
+  }
+  .sf-progress-ring.sf-progress-ring--size-1 {
+    --sf-progress-ring--step-size: var(--sf-ui-1--control-height);
+    --sf-progress-ring--font-size: var(--sf-text-size-1\/4);
+  }
+  .sf-progress-ring.sf-progress-ring--size-2 {
+    --sf-progress-ring--step-size: var(--sf-ui-2--control-height);
+    --sf-progress-ring--font-size: var(--sf-text-size-1\/3);
+  }
+  /* Indeterminate: the spinner's arc -- a fixed 30% of the ring going round
+     at one turn a second -- on the ring's own track. */
+  .sf-progress-ring.sf-progress-ring--indeterminate .sf-progress-ring-indicator {
+    background: conic-gradient(var(--sf-progress-ring--fill) 0,var(--sf-progress-ring--fill) 30%, var(--sf-progress-ring--track) 0);
+    background: conic-gradient(var(--sf-progress-ring--fill) 0 30%, var(--sf-progress-ring--track) 0);
+    -webkit-animation: sf-progress-ring-turn calc(var(--sf-duration-slow) * 2) linear infinite;
+            animation: sf-progress-ring-turn calc(var(--sf-duration-slow) * 2) linear infinite;
+  }
+  @-webkit-keyframes sf-progress-ring-turn {
+    to {
+      -webkit-transform: rotate(1turn);
+              transform: rotate(1turn);
+    }
+  }
+  @keyframes sf-progress-ring-turn {
+    to {
+      -webkit-transform: rotate(1turn);
+              transform: rotate(1turn);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sf-progress-ring {
+      transition-duration: 0s;
+    }
+    .sf-progress-ring.sf-progress-ring--indeterminate .sf-progress-ring-indicator {
+      -webkit-animation: none;
+              animation: none;
+    }
+  }
+}
