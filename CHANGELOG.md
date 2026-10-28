@@ -355,6 +355,9 @@
 
 ### Изменено
 
+- sf-drawer 1.8.0: a docked drawer without the room (dock host or window narrower than its `dock-breakpoint`) now floats as a modal panel — focus kept inside, scrim takes presses, page scroll locked, Escape closes, focus returns to the opener; with the room it stays a modeless column, and `modal="false"` keeps it modeless everywhere (q-a49e2045c1, asked by ui-chat).
+- sf-drawer 1.8.0: a modal drawer's Tab cycle runs through the panel and then its edge, so the close, copy-link and open-full controls sf-property-view stands there are reachable by keyboard; a focus on the edge counts as inside.
+
 - Host port `simai.chat-port` 1.0.0, the seam of `sf-chat-window` (sixteen `chat-port:` intents, eleven capabilities, a revision on every edit and delete, one `client_key` per write) with its fourteen-case kit; core publishes `SF.sanitizeHtml(html, {elements?, codeLanguage?, document?})` and `SF.safeHref(value)` (core.runtime 1.0.4; rules in docs/developer/sanitize-html.md).
 - First-paint snapshots leave out an inline custom property holding a non-zero px length (a measured size such as `--sf-table--content-inline-size`), as they leave out geometry declarations; an authored size is written in rem or a token.
 - The first-paint tools (snapshot and gate 24) freeze `Date` and `Date.now()` at `2026-10-27T12:00:00+03:00` before any page code runs, so a component that reads the date prints the same snapshot every day; an example overrides it with `"first-paint": {"now": "<ISO>"}`, a component package with a top-level `"now"` in its config.

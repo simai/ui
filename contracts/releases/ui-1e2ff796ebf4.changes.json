@@ -1,0 +1,25 @@
+{
+  "schema": "simai.framework.unit-change-report",
+  "schema_version": 1,
+  "source": "simai/ui-source",
+  "from": {
+    "revision": "465fbee3ddb060cba919d6961f64036aa6cce204",
+    "release": "ui-194f75ac620f"
+  },
+  "to": {
+    "revision": "aefb13c94f962b4fd78147cafef29190dc037eb1",
+    "release": "ui-1e2ff796ebf4"
+  },
+  "added": [],
+  "removed": [],
+  "changed": [
+    {
+      "id": "smart.drawer",
+      "from_version": "1.7.0",
+      "to_version": "1.8.0",
+      "step": "minor"
+    }
+  ],
+  "dependencies_changed": [],
+  "violations": []
+}
