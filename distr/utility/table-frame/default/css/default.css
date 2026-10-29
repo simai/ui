@@ -26,6 +26,8 @@
     border-radius: 0;
     border-collapse: separate;
     border-spacing: 0;
+    word-break: normal;
+    word-wrap: normal;
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .table-frame > .table > :not(caption) > * > * {
     border-right: var(--sf-px) solid var(--sf-table-frame-border-color);
