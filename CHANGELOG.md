@@ -8,6 +8,15 @@
 
 ### Исправлено
 
+- New Smart component sf-site-header 1.0.0: one top bar for SIMAI sites -- brand, navigation, actions and tools, collapsing into a side panel on a narrow screen (layer stack, focus kept, Escape closes); gutters from .container.
+- sf-color 1.3.0, variant theme: an icon-only palette button that opens the platform colour picker and rebuilds the page theme from the colour (SF.ThemePalette), with a reset to the original colour.
+- SF.ThemePalette loads on its own: component theme-palette (SF.Loader.ensurePlugin('theme-palette') or data-sf-theme-palette); SF.Loader.ready hands over an API object as well as a class.
+- Highlight 1.1.0: a line-wrap toggle beside copy (data-wrap, data-wrap-control); a block in a grid row shows all its lines; a block whose text comes later is highlighted.
+- Theme 1.1.0: a toggle shows the theme it switches to (moon on a light page, sun on a dark one).
+- sf-dropdown 1.4.6: options printed as an attribute are data, and a changed attribute redraws the list.
+- sf-icon 1.1.4 keeps classes others put on the glyph; sf-button-group 1.1.4 and sf-color carry the value-missing words, asked only when a value is missing; sf-page-header 1.1.6.
+- First-paint snapshots: a forwarded page mark no longer prints a drawn control as a page node (a doubled button in the page and site headers).
+
 - Background effects (simai.effect 1.2.0): in auto a light-only effect stays light on a dark page, its area light, as a dark-only effect already stayed dark on a light one. The reason light-only-on-dark is gone; a fixed mode the effect cannot draw is still hidden (mode-not-drawable).
 - Container (utility.container 1.1.0): a public --sf-container-gutter sets the gutter of every container and breakpoint container at once; unset, each keeps its width step. container-flush takes the gutter off one container (a nested one), and a container inside it keeps its own.
 - sf-empty-state 1.1.5: the no-data wording is a finished sentence (ru «Записей пока нет» / «Они появятся здесь, когда их добавят»; en «No records yet» / «They will appear here once added»).
