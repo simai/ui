@@ -8,6 +8,8 @@
 
 ### Добавлено
 
+- smart.rich-text 1.0.0: sf-rich-text, a form field for formatted text. The value is HTML of p, h2, h3, h4, strong, em, a[href], ul, ol, li, blockquote and br; a link keeps https:, mailto:, tel: or a /path on the site. Toolbar for block level, bold, italic, link, lists, quote, undo and redo; paste and drop are cleaned to the same subset, and so is the incoming value. Form-associated like sf-textarea (name, value, required, disabled, readonly, input and change); keyboard only, light and dark, ru and en. core.runtime 1.6.3.
+
 ### Исправлено
 
 - component.range-slider 1.0.1: a tooltip label reserves its own room at first paint, so a printed slider with a tooltip is 54 px tall like the adopted one, not 44 px growing to 54.
