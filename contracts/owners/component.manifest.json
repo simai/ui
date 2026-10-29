@@ -21,8 +21,8 @@
       "type": "component"
     },
     "expected": {
-      "rules": 63,
-      "entries": 63
+      "rules": 64,
+      "entries": 64
     }
   },
   "defaults": {

@@ -104,14 +104,14 @@ class FrameworkContractRegistryTest(unittest.TestCase):
             self.registry["counts"],
             {
                 "utility": 228,
-                "component": 63,
+                "component": 64,
                 # 49 until the four components now in package larena left
                 # the free release (two of them, sf-data-view and
                 # sf-property-view, were never entries here); 48 with
-                # sf-page-header; 60 with sf-progress-ring.
-                "smart-component": 60,
+                # sf-page-header; 60 with sf-progress-ring; 61 with sf-site-header.
+                "smart-component": 61,
                 "recipe": 1,
-                "total": 352,
+                "total": 354,
             },
         )
         # The id names the runtimes it was built from; that is the claim, not

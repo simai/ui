@@ -17,7 +17,7 @@
   "inventory": {
     "source": "simai/ui@e84590925e63d0b72fa5987a9d74af83e2ab8913:distr/smart",
     "selector": "*/js/*.js",
-    "expected": 60
+    "expected": 61
   },
   "defaults": {
     "lifecycle": "released",
