@@ -4276,6 +4276,10 @@
     "regex": "/^(?:table-border)(?![\\s\\S])/"
   },
   {
+    "name": "table-frame/default",
+    "regex": "/^(?:table-frame)(?![\\s\\S])/"
+  },
+  {
     "name": "table-hover/default",
     "regex": "/^(?:table-hover)(?![\\s\\S])/"
   },

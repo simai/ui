@@ -1,0 +1,132 @@
+@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@layer sf.utilities {
+  .table-frame {
+    /* The public variables of .table-frame; the head fill,
+       --sf-table-frame-head-background, defaults on the head cells. */
+    --sf-table-frame-border-color: var(--sf-outline-variant);
+    --sf-table-frame-radius: var(--sf-radius--surface);
+    --sf-table-frame-background: var(--sf-surface-0);
+    --sf-table-frame-head-color: var(--sf-on-surface);
+    --sf-table-frame-head-padding-block: var(--sf-space-1);
+    --sf-table-frame-cell-padding-block: var(--sf-space-1\/2);
+    --sf-table-frame-cell-padding-inline: var(--sf-space-1);
+    --sf-table-frame-cell-min-inline-size: var(--sf-e0);
+    width: 100%;
+    inline-size: 100%;
+    overflow: auto;
+    border: var(--sf-px) solid var(--sf-table-frame-border-color);
+    border-radius: var(--sf-table-frame-radius);
+    background-color: var(--sf-table-frame-background);
+  }
+  .table-frame > .table {
+    width: 100%;
+    inline-size: 100%;
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .table-frame > .table > :not(caption) > * > * {
+    border-right: var(--sf-px) solid var(--sf-table-frame-border-color);
+  }
+  @supports not (border-inline-end: initial) {
+  html:not([dir="rtl"]) .table-frame > .table > :not(caption) > * > * {
+    border-right: var(--sf-px) solid var(--sf-table-frame-border-color);
+    }
+  }
+  .table-frame > .table > :not(caption) > * > *:where(:dir(ltr)) {
+    border-right: var(--sf-px) solid var(--sf-table-frame-border-color);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .table-frame > .table > :not(caption) > * > * {
+    border-left: var(--sf-px) solid var(--sf-table-frame-border-color);
+  }
+  @supports not (border-inline-end: initial) {
+  [dir="rtl"] .table-frame > .table > :not(caption) > * > * {
+    border-left: var(--sf-px) solid var(--sf-table-frame-border-color);
+    }
+  }
+  .table-frame > .table > :not(caption) > * > *:where(:dir(rtl)) {
+    border-left: var(--sf-px) solid var(--sf-table-frame-border-color);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .table-frame > .table > :not(caption) > * > * {
+    text-align: left;
+  }
+  @supports not (text-align: start) {
+  html:not([dir="rtl"]) .table-frame > .table > :not(caption) > * > * {
+    text-align: left;
+    }
+  }
+  .table-frame > .table > :not(caption) > * > *:where(:dir(ltr)) {
+    text-align: left;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .table-frame > .table > :not(caption) > * > * {
+    text-align: right;
+  }
+  @supports not (text-align: start) {
+  [dir="rtl"] .table-frame > .table > :not(caption) > * > * {
+    text-align: right;
+    }
+  }
+  .table-frame > .table > :not(caption) > * > *:where(:dir(rtl)) {
+    text-align: right;
+  }
+  .table-frame > .table > :not(caption) > * > * {
+    min-width: var(--sf-table-frame-cell-min-inline-size);
+    min-inline-size: var(--sf-table-frame-cell-min-inline-size);
+    padding-top: var(--sf-table-frame-cell-padding-block);
+    padding-bottom: var(--sf-table-frame-cell-padding-block);
+    padding-block: var(--sf-table-frame-cell-padding-block);
+    padding-left: var(--sf-table-frame-cell-padding-inline);
+    padding-right: var(--sf-table-frame-cell-padding-inline);
+    padding-inline: var(--sf-table-frame-cell-padding-inline);
+    border-width: var(--sf-0);
+    -webkit-border-end: var(--sf-px) solid var(--sf-table-frame-border-color);
+            border-inline-end: var(--sf-px) solid var(--sf-table-frame-border-color);
+    border-bottom: var(--sf-px) solid var(--sf-table-frame-border-color);
+    -webkit-border-after: var(--sf-px) solid var(--sf-table-frame-border-color);
+            border-block-end: var(--sf-px) solid var(--sf-table-frame-border-color);
+    text-align: start;
+    vertical-align: top;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .table-frame > .table > :not(caption) > * > *:last-child {
+    border-right-width: var(--sf-0);
+  }
+  @supports not (border-inline-end-width: initial) {
+  html:not([dir="rtl"]) .table-frame > .table > :not(caption) > * > *:last-child {
+    border-right-width: var(--sf-0);
+    }
+  }
+  .table-frame > .table > :not(caption) > * > *:last-child:where(:dir(ltr)) {
+    border-right-width: var(--sf-0);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .table-frame > .table > :not(caption) > * > *:last-child {
+    border-left-width: var(--sf-0);
+  }
+  @supports not (border-inline-end-width: initial) {
+  [dir="rtl"] .table-frame > .table > :not(caption) > * > *:last-child {
+    border-left-width: var(--sf-0);
+    }
+  }
+  .table-frame > .table > :not(caption) > * > *:last-child:where(:dir(rtl)) {
+    border-left-width: var(--sf-0);
+  }
+  .table-frame > .table > :not(caption) > * > *:last-child {
+    border-inline-end-width: var(--sf-0);
+  }
+  .table-frame > .table > :last-child > tr:last-child > * {
+    border-bottom-width: var(--sf-0);
+    border-block-end-width: var(--sf-0);
+  }
+  .table-frame > .table > thead > tr > * {
+    --sf-on-surface-variant: var(--sf-on-surface-container--variant);
+    padding-top: var(--sf-table-frame-head-padding-block);
+    padding-bottom: var(--sf-table-frame-head-padding-block);
+    padding-block: var(--sf-table-frame-head-padding-block);
+    background-color: var(--sf-surface-container);
+    background-color: var(--sf-table-frame-head-background, var(--sf-surface-container));
+    color: var(--sf-table-frame-head-color);
+    font-weight: var(--sf-font-weight-bold);
+    vertical-align: bottom;
+  }
+}
