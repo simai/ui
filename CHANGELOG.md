@@ -6,6 +6,8 @@
 
 ## [Unreleased]
 
+### Добавлено
+
 ### Исправлено
 
 - component.range-slider 1.0.1: a tooltip label reserves its own room at first paint, so a printed slider with a tooltip is 54 px tall like the adopted one, not 44 px growing to 54.
