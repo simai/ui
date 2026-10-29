@@ -8,6 +8,9 @@
 
 ### Исправлено
 
+- component.range-slider 1.0.1: a tooltip label reserves its own room at first paint, so a printed slider with a tooltip is 54 px tall like the adopted one, not 44 px growing to 54.
+- A trait's event is declared like any other: "shared": "<trait>" gives sf-<verb>. sf-input, sf-textarea, sf-dropdown, sf-color, sf-switch and sf-quantity declare sf-field-reset as their current event; sf-field:reset stays as its dated alias until 2026-12-01.
+
 - The change journal records the thirty-nine dated event names of the SIMAI Pro chat components (record event-chat-vocabulary-names, removed after 2026-12-01), so the chat components in their standard 1.4 form pass change-lifecycle over a package.
 - simai.dataview-port 1.13.0: query.count names the event the pagination sends today.
 
