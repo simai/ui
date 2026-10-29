@@ -548,8 +548,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 // Written once here and opted into by each control, which says only what its
 // own value is, how to empty it and what takes focus: sf-input, sf-textarea,
 // sf-dropdown, sf-color and sf-switch.
+// The trait's event, one name for the whole family (§8, §20.2). The field
+// sends this name; the dated `sf-field:reset` follows it, with the same detail
+// and one cancel, from the alias shim (aliases.json, §16 item 20).
 
-const INHERITED_RESET_EVENT = 'sf-field:reset'; // The marker and the reset, in the page's language. A product names its own
+const INHERITED_RESET_EVENT = 'sf-field-reset'; // The marker and the reset, in the page's language. A product names its own
 // words with `inherited-text` and `reset-label`, or registers a language.
 
 const INHERITED_TEXT = {
@@ -643,7 +646,7 @@ const InheritedValueField = Base => class extends Base {
     return (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_1__.pageText)(INHERITED_TEXT, 'described', this).replace('{value}', this.inheritedDisplayValue());
   }
   /**
-   * Back to the inherited value. Fires `sf-field:reset` first, cancellable:
+   * Back to the inherited value. Fires `sf-field-reset` first, cancellable:
    * a host that must confirm or refuse calls preventDefault and nothing
    * changes. Returns whether the field was reset. The detail names the
    * element (`tag`), as a trait event does (standard 1.3.8 §20, trait
@@ -1180,14 +1183,14 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "4cf3e66c54bd"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-switch for the shim (stands/18-aliases-ci/alias.mjs, standard §16 item 20). mode: same-detail (the shim sends the new and the old name), split / detail-adds (a detail adapter, refused by the shim), attribute-and-property, method, property, manifest-only (the DOM name does not change), host-attribute (no shim), retired.","component":"sf-switch","since":"2026-10-27","remove_after":"2026-12-01","aliases":[{"from":"sf-field:reset","to":"sf-field-reset","kind":"event","component":"sf-switch","since":"2026-10-27","remove_after":"2026-12-01","mode":"same-detail","section":"§8, §20.2","note":"the event of the trait field-inherit@1; the trait code still sends the old name, the shim sends sf-field-reset first"},{"from":"aria-label","to":null,"kind":"attribute","component":"sf-switch","since":"2026-10-27","remove_after":"2026-12-01","mode":"host-attribute","section":"§3.1","note":"stays a host attribute, read by the base (§3.1, §4.8); no shim"}]}');
+module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-switch for the shim (stands/18-aliases-ci/alias.mjs, standard §16 item 20). mode: same-detail (the shim sends the new and the old name), split / detail-adds (a detail adapter, refused by the shim), attribute-and-property, method, property, manifest-only (the DOM name does not change), host-attribute (no shim), retired.","component":"sf-switch","since":"2026-10-27","remove_after":"2026-12-01","aliases":[{"from":"sf-field:reset","to":"sf-field-reset","kind":"event","component":"sf-switch","since":"2026-10-27","remove_after":"2026-12-01","mode":"same-detail","section":"§8, §20.2","note":"the event of the trait field-inherit@1, declared in component.json as the shared event field-reset; the field sends sf-field-reset and the shim follows it with this dated name, same detail, one cancel"},{"from":"aria-label","to":null,"kind":"attribute","component":"sf-switch","since":"2026-10-27","remove_after":"2026-12-01","mode":"host-attribute","section":"§3.1","note":"stays a host attribute, read by the base (§3.1, §4.8); no shim"}]}');
 
 /***/ },
 
 /***/ "7577d7eb26f7"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.switch","tag":"sf-switch","version":"1.1.3","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"label":{"type":"string","default":""},"description":{"type":"string","default":""},"help":{"type":"icon","default":""},"disabled":{"type":"boolean","default":false},"name":{"type":"string","default":""},"value":{"type":"string","default":"on"}},"values":{"checked":{"type":"boolean","default":false,"optional":true},"effective-checked":{"type":"boolean"}},"events":{"change":{"carries":"native"}},"actions":{},"form":{"value":"checked","name":"name","default":"checked","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.switch","tag":"sf-switch","version":"1.2.0","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"label":{"type":"string","default":""},"description":{"type":"string","default":""},"help":{"type":"icon","default":""},"disabled":{"type":"boolean","default":false},"name":{"type":"string","default":""},"value":{"type":"string","default":"on"}},"values":{"checked":{"type":"boolean","default":false,"optional":true},"effective-checked":{"type":"boolean"}},"events":{"change":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{},"form":{"value":"checked","name":"name","default":"checked","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{}}');
 
 /***/ },
 

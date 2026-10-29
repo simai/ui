@@ -889,8 +889,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 // Written once here and opted into by each control, which says only what its
 // own value is, how to empty it and what takes focus: sf-input, sf-textarea,
 // sf-dropdown, sf-color and sf-switch.
+// The trait's event, one name for the whole family (§8, §20.2). The field
+// sends this name; the dated `sf-field:reset` follows it, with the same detail
+// and one cancel, from the alias shim (aliases.json, §16 item 20).
 
-const INHERITED_RESET_EVENT = 'sf-field:reset'; // The marker and the reset, in the page's language. A product names its own
+const INHERITED_RESET_EVENT = 'sf-field-reset'; // The marker and the reset, in the page's language. A product names its own
 // words with `inherited-text` and `reset-label`, or registers a language.
 
 const INHERITED_TEXT = {
@@ -984,7 +987,7 @@ const InheritedValueField = Base => class extends Base {
     return (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_1__.pageText)(INHERITED_TEXT, 'described', this).replace('{value}', this.inheritedDisplayValue());
   }
   /**
-   * Back to the inherited value. Fires `sf-field:reset` first, cancellable:
+   * Back to the inherited value. Fires `sf-field-reset` first, cancellable:
    * a host that must confirm or refuse calls preventDefault and nothing
    * changes. Returns whether the field was reset. The detail names the
    * element (`tag`), as a trait event does (standard 1.3.8 §20, trait
@@ -1147,14 +1150,14 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "91a7989d7c1c"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shim (core/js/aliases.js, standard simai.smart-component 1.3.8 §16.20). Event rows send the new name first, then the old one, with one detail; setting rows map the old attribute and property to the new; host-attribute rows (no \\"to\\") stay host attributes read by the browser or the base and are listed, refused by the shim on purpose; documentary rows (\\"shim\\": \\"none\\") record a rename the shim cannot serve.","component":"sf-color","since":"2026-10-27","remove_after":"2026-12-01","aliases":[{"from":"sf-field:reset","to":"sf-field-reset","kind":"event","component":"sf-color","since":"2026-10-27","remove_after":"2026-12-01","mode":"same-detail","section":"§8, §20.2","note":"the event of the trait field-inherit@1; the trait code still sends the old name, the shim sends sf-field-reset first"},{"from":"shown","to":"effective-value","kind":"value","component":"sf-color","since":"2026-10-27","remove_after":"2026-12-01","section":"§4.1, §4.3","note":"the getter shown returned the painted colour; shown is now the base value (a boolean) on every element, so the old meaning cannot be served beside it: read effectiveValue","shim":"none"}]}');
+module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shim (core/js/aliases.js, standard simai.smart-component 1.3.8 §16.20). Event rows send the new name first, then the old one, with one detail; setting rows map the old attribute and property to the new; host-attribute rows (no \\"to\\") stay host attributes read by the browser or the base and are listed, refused by the shim on purpose; documentary rows (\\"shim\\": \\"none\\") record a rename the shim cannot serve.","component":"sf-color","since":"2026-10-27","remove_after":"2026-12-01","aliases":[{"from":"sf-field:reset","to":"sf-field-reset","kind":"event","component":"sf-color","since":"2026-10-27","remove_after":"2026-12-01","mode":"same-detail","section":"§8, §20.2","note":"the event of the trait field-inherit@1, declared in component.json as the shared event field-reset; the field sends sf-field-reset and the shim follows it with this dated name, same detail, one cancel"},{"from":"shown","to":"effective-value","kind":"value","component":"sf-color","since":"2026-10-27","remove_after":"2026-12-01","section":"§4.1, §4.3","note":"the getter shown returned the painted colour; shown is now the base value (a boolean) on every element, so the old meaning cannot be served beside it: read effectiveValue","shim":"none"}]}');
 
 /***/ },
 
 /***/ "9a1741f2071b"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.color","tag":"sf-color","version":"1.3.2","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"appearance":{"type":"enum","values":["bordered","outlined","plain"],"default":"bordered"},"variant":{"type":"enum","values":["field","theme"],"default":"field"},"swatches":{"type":"string","default":""},"clearable":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"name":{"type":"string","default":""},"label":{"type":"string","default":""},"choose-label":{"type":"string","default-from":"runtime.choose"},"clear-label":{"type":"string","default-from":"runtime.clear"}},"values":{"value":{"type":"string","default":""},"effective-value":{"type":"string"}},"events":{"change":{"carries":{"value":"string","name":"string"}},"input":{"carries":{"value":"string","name":"string"}}},"actions":{"clear":{}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-color-gap":{"type":"length"},"--sf-color-chip-radius":{"type":"length"},"--sf-color-chip-border-color":{"type":"color","state":"rest"},"--sf-color-swatches-gap":{"type":"length"},"--sf-color-inherited-color":{"type":"color","state":"inherited"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.color","tag":"sf-color","version":"1.4.0","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"appearance":{"type":"enum","values":["bordered","outlined","plain"],"default":"bordered"},"variant":{"type":"enum","values":["field","theme"],"default":"field"},"swatches":{"type":"string","default":""},"clearable":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"name":{"type":"string","default":""},"label":{"type":"string","default":""},"choose-label":{"type":"string","default-from":"runtime.choose"},"clear-label":{"type":"string","default-from":"runtime.clear"}},"values":{"value":{"type":"string","default":""},"effective-value":{"type":"string"}},"events":{"change":{"carries":{"value":"string","name":"string"}},"input":{"carries":{"value":"string","name":"string"}},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{"clear":{}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-color-gap":{"type":"length"},"--sf-color-chip-radius":{"type":"length"},"--sf-color-chip-border-color":{"type":"color","state":"rest"},"--sf-color-swatches-gap":{"type":"length"},"--sf-color-inherited-color":{"type":"color","state":"inherited"}}}');
 
 /***/ },
 
