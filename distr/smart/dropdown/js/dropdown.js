@@ -864,11 +864,20 @@ class SfDropdown extends DropdownElement {
         default: ''
       }
     };
+  } // options is data, not a setting the manifest maps to an attribute, so it
+  // is observed here: a page that rewrites the attribute redraws the list.
+
+
+  static get observedAttributes() {
+    return [...new Set([...super.observedAttributes, 'options'])];
   }
 
   connectedCallback() {
     // A printed JSON island first (standard 1.3.8 §5.4): what is read below may be in it.
-    this.sfReadIsland();
+    this.sfReadIsland(); // Options printed as an attribute (JSON) are data, as the property is: the
+    // selected option's text was empty when only the property was read.
+
+    if (!this._optionsFromData && this.hasAttribute('options')) this.options = this.getAttribute('options');
     this.captureOptions();
 
     if (!Object.prototype.hasOwnProperty.call(this, '_resetValues')) {
@@ -881,6 +890,7 @@ class SfDropdown extends DropdownElement {
   attributeChangedCallback(name, oldValue, newValue) {
     if (oldValue !== newValue) {
       if (name === 'value') this._selectedValues = splitValues(newValue);
+      if (name === 'options' && this.isConnected) this.options = newValue;
 
       if (name === 'disabled' && this.disabled) {
         this._open = false;
@@ -2261,7 +2271,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-dropd
 /***/ "b4d28078de6f"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.dropdown","tag":"sf-dropdown","version":"1.4.5","kind":"leaf","traits":["field-inherit@1"],"settings":{"appearance":{"type":"enum","values":["filled","outlined"],"default":"outlined"},"columns":{"type":"number","default":6},"disabled":{"type":"boolean","default":false},"label":{"type":"string","default":""},"layout":{"type":"enum","values":["list","grid"],"default":"list"},"mode":{"type":"enum","values":["tag","select"],"default":"select"},"multiple":{"type":"boolean","default":false},"name":{"type":"string","default":""},"options":{"type":"list","default":[],"of":{"value":"string","text":"string","icon":{"type":"icon","optional":true},"disabled":{"type":"boolean","optional":true},"group":{"type":"string","optional":true}}},"placeholder":{"type":"string","default":""},"portal":{"type":"boolean","default":true},"required":{"type":"boolean","default":false},"search":{"type":"boolean","default":true},"search-placeholder":{"type":"string","default-from":"runtime.search"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":"native"}},"actions":{"open-dropdown":{},"close-dropdown":{},"toggle-dropdown":{}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-dropdown-background-color":{"type":"color","state":"default"},"--sf-dropdown-border-color":{"type":"color","state":"default"},"--sf-dropdown-radius":{"type":"length","state":"default"},"--sf-dropdown-gap":{"type":"length","state":"default"},"--sf-dropdown-list-background-color":{"type":"color","state":"open"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.dropdown","tag":"sf-dropdown","version":"1.4.6","kind":"leaf","traits":["field-inherit@1"],"settings":{"appearance":{"type":"enum","values":["filled","outlined"],"default":"outlined"},"columns":{"type":"number","default":6},"disabled":{"type":"boolean","default":false},"label":{"type":"string","default":""},"layout":{"type":"enum","values":["list","grid"],"default":"list"},"mode":{"type":"enum","values":["tag","select"],"default":"select"},"multiple":{"type":"boolean","default":false},"name":{"type":"string","default":""},"options":{"type":"list","default":[],"of":{"value":"string","text":"string","icon":{"type":"icon","optional":true},"disabled":{"type":"boolean","optional":true},"group":{"type":"string","optional":true}}},"placeholder":{"type":"string","default":""},"portal":{"type":"boolean","default":true},"required":{"type":"boolean","default":false},"search":{"type":"boolean","default":true},"search-placeholder":{"type":"string","default-from":"runtime.search"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":"native"}},"actions":{"open-dropdown":{},"close-dropdown":{},"toggle-dropdown":{}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-dropdown-background-color":{"type":"color","state":"default"},"--sf-dropdown-border-color":{"type":"color","state":"default"},"--sf-dropdown-radius":{"type":"length","state":"default"},"--sf-dropdown-gap":{"type":"length","state":"default"},"--sf-dropdown-list-background-color":{"type":"color","state":"open"}}}');
 
 /***/ },
 

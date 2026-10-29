@@ -29,11 +29,13 @@ __webpack_require__.r(__webpack_exports__);
 const HIGHLIGHT_TEXT = {
   en: {
     copy: 'Copy code',
-    copied: 'Code copied'
+    copied: 'Code copied',
+    wrap: 'Wrap lines'
   },
   ru: {
     copy: 'Копировать код',
-    copied: 'Код скопирован'
+    copied: 'Код скопирован',
+    wrap: 'Переносить строки'
   }
 };
 const CODE_SELECTOR = 'pre code';
@@ -209,6 +211,40 @@ function ensureCopyButton(block, root, head) {
   button.append(icon);
   head.append(button);
   return button;
+} // Line wrapping, beside copy: a toggle that wraps long lines instead of
+// scrolling them sideways (owner request through the effects catalogue,
+// 2026-10-29; projects put a switch over their code blocks for it). The page
+// sets the starting state with data-wrap="true" on the block's root, or
+// data-wrap-control="none" to leave the button out; the button says its state
+// with aria-pressed.
+
+
+function ensureWrapButton(block, root, head) {
+  if (root.dataset.wrapControl === 'none') return null;
+  let button = head.querySelector(':scope > .sf-highlight__wrap-toggle');
+  if (button) return button;
+  const wrapped = root.dataset.wrap === 'true';
+  root.classList.toggle('sf-highlight--wrap', wrapped);
+  button = block.ownerDocument.createElement('button');
+  button.type = 'button';
+  button.className = 'sf-highlight__wrap-toggle sf-icon-button sf-icon-button--size-1/2 sf-icon-button--icon sf-icon-button--link sf-icon-button--on-surface flex items-cross-center';
+  button.setAttribute('aria-label', root.dataset.wrapLabel || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(HIGHLIGHT_TEXT, 'wrap', block, 'sf-highlight'));
+  button.setAttribute('aria-pressed', String(wrapped));
+  button.setAttribute('aria-controls', ensureCodeId(block));
+  const icon = block.ownerDocument.createElement('span');
+  icon.className = 'sf-icon';
+  icon.textContent = 'wrap_text';
+  icon.setAttribute('aria-hidden', 'true');
+  button.append(icon);
+  button.addEventListener('click', () => {
+    const next = !root.classList.contains('sf-highlight--wrap');
+    root.classList.toggle('sf-highlight--wrap', next);
+    root.dataset.wrap = String(next);
+    button.setAttribute('aria-pressed', String(next));
+  });
+  const copy = head.querySelector(':scope > .sf-highlight__copy');
+  head.insertBefore(button, copy);
+  return button;
 }
 
 function ensureStructure(block) {
@@ -289,6 +325,7 @@ function updateChrome(block, result) {
 
   language.textContent = block.dataset.requestedLang || result.language || 'text';
   ensureCopyButton(block, root, head);
+  ensureWrapButton(block, root, head);
 }
 
 hljs.addPlugin({
@@ -313,7 +350,10 @@ function codeBlocksIn(root = document) {
 
 async function highlightBlock(block) {
   if (!(block instanceof HTMLElement)) return false;
-  if (block.dataset.highlighted || highlightedNodes.has(block)) return true;
+  if (block.dataset.highlighted || highlightedNodes.has(block)) return true; // An empty block waits for its text: marked now, it was skipped for good
+  // when a page filled it later (ui-effects site, a code block in a tab).
+
+  if (block.textContent.trim() === '') return false;
   block.textContent = block.textContent.trim();
   sourceText.set(block, block.textContent);
   const requested = requestedLanguage(block);
@@ -349,13 +389,29 @@ async function refresh(target, nextSource) {
 }
 
 if (typeof document !== 'undefined') {
-  highlightAllLazy();
-  const observer = new MutationObserver(mutations => mutations.forEach(mutation => mutation.addedNodes.forEach(node => {
-    if (node instanceof Element) highlightAllLazy(node);
-  })));
+  highlightAllLazy(); // A block is read when it arrives and again when its text changes: text
+  // written into a block (textContent, a text node, characterData) adds no
+  // element, so an observer of elements alone never saw it. A highlighted
+  // block whose text is no longer the source it was drawn from is drawn
+  // again; drawing writes that same text, so it does not come back here.
+
+  const blockOf = node => (node instanceof Element ? node : node?.parentElement)?.closest?.(CODE_SELECTOR) ?? null;
+
+  const textChanged = block => {
+    if (!block) return;
+    if (!block.dataset.highlighted && !highlightedNodes.has(block)) highlightBlock(block);else if (block.textContent.trim() !== (sourceText.get(block) ?? '').trim()) refresh(block, block.textContent.trim());
+  };
+
+  const observer = new MutationObserver(mutations => mutations.forEach(mutation => {
+    if (mutation.type === 'characterData') return textChanged(blockOf(mutation.target));
+    mutation.addedNodes.forEach(node => {
+      if (node instanceof Element) highlightAllLazy(node);else if (node.nodeType === Node.TEXT_NODE) textChanged(blockOf(node));
+    });
+  }));
   observer.observe(document.documentElement, {
     childList: true,
-    subtree: true
+    subtree: true,
+    characterData: true
   });
 }
 

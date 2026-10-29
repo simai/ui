@@ -238,10 +238,40 @@
   }
   .sf--highlight-wrap {
     padding: 0;
-    height: 100%;
+    flex: 1 1 auto;
+    min-height: 0;
   }
   .sf--highlight-wrap > .sf-scrollbar__viewport:not([class*=p-]) {
     padding: var(--sf-space-1);
+  }
+  /* Wrapped lines (the head's wrap toggle, or data-wrap="true"): long lines
+     break inside the block instead of scrolling sideways. The toggle stands
+     with copy at the end of the head. */
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-highlight__wrap-toggle {
+    margin-left: auto;
+  }
+  @supports not (margin-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-highlight__wrap-toggle {
+    margin-left: auto;
+    }
+  }
+  .sf-highlight__wrap-toggle:where(:dir(ltr)) {
+    margin-left: auto;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-highlight__wrap-toggle {
+    margin-right: auto;
+  }
+  @supports not (margin-inline-start: initial) {
+  [dir="rtl"] .sf-highlight__wrap-toggle {
+    margin-right: auto;
+    }
+  }
+  .sf-highlight__wrap-toggle:where(:dir(rtl)) {
+    margin-right: auto;
+  }
+  .sf-highlight__wrap-toggle {
+    -webkit-margin-start: auto;
+            margin-inline-start: auto;
   }
   .sf-highlight__head {
     padding: var(--sf-space-1\/3) var(--sf-space-1);
@@ -250,9 +280,23 @@
     -webkit-border-after: var(--sf-px) solid var(--sf-outline-variant);
             border-block-end: var(--sf-px) solid var(--sf-outline-variant);
   }
+  /* The block is a column: the head, then the code taking the rest. The code
+     was height: 100%, which a block with a definite height -- a grid item
+     stretched to its row -- resolved against the whole block, head included,
+     so the last lines were clipped (ui-effects site, a code block in a grid).
+     A block given a height still scrolls its code inside. */
+  .sf-highlight[\:has\(\%3E\%20.sf-highlight__wrap\,\%20\%3E\%20.sf--highlight-wrap\)] {
+    display: flex;
+    flex-direction: column;
+  }
+  .sf-highlight:has(> .sf-highlight__wrap, > .sf--highlight-wrap) {
+    display: flex;
+    flex-direction: column;
+  }
   .sf-highlight__wrap {
     min-width: 0;
-    height: 100%;
+    flex: 1 1 auto;
+    min-height: 0;
     padding: 0;
   }
   /* Public code-surface composition used by documentation and developer tools. */
@@ -336,6 +380,33 @@
     padding: 0;
     white-space: pre;
     background: transparent;
+  }
+  /* After the code surface's own rule, which sizes the code to its longest
+     line (max-content) and keeps it on one: wrapped, the code is as wide as
+     the block and its lines break. */
+  .sf-highlight--wrap pre:not(.does-not-exist) {
+    min-width: 0;
+    min-inline-size: 0;
+    white-space: pre-wrap;
+    word-wrap: anywhere;
+  }
+  .sf-highlight--wrap :is(.sf-code-surface__scroll code) {
+    min-width: 0;
+    min-inline-size: 0;
+    white-space: pre-wrap;
+    word-wrap: anywhere;
+  }
+  .sf-highlight--wrap code:not(.does-not-exist) {
+    min-width: 0;
+    min-inline-size: 0;
+    white-space: pre-wrap;
+    word-wrap: anywhere;
+  }
+  .sf-highlight--wrap .sf-code-line__content:not(does-not-exist) {
+    min-width: 0;
+    min-inline-size: 0;
+    white-space: pre-wrap;
+    word-wrap: anywhere;
   }
   li .sf-highlight {
     margin-top: var(--sf-space-1);

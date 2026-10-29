@@ -1,0 +1,1024 @@
+@charset "UTF-8";
+@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@layer sf.components {
+  /* The top bar of a SIMAI site (standard simai.smart-component 1.3.11 §6).
+     Every length is a token of the one ladder (docs/foundation-composition-
+     geometry.md): the bar is the size's control height, a space-1 inset above
+     and below, and the 1px edge of a region. Gutters are the .container's, so a
+     product's --sf-container-gutter reaches the bar. The public variables are
+     read with the role token as their fallback and never set here. */
+  .sf-site-header {
+    --sf-site-header--control-height: var(--sf-ui-1--control-height);
+    --sf-site-header--text-space: var(--sf-ui-1--text-space-x);
+    --sf-site-header--block-size: var(--sf-site-header-block-size,
+      calc(var(--sf-site-header--control-height) + 2 * var(--sf-space-1) + var(--sf-px)));
+    position: relative;
+    display: block;
+    box-sizing: border-box;
+    min-height: var(--sf-site-header--block-size);
+    min-block-size: var(--sf-site-header--block-size);
+    border-bottom: var(--sf-px) solid var(--sf-outline-variant);
+    -webkit-border-after: var(--sf-px) solid var(--sf-outline-variant);
+            border-block-end: var(--sf-px) solid var(--sf-outline-variant);
+    border-bottom: var(--sf-px) solid var(--sf-outline-variant);
+    border-bottom: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
+    -webkit-border-after: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
+            border-block-end: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
+    background: var(--sf-surface-0);
+    background: var(--sf-site-header-background, var(--sf-surface-0));
+    color: var(--sf-on-surface);
+    color: var(--sf-site-header-color, var(--sf-on-surface));
+  }
+  .sf-site-header--size-half {
+    --sf-site-header--control-height: var(--sf-ui-1\/2--control-height);
+    --sf-site-header--text-space: var(--sf-ui-1\/2--text-space-x);
+  }
+  .sf-site-header--sticky {
+    position: sticky;
+    top: 0;
+    inset-block-start: 0;
+    z-index: var(--sf-z-index-5);
+    z-index: var(--sf-site-header-z-index, var(--sf-z-index-5));
+  }
+  /* The row: brand · nav … actions · tools, on one centre line. */
+  .sf-site-header-row {
+    display: flex;
+    align-items: center;
+    gap: var(--sf-space-2);
+    gap: var(--sf-site-header-gap, var(--sf-space-2));
+    box-sizing: border-box;
+    min-height: calc(var(--sf-site-header--block-size) - var(--sf-px));
+    min-block-size: calc(var(--sf-site-header--block-size) - var(--sf-px));
+    padding-top: var(--sf-space-1);
+    padding-bottom: var(--sf-space-1);
+    padding-block: var(--sf-space-1);
+  }
+  .sf-site-header-brand {
+    display: flex;
+    flex: none;
+    align-items: center;
+    min-width: 0;
+    min-inline-size: 0;
+  }
+  /* The brand's picture: the page's <img> or <svg>, one height. :where keeps the
+     rule at no weight, so the page's own markup stays in charge of the rest. */
+  .sf-site-header-brand :where(a) {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sf-site-header--text-space);
+    color: inherit;
+    text-decoration: none;
+  }
+  .sf-site-header-brand :where(img, svg) {
+    display: block;
+    flex: none;
+    height: var(--sf-ui-1\/2--control-height);
+    block-size: var(--sf-ui-1\/2--control-height);
+    height: var(--sf-ui-1\/2--control-height);
+    height: var(--sf-site-header-brand-size, var(--sf-ui-1\/2--control-height));
+    block-size: var(--sf-site-header-brand-size, var(--sf-ui-1\/2--control-height));
+    width: auto;
+    inline-size: auto;
+  }
+  /* Wide: the panel is no box of its own, so the nav and the actions stand in
+     the row; its heading, the scrim, the sheet slot and the menu button are not
+     shown. */
+  .sf-site-header-panel {
+    display: contents;
+  }
+  .sf-site-header-panel-head,
+  .sf-site-header-scrim,
+  .sf-site-header-sheet,
+  .sf-site-header-menu-button > button {
+    display: none;
+  }
+  /* The menu button's host is sf-icon-button, display: contents written on the
+     element itself: a display on the host is overruled, so the native button
+     inside is what is shown and hidden. */
+  .sf-site-header-nav {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: center;
+    min-width: 0;
+    min-inline-size: 0;
+  }
+  .sf-site-header-actions,
+  .sf-site-header-tools {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: var(--sf-space-1);
+  }
+  /* Collapsed: the menu button first, the brand, then the tools at the end; the
+     panel is shown only while open, as a side panel at the inline start over a
+     scrim. Height and focus come from the layer stack (core/js/layer-stack.js),
+     which lifts the whole header to the layer's z-index while it is open. */
+  .sf-site-header--collapse-always {
+    /* flex, as the icon button's own utility draws it. */
+    /* The panel's head is as tall as the bar, its close button on the axis of
+       the menu button. */
+    /* A plain list of links in the nav stands as a column in the panel; an
+       sf-menu turns vertical through its own setting (index.js). */
+  }
+  .sf-site-header--collapse-always .sf-site-header-menu-button > button {
+    display: flex;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-always .sf-site-header-tools{
+    margin-left: auto;
+  }
+  @supports not (margin-inline-start: initial){
+  html:not([dir="rtl"]) .sf-site-header--collapse-always .sf-site-header-tools{
+    margin-left: auto;
+    }
+  }
+  .sf-site-header--collapse-always .sf-site-header-tools:where(:dir(ltr)){
+    margin-left: auto;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-always .sf-site-header-tools{
+    margin-right: auto;
+  }
+  @supports not (margin-inline-start: initial){
+  [dir="rtl"] .sf-site-header--collapse-always .sf-site-header-tools{
+    margin-right: auto;
+    }
+  }
+  .sf-site-header--collapse-always .sf-site-header-tools:where(:dir(rtl)){
+    margin-right: auto;
+  }
+  .sf-site-header--collapse-always .sf-site-header-tools {
+    -webkit-margin-start: auto;
+            margin-inline-start: auto;
+  }
+  .sf-site-header--collapse-always .sf-site-header-panel {
+    display: none;
+  }
+  .sf-site-header--collapse-always.sf-site-header--open .sf-site-header-scrim {
+    display: block;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    inset: 0;
+    background: var(--sf-black);
+    opacity: var(--sf-opacity-60);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-always.sf-site-header--open .sf-site-header-panel{
+    left: 0;
+  }
+  @supports not (inset-inline-start: initial){
+  html:not([dir="rtl"]) .sf-site-header--collapse-always.sf-site-header--open .sf-site-header-panel{
+    left: 0;
+    }
+  }
+  .sf-site-header--collapse-always.sf-site-header--open .sf-site-header-panel:where(:dir(ltr)){
+    left: 0;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-always.sf-site-header--open .sf-site-header-panel{
+    right: 0;
+  }
+  @supports not (inset-inline-start: initial){
+  [dir="rtl"] .sf-site-header--collapse-always.sf-site-header--open .sf-site-header-panel{
+    right: 0;
+    }
+  }
+  .sf-site-header--collapse-always.sf-site-header--open .sf-site-header-panel:where(:dir(rtl)){
+    right: 0;
+  }
+  .sf-site-header--collapse-always.sf-site-header--open .sf-site-header-panel {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    inset-block: 0;
+    inset-inline-start: 0;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    width: min(90vw, var(--sf-g1));
+    inline-size: min(90vw, var(--sf-g1));
+    width: min(90vw, var(--sf-g1));
+    width: var(--sf-site-header-sheet-inline-size, min(90vw, var(--sf-g1)));
+    inline-size: var(--sf-site-header-sheet-inline-size, min(90vw, var(--sf-g1)));
+    height: 100dvh;
+    block-size: 100dvh;
+    overflow: auto;
+    -ms-scroll-chaining: none;
+        overscroll-behavior: contain;
+    background: var(--sf-elevation-4--surface);
+    box-shadow: var(--sf-elevation-4--shadow);
+    color: var(--sf-on-surface);
+    --sf-on-surface-variant: var(--sf-on-elevation-4--variant);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-always.sf-site-header--open .sf-site-header-panel-head{
+    padding-left: var(--sf-space-2);
+  }
+  @supports not (padding-inline-start: initial){
+  html:not([dir="rtl"]) .sf-site-header--collapse-always.sf-site-header--open .sf-site-header-panel-head{
+    padding-left: var(--sf-space-2);
+    }
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-always.sf-site-header--open .sf-site-header-panel-head{
+    padding-right: var(--sf-space-1);
+  }
+  @supports not (padding-inline-end: initial){
+  html:not([dir="rtl"]) .sf-site-header--collapse-always.sf-site-header--open .sf-site-header-panel-head{
+    padding-right: var(--sf-space-1);
+    }
+  }
+  .sf-site-header--collapse-always.sf-site-header--open .sf-site-header-panel-head:where(:dir(ltr)){
+    padding-left: var(--sf-space-2);
+    padding-right: var(--sf-space-1);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-always.sf-site-header--open .sf-site-header-panel-head{
+    padding-right: var(--sf-space-2);
+  }
+  @supports not (padding-inline-start: initial){
+  [dir="rtl"] .sf-site-header--collapse-always.sf-site-header--open .sf-site-header-panel-head{
+    padding-right: var(--sf-space-2);
+    }
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-always.sf-site-header--open .sf-site-header-panel-head{
+    padding-left: var(--sf-space-1);
+  }
+  @supports not (padding-inline-end: initial){
+  [dir="rtl"] .sf-site-header--collapse-always.sf-site-header--open .sf-site-header-panel-head{
+    padding-left: var(--sf-space-1);
+    }
+  }
+  .sf-site-header--collapse-always.sf-site-header--open .sf-site-header-panel-head:where(:dir(rtl)){
+    padding-right: var(--sf-space-2);
+    padding-left: var(--sf-space-1);
+  }
+  .sf-site-header--collapse-always.sf-site-header--open .sf-site-header-panel-head {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sf-space-2);
+    box-sizing: border-box;
+    min-height: var(--sf-site-header--block-size);
+    min-block-size: var(--sf-site-header--block-size);
+    padding-top: var(--sf-space-1);
+    padding-bottom: var(--sf-space-1);
+    padding-block: var(--sf-space-1);
+    padding-inline: var(--sf-space-2) var(--sf-space-1);
+    border-bottom: var(--sf-px) solid var(--sf-outline-variant);
+    -webkit-border-after: var(--sf-px) solid var(--sf-outline-variant);
+            border-block-end: var(--sf-px) solid var(--sf-outline-variant);
+    border-bottom: var(--sf-px) solid var(--sf-outline-variant);
+    border-bottom: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
+    -webkit-border-after: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
+            border-block-end: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
+  }
+  .sf-site-header--collapse-always .sf-site-header-panel-heading {
+    font-size: var(--sf-text-medium--size);
+    line-height: var(--sf-text-medium--height);
+    font-weight: 700;
+  }
+  .sf-site-header--collapse-always.sf-site-header--open .sf-site-header-nav, .sf-site-header--collapse-always.sf-site-header--open .sf-site-header-actions, .sf-site-header--collapse-always.sf-site-header--open .sf-site-header-sheet {
+    display: flex;
+    flex: none;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--sf-space-1);
+    padding: var(--sf-space-2);
+  }
+  .sf-site-header--collapse-always.sf-site-header--open .sf-site-header-actions, .sf-site-header--collapse-always.sf-site-header--open .sf-site-header-sheet {
+    border-top: var(--sf-px) solid var(--sf-outline-variant);
+    -webkit-border-before: var(--sf-px) solid var(--sf-outline-variant);
+            border-block-start: var(--sf-px) solid var(--sf-outline-variant);
+  }
+  .sf-site-header--collapse-always .sf-site-header-nav :where(nav, ul) {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  @media not all and (min-width: 32rem) {
+    .sf-site-header--collapse-sm {
+      /* flex, as the icon button's own utility draws it. */
+      /* The panel's head is as tall as the bar, its close button on the axis of
+         the menu button. */
+      /* A plain list of links in the nav stands as a column in the panel; an
+         sf-menu turns vertical through its own setting (index.js). */
+    }
+    .sf-site-header--collapse-sm .sf-site-header-menu-button > button {
+      display: flex;
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-sm .sf-site-header-tools{
+      margin-left: auto;
+    }
+    @supports not (margin-inline-start: initial){
+    html:not([dir="rtl"]) .sf-site-header--collapse-sm .sf-site-header-tools{
+      margin-left: auto;
+      }
+    }
+    .sf-site-header--collapse-sm .sf-site-header-tools:where(:dir(ltr)){
+      margin-left: auto;
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-sm .sf-site-header-tools{
+      margin-right: auto;
+    }
+    @supports not (margin-inline-start: initial){
+    [dir="rtl"] .sf-site-header--collapse-sm .sf-site-header-tools{
+      margin-right: auto;
+      }
+    }
+    .sf-site-header--collapse-sm .sf-site-header-tools:where(:dir(rtl)){
+      margin-right: auto;
+    }
+    .sf-site-header--collapse-sm .sf-site-header-tools {
+      -webkit-margin-start: auto;
+              margin-inline-start: auto;
+    }
+    .sf-site-header--collapse-sm .sf-site-header-panel {
+      display: none;
+    }
+    .sf-site-header--collapse-sm.sf-site-header--open .sf-site-header-scrim {
+      display: block;
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      inset: 0;
+      background: var(--sf-black);
+      opacity: var(--sf-opacity-60);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-sm.sf-site-header--open .sf-site-header-panel{
+      left: 0;
+    }
+    @supports not (inset-inline-start: initial){
+    html:not([dir="rtl"]) .sf-site-header--collapse-sm.sf-site-header--open .sf-site-header-panel{
+      left: 0;
+      }
+    }
+    .sf-site-header--collapse-sm.sf-site-header--open .sf-site-header-panel:where(:dir(ltr)){
+      left: 0;
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-sm.sf-site-header--open .sf-site-header-panel{
+      right: 0;
+    }
+    @supports not (inset-inline-start: initial){
+    [dir="rtl"] .sf-site-header--collapse-sm.sf-site-header--open .sf-site-header-panel{
+      right: 0;
+      }
+    }
+    .sf-site-header--collapse-sm.sf-site-header--open .sf-site-header-panel:where(:dir(rtl)){
+      right: 0;
+    }
+    .sf-site-header--collapse-sm.sf-site-header--open .sf-site-header-panel {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      inset-block: 0;
+      inset-inline-start: 0;
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
+      width: min(90vw, var(--sf-g1));
+      inline-size: min(90vw, var(--sf-g1));
+      width: min(90vw, var(--sf-g1));
+      width: var(--sf-site-header-sheet-inline-size, min(90vw, var(--sf-g1)));
+      inline-size: var(--sf-site-header-sheet-inline-size, min(90vw, var(--sf-g1)));
+      height: 100dvh;
+      block-size: 100dvh;
+      overflow: auto;
+      -ms-scroll-chaining: none;
+          overscroll-behavior: contain;
+      background: var(--sf-elevation-4--surface);
+      box-shadow: var(--sf-elevation-4--shadow);
+      color: var(--sf-on-surface);
+      --sf-on-surface-variant: var(--sf-on-elevation-4--variant);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-sm.sf-site-header--open .sf-site-header-panel-head{
+      padding-left: var(--sf-space-2);
+    }
+    @supports not (padding-inline-start: initial){
+    html:not([dir="rtl"]) .sf-site-header--collapse-sm.sf-site-header--open .sf-site-header-panel-head{
+      padding-left: var(--sf-space-2);
+      }
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-sm.sf-site-header--open .sf-site-header-panel-head{
+      padding-right: var(--sf-space-1);
+    }
+    @supports not (padding-inline-end: initial){
+    html:not([dir="rtl"]) .sf-site-header--collapse-sm.sf-site-header--open .sf-site-header-panel-head{
+      padding-right: var(--sf-space-1);
+      }
+    }
+    .sf-site-header--collapse-sm.sf-site-header--open .sf-site-header-panel-head:where(:dir(ltr)){
+      padding-left: var(--sf-space-2);
+      padding-right: var(--sf-space-1);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-sm.sf-site-header--open .sf-site-header-panel-head{
+      padding-right: var(--sf-space-2);
+    }
+    @supports not (padding-inline-start: initial){
+    [dir="rtl"] .sf-site-header--collapse-sm.sf-site-header--open .sf-site-header-panel-head{
+      padding-right: var(--sf-space-2);
+      }
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-sm.sf-site-header--open .sf-site-header-panel-head{
+      padding-left: var(--sf-space-1);
+    }
+    @supports not (padding-inline-end: initial){
+    [dir="rtl"] .sf-site-header--collapse-sm.sf-site-header--open .sf-site-header-panel-head{
+      padding-left: var(--sf-space-1);
+      }
+    }
+    .sf-site-header--collapse-sm.sf-site-header--open .sf-site-header-panel-head:where(:dir(rtl)){
+      padding-right: var(--sf-space-2);
+      padding-left: var(--sf-space-1);
+    }
+    .sf-site-header--collapse-sm.sf-site-header--open .sf-site-header-panel-head {
+      display: flex;
+      flex: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--sf-space-2);
+      box-sizing: border-box;
+      min-height: var(--sf-site-header--block-size);
+      min-block-size: var(--sf-site-header--block-size);
+      padding-top: var(--sf-space-1);
+      padding-bottom: var(--sf-space-1);
+      padding-block: var(--sf-space-1);
+      padding-inline: var(--sf-space-2) var(--sf-space-1);
+      border-bottom: var(--sf-px) solid var(--sf-outline-variant);
+      -webkit-border-after: var(--sf-px) solid var(--sf-outline-variant);
+              border-block-end: var(--sf-px) solid var(--sf-outline-variant);
+      border-bottom: var(--sf-px) solid var(--sf-outline-variant);
+      border-bottom: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
+      -webkit-border-after: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
+              border-block-end: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
+    }
+    .sf-site-header--collapse-sm .sf-site-header-panel-heading {
+      font-size: var(--sf-text-medium--size);
+      line-height: var(--sf-text-medium--height);
+      font-weight: 700;
+    }
+    .sf-site-header--collapse-sm.sf-site-header--open .sf-site-header-nav, .sf-site-header--collapse-sm.sf-site-header--open .sf-site-header-actions, .sf-site-header--collapse-sm.sf-site-header--open .sf-site-header-sheet {
+      display: flex;
+      flex: none;
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--sf-space-1);
+      padding: var(--sf-space-2);
+    }
+    .sf-site-header--collapse-sm.sf-site-header--open .sf-site-header-actions, .sf-site-header--collapse-sm.sf-site-header--open .sf-site-header-sheet {
+      border-top: var(--sf-px) solid var(--sf-outline-variant);
+      -webkit-border-before: var(--sf-px) solid var(--sf-outline-variant);
+              border-block-start: var(--sf-px) solid var(--sf-outline-variant);
+    }
+    .sf-site-header--collapse-sm .sf-site-header-nav :where(nav, ul) {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+  @media not all and (min-width: 44rem) {
+    .sf-site-header--collapse-md {
+      /* flex, as the icon button's own utility draws it. */
+      /* The panel's head is as tall as the bar, its close button on the axis of
+         the menu button. */
+      /* A plain list of links in the nav stands as a column in the panel; an
+         sf-menu turns vertical through its own setting (index.js). */
+    }
+    .sf-site-header--collapse-md .sf-site-header-menu-button > button {
+      display: flex;
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-md .sf-site-header-tools{
+      margin-left: auto;
+    }
+    @supports not (margin-inline-start: initial){
+    html:not([dir="rtl"]) .sf-site-header--collapse-md .sf-site-header-tools{
+      margin-left: auto;
+      }
+    }
+    .sf-site-header--collapse-md .sf-site-header-tools:where(:dir(ltr)){
+      margin-left: auto;
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-md .sf-site-header-tools{
+      margin-right: auto;
+    }
+    @supports not (margin-inline-start: initial){
+    [dir="rtl"] .sf-site-header--collapse-md .sf-site-header-tools{
+      margin-right: auto;
+      }
+    }
+    .sf-site-header--collapse-md .sf-site-header-tools:where(:dir(rtl)){
+      margin-right: auto;
+    }
+    .sf-site-header--collapse-md .sf-site-header-tools {
+      -webkit-margin-start: auto;
+              margin-inline-start: auto;
+    }
+    .sf-site-header--collapse-md .sf-site-header-panel {
+      display: none;
+    }
+    .sf-site-header--collapse-md.sf-site-header--open .sf-site-header-scrim {
+      display: block;
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      inset: 0;
+      background: var(--sf-black);
+      opacity: var(--sf-opacity-60);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-md.sf-site-header--open .sf-site-header-panel{
+      left: 0;
+    }
+    @supports not (inset-inline-start: initial){
+    html:not([dir="rtl"]) .sf-site-header--collapse-md.sf-site-header--open .sf-site-header-panel{
+      left: 0;
+      }
+    }
+    .sf-site-header--collapse-md.sf-site-header--open .sf-site-header-panel:where(:dir(ltr)){
+      left: 0;
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-md.sf-site-header--open .sf-site-header-panel{
+      right: 0;
+    }
+    @supports not (inset-inline-start: initial){
+    [dir="rtl"] .sf-site-header--collapse-md.sf-site-header--open .sf-site-header-panel{
+      right: 0;
+      }
+    }
+    .sf-site-header--collapse-md.sf-site-header--open .sf-site-header-panel:where(:dir(rtl)){
+      right: 0;
+    }
+    .sf-site-header--collapse-md.sf-site-header--open .sf-site-header-panel {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      inset-block: 0;
+      inset-inline-start: 0;
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
+      width: min(90vw, var(--sf-g1));
+      inline-size: min(90vw, var(--sf-g1));
+      width: min(90vw, var(--sf-g1));
+      width: var(--sf-site-header-sheet-inline-size, min(90vw, var(--sf-g1)));
+      inline-size: var(--sf-site-header-sheet-inline-size, min(90vw, var(--sf-g1)));
+      height: 100dvh;
+      block-size: 100dvh;
+      overflow: auto;
+      -ms-scroll-chaining: none;
+          overscroll-behavior: contain;
+      background: var(--sf-elevation-4--surface);
+      box-shadow: var(--sf-elevation-4--shadow);
+      color: var(--sf-on-surface);
+      --sf-on-surface-variant: var(--sf-on-elevation-4--variant);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-md.sf-site-header--open .sf-site-header-panel-head{
+      padding-left: var(--sf-space-2);
+    }
+    @supports not (padding-inline-start: initial){
+    html:not([dir="rtl"]) .sf-site-header--collapse-md.sf-site-header--open .sf-site-header-panel-head{
+      padding-left: var(--sf-space-2);
+      }
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-md.sf-site-header--open .sf-site-header-panel-head{
+      padding-right: var(--sf-space-1);
+    }
+    @supports not (padding-inline-end: initial){
+    html:not([dir="rtl"]) .sf-site-header--collapse-md.sf-site-header--open .sf-site-header-panel-head{
+      padding-right: var(--sf-space-1);
+      }
+    }
+    .sf-site-header--collapse-md.sf-site-header--open .sf-site-header-panel-head:where(:dir(ltr)){
+      padding-left: var(--sf-space-2);
+      padding-right: var(--sf-space-1);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-md.sf-site-header--open .sf-site-header-panel-head{
+      padding-right: var(--sf-space-2);
+    }
+    @supports not (padding-inline-start: initial){
+    [dir="rtl"] .sf-site-header--collapse-md.sf-site-header--open .sf-site-header-panel-head{
+      padding-right: var(--sf-space-2);
+      }
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-md.sf-site-header--open .sf-site-header-panel-head{
+      padding-left: var(--sf-space-1);
+    }
+    @supports not (padding-inline-end: initial){
+    [dir="rtl"] .sf-site-header--collapse-md.sf-site-header--open .sf-site-header-panel-head{
+      padding-left: var(--sf-space-1);
+      }
+    }
+    .sf-site-header--collapse-md.sf-site-header--open .sf-site-header-panel-head:where(:dir(rtl)){
+      padding-right: var(--sf-space-2);
+      padding-left: var(--sf-space-1);
+    }
+    .sf-site-header--collapse-md.sf-site-header--open .sf-site-header-panel-head {
+      display: flex;
+      flex: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--sf-space-2);
+      box-sizing: border-box;
+      min-height: var(--sf-site-header--block-size);
+      min-block-size: var(--sf-site-header--block-size);
+      padding-top: var(--sf-space-1);
+      padding-bottom: var(--sf-space-1);
+      padding-block: var(--sf-space-1);
+      padding-inline: var(--sf-space-2) var(--sf-space-1);
+      border-bottom: var(--sf-px) solid var(--sf-outline-variant);
+      -webkit-border-after: var(--sf-px) solid var(--sf-outline-variant);
+              border-block-end: var(--sf-px) solid var(--sf-outline-variant);
+      border-bottom: var(--sf-px) solid var(--sf-outline-variant);
+      border-bottom: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
+      -webkit-border-after: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
+              border-block-end: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
+    }
+    .sf-site-header--collapse-md .sf-site-header-panel-heading {
+      font-size: var(--sf-text-medium--size);
+      line-height: var(--sf-text-medium--height);
+      font-weight: 700;
+    }
+    .sf-site-header--collapse-md.sf-site-header--open .sf-site-header-nav, .sf-site-header--collapse-md.sf-site-header--open .sf-site-header-actions, .sf-site-header--collapse-md.sf-site-header--open .sf-site-header-sheet {
+      display: flex;
+      flex: none;
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--sf-space-1);
+      padding: var(--sf-space-2);
+    }
+    .sf-site-header--collapse-md.sf-site-header--open .sf-site-header-actions, .sf-site-header--collapse-md.sf-site-header--open .sf-site-header-sheet {
+      border-top: var(--sf-px) solid var(--sf-outline-variant);
+      -webkit-border-before: var(--sf-px) solid var(--sf-outline-variant);
+              border-block-start: var(--sf-px) solid var(--sf-outline-variant);
+    }
+    .sf-site-header--collapse-md .sf-site-header-nav :where(nav, ul) {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+  @media not all and (min-width: 60rem) {
+    .sf-site-header--collapse-lg {
+      /* flex, as the icon button's own utility draws it. */
+      /* The panel's head is as tall as the bar, its close button on the axis of
+         the menu button. */
+      /* A plain list of links in the nav stands as a column in the panel; an
+         sf-menu turns vertical through its own setting (index.js). */
+    }
+    .sf-site-header--collapse-lg .sf-site-header-menu-button > button {
+      display: flex;
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-lg .sf-site-header-tools{
+      margin-left: auto;
+    }
+    @supports not (margin-inline-start: initial){
+    html:not([dir="rtl"]) .sf-site-header--collapse-lg .sf-site-header-tools{
+      margin-left: auto;
+      }
+    }
+    .sf-site-header--collapse-lg .sf-site-header-tools:where(:dir(ltr)){
+      margin-left: auto;
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-lg .sf-site-header-tools{
+      margin-right: auto;
+    }
+    @supports not (margin-inline-start: initial){
+    [dir="rtl"] .sf-site-header--collapse-lg .sf-site-header-tools{
+      margin-right: auto;
+      }
+    }
+    .sf-site-header--collapse-lg .sf-site-header-tools:where(:dir(rtl)){
+      margin-right: auto;
+    }
+    .sf-site-header--collapse-lg .sf-site-header-tools {
+      -webkit-margin-start: auto;
+              margin-inline-start: auto;
+    }
+    .sf-site-header--collapse-lg .sf-site-header-panel {
+      display: none;
+    }
+    .sf-site-header--collapse-lg.sf-site-header--open .sf-site-header-scrim {
+      display: block;
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      inset: 0;
+      background: var(--sf-black);
+      opacity: var(--sf-opacity-60);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-lg.sf-site-header--open .sf-site-header-panel{
+      left: 0;
+    }
+    @supports not (inset-inline-start: initial){
+    html:not([dir="rtl"]) .sf-site-header--collapse-lg.sf-site-header--open .sf-site-header-panel{
+      left: 0;
+      }
+    }
+    .sf-site-header--collapse-lg.sf-site-header--open .sf-site-header-panel:where(:dir(ltr)){
+      left: 0;
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-lg.sf-site-header--open .sf-site-header-panel{
+      right: 0;
+    }
+    @supports not (inset-inline-start: initial){
+    [dir="rtl"] .sf-site-header--collapse-lg.sf-site-header--open .sf-site-header-panel{
+      right: 0;
+      }
+    }
+    .sf-site-header--collapse-lg.sf-site-header--open .sf-site-header-panel:where(:dir(rtl)){
+      right: 0;
+    }
+    .sf-site-header--collapse-lg.sf-site-header--open .sf-site-header-panel {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      inset-block: 0;
+      inset-inline-start: 0;
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
+      width: min(90vw, var(--sf-g1));
+      inline-size: min(90vw, var(--sf-g1));
+      width: min(90vw, var(--sf-g1));
+      width: var(--sf-site-header-sheet-inline-size, min(90vw, var(--sf-g1)));
+      inline-size: var(--sf-site-header-sheet-inline-size, min(90vw, var(--sf-g1)));
+      height: 100dvh;
+      block-size: 100dvh;
+      overflow: auto;
+      -ms-scroll-chaining: none;
+          overscroll-behavior: contain;
+      background: var(--sf-elevation-4--surface);
+      box-shadow: var(--sf-elevation-4--shadow);
+      color: var(--sf-on-surface);
+      --sf-on-surface-variant: var(--sf-on-elevation-4--variant);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-lg.sf-site-header--open .sf-site-header-panel-head{
+      padding-left: var(--sf-space-2);
+    }
+    @supports not (padding-inline-start: initial){
+    html:not([dir="rtl"]) .sf-site-header--collapse-lg.sf-site-header--open .sf-site-header-panel-head{
+      padding-left: var(--sf-space-2);
+      }
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-lg.sf-site-header--open .sf-site-header-panel-head{
+      padding-right: var(--sf-space-1);
+    }
+    @supports not (padding-inline-end: initial){
+    html:not([dir="rtl"]) .sf-site-header--collapse-lg.sf-site-header--open .sf-site-header-panel-head{
+      padding-right: var(--sf-space-1);
+      }
+    }
+    .sf-site-header--collapse-lg.sf-site-header--open .sf-site-header-panel-head:where(:dir(ltr)){
+      padding-left: var(--sf-space-2);
+      padding-right: var(--sf-space-1);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-lg.sf-site-header--open .sf-site-header-panel-head{
+      padding-right: var(--sf-space-2);
+    }
+    @supports not (padding-inline-start: initial){
+    [dir="rtl"] .sf-site-header--collapse-lg.sf-site-header--open .sf-site-header-panel-head{
+      padding-right: var(--sf-space-2);
+      }
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-lg.sf-site-header--open .sf-site-header-panel-head{
+      padding-left: var(--sf-space-1);
+    }
+    @supports not (padding-inline-end: initial){
+    [dir="rtl"] .sf-site-header--collapse-lg.sf-site-header--open .sf-site-header-panel-head{
+      padding-left: var(--sf-space-1);
+      }
+    }
+    .sf-site-header--collapse-lg.sf-site-header--open .sf-site-header-panel-head:where(:dir(rtl)){
+      padding-right: var(--sf-space-2);
+      padding-left: var(--sf-space-1);
+    }
+    .sf-site-header--collapse-lg.sf-site-header--open .sf-site-header-panel-head {
+      display: flex;
+      flex: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--sf-space-2);
+      box-sizing: border-box;
+      min-height: var(--sf-site-header--block-size);
+      min-block-size: var(--sf-site-header--block-size);
+      padding-top: var(--sf-space-1);
+      padding-bottom: var(--sf-space-1);
+      padding-block: var(--sf-space-1);
+      padding-inline: var(--sf-space-2) var(--sf-space-1);
+      border-bottom: var(--sf-px) solid var(--sf-outline-variant);
+      -webkit-border-after: var(--sf-px) solid var(--sf-outline-variant);
+              border-block-end: var(--sf-px) solid var(--sf-outline-variant);
+      border-bottom: var(--sf-px) solid var(--sf-outline-variant);
+      border-bottom: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
+      -webkit-border-after: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
+              border-block-end: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
+    }
+    .sf-site-header--collapse-lg .sf-site-header-panel-heading {
+      font-size: var(--sf-text-medium--size);
+      line-height: var(--sf-text-medium--height);
+      font-weight: 700;
+    }
+    .sf-site-header--collapse-lg.sf-site-header--open .sf-site-header-nav, .sf-site-header--collapse-lg.sf-site-header--open .sf-site-header-actions, .sf-site-header--collapse-lg.sf-site-header--open .sf-site-header-sheet {
+      display: flex;
+      flex: none;
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--sf-space-1);
+      padding: var(--sf-space-2);
+    }
+    .sf-site-header--collapse-lg.sf-site-header--open .sf-site-header-actions, .sf-site-header--collapse-lg.sf-site-header--open .sf-site-header-sheet {
+      border-top: var(--sf-px) solid var(--sf-outline-variant);
+      -webkit-border-before: var(--sf-px) solid var(--sf-outline-variant);
+              border-block-start: var(--sf-px) solid var(--sf-outline-variant);
+    }
+    .sf-site-header--collapse-lg .sf-site-header-nav :where(nav, ul) {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+  @media not all and (min-width: 72rem) {
+    .sf-site-header--collapse-xl {
+      /* flex, as the icon button's own utility draws it. */
+      /* The panel's head is as tall as the bar, its close button on the axis of
+         the menu button. */
+      /* A plain list of links in the nav stands as a column in the panel; an
+         sf-menu turns vertical through its own setting (index.js). */
+    }
+    .sf-site-header--collapse-xl .sf-site-header-menu-button > button {
+      display: flex;
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-xl .sf-site-header-tools{
+      margin-left: auto;
+    }
+    @supports not (margin-inline-start: initial){
+    html:not([dir="rtl"]) .sf-site-header--collapse-xl .sf-site-header-tools{
+      margin-left: auto;
+      }
+    }
+    .sf-site-header--collapse-xl .sf-site-header-tools:where(:dir(ltr)){
+      margin-left: auto;
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-xl .sf-site-header-tools{
+      margin-right: auto;
+    }
+    @supports not (margin-inline-start: initial){
+    [dir="rtl"] .sf-site-header--collapse-xl .sf-site-header-tools{
+      margin-right: auto;
+      }
+    }
+    .sf-site-header--collapse-xl .sf-site-header-tools:where(:dir(rtl)){
+      margin-right: auto;
+    }
+    .sf-site-header--collapse-xl .sf-site-header-tools {
+      -webkit-margin-start: auto;
+              margin-inline-start: auto;
+    }
+    .sf-site-header--collapse-xl .sf-site-header-panel {
+      display: none;
+    }
+    .sf-site-header--collapse-xl.sf-site-header--open .sf-site-header-scrim {
+      display: block;
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      inset: 0;
+      background: var(--sf-black);
+      opacity: var(--sf-opacity-60);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-xl.sf-site-header--open .sf-site-header-panel{
+      left: 0;
+    }
+    @supports not (inset-inline-start: initial){
+    html:not([dir="rtl"]) .sf-site-header--collapse-xl.sf-site-header--open .sf-site-header-panel{
+      left: 0;
+      }
+    }
+    .sf-site-header--collapse-xl.sf-site-header--open .sf-site-header-panel:where(:dir(ltr)){
+      left: 0;
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-xl.sf-site-header--open .sf-site-header-panel{
+      right: 0;
+    }
+    @supports not (inset-inline-start: initial){
+    [dir="rtl"] .sf-site-header--collapse-xl.sf-site-header--open .sf-site-header-panel{
+      right: 0;
+      }
+    }
+    .sf-site-header--collapse-xl.sf-site-header--open .sf-site-header-panel:where(:dir(rtl)){
+      right: 0;
+    }
+    .sf-site-header--collapse-xl.sf-site-header--open .sf-site-header-panel {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      inset-block: 0;
+      inset-inline-start: 0;
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
+      width: min(90vw, var(--sf-g1));
+      inline-size: min(90vw, var(--sf-g1));
+      width: min(90vw, var(--sf-g1));
+      width: var(--sf-site-header-sheet-inline-size, min(90vw, var(--sf-g1)));
+      inline-size: var(--sf-site-header-sheet-inline-size, min(90vw, var(--sf-g1)));
+      height: 100dvh;
+      block-size: 100dvh;
+      overflow: auto;
+      -ms-scroll-chaining: none;
+          overscroll-behavior: contain;
+      background: var(--sf-elevation-4--surface);
+      box-shadow: var(--sf-elevation-4--shadow);
+      color: var(--sf-on-surface);
+      --sf-on-surface-variant: var(--sf-on-elevation-4--variant);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-xl.sf-site-header--open .sf-site-header-panel-head{
+      padding-left: var(--sf-space-2);
+    }
+    @supports not (padding-inline-start: initial){
+    html:not([dir="rtl"]) .sf-site-header--collapse-xl.sf-site-header--open .sf-site-header-panel-head{
+      padding-left: var(--sf-space-2);
+      }
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-xl.sf-site-header--open .sf-site-header-panel-head{
+      padding-right: var(--sf-space-1);
+    }
+    @supports not (padding-inline-end: initial){
+    html:not([dir="rtl"]) .sf-site-header--collapse-xl.sf-site-header--open .sf-site-header-panel-head{
+      padding-right: var(--sf-space-1);
+      }
+    }
+    .sf-site-header--collapse-xl.sf-site-header--open .sf-site-header-panel-head:where(:dir(ltr)){
+      padding-left: var(--sf-space-2);
+      padding-right: var(--sf-space-1);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-xl.sf-site-header--open .sf-site-header-panel-head{
+      padding-right: var(--sf-space-2);
+    }
+    @supports not (padding-inline-start: initial){
+    [dir="rtl"] .sf-site-header--collapse-xl.sf-site-header--open .sf-site-header-panel-head{
+      padding-right: var(--sf-space-2);
+      }
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-site-header--collapse-xl.sf-site-header--open .sf-site-header-panel-head{
+      padding-left: var(--sf-space-1);
+    }
+    @supports not (padding-inline-end: initial){
+    [dir="rtl"] .sf-site-header--collapse-xl.sf-site-header--open .sf-site-header-panel-head{
+      padding-left: var(--sf-space-1);
+      }
+    }
+    .sf-site-header--collapse-xl.sf-site-header--open .sf-site-header-panel-head:where(:dir(rtl)){
+      padding-right: var(--sf-space-2);
+      padding-left: var(--sf-space-1);
+    }
+    .sf-site-header--collapse-xl.sf-site-header--open .sf-site-header-panel-head {
+      display: flex;
+      flex: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--sf-space-2);
+      box-sizing: border-box;
+      min-height: var(--sf-site-header--block-size);
+      min-block-size: var(--sf-site-header--block-size);
+      padding-top: var(--sf-space-1);
+      padding-bottom: var(--sf-space-1);
+      padding-block: var(--sf-space-1);
+      padding-inline: var(--sf-space-2) var(--sf-space-1);
+      border-bottom: var(--sf-px) solid var(--sf-outline-variant);
+      -webkit-border-after: var(--sf-px) solid var(--sf-outline-variant);
+              border-block-end: var(--sf-px) solid var(--sf-outline-variant);
+      border-bottom: var(--sf-px) solid var(--sf-outline-variant);
+      border-bottom: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
+      -webkit-border-after: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
+              border-block-end: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
+    }
+    .sf-site-header--collapse-xl .sf-site-header-panel-heading {
+      font-size: var(--sf-text-medium--size);
+      line-height: var(--sf-text-medium--height);
+      font-weight: 700;
+    }
+    .sf-site-header--collapse-xl.sf-site-header--open .sf-site-header-nav, .sf-site-header--collapse-xl.sf-site-header--open .sf-site-header-actions, .sf-site-header--collapse-xl.sf-site-header--open .sf-site-header-sheet {
+      display: flex;
+      flex: none;
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--sf-space-1);
+      padding: var(--sf-space-2);
+    }
+    .sf-site-header--collapse-xl.sf-site-header--open .sf-site-header-actions, .sf-site-header--collapse-xl.sf-site-header--open .sf-site-header-sheet {
+      border-top: var(--sf-px) solid var(--sf-outline-variant);
+      -webkit-border-before: var(--sf-px) solid var(--sf-outline-variant);
+              border-block-start: var(--sf-px) solid var(--sf-outline-variant);
+    }
+    .sf-site-header--collapse-xl .sf-site-header-nav :where(nav, ul) {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+}

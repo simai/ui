@@ -918,9 +918,13 @@ const FormField = Base => class extends Base {
     if (this.sfValidityAnchor()) return null;
     const required = this.hasAttribute('required') && this.getAttribute('required') !== 'false';
     const value = this.sfFormValue?.();
+    const valueMissing = required && !this.disabled && (value === null || value === undefined || value === ''); // The word only when it is said: asked on every sync, a component without
+    // it warned «no word value-missing» on each optional field (simai.main,
+    // sf-button-group in property-view's choice field, 2026-10-28).
+
     return {
-      valueMissing: required && !this.disabled && (value === null || value === undefined || value === ''),
-      message: this.sfWord?.('value-missing') || 'value-missing',
+      valueMissing,
+      message: valueMissing ? this.sfWord?.('value-missing') || 'value-missing' : '',
       anchor: null
     };
   }
@@ -1011,21 +1015,21 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shi
 /***/ "b4279d32e6ce"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button-group","tag":"sf-button-group","version":"1.1.3","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","value":"string","label":"string","icon":{"type":"icon","optional":true},"count":{"type":"string","optional":true},"icon-only":{"type":"boolean","optional":true},"loading":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true}}},"name":{"type":"string","default":""},"theme-switch":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"tightness":{"type":"enum","values":["","low","high","highest"],"default":""},"scheme":{"type":"enum","values":["primary","secondary","on-surface"],"default":"primary"},"appearance":{"type":"enum","values":["default","segmented"],"default":"default"},"plate":{"type":"enum","values":["scheme","raised"],"default":"scheme"},"full-width":{"type":"boolean","default":false},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"orientation":{"type":"enum","values":["horizontal","vertical"],"default":"horizontal"},"disabled":{"type":"boolean","default":false}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":{"previous":"string","value":{"type":"string"},"item":{"type":"object","nullable":true}}}},"actions":{"select":{"with":{"value":"string"}},"clear":{}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"css-variables":{"--sf-button-group-background-color":{"type":"color","state":"rest"},"--sf-button-group-padding":{"type":"length"},"--sf-button-group-radius":{"type":"length"},"--sf-button-group-color":{"type":"color","state":"rest"},"--sf-button-group-plate-background-color":{"type":"color","state":"selected"},"--sf-button-group-plate-color":{"type":"color","state":"selected"},"--sf-button-group-count-color":{"type":"color","state":"rest"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button-group","tag":"sf-button-group","version":"1.1.4","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","value":"string","label":"string","icon":{"type":"icon","optional":true},"count":{"type":"string","optional":true},"icon-only":{"type":"boolean","optional":true},"loading":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true}}},"name":{"type":"string","default":""},"theme-switch":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"tightness":{"type":"enum","values":["","low","high","highest"],"default":""},"scheme":{"type":"enum","values":["primary","secondary","on-surface"],"default":"primary"},"appearance":{"type":"enum","values":["default","segmented"],"default":"default"},"plate":{"type":"enum","values":["scheme","raised"],"default":"scheme"},"full-width":{"type":"boolean","default":false},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"orientation":{"type":"enum","values":["horizontal","vertical"],"default":"horizontal"},"disabled":{"type":"boolean","default":false}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":{"previous":"string","value":{"type":"string"},"item":{"type":"object","nullable":true}}}},"actions":{"select":{"with":{"value":"string"}},"clear":{}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"css-variables":{"--sf-button-group-background-color":{"type":"color","state":"rest"},"--sf-button-group-padding":{"type":"length"},"--sf-button-group-radius":{"type":"length"},"--sf-button-group-color":{"type":"color","state":"rest"},"--sf-button-group-plate-background-color":{"type":"color","state":"selected"},"--sf-button-group-plate-color":{"type":"color","state":"selected"},"--sf-button-group-count-color":{"type":"color","state":"rest"}}}');
 
 /***/ },
 
 /***/ "2b1acd19d153"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Button group","runtime":{"dark":"Dark","group":"Theme","light":"Light","system":"System"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Button group","runtime":{"dark":"Dark","group":"Theme","light":"Light","system":"System","value-missing":"Choose an option."}}');
 
 /***/ },
 
 /***/ "cab346738e0b"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Группа кнопок","runtime":{"dark":"Тёмная","group":"Тема","light":"Светлая","system":"Как в системе"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Группа кнопок","runtime":{"dark":"Тёмная","group":"Тема","light":"Светлая","system":"Как в системе","value-missing":"Выберите вариант."}}');
 
 /***/ }
 

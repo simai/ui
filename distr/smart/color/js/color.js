@@ -65,7 +65,9 @@ const ColorElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.e
 }); // #abc, #aabbcc and #aabbccdd, which is what a person pastes and what a store
 // keeps. Anything else is not a colour this control will claim to hold.
 
-const HEX = /^#(?:[0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})$/iu;
+const HEX = /^#(?:[0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})$/iu; // How long a moving colour rests before the page theme follows it.
+
+const THEME_DEBOUNCE = 120;
 
 const normalise = value => {
   const text = String(value ?? "").trim();
@@ -166,7 +168,150 @@ class SfColor extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.FormFi
 
   afterRender() {
     this.syncInheritedState();
+    this.sfSyncFormState(); // A value written from code (a page restoring the colour it kept) takes
+    // the theme silently; a drag waits for its debounce.
+
+    if (this.isTheme && this._themeTimer == null) this._applyTheme();
+  } // ---------------------------------------------------------- variant theme
+  //
+  // One icon button that opens the platform picker and rebuilds the page
+  // theme from the colour while it moves (owner decision by delegation,
+  // 2026-10-28: a variant of sf-color, not a separate component). The theme
+  // is SF.ThemePalette, fetched through the Loader the first time a theme
+  // control draws: it is larger than this control and a field-variant colour
+  // has no use for it.
+
+
+  get isTheme() {
+    return this.variant === "theme";
+  }
+
+  get themeLabel() {
+    return this.label || this.sfWord("theme");
+  }
+
+  get themeResetLabel() {
+    return this.getAttribute("clear-label") || this.sfWord("theme-reset");
+  }
+
+  _palette() {
+    const palette = globalThis.SF?.ThemePalette;
+    if (palette?.applyTheme) return palette;
+
+    if (!this._paletteAsked) {
+      this._paletteAsked = true;
+
+      const ready = () => {
+        this._applyTheme();
+
+        this.requestComponentUpdate("palette");
+      };
+
+      globalThis.addEventListener?.("theme-palette:ready", ready, {
+        once: true
+      });
+      globalThis.SF?.Loader?.ensurePlugin?.("theme-palette");
+    }
+
+    return null;
+  } // The colour on <html>: the previous application is taken off first, so the
+  // restore that is kept always returns the page to what it had before this
+  // control touched it. An empty value is that restore.
+
+
+  _applyTheme() {
+    const palette = this._palette();
+
+    if (!palette) return;
+    const color = this.value;
+    if (color === this._appliedColor) return;
+    this._restoreTheme?.();
+    this._restoreTheme = null;
+
+    if (color && palette.isThemeColor(color)) {
+      this._restoreTheme = palette.applyTheme(palette.themeFromColor(color));
+    }
+
+    this._appliedColor = color;
+  }
+
+  _scheduleTheme(delay) {
+    clearTimeout(this._themeTimer);
+    this._themeTimer = null;
+
+    if (!delay) {
+      this._applyTheme();
+
+      return;
+    }
+
+    this._themeTimer = setTimeout(() => {
+      this._themeTimer = null;
+
+      this._applyTheme();
+    }, delay);
+  } // The icon button opens the native input's picker. showPicker needs the
+  // press's activation, which the click carries; without it, a click on the
+  // input does the same.
+
+
+  _openPicker() {
+    const input = this.querySelector(".sf-color-input");
+    if (!input || this.disabled) return;
+
+    this._watchUncommitted();
+
+    try {
+      input.showPicker();
+    } catch {
+      input.click();
+    }
+  } // A colour that moved but was never committed (Escape, the picker's cancel)
+  // goes back to the committed one: the browser usually puts the old value
+  // back with an input of its own; if it does not, the next press or key on
+  // the page -- the picker is closed by then -- reverts it. A change that
+  // closes the picker on that same press wins: the check waits a moment.
+
+
+  _watchUncommitted() {
+    if (this._uncommittedWatch) return;
+    const document = this.ownerDocument;
+
+    const check = () => {
+      document.removeEventListener("pointerdown", check, true);
+      document.removeEventListener("keydown", check, true);
+      this._uncommittedWatch = null;
+      setTimeout(() => this._revertUncommitted(), 60);
+    };
+
+    this._uncommittedWatch = check;
+    document.addEventListener("pointerdown", check, true);
+    document.addEventListener("keydown", check, true);
+  }
+
+  _revertUncommitted() {
+    const committed = this._committed ?? normalise(this._initialValue);
+    if (this.value === committed) return;
+    if (committed) this.setAttribute("value", committed);else this.removeAttribute("value");
+    this.requestComponentUpdate("value");
     this.sfSyncFormState();
+
+    this._emit("input");
+
+    this._scheduleTheme(0);
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback?.(); // The theme stays: the page chose it. Only the pending work goes.
+
+    clearTimeout(this._themeTimer);
+    this._themeTimer = null;
+
+    if (this._uncommittedWatch) {
+      this.ownerDocument.removeEventListener("pointerdown", this._uncommittedWatch, true);
+      this.ownerDocument.removeEventListener("keydown", this._uncommittedWatch, true);
+      this._uncommittedWatch = null;
+    }
   }
 
   get customText() {
@@ -267,13 +412,19 @@ class SfColor extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.FormFi
   _pickerInput(event) {
     event.stopPropagation();
 
-    this._write(event.target.value);
+    this._write(event.target.value); // A drag across the picker sends an input per step; the theme is a
+    // whole page of variables, rebuilt once the colour rests for 120 ms.
+
+
+    if (this.isTheme) this._scheduleTheme(THEME_DEBOUNCE);
   }
 
   _pickerChange(event) {
     event.stopPropagation();
 
     this._write(event.target.value);
+
+    if (this.isTheme) this._scheduleTheme(0);
 
     this._commit();
   }
@@ -299,7 +450,13 @@ class SfColor extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.FormFi
       // The host is the form control where the browser has
       // ElementInternals; the hidden input is drawn only without them.
       hiddenName: this.sfInternals ? "" : this.name,
-      label: this.label
+      label: this.label,
+      variant: this.variant,
+      themeLabel: this.themeLabel,
+      themeResetLabel: this.themeResetLabel,
+      // The picker opens on the theme's colour: the chosen one, else the
+      // Framework's once the palette is here.
+      pickerValue: this.value || this.inheritedValue || (this.isTheme ? globalThis.SF?.ThemePalette?.DEFAULT_THEME_COLOR : "") || ""
     });
   }
 
@@ -339,6 +496,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 // the system already does well.
 
 function renderColorTemplate(context) {
+  if (context.variant === 'theme') return renderThemeTemplate(context);
   const {
     painted,
     isSet,
@@ -407,6 +565,56 @@ function renderColorTemplate(context) {
                                 icon="restart_alt"
                                 data-action="clear"
                                 aria-label=${context.clearLabel}
+                                ?disabled=${disabled}
+                                @click=${() => context.component.clear()}
+                        ></sf-icon-button>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        </div>
+    `;
+} // variant theme: one icon-only primary button that opens the same native
+// picker. The input stays in the tree under the button -- transparent, out of
+// the focus order and out of the accessibility tree -- so the picker opens
+// where the button is; the button is what a keyboard reaches and what a screen
+// reader names («Цвет темы», «Theme colour»).
+
+function renderThemeTemplate(context) {
+  const {
+    isSet,
+    disabled,
+    size
+  } = context;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <div class="sf-color sf-color--theme sf-color--size-${size}"
+             data-set=${isSet ? 'true' : 'false'}>
+            <span class="sf-color-theme">
+                <input
+                        type="color"
+                        class="sf-color-input"
+                        tabindex="-1"
+                        aria-hidden="true"
+                        .value=${context.pickerValue || '#000000'}
+                        ?disabled=${disabled}
+                        @input=${event => context.component._pickerInput(event)}
+                        @change=${event => context.component._pickerChange(event)}
+                >
+                <sf-icon-button
+                        size=${size}
+                        icon="palette"
+                        data-action="theme"
+                        aria-label=${context.themeLabel}
+                        title=${context.themeLabel}
+                        ?disabled=${disabled}
+                        @click=${() => context.component._openPicker()}
+                ></sf-icon-button>
+            </span>
+            ${context.hiddenName ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<input type="hidden" name=${context.hiddenName} .value=${context.value}>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+            ${context.clearable && isSet ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+                        <sf-icon-button
+                                appearance="link"
+                                size=${size}
+                                icon="restart_alt"
+                                data-action="clear"
+                                aria-label=${context.themeResetLabel}
+                                title=${context.themeResetLabel}
                                 ?disabled=${disabled}
                                 @click=${() => context.component.clear()}
                         ></sf-icon-button>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
@@ -579,9 +787,13 @@ const FormField = Base => class extends Base {
     if (this.sfValidityAnchor()) return null;
     const required = this.hasAttribute('required') && this.getAttribute('required') !== 'false';
     const value = this.sfFormValue?.();
+    const valueMissing = required && !this.disabled && (value === null || value === undefined || value === ''); // The word only when it is said: asked on every sync, a component without
+    // it warned «no word value-missing» on each optional field (simai.main,
+    // sf-button-group in property-view's choice field, 2026-10-28).
+
     return {
-      valueMissing: required && !this.disabled && (value === null || value === undefined || value === ''),
-      message: this.sfWord?.('value-missing') || 'value-missing',
+      valueMissing,
+      message: valueMissing ? this.sfWord?.('value-missing') || 'value-missing' : '',
       anchor: null
     };
   }
@@ -942,21 +1154,21 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shi
 /***/ "9a1741f2071b"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.color","tag":"sf-color","version":"1.2.3","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"appearance":{"type":"enum","values":["bordered","outlined","plain"],"default":"bordered"},"swatches":{"type":"string","default":""},"clearable":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"name":{"type":"string","default":""},"label":{"type":"string","default":""},"choose-label":{"type":"string","default-from":"runtime.choose"},"clear-label":{"type":"string","default-from":"runtime.clear"}},"values":{"value":{"type":"string","default":""},"effective-value":{"type":"string"}},"events":{"change":{"carries":{"value":"string","name":"string"}},"input":{"carries":{"value":"string","name":"string"}}},"actions":{"clear":{}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-color-gap":{"type":"length"},"--sf-color-chip-radius":{"type":"length"},"--sf-color-chip-border-color":{"type":"color","state":"rest"},"--sf-color-swatches-gap":{"type":"length"},"--sf-color-inherited-color":{"type":"color","state":"inherited"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.color","tag":"sf-color","version":"1.3.0","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"appearance":{"type":"enum","values":["bordered","outlined","plain"],"default":"bordered"},"variant":{"type":"enum","values":["field","theme"],"default":"field"},"swatches":{"type":"string","default":""},"clearable":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"name":{"type":"string","default":""},"label":{"type":"string","default":""},"choose-label":{"type":"string","default-from":"runtime.choose"},"clear-label":{"type":"string","default-from":"runtime.clear"}},"values":{"value":{"type":"string","default":""},"effective-value":{"type":"string"}},"events":{"change":{"carries":{"value":"string","name":"string"}},"input":{"carries":{"value":"string","name":"string"}}},"actions":{"clear":{}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-color-gap":{"type":"length"},"--sf-color-chip-radius":{"type":"length"},"--sf-color-chip-border-color":{"type":"color","state":"rest"},"--sf-color-swatches-gap":{"type":"length"},"--sf-color-inherited-color":{"type":"color","state":"inherited"}}}');
 
 /***/ },
 
 /***/ "5e8168ed58c0"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Color","runtime":{"choose":"Choose a colour","clear":"Use the inherited colour","custom":"Custom","inherited":"inherited","reset":"Reset to inherited","described":"Inherited: {value}"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Color","runtime":{"choose":"Choose a colour","clear":"Use the inherited colour","custom":"Custom","inherited":"inherited","reset":"Reset to inherited","described":"Inherited: {value}","value-missing":"Choose a colour.","theme":"Theme colour","theme-reset":"Use the original theme colour"}}');
 
 /***/ },
 
 /***/ "5145baaa7717"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Цвет","runtime":{"choose":"Выбрать цвет","clear":"Вернуть унаследованный","custom":"Свой","inherited":"наследуется","reset":"Сбросить к наследуемому","described":"Наследуется: {value}"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Цвет","runtime":{"choose":"Выбрать цвет","clear":"Вернуть унаследованный","custom":"Свой","inherited":"наследуется","reset":"Сбросить к наследуемому","described":"Наследуется: {value}","value-missing":"Выберите цвет.","theme":"Цвет темы","theme-reset":"Вернуть исходный цвет темы"}}');
 
 /***/ }
 

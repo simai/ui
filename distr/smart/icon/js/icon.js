@@ -435,12 +435,31 @@ class SfIcon extends IconElement {
       label: String(this.getProp("label") || "").trim(),
       badge: (0,_helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_3__.elementBadge)(this)
     };
+  } // Classes someone else put on the glyph stay through a re-render: the
+  // template writes the whole class attribute, and Docara's icon runtime lost
+  // the face class it had set (sf-icon-complete), so a name outside the fast
+  // subset drew as broken ligatures (simai/docara#35). The glyph's classes
+  // that the last render did not write are carried into the next.
+
+
+  foreignGlyphClasses() {
+    const glyph = this.querySelector(":scope > i.sf-icon, :scope > .sf-badge-anchor > i.sf-icon");
+    if (!glyph) return "";
+    const written = new Set(String(this.__sfIconWrittenClass || "").split(/\s+/).filter(Boolean)); // The element's own family is never foreign, so a first paint printed
+    // before the element ran (its classes not yet recorded) hands over no
+    // stale size or weight.
+
+    const own = /^sf-icon(?:$|--)|^sf-icon-loaded$/;
+    return [...glyph.classList].filter(name => !written.has(name) && !own.test(name)).join(" ");
   }
 
   template() {
-    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_2__.renderIconTemplate)({ ...this.templateContext(),
-      ...this.templateData
+    const result = (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_2__.renderIconTemplate)({ ...this.templateContext(),
+      ...this.templateData,
+      foreignClass: this.foreignGlyphClasses()
     });
+    this.__sfIconWrittenClass = result.__sfIconClass;
+    return result;
   }
 
 }
@@ -482,13 +501,17 @@ function getIconData(context) {
     rootStyle,
     grade,
     opticalSize,
-    label
+    label,
+    foreignClass
   } = context;
-  const className = ["sf-icon", size ? `sf-icon--size-${size}` : "", loaded ? "sf-icon-loaded" : "", weightClass ? `sf-icon--weight-${weightClass}` : "", rounded ? "sf-icon--rounded" : "", sharp ? "sf-icon--sharp" : "", filled ? "sf-icon--filled" : "", rootClass].filter(Boolean).join(" ");
+  const ownClass = ["sf-icon", size ? `sf-icon--size-${size}` : "", loaded ? "sf-icon-loaded" : "", weightClass ? `sf-icon--weight-${weightClass}` : "", rounded ? "sf-icon--rounded" : "", sharp ? "sf-icon--sharp" : "", filled ? "sf-icon--filled" : "", rootClass].filter(Boolean).join(" "); // What the element did not write itself (sf-icon's foreignGlyphClasses).
+
+  const className = [ownClass, foreignClass].filter(Boolean).join(" ");
   const style = [rootStyle, `--sf-icon--grade:${grade}`, `--sf-icon--optical-size:${opticalSize}`].filter(Boolean).join(";");
   return {
     icon,
     className,
+    ownClass,
     style,
     label
   };
@@ -498,32 +521,38 @@ function renderIconTemplate(context) {
   const {
     icon,
     className,
+    ownClass,
     style,
     label
   } = getIconData(context);
-  const badge = context.badge; // With a count or a dot the glyph stands in an anchor of its own box
+  const badge = context.badge;
+
+  const mark = result => Object.assign(result, {
+    __sfIconClass: ownClass
+  }); // With a count or a dot the glyph stands in an anchor of its own box
   // (simai/ui-source#12): the glyph's text is its ligature, so the badge
   // cannot go inside it. A labelled icon is then named by the anchor, with the
   // count after the label; an unlabelled one says the count in hidden words.
 
+
   if ((0,_helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_2__.hasBadge)(badge)) {
-    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span
+    return mark((0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span
       class="sf-badge-anchor sf-badge-anchor--size-${(0,_component_badges_js_anchored_state__WEBPACK_IMPORTED_MODULE_1__.iconBadgeStep)(context.size)} sf-badge-anchor--square"
       role=${label ? "img" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       aria-label=${label ? (0,_helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_2__.nameWithBadge)(label, badge.phrase) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       ><i class="${className}" style=${style} aria-hidden="true">${icon}</i
       >${(0,_helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_2__.renderAnchoredBadge)(badge)}${label ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : (0,_helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_2__.renderAnchoredBadgeText)(badge, false)}</span
-    >`;
+    >`);
   }
 
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<i
+  return mark((0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<i
     class="${className}"
     style=${style}
     role=${label ? "img" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     aria-label=${label || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     aria-hidden=${label ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : "true"}
     >${icon}</i
-  >`;
+  >`);
 }
 renderIconTemplate.getIconData = getIconData;
 __webpack_async_result__();
@@ -569,7 +598,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-icon 
 /***/ "756bf22cb853"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.icon","tag":"sf-icon","version":"1.1.3","kind":"leaf","settings":{"icon":{"type":"icon","default":""},"filled":{"type":"boolean","default":false},"weight":{"type":"number","integer":true,"min":100,"max":700,"step":100,"default":400},"size":{"type":"enum","values":["","1/4","1/3","1/2","1","2","3","4","5","6","7"],"default":""},"type":{"type":"enum","values":["","outlined","rounded","sharp"],"default":""},"grade":{"type":"number","integer":true,"min":-50,"max":200,"default":0},"optical-size":{"type":"number","min":20,"max":48,"default":24},"label":{"type":"string","default":""},"badge-count":{"type":"string","default":""},"badge-dot":{"type":"boolean","default":false},"badge-cap":{"type":"number","integer":true,"min":1,"default":99},"badge-label":{"type":"string","default":""}},"values":{"loaded":{"type":"boolean","default":false}},"events":{},"actions":{},"css-variables":{"--sf-icon-color":{"type":"color","state":"default"},"--sf-icon-glyph-size":{"type":"length","state":"default"},"--sf-icon-weight":{"type":"number","state":"default"},"--sf-icon-fill":{"type":"number","state":"default"},"--sf-icon-line-height":{"type":"number","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.icon","tag":"sf-icon","version":"1.1.4","kind":"leaf","settings":{"icon":{"type":"icon","default":""},"filled":{"type":"boolean","default":false},"weight":{"type":"number","integer":true,"min":100,"max":700,"step":100,"default":400},"size":{"type":"enum","values":["","1/4","1/3","1/2","1","2","3","4","5","6","7"],"default":""},"type":{"type":"enum","values":["","outlined","rounded","sharp"],"default":""},"grade":{"type":"number","integer":true,"min":-50,"max":200,"default":0},"optical-size":{"type":"number","min":20,"max":48,"default":24},"label":{"type":"string","default":""},"badge-count":{"type":"string","default":""},"badge-dot":{"type":"boolean","default":false},"badge-cap":{"type":"number","integer":true,"min":1,"default":99},"badge-label":{"type":"string","default":""}},"values":{"loaded":{"type":"boolean","default":false}},"events":{},"actions":{},"css-variables":{"--sf-icon-color":{"type":"color","state":"default"},"--sf-icon-glyph-size":{"type":"length","state":"default"},"--sf-icon-weight":{"type":"number","state":"default"},"--sf-icon-fill":{"type":"number","state":"default"},"--sf-icon-line-height":{"type":"number","state":"default"}}}');
 
 /***/ },
 
