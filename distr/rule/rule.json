@@ -1519,6 +1519,33 @@
     "type": "smart"
   },
   {
+    "name": "cl-rich-text",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "icon-buttons"
+      },
+      {
+        "name": "icons"
+      },
+      {
+        "name": "cl-popover"
+      },
+      {
+        "name": "cl-input"
+      },
+      {
+        "name": "cl-button"
+      }
+    ],
+    "tags": [
+      "sf-rich-text"
+    ],
+    "type": "smart"
+  },
+  {
     "name": "cl-site-header",
     "css": true,
     "js": true,
