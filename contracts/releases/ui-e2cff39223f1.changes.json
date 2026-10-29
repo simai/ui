@@ -1,0 +1,25 @@
+{
+  "schema": "simai.framework.unit-change-report",
+  "schema_version": 1,
+  "source": "simai/ui-source",
+  "from": {
+    "revision": "c1ff555bfe416278ac18315b78e56cfe069a0cfe",
+    "release": "ui-466d8f260e58"
+  },
+  "to": {
+    "revision": "e0e49367a0c81b538cc6fe385dafec22647d34fa",
+    "release": "ui-e2cff39223f1"
+  },
+  "added": [],
+  "removed": [],
+  "changed": [
+    {
+      "id": "port.simai.dataview-port",
+      "from_version": "1.12.0",
+      "to_version": "1.13.0",
+      "step": "minor"
+    }
+  ],
+  "dependencies_changed": [],
+  "violations": []
+}

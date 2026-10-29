@@ -8,6 +8,9 @@
 
 ### Исправлено
 
+- The change journal records the thirty-nine dated event names of the SIMAI Pro chat components (record event-chat-vocabulary-names, removed after 2026-12-01), so the chat components in their standard 1.4 form pass change-lifecycle over a package.
+- simai.dataview-port 1.13.0: query.count names the event the pagination sends today.
+
 - table-frame 1.0.1: a cell keeps its words whole. The base typography's `word-break: break-word` on `table` broke a header inside a word in a narrow column («Парамет-р»); the table inside the frame sets `word-break: normal` and `overflow-wrap: normal`, and the frame scrolls instead.
 
 - New utility table-frame 1.0.0 (class `table-frame` on a wrapper around a `.table`): a hairline frame with the surface corner that scrolls sideways; separate borders, gridlines after and under each cell, a filled head in the container's dimmed-text role; public variables `--sf-table-frame-*` for the colours and the ladder paddings (`core.runtime` 1.6.1).
