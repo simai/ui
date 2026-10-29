@@ -8,6 +8,12 @@
 
 ### Исправлено
 
+- New utility table-frame 1.0.0 (class `table-frame` on a wrapper around a `.table`): a hairline frame with the surface corner that scrolls sideways; separate borders, gridlines after and under each cell, a filled head in the container's dimmed-text role; public variables `--sf-table-frame-*` for the colours and the ladder paddings (`core.runtime` 1.6.1).
+- Theme 1.1.1: a choice button (`.sf-theme-button[data-theme]`) on an sf-icon-button or sf-button host stays a choice after the host has started and handed `data-theme` to the button it draws: its glyph no longer flips with the page, and a click chooses the theme instead of toggling it. The active look reaches an inner sf-icon-button too.
+- sf-datepicker 1.2.0: `hint` and `hint-icon` are its settings, forwarded to the inner sf-input (`text-end` stays unsupported).
+- sf-pagination 1.1.2: the utility hint names the pagination root again, and the docs promise the row's box the stylesheet publishes.
+- A dated event name says which event it is an alias of; the change journal records the seventy-seven dated event names; the generated contract registry carries the manifests it describes; `x-words` names a string setting of its own file.
+
 - New Smart component sf-site-header 1.0.0: one top bar for SIMAI sites -- brand, navigation, actions and tools, collapsing into a side panel on a narrow screen (layer stack, focus kept, Escape closes); gutters from .container.
 - sf-color 1.3.0, variant theme: an icon-only palette button that opens the platform colour picker and rebuilds the page theme from the colour (SF.ThemePalette), with a reset to the original colour.
 - SF.ThemePalette loads on its own: component theme-palette (SF.Loader.ensurePlugin('theme-palette') or data-sf-theme-palette); SF.Loader.ready hands over an API object as well as a class.
