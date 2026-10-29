@@ -1,0 +1,25 @@
+{
+  "schema": "simai.framework.unit-change-report",
+  "schema_version": 1,
+  "source": "simai/ui-source",
+  "from": {
+    "revision": "88359bc0a15afa356b4c01e84d09fa5f3e05c447",
+    "release": "ui-0c8735b2dc5b"
+  },
+  "to": {
+    "revision": "c1ff555bfe416278ac18315b78e56cfe069a0cfe",
+    "release": "ui-466d8f260e58"
+  },
+  "added": [],
+  "removed": [],
+  "changed": [
+    {
+      "id": "utility.table-frame",
+      "from_version": "1.0.0",
+      "to_version": "1.0.1",
+      "step": "patch"
+    }
+  ],
+  "dependencies_changed": [],
+  "violations": []
+}

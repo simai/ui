@@ -8,6 +8,8 @@
 
 ### Исправлено
 
+- table-frame 1.0.1: a cell keeps its words whole. The base typography's `word-break: break-word` on `table` broke a header inside a word in a narrow column («Парамет-р»); the table inside the frame sets `word-break: normal` and `overflow-wrap: normal`, and the frame scrolls instead.
+
 - New utility table-frame 1.0.0 (class `table-frame` on a wrapper around a `.table`): a hairline frame with the surface corner that scrolls sideways; separate borders, gridlines after and under each cell, a filled head in the container's dimmed-text role; public variables `--sf-table-frame-*` for the colours and the ladder paddings (`core.runtime` 1.6.1).
 - Theme 1.1.1: a choice button (`.sf-theme-button[data-theme]`) on an sf-icon-button or sf-button host stays a choice after the host has started and handed `data-theme` to the button it draws: its glyph no longer flips with the page, and a click chooses the theme instead of toggling it. The active look reaches an inner sf-icon-button too.
 - sf-datepicker 1.2.0: `hint` and `hint-icon` are its settings, forwarded to the inner sf-input (`text-end` stays unsupported).
