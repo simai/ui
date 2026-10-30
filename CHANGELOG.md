@@ -8,6 +8,7 @@
 
 ### Добавлено
 
+- The larena package reference names sf-mail-library and sf-mail-letters, moved from simai/ui-mail to simai/ui-pro (D31). core.runtime 1.8.1.
 - The workspace layout, core.styles 1.1.0 and core.runtime 1.8.0: rail, list, main and panel by the width of the container, never the viewport. Below the wide width the open panel is a drawer over main (inert regions, Escape, scrim, focus back to the opener), below the split width one region shows at a time with a back control. SF.workspace(element), the data-sf-workspace-* attributes, sf-workspace-view and sf-workspace-panel, six public variables.
 - smart.badge 1.2.0: activity (running, waiting, done, stopped, failed; an icon or spinner and a word in the page language, activity wins over status) and compact (the icon alone, the word as the accessible name). component.badges 1.1.0.
 - sf-tag 1.1.6: the remove button keeps to the label line. A removable tag is as tall as a plain one at every size (it was taller at 1/3, 1/2 and 2), the mark scales with the size, the hit target stays 24 by 24 px and clear of the label on interactive and checkbox tags. Visible on every page with removable tags. sf-lookup 1.0.2: chip rows keep their hit targets apart when they wrap.

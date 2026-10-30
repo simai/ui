@@ -216,6 +216,8 @@ class FrameworkContractRegistryTest(unittest.TestCase):
                         "smart.chat-window",
                         "smart.data-view",
                         "smart.data-view-composite",
+                        "smart.mail-letters",
+                        "smart.mail-library",
                         "smart.message-log",
                         "smart.property-view",
                         "smart.thread-list",
