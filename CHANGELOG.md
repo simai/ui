@@ -8,6 +8,8 @@
 
 ### Добавлено
 
+- sf-lookup 1.1.0: notice in the provider's answer, a line of the host's own under the rows. The larena package reference holds sf-chat-window 1.4.0's relations (sf-lookup, sf-input, sf-button, avatars). SF.notify takes a string as the text and warns in the console when there is nothing to show (component.toast 1.0.1). sf-input 1.4.1 and sf-textarea: element.focus() on the host reaches the native control. core.runtime 1.8.3.
+
 - sf-context-menu 1.5.0: the settings rows. submenu="drill" opens a submenu in the panel it was opened from, at a fixed width; switch, range and choice rows and groups (rows or tiles); the cancelable change and the fact changed; the actions set-value, set-all, reset and show, each answering an outcome (component.context-menu 1.1.0).
 - sf-settings-menu 1.0.0 is removed: its work is sf-context-menu's. It had no consumer in any pair.
 - sf-search 1.1.0 asks its host through simai.search-port 1.0.0 (new): the capability says what is possible and the setting says what is wanted. Built-in hosts keep index and provider working; connect-port hands a server's. New: the «Возможно, вы искали …» line, the preview pane on a wide window, a refusal said in the card, sf-search-intent.
