@@ -1286,6 +1286,36 @@
     "type": "smart"
   },
   {
+    "name": "cl-lookup",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "cl-tag"
+      },
+      {
+        "name": "avatars"
+      },
+      {
+        "name": "icons"
+      },
+      {
+        "name": "cl-spinner"
+      },
+      {
+        "name": "cl-button"
+      },
+      {
+        "name": "icon-buttons"
+      }
+    ],
+    "tags": [
+      "sf-lookup"
+    ],
+    "type": "smart"
+  },
+  {
     "name": "cl-menu",
     "css": true,
     "js": true,
