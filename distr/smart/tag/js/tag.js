@@ -375,6 +375,26 @@ __webpack_async_result__();
 
 /***/ },
 
+/***/ "b22d4f28d908"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   CLOSE_SIZE: () => (/* binding */ CLOSE_SIZE),
+/* harmony export */   closeSize: () => (/* binding */ closeSize)
+/* harmony export */ });
+// The size sf-tag asks sf-icon-button for, for its remove button. The button's
+// sizes are 1/3, 1/2, 1, 2 and 3; the tag asks for the smallest at every tag
+// size and its stylesheet draws the box from the label (templates/default.css).
+// Before 1.1.6 sizes 1/2 and 1/3 asked for 1/4, a size the button does not
+// have, and it fell back to size 1. A pure module, so a contract reads it.
+const CLOSE_SIZE = '1/3';
+function closeSize() {
+  return CLOSE_SIZE;
+}
+
+/***/ },
+
 /***/ "a038e9885b82"
 (module, __webpack_exports__, __webpack_require__) {
 
@@ -385,18 +405,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
 /* harmony import */ var _default_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("eab03d52c052");
+/* harmony import */ var _close_size_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("b22d4f28d908");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__]);
 var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
 
- // Sizes 1, 2 and 3 take the larger close and dot; 1/2 and 1/3 the smaller.
+
+ // Sizes 1, 2 and 3 take the larger dot; 1/2 and 1/3 the smaller.
 
 const LARGE_SIZES = new Set(['1', '2', '3']);
-
-function closeSize(size) {
-  return LARGE_SIZES.has(size) ? '1/3' : '1/4';
-}
 
 function dotSize(size) {
   return LARGE_SIZES.has(size) ? '1/2' : '1/3';
@@ -490,7 +508,7 @@ function renderClose(context) {
   return context.component?.hasSlotContent?.('close') ? context.component.getSlotContent('close') : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
                 <sf-icon-button
                         kind="close"
-                        size="${closeSize(context.size)}"
+                        size="${(0,_close_size_js__WEBPACK_IMPORTED_MODULE_2__.closeSize)(context.size)}"
                         appearance="link"
                         scheme="on-surface"
                         ?disabled=${context.disabled}
@@ -635,7 +653,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-tag f
 /***/ "7eee137ec5ff"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tag","tag":"sf-tag","version":"1.1.5","kind":"leaf","settings":{"kind":{"type":"enum","values":["checkbox","icon","default","color","avatar"],"default":"checkbox"},"status":{"type":"enum","values":["","info","success","warning","error"],"default":""},"appearance":{"type":"enum","values":["default","surface","ghost"],"default":"default"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1/2"},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"inline":{"type":"boolean","default":false},"text":{"type":"string","default":""},"count":{"type":"string","default":""},"icon":{"type":"icon","default":""},"color-class":{"type":"string","default":""},"avatar-image-url":{"type":"string","default":""},"avatar-text":{"type":"string","default":""},"avatar-status":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"closable":{"type":"boolean","optional":true},"interactive":{"type":"boolean","default":false},"close-label":{"type":"string","default-from":"runtime.remove"}},"values":{"active":{"type":"boolean","default":false}},"events":{"change":{"carries":{"active":"boolean"}},"close":{"carries":{}}},"actions":{},"css-variables":{"--sf-tag-background-color":{"type":"color","state":"default"},"--sf-tag-color":{"type":"color","state":"default"},"--sf-tag-radius":{"type":"length","state":"default"},"--sf-tag-padding-inline":{"type":"length","state":"default"},"--sf-tag-padding-block":{"type":"length","state":"default"},"--sf-tag-gap":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tag","tag":"sf-tag","version":"1.1.6","kind":"leaf","settings":{"kind":{"type":"enum","values":["checkbox","icon","default","color","avatar"],"default":"checkbox"},"status":{"type":"enum","values":["","info","success","warning","error"],"default":""},"appearance":{"type":"enum","values":["default","surface","ghost"],"default":"default"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1/2"},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"inline":{"type":"boolean","default":false},"text":{"type":"string","default":""},"count":{"type":"string","default":""},"icon":{"type":"icon","default":""},"color-class":{"type":"string","default":""},"avatar-image-url":{"type":"string","default":""},"avatar-text":{"type":"string","default":""},"avatar-status":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"closable":{"type":"boolean","optional":true},"interactive":{"type":"boolean","default":false},"close-label":{"type":"string","default-from":"runtime.remove"}},"values":{"active":{"type":"boolean","default":false}},"events":{"change":{"carries":{"active":"boolean"}},"close":{"carries":{}}},"actions":{},"css-variables":{"--sf-tag-background-color":{"type":"color","state":"default"},"--sf-tag-color":{"type":"color","state":"default"},"--sf-tag-radius":{"type":"length","state":"default"},"--sf-tag-padding-inline":{"type":"length","state":"default"},"--sf-tag-padding-block":{"type":"length","state":"default"},"--sf-tag-gap":{"type":"length","state":"default"}}}');
 
 /***/ },
 

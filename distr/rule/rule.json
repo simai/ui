@@ -722,6 +722,10 @@
       },
       {
         "name": "sr-only/default"
+      },
+      {
+        "lazy": true,
+        "name": "spinner"
       }
     ],
     "tags": [

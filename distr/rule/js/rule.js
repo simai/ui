@@ -3614,6 +3614,11 @@ SF.RuleLoader['cl-badge'] = {
   // (Larena, «Элементы: 7 7», 2026-10-12).
   {
     name: 'sr-only/default'
+  }, // The spinner of activity running: its slot is drawn by the badge sheet, the
+  // motion by the spinner's, fetched after the page is ready.
+  {
+    name: 'spinner',
+    lazy: true
   }]
 }; // The bundle's former name cl-badges (the folder was `badges` until standard
 // 1.3.8 §3, §21 gave it the tag's name) is not a rule here: a rule of type

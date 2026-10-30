@@ -145,6 +145,210 @@ __webpack_async_result__();
 
 /***/ },
 
+/***/ "50d2a204ba4c"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   SPINNER_DEFAULT_LOOK: () => (/* binding */ SPINNER_DEFAULT_LOOK),
+/* harmony export */   SPINNER_DOTS: () => (/* binding */ SPINNER_DOTS),
+/* harmony export */   SPINNER_DOTS_FILLED: () => (/* binding */ SPINNER_DOTS_FILLED),
+/* harmony export */   SPINNER_GRID: () => (/* binding */ SPINNER_GRID),
+/* harmony export */   SPINNER_LOOKS: () => (/* binding */ SPINNER_LOOKS),
+/* harmony export */   SPINNER_STROKE: () => (/* binding */ SPINNER_STROKE),
+/* harmony export */   createInlineSpinner: () => (/* binding */ createInlineSpinner),
+/* harmony export */   createLadderSpinnerSvg: () => (/* binding */ createLadderSpinnerSvg),
+/* harmony export */   createSpinnerSvg: () => (/* binding */ createSpinnerSvg),
+/* harmony export */   createSvgNode: () => (/* binding */ createSvgNode),
+/* harmony export */   normalizeSpinnerLook: () => (/* binding */ normalizeSpinnerLook)
+/* harmony export */ });
+// The spinner's drawing, without the component's side effects (no registry, no
+// observer), so a control that shows work in place of its icon -- a button, an
+// icon button, a group's segment, a modal waiting for its content -- draws the
+// one spinner of the Framework without loading or binding the spinner
+// component (simai/ui-source#10).
+//
+// The ladder: a spinner is drawn on the icon grid. Material Symbols are drawn on
+// 24 units and, at the regular weight the Framework's controls use, stroke 2 of
+// them; a spinner on the same grid, scaled to the icon box of a step, strokes as
+// the icons of that step do, and needs no stroke of its own per step.
+//
+// The looks (simai/ui-source#11): every spinner carries the four looks on the
+// same ring -- the arc and the breathing arc (one circle, two motions), the
+// comet and the dots -- and the spinner sheet shows the one the page asks for:
+// data-sf-spinner on html, body or any block (the nearest wins), data-variant on
+// the spinner itself above both. The choice is CSS alone, so a page that
+// changes the attribute changes every spinner at once, drawn or not yet drawn.
+// Without the spinner sheet only the arc is shown, still.
+const SVG_NS = 'http://www.w3.org/2000/svg';
+const SPINNER_GRID = 24;
+const SPINNER_STROKE = 2;
+const SPINNER_LOOKS = ['arc', 'breathing', 'comet', 'dots'];
+const SPINNER_DEFAULT_LOOK = 'arc'; // The dots look on the grid: a ring of dots as big as the stroke allows, so at
+// every step the dots are the step's and no attribute sizes them.
+
+const SPINNER_DOTS = 8;
+const SPINNER_DOTS_FILLED = 3; // The comet: a head and a tail a little under half the ring, in segments whose
+// opacity falls towards the end of the tail. Segments rather than a gradient,
+// because an SVG gradient cannot follow a circle and a CSS one would leave the
+// ring and its stroke; each segment strokes in the current ink.
+
+const COMET_SEGMENTS = 10;
+const COMET_LENGTH = 40;
+function normalizeSpinnerLook(value, fallback = SPINNER_DEFAULT_LOOK) {
+  const look = String(value ?? '').trim().toLowerCase();
+  return SPINNER_LOOKS.includes(look) ? look : fallback;
+}
+function createSvgNode(tagName, attributes = {}) {
+  const node = document.createElementNS(SVG_NS, tagName);
+  Object.entries(attributes).forEach(([key, value]) => {
+    if (value === undefined || value === null || value === '') {
+      return;
+    }
+
+    node.setAttribute(key, String(value));
+  });
+  return node;
+}
+
+const round = value => Math.round(value * 1000) / 1000; // The four looks in one drawing. On the ladder it is the 24-unit grid with
+// stroke 2; a spinner still drawn in pixels (the deprecated attributes) passes
+// its own width, height and stroke. The circles carry presentation attributes
+// as well as their classes: the spinner sheet styles them (track colour, the
+// motion of each look, the still frame under reduced motion), and until that
+// sheet has arrived they draw a faint ring and the arc in the current ink
+// rather than a filled black disc; the comet and the dots wait hidden. The arc
+// is a fixed 30% of the ring (simai/ui-source#13): the sheet turns the drawing,
+// the arc itself never changes length.
+
+
+function createSpinnerSvg({
+  width = SPINNER_GRID,
+  height = SPINNER_GRID,
+  stroke = SPINNER_STROKE,
+  dots = SPINNER_DOTS,
+  filled = SPINNER_DOTS_FILLED,
+  dotRadius = null,
+  direction = 'clockwise',
+  pixel = false
+} = {}) {
+  const cx = width / 2;
+  const cy = height / 2;
+  const half = Math.min(width, height) / 2;
+  const radius = Math.max(1, half - stroke / 2);
+  const svg = createSvgNode('svg', {
+    class: 'sf-loader-svg',
+    viewBox: `0 0 ${width} ${height}`,
+    width: pixel ? width : null,
+    height: pixel ? height : null,
+    'aria-hidden': 'true',
+    focusable: 'false'
+  });
+  const ring = {
+    cx,
+    cy,
+    r: round(radius),
+    fill: 'none',
+    stroke: 'currentColor',
+    'stroke-width': stroke
+  };
+  const track = createSvgNode('circle', {
+    class: 'sf-loader-ring-filled',
+    ...ring,
+    opacity: '0.3'
+  });
+  const accent = createSvgNode('circle', {
+    class: 'sf-loader-ring-accent',
+    ...ring,
+    'stroke-linecap': 'round',
+    pathLength: 100,
+    'stroke-dasharray': '30 70',
+    transform: `rotate(90 ${cx} ${cy})`
+  }); // The comet starts at the top and runs clockwise: segment 0 is the end of the
+  // tail, the last one the head, drawn last and with a round cap.
+
+  const comet = createSvgNode('g', {
+    class: 'sf-loader-comet',
+    display: 'none',
+    transform: `rotate(-90 ${cx} ${cy})`
+  });
+  const segment = COMET_LENGTH / COMET_SEGMENTS;
+
+  for (let index = 0; index < COMET_SEGMENTS; index += 1) {
+    const head = index === COMET_SEGMENTS - 1;
+    comet.append(createSvgNode('circle', {
+      class: `sf-loader-comet-segment${head ? ' sf-loader-comet-head' : ''}`,
+      ...ring,
+      'stroke-linecap': head ? 'round' : 'butt',
+      pathLength: 100,
+      'stroke-dasharray': `${round(segment)} ${round(100 - segment)}`,
+      'stroke-dashoffset': round(-segment * index),
+      opacity: round(((index + 1) / COMET_SEGMENTS) ** 1.6)
+    }));
+  } // The dots sit on the same ring: a dot as wide as the stroke allows without
+  // touching its neighbours, so fewer dots are bigger ones.
+
+
+  const count = Math.max(3, Math.min(32, Math.floor(Number(dots) || SPINNER_DOTS)));
+  const active = Math.max(1, Math.min(count, Math.floor(Number(filled) || SPINNER_DOTS_FILLED)));
+  const fitted = Math.min(stroke, 0.7 * Math.PI * (half - stroke) / count);
+  const dotR = dotRadius === null || dotRadius === undefined || dotRadius === '' ? fitted : Math.max(1, Math.min(Number(dotRadius) || fitted, half / 4));
+  const orbit = Math.max(dotR, half - dotR);
+  const dotsGroup = createSvgNode('g', {
+    class: 'sf-loader-dots',
+    display: 'none',
+    style: `--sf-loader-dot-count:${count}; --sf-loader-dot-filled:${active};`
+  });
+
+  for (let index = 0; index < count; index += 1) {
+    const angle = Math.PI * 2 / count * index - Math.PI / 2;
+    const step = direction === 'counterclockwise' ? index : (count - index) % count;
+    dotsGroup.append(createSvgNode('circle', {
+      class: `sf-loader-dot${index < active ? ' sf-loader-dot--active' : ''}`,
+      cx: round(cx + orbit * Math.cos(angle)),
+      cy: round(cy + orbit * Math.sin(angle)),
+      r: round(dotR),
+      fill: 'currentColor',
+      style: `--sf-loader-dot-index:${index}; --sf-loader-dot-step:${step};`
+    }));
+  }
+
+  svg.append(track, accent, comet, dotsGroup);
+  return svg;
+} // The drawing on the icon grid, the one every spinner on the ladder uses.
+
+function createLadderSpinnerSvg(options = {}) {
+  return createSpinnerSvg({ ...options,
+    width: SPINNER_GRID,
+    height: SPINNER_GRID,
+    stroke: SPINNER_STROKE,
+    dotRadius: null,
+    pixel: false
+  });
+} // A spinner that stands in a control: endless, decorative (the control keeps
+// its label and says aria-busy), and marked bound so the spinner component,
+// when it is on the page, leaves it as drawn. `className` names the control's
+// slot for it; `overlay` lays it over the control's hidden label instead of in
+// the place of an icon. Its look is the page's, as every spinner's.
+
+function createInlineSpinner({
+  className = '',
+  overlay = false
+} = {}) {
+  const root = document.createElement('span');
+  root.className = ['sf-loader-container', 'sf-loader--infinite', className, className && overlay ? `${className}--overlay` : ''].filter(Boolean).join(' ');
+  root.dataset.sfSpinnerBound = '1';
+  root.dataset.infinite = 'true';
+  root.setAttribute('aria-hidden', 'true');
+  const indicator = document.createElement('span');
+  indicator.className = 'sf-loader--loading-indicator';
+  indicator.append(createLadderSpinnerSvg());
+  root.append(indicator);
+  return root;
+}
+
+/***/ },
+
 /***/ "d39108e5ef4f"
 (module, __webpack_exports__, __webpack_require__) {
 
@@ -176,6 +380,36 @@ const BADGE_COLOUR_ROLES = ['neutral', 'primary', 'secondary', 'tertiary', 'on-s
 const BADGE_STATUSES = ['', 'info', 'success', 'warning', 'error'];
 const BADGE_STATUS_LEGACY = {
   error: 'danger'
+}; // What each run state draws. A spinner has no icon name; the words are in
+// lang/ (runtime activity-*). The role is the colour class, the same classes a
+// status or a colour role paints with, so every appearance holds for it.
+
+const BADGE_ACTIVITIES = {
+  running: {
+    role: 'neutral',
+    spinner: true,
+    word: 'activity-running'
+  },
+  waiting: {
+    role: 'warning',
+    icon: 'pending_actions',
+    word: 'activity-waiting'
+  },
+  done: {
+    role: 'success',
+    icon: 'check_circle',
+    word: 'activity-done'
+  },
+  stopped: {
+    role: 'neutral',
+    icon: 'stop_circle',
+    word: 'activity-stopped'
+  },
+  failed: {
+    role: 'error',
+    icon: 'error',
+    word: 'activity-failed'
+  }
 };
 
 const normalizeName = value => String(value ?? '').trim().toLowerCase();
@@ -265,12 +499,34 @@ class SfBadge extends BadgeElement {
 
   get status() {
     return this.getProp('status');
+  } // What the run state draws, null without one.
+
+
+  get activityMark() {
+    return BADGE_ACTIVITIES[this.activity] ?? null;
   } // One colour name reaches the class list, because the styles are written that
-  // way: the status when one is set, the colour role otherwise.
+  // way: the run state's role when one is set, then the status, then the colour
+  // role. status and scheme stay as the host set them.
 
 
   get paintedScheme() {
-    return this.status || this.scheme;
+    return this.activityMark?.role || this.status || this.scheme;
+  } // The text the badge draws: the host's, else the run state's word.
+
+
+  get drawnText() {
+    const mark = this.activityMark;
+    return this.text || (mark ? this.sfWord(mark.word) : '');
+  } // The icon shortcut the badge draws: the host's, else the run state's.
+
+
+  get drawnIcon() {
+    return this.icon || this.activityMark?.icon || '';
+  } // The spinner stands in the icon's place only while the host gave no icon.
+
+
+  get activitySpinner() {
+    return Boolean(this.activityMark?.spinner && !this.icon);
   } // Null when the attribute is not there, '' when it is there and empty: an
   // empty icon-start suppresses the icon shortcut, an absent one lets it
   // through. icon-left and icon-right write these through the dated aliases.
@@ -301,6 +557,10 @@ class SfBadge extends BadgeElement {
       iconEnd: this.iconEnd,
       ...variant,
       appearance: this.appearance,
+      paintedScheme: this.paintedScheme,
+      drawnText: this.drawnText,
+      drawnIcon: this.drawnIcon,
+      activitySpinner: this.activitySpinner,
       ariaLabel: this.getAttribute('aria-label') || '',
       component: this
     });
@@ -319,6 +579,8 @@ class SfBadge extends BadgeElement {
       type: this.appearance,
       scheme: this.scheme,
       status: this.status,
+      activity: this.activity,
+      compact: this.compact,
       text: this.text,
       icon: this.icon,
       iconLeft: this.iconStart ?? '',
@@ -351,10 +613,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   renderBadgeTemplate: () => (/* binding */ renderBadgeTemplate)
 /* harmony export */ });
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
+/* harmony import */ var _component_spinner_js_spinner_draw__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("50d2a204ba4c");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__]);
 var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+
 
 
 function createIcon(name) {
@@ -369,17 +633,28 @@ function createIcon(name) {
 function renderBadgeTemplate(context) {
   const normalizedIconPosition = String(context.iconPosition || 'start').toLowerCase();
   const isIconEnd = ['right', 'end'].includes(normalizedIconPosition);
-  const leftIconName = context.iconStart ?? (context.iconLeft || (context.icon && !isIconEnd ? context.icon : ''));
-  const rightIconName = context.iconEnd ?? (context.iconRight || (context.icon && isIconEnd ? context.icon : ''));
-  const leftIconContent = context.component?.hasSlotContent?.('icon-start') ? context.component.getSlotContent('icon-start') : context.component?.hasSlotContent?.('icon-left') ? context.component.getSlotContent('icon-left') : createIcon(leftIconName);
-  const rightIconContent = context.component?.hasSlotContent?.('icon-end') ? context.component.getSlotContent('icon-end') : context.component?.hasSlotContent?.('icon-right') ? context.component.getSlotContent('icon-right') : createIcon(rightIconName);
+  const leftIconName = context.iconStart ?? (context.iconLeft || (context.drawnIcon && !isIconEnd ? context.drawnIcon : ''));
+  const rightIconName = context.iconEnd ?? (context.iconRight || (context.drawnIcon && isIconEnd ? context.drawnIcon : '')); // A run state always has a shape, so it is not told by colour alone: at the
+  // icon's place the mark stands in for no icon, an emptied icon-start included.
+
+  const drawIcon = (name, isMarkPlace) => {
+    if (name || !isMarkPlace || !context.activity) return createIcon(name);
+    return context.activitySpinner ? (0,_component_spinner_js_spinner_draw__WEBPACK_IMPORTED_MODULE_1__.createInlineSpinner)({
+      className: 'sf-badge-spinner'
+    }) : createIcon(context.drawnIcon);
+  };
+
+  const leftIconContent = context.component?.hasSlotContent?.('icon-start') ? context.component.getSlotContent('icon-start') : context.component?.hasSlotContent?.('icon-left') ? context.component.getSlotContent('icon-left') : drawIcon(leftIconName, !isIconEnd);
+  const rightIconContent = context.component?.hasSlotContent?.('icon-end') ? context.component.getSlotContent('icon-end') : context.component?.hasSlotContent?.('icon-right') ? context.component.getSlotContent('icon-right') : drawIcon(rightIconName, isIconEnd);
   const hasTextSlot = context.component?.hasSlotContent?.('text');
-  const hasTextContent = hasTextSlot || String(context.text ?? '').length > 0;
+  const hasTextContent = hasTextSlot || String(context.drawnText ?? '').length > 0;
   const hasAccessibleLabel = String(context.ariaLabel || '').length > 0;
-  const textContent = hasTextSlot ? context.component.getSlotContent('text') : context.text;
-  const classes = ['sf-badge', `sf-badge--${context.appearance ?? context.type}`, // One colour name, as the styles expect: the status when one is set, the
-  // colour role otherwise.
-  `sf-badge--${context.status || context.scheme}`, `sf-badge--size-${context.size}`, context.line ? `sf-badge--line-${context.line}` : '', // Inline: a badge is as wide as its text. As a block-level flex box it
+  const textContent = hasTextSlot ? context.component.getSlotContent('text') : context.drawnText; // Compact needs something to show: with no icon the text stays visible.
+
+  const isCompact = Boolean(context.compact) && (leftIconContent !== lit__WEBPACK_IMPORTED_MODULE_0__.nothing || rightIconContent !== lit__WEBPACK_IMPORTED_MODULE_0__.nothing);
+  const classes = ['sf-badge', `sf-badge--${context.appearance ?? context.type}`, // One colour name, as the styles expect: the run state's role, the status
+  // or the colour role (the component's paintedScheme).
+  `sf-badge--${context.paintedScheme}`, `sf-badge--size-${context.size}`, context.line ? `sf-badge--line-${context.line}` : '', isCompact ? 'sf-badge--compact' : '', // Inline: a badge is as wide as its text. As a block-level flex box it
   // filled whatever held it -- every status in a table cell was a bar the
   // width of the column.
   'inline-flex', 'flex-row', 'flex-nowrap', 'justify-center', 'items-center', context.rootClass].filter(Boolean);
@@ -393,7 +668,7 @@ function renderBadgeTemplate(context) {
       ${leftIconContent}
       ${hasTextContent ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
             <span
-              class="sf-badge-text-container flex items-center"
+              class=${`sf-badge-text-container flex items-center${isCompact ? ' sr-only' : ''}`}
               aria-hidden=${hasAccessibleLabel ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
             >
               <span class="sf-badge-text">${textContent}</span>
@@ -446,21 +721,21 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-badge
 /***/ "55155acfa4cc"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.badge","tag":"sf-badge","version":"1.1.3","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1"],"default":"1/3"},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"appearance":{"type":"enum","values":["main","tonal","outline"],"default":"main"},"scheme":{"type":"enum","values":["neutral","primary","secondary","tertiary","on-surface"],"default":"neutral"},"status":{"type":"enum","values":["","info","success","warning","error"],"default":""},"text":{"type":"string","default":""},"icon":{"type":"icon","default":""},"icon-start":{"type":"icon","optional":true},"icon-end":{"type":"icon","optional":true},"icon-position":{"type":"enum","values":["start","end"],"default":"start"}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-badge-background-color":{"type":"color","state":"default"},"--sf-badge-color":{"type":"color","state":"default"},"--sf-badge-border-color":{"type":"color","state":"default"},"--sf-badge-border-width":{"type":"length","state":"default"},"--sf-badge-radius":{"type":"length","state":"default"},"--sf-badge-padding-inline":{"type":"length","state":"default"},"--sf-badge-padding-block":{"type":"length","state":"default"},"--sf-badge-gap":{"type":"length","state":"default"},"--sf-badge-ring-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.badge","tag":"sf-badge","version":"1.2.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1"],"default":"1/3"},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"appearance":{"type":"enum","values":["main","tonal","outline"],"default":"main"},"scheme":{"type":"enum","values":["neutral","primary","secondary","tertiary","on-surface"],"default":"neutral"},"status":{"type":"enum","values":["","info","success","warning","error"],"default":""},"activity":{"type":"enum","values":["","running","waiting","done","stopped","failed"],"default":""},"compact":{"type":"boolean","default":false},"text":{"type":"string","default":""},"icon":{"type":"icon","default":""},"icon-start":{"type":"icon","optional":true},"icon-end":{"type":"icon","optional":true},"icon-position":{"type":"enum","values":["start","end"],"default":"start"}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-badge-background-color":{"type":"color","state":"default"},"--sf-badge-color":{"type":"color","state":"default"},"--sf-badge-border-color":{"type":"color","state":"default"},"--sf-badge-border-width":{"type":"length","state":"default"},"--sf-badge-radius":{"type":"length","state":"default"},"--sf-badge-padding-inline":{"type":"length","state":"default"},"--sf-badge-padding-block":{"type":"length","state":"default"},"--sf-badge-gap":{"type":"length","state":"default"},"--sf-badge-ring-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 
 /***/ "f6a7c3a64b57"
 (module) {
 
-module.exports = {"title":"Badges"};
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Badges","runtime":{"activity-running":"Running","activity-waiting":"Needs your input","activity-done":"Ready","activity-stopped":"Stopped","activity-failed":"Failed"}}');
 
 /***/ },
 
 /***/ "94f01354b3f6"
 (module) {
 
-module.exports = {"title":"Бейджи"};
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Бейджи","runtime":{"activity-running":"Выполняется","activity-waiting":"Нужен ваш ответ","activity-done":"Готово","activity-stopped":"Остановлено","activity-failed":"Не удалось"}}');
 
 /***/ }
 
