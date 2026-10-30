@@ -1,0 +1,42 @@
+{
+  "schema": "simai.framework.unit-change-report",
+  "schema_version": 1,
+  "source": "simai/ui-source",
+  "from": {
+    "revision": "810850711e27ced91b49f8434c78b335550c8122",
+    "release": "ui-d6292bd6fc34"
+  },
+  "to": {
+    "revision": "a45601185982c3c5a5b33799fea7e923484024a1",
+    "release": "ui-e5f4eb4153ee"
+  },
+  "added": [],
+  "removed": [],
+  "changed": [
+    {
+      "id": "smart.context-menu",
+      "from_version": "1.5.0",
+      "to_version": "1.5.1",
+      "step": "patch"
+    }
+  ],
+  "dependencies_changed": [
+    {
+      "id": "smart.sortable",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "smart.context-menu"
+      ]
+    },
+    {
+      "id": "smart.tabs",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "smart.context-menu"
+      ]
+    }
+  ],
+  "violations": []
+}
