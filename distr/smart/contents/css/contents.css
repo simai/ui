@@ -254,8 +254,28 @@
   }
   .sf-contents--layout-compact {
     position: relative;
+    /* Sticky, the button travels with the reader. The page scrolls under it, so
+       the head takes the page's own surface and gives the band back with a
+       negative margin: without it the text shows through the button's gaps and
+       under the progress line. The column keeps the reading width, so the band
+       is the host's own. */
     /* A row of the open list is a menu's row: the control height of the size,
        its inset, the panel's inset given back. */
+  }
+  .sf-contents--layout-compact.sf-contents--sticky {
+    position: sticky;
+    z-index: var(--sf-z-index-5);
+    z-index: var(--sf-contents-z-index, var(--sf-z-index-5));
+    top: var(--sf-contents--top);
+    inset-block-start: var(--sf-contents--top);
+    padding-top: var(--sf-space-1\/4);
+    padding-bottom: var(--sf-space-1\/4);
+    padding-block: var(--sf-space-1\/4);
+    margin-top: calc(var(--sf-space-1\/4) * -1);
+    margin-bottom: calc(var(--sf-space-1\/4) * -1);
+    margin-block: calc(var(--sf-space-1\/4) * -1);
+    background-color: var(--sf-surface-0);
+    background-color: var(--sf-contents-background, var(--sf-surface-0));
   }
   .sf-contents--layout-compact .sf-contents-head {
     display: flex;
@@ -599,8 +619,28 @@
   @media not all and (min-width: 32rem) {
     .sf-contents--layout-auto.sf-contents--collapse-sm {
       position: relative;
+      /* Sticky, the button travels with the reader. The page scrolls under it, so
+         the head takes the page's own surface and gives the band back with a
+         negative margin: without it the text shows through the button's gaps and
+         under the progress line. The column keeps the reading width, so the band
+         is the host's own. */
       /* A row of the open list is a menu's row: the control height of the size,
          its inset, the panel's inset given back. */
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--sticky {
+      position: sticky;
+      z-index: var(--sf-z-index-5);
+      z-index: var(--sf-contents-z-index, var(--sf-z-index-5));
+      top: var(--sf-contents--top);
+      inset-block-start: var(--sf-contents--top);
+      padding-top: var(--sf-space-1\/4);
+      padding-bottom: var(--sf-space-1\/4);
+      padding-block: var(--sf-space-1\/4);
+      margin-top: calc(var(--sf-space-1\/4) * -1);
+      margin-bottom: calc(var(--sf-space-1\/4) * -1);
+      margin-block: calc(var(--sf-space-1\/4) * -1);
+      background-color: var(--sf-surface-0);
+      background-color: var(--sf-contents-background, var(--sf-surface-0));
     }
     .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-head {
       display: flex;
@@ -800,8 +840,28 @@
   @media not all and (min-width: 44rem) {
     .sf-contents--layout-auto.sf-contents--collapse-md {
       position: relative;
+      /* Sticky, the button travels with the reader. The page scrolls under it, so
+         the head takes the page's own surface and gives the band back with a
+         negative margin: without it the text shows through the button's gaps and
+         under the progress line. The column keeps the reading width, so the band
+         is the host's own. */
       /* A row of the open list is a menu's row: the control height of the size,
          its inset, the panel's inset given back. */
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--sticky {
+      position: sticky;
+      z-index: var(--sf-z-index-5);
+      z-index: var(--sf-contents-z-index, var(--sf-z-index-5));
+      top: var(--sf-contents--top);
+      inset-block-start: var(--sf-contents--top);
+      padding-top: var(--sf-space-1\/4);
+      padding-bottom: var(--sf-space-1\/4);
+      padding-block: var(--sf-space-1\/4);
+      margin-top: calc(var(--sf-space-1\/4) * -1);
+      margin-bottom: calc(var(--sf-space-1\/4) * -1);
+      margin-block: calc(var(--sf-space-1\/4) * -1);
+      background-color: var(--sf-surface-0);
+      background-color: var(--sf-contents-background, var(--sf-surface-0));
     }
     .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-head {
       display: flex;
@@ -1001,8 +1061,28 @@
   @media not all and (min-width: 60rem) {
     .sf-contents--layout-auto.sf-contents--collapse-lg {
       position: relative;
+      /* Sticky, the button travels with the reader. The page scrolls under it, so
+         the head takes the page's own surface and gives the band back with a
+         negative margin: without it the text shows through the button's gaps and
+         under the progress line. The column keeps the reading width, so the band
+         is the host's own. */
       /* A row of the open list is a menu's row: the control height of the size,
          its inset, the panel's inset given back. */
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--sticky {
+      position: sticky;
+      z-index: var(--sf-z-index-5);
+      z-index: var(--sf-contents-z-index, var(--sf-z-index-5));
+      top: var(--sf-contents--top);
+      inset-block-start: var(--sf-contents--top);
+      padding-top: var(--sf-space-1\/4);
+      padding-bottom: var(--sf-space-1\/4);
+      padding-block: var(--sf-space-1\/4);
+      margin-top: calc(var(--sf-space-1\/4) * -1);
+      margin-bottom: calc(var(--sf-space-1\/4) * -1);
+      margin-block: calc(var(--sf-space-1\/4) * -1);
+      background-color: var(--sf-surface-0);
+      background-color: var(--sf-contents-background, var(--sf-surface-0));
     }
     .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-head {
       display: flex;
@@ -1202,8 +1282,28 @@
   @media not all and (min-width: 72rem) {
     .sf-contents--layout-auto.sf-contents--collapse-xl {
       position: relative;
+      /* Sticky, the button travels with the reader. The page scrolls under it, so
+         the head takes the page's own surface and gives the band back with a
+         negative margin: without it the text shows through the button's gaps and
+         under the progress line. The column keeps the reading width, so the band
+         is the host's own. */
       /* A row of the open list is a menu's row: the control height of the size,
          its inset, the panel's inset given back. */
+    }
+    .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--sticky {
+      position: sticky;
+      z-index: var(--sf-z-index-5);
+      z-index: var(--sf-contents-z-index, var(--sf-z-index-5));
+      top: var(--sf-contents--top);
+      inset-block-start: var(--sf-contents--top);
+      padding-top: var(--sf-space-1\/4);
+      padding-bottom: var(--sf-space-1\/4);
+      padding-block: var(--sf-space-1\/4);
+      margin-top: calc(var(--sf-space-1\/4) * -1);
+      margin-bottom: calc(var(--sf-space-1\/4) * -1);
+      margin-block: calc(var(--sf-space-1\/4) * -1);
+      background-color: var(--sf-surface-0);
+      background-color: var(--sf-contents-background, var(--sf-surface-0));
     }
     .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-head {
       display: flex;
