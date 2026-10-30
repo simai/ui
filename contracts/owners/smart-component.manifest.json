@@ -52,11 +52,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/alert",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-alert"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-alert"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -110,11 +110,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/avatar",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-avatar"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-avatar"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -172,11 +172,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/avatars",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-avatars"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-avatars"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -236,11 +236,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/breadcrumbs",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-breadcrumbs"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-breadcrumbs"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -293,11 +293,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/button-group",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-button-group"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-button-group"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -353,11 +353,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/checkbox",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-checkbox"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-checkbox"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -419,11 +419,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/close",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-close"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-close"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -477,11 +477,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/composition-overlay",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-composition-overlay"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-composition-overlay"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -533,11 +533,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/context-menu",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-context-menu"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-context-menu"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -596,11 +596,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/country-code",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-country-code"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-country-code"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -652,11 +652,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/datepicker",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-datepicker"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-datepicker"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -716,11 +716,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/download-file",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-download-file"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-download-file"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -775,11 +775,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/drawer",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-drawer"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-drawer"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -834,11 +834,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/dropdown",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-dropdown"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-dropdown"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -900,11 +900,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/file-preview",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-file-preview"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-file-preview"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -958,11 +958,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/file-upload",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-file-upload"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-file-upload"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -1017,11 +1017,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/gallery",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-gallery"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-gallery"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -1078,11 +1078,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/inline-editor",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-inline-editor"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-inline-editor"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -1131,11 +1131,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/list-item",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-list-item"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-list-item"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -1192,11 +1192,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/modal",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-modal"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-modal"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -1252,11 +1252,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/pagination",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-pagination"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-pagination"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -1316,11 +1316,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/progress-bar",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-progress-bar"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-progress-bar"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -1371,11 +1371,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/progress-scale",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-progress-scale"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-progress-scale"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -1426,11 +1426,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/radio",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-radio"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-radio"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -1483,11 +1483,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/range-slider",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-range-slider"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-range-slider"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -1539,11 +1539,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/reference-link",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-reference-link"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-reference-link"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -1599,11 +1599,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/skeleton",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-skeleton"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-skeleton"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -1654,11 +1654,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/slider",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-slider"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-slider"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -1711,11 +1711,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/sortable",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-sortable"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-sortable"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -1769,11 +1769,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/spinner",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-spinner"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-spinner"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -1827,11 +1827,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/steps",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-steps"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-steps"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -1883,11 +1883,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/switch",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-switch"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-switch"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -1939,11 +1939,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/tabs",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-tabs"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-tabs"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -2004,11 +2004,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/textarea",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-textarea"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-textarea"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -2068,11 +2068,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/toast",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-toast"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-toast"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -2130,11 +2130,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/toggle",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-toggle"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-toggle"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -2189,11 +2189,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/tooltip",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-tooltip"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-tooltip"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -2244,11 +2244,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/tree",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-tree"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-tree"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -2309,11 +2309,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/tree-item",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-tree-item"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-tree-item"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -2368,11 +2368,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/color",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-color"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-color"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -2429,11 +2429,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/popover",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-popover"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-popover"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -2485,11 +2485,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/page-header",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-page-header"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-page-header"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -2545,11 +2545,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/resizer",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-resizer"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-resizer"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -2599,11 +2599,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/profile-picker",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-profile-picker"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-profile-picker"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -2659,11 +2659,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/empty-state",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-empty-state"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-empty-state"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -2720,11 +2720,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/copy-button",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-copy-button"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-copy-button"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -2780,11 +2780,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/help-mark",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-help-mark"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-help-mark"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -2838,11 +2838,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/theme-generator",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-theme-generator"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-theme-generator"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -2901,11 +2901,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/image-field",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-image-field"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-image-field"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -2960,11 +2960,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/accordion",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-accordion"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-accordion"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -3019,11 +3019,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/code-input",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-code-input"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-code-input"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -3082,11 +3082,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/menu",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-menu"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-menu"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -3148,11 +3148,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/quantity",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-quantity"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-quantity"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -3211,11 +3211,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/input",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-input"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-input"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -3278,11 +3278,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/badge",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-badge"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-badge"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -3347,11 +3347,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/button",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-button"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-button"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -3419,11 +3419,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/icon",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-icon"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-icon"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -3479,11 +3479,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/icon-button",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-icon-button"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-icon-button"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -3549,11 +3549,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/tag",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-tag"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-tag"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -3617,11 +3617,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/progress-ring",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-progress-ring"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-progress-ring"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -3674,11 +3674,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/site-header",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-site-header"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-site-header"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -3732,11 +3732,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/rich-text",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-rich-text"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-rich-text"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -3797,11 +3797,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/contents",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-contents"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-contents"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -3857,11 +3857,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/pager",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-pager"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-pager"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -3921,11 +3921,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/search",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-search"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-search"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {
@@ -3979,11 +3979,11 @@
         "commit": "e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8",
         "source_refs": [
           "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/smart/lookup",
-          "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:distr/rule/rule.json#name=cl-lookup"
+          "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:distr/rule/rule.json#name=cl-lookup"
         ]
       },
       "documentation_refs": [
-        "simai/ui@e5f4eb4153ee9046a0b2a85c208c99c5ff113bb8:README.md"
+        "simai/ui@e9ba5a10353f7b9656e3975ecf3e43adfa8bda8e:README.md"
       ],
       "example_refs": [],
       "runtime": {

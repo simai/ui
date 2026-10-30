@@ -8,6 +8,8 @@
 
 ### Добавлено
 
+- The larena package reference names sf-mail-structure, sf-mail-inspector and sf-mail-canvas, moved from simai/ui-mail to simai/ui-pro (D31).
+
 - sf-context-menu 1.5.1: a level entered by a pointer keeps the keys. The row that held the focus leaves with its level, so the focus now moves into the level, without a ring; before, it fell to the body and Escape and the arrows reached nobody. A placed drilling panel goes back on Escape and the outward arrow.
 
 - sf-lookup 1.1.0: notice in the provider's answer, a line of the host's own under the rows. The larena package reference holds sf-chat-window 1.4.0's relations (sf-lookup, sf-input, sf-button, avatars). SF.notify takes a string as the text and warns in the console when there is nothing to show (component.toast 1.0.1). sf-input 1.4.1 and sf-textarea: element.focus() on the host reaches the native control. core.runtime 1.8.3.
