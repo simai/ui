@@ -505,6 +505,7 @@ class SfLookup extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.FormF
     this._state = 'closed';
     this._items = [];
     this._nextCursor = null;
+    this._notice = '';
     this._active = -1;
     this._refusal = '';
     this._loadingMore = false;
@@ -698,6 +699,7 @@ class SfLookup extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.FormF
       items: this._items,
       activeIndex: this._active,
       nextCursor: this._nextCursor,
+      notice: this._notice,
       loadingMore: this._loadingMore,
       refusal: this._refusal,
       ariaLabel: this.getAttribute('aria-label') || '',
@@ -820,6 +822,7 @@ class SfLookup extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.FormF
     this._state = 'closed';
     this._items = [];
     this._nextCursor = null;
+    this._notice = '';
     this._active = -1;
     this._refusal = '';
     if (render) this.requestComponentUpdate('close');
@@ -842,6 +845,7 @@ class SfLookup extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.FormF
       hasProvider: Boolean(this._provider())
     });
     this._nextCursor = null;
+    this._notice = '';
     this._active = -1;
 
     if (plan === 'local') {
@@ -886,6 +890,7 @@ class SfLookup extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.FormF
       this._state = 'searching';
       this._items = [];
       this._nextCursor = null;
+      this._notice = '';
       this._active = -1;
     } else {
       this._loadingMore = true;
@@ -931,6 +936,7 @@ class SfLookup extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.FormF
 
 
     this._nextCursor = read.state === 'error' ? cursor : read.nextCursor;
+    this._notice = read.notice ?? '';
     if (this._active >= this._items.length) this._active = this._items.length - 1;
     this.requestComponentUpdate('answer');
   }
@@ -1368,7 +1374,8 @@ function stateLine(context) {
     minChars,
     refusal,
     items,
-    loadingMore
+    loadingMore,
+    notice
   } = context;
   if (refusal) return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-lookup-state-text">${refusal}</span>`;
 
@@ -1392,7 +1399,7 @@ function stateLine(context) {
 
     case 'results':
       return loadingMore ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-lookup-state-text">${component.sfWord('searching')}</span>` // Said, not shown: the rows are what a sighted person reads.
-      : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-lookup-visually-hidden">${component.sfWord('results', {
+      : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${notice ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-lookup-state-text">${notice}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}<span class="sf-lookup-visually-hidden">${component.sfWord('results', {
         count: items.length
       })}</span>`;
 
@@ -1921,7 +1928,10 @@ function readAnswer(answer, {exclude, limit = DEFAULTS.maxResults} = {}) {
   if (!Array.isArray(answer.items)) return {state: 'error', items: [], nextCursor: null};
   const items = withoutExcluded(normaliseItems(answer.items).slice(0, Math.max(0, limit)), exclude);
   const nextCursor = present(answer.nextCursor) ? answer.nextCursor : null;
-  return {state: items.length || nextCursor !== null ? 'results' : 'empty', items, nextCursor};
+  const read = {state: items.length || nextCursor !== null ? 'results' : 'empty', items, nextCursor};
+  // A line of the host's own under the rows: «first 20 shown, narrow your search».
+  const notice = typeof answer.notice === 'string' ? answer.notice.trim() : '';
+  return notice ? {...read, notice} : read;
 }
 
 /** A page of more results joined to what is shown: in order, no item twice. */
@@ -1985,7 +1995,7 @@ function moveActive(index, count, key) {
 /***/ "7acc12578fb6"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.lookup","tag":"sf-lookup","version":"1.0.2","kind":"leaf","settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"appearance":{"type":"enum","values":["bordered","filled"],"default":"bordered"},"label":{"type":"string","default":""},"placeholder":{"type":"string","default":""},"hint":{"type":"string","default":""},"name":{"type":"string","default":""},"multiple":{"type":"boolean","default":false},"max-items":{"type":"number","default":0},"min-length":{"type":"number","default":2},"max-results":{"type":"number","default":20},"debounce":{"type":"number","default":120},"maxlength":{"type":"number","default":0},"options":{"type":"list","default":[]},"exclude":{"type":"list","default":[]},"provider":{"type":"object","default":null},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""}},"values":{"value":{"type":"object","nullable":true,"default":null}},"events":{"input":{"carries":"native"},"change":{"carries":"native"}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","custom-error"]},"css-variables":{"--sf-lookup-background-color":{"type":"color","state":"default"},"--sf-lookup-border-color":{"type":"color","state":"default"},"--sf-lookup-color":{"type":"color","state":"default"},"--sf-lookup-radius":{"type":"length","state":"default"},"--sf-lookup-padding-inline":{"type":"length","state":"default"},"--sf-lookup-padding-block":{"type":"length","state":"default"},"--sf-lookup-invalid-border-color":{"type":"color","state":"invalid"},"--sf-lookup-list-background-color":{"type":"color","state":"open"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.lookup","tag":"sf-lookup","version":"1.1.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"appearance":{"type":"enum","values":["bordered","filled"],"default":"bordered"},"label":{"type":"string","default":""},"placeholder":{"type":"string","default":""},"hint":{"type":"string","default":""},"name":{"type":"string","default":""},"multiple":{"type":"boolean","default":false},"max-items":{"type":"number","default":0},"min-length":{"type":"number","default":2},"max-results":{"type":"number","default":20},"debounce":{"type":"number","default":120},"maxlength":{"type":"number","default":0},"options":{"type":"list","default":[]},"exclude":{"type":"list","default":[]},"provider":{"type":"object","default":null},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""}},"values":{"value":{"type":"object","nullable":true,"default":null}},"events":{"input":{"carries":"native"},"change":{"carries":"native"}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","custom-error"]},"css-variables":{"--sf-lookup-background-color":{"type":"color","state":"default"},"--sf-lookup-border-color":{"type":"color","state":"default"},"--sf-lookup-color":{"type":"color","state":"default"},"--sf-lookup-radius":{"type":"length","state":"default"},"--sf-lookup-padding-inline":{"type":"length","state":"default"},"--sf-lookup-padding-block":{"type":"length","state":"default"},"--sf-lookup-invalid-border-color":{"type":"color","state":"invalid"},"--sf-lookup-list-background-color":{"type":"color","state":"open"}}}');
 
 /***/ },
 
