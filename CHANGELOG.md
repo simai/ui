@@ -8,6 +8,9 @@
 
 ### Добавлено
 
+- sf-contents 1.1.0: the compact button sticks too, on a band of the page's surface; sticky="false" lets it scroll away. On a phone the page's column has to hold the button and the article: docs.md gives the layout.
+- The template utilities generator no longer reads a class member's keyword or a boolean binding as a class: thirty-nine relations go, sf-image-field, sf-profile-picker and sf-spinner leave the file (core.runtime 1.8.5).
+
 - The larena package reference names sf-mail-structure, sf-mail-inspector and sf-mail-canvas, moved from simai/ui-mail to simai/ui-pro (D31).
 
 - sf-context-menu 1.5.1: a level entered by a pointer keeps the keys. The row that held the focus leaves with its level, so the focus now moves into the level, without a ring; before, it fell to the body and Escape and the arrows reached nobody. A placed drilling panel goes back on Escape and the outward arrow.
