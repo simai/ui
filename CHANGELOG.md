@@ -8,6 +8,13 @@
 
 ### Добавлено
 
+- sf-contents 1.0.0: the page's table of contents. Layouts column, compact, rail and bar, plus auto (column on wide screens, compact below the collapse step). Collects headings from a target or takes server-printed links; scroll-spy with aria-current, smooth scroll respecting reduced motion, the hash follows. Event sf-contents-change.
+- sf-settings-menu 1.0.0: universal compact settings, a context-menu surface. Default template drill (value under the name, choice lists open in place, switches inline, fixed 280 px width), template rows (controls on the right: switch, quiet pills, compact select), optional tiles block. Settings are data; events sf-settings-menu-change/-changed/-apply/-reset and the overlay open/close pair.
+- sf-search 1.0.0: the site search window («spotlight»): pill field and results card, switchable blocks (scopes, recent, popular, actions, path, keys), X clears then closes, full-screen sheet on phones. Results from a provider property or a static JSON index; sf-search-navigate is cancelable.
+- sf-pager 1.0.0: neighbouring page or step by meaning. Appearances cards, row, steps (cancelable sf-pager-navigate, «Готово» on the last step), course and counter; cards and row print plain links.
+- sf-button 1.2.0: the shortcut setting draws the key combination at the end (⌘ K on Mac, Ctrl K elsewhere, one box on every platform) and shortcut-listen presses the button on that combination; scheme on-surface-variant for a quiet field-like trigger (component.buttons 1.1.0).
+- The first-paint snapshot tool keeps a page's own slotted child as the page's, not as the component's drawing (core.runtime 1.7.0).
+
 - smart.rich-text 1.0.0: sf-rich-text, a form field for formatted text. The value is HTML of p, h2, h3, h4, strong, em, a[href], ul, ol, li, blockquote and br; a link keeps https:, mailto:, tel: or a /path on the site. Toolbar for block level, bold, italic, link, lists, quote, undo and redo; paste and drop are cleaned to the same subset, and so is the incoming value. Form-associated like sf-textarea (name, value, required, disabled, readonly, input and change); keyboard only, light and dark, ru and en. core.runtime 1.6.3.
 
 ### Исправлено
