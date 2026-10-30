@@ -8,6 +8,11 @@
 
 ### Добавлено
 
+- sf-context-menu 1.5.0: the settings rows. submenu="drill" opens a submenu in the panel it was opened from, at a fixed width; switch, range and choice rows and groups (rows or tiles); the cancelable change and the fact changed; the actions set-value, set-all, reset and show, each answering an outcome (component.context-menu 1.1.0).
+- sf-settings-menu 1.0.0 is removed: its work is sf-context-menu's. It had no consumer in any pair.
+- sf-search 1.1.0 asks its host through simai.search-port 1.0.0 (new): the capability says what is possible and the setting says what is wanted. Built-in hosts keep index and provider working; connect-port hands a server's. New: the «Возможно, вы искали …» line, the preview pane on a wide window, a refusal said in the card, sf-search-intent.
+- core.runtime 1.8.2.
+
 - The larena package reference names sf-mail-library and sf-mail-letters, moved from simai/ui-mail to simai/ui-pro (D31). core.runtime 1.8.1.
 - The workspace layout, core.styles 1.1.0 and core.runtime 1.8.0: rail, list, main and panel by the width of the container, never the viewport. Below the wide width the open panel is a drawer over main (inert regions, Escape, scrim, focus back to the opener), below the split width one region shows at a time with a back control. SF.workspace(element), the data-sf-workspace-* attributes, sf-workspace-view and sf-workspace-panel, six public variables.
 - smart.badge 1.2.0: activity (running, waiting, done, stopped, failed; an icon or spinner and a word in the page language, activity wins over status) and compact (the icon alone, the word as the accessible name). component.badges 1.1.0.
