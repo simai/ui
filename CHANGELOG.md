@@ -8,6 +8,8 @@
 
 ### Добавлено
 
+- smart.avatar 1.2.0: tone gives initials one of eight muted colours (rose, amber, lime, green, teal, sky, indigo, violet); tone="auto" picks one from the name by a fixed hash, the same in every browser and on a server. component.avatars 1.1.0, tokens.colour 1.1.0. The larena package reference holds sf-chat-message 1.4.0 relations. core.runtime 1.8.6.
+
 - sf-contents 1.1.0: the compact button sticks too, on a band of the page's surface; sticky="false" lets it scroll away. On a phone the page's column has to hold the button and the article: docs.md gives the layout.
 - The template utilities generator no longer reads a class member's keyword or a boolean binding as a class: thirty-nine relations go, sf-image-field, sf-profile-picker and sf-spinner leave the file (core.runtime 1.8.5).
 
