@@ -3123,6 +3123,264 @@
       ]
     },
     {
+      "component": "search",
+      "selector": "sf-search, .sf-search-portal",
+      "variables": [
+        {
+          "name": "--sf-search-inline-size",
+          "role": "inline-size",
+          "summary": "The window's width on a wide screen; a phone shows a full-screen sheet.",
+          "default": "var(--sf-g8)",
+          "state": "open",
+          "since": "2026-10-30"
+        },
+        {
+          "name": "--sf-search-inset-block-start",
+          "role": "inset-block-start",
+          "summary": "The distance from the top of the browser window to the field.",
+          "default": "var(--sf-d6)",
+          "state": "open",
+          "since": "2026-10-30"
+        },
+        {
+          "name": "--sf-search-background",
+          "role": "background",
+          "summary": "The surface of the field and of the results card.",
+          "default": "var(--sf-elevation-3--surface)",
+          "state": "open",
+          "since": "2026-10-30"
+        },
+        {
+          "name": "--sf-search-scrim-color",
+          "role": "background",
+          "summary": "The scrim between the window and the page.",
+          "default": "var(--sf-surface-transparent-overlay)",
+          "state": "open",
+          "since": "2026-10-30"
+        },
+        {
+          "name": "--sf-search-mark-color",
+          "role": "background",
+          "summary": "The fill of the matched text in a result's title.",
+          "default": "var(--sf-primary-container)",
+          "state": "open",
+          "since": "2026-10-30"
+        },
+        {
+          "name": "--sf-search-radius",
+          "role": "radius",
+          "summary": "The results card's corners; the rows follow them.",
+          "default": "var(--sf-radius-2)",
+          "state": "open",
+          "since": "2026-10-30"
+        },
+        {
+          "name": "--sf-search-list-max-block-size",
+          "role": "max-block-size",
+          "summary": "The results card's greatest height; by default the browser window bounds it.",
+          "default": "none",
+          "state": "open",
+          "since": "2026-10-30"
+        }
+      ]
+    },
+    {
+      "component": "settings-menu",
+      "selector": "sf-settings-menu, .sf-settings-menu",
+      "variables": [
+        {
+          "name": "--sf-settings-menu-inline-size",
+          "role": "inline-size",
+          "summary": "The panel's fixed width; it never grows with its text.",
+          "default": "calc(var(--sf-f7) + var(--sf-a8))",
+          "since": "2026-10-30"
+        },
+        {
+          "name": "--sf-settings-menu-background",
+          "role": "background",
+          "summary": "The panel's fill.",
+          "default": "var(--sf-elevation-3--surface)",
+          "since": "2026-10-30"
+        },
+        {
+          "name": "--sf-settings-menu-color",
+          "role": "color",
+          "summary": "The panel's text.",
+          "default": "var(--sf-on-surface)",
+          "since": "2026-10-30"
+        },
+        {
+          "name": "--sf-settings-menu-border-color",
+          "role": "border-color",
+          "summary": "The panel's hairline edge and its dividers.",
+          "default": "var(--sf-outline-variant)",
+          "since": "2026-10-30"
+        },
+        {
+          "name": "--sf-settings-menu-radius",
+          "role": "radius",
+          "summary": "The panel's corners.",
+          "default": "var(--sf-radius--surface)",
+          "since": "2026-10-30"
+        },
+        {
+          "name": "--sf-settings-menu-hover-background",
+          "role": "hover-background",
+          "summary": "A row, an option, a pill or a tile under the pointer.",
+          "default": "var(--sf-surface-container-hover)",
+          "state": "hover",
+          "since": "2026-10-30"
+        },
+        {
+          "name": "--sf-settings-menu-selected-background",
+          "role": "background",
+          "summary": "The chosen pill.",
+          "default": "var(--sf-secondary-container)",
+          "state": "selected",
+          "since": "2026-10-30"
+        },
+        {
+          "name": "--sf-settings-menu-tile-background",
+          "role": "background",
+          "summary": "A tile and a compact select at rest.",
+          "default": "var(--sf-surface-container)",
+          "since": "2026-10-30"
+        },
+        {
+          "name": "--sf-settings-menu-accent-color",
+          "role": "accent-color",
+          "summary": "The check mark of the chosen option and a range's fill.",
+          "default": "var(--sf-primary)",
+          "since": "2026-10-30"
+        }
+      ]
+    },
+    {
+      "component": "pager",
+      "selector": "sf-pager, .sf-pager",
+      "variables": [
+        {
+          "name": "--sf-pager-gap",
+          "role": "gap",
+          "summary": "The space between the parts: the two cards, the two links, Back, the place and Next, the dots and the lesson card.",
+          "default": "var(--sf-ui-1--text-space-x)",
+          "since": "2026-10-30"
+        },
+        {
+          "name": "--sf-pager-card-background",
+          "role": "background",
+          "summary": "The fill of the cards and of the lesson card.",
+          "default": "var(--sf-surface-0)",
+          "since": "2026-10-30"
+        },
+        {
+          "name": "--sf-pager-card-border-color",
+          "role": "border-color",
+          "summary": "The edge of the cards and of the lesson card at rest.",
+          "default": "var(--sf-outline-variant)",
+          "since": "2026-10-30"
+        },
+        {
+          "name": "--sf-pager-card-radius",
+          "role": "radius",
+          "summary": "The corners of the cards and of the lesson card.",
+          "default": "var(--sf-radius--ui)",
+          "since": "2026-10-30"
+        },
+        {
+          "name": "--sf-pager-link-color",
+          "role": "color",
+          "summary": "The titles of the cards and of the row.",
+          "default": "var(--sf-primary)",
+          "since": "2026-10-30"
+        },
+        {
+          "name": "--sf-pager-meta-color",
+          "role": "color",
+          "summary": "The direction words, the notes and the place lines.",
+          "default": "var(--sf-on-surface-variant)",
+          "since": "2026-10-30"
+        },
+        {
+          "name": "--sf-pager-track-color",
+          "role": "background",
+          "summary": "The steps' track and the dots ahead.",
+          "default": "var(--sf-surface-container)",
+          "since": "2026-10-30"
+        },
+        {
+          "name": "--sf-pager-fill-color",
+          "role": "background",
+          "summary": "The done segments of the track and the done dots.",
+          "default": "var(--sf-primary)",
+          "since": "2026-10-30"
+        }
+      ]
+    },
+    {
+      "component": "contents",
+      "selector": "sf-contents, .sf-contents",
+      "variables": [
+        {
+          "name": "--sf-contents-color",
+          "role": "color",
+          "summary": "The links' ink.",
+          "default": "var(--sf-on-surface-variant)",
+          "since": "2026-10-30"
+        },
+        {
+          "name": "--sf-contents-current-color",
+          "role": "indicator-color",
+          "summary": "The current link, its bar, stroke or underline, and the reading progress.",
+          "default": "var(--sf-primary)",
+          "state": "current",
+          "since": "2026-10-30"
+        },
+        {
+          "name": "--sf-contents-line-color",
+          "role": "background",
+          "summary": "The column's line, the bar's edge and the progress track.",
+          "default": "var(--sf-outline-variant)",
+          "since": "2026-10-30"
+        },
+        {
+          "name": "--sf-contents-background",
+          "role": "background",
+          "summary": "The bar's fill and the compact view's open list.",
+          "default": "var(--sf-surface-0)",
+          "since": "2026-10-30"
+        },
+        {
+          "name": "--sf-contents-indent",
+          "role": "indent",
+          "summary": "The step of a deeper level.",
+          "default": "var(--sf-space-1\\/2)",
+          "since": "2026-10-30"
+        },
+        {
+          "name": "--sf-contents-gap",
+          "role": "gap",
+          "summary": "The space between the links.",
+          "default": "0",
+          "since": "2026-10-30"
+        },
+        {
+          "name": "--sf-contents-inset-block-start",
+          "role": "inset-block-start",
+          "summary": "Where the sticky column, rail or bar stops.",
+          "default": "var(--sf-space-1)",
+          "since": "2026-10-30"
+        },
+        {
+          "name": "--sf-contents-z-index",
+          "role": "z-index",
+          "summary": "The bar and the open list above the page, under every layer.",
+          "default": "var(--sf-z-index-5)",
+          "since": "2026-10-30"
+        }
+      ]
+    },
+    {
       "component": "rich-text",
       "selector": ".sf-rich-text",
       "variables": [

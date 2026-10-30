@@ -769,6 +769,10 @@
       {
         "lazy": true,
         "name": "spinner"
+      },
+      {
+        "lazy": true,
+        "name": "kbd"
       }
     ],
     "tags": [
@@ -880,6 +884,24 @@
     ],
     "tags": [
       "sf-composition-overlay"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-contents",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "cl-button"
+      },
+      {
+        "name": "cl-icon"
+      }
+    ],
+    "tags": [
+      "sf-contents"
     ],
     "type": "smart"
   },
@@ -1330,6 +1352,27 @@
     "type": "smart"
   },
   {
+    "name": "cl-pager",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "cl-button"
+      },
+      {
+        "name": "cl-icon-button"
+      },
+      {
+        "name": "cl-icon"
+      }
+    ],
+    "tags": [
+      "sf-pager"
+    ],
+    "type": "smart"
+  },
+  {
     "name": "cl-pagination",
     "js": true,
     "mode": "smart",
@@ -1542,6 +1585,52 @@
     ],
     "tags": [
       "sf-rich-text"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-search",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "cl-icon-button"
+      },
+      {
+        "name": "icons"
+      },
+      {
+        "name": "kbd"
+      }
+    ],
+    "tags": [
+      "sf-search"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-settings-menu",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "switch"
+      },
+      {
+        "name": "cl-icon"
+      },
+      {
+        "name": "cl-icon-button"
+      },
+      {
+        "lazy": true,
+        "name": "cl-context-menu"
+      }
+    ],
+    "tags": [
+      "sf-settings-menu"
     ],
     "type": "smart"
   },

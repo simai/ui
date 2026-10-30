@@ -86,6 +86,13 @@
     "display/default",
     "position/default"
   ],
+  "cl-contents": [
+    "display/default",
+    "isolate/default",
+    "position/default",
+    "resize/default",
+    "width/default"
+  ],
   "cl-context-menu": [
     "display/default",
     "flex-direction/default",
@@ -273,6 +280,10 @@
     "min-width/default",
     "text-overflow/default"
   ],
+  "cl-pager": [
+    "position/default",
+    "sr-only/default"
+  ],
   "cl-pagination": [
     "align-items/default",
     "display/default",
@@ -348,6 +359,13 @@
     "font-style/default",
     "font-weight/default",
     "position/default"
+  ],
+  "cl-search": [
+    "display/default",
+    "sr-only/default"
+  ],
+  "cl-settings-menu": [
+    "display/default"
   ],
   "cl-site-header": [
     "container/default",

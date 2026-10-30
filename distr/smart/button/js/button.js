@@ -216,10 +216,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("b5e6381153f8");
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("2a080a730149");
 /* harmony import */ var _core_js_control_spacing__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("9abcb852f1cf");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("5bb33fb22db3");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("902a6f38915d");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("d7b6a56d1dd6");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("96bdb2ff5f5d");
+/* harmony import */ var _js_shortcut__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("996f5565603b");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("5bb33fb22db3");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("902a6f38915d");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("d7b6a56d1dd6");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("96bdb2ff5f5d");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, lit__WEBPACK_IMPORTED_MODULE_3__, _core_js_control_spacing__WEBPACK_IMPORTED_MODULE_4__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, lit__WEBPACK_IMPORTED_MODULE_3__, _core_js_control_spacing__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -235,7 +236,8 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
-const COMPONENT_ATTRIBUTES = new Set(["template", "size", "appearance", "type", "scheme", "status", "text", "icon", "icon-start", "icon-end", "icon-left", "icon-right", "icon-position", "text-position", "spacing", "tightness", "radius", "root-class", "loading", "segment", "disabled", "native-type", "expanded", "aria-label", "class", "style", "id", "slot"]);
+
+const COMPONENT_ATTRIBUTES = new Set(["template", "size", "appearance", "type", "scheme", "status", "text", "icon", "icon-start", "icon-end", "icon-left", "icon-right", "icon-position", "text-position", "spacing", "tightness", "radius", "root-class", "loading", "segment", "disabled", "native-type", "expanded", "shortcut", "shortcut-listen", "aria-label", "class", "style", "id", "slot"]);
 
 function applyButtonAttributes(host, button) {
   host?.forwardHostAttributes(button, {
@@ -253,14 +255,14 @@ function applyButtonAttributes(host, button) {
 // notes the use, so a value outside a list reads as the default here.
 
 
-const ButtonElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_5__, {
+const ButtonElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_6__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_7__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_8__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__
   },
   source: "ru",
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_6__
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_7__
 });
 
 class SfButton extends ButtonElement {
@@ -268,6 +270,7 @@ class SfButton extends ButtonElement {
     super();
     this._attributeObserver = null;
     this._textFromChildren = "";
+    this._shortcutListener = null;
   }
 
   get templateName() {
@@ -359,6 +362,10 @@ class SfButton extends ButtonElement {
       radius: this.radius,
       ariaLabel: this.getAttribute("aria-label") || "",
       expanded: this.expanded,
+      // The shortcut's key caps and its aria-keyshortcuts, in this platform's
+      // words (js/shortcut.js).
+      shortcutCaps: (0,_js_shortcut__WEBPACK_IMPORTED_MODULE_5__.shortcutCaps)((0,_js_shortcut__WEBPACK_IMPORTED_MODULE_5__.parseShortcut)(this.shortcut)),
+      ariaKeyShortcuts: (0,_js_shortcut__WEBPACK_IMPORTED_MODULE_5__.ariaKeyShortcuts)((0,_js_shortcut__WEBPACK_IMPORTED_MODULE_5__.parseShortcut)(this.shortcut)),
       ...(0,_core_js_control_spacing__WEBPACK_IMPORTED_MODULE_4__.resolveControlSpacing)({
         spacing: this.getAttribute('spacing')
       }),
@@ -383,7 +390,46 @@ class SfButton extends ButtonElement {
       this.addEventListener("click", this._pressListener);
     }
 
+    this.syncShortcutListener();
     super.onConnected?.();
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    super.attributeChangedCallback?.(name, oldValue, newValue);
+
+    if ((name === "shortcut" || name === "shortcut-listen") && oldValue !== newValue && this.isConnected) {
+      this.syncShortcutListener();
+    }
+  } // shortcut-listen: one keydown listener on the document while the button is
+  // connected and listens. The combination presses the native button -- a
+  // click, so the press event follows as for a person's click -- unless a
+  // listener before it took the key, the button is disabled or loading, or
+  // the combination has no modifier and focus is in a field.
+
+
+  syncShortcutListener() {
+    const wanted = Boolean(this.shortcutListen) && Boolean((0,_js_shortcut__WEBPACK_IMPORTED_MODULE_5__.parseShortcut)(this.shortcut));
+
+    if (wanted && !this._shortcutListener) {
+      this._shortcutListener = event => this.handleShortcut(event);
+
+      globalThis.document?.addEventListener("keydown", this._shortcutListener);
+    } else if (!wanted && this._shortcutListener) {
+      globalThis.document?.removeEventListener("keydown", this._shortcutListener);
+      this._shortcutListener = null;
+    }
+  }
+
+  handleShortcut(event) {
+    if (event.defaultPrevented || event.repeat || event.isComposing) return;
+    const parsed = (0,_js_shortcut__WEBPACK_IMPORTED_MODULE_5__.parseShortcut)(this.shortcut);
+    if (!(0,_js_shortcut__WEBPACK_IMPORTED_MODULE_5__.matchesShortcut)(event, parsed)) return;
+    const target = event.composedPath?.()[0] ?? event.target;
+    if (!(0,_js_shortcut__WEBPACK_IMPORTED_MODULE_5__.isCommandShortcut)(parsed) && (0,_js_shortcut__WEBPACK_IMPORTED_MODULE_5__.isEditableTarget)(target)) return;
+    const button = this.querySelector(".sf-button");
+    if (!button || button.disabled || !button.getClientRects().length) return;
+    event.preventDefault();
+    button.click();
   } // §8: a person's press of the native button, sent once as sf-button-press.
   // A disabled or loading button never gets the click, and a click on the host
   // outside the native button (there is no such box: the host is
@@ -444,6 +490,8 @@ class SfButton extends ButtonElement {
       loading: this.loading,
       disabled: this.disabled,
       nativeType: this.nativeType,
+      shortcut: this.shortcut,
+      shortcutListen: this.shortcutListen,
       ariaLabel: this.getAttribute("aria-label") || ""
     };
   }
@@ -513,6 +561,11 @@ class SfButton extends ButtonElement {
       this._pressListener = null;
     }
 
+    if (this._shortcutListener) {
+      globalThis.document?.removeEventListener("keydown", this._shortcutListener);
+      this._shortcutListener = null;
+    }
+
     this.disconnectForwardedHostAttributes();
     this._attributeObserver = null;
     super.onDisconnected?.();
@@ -523,6 +576,215 @@ class SfButton extends ButtonElement {
 SfButton.define("sf-button");
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "996f5565603b"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   ariaKeyShortcuts: () => (/* binding */ ariaKeyShortcuts),
+/* harmony export */   isApplePlatform: () => (/* binding */ isApplePlatform),
+/* harmony export */   isCommandShortcut: () => (/* binding */ isCommandShortcut),
+/* harmony export */   isEditableTarget: () => (/* binding */ isEditableTarget),
+/* harmony export */   matchesShortcut: () => (/* binding */ matchesShortcut),
+/* harmony export */   parseShortcut: () => (/* binding */ parseShortcut),
+/* harmony export */   shortcutCaps: () => (/* binding */ shortcutCaps)
+/* harmony export */ });
+// A key combination as sf-button's shortcut setting writes it: words joined
+// by +, the modifiers first and the key last -- mod+k, shift+/, /, escape.
+// `mod` is the platform's command modifier: Cmd on Apple platforms, Ctrl
+// elsewhere. Read once per render; nothing here holds state.
+const MODIFIERS = ['mod', 'ctrl', 'alt', 'shift', 'meta']; // What a person reads on a key cap, per platform.
+
+const MAC_CAPS = {
+  mod: '⌘',
+  meta: '⌘',
+  ctrl: '⌃',
+  alt: '⌥',
+  shift: '⇧'
+};
+const OTHER_CAPS = {
+  mod: 'Ctrl',
+  meta: 'Win',
+  ctrl: 'Ctrl',
+  alt: 'Alt',
+  shift: 'Shift'
+}; // A modifier's cap reads differently per platform (⌘ or Ctrl), but a server
+// prints one of them and the visitor's browser draws the other: the cap keeps
+// the box of its wider word on every platform, in characters of the keys'
+// monospace face, so the first paint does not move (sheet:
+// .sf-button-shortcut-key--chars-N).
+
+const MODIFIER_CHARS = Object.fromEntries(Object.keys(OTHER_CAPS).map(name => [name, Math.max(MAC_CAPS[name].length, OTHER_CAPS[name].length)]));
+const KEY_CAPS = {
+  enter: '↵',
+  return: '↵',
+  escape: 'Esc',
+  esc: 'Esc',
+  tab: 'Tab',
+  space: 'Space',
+  backspace: '⌫',
+  delete: 'Del',
+  up: '↑',
+  down: '↓',
+  left: '←',
+  right: '→',
+  arrowup: '↑',
+  arrowdown: '↓',
+  arrowleft: '←',
+  arrowright: '→',
+  home: 'Home',
+  end: 'End',
+  pageup: 'PgUp',
+  pagedown: 'PgDn'
+}; // The names of KeyboardEvent.key for the words above.
+
+const KEY_NAMES = {
+  enter: 'Enter',
+  return: 'Enter',
+  escape: 'Escape',
+  esc: 'Escape',
+  tab: 'Tab',
+  space: ' ',
+  backspace: 'Backspace',
+  delete: 'Delete',
+  up: 'ArrowUp',
+  down: 'ArrowDown',
+  left: 'ArrowLeft',
+  right: 'ArrowRight',
+  arrowup: 'ArrowUp',
+  arrowdown: 'ArrowDown',
+  arrowleft: 'ArrowLeft',
+  arrowright: 'ArrowRight',
+  home: 'Home',
+  end: 'End',
+  pageup: 'PageUp',
+  pagedown: 'PageDown'
+}; // KeyboardEvent.code of the punctuation a shortcut is usually written with,
+// so the combination is heard on any keyboard layout.
+
+const PUNCTUATION_CODES = {
+  '/': 'Slash',
+  '.': 'Period',
+  ',': 'Comma',
+  ';': 'Semicolon',
+  "'": 'Quote',
+  '[': 'BracketLeft',
+  ']': 'BracketRight',
+  '-': 'Minus',
+  '=': 'Equal',
+  '`': 'Backquote',
+  '\\': 'Backslash'
+};
+function isApplePlatform() {
+  const platform = globalThis.navigator?.userAgentData?.platform || globalThis.navigator?.platform || '';
+  return /mac|iphone|ipad|ipod/iu.test(platform);
+}
+/**
+ * The combination as parts: `{modifiers: Set, key}`, or null when there is
+ * none. `+` as the key itself is written `mod+plus`.
+ */
+
+function parseShortcut(value) {
+  const text = String(value ?? '').trim().toLowerCase();
+  if (!text) return null;
+  const words = text === '+' ? ['+'] : text.split('+').map(word => word.trim()).filter(Boolean);
+  if (!words.length) return null;
+  const key = words.at(-1) === 'plus' ? '+' : words.at(-1);
+  const modifiers = new Set(words.slice(0, -1).filter(word => MODIFIERS.includes(word)));
+  return {
+    modifiers,
+    key
+  };
+}
+/**
+ * What the keys read, one cap per key in the platform's words: {text, chars},
+ * chars the width a modifier's cap keeps on every platform (null for the key).
+ */
+
+function shortcutCaps(parsed, apple = isApplePlatform()) {
+  if (!parsed) return [];
+  const caps = apple ? MAC_CAPS : OTHER_CAPS;
+  const order = apple ? ['ctrl', 'alt', 'shift', 'mod', 'meta'] : ['mod', 'ctrl', 'meta', 'alt', 'shift'];
+  const modifiers = [];
+
+  for (const name of order.filter(one => parsed.modifiers.has(one))) {
+    // On a Mac mod and meta are one key.
+    if (modifiers.some(cap => cap.text === caps[name])) continue;
+    modifiers.push({
+      text: caps[name],
+      chars: MODIFIER_CHARS[name]
+    });
+  }
+
+  const key = KEY_CAPS[parsed.key] ?? (parsed.key.length === 1 ? parsed.key.toUpperCase() : parsed.key.charAt(0).toUpperCase() + parsed.key.slice(1));
+  return [...modifiers, {
+    text: key,
+    chars: null
+  }];
+}
+/** The value of aria-keyshortcuts (WAI-ARIA 1.2): Meta+K, Control+K, /. */
+
+function ariaKeyShortcuts(parsed, apple = isApplePlatform()) {
+  if (!parsed) return '';
+  const names = [];
+  if (parsed.modifiers.has('ctrl') || parsed.modifiers.has('mod') && !apple) names.push('Control');
+  if (parsed.modifiers.has('alt')) names.push('Alt');
+  if (parsed.modifiers.has('shift')) names.push('Shift');
+  if (parsed.modifiers.has('meta') || parsed.modifiers.has('mod') && apple) names.push('Meta');
+  const key = KEY_NAMES[parsed.key] ?? (parsed.key === ' ' ? 'Space' : parsed.key.length === 1 ? parsed.key.toUpperCase() : parsed.key);
+  return [...names, key === ' ' ? 'Space' : key].join('+');
+} // Whether the event's key is the combination's key: by the character it
+// typed, or by the physical key for a letter, a digit or the punctuation
+// above, so mod+k is heard on a Russian layout too.
+
+function sameKey(event, key) {
+  const name = KEY_NAMES[key];
+  if (name) return event.key === name;
+  if (String(event.key).toLowerCase() === key) return true;
+  if (/^[a-z]$/u.test(key)) return event.code === `Key${key.toUpperCase()}`;
+  if (/^[0-9]$/u.test(key)) return event.code === `Digit${key}`;
+  return PUNCTUATION_CODES[key] !== undefined && event.code === PUNCTUATION_CODES[key];
+}
+/** Whether a keydown is the combination. */
+
+
+function matchesShortcut(event, parsed, apple = isApplePlatform()) {
+  if (!parsed || !event) return false;
+  const wants = {
+    ctrl: parsed.modifiers.has('ctrl') || parsed.modifiers.has('mod') && !apple,
+    meta: parsed.modifiers.has('meta') || parsed.modifiers.has('mod') && apple,
+    alt: parsed.modifiers.has('alt'),
+    shift: parsed.modifiers.has('shift')
+  };
+  if (Boolean(event.ctrlKey) !== wants.ctrl || Boolean(event.metaKey) !== wants.meta || Boolean(event.altKey) !== wants.alt) return false; // Shift is part of typing a punctuation mark on many layouts (? is shift+/):
+  // a combination that does not name it does not mind it for punctuation, and
+  // minds it for a letter, a digit or a named key.
+
+  const punctuation = parsed.key.length === 1 && !/^[a-z0-9]$/u.test(parsed.key);
+  if (!punctuation && Boolean(event.shiftKey) !== wants.shift) return false;
+  if (punctuation && wants.shift && !event.shiftKey) return false;
+  return sameKey(event, parsed.key);
+}
+/** A combination with mod, ctrl, alt or meta is a command even in a field. */
+
+function isCommandShortcut(parsed) {
+  return Boolean(parsed) && ['mod', 'ctrl', 'alt', 'meta'].some(name => parsed.modifiers.has(name));
+}
+/** Whether focus is where a person types: a field, a select or editable text. */
+
+function isEditableTarget(target) {
+  const element = target instanceof Element ? target : null;
+  if (!element) return false;
+  if (element.isContentEditable) return true;
+  const tag = element.localName;
+  if (tag === 'textarea' || tag === 'select') return true;
+  if (tag !== 'input') return false;
+  const type = (element.getAttribute('type') || 'text').toLowerCase();
+  return !['button', 'submit', 'reset', 'checkbox', 'radio', 'range', 'color', 'file', 'image', 'hidden'].includes(type);
+}
 
 /***/ },
 
@@ -571,8 +833,11 @@ function renderButtonTemplate(context) {
   const component = context.component;
   const leftIconContent = component?.hasSlotContent?.('icon-start') ? component.getSlotContent('icon-start') : component?.hasSlotContent?.('icon-left') ? component.getSlotContent('icon-left') : component.createIcon(leftIconName);
   const rightIconContent = component?.hasSlotContent?.('icon-end') ? component.getSlotContent('icon-end') : component?.hasSlotContent?.('icon-right') ? component.getSlotContent('icon-right') : component.createIcon(rightIconName);
-  const textContent = component?.hasSlotContent?.('text') ? component.getSlotContent('text') : text;
-  const fullText = !leftIconContent && !rightIconContent; // Loading shows the spinner at the icon's size (simai/ui-source#10): in
+  const textContent = component?.hasSlotContent?.('text') ? component.getSlotContent('text') : text; // The shortcut's keys sit at the end; the label then takes the free room,
+  // so a stretched button reads label ... keys and text-position places it.
+
+  const shortcutCaps = context.shortcutCaps || [];
+  const fullText = !leftIconContent && !rightIconContent || shortcutCaps.length > 0; // Loading shows the spinner at the icon's size (simai/ui-source#10): in
   // place of the start icon, else of the end icon; a button without an icon
   // lays it over its label, which keeps its place (and the button its width)
   // and stays the accessible name. Icon-only is the first case.
@@ -594,7 +859,9 @@ function renderButtonTemplate(context) {
   // scheme otherwise. A status says what the control is about -- an error
   // for something destructive -- and a scheme says which colour family it
   // takes; they cannot both paint it.
-  `sf-button--${status || scheme}`, 'flex', 'items-cross-center', segment ? `segment-${segment}` : '', // The spacing class, not its retired tightness name (journal
+  `sf-button--${status || scheme}`, // on-surface-variant is the on-surface family one step quieter: both
+  // classes, so every on-surface rule holds and one rule quietens it.
+  !status && scheme === 'on-surface-variant' ? 'sf-button--on-surface' : '', 'flex', 'items-cross-center', segment ? `segment-${segment}` : '', // The spacing class, not its retired tightness name (journal
   // class-tightness-to-spacing; docs trial 4).
   spacing && spacing !== 'normal' ? `spacing-${spacing}` : '', radius ? `radius-${radius}` : '', rootClass, loading ? 'loading sf-button-state-loading' : ''].filter(Boolean);
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
@@ -606,6 +873,7 @@ function renderButtonTemplate(context) {
                 aria-label=${ariaLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 aria-busy=${loading ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 aria-expanded=${context.expanded === undefined ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : String(Boolean(context.expanded))}
+                aria-keyshortcuts=${context.ariaKeyShortcuts || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         >
             ${overlayContent}
             ${startContent}
@@ -613,7 +881,7 @@ function renderButtonTemplate(context) {
                     class="sf-button-text-container text-${textPosition} pointer-event-none${fullText ? ' flex-1' : ''}">
         ${textContent}
       </span>` : ''}
-            ${endContent}
+            ${endContent}${shortcutCaps.length ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<kbd class="sf-kbd--group sf-button-shortcut pointer-event-none" aria-hidden="true">${shortcutCaps.map(cap => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<kbd class=${cap.chars ? `sf-button-shortcut-key--chars-${cap.chars}` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>${cap.text}</kbd>`)}</kbd>` : ''}
         </button>
     `;
 }
@@ -660,7 +928,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-butto
 /***/ "5bb33fb22db3"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button","tag":"sf-button","version":"1.1.5","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"appearance":{"type":"enum","values":["default","tonal","outline","link","surface"],"default":"default"},"scheme":{"type":"enum","values":["primary","secondary","on-surface"],"default":"primary"},"status":{"type":"enum","values":["","error"],"default":""},"text-position":{"type":"string","default":"center"},"text":{"type":"string","default":""},"segment":{"type":"string","default":""},"icon":{"type":"icon","default":""},"icon-start":{"type":"icon","default":""},"icon-end":{"type":"icon","default":""},"icon-position":{"type":"enum","values":["start","end"],"default":"start"},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"loading":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"native-type":{"type":"enum","values":["button","submit","reset"],"default":"button"},"expanded":{"type":"boolean","optional":true}},"values":{},"events":{"press":{"carries":{}}},"actions":{},"css-variables":{"--sf-button-background-color":{"type":"color","state":"default"},"--sf-button-color":{"type":"color","state":"default"},"--sf-button-border-color":{"type":"color","state":"default"},"--sf-button-border-width":{"type":"length","state":"default"},"--sf-button-radius":{"type":"length","state":"default"},"--sf-button-padding-inline":{"type":"length","state":"default"},"--sf-button-padding-block":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button","tag":"sf-button","version":"1.2.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"appearance":{"type":"enum","values":["default","tonal","outline","link","surface"],"default":"default"},"scheme":{"type":"enum","values":["primary","secondary","on-surface","on-surface-variant"],"default":"primary"},"status":{"type":"enum","values":["","error"],"default":""},"text-position":{"type":"string","default":"center"},"text":{"type":"string","default":""},"segment":{"type":"string","default":""},"icon":{"type":"icon","default":""},"icon-start":{"type":"icon","default":""},"icon-end":{"type":"icon","default":""},"icon-position":{"type":"enum","values":["start","end"],"default":"start"},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"loading":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"native-type":{"type":"enum","values":["button","submit","reset"],"default":"button"},"shortcut":{"type":"string","default":""},"shortcut-listen":{"type":"boolean","default":false},"expanded":{"type":"boolean","optional":true}},"values":{},"events":{"press":{"carries":{}}},"actions":{},"css-variables":{"--sf-button-background-color":{"type":"color","state":"default"},"--sf-button-color":{"type":"color","state":"default"},"--sf-button-border-color":{"type":"color","state":"default"},"--sf-button-border-width":{"type":"length","state":"default"},"--sf-button-radius":{"type":"length","state":"default"},"--sf-button-padding-inline":{"type":"length","state":"default"},"--sf-button-padding-block":{"type":"length","state":"default"}}}');
 
 /***/ },
 
