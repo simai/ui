@@ -381,6 +381,25 @@
        simai/ui-source#3). A fill inside a fill -- an avatar in a tag -- is
        darker still and takes the primary role. */
     --sf-on-surface-container--variant: light-dark(var(--sf-neutral-35), var(--sf-neutral-80));
+    /* The tones of initials: a muted plate and the ink that reads on it over the
+       surfaces 0 to 3, in both themes (tests/browser/avatar-tones.browser.mjs
+       measures them). */
+    --sf-tone-rose-container: light-dark(var(--sf-tone-rose-50--alfa-20), var(--sf-tone-rose-50--alfa-32));
+    --sf-on-tone-rose-container: light-dark(var(--sf-tone-rose-30), var(--sf-tone-rose-85));
+    --sf-tone-amber-container: light-dark(var(--sf-tone-amber-50--alfa-20), var(--sf-tone-amber-50--alfa-32));
+    --sf-on-tone-amber-container: light-dark(var(--sf-tone-amber-30), var(--sf-tone-amber-85));
+    --sf-tone-lime-container: light-dark(var(--sf-tone-lime-50--alfa-20), var(--sf-tone-lime-50--alfa-32));
+    --sf-on-tone-lime-container: light-dark(var(--sf-tone-lime-30), var(--sf-tone-lime-85));
+    --sf-tone-green-container: light-dark(var(--sf-tone-green-50--alfa-20), var(--sf-tone-green-50--alfa-32));
+    --sf-on-tone-green-container: light-dark(var(--sf-tone-green-30), var(--sf-tone-green-85));
+    --sf-tone-teal-container: light-dark(var(--sf-tone-teal-50--alfa-20), var(--sf-tone-teal-50--alfa-32));
+    --sf-on-tone-teal-container: light-dark(var(--sf-tone-teal-30), var(--sf-tone-teal-85));
+    --sf-tone-sky-container: light-dark(var(--sf-tone-sky-50--alfa-20), var(--sf-tone-sky-50--alfa-32));
+    --sf-on-tone-sky-container: light-dark(var(--sf-tone-sky-30), var(--sf-tone-sky-85));
+    --sf-tone-indigo-container: light-dark(var(--sf-tone-indigo-50--alfa-20), var(--sf-tone-indigo-50--alfa-32));
+    --sf-on-tone-indigo-container: light-dark(var(--sf-tone-indigo-30), var(--sf-tone-indigo-85));
+    --sf-tone-violet-container: light-dark(var(--sf-tone-violet-50--alfa-20), var(--sf-tone-violet-50--alfa-32));
+    --sf-on-tone-violet-container: light-dark(var(--sf-tone-violet-30), var(--sf-tone-violet-85));
     --sf-on-surface-muted: light-dark(var(--sf-neutral-60), var(--sf-neutral-40));
     --sf-on-surface-inverse: light-dark(var(--sf-neutral-90), var(--sf-neutral-10));
     --sf-on-surface-inverse-fixed: var(--sf-neutral-90);
@@ -1052,6 +1071,46 @@
     --sf-success-15: #002d05;
     --sf-success-10: #002203;
     --sf-success-5: #001501;
+    /* The tones of initials (sf-avatar tone): eight fixed hues, one palette
+       step per use. They are not status colours and not the brand: the status
+       ramps say something about the world, and primary, secondary and tertiary
+       move with a theme's colour, so a hue that must keep its name under every
+       theme has a set of its own (HCT chroma 48, hues 5 to 325, the generator's
+       tones, tests/avatar-tones.contract.test.mjs holds them). Tone 50 lays the
+       plate on the fill family of the alpha scale, 20 light and 32 dark; tone 30
+       and tone 85 are the ink. */
+    --sf-tone-rose-50--alfa-20: rgba(184,88,113,0.2);
+    --sf-tone-rose-50--alfa-32: rgba(184,88,113,0.32157);
+    --sf-tone-rose-30: #7c2942;
+    --sf-tone-rose-85: #ffc6d1;
+    --sf-tone-amber-50--alfa-20: rgba(172,103,4,0.2);
+    --sf-tone-amber-50--alfa-32: rgba(172,103,4,0.32157);
+    --sf-tone-amber-30: #693c00;
+    --sf-tone-amber-85: #ffcb98;
+    --sf-tone-lime-50--alfa-20: rgba(125,123,0,0.2);
+    --sf-tone-lime-50--alfa-32: rgba(125,123,0,0.32157);
+    --sf-tone-lime-30: #4a4900;
+    --sf-tone-lime-85: #dcda62;
+    --sf-tone-green-50--alfa-20: rgba(56,134,71,0.2);
+    --sf-tone-green-50--alfa-32: rgba(56,134,71,0.32157);
+    --sf-tone-green-30: #00531f;
+    --sf-tone-green-85: #95e79d;
+    --sf-tone-teal-50--alfa-20: rgba(0,133,126,0.2);
+    --sf-tone-teal-50--alfa-32: rgba(0,133,126,0.32157);
+    --sf-tone-teal-30: #00504b;
+    --sf-tone-teal-85: #61e9de;
+    --sf-tone-sky-50--alfa-20: rgba(21,125,185,0.2);
+    --sf-tone-sky-50--alfa-32: rgba(21,125,185,0.32157);
+    --sf-tone-sky-30: #004b72;
+    --sf-tone-sky-85: #afd9ff;
+    --sf-tone-indigo-50--alfa-20: rgba(109,110,196,0.2);
+    --sf-tone-indigo-50--alfa-32: rgba(109,110,196,0.32157);
+    --sf-tone-indigo-30: #3b3d8f;
+    --sf-tone-indigo-85: #d1d0ff;
+    --sf-tone-violet-50--alfa-20: rgba(158,95,170,0.2);
+    --sf-tone-violet-50--alfa-32: rgba(158,95,170,0.32157);
+    --sf-tone-violet-30: #682e76;
+    --sf-tone-violet-85: #f9c2ff;
   }
 }
 body {

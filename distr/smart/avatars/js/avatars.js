@@ -290,6 +290,10 @@ function avatarClasses(context, options = {}) {
 
   if (context.isText) {
     classes.push("sf-avatar--text", "items-cross-center", "content-main-center");
+
+    if (context.resolvedTone) {
+      classes.push(`sf-avatar--tone-${context.resolvedTone}`);
+    }
   }
 
   if (!context.isImage && !context.isText) {

@@ -298,15 +298,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("602783801435");
 /* harmony import */ var _js_templates_label__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("63cd440fc8e3");
 /* harmony import */ var _helpers_text__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("cbce4a5232a6");
-/* harmony import */ var _helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("34addf781b5b");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("488a9707ea64");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("f2cb53b98f17");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("7ebc02c41719");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("56400745dab0");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_field_size__WEBPACK_IMPORTED_MODULE_2__, _js_templates_card__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__, _js_templates_label__WEBPACK_IMPORTED_MODULE_5__, _helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_7__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_field_size__WEBPACK_IMPORTED_MODULE_2__, _js_templates_card__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__, _js_templates_label__WEBPACK_IMPORTED_MODULE_5__, _helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_7__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _js_tone_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("a6b3ed0c1589");
+/* harmony import */ var _helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("34addf781b5b");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("488a9707ea64");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("f2cb53b98f17");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("7ebc02c41719");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("56400745dab0");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_field_size__WEBPACK_IMPORTED_MODULE_2__, _js_templates_card__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__, _js_templates_label__WEBPACK_IMPORTED_MODULE_5__, _helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_8__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_field_size__WEBPACK_IMPORTED_MODULE_2__, _js_templates_card__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__, _js_templates_label__WEBPACK_IMPORTED_MODULE_5__, _helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_8__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
+
 
 
 
@@ -324,14 +326,14 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 // dated alias (aliases.json, §3.1); the default name is the language files'
 // runtime aria-label.
 
-const AvatarElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_8__, {
+const AvatarElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_9__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_10__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_11__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_12__
   },
   source: "ru",
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_9__
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_10__
 });
 const TEMPLATE_RENDERERS = {
   default: _js_templates_default__WEBPACK_IMPORTED_MODULE_4__.renderDefaultTemplate,
@@ -403,15 +405,27 @@ class SfAvatar extends AvatarElement {
     }
 
     return (0,_helpers_text__WEBPACK_IMPORTED_MODULE_6__.getInitials)(this.heading || (this.hasAttribute("aria-label") ? this.ariaLabel : ""));
+  } // The tone the initials are drawn in: the named one, or for auto the one of
+  // the name, the words the initials stand for rather than the two letters, so
+  // two people with the same initials differ. Only initials take a tone: a
+  // picture covers the fill and the placeholder stays neutral.
+
+
+  get resolvedTone() {
+    if (!this.isText) {
+      return "";
+    }
+
+    return (0,_js_tone_mjs__WEBPACK_IMPORTED_MODULE_7__.resolveAvatarTone)(this.tone, this.heading || this.getAttribute("aria-label") || this.text);
   }
 
   templateContext() {
     const props = this.getPropsContext();
-    const badge = (0,_helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_7__.elementBadge)(this);
+    const badge = (0,_helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_8__.elementBadge)(this);
     return this.createTemplateContext({ ...props,
       ariaLabel: this.ariaLabel,
       // The count joins the name: «Анна Белова, 3 непрочитанных».
-      buttonLabel: (0,_helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_7__.nameWithBadge)(this.ariaLabel, badge.phrase),
+      buttonLabel: (0,_helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_8__.nameWithBadge)(this.ariaLabel, badge.phrase),
       size: this.size,
       line: this.line,
       shape: this.shape,
@@ -423,6 +437,7 @@ class SfAvatar extends AvatarElement {
       component: this,
       isImage: this.isImage,
       isText: this.isText,
+      resolvedTone: this.resolvedTone,
       text: this.displayText,
       rootClass: this.getRootClass(),
       rootStyle: this.getRootStyle()
@@ -459,7 +474,7 @@ class SfAvatar extends AvatarElement {
     }
 
     if (changedAttributes.includes("aria-label")) {
-      button.setAttribute("aria-label", (0,_helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_7__.nameWithBadge)(this.ariaLabel, (0,_helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_7__.elementBadge)(this).phrase));
+      button.setAttribute("aria-label", (0,_helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_8__.nameWithBadge)(this.ariaLabel, (0,_helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_8__.elementBadge)(this).phrase));
     }
 
     if (changedAttributes.includes("disabled")) {
@@ -478,6 +493,7 @@ class SfAvatar extends AvatarElement {
       imageUrl: this.imageUrl,
       imageAlt: this.imageAlt,
       text: this.text,
+      tone: this.tone,
       status: this.status,
       ariaLabel: this.ariaLabel,
       heading: this.heading,
@@ -692,6 +708,10 @@ function avatarClasses(context, options = {}) {
 
   if (context.isText) {
     classes.push("sf-avatar--text", "items-cross-center", "content-main-center");
+
+    if (context.resolvedTone) {
+      classes.push(`sf-avatar--tone-${context.resolvedTone}`);
+    }
   }
 
   if (!context.isImage && !context.isText) {
@@ -926,6 +946,56 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "a6b3ed0c1589"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   AVATAR_TONES: () => (/* binding */ AVATAR_TONES),
+/* harmony export */   avatarTone: () => (/* binding */ avatarTone),
+/* harmony export */   avatarToneHash: () => (/* binding */ avatarToneHash),
+/* harmony export */   resolveAvatarTone: () => (/* binding */ resolveAvatarTone)
+/* harmony export */ });
+// sf-avatar's tone from a name, without a document: a plain function of its
+// argument, so tests/avatar-tones.contract.test.mjs runs it in Node and a server
+// can print the same class in the first paint. docs/docs.md gives the algorithm
+// for a server in another language.
+//
+// FNV-1a, 32 bits, over the UTF-8 bytes of the string exactly as given (no
+// trimming, no case folding, no normalisation), its high half folded onto the
+// low one, because the low bits of FNV-1a alone follow the low bits of the
+// input; the remainder by the length of the list picks the tone.
+//
+// The list and its order are part of the algorithm: a name keeps its tone only
+// while they stay. A later named tone does not join `auto`.
+const AVATAR_TONES = Object.freeze(['rose', 'amber', 'lime', 'green', 'teal', 'sky', 'indigo', 'violet']);
+
+const FNV_OFFSET = 0x811c9dc5;
+const FNV_PRIME = 0x01000193;
+
+function avatarToneHash(name) {
+  let hash = FNV_OFFSET;
+  for (const byte of new TextEncoder().encode(String(name))) {
+    hash = Math.imul(hash ^ byte, FNV_PRIME) >>> 0;
+  }
+  return (hash ^ (hash >>> 16)) >>> 0;
+}
+
+// No name, no tone: the neutral look.
+function avatarTone(name) {
+  const text = name === undefined || name === null ? '' : String(name);
+  return text ? AVATAR_TONES[avatarToneHash(text) % AVATAR_TONES.length] : '';
+}
+
+// The tone a setting asks for: a named one as it is, auto the one of the name,
+// empty the neutral look.
+function resolveAvatarTone(setting, name) {
+  return setting === 'auto' ? avatarTone(name) : setting || '';
+}
+
+
+/***/ },
+
 /***/ "f2cb53b98f17"
 (module) {
 
@@ -936,7 +1006,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-avata
 /***/ "488a9707ea64"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.avatar","tag":"sf-avatar","version":"1.1.3","kind":"leaf","settings":{"size":{"type":"enum","values":["1/4","1/3","1/2","1","2","3"],"default":"1"},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"shape":{"type":"enum","values":["circle","square"],"default":"circle"},"image-url":{"type":"string","default":""},"image-alt":{"type":"string","default":""},"no-wrap":{"type":"boolean","default":false},"text":{"type":"string","default":""},"status":{"type":"enum","values":["none","online","offline","company","verified"],"default":"none"},"heading":{"type":"string","default":""},"description":{"type":"string","default":""},"meta":{"type":"string","default":""},"meta-icon":{"type":"icon","default":""},"card-variant":{"type":"enum","values":["square","portrait"],"default":"square"},"disabled":{"type":"boolean","default":false},"badge-count":{"type":"string","default":""},"badge-dot":{"type":"boolean","default":false},"badge-cap":{"type":"number","integer":true,"min":1,"default":99},"badge-label":{"type":"string","default":""}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-avatar-background-color":{"type":"color","state":"default"},"--sf-avatar-color":{"type":"color","state":"default"},"--sf-avatar-border-color":{"type":"color","state":"default"},"--sf-avatar-border-width":{"type":"length","state":"default"},"--sf-avatar-radius":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.avatar","tag":"sf-avatar","version":"1.2.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/4","1/3","1/2","1","2","3"],"default":"1"},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"shape":{"type":"enum","values":["circle","square"],"default":"circle"},"image-url":{"type":"string","default":""},"image-alt":{"type":"string","default":""},"no-wrap":{"type":"boolean","default":false},"text":{"type":"string","default":""},"tone":{"type":"enum","values":["","auto","rose","amber","lime","green","teal","sky","indigo","violet"],"default":""},"status":{"type":"enum","values":["none","online","offline","company","verified"],"default":"none"},"heading":{"type":"string","default":""},"description":{"type":"string","default":""},"meta":{"type":"string","default":""},"meta-icon":{"type":"icon","default":""},"card-variant":{"type":"enum","values":["square","portrait"],"default":"square"},"disabled":{"type":"boolean","default":false},"badge-count":{"type":"string","default":""},"badge-dot":{"type":"boolean","default":false},"badge-cap":{"type":"number","integer":true,"min":1,"default":99},"badge-label":{"type":"string","default":""}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-avatar-background-color":{"type":"color","state":"default"},"--sf-avatar-color":{"type":"color","state":"default"},"--sf-avatar-border-color":{"type":"color","state":"default"},"--sf-avatar-border-width":{"type":"length","state":"default"},"--sf-avatar-radius":{"type":"length","state":"default"}}}');
 
 /***/ },
 
