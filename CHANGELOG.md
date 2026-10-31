@@ -45,6 +45,8 @@
 
 ### Исправлено
 
+- sf-input and sf-textarea: an inherited value is the page's text in forced colours (#57). sf-composition-overlay 1.2.5: the layer keeps the page's origin under a contained ancestor (#58). A portal's carried language follows the page (#55). core.runtime 1.9.0: a setting a component reads for itself can still be written as a property. Docs: two things that catch a host of the workspace layout.
+
 - component.range-slider 1.0.1: a tooltip label reserves its own room at first paint, so a printed slider with a tooltip is 54 px tall like the adopted one, not 44 px growing to 54.
 - A trait's event is declared like any other: "shared": "<trait>" gives sf-<verb>. sf-input, sf-textarea, sf-dropdown, sf-color, sf-switch and sf-quantity declare sf-field-reset as their current event; sf-field:reset stays as its dated alias until 2026-12-01.
 
