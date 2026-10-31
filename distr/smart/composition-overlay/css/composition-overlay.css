@@ -29,14 +29,43 @@
     inset: 0;
     pointer-events: none;
   }
+  .sf-composition-overlay[data-sf-overlay-place=content] {
+    position: relative;
+    top: auto;
+    right: auto;
+    bottom: auto;
+    left: auto;
+    inset: auto;
+    display: block;
+    width: 0;
+    inline-size: 0;
+    height: 0;
+    block-size: 0;
+  }
+  .sf-composition-overlay[data-sf-overlay-place=content] .sf-composition-overlay-layer,
+  .sf-composition-overlay[data-sf-overlay-place=content] .sf-composition-overlay-insertions {
+    position: absolute;
+    top: auto;
+    right: auto;
+    bottom: auto;
+    left: auto;
+    inset: auto;
+    top: 0;
+    left: 0;
+    width: 1px;
+    inline-size: 1px;
+    height: 1px;
+    block-size: 1px;
+  }
+  .sf-composition-overlay[data-sf-overlay-place=content] .sf-composition-overlay-frame,
+  .sf-composition-overlay[data-sf-overlay-place=content] .sf-composition-overlay-insert,
+  .sf-composition-overlay[data-sf-overlay-place=content] .sf-composition-overlay-drop {
+    position: absolute;
+  }
   .sf-composition-overlay-frame {
     position: fixed;
     box-sizing: border-box;
-    border: 1px dashed var(--sf-composition-overlay-color);
-    border-radius: 0.25rem;
-    border-radius: var(--sf-radius-1, 0.25rem);
-    transition: top 0.1s, left 0.1s, width 0.1s, height 0.1s;
-    transition: top var(--sf-duration-fast, 0.1s), left var(--sf-duration-fast, 0.1s), width var(--sf-duration-fast, 0.1s), height var(--sf-duration-fast, 0.1s);
+    border: 1px solid var(--sf-composition-overlay-color);
   }
   .sf-composition-overlay-frame--selected {
     border-style: solid;
@@ -93,13 +122,41 @@
     white-space: nowrap;
     text-overflow: ellipsis;
   }
+  .sf-composition-overlay-rail {
+    display: contents;
+  }
+  .sf-composition-overlay[data-sf-overlay-place=content] .sf-composition-overlay-rail {
+    position: absolute;
+    z-index: 2;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+    pointer-events: none;
+  }
+  .sf-composition-overlay[data-sf-overlay-place=content] .sf-composition-overlay-toolbar {
+    position: sticky;
+    top: 0.25rem;
+    top: var(--sf-space-1\/4, 0.25rem);
+    flex: none;
+  }
+  .sf-composition-overlay[data-sf-overlay-side] .sf-composition-overlay-toolbar {
+    flex-direction: column;
+  }
   .sf-composition-overlay-toolbar {
     position: fixed;
+    z-index: 2;
     display: flex;
     gap: 0.25rem;
-    gap: var(--sf-composition-overlay-toolbar-gap, var(--sf-space-1, 0.25rem));
+    gap: var(--sf-composition-overlay-toolbar-gap, var(--sf-space-1\/4, 0.25rem));
+    margin-bottom: 0.25rem;
+    -webkit-margin-after: 0.25rem;
+            margin-block-end: 0.25rem;
+    margin-bottom: 0.25rem;
+    margin-bottom: var(--sf-space-1\/4, 0.25rem);
+    -webkit-margin-after: var(--sf-space-1\/4, 0.25rem);
+            margin-block-end: var(--sf-space-1\/4, 0.25rem);
     padding: 0.25rem;
-    padding: var(--sf-space-1, 0.25rem);
+    padding: var(--sf-space-1\/4, 0.25rem);
     border-radius: 0.25rem;
     border-radius: var(--sf-composition-overlay-toolbar-radius, var(--sf-radius-1, 0.25rem));
     /* A toolbar floats over the page: step 2's surface and shadow. */
@@ -120,8 +177,14 @@
     cursor: pointer;
   }
   .sf-composition-overlay-action {
-    padding: 0.25rem 0.5rem;
-    padding: var(--sf-space-1, 0.25rem) var(--sf-space-2, 0.5rem);
+    box-sizing: border-box;
+    min-height: 2rem;
+    min-block-size: 2rem;
+    min-height: 2rem;
+    min-height: var(--sf-space-4, 2rem);
+    min-block-size: var(--sf-space-4, 2rem);
+    padding: 0 0.5rem;
+    padding: 0 var(--sf-space-1\/2, 0.5rem);
     border: 1px solid GrayText;
     border: 1px solid var(--sf-outline, GrayText);
     border-radius: 0.25rem;
@@ -131,8 +194,38 @@
     color: CanvasText;
     color: var(--sf-on-surface, CanvasText);
   }
+  .sf-composition-overlay-action:disabled {
+    border-color: GrayText;
+    border-color: var(--sf-outline-disable, GrayText);
+    color: GrayText;
+    color: var(--sf-on-disable, GrayText);
+    cursor: default;
+  }
+  .sf-composition-overlay-tool {
+    flex: none;
+    min-width: 2rem;
+    min-inline-size: 2rem;
+    min-width: 2rem;
+    min-width: var(--sf-space-4, 2rem);
+    min-inline-size: var(--sf-space-4, 2rem);
+    min-height: 2rem;
+    min-block-size: 2rem;
+    min-height: 2rem;
+    min-height: var(--sf-space-4, 2rem);
+    min-block-size: var(--sf-space-4, 2rem);
+  }
+  .sf-composition-overlay-tool[data-sf-overlay-grip] .sf-icon-button:not(:disabled) {
+    cursor: -webkit-grab;
+    cursor: grab;
+    touch-action: none;
+  }
+  .sf-composition-overlay-tool[data-sf-overlay-grip] .sf-icon-button:not(:disabled):active {
+    cursor: -webkit-grabbing;
+    cursor: grabbing;
+  }
   .sf-composition-overlay-insert {
     position: fixed;
+    z-index: 1;
     display: grid;
     align-items: center;
     justify-items: center;
@@ -145,43 +238,38 @@
             margin-block-start: -0.75rem;
     padding: 0;
     border: 0;
-    background: linear-gradient(var(--sf-composition-overlay-color), var(--sf-composition-overlay-color)) center/100% 1px no-repeat;
+    background: linear-gradient(var(--sf-composition-overlay-color), var(--sf-composition-overlay-color)) center/100% 2px no-repeat;
     color: var(--sf-composition-overlay-color);
-    opacity: 0.6;
+    opacity: 0;
     pointer-events: none;
   }
-  .sf-composition-overlay-insert:hover,
+  .sf-composition-overlay-insert[data-sf-insert-shown],
   .sf-composition-overlay-insert.focus-visible {
     opacity: 1;
   }
-  .sf-composition-overlay-insert:hover,
+  .sf-composition-overlay-insert[data-sf-insert-shown],
   .sf-composition-overlay-insert:focus-visible {
     opacity: 1;
   }
   .sf-composition-overlay-insert-mark {
-    display: grid;
-    align-items: center;
-    justify-items: center;
-    place-items: center;
     width: 1.5rem;
     inline-size: 1.5rem;
     height: 1.5rem;
     block-size: 1.5rem;
-    border: 1px solid var(--sf-composition-overlay-color);
     border-radius: 50%;
-    background: Canvas;
-    background: var(--sf-surface-1, Canvas);
-    line-height: 1;
+    background: linear-gradient(HighlightText, HighlightText) center/0.75rem 2px no-repeat, linear-gradient(HighlightText, HighlightText) center/2px 0.75rem no-repeat, var(--sf-composition-overlay-color);
+    background: linear-gradient(var(--sf-on-primary, HighlightText), var(--sf-on-primary, HighlightText)) center/0.75rem 2px no-repeat, linear-gradient(var(--sf-on-primary, HighlightText), var(--sf-on-primary, HighlightText)) center/2px 0.75rem no-repeat, var(--sf-composition-overlay-color);
+  }
+  .sf-composition-overlay-insert[data-sf-insert-shown] .sf-composition-overlay-insert-mark,
+  .sf-composition-overlay-insert.focus-visible .sf-composition-overlay-insert-mark {
+    pointer-events: auto;
+  }
+  .sf-composition-overlay-insert[data-sf-insert-shown] .sf-composition-overlay-insert-mark,
+  .sf-composition-overlay-insert:focus-visible .sf-composition-overlay-insert-mark {
     pointer-events: auto;
   }
   .sf-composition-overlay-insert[aria-pressed=true] {
     background-size: 100% 3px;
-    opacity: 1;
-  }
-  .sf-composition-overlay-insert[aria-pressed=true] .sf-composition-overlay-insert-mark {
-    background: var(--sf-composition-overlay-color);
-    color: HighlightText;
-    color: var(--sf-on-primary, HighlightText);
   }
   .sf-composition-overlay-action.focus-visible,
   .sf-composition-overlay-insert.focus-visible {
@@ -206,11 +294,6 @@
     white-space: nowrap;
     pointer-events: auto;
   }
-  @media (prefers-reduced-motion: reduce) {
-    .sf-composition-overlay-frame {
-      transition: none;
-    }
-  }
   .sf-composition-overlay-drop {
     position: fixed;
     z-index: 90;
@@ -229,14 +312,15 @@
     pointer-events: auto;
     touch-action: none;
   }
-  .sf-composition-overlay[data-sf-overlay-mode=frame] .sf-composition-overlay-frame {
-    transition: none;
-  }
-  .sf-composition-overlay[data-sf-overlay-mode=frame] .sf-composition-overlay-frame--selected .sf-composition-overlay-label {
-    cursor: default;
-    pointer-events: none;
-  }
   .sf-composition-overlay[data-sf-overlay-editing] .sf-composition-overlay-frame--hover {
     display: none;
+  }
+}
+@layer sf.states {
+  .sf-composition-overlay-tool[data-tone=danger] .sf-icon-button:not(:disabled):hover {
+    --sf-icon--color: var(--sf-error-active);
+  }
+  .sf-composition-overlay-action[data-tone=danger]:not(:disabled):hover {
+    color: var(--sf-error-active);
   }
 }

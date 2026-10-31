@@ -147,6 +147,37 @@ const MESSAGES = {
 const SHORTCUTS = { strong: 'b', em: 'i', code: 'e' };
 const SKIP = new Set(['SCRIPT', 'STYLE', 'TEMPLATE', 'HEAD', 'TITLE', 'META', 'LINK', 'IMG', 'SVG', 'OBJECT', 'IFRAME', 'NOSCRIPT']);
 const BLOCK = new Set(['P', 'DIV', 'LI', 'UL', 'OL', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'TR', 'TABLE', 'BLOCKQUOTE', 'SECTION', 'ARTICLE']);
+// While editing, an atom or an opaque node is one element that is not
+// editable inside and carries its entry as JSON here, so reading the DOM back,
+// and pasting what the editor copied, return the entry exactly.
+const NODE_ATTRIBUTE = 'data-sf-inline-node';
+const ATOM_TAGS = new Map(Object.entries(_inline_model_mjs__WEBPACK_IMPORTED_MODULE_1__.INLINE_COMPONENTS).map(([name, entry]) => [entry.tag.toUpperCase(), name]));
+const isAtomElement = (node) => node?.nodeType === 1 && node.hasAttribute(NODE_ATTRIBUTE);
+
+/** The entry an atom element holds: its JSON, or for a drawn atom without it, its tag and declared attributes. */
+function atomEntry(element) {
+  const json = element.getAttribute(NODE_ATTRIBUTE);
+  if (json !== null) {
+    try {
+      const entry = JSON.parse(json);
+      // Only atoms and opaque nodes travel this way; text and links are read from the DOM.
+      if (entry && typeof entry === 'object' && !Array.isArray(entry) && typeof entry.type === 'string' && entry.type !== 'text' && entry.type !== 'link') return entry;
+    } catch { /* not ours: read the element as markup */ }
+    return null;
+  }
+  const name = ATOM_TAGS.get(element.tagName.toUpperCase());
+  if (!name) return null;
+  const declared = _inline_model_mjs__WEBPACK_IMPORTED_MODULE_1__.INLINE_COMPONENTS[name].props;
+  const props = {};
+  if (name === 'kbd') props.text = element.textContent.replace(/\s+/gu, ' ').trim();
+  else for (const [key, kind] of Object.entries(declared)) {
+    if (!element.hasAttribute(key)) continue;
+    props[key] = kind === 'boolean' ? true : element.getAttribute(key);
+  }
+  const entry = { type: 'component', name, ...(Object.keys(props).length ? { props } : {}) };
+  return (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_1__.isInlineComponent)(entry) ? entry : null;
+}
+
 const format = (template, values) => template.replace(/\{(\w+)\}/gu, (_, key) => String(values[key] ?? ''));
 // Words in the page's language through pageText, as every component takes
 // them: the editor read <html lang> alone and offered only English or Russian,
@@ -165,6 +196,13 @@ function readInlineDom(root, { marks = _inline_model_mjs__WEBPACK_IMPORTED_MODUL
       return;
     }
     if (node.nodeType !== 1 && node.nodeType !== 11) return;
+    if (node.nodeType === 1 && node !== root) {
+      const entry = atomEntry(node);
+      if (entry) {
+        segments.push({ text: _inline_model_mjs__WEBPACK_IMPORTED_MODULE_1__.INLINE_OBJECT, marks: [], href, node: entry });
+        return;
+      }
+    }
     if (node.nodeType === 1 && SKIP.has(node.tagName.toUpperCase())) return;
     const tag = node.nodeType === 1 ? node.tagName.toUpperCase() : '';
     const next = new Set(active);
@@ -196,19 +234,33 @@ function readInlineDom(root, { marks = _inline_model_mjs__WEBPACK_IMPORTED_MODUL
   let content = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_1__.fromSegments)(segments.map((segment) => ({ ...segment, marks: segment.marks.filter((mark) => allowed.has(mark)), href: links ? segment.href : null })));
   if (collapse) {
     const flat = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_1__.toSegments)(content);
-    if (flat.length) {
-      flat[0] = { ...flat[0], text: flat[0].text.replace(/^ +/u, '') };
-      flat[flat.length - 1] = { ...flat.at(-1), text: flat.at(-1).text.replace(/ +$/u, '') };
-    }
+    if (flat.length && !flat[0].node) flat[0] = { ...flat[0], text: flat[0].text.replace(/^ +/u, '') };
+    if (flat.length && !flat.at(-1).node) flat[flat.length - 1] = { ...flat.at(-1), text: flat.at(-1).text.replace(/ +$/u, '') };
     content = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_1__.fromSegments)(flat);
   }
   return content;
 }
 
-/** Renders inline content with the same element nesting as the Framework renderer. */
+/**
+ * Renders inline content with the same element nesting as the Framework
+ * renderer. An atom draws its component's element, an opaque node a
+ * placeholder; both are not editable inside and carry their entry.
+ */
 function renderInlineDom(doc, content) {
   const fragment = doc.createDocumentFragment();
+  const object = (entry) => {
+    const view = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_1__.inlineComponentView)(entry);
+    const element = doc.createElement(view ? view.tag : 'span');
+    if (view) {
+      for (const [name, value] of view.attributes) element.setAttribute(name, value);
+      if (view.text) element.textContent = view.text;
+    } else element.textContent = _inline_model_mjs__WEBPACK_IMPORTED_MODULE_1__.INLINE_OBJECT;
+    element.setAttribute('contenteditable', 'false');
+    element.setAttribute(NODE_ATTRIBUTE, JSON.stringify(entry));
+    return element;
+  };
   const run = (entry) => {
+    if (entry.type !== 'text') return object(entry);
     let node = doc.createTextNode(entry.value);
     for (const mark of entry.marks || []) {
       const wrapper = doc.createElement(mark);
@@ -228,39 +280,60 @@ function renderInlineDom(doc, content) {
   return fragment;
 }
 
-function textNodes(root) {
-  const walker = root.ownerDocument.createTreeWalker(root, 4);
-  const nodes = [];
-  while (walker.nextNode()) nodes.push(walker.currentNode);
-  return nodes;
+// The units of offset inside root, in document order: text nodes outside
+// atoms, and atom elements, which hold one unit each.
+function units(root) {
+  const list = [];
+  const visit = (node) => {
+    for (const child of node.childNodes) {
+      if (child.nodeType === 3) list.push(child);
+      else if (isAtomElement(child)) list.push(child);
+      else if (child.nodeType === 1) visit(child);
+    }
+  };
+  visit(root);
+  return list;
 }
+const unitLength = (unit) => (unit.nodeType === 3 ? unit.nodeValue.length : 1);
 
-/** Character offset of a DOM position inside root, counted over text nodes. */
+/** Offset of a DOM position inside root: characters of text nodes, one per atom. */
 function textOffset(root, container, offset) {
   const range = root.ownerDocument.createRange();
   range.setStart(root, 0);
   range.setEnd(container, offset);
-  return range.toString().length;
+  let total = 0;
+  for (const unit of units(root)) {
+    if (unit === container) return total + offset;
+    // A unit counts once its end is inside [root start, position].
+    const [parent, index] = unit.nodeType === 3 ? [unit, unit.nodeValue.length] : [unit.parentNode, [...unit.parentNode.childNodes].indexOf(unit) + 1];
+    if (range.comparePoint(parent, index) !== 0) break;
+    total += unitLength(unit);
+  }
+  return total;
 }
 
-function setSelection(root, start, end = start) {
+// The DOM position of an offset: inside a text node where one holds it, else
+// beside the atom, so the caret never lands inside one.
+function locate(root, offset) {
+  let total = 0;
+  const list = units(root);
+  for (const unit of list) {
+    if (unit.nodeType === 3) {
+      if (offset <= total + unit.nodeValue.length) return [unit, offset - total];
+    } else if (offset <= total) return [unit.parentNode, [...unit.parentNode.childNodes].indexOf(unit)];
+    total += unitLength(unit);
+  }
+  const last = list.at(-1);
+  if (!last) return [root, 0];
+  return last.nodeType === 3 ? [last, last.nodeValue.length] : [last.parentNode, [...last.parentNode.childNodes].indexOf(last) + 1];
+}
+
+/** Selects from anchor to focus (focus may come first: a backward selection). */
+function setSelection(root, anchor, focus = anchor) {
   const selection = root.ownerDocument.getSelection();
-  const nodes = textNodes(root);
-  const locate = (offset) => {
-    let total = 0;
-    for (const node of nodes) {
-      if (offset <= total + node.nodeValue.length) return [node, offset - total];
-      total += node.nodeValue.length;
-    }
-    return nodes.length ? [nodes.at(-1), nodes.at(-1).nodeValue.length] : [root, 0];
-  };
-  const range = root.ownerDocument.createRange();
-  const [startNode, startOffset] = locate(start);
-  const [endNode, endOffset] = locate(end);
-  range.setStart(startNode, startOffset);
-  range.setEnd(endNode, endOffset);
-  selection.removeAllRanges();
-  selection.addRange(range);
+  const [anchorNode, anchorOffset] = locate(root, anchor);
+  const [focusNode, focusOffset] = locate(root, focus);
+  selection.setBaseAndExtent(anchorNode, anchorOffset, focusNode, focusOffset);
 }
 
 /**
@@ -287,7 +360,7 @@ function startInlineEdit(element, options = {}) {
   const read = () => readInlineDom(element, { marks, links });
   const selectionOffsets = () => {
     const selection = doc.getSelection();
-    if (!selection?.rangeCount || !element.contains(selection.anchorNode)) return [(0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_1__.inlineText)(read()).length, (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_1__.inlineText)(read()).length];
+    if (!selection?.rangeCount || !element.contains(selection.anchorNode)) return [(0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_1__.inlineLength)(read()), (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_1__.inlineLength)(read())];
     const range = selection.getRangeAt(0);
     return [textOffset(element, range.startContainer, range.startOffset), textOffset(element, range.endContainer, range.endOffset)];
   };
@@ -458,7 +531,7 @@ function startInlineEdit(element, options = {}) {
   element.setAttribute('aria-label', format(text.editing, { label: options.label || '' }).replace(/^: /u, ''));
   element.replaceChildren(renderInlineDom(doc, initial));
   element.focus();
-  setSelection(element, (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_1__.inlineText)(initial).length);
+  setSelection(element, (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_1__.inlineLength)(initial));
   history.push({ content: initial, selection: selectionOffsets(), typing: false });
   historyIndex = 0;
 
@@ -501,14 +574,60 @@ function startInlineEdit(element, options = {}) {
       : [{ type: 'text', value: plain.replace(/\s+/gu, ' ').trim() }];
     const inserted = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_1__.toSegments)(parsed);
     const [start, end] = selectionOffsets();
-    const length = inserted.reduce((sum, segment) => sum + segment.text.length, 0);
+    const length = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_1__.inlineLength)((0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_1__.fromSegments)(inserted));
     apply((0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_1__.replaceRange)(read(), start, end, inserted), start + length, start + length);
   }, signal);
   element.addEventListener('drop', (event) => event.preventDefault(), signal);
+  // Copy and cut write the editor's own HTML, in which an atom keeps its
+  // entry, so pasting it into an inline editor gives the same atom back.
+  const copySelection = (event, remove) => {
+    const [start, end] = selectionOffsets();
+    if (start === end || !event.clipboardData) return;
+    event.preventDefault();
+    const slice = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_1__.sliceInline)(read(), start, end);
+    const holder = doc.createElement('div');
+    holder.append(renderInlineDom(doc, slice));
+    event.clipboardData.setData('text/html', holder.innerHTML);
+    event.clipboardData.setData('text/plain', (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_1__.toSegments)(slice).map(({ text, node }) => (node ? (typeof node.props?.text === 'string' ? node.props.text : '') : text)).join(''));
+    if (remove) apply((0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_1__.replaceRange)(read(), start, end, []), start, start);
+  };
+  element.addEventListener('copy', (event) => copySelection(event, false), signal);
+  element.addEventListener('cut', (event) => copySelection(event, true), signal);
+  // An atom is one caret stop: arrows step over it in one move, Backspace
+  // and Delete remove it whole. Only the moves next to an atom are taken over.
+  const stepOverAtom = (event) => {
+    const selection = doc.getSelection();
+    if (!selection?.rangeCount || event.altKey || event.ctrlKey || event.metaKey) return false;
+    const content = read();
+    const [start, end] = selectionOffsets();
+    if (event.key === 'Backspace' || event.key === 'Delete') {
+      if (start !== end) {
+        if (!(0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_1__.toSegments)((0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_1__.sliceInline)(content, start, end)).some(({ node }) => node)) return false;
+        apply((0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_1__.replaceRange)(content, start, end, []), start, start);
+        return true;
+      }
+      const at = event.key === 'Backspace' ? start - 1 : start;
+      if (at < 0 || !(0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_1__.objectAt)(content, at)) return false;
+      apply((0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_1__.replaceRange)(content, at, at + 1, []), at, at);
+      return true;
+    }
+    const rtl = globalThis.getComputedStyle(element).direction === 'rtl';
+    const forward = (event.key === 'ArrowRight') !== rtl;
+    const anchor = textOffset(element, selection.anchorNode, selection.anchorOffset);
+    const focus = textOffset(element, selection.focusNode, selection.focusOffset);
+    if (!event.shiftKey && anchor !== focus) return false;
+    const next = forward ? focus + 1 : focus - 1;
+    if (!(0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_1__.objectAt)(content, forward ? focus : focus - 1)) return false;
+    setSelection(element, event.shiftKey ? anchor : next, next);
+    updateToolbar();
+    return true;
+  };
   element.addEventListener('keydown', (event) => {
     if (event.isComposing || composing) return;
     const modifier = event.ctrlKey || event.metaKey;
-    if (event.key === 'Enter' && !event.shiftKey) {
+    if (['ArrowLeft', 'ArrowRight', 'Backspace', 'Delete'].includes(event.key) && stepOverAtom(event)) {
+      event.preventDefault();
+    } else if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
       commit();
     } else if (event.key === 'Escape') {
@@ -603,27 +722,106 @@ __webpack_async_result__();
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   INLINE_COMPONENTS: () => (/* binding */ INLINE_COMPONENTS),
 /* harmony export */   INLINE_LIMITS: () => (/* binding */ INLINE_LIMITS),
 /* harmony export */   INLINE_MARKS: () => (/* binding */ INLINE_MARKS),
+/* harmony export */   INLINE_OBJECT: () => (/* binding */ INLINE_OBJECT),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
 /* harmony export */   fromSegments: () => (/* binding */ fromSegments),
+/* harmony export */   inlineComponentSchemas: () => (/* binding */ inlineComponentSchemas),
+/* harmony export */   inlineComponentView: () => (/* binding */ inlineComponentView),
+/* harmony export */   inlineLength: () => (/* binding */ inlineLength),
 /* harmony export */   inlineText: () => (/* binding */ inlineText),
+/* harmony export */   isInlineComponent: () => (/* binding */ isInlineComponent),
 /* harmony export */   marksIn: () => (/* binding */ marksIn),
 /* harmony export */   normalizeInline: () => (/* binding */ normalizeInline),
+/* harmony export */   objectAt: () => (/* binding */ objectAt),
 /* harmony export */   replaceRange: () => (/* binding */ replaceRange),
 /* harmony export */   safeHref: () => (/* binding */ safeHref),
 /* harmony export */   setLink: () => (/* binding */ setLink),
+/* harmony export */   sliceInline: () => (/* binding */ sliceInline),
 /* harmony export */   toSegments: () => (/* binding */ toSegments),
 /* harmony export */   toggleMark: () => (/* binding */ toggleMark)
 /* harmony export */ });
 // Pure operations on the Composition inline content model used by
 // content.heading and content.paragraph: text runs with strong, em and code
-// marks, and links whose children are text runs. No DOM access here.
+// marks, links whose children are text runs, and inline component atoms
+// ({type: 'component', name, props}). No DOM access here.
+//
+// Every other entry -- a node from a newer producer, or an atom this model
+// does not know -- is opaque: it holds one caret stop, takes no marks, and
+// comes back out of every operation exactly as it went in. toSegments used
+// to drop such entries, so an edit next to them lost them silently.
 
 const INLINE_MARKS = Object.freeze(['strong', 'em', 'code']);
 const MARK_ORDER = new Map(INLINE_MARKS.map((mark, index) => [mark, index]));
 const SAFE_SCHEMES = new Set(['http:', 'https:', 'mailto:', 'tel:']);
-const INLINE_LIMITS = Object.freeze({ maxTextLength: 100000, maxHrefLength: 2048 });
+const INLINE_LIMITS = Object.freeze({ maxTextLength: 100000, maxHrefLength: 2048, maxPropLength: 1000 });
+
+// The closed list of inline atoms. Each name draws one element; its props
+// are that component's own settings, a string (text) or a token (a name the
+// component reads from a fixed set) or a boolean. Nothing else is drawn, so
+// no prop can become an event handler or markup.
+const INLINE_COMPONENTS = Object.freeze({
+  badge: Object.freeze({ tag: 'sf-badge', required: [], props: Object.freeze({ text: 'text', icon: 'token', appearance: 'token', scheme: 'token', status: 'token', size: 'token', compact: 'boolean' }) }),
+  kbd: Object.freeze({ tag: 'kbd', required: ['text'], props: Object.freeze({ text: 'text' }) }),
+  icon: Object.freeze({ tag: 'sf-icon', required: ['icon'], props: Object.freeze({ icon: 'token', label: 'text', size: 'token', filled: 'boolean' }) }),
+  button: Object.freeze({ tag: 'sf-button', required: [], props: Object.freeze({ text: 'text', icon: 'token', appearance: 'token', scheme: 'token', size: 'token' }) }),
+});
+const TOKEN = '^[a-z0-9][a-z0-9_/-]{0,63}$';
+const TOKEN_PATTERN = new RegExp(TOKEN, 'u');
+// The one unit an atom or an opaque node holds in segment offsets.
+const INLINE_OBJECT = '\ufffc';
+
+/** JSON Schema of one inline atom per name, for the type manifests. */
+function inlineComponentSchemas() {
+  const prop = (kind) => (kind === 'boolean' ? { type: 'boolean' } : kind === 'token' ? { type: 'string', pattern: TOKEN } : { type: 'string', maxLength: INLINE_LIMITS.maxPropLength });
+  return Object.entries(INLINE_COMPONENTS).map(([name, entry]) => ({
+    type: 'object',
+    required: ['type', 'name', ...(entry.required.length ? ['props'] : [])],
+    additionalProperties: false,
+    properties: {
+      type: { const: 'component' },
+      name: { const: name },
+      props: {
+        type: 'object',
+        ...(entry.required.length ? { required: [...entry.required] } : {}),
+        additionalProperties: false,
+        properties: Object.fromEntries(Object.entries(entry.props).map(([key, kind]) => [key, prop(kind)])),
+      },
+    },
+  }));
+}
+
+/** True for an atom whose name is declared and whose props are all declared and well typed. */
+function isInlineComponent(node) {
+  const entry = node?.type === 'component' && Object.hasOwn(INLINE_COMPONENTS, node.name) ? INLINE_COMPONENTS[node.name] : null;
+  if (!entry) return false;
+  if (Object.keys(node).some((key) => !['type', 'name', 'props'].includes(key))) return false;
+  const props = node.props ?? {};
+  if (!props || typeof props !== 'object' || Array.isArray(props)) return false;
+  if (entry.required.some((key) => !(key in props))) return false;
+  return Object.entries(props).every(([key, value]) => {
+    const kind = Object.hasOwn(entry.props, key) ? entry.props[key] : null;
+    if (kind === 'boolean') return typeof value === 'boolean';
+    if (kind === 'token') return typeof value === 'string' && TOKEN_PATTERN.test(value);
+    return kind === 'text' && typeof value === 'string' && value.length <= INLINE_LIMITS.maxPropLength;
+  });
+}
+
+/** The tag and attributes an atom draws as; text is a kbd's content. Values are raw: the caller escapes. */
+function inlineComponentView(node) {
+  if (!isInlineComponent(node)) return null;
+  const entry = INLINE_COMPONENTS[node.name];
+  const props = node.props ?? {};
+  if (node.name === 'kbd') return { tag: entry.tag, attributes: [], text: props.text };
+  const attributes = Object.keys(entry.props).filter((key) => key in props && props[key] !== false)
+    .map((key) => [key, props[key] === true ? '' : props[key]]);
+  return { tag: entry.tag, attributes, text: '' };
+}
+
+const clone = (value) => JSON.parse(JSON.stringify(value));
+const isObjectEntry = (entry) => entry !== null && typeof entry === 'object' && !Array.isArray(entry) && entry.type !== 'text' && entry.type !== 'link';
 
 /** Same link rule as Document validation: relative, fragment or http(s)/mailto/tel. */
 function safeHref(value) {
@@ -641,10 +839,18 @@ function sortMarks(marks) {
   return [...new Set(marks)].filter((mark) => MARK_ORDER.has(mark)).sort((left, right) => MARK_ORDER.get(left) - MARK_ORDER.get(right));
 }
 
-/** Flat segments: {text, marks: string[], href: string|null}. */
+/**
+ * Flat segments: {text, marks: string[], href: string|null}. An atom or an
+ * opaque node is one segment {text: INLINE_OBJECT, marks: [], href, node}
+ * that carries the entry unchanged; inside a link it keeps the link's href.
+ */
 function toSegments(content) {
   const segments = [];
   const push = (run, href) => {
+    if (isObjectEntry(run)) {
+      segments.push({ text: INLINE_OBJECT, marks: [], href, node: clone(run) });
+      return;
+    }
     if (run?.type !== 'text' || typeof run.value !== 'string' || !run.value) return;
     segments.push({ text: run.value, marks: sortMarks(Array.isArray(run.marks) ? run.marks : []), href });
   };
@@ -657,12 +863,16 @@ function toSegments(content) {
   return segments;
 }
 
-const sameStyle = (left, right) => left.href === right.href && left.marks.join() === right.marks.join();
+const sameStyle = (left, right) => !left.node && !right.node && left.href === right.href && left.marks.join() === right.marks.join();
 
 /** Builds normalized content: merged runs, canonical marks, no empty parts. */
 function fromSegments(segments) {
   const merged = [];
   for (const segment of segments) {
+    if (segment.node) {
+      merged.push({ text: INLINE_OBJECT, marks: [], href: segment.href && safeHref(segment.href) ? segment.href : null, node: segment.node });
+      continue;
+    }
     if (!segment.text) continue;
     const clean = { text: segment.text, marks: sortMarks(segment.marks || []), href: segment.href && safeHref(segment.href) ? segment.href : null };
     const previous = merged.at(-1);
@@ -671,7 +881,7 @@ function fromSegments(segments) {
   }
   const content = [];
   for (const segment of merged) {
-    const run = { type: 'text', value: segment.text, ...(segment.marks.length ? { marks: segment.marks } : {}) };
+    const run = segment.node ? clone(segment.node) : { type: 'text', value: segment.text, ...(segment.marks.length ? { marks: segment.marks } : {}) };
     const previous = content.at(-1);
     if (segment.href) {
       if (previous?.type === 'link' && previous.href === segment.href) previous.children.push(run);
@@ -685,8 +895,31 @@ function normalizeInline(content) {
   return fromSegments(toSegments(content));
 }
 
+/** The text of the text runs; atoms and opaque nodes add nothing. */
 function inlineText(content) {
-  return toSegments(content).map(({ text }) => text).join('');
+  return toSegments(content).filter(({ node }) => !node).map(({ text }) => text).join('');
+}
+
+/** Length in segment offsets: characters, plus one for each atom or opaque node. */
+function inlineLength(content) {
+  return toSegments(content).reduce((sum, { text }) => sum + text.length, 0);
+}
+
+/** The atom or opaque node that holds offset [at, at + 1), or null. */
+function objectAt(content, at) {
+  let position = 0;
+  for (const segment of toSegments(content)) {
+    if (position === at && segment.node) return segment.node;
+    position += segment.text.length;
+    if (position > at) return null;
+  }
+  return null;
+}
+
+/** The segments of [start, end), for copying. */
+function sliceInline(content, start, end) {
+  const [from, to] = [Math.min(start, end), Math.max(start, end)];
+  return fromSegments(range(content, from, to).filter(({ inside }) => inside).map(({ segment }) => segment));
 }
 
 function split(segments, offset) {
@@ -714,7 +947,8 @@ function range(content, start, end) {
 
 /** Marks and link shared by every character in [start, end). */
 function marksIn(content, start, end) {
-  const inside = range(content, Math.min(start, end), Math.max(start, end)).filter(({ inside: isInside }) => isInside).map(({ segment }) => segment);
+  // Atoms take no marks and no link, so they do not decide the state.
+  const inside = range(content, Math.min(start, end), Math.max(start, end)).filter(({ inside: isInside, segment }) => isInside && !segment.node).map(({ segment }) => segment);
   if (!inside.length) return { marks: [], href: null };
   const marks = INLINE_MARKS.filter((mark) => inside.every((segment) => segment.marks.includes(mark)));
   const href = inside.every((segment) => segment.href === inside[0].href) ? inside[0].href : null;
@@ -726,7 +960,7 @@ function toggleMark(content, start, end, mark) {
   if (!MARK_ORDER.has(mark) || start === end) return normalizeInline(content);
   const [from, to] = [Math.min(start, end), Math.max(start, end)];
   const remove = marksIn(content, from, to).marks.includes(mark);
-  return fromSegments(range(content, from, to).map(({ segment, inside }) => (inside
+  return fromSegments(range(content, from, to).map(({ segment, inside }) => (inside && !segment.node
     ? { ...segment, marks: remove ? segment.marks.filter((entry) => entry !== mark) : [...segment.marks, mark] }
     : segment)));
 }
@@ -736,7 +970,8 @@ function setLink(content, start, end, href) {
   if (href !== null && !safeHref(href)) throw new TypeError('inline_link_unsafe');
   const [from, to] = [Math.min(start, end), Math.max(start, end)];
   if (from === to) return normalizeInline(content);
-  return fromSegments(range(content, from, to).map(({ segment, inside }) => (inside ? { ...segment, href } : segment)));
+  // An atom is never nested in a link: the link stops on each side of it.
+  return fromSegments(range(content, from, to).map(({ segment, inside }) => (inside && !segment.node ? { ...segment, href } : segment)));
 }
 
 /** Replaces [start, end) with segments (typing, paste or deletion). */
@@ -754,7 +989,7 @@ function replaceRange(content, start, end, inserted) {
   return fromSegments([...before, ...inserted, ...after]);
 }
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ INLINE_MARKS, fromSegments, inlineText, marksIn, normalizeInline, replaceRange, safeHref, setLink, toSegments, toggleMark });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ INLINE_COMPONENTS, INLINE_MARKS, INLINE_OBJECT, fromSegments, inlineComponentSchemas, inlineComponentView, inlineLength, inlineText, isInlineComponent, marksIn, normalizeInline, objectAt, replaceRange, safeHref, setLink, sliceInline, toSegments, toggleMark });
 
 
 /***/ },
@@ -846,7 +1081,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-inlin
 /***/ "f890c1d3caee"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.inline-editor","tag":"sf-inline-editor","version":"1.1.3","kind":"leaf","settings":{},"values":{},"events":{"input":{"carries":{"id":{"type":"string","nullable":true},"content":{"type":"list","of":{"type":"string","value":"string","marks":"list","href":"string"}}},"x-native":false},"change":{"carries":{"id":{"type":"string","nullable":true},"content":{"type":"list","of":{"type":"string","value":"string","marks":"list","href":"string"}}},"x-native":false},"cancel":{"carries":{"id":{"type":"string","nullable":true}}}},"actions":{"edit":{"with":{"element":"object","options":"object"}}},"css-variables":{"--sf-inline-editor-outline-color":{"type":"color","state":"editing"},"--sf-inline-editor-toolbar-background-color":{"type":"color","state":"editing"},"--sf-inline-editor-toolbar-radius":{"type":"length","state":"editing"},"--sf-inline-editor-toolbar-gap":{"type":"length","state":"editing"},"--sf-inline-editor-toolbar-padding":{"type":"length","state":"editing"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.inline-editor","tag":"sf-inline-editor","version":"1.2.0","kind":"leaf","settings":{},"values":{},"events":{"input":{"carries":{"id":{"type":"string","nullable":true},"content":{"type":"list","of":{"type":"string","value":"string","marks":"list","href":"string"}}},"x-native":false},"change":{"carries":{"id":{"type":"string","nullable":true},"content":{"type":"list","of":{"type":"string","value":"string","marks":"list","href":"string"}}},"x-native":false},"cancel":{"carries":{"id":{"type":"string","nullable":true}}}},"actions":{"edit":{"with":{"element":"object","options":"object"}}},"css-variables":{"--sf-inline-editor-outline-color":{"type":"color","state":"editing"},"--sf-inline-editor-toolbar-background-color":{"type":"color","state":"editing"},"--sf-inline-editor-toolbar-radius":{"type":"length","state":"editing"},"--sf-inline-editor-toolbar-gap":{"type":"length","state":"editing"},"--sf-inline-editor-toolbar-padding":{"type":"length","state":"editing"}}}');
 
 /***/ },
 

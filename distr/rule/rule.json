@@ -884,6 +884,12 @@
     "relation": [
       {
         "name": "cl-sortable"
+      },
+      {
+        "name": "cl-icon-button"
+      },
+      {
+        "name": "cl-tooltip"
       }
     ],
     "tags": [

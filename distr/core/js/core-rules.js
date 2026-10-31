@@ -3789,6 +3789,10 @@ SF.RuleLoader['cl-composition-overlay'] = {
   css: true,
   relation: [{
     name: 'cl-sortable'
+  }, {
+    name: 'cl-icon-button'
+  }, {
+    name: 'cl-tooltip'
   }]
 };
 
