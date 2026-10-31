@@ -8,6 +8,9 @@
 
 ### Добавлено
 
+- sf-composition-overlay 1.3.0: selecting, moving and adding a block. The toolbar sits above the block (placement top, or side), actions carry an icon, a shortcut, a disabled state and a tone, an unavailable action dims in place, hover is a 1px frame and selection a 2px frame, one «+» at the seam under the pointer, moves glide in 180ms, and frames travel with the content without a script on scroll.
+- Inline content: an inline component atom ({type: "component", name, props}, for badge, kbd, icon and button) and unknown inline nodes survive an edit. content.heading and content.paragraph 1.1.0, sf-inline-editor 1.2.0, core.runtime 1.10.0.
+
 - sf-icon-button 1.2.0: scheme on-surface-variant, the on-surface family one step quieter, as on sf-button: the glyph and a close control's cross take --sf-on-surface-variant; a tonal control its container's quieter role; a filled one keeps the inverse glyph (component.icon-buttons 1.1.0).
 - The template utilities generator no longer reads a utility's dated bare word as a class: auto stands in components as a value, and the isolate sheet rode with eight components that write no isolation class. isolate, isolation-auto and the page class auto work as before (core.runtime 1.8.7).
 - sf-tag 1.1.7, sf-pager 1.0.1: an icon no longer moves an inline root. A printed tag or counter stood 1-2 px low until the code adopted it, because its baseline came from an icon whose metrics change while it loads; the icon's layout is contained, and what a finished tag or pager looks like does not change.
