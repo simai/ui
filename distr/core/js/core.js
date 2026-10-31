@@ -4592,8 +4592,13 @@ function carryLayerOrigin(portal, host, {
   if (!portal || !host?.isConnected) return;
   const doc = host.ownerDocument;
   const view = doc.defaultView;
-  const lang = host.closest('[lang]')?.getAttribute('lang') ?? doc.documentElement.getAttribute('lang') ?? '';
-  if (lang) portal.setAttribute('lang', lang);else portal.removeAttribute('lang');
+  const nearest = host.closest('[lang]');
+  const lang = nearest?.getAttribute('lang') ?? doc.documentElement.getAttribute('lang') ?? '';
+  if (lang) portal.setAttribute('lang', lang);else portal.removeAttribute('lang'); // Where the copy came from: the page itself, or a section that names its own
+  // language. Only the first follows SF.language.use(), which the page language
+  // does before it announces the change (simai/ui-source#55).
+
+  if (!nearest || nearest === doc.documentElement) portal.dataset.sfLayerLang = 'page';else delete portal.dataset.sfLayerLang;
   const declared = host.closest('[dir]')?.getAttribute('dir');
   const dir = declared && declared !== 'auto' ? declared : view.getComputedStyle(host).direction;
   if (dir) portal.setAttribute('dir', dir); // The theme only when the host's differs from the portal's place: a page
@@ -5525,9 +5530,28 @@ const chain = language => {
 const componentOf = node => {
   const tag = node?.tagName;
   return typeof tag === 'string' ? tag.toLowerCase() : null;
+}; // A layer drawn in a portal carries a copy of its host's language, stamped by
+// carryLayerOrigin (§19.1). When that copy came from the page itself, it has
+// to follow the page before the listeners draw: a word read inside a drawer
+// during SF.language.use() answered the language the page had just left, and
+// the portal was carried again only later, with nothing to draw it again
+// (simai/ui-source#55, found by ui-mail). A portal whose host sits in a
+// section with a language of its own is not touched: that section means it.
+
+
+const carryPageLanguage = () => {
+  const doc = globalThis.document;
+  if (!doc?.querySelectorAll) return;
+  const lang = doc.documentElement?.getAttribute('lang') || '';
+
+  for (const portal of doc.querySelectorAll('[data-sf-layer-lang="page"]')) {
+    if (lang) portal.setAttribute('lang', lang);else portal.removeAttribute('lang');
+  }
 };
 
 const announce = () => {
+  carryPageLanguage();
+
   for (const listener of [...LISTENERS]) {
     try {
       listener();

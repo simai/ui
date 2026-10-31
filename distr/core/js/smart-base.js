@@ -1449,6 +1449,40 @@ function writeAttribute(element, member, value) {
   }
 
   element.setAttribute(member.attribute, String(value));
+} // Every setting is a property of the same name (§5.1, the model guide). A
+// component that writes its own getter for one -- to normalise what the
+// attribute says -- shadows the pair this base defines, and the setter goes
+// with it, so `element.size = '2'` changed nothing and said nothing. Measured
+// on 2026-10-31: sf-badge status, sf-dropdown size, sf-input size,
+// sf-textarea rows and sf-toast duration all dropped the value in silence, and
+// twenty-three components hold such a getter. The author's getter stays; the
+// base's setter is put back beside it, once per class, when its first element
+// is built.
+
+
+const completedAccessors = new WeakSet();
+
+function completeOwnAccessors(Class, baseProto, members) {
+  if (typeof Class !== 'function' || completedAccessors.has(Class)) return;
+  completedAccessors.add(Class);
+
+  for (let proto = Class.prototype; proto && proto !== baseProto; proto = Object.getPrototypeOf(proto)) {
+    for (const member of members) {
+      if (member.native || !member.writable || !member.attribute) continue;
+      const own = Object.getOwnPropertyDescriptor(proto, member.property);
+      if (!own || !own.get || own.set || !own.configurable) continue;
+      Object.defineProperty(proto, member.property, {
+        configurable: true,
+        enumerable: own.enumerable,
+        get: own.get,
+
+        set(value) {
+          writeAttribute(this, member, value);
+        }
+
+      });
+    }
+  }
 }
 
 function defineMembers(target, members) {
@@ -1661,6 +1695,7 @@ function elementFromManifest(manifest, {
 
     constructor() {
       super();
+      completeOwnAccessors(new.target, ManifestElement.prototype, read.members);
       this.sfInternals = formAssociated && typeof this.attachInternals === 'function' ? this.attachInternals() : null;
     }
 
@@ -2652,8 +2687,13 @@ function carryLayerOrigin(portal, host, {
   if (!portal || !host?.isConnected) return;
   const doc = host.ownerDocument;
   const view = doc.defaultView;
-  const lang = host.closest('[lang]')?.getAttribute('lang') ?? doc.documentElement.getAttribute('lang') ?? '';
-  if (lang) portal.setAttribute('lang', lang);else portal.removeAttribute('lang');
+  const nearest = host.closest('[lang]');
+  const lang = nearest?.getAttribute('lang') ?? doc.documentElement.getAttribute('lang') ?? '';
+  if (lang) portal.setAttribute('lang', lang);else portal.removeAttribute('lang'); // Where the copy came from: the page itself, or a section that names its own
+  // language. Only the first follows SF.language.use(), which the page language
+  // does before it announces the change (simai/ui-source#55).
+
+  if (!nearest || nearest === doc.documentElement) portal.dataset.sfLayerLang = 'page';else delete portal.dataset.sfLayerLang;
   const declared = host.closest('[dir]')?.getAttribute('dir');
   const dir = declared && declared !== 'auto' ? declared : view.getComputedStyle(host).direction;
   if (dir) portal.setAttribute('dir', dir); // The theme only when the host's differs from the portal's place: a page
@@ -2972,9 +3012,28 @@ const chain = language => {
 const componentOf = node => {
   const tag = node?.tagName;
   return typeof tag === 'string' ? tag.toLowerCase() : null;
+}; // A layer drawn in a portal carries a copy of its host's language, stamped by
+// carryLayerOrigin (§19.1). When that copy came from the page itself, it has
+// to follow the page before the listeners draw: a word read inside a drawer
+// during SF.language.use() answered the language the page had just left, and
+// the portal was carried again only later, with nothing to draw it again
+// (simai/ui-source#55, found by ui-mail). A portal whose host sits in a
+// section with a language of its own is not touched: that section means it.
+
+
+const carryPageLanguage = () => {
+  const doc = globalThis.document;
+  if (!doc?.querySelectorAll) return;
+  const lang = doc.documentElement?.getAttribute('lang') || '';
+
+  for (const portal of doc.querySelectorAll('[data-sf-layer-lang="page"]')) {
+    if (lang) portal.setAttribute('lang', lang);else portal.removeAttribute('lang');
+  }
 };
 
 const announce = () => {
+  carryPageLanguage();
+
   for (const listener of [...LISTENERS]) {
     try {
       listener();
