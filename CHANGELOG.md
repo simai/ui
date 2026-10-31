@@ -8,6 +8,10 @@
 
 ### Добавлено
 
+- sf-icon-button 1.2.0: scheme on-surface-variant, the on-surface family one step quieter, as on sf-button: the glyph and a close control's cross take --sf-on-surface-variant; a tonal control its container's quieter role; a filled one keeps the inverse glyph (component.icon-buttons 1.1.0).
+- The template utilities generator no longer reads a utility's dated bare word as a class: auto stands in components as a value, and the isolate sheet rode with eight components that write no isolation class. isolate, isolation-auto and the page class auto work as before (core.runtime 1.8.7).
+- sf-tag 1.1.7, sf-pager 1.0.1: an icon no longer moves an inline root. A printed tag or counter stood 1-2 px low until the code adopted it, because its baseline came from an icon whose metrics change while it loads; the icon's layout is contained, and what a finished tag or pager looks like does not change.
+
 - smart.avatar 1.2.0: tone gives initials one of eight muted colours (rose, amber, lime, green, teal, sky, indigo, violet); tone="auto" picks one from the name by a fixed hash, the same in every browser and on a server. component.avatars 1.1.0, tokens.colour 1.1.0. The larena package reference holds sf-chat-message 1.4.0 relations. core.runtime 1.8.6.
 
 - sf-contents 1.1.0: the compact button sticks too, on a band of the page's surface; sticky="false" lets it scroll away. On a phone the page's column has to hold the button and the article: docs.md gives the layout.
