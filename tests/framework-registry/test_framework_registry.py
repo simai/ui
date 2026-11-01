@@ -214,6 +214,7 @@ class FrameworkContractRegistryTest(unittest.TestCase):
                         "smart.chat-interlocutor",
                         "smart.chat-message",
                         "smart.chat-window",
+                        "smart.content-editor",
                         "smart.data-view",
                         "smart.data-view-composite",
                         "smart.mail-canvas",
