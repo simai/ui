@@ -8,6 +8,8 @@
 
 ### Добавлено
 
+- `sf-site-header` 1.2.0: the tools take one even step, `var(--sf-space-1/3)`, and a colour tool's swatch and its reset button take the same step, so the reset button stays by its swatch. The step is public as `--sf-site-header-tools-gap`. `core.runtime` 1.14.0.
+
 - Icons no longer blank out while the icon subset grows: the grown face is loaded before it replaces the old one, and a changed icon waits invisibly instead of showing its name (core.runtime).
 - sf-tabs 1.1.8: in pills only the selected tab is filled; the others are text with state layers only, in every scheme (component.tabs 1.0.1).
 - simai.effect 1.3.0: an optional when {key, is} on a setting; the setting is shown and read only while that other setting holds one of the values. core.runtime 1.13.0.
