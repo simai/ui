@@ -8,6 +8,8 @@
 
 ### Добавлено
 
+- The larena package reference: sf-content-editor 1.1.0 also requires sf-button, sf-file-upload, sf-popover and sf-progress-bar. core.runtime 1.11.2.
+
 - sf-range-slider 1.2.1: a plain handle, no ring around it by default, and a flat inactive track without a shadow (owner, 2026-11-01). The ring stays opt-in through --sf-thumb-handle--ring-width and --sf-thumb-handle--ring-color. component.range-slider 1.1.1.
 - Header navigation: sf-menu 1.2.0 appearance="navigation", rows without a frame, a plate on the current page, in a row or a column (component.menu 1.1.0, .sf-menu--navigation); sf-site-header 1.1.0 navigation-align="start|center" puts the menu in the centre of the bar, collapsing to its side panel as before.
 
