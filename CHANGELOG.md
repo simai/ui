@@ -8,6 +8,9 @@
 
 ### Добавлено
 
+- sf-range-slider 1.2.0: a solid handle with a 2px ring of the surface, and the fill ends under it; hover and press grow a halo (state 8 and 12) instead of the inner disc. The hollow handle stays opt-in: set --sf-range-slider-handle-inner-color (default transparent). The disabled handle is a solid disc. component.range-slider 1.1.0, core.runtime 1.10.1.
+- Fields: a page's own :focus-visible rule no longer draws a second frame on the inner control where the field draws the focus (dropdown, inputs, country-code, quantity, verification 1.0.1; sf-lookup 1.1.1, sf-rich-text 1.0.1).
+
 - sf-composition-overlay 1.3.0: selecting, moving and adding a block. The toolbar sits above the block (placement top, or side), actions carry an icon, a shortcut, a disabled state and a tone, an unavailable action dims in place, hover is a 1px frame and selection a 2px frame, one «+» at the seam under the pointer, moves glide in 180ms, and frames travel with the content without a script on scroll.
 - Inline content: an inline component atom ({type: "component", name, props}, for badge, kbd, icon and button) and unknown inline nodes survive an edit. content.heading and content.paragraph 1.1.0, sf-inline-editor 1.2.0, core.runtime 1.10.0.
 
