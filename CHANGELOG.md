@@ -8,6 +8,10 @@
 
 ### Добавлено
 
+- Icons no longer blank out while the icon subset grows: the grown face is loaded before it replaces the old one, and a changed icon waits invisibly instead of showing its name (core.runtime).
+- sf-tabs 1.1.8: in pills only the selected tab is filled; the others are text with state layers only, in every scheme (component.tabs 1.0.1).
+- simai.effect 1.3.0: an optional when {key, is} on a setting; the setting is shown and read only while that other setting holds one of the values. core.runtime 1.13.0.
+
 - content.file 1.0.0: a file to download (href, value, label, mime, size), drawn as the download-file row with an icon by kind, the name and the size in the document language. core.runtime 1.12.0; sf-image-field 1.1.6 takes the size formatter from core.
 - The structured-content conformance kit 1.0.0 (contracts/conformance/structured-content in ui-source): 259 cases, Document to expected HTML and diagnostics, with a normative comparison rule; the JS renderer passes it. A server renderer (Larena) must pass it too.
 
