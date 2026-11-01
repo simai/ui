@@ -391,6 +391,7 @@ class SfSiteHeader extends SiteHeaderElement {
       collapse: this.collapse,
       sticky: this.sticky,
       size: this.size,
+      navigationAlign: this.navigationAlign,
       label: this.label,
       menuLabel: this.menuLabel,
       closeLabel: this.closeLabel,
@@ -442,6 +443,7 @@ function renderSiteHeaderTemplate(context) {
     collapse,
     sticky,
     size,
+    navigationAlign,
     label,
     menuLabel,
     closeLabel,
@@ -451,7 +453,7 @@ function renderSiteHeaderTemplate(context) {
   } = context;
   const panelId = `${id}-panel`;
   const headingId = `${id}-heading`;
-  const classes = ['sf-site-header', `sf-site-header--collapse-${collapse}`, `sf-site-header--size-${size === '1/2' ? 'half' : '1'}`, sticky ? 'sf-site-header--sticky' : '', open ? 'sf-site-header--open' : '', rootClass].filter(Boolean).join(' ');
+  const classes = ['sf-site-header', `sf-site-header--collapse-${collapse}`, `sf-site-header--size-${size === '1/2' ? 'half' : '1'}`, navigationAlign === 'center' ? 'sf-site-header--navigation-center' : '', sticky ? 'sf-site-header--sticky' : '', open ? 'sf-site-header--open' : '', rootClass].filter(Boolean).join(' ');
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<header class=${classes} style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
     <div class="sf-site-header-row container w-full m-inline-auto">
       <sf-icon-button class="sf-site-header-menu-button" icon="menu" size=${size} appearance="link" scheme="on-surface"
@@ -525,7 +527,7 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "52c9a0720bbf"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.site-header","tag":"sf-site-header","version":"1.0.0","kind":"leaf","settings":{"collapse":{"type":"enum","values":["none","sm","md","lg","xl","always"],"default":"lg"},"sticky":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1"],"default":"1"},"label":{"type":"string","default-from":"runtime.label"},"menu-label":{"type":"string","default-from":"runtime.menu-label"},"close-label":{"type":"string","default-from":"runtime.close-label"}},"values":{},"events":{"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}}},"actions":{"open":{},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"toggle":{}},"layer":{"kind":"panel","locks-page":true,"traps-focus":true},"host-states":{"data-open":"boolean","data-collapsed":"boolean"},"css-variables":{"--sf-site-header-background":{"type":"color","state":"default"},"--sf-site-header-color":{"type":"color","state":"default"},"--sf-site-header-border-color":{"type":"color","state":"default"},"--sf-site-header-block-size":{"type":"length","state":"default"},"--sf-site-header-gap":{"type":"length","state":"default"},"--sf-site-header-brand-size":{"type":"length","state":"default"},"--sf-site-header-sheet-inline-size":{"type":"length","state":"open"},"--sf-site-header-z-index":{"type":"number","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.site-header","tag":"sf-site-header","version":"1.1.0","kind":"leaf","settings":{"collapse":{"type":"enum","values":["none","sm","md","lg","xl","always"],"default":"lg"},"sticky":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1"],"default":"1"},"navigation-align":{"type":"enum","values":["start","center"],"default":"start"},"label":{"type":"string","default-from":"runtime.label"},"menu-label":{"type":"string","default-from":"runtime.menu-label"},"close-label":{"type":"string","default-from":"runtime.close-label"}},"values":{},"events":{"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}}},"actions":{"open":{},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"toggle":{}},"layer":{"kind":"panel","locks-page":true,"traps-focus":true},"host-states":{"data-open":"boolean","data-collapsed":"boolean"},"css-variables":{"--sf-site-header-background":{"type":"color","state":"default"},"--sf-site-header-color":{"type":"color","state":"default"},"--sf-site-header-border-color":{"type":"color","state":"default"},"--sf-site-header-block-size":{"type":"length","state":"default"},"--sf-site-header-gap":{"type":"length","state":"default"},"--sf-site-header-brand-size":{"type":"length","state":"default"},"--sf-site-header-sheet-inline-size":{"type":"length","state":"open"},"--sf-site-header-z-index":{"type":"number","state":"default"}}}');
 
 /***/ },
 

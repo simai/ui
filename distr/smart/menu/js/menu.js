@@ -219,11 +219,12 @@ class SfSmartMenu extends MenuElement {
     return items.length ? items : this._childItems;
   } // orientation, appearance, collapse, current-from-location and the words are
   // the manifest's accessors (attribute and property).
-  // The documentation tree and the compact rail are columns.
+  // The documentation tree and the compact rail are columns; the default and
+  // the navigation can be a row.
 
 
   get horizontal() {
-    return this.orientation === 'horizontal' && this.appearance === 'default';
+    return this.orientation === 'horizontal' && _items_mjs__WEBPACK_IMPORTED_MODULE_6__.ROW_APPEARANCES.includes(this.appearance);
   } // The row became a button that opens the same links as a column.
 
 
@@ -912,6 +913,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   MENU_APPEARANCES: () => (/* binding */ MENU_APPEARANCES),
 /* harmony export */   MENU_COLLAPSE: () => (/* binding */ MENU_COLLAPSE),
 /* harmony export */   MENU_ORIENTATIONS: () => (/* binding */ MENU_ORIENTATIONS),
+/* harmony export */   ROW_APPEARANCES: () => (/* binding */ ROW_APPEARANCES),
 /* harmony export */   badgeCount: () => (/* binding */ badgeCount),
 /* harmony export */   currentItemId: () => (/* binding */ currentItemId),
 /* harmony export */   findItem: () => (/* binding */ findItem),
@@ -933,9 +935,13 @@ __webpack_require__.r(__webpack_exports__);
 // header (sf-menu--horizontal, the first level only).
 const MENU_ORIENTATIONS = Object.freeze(['vertical', 'horizontal']);
 // The class menu's presentations by name: default, the documentation tree
-// (sf-menu--documentation-tree) and the compact rail (sf-menu--compact). The
-// tree and the rail are columns: with them the menu is vertical.
-const MENU_APPEARANCES = Object.freeze(['default', 'documentation-tree', 'compact']);
+// (sf-menu--documentation-tree), the compact rail (sf-menu--compact) and the
+// header navigation (sf-menu--navigation). The tree and the rail are columns:
+// with them the menu is vertical. The navigation is a row or a column, as
+// orientation says, like the default.
+const MENU_APPEARANCES = Object.freeze(['default', 'documentation-tree', 'compact', 'navigation']);
+// The presentations that can stand in a row.
+const ROW_APPEARANCES = Object.freeze(['default', 'navigation']);
 // When a row of links that does not fit becomes a button that opens them as a
 // column: when it does not fit, always, or never.
 const MENU_COLLAPSE = Object.freeze(['auto', 'always', 'none']);
@@ -1146,7 +1152,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-menu 
 /***/ "e0fa46ed075f"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.menu","tag":"sf-menu","version":"1.1.4","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","label":"string","href":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"badge":{"type":"string","optional":true},"current":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true},"open":{"type":"boolean","optional":true},"children":{"type":"list","optional":true}}},"orientation":{"type":"enum","values":["vertical","horizontal"],"default":"vertical"},"appearance":{"type":"enum","values":["default","documentation-tree","compact"],"default":"default"},"current-from-location":{"type":"boolean","default":false},"collapse":{"type":"enum","values":["auto","always","none"],"default":"auto"},"label":{"type":"string","default":""},"toggle-label":{"type":"string","default-from":"runtime.toggle-label"}},"values":{"current":{"type":"string","default":""}},"events":{"navigate":{"carries":{"id":"id","href":"string","item":"object"},"cancelable":true},"toggle":{"carries":{"id":{"type":"id","nullable":true},"open":"boolean","source":{"type":"enum","values":["user","method"]},"item":{"type":"object","nullable":true}}}},"actions":{"open":{"with":{"id":"id"}},"close":{"with":{"id":"id"}},"toggle":{"with":{"id":"id"}},"close-all":{}},"presentation":{"skeleton":{"late":["items"]}},"css-variables":{"--sf-menu-background-color":{"type":"color","state":"default"},"--sf-menu-gap":{"type":"length","state":"default"},"--sf-menu-item-color":{"type":"color","state":"default"},"--sf-menu-item-background-color":{"type":"color","state":"default"},"--sf-menu-item-border-color":{"type":"color","state":"default"},"--sf-menu-item-radius":{"type":"length","state":"default"},"--sf-menu-submenu-background-color":{"type":"color","state":"open"},"--sf-menu-submenu-border-color":{"type":"color","state":"open"},"--sf-menu-submenu-radius":{"type":"length","state":"open"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.menu","tag":"sf-menu","version":"1.2.0","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","label":"string","href":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"badge":{"type":"string","optional":true},"current":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true},"open":{"type":"boolean","optional":true},"children":{"type":"list","optional":true}}},"orientation":{"type":"enum","values":["vertical","horizontal"],"default":"vertical"},"appearance":{"type":"enum","values":["default","documentation-tree","compact","navigation"],"default":"default"},"current-from-location":{"type":"boolean","default":false},"collapse":{"type":"enum","values":["auto","always","none"],"default":"auto"},"label":{"type":"string","default":""},"toggle-label":{"type":"string","default-from":"runtime.toggle-label"}},"values":{"current":{"type":"string","default":""}},"events":{"navigate":{"carries":{"id":"id","href":"string","item":"object"},"cancelable":true},"toggle":{"carries":{"id":{"type":"id","nullable":true},"open":"boolean","source":{"type":"enum","values":["user","method"]},"item":{"type":"object","nullable":true}}}},"actions":{"open":{"with":{"id":"id"}},"close":{"with":{"id":"id"}},"toggle":{"with":{"id":"id"}},"close-all":{}},"presentation":{"skeleton":{"late":["items"]}},"css-variables":{"--sf-menu-background-color":{"type":"color","state":"default"},"--sf-menu-gap":{"type":"length","state":"default"},"--sf-menu-item-color":{"type":"color","state":"default"},"--sf-menu-item-background-color":{"type":"color","state":"default"},"--sf-menu-item-border-color":{"type":"color","state":"default"},"--sf-menu-item-radius":{"type":"length","state":"default"},"--sf-menu-submenu-background-color":{"type":"color","state":"open"},"--sf-menu-submenu-border-color":{"type":"color","state":"open"},"--sf-menu-submenu-radius":{"type":"length","state":"open"}}}');
 
 /***/ },
 
