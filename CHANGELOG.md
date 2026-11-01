@@ -8,6 +8,9 @@
 
 ### Добавлено
 
+- Structured content, first edition (content plan step 3): content.list, quote, code, divider, table, figure, alert (status and appearance as sf-alert), details, tabs, steps, grid, card, media and html, with their items content.list-item, content.tab and content.step, and content.document as a page's root, all 1.0.0. content.diagram and content.math are registered types: they draw when the host registers a renderer. content.outlet marks where a layout holds the page: render(layout, {content}). The html@1 cleaner moved into core (composition/html-subset), sf-rich-text 1.0.2 reads it from there.
+- New CSS components: sf-card, sf-figure (caption, ratios, contain) and sf-procedure, a vertical numbered list whose steps hold paragraphs and code (complete and current steps). core.runtime 1.11.0. The Recipe edition stays 1.1.0.
+
 - sf-range-slider 1.2.0: a solid handle with a 2px ring of the surface, and the fill ends under it; hover and press grow a halo (state 8 and 12) instead of the inner disc. The hollow handle stays opt-in: set --sf-range-slider-handle-inner-color (default transparent). The disabled handle is a solid disc. component.range-slider 1.1.0, core.runtime 1.10.1.
 - Fields: a page's own :focus-visible rule no longer draws a second frame on the inner control where the field draws the focus (dropdown, inputs, country-code, quantity, verification 1.0.1; sf-lookup 1.1.1, sf-rich-text 1.0.1).
 
