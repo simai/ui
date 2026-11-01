@@ -610,6 +610,13 @@
     "type": "component"
   },
   {
+    "name": "card",
+    "css": true,
+    "js": false,
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-card\\b/i",
+    "type": "component"
+  },
+  {
     "name": "caret-color/default",
     "regex": "/^(?:caret-(?:current|error|on-surface|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))(?![\\s\\S])/"
   },
@@ -2312,6 +2319,13 @@
     "type": "component"
   },
   {
+    "name": "figure",
+    "css": true,
+    "js": false,
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-figure\\b/i",
+    "type": "component"
+  },
+  {
     "name": "file-preview",
     "css": true,
     "js": false,
@@ -3951,6 +3965,13 @@
   {
     "name": "position/xxl",
     "regex": "/^(?:xxl:(?:absolute|fixed|relative|st(?:atic|icky)))(?![\\s\\S])/"
+  },
+  {
+    "name": "procedure",
+    "css": true,
+    "js": false,
+    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-procedure\\b/i",
+    "type": "component"
   },
   {
     "name": "progress-bar",

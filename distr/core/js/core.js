@@ -13037,6 +13037,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   BUILTIN_EDITOR_MANIFESTS: () => (/* binding */ BUILTIN_EDITOR_MANIFESTS),
 /* harmony export */   BUILTIN_PORT_MANIFESTS: () => (/* binding */ BUILTIN_PORT_MANIFESTS),
 /* harmony export */   BUILTIN_TYPE_MANIFESTS: () => (/* binding */ BUILTIN_TYPE_MANIFESTS),
+/* harmony export */   CONTENT_ALERT_APPEARANCES: () => (/* binding */ CONTENT_ALERT_APPEARANCES),
+/* harmony export */   CONTENT_ALERT_STATUSES: () => (/* binding */ CONTENT_ALERT_STATUSES),
+/* harmony export */   CONTENT_ITEM_PARENTS: () => (/* binding */ CONTENT_ITEM_PARENTS),
+/* harmony export */   CONTENT_RATIOS: () => (/* binding */ CONTENT_RATIOS),
+/* harmony export */   CONTENT_TABLE_HEADERS: () => (/* binding */ CONTENT_TABLE_HEADERS),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _inline_model_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("e66d878fb4f8");
@@ -13114,6 +13119,63 @@ const emptyObjectSchema = {
   additionalProperties: false,
   properties: {},
 };
+
+// The first edition of the structured-content types (owner's decision
+// 2026-10-31, the content standard's step 3). Where a SIMAI Framework
+// component already has a word, the type uses it (content.alert takes status
+// and appearance as sf-alert does); elsewhere Docara's parameter names stand
+// (details open and layout, figure ratio and fit, code lang and title, steps
+// current and layout, grid columns and gap, card variant, media side and
+// ratio). A type's renderer draws the existing display parts; card, figure
+// and the numbered procedure are CSS components of their own.
+
+// The blocks a content container holds: any content type, or a Smart type.
+// The item types (content.list-item, content.tab, content.step) are content
+// too; Document validation keeps each inside its own parent.
+const contentSlot = (min, max) => ({ min, max, categories: ['content', 'smart'] });
+const contentManifest = (type, fields) => ({
+  ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_2__.schemaFields)('simai.composition.type-manifest', 1),
+  type,
+  version: '1.0.0',
+  category: 'content',
+  profiles: ['ui-layout', 'structured-content'],
+  data_schema: emptyObjectSchema,
+  props_schema: emptyObjectSchema,
+  presentation: { views: ['default'], presets: [], modifiers: [] },
+  slots: {},
+  renderer: { kind: 'builtin', name: type },
+  assets: [],
+  capabilities: ['html'],
+  ...fields,
+});
+const closed = (properties, required = []) => ({
+  type: 'object',
+  ...(required.length ? { required } : {}),
+  additionalProperties: false,
+  properties,
+});
+// A link target or an image source: the Document's URL rule (relative, a
+// fragment, http(s), mailto, tel) is applied by validate on top of this.
+const urlSchema = { type: 'string', minLength: 1, maxLength: 2048 };
+const plainText = (maxLength) => ({ type: 'string', minLength: 1, maxLength });
+const sourceText = { type: 'string', maxLength: 200000 };
+const imageData = {
+  src: urlSchema,
+  // The empty text marks an image that only decorates.
+  alt: { type: 'string', maxLength: 1000 },
+  width: { type: 'integer', minimum: 1, maximum: 100000 },
+  height: { type: 'integer', minimum: 1, maximum: 100000 },
+};
+const CONTENT_RATIOS = Object.freeze(['1/1', '4/3', '3/2', '16/9', '21/9']);
+const CONTENT_ALERT_STATUSES = Object.freeze(['neutral', 'info', 'success', 'warning', 'error']);
+const CONTENT_ALERT_APPEARANCES = Object.freeze(['default', 'outlined', 'flat']);
+const CONTENT_TABLE_HEADERS = Object.freeze(['row', 'column', 'both', 'none']);
+// Which parent an item type stands in; validate reports any other place.
+const CONTENT_ITEM_PARENTS = Object.freeze({
+  'content.list-item': 'content.list',
+  'content.tab': 'content.tabs',
+  'content.step': 'content.steps',
+});
 
 const BUILTIN_TYPE_MANIFESTS = Object.freeze([
   {
@@ -13305,6 +13367,185 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
     assets: [],
     capabilities: ['html', 'hydration', 'routing'],
   },
+  // The root of a structured-content Document: the page's blocks in order,
+  // under the page's title (the accepted content editor prototype writes
+  // this root).
+  contentManifest('content.document', {
+    mode: 'composite',
+    profiles: ['structured-content'],
+    data_schema: closed({ title: { type: 'string', maxLength: 300 } }),
+    slots: { default: contentSlot(0, 500) },
+  }),
+  contentManifest('content.list', {
+    mode: 'composite',
+    props_schema: closed({
+      ordered: { type: 'boolean' },
+      start: { type: 'integer', minimum: 1, maximum: 1000000 },
+    }),
+    slots: { items: { min: 1, max: 500, types: ['content.list-item'] } },
+  }),
+  contentManifest('content.list-item', {
+    mode: 'composite',
+    data_schema: closed({ content: inlineContentSchema }, ['content']),
+    // A nested list, or more paragraphs and code under the item's own line.
+    slots: { default: contentSlot(0, 50) },
+    capabilities: ['html', 'rich-text'],
+  }),
+  contentManifest('content.quote', {
+    mode: 'composite',
+    slots: { default: contentSlot(1, 100) },
+  }),
+  contentManifest('content.code', {
+    mode: 'leaf',
+    data_schema: closed({ code: sourceText }, ['code']),
+    props_schema: closed({
+      lang: { type: 'string', pattern: '^[a-z0-9][a-z0-9+#._-]{0,31}$' },
+      title: plainText(200),
+      numbers: { type: 'boolean' },
+    }),
+    assets: ['component/highlight'],
+  }),
+  contentManifest('content.divider', {
+    mode: 'leaf',
+    assets: ['component/contentDivider'],
+  }),
+  contentManifest('content.table', {
+    mode: 'leaf',
+    data_schema: closed({
+      caption: inlineContentSchema,
+      rows: {
+        type: 'array',
+        minItems: 1,
+        maxItems: 1000,
+        items: { type: 'array', minItems: 1, maxItems: 50, items: inlineContentSchema },
+      },
+    }, ['rows']),
+    props_schema: closed({
+      header: { enum: [...CONTENT_TABLE_HEADERS] },
+      align: { type: 'array', maxItems: 50, items: { enum: ['start', 'center', 'end'] } },
+    }),
+    assets: ['utility/table-frame'],
+    capabilities: ['html', 'rich-text'],
+  }),
+  contentManifest('content.figure', {
+    mode: 'leaf',
+    data_schema: closed({ ...imageData, caption: inlineContentSchema }, ['src', 'alt']),
+    props_schema: closed({
+      ratio: { enum: ['auto', ...CONTENT_RATIOS] },
+      fit: { enum: ['cover', 'contain'] },
+    }),
+    assets: ['component/figure'],
+    capabilities: ['html', 'rich-text'],
+  }),
+  contentManifest('content.alert', {
+    mode: 'composite',
+    data_schema: closed({ title: inlineContentSchema }),
+    props_schema: closed({
+      status: { enum: [...CONTENT_ALERT_STATUSES] },
+      appearance: { enum: [...CONTENT_ALERT_APPEARANCES] },
+    }),
+    slots: { default: contentSlot(0, 100) },
+    assets: ['component/alerts'],
+    capabilities: ['html', 'rich-text'],
+  }),
+  contentManifest('content.details', {
+    mode: 'composite',
+    data_schema: closed({ summary: inlineContentSchema }, ['summary']),
+    props_schema: closed({
+      open: { type: 'boolean' },
+      layout: { enum: ['surface', 'lines'] },
+    }),
+    slots: { default: contentSlot(0, 100) },
+    capabilities: ['html', 'rich-text'],
+  }),
+  contentManifest('content.tabs', {
+    mode: 'composite',
+    // The accessible name of the row of tabs.
+    data_schema: closed({ label: plainText(120) }),
+    slots: { tabs: { min: 1, max: 20, types: ['content.tab'] } },
+    assets: ['component/tabs'],
+  }),
+  contentManifest('content.tab', {
+    mode: 'composite',
+    data_schema: closed({ label: plainText(120) }, ['label']),
+    slots: { default: contentSlot(0, 100) },
+  }),
+  contentManifest('content.steps', {
+    mode: 'composite',
+    props_schema: closed({
+      current: { type: 'integer', minimum: 1, maximum: 100 },
+      layout: { enum: ['timeline', 'list'] },
+    }),
+    slots: { steps: { min: 1, max: 100, types: ['content.step'] } },
+    assets: ['component/procedure'],
+  }),
+  contentManifest('content.step', {
+    mode: 'composite',
+    data_schema: closed({ title: inlineContentSchema }),
+    slots: { default: contentSlot(0, 100) },
+    capabilities: ['html', 'rich-text'],
+  }),
+  contentManifest('content.grid', {
+    mode: 'composite',
+    props_schema: closed({
+      columns: { type: 'integer', minimum: 1, maximum: 4 },
+      gap: { type: 'integer', minimum: 0, maximum: 4 },
+    }),
+    slots: { default: contentSlot(1, 48) },
+  }),
+  contentManifest('content.card', {
+    mode: 'composite',
+    props_schema: closed({ variant: { enum: ['default', 'plain'] } }),
+    slots: { default: contentSlot(0, 100) },
+    assets: ['component/card'],
+  }),
+  contentManifest('content.media', {
+    mode: 'composite',
+    data_schema: closed({ ...imageData }, ['src', 'alt']),
+    props_schema: closed({
+      side: { enum: ['left', 'right'] },
+      ratio: { enum: [...CONTENT_RATIOS] },
+    }),
+    slots: { default: contentSlot(0, 100) },
+    assets: ['component/figure'],
+  }),
+  // The escape hatch: markup in the html@1 subset of sf-rich-text, cleaned at
+  // render by that subset's one rule. The key is not "html": that word is
+  // refused anywhere in a Document.
+  contentManifest('content.html', {
+    mode: 'leaf',
+    data_schema: closed({ markup: sourceText }, ['markup']),
+  }),
+  // Diagram and math draw with a runtime the SIMAI Framework does not carry
+  // (a diagram engine, a TeX typesetter). They are registered types whose
+  // renderer a host supplies -- createRegistry(manifests, {'content.diagram':
+  // render}) -- and whose assets it loads on demand; without one, render
+  // reports renderer_unavailable for the node.
+  contentManifest('content.diagram', {
+    mode: 'leaf',
+    data_schema: closed({ source: sourceText }, ['source']),
+    props_schema: closed({
+      engine: { enum: ['mermaid'] },
+      title: plainText(200),
+    }),
+    renderer: { kind: 'registered', name: 'content.diagram' },
+    assets: ['composition/diagram'],
+  }),
+  contentManifest('content.math', {
+    mode: 'leaf',
+    data_schema: closed({ source: sourceText }, ['source']),
+    props_schema: closed({ label: plainText(200) }),
+    renderer: { kind: 'registered', name: 'content.math' },
+    assets: ['composition/math'],
+  }),
+  // Where a layout puts the page's content: a layout document holds one, and
+  // render(layout, {content: document}) draws the structured-content document
+  // in its place. layout.region names an area whose nodes are the layout's
+  // own; nothing in it stands for a document that comes from elsewhere.
+  contentManifest('content.outlet', {
+    mode: 'leaf',
+    profiles: ['ui-layout'],
+  }),
 ]);
 
 // Published typed ports. Framework owns the element protocol; the product owns
@@ -13341,6 +13582,36 @@ const BUILTIN_PORT_MANIFESTS = Object.freeze([
 ]);
 
 
+
+// One editor field of a first-edition content type: the label and help keys
+// follow the type and the key, the owner is the SIMAI Framework.
+const contentField = (type, key, plane, kind, fields) => {
+  const name = type.replace('content.', 'content_').replaceAll('-', '_');
+  const property = kind === 'choice' || kind === 'text' ? { type: 'string', version: 2 }
+    : kind === 'integer' ? { type: 'integer', version: 1 } : { type: 'boolean', version: 1 };
+  return {
+    key,
+    plane,
+    target: key,
+    property,
+    constraints: kind === 'toggle' ? {} : kind === 'choice' ? { min_length: 1, max_length: 16 } : {},
+    group: 'basic',
+    visibility: 'visible',
+    label_key: `sf.composition.${name}.${key}`,
+    help_key: `sf.composition.${name}.${key}_help`,
+    capability_hints: [`composition.${plane}.${key}`],
+    permission_hints: ['composition.node.update'],
+    owner: 'simai/framework',
+    ...fields,
+  };
+};
+const contentEditor = (type, fields) => ({
+  ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_2__.schemaFields)('simai.composition.editor-manifest', 1),
+  type,
+  type_version: '1.0.0',
+  fields,
+});
+const advanced = { group: 'advanced', visibility: 'collapsed' };
 
 const BUILTIN_EDITOR_MANIFESTS = Object.freeze([
   {
@@ -13476,6 +13747,60 @@ const BUILTIN_EDITOR_MANIFESTS = Object.freeze([
       },
     ],
   },
+  contentEditor('content.list', [
+    contentField('content.list', 'ordered', 'props', 'toggle', { default: false }),
+    contentField('content.list', 'start', 'props', 'integer', { ...advanced, constraints: { min: 1, max: 1000000 }, default: 1 }),
+  ]),
+  contentEditor('content.code', [
+    contentField('content.code', 'lang', 'props', 'text', { constraints: { min_length: 1, max_length: 32 }, default: 'text' }),
+    contentField('content.code', 'title', 'props', 'text', { constraints: { min_length: 1, max_length: 200 } }),
+    contentField('content.code', 'numbers', 'props', 'toggle', { ...advanced, default: false }),
+  ]),
+  contentEditor('content.table', [
+    contentField('content.table', 'header', 'props', 'choice', { choices: ['row', 'column', 'both', 'none'], default: 'row' }),
+  ]),
+  contentEditor('content.figure', [
+    contentField('content.figure', 'alt', 'data', 'text', { constraints: { min_length: 1, max_length: 1000 } }),
+    contentField('content.figure', 'ratio', 'props', 'choice', { choices: ['auto', '1/1', '4/3', '3/2', '16/9', '21/9'], default: 'auto' }),
+    contentField('content.figure', 'fit', 'props', 'choice', { choices: ['cover', 'contain'], default: 'cover' }),
+  ]),
+  contentEditor('content.alert', [
+    contentField('content.alert', 'status', 'props', 'choice', { choices: ['neutral', 'info', 'success', 'warning', 'error'], default: 'neutral' }),
+    contentField('content.alert', 'appearance', 'props', 'choice', { choices: ['default', 'outlined', 'flat'], default: 'default' }),
+  ]),
+  contentEditor('content.details', [
+    contentField('content.details', 'open', 'props', 'toggle', { default: false }),
+    contentField('content.details', 'layout', 'props', 'choice', { choices: ['surface', 'lines'], default: 'surface' }),
+  ]),
+  contentEditor('content.tabs', [
+    contentField('content.tabs', 'label', 'data', 'text', { ...advanced, constraints: { min_length: 1, max_length: 120 } }),
+  ]),
+  contentEditor('content.tab', [
+    contentField('content.tab', 'label', 'data', 'text', { constraints: { min_length: 1, max_length: 120 } }),
+  ]),
+  contentEditor('content.steps', [
+    contentField('content.steps', 'current', 'props', 'integer', { constraints: { min: 1, max: 100 } }),
+    contentField('content.steps', 'layout', 'props', 'choice', { choices: ['timeline', 'list'], default: 'timeline' }),
+  ]),
+  contentEditor('content.grid', [
+    contentField('content.grid', 'columns', 'props', 'integer', { constraints: { min: 1, max: 4 }, default: 3 }),
+    contentField('content.grid', 'gap', 'props', 'integer', { ...advanced, constraints: { min: 0, max: 4 }, default: 2 }),
+  ]),
+  contentEditor('content.card', [
+    contentField('content.card', 'variant', 'props', 'choice', { choices: ['default', 'plain'], default: 'default' }),
+  ]),
+  contentEditor('content.media', [
+    contentField('content.media', 'alt', 'data', 'text', { constraints: { min_length: 1, max_length: 1000 } }),
+    contentField('content.media', 'side', 'props', 'choice', { choices: ['left', 'right'], default: 'right' }),
+    contentField('content.media', 'ratio', 'props', 'choice', { choices: ['1/1', '4/3', '3/2', '16/9', '21/9'], default: '16/9' }),
+  ]),
+  contentEditor('content.diagram', [
+    contentField('content.diagram', 'title', 'props', 'text', { constraints: { min_length: 1, max_length: 200 } }),
+    contentField('content.diagram', 'engine', 'props', 'choice', { ...advanced, choices: ['mermaid'], default: 'mermaid' }),
+  ]),
+  contentEditor('content.math', [
+    contentField('content.math', 'label', 'props', 'text', { constraints: { min_length: 1, max_length: 200 } }),
+  ]),
 ]);
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (BUILTIN_TYPE_MANIFESTS);
@@ -14312,6 +14637,773 @@ function defineFragmentBoundary(registry = globalThis.customElements) {
 
 /***/ },
 
+/***/ "e19611ff78cb"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   RICH_TEXT_BLOCKS: () => (/* binding */ RICH_TEXT_BLOCKS),
+/* harmony export */   RICH_TEXT_ELEMENTS: () => (/* binding */ RICH_TEXT_ELEMENTS),
+/* harmony export */   RICH_TEXT_SCHEMES: () => (/* binding */ RICH_TEXT_SCHEMES),
+/* harmony export */   cleanTree: () => (/* binding */ cleanTree),
+/* harmony export */   decodeEntities: () => (/* binding */ decodeEntities),
+/* harmony export */   parseHtml: () => (/* binding */ parseHtml),
+/* harmony export */   plainText: () => (/* binding */ plainText),
+/* harmony export */   richTextFromPlainText: () => (/* binding */ richTextFromPlainText),
+/* harmony export */   richTextHref: () => (/* binding */ richTextHref),
+/* harmony export */   sanitizeRichText: () => (/* binding */ sanitizeRichText),
+/* harmony export */   serialize: () => (/* binding */ serialize),
+/* harmony export */   treeFromDom: () => (/* binding */ treeFromDom)
+/* harmony export */ });
+// The HTML subset of sf-rich-text: what the value may hold, and how anything
+// else is brought into it. Larena stores page text as a property of type
+// html@1, and this module is that type's rule in the browser: the editor
+// cleans the value it is given, every paste and drop, and its own DOM after
+// every edit and command, through the one function here.
+//
+// The subset:
+//
+//   p  h2  h3  h4  strong  em  a[href]  ul  ol  li  blockquote  br
+//
+// - no attribute is kept but href on <a>;
+// - href is kept for https:, mailto: and tel: URLs and for a site path
+//   ("/docs/a"), judged after removing control characters and white space, so
+//   "java\tscript:" does not pass; "//host" and "/\host" leave the site and
+//   are not kept; a link whose href is not kept becomes its text;
+// - script, style and the other containers whose content is not text for a
+//   reader (DROPPED) go with their content; any other element is unwrapped,
+//   and its text stays; one that stands as a block (div, section, table, a
+//   cell, h1, pre) still separates its text from its neighbours';
+// - b and i are strong and em, and a span whose style is bold or italic is
+//   too (a word processor's paste); a b whose style says normal is not;
+// - text outside a block is wrapped in p, a block inside a paragraph splits
+//   it, a block inside a list item becomes a line of it (br), a list holds
+//   only items, adjacent lists of one kind are one list;
+// - the value has no empty block, no line break at a block's edge and no
+//   white space between blocks; an editor with no text is "".
+//
+// Two readers feed one cleaner: `treeFromDom` reads a DOM (the editor, or a
+// paste parsed by the browser in an inert <template>), `parseHtml` reads a
+// string without a DOM (a server, a test). Neither ever assigns the input to
+// a live element. What comes out is written by `serialize` from the cleaned
+// model, every text escaped, so it holds nothing the subset does not allow
+// whatever the reader understood.
+//
+// No imports and no state: the element and the contract tests use the same
+// functions.
+//
+// The module lives in the core runtime since content.html 1.0.0: the
+// Composition renderer sanitises a content.html block through it at render,
+// so a page that only renders a Document needs no Smart component.
+// src/smart/rich-text/js/rich-text-html.mjs re-exports it for sf-rich-text and
+// the field renderers; there is one rule, here.
+
+const RICH_TEXT_ELEMENTS = Object.freeze(['p', 'h2', 'h3', 'h4', 'strong', 'em', 'a', 'ul', 'ol', 'li', 'blockquote', 'br']);
+const RICH_TEXT_BLOCKS = Object.freeze(['p', 'h2', 'h3', 'h4']);
+const RICH_TEXT_SCHEMES = Object.freeze(['https:', 'mailto:', 'tel:']);
+
+// Dropped with everything inside: their content is code, a document's head,
+// a drawing, or a control's own data, not text for a reader.
+const DROPPED = new Set([
+  'script', 'style', 'template', 'head', 'title', 'meta', 'link', 'base', 'noscript',
+  'iframe', 'frame', 'frameset', 'noembed', 'noframes', 'object', 'embed', 'applet',
+  'svg', 'math', 'canvas', 'video', 'audio', 'img', 'picture', 'source', 'track',
+  'input', 'select', 'textarea', 'xmp', 'plaintext',
+]);
+
+// Elements off the subset that stand as blocks: unwrapped, but their text is
+// not run together with the text around them.
+const BREAKING = new Set([
+  'address', 'article', 'aside', 'body', 'caption', 'center', 'dd', 'details', 'dialog', 'dir', 'div',
+  'dl', 'dt', 'fieldset', 'figcaption', 'figure', 'footer', 'form', 'h1', 'h5', 'h6', 'header',
+  'hgroup', 'hr', 'html', 'legend', 'listing', 'main', 'menu', 'nav', 'optgroup', 'option', 'pre',
+  'section', 'summary', 'table', 'tbody', 'td', 'tfoot', 'th', 'thead', 'tr',
+]);
+
+const LISTS = new Set(['ul', 'ol']);
+const VOID = new Set(['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source', 'track', 'wbr']);
+// Raw text: what follows the start tag up to its end tag is not markup.
+const RAW = new Set(['script', 'style', 'textarea', 'title', 'xmp', 'iframe', 'noembed', 'noframes', 'noscript']);
+// Where an implied </p> stops looking for the paragraph (the parser's button scope).
+const P_SCOPE = new Set(['td', 'th', 'table', 'caption', 'button']);
+
+// C0 controls, DEL and C1 controls: a browser ignores them inside a scheme.
+// eslint-disable-next-line no-control-regex -- matching control characters is the point
+const CONTROLS = /[\u0000-\u001f\u007f-\u009f]/gu;
+// ...and white space, which a browser also skips around and inside a scheme.
+// eslint-disable-next-line no-control-regex -- matching control characters is the point
+const CONTROLS_AND_SPACE = /[\u0000- \u007f-\u009f\u00a0\u1680\u2000-\u200b\u2028\u2029\u202f\u205f\u3000\ufeff]/gu;
+const HREF_MAX = 2048;
+
+/**
+ * The href sf-rich-text keeps, or null: https:, mailto: and tel: URLs and a
+ * path on the site ("/docs/a", "/docs?q=1#a"). "//host", "/\host", http:,
+ * javascript:, data: and anything else are not kept.
+ * @param {unknown} value
+ * @returns {string|null}
+ */
+function richTextHref(value) {
+  if (typeof value !== 'string') return null;
+  const trimmed = value.trim();
+  if (!trimmed || trimmed.length > HREF_MAX) return null;
+  const compact = trimmed.replace(CONTROLS_AND_SPACE, '');
+  if (!compact) return null;
+  if (compact.startsWith('/')) {
+    // A site path, but not "//host" or "/\host", which leave the site.
+    if (/^\/[/\\]/u.test(compact)) return null;
+    const path = trimmed.replace(CONTROLS, '');
+    return /^\/[/\\]/u.test(path) ? null : path;
+  }
+  const scheme = /^([a-z][a-z0-9+.-]*):/iu.exec(compact)?.[1]?.toLowerCase();
+  if (!scheme || !RICH_TEXT_SCHEMES.includes(`${scheme}:`)) return null;
+  let url;
+  try {
+    url = new globalThis.URL(trimmed.replace(CONTROLS, ''));
+  } catch {
+    return null;
+  }
+  if (url.protocol !== `${scheme}:`) return null;
+  if (url.protocol === 'https:' && !url.hostname) return null;
+  if (url.protocol !== 'https:' && url.href.length <= url.protocol.length) return null;
+  return url.href;
+}
+
+// ---------------------------------------------------------------- entities
+
+const NAMED = {
+  amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: '\u00a0', shy: '\u00ad',
+  hellip: '\u2026', mdash: '\u2014', ndash: '\u2013', minus: '\u2212', laquo: '\u00ab', raquo: '\u00bb',
+  lsquo: '\u2018', rsquo: '\u2019', sbquo: '\u201a', ldquo: '\u201c', rdquo: '\u201d', bdquo: '\u201e',
+  bull: '\u2022', middot: '\u00b7', copy: '\u00a9', reg: '\u00ae', trade: '\u2122', deg: '\u00b0',
+  times: '\u00d7', divide: '\u00f7', plusmn: '\u00b1', euro: '\u20ac', pound: '\u00a3', yen: '\u00a5',
+  cent: '\u00a2', sect: '\u00a7', para: '\u00b6', thinsp: '\u2009', ensp: '\u2002', emsp: '\u2003',
+  zwj: '\u200d', zwnj: '\u200c', larr: '\u2190', rarr: '\u2192', uarr: '\u2191', darr: '\u2193',
+  numero: '\u2116', prime: '\u2032', Prime: '\u2033',
+};
+
+function decodeEntities(text) {
+  return String(text).replace(/&(#x[0-9a-f]+|#[0-9]+|[a-z][a-z0-9]*);?/giu, (whole, body) => {
+    if (body[0] === '#') {
+      const code = body[1] === 'x' || body[1] === 'X' ? Number.parseInt(body.slice(2), 16) : Number.parseInt(body.slice(1), 10);
+      if (!Number.isFinite(code) || code <= 0 || code > 0x10ffff || (code >= 0xd800 && code <= 0xdfff)) return '\ufffd';
+      return String.fromCodePoint(code);
+    }
+    return Object.hasOwn(NAMED, body) && whole.endsWith(';') ? NAMED[body] : whole;
+  });
+}
+
+// ---------------------------------------------------------------- readers
+
+// The raw tree both readers give: {type: 'element', name, attrs, children}
+// and {type: 'text', value}. Only href and style are read from attributes.
+
+/**
+ * Reads an HTML string into the raw tree, without a DOM. Tolerant the way a
+ * browser is for what matters here: implied ends of p and li, void elements,
+ * raw-text elements, comments, entities in text and attributes.
+ * @param {string} html
+ */
+function parseHtml(html) {
+  const source = typeof html === 'string' ? html : '';
+  const root = {type: 'element', name: '#root', attrs: {}, children: []};
+  const stack = [root];
+  const top = () => stack[stack.length - 1];
+  const append = (node) => top().children.push(node);
+  const appendText = (value) => {
+    if (!value) return;
+    const last = top().children.at(-1);
+    if (last?.type === 'text') last.value += value;
+    else append({type: 'text', value});
+  };
+  const closeTo = (name, stopAt = null) => {
+    for (let index = stack.length - 1; index > 0; index -= 1) {
+      const open = stack[index].name;
+      if (stopAt && stopAt.has(open)) return false;
+      if (open === name) {
+        stack.length = index;
+        return true;
+      }
+    }
+    return false;
+  };
+  let at = 0;
+  const length = source.length;
+  while (at < length) {
+    const lt = source.indexOf('<', at);
+    if (lt < 0) {
+      appendText(decodeEntities(source.slice(at)));
+      break;
+    }
+    if (lt > at) appendText(decodeEntities(source.slice(at, lt)));
+    at = lt;
+    if (source.startsWith('<!--', at)) {
+      const end = source.indexOf('-->', at + 4);
+      at = end < 0 ? length : end + 3;
+      continue;
+    }
+    const next = source[at + 1] ?? '';
+    if (next === '!' || next === '?') {
+      const end = source.indexOf('>', at + 2);
+      at = end < 0 ? length : end + 1;
+      continue;
+    }
+    if (next === '/') {
+      const match = /^<\/([a-z][a-z0-9-]*)[^>]*>?/iu.exec(source.slice(at));
+      if (!match) {
+        // "</" not followed by a name is a bogus comment.
+        const end = source.indexOf('>', at + 2);
+        at = end < 0 ? length : end + 1;
+        continue;
+      }
+      at += match[0].length;
+      const name = match[1].toLowerCase();
+      if (name === 'br') append({type: 'element', name: 'br', attrs: {}, children: []});
+      else if (name === 'p' && !closeTo('p', P_SCOPE)) {
+        // A </p> without a <p> is an empty paragraph, as a browser reads it.
+        append({type: 'element', name: 'p', attrs: {}, children: []});
+      } else closeTo(name);
+      continue;
+    }
+    const tag = /^<([a-z][a-z0-9-]*)/iu.exec(source.slice(at));
+    if (!tag) {
+      appendText('<');
+      at += 1;
+      continue;
+    }
+    at += tag[0].length;
+    const name = tag[1].toLowerCase();
+    const attrs = {};
+    let selfClosing = false;
+    // Attributes, up to the closing ">".
+    while (at < length) {
+      const space = /^[\s/]+/u.exec(source.slice(at));
+      if (space) {
+        if (space[0].includes('/') && source[at + space[0].length] === '>') selfClosing = true;
+        at += space[0].length;
+        continue;
+      }
+      if (source[at] === '>') {
+        at += 1;
+        break;
+      }
+      const attr = /^([^\s/>"'=][^\s/>"'=]*)(?:\s*=\s*(?:"([^"]*)"?|'([^']*)'?|([^\s>]*)))?/u.exec(source.slice(at));
+      if (!attr) {
+        at += 1;
+        continue;
+      }
+      at += attr[0].length;
+      const key = attr[1].toLowerCase();
+      if (!Object.hasOwn(attrs, key)) attrs[key] = decodeEntities(attr[2] ?? attr[3] ?? attr[4] ?? '');
+    }
+    const element = {type: 'element', name, attrs, children: []};
+    if (name === 'li') closeTo('li', LISTS);
+    // A block start ends an open paragraph (the browser's implied </p>).
+    if (RICH_TEXT_BLOCKS.includes(name) || LISTS.has(name) || name === 'blockquote' || BREAKING.has(name)) closeTo('p', P_SCOPE);
+    append(element);
+    if (name === 'plaintext') {
+      at = length;
+      break;
+    }
+    if (RAW.has(name)) {
+      const close = new RegExp(`</${name}[\\s/>]`, 'iu').exec(source.slice(at));
+      const end = close ? at + close.index : length;
+      if (name === 'textarea' || name === 'title') element.children.push({type: 'text', value: decodeEntities(source.slice(at, end))});
+      else element.children.push({type: 'text', value: source.slice(at, end)});
+      const gt = close ? source.indexOf('>', end) : -1;
+      at = gt < 0 ? length : gt + 1;
+      continue;
+    }
+    if (!VOID.has(name) && !selfClosing) stack.push(element);
+  }
+  return root;
+}
+
+const HTML_NS = 'http://www.w3.org/1999/xhtml';
+
+/**
+ * Reads a DOM subtree (an element, a fragment, a template's content) into the
+ * raw tree. Elements outside the HTML namespace are dropped.
+ * @param {Node} node
+ */
+function treeFromDom(node) {
+  const read = (current) => {
+    if (current.nodeType === 3) return {type: 'text', value: current.data};
+    if (current.nodeType === 11) return {type: 'element', name: '#root', attrs: {}, children: [...current.childNodes].map(read).filter(Boolean)};
+    if (current.nodeType !== 1) return null;
+    if (current.namespaceURI && current.namespaceURI !== HTML_NS) return null;
+    const name = current.localName;
+    if (DROPPED.has(name)) return null;
+    const attrs = {};
+    const href = current.getAttribute('href');
+    if (href !== null) attrs.href = href;
+    const style = current.getAttribute('style');
+    if (style !== null) attrs.style = style;
+    const children = name === 'template' ? [] : [...current.childNodes].map(read).filter(Boolean);
+    return {type: 'element', name, attrs, children};
+  };
+  const tree = read(node);
+  if (!tree || tree.type !== 'element') return {type: 'element', name: '#root', attrs: {}, children: tree ? [tree] : []};
+  return {...tree, name: '#root'};
+}
+
+// ---------------------------------------------------------------- the cleaner
+
+// What a style says of the marks: {strong: true|false|undefined, em: ...}.
+function styleMarks(style) {
+  const out = {};
+  if (!style) return out;
+  const weight = /(?:^|;)\s*font-weight\s*:\s*([^;!]+)/iu.exec(style)?.[1]?.trim().toLowerCase();
+  if (weight) {
+    if (weight === 'bold' || weight === 'bolder' || Number(weight) >= 600) out.strong = true;
+    else if (weight === 'normal' || weight === 'lighter' || Number(weight) < 600) out.strong = false;
+  }
+  const fontStyle = /(?:^|;)\s*font-style\s*:\s*([^;!]+)/iu.exec(style)?.[1]?.trim().toLowerCase();
+  if (fontStyle) {
+    if (fontStyle === 'italic' || fontStyle.startsWith('oblique')) out.em = true;
+    else if (fontStyle === 'normal') out.em = false;
+  }
+  return out;
+}
+
+function marksOf(element, marks) {
+  const next = {...marks};
+  if (element.name === 'strong' || element.name === 'b') next.strong = true;
+  if (element.name === 'em' || element.name === 'i') next.em = true;
+  const styled = styleMarks(element.attrs?.style);
+  if (styled.strong !== undefined) next.strong = styled.strong;
+  if (styled.em !== undefined) next.em = styled.em;
+  return next;
+}
+
+// A leaf of inline content: {kind: 'text', value, strong, em, href} or
+// {kind: 'br', strong, em, href}.
+const leaf = (kind, value, context) => ({kind, value, strong: Boolean(context.marks.strong), em: Boolean(context.marks.em), href: context.href || null});
+
+// A flow (the root, a quote) collects blocks; a list item collects its own
+// content. Text comes in as leaves into the current run; a block ends the
+// run.
+class Flow {
+  constructor(kind) {
+    this.kind = kind;
+    this.blocks = [];
+    this.run = [];
+    this.types = ['p'];
+    this.starts = [0];
+    this.needBreak = false;
+  }
+
+  inline(item) {
+    if (this.kind === 'item' && this.needBreak && this.run.length > 0) {
+      if (!(item.kind === 'text' && !item.value.trim())) {
+        this.run.push({kind: 'br', strong: false, em: false, href: null});
+        this.needBreak = false;
+      }
+    }
+    this.run.push(item);
+  }
+
+  flush() {
+    if (!this.run.length) return;
+    if (this.kind === 'item') {
+      this.blocks.push({type: 'inline', leaves: this.run});
+    } else {
+      this.blocks.push({type: this.types[this.types.length - 1], leaves: this.run});
+    }
+    this.run = [];
+  }
+
+  // A paragraph or heading starts (or a block off the subset): the text so
+  // far is one block, and what follows belongs to the new one.
+  open(type) {
+    if (this.kind === 'item') {
+      this.needBreak = true;
+      return;
+    }
+    this.flush();
+    this.types.push(type);
+    this.starts.push(this.blocks.length);
+  }
+
+  // keepEmpty: a paragraph or heading of the subset that held nothing is
+  // still a block (the editing surface keeps it; the value drops it).
+  close(keepEmpty = false) {
+    if (this.kind === 'item') {
+      this.needBreak = true;
+      return;
+    }
+    const start = this.starts[this.starts.length - 1];
+    if (keepEmpty && !this.run.length && this.blocks.length === start) this.blocks.push({type: this.types[this.types.length - 1], leaves: []});
+    this.flush();
+    if (this.types.length > 1) {
+      this.types.pop();
+      this.starts.pop();
+    }
+  }
+
+  block(block) {
+    this.flush();
+    this.blocks.push(block);
+    this.needBreak = false;
+  }
+}
+
+function walkText(value, flow, context) {
+  if (context.pre) {
+    const lines = value.replace(/\r\n?/gu, '\n').split('\n');
+    lines.forEach((line, index) => {
+      if (index > 0) flow.inline(leaf('br', '', context));
+      if (line) flow.inline(leaf('text', line.replace(/[\t\f]/gu, ' '), context));
+    });
+    return;
+  }
+  const text = value.replace(/[\t\n\r\f ]+/gu, ' ');
+  if (!text) return;
+  // White space between blocks is formatting of the source, not text.
+  if (text === ' ' && !flow.run.length) return;
+  flow.inline(leaf('text', text, context));
+}
+
+function walkChildren(children, flow, context) {
+  for (const child of children) walk(child, flow, context);
+}
+
+function walk(node, flow, context) {
+  if (node.type === 'text') {
+    walkText(node.value, flow, context);
+    return;
+  }
+  const name = node.name;
+  if (DROPPED.has(name)) return;
+  if (name === 'br') {
+    flow.inline(leaf('br', '', context));
+    return;
+  }
+  const inner = {...context, marks: marksOf(node, context.marks)};
+  if (name === 'a') {
+    const href = richTextHref(node.attrs?.href);
+    walkChildren(node.children, flow, href && !context.href ? {...inner, href} : inner);
+    return;
+  }
+  if (RICH_TEXT_BLOCKS.includes(name)) {
+    flow.open(name);
+    walkChildren(node.children, flow, inner);
+    flow.close(true);
+    return;
+  }
+  if (LISTS.has(name)) {
+    const list = readList(node, inner, name);
+    if (list.items.length) flow.block(list);
+    return;
+  }
+  if (name === 'blockquote') {
+    if (flow.kind === 'item') {
+      flow.open('p');
+      walkChildren(node.children, flow, inner);
+      flow.close();
+      return;
+    }
+    const quote = new Flow('flow');
+    walkChildren(node.children, quote, inner);
+    quote.flush();
+    flow.block({type: 'blockquote', blocks: quote.blocks});
+    return;
+  }
+  if (name === 'li') {
+    // An item outside a list is a paragraph of its own.
+    flow.open('p');
+    walkChildren(node.children, flow, inner);
+    flow.close();
+    return;
+  }
+  if (BREAKING.has(name)) {
+    flow.open('p');
+    walkChildren(node.children, flow, name === 'pre' || name === 'listing' ? {...inner, pre: true} : inner);
+    flow.close();
+    return;
+  }
+  // Any other element: its text, in place.
+  walkChildren(node.children, flow, inner);
+}
+
+function readItem(node, context) {
+  const flow = new Flow('item');
+  walkChildren(node.children, flow, context);
+  flow.flush();
+  return {children: flow.blocks};
+}
+
+function readList(node, context, type) {
+  const list = {type, items: []};
+  let loose = null;
+  const endLoose = () => {
+    if (loose) {
+      loose.flush();
+      list.items.push({children: loose.blocks});
+      loose = null;
+    }
+  };
+  for (const child of node.children) {
+    if (child.type === 'element' && child.name === 'li') {
+      endLoose();
+      list.items.push(readItem(child, context));
+      continue;
+    }
+    if (child.type === 'element' && LISTS.has(child.name)) {
+      endLoose();
+      // A list right inside a list (what an indent command leaves) belongs to
+      // the item before it.
+      const nested = readList(child, {...context, marks: marksOf(child, context.marks)}, child.name);
+      if (!nested.items.length) continue;
+      const previous = list.items.at(-1);
+      if (previous) previous.children.push(nested);
+      else list.items.push({children: [nested]});
+      continue;
+    }
+    if (child.type === 'text' && !child.value.trim()) continue;
+    if (child.type === 'element' && DROPPED.has(child.name)) continue;
+    // Loose content in a list is an item.
+    loose ??= new Flow('item');
+    walk(child, loose, context);
+  }
+  endLoose();
+  return list;
+}
+
+// ---------------------------------------------------------------- tidying
+
+const SPACE = ' ';
+const sameFormat = (a, b) => a.strong === b.strong && a.em === b.em && a.href === b.href;
+
+// Inline leaves made canonical: adjacent text of one format joined, runs of
+// spaces made one, spaces at the edges and around a line break removed, a link
+// with nothing but spaces made text.
+function tidyLeaves(leaves, mode) {
+  const out = [];
+  for (const item of leaves) {
+    if (item.kind === 'text' && !item.value) continue;
+    const last = out.at(-1);
+    if (item.kind === 'text' && last?.kind === 'text' && sameFormat(last, item)) {
+      last.value += item.value;
+    } else {
+      out.push({...item});
+    }
+  }
+  // One space between words, whatever the leaves.
+  for (let index = 0; index < out.length; index += 1) {
+    const item = out[index];
+    if (item.kind !== 'text') continue;
+    item.value = item.value.replace(/ {2,}/gu, SPACE);
+    const previous = out[index - 1];
+    if (item.value.startsWith(SPACE) && (!previous || previous.kind === 'br' || (previous.kind === 'text' && previous.value.endsWith(SPACE)))) {
+      item.value = item.value.slice(1);
+    }
+    const next = out[index + 1];
+    if (item.value.endsWith(SPACE) && (!next || next.kind === 'br')) item.value = item.value.slice(0, -1);
+  }
+  let kept = out.filter((item) => item.kind === 'br' || item.value);
+  if (mode === 'value') {
+    while (kept[0]?.kind === 'br') kept.shift();
+    while (kept.at(-1)?.kind === 'br') kept.pop();
+    if (kept[0]?.kind === 'text') kept[0].value = kept[0].value.replace(/^[\s\u00a0]+/u, '');
+    const end = kept.at(-1);
+    if (end?.kind === 'text') end.value = end.value.replace(/[\s\u00a0]+$/u, '');
+    kept = kept.filter((item) => item.kind === 'br' || item.value);
+  }
+  // A link of nothing but spaces is not a link.
+  const groups = new Map();
+  for (const item of kept) {
+    if (!item.href) continue;
+    groups.set(item.href, (groups.get(item.href) || '') + (item.kind === 'text' ? item.value : 'x'));
+  }
+  for (const item of kept) if (item.href && !groups.get(item.href).trim()) item.href = null;
+  // Join again: dropping spaces and links may have made neighbours alike.
+  const joined = [];
+  for (const item of kept) {
+    const last = joined.at(-1);
+    if (item.kind === 'text' && last?.kind === 'text' && sameFormat(last, item)) last.value += item.value;
+    else joined.push(item);
+  }
+  return joined;
+}
+
+const hasText = (leaves) => leaves.some((item) => item.kind === 'text' && item.value.replace(/[\s\u00a0]+/gu, '') !== '');
+
+function tidyItem(item, mode) {
+  const children = [];
+  for (const part of item.children) {
+    if (part.type === 'inline') {
+      const leaves = tidyLeaves(part.leaves, mode);
+      if (!leaves.length) continue;
+      const last = children.at(-1);
+      if (last?.type === 'inline') last.leaves = tidyLeaves([...last.leaves, {kind: 'br', strong: false, em: false, href: null}, ...leaves], mode);
+      else children.push({type: 'inline', leaves});
+    } else {
+      const list = tidyList(part, mode);
+      if (!list) continue;
+      const last = children.at(-1);
+      if (last && last.type === list.type) last.items.push(...list.items);
+      else children.push(list);
+    }
+  }
+  if (mode === 'value') {
+    const filtered = children.filter((part) => part.type !== 'inline' || hasText(part.leaves));
+    return filtered.length ? {children: filtered} : null;
+  }
+  if (!children.length || children[0].type !== 'inline') children.unshift({type: 'inline', leaves: [{kind: 'br', strong: false, em: false, href: null}]});
+  return {children};
+}
+
+function tidyList(list, mode) {
+  const items = list.items.map((item) => tidyItem(item, mode)).filter(Boolean);
+  return items.length ? {type: list.type, items} : null;
+}
+
+function tidyBlocks(blocks, mode) {
+  const out = [];
+  for (const block of blocks) {
+    let tidy = null;
+    if (block.type === 'blockquote') {
+      const inner = tidyBlocks(block.blocks, mode);
+      if (inner.length) tidy = {type: 'blockquote', blocks: inner};
+      else if (mode === 'editor') tidy = {type: 'blockquote', blocks: [{type: 'p', leaves: [{kind: 'br', strong: false, em: false, href: null}]}]};
+    } else if (LISTS.has(block.type)) {
+      tidy = tidyList(block, mode);
+    } else {
+      const leaves = tidyLeaves(block.leaves, mode);
+      if (mode === 'value') {
+        if (hasText(leaves)) tidy = {type: block.type, leaves};
+      } else {
+        tidy = {type: block.type, leaves: leaves.length ? leaves : [{kind: 'br', strong: false, em: false, href: null}]};
+      }
+    }
+    if (!tidy) continue;
+    const last = out.at(-1);
+    // Adjacent lists of one kind are one list.
+    if (last && LISTS.has(tidy.type) && last.type === tidy.type) last.items.push(...tidy.items);
+    else out.push(tidy);
+  }
+  return out;
+}
+
+/**
+ * The raw tree cleaned into blocks.
+ * mode "value": the stored form -- no empty block, no break at an edge.
+ * mode "editor": what the editing surface holds -- an empty block keeps a
+ *   <br> so the caret has a line, breaks the person typed stay.
+ */
+function cleanTree(tree, {mode = 'value'} = {}) {
+  const flow = new Flow('flow');
+  walkChildren(tree.children ?? [], flow, {marks: {}, href: null, pre: false});
+  flow.flush();
+  const blocks = tidyBlocks(flow.blocks, mode);
+  if (mode === 'editor' && !blocks.length) return [{type: 'p', leaves: [{kind: 'br', strong: false, em: false, href: null}]}];
+  return blocks;
+}
+
+// ---------------------------------------------------------------- writing
+
+const escapeText = (text) => text.replace(/&/gu, '&amp;').replace(/</gu, '&lt;').replace(/>/gu, '&gt;').replace(/\u00a0/gu, '&nbsp;');
+const escapeAttribute = (text) => text.replace(/&/gu, '&amp;').replace(/"/gu, '&quot;').replace(/</gu, '&lt;').replace(/>/gu, '&gt;').replace(/\u00a0/gu, '&nbsp;');
+
+// Leaves to markup, nested a > strong > em, each run of one format once.
+function writeLeaves(leaves) {
+  const writeGroup = (items, level) => {
+    let out = '';
+    let at = 0;
+    const key = ['href', 'strong', 'em'][level];
+    while (at < items.length) {
+      const value = key ? items[at][key] : null;
+      let end = at + 1;
+      while (end < items.length && key && items[end][key] === value) end += 1;
+      const group = items.slice(at, end);
+      if (!key) {
+        out += group.map((item) => (item.kind === 'br' ? '<br>' : escapeText(item.value))).join('');
+      } else if (key === 'href' && value) {
+        out += `<a href="${escapeAttribute(value)}">${writeGroup(group, level + 1)}</a>`;
+      } else if (key !== 'href' && value) {
+        out += `<${key}>${writeGroup(group, level + 1)}</${key}>`;
+      } else {
+        out += writeGroup(group, level + 1);
+      }
+      at = end;
+    }
+    return out;
+  };
+  return writeGroup(leaves, 0);
+}
+
+function writeList(list) {
+  return `<${list.type}>${list.items.map((item) => `<li>${item.children.map((part) => (part.type === 'inline' ? writeLeaves(part.leaves) : writeList(part))).join('')}</li>`).join('')}</${list.type}>`;
+}
+
+/** Cleaned blocks to the HTML string. */
+function serialize(blocks) {
+  return blocks.map((block) => {
+    if (block.type === 'blockquote') return `<blockquote>${serialize(block.blocks)}</blockquote>`;
+    if (LISTS.has(block.type)) return writeList(block);
+    return `<${block.type}>${writeLeaves(block.leaves)}</${block.type}>`;
+  }).join('');
+}
+
+/** The text of cleaned blocks, for counting and emptiness. */
+function plainText(html) {
+  const blocks = cleanTree(parseHtml(html), {mode: 'value'});
+  const text = (leaves) => leaves.map((item) => (item.kind === 'br' ? '\n' : item.value)).join('');
+  const list = (block) => block.items.map((item) => item.children.map((part) => (part.type === 'inline' ? text(part.leaves) : list(part))).join('\n')).join('\n');
+  const all = (items) => items.map((block) => (block.type === 'blockquote' ? all(block.blocks) : LISTS.has(block.type) ? list(block) : text(block.leaves))).join('\n\n');
+  return all(blocks);
+}
+
+/**
+ * Untrusted HTML into the subset. With a document (the browser) the string
+ * is parsed by the browser in an inert <template>; without one, by
+ * parseHtml. A DOM node may be given instead of a string.
+ * @param {string|Node|null|undefined} input
+ * @param {{mode?: 'value'|'editor', document?: Document|null}} [options]
+ * @returns {string}
+ */
+function sanitizeRichText(input, {mode = 'value', document: documentRef} = {}) {
+  let tree;
+  if (input && typeof input === 'object' && typeof input.nodeType === 'number') {
+    tree = treeFromDom(input);
+  } else {
+    const html = typeof input === 'string' ? input : '';
+    const doc = documentRef === undefined ? globalThis.document : documentRef;
+    if (html && doc?.createElement) {
+      const template = doc.createElement('template');
+      template.innerHTML = html;
+      tree = treeFromDom(template.content);
+    } else {
+      tree = parseHtml(html);
+    }
+  }
+  return serialize(cleanTree(tree, {mode}));
+}
+
+/**
+ * Plain text into the subset: paragraphs split on blank lines, a single line
+ * break a <br>.
+ * @param {string} text
+ * @param {{mode?: 'value'|'editor'}} [options]
+ */
+function richTextFromPlainText(text, {mode = 'value'} = {}) {
+  const source = String(text ?? '').replace(/\r\n?/gu, '\n');
+  const blocks = source.split(/\n[ \t\f\v\u00a0]*\n+/u).map((paragraph) => {
+    const leaves = [];
+    paragraph.split('\n').forEach((line, index) => {
+      if (index > 0) leaves.push({kind: 'br', strong: false, em: false, href: null});
+      const value = line.replace(/[\t\f\v ]+/gu, ' ');
+      if (value) leaves.push({kind: 'text', value, strong: false, em: false, href: null});
+    });
+    return {type: 'p', leaves};
+  });
+  return serialize(tidyBlocks(blocks, mode));
+}
+
+
+/***/ },
+
 /***/ "32dfc4431a24"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
@@ -14319,61 +15411,63 @@ function defineFragmentBoundary(registry = globalThis.customElements) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   BUILTIN_EDITOR_MANIFESTS: () => (/* reexport safe */ _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_EDITOR_MANIFESTS),
-/* harmony export */   BUILTIN_FIELD_KINDS: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_4__.BUILTIN_FIELD_KINDS),
+/* harmony export */   BUILTIN_FIELD_KINDS: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_5__.BUILTIN_FIELD_KINDS),
 /* harmony export */   BUILTIN_PORT_MANIFESTS: () => (/* reexport safe */ _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_PORT_MANIFESTS),
 /* harmony export */   BUILTIN_TYPE_MANIFESTS: () => (/* reexport safe */ _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_TYPE_MANIFESTS),
 /* harmony export */   Composition: () => (/* binding */ Composition),
-/* harmony export */   FRAGMENT_DESCRIPTOR_SCHEMA: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_9__.FRAGMENT_DESCRIPTOR_SCHEMA),
-/* harmony export */   INLINE_MARKS: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_7__.INLINE_MARKS),
-/* harmony export */   Recipe: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_5__.Recipe),
-/* harmony export */   VALUE_TYPES: () => (/* reexport safe */ _routing_mjs__WEBPACK_IMPORTED_MODULE_8__.VALUE_TYPES),
-/* harmony export */   applyFieldValue: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_4__.applyFieldValue),
-/* harmony export */   checkFragmentDescriptor: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_9__.checkFragmentDescriptor),
-/* harmony export */   checkPortValue: () => (/* reexport safe */ _routing_mjs__WEBPACK_IMPORTED_MODULE_8__.checkPortValue),
+/* harmony export */   FRAGMENT_DESCRIPTOR_SCHEMA: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_10__.FRAGMENT_DESCRIPTOR_SCHEMA),
+/* harmony export */   INLINE_MARKS: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_8__.INLINE_MARKS),
+/* harmony export */   Recipe: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_6__.Recipe),
+/* harmony export */   VALUE_TYPES: () => (/* reexport safe */ _routing_mjs__WEBPACK_IMPORTED_MODULE_9__.VALUE_TYPES),
+/* harmony export */   applyFieldValue: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_5__.applyFieldValue),
+/* harmony export */   checkFragmentDescriptor: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_10__.checkFragmentDescriptor),
+/* harmony export */   checkPortValue: () => (/* reexport safe */ _routing_mjs__WEBPACK_IMPORTED_MODULE_9__.checkPortValue),
 /* harmony export */   compositionTypeFromSmartManifest: () => (/* binding */ compositionTypeFromSmartManifest),
-/* harmony export */   createPortRegistry: () => (/* reexport safe */ _routing_mjs__WEBPACK_IMPORTED_MODULE_8__.createPortRegistry),
+/* harmony export */   createPortRegistry: () => (/* reexport safe */ _routing_mjs__WEBPACK_IMPORTED_MODULE_9__.createPortRegistry),
 /* harmony export */   createRegistry: () => (/* binding */ createRegistry),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
-/* harmony export */   defineCompositionScope: () => (/* reexport safe */ _routing_mjs__WEBPACK_IMPORTED_MODULE_8__.defineCompositionScope),
-/* harmony export */   defineFragmentBoundary: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_9__.defineFragmentBoundary),
-/* harmony export */   definePageHost: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_9__.definePageHost),
-/* harmony export */   describeRegions: () => (/* reexport safe */ _regions_mjs__WEBPACK_IMPORTED_MODULE_6__.describeRegions),
+/* harmony export */   defineCompositionScope: () => (/* reexport safe */ _routing_mjs__WEBPACK_IMPORTED_MODULE_9__.defineCompositionScope),
+/* harmony export */   defineFragmentBoundary: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_10__.defineFragmentBoundary),
+/* harmony export */   definePageHost: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_10__.definePageHost),
+/* harmony export */   describeRegions: () => (/* reexport safe */ _regions_mjs__WEBPACK_IMPORTED_MODULE_7__.describeRegions),
 /* harmony export */   extendRegistry: () => (/* binding */ extendRegistry),
-/* harmony export */   inlineText: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_7__.inlineText),
-/* harmony export */   marksIn: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_7__.marksIn),
+/* harmony export */   inlineText: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_8__.inlineText),
+/* harmony export */   marksIn: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_8__.marksIn),
 /* harmony export */   normalize: () => (/* binding */ normalize),
-/* harmony export */   normalizeInline: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_7__.normalizeInline),
-/* harmony export */   parseFieldSubmission: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_4__.parseFieldSubmission),
-/* harmony export */   parseRecipeJson: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_5__.parseRecipeJson),
-/* harmony export */   projectDocumentEditorFields: () => (/* reexport safe */ _editor_mjs__WEBPACK_IMPORTED_MODULE_3__.projectDocumentEditorFields),
-/* harmony export */   projectEditorFields: () => (/* reexport safe */ _editor_mjs__WEBPACK_IMPORTED_MODULE_3__.projectEditorFields),
-/* harmony export */   publishEffects: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_9__.publishEffects),
-/* harmony export */   recipeDigest: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_5__.recipeDigest),
-/* harmony export */   recipeNodeId: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_5__.recipeNodeId),
+/* harmony export */   normalizeInline: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_8__.normalizeInline),
+/* harmony export */   parseFieldSubmission: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_5__.parseFieldSubmission),
+/* harmony export */   parseRecipeJson: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_6__.parseRecipeJson),
+/* harmony export */   projectDocumentEditorFields: () => (/* reexport safe */ _editor_mjs__WEBPACK_IMPORTED_MODULE_4__.projectDocumentEditorFields),
+/* harmony export */   projectEditorFields: () => (/* reexport safe */ _editor_mjs__WEBPACK_IMPORTED_MODULE_4__.projectEditorFields),
+/* harmony export */   publishEffects: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_10__.publishEffects),
+/* harmony export */   recipeDigest: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_6__.recipeDigest),
+/* harmony export */   recipeNodeId: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_6__.recipeNodeId),
 /* harmony export */   render: () => (/* binding */ render),
-/* harmony export */   renderFieldFallback: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_4__.renderFieldFallback),
-/* harmony export */   replaceRange: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_7__.replaceRange),
-/* harmony export */   resolveFieldKind: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_4__.resolveFieldKind),
-/* harmony export */   resolveRecipe: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_5__.resolveRecipe),
-/* harmony export */   setLink: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_7__.setLink),
-/* harmony export */   stableStringify: () => (/* reexport safe */ _canonical_mjs__WEBPACK_IMPORTED_MODULE_1__.stableStringify),
+/* harmony export */   renderFieldFallback: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_5__.renderFieldFallback),
+/* harmony export */   replaceRange: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_8__.replaceRange),
+/* harmony export */   resolveFieldKind: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_5__.resolveFieldKind),
+/* harmony export */   resolveRecipe: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_6__.resolveRecipe),
+/* harmony export */   setLink: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_8__.setLink),
+/* harmony export */   stableStringify: () => (/* reexport safe */ _canonical_mjs__WEBPACK_IMPORTED_MODULE_2__.stableStringify),
 /* harmony export */   startInlineEdit: () => (/* binding */ startInlineEdit),
-/* harmony export */   toggleMark: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_7__.toggleMark),
+/* harmony export */   toggleMark: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_8__.toggleMark),
 /* harmony export */   validate: () => (/* binding */ validate),
-/* harmony export */   validateEditorManifest: () => (/* reexport safe */ _editor_mjs__WEBPACK_IMPORTED_MODULE_3__.validateEditorManifest),
-/* harmony export */   validateFieldKinds: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_4__.validateFieldKinds),
-/* harmony export */   validateFieldValue: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_4__.validateFieldValue)
+/* harmony export */   validateEditorManifest: () => (/* reexport safe */ _editor_mjs__WEBPACK_IMPORTED_MODULE_4__.validateEditorManifest),
+/* harmony export */   validateFieldKinds: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_5__.validateFieldKinds),
+/* harmony export */   validateFieldValue: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_5__.validateFieldValue)
 /* harmony export */ });
 /* harmony import */ var _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("08e5033c490a");
-/* harmony import */ var _canonical_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("6f489cc65b77");
-/* harmony import */ var _schema_name_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("ac24888e7d3e");
-/* harmony import */ var _editor_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("3765e2c966fd");
-/* harmony import */ var _fields_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("4e6fc63bed81");
-/* harmony import */ var _recipe_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("6770fb69bd04");
-/* harmony import */ var _regions_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("68efac8c1b57");
-/* harmony import */ var _inline_model_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("e66d878fb4f8");
-/* harmony import */ var _routing_mjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("4aea5d6d49c7");
-/* harmony import */ var _fragments_mjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("c2e3ed8498dc");
+/* harmony import */ var _html_subset_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("e19611ff78cb");
+/* harmony import */ var _canonical_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("6f489cc65b77");
+/* harmony import */ var _schema_name_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("ac24888e7d3e");
+/* harmony import */ var _editor_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("3765e2c966fd");
+/* harmony import */ var _fields_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("4e6fc63bed81");
+/* harmony import */ var _recipe_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("6770fb69bd04");
+/* harmony import */ var _regions_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("68efac8c1b57");
+/* harmony import */ var _inline_model_mjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("e66d878fb4f8");
+/* harmony import */ var _routing_mjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("4aea5d6d49c7");
+/* harmony import */ var _fragments_mjs__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("c2e3ed8498dc");
+
 
 
 
@@ -14425,7 +15519,7 @@ async function sha256(value) {
 }
 
 function pushUnknownFields(value, allowed, path, diagnostics) {
-  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_1__.isPlainObject)(value)) return;
+  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_2__.isPlainObject)(value)) return;
   for (const key of Object.keys(value)) {
     if (!allowed.has(key)) diagnostics.push(diagnostic('unknown_field', `${path}.${key}`, `Unknown field ${key}`));
   }
@@ -14436,7 +15530,7 @@ function scanForbiddenKeys(value, path, diagnostics) {
     value.forEach((entry, index) => scanForbiddenKeys(entry, `${path}[${index}]`, diagnostics));
     return;
   }
-  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_1__.isPlainObject)(value)) return;
+  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_2__.isPlainObject)(value)) return;
   for (const [key, entry] of Object.entries(value)) {
     const normalized = key.toLowerCase().replaceAll('-', '');
     if (FORBIDDEN_KEYS.has(normalized)) {
@@ -14447,7 +15541,7 @@ function scanForbiddenKeys(value, path, diagnostics) {
 }
 
 function validateExtensions(value, path, diagnostics, supported = new Set()) {
-  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_1__.isPlainObject)(value)) {
+  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_2__.isPlainObject)(value)) {
     diagnostics.push(diagnostic('extensions_invalid', path, 'Extensions must be an object'));
     return;
   }
@@ -14455,7 +15549,7 @@ function validateExtensions(value, path, diagnostics, supported = new Set()) {
     if (!/^[a-z][a-z0-9.-]*:[a-z][a-z0-9._-]*$/u.test(key)) {
       diagnostics.push(diagnostic('extension_name_invalid', `${path}.${key}`, 'Extension keys must be namespaced'));
     }
-    if ((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_1__.isPlainObject)(value[key]) && value[key].required === true && !supported.has(key)) {
+    if ((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_2__.isPlainObject)(value[key]) && value[key].required === true && !supported.has(key)) {
       diagnostics.push(diagnostic('extension_required_unknown', `${path}.${key}`, `Required extension ${key} is not supported`));
     }
   }
@@ -14483,7 +15577,7 @@ function validateJsonSchema(value, schema, path, diagnostics) {
   const types = Array.isArray(schema.type) ? schema.type : [schema.type];
   if (schema.type) {
     const actual = value === null ? 'null' : Array.isArray(value) ? 'array' : Number.isInteger(value) ? 'integer' : typeof value === 'number' ? 'number' : typeof value;
-    if (!types.includes(actual) && !(actual === 'integer' && types.includes('number')) && !(actual === 'object' && !(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_1__.isPlainObject)(value))) {
+    if (!types.includes(actual) && !(actual === 'integer' && types.includes('number')) && !(actual === 'object' && !(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_2__.isPlainObject)(value))) {
       diagnostics.push(diagnostic('schema_type', path, `Expected ${types.join(' or ')}`));
       return;
     }
@@ -14500,10 +15594,10 @@ function validateJsonSchema(value, schema, path, diagnostics) {
   if (Array.isArray(value)) {
     if (schema.minItems !== undefined && value.length < schema.minItems) diagnostics.push(diagnostic('schema_min_items', path, 'Array has too few items'));
     if (schema.maxItems !== undefined && value.length > schema.maxItems) diagnostics.push(diagnostic('schema_max_items', path, 'Array has too many items'));
-    if (schema.uniqueItems && new Set(value.map(_canonical_mjs__WEBPACK_IMPORTED_MODULE_1__.stableStringify)).size !== value.length) diagnostics.push(diagnostic('schema_unique_items', path, 'Array items must be unique'));
+    if (schema.uniqueItems && new Set(value.map(_canonical_mjs__WEBPACK_IMPORTED_MODULE_2__.stableStringify)).size !== value.length) diagnostics.push(diagnostic('schema_unique_items', path, 'Array items must be unique'));
     if (schema.items) value.forEach((entry, index) => validateJsonSchema(entry, schema.items, `${path}[${index}]`, diagnostics));
   }
-  if ((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_1__.isPlainObject)(value)) {
+  if ((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_2__.isPlainObject)(value)) {
     for (const key of schema.required || []) {
       if (!(key in value)) diagnostics.push(diagnostic('schema_required', `${path}.${key}`, `Required field ${key} is missing`));
     }
@@ -14539,13 +15633,65 @@ function validateInlineContent(value, path, diagnostics) {
   }
 }
 
+// Every inline content of a node, with its path: the link rule applies to all
+// of them, wherever a type keeps text.
+function inlineFields(node, path) {
+  const data = (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_2__.isPlainObject)(node.data) ? node.data : {};
+  const at = (key) => (Array.isArray(data[key]) ? [[data[key], `${path}.data.${key}`]] : []);
+  switch (node.type) {
+    case 'content.heading':
+    case 'content.paragraph':
+    case 'content.list-item':
+      return at('content');
+    case 'content.alert':
+    case 'content.step':
+      return at('title');
+    case 'content.details':
+      return at('summary');
+    case 'content.figure':
+      return at('caption');
+    case 'content.table':
+      return [
+        ...at('caption'),
+        ...(Array.isArray(data.rows) ? data.rows : []).flatMap((row, rowIndex) => (Array.isArray(row) ? row : [])
+          .map((cell, cellIndex) => [cell, `${path}.data.rows[${rowIndex}][${cellIndex}]`])),
+      ];
+    default:
+      return [];
+  }
+}
+
+// Content rules beyond a type's own schema: links and image sources follow the
+// Document's URL rule, an item type stands only in its own parent, and a
+// layout holds at most one outlet.
+function validateContentRules(root, diagnostics) {
+  let outlets = 0;
+  const visit = (node, path, parentType) => {
+    if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_2__.isPlainObject)(node)) return;
+    for (const [content, contentPath] of inlineFields(node, path)) validateInlineContent(content, contentPath, diagnostics);
+    if ((node.type === 'content.figure' || node.type === 'content.media') && typeof node.data?.src === 'string' && !validUrl(node.data.src)) {
+      diagnostics.push(diagnostic('unsafe_url', `${path}.data.src`, 'Image source protocol is not allowed'));
+    }
+    const parent = _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.CONTENT_ITEM_PARENTS[node.type];
+    if (parent && parentType !== parent) diagnostics.push(diagnostic('content_parent_invalid', path, `${node.type} must be a direct child of ${parent}`));
+    if (node.type === 'content.outlet') {
+      outlets += 1;
+      if (outlets > 1) diagnostics.push(diagnostic('outlet_duplicate', path, 'A layout holds the page content in one place'));
+    }
+    for (const [slotName, children] of Object.entries((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_2__.isPlainObject)(node.slots) ? node.slots : {})) {
+      if (Array.isArray(children)) children.forEach((child, index) => visit(child, `${path}.slots.${slotName}[${index}]`, node.type));
+    }
+  };
+  visit(root, '$.root', null);
+}
+
 let defaultPorts = null;
 
 function normalizePorts(ports) {
   if (ports?.elements instanceof Map) return ports;
-  if (Array.isArray(ports)) return (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_8__.createPortRegistry)(ports);
-  if (ports && Array.isArray(ports.manifests)) return (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_8__.createPortRegistry)(ports.manifests, { bindings: ports.bindings });
-  defaultPorts = defaultPorts || (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_8__.createPortRegistry)(_builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_PORT_MANIFESTS);
+  if (Array.isArray(ports)) return (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_9__.createPortRegistry)(ports);
+  if (ports && Array.isArray(ports.manifests)) return (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_9__.createPortRegistry)(ports.manifests, { bindings: ports.bindings });
+  defaultPorts = defaultPorts || (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_9__.createPortRegistry)(_builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_PORT_MANIFESTS);
   return defaultPorts;
 }
 
@@ -14558,9 +15704,9 @@ function createRegistry(manifests = _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.B
   const types = new Map();
   for (const manifest of manifests) {
     // Either form of the format name (schema-name.mjs).
-    if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_1__.isPlainObject)(manifest) || !(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_2__.isSchema)(manifest, 'simai.composition.type-manifest', 1)) throw new TypeError('composition_manifest_invalid');
+    if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_2__.isPlainObject)(manifest) || !(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_3__.isSchema)(manifest, 'simai.composition.type-manifest', 1)) throw new TypeError('composition_manifest_invalid');
     if (types.has(manifest.type)) throw new TypeError(`composition_manifest_duplicate:${manifest.type}`);
-    types.set(manifest.type, (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_1__.canonical)(manifest));
+    types.set(manifest.type, (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_2__.canonical)(manifest));
   }
   return { types, renderers: new Map(Object.entries(renderers)) };
 }
@@ -14602,7 +15748,7 @@ function compositionTypeFromSmartManifest(manifest) {
     }
     : undefined;
   return {
-    ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_2__.schemaFields)('simai.composition.type-manifest', 1),
+    ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_3__.schemaFields)('simai.composition.type-manifest', 1),
     type: declaration.type,
     version: manifest.version,
     category: 'smart',
@@ -14624,7 +15770,7 @@ function validate(document, registry = undefined, options = {}) {
   const diagnostics = [];
   const resolvedRegistry = normalizeRegistry(registry);
   const limits = { ...DEFAULT_LIMITS, ...(options.limits || {}) };
-  const supportedExtensions = new Set([_routing_mjs__WEBPACK_IMPORTED_MODULE_8__.ENDPOINT_EXTENSION, ...(options.supportedExtensions || [])]);
+  const supportedExtensions = new Set([_routing_mjs__WEBPACK_IMPORTED_MODULE_9__.ENDPOINT_EXTENSION, ...(options.supportedExtensions || [])]);
   let serialized;
   try {
     serialized = JSON.stringify(document);
@@ -14632,9 +15778,9 @@ function validate(document, registry = undefined, options = {}) {
     return { valid: false, diagnostics: [diagnostic('document_not_json', '$', 'Document must be JSON serializable')] };
   }
   if (new globalThis.TextEncoder().encode(serialized).byteLength > limits.maxDocumentBytes) diagnostics.push(diagnostic('document_too_large', '$', 'Document exceeds the byte limit'));
-  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_1__.isPlainObject)(document)) return { valid: false, diagnostics: [diagnostic('document_invalid', '$', 'Document must be an object')] };
+  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_2__.isPlainObject)(document)) return { valid: false, diagnostics: [diagnostic('document_invalid', '$', 'Document must be an object')] };
   pushUnknownFields(document, DOCUMENT_FIELDS, '$', diagnostics);
-  if (!(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_2__.isSchema)(document, 'simai.composition.document', 1)) diagnostics.push(diagnostic('schema_unknown', '$.schema', `Expected ${DOCUMENT_SCHEMA}, or simai.composition.document with schema_version 1`));
+  if (!(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_3__.isSchema)(document, 'simai.composition.document', 1)) diagnostics.push(diagnostic('schema_unknown', '$.schema', `Expected ${DOCUMENT_SCHEMA}, or simai.composition.document with schema_version 1`));
   if (typeof document.id !== 'string' || !/^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,119}$/u.test(document.id)) diagnostics.push(diagnostic('document_id_invalid', '$.id', 'Document id is invalid'));
   if (!PROFILES.has(document.profile)) diagnostics.push(diagnostic('profile_unknown', '$.profile', 'Profile is not supported'));
   if (document.locale !== undefined && (typeof document.locale !== 'string' || !/^[a-zA-Z]{2,8}(?:-[a-zA-Z0-9]{1,8})*$/u.test(document.locale))) diagnostics.push(diagnostic('locale_invalid', '$.locale', 'Locale is invalid'));
@@ -14647,7 +15793,7 @@ function validate(document, registry = undefined, options = {}) {
     nodeCount += 1;
     if (nodeCount > limits.maxNodes) return;
     if (depth > limits.maxDepth) diagnostics.push(diagnostic('depth_limit', path, 'Composition is too deeply nested'));
-    if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_1__.isPlainObject)(node)) {
+    if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_2__.isPlainObject)(node)) {
       diagnostics.push(diagnostic('node_invalid', path, 'Node must be an object'));
       return;
     }
@@ -14663,9 +15809,8 @@ function validate(document, registry = undefined, options = {}) {
     if (!manifest.profiles.includes(document.profile)) diagnostics.push(diagnostic('type_profile_unsupported', `${path}.type`, `${node.type} does not support ${document.profile}`));
     validateJsonSchema(node.data || {}, manifest.data_schema, `${path}.data`, diagnostics);
     validateJsonSchema(node.props || {}, manifest.props_schema, `${path}.props`, diagnostics);
-    if (node.type === 'content.heading' || node.type === 'content.paragraph') validateInlineContent(node.data?.content, `${path}.data.content`, diagnostics);
     if (node.presentation !== undefined) {
-      if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_1__.isPlainObject)(node.presentation)) diagnostics.push(diagnostic('presentation_invalid', `${path}.presentation`, 'Presentation must be an object'));
+      if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_2__.isPlainObject)(node.presentation)) diagnostics.push(diagnostic('presentation_invalid', `${path}.presentation`, 'Presentation must be an object'));
       else {
         pushUnknownFields(node.presentation, PRESENTATION_FIELDS, `${path}.presentation`, diagnostics);
         const contract = manifest.presentation || {};
@@ -14682,7 +15827,7 @@ function validate(document, registry = undefined, options = {}) {
       if (!Array.isArray(node.bindings)) diagnostics.push(diagnostic('bindings_invalid', `${path}.bindings`, 'Bindings must be an array'));
       else node.bindings.forEach((binding, index) => {
         const bindingPath = `${path}.bindings[${index}]`;
-        if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_1__.isPlainObject)(binding)) diagnostics.push(diagnostic('binding_invalid', bindingPath, 'Binding must be an object'));
+        if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_2__.isPlainObject)(binding)) diagnostics.push(diagnostic('binding_invalid', bindingPath, 'Binding must be an object'));
         else {
           pushUnknownFields(binding, BINDING_FIELDS, bindingPath, diagnostics);
           for (const key of ['owner', 'ref', 'target']) if (typeof binding[key] !== 'string' || !binding[key]) diagnostics.push(diagnostic('binding_field_invalid', `${bindingPath}.${key}`, `${key} is required`));
@@ -14691,7 +15836,7 @@ function validate(document, registry = undefined, options = {}) {
       });
     }
     const slots = node.slots || {};
-    if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_1__.isPlainObject)(slots)) {
+    if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_2__.isPlainObject)(slots)) {
       diagnostics.push(diagnostic('slots_invalid', `${path}.slots`, 'Slots must be an object'));
       return;
     }
@@ -14721,22 +15866,23 @@ function validate(document, registry = undefined, options = {}) {
   visit(document.root, '$.root', 1);
   if (nodeCount > limits.maxNodes) diagnostics.push(diagnostic('node_limit', '$.root', 'Composition has too many nodes'));
   else {
-    (0,_regions_mjs__WEBPACK_IMPORTED_MODULE_6__.validateRegionRules)(document.root, resolvedRegistry, diagnostics);
-    (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_8__.resolveRoutes)(document.root, resolvedRegistry, normalizePorts(options.ports), diagnostics);
+    (0,_regions_mjs__WEBPACK_IMPORTED_MODULE_7__.validateRegionRules)(document.root, resolvedRegistry, diagnostics);
+    validateContentRules(document.root, diagnostics);
+    (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_9__.resolveRoutes)(document.root, resolvedRegistry, normalizePorts(options.ports), diagnostics);
   }
   return { valid: diagnostics.length === 0, diagnostics };
 }
 
 function collectDependencies(node, manifest, output) {
   for (const asset of manifest.assets || []) output.assets.add(asset);
-  for (const binding of node.bindings || []) output.bindings.set(`${binding.owner}:${binding.ref}:${binding.target}:${binding.revision || ''}`, (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_1__.canonical)(binding));
+  for (const binding of node.bindings || []) output.bindings.set(`${binding.owner}:${binding.ref}:${binding.target}:${binding.revision || ''}`, (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_2__.canonical)(binding));
 }
 
 async function normalize(document, registry = undefined, options = {}) {
   const resolvedRegistry = normalizeRegistry(registry);
   const result = validate(document, resolvedRegistry, options);
   if (!result.valid) return { document: null, digest: null, dependencies: { assets: [], bindings: [] }, diagnostics: result.diagnostics };
-  const normalized = (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_1__.canonical)(JSON.parse(JSON.stringify(document)));
+  const normalized = (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_2__.canonical)(JSON.parse(JSON.stringify(document)));
   const dependencies = { assets: new Set(), bindings: new Map() };
   const visit = (node) => {
     collectDependencies(node, resolvedRegistry.types.get(node.type), dependencies);
@@ -14745,10 +15891,10 @@ async function normalize(document, registry = undefined, options = {}) {
   visit(normalized.root);
   return {
     document: normalized,
-    digest: await sha256((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_1__.stableStringify)(normalized)),
+    digest: await sha256((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_2__.stableStringify)(normalized)),
     dependencies: {
       assets: [...dependencies.assets].sort(),
-      bindings: [...dependencies.bindings.values()].sort((left, right) => (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_1__.stableStringify)(left).localeCompare((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_1__.stableStringify)(right))),
+      bindings: [...dependencies.bindings.values()].sort((left, right) => (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_2__.stableStringify)(left).localeCompare((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_2__.stableStringify)(right))),
     },
     diagnostics: [],
   };
@@ -14764,7 +15910,7 @@ function renderInline(content) {
     if (inline.type !== 'text') {
       // An atom draws its own element, its props escaped as text; anything
       // else (validation refuses it) draws nothing rather than "undefined".
-      const view = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_7__.inlineComponentView)(inline);
+      const view = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_8__.inlineComponentView)(inline);
       if (!view) return '';
       const attributes = view.attributes.map(([name, value]) => (value === '' ? ` ${name}` : ` ${name}="${escapeHtml(value)}"`)).join('');
       return `<${view.tag}${attributes}>${escapeHtml(view.text)}</${view.tag}>`;
@@ -14773,6 +15919,79 @@ function renderInline(content) {
     for (const mark of inline.marks || []) output = mark === 'strong' ? `<strong>${output}</strong>` : mark === 'em' ? `<em>${output}</em>` : `<code>${output}</code>`;
     return output;
   }).join('');
+}
+
+const id = (node) => ` data-sf-composition-id="${escapeHtml(node.id)}"`;
+// Docara's ratio words and the figure's modifier: 16/9 is sf-figure--ratio-16x9.
+const ratioClass = (ratio) => (ratio && ratio !== 'auto' ? ` sf-figure--ratio-${ratio.replace('/', 'x')}` : '');
+const ALERT_ICONS = { neutral: 'info', info: 'info', success: 'check_circle', warning: 'warning', error: 'error' };
+const GRID_COLUMNS = {
+  1: 'grid-col-1',
+  2: 'grid-col-1 md:grid-col-2',
+  3: 'grid-col-1 md:grid-col-2 lg:grid-col-3',
+  4: 'grid-col-1 md:grid-col-2 lg:grid-col-4',
+};
+
+function renderImage(data) {
+  const size = ['width', 'height'].filter((key) => Number.isInteger(data[key])).map((key) => ` ${key}="${data[key]}"`).join('');
+  return `<img src="${escapeHtml(data.src)}" alt="${escapeHtml(data.alt)}"${size} loading="lazy" decoding="async">`;
+}
+
+function renderTable(node) {
+  const { rows } = node.data;
+  const header = node.props?.header ?? 'row';
+  const headRow = header === 'row' || header === 'both';
+  const headColumn = header === 'column' || header === 'both';
+  const align = Array.isArray(node.props?.align) ? node.props.align : [];
+  // The frame sets every cell to the start; a column set otherwise says so on
+  // its cells, with one of two fixed values.
+  const cellStyle = (index) => (align[index] === 'center' || align[index] === 'end' ? ` style="text-align: ${align[index]}"` : '');
+  const cell = (content, index, tag, scope) => `<${tag}${scope ? ` scope="${scope}"` : ''}${cellStyle(index)}>${renderInline(content)}</${tag}>`;
+  const row = (cells, inHead) => `<tr>${cells.map((content, index) => (inHead
+    ? cell(content, index, 'th', 'col')
+    : headColumn && index === 0 ? cell(content, index, 'th', 'row') : cell(content, index, 'td', null))).join('')}</tr>`;
+  const caption = Array.isArray(node.data.caption) ? `<caption>${renderInline(node.data.caption)}</caption>` : '';
+  const head = headRow ? `<thead>${row(rows[0], true)}</thead>` : '';
+  const body = (headRow ? rows.slice(1) : rows).map((cells) => row(cells, false)).join('');
+  return `<div class="table-frame"${id(node)}><table class="table">${caption}${head}${body ? `<tbody>${body}</tbody>` : ''}</table></div>`;
+}
+
+function renderCode(node) {
+  const lang = node.props?.lang;
+  const language = lang ? ` class="language-${escapeHtml(lang)}" data-lang="${escapeHtml(lang)}"` : '';
+  const lines = node.props?.numbers === true ? ' data-lines' : '';
+  const code = `<div class="sf-highlight"${node.props?.title ? '' : id(node)}><pre><code${language}${lines}>${escapeHtml(node.data.code)}</code></pre></div>`;
+  if (!node.props?.title) return code;
+  return `<figure class="flex flex-col gap-1/2 m-0"${id(node)}><figcaption class="text-1/2 weight-5 color-on-surface-variant">${escapeHtml(node.props.title)}</figcaption>${code}</figure>`;
+}
+
+function renderTabs(node, slots) {
+  const tabs = node.slots.tabs;
+  const panels = slots.tabsList || [];
+  const label = node.data?.label ? ` aria-label="${escapeHtml(node.data.label)}"` : '';
+  // The first tab is selected; the tabs runtime adds roles, ids and keys.
+  const buttons = tabs.map((tab, index) => `<button type="button" class="sf-button sf-button--default sf-button--primary sf-button--size-1${index === 0 ? ' selected' : ''}"><span class="sf-button-text-container">${escapeHtml(tab.data.label)}</span></button>`).join('');
+  const bodies = tabs.map((tab, index) => `<div class="sf-tabs-main-tab${index === 0 ? ' selected' : ''}"${id(tab)}${index === 0 ? '' : ' hidden'}>${panels[index] || ''}</div>`).join('');
+  return `<div class="sf-tabs sf-tabs--underline flex flex-col"${id(node)}><div class="sf-tabs-top-container"><div class="sf-tabs-top flex"${label}>${buttons}</div></div><div class="sf-tabs-main-container">${bodies}</div></div>`;
+}
+
+function renderSteps(node, slots) {
+  const steps = node.slots.steps;
+  const items = slots.stepsList || [];
+  const current = Number.isInteger(node.props?.current) ? node.props.current : null;
+  const layout = node.props?.layout === 'list' ? ' sf-procedure--list' : '';
+  return `<ol class="sf-procedure${layout}"${id(node)}>${steps.map((step, index) => {
+    const number = index + 1;
+    const state = current === null ? '' : number < current ? ' sf-procedure-step--complete' : number === current ? ' sf-procedure-step--current' : '';
+    return `<li class="sf-procedure-step${state}"${id(step)}${current === number ? ' aria-current="step"' : ''}>${items[index] || ''}</li>`;
+  }).join('')}</ol>`;
+}
+
+function renderMedia(node, slots) {
+  const figure = `<figure class="sf-figure${ratioClass(node.props?.ratio ?? '16/9')}"><div class="sf-figure-media">${renderImage(node.data)}</div></figure>`;
+  const text = `<div class="min-w-0">${slots.default || ''}</div>`;
+  const parts = node.props?.side === 'left' ? figure + text : text + figure;
+  return `<div class="grid grid-col-1 md:grid-col-2 gap-3 items-cross-center"${id(node)}>${parts}</div>`;
 }
 
 const BUILTIN_RENDERERS = {
@@ -14787,12 +16006,61 @@ const BUILTIN_RENDERERS = {
   'layout.regions': ({ node, slots }) => `<div class="sf-composition-regions" data-sf-composition-id="${escapeHtml(node.id)}"><div class="sf-composition-regions-grid">${slots.regions || ''}</div></div>`,
   'layout.region': ({ node, slots }) => {
     const props = node.props;
-    const element = _regions_mjs__WEBPACK_IMPORTED_MODULE_6__.REGION_ELEMENTS[props.landmark];
+    const element = _regions_mjs__WEBPACK_IMPORTED_MODULE_7__.REGION_ELEMENTS[props.landmark];
     const sticky = props.sticky === true ? ' data-sf-region-sticky=""' : '';
     const label = props.label !== undefined ? ` aria-label="${escapeHtml(props.label)}"` : '';
     return `<${element} class="sf-composition-region" data-sf-composition-id="${escapeHtml(node.id)}" data-sf-region="${escapeHtml(props.name)}" data-sf-region-placement="${escapeHtml(props.placement ?? 'block')}"${sticky}${label}>${slots.default || ''}</${element}>`;
   },
-  'layout.scope': ({ node, slots, routes }) => `<sf-composition-scope data-sf-composition-id="${escapeHtml(node.id)}" data-sf-routes="${escapeHtml((0,_routing_mjs__WEBPACK_IMPORTED_MODULE_8__.routesAttribute)(routes || []))}">${slots.default || ''}</sf-composition-scope>`,
+  'layout.scope': ({ node, slots, routes }) => `<sf-composition-scope data-sf-composition-id="${escapeHtml(node.id)}" data-sf-routes="${escapeHtml((0,_routing_mjs__WEBPACK_IMPORTED_MODULE_9__.routesAttribute)(routes || []))}">${slots.default || ''}</sf-composition-scope>`,
+  'content.document': ({ node, slots }) => `<article${id(node)}>${node.data?.title ? `<h1>${escapeHtml(node.data.title)}</h1>` : ''}${slots.default || ''}</article>`,
+  'content.list': ({ node, slots }) => {
+    const ordered = node.props?.ordered === true;
+    const start = ordered && Number.isInteger(node.props?.start) && node.props.start !== 1 ? ` start="${node.props.start}"` : '';
+    return `<${ordered ? 'ol' : 'ul'}${start}${id(node)}>${slots.items || ''}</${ordered ? 'ol' : 'ul'}>`;
+  },
+  'content.list-item': ({ node, slots }) => `<li${id(node)}>${renderInline(node.data.content)}${slots.default || ''}</li>`,
+  'content.quote': ({ node, slots }) => `<blockquote${id(node)}>${slots.default || ''}</blockquote>`,
+  'content.code': ({ node }) => renderCode(node),
+  'content.divider': ({ node }) => `<hr class="sf-divider sf-divider-horizontal"${id(node)}>`,
+  'content.table': ({ node }) => renderTable(node),
+  'content.figure': ({ node }) => {
+    const fit = node.props?.fit === 'contain' ? ' sf-figure--contain' : '';
+    const caption = Array.isArray(node.data.caption) ? `<figcaption class="sf-figure-caption">${renderInline(node.data.caption)}</figcaption>` : '';
+    return `<figure class="sf-figure${ratioClass(node.props?.ratio)}${fit}"${id(node)}><div class="sf-figure-media">${renderImage(node.data)}</div>${caption}</figure>`;
+  },
+  'content.alert': ({ node, slots }) => {
+    const status = node.props?.status ?? 'neutral';
+    const appearance = node.props?.appearance ?? 'default';
+    const title = Array.isArray(node.data?.title) ? `<div class="sf-alert-text">${renderInline(node.data.title)}</div>` : '';
+    const body = slots.default ? `<div class="sf-alert-supporting-text">${slots.default}</div>` : '';
+    return `<div class="sf-alert sf-alert--${status} sf-alert--${appearance} flex items-start"${id(node)}><i class="sf-icon" aria-hidden="true">${ALERT_ICONS[status]}</i><div class="sf-alert-wrap flex flex-col flex-1"><div class="sf-alert-content flex flex-col flex-1">${title}${body}</div></div></div>`;
+  },
+  // Native details: it opens and closes with no script.
+  'content.details': ({ node, slots }) => {
+    const lines = node.props?.layout === 'lines';
+    const frame = lines ? 'border-bottom-1 border-bottom-solid border-outline-variant p-y-1' : 'bg-surface-0 border-1 border-solid border-outline-variant radius-2 p-2';
+    return `<details class="${frame}"${id(node)}${node.props?.open === true ? ' open' : ''}><summary class="weight-5 cursor-pointer">${renderInline(node.data.summary)}</summary><div class="p-top-1">${slots.default || ''}</div></details>`;
+  },
+  'content.tabs': ({ node, slots }) => renderTabs(node, slots),
+  // A tab is drawn by its tabs: the panel is theirs, the content its own.
+  'content.tab': ({ slots }) => slots.default || '',
+  'content.steps': ({ node, slots }) => renderSteps(node, slots),
+  // A step is drawn by its steps: the item is theirs, title and content its own.
+  'content.step': ({ node, slots }) => {
+    const title = Array.isArray(node.data?.title) ? `<div class="sf-procedure-title">${renderInline(node.data.title)}</div>` : '';
+    return `${title}<div class="sf-procedure-content">${slots.default || ''}</div>`;
+  },
+  'content.grid': ({ node, slots }) => {
+    const columns = GRID_COLUMNS[node.props?.columns ?? 3];
+    const gap = Number.isInteger(node.props?.gap) ? node.props.gap : 2;
+    return `<div class="grid ${columns} gap-${gap}"${id(node)}>${(slots.defaultList || []).map((child) => `<div class="min-w-0">${child}</div>`).join('')}</div>`;
+  },
+  'content.card': ({ node, slots }) => `<div class="sf-card${node.props?.variant === 'plain' ? ' sf-card--plain' : ''}"${id(node)}>${slots.default || ''}</div>`,
+  'content.media': ({ node, slots }) => renderMedia(node, slots),
+  // Cleaned at render by the html@1 subset's one rule: no script, no style, no
+  // attribute but a safe href survives.
+  'content.html': ({ node }) => `<div${id(node)}>${(0,_html_subset_mjs__WEBPACK_IMPORTED_MODULE_1__.sanitizeRichText)(node.data.markup)}</div>`,
+  'content.outlet': ({ node, outlet }) => `<div data-sf-outlet=""${id(node)}>${outlet || ''}</div>`,
 };
 
 async function render(document, context = {}) {
@@ -14801,7 +16069,24 @@ async function render(document, context = {}) {
   if (!normalized.document) return { html: '', assets: [], hydration: [], diagnostics: normalized.diagnostics, digest: null };
   const diagnostics = [];
   const hydration = [];
-  const routes = (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_8__.resolveRoutes)(normalized.document.root, registry, normalizePorts(context.options?.ports), []);
+  const routes = (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_9__.resolveRoutes)(normalized.document.root, registry, normalizePorts(context.options?.ports), []);
+  // The page's content for a layout's content.outlet: a structured-content
+  // Document, rendered with the same registry; its assets and diagnostics
+  // join the layout's.
+  let outlet = '';
+  const outletAssets = [];
+  if (context.content !== undefined) {
+    if (context.content?.profile !== 'structured-content') {
+      diagnostics.push(diagnostic('outlet_content_invalid', '$.content', 'The page content must be a structured-content Document'));
+    } else {
+      const { content, ...rest } = context;
+      const page = await render(content, rest);
+      outlet = page.html;
+      outletAssets.push(...page.assets);
+      hydration.push(...page.hydration);
+      diagnostics.push(...page.diagnostics.map((entry) => ({ ...entry, path: `$.content${entry.path.startsWith('$') ? entry.path.slice(1) : `:${entry.path}`}` })));
+    }
+  }
   const renderNode = async (node) => {
     const manifest = registry.types.get(node.type);
     const slots = {};
@@ -14829,55 +16114,56 @@ async function render(document, context = {}) {
       return '';
     }
     if (node.type === 'layout.scope') hydration.push({ id: node.id, type: node.type, element: 'sf-composition-scope' });
-    return renderer({ node, slots, context, resolvedBindings, manifest, routes: routes.get(node.id), endpoint: (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_8__.endpointName)(node) });
+    return renderer({ node, slots, context, resolvedBindings, manifest, routes: routes.get(node.id), endpoint: (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_9__.endpointName)(node), outlet: node.type === 'content.outlet' ? outlet : undefined });
   };
   const html = await renderNode(normalized.document.root);
-  return { html, assets: normalized.dependencies.assets, hydration, diagnostics, digest: normalized.digest };
+  const assets = outletAssets.length ? [...new Set([...normalized.dependencies.assets, ...outletAssets])].sort() : normalized.dependencies.assets;
+  return { html, assets, hydration, diagnostics, digest: normalized.digest };
 }
 
 const Composition = Object.freeze({
   BUILTIN_EDITOR_MANIFESTS: _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_EDITOR_MANIFESTS,
-  BUILTIN_FIELD_KINDS: _fields_mjs__WEBPACK_IMPORTED_MODULE_4__.BUILTIN_FIELD_KINDS,
+  BUILTIN_FIELD_KINDS: _fields_mjs__WEBPACK_IMPORTED_MODULE_5__.BUILTIN_FIELD_KINDS,
   BUILTIN_PORT_MANIFESTS: _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_PORT_MANIFESTS,
-  Recipe: _recipe_mjs__WEBPACK_IMPORTED_MODULE_5__.Recipe,
-  applyFieldValue: _fields_mjs__WEBPACK_IMPORTED_MODULE_4__.applyFieldValue,
-  parseFieldSubmission: _fields_mjs__WEBPACK_IMPORTED_MODULE_4__.parseFieldSubmission,
-  renderFieldFallback: _fields_mjs__WEBPACK_IMPORTED_MODULE_4__.renderFieldFallback,
-  resolveFieldKind: _fields_mjs__WEBPACK_IMPORTED_MODULE_4__.resolveFieldKind,
-  validateFieldKinds: _fields_mjs__WEBPACK_IMPORTED_MODULE_4__.validateFieldKinds,
-  validateFieldValue: _fields_mjs__WEBPACK_IMPORTED_MODULE_4__.validateFieldValue,
-  VALUE_TYPES: _routing_mjs__WEBPACK_IMPORTED_MODULE_8__.VALUE_TYPES,
-  checkPortValue: _routing_mjs__WEBPACK_IMPORTED_MODULE_8__.checkPortValue,
-  checkFragmentDescriptor: _fragments_mjs__WEBPACK_IMPORTED_MODULE_9__.checkFragmentDescriptor,
-  FRAGMENT_DESCRIPTOR_SCHEMA: _fragments_mjs__WEBPACK_IMPORTED_MODULE_9__.FRAGMENT_DESCRIPTOR_SCHEMA,
-  publishEffects: _fragments_mjs__WEBPACK_IMPORTED_MODULE_9__.publishEffects,
-  createPortRegistry: _routing_mjs__WEBPACK_IMPORTED_MODULE_8__.createPortRegistry,
-  defineCompositionScope: _routing_mjs__WEBPACK_IMPORTED_MODULE_8__.defineCompositionScope,
+  Recipe: _recipe_mjs__WEBPACK_IMPORTED_MODULE_6__.Recipe,
+  applyFieldValue: _fields_mjs__WEBPACK_IMPORTED_MODULE_5__.applyFieldValue,
+  parseFieldSubmission: _fields_mjs__WEBPACK_IMPORTED_MODULE_5__.parseFieldSubmission,
+  renderFieldFallback: _fields_mjs__WEBPACK_IMPORTED_MODULE_5__.renderFieldFallback,
+  resolveFieldKind: _fields_mjs__WEBPACK_IMPORTED_MODULE_5__.resolveFieldKind,
+  validateFieldKinds: _fields_mjs__WEBPACK_IMPORTED_MODULE_5__.validateFieldKinds,
+  validateFieldValue: _fields_mjs__WEBPACK_IMPORTED_MODULE_5__.validateFieldValue,
+  VALUE_TYPES: _routing_mjs__WEBPACK_IMPORTED_MODULE_9__.VALUE_TYPES,
+  checkPortValue: _routing_mjs__WEBPACK_IMPORTED_MODULE_9__.checkPortValue,
+  checkFragmentDescriptor: _fragments_mjs__WEBPACK_IMPORTED_MODULE_10__.checkFragmentDescriptor,
+  FRAGMENT_DESCRIPTOR_SCHEMA: _fragments_mjs__WEBPACK_IMPORTED_MODULE_10__.FRAGMENT_DESCRIPTOR_SCHEMA,
+  publishEffects: _fragments_mjs__WEBPACK_IMPORTED_MODULE_10__.publishEffects,
+  createPortRegistry: _routing_mjs__WEBPACK_IMPORTED_MODULE_9__.createPortRegistry,
+  defineCompositionScope: _routing_mjs__WEBPACK_IMPORTED_MODULE_9__.defineCompositionScope,
   startInlineEdit,
-  normalizeInline: _inline_model_mjs__WEBPACK_IMPORTED_MODULE_7__.normalizeInline,
-  inlineText: _inline_model_mjs__WEBPACK_IMPORTED_MODULE_7__.inlineText,
+  normalizeInline: _inline_model_mjs__WEBPACK_IMPORTED_MODULE_8__.normalizeInline,
+  inlineText: _inline_model_mjs__WEBPACK_IMPORTED_MODULE_8__.inlineText,
   BUILTIN_TYPE_MANIFESTS: _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_TYPE_MANIFESTS,
   createRegistry,
   extendRegistry,
   compositionTypeFromSmartManifest,
-  describeRegions: _regions_mjs__WEBPACK_IMPORTED_MODULE_6__.describeRegions,
+  describeRegions: _regions_mjs__WEBPACK_IMPORTED_MODULE_7__.describeRegions,
   normalize,
-  projectDocumentEditorFields: _editor_mjs__WEBPACK_IMPORTED_MODULE_3__.projectDocumentEditorFields,
-  projectEditorFields: _editor_mjs__WEBPACK_IMPORTED_MODULE_3__.projectEditorFields,
+  projectDocumentEditorFields: _editor_mjs__WEBPACK_IMPORTED_MODULE_4__.projectDocumentEditorFields,
+  projectEditorFields: _editor_mjs__WEBPACK_IMPORTED_MODULE_4__.projectEditorFields,
   render,
-  resolveRecipe: _recipe_mjs__WEBPACK_IMPORTED_MODULE_5__.resolveRecipe,
-  parseRecipeJson: _recipe_mjs__WEBPACK_IMPORTED_MODULE_5__.parseRecipeJson,
-  stableStringify: _canonical_mjs__WEBPACK_IMPORTED_MODULE_1__.stableStringify,
+  resolveRecipe: _recipe_mjs__WEBPACK_IMPORTED_MODULE_6__.resolveRecipe,
+  parseRecipeJson: _recipe_mjs__WEBPACK_IMPORTED_MODULE_6__.parseRecipeJson,
+  stableStringify: _canonical_mjs__WEBPACK_IMPORTED_MODULE_2__.stableStringify,
   validate,
-  validateEditorManifest: _editor_mjs__WEBPACK_IMPORTED_MODULE_3__.validateEditorManifest,
+  validateEditorManifest: _editor_mjs__WEBPACK_IMPORTED_MODULE_4__.validateEditorManifest,
 });
 
 if (typeof globalThis !== 'undefined') {
   globalThis.SF = globalThis.SF || {};
   globalThis.SF.Composition = Composition;
-  (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_8__.defineCompositionScope)();
-  (0,_fragments_mjs__WEBPACK_IMPORTED_MODULE_9__.definePageHost)();
-  (0,_fragments_mjs__WEBPACK_IMPORTED_MODULE_9__.defineFragmentBoundary)();
+  (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_9__.defineCompositionScope)();
+  (0,_fragments_mjs__WEBPACK_IMPORTED_MODULE_10__.definePageHost)();
+  (0,_fragments_mjs__WEBPACK_IMPORTED_MODULE_10__.defineFragmentBoundary)();
 }
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Composition);

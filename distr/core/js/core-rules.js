@@ -104,6 +104,19 @@ SF.RuleLoader['buttons'] = {
 
 /***/ },
 
+/***/ "de4f6a177a5c"
+() {
+
+// The card is drawn by its sheet alone: no script.
+SF.RuleLoader.card = {
+  regex: /class\s*=\s*["'][^"']*\bsf-card\b/i,
+  type: 'component',
+  css: true,
+  js: false
+};
+
+/***/ },
+
 /***/ "7f00837be123"
 () {
 
@@ -289,6 +302,19 @@ SF.RuleLoader['fab'] = {
 
 SF.RuleLoader['featured-icon'] = {
   regex: /class\s*=\s*["'][^"']*\bsf-featured-icon\b/i,
+  type: 'component',
+  css: true,
+  js: false
+};
+
+/***/ },
+
+/***/ "51a82dcce08f"
+() {
+
+// The figure is drawn by its sheet alone: no script.
+SF.RuleLoader.figure = {
+  regex: /class\s*=\s*["'][^"']*\bsf-figure\b/i,
   type: 'component',
   css: true,
   js: false
@@ -499,6 +525,20 @@ SF.RuleLoader['pagination'] = {
 
 SF.RuleLoader['placeholder'] = {
   regex: /class\s*=\s*["'][^"']*\b(?:sf-placeholder)\b/i,
+  type: 'component',
+  css: true,
+  js: false
+};
+
+/***/ },
+
+/***/ "698c86f93b0f"
+() {
+
+// The procedure is drawn by its sheet alone: the numbers are a CSS counter and
+// the line a pseudo-element, so it needs no script.
+SF.RuleLoader.procedure = {
+  regex: /class\s*=\s*["'][^"']*\bsf-procedure\b/i,
   type: 'component',
   css: true,
   js: false
@@ -2508,122 +2548,131 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _component_button_group_rule_js__WEBPACK_IMPORTED_MODULE_811___default = /*#__PURE__*/__webpack_require__.n(_component_button_group_rule_js__WEBPACK_IMPORTED_MODULE_811__);
 /* harmony import */ var _component_buttons_rule_js__WEBPACK_IMPORTED_MODULE_812__ = __webpack_require__("99cb5b4053d2");
 /* harmony import */ var _component_buttons_rule_js__WEBPACK_IMPORTED_MODULE_812___default = /*#__PURE__*/__webpack_require__.n(_component_buttons_rule_js__WEBPACK_IMPORTED_MODULE_812__);
-/* harmony import */ var _component_carousel_rule_js__WEBPACK_IMPORTED_MODULE_813__ = __webpack_require__("7f00837be123");
-/* harmony import */ var _component_carousel_rule_js__WEBPACK_IMPORTED_MODULE_813___default = /*#__PURE__*/__webpack_require__.n(_component_carousel_rule_js__WEBPACK_IMPORTED_MODULE_813__);
-/* harmony import */ var _component_checkbox_rule_js__WEBPACK_IMPORTED_MODULE_814__ = __webpack_require__("83d7f5e66620");
-/* harmony import */ var _component_checkbox_rule_js__WEBPACK_IMPORTED_MODULE_814___default = /*#__PURE__*/__webpack_require__.n(_component_checkbox_rule_js__WEBPACK_IMPORTED_MODULE_814__);
-/* harmony import */ var _component_clipboard_rule_js__WEBPACK_IMPORTED_MODULE_815__ = __webpack_require__("c823f2459268");
-/* harmony import */ var _component_clipboard_rule_js__WEBPACK_IMPORTED_MODULE_815___default = /*#__PURE__*/__webpack_require__.n(_component_clipboard_rule_js__WEBPACK_IMPORTED_MODULE_815__);
-/* harmony import */ var _component_close_rule_js__WEBPACK_IMPORTED_MODULE_816__ = __webpack_require__("b1e1ee852e73");
-/* harmony import */ var _component_close_rule_js__WEBPACK_IMPORTED_MODULE_816___default = /*#__PURE__*/__webpack_require__.n(_component_close_rule_js__WEBPACK_IMPORTED_MODULE_816__);
-/* harmony import */ var _component_contentDivider_rule_js__WEBPACK_IMPORTED_MODULE_817__ = __webpack_require__("13c0bdfe9cbd");
-/* harmony import */ var _component_contentDivider_rule_js__WEBPACK_IMPORTED_MODULE_817___default = /*#__PURE__*/__webpack_require__.n(_component_contentDivider_rule_js__WEBPACK_IMPORTED_MODULE_817__);
-/* harmony import */ var _component_context_menu_rule_js__WEBPACK_IMPORTED_MODULE_818__ = __webpack_require__("7f9773946dca");
-/* harmony import */ var _component_context_menu_rule_js__WEBPACK_IMPORTED_MODULE_818___default = /*#__PURE__*/__webpack_require__.n(_component_context_menu_rule_js__WEBPACK_IMPORTED_MODULE_818__);
-/* harmony import */ var _component_country_code_rule_js__WEBPACK_IMPORTED_MODULE_819__ = __webpack_require__("cedce224c5f4");
-/* harmony import */ var _component_country_code_rule_js__WEBPACK_IMPORTED_MODULE_819___default = /*#__PURE__*/__webpack_require__.n(_component_country_code_rule_js__WEBPACK_IMPORTED_MODULE_819__);
-/* harmony import */ var _component_datepicker_rule_js__WEBPACK_IMPORTED_MODULE_820__ = __webpack_require__("7f98398d9893");
-/* harmony import */ var _component_datepicker_rule_js__WEBPACK_IMPORTED_MODULE_820___default = /*#__PURE__*/__webpack_require__.n(_component_datepicker_rule_js__WEBPACK_IMPORTED_MODULE_820__);
-/* harmony import */ var _component_doc_rule_js__WEBPACK_IMPORTED_MODULE_821__ = __webpack_require__("a1f9ca5242b3");
-/* harmony import */ var _component_doc_rule_js__WEBPACK_IMPORTED_MODULE_821___default = /*#__PURE__*/__webpack_require__.n(_component_doc_rule_js__WEBPACK_IMPORTED_MODULE_821__);
-/* harmony import */ var _component_dot_rule_js__WEBPACK_IMPORTED_MODULE_822__ = __webpack_require__("febe56193858");
-/* harmony import */ var _component_dot_rule_js__WEBPACK_IMPORTED_MODULE_822___default = /*#__PURE__*/__webpack_require__.n(_component_dot_rule_js__WEBPACK_IMPORTED_MODULE_822__);
-/* harmony import */ var _component_download_file_rule_js__WEBPACK_IMPORTED_MODULE_823__ = __webpack_require__("4d0185b18432");
-/* harmony import */ var _component_download_file_rule_js__WEBPACK_IMPORTED_MODULE_823___default = /*#__PURE__*/__webpack_require__.n(_component_download_file_rule_js__WEBPACK_IMPORTED_MODULE_823__);
-/* harmony import */ var _component_dropdown_rule_js__WEBPACK_IMPORTED_MODULE_824__ = __webpack_require__("08def12eca8c");
-/* harmony import */ var _component_dropdown_rule_js__WEBPACK_IMPORTED_MODULE_824___default = /*#__PURE__*/__webpack_require__.n(_component_dropdown_rule_js__WEBPACK_IMPORTED_MODULE_824__);
-/* harmony import */ var _component_emoji_rule_js__WEBPACK_IMPORTED_MODULE_825__ = __webpack_require__("e923efa104b7");
-/* harmony import */ var _component_emoji_rule_js__WEBPACK_IMPORTED_MODULE_825___default = /*#__PURE__*/__webpack_require__.n(_component_emoji_rule_js__WEBPACK_IMPORTED_MODULE_825__);
-/* harmony import */ var _component_fab_rule_js__WEBPACK_IMPORTED_MODULE_826__ = __webpack_require__("98170297f7a3");
-/* harmony import */ var _component_fab_rule_js__WEBPACK_IMPORTED_MODULE_826___default = /*#__PURE__*/__webpack_require__.n(_component_fab_rule_js__WEBPACK_IMPORTED_MODULE_826__);
-/* harmony import */ var _component_featured_icon_rule_js__WEBPACK_IMPORTED_MODULE_827__ = __webpack_require__("ede41ae041d0");
-/* harmony import */ var _component_featured_icon_rule_js__WEBPACK_IMPORTED_MODULE_827___default = /*#__PURE__*/__webpack_require__.n(_component_featured_icon_rule_js__WEBPACK_IMPORTED_MODULE_827__);
-/* harmony import */ var _component_file_preview_rule_js__WEBPACK_IMPORTED_MODULE_828__ = __webpack_require__("502724424fe6");
-/* harmony import */ var _component_file_preview_rule_js__WEBPACK_IMPORTED_MODULE_828___default = /*#__PURE__*/__webpack_require__.n(_component_file_preview_rule_js__WEBPACK_IMPORTED_MODULE_828__);
-/* harmony import */ var _component_file_upload_rule_js__WEBPACK_IMPORTED_MODULE_829__ = __webpack_require__("5573ce94df22");
-/* harmony import */ var _component_file_upload_rule_js__WEBPACK_IMPORTED_MODULE_829___default = /*#__PURE__*/__webpack_require__.n(_component_file_upload_rule_js__WEBPACK_IMPORTED_MODULE_829__);
-/* harmony import */ var _component_flag_rule_js__WEBPACK_IMPORTED_MODULE_830__ = __webpack_require__("e50d07f1eda6");
-/* harmony import */ var _component_flag_rule_js__WEBPACK_IMPORTED_MODULE_830___default = /*#__PURE__*/__webpack_require__.n(_component_flag_rule_js__WEBPACK_IMPORTED_MODULE_830__);
-/* harmony import */ var _component_hideShow_rule_js__WEBPACK_IMPORTED_MODULE_831__ = __webpack_require__("f8a0c6e97ace");
-/* harmony import */ var _component_hideShow_rule_js__WEBPACK_IMPORTED_MODULE_831___default = /*#__PURE__*/__webpack_require__.n(_component_hideShow_rule_js__WEBPACK_IMPORTED_MODULE_831__);
-/* harmony import */ var _component_highlight_rule_js__WEBPACK_IMPORTED_MODULE_832__ = __webpack_require__("f95496d0d543");
-/* harmony import */ var _component_highlight_rule_js__WEBPACK_IMPORTED_MODULE_832___default = /*#__PURE__*/__webpack_require__.n(_component_highlight_rule_js__WEBPACK_IMPORTED_MODULE_832__);
-/* harmony import */ var _component_icon_buttons_rule_js__WEBPACK_IMPORTED_MODULE_833__ = __webpack_require__("1cea4ba3f399");
-/* harmony import */ var _component_icon_buttons_rule_js__WEBPACK_IMPORTED_MODULE_833___default = /*#__PURE__*/__webpack_require__.n(_component_icon_buttons_rule_js__WEBPACK_IMPORTED_MODULE_833__);
-/* harmony import */ var _component_icons_rule_js__WEBPACK_IMPORTED_MODULE_834__ = __webpack_require__("32d21669864f");
-/* harmony import */ var _component_icons_rule_js__WEBPACK_IMPORTED_MODULE_834___default = /*#__PURE__*/__webpack_require__.n(_component_icons_rule_js__WEBPACK_IMPORTED_MODULE_834__);
-/* harmony import */ var _component_inputs_rule_js__WEBPACK_IMPORTED_MODULE_835__ = __webpack_require__("e3063c2ae869");
-/* harmony import */ var _component_inputs_rule_js__WEBPACK_IMPORTED_MODULE_835___default = /*#__PURE__*/__webpack_require__.n(_component_inputs_rule_js__WEBPACK_IMPORTED_MODULE_835__);
-/* harmony import */ var _component_kbd_rule_js__WEBPACK_IMPORTED_MODULE_836__ = __webpack_require__("ae09dbe11fa0");
-/* harmony import */ var _component_kbd_rule_js__WEBPACK_IMPORTED_MODULE_836___default = /*#__PURE__*/__webpack_require__.n(_component_kbd_rule_js__WEBPACK_IMPORTED_MODULE_836__);
-/* harmony import */ var _component_link_rule_js__WEBPACK_IMPORTED_MODULE_837__ = __webpack_require__("50bd270389f0");
-/* harmony import */ var _component_link_rule_js__WEBPACK_IMPORTED_MODULE_837___default = /*#__PURE__*/__webpack_require__.n(_component_link_rule_js__WEBPACK_IMPORTED_MODULE_837__);
-/* harmony import */ var _component_menu_rule_js__WEBPACK_IMPORTED_MODULE_838__ = __webpack_require__("f64620850696");
-/* harmony import */ var _component_menu_rule_js__WEBPACK_IMPORTED_MODULE_838___default = /*#__PURE__*/__webpack_require__.n(_component_menu_rule_js__WEBPACK_IMPORTED_MODULE_838__);
-/* harmony import */ var _component_modal_rule_js__WEBPACK_IMPORTED_MODULE_839__ = __webpack_require__("35be363b8e77");
-/* harmony import */ var _component_modal_rule_js__WEBPACK_IMPORTED_MODULE_839___default = /*#__PURE__*/__webpack_require__.n(_component_modal_rule_js__WEBPACK_IMPORTED_MODULE_839__);
-/* harmony import */ var _component_outline_rule_js__WEBPACK_IMPORTED_MODULE_840__ = __webpack_require__("00d5078d0378");
-/* harmony import */ var _component_outline_rule_js__WEBPACK_IMPORTED_MODULE_840___default = /*#__PURE__*/__webpack_require__.n(_component_outline_rule_js__WEBPACK_IMPORTED_MODULE_840__);
-/* harmony import */ var _component_pagination_rule_js__WEBPACK_IMPORTED_MODULE_841__ = __webpack_require__("9c9ed777c04f");
-/* harmony import */ var _component_pagination_rule_js__WEBPACK_IMPORTED_MODULE_841___default = /*#__PURE__*/__webpack_require__.n(_component_pagination_rule_js__WEBPACK_IMPORTED_MODULE_841__);
-/* harmony import */ var _component_placeholder_rule_js__WEBPACK_IMPORTED_MODULE_842__ = __webpack_require__("55e539d03b34");
-/* harmony import */ var _component_placeholder_rule_js__WEBPACK_IMPORTED_MODULE_842___default = /*#__PURE__*/__webpack_require__.n(_component_placeholder_rule_js__WEBPACK_IMPORTED_MODULE_842__);
-/* harmony import */ var _component_progress_bar_rule_js__WEBPACK_IMPORTED_MODULE_843__ = __webpack_require__("10b4871fe1b2");
-/* harmony import */ var _component_progress_bar_rule_js__WEBPACK_IMPORTED_MODULE_843___default = /*#__PURE__*/__webpack_require__.n(_component_progress_bar_rule_js__WEBPACK_IMPORTED_MODULE_843__);
-/* harmony import */ var _component_progress_ring_rule_js__WEBPACK_IMPORTED_MODULE_844__ = __webpack_require__("738927b9fd2c");
-/* harmony import */ var _component_progress_ring_rule_js__WEBPACK_IMPORTED_MODULE_844___default = /*#__PURE__*/__webpack_require__.n(_component_progress_ring_rule_js__WEBPACK_IMPORTED_MODULE_844__);
-/* harmony import */ var _component_progress_scale_rule_js__WEBPACK_IMPORTED_MODULE_845__ = __webpack_require__("08a2fdb3ce51");
-/* harmony import */ var _component_progress_scale_rule_js__WEBPACK_IMPORTED_MODULE_845___default = /*#__PURE__*/__webpack_require__.n(_component_progress_scale_rule_js__WEBPACK_IMPORTED_MODULE_845__);
-/* harmony import */ var _component_quantity_rule_js__WEBPACK_IMPORTED_MODULE_846__ = __webpack_require__("5f1041a80dca");
-/* harmony import */ var _component_quantity_rule_js__WEBPACK_IMPORTED_MODULE_846___default = /*#__PURE__*/__webpack_require__.n(_component_quantity_rule_js__WEBPACK_IMPORTED_MODULE_846__);
-/* harmony import */ var _component_radio_rule_js__WEBPACK_IMPORTED_MODULE_847__ = __webpack_require__("2d9044a005c1");
-/* harmony import */ var _component_radio_rule_js__WEBPACK_IMPORTED_MODULE_847___default = /*#__PURE__*/__webpack_require__.n(_component_radio_rule_js__WEBPACK_IMPORTED_MODULE_847__);
-/* harmony import */ var _component_range_slider_rule_js__WEBPACK_IMPORTED_MODULE_848__ = __webpack_require__("0e7907f7b040");
-/* harmony import */ var _component_range_slider_rule_js__WEBPACK_IMPORTED_MODULE_848___default = /*#__PURE__*/__webpack_require__.n(_component_range_slider_rule_js__WEBPACK_IMPORTED_MODULE_848__);
-/* harmony import */ var _component_reference_link_rule_js__WEBPACK_IMPORTED_MODULE_849__ = __webpack_require__("347ca1dd66c3");
-/* harmony import */ var _component_reference_link_rule_js__WEBPACK_IMPORTED_MODULE_849___default = /*#__PURE__*/__webpack_require__.n(_component_reference_link_rule_js__WEBPACK_IMPORTED_MODULE_849__);
-/* harmony import */ var _component_scrollbar_rule_js__WEBPACK_IMPORTED_MODULE_850__ = __webpack_require__("3addfbac9f00");
-/* harmony import */ var _component_scrollbar_rule_js__WEBPACK_IMPORTED_MODULE_850___default = /*#__PURE__*/__webpack_require__.n(_component_scrollbar_rule_js__WEBPACK_IMPORTED_MODULE_850__);
-/* harmony import */ var _component_sf_system_rule_js__WEBPACK_IMPORTED_MODULE_851__ = __webpack_require__("31202915d37e");
-/* harmony import */ var _component_sf_system_rule_js__WEBPACK_IMPORTED_MODULE_851___default = /*#__PURE__*/__webpack_require__.n(_component_sf_system_rule_js__WEBPACK_IMPORTED_MODULE_851__);
-/* harmony import */ var _component_skeleton_rule_js__WEBPACK_IMPORTED_MODULE_852__ = __webpack_require__("6564c67b316e");
-/* harmony import */ var _component_skeleton_rule_js__WEBPACK_IMPORTED_MODULE_852___default = /*#__PURE__*/__webpack_require__.n(_component_skeleton_rule_js__WEBPACK_IMPORTED_MODULE_852__);
-/* harmony import */ var _component_slider_rule_js__WEBPACK_IMPORTED_MODULE_853__ = __webpack_require__("2b9704ba9e3e");
-/* harmony import */ var _component_slider_rule_js__WEBPACK_IMPORTED_MODULE_853___default = /*#__PURE__*/__webpack_require__.n(_component_slider_rule_js__WEBPACK_IMPORTED_MODULE_853__);
-/* harmony import */ var _component_special_rule_js__WEBPACK_IMPORTED_MODULE_854__ = __webpack_require__("68a67de6f3c1");
-/* harmony import */ var _component_special_rule_js__WEBPACK_IMPORTED_MODULE_854___default = /*#__PURE__*/__webpack_require__.n(_component_special_rule_js__WEBPACK_IMPORTED_MODULE_854__);
-/* harmony import */ var _component_spinner_rule_js__WEBPACK_IMPORTED_MODULE_855__ = __webpack_require__("5992802b14b7");
-/* harmony import */ var _component_spinner_rule_js__WEBPACK_IMPORTED_MODULE_855___default = /*#__PURE__*/__webpack_require__.n(_component_spinner_rule_js__WEBPACK_IMPORTED_MODULE_855__);
-/* harmony import */ var _component_step_rule_js__WEBPACK_IMPORTED_MODULE_856__ = __webpack_require__("9a180ecf087c");
-/* harmony import */ var _component_step_rule_js__WEBPACK_IMPORTED_MODULE_856___default = /*#__PURE__*/__webpack_require__.n(_component_step_rule_js__WEBPACK_IMPORTED_MODULE_856__);
-/* harmony import */ var _component_swiper_rule_js__WEBPACK_IMPORTED_MODULE_857__ = __webpack_require__("e0297f454be4");
-/* harmony import */ var _component_swiper_rule_js__WEBPACK_IMPORTED_MODULE_857___default = /*#__PURE__*/__webpack_require__.n(_component_swiper_rule_js__WEBPACK_IMPORTED_MODULE_857__);
-/* harmony import */ var _component_switch_rule_js__WEBPACK_IMPORTED_MODULE_858__ = __webpack_require__("fe33f3a2cd50");
-/* harmony import */ var _component_switch_rule_js__WEBPACK_IMPORTED_MODULE_858___default = /*#__PURE__*/__webpack_require__.n(_component_switch_rule_js__WEBPACK_IMPORTED_MODULE_858__);
-/* harmony import */ var _component_tab_rule_js__WEBPACK_IMPORTED_MODULE_859__ = __webpack_require__("f1658b8aaf0c");
-/* harmony import */ var _component_tab_rule_js__WEBPACK_IMPORTED_MODULE_859___default = /*#__PURE__*/__webpack_require__.n(_component_tab_rule_js__WEBPACK_IMPORTED_MODULE_859__);
-/* harmony import */ var _component_tabs_rule_js__WEBPACK_IMPORTED_MODULE_860__ = __webpack_require__("27d3a6768710");
-/* harmony import */ var _component_tabs_rule_js__WEBPACK_IMPORTED_MODULE_860___default = /*#__PURE__*/__webpack_require__.n(_component_tabs_rule_js__WEBPACK_IMPORTED_MODULE_860__);
-/* harmony import */ var _component_tags_rule_js__WEBPACK_IMPORTED_MODULE_861__ = __webpack_require__("34f9ee8f659a");
-/* harmony import */ var _component_tags_rule_js__WEBPACK_IMPORTED_MODULE_861___default = /*#__PURE__*/__webpack_require__.n(_component_tags_rule_js__WEBPACK_IMPORTED_MODULE_861__);
-/* harmony import */ var _component_textarea_rule_js__WEBPACK_IMPORTED_MODULE_862__ = __webpack_require__("bb4e586a81ed");
-/* harmony import */ var _component_textarea_rule_js__WEBPACK_IMPORTED_MODULE_862___default = /*#__PURE__*/__webpack_require__.n(_component_textarea_rule_js__WEBPACK_IMPORTED_MODULE_862__);
-/* harmony import */ var _component_theme_rule_js__WEBPACK_IMPORTED_MODULE_863__ = __webpack_require__("ab08e8bb7ac2");
-/* harmony import */ var _component_theme_rule_js__WEBPACK_IMPORTED_MODULE_863___default = /*#__PURE__*/__webpack_require__.n(_component_theme_rule_js__WEBPACK_IMPORTED_MODULE_863__);
-/* harmony import */ var _component_theme_palette_rule_js__WEBPACK_IMPORTED_MODULE_864__ = __webpack_require__("7f4ae1687732");
-/* harmony import */ var _component_theme_palette_rule_js__WEBPACK_IMPORTED_MODULE_864___default = /*#__PURE__*/__webpack_require__.n(_component_theme_palette_rule_js__WEBPACK_IMPORTED_MODULE_864__);
-/* harmony import */ var _component_toast_rule_js__WEBPACK_IMPORTED_MODULE_865__ = __webpack_require__("d1e4bb3aff97");
-/* harmony import */ var _component_toast_rule_js__WEBPACK_IMPORTED_MODULE_865___default = /*#__PURE__*/__webpack_require__.n(_component_toast_rule_js__WEBPACK_IMPORTED_MODULE_865__);
-/* harmony import */ var _component_toggle_rule_js__WEBPACK_IMPORTED_MODULE_866__ = __webpack_require__("9e94f7488ae3");
-/* harmony import */ var _component_toggle_rule_js__WEBPACK_IMPORTED_MODULE_866___default = /*#__PURE__*/__webpack_require__.n(_component_toggle_rule_js__WEBPACK_IMPORTED_MODULE_866__);
-/* harmony import */ var _component_tooltip_rule_js__WEBPACK_IMPORTED_MODULE_867__ = __webpack_require__("3b5ec10a8e5f");
-/* harmony import */ var _component_tooltip_rule_js__WEBPACK_IMPORTED_MODULE_867___default = /*#__PURE__*/__webpack_require__.n(_component_tooltip_rule_js__WEBPACK_IMPORTED_MODULE_867__);
-/* harmony import */ var _component_tree_item_rule_js__WEBPACK_IMPORTED_MODULE_868__ = __webpack_require__("8f5b10ee7efe");
-/* harmony import */ var _component_tree_item_rule_js__WEBPACK_IMPORTED_MODULE_868___default = /*#__PURE__*/__webpack_require__.n(_component_tree_item_rule_js__WEBPACK_IMPORTED_MODULE_868__);
-/* harmony import */ var _component_tree_rule_js__WEBPACK_IMPORTED_MODULE_869__ = __webpack_require__("93d82b41ff5c");
-/* harmony import */ var _component_tree_rule_js__WEBPACK_IMPORTED_MODULE_869___default = /*#__PURE__*/__webpack_require__.n(_component_tree_rule_js__WEBPACK_IMPORTED_MODULE_869__);
-/* harmony import */ var _component_verification_rule_js__WEBPACK_IMPORTED_MODULE_870__ = __webpack_require__("30b366c77b1e");
-/* harmony import */ var _component_verification_rule_js__WEBPACK_IMPORTED_MODULE_870___default = /*#__PURE__*/__webpack_require__.n(_component_verification_rule_js__WEBPACK_IMPORTED_MODULE_870__);
+/* harmony import */ var _component_card_rule_js__WEBPACK_IMPORTED_MODULE_813__ = __webpack_require__("de4f6a177a5c");
+/* harmony import */ var _component_card_rule_js__WEBPACK_IMPORTED_MODULE_813___default = /*#__PURE__*/__webpack_require__.n(_component_card_rule_js__WEBPACK_IMPORTED_MODULE_813__);
+/* harmony import */ var _component_carousel_rule_js__WEBPACK_IMPORTED_MODULE_814__ = __webpack_require__("7f00837be123");
+/* harmony import */ var _component_carousel_rule_js__WEBPACK_IMPORTED_MODULE_814___default = /*#__PURE__*/__webpack_require__.n(_component_carousel_rule_js__WEBPACK_IMPORTED_MODULE_814__);
+/* harmony import */ var _component_checkbox_rule_js__WEBPACK_IMPORTED_MODULE_815__ = __webpack_require__("83d7f5e66620");
+/* harmony import */ var _component_checkbox_rule_js__WEBPACK_IMPORTED_MODULE_815___default = /*#__PURE__*/__webpack_require__.n(_component_checkbox_rule_js__WEBPACK_IMPORTED_MODULE_815__);
+/* harmony import */ var _component_clipboard_rule_js__WEBPACK_IMPORTED_MODULE_816__ = __webpack_require__("c823f2459268");
+/* harmony import */ var _component_clipboard_rule_js__WEBPACK_IMPORTED_MODULE_816___default = /*#__PURE__*/__webpack_require__.n(_component_clipboard_rule_js__WEBPACK_IMPORTED_MODULE_816__);
+/* harmony import */ var _component_close_rule_js__WEBPACK_IMPORTED_MODULE_817__ = __webpack_require__("b1e1ee852e73");
+/* harmony import */ var _component_close_rule_js__WEBPACK_IMPORTED_MODULE_817___default = /*#__PURE__*/__webpack_require__.n(_component_close_rule_js__WEBPACK_IMPORTED_MODULE_817__);
+/* harmony import */ var _component_contentDivider_rule_js__WEBPACK_IMPORTED_MODULE_818__ = __webpack_require__("13c0bdfe9cbd");
+/* harmony import */ var _component_contentDivider_rule_js__WEBPACK_IMPORTED_MODULE_818___default = /*#__PURE__*/__webpack_require__.n(_component_contentDivider_rule_js__WEBPACK_IMPORTED_MODULE_818__);
+/* harmony import */ var _component_context_menu_rule_js__WEBPACK_IMPORTED_MODULE_819__ = __webpack_require__("7f9773946dca");
+/* harmony import */ var _component_context_menu_rule_js__WEBPACK_IMPORTED_MODULE_819___default = /*#__PURE__*/__webpack_require__.n(_component_context_menu_rule_js__WEBPACK_IMPORTED_MODULE_819__);
+/* harmony import */ var _component_country_code_rule_js__WEBPACK_IMPORTED_MODULE_820__ = __webpack_require__("cedce224c5f4");
+/* harmony import */ var _component_country_code_rule_js__WEBPACK_IMPORTED_MODULE_820___default = /*#__PURE__*/__webpack_require__.n(_component_country_code_rule_js__WEBPACK_IMPORTED_MODULE_820__);
+/* harmony import */ var _component_datepicker_rule_js__WEBPACK_IMPORTED_MODULE_821__ = __webpack_require__("7f98398d9893");
+/* harmony import */ var _component_datepicker_rule_js__WEBPACK_IMPORTED_MODULE_821___default = /*#__PURE__*/__webpack_require__.n(_component_datepicker_rule_js__WEBPACK_IMPORTED_MODULE_821__);
+/* harmony import */ var _component_doc_rule_js__WEBPACK_IMPORTED_MODULE_822__ = __webpack_require__("a1f9ca5242b3");
+/* harmony import */ var _component_doc_rule_js__WEBPACK_IMPORTED_MODULE_822___default = /*#__PURE__*/__webpack_require__.n(_component_doc_rule_js__WEBPACK_IMPORTED_MODULE_822__);
+/* harmony import */ var _component_dot_rule_js__WEBPACK_IMPORTED_MODULE_823__ = __webpack_require__("febe56193858");
+/* harmony import */ var _component_dot_rule_js__WEBPACK_IMPORTED_MODULE_823___default = /*#__PURE__*/__webpack_require__.n(_component_dot_rule_js__WEBPACK_IMPORTED_MODULE_823__);
+/* harmony import */ var _component_download_file_rule_js__WEBPACK_IMPORTED_MODULE_824__ = __webpack_require__("4d0185b18432");
+/* harmony import */ var _component_download_file_rule_js__WEBPACK_IMPORTED_MODULE_824___default = /*#__PURE__*/__webpack_require__.n(_component_download_file_rule_js__WEBPACK_IMPORTED_MODULE_824__);
+/* harmony import */ var _component_dropdown_rule_js__WEBPACK_IMPORTED_MODULE_825__ = __webpack_require__("08def12eca8c");
+/* harmony import */ var _component_dropdown_rule_js__WEBPACK_IMPORTED_MODULE_825___default = /*#__PURE__*/__webpack_require__.n(_component_dropdown_rule_js__WEBPACK_IMPORTED_MODULE_825__);
+/* harmony import */ var _component_emoji_rule_js__WEBPACK_IMPORTED_MODULE_826__ = __webpack_require__("e923efa104b7");
+/* harmony import */ var _component_emoji_rule_js__WEBPACK_IMPORTED_MODULE_826___default = /*#__PURE__*/__webpack_require__.n(_component_emoji_rule_js__WEBPACK_IMPORTED_MODULE_826__);
+/* harmony import */ var _component_fab_rule_js__WEBPACK_IMPORTED_MODULE_827__ = __webpack_require__("98170297f7a3");
+/* harmony import */ var _component_fab_rule_js__WEBPACK_IMPORTED_MODULE_827___default = /*#__PURE__*/__webpack_require__.n(_component_fab_rule_js__WEBPACK_IMPORTED_MODULE_827__);
+/* harmony import */ var _component_featured_icon_rule_js__WEBPACK_IMPORTED_MODULE_828__ = __webpack_require__("ede41ae041d0");
+/* harmony import */ var _component_featured_icon_rule_js__WEBPACK_IMPORTED_MODULE_828___default = /*#__PURE__*/__webpack_require__.n(_component_featured_icon_rule_js__WEBPACK_IMPORTED_MODULE_828__);
+/* harmony import */ var _component_figure_rule_js__WEBPACK_IMPORTED_MODULE_829__ = __webpack_require__("51a82dcce08f");
+/* harmony import */ var _component_figure_rule_js__WEBPACK_IMPORTED_MODULE_829___default = /*#__PURE__*/__webpack_require__.n(_component_figure_rule_js__WEBPACK_IMPORTED_MODULE_829__);
+/* harmony import */ var _component_file_preview_rule_js__WEBPACK_IMPORTED_MODULE_830__ = __webpack_require__("502724424fe6");
+/* harmony import */ var _component_file_preview_rule_js__WEBPACK_IMPORTED_MODULE_830___default = /*#__PURE__*/__webpack_require__.n(_component_file_preview_rule_js__WEBPACK_IMPORTED_MODULE_830__);
+/* harmony import */ var _component_file_upload_rule_js__WEBPACK_IMPORTED_MODULE_831__ = __webpack_require__("5573ce94df22");
+/* harmony import */ var _component_file_upload_rule_js__WEBPACK_IMPORTED_MODULE_831___default = /*#__PURE__*/__webpack_require__.n(_component_file_upload_rule_js__WEBPACK_IMPORTED_MODULE_831__);
+/* harmony import */ var _component_flag_rule_js__WEBPACK_IMPORTED_MODULE_832__ = __webpack_require__("e50d07f1eda6");
+/* harmony import */ var _component_flag_rule_js__WEBPACK_IMPORTED_MODULE_832___default = /*#__PURE__*/__webpack_require__.n(_component_flag_rule_js__WEBPACK_IMPORTED_MODULE_832__);
+/* harmony import */ var _component_hideShow_rule_js__WEBPACK_IMPORTED_MODULE_833__ = __webpack_require__("f8a0c6e97ace");
+/* harmony import */ var _component_hideShow_rule_js__WEBPACK_IMPORTED_MODULE_833___default = /*#__PURE__*/__webpack_require__.n(_component_hideShow_rule_js__WEBPACK_IMPORTED_MODULE_833__);
+/* harmony import */ var _component_highlight_rule_js__WEBPACK_IMPORTED_MODULE_834__ = __webpack_require__("f95496d0d543");
+/* harmony import */ var _component_highlight_rule_js__WEBPACK_IMPORTED_MODULE_834___default = /*#__PURE__*/__webpack_require__.n(_component_highlight_rule_js__WEBPACK_IMPORTED_MODULE_834__);
+/* harmony import */ var _component_icon_buttons_rule_js__WEBPACK_IMPORTED_MODULE_835__ = __webpack_require__("1cea4ba3f399");
+/* harmony import */ var _component_icon_buttons_rule_js__WEBPACK_IMPORTED_MODULE_835___default = /*#__PURE__*/__webpack_require__.n(_component_icon_buttons_rule_js__WEBPACK_IMPORTED_MODULE_835__);
+/* harmony import */ var _component_icons_rule_js__WEBPACK_IMPORTED_MODULE_836__ = __webpack_require__("32d21669864f");
+/* harmony import */ var _component_icons_rule_js__WEBPACK_IMPORTED_MODULE_836___default = /*#__PURE__*/__webpack_require__.n(_component_icons_rule_js__WEBPACK_IMPORTED_MODULE_836__);
+/* harmony import */ var _component_inputs_rule_js__WEBPACK_IMPORTED_MODULE_837__ = __webpack_require__("e3063c2ae869");
+/* harmony import */ var _component_inputs_rule_js__WEBPACK_IMPORTED_MODULE_837___default = /*#__PURE__*/__webpack_require__.n(_component_inputs_rule_js__WEBPACK_IMPORTED_MODULE_837__);
+/* harmony import */ var _component_kbd_rule_js__WEBPACK_IMPORTED_MODULE_838__ = __webpack_require__("ae09dbe11fa0");
+/* harmony import */ var _component_kbd_rule_js__WEBPACK_IMPORTED_MODULE_838___default = /*#__PURE__*/__webpack_require__.n(_component_kbd_rule_js__WEBPACK_IMPORTED_MODULE_838__);
+/* harmony import */ var _component_link_rule_js__WEBPACK_IMPORTED_MODULE_839__ = __webpack_require__("50bd270389f0");
+/* harmony import */ var _component_link_rule_js__WEBPACK_IMPORTED_MODULE_839___default = /*#__PURE__*/__webpack_require__.n(_component_link_rule_js__WEBPACK_IMPORTED_MODULE_839__);
+/* harmony import */ var _component_menu_rule_js__WEBPACK_IMPORTED_MODULE_840__ = __webpack_require__("f64620850696");
+/* harmony import */ var _component_menu_rule_js__WEBPACK_IMPORTED_MODULE_840___default = /*#__PURE__*/__webpack_require__.n(_component_menu_rule_js__WEBPACK_IMPORTED_MODULE_840__);
+/* harmony import */ var _component_modal_rule_js__WEBPACK_IMPORTED_MODULE_841__ = __webpack_require__("35be363b8e77");
+/* harmony import */ var _component_modal_rule_js__WEBPACK_IMPORTED_MODULE_841___default = /*#__PURE__*/__webpack_require__.n(_component_modal_rule_js__WEBPACK_IMPORTED_MODULE_841__);
+/* harmony import */ var _component_outline_rule_js__WEBPACK_IMPORTED_MODULE_842__ = __webpack_require__("00d5078d0378");
+/* harmony import */ var _component_outline_rule_js__WEBPACK_IMPORTED_MODULE_842___default = /*#__PURE__*/__webpack_require__.n(_component_outline_rule_js__WEBPACK_IMPORTED_MODULE_842__);
+/* harmony import */ var _component_pagination_rule_js__WEBPACK_IMPORTED_MODULE_843__ = __webpack_require__("9c9ed777c04f");
+/* harmony import */ var _component_pagination_rule_js__WEBPACK_IMPORTED_MODULE_843___default = /*#__PURE__*/__webpack_require__.n(_component_pagination_rule_js__WEBPACK_IMPORTED_MODULE_843__);
+/* harmony import */ var _component_placeholder_rule_js__WEBPACK_IMPORTED_MODULE_844__ = __webpack_require__("55e539d03b34");
+/* harmony import */ var _component_placeholder_rule_js__WEBPACK_IMPORTED_MODULE_844___default = /*#__PURE__*/__webpack_require__.n(_component_placeholder_rule_js__WEBPACK_IMPORTED_MODULE_844__);
+/* harmony import */ var _component_procedure_rule_js__WEBPACK_IMPORTED_MODULE_845__ = __webpack_require__("698c86f93b0f");
+/* harmony import */ var _component_procedure_rule_js__WEBPACK_IMPORTED_MODULE_845___default = /*#__PURE__*/__webpack_require__.n(_component_procedure_rule_js__WEBPACK_IMPORTED_MODULE_845__);
+/* harmony import */ var _component_progress_bar_rule_js__WEBPACK_IMPORTED_MODULE_846__ = __webpack_require__("10b4871fe1b2");
+/* harmony import */ var _component_progress_bar_rule_js__WEBPACK_IMPORTED_MODULE_846___default = /*#__PURE__*/__webpack_require__.n(_component_progress_bar_rule_js__WEBPACK_IMPORTED_MODULE_846__);
+/* harmony import */ var _component_progress_ring_rule_js__WEBPACK_IMPORTED_MODULE_847__ = __webpack_require__("738927b9fd2c");
+/* harmony import */ var _component_progress_ring_rule_js__WEBPACK_IMPORTED_MODULE_847___default = /*#__PURE__*/__webpack_require__.n(_component_progress_ring_rule_js__WEBPACK_IMPORTED_MODULE_847__);
+/* harmony import */ var _component_progress_scale_rule_js__WEBPACK_IMPORTED_MODULE_848__ = __webpack_require__("08a2fdb3ce51");
+/* harmony import */ var _component_progress_scale_rule_js__WEBPACK_IMPORTED_MODULE_848___default = /*#__PURE__*/__webpack_require__.n(_component_progress_scale_rule_js__WEBPACK_IMPORTED_MODULE_848__);
+/* harmony import */ var _component_quantity_rule_js__WEBPACK_IMPORTED_MODULE_849__ = __webpack_require__("5f1041a80dca");
+/* harmony import */ var _component_quantity_rule_js__WEBPACK_IMPORTED_MODULE_849___default = /*#__PURE__*/__webpack_require__.n(_component_quantity_rule_js__WEBPACK_IMPORTED_MODULE_849__);
+/* harmony import */ var _component_radio_rule_js__WEBPACK_IMPORTED_MODULE_850__ = __webpack_require__("2d9044a005c1");
+/* harmony import */ var _component_radio_rule_js__WEBPACK_IMPORTED_MODULE_850___default = /*#__PURE__*/__webpack_require__.n(_component_radio_rule_js__WEBPACK_IMPORTED_MODULE_850__);
+/* harmony import */ var _component_range_slider_rule_js__WEBPACK_IMPORTED_MODULE_851__ = __webpack_require__("0e7907f7b040");
+/* harmony import */ var _component_range_slider_rule_js__WEBPACK_IMPORTED_MODULE_851___default = /*#__PURE__*/__webpack_require__.n(_component_range_slider_rule_js__WEBPACK_IMPORTED_MODULE_851__);
+/* harmony import */ var _component_reference_link_rule_js__WEBPACK_IMPORTED_MODULE_852__ = __webpack_require__("347ca1dd66c3");
+/* harmony import */ var _component_reference_link_rule_js__WEBPACK_IMPORTED_MODULE_852___default = /*#__PURE__*/__webpack_require__.n(_component_reference_link_rule_js__WEBPACK_IMPORTED_MODULE_852__);
+/* harmony import */ var _component_scrollbar_rule_js__WEBPACK_IMPORTED_MODULE_853__ = __webpack_require__("3addfbac9f00");
+/* harmony import */ var _component_scrollbar_rule_js__WEBPACK_IMPORTED_MODULE_853___default = /*#__PURE__*/__webpack_require__.n(_component_scrollbar_rule_js__WEBPACK_IMPORTED_MODULE_853__);
+/* harmony import */ var _component_sf_system_rule_js__WEBPACK_IMPORTED_MODULE_854__ = __webpack_require__("31202915d37e");
+/* harmony import */ var _component_sf_system_rule_js__WEBPACK_IMPORTED_MODULE_854___default = /*#__PURE__*/__webpack_require__.n(_component_sf_system_rule_js__WEBPACK_IMPORTED_MODULE_854__);
+/* harmony import */ var _component_skeleton_rule_js__WEBPACK_IMPORTED_MODULE_855__ = __webpack_require__("6564c67b316e");
+/* harmony import */ var _component_skeleton_rule_js__WEBPACK_IMPORTED_MODULE_855___default = /*#__PURE__*/__webpack_require__.n(_component_skeleton_rule_js__WEBPACK_IMPORTED_MODULE_855__);
+/* harmony import */ var _component_slider_rule_js__WEBPACK_IMPORTED_MODULE_856__ = __webpack_require__("2b9704ba9e3e");
+/* harmony import */ var _component_slider_rule_js__WEBPACK_IMPORTED_MODULE_856___default = /*#__PURE__*/__webpack_require__.n(_component_slider_rule_js__WEBPACK_IMPORTED_MODULE_856__);
+/* harmony import */ var _component_special_rule_js__WEBPACK_IMPORTED_MODULE_857__ = __webpack_require__("68a67de6f3c1");
+/* harmony import */ var _component_special_rule_js__WEBPACK_IMPORTED_MODULE_857___default = /*#__PURE__*/__webpack_require__.n(_component_special_rule_js__WEBPACK_IMPORTED_MODULE_857__);
+/* harmony import */ var _component_spinner_rule_js__WEBPACK_IMPORTED_MODULE_858__ = __webpack_require__("5992802b14b7");
+/* harmony import */ var _component_spinner_rule_js__WEBPACK_IMPORTED_MODULE_858___default = /*#__PURE__*/__webpack_require__.n(_component_spinner_rule_js__WEBPACK_IMPORTED_MODULE_858__);
+/* harmony import */ var _component_step_rule_js__WEBPACK_IMPORTED_MODULE_859__ = __webpack_require__("9a180ecf087c");
+/* harmony import */ var _component_step_rule_js__WEBPACK_IMPORTED_MODULE_859___default = /*#__PURE__*/__webpack_require__.n(_component_step_rule_js__WEBPACK_IMPORTED_MODULE_859__);
+/* harmony import */ var _component_swiper_rule_js__WEBPACK_IMPORTED_MODULE_860__ = __webpack_require__("e0297f454be4");
+/* harmony import */ var _component_swiper_rule_js__WEBPACK_IMPORTED_MODULE_860___default = /*#__PURE__*/__webpack_require__.n(_component_swiper_rule_js__WEBPACK_IMPORTED_MODULE_860__);
+/* harmony import */ var _component_switch_rule_js__WEBPACK_IMPORTED_MODULE_861__ = __webpack_require__("fe33f3a2cd50");
+/* harmony import */ var _component_switch_rule_js__WEBPACK_IMPORTED_MODULE_861___default = /*#__PURE__*/__webpack_require__.n(_component_switch_rule_js__WEBPACK_IMPORTED_MODULE_861__);
+/* harmony import */ var _component_tab_rule_js__WEBPACK_IMPORTED_MODULE_862__ = __webpack_require__("f1658b8aaf0c");
+/* harmony import */ var _component_tab_rule_js__WEBPACK_IMPORTED_MODULE_862___default = /*#__PURE__*/__webpack_require__.n(_component_tab_rule_js__WEBPACK_IMPORTED_MODULE_862__);
+/* harmony import */ var _component_tabs_rule_js__WEBPACK_IMPORTED_MODULE_863__ = __webpack_require__("27d3a6768710");
+/* harmony import */ var _component_tabs_rule_js__WEBPACK_IMPORTED_MODULE_863___default = /*#__PURE__*/__webpack_require__.n(_component_tabs_rule_js__WEBPACK_IMPORTED_MODULE_863__);
+/* harmony import */ var _component_tags_rule_js__WEBPACK_IMPORTED_MODULE_864__ = __webpack_require__("34f9ee8f659a");
+/* harmony import */ var _component_tags_rule_js__WEBPACK_IMPORTED_MODULE_864___default = /*#__PURE__*/__webpack_require__.n(_component_tags_rule_js__WEBPACK_IMPORTED_MODULE_864__);
+/* harmony import */ var _component_textarea_rule_js__WEBPACK_IMPORTED_MODULE_865__ = __webpack_require__("bb4e586a81ed");
+/* harmony import */ var _component_textarea_rule_js__WEBPACK_IMPORTED_MODULE_865___default = /*#__PURE__*/__webpack_require__.n(_component_textarea_rule_js__WEBPACK_IMPORTED_MODULE_865__);
+/* harmony import */ var _component_theme_rule_js__WEBPACK_IMPORTED_MODULE_866__ = __webpack_require__("ab08e8bb7ac2");
+/* harmony import */ var _component_theme_rule_js__WEBPACK_IMPORTED_MODULE_866___default = /*#__PURE__*/__webpack_require__.n(_component_theme_rule_js__WEBPACK_IMPORTED_MODULE_866__);
+/* harmony import */ var _component_theme_palette_rule_js__WEBPACK_IMPORTED_MODULE_867__ = __webpack_require__("7f4ae1687732");
+/* harmony import */ var _component_theme_palette_rule_js__WEBPACK_IMPORTED_MODULE_867___default = /*#__PURE__*/__webpack_require__.n(_component_theme_palette_rule_js__WEBPACK_IMPORTED_MODULE_867__);
+/* harmony import */ var _component_toast_rule_js__WEBPACK_IMPORTED_MODULE_868__ = __webpack_require__("d1e4bb3aff97");
+/* harmony import */ var _component_toast_rule_js__WEBPACK_IMPORTED_MODULE_868___default = /*#__PURE__*/__webpack_require__.n(_component_toast_rule_js__WEBPACK_IMPORTED_MODULE_868__);
+/* harmony import */ var _component_toggle_rule_js__WEBPACK_IMPORTED_MODULE_869__ = __webpack_require__("9e94f7488ae3");
+/* harmony import */ var _component_toggle_rule_js__WEBPACK_IMPORTED_MODULE_869___default = /*#__PURE__*/__webpack_require__.n(_component_toggle_rule_js__WEBPACK_IMPORTED_MODULE_869__);
+/* harmony import */ var _component_tooltip_rule_js__WEBPACK_IMPORTED_MODULE_870__ = __webpack_require__("3b5ec10a8e5f");
+/* harmony import */ var _component_tooltip_rule_js__WEBPACK_IMPORTED_MODULE_870___default = /*#__PURE__*/__webpack_require__.n(_component_tooltip_rule_js__WEBPACK_IMPORTED_MODULE_870__);
+/* harmony import */ var _component_tree_item_rule_js__WEBPACK_IMPORTED_MODULE_871__ = __webpack_require__("8f5b10ee7efe");
+/* harmony import */ var _component_tree_item_rule_js__WEBPACK_IMPORTED_MODULE_871___default = /*#__PURE__*/__webpack_require__.n(_component_tree_item_rule_js__WEBPACK_IMPORTED_MODULE_871__);
+/* harmony import */ var _component_tree_rule_js__WEBPACK_IMPORTED_MODULE_872__ = __webpack_require__("93d82b41ff5c");
+/* harmony import */ var _component_tree_rule_js__WEBPACK_IMPORTED_MODULE_872___default = /*#__PURE__*/__webpack_require__.n(_component_tree_rule_js__WEBPACK_IMPORTED_MODULE_872__);
+/* harmony import */ var _component_verification_rule_js__WEBPACK_IMPORTED_MODULE_873__ = __webpack_require__("30b366c77b1e");
+/* harmony import */ var _component_verification_rule_js__WEBPACK_IMPORTED_MODULE_873___default = /*#__PURE__*/__webpack_require__.n(_component_verification_rule_js__WEBPACK_IMPORTED_MODULE_873__);
+
+
+
 
 
 

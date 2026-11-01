@@ -1,0 +1,53 @@
+@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@layer sf.components {
+  .sf-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sf-content--space-text);
+    gap: var(--sf-card-gap, var(--sf-content--space-text));
+    box-sizing: border-box;
+    min-width: 0;
+    min-inline-size: 0;
+    padding-top: var(--sf-space-2);
+    padding-bottom: var(--sf-space-2);
+    padding-block: var(--sf-space-2);
+    padding-top: var(--sf-space-2);
+    padding-top: var(--sf-card-padding-block, var(--sf-space-2));
+    padding-bottom: var(--sf-space-2);
+    padding-bottom: var(--sf-card-padding-block, var(--sf-space-2));
+    padding-block: var(--sf-card-padding-block, var(--sf-space-2));
+    padding-left: var(--sf-space-2);
+    padding-right: var(--sf-space-2);
+    padding-inline: var(--sf-space-2);
+    padding-left: var(--sf-space-2);
+    padding-left: var(--sf-card-padding-inline, var(--sf-space-2));
+    padding-right: var(--sf-space-2);
+    padding-right: var(--sf-card-padding-inline, var(--sf-space-2));
+    padding-inline: var(--sf-card-padding-inline, var(--sf-space-2));
+    color: var(--sf-on-surface);
+    color: var(--sf-card-color, var(--sf-on-surface));
+    background-color: var(--sf-surface-0);
+    background-color: var(--sf-card-background, var(--sf-surface-0));
+    border: var(--sf-px) solid var(--sf-outline-variant);
+    border: var(--sf-card-border-width, var(--sf-px)) solid var(--sf-card-border-color, var(--sf-outline-variant));
+    border-radius: var(--sf-radius--surface);
+    border-radius: var(--sf-card-radius, var(--sf-radius--surface));
+    word-wrap: break-word;
+  }
+  .sf-card > * {
+    margin-top: var(--sf-0);
+    margin-bottom: var(--sf-0);
+    margin-block: var(--sf-0);
+  }
+  .sf-card--plain {
+    padding: var(--sf-0);
+    background-color: var(--sf-transparent);
+    border-color: var(--sf-transparent);
+    border-radius: var(--sf-0);
+  }
+  @media (forced-colors: active) {
+    .sf-card:not(.sf-card--plain) {
+      border-color: CanvasText;
+    }
+  }
+}
