@@ -1033,4 +1033,52 @@
   .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.disabled {
     color: var(--sf-on-disable);
   }
+  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled),
+  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:not(.selected):not(:disabled):not(.disabled) {
+    --sf-tabs--focus-ink: var(--sf-on-surface);
+    --sf-button--background-color: var(--sf-transparent);
+    --sf-button--border-color: var(--sf-transparent);
+    --sf-icon-button--background-color: var(--sf-transparent);
+    --sf-icon-button--border-color: var(--sf-transparent);
+    color: var(--sf-on-surface);
+    color: var(--sf-tabs-color, var(--sf-on-surface));
+  }
+  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled):hover,
+  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:not(.selected):not(:disabled):not(.disabled):hover {
+    --sf-button--background-color: var(--sf-surface-transparent-hover);
+    --sf-icon-button--background-color: var(--sf-surface-transparent-hover);
+  }
+  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled).focus-visible,
+  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:not(.selected):not(:disabled):not(.disabled).focus-visible {
+    --sf-button--background-color: var(--sf-surface-transparent-select);
+    --sf-icon-button--background-color: var(--sf-surface-transparent-select);
+  }
+  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled):focus-visible,
+  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:not(.selected):not(:disabled):not(.disabled):focus-visible {
+    --sf-button--background-color: var(--sf-surface-transparent-select);
+    --sf-icon-button--background-color: var(--sf-surface-transparent-select);
+  }
+  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled):active {
+    --sf-button--background-color: var(--sf-surface-transparent-active);
+    --sf-icon-button--background-color: var(--sf-surface-transparent-active);
+  }
+  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-button.active:not(.selected):not(:disabled):not(.disabled) {
+    --sf-button--background-color: var(--sf-surface-transparent-active);
+    --sf-icon-button--background-color: var(--sf-surface-transparent-active);
+  }
+  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:not(.selected):not(:disabled):not(.disabled):active {
+    --sf-button--background-color: var(--sf-surface-transparent-active);
+    --sf-icon-button--background-color: var(--sf-surface-transparent-active);
+  }
+  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.active:not(.selected):not(:disabled):not(.disabled) {
+    --sf-button--background-color: var(--sf-surface-transparent-active);
+    --sf-icon-button--background-color: var(--sf-surface-transparent-active);
+  }
+  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled) .sf-button-text-container {
+    --sf-button-text-container--color: var(--sf-tabs-color, var(--sf-on-surface));
+  }
+  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled) .sf-icon,
+  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:not(.selected):not(:disabled):not(.disabled) .sf-icon {
+    --sf-icon--color: var(--sf-tabs-color, var(--sf-on-surface));
+  }
 }
