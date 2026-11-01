@@ -8,6 +8,9 @@
 
 ### Добавлено
 
+- content.file 1.0.0: a file to download (href, value, label, mime, size), drawn as the download-file row with an icon by kind, the name and the size in the document language. core.runtime 1.12.0; sf-image-field 1.1.6 takes the size formatter from core.
+- The structured-content conformance kit 1.0.0 (contracts/conformance/structured-content in ui-source): 259 cases, Document to expected HTML and diagnostics, with a normative comparison rule; the JS renderer passes it. A server renderer (Larena) must pass it too.
+
 - The larena package reference: sf-content-editor 1.1.0 also requires sf-button, sf-file-upload, sf-popover and sf-progress-bar. core.runtime 1.11.2.
 
 - sf-range-slider 1.2.1: a plain handle, no ring around it by default, and a flat inactive track without a shadow (owner, 2026-11-01). The ring stays opt-in through --sf-thumb-handle--ring-width and --sf-thumb-handle--ring-color. component.range-slider 1.1.1.
