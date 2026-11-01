@@ -1220,19 +1220,92 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "fb0bdf7719f0"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   FILE_SIZE_UNITS: () => (/* binding */ FILE_SIZE_UNITS),
+/* harmony export */   fileNameFromAddress: () => (/* binding */ fileNameFromAddress),
+/* harmony export */   fileSizeUnits: () => (/* binding */ fileSizeUnits),
+/* harmony export */   formatFileSize: () => (/* binding */ formatFileSize)
+/* harmony export */ });
+// How a stored file reads to people: its size in the page's language and its
+// name when nobody gave it one. sf-image-field wrote these first (its
+// value.mjs re-exports them); the Composition renderer draws content.file with
+// the same rule, so a size reads the same in a field and on a page. No DOM.
+
+// The four words of a size, in the languages the SIMAI Framework ships; any
+// other language reads the English words with its own digits.
+const FILE_SIZE_UNITS = Object.freeze({
+  en: Object.freeze(['B', 'KB', 'MB', 'GB']),
+  ru: Object.freeze(['Б', 'КБ', 'МБ', 'ГБ']),
+});
+
+/** The unit words for a locale: its language's, else English. */
+function fileSizeUnits(locale = 'en') {
+  const language = String(locale || 'en').toLowerCase().split('-')[0];
+  return Object.hasOwn(FILE_SIZE_UNITS, language) ? FILE_SIZE_UNITS[language] : FILE_SIZE_UNITS.en;
+}
+
+// A size as people read it: «2 КБ», «1,4 МБ». `units` are the four words in
+// the page's language, `locale` its formatting. Text the host already
+// formatted is returned as it came; anything that is not a size is ''.
+function formatFileSize(size, units = FILE_SIZE_UNITS.en, locale = 'en') {
+  if (typeof size === 'string') return size;
+  const bytes = Number(size);
+  if (size === null || size === undefined || !Number.isFinite(bytes) || bytes < 0) return '';
+  let amount = bytes;
+  let index = 0;
+  while (amount >= 1024 && index < units.length - 1) {
+    amount /= 1024;
+    index += 1;
+  }
+  const digits = index === 0 || amount >= 10 ? 0 : 1;
+  let number;
+  try {
+    number = new Intl.NumberFormat(locale, {maximumFractionDigits: digits}).format(amount);
+  } catch {
+    number = amount.toFixed(digits);
+  }
+  return `${number} ${units[index]}`;
+}
+
+// The last part of an address, decoded, without its query and fragment: the
+// name a file is shown under when it has no label.
+function fileNameFromAddress(href) {
+  const tail = String(href).split(/[?#]/u)[0].split('/').pop() || '';
+  try {
+    return decodeURIComponent(tail);
+  } catch {
+    return tail;
+  }
+}
+
+
+/***/ },
+
 /***/ "c22743d41d10"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   acceptsFile: () => (/* binding */ acceptsFile),
-/* harmony export */   formatFileSize: () => (/* binding */ formatFileSize),
+/* harmony export */   formatFileSize: () => (/* reexport safe */ _core_js_composition_file_size_mjs__WEBPACK_IMPORTED_MODULE_0__.formatFileSize),
 /* harmony export */   normaliseImageValue: () => (/* binding */ normaliseImageValue)
 /* harmony export */ });
+/* harmony import */ var _core_js_composition_file_size_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("fb0bdf7719f0");
 // The parts of sf-image-field that are about data, not the page: which files
 // the field accepts, the shape its value takes and how a size reads. Kept
 // apart from the element so the contract tests can run them in Node, as
 // sf-resizer's engine.mjs is.
+
+// The size and the name rules live in the core runtime
+// (composition/file-size.mjs), where the Composition renderer draws
+// content.file with them; this module re-exports the formatter it published.
+
+
+
 
 // Whether a file is one the accept list names: `.ext`, `type/*` or `type/sub`,
 // as the platform dialog reads it. The dialog filters what a person may pick;
@@ -1250,15 +1323,6 @@ function acceptsFile(accept, file) {
     if (token.endsWith('/*')) return type.startsWith(token.slice(0, -1));
     return type === token;
   });
-}
-
-function nameFromAddress(href) {
-  const tail = String(href).split(/[?#]/u)[0].split('/').pop() || '';
-  try {
-    return decodeURIComponent(tail);
-  } catch {
-    return tail;
-  }
 }
 
 // The value is the file shape the Framework already uses for a stored file --
@@ -1286,7 +1350,7 @@ function normaliseImageValue(input) {
   }
   if (typeof source !== 'object' || Array.isArray(source)) return null;
   const href = source.href ? String(source.href) : '';
-  const label = String(source.label ?? source.name ?? (href ? nameFromAddress(href) : ''));
+  const label = String(source.label ?? source.name ?? (href ? (0,_core_js_composition_file_size_mjs__WEBPACK_IMPORTED_MODULE_0__.fileNameFromAddress)(href) : ''));
   const id = source.value === undefined || source.value === null ? '' : String(source.value);
   if (!href && !label && !id) return null;
   const value = {
@@ -1299,29 +1363,6 @@ function normaliseImageValue(input) {
   // A file chosen in this page and not stored yet carries the File itself.
   if (source.file) value.file = source.file;
   return value;
-}
-
-// A size as people read it: «2 КБ», «1,4 МБ». `units` are the four words in
-// the page's language, `locale` its formatting. Text the host already
-// formatted is returned as it came; anything that is not a size is ''.
-function formatFileSize(size, units = ['B', 'KB', 'MB', 'GB'], locale = 'en') {
-  if (typeof size === 'string') return size;
-  const bytes = Number(size);
-  if (size === null || size === undefined || !Number.isFinite(bytes) || bytes < 0) return '';
-  let amount = bytes;
-  let index = 0;
-  while (amount >= 1024 && index < units.length - 1) {
-    amount /= 1024;
-    index += 1;
-  }
-  const digits = index === 0 || amount >= 10 ? 0 : 1;
-  let number;
-  try {
-    number = new Intl.NumberFormat(locale, {maximumFractionDigits: digits}).format(amount);
-  } catch {
-    number = amount.toFixed(digits);
-  }
-  return `${number} ${units[index]}`;
 }
 
 
@@ -1337,7 +1378,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shi
 /***/ "dc26a735709e"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.image-field","tag":"sf-image-field","version":"1.1.5","kind":"leaf","settings":{"name":{"type":"string","default":""},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"accept":{"type":"string","default":"image/*"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"meta":{"type":"string","default":""},"empty-text":{"type":"string","default":""},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""}},"values":{"value":{"type":"object","nullable":true,"default":null}},"events":{"change":{"carries":{"value":{"type":"object","nullable":true},"file":{"type":"object","nullable":true},"source":{"type":"enum","values":["input","drop","remove"]},"name":"string"}},"input":{"carries":{"value":{"type":"object","nullable":true},"file":{"type":"object","nullable":true},"source":{"type":"enum","values":["input","drop","remove"]},"name":"string"}},"attach":{"carries":{"files":"list","file":"object","source":{"type":"enum","values":["input","drop"]},"value":"object","name":"string"}},"detach":{"carries":{"value":"object","name":"string"}},"rejected":{"carries":{"files":"list","accept":"string","source":"string"}}},"actions":{"clear":{},"choose":{},"remove-image":{},"take-file":{"with":{"file":"object","source":{"type":"string","optional":true}}},"set-error":{"with":{"message":"string"}}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","custom-error"]},"host-states":{"data-dragged-over":"boolean"},"css-variables":{"--sf-image-field-background-color":{"type":"color","state":"rest"},"--sf-image-field-border-color":{"type":"color","state":"rest"},"--sf-image-field-border-width":{"type":"length"},"--sf-image-field-radius":{"type":"length"},"--sf-image-field-padding-inline":{"type":"length"},"--sf-image-field-padding-block":{"type":"length"},"--sf-image-field-gap":{"type":"length"},"--sf-image-field-thumbnail-size":{"type":"length"},"--sf-image-field-thumbnail-radius":{"type":"length"},"--sf-image-field-thumbnail-background-color":{"type":"color","state":"rest"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.image-field","tag":"sf-image-field","version":"1.1.6","kind":"leaf","settings":{"name":{"type":"string","default":""},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"accept":{"type":"string","default":"image/*"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"meta":{"type":"string","default":""},"empty-text":{"type":"string","default":""},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""}},"values":{"value":{"type":"object","nullable":true,"default":null}},"events":{"change":{"carries":{"value":{"type":"object","nullable":true},"file":{"type":"object","nullable":true},"source":{"type":"enum","values":["input","drop","remove"]},"name":"string"}},"input":{"carries":{"value":{"type":"object","nullable":true},"file":{"type":"object","nullable":true},"source":{"type":"enum","values":["input","drop","remove"]},"name":"string"}},"attach":{"carries":{"files":"list","file":"object","source":{"type":"enum","values":["input","drop"]},"value":"object","name":"string"}},"detach":{"carries":{"value":"object","name":"string"}},"rejected":{"carries":{"files":"list","accept":"string","source":"string"}}},"actions":{"clear":{},"choose":{},"remove-image":{},"take-file":{"with":{"file":"object","source":{"type":"string","optional":true}}},"set-error":{"with":{"message":"string"}}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","custom-error"]},"host-states":{"data-dragged-over":"boolean"},"css-variables":{"--sf-image-field-background-color":{"type":"color","state":"rest"},"--sf-image-field-border-color":{"type":"color","state":"rest"},"--sf-image-field-border-width":{"type":"length"},"--sf-image-field-radius":{"type":"length"},"--sf-image-field-padding-inline":{"type":"length"},"--sf-image-field-padding-block":{"type":"length"},"--sf-image-field-gap":{"type":"length"},"--sf-image-field-thumbnail-size":{"type":"length"},"--sf-image-field-thumbnail-radius":{"type":"length"},"--sf-image-field-thumbnail-background-color":{"type":"color","state":"rest"}}}');
 
 /***/ },
 

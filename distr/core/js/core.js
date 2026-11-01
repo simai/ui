@@ -13039,6 +13039,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   BUILTIN_TYPE_MANIFESTS: () => (/* binding */ BUILTIN_TYPE_MANIFESTS),
 /* harmony export */   CONTENT_ALERT_APPEARANCES: () => (/* binding */ CONTENT_ALERT_APPEARANCES),
 /* harmony export */   CONTENT_ALERT_STATUSES: () => (/* binding */ CONTENT_ALERT_STATUSES),
+/* harmony export */   CONTENT_FILE_MIME: () => (/* binding */ CONTENT_FILE_MIME),
 /* harmony export */   CONTENT_ITEM_PARENTS: () => (/* binding */ CONTENT_ITEM_PARENTS),
 /* harmony export */   CONTENT_RATIOS: () => (/* binding */ CONTENT_RATIOS),
 /* harmony export */   CONTENT_TABLE_HEADERS: () => (/* binding */ CONTENT_TABLE_HEADERS),
@@ -13169,6 +13170,8 @@ const imageData = {
 const CONTENT_RATIOS = Object.freeze(['1/1', '4/3', '3/2', '16/9', '21/9']);
 const CONTENT_ALERT_STATUSES = Object.freeze(['neutral', 'info', 'success', 'warning', 'error']);
 const CONTENT_ALERT_APPEARANCES = Object.freeze(['default', 'outlined', 'flat']);
+// A media type in its lowercase form: type/subtype, no parameters.
+const CONTENT_FILE_MIME = '^[a-z0-9][a-z0-9!#$&^_.+-]{0,126}/[a-z0-9][a-z0-9!#$&^_.+-]{0,126}$';
 const CONTENT_TABLE_HEADERS = Object.freeze(['row', 'column', 'both', 'none']);
 // Which parent an item type stands in; validate reports any other place.
 const CONTENT_ITEM_PARENTS = Object.freeze({
@@ -13509,6 +13512,23 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
     slots: { default: contentSlot(0, 100) },
     assets: ['component/figure'],
   }),
+  // A file to download, not to play in the page (content.media plays). Its
+  // data is the shape the SIMAI Framework already uses for a stored file (the
+  // property-view file type, sf-image-field's value): value the host's
+  // reference, href the address it is fetched from, label the name shown
+  // (else the address's last part), mime and size in bytes, both optional.
+  // The renderer draws sf-download-file's row as a plain <a download>.
+  contentManifest('content.file', {
+    mode: 'leaf',
+    data_schema: closed({
+      value: { type: 'string', minLength: 1, maxLength: 2048 },
+      href: urlSchema,
+      label: plainText(300),
+      mime: { type: 'string', maxLength: 255, pattern: CONTENT_FILE_MIME },
+      size: { type: 'integer', minimum: 0, maximum: Number.MAX_SAFE_INTEGER },
+    }, ['href']),
+    assets: ['component/download-file'],
+  }),
   // The escape hatch: markup in the html@1 subset of sf-rich-text, cleaned at
   // render by that subset's one rule. The key is not "html": that word is
   // refused anywhere in a Document.
@@ -13793,6 +13813,10 @@ const BUILTIN_EDITOR_MANIFESTS = Object.freeze([
     contentField('content.media', 'alt', 'data', 'text', { constraints: { min_length: 1, max_length: 1000 } }),
     contentField('content.media', 'side', 'props', 'choice', { choices: ['left', 'right'], default: 'right' }),
     contentField('content.media', 'ratio', 'props', 'choice', { choices: ['1/1', '4/3', '3/2', '16/9', '21/9'], default: '16/9' }),
+  ]),
+  contentEditor('content.file', [
+    contentField('content.file', 'label', 'data', 'text', { constraints: { min_length: 1, max_length: 300 } }),
+    contentField('content.file', 'href', 'data', 'text', { constraints: { min_length: 1, max_length: 2048 } }),
   ]),
   contentEditor('content.diagram', [
     contentField('content.diagram', 'title', 'props', 'text', { constraints: { min_length: 1, max_length: 200 } }),
@@ -14373,6 +14397,72 @@ function fieldKindRegistry() {
 }
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ BUILTIN_FIELD_KINDS, applyFieldValue, parseFieldSubmission, renderFieldFallback, resolveFieldKind, validateFieldKinds, validateFieldValue });
+
+
+/***/ },
+
+/***/ "fb0bdf7719f0"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   FILE_SIZE_UNITS: () => (/* binding */ FILE_SIZE_UNITS),
+/* harmony export */   fileNameFromAddress: () => (/* binding */ fileNameFromAddress),
+/* harmony export */   fileSizeUnits: () => (/* binding */ fileSizeUnits),
+/* harmony export */   formatFileSize: () => (/* binding */ formatFileSize)
+/* harmony export */ });
+// How a stored file reads to people: its size in the page's language and its
+// name when nobody gave it one. sf-image-field wrote these first (its
+// value.mjs re-exports them); the Composition renderer draws content.file with
+// the same rule, so a size reads the same in a field and on a page. No DOM.
+
+// The four words of a size, in the languages the SIMAI Framework ships; any
+// other language reads the English words with its own digits.
+const FILE_SIZE_UNITS = Object.freeze({
+  en: Object.freeze(['B', 'KB', 'MB', 'GB']),
+  ru: Object.freeze(['Б', 'КБ', 'МБ', 'ГБ']),
+});
+
+/** The unit words for a locale: its language's, else English. */
+function fileSizeUnits(locale = 'en') {
+  const language = String(locale || 'en').toLowerCase().split('-')[0];
+  return Object.hasOwn(FILE_SIZE_UNITS, language) ? FILE_SIZE_UNITS[language] : FILE_SIZE_UNITS.en;
+}
+
+// A size as people read it: «2 КБ», «1,4 МБ». `units` are the four words in
+// the page's language, `locale` its formatting. Text the host already
+// formatted is returned as it came; anything that is not a size is ''.
+function formatFileSize(size, units = FILE_SIZE_UNITS.en, locale = 'en') {
+  if (typeof size === 'string') return size;
+  const bytes = Number(size);
+  if (size === null || size === undefined || !Number.isFinite(bytes) || bytes < 0) return '';
+  let amount = bytes;
+  let index = 0;
+  while (amount >= 1024 && index < units.length - 1) {
+    amount /= 1024;
+    index += 1;
+  }
+  const digits = index === 0 || amount >= 10 ? 0 : 1;
+  let number;
+  try {
+    number = new Intl.NumberFormat(locale, {maximumFractionDigits: digits}).format(amount);
+  } catch {
+    number = amount.toFixed(digits);
+  }
+  return `${number} ${units[index]}`;
+}
+
+// The last part of an address, decoded, without its query and fragment: the
+// name a file is shown under when it has no label.
+function fileNameFromAddress(href) {
+  const tail = String(href).split(/[?#]/u)[0].split('/').pop() || '';
+  try {
+    return decodeURIComponent(tail);
+  } catch {
+    return tail;
+  }
+}
 
 
 /***/ },
@@ -15411,62 +15501,64 @@ function richTextFromPlainText(text, {mode = 'value'} = {}) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   BUILTIN_EDITOR_MANIFESTS: () => (/* reexport safe */ _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_EDITOR_MANIFESTS),
-/* harmony export */   BUILTIN_FIELD_KINDS: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_5__.BUILTIN_FIELD_KINDS),
+/* harmony export */   BUILTIN_FIELD_KINDS: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_6__.BUILTIN_FIELD_KINDS),
 /* harmony export */   BUILTIN_PORT_MANIFESTS: () => (/* reexport safe */ _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_PORT_MANIFESTS),
 /* harmony export */   BUILTIN_TYPE_MANIFESTS: () => (/* reexport safe */ _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_TYPE_MANIFESTS),
 /* harmony export */   Composition: () => (/* binding */ Composition),
-/* harmony export */   FRAGMENT_DESCRIPTOR_SCHEMA: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_10__.FRAGMENT_DESCRIPTOR_SCHEMA),
-/* harmony export */   INLINE_MARKS: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_8__.INLINE_MARKS),
-/* harmony export */   Recipe: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_6__.Recipe),
-/* harmony export */   VALUE_TYPES: () => (/* reexport safe */ _routing_mjs__WEBPACK_IMPORTED_MODULE_9__.VALUE_TYPES),
-/* harmony export */   applyFieldValue: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_5__.applyFieldValue),
-/* harmony export */   checkFragmentDescriptor: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_10__.checkFragmentDescriptor),
-/* harmony export */   checkPortValue: () => (/* reexport safe */ _routing_mjs__WEBPACK_IMPORTED_MODULE_9__.checkPortValue),
+/* harmony export */   FRAGMENT_DESCRIPTOR_SCHEMA: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_11__.FRAGMENT_DESCRIPTOR_SCHEMA),
+/* harmony export */   INLINE_MARKS: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_9__.INLINE_MARKS),
+/* harmony export */   Recipe: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_7__.Recipe),
+/* harmony export */   VALUE_TYPES: () => (/* reexport safe */ _routing_mjs__WEBPACK_IMPORTED_MODULE_10__.VALUE_TYPES),
+/* harmony export */   applyFieldValue: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_6__.applyFieldValue),
+/* harmony export */   checkFragmentDescriptor: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_11__.checkFragmentDescriptor),
+/* harmony export */   checkPortValue: () => (/* reexport safe */ _routing_mjs__WEBPACK_IMPORTED_MODULE_10__.checkPortValue),
 /* harmony export */   compositionTypeFromSmartManifest: () => (/* binding */ compositionTypeFromSmartManifest),
-/* harmony export */   createPortRegistry: () => (/* reexport safe */ _routing_mjs__WEBPACK_IMPORTED_MODULE_9__.createPortRegistry),
+/* harmony export */   createPortRegistry: () => (/* reexport safe */ _routing_mjs__WEBPACK_IMPORTED_MODULE_10__.createPortRegistry),
 /* harmony export */   createRegistry: () => (/* binding */ createRegistry),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
-/* harmony export */   defineCompositionScope: () => (/* reexport safe */ _routing_mjs__WEBPACK_IMPORTED_MODULE_9__.defineCompositionScope),
-/* harmony export */   defineFragmentBoundary: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_10__.defineFragmentBoundary),
-/* harmony export */   definePageHost: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_10__.definePageHost),
-/* harmony export */   describeRegions: () => (/* reexport safe */ _regions_mjs__WEBPACK_IMPORTED_MODULE_7__.describeRegions),
+/* harmony export */   defineCompositionScope: () => (/* reexport safe */ _routing_mjs__WEBPACK_IMPORTED_MODULE_10__.defineCompositionScope),
+/* harmony export */   defineFragmentBoundary: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_11__.defineFragmentBoundary),
+/* harmony export */   definePageHost: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_11__.definePageHost),
+/* harmony export */   describeRegions: () => (/* reexport safe */ _regions_mjs__WEBPACK_IMPORTED_MODULE_8__.describeRegions),
 /* harmony export */   extendRegistry: () => (/* binding */ extendRegistry),
-/* harmony export */   inlineText: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_8__.inlineText),
-/* harmony export */   marksIn: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_8__.marksIn),
+/* harmony export */   inlineText: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_9__.inlineText),
+/* harmony export */   marksIn: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_9__.marksIn),
 /* harmony export */   normalize: () => (/* binding */ normalize),
-/* harmony export */   normalizeInline: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_8__.normalizeInline),
-/* harmony export */   parseFieldSubmission: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_5__.parseFieldSubmission),
-/* harmony export */   parseRecipeJson: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_6__.parseRecipeJson),
-/* harmony export */   projectDocumentEditorFields: () => (/* reexport safe */ _editor_mjs__WEBPACK_IMPORTED_MODULE_4__.projectDocumentEditorFields),
-/* harmony export */   projectEditorFields: () => (/* reexport safe */ _editor_mjs__WEBPACK_IMPORTED_MODULE_4__.projectEditorFields),
-/* harmony export */   publishEffects: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_10__.publishEffects),
-/* harmony export */   recipeDigest: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_6__.recipeDigest),
-/* harmony export */   recipeNodeId: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_6__.recipeNodeId),
+/* harmony export */   normalizeInline: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_9__.normalizeInline),
+/* harmony export */   parseFieldSubmission: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_6__.parseFieldSubmission),
+/* harmony export */   parseRecipeJson: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_7__.parseRecipeJson),
+/* harmony export */   projectDocumentEditorFields: () => (/* reexport safe */ _editor_mjs__WEBPACK_IMPORTED_MODULE_5__.projectDocumentEditorFields),
+/* harmony export */   projectEditorFields: () => (/* reexport safe */ _editor_mjs__WEBPACK_IMPORTED_MODULE_5__.projectEditorFields),
+/* harmony export */   publishEffects: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_11__.publishEffects),
+/* harmony export */   recipeDigest: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_7__.recipeDigest),
+/* harmony export */   recipeNodeId: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_7__.recipeNodeId),
 /* harmony export */   render: () => (/* binding */ render),
-/* harmony export */   renderFieldFallback: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_5__.renderFieldFallback),
-/* harmony export */   replaceRange: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_8__.replaceRange),
-/* harmony export */   resolveFieldKind: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_5__.resolveFieldKind),
-/* harmony export */   resolveRecipe: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_6__.resolveRecipe),
-/* harmony export */   setLink: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_8__.setLink),
-/* harmony export */   stableStringify: () => (/* reexport safe */ _canonical_mjs__WEBPACK_IMPORTED_MODULE_2__.stableStringify),
+/* harmony export */   renderFieldFallback: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_6__.renderFieldFallback),
+/* harmony export */   replaceRange: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_9__.replaceRange),
+/* harmony export */   resolveFieldKind: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_6__.resolveFieldKind),
+/* harmony export */   resolveRecipe: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_7__.resolveRecipe),
+/* harmony export */   setLink: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_9__.setLink),
+/* harmony export */   stableStringify: () => (/* reexport safe */ _canonical_mjs__WEBPACK_IMPORTED_MODULE_3__.stableStringify),
 /* harmony export */   startInlineEdit: () => (/* binding */ startInlineEdit),
-/* harmony export */   toggleMark: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_8__.toggleMark),
+/* harmony export */   toggleMark: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_9__.toggleMark),
 /* harmony export */   validate: () => (/* binding */ validate),
-/* harmony export */   validateEditorManifest: () => (/* reexport safe */ _editor_mjs__WEBPACK_IMPORTED_MODULE_4__.validateEditorManifest),
-/* harmony export */   validateFieldKinds: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_5__.validateFieldKinds),
-/* harmony export */   validateFieldValue: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_5__.validateFieldValue)
+/* harmony export */   validateEditorManifest: () => (/* reexport safe */ _editor_mjs__WEBPACK_IMPORTED_MODULE_5__.validateEditorManifest),
+/* harmony export */   validateFieldKinds: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_6__.validateFieldKinds),
+/* harmony export */   validateFieldValue: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_6__.validateFieldValue)
 /* harmony export */ });
 /* harmony import */ var _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("08e5033c490a");
 /* harmony import */ var _html_subset_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("e19611ff78cb");
-/* harmony import */ var _canonical_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("6f489cc65b77");
-/* harmony import */ var _schema_name_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("ac24888e7d3e");
-/* harmony import */ var _editor_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("3765e2c966fd");
-/* harmony import */ var _fields_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("4e6fc63bed81");
-/* harmony import */ var _recipe_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("6770fb69bd04");
-/* harmony import */ var _regions_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("68efac8c1b57");
-/* harmony import */ var _inline_model_mjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("e66d878fb4f8");
-/* harmony import */ var _routing_mjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("4aea5d6d49c7");
-/* harmony import */ var _fragments_mjs__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("c2e3ed8498dc");
+/* harmony import */ var _file_size_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("fb0bdf7719f0");
+/* harmony import */ var _canonical_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("6f489cc65b77");
+/* harmony import */ var _schema_name_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("ac24888e7d3e");
+/* harmony import */ var _editor_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("3765e2c966fd");
+/* harmony import */ var _fields_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("4e6fc63bed81");
+/* harmony import */ var _recipe_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("6770fb69bd04");
+/* harmony import */ var _regions_mjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("68efac8c1b57");
+/* harmony import */ var _inline_model_mjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("e66d878fb4f8");
+/* harmony import */ var _routing_mjs__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("4aea5d6d49c7");
+/* harmony import */ var _fragments_mjs__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("c2e3ed8498dc");
+
 
 
 
@@ -15519,7 +15611,7 @@ async function sha256(value) {
 }
 
 function pushUnknownFields(value, allowed, path, diagnostics) {
-  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_2__.isPlainObject)(value)) return;
+  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_3__.isPlainObject)(value)) return;
   for (const key of Object.keys(value)) {
     if (!allowed.has(key)) diagnostics.push(diagnostic('unknown_field', `${path}.${key}`, `Unknown field ${key}`));
   }
@@ -15530,7 +15622,7 @@ function scanForbiddenKeys(value, path, diagnostics) {
     value.forEach((entry, index) => scanForbiddenKeys(entry, `${path}[${index}]`, diagnostics));
     return;
   }
-  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_2__.isPlainObject)(value)) return;
+  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_3__.isPlainObject)(value)) return;
   for (const [key, entry] of Object.entries(value)) {
     const normalized = key.toLowerCase().replaceAll('-', '');
     if (FORBIDDEN_KEYS.has(normalized)) {
@@ -15541,7 +15633,7 @@ function scanForbiddenKeys(value, path, diagnostics) {
 }
 
 function validateExtensions(value, path, diagnostics, supported = new Set()) {
-  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_2__.isPlainObject)(value)) {
+  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_3__.isPlainObject)(value)) {
     diagnostics.push(diagnostic('extensions_invalid', path, 'Extensions must be an object'));
     return;
   }
@@ -15549,7 +15641,7 @@ function validateExtensions(value, path, diagnostics, supported = new Set()) {
     if (!/^[a-z][a-z0-9.-]*:[a-z][a-z0-9._-]*$/u.test(key)) {
       diagnostics.push(diagnostic('extension_name_invalid', `${path}.${key}`, 'Extension keys must be namespaced'));
     }
-    if ((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_2__.isPlainObject)(value[key]) && value[key].required === true && !supported.has(key)) {
+    if ((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_3__.isPlainObject)(value[key]) && value[key].required === true && !supported.has(key)) {
       diagnostics.push(diagnostic('extension_required_unknown', `${path}.${key}`, `Required extension ${key} is not supported`));
     }
   }
@@ -15577,7 +15669,7 @@ function validateJsonSchema(value, schema, path, diagnostics) {
   const types = Array.isArray(schema.type) ? schema.type : [schema.type];
   if (schema.type) {
     const actual = value === null ? 'null' : Array.isArray(value) ? 'array' : Number.isInteger(value) ? 'integer' : typeof value === 'number' ? 'number' : typeof value;
-    if (!types.includes(actual) && !(actual === 'integer' && types.includes('number')) && !(actual === 'object' && !(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_2__.isPlainObject)(value))) {
+    if (!types.includes(actual) && !(actual === 'integer' && types.includes('number')) && !(actual === 'object' && !(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_3__.isPlainObject)(value))) {
       diagnostics.push(diagnostic('schema_type', path, `Expected ${types.join(' or ')}`));
       return;
     }
@@ -15594,10 +15686,10 @@ function validateJsonSchema(value, schema, path, diagnostics) {
   if (Array.isArray(value)) {
     if (schema.minItems !== undefined && value.length < schema.minItems) diagnostics.push(diagnostic('schema_min_items', path, 'Array has too few items'));
     if (schema.maxItems !== undefined && value.length > schema.maxItems) diagnostics.push(diagnostic('schema_max_items', path, 'Array has too many items'));
-    if (schema.uniqueItems && new Set(value.map(_canonical_mjs__WEBPACK_IMPORTED_MODULE_2__.stableStringify)).size !== value.length) diagnostics.push(diagnostic('schema_unique_items', path, 'Array items must be unique'));
+    if (schema.uniqueItems && new Set(value.map(_canonical_mjs__WEBPACK_IMPORTED_MODULE_3__.stableStringify)).size !== value.length) diagnostics.push(diagnostic('schema_unique_items', path, 'Array items must be unique'));
     if (schema.items) value.forEach((entry, index) => validateJsonSchema(entry, schema.items, `${path}[${index}]`, diagnostics));
   }
-  if ((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_2__.isPlainObject)(value)) {
+  if ((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_3__.isPlainObject)(value)) {
     for (const key of schema.required || []) {
       if (!(key in value)) diagnostics.push(diagnostic('schema_required', `${path}.${key}`, `Required field ${key} is missing`));
     }
@@ -15636,7 +15728,7 @@ function validateInlineContent(value, path, diagnostics) {
 // Every inline content of a node, with its path: the link rule applies to all
 // of them, wherever a type keeps text.
 function inlineFields(node, path) {
-  const data = (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_2__.isPlainObject)(node.data) ? node.data : {};
+  const data = (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_3__.isPlainObject)(node.data) ? node.data : {};
   const at = (key) => (Array.isArray(data[key]) ? [[data[key], `${path}.data.${key}`]] : []);
   switch (node.type) {
     case 'content.heading':
@@ -15667,10 +15759,13 @@ function inlineFields(node, path) {
 function validateContentRules(root, diagnostics) {
   let outlets = 0;
   const visit = (node, path, parentType) => {
-    if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_2__.isPlainObject)(node)) return;
+    if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_3__.isPlainObject)(node)) return;
     for (const [content, contentPath] of inlineFields(node, path)) validateInlineContent(content, contentPath, diagnostics);
     if ((node.type === 'content.figure' || node.type === 'content.media') && typeof node.data?.src === 'string' && !validUrl(node.data.src)) {
       diagnostics.push(diagnostic('unsafe_url', `${path}.data.src`, 'Image source protocol is not allowed'));
+    }
+    if (node.type === 'content.file' && typeof node.data?.href === 'string' && !validUrl(node.data.href)) {
+      diagnostics.push(diagnostic('unsafe_url', `${path}.data.href`, 'File address protocol is not allowed'));
     }
     const parent = _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.CONTENT_ITEM_PARENTS[node.type];
     if (parent && parentType !== parent) diagnostics.push(diagnostic('content_parent_invalid', path, `${node.type} must be a direct child of ${parent}`));
@@ -15678,7 +15773,7 @@ function validateContentRules(root, diagnostics) {
       outlets += 1;
       if (outlets > 1) diagnostics.push(diagnostic('outlet_duplicate', path, 'A layout holds the page content in one place'));
     }
-    for (const [slotName, children] of Object.entries((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_2__.isPlainObject)(node.slots) ? node.slots : {})) {
+    for (const [slotName, children] of Object.entries((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_3__.isPlainObject)(node.slots) ? node.slots : {})) {
       if (Array.isArray(children)) children.forEach((child, index) => visit(child, `${path}.slots.${slotName}[${index}]`, node.type));
     }
   };
@@ -15689,9 +15784,9 @@ let defaultPorts = null;
 
 function normalizePorts(ports) {
   if (ports?.elements instanceof Map) return ports;
-  if (Array.isArray(ports)) return (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_9__.createPortRegistry)(ports);
-  if (ports && Array.isArray(ports.manifests)) return (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_9__.createPortRegistry)(ports.manifests, { bindings: ports.bindings });
-  defaultPorts = defaultPorts || (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_9__.createPortRegistry)(_builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_PORT_MANIFESTS);
+  if (Array.isArray(ports)) return (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_10__.createPortRegistry)(ports);
+  if (ports && Array.isArray(ports.manifests)) return (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_10__.createPortRegistry)(ports.manifests, { bindings: ports.bindings });
+  defaultPorts = defaultPorts || (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_10__.createPortRegistry)(_builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_PORT_MANIFESTS);
   return defaultPorts;
 }
 
@@ -15704,9 +15799,9 @@ function createRegistry(manifests = _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.B
   const types = new Map();
   for (const manifest of manifests) {
     // Either form of the format name (schema-name.mjs).
-    if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_2__.isPlainObject)(manifest) || !(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_3__.isSchema)(manifest, 'simai.composition.type-manifest', 1)) throw new TypeError('composition_manifest_invalid');
+    if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_3__.isPlainObject)(manifest) || !(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_4__.isSchema)(manifest, 'simai.composition.type-manifest', 1)) throw new TypeError('composition_manifest_invalid');
     if (types.has(manifest.type)) throw new TypeError(`composition_manifest_duplicate:${manifest.type}`);
-    types.set(manifest.type, (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_2__.canonical)(manifest));
+    types.set(manifest.type, (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_3__.canonical)(manifest));
   }
   return { types, renderers: new Map(Object.entries(renderers)) };
 }
@@ -15748,7 +15843,7 @@ function compositionTypeFromSmartManifest(manifest) {
     }
     : undefined;
   return {
-    ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_3__.schemaFields)('simai.composition.type-manifest', 1),
+    ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_4__.schemaFields)('simai.composition.type-manifest', 1),
     type: declaration.type,
     version: manifest.version,
     category: 'smart',
@@ -15770,7 +15865,7 @@ function validate(document, registry = undefined, options = {}) {
   const diagnostics = [];
   const resolvedRegistry = normalizeRegistry(registry);
   const limits = { ...DEFAULT_LIMITS, ...(options.limits || {}) };
-  const supportedExtensions = new Set([_routing_mjs__WEBPACK_IMPORTED_MODULE_9__.ENDPOINT_EXTENSION, ...(options.supportedExtensions || [])]);
+  const supportedExtensions = new Set([_routing_mjs__WEBPACK_IMPORTED_MODULE_10__.ENDPOINT_EXTENSION, ...(options.supportedExtensions || [])]);
   let serialized;
   try {
     serialized = JSON.stringify(document);
@@ -15778,9 +15873,9 @@ function validate(document, registry = undefined, options = {}) {
     return { valid: false, diagnostics: [diagnostic('document_not_json', '$', 'Document must be JSON serializable')] };
   }
   if (new globalThis.TextEncoder().encode(serialized).byteLength > limits.maxDocumentBytes) diagnostics.push(diagnostic('document_too_large', '$', 'Document exceeds the byte limit'));
-  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_2__.isPlainObject)(document)) return { valid: false, diagnostics: [diagnostic('document_invalid', '$', 'Document must be an object')] };
+  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_3__.isPlainObject)(document)) return { valid: false, diagnostics: [diagnostic('document_invalid', '$', 'Document must be an object')] };
   pushUnknownFields(document, DOCUMENT_FIELDS, '$', diagnostics);
-  if (!(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_3__.isSchema)(document, 'simai.composition.document', 1)) diagnostics.push(diagnostic('schema_unknown', '$.schema', `Expected ${DOCUMENT_SCHEMA}, or simai.composition.document with schema_version 1`));
+  if (!(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_4__.isSchema)(document, 'simai.composition.document', 1)) diagnostics.push(diagnostic('schema_unknown', '$.schema', `Expected ${DOCUMENT_SCHEMA}, or simai.composition.document with schema_version 1`));
   if (typeof document.id !== 'string' || !/^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,119}$/u.test(document.id)) diagnostics.push(diagnostic('document_id_invalid', '$.id', 'Document id is invalid'));
   if (!PROFILES.has(document.profile)) diagnostics.push(diagnostic('profile_unknown', '$.profile', 'Profile is not supported'));
   if (document.locale !== undefined && (typeof document.locale !== 'string' || !/^[a-zA-Z]{2,8}(?:-[a-zA-Z0-9]{1,8})*$/u.test(document.locale))) diagnostics.push(diagnostic('locale_invalid', '$.locale', 'Locale is invalid'));
@@ -15793,7 +15888,7 @@ function validate(document, registry = undefined, options = {}) {
     nodeCount += 1;
     if (nodeCount > limits.maxNodes) return;
     if (depth > limits.maxDepth) diagnostics.push(diagnostic('depth_limit', path, 'Composition is too deeply nested'));
-    if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_2__.isPlainObject)(node)) {
+    if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_3__.isPlainObject)(node)) {
       diagnostics.push(diagnostic('node_invalid', path, 'Node must be an object'));
       return;
     }
@@ -15810,7 +15905,7 @@ function validate(document, registry = undefined, options = {}) {
     validateJsonSchema(node.data || {}, manifest.data_schema, `${path}.data`, diagnostics);
     validateJsonSchema(node.props || {}, manifest.props_schema, `${path}.props`, diagnostics);
     if (node.presentation !== undefined) {
-      if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_2__.isPlainObject)(node.presentation)) diagnostics.push(diagnostic('presentation_invalid', `${path}.presentation`, 'Presentation must be an object'));
+      if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_3__.isPlainObject)(node.presentation)) diagnostics.push(diagnostic('presentation_invalid', `${path}.presentation`, 'Presentation must be an object'));
       else {
         pushUnknownFields(node.presentation, PRESENTATION_FIELDS, `${path}.presentation`, diagnostics);
         const contract = manifest.presentation || {};
@@ -15827,7 +15922,7 @@ function validate(document, registry = undefined, options = {}) {
       if (!Array.isArray(node.bindings)) diagnostics.push(diagnostic('bindings_invalid', `${path}.bindings`, 'Bindings must be an array'));
       else node.bindings.forEach((binding, index) => {
         const bindingPath = `${path}.bindings[${index}]`;
-        if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_2__.isPlainObject)(binding)) diagnostics.push(diagnostic('binding_invalid', bindingPath, 'Binding must be an object'));
+        if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_3__.isPlainObject)(binding)) diagnostics.push(diagnostic('binding_invalid', bindingPath, 'Binding must be an object'));
         else {
           pushUnknownFields(binding, BINDING_FIELDS, bindingPath, diagnostics);
           for (const key of ['owner', 'ref', 'target']) if (typeof binding[key] !== 'string' || !binding[key]) diagnostics.push(diagnostic('binding_field_invalid', `${bindingPath}.${key}`, `${key} is required`));
@@ -15836,7 +15931,7 @@ function validate(document, registry = undefined, options = {}) {
       });
     }
     const slots = node.slots || {};
-    if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_2__.isPlainObject)(slots)) {
+    if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_3__.isPlainObject)(slots)) {
       diagnostics.push(diagnostic('slots_invalid', `${path}.slots`, 'Slots must be an object'));
       return;
     }
@@ -15866,23 +15961,23 @@ function validate(document, registry = undefined, options = {}) {
   visit(document.root, '$.root', 1);
   if (nodeCount > limits.maxNodes) diagnostics.push(diagnostic('node_limit', '$.root', 'Composition has too many nodes'));
   else {
-    (0,_regions_mjs__WEBPACK_IMPORTED_MODULE_7__.validateRegionRules)(document.root, resolvedRegistry, diagnostics);
+    (0,_regions_mjs__WEBPACK_IMPORTED_MODULE_8__.validateRegionRules)(document.root, resolvedRegistry, diagnostics);
     validateContentRules(document.root, diagnostics);
-    (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_9__.resolveRoutes)(document.root, resolvedRegistry, normalizePorts(options.ports), diagnostics);
+    (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_10__.resolveRoutes)(document.root, resolvedRegistry, normalizePorts(options.ports), diagnostics);
   }
   return { valid: diagnostics.length === 0, diagnostics };
 }
 
 function collectDependencies(node, manifest, output) {
   for (const asset of manifest.assets || []) output.assets.add(asset);
-  for (const binding of node.bindings || []) output.bindings.set(`${binding.owner}:${binding.ref}:${binding.target}:${binding.revision || ''}`, (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_2__.canonical)(binding));
+  for (const binding of node.bindings || []) output.bindings.set(`${binding.owner}:${binding.ref}:${binding.target}:${binding.revision || ''}`, (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_3__.canonical)(binding));
 }
 
 async function normalize(document, registry = undefined, options = {}) {
   const resolvedRegistry = normalizeRegistry(registry);
   const result = validate(document, resolvedRegistry, options);
   if (!result.valid) return { document: null, digest: null, dependencies: { assets: [], bindings: [] }, diagnostics: result.diagnostics };
-  const normalized = (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_2__.canonical)(JSON.parse(JSON.stringify(document)));
+  const normalized = (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_3__.canonical)(JSON.parse(JSON.stringify(document)));
   const dependencies = { assets: new Set(), bindings: new Map() };
   const visit = (node) => {
     collectDependencies(node, resolvedRegistry.types.get(node.type), dependencies);
@@ -15891,10 +15986,10 @@ async function normalize(document, registry = undefined, options = {}) {
   visit(normalized.root);
   return {
     document: normalized,
-    digest: await sha256((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_2__.stableStringify)(normalized)),
+    digest: await sha256((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_3__.stableStringify)(normalized)),
     dependencies: {
       assets: [...dependencies.assets].sort(),
-      bindings: [...dependencies.bindings.values()].sort((left, right) => (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_2__.stableStringify)(left).localeCompare((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_2__.stableStringify)(right))),
+      bindings: [...dependencies.bindings.values()].sort((left, right) => (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_3__.stableStringify)(left).localeCompare((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_3__.stableStringify)(right))),
     },
     diagnostics: [],
   };
@@ -15910,7 +16005,7 @@ function renderInline(content) {
     if (inline.type !== 'text') {
       // An atom draws its own element, its props escaped as text; anything
       // else (validation refuses it) draws nothing rather than "undefined".
-      const view = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_8__.inlineComponentView)(inline);
+      const view = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_9__.inlineComponentView)(inline);
       if (!view) return '';
       const attributes = view.attributes.map(([name, value]) => (value === '' ? ` ${name}` : ` ${name}="${escapeHtml(value)}"`)).join('');
       return `<${view.tag}${attributes}>${escapeHtml(view.text)}</${view.tag}>`;
@@ -15935,6 +16030,35 @@ const GRID_COLUMNS = {
 function renderImage(data) {
   const size = ['width', 'height'].filter((key) => Number.isInteger(data[key])).map((key) => ` ${key}="${data[key]}"`).join('');
   return `<img src="${escapeHtml(data.src)}" alt="${escapeHtml(data.alt)}"${size} loading="lazy" decoding="async">`;
+}
+
+// The icon of a file's kind, by its media type: sf-download-file's own glyph
+// when the type says nothing a reader would recognise.
+const FILE_ICONS = [
+  [/^application\/pdf$/u, 'picture_as_pdf'],
+  [/^image\//u, 'image'],
+  [/^video\//u, 'movie'],
+  [/^audio\//u, 'audio_file'],
+  [/^application\/(?:zip|x-zip-compressed|x-7z-compressed|x-rar-compressed|vnd\.rar|x-tar|gzip|x-gzip)$/u, 'folder_zip'],
+  [/^(?:text\/csv|application\/vnd\.ms-excel|application\/vnd\.openxmlformats-officedocument\.spreadsheetml\.[a-z.]+|application\/vnd\.oasis\.opendocument\.spreadsheet)$/u, 'table_chart'],
+  [/^(?:application\/vnd\.ms-powerpoint|application\/vnd\.openxmlformats-officedocument\.presentationml\.[a-z.]+|application\/vnd\.oasis\.opendocument\.presentation)$/u, 'slideshow'],
+  [/^(?:text\/|application\/msword$|application\/vnd\.openxmlformats-officedocument\.wordprocessingml\.[a-z.]+$|application\/vnd\.oasis\.opendocument\.text$|application\/rtf$)/u, 'description'],
+];
+function fileIcon(mime) {
+  if (typeof mime !== 'string' || !mime) return 'download';
+  return FILE_ICONS.find(([pattern]) => pattern.test(mime))?.[1] ?? 'download';
+}
+
+// sf-download-file's row, drawn as a plain link: it downloads with no script,
+// the name falls back to the address's last part, and the size reads in the
+// Document's language.
+function renderFile(node, locale) {
+  const { href, label, mime, size } = node.data;
+  const name = label || (0,_file_size_mjs__WEBPACK_IMPORTED_MODULE_2__.fileNameFromAddress)(href) || href;
+  const type = mime ? ` type="${escapeHtml(mime)}"` : '';
+  const sizeText = Number.isInteger(size) ? (0,_file_size_mjs__WEBPACK_IMPORTED_MODULE_2__.formatFileSize)(size, (0,_file_size_mjs__WEBPACK_IMPORTED_MODULE_2__.fileSizeUnits)(locale), locale) : '';
+  const sizePart = sizeText ? `<span class="sf-download-file__size sf-download-file-file-size">${escapeHtml(sizeText)}</span>` : '';
+  return `<a class="sf-download-file" href="${escapeHtml(href)}" download${type}${id(node)}><span class="sf-download-file__body sf-download-file-wrap"><span class="sf-download-file__main sf-download-file-container"><i class="sf-download-file__icon sf-icon" aria-hidden="true">${fileIcon(mime)}</i><span class="sf-download-file__name sf-download-file-file-name">${escapeHtml(name)}</span></span>${sizePart}</span></a>`;
 }
 
 function renderTable(node) {
@@ -16006,12 +16130,12 @@ const BUILTIN_RENDERERS = {
   'layout.regions': ({ node, slots }) => `<div class="sf-composition-regions" data-sf-composition-id="${escapeHtml(node.id)}"><div class="sf-composition-regions-grid">${slots.regions || ''}</div></div>`,
   'layout.region': ({ node, slots }) => {
     const props = node.props;
-    const element = _regions_mjs__WEBPACK_IMPORTED_MODULE_7__.REGION_ELEMENTS[props.landmark];
+    const element = _regions_mjs__WEBPACK_IMPORTED_MODULE_8__.REGION_ELEMENTS[props.landmark];
     const sticky = props.sticky === true ? ' data-sf-region-sticky=""' : '';
     const label = props.label !== undefined ? ` aria-label="${escapeHtml(props.label)}"` : '';
     return `<${element} class="sf-composition-region" data-sf-composition-id="${escapeHtml(node.id)}" data-sf-region="${escapeHtml(props.name)}" data-sf-region-placement="${escapeHtml(props.placement ?? 'block')}"${sticky}${label}>${slots.default || ''}</${element}>`;
   },
-  'layout.scope': ({ node, slots, routes }) => `<sf-composition-scope data-sf-composition-id="${escapeHtml(node.id)}" data-sf-routes="${escapeHtml((0,_routing_mjs__WEBPACK_IMPORTED_MODULE_9__.routesAttribute)(routes || []))}">${slots.default || ''}</sf-composition-scope>`,
+  'layout.scope': ({ node, slots, routes }) => `<sf-composition-scope data-sf-composition-id="${escapeHtml(node.id)}" data-sf-routes="${escapeHtml((0,_routing_mjs__WEBPACK_IMPORTED_MODULE_10__.routesAttribute)(routes || []))}">${slots.default || ''}</sf-composition-scope>`,
   'content.document': ({ node, slots }) => `<article${id(node)}>${node.data?.title ? `<h1>${escapeHtml(node.data.title)}</h1>` : ''}${slots.default || ''}</article>`,
   'content.list': ({ node, slots }) => {
     const ordered = node.props?.ordered === true;
@@ -16057,6 +16181,7 @@ const BUILTIN_RENDERERS = {
   },
   'content.card': ({ node, slots }) => `<div class="sf-card${node.props?.variant === 'plain' ? ' sf-card--plain' : ''}"${id(node)}>${slots.default || ''}</div>`,
   'content.media': ({ node, slots }) => renderMedia(node, slots),
+  'content.file': ({ node, locale }) => renderFile(node, locale),
   // Cleaned at render by the html@1 subset's one rule: no script, no style, no
   // attribute but a safe href survives.
   'content.html': ({ node }) => `<div${id(node)}>${(0,_html_subset_mjs__WEBPACK_IMPORTED_MODULE_1__.sanitizeRichText)(node.data.markup)}</div>`,
@@ -16069,7 +16194,7 @@ async function render(document, context = {}) {
   if (!normalized.document) return { html: '', assets: [], hydration: [], diagnostics: normalized.diagnostics, digest: null };
   const diagnostics = [];
   const hydration = [];
-  const routes = (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_9__.resolveRoutes)(normalized.document.root, registry, normalizePorts(context.options?.ports), []);
+  const routes = (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_10__.resolveRoutes)(normalized.document.root, registry, normalizePorts(context.options?.ports), []);
   // The page's content for a layout's content.outlet: a structured-content
   // Document, rendered with the same registry; its assets and diagnostics
   // join the layout's.
@@ -16114,7 +16239,7 @@ async function render(document, context = {}) {
       return '';
     }
     if (node.type === 'layout.scope') hydration.push({ id: node.id, type: node.type, element: 'sf-composition-scope' });
-    return renderer({ node, slots, context, resolvedBindings, manifest, routes: routes.get(node.id), endpoint: (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_9__.endpointName)(node), outlet: node.type === 'content.outlet' ? outlet : undefined });
+    return renderer({ node, slots, context, resolvedBindings, manifest, routes: routes.get(node.id), endpoint: (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_10__.endpointName)(node), outlet: node.type === 'content.outlet' ? outlet : undefined, locale: normalized.document.locale ?? 'en' });
   };
   const html = await renderNode(normalized.document.root);
   const assets = outletAssets.length ? [...new Set([...normalized.dependencies.assets, ...outletAssets])].sort() : normalized.dependencies.assets;
@@ -16123,47 +16248,47 @@ async function render(document, context = {}) {
 
 const Composition = Object.freeze({
   BUILTIN_EDITOR_MANIFESTS: _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_EDITOR_MANIFESTS,
-  BUILTIN_FIELD_KINDS: _fields_mjs__WEBPACK_IMPORTED_MODULE_5__.BUILTIN_FIELD_KINDS,
+  BUILTIN_FIELD_KINDS: _fields_mjs__WEBPACK_IMPORTED_MODULE_6__.BUILTIN_FIELD_KINDS,
   BUILTIN_PORT_MANIFESTS: _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_PORT_MANIFESTS,
-  Recipe: _recipe_mjs__WEBPACK_IMPORTED_MODULE_6__.Recipe,
-  applyFieldValue: _fields_mjs__WEBPACK_IMPORTED_MODULE_5__.applyFieldValue,
-  parseFieldSubmission: _fields_mjs__WEBPACK_IMPORTED_MODULE_5__.parseFieldSubmission,
-  renderFieldFallback: _fields_mjs__WEBPACK_IMPORTED_MODULE_5__.renderFieldFallback,
-  resolveFieldKind: _fields_mjs__WEBPACK_IMPORTED_MODULE_5__.resolveFieldKind,
-  validateFieldKinds: _fields_mjs__WEBPACK_IMPORTED_MODULE_5__.validateFieldKinds,
-  validateFieldValue: _fields_mjs__WEBPACK_IMPORTED_MODULE_5__.validateFieldValue,
-  VALUE_TYPES: _routing_mjs__WEBPACK_IMPORTED_MODULE_9__.VALUE_TYPES,
-  checkPortValue: _routing_mjs__WEBPACK_IMPORTED_MODULE_9__.checkPortValue,
-  checkFragmentDescriptor: _fragments_mjs__WEBPACK_IMPORTED_MODULE_10__.checkFragmentDescriptor,
-  FRAGMENT_DESCRIPTOR_SCHEMA: _fragments_mjs__WEBPACK_IMPORTED_MODULE_10__.FRAGMENT_DESCRIPTOR_SCHEMA,
-  publishEffects: _fragments_mjs__WEBPACK_IMPORTED_MODULE_10__.publishEffects,
-  createPortRegistry: _routing_mjs__WEBPACK_IMPORTED_MODULE_9__.createPortRegistry,
-  defineCompositionScope: _routing_mjs__WEBPACK_IMPORTED_MODULE_9__.defineCompositionScope,
+  Recipe: _recipe_mjs__WEBPACK_IMPORTED_MODULE_7__.Recipe,
+  applyFieldValue: _fields_mjs__WEBPACK_IMPORTED_MODULE_6__.applyFieldValue,
+  parseFieldSubmission: _fields_mjs__WEBPACK_IMPORTED_MODULE_6__.parseFieldSubmission,
+  renderFieldFallback: _fields_mjs__WEBPACK_IMPORTED_MODULE_6__.renderFieldFallback,
+  resolveFieldKind: _fields_mjs__WEBPACK_IMPORTED_MODULE_6__.resolveFieldKind,
+  validateFieldKinds: _fields_mjs__WEBPACK_IMPORTED_MODULE_6__.validateFieldKinds,
+  validateFieldValue: _fields_mjs__WEBPACK_IMPORTED_MODULE_6__.validateFieldValue,
+  VALUE_TYPES: _routing_mjs__WEBPACK_IMPORTED_MODULE_10__.VALUE_TYPES,
+  checkPortValue: _routing_mjs__WEBPACK_IMPORTED_MODULE_10__.checkPortValue,
+  checkFragmentDescriptor: _fragments_mjs__WEBPACK_IMPORTED_MODULE_11__.checkFragmentDescriptor,
+  FRAGMENT_DESCRIPTOR_SCHEMA: _fragments_mjs__WEBPACK_IMPORTED_MODULE_11__.FRAGMENT_DESCRIPTOR_SCHEMA,
+  publishEffects: _fragments_mjs__WEBPACK_IMPORTED_MODULE_11__.publishEffects,
+  createPortRegistry: _routing_mjs__WEBPACK_IMPORTED_MODULE_10__.createPortRegistry,
+  defineCompositionScope: _routing_mjs__WEBPACK_IMPORTED_MODULE_10__.defineCompositionScope,
   startInlineEdit,
-  normalizeInline: _inline_model_mjs__WEBPACK_IMPORTED_MODULE_8__.normalizeInline,
-  inlineText: _inline_model_mjs__WEBPACK_IMPORTED_MODULE_8__.inlineText,
+  normalizeInline: _inline_model_mjs__WEBPACK_IMPORTED_MODULE_9__.normalizeInline,
+  inlineText: _inline_model_mjs__WEBPACK_IMPORTED_MODULE_9__.inlineText,
   BUILTIN_TYPE_MANIFESTS: _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_TYPE_MANIFESTS,
   createRegistry,
   extendRegistry,
   compositionTypeFromSmartManifest,
-  describeRegions: _regions_mjs__WEBPACK_IMPORTED_MODULE_7__.describeRegions,
+  describeRegions: _regions_mjs__WEBPACK_IMPORTED_MODULE_8__.describeRegions,
   normalize,
-  projectDocumentEditorFields: _editor_mjs__WEBPACK_IMPORTED_MODULE_4__.projectDocumentEditorFields,
-  projectEditorFields: _editor_mjs__WEBPACK_IMPORTED_MODULE_4__.projectEditorFields,
+  projectDocumentEditorFields: _editor_mjs__WEBPACK_IMPORTED_MODULE_5__.projectDocumentEditorFields,
+  projectEditorFields: _editor_mjs__WEBPACK_IMPORTED_MODULE_5__.projectEditorFields,
   render,
-  resolveRecipe: _recipe_mjs__WEBPACK_IMPORTED_MODULE_6__.resolveRecipe,
-  parseRecipeJson: _recipe_mjs__WEBPACK_IMPORTED_MODULE_6__.parseRecipeJson,
-  stableStringify: _canonical_mjs__WEBPACK_IMPORTED_MODULE_2__.stableStringify,
+  resolveRecipe: _recipe_mjs__WEBPACK_IMPORTED_MODULE_7__.resolveRecipe,
+  parseRecipeJson: _recipe_mjs__WEBPACK_IMPORTED_MODULE_7__.parseRecipeJson,
+  stableStringify: _canonical_mjs__WEBPACK_IMPORTED_MODULE_3__.stableStringify,
   validate,
-  validateEditorManifest: _editor_mjs__WEBPACK_IMPORTED_MODULE_4__.validateEditorManifest,
+  validateEditorManifest: _editor_mjs__WEBPACK_IMPORTED_MODULE_5__.validateEditorManifest,
 });
 
 if (typeof globalThis !== 'undefined') {
   globalThis.SF = globalThis.SF || {};
   globalThis.SF.Composition = Composition;
-  (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_9__.defineCompositionScope)();
-  (0,_fragments_mjs__WEBPACK_IMPORTED_MODULE_10__.definePageHost)();
-  (0,_fragments_mjs__WEBPACK_IMPORTED_MODULE_10__.defineFragmentBoundary)();
+  (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_10__.defineCompositionScope)();
+  (0,_fragments_mjs__WEBPACK_IMPORTED_MODULE_11__.definePageHost)();
+  (0,_fragments_mjs__WEBPACK_IMPORTED_MODULE_11__.defineFragmentBoundary)();
 }
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Composition);
