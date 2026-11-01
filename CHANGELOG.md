@@ -8,6 +8,9 @@
 
 ### Добавлено
 
+- sf-range-slider 1.2.1: a plain handle, no ring around it by default, and a flat inactive track without a shadow (owner, 2026-11-01). The ring stays opt-in through --sf-thumb-handle--ring-width and --sf-thumb-handle--ring-color. component.range-slider 1.1.1.
+- Header navigation: sf-menu 1.2.0 appearance="navigation", rows without a frame, a plate on the current page, in a row or a column (component.menu 1.1.0, .sf-menu--navigation); sf-site-header 1.1.0 navigation-align="start|center" puts the menu in the centre of the bar, collapsing to its side panel as before.
+
 - The larena package reference names sf-content-editor, the Content mode of the SIMAI page editor (simai/ui-pro). core.runtime 1.11.1.
 
 - Structured content, first edition (content plan step 3): content.list, quote, code, divider, table, figure, alert (status and appearance as sf-alert), details, tabs, steps, grid, card, media and html, with their items content.list-item, content.tab and content.step, and content.document as a page's root, all 1.0.0. content.diagram and content.math are registered types: they draw when the host registers a renderer. content.outlet marks where a layout holds the page: render(layout, {content}). The html@1 cleaner moved into core (composition/html-subset), sf-rich-text 1.0.2 reads it from there.

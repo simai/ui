@@ -1,0 +1,66 @@
+{
+  "schema": "simai.framework.unit-change-report",
+  "schema_version": 1,
+  "source": "simai/ui-source",
+  "from": {
+    "revision": "b5a55fd032ca1b087c0cd9adf7c046d306bd2f92",
+    "release": "ui-3b75bb31a203"
+  },
+  "to": {
+    "revision": "bafeaffe0ddbb06ce92193c2d9b8806a0fcaf658",
+    "release": "ui-76c3b120303e"
+  },
+  "added": [],
+  "removed": [],
+  "changed": [
+    {
+      "id": "component.menu",
+      "from_version": "1.0.0",
+      "to_version": "1.1.0",
+      "step": "minor"
+    },
+    {
+      "id": "component.range-slider",
+      "from_version": "1.1.0",
+      "to_version": "1.1.1",
+      "step": "patch"
+    },
+    {
+      "id": "smart.menu",
+      "from_version": "1.1.4",
+      "to_version": "1.2.0",
+      "step": "minor"
+    },
+    {
+      "id": "smart.range-slider",
+      "from_version": "1.2.0",
+      "to_version": "1.2.1",
+      "step": "patch"
+    },
+    {
+      "id": "smart.site-header",
+      "from_version": "1.0.0",
+      "to_version": "1.1.0",
+      "step": "minor"
+    }
+  ],
+  "dependencies_changed": [
+    {
+      "id": "smart.menu",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "component.menu"
+      ]
+    },
+    {
+      "id": "smart.range-slider",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "component.range-slider"
+      ]
+    }
+  ],
+  "violations": []
+}
