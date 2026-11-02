@@ -8,6 +8,11 @@
 
 ### Добавлено
 
+- One scrim for every window: `--sf-scrim-color` and `--sf-scrim-opacity` (`tokens.colour` 1.3.0). The layer stack now owns outside press (read in capture, acted on by the top layer only), the page scroll lock (`lockPageScroll({preserveScrollGap})`) and one list of focus stops (`FOCUSABLE`, `focusablesIn`); the modal, drawer and overlay components use them. `composition-overlay` 1.3.2.
+- Chart colour roles: `--sf-chart-1..8` for categorical series, their area fills, and `--sf-chart-midpoint` for diverging scales, light and dark, with a contract test that computes contrast and separation (docs/foundation-chart-colours.md).
+- `SF.Loader.ensure(tags, {timeout = 3000})` resolves `{ready, missing}` and never rejects; `SF.Loader.watch(root)` marks a Smart element's portal with `data-sf-portal` so the Loader reads lazy elements drawn there as it reads the page. `sf-tabs` 1.1.10 and `sf-sortable` 1.1.6 ask for the standard menu through it. `core.runtime` 1.19.0.
+- Assembly: `start visible` watches an element that has a box (itself, else its first descendant with one, else its nearest ancestor), so a printed part with `display: contents` starts when it scrolls into view.
+
 - Inline code in running text gets a quiet neutral plate (owner decision): `code` in paragraphs, lists, tables, headings and chat markup takes `--sf-surface-container`, padding `--sf-space-1/4`, radius `--sf-radius--ui`, `.875em`, mono; code inside components, `pre`, highlight blocks, `kbd`, `samp` and buttons is untouched. The rule weighs no more than a bare `code`. `tokens.typography` 1.1.0.
 - `sf-tabs` 1.1.9: an underline tab reads as selected. The selected tab's label and line take `--sf-on-surface` and the theme colour (`--sf-tabs-indicator-color` now defaults to `--sf-primary`); resting tabs take `--sf-on-surface-variant`.
 - Icons draw from the first frame on the next page of an origin: the saved icon subset survives the cache wipe and is applied at boot with a font preload. New boot option `SF_BOOT_CONFIG.icons.remember = false`. `sf-icon` 1.1.5.
