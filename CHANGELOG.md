@@ -8,6 +8,10 @@
 
 ### Добавлено
 
+- Eight legacy class units are retired: `ajax`, `ajaxload`, `lazy-load`, `share`, `viewbox`, `overbox`, `overcard`, `wow`. No Loader rule loaded them, so no page changes behaviour; the change journal records each with its successor (`sf-viewbox-NxM` → `aspect-NxM`, overbox → `sf-popover`, wow → the `animation` utility, lazy-load → `loading="lazy"`, ajax and ajaxload → `fetch`).
+- `sf-system` and `special` are internal modules (`module.sf-system`, `module.special` 2.0.0). sf-system loses its never-built gallery, modal and overbox code and its rule, so it no longer loads on pages with Smart `sf-gallery`.
+- The JavaScript API contract drops `SF.AjaxLoad`, `SF.LazyLoad` and `SF.Modal` (never defined). `core.runtime` 1.15.0.
+
 - `sf-site-header` 1.2.0: the tools take one even step, `var(--sf-space-1/3)`, and a colour tool's swatch and its reset button take the same step, so the reset button stays by its swatch. The step is public as `--sf-site-header-tools-gap`. `core.runtime` 1.14.0.
 
 - Icons no longer blank out while the icon subset grows: the grown face is loaded before it replaces the old one, and a changed icon waits invisibly instead of showing its name (core.runtime).
