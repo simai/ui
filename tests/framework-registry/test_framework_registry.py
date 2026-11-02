@@ -201,13 +201,13 @@ class FrameworkContractRegistryTest(unittest.TestCase):
         self.assertIn("smart.tag", closure, "reached through the package table's requirements")
         self.assertEqual(
             self.registry["indexes"]["recipe_packages"]["recipe.admin.collection"],
-            {"larena": ["smart.data-view"]},
+            {"pro": ["smart.data-view"]},
         )
         self.assertEqual(
             self.registry["indexes"]["packages"],
             {
-                "larena": {
-                    "owner": "simai/larena-ui",
+                "pro": {
+                    "owner": "simai/ui-pro",
                     "provides": [
                         "smart.admin-menu",
                         "smart.change-confirm",
@@ -230,7 +230,7 @@ class FrameworkContractRegistryTest(unittest.TestCase):
                 }
             },
         )
-        for public_id in self.registry["indexes"]["packages"]["larena"]["provides"]:
+        for public_id in self.registry["indexes"]["packages"]["pro"]["provides"]:
             self.assertNotIn(public_id, self.by_id)
         for component_id in ("component.file-preview", "component.link"):
             self.assertIn(component_id, self.by_id)

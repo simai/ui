@@ -8,6 +8,8 @@
 
 ### Добавлено
 
+- The Pro component package is named `pro` (owner decision q-4ac7d07595): `SF_BOOT_CONFIG.packages.pro`. `packages.larena` keeps working as a dated alias until 2027-01-01 with a deprecation note (journal `option-package-larena-to-pro`); the package reference is `pro.package.json`, `larena.package.json` its alias.
+- `simai.effect` 1.4.0: right-click over an effect's background opens an English about menu (name and version, author, Open in SIMAI Effects or the manifest's new `homepage`, Pause/Resume motion). Text, links, controls and Shift+right-click keep the browser's menu; off with `SF_BOOT_CONFIG.effects.about = false` or `data-sf-effect-about="false"`. The menu announces its pause as `sf-effect-motion`. `core.runtime` 1.17.0.
 - `animation-on-view`: a setting of the `animation` utility (1.1.0). The element waits at the animation's first frame until 15% of it is in view, then plays once; reduced motion and no JavaScript show it at once.
 - `sf-include` 1.0.0: a part of the page loaded from an address. `src`, `load="now|view"`, a skeleton (or the `placeholder` slot) while loading, an error with Retry, `refresh()`, events `sf-include-loaded` and `sf-include-load-failed`. Scripts in the response do not run. It replaces the retired ajax, ajaxload and lazy-load units.
 - The compat sweep of 2026-11-01: `sf-toggle` and the toggle class component are removed (use `sf-switch`), `--sf-radius-round` and `radius-round` (use `radius-rounded`), `--sf-radius-default` and `radius-default*` (use `--sf-radius--ui` / `radius-ui`, or `radius-surface` for a block), and the `text-a0 … text-i9` utilities (use the text scale). `tokens.radius` and `utility.border-radius` 1.1.0. `core.runtime` 1.16.0.

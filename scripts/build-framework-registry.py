@@ -816,6 +816,16 @@ def load_package_references(ui_root: Path) -> list[dict[str, Any]]:
     directory = ui_root / "distr/core/contracts/packages"
     for path in sorted(directory.glob("*.package.json")) if directory.is_dir() else []:
         reference = load_json(path)
+        # A former package name kept as a dated alias (larena for pro until
+        # 2027-01-01) repeats its package's provides; it is checked against
+        # that package and not counted twice.
+        if "alias_of" in reference:
+            if set(reference) != PACKAGE_REFERENCE_KEYS | {"alias_of", "remove_after"} or reference["schema_id"] != "simai.framework.package-reference" or reference["schema_version"] != 1:
+                raise ContractError(f"package_reference_invalid:{path.name}")
+            target = directory / f"{reference['alias_of']}.package.json"
+            if path.name != f"{reference['package']}.package.json" or not target.is_file() or load_json(target)["provides"] != reference["provides"]:
+                raise ContractError(f"package_reference_alias_invalid:{path.name}")
+            continue
         if set(reference) != PACKAGE_REFERENCE_KEYS or reference["schema_id"] != "simai.framework.package-reference" or reference["schema_version"] != 1:
             raise ContractError(f"package_reference_invalid:{path.name}")
         if path.name != f"{reference['package']}.package.json" or not re.fullmatch(r"[a-z][a-z0-9-]*", reference["package"]):
