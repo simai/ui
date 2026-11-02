@@ -4207,13 +4207,6 @@
     "type": "component"
   },
   {
-    "name": "sf-system",
-    "css": false,
-    "js": true,
-    "regex": "/sf-gallery|sf-overbox/",
-    "type": "attribute"
-  },
-  {
     "name": "skeleton",
     "css": true,
     "js": false,
