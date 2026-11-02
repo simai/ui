@@ -4029,6 +4029,260 @@ if (typeof window !== 'undefined') {
 
 /***/ },
 
+/***/ "de1f3481c667"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   ICON_SUBSET_DEFAULT_HOST: () => (/* binding */ ICON_SUBSET_DEFAULT_HOST),
+/* harmony export */   ICON_SUBSET_STORAGE_KEY: () => (/* binding */ ICON_SUBSET_STORAGE_KEY),
+/* harmony export */   applyRememberedIconSubset: () => (/* binding */ applyRememberedIconSubset),
+/* harmony export */   iconManifestFontFamily: () => (/* binding */ iconManifestFontFamily),
+/* harmony export */   iconManifestType: () => (/* binding */ iconManifestType),
+/* harmony export */   iconSubsetCssFromManifest: () => (/* binding */ iconSubsetCssFromManifest),
+/* harmony export */   iconSubsetHostOrigin: () => (/* binding */ iconSubsetHostOrigin),
+/* harmony export */   iconSubsetSelector: () => (/* binding */ iconSubsetSelector),
+/* harmony export */   iconSubsetStorageKey: () => (/* binding */ iconSubsetStorageKey),
+/* harmony export */   isIconSubsetRemembered: () => (/* binding */ isIconSubsetRemembered),
+/* harmony export */   isRememberedIconSubsetUsable: () => (/* binding */ isRememberedIconSubsetUsable),
+/* harmony export */   normalizeIconFontLoadWeight: () => (/* binding */ normalizeIconFontLoadWeight),
+/* harmony export */   normalizeIconType: () => (/* binding */ normalizeIconType),
+/* harmony export */   readRememberedIconSubset: () => (/* binding */ readRememberedIconSubset)
+/* harmony export */ });
+// The icon subset a page drew with, remembered for the next page on its origin.
+//
+// The Loader asks the subset service for the page's icons once the page is
+// ready, and the @font-face goes in only when that answer is back. A page that
+// opens with icon buttons in its header therefore drew them as empty squares
+// for as long as the request took -- some 340 ms on effects.simai.io on every
+// load, a warm HTTP cache included (pair ui-2d39b617a719, language switch
+// en -> ru). The answer the last page got is kept in localStorage (the
+// manifest the service sends with its stylesheet); the core runtime reads it at
+// boot, before any component renders, writes its face and a font preload into
+// the head, and the font comes out of the HTTP cache by the time the first
+// button draws. The Loader then asks the service as before, and a grown subset
+// replaces the remembered one only once its own face is loaded.
+//
+// What is reused is checked first: a remembered subset is only used when every
+// icon name is a plain ligature name and every font file it names is on the
+// subset host the page is configured with. Nothing but the manifest the
+// service sent is stored.
+//
+// Shared by the core runtime (index.js, at boot) and the Loader's icon runtime
+// (iconSubsetRuntime.js), so both build the same stylesheet from a manifest.
+const ICON_SUBSET_STORAGE_KEY = 'SF_ICON_SUBSET_MANIFEST';
+const ICON_SUBSET_DEFAULT_HOST = 'https://icons.simai.io';
+const ICON_NAME = /^[a-z0-9_]{1,96}$/u;
+const FAMILY_NAME = /^[A-Za-z0-9 _.-]{1,160}$/u;
+const FONT_WEIGHT = /^[1-9]00(?: [1-9]00)?$/u; // Characters a font URL never needs and a CSS url('...') must not meet.
+
+const UNSAFE_URL = /['"\\()<>\s]/u; // The family a subset of the v1 generator declares, by icon type.
+
+const V1_FAMILIES = Object.freeze({
+  outlined: 'Material Symbols Outlined',
+  rounded: 'Material Icons Round',
+  sharp: 'Material Icons Sharp'
+});
+const FAMILY_TYPES = new Map([['material symbols outlined', 'outlined'], ['material symbols rounded', 'rounded'], ['material symbols sharp', 'sharp']]);
+function normalizeIconType(type = '') {
+  const normalized = String(type || '').trim().toLowerCase();
+  if (normalized === 'shape') return 'sharp';
+  if (normalized === 'rounded' || normalized === 'sharp') return normalized;
+  return 'outlined';
+} // A variable font's weight range loads as one weight in every browser.
+
+function normalizeIconFontLoadWeight(value = '400') {
+  const normalized = String(value || '').trim().replace(/\s+/g, ' ');
+  const range = normalized.match(/^([1-9]00)\s+([1-9]00)$/);
+  if (!range) return normalized || '400';
+  const start = Number(range[1]);
+  const end = Number(range[2]);
+  const minimum = Math.min(start, end);
+  const maximum = Math.max(start, end);
+  return String(Math.min(maximum, Math.max(minimum, 400)));
+}
+function iconSubsetStorageKey(type = '') {
+  const normalized = normalizeIconType(type);
+  return normalized === 'outlined' ? ICON_SUBSET_STORAGE_KEY : `${ICON_SUBSET_STORAGE_KEY}:${normalized}`;
+}
+function iconManifestType(manifest = {}) {
+  const declared = String(manifest.type || (manifest.schema === 'sf.icon_subset.v1' ? manifest.family : '') || '').trim().toLowerCase();
+  if (declared) return normalizeIconType(declared);
+  return normalizeIconType(FAMILY_TYPES.get(String(manifest.family || '').trim().toLowerCase()) || 'outlined');
+}
+function iconManifestFontFamily(manifest = {}) {
+  if (manifest.font_family) return String(manifest.font_family);
+  return `${(manifest.schema === 'sf.icon_subset.v1' ? V1_FAMILIES[iconManifestType(manifest)] : manifest.family) || 'Material Symbols Outlined'} Subset`;
+}
+function iconSubsetSelector(type = '') {
+  const normalized = normalizeIconType(type);
+  if (normalized === 'rounded') return '.sf-icon:is(.sf-icon--rounded, .sf-icon-rounded)';
+  if (normalized === 'sharp') return '.sf-icon:is(.sf-icon--sharp, .sf-icon-shape)';
+  return '.sf-icon:not(.sf-icon--rounded):not(.sf-icon-rounded):not(.sf-icon--sharp):not(.sf-icon-shape)';
+} // The stylesheet a manifest stands for: one @font-face per font file, and the
+// rule that sets the family's icons in it. font-display stays block: an icon's
+// fallback text is its name spelled out, so an icon waits unseen rather than
+// swap; a remembered face comes from the HTTP cache well inside that period.
+
+function iconSubsetCssFromManifest(manifest = {}) {
+  const fonts = Array.isArray(manifest.fonts) ? manifest.fonts : [];
+  const family = iconManifestFontFamily(manifest);
+  const weights = new Set();
+  const fontFaces = fonts.filter(font => font?.url).map(font => {
+    const weight = font.weight || manifest.axes?.wght?.value || 400;
+    weights.add(String(weight));
+    return `@font-face {\n` + `  font-family: '${family}';\n` + `  src: url('${font.url}') format('woff2');\n` + `  font-style: normal;\n` + `  font-weight: ${weight};\n` + `  font-display: block;\n` + `}\n`;
+  }).join('\n');
+  if (!fontFaces) return {
+    cssText: '',
+    family,
+    weights: [...weights]
+  };
+  const cssText = fontFaces + `\n` + `${iconSubsetSelector(iconManifestType(manifest))} {\n` + `  --sf-icon--font-family: '${family}';\n` + `  --sf-icon--font--weight: var(--sf-icon--weight, 400);\n` + `  font-feature-settings: 'liga';\n` + `  font-variation-settings: ` + `'FILL' var(--sf-icon--fill, 0), ` + `'wght' var(--sf-icon--weight, 400), ` + `'GRAD' var(--sf-icon--grade, 0), ` + `'opsz' var(--sf-icon--optical-size, 24);\n` + `}\n`;
+  return {
+    cssText,
+    family,
+    weights: [...weights]
+  };
+} // The origin of the subset host the page is configured with; '' when the
+// configured host is not a URL.
+
+function iconSubsetHostOrigin(host, baseURI) {
+  try {
+    return new URL(host || ICON_SUBSET_DEFAULT_HOST, baseURI).origin;
+  } catch {
+    return '';
+  }
+} // icons.remember = false: nothing is remembered between pages.
+
+function isIconSubsetRemembered(config) {
+  return config?.icons?.remember !== false;
+} // Whether a remembered manifest may be used on this page: its family is the
+// type asked for, its icon names are plain ligature names, its family name and
+// weights are plain values, and every font file is on the subset host.
+
+function isRememberedIconSubsetUsable(manifest, {
+  hostOrigin = '',
+  type = 'outlined'
+} = {}) {
+  if (!manifest || typeof manifest !== 'object' || !hostOrigin) return false;
+  if (iconManifestType(manifest) !== normalizeIconType(type)) return false;
+  const icons = manifest.icons;
+
+  if (!Array.isArray(icons) || !icons.length || !icons.every(icon => typeof icon === 'string' && ICON_NAME.test(icon))) {
+    return false;
+  }
+
+  if (!FAMILY_NAME.test(iconManifestFontFamily(manifest))) return false;
+  const fonts = manifest.fonts;
+  if (!Array.isArray(fonts) || !fonts.length) return false;
+  const hostProtocol = hostOrigin.slice(0, hostOrigin.indexOf(':') + 1);
+  return fonts.every(font => {
+    if (!font || typeof font.url !== 'string' || UNSAFE_URL.test(font.url)) return false;
+    const weight = font.weight ?? manifest.axes?.wght?.value ?? 400;
+    if (!FONT_WEIGHT.test(String(weight))) return false;
+
+    try {
+      const url = new URL(font.url);
+      return url.origin === hostOrigin && url.protocol === hostProtocol && (url.protocol === 'https:' || url.protocol === 'http:');
+    } catch {
+      return false;
+    }
+  });
+} // The remembered manifest for a type, or null: unreadable storage, nothing
+// stored, unparsable or unusable all read as nothing remembered.
+
+function readRememberedIconSubset(storage, {
+  hostOrigin,
+  type
+}) {
+  let raw = null;
+
+  try {
+    raw = storage?.getItem(iconSubsetStorageKey(type)) ?? null;
+  } catch {
+    return null;
+  }
+
+  if (!raw) return null;
+
+  try {
+    const manifest = JSON.parse(raw);
+    return isRememberedIconSubsetUsable(manifest, {
+      hostOrigin,
+      type
+    }) ? manifest : null;
+  } catch {
+    return null;
+  }
+} // At boot, before any component renders: the remembered subset's stylesheet
+// and a preload for each of its font files, and the pending mark lifted as
+// soon as its face is loaded. The style is the one the Loader would write for
+// the same manifest (same attributes), marked data-sf-icons-remembered; the
+// Loader adopts it when it restores that manifest, and keeps it as the face
+// the page draws with until a grown subset's own face is loaded.
+
+function applyRememberedIconSubset({
+  win = globalThis.window,
+  doc = globalThis.document,
+  storage
+} = {}) {
+  if (!win || !doc?.head) return null;
+  const config = win.SF_BOOT_CONFIG;
+  if (!isIconSubsetRemembered(config)) return null;
+  const type = normalizeIconType(config?.icons?.type || win.SF_ICON_TYPE || 'outlined');
+  if (doc.querySelector(`style[data-sf-icons-subset-family="${type}"]`)) return null;
+  const hostOrigin = iconSubsetHostOrigin(config?.icons?.subsetHost || win.SF_ICON_SUBSET_HOST, doc.baseURI);
+  const manifest = readRememberedIconSubset(storage, {
+    hostOrigin,
+    type
+  });
+  if (!manifest) return null;
+  const {
+    cssText,
+    family
+  } = iconSubsetCssFromManifest(manifest);
+  if (!cssText) return null;
+
+  for (const font of manifest.fonts) {
+    const href = new URL(font.url).href;
+    if ([...doc.querySelectorAll('link[rel="preload"][as="font"]')].some(link => link.href === href)) continue;
+    const link = doc.createElement('link');
+    link.rel = 'preload';
+    link.as = 'font';
+    link.type = 'font/woff2';
+    link.crossOrigin = 'anonymous';
+    link.href = href;
+    link.setAttribute('data-sf-icons-remembered', '');
+    doc.head.appendChild(link);
+  }
+
+  const style = doc.createElement('style');
+  style.setAttribute('data-sf-icons-subset', manifest.icons.join(','));
+  style.setAttribute('data-sf-icons-subset-family', type);
+  if (manifest.hash) style.setAttribute('data-sf-icons-subset-hash', String(manifest.hash));
+  style.setAttribute('data-sf-icons-remembered', '');
+  style.textContent = cssText;
+  doc.head.appendChild(style);
+  const root = doc.documentElement;
+  const weight = normalizeIconFontLoadWeight(String(manifest.fonts[0]?.weight || manifest.axes?.wght?.value || 400));
+  doc.fonts?.load?.(`${weight} 24px "${family}"`, manifest.icons.join(' ')).then(faces => {
+    if (faces?.length && root?.getAttribute('data-sf-icons') === 'subset-pending' && style.isConnected) {
+      root.removeAttribute('data-sf-icons');
+    }
+  }).catch(() => {
+    /* The Loader's own request and fallback take over. */
+  });
+  return {
+    manifest,
+    style,
+    type
+  };
+}
+
+/***/ },
+
 /***/ "c7a5006ae2e0"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -4053,9 +4307,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _notify_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("b4bff8456ce0");
 /* harmony import */ var _sanitize_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("20db70d35f32");
 /* harmony import */ var _ready_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__("5effd0d9c238");
-/* harmony import */ var _early_port_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__("55bd48f35b65");
-/* harmony import */ var _pending_tags_js__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__("3c79afd07eeb");
-/* harmony import */ var _preloader__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__("6c7f357fe960");
+/* harmony import */ var _icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__("de1f3481c667");
+/* harmony import */ var _page_storage_js__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__("cda569e6042b");
+/* harmony import */ var _early_port_js__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__("55bd48f35b65");
+/* harmony import */ var _pending_tags_js__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__("3c79afd07eeb");
+/* harmony import */ var _preloader__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__("6c7f357fe960");
+
+
 
 
 
@@ -4088,7 +4346,7 @@ if (typeof window !== 'undefined') {
   (0,_ready_js__WEBPACK_IMPORTED_MODULE_16__.installReady)(window); // The ports declared on elements (data-sf-port islands): their first calls
   // leave now, while the components' code is still on its way (stand 27).
 
-  (0,_early_port_js__WEBPACK_IMPORTED_MODULE_17__.installEarlyPort)(window);
+  (0,_early_port_js__WEBPACK_IMPORTED_MODULE_19__.installEarlyPort)(window);
 
   if (!SF.loadRuntime) {
     let loading = null;
@@ -4202,6 +4460,22 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
         root.removeAttribute('data-sf-icons');
       }
     }, 6000);
+  } // The subset the last page on this origin drew with goes in now, before
+  // any component renders, with a preload for its font: on a warm cache the
+  // header's icon buttons draw their glyphs from their first frame instead of
+  // waiting for the subset request (icon-subset-memory.js).
+
+
+  if (subsetEnabled && document.head) {
+    try {
+      (0,_icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_17__.applyRememberedIconSubset)({
+        win: window,
+        doc: document,
+        storage: (0,_page_storage_js__WEBPACK_IMPORTED_MODULE_18__["default"])()
+      });
+    } catch {
+      /* Nothing remembered is nothing lost: the Loader asks as before. */
+    }
   } // The subset is asked for once the page is ready; opening the connection
   // now takes its DNS, TCP and TLS (some 350 ms to icons.simai.io) off that
   // request. The fetch and the font are both anonymous CORS requests, which
@@ -4303,8 +4577,8 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
       return;
     }
 
-    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_18__.installPendingTags)(window);
-    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_18__.holdUndefinedElements)(window);
+    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_20__.installPendingTags)(window);
+    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_20__.holdUndefinedElements)(window);
   };
 
   holdUndefinedUntilDefined();
@@ -4312,18 +4586,18 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
   const mountPreloader = () => {
     const cfg = {
       enabled: true,
-      background: (0,_preloader__WEBPACK_IMPORTED_MODULE_19__.getPreloaderBackground)(),
+      background: (0,_preloader__WEBPACK_IMPORTED_MODULE_21__.getPreloaderBackground)(),
       modifier: 'loader-default',
       tempStyles: 'inset: 0;position: fixed;width: 100%;height: 100vh;opacity: 1;z-index: 1000;background-color: var(--sf-color--surface-highest, var(--sf-surface-0, #fff));text-align: center;',
-      color: (0,_preloader__WEBPACK_IMPORTED_MODULE_19__.getPreloaderColor)(),
-      width: _preloader__WEBPACK_IMPORTED_MODULE_19__.DEFAULT_PRELOADER.width,
-      height: _preloader__WEBPACK_IMPORTED_MODULE_19__.DEFAULT_PRELOADER.height,
+      color: (0,_preloader__WEBPACK_IMPORTED_MODULE_21__.getPreloaderColor)(),
+      width: _preloader__WEBPACK_IMPORTED_MODULE_21__.DEFAULT_PRELOADER.width,
+      height: _preloader__WEBPACK_IMPORTED_MODULE_21__.DEFAULT_PRELOADER.height,
       content: '',
       delay: 300,
       ...(window.SF_BOOT_CONFIG?.preloader || {})
     };
     if (cfg.enabled === false || document.querySelector('.sf-loader')) return;
-    const svgContent = cfg.content || (0,_preloader__WEBPACK_IMPORTED_MODULE_19__.createPreloaderContent)(cfg);
+    const svgContent = cfg.content || (0,_preloader__WEBPACK_IMPORTED_MODULE_21__.createPreloaderContent)(cfg);
     let wrap = null;
     let preloaderWrap = null;
     let preloaderRun = false;
@@ -4337,7 +4611,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
 
     const stopAnimation = () => {
       if (preloaderWrap) {
-        (0,_preloader__WEBPACK_IMPORTED_MODULE_19__.stopPreloaderMotion)(preloaderWrap);
+        (0,_preloader__WEBPACK_IMPORTED_MODULE_21__.stopPreloaderMotion)(preloaderWrap);
       }
     };
 
@@ -4346,7 +4620,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
       // preloader over them (§5.4). Read when the preloader would show, after
       // its delay, when the server's markup has been parsed.
 
-      if ((0,_preloader__WEBPACK_IMPORTED_MODULE_19__.pageHasFirstPaint)(document)) return;
+      if ((0,_preloader__WEBPACK_IMPORTED_MODULE_21__.pageHasFirstPaint)(document)) return;
       wrap = document.createElement('div');
       const inner = document.createElement('div');
       wrap.classList.add('sf-loader', cfg.modifier);
@@ -4368,7 +4642,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
         wrap: wrap,
         preloaderActive: true
       };
-      (0,_preloader__WEBPACK_IMPORTED_MODULE_19__.startPreloaderMotion)(preloaderWrap, () => preloaderRun, cfg);
+      (0,_preloader__WEBPACK_IMPORTED_MODULE_21__.startPreloaderMotion)(preloaderWrap, () => preloaderRun, cfg);
     };
 
     const cancelBuild = () => {
@@ -4405,7 +4679,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
 
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', () => {
-        if (!(0,_preloader__WEBPACK_IMPORTED_MODULE_19__.pageHasFirstPaint)(document)) return;
+        if (!(0,_preloader__WEBPACK_IMPORTED_MODULE_21__.pageHasFirstPaint)(document)) return;
         cancelBuild();
         preloaderRun = false;
         stopAnimation();
@@ -6024,6 +6298,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   followLanguage: () => (/* binding */ followLanguage),
 /* harmony export */   isRussianPage: () => (/* binding */ isRussianPage),
 /* harmony export */   language: () => (/* binding */ language),
+/* harmony export */   localeText: () => (/* binding */ localeText),
 /* harmony export */   pageLanguage: () => (/* binding */ pageLanguage),
 /* harmony export */   pageLocale: () => (/* binding */ pageLocale),
 /* harmony export */   pageText: () => (/* binding */ pageText),
@@ -6252,10 +6527,18 @@ function isRussianPage(node) {
  */
 
 function pageText(dictionary, key, node, component) {
-  const owner = component ?? componentOf(node);
+  return localeText(dictionary, key, pageLocale(node), component ?? componentOf(node));
+}
+/**
+ * Text for `key` in a named language, with no node to read it from: a server
+ * fallback or a form drawn before it is placed. The same order as pageText --
+ * words registered for `component`, then the shipped ones, for the language,
+ * the language without its region and English -- and the key last.
+ */
 
-  for (const candidate of chain(pageLocale(node))) {
-    const added = owner ? REGISTERED.get(owner)?.get(candidate)?.[key] : undefined;
+function localeText(dictionary, key, locale, component) {
+  for (const candidate of chain(locale || 'en')) {
+    const added = component ? REGISTERED.get(component)?.get(candidate)?.[key] : undefined;
     if (added !== undefined) return added;
     const shipped = dictionary?.[candidate]?.[key];
     if (shipped !== undefined) return shipped;
@@ -6468,6 +6751,49 @@ if (typeof window !== 'undefined') {
   window.SF.language = language;
   window.SF.pageLanguage = pageLanguage;
   window.SF.pageText = pageText;
+}
+
+/***/ },
+
+/***/ "cda569e6042b"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ pageStorage)
+/* harmony export */ });
+// The page's localStorage, or a store in memory where there is none to have.
+//
+// A sandboxed document without allow-same-origin -- a documentation example in
+// an iframe -- throws on the mere read of window.localStorage, and the Loader,
+// which reads it to cache its plugin lists, stopped there: nothing it found was
+// ever fetched (DEV, 2026-10-15). In memory the caches live as long as the
+// page, which is all such a page can keep anyway.
+const memory = new Map();
+const memoryStorage = {
+  get length() {
+    return memory.size;
+  },
+
+  key: index => [...memory.keys()][index] ?? null,
+  getItem: key => memory.has(key) ? memory.get(key) : null,
+  setItem: (key, value) => {
+    memory.set(String(key), String(value));
+  },
+  removeItem: key => {
+    memory.delete(String(key));
+  },
+  clear: () => memory.clear()
+};
+function pageStorage() {
+  try {
+    const storage = globalThis.localStorage;
+    if (storage) return storage;
+  } catch {// Sandboxed: fall through to memory.
+  }
+
+  return memoryStorage;
 }
 
 /***/ },
@@ -14351,7 +14677,11 @@ const BUILTIN_EDITOR_MANIFESTS = Object.freeze([
   contentEditor('content.table', [
     contentField('content.table', 'header', 'props', 'choice', { choices: ['row', 'column', 'both', 'none'], default: 'row' }),
   ]),
+  // src is the one field the type requires besides alt: a host draws a
+  // complete form from the manifest alone (simai/ui-source#64). The address
+  // is a text field; validate applies the Document's URL rule on top.
   contentEditor('content.figure', [
+    contentField('content.figure', 'src', 'data', 'text', { constraints: { min_length: 1, max_length: 2048 } }),
     contentField('content.figure', 'alt', 'data', 'text', { constraints: { min_length: 1, max_length: 1000 } }),
     contentField('content.figure', 'ratio', 'props', 'choice', { choices: ['auto', '1/1', '4/3', '3/2', '16/9', '21/9'], default: 'auto' }),
     contentField('content.figure', 'fit', 'props', 'choice', { choices: ['cover', 'contain'], default: 'cover' }),
@@ -14382,6 +14712,7 @@ const BUILTIN_EDITOR_MANIFESTS = Object.freeze([
     contentField('content.card', 'variant', 'props', 'choice', { choices: ['default', 'plain'], default: 'default' }),
   ]),
   contentEditor('content.media', [
+    contentField('content.media', 'src', 'data', 'text', { constraints: { min_length: 1, max_length: 2048 } }),
     contentField('content.media', 'alt', 'data', 'text', { constraints: { min_length: 1, max_length: 1000 } }),
     contentField('content.media', 'side', 'props', 'choice', { choices: ['left', 'right'], default: 'right' }),
     contentField('content.media', 'ratio', 'props', 'choice', { choices: ['1/1', '4/3', '3/2', '16/9', '21/9'], default: '16/9' }),
@@ -14433,6 +14764,388 @@ function stableStringify(value) {
 }
 
 
+
+
+/***/ },
+
+/***/ "fe90f998a31d"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   EDITOR_FIELD_WORDS: () => (/* binding */ EDITOR_FIELD_WORDS),
+/* harmony export */   EDITOR_WORDS_OWNER: () => (/* binding */ EDITOR_WORDS_OWNER),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   editorFieldKeys: () => (/* binding */ editorFieldKeys),
+/* harmony export */   editorFieldMessages: () => (/* binding */ editorFieldMessages)
+/* harmony export */ });
+/* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("8489d1f5bab4");
+/* harmony import */ var _builtins_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("08e5033c490a");
+
+
+
+// The words of the built-in editor manifests (simai/ui-source#65): every
+// label_key, help_key and `<label_key>.<choice>` of a choice that is a stable
+// segment, in English and Russian. A choice that is not a stable segment
+// (`16/9`) is shown as it is, by the field kinds' localization rule.
+//
+// The words belong to the registry owner `sf-composition`, so a product adds a
+// language or corrects one word the way it does for any component:
+//
+//   SF.language.register('sf-composition', 'de', {'sf.composition.content_figure.src': 'Bildadresse'});
+//
+// src/core/contracts/composition-editor-words.v1.json is generated from this
+// file (scripts/generate-composition-contracts.mjs) for a host without
+// JavaScript, which reads the same keys.
+
+const EDITOR_WORDS_OWNER = 'sf-composition';
+
+const words = (prefix, entries) => Object.fromEntries(Object.entries(entries).map(([key, value]) => [`sf.composition.${prefix}.${key}`, value]));
+
+const EN = {
+  ...words('layout_section', {
+    surface: 'Background',
+    surface_help: 'How the section stands out from the page',
+    'surface.surface': 'Regular',
+    'surface.contrast': 'Contrasting',
+  }),
+  ...words('layout_columns', {
+    columns: 'Columns',
+    columns_help: 'How many columns the content is split into',
+  }),
+  ...words('content_heading', {
+    level: 'Heading level',
+    level_help: 'From 1, the page title, to 6',
+  }),
+  ...words('layout_region', {
+    placement: 'Placement',
+    placement_help: 'Where the area stands in the layout',
+    'placement.block': 'Full width',
+    'placement.start': 'At the start',
+    'placement.center': 'In the centre',
+    'placement.end': 'At the end',
+    label: 'Name',
+    label_help: 'The area\'s name for screen readers',
+    landmark: 'Landmark',
+    landmark_help: 'The area\'s role in the page structure for assistive technology',
+    'landmark.banner': 'Header',
+    'landmark.navigation': 'Navigation',
+    'landmark.main': 'Main content',
+    'landmark.complementary': 'Sidebar',
+    'landmark.contentinfo': 'Footer',
+    'landmark.region': 'Region',
+    'landmark.none': 'None',
+    sticky: 'Sticky',
+    sticky_help: 'The area stays in view while the page scrolls',
+  }),
+  ...words('content_list', {
+    ordered: 'Numbered',
+    ordered_help: 'Numbers instead of bullets',
+    start: 'Start at',
+    start_help: 'The number of the first item',
+  }),
+  ...words('content_code', {
+    lang: 'Language',
+    lang_help: 'The programming language, for highlighting',
+    title: 'Caption',
+    title_help: 'A file name or a short caption above the code',
+    numbers: 'Line numbers',
+    numbers_help: 'Number every line',
+  }),
+  ...words('content_table', {
+    header: 'Table headers',
+    header_help: 'Which cells are headers',
+    'header.row': 'First row',
+    'header.column': 'First column',
+    'header.both': 'Row and column',
+    'header.none': 'None',
+  }),
+  ...words('content_figure', {
+    src: 'Picture address',
+    src_help: 'A link to the image: http(s) or a path on the site',
+    alt: 'Picture description',
+    alt_help: 'What the picture shows, for those who cannot see it',
+    ratio: 'Ratio',
+    ratio_help: 'The picture\'s width to its height',
+    'ratio.auto': 'As it is',
+    fit: 'Fit',
+    fit_help: 'How the picture fills its frame',
+    'fit.cover': 'Fill',
+    'fit.contain': 'Whole',
+  }),
+  ...words('content_alert', {
+    status: 'Kind',
+    status_help: 'What the message is about',
+    'status.neutral': 'Plain',
+    'status.info': 'Information',
+    'status.success': 'Success',
+    'status.warning': 'Warning',
+    'status.error': 'Error',
+    appearance: 'Look',
+    appearance_help: 'Filled, outlined or flat',
+    'appearance.default': 'Filled',
+    'appearance.outlined': 'Outlined',
+    'appearance.flat': 'Flat',
+  }),
+  ...words('content_details', {
+    open: 'Open at first',
+    open_help: 'The block is shown open when the page loads',
+    layout: 'Look',
+    layout_help: 'A filled box or lines between blocks',
+    'layout.surface': 'Filled',
+    'layout.lines': 'Lines',
+  }),
+  ...words('content_tabs', {
+    label: 'Name',
+    label_help: 'The name of the row of tabs for screen readers',
+  }),
+  ...words('content_tab', {
+    label: 'Tab name',
+    label_help: 'The text on the tab',
+  }),
+  ...words('content_steps', {
+    current: 'Current step',
+    current_help: 'The number of the step in progress',
+    layout: 'Look',
+    layout_help: 'A timeline or a numbered list',
+    'layout.timeline': 'Timeline',
+    'layout.list': 'List',
+  }),
+  ...words('content_grid', {
+    columns: 'Columns',
+    columns_help: 'How many columns on a wide screen; a narrow one shows fewer',
+    gap: 'Gap',
+    gap_help: 'The space between the cells, from 0 to 4',
+  }),
+  ...words('content_card', {
+    variant: 'Look',
+    variant_help: 'A card with a background or without one',
+    'variant.default': 'Card',
+    'variant.plain': 'No background',
+  }),
+  ...words('content_media', {
+    src: 'Picture address',
+    src_help: 'A link to the image: http(s) or a path on the site',
+    alt: 'Picture description',
+    alt_help: 'What the picture shows, for those who cannot see it',
+    side: 'Picture',
+    side_help: 'Which side the picture stands on',
+    'side.left': 'Left',
+    'side.right': 'Right',
+    ratio: 'Ratio',
+    ratio_help: 'The picture\'s width to its height',
+  }),
+  ...words('content_file', {
+    label: 'File name',
+    label_help: 'The name shown; when empty, the last part of the address',
+    href: 'File address',
+    href_help: 'A link to the file to download',
+  }),
+  ...words('content_diagram', {
+    title: 'Caption',
+    title_help: 'The diagram\'s name, also for screen readers',
+    engine: 'Engine',
+    engine_help: 'What draws the diagram',
+    'engine.mermaid': 'Mermaid',
+  }),
+  ...words('content_math', {
+    label: 'Caption',
+    label_help: 'The formula\'s name for screen readers',
+  }),
+};
+
+const RU = {
+  ...words('layout_section', {
+    surface: 'Фон',
+    surface_help: 'Как раздел выделяется на странице',
+    'surface.surface': 'Обычный',
+    'surface.contrast': 'Контрастный',
+  }),
+  ...words('layout_columns', {
+    columns: 'Колонки',
+    columns_help: 'На сколько колонок делится содержимое',
+  }),
+  ...words('content_heading', {
+    level: 'Уровень заголовка',
+    level_help: 'От 1 (заголовок страницы) до 6',
+  }),
+  ...words('layout_region', {
+    placement: 'Расположение',
+    placement_help: 'Где область стоит в макете',
+    'placement.block': 'Во всю ширину',
+    'placement.start': 'В начале',
+    'placement.center': 'По центру',
+    'placement.end': 'В конце',
+    label: 'Название',
+    label_help: 'Название области для программ чтения с экрана',
+    landmark: 'Ориентир',
+    landmark_help: 'Роль области в структуре страницы для вспомогательных технологий',
+    'landmark.banner': 'Шапка',
+    'landmark.navigation': 'Навигация',
+    'landmark.main': 'Основное содержимое',
+    'landmark.complementary': 'Боковая колонка',
+    'landmark.contentinfo': 'Подвал',
+    'landmark.region': 'Область',
+    'landmark.none': 'Нет',
+    sticky: 'Закрепить',
+    sticky_help: 'Область остаётся на виду при прокрутке страницы',
+  }),
+  ...words('content_list', {
+    ordered: 'Нумерованный',
+    ordered_help: 'Номера вместо маркеров',
+    start: 'Начать с',
+    start_help: 'Номер первого пункта',
+  }),
+  ...words('content_code', {
+    lang: 'Язык',
+    lang_help: 'Язык программирования для подсветки',
+    title: 'Подпись',
+    title_help: 'Имя файла или короткая подпись над кодом',
+    numbers: 'Номера строк',
+    numbers_help: 'Нумеровать каждую строку',
+  }),
+  ...words('content_table', {
+    header: 'Заголовки таблицы',
+    header_help: 'Какие ячейки — заголовки',
+    'header.row': 'Первая строка',
+    'header.column': 'Первый столбец',
+    'header.both': 'Строка и столбец',
+    'header.none': 'Нет',
+  }),
+  ...words('content_figure', {
+    src: 'Адрес картинки',
+    src_help: 'Ссылка на изображение: http(s) или путь на сайте',
+    alt: 'Описание картинки',
+    alt_help: 'Что на картинке — для тех, кто её не видит',
+    ratio: 'Пропорции',
+    ratio_help: 'Соотношение ширины и высоты картинки',
+    'ratio.auto': 'Как есть',
+    fit: 'Вписать',
+    fit_help: 'Как картинка заполняет рамку',
+    'fit.cover': 'Заполнить',
+    'fit.contain': 'Целиком',
+  }),
+  ...words('content_alert', {
+    status: 'Вид',
+    status_help: 'О чём сообщение',
+    'status.neutral': 'Обычная',
+    'status.info': 'Сведения',
+    'status.success': 'Успех',
+    'status.warning': 'Внимание',
+    'status.error': 'Ошибка',
+    appearance: 'Оформление',
+    appearance_help: 'Заливка, рамка или без фона',
+    'appearance.default': 'Заливка',
+    'appearance.outlined': 'Рамка',
+    'appearance.flat': 'Плоско',
+  }),
+  ...words('content_details', {
+    open: 'Открыт сразу',
+    open_help: 'Блок показан раскрытым при загрузке страницы',
+    layout: 'Оформление',
+    layout_help: 'Заливка или линии между блоками',
+    'layout.surface': 'Заливка',
+    'layout.lines': 'Линии',
+  }),
+  ...words('content_tabs', {
+    label: 'Название',
+    label_help: 'Название ряда вкладок для программ чтения с экрана',
+  }),
+  ...words('content_tab', {
+    label: 'Название вкладки',
+    label_help: 'Текст на вкладке',
+  }),
+  ...words('content_steps', {
+    current: 'Текущий шаг',
+    current_help: 'Номер шага, который выполняется сейчас',
+    layout: 'Оформление',
+    layout_help: 'Линия или нумерованный список',
+    'layout.timeline': 'Линия',
+    'layout.list': 'Список',
+  }),
+  ...words('content_grid', {
+    columns: 'Колонки',
+    columns_help: 'Сколько колонок на широком экране; на узком их меньше',
+    gap: 'Промежуток',
+    gap_help: 'Расстояние между ячейками, от 0 до 4',
+  }),
+  ...words('content_card', {
+    variant: 'Оформление',
+    variant_help: 'Карточка с фоном или без него',
+    'variant.default': 'Карточка',
+    'variant.plain': 'Без фона',
+  }),
+  ...words('content_media', {
+    src: 'Адрес картинки',
+    src_help: 'Ссылка на изображение: http(s) или путь на сайте',
+    alt: 'Описание картинки',
+    alt_help: 'Что на картинке — для тех, кто её не видит',
+    side: 'Картинка',
+    side_help: 'С какой стороны стоит картинка',
+    'side.left': 'Слева',
+    'side.right': 'Справа',
+    ratio: 'Пропорции',
+    ratio_help: 'Соотношение ширины и высоты картинки',
+  }),
+  ...words('content_file', {
+    label: 'Название файла',
+    label_help: 'Показываемое название; если пусто — последняя часть адреса',
+    href: 'Адрес файла',
+    href_help: 'Ссылка на файл для скачивания',
+  }),
+  ...words('content_diagram', {
+    title: 'Подпись',
+    title_help: 'Название схемы, в том числе для программ чтения с экрана',
+    engine: 'Движок',
+    engine_help: 'Чем рисуется схема',
+    'engine.mermaid': 'Mermaid',
+  }),
+  ...words('content_math', {
+    label: 'Подпись',
+    label_help: 'Название формулы для программ чтения с экрана',
+  }),
+};
+
+const EDITOR_FIELD_WORDS = Object.freeze({ en: Object.freeze(EN), ru: Object.freeze(RU) });
+
+const STABLE_SEGMENT = /^[a-z][a-z0-9_]*$/u;
+
+/** Every word key a field reads: its label, its help and its stable choices. */
+function editorFieldKeys(field) {
+  if (!field || typeof field.label_key !== 'string') return [];
+  const keys = [field.label_key];
+  if (typeof field.help_key === 'string') keys.push(field.help_key);
+  for (const choice of Array.isArray(field.choices) ? field.choices : []) {
+    if (typeof choice === 'string' && STABLE_SEGMENT.test(choice)) keys.push(`${field.label_key}.${choice}`);
+  }
+  return keys;
+}
+
+/**
+ * The `messages` renderFieldFallback and a host's form read, for one editor
+ * manifest, a list of them, or every built-in one when none is given. The
+ * language is `locale` when it is named, else the language of `node` (the
+ * nearest [lang], SF.language.use(), <html lang>), else English. A word
+ * registered for `sf-composition` wins over the shipped one; a key with no
+ * word in any language is left out, so the host's own words or the key show.
+ */
+function editorFieldMessages(manifests = _builtins_mjs__WEBPACK_IMPORTED_MODULE_1__.BUILTIN_EDITOR_MANIFESTS, { node = null, locale } = {}) {
+  const list = Array.isArray(manifests) ? manifests : [manifests];
+  const language = locale || (0,_page_language_js__WEBPACK_IMPORTED_MODULE_0__.pageLocale)(node);
+  const messages = {};
+  for (const manifest of list) {
+    for (const field of manifest?.fields || []) {
+      for (const key of editorFieldKeys(field)) {
+        const word = (0,_page_language_js__WEBPACK_IMPORTED_MODULE_0__.localeText)(EDITOR_FIELD_WORDS, key, language, EDITOR_WORDS_OWNER);
+        if (word !== key) messages[key] = word;
+      }
+    }
+  }
+  return messages;
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ EDITOR_FIELD_WORDS, EDITOR_WORDS_OWNER, editorFieldKeys, editorFieldMessages });
 
 
 /***/ },
@@ -15305,8 +16018,10 @@ function defineFragmentBoundary(registry = globalThis.customElements) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   PASTE_BLOCKS: () => (/* binding */ PASTE_BLOCKS),
 /* harmony export */   RICH_TEXT_BLOCKS: () => (/* binding */ RICH_TEXT_BLOCKS),
 /* harmony export */   RICH_TEXT_ELEMENTS: () => (/* binding */ RICH_TEXT_ELEMENTS),
+/* harmony export */   RICH_TEXT_PROFILES: () => (/* binding */ RICH_TEXT_PROFILES),
 /* harmony export */   RICH_TEXT_SCHEMES: () => (/* binding */ RICH_TEXT_SCHEMES),
 /* harmony export */   cleanTree: () => (/* binding */ cleanTree),
 /* harmony export */   decodeEntities: () => (/* binding */ decodeEntities),
@@ -15355,6 +16070,24 @@ __webpack_require__.r(__webpack_exports__);
 // No imports and no state: the element and the contract tests use the same
 // functions.
 //
+// The paste profile (simai/ui-source#66). html@1 is a stored type, so it does
+// not grow: a value never holds pre or table. A structured-content editor
+// reads a paste with cleanTree(tree, {profile: 'paste'}), which is html@1
+// plus two blocks the profile maps to its own types instead of flattening
+// them into paragraphs:
+//
+//   {type: 'pre', text}            a code block: its text with its line
+//                                  breaks and indentation (-> content.code)
+//   {type: 'table', caption, rows} a simple table: rows of {head, cells},
+//                                  each cell {header, leaves} with the
+//                                  subset's inline leaves (-> content.table)
+//
+// Everything inside them is cleaned by the same rule: the same marks, the
+// same href check, DROPPED goes with its content. A pre or a table inside a
+// list item, and a table inside a cell, are read as html@1 reads them.
+// serialize writes the two in html@1 terms (lines of a paragraph, a
+// paragraph per cell), so whatever comes out of it is still the subset.
+//
 // The module lives in the core runtime since content.html 1.0.0: the
 // Composition renderer sanitises a content.html block through it at render,
 // so a page that only renders a Document needs no Smart component.
@@ -15364,6 +16097,10 @@ __webpack_require__.r(__webpack_exports__);
 const RICH_TEXT_ELEMENTS = Object.freeze(['p', 'h2', 'h3', 'h4', 'strong', 'em', 'a', 'ul', 'ol', 'li', 'blockquote', 'br']);
 const RICH_TEXT_BLOCKS = Object.freeze(['p', 'h2', 'h3', 'h4']);
 const RICH_TEXT_SCHEMES = Object.freeze(['https:', 'mailto:', 'tel:']);
+// The profiles cleanTree reads by: html@1 itself, and the paste profile of a
+// structured-content editor, which keeps PASTE_BLOCKS as blocks of their own.
+const RICH_TEXT_PROFILES = Object.freeze(['html', 'paste']);
+const PASTE_BLOCKS = Object.freeze(['pre', 'table']);
 
 // Dropped with everything inside: their content is code, a document's head,
 // a drawing, or a control's own data, not text for a reader.
@@ -15778,6 +16515,14 @@ function walk(node, flow, context) {
     flow.close();
     return;
   }
+  if (context.paste && flow.kind !== 'item' && (name === 'pre' || name === 'listing')) {
+    flow.block({type: 'pre', text: preText(node)});
+    return;
+  }
+  if (context.paste && flow.kind !== 'item' && name === 'table') {
+    flow.block(readTable(node, inner));
+    return;
+  }
   if (BREAKING.has(name)) {
     flow.open('p');
     walkChildren(node.children, flow, name === 'pre' || name === 'listing' ? {...inner, pre: true} : inner);
@@ -15786,6 +16531,74 @@ function walk(node, flow, context) {
   }
   // Any other element: its text, in place.
   walkChildren(node.children, flow, inner);
+}
+
+// The text of a pre as it stands: line breaks and indentation kept, a <br> a
+// line break, what DROPPED names gone. The newline right after <pre> is the
+// markup's, as a browser reads it; trailing blank lines are not code.
+function preText(node) {
+  const read = (current) => {
+    if (current.type === 'text') return current.value;
+    if (DROPPED.has(current.name)) return '';
+    if (current.name === 'br') return '\n';
+    return current.children.map(read).join('');
+  };
+  return node.children.map(read).join('')
+    .replace(/\r\n?/gu, '\n')
+    .replace(/\u00a0/gu, ' ')
+    .replace(/^\n/u, '')
+    .replace(/\s+$/u, '');
+}
+
+// A simple table: thead, tbody, tfoot and rows straight in the table, cells
+// th and td; a cell's content is inline leaves, its paragraphs and list items
+// lines of it. colspan and rowspan are not read: a cell is one cell.
+function readTable(node, context) {
+  const table = {type: 'table', caption: [], rows: []};
+  const readRow = (row, head) => {
+    const cells = [];
+    for (const cell of row.children) {
+      if (cell.type !== 'element' || (cell.name !== 'td' && cell.name !== 'th')) continue;
+      const flow = new Flow('item');
+      walkChildren(cell.children, flow, {...context, marks: marksOf(cell, context.marks)});
+      flow.flush();
+      cells.push({header: cell.name === 'th', leaves: flatLeaves(flow.blocks)});
+    }
+    if (cells.length) table.rows.push({head, cells});
+  };
+  const readSection = (section, head) => {
+    for (const child of section.children) {
+      if (child.type === 'element' && child.name === 'tr') readRow(child, head);
+    }
+  };
+  for (const child of node.children) {
+    if (child.type !== 'element') continue;
+    if (child.name === 'caption') {
+      const flow = new Flow('item');
+      walkChildren(child.children, flow, context);
+      flow.flush();
+      table.caption = flatLeaves(flow.blocks);
+    } else if (child.name === 'thead') readSection(child, true);
+    else if (child.name === 'tbody' || child.name === 'tfoot') readSection(child, false);
+    else if (child.name === 'tr') readRow(child, false);
+  }
+  return table;
+}
+
+// An item's parts as one line of leaves: a nested list's items are lines too.
+function flatLeaves(parts) {
+  const out = [];
+  const add = (leaves) => {
+    if (!leaves.length) return;
+    if (out.length) out.push({kind: 'br', strong: false, em: false, href: null});
+    out.push(...leaves);
+  };
+  const visit = (part) => {
+    if (part.type === 'inline') add(part.leaves);
+    else for (const item of part.items) item.children.forEach(visit);
+  };
+  parts.forEach(visit);
+  return out;
 }
 
 function readItem(node, context) {
@@ -15931,6 +16744,13 @@ function tidyBlocks(blocks, mode) {
       else if (mode === 'editor') tidy = {type: 'blockquote', blocks: [{type: 'p', leaves: [{kind: 'br', strong: false, em: false, href: null}]}]};
     } else if (LISTS.has(block.type)) {
       tidy = tidyList(block, mode);
+    } else if (block.type === 'pre') {
+      if (block.text.trim()) tidy = {type: 'pre', text: block.text};
+    } else if (block.type === 'table') {
+      // A row with no text in any cell is not kept, as an empty paragraph is not.
+      const rows = block.rows.map((row) => ({head: row.head, cells: row.cells.map((cell) => ({header: cell.header, leaves: tidyLeaves(cell.leaves, 'value')}))}))
+        .filter((row) => row.cells.some((cell) => hasText(cell.leaves)));
+      if (rows.length) tidy = {type: 'table', caption: tidyLeaves(block.caption, 'value'), rows};
     } else {
       const leaves = tidyLeaves(block.leaves, mode);
       if (mode === 'value') {
@@ -15954,9 +16774,10 @@ function tidyBlocks(blocks, mode) {
  * mode "editor": what the editing surface holds -- an empty block keeps a
  *   <br> so the caret has a line, breaks the person typed stay.
  */
-function cleanTree(tree, {mode = 'value'} = {}) {
+function cleanTree(tree, {mode = 'value', profile = 'html'} = {}) {
+  if (!RICH_TEXT_PROFILES.includes(profile)) throw new TypeError(`rich_text_profile_unknown: ${profile}`);
   const flow = new Flow('flow');
-  walkChildren(tree.children ?? [], flow, {marks: {}, href: null, pre: false});
+  walkChildren(tree.children ?? [], flow, {marks: {}, href: null, pre: false, paste: profile === 'paste'});
   flow.flush();
   const blocks = tidyBlocks(flow.blocks, mode);
   if (mode === 'editor' && !blocks.length) return [{type: 'p', leaves: [{kind: 'br', strong: false, em: false, href: null}]}];
@@ -16004,6 +16825,18 @@ function serialize(blocks) {
   return blocks.map((block) => {
     if (block.type === 'blockquote') return `<blockquote>${serialize(block.blocks)}</blockquote>`;
     if (LISTS.has(block.type)) return writeList(block);
+    // The paste profile's blocks in html@1 terms: never a pre or a table.
+    if (block.type === 'pre') {
+      const leaves = block.text.split('\n').flatMap((line, index) => [
+        ...(index ? [{kind: 'br', strong: false, em: false, href: null}] : []),
+        {kind: 'text', value: line.replace(/[\t\f]/gu, ' '), strong: false, em: false, href: null},
+      ]);
+      return `<p>${writeLeaves(tidyLeaves(leaves, 'value'))}</p>`;
+    }
+    if (block.type === 'table') {
+      const cells = [{leaves: block.caption}, ...block.rows.flatMap((row) => row.cells)];
+      return cells.filter((cell) => hasText(cell.leaves)).map((cell) => `<p>${writeLeaves(cell.leaves)}</p>`).join('');
+    }
     return `<${block.type}>${writeLeaves(block.leaves)}</${block.type}>`;
   }).join('');
 }
@@ -16073,63 +16906,68 @@ function richTextFromPlainText(text, {mode = 'value'} = {}) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   BUILTIN_EDITOR_MANIFESTS: () => (/* reexport safe */ _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_EDITOR_MANIFESTS),
-/* harmony export */   BUILTIN_FIELD_KINDS: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_6__.BUILTIN_FIELD_KINDS),
+/* harmony export */   BUILTIN_FIELD_KINDS: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_7__.BUILTIN_FIELD_KINDS),
 /* harmony export */   BUILTIN_PORT_MANIFESTS: () => (/* reexport safe */ _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_PORT_MANIFESTS),
 /* harmony export */   BUILTIN_TYPE_MANIFESTS: () => (/* reexport safe */ _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_TYPE_MANIFESTS),
 /* harmony export */   Composition: () => (/* binding */ Composition),
-/* harmony export */   FRAGMENT_DESCRIPTOR_SCHEMA: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_11__.FRAGMENT_DESCRIPTOR_SCHEMA),
-/* harmony export */   INLINE_MARKS: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_9__.INLINE_MARKS),
-/* harmony export */   Recipe: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_7__.Recipe),
-/* harmony export */   VALUE_TYPES: () => (/* reexport safe */ _routing_mjs__WEBPACK_IMPORTED_MODULE_10__.VALUE_TYPES),
-/* harmony export */   applyFieldValue: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_6__.applyFieldValue),
-/* harmony export */   checkFragmentDescriptor: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_11__.checkFragmentDescriptor),
-/* harmony export */   checkPortValue: () => (/* reexport safe */ _routing_mjs__WEBPACK_IMPORTED_MODULE_10__.checkPortValue),
+/* harmony export */   EDITOR_FIELD_WORDS: () => (/* reexport safe */ _editor_words_mjs__WEBPACK_IMPORTED_MODULE_1__.EDITOR_FIELD_WORDS),
+/* harmony export */   EDITOR_WORDS_OWNER: () => (/* reexport safe */ _editor_words_mjs__WEBPACK_IMPORTED_MODULE_1__.EDITOR_WORDS_OWNER),
+/* harmony export */   FRAGMENT_DESCRIPTOR_SCHEMA: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_12__.FRAGMENT_DESCRIPTOR_SCHEMA),
+/* harmony export */   INLINE_MARKS: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_10__.INLINE_MARKS),
+/* harmony export */   Recipe: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_8__.Recipe),
+/* harmony export */   VALUE_TYPES: () => (/* reexport safe */ _routing_mjs__WEBPACK_IMPORTED_MODULE_11__.VALUE_TYPES),
+/* harmony export */   applyFieldValue: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_7__.applyFieldValue),
+/* harmony export */   checkFragmentDescriptor: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_12__.checkFragmentDescriptor),
+/* harmony export */   checkPortValue: () => (/* reexport safe */ _routing_mjs__WEBPACK_IMPORTED_MODULE_11__.checkPortValue),
 /* harmony export */   compositionTypeFromSmartManifest: () => (/* binding */ compositionTypeFromSmartManifest),
-/* harmony export */   createPortRegistry: () => (/* reexport safe */ _routing_mjs__WEBPACK_IMPORTED_MODULE_10__.createPortRegistry),
+/* harmony export */   createPortRegistry: () => (/* reexport safe */ _routing_mjs__WEBPACK_IMPORTED_MODULE_11__.createPortRegistry),
 /* harmony export */   createRegistry: () => (/* binding */ createRegistry),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
-/* harmony export */   defineCompositionScope: () => (/* reexport safe */ _routing_mjs__WEBPACK_IMPORTED_MODULE_10__.defineCompositionScope),
-/* harmony export */   defineFragmentBoundary: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_11__.defineFragmentBoundary),
-/* harmony export */   definePageHost: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_11__.definePageHost),
-/* harmony export */   describeRegions: () => (/* reexport safe */ _regions_mjs__WEBPACK_IMPORTED_MODULE_8__.describeRegions),
+/* harmony export */   defineCompositionScope: () => (/* reexport safe */ _routing_mjs__WEBPACK_IMPORTED_MODULE_11__.defineCompositionScope),
+/* harmony export */   defineFragmentBoundary: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_12__.defineFragmentBoundary),
+/* harmony export */   definePageHost: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_12__.definePageHost),
+/* harmony export */   describeRegions: () => (/* reexport safe */ _regions_mjs__WEBPACK_IMPORTED_MODULE_9__.describeRegions),
+/* harmony export */   editorFieldMessages: () => (/* reexport safe */ _editor_words_mjs__WEBPACK_IMPORTED_MODULE_1__.editorFieldMessages),
 /* harmony export */   extendRegistry: () => (/* binding */ extendRegistry),
-/* harmony export */   inlineText: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_9__.inlineText),
-/* harmony export */   marksIn: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_9__.marksIn),
+/* harmony export */   inlineText: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_10__.inlineText),
+/* harmony export */   marksIn: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_10__.marksIn),
 /* harmony export */   normalize: () => (/* binding */ normalize),
-/* harmony export */   normalizeInline: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_9__.normalizeInline),
-/* harmony export */   parseFieldSubmission: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_6__.parseFieldSubmission),
-/* harmony export */   parseRecipeJson: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_7__.parseRecipeJson),
-/* harmony export */   projectDocumentEditorFields: () => (/* reexport safe */ _editor_mjs__WEBPACK_IMPORTED_MODULE_5__.projectDocumentEditorFields),
-/* harmony export */   projectEditorFields: () => (/* reexport safe */ _editor_mjs__WEBPACK_IMPORTED_MODULE_5__.projectEditorFields),
-/* harmony export */   publishEffects: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_11__.publishEffects),
-/* harmony export */   recipeDigest: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_7__.recipeDigest),
-/* harmony export */   recipeNodeId: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_7__.recipeNodeId),
+/* harmony export */   normalizeInline: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_10__.normalizeInline),
+/* harmony export */   parseFieldSubmission: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_7__.parseFieldSubmission),
+/* harmony export */   parseRecipeJson: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_8__.parseRecipeJson),
+/* harmony export */   projectDocumentEditorFields: () => (/* reexport safe */ _editor_mjs__WEBPACK_IMPORTED_MODULE_6__.projectDocumentEditorFields),
+/* harmony export */   projectEditorFields: () => (/* reexport safe */ _editor_mjs__WEBPACK_IMPORTED_MODULE_6__.projectEditorFields),
+/* harmony export */   publishEffects: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_12__.publishEffects),
+/* harmony export */   recipeDigest: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_8__.recipeDigest),
+/* harmony export */   recipeNodeId: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_8__.recipeNodeId),
 /* harmony export */   render: () => (/* binding */ render),
-/* harmony export */   renderFieldFallback: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_6__.renderFieldFallback),
-/* harmony export */   replaceRange: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_9__.replaceRange),
-/* harmony export */   resolveFieldKind: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_6__.resolveFieldKind),
-/* harmony export */   resolveRecipe: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_7__.resolveRecipe),
-/* harmony export */   setLink: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_9__.setLink),
-/* harmony export */   stableStringify: () => (/* reexport safe */ _canonical_mjs__WEBPACK_IMPORTED_MODULE_3__.stableStringify),
+/* harmony export */   renderFieldFallback: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_7__.renderFieldFallback),
+/* harmony export */   replaceRange: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_10__.replaceRange),
+/* harmony export */   resolveFieldKind: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_7__.resolveFieldKind),
+/* harmony export */   resolveRecipe: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_8__.resolveRecipe),
+/* harmony export */   setLink: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_10__.setLink),
+/* harmony export */   stableStringify: () => (/* reexport safe */ _canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.stableStringify),
 /* harmony export */   startInlineEdit: () => (/* binding */ startInlineEdit),
-/* harmony export */   toggleMark: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_9__.toggleMark),
+/* harmony export */   toggleMark: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_10__.toggleMark),
 /* harmony export */   validate: () => (/* binding */ validate),
-/* harmony export */   validateEditorManifest: () => (/* reexport safe */ _editor_mjs__WEBPACK_IMPORTED_MODULE_5__.validateEditorManifest),
-/* harmony export */   validateFieldKinds: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_6__.validateFieldKinds),
-/* harmony export */   validateFieldValue: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_6__.validateFieldValue)
+/* harmony export */   validateEditorManifest: () => (/* reexport safe */ _editor_mjs__WEBPACK_IMPORTED_MODULE_6__.validateEditorManifest),
+/* harmony export */   validateFieldKinds: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_7__.validateFieldKinds),
+/* harmony export */   validateFieldValue: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_7__.validateFieldValue)
 /* harmony export */ });
 /* harmony import */ var _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("08e5033c490a");
-/* harmony import */ var _html_subset_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("e19611ff78cb");
-/* harmony import */ var _file_size_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("fb0bdf7719f0");
-/* harmony import */ var _canonical_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("6f489cc65b77");
-/* harmony import */ var _schema_name_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("ac24888e7d3e");
-/* harmony import */ var _editor_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("3765e2c966fd");
-/* harmony import */ var _fields_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("4e6fc63bed81");
-/* harmony import */ var _recipe_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("6770fb69bd04");
-/* harmony import */ var _regions_mjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("68efac8c1b57");
-/* harmony import */ var _inline_model_mjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("e66d878fb4f8");
-/* harmony import */ var _routing_mjs__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("4aea5d6d49c7");
-/* harmony import */ var _fragments_mjs__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("c2e3ed8498dc");
+/* harmony import */ var _editor_words_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("fe90f998a31d");
+/* harmony import */ var _html_subset_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e19611ff78cb");
+/* harmony import */ var _file_size_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("fb0bdf7719f0");
+/* harmony import */ var _canonical_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("6f489cc65b77");
+/* harmony import */ var _schema_name_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("ac24888e7d3e");
+/* harmony import */ var _editor_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("3765e2c966fd");
+/* harmony import */ var _fields_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("4e6fc63bed81");
+/* harmony import */ var _recipe_mjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("6770fb69bd04");
+/* harmony import */ var _regions_mjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("68efac8c1b57");
+/* harmony import */ var _inline_model_mjs__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("e66d878fb4f8");
+/* harmony import */ var _routing_mjs__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("4aea5d6d49c7");
+/* harmony import */ var _fragments_mjs__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("c2e3ed8498dc");
+
 
 
 
@@ -16183,7 +17021,7 @@ async function sha256(value) {
 }
 
 function pushUnknownFields(value, allowed, path, diagnostics) {
-  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_3__.isPlainObject)(value)) return;
+  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.isPlainObject)(value)) return;
   for (const key of Object.keys(value)) {
     if (!allowed.has(key)) diagnostics.push(diagnostic('unknown_field', `${path}.${key}`, `Unknown field ${key}`));
   }
@@ -16194,7 +17032,7 @@ function scanForbiddenKeys(value, path, diagnostics) {
     value.forEach((entry, index) => scanForbiddenKeys(entry, `${path}[${index}]`, diagnostics));
     return;
   }
-  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_3__.isPlainObject)(value)) return;
+  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.isPlainObject)(value)) return;
   for (const [key, entry] of Object.entries(value)) {
     const normalized = key.toLowerCase().replaceAll('-', '');
     if (FORBIDDEN_KEYS.has(normalized)) {
@@ -16205,7 +17043,7 @@ function scanForbiddenKeys(value, path, diagnostics) {
 }
 
 function validateExtensions(value, path, diagnostics, supported = new Set()) {
-  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_3__.isPlainObject)(value)) {
+  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.isPlainObject)(value)) {
     diagnostics.push(diagnostic('extensions_invalid', path, 'Extensions must be an object'));
     return;
   }
@@ -16213,7 +17051,7 @@ function validateExtensions(value, path, diagnostics, supported = new Set()) {
     if (!/^[a-z][a-z0-9.-]*:[a-z][a-z0-9._-]*$/u.test(key)) {
       diagnostics.push(diagnostic('extension_name_invalid', `${path}.${key}`, 'Extension keys must be namespaced'));
     }
-    if ((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_3__.isPlainObject)(value[key]) && value[key].required === true && !supported.has(key)) {
+    if ((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.isPlainObject)(value[key]) && value[key].required === true && !supported.has(key)) {
       diagnostics.push(diagnostic('extension_required_unknown', `${path}.${key}`, `Required extension ${key} is not supported`));
     }
   }
@@ -16241,7 +17079,7 @@ function validateJsonSchema(value, schema, path, diagnostics) {
   const types = Array.isArray(schema.type) ? schema.type : [schema.type];
   if (schema.type) {
     const actual = value === null ? 'null' : Array.isArray(value) ? 'array' : Number.isInteger(value) ? 'integer' : typeof value === 'number' ? 'number' : typeof value;
-    if (!types.includes(actual) && !(actual === 'integer' && types.includes('number')) && !(actual === 'object' && !(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_3__.isPlainObject)(value))) {
+    if (!types.includes(actual) && !(actual === 'integer' && types.includes('number')) && !(actual === 'object' && !(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.isPlainObject)(value))) {
       diagnostics.push(diagnostic('schema_type', path, `Expected ${types.join(' or ')}`));
       return;
     }
@@ -16258,10 +17096,10 @@ function validateJsonSchema(value, schema, path, diagnostics) {
   if (Array.isArray(value)) {
     if (schema.minItems !== undefined && value.length < schema.minItems) diagnostics.push(diagnostic('schema_min_items', path, 'Array has too few items'));
     if (schema.maxItems !== undefined && value.length > schema.maxItems) diagnostics.push(diagnostic('schema_max_items', path, 'Array has too many items'));
-    if (schema.uniqueItems && new Set(value.map(_canonical_mjs__WEBPACK_IMPORTED_MODULE_3__.stableStringify)).size !== value.length) diagnostics.push(diagnostic('schema_unique_items', path, 'Array items must be unique'));
+    if (schema.uniqueItems && new Set(value.map(_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.stableStringify)).size !== value.length) diagnostics.push(diagnostic('schema_unique_items', path, 'Array items must be unique'));
     if (schema.items) value.forEach((entry, index) => validateJsonSchema(entry, schema.items, `${path}[${index}]`, diagnostics));
   }
-  if ((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_3__.isPlainObject)(value)) {
+  if ((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.isPlainObject)(value)) {
     for (const key of schema.required || []) {
       if (!(key in value)) diagnostics.push(diagnostic('schema_required', `${path}.${key}`, `Required field ${key} is missing`));
     }
@@ -16300,7 +17138,7 @@ function validateInlineContent(value, path, diagnostics) {
 // Every inline content of a node, with its path: the link rule applies to all
 // of them, wherever a type keeps text.
 function inlineFields(node, path) {
-  const data = (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_3__.isPlainObject)(node.data) ? node.data : {};
+  const data = (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.isPlainObject)(node.data) ? node.data : {};
   const at = (key) => (Array.isArray(data[key]) ? [[data[key], `${path}.data.${key}`]] : []);
   switch (node.type) {
     case 'content.heading':
@@ -16331,7 +17169,7 @@ function inlineFields(node, path) {
 function validateContentRules(root, diagnostics) {
   let outlets = 0;
   const visit = (node, path, parentType) => {
-    if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_3__.isPlainObject)(node)) return;
+    if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.isPlainObject)(node)) return;
     for (const [content, contentPath] of inlineFields(node, path)) validateInlineContent(content, contentPath, diagnostics);
     if ((node.type === 'content.figure' || node.type === 'content.media') && typeof node.data?.src === 'string' && !validUrl(node.data.src)) {
       diagnostics.push(diagnostic('unsafe_url', `${path}.data.src`, 'Image source protocol is not allowed'));
@@ -16345,7 +17183,7 @@ function validateContentRules(root, diagnostics) {
       outlets += 1;
       if (outlets > 1) diagnostics.push(diagnostic('outlet_duplicate', path, 'A layout holds the page content in one place'));
     }
-    for (const [slotName, children] of Object.entries((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_3__.isPlainObject)(node.slots) ? node.slots : {})) {
+    for (const [slotName, children] of Object.entries((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.isPlainObject)(node.slots) ? node.slots : {})) {
       if (Array.isArray(children)) children.forEach((child, index) => visit(child, `${path}.slots.${slotName}[${index}]`, node.type));
     }
   };
@@ -16356,9 +17194,9 @@ let defaultPorts = null;
 
 function normalizePorts(ports) {
   if (ports?.elements instanceof Map) return ports;
-  if (Array.isArray(ports)) return (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_10__.createPortRegistry)(ports);
-  if (ports && Array.isArray(ports.manifests)) return (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_10__.createPortRegistry)(ports.manifests, { bindings: ports.bindings });
-  defaultPorts = defaultPorts || (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_10__.createPortRegistry)(_builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_PORT_MANIFESTS);
+  if (Array.isArray(ports)) return (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_11__.createPortRegistry)(ports);
+  if (ports && Array.isArray(ports.manifests)) return (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_11__.createPortRegistry)(ports.manifests, { bindings: ports.bindings });
+  defaultPorts = defaultPorts || (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_11__.createPortRegistry)(_builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_PORT_MANIFESTS);
   return defaultPorts;
 }
 
@@ -16371,9 +17209,9 @@ function createRegistry(manifests = _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.B
   const types = new Map();
   for (const manifest of manifests) {
     // Either form of the format name (schema-name.mjs).
-    if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_3__.isPlainObject)(manifest) || !(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_4__.isSchema)(manifest, 'simai.composition.type-manifest', 1)) throw new TypeError('composition_manifest_invalid');
+    if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.isPlainObject)(manifest) || !(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_5__.isSchema)(manifest, 'simai.composition.type-manifest', 1)) throw new TypeError('composition_manifest_invalid');
     if (types.has(manifest.type)) throw new TypeError(`composition_manifest_duplicate:${manifest.type}`);
-    types.set(manifest.type, (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_3__.canonical)(manifest));
+    types.set(manifest.type, (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.canonical)(manifest));
   }
   return { types, renderers: new Map(Object.entries(renderers)) };
 }
@@ -16415,7 +17253,7 @@ function compositionTypeFromSmartManifest(manifest) {
     }
     : undefined;
   return {
-    ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_4__.schemaFields)('simai.composition.type-manifest', 1),
+    ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_5__.schemaFields)('simai.composition.type-manifest', 1),
     type: declaration.type,
     version: manifest.version,
     category: 'smart',
@@ -16437,7 +17275,7 @@ function validate(document, registry = undefined, options = {}) {
   const diagnostics = [];
   const resolvedRegistry = normalizeRegistry(registry);
   const limits = { ...DEFAULT_LIMITS, ...(options.limits || {}) };
-  const supportedExtensions = new Set([_routing_mjs__WEBPACK_IMPORTED_MODULE_10__.ENDPOINT_EXTENSION, ...(options.supportedExtensions || [])]);
+  const supportedExtensions = new Set([_routing_mjs__WEBPACK_IMPORTED_MODULE_11__.ENDPOINT_EXTENSION, ...(options.supportedExtensions || [])]);
   let serialized;
   try {
     serialized = JSON.stringify(document);
@@ -16445,9 +17283,9 @@ function validate(document, registry = undefined, options = {}) {
     return { valid: false, diagnostics: [diagnostic('document_not_json', '$', 'Document must be JSON serializable')] };
   }
   if (new globalThis.TextEncoder().encode(serialized).byteLength > limits.maxDocumentBytes) diagnostics.push(diagnostic('document_too_large', '$', 'Document exceeds the byte limit'));
-  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_3__.isPlainObject)(document)) return { valid: false, diagnostics: [diagnostic('document_invalid', '$', 'Document must be an object')] };
+  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.isPlainObject)(document)) return { valid: false, diagnostics: [diagnostic('document_invalid', '$', 'Document must be an object')] };
   pushUnknownFields(document, DOCUMENT_FIELDS, '$', diagnostics);
-  if (!(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_4__.isSchema)(document, 'simai.composition.document', 1)) diagnostics.push(diagnostic('schema_unknown', '$.schema', `Expected ${DOCUMENT_SCHEMA}, or simai.composition.document with schema_version 1`));
+  if (!(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_5__.isSchema)(document, 'simai.composition.document', 1)) diagnostics.push(diagnostic('schema_unknown', '$.schema', `Expected ${DOCUMENT_SCHEMA}, or simai.composition.document with schema_version 1`));
   if (typeof document.id !== 'string' || !/^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,119}$/u.test(document.id)) diagnostics.push(diagnostic('document_id_invalid', '$.id', 'Document id is invalid'));
   if (!PROFILES.has(document.profile)) diagnostics.push(diagnostic('profile_unknown', '$.profile', 'Profile is not supported'));
   if (document.locale !== undefined && (typeof document.locale !== 'string' || !/^[a-zA-Z]{2,8}(?:-[a-zA-Z0-9]{1,8})*$/u.test(document.locale))) diagnostics.push(diagnostic('locale_invalid', '$.locale', 'Locale is invalid'));
@@ -16460,7 +17298,7 @@ function validate(document, registry = undefined, options = {}) {
     nodeCount += 1;
     if (nodeCount > limits.maxNodes) return;
     if (depth > limits.maxDepth) diagnostics.push(diagnostic('depth_limit', path, 'Composition is too deeply nested'));
-    if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_3__.isPlainObject)(node)) {
+    if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.isPlainObject)(node)) {
       diagnostics.push(diagnostic('node_invalid', path, 'Node must be an object'));
       return;
     }
@@ -16477,7 +17315,7 @@ function validate(document, registry = undefined, options = {}) {
     validateJsonSchema(node.data || {}, manifest.data_schema, `${path}.data`, diagnostics);
     validateJsonSchema(node.props || {}, manifest.props_schema, `${path}.props`, diagnostics);
     if (node.presentation !== undefined) {
-      if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_3__.isPlainObject)(node.presentation)) diagnostics.push(diagnostic('presentation_invalid', `${path}.presentation`, 'Presentation must be an object'));
+      if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.isPlainObject)(node.presentation)) diagnostics.push(diagnostic('presentation_invalid', `${path}.presentation`, 'Presentation must be an object'));
       else {
         pushUnknownFields(node.presentation, PRESENTATION_FIELDS, `${path}.presentation`, diagnostics);
         const contract = manifest.presentation || {};
@@ -16494,7 +17332,7 @@ function validate(document, registry = undefined, options = {}) {
       if (!Array.isArray(node.bindings)) diagnostics.push(diagnostic('bindings_invalid', `${path}.bindings`, 'Bindings must be an array'));
       else node.bindings.forEach((binding, index) => {
         const bindingPath = `${path}.bindings[${index}]`;
-        if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_3__.isPlainObject)(binding)) diagnostics.push(diagnostic('binding_invalid', bindingPath, 'Binding must be an object'));
+        if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.isPlainObject)(binding)) diagnostics.push(diagnostic('binding_invalid', bindingPath, 'Binding must be an object'));
         else {
           pushUnknownFields(binding, BINDING_FIELDS, bindingPath, diagnostics);
           for (const key of ['owner', 'ref', 'target']) if (typeof binding[key] !== 'string' || !binding[key]) diagnostics.push(diagnostic('binding_field_invalid', `${bindingPath}.${key}`, `${key} is required`));
@@ -16503,7 +17341,7 @@ function validate(document, registry = undefined, options = {}) {
       });
     }
     const slots = node.slots || {};
-    if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_3__.isPlainObject)(slots)) {
+    if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.isPlainObject)(slots)) {
       diagnostics.push(diagnostic('slots_invalid', `${path}.slots`, 'Slots must be an object'));
       return;
     }
@@ -16533,23 +17371,23 @@ function validate(document, registry = undefined, options = {}) {
   visit(document.root, '$.root', 1);
   if (nodeCount > limits.maxNodes) diagnostics.push(diagnostic('node_limit', '$.root', 'Composition has too many nodes'));
   else {
-    (0,_regions_mjs__WEBPACK_IMPORTED_MODULE_8__.validateRegionRules)(document.root, resolvedRegistry, diagnostics);
+    (0,_regions_mjs__WEBPACK_IMPORTED_MODULE_9__.validateRegionRules)(document.root, resolvedRegistry, diagnostics);
     validateContentRules(document.root, diagnostics);
-    (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_10__.resolveRoutes)(document.root, resolvedRegistry, normalizePorts(options.ports), diagnostics);
+    (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_11__.resolveRoutes)(document.root, resolvedRegistry, normalizePorts(options.ports), diagnostics);
   }
   return { valid: diagnostics.length === 0, diagnostics };
 }
 
 function collectDependencies(node, manifest, output) {
   for (const asset of manifest.assets || []) output.assets.add(asset);
-  for (const binding of node.bindings || []) output.bindings.set(`${binding.owner}:${binding.ref}:${binding.target}:${binding.revision || ''}`, (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_3__.canonical)(binding));
+  for (const binding of node.bindings || []) output.bindings.set(`${binding.owner}:${binding.ref}:${binding.target}:${binding.revision || ''}`, (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.canonical)(binding));
 }
 
 async function normalize(document, registry = undefined, options = {}) {
   const resolvedRegistry = normalizeRegistry(registry);
   const result = validate(document, resolvedRegistry, options);
   if (!result.valid) return { document: null, digest: null, dependencies: { assets: [], bindings: [] }, diagnostics: result.diagnostics };
-  const normalized = (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_3__.canonical)(JSON.parse(JSON.stringify(document)));
+  const normalized = (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.canonical)(JSON.parse(JSON.stringify(document)));
   const dependencies = { assets: new Set(), bindings: new Map() };
   const visit = (node) => {
     collectDependencies(node, resolvedRegistry.types.get(node.type), dependencies);
@@ -16558,10 +17396,10 @@ async function normalize(document, registry = undefined, options = {}) {
   visit(normalized.root);
   return {
     document: normalized,
-    digest: await sha256((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_3__.stableStringify)(normalized)),
+    digest: await sha256((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.stableStringify)(normalized)),
     dependencies: {
       assets: [...dependencies.assets].sort(),
-      bindings: [...dependencies.bindings.values()].sort((left, right) => (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_3__.stableStringify)(left).localeCompare((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_3__.stableStringify)(right))),
+      bindings: [...dependencies.bindings.values()].sort((left, right) => (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.stableStringify)(left).localeCompare((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.stableStringify)(right))),
     },
     diagnostics: [],
   };
@@ -16577,7 +17415,7 @@ function renderInline(content) {
     if (inline.type !== 'text') {
       // An atom draws its own element, its props escaped as text; anything
       // else (validation refuses it) draws nothing rather than "undefined".
-      const view = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_9__.inlineComponentView)(inline);
+      const view = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_10__.inlineComponentView)(inline);
       if (!view) return '';
       const attributes = view.attributes.map(([name, value]) => (value === '' ? ` ${name}` : ` ${name}="${escapeHtml(value)}"`)).join('');
       return `<${view.tag}${attributes}>${escapeHtml(view.text)}</${view.tag}>`;
@@ -16626,9 +17464,9 @@ function fileIcon(mime) {
 // Document's language.
 function renderFile(node, locale) {
   const { href, label, mime, size } = node.data;
-  const name = label || (0,_file_size_mjs__WEBPACK_IMPORTED_MODULE_2__.fileNameFromAddress)(href) || href;
+  const name = label || (0,_file_size_mjs__WEBPACK_IMPORTED_MODULE_3__.fileNameFromAddress)(href) || href;
   const type = mime ? ` type="${escapeHtml(mime)}"` : '';
-  const sizeText = Number.isInteger(size) ? (0,_file_size_mjs__WEBPACK_IMPORTED_MODULE_2__.formatFileSize)(size, (0,_file_size_mjs__WEBPACK_IMPORTED_MODULE_2__.fileSizeUnits)(locale), locale) : '';
+  const sizeText = Number.isInteger(size) ? (0,_file_size_mjs__WEBPACK_IMPORTED_MODULE_3__.formatFileSize)(size, (0,_file_size_mjs__WEBPACK_IMPORTED_MODULE_3__.fileSizeUnits)(locale), locale) : '';
   const sizePart = sizeText ? `<span class="sf-download-file__size sf-download-file-file-size">${escapeHtml(sizeText)}</span>` : '';
   return `<a class="sf-download-file" href="${escapeHtml(href)}" download${type}${id(node)}><span class="sf-download-file__body sf-download-file-wrap"><span class="sf-download-file__main sf-download-file-container"><i class="sf-download-file__icon sf-icon" aria-hidden="true">${fileIcon(mime)}</i><span class="sf-download-file__name sf-download-file-file-name">${escapeHtml(name)}</span></span>${sizePart}</span></a>`;
 }
@@ -16702,12 +17540,12 @@ const BUILTIN_RENDERERS = {
   'layout.regions': ({ node, slots }) => `<div class="sf-composition-regions" data-sf-composition-id="${escapeHtml(node.id)}"><div class="sf-composition-regions-grid">${slots.regions || ''}</div></div>`,
   'layout.region': ({ node, slots }) => {
     const props = node.props;
-    const element = _regions_mjs__WEBPACK_IMPORTED_MODULE_8__.REGION_ELEMENTS[props.landmark];
+    const element = _regions_mjs__WEBPACK_IMPORTED_MODULE_9__.REGION_ELEMENTS[props.landmark];
     const sticky = props.sticky === true ? ' data-sf-region-sticky=""' : '';
     const label = props.label !== undefined ? ` aria-label="${escapeHtml(props.label)}"` : '';
     return `<${element} class="sf-composition-region" data-sf-composition-id="${escapeHtml(node.id)}" data-sf-region="${escapeHtml(props.name)}" data-sf-region-placement="${escapeHtml(props.placement ?? 'block')}"${sticky}${label}>${slots.default || ''}</${element}>`;
   },
-  'layout.scope': ({ node, slots, routes }) => `<sf-composition-scope data-sf-composition-id="${escapeHtml(node.id)}" data-sf-routes="${escapeHtml((0,_routing_mjs__WEBPACK_IMPORTED_MODULE_10__.routesAttribute)(routes || []))}">${slots.default || ''}</sf-composition-scope>`,
+  'layout.scope': ({ node, slots, routes }) => `<sf-composition-scope data-sf-composition-id="${escapeHtml(node.id)}" data-sf-routes="${escapeHtml((0,_routing_mjs__WEBPACK_IMPORTED_MODULE_11__.routesAttribute)(routes || []))}">${slots.default || ''}</sf-composition-scope>`,
   'content.document': ({ node, slots }) => `<article${id(node)}>${node.data?.title ? `<h1>${escapeHtml(node.data.title)}</h1>` : ''}${slots.default || ''}</article>`,
   'content.list': ({ node, slots }) => {
     const ordered = node.props?.ordered === true;
@@ -16756,7 +17594,7 @@ const BUILTIN_RENDERERS = {
   'content.file': ({ node, locale }) => renderFile(node, locale),
   // Cleaned at render by the html@1 subset's one rule: no script, no style, no
   // attribute but a safe href survives.
-  'content.html': ({ node }) => `<div${id(node)}>${(0,_html_subset_mjs__WEBPACK_IMPORTED_MODULE_1__.sanitizeRichText)(node.data.markup)}</div>`,
+  'content.html': ({ node }) => `<div${id(node)}>${(0,_html_subset_mjs__WEBPACK_IMPORTED_MODULE_2__.sanitizeRichText)(node.data.markup)}</div>`,
   'content.outlet': ({ node, outlet }) => `<div data-sf-outlet=""${id(node)}>${outlet || ''}</div>`,
 };
 
@@ -16766,7 +17604,7 @@ async function render(document, context = {}) {
   if (!normalized.document) return { html: '', assets: [], hydration: [], diagnostics: normalized.diagnostics, digest: null };
   const diagnostics = [];
   const hydration = [];
-  const routes = (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_10__.resolveRoutes)(normalized.document.root, registry, normalizePorts(context.options?.ports), []);
+  const routes = (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_11__.resolveRoutes)(normalized.document.root, registry, normalizePorts(context.options?.ports), []);
   // The page's content for a layout's content.outlet: a structured-content
   // Document, rendered with the same registry; its assets and diagnostics
   // join the layout's.
@@ -16811,7 +17649,7 @@ async function render(document, context = {}) {
       return '';
     }
     if (node.type === 'layout.scope') hydration.push({ id: node.id, type: node.type, element: 'sf-composition-scope' });
-    return renderer({ node, slots, context, resolvedBindings, manifest, routes: routes.get(node.id), endpoint: (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_10__.endpointName)(node), outlet: node.type === 'content.outlet' ? outlet : undefined, locale: normalized.document.locale ?? 'en' });
+    return renderer({ node, slots, context, resolvedBindings, manifest, routes: routes.get(node.id), endpoint: (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_11__.endpointName)(node), outlet: node.type === 'content.outlet' ? outlet : undefined, locale: normalized.document.locale ?? 'en' });
   };
   const html = await renderNode(normalized.document.root);
   const assets = outletAssets.length ? [...new Set([...normalized.dependencies.assets, ...outletAssets])].sort() : normalized.dependencies.assets;
@@ -16820,47 +17658,50 @@ async function render(document, context = {}) {
 
 const Composition = Object.freeze({
   BUILTIN_EDITOR_MANIFESTS: _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_EDITOR_MANIFESTS,
-  BUILTIN_FIELD_KINDS: _fields_mjs__WEBPACK_IMPORTED_MODULE_6__.BUILTIN_FIELD_KINDS,
+  BUILTIN_FIELD_KINDS: _fields_mjs__WEBPACK_IMPORTED_MODULE_7__.BUILTIN_FIELD_KINDS,
   BUILTIN_PORT_MANIFESTS: _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_PORT_MANIFESTS,
-  Recipe: _recipe_mjs__WEBPACK_IMPORTED_MODULE_7__.Recipe,
-  applyFieldValue: _fields_mjs__WEBPACK_IMPORTED_MODULE_6__.applyFieldValue,
-  parseFieldSubmission: _fields_mjs__WEBPACK_IMPORTED_MODULE_6__.parseFieldSubmission,
-  renderFieldFallback: _fields_mjs__WEBPACK_IMPORTED_MODULE_6__.renderFieldFallback,
-  resolveFieldKind: _fields_mjs__WEBPACK_IMPORTED_MODULE_6__.resolveFieldKind,
-  validateFieldKinds: _fields_mjs__WEBPACK_IMPORTED_MODULE_6__.validateFieldKinds,
-  validateFieldValue: _fields_mjs__WEBPACK_IMPORTED_MODULE_6__.validateFieldValue,
-  VALUE_TYPES: _routing_mjs__WEBPACK_IMPORTED_MODULE_10__.VALUE_TYPES,
-  checkPortValue: _routing_mjs__WEBPACK_IMPORTED_MODULE_10__.checkPortValue,
-  checkFragmentDescriptor: _fragments_mjs__WEBPACK_IMPORTED_MODULE_11__.checkFragmentDescriptor,
-  FRAGMENT_DESCRIPTOR_SCHEMA: _fragments_mjs__WEBPACK_IMPORTED_MODULE_11__.FRAGMENT_DESCRIPTOR_SCHEMA,
-  publishEffects: _fragments_mjs__WEBPACK_IMPORTED_MODULE_11__.publishEffects,
-  createPortRegistry: _routing_mjs__WEBPACK_IMPORTED_MODULE_10__.createPortRegistry,
-  defineCompositionScope: _routing_mjs__WEBPACK_IMPORTED_MODULE_10__.defineCompositionScope,
+  EDITOR_FIELD_WORDS: _editor_words_mjs__WEBPACK_IMPORTED_MODULE_1__.EDITOR_FIELD_WORDS,
+  EDITOR_WORDS_OWNER: _editor_words_mjs__WEBPACK_IMPORTED_MODULE_1__.EDITOR_WORDS_OWNER,
+  Recipe: _recipe_mjs__WEBPACK_IMPORTED_MODULE_8__.Recipe,
+  applyFieldValue: _fields_mjs__WEBPACK_IMPORTED_MODULE_7__.applyFieldValue,
+  editorFieldMessages: _editor_words_mjs__WEBPACK_IMPORTED_MODULE_1__.editorFieldMessages,
+  parseFieldSubmission: _fields_mjs__WEBPACK_IMPORTED_MODULE_7__.parseFieldSubmission,
+  renderFieldFallback: _fields_mjs__WEBPACK_IMPORTED_MODULE_7__.renderFieldFallback,
+  resolveFieldKind: _fields_mjs__WEBPACK_IMPORTED_MODULE_7__.resolveFieldKind,
+  validateFieldKinds: _fields_mjs__WEBPACK_IMPORTED_MODULE_7__.validateFieldKinds,
+  validateFieldValue: _fields_mjs__WEBPACK_IMPORTED_MODULE_7__.validateFieldValue,
+  VALUE_TYPES: _routing_mjs__WEBPACK_IMPORTED_MODULE_11__.VALUE_TYPES,
+  checkPortValue: _routing_mjs__WEBPACK_IMPORTED_MODULE_11__.checkPortValue,
+  checkFragmentDescriptor: _fragments_mjs__WEBPACK_IMPORTED_MODULE_12__.checkFragmentDescriptor,
+  FRAGMENT_DESCRIPTOR_SCHEMA: _fragments_mjs__WEBPACK_IMPORTED_MODULE_12__.FRAGMENT_DESCRIPTOR_SCHEMA,
+  publishEffects: _fragments_mjs__WEBPACK_IMPORTED_MODULE_12__.publishEffects,
+  createPortRegistry: _routing_mjs__WEBPACK_IMPORTED_MODULE_11__.createPortRegistry,
+  defineCompositionScope: _routing_mjs__WEBPACK_IMPORTED_MODULE_11__.defineCompositionScope,
   startInlineEdit,
-  normalizeInline: _inline_model_mjs__WEBPACK_IMPORTED_MODULE_9__.normalizeInline,
-  inlineText: _inline_model_mjs__WEBPACK_IMPORTED_MODULE_9__.inlineText,
+  normalizeInline: _inline_model_mjs__WEBPACK_IMPORTED_MODULE_10__.normalizeInline,
+  inlineText: _inline_model_mjs__WEBPACK_IMPORTED_MODULE_10__.inlineText,
   BUILTIN_TYPE_MANIFESTS: _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_TYPE_MANIFESTS,
   createRegistry,
   extendRegistry,
   compositionTypeFromSmartManifest,
-  describeRegions: _regions_mjs__WEBPACK_IMPORTED_MODULE_8__.describeRegions,
+  describeRegions: _regions_mjs__WEBPACK_IMPORTED_MODULE_9__.describeRegions,
   normalize,
-  projectDocumentEditorFields: _editor_mjs__WEBPACK_IMPORTED_MODULE_5__.projectDocumentEditorFields,
-  projectEditorFields: _editor_mjs__WEBPACK_IMPORTED_MODULE_5__.projectEditorFields,
+  projectDocumentEditorFields: _editor_mjs__WEBPACK_IMPORTED_MODULE_6__.projectDocumentEditorFields,
+  projectEditorFields: _editor_mjs__WEBPACK_IMPORTED_MODULE_6__.projectEditorFields,
   render,
-  resolveRecipe: _recipe_mjs__WEBPACK_IMPORTED_MODULE_7__.resolveRecipe,
-  parseRecipeJson: _recipe_mjs__WEBPACK_IMPORTED_MODULE_7__.parseRecipeJson,
-  stableStringify: _canonical_mjs__WEBPACK_IMPORTED_MODULE_3__.stableStringify,
+  resolveRecipe: _recipe_mjs__WEBPACK_IMPORTED_MODULE_8__.resolveRecipe,
+  parseRecipeJson: _recipe_mjs__WEBPACK_IMPORTED_MODULE_8__.parseRecipeJson,
+  stableStringify: _canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.stableStringify,
   validate,
-  validateEditorManifest: _editor_mjs__WEBPACK_IMPORTED_MODULE_5__.validateEditorManifest,
+  validateEditorManifest: _editor_mjs__WEBPACK_IMPORTED_MODULE_6__.validateEditorManifest,
 });
 
 if (typeof globalThis !== 'undefined') {
   globalThis.SF = globalThis.SF || {};
   globalThis.SF.Composition = Composition;
-  (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_10__.defineCompositionScope)();
-  (0,_fragments_mjs__WEBPACK_IMPORTED_MODULE_11__.definePageHost)();
-  (0,_fragments_mjs__WEBPACK_IMPORTED_MODULE_11__.defineFragmentBoundary)();
+  (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_11__.defineCompositionScope)();
+  (0,_fragments_mjs__WEBPACK_IMPORTED_MODULE_12__.definePageHost)();
+  (0,_fragments_mjs__WEBPACK_IMPORTED_MODULE_12__.defineFragmentBoundary)();
 }
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Composition);

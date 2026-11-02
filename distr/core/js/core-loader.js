@@ -32,9 +32,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   initIconSubsetState: () => (/* binding */ initIconSubsetState),
 /* harmony export */   installIconSubsetRuntime: () => (/* binding */ installIconSubsetRuntime),
-/* harmony export */   normalizeIconFontLoadWeight: () => (/* binding */ normalizeIconFontLoadWeight)
+/* harmony export */   normalizeIconFontLoadWeight: () => (/* reexport safe */ _icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_1__.normalizeIconFontLoadWeight)
 /* harmony export */ });
 /* harmony import */ var _page_storage_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("cda569e6042b");
+/* harmony import */ var _icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("de1f3481c667");
+
 
 function initIconSubsetState(loader) {
   loader.iconFontReady = false;
@@ -55,21 +57,10 @@ function initIconSubsetState(loader) {
   loader.isSyncingStaticIconState = false;
   loader.staticIconDescriptorKeys = new WeakMap();
   return loader;
-}
-function normalizeIconFontLoadWeight(value = "400") {
-  const normalized = String(value || "").trim().replace(/\s+/g, " ");
-  const range = normalized.match(/^([1-9]00)\s+([1-9]00)$/);
+} // Re-exported: the weight a font loads at is shared with the boot-time
+// re-apply of a remembered subset (icon-subset-memory.js).
 
-  if (!range) {
-    return normalized || "400";
-  }
 
-  const start = Number(range[1]);
-  const end = Number(range[2]);
-  const minimum = Math.min(start, end);
-  const maximum = Math.max(start, end);
-  return String(Math.min(maximum, Math.max(minimum, 400)));
-}
 function installIconSubsetRuntime(SFLoaderPlugin, {
   safeSetItem,
   safeRemoveItem
@@ -93,7 +84,6 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
   const iconWeightClassMap = new Map([["sf-icon--weight-thin", "100"], ["sf-icon-thin", "100"], ["sf-icon--weight-extra-light", "200"], ["sf-icon-extra-light", "200"], ["sf-icon--weight-light", "300"], ["sf-icon-light", "300"], ["sf-icon--weight-regular", "400"], ["sf-icon-regular", "400"], ["sf-icon--weight-medium", "500"], ["sf-icon-medium", "500"], ["sf-icon--weight-semi-bold", "600"], ["sf-icon-semi-bold", "600"], ["sf-icon--weight-bold", "700"], ["sf-icon-bold", "700"]]);
   const defaultIconWeight = "400";
   const iconTypeClassMap = new Map([["sf-icon--rounded", "rounded"], ["sf-icon-rounded", "rounded"], ["sf-icon--sharp", "sharp"], ["sf-icon-shape", "sharp"]]);
-  const iconFamilyTypeMap = new Map([["material symbols outlined", "outlined"], ["material symbols rounded", "rounded"], ["material symbols sharp", "sharp"]]);
   const iconFallbackFontFiles = Object.freeze({
     outlined: {
       family: "Material Symbols Outlined",
@@ -1161,33 +1151,15 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
   };
 
   SFLoaderPlugin.prototype.getIconManifestFontFamily = function (manifest = {}) {
-    if (manifest.font_family) return String(manifest.font_family);
-    return `${(manifest.schema === "sf.icon_subset.v1" ? iconFallbackFontFiles[this.getIconManifestType(manifest)]?.family : manifest.family) || "Material Symbols Outlined"} Subset`;
+    return (0,_icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_1__.iconManifestFontFamily)(manifest);
   };
 
   SFLoaderPlugin.prototype.getIconManifestType = function (manifest = {}) {
-    const manifestType = String(manifest.type || (manifest.schema === "sf.icon_subset.v1" ? manifest.family : "") || "").trim().toLowerCase();
-
-    if (manifestType) {
-      return this.normalizeIconType(manifestType);
-    }
-
-    const familyKey = String(manifest.family || "").trim().toLowerCase();
-    return this.normalizeIconType(iconFamilyTypeMap.get(familyKey) || "outlined");
+    return this.normalizeIconType((0,_icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_1__.iconManifestType)(manifest));
   };
 
   SFLoaderPlugin.prototype.getIconSubsetSelector = function (manifest = {}) {
-    const type = this.getIconManifestType(manifest);
-
-    if (type === "rounded") {
-      return ".sf-icon:is(.sf-icon--rounded, .sf-icon-rounded)";
-    }
-
-    if (type === "sharp") {
-      return ".sf-icon:is(.sf-icon--sharp, .sf-icon-shape)";
-    }
-
-    return ".sf-icon:not(.sf-icon--rounded):not(.sf-icon-rounded):not(.sf-icon--sharp):not(.sf-icon-shape)";
+    return (0,_icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_1__.iconSubsetSelector)(this.getIconManifestType(manifest));
   };
 
   SFLoaderPlugin.prototype.getIconFallbackFontUrl = function (type = "") {
@@ -1288,37 +1260,18 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
   };
 
   SFLoaderPlugin.prototype.buildIconSubsetCssFromManifest = function (manifest = {}) {
-    const fonts = Array.isArray(manifest.fonts) ? manifest.fonts : [];
-
-    if (!fonts.length) {
-      return {
-        cssText: "",
-        family: "",
-        weights: []
-      };
-    }
-
-    const family = this.getIconManifestFontFamily(manifest);
-    const selector = this.getIconSubsetSelector(manifest);
-    const weights = new Set();
-    const fontFaces = fonts.filter(font => font?.url).map(font => {
-      const weight = font.weight || manifest.axes?.wght?.value || 400;
-      weights.add(String(weight));
-      return `@font-face {\n` + `  font-family: '${family}';\n` + `  src: url('${font.url}') format('woff2');\n` + `  font-style: normal;\n` + `  font-weight: ${weight};\n` + `  font-display: block;\n` + `}\n`;
-    }).join("\n");
-
-    if (!fontFaces) {
-      return {
-        cssText: "",
-        family,
-        weights: [...weights]
-      };
-    }
-
-    const cssText = fontFaces + `\n` + `${selector} {\n` + `  --sf-icon--font-family: '${family}';\n` + `  --sf-icon--font--weight: var(--sf-icon--weight, 400);\n` + `  font-feature-settings: 'liga';\n` + `  font-variation-settings: ` + `'FILL' var(--sf-icon--fill, 0), ` + `'wght' var(--sf-icon--weight, 400), ` + `'GRAD' var(--sf-icon--grade, 0), ` + `'opsz' var(--sf-icon--optical-size, 24);\n` + `}\n`;
-    return {
+    const {
       cssText,
-      weights: [...weights]
+      family,
+      weights
+    } = (0,_icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_1__.iconSubsetCssFromManifest)(manifest);
+    return cssText ? {
+      cssText,
+      weights
+    } : {
+      cssText: "",
+      family,
+      weights
     };
   };
 
@@ -1333,8 +1286,13 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
     if (!cssText) return false;
     const icons = Array.isArray(manifest.icons) ? manifest.icons : [];
     const type = this.getIconManifestType(manifest);
-    const prev = document.querySelector(`style[data-sf-icons-subset-family="${type}"]`);
-    const style = document.createElement("style");
+    let prev = document.querySelector(`style[data-sf-icons-subset-family="${type}"]`); // The core runtime already wrote this manifest's stylesheet at boot
+    // (icon-subset-memory.js): it is adopted as it stands, so its face, loaded
+    // or on its way, is the one the page keeps drawing with.
+
+    const adopted = options.fromCache && prev?.hasAttribute("data-sf-icons-remembered") && prev.getAttribute("data-sf-icons-subset-hash") === String(manifest.hash || "") && prev.getAttribute("data-sf-icons-subset") === icons.join(",") ? prev : null;
+    if (adopted) prev = null;
+    const style = adopted || document.createElement("style");
     style.setAttribute("data-sf-icons-subset", icons.join(","));
     style.setAttribute("data-sf-icons-subset-family", type);
 
@@ -1356,7 +1314,9 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
 
     let fontVerification;
 
-    if (prev && this.canPreloadIconFontFaces()) {
+    if (adopted) {
+      fontVerification = verify();
+    } else if (prev && this.canPreloadIconFontFaces()) {
       // A subset that already drew: load the grown face first, then swap.
       fontVerification = this.preloadIconFontFaces(cssText).then(preloaded => {
         style.textContent = preloaded ? preloaded.cssText : cssText;
@@ -1467,7 +1427,7 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
     const sampleText = icons.join(" ");
     await new Promise(resolve => requestAnimationFrame(resolve));
     const results = await Promise.all(fonts.map(font => {
-      const weight = normalizeIconFontLoadWeight(font.weight || manifest.axes?.wght?.value || defaultIconWeight);
+      const weight = (0,_icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_1__.normalizeIconFontLoadWeight)(font.weight || manifest.axes?.wght?.value || defaultIconWeight);
       return document.fonts.load(`${weight} 16px "${family}"`, sampleText);
     }));
     const loadedCount = results.reduce((sum, fontFaces) => sum + fontFaces.length, 0);
@@ -1594,7 +1554,7 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
     const results = await Promise.all(fontFaces.map(({
       family,
       weight
-    }) => document.fonts.load(`${normalizeIconFontLoadWeight(weight)} 16px "${family}"`, sampleText)));
+    }) => document.fonts.load(`${(0,_icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_1__.normalizeIconFontLoadWeight)(weight)} 16px "${family}"`, sampleText)));
     const loadedCount = results.reduce((sum, fontFaceList) => sum + fontFaceList.length, 0);
 
     if (!loadedCount) {
@@ -1608,14 +1568,29 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
     return true;
   };
 
+  SFLoaderPlugin.prototype.isIconSubsetRemembered = function () {
+    return (0,_icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_1__.isIconSubsetRemembered)(window.SF_BOOT_CONFIG);
+  };
+
   SFLoaderPlugin.prototype.restoreIconManifestFromCache = function () {
     if (!this.isIconSubsetEnabled()) return false;
+
+    if (!this.isIconSubsetRemembered()) {
+      ["outlined", "rounded", "sharp"].forEach(type => safeRemoveItem?.(this.getIconManifestStorageKey(type)));
+      return false;
+    }
+
     const currentDefaultType = this.getIconSubsetRequestConfig().defaultType;
     const manifest = this.getStoredIconManifest(currentDefaultType);
-    if (!manifest) return false;
+    if (!manifest) return false; // Only a manifest whose font files are on the configured subset host,
+    // with plain icon names, is used again (icon-subset-memory.js).
+
     const manifestType = this.getIconManifestType(manifest);
 
-    if (manifestType !== currentDefaultType || !this.isManifestCoveredByConfiguredSubset(manifest)) {
+    if (manifestType !== currentDefaultType || !(0,_icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_1__.isRememberedIconSubsetUsable)(manifest, {
+      hostOrigin: (0,_icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_1__.iconSubsetHostOrigin)(this.getIconSubsetHost(), document.baseURI),
+      type: currentDefaultType
+    }) || !this.isManifestCoveredByConfiguredSubset(manifest)) {
       safeRemoveItem?.(this.getIconManifestStorageKey(currentDefaultType));
       this.setIconManifestForType(currentDefaultType, null);
       return false;
@@ -1860,7 +1835,10 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
       appliedStyle = style;
 
       if (manifest) {
-        safeSetItem?.(this.getIconManifestStorageKey(type), JSON.stringify(manifest));
+        if (this.isIconSubsetRemembered()) {
+          safeSetItem?.(this.getIconManifestStorageKey(type), JSON.stringify(manifest));
+        }
+
         this.setIconManifestForType(type, manifest);
         this.markManifestIconsAsLoaded(manifest);
 
@@ -5580,13 +5558,19 @@ SFLoaderPlugin.prototype.clearCache = function () {
   }
 
   safeRemoveItem('SF_MISSING_PLUGINS');
-};
+}; // The remembered icon subset is kept: it is not a list of this release's
+// plugins but the service's own answer, checked again on every use (its font
+// files on the subset host, its face loaded before it counts). Wiped with the
+// rest on every boot of a page that sets no cacheVersion -- most sites -- the
+// Loader asked the subset service again on every page, and the header's icon
+// buttons stood empty until it answered (effects.simai.io, 2026-11-02).
+
 
 SFLoaderPlugin.prototype.clearAllSfCache = function () {
   for (let i = (0,_page_storage_js__WEBPACK_IMPORTED_MODULE_2__["default"])().length - 1; i >= 0; i--) {
     const key = (0,_page_storage_js__WEBPACK_IMPORTED_MODULE_2__["default"])().key(i);
 
-    if (key && key.startsWith('SF_')) {
+    if (key && key.startsWith('SF_') && !key.startsWith('SF_ICON_SUBSET_MANIFEST')) {
       safeRemoveItem(key);
     }
   }
@@ -7377,48 +7361,6 @@ if (Array.isArray(window.SF_PENDING_COMPONENTS)) {
       console.warn('pending component register failed', n, err);
     }
   }
-}
-
-/***/ },
-
-/***/ "cda569e6042b"
-(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (/* binding */ pageStorage)
-/* harmony export */ });
-// The page's localStorage, or a store in memory where there is none to have.
-//
-// A sandboxed document without allow-same-origin -- a documentation example in
-// an iframe -- throws on the mere read of window.localStorage, and the Loader,
-// which reads it to cache its plugin lists, stopped there: nothing it found was
-// ever fetched (DEV, 2026-10-15). In memory the caches live as long as the
-// page, which is all such a page can keep anyway.
-const memory = new Map();
-const memoryStorage = {
-  get length() {
-    return memory.size;
-  },
-
-  key: index => [...memory.keys()][index] ?? null,
-  getItem: key => memory.has(key) ? memory.get(key) : null,
-  setItem: (key, value) => {
-    memory.set(String(key), String(value));
-  },
-  removeItem: key => {
-    memory.delete(String(key));
-  },
-  clear: () => memory.clear()
-};
-function pageStorage() {
-  try {
-    const storage = globalThis.localStorage;
-    if (storage) return storage;
-  } catch {// Sandboxed: fall through to memory.
-  }
-
-  return memoryStorage;
 }
 
 /***/ },

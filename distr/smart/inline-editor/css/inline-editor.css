@@ -76,7 +76,8 @@
     gap: 0.25rem;
     gap: var(--sf-space-1, 0.25rem);
   }
-  .sf-inline-editor-link[hidden] {
+  .sf-inline-editor-link[hidden],
+  .sf-inline-editor-toolbar[hidden] {
     display: none;
   }
   .sf-inline-editor-error {
