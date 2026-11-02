@@ -340,8 +340,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 
 
 const DEBOUNCE = 120;
-const OVERLAY_CONTAINER = '[data-sf-overlay-container], [data-sf-drawer-container]';
-const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'; // The port's three answers (no revision travels here, so nothing conflicts).
+const OVERLAY_CONTAINER = '[data-sf-overlay-container], [data-sf-drawer-container]'; // The port's three answers (no revision travels here, so nothing conflicts).
 
 const ANSWERS = ['applied', 'refused', 'unavailable']; // Which capability stands behind an intent (simai.search-port 1.0.0): an
 // intent of a capability the host did not announce is never raised.
@@ -649,10 +648,10 @@ class SfSearch extends SearchElement {
     const contained = this._contained;
     (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_4__.openLayer)(this, {
       kind: 'modal',
+      // The stack's default page lock (lockPageScroll), the one every layer takes.
       locksPage: !contained,
       trapsFocus: true,
       returnTo: this._returnTo,
-      lockPage: () => this.lockPage(),
       root: () => this.dialog(),
       focusIn: () => this.focusField(),
       onEscape: event => this.onEscape(event),
@@ -748,27 +747,6 @@ class SfSearch extends SearchElement {
   place(zIndex) {
     if (!this._portal) return;
     if (zIndex === '' || zIndex === undefined) this._portal.style.removeProperty('z-index');else this._portal.style.zIndex = String(zIndex);
-  } // The one page lock (§19.1), as sf-site-header and sf-drawer take it.
-
-
-  lockPage() {
-    const root = document.documentElement;
-    const body = document.body;
-    if (!root || !body) return () => {};
-    const gap = Math.max(0, window.innerWidth - root.clientWidth);
-    const kept = {
-      root: root.style.overflow,
-      body: body.style.overflow,
-      padding: body.style.paddingInlineEnd
-    };
-    root.style.overflow = 'hidden';
-    body.style.overflow = 'hidden';
-    if (gap > 0) body.style.paddingInlineEnd = `${gap}px`;
-    return () => {
-      root.style.overflow = kept.root;
-      body.style.overflow = kept.body;
-      body.style.paddingInlineEnd = kept.padding;
-    };
   }
 
   dialog() {
@@ -821,7 +799,7 @@ class SfSearch extends SearchElement {
   onTab(event) {
     if (!this.isOpen) return;
     const root = this.dialog();
-    const items = root ? Array.from(root.querySelectorAll(FOCUSABLE)).filter(element => element.getClientRects().length > 0) : [];
+    const items = (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_4__.focusablesIn)(root);
     if (!items.length) return;
     const first = items[0];
     const last = items.at(-1);
@@ -2221,7 +2199,7 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "e264eb73f918"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.search","tag":"sf-search","version":"1.1.1","kind":"leaf","settings":{"index":{"type":"string","default":""},"provider":{"type":"object","default":null},"for":{"type":"string","default":""},"shortcut":{"type":"string","default":"mod+k /"},"label":{"type":"string","default-from":"runtime.label"},"placeholder":{"type":"string","default-from":"runtime.placeholder"},"scopes":{"type":"boolean","default":true},"recent":{"type":"boolean","default":true},"recent-key":{"type":"string","default":"site"},"popular":{"type":"boolean","default":true},"actions":{"type":"boolean","default":true},"path":{"type":"boolean","default":true},"keys":{"type":"boolean","default":true}},"values":{},"events":{"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"navigate":{"carries":{"id":{"type":"string"},"href":{"type":"string"},"action":{"type":"string"},"query":{"type":"string"},"group":{"type":"string"}},"cancelable":true},"intent":{"carries":{"intent":{"type":"enum","values":["query.change","result.open","result.preview","action.run","recent.forget","recent.clear"]},"payload":{"type":"object"},"answer":{"type":"object"}}}},"actions":{"open":{},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"toggle":{}},"layer":{"kind":"modal","locks-page":true,"traps-focus":true},"port":{"id":"simai.search-port","version":"1.0.0","contract":"src/core/contracts/ports/simai.search-port/1.0.0/port.json"},"presentation":{"skeleton":{"late":[]}},"host-states":{"data-open":"boolean"},"css-variables":{"--sf-search-inline-size":{"type":"length","state":"open"},"--sf-search-inset-block-start":{"type":"length","state":"open"},"--sf-search-background":{"type":"color","state":"open"},"--sf-search-scrim-color":{"type":"color","state":"open"},"--sf-search-mark-color":{"type":"color","state":"open"},"--sf-search-radius":{"type":"length","state":"open"},"--sf-search-list-max-block-size":{"type":"length","state":"open"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.search","tag":"sf-search","version":"1.2.0","kind":"leaf","settings":{"index":{"type":"string","default":""},"provider":{"type":"object","default":null},"for":{"type":"string","default":""},"shortcut":{"type":"string","default":"mod+k /"},"label":{"type":"string","default-from":"runtime.label"},"placeholder":{"type":"string","default-from":"runtime.placeholder"},"scopes":{"type":"boolean","default":true},"recent":{"type":"boolean","default":true},"recent-key":{"type":"string","default":"site"},"popular":{"type":"boolean","default":true},"actions":{"type":"boolean","default":true},"path":{"type":"boolean","default":true},"keys":{"type":"boolean","default":true}},"values":{},"events":{"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"navigate":{"carries":{"id":{"type":"string"},"href":{"type":"string"},"action":{"type":"string"},"query":{"type":"string"},"group":{"type":"string"}},"cancelable":true},"intent":{"carries":{"intent":{"type":"enum","values":["query.change","result.open","result.preview","action.run","recent.forget","recent.clear"]},"payload":{"type":"object"},"answer":{"type":"object"}}}},"actions":{"open":{},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"toggle":{}},"layer":{"kind":"modal","locks-page":true,"traps-focus":true},"port":{"id":"simai.search-port","version":"1.0.0","contract":"src/core/contracts/ports/simai.search-port/1.0.0/port.json"},"presentation":{"skeleton":{"late":[]}},"host-states":{"data-open":"boolean"},"css-variables":{"--sf-search-inline-size":{"type":"length","state":"open"},"--sf-search-inset-block-start":{"type":"length","state":"open"},"--sf-search-background":{"type":"color","state":"open"},"--sf-search-scrim-color":{"type":"color","state":"open"},"--sf-search-mark-color":{"type":"color","state":"open"},"--sf-search-radius":{"type":"length","state":"open"},"--sf-search-list-max-block-size":{"type":"length","state":"open"}}}');
 
 /***/ },
 

@@ -11,18 +11,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5b7d7695b41b");
 /* harmony import */ var _core_js_position_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("116963e5e31b");
 /* harmony import */ var _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("bf0cea966575");
-/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("eaf281324a90");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("cd1ae22812c1");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("850094d8ffb2");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("c07ccd74494d");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("23401528a3d5");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("48eb1fd0f69f");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("18003344cff0");
+/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("eaf281324a90");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("cd1ae22812c1");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("850094d8ffb2");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("c07ccd74494d");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("23401528a3d5");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("48eb1fd0f69f");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_3__, _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_5__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_3__, _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_position_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_position_js__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_4__);
 // sf-help-mark: a «?» beside a label that opens a short explanation -- a
 // toggletip (owner-approved assignment, 2026-10-14). A press opens and closes
 // it, never a hover, so it works by touch and keyboard alike; the
@@ -46,6 +48,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+
 const position = () => globalThis.SF?.Position || (_core_js_position_js__WEBPACK_IMPORTED_MODULE_2___default());
 
 const PLACEMENTS = {
@@ -56,14 +59,14 @@ const PLACEMENTS = {
   end: 'inline-end'
 };
 let sequence = 0;
-const HelpMarkElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_5__, {
+const HelpMarkElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_6__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_7__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_8__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__
   },
   source: 'ru',
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_6__,
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_7__,
   actions: {
     open() {
       return this.runOpen();
@@ -81,17 +84,9 @@ class SfHelpMark extends HelpMarkElement {
     super();
     this._id = `sf-help-mark-${++sequence}`;
     this.isOpen = false;
-    this.announcement = '';
-
-    this._onOutside = event => {
-      if (!this.isOpen || event.composedPath().includes(this)) return;
-      this.runClose({
-        restoreFocus: false
-      });
-    }; // An open explanation owns Escape as the innermost open layer, and says so
+    this.announcement = ''; // An open explanation owns Escape as the innermost open layer, and says so
     // on the root through the shared mark, so a record panel listening in
     // capture before it stands back instead of closing with it.
-
 
     this._onKey = event => {
       if (!this.isOpen || event.key !== 'Escape' || event.defaultPrevented || !(0,_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_3__.isTopOpenSurface)(this)) return;
@@ -120,7 +115,7 @@ class SfHelpMark extends HelpMarkElement {
   }
 
   interactive() {
-    return Boolean(this.panel()?.querySelector('a[href], button, input, select, textarea, [tabindex]:not([tabindex="-1"])'));
+    return Boolean(this.panel()?.querySelector(_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_4__.FOCUSABLE));
   } // The template's press: a helper, not an action (the actions are open and
   // close).
 
@@ -158,9 +153,14 @@ class SfHelpMark extends HelpMarkElement {
       align: 'center',
       flip: true,
       shift: true
+    }); // A press outside closes it, heard through the layer stack's one listener
+    // while it is the top layer (§19.3).
+
+    (0,_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_3__.holdOpenSurfaceMark)(this, true, {
+      onOutsidePress: () => this.runClose({
+        restoreFocus: false
+      })
     });
-    (0,_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_3__.holdOpenSurfaceMark)(this, true);
-    document.addEventListener('pointerdown', this._onOutside, true);
     document.addEventListener('keydown', this._onKey, true); // Said once it is open: the text a screen reader hears is the text shown.
 
     this.announcement = '';
@@ -190,7 +190,6 @@ class SfHelpMark extends HelpMarkElement {
     this._position?.stop();
     this._position = null;
     (0,_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_3__.holdOpenSurfaceMark)(this, false);
-    document.removeEventListener('pointerdown', this._onOutside, true);
     document.removeEventListener('keydown', this._onKey, true);
     const panel = this.panel();
     if (panel?.matches?.(':popover-open')) panel.hidePopover();
@@ -226,7 +225,7 @@ class SfHelpMark extends HelpMarkElement {
   }
 
   template() {
-    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_4__.renderHelpMarkTemplate)(this.templateContext());
+    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_5__.renderHelpMarkTemplate)(this.templateContext());
   }
 
 }
@@ -288,6 +287,13 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "18003344cff0"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("layer-stack", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("layer-stack", 1).then(resolve, reject), { once: true })));
+
+/***/ },
+
 /***/ "2a080a730149"
 (module) {
 
@@ -326,7 +332,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-help-
 /***/ "cd1ae22812c1"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.help-mark","tag":"sf-help-mark","version":"1.1.6","kind":"leaf","settings":{"text":{"type":"string","default":""},"heading":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"},"size":{"type":"enum","values":["1/3","1/2","1"],"default":"1/2"},"placement":{"type":"enum","values":["auto","top","bottom","start","end"],"default":"auto"}},"values":{},"events":{"opened":{"carries":{}},"closed":{"carries":{}}},"actions":{"open":{"waits":true},"close":{}},"host-states":{"data-open":"boolean"},"css-variables":{"--sf-help-mark-background-color":{"type":"color","state":"open"},"--sf-help-mark-color":{"type":"color","state":"open"},"--sf-help-mark-border-color":{"type":"color","state":"open"},"--sf-help-mark-radius":{"type":"length","state":"default"},"--sf-help-mark-max-width":{"type":"length","state":"default"},"--sf-help-mark-padding-inline":{"type":"length","state":"default"},"--sf-help-mark-padding-block":{"type":"length","state":"default"},"--sf-help-mark-gap":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.help-mark","tag":"sf-help-mark","version":"1.1.7","kind":"leaf","settings":{"text":{"type":"string","default":""},"heading":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"},"size":{"type":"enum","values":["1/3","1/2","1"],"default":"1/2"},"placement":{"type":"enum","values":["auto","top","bottom","start","end"],"default":"auto"}},"values":{},"events":{"opened":{"carries":{}},"closed":{"carries":{}}},"actions":{"open":{"waits":true},"close":{}},"host-states":{"data-open":"boolean"},"css-variables":{"--sf-help-mark-background-color":{"type":"color","state":"open"},"--sf-help-mark-color":{"type":"color","state":"open"},"--sf-help-mark-border-color":{"type":"color","state":"open"},"--sf-help-mark-radius":{"type":"length","state":"default"},"--sf-help-mark-max-width":{"type":"length","state":"default"},"--sf-help-mark-padding-inline":{"type":"length","state":"default"},"--sf-help-mark-padding-block":{"type":"length","state":"default"},"--sf-help-mark-gap":{"type":"length","state":"default"}}}');
 
 /***/ },
 

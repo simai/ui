@@ -60,7 +60,6 @@ const STEPS = {
   xl: '72rem'
 };
 const SLOTS = ['brand', 'nav', 'actions', 'tools', 'sheet'];
-const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 let sequence = 0;
 
 const applied = () => ({
@@ -218,10 +217,10 @@ class SfSiteHeader extends SiteHeaderElement {
     this.sfHostState('data-open', true);
     (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_2__.openLayer)(this, {
       kind: 'panel',
+      // The stack's default page lock (lockPageScroll), the one every layer takes.
       locksPage: true,
       trapsFocus: true,
       returnTo: this._returnTo,
-      lockPage: () => this.lockPage(),
       root: () => this.panel(),
       focusIn: () => this.focusFirst(),
       onEscape: event => this.onEscape(event),
@@ -293,34 +292,10 @@ class SfSiteHeader extends SiteHeaderElement {
     const header = this.header();
     if (!header) return;
     if (zIndex === '' || zIndex === undefined) header.style.removeProperty('z-index');else header.style.zIndex = String(zIndex);
-  } // The one page lock (§19.1): the stack takes it with the first layer that
-  // locks the page and gives it back with the last.
-
-
-  lockPage() {
-    const root = document.documentElement;
-    const body = document.body;
-    if (!root || !body) return () => {};
-    const gap = Math.max(0, window.innerWidth - root.clientWidth);
-    const kept = {
-      root: root.style.overflow,
-      body: body.style.overflow,
-      padding: body.style.paddingInlineEnd
-    };
-    root.style.overflow = 'hidden';
-    body.style.overflow = 'hidden';
-    if (gap > 0) body.style.paddingInlineEnd = `${gap}px`;
-    return () => {
-      root.style.overflow = kept.root;
-      body.style.overflow = kept.body;
-      body.style.paddingInlineEnd = kept.padding;
-    };
   }
 
   focusable() {
-    const panel = this.panel();
-    if (!panel) return [];
-    return Array.from(panel.querySelectorAll(FOCUSABLE)).filter(element => element.getClientRects().length > 0);
+    return (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_2__.focusablesIn)(this.panel());
   } // Focus on open: the current page's link (the last one, as the nav comes
   // before a documentation tree in the sheet slot), else the first link, else
   // the close button.
@@ -527,7 +502,7 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "52c9a0720bbf"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.site-header","tag":"sf-site-header","version":"1.2.1","kind":"leaf","settings":{"collapse":{"type":"enum","values":["none","sm","md","lg","xl","always"],"default":"lg"},"sticky":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1"],"default":"1"},"navigation-align":{"type":"enum","values":["start","center"],"default":"start"},"label":{"type":"string","default-from":"runtime.label"},"menu-label":{"type":"string","default-from":"runtime.menu-label"},"close-label":{"type":"string","default-from":"runtime.close-label"}},"values":{},"events":{"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}}},"actions":{"open":{},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"toggle":{}},"layer":{"kind":"panel","locks-page":true,"traps-focus":true},"host-states":{"data-open":"boolean","data-collapsed":"boolean"},"css-variables":{"--sf-site-header-background":{"type":"color","state":"default"},"--sf-site-header-color":{"type":"color","state":"default"},"--sf-site-header-border-color":{"type":"color","state":"default"},"--sf-site-header-block-size":{"type":"length","state":"default"},"--sf-site-header-gap":{"type":"length","state":"default"},"--sf-site-header-tools-gap":{"type":"length","state":"default"},"--sf-site-header-brand-size":{"type":"length","state":"default"},"--sf-site-header-sheet-inline-size":{"type":"length","state":"open"},"--sf-site-header-z-index":{"type":"number","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.site-header","tag":"sf-site-header","version":"1.2.2","kind":"leaf","settings":{"collapse":{"type":"enum","values":["none","sm","md","lg","xl","always"],"default":"lg"},"sticky":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1"],"default":"1"},"navigation-align":{"type":"enum","values":["start","center"],"default":"start"},"label":{"type":"string","default-from":"runtime.label"},"menu-label":{"type":"string","default-from":"runtime.menu-label"},"close-label":{"type":"string","default-from":"runtime.close-label"}},"values":{},"events":{"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}}},"actions":{"open":{},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"toggle":{}},"layer":{"kind":"panel","locks-page":true,"traps-focus":true},"host-states":{"data-open":"boolean","data-collapsed":"boolean"},"css-variables":{"--sf-site-header-background":{"type":"color","state":"default"},"--sf-site-header-color":{"type":"color","state":"default"},"--sf-site-header-border-color":{"type":"color","state":"default"},"--sf-site-header-block-size":{"type":"length","state":"default"},"--sf-site-header-gap":{"type":"length","state":"default"},"--sf-site-header-tools-gap":{"type":"length","state":"default"},"--sf-site-header-brand-size":{"type":"length","state":"default"},"--sf-site-header-sheet-inline-size":{"type":"length","state":"open"},"--sf-site-header-z-index":{"type":"number","state":"default"}}}');
 
 /***/ },
 

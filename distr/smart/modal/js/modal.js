@@ -247,64 +247,6 @@ function scheduleModalClose(getRoot, finalize, view = window) {
 
 /***/ },
 
-/***/ "ed3ae3576d0a"
-(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   lockModalScroll: () => (/* binding */ lockModalScroll),
-/* harmony export */   unlockModalScroll: () => (/* binding */ unlockModalScroll)
-/* harmony export */ });
-// One lease is held by the first visible layer in the shared Modal stack.
-// Restore only changes that this lease owns, not pre-existing page styling.
-function lockModalScroll(preserveScrollGap = true) {
-  const docEl = document.documentElement;
-  const body = document.body;
-  if (!docEl || !body) return null;
-  const gap = Math.max(0, window.innerWidth - docEl.clientWidth);
-  const padding = parseFloat(window.getComputedStyle(body).paddingInlineEnd) || 0;
-  const saved = {
-    docEl,
-    body,
-    htmlLocked: docEl.classList.contains('overflow-hidden'),
-    bodyLocked: body.classList.contains('overflow-hidden'),
-    bodyPaddingInlineEnd: body.style.getPropertyValue('padding-inline-end'),
-    paddingPriority: body.style.getPropertyPriority('padding-inline-end'),
-    appliedPadding: null
-  };
-  docEl.classList.add('overflow-hidden');
-  body.classList.add('overflow-hidden');
-
-  if (preserveScrollGap && gap > 0) {
-    body.style.setProperty('padding-inline-end', `${padding + gap}px`, saved.paddingPriority);
-    saved.appliedPadding = body.style.getPropertyValue('padding-inline-end');
-  }
-
-  return saved;
-}
-
-function unlockModalScroll(saved) {
-  if (!saved) return;
-  const {
-    docEl,
-    body
-  } = saved;
-  if (!saved.htmlLocked) docEl.classList.remove('overflow-hidden');
-  if (!saved.bodyLocked) body.classList.remove('overflow-hidden');
-
-  if (saved.appliedPadding !== null && body.style.getPropertyValue('padding-inline-end') === saved.appliedPadding && body.style.getPropertyPriority('padding-inline-end') === saved.paddingPriority) {
-    if (saved.bodyPaddingInlineEnd) {
-      body.style.setProperty('padding-inline-end', saved.bodyPaddingInlineEnd, saved.paddingPriority);
-    } else {
-      body.style.removeProperty('padding-inline-end');
-    }
-  }
-}
-
-
-
-/***/ },
-
 /***/ "93025a68d8ab"
 (module, __webpack_exports__, __webpack_require__) {
 
@@ -364,18 +306,18 @@ function updateModalLayers() {
 // page stays scrollable while it is open.
 
 
-const locksPage = modal => !modal.inContainer;
+const locksPage = modal => !modal.inContainer; // The page lock is the stack's default one (lockPageScroll), which is the
+// lock this file's _scroll.js held before: the class, the page's own padding
+// plus the gap, and only what it set given back.
 
-function addModalLayer(modal, owner) {
+
+function addModalLayer(modal) {
   if ((0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_1__.hasLayer)(modal)) return;
   (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_1__.openLayer)(modal, {
     kind: 'modal',
     locksPage: locksPage(modal),
+    preserveScrollGap: modal.preserveScrollGap !== false,
     trapsFocus: true,
-    lockPage: () => {
-      owner.lockPage(modal.preserveScrollGap);
-      return () => owner.unlockPage();
-    },
     returnTo: modal._lastActive ?? modal.lastActive ?? null,
     root: () => modalRoot(modal),
     focusIn: () => modal.focusFirst?.(),
@@ -644,24 +586,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _component_modal_js_focus__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("c8d66dd2c299");
 /* harmony import */ var _component_modal_js_closing__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("3f3a6e2680d5");
 /* harmony import */ var _component_modal_js_motion__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("201fd0b17b8b");
-/* harmony import */ var _component_modal_js_scroll__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("ed3ae3576d0a");
-/* harmony import */ var _component_spinner_js_spinner_draw__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("50d2a204ba4c");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("afc57055d2cc");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("85cdf307b188");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("66be591d2d06");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("be0bc1a67e65");
-/* harmony import */ var _component_modal_js_stack__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__("93025a68d8ab");
-/* harmony import */ var _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__("18003344cff0");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_2__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_4__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__, _component_modal_js_stack__WEBPACK_IMPORTED_MODULE_16__, _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_17__]);
-([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_2__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_4__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__, _component_modal_js_stack__WEBPACK_IMPORTED_MODULE_16__, _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_17__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _component_spinner_js_spinner_draw__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("50d2a204ba4c");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("afc57055d2cc");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("85cdf307b188");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("66be591d2d06");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("be0bc1a67e65");
+/* harmony import */ var _component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("93025a68d8ab");
+/* harmony import */ var _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__("18003344cff0");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_2__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_4__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__, _component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__, _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_16__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_2__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_4__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__, _component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__, _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_16__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var _core_js_instance_path__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_core_js_instance_path__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_17___default = /*#__PURE__*/__webpack_require__.n(_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_17__);
-
+/* harmony import */ var _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_16___default = /*#__PURE__*/__webpack_require__.n(_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_16__);
 
 
 
@@ -688,18 +628,18 @@ const OVERLAY_CONTAINER = "[data-sf-overlay-container], [data-sf-drawer-containe
 // page's language), and the old names -- title, blur, hide, unclose, the
 // modal:* events, hide() and show() -- are dated aliases in aliases.json.
 
-const ModalElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_12__, {
+const ModalElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_11__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_14__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_15__
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_13__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_14__
   },
   source: "ru",
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_13__
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_12__
 }); // The public variables the manifest declares; a window drawn at the end of the
 // body carries their values from where its host stands (§19.1).
 
-const MODAL_VARIABLES = Object.keys(_component_json__WEBPACK_IMPORTED_MODULE_12__["css-variables"] || {}); // What retires without a new name (aliases.json rows with `to: null`): kept
+const MODAL_VARIABLES = Object.keys(_component_json__WEBPACK_IMPORTED_MODULE_11__["css-variables"] || {}); // What retires without a new name (aliases.json rows with `to: null`): kept
 // until the date, and each use is noted with it.
 
 function noteRetired(kind, from) {
@@ -709,8 +649,8 @@ function noteRetired(kind, from) {
     kind,
     from,
     to: null,
-    since: _aliases_json__WEBPACK_IMPORTED_MODULE_13__.since,
-    remove_after: _aliases_json__WEBPACK_IMPORTED_MODULE_13__.remove_after
+    since: _aliases_json__WEBPACK_IMPORTED_MODULE_12__.since,
+    remove_after: _aliases_json__WEBPACK_IMPORTED_MODULE_12__.remove_after
   });
 } // A lifecycle copy (modal:ready, modal:update) is still sent until its date; a
 // listener that reads it is a use (§4.1, §16.13).
@@ -777,17 +717,17 @@ class SfModal extends ModalElement {
   static defaultTrueAttributes = new Set(["overlay", "show-close", "show-footer", "close-on-esc", "close-on-overlay", "preserve-scroll-gap", "preload", "dismissible"]);
 
   static getTopModal() {
-    return (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_16__.getTopModalLayer)();
+    return (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__.getTopModalLayer)();
   } // Whether this modal is the top layer of the document: a drawer or a list
   // opened from it stands above it and takes the keys while it does.
 
 
   static isTopModal(modal) {
-    return (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_16__.isTopModalLayer)(modal);
+    return (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__.isTopModalLayer)(modal);
   }
 
   static getStackIndex(modal) {
-    return (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_16__.getModalLayerIndex)(modal);
+    return (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__.getModalLayerIndex)(modal);
   }
 
   static addToStack(modal) {
@@ -801,7 +741,7 @@ class SfModal extends ModalElement {
     // and the document scroll lock.
 
     if (!modal.hiddenState) {
-      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_16__.addModalLayer)(modal, SfModal);
+      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__.addModalLayer)(modal);
     }
   }
 
@@ -812,7 +752,7 @@ class SfModal extends ModalElement {
 
     SfModal.stack = SfModal.stack.filter(item => item !== modal);
     SfModal.openCount = SfModal.stack.length;
-    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_16__.removeModalLayer)(modal);
+    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__.removeModalLayer)(modal);
   }
 
   static bringToFront(modal) {
@@ -822,11 +762,11 @@ class SfModal extends ModalElement {
 
     SfModal.stack = SfModal.stack.filter(item => item !== modal);
     SfModal.stack.push(modal);
-    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_16__.raiseModalLayer)(modal);
+    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__.raiseModalLayer)(modal);
   }
 
   static updateStackStyles() {
-    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_16__.updateModalLayers)();
+    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__.updateModalLayers)();
   } // The manifest's settings, and the base's own template name.
 
 
@@ -949,8 +889,8 @@ class SfModal extends ModalElement {
         attribute: "unclose",
         from: "unclose",
         to: "dismissible",
-        since: _aliases_json__WEBPACK_IMPORTED_MODULE_13__.since,
-        remove_after: _aliases_json__WEBPACK_IMPORTED_MODULE_13__.remove_after
+        since: _aliases_json__WEBPACK_IMPORTED_MODULE_12__.since,
+        remove_after: _aliases_json__WEBPACK_IMPORTED_MODULE_12__.remove_after
       });
       return false;
     }
@@ -1082,7 +1022,7 @@ class SfModal extends ModalElement {
       return "";
     }
 
-    return (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_17__.layerZIndexAt)(this._stackIndex);
+    return (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_16__.layerZIndexAt)(this._stackIndex);
   }
 
   get remoteContent() {
@@ -1144,7 +1084,7 @@ class SfModal extends ModalElement {
 
   _loadingSpinnerNode() {
     if (!this._loadingSpinner) {
-      this._loadingSpinner = (0,_component_spinner_js_spinner_draw__WEBPACK_IMPORTED_MODULE_11__.createInlineSpinner)({
+      this._loadingSpinner = (0,_component_spinner_js_spinner_draw__WEBPACK_IMPORTED_MODULE_10__.createInlineSpinner)({
         className: "sf-modal-spinner"
       });
     }
@@ -1340,7 +1280,7 @@ class SfModal extends ModalElement {
     // declares, by name: a prefix would also carry what an outer window sets
     // on its own panel (--sf-modal-width) into a window opened from it.
 
-    (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_17__.carryLayerOrigin)(this._portalRoot, this, {
+    (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_16__.carryLayerOrigin)(this._portalRoot, this, {
       variables: MODAL_VARIABLES
     });
     this._renderTarget = this._portalRoot;
@@ -1442,7 +1382,7 @@ class SfModal extends ModalElement {
 
     if (!wasClosing) {
       this._lastActive = document.activeElement;
-      this._focusReturnAncestors = (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_16__.captureModalFocusAncestors)(this._lastActive);
+      this._focusReturnAncestors = (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__.captureModalFocusAncestors)(this._lastActive);
     }
 
     if (wasClosing) {
@@ -1640,9 +1580,9 @@ class SfModal extends ModalElement {
 
     if (this.hiddenState) {
       const wasTop = SfModal.isTopModal(this);
-      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_16__.removeModalLayer)(this);
+      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__.removeModalLayer)(this);
       this.applyStackPosition();
-      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_16__.restoreModalLayerFocus)(wasTop, this._lastActive, this._focusReturnAncestors);
+      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__.restoreModalLayerFocus)(wasTop, this._lastActive, this._focusReturnAncestors);
 
       if (root) {
         root.inert = true;
@@ -1654,7 +1594,7 @@ class SfModal extends ModalElement {
         root.setAttribute("aria-hidden", "false");
       }
 
-      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_16__.addModalLayer)(this, SfModal);
+      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__.addModalLayer)(this);
       SfModal.bringToFront(this);
       requestAnimationFrame(() => this.focusFirst());
     }
@@ -1693,7 +1633,7 @@ class SfModal extends ModalElement {
     }
 
     if (this.display !== "inline") {
-      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_16__.restoreModalLayerFocus)(wasTop, this._lastActive, this._focusReturnAncestors);
+      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__.restoreModalLayerFocus)(wasTop, this._lastActive, this._focusReturnAncestors);
     }
 
     this.requestComponentUpdate("after-close");
@@ -1779,7 +1719,7 @@ class SfModal extends ModalElement {
 
     this.applyStackPosition(); // Projection can replace the panel while an existing layer remains open.
 
-    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_16__.updateModalLayers)();
+    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__.updateModalLayers)();
 
     if (this.autoload && !this.openState && !this._hasAutoloaded) {
       this._hasAutoloaded = true;
@@ -2102,7 +2042,7 @@ class SfModal extends ModalElement {
     if (this.display !== "inline") this.returnSlotNodes();
     this._releaseClosingContent?.();
     this._releaseClosingContent = null;
-    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_16__.restoreModalLayerFocus)(wasTop, this._lastActive, this._focusReturnAncestors);
+    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__.restoreModalLayerFocus)(wasTop, this._lastActive, this._focusReturnAncestors);
   }
 
   clearPortal() {
@@ -2231,14 +2171,18 @@ class SfModal extends ModalElement {
       });
     });
     SfModal.globalBound = true;
-  }
+  } // Kept for code that calls them: the layer stack takes the page lock itself
+  // now, with its default lockPageScroll, while any layer that locks is open.
+
 
   static lockPage(preserveScrollGap = true) {
-    if (!SfModal.lockState) SfModal.lockState = (0,_component_modal_js_scroll__WEBPACK_IMPORTED_MODULE_10__.lockModalScroll)(preserveScrollGap);
+    if (!SfModal.lockState) SfModal.lockState = (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_16__.lockPageScroll)({
+      preserveScrollGap
+    });
   }
 
   static unlockPage() {
-    (0,_component_modal_js_scroll__WEBPACK_IMPORTED_MODULE_10__.unlockModalScroll)(SfModal.lockState);
+    SfModal.lockState?.();
     SfModal.lockState = null;
   }
 
@@ -2469,7 +2413,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-modal
 /***/ "afc57055d2cc"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.modal","tag":"sf-modal","version":"1.4.4","kind":"leaf","settings":{"modal-id":{"type":"id","default":""},"heading":{"type":"string","default-from":"runtime.title"},"text":{"type":"string","default":""},"autoload":{"type":"boolean","default":false},"minimizable":{"type":"boolean","default":false},"hide-modifier":{"type":"string","default":""},"overlay":{"type":"boolean","default":true},"show-header":{"type":"boolean","default":true},"show-close":{"type":"boolean","default":true},"show-footer":{"type":"boolean","default":true},"close-on-esc":{"type":"boolean","default":true},"close-on-overlay":{"type":"boolean","default":true},"preserve-scroll-gap":{"type":"boolean","default":true},"position":{"type":"enum","values":["center","left","right","inline-start","inline-end","top","bottom"],"default":"center"},"mode":{"type":"enum","values":["inline","ajax","iframe"],"default":"inline"},"display":{"type":"enum","values":["modal","inline"],"default":"modal"},"src":{"type":"string","default":""},"preload":{"type":"boolean","default":true},"fullscreen":{"type":"boolean","default":false},"width":{"type":"string","default":""},"height":{"type":"string","default":""},"backdrop-blur":{"type":"string","default":""},"blur-type":{"type":"enum","values":["none","small","medium","large"],"default":"medium"},"overlay-preset":{"type":"enum","values":["default","focus"],"default":"default"},"overlay-class":{"type":"string","default":""},"close-class":{"type":"string","default":""},"surface-class":{"type":"string","default":""},"surface-padding":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"header-class":{"type":"string","default":""},"body-class":{"type":"string","default":""},"content-class":{"type":"string","default":""},"footer-class":{"type":"string","default":""},"unsaved":{"type":"boolean","default":false},"dismissible":{"type":"boolean","default":true}},"values":{"open":{"type":"boolean","default":false,"reflect":true},"minimized":{"type":"boolean","default":false,"reflect":true}},"events":{"open":{"carries":{"modal-id":"string","phase":"string"},"cancelable":true},"opened":{"carries":{"modal-id":"string","phase":"string"}},"close":{"carries":{"modal-id":"string","phase":"string","reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"modal-id":"string","phase":"string","reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"accepted":"boolean"}},"minimize":{"carries":{"modal-id":"string","phase":"string"},"cancelable":true},"minimized":{"carries":{"modal-id":"string","phase":"string"}},"expand":{"carries":{"modal-id":"string","phase":"string"},"cancelable":true},"expanded":{"carries":{"modal-id":"string","phase":"string"}},"content-upload":{"carries":{"modal-id":"string","src":"string","remote":"object"},"own-verb":true},"content-uploaded":{"carries":{"modal-id":"string","src":"string","remote":"object"},"own-verb":true}},"actions":{"open":{"with":{"animate":{"type":"boolean","optional":true}},"emits":"open","x-answer":"asked by an assembly (ask, §19.4) it answers when the window closes, with value {accepted, reason, value}"},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"emits":"close"},"minimize":{"emits":"minimize"},"expand":{"emits":"expand"},"toggle":{},"reload-content":{},"confirm":{"with":{"value":{"type":"object","optional":true}}}},"layer":{"kind":"modal","locks-page":true,"traps-focus":true},"css-variables":{"--sf-modal-background-color":{"type":"color","state":"default"},"--sf-modal-border-color":{"type":"color","state":"default"},"--sf-modal-border-width":{"type":"length","state":"default"},"--sf-modal-radius":{"type":"length","state":"default"},"--sf-modal-padding-inline":{"type":"length","state":"default"},"--sf-modal-padding-block":{"type":"length","state":"default"},"--sf-modal-gap":{"type":"length","state":"default"},"--sf-modal-footer-gap":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.modal","tag":"sf-modal","version":"1.4.5","kind":"leaf","settings":{"modal-id":{"type":"id","default":""},"heading":{"type":"string","default-from":"runtime.title"},"text":{"type":"string","default":""},"autoload":{"type":"boolean","default":false},"minimizable":{"type":"boolean","default":false},"hide-modifier":{"type":"string","default":""},"overlay":{"type":"boolean","default":true},"show-header":{"type":"boolean","default":true},"show-close":{"type":"boolean","default":true},"show-footer":{"type":"boolean","default":true},"close-on-esc":{"type":"boolean","default":true},"close-on-overlay":{"type":"boolean","default":true},"preserve-scroll-gap":{"type":"boolean","default":true},"position":{"type":"enum","values":["center","left","right","inline-start","inline-end","top","bottom"],"default":"center"},"mode":{"type":"enum","values":["inline","ajax","iframe"],"default":"inline"},"display":{"type":"enum","values":["modal","inline"],"default":"modal"},"src":{"type":"string","default":""},"preload":{"type":"boolean","default":true},"fullscreen":{"type":"boolean","default":false},"width":{"type":"string","default":""},"height":{"type":"string","default":""},"backdrop-blur":{"type":"string","default":""},"blur-type":{"type":"enum","values":["none","small","medium","large"],"default":"medium"},"overlay-preset":{"type":"enum","values":["default","focus"],"default":"default"},"overlay-class":{"type":"string","default":""},"close-class":{"type":"string","default":""},"surface-class":{"type":"string","default":""},"surface-padding":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"header-class":{"type":"string","default":""},"body-class":{"type":"string","default":""},"content-class":{"type":"string","default":""},"footer-class":{"type":"string","default":""},"unsaved":{"type":"boolean","default":false},"dismissible":{"type":"boolean","default":true}},"values":{"open":{"type":"boolean","default":false,"reflect":true},"minimized":{"type":"boolean","default":false,"reflect":true}},"events":{"open":{"carries":{"modal-id":"string","phase":"string"},"cancelable":true},"opened":{"carries":{"modal-id":"string","phase":"string"}},"close":{"carries":{"modal-id":"string","phase":"string","reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"modal-id":"string","phase":"string","reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"accepted":"boolean"}},"minimize":{"carries":{"modal-id":"string","phase":"string"},"cancelable":true},"minimized":{"carries":{"modal-id":"string","phase":"string"}},"expand":{"carries":{"modal-id":"string","phase":"string"},"cancelable":true},"expanded":{"carries":{"modal-id":"string","phase":"string"}},"content-upload":{"carries":{"modal-id":"string","src":"string","remote":"object"},"own-verb":true},"content-uploaded":{"carries":{"modal-id":"string","src":"string","remote":"object"},"own-verb":true}},"actions":{"open":{"with":{"animate":{"type":"boolean","optional":true}},"emits":"open","x-answer":"asked by an assembly (ask, §19.4) it answers when the window closes, with value {accepted, reason, value}"},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"emits":"close"},"minimize":{"emits":"minimize"},"expand":{"emits":"expand"},"toggle":{},"reload-content":{},"confirm":{"with":{"value":{"type":"object","optional":true}}}},"layer":{"kind":"modal","locks-page":true,"traps-focus":true},"css-variables":{"--sf-modal-background-color":{"type":"color","state":"default"},"--sf-modal-border-color":{"type":"color","state":"default"},"--sf-modal-border-width":{"type":"length","state":"default"},"--sf-modal-radius":{"type":"length","state":"default"},"--sf-modal-padding-inline":{"type":"length","state":"default"},"--sf-modal-padding-block":{"type":"length","state":"default"},"--sf-modal-gap":{"type":"length","state":"default"},"--sf-modal-footer-gap":{"type":"length","state":"default"}}}');
 
 /***/ },
 

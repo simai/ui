@@ -87,15 +87,6 @@ class SfProfilePicker extends ProfilePickerElement {
         shared: false
       }
     };
-
-    this._onOutside = event => {
-      if (!this.state.open) return;
-      const path = event.composedPath();
-      if (path.includes(this) || path.includes(this.panel())) return;
-      this.close({
-        restoreFocus: false
-      });
-    };
   }
 
   static get props() {
@@ -225,11 +216,17 @@ class SfProfilePicker extends ProfilePickerElement {
       flip: true,
       shift: true,
       fitHeight: true
-    });
-    document.addEventListener('pointerdown', this._onOutside, true); // The open panel owns Escape: the root says so, and a drawer or record
-    // panel listening on the document stands back.
+    }); // The open panel owns Escape: the root says so, and a drawer or record
+    // panel listening on the document stands back. A press outside the picker
+    // and its panel closes it, heard through the layer stack's one listener
+    // while it is the top layer (§19.3).
 
-    (0,_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_3__.holdOpenSurfaceMark)(this, true);
+    (0,_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_3__.holdOpenSurfaceMark)(this, true, {
+      root: () => this.panel(),
+      onOutsidePress: () => this.close({
+        restoreFocus: false
+      })
+    });
     (panel.querySelector('.sf-profile-picker-row[aria-checked="true"]') ?? panel.querySelector('.sf-profile-picker-row'))?.focus({
       preventScroll: true
     });
@@ -250,7 +247,6 @@ class SfProfilePicker extends ProfilePickerElement {
     };
     this._position?.stop();
     this._position = null;
-    document.removeEventListener('pointerdown', this._onOutside, true);
     (0,_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_3__.holdOpenSurfaceMark)(this, false);
     const panel = this.panel();
     if (panel?.matches?.(':popover-open')) panel.hidePopover();
@@ -665,7 +661,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-profi
 /***/ "816c0ad0728a"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.profile-picker","tag":"sf-profile-picker","version":"1.1.8","kind":"leaf","settings":{"label":{"type":"string","default-from":"runtime.label"},"size":{"type":"enum","values":["1/2","1"],"default":"1/2"},"resettable":{"type":"boolean","default":false},"message":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"profiles":{"type":"list","of":{"id":"id","label":"string","shared":"boolean","builtin":"boolean","editable":"boolean"}},"rights":{"type":"object"}},"values":{"current":{"type":"string","default":""}},"events":{"select":{"carries":{"id":"string","ids":"list"}},"create":{"carries":{"label":"string","shared":"boolean","from":"string","kind":{"type":"enum","values":["personal","shared"]}}},"rename":{"carries":{"id":"string","label":"string","title":"string"}},"delete":{"carries":{"id":"string","ids":"list"}},"reset":{"carries":{"id":"string"}}},"actions":{"open":{},"close":{},"toggle":{}},"presentation":{"skeleton":{"file":"skeleton.html","late":["profiles"]}},"css-variables":{"--sf-profile-picker-background-color":{"type":"color","state":"default"},"--sf-profile-picker-border-color":{"type":"color","state":"default"},"--sf-profile-picker-radius":{"type":"length","state":"default"},"--sf-profile-picker-color":{"type":"color","state":"default"},"--sf-profile-picker-panel-background-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.profile-picker","tag":"sf-profile-picker","version":"1.1.9","kind":"leaf","settings":{"label":{"type":"string","default-from":"runtime.label"},"size":{"type":"enum","values":["1/2","1"],"default":"1/2"},"resettable":{"type":"boolean","default":false},"message":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"profiles":{"type":"list","of":{"id":"id","label":"string","shared":"boolean","builtin":"boolean","editable":"boolean"}},"rights":{"type":"object"}},"values":{"current":{"type":"string","default":""}},"events":{"select":{"carries":{"id":"string","ids":"list"}},"create":{"carries":{"label":"string","shared":"boolean","from":"string","kind":{"type":"enum","values":["personal","shared"]}}},"rename":{"carries":{"id":"string","label":"string","title":"string"}},"delete":{"carries":{"id":"string","ids":"list"}},"reset":{"carries":{"id":"string"}}},"actions":{"open":{},"close":{},"toggle":{}},"presentation":{"skeleton":{"file":"skeleton.html","late":["profiles"]}},"css-variables":{"--sf-profile-picker-background-color":{"type":"color","state":"default"},"--sf-profile-picker-border-color":{"type":"color","state":"default"},"--sf-profile-picker-radius":{"type":"length","state":"default"},"--sf-profile-picker-color":{"type":"color","state":"default"},"--sf-profile-picker-panel-background-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 

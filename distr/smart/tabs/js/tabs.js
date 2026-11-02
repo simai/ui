@@ -777,11 +777,9 @@ class SfTabs extends TabsElement {
   }
 
   async standardMenu(field, select) {
-    if (!customElements.get('sf-context-menu')) {
-      globalThis.SF?.Loader?.ensurePlugin?.('cl-context-menu');
-      await Promise.race([customElements.whenDefined('sf-context-menu'), new Promise(done => setTimeout(done, 3000))]);
-    }
-
+    // The standard menu is a relation of the tabs fetched when first used
+    // (SF.Loader.ensure: asked for, waited for up to 3 s, never thrown).
+    await globalThis.SF?.Loader?.ensure?.(['sf-context-menu']);
     if (this[field]?.isConnected) return this[field];
     const menu = document.createElement('sf-context-menu');
     menu.setAttribute('popup', '');
@@ -828,15 +826,11 @@ class SfTabs extends TabsElement {
   }
 
   async settingsMenu() {
-    if (this._settingsMenu?.isConnected) return this._settingsMenu;
+    if (this._settingsMenu?.isConnected) return this._settingsMenu; // The list's elements are asked for now, not waited for: the Loader also
+    // finds them in the menu once it is drawn.
 
-    if (!customElements.get('sf-context-menu')) {
-      globalThis.SF?.Loader?.ensurePlugin?.('cl-context-menu');
-      await Promise.race([customElements.whenDefined('sf-context-menu'), new Promise(done => setTimeout(done, 3000))]);
-    }
-
-    globalThis.SF?.Loader?.ensureSmartElementLoaded?.('sf-sortable');
-    globalThis.SF?.Loader?.ensureSmartElementLoaded?.('sf-checkbox');
+    globalThis.SF?.Loader?.ensure?.(['sf-sortable', 'sf-checkbox']);
+    await globalThis.SF?.Loader?.ensure?.(['sf-context-menu']);
     const menu = document.createElement('sf-context-menu');
     menu.setAttribute('popup', '');
     menu.setAttribute('aria-label', this.text('customize'));
@@ -1398,7 +1392,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-tabs 
 /***/ "84d032c55810"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tabs","tag":"sf-tabs","version":"1.1.9","kind":"leaf","settings":{"type":{"type":"enum","values":["underline","pills","full","vertical"],"optional":true},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"variant":{"type":"string","default":"buttons"},"scheme":{"type":"string","default":"default"},"top-position":{"type":"string","default":"start"},"active-index":{"type":"number","integer":true,"min":0,"default":0},"items":{"type":"list","default":[],"of":{"id":"id","label":"string","icon":{"type":"icon","optional":true},"count":{"type":"number","optional":true},"href":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"pinned":{"type":"boolean","optional":true}}},"top-class":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"overflow":{"type":"enum","values":["scroll","wrap","more"],"default":"scroll"},"configurable":{"type":"boolean","default":false},"settings":{"type":"object"}},"values":{"selected":{"type":"id","default":""}},"events":{"change":{"x-native":false,"carries":{"selected":"id","previous":"number","current":"number","item":"object","items":"list"}},"settings-change":{"carries":{"order":{"type":"list","schema":{"items":{"type":"string"}}},"hidden":{"type":"list","schema":{"items":{"type":"string"}}},"reason":{"type":"enum","values":["order","visibility"],"optional":true}},"own-verb":true},"settings-reset":{"carries":{},"own-verb":true}},"actions":{"set-data":{"with":{"data":"object","reason":{"type":"string","optional":true}}},"set-panels":{"with":{"panels":"list","reason":{"type":"string","optional":true}}},"go-to":{"with":{"index":"number"}}},"css-variables":{"--sf-tabs-color":{"type":"color","state":"default"},"--sf-tabs-indicator-color":{"type":"color","state":"selected"},"--sf-tabs-indicator-width":{"type":"length","state":"selected"},"--sf-tabs-border-color":{"type":"color","state":"default"},"--sf-tabs-border-width":{"type":"length","state":"default"},"--sf-tabs-gap":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tabs","tag":"sf-tabs","version":"1.1.10","kind":"leaf","settings":{"type":{"type":"enum","values":["underline","pills","full","vertical"],"optional":true},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"variant":{"type":"string","default":"buttons"},"scheme":{"type":"string","default":"default"},"top-position":{"type":"string","default":"start"},"active-index":{"type":"number","integer":true,"min":0,"default":0},"items":{"type":"list","default":[],"of":{"id":"id","label":"string","icon":{"type":"icon","optional":true},"count":{"type":"number","optional":true},"href":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"pinned":{"type":"boolean","optional":true}}},"top-class":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"overflow":{"type":"enum","values":["scroll","wrap","more"],"default":"scroll"},"configurable":{"type":"boolean","default":false},"settings":{"type":"object"}},"values":{"selected":{"type":"id","default":""}},"events":{"change":{"x-native":false,"carries":{"selected":"id","previous":"number","current":"number","item":"object","items":"list"}},"settings-change":{"carries":{"order":{"type":"list","schema":{"items":{"type":"string"}}},"hidden":{"type":"list","schema":{"items":{"type":"string"}}},"reason":{"type":"enum","values":["order","visibility"],"optional":true}},"own-verb":true},"settings-reset":{"carries":{},"own-verb":true}},"actions":{"set-data":{"with":{"data":"object","reason":{"type":"string","optional":true}}},"set-panels":{"with":{"panels":"list","reason":{"type":"string","optional":true}}},"go-to":{"with":{"index":"number"}}},"css-variables":{"--sf-tabs-color":{"type":"color","state":"default"},"--sf-tabs-indicator-color":{"type":"color","state":"selected"},"--sf-tabs-indicator-width":{"type":"length","state":"selected"},"--sf-tabs-border-color":{"type":"color","state":"default"},"--sf-tabs-border-width":{"type":"length","state":"default"},"--sf-tabs-gap":{"type":"length","state":"default"}}}');
 
 /***/ },
 

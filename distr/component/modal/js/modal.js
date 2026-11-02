@@ -176,11 +176,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _focus__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("c8d66dd2c299");
 /* harmony import */ var _closing__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("3f3a6e2680d5");
 /* harmony import */ var _motion__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("201fd0b17b8b");
-/* harmony import */ var _scroll__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("ed3ae3576d0a");
-/* harmony import */ var _spinner_js_spinner_draw__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("50d2a204ba4c");
-/* harmony import */ var _stack__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("93025a68d8ab");
-/* harmony import */ var _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("78628e837a32");
-
+/* harmony import */ var _spinner_js_spinner_draw__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("50d2a204ba4c");
+/* harmony import */ var _stack__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("93025a68d8ab");
+/* harmony import */ var _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("78628e837a32");
 
 
 
@@ -271,13 +269,13 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
   static baseZIndex = 9000;
 
   static getTopModal() {
-    return (0,_stack__WEBPACK_IMPORTED_MODULE_8__.getTopModalLayer)();
+    return (0,_stack__WEBPACK_IMPORTED_MODULE_7__.getTopModalLayer)();
   } // Whether this modal is the top layer of the document (layer-stack.js): a
   // drawer or a list opened from it stands above it.
 
 
   static isTopModal(modal) {
-    return (0,_stack__WEBPACK_IMPORTED_MODULE_8__.isTopModalLayer)(modal);
+    return (0,_stack__WEBPACK_IMPORTED_MODULE_7__.isTopModalLayer)(modal);
   }
 
   static addToStack(modal) {
@@ -288,7 +286,7 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
     Modal.stack = Modal.stack.filter(item => item !== modal);
     Modal.stack.push(modal);
     Modal.openCount = Modal.stack.length;
-    (0,_stack__WEBPACK_IMPORTED_MODULE_8__.addModalLayer)(modal, Modal);
+    (0,_stack__WEBPACK_IMPORTED_MODULE_7__.addModalLayer)(modal);
   }
 
   static removeFromStack(modal) {
@@ -298,7 +296,7 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
 
     Modal.stack = Modal.stack.filter(item => item !== modal);
     Modal.openCount = Modal.stack.length;
-    (0,_stack__WEBPACK_IMPORTED_MODULE_8__.removeModalLayer)(modal);
+    (0,_stack__WEBPACK_IMPORTED_MODULE_7__.removeModalLayer)(modal);
   }
 
   static bringToFront(modal) {
@@ -308,11 +306,11 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
 
     Modal.stack = Modal.stack.filter(item => item !== modal);
     Modal.stack.push(modal);
-    (0,_stack__WEBPACK_IMPORTED_MODULE_8__.raiseModalLayer)(modal);
+    (0,_stack__WEBPACK_IMPORTED_MODULE_7__.raiseModalLayer)(modal);
   }
 
   static updateStackStyles() {
-    (0,_stack__WEBPACK_IMPORTED_MODULE_8__.updateModalLayers)();
+    (0,_stack__WEBPACK_IMPORTED_MODULE_7__.updateModalLayers)();
   }
 
   constructor(props) {
@@ -732,7 +730,7 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
     loading.append(text); // The Framework's one spinner, in the page's look (simai/ui-source#11);
     // the modal sheet draws its slot.
 
-    loading.prepend((0,_spinner_js_spinner_draw__WEBPACK_IMPORTED_MODULE_7__.createInlineSpinner)({
+    loading.prepend((0,_spinner_js_spinner_draw__WEBPACK_IMPORTED_MODULE_6__.createInlineSpinner)({
       className: 'sf-modal-spinner'
     }));
     container.append(loading);
@@ -1101,7 +1099,7 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
     panel.focus();
   }
 
-  applyStackPosition(index = (0,_stack__WEBPACK_IMPORTED_MODULE_8__.getModalLayerIndex)(this)) {
+  applyStackPosition(index = (0,_stack__WEBPACK_IMPORTED_MODULE_7__.getModalLayerIndex)(this)) {
     this._stackIndex = index;
 
     if (!this.template || this.display === 'inline') {
@@ -1115,7 +1113,7 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
     }
 
     this.template.style.setProperty('--sf-modal-stack-index', String(index));
-    this.template.style.zIndex = String((0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_9__.layerZIndexAt)(index));
+    this.template.style.zIndex = String((0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_8__.layerZIndexAt)(index));
     return this;
   }
 
@@ -1171,7 +1169,7 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
 
     if (this._modalState !== 'closing') {
       this.lastActive = document.activeElement;
-      this._focusReturnAncestors = (0,_stack__WEBPACK_IMPORTED_MODULE_8__.captureModalFocusAncestors)(this.lastActive);
+      this._focusReturnAncestors = (0,_stack__WEBPACK_IMPORTED_MODULE_7__.captureModalFocusAncestors)(this.lastActive);
       this.placeIn(this.overlayHomeFor(this.lastActive));
     }
 
@@ -1334,7 +1332,7 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
     this._modalState = 'closed';
     const wasTop = Modal.isTopModal(this);
     Modal.removeFromStack(this);
-    (0,_stack__WEBPACK_IMPORTED_MODULE_8__.restoreModalLayerFocus)(wasTop, this.lastActive, this._focusReturnAncestors);
+    (0,_stack__WEBPACK_IMPORTED_MODULE_7__.restoreModalLayerFocus)(wasTop, this.lastActive, this._focusReturnAncestors);
     this.emitAfterClose();
   }
 
@@ -1389,14 +1387,18 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
       }
     });
     Modal.globalBound = true;
-  }
+  } // Kept for code that calls them: the layer stack takes the page lock itself
+  // now, with its default lockPageScroll, while any layer that locks is open.
+
 
   static lockPage(preserveScrollGap = true) {
-    if (!Modal.lockState) Modal.lockState = (0,_scroll__WEBPACK_IMPORTED_MODULE_6__.lockModalScroll)(preserveScrollGap);
+    if (!Modal.lockState) Modal.lockState = (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_8__.lockPageScroll)({
+      preserveScrollGap
+    });
   }
 
   static unlockPage() {
-    (0,_scroll__WEBPACK_IMPORTED_MODULE_6__.unlockModalScroll)(Modal.lockState);
+    Modal.lockState?.();
     Modal.lockState = null;
   }
 
@@ -1491,64 +1493,6 @@ function scheduleModalClose(getRoot, finalize, view = window) {
 
 /***/ },
 
-/***/ "ed3ae3576d0a"
-(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   lockModalScroll: () => (/* binding */ lockModalScroll),
-/* harmony export */   unlockModalScroll: () => (/* binding */ unlockModalScroll)
-/* harmony export */ });
-// One lease is held by the first visible layer in the shared Modal stack.
-// Restore only changes that this lease owns, not pre-existing page styling.
-function lockModalScroll(preserveScrollGap = true) {
-  const docEl = document.documentElement;
-  const body = document.body;
-  if (!docEl || !body) return null;
-  const gap = Math.max(0, window.innerWidth - docEl.clientWidth);
-  const padding = parseFloat(window.getComputedStyle(body).paddingInlineEnd) || 0;
-  const saved = {
-    docEl,
-    body,
-    htmlLocked: docEl.classList.contains('overflow-hidden'),
-    bodyLocked: body.classList.contains('overflow-hidden'),
-    bodyPaddingInlineEnd: body.style.getPropertyValue('padding-inline-end'),
-    paddingPriority: body.style.getPropertyPriority('padding-inline-end'),
-    appliedPadding: null
-  };
-  docEl.classList.add('overflow-hidden');
-  body.classList.add('overflow-hidden');
-
-  if (preserveScrollGap && gap > 0) {
-    body.style.setProperty('padding-inline-end', `${padding + gap}px`, saved.paddingPriority);
-    saved.appliedPadding = body.style.getPropertyValue('padding-inline-end');
-  }
-
-  return saved;
-}
-
-function unlockModalScroll(saved) {
-  if (!saved) return;
-  const {
-    docEl,
-    body
-  } = saved;
-  if (!saved.htmlLocked) docEl.classList.remove('overflow-hidden');
-  if (!saved.bodyLocked) body.classList.remove('overflow-hidden');
-
-  if (saved.appliedPadding !== null && body.style.getPropertyValue('padding-inline-end') === saved.appliedPadding && body.style.getPropertyPriority('padding-inline-end') === saved.paddingPriority) {
-    if (saved.bodyPaddingInlineEnd) {
-      body.style.setProperty('padding-inline-end', saved.bodyPaddingInlineEnd, saved.paddingPriority);
-    } else {
-      body.style.removeProperty('padding-inline-end');
-    }
-  }
-}
-
-
-
-/***/ },
-
 /***/ "93025a68d8ab"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -1603,18 +1547,18 @@ function updateModalLayers() {
 // page stays scrollable while it is open.
 
 
-const locksPage = modal => !modal.inContainer;
+const locksPage = modal => !modal.inContainer; // The page lock is the stack's default one (lockPageScroll), which is the
+// lock this file's _scroll.js held before: the class, the page's own padding
+// plus the gap, and only what it set given back.
 
-function addModalLayer(modal, owner) {
+
+function addModalLayer(modal) {
   if ((0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_1__.hasLayer)(modal)) return;
   (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_1__.openLayer)(modal, {
     kind: 'modal',
     locksPage: locksPage(modal),
+    preserveScrollGap: modal.preserveScrollGap !== false,
     trapsFocus: true,
-    lockPage: () => {
-      owner.lockPage(modal.preserveScrollGap);
-      return () => owner.unlockPage();
-    },
     returnTo: modal._lastActive ?? modal.lastActive ?? null,
     root: () => modalRoot(modal),
     focusIn: () => modal.focusFirst?.(),
@@ -2030,8 +1974,10 @@ class ComponentObserver {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   FOCUSABLE: () => (/* binding */ FOCUSABLE),
 /* harmony export */   carryLayerOrigin: () => (/* binding */ carryLayerOrigin),
 /* harmony export */   closeLayer: () => (/* binding */ closeLayer),
+/* harmony export */   focusablesIn: () => (/* binding */ focusablesIn),
 /* harmony export */   hasLayer: () => (/* binding */ hasLayer),
 /* harmony export */   hasLayerAbove: () => (/* binding */ hasLayerAbove),
 /* harmony export */   isOutsideTopLayer: () => (/* binding */ isOutsideTopLayer),
@@ -2040,6 +1986,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   layerIndex: () => (/* binding */ layerIndex),
 /* harmony export */   layerZIndex: () => (/* binding */ layerZIndex),
 /* harmony export */   layerZIndexAt: () => (/* binding */ layerZIndexAt),
+/* harmony export */   lockPageScroll: () => (/* binding */ lockPageScroll),
 /* harmony export */   openLayer: () => (/* binding */ openLayer),
 /* harmony export */   openLayers: () => (/* binding */ openLayers),
 /* harmony export */   raiseLayer: () => (/* binding */ raiseLayer),
@@ -2069,6 +2016,15 @@ __webpack_require__.r(__webpack_exports__);
 //     layer; else the nearest landmark; else the body. A layer that closes
 //     while another stands above it moves no focus.
 //
+// It also keeps what every layer did with a copy of its own: one listener for
+// a press outside the top layer (onOutsidePress), one page lock (lockPageScroll,
+// taken for a layer that locks the page and brings no lock of its own) and one
+// list of what can take focus (FOCUSABLE). A popover, a menu and a context menu
+// each bound a document listener for the outside press, and a drawer, a site
+// header, a search window and a modal each wrote the page lock again, three of
+// them without the modal's care for the page's own padding (reuse audit
+// 2026-11-02, findings 1 and 2).
+//
 // Kept on a shared global, not in module scope: every Smart bundle carries its
 // own copy of this module, and the modal's bundle has to see the drawer the
 // drawer's bundle opened. Each document (an iframe too) has its own stack.
@@ -2082,6 +2038,18 @@ const STACK_KEY = Symbol.for('sf.layerStack'); // The scale's defaults, the same
 const LAYER_BASE = 9000;
 const LAYER_STEP = 2;
 const LANDMARKS = 'main, section, article, [role="main"], [role="region"]';
+/**
+ * What a person can move focus to: the one list a layer keeps Tab inside and
+ * moves focus into. A hidden input is not a stop; an editable region is. Each
+ * component kept a list of its own, and they had drifted apart.
+ */
+
+const FOCUSABLE = ['a[href]', 'button:not([disabled])', 'input:not([disabled]):not([type="hidden"])', 'select:not([disabled])', 'textarea:not([disabled])', '[contenteditable="true"]', '[tabindex]:not([tabindex="-1"])'].join(',');
+/** The focusable nodes inside these roots that are drawn and not inert, in order. */
+
+function focusablesIn(...roots) {
+  return roots.flatMap(root => Array.from(root?.querySelectorAll?.(FOCUSABLE) ?? [])).filter(node => node.getClientRects().length > 0 && !node.closest('[inert]'));
+}
 
 function stack() {
   const scope = globalThis;
@@ -2091,6 +2059,7 @@ function stack() {
       value: {
         layers: [],
         bound: false,
+        pressBound: false,
         lease: null,
         pressTop: new WeakMap()
       },
@@ -2122,18 +2091,87 @@ function readToken(name, fallback) {
 function layerZIndexAt(index) {
   if (index < 0) return '';
   return readToken('--sf-z-index-layer', LAYER_BASE) + index * readToken('--sf-z-index-layer-step', LAYER_STEP);
+} // The class the modal's lock always added, kept so a page that reads it (and
+// the modal's probes, which do) still sees a locked page.
+
+const LOCK_CLASS = 'overflow-hidden';
+/**
+ * The default page lock (§19.1): the document stops scrolling, and the body
+ * takes the scrollbar's width as padding so the page does not jump sideways
+ * when the bar goes. Answers the function that gives it back.
+ *
+ * It was the modal's: it adds the gap to the padding the body already has, and
+ * gives back only what it set -- a class or an overflow the page had before
+ * stays, and a padding the page changed meanwhile is the page's. The overflow
+ * is also written inline, as the drawer, the site header and the search window
+ * wrote it, so the lock holds before the utility sheet with the class arrives.
+ */
+
+function lockPageScroll({
+  preserveScrollGap = true
+} = {}) {
+  const doc = globalThis.document;
+  const html = doc?.documentElement;
+  const body = doc?.body;
+  if (!html || !body) return () => {};
+  const view = doc.defaultView || globalThis.window || globalThis;
+  const gap = Math.max(0, (view.innerWidth || 0) - html.clientWidth);
+  const kept = [html, body].map(node => ({
+    node,
+    locked: node.classList.contains(LOCK_CLASS),
+    overflow: node.style.getPropertyValue('overflow'),
+    overflowPriority: node.style.getPropertyPriority('overflow')
+  }));
+
+  for (const {
+    node
+  } of kept) {
+    node.classList.add(LOCK_CLASS);
+    node.style.setProperty('overflow', 'hidden');
+  }
+
+  const padding = {
+    value: body.style.getPropertyValue('padding-inline-end'),
+    priority: body.style.getPropertyPriority('padding-inline-end'),
+    applied: null
+  };
+
+  if (preserveScrollGap && gap > 0) {
+    const current = parseFloat(view.getComputedStyle?.(body).paddingInlineEnd) || 0;
+    body.style.setProperty('padding-inline-end', `${current + gap}px`, padding.priority);
+    padding.applied = body.style.getPropertyValue('padding-inline-end');
+  }
+
+  return () => {
+    for (const {
+      node,
+      locked,
+      overflow,
+      overflowPriority
+    } of kept) {
+      if (!locked) node.classList.remove(LOCK_CLASS); // Only the overflow this lock wrote: one the page set meanwhile stays.
+
+      if (node.style.getPropertyValue('overflow') !== 'hidden' || node.style.getPropertyPriority('overflow')) continue;
+      if (overflow) node.style.setProperty('overflow', overflow, overflowPriority);else node.style.removeProperty('overflow');
+    }
+
+    if (padding.applied === null || body.style.getPropertyValue('padding-inline-end') !== padding.applied || body.style.getPropertyPriority('padding-inline-end') !== padding.priority) return;
+    if (padding.value) body.style.setProperty('padding-inline-end', padding.value, padding.priority);else body.style.removeProperty('padding-inline-end');
+  };
 } // The page lock is one lease for the whole stack, taken by the first layer
 // that locks the page and given back when no such layer is left -- whichever
 // kind opened first and whichever closes last. A modal and a drawer held two
 // locks before, and closing them out of order unlocked the page under an open
-// window.
+// window. A layer that brings no lockPage of its own takes the default one.
 
 function syncPageLock() {
   const state = stack();
   const locker = state.layers.find(entry => entry.locksPage && isLive(entry));
 
   if (locker && !state.lease) {
-    const release = locker.lockPage?.();
+    const release = locker.lockPage ? locker.lockPage() : lockPageScroll({
+      preserveScrollGap: locker.preserveScrollGap !== false
+    });
     state.lease = typeof release === 'function' ? release : () => {};
   } else if (!locker && state.lease) {
     const release = state.lease;
@@ -2208,11 +2246,15 @@ function openLayers(kind = '') {
  * options:
  *   kind        'modal' | 'panel' | 'surface' | 'toast'
  *   locksPage   true to hold the page lock while open; lockPage() takes it and
- *               returns the function that gives it back
+ *               returns the function that gives it back, and without one the
+ *               stack takes lockPageScroll({preserveScrollGap})
+ *   preserveScrollGap  false to let the page widen when its scrollbar goes
  *   trapsFocus  true to keep Tab inside and to return focus on close
  *   root()      the element the layer draws, for focus and outside presses
  *   onEscape(event)  closes the layer and answers true when it took the press
  *   onTab(event)     keeps focus inside
+ *   onOutsidePress(event)  a press began outside root() and the owner while
+ *               this is the top layer; the layer decides what it closes
  *   focusIn()        moves focus inside
  *   place({index, zIndex, top})  draws the layer at its height
  *   returnTo    what was active at open (default: the active element now)
@@ -2222,6 +2264,7 @@ function openLayer(owner, options = {}) {
   if (!owner) return null;
   const state = stack();
   bindKeys();
+  bindPresses();
   let entry = find(owner);
 
   if (entry) {
@@ -2413,6 +2456,35 @@ function bindKeys() {
     }
 
     top.onTab?.(event);
+  });
+} // Outside a layer: in the composed path of neither what it draws nor its
+// owner, so a press inside a shadow root or a portal of its own is inside.
+
+
+function pressedOutside(entry, event) {
+  const path = event.composedPath?.() ?? [];
+  const root = entry.root?.();
+  return !path.includes(entry.owner) && !(root && path.includes(root));
+} // One pointerdown listener pair for the whole document, as for the keys: the
+// top layer is read in capture, before any component sees the press, and acts
+// in bubble, once the press has passed through the page. Only the top layer
+// hears it, so a list over a popover closes and the popover stays, and a layer
+// that opened or closed on the way down (a trigger's own press) does not hand
+// the press to another. Each surface bound a document listener of its own
+// before, and the first one bound acted whatever lay above it.
+
+
+function bindPresses() {
+  const state = stack();
+  if (state.pressBound || typeof globalThis.addEventListener !== 'function') return;
+  state.pressBound = true;
+  globalThis.addEventListener('pointerdown', event => {
+    state.pressTop.set(event, topLayer());
+  }, true);
+  globalThis.addEventListener('pointerdown', event => {
+    const top = state.pressTop.has(event) ? state.pressTop.get(event) : topLayer();
+    if (!top?.onOutsidePress || top !== topLayer() || !pressedOutside(top, event)) return;
+    top.onOutsidePress(event);
   });
 } // A press outside the top layer, read in capture: what a layer below would
 // call outside is ignored there.

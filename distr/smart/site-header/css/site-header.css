@@ -215,8 +215,11 @@
     bottom: 0;
     left: 0;
     inset: 0;
+    /* The shared scrim (core --sf-scrim-*). */
     background: var(--sf-black);
+    background: var(--sf-scrim-color, var(--sf-black));
     opacity: var(--sf-opacity-60);
+    opacity: var(--sf-scrim-opacity, var(--sf-opacity-60));
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-always.sf-site-header--open .sf-site-header-panel{
     left: 0;
@@ -400,8 +403,11 @@
       bottom: 0;
       left: 0;
       inset: 0;
+      /* The shared scrim (core --sf-scrim-*). */
       background: var(--sf-black);
+      background: var(--sf-scrim-color, var(--sf-black));
       opacity: var(--sf-opacity-60);
+      opacity: var(--sf-scrim-opacity, var(--sf-opacity-60));
     }
     _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-sm.sf-site-header--open .sf-site-header-panel{
       left: 0;
@@ -586,8 +592,11 @@
       bottom: 0;
       left: 0;
       inset: 0;
+      /* The shared scrim (core --sf-scrim-*). */
       background: var(--sf-black);
+      background: var(--sf-scrim-color, var(--sf-black));
       opacity: var(--sf-opacity-60);
+      opacity: var(--sf-scrim-opacity, var(--sf-opacity-60));
     }
     _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-md.sf-site-header--open .sf-site-header-panel{
       left: 0;
@@ -772,8 +781,11 @@
       bottom: 0;
       left: 0;
       inset: 0;
+      /* The shared scrim (core --sf-scrim-*). */
       background: var(--sf-black);
+      background: var(--sf-scrim-color, var(--sf-black));
       opacity: var(--sf-opacity-60);
+      opacity: var(--sf-scrim-opacity, var(--sf-opacity-60));
     }
     _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-lg.sf-site-header--open .sf-site-header-panel{
       left: 0;
@@ -958,8 +970,11 @@
       bottom: 0;
       left: 0;
       inset: 0;
+      /* The shared scrim (core --sf-scrim-*). */
       background: var(--sf-black);
+      background: var(--sf-scrim-color, var(--sf-black));
       opacity: var(--sf-opacity-60);
+      opacity: var(--sf-scrim-opacity, var(--sf-opacity-60));
     }
     _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-xl.sf-site-header--open .sf-site-header-panel{
       left: 0;

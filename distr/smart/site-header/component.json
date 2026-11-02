@@ -2,7 +2,7 @@
   "$comment": "The source of sf-site-header's element plumbing (core/js/element-manifest.js), in the 1.4 form (scripts/generate-component-files.mjs writes rule.js, aliases.json, studio.fixture.json, studio.scenario.json, probe.json and smart.manifest.json from it). A new component, made against standard simai.smart-component 1.3.11 and vocabulary 1.1.5; the brief is ui-control's site-header design brief of 2026-10-28.",
   "id": "smart.site-header",
   "tag": "sf-site-header",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "kind": "leaf",
   "family": "header",
   "settings": {
@@ -257,7 +257,7 @@
   ],
   "x-decisions": [
     "name: sf-site-header (dispatcher, owner-delegated, 2026-10-28). A leaf with slots: its content is the page's, drawn with Framework components (sf-menu, sf-button-group theme-switch, sf-color, sf-button), so it owns no bus and no rules.",
-    "layer: kind panel, locks-page, traps-focus (§19.1), registered in the shared layer stack of core/js/layer-stack.js the way sf-drawer registers -- openLayer with lockPage, root, focusIn, onEscape, onTab and place; closeLayer, then returnLayerFocus. No overlay system of its own: the stack orders it, hands it Escape and Tab only while it is the top layer, holds the one page lock and gives focus back.",
+    "layer: kind panel, locks-page, traps-focus (§19.1), registered in the shared layer stack of core/js/layer-stack.js the way sf-drawer registers -- openLayer with locksPage (the stack's default page lock, lockPageScroll), root, focusIn, onEscape, onTab and place; closeLayer, then returnLayerFocus. No overlay system of its own: the stack orders it, hands it Escape and Tab only while it is the top layer, holds the one page lock and gives focus back.",
     "sheet: the panel is the header's own element, not a portal and not an sf-drawer. Wide, the panel is display: contents, so the nav and the actions stand in the row; collapsed and closed it is not shown; collapsed and open it is a fixed side panel at the inline start with a scrim. The page's nav and actions nodes are placed once and never move or get copied (§4.5): one nav in the page, its listeners and state kept. sf-drawer was the other option; it collects its children as content, so the nav would have had to move between the bar and the drawer on every width change.",
     "collapse: a ladder step, not a length, so the switch is one media rule per step in the sheet: the first paint is right without the script and nothing is measured. A measured auto mode was left out: it decides after layout and would move the first paint (gate 24).",
     "reason: the close event keeps §19.3's closed list. A link chosen in the panel and a window widened past the breakpoint close it with api; the brief's navigate and resize would be vocabulary additions, not made here.",

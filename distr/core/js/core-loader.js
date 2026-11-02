@@ -3890,7 +3890,18 @@ SFLoaderPlugin.prototype.getSmartElementRuleName = function (el) {
   }
 
   return this.getCustomElementRules()[tagName] || '';
-};
+}; // A portal root: a box a Smart element renders into from its own code, outside
+// its own render -- sf-table's window form, sf-drawer's panel at the end of the
+// body, a menu a component appends to the page. What is drawn there is the
+// owner's output, not source it still has to capture, so a Smart element in a
+// portal does not wait for an ancestor outside it (simai/ui-pro table,
+// 2026-10-31: the filter window's sf-radio never upgraded, and eleven call
+// sites asked for each tag by name instead -- reuse audit 2026-11-02, finding
+// 4). SF.Loader.watch(root) marks one; sf-drawer's own marker counts as well.
+
+
+const PORTAL_ATTRIBUTE = 'data-sf-portal';
+const PORTAL_ROOT = `[${PORTAL_ATTRIBUTE}], [data-sf-drawer-portal]`;
 
 SFLoaderPlugin.prototype.findNearestSmartParent = function (el) {
   let parent = el?.parentElement || null;
@@ -3900,11 +3911,25 @@ SFLoaderPlugin.prototype.findNearestSmartParent = function (el) {
       return parent;
     }
 
+    if (parent.matches?.(PORTAL_ROOT)) return null;
     parent = parent.parentElement;
   }
 
   return null;
-};
+}; // A nested Smart element waits until its parent has captured its source: the
+// parent may take it as a slot template, and its sf-after-render reads the
+// subtree again (prepareSmartChildScanEvents). Only a Smart base element does
+// either. A parent defined over another base -- sf-sortable is a composition
+// host -- captures nothing and sends no sf-after-render, and its children used
+// to wait for ever: sf-checkbox in sf-tabs' settings list and sf-radio in
+// sf-table's template rows were loaded only because each was asked for by
+// name. Such a parent holds nothing; one not defined yet is read again when
+// its definition arrives, whichever base it turns out to have.
+
+
+function capturesSource(constructor) {
+  return typeof constructor?.prototype?.captureSlotTemplates === 'function';
+}
 
 SFLoaderPlugin.prototype.shouldDeferNestedSmartElement = function (el) {
   if (!this.getSmartElementRuleName(el)) {
@@ -3913,11 +3938,44 @@ SFLoaderPlugin.prototype.shouldDeferNestedSmartElement = function (el) {
 
   const parentSmart = this.findNearestSmartParent(el);
 
-  if (!parentSmart) {
+  if (!parentSmart || parentSmart.__sfSourceCaptured === true) {
     return false;
   }
 
-  return parentSmart.__sfSourceCaptured !== true;
+  const registry = globalThis.customElements;
+  const defined = registry?.get?.(parentSmart.localName);
+  if (defined) return capturesSource(defined);
+  this.scanWhenDefined(parentSmart);
+  return true;
+};
+
+SFLoaderPlugin.prototype.scanWhenDefined = function (parent) {
+  const registry = globalThis.customElements;
+  if (!registry?.whenDefined) return;
+  this.parentsAwaited = this.parentsAwaited || new WeakSet();
+  if (this.parentsAwaited.has(parent)) return;
+  this.parentsAwaited.add(parent);
+  registry.whenDefined(parent.localName).then(constructor => {
+    this.parentsAwaited.delete(parent); // A Smart base parent reads its subtree on its own sf-after-render.
+
+    if (parent.isConnected && !capturesSource(constructor ?? registry.get(parent.localName))) {
+      this.scanCustomElements(parent);
+    }
+  });
+}; // Marks a root a Smart element renders into as a portal (PORTAL_ROOT) and
+// reads what is in it now; the Loader's page observer reads what is drawn
+// there later, as it reads the page. Returns the function that unmarks it.
+
+
+SFLoaderPlugin.prototype.watch = function (root) {
+  if (root?.nodeType !== 1) return () => {};
+  if (!root.matches(PORTAL_ROOT)) root.setAttribute(PORTAL_ATTRIBUTE, '');
+  if (root.isConnected) this.scanCustomElements(root);
+  return () => this.unwatch(root);
+};
+
+SFLoaderPlugin.prototype.unwatch = function (root) {
+  root?.removeAttribute?.(PORTAL_ATTRIBUTE);
 }; // Leaves the element for later when it sits in a closed container: the
 // container is watched, and read again when it opens. The element's tag is
 // held meanwhile (pending-tags.js), in case the container is one that still
@@ -7255,6 +7313,65 @@ SFLoaderPlugin.prototype.ensureSmartElementLoaded = function (tagName) {
   this.setExistCookie(componentName);
   this.mutate(() => this.getLoader(this.module, true));
   return true;
+}; // The element a name in SF.Loader.ensure() stands for: a tag a rule claims as
+// it is, a short Framework name with sf- before it (context-menu), and a
+// package's own hyphenated name as it is while its rules have not loaded.
+
+
+function ensureTagName(input, rules) {
+  const name = String(input || '').trim().toLowerCase();
+  if (!name) return '';
+  if (name.startsWith('sf-') || rules[name]) return name;
+  if (rules[`sf-${name}`] || !name.includes('-')) return `sf-${name}`;
+  return name;
+} // SF.Loader.ensure(tags, {timeout}): what a component calls before it draws an
+// element it did not have in its markup -- a menu it appends to the page, an
+// editor a window shows. Each tag's code is asked for the way the page would
+// ask for it (its rule, the rule's package and relations, a lazy relation at
+// once), and the promise settles when every tag is defined or the timeout
+// (3 s by default; a non-finite one waits) has passed, with the tags that are
+// defined and those that are not: it never rejects, so a caller draws what it
+// can and falls back for the rest. A tag already defined costs nothing. The
+// fetch is asked for once per rule however many callers wait, and callers of
+// one tag share one wait. This replaces "ask the Loader, race whenDefined
+// against 3 s", copied at eleven call sites (reuse audit 2026-11-02, finding 4).
+
+
+SFLoaderPlugin.prototype.ensure = function (tags, {
+  timeout = 3000
+} = {}) {
+  const registry = globalThis.customElements;
+  const rules = this.getCustomElementRules();
+  const names = [...new Set((Array.isArray(tags) ? tags : [tags]).map(tag => ensureTagName(tag, rules)).filter(Boolean))];
+  const pending = names.filter(tag => !registry?.get?.(tag));
+
+  const report = () => ({
+    ready: names.filter(tag => registry?.get?.(tag)),
+    missing: names.filter(tag => !registry?.get?.(tag))
+  });
+
+  if (!pending.length || !registry?.whenDefined) return Promise.resolve(report());
+  this.ensureWaits = this.ensureWaits || new Map();
+  const waits = pending.map(tag => {
+    const rule = this.getCustomElementRules()[tag];
+    if (rule) this.ensurePlugin(rule);
+
+    if (!this.ensureWaits.has(tag)) {
+      this.ensureWaits.set(tag, registry.whenDefined(tag).finally(() => this.ensureWaits.delete(tag)));
+    }
+
+    return this.ensureWaits.get(tag);
+  });
+  const all = Promise.all(waits);
+  if (!Number.isFinite(timeout)) return all.then(report);
+  let timer = null;
+  const expired = new Promise(settle => {
+    timer = setTimeout(settle, Math.max(0, timeout));
+  });
+  return Promise.race([all, expired]).then(() => {
+    clearTimeout(timer);
+    return report();
+  });
 };
 
 async function createSmartElementAsync(name, params = {}) {
@@ -7921,7 +8038,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"version":1,"aliases":{"column-gap/de
 /***/ "e7acc025fab1"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"cl-accordion":["display/default","flex-direction/default","gap/default","position/default"],"cl-alert":["display/default","flex-direction/default","flex-wrap/default","flex/default","place-items/default"],"cl-avatar":["align-items/default","background-color/default","display/default","element-position/default","flex-direction/default","flex/default","height/default","justify-content/default","overflow/default","place-items/default","position/default","text-overflow/default","transition-property/default","white-space/default","width/default"],"cl-avatars":["align-items/default","display/default","flex-direction/default"],"cl-badge":["display/default","flex-direction/default","flex-wrap/default","justify-content/default","place-items/default","sr-only/default"],"cl-breadcrumbs":["align-items/default","display/default"],"cl-button":["align-items/default","display/default","flex/default","pointer-events/default"],"cl-button-group":["align-items/default","display/default","pointer-events/default","text-align/default"],"cl-checkbox":["cursor/default","display/default","flex-direction/default","transition-property/default"],"cl-close":["display/default","justify-content/default","place-items/default"],"cl-code-input":["sr-only/default"],"cl-color":["display/default"],"cl-contents":["display/default","position/default","width/default"],"cl-context-menu":["display/default","flex-direction/default","flex/default","position/default","text-decoration/default"],"cl-copy-button":["position/default"],"cl-country-code":["display/default","flex-direction/default","place-items/default","transition-property/default"],"cl-datepicker":["align-content/default","align-items/default","display/default","element-position/default","flex-direction/default","gap/default","grid-template-columns/default","justify-content/default","overflow/default","position/default"],"cl-download-file":["cursor/default","display/default","transition-property/default"],"cl-drawer":["display/default","justify-content/default","margin/default","place-items/default","resize/default","visibility/default"],"cl-dropdown":["align-items/default","background-color/default","background-size/default","cursor/default","display/default","flex-direction/default","flex-wrap/default","flex/default","place-items/default","position/default","transition-property/default"],"cl-empty-state":["display/default"],"cl-file-upload":["align-items/default","align-self/default","cursor/default","display/default","flex-direction/default","flex/default","gap/default","grid-template-columns/default","justify-content/default","justify-items/default","width/default"],"cl-gallery":["align-items/default","backdrop-filter-blur/default","background-color/default","border-radius/default","border-width/default","box-shadow/default","display/default","filter-blur/default","flex-direction/default","gap/default","height/default","justify-content/default","margin/default","max-width/default","min-height/default","min-width/default","padding/default","text-color/default","width/default"],"cl-help-mark":["display/default"],"cl-icon":["font-weight/default"],"cl-icon-button":["align-items/default","display/default","pointer-events/default"],"cl-input":["align-items/default","display/default","flex-direction/default","text-align/default","transition-property/default"],"cl-list-item":["align-items/default","background-color/default","background-size/default","cursor/default","display/default","flex-direction/default","flex-wrap/default","flex/default","gap/default","justify-content/default","place-items/default"],"cl-lookup":["align-items/default","display/default","flex-direction/default","flex-wrap/default","flex/default","justify-content/default","overflow/default"],"cl-modal":["align-items/default","backdrop-filter-blur/default","border-radius/default","border-width/default","display/default","element-position/default","filter-blur/default","flex-direction/default","flex-wrap/default","font-size/default","gap/default","height/default","justify-content/default","margin/default","min-width/default","overflow/default","padding/default","place-items/default","position/default","text-color/default","title/default","width/default","z-index/default"],"cl-page-header":["align-items/default","display/default","flex-direction/default","flex-grow/default","flex-wrap/default","margin/default","min-width/default","text-overflow/default"],"cl-pager":["sr-only/default"],"cl-pagination":["align-items/default","display/default","flex-direction/default","justify-content/default","position/default"],"cl-popover":["display/default","position/default"],"cl-progress-bar":["align-items/default","display/default","flex-direction/default","transition-property/default"],"cl-progress-ring":["display/default"],"cl-progress-scale":["align-items/default","display/default","flex-direction/default","grid-template-columns/default","overflow/default"],"cl-quantity":["display/default","filter-blur/default","flex-direction/default","flex-wrap/default","justify-content/default","place-items/default"],"cl-radio":["align-items/default","display/default","flex-direction/default","justify-content/default","transition-property/default"],"cl-range-slider":["flex/default"],"cl-reference-link":["align-items/default","display/default"],"cl-resizer":["display/default","position/default","resize/default","text-max-width/default"],"cl-rich-text":["align-items/default","container/default","display/default","flex-direction/default","flex-wrap/default","font-style/default","font-weight/default"],"cl-search":["display/default","sr-only/default"],"cl-site-header":["container/default","display/default","margin/default","position/default","width/default"],"cl-skeleton":["animation/default","display/default","flex/default"],"cl-slider":["background-color/default","border-radius/default","display/default","padding/default","text-color/default"],"cl-steps":["cursor/default","display/default","flex-direction/default","justify-content/default","place-items/default"],"cl-switch":["align-items/default","display/default","flex-direction/default","justify-content/default","transition-property/default"],"cl-tabs":["container/default","display/default","flex-direction/default","visibility/default"],"cl-tag":["background-size/default","display/default","flex-direction/default","flex-wrap/default","justify-content/default","min-width/default","place-items/default"],"cl-textarea":["display/default","flex-direction/default","transition-property/default"],"cl-toast":["align-items/default","display/default","flex-direction/default","flex/default","justify-content/default","place-items/default"],"cl-tooltip":["display/default","flex-direction/default","position/default"],"cl-tree":["display/default","flex-direction/default"],"cl-tree-item":["align-items/default","display/default","flex-direction/default","position/default"]}');
+module.exports = /*#__PURE__*/JSON.parse('{"cl-accordion":["display/default","flex-direction/default","gap/default","position/default"],"cl-alert":["display/default","flex-direction/default","flex-wrap/default","flex/default","place-items/default"],"cl-avatar":["align-items/default","background-color/default","display/default","element-position/default","flex-direction/default","flex/default","height/default","justify-content/default","overflow/default","place-items/default","position/default","text-overflow/default","transition-property/default","white-space/default","width/default"],"cl-avatars":["align-items/default","display/default","flex-direction/default"],"cl-badge":["display/default","flex-direction/default","flex-wrap/default","justify-content/default","place-items/default","sr-only/default"],"cl-breadcrumbs":["align-items/default","display/default"],"cl-button":["align-items/default","display/default","flex/default","pointer-events/default"],"cl-button-group":["align-items/default","display/default","pointer-events/default","text-align/default"],"cl-checkbox":["cursor/default","display/default","flex-direction/default","transition-property/default"],"cl-close":["display/default","justify-content/default","place-items/default"],"cl-code-input":["sr-only/default"],"cl-color":["display/default"],"cl-contents":["display/default","position/default","width/default"],"cl-context-menu":["display/default","flex-direction/default","flex/default","position/default","text-decoration/default"],"cl-copy-button":["position/default"],"cl-country-code":["display/default","flex-direction/default","place-items/default","transition-property/default"],"cl-datepicker":["align-content/default","align-items/default","display/default","element-position/default","flex-direction/default","gap/default","grid-template-columns/default","justify-content/default","overflow/default","position/default"],"cl-download-file":["cursor/default","display/default","transition-property/default"],"cl-drawer":["display/default","justify-content/default","margin/default","place-items/default","resize/default","visibility/default"],"cl-dropdown":["align-items/default","background-color/default","background-size/default","cursor/default","display/default","flex-direction/default","flex-wrap/default","flex/default","place-items/default","position/default","transition-property/default"],"cl-empty-state":["display/default"],"cl-file-upload":["align-items/default","align-self/default","cursor/default","display/default","flex-direction/default","flex/default","gap/default","grid-template-columns/default","justify-content/default","justify-items/default","width/default"],"cl-gallery":["align-items/default","backdrop-filter-blur/default","background-color/default","border-radius/default","border-width/default","box-shadow/default","display/default","filter-blur/default","flex-direction/default","gap/default","height/default","justify-content/default","margin/default","max-width/default","min-height/default","min-width/default","padding/default","text-color/default","width/default"],"cl-help-mark":["display/default"],"cl-icon":["font-weight/default"],"cl-icon-button":["align-items/default","display/default","pointer-events/default"],"cl-input":["align-items/default","display/default","flex-direction/default","text-align/default","transition-property/default"],"cl-list-item":["align-items/default","background-color/default","background-size/default","cursor/default","display/default","flex-direction/default","flex-wrap/default","flex/default","gap/default","justify-content/default","place-items/default"],"cl-lookup":["align-items/default","display/default","flex-direction/default","flex-wrap/default","flex/default","justify-content/default","overflow/default"],"cl-modal":["align-items/default","backdrop-filter-blur/default","border-radius/default","border-width/default","display/default","element-position/default","filter-blur/default","flex-direction/default","flex-wrap/default","font-size/default","gap/default","height/default","justify-content/default","margin/default","min-width/default","overflow/default","padding/default","place-items/default","position/default","text-color/default","title/default","width/default","z-index/default"],"cl-page-header":["align-items/default","display/default","flex-direction/default","flex-grow/default","flex-wrap/default","margin/default","min-width/default","text-overflow/default"],"cl-pager":["sr-only/default"],"cl-pagination":["align-items/default","display/default","flex-direction/default","justify-content/default","position/default"],"cl-popover":["display/default","position/default"],"cl-progress-bar":["align-items/default","display/default","flex-direction/default","transition-property/default"],"cl-progress-ring":["display/default"],"cl-progress-scale":["align-items/default","display/default","flex-direction/default","grid-template-columns/default","overflow/default"],"cl-quantity":["display/default","filter-blur/default","flex-direction/default","flex-wrap/default","justify-content/default","place-items/default"],"cl-radio":["align-items/default","display/default","flex-direction/default","justify-content/default","transition-property/default"],"cl-range-slider":["flex/default"],"cl-reference-link":["align-items/default","display/default"],"cl-resizer":["display/default","position/default","resize/default","text-max-width/default"],"cl-rich-text":["align-items/default","container/default","display/default","flex-direction/default","flex-wrap/default","font-style/default","font-weight/default"],"cl-search":["display/default","sr-only/default"],"cl-site-header":["container/default","margin/default","position/default","width/default"],"cl-skeleton":["animation/default","display/default","flex/default"],"cl-slider":["background-color/default","border-radius/default","display/default","padding/default","text-color/default"],"cl-steps":["cursor/default","display/default","flex-direction/default","justify-content/default","place-items/default"],"cl-switch":["align-items/default","display/default","flex-direction/default","justify-content/default","transition-property/default"],"cl-tabs":["container/default","display/default","flex-direction/default","visibility/default"],"cl-tag":["background-size/default","display/default","flex-direction/default","flex-wrap/default","justify-content/default","min-width/default","place-items/default"],"cl-textarea":["display/default","flex-direction/default","transition-property/default"],"cl-toast":["align-items/default","display/default","flex-direction/default","flex/default","justify-content/default","place-items/default"],"cl-tooltip":["display/default","flex-direction/default","position/default"],"cl-tree":["display/default","flex-direction/default"],"cl-tree-item":["align-items/default","display/default","flex-direction/default","position/default"]}');
 
 /***/ }
 

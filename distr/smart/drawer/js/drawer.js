@@ -112,8 +112,7 @@ const asksForArea = node => DRAWER_AREAS.some(slot => asksFor(node, slot));
 const PORTAL_ATTRIBUTE = 'data-sf-drawer-portal'; // A box that holds its own overlays (sf-drawer, sf-modal); the drawer's own
 // name came first and is read until the change journal retires it.
 
-const OVERLAY_CONTAINER = '[data-sf-overlay-container], [data-sf-drawer-container]';
-const FOCUSABLE_SELECTOR = ['a[href]', 'button:not([disabled])', 'input:not([disabled])', 'select:not([disabled])', 'textarea:not([disabled])', '[tabindex]:not([tabindex="-1"])'].join(','); // The open drawers, in the order they opened: the panels of the one document
+const OVERLAY_CONTAINER = '[data-sf-overlay-container], [data-sf-drawer-container]'; // The open drawers, in the order they opened: the panels of the one document
 // layer stack (layer-stack.js, standard 1.3.8 §19.1). The drawer kept an array
 // of its own, so a modal opened from a drawer did not know it was above it
 // (simai/ui-source#36) and a drawer opened from a modal was drawn under it
@@ -154,7 +153,6 @@ function escapeSelector(value) {
 
 const drawerManager = {
   globalBound: false,
-  lockState: null,
 
   // Opening raises a drawer that is open already: it is the last opened.
   add(drawer) {
@@ -162,10 +160,6 @@ const drawerManager = {
       kind: 'panel',
       ...this.declares(drawer),
       returnTo: drawer._lastActive ?? null,
-      lockPage: () => {
-        this.lockPage(drawer.preserveScrollGap);
-        return () => this.unlockPage();
-      },
       root: () => drawer.getDrawerRoot(),
       focusIn: () => drawer.focusFirst(),
       onEscape: event => drawer.onKeyDown(event),
@@ -180,13 +174,14 @@ const drawerManager = {
 
   // What the drawer declares to the stack (§19.1): a modal drawer locks the
   // page -- unless it stands in an overlay container, which it covers instead
-  // -- and holds the focus. The drawer remembers what it declared, so a docked
+  // -- with the stack's default page lock, and holds the focus. The drawer remembers what it declared, so a docked
   // drawer that starts or stops floating says so again (syncModal).
   declares(drawer) {
     const modal = drawer.modal;
     drawer._declaredModal = modal;
     return {
       locksPage: modal && !drawer.closest(OVERLAY_CONTAINER),
+      preserveScrollGap: drawer.preserveScrollGap !== false,
       trapsFocus: modal
     };
   },
@@ -312,31 +307,6 @@ const drawerManager = {
   // changed while open says so again.
   syncPageLock() {
     for (const drawer of openDrawers()) (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_5__.updateLayer)(drawer, this.declares(drawer));
-  },
-
-  lockPage(preserveScrollGap) {
-    const htmlElement = document.documentElement;
-    const body = document.body;
-    if (!htmlElement || !body || this.lockState) return;
-    const gap = Math.max(0, window.innerWidth - htmlElement.clientWidth);
-    this.lockState = {
-      htmlOverflow: htmlElement.style.overflow,
-      bodyOverflow: body.style.overflow,
-      bodyPaddingInlineEnd: body.style.paddingInlineEnd
-    };
-    htmlElement.style.overflow = 'hidden';
-    body.style.overflow = 'hidden';
-    if (preserveScrollGap && gap > 0) body.style.paddingInlineEnd = `${gap}px`;
-  },
-
-  unlockPage() {
-    if (!this.lockState) return;
-    const htmlElement = document.documentElement;
-    const body = document.body;
-    htmlElement.style.overflow = this.lockState.htmlOverflow;
-    body.style.overflow = this.lockState.bodyOverflow;
-    body.style.paddingInlineEnd = this.lockState.bodyPaddingInlineEnd;
-    this.lockState = null;
   },
 
   bindGlobalEvents() {
@@ -1230,7 +1200,7 @@ class SfDrawer extends DrawerElement {
 
     const inside = element => Boolean(element && (panel?.contains(element) || edge?.contains(element)));
 
-    const focusable = [panel, edge].flatMap(area => Array.from(area?.querySelectorAll(FOCUSABLE_SELECTOR) || [])).filter(element => element.getClientRects().length > 0);
+    const focusable = (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_5__.focusablesIn)(panel, edge);
 
     if (focusable.length === 0) {
       event.preventDefault();
@@ -1386,7 +1356,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-drawe
 /***/ "0dc7c163a2e8"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.drawer","tag":"sf-drawer","version":"1.8.4","kind":"leaf","settings":{"placement":{"type":"enum","values":["left","right","inline-start","inline-end","bottom"],"default":"right"},"snap":{"type":"enum","values":["auto","half","full"],"default":"auto"},"overlay":{"type":"boolean","default":true},"modal":{"type":"boolean","default":true},"docked":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1","2","full"],"default":"1"},"close-on-esc":{"type":"boolean","default":true},"close-on-overlay":{"type":"boolean","default":true},"preserve-scroll-gap":{"type":"boolean","default":true},"show-close":{"type":"boolean","default":true},"controlled":{"type":"boolean","default":false},"close-placement":{"type":"enum","values":["inside","outside"],"default":"inside"},"heading":{"type":"string","default":""},"label":{"type":"string","default":""},"close-label":{"type":"string","default-from":"runtime.close-label"},"width":{"type":"string","default":""},"stack-offset":{"type":"string","default":""},"dock-breakpoint":{"type":"string","default":""},"block-start":{"type":"string","default":""},"gutter":{"type":"string","default":""},"z-index":{"type":"string","default":""},"overlay-class":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"panel-style":{"type":"string","default":""},"header-class":{"type":"string","default":""},"body-class":{"type":"string","default":""},"close-class":{"type":"string","default":""},"unsaved":{"type":"boolean","default":false},"dismissible":{"type":"boolean","default":true}},"values":{"open":{"type":"boolean","default":false}},"events":{"open":{"carries":{"drawer-id":"string"},"cancelable":true},"opened":{"carries":{"drawer-id":"string"}},"close":{"carries":{"drawer-id":"string","reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"drawer-id":"string","reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"snapped":{"carries":{"drawer-id":"string","snap":{"type":"enum","values":["auto","half","full"]}}}},"actions":{"open":{"emits":"open"},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"emits":"close"},"toggle":{}},"layer":{"kind":"panel","locks-page":true,"traps-focus":true},"css-variables":{"--sf-drawer-background":{"type":"color","state":"default"},"--sf-drawer-color":{"type":"color","state":"default"},"--sf-drawer-overlay-background":{"type":"color","state":"overlay"},"--sf-drawer-gutter":{"type":"length","state":"default"},"--sf-drawer-block-start":{"type":"length","state":"default"},"--sf-drawer-dock-breakpoint":{"type":"length","state":"docked"},"--sf-drawer-z-index":{"type":"number","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.drawer","tag":"sf-drawer","version":"1.8.5","kind":"leaf","settings":{"placement":{"type":"enum","values":["left","right","inline-start","inline-end","bottom"],"default":"right"},"snap":{"type":"enum","values":["auto","half","full"],"default":"auto"},"overlay":{"type":"boolean","default":true},"modal":{"type":"boolean","default":true},"docked":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1","2","full"],"default":"1"},"close-on-esc":{"type":"boolean","default":true},"close-on-overlay":{"type":"boolean","default":true},"preserve-scroll-gap":{"type":"boolean","default":true},"show-close":{"type":"boolean","default":true},"controlled":{"type":"boolean","default":false},"close-placement":{"type":"enum","values":["inside","outside"],"default":"inside"},"heading":{"type":"string","default":""},"label":{"type":"string","default":""},"close-label":{"type":"string","default-from":"runtime.close-label"},"width":{"type":"string","default":""},"stack-offset":{"type":"string","default":""},"dock-breakpoint":{"type":"string","default":""},"block-start":{"type":"string","default":""},"gutter":{"type":"string","default":""},"z-index":{"type":"string","default":""},"overlay-class":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"panel-style":{"type":"string","default":""},"header-class":{"type":"string","default":""},"body-class":{"type":"string","default":""},"close-class":{"type":"string","default":""},"unsaved":{"type":"boolean","default":false},"dismissible":{"type":"boolean","default":true}},"values":{"open":{"type":"boolean","default":false}},"events":{"open":{"carries":{"drawer-id":"string"},"cancelable":true},"opened":{"carries":{"drawer-id":"string"}},"close":{"carries":{"drawer-id":"string","reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"drawer-id":"string","reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"snapped":{"carries":{"drawer-id":"string","snap":{"type":"enum","values":["auto","half","full"]}}}},"actions":{"open":{"emits":"open"},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"emits":"close"},"toggle":{}},"layer":{"kind":"panel","locks-page":true,"traps-focus":true},"css-variables":{"--sf-drawer-background":{"type":"color","state":"default"},"--sf-drawer-color":{"type":"color","state":"default"},"--sf-drawer-overlay-background":{"type":"color","state":"overlay"},"--sf-drawer-gutter":{"type":"length","state":"default"},"--sf-drawer-block-start":{"type":"length","state":"default"},"--sf-drawer-dock-breakpoint":{"type":"length","state":"docked"},"--sf-drawer-z-index":{"type":"number","state":"default"}}}');
 
 /***/ },
 
