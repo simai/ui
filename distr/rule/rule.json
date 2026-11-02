@@ -106,7 +106,7 @@
   },
   {
     "name": "animation/default",
-    "regex": "/^(?:(?:animation(?:-from-(?:bottom|left|right))?|infinite))(?![\\s\\S])/"
+    "regex": "/^(?:(?:animation(?:-(?:from-(?:bottom|left|right)|on-view))?|infinite))(?![\\s\\S])/"
   },
   {
     "name": "appearance/default",
@@ -428,27 +428,27 @@
   },
   {
     "name": "border-radius/default",
-    "regex": "/^(?:radius-(?:0|1(?:\\/(?:2|3))?|2|3|4|bottom-(?:0|1(?:\\/(?:2|3))?|2|3|4|default|inline-(?:end-(?:0|1(?:\\/(?:2|3))?|2|3|4|default|round(?:ed)?|s(?:quare|urface)|ui)|start-(?:0|1(?:\\/(?:2|3))?|2|3|4|default|round(?:ed)?|s(?:quare|urface)|ui))|round(?:ed)?|s(?:quare|urface)|ui)|default|inline-(?:end-(?:0|1(?:\\/(?:2|3))?|2|3|4|default|round(?:ed)?|s(?:quare|urface)|ui)|start-(?:0|1(?:\\/(?:2|3))?|2|3|4|default|round(?:ed)?|s(?:quare|urface)|ui))|round(?:ed)?|s(?:quare|urface)|top-(?:0|1(?:\\/(?:2|3))?|2|3|4|default|inline-(?:end-(?:0|1(?:\\/(?:2|3))?|2|3|4|default|round(?:ed)?|s(?:quare|urface)|ui)|start-(?:0|1(?:\\/(?:2|3))?|2|3|4|default|round(?:ed)?|s(?:quare|urface)|ui))|round(?:ed)?|s(?:quare|urface)|ui)|ui))(?![\\s\\S])/"
+    "regex": "/^(?:radius-(?:0|1(?:\\/(?:2|3))?|2|3|4|bottom-(?:0|1(?:\\/(?:2|3))?|2|3|4|inline-(?:end-(?:0|1(?:\\/(?:2|3))?|2|3|4|rounded|s(?:quare|urface)|ui)|start-(?:0|1(?:\\/(?:2|3))?|2|3|4|rounded|s(?:quare|urface)|ui))|rounded|s(?:quare|urface)|ui)|inline-(?:end-(?:0|1(?:\\/(?:2|3))?|2|3|4|rounded|s(?:quare|urface)|ui)|start-(?:0|1(?:\\/(?:2|3))?|2|3|4|rounded|s(?:quare|urface)|ui))|rounded|s(?:quare|urface)|top-(?:0|1(?:\\/(?:2|3))?|2|3|4|inline-(?:end-(?:0|1(?:\\/(?:2|3))?|2|3|4|rounded|s(?:quare|urface)|ui)|start-(?:0|1(?:\\/(?:2|3))?|2|3|4|rounded|s(?:quare|urface)|ui))|rounded|s(?:quare|urface)|ui)|ui))(?![\\s\\S])/"
   },
   {
     "name": "border-radius/lg",
-    "regex": "/^(?:lg:radius-(?:0|1(?:\\/(?:2|3))?|2|3|4|bottom-(?:0|1(?:\\/(?:2|3))?|2|3|4|default|inline-(?:end-(?:0|1(?:\\/(?:2|3))?|2|3|4|default|round(?:ed)?|s(?:quare|urface)|ui)|start-(?:0|1(?:\\/(?:2|3))?|2|3|4|default|round(?:ed)?|s(?:quare|urface)|ui))|round(?:ed)?|s(?:quare|urface)|ui)|default|inline-(?:end-(?:0|1(?:\\/(?:2|3))?|2|3|4|default|round(?:ed)?|s(?:quare|urface)|ui)|start-(?:0|1(?:\\/(?:2|3))?|2|3|4|default|round(?:ed)?|s(?:quare|urface)|ui))|round(?:ed)?|s(?:quare|urface)|top-(?:0|1(?:\\/(?:2|3))?|2|3|4|default|inline-(?:end-(?:0|1(?:\\/(?:2|3))?|2|3|4|default|round(?:ed)?|s(?:quare|urface)|ui)|start-(?:0|1(?:\\/(?:2|3))?|2|3|4|default|round(?:ed)?|s(?:quare|urface)|ui))|round(?:ed)?|s(?:quare|urface)|ui)|ui))(?![\\s\\S])/"
+    "regex": "/^(?:lg:radius-(?:0|1(?:\\/(?:2|3))?|2|3|4|bottom-(?:0|1(?:\\/(?:2|3))?|2|3|4|inline-(?:end-(?:0|1(?:\\/(?:2|3))?|2|3|4|rounded|s(?:quare|urface)|ui)|start-(?:0|1(?:\\/(?:2|3))?|2|3|4|rounded|s(?:quare|urface)|ui))|rounded|s(?:quare|urface)|ui)|inline-(?:end-(?:0|1(?:\\/(?:2|3))?|2|3|4|rounded|s(?:quare|urface)|ui)|start-(?:0|1(?:\\/(?:2|3))?|2|3|4|rounded|s(?:quare|urface)|ui))|rounded|s(?:quare|urface)|top-(?:0|1(?:\\/(?:2|3))?|2|3|4|inline-(?:end-(?:0|1(?:\\/(?:2|3))?|2|3|4|rounded|s(?:quare|urface)|ui)|start-(?:0|1(?:\\/(?:2|3))?|2|3|4|rounded|s(?:quare|urface)|ui))|rounded|s(?:quare|urface)|ui)|ui))(?![\\s\\S])/"
   },
   {
     "name": "border-radius/md",
-    "regex": "/^(?:md:radius-(?:0|1(?:\\/(?:2|3))?|2|3|4|bottom-(?:0|1(?:\\/(?:2|3))?|2|3|4|default|inline-(?:end-(?:0|1(?:\\/(?:2|3))?|2|3|4|default|round(?:ed)?|s(?:quare|urface)|ui)|start-(?:0|1(?:\\/(?:2|3))?|2|3|4|default|round(?:ed)?|s(?:quare|urface)|ui))|round(?:ed)?|s(?:quare|urface)|ui)|default|inline-(?:end-(?:0|1(?:\\/(?:2|3))?|2|3|4|default|round(?:ed)?|s(?:quare|urface)|ui)|start-(?:0|1(?:\\/(?:2|3))?|2|3|4|default|round(?:ed)?|s(?:quare|urface)|ui))|round(?:ed)?|s(?:quare|urface)|top-(?:0|1(?:\\/(?:2|3))?|2|3|4|default|inline-(?:end-(?:0|1(?:\\/(?:2|3))?|2|3|4|default|round(?:ed)?|s(?:quare|urface)|ui)|start-(?:0|1(?:\\/(?:2|3))?|2|3|4|default|round(?:ed)?|s(?:quare|urface)|ui))|round(?:ed)?|s(?:quare|urface)|ui)|ui))(?![\\s\\S])/"
+    "regex": "/^(?:md:radius-(?:0|1(?:\\/(?:2|3))?|2|3|4|bottom-(?:0|1(?:\\/(?:2|3))?|2|3|4|inline-(?:end-(?:0|1(?:\\/(?:2|3))?|2|3|4|rounded|s(?:quare|urface)|ui)|start-(?:0|1(?:\\/(?:2|3))?|2|3|4|rounded|s(?:quare|urface)|ui))|rounded|s(?:quare|urface)|ui)|inline-(?:end-(?:0|1(?:\\/(?:2|3))?|2|3|4|rounded|s(?:quare|urface)|ui)|start-(?:0|1(?:\\/(?:2|3))?|2|3|4|rounded|s(?:quare|urface)|ui))|rounded|s(?:quare|urface)|top-(?:0|1(?:\\/(?:2|3))?|2|3|4|inline-(?:end-(?:0|1(?:\\/(?:2|3))?|2|3|4|rounded|s(?:quare|urface)|ui)|start-(?:0|1(?:\\/(?:2|3))?|2|3|4|rounded|s(?:quare|urface)|ui))|rounded|s(?:quare|urface)|ui)|ui))(?![\\s\\S])/"
   },
   {
     "name": "border-radius/sm",
-    "regex": "/^(?:sm:radius-(?:0|1(?:\\/(?:2|3))?|2|3|4|bottom-(?:0|1(?:\\/(?:2|3))?|2|3|4|default|inline-(?:end-(?:0|1(?:\\/(?:2|3))?|2|3|4|default|round(?:ed)?|s(?:quare|urface)|ui)|start-(?:0|1(?:\\/(?:2|3))?|2|3|4|default|round(?:ed)?|s(?:quare|urface)|ui))|round(?:ed)?|s(?:quare|urface)|ui)|default|inline-(?:end-(?:0|1(?:\\/(?:2|3))?|2|3|4|default|round(?:ed)?|s(?:quare|urface)|ui)|start-(?:0|1(?:\\/(?:2|3))?|2|3|4|default|round(?:ed)?|s(?:quare|urface)|ui))|round(?:ed)?|s(?:quare|urface)|top-(?:0|1(?:\\/(?:2|3))?|2|3|4|default|inline-(?:end-(?:0|1(?:\\/(?:2|3))?|2|3|4|default|round(?:ed)?|s(?:quare|urface)|ui)|start-(?:0|1(?:\\/(?:2|3))?|2|3|4|default|round(?:ed)?|s(?:quare|urface)|ui))|round(?:ed)?|s(?:quare|urface)|ui)|ui))(?![\\s\\S])/"
+    "regex": "/^(?:sm:radius-(?:0|1(?:\\/(?:2|3))?|2|3|4|bottom-(?:0|1(?:\\/(?:2|3))?|2|3|4|inline-(?:end-(?:0|1(?:\\/(?:2|3))?|2|3|4|rounded|s(?:quare|urface)|ui)|start-(?:0|1(?:\\/(?:2|3))?|2|3|4|rounded|s(?:quare|urface)|ui))|rounded|s(?:quare|urface)|ui)|inline-(?:end-(?:0|1(?:\\/(?:2|3))?|2|3|4|rounded|s(?:quare|urface)|ui)|start-(?:0|1(?:\\/(?:2|3))?|2|3|4|rounded|s(?:quare|urface)|ui))|rounded|s(?:quare|urface)|top-(?:0|1(?:\\/(?:2|3))?|2|3|4|inline-(?:end-(?:0|1(?:\\/(?:2|3))?|2|3|4|rounded|s(?:quare|urface)|ui)|start-(?:0|1(?:\\/(?:2|3))?|2|3|4|rounded|s(?:quare|urface)|ui))|rounded|s(?:quare|urface)|ui)|ui))(?![\\s\\S])/"
   },
   {
     "name": "border-radius/xl",
-    "regex": "/^(?:xl:radius-(?:0|1(?:\\/(?:2|3))?|2|3|4|bottom-(?:0|1(?:\\/(?:2|3))?|2|3|4|default|inline-(?:end-(?:0|1(?:\\/(?:2|3))?|2|3|4|default|round(?:ed)?|s(?:quare|urface)|ui)|start-(?:0|1(?:\\/(?:2|3))?|2|3|4|default|round(?:ed)?|s(?:quare|urface)|ui))|round(?:ed)?|s(?:quare|urface)|ui)|default|inline-(?:end-(?:0|1(?:\\/(?:2|3))?|2|3|4|default|round(?:ed)?|s(?:quare|urface)|ui)|start-(?:0|1(?:\\/(?:2|3))?|2|3|4|default|round(?:ed)?|s(?:quare|urface)|ui))|round(?:ed)?|s(?:quare|urface)|top-(?:0|1(?:\\/(?:2|3))?|2|3|4|default|inline-(?:end-(?:0|1(?:\\/(?:2|3))?|2|3|4|default|round(?:ed)?|s(?:quare|urface)|ui)|start-(?:0|1(?:\\/(?:2|3))?|2|3|4|default|round(?:ed)?|s(?:quare|urface)|ui))|round(?:ed)?|s(?:quare|urface)|ui)|ui))(?![\\s\\S])/"
+    "regex": "/^(?:xl:radius-(?:0|1(?:\\/(?:2|3))?|2|3|4|bottom-(?:0|1(?:\\/(?:2|3))?|2|3|4|inline-(?:end-(?:0|1(?:\\/(?:2|3))?|2|3|4|rounded|s(?:quare|urface)|ui)|start-(?:0|1(?:\\/(?:2|3))?|2|3|4|rounded|s(?:quare|urface)|ui))|rounded|s(?:quare|urface)|ui)|inline-(?:end-(?:0|1(?:\\/(?:2|3))?|2|3|4|rounded|s(?:quare|urface)|ui)|start-(?:0|1(?:\\/(?:2|3))?|2|3|4|rounded|s(?:quare|urface)|ui))|rounded|s(?:quare|urface)|top-(?:0|1(?:\\/(?:2|3))?|2|3|4|inline-(?:end-(?:0|1(?:\\/(?:2|3))?|2|3|4|rounded|s(?:quare|urface)|ui)|start-(?:0|1(?:\\/(?:2|3))?|2|3|4|rounded|s(?:quare|urface)|ui))|rounded|s(?:quare|urface)|ui)|ui))(?![\\s\\S])/"
   },
   {
     "name": "border-radius/xxl",
-    "regex": "/^(?:xxl:radius-(?:0|1(?:\\/(?:2|3))?|2|3|4|bottom-(?:0|1(?:\\/(?:2|3))?|2|3|4|default|inline-(?:end-(?:0|1(?:\\/(?:2|3))?|2|3|4|default|round(?:ed)?|s(?:quare|urface)|ui)|start-(?:0|1(?:\\/(?:2|3))?|2|3|4|default|round(?:ed)?|s(?:quare|urface)|ui))|round(?:ed)?|s(?:quare|urface)|ui)|default|inline-(?:end-(?:0|1(?:\\/(?:2|3))?|2|3|4|default|round(?:ed)?|s(?:quare|urface)|ui)|start-(?:0|1(?:\\/(?:2|3))?|2|3|4|default|round(?:ed)?|s(?:quare|urface)|ui))|round(?:ed)?|s(?:quare|urface)|top-(?:0|1(?:\\/(?:2|3))?|2|3|4|default|inline-(?:end-(?:0|1(?:\\/(?:2|3))?|2|3|4|default|round(?:ed)?|s(?:quare|urface)|ui)|start-(?:0|1(?:\\/(?:2|3))?|2|3|4|default|round(?:ed)?|s(?:quare|urface)|ui))|round(?:ed)?|s(?:quare|urface)|ui)|ui))(?![\\s\\S])/"
+    "regex": "/^(?:xxl:radius-(?:0|1(?:\\/(?:2|3))?|2|3|4|bottom-(?:0|1(?:\\/(?:2|3))?|2|3|4|inline-(?:end-(?:0|1(?:\\/(?:2|3))?|2|3|4|rounded|s(?:quare|urface)|ui)|start-(?:0|1(?:\\/(?:2|3))?|2|3|4|rounded|s(?:quare|urface)|ui))|rounded|s(?:quare|urface)|ui)|inline-(?:end-(?:0|1(?:\\/(?:2|3))?|2|3|4|rounded|s(?:quare|urface)|ui)|start-(?:0|1(?:\\/(?:2|3))?|2|3|4|rounded|s(?:quare|urface)|ui))|rounded|s(?:quare|urface)|top-(?:0|1(?:\\/(?:2|3))?|2|3|4|inline-(?:end-(?:0|1(?:\\/(?:2|3))?|2|3|4|rounded|s(?:quare|urface)|ui)|start-(?:0|1(?:\\/(?:2|3))?|2|3|4|rounded|s(?:quare|urface)|ui))|rounded|s(?:quare|urface)|ui)|ui))(?![\\s\\S])/"
   },
   {
     "name": "border-spacing/default",
@@ -1245,6 +1245,27 @@
     "type": "smart"
   },
   {
+    "name": "cl-include",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "cl-skeleton"
+      },
+      {
+        "name": "cl-button"
+      },
+      {
+        "name": "cl-icon"
+      }
+    ],
+    "tags": [
+      "sf-include"
+    ],
+    "type": "smart"
+  },
+  {
     "name": "cl-inline-editor",
     "css": true,
     "js": true,
@@ -1911,23 +1932,6 @@
     ],
     "tags": [
       "sf-toast"
-    ],
-    "type": "smart"
-  },
-  {
-    "name": "cl-toggle",
-    "js": true,
-    "mode": "smart",
-    "relation": [
-      {
-        "name": "toggle"
-      },
-      {
-        "name": "icons"
-      }
-    ],
-    "tags": [
-      "sf-toggle"
     ],
     "type": "smart"
   },
@@ -2653,30 +2657,6 @@
   {
     "name": "font-family/default",
     "regex": "/^(?:(?:mono|s(?:ans|erif)))(?![\\s\\S])/"
-  },
-  {
-    "name": "font-size-ext/default",
-    "regex": "/^(?:text-(?:a(?:0|1|2|3|4|5|6|7|8|9)|b(?:0|1|2|3|4|5|6|7|8|9)|c(?:0|1|2|3|4|5|6|7|8|9)|d(?:0|1|2|3|4|5|6|7|8|9)|e(?:0|1|2|3|4|5|6|7|8|9)|f(?:0|1|2|3|4|5|6|7|8|9)|g(?:0|1|2|3|4|5|6|7|8|9)|h(?:0|1|2|3|4|5|6|7|8|9)|i(?:0|1|2|3|4|5|6|7|8|9)))(?![\\s\\S])/"
-  },
-  {
-    "name": "font-size-ext/lg",
-    "regex": "/^(?:lg:text-(?:a(?:0|1|2|3|4|5|6|7|8|9)|b(?:0|1|2|3|4|5|6|7|8|9)|c(?:0|1|2|3|4|5|6|7|8|9)|d(?:0|1|2|3|4|5|6|7|8|9)|e(?:0|1|2|3|4|5|6|7|8|9)|f(?:0|1|2|3|4|5|6|7|8|9)|g(?:0|1|2|3|4|5|6|7|8|9)|h(?:0|1|2|3|4|5|6|7|8|9)|i(?:0|1|2|3|4|5|6|7|8|9)))(?![\\s\\S])/"
-  },
-  {
-    "name": "font-size-ext/md",
-    "regex": "/^(?:md:text-(?:a(?:0|1|2|3|4|5|6|7|8|9)|b(?:0|1|2|3|4|5|6|7|8|9)|c(?:0|1|2|3|4|5|6|7|8|9)|d(?:0|1|2|3|4|5|6|7|8|9)|e(?:0|1|2|3|4|5|6|7|8|9)|f(?:0|1|2|3|4|5|6|7|8|9)|g(?:0|1|2|3|4|5|6|7|8|9)|h(?:0|1|2|3|4|5|6|7|8|9)|i(?:0|1|2|3|4|5|6|7|8|9)))(?![\\s\\S])/"
-  },
-  {
-    "name": "font-size-ext/sm",
-    "regex": "/^(?:sm:text-(?:a(?:0|1|2|3|4|5|6|7|8|9)|b(?:0|1|2|3|4|5|6|7|8|9)|c(?:0|1|2|3|4|5|6|7|8|9)|d(?:0|1|2|3|4|5|6|7|8|9)|e(?:0|1|2|3|4|5|6|7|8|9)|f(?:0|1|2|3|4|5|6|7|8|9)|g(?:0|1|2|3|4|5|6|7|8|9)|h(?:0|1|2|3|4|5|6|7|8|9)|i(?:0|1|2|3|4|5|6|7|8|9)))(?![\\s\\S])/"
-  },
-  {
-    "name": "font-size-ext/xl",
-    "regex": "/^(?:xl:text-(?:a(?:0|1|2|3|4|5|6|7|8|9)|b(?:0|1|2|3|4|5|6|7|8|9)|c(?:0|1|2|3|4|5|6|7|8|9)|d(?:0|1|2|3|4|5|6|7|8|9)|e(?:0|1|2|3|4|5|6|7|8|9)|f(?:0|1|2|3|4|5|6|7|8|9)|g(?:0|1|2|3|4|5|6|7|8|9)|h(?:0|1|2|3|4|5|6|7|8|9)|i(?:0|1|2|3|4|5|6|7|8|9)))(?![\\s\\S])/"
-  },
-  {
-    "name": "font-size-ext/xxl",
-    "regex": "/^(?:xxl:text-(?:a(?:0|1|2|3|4|5|6|7|8|9)|b(?:0|1|2|3|4|5|6|7|8|9)|c(?:0|1|2|3|4|5|6|7|8|9)|d(?:0|1|2|3|4|5|6|7|8|9)|e(?:0|1|2|3|4|5|6|7|8|9)|f(?:0|1|2|3|4|5|6|7|8|9)|g(?:0|1|2|3|4|5|6|7|8|9)|h(?:0|1|2|3|4|5|6|7|8|9)|i(?:0|1|2|3|4|5|6|7|8|9)))(?![\\s\\S])/"
   },
   {
     "name": "font-size/default",
@@ -4608,13 +4588,6 @@
     "css": true,
     "js": true,
     "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-toast\\b/i",
-    "type": "component"
-  },
-  {
-    "name": "toggle",
-    "css": true,
-    "js": true,
-    "regex": "/class\\s*=\\s*[\"'][^\"']*\\bsf-toggle\\b/i",
     "type": "component"
   },
   {

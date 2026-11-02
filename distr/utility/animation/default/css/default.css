@@ -26,6 +26,16 @@
     -webkit-animation-name: sf-animation-from-bottom;
             animation-name: sf-animation-from-bottom;
   }
+  .animation-on-view[data-sf-on-view=waiting] {
+    -webkit-animation-play-state: paused;
+            animation-play-state: paused;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .animation-on-view[data-sf-on-view=waiting] {
+      -webkit-animation-play-state: running;
+              animation-play-state: running;
+    }
+  }
   @-webkit-keyframes sf-animation-fade {
     from {
       opacity: 0;

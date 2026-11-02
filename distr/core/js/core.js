@@ -3714,12 +3714,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _region_navigation_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("9edc14a11fec");
 /* harmony import */ var _workspace_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("0730c3d86f4b");
 /* harmony import */ var _effects_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("4f52f56c9555");
-/* harmony import */ var _notify_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("b4bff8456ce0");
-/* harmony import */ var _sanitize_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("20db70d35f32");
-/* harmony import */ var _ready_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("5effd0d9c238");
-/* harmony import */ var _early_port_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__("55bd48f35b65");
-/* harmony import */ var _pending_tags_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__("3c79afd07eeb");
-/* harmony import */ var _preloader__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__("6c7f357fe960");
+/* harmony import */ var _on_view_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("43cada8855de");
+/* harmony import */ var _notify_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("b4bff8456ce0");
+/* harmony import */ var _sanitize_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("20db70d35f32");
+/* harmony import */ var _ready_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__("5effd0d9c238");
+/* harmony import */ var _early_port_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__("55bd48f35b65");
+/* harmony import */ var _pending_tags_js__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__("3c79afd07eeb");
+/* harmony import */ var _preloader__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__("6c7f357fe960");
+
 
 
 
@@ -3748,10 +3750,10 @@ if (typeof window !== 'undefined') {
   window.SF = window.SF || {};
   const SF = window.SF; // SF.ready, before the Loader chunk is even asked for (simai/ui-source#16).
 
-  (0,_ready_js__WEBPACK_IMPORTED_MODULE_15__.installReady)(window); // The ports declared on elements (data-sf-port islands): their first calls
+  (0,_ready_js__WEBPACK_IMPORTED_MODULE_16__.installReady)(window); // The ports declared on elements (data-sf-port islands): their first calls
   // leave now, while the components' code is still on its way (stand 27).
 
-  (0,_early_port_js__WEBPACK_IMPORTED_MODULE_16__.installEarlyPort)(window);
+  (0,_early_port_js__WEBPACK_IMPORTED_MODULE_17__.installEarlyPort)(window);
 
   if (!SF.loadRuntime) {
     let loading = null;
@@ -3966,8 +3968,8 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
       return;
     }
 
-    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_17__.installPendingTags)(window);
-    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_17__.holdUndefinedElements)(window);
+    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_18__.installPendingTags)(window);
+    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_18__.holdUndefinedElements)(window);
   };
 
   holdUndefinedUntilDefined();
@@ -3975,18 +3977,18 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
   const mountPreloader = () => {
     const cfg = {
       enabled: true,
-      background: (0,_preloader__WEBPACK_IMPORTED_MODULE_18__.getPreloaderBackground)(),
+      background: (0,_preloader__WEBPACK_IMPORTED_MODULE_19__.getPreloaderBackground)(),
       modifier: 'loader-default',
       tempStyles: 'inset: 0;position: fixed;width: 100%;height: 100vh;opacity: 1;z-index: 1000;background-color: var(--sf-color--surface-highest, var(--sf-surface-0, #fff));text-align: center;',
-      color: (0,_preloader__WEBPACK_IMPORTED_MODULE_18__.getPreloaderColor)(),
-      width: _preloader__WEBPACK_IMPORTED_MODULE_18__.DEFAULT_PRELOADER.width,
-      height: _preloader__WEBPACK_IMPORTED_MODULE_18__.DEFAULT_PRELOADER.height,
+      color: (0,_preloader__WEBPACK_IMPORTED_MODULE_19__.getPreloaderColor)(),
+      width: _preloader__WEBPACK_IMPORTED_MODULE_19__.DEFAULT_PRELOADER.width,
+      height: _preloader__WEBPACK_IMPORTED_MODULE_19__.DEFAULT_PRELOADER.height,
       content: '',
       delay: 300,
       ...(window.SF_BOOT_CONFIG?.preloader || {})
     };
     if (cfg.enabled === false || document.querySelector('.sf-loader')) return;
-    const svgContent = cfg.content || (0,_preloader__WEBPACK_IMPORTED_MODULE_18__.createPreloaderContent)(cfg);
+    const svgContent = cfg.content || (0,_preloader__WEBPACK_IMPORTED_MODULE_19__.createPreloaderContent)(cfg);
     let wrap = null;
     let preloaderWrap = null;
     let preloaderRun = false;
@@ -4000,7 +4002,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
 
     const stopAnimation = () => {
       if (preloaderWrap) {
-        (0,_preloader__WEBPACK_IMPORTED_MODULE_18__.stopPreloaderMotion)(preloaderWrap);
+        (0,_preloader__WEBPACK_IMPORTED_MODULE_19__.stopPreloaderMotion)(preloaderWrap);
       }
     };
 
@@ -4009,7 +4011,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
       // preloader over them (§5.4). Read when the preloader would show, after
       // its delay, when the server's markup has been parsed.
 
-      if ((0,_preloader__WEBPACK_IMPORTED_MODULE_18__.pageHasFirstPaint)(document)) return;
+      if ((0,_preloader__WEBPACK_IMPORTED_MODULE_19__.pageHasFirstPaint)(document)) return;
       wrap = document.createElement('div');
       const inner = document.createElement('div');
       wrap.classList.add('sf-loader', cfg.modifier);
@@ -4031,7 +4033,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
         wrap: wrap,
         preloaderActive: true
       };
-      (0,_preloader__WEBPACK_IMPORTED_MODULE_18__.startPreloaderMotion)(preloaderWrap, () => preloaderRun, cfg);
+      (0,_preloader__WEBPACK_IMPORTED_MODULE_19__.startPreloaderMotion)(preloaderWrap, () => preloaderRun, cfg);
     };
 
     const cancelBuild = () => {
@@ -4068,7 +4070,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
 
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', () => {
-        if (!(0,_preloader__WEBPACK_IMPORTED_MODULE_18__.pageHasFirstPaint)(document)) return;
+        if (!(0,_preloader__WEBPACK_IMPORTED_MODULE_19__.pageHasFirstPaint)(document)) return;
         cancelBuild();
         preloaderRun = false;
         stopAnimation();
@@ -5520,6 +5522,161 @@ if (typeof window !== 'undefined') {
     };
   }
 }
+
+/***/ },
+
+/***/ "43cada8855de"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   ON_VIEW_CLASS: () => (/* binding */ ON_VIEW_CLASS),
+/* harmony export */   ON_VIEW_STATE: () => (/* binding */ ON_VIEW_STATE),
+/* harmony export */   ON_VIEW_THRESHOLD: () => (/* binding */ ON_VIEW_THRESHOLD),
+/* harmony export */   installOnView: () => (/* binding */ installOnView),
+/* harmony export */   onViewSeen: () => (/* binding */ onViewSeen)
+/* harmony export */ });
+// Animate when scrolled into view (utility.animation 1.1.0; step 2 of the
+// legacy-units plan, owner decision q-410df7e4b5). An element with the
+// animation utility's classes and `animation-on-view` holds its animation at
+// the first frame until it enters the viewport, then plays it once:
+//
+//   <div class="animation animation-from-bottom animation-on-view">...</div>
+//
+// Core marks such an element data-sf-on-view="waiting" -- the utility's sheet
+// pauses the animation there, so the element keeps its from-state and never
+// shows its end state first -- and sets "shown" once at least 15 % of it is in
+// view (an element too tall to ever show 15 % starts as soon as it enters).
+// "shown" stays, so an element moved in the document does not wait again.
+//
+// The waiting state exists only once core has marked the element: without
+// JavaScript, without IntersectionObserver or for a person who asked for less
+// motion (prefers-reduced-motion: reduce) nothing is marked and the element
+// renders as the utility alone draws it. Turning reduced motion on shows every
+// waiting element at once.
+//
+// One IntersectionObserver for the page, created on first use; an element is
+// unobserved once shown. Markup added later is found by a MutationObserver of
+// its own: the Loader's scan is debounced and runs after the element may
+// already have painted, while a mutation callback marks it before the first
+// frame (the same reason effects.js watches its declarations itself).
+const ON_VIEW_CLASS = 'animation-on-view';
+const ON_VIEW_STATE = 'data-sf-on-view';
+const ON_VIEW_THRESHOLD = 0.15;
+const FRESH = `.${ON_VIEW_CLASS}:not([${ON_VIEW_STATE}])`;
+const WAITING = `[${ON_VIEW_STATE}="waiting"]`; // Whether an entry counts as seen: 15 % of the element in view, or any part of
+// an element so tall that 15 % of it is more than the viewport.
+
+function onViewSeen(entry, viewportHeight = 0) {
+  if (!entry?.isIntersecting) return false;
+  if (entry.intersectionRatio >= ON_VIEW_THRESHOLD) return true;
+  const height = entry.boundingClientRect?.height ?? 0;
+  const root = entry.rootBounds?.height || viewportHeight;
+  return root > 0 && height * ON_VIEW_THRESHOLD >= root;
+}
+function installOnView(win = globalThis) {
+  const doc = win?.document;
+  if (!doc?.documentElement) return null;
+  if (win.__sfOnView?.document === doc) return win.__sfOnView;
+  const Sight = win.IntersectionObserver;
+  const Changes = win.MutationObserver;
+  const motion = win.matchMedia?.('(prefers-reduced-motion: reduce)') ?? null;
+  let sight = null;
+  let waiting = 0;
+
+  const show = element => {
+    if (element.getAttribute(ON_VIEW_STATE) !== 'waiting') return;
+    sight?.unobserve(element);
+    element.setAttribute(ON_VIEW_STATE, 'shown');
+    waiting = Math.max(0, waiting - 1);
+  };
+
+  const observer = () => {
+    if (!sight) {
+      sight = new Sight(entries => {
+        for (const entry of entries) if (onViewSeen(entry, win.innerHeight)) show(entry.target);
+      }, {
+        threshold: [0, ON_VIEW_THRESHOLD]
+      });
+    }
+
+    return sight;
+  };
+
+  const mark = element => {
+    if (typeof Sight !== 'function' || motion?.matches) return;
+    element.setAttribute(ON_VIEW_STATE, 'waiting');
+    waiting += 1;
+    observer().observe(element);
+  };
+
+  const scan = root => {
+    if (root?.nodeType !== 1 && root?.nodeType !== 9) return;
+    if (root.nodeType === 1 && root.matches(FRESH)) mark(root);
+
+    for (const element of root.querySelectorAll?.(FRESH) ?? []) mark(element);
+  };
+
+  const forget = root => {
+    if (root?.nodeType !== 1 || root.isConnected) return;
+    const gone = root.matches(WAITING) ? [root] : [];
+    gone.push(...(root.querySelectorAll?.(WAITING) ?? []));
+
+    for (const element of gone) {
+      sight?.unobserve(element);
+      element.removeAttribute(ON_VIEW_STATE);
+      waiting = Math.max(0, waiting - 1);
+    }
+  };
+
+  const showAll = () => {
+    for (const element of doc.querySelectorAll(WAITING)) show(element);
+  };
+
+  scan(doc);
+  const changes = typeof Changes === 'function' ? new Changes(records => {
+    for (const record of records) {
+      for (const node of record.addedNodes) scan(node);
+
+      if (waiting) for (const node of record.removedNodes) forget(node);
+    }
+  }) : null;
+  changes?.observe(doc.documentElement, {
+    childList: true,
+    subtree: true
+  });
+
+  const onMotion = () => {
+    if (motion.matches) showAll();
+  };
+
+  motion?.addEventListener?.('change', onMotion);
+  const handle = Object.freeze({
+    document: doc,
+    scan,
+
+    get waiting() {
+      return waiting;
+    },
+
+    stop() {
+      changes?.disconnect();
+      sight?.disconnect();
+      motion?.removeEventListener?.('change', onMotion);
+      if (win.__sfOnView === handle) delete win.__sfOnView;
+    }
+
+  });
+  Object.defineProperty(win, '__sfOnView', {
+    value: handle,
+    configurable: true,
+    enumerable: false,
+    writable: true
+  });
+  return handle;
+}
+if (typeof window !== 'undefined') installOnView(window);
 
 /***/ },
 

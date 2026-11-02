@@ -3,7 +3,7 @@
   "schema_version": 1,
   "id": "core.runtime",
   "kind": "core",
-  "version": "1.15.0",
+  "version": "1.16.0",
   "owner": "simai/ui-source",
   "summary": "The core runtime: the Loader, the Smart base, the composition runtime and the contracts it reads; everything under src/core that no token set, font, port or the core sheet claims.",
   "includes": [
@@ -117,6 +117,7 @@
     "src/core/js/loader.js",
     "src/core/js/mask.js",
     "src/core/js/notify.js",
+    "src/core/js/on-view.js",
     "src/core/js/open-surface-mark.js",
     "src/core/js/page-actions.js",
     "src/core/js/page-language.js",
@@ -156,7 +157,7 @@
     "src/core/types/smart-components.d.ts",
     "src/core/utility-full.js"
   ],
-  "content_sha256": "1c4ee12abbe384b5579c693391d66999b19b22d2ab34b07be70882b7a28c17cc",
+  "content_sha256": "452078f46f3fe46b54d1fcd4e59ed39e88679e687a1947ebfe63476f44a6f5a2",
   "dependencies": [
     {
       "id": "core.styles",
