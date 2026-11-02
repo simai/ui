@@ -103,15 +103,16 @@ class FrameworkContractRegistryTest(unittest.TestCase):
         self.assertEqual(
             self.registry["counts"],
             {
-                "utility": 229,
-                "component": 67,
+                "utility": 228,
+                "component": 66,
                 # 49 until the four components now in package larena left
                 # the free release (two of them, sf-data-view and
                 # sf-property-view, were never entries here); 48 with
-                # sf-page-header; 60 with sf-progress-ring; 61 with sf-site-header.
+                # sf-page-header; 60 with sf-progress-ring; 61 with sf-site-header;
+                # 66 again when sf-toggle left and sf-include came.
                 "smart-component": 66,
                 "recipe": 1,
-                "total": 363,
+                "total": 361,
             },
         )
         # The id names the runtimes it was built from; that is the claim, not
@@ -335,7 +336,7 @@ class FrameworkContractRegistryTest(unittest.TestCase):
         self.assertIn("--sf-button--radius", entities["component.buttons"]["public_contract"]["custom_properties"])
         radius = entities["core.design-tokens"]["public_contract"]["semantic_radius"]
         self.assertEqual(radius["--sf-radius--ui"]["scope"], "compact_controls")
-        self.assertEqual(radius["--sf-radius-default"]["scope"], "large_surfaces")
+        self.assertEqual(radius["--sf-radius--surface"]["scope"], "large_surfaces")
         self.assertNotIn("documentation_refs", first)
         self.assertNotIn("example_refs", first)
         self.assertNotIn("readiness", first)

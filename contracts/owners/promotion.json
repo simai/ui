@@ -1553,8 +1553,6 @@
     }
   },
   "held": {
-    "smart.inline-editor": "declares no inputs: no stable public API",
-    "smart.toggle": "deprecated in its source manifest (sf-switch replaces it)",
-    "component.toggle": "deprecated: its docs page is the migration to sf-switch"
+    "smart.inline-editor": "declares no inputs: no stable public API"
   }
 }

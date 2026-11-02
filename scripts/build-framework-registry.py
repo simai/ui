@@ -1207,8 +1207,8 @@ def build_documentation_source(
                         "value": css_custom_property(core_css, "--sf-radius--ui"),
                         "scope": "compact_controls",
                     },
-                    "--sf-radius-default": {
-                        "value": css_custom_property(core_css, "--sf-radius-default"),
+                    "--sf-radius--surface": {
+                        "value": css_custom_property(core_css, "--sf-radius--surface"),
                         "scope": "large_surfaces",
                     },
                     "square": {"role": "explicit_override"},

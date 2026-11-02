@@ -8,6 +8,9 @@
 
 ### Добавлено
 
+- `animation-on-view`: a setting of the `animation` utility (1.1.0). The element waits at the animation's first frame until 15% of it is in view, then plays once; reduced motion and no JavaScript show it at once.
+- `sf-include` 1.0.0: a part of the page loaded from an address. `src`, `load="now|view"`, a skeleton (or the `placeholder` slot) while loading, an error with Retry, `refresh()`, events `sf-include-loaded` and `sf-include-load-failed`. Scripts in the response do not run. It replaces the retired ajax, ajaxload and lazy-load units.
+- The compat sweep of 2026-11-01: `sf-toggle` and the toggle class component are removed (use `sf-switch`), `--sf-radius-round` and `radius-round` (use `radius-rounded`), `--sf-radius-default` and `radius-default*` (use `--sf-radius--ui` / `radius-ui`, or `radius-surface` for a block), and the `text-a0 … text-i9` utilities (use the text scale). `tokens.radius` and `utility.border-radius` 1.1.0. `core.runtime` 1.16.0.
 - Eight legacy class units are retired: `ajax`, `ajaxload`, `lazy-load`, `share`, `viewbox`, `overbox`, `overcard`, `wow`. No Loader rule loaded them, so no page changes behaviour; the change journal records each with its successor (`sf-viewbox-NxM` → `aspect-NxM`, overbox → `sf-popover`, wow → the `animation` utility, lazy-load → `loading="lazy"`, ajax and ajaxload → `fetch`).
 - `sf-system` and `special` are internal modules (`module.sf-system`, `module.special` 2.0.0). sf-system loses its never-built gallery, modal and overbox code and its rule, so it no longer loads on pages with Smart `sf-gallery`.
 - The JavaScript API contract drops `SF.AjaxLoad`, `SF.LazyLoad` and `SF.Modal` (never defined). `core.runtime` 1.15.0.

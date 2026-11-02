@@ -40,7 +40,7 @@ class DocumentationSourceTest(unittest.TestCase):
         self.assertIn("--sf-button--radius", buttons["custom_properties"])
         radius = entities["core.design-tokens"]["public_contract"]["semantic_radius"]
         self.assertEqual("compact_controls", radius["--sf-radius--ui"]["scope"])
-        self.assertEqual("large_surfaces", radius["--sf-radius-default"]["scope"])
+        self.assertEqual("large_surfaces", radius["--sf-radius--surface"]["scope"])
         self.assertNotIn("documentation_refs", actual)
         self.assertNotIn("readiness", actual)
 
