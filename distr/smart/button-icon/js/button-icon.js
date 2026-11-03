@@ -442,7 +442,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
-const COMPONENT_ATTRIBUTES = new Set(['template', 'kind', 'variant', 'size', 'appearance', 'type', 'scheme', 'status', 'icon', 'filled', 'spacing', 'tightness', 'radius', 'segment', 'root-class', 'loading', 'disabled', 'native-type', 'button-attributes', 'aria-label', ..._helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_4__.ANCHORED_BADGE_ATTRIBUTES, 'class', 'style', 'id', 'slot']);
+const COMPONENT_ATTRIBUTES = new Set(['template', 'kind', 'variant', 'size', 'appearance', 'type', 'scheme', 'status', 'icon', 'filled', 'spacing', 'tightness', 'radius', 'segment', 'root-class', 'loading', 'disabled', 'native-type', 'pressed', 'button-attributes', 'aria-label', ..._helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_4__.ANCHORED_BADGE_ATTRIBUTES, 'class', 'style', 'id', 'slot']);
 
 function applyButtonAttributes(host, button) {
   host?.forwardHostAttributes(button, {
@@ -481,6 +481,16 @@ class SfIconButton extends IconButtonElement {
 
   get rootClass() {
     return this.getAttribute('root-class') || '';
+  } // pressed is optional: absent, the button is not a toggle and says nothing;
+  // present, aria-pressed and the selected look follow it.
+
+
+  get pressed() {
+    return this.hasAttribute('pressed') ? super.pressed : undefined;
+  }
+
+  set pressed(value) {
+    if (value === undefined || value === null) this.removeAttribute('pressed');else this.setAttribute('pressed', value ? '' : 'false');
   }
 
   templateContext() {
@@ -500,6 +510,7 @@ class SfIconButton extends IconButtonElement {
       nativeType: this.nativeType,
       radius: this.radius,
       ariaLabel: this.getAttribute('aria-label') || '',
+      pressed: this.pressed,
       ...(0,_core_js_control_spacing__WEBPACK_IMPORTED_MODULE_3__.resolveControlSpacing)({
         spacing: this.getAttribute('spacing')
       }),
@@ -737,7 +748,8 @@ function renderIconButtonTemplate(context) {
   // takes; they cannot both paint it.
   `sf-icon-button--${status || scheme || 'primary'}`, // on-surface-variant is the on-surface family one step quieter: both
   // classes, so every on-surface rule holds and one rule quietens it.
-  !status && scheme === 'on-surface-variant' ? 'sf-icon-button--on-surface' : '', tightness ? `tightness-${tightness}` : '', radius ? `radius-${radius}` : '', rootClass, loading ? 'loading sf-icon-button-state-loading' : ''].filter(Boolean); // Loading shows the spinner in place of the icon, at the icon's size
+  !status && scheme === 'on-surface-variant' ? 'sf-icon-button--on-surface' : '', tightness ? `tightness-${tightness}` : '', radius ? `radius-${radius}` : '', rootClass, loading ? 'loading sf-icon-button-state-loading' : '', // A toggle that is on wears the selected look (active with aria-pressed).
+  context.pressed ? 'active' : ''].filter(Boolean); // Loading shows the spinner in place of the icon, at the icon's size
   // (simai/ui-source#10); the button keeps its name and says aria-busy.
 
   const iconContent = loading ? (0,_component_spinner_js_spinner_draw__WEBPACK_IMPORTED_MODULE_2__.createInlineSpinner)({
@@ -753,6 +765,7 @@ function renderIconButtonTemplate(context) {
                 ?disabled=${disabled || loading}
                 aria-label=${ariaLabel ? (0,_helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_3__.nameWithBadge)(ariaLabel, badge?.phrase) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 aria-busy=${loading ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                aria-pressed=${context.pressed === undefined ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : String(Boolean(context.pressed))}
         >
             ${iconContent}${(0,_helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_3__.renderAnchoredBadge)(badge)}${ariaLabel ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : (0,_helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_3__.renderAnchoredBadgeText)(badge, false)}
         </button>
@@ -887,7 +900,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-butto
 /***/ "79f8b9b70d88"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button-icon","tag":"sf-button-icon","version":"1.3.0","kind":"leaf","settings":{"kind":{"type":"enum","values":["icon","close"],"default":"icon"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"appearance":{"type":"enum","values":["default","tonal","outline","link","surface","ghost"],"default":"default"},"scheme":{"type":"enum","values":["primary","secondary","on-surface","on-surface-variant"],"default":"primary"},"status":{"type":"enum","values":["","error"],"default":""},"segment":{"type":"enum","values":["","start","middle","end"],"default":""},"icon":{"type":"icon","default":"add"},"filled":{"type":"boolean","default":false},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"loading":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"native-type":{"type":"enum","values":["button","submit","reset"],"default":"button"},"badge-count":{"type":"string","default":""},"badge-dot":{"type":"boolean","default":false},"badge-cap":{"type":"number","integer":true,"min":1,"default":99},"badge-label":{"type":"string","default":""},"button-attributes":{"type":"object"}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-icon-button-background-color":{"type":"color","state":"default"},"--sf-icon-button-color":{"type":"color","state":"default"},"--sf-icon-button-border-color":{"type":"color","state":"default"},"--sf-icon-button-border-width":{"type":"length","state":"default"},"--sf-icon-button-radius":{"type":"length","state":"default"},"--sf-icon-button-padding-inline":{"type":"length","state":"default"},"--sf-icon-button-padding-block":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button-icon","tag":"sf-button-icon","version":"1.4.0","kind":"leaf","settings":{"kind":{"type":"enum","values":["icon","close"],"default":"icon"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"appearance":{"type":"enum","values":["default","tonal","outline","link","surface","ghost"],"default":"default"},"scheme":{"type":"enum","values":["primary","secondary","on-surface","on-surface-variant"],"default":"primary"},"status":{"type":"enum","values":["","error"],"default":""},"segment":{"type":"enum","values":["","start","middle","end"],"default":""},"icon":{"type":"icon","default":"add"},"filled":{"type":"boolean","default":false},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"loading":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"native-type":{"type":"enum","values":["button","submit","reset"],"default":"button"},"badge-count":{"type":"string","default":""},"badge-dot":{"type":"boolean","default":false},"badge-cap":{"type":"number","integer":true,"min":1,"default":99},"badge-label":{"type":"string","default":""},"button-attributes":{"type":"object"},"pressed":{"type":"boolean","optional":true}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-icon-button-background-color":{"type":"color","state":"default"},"--sf-icon-button-color":{"type":"color","state":"default"},"--sf-icon-button-border-color":{"type":"color","state":"default"},"--sf-icon-button-border-width":{"type":"length","state":"default"},"--sf-icon-button-radius":{"type":"length","state":"default"},"--sf-icon-button-padding-inline":{"type":"length","state":"default"},"--sf-icon-button-padding-block":{"type":"length","state":"default"}}}');
 
 /***/ },
 

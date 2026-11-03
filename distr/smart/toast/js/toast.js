@@ -621,15 +621,6 @@ const ToastElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.e
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_5__
 });
 
-const applied = () => ({
-  outcome: 'applied'
-});
-
-const refused = reason => ({
-  outcome: 'refused',
-  reason
-});
-
 class SfToast extends ToastElement {
   static get props() {
     return { ...super.props,
@@ -766,13 +757,13 @@ class SfToast extends ToastElement {
 
   close() {
     if (!this._boundRoot) {
-      if (!this.isConnected) return refused('closed');
+      if (!this.isConnected) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('closed');
       this.remove();
-      return applied();
+      return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.applied)();
     }
 
     this._closeReason = 'api';
-    return (0,_component_toast_js_toast__WEBPACK_IMPORTED_MODULE_2__.dismissToast)(this._boundRoot, this) ? applied() : refused('prevented');
+    return (0,_component_toast_js_toast__WEBPACK_IMPORTED_MODULE_2__.dismissToast)(this._boundRoot, this) ? (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.applied)() : (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('prevented');
   } // Says a message: text (the assembly's word for code and count, §11.2) is the
   // heading, tone the status.
 
@@ -781,7 +772,7 @@ class SfToast extends ToastElement {
     const text = typeof params === 'string' ? params : params?.text;
     if (typeof text === 'string' && text) this.setAttribute('heading', text);
     if (params?.tone) this.setAttribute('status', params.tone);
-    return this.isConnected ? applied() : refused('closed');
+    return this.isConnected ? (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.applied)() : (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('closed');
   }
 
   get state() {
@@ -973,7 +964,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-toast
 /***/ "b3afcae54093"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.toast","tag":"sf-toast","version":"1.1.6","kind":"leaf","settings":{"status":{"type":"enum","values":["neutral","info","success","warning","error"],"default":"neutral"},"icon":{"type":"icon","default":""},"heading":{"type":"string","default":""},"supporting-text":{"type":"string","default":""},"action-text":{"type":"string","default":""},"action":{"type":"string","default":"action"},"closable":{"type":"boolean","default":true},"close-label":{"type":"string","default-from":"runtime.close-label"},"duration":{"type":"number","default":0,"min":0}},"values":{},"events":{"action":{"carries":{"action":{"type":"string"}},"own-verb":true},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}}},"actions":{"close":{"emits":"close"},"show":{"with":{"text":"string","code":"string","count":"number","tone":{"type":"enum","values":["info","success","warning","error"]}}}},"layer":{"kind":"toast","locks-page":false,"traps-focus":false},"css-variables":{"--sf-toast-background-color":{"type":"color","state":"default"},"--sf-toast-color":{"type":"color","state":"default"},"--sf-toast-border-color":{"type":"color","state":"default"},"--sf-toast-border-width":{"type":"length","state":"default"},"--sf-toast-radius":{"type":"length","state":"default"},"--sf-toast-padding-inline":{"type":"length","state":"default"},"--sf-toast-padding-block":{"type":"length","state":"default"},"--sf-toast-gap":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.toast","tag":"sf-toast","version":"1.1.7","kind":"leaf","settings":{"status":{"type":"enum","values":["neutral","info","success","warning","error"],"default":"neutral"},"icon":{"type":"icon","default":""},"heading":{"type":"string","default":""},"supporting-text":{"type":"string","default":""},"action-text":{"type":"string","default":""},"action":{"type":"string","default":"action"},"closable":{"type":"boolean","default":true},"close-label":{"type":"string","default-from":"runtime.close-label"},"duration":{"type":"number","default":0,"min":0}},"values":{},"events":{"action":{"carries":{"action":{"type":"string"}},"own-verb":true},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}}},"actions":{"close":{"emits":"close"},"show":{"with":{"text":"string","code":"string","count":"number","tone":{"type":"enum","values":["info","success","warning","error"]}}}},"layer":{"kind":"toast","locks-page":false,"traps-focus":false},"css-variables":{"--sf-toast-background-color":{"type":"color","state":"default"},"--sf-toast-color":{"type":"color","state":"default"},"--sf-toast-border-color":{"type":"color","state":"default"},"--sf-toast-border-width":{"type":"length","state":"default"},"--sf-toast-radius":{"type":"length","state":"default"},"--sf-toast-padding-inline":{"type":"length","state":"default"},"--sf-toast-padding-block":{"type":"length","state":"default"},"--sf-toast-gap":{"type":"length","state":"default"}}}');
 
 /***/ },
 

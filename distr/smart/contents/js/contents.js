@@ -150,16 +150,6 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 const HOLD_MS = 300;
 let sequence = 0;
-
-const applied = () => ({
-  outcome: 'applied'
-});
-
-const refused = reason => ({
-  outcome: 'refused',
-  reason
-});
-
 const ContentsElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_4__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
@@ -170,7 +160,7 @@ const ContentsElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1_
   actions: {
     refresh() {
       this.collect();
-      return applied();
+      return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.applied)();
     },
 
     toggle() {
@@ -584,19 +574,19 @@ class SfContents extends ContentsElement {
 
 
   openList() {
-    if (this.isOpen) return applied();
-    if (!this.compact) return refused('not-compact');
+    if (this.isOpen) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.applied)();
+    if (!this.compact) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('not-compact');
     this.isOpen = true;
     this.sfHostState('data-open', true);
     document.addEventListener('pointerdown', this._onOutside, true);
     this.requestComponentUpdate('open');
-    return applied();
+    return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.applied)();
   }
 
   closeList({
     restoreFocus = true
   } = {}) {
-    if (!this.isOpen) return refused('closed');
+    if (!this.isOpen) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('closed');
     this.isOpen = false;
     this.sfHostState('data-open', false);
     document.removeEventListener('pointerdown', this._onOutside, true);
@@ -604,7 +594,7 @@ class SfContents extends ContentsElement {
     if (restoreFocus) this.toggleButton()?.focus({
       preventScroll: true
     });
-    return applied();
+    return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.applied)();
   }
 
   toggleButton() {
@@ -789,7 +779,7 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "98e539eba4a2"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.contents","tag":"sf-contents","version":"1.1.2","kind":"leaf","settings":{"layout":{"type":"enum","values":["auto","column","compact","rail","bar"],"default":"auto"},"collapse":{"type":"enum","values":["sm","md","lg","xl"],"default":"lg"},"target":{"type":"string","default":""},"levels":{"type":"string","default":"2-3"},"items":{"type":"list","default":[],"of":{"id":"id","text":"string","level":{"type":"number","optional":true}}},"size":{"type":"enum","values":["1/2","1"],"default":"1/2"},"sticky":{"type":"boolean","default":true},"hash":{"type":"boolean","default":true},"label":{"type":"string","default-from":"runtime.label"}},"values":{"current":{"type":"id"}},"events":{"change":{"x-native":false,"carries":{"id":"id","previous":{"type":"id","nullable":true}}}},"actions":{"refresh":{},"toggle":{}},"host-states":{"data-open":"boolean","data-compact":"boolean"},"css-variables":{"--sf-contents-color":{"type":"color","state":"default"},"--sf-contents-current-color":{"type":"color","state":"current"},"--sf-contents-line-color":{"type":"color","state":"default"},"--sf-contents-background":{"type":"color","state":"default"},"--sf-contents-indent":{"type":"length","state":"default"},"--sf-contents-gap":{"type":"length","state":"default"},"--sf-contents-inset-block-start":{"type":"length","state":"default"},"--sf-contents-z-index":{"type":"number","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.contents","tag":"sf-contents","version":"1.1.3","kind":"leaf","settings":{"layout":{"type":"enum","values":["auto","column","compact","rail","bar"],"default":"auto"},"collapse":{"type":"enum","values":["sm","md","lg","xl"],"default":"lg"},"target":{"type":"string","default":""},"levels":{"type":"string","default":"2-3"},"items":{"type":"list","default":[],"of":{"id":"id","text":"string","level":{"type":"number","optional":true}}},"size":{"type":"enum","values":["1/2","1"],"default":"1/2"},"sticky":{"type":"boolean","default":true},"hash":{"type":"boolean","default":true},"label":{"type":"string","default-from":"runtime.label"}},"values":{"current":{"type":"id"}},"events":{"change":{"x-native":false,"carries":{"id":"id","previous":{"type":"id","nullable":true}}}},"actions":{"refresh":{},"toggle":{}},"host-states":{"data-open":"boolean","data-compact":"boolean"},"css-variables":{"--sf-contents-color":{"type":"color","state":"default"},"--sf-contents-current-color":{"type":"color","state":"current"},"--sf-contents-line-color":{"type":"color","state":"default"},"--sf-contents-background":{"type":"color","state":"default"},"--sf-contents-indent":{"type":"length","state":"default"},"--sf-contents-gap":{"type":"length","state":"default"},"--sf-contents-inset-block-start":{"type":"length","state":"default"},"--sf-contents-z-index":{"type":"number","state":"default"}}}');
 
 /***/ },
 

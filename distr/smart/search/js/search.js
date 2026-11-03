@@ -451,21 +451,11 @@ const BLOCK_CAPABILITY = {
 // rule reads; reuse audit 2026-11-02, finding 6).
 
 const PREVIEW_STEP = 'lg';
-let sequence = 0;
-
-const applied = () => ({
-  outcome: 'applied'
-});
-
-const refused = reason => ({
-  outcome: 'refused',
-  reason
-}); // The built-in hosts keep the recent queries as a view preference of the
+let sequence = 0; // The built-in hosts keep the recent queries as a view preference of the
 // person (SF.Preferences, owner 2026-10-14): in the browser under
 // sf-pref:sf-search/<recent-key> and by a host that keeps preferences for its
 // user. The registry is the shared one when core has published it (every
 // bundle has its own copy).
-
 
 const preferences = () => globalThis.SF?.Preferences || _core_js_preferences_js__WEBPACK_IMPORTED_MODULE_2__["default"]; // `shortcut`: keys separated by spaces, each `mod+k`, `shift+/`, `/`.
 
@@ -714,12 +704,12 @@ class SfSearch extends SearchElement {
   runOpen() {
     if (this.isOpen) {
       this.focusField();
-      return applied();
+      return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__.applied)();
     }
 
     if (!this.sfEmit('open', {}, {
       cancelable: true
-    })) return refused('prevented');
+    })) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__.refused)('prevented');
     this._returnTo = document.activeElement;
     this._returnAncestors = (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_5__.landmarksAround)(this._returnTo);
     this.isOpen = true;
@@ -763,24 +753,24 @@ class SfSearch extends SearchElement {
     };
 
     if (typeof globalThis.requestAnimationFrame === 'function') globalThis.requestAnimationFrame(settle);else Promise.resolve().then(settle);
-    return applied();
+    return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__.applied)();
   }
 
   runClose({
     reason = 'api',
     restoreFocus = true
   } = {}) {
-    if (!this.isOpen) return refused('closed');
+    if (!this.isOpen) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__.refused)('closed');
     if (!this.sfEmit('close', {
       reason
     }, {
       cancelable: true
-    })) return refused('prevented');
+    })) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__.refused)('prevented');
     this.finishClose({
       reason,
       restoreFocus
     });
-    return applied();
+    return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__.applied)();
   }
 
   finishClose({
@@ -2287,7 +2277,7 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "e264eb73f918"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.search","tag":"sf-search","version":"1.2.2","kind":"leaf","settings":{"index":{"type":"string","default":""},"provider":{"type":"object","default":null},"for":{"type":"string","default":""},"shortcut":{"type":"string","default":"mod+k /"},"label":{"type":"string","default-from":"runtime.label"},"placeholder":{"type":"string","default-from":"runtime.placeholder"},"scopes":{"type":"boolean","default":true},"recent":{"type":"boolean","default":true},"recent-key":{"type":"string","default":"site"},"popular":{"type":"boolean","default":true},"actions":{"type":"boolean","default":true},"path":{"type":"boolean","default":true},"keys":{"type":"boolean","default":true}},"values":{},"events":{"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"navigate":{"carries":{"id":{"type":"string"},"href":{"type":"string"},"action":{"type":"string"},"query":{"type":"string"},"group":{"type":"string"}},"cancelable":true},"intent":{"carries":{"intent":{"type":"enum","values":["query.change","result.open","result.preview","action.run","recent.forget","recent.clear"]},"payload":{"type":"object"},"answer":{"type":"object"}}}},"actions":{"open":{},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"toggle":{}},"layer":{"kind":"modal","locks-page":true,"traps-focus":true},"port":{"id":"simai.search-port","version":"1.0.0","contract":"src/core/contracts/ports/simai.search-port/1.0.0/port.json"},"presentation":{"skeleton":{"late":[]}},"host-states":{"data-open":"boolean"},"css-variables":{"--sf-search-inline-size":{"type":"length","state":"open"},"--sf-search-inset-block-start":{"type":"length","state":"open"},"--sf-search-background":{"type":"color","state":"open"},"--sf-search-scrim-color":{"type":"color","state":"open"},"--sf-search-mark-color":{"type":"color","state":"open"},"--sf-search-radius":{"type":"length","state":"open"},"--sf-search-list-max-block-size":{"type":"length","state":"open"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.search","tag":"sf-search","version":"1.2.3","kind":"leaf","settings":{"index":{"type":"string","default":""},"provider":{"type":"object","default":null},"for":{"type":"string","default":""},"shortcut":{"type":"string","default":"mod+k /"},"label":{"type":"string","default-from":"runtime.label"},"placeholder":{"type":"string","default-from":"runtime.placeholder"},"scopes":{"type":"boolean","default":true},"recent":{"type":"boolean","default":true},"recent-key":{"type":"string","default":"site"},"popular":{"type":"boolean","default":true},"actions":{"type":"boolean","default":true},"path":{"type":"boolean","default":true},"keys":{"type":"boolean","default":true}},"values":{},"events":{"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"navigate":{"carries":{"id":{"type":"string"},"href":{"type":"string"},"action":{"type":"string"},"query":{"type":"string"},"group":{"type":"string"}},"cancelable":true},"intent":{"carries":{"intent":{"type":"enum","values":["query.change","result.open","result.preview","action.run","recent.forget","recent.clear"]},"payload":{"type":"object"},"answer":{"type":"object"}}}},"actions":{"open":{},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"toggle":{}},"layer":{"kind":"modal","locks-page":true,"traps-focus":true},"port":{"id":"simai.search-port","version":"1.0.0","contract":"src/core/contracts/ports/simai.search-port/1.0.0/port.json"},"presentation":{"skeleton":{"late":[]}},"host-states":{"data-open":"boolean"},"css-variables":{"--sf-search-inline-size":{"type":"length","state":"open"},"--sf-search-inset-block-start":{"type":"length","state":"open"},"--sf-search-background":{"type":"color","state":"open"},"--sf-search-scrim-color":{"type":"color","state":"open"},"--sf-search-mark-color":{"type":"color","state":"open"},"--sf-search-radius":{"type":"length","state":"open"},"--sf-search-list-max-block-size":{"type":"length","state":"open"}}}');
 
 /***/ },
 

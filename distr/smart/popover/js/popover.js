@@ -157,6 +157,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   isTag: () => (/* binding */ isTag),
 /* harmony export */   listTagAliases: () => (/* binding */ listTagAliases),
 /* harmony export */   noteTagAlias: () => (/* binding */ noteTagAlias),
+/* harmony export */   registerTagAliasRows: () => (/* binding */ registerTagAliasRows),
 /* harmony export */   registerTagAliases: () => (/* binding */ registerTagAliases),
 /* harmony export */   tagNames: () => (/* binding */ tagNames),
 /* harmony export */   tagSelector: () => (/* binding */ tagSelector)
@@ -244,6 +245,29 @@ function registerTagAliases(table, tag) {
   for (const row of rows) addRow(shared, row);
 
   return rows;
+} // Rows a component set gives at runtime (SF.RuleLoader.registerPackage(name,
+// {aliases})): {from, to, since, remove_after}, the set's own former tags, so
+// SIMAI Framework needs no table row for a set it does not know. Answers the
+// rows taken; a row whose old tag is already known keeps the first.
+
+function registerTagAliasRows(rows) {
+  const shared = state();
+  const taken = [];
+
+  for (const row of Array.isArray(rows) ? rows : []) {
+    if (!row || typeof row.from !== 'string' || typeof row.to !== 'string') continue;
+    if (shared.byOld.has(row.from)) continue;
+    const clean = Object.freeze({
+      from: row.from,
+      to: row.to,
+      since: String(row.since ?? ''),
+      remove_after: String(row.remove_after ?? '')
+    });
+    addRow(shared, clean);
+    taken.push(clean);
+  }
+
+  return taken;
 } // The open old names of a tag, its own first: ['sf-button-close', 'sf-close'].
 
 function tagNames(tag) {
@@ -411,15 +435,6 @@ const PopoverElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__
   },
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_8__
-});
-
-const applied = () => ({
-  outcome: 'applied'
-});
-
-const refused = reason => ({
-  outcome: 'refused',
-  reason
 }); // A surface anchored to a control the consumer supplies: a field's settings, a
 // list of things to add, a filter, a colour picker's own panel. It exists
 // because the Framework had the surface and not the behaviour -- sf-context-menu
@@ -436,7 +451,6 @@ const refused = reason => ({
 // closes something -- a drawer, a modal, a panel -- stands back. The mark is a
 // protocol shared with every other surface that owns Escape, so it is held
 // through core (`core/js/open-surface-mark`) rather than written here.
-
 
 class SfPopover extends PopoverElement {
   // The manifest's settings and value, and the base's template name.
@@ -554,36 +568,36 @@ class SfPopover extends PopoverElement {
   toggle(force) {
     const given = force && typeof force === 'object' ? force.force : force;
     const next = typeof given === 'boolean' ? given : !this.open;
-    if (next === this.open) return applied();
+    if (next === this.open) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.applied)();
     return next ? this.show() : this.close();
   }
 
   show() {
-    if (this.open) return applied();
+    if (this.open) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.applied)();
     if (!this.sfEmit('open', {}, {
       cancelable: true
-    })) return refused('prevented');
+    })) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('prevented');
     this._opener = this.querySelector('[slot="trigger"]') ?? null;
     this.toggleAttribute('open', true);
     this.requestComponentUpdate('open');
-    return applied();
+    return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.applied)();
   } // options.reason says why (standard 1.3.8 §19.3): escape, outside, close
   // (the trigger pressed again) or api, the default.
 
 
   close(options = {}) {
-    if (!this.open) return refused('closed');
+    if (!this.open) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('closed');
     const reason = typeof options?.reason === 'string' ? options.reason : 'api';
     if (!this.sfEmit('close', {
       reason,
       unsaved: Boolean(this.unsaved)
     }, {
       cancelable: true
-    })) return refused('prevented');
+    })) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('prevented');
     this._closeReason = reason;
     this.toggleAttribute('open', false);
     this.requestComponentUpdate('open');
-    return applied();
+    return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.applied)();
   } // The control that opened it gets the focus back, because a surface that
   // closes leaving the focus on the document start makes a keyboard lose its
   // place entirely.
@@ -593,7 +607,7 @@ class SfPopover extends PopoverElement {
     const trigger = this._opener?.isConnected ? this._opener : this.querySelector('[slot="trigger"]');
     const focusable = trigger?.matches?.('button, a[href], [tabindex]') ? trigger : trigger?.querySelector?.('button, a[href], [tabindex]');
     focusable?.focus?.();
-    return applied();
+    return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.applied)();
   }
 
   _bindDismissal() {
@@ -801,7 +815,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-popov
 /***/ "fcb18992f3bb"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.popover","tag":"sf-popover","version":"1.1.4","kind":"leaf","settings":{"placement":{"type":"enum","values":["bottom-start","bottom-end","top-start","top-end","inline-start","inline-end"],"default":"bottom-end"},"label":{"type":"string","default":""},"width":{"type":"string","default":""},"dismissible":{"type":"boolean","default":true},"surface-role":{"type":"enum","values":["dialog","menu","listbox","group"],"default":"dialog"},"unsaved":{"type":"boolean","default":false}},"values":{"open":{"type":"boolean","default":false,"reflect":true}},"events":{"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}}},"actions":{"toggle":{"with":{"force":{"type":"boolean","optional":true}}},"show":{"emits":"open"},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"emits":"close"},"return-focus":{}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"css-variables":{"--sf-popover-background-color":{"type":"color","state":"default"},"--sf-popover-color":{"type":"color","state":"default"},"--sf-popover-radius":{"type":"length","state":"default"},"--sf-popover-shadow":{"type":"shadow","state":"default"},"--sf-popover-max-width":{"type":"length","state":"default"},"--sf-popover-max-height":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.popover","tag":"sf-popover","version":"1.1.5","kind":"leaf","settings":{"placement":{"type":"enum","values":["bottom-start","bottom-end","top-start","top-end","inline-start","inline-end"],"default":"bottom-end"},"label":{"type":"string","default":""},"width":{"type":"string","default":""},"dismissible":{"type":"boolean","default":true},"surface-role":{"type":"enum","values":["dialog","menu","listbox","group"],"default":"dialog"},"unsaved":{"type":"boolean","default":false}},"values":{"open":{"type":"boolean","default":false,"reflect":true}},"events":{"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}}},"actions":{"toggle":{"with":{"force":{"type":"boolean","optional":true}}},"show":{"emits":"open"},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"emits":"close"},"return-focus":{}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"css-variables":{"--sf-popover-background-color":{"type":"color","state":"default"},"--sf-popover-color":{"type":"color","state":"default"},"--sf-popover-radius":{"type":"length","state":"default"},"--sf-popover-shadow":{"type":"shadow","state":"default"},"--sf-popover-max-width":{"type":"length","state":"default"},"--sf-popover-max-height":{"type":"length","state":"default"}}}');
 
 /***/ },
 

@@ -224,6 +224,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   isTag: () => (/* binding */ isTag),
 /* harmony export */   listTagAliases: () => (/* binding */ listTagAliases),
 /* harmony export */   noteTagAlias: () => (/* binding */ noteTagAlias),
+/* harmony export */   registerTagAliasRows: () => (/* binding */ registerTagAliasRows),
 /* harmony export */   registerTagAliases: () => (/* binding */ registerTagAliases),
 /* harmony export */   tagNames: () => (/* binding */ tagNames),
 /* harmony export */   tagSelector: () => (/* binding */ tagSelector)
@@ -311,6 +312,29 @@ function registerTagAliases(table, tag) {
   for (const row of rows) addRow(shared, row);
 
   return rows;
+} // Rows a component set gives at runtime (SF.RuleLoader.registerPackage(name,
+// {aliases})): {from, to, since, remove_after}, the set's own former tags, so
+// SIMAI Framework needs no table row for a set it does not know. Answers the
+// rows taken; a row whose old tag is already known keeps the first.
+
+function registerTagAliasRows(rows) {
+  const shared = state();
+  const taken = [];
+
+  for (const row of Array.isArray(rows) ? rows : []) {
+    if (!row || typeof row.from !== 'string' || typeof row.to !== 'string') continue;
+    if (shared.byOld.has(row.from)) continue;
+    const clean = Object.freeze({
+      from: row.from,
+      to: row.to,
+      since: String(row.since ?? ''),
+      remove_after: String(row.remove_after ?? '')
+    });
+    addRow(shared, clean);
+    taken.push(clean);
+  }
+
+  return taken;
 } // The open old names of a tag, its own first: ['sf-button-close', 'sf-close'].
 
 function tagNames(tag) {
@@ -1468,7 +1492,7 @@ function renderPhoneEdit(field, value, host) {
 //
 // The typed text lives in the input and nowhere else: no `value` attribute on
 // sf-input, no data-*, no text node, no log. «Показать» is an icon button that
-// switches the input's type and says so with aria-pressed; it changes the DOM
+// switches the input's type and says so with its pressed setting (aria-pressed); it changes the DOM
 // directly, so a host's re-render (its attributes are static in the template)
 // leaves the person's choice as it is.
 
@@ -1490,9 +1514,9 @@ function togglePasswordShown(event) {
   const button = event.currentTarget;
   const input = button?.closest?.('.sf-field-password')?.querySelector?.('sf-input');
   if (!input) return;
-  const shown = button.getAttribute('aria-pressed') !== 'true';
+  const shown = button.getAttribute('pressed') === 'false';
   input.setAttribute('input-type', shown ? 'text' : 'password');
-  button.setAttribute('aria-pressed', shown ? 'true' : 'false');
+  button.setAttribute('pressed', shown ? '' : 'false');
   button.setAttribute('icon', shown ? 'visibility_off' : 'visibility');
 }
 
@@ -1528,7 +1552,7 @@ function renderPasswordEdit(field, value, host) {
                     appearance="link"
                     scheme="on-surface"
                     icon="visibility"
-                    aria-pressed="false"
+                    pressed="false"
                     aria-label=${setText(host, 'showPassword')}
                     @click=${togglePasswordShown}
             ></sf-button-icon>

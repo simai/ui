@@ -69,10 +69,6 @@ const position = () => globalThis.SF?.Position || (_core_js_position_js__WEBPACK
 
 const kebab = key => String(key).replace(/[A-Z]/gu, letter => `-${letter.toLowerCase()}`);
 
-const applied = () => ({
-  outcome: 'applied'
-});
-
 class SfProfilePicker extends ProfilePickerElement {
   constructor() {
     super();
@@ -184,7 +180,7 @@ class SfProfilePicker extends ProfilePickerElement {
       outcome: 'refused',
       reason: 'disabled'
     };
-    if (this.state.open) return applied();
+    if (this.state.open) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.applied)();
     this.state = { ...this.state,
       open: true,
       mode: null,
@@ -201,7 +197,7 @@ class SfProfilePicker extends ProfilePickerElement {
     };
     const panel = this.panel();
     const trigger = this.trigger();
-    if (!panel || !trigger) return applied();
+    if (!panel || !trigger) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.applied)();
 
     if (typeof panel.showPopover === 'function') {
       panel.setAttribute('popover', 'manual');
@@ -230,7 +226,7 @@ class SfProfilePicker extends ProfilePickerElement {
     (panel.querySelector('.sf-profile-picker-row[aria-checked="true"]') ?? panel.querySelector('.sf-profile-picker-row'))?.focus({
       preventScroll: true
     });
-    return applied();
+    return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.applied)();
   }
 
   close({
@@ -254,7 +250,7 @@ class SfProfilePicker extends ProfilePickerElement {
     if (restoreFocus) this.trigger()?.focus({
       preventScroll: true
     });
-    return applied();
+    return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.applied)();
   }
 
   toggle() {
@@ -661,7 +657,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-profi
 /***/ "816c0ad0728a"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.profile-picker","tag":"sf-profile-picker","version":"1.1.9","kind":"leaf","settings":{"label":{"type":"string","default-from":"runtime.label"},"size":{"type":"enum","values":["1/2","1"],"default":"1/2"},"resettable":{"type":"boolean","default":false},"message":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"profiles":{"type":"list","of":{"id":"id","label":"string","shared":"boolean","builtin":"boolean","editable":"boolean"}},"rights":{"type":"object"}},"values":{"current":{"type":"string","default":""}},"events":{"select":{"carries":{"id":"string","ids":"list"}},"create":{"carries":{"label":"string","shared":"boolean","from":"string","kind":{"type":"enum","values":["personal","shared"]}}},"rename":{"carries":{"id":"string","label":"string","title":"string"}},"delete":{"carries":{"id":"string","ids":"list"}},"reset":{"carries":{"id":"string"}}},"actions":{"open":{},"close":{},"toggle":{}},"presentation":{"skeleton":{"file":"skeleton.html","late":["profiles"]}},"css-variables":{"--sf-profile-picker-background-color":{"type":"color","state":"default"},"--sf-profile-picker-border-color":{"type":"color","state":"default"},"--sf-profile-picker-radius":{"type":"length","state":"default"},"--sf-profile-picker-color":{"type":"color","state":"default"},"--sf-profile-picker-panel-background-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.profile-picker","tag":"sf-profile-picker","version":"1.1.10","kind":"leaf","settings":{"label":{"type":"string","default-from":"runtime.label"},"size":{"type":"enum","values":["1/2","1"],"default":"1/2"},"resettable":{"type":"boolean","default":false},"message":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"profiles":{"type":"list","of":{"id":"id","label":"string","shared":"boolean","builtin":"boolean","editable":"boolean"}},"rights":{"type":"object"}},"values":{"current":{"type":"string","default":""}},"events":{"select":{"carries":{"id":"string","ids":"list"}},"create":{"carries":{"label":"string","shared":"boolean","from":"string","kind":{"type":"enum","values":["personal","shared"]}}},"rename":{"carries":{"id":"string","label":"string","title":"string"}},"delete":{"carries":{"id":"string","ids":"list"}},"reset":{"carries":{"id":"string"}}},"actions":{"open":{},"close":{},"toggle":{}},"presentation":{"skeleton":{"file":"skeleton.html","late":["profiles"]}},"css-variables":{"--sf-profile-picker-background-color":{"type":"color","state":"default"},"--sf-profile-picker-border-color":{"type":"color","state":"default"},"--sf-profile-picker-radius":{"type":"length","state":"default"},"--sf-profile-picker-color":{"type":"color","state":"default"},"--sf-profile-picker-panel-background-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 

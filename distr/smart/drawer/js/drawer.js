@@ -87,15 +87,6 @@ function retiredEvent(type, detail) {
   return event;
 }
 
-const applied = () => ({
-  outcome: 'applied'
-});
-
-const refused = reason => ({
-  outcome: 'refused',
-  reason
-});
-
 
 const DRAWER_SELECTOR = 'sf-drawer'; // Only the edge. A foot area was tried and taken out: lit inserts a node that
 // appears later beside the markers of its siblings, and those markers move with
@@ -935,10 +926,10 @@ class SfDrawer extends DrawerElement {
 
     if (this.openState) {
       drawerManager.bringToFront(this);
-      return applied();
+      return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.applied)();
     }
 
-    if (options.emit !== false && !this.emitDrawerEvent('open', true)) return refused('prevented');
+    if (options.emit !== false && !this.emitDrawerEvent('open', true)) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.refused)('prevented');
     this._lastActive = document.activeElement;
     this._focusReturnAncestors = (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_5__.landmarksAround)(this._lastActive);
     this.syncOpenAttribute(true);
@@ -946,7 +937,7 @@ class SfDrawer extends DrawerElement {
     this._focusAfterRender = this.modal;
     this._emitAfterOpen = options.emit !== false;
     this.requestComponentUpdate('open');
-    return applied();
+    return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.applied)();
   } // options.reason says why (standard 1.3.8 §19.3): close, escape, outside,
   // cancelled or api, the default.
   // A listener that prevents sf-drawer-close keeps it open, and the action
@@ -955,12 +946,12 @@ class SfDrawer extends DrawerElement {
 
   close(options = {}) {
     options = options || {};
-    if (!this.openState) return refused('closed');
+    if (!this.openState) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.refused)('closed');
     const reason = typeof options.reason === 'string' ? options.reason : 'api';
     if (options.emit !== false && !this.emitDrawerEvent('close', true, {
       reason,
       unsaved: Boolean(this.unsaved)
-    })) return refused('prevented');
+    })) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.refused)('prevented');
     this.syncOpenAttribute(false);
     const wasTop = drawerManager.remove(this);
     this.requestComponentUpdate('close');
@@ -968,7 +959,7 @@ class SfDrawer extends DrawerElement {
     if (options.emit !== false) this.emitDrawerEvent('closed', false, {
       reason
     });
-    return applied();
+    return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.applied)();
   } // A drawer that closes under another layer moves no focus (§19.2). A modal
   // drawer on top gives it back by the stack's rule; a modeless one to what
   // was active when it opened, as before.
@@ -1356,7 +1347,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-drawe
 /***/ "0dc7c163a2e8"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.drawer","tag":"sf-drawer","version":"1.8.6","kind":"leaf","settings":{"placement":{"type":"enum","values":["left","right","inline-start","inline-end","bottom"],"default":"right"},"snap":{"type":"enum","values":["auto","half","full"],"default":"auto"},"overlay":{"type":"boolean","default":true},"modal":{"type":"boolean","default":true},"docked":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1","2","full"],"default":"1"},"close-on-esc":{"type":"boolean","default":true},"close-on-overlay":{"type":"boolean","default":true},"preserve-scroll-gap":{"type":"boolean","default":true},"show-close":{"type":"boolean","default":true},"controlled":{"type":"boolean","default":false},"close-placement":{"type":"enum","values":["inside","outside"],"default":"inside"},"heading":{"type":"string","default":""},"label":{"type":"string","default":""},"close-label":{"type":"string","default-from":"runtime.close-label"},"width":{"type":"string","default":""},"stack-offset":{"type":"string","default":""},"dock-breakpoint":{"type":"string","default":""},"block-start":{"type":"string","default":""},"gutter":{"type":"string","default":""},"z-index":{"type":"string","default":""},"overlay-class":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"panel-style":{"type":"string","default":""},"header-class":{"type":"string","default":""},"body-class":{"type":"string","default":""},"close-class":{"type":"string","default":""},"unsaved":{"type":"boolean","default":false},"dismissible":{"type":"boolean","default":true}},"values":{"open":{"type":"boolean","default":false}},"events":{"open":{"carries":{"drawer-id":"string"},"cancelable":true},"opened":{"carries":{"drawer-id":"string"}},"close":{"carries":{"drawer-id":"string","reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"drawer-id":"string","reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"snapped":{"carries":{"drawer-id":"string","snap":{"type":"enum","values":["auto","half","full"]}}}},"actions":{"open":{"emits":"open"},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"emits":"close"},"toggle":{}},"layer":{"kind":"panel","locks-page":true,"traps-focus":true},"css-variables":{"--sf-drawer-background":{"type":"color","state":"default"},"--sf-drawer-color":{"type":"color","state":"default"},"--sf-drawer-overlay-background":{"type":"color","state":"overlay"},"--sf-drawer-gutter":{"type":"length","state":"default"},"--sf-drawer-block-start":{"type":"length","state":"default"},"--sf-drawer-dock-breakpoint":{"type":"length","state":"docked"},"--sf-drawer-z-index":{"type":"number","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.drawer","tag":"sf-drawer","version":"1.8.7","kind":"leaf","settings":{"placement":{"type":"enum","values":["left","right","inline-start","inline-end","bottom"],"default":"right"},"snap":{"type":"enum","values":["auto","half","full"],"default":"auto"},"overlay":{"type":"boolean","default":true},"modal":{"type":"boolean","default":true},"docked":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1","2","full"],"default":"1"},"close-on-esc":{"type":"boolean","default":true},"close-on-overlay":{"type":"boolean","default":true},"preserve-scroll-gap":{"type":"boolean","default":true},"show-close":{"type":"boolean","default":true},"controlled":{"type":"boolean","default":false},"close-placement":{"type":"enum","values":["inside","outside"],"default":"inside"},"heading":{"type":"string","default":""},"label":{"type":"string","default":""},"close-label":{"type":"string","default-from":"runtime.close-label"},"width":{"type":"string","default":""},"stack-offset":{"type":"string","default":""},"dock-breakpoint":{"type":"string","default":""},"block-start":{"type":"string","default":""},"gutter":{"type":"string","default":""},"z-index":{"type":"string","default":""},"overlay-class":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"panel-style":{"type":"string","default":""},"header-class":{"type":"string","default":""},"body-class":{"type":"string","default":""},"close-class":{"type":"string","default":""},"unsaved":{"type":"boolean","default":false},"dismissible":{"type":"boolean","default":true}},"values":{"open":{"type":"boolean","default":false}},"events":{"open":{"carries":{"drawer-id":"string"},"cancelable":true},"opened":{"carries":{"drawer-id":"string"}},"close":{"carries":{"drawer-id":"string","reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"drawer-id":"string","reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"snapped":{"carries":{"drawer-id":"string","snap":{"type":"enum","values":["auto","half","full"]}}}},"actions":{"open":{"emits":"open"},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"emits":"close"},"toggle":{}},"layer":{"kind":"panel","locks-page":true,"traps-focus":true},"css-variables":{"--sf-drawer-background":{"type":"color","state":"default"},"--sf-drawer-color":{"type":"color","state":"default"},"--sf-drawer-overlay-background":{"type":"color","state":"overlay"},"--sf-drawer-gutter":{"type":"length","state":"default"},"--sf-drawer-block-start":{"type":"length","state":"default"},"--sf-drawer-dock-breakpoint":{"type":"length","state":"docked"},"--sf-drawer-z-index":{"type":"number","state":"default"}}}');
 
 /***/ },
 

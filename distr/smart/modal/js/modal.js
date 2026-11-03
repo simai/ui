@@ -692,15 +692,6 @@ const OLD_EVENT_NAMES = {
   "modal:after-content-upload": "content-uploaded"
 };
 
-const applied = () => ({
-  outcome: "applied"
-});
-
-const refused = reason => ({
-  outcome: "refused",
-  reason
-});
-
 function isBlurTypeValue(value) {
   return ["none", "small", "medium", "large"].includes(String(value || "").trim().toLowerCase());
 }
@@ -1370,14 +1361,14 @@ class SfModal extends ModalElement {
     if ((this._isOpen || this.display === "inline" && this.openState) && !wasClosing) {
       this.cancelCloseTransition();
       SfModal.bringToFront(this);
-      return asked ? this.waitForAnswer(signal) : applied();
+      return asked ? this.waitForAnswer(signal) : (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__.applied)();
     }
 
     if (!this.emitModalEvent("open", {
       cancelable: true,
       phase: "before-open"
     })) {
-      return refused("prevented");
+      return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__.refused)("prevented");
     }
 
     if (!wasClosing) {
@@ -1437,7 +1428,7 @@ class SfModal extends ModalElement {
         this.loadRemoteContentIfNeeded();
       });
     });
-    return asked ? this.waitForAnswer(signal) : applied();
+    return asked ? this.waitForAnswer(signal) : (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__.applied)();
   } // The person's answer to an assembly's ask (§19.4), when the window closes:
   // {accepted, reason, value}. A scope that ends first answers cancelled.
 
@@ -1482,7 +1473,7 @@ class SfModal extends ModalElement {
 
   close(options = {}) {
     if (!this.openState || this._modalState === "closing") {
-      return refused("closed");
+      return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__.refused)("closed");
     }
 
     const reason = typeof options?.reason === "string" ? options.reason : "api";
@@ -1494,14 +1485,14 @@ class SfModal extends ModalElement {
       unsaved: Boolean(this.unsaved)
     })) {
       this._answer = null;
-      return refused("prevented");
+      return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__.refused)("prevented");
     }
 
     this._closeReason = reason;
 
     if (this.display === "inline") {
       this.finishClose();
-      return applied();
+      return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__.applied)();
     }
 
     this._modalState = "closing";
@@ -1510,14 +1501,14 @@ class SfModal extends ModalElement {
     const panel = this._root()?.querySelector("[data-sf-modal-panel]");
     this._releaseClosingContent = (0,_component_modal_js_closing__WEBPACK_IMPORTED_MODULE_8__.freezeModalContent)(panel, SfModal.isTopModal(this));
     this._closeTransitionAbort = (0,_component_modal_js_motion__WEBPACK_IMPORTED_MODULE_9__.scheduleModalClose)(() => this._root(), () => this.finishClose());
-    return applied();
+    return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__.applied)();
   } // The person accepts: the window closes and an assembly's ask answers
   // {accepted: true, reason: "close", value} (§19.4). A page button reaches it
   // with data-sf-action="<id>.confirm".
 
 
   confirm(params = {}) {
-    if (!this.openState) return refused("closed");
+    if (!this.openState) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__.refused)("closed");
     this._answer = {
       accepted: true,
       value: params?.value ?? null
@@ -1530,14 +1521,14 @@ class SfModal extends ModalElement {
 
   minimize() {
     if (!this.openState || this.display === "inline" || this.hiddenState) {
-      return refused(this.openState ? "minimized" : "closed");
+      return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__.refused)(this.openState ? "minimized" : "closed");
     }
 
     if (!this.emitModalEvent("minimize", {
       cancelable: true,
       phase: "before-hide"
     })) {
-      return refused("prevented");
+      return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__.refused)("prevented");
     }
 
     this._isHidden = true;
@@ -1546,20 +1537,20 @@ class SfModal extends ModalElement {
     this.emitModalEvent("minimized", {
       phase: "after-hide"
     });
-    return applied();
+    return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__.applied)();
   } // Brings a minimized window back (its old name is show()).
 
 
   expand() {
     if (!this.openState || this.display === "inline" || !this.hiddenState) {
-      return refused(this.openState ? "expanded" : "closed");
+      return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__.refused)(this.openState ? "expanded" : "closed");
     }
 
     if (!this.emitModalEvent("expand", {
       cancelable: true,
       phase: "before-show"
     })) {
-      return refused("prevented");
+      return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__.refused)("prevented");
     }
 
     this._isHidden = false;
@@ -1568,7 +1559,7 @@ class SfModal extends ModalElement {
     this.emitModalEvent("expanded", {
       phase: "after-show"
     });
-    return applied();
+    return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__.applied)();
   }
 
   syncMinimizedLayer() {
@@ -1671,7 +1662,7 @@ class SfModal extends ModalElement {
   reloadContent() {
     this.resetRemoteContent();
     this.loadRemoteContentIfNeeded(true);
-    return applied();
+    return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__.applied)();
   } // A reader retires (§4.4, §16.13): kept until its date, each call noted.
 
 
@@ -2413,7 +2404,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-modal
 /***/ "afc57055d2cc"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.modal","tag":"sf-modal","version":"1.4.5","kind":"leaf","settings":{"modal-id":{"type":"id","default":""},"heading":{"type":"string","default-from":"runtime.title"},"text":{"type":"string","default":""},"autoload":{"type":"boolean","default":false},"minimizable":{"type":"boolean","default":false},"hide-modifier":{"type":"string","default":""},"overlay":{"type":"boolean","default":true},"show-header":{"type":"boolean","default":true},"show-close":{"type":"boolean","default":true},"show-footer":{"type":"boolean","default":true},"close-on-esc":{"type":"boolean","default":true},"close-on-overlay":{"type":"boolean","default":true},"preserve-scroll-gap":{"type":"boolean","default":true},"position":{"type":"enum","values":["center","left","right","inline-start","inline-end","top","bottom"],"default":"center"},"mode":{"type":"enum","values":["inline","ajax","iframe"],"default":"inline"},"display":{"type":"enum","values":["modal","inline"],"default":"modal"},"src":{"type":"string","default":""},"preload":{"type":"boolean","default":true},"fullscreen":{"type":"boolean","default":false},"width":{"type":"string","default":""},"height":{"type":"string","default":""},"backdrop-blur":{"type":"string","default":""},"blur-type":{"type":"enum","values":["none","small","medium","large"],"default":"medium"},"overlay-preset":{"type":"enum","values":["default","focus"],"default":"default"},"overlay-class":{"type":"string","default":""},"close-class":{"type":"string","default":""},"surface-class":{"type":"string","default":""},"surface-padding":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"header-class":{"type":"string","default":""},"body-class":{"type":"string","default":""},"content-class":{"type":"string","default":""},"footer-class":{"type":"string","default":""},"unsaved":{"type":"boolean","default":false},"dismissible":{"type":"boolean","default":true}},"values":{"open":{"type":"boolean","default":false,"reflect":true},"minimized":{"type":"boolean","default":false,"reflect":true}},"events":{"open":{"carries":{"modal-id":"string","phase":"string"},"cancelable":true},"opened":{"carries":{"modal-id":"string","phase":"string"}},"close":{"carries":{"modal-id":"string","phase":"string","reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"modal-id":"string","phase":"string","reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"accepted":"boolean"}},"minimize":{"carries":{"modal-id":"string","phase":"string"},"cancelable":true},"minimized":{"carries":{"modal-id":"string","phase":"string"}},"expand":{"carries":{"modal-id":"string","phase":"string"},"cancelable":true},"expanded":{"carries":{"modal-id":"string","phase":"string"}},"content-upload":{"carries":{"modal-id":"string","src":"string","remote":"object"},"own-verb":true},"content-uploaded":{"carries":{"modal-id":"string","src":"string","remote":"object"},"own-verb":true}},"actions":{"open":{"with":{"animate":{"type":"boolean","optional":true}},"emits":"open","x-answer":"asked by an assembly (ask, §19.4) it answers when the window closes, with value {accepted, reason, value}"},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"emits":"close"},"minimize":{"emits":"minimize"},"expand":{"emits":"expand"},"toggle":{},"reload-content":{},"confirm":{"with":{"value":{"type":"object","optional":true}}}},"layer":{"kind":"modal","locks-page":true,"traps-focus":true},"css-variables":{"--sf-modal-background-color":{"type":"color","state":"default"},"--sf-modal-border-color":{"type":"color","state":"default"},"--sf-modal-border-width":{"type":"length","state":"default"},"--sf-modal-radius":{"type":"length","state":"default"},"--sf-modal-padding-inline":{"type":"length","state":"default"},"--sf-modal-padding-block":{"type":"length","state":"default"},"--sf-modal-gap":{"type":"length","state":"default"},"--sf-modal-footer-gap":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.modal","tag":"sf-modal","version":"1.4.6","kind":"leaf","settings":{"modal-id":{"type":"id","default":""},"heading":{"type":"string","default-from":"runtime.title"},"text":{"type":"string","default":""},"autoload":{"type":"boolean","default":false},"minimizable":{"type":"boolean","default":false},"hide-modifier":{"type":"string","default":""},"overlay":{"type":"boolean","default":true},"show-header":{"type":"boolean","default":true},"show-close":{"type":"boolean","default":true},"show-footer":{"type":"boolean","default":true},"close-on-esc":{"type":"boolean","default":true},"close-on-overlay":{"type":"boolean","default":true},"preserve-scroll-gap":{"type":"boolean","default":true},"position":{"type":"enum","values":["center","left","right","inline-start","inline-end","top","bottom"],"default":"center"},"mode":{"type":"enum","values":["inline","ajax","iframe"],"default":"inline"},"display":{"type":"enum","values":["modal","inline"],"default":"modal"},"src":{"type":"string","default":""},"preload":{"type":"boolean","default":true},"fullscreen":{"type":"boolean","default":false},"width":{"type":"string","default":""},"height":{"type":"string","default":""},"backdrop-blur":{"type":"string","default":""},"blur-type":{"type":"enum","values":["none","small","medium","large"],"default":"medium"},"overlay-preset":{"type":"enum","values":["default","focus"],"default":"default"},"overlay-class":{"type":"string","default":""},"close-class":{"type":"string","default":""},"surface-class":{"type":"string","default":""},"surface-padding":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"header-class":{"type":"string","default":""},"body-class":{"type":"string","default":""},"content-class":{"type":"string","default":""},"footer-class":{"type":"string","default":""},"unsaved":{"type":"boolean","default":false},"dismissible":{"type":"boolean","default":true}},"values":{"open":{"type":"boolean","default":false,"reflect":true},"minimized":{"type":"boolean","default":false,"reflect":true}},"events":{"open":{"carries":{"modal-id":"string","phase":"string"},"cancelable":true},"opened":{"carries":{"modal-id":"string","phase":"string"}},"close":{"carries":{"modal-id":"string","phase":"string","reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"modal-id":"string","phase":"string","reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"accepted":"boolean"}},"minimize":{"carries":{"modal-id":"string","phase":"string"},"cancelable":true},"minimized":{"carries":{"modal-id":"string","phase":"string"}},"expand":{"carries":{"modal-id":"string","phase":"string"},"cancelable":true},"expanded":{"carries":{"modal-id":"string","phase":"string"}},"content-upload":{"carries":{"modal-id":"string","src":"string","remote":"object"},"own-verb":true},"content-uploaded":{"carries":{"modal-id":"string","src":"string","remote":"object"},"own-verb":true}},"actions":{"open":{"with":{"animate":{"type":"boolean","optional":true}},"emits":"open","x-answer":"asked by an assembly (ask, §19.4) it answers when the window closes, with value {accepted, reason, value}"},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"emits":"close"},"minimize":{"emits":"minimize"},"expand":{"emits":"expand"},"toggle":{},"reload-content":{},"confirm":{"with":{"value":{"type":"object","optional":true}}}},"layer":{"kind":"modal","locks-page":true,"traps-focus":true},"css-variables":{"--sf-modal-background-color":{"type":"color","state":"default"},"--sf-modal-border-color":{"type":"color","state":"default"},"--sf-modal-border-width":{"type":"length","state":"default"},"--sf-modal-radius":{"type":"length","state":"default"},"--sf-modal-padding-inline":{"type":"length","state":"default"},"--sf-modal-padding-block":{"type":"length","state":"default"},"--sf-modal-gap":{"type":"length","state":"default"},"--sf-modal-footer-gap":{"type":"length","state":"default"}}}');
 
 /***/ },
 

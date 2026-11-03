@@ -48,17 +48,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
-
-
-const applied = () => ({
-  outcome: 'applied'
-});
-
-const refused = reason => ({
-  outcome: 'refused',
-  reason
-}); // A key pressed in a field is the field's: the keys setting never takes it.
-
+ // A key pressed in a field is the field's: the keys setting never takes it.
 
 const EDITABLE = 'input, textarea, select, [contenteditable=""], [contenteditable="true"], [role="textbox"], [role="combobox"], [role="spinbutton"], [role="slider"]';
 
@@ -200,18 +190,18 @@ class SfPager extends PagerElement {
     person = false
   } = {}) {
     const list = this.list;
-    if (!list.length) return refused('empty');
+    if (!list.length) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('empty');
     const from = this.at;
     const finishing = this.appearance === 'steps' || this.appearance === 'course';
     let index;
     let complete = false;
 
     if (direction === 'prev') {
-      if (from <= 0) return refused('first');
+      if (from <= 0) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('first');
       index = from - 1;
     } else if (direction === 'next') {
       if (from >= list.length - 1) {
-        if (!finishing || this.complete) return refused('last');
+        if (!finishing || this.complete) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('last');
         index = from;
         complete = true;
         direction = 'finish';
@@ -222,7 +212,7 @@ class SfPager extends PagerElement {
       index = 0;
     } else {
       index = clampIndex(wanted, list.length);
-      if (index === from && !this.complete) return refused('current');
+      if (index === from && !this.complete) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('current');
     }
 
     const item = list[index];
@@ -234,11 +224,11 @@ class SfPager extends PagerElement {
     }, {
       cancelable: true
     });
-    if (!allowed) return refused('prevented');
+    if (!allowed) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('prevented');
     this.apply(index, complete, person); // An item with an address is a page of its own: go there.
 
     if (item.href && direction !== 'finish') globalThis.location?.assign?.(item.href);
-    return applied();
+    return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.applied)();
   }
 
   apply(index, complete, person) {
@@ -602,7 +592,7 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "4e5307ab3b30"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.pager","tag":"sf-pager","version":"1.0.3","kind":"leaf","settings":{"appearance":{"type":"enum","values":["cards","row","steps","course","counter"],"default":"cards"},"size":{"type":"enum","values":["1/2","1"],"default":"1"},"prev-href":{"type":"string","default":""},"prev-title":{"type":"string","default":""},"next-href":{"type":"string","default":""},"next-title":{"type":"string","default":""},"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"title":{"type":"string"},"href":{"type":"string"},"meta":{"type":"string"}},"required":["title"]}},"default":[]},"label":{"type":"string","default-from":"runtime.label"},"prev-label":{"type":"string","default-from":"runtime.prev"},"next-label":{"type":"string","default-from":"runtime.next"},"done-label":{"type":"string","default-from":"runtime.done"},"keys":{"type":"boolean","default":false}},"values":{"current":{"type":"number","integer":true,"min":0,"default":0},"complete":{"type":"boolean","default":false}},"events":{"navigate":{"carries":{"direction":{"type":"enum","values":["prev","next","finish","restart","go-to"]},"index":{"type":"number","nullable":true},"id":{"type":"string","nullable":true},"href":{"type":"string","nullable":true}},"cancelable":true},"change":{"x-native":false,"carries":{"previous":"number","current":"number","complete":"boolean","item":{"type":"object","nullable":true}}}},"actions":{"prev":{},"next":{},"go-to":{"with":{"index":"number"}}},"host-states":{"data-complete":"boolean"},"css-variables":{"--sf-pager-gap":{"type":"length","state":"default"},"--sf-pager-card-background":{"type":"color","state":"default"},"--sf-pager-card-border-color":{"type":"color","state":"default"},"--sf-pager-card-radius":{"type":"length","state":"default"},"--sf-pager-link-color":{"type":"color","state":"default"},"--sf-pager-meta-color":{"type":"color","state":"default"},"--sf-pager-track-color":{"type":"color","state":"default"},"--sf-pager-fill-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.pager","tag":"sf-pager","version":"1.0.4","kind":"leaf","settings":{"appearance":{"type":"enum","values":["cards","row","steps","course","counter"],"default":"cards"},"size":{"type":"enum","values":["1/2","1"],"default":"1"},"prev-href":{"type":"string","default":""},"prev-title":{"type":"string","default":""},"next-href":{"type":"string","default":""},"next-title":{"type":"string","default":""},"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"title":{"type":"string"},"href":{"type":"string"},"meta":{"type":"string"}},"required":["title"]}},"default":[]},"label":{"type":"string","default-from":"runtime.label"},"prev-label":{"type":"string","default-from":"runtime.prev"},"next-label":{"type":"string","default-from":"runtime.next"},"done-label":{"type":"string","default-from":"runtime.done"},"keys":{"type":"boolean","default":false}},"values":{"current":{"type":"number","integer":true,"min":0,"default":0},"complete":{"type":"boolean","default":false}},"events":{"navigate":{"carries":{"direction":{"type":"enum","values":["prev","next","finish","restart","go-to"]},"index":{"type":"number","nullable":true},"id":{"type":"string","nullable":true},"href":{"type":"string","nullable":true}},"cancelable":true},"change":{"x-native":false,"carries":{"previous":"number","current":"number","complete":"boolean","item":{"type":"object","nullable":true}}}},"actions":{"prev":{},"next":{},"go-to":{"with":{"index":"number"}}},"host-states":{"data-complete":"boolean"},"css-variables":{"--sf-pager-gap":{"type":"length","state":"default"},"--sf-pager-card-background":{"type":"color","state":"default"},"--sf-pager-card-border-color":{"type":"color","state":"default"},"--sf-pager-card-radius":{"type":"length","state":"default"},"--sf-pager-link-color":{"type":"color","state":"default"},"--sf-pager-meta-color":{"type":"color","state":"default"},"--sf-pager-track-color":{"type":"color","state":"default"},"--sf-pager-fill-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 

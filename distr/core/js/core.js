@@ -2013,6 +2013,7 @@ function installEarlyPort(win = globalThis) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   EFFECTS_ALIAS: () => (/* binding */ EFFECTS_ALIAS),
 /* harmony export */   EFFECT_FORMAT: () => (/* binding */ EFFECT_FORMAT),
 /* harmony export */   EFFECT_SCHEMA: () => (/* binding */ EFFECT_SCHEMA),
 /* harmony export */   FRAME_RUNNER: () => (/* binding */ FRAME_RUNNER),
@@ -2067,6 +2068,13 @@ __webpack_require__.r(__webpack_exports__);
 // it runs in a sandboxed frame of its own (an opaque origin under a strict
 // content security policy, its checked settings sent by message), or, with
 // SF_BOOT_CONFIG.effects.foreign = 'refuse', not at all.
+//
+// FROZEN since core.runtime 1.25.0 (2026-11-03). The engine has moved to the
+// component set `effects` (simai/ui-effects, <sf-effect>, SF.package('effects'));
+// this copy stays as a dated alias until the journal records sweep it
+// (global-sf-effects-to-package, attribute-data-sf-effect-to-sf-effect,
+// option-sf-boot-config-effects-to-package). Only security fixes land here;
+// every other change goes to the set. Each use is noted in SF.deprecations.
 
 
  // The fields a writer of an effect.json emits: the format named without a
@@ -2384,10 +2392,35 @@ const WINDOW = '[data-sf-effect-window]'; // Foreign effects in a sandbox (forei
 // hears of its size, scheme, palette tones, pause, resume, update and
 // destroy the same way.
 
-const SANDBOXED = new WeakSet();
+const SANDBOXED = new WeakSet(); // The dated alias of this engine (contracts/changes/journal.json).
+
+const EFFECTS_ALIAS = Object.freeze({
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+});
+
+const aliasExpired = () => Date.now() > Date.parse(`${EFFECTS_ALIAS.remove_after}T23:59:59.999Z`);
+
+function noteAlias(note) {
+  (0,_deprecations_js__WEBPACK_IMPORTED_MODULE_1__.noteDeprecated)({
+    component: 'effects',
+    ...note,
+    ...EFFECTS_ALIAS,
+    ...(aliasExpired() ? {
+      expired: true
+    } : {})
+  });
+}
 
 function effectsConfig() {
-  return globalThis.SF_BOOT_CONFIG?.effects ?? {};
+  const config = globalThis.SF_BOOT_CONFIG?.effects;
+  if (config === undefined) return {};
+  noteAlias({
+    kind: 'option',
+    from: 'SF_BOOT_CONFIG.effects',
+    to: 'SF_BOOT_CONFIG.packages.effects'
+  });
+  return config ?? {};
 } // SF_BOOT_CONFIG.effects.foreign: 'sandbox' (the default) or 'refuse'. Any
 // other value refuses: a switch mistyped fails closed.
 
@@ -4203,6 +4236,12 @@ const DECLARED = `[data-sf-effect]:not([${STATE}]), [data-sf-effect-windows]:not
 
 function placeDeclared(element) {
   const windows = element.hasAttribute('data-sf-effect-windows');
+  noteAlias({
+    kind: 'attribute',
+    attribute: windows ? 'data-sf-effect-windows' : 'data-sf-effect',
+    from: windows ? 'data-sf-effect-windows' : 'data-sf-effect',
+    to: windows ? '<sf-effect windows>' : '<sf-effect effect>'
+  });
   const reference = element.getAttribute(windows ? 'data-sf-effect-windows' : 'data-sf-effect');
   let settings = {};
   const raw = element.getAttribute('data-sf-effect-settings');
@@ -4256,7 +4295,7 @@ function watchDeclared(document) {
 
 if (typeof window !== 'undefined') {
   window.SF = window.SF || {};
-  window.SF.Effects = Object.freeze({
+  const api = Object.freeze({
     checkEffectManifest,
     checkSetting,
     effectSettings,
@@ -4280,6 +4319,21 @@ if (typeof window !== 'undefined') {
         to: 'SF.Effects.EFFECT_FORMAT'
       });
       return EFFECT_SCHEMA;
+    }
+
+  }); // A dated getter: every read is noted, SF.package('effects') replaces it.
+
+  Object.defineProperty(window.SF, 'Effects', {
+    configurable: true,
+    enumerable: true,
+
+    get() {
+      noteAlias({
+        kind: 'global',
+        from: 'SF.Effects',
+        to: "SF.package('effects')"
+      });
+      return api;
     }
 
   });
@@ -4688,6 +4742,41 @@ if (typeof globalThis !== 'undefined') {
 
 /***/ },
 
+/***/ "1b42c5117087"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   ICON_CHOICES: () => (/* binding */ ICON_CHOICES),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// The glyphs a person may mark a part of an interface with -- a section of a
+// record, a row of a menu, a tile of a dashboard. A hundred and twenty names
+// from the Framework's own icon set, the ones products actually reach for,
+// read in rows of what they are usually about: what a thing is, who it
+// belongs to, when it happens, what it costs, what it is made of. One list,
+// so every set chooses from the same glyphs.
+//
+// Raised from ui-pro sf-view-properties (js/icon-choices.js), which sf-admin-menu
+// imported across what become two component sets (duplication audit
+// 2026-11-03, A-1; owner decision 2026-11-03, component sets, point 13). A
+// component imports ICON_CHOICES; a page reads SF.icons.choices. The choice
+// itself is drawn by sf-dropdown with options of kind icon (layout grid,
+// search), as sf-view-properties and sf-admin-menu do.
+const ICON_CHOICES = Object.freeze(["folder", "folder_open", "topic", "home", "dashboard", "apartment", "store", "storefront", "business_center", "work", "badge", "person", "group", "groups", "account_circle", "manage_accounts", "supervisor_account", "contacts", "school", "menu_book", "assignment", "task", "description", "article", "note_alt", "edit_note", "draft", "receipt", "receipt_long", "request_quote", "inventory_2", "category", "label", "sell", "local_offer", "shopping_cart", "shopping_bag", "payments", "savings", "credit_card", "account_balance", "calculate", "percent", "trending_up", "analytics", "insights", "monitoring", "bar_chart", "pie_chart", "table_chart", "schedule", "event", "today", "calendar_month", "date_range", "history", "alarm", "timer", "update", "hourglass_top", "mail", "outgoing_mail", "chat", "forum", "sms", "call", "phone_in_talk", "contact_support", "campaign", "notifications", "language", "public", "place", "map", "location_on", "travel_explore", "flight", "local_shipping", "route", "directions", "settings", "tune", "build", "construction", "handyman", "code", "terminal", "data_object", "api", "bug_report", "database", "storage", "cloud", "backup", "sync", "folder_zip", "upload_file", "download", "attach_file", "link", "lock", "lock_open", "shield", "verified_user", "key", "admin_panel_settings", "policy", "gavel", "fingerprint", "visibility", "palette", "format_paint", "image", "photo_library", "collections", "movie", "play_circle", "mic", "headphones", "brush"]); // Core publishes the list; a component bundle that carries its own copy reuses
+// the published one instead of replacing it.
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.SF = globalThis.SF || {};
+  globalThis.SF.icons = globalThis.SF.icons || {};
+  if (!globalThis.SF.icons.choices) globalThis.SF.icons.choices = ICON_CHOICES;
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (ICON_CHOICES);
+
+/***/ },
+
 /***/ "de1f3481c667"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -4963,18 +5052,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _region_navigation_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("9edc14a11fec");
 /* harmony import */ var _workspace_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("0730c3d86f4b");
 /* harmony import */ var _effects_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("4f52f56c9555");
-/* harmony import */ var _on_view_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("43cada8855de");
-/* harmony import */ var _notify_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("b4bff8456ce0");
-/* harmony import */ var _sanitize_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__("20db70d35f32");
-/* harmony import */ var _format_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__("5b8371b87515");
-/* harmony import */ var _breakpoints_js__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__("1373e294ec38");
-/* harmony import */ var _clipboard_js__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__("e081a020262e");
-/* harmony import */ var _ready_js__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__("5effd0d9c238");
-/* harmony import */ var _icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__("de1f3481c667");
-/* harmony import */ var _page_storage_js__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__("cda569e6042b");
-/* harmony import */ var _early_port_js__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__("55bd48f35b65");
-/* harmony import */ var _pending_tags_js__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__("3c79afd07eeb");
-/* harmony import */ var _preloader__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__("6c7f357fe960");
+/* harmony import */ var _sets_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("a30ed252d965");
+/* harmony import */ var _on_view_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("43cada8855de");
+/* harmony import */ var _notify_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__("b4bff8456ce0");
+/* harmony import */ var _sanitize_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__("20db70d35f32");
+/* harmony import */ var _format_js__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__("5b8371b87515");
+/* harmony import */ var _breakpoints_js__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__("1373e294ec38");
+/* harmony import */ var _clipboard_js__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__("e081a020262e");
+/* harmony import */ var _icon_choices_js__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__("1b42c5117087");
+/* harmony import */ var _ready_js__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__("5effd0d9c238");
+/* harmony import */ var _icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__("de1f3481c667");
+/* harmony import */ var _page_storage_js__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__("cda569e6042b");
+/* harmony import */ var _early_port_js__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__("55bd48f35b65");
+/* harmony import */ var _pending_tags_js__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__("3c79afd07eeb");
+/* harmony import */ var _preloader__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__("6c7f357fe960");
 
 
 
@@ -4990,6 +5081,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+ // Component sets: SF.package(name) before the Loader has started, and the
+// set declaration helpers the Loader uses (core/js/sets.js).
+
 
 
 
@@ -4997,6 +5091,9 @@ __webpack_require__.r(__webpack_exports__);
 // 2026-11-02, findings 6, 7, 11): SF.format, SF.breakpoints, SF.copyText.
 
 
+
+ // The glyphs a person chooses from (duplication audit 2026-11-03, A-1):
+// SF.icons.choices.
 
 
 
@@ -5014,10 +5111,10 @@ if (typeof window !== 'undefined') {
   window.SF = window.SF || {};
   const SF = window.SF; // SF.ready, before the Loader chunk is even asked for (simai/ui-source#16).
 
-  (0,_ready_js__WEBPACK_IMPORTED_MODULE_20__.installReady)(window); // The ports declared on elements (data-sf-port islands): their first calls
+  (0,_ready_js__WEBPACK_IMPORTED_MODULE_22__.installReady)(window); // The ports declared on elements (data-sf-port islands): their first calls
   // leave now, while the components' code is still on its way (stand 27).
 
-  (0,_early_port_js__WEBPACK_IMPORTED_MODULE_23__.installEarlyPort)(window);
+  (0,_early_port_js__WEBPACK_IMPORTED_MODULE_25__.installEarlyPort)(window);
 
   if (!SF.loadRuntime) {
     let loading = null;
@@ -5139,10 +5236,10 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
 
   if (subsetEnabled && document.head) {
     try {
-      (0,_icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_21__.applyRememberedIconSubset)({
+      (0,_icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_23__.applyRememberedIconSubset)({
         win: window,
         doc: document,
-        storage: (0,_page_storage_js__WEBPACK_IMPORTED_MODULE_22__["default"])()
+        storage: (0,_page_storage_js__WEBPACK_IMPORTED_MODULE_24__["default"])()
       });
     } catch {
       /* Nothing remembered is nothing lost: the Loader asks as before. */
@@ -5248,8 +5345,8 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
       return;
     }
 
-    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_24__.installPendingTags)(window);
-    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_24__.holdUndefinedElements)(window);
+    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_26__.installPendingTags)(window);
+    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_26__.holdUndefinedElements)(window);
   };
 
   holdUndefinedUntilDefined();
@@ -5257,18 +5354,18 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
   const mountPreloader = () => {
     const cfg = {
       enabled: true,
-      background: (0,_preloader__WEBPACK_IMPORTED_MODULE_25__.getPreloaderBackground)(),
+      background: (0,_preloader__WEBPACK_IMPORTED_MODULE_27__.getPreloaderBackground)(),
       modifier: 'loader-default',
       tempStyles: 'inset: 0;position: fixed;width: 100%;height: 100vh;opacity: 1;z-index: 1000;background-color: var(--sf-color--surface-highest, var(--sf-surface-0, #fff));text-align: center;',
-      color: (0,_preloader__WEBPACK_IMPORTED_MODULE_25__.getPreloaderColor)(),
-      width: _preloader__WEBPACK_IMPORTED_MODULE_25__.DEFAULT_PRELOADER.width,
-      height: _preloader__WEBPACK_IMPORTED_MODULE_25__.DEFAULT_PRELOADER.height,
+      color: (0,_preloader__WEBPACK_IMPORTED_MODULE_27__.getPreloaderColor)(),
+      width: _preloader__WEBPACK_IMPORTED_MODULE_27__.DEFAULT_PRELOADER.width,
+      height: _preloader__WEBPACK_IMPORTED_MODULE_27__.DEFAULT_PRELOADER.height,
       content: '',
       delay: 300,
       ...(window.SF_BOOT_CONFIG?.preloader || {})
     };
     if (cfg.enabled === false || document.querySelector('.sf-loader')) return;
-    const svgContent = cfg.content || (0,_preloader__WEBPACK_IMPORTED_MODULE_25__.createPreloaderContent)(cfg);
+    const svgContent = cfg.content || (0,_preloader__WEBPACK_IMPORTED_MODULE_27__.createPreloaderContent)(cfg);
     let wrap = null;
     let preloaderWrap = null;
     let preloaderRun = false;
@@ -5282,7 +5379,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
 
     const stopAnimation = () => {
       if (preloaderWrap) {
-        (0,_preloader__WEBPACK_IMPORTED_MODULE_25__.stopPreloaderMotion)(preloaderWrap);
+        (0,_preloader__WEBPACK_IMPORTED_MODULE_27__.stopPreloaderMotion)(preloaderWrap);
       }
     };
 
@@ -5291,7 +5388,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
       // preloader over them (§5.4). Read when the preloader would show, after
       // its delay, when the server's markup has been parsed.
 
-      if ((0,_preloader__WEBPACK_IMPORTED_MODULE_25__.pageHasFirstPaint)(document)) return;
+      if ((0,_preloader__WEBPACK_IMPORTED_MODULE_27__.pageHasFirstPaint)(document)) return;
       wrap = document.createElement('div');
       const inner = document.createElement('div');
       wrap.classList.add('sf-loader', cfg.modifier);
@@ -5313,7 +5410,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
         wrap: wrap,
         preloaderActive: true
       };
-      (0,_preloader__WEBPACK_IMPORTED_MODULE_25__.startPreloaderMotion)(preloaderWrap, () => preloaderRun, cfg);
+      (0,_preloader__WEBPACK_IMPORTED_MODULE_27__.startPreloaderMotion)(preloaderWrap, () => preloaderRun, cfg);
     };
 
     const cancelBuild = () => {
@@ -5350,7 +5447,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
 
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', () => {
-        if (!(0,_preloader__WEBPACK_IMPORTED_MODULE_25__.pageHasFirstPaint)(document)) return;
+        if (!(0,_preloader__WEBPACK_IMPORTED_MODULE_27__.pageHasFirstPaint)(document)) return;
         cancelBuild();
         preloaderRun = false;
         stopAnimation();
@@ -9219,6 +9316,279 @@ if (typeof globalThis !== 'undefined') {
 
 /***/ },
 
+/***/ "a30ed252d965"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   CORE_RUNTIME: () => (/* binding */ CORE_RUNTIME),
+/* harmony export */   SET_INDEX_FORMAT: () => (/* binding */ SET_INDEX_FORMAT),
+/* harmony export */   SET_INDEX_URL: () => (/* binding */ SET_INDEX_URL),
+/* harmony export */   SET_NAME: () => (/* binding */ SET_NAME),
+/* harmony export */   SET_NPM_ROOT: () => (/* binding */ SET_NPM_ROOT),
+/* harmony export */   SET_NPM_SCOPE: () => (/* binding */ SET_NPM_SCOPE),
+/* harmony export */   checkSetIndex: () => (/* binding */ checkSetIndex),
+/* harmony export */   compareVersions: () => (/* binding */ compareVersions),
+/* harmony export */   declarationLine: () => (/* binding */ declarationLine),
+/* harmony export */   isVersion: () => (/* binding */ isVersion),
+/* harmony export */   meetsMinimum: () => (/* binding */ meetsMinimum),
+/* harmony export */   npmBase: () => (/* binding */ npmBase),
+/* harmony export */   packageExports: () => (/* binding */ packageExports),
+/* harmony export */   readSetDeclaration: () => (/* binding */ readSetDeclaration),
+/* harmony export */   readSetsAttribute: () => (/* binding */ readSetsAttribute),
+/* harmony export */   selectSetRelease: () => (/* binding */ selectSetRelease),
+/* harmony export */   setsFromScripts: () => (/* binding */ setsFromScripts)
+/* harmony export */ });
+// Component sets (standard simai.component-set 1.0.0): everything outside the
+// free SIMAI Framework comes in sets, each served from its own base and
+// describing its own components. SIMAI Framework does not know what a set
+// holds; it knows how a page names one and where to look it up.
+//
+// A page names its sets in one line, on the script that loads Core:
+//
+//   <script src=".../distr/core/js/core.min.js" data-sf-sets="effects"></script>
+//
+// or in SF_BOOT_CONFIG.packages, before Core starts:
+//
+//   packages: {effects: true}                      the release the index gives
+//   packages: {effects: '1.0.0'}                   that npm version, no index
+//   packages: {effects: '<base>'}                  that base (a string with a /)
+//   packages: {effects: {base, rule, version}}     the full form
+//   packages: {effects: {index: true}}             by the index, in full form
+//
+// A set named without a base is looked up in the one compatibility index,
+// simai.framework.set-index (contracts/schema/set-index.v1.schema.json): the
+// newest release of the set whose SIMAI Framework range this Core is in. Its
+// base is the set's npm package on jsDelivr,
+// <npm root>/@simai-studio/<set>@<version>/dist/smart. A page that wants other
+// hosts sets SF_BOOT_CONFIG.setIndex (the index address) and
+// SF_BOOT_CONFIG.setNpm (the npm root): a mirror, or a local stand.
+//
+// This module holds the pure part -- reading a declaration, choosing a
+// release, making a base -- and SF.package(name), which a page may call before
+// the Loader has started. The Loader (loader.js) keeps the packages and asks
+// these functions.
+// The core.runtime passport version of this Core (src/core/passports/
+// core.runtime.json). A set's release says the lowest version it needs, and
+// the index lookup keeps the releases this Core satisfies. Moved by hand with
+// the passport; tests/component-set-loader.contract.test.mjs holds them equal.
+const CORE_RUNTIME = '1.25.0';
+const SET_NAME = /^[a-z][a-z0-9-]*$/u;
+const SET_INDEX_FORMAT = 'simai.framework.set-index';
+const SET_INDEX_URL = 'https://cdn.jsdelivr.net/npm/@simai-studio/sets@1/index.json';
+const SET_NPM_ROOT = 'https://cdn.jsdelivr.net/npm';
+const SET_NPM_SCOPE = '@simai-studio';
+const VERSION = /^(\d+)\.(\d+)\.(\d+)(?:-([0-9A-Za-z.-]+))?$/u;
+const MINIMUM = /^>=(\d+\.\d+\.\d+)$/u;
+
+const trimSlash = value => typeof value === 'string' ? value.trim().replace(/\/+$/u, '') : ''; // -1, 0 or 1; a version with a pre-release part is below the same version
+// without one. null when either is not a version.
+
+
+function compareVersions(a, b) {
+  const left = VERSION.exec(String(a ?? ''));
+  const right = VERSION.exec(String(b ?? ''));
+  if (!left || !right) return null;
+
+  for (let at = 1; at <= 3; at += 1) {
+    const delta = Number(left[at]) - Number(right[at]);
+    if (delta) return delta < 0 ? -1 : 1;
+  }
+
+  if (left[4] === right[4]) return 0;
+  if (!left[4]) return 1;
+  if (!right[4]) return -1;
+  return left[4] < right[4] ? -1 : 1;
+} // Whether `version` meets a passport range of the form >=X.Y.Z.
+
+function meetsMinimum(range, version = CORE_RUNTIME) {
+  const match = MINIMUM.exec(String(range ?? '').trim());
+  if (!match) return false;
+  const order = compareVersions(version, match[1]);
+  return order !== null && order >= 0;
+}
+const isVersion = value => typeof value === 'string' && VERSION.test(value); // One entry of SF_BOOT_CONFIG.packages, read: {base, rule, version, byIndex}
+// or null when it declares nothing usable. A version string is a version, any
+// other string a base; true, or {index: true}, is "by the index". An object
+// with none of base, version or index declares nothing (as before sets).
+
+function readSetDeclaration(value) {
+  if (value === true) return {
+    base: '',
+    rule: '',
+    version: '',
+    byIndex: true
+  };
+
+  if (typeof value === 'string') {
+    const text = value.trim();
+    if (!text) return null;
+    if (isVersion(text)) return {
+      base: '',
+      rule: '',
+      version: text,
+      byIndex: false
+    };
+    return {
+      base: trimSlash(text),
+      rule: '',
+      version: '',
+      byIndex: false
+    };
+  }
+
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
+  const base = trimSlash(value.base);
+  const rule = trimSlash(value.rule);
+  const version = isVersion(value.version) ? value.version : '';
+  const byIndex = !base && !version && value.index === true;
+  if (!base && !version && !byIndex) return null;
+  return {
+    base,
+    rule,
+    version,
+    byIndex
+  };
+} // The sets a data-sf-sets attribute names: "effects admin@1.2.0" ->
+// {effects: true, admin: '1.2.0'}. Names that are not set names are left out
+// and returned in `refused`.
+
+function readSetsAttribute(text) {
+  const sets = {};
+  const refused = [];
+
+  for (const word of String(text ?? '').split(/[\s,]+/u).filter(Boolean)) {
+    const at = word.indexOf('@');
+    const name = at > 0 ? word.slice(0, at) : word;
+    const version = at > 0 ? word.slice(at + 1) : '';
+
+    if (!SET_NAME.test(name) || at > 0 && !isVersion(version)) {
+      refused.push(word);
+      continue;
+    }
+
+    sets[name] = version || true;
+  }
+
+  return {
+    sets,
+    refused
+  };
+} // Every data-sf-sets on the page's scripts, merged; the first script that
+// names a set wins.
+
+function setsFromScripts(document = globalThis.document) {
+  const sets = {};
+  const refused = [];
+  const scripts = document?.querySelectorAll?.('script[data-sf-sets]') ?? [];
+
+  for (const script of scripts) {
+    const read = readSetsAttribute(script.getAttribute('data-sf-sets'));
+
+    for (const [name, value] of Object.entries(read.sets)) if (!(name in sets)) sets[name] = value;
+
+    refused.push(...read.refused);
+  }
+
+  return {
+    sets,
+    refused
+  };
+} // Where a released set is served: its npm package on the npm root.
+
+function npmBase(id, version, root = SET_NPM_ROOT) {
+  return `${trimSlash(root) || SET_NPM_ROOT}/${SET_NPM_SCOPE}/${id}@${version}/dist/smart`;
+} // The problems of an index, empty when it holds. Only what the Loader relies
+// on is checked here; the schema says the rest.
+
+function checkSetIndex(index) {
+  if (!index || typeof index !== 'object') return ['index: not an object'];
+  const problems = [];
+  if (index.schema !== SET_INDEX_FORMAT || index.schema_version !== 1) problems.push(`schema: not ${SET_INDEX_FORMAT}, schema_version 1`);
+  if (!Array.isArray(index.releases)) problems.push('releases: not a list');
+
+  for (const [at, row] of (Array.isArray(index.releases) ? index.releases : []).entries()) {
+    const where = `releases[${at}]`;
+
+    if (!row || typeof row !== 'object') {
+      problems.push(`${where}: not an object`);
+      continue;
+    }
+
+    if (!SET_NAME.test(String(row.set ?? ''))) problems.push(`${where}.set`);
+    if (!isVersion(row.version)) problems.push(`${where}.version`);
+    if (!new RegExp(`^${row.set}-[0-9a-f]{12}$`, 'u').test(String(row.release ?? ''))) problems.push(`${where}.release`);
+    if (!MINIMUM.test(String(row.framework?.core_runtime ?? ''))) problems.push(`${where}.framework.core_runtime`);
+  }
+
+  return problems;
+} // The release of set `id` this Core should load: the one with `version` when
+// a version is asked for, else the newest whose framework range this Core
+// meets. Answers {row} or {reason} -- 'unknown-set', 'no-compatible-release',
+// 'version-not-indexed'.
+
+function selectSetRelease(index, id, {
+  version = '',
+  coreRuntime = CORE_RUNTIME
+} = {}) {
+  const rows = (Array.isArray(index?.releases) ? index.releases : []).filter(row => row?.set === id && isVersion(row.version));
+  if (!rows.length) return {
+    reason: 'unknown-set'
+  };
+
+  if (version) {
+    const row = rows.find(candidate => candidate.version === version);
+    return row ? {
+      row
+    } : {
+      reason: 'version-not-indexed'
+    };
+  }
+
+  const fitting = rows.filter(row => meetsMinimum(row.framework?.core_runtime, coreRuntime));
+  if (!fitting.length) return {
+    reason: 'no-compatible-release'
+  };
+  fitting.sort((a, b) => compareVersions(b.version, a.version));
+  return {
+    row: fitting[0]
+  };
+} // The line a page adds to declare a set it has not.
+
+const declarationLine = id => `data-sf-sets="${id}" on the core script, or SF_BOOT_CONFIG.packages.${id} = true`; // SF.package(name): a Promise of the set's exports -- what its bundle gave
+// SF.RuleLoader.registerPackage(name, {exports}). Callable before the Loader
+// has started; it waits for it. Rejects when the page has not declared the set.
+
+function whenLoader() {
+  const loader = globalThis.SF?.Loader;
+  if (loader?.packageExports) return Promise.resolve(loader);
+  return new Promise(resolve => {
+    globalThis.addEventListener?.('sf-loader-init', () => resolve(globalThis.SF.Loader), {
+      once: true
+    });
+  });
+}
+
+function packageExports(name) {
+  return whenLoader().then(loader => loader.packageExports(name));
+}
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.SF = globalThis.SF || {};
+
+  if (typeof globalThis.SF.package !== 'function') {
+    Object.defineProperty(globalThis.SF, 'package', {
+      configurable: true,
+      enumerable: true,
+      writable: false,
+      value: packageExports
+    });
+  }
+}
+
+/***/ },
+
 /***/ "f28a9d913ce0"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -9375,6 +9745,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   isTag: () => (/* binding */ isTag),
 /* harmony export */   listTagAliases: () => (/* binding */ listTagAliases),
 /* harmony export */   noteTagAlias: () => (/* binding */ noteTagAlias),
+/* harmony export */   registerTagAliasRows: () => (/* binding */ registerTagAliasRows),
 /* harmony export */   registerTagAliases: () => (/* binding */ registerTagAliases),
 /* harmony export */   tagNames: () => (/* binding */ tagNames),
 /* harmony export */   tagSelector: () => (/* binding */ tagSelector)
@@ -9458,6 +9829,29 @@ function registerTagAliases(table, tag) {
   for (const row of rows) addRow(shared, row);
 
   return rows;
+} // Rows a component set gives at runtime (SF.RuleLoader.registerPackage(name,
+// {aliases})): {from, to, since, remove_after}, the set's own former tags, so
+// SIMAI Framework needs no table row for a set it does not know. Answers the
+// rows taken; a row whose old tag is already known keeps the first.
+
+function registerTagAliasRows(rows) {
+  const shared = state();
+  const taken = [];
+
+  for (const row of Array.isArray(rows) ? rows : []) {
+    if (!row || typeof row.from !== 'string' || typeof row.to !== 'string') continue;
+    if (shared.byOld.has(row.from)) continue;
+    const clean = Object.freeze({
+      from: row.from,
+      to: row.to,
+      since: String(row.since ?? ''),
+      remove_after: String(row.remove_after ?? '')
+    });
+    addRow(shared, clean);
+    taken.push(clean);
+  }
+
+  return taken;
 } // The open old names of a tag, its own first: ['sf-button-close', 'sf-close'].
 
 function tagNames(tag) {
@@ -18060,6 +18454,10 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
           ],
           "type": "string"
         },
+        "pressed": {
+          "default": false,
+          "type": "boolean"
+        },
         "radius": {
           "default": "",
           "enum": [
@@ -18146,7 +18544,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.button",
-    "version": "1.2.1"
+    "version": "1.3.0"
   },
   "sf-button-icon": {
     "inputs": {
@@ -18218,6 +18616,10 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
           ],
           "type": "string"
         },
+        "pressed": {
+          "default": false,
+          "type": "boolean"
+        },
         "radius": {
           "default": "",
           "enum": [
@@ -18282,7 +18684,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.button-icon",
-    "version": "1.3.0"
+    "version": "1.4.0"
   },
   "sf-divider": {
     "component": "component.content-divider",

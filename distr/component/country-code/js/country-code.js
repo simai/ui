@@ -3729,6 +3729,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   isTag: () => (/* binding */ isTag),
 /* harmony export */   listTagAliases: () => (/* binding */ listTagAliases),
 /* harmony export */   noteTagAlias: () => (/* binding */ noteTagAlias),
+/* harmony export */   registerTagAliasRows: () => (/* binding */ registerTagAliasRows),
 /* harmony export */   registerTagAliases: () => (/* binding */ registerTagAliases),
 /* harmony export */   tagNames: () => (/* binding */ tagNames),
 /* harmony export */   tagSelector: () => (/* binding */ tagSelector)
@@ -3812,6 +3813,29 @@ function registerTagAliases(table, tag) {
   for (const row of rows) addRow(shared, row);
 
   return rows;
+} // Rows a component set gives at runtime (SF.RuleLoader.registerPackage(name,
+// {aliases})): {from, to, since, remove_after}, the set's own former tags, so
+// SIMAI Framework needs no table row for a set it does not know. Answers the
+// rows taken; a row whose old tag is already known keeps the first.
+
+function registerTagAliasRows(rows) {
+  const shared = state();
+  const taken = [];
+
+  for (const row of Array.isArray(rows) ? rows : []) {
+    if (!row || typeof row.from !== 'string' || typeof row.to !== 'string') continue;
+    if (shared.byOld.has(row.from)) continue;
+    const clean = Object.freeze({
+      from: row.from,
+      to: row.to,
+      since: String(row.since ?? ''),
+      remove_after: String(row.remove_after ?? '')
+    });
+    addRow(shared, clean);
+    taken.push(clean);
+  }
+
+  return taken;
 } // The open old names of a tag, its own first: ['sf-button-close', 'sf-close'].
 
 function tagNames(tag) {

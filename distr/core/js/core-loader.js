@@ -1985,6 +1985,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var lit_static_html_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("ee5035470810");
 /* harmony import */ var _pending_tags_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("3c79afd07eeb");
 /* harmony import */ var _deprecations_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("06e8cd089f28");
+/* harmony import */ var _sets_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("a30ed252d965");
+
 
 
 
@@ -2101,6 +2103,14 @@ const PACKAGE_ALIASES = Object.freeze({
 function normalisePackageUrl(value) {
   if (typeof value !== 'string') return '';
   return value.trim().replace(/\/+$/, '');
+} // The directory of the package rule file that is running now, when it is one
+// (<base>/rule.js or rule.min.js); '' for anything else, a bundle included.
+
+
+function ruleScriptBase() {
+  const src = globalThis.document?.currentScript?.src || '';
+  const match = /^(.*)\/rule(?:\.min)?\.js(?:[?#].*)?$/u.exec(src);
+  return match ? match[1] : '';
 }
 
 function SFLoaderPlugin(params) {
@@ -2244,8 +2254,13 @@ function SFLoaderPlugin(params) {
   this.searchEnd = false;
   this.packages = Object.create(null);
   this.packageWarnings = new Set();
-  this.installPackageApi();
-  this.declarePackages({ ...(window.SF_BOOT_CONFIG?.packages || {}),
+  this.installPackageApi(); // A set named on the core script (data-sf-sets) is declared like one in
+  // SF_BOOT_CONFIG.packages; the configuration wins over the attribute.
+
+  const named = (0,_sets_js__WEBPACK_IMPORTED_MODULE_14__.setsFromScripts)(globalThis.document);
+  named.refused.forEach(word => this.warnPackage(`sets:${word}`, `"${word}" in data-sf-sets is not a set name (or name@version); it is ignored`));
+  this.declarePackages({ ...named.sets,
+    ...(window.SF_BOOT_CONFIG?.packages || {}),
     ...(params.packages || {})
   }); // A declared package's rules are fetched before the first scan, so its tags
   // are known when the page is first read and a cached plugin list never names
@@ -2281,6 +2296,12 @@ SFLoaderPlugin.prototype.installPackageApi = function () {
     enumerable: false,
     writable: true,
     value: (name, options) => this.registerPackage(name, options)
+  });
+  Object.defineProperty(rules, 'packageOf', {
+    configurable: true,
+    enumerable: false,
+    writable: true,
+    value: name => this.packageOf(name)
   });
 };
 
@@ -2324,33 +2345,164 @@ SFLoaderPlugin.prototype.declarePackages = function (declared) {
     if (!PACKAGE_NAME.test(name)) {
       this.warnPackage(`name:${name}`, `"${name}" in SF_BOOT_CONFIG.packages is not a package name ` + '(lower-case letters, digits and hyphens); it is ignored');
       return;
-    }
+    } // A set may be declared by its base, by an npm version or by name alone
+    // (sets.js); a version makes the base, a name alone waits for the index.
 
-    const base = normalisePackageUrl(config?.base);
 
-    if (!base) {
+    const read = (0,_sets_js__WEBPACK_IMPORTED_MODULE_14__.readSetDeclaration)(config);
+
+    if (!read) {
       this.warnPackage(`base:${name}`, `package "${name}" is declared without a base, so none of its ` + 'components can load; set SF_BOOT_CONFIG.packages.' + `${name}.base to the directory holding its component folders`);
     }
 
+    const base = read?.base || (read?.version ? (0,_sets_js__WEBPACK_IMPORTED_MODULE_14__.npmBase)(name, read.version, this.setNpmRoot()) : '');
     this.packages[name] = {
       name,
       base,
-      rule: normalisePackageUrl(config?.rule) || (base ? `${base}/rule.js` : ''),
+      rule: read?.rule || (base ? `${base}/rule.js` : ''),
+      version: read?.version || '',
+      byIndex: Boolean(read?.byIndex),
       declared: true,
       registered: false
     };
   });
 };
 
+SFLoaderPlugin.prototype.setNpmRoot = function () {
+  return normalisePackageUrl(window.SF_BOOT_CONFIG?.setNpm) || _sets_js__WEBPACK_IMPORTED_MODULE_14__.SET_NPM_ROOT;
+}; // The bases of the sets a page named without one, from the compatibility
+// index: fetched once, only when a set needs it. A set the index cannot place
+// is said aloud with the reason and stays without a base.
+
+
+SFLoaderPlugin.prototype.resolveIndexedPackages = function () {
+  const waiting = Object.values(this.packages).filter(pkg => pkg.byIndex && !pkg.base);
+  if (!waiting.length) return null;
+  const url = normalisePackageUrl(window.SF_BOOT_CONFIG?.setIndex) || _sets_js__WEBPACK_IMPORTED_MODULE_14__.SET_INDEX_URL;
+
+  const unplaced = (pkg, why) => this.warnPackage(`index:${pkg.name}`, `set "${pkg.name}" could not be placed from the compatibility index ` + `(${why}); give it a base or a version: SF_BOOT_CONFIG.packages.` + `${pkg.name} = '<base>' or '<version>'`);
+
+  return fetch(url, {
+    credentials: 'omit'
+  }).then(response => {
+    if (!response.ok) throw new Error(`${url} answered ${response.status}`);
+    return response.json();
+  }).then(index => {
+    const problems = (0,_sets_js__WEBPACK_IMPORTED_MODULE_14__.checkSetIndex)(index);
+    if (problems.length) throw new Error(`${url} is not a set index: ${problems[0]}`);
+    this.setIndex = index;
+    waiting.forEach(pkg => {
+      const chosen = (0,_sets_js__WEBPACK_IMPORTED_MODULE_14__.selectSetRelease)(index, pkg.name);
+
+      if (!chosen.row) {
+        unplaced(pkg, chosen.reason);
+        return;
+      }
+
+      pkg.version = chosen.row.version;
+      pkg.release = chosen.row.release;
+      pkg.base = (0,_sets_js__WEBPACK_IMPORTED_MODULE_14__.npmBase)(pkg.name, chosen.row.version, this.setNpmRoot());
+      pkg.rule = `${pkg.base}/rule.js`;
+    });
+  }).catch(error => waiting.forEach(pkg => unplaced(pkg, String(error?.message || error))));
+};
+
 SFLoaderPlugin.prototype.loadDeclaredPackageRules = function () {
-  const loads = Object.values(this.packages).filter(pkg => pkg.declared && pkg.rule).map(pkg => this.addScript(pkg.rule).then(() => {
-    if (!pkg.registered) {
-      this.warnPackage(`empty:${pkg.name}`, `${pkg.rule} loaded but registered nothing for package ` + `"${pkg.name}"; it must call SF.RuleLoader.registerPackage(` + `"${pkg.name}", {rules})`);
+  const load = () => {
+    const loads = Object.values(this.packages).filter(pkg => pkg.declared && pkg.rule).map(pkg => this.addScript(pkg.rule).then(() => {
+      if (!pkg.registered) {
+        this.warnPackage(`empty:${pkg.name}`, `${pkg.rule} loaded but registered nothing for package ` + `"${pkg.name}"; it must call SF.RuleLoader.registerPackage(` + `"${pkg.name}", {rules})`);
+      }
+
+      if (!this.minified) this.readSetPassport(pkg);
+    }).catch(() => {
+      this.warnPackage(`rule:${pkg.name}`, `the rules of package "${pkg.name}" could not be loaded from ` + `${pkg.rule}; its components stay undefined`);
+    }));
+    return loads.length ? Promise.all(loads) : null;
+  };
+
+  const indexed = this.resolveIndexedPackages();
+  this.packageRulesReady = indexed ? indexed.then(load) : load();
+  return this.packageRulesReady;
+}; // Debug only (?sf-debug, data-sf-debug, minified: false): the set's passport,
+// <base>/../set.json, read for diagnostics. It says which sets this one needs;
+// one the page has not declared is said aloud with the line to add, and is
+// never loaded on the page's behalf.
+
+
+SFLoaderPlugin.prototype.readSetPassport = function (pkg) {
+  if (!pkg.base || typeof fetch !== 'function') return null;
+  const url = `${pkg.base.replace(/\/[^/]*$/u, '')}/set.json`;
+  return fetch(url, {
+    credentials: 'omit'
+  }).then(response => response.ok ? response.json() : null).then(passport => {
+    if (!passport || passport.schema !== 'simai.framework.component-set') return;
+    pkg.passport = passport;
+
+    if (passport.id !== pkg.name) {
+      this.warnPackage(`passport:${pkg.name}`, `${url} is the passport of set "${passport.id}", not "${pkg.name}"`);
     }
-  }).catch(() => {
-    this.warnPackage(`rule:${pkg.name}`, `the rules of package "${pkg.name}" could not be loaded from ` + `${pkg.rule}; its components stay undefined`);
-  }));
-  return loads.length ? Promise.all(loads) : null;
+
+    (Array.isArray(passport.requires_sets) ? passport.requires_sets : []).forEach(need => {
+      if (this.packages[need?.id]) return;
+      this.warnPackage(`requires:${pkg.name}:${need?.id}`, `set "${pkg.name}" needs set "${need?.id}" (${need?.range}), which this ` + `page has not declared; add ${(0,_sets_js__WEBPACK_IMPORTED_MODULE_14__.declarationLine)(need?.id)}`);
+    });
+  }).catch(() => null);
+}; // What the Loader knows of a package: frozen, safe to hand out. A bundle uses
+// it to find files beside its own at the same commit (its catalogue, its
+// data), since a classic script has no import.meta.url.
+
+
+SFLoaderPlugin.prototype.packageOf = function (name) {
+  const pkg = this.packages[String(name ?? '').trim()];
+  if (!pkg) return null;
+  return Object.freeze({
+    name: pkg.name,
+    base: pkg.base,
+    declared: pkg.declared,
+    registered: pkg.registered,
+    version: pkg.version || '',
+    release: pkg.release || '',
+    api: pkg.api || '',
+    exported: Boolean(pkg.exports)
+  });
+}; // SF.package(name) (sets.js): the set's exports, once its bundle has given
+// them. The set's `api` rule (registerPackage(name, {api})) is the element
+// whose bundle carries them, asked for as an element would be. A set the page
+// has not declared and nothing has registered is refused with the line to add.
+
+
+SFLoaderPlugin.prototype.packageExports = function (name, {
+  timeout = 10000
+} = {}) {
+  const ready = this.packageRulesReady || Promise.resolve();
+  return Promise.resolve(ready).then(() => {
+    const given = String(name ?? '').trim();
+    const packageName = PACKAGE_NAME.test(given) ? this.packageNameOf(given) : given;
+    const pkg = this.packages[packageName];
+
+    if (!pkg) {
+      throw new Error(`SF.package: set "${given}" is not declared on this page; add ${(0,_sets_js__WEBPACK_IMPORTED_MODULE_14__.declarationLine)(given)}`);
+    }
+
+    if (pkg.exports) return pkg.exports;
+
+    if (!pkg.exportsReady) {
+      pkg.exportsReady = new Promise(resolve => {
+        pkg.resolveExports = resolve;
+      });
+    }
+
+    const apiTag = pkg.api ? this.findPlugins?.[pkg.api]?.tags?.[0] : '';
+    if (apiTag) this.ensure([apiTag], {
+      timeout
+    });
+    let timer = null;
+    const expired = new Promise((resolve, reject) => {
+      timer = setTimeout(() => reject(new Error(`SF.package: set "${packageName}" gave no exports within ${timeout} ms` + (pkg.api ? ` (its api rule ${pkg.api})` : ' (it names no api rule)'))), timeout);
+    });
+    return Promise.race([pkg.exportsReady, expired]).finally(() => clearTimeout(timer));
+  });
 }; // The one way a package adds rules. It may run before the first scan (the
 // rule file the Loader fetched for a declared package) or long after it (a
 // page registering a package of its own), so it rebuilds what the Loader
@@ -2374,8 +2526,12 @@ SFLoaderPlugin.prototype.registerPackage = function (name, options = {}) {
   }
 
   const rules = options?.rules;
+  const exported = options?.exports && typeof options.exports === 'object' ? options.exports : null;
+  const aliases = Array.isArray(options?.aliases) ? options.aliases : null;
+  const hasRules = rules && typeof rules === 'object' && !Array.isArray(rules); // A set's bundle registers again with its exports alone (SF.package); a
+  // call with neither rules nor exports nor aliases registers nothing.
 
-  if (!rules || typeof rules !== 'object' || Array.isArray(rules)) {
+  if (!hasRules && !exported && !aliases) {
     this.warnPackage(`rules:${packageName}`, `package "${packageName}" was registered without a rules object`);
     return [];
   }
@@ -2391,10 +2547,35 @@ SFLoaderPlugin.prototype.registerPackage = function (name, options = {}) {
   }
 
   const pkg = this.packages[packageName]; // Where the bytes are served is the page's decision, so a base the page
-  // declared wins over the one a bundle suggests.
+  // declared wins over the one a bundle suggests; then the bundle's own word;
+  // then, for a rule file the page loaded with a script tag of its own
+  // (<script src="<base>/rule.js">), the directory it came from.
 
-  if (!pkg.base) pkg.base = normalisePackageUrl(options.base);
-  pkg.registered = true;
+  if (!pkg.base) pkg.base = normalisePackageUrl(options.base) || ruleScriptBase();
+  if (hasRules) pkg.registered = true;
+  if (typeof options.api === 'string' && /^cl-[a-z][a-z0-9-]*$/u.test(options.api)) pkg.api = options.api;
+
+  if (aliases) {
+    const own = new Set(Object.values(hasRules ? rules : {}).flatMap(rule => rule?.tags || []));
+    const rows = aliases.filter(row => {
+      const ok = row && typeof row.from === 'string' && typeof row.to === 'string' && own.has(row.to) && typeof row.remove_after === 'string';
+
+      if (!ok) {
+        this.warnPackage(`alias:${packageName}:${row?.from}`, `package "${packageName}" alias ${JSON.stringify(row)} does not name ` + 'one of its own tags with a remove_after; skipped');
+      }
+
+      return ok;
+    });
+    (0,_tag_aliases_js__WEBPACK_IMPORTED_MODULE_7__.registerTagAliasRows)(rows);
+  }
+
+  if (exported && !pkg.exports) {
+    pkg.exports = Object.freeze({ ...exported
+    });
+    pkg.resolveExports?.(pkg.exports);
+  }
+
+  if (!hasRules) return [];
   const added = [];
   Object.entries(rules).forEach(([key, rule]) => {
     if (!rule || typeof rule !== 'object' || Array.isArray(rule)) {
@@ -8055,7 +8236,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"version":1,"aliases":{"column-gap/de
 /***/ "e7acc025fab1"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"cl-accordion":["display/default","flex-direction/default","gap/default","position/default"],"cl-alert":["display/default","flex-direction/default","flex-wrap/default","flex/default","place-items/default"],"cl-avatar":["align-items/default","background-color/default","display/default","element-position/default","flex-direction/default","flex/default","height/default","justify-content/default","overflow/default","place-items/default","position/default","text-overflow/default","transition-property/default","white-space/default","width/default"],"cl-avatar-group":["align-items/default","display/default","flex-direction/default"],"cl-badge":["display/default","flex-direction/default","flex-wrap/default","justify-content/default","place-items/default","sr-only/default"],"cl-breadcrumbs":["align-items/default","display/default"],"cl-button":["align-items/default","display/default","flex/default","pointer-events/default"],"cl-button-close":["display/default","justify-content/default","place-items/default"],"cl-button-group":["align-items/default","display/default","pointer-events/default","text-align/default"],"cl-button-icon":["align-items/default","display/default","pointer-events/default"],"cl-checkbox":["cursor/default","display/default","flex-direction/default","transition-property/default"],"cl-contents":["display/default","position/default","width/default"],"cl-drawer":["display/default","justify-content/default","margin/default","place-items/default","resize/default","visibility/default"],"cl-dropdown":["align-items/default","background-color/default","background-size/default","cursor/default","display/default","flex-direction/default","flex-wrap/default","flex/default","place-items/default","position/default","transition-property/default"],"cl-empty-state":["display/default"],"cl-file-download":["cursor/default","display/default","transition-property/default"],"cl-file-upload":["align-items/default","align-self/default","cursor/default","display/default","flex-direction/default","flex/default","gap/default","grid-template-columns/default","justify-content/default","justify-items/default","width/default"],"cl-gallery":["align-items/default","backdrop-filter-blur/default","background-color/default","border-radius/default","border-width/default","box-shadow/default","display/default","filter-blur/default","flex-direction/default","gap/default","height/default","justify-content/default","margin/default","max-width/default","min-height/default","min-width/default","padding/default","text-color/default","width/default"],"cl-header-page":["align-items/default","display/default","flex-direction/default","flex-grow/default","flex-wrap/default","margin/default","min-width/default","text-overflow/default"],"cl-header-site":["container/default","margin/default","position/default","width/default"],"cl-help-mark":["display/default"],"cl-icon":["font-weight/default"],"cl-input":["align-items/default","display/default","flex-direction/default","text-align/default","transition-property/default"],"cl-input-code":["sr-only/default"],"cl-input-color":["display/default"],"cl-input-country":["display/default","flex-direction/default","place-items/default","transition-property/default"],"cl-input-date":["align-content/default","align-items/default","display/default","element-position/default","flex-direction/default","gap/default","grid-template-columns/default","justify-content/default","overflow/default","position/default"],"cl-input-lookup":["align-items/default","display/default","flex-direction/default","flex-wrap/default","flex/default","justify-content/default","overflow/default"],"cl-input-quantity":["display/default","filter-blur/default","flex-direction/default","flex-wrap/default","justify-content/default","place-items/default"],"cl-input-rich":["align-items/default","container/default","display/default","flex-direction/default","flex-wrap/default","font-style/default","font-weight/default"],"cl-input-textarea":["display/default","flex-direction/default","transition-property/default"],"cl-list-item":["align-items/default","background-color/default","background-size/default","cursor/default","display/default","flex-direction/default","flex-wrap/default","flex/default","gap/default","justify-content/default","place-items/default"],"cl-menu-context":["display/default","flex-direction/default","flex/default","position/default","text-decoration/default"],"cl-modal":["align-items/default","backdrop-filter-blur/default","border-radius/default","border-width/default","display/default","element-position/default","filter-blur/default","flex-direction/default","flex-wrap/default","font-size/default","gap/default","height/default","justify-content/default","margin/default","min-width/default","overflow/default","padding/default","place-items/default","position/default","text-color/default","title/default","width/default","z-index/default"],"cl-pager":["sr-only/default"],"cl-pagination":["align-items/default","display/default","flex-direction/default","justify-content/default","position/default"],"cl-popover":["display/default","position/default"],"cl-progress-bar":["align-items/default","display/default","flex-direction/default","transition-property/default"],"cl-progress-ring":["display/default"],"cl-progress-scale":["align-items/default","display/default","flex-direction/default","grid-template-columns/default","overflow/default"],"cl-radio":["align-items/default","display/default","flex-direction/default","justify-content/default","transition-property/default"],"cl-reference-link":["align-items/default","display/default"],"cl-resizer":["display/default","position/default","resize/default","text-max-width/default"],"cl-search":["display/default","sr-only/default"],"cl-skeleton":["animation/default","display/default","flex/default"],"cl-slider":["background-color/default","border-radius/default","display/default","padding/default","text-color/default"],"cl-slider-range":["flex/default"],"cl-steps":["cursor/default","display/default","flex-direction/default","justify-content/default","place-items/default"],"cl-switch":["align-items/default","display/default","flex-direction/default","justify-content/default","transition-property/default"],"cl-tabs":["container/default","display/default","flex-direction/default","visibility/default"],"cl-tag":["background-size/default","display/default","flex-direction/default","flex-wrap/default","justify-content/default","min-width/default","place-items/default"],"cl-toast":["align-items/default","display/default","flex-direction/default","flex/default","justify-content/default","place-items/default"],"cl-tooltip":["display/default","flex-direction/default","position/default"],"cl-tree":["display/default","flex-direction/default"],"cl-tree-item":["align-items/default","display/default","flex-direction/default","position/default"]}');
+module.exports = /*#__PURE__*/JSON.parse('{"cl-accordion":["display/default","flex-direction/default","gap/default","position/default"],"cl-alert":["display/default","flex-direction/default","flex-wrap/default","flex/default","place-items/default"],"cl-avatar":["align-items/default","background-color/default","display/default","element-position/default","flex-direction/default","flex/default","height/default","justify-content/default","overflow/default","place-items/default","position/default","text-overflow/default","transition-property/default","white-space/default","width/default"],"cl-avatar-group":["align-items/default","display/default","flex-direction/default"],"cl-badge":["display/default","flex-direction/default","flex-wrap/default","justify-content/default","place-items/default","sr-only/default"],"cl-breadcrumbs":["align-items/default","display/default"],"cl-button":["align-items/default","display/default","flex/default","pointer-events/default"],"cl-button-close":["display/default","justify-content/default","place-items/default"],"cl-button-group":["align-items/default","display/default","pointer-events/default","text-align/default"],"cl-button-icon":["align-items/default","display/default","pointer-events/default"],"cl-checkbox":["cursor/default","display/default","flex-direction/default","transition-property/default"],"cl-confirm":["display/default"],"cl-confirm-change":["display/default"],"cl-contents":["display/default","position/default","width/default"],"cl-drawer":["display/default","justify-content/default","margin/default","place-items/default","resize/default","visibility/default"],"cl-dropdown":["align-items/default","background-color/default","background-size/default","cursor/default","display/default","flex-direction/default","flex-wrap/default","flex/default","place-items/default","position/default","transition-property/default"],"cl-empty-state":["display/default"],"cl-file-download":["cursor/default","display/default","transition-property/default"],"cl-file-upload":["align-items/default","align-self/default","cursor/default","display/default","flex-direction/default","flex/default","gap/default","grid-template-columns/default","justify-content/default","justify-items/default","width/default"],"cl-gallery":["align-items/default","backdrop-filter-blur/default","background-color/default","border-radius/default","border-width/default","box-shadow/default","display/default","filter-blur/default","flex-direction/default","gap/default","height/default","justify-content/default","margin/default","max-width/default","min-height/default","min-width/default","padding/default","text-color/default","width/default"],"cl-header-page":["align-items/default","display/default","flex-direction/default","flex-grow/default","flex-wrap/default","margin/default","min-width/default","text-overflow/default"],"cl-header-site":["container/default","margin/default","position/default","width/default"],"cl-help-mark":["display/default"],"cl-icon":["font-weight/default"],"cl-input":["align-items/default","display/default","flex-direction/default","text-align/default","transition-property/default"],"cl-input-code":["sr-only/default"],"cl-input-color":["display/default"],"cl-input-country":["display/default","flex-direction/default","place-items/default","transition-property/default"],"cl-input-date":["align-content/default","align-items/default","display/default","element-position/default","flex-direction/default","gap/default","grid-template-columns/default","justify-content/default","overflow/default","position/default"],"cl-input-lookup":["align-items/default","display/default","flex-direction/default","flex-wrap/default","flex/default","justify-content/default","overflow/default"],"cl-input-quantity":["display/default","filter-blur/default","flex-direction/default","flex-wrap/default","justify-content/default","place-items/default"],"cl-input-rich":["align-items/default","container/default","display/default","flex-direction/default","flex-wrap/default","font-style/default","font-weight/default"],"cl-input-textarea":["display/default","flex-direction/default","transition-property/default"],"cl-list-item":["align-items/default","background-color/default","background-size/default","cursor/default","display/default","flex-direction/default","flex-wrap/default","flex/default","gap/default","justify-content/default","place-items/default"],"cl-menu-context":["display/default","flex-direction/default","flex/default","position/default","text-decoration/default"],"cl-modal":["align-items/default","backdrop-filter-blur/default","border-radius/default","border-width/default","display/default","element-position/default","filter-blur/default","flex-direction/default","flex-wrap/default","font-size/default","gap/default","height/default","justify-content/default","margin/default","min-width/default","overflow/default","padding/default","place-items/default","position/default","text-color/default","title/default","width/default","z-index/default"],"cl-pager":["sr-only/default"],"cl-pagination":["align-items/default","display/default","flex-direction/default","justify-content/default","position/default"],"cl-popover":["display/default","position/default"],"cl-progress-bar":["align-items/default","display/default","flex-direction/default","transition-property/default"],"cl-progress-ring":["display/default"],"cl-progress-scale":["align-items/default","display/default","flex-direction/default","grid-template-columns/default","overflow/default"],"cl-radio":["align-items/default","display/default","flex-direction/default","justify-content/default","transition-property/default"],"cl-reference-link":["align-items/default","display/default"],"cl-resizer":["display/default","position/default","resize/default","text-max-width/default"],"cl-search":["display/default","sr-only/default"],"cl-skeleton":["animation/default","display/default","flex/default"],"cl-slider":["background-color/default","border-radius/default","display/default","padding/default","text-color/default"],"cl-slider-range":["flex/default"],"cl-steps":["cursor/default","display/default","flex-direction/default","justify-content/default","place-items/default"],"cl-switch":["align-items/default","display/default","flex-direction/default","justify-content/default","transition-property/default"],"cl-tabs":["container/default","display/default","flex-direction/default","visibility/default"],"cl-tag":["background-size/default","display/default","flex-direction/default","flex-wrap/default","justify-content/default","min-width/default","place-items/default"],"cl-toast":["align-items/default","display/default","flex-direction/default","flex/default","justify-content/default","place-items/default"],"cl-tooltip":["display/default","flex-direction/default","position/default"],"cl-tree":["display/default","flex-direction/default"],"cl-tree-item":["align-items/default","display/default","flex-direction/default","position/default"]}');
 
 /***/ }
 

@@ -177,6 +177,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   isTag: () => (/* binding */ isTag),
 /* harmony export */   listTagAliases: () => (/* binding */ listTagAliases),
 /* harmony export */   noteTagAlias: () => (/* binding */ noteTagAlias),
+/* harmony export */   registerTagAliasRows: () => (/* binding */ registerTagAliasRows),
 /* harmony export */   registerTagAliases: () => (/* binding */ registerTagAliases),
 /* harmony export */   tagNames: () => (/* binding */ tagNames),
 /* harmony export */   tagSelector: () => (/* binding */ tagSelector)
@@ -264,6 +265,29 @@ function registerTagAliases(table, tag) {
   for (const row of rows) addRow(shared, row);
 
   return rows;
+} // Rows a component set gives at runtime (SF.RuleLoader.registerPackage(name,
+// {aliases})): {from, to, since, remove_after}, the set's own former tags, so
+// SIMAI Framework needs no table row for a set it does not know. Answers the
+// rows taken; a row whose old tag is already known keeps the first.
+
+function registerTagAliasRows(rows) {
+  const shared = state();
+  const taken = [];
+
+  for (const row of Array.isArray(rows) ? rows : []) {
+    if (!row || typeof row.from !== 'string' || typeof row.to !== 'string') continue;
+    if (shared.byOld.has(row.from)) continue;
+    const clean = Object.freeze({
+      from: row.from,
+      to: row.to,
+      since: String(row.since ?? ''),
+      remove_after: String(row.remove_after ?? '')
+    });
+    addRow(shared, clean);
+    taken.push(clean);
+  }
+
+  return taken;
 } // The open old names of a tag, its own first: ['sf-button-close', 'sf-close'].
 
 function tagNames(tag) {
@@ -425,13 +449,8 @@ const GalleryElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__
   },
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_7__
-});
-
-const applied = () => ({
-  outcome: 'applied'
 }); // What retires without a new name (aliases.json rows with `to: null`): kept
 // until the date, and each call is noted with it.
-
 
 function noteRetired(from) {
   (0,_core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__.noteDeprecated)({
@@ -1012,17 +1031,18 @@ class SfGallery extends GalleryElement {
     }
 
     this._nestedDefinitionSyncQueued = true;
-    const waits = [];
+    const tags = [];
+    if (needsSliderUpgrade) tags.push('sf-slider');
+    if (needsModalUpgrade) tags.push('sf-modal'); // The slider and the window are asked for, not only waited for
+    // (SF.Loader.ensure, core.runtime 1.19.0; duplication audit A-18): a
+    // gallery drawn into a page after the Loader's scan no longer waits on a
+    // definition nobody fetches. It waits as long as before (no timeout).
 
-    if (needsSliderUpgrade && window.customElements?.whenDefined) {
-      waits.push(window.customElements.whenDefined('sf-slider'));
-    }
-
-    if (needsModalUpgrade && window.customElements?.whenDefined) {
-      waits.push(window.customElements.whenDefined('sf-modal'));
-    }
-
-    Promise.allSettled(waits).then(() => {
+    const loader = globalThis.SF?.Loader;
+    const wait = typeof loader?.ensure === 'function' ? loader.ensure(tags, {
+      timeout: Infinity
+    }) : Promise.allSettled(tags.map(tag => window.customElements?.whenDefined?.(tag)));
+    Promise.resolve(wait).then(() => {
       requestAnimationFrame(() => {
         this._nestedDefinitionSyncQueued = false;
 
@@ -1351,7 +1371,7 @@ class SfGallery extends GalleryElement {
 
     this.setAttribute('open', '');
     this._modal?.open?.();
-    return applied();
+    return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.applied)();
   }
 
   close() {
@@ -1361,7 +1381,7 @@ class SfGallery extends GalleryElement {
     };
     this.removeAttribute('open');
     this._modal?.close?.();
-    return applied();
+    return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.applied)();
   }
 
   toggle(index = null) {
@@ -1383,7 +1403,7 @@ class SfGallery extends GalleryElement {
       syncAttribute: true
     });
 
-    return applied();
+    return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.applied)();
   }
 
   next() {
@@ -1559,7 +1579,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-galle
 /***/ "a2bebed909d0"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.gallery","tag":"sf-gallery","version":"1.1.7","kind":"leaf","settings":{"modal-id":{"type":"id","default":""},"heading":{"type":"string","default-from":"runtime.heading"},"text":{"type":"string","default":""},"inline":{"type":"boolean","default":true},"lightbox":{"type":"boolean","default":true},"arrows":{"type":"boolean","default":true},"dots":{"type":"boolean","default":false},"thumbs":{"type":"boolean","default":true},"loop":{"type":"boolean","default":false},"space-between":{"type":"number","default":12},"speed":{"type":"number","default":450},"button-type":{"type":"string","default":"primary"},"button-size":{"type":"string","default":"1"},"dots-type":{"type":"string","default":"primary-dark"},"dots-size":{"type":"string","default":"2"},"thumbs-class":{"type":"string","default":""},"thumb-class":{"type":"string","default":""},"slide-class":{"type":"string","default":""},"inline-class":{"type":"string","default":""},"lightbox-class":{"type":"string","default":""},"overlay":{"type":"boolean","default":true},"show-header":{"type":"boolean","default":true},"show-close":{"type":"boolean","default":true},"close-on-esc":{"type":"boolean","default":true},"close-on-overlay":{"type":"boolean","default":true},"preserve-scroll-gap":{"type":"boolean","default":true},"position":{"type":"enum","values":["center","left","right","top","bottom"],"default":"center"},"fullscreen":{"type":"boolean","default":false},"width":{"type":"string","default":""},"height":{"type":"string","default":""},"backdrop-blur":{"type":"boolean","default":false},"blur-type":{"type":"enum","values":["none","small","medium","large"],"default":"medium"},"overlay-class":{"type":"string","default":""},"close-class":{"type":"string","default":""},"surface-class":{"type":"string","default":""},"surface-padding":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"header-class":{"type":"string","default":""},"body-class":{"type":"string","default":""},"content-class":{"type":"string","default":""},"footer-class":{"type":"string","default":""}},"values":{"open":{"type":"boolean","default":false,"reflect":true},"current":{"type":"number","default":1,"integer":true,"min":1}},"events":{"change":{"carries":{"previous":"number","current":"number","total":"number","from":{"type":"enum","values":["api","inline","lightbox"]}}},"opened":{"carries":{"current":"number","total":"number"}},"closed":{"carries":{"current":"number","total":"number"}}},"actions":{"open":{"with":{"index":{"type":"number","optional":true}}},"close":{},"toggle":{"with":{"index":{"type":"number","optional":true}}},"go-to":{"with":{"index":"number"}},"next":{},"prev":{}},"css-variables":{"--sf-gallery-min-inline-size":{"type":"length","state":"default"},"--sf-gallery-media-max-height":{"type":"length","state":"default"},"--sf-gallery-object-fit":{"type":"keyword","state":"default"},"--sf-gallery-slide-min-height":{"type":"length","state":"default"},"--sf-gallery-caption-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.gallery","tag":"sf-gallery","version":"1.1.8","kind":"leaf","settings":{"modal-id":{"type":"id","default":""},"heading":{"type":"string","default-from":"runtime.heading"},"text":{"type":"string","default":""},"inline":{"type":"boolean","default":true},"lightbox":{"type":"boolean","default":true},"arrows":{"type":"boolean","default":true},"dots":{"type":"boolean","default":false},"thumbs":{"type":"boolean","default":true},"loop":{"type":"boolean","default":false},"space-between":{"type":"number","default":12},"speed":{"type":"number","default":450},"button-type":{"type":"string","default":"primary"},"button-size":{"type":"string","default":"1"},"dots-type":{"type":"string","default":"primary-dark"},"dots-size":{"type":"string","default":"2"},"thumbs-class":{"type":"string","default":""},"thumb-class":{"type":"string","default":""},"slide-class":{"type":"string","default":""},"inline-class":{"type":"string","default":""},"lightbox-class":{"type":"string","default":""},"overlay":{"type":"boolean","default":true},"show-header":{"type":"boolean","default":true},"show-close":{"type":"boolean","default":true},"close-on-esc":{"type":"boolean","default":true},"close-on-overlay":{"type":"boolean","default":true},"preserve-scroll-gap":{"type":"boolean","default":true},"position":{"type":"enum","values":["center","left","right","top","bottom"],"default":"center"},"fullscreen":{"type":"boolean","default":false},"width":{"type":"string","default":""},"height":{"type":"string","default":""},"backdrop-blur":{"type":"boolean","default":false},"blur-type":{"type":"enum","values":["none","small","medium","large"],"default":"medium"},"overlay-class":{"type":"string","default":""},"close-class":{"type":"string","default":""},"surface-class":{"type":"string","default":""},"surface-padding":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"header-class":{"type":"string","default":""},"body-class":{"type":"string","default":""},"content-class":{"type":"string","default":""},"footer-class":{"type":"string","default":""}},"values":{"open":{"type":"boolean","default":false,"reflect":true},"current":{"type":"number","default":1,"integer":true,"min":1}},"events":{"change":{"carries":{"previous":"number","current":"number","total":"number","from":{"type":"enum","values":["api","inline","lightbox"]}}},"opened":{"carries":{"current":"number","total":"number"}},"closed":{"carries":{"current":"number","total":"number"}}},"actions":{"open":{"with":{"index":{"type":"number","optional":true}}},"close":{},"toggle":{"with":{"index":{"type":"number","optional":true}}},"go-to":{"with":{"index":"number"}},"next":{},"prev":{}},"css-variables":{"--sf-gallery-min-inline-size":{"type":"length","state":"default"},"--sf-gallery-media-max-height":{"type":"length","state":"default"},"--sf-gallery-object-fit":{"type":"keyword","state":"default"},"--sf-gallery-slide-min-height":{"type":"length","state":"default"},"--sf-gallery-caption-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 

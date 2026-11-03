@@ -904,6 +904,43 @@
     "type": "smart"
   },
   {
+    "name": "cl-confirm",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "cl-button"
+      },
+      {
+        "name": "cl-icon"
+      }
+    ],
+    "tags": [
+      "sf-confirm"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-confirm-change",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "cl-button"
+      },
+      {
+        "name": "cl-icon"
+      }
+    ],
+    "tags": [
+      "sf-confirm-change",
+      "sf-change-confirm"
+    ],
+    "type": "smart"
+  },
+  {
     "name": "cl-contents",
     "css": true,
     "js": true,
