@@ -110,9 +110,9 @@ class FrameworkContractRegistryTest(unittest.TestCase):
                 # sf-property-view, were never entries here); 48 with
                 # sf-page-header; 60 with sf-progress-ring; 61 with sf-site-header;
                 # 66 again when sf-toggle left and sf-include came.
-                "smart-component": 66,
+                "smart-component": 68,
                 "recipe": 1,
-                "total": 361,
+                "total": 363,
             },
         )
         # The id names the runtimes it was built from; that is the claim, not
@@ -215,7 +215,6 @@ class FrameworkContractRegistryTest(unittest.TestCase):
                         "smart.chat-message",
                         "smart.chat-threads",
                         "smart.chat-window",
-                        "smart.confirm-change",
                         "smart.editor",
                         "smart.editor-content",
                         "smart.mail-canvas",
