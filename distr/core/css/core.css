@@ -2895,20 +2895,11 @@ body {
     background: var(--sf-surface-1, Canvas);
   }
   @container (min-width: 48rem) {
-    .sf-composition-regions-grid[\:has\(\%3E\%20\[data-sf-region-placement\%3Dstart\]\)] {
-      grid-template-columns: var(--sf-composition-region-side) minmax(0, 1fr);
-    }
     .sf-composition-regions-grid:has(> [data-sf-region-placement=start]) {
       grid-template-columns: var(--sf-composition-region-side) minmax(0, 1fr);
     }
-    .sf-composition-regions-grid[\:has\(\%3E\%20\[data-sf-region-placement\%3Dend\]\)] {
-      grid-template-columns: minmax(0, 1fr) var(--sf-composition-region-side);
-    }
     .sf-composition-regions-grid:has(> [data-sf-region-placement=end]) {
       grid-template-columns: minmax(0, 1fr) var(--sf-composition-region-side);
-    }
-    .sf-composition-regions-grid[\:has\(\%3E\%20\[data-sf-region-placement\%3Dstart\]\)][\:has\(\%3E\%20\[data-sf-region-placement\%3Dend\]\)] {
-      grid-template-columns: var(--sf-composition-region-side) minmax(0, 1fr) var(--sf-composition-region-side);
     }
     .sf-composition-regions-grid:has(> [data-sf-region-placement=start]):has(> [data-sf-region-placement=end]) {
       grid-template-columns: var(--sf-composition-region-side) minmax(0, 1fr) var(--sf-composition-region-side);
@@ -2916,20 +2907,11 @@ body {
     .sf-composition-regions-grid > [data-sf-region-placement=block] {
       grid-column: 1/-1;
     }
-    .sf-composition-regions-grid[\:has\(\%3E\%20\[data-sf-region-placement\%3Dstart\]\)] > [data-sf-region-placement=start] {
-      grid-column: 1;
-    }
     .sf-composition-regions-grid:has(> [data-sf-region-placement=start]) > [data-sf-region-placement=start] {
       grid-column: 1;
     }
-    .sf-composition-regions-grid[\:has\(\%3E\%20\[data-sf-region-placement\%3Dstart\]\)] > [data-sf-region-placement=center] {
-      grid-column: 2;
-    }
     .sf-composition-regions-grid:has(> [data-sf-region-placement=start]) > [data-sf-region-placement=center] {
       grid-column: 2;
-    }
-    .sf-composition-regions-grid[\:not-has\(\%3E\%20\[data-sf-region-placement\%3Dstart\]\)] > [data-sf-region-placement=center] {
-      grid-column: 1;
     }
     .sf-composition-regions-grid:not(:has(> [data-sf-region-placement=start])) > [data-sf-region-placement=center] {
       grid-column: 1;
@@ -3651,56 +3633,12 @@ body {
 
      The shape still names the kind for a manifest and a page; the room is the
      page's (it knows the loaded box) or the printed first paint's. */
-  :where([data-sf-skeleton]):not(:defined)[\:not-has\(\%3E\%20\[data-sf-static\]\)] {
-    --sf-skeleton-base: var(--sf-neutral-60--alfa-48);
-    --sf-skeleton-line: var(--sf-text-height-1);
-    --sf-skeleton-bar: var(--sf-text-size-1);
-    display: block;
-    background-repeat: no-repeat;
-  }
   :where([data-sf-skeleton]):not(:defined):not(:has(> [data-sf-static])) {
     --sf-skeleton-base: var(--sf-neutral-60--alfa-48);
     --sf-skeleton-line: var(--sf-text-height-1);
     --sf-skeleton-bar: var(--sf-text-size-1);
     display: block;
     background-repeat: no-repeat;
-  }
-  :where([data-sf-skeleton=rows]):not(:defined)[\:not-has\(\%3E\%20\[data-sf-static\]\)],
-  :where([data-sf-skeleton=record]):not(:defined)[\:not-has\(\%3E\%20\[data-sf-static\]\)],
-  :where([data-sf-skeleton=menu]):not(:defined)[\:not-has\(\%3E\%20\[data-sf-static\]\)] {
-    min-height: 0;
-    min-block-size: 0;
-    min-height: 0;
-    min-height: var(--sf-skeleton-block-size, 0);
-    min-block-size: var(--sf-skeleton-block-size, 0);
-  }
-  :where([data-sf-skeleton=rows]):not(:defined)[\:not-has\(\%3E\%20\[data-sf-static\]\)],
-  :where([data-sf-skeleton=record]):not(:defined)[\:not-has\(\%3E\%20\[data-sf-static\]\)],
-  :where([data-sf-skeleton=menu]):not(:defined)[\:not-has\(\%3E\%20\[data-sf-static\]\)] {
-    min-height: 0;
-    min-block-size: 0;
-    min-height: 0;
-    min-height: var(--sf-skeleton-block-size, 0);
-    min-height: 0;
-    min-block-size: 0;
-    min-height: 0;
-    min-height: var(--sf-skeleton-block-size, 0);
-    min-block-size: var(--sf-skeleton-block-size, 0);
-  }
-  :where([data-sf-skeleton=rows]):not(:defined)[\:not-has\(\%3E\%20\[data-sf-static\]\)],
-  :where([data-sf-skeleton=record]):not(:defined)[\:not-has\(\%3E\%20\[data-sf-static\]\)],
-  :where([data-sf-skeleton=menu]):not(:defined)[\:not-has\(\%3E\%20\[data-sf-static\]\)] {
-    min-height: 0;
-    min-height: 0;
-    min-block-size: 0;
-    min-height: 0;
-    min-height: 0;
-    min-height: var(--sf-skeleton-block-size, 0);
-    min-height: 0;
-    min-block-size: 0;
-    min-height: 0;
-    min-height: var(--sf-skeleton-block-size, 0);
-    min-block-size: var(--sf-skeleton-block-size, 0);
   }
   :where([data-sf-skeleton=rows]):not(:defined):not(:has(> [data-sf-static])),
   :where([data-sf-skeleton=record]):not(:defined):not(:has(> [data-sf-static])),
@@ -3711,52 +3649,6 @@ body {
     min-height: var(--sf-skeleton-block-size, 0);
     min-block-size: var(--sf-skeleton-block-size, 0);
   }
-  :where([data-sf-skeleton=block]):not(:defined)[\:not-has\(\%3E\%20\[data-sf-static\]\)] {
-    min-height: var(--sf-ui-1--control-height);
-    min-block-size: var(--sf-ui-1--control-height);
-    min-height: var(--sf-ui-1--control-height);
-    min-height: var(--sf-skeleton-block-size, var(--sf-ui-1--control-height));
-    min-block-size: var(--sf-skeleton-block-size, var(--sf-ui-1--control-height));
-    background-image: linear-gradient(var(--sf-skeleton-base), var(--sf-skeleton-base));
-    background-size: 100% 100%;
-    border-radius: var(--sf-radius--ui);
-    -webkit-animation: sf-placeholder-pulse calc(var(--sf-duration-slow) * 3) var(--sf-animation) infinite;
-            animation: sf-placeholder-pulse calc(var(--sf-duration-slow) * 3) var(--sf-animation) infinite;
-  }
-  :where([data-sf-skeleton=block]):not(:defined)[\:not-has\(\%3E\%20\[data-sf-static\]\)] {
-    min-height: var(--sf-ui-1--control-height);
-    min-block-size: var(--sf-ui-1--control-height);
-    min-height: var(--sf-ui-1--control-height);
-    min-height: var(--sf-skeleton-block-size, var(--sf-ui-1--control-height));
-    min-height: var(--sf-ui-1--control-height);
-    min-block-size: var(--sf-ui-1--control-height);
-    min-height: var(--sf-ui-1--control-height);
-    min-height: var(--sf-skeleton-block-size, var(--sf-ui-1--control-height));
-    min-block-size: var(--sf-skeleton-block-size, var(--sf-ui-1--control-height));
-    background-image: linear-gradient(var(--sf-skeleton-base), var(--sf-skeleton-base));
-    background-size: 100% 100%;
-    border-radius: var(--sf-radius--ui);
-    -webkit-animation: sf-placeholder-pulse calc(var(--sf-duration-slow) * 3) var(--sf-animation) infinite;
-            animation: sf-placeholder-pulse calc(var(--sf-duration-slow) * 3) var(--sf-animation) infinite;
-  }
-  :where([data-sf-skeleton=block]):not(:defined)[\:not-has\(\%3E\%20\[data-sf-static\]\)] {
-    min-height: var(--sf-ui-1--control-height);
-    min-height: var(--sf-ui-1--control-height);
-    min-block-size: var(--sf-ui-1--control-height);
-    min-height: var(--sf-ui-1--control-height);
-    min-height: var(--sf-ui-1--control-height);
-    min-height: var(--sf-skeleton-block-size, var(--sf-ui-1--control-height));
-    min-height: var(--sf-ui-1--control-height);
-    min-block-size: var(--sf-ui-1--control-height);
-    min-height: var(--sf-ui-1--control-height);
-    min-height: var(--sf-skeleton-block-size, var(--sf-ui-1--control-height));
-    min-block-size: var(--sf-skeleton-block-size, var(--sf-ui-1--control-height));
-    background-image: linear-gradient(var(--sf-skeleton-base), var(--sf-skeleton-base));
-    background-size: 100% 100%;
-    border-radius: var(--sf-radius--ui);
-    -webkit-animation: sf-placeholder-pulse calc(var(--sf-duration-slow) * 3) var(--sf-animation) infinite;
-            animation: sf-placeholder-pulse calc(var(--sf-duration-slow) * 3) var(--sf-animation) infinite;
-  }
   :where([data-sf-skeleton=block]):not(:defined):not(:has(> [data-sf-static])) {
     min-height: var(--sf-ui-1--control-height);
     min-block-size: var(--sf-ui-1--control-height);
@@ -3766,49 +3658,6 @@ body {
     background-image: linear-gradient(var(--sf-skeleton-base), var(--sf-skeleton-base));
     background-size: 100% 100%;
     border-radius: var(--sf-radius--ui);
-    -webkit-animation: sf-placeholder-pulse calc(var(--sf-duration-slow) * 3) var(--sf-animation) infinite;
-            animation: sf-placeholder-pulse calc(var(--sf-duration-slow) * 3) var(--sf-animation) infinite;
-  }
-  :where([data-sf-skeleton=line]):not(:defined)[\:not-has\(\%3E\%20\[data-sf-static\]\)] {
-    min-height: var(--sf-skeleton-line);
-    min-block-size: var(--sf-skeleton-line);
-    min-height: var(--sf-skeleton-line);
-    min-height: var(--sf-skeleton-block-size, var(--sf-skeleton-line));
-    min-block-size: var(--sf-skeleton-block-size, var(--sf-skeleton-line));
-    background-image: repeating-linear-gradient(to bottom, transparent 0 calc((var(--sf-skeleton-line) - var(--sf-skeleton-bar)) / 2), var(--sf-skeleton-base) calc((var(--sf-skeleton-line) - var(--sf-skeleton-bar)) / 2) calc((var(--sf-skeleton-line) + var(--sf-skeleton-bar)) / 2), transparent calc((var(--sf-skeleton-line) + var(--sf-skeleton-bar)) / 2) var(--sf-skeleton-line));
-    background-size: 60% 100%;
-    -webkit-animation: sf-placeholder-pulse calc(var(--sf-duration-slow) * 3) var(--sf-animation) infinite;
-            animation: sf-placeholder-pulse calc(var(--sf-duration-slow) * 3) var(--sf-animation) infinite;
-  }
-  :where([data-sf-skeleton=line]):not(:defined)[\:not-has\(\%3E\%20\[data-sf-static\]\)] {
-    min-height: var(--sf-skeleton-line);
-    min-block-size: var(--sf-skeleton-line);
-    min-height: var(--sf-skeleton-line);
-    min-height: var(--sf-skeleton-block-size, var(--sf-skeleton-line));
-    min-height: var(--sf-skeleton-line);
-    min-block-size: var(--sf-skeleton-line);
-    min-height: var(--sf-skeleton-line);
-    min-height: var(--sf-skeleton-block-size, var(--sf-skeleton-line));
-    min-block-size: var(--sf-skeleton-block-size, var(--sf-skeleton-line));
-    background-image: repeating-linear-gradient(to bottom, transparent 0 calc((var(--sf-skeleton-line) - var(--sf-skeleton-bar)) / 2), var(--sf-skeleton-base) calc((var(--sf-skeleton-line) - var(--sf-skeleton-bar)) / 2) calc((var(--sf-skeleton-line) + var(--sf-skeleton-bar)) / 2), transparent calc((var(--sf-skeleton-line) + var(--sf-skeleton-bar)) / 2) var(--sf-skeleton-line));
-    background-size: 60% 100%;
-    -webkit-animation: sf-placeholder-pulse calc(var(--sf-duration-slow) * 3) var(--sf-animation) infinite;
-            animation: sf-placeholder-pulse calc(var(--sf-duration-slow) * 3) var(--sf-animation) infinite;
-  }
-  :where([data-sf-skeleton=line]):not(:defined)[\:not-has\(\%3E\%20\[data-sf-static\]\)] {
-    min-height: var(--sf-skeleton-line);
-    min-height: var(--sf-skeleton-line);
-    min-block-size: var(--sf-skeleton-line);
-    min-height: var(--sf-skeleton-line);
-    min-height: var(--sf-skeleton-line);
-    min-height: var(--sf-skeleton-block-size, var(--sf-skeleton-line));
-    min-height: var(--sf-skeleton-line);
-    min-block-size: var(--sf-skeleton-line);
-    min-height: var(--sf-skeleton-line);
-    min-height: var(--sf-skeleton-block-size, var(--sf-skeleton-line));
-    min-block-size: var(--sf-skeleton-block-size, var(--sf-skeleton-line));
-    background-image: repeating-linear-gradient(to bottom, transparent 0 calc((var(--sf-skeleton-line) - var(--sf-skeleton-bar)) / 2), var(--sf-skeleton-base) calc((var(--sf-skeleton-line) - var(--sf-skeleton-bar)) / 2) calc((var(--sf-skeleton-line) + var(--sf-skeleton-bar)) / 2), transparent calc((var(--sf-skeleton-line) + var(--sf-skeleton-bar)) / 2) var(--sf-skeleton-line));
-    background-size: 60% 100%;
     -webkit-animation: sf-placeholder-pulse calc(var(--sf-duration-slow) * 3) var(--sf-animation) infinite;
             animation: sf-placeholder-pulse calc(var(--sf-duration-slow) * 3) var(--sf-animation) infinite;
   }
@@ -3895,9 +3744,6 @@ body {
   }
   .sf-first-paint-fill {
     background-color: var(--sf-neutral-60--alfa-48);
-  }
-  :where(:not(:defined),[\%20\:has\(\%3E\%20\[data-sf-static\]\)]) > [data-sf-held] {
-    display: none !important;
   }
   :where(:not(:defined), :has(> [data-sf-static])) > [data-sf-held] {
     display: none !important;

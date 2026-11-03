@@ -178,15 +178,7 @@
   /* variant theme: an icon button that sits in a row of buttons, so the host
      is inline rather than a block field. The native input lies under the
      button for the picker to anchor at; the button takes every press. */
-  sf-input-color[\:has\(\%3E\%20.sf-color--theme\)] {
-    display: inline-block;
-    vertical-align: middle;
-  }
   sf-input-color:has(> .sf-color--theme) {
-    display: inline-block;
-    vertical-align: middle;
-  }
-  sf-color[\:has\(\%3E\%20.sf-color--theme\)] {
     display: inline-block;
     vertical-align: middle;
   }

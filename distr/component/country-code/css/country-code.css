@@ -499,9 +499,6 @@
     --sf-country-code-field--padding-inline-start: var(--sf-ui-1--space-x);
     --sf-country-code-field--padding-top: calc(var(--sf-ui-1--space-y-tightness-default) - var(--sf-px));
   }
-  .sf-country-code[\:not-has\(input\:disabled\)] .sf-country-code-field {
-    --sf-country-code-field--border-color: var(--sf-country-code-border-color, var(--sf-outline));
-  }
   .sf-country-code:not(:has(input:disabled)) .sf-country-code-field {
     --sf-country-code-field--border-color: var(--sf-country-code-border-color, var(--sf-outline));
   }
@@ -532,9 +529,6 @@
   .sf-country-code.sf-country-code--size-1 .sf-country-code-hint {
     --sf-country-code-hint--font-size: var(--sf-text-size-1\/2);
     --sf-country-code-hint--line-height: var(--sf-text-height-1\/2);
-  }
-  .sf-country-code[\:has\(input\:disabled\)] input {
-    --sf-country-code-input--color: var(--sf-on-disable);
   }
   .sf-country-code:has(input:disabled) input {
     --sf-country-code-input--color: var(--sf-on-disable);
@@ -703,24 +697,11 @@
     --sf-country-code-placeholder--font-size: var(--sf-text-size-1\/2);
     --sf-country-code-placeholder--line-height: var(--sf-text-height-1\/2);
   }
-  .sf-country-code[\:has\(input\:disabled\)] .sf-country-code-field {
-    --sf-country-code-field--border-color: var(--sf-outline-disable);
-  }
   .sf-country-code:has(input:disabled) .sf-country-code-field {
     --sf-country-code-field--border-color: var(--sf-outline-disable);
   }
-  .sf-country-code[\:has\(input\:disabled\)] .sf-country-code-flag-icon {
-    --sf-country-code-flag-icon--opacity: var(--sf-opacity-60);
-  }
   .sf-country-code:has(input:disabled) .sf-country-code-flag-icon {
     --sf-country-code-flag-icon--opacity: var(--sf-opacity-60);
-  }
-  .sf-country-code[\:has\(input\:disabled\)] .sf-icon {
-    /* The disabled role for what is drawn on a surface, not the one for a
-       boundary. The two carry the same value today, so this changed nothing a
-       person sees -- and a theme that retunes one of them separately would have
-       found a glyph taking the colour of a border. */
-    --sf-icon--color: var(--sf-on-disable);
   }
   .sf-country-code:has(input:disabled) .sf-icon {
     /* The disabled role for what is drawn on a surface, not the one for a
@@ -728,21 +709,6 @@
        person sees -- and a theme that retunes one of them separately would have
        found a glyph taking the colour of a border. */
     --sf-icon--color: var(--sf-on-disable);
-  }
-  .sf-country-code[\:has\(input\:disabled\)] .sf-country-code-field input::-webkit-input-placeholder {
-    --sf-country-code-placeholder--color: var(--sf-on-disable);
-  }
-  .sf-country-code[\:has\(input\:disabled\)] .sf-country-code-field input::-moz-placeholder {
-    --sf-country-code-placeholder--color: var(--sf-on-disable);
-  }
-  .sf-country-code[\:has\(input\:disabled\)] .sf-country-code-field input:-ms-input-placeholder {
-    --sf-country-code-placeholder--color: var(--sf-on-disable);
-  }
-  .sf-country-code[\:has\(input\:disabled\)] .sf-country-code-field input::-ms-input-placeholder {
-    --sf-country-code-placeholder--color: var(--sf-on-disable);
-  }
-  .sf-country-code[\:has\(input\:disabled\)] .sf-country-code-field input::placeholder {
-    --sf-country-code-placeholder--color: var(--sf-on-disable);
   }
   .sf-country-code:has(input:disabled) .sf-country-code-field input::-webkit-input-placeholder {
     --sf-country-code-placeholder--color: var(--sf-on-disable);
@@ -759,15 +725,7 @@
   .sf-country-code:has(input:disabled) .sf-country-code-field input::placeholder {
     --sf-country-code-placeholder--color: var(--sf-on-disable);
   }
-  .sf-country-code[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\).focus-visible\)] .sf-country-code-field {
-    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-    outline-offset: var(--sf-focus--offset);
-  }
   .sf-country-code:has(input:enabled:not(:disabled):not(.disabled).focus-visible) .sf-country-code-field {
-    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-    outline-offset: var(--sf-focus--offset);
-  }
-  .sf-country-code[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:focus-visible\)] .sf-country-code-field {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
     outline-offset: var(--sf-focus--offset);
   }
@@ -786,9 +744,6 @@
   }
   .sf-country-code .sf-country-code-field input:focus-visible {
     outline: none !important;
-  }
-  .sf-country-code[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:hover\)] .sf-country-code-field {
-    --sf-country-code-field--border-color: var(--sf-primary-hover);
   }
   .sf-country-code:has(input:enabled:not(:disabled):not(.disabled):hover) .sf-country-code-field {
     --sf-country-code-field--border-color: var(--sf-primary-hover);
@@ -902,15 +857,7 @@
     outline-offset: calc(var(--sf-focus--width) * -1);
   }
   @media (forced-colors: active) {
-    .sf-country-code[\:has\(input\:not\(\:disabled\).focus-visible\)] .sf-country-code-field {
-      outline: var(--sf-focus-outline-width) solid currentColor;
-      outline-offset: var(--sf-focus-outline-width);
-    }
     .sf-country-code:has(input:not(:disabled).focus-visible) .sf-country-code-field {
-      outline: var(--sf-focus-outline-width) solid currentColor;
-      outline-offset: var(--sf-focus-outline-width);
-    }
-    .sf-country-code[\:has\(input\:not\(\:disabled\)\:focus-visible\)] .sf-country-code-field {
       outline: var(--sf-focus-outline-width) solid currentColor;
       outline-offset: var(--sf-focus-outline-width);
     }

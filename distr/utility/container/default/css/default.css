@@ -3,6 +3,11 @@
   syntax: "*";
   inherits: false;
 }
+@property --sf-container-breakout--page {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 100vw;
+}
 @layer sf.utilities {
   _:-ms-input-placeholder, html:not([dir="rtl"]) .container {
     padding-left: var(--sf-space-1);
@@ -423,5 +428,125 @@
   }
   .container-flush {
     --sf-container--inset: 0px;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .container-breakout {
+    margin-left: calc(50% - 100vw / 2);
+    margin-left: calc(50% - var(--sf-container-breakout-page, var(--sf-container-breakout--page, 100vw)) / 2);
+  }
+  @supports not (margin-inline-start: initial) {
+  html:not([dir="rtl"]) .container-breakout {
+    margin-left: calc(50% - 100vw / 2);
+    margin-left: calc(50% - var(--sf-container-breakout-page, var(--sf-container-breakout--page, 100vw)) / 2);
+    }
+  }
+  .container-breakout:where(:dir(ltr)) {
+    margin-left: calc(50% - 100vw / 2);
+    margin-left: calc(50% - var(--sf-container-breakout-page, var(--sf-container-breakout--page, 100vw)) / 2);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .container-breakout {
+    margin-right: calc(50% - 100vw / 2);
+    margin-right: calc(50% - var(--sf-container-breakout-page, var(--sf-container-breakout--page, 100vw)) / 2);
+  }
+  @supports not (margin-inline-start: initial) {
+  [dir="rtl"] .container-breakout {
+    margin-right: calc(50% - 100vw / 2);
+    margin-right: calc(50% - var(--sf-container-breakout-page, var(--sf-container-breakout--page, 100vw)) / 2);
+    }
+  }
+  .container-breakout:where(:dir(rtl)) {
+    margin-right: calc(50% - 100vw / 2);
+    margin-right: calc(50% - var(--sf-container-breakout-page, var(--sf-container-breakout--page, 100vw)) / 2);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .container-breakout {
+    margin-right: calc(50% - 100vw / 2);
+    margin-right: calc(50% - var(--sf-container-breakout-page, var(--sf-container-breakout--page, 100vw)) / 2);
+  }
+  @supports not (margin-inline-end: initial) {
+  html:not([dir="rtl"]) .container-breakout {
+    margin-right: calc(50% - 100vw / 2);
+    margin-right: calc(50% - var(--sf-container-breakout-page, var(--sf-container-breakout--page, 100vw)) / 2);
+    }
+  }
+  .container-breakout:where(:dir(ltr)) {
+    margin-right: calc(50% - 100vw / 2);
+    margin-right: calc(50% - var(--sf-container-breakout-page, var(--sf-container-breakout--page, 100vw)) / 2);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .container-breakout {
+    margin-left: calc(50% - 100vw / 2);
+    margin-left: calc(50% - var(--sf-container-breakout-page, var(--sf-container-breakout--page, 100vw)) / 2);
+  }
+  @supports not (margin-inline-end: initial) {
+  [dir="rtl"] .container-breakout {
+    margin-left: calc(50% - 100vw / 2);
+    margin-left: calc(50% - var(--sf-container-breakout-page, var(--sf-container-breakout--page, 100vw)) / 2);
+    }
+  }
+  .container-breakout:where(:dir(rtl)) {
+    margin-left: calc(50% - 100vw / 2);
+    margin-left: calc(50% - var(--sf-container-breakout-page, var(--sf-container-breakout--page, 100vw)) / 2);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .container-breakout {
+    margin-left: calc(50% - 100vw / 2);
+  }
+  @supports not (margin-inline-start: initial) {
+  html:not([dir="rtl"]) .container-breakout {
+    margin-left: calc(50% - 100vw / 2);
+    }
+  }
+  .container-breakout:where(:dir(ltr)) {
+    margin-left: calc(50% - 100vw / 2);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .container-breakout {
+    margin-right: calc(50% - 100vw / 2);
+  }
+  @supports not (margin-inline-start: initial) {
+  [dir="rtl"] .container-breakout {
+    margin-right: calc(50% - 100vw / 2);
+    }
+  }
+  .container-breakout:where(:dir(rtl)) {
+    margin-right: calc(50% - 100vw / 2);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .container-breakout {
+    margin-right: calc(50% - 100vw / 2);
+  }
+  @supports not (margin-inline-end: initial) {
+  html:not([dir="rtl"]) .container-breakout {
+    margin-right: calc(50% - 100vw / 2);
+    }
+  }
+  .container-breakout:where(:dir(ltr)) {
+    margin-right: calc(50% - 100vw / 2);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .container-breakout {
+    margin-left: calc(50% - 100vw / 2);
+  }
+  @supports not (margin-inline-end: initial) {
+  [dir="rtl"] .container-breakout {
+    margin-left: calc(50% - 100vw / 2);
+    }
+  }
+  .container-breakout:where(:dir(rtl)) {
+    margin-left: calc(50% - 100vw / 2);
+  }
+  .container-breakout {
+    width: auto;
+    max-width: none;
+    -webkit-margin-start: calc(50% - 100vw / 2);
+            margin-inline-start: calc(50% - 100vw / 2);
+    -webkit-margin-start: calc(50% - var(--sf-container-breakout-page, var(--sf-container-breakout--page, 100vw)) / 2);
+            margin-inline-start: calc(50% - var(--sf-container-breakout-page, var(--sf-container-breakout--page, 100vw)) / 2);
+    -webkit-margin-end: calc(50% - 100vw / 2);
+            margin-inline-end: calc(50% - 100vw / 2);
+    -webkit-margin-end: calc(50% - var(--sf-container-breakout-page, var(--sf-container-breakout--page, 100vw)) / 2);
+            margin-inline-end: calc(50% - var(--sf-container-breakout-page, var(--sf-container-breakout--page, 100vw)) / 2);
+  }
+}
+@layer sf.utilities {
+  html:has(.container-breakout) {
+    container-type: inline-size;
+  }
+  html:has(.container-breakout) body {
+    --sf-container-breakout--page: 100cqi;
   }
 }

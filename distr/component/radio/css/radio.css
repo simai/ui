@@ -236,24 +236,13 @@
      sub-element scales with its size). It was 12px at all three, so size 2
      drew a small dot and size 1/2 on a phone a dot three quarters of its ring;
      size 1 on a desktop stays 12 of 24. */
-  .sf-radio-button.sf-radio-button--size-1\/2[\:has\(input\:checked\)] .sf-radio-button-mark {
-    --sf-radio-button-mark--height: calc(var(--sf-radio-button-box--height) / 2);
-    --sf-radio-button-mark--width: calc(var(--sf-radio-button-box--width) / 2);
-  }
   .sf-radio-button.sf-radio-button--size-1\/2:has(input:checked) .sf-radio-button-mark {
-    --sf-radio-button-mark--height: calc(var(--sf-radio-button-box--height) / 2);
-    --sf-radio-button-mark--width: calc(var(--sf-radio-button-box--width) / 2);
-  }
-  .sf-radio-button.sf-radio-button--size-1[\:has\(input\:checked\)] .sf-radio-button-mark {
     --sf-radio-button-mark--height: calc(var(--sf-radio-button-box--height) / 2);
     --sf-radio-button-mark--width: calc(var(--sf-radio-button-box--width) / 2);
   }
   .sf-radio-button.sf-radio-button--size-1:has(input:checked) .sf-radio-button-mark {
     --sf-radio-button-mark--height: calc(var(--sf-radio-button-box--height) / 2);
     --sf-radio-button-mark--width: calc(var(--sf-radio-button-box--width) / 2);
-  }
-  .sf-radio-button[\:has\(input\:disabled\)] .sf-radio-button-text {
-    --sf-radio-button-text--color: var(--sf-on-disable);
   }
   .sf-radio-button:has(input:disabled) .sf-radio-button-text {
     --sf-radio-button-text--color: var(--sf-on-disable);
@@ -285,10 +274,6 @@
   .sf-radio-button.sf-radio-button--size-2 .sf-radio-button-top {
     --sf-radio-button-top--gap: var(--sf-space-1\/4);
   }
-  .sf-radio-button.sf-radio-button--size-2[\:has\(input\:checked\)] .sf-radio-button-mark {
-    --sf-radio-button-mark--height: calc(var(--sf-radio-button-box--height) / 2);
-    --sf-radio-button-mark--width: calc(var(--sf-radio-button-box--width) / 2);
-  }
   .sf-radio-button.sf-radio-button--size-2:has(input:checked) .sf-radio-button-mark {
     --sf-radio-button-mark--height: calc(var(--sf-radio-button-box--height) / 2);
     --sf-radio-button-mark--width: calc(var(--sf-radio-button-box--width) / 2);
@@ -296,44 +281,22 @@
   .sf-radio-button--size-2 {
     --sf-radio-button--gap: var(--sf-radio-button-gap, var(--sf-ui-2--text-space-x));
   }
-  .sf-radio-button[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:hover\)] .sf-radio-button-box {
-    --sf-radio-button-box--border-color: var(--sf-primary-hover);
-  }
   .sf-radio-button:has(input:enabled:not(:disabled):not(.disabled):hover) .sf-radio-button-box {
     --sf-radio-button-box--border-color: var(--sf-primary-hover);
   }
   /* Hover shows on the ring alone, as on the checkbox: a fill behind the ring
      and its label marked the text, which no control here does (owner,
      2026-10-13). */
-  .sf-radio-button[\:has\(input\:checked\)][\:not-has\(input\:disabled\)] .sf-radio-button-box {
-    --sf-radio-button-box--border-color: var(--sf-radio-button-checked-color, var(--sf-primary));
-  }
   .sf-radio-button:has(input:checked):not(:has(input:disabled)) .sf-radio-button-box {
     --sf-radio-button-box--border-color: var(--sf-radio-button-checked-color, var(--sf-primary));
-  }
-  .sf-radio-button[\:has\(input\:checked\)] .sf-radio-button-mark {
-    --sf-radio-button-mark--border-radius: var(--sf-radius-circle);
   }
   .sf-radio-button:has(input:checked) .sf-radio-button-mark {
     --sf-radio-button-mark--border-radius: var(--sf-radius-circle);
   }
-  .sf-radio-button[\:has\(input\:checked\)][\:not-has\(input\:disabled\)] .sf-radio-button-mark {
-    --sf-radio-button-mark--background-color: var(--sf-radio-button-checked-color, var(--sf-primary));
-  }
   .sf-radio-button:has(input:checked):not(:has(input:disabled)) .sf-radio-button-mark {
     --sf-radio-button-mark--background-color: var(--sf-radio-button-checked-color, var(--sf-primary));
   }
-  .sf-radio-button[\:has\(input\:not\(\:disabled\)\:not\(.disabled\).focus-visible\)] .sf-radio-button-box {
-    --sf-radio-button-box--background-color: var(--sf-transparent-for-focus);
-    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-    outline-offset: var(--sf-focus--offset);
-  }
   .sf-radio-button:has(input:not(:disabled):not(.disabled).focus-visible) .sf-radio-button-box {
-    --sf-radio-button-box--background-color: var(--sf-transparent-for-focus);
-    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-    outline-offset: var(--sf-focus--offset);
-  }
-  .sf-radio-button[\:has\(input\:not\(\:disabled\)\:not\(.disabled\)\:focus-visible\)] .sf-radio-button-box {
     --sf-radio-button-box--background-color: var(--sf-transparent-for-focus);
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
     outline-offset: var(--sf-focus--offset);
@@ -353,26 +316,14 @@
   .sf-radio-button input:focus-visible {
     outline: none;
   }
-  .sf-radio-button[\:has\(input\:disabled\)] .sf-radio-button-box {
-    --sf-radio-button-box--border-color: var(--sf-outline-disable);
-  }
   .sf-radio-button:has(input:disabled) .sf-radio-button-box {
     --sf-radio-button-box--border-color: var(--sf-outline-disable);
-  }
-  .sf-radio-button[\:has\(input\:disabled\)] .sf-radio-button-mark {
-    --sf-radio-button-mark--background-color: var(--sf-on-disable);
   }
   .sf-radio-button:has(input:disabled) .sf-radio-button-mark {
     --sf-radio-button-mark--background-color: var(--sf-on-disable);
   }
-  .sf-radio-button[\:has\(input\:disabled\)] > .sf-radio-button-container > .sf-radio-button-top > .sf-icon {
-    --sf-icon--color: var(--sf-on-disable);
-  }
   .sf-radio-button:has(input:disabled) > .sf-radio-button-container > .sf-radio-button-top > .sf-icon {
     --sf-icon--color: var(--sf-on-disable);
-  }
-  .sf-radio-button[\:has\(input\:disabled\)] .sf-radio-button-description {
-    --sf-radio-button-description--color: var(--sf-on-disable);
   }
   .sf-radio-button:has(input:disabled) .sf-radio-button-description {
     --sf-radio-button-description--color: var(--sf-on-disable);
@@ -391,41 +342,19 @@
     .sf-radio-button .sf-radio-button-mark {
       background-color: transparent;
     }
-    .sf-radio-button[\:has\(input\:checked\)] .sf-radio-button-box {
-      border-color: Highlight;
-    }
     .sf-radio-button:has(input:checked) .sf-radio-button-box {
       border-color: Highlight;
-    }
-    .sf-radio-button[\:has\(input\:checked\)] .sf-radio-button-mark {
-      background-color: Highlight;
     }
     .sf-radio-button:has(input:checked) .sf-radio-button-mark {
       background-color: Highlight;
     }
-    .sf-radio-button[\:has\(input\:disabled\)] .sf-radio-button-box {
-      border-color: GrayText;
-    }
     .sf-radio-button:has(input:disabled) .sf-radio-button-box {
       border-color: GrayText;
-    }
-    .sf-radio-button[\:has\(input\:disabled\:checked\)] .sf-radio-button-mark {
-      background-color: GrayText;
     }
     .sf-radio-button:has(input:disabled:checked) .sf-radio-button-mark {
       background-color: GrayText;
     }
-    .sf-radio-button[\:has\(input\:not\(\:disabled\)\:not\(.disabled\).focus-visible\)] .sf-radio-button-box {
-      outline: var(--sf-focus-outline-width) solid currentColor;
-      outline-offset: var(--sf-focus-outline-width);
-      --sf-radio-button-box--box-shadow: none;
-    }
     .sf-radio-button:has(input:not(:disabled):not(.disabled).focus-visible) .sf-radio-button-box {
-      outline: var(--sf-focus-outline-width) solid currentColor;
-      outline-offset: var(--sf-focus-outline-width);
-      --sf-radio-button-box--box-shadow: none;
-    }
-    .sf-radio-button[\:has\(input\:not\(\:disabled\)\:not\(.disabled\)\:focus-visible\)] .sf-radio-button-box {
       outline: var(--sf-focus-outline-width) solid currentColor;
       outline-offset: var(--sf-focus-outline-width);
       --sf-radio-button-box--box-shadow: none;
@@ -441,14 +370,8 @@
   .sf-radio-button {
     min-width: 0;
   }
-  .sf-radio-button:not(.disabled)[\:has\(input\:not\(\:disabled\)\)] {
-    cursor: pointer;
-  }
   .sf-radio-button:not(.disabled):has(input:not(:disabled)) {
     cursor: pointer;
-  }
-  .sf-radio-button[\:has\(input\:disabled\)] {
-    cursor: default;
   }
   .sf-radio-button:has(input:disabled) {
     cursor: default;
@@ -541,10 +464,6 @@
     font-size: var(--sf-text-size-2);
     line-height: var(--sf-text-height-2);
   }
-  .sf-radio-button--type-font[\:has\(input\:not\(\:disabled\)\:hover\)] .sf-radio-text {
-    border-color: var(--sf-primary-hover);
-    background-color: var(--sf-surface-container-hover);
-  }
   .sf-radio-button--type-font:has(input:not(:disabled):hover) .sf-radio-text {
     border-color: var(--sf-primary-hover);
     background-color: var(--sf-surface-container-hover);
@@ -554,26 +473,13 @@
     background-color: var(--sf-primary);
     border-color: var(--sf-primary);
   }
-  .sf-radio-button--type-font[\:has\(input.focus-visible\)] .sf-radio-text {
-    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-    outline-offset: var(--sf-focus--offset);
-  }
   .sf-radio-button--type-font:has(input.focus-visible) .sf-radio-text {
-    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-    outline-offset: var(--sf-focus--offset);
-  }
-  .sf-radio-button--type-font[\:has\(input\:focus-visible\)] .sf-radio-text {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
     outline-offset: var(--sf-focus--offset);
   }
   .sf-radio-button--type-font:has(input:focus-visible) .sf-radio-text {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
     outline-offset: var(--sf-focus--offset);
-  }
-  .sf-radio-button--type-font[\:has\(input\:disabled\)] .sf-radio-text {
-    color: var(--sf-on-disable);
-    background-color: var(--sf-surface-0);
-    border-color: var(--sf-outline-disable);
   }
   .sf-radio-button--type-font:has(input:disabled) .sf-radio-text {
     color: var(--sf-on-disable);
@@ -592,17 +498,7 @@
       background-color: Highlight;
       border-color: Highlight;
     }
-    .sf-radio-button--type-font[\:has\(input.focus-visible\)] .sf-radio-text {
-      outline: var(--sf-focus-outline-width) solid currentColor;
-      outline-offset: var(--sf-focus-outline-width);
-      box-shadow: none;
-    }
     .sf-radio-button--type-font:has(input.focus-visible) .sf-radio-text {
-      outline: var(--sf-focus-outline-width) solid currentColor;
-      outline-offset: var(--sf-focus-outline-width);
-      box-shadow: none;
-    }
-    .sf-radio-button--type-font[\:has\(input\:focus-visible\)] .sf-radio-text {
       outline: var(--sf-focus-outline-width) solid currentColor;
       outline-offset: var(--sf-focus-outline-width);
       box-shadow: none;
@@ -611,10 +507,6 @@
       outline: var(--sf-focus-outline-width) solid currentColor;
       outline-offset: var(--sf-focus-outline-width);
       box-shadow: none;
-    }
-    .sf-radio-button--type-font[\:has\(input\:disabled\)] .sf-radio-text {
-      color: GrayText;
-      border-color: GrayText;
     }
     .sf-radio-button--type-font:has(input:disabled) .sf-radio-text {
       color: GrayText;

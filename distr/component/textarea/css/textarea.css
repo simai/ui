@@ -310,45 +310,22 @@
     --sf-textarea-textarea--background-color: var(--sf-textarea-background-color, var(--sf-surface-0));
     --sf-textarea-textarea--border-color: var(--sf-textarea-border-color, var(--sf-outline));
   }
-  .sf-textarea:not(.error).sf-textarea--size-1.sf-textarea--bordered[\:has\(textarea\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:not\(\:-moz-read-only\)\:active\)] textarea {
-    --sf-textarea-textarea--border-color: var(--sf-primary);
-  }
-  .sf-textarea:not(.error).sf-textarea--size-1.sf-textarea--bordered[\:has\(textarea\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:not\(\:read-only\)\:active\)] textarea {
-    --sf-textarea-textarea--border-color: var(--sf-primary);
-  }
   .sf-textarea:not(.error).sf-textarea--size-1.sf-textarea--bordered:has(textarea:enabled:not(:disabled):not(.disabled):not(:-moz-read-only):active) textarea {
     --sf-textarea-textarea--border-color: var(--sf-primary);
   }
   .sf-textarea:not(.error).sf-textarea--size-1.sf-textarea--bordered:has(textarea:enabled:not(:disabled):not(.disabled):not(:read-only):active) textarea {
     --sf-textarea-textarea--border-color: var(--sf-primary);
   }
-  .sf-textarea.sf-textarea--bordered[\:has\(textarea\:disabled\)] textarea, .sf-textarea.sf-textarea--filled[\:has\(textarea\:disabled\)] textarea, .sf-textarea.sf-textarea--flush[\:has\(textarea\:disabled\)] textarea {
-    --sf-textarea-textarea--color: var(--sf-on-disable);
-  }
   .sf-textarea.sf-textarea--bordered:has(textarea:disabled) textarea, .sf-textarea.sf-textarea--filled:has(textarea:disabled) textarea, .sf-textarea.sf-textarea--flush:has(textarea:disabled) textarea {
     --sf-textarea-textarea--color: var(--sf-on-disable);
-  }
-  .sf-textarea.sf-textarea--bordered[\:has\(textarea\:disabled\)] textarea {
-    --sf-textarea-textarea--border-color: var(--sf-outline-disable);
   }
   .sf-textarea.sf-textarea--bordered:has(textarea:disabled) textarea {
     --sf-textarea-textarea--border-color: var(--sf-outline-disable);
   }
-  .sf-textarea.sf-textarea--filled[\:has\(textarea\:disabled\)] textarea {
-    --sf-textarea-textarea--background-color: var(--sf-disable);
-  }
   .sf-textarea.sf-textarea--filled:has(textarea:disabled) textarea {
     --sf-textarea-textarea--background-color: var(--sf-disable);
   }
-  .sf-textarea.sf-textarea--bordered[\:has\(textarea\:enabled\:not\(\:disabled\)\:not\(.disabled\).focus-visible\)] textarea {
-    --sf-textarea-textarea--background-color: var(--sf-transparent-for-focus);
-    --sf-textarea-textarea--border-color: var(--sf-outline);
-  }
   .sf-textarea.sf-textarea--bordered:has(textarea:enabled:not(:disabled):not(.disabled).focus-visible) textarea {
-    --sf-textarea-textarea--background-color: var(--sf-transparent-for-focus);
-    --sf-textarea-textarea--border-color: var(--sf-outline);
-  }
-  .sf-textarea.sf-textarea--bordered[\:has\(textarea\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:focus-visible\)] textarea {
     --sf-textarea-textarea--background-color: var(--sf-transparent-for-focus);
     --sf-textarea-textarea--border-color: var(--sf-outline);
   }
@@ -368,23 +345,11 @@
     --sf-on-surface-variant: var(--sf-on-surface-container--variant);
     --sf-textarea-textarea--border-color: var(--sf-textarea-border-color, var(--sf-transparent-for-focus));
   }
-  .sf-textarea:not(.error).sf-textarea--filled[\:has\(textarea\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:not\(\:-moz-read-only\)\:hover\)] textarea {
-    --sf-textarea-textarea--background-color: var(--sf-surface-container-hover);
-  }
-  .sf-textarea:not(.error).sf-textarea--filled[\:has\(textarea\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:not\(\:read-only\)\:hover\)] textarea {
-    --sf-textarea-textarea--background-color: var(--sf-surface-container-hover);
-  }
   .sf-textarea:not(.error).sf-textarea--filled:has(textarea:enabled:not(:disabled):not(.disabled):not(:-moz-read-only):hover) textarea {
     --sf-textarea-textarea--background-color: var(--sf-surface-container-hover);
   }
   .sf-textarea:not(.error).sf-textarea--filled:has(textarea:enabled:not(:disabled):not(.disabled):not(:read-only):hover) textarea {
     --sf-textarea-textarea--background-color: var(--sf-surface-container-hover);
-  }
-  .sf-textarea:not(.error).sf-textarea--filled[\:has\(textarea\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:not\(\:-moz-read-only\)\:active\)] textarea {
-    --sf-textarea-textarea--border-color: var(--sf-primary-active);
-  }
-  .sf-textarea:not(.error).sf-textarea--filled[\:has\(textarea\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:not\(\:read-only\)\:active\)] textarea {
-    --sf-textarea-textarea--border-color: var(--sf-primary-active);
   }
   .sf-textarea:not(.error).sf-textarea--filled:has(textarea:enabled:not(:disabled):not(.disabled):not(:-moz-read-only):active) textarea {
     --sf-textarea-textarea--border-color: var(--sf-primary-active);
@@ -413,12 +378,6 @@
   }
   .sf-textarea.sf-textarea--size-2.sf-textarea--bordered textarea, .sf-textarea.sf-textarea--size-2.sf-textarea--filled textarea, .sf-textarea.sf-textarea--size-1\/2.sf-textarea--bordered textarea, .sf-textarea.sf-textarea--size-1\/2.sf-textarea--filled textarea, .sf-textarea.sf-textarea--size-2.sf-textarea--flush textarea, .sf-textarea.sf-textarea--size-1\/2.sf-textarea--flush textarea {
     --sf-textarea-textarea--font-family: var(--sf-text--family);
-  }
-  .sf-textarea:not(.error).sf-textarea--size-2.sf-textarea--bordered[\:has\(textarea\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:not\(\:-moz-read-only\)\:active\)] textarea, .sf-textarea:not(.error).sf-textarea--size-1\/2.sf-textarea--bordered[\:has\(textarea\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:not\(\:-moz-read-only\)\:active\)] textarea {
-    --sf-textarea-textarea--border-color: var(--sf-primary-active);
-  }
-  .sf-textarea:not(.error).sf-textarea--size-2.sf-textarea--bordered[\:has\(textarea\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:not\(\:read-only\)\:active\)] textarea, .sf-textarea:not(.error).sf-textarea--size-1\/2.sf-textarea--bordered[\:has\(textarea\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:not\(\:read-only\)\:active\)] textarea {
-    --sf-textarea-textarea--border-color: var(--sf-primary-active);
   }
   .sf-textarea:not(.error).sf-textarea--size-2.sf-textarea--bordered:has(textarea:enabled:not(:disabled):not(.disabled):not(:-moz-read-only):active) textarea, .sf-textarea:not(.error).sf-textarea--size-1\/2.sf-textarea--bordered:has(textarea:enabled:not(:disabled):not(.disabled):not(:-moz-read-only):active) textarea {
     --sf-textarea-textarea--border-color: var(--sf-primary-active);
@@ -557,21 +516,6 @@
     overflow-y: auto;
     resize: none;
   }
-  .sf-textarea[\:has\(textarea\:disabled\)] textarea::-webkit-input-placeholder {
-    --sf-textarea-placeholder--color: var(--sf-on-disable);
-  }
-  .sf-textarea[\:has\(textarea\:disabled\)] textarea::-moz-placeholder {
-    --sf-textarea-placeholder--color: var(--sf-on-disable);
-  }
-  .sf-textarea[\:has\(textarea\:disabled\)] textarea:-ms-input-placeholder {
-    --sf-textarea-placeholder--color: var(--sf-on-disable);
-  }
-  .sf-textarea[\:has\(textarea\:disabled\)] textarea::-ms-input-placeholder {
-    --sf-textarea-placeholder--color: var(--sf-on-disable);
-  }
-  .sf-textarea[\:has\(textarea\:disabled\)] textarea::placeholder {
-    --sf-textarea-placeholder--color: var(--sf-on-disable);
-  }
   .sf-textarea:has(textarea:disabled) textarea::-webkit-input-placeholder {
     --sf-textarea-placeholder--color: var(--sf-on-disable);
   }
@@ -587,23 +531,11 @@
   .sf-textarea:has(textarea:disabled) textarea::placeholder {
     --sf-textarea-placeholder--color: var(--sf-on-disable);
   }
-  .sf-textarea:not(.error)[\:has\(textarea\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:not\(\:-moz-read-only\)\:hover\)] textarea {
-    --sf-textarea-textarea--border-color: var(--sf-primary-hover);
-  }
-  .sf-textarea:not(.error)[\:has\(textarea\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:not\(\:read-only\)\:hover\)] textarea {
-    --sf-textarea-textarea--border-color: var(--sf-primary-hover);
-  }
   .sf-textarea:not(.error):has(textarea:enabled:not(:disabled):not(.disabled):not(:-moz-read-only):hover) textarea {
     --sf-textarea-textarea--border-color: var(--sf-primary-hover);
   }
   .sf-textarea:not(.error):has(textarea:enabled:not(:disabled):not(.disabled):not(:read-only):hover) textarea {
     --sf-textarea-textarea--border-color: var(--sf-primary-hover);
-  }
-  .sf-textarea:not(.error)[\:has\(textarea\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:not\(\:-moz-read-only\)\:active\)] textarea {
-    --sf-textarea-textarea--background-color: var(--sf-surface-0);
-  }
-  .sf-textarea:not(.error)[\:has\(textarea\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:not\(\:read-only\)\:active\)] textarea {
-    --sf-textarea-textarea--background-color: var(--sf-surface-0);
   }
   .sf-textarea:not(.error):has(textarea:enabled:not(:disabled):not(.disabled):not(:-moz-read-only):active) textarea {
     --sf-textarea-textarea--background-color: var(--sf-surface-0);
@@ -611,15 +543,7 @@
   .sf-textarea:not(.error):has(textarea:enabled:not(:disabled):not(.disabled):not(:read-only):active) textarea {
     --sf-textarea-textarea--background-color: var(--sf-surface-0);
   }
-  .sf-textarea:not(.sf-textarea--pointer-focus)[\:has\(textarea\:enabled\:not\(\:disabled\)\:not\(.disabled\).focus-visible\)] textarea {
-    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-    outline-offset: var(--sf-focus--offset);
-  }
   .sf-textarea:not(.sf-textarea--pointer-focus):has(textarea:enabled:not(:disabled):not(.disabled).focus-visible) textarea {
-    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-    outline-offset: var(--sf-focus--offset);
-  }
-  .sf-textarea:not(.sf-textarea--pointer-focus)[\:has\(textarea\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:focus-visible\)] textarea {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
     outline-offset: var(--sf-focus--offset);
   }
@@ -636,14 +560,6 @@
   }
   .sf-textarea.sf-textarea--pointer-focus textarea:focus-visible {
     outline: none;
-  }
-  .sf-textarea:not(.error).sf-textarea--bordered[\:has\(textarea\:-moz-read-only\:not\(\:disabled\)\)] textarea {
-    --sf-textarea-textarea--background-color: var(--sf-surface-container);
-    --sf-on-surface-variant: var(--sf-on-surface-container--variant);
-  }
-  .sf-textarea:not(.error).sf-textarea--bordered[\:has\(textarea\:read-only\:not\(\:disabled\)\)] textarea {
-    --sf-textarea-textarea--background-color: var(--sf-surface-container);
-    --sf-on-surface-variant: var(--sf-on-surface-container--variant);
   }
   .sf-textarea:not(.error).sf-textarea--bordered:has(textarea:-moz-read-only:not(:disabled)) textarea {
     --sf-textarea-textarea--background-color: var(--sf-surface-container);
@@ -696,13 +612,7 @@
   }
   /* The keyboard ring is the composite's to draw; as specific as the rule that
      draws it on the other surfaces, and later. */
-  .sf-textarea.sf-textarea--flush:not(.sf-textarea--pointer-focus)[\:has\(textarea\:enabled\:not\(\:disabled\)\:not\(.disabled\).focus-visible\)] textarea {
-    outline: none;
-  }
   .sf-textarea.sf-textarea--flush:not(.sf-textarea--pointer-focus):has(textarea:enabled:not(:disabled):not(.disabled).focus-visible) textarea {
-    outline: none;
-  }
-  .sf-textarea.sf-textarea--flush:not(.sf-textarea--pointer-focus)[\:has\(textarea\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:focus-visible\)] textarea {
     outline: none;
   }
   .sf-textarea.sf-textarea--flush:not(.sf-textarea--pointer-focus):has(textarea:enabled:not(:disabled):not(.disabled):focus-visible) textarea {
@@ -735,22 +645,10 @@
    their own look. */
 @layer sf.components {
   /* Focus anywhere within the field changes the fill, not the focus ring. */
-  .sf-textarea:not(.error).sf-textarea--filled[\:has\(textarea\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:not\(\:-moz-read-only\)\[focus-within\]\)] textarea {
-    --sf-textarea-textarea--background-color: var(--sf-surface-0);
-  }
-  .sf-textarea:not(.error).sf-textarea--filled[\:has\(textarea\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:not\(\:read-only\)\[focus-within\]\)] textarea {
-    --sf-textarea-textarea--background-color: var(--sf-surface-0);
-  }
   .sf-textarea:not(.error).sf-textarea--filled:has(textarea:enabled:not(:disabled):not(.disabled):not(:-moz-read-only)[focus-within]) textarea {
     --sf-textarea-textarea--background-color: var(--sf-surface-0);
   }
   .sf-textarea:not(.error).sf-textarea--filled:has(textarea:enabled:not(:disabled):not(.disabled):not(:read-only)[focus-within]) textarea {
-    --sf-textarea-textarea--background-color: var(--sf-surface-0);
-  }
-  .sf-textarea:not(.error).sf-textarea--filled[\:has\(textarea\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:not\(\:-moz-read-only\)\:focus-within\)] textarea {
-    --sf-textarea-textarea--background-color: var(--sf-surface-0);
-  }
-  .sf-textarea:not(.error).sf-textarea--filled[\:has\(textarea\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:not\(\:read-only\)\:focus-within\)] textarea {
     --sf-textarea-textarea--background-color: var(--sf-surface-0);
   }
   .sf-textarea:not(.error).sf-textarea--filled:has(textarea:enabled:not(:disabled):not(.disabled):not(:-moz-read-only):focus-within) textarea {
@@ -760,13 +658,7 @@
     --sf-textarea-textarea--background-color: var(--sf-surface-0);
   }
   /* The boundary of the ordinary field; lighter than the hover rule. */
-  .sf-textarea:not(.error).sf-textarea--filled[\:has\(textarea\[focus-within\]\)] textarea {
-    --sf-textarea-textarea--border-color: var(--sf-outline);
-  }
   .sf-textarea:not(.error).sf-textarea--filled:has(textarea[focus-within]) textarea {
-    --sf-textarea-textarea--border-color: var(--sf-outline);
-  }
-  .sf-textarea:not(.error).sf-textarea--filled[\:has\(textarea\:focus-within\)] textarea {
     --sf-textarea-textarea--border-color: var(--sf-outline);
   }
   .sf-textarea:not(.error).sf-textarea--filled:has(textarea:focus-within) textarea {

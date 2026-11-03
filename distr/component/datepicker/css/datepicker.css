@@ -234,9 +234,6 @@
      caption stands in the height under the number instead of pushing it up
      (owner, 2026-10-14). Centred together, a day with «3» under it lifted its
      number above its neighbours'. */
-  .sf-datepicker-day[\:has\(.sf-datepicker-day-info\)] {
-    position: relative;
-  }
   .sf-datepicker-day:has(.sf-datepicker-day-info) {
     position: relative;
   }

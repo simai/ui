@@ -2181,9 +2181,6 @@
   }
   /* The short end step makes room for a remove button; without one the tag
      keeps the same step on both sides. */
-  .sf-tag.sf-tag--inline.sf-tag--inline[\:not-has\(\%3E\%20.sf-icon-button\)] {
-    --sf-tag--inline-end: var(--sf-space-1\/3);
-  }
   .sf-tag.sf-tag--inline.sf-tag--inline:not(:has(> .sf-icon-button)) {
     --sf-tag--inline-end: var(--sf-space-1\/3);
   }

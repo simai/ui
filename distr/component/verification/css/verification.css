@@ -77,18 +77,8 @@
   .sf-verification-input:focus {
     outline: 0 !important;
   }
-  .sf-verification[\:has\(.sf-verification-input.focus-visible\)],
-  .sf-verification-form-wrap .sf-verification[\:has\(input.focus-visible\)] {
-    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-    outline-offset: var(--sf-focus--offset);
-  }
   .sf-verification:has(.sf-verification-input.focus-visible),
   .sf-verification-form-wrap .sf-verification:has(input.focus-visible) {
-    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-    outline-offset: var(--sf-focus--offset);
-  }
-  .sf-verification[\:has\(.sf-verification-input\:focus-visible\)],
-  .sf-verification-form-wrap .sf-verification[\:has\(input\:focus-visible\)] {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
     outline-offset: var(--sf-focus--offset);
   }
@@ -118,13 +108,6 @@
     border-color: var(--sf-error);
     border-color: var(--sf-verification-invalid-border-color, var(--sf-error));
     color: var(--sf-error);
-  }
-  .sf-verification[\:has\(input\:disabled\)] .sf-verification-cell,
-  .sf-verification-form-wrap .sf-verification[\:has\(input\:disabled\)] {
-    border-color: var(--sf-outline-disable);
-    background: var(--sf-disable);
-    color: var(--sf-on-disable);
-    cursor: not-allowed;
   }
   .sf-verification:has(input:disabled) .sf-verification-cell,
   .sf-verification-form-wrap .sf-verification:has(input:disabled) {
@@ -156,18 +139,8 @@
     .sf-verification-form-wrap .sf-verification {
       border-color: CanvasText;
     }
-    .sf-verification[\:has\(.sf-verification-input.focus-visible\)],
-    .sf-verification-form-wrap .sf-verification[\:has\(input.focus-visible\)] {
-      outline: var(--sf-px) solid Highlight;
-      outline-offset: var(--sf-px);
-    }
     .sf-verification:has(.sf-verification-input.focus-visible),
     .sf-verification-form-wrap .sf-verification:has(input.focus-visible) {
-      outline: var(--sf-px) solid Highlight;
-      outline-offset: var(--sf-px);
-    }
-    .sf-verification[\:has\(.sf-verification-input\:focus-visible\)],
-    .sf-verification-form-wrap .sf-verification[\:has\(input\:focus-visible\)] {
       outline: var(--sf-px) solid Highlight;
       outline-offset: var(--sf-px);
     }
@@ -184,11 +157,6 @@
    fill comes back when focus leaves. Error, disabled and read-only fields keep
    their own look. */
 @layer sf.components {
-  .sf-verification--filled:not(.error)[\:has\(.sf-verification-input\:enabled\:focus\)] .sf-verification-cell,
-  .sf-verification-form--filled:not(.error)[\:has\(input\:enabled\:focus\)] .sf-verification-form-wrap .sf-verification {
-    background: var(--sf-surface-0);
-    border-color: var(--sf-outline);
-  }
   .sf-verification--filled:not(.error):has(.sf-verification-input:enabled:focus) .sf-verification-cell,
   .sf-verification-form--filled:not(.error):has(input:enabled:focus) .sf-verification-form-wrap .sf-verification {
     background: var(--sf-surface-0);
@@ -196,11 +164,6 @@
   }
   /* The cell the next character goes to. In a filled field the fill rule came
      after .current and took its border away, so the caret had no place. */
-  .sf-verification--filled:not(.error) .sf-verification-cell.current,
-  .sf-verification--filled:not(.error)[\:has\(.sf-verification-input\:enabled\:focus\)] .sf-verification-cell.current,
-  .sf-verification-form--filled:not(.error)[\:has\(input\:enabled\:focus\)] .sf-verification-form-wrap .sf-verification[\:has\(input\:focus\)] {
-    border-color: var(--sf-primary);
-  }
   .sf-verification--filled:not(.error) .sf-verification-cell.current,
   .sf-verification--filled:not(.error):has(.sf-verification-input:enabled:focus) .sf-verification-cell.current,
   .sf-verification-form--filled:not(.error):has(input:enabled:focus) .sf-verification-form-wrap .sf-verification:has(input:focus) {

@@ -43,56 +43,6 @@
     vertical-align: baseline;
     white-space: nowrap;
   }
-  kbd[\:has\(\%3E\%20kbd\)],
-  .sf-kbd--group {
-    display: inline-flex;
-    box-sizing: border-box;
-    align-items: center;
-    gap: var(--sf-space-1\/4);
-    min-height: var(--sf-0);
-    min-block-size: var(--sf-0);
-    min-width: var(--sf-0);
-    min-inline-size: var(--sf-0);
-    margin: var(--sf-0);
-    padding: var(--sf-0);
-    color: inherit;
-    background: var(--sf-transparent);
-    border: none;
-    border-radius: var(--sf-0);
-    font: inherit;
-    line-height: inherit;
-    unicode-bidi: -webkit-isolate;
-    unicode-bidi: -moz-isolate;
-    unicode-bidi: isolate;
-    vertical-align: baseline;
-    white-space: nowrap;
-  }
-  kbd[\:has\(\%3E\%20kbd\)],
-  .sf-kbd--group {
-    display: inline-flex;
-    box-sizing: border-box;
-    align-items: center;
-    gap: var(--sf-space-1\/4);
-    min-height: var(--sf-0);
-    min-height: var(--sf-0);
-    min-block-size: var(--sf-0);
-    min-width: var(--sf-0);
-    min-width: var(--sf-0);
-    min-inline-size: var(--sf-0);
-    margin: var(--sf-0);
-    padding: var(--sf-0);
-    color: inherit;
-    background: var(--sf-transparent);
-    border: none;
-    border-radius: var(--sf-0);
-    font: inherit;
-    line-height: inherit;
-    unicode-bidi: -webkit-isolate;
-    unicode-bidi: -moz-isolate;
-    unicode-bidi: isolate;
-    vertical-align: baseline;
-    white-space: nowrap;
-  }
   kbd:has(> kbd),
   .sf-kbd--group {
     display: inline-flex;

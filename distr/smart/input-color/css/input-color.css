@@ -189,96 +189,10 @@
      glyph keeps the axis it had (the button's own padding is given back at the
      end), and the slot and the chevron reach into the field's block padding,
      so the field keeps its height. */
-  .sf-dropdown .sf-dropdown-field[\:has\(\%3E\%20.sf-field-inherited-slot\)] > input {
-    --sf-dropdown-input--padding-inline-end: 0px;
-    min-width: 0;
-    min-inline-size: 0;
-  }
-  .sf-dropdown .sf-dropdown-field[\:has\(\%3E\%20.sf-field-inherited-slot\)] > input {
-    --sf-dropdown-input--padding-inline-end: 0px;
-    min-width: 0;
-    min-width: 0;
-    min-inline-size: 0;
-  }
   .sf-dropdown .sf-dropdown-field:has(> .sf-field-inherited-slot) > input {
     --sf-dropdown-input--padding-inline-end: 0px;
     min-width: 0;
     min-inline-size: 0;
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field[\:has\(\%3E\%20.sf-field-inherited-slot\)] > button{
-    margin-right: calc(-1 * 0px);
-    margin-right: calc(-1 * var(--sf-icon-button--padding-inline-end, 0px));
-  }
-  @supports not (margin-inline-end: initial){
-  html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field[\:has\(\%3E\%20.sf-field-inherited-slot\)] > button{
-    margin-right: calc(-1 * 0px);
-    margin-right: calc(-1 * var(--sf-icon-button--padding-inline-end, 0px));
-    }
-  }
-  .sf-dropdown .sf-dropdown-field[\:has\(\%3E\%20.sf-field-inherited-slot\)] > button:where(:dir(ltr)){
-    margin-right: calc(-1 * 0px);
-    margin-right: calc(-1 * var(--sf-icon-button--padding-inline-end, 0px));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-dropdown-field[\:has\(\%3E\%20.sf-field-inherited-slot\)] > button{
-    margin-left: calc(-1 * 0px);
-    margin-left: calc(-1 * var(--sf-icon-button--padding-inline-end, 0px));
-  }
-  @supports not (margin-inline-end: initial){
-  [dir="rtl"] .sf-dropdown .sf-dropdown-field[\:has\(\%3E\%20.sf-field-inherited-slot\)] > button{
-    margin-left: calc(-1 * 0px);
-    margin-left: calc(-1 * var(--sf-icon-button--padding-inline-end, 0px));
-    }
-  }
-  .sf-dropdown .sf-dropdown-field[\:has\(\%3E\%20.sf-field-inherited-slot\)] > button:where(:dir(rtl)){
-    margin-left: calc(-1 * 0px);
-    margin-left: calc(-1 * var(--sf-icon-button--padding-inline-end, 0px));
-  }
-  .sf-dropdown .sf-dropdown-field[\:has\(\%3E\%20.sf-field-inherited-slot\)] > button {
-    position: static;
-    flex: none;
-    margin-top: calc(-1 * 0px);
-    margin-bottom: calc(-1 * 0px);
-    margin-block: calc(-1 * 0px) calc(-1 * 0px);
-    margin-top: calc(-1 * 0px);
-    margin-top: calc(-1 * var(--sf-dropdown-field--padding-top, 0px));
-    margin-bottom: calc(-1 * 0px);
-    margin-bottom: calc(-1 * var(--sf-dropdown-field--padding-bottom, 0px));
-    margin-block: calc(-1 * var(--sf-dropdown-field--padding-top, 0px)) calc(-1 * var(--sf-dropdown-field--padding-bottom, 0px));
-    -webkit-margin-end: calc(-1 * 0px);
-            margin-inline-end: calc(-1 * 0px);
-    -webkit-margin-end: calc(-1 * var(--sf-icon-button--padding-inline-end, 0px));
-            margin-inline-end: calc(-1 * var(--sf-icon-button--padding-inline-end, 0px));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field[\:has\(\%3E\%20.sf-field-inherited-slot\)] > button{
-    margin-right: calc(-1 * 0px);
-    margin-right: calc(-1 * var(--sf-icon-button--padding-inline-end, 0px));
-  }
-  @supports not (margin-inline-end: initial){
-  html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field[\:has\(\%3E\%20.sf-field-inherited-slot\)] > button{
-    margin-right: calc(-1 * 0px);
-    margin-right: calc(-1 * var(--sf-icon-button--padding-inline-end, 0px));
-    }
-  }
-  .sf-dropdown .sf-dropdown-field[\:has\(\%3E\%20.sf-field-inherited-slot\)] > button:where(:dir(ltr)){
-    margin-right: calc(-1 * 0px);
-    margin-right: calc(-1 * var(--sf-icon-button--padding-inline-end, 0px));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field[\:has\(\%3E\%20.sf-field-inherited-slot\)] > button{
-    margin-right: calc(-1 * 0px);
-    margin-right: calc(-1 * 0px);
-    margin-right: calc(-1 * var(--sf-icon-button--padding-inline-end, 0px));
-  }
-  @supports not (margin-inline-end: initial){
-  html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field[\:has\(\%3E\%20.sf-field-inherited-slot\)] > button{
-    margin-right: calc(-1 * 0px);
-    margin-right: calc(-1 * 0px);
-    margin-right: calc(-1 * var(--sf-icon-button--padding-inline-end, 0px));
-    }
-  }
-  .sf-dropdown .sf-dropdown-field[\:has\(\%3E\%20.sf-field-inherited-slot\)] > button:where(:dir(ltr)){
-    margin-right: calc(-1 * 0px);
-    margin-right: calc(-1 * 0px);
-    margin-right: calc(-1 * var(--sf-icon-button--padding-inline-end, 0px));
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field:has(> .sf-field-inherited-slot) > button{
     margin-right: calc(-1 * 0px);
@@ -294,37 +208,6 @@
     margin-right: calc(-1 * 0px);
     margin-right: calc(-1 * var(--sf-icon-button--padding-inline-end, 0px));
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-dropdown-field[\:has\(\%3E\%20.sf-field-inherited-slot\)] > button{
-    margin-left: calc(-1 * 0px);
-    margin-left: calc(-1 * var(--sf-icon-button--padding-inline-end, 0px));
-  }
-  @supports not (margin-inline-end: initial){
-  [dir="rtl"] .sf-dropdown .sf-dropdown-field[\:has\(\%3E\%20.sf-field-inherited-slot\)] > button{
-    margin-left: calc(-1 * 0px);
-    margin-left: calc(-1 * var(--sf-icon-button--padding-inline-end, 0px));
-    }
-  }
-  .sf-dropdown .sf-dropdown-field[\:has\(\%3E\%20.sf-field-inherited-slot\)] > button:where(:dir(rtl)){
-    margin-left: calc(-1 * 0px);
-    margin-left: calc(-1 * var(--sf-icon-button--padding-inline-end, 0px));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-dropdown-field[\:has\(\%3E\%20.sf-field-inherited-slot\)] > button{
-    margin-left: calc(-1 * 0px);
-    margin-left: calc(-1 * 0px);
-    margin-left: calc(-1 * var(--sf-icon-button--padding-inline-end, 0px));
-  }
-  @supports not (margin-inline-end: initial){
-  [dir="rtl"] .sf-dropdown .sf-dropdown-field[\:has\(\%3E\%20.sf-field-inherited-slot\)] > button{
-    margin-left: calc(-1 * 0px);
-    margin-left: calc(-1 * 0px);
-    margin-left: calc(-1 * var(--sf-icon-button--padding-inline-end, 0px));
-    }
-  }
-  .sf-dropdown .sf-dropdown-field[\:has\(\%3E\%20.sf-field-inherited-slot\)] > button:where(:dir(rtl)){
-    margin-left: calc(-1 * 0px);
-    margin-left: calc(-1 * 0px);
-    margin-left: calc(-1 * var(--sf-icon-button--padding-inline-end, 0px));
-  }
   _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-dropdown-field:has(> .sf-field-inherited-slot) > button{
     margin-left: calc(-1 * 0px);
     margin-left: calc(-1 * var(--sf-icon-button--padding-inline-end, 0px));
@@ -338,114 +221,6 @@
   .sf-dropdown .sf-dropdown-field:has(> .sf-field-inherited-slot) > button:where(:dir(rtl)){
     margin-left: calc(-1 * 0px);
     margin-left: calc(-1 * var(--sf-icon-button--padding-inline-end, 0px));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field[\:has\(\%3E\%20.sf-field-inherited-slot\)] > button{
-    margin-right: calc(-1 * 0px);
-    margin-right: calc(-1 * var(--sf-icon-button--padding-inline-end, 0px));
-  }
-  @supports not (margin-inline-end: initial){
-  html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field[\:has\(\%3E\%20.sf-field-inherited-slot\)] > button{
-    margin-right: calc(-1 * 0px);
-    margin-right: calc(-1 * var(--sf-icon-button--padding-inline-end, 0px));
-    }
-  }
-  .sf-dropdown .sf-dropdown-field[\:has\(\%3E\%20.sf-field-inherited-slot\)] > button:where(:dir(ltr)){
-    margin-right: calc(-1 * 0px);
-    margin-right: calc(-1 * var(--sf-icon-button--padding-inline-end, 0px));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-dropdown-field[\:has\(\%3E\%20.sf-field-inherited-slot\)] > button{
-    margin-left: calc(-1 * 0px);
-    margin-left: calc(-1 * var(--sf-icon-button--padding-inline-end, 0px));
-  }
-  @supports not (margin-inline-end: initial){
-  [dir="rtl"] .sf-dropdown .sf-dropdown-field[\:has\(\%3E\%20.sf-field-inherited-slot\)] > button{
-    margin-left: calc(-1 * 0px);
-    margin-left: calc(-1 * var(--sf-icon-button--padding-inline-end, 0px));
-    }
-  }
-  .sf-dropdown .sf-dropdown-field[\:has\(\%3E\%20.sf-field-inherited-slot\)] > button:where(:dir(rtl)){
-    margin-left: calc(-1 * 0px);
-    margin-left: calc(-1 * var(--sf-icon-button--padding-inline-end, 0px));
-  }
-  .sf-dropdown .sf-dropdown-field[\:has\(\%3E\%20.sf-field-inherited-slot\)] > button {
-    position: static;
-    flex: none;
-    margin-top: calc(-1 * 0px);
-    margin-bottom: calc(-1 * 0px);
-    margin-block: calc(-1 * 0px) calc(-1 * 0px);
-    margin-top: calc(-1 * 0px);
-    margin-top: calc(-1 * var(--sf-dropdown-field--padding-top, 0px));
-    margin-bottom: calc(-1 * 0px);
-    margin-bottom: calc(-1 * var(--sf-dropdown-field--padding-bottom, 0px));
-    margin-top: calc(-1 * 0px);
-    margin-bottom: calc(-1 * 0px);
-    margin-block: calc(-1 * 0px) calc(-1 * 0px);
-    margin-top: calc(-1 * 0px);
-    margin-top: calc(-1 * var(--sf-dropdown-field--padding-top, 0px));
-    margin-bottom: calc(-1 * 0px);
-    margin-bottom: calc(-1 * var(--sf-dropdown-field--padding-bottom, 0px));
-    margin-block: calc(-1 * var(--sf-dropdown-field--padding-top, 0px)) calc(-1 * var(--sf-dropdown-field--padding-bottom, 0px));
-    -webkit-margin-end: calc(-1 * 0px);
-            margin-inline-end: calc(-1 * 0px);
-    margin-inline-end: calc(-1 * 0px);
-    -webkit-margin-end: calc(-1 * var(--sf-icon-button--padding-inline-end, 0px));
-            margin-inline-end: calc(-1 * var(--sf-icon-button--padding-inline-end, 0px));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field[\:has\(\%3E\%20.sf-field-inherited-slot\)] > button{
-    margin-right: calc(-1 * 0px);
-    margin-right: calc(-1 * var(--sf-icon-button--padding-inline-end, 0px));
-  }
-  @supports not (margin-inline-end: initial){
-  html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field[\:has\(\%3E\%20.sf-field-inherited-slot\)] > button{
-    margin-right: calc(-1 * 0px);
-    margin-right: calc(-1 * var(--sf-icon-button--padding-inline-end, 0px));
-    }
-  }
-  .sf-dropdown .sf-dropdown-field[\:has\(\%3E\%20.sf-field-inherited-slot\)] > button:where(:dir(ltr)){
-    margin-right: calc(-1 * 0px);
-    margin-right: calc(-1 * var(--sf-icon-button--padding-inline-end, 0px));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-dropdown-field[\:has\(\%3E\%20.sf-field-inherited-slot\)] > button{
-    margin-left: calc(-1 * 0px);
-    margin-left: calc(-1 * var(--sf-icon-button--padding-inline-end, 0px));
-  }
-  @supports not (margin-inline-end: initial){
-  [dir="rtl"] .sf-dropdown .sf-dropdown-field[\:has\(\%3E\%20.sf-field-inherited-slot\)] > button{
-    margin-left: calc(-1 * 0px);
-    margin-left: calc(-1 * var(--sf-icon-button--padding-inline-end, 0px));
-    }
-  }
-  .sf-dropdown .sf-dropdown-field[\:has\(\%3E\%20.sf-field-inherited-slot\)] > button:where(:dir(rtl)){
-    margin-left: calc(-1 * 0px);
-    margin-left: calc(-1 * var(--sf-icon-button--padding-inline-end, 0px));
-  }
-  .sf-dropdown .sf-dropdown-field[\:has\(\%3E\%20.sf-field-inherited-slot\)] > button {
-    position: static;
-    flex: none;
-    margin-top: calc(-1 * 0px);
-    margin-bottom: calc(-1 * 0px);
-    margin-top: calc(-1 * 0px);
-    margin-bottom: calc(-1 * 0px);
-    margin-block: calc(-1 * 0px) calc(-1 * 0px);
-    margin-top: calc(-1 * 0px);
-    margin-top: calc(-1 * 0px);
-    margin-top: calc(-1 * var(--sf-dropdown-field--padding-top, 0px));
-    margin-bottom: calc(-1 * 0px);
-    margin-bottom: calc(-1 * 0px);
-    margin-bottom: calc(-1 * var(--sf-dropdown-field--padding-bottom, 0px));
-    margin-top: calc(-1 * 0px);
-    margin-bottom: calc(-1 * 0px);
-    margin-block: calc(-1 * 0px) calc(-1 * 0px);
-    margin-top: calc(-1 * 0px);
-    margin-top: calc(-1 * var(--sf-dropdown-field--padding-top, 0px));
-    margin-bottom: calc(-1 * 0px);
-    margin-bottom: calc(-1 * var(--sf-dropdown-field--padding-bottom, 0px));
-    margin-block: calc(-1 * var(--sf-dropdown-field--padding-top, 0px)) calc(-1 * var(--sf-dropdown-field--padding-bottom, 0px));
-    -webkit-margin-end: calc(-1 * 0px);
-            margin-inline-end: calc(-1 * 0px);
-    margin-inline-end: calc(-1 * 0px);
-    -webkit-margin-end: calc(-1 * var(--sf-icon-button--padding-inline-end, 0px));
-            margin-inline-end: calc(-1 * var(--sf-icon-button--padding-inline-end, 0px));
   }
   .sf-dropdown .sf-dropdown-field:has(> .sf-field-inherited-slot) > button {
     position: static;
@@ -873,15 +648,7 @@
   /* variant theme: an icon button that sits in a row of buttons, so the host
      is inline rather than a block field. The native input lies under the
      button for the picker to anchor at; the button takes every press. */
-  sf-input-color[\:has\(\%3E\%20.sf-color--theme\)] {
-    display: inline-block;
-    vertical-align: middle;
-  }
   sf-input-color:has(> .sf-color--theme) {
-    display: inline-block;
-    vertical-align: middle;
-  }
-  sf-color[\:has\(\%3E\%20.sf-color--theme\)] {
     display: inline-block;
     vertical-align: middle;
   }

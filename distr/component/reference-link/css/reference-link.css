@@ -161,15 +161,7 @@
   /* The hover and press fills belong to the card. A plain reference has no card
      to fill, and filling the line behind the words was the grey patch the owner
      saw behind a field's value. */
-  .sf-reference-link.sf-reference-link--plain[\:has\(\:where\(.sf-reference-link__link\,\%20.sf-reference-link-left\%20\%3E\%20a\)\:hover\)] {
-    --sf-reference-link--background-color: transparent;
-    --sf-reference-link--border-color: transparent;
-  }
   .sf-reference-link.sf-reference-link--plain:has(:where(.sf-reference-link__link, .sf-reference-link-left > a):hover) {
-    --sf-reference-link--background-color: transparent;
-    --sf-reference-link--border-color: transparent;
-  }
-  .sf-reference-link.sf-reference-link--plain[\:has\(\:where\(.sf-reference-link__link\,\%20.sf-reference-link-left\%20\%3E\%20a\)\:active\)] {
     --sf-reference-link--background-color: transparent;
     --sf-reference-link--border-color: transparent;
   }
@@ -177,16 +169,9 @@
     --sf-reference-link--background-color: transparent;
     --sf-reference-link--border-color: transparent;
   }
-  .sf-reference-link:not(.sf-reference-link--plain)[\:has\(\:where\(.sf-reference-link__link\,\%20.sf-reference-link-left\%20\%3E\%20a\)\:hover\)] {
-    --sf-reference-link--background-color: var(--sf-surface-container-hover);
-    --sf-reference-link--border-color: var(--sf-outline-primary);
-  }
   .sf-reference-link:not(.sf-reference-link--plain):has(:where(.sf-reference-link__link, .sf-reference-link-left > a):hover) {
     --sf-reference-link--background-color: var(--sf-surface-container-hover);
     --sf-reference-link--border-color: var(--sf-outline-primary);
-  }
-  .sf-reference-link:not(.sf-reference-link--plain)[\:has\(\:where\(.sf-reference-link__link\,\%20.sf-reference-link-left\%20\%3E\%20a\)\:active\)] {
-    --sf-reference-link--background-color: var(--sf-surface-container-active);
   }
   .sf-reference-link:not(.sf-reference-link--plain):has(:where(.sf-reference-link__link, .sf-reference-link-left > a):active) {
     --sf-reference-link--background-color: var(--sf-surface-container-active);
@@ -194,19 +179,7 @@
   .sf-reference-link :where(.sf-reference-link__link, .sf-reference-link-left > a):focus {
     outline: none;
   }
-  .sf-reference-link[\:has\(\:where\(.sf-reference-link__link\,\%20.sf-reference-link-left\%20\%3E\%20a\).focus-visible\)] {
-    outline-color: var(--sf-focus);
-    outline-offset: var(--sf-focus--offset);
-    outline-style: var(--sf-focus--style);
-    outline-width: var(--sf-focus--width);
-  }
   .sf-reference-link:has(:where(.sf-reference-link__link, .sf-reference-link-left > a).focus-visible) {
-    outline-color: var(--sf-focus);
-    outline-offset: var(--sf-focus--offset);
-    outline-style: var(--sf-focus--style);
-    outline-width: var(--sf-focus--width);
-  }
-  .sf-reference-link[\:has\(\:where\(.sf-reference-link__link\,\%20.sf-reference-link-left\%20\%3E\%20a\)\:focus-visible\)] {
     outline-color: var(--sf-focus);
     outline-offset: var(--sf-focus--offset);
     outline-style: var(--sf-focus--style);
@@ -290,13 +263,7 @@
     }
   }
   @media (forced-colors: active) {
-    .sf-reference-link[\:has\(\:where\(.sf-reference-link__link\,\%20.sf-reference-link-left\%20\%3E\%20a\).focus-visible\)] {
-      outline-color: Highlight;
-    }
     .sf-reference-link:has(:where(.sf-reference-link__link, .sf-reference-link-left > a).focus-visible) {
-      outline-color: Highlight;
-    }
-    .sf-reference-link[\:has\(\:where\(.sf-reference-link__link\,\%20.sf-reference-link-left\%20\%3E\%20a\)\:focus-visible\)] {
       outline-color: Highlight;
     }
     .sf-reference-link:has(:where(.sf-reference-link__link, .sf-reference-link-left > a):focus-visible) {

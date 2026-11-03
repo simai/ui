@@ -1,5 +1,5 @@
 import { localeText, pageLocale } from '../page-language.js';
-import { BUILTIN_EDITOR_MANIFESTS } from './builtins.mjs';
+import { BUILTIN_EDITOR_MANIFESTS, BUILTIN_TYPE_MANIFESTS } from './builtins.mjs';
 
 // The words of the built-in editor manifests (simai/ui-source#65): every
 // label_key, help_key and `<label_key>.<choice>` of a choice that is a stable
@@ -29,6 +29,61 @@ const EN = {
   ...words('layout_columns', {
     columns: 'Columns',
     columns_help: 'How many columns the content is split into',
+    gap: 'Gap',
+    gap_help: 'Space between the columns, from 0 to 8 steps',
+  }),
+  // Parameter sets (parameter-sets.mjs), shared by every type that takes them.
+  ...words('set_background', {
+    background: 'Background',
+    background_help: 'The fill behind the block',
+    'background.surface': 'Page',
+    'background.container': 'Container',
+    'background.primary': 'Primary',
+    'background.secondary': 'Secondary',
+    'background.tertiary': 'Tertiary',
+  }),
+  ...words('set_spacing', {
+    padding_y: 'Space above and below',
+    padding_y_help: 'From 0 to 8 steps, per screen',
+    padding_x: 'Space at the sides',
+    padding_x_help: 'From 0 to 8 steps, per screen',
+  }),
+  ...words('set_width', {
+    width: 'Width',
+    width_help: 'How wide the content stands on the page',
+    'width.narrow': 'Narrow',
+    'width.normal': 'Normal',
+    'width.wide': 'Wide',
+    'width.full': 'Full width',
+  }),
+  ...words('set_grid', {
+    columns: 'Columns',
+    columns_help: 'How many columns the content is split into, per screen',
+    gap: 'Gap',
+    gap_help: 'Space between the columns, from 0 to 8 steps',
+  }),
+  ...words('set_alignment', {
+    align: 'Alignment',
+    align_help: 'How the text lines up, per screen',
+    'align.start': 'Start',
+    'align.center': 'Centre',
+    'align.end': 'End',
+  }),
+  ...words('set_breakout', {
+    breakout: 'Edge to edge',
+    breakout_help: 'The block spans the whole page width',
+  }),
+  ...words('set_visibility', {
+    hidden: 'Hidden',
+    hidden_help: 'The block is not shown on this screen',
+  }),
+  ...words('layout_area', {
+    content: 'Text',
+    empty: 'Start writing or press / for a block',
+    padding: 'Padding',
+    padding_help: 'Space inside the area, from 0 to 8 steps',
+    hidden: 'Hidden',
+    hidden_help: 'The area is not shown on this screen',
   }),
   ...words('content_heading', {
     level: 'Heading level',
@@ -181,6 +236,60 @@ const RU = {
   ...words('layout_columns', {
     columns: 'Колонки',
     columns_help: 'На сколько колонок делится содержимое',
+    gap: 'Промежуток',
+    gap_help: 'Расстояние между колонками, от 0 до 8 шагов',
+  }),
+  ...words('set_background', {
+    background: 'Фон',
+    background_help: 'Заливка под блоком',
+    'background.surface': 'Страница',
+    'background.container': 'Контейнер',
+    'background.primary': 'Основной',
+    'background.secondary': 'Дополнительный',
+    'background.tertiary': 'Третий',
+  }),
+  ...words('set_spacing', {
+    padding_y: 'Отступ сверху и снизу',
+    padding_y_help: 'От 0 до 8 шагов, для каждого экрана',
+    padding_x: 'Отступ по бокам',
+    padding_x_help: 'От 0 до 8 шагов, для каждого экрана',
+  }),
+  ...words('set_width', {
+    width: 'Ширина',
+    width_help: 'Насколько широко стоит содержимое на странице',
+    'width.narrow': 'Узкая',
+    'width.normal': 'Обычная',
+    'width.wide': 'Широкая',
+    'width.full': 'Во всю ширину',
+  }),
+  ...words('set_grid', {
+    columns: 'Колонки',
+    columns_help: 'На сколько колонок делится содержимое, для каждого экрана',
+    gap: 'Промежуток',
+    gap_help: 'Расстояние между колонками, от 0 до 8 шагов',
+  }),
+  ...words('set_alignment', {
+    align: 'Выравнивание',
+    align_help: 'Как выравнивается текст, для каждого экрана',
+    'align.start': 'К началу',
+    'align.center': 'По центру',
+    'align.end': 'К концу',
+  }),
+  ...words('set_breakout', {
+    breakout: 'От края до края',
+    breakout_help: 'Блок занимает всю ширину страницы',
+  }),
+  ...words('set_visibility', {
+    hidden: 'Скрыт',
+    hidden_help: 'Блок не показывается на этом экране',
+  }),
+  ...words('layout_area', {
+    content: 'Текст',
+    empty: 'Начните писать или нажмите / для блока',
+    padding: 'Отступ',
+    padding_help: 'Пространство внутри области, от 0 до 8 шагов',
+    hidden: 'Скрыть',
+    hidden_help: 'Область не показывается на этом экране',
   }),
   ...words('content_heading', {
     level: 'Уровень заголовка',
@@ -346,10 +455,17 @@ export function editorFieldKeys(field) {
  * registered for `sf-composition` wins over the shipped one; a key with no
  * word in any language is left out, so the host's own words or the key show.
  */
-export function editorFieldMessages(manifests = BUILTIN_EDITOR_MANIFESTS, { node = null, locale } = {}) {
-  const list = Array.isArray(manifests) ? manifests : [manifests];
+export function editorFieldMessages(manifests, { node = null, locale } = {}) {
+  const list = manifests === undefined ? BUILTIN_EDITOR_MANIFESTS : Array.isArray(manifests) ? manifests : [manifests];
   const language = locale || pageLocale(node);
   const messages = {};
+  // Without a manifest, the words of the built-in types' named places too
+  // (a slot's label_key and empty_key; one block editor, 2026-11-03).
+  if (manifests === undefined) {
+    for (const slot of BUILTIN_TYPE_MANIFESTS.flatMap((manifest) => Object.values(manifest.slots || {}))) {
+      for (const key of [slot.label_key, slot.empty_key].filter(Boolean)) messages[key] = localeText(EDITOR_FIELD_WORDS, key, language, EDITOR_WORDS_OWNER);
+    }
+  }
   for (const manifest of list) {
     for (const field of manifest?.fields || []) {
       for (const key of editorFieldKeys(field)) {

@@ -10,6 +10,18 @@ manifest v1 не меняются. Реестр типов полей —
 `content.heading@1.1.0` (inline-атомы), поэтому в fixture и lock его
 `type_version` — 1.1.0.
 
+1.1.0 (2026-11-03, one block editor): the `layout.columns` editor manifest
+follows its type to `layout.columns@1.1.0`. The `columns` field is unchanged;
+a new `gap` field (`integer@1`, 0..8, default 4) is added. Both parameters take
+a value per screen in the Document and print SIMAI Framework grid utilities
+(`grid-col-*`, `gap-*`, `md:`/`lg:` prefixes); a 1.0.0 Document (one integer
+for every screen, no gap) stays valid and draws the same number of columns.
+The `layout.section` editor manifest follows its type to `layout.section@1.1.0`:
+the `surface` field is unchanged, and the fields of its parameter sets
+(background, spacing, width, grid, alignment, breakout, visibility) follow it.
+The toggles need `boolean@1` registered by the host, as `layout.region`'s
+`sticky` already did.
+
 ## Файлы
 
 - README.md — этот текст, нормативный.

@@ -639,10 +639,6 @@
     --sf-menu-element--background-color: var(--sf-surface-container-active);
     --sf-menu-element--border-color: var(--sf-transparent);
   }
-  .sf-menu.sf-menu--navigation .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true])[\:has\(\%3E\%20\[aria-current\%3Dpage\]\,\%20\%3E\%20\[aria-current\%3Dtrue\]\)] {
-    --sf-menu-element--background-color: var(--sf-surface-container-active);
-    --sf-menu-element--border-color: var(--sf-transparent);
-  }
   .sf-menu.sf-menu--navigation .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]):has(> [aria-current=page], > [aria-current=true]) {
     --sf-menu-element--background-color: var(--sf-surface-container-active);
     --sf-menu-element--border-color: var(--sf-transparent);
@@ -661,10 +657,6 @@
       --sf-menu-element--border-color: CanvasText;
     }
     .sf-menu.sf-menu--navigation .sf-menu-element[aria-current=true] {
-      --sf-menu-element--border-width: var(--sf-px);
-      --sf-menu-element--border-color: CanvasText;
-    }
-    .sf-menu.sf-menu--navigation .sf-menu-element[\:has\(\%3E\%20\[aria-current\%3Dpage\]\,\%20\%3E\%20\[aria-current\%3Dtrue\]\)] {
       --sf-menu-element--border-width: var(--sf-px);
       --sf-menu-element--border-color: CanvasText;
     }
@@ -899,14 +891,8 @@
       outline: var(--sf-badge--ring-width) solid Canvas;
     }
   }
-  .sf-menu.sf-menu--compact .sf-menu-element-wrap[\:has\(\%3E\%20.sf-avatar\:not\(.sf-avatar--square\)\)] > .sf-badge {
-    --sf-badge--anchor-radius: var(--sf-radius-circle);
-  }
   .sf-menu.sf-menu--compact .sf-menu-element-wrap:has(> .sf-avatar:not(.sf-avatar--square)) > .sf-badge {
     --sf-badge--anchor-radius: var(--sf-radius-circle);
-  }
-  .sf-menu.sf-menu--compact .sf-menu-element-wrap[\:has\(\%3E\%20.sf-avatar--square\)] > .sf-badge {
-    --sf-badge--anchor-radius: var(--sf-radius--ui);
   }
   .sf-menu.sf-menu--compact .sf-menu-element-wrap:has(> .sf-avatar--square) > .sf-badge {
     --sf-badge--anchor-radius: var(--sf-radius--ui);

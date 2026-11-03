@@ -28,6 +28,73 @@ import {
   routesAttribute,
 } from './routing.mjs';
 import { FRAGMENT_DESCRIPTOR_SCHEMA, checkFragmentDescriptor, defineFragmentBoundary, definePageHost, publishEffects } from './fragments.mjs';
+import {
+  MODIFIERS_EXTENSION,
+  UTILITY_BREAKPOINTS,
+  checkModifiers,
+  checkResponsiveProps,
+  isBreakpointValue,
+  isResponsive,
+  modifierNotices,
+  ownModifiers,
+  utilityClassSpace,
+  utilityClasses,
+  utilityPartClasses,
+  validateUtilityDeclarations,
+  withPartClasses,
+  valueSchema,
+  valuesByBreakpoint,
+  withClasses,
+} from './utilities.mjs';
+import {
+  BUILTIN_CATALOGUE,
+  CATALOGUE_GROUPS,
+  CATALOGUE_TABS,
+  catalogue,
+  catalogueEntry,
+  instantiateVariant,
+  slotAccepts,
+  slotPlaces,
+  validateCatalogueFields,
+} from './catalogue.mjs';
+import { PRINTED_ELEMENTS, checkPrintedElements as checkPrintedElementsWith, elementInputs, printElement as printElementWith } from './elements.mjs';
+import {
+  PARAMETER_SETS,
+  PARAMETER_SET_NAMES,
+  expandParameterSets,
+  parameterSetFields,
+  parameterSetParts,
+  validateParameterSets,
+  withParameterSetFields,
+} from './parameter-sets.mjs';
+import {
+  COMPOSED_EXTENSION,
+  MAX_COMPOSED_DEPTH,
+  composedEditorManifest as composedEditorManifestWith,
+  composedInstance,
+  composedPart,
+  composedTextPaths,
+  defineComposedType as defineComposed,
+  expandComposed,
+  isComposed,
+  upgradeComposed as upgradeComposedWith,
+  validateComposedInstance,
+} from './composed.mjs';
+import {
+  BINDING_STATES,
+  DATA_EXTENSION,
+  DATA_SHAPES,
+  RUNTIME_OWNER,
+  SOURCE_PORT,
+  bindingSettings,
+  checkSourceAnswer as checkSourceAnswerWith,
+  createShapeRegistry,
+  demoData,
+  resolveData,
+  takesData,
+  validateDataDeclarations,
+  validateDataRules,
+} from './data.mjs';
 
 const DOCUMENT_SCHEMA = 'simai.composition.document.v1';
 
@@ -163,6 +230,13 @@ function validateJsonSchema(value, schema, path, diagnostics) {
   }
 }
 
+// The inline model as content.paragraph holds it: what a site block's text is.
+const INLINE_SCHEMA = BUILTIN_TYPE_MANIFESTS.find(({ type }) => type === 'content.paragraph').data_schema.properties.content;
+function checkInline(content, path, diagnostics) {
+  validateJsonSchema(content, INLINE_SCHEMA, path, diagnostics);
+  validateInlineContent(content, path, diagnostics);
+}
+
 function validUrl(value) {
   // Browsers read "/\\host" like "//host": backslashes never form a local link.
   if (/^(?:\/|\.?\.\/|#)/u.test(value)) return !value.startsWith('//') && !value.includes('\\');
@@ -259,7 +333,8 @@ export function createRegistry(manifests = BUILTIN_TYPE_MANIFESTS, renderers = {
     // Either form of the format name (schema-name.mjs).
     if (!isPlainObject(manifest) || !isSchema(manifest, 'simai.composition.type-manifest', 1)) throw new TypeError('composition_manifest_invalid');
     if (types.has(manifest.type)) throw new TypeError(`composition_manifest_duplicate:${manifest.type}`);
-    types.set(manifest.type, canonical(manifest));
+    // A type's parameter sets join its props (parameter-sets.mjs).
+    types.set(manifest.type, canonical(expandParameterSets(manifest)));
   }
   return { types, renderers: new Map(Object.entries(renderers)) };
 }
@@ -321,6 +396,7 @@ export function compositionTypeFromSmartManifest(manifest) {
 
 export function validate(document, registry = undefined, options = {}) {
   const diagnostics = [];
+  const notices = [];
   const resolvedRegistry = normalizeRegistry(registry);
   const limits = { ...DEFAULT_LIMITS, ...(options.limits || {}) };
   const supportedExtensions = new Set([ENDPOINT_EXTENSION, ...(options.supportedExtensions || [])]);
@@ -361,7 +437,26 @@ export function validate(document, registry = undefined, options = {}) {
     }
     if (!manifest.profiles.includes(document.profile)) diagnostics.push(diagnostic('type_profile_unsupported', `${path}.type`, `${node.type} does not support ${document.profile}`));
     validateJsonSchema(node.data || {}, manifest.data_schema, `${path}.data`, diagnostics);
-    validateJsonSchema(node.props || {}, manifest.props_schema, `${path}.props`, diagnostics);
+    // A layout parameter may hold a value per breakpoint (utilities.mjs): each
+    // value is checked on its own, the rest of the props as before.
+    const responsive = checkResponsiveProps(node.props || {}, manifest.props_schema, `${path}.props`, validateJsonSchema);
+    diagnostics.push(...responsive.diagnostics);
+    validateJsonSchema(responsive.props, responsive.schema || manifest.props_schema, `${path}.props`, diagnostics);
+    // A block's own modifiers never refuse a Document: a class no utility rule
+    // knows is left out of the HTML and reported.
+    notices.push(...modifierNotices(node, { rules: options.utilityRules }).notices);
+    if (isComposed(manifest)) {
+      const instance = validateComposedInstance(node, manifest, resolvedRegistry, path, checkInline);
+      diagnostics.push(...instance.diagnostics);
+      notices.push(...instance.notices);
+      const depth = (options.composedDepth || 0) + 1;
+      if (depth > MAX_COMPOSED_DEPTH) diagnostics.push(diagnostic('composed_depth_limit', path, 'Site blocks are nested too deeply'));
+      else {
+        const expanded = validate({ ...document, root: expandComposed(node, manifest) }, resolvedRegistry, { ...options, composedDepth: depth });
+        diagnostics.push(...expanded.diagnostics.map((entry) => ({ ...entry, path: `${path}.composed${entry.path.replace(/^\$\.root/u, '').replace(/^\$/u, '')}` })));
+        notices.push(...(expanded.notices || []));
+      }
+    }
     if (node.presentation !== undefined) {
       if (!isPlainObject(node.presentation)) diagnostics.push(diagnostic('presentation_invalid', `${path}.presentation`, 'Presentation must be an object'));
       else {
@@ -409,6 +504,7 @@ export function validate(document, registry = undefined, options = {}) {
         const childManifest = resolvedRegistry.types.get(child?.type);
         if (childManifest && slot.types && !slot.types.includes(child.type)) diagnostics.push(diagnostic('slot_child_type_forbidden', `${path}.slots.${slotName}[${index}]`, `${child.type} is not allowed in this slot`));
         if (childManifest && slot.categories && !slot.categories.includes(childManifest.category)) diagnostics.push(diagnostic('slot_child_category_forbidden', `${path}.slots.${slotName}[${index}]`, `${childManifest.category} is not allowed in this slot`));
+        if (childManifest && slot.groups && !slot.groups.includes(catalogueEntry(childManifest)?.group)) diagnostics.push(diagnostic('slot_child_group_forbidden', `${path}.slots.${slotName}[${index}]`, `${child.type} is not in a group this place accepts (${slot.groups.join(', ')})`));
         visit(child, `${path}.slots.${slotName}[${index}]`, depth + 1);
       });
     }
@@ -422,8 +518,9 @@ export function validate(document, registry = undefined, options = {}) {
     validateRegionRules(document.root, resolvedRegistry, diagnostics);
     validateContentRules(document.root, diagnostics);
     resolveRoutes(document.root, resolvedRegistry, normalizePorts(options.ports), diagnostics);
+    validateDataRules(document.root, resolvedRegistry, options.shapes, diagnostics);
   }
-  return { valid: diagnostics.length === 0, diagnostics };
+  return { valid: diagnostics.length === 0, diagnostics, ...(notices.length ? { notices } : {}) };
 }
 
 function collectDependencies(node, manifest, output) {
@@ -437,12 +534,17 @@ export async function normalize(document, registry = undefined, options = {}) {
   if (!result.valid) return { document: null, digest: null, dependencies: { assets: [], bindings: [] }, diagnostics: result.diagnostics };
   const normalized = canonical(JSON.parse(JSON.stringify(document)));
   const dependencies = { assets: new Set(), bindings: new Map() };
-  const visit = (node) => {
-    collectDependencies(node, resolvedRegistry.types.get(node.type), dependencies);
-    Object.values(node.slots || {}).flat().forEach(visit);
+  const visit = (node, depth = 0) => {
+    const manifest = resolvedRegistry.types.get(node.type);
+    if (!manifest) return;
+    collectDependencies(node, manifest, dependencies);
+    // A site block needs what the blocks of its tree need.
+    if (isComposed(manifest) && depth < MAX_COMPOSED_DEPTH) visit(expandComposed(node, manifest), depth + 1);
+    Object.values(node.slots || {}).flat().forEach((child) => visit(child, depth));
   };
   visit(normalized.root);
   return {
+    ...(result.notices ? { notices: result.notices } : {}),
     document: normalized,
     digest: await sha256(stableStringify(normalized)),
     dependencies: {
@@ -578,10 +680,20 @@ function renderMedia(node, slots) {
 
 const BUILTIN_RENDERERS = {
   'layout.page': ({ node, slots }) => `<main data-sf-composition-id="${escapeHtml(node.id)}">${slots.default || ''}</main>`,
-  'layout.section': ({ node, slots }) => `<section data-sf-composition-id="${escapeHtml(node.id)}">${slots.default || ''}</section>`,
+  'layout.section': ({ node, slots }) => {
+    // 1.1.0: a section given a width or columns draws the frame and content
+    // parts its parameter sets place classes on; one without draws as before.
+    const framed = ['width', 'columns', 'gap'].some((key) => node.props?.[key] !== undefined);
+    const inner = framed ? `<div data-sf-composition-part="frame"><div data-sf-composition-part="content">${slots.default || ''}</div></div>` : (slots.default || '');
+    return `<section data-sf-composition-id="${escapeHtml(node.id)}">${inner}</section>`;
+  },
   'layout.columns': ({ node, slots }) => {
     const columns = Number.isInteger(node.props?.columns) ? ` data-composition-columns="${node.props.columns}"` : '';
-    return `<div class="sf-composition-columns" data-sf-composition-id="${escapeHtml(node.id)}"${columns}>${(slots.columnsList || []).map((child) => `<div class="sf-composition-column">${child}</div>`).join('')}</div>`;
+    // A grid of one column on the phone unless columns says otherwise; the
+    // columns and gap utilities are added from the props (1.1.0). No gap given
+    // keeps the type's own gap.
+    const gap = node.props?.gap === undefined ? ' gap-4' : '';
+    return `<div class="sf-composition-columns grid${gap}" data-sf-composition-id="${escapeHtml(node.id)}"${columns}>${(slots.columnsList || []).map((child) => `<div class="sf-composition-column">${child}</div>`).join('')}</div>`;
   },
   'content.heading': ({ node }) => `<h${node.data.level || 2} data-sf-composition-id="${escapeHtml(node.id)}">${renderInline(node.data.content)}</h${node.data.level || 2}>`,
   'content.paragraph': ({ node }) => `<p data-sf-composition-id="${escapeHtml(node.id)}">${renderInline(node.data.content)}</p>`,
@@ -594,6 +706,7 @@ const BUILTIN_RENDERERS = {
     return `<${element} class="sf-composition-region" data-sf-composition-id="${escapeHtml(node.id)}" data-sf-region="${escapeHtml(props.name)}" data-sf-region-placement="${escapeHtml(props.placement ?? 'block')}"${sticky}${label}>${slots.default || ''}</${element}>`;
   },
   'layout.scope': ({ node, slots, routes }) => `<sf-composition-scope data-sf-composition-id="${escapeHtml(node.id)}" data-sf-routes="${escapeHtml(routesAttribute(routes || []))}">${slots.default || ''}</sf-composition-scope>`,
+  'layout.area': ({ node, slots }) => `<div data-sf-composition-area=""${id(node)}>${slots.default || ''}</div>`,
   'content.document': ({ node, slots }) => `<article${id(node)}>${node.data?.title ? `<h1>${escapeHtml(node.data.title)}</h1>` : ''}${slots.default || ''}</article>`,
   'content.list': ({ node, slots }) => {
     const ordered = node.props?.ordered === true;
@@ -651,8 +764,12 @@ export async function render(document, context = {}) {
   const normalized = await normalize(document, registry, context.options || {});
   if (!normalized.document) return { html: '', assets: [], hydration: [], diagnostics: normalized.diagnostics, digest: null };
   const diagnostics = [];
+  const notices = [...(normalized.notices || [])].filter((entry) => !entry.code.startsWith('modifier'));
   const hydration = [];
   const routes = resolveRoutes(normalized.document.root, registry, normalizePorts(context.options?.ports), []);
+  // The data of the blocks that declare it, resolved before drawing (data.mjs).
+  const data = await resolveData(normalized.document.root, registry, context, validateJsonSchema);
+  diagnostics.push(...data.diagnostics);
   // The page's content for a layout's content.outlet: a structured-content
   // Document, rendered with the same registry; its assets and diagnostics
   // join the layout's.
@@ -670,19 +787,43 @@ export async function render(document, context = {}) {
       diagnostics.push(...page.diagnostics.map((entry) => ({ ...entry, path: `$.content${entry.path.startsWith('$') ? entry.path.slice(1) : `:${entry.path}`}` })));
     }
   }
-  const renderNode = async (node) => {
+  const renderNode = async (node, depth = 0) => {
     const manifest = registry.types.get(node.type);
+    // A site block draws its type's current tree with the instance's values
+    // and texts (composed.mjs); the instance stays one node of the Document.
+    if (isComposed(manifest)) {
+      if (depth >= MAX_COMPOSED_DEPTH) return '';
+      const expanded = expandComposed(node, manifest);
+      const inner = await resolveData(expanded, registry, context, validateJsonSchema);
+      for (const [id, entry] of inner.byNode) data.byNode.set(id, entry);
+      data.links.push(...inner.links);
+      diagnostics.push(...inner.diagnostics);
+      return renderNode(expanded, depth + 1);
+    }
     const slots = {};
     for (const [name, children] of Object.entries(node.slots || {})) {
       const rendered = [];
-      for (const child of children) rendered.push(await renderNode(child));
+      for (const child of children) rendered.push(await renderNode(child, depth));
       slots[name] = rendered.join('');
       slots[`${name}List`] = rendered;
     }
     const resolvedBindings = {};
-    for (const binding of node.bindings || []) {
-      if (context.resolveBinding) resolvedBindings[binding.target] = await context.resolveBinding(binding, { document: normalized.document, node });
+    let bindingStates;
+    if (takesData(manifest)) {
+      const entry = data.byNode.get(node.id) || { values: {}, states: {} };
+      Object.assign(resolvedBindings, entry.values);
+      bindingStates = entry.states;
+    } else {
+      for (const binding of node.bindings || []) {
+        if (context.resolveBinding) resolvedBindings[binding.target] = await context.resolveBinding(binding, { document: normalized.document, node });
+      }
     }
+    // Layout parameters and the block's own modifiers become SIMAI Framework
+    // utilities on the block's element (utilities.mjs).
+    const own = modifierNotices(node, { rules: context.options?.utilityRules });
+    notices.push(...own.notices);
+    const byPart = utilityPartClasses(node, manifest);
+    const utilities = [...new Set([...(byPart[''] || []), ...own.kept])];
     let renderer = registry.renderers.get(manifest.renderer.name) || BUILTIN_RENDERERS[manifest.renderer.name];
     if (!renderer && manifest.renderer.kind === 'custom-element' && manifest.renderer.name) {
       renderer = ({ node: current, slots: currentSlots, endpoint }) => {
@@ -697,11 +838,148 @@ export async function render(document, context = {}) {
       return '';
     }
     if (node.type === 'layout.scope') hydration.push({ id: node.id, type: node.type, element: 'sf-composition-scope' });
-    return renderer({ node, slots, context, resolvedBindings, manifest, routes: routes.get(node.id), endpoint: endpointName(node), outlet: node.type === 'content.outlet' ? outlet : undefined, locale: normalized.document.locale ?? 'en' });
+    // The smart elements a block may print, held to their manifests (elements.mjs).
+    const elements = {
+      print: (name, inputs) => {
+        const printed = printElementWith(name, inputs, validateJsonSchema, `node:${node.id}`);
+        diagnostics.push(...printed.diagnostics);
+        return printed.html;
+      },
+    };
+    const html = await renderer({ node, slots, context, elements, resolvedBindings, ...(bindingStates ? { bindingStates } : {}), utilities, manifest, routes: routes.get(node.id), endpoint: endpointName(node), outlet: node.type === 'content.outlet' ? outlet : undefined, locale: normalized.document.locale ?? 'en' });
+    let drawn = withClasses(html, node.id, utilities);
+    // A parameter that reaches an inner element (a set's part): the renderer
+    // marks it data-sf-composition-part; classes for a part it did not draw
+    // are reported, never placed elsewhere.
+    for (const [part, classes] of Object.entries(byPart)) {
+      if (part === '' || !classes.length) continue;
+      const placed = withPartClasses(drawn, node.id, part, classes);
+      if (placed.found) drawn = placed.html;
+      else notices.push(diagnostic('utility_part_missing', `node:${node.id}`, `${node.type} draws no ${part} part; ${classes.join(' ')} is left out`, { part }));
+    }
+    return drawn;
   };
   const html = await renderNode(normalized.document.root);
   const assets = outletAssets.length ? [...new Set([...normalized.dependencies.assets, ...outletAssets])].sort() : normalized.dependencies.assets;
-  return { html, assets, hydration, diagnostics, digest: normalized.digest };
+  return {
+    html,
+    assets,
+    hydration,
+    diagnostics,
+    digest: normalized.digest,
+    ...(notices.length ? { notices } : {}),
+    ...(data.links.length ? { runtime: data.links } : {}),
+  };
+}
+
+// ------------------------------------------------- one block editor (2026-11-03)
+
+const fits = (value, schema) => {
+  const problems = [];
+  const responsive = isResponsive(schema) && isBreakpointValue(value);
+  if (responsive) for (const entry of Object.values(value)) validateJsonSchema(entry, valueSchema(schema), '$', problems);
+  else validateJsonSchema(value, schema, '$', problems);
+  return problems.length === 0;
+};
+
+/**
+ * The problems of a type manifest's additive fields (catalogue, variants,
+ * slot words and groups, layout utilities, data bindings, runtime states, a
+ * site block's tree): {valid, diagnostics}. Each variant is made into a node
+ * and validated as a Document of the type's first profile.
+ */
+export function validateTypeManifest(manifest, registry = undefined, options = {}) {
+  const diagnostics = [];
+  if (!isPlainObject(manifest) || !isSchema(manifest, 'simai.composition.type-manifest', 1)) return { valid: false, diagnostics: [diagnostic('composition_manifest_invalid', '$', 'A type manifest is simai.composition.type-manifest with schema_version 1')] };
+  diagnostics.push(...validateCatalogueFields(manifest));
+  diagnostics.push(...validateParameterSets(manifest));
+  diagnostics.push(...validateUtilityDeclarations(expandParameterSets(manifest)));
+  diagnostics.push(...validateDataDeclarations(manifest, options.shapes));
+  let resolved = normalizeRegistry(registry);
+  if (resolved.types.get(manifest.type) !== manifest) {
+    const others = [...resolved.types.values()].filter((entry) => entry.type !== manifest.type);
+    resolved = { types: new Map([...others, expandParameterSets(manifest)].map((entry) => [entry.type, entry])), renderers: resolved.renderers };
+  }
+  if (isComposed(manifest)) {
+    const again = defineComposed({ ...manifest, root: manifest.composed.root }, resolved, (document, current) => validate(document, current, options));
+    diagnostics.push(...again.diagnostics.map((entry) => ({ ...entry, path: entry.path.startsWith('$.root') ? `$.composed${entry.path.slice(1)}` : entry.path })));
+    if (again.manifest && stableStringify(again.manifest.props_schema) !== stableStringify(manifest.props_schema)) diagnostics.push(diagnostic('composed_schema_drift', '$.props_schema', 'The exposed parameters do not match the tree: make the manifest with defineComposedType'));
+    if (manifest.renderer?.kind !== 'builtin' || manifest.renderer?.name !== 'composed') diagnostics.push(diagnostic('composed_renderer_invalid', '$.renderer', 'A site block is drawn by the builtin renderer composed'));
+  } else if (manifest.exposed !== undefined) diagnostics.push(diagnostic('composed_exposed_without_tree', '$.exposed', 'Only a site block (composed) exposes parameters'));
+  if (Array.isArray(manifest.variants) && !diagnostics.some((entry) => entry.code.startsWith('variant'))) {
+    for (const variant of manifest.variants) {
+      const node = instantiateVariant(manifest, variant.id, { id: `variant-${variant.id}` });
+      const checked = validate({ ...schemaFields('simai.composition.document', 1), id: 'variant-probe', profile: manifest.profiles[0], root: node }, resolved, options);
+      diagnostics.push(...checked.diagnostics.map((entry) => ({ ...entry, path: `$.variants.${variant.id}${entry.path.replace(/^\$\.root/u, '')}` })));
+    }
+  }
+  return { valid: diagnostics.length === 0, diagnostics };
+}
+
+/** A site block's type manifest from what the block builder saved (composed.mjs). */
+export function defineComposedType(definition, registry = undefined, options = {}) {
+  return defineComposed(definition, normalizeRegistry(registry), (document, current) => validate(document, current, options));
+}
+
+/**
+ * A site block's parameter form: its exposed list with the target types'
+ * editor fields (composed.mjs composedEditorManifest). With an instance it
+ * also projects the instance's values, as projectEditorFields does for a type
+ * of code: {manifest, origins, fields, diagnostics, valid}.
+ */
+export function composedEditorFields(manifest, instance = undefined, options = {}) {
+  const registry = normalizeRegistry(options.registry);
+  const editors = [...BUILTIN_EDITOR_MANIFESTS, ...(options.editorManifests || [])];
+  const made = composedEditorManifestWith(manifest, registry, editors);
+  if (!made.manifest) return { valid: false, manifest: null, origins: {}, fields: [], diagnostics: made.diagnostics };
+  const projected = projectEditorFields(made.manifest, manifest, instance || { id: '', type: manifest.type }, options);
+  const diagnostics = [...made.diagnostics, ...projected.diagnostics];
+  return { valid: diagnostics.length === 0, manifest: made.manifest, origins: made.origins, fields: projected.fields, diagnostics };
+}
+
+/** Every instance of a site block moved to its type's current version; what the new version no longer has is reported. */
+export function upgradeComposed(document, registry = undefined) {
+  return upgradeComposedWith(document, normalizeRegistry(registry), fits);
+}
+
+/** The markup of a smart element a block prints, from its manifest inputs: {html, diagnostics} (elements.mjs). */
+export function printElement(name, inputs = {}) {
+  return printElementWith(name, inputs, validateJsonSchema);
+}
+
+/** The problems of the smart elements in HTML a renderer wrote: attributes their manifests do not take (elements.mjs). */
+export function checkPrintedElements(html) {
+  return checkPrintedElementsWith(html, validateJsonSchema);
+}
+
+/** The problems of a host's answer to one source-port request. */
+export function checkSourceAnswer(request, answer, options = {}) {
+  return checkSourceAnswerWith(request, answer, { ...options, check: validateJsonSchema });
+}
+
+/**
+ * The source port over a host's three functions {sources(shape),
+ * fields(source), preview(binding, {settings, shape})}: each answer is checked
+ * before an editor reads it. resolveBinding draws the editor's preview through
+ * the port: render(document, {resolveBinding: port.resolveBinding, preview: true}).
+ */
+export function createSourcePort(host, options = {}) {
+  if (!host || ['sources', 'fields', 'preview'].some((name) => typeof host[name] !== 'function')) throw new TypeError('composition_source_port_incomplete');
+  const answered = async (request, answer, extra = {}) => {
+    const problems = checkSourceAnswer(request, answer, { ...options, ...extra });
+    if (problems.length) {
+      const error = new TypeError(`composition_source_answer_invalid:${request}`);
+      error.diagnostics = problems;
+      throw error;
+    }
+    return answer;
+  };
+  return Object.freeze({
+    sources: async (shape) => answered('sources', await host.sources(shape)),
+    fields: async (source) => answered('fields', await host.fields(source)),
+    preview: async (binding, { settings = {}, shape } = {}) => answered('preview', await host.preview(binding, { settings, shape }), { shape }),
+    resolveBinding: async (binding, { shape, settings } = {}) => host.preview(binding, { settings: settings || {}, shape }),
+  });
 }
 
 export const Composition = Object.freeze({
@@ -742,6 +1020,47 @@ export const Composition = Object.freeze({
   stableStringify,
   validate,
   validateEditorManifest,
+  // One block editor (2026-11-03): catalogue, layout utilities, own
+  // modifiers, site blocks, named places and data.
+  BINDING_STATES,
+  BUILTIN_CATALOGUE,
+  CATALOGUE_GROUPS,
+  CATALOGUE_TABS,
+  DATA_SHAPES,
+  SOURCE_PORT,
+  UTILITY_BREAKPOINTS,
+  bindingSettings,
+  catalogue,
+  catalogueEntry,
+  checkModifiers,
+  checkSourceAnswer,
+  composedEditorFields,
+  composedInstance,
+  composedPart,
+  composedTextPaths,
+  createShapeRegistry,
+  createSourcePort,
+  defineComposedType,
+  demoData,
+  PARAMETER_SETS,
+  PRINTED_ELEMENTS,
+  checkPrintedElements,
+  elementInputs,
+  expandParameterSets,
+  parameterSetFields,
+  printElement,
+  withParameterSetFields,
+  expandComposed,
+  instantiateVariant,
+  ownModifiers,
+  slotAccepts,
+  slotPlaces,
+  upgradeComposed,
+  utilityClasses,
+  utilityClassSpace,
+  utilityPartClasses,
+  validateTypeManifest,
+  valuesByBreakpoint,
 });
 
 if (typeof globalThis !== 'undefined') {
@@ -762,3 +1081,9 @@ export { BUILTIN_PORT_MANIFESTS, VALUE_TYPES, checkPortValue, createPortRegistry
 export { FRAGMENT_DESCRIPTOR_SCHEMA, checkFragmentDescriptor, defineFragmentBoundary, definePageHost, publishEffects };
 export { INLINE_MARKS, inlineText, marksIn, normalizeInline, replaceRange, setLink, startInlineEdit, toggleMark };
 export { BUILTIN_FIELD_KINDS, applyFieldValue, parseFieldSubmission, renderFieldFallback, resolveFieldKind, validateFieldKinds, validateFieldValue };
+export { MODIFIERS_EXTENSION, UTILITY_BREAKPOINTS, checkModifiers, ownModifiers, utilityClassSpace, utilityClasses, valuesByBreakpoint };
+export { BUILTIN_CATALOGUE, CATALOGUE_GROUPS, CATALOGUE_TABS, catalogue, catalogueEntry, instantiateVariant, slotAccepts, slotPlaces };
+export { COMPOSED_EXTENSION, composedInstance, composedPart, composedTextPaths, expandComposed };
+export { BINDING_STATES, DATA_EXTENSION, DATA_SHAPES, RUNTIME_OWNER, SOURCE_PORT, bindingSettings, createShapeRegistry, demoData };
+export { PARAMETER_SETS, PARAMETER_SET_NAMES, expandParameterSets, parameterSetFields, parameterSetParts, utilityPartClasses, validateParameterSets, withParameterSetFields };
+export { PRINTED_ELEMENTS, elementInputs };

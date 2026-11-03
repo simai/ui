@@ -120,10 +120,6 @@
     --sf-lookup--background-color: var(--sf-surface-container-hover);
   }
   /* Typing in it: sf-input's focus surface. */
-  .sf-lookup.sf-lookup--bordered:not(.error):not(.sf-lookup--readonly)[\:has\(.sf-lookup-input\:focus\)] .sf-lookup-frame {
-    --sf-lookup--background-color: var(--sf-transparent-for-focus);
-    --sf-lookup--border-color: var(--sf-outline);
-  }
   .sf-lookup.sf-lookup--bordered:not(.error):not(.sf-lookup--readonly):has(.sf-lookup-input:focus) .sf-lookup-frame {
     --sf-lookup--background-color: var(--sf-transparent-for-focus);
     --sf-lookup--border-color: var(--sf-outline);
@@ -137,15 +133,7 @@
     --sf-lookup--border-color: var(--sf-outline);
   }
   /* The keyboard ring is the frame's; a click into it draws none, as on sf-input. */
-  .sf-lookup:not(.sf-lookup--pointer-focus)[\:has\(.sf-lookup-input.focus-visible\)] .sf-lookup-frame {
-    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-    outline-offset: var(--sf-focus--offset);
-  }
   .sf-lookup:not(.sf-lookup--pointer-focus):has(.sf-lookup-input.focus-visible) .sf-lookup-frame {
-    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-    outline-offset: var(--sf-focus--offset);
-  }
-  .sf-lookup:not(.sf-lookup--pointer-focus)[\:has\(.sf-lookup-input\:focus-visible\)] .sf-lookup-frame {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
     outline-offset: var(--sf-focus--offset);
   }
@@ -383,18 +371,6 @@
     min-width: 0;
     min-inline-size: 0;
   }
-  .sf-lookup .sf-lookup-state[\:has\(.sf-lookup-state-text\)] {
-    padding-top: var(--sf-lookup--row-padding-block);
-    padding-bottom: var(--sf-lookup--row-padding-block);
-    padding-block: var(--sf-lookup--row-padding-block);
-  }
-  .sf-lookup .sf-lookup-state[\:has\(.sf-lookup-state-text\)] {
-    padding-top: var(--sf-lookup--row-padding-block);
-    padding-bottom: var(--sf-lookup--row-padding-block);
-    padding-top: var(--sf-lookup--row-padding-block);
-    padding-bottom: var(--sf-lookup--row-padding-block);
-    padding-block: var(--sf-lookup--row-padding-block);
-  }
   .sf-lookup .sf-lookup-state:has(.sf-lookup-state-text) {
     padding-top: var(--sf-lookup--row-padding-block);
     padding-bottom: var(--sf-lookup--row-padding-block);
@@ -433,15 +409,7 @@
     }
   }
   @media (forced-colors: active) {
-    .sf-lookup:not(.sf-lookup--pointer-focus)[\:has\(.sf-lookup-input.focus-visible\)] .sf-lookup-frame {
-      outline: var(--sf-focus-outline-width) solid currentColor;
-      outline-offset: var(--sf-focus-outline-width);
-    }
     .sf-lookup:not(.sf-lookup--pointer-focus):has(.sf-lookup-input.focus-visible) .sf-lookup-frame {
-      outline: var(--sf-focus-outline-width) solid currentColor;
-      outline-offset: var(--sf-focus-outline-width);
-    }
-    .sf-lookup:not(.sf-lookup--pointer-focus)[\:has\(.sf-lookup-input\:focus-visible\)] .sf-lookup-frame {
       outline: var(--sf-focus-outline-width) solid currentColor;
       outline-offset: var(--sf-focus-outline-width);
     }

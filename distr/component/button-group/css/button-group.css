@@ -2293,20 +2293,8 @@
      turned inwards, so it never covers the separator of its neighbour. No
      shadow is involved any more, so nothing has to be suppressed for pointer
      focus either. */
-  .sf-button-group > sf-button[\:has\(\%3E\%20.sf-button.focus-visible\)] > .sf-button,
-  .sf-button-group > .sf-button.focus-visible {
-    outline-offset: calc(var(--sf-focus--width) * -1);
-  }
   .sf-button-group > sf-button:has(> .sf-button.focus-visible) > .sf-button,
   .sf-button-group > .sf-button.focus-visible {
-    outline-offset: calc(var(--sf-focus--width) * -1);
-  }
-  .sf-button-group > sf-button[\:has\(\%3E\%20.sf-button\:focus-visible\)] > .sf-button,
-  .sf-button-group > .sf-button.focus-visible {
-    outline-offset: calc(var(--sf-focus--width) * -1);
-  }
-  .sf-button-group > sf-button[\:has\(\%3E\%20.sf-button\:focus-visible\)] > .sf-button,
-  .sf-button-group > .sf-button:focus-visible {
     outline-offset: calc(var(--sf-focus--width) * -1);
   }
   .sf-button-group > sf-button:has(> .sf-button:focus-visible) > .sf-button,
@@ -2314,26 +2302,8 @@
     outline-offset: calc(var(--sf-focus--width) * -1);
   }
   @media (forced-colors: active) {
-    .sf-button-group > sf-button[\:has\(\%3E\%20.sf-button.focus-visible\)] > .sf-button,
-    .sf-button-group > .sf-button.focus-visible {
-      outline: var(--sf-focus-outline-width) solid currentColor;
-      outline-offset: calc(var(--sf-focus-outline-width) * -1);
-      --sf-button--box-shadow: none;
-    }
     .sf-button-group > sf-button:has(> .sf-button.focus-visible) > .sf-button,
     .sf-button-group > .sf-button.focus-visible {
-      outline: var(--sf-focus-outline-width) solid currentColor;
-      outline-offset: calc(var(--sf-focus-outline-width) * -1);
-      --sf-button--box-shadow: none;
-    }
-    .sf-button-group > sf-button[\:has\(\%3E\%20.sf-button\:focus-visible\)] > .sf-button,
-    .sf-button-group > .sf-button.focus-visible {
-      outline: var(--sf-focus-outline-width) solid currentColor;
-      outline-offset: calc(var(--sf-focus-outline-width) * -1);
-      --sf-button--box-shadow: none;
-    }
-    .sf-button-group > sf-button[\:has\(\%3E\%20.sf-button\:focus-visible\)] > .sf-button,
-    .sf-button-group > .sf-button:focus-visible {
       outline: var(--sf-focus-outline-width) solid currentColor;
       outline-offset: calc(var(--sf-focus-outline-width) * -1);
       --sf-button--box-shadow: none;

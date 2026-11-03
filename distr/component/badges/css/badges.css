@@ -570,9 +570,6 @@
   initial-value: 0px;
 }
 @layer sf.components {
-  :where(.sf-avatar, .sf-icon-button, .sf-badge-anchor)[\:has\(\%3E\%20.sf-badge--anchored\)] {
-    position: relative;
-  }
   :where(.sf-avatar, .sf-icon-button, .sf-badge-anchor):has(> .sf-badge--anchored) {
     position: relative;
   }

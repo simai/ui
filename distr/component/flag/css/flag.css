@@ -49,9 +49,6 @@
   }
   /* While the file is still coming, the box holds its place instead of letting
      the line jump. */
-  .sf-flag[\:not-has\(img\,\%20svg\)] {
-    background-color: var(--sf-surface-container);
-  }
   .sf-flag:not(:has(img, svg)) {
     background-color: var(--sf-surface-container);
   }

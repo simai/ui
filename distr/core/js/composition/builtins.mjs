@@ -1,6 +1,9 @@
 import { inlineComponentSchemas } from './inline-model.mjs';
 import { REGION_ACCEPTS, REGION_LANDMARKS, REGION_PLACEMENTS } from './regions.mjs';
 import { schemaFields } from './schema-name.mjs';
+import { parameterSetFields } from './parameter-sets.mjs';
+
+const SECTION_SETS = Object.freeze(['background', 'spacing', 'width', 'grid', 'alignment', 'breakout', 'visibility']);
 
 // Text runs, links of text runs, and since content.heading and
 // content.paragraph 1.1.0 the inline component atoms: one shape per declared
@@ -151,12 +154,17 @@ export const BUILTIN_TYPE_MANIFESTS = Object.freeze([
   {
     ...schemaFields('simai.composition.type-manifest', 1),
     type: 'layout.section',
-    version: '1.0.0',
+    // 1.1.0 (2026-11-03): the parameter sets of the one block editor --
+    // background, spacing, width, columns, alignment, edge to edge and
+    // visibility, all SIMAI Framework utilities (parameter-sets.mjs). A
+    // section without them draws as 1.0.0 did.
+    version: '1.1.0',
     category: 'layout',
     mode: 'composite',
     profiles: ['ui-layout'],
     data_schema: emptyObjectSchema,
     props_schema: emptyObjectSchema,
+    parameter_sets: SECTION_SETS,
     presentation: {
       views: ['default'],
       presets: ['surface', 'contrast'],
@@ -172,7 +180,10 @@ export const BUILTIN_TYPE_MANIFESTS = Object.freeze([
   {
     ...schemaFields('simai.composition.type-manifest', 1),
     type: 'layout.columns',
-    version: '1.0.0',
+    // 1.1.0: columns and gap take a value per screen and print SIMAI Framework
+    // grid utilities (one block editor, owner 2026-11-03); a 1.0.0 value (one
+    // integer for every screen, no gap) stays valid.
+    version: '1.1.0',
     category: 'layout',
     mode: 'composite',
     profiles: ['ui-layout'],
@@ -181,7 +192,8 @@ export const BUILTIN_TYPE_MANIFESTS = Object.freeze([
       type: 'object',
       additionalProperties: false,
       properties: {
-        columns: { type: 'integer', minimum: 1, maximum: 12 },
+        columns: { type: 'integer', minimum: 1, maximum: 12, default: 1, 'x-simai-utility': { class: 'grid-col-{value}', responsive: true } },
+        gap: { type: 'integer', minimum: 0, maximum: 8, 'x-simai-utility': { class: 'gap-{value}', responsive: true } },
       },
     },
     presentation: { views: ['default'], presets: [], modifiers: ['equal', 'responsive'] },
@@ -319,6 +331,35 @@ export const BUILTIN_TYPE_MANIFESTS = Object.freeze([
     renderer: { kind: 'builtin', name: 'layout.scope' },
     assets: [],
     capabilities: ['html', 'hydration', 'routing'],
+  },
+  // A text area of a layout (one block editor, owner 2026-11-03): where an
+  // author writes. A page may hold several; the rest of the layout is the
+  // designer's, and the host grants the rights. Its padding and visibility are
+  // SIMAI Framework utilities per screen (x-simai-utility, utilities.mjs),
+  // never inline styles.
+  {
+    ...schemaFields('simai.composition.type-manifest', 1),
+    type: 'layout.area',
+    version: '1.0.0',
+    category: 'layout',
+    mode: 'composite',
+    profiles: ['ui-layout'],
+    data_schema: emptyObjectSchema,
+    props_schema: {
+      type: 'object',
+      additionalProperties: false,
+      properties: {
+        padding: { type: 'integer', minimum: 0, maximum: 8, 'x-simai-utility': { class: 'p-{value}', responsive: true } },
+        hidden: { type: 'boolean', default: false, 'x-simai-utility': { values: { true: 'hidden', false: 'block' }, responsive: true } },
+      },
+    },
+    presentation: { views: ['default'], presets: [], modifiers: [] },
+    slots: {
+      default: { min: 0, max: 500, categories: ['content', 'smart'], label_key: 'sf.composition.layout_area.content', empty_key: 'sf.composition.layout_area.empty' },
+    },
+    renderer: { kind: 'builtin', name: 'layout.area' },
+    assets: [],
+    capabilities: ['html', 'content-area'],
   },
   // The root of a structured-content Document: the page's blocks in order,
   // under the page's title (the accepted content editor prototype writes
@@ -556,7 +597,7 @@ export const BUILTIN_PORT_MANIFESTS = Object.freeze([
 // One editor field of a first-edition content type: the label and help keys
 // follow the type and the key, the owner is the SIMAI Framework.
 const contentField = (type, key, plane, kind, fields) => {
-  const name = type.replace('content.', 'content_').replaceAll('-', '_');
+  const name = type.replace('.', '_').replaceAll('-', '_');
   const property = kind === 'choice' || kind === 'text' ? { type: 'string', version: 2 }
     : kind === 'integer' ? { type: 'integer', version: 1 } : { type: 'boolean', version: 1 };
   return {
@@ -587,7 +628,7 @@ export const BUILTIN_EDITOR_MANIFESTS = Object.freeze([
   {
     ...schemaFields('simai.composition.editor-manifest', 1),
     type: 'layout.section',
-    type_version: '1.0.0',
+    type_version: '1.1.0',
     fields: [
       {
         key: 'surface',
@@ -605,12 +646,14 @@ export const BUILTIN_EDITOR_MANIFESTS = Object.freeze([
         permission_hints: ['composition.node.update'],
         owner: 'simai/framework',
       },
+      // 1.1.0: the fields of its parameter sets.
+      ...parameterSetFields({ parameter_sets: SECTION_SETS }),
     ],
   },
   {
     ...schemaFields('simai.composition.editor-manifest', 1),
     type: 'layout.columns',
-    type_version: '1.0.0',
+    type_version: '1.1.0',
     fields: [
       {
         key: 'columns',
@@ -624,6 +667,21 @@ export const BUILTIN_EDITOR_MANIFESTS = Object.freeze([
         label_key: 'sf.composition.layout_columns.columns',
         help_key: 'sf.composition.layout_columns.columns_help',
         capability_hints: ['composition.props.columns'],
+        permission_hints: ['composition.node.update'],
+        owner: 'simai/framework',
+      },
+      {
+        key: 'gap',
+        plane: 'props',
+        target: 'gap',
+        property: { type: 'integer', version: 1 },
+        constraints: { min: 0, max: 8 },
+        group: 'basic',
+        visibility: 'visible',
+        default: 4,
+        label_key: 'sf.composition.layout_columns.gap',
+        help_key: 'sf.composition.layout_columns.gap_help',
+        capability_hints: ['composition.props.gap'],
         permission_hints: ['composition.node.update'],
         owner: 'simai/framework',
       },
@@ -717,6 +775,10 @@ export const BUILTIN_EDITOR_MANIFESTS = Object.freeze([
       },
     ],
   },
+  contentEditor('layout.area', [
+    contentField('layout.area', 'padding', 'props', 'integer', { constraints: { min: 0, max: 8 } }),
+    contentField('layout.area', 'hidden', 'props', 'toggle', { default: false }),
+  ]),
   contentEditor('content.list', [
     contentField('content.list', 'ordered', 'props', 'toggle', { default: false }),
     contentField('content.list', 'start', 'props', 'integer', { ...advanced, constraints: { min: 1, max: 1000000 }, default: 1 }),

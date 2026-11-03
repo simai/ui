@@ -2114,7 +2114,7 @@
   },
   {
     "name": "container/default",
-    "regex": "/^(?:container|container-flush)(?![\\s\\S])/"
+    "regex": "/^(?:container|container-(?:breakout|flush))(?![\\s\\S])/"
   },
   {
     "name": "container/lg",

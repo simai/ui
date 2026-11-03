@@ -15125,9 +15125,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _inline_model_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("e66d878fb4f8");
 /* harmony import */ var _regions_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("68efac8c1b57");
 /* harmony import */ var _schema_name_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("ac24888e7d3e");
+/* harmony import */ var _parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("18b9c76994c9");
 
 
 
+
+
+const SECTION_SETS = Object.freeze(['background', 'spacing', 'width', 'grid', 'alignment', 'breakout', 'visibility']);
 
 // Text runs, links of text runs, and since content.heading and
 // content.paragraph 1.1.0 the inline component atoms: one shape per declared
@@ -15278,12 +15282,17 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
   {
     ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_2__.schemaFields)('simai.composition.type-manifest', 1),
     type: 'layout.section',
-    version: '1.0.0',
+    // 1.1.0 (2026-11-03): the parameter sets of the one block editor --
+    // background, spacing, width, columns, alignment, edge to edge and
+    // visibility, all SIMAI Framework utilities (parameter-sets.mjs). A
+    // section without them draws as 1.0.0 did.
+    version: '1.1.0',
     category: 'layout',
     mode: 'composite',
     profiles: ['ui-layout'],
     data_schema: emptyObjectSchema,
     props_schema: emptyObjectSchema,
+    parameter_sets: SECTION_SETS,
     presentation: {
       views: ['default'],
       presets: ['surface', 'contrast'],
@@ -15299,7 +15308,10 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
   {
     ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_2__.schemaFields)('simai.composition.type-manifest', 1),
     type: 'layout.columns',
-    version: '1.0.0',
+    // 1.1.0: columns and gap take a value per screen and print SIMAI Framework
+    // grid utilities (one block editor, owner 2026-11-03); a 1.0.0 value (one
+    // integer for every screen, no gap) stays valid.
+    version: '1.1.0',
     category: 'layout',
     mode: 'composite',
     profiles: ['ui-layout'],
@@ -15308,7 +15320,8 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
       type: 'object',
       additionalProperties: false,
       properties: {
-        columns: { type: 'integer', minimum: 1, maximum: 12 },
+        columns: { type: 'integer', minimum: 1, maximum: 12, default: 1, 'x-simai-utility': { class: 'grid-col-{value}', responsive: true } },
+        gap: { type: 'integer', minimum: 0, maximum: 8, 'x-simai-utility': { class: 'gap-{value}', responsive: true } },
       },
     },
     presentation: { views: ['default'], presets: [], modifiers: ['equal', 'responsive'] },
@@ -15446,6 +15459,35 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
     renderer: { kind: 'builtin', name: 'layout.scope' },
     assets: [],
     capabilities: ['html', 'hydration', 'routing'],
+  },
+  // A text area of a layout (one block editor, owner 2026-11-03): where an
+  // author writes. A page may hold several; the rest of the layout is the
+  // designer's, and the host grants the rights. Its padding and visibility are
+  // SIMAI Framework utilities per screen (x-simai-utility, utilities.mjs),
+  // never inline styles.
+  {
+    ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_2__.schemaFields)('simai.composition.type-manifest', 1),
+    type: 'layout.area',
+    version: '1.0.0',
+    category: 'layout',
+    mode: 'composite',
+    profiles: ['ui-layout'],
+    data_schema: emptyObjectSchema,
+    props_schema: {
+      type: 'object',
+      additionalProperties: false,
+      properties: {
+        padding: { type: 'integer', minimum: 0, maximum: 8, 'x-simai-utility': { class: 'p-{value}', responsive: true } },
+        hidden: { type: 'boolean', default: false, 'x-simai-utility': { values: { true: 'hidden', false: 'block' }, responsive: true } },
+      },
+    },
+    presentation: { views: ['default'], presets: [], modifiers: [] },
+    slots: {
+      default: { min: 0, max: 500, categories: ['content', 'smart'], label_key: 'sf.composition.layout_area.content', empty_key: 'sf.composition.layout_area.empty' },
+    },
+    renderer: { kind: 'builtin', name: 'layout.area' },
+    assets: [],
+    capabilities: ['html', 'content-area'],
   },
   // The root of a structured-content Document: the page's blocks in order,
   // under the page's title (the accepted content editor prototype writes
@@ -15683,7 +15725,7 @@ const BUILTIN_PORT_MANIFESTS = Object.freeze([
 // One editor field of a first-edition content type: the label and help keys
 // follow the type and the key, the owner is the SIMAI Framework.
 const contentField = (type, key, plane, kind, fields) => {
-  const name = type.replace('content.', 'content_').replaceAll('-', '_');
+  const name = type.replace('.', '_').replaceAll('-', '_');
   const property = kind === 'choice' || kind === 'text' ? { type: 'string', version: 2 }
     : kind === 'integer' ? { type: 'integer', version: 1 } : { type: 'boolean', version: 1 };
   return {
@@ -15714,7 +15756,7 @@ const BUILTIN_EDITOR_MANIFESTS = Object.freeze([
   {
     ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_2__.schemaFields)('simai.composition.editor-manifest', 1),
     type: 'layout.section',
-    type_version: '1.0.0',
+    type_version: '1.1.0',
     fields: [
       {
         key: 'surface',
@@ -15732,12 +15774,14 @@ const BUILTIN_EDITOR_MANIFESTS = Object.freeze([
         permission_hints: ['composition.node.update'],
         owner: 'simai/framework',
       },
+      // 1.1.0: the fields of its parameter sets.
+      ...(0,_parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_3__.parameterSetFields)({ parameter_sets: SECTION_SETS }),
     ],
   },
   {
     ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_2__.schemaFields)('simai.composition.editor-manifest', 1),
     type: 'layout.columns',
-    type_version: '1.0.0',
+    type_version: '1.1.0',
     fields: [
       {
         key: 'columns',
@@ -15751,6 +15795,21 @@ const BUILTIN_EDITOR_MANIFESTS = Object.freeze([
         label_key: 'sf.composition.layout_columns.columns',
         help_key: 'sf.composition.layout_columns.columns_help',
         capability_hints: ['composition.props.columns'],
+        permission_hints: ['composition.node.update'],
+        owner: 'simai/framework',
+      },
+      {
+        key: 'gap',
+        plane: 'props',
+        target: 'gap',
+        property: { type: 'integer', version: 1 },
+        constraints: { min: 0, max: 8 },
+        group: 'basic',
+        visibility: 'visible',
+        default: 4,
+        label_key: 'sf.composition.layout_columns.gap',
+        help_key: 'sf.composition.layout_columns.gap_help',
+        capability_hints: ['composition.props.gap'],
         permission_hints: ['composition.node.update'],
         owner: 'simai/framework',
       },
@@ -15844,6 +15903,10 @@ const BUILTIN_EDITOR_MANIFESTS = Object.freeze([
       },
     ],
   },
+  contentEditor('layout.area', [
+    contentField('layout.area', 'padding', 'props', 'integer', { constraints: { min: 0, max: 8 } }),
+    contentField('layout.area', 'hidden', 'props', 'toggle', { default: false }),
+  ]),
   contentEditor('content.list', [
     contentField('content.list', 'ordered', 'props', 'toggle', { default: false }),
     contentField('content.list', 'start', 'props', 'integer', { ...advanced, constraints: { min: 1, max: 1000000 }, default: 1 }),
@@ -15947,6 +16010,1122 @@ function stableStringify(value) {
 
 /***/ },
 
+/***/ "76235de72516"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BUILTIN_CATALOGUE: () => (/* binding */ BUILTIN_CATALOGUE),
+/* harmony export */   CATALOGUE_GROUPS: () => (/* binding */ CATALOGUE_GROUPS),
+/* harmony export */   CATALOGUE_TABS: () => (/* binding */ CATALOGUE_TABS),
+/* harmony export */   SLOT_EXTRA_FIELDS: () => (/* binding */ SLOT_EXTRA_FIELDS),
+/* harmony export */   catalogue: () => (/* binding */ catalogue),
+/* harmony export */   catalogueEntry: () => (/* binding */ catalogueEntry),
+/* harmony export */   groupAllowed: () => (/* binding */ groupAllowed),
+/* harmony export */   instantiateVariant: () => (/* binding */ instantiateVariant),
+/* harmony export */   slotAccepts: () => (/* binding */ slotAccepts),
+/* harmony export */   slotPlaces: () => (/* binding */ slotPlaces),
+/* harmony export */   validateCatalogueFields: () => (/* binding */ validateCatalogueFields)
+/* harmony export */ });
+/* harmony import */ var _canonical_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("6f489cc65b77");
+// The block catalogue: groups, tabs and variants of the types a registry holds
+// (one block editor, owner 2026-11-03; ui-control
+// control/ui-editor/UNIFIED-BLOCK-EDITOR.md, section 3). Additive to the type
+// manifest: `catalogue` places a type in the catalogue, `variants` names its
+// starting states, and a slot may say which groups it accepts.
+//
+// Three levels keep the catalogue small: a type is code (data, parameters,
+// renderer), a variant is a named starting state of a type (parameters, child
+// blocks, a preview), a saved block is a site's snapshot (the host's, not a
+// manifest's). A new kind of header is a variant, not a type.
+
+
+
+/** The fixed groups, in catalogue order. A product adds its own group by its namespace. */
+const CATALOGUE_GROUPS = Object.freeze(['text', 'media', 'structure', 'page-parts', 'marketing', 'data', 'forms']);
+/** The two tabs the catalogue opens on: what is written into a text flow, and what a page is built from. */
+const CATALOGUE_TABS = Object.freeze(['text', 'blocks']);
+const TEXT_TAB_GROUPS = new Set(['text', 'media']);
+const CATALOGUE_FIELDS = new Set(['group', 'tab', 'label_key', 'help_key', 'keywords', 'preview', 'order']);
+const VARIANT_FIELDS = new Set(['id', 'label_key', 'preview', 'props', 'data', 'presentation', 'slots']);
+const SLOT_EXTRA_FIELDS = new Set(['label_key', 'empty_key', 'groups']);
+const STABLE_KEY = /^[a-z][a-z0-9_]*(?:\.[a-z][a-z0-9_]*)*$/u;
+const VARIANT_ID = /^[a-z][a-z0-9-]{0,63}$/u;
+const NODE_ID = /^[A-Za-z0-9][A-Za-z0-9._:-]{0,119}$/u;
+
+// The SIMAI Framework's own types in the catalogue. Their manifests carry no
+// `catalogue` (their identities are pinned by the capability locks); a type
+// listed as null stands only inside its parent or as a root and is not offered.
+const BUILTIN_CATALOGUE = Object.freeze({
+  'layout.page': null,
+  'layout.section': 'structure',
+  'layout.columns': 'structure',
+  'layout.area': 'structure',
+  'layout.regions': null,
+  'layout.region': null,
+  'layout.scope': null,
+  'content.document': null,
+  'content.heading': 'text',
+  'content.paragraph': 'text',
+  'content.list': 'text',
+  'content.list-item': null,
+  'content.quote': 'text',
+  'content.code': 'text',
+  'content.divider': 'text',
+  'content.alert': 'text',
+  'content.math': 'text',
+  'content.table': 'data',
+  'content.figure': 'media',
+  'content.media': 'media',
+  'content.file': 'media',
+  'content.html': 'media',
+  'content.diagram': 'media',
+  'content.details': 'structure',
+  'content.tabs': 'structure',
+  'content.tab': null,
+  'content.steps': 'structure',
+  'content.step': null,
+  'content.grid': 'structure',
+  'content.card': 'structure',
+  'content.outlet': null,
+});
+
+// Documents and manifests are JSON: a copy through JSON is a deep copy.
+const clone = (value) => (value === undefined ? undefined : JSON.parse(JSON.stringify(value)));
+const diagnostic = (code, path, message) => ({ code, path, message });
+const namespaceOf = (type) => String(type || '').split('.')[0];
+
+/** Whether a group name may stand in a type's catalogue entry: a fixed group, or the type's own namespace. */
+function groupAllowed(group, type) {
+  return CATALOGUE_GROUPS.includes(group) || (typeof group === 'string' && group === namespaceOf(type));
+}
+
+/**
+ * A type's catalogue entry, or null when the type is not offered:
+ * {type, group, tab, label_key?, help_key?, keywords, preview?, order, variants}.
+ * A product type without `catalogue` falls into its namespace's group.
+ */
+function catalogueEntry(manifest) {
+  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(manifest)) return null;
+  const own = (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(manifest.catalogue) ? manifest.catalogue : null;
+  let group = own?.group;
+  if (group === undefined) {
+    if (Object.hasOwn(BUILTIN_CATALOGUE, manifest.type)) group = BUILTIN_CATALOGUE[manifest.type];
+    else group = namespaceOf(manifest.type);
+  }
+  if (!group) return null;
+  const tab = own?.tab ?? (TEXT_TAB_GROUPS.has(group) ? 'text' : 'blocks');
+  return (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.canonical)({
+    type: manifest.type,
+    version: manifest.version,
+    group,
+    tab,
+    ...(own?.label_key ? { label_key: own.label_key } : {}),
+    ...(own?.help_key ? { help_key: own.help_key } : {}),
+    keywords: (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(own?.keywords) ? own.keywords : {},
+    ...(own?.preview ? { preview: own.preview } : {}),
+    order: Number.isInteger(own?.order) ? own.order : 500,
+    variants: (Array.isArray(manifest.variants) ? manifest.variants : []).map((variant) => ({
+      id: variant.id,
+      label_key: variant.label_key,
+      ...(variant.preview ? { preview: variant.preview } : {}),
+    })),
+  });
+}
+
+/**
+ * The catalogue of a registry: every offered type, by tab and group, in order.
+ * With `{parent, slot}` only the types that place accepts (hidden, not
+ * greyed: a mail column accepts no video); a tab with nothing is left out.
+ */
+function catalogue(registry, place = {}) {
+  const types = registry?.types instanceof Map ? [...registry.types.values()] : [];
+  let entries = types.map(catalogueEntry).filter(Boolean);
+  if (place.parent) {
+    const parent = registry.types.get(place.parent);
+    entries = entries.filter((entry) => slotAccepts(registry, parent, place.slot ?? 'default', entry.type));
+  }
+  if (place.profile) entries = entries.filter((entry) => registry.types.get(entry.type).profiles.includes(place.profile));
+  entries.sort((left, right) => left.order - right.order || left.type.localeCompare(right.type));
+  const tabs = {};
+  for (const entry of entries) {
+    tabs[entry.tab] ||= {};
+    (tabs[entry.tab][entry.group] ||= []).push(entry);
+  }
+  return { entries, tabs };
+}
+
+/**
+ * Whether a slot of a type accepts a child type: its `types`, its
+ * `categories` and, when it declares them, its catalogue `groups`.
+ */
+function slotAccepts(registry, parentManifest, slotName, childType) {
+  const slot = parentManifest?.slots?.[slotName];
+  const child = registry?.types instanceof Map ? registry.types.get(childType) : undefined;
+  if (!slot || !child) return false;
+  if (parentManifest.mode === 'leaf') return false;
+  if (slot.types && !slot.types.includes(childType)) return false;
+  if (slot.categories && !slot.categories.includes(child.category)) return false;
+  if (slot.groups) {
+    const entry = catalogueEntry(child);
+    if (!entry || !slot.groups.includes(entry.group)) return false;
+  }
+  return true;
+}
+
+/** The named places of a type: each slot with what it accepts and its words. */
+function slotPlaces(manifest) {
+  return Object.entries((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(manifest?.slots) ? manifest.slots : {}).map(([name, slot]) => (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.canonical)({
+    name,
+    min: slot.min,
+    max: slot.max,
+    ...(slot.types ? { types: slot.types } : {}),
+    ...(slot.categories ? { categories: slot.categories } : {}),
+    ...(slot.groups ? { groups: slot.groups } : {}),
+    ...(slot.label_key ? { label_key: slot.label_key } : {}),
+    ...(slot.empty_key ? { empty_key: slot.empty_key } : {}),
+  }));
+}
+
+function cloneWithIds(node, map, makeId) {
+  const next = { ...node, id: makeId(node.id) };
+  map.set(node.id, next.id);
+  if ((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(node.slots)) {
+    next.slots = Object.fromEntries(Object.entries(node.slots).map(([name, children]) => [name, (children || []).map((child) => cloneWithIds(child, map, makeId))]));
+  }
+  return next;
+}
+
+function rewriteLinks(node, map) {
+  if (Array.isArray(node.bindings)) {
+    node.bindings = node.bindings.map((binding) => {
+      if (binding.owner !== 'section' || typeof binding.ref !== 'string') return binding;
+      const [from, state] = binding.ref.split('#');
+      return map.has(from) ? { ...binding, ref: `${map.get(from)}#${state}` } : binding;
+    });
+  }
+  for (const children of Object.values(node.slots || {})) for (const child of children) rewriteLinks(child, map);
+}
+
+/**
+ * A node made from a type's variant, ready to insert: the variant's props,
+ * data, presentation and child blocks, every child with a new id
+ * (`<id>-<variant child id>` unless `makeId` says otherwise) and the runtime
+ * links between them rewritten to the new ids.
+ */
+function instantiateVariant(manifest, variantId, options = {}) {
+  const variant = (manifest?.variants || []).find((entry) => entry.id === variantId);
+  if (!variant) throw new TypeError(`composition_variant_unknown:${manifest?.type}:${variantId}`);
+  const id = options.id ?? `${namespaceOf(manifest.type)}-${variantId}`;
+  const makeId = options.makeId ?? ((childId) => `${id}-${childId}`);
+  const source = clone({
+    id,
+    type: manifest.type,
+    ...(variant.props ? { props: variant.props } : {}),
+    ...(variant.data ? { data: variant.data } : {}),
+    ...(variant.presentation ? { presentation: variant.presentation } : {}),
+    ...(variant.slots ? { slots: variant.slots } : {}),
+  });
+  const map = new Map();
+  const node = { ...source };
+  if ((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(source.slots)) {
+    node.slots = Object.fromEntries(Object.entries(source.slots).map(([name, children]) => [name, children.map((child) => cloneWithIds(child, map, makeId))]));
+  }
+  rewriteLinks(node, map);
+  return node;
+}
+
+/** The problems of a type manifest's catalogue, variants and slot words (validate decides whether each variant is a valid node). */
+function validateCatalogueFields(manifest) {
+  const diagnostics = [];
+  if (manifest.catalogue !== undefined) {
+    const entry = manifest.catalogue;
+    if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(entry)) diagnostics.push(diagnostic('catalogue_invalid', '$.catalogue', 'catalogue is an object'));
+    else {
+      for (const key of Object.keys(entry)) if (!CATALOGUE_FIELDS.has(key)) diagnostics.push(diagnostic('catalogue_invalid', `$.catalogue.${key}`, `Unknown catalogue field ${key}`));
+      if (!groupAllowed(entry.group, manifest.type)) diagnostics.push(diagnostic('catalogue_group_unknown', '$.catalogue.group', `A group is one of ${CATALOGUE_GROUPS.join(', ')}, or the type's namespace ${namespaceOf(manifest.type)}`));
+      if (entry.tab !== undefined && !CATALOGUE_TABS.includes(entry.tab)) diagnostics.push(diagnostic('catalogue_tab_unknown', '$.catalogue.tab', 'A tab is text or blocks'));
+      for (const key of ['label_key', 'help_key']) if (entry[key] !== undefined && !STABLE_KEY.test(entry[key])) diagnostics.push(diagnostic('catalogue_word_invalid', `$.catalogue.${key}`, 'A word is a stable key'));
+      if (entry.keywords !== undefined && (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(entry.keywords) || Object.entries(entry.keywords).some(([locale, words]) => !/^[a-z]{2,8}$/u.test(locale) || !Array.isArray(words) || words.length > 20 || words.some((word) => typeof word !== 'string' || !word || word.length > 60)))) {
+        diagnostics.push(diagnostic('catalogue_keywords_invalid', '$.catalogue.keywords', 'keywords are up to 20 words per locale'));
+      }
+      if (entry.order !== undefined && (!Number.isInteger(entry.order) || entry.order < 0 || entry.order > 1000)) diagnostics.push(diagnostic('catalogue_order_invalid', '$.catalogue.order', 'order is 0 to 1000'));
+      if (entry.preview !== undefined && (typeof entry.preview !== 'string' || !entry.preview || entry.preview.length > 2048)) diagnostics.push(diagnostic('catalogue_preview_invalid', '$.catalogue.preview', 'preview is an image address'));
+    }
+  }
+  if (manifest.variants !== undefined) {
+    if (!Array.isArray(manifest.variants) || manifest.variants.length > 50) diagnostics.push(diagnostic('variants_invalid', '$.variants', 'variants is a list of up to 50'));
+    else {
+      const ids = new Set();
+      manifest.variants.forEach((variant, index) => {
+        const at = `$.variants[${index}]`;
+        if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(variant)) return diagnostics.push(diagnostic('variant_invalid', at, 'A variant is an object'));
+        for (const key of Object.keys(variant)) if (!VARIANT_FIELDS.has(key)) diagnostics.push(diagnostic('variant_invalid', `${at}.${key}`, `Unknown variant field ${key}`));
+        if (!VARIANT_ID.test(variant.id ?? '')) diagnostics.push(diagnostic('variant_id_invalid', `${at}.id`, 'A variant id is lowercase words joined by hyphens'));
+        else if (ids.has(variant.id)) diagnostics.push(diagnostic('variant_id_duplicate', `${at}.id`, `Duplicate variant ${variant.id}`));
+        else ids.add(variant.id);
+        if (!STABLE_KEY.test(variant.label_key ?? '')) diagnostics.push(diagnostic('variant_word_invalid', `${at}.label_key`, 'A variant names its word'));
+        if (variant.preview !== undefined && (typeof variant.preview !== 'string' || !variant.preview)) diagnostics.push(diagnostic('variant_preview_invalid', `${at}.preview`, 'preview is an image address'));
+        const childIds = new Set();
+        const visit = (node, path) => {
+          if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(node) || !NODE_ID.test(node.id ?? '')) return diagnostics.push(diagnostic('variant_child_invalid', path, 'A child block is a node with an id'));
+          if (childIds.has(node.id)) diagnostics.push(diagnostic('variant_child_id_duplicate', `${path}.id`, `Duplicate child id ${node.id}`));
+          childIds.add(node.id);
+          for (const [name, children] of Object.entries((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(node.slots) ? node.slots : {})) (children || []).forEach((child, at2) => visit(child, `${path}.slots.${name}[${at2}]`));
+          return undefined;
+        };
+        for (const [name, children] of Object.entries((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(variant.slots) ? variant.slots : {})) (Array.isArray(children) ? children : []).forEach((child, at2) => visit(child, `${at}.slots.${name}[${at2}]`));
+      });
+    }
+  }
+  for (const [name, slot] of Object.entries((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(manifest.slots) ? manifest.slots : {})) {
+    if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(slot)) continue;
+    for (const key of ['label_key', 'empty_key']) if (slot[key] !== undefined && !STABLE_KEY.test(slot[key])) diagnostics.push(diagnostic('slot_word_invalid', `$.slots.${name}.${key}`, 'A word is a stable key'));
+    if (slot.groups !== undefined && (!Array.isArray(slot.groups) || !slot.groups.length || slot.groups.some((group) => typeof group !== 'string' || !/^[a-z][a-z0-9-]*$/u.test(group)))) diagnostics.push(diagnostic('slot_groups_invalid', `$.slots.${name}.groups`, 'groups is a list of catalogue groups'));
+  }
+  return diagnostics;
+}
+
+
+
+
+/***/ },
+
+/***/ "e2cb52b018e5"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   COMPOSED_EXTENSION: () => (/* binding */ COMPOSED_EXTENSION),
+/* harmony export */   COMPOSED_RENDERER: () => (/* binding */ COMPOSED_RENDERER),
+/* harmony export */   MAX_COMPOSED_DEPTH: () => (/* binding */ MAX_COMPOSED_DEPTH),
+/* harmony export */   composedEditorManifest: () => (/* binding */ composedEditorManifest),
+/* harmony export */   composedInstance: () => (/* binding */ composedInstance),
+/* harmony export */   composedPart: () => (/* binding */ composedPart),
+/* harmony export */   composedTextPaths: () => (/* binding */ composedTextPaths),
+/* harmony export */   defineComposedType: () => (/* binding */ defineComposedType),
+/* harmony export */   expandComposed: () => (/* binding */ expandComposed),
+/* harmony export */   instanceVersion: () => (/* binding */ instanceVersion),
+/* harmony export */   isComposed: () => (/* binding */ isComposed),
+/* harmony export */   textFields: () => (/* binding */ textFields),
+/* harmony export */   upgradeComposed: () => (/* binding */ upgradeComposed),
+/* harmony export */   validateComposedInstance: () => (/* binding */ validateComposedInstance)
+/* harmony export */ });
+/* harmony import */ var _canonical_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("6f489cc65b77");
+/* harmony import */ var _schema_name_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("ac24888e7d3e");
+// Site blocks: a type made of existing blocks (one block editor, owner
+// 2026-11-03; ui-control control/ui-editor/UNIFIED-BLOCK-EDITOR.md, section 6).
+//
+// The block builder composes a tree of existing blocks, marks the parameters
+// an author may set (`exposed`: a key, the path of a node in the tree and the
+// target there), and saves it as a type with a version (`site.*` in a site's
+// catalogue). On a page the block is closed: an instance is its type, the
+// version it was written against, and what differs -- the exposed values in
+// `props` and the texts by path in `data.texts`. A new version of the type
+// reaches every instance, because the tree is read from the type; the
+// author's texts and values stay. upgradeComposed moves an instance to the
+// current version and reports what the new version no longer has.
+//
+// Nothing here is a new Document format: an instance is a node of
+// composition-document v1 and the type is a type manifest with two more
+// fields (`composed`, `exposed`).
+
+
+
+
+const COMPOSED_EXTENSION = 'simai.composition:composed';
+const COMPOSED_RENDERER = 'composed';
+const MAX_COMPOSED_DEPTH = 8;
+const KEY = /^[a-z][a-z0-9_]{0,31}$/u;
+const TEXT_PATH = /^([A-Za-z0-9][A-Za-z0-9._:-]{0,119})\/([a-z][a-z0-9_]{0,31})$/u;
+const VERSION = /^[0-9]+\.[0-9]+\.[0-9]+$/u;
+
+// The inline text of the SIMAI Framework's types, by field: what an author
+// writes in a site block. A product type's text is any data field holding
+// inline content (an array of the inline model's entries).
+const TEXT_FIELDS = Object.freeze({
+  'content.heading': ['content'],
+  'content.paragraph': ['content'],
+  'content.list-item': ['content'],
+  'content.alert': ['title'],
+  'content.step': ['title'],
+  'content.details': ['summary'],
+  'content.figure': ['caption'],
+});
+
+// Documents and manifests are JSON: a copy through JSON is a deep copy.
+const clone = (value) => (value === undefined ? undefined : JSON.parse(JSON.stringify(value)));
+const diagnostic = (code, path, message, details = {}) => ({ code, path, message, ...details });
+
+const isComposed = (manifest) => (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(manifest?.composed) && (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(manifest.composed.root);
+
+/** The text fields of a type: inline content an author writes. */
+function textFields(manifest) {
+  if (!manifest) return [];
+  if (Object.hasOwn(TEXT_FIELDS, manifest.type)) return TEXT_FIELDS[manifest.type];
+  const properties = manifest.data_schema?.properties || {};
+  return Object.keys(properties).filter((key) => properties[key]?.type === 'array' && Array.isArray(properties[key]?.items?.oneOf));
+}
+
+function walk(node, visit, path = []) {
+  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(node)) return;
+  visit(node, path);
+  for (const [slot, children] of Object.entries((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(node.slots) ? node.slots : {})) {
+    (Array.isArray(children) ? children : []).forEach((child, index) => walk(child, visit, [...path, slot, index]));
+  }
+}
+
+function nodeById(root, id) {
+  let found = null;
+  walk(root, (node) => { if (!found && node.id === id) found = node; });
+  return found;
+}
+
+/** Every text path of a site block: `<node id>/<field>`, in tree order. */
+function composedTextPaths(manifest, registry) {
+  if (!isComposed(manifest)) return [];
+  const paths = [];
+  walk(manifest.composed.root, (node) => {
+    for (const field of textFields(registry?.types?.get(node.type))) paths.push(`${node.id}/${field}`);
+  });
+  return paths;
+}
+
+/** The version a node of a site block was written against, or null when it says none. */
+function instanceVersion(node) {
+  const entry = (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(node?.extensions) ? node.extensions[COMPOSED_EXTENSION] : undefined;
+  return (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(entry) && typeof entry.version === 'string' ? entry.version : null;
+}
+
+const compareVersions = (left, right) => {
+  const a = left.split('.').map(Number);
+  const b = right.split('.').map(Number);
+  for (let index = 0; index < 3; index += 1) if (a[index] !== b[index]) return a[index] < b[index] ? -1 : 1;
+  return 0;
+};
+
+/**
+ * Makes the type manifest of a site block from what the builder saved:
+ * {type, version, category?, profiles, catalogue?, root, exposed}. The
+ * parameters an author sees take the schema of their target; their default is
+ * the value the tree holds. `validateDocument(document, registry)` checks the
+ * tree as a Document. Returns {manifest, diagnostics}.
+ */
+function defineComposedType(definition, registry, validateDocument) {
+  const diagnostics = [];
+  const push = (code, path, message) => diagnostics.push(diagnostic(code, path, message));
+  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(definition)) return { manifest: null, diagnostics: [diagnostic('composed_definition_invalid', '$', 'A site block is an object')] };
+  const { type, version, root } = definition;
+  if (typeof type !== 'string' || !/^[a-z][a-z0-9-]*(?:\.[a-z][a-z0-9-]*)+$/u.test(type)) push('composed_type_invalid', '$.type', 'A type is <owner>.<name>');
+  if (registry?.types?.has(type) && !isComposed(registry.types.get(type))) push('composed_type_taken', '$.type', `${type} is a type of code, not a site block`);
+  if (typeof version !== 'string' || !VERSION.test(version)) push('composed_version_invalid', '$.version', 'A version is major.minor.patch');
+  const profiles = Array.isArray(definition.profiles) && definition.profiles.length ? definition.profiles : ['ui-layout'];
+  const category = definition.category ?? 'layout';
+  if (!['layout', 'content', 'component', 'smart'].includes(category)) push('composed_category_invalid', '$.category', 'A category is layout, content, component or smart');
+  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(root)) push('composed_root_missing', '$.root', 'A site block is a tree of blocks');
+  if (diagnostics.length) return { manifest: null, diagnostics };
+
+  const tree = clone(root);
+  walk(tree, (node, path) => {
+    if (node.type === type) push('composed_cycle', `$.root${path.length ? `.slots.${path.join('.')}` : ''}`, 'A site block cannot hold itself');
+  });
+  const probe = { ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_1__.schemaFields)('simai.composition.document', 1), id: 'composed-probe', profile: profiles[0], root: tree };
+  if (typeof validateDocument === 'function') {
+    const checked = validateDocument(probe, registry);
+    for (const entry of checked.diagnostics) diagnostics.push({ ...entry, path: entry.path.replace(/^\$\.root/u, '$.root') });
+  }
+
+  const exposed = Array.isArray(definition.exposed) ? definition.exposed : [];
+  const properties = {};
+  const keys = new Set();
+  if (exposed.length > 50) push('composed_exposed_limit', '$.exposed', 'A site block exposes at most 50 parameters');
+  exposed.forEach((entry, index) => {
+    const at = `$.exposed[${index}]`;
+    if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(entry)) return push('composed_exposed_invalid', at, 'An exposed parameter is {key, path, target}');
+    for (const field of Object.keys(entry)) if (!['key', 'path', 'target', 'label_key'].includes(field)) push('composed_exposed_invalid', `${at}.${field}`, `Unknown field ${field}`);
+    if (!KEY.test(entry.key ?? '')) return push('composed_exposed_key_invalid', `${at}.key`, 'A key is a lowercase name');
+    if (keys.has(entry.key)) return push('composed_exposed_key_duplicate', `${at}.key`, `Duplicate key ${entry.key}`);
+    keys.add(entry.key);
+    const node = nodeById(tree, entry.path);
+    if (!node) return push('composed_exposed_path_unknown', `${at}.path`, `No block ${entry.path} in the tree`);
+    const match = /^(props|data)\.([a-z][a-z0-9_]*)$/u.exec(entry.target ?? '');
+    if (!match) return push('composed_exposed_target_invalid', `${at}.target`, 'A target is props.<name> or data.<name>');
+    const target = registry?.types?.get(node.type);
+    const schema = target?.[match[1] === 'props' ? 'props_schema' : 'data_schema']?.properties?.[match[2]];
+    if (!schema) return push('composed_exposed_target_unknown', `${at}.target`, `${node.type} has no ${entry.target}`);
+    const current = node[match[1]]?.[match[2]];
+    properties[entry.key] = (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.canonical)({ ...schema, ...(current !== undefined && typeof current !== 'object' ? { default: current } : {}) });
+    return undefined;
+  });
+  if (diagnostics.length) return { manifest: null, diagnostics };
+
+  const assets = new Set(definition.assets || []);
+  walk(tree, (node) => { for (const asset of registry?.types?.get(node.type)?.assets || []) assets.add(asset); });
+  const manifest = (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.canonical)({
+    ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_1__.schemaFields)('simai.composition.type-manifest', 1),
+    type,
+    version,
+    category,
+    mode: 'leaf',
+    profiles,
+    data_schema: { type: 'object', additionalProperties: false, properties: { texts: { type: 'object' } } },
+    props_schema: { type: 'object', additionalProperties: false, properties },
+    presentation: { views: ['default'], presets: [], modifiers: [] },
+    slots: {},
+    renderer: { kind: 'builtin', name: COMPOSED_RENDERER },
+    assets: [...assets].sort(),
+    capabilities: ['html', 'composed'],
+    ...(definition.catalogue ? { catalogue: definition.catalogue } : {}),
+    composed: { root: tree },
+    exposed: exposed.map(({ key, path, target, label_key: label }) => ({ key, path, target, ...(label ? { label_key: label } : {}) })),
+  });
+  return { manifest, diagnostics };
+}
+
+/**
+ * A site block's parameter form (dispatcher decision 2026-11-03): a site
+ * block has no editor manifest of its own. Its form is its `exposed` list,
+ * each entry taking the field the target type's editor manifest declares for
+ * that target, renamed to the exposed key and pointed at the instance's
+ * `props.<key>`. The words are the exposed label_key, else the target field's.
+ * `editorManifests` are the editor manifests a host knows (builtin and
+ * product). Returns {manifest, origins, diagnostics}: an editor manifest
+ * (editor-manifest v1, unchanged) of the site block's version, made fresh from
+ * the type each time and never stored, and for each field key the block and
+ * target it edits ({path, type, target}).
+ */
+function composedEditorManifest(manifest, registry, editorManifests) {
+  const diagnostics = [];
+  if (!isComposed(manifest)) return { manifest: null, origins: {}, diagnostics: [diagnostic('composed_type_required', '$', 'Not a site block')] };
+  const byType = new Map((editorManifests || []).map((entry) => [`${entry.type}@${entry.type_version}`, entry]));
+  const fields = [];
+  const origins = {};
+  (manifest.exposed || []).forEach((entry, index) => {
+    const at = `$.exposed[${index}]`;
+    const node = nodeById(manifest.composed.root, entry.path);
+    const target = node && registry?.types?.get(node.type);
+    if (!target) return diagnostics.push(diagnostic('composed_exposed_path_unknown', at, `No block ${entry.path} in the tree`));
+    const editor = byType.get(`${target.type}@${target.version}`);
+    const [plane, name] = String(entry.target).split('.');
+    const field = editor?.fields?.find((candidate) => candidate.plane === plane && candidate.target === name);
+    if (!field) return diagnostics.push(diagnostic('composed_editor_field_missing', at, `${target.type}@${target.version} declares no editor field for ${entry.target}; the parameter has no form field`, { key: entry.key }));
+    const value = node[plane]?.[name];
+    fields.push((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.canonical)({
+      ...field,
+      key: entry.key,
+      plane: 'props',
+      target: entry.key,
+      ...(entry.label_key ? { label_key: entry.label_key } : {}),
+      ...(value !== undefined && typeof value !== 'object' ? { default: value } : {}),
+      capability_hints: [`composition.props.${entry.key}`],
+    }));
+    origins[entry.key] = { path: entry.path, type: target.type, target: entry.target };
+    return undefined;
+  });
+  return {
+    manifest: (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.canonical)({ ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_1__.schemaFields)('simai.composition.editor-manifest', 1), type: manifest.type, type_version: manifest.version, fields }),
+    origins,
+    diagnostics,
+  };
+}
+
+/** A new instance of a site block: its type and version, nothing that differs yet. */
+function composedInstance(manifest, id) {
+  return { id, type: manifest.type, extensions: { [COMPOSED_EXTENSION]: { version: manifest.version } } };
+}
+
+/**
+ * The problems of an instance's texts and the notices of what the current
+ * version no longer has. `checkInline(content, path, diagnostics)` holds a
+ * text to the inline model and the Document's URL rule.
+ */
+function validateComposedInstance(node, manifest, registry, path, checkInline) {
+  const diagnostics = [];
+  const notices = [];
+  const texts = (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(node.data?.texts) ? node.data.texts : {};
+  const known = new Set(composedTextPaths(manifest, registry));
+  for (const [key, content] of Object.entries(texts)) {
+    const at = `${path}.data.texts.${key}`;
+    if (!TEXT_PATH.test(key)) {
+      diagnostics.push(diagnostic('composed_text_path_invalid', at, 'A text is keyed <node id>/<field>'));
+      continue;
+    }
+    checkInline(content, at, diagnostics);
+    if (!known.has(key)) notices.push(diagnostic('composed_text_orphaned', at, `${manifest.type} ${manifest.version} has no text ${key}; it is kept and not drawn`));
+  }
+  const version = instanceVersion(node);
+  const entry = (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(node.extensions) ? node.extensions[COMPOSED_EXTENSION] : undefined;
+  if (entry !== undefined && (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(entry) || !VERSION.test(entry.version ?? ''))) diagnostics.push(diagnostic('composed_version_invalid', `${path}.extensions.${COMPOSED_EXTENSION}`, 'An instance names the version it was written against'));
+  else if (version && compareVersions(version, manifest.version) > 0) notices.push(diagnostic('composed_version_newer', `node:${node.id}`, `Written against ${manifest.type} ${version}; this site has ${manifest.version}`));
+  else if (version && version !== manifest.version) notices.push(diagnostic('composed_version_behind', `node:${node.id}`, `Written against ${version}; drawn with ${manifest.version} (upgradeComposed moves it)`));
+  return { diagnostics, notices };
+}
+
+/**
+ * The tree an instance draws: the type's current tree, with the instance's
+ * exposed values and texts in place. The root takes the instance's id; every
+ * other block `<instance id>:<tree id>`, so an editor maps a click back to a
+ * text path and the instance stays one node in the Document.
+ */
+function expandComposed(node, manifest) {
+  const tree = clone(manifest.composed.root);
+  const ids = new Map();
+  walk(tree, (child) => { ids.set(child, child.id); });
+  const props = (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(node.props) ? node.props : {};
+  for (const entry of manifest.exposed || []) {
+    if (!(entry.key in props)) continue;
+    const target = nodeById(tree, entry.path);
+    const [plane, name] = entry.target.split('.');
+    if (target) target[plane] = { ...(target[plane] || {}), [name]: clone(props[entry.key]) };
+  }
+  const texts = (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(node.data?.texts) ? node.data.texts : {};
+  for (const [key, content] of Object.entries(texts)) {
+    const match = TEXT_PATH.exec(key);
+    const target = match && nodeById(tree, match[1]);
+    if (target) target.data = { ...(target.data || {}), [match[2]]: clone(content) };
+  }
+  const drawnId = (id) => (id === manifest.composed.root.id ? node.id : `${node.id}:${id}`);
+  walk(tree, (child) => {
+    child.id = drawnId(ids.get(child));
+    // A runtime link inside the block follows the ids (data.mjs: owner section).
+    if (Array.isArray(child.bindings)) {
+      child.bindings = child.bindings.map((binding) => {
+        if (binding?.owner !== 'section' || typeof binding.ref !== 'string' || !binding.ref.includes('#')) return binding;
+        const [from, state] = binding.ref.split('#');
+        return [...ids.values()].includes(from) ? { ...binding, ref: `${drawnId(from)}#${state}` } : binding;
+      });
+    }
+  });
+  if (node.extensions) {
+    const rest = Object.fromEntries(Object.entries(node.extensions).filter(([key]) => key !== COMPOSED_EXTENSION));
+    if (Object.keys(rest).length) tree.extensions = { ...(tree.extensions || {}), ...rest };
+  }
+  return tree;
+}
+
+/** The tree id and text path a drawn id of an instance stands for: {instance, node, root}. */
+function composedPart(drawnId) {
+  const at = String(drawnId).indexOf(':');
+  return at === -1 ? { instance: drawnId, node: null, root: true } : { instance: drawnId.slice(0, at), node: drawnId.slice(at + 1), root: false };
+}
+
+/**
+ * Moves every instance of a site block in a Document to the type's current
+ * version: texts whose block is gone and values the version no longer takes
+ * are dropped and reported; everything else stays. `checkValue(value,
+ * schema)` says whether a value fits a schema. Returns {document, changes}.
+ */
+function upgradeComposed(document, registry, checkValue) {
+  const next = clone(document);
+  const changes = [];
+  const visit = (node) => {
+    const manifest = registry.types.get(node.type);
+    if (isComposed(manifest)) {
+      const from = instanceVersion(node);
+      const dropped = { texts: [], values: [] };
+      const known = new Set(composedTextPaths(manifest, registry));
+      if ((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(node.data?.texts)) {
+        for (const key of Object.keys(node.data.texts)) if (!known.has(key)) { dropped.texts.push(key); delete node.data.texts[key]; }
+        if (!Object.keys(node.data.texts).length) delete node.data.texts;
+        if (node.data && !Object.keys(node.data).length) delete node.data;
+      }
+      if ((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(node.props)) {
+        for (const [key, value] of Object.entries(node.props)) {
+          const schema = manifest.props_schema.properties[key];
+          if (!schema || !checkValue(value, schema)) { dropped.values.push(key); delete node.props[key]; }
+        }
+        if (!Object.keys(node.props).length) delete node.props;
+      }
+      if (from !== manifest.version || dropped.texts.length || dropped.values.length) {
+        node.extensions = { ...(node.extensions || {}), [COMPOSED_EXTENSION]: { version: manifest.version } };
+        changes.push({ id: node.id, type: node.type, from, to: manifest.version, dropped });
+      }
+    }
+    for (const children of Object.values(node.slots || {})) for (const child of children) visit(child);
+  };
+  if ((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(next.root)) visit(next.root);
+  return { document: next, changes };
+}
+
+
+/***/ },
+
+/***/ "c6b53a101be9"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BINDING_STATES: () => (/* binding */ BINDING_STATES),
+/* harmony export */   DATA_EXTENSION: () => (/* binding */ DATA_EXTENSION),
+/* harmony export */   DATA_SHAPES: () => (/* binding */ DATA_SHAPES),
+/* harmony export */   RUNTIME_OWNER: () => (/* binding */ RUNTIME_OWNER),
+/* harmony export */   SOURCE_PORT: () => (/* binding */ SOURCE_PORT),
+/* harmony export */   bindingSettings: () => (/* binding */ bindingSettings),
+/* harmony export */   checkSourceAnswer: () => (/* binding */ checkSourceAnswer),
+/* harmony export */   createShapeRegistry: () => (/* binding */ createShapeRegistry),
+/* harmony export */   demoData: () => (/* binding */ demoData),
+/* harmony export */   normalizeShapes: () => (/* binding */ normalizeShapes),
+/* harmony export */   resolveData: () => (/* binding */ resolveData),
+/* harmony export */   shapeFields: () => (/* binding */ shapeFields),
+/* harmony export */   takesData: () => (/* binding */ takesData),
+/* harmony export */   validateDataDeclarations: () => (/* binding */ validateDataDeclarations),
+/* harmony export */   validateDataRules: () => (/* binding */ validateDataRules)
+/* harmony export */ });
+/* harmony import */ var _canonical_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("6f489cc65b77");
+/* harmony import */ var _schema_name_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("ac24888e7d3e");
+// Data for blocks: shapes, host bindings, the source port and runtime links
+// (one block editor, owner 2026-11-03; ui-control
+// control/ui-editor/UNIFIED-BLOCK-EDITOR.md, section 5).
+//
+// The rule: a block never fetches. A type says which shape of data it takes
+// (`data_bindings` in its manifest); the host says where the data comes from.
+// The node's `bindings` (composition-document v1) carry {owner, ref, target,
+// revision}; what the host needs beside them (the shape, the field mapping,
+// filter, sort, limit, the page parameter, the empty text) is the node's
+// extension `simai.composition:data`, keyed by the binding's target, and only
+// the host reads the query. A list and its pagination are linked by a runtime
+// binding: owner `section`, ref `<list node id>#<state>`, resolved by the
+// runtime inside the same section, never by the host.
+
+
+
+
+const DATA_EXTENSION = 'simai.composition:data';
+const RUNTIME_OWNER = 'section';
+/** What a data block draws: the host's answer is on its way, empty, failed, real, or demo data in the editor. */
+const BINDING_STATES = Object.freeze(['loading', 'empty', 'error', 'ready', 'preview']);
+const SETTINGS_FIELDS = new Set(['shape', 'preset', 'mapping', 'filter', 'sort', 'limit', 'page_param', 'params', 'empty_text']);
+const PARAM_SOURCES = new Set(['url', 'context', 'route']);
+const NAME = /^[a-z][a-z0-9_]{0,31}$/u;
+const MAX_FILTER_BYTES = 4000;
+
+const text = (maxLength, minLength = 0) => ({ type: 'string', ...(minLength ? { minLength } : {}), maxLength });
+const closed = (properties, required = []) => ({ type: 'object', ...(required.length ? { required } : {}), additionalProperties: false, properties });
+const image = closed({ src: text(2048, 1), alt: text(1000) }, ['src']);
+const item = closed({
+  id: text(120, 1),
+  title: text(500, 1),
+  text: text(5000),
+  url: text(2048, 1),
+  image,
+  date: text(40, 1),
+  badge: text(60, 1),
+}, ['title']);
+const link = closed({ label: text(200, 1), url: text(2048, 1), active: { type: 'boolean' } }, ['label', 'url']);
+
+// The data shapes of the SIMAI Framework: small named contracts a block takes
+// and a host answers with (bx-simai.layout calls them view types). A host
+// adds its own in its namespace (`larena.product`); it never changes these.
+const DATA_SHAPES = Object.freeze({
+  item: {
+    summary: 'One record: a title, and optionally a text, an address, a picture, a date and a badge.',
+    schema: item,
+  },
+  cards: {
+    summary: 'A list of records for cards, with the page it is when the host pages it.',
+    schema: closed({
+      items: { type: 'array', maxItems: 500, items: item },
+      total: { type: 'integer', minimum: 0 },
+      page: { type: 'integer', minimum: 1 },
+      pages: { type: 'integer', minimum: 0 },
+      per_page: { type: 'integer', minimum: 1, maximum: 500 },
+    }, ['items']),
+    list: 'items',
+  },
+  gallery: {
+    summary: 'Pictures with their captions.',
+    schema: closed({
+      items: { type: 'array', maxItems: 500, items: closed({ src: text(2048, 1), alt: text(1000), caption: text(1000) }, ['src']) },
+    }, ['items']),
+    list: 'items',
+  },
+  section_title: {
+    summary: 'The title of a section and a line under it.',
+    schema: closed({ title: text(500, 1), subtitle: text(1000) }, ['title']),
+  },
+  menu: {
+    summary: 'Links of a menu, one level of children under each.',
+    schema: closed({
+      items: { type: 'array', maxItems: 200, items: closed({ ...link.properties, children: { type: 'array', maxItems: 100, items: link } }, ['label', 'url']) },
+    }, ['items']),
+    list: 'items',
+  },
+  pagination: {
+    summary: 'Where a paged list is: the page, how many there are, and the total. A runtime state a list publishes.',
+    schema: closed({
+      page: { type: 'integer', minimum: 1 },
+      pages: { type: 'integer', minimum: 0 },
+      total: { type: 'integer', minimum: 0 },
+      per_page: { type: 'integer', minimum: 1, maximum: 500 },
+    }, ['page', 'pages']),
+  },
+});
+
+const diagnostic = (code, path, message, details = {}) => ({ code, path, message, ...details });
+
+/** The shape registry: the SIMAI Framework's shapes and a host's own (namespaced: `<owner>.<name>`). */
+function createShapeRegistry(extra = {}) {
+  const shapes = new Map(Object.entries(DATA_SHAPES));
+  for (const [name, shape] of Object.entries(extra || {})) {
+    if (!/^[a-z][a-z0-9-]*\.[a-z][a-z0-9_]*$/u.test(name)) throw new TypeError(`composition_shape_name_invalid:${name}`);
+    if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(shape?.schema)) throw new TypeError(`composition_shape_invalid:${name}`);
+    shapes.set(name, (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.canonical)(shape));
+  }
+  return shapes;
+}
+
+let defaultShapes = null;
+function normalizeShapes(shapes) {
+  if (shapes instanceof Map) return shapes;
+  if ((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(shapes)) return createShapeRegistry(shapes);
+  defaultShapes ||= createShapeRegistry();
+  return defaultShapes;
+}
+
+/** The fields of a shape a mapping may name: the record's fields for a list shape, else the shape's own. */
+function shapeFields(shape) {
+  if (!shape) return [];
+  const own = shape.schema?.properties || {};
+  const listed = shape.list ? own[shape.list]?.items?.properties : null;
+  return Object.keys(listed || own);
+}
+
+/** The settings a node keeps for the binding of one target, or undefined. */
+function bindingSettings(node, target) {
+  const entry = (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(node?.extensions) ? node.extensions[DATA_EXTENSION] : undefined;
+  return (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(entry) && (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(entry[target]) ? entry[target] : undefined;
+}
+
+const declaredBindings = (manifest) => ((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(manifest?.data_bindings) ? manifest.data_bindings : null);
+const declaredRuntime = (manifest) => ((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(manifest?.runtime) ? manifest.runtime : null);
+/** Whether a type takes data through bindings (host or runtime). */
+const takesData = (manifest) => Boolean(declaredBindings(manifest) || declaredRuntime(manifest)?.accepts);
+
+/** The problems of a manifest's data_bindings and runtime declarations. */
+function validateDataDeclarations(manifest, shapes) {
+  const diagnostics = [];
+  const registry = normalizeShapes(shapes);
+  const bindings = manifest.data_bindings;
+  if (bindings !== undefined) {
+    if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(bindings) || !Object.keys(bindings).length) diagnostics.push(diagnostic('data_bindings_invalid', '$.data_bindings', 'data_bindings names each data key a host fills'));
+    else for (const [target, entry] of Object.entries(bindings)) {
+      const at = `$.data_bindings.${target}`;
+      if (!NAME.test(target)) diagnostics.push(diagnostic('data_binding_target_invalid', at, 'A target is a data key'));
+      if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(entry) || !Array.isArray(entry.shapes) || !entry.shapes.length) {
+        diagnostics.push(diagnostic('data_binding_invalid', at, 'A binding names the shapes it takes'));
+        continue;
+      }
+      for (const key of Object.keys(entry)) if (!['shapes', 'required', 'empty_key'].includes(key)) diagnostics.push(diagnostic('data_binding_invalid', `${at}.${key}`, `Unknown binding field ${key}`));
+      for (const shape of entry.shapes) if (!registry.has(shape)) diagnostics.push(diagnostic('data_shape_unknown', `${at}.shapes`, `${shape} is not a data shape`));
+    }
+  }
+  const runtime = manifest.runtime;
+  if (runtime !== undefined) {
+    if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(runtime)) diagnostics.push(diagnostic('runtime_invalid', '$.runtime', 'runtime is {publishes, accepts}'));
+    else {
+      for (const key of Object.keys(runtime)) if (!['publishes', 'accepts'].includes(key)) diagnostics.push(diagnostic('runtime_invalid', `$.runtime.${key}`, `Unknown runtime field ${key}`));
+      for (const [state, entry] of Object.entries((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(runtime.publishes) ? runtime.publishes : {})) {
+        const at = `$.runtime.publishes.${state}`;
+        if (!NAME.test(state)) diagnostics.push(diagnostic('runtime_state_invalid', at, 'A state is a lowercase name'));
+        if (!registry.has(entry?.shape)) diagnostics.push(diagnostic('data_shape_unknown', `${at}.shape`, `${entry?.shape} is not a data shape`));
+        if (entry?.binding !== undefined && !Object.hasOwn(declaredBindings(manifest) || {}, entry.binding)) diagnostics.push(diagnostic('runtime_binding_unknown', `${at}.binding`, 'A state is taken from one of the type\'s own bindings'));
+      }
+      for (const [target, entry] of Object.entries((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(runtime.accepts) ? runtime.accepts : {})) {
+        const at = `$.runtime.accepts.${target}`;
+        if (!NAME.test(target)) diagnostics.push(diagnostic('runtime_state_invalid', at, 'A target is a data key'));
+        if (!registry.has(entry?.shape)) diagnostics.push(diagnostic('data_shape_unknown', `${at}.shape`, `${entry?.shape} is not a data shape`));
+      }
+    }
+  }
+  return diagnostics;
+}
+
+function validateSettings(settings, target, shapeNames, registry, path, diagnostics) {
+  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(settings)) {
+    diagnostics.push(diagnostic('data_settings_invalid', path, 'The settings of a binding are an object'));
+    return;
+  }
+  for (const key of Object.keys(settings)) if (!SETTINGS_FIELDS.has(key)) diagnostics.push(diagnostic('data_settings_invalid', `${path}.${key}`, `Unknown binding setting ${key}`));
+  const shapeName = settings.shape ?? (shapeNames.length === 1 ? shapeNames[0] : undefined);
+  if (settings.shape !== undefined && !shapeNames.includes(settings.shape)) diagnostics.push(diagnostic('data_shape_not_taken', `${path}.shape`, `${target} takes ${shapeNames.join(', ')}`));
+  if (shapeName === undefined) diagnostics.push(diagnostic('data_shape_required', `${path}.shape`, `${target} takes several shapes; the binding names one`));
+  if (settings.preset !== undefined && (typeof settings.preset !== 'string' || !/^[a-z][a-z0-9._-]{0,63}$/u.test(settings.preset))) diagnostics.push(diagnostic('data_settings_invalid', `${path}.preset`, 'A preset is the host\'s mapping preset name'));
+  if (settings.mapping !== undefined) {
+    const fields = new Set(shapeFields(registry.get(shapeName)));
+    if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(settings.mapping)) diagnostics.push(diagnostic('data_mapping_invalid', `${path}.mapping`, 'A mapping maps shape fields to source fields'));
+    else for (const [field, source] of Object.entries(settings.mapping)) {
+      if (!fields.has(field)) diagnostics.push(diagnostic('data_mapping_field_unknown', `${path}.mapping.${field}`, `${field} is no field of ${shapeName}`));
+      if (typeof source !== 'string' || !source || source.length > 120) diagnostics.push(diagnostic('data_mapping_invalid', `${path}.mapping.${field}`, 'A source field is a name'));
+    }
+  }
+  if (settings.filter !== undefined && (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(settings.filter) || (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.stableStringify)(settings.filter).length > MAX_FILTER_BYTES)) diagnostics.push(diagnostic('data_filter_invalid', `${path}.filter`, `A filter is an object of at most ${MAX_FILTER_BYTES} bytes, read by the host only`));
+  if (settings.sort !== undefined && (!Array.isArray(settings.sort) || settings.sort.length > 5 || settings.sort.some((entry) => !(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(entry) || typeof entry.field !== 'string' || !entry.field || !['asc', 'desc'].includes(entry.direction ?? 'asc') || Object.keys(entry).some((key) => !['field', 'direction'].includes(key))))) {
+    diagnostics.push(diagnostic('data_sort_invalid', `${path}.sort`, 'sort is up to 5 {field, direction: asc | desc}'));
+  }
+  if (settings.limit !== undefined && (!Number.isInteger(settings.limit) || settings.limit < 1 || settings.limit > 500)) diagnostics.push(diagnostic('data_limit_invalid', `${path}.limit`, 'limit is 1 to 500'));
+  if (settings.page_param !== undefined && (typeof settings.page_param !== 'string' || !/^[a-z][a-z0-9_-]{0,31}$/u.test(settings.page_param))) diagnostics.push(diagnostic('data_settings_invalid', `${path}.page_param`, 'page_param is the URL parameter the host pages by'));
+  if (settings.params !== undefined) {
+    if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(settings.params)) diagnostics.push(diagnostic('data_params_invalid', `${path}.params`, 'params name URL and context values'));
+    else for (const [name, param] of Object.entries(settings.params)) {
+      if (!NAME.test(name) || !(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(param) || !PARAM_SOURCES.has(param.from) || typeof param.key !== 'string' || !param.key || param.key.length > 64 || Object.keys(param).some((key) => !['from', 'key'].includes(key))) {
+        diagnostics.push(diagnostic('data_params_invalid', `${path}.params.${name}`, 'A parameter is {from: url | context | route, key}'));
+      }
+    }
+  }
+  if (settings.empty_text !== undefined && (typeof settings.empty_text !== 'string' || settings.empty_text.length > 500)) diagnostics.push(diagnostic('data_settings_invalid', `${path}.empty_text`, 'empty_text is up to 500 characters'));
+}
+
+/**
+ * The data rules of a Document, for the types that declare data: each host
+ * binding fills a declared target with a shape the type takes, its settings
+ * are well formed, and each runtime binding names a publisher in the same
+ * section with a state of the shape the target takes.
+ */
+function validateDataRules(root, registry, shapes, diagnostics) {
+  const shapeRegistry = normalizeShapes(shapes);
+  const sections = new Map();
+  const nodes = new Map();
+  const visit = (node, path, section) => {
+    if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(node)) return;
+    const here = node.type === 'layout.section' ? node.id : section;
+    nodes.set(node.id, { node, path, section: here });
+    for (const [slot, children] of Object.entries((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(node.slots) ? node.slots : {})) {
+      if (Array.isArray(children)) children.forEach((child, index) => visit(child, `${path}.slots.${slot}[${index}]`, here));
+    }
+  };
+  visit(root, '$.root', '$root');
+  for (const { node, path, section } of nodes.values()) {
+    sections.set(node.id, section);
+    const manifest = registry.types.get(node.type);
+    if (!manifest) continue;
+    const declared = declaredBindings(manifest);
+    const accepts = declaredRuntime(manifest)?.accepts;
+    const extension = (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(node.extensions) ? node.extensions[DATA_EXTENSION] : undefined;
+    if (extension !== undefined && !declared) diagnostics.push(diagnostic('data_binding_undeclared', `${path}.extensions.${DATA_EXTENSION}`, `${node.type} takes no data from a host`));
+    if (!declared && !accepts) continue;
+    const bound = new Set();
+    (Array.isArray(node.bindings) ? node.bindings : []).forEach((binding, index) => {
+      const at = `${path}.bindings[${index}]`;
+      if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(binding)) return;
+      if (binding.owner === RUNTIME_OWNER) {
+        if (!accepts || !Object.hasOwn(accepts, binding.target)) return diagnostics.push(diagnostic('runtime_target_undeclared', `${at}.target`, `${node.type} accepts no runtime state at ${binding.target}`));
+        const [from, state, extra] = String(binding.ref).split('#');
+        if (!from || !state || extra !== undefined) return diagnostics.push(diagnostic('runtime_ref_invalid', `${at}.ref`, 'A runtime binding names <node id>#<state>'));
+        const publisher = nodes.get(from);
+        if (!publisher || publisher.section !== section) return diagnostics.push(diagnostic('runtime_publisher_missing', `${at}.ref`, `${from} is not in the same section`));
+        const published = declaredRuntime(registry.types.get(publisher.node.type))?.publishes?.[state];
+        if (!published) return diagnostics.push(diagnostic('runtime_state_unknown', `${at}.ref`, `${publisher.node.type} publishes no ${state}`));
+        if (published.shape !== accepts[binding.target].shape) diagnostics.push(diagnostic('runtime_shape_mismatch', `${at}.ref`, `${state} is ${published.shape}; ${binding.target} takes ${accepts[binding.target].shape}`));
+        return undefined;
+      }
+      if (!declared || !Object.hasOwn(declared, binding.target)) return diagnostics.push(diagnostic('binding_target_undeclared', `${at}.target`, `${node.type} takes no host data at ${binding.target}`));
+      if (bound.has(binding.target)) diagnostics.push(diagnostic('binding_target_duplicate', `${at}.target`, `${binding.target} is bound twice`));
+      bound.add(binding.target);
+      return undefined;
+    });
+    for (const [target, entry] of Object.entries(declared || {})) {
+      if (entry.required === true && !bound.has(target)) diagnostics.push(diagnostic('binding_required', `${path}.bindings`, `${target} needs a source`));
+    }
+    if ((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(extension)) {
+      for (const [target, settings] of Object.entries(extension)) {
+        const at = `${path}.extensions.${DATA_EXTENSION}.${target}`;
+        if (!Object.hasOwn(declared || {}, target)) diagnostics.push(diagnostic('binding_target_undeclared', at, `${node.type} takes no host data at ${target}`));
+        else validateSettings(settings, target, declared[target].shapes, shapeRegistry, at, diagnostics);
+      }
+    } else if (extension !== undefined) diagnostics.push(diagnostic('data_settings_invalid', `${path}.extensions.${DATA_EXTENSION}`, 'The data settings are an object keyed by binding target'));
+  }
+}
+
+/**
+ * Demo data of a shape, for a preview when no source is reachable and for a
+ * check that a block draws every state: each required field filled, a list
+ * with `count` records.
+ */
+function demoData(shapeName, options = {}) {
+  const shape = normalizeShapes(options.shapes).get(shapeName);
+  if (!shape) throw new TypeError(`composition_shape_unknown:${shapeName}`);
+  const count = Number.isInteger(options.count) ? options.count : 3;
+  const fill = (schema, index) => {
+    if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(schema)) return null;
+    if (schema.enum) return schema.enum[0];
+    if (schema.type === 'object') {
+      const keys = new Set([...(schema.required || []), ...Object.keys(schema.properties || {}).filter((key) => ['title', 'text', 'alt', 'label', 'url', 'src'].includes(key))]);
+      return Object.fromEntries([...keys].filter((key) => schema.properties?.[key]).map((key) => [key, fill(schema.properties[key], index, key)]));
+    }
+    if (schema.type === 'array') return Array.from({ length: Math.min(count, schema.maxItems ?? count) }, (_, at) => fill(schema.items, at + 1));
+    if (schema.type === 'integer' || schema.type === 'number') return Math.max(schema.minimum ?? 1, 1);
+    if (schema.type === 'boolean') return false;
+    return `Example ${index || 1}`;
+  };
+  const data = fill(shape.schema, 1);
+  for (const [key, value] of Object.entries(data)) if (/(?:url|src)$/u.test(key) && typeof value === 'string') data[key] = '#';
+  const fixAddresses = (value) => {
+    if (Array.isArray(value)) return value.forEach(fixAddresses);
+    if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(value)) return undefined;
+    for (const key of Object.keys(value)) {
+      if (['url', 'src'].includes(key)) value[key] = key === 'src' ? '/example.webp' : '#';
+      else fixAddresses(value[key]);
+    }
+    return undefined;
+  };
+  fixAddresses(data);
+  return data;
+}
+
+// ------------------------------------------------------------- at render
+
+function isEmpty(data, shape) {
+  if (data === null) return true;
+  if (shape?.list) return Array.isArray(data?.[shape.list]) && data[shape.list].length === 0;
+  return false;
+}
+
+/**
+ * Resolves the data of the nodes whose types declare it, before drawing: each
+ * host binding through `context.resolveBinding`, with its state; then each
+ * runtime binding from its publisher. A failure stays inside its block: the
+ * state is `error` and the page still draws. Returns {byNode: Map(id ->
+ * {values, states}), links, diagnostics}.
+ */
+async function resolveData(root, registry, context, check) {
+  const shapes = normalizeShapes(context.options?.shapes);
+  const byNode = new Map();
+  const diagnostics = [];
+  const links = [];
+  const pending = [];
+  const walk = (node) => {
+    const manifest = registry.types.get(node.type);
+    if (manifest && takesData(manifest)) pending.push({ node, manifest });
+    for (const children of Object.values(node.slots || {})) for (const child of children) walk(child);
+  };
+  walk(root);
+  for (const { node, manifest } of pending) {
+    const entry = { values: {}, states: {} };
+    byNode.set(node.id, entry);
+    for (const binding of node.bindings || []) {
+      if (binding.owner === RUNTIME_OWNER || !declaredBindings(manifest)?.[binding.target]) continue;
+      const settings = bindingSettings(node, binding.target) || {};
+      const shapeName = settings.shape ?? declaredBindings(manifest)[binding.target].shapes[0];
+      const shape = shapes.get(shapeName);
+      let data;
+      try {
+        data = typeof context.resolveBinding === 'function'
+          ? await context.resolveBinding(binding, { node, shape: shapeName, settings })
+          : undefined;
+      } catch (error) {
+        entry.states[binding.target] = 'error';
+        diagnostics.push(diagnostic('binding_failed', `node:${node.id}`, `The source of ${binding.target} failed: ${String(error?.message || error).slice(0, 200)}`));
+        continue;
+      }
+      if (data === undefined) {
+        entry.states[binding.target] = 'loading';
+        continue;
+      }
+      const problems = [];
+      check(data, shape?.schema, `node:${node.id}.${binding.target}`, problems);
+      if (problems.length) {
+        entry.states[binding.target] = 'error';
+        diagnostics.push(diagnostic('binding_shape_mismatch', `node:${node.id}`, `The host's answer for ${binding.target} is not ${shapeName}: ${problems.map((item) => `${item.code} at ${item.path}`).slice(0, 5).join('; ')}`));
+        continue;
+      }
+      entry.values[binding.target] = data;
+      entry.states[binding.target] = isEmpty(data, shape) ? 'empty' : context.preview === true ? 'preview' : 'ready';
+    }
+    for (const target of Object.keys(declaredBindings(manifest) || {})) if (!(target in entry.states)) entry.states[target] = 'empty';
+  }
+  // Runtime bindings read what their publisher holds now.
+  for (const { node, manifest } of pending) {
+    const entry = byNode.get(node.id);
+    for (const binding of node.bindings || []) {
+      if (binding.owner !== RUNTIME_OWNER || !declaredRuntime(manifest)?.accepts?.[binding.target]) continue;
+      const [from, state] = String(binding.ref).split('#');
+      const publisher = byNode.get(from);
+      const publisherManifest = publisher && registry.types.get(pending.find((item) => item.node.id === from)?.node.type);
+      const published = declaredRuntime(publisherManifest)?.publishes?.[state];
+      links.push({ from, state, to: node.id, target: binding.target });
+      if (!publisher || !published) {
+        entry.states[binding.target] = 'empty';
+        continue;
+      }
+      const sourceState = published.binding ? publisher.states[published.binding] : 'ready';
+      const source = published.binding ? publisher.values[published.binding] : undefined;
+      const fields = Object.keys(shapes.get(published.shape)?.schema?.properties || {});
+      const value = (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(source) ? Object.fromEntries(fields.filter((key) => key in source).map((key) => [key, source[key]])) : undefined;
+      const problems = [];
+      if (value !== undefined) check(value, shapes.get(published.shape)?.schema, `node:${node.id}.${binding.target}`, problems);
+      if (value === undefined || problems.length) {
+        entry.states[binding.target] = sourceState === 'loading' || sourceState === 'error' ? sourceState : 'empty';
+        continue;
+      }
+      entry.values[binding.target] = value;
+      entry.states[binding.target] = sourceState;
+    }
+  }
+  return { byNode, links, diagnostics };
+}
+
+// ----------------------------------------------------------- the source port
+
+// The three things an editor asks a host about data. The host answers; the
+// editor never knows about iblocks, models or merge data. Bitrix, Larena and
+// the mail editor each implement it.
+const SOURCE_PORT = Object.freeze({
+  ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_1__.schemaFields)('simai.composition.source-port', 1),
+  requests: {
+    sources: { summary: 'Which sources give this shape: [{id, label, shapes, presets?}].', input: ['shape'] },
+    fields: { summary: 'Which fields a source has: [{key, label, type?}].', input: ['source'] },
+    preview: { summary: 'Data for a binding to show in the editor, in the binding\'s shape (demo data when the source is not reachable).', input: ['binding', 'settings', 'shape'] },
+  },
+});
+
+const SOURCE_FIELDS = new Set(['id', 'label', 'shapes', 'presets', 'revision']);
+const PRESET_FIELDS = new Set(['id', 'label', 'shape', 'mapping']);
+
+/** The problems of a host's answer to one source-port request. */
+function checkSourceAnswer(request, answer, options = {}) {
+  const diagnostics = [];
+  const shapes = normalizeShapes(options.shapes);
+  const push = (code, path, message) => diagnostics.push(diagnostic(code, path, message));
+  if (request === 'sources') {
+    if (!Array.isArray(answer) || answer.length > 200) push('source_answer_invalid', '$', 'sources is a list of up to 200');
+    else answer.forEach((source, index) => {
+      const at = `$[${index}]`;
+      if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(source)) return push('source_answer_invalid', at, 'A source is an object');
+      for (const key of Object.keys(source)) if (!SOURCE_FIELDS.has(key)) push('source_answer_invalid', `${at}.${key}`, `Unknown source field ${key}`);
+      if (typeof source.id !== 'string' || !source.id || source.id.length > 200) push('source_answer_invalid', `${at}.id`, 'A source has an id');
+      if (typeof source.label !== 'string' || !source.label) push('source_answer_invalid', `${at}.label`, 'A source has a label');
+      if (!Array.isArray(source.shapes) || source.shapes.some((shape) => !shapes.has(shape))) push('source_shape_unknown', `${at}.shapes`, 'A source names the shapes it gives');
+      for (const [presetIndex, preset] of (Array.isArray(source.presets) ? source.presets : []).entries()) {
+        const presetAt = `${at}.presets[${presetIndex}]`;
+        if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(preset) || Object.keys(preset).some((key) => !PRESET_FIELDS.has(key)) || typeof preset.id !== 'string' || !(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(preset.mapping)) { push('source_preset_invalid', presetAt, 'A preset is {id, label, shape, mapping}'); continue; }
+        const fields = new Set(shapeFields(shapes.get(preset.shape)));
+        for (const field of Object.keys(preset.mapping)) if (!fields.has(field)) push('source_preset_invalid', `${presetAt}.mapping.${field}`, `${field} is no field of ${preset.shape}`);
+      }
+      return undefined;
+    });
+  } else if (request === 'fields') {
+    if (!Array.isArray(answer) || answer.length > 500) push('source_answer_invalid', '$', 'fields is a list of up to 500');
+    else answer.forEach((field, index) => {
+      if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(field) || typeof field.key !== 'string' || !field.key || typeof field.label !== 'string' || Object.keys(field).some((key) => !['key', 'label', 'type'].includes(key))) push('source_answer_invalid', `$[${index}]`, 'A field is {key, label, type?}');
+    });
+  } else if (request === 'preview') {
+    const shape = shapes.get(options.shape);
+    if (!shape) push('source_shape_unknown', '$', `${options.shape} is not a data shape`);
+    else if (typeof options.check === 'function') {
+      const problems = [];
+      options.check(answer, shape.schema, '$', problems);
+      diagnostics.push(...problems);
+    }
+  } else push('source_request_unknown', '$', `${request} is not a request of the source port`);
+  return diagnostics;
+}
+
+
+/***/ },
+
 /***/ "fe90f998a31d"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
@@ -15992,6 +17171,61 @@ const EN = {
   ...words('layout_columns', {
     columns: 'Columns',
     columns_help: 'How many columns the content is split into',
+    gap: 'Gap',
+    gap_help: 'Space between the columns, from 0 to 8 steps',
+  }),
+  // Parameter sets (parameter-sets.mjs), shared by every type that takes them.
+  ...words('set_background', {
+    background: 'Background',
+    background_help: 'The fill behind the block',
+    'background.surface': 'Page',
+    'background.container': 'Container',
+    'background.primary': 'Primary',
+    'background.secondary': 'Secondary',
+    'background.tertiary': 'Tertiary',
+  }),
+  ...words('set_spacing', {
+    padding_y: 'Space above and below',
+    padding_y_help: 'From 0 to 8 steps, per screen',
+    padding_x: 'Space at the sides',
+    padding_x_help: 'From 0 to 8 steps, per screen',
+  }),
+  ...words('set_width', {
+    width: 'Width',
+    width_help: 'How wide the content stands on the page',
+    'width.narrow': 'Narrow',
+    'width.normal': 'Normal',
+    'width.wide': 'Wide',
+    'width.full': 'Full width',
+  }),
+  ...words('set_grid', {
+    columns: 'Columns',
+    columns_help: 'How many columns the content is split into, per screen',
+    gap: 'Gap',
+    gap_help: 'Space between the columns, from 0 to 8 steps',
+  }),
+  ...words('set_alignment', {
+    align: 'Alignment',
+    align_help: 'How the text lines up, per screen',
+    'align.start': 'Start',
+    'align.center': 'Centre',
+    'align.end': 'End',
+  }),
+  ...words('set_breakout', {
+    breakout: 'Edge to edge',
+    breakout_help: 'The block spans the whole page width',
+  }),
+  ...words('set_visibility', {
+    hidden: 'Hidden',
+    hidden_help: 'The block is not shown on this screen',
+  }),
+  ...words('layout_area', {
+    content: 'Text',
+    empty: 'Start writing or press / for a block',
+    padding: 'Padding',
+    padding_help: 'Space inside the area, from 0 to 8 steps',
+    hidden: 'Hidden',
+    hidden_help: 'The area is not shown on this screen',
   }),
   ...words('content_heading', {
     level: 'Heading level',
@@ -16144,6 +17378,60 @@ const RU = {
   ...words('layout_columns', {
     columns: 'Колонки',
     columns_help: 'На сколько колонок делится содержимое',
+    gap: 'Промежуток',
+    gap_help: 'Расстояние между колонками, от 0 до 8 шагов',
+  }),
+  ...words('set_background', {
+    background: 'Фон',
+    background_help: 'Заливка под блоком',
+    'background.surface': 'Страница',
+    'background.container': 'Контейнер',
+    'background.primary': 'Основной',
+    'background.secondary': 'Дополнительный',
+    'background.tertiary': 'Третий',
+  }),
+  ...words('set_spacing', {
+    padding_y: 'Отступ сверху и снизу',
+    padding_y_help: 'От 0 до 8 шагов, для каждого экрана',
+    padding_x: 'Отступ по бокам',
+    padding_x_help: 'От 0 до 8 шагов, для каждого экрана',
+  }),
+  ...words('set_width', {
+    width: 'Ширина',
+    width_help: 'Насколько широко стоит содержимое на странице',
+    'width.narrow': 'Узкая',
+    'width.normal': 'Обычная',
+    'width.wide': 'Широкая',
+    'width.full': 'Во всю ширину',
+  }),
+  ...words('set_grid', {
+    columns: 'Колонки',
+    columns_help: 'На сколько колонок делится содержимое, для каждого экрана',
+    gap: 'Промежуток',
+    gap_help: 'Расстояние между колонками, от 0 до 8 шагов',
+  }),
+  ...words('set_alignment', {
+    align: 'Выравнивание',
+    align_help: 'Как выравнивается текст, для каждого экрана',
+    'align.start': 'К началу',
+    'align.center': 'По центру',
+    'align.end': 'К концу',
+  }),
+  ...words('set_breakout', {
+    breakout: 'От края до края',
+    breakout_help: 'Блок занимает всю ширину страницы',
+  }),
+  ...words('set_visibility', {
+    hidden: 'Скрыт',
+    hidden_help: 'Блок не показывается на этом экране',
+  }),
+  ...words('layout_area', {
+    content: 'Текст',
+    empty: 'Начните писать или нажмите / для блока',
+    padding: 'Отступ',
+    padding_help: 'Пространство внутри области, от 0 до 8 шагов',
+    hidden: 'Скрыть',
+    hidden_help: 'Область не показывается на этом экране',
   }),
   ...words('content_heading', {
     level: 'Уровень заголовка',
@@ -16309,10 +17597,17 @@ function editorFieldKeys(field) {
  * registered for `sf-composition` wins over the shipped one; a key with no
  * word in any language is left out, so the host's own words or the key show.
  */
-function editorFieldMessages(manifests = _builtins_mjs__WEBPACK_IMPORTED_MODULE_1__.BUILTIN_EDITOR_MANIFESTS, { node = null, locale } = {}) {
-  const list = Array.isArray(manifests) ? manifests : [manifests];
+function editorFieldMessages(manifests, { node = null, locale } = {}) {
+  const list = manifests === undefined ? _builtins_mjs__WEBPACK_IMPORTED_MODULE_1__.BUILTIN_EDITOR_MANIFESTS : Array.isArray(manifests) ? manifests : [manifests];
   const language = locale || (0,_page_language_js__WEBPACK_IMPORTED_MODULE_0__.pageLocale)(node);
   const messages = {};
+  // Without a manifest, the words of the built-in types' named places too
+  // (a slot's label_key and empty_key; one block editor, 2026-11-03).
+  if (manifests === undefined) {
+    for (const slot of _builtins_mjs__WEBPACK_IMPORTED_MODULE_1__.BUILTIN_TYPE_MANIFESTS.flatMap((manifest) => Object.values(manifest.slots || {}))) {
+      for (const key of [slot.label_key, slot.empty_key].filter(Boolean)) messages[key] = (0,_page_language_js__WEBPACK_IMPORTED_MODULE_0__.localeText)(EDITOR_FIELD_WORDS, key, language, EDITOR_WORDS_OWNER);
+    }
+  }
   for (const manifest of list) {
     for (const field of manifest?.fields || []) {
       for (const key of editorFieldKeys(field)) {
@@ -16342,6 +17637,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _canonical_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("6f489cc65b77");
 /* harmony import */ var _schema_name_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("ac24888e7d3e");
+/* harmony import */ var _parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("18b9c76994c9");
+/* harmony import */ var _utilities_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("b88de35f4919");
+
+
 
 
 
@@ -16441,8 +17740,10 @@ function validateAppliesTo(value, typeManifest, diagnostics) {
   }
 }
 
-function validateEditorManifest(editorManifest, typeManifest, options = {}) {
+function validateEditorManifest(editorManifest, given, options = {}) {
   const diagnostics = [];
+  // A type's parameter sets are its props too (parameter-sets.mjs).
+  const typeManifest = (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(given) ? (0,_parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_2__.expandParameterSets)(given) : given;
   if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(editorManifest)) return { valid: false, diagnostics: [diagnostic('editor_manifest_invalid', '$', 'Editor manifest must be an object')] };
   unknownFields(editorManifest, MANIFEST_FIELDS, '$', diagnostics);
   scanForbidden(editorManifest, '$', diagnostics);
@@ -16519,19 +17820,32 @@ function validateEditorManifest(editorManifest, typeManifest, options = {}) {
   return { valid: diagnostics.length === 0, diagnostics };
 }
 
-function nodeValue(node, field) {
+const BREAKPOINT_KEYS = new Set(['xs', 'sm', 'md', 'lg', 'xl', 'xxl']);
+
+function nodeValue(node, field, typeManifest) {
   const plane = node?.[field.plane];
-  if ((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(plane) && field.target in plane) return { value: plane[field.target], source: 'node' };
+  if ((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(plane) && field.target in plane) {
+    const value = plane[field.target];
+    // A layout parameter held per screen (x-simai-utility responsive): the
+    // field shows the phone's value and lists the screens that differ, for a
+    // per-screen switch.
+    const responsive = field.plane === 'props' && (0,_utilities_mjs__WEBPACK_IMPORTED_MODULE_3__.isResponsive)(typeManifest?.props_schema?.properties?.[field.target]);
+    if (responsive && (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(value) && Object.keys(value).every((key) => BREAKPOINT_KEYS.has(key))) {
+      return { value: 'xs' in value ? value.xs : ('default' in field ? field.default : null), source: 'xs' in value ? 'node' : 'default', screens: value };
+    }
+    return { value, source: 'node' };
+  }
   if ('default' in field) return { value: field.default, source: 'default' };
   return { value: null, source: 'unset' };
 }
 
-function projectEditorFields(editorManifest, typeManifest, node, options = {}) {
+function projectEditorFields(editorManifest, given, node, options = {}) {
+  const typeManifest = (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(given) ? (0,_parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_2__.expandParameterSets)(given) : given;
   const checked = validateEditorManifest(editorManifest, typeManifest, options);
   if (!checked.valid) return { valid: false, fields: [], diagnostics: checked.diagnostics };
   const diagnostics = [];
   const fields = editorManifest.fields.map((field) => {
-    const current = nodeValue(node, field);
+    const current = nodeValue(node, field, typeManifest);
     if (current.source !== 'unset' && field.choices && !field.choices.some((choice) => (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.stableStringify)(choice) === (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.stableStringify)(current.value))) {
       diagnostics.push(diagnostic('editor_choice_unknown', `node:${node?.id || ''}.${field.plane}.${field.target}`, 'Current value is not an allowed choice'));
     }
@@ -16566,6 +17880,642 @@ function projectDocumentEditorFields(document, typeRegistry, editorManifests, op
 }
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ projectDocumentEditorFields, projectEditorFields, validateEditorManifest });
+
+
+/***/ },
+
+/***/ "07d89539a7af"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   PRINTED_ELEMENT_TABLE: () => (/* binding */ PRINTED_ELEMENT_TABLE)
+/* harmony export */ });
+// Generated by scripts/generate-composition-contracts.mjs from src/smart/*/smart.manifest.json; do not edit.
+// The smart elements a block's renderer may print, with the inputs it may set (elements.mjs).
+const PRINTED_ELEMENT_TABLE = Object.freeze({
+  "sf-badge": {
+    "inputs": {
+      "additionalProperties": false,
+      "properties": {
+        "activity": {
+          "default": "",
+          "enum": [
+            "",
+            "running",
+            "waiting",
+            "done",
+            "stopped",
+            "failed"
+          ],
+          "type": "string"
+        },
+        "appearance": {
+          "default": "main",
+          "enum": [
+            "main",
+            "tonal",
+            "outline"
+          ],
+          "type": "string"
+        },
+        "aria-label": {
+          "default": "",
+          "type": "string"
+        },
+        "compact": {
+          "default": false,
+          "type": "boolean"
+        },
+        "icon": {
+          "default": "",
+          "type": "string"
+        },
+        "icon-end": {
+          "default": "",
+          "type": "string"
+        },
+        "icon-position": {
+          "default": "start",
+          "enum": [
+            "start",
+            "end"
+          ],
+          "type": "string"
+        },
+        "icon-start": {
+          "default": "",
+          "type": "string"
+        },
+        "line": {
+          "default": "",
+          "enum": [
+            "",
+            "1/2",
+            "1",
+            "2"
+          ],
+          "type": "string"
+        },
+        "scheme": {
+          "default": "neutral",
+          "enum": [
+            "neutral",
+            "primary",
+            "secondary",
+            "tertiary",
+            "on-surface"
+          ],
+          "type": "string"
+        },
+        "size": {
+          "default": "1/3",
+          "enum": [
+            "1/3",
+            "1/2",
+            "1"
+          ],
+          "type": "string"
+        },
+        "status": {
+          "default": "",
+          "enum": [
+            "",
+            "info",
+            "success",
+            "warning",
+            "error"
+          ],
+          "type": "string"
+        },
+        "text": {
+          "default": "",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "kind": "custom-element",
+    "manifest": "smart.badge",
+    "version": "1.2.1"
+  },
+  "sf-button": {
+    "inputs": {
+      "additionalProperties": false,
+      "properties": {
+        "appearance": {
+          "default": "default",
+          "enum": [
+            "default",
+            "tonal",
+            "outline",
+            "link",
+            "surface"
+          ],
+          "type": "string"
+        },
+        "aria-label": {
+          "default": "",
+          "type": "string"
+        },
+        "disabled": {
+          "default": false,
+          "type": "boolean"
+        },
+        "expanded": {
+          "default": false,
+          "type": "boolean"
+        },
+        "icon": {
+          "default": "",
+          "type": "string"
+        },
+        "icon-end": {
+          "default": "",
+          "type": "string"
+        },
+        "icon-position": {
+          "default": "start",
+          "enum": [
+            "start",
+            "end"
+          ],
+          "type": "string"
+        },
+        "icon-start": {
+          "default": "",
+          "type": "string"
+        },
+        "loading": {
+          "default": false,
+          "type": "boolean"
+        },
+        "native-type": {
+          "default": "button",
+          "enum": [
+            "button",
+            "submit",
+            "reset"
+          ],
+          "type": "string"
+        },
+        "radius": {
+          "default": "",
+          "enum": [
+            "",
+            "default",
+            "square",
+            "rounded"
+          ],
+          "type": "string"
+        },
+        "scheme": {
+          "default": "primary",
+          "enum": [
+            "primary",
+            "secondary",
+            "on-surface",
+            "on-surface-variant"
+          ],
+          "type": "string"
+        },
+        "segment": {
+          "default": "",
+          "enum": [
+            "",
+            "start",
+            "middle",
+            "end"
+          ],
+          "type": "string"
+        },
+        "shortcut": {
+          "default": "",
+          "type": "string"
+        },
+        "shortcut-listen": {
+          "default": false,
+          "type": "boolean"
+        },
+        "size": {
+          "default": "1",
+          "enum": [
+            "1/3",
+            "1/2",
+            "1",
+            "2",
+            "3"
+          ],
+          "type": "string"
+        },
+        "spacing": {
+          "default": "normal",
+          "enum": [
+            "compact",
+            "normal",
+            "comfortable",
+            "spacious"
+          ],
+          "type": "string"
+        },
+        "status": {
+          "default": "",
+          "enum": [
+            "",
+            "error"
+          ],
+          "type": "string"
+        },
+        "text": {
+          "default": "",
+          "type": "string"
+        },
+        "text-position": {
+          "default": "center",
+          "enum": [
+            "start",
+            "center",
+            "end",
+            "justify"
+          ],
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "kind": "custom-element",
+    "manifest": "smart.button",
+    "version": "1.2.1"
+  },
+  "sf-button-icon": {
+    "inputs": {
+      "additionalProperties": false,
+      "properties": {
+        "appearance": {
+          "default": "default",
+          "enum": [
+            "default",
+            "tonal",
+            "outline",
+            "link",
+            "surface",
+            "ghost"
+          ],
+          "type": "string"
+        },
+        "aria-label": {
+          "default": "",
+          "type": "string"
+        },
+        "badge-cap": {
+          "default": 99,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "badge-count": {
+          "default": "",
+          "type": "string"
+        },
+        "badge-dot": {
+          "default": false,
+          "type": "boolean"
+        },
+        "badge-label": {
+          "default": "",
+          "type": "string"
+        },
+        "disabled": {
+          "default": false,
+          "type": "boolean"
+        },
+        "filled": {
+          "default": false,
+          "type": "boolean"
+        },
+        "icon": {
+          "default": "add",
+          "type": "string"
+        },
+        "kind": {
+          "default": "icon",
+          "enum": [
+            "icon",
+            "close"
+          ],
+          "type": "string"
+        },
+        "loading": {
+          "default": false,
+          "type": "boolean"
+        },
+        "native-type": {
+          "default": "button",
+          "enum": [
+            "button",
+            "submit",
+            "reset"
+          ],
+          "type": "string"
+        },
+        "radius": {
+          "default": "",
+          "enum": [
+            "",
+            "default",
+            "square",
+            "rounded"
+          ],
+          "type": "string"
+        },
+        "scheme": {
+          "default": "primary",
+          "enum": [
+            "primary",
+            "secondary",
+            "on-surface",
+            "on-surface-variant"
+          ],
+          "type": "string"
+        },
+        "segment": {
+          "default": "",
+          "enum": [
+            "",
+            "start",
+            "middle",
+            "end"
+          ],
+          "type": "string"
+        },
+        "size": {
+          "default": "1",
+          "enum": [
+            "1/3",
+            "1/2",
+            "1",
+            "2",
+            "3"
+          ],
+          "type": "string"
+        },
+        "spacing": {
+          "default": "normal",
+          "enum": [
+            "compact",
+            "normal",
+            "comfortable",
+            "spacious"
+          ],
+          "type": "string"
+        },
+        "status": {
+          "default": "",
+          "enum": [
+            "",
+            "error"
+          ],
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "kind": "custom-element",
+    "manifest": "smart.button-icon",
+    "version": "1.3.0"
+  },
+  "sf-divider": {
+    "component": "component.content-divider",
+    "inputs": {
+      "additionalProperties": false,
+      "properties": {
+        "orientation": {
+          "default": "horizontal",
+          "enum": [
+            "horizontal",
+            "vertical"
+          ],
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "kind": "class"
+  },
+  "sf-icon": {
+    "inputs": {
+      "additionalProperties": false,
+      "properties": {
+        "badge-cap": {
+          "default": 99,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "badge-count": {
+          "default": "",
+          "type": "string"
+        },
+        "badge-dot": {
+          "default": false,
+          "type": "boolean"
+        },
+        "badge-label": {
+          "default": "",
+          "type": "string"
+        },
+        "filled": {
+          "default": false,
+          "type": "boolean"
+        },
+        "grade": {
+          "default": 0,
+          "maximum": 200,
+          "minimum": -50,
+          "type": "integer"
+        },
+        "icon": {
+          "default": "",
+          "type": "string"
+        },
+        "label": {
+          "default": "",
+          "type": "string"
+        },
+        "optical-size": {
+          "default": 24,
+          "maximum": 48,
+          "minimum": 20,
+          "type": "number"
+        },
+        "size": {
+          "default": "",
+          "enum": [
+            "",
+            "1/4",
+            "1/3",
+            "1/2",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7"
+          ],
+          "type": "string"
+        },
+        "type": {
+          "default": "",
+          "enum": [
+            "",
+            "outlined",
+            "rounded",
+            "sharp"
+          ],
+          "type": "string"
+        },
+        "weight": {
+          "default": 400,
+          "maximum": 700,
+          "minimum": 100,
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "kind": "custom-element",
+    "manifest": "smart.icon",
+    "version": "1.1.5"
+  }
+});
+
+
+/***/ },
+
+/***/ "3ad83f3699c7"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   PRINTED_ELEMENTS: () => (/* binding */ PRINTED_ELEMENTS),
+/* harmony export */   checkPrintedElements: () => (/* binding */ checkPrintedElements),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   elementInputs: () => (/* binding */ elementInputs),
+/* harmony export */   printElement: () => (/* binding */ printElement)
+/* harmony export */ });
+/* harmony import */ var _canonical_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("6f489cc65b77");
+/* harmony import */ var _elements_generated_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("07d89539a7af");
+// Smart elements a block prints (one block editor, 2026-11-03): a block's
+// renderer may draw sf-button, sf-button-icon, sf-badge, sf-icon and the
+// sf-divider class component, with attributes from their smart.manifest.json
+// inputs (elements.generated.mjs) and nothing else. printElement makes the
+// markup from inputs and refuses what a manifest does not take;
+// checkPrintedElements reads HTML a renderer wrote by hand and reports every
+// attribute those manifests do not take.
+//
+// An element draws itself in the browser (the Loader loads it); the HTML only
+// names it. A block prints no inline style, no free classes on the element
+// (root-class) and no legacy or alias names.
+
+
+
+
+const PRINTED_ELEMENTS = Object.freeze(Object.keys(_elements_generated_mjs__WEBPACK_IMPORTED_MODULE_1__.PRINTED_ELEMENT_TABLE));
+
+// Attributes any printed element may carry beside its inputs: an editor's and
+// the composition's own markers, and the host's class for its placement.
+const HOST_ATTRIBUTE = /^(?:class|id|slot|data-[a-z0-9-]+)$/u;
+const ATTRIBUTE = /([^\s=/>"']+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+)))?/gu;
+
+const diagnostic = (code, path, message, details = {}) => ({ code, path, message, ...details });
+const escapeAttribute = (value) => String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
+const unescape = (value) => String(value).replaceAll('&quot;', '"').replaceAll('&#39;', "'").replaceAll('&lt;', '<').replaceAll('&gt;', '>').replaceAll('&amp;', '&');
+
+/** The inputs schema of a printed element, or null. */
+function elementInputs(name) {
+  return Object.hasOwn(_elements_generated_mjs__WEBPACK_IMPORTED_MODULE_1__.PRINTED_ELEMENT_TABLE, name) ? _elements_generated_mjs__WEBPACK_IMPORTED_MODULE_1__.PRINTED_ELEMENT_TABLE[name].inputs : null;
+}
+
+function labelProblem(name, inputs, path) {
+  // An element a reader must be able to name: a button with words or a label,
+  // an icon button with its label.
+  if (name === 'sf-button' && !inputs.text && !inputs['aria-label']) return diagnostic('element_label_missing', path, 'sf-button prints its text or an aria-label');
+  if (name === 'sf-button-icon' && !inputs['aria-label']) return diagnostic('element_label_missing', path, 'sf-button-icon prints an aria-label');
+  return null;
+}
+
+/**
+ * The markup of one element from its inputs: {html, diagnostics}. `check(value,
+ * schema, path, diagnostics)` is the Composition JSON Schema check. A value
+ * equal to the input's default is left out; a boolean prints only when true.
+ * An input the manifest does not take, or a value it refuses, prints nothing.
+ */
+function printElement(name, inputs = {}, check = undefined, path = '$') {
+  const entry = _elements_generated_mjs__WEBPACK_IMPORTED_MODULE_1__.PRINTED_ELEMENT_TABLE[name];
+  if (!Object.hasOwn(_elements_generated_mjs__WEBPACK_IMPORTED_MODULE_1__.PRINTED_ELEMENT_TABLE, name)) return { html: '', diagnostics: [diagnostic('element_unknown', path, `${String(name)} is not an element a block prints; they are ${PRINTED_ELEMENTS.join(', ')}`)] };
+  const diagnostics = [];
+  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(inputs)) return { html: '', diagnostics: [diagnostic('element_inputs_invalid', path, 'Inputs are an object')] };
+  const properties = entry.inputs.properties;
+  for (const key of Object.keys(inputs)) {
+    if (!Object.hasOwn(properties, key)) diagnostics.push(diagnostic('element_input_unknown', `${path}.${key}`, `${name} takes no input ${key}`, { element: name, input: key }));
+  }
+  // Unknown inputs are reported above, once; the schema holds the values.
+  if (typeof check === 'function') check(inputs, { ...entry.inputs, additionalProperties: true }, path, diagnostics);
+  const label = labelProblem(name, inputs, path);
+  if (label) diagnostics.push(label);
+  if (diagnostics.length) return { html: '', diagnostics };
+  if (entry.kind === 'class') {
+    const vertical = inputs.orientation === 'vertical';
+    return { html: `<hr class="sf-divider sf-divider-${vertical ? 'vertical' : 'horizontal'}"${vertical ? ' aria-orientation="vertical"' : ''}>`, diagnostics };
+  }
+  const attributes = Object.keys(inputs).sort().flatMap((key) => {
+    const value = inputs[key];
+    if ('default' in properties[key] && value === properties[key].default) return [];
+    if (typeof value === 'boolean') return value ? [` ${key}`] : [];
+    return [` ${key}="${escapeAttribute(value)}"`];
+  });
+  return { html: `<${name}${attributes.join('')}></${name}>`, diagnostics };
+}
+
+/** The value an attribute stands for, read by the input's type. */
+function attributeValue(raw, schema) {
+  if (schema.type === 'boolean') return raw === undefined || raw === '' || raw === 'true' ? true : raw === 'false' ? false : raw;
+  if (raw === undefined) return '';
+  if (schema.type === 'integer' || schema.type === 'number') return /^-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?$/u.test(raw) ? Number(raw) : raw;
+  return unescape(raw);
+}
+
+/**
+ * Every printed element in HTML a renderer wrote, held to its manifest: an
+ * attribute that is not an input (nor a host attribute), a value the input
+ * refuses, an inline style, a missing label. Returns the diagnostics.
+ */
+function checkPrintedElements(html, check = undefined, path = '$') {
+  const diagnostics = [];
+  if (typeof html !== 'string') return diagnostics;
+  const names = PRINTED_ELEMENTS.filter((name) => _elements_generated_mjs__WEBPACK_IMPORTED_MODULE_1__.PRINTED_ELEMENT_TABLE[name].kind === 'custom-element');
+  const tag = new RegExp(`<(${names.join('|')})(?=[\\s>/])([^>]*)>`, 'gu');
+  for (const match of html.matchAll(tag)) {
+    const [, name, rest] = match;
+    const at = `${path}<${name}>@${match.index}`;
+    const properties = _elements_generated_mjs__WEBPACK_IMPORTED_MODULE_1__.PRINTED_ELEMENT_TABLE[name].inputs.properties;
+    const inputs = {};
+    for (const attribute of rest.matchAll(ATTRIBUTE)) {
+      const key = attribute[1].toLowerCase();
+      const raw = attribute[2] ?? attribute[3] ?? attribute[4];
+      if (key === 'style') diagnostics.push(diagnostic('element_inline_style', at, `${name} prints no inline style`, { element: name }));
+      else if (Object.hasOwn(properties, key)) inputs[key] = attributeValue(raw, properties[key]);
+      else if (!HOST_ATTRIBUTE.test(key)) diagnostics.push(diagnostic('element_input_unknown', `${at}.${key}`, `${name} takes no input ${key}`, { element: name, input: key }));
+    }
+    if (typeof check === 'function') check(inputs, _elements_generated_mjs__WEBPACK_IMPORTED_MODULE_1__.PRINTED_ELEMENT_TABLE[name].inputs, at, diagnostics);
+    const label = labelProblem(name, inputs, at);
+    if (label) diagnostics.push(label);
+  }
+  return diagnostics;
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ PRINTED_ELEMENTS, checkPrintedElements, elementInputs, printElement });
 
 
 /***/ },
@@ -18054,36 +20004,72 @@ function richTextFromPlainText(text, {mode = 'value'} = {}) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BINDING_STATES: () => (/* reexport safe */ _data_mjs__WEBPACK_IMPORTED_MODULE_18__.BINDING_STATES),
+/* harmony export */   BUILTIN_CATALOGUE: () => (/* reexport safe */ _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.BUILTIN_CATALOGUE),
 /* harmony export */   BUILTIN_EDITOR_MANIFESTS: () => (/* reexport safe */ _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_EDITOR_MANIFESTS),
 /* harmony export */   BUILTIN_FIELD_KINDS: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_7__.BUILTIN_FIELD_KINDS),
 /* harmony export */   BUILTIN_PORT_MANIFESTS: () => (/* reexport safe */ _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_PORT_MANIFESTS),
 /* harmony export */   BUILTIN_TYPE_MANIFESTS: () => (/* reexport safe */ _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_TYPE_MANIFESTS),
+/* harmony export */   CATALOGUE_GROUPS: () => (/* reexport safe */ _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.CATALOGUE_GROUPS),
+/* harmony export */   CATALOGUE_TABS: () => (/* reexport safe */ _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.CATALOGUE_TABS),
+/* harmony export */   COMPOSED_EXTENSION: () => (/* reexport safe */ _composed_mjs__WEBPACK_IMPORTED_MODULE_17__.COMPOSED_EXTENSION),
 /* harmony export */   Composition: () => (/* binding */ Composition),
+/* harmony export */   DATA_EXTENSION: () => (/* reexport safe */ _data_mjs__WEBPACK_IMPORTED_MODULE_18__.DATA_EXTENSION),
+/* harmony export */   DATA_SHAPES: () => (/* reexport safe */ _data_mjs__WEBPACK_IMPORTED_MODULE_18__.DATA_SHAPES),
 /* harmony export */   EDITOR_FIELD_WORDS: () => (/* reexport safe */ _editor_words_mjs__WEBPACK_IMPORTED_MODULE_1__.EDITOR_FIELD_WORDS),
 /* harmony export */   EDITOR_WORDS_OWNER: () => (/* reexport safe */ _editor_words_mjs__WEBPACK_IMPORTED_MODULE_1__.EDITOR_WORDS_OWNER),
 /* harmony export */   FRAGMENT_DESCRIPTOR_SCHEMA: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_12__.FRAGMENT_DESCRIPTOR_SCHEMA),
 /* harmony export */   INLINE_MARKS: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_10__.INLINE_MARKS),
+/* harmony export */   MODIFIERS_EXTENSION: () => (/* reexport safe */ _utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.MODIFIERS_EXTENSION),
+/* harmony export */   PARAMETER_SETS: () => (/* reexport safe */ _parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_16__.PARAMETER_SETS),
+/* harmony export */   PARAMETER_SET_NAMES: () => (/* reexport safe */ _parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_16__.PARAMETER_SET_NAMES),
+/* harmony export */   PRINTED_ELEMENTS: () => (/* reexport safe */ _elements_mjs__WEBPACK_IMPORTED_MODULE_15__.PRINTED_ELEMENTS),
+/* harmony export */   RUNTIME_OWNER: () => (/* reexport safe */ _data_mjs__WEBPACK_IMPORTED_MODULE_18__.RUNTIME_OWNER),
 /* harmony export */   Recipe: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_8__.Recipe),
+/* harmony export */   SOURCE_PORT: () => (/* reexport safe */ _data_mjs__WEBPACK_IMPORTED_MODULE_18__.SOURCE_PORT),
+/* harmony export */   UTILITY_BREAKPOINTS: () => (/* reexport safe */ _utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.UTILITY_BREAKPOINTS),
 /* harmony export */   VALUE_TYPES: () => (/* reexport safe */ _routing_mjs__WEBPACK_IMPORTED_MODULE_11__.VALUE_TYPES),
 /* harmony export */   applyFieldValue: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_7__.applyFieldValue),
+/* harmony export */   bindingSettings: () => (/* reexport safe */ _data_mjs__WEBPACK_IMPORTED_MODULE_18__.bindingSettings),
+/* harmony export */   catalogue: () => (/* reexport safe */ _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.catalogue),
+/* harmony export */   catalogueEntry: () => (/* reexport safe */ _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.catalogueEntry),
 /* harmony export */   checkFragmentDescriptor: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_12__.checkFragmentDescriptor),
+/* harmony export */   checkModifiers: () => (/* reexport safe */ _utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.checkModifiers),
 /* harmony export */   checkPortValue: () => (/* reexport safe */ _routing_mjs__WEBPACK_IMPORTED_MODULE_11__.checkPortValue),
+/* harmony export */   checkPrintedElements: () => (/* binding */ checkPrintedElements),
+/* harmony export */   checkSourceAnswer: () => (/* binding */ checkSourceAnswer),
+/* harmony export */   composedEditorFields: () => (/* binding */ composedEditorFields),
+/* harmony export */   composedInstance: () => (/* reexport safe */ _composed_mjs__WEBPACK_IMPORTED_MODULE_17__.composedInstance),
+/* harmony export */   composedPart: () => (/* reexport safe */ _composed_mjs__WEBPACK_IMPORTED_MODULE_17__.composedPart),
+/* harmony export */   composedTextPaths: () => (/* reexport safe */ _composed_mjs__WEBPACK_IMPORTED_MODULE_17__.composedTextPaths),
 /* harmony export */   compositionTypeFromSmartManifest: () => (/* binding */ compositionTypeFromSmartManifest),
 /* harmony export */   createPortRegistry: () => (/* reexport safe */ _routing_mjs__WEBPACK_IMPORTED_MODULE_11__.createPortRegistry),
 /* harmony export */   createRegistry: () => (/* binding */ createRegistry),
+/* harmony export */   createShapeRegistry: () => (/* reexport safe */ _data_mjs__WEBPACK_IMPORTED_MODULE_18__.createShapeRegistry),
+/* harmony export */   createSourcePort: () => (/* binding */ createSourcePort),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   defineComposedType: () => (/* binding */ defineComposedType),
 /* harmony export */   defineCompositionScope: () => (/* reexport safe */ _routing_mjs__WEBPACK_IMPORTED_MODULE_11__.defineCompositionScope),
 /* harmony export */   defineFragmentBoundary: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_12__.defineFragmentBoundary),
 /* harmony export */   definePageHost: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_12__.definePageHost),
+/* harmony export */   demoData: () => (/* reexport safe */ _data_mjs__WEBPACK_IMPORTED_MODULE_18__.demoData),
 /* harmony export */   describeRegions: () => (/* reexport safe */ _regions_mjs__WEBPACK_IMPORTED_MODULE_9__.describeRegions),
 /* harmony export */   editorFieldMessages: () => (/* reexport safe */ _editor_words_mjs__WEBPACK_IMPORTED_MODULE_1__.editorFieldMessages),
+/* harmony export */   elementInputs: () => (/* reexport safe */ _elements_mjs__WEBPACK_IMPORTED_MODULE_15__.elementInputs),
+/* harmony export */   expandComposed: () => (/* reexport safe */ _composed_mjs__WEBPACK_IMPORTED_MODULE_17__.expandComposed),
+/* harmony export */   expandParameterSets: () => (/* reexport safe */ _parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_16__.expandParameterSets),
 /* harmony export */   extendRegistry: () => (/* binding */ extendRegistry),
 /* harmony export */   inlineText: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_10__.inlineText),
+/* harmony export */   instantiateVariant: () => (/* reexport safe */ _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.instantiateVariant),
 /* harmony export */   marksIn: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_10__.marksIn),
 /* harmony export */   normalize: () => (/* binding */ normalize),
 /* harmony export */   normalizeInline: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_10__.normalizeInline),
+/* harmony export */   ownModifiers: () => (/* reexport safe */ _utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.ownModifiers),
+/* harmony export */   parameterSetFields: () => (/* reexport safe */ _parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_16__.parameterSetFields),
+/* harmony export */   parameterSetParts: () => (/* reexport safe */ _parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_16__.parameterSetParts),
 /* harmony export */   parseFieldSubmission: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_7__.parseFieldSubmission),
 /* harmony export */   parseRecipeJson: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_8__.parseRecipeJson),
+/* harmony export */   printElement: () => (/* binding */ printElement),
 /* harmony export */   projectDocumentEditorFields: () => (/* reexport safe */ _editor_mjs__WEBPACK_IMPORTED_MODULE_6__.projectDocumentEditorFields),
 /* harmony export */   projectEditorFields: () => (/* reexport safe */ _editor_mjs__WEBPACK_IMPORTED_MODULE_6__.projectEditorFields),
 /* harmony export */   publishEffects: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_12__.publishEffects),
@@ -18095,13 +20081,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   resolveFieldKind: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_7__.resolveFieldKind),
 /* harmony export */   resolveRecipe: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_8__.resolveRecipe),
 /* harmony export */   setLink: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_10__.setLink),
+/* harmony export */   slotAccepts: () => (/* reexport safe */ _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.slotAccepts),
+/* harmony export */   slotPlaces: () => (/* reexport safe */ _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.slotPlaces),
 /* harmony export */   stableStringify: () => (/* reexport safe */ _canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.stableStringify),
 /* harmony export */   startInlineEdit: () => (/* binding */ startInlineEdit),
 /* harmony export */   toggleMark: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_10__.toggleMark),
+/* harmony export */   upgradeComposed: () => (/* binding */ upgradeComposed),
+/* harmony export */   utilityClassSpace: () => (/* reexport safe */ _utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.utilityClassSpace),
+/* harmony export */   utilityClasses: () => (/* reexport safe */ _utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.utilityClasses),
+/* harmony export */   utilityPartClasses: () => (/* reexport safe */ _utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.utilityPartClasses),
 /* harmony export */   validate: () => (/* binding */ validate),
 /* harmony export */   validateEditorManifest: () => (/* reexport safe */ _editor_mjs__WEBPACK_IMPORTED_MODULE_6__.validateEditorManifest),
 /* harmony export */   validateFieldKinds: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_7__.validateFieldKinds),
-/* harmony export */   validateFieldValue: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_7__.validateFieldValue)
+/* harmony export */   validateFieldValue: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_7__.validateFieldValue),
+/* harmony export */   validateParameterSets: () => (/* reexport safe */ _parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_16__.validateParameterSets),
+/* harmony export */   validateTypeManifest: () => (/* binding */ validateTypeManifest),
+/* harmony export */   valuesByBreakpoint: () => (/* reexport safe */ _utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.valuesByBreakpoint),
+/* harmony export */   withParameterSetFields: () => (/* reexport safe */ _parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_16__.withParameterSetFields)
 /* harmony export */ });
 /* harmony import */ var _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("08e5033c490a");
 /* harmony import */ var _editor_words_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("fe90f998a31d");
@@ -18116,6 +20112,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _inline_model_mjs__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("e66d878fb4f8");
 /* harmony import */ var _routing_mjs__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("4aea5d6d49c7");
 /* harmony import */ var _fragments_mjs__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("c2e3ed8498dc");
+/* harmony import */ var _utilities_mjs__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("b88de35f4919");
+/* harmony import */ var _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("76235de72516");
+/* harmony import */ var _elements_mjs__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("3ad83f3699c7");
+/* harmony import */ var _parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__("18b9c76994c9");
+/* harmony import */ var _composed_mjs__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__("e2cb52b018e5");
+/* harmony import */ var _data_mjs__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__("c6b53a101be9");
+
+
+
+
+
+
 
 
 
@@ -18264,6 +20272,13 @@ function validateJsonSchema(value, schema, path, diagnostics) {
   }
 }
 
+// The inline model as content.paragraph holds it: what a site block's text is.
+const INLINE_SCHEMA = _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_TYPE_MANIFESTS.find(({ type }) => type === 'content.paragraph').data_schema.properties.content;
+function checkInline(content, path, diagnostics) {
+  validateJsonSchema(content, INLINE_SCHEMA, path, diagnostics);
+  validateInlineContent(content, path, diagnostics);
+}
+
 function validUrl(value) {
   // Browsers read "/\\host" like "//host": backslashes never form a local link.
   if (/^(?:\/|\.?\.\/|#)/u.test(value)) return !value.startsWith('//') && !value.includes('\\');
@@ -18360,7 +20375,8 @@ function createRegistry(manifests = _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.B
     // Either form of the format name (schema-name.mjs).
     if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.isPlainObject)(manifest) || !(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_5__.isSchema)(manifest, 'simai.composition.type-manifest', 1)) throw new TypeError('composition_manifest_invalid');
     if (types.has(manifest.type)) throw new TypeError(`composition_manifest_duplicate:${manifest.type}`);
-    types.set(manifest.type, (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.canonical)(manifest));
+    // A type's parameter sets join its props (parameter-sets.mjs).
+    types.set(manifest.type, (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.canonical)((0,_parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_16__.expandParameterSets)(manifest)));
   }
   return { types, renderers: new Map(Object.entries(renderers)) };
 }
@@ -18422,6 +20438,7 @@ function compositionTypeFromSmartManifest(manifest) {
 
 function validate(document, registry = undefined, options = {}) {
   const diagnostics = [];
+  const notices = [];
   const resolvedRegistry = normalizeRegistry(registry);
   const limits = { ...DEFAULT_LIMITS, ...(options.limits || {}) };
   const supportedExtensions = new Set([_routing_mjs__WEBPACK_IMPORTED_MODULE_11__.ENDPOINT_EXTENSION, ...(options.supportedExtensions || [])]);
@@ -18462,7 +20479,26 @@ function validate(document, registry = undefined, options = {}) {
     }
     if (!manifest.profiles.includes(document.profile)) diagnostics.push(diagnostic('type_profile_unsupported', `${path}.type`, `${node.type} does not support ${document.profile}`));
     validateJsonSchema(node.data || {}, manifest.data_schema, `${path}.data`, diagnostics);
-    validateJsonSchema(node.props || {}, manifest.props_schema, `${path}.props`, diagnostics);
+    // A layout parameter may hold a value per breakpoint (utilities.mjs): each
+    // value is checked on its own, the rest of the props as before.
+    const responsive = (0,_utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.checkResponsiveProps)(node.props || {}, manifest.props_schema, `${path}.props`, validateJsonSchema);
+    diagnostics.push(...responsive.diagnostics);
+    validateJsonSchema(responsive.props, responsive.schema || manifest.props_schema, `${path}.props`, diagnostics);
+    // A block's own modifiers never refuse a Document: a class no utility rule
+    // knows is left out of the HTML and reported.
+    notices.push(...(0,_utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.modifierNotices)(node, { rules: options.utilityRules }).notices);
+    if ((0,_composed_mjs__WEBPACK_IMPORTED_MODULE_17__.isComposed)(manifest)) {
+      const instance = (0,_composed_mjs__WEBPACK_IMPORTED_MODULE_17__.validateComposedInstance)(node, manifest, resolvedRegistry, path, checkInline);
+      diagnostics.push(...instance.diagnostics);
+      notices.push(...instance.notices);
+      const depth = (options.composedDepth || 0) + 1;
+      if (depth > _composed_mjs__WEBPACK_IMPORTED_MODULE_17__.MAX_COMPOSED_DEPTH) diagnostics.push(diagnostic('composed_depth_limit', path, 'Site blocks are nested too deeply'));
+      else {
+        const expanded = validate({ ...document, root: (0,_composed_mjs__WEBPACK_IMPORTED_MODULE_17__.expandComposed)(node, manifest) }, resolvedRegistry, { ...options, composedDepth: depth });
+        diagnostics.push(...expanded.diagnostics.map((entry) => ({ ...entry, path: `${path}.composed${entry.path.replace(/^\$\.root/u, '').replace(/^\$/u, '')}` })));
+        notices.push(...(expanded.notices || []));
+      }
+    }
     if (node.presentation !== undefined) {
       if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.isPlainObject)(node.presentation)) diagnostics.push(diagnostic('presentation_invalid', `${path}.presentation`, 'Presentation must be an object'));
       else {
@@ -18510,6 +20546,7 @@ function validate(document, registry = undefined, options = {}) {
         const childManifest = resolvedRegistry.types.get(child?.type);
         if (childManifest && slot.types && !slot.types.includes(child.type)) diagnostics.push(diagnostic('slot_child_type_forbidden', `${path}.slots.${slotName}[${index}]`, `${child.type} is not allowed in this slot`));
         if (childManifest && slot.categories && !slot.categories.includes(childManifest.category)) diagnostics.push(diagnostic('slot_child_category_forbidden', `${path}.slots.${slotName}[${index}]`, `${childManifest.category} is not allowed in this slot`));
+        if (childManifest && slot.groups && !slot.groups.includes((0,_catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.catalogueEntry)(childManifest)?.group)) diagnostics.push(diagnostic('slot_child_group_forbidden', `${path}.slots.${slotName}[${index}]`, `${child.type} is not in a group this place accepts (${slot.groups.join(', ')})`));
         visit(child, `${path}.slots.${slotName}[${index}]`, depth + 1);
       });
     }
@@ -18523,8 +20560,9 @@ function validate(document, registry = undefined, options = {}) {
     (0,_regions_mjs__WEBPACK_IMPORTED_MODULE_9__.validateRegionRules)(document.root, resolvedRegistry, diagnostics);
     validateContentRules(document.root, diagnostics);
     (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_11__.resolveRoutes)(document.root, resolvedRegistry, normalizePorts(options.ports), diagnostics);
+    (0,_data_mjs__WEBPACK_IMPORTED_MODULE_18__.validateDataRules)(document.root, resolvedRegistry, options.shapes, diagnostics);
   }
-  return { valid: diagnostics.length === 0, diagnostics };
+  return { valid: diagnostics.length === 0, diagnostics, ...(notices.length ? { notices } : {}) };
 }
 
 function collectDependencies(node, manifest, output) {
@@ -18538,12 +20576,17 @@ async function normalize(document, registry = undefined, options = {}) {
   if (!result.valid) return { document: null, digest: null, dependencies: { assets: [], bindings: [] }, diagnostics: result.diagnostics };
   const normalized = (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.canonical)(JSON.parse(JSON.stringify(document)));
   const dependencies = { assets: new Set(), bindings: new Map() };
-  const visit = (node) => {
-    collectDependencies(node, resolvedRegistry.types.get(node.type), dependencies);
-    Object.values(node.slots || {}).flat().forEach(visit);
+  const visit = (node, depth = 0) => {
+    const manifest = resolvedRegistry.types.get(node.type);
+    if (!manifest) return;
+    collectDependencies(node, manifest, dependencies);
+    // A site block needs what the blocks of its tree need.
+    if ((0,_composed_mjs__WEBPACK_IMPORTED_MODULE_17__.isComposed)(manifest) && depth < _composed_mjs__WEBPACK_IMPORTED_MODULE_17__.MAX_COMPOSED_DEPTH) visit((0,_composed_mjs__WEBPACK_IMPORTED_MODULE_17__.expandComposed)(node, manifest), depth + 1);
+    Object.values(node.slots || {}).flat().forEach((child) => visit(child, depth));
   };
   visit(normalized.root);
   return {
+    ...(result.notices ? { notices: result.notices } : {}),
     document: normalized,
     digest: await sha256((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.stableStringify)(normalized)),
     dependencies: {
@@ -18679,10 +20722,20 @@ function renderMedia(node, slots) {
 
 const BUILTIN_RENDERERS = {
   'layout.page': ({ node, slots }) => `<main data-sf-composition-id="${escapeHtml(node.id)}">${slots.default || ''}</main>`,
-  'layout.section': ({ node, slots }) => `<section data-sf-composition-id="${escapeHtml(node.id)}">${slots.default || ''}</section>`,
+  'layout.section': ({ node, slots }) => {
+    // 1.1.0: a section given a width or columns draws the frame and content
+    // parts its parameter sets place classes on; one without draws as before.
+    const framed = ['width', 'columns', 'gap'].some((key) => node.props?.[key] !== undefined);
+    const inner = framed ? `<div data-sf-composition-part="frame"><div data-sf-composition-part="content">${slots.default || ''}</div></div>` : (slots.default || '');
+    return `<section data-sf-composition-id="${escapeHtml(node.id)}">${inner}</section>`;
+  },
   'layout.columns': ({ node, slots }) => {
     const columns = Number.isInteger(node.props?.columns) ? ` data-composition-columns="${node.props.columns}"` : '';
-    return `<div class="sf-composition-columns" data-sf-composition-id="${escapeHtml(node.id)}"${columns}>${(slots.columnsList || []).map((child) => `<div class="sf-composition-column">${child}</div>`).join('')}</div>`;
+    // A grid of one column on the phone unless columns says otherwise; the
+    // columns and gap utilities are added from the props (1.1.0). No gap given
+    // keeps the type's own gap.
+    const gap = node.props?.gap === undefined ? ' gap-4' : '';
+    return `<div class="sf-composition-columns grid${gap}" data-sf-composition-id="${escapeHtml(node.id)}"${columns}>${(slots.columnsList || []).map((child) => `<div class="sf-composition-column">${child}</div>`).join('')}</div>`;
   },
   'content.heading': ({ node }) => `<h${node.data.level || 2} data-sf-composition-id="${escapeHtml(node.id)}">${renderInline(node.data.content)}</h${node.data.level || 2}>`,
   'content.paragraph': ({ node }) => `<p data-sf-composition-id="${escapeHtml(node.id)}">${renderInline(node.data.content)}</p>`,
@@ -18695,6 +20748,7 @@ const BUILTIN_RENDERERS = {
     return `<${element} class="sf-composition-region" data-sf-composition-id="${escapeHtml(node.id)}" data-sf-region="${escapeHtml(props.name)}" data-sf-region-placement="${escapeHtml(props.placement ?? 'block')}"${sticky}${label}>${slots.default || ''}</${element}>`;
   },
   'layout.scope': ({ node, slots, routes }) => `<sf-composition-scope data-sf-composition-id="${escapeHtml(node.id)}" data-sf-routes="${escapeHtml((0,_routing_mjs__WEBPACK_IMPORTED_MODULE_11__.routesAttribute)(routes || []))}">${slots.default || ''}</sf-composition-scope>`,
+  'layout.area': ({ node, slots }) => `<div data-sf-composition-area=""${id(node)}>${slots.default || ''}</div>`,
   'content.document': ({ node, slots }) => `<article${id(node)}>${node.data?.title ? `<h1>${escapeHtml(node.data.title)}</h1>` : ''}${slots.default || ''}</article>`,
   'content.list': ({ node, slots }) => {
     const ordered = node.props?.ordered === true;
@@ -18752,8 +20806,12 @@ async function render(document, context = {}) {
   const normalized = await normalize(document, registry, context.options || {});
   if (!normalized.document) return { html: '', assets: [], hydration: [], diagnostics: normalized.diagnostics, digest: null };
   const diagnostics = [];
+  const notices = [...(normalized.notices || [])].filter((entry) => !entry.code.startsWith('modifier'));
   const hydration = [];
   const routes = (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_11__.resolveRoutes)(normalized.document.root, registry, normalizePorts(context.options?.ports), []);
+  // The data of the blocks that declare it, resolved before drawing (data.mjs).
+  const data = await (0,_data_mjs__WEBPACK_IMPORTED_MODULE_18__.resolveData)(normalized.document.root, registry, context, validateJsonSchema);
+  diagnostics.push(...data.diagnostics);
   // The page's content for a layout's content.outlet: a structured-content
   // Document, rendered with the same registry; its assets and diagnostics
   // join the layout's.
@@ -18771,19 +20829,43 @@ async function render(document, context = {}) {
       diagnostics.push(...page.diagnostics.map((entry) => ({ ...entry, path: `$.content${entry.path.startsWith('$') ? entry.path.slice(1) : `:${entry.path}`}` })));
     }
   }
-  const renderNode = async (node) => {
+  const renderNode = async (node, depth = 0) => {
     const manifest = registry.types.get(node.type);
+    // A site block draws its type's current tree with the instance's values
+    // and texts (composed.mjs); the instance stays one node of the Document.
+    if ((0,_composed_mjs__WEBPACK_IMPORTED_MODULE_17__.isComposed)(manifest)) {
+      if (depth >= _composed_mjs__WEBPACK_IMPORTED_MODULE_17__.MAX_COMPOSED_DEPTH) return '';
+      const expanded = (0,_composed_mjs__WEBPACK_IMPORTED_MODULE_17__.expandComposed)(node, manifest);
+      const inner = await (0,_data_mjs__WEBPACK_IMPORTED_MODULE_18__.resolveData)(expanded, registry, context, validateJsonSchema);
+      for (const [id, entry] of inner.byNode) data.byNode.set(id, entry);
+      data.links.push(...inner.links);
+      diagnostics.push(...inner.diagnostics);
+      return renderNode(expanded, depth + 1);
+    }
     const slots = {};
     for (const [name, children] of Object.entries(node.slots || {})) {
       const rendered = [];
-      for (const child of children) rendered.push(await renderNode(child));
+      for (const child of children) rendered.push(await renderNode(child, depth));
       slots[name] = rendered.join('');
       slots[`${name}List`] = rendered;
     }
     const resolvedBindings = {};
-    for (const binding of node.bindings || []) {
-      if (context.resolveBinding) resolvedBindings[binding.target] = await context.resolveBinding(binding, { document: normalized.document, node });
+    let bindingStates;
+    if ((0,_data_mjs__WEBPACK_IMPORTED_MODULE_18__.takesData)(manifest)) {
+      const entry = data.byNode.get(node.id) || { values: {}, states: {} };
+      Object.assign(resolvedBindings, entry.values);
+      bindingStates = entry.states;
+    } else {
+      for (const binding of node.bindings || []) {
+        if (context.resolveBinding) resolvedBindings[binding.target] = await context.resolveBinding(binding, { document: normalized.document, node });
+      }
     }
+    // Layout parameters and the block's own modifiers become SIMAI Framework
+    // utilities on the block's element (utilities.mjs).
+    const own = (0,_utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.modifierNotices)(node, { rules: context.options?.utilityRules });
+    notices.push(...own.notices);
+    const byPart = (0,_utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.utilityPartClasses)(node, manifest);
+    const utilities = [...new Set([...(byPart[''] || []), ...own.kept])];
     let renderer = registry.renderers.get(manifest.renderer.name) || BUILTIN_RENDERERS[manifest.renderer.name];
     if (!renderer && manifest.renderer.kind === 'custom-element' && manifest.renderer.name) {
       renderer = ({ node: current, slots: currentSlots, endpoint }) => {
@@ -18798,11 +20880,148 @@ async function render(document, context = {}) {
       return '';
     }
     if (node.type === 'layout.scope') hydration.push({ id: node.id, type: node.type, element: 'sf-composition-scope' });
-    return renderer({ node, slots, context, resolvedBindings, manifest, routes: routes.get(node.id), endpoint: (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_11__.endpointName)(node), outlet: node.type === 'content.outlet' ? outlet : undefined, locale: normalized.document.locale ?? 'en' });
+    // The smart elements a block may print, held to their manifests (elements.mjs).
+    const elements = {
+      print: (name, inputs) => {
+        const printed = (0,_elements_mjs__WEBPACK_IMPORTED_MODULE_15__.printElement)(name, inputs, validateJsonSchema, `node:${node.id}`);
+        diagnostics.push(...printed.diagnostics);
+        return printed.html;
+      },
+    };
+    const html = await renderer({ node, slots, context, elements, resolvedBindings, ...(bindingStates ? { bindingStates } : {}), utilities, manifest, routes: routes.get(node.id), endpoint: (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_11__.endpointName)(node), outlet: node.type === 'content.outlet' ? outlet : undefined, locale: normalized.document.locale ?? 'en' });
+    let drawn = (0,_utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.withClasses)(html, node.id, utilities);
+    // A parameter that reaches an inner element (a set's part): the renderer
+    // marks it data-sf-composition-part; classes for a part it did not draw
+    // are reported, never placed elsewhere.
+    for (const [part, classes] of Object.entries(byPart)) {
+      if (part === '' || !classes.length) continue;
+      const placed = (0,_utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.withPartClasses)(drawn, node.id, part, classes);
+      if (placed.found) drawn = placed.html;
+      else notices.push(diagnostic('utility_part_missing', `node:${node.id}`, `${node.type} draws no ${part} part; ${classes.join(' ')} is left out`, { part }));
+    }
+    return drawn;
   };
   const html = await renderNode(normalized.document.root);
   const assets = outletAssets.length ? [...new Set([...normalized.dependencies.assets, ...outletAssets])].sort() : normalized.dependencies.assets;
-  return { html, assets, hydration, diagnostics, digest: normalized.digest };
+  return {
+    html,
+    assets,
+    hydration,
+    diagnostics,
+    digest: normalized.digest,
+    ...(notices.length ? { notices } : {}),
+    ...(data.links.length ? { runtime: data.links } : {}),
+  };
+}
+
+// ------------------------------------------------- one block editor (2026-11-03)
+
+const fits = (value, schema) => {
+  const problems = [];
+  const responsive = (0,_utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.isResponsive)(schema) && (0,_utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.isBreakpointValue)(value);
+  if (responsive) for (const entry of Object.values(value)) validateJsonSchema(entry, (0,_utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.valueSchema)(schema), '$', problems);
+  else validateJsonSchema(value, schema, '$', problems);
+  return problems.length === 0;
+};
+
+/**
+ * The problems of a type manifest's additive fields (catalogue, variants,
+ * slot words and groups, layout utilities, data bindings, runtime states, a
+ * site block's tree): {valid, diagnostics}. Each variant is made into a node
+ * and validated as a Document of the type's first profile.
+ */
+function validateTypeManifest(manifest, registry = undefined, options = {}) {
+  const diagnostics = [];
+  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.isPlainObject)(manifest) || !(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_5__.isSchema)(manifest, 'simai.composition.type-manifest', 1)) return { valid: false, diagnostics: [diagnostic('composition_manifest_invalid', '$', 'A type manifest is simai.composition.type-manifest with schema_version 1')] };
+  diagnostics.push(...(0,_catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.validateCatalogueFields)(manifest));
+  diagnostics.push(...(0,_parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_16__.validateParameterSets)(manifest));
+  diagnostics.push(...(0,_utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.validateUtilityDeclarations)((0,_parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_16__.expandParameterSets)(manifest)));
+  diagnostics.push(...(0,_data_mjs__WEBPACK_IMPORTED_MODULE_18__.validateDataDeclarations)(manifest, options.shapes));
+  let resolved = normalizeRegistry(registry);
+  if (resolved.types.get(manifest.type) !== manifest) {
+    const others = [...resolved.types.values()].filter((entry) => entry.type !== manifest.type);
+    resolved = { types: new Map([...others, (0,_parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_16__.expandParameterSets)(manifest)].map((entry) => [entry.type, entry])), renderers: resolved.renderers };
+  }
+  if ((0,_composed_mjs__WEBPACK_IMPORTED_MODULE_17__.isComposed)(manifest)) {
+    const again = (0,_composed_mjs__WEBPACK_IMPORTED_MODULE_17__.defineComposedType)({ ...manifest, root: manifest.composed.root }, resolved, (document, current) => validate(document, current, options));
+    diagnostics.push(...again.diagnostics.map((entry) => ({ ...entry, path: entry.path.startsWith('$.root') ? `$.composed${entry.path.slice(1)}` : entry.path })));
+    if (again.manifest && (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.stableStringify)(again.manifest.props_schema) !== (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.stableStringify)(manifest.props_schema)) diagnostics.push(diagnostic('composed_schema_drift', '$.props_schema', 'The exposed parameters do not match the tree: make the manifest with defineComposedType'));
+    if (manifest.renderer?.kind !== 'builtin' || manifest.renderer?.name !== 'composed') diagnostics.push(diagnostic('composed_renderer_invalid', '$.renderer', 'A site block is drawn by the builtin renderer composed'));
+  } else if (manifest.exposed !== undefined) diagnostics.push(diagnostic('composed_exposed_without_tree', '$.exposed', 'Only a site block (composed) exposes parameters'));
+  if (Array.isArray(manifest.variants) && !diagnostics.some((entry) => entry.code.startsWith('variant'))) {
+    for (const variant of manifest.variants) {
+      const node = (0,_catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.instantiateVariant)(manifest, variant.id, { id: `variant-${variant.id}` });
+      const checked = validate({ ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_5__.schemaFields)('simai.composition.document', 1), id: 'variant-probe', profile: manifest.profiles[0], root: node }, resolved, options);
+      diagnostics.push(...checked.diagnostics.map((entry) => ({ ...entry, path: `$.variants.${variant.id}${entry.path.replace(/^\$\.root/u, '')}` })));
+    }
+  }
+  return { valid: diagnostics.length === 0, diagnostics };
+}
+
+/** A site block's type manifest from what the block builder saved (composed.mjs). */
+function defineComposedType(definition, registry = undefined, options = {}) {
+  return (0,_composed_mjs__WEBPACK_IMPORTED_MODULE_17__.defineComposedType)(definition, normalizeRegistry(registry), (document, current) => validate(document, current, options));
+}
+
+/**
+ * A site block's parameter form: its exposed list with the target types'
+ * editor fields (composed.mjs composedEditorManifest). With an instance it
+ * also projects the instance's values, as projectEditorFields does for a type
+ * of code: {manifest, origins, fields, diagnostics, valid}.
+ */
+function composedEditorFields(manifest, instance = undefined, options = {}) {
+  const registry = normalizeRegistry(options.registry);
+  const editors = [..._builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_EDITOR_MANIFESTS, ...(options.editorManifests || [])];
+  const made = (0,_composed_mjs__WEBPACK_IMPORTED_MODULE_17__.composedEditorManifest)(manifest, registry, editors);
+  if (!made.manifest) return { valid: false, manifest: null, origins: {}, fields: [], diagnostics: made.diagnostics };
+  const projected = (0,_editor_mjs__WEBPACK_IMPORTED_MODULE_6__.projectEditorFields)(made.manifest, manifest, instance || { id: '', type: manifest.type }, options);
+  const diagnostics = [...made.diagnostics, ...projected.diagnostics];
+  return { valid: diagnostics.length === 0, manifest: made.manifest, origins: made.origins, fields: projected.fields, diagnostics };
+}
+
+/** Every instance of a site block moved to its type's current version; what the new version no longer has is reported. */
+function upgradeComposed(document, registry = undefined) {
+  return (0,_composed_mjs__WEBPACK_IMPORTED_MODULE_17__.upgradeComposed)(document, normalizeRegistry(registry), fits);
+}
+
+/** The markup of a smart element a block prints, from its manifest inputs: {html, diagnostics} (elements.mjs). */
+function printElement(name, inputs = {}) {
+  return (0,_elements_mjs__WEBPACK_IMPORTED_MODULE_15__.printElement)(name, inputs, validateJsonSchema);
+}
+
+/** The problems of the smart elements in HTML a renderer wrote: attributes their manifests do not take (elements.mjs). */
+function checkPrintedElements(html) {
+  return (0,_elements_mjs__WEBPACK_IMPORTED_MODULE_15__.checkPrintedElements)(html, validateJsonSchema);
+}
+
+/** The problems of a host's answer to one source-port request. */
+function checkSourceAnswer(request, answer, options = {}) {
+  return (0,_data_mjs__WEBPACK_IMPORTED_MODULE_18__.checkSourceAnswer)(request, answer, { ...options, check: validateJsonSchema });
+}
+
+/**
+ * The source port over a host's three functions {sources(shape),
+ * fields(source), preview(binding, {settings, shape})}: each answer is checked
+ * before an editor reads it. resolveBinding draws the editor's preview through
+ * the port: render(document, {resolveBinding: port.resolveBinding, preview: true}).
+ */
+function createSourcePort(host, options = {}) {
+  if (!host || ['sources', 'fields', 'preview'].some((name) => typeof host[name] !== 'function')) throw new TypeError('composition_source_port_incomplete');
+  const answered = async (request, answer, extra = {}) => {
+    const problems = checkSourceAnswer(request, answer, { ...options, ...extra });
+    if (problems.length) {
+      const error = new TypeError(`composition_source_answer_invalid:${request}`);
+      error.diagnostics = problems;
+      throw error;
+    }
+    return answer;
+  };
+  return Object.freeze({
+    sources: async (shape) => answered('sources', await host.sources(shape)),
+    fields: async (source) => answered('fields', await host.fields(source)),
+    preview: async (binding, { settings = {}, shape } = {}) => answered('preview', await host.preview(binding, { settings, shape }), { shape }),
+    resolveBinding: async (binding, { shape, settings } = {}) => host.preview(binding, { settings: settings || {}, shape }),
+  });
 }
 
 const Composition = Object.freeze({
@@ -18843,6 +21062,47 @@ const Composition = Object.freeze({
   stableStringify: _canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.stableStringify,
   validate,
   validateEditorManifest: _editor_mjs__WEBPACK_IMPORTED_MODULE_6__.validateEditorManifest,
+  // One block editor (2026-11-03): catalogue, layout utilities, own
+  // modifiers, site blocks, named places and data.
+  BINDING_STATES: _data_mjs__WEBPACK_IMPORTED_MODULE_18__.BINDING_STATES,
+  BUILTIN_CATALOGUE: _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.BUILTIN_CATALOGUE,
+  CATALOGUE_GROUPS: _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.CATALOGUE_GROUPS,
+  CATALOGUE_TABS: _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.CATALOGUE_TABS,
+  DATA_SHAPES: _data_mjs__WEBPACK_IMPORTED_MODULE_18__.DATA_SHAPES,
+  SOURCE_PORT: _data_mjs__WEBPACK_IMPORTED_MODULE_18__.SOURCE_PORT,
+  UTILITY_BREAKPOINTS: _utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.UTILITY_BREAKPOINTS,
+  bindingSettings: _data_mjs__WEBPACK_IMPORTED_MODULE_18__.bindingSettings,
+  catalogue: _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.catalogue,
+  catalogueEntry: _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.catalogueEntry,
+  checkModifiers: _utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.checkModifiers,
+  checkSourceAnswer,
+  composedEditorFields,
+  composedInstance: _composed_mjs__WEBPACK_IMPORTED_MODULE_17__.composedInstance,
+  composedPart: _composed_mjs__WEBPACK_IMPORTED_MODULE_17__.composedPart,
+  composedTextPaths: _composed_mjs__WEBPACK_IMPORTED_MODULE_17__.composedTextPaths,
+  createShapeRegistry: _data_mjs__WEBPACK_IMPORTED_MODULE_18__.createShapeRegistry,
+  createSourcePort,
+  defineComposedType,
+  demoData: _data_mjs__WEBPACK_IMPORTED_MODULE_18__.demoData,
+  PARAMETER_SETS: _parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_16__.PARAMETER_SETS,
+  PRINTED_ELEMENTS: _elements_mjs__WEBPACK_IMPORTED_MODULE_15__.PRINTED_ELEMENTS,
+  checkPrintedElements,
+  elementInputs: _elements_mjs__WEBPACK_IMPORTED_MODULE_15__.elementInputs,
+  expandParameterSets: _parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_16__.expandParameterSets,
+  parameterSetFields: _parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_16__.parameterSetFields,
+  printElement,
+  withParameterSetFields: _parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_16__.withParameterSetFields,
+  expandComposed: _composed_mjs__WEBPACK_IMPORTED_MODULE_17__.expandComposed,
+  instantiateVariant: _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.instantiateVariant,
+  ownModifiers: _utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.ownModifiers,
+  slotAccepts: _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.slotAccepts,
+  slotPlaces: _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.slotPlaces,
+  upgradeComposed,
+  utilityClasses: _utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.utilityClasses,
+  utilityClassSpace: _utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.utilityClassSpace,
+  utilityPartClasses: _utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.utilityPartClasses,
+  validateTypeManifest,
+  valuesByBreakpoint: _utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.valuesByBreakpoint,
 });
 
 if (typeof globalThis !== 'undefined') {
@@ -18854,6 +21114,12 @@ if (typeof globalThis !== 'undefined') {
 }
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Composition);
+
+
+
+
+
+
 
 
 
@@ -19141,6 +21407,273 @@ function replaceRange(content, start, end, inserted) {
 }
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ INLINE_COMPONENTS, INLINE_MARKS, INLINE_OBJECT, fromSegments, inlineComponentSchemas, inlineComponentView, inlineLength, inlineText, isInlineComponent, marksIn, normalizeInline, objectAt, replaceRange, safeHref, setLink, sliceInline, toSegments, toggleMark });
+
+
+/***/ },
+
+/***/ "18b9c76994c9"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   PARAMETER_SETS: () => (/* binding */ PARAMETER_SETS),
+/* harmony export */   PARAMETER_SETS_FIELD: () => (/* binding */ PARAMETER_SETS_FIELD),
+/* harmony export */   PARAMETER_SET_NAMES: () => (/* binding */ PARAMETER_SET_NAMES),
+/* harmony export */   PARAMETER_SET_OWNER: () => (/* binding */ PARAMETER_SET_OWNER),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   expandParameterSets: () => (/* binding */ expandParameterSets),
+/* harmony export */   parameterSetFields: () => (/* binding */ parameterSetFields),
+/* harmony export */   parameterSetParts: () => (/* binding */ parameterSetParts),
+/* harmony export */   parameterSetTable: () => (/* binding */ parameterSetTable),
+/* harmony export */   parameterSetsOf: () => (/* binding */ parameterSetsOf),
+/* harmony export */   validateParameterSets: () => (/* binding */ validateParameterSets),
+/* harmony export */   withParameterSetFields: () => (/* binding */ withParameterSetFields)
+/* harmony export */ });
+/* harmony import */ var _canonical_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("6f489cc65b77");
+// Parameter sets: reusable groups of layout parameters a type manifest names
+// instead of declaring them again (one block editor, 2026-11-03; ui-control
+// control/ui-editor/UNIFIED-BLOCK-EDITOR.md, owner questions of the third
+// review). Each set is props_schema properties with their SIMAI Framework
+// utilities (x-simai-utility, utilities.mjs), the editor fields that set them
+// and the inner elements (parts) a renderer draws for them.
+//
+// A type names its sets in `parameter_sets`; a registry (createRegistry,
+// extendRegistry) adds their properties to the type's props_schema, so
+// validation, the form and the output read them as the type's own. The stored
+// manifest keeps only the names.
+//
+// Width is not one class on one element. Measured on the built sheet
+// (2026-11-03): `.container` sets no inline margins, so a container is
+// centred only with `m-inline-auto`; `max-container-N` widens a `.container`
+// that is its descendant (`.max-container-N .container`, from the desktop
+// breakpoint), never one on the same element; and `container max-w-prose` on
+// one element is decided by which sheet comes later, which the Loader does
+// not fix. So width reaches three elements: the block's own (wide:
+// max-container-7), its `frame` part (the centred container) and its
+// `content` part (the measure of a narrow block, around the slots).
+
+
+
+const PARAMETER_SETS_FIELD = 'parameter_sets';
+const PARAMETER_SET_OWNER = 'simai/framework';
+
+// A background is named by its role; the class is the role's container fill.
+const BACKGROUND_CLASSES = {
+  surface: 'bg-surface',
+  container: 'bg-surface-container',
+  primary: 'bg-primary-container',
+  secondary: 'bg-secondary-container',
+  tertiary: 'bg-tertiary-container',
+};
+const BACKGROUNDS = Object.keys(BACKGROUND_CLASSES);
+const step = (maximum) => ({ type: 'integer', minimum: 0, maximum });
+
+/**
+ * The sets, by name. `properties` join the type's props_schema; `parts` are
+ * the inner elements a renderer must draw (`data-sf-composition-part`);
+ * `fields` are editor manifest fields (key, kind and the field's own extras).
+ */
+const PARAMETER_SETS = Object.freeze({
+  background: {
+    version: '1.0.0',
+    summary: 'The block\'s fill: a surface or container colour role.',
+    properties: {
+      background: { type: 'string', enum: BACKGROUNDS, 'x-simai-utility': { values: BACKGROUND_CLASSES } },
+    },
+    parts: [],
+    fields: [{ key: 'background', kind: 'choice', choices: BACKGROUNDS }],
+  },
+  spacing: {
+    version: '1.0.0',
+    summary: 'Space inside the block, above and below, and at the sides, per screen.',
+    properties: {
+      padding_y: { ...step(8), 'x-simai-utility': { class: 'p-y-{value}', responsive: true } },
+      padding_x: { ...step(8), 'x-simai-utility': { class: 'p-x-{value}', responsive: true } },
+    },
+    parts: [],
+    fields: [{ key: 'padding_y', kind: 'integer' }, { key: 'padding_x', kind: 'integer' }],
+  },
+  width: {
+    version: '1.0.0',
+    summary: 'How wide the block\'s content stands: a text measure, the page container, a wider container or the full width.',
+    properties: {
+      // Without a width the block draws as it always did: no container, the
+      // width of where it stands (full).
+      width: {
+        type: 'string',
+        enum: ['narrow', 'normal', 'wide', 'full'],
+        default: 'full',
+        'x-simai-utility': [
+          { values: { wide: 'max-container-7' } },
+          { part: 'frame', values: { narrow: 'container m-inline-auto', normal: 'container m-inline-auto', wide: 'container m-inline-auto' } },
+          { part: 'content', values: { narrow: 'max-w-prose m-inline-auto' } },
+        ],
+      },
+    },
+    parts: ['frame', 'content'],
+    fields: [{ key: 'width', kind: 'choice', choices: ['narrow', 'normal', 'wide', 'full'], default: 'full' }],
+  },
+  grid: {
+    version: '1.0.0',
+    summary: 'The block\'s children in columns, with a gap, per screen.',
+    properties: {
+      columns: { type: 'integer', minimum: 1, maximum: 12, default: 1, 'x-simai-utility': { part: 'content', class: 'grid grid-col-{value}', responsive: true } },
+      gap: { ...step(8), 'x-simai-utility': { part: 'content', class: 'gap-{value}', responsive: true } },
+    },
+    parts: ['content'],
+    fields: [{ key: 'columns', kind: 'integer', default: 1 }, { key: 'gap', kind: 'integer', default: 4 }],
+  },
+  alignment: {
+    version: '1.0.0',
+    summary: 'How the block\'s text lines up, per screen.',
+    properties: {
+      align: { type: 'string', enum: ['start', 'center', 'end'], 'x-simai-utility': { class: 'text-{value}', responsive: true } },
+    },
+    parts: [],
+    fields: [{ key: 'align', kind: 'choice', choices: ['start', 'center', 'end'] }],
+  },
+  breakout: {
+    version: '1.0.0',
+    summary: 'The block leaves its container and spans the page\'s width (container-breakout).',
+    properties: {
+      breakout: { type: 'boolean', default: false, 'x-simai-utility': { values: { true: 'container-breakout', false: '' } } },
+    },
+    parts: [],
+    fields: [{ key: 'breakout', kind: 'toggle', default: false }],
+  },
+  visibility: {
+    version: '1.0.0',
+    summary: 'The block is hidden on the screens where it is set.',
+    properties: {
+      hidden: { type: 'boolean', default: false, 'x-simai-utility': { values: { true: 'hidden', false: 'block' }, responsive: true } },
+    },
+    parts: [],
+    fields: [{ key: 'hidden', kind: 'toggle', default: false }],
+  },
+});
+
+const PARAMETER_SET_NAMES = Object.freeze(Object.keys(PARAMETER_SETS));
+
+/** The set names a type manifest takes, as stored (an empty list when none). */
+function parameterSetsOf(manifest) {
+  const names = manifest?.[PARAMETER_SETS_FIELD];
+  return Array.isArray(names) ? names.filter((name) => typeof name === 'string') : [];
+}
+
+/** The parts a type's renderer draws for its sets. */
+function parameterSetParts(manifest) {
+  return [...new Set(parameterSetsOf(manifest).flatMap((name) => PARAMETER_SETS[name]?.parts || []))];
+}
+
+/**
+ * The type manifest with its sets' properties in props_schema (a copy; the
+ * manifest itself is not touched). A property the type declares itself wins;
+ * validateParameterSets reports the clash. Unknown names are left out.
+ */
+function expandParameterSets(manifest) {
+  const names = parameterSetsOf(manifest);
+  if (!names.length || !(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(manifest)) return manifest;
+  const own = (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(manifest.props_schema?.properties) ? manifest.props_schema.properties : {};
+  const added = {};
+  for (const name of names) {
+    for (const [key, schema] of Object.entries(PARAMETER_SETS[name]?.properties || {})) if (!(key in own) && !(key in added)) added[key] = schema;
+  }
+  if (!Object.keys(added).length) return manifest;
+  return (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.canonical)({
+    ...manifest,
+    props_schema: {
+      type: 'object',
+      additionalProperties: false,
+      ...manifest.props_schema,
+      properties: { ...own, ...added },
+    },
+  });
+}
+
+/** The problems of a type's `parameter_sets`. */
+function validateParameterSets(manifest) {
+  const diagnostics = [];
+  if (!(PARAMETER_SETS_FIELD in (manifest || {}))) return diagnostics;
+  const names = manifest[PARAMETER_SETS_FIELD];
+  const at = `$.${PARAMETER_SETS_FIELD}`;
+  if (!Array.isArray(names)) return [{ code: 'parameter_sets_invalid', path: at, message: 'parameter_sets is a list of set names' }];
+  const own = (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(manifest.props_schema?.properties) ? manifest.props_schema.properties : {};
+  const taken = new Map();
+  names.forEach((name, index) => {
+    if (!Object.hasOwn(PARAMETER_SETS, name)) {
+      diagnostics.push({ code: 'parameter_set_unknown', path: `${at}[${index}]`, message: `No parameter set ${String(name)}; the sets are ${PARAMETER_SET_NAMES.join(', ')}` });
+      return;
+    }
+    if (names.indexOf(name) !== index) {
+      diagnostics.push({ code: 'parameter_set_duplicate', path: `${at}[${index}]`, message: `${name} is named twice` });
+      return;
+    }
+    for (const key of Object.keys(PARAMETER_SETS[name].properties)) {
+      if (key in own) diagnostics.push({ code: 'parameter_set_conflict', path: `$.props_schema.properties.${key}`, message: `${key} is a parameter of the set ${name}; the type declares it too` });
+      else if (taken.has(key) && taken.get(key) !== name) diagnostics.push({ code: 'parameter_set_conflict', path: `${at}[${index}]`, message: `${key} is in both ${taken.get(key)} and ${name}` });
+      taken.set(key, name);
+    }
+  });
+  if (manifest.mode === 'leaf' && parameterSetParts(manifest).length) {
+    diagnostics.push({ code: 'parameter_set_parts_leaf', path: at, message: 'A set with parts (width, grid) arranges children: the type is composite' });
+  }
+  return diagnostics;
+}
+
+function setField(name, field) {
+  const property = field.kind === 'choice' ? { type: 'string', version: 2 }
+    : field.kind === 'integer' ? { type: 'integer', version: 1 } : { type: 'boolean', version: 1 };
+  const schema = PARAMETER_SETS[name].properties[field.key];
+  const constraints = field.kind === 'integer' ? { min: schema.minimum, max: schema.maximum }
+    : field.kind === 'choice' ? { min_length: 1, max_length: 32 } : {};
+  return (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.canonical)({
+    key: field.key,
+    plane: 'props',
+    target: field.key,
+    property,
+    constraints,
+    group: 'basic',
+    visibility: 'visible',
+    ...(field.choices ? { choices: field.choices } : {}),
+    ...('default' in field ? { default: field.default } : {}),
+    label_key: `sf.composition.set_${name}.${field.key}`,
+    help_key: `sf.composition.set_${name}.${field.key}_help`,
+    capability_hints: [`composition.props.${field.key}`],
+    permission_hints: ['composition.node.update'],
+    owner: PARAMETER_SET_OWNER,
+  });
+}
+
+/** The editor fields of a type's sets, in set order. */
+function parameterSetFields(manifest) {
+  return parameterSetsOf(manifest).filter((name) => Object.hasOwn(PARAMETER_SETS, name)).flatMap((name) => PARAMETER_SETS[name].fields.map((field) => setField(name, field)));
+}
+
+/**
+ * An editor manifest with the fields of its type's sets added after its own;
+ * a field the manifest already has for that target is kept as it is.
+ */
+function withParameterSetFields(editorManifest, typeManifest) {
+  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(editorManifest)) return editorManifest;
+  const fields = Array.isArray(editorManifest.fields) ? editorManifest.fields : [];
+  const have = new Set(fields.filter((field) => field?.plane === 'props').map((field) => field.target));
+  const added = parameterSetFields(typeManifest).filter((field) => !have.has(field.target));
+  return added.length ? { ...editorManifest, fields: [...fields, ...added] } : editorManifest;
+}
+
+/** The sets as a table for a host without JavaScript (composition-blocks.v1.json). */
+function parameterSetTable() {
+  return Object.fromEntries(Object.entries(PARAMETER_SETS).map(([name, { version, summary, properties, parts, fields }]) => [name, {
+    version,
+    summary,
+    properties,
+    parts,
+    fields: fields.map((field) => setField(name, field)),
+  }]));
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ PARAMETER_SETS, expandParameterSets, parameterSetFields, validateParameterSets, withParameterSetFields });
 
 
 /***/ },
@@ -20673,6 +23206,396 @@ function withUnversionedSchema(document) {
   if (!read || read.form === 'name') return document;
   const {schema, schema_id, schema_version, ...rest} = document;
   return {...schemaFields(read.name, read.version), ...rest};
+}
+
+
+/***/ },
+
+/***/ "b88de35f4919"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   MODIFIERS_EXTENSION: () => (/* binding */ MODIFIERS_EXTENSION),
+/* harmony export */   PART_ATTRIBUTE: () => (/* binding */ PART_ATTRIBUTE),
+/* harmony export */   UTILITY_BREAKPOINTS: () => (/* binding */ UTILITY_BREAKPOINTS),
+/* harmony export */   UTILITY_KEYWORD: () => (/* binding */ UTILITY_KEYWORD),
+/* harmony export */   checkModifiers: () => (/* binding */ checkModifiers),
+/* harmony export */   checkResponsiveProps: () => (/* binding */ checkResponsiveProps),
+/* harmony export */   declarationsOf: () => (/* binding */ declarationsOf),
+/* harmony export */   isBreakpointValue: () => (/* binding */ isBreakpointValue),
+/* harmony export */   isResponsive: () => (/* binding */ isResponsive),
+/* harmony export */   modifierNotices: () => (/* binding */ modifierNotices),
+/* harmony export */   ownModifiers: () => (/* binding */ ownModifiers),
+/* harmony export */   utilityClass: () => (/* binding */ utilityClass),
+/* harmony export */   utilityClassSpace: () => (/* binding */ utilityClassSpace),
+/* harmony export */   utilityClasses: () => (/* binding */ utilityClasses),
+/* harmony export */   utilityOf: () => (/* binding */ utilityOf),
+/* harmony export */   utilityPartClasses: () => (/* binding */ utilityPartClasses),
+/* harmony export */   utilityRules: () => (/* binding */ utilityRules),
+/* harmony export */   validateUtilityDeclarations: () => (/* binding */ validateUtilityDeclarations),
+/* harmony export */   valueSchema: () => (/* binding */ valueSchema),
+/* harmony export */   valuesByBreakpoint: () => (/* binding */ valuesByBreakpoint),
+/* harmony export */   withClasses: () => (/* binding */ withClasses),
+/* harmony export */   withPartClasses: () => (/* binding */ withPartClasses)
+/* harmony export */ });
+/* harmony import */ var _canonical_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("6f489cc65b77");
+// Layout parameters as SIMAI Framework modifiers, and a block's own modifiers
+// (one block editor, owner 2026-11-03; ui-control
+// control/ui-editor/UNIFIED-BLOCK-EDITOR.md, section 6).
+//
+// A Document keeps values, never class strings: `cols: 3`, on the tablet 2,
+// on the phone 1. A parameter of a type's props_schema declares the utility it
+// becomes (`x-simai-utility`), and the renderer prints the classes mobile
+// first: no prefix for the phone, `md:` for the tablet, `lg:` for the desktop,
+// a prefix only where the value changes. Grid, gap, padding and visibility are
+// utilities, never inline styles.
+//
+// A block's own modifiers are classes an author adds (the editor's "Extra"
+// field). They live in the node's extension `simai.composition:modifiers`,
+// are checked against the RuleLoader's utility rules, and a class no rule
+// knows is left out of the HTML and reported: a notice, never a refusal.
+
+
+
+/** The SIMAI Framework's breakpoints, narrowest first (core/js/breakpoints.js; xs has no prefix). */
+const UTILITY_BREAKPOINTS = Object.freeze(['xs', 'sm', 'md', 'lg', 'xl', 'xxl']);
+const UTILITY_KEYWORD = 'x-simai-utility';
+const MODIFIERS_EXTENSION = 'simai.composition:modifiers';
+const MAX_MODIFIERS = 50;
+const CLASS_PATTERN = /^[a-z0-9][a-z0-9:/_.-]{0,99}$/u;
+const TEMPLATE_PATTERN = /^[a-z][a-z0-9-]*\{value\}$/u;
+const PART_PATTERN = /^[a-z][a-z0-9-]{0,31}$/u;
+const DECLARATION_FIELDS = new Set(['class', 'values', 'responsive', 'part']);
+/** The attribute a renderer marks an inner element with, so a parameter's classes reach it (`part`). */
+const PART_ATTRIBUTE = 'data-sf-composition-part';
+
+const diagnostic = (code, path, message, details = {}) => ({ code, path, message, ...details });
+const prefix = (breakpoint) => (breakpoint === 'xs' ? '' : `${breakpoint}:`);
+
+/**
+ * The utility declarations of a props_schema property: one object, or a list
+ * when the value also reaches inner elements of the block (each with its
+ * `part`; parameter sets, 2026-11-03). Empty when there is none.
+ */
+function declarationsOf(schema) {
+  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(schema)) return [];
+  const value = schema[UTILITY_KEYWORD];
+  if ((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(value)) return [value];
+  if (Array.isArray(value)) return value.filter(_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject);
+  return [];
+}
+
+/** The utility a props_schema property declares on the block's own element (its first declaration), or null. */
+function utilityOf(schema) {
+  return declarationsOf(schema)[0] ?? null;
+}
+
+/** Whether a property takes a value per breakpoint. */
+function isResponsive(schema) {
+  return declarationsOf(schema).some((declaration) => declaration.responsive === true);
+}
+
+/** A value held per breakpoint: an object whose keys are breakpoint names. */
+function isBreakpointValue(value) {
+  return (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(value) && Object.keys(value).length > 0 && Object.keys(value).every((key) => UTILITY_BREAKPOINTS.includes(key));
+}
+
+/** The schema a single value of the property is checked by: the property without its utility annotation. */
+function valueSchema(schema) {
+  if (!utilityOf(schema)) return schema;
+  return Object.fromEntries(Object.entries(schema).filter(([key]) => key !== UTILITY_KEYWORD));
+}
+
+/**
+ * The value of a property at each breakpoint, carried forward from the
+ * narrowest one; the property's `default` where nothing is set yet.
+ * A scalar stands for every breakpoint.
+ */
+function valuesByBreakpoint(value, schema = {}) {
+  const fallback = (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(schema) && 'default' in schema ? schema.default : undefined;
+  const out = {};
+  let current = fallback;
+  for (const breakpoint of UTILITY_BREAKPOINTS) {
+    if (isBreakpointValue(value)) {
+      if (breakpoint in value) current = value[breakpoint];
+    } else if (value !== undefined) current = value;
+    out[breakpoint] = current;
+  }
+  return out;
+}
+
+const tokens = (value) => String(value).split(' ').filter(Boolean);
+const prefixed = (breakpoint, name) => tokens(name).map((token) => `${prefix(breakpoint)}${token}`);
+
+/** The class (or space-separated classes) one value becomes, without a prefix; '' when it becomes none. */
+function utilityClass(declaration, value) {
+  if (value === undefined || value === null || !(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(declaration)) return '';
+  if ((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(declaration.values) && Object.hasOwn(declaration.values, String(value))) return declaration.values[String(value)];
+  if (typeof declaration.class === 'string') return declaration.class.replaceAll('{value}', String(value));
+  return '';
+}
+
+/**
+ * The classes a node's layout parameters print, mobile first, by part: '' is
+ * the block's own element, any other key an inner element the renderer marks
+ * `data-sf-composition-part="<part>"`. At the phone a value equal to the
+ * property's default prints nothing (the type draws its default without a
+ * class); at a wider breakpoint a class is printed only where the value
+ * differs from the narrower one. A value may become several classes.
+ */
+function utilityPartClasses(node, manifest) {
+  const parts = {};
+  const properties = manifest?.props_schema?.properties;
+  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(properties)) return parts;
+  const props = (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(node?.props) ? node.props : {};
+  for (const [key, schema] of Object.entries(properties)) {
+    if (!(key in props)) continue;
+    for (const declaration of declarationsOf(schema)) {
+      const part = typeof declaration.part === 'string' ? declaration.part : '';
+      const classes = parts[part] || (parts[part] = []);
+      // A parameter that is not responsive holds one value for every screen.
+      const values = valuesByBreakpoint(declaration.responsive === true ? props[key] : ((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(props[key]) ? undefined : props[key]), schema);
+      // `effective` are the classes in force at the narrower screen: a class
+      // a wider value shares with it (grid in grid grid-col-{value}) is not
+      // printed again.
+      let previous;
+      let effective = [];
+      UTILITY_BREAKPOINTS.forEach((breakpoint, index) => {
+        const value = values[breakpoint];
+        if (index === 0) {
+          if (!('default' in schema && value === schema.default)) {
+            effective = tokens(utilityClass(declaration, value));
+            classes.push(...prefixed('xs', effective.join(' ')));
+          }
+        } else if (value !== previous) {
+          const next = tokens(utilityClass(declaration, value));
+          classes.push(...prefixed(breakpoint, next.filter((token) => !effective.includes(token)).join(' ')));
+          effective = next;
+        }
+        previous = value;
+      });
+    }
+  }
+  for (const part of Object.keys(parts)) parts[part] = [...new Set(parts[part])];
+  return parts;
+}
+
+/** The classes a node's layout parameters print on the block's own element. */
+function utilityClasses(node, manifest) {
+  return utilityPartClasses(node, manifest)[''] || [];
+}
+
+/**
+ * Every class a property can print, for a check against the utility rules: each
+ * allowed value at each breakpoint. Null when the values are not a closed list
+ * (an integer range of more than 100 steps).
+ */
+function utilityClassSpace(schema) {
+  const declarations = declarationsOf(schema);
+  if (!declarations.length) return [];
+  let values = null;
+  if (Array.isArray(schema.enum)) values = schema.enum;
+  else if (schema.type === 'boolean') values = [true, false];
+  else if (schema.type === 'integer' && Number.isInteger(schema.minimum) && Number.isInteger(schema.maximum) && schema.maximum - schema.minimum <= 100) {
+    values = Array.from({ length: schema.maximum - schema.minimum + 1 }, (_, index) => schema.minimum + index);
+  }
+  if (!values) return null;
+  return [...new Set(declarations.flatMap((declaration) => {
+    const breakpoints = declaration.responsive === true ? UTILITY_BREAKPOINTS : ['xs'];
+    return values.flatMap((value) => breakpoints.flatMap((breakpoint) => prefixed(breakpoint, utilityClass(declaration, value))));
+  }))];
+}
+
+/** The problems of a props_schema's utility declarations (a type manifest check). */
+function validateUtilityDeclarations(manifest, path = '$.props_schema') {
+  const diagnostics = [];
+  const properties = manifest?.props_schema?.properties;
+  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(properties)) return diagnostics;
+  for (const [key, schema] of Object.entries(properties)) {
+    if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(schema) || !(UTILITY_KEYWORD in schema)) continue;
+    const declared = schema[UTILITY_KEYWORD];
+    const list = Array.isArray(declared) ? declared : [declared];
+    if (Array.isArray(declared) && (declared.length === 0 || declared.length > 8)) diagnostics.push(diagnostic('utility_declaration_invalid', `${path}.properties.${key}.${UTILITY_KEYWORD}`, 'A list holds one to eight declarations'));
+    const partsSeen = new Set();
+    list.forEach((declaration, index) => {
+      const at = `${path}.properties.${key}.${UTILITY_KEYWORD}${Array.isArray(declared) ? `[${index}]` : ''}`;
+      if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(declaration)) {
+        diagnostics.push(diagnostic('utility_declaration_invalid', at, 'A utility declaration is an object'));
+        return;
+      }
+      for (const field of Object.keys(declaration)) if (!DECLARATION_FIELDS.has(field)) diagnostics.push(diagnostic('utility_declaration_invalid', `${at}.${field}`, `Unknown utility field ${field}`));
+      const part = declaration.part ?? '';
+      if (declaration.part !== undefined && (typeof declaration.part !== 'string' || !PART_PATTERN.test(declaration.part))) diagnostics.push(diagnostic('utility_declaration_invalid', `${at}.part`, 'A part is a lowercase name'));
+      else if (partsSeen.has(part)) diagnostics.push(diagnostic('utility_declaration_invalid', `${at}.part`, 'One declaration per part'));
+      partsSeen.add(part);
+      const hasClass = declaration.class !== undefined;
+      const hasValues = declaration.values !== undefined;
+      if (!hasClass && !hasValues) diagnostics.push(diagnostic('utility_declaration_invalid', at, 'A utility names a class template or a class per value'));
+      // A template is one or more classes, at least one ending in {value}.
+      const templateTokens = typeof declaration.class === 'string' ? declaration.class.split(' ') : [];
+      if (hasClass && (typeof declaration.class !== 'string' || !templateTokens.some((token) => TEMPLATE_PATTERN.test(token)) || templateTokens.some((token) => !TEMPLATE_PATTERN.test(token) && (!CLASS_PATTERN.test(token) || token.includes(':'))))) diagnostics.push(diagnostic('utility_template_invalid', `${at}.class`, 'The class template is utility names with no prefix, one ending in {value}'));
+      if (hasValues) {
+        if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(declaration.values)) diagnostics.push(diagnostic('utility_declaration_invalid', `${at}.values`, 'values maps each value to a class'));
+        else for (const [value, name] of Object.entries(declaration.values)) {
+          if (typeof name !== 'string' || (name !== '' && name.split(' ').some((token) => !CLASS_PATTERN.test(token) || token.includes(':')))) diagnostics.push(diagnostic('utility_template_invalid', `${at}.values.${value}`, 'A value becomes classes with no prefix (space-separated), or none'));
+        }
+      }
+      if (declaration.responsive !== undefined && typeof declaration.responsive !== 'boolean') diagnostics.push(diagnostic('utility_declaration_invalid', `${at}.responsive`, 'responsive is true or false'));
+    });
+    const scalarSchema = Array.isArray(schema.enum) || ['integer', 'number', 'string', 'boolean'].includes(schema.type);
+    if (!scalarSchema) diagnostics.push(diagnostic('utility_value_not_scalar', `${path}.properties.${key}`, 'A layout parameter holds one scalar value per breakpoint'));
+  }
+  return diagnostics;
+}
+
+/**
+ * Splits a node's props for the schema check: a responsive property held per
+ * breakpoint is checked value by value, and stands in the props by one of its
+ * values so the closed schema still reads it.
+ */
+function checkResponsiveProps(props, schema, path, check) {
+  const diagnostics = [];
+  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(props) || !(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(schema?.properties)) return { props, diagnostics };
+  let flat = props;
+  for (const [key, property] of Object.entries(schema.properties)) {
+    if (!(key in props)) continue;
+    const value = props[key];
+    if (isResponsive(property) && (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(value)) {
+      if (!isBreakpointValue(value)) {
+        diagnostics.push(diagnostic('breakpoint_unknown', `${path}.${key}`, `A value per screen is keyed by ${UTILITY_BREAKPOINTS.join(', ')}`));
+      } else {
+        for (const [breakpoint, entry] of Object.entries(value)) check(entry, valueSchema(property), `${path}.${key}.${breakpoint}`, diagnostics);
+      }
+      if (flat === props) flat = { ...props };
+      delete flat[key];
+    }
+  }
+  if (flat !== props) {
+    const properties = Object.fromEntries(Object.entries(schema.properties).filter(([key]) => key in flat));
+    return { props: flat, schema: { ...schema, properties, required: (schema.required || []).filter((key) => key in flat || !(key in props)) }, diagnostics };
+  }
+  return { props, diagnostics };
+}
+
+// ------------------------------------------------------------- own modifiers
+
+/** The classes an author added to a node (its own modifiers), as stored. */
+function ownModifiers(node) {
+  const entry = (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(node?.extensions) ? node.extensions[MODIFIERS_EXTENSION] : undefined;
+  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(entry) || !Array.isArray(entry.utilities)) return [];
+  return entry.utilities.filter((value) => typeof value === 'string').slice(0, MAX_MODIFIERS);
+}
+
+/** The class rules of a RuleLoader map: its RegExp entries (component rules are objects). */
+function utilityRules(ruleLoader = globalThis.SF?.RuleLoader) {
+  if (Array.isArray(ruleLoader)) return ruleLoader.filter((rule) => rule instanceof RegExp);
+  if (!ruleLoader || typeof ruleLoader !== 'object') return null;
+  const rules = Object.values(ruleLoader).filter((rule) => rule instanceof RegExp);
+  return rules.length ? rules : null;
+}
+
+/**
+ * Checks classes against the utility rules: `kept` are printed, `dropped` are
+ * left out with the reason. Without any rule nothing unchecked is printed.
+ */
+function checkModifiers(classes, options = {}) {
+  const rules = utilityRules(options.rules ?? globalThis.SF?.RuleLoader);
+  const kept = [];
+  const dropped = [];
+  const seen = new Set();
+  for (const value of Array.isArray(classes) ? classes : []) {
+    if (typeof value !== 'string' || !CLASS_PATTERN.test(value)) dropped.push({ class: String(value), reason: 'modifier_invalid' });
+    else if (seen.has(value)) continue;
+    else if (!rules) dropped.push({ class: value, reason: 'modifier_rules_unavailable' });
+    else if (rules.some((rule) => { rule.lastIndex = 0; return rule.test(value); })) kept.push(value);
+    else dropped.push({ class: value, reason: 'modifier_unknown' });
+    seen.add(value);
+  }
+  if (Array.isArray(classes) && classes.length > MAX_MODIFIERS) dropped.push({ class: `(${classes.length - MAX_MODIFIERS} more)`, reason: 'modifier_limit' });
+  return { kept, dropped };
+}
+
+/** The notices a node's own modifiers give: one per class left out. */
+function modifierNotices(node, options = {}) {
+  const entry = (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(node?.extensions) ? node.extensions[MODIFIERS_EXTENSION] : undefined;
+  if (entry === undefined) return { kept: [], notices: [] };
+  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(entry) || !Array.isArray(entry.utilities)) {
+    return { kept: [], notices: [diagnostic('modifiers_invalid', `node:${node.id}`, `${MODIFIERS_EXTENSION} holds {utilities: [classes]}`)] };
+  }
+  const { kept, dropped } = checkModifiers(entry.utilities, options);
+  return {
+    kept,
+    notices: dropped.map((item) => diagnostic(item.reason, `node:${node.id}`, item.reason === 'modifier_unknown'
+      ? `${item.class} is no SIMAI Framework utility; it is left out of the HTML`
+      : item.reason === 'modifier_rules_unavailable'
+        ? `${item.class} cannot be checked without the utility rules; it is left out of the HTML`
+        : `${item.class} is left out of the HTML`, { class: item.class })),
+  };
+}
+
+// --------------------------------------------------------------- the output
+
+function escapeAttribute(value) {
+  return String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#39;');
+}
+
+/**
+ * Adds classes to the inner element a renderer marks `data-sf-composition-part="<part>"`,
+ * the first one after the node's own element (a renderer draws its parts
+ * around its slots, so the node's parts come before its children's).
+ * Returns {html, found}.
+ */
+function withPartClasses(html, id, part, classes) {
+  if (typeof html !== 'string') return { html, found: false };
+  const at = html.indexOf(`data-sf-composition-id="${escapeAttribute(id)}"`);
+  if (at === -1) return { html, found: false };
+  const marker = html.indexOf(`${PART_ATTRIBUTE}="${escapeAttribute(part)}"`, at);
+  // The part belongs to this node only if no other node's element comes first.
+  const next = html.indexOf('data-sf-composition-id="', at + 1);
+  if (marker === -1 || (next !== -1 && next < marker)) return { html, found: false };
+  if (!classes.length) return { html, found: true };
+  const start = html.lastIndexOf('<', marker);
+  const end = html.indexOf('>', marker);
+  const tag = html.slice(start, end);
+  const existing = tag.match(/\sclass="([^"]*)"/u);
+  let replaced;
+  if (existing) {
+    const own = existing[1].split(/\s+/u).filter(Boolean);
+    replaced = tag.replace(existing[0], ` class="${escapeAttribute([...own, ...classes.filter((name) => !own.includes(name))].join(' '))}"`);
+  } else {
+    const name = tag.match(/^<[A-Za-z][A-Za-z0-9-]*/u);
+    if (!name) return { html, found: false };
+    replaced = `${name[0]} class="${escapeAttribute(classes.join(' '))}"${tag.slice(name[0].length)}`;
+  }
+  return { html: html.slice(0, start) + replaced + html.slice(end), found: true };
+}
+
+/**
+ * Adds classes to the element that carries `data-sf-composition-id="<id>"`:
+ * the one element each renderer draws for its node. The classes join the
+ * element's own, once each; HTML without that element is returned as it came.
+ */
+function withClasses(html, id, classes) {
+  if (!classes.length || typeof html !== 'string') return html;
+  const marker = `data-sf-composition-id="${escapeAttribute(id)}"`;
+  const at = html.indexOf(marker);
+  if (at === -1) return html;
+  const start = html.lastIndexOf('<', at);
+  const end = html.indexOf('>', at);
+  if (start === -1 || end === -1) return html;
+  const tag = html.slice(start, end);
+  const existing = tag.match(/\sclass="([^"]*)"/u);
+  if (existing) {
+    const own = existing[1].split(/\s+/u).filter(Boolean);
+    const merged = [...own, ...classes.filter((name) => !own.includes(name))].join(' ');
+    const replaced = tag.replace(existing[0], ` class="${escapeAttribute(merged)}"`);
+    return html.slice(0, start) + replaced + html.slice(end);
+  }
+  const name = tag.match(/^<[A-Za-z][A-Za-z0-9-]*/u);
+  if (!name) return html;
+  return `${html.slice(0, start)}${name[0]} class="${escapeAttribute(classes.join(' '))}"${tag.slice(name[0].length)}${html.slice(end)}`;
 }
 
 

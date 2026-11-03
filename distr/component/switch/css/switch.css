@@ -284,14 +284,8 @@
     --sf-switch-description--font-size: var(--sf-text-size-1);
     --sf-switch-description--line-height: var(--sf-text-height-1);
   }
-  .sf-switch[\:has\(input\:checked\)][\:not-has\(input\:disabled\)] .sf-switch-inner {
-    --sf-switch-inner--background-color: var(--sf-on-primary);
-  }
   .sf-switch:has(input:checked):not(:has(input:disabled)) .sf-switch-inner {
     --sf-switch-inner--background-color: var(--sf-on-primary);
-  }
-  .sf-switch[\:has\(input\:checked\)][\:not-has\(input\:disabled\)] .sf-switch-toggler {
-    --sf-switch-toggler--background-color: var(--sf-primary);
   }
   .sf-switch:has(input:checked):not(:has(input:disabled)) .sf-switch-toggler {
     --sf-switch-toggler--background-color: var(--sf-primary);
@@ -354,9 +348,6 @@
     transition: transform var(--sf-switch--duration) var(--sf-animation), background-color var(--sf-switch--duration) var(--sf-animation);
     transition: transform var(--sf-switch--duration) var(--sf-animation), background-color var(--sf-switch--duration) var(--sf-animation), -webkit-transform var(--sf-switch--duration) var(--sf-animation);
   }
-  .sf-switch[\:has\(input\:checked\)] .sf-switch-inner {
-    --sf-switch-inner--travel: calc(var(--sf-switch--track-height) * (var(--sf-switch--ratio) - 1));
-  }
   .sf-switch:has(input:checked) .sf-switch-inner {
     --sf-switch-inner--travel: calc(var(--sf-switch--track-height) * (var(--sf-switch--ratio) - 1));
   }
@@ -391,14 +382,8 @@
   .sf-switch .sf-switch-inner .sf-switch-icon--on {
     opacity: 0;
   }
-  .sf-switch[\:has\(input\:checked\)] .sf-switch-inner .sf-switch-icon--on {
-    opacity: 1;
-  }
   .sf-switch:has(input:checked) .sf-switch-inner .sf-switch-icon--on {
     opacity: 1;
-  }
-  .sf-switch[\:has\(input\:checked\)] .sf-switch-inner .sf-switch-icon--off:not(:only-child) {
-    opacity: 0;
   }
   .sf-switch:has(input:checked) .sf-switch-inner .sf-switch-icon--off:not(:only-child) {
     opacity: 0;
@@ -427,15 +412,7 @@
   .sf-switch.disabled .sf-switch-toggler {
     --sf-switch-toggler--border-color: var(--sf-outline-disable);
   }
-  .sf-switch[\:has\(input\:not\(\:disabled\)\:not\(.disabled\).focus-visible\)] .sf-switch-toggler {
-    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-    outline-offset: var(--sf-focus--offset);
-  }
   .sf-switch:has(input:not(:disabled):not(.disabled).focus-visible) .sf-switch-toggler {
-    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-    outline-offset: var(--sf-focus--offset);
-  }
-  .sf-switch[\:has\(input\:not\(\:disabled\)\:not\(.disabled\)\:focus-visible\)] .sf-switch-toggler {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
     outline-offset: var(--sf-focus--offset);
   }
@@ -452,9 +429,6 @@
   }
   .sf-switch input:focus-visible {
     outline: none;
-  }
-  .sf-switch[\:has\(input\:enabled\:not\(\:disabled\)\:not\(.disabled\)\:hover\)] .sf-switch-toggler {
-    --sf-switch-toggler--border-color: var(--sf-primary-hover);
   }
   .sf-switch:has(input:enabled:not(:disabled):not(.disabled):hover) .sf-switch-toggler {
     --sf-switch-toggler--border-color: var(--sf-primary-hover);
@@ -477,45 +451,21 @@
     .sf-switch .sf-switch-inner {
       background-color: ButtonText;
     }
-    .sf-switch[\:has\(input\:checked\)] .sf-switch-toggler {
-      background-color: Highlight;
-      border-color: Highlight;
-    }
     .sf-switch:has(input:checked) .sf-switch-toggler {
       background-color: Highlight;
       border-color: Highlight;
     }
-    .sf-switch[\:has\(input\:checked\)] .sf-switch-inner {
-      background-color: HighlightText;
-    }
     .sf-switch:has(input:checked) .sf-switch-inner {
       background-color: HighlightText;
-    }
-    .sf-switch[\:has\(input\:disabled\)] .sf-switch-toggler {
-      background-color: Canvas;
-      border-color: GrayText;
     }
     .sf-switch:has(input:disabled) .sf-switch-toggler {
       background-color: Canvas;
       border-color: GrayText;
     }
-    .sf-switch[\:has\(input\:disabled\)] .sf-switch-inner {
-      background-color: GrayText;
-    }
     .sf-switch:has(input:disabled) .sf-switch-inner {
       background-color: GrayText;
     }
-    .sf-switch[\:has\(input\:not\(\:disabled\)\:not\(.disabled\).focus-visible\)] .sf-switch-toggler {
-      outline: var(--sf-focus-outline-width) solid currentColor;
-      outline-offset: var(--sf-focus-outline-width);
-      --sf-switch-toggler--box-shadow: none;
-    }
     .sf-switch:has(input:not(:disabled):not(.disabled).focus-visible) .sf-switch-toggler {
-      outline: var(--sf-focus-outline-width) solid currentColor;
-      outline-offset: var(--sf-focus-outline-width);
-      --sf-switch-toggler--box-shadow: none;
-    }
-    .sf-switch[\:has\(input\:not\(\:disabled\)\:not\(.disabled\)\:focus-visible\)] .sf-switch-toggler {
       outline: var(--sf-focus-outline-width) solid currentColor;
       outline-offset: var(--sf-focus-outline-width);
       --sf-switch-toggler--box-shadow: none;
@@ -540,15 +490,8 @@
   .sf-switch {
     min-width: 0;
   }
-  .sf-switch:not(.disabled)[\:has\(input\:not\(\:disabled\)\)] {
-    cursor: pointer;
-  }
   .sf-switch:not(.disabled):has(input:not(:disabled)) {
     cursor: pointer;
-  }
-  .sf-switch.disabled,
-  .sf-switch[\:has\(input\:disabled\)] {
-    cursor: default;
   }
   .sf-switch.disabled,
   .sf-switch:has(input:disabled) {

@@ -285,10 +285,6 @@
      stretched to its row -- resolved against the whole block, head included,
      so the last lines were clipped (ui-effects site, a code block in a grid).
      A block given a height still scrolls its code inside. */
-  .sf-highlight[\:has\(\%3E\%20.sf-highlight__wrap\,\%20\%3E\%20.sf--highlight-wrap\)] {
-    display: flex;
-    flex-direction: column;
-  }
   .sf-highlight:has(> .sf-highlight__wrap, > .sf--highlight-wrap) {
     display: flex;
     flex-direction: column;

@@ -416,54 +416,6 @@
      have no scrollbar, so they take the same two together -- otherwise the frame
      is narrower above the content than beside it, which is what the owner
      measured. The width is the Framework's own scrollbar token, not a guess. */
-  .sf-drawer-panel[\:not-has\(.sf-drawer-head\)] .sf-drawer-body {
-    padding-top: calc(var(--sf-space-1) + var(--sf-scroll-bg-width));
-    padding-bottom: calc(var(--sf-space-1) + var(--sf-scroll-bg-width));
-    padding-block: calc(var(--sf-space-1) + var(--sf-scroll-bg-width));
-    padding-top: calc(var(--sf-space-1) + var(--sf-scroll-bg-width));
-    padding-top: calc(var(--sf-drawer-gutter, var(--sf-space-1)) + var(--sf-scroll-bg-width));
-    padding-bottom: calc(var(--sf-space-1) + var(--sf-scroll-bg-width));
-    padding-bottom: calc(var(--sf-drawer-gutter, var(--sf-space-1)) + var(--sf-scroll-bg-width));
-    padding-block: calc(var(--sf-drawer-gutter, var(--sf-space-1)) + var(--sf-scroll-bg-width));
-  }
-  .sf-drawer-panel[\:not-has\(.sf-drawer-head\)] .sf-drawer-body {
-    padding-top: calc(var(--sf-space-1) + var(--sf-scroll-bg-width));
-    padding-bottom: calc(var(--sf-space-1) + var(--sf-scroll-bg-width));
-    padding-block: calc(var(--sf-space-1) + var(--sf-scroll-bg-width));
-    padding-top: calc(var(--sf-space-1) + var(--sf-scroll-bg-width));
-    padding-top: calc(var(--sf-drawer-gutter, var(--sf-space-1)) + var(--sf-scroll-bg-width));
-    padding-bottom: calc(var(--sf-space-1) + var(--sf-scroll-bg-width));
-    padding-bottom: calc(var(--sf-drawer-gutter, var(--sf-space-1)) + var(--sf-scroll-bg-width));
-    padding-top: calc(var(--sf-space-1) + var(--sf-scroll-bg-width));
-    padding-bottom: calc(var(--sf-space-1) + var(--sf-scroll-bg-width));
-    padding-block: calc(var(--sf-space-1) + var(--sf-scroll-bg-width));
-    padding-top: calc(var(--sf-space-1) + var(--sf-scroll-bg-width));
-    padding-top: calc(var(--sf-drawer-gutter, var(--sf-space-1)) + var(--sf-scroll-bg-width));
-    padding-bottom: calc(var(--sf-space-1) + var(--sf-scroll-bg-width));
-    padding-bottom: calc(var(--sf-drawer-gutter, var(--sf-space-1)) + var(--sf-scroll-bg-width));
-    padding-block: calc(var(--sf-drawer-gutter, var(--sf-space-1)) + var(--sf-scroll-bg-width));
-  }
-  .sf-drawer-panel[\:not-has\(.sf-drawer-head\)] .sf-drawer-body {
-    padding-top: calc(var(--sf-space-1) + var(--sf-scroll-bg-width));
-    padding-bottom: calc(var(--sf-space-1) + var(--sf-scroll-bg-width));
-    padding-top: calc(var(--sf-space-1) + var(--sf-scroll-bg-width));
-    padding-bottom: calc(var(--sf-space-1) + var(--sf-scroll-bg-width));
-    padding-block: calc(var(--sf-space-1) + var(--sf-scroll-bg-width));
-    padding-top: calc(var(--sf-space-1) + var(--sf-scroll-bg-width));
-    padding-top: calc(var(--sf-space-1) + var(--sf-scroll-bg-width));
-    padding-top: calc(var(--sf-drawer-gutter, var(--sf-space-1)) + var(--sf-scroll-bg-width));
-    padding-bottom: calc(var(--sf-space-1) + var(--sf-scroll-bg-width));
-    padding-bottom: calc(var(--sf-space-1) + var(--sf-scroll-bg-width));
-    padding-bottom: calc(var(--sf-drawer-gutter, var(--sf-space-1)) + var(--sf-scroll-bg-width));
-    padding-top: calc(var(--sf-space-1) + var(--sf-scroll-bg-width));
-    padding-bottom: calc(var(--sf-space-1) + var(--sf-scroll-bg-width));
-    padding-block: calc(var(--sf-space-1) + var(--sf-scroll-bg-width));
-    padding-top: calc(var(--sf-space-1) + var(--sf-scroll-bg-width));
-    padding-top: calc(var(--sf-drawer-gutter, var(--sf-space-1)) + var(--sf-scroll-bg-width));
-    padding-bottom: calc(var(--sf-space-1) + var(--sf-scroll-bg-width));
-    padding-bottom: calc(var(--sf-drawer-gutter, var(--sf-space-1)) + var(--sf-scroll-bg-width));
-    padding-block: calc(var(--sf-drawer-gutter, var(--sf-space-1)) + var(--sf-scroll-bg-width));
-  }
   .sf-drawer-panel:not(:has(.sf-drawer-head)) .sf-drawer-body {
     padding-top: calc(var(--sf-space-1) + var(--sf-scroll-bg-width));
     padding-bottom: calc(var(--sf-space-1) + var(--sf-scroll-bg-width));
