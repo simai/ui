@@ -8,6 +8,11 @@
 
 ### Добавлено
 
+- A core format module, `SF.format` (`core/js/format.js`): `date`, `relativeDay` (today, yesterday, tomorrow, weekday), `msUntilNextDay` for a redraw at the reader's midnight, `relativeTime`, `dayOffset`, `number` with the chart format words (`number`, `integer`, `decimal-<n>`, `percent`, `compact`, `currency-<CODE>`, `unit-<u>`), `fileSize` and `locale()`; the page's language unless a locale is given, Intl formatters cached on a shared global. `SF.breakpoints` (`ladder`, `query`, `media`, `matches`) reads the Framework's breakpoint ladder from script; `SF.copyText(text)` copies with the legacy fallback. `core.runtime` 1.20.0.
+- One rule for initials, `getInitials(value, {maxLetters, skipWords, fallback, locale})`: a hyphenated single name splits into its parts («Жан-Поль» → ЖП), whole letters with surrogate pairs and combining marks. `sf-avatar` 1.2.2, `sf-context-menu` 1.5.4.
+- Components take the shared helpers instead of their own copies: `sf-copy-button` 1.1.8 and the clipboard class, `sf-contents` 1.1.2, `sf-site-header` 1.2.3 and `sf-search` 1.2.1 (breakpoints), `sf-quantity` 1.2.2 (number), `sf-image-field` 1.1.8 (file size). The same text and steps, except a locale the browser does not know.
+- `contracts/public-api-axes.json`: the chart package's `chart-heatmap` `scheme` names a colour family of the data and is exempt from the status axis.
+
 - One scrim for every window: `--sf-scrim-color` and `--sf-scrim-opacity` (`tokens.colour` 1.3.0). The layer stack now owns outside press (read in capture, acted on by the top layer only), the page scroll lock (`lockPageScroll({preserveScrollGap})`) and one list of focus stops (`FOCUSABLE`, `focusablesIn`); the modal, drawer and overlay components use them. `composition-overlay` 1.3.2.
 - Chart colour roles: `--sf-chart-1..8` for categorical series, their area fills, and `--sf-chart-midpoint` for diverging scales, light and dark, with a contract test that computes contrast and separation (docs/foundation-chart-colours.md).
 - `SF.Loader.ensure(tags, {timeout = 3000})` resolves `{ready, missing}` and never rejects; `SF.Loader.watch(root)` marks a Smart element's portal with `data-sf-portal` so the Loader reads lazy elements drawn there as it reads the page. `sf-tabs` 1.1.10 and `sf-sortable` 1.1.6 ask for the standard menu through it. `core.runtime` 1.19.0.
