@@ -130,7 +130,8 @@ class FrameworkAssetPlannerTest(unittest.TestCase):
         rules = PLANNER.load_rules(ROOT / "distr/rule/rule.json")
         by_name = {rule["name"]: rule for rule in rules}
         button_relations = {item["name"] for item in by_name["cl-button"]["relation"]}
-        icon_button_relations = {item["name"] for item in by_name["cl-icon-button"]["relation"]}
+        # sf-icon-button is sf-button-icon since ui-70676d90fe34 (naming standard).
+        icon_button_relations = {item["name"] for item in by_name["cl-button-icon"]["relation"]}
         clipboard_relations = {item["name"] for item in by_name["clipboard"]["relation"]}
         self.assertTrue({"buttons", "pointer-events/default", "text-align/default"} <= button_relations)
         self.assertTrue({"icon-buttons", "cl-icon", "pointer-events/default"} <= icon_button_relations)

@@ -61,38 +61,38 @@
     "component.verification",
     "smart.alert",
     "smart.avatar",
-    "smart.avatars",
+    "smart.avatar-group",
     "smart.badge",
     "smart.breadcrumbs",
+    "smart.button-copy",
     "smart.button-group",
-    "smart.color",
-    "smart.composition-overlay",
-    "smart.copy-button",
-    "smart.country-code",
-    "smart.download-file",
     "smart.drawer",
+    "smart.editor-overlay",
     "smart.empty-state",
+    "smart.file-download",
     "smart.file-preview",
     "smart.file-upload",
     "smart.gallery",
+    "smart.header-page",
     "smart.help-mark",
+    "smart.input-color",
+    "smart.input-country",
+    "smart.input-textarea",
     "smart.list-item",
     "smart.modal",
-    "smart.page-header",
     "smart.popover",
     "smart.profile-picker",
     "smart.progress-bar",
     "smart.progress-scale",
     "smart.radio",
-    "smart.range-slider",
     "smart.reference-link",
     "smart.resizer",
     "smart.skeleton",
     "smart.slider",
+    "smart.slider-range",
     "smart.sortable",
     "smart.steps",
     "smart.switch",
-    "smart.textarea",
     "smart.theme-generator",
     "smart.toast",
     "smart.tooltip",
@@ -631,7 +631,7 @@
         "ui_admin": 6
       }
     },
-    "smart.avatars": {
+    "smart.avatar-group": {
       "docs": [
         "content/ru/smart-components/content/avatars.md"
       ],
@@ -672,7 +672,7 @@
         "ui_admin": 1
       }
     },
-    "smart.color": {
+    "smart.input-color": {
       "docs": [
         "content/ru/smart-components/forms/color.md"
       ],
@@ -682,7 +682,7 @@
         "ui_admin": 0
       }
     },
-    "smart.composition-overlay": {
+    "smart.editor-overlay": {
       "docs": [
         "content/ru/smart-components/editor/composition-overlay.md"
       ],
@@ -692,7 +692,7 @@
         "ui_admin": 0
       }
     },
-    "smart.copy-button": {
+    "smart.button-copy": {
       "docs": [
         "content/ru/smart-components/actions/copy-button.md"
       ],
@@ -702,7 +702,7 @@
         "ui_admin": 0
       }
     },
-    "smart.country-code": {
+    "smart.input-country": {
       "docs": [
         "content/ru/smart-components/forms/country-code.md"
       ],
@@ -712,7 +712,7 @@
         "ui_admin": 0
       }
     },
-    "smart.download-file": {
+    "smart.file-download": {
       "docs": [
         "content/ru/smart-components/actions/download-file.md"
       ],
@@ -802,7 +802,7 @@
         "ui_admin": 1
       }
     },
-    "smart.page-header": {
+    "smart.header-page": {
       "docs": [
         "content/ru/smart-components/composite/page-header.md"
       ],
@@ -862,7 +862,7 @@
         "ui_admin": 0
       }
     },
-    "smart.range-slider": {
+    "smart.slider-range": {
       "docs": [
         "content/ru/smart-components/forms/range-slider.md"
       ],
@@ -942,7 +942,7 @@
         "ui_admin": 0
       }
     },
-    "smart.textarea": {
+    "smart.input-textarea": {
       "docs": [
         "content/ru/smart-components/forms/textarea.md"
       ],
@@ -1553,6 +1553,6 @@
     }
   },
   "held": {
-    "smart.inline-editor": "declares no inputs: no stable public API"
+    "smart.editor-inline": "declares no inputs: no stable public API"
   }
 }
