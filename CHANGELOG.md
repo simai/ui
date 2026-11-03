@@ -98,6 +98,8 @@
 
 ### Исправлено
 
+- Event aliases: an event name that is both a component's own event and an older name of another (`sf-chat-window-answer`) is sent as its own again, with its former names under their `when` conditions and adapters. Since `ui-70676d90fe34` the chain following of renamed events had sent it as an old name only, so `chat-port:decide` (the 0.3 name of a proposal's answer) was not heard. Chains now continue only through same-detail steps. `core.runtime` 1.21.1.
+
 - sf-input and sf-textarea: an inherited value is the page's text in forced colours (#57). sf-composition-overlay 1.2.5: the layer keeps the page's origin under a contained ancestor (#58). A portal's carried language follows the page (#55). core.runtime 1.9.0: a setting a component reads for itself can still be written as a property. Docs: two things that catch a host of the workspace layout.
 
 - component.range-slider 1.0.1: a tooltip label reserves its own room at first paint, so a printed slider with a tooltip is 54 px tall like the adopted one, not 44 px growing to 54.
