@@ -8,6 +8,8 @@
 
 ### Добавлено
 
+- One block editor, Part B: the Pro package reference lists `sf-editor` (`smart.editor`, folder `editor`), so the Pro package can carry the one block editor.
+- Composition: the variant a block was inserted from is kept in the node's extension `simai.composition:variant` (`{"id": "<variant id>"}`), named in the blocks contract (`catalogue.variant_extension`); renderers ignore it. `core.runtime` 1.24.0.
 - One block editor, Part A (owner decision, 2026-11-03): the Composition contracts the editor builds on, all additive (`simai.composition.document` v1 unchanged). Type manifest schema 1.4.0: `catalogue` (group, tab, words, keywords, preview), `variants` (a named starting state with child blocks), `parameter_sets` (background, spacing, width, grid, alignment, breakout, visibility). Layout parameters print SIMAI Framework utilities phone first (`x-simai-utility`; a prefix only where the value changes; no inline styles). Own modifiers on every block, checked against the utility rules; unknown classes are left out and reported in `notices`. Site blocks: `defineComposedType`, `upgradeComposed`, `composedEditorFields`. Named slots declare what they accept. Data: six shapes, the source port, runtime binding and block states (`demoData`). Smart elements printed from their manifest inputs (`elements.print`, `SF.Composition.printElement`). New type `layout.area`; `layout.columns` 1.1.0 and `layout.section` 1.1.0 take per-screen values. `core.runtime` 1.23.0.
 - `container-breakout` (utility.container 1.2.0): a block reaches the page edges from inside a centred container, in both directions, without sideways scroll; `--sf-container-breakout-page` for a narrower page.
 - The block author kit learns all of the above; sample block `sample.cards`.
