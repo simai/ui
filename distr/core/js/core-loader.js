@@ -1978,12 +1978,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _contracts_utility_module_aliases_v1_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("b3ed17287563");
 /* harmony import */ var _contracts_smart_rule_forwards_v1_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("8a67fe9caf0a");
 /* harmony import */ var _template_utilities_generated_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("e7acc025fab1");
-/* harmony import */ var _utilityModuleAliases__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("98e08d2c9eb6");
-/* harmony import */ var _iconSubsetRuntime__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("09d27e26e137");
-/* harmony import */ var _preloader__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("6c7f357fe960");
-/* harmony import */ var lit_static_html_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("ee5035470810");
-/* harmony import */ var _pending_tags_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("3c79afd07eeb");
-/* harmony import */ var _deprecations_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("06e8cd089f28");
+/* harmony import */ var _tag_aliases_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("4a85acfb05c1");
+/* harmony import */ var _utilityModuleAliases__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("98e08d2c9eb6");
+/* harmony import */ var _iconSubsetRuntime__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("09d27e26e137");
+/* harmony import */ var _preloader__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("6c7f357fe960");
+/* harmony import */ var lit_static_html_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("ee5035470810");
+/* harmony import */ var _pending_tags_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("3c79afd07eeb");
+/* harmony import */ var _deprecations_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("06e8cd089f28");
+
 
 
 
@@ -2118,7 +2120,7 @@ function SFLoaderPlugin(params) {
   };
   this.componentTemplates = {};
   this.prepareInit = false;
-  (0,_iconSubsetRuntime__WEBPACK_IMPORTED_MODULE_8__.initIconSubsetState)(this);
+  (0,_iconSubsetRuntime__WEBPACK_IMPORTED_MODULE_9__.initIconSubsetState)(this);
   this.eventSend = false;
   this.uniqueIcons = new Map();
   this.pendingRegex = true;
@@ -2163,9 +2165,9 @@ function SFLoaderPlugin(params) {
   this.heavyModules = params.heavyModules || [];
   this.priorityModules = params.priorityModules || ['container', 'display', 'flex', 'grid', 'gap', 'column', 'width', 'height', 'aspect-ratio', 'element-position', 'element-position-ext', 'headers', 'theme', 'skeleton'];
   this.preloader = {
-    color: (0,_preloader__WEBPACK_IMPORTED_MODULE_9__.getPreloaderColor)(),
-    width: _preloader__WEBPACK_IMPORTED_MODULE_9__.DEFAULT_PRELOADER.width,
-    height: _preloader__WEBPACK_IMPORTED_MODULE_9__.DEFAULT_PRELOADER.height
+    color: (0,_preloader__WEBPACK_IMPORTED_MODULE_10__.getPreloaderColor)(),
+    width: _preloader__WEBPACK_IMPORTED_MODULE_10__.DEFAULT_PRELOADER.width,
+    height: _preloader__WEBPACK_IMPORTED_MODULE_10__.DEFAULT_PRELOADER.height
   };
   this.timingStart = typeof performance !== 'undefined' && performance.now ? performance.now() : Date.now();
   this.turboEventsBound = false;
@@ -2214,7 +2216,7 @@ function SFLoaderPlugin(params) {
   this.contentPreloaderText = params.contentPreloaderText ? params.contentPreloaderText : 'LOADING';
   this.arrowInterval = null;
   this.contentPreloader = '';
-  this.backgroundPreloader = params.backgroundPreloader ? params.backgroundPreloader : (0,_preloader__WEBPACK_IMPORTED_MODULE_9__.getPreloaderBackground)();
+  this.backgroundPreloader = params.backgroundPreloader ? params.backgroundPreloader : (0,_preloader__WEBPACK_IMPORTED_MODULE_10__.getPreloaderBackground)();
   this.tempLoaderStyles = 'inset: 0;position: fixed;width: 100%;height: 100vh;opacity: 1;z-index: 1000;background-color: var(--sf-color--surface-highest, var(--sf-surface-0, #fff));text-align: center;';
   this.modifierPreloader = params.modifierPreloader ? params.modifierPreloader : 'loader-default';
   this.isDebug = false; // Minified bundles unless someone is debugging: every bundle ships
@@ -2295,7 +2297,7 @@ SFLoaderPlugin.prototype.packageNameOf = function (name, via = 'declaration') {
   const alias = Object.prototype.hasOwnProperty.call(PACKAGE_ALIASES, name) ? PACKAGE_ALIASES[name] : null;
   if (!alias) return name;
   const expired = Date.now() > Date.parse(`${alias.remove_after}T23:59:59.999Z`);
-  (0,_deprecations_js__WEBPACK_IMPORTED_MODULE_12__.noteDeprecated)({
+  (0,_deprecations_js__WEBPACK_IMPORTED_MODULE_13__.noteDeprecated)({
     component: 'loader',
     kind: 'option',
     from: via === 'registration' ? `SF.RuleLoader.registerPackage('${name}')` : `SF_BOOT_CONFIG.packages.${name}`,
@@ -2865,7 +2867,7 @@ function safeRemoveItem(key) {
   }
 }
 
-(0,_iconSubsetRuntime__WEBPACK_IMPORTED_MODULE_8__.installIconSubsetRuntime)(SFLoaderPlugin, {
+(0,_iconSubsetRuntime__WEBPACK_IMPORTED_MODULE_9__.installIconSubsetRuntime)(SFLoaderPlugin, {
   safeSetItem,
   safeRemoveItem
 });
@@ -2953,13 +2955,13 @@ SFLoaderPlugin.prototype.runPreloader = function () {
 };
 
 SFLoaderPlugin.prototype.rotatePreloader = function () {
-  (0,_preloader__WEBPACK_IMPORTED_MODULE_9__.startPreloaderMotion)(this.preloaderWrap, () => this.preloaderRun, this.preloader);
+  (0,_preloader__WEBPACK_IMPORTED_MODULE_10__.startPreloaderMotion)(this.preloaderWrap, () => this.preloaderRun, this.preloader);
 };
 
 SFLoaderPlugin.prototype.stopAnimation = function () {
   clearInterval(this.arrowInterval);
   if (!this.preloaderWrap) return;
-  (0,_preloader__WEBPACK_IMPORTED_MODULE_9__.stopPreloaderMotion)(this.preloaderWrap);
+  (0,_preloader__WEBPACK_IMPORTED_MODULE_10__.stopPreloaderMotion)(this.preloaderWrap);
 };
 
 SFLoaderPlugin.prototype.stopPreloader = function () {
@@ -3985,7 +3987,7 @@ SFLoaderPlugin.prototype.unwatch = function (root) {
 SFLoaderPlugin.prototype.deferClosedSmartElement = function (el) {
   const container = closedContainerOf(el);
   if (!container) return false;
-  (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_11__.installPendingTags)(window).hold(el.localName);
+  (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_12__.installPendingTags)(window).hold(el.localName);
   this.watchClosedContainer(container);
   return true;
 };
@@ -4018,7 +4020,7 @@ SFLoaderPlugin.prototype.watchClosedContainer = function (container) {
 
 
 SFLoaderPlugin.prototype.holdSmartTag = function (tagName) {
-  (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_11__.installPendingTags)(window).hold(tagName, {
+  (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_12__.installPendingTags)(window).hold(tagName, {
     asked: true
   });
 };
@@ -4737,7 +4739,7 @@ SFLoaderPlugin.prototype.search = function () {
 };
 
 SFLoaderPlugin.prototype.setExistCookie = function (name, output = null, output2 = null) {
-  name = (0,_utilityModuleAliases__WEBPACK_IMPORTED_MODULE_7__.resolveUtilityModule)(name, _contracts_utility_module_aliases_v1_json__WEBPACK_IMPORTED_MODULE_4__.aliases, this.findPlugins, this.productionPlanActive); // A package rule without a usable base is not marked for loading at all; the
+  name = (0,_utilityModuleAliases__WEBPACK_IMPORTED_MODULE_8__.resolveUtilityModule)(name, _contracts_utility_module_aliases_v1_json__WEBPACK_IMPORTED_MODULE_4__.aliases, this.findPlugins, this.productionPlanActive); // A package rule without a usable base is not marked for loading at all; the
   // warning names it, and nothing is fetched from the Smart base in its place.
 
   if (!this.isPluginResolvable(name)) {
@@ -5939,7 +5941,7 @@ SFLoaderPlugin.prototype.getLoader = async function (PluginList, temp = false, s
     PluginList = this.getObjectArray(PluginList || {});
   }
 
-  PluginList = [...new Set(PluginList.map(name => (0,_utilityModuleAliases__WEBPACK_IMPORTED_MODULE_7__.resolveUtilityModule)(name, _contracts_utility_module_aliases_v1_json__WEBPACK_IMPORTED_MODULE_4__.aliases, this.findPlugins, this.productionPlanActive)))];
+  PluginList = [...new Set(PluginList.map(name => (0,_utilityModuleAliases__WEBPACK_IMPORTED_MODULE_8__.resolveUtilityModule)(name, _contracts_utility_module_aliases_v1_json__WEBPACK_IMPORTED_MODULE_4__.aliases, this.findPlugins, this.productionPlanActive)))];
 
   if (!this.productionPlanActive) {
     PluginList.forEach(name => this.setModule(name));
@@ -6410,7 +6412,7 @@ SFLoaderPlugin.prototype.setPreloaderParams = function () {
     }
   }
 
-  this.contentPreloader = this.params.contentPreloader ? this.params.contentPreloader : (0,_preloader__WEBPACK_IMPORTED_MODULE_9__.createPreloaderContent)(this.preloader);
+  this.contentPreloader = this.params.contentPreloader ? this.params.contentPreloader : (0,_preloader__WEBPACK_IMPORTED_MODULE_10__.createPreloaderContent)(this.preloader);
 };
 
 SFLoaderPlugin.prototype.getCurrentUrl = function () {
@@ -7074,7 +7076,8 @@ function appendCreateChildren(element, children) {
 }
 
 function createSmartElement(name, params = {}) {
-  const tagName = normalizeSmartTagName(name);
+  // An old name of a renamed tag creates the current one (tag-aliases.js).
+  const tagName = (0,_tag_aliases_js__WEBPACK_IMPORTED_MODULE_7__.canonicalTag)(normalizeSmartTagName(name));
 
   if (!tagName) {
     throw new Error('SF.create(name, params): name is required');
@@ -7141,7 +7144,7 @@ function createSmartElement(name, params = {}) {
 SFLoaderPlugin.prototype.styleSheetsOfRule = function (requested, visited = new Set()) {
   const sheets = []; // The module the Loader itself would load under this name (setExistCookie).
 
-  const name = requested ? (0,_utilityModuleAliases__WEBPACK_IMPORTED_MODULE_7__.resolveUtilityModule)(requested, _contracts_utility_module_aliases_v1_json__WEBPACK_IMPORTED_MODULE_4__.aliases, this.findPlugins, this.productionPlanActive) : requested;
+  const name = requested ? (0,_utilityModuleAliases__WEBPACK_IMPORTED_MODULE_8__.resolveUtilityModule)(requested, _contracts_utility_module_aliases_v1_json__WEBPACK_IMPORTED_MODULE_4__.aliases, this.findPlugins, this.productionPlanActive) : requested;
   if (!name || visited.has(name)) return sheets;
   visited.add(name);
   const rule = this.findPlugins?.[name];
@@ -7448,8 +7451,9 @@ SF.__internal.litHtml = (tagName, props = {}) => {
     }
   }
 
-  const tag = (0,lit_static_html_js__WEBPACK_IMPORTED_MODULE_10__.unsafeStatic)(tagName);
-  return (0,lit_static_html_js__WEBPACK_IMPORTED_MODULE_10__.html)`<${tag} ...=${props}></${tag}>`;
+  tagName = (0,_tag_aliases_js__WEBPACK_IMPORTED_MODULE_7__.canonicalTag)(tagName);
+  const tag = (0,lit_static_html_js__WEBPACK_IMPORTED_MODULE_11__.unsafeStatic)(tagName);
+  return (0,lit_static_html_js__WEBPACK_IMPORTED_MODULE_11__.html)`<${tag} ...=${props}></${tag}>`;
 };
 
 SF.whenDefine = whenSmartDefined;
@@ -8024,7 +8028,7 @@ __webpack_require__.r(__webpack_exports__);
 /***/ "8a67fe9caf0a"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"version":1,"$comment":"Former Smart bundle names the Loader still answers to. A forward is not a rule in the distribution (a rule of type smart is a Smart component to the registry, and a forward has no element); the Loader installs it at start as a rule with no tags, no assets and one relation, the new name, unless a rule of that name is already defined, and a relation that names a forward is taken as its target, so the element waits for the bundle itself. Each forward is dated and has a change journal record; remove it on remove_after.","forwards":{"cl-inputs":{"to":"cl-input","since":"2026-10-27","remove_after":"2026-12-01","journal":"path-smart-inputs-to-input"},"cl-buttons":{"to":"cl-button","since":"2026-10-27","remove_after":"2026-12-01","journal":"path-smart-buttons-to-button"},"cl-icon-buttons":{"to":"cl-icon-button","since":"2026-10-27","remove_after":"2026-12-01","journal":"path-smart-icon-buttons-to-icon-button"},"cl-icons":{"to":"cl-icon","since":"2026-10-27","remove_after":"2026-12-01","journal":"path-smart-icons-to-icon"},"cl-badges":{"to":"cl-badge","since":"2026-10-27","remove_after":"2026-12-01","journal":"path-smart-badges-to-badge"},"cl-tags":{"to":"cl-tag","since":"2026-10-27","remove_after":"2026-12-01","journal":"path-smart-tags-to-tag"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"version":1,"$comment":"Former Smart bundle names the Loader still answers to. A forward is not a rule in the distribution (a rule of type smart is a Smart component to the registry, and a forward has no element); the Loader installs it at start as a rule with no tags, no assets and one relation, the new name, unless a rule of that name is already defined, and a relation that names a forward is taken as its target, so the element waits for the bundle itself. Each forward is dated and has a change journal record; remove it on remove_after.","forwards":{"cl-inputs":{"to":"cl-input","since":"2026-10-27","remove_after":"2026-12-01","journal":"path-smart-inputs-to-input"},"cl-buttons":{"to":"cl-button","since":"2026-10-27","remove_after":"2026-12-01","journal":"path-smart-buttons-to-button"},"cl-icon-buttons":{"to":"cl-button-icon","since":"2026-10-27","remove_after":"2026-12-01","journal":"path-smart-icon-buttons-to-icon-button"},"cl-icons":{"to":"cl-icon","since":"2026-10-27","remove_after":"2026-12-01","journal":"path-smart-icons-to-icon"},"cl-badges":{"to":"cl-badge","since":"2026-10-27","remove_after":"2026-12-01","journal":"path-smart-badges-to-badge"},"cl-tags":{"to":"cl-tag","since":"2026-10-27","remove_after":"2026-12-01","journal":"path-smart-tags-to-tag"},"cl-close":{"to":"cl-button-close","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-close-to-button-close"},"cl-avatars":{"to":"cl-avatar-group","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-avatars-to-avatar-group"},"cl-page-header":{"to":"cl-header-page","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-page-header-to-header-page"},"cl-site-header":{"to":"cl-header-site","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-site-header-to-header-site"},"cl-inline-editor":{"to":"cl-editor-inline","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-inline-editor-to-editor-inline"},"cl-copy-button":{"to":"cl-button-copy","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-copy-button-to-button-copy"},"cl-lookup":{"to":"cl-input-lookup","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-lookup-to-input-lookup"},"cl-code-input":{"to":"cl-input-code","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-code-input-to-input-code"},"cl-download-file":{"to":"cl-file-download","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-download-file-to-file-download"},"cl-image-field":{"to":"cl-input-image","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-image-field-to-input-image"},"cl-composition-overlay":{"to":"cl-editor-overlay","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-composition-overlay-to-editor-overlay"},"cl-rich-text":{"to":"cl-input-rich","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-rich-text-to-input-rich"},"cl-range-slider":{"to":"cl-slider-range","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-range-slider-to-slider-range"},"cl-datepicker":{"to":"cl-input-date","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-datepicker-to-input-date"},"cl-color":{"to":"cl-input-color","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-color-to-input-color"},"cl-country-code":{"to":"cl-input-country","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-country-code-to-input-country"},"cl-quantity":{"to":"cl-input-quantity","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-quantity-to-input-quantity"},"cl-textarea":{"to":"cl-input-textarea","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-textarea-to-input-textarea"},"cl-context-menu":{"to":"cl-menu-context","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-context-menu-to-menu-context"},"cl-icon-button":{"to":"cl-button-icon","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-icon-button-to-button-icon"}}}');
 
 /***/ },
 
@@ -8038,7 +8042,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"version":1,"aliases":{"column-gap/de
 /***/ "e7acc025fab1"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"cl-accordion":["display/default","flex-direction/default","gap/default","position/default"],"cl-alert":["display/default","flex-direction/default","flex-wrap/default","flex/default","place-items/default"],"cl-avatar":["align-items/default","background-color/default","display/default","element-position/default","flex-direction/default","flex/default","height/default","justify-content/default","overflow/default","place-items/default","position/default","text-overflow/default","transition-property/default","white-space/default","width/default"],"cl-avatars":["align-items/default","display/default","flex-direction/default"],"cl-badge":["display/default","flex-direction/default","flex-wrap/default","justify-content/default","place-items/default","sr-only/default"],"cl-breadcrumbs":["align-items/default","display/default"],"cl-button":["align-items/default","display/default","flex/default","pointer-events/default"],"cl-button-group":["align-items/default","display/default","pointer-events/default","text-align/default"],"cl-checkbox":["cursor/default","display/default","flex-direction/default","transition-property/default"],"cl-close":["display/default","justify-content/default","place-items/default"],"cl-code-input":["sr-only/default"],"cl-color":["display/default"],"cl-contents":["display/default","position/default","width/default"],"cl-context-menu":["display/default","flex-direction/default","flex/default","position/default","text-decoration/default"],"cl-country-code":["display/default","flex-direction/default","place-items/default","transition-property/default"],"cl-datepicker":["align-content/default","align-items/default","display/default","element-position/default","flex-direction/default","gap/default","grid-template-columns/default","justify-content/default","overflow/default","position/default"],"cl-download-file":["cursor/default","display/default","transition-property/default"],"cl-drawer":["display/default","justify-content/default","margin/default","place-items/default","resize/default","visibility/default"],"cl-dropdown":["align-items/default","background-color/default","background-size/default","cursor/default","display/default","flex-direction/default","flex-wrap/default","flex/default","place-items/default","position/default","transition-property/default"],"cl-empty-state":["display/default"],"cl-file-upload":["align-items/default","align-self/default","cursor/default","display/default","flex-direction/default","flex/default","gap/default","grid-template-columns/default","justify-content/default","justify-items/default","width/default"],"cl-gallery":["align-items/default","backdrop-filter-blur/default","background-color/default","border-radius/default","border-width/default","box-shadow/default","display/default","filter-blur/default","flex-direction/default","gap/default","height/default","justify-content/default","margin/default","max-width/default","min-height/default","min-width/default","padding/default","text-color/default","width/default"],"cl-help-mark":["display/default"],"cl-icon":["font-weight/default"],"cl-icon-button":["align-items/default","display/default","pointer-events/default"],"cl-input":["align-items/default","display/default","flex-direction/default","text-align/default","transition-property/default"],"cl-list-item":["align-items/default","background-color/default","background-size/default","cursor/default","display/default","flex-direction/default","flex-wrap/default","flex/default","gap/default","justify-content/default","place-items/default"],"cl-lookup":["align-items/default","display/default","flex-direction/default","flex-wrap/default","flex/default","justify-content/default","overflow/default"],"cl-modal":["align-items/default","backdrop-filter-blur/default","border-radius/default","border-width/default","display/default","element-position/default","filter-blur/default","flex-direction/default","flex-wrap/default","font-size/default","gap/default","height/default","justify-content/default","margin/default","min-width/default","overflow/default","padding/default","place-items/default","position/default","text-color/default","title/default","width/default","z-index/default"],"cl-page-header":["align-items/default","display/default","flex-direction/default","flex-grow/default","flex-wrap/default","margin/default","min-width/default","text-overflow/default"],"cl-pager":["sr-only/default"],"cl-pagination":["align-items/default","display/default","flex-direction/default","justify-content/default","position/default"],"cl-popover":["display/default","position/default"],"cl-progress-bar":["align-items/default","display/default","flex-direction/default","transition-property/default"],"cl-progress-ring":["display/default"],"cl-progress-scale":["align-items/default","display/default","flex-direction/default","grid-template-columns/default","overflow/default"],"cl-quantity":["display/default","filter-blur/default","flex-direction/default","flex-wrap/default","justify-content/default","place-items/default"],"cl-radio":["align-items/default","display/default","flex-direction/default","justify-content/default","transition-property/default"],"cl-range-slider":["flex/default"],"cl-reference-link":["align-items/default","display/default"],"cl-resizer":["display/default","position/default","resize/default","text-max-width/default"],"cl-rich-text":["align-items/default","container/default","display/default","flex-direction/default","flex-wrap/default","font-style/default","font-weight/default"],"cl-search":["display/default","sr-only/default"],"cl-site-header":["container/default","margin/default","position/default","width/default"],"cl-skeleton":["animation/default","display/default","flex/default"],"cl-slider":["background-color/default","border-radius/default","display/default","padding/default","text-color/default"],"cl-steps":["cursor/default","display/default","flex-direction/default","justify-content/default","place-items/default"],"cl-switch":["align-items/default","display/default","flex-direction/default","justify-content/default","transition-property/default"],"cl-tabs":["container/default","display/default","flex-direction/default","visibility/default"],"cl-tag":["background-size/default","display/default","flex-direction/default","flex-wrap/default","justify-content/default","min-width/default","place-items/default"],"cl-textarea":["display/default","flex-direction/default","transition-property/default"],"cl-toast":["align-items/default","display/default","flex-direction/default","flex/default","justify-content/default","place-items/default"],"cl-tooltip":["display/default","flex-direction/default","position/default"],"cl-tree":["display/default","flex-direction/default"],"cl-tree-item":["align-items/default","display/default","flex-direction/default","position/default"]}');
+module.exports = /*#__PURE__*/JSON.parse('{"cl-accordion":["display/default","flex-direction/default","gap/default","position/default"],"cl-alert":["display/default","flex-direction/default","flex-wrap/default","flex/default","place-items/default"],"cl-avatar":["align-items/default","background-color/default","display/default","element-position/default","flex-direction/default","flex/default","height/default","justify-content/default","overflow/default","place-items/default","position/default","text-overflow/default","transition-property/default","white-space/default","width/default"],"cl-avatar-group":["align-items/default","display/default","flex-direction/default"],"cl-badge":["display/default","flex-direction/default","flex-wrap/default","justify-content/default","place-items/default","sr-only/default"],"cl-breadcrumbs":["align-items/default","display/default"],"cl-button":["align-items/default","display/default","flex/default","pointer-events/default"],"cl-button-close":["display/default","justify-content/default","place-items/default"],"cl-button-group":["align-items/default","display/default","pointer-events/default","text-align/default"],"cl-button-icon":["align-items/default","display/default","pointer-events/default"],"cl-checkbox":["cursor/default","display/default","flex-direction/default","transition-property/default"],"cl-contents":["display/default","position/default","width/default"],"cl-drawer":["display/default","justify-content/default","margin/default","place-items/default","resize/default","visibility/default"],"cl-dropdown":["align-items/default","background-color/default","background-size/default","cursor/default","display/default","flex-direction/default","flex-wrap/default","flex/default","place-items/default","position/default","transition-property/default"],"cl-empty-state":["display/default"],"cl-file-download":["cursor/default","display/default","transition-property/default"],"cl-file-upload":["align-items/default","align-self/default","cursor/default","display/default","flex-direction/default","flex/default","gap/default","grid-template-columns/default","justify-content/default","justify-items/default","width/default"],"cl-gallery":["align-items/default","backdrop-filter-blur/default","background-color/default","border-radius/default","border-width/default","box-shadow/default","display/default","filter-blur/default","flex-direction/default","gap/default","height/default","justify-content/default","margin/default","max-width/default","min-height/default","min-width/default","padding/default","text-color/default","width/default"],"cl-header-page":["align-items/default","display/default","flex-direction/default","flex-grow/default","flex-wrap/default","margin/default","min-width/default","text-overflow/default"],"cl-header-site":["container/default","margin/default","position/default","width/default"],"cl-help-mark":["display/default"],"cl-icon":["font-weight/default"],"cl-input":["align-items/default","display/default","flex-direction/default","text-align/default","transition-property/default"],"cl-input-code":["sr-only/default"],"cl-input-color":["display/default"],"cl-input-country":["display/default","flex-direction/default","place-items/default","transition-property/default"],"cl-input-date":["align-content/default","align-items/default","display/default","element-position/default","flex-direction/default","gap/default","grid-template-columns/default","justify-content/default","overflow/default","position/default"],"cl-input-lookup":["align-items/default","display/default","flex-direction/default","flex-wrap/default","flex/default","justify-content/default","overflow/default"],"cl-input-quantity":["display/default","filter-blur/default","flex-direction/default","flex-wrap/default","justify-content/default","place-items/default"],"cl-input-rich":["align-items/default","container/default","display/default","flex-direction/default","flex-wrap/default","font-style/default","font-weight/default"],"cl-input-textarea":["display/default","flex-direction/default","transition-property/default"],"cl-list-item":["align-items/default","background-color/default","background-size/default","cursor/default","display/default","flex-direction/default","flex-wrap/default","flex/default","gap/default","justify-content/default","place-items/default"],"cl-menu-context":["display/default","flex-direction/default","flex/default","position/default","text-decoration/default"],"cl-modal":["align-items/default","backdrop-filter-blur/default","border-radius/default","border-width/default","display/default","element-position/default","filter-blur/default","flex-direction/default","flex-wrap/default","font-size/default","gap/default","height/default","justify-content/default","margin/default","min-width/default","overflow/default","padding/default","place-items/default","position/default","text-color/default","title/default","width/default","z-index/default"],"cl-pager":["sr-only/default"],"cl-pagination":["align-items/default","display/default","flex-direction/default","justify-content/default","position/default"],"cl-popover":["display/default","position/default"],"cl-progress-bar":["align-items/default","display/default","flex-direction/default","transition-property/default"],"cl-progress-ring":["display/default"],"cl-progress-scale":["align-items/default","display/default","flex-direction/default","grid-template-columns/default","overflow/default"],"cl-radio":["align-items/default","display/default","flex-direction/default","justify-content/default","transition-property/default"],"cl-reference-link":["align-items/default","display/default"],"cl-resizer":["display/default","position/default","resize/default","text-max-width/default"],"cl-search":["display/default","sr-only/default"],"cl-skeleton":["animation/default","display/default","flex/default"],"cl-slider":["background-color/default","border-radius/default","display/default","padding/default","text-color/default"],"cl-slider-range":["flex/default"],"cl-steps":["cursor/default","display/default","flex-direction/default","justify-content/default","place-items/default"],"cl-switch":["align-items/default","display/default","flex-direction/default","justify-content/default","transition-property/default"],"cl-tabs":["container/default","display/default","flex-direction/default","visibility/default"],"cl-tag":["background-size/default","display/default","flex-direction/default","flex-wrap/default","justify-content/default","min-width/default","place-items/default"],"cl-toast":["align-items/default","display/default","flex-direction/default","flex/default","justify-content/default","place-items/default"],"cl-tooltip":["display/default","flex-direction/default","position/default"],"cl-tree":["display/default","flex-direction/default"],"cl-tree-item":["align-items/default","display/default","flex-direction/default","position/default"]}');
 
 /***/ }
 

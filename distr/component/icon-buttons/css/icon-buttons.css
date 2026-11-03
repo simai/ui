@@ -1423,56 +1423,180 @@
   }
 }
 @layer sf.override {
-  sf-icon-button[\:has\(.sf-icon-button--outline\[class*\%3Dsegment-\]\)] + sf-icon-button .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline),
+  sf-button-icon[\:has\(.sf-icon-button--outline\[class*\%3Dsegment-\]\)] + sf-button-icon .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-inline-end-width: var(--sf-px);
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+    --sf-icon-button--border-inline-start-width: var(--sf-px);
+  }
+  sf-button-icon:has(.sf-icon-button--outline[class*=segment-]) + sf-button-icon .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-inline-end-width: var(--sf-px);
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+    --sf-icon-button--border-inline-start-width: var(--sf-px);
+  }
+  sf-button-icon[\:has\(.sf-icon-button--outline\[class*\%3Dsegment-\]\)] + sf-icon-button .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-inline-end-width: var(--sf-px);
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+    --sf-icon-button--border-inline-start-width: var(--sf-px);
+  }
+  sf-button-icon:has(.sf-icon-button--outline[class*=segment-]) + sf-icon-button .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-inline-end-width: var(--sf-px);
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+    --sf-icon-button--border-inline-start-width: var(--sf-px);
+  }
+  sf-icon-button[\:has\(.sf-icon-button--outline\[class*\%3Dsegment-\]\)] + sf-button-icon .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-inline-end-width: var(--sf-px);
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+    --sf-icon-button--border-inline-start-width: var(--sf-px);
+  }
+  sf-icon-button:has(.sf-icon-button--outline[class*=segment-]) + sf-button-icon .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-inline-end-width: var(--sf-px);
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+    --sf-icon-button--border-inline-start-width: var(--sf-px);
+  }
+  sf-icon-button[\:has\(.sf-icon-button--outline\[class*\%3Dsegment-\]\)] + sf-icon-button .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-inline-end-width: var(--sf-px);
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+    --sf-icon-button--border-inline-start-width: var(--sf-px);
+  }
+  sf-icon-button:has(.sf-icon-button--outline[class*=segment-]) + sf-icon-button .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-inline-end-width: var(--sf-px);
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+    --sf-icon-button--border-inline-start-width: var(--sf-px);
+  }
   .sf-icon-button.sf-icon-button--outline[class*=segment-] + .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
     --sf-icon-button--border-top-width: var(--sf-px);
     --sf-icon-button--border-inline-end-width: var(--sf-px);
     --sf-icon-button--border-bottom-width: var(--sf-px);
     --sf-icon-button--border-inline-start-width: var(--sf-px);
   }
-  sf-icon-button:has(.sf-icon-button--outline[class*=segment-]) + sf-icon-button .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline),
-  .sf-icon-button.sf-icon-button--outline[class*=segment-] + .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+  sf-button-icon[\:has\(.sf-icon-button--outline\[class*\%3Dsegment-\]\)] + sf-button .sf-button[class*=segment-]:not(.sf-button--outline) {
+    --sf-button--border-top-width: var(--sf-px);
+    --sf-button--border-inline-end-width: var(--sf-px);
+    --sf-button--border-bottom-width: var(--sf-px);
+    --sf-button--border-inline-start-width: var(--sf-px);
+  }
+  sf-button-icon:has(.sf-icon-button--outline[class*=segment-]) + sf-button .sf-button[class*=segment-]:not(.sf-button--outline) {
+    --sf-button--border-top-width: var(--sf-px);
+    --sf-button--border-inline-end-width: var(--sf-px);
+    --sf-button--border-bottom-width: var(--sf-px);
+    --sf-button--border-inline-start-width: var(--sf-px);
+  }
+  sf-icon-button[\:has\(.sf-icon-button--outline\[class*\%3Dsegment-\]\)] + sf-button .sf-button[class*=segment-]:not(.sf-button--outline) {
+    --sf-button--border-top-width: var(--sf-px);
+    --sf-button--border-inline-end-width: var(--sf-px);
+    --sf-button--border-bottom-width: var(--sf-px);
+    --sf-button--border-inline-start-width: var(--sf-px);
+  }
+  sf-icon-button:has(.sf-icon-button--outline[class*=segment-]) + sf-button .sf-button[class*=segment-]:not(.sf-button--outline) {
+    --sf-button--border-top-width: var(--sf-px);
+    --sf-button--border-inline-end-width: var(--sf-px);
+    --sf-button--border-bottom-width: var(--sf-px);
+    --sf-button--border-inline-start-width: var(--sf-px);
+  }
+  .sf-icon-button.sf-icon-button--outline[class*=segment-] + .sf-button[class*=segment-]:not(.sf-button--outline) {
+    --sf-button--border-top-width: var(--sf-px);
+    --sf-button--border-inline-end-width: var(--sf-px);
+    --sf-button--border-bottom-width: var(--sf-px);
+    --sf-button--border-inline-start-width: var(--sf-px);
+  }
+  sf-button-icon[\:has\(\%2B\%20sf-button-icon\%20.sf-icon-button--outline\[class*\%3Dsegment-\]\)] .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
     --sf-icon-button--border-top-width: var(--sf-px);
     --sf-icon-button--border-inline-end-width: var(--sf-px);
     --sf-icon-button--border-bottom-width: var(--sf-px);
     --sf-icon-button--border-inline-start-width: var(--sf-px);
   }
-  sf-icon-button[\:has\(.sf-icon-button--outline\[class*\%3Dsegment-\]\)] + sf-button .sf-button[class*=segment-]:not(.sf-button--outline),
-  .sf-icon-button.sf-icon-button--outline[class*=segment-] + .sf-button[class*=segment-]:not(.sf-button--outline) {
-    --sf-button--border-top-width: var(--sf-px);
-    --sf-button--border-inline-end-width: var(--sf-px);
-    --sf-button--border-bottom-width: var(--sf-px);
-    --sf-button--border-inline-start-width: var(--sf-px);
+  sf-button-icon:has(+ sf-button-icon .sf-icon-button--outline[class*=segment-]) .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-inline-end-width: var(--sf-px);
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+    --sf-icon-button--border-inline-start-width: var(--sf-px);
   }
-  sf-icon-button:has(.sf-icon-button--outline[class*=segment-]) + sf-button .sf-button[class*=segment-]:not(.sf-button--outline),
-  .sf-icon-button.sf-icon-button--outline[class*=segment-] + .sf-button[class*=segment-]:not(.sf-button--outline) {
-    --sf-button--border-top-width: var(--sf-px);
-    --sf-button--border-inline-end-width: var(--sf-px);
-    --sf-button--border-bottom-width: var(--sf-px);
-    --sf-button--border-inline-start-width: var(--sf-px);
+  sf-button-icon[\:has\(\%2B\%20sf-icon-button\%20.sf-icon-button--outline\[class*\%3Dsegment-\]\)] .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-inline-end-width: var(--sf-px);
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+    --sf-icon-button--border-inline-start-width: var(--sf-px);
   }
-  sf-icon-button[\:has\(\%2B\%20sf-icon-button\%20.sf-icon-button--outline\[class*\%3Dsegment-\]\)] .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline),
+  sf-button-icon:has(+ sf-icon-button .sf-icon-button--outline[class*=segment-]) .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-inline-end-width: var(--sf-px);
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+    --sf-icon-button--border-inline-start-width: var(--sf-px);
+  }
+  sf-icon-button[\:has\(\%2B\%20sf-button-icon\%20.sf-icon-button--outline\[class*\%3Dsegment-\]\)] .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-inline-end-width: var(--sf-px);
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+    --sf-icon-button--border-inline-start-width: var(--sf-px);
+  }
+  sf-icon-button:has(+ sf-button-icon .sf-icon-button--outline[class*=segment-]) .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-inline-end-width: var(--sf-px);
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+    --sf-icon-button--border-inline-start-width: var(--sf-px);
+  }
+  sf-icon-button[\:has\(\%2B\%20sf-icon-button\%20.sf-icon-button--outline\[class*\%3Dsegment-\]\)] .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-inline-end-width: var(--sf-px);
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+    --sf-icon-button--border-inline-start-width: var(--sf-px);
+  }
+  sf-icon-button:has(+ sf-icon-button .sf-icon-button--outline[class*=segment-]) .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-inline-end-width: var(--sf-px);
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+    --sf-icon-button--border-inline-start-width: var(--sf-px);
+  }
   .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline)[\:has\(\%2B\%20.sf-icon-button.sf-icon-button--outline\[class*\%3Dsegment-\]\)] {
     --sf-icon-button--border-top-width: var(--sf-px);
     --sf-icon-button--border-inline-end-width: var(--sf-px);
     --sf-icon-button--border-bottom-width: var(--sf-px);
     --sf-icon-button--border-inline-start-width: var(--sf-px);
   }
-  sf-icon-button:has(+ sf-icon-button .sf-icon-button--outline[class*=segment-]) .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline),
   .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline):has(+ .sf-icon-button.sf-icon-button--outline[class*=segment-]) {
     --sf-icon-button--border-top-width: var(--sf-px);
     --sf-icon-button--border-inline-end-width: var(--sf-px);
     --sf-icon-button--border-bottom-width: var(--sf-px);
     --sf-icon-button--border-inline-start-width: var(--sf-px);
   }
-  sf-icon-button[\:has\(\%2B\%20sf-button\%20.sf-button--outline\[class*\%3Dsegment-\]\)] .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline),
+  sf-button-icon[\:has\(\%2B\%20sf-button\%20.sf-button--outline\[class*\%3Dsegment-\]\)] .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-inline-end-width: var(--sf-px);
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+    --sf-icon-button--border-inline-start-width: var(--sf-px);
+  }
+  sf-button-icon:has(+ sf-button .sf-button--outline[class*=segment-]) .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-inline-end-width: var(--sf-px);
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+    --sf-icon-button--border-inline-start-width: var(--sf-px);
+  }
+  sf-icon-button[\:has\(\%2B\%20sf-button\%20.sf-button--outline\[class*\%3Dsegment-\]\)] .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-inline-end-width: var(--sf-px);
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+    --sf-icon-button--border-inline-start-width: var(--sf-px);
+  }
+  sf-icon-button:has(+ sf-button .sf-button--outline[class*=segment-]) .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-inline-end-width: var(--sf-px);
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+    --sf-icon-button--border-inline-start-width: var(--sf-px);
+  }
   .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline)[\:has\(\%2B\%20.sf-button.sf-button--outline\[class*\%3Dsegment-\]\)] {
     --sf-icon-button--border-top-width: var(--sf-px);
     --sf-icon-button--border-inline-end-width: var(--sf-px);
     --sf-icon-button--border-bottom-width: var(--sf-px);
     --sf-icon-button--border-inline-start-width: var(--sf-px);
   }
-  sf-icon-button:has(+ sf-button .sf-button--outline[class*=segment-]) .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline),
   .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline):has(+ .sf-button.sf-button--outline[class*=segment-]) {
     --sf-icon-button--border-top-width: var(--sf-px);
     --sf-icon-button--border-inline-end-width: var(--sf-px);
@@ -1561,7 +1685,7 @@
   }
 }
 @layer sf.components {
-  /* on-surface-variant (sf-icon-button scheme): the on-surface family one step
+  /* on-surface-variant (sf-button-icon scheme): the on-surface family one step
      quieter. The control carries sf-icon-button--on-surface as well, so its
      fill and edge are on-surface's; here the glyph takes
      --sf-on-surface-variant (a tonal control has already turned that role to
@@ -1571,7 +1695,7 @@
   /* The colours are set on the control, as every other scheme rule sets them,
      and never on the glyph itself: a rule on the glyph would stand over the
      value a state hands down, and a disabled quiet control would keep its
-     resting colour. A close control draws its cross through sf-close, whose
+     resting colour. A close control draws its cross through sf-button-close, whose
      own element stands between the control and the mark, so that colour is
      handed down too. */
   .sf-icon-button.sf-icon-button--on-surface.sf-icon-button--on-surface-variant:not(.sf-icon-button--default) {

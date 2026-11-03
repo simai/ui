@@ -1969,6 +1969,394 @@ class ComponentObserver {
 
 /***/ },
 
+/***/ "f49a716b86bd"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   ALIAS_KINDS: () => (/* binding */ ALIAS_KINDS),
+/* harmony export */   ALIAS_MODES: () => (/* binding */ ALIAS_MODES),
+/* harmony export */   TAG_ALIAS_KIND: () => (/* binding */ TAG_ALIAS_KIND),
+/* harmony export */   aliasExpired: () => (/* binding */ aliasExpired),
+/* harmony export */   propertyOf: () => (/* binding */ propertyOf),
+/* harmony export */   readAliasTable: () => (/* binding */ readAliasTable),
+/* harmony export */   readTagAliases: () => (/* binding */ readTagAliases)
+/* harmony export */ });
+// The dated alias table of one component (standard simai.smart-component
+// 1.3.8 §16.20, vocabulary 1.1.5 §9): what the migration converter writes as
+// <component>/aliases.json, read and checked here before core/js/aliases.js
+// installs it on an element. Pure data, no DOM, so a build, a lint and the
+// runtime share one reading of it.
+//
+// A table is a list of rows, or {tag, aliases: [rows]}. A row:
+//
+//   {from, to, kind, since, remove_after, mode?, when?, setting?, tag?}
+//
+//   kind      event | setting | attribute | action | value
+//   since     the first day the new name exists, YYYY-MM-DD
+//   remove_after
+//             the last day the old name is promised, YYYY-MM-DD
+//   mode      events only: same-detail (default) | detail-adds | split
+//   when      events only, optional: {<detail field>: <value>}; the old name
+//             is sent only for a new event whose detail matches (two old
+//             names folded into one new name, as modal:after-hide and
+//             modal:after-show into change)
+//   setting   values only: the attribute the value belongs to
+//
+// A row that does not hold is refused with a reason, never thrown: the rest of
+// the table still installs, and the refusals are reported.
+//
+// A `tag` row renames the element itself ({from: 'sf-close', to:
+// 'sf-button-close', kind: 'tag', since, remove_after}). It is not installed on
+// an element: the Smart base defines the old tag as a subclass when it defines
+// the new one (core/js/tag-aliases.js), so readAliasTable leaves it out and
+// readTagAliases reads it.
+const ALIAS_KINDS = Object.freeze(['event', 'setting', 'attribute', 'action', 'value']);
+const ALIAS_MODES = Object.freeze(['same-detail', 'detail-adds', 'split']);
+const DAY = 86400000;
+const DATE = /^\d{4}-\d{2}-\d{2}$/u;
+const ATTRIBUTE = /^[a-z][a-z0-9-]*$/u;
+const MEMBER = /^[A-Za-z_$][\w$]*$/u;
+
+function dateOf(text) {
+  if (typeof text !== 'string' || !DATE.test(text)) return NaN;
+  const time = Date.parse(`${text}T00:00:00Z`); // 2026-02-30 parses in some engines; it must print back as itself.
+
+  return Number.isNaN(time) || new Date(time).toISOString().slice(0, 10) !== text ? NaN : time;
+} // `remove_after` is the last promised day, whole, in UTC: the old name is
+// open until the end of it and expired from the next midnight.
+
+
+function aliasExpired(row, now = Date.now()) {
+  const last = dateOf(row?.remove_after);
+  return Number.isFinite(last) && now >= last + DAY;
+} // kebab-case attribute -> camelCase property: backdrop-blur -> backdropBlur.
+
+function propertyOf(attribute) {
+  return String(attribute).replace(/-([a-z0-9])/gu, (_, letter) => letter.toUpperCase());
+}
+const TAG_ALIAS_KIND = 'tag'; // A custom element name of the Framework or of a package: lower case, a hyphen.
+
+const ELEMENT = /^[a-z][a-z0-9]*-[a-z0-9-]+$/u;
+
+function primitive(value) {
+  return value === null || ['string', 'number', 'boolean'].includes(typeof value);
+}
+
+function checkRow(row) {
+  if (!row || typeof row !== 'object' || Array.isArray(row)) return 'not-an-object';
+  const {
+    from,
+    to,
+    kind,
+    since,
+    mode = 'same-detail',
+    when,
+    setting
+  } = row;
+  if (!ALIAS_KINDS.includes(kind)) return 'unknown-kind';
+  if (typeof from !== 'string' || !from) return 'no-from';
+  if (to === null || to === undefined || to === '') return 'no-new-name';
+  if (typeof to !== 'string') return 'no-to';
+  if (from === to) return 'same-name';
+  const start = dateOf(since);
+  const end = dateOf(row.remove_after);
+  if (Number.isNaN(start)) return 'bad-since';
+  if (Number.isNaN(end)) return 'bad-remove-after';
+  if (end < start) return 'remove-after-before-since';
+  if (!ALIAS_MODES.includes(mode)) return 'unknown-mode';
+  if (kind !== 'event' && mode !== 'same-detail') return 'mode-on-non-event';
+
+  if (when !== undefined) {
+    if (kind !== 'event') return 'when-on-non-event';
+    if (!when || typeof when !== 'object' || Array.isArray(when) || !Object.values(when).every(primitive)) return 'bad-when';
+  }
+
+  if (kind === 'setting' || kind === 'attribute') {
+    if (!ATTRIBUTE.test(from) || !ATTRIBUTE.test(to)) return 'bad-attribute-name';
+  }
+
+  if (kind === 'action' && (!MEMBER.test(from) || !MEMBER.test(to))) return 'bad-member-name';
+
+  if (kind === 'value') {
+    if (typeof setting !== 'string' || !ATTRIBUTE.test(setting)) return 'value-needs-setting';
+  } else if (setting !== undefined) {
+    return 'setting-on-non-value';
+  }
+
+  return null;
+}
+
+function normal(row, tag) {
+  const out = {
+    kind: row.kind,
+    from: row.from,
+    to: row.to,
+    since: row.since,
+    remove_after: row.remove_after,
+    tag: typeof row.tag === 'string' && row.tag ? row.tag : tag
+  };
+
+  if (row.kind === 'event') {
+    out.mode = row.mode || 'same-detail';
+    if (row.when) out.when = { ...row.when
+    };
+  }
+
+  if (row.kind === 'value') out.setting = row.setting;
+  return Object.freeze(out);
+} // -> {tag, rows: [frozen rows], refused: [{index, from, to, kind, reason}]}
+
+
+function readAliasTable(table, {
+  tag = ''
+} = {}) {
+  const list = Array.isArray(table) ? table : table?.aliases;
+  const owner = !Array.isArray(table) && typeof table?.tag === 'string' && table.tag || tag || '';
+  const rows = [];
+  const refused = [];
+
+  if (!Array.isArray(list)) {
+    refused.push({
+      index: -1,
+      from: null,
+      to: null,
+      kind: null,
+      reason: 'not-a-table'
+    });
+    return {
+      tag: owner,
+      rows,
+      refused
+    };
+  }
+
+  const refuse = (index, row, reason) => refused.push({
+    index,
+    from: row?.from ?? null,
+    to: row?.to ?? null,
+    kind: row?.kind ?? null,
+    reason
+  });
+
+  const seen = new Map();
+  list.forEach((row, index) => {
+    if (row?.kind === TAG_ALIAS_KIND) return;
+    const reason = checkRow(row);
+    if (reason) return refuse(index, row, reason);
+    const one = normal(row, owner); // An attribute, a property or a method has one new name; an event's old
+    // name may be sent beside several new ones (split, folded names).
+
+    const identity = one.kind === 'event' ? `event|${one.from}|${one.to}|${JSON.stringify(one.when ?? null)}` : one.kind === 'value' ? `value|${one.setting}|${one.from}` : `${one.kind === 'action' ? 'action' : 'name'}|${one.from}`;
+    const before = seen.get(identity);
+    if (before) return refuse(index, row, before.to === one.to ? 'duplicate' : 'conflict');
+    seen.set(identity, one);
+    rows.push({
+      index,
+      row: one
+    });
+  }); // Two old names folded into one new name by their detail: without `when`
+  // each would be sent on every new event, the wrong one among them.
+
+  const folded = new Map();
+
+  for (const entry of rows) {
+    const {
+      row
+    } = entry;
+    if (row.kind !== 'event' || row.mode === 'same-detail' || row.when) continue;
+    folded.set(row.to, [...(folded.get(row.to) ?? []), entry]);
+  }
+
+  const ambiguous = new Set();
+
+  for (const group of folded.values()) if (group.length > 1) for (const entry of group) ambiguous.add(entry);
+
+  const kept = [];
+
+  for (const entry of rows) {
+    if (ambiguous.has(entry)) refuse(entry.index, entry.row, 'needs-when');else kept.push(entry.row);
+  }
+
+  refused.sort((a, b) => a.index - b.index);
+  return {
+    tag: owner,
+    rows: kept,
+    refused
+  };
+} // The `tag` rows of a table: -> {tag, rows: [{from, to, since, remove_after}],
+// refused: [{index, from, to, reason}]}. A row renames the table's own tag:
+// its `to` is that tag when the table names one.
+
+function readTagAliases(table, {
+  tag = ''
+} = {}) {
+  const list = Array.isArray(table) ? table : table?.aliases;
+  const owner = !Array.isArray(table) && typeof table?.component === 'string' && table.component || !Array.isArray(table) && typeof table?.tag === 'string' && table.tag || tag || '';
+  const rows = [];
+  const refused = [];
+  if (!Array.isArray(list)) return {
+    tag: owner,
+    rows,
+    refused
+  };
+  const seen = new Set();
+  list.forEach((row, index) => {
+    if (row?.kind !== TAG_ALIAS_KIND) return;
+
+    const refuse = reason => refused.push({
+      index,
+      from: row.from ?? null,
+      to: row.to ?? null,
+      reason
+    });
+
+    if (typeof row.from !== 'string' || !ELEMENT.test(row.from)) return refuse('bad-old-tag');
+    if (typeof row.to !== 'string' || !ELEMENT.test(row.to)) return refuse('bad-new-tag');
+    if (row.from === row.to) return refuse('same-name');
+    if (owner && row.to !== owner) return refuse('not-this-tag');
+    const start = dateOf(row.since);
+    const end = dateOf(row.remove_after);
+    if (Number.isNaN(start)) return refuse('bad-since');
+    if (Number.isNaN(end)) return refuse('bad-remove-after');
+    if (end < start) return refuse('remove-after-before-since');
+    if (seen.has(row.from)) return refuse('duplicate');
+    seen.add(row.from);
+    rows.push(Object.freeze({
+      from: row.from,
+      to: row.to,
+      since: row.since,
+      remove_after: row.remove_after
+    }));
+  });
+  return {
+    tag: owner,
+    rows,
+    refused
+  };
+}
+
+/***/ },
+
+/***/ "06e8cd089f28"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   clearDeprecations: () => (/* binding */ clearDeprecations),
+/* harmony export */   listDeprecations: () => (/* binding */ listDeprecations),
+/* harmony export */   noteDeprecated: () => (/* binding */ noteDeprecated)
+/* harmony export */ });
+// What a page still uses that the Framework keeps only for compatibility. Every
+// legacy attribute, value or name a component resolves is noted here once, so a
+// person, a probe or an AI upgrading a product can read the list off a running
+// page (SF.deprecations.list()) instead of searching the source for it. The
+// records behind the names are in contracts/changes/journal.json.
+//
+// Nothing is printed by default: a page opts in to console warnings with
+// <html data-sf-deprecations="warn"> or SF.deprecations.warn = true. A dated
+// alias (core/js/aliases.js, standard simai.smart-component §16.20) also
+// records `tag`, `since` and `remove_after`; once its date has passed the
+// record turns `expired` and that is printed once whatever the page opted
+// into, because the name can leave with the next sweep.
+//
+// Every bundle carries its own copy of this module, so a Map of its own made one
+// list per bundle, and SF.deprecations.list() answered with whichever bundle set
+// it last -- [] on a page printing seven warnings from others. The notes live on
+// one shared global instead, whichever copy writes or reads them.
+function sharedNotes() {
+  const root = globalThis.SF = globalThis.SF || {};
+
+  if (!(root.__deprecationNotes instanceof Map)) {
+    Object.defineProperty(root, '__deprecationNotes', {
+      value: new Map(),
+      configurable: true
+    });
+  }
+
+  return root.__deprecationNotes;
+}
+
+function warnEnabled() {
+  const root = globalThis.document?.documentElement;
+  return root?.dataset?.sfDeprecations === 'warn' || globalThis.SF?.deprecations?.warn === true;
+}
+
+function noteDeprecated({
+  component = '',
+  kind = 'attribute',
+  attribute = '',
+  from,
+  to = null,
+  tag,
+  since,
+  remove_after: removeAfter,
+  expired
+} = {}) {
+  if (!from) return;
+  const key = [component, kind, attribute, from].join('|');
+  const notes = sharedNotes();
+  let note = notes.get(key);
+  const firstExpiry = expired === true && note?.expired !== true;
+
+  if (note) {
+    note.count += 1;
+  } else {
+    note = {
+      component,
+      kind,
+      attribute,
+      from,
+      to,
+      count: 1
+    };
+    notes.set(key, note);
+  } // The dated fields are kept only when a caller knows them, so the records of
+  // the Framework's undated aliases keep their shape.
+
+
+  if (tag !== undefined) note.tag = tag;
+  if (since !== undefined) note.since = since;
+  if (removeAfter !== undefined) note.remove_after = removeAfter;
+  if (expired === true) note.expired = true;
+
+  if (firstExpiry) {
+    globalThis.console?.warn?.(`[SIMAI Framework] ${describe(note)} was due to leave after ${note.remove_after || 'its date'}${to ? `; write ${to}` : ''}. See contracts/changes/journal.json.`);
+  } else if (note.count === 1 && warnEnabled()) {
+    globalThis.console?.warn?.(`[SIMAI Framework] ${describe(note)} is a legacy name${note.remove_after ? ` until ${note.remove_after}` : ''}${to ? `; write ${to}` : ''}. See contracts/changes/journal.json.`);
+  }
+}
+
+function describe({
+  component,
+  kind,
+  attribute,
+  from
+}) {
+  const where = component ? `${component}: ` : '';
+  const what = kind === 'value' ? `${attribute}="${from}"` : `${kind} ${from}`;
+  return `${where}${what}`;
+}
+
+function listDeprecations() {
+  return [...sharedNotes().values()].map(note => ({ ...note
+  }));
+}
+function clearDeprecations() {
+  sharedNotes().clear();
+}
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.SF = globalThis.SF || {};
+  const api = globalThis.SF.deprecations || {};
+  api.list = listDeprecations;
+  api.clear = clearDeprecations;
+  api.note = noteDeprecated;
+  globalThis.SF.deprecations = api;
+}
+
+/***/ },
+
 /***/ "78628e837a32"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -2582,6 +2970,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   pageText: () => (/* binding */ pageText),
 /* harmony export */   pageWord: () => (/* binding */ pageWord)
 /* harmony export */ });
+/* harmony import */ var _tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("4a85acfb05c1");
 // What language a component speaks, and how a product adds one.
 //
 // The Framework speaks English by default and whatever the page says otherwise:
@@ -2616,6 +3005,8 @@ __webpack_require__.r(__webpack_exports__);
 // was published from core's copy, the table read its own, and registering a
 // language changed nothing on screen. Only a browser shows that, and it did
 // (2026-10-11).
+
+
 const STORE = (() => {
   const root = typeof globalThis !== 'undefined' ? globalThis : {};
   const key = '__sfPageLanguage';
@@ -2632,7 +3023,12 @@ const STORE = (() => {
 })();
 
 const LISTENERS = STORE.listeners;
-const REGISTERED = STORE.registered;
+const REGISTERED = STORE.registered; // Words are kept under a component's current tag: a product that registered
+// them for a renamed tag (sf-datepicker, now sf-input-date) keeps its words
+// while the old tag is a dated alias, whichever name the element was written
+// with (core/js/tag-aliases.js).
+
+const wordsOf = component => REGISTERED.get((0,_tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__.canonicalTag)(component));
 
 const normalise = value => String(value ?? '').trim().toLowerCase().replace('_', '-');
 /** The languages to try, most specific first, English last. */
@@ -2816,7 +3212,7 @@ function pageText(dictionary, key, node, component) {
 
 function localeText(dictionary, key, locale, component) {
   for (const candidate of chain(locale || 'en')) {
-    const added = component ? REGISTERED.get(component)?.get(candidate)?.[key] : undefined;
+    const added = component ? wordsOf(component)?.get(candidate)?.[key] : undefined;
     if (added !== undefined) return added;
     const shipped = dictionary?.[candidate]?.[key];
     if (shipped !== undefined) return shipped;
@@ -2888,7 +3284,7 @@ function pageWord(dictionary, key, node, {
   const formerKeys = former === undefined || former === null ? [] : [].concat(former);
 
   for (const candidate of order) {
-    const registered = owner ? REGISTERED.get(owner)?.get(candidate) : undefined;
+    const registered = owner ? wordsOf(owner)?.get(candidate) : undefined;
     let added = registered?.[key];
 
     if (added === undefined && registered) {
@@ -2969,7 +3365,7 @@ const language = {
    * restating the rest, and `null` removes what it added.
    */
   register(component, value, words) {
-    const name = String(component ?? '').toLowerCase();
+    const name = (0,_tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__.canonicalTag)(component ?? '');
     const code = normalise(value);
     if (!name || !code) throw new TypeError('a component and a language are required');
     if (!REGISTERED.has(name)) REGISTERED.set(name, new Map());
@@ -2981,7 +3377,7 @@ const language = {
     return this;
   },
 
-  /** One language across many components: `{ 'sf-datepicker': {...}, ... }`. */
+  /** One language across many components: `{ 'sf-input-date': {...}, ... }`. */
   registerAll(value, byComponent = {}) {
     for (const [component, words] of Object.entries(byComponent)) {
       this.register(component, value, words);
@@ -2992,8 +3388,7 @@ const language = {
 
   /** The languages something has registered words for. */
   known(component) {
-    const name = String(component ?? '').toLowerCase();
-    return [...(REGISTERED.get(name)?.keys() ?? [])];
+    return [...(wordsOf(component ?? '')?.keys() ?? [])];
   },
 
   /** Every component something has been registered for. */
@@ -3029,6 +3424,309 @@ if (typeof window !== 'undefined') {
   window.SF.language = language;
   window.SF.pageLanguage = pageLanguage;
   window.SF.pageText = pageText;
+}
+
+/***/ },
+
+/***/ "f28a9d913ce0"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Generated from the `tag` rows of src/smart/*/aliases.json by scripts/tag-alias-table.mjs; do not edit.
+// The Framework's dated tag aliases, read by core/js/tag-aliases.js.
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Object.freeze([Object.freeze({
+  from: 'sf-avatars',
+  to: 'sf-avatar-group',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-close',
+  to: 'sf-button-close',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-code-input',
+  to: 'sf-input-code',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-color',
+  to: 'sf-input-color',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-composition-overlay',
+  to: 'sf-editor-overlay',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-context-menu',
+  to: 'sf-menu-context',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-copy-button',
+  to: 'sf-button-copy',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-country-code',
+  to: 'sf-input-country',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-datepicker',
+  to: 'sf-input-date',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-download-file',
+  to: 'sf-file-download',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-icon-button',
+  to: 'sf-button-icon',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-image-field',
+  to: 'sf-input-image',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-inline-editor',
+  to: 'sf-editor-inline',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-lookup',
+  to: 'sf-input-lookup',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-page-header',
+  to: 'sf-header-page',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-quantity',
+  to: 'sf-input-quantity',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-range-slider',
+  to: 'sf-slider-range',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-rich-text',
+  to: 'sf-input-rich',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-site-header',
+  to: 'sf-header-site',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-textarea',
+  to: 'sf-input-textarea',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+})]));
+
+/***/ },
+
+/***/ "4a85acfb05c1"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   canonicalTag: () => (/* binding */ canonicalTag),
+/* harmony export */   defineTagAliases: () => (/* binding */ defineTagAliases),
+/* harmony export */   isTag: () => (/* binding */ isTag),
+/* harmony export */   listTagAliases: () => (/* binding */ listTagAliases),
+/* harmony export */   noteTagAlias: () => (/* binding */ noteTagAlias),
+/* harmony export */   registerTagAliases: () => (/* binding */ registerTagAliases),
+/* harmony export */   tagNames: () => (/* binding */ tagNames),
+/* harmony export */   tagSelector: () => (/* binding */ tagSelector)
+/* harmony export */ });
+/* harmony import */ var _deprecations_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("06e8cd089f28");
+/* harmony import */ var _alias_table_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("f49a716b86bd");
+/* harmony import */ var _tag_aliases_generated_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("f28a9d913ce0");
+// Dated tag aliases (rename plan R0, ui-control RENAME-PLAN-2026-11-03; change
+// lifecycle: contracts/changes/journal.json, kind "tag"). When a Smart
+// component takes a new tag, the old tag keeps working until its
+// `remove_after` day:
+//
+// - Definition. defineTagAliases(Class, tag) defines each old tag as a trivial
+//   subclass of the class that defines the new one (the Smart base calls it
+//   from define()). The Loader's rule lists the old tag beside the new one, so
+//   markup with the old tag alone loads the bundle.
+// - Note. The first old-tag element a page connects is noted in
+//   SF.deprecations (kind "tag") and named once on the console with the new tag
+//   and the date, whatever the page opted into: an element name is the most
+//   visible thing a page writes, and the old one is going.
+// - Script. Code that finds a renamed element by name asks for both names
+//   through one helper instead of a literal:
+//
+//     import {tagSelector, isTag} from '../../core/js/smart-base';
+//     host.querySelector(`.sf-tag > ${tagSelector('sf-button-close')}`);
+//     if (isTag(node, 'sf-button-close')) ...
+//
+// - Sheets. A selector that names the new tag names the old one beside it in
+//   source, `:is(sf-button-close, sf-close)`, for as long as the alias lives
+//   (scripts/rename-smart-tag.mjs writes it, --sweep takes it out; the
+//   contract test tests/tag-aliases.contract.test.mjs holds both).
+//
+// The Framework's own aliases are a static table (tag-aliases.generated.js,
+// written from every component's aliases.json by scripts/tag-alias-table.mjs),
+// so a lookup finds an old tag before the renamed component's bundle has run.
+// A package's component adds its rows when it is defined. Every copy of this
+// module shares one state on the page (a global symbol); the Smart bundles
+// reach it through the shared runtime (smart-base re-exports it).
+
+
+
+const STATE = Symbol.for('simai.sf.tag-aliases');
+
+function state() {
+  if (!globalThis[STATE]) {
+    const shared = {
+      byOld: new Map(),
+      byNew: new Map(),
+      noted: new Set()
+    };
+    Object.defineProperty(globalThis, STATE, {
+      value: shared,
+      configurable: true
+    });
+
+    for (const row of _tag_aliases_generated_js__WEBPACK_IMPORTED_MODULE_2__["default"]) addRow(shared, row);
+  }
+
+  return globalThis[STATE];
+}
+
+function addRow(shared, row) {
+  if (shared.byOld.has(row.from)) return;
+  shared.byOld.set(row.from, row);
+  shared.byNew.set(row.to, [...(shared.byNew.get(row.to) ?? []), row.from]);
+} // Rows from a component's aliases.json (its `tag` rows); the Framework's are
+// already known, a package's are added here.
+
+
+function registerTagAliases(table, tag) {
+  const {
+    rows
+  } = (0,_alias_table_js__WEBPACK_IMPORTED_MODULE_1__.readTagAliases)(table, {
+    tag
+  });
+  const shared = state();
+
+  for (const row of rows) addRow(shared, row);
+
+  return rows;
+} // The open old names of a tag, its own first: ['sf-button-close', 'sf-close'].
+
+function tagNames(tag) {
+  const name = String(tag || '').toLowerCase();
+  return [name, ...(state().byNew.get(name) ?? [])];
+} // A selector for the tag that matches its old names too:
+// ':is(sf-button-close, sf-close)', or the tag itself when it has none.
+
+function tagSelector(tag) {
+  const names = tagNames(tag);
+  return names.length > 1 ? `:is(${names.join(', ')})` : names[0];
+} // Whether an element is the tag, under its own or an old name.
+
+function isTag(element, tag) {
+  const name = element?.localName;
+  return Boolean(name) && tagNames(tag).includes(name);
+} // The current name of a tag: 'sf-button-close' for 'sf-close'.
+
+function canonicalTag(tag) {
+  const name = String(tag || '').toLowerCase();
+  return state().byOld.get(name)?.to ?? name;
+} // Every open row: [{from, to, since, remove_after}].
+
+function listTagAliases() {
+  return [...state().byOld.values()].map(row => ({ ...row
+  }));
+} // The page met an element under an old name: once per old tag.
+
+function noteTagAlias(row) {
+  const shared = state();
+  const expired = (0,_alias_table_js__WEBPACK_IMPORTED_MODULE_1__.aliasExpired)(row);
+  (0,_deprecations_js__WEBPACK_IMPORTED_MODULE_0__.noteDeprecated)({
+    component: row.to,
+    kind: 'tag',
+    from: row.from,
+    to: row.to,
+    tag: row.to,
+    since: row.since,
+    remove_after: row.remove_after,
+    expired
+  });
+  if (shared.noted.has(row.from)) return;
+  shared.noted.add(row.from); // deprecations.js prints an expired name itself, and every name when the
+  // page opted in; the note here is for the rest.
+
+  const optedIn = globalThis.document?.documentElement?.dataset?.sfDeprecations === 'warn' || globalThis.SF?.deprecations?.warn === true;
+  if (expired || optedIn) return;
+  globalThis.console?.warn?.(`[SIMAI Framework] <${row.from}> is now <${row.to}>; the old tag works until ${row.remove_after}. Write <${row.to}>. See contracts/changes/journal.json.`);
+} // Defines each old tag of `tag` as a subclass of `Base` (the class that
+// defines `tag`), through `define(name, Class)`: the Smart base passes its
+// definition queue, so both names are defined in the same batch. Returns the
+// rows defined.
+
+function defineTagAliases(Base, tag, {
+  table = Base?.aliases,
+  define
+} = {}) {
+  if (table) registerTagAliases(table, tag);
+  const rows = (state().byNew.get(tag) ?? []).map(from => state().byOld.get(from));
+  const registry = globalThis.customElements;
+  const defined = [];
+
+  for (const row of rows) {
+    if (!registry || registry.get(row.from)) continue;
+
+    class TagAlias extends Base {
+      connectedCallback() {
+        noteTagAlias(row);
+        super.connectedCallback?.();
+      }
+
+    }
+
+    Object.defineProperty(TagAlias, 'sfTagAliasOf', {
+      value: row.to
+    });
+    (define ?? ((name, Class) => registry.define(name, Class)))(row.from, TagAlias);
+    defined.push(row);
+  }
+
+  return defined;
+}
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.SF = globalThis.SF || {}; // For scripts that are not Smart bundles (class components, a page):
+  // SF.tags.selector('sf-button-close').
+
+  if (!globalThis.SF.tags) {
+    globalThis.SF.tags = Object.freeze({
+      names: tagNames,
+      selector: tagSelector,
+      is: isTag,
+      canonical: canonicalTag,
+      list: listTagAliases
+    });
+  }
 }
 
 /***/ },

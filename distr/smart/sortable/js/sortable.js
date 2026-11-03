@@ -110,7 +110,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_ele
 // The editors' elements from their manifests (standard simai.smart-component
 // 1.3.8 §3, §4, §8, §16.20).
 //
-// sf-sortable, sf-inline-editor and sf-composition-overlay are plain custom
+// sf-sortable, sf-editor-inline and sf-editor-overlay are plain custom
 // elements defined by the composition modules (core/js/composition): the
 // overlay's bundle carries the drag module too, and a page may define them
 // before any Smart base is loaded. They draw nothing through the Smart base
@@ -200,7 +200,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_pag
 // The component reports the choice and creates nothing: the host hears
 // sf-sortable-insert with the place and the kind, builds the item and puts it
 // in the list, exactly as it applies sf-sortable-intent. The inserter is the
-// Framework's standard menu (sf-context-menu, opened with openFor and its own
+// Framework's standard menu (sf-menu-context, opened with openFor and its own
 // local search), so its rows, its keys, its top layer and its Escape are the
 // ones every other menu has; nothing here draws a second popover.
 //
@@ -485,12 +485,12 @@ function createSortableInserter(list) {
   async function standardMenu() {
     if (menu?.isConnected) return menu;
     const registry = globalThis.customElements;
-    await globalThis.SF?.Loader?.ensure?.(['sf-context-menu']);
-    if (!registry.get('sf-context-menu')) return null;
-    menu = document_().createElement('sf-context-menu');
+    await globalThis.SF?.Loader?.ensure?.(['sf-menu-context']);
+    if (!registry.get('sf-menu-context')) return null;
+    menu = document_().createElement('sf-menu-context');
     menu.setAttribute('popup', '');
-    menu.addEventListener('sf-context-menu-select', onSelect);
-    menu.addEventListener('sf-context-menu-closed', () => { button?.setAttribute('aria-expanded', 'false'); place(); });
+    menu.addEventListener('sf-menu-context-select', onSelect);
+    menu.addEventListener('sf-menu-context-closed', () => { button?.setAttribute('aria-expanded', 'false'); place(); });
     // Enter in the search takes the first row it left: whoever typed the name
     // of what they want has chosen it. The menu's own Enter is a row's.
     menu.addEventListener('keydown', (event) => {
@@ -1607,7 +1607,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-sorta
 /***/ "34bb89f847b9"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.sortable","tag":"sf-sortable","version":"1.1.6","kind":"leaf","settings":{"group":{"type":"string","default":""},"accepts":{"type":"string","default":""},"mode":{"type":"enum","values":["move","copy"],"default":"move"},"orientation":{"type":"enum","values":["vertical","horizontal"],"default":"vertical"},"label":{"type":"string","default":""},"preview":{"type":"enum","values":["silhouette","line"],"default":"silhouette"},"inserter-items":{"type":"string","default":""}},"values":{},"events":{"move":{"carries":{"item":"string","from":"string","to":"string","index":"number","mode":{"type":"enum","values":["move","copy"]}}},"state":{"carries":{"state":{"type":"enum","values":["picked","dropped","cancelled"]},"item":"string"},"own-verb":true},"insert":{"carries":{"index":{"type":"number","integer":true,"schema":{"minimum":0}},"item":"string","to":"string"},"cancelable":true,"own-verb":true}},"actions":{},"css-variables":{"--sf-sortable-dragging-opacity":{"type":"number","state":"dragging"},"--sf-sortable-ghost-opacity":{"type":"number","state":"dragging"},"--sf-sortable-ghost-z-index":{"type":"number","state":"dragging"},"--sf-sortable-indicator-color":{"type":"color","state":"dragging"},"--sf-sortable-placeholder-border-color":{"type":"color","state":"dragging"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.sortable","tag":"sf-sortable","version":"1.1.7","kind":"leaf","settings":{"group":{"type":"string","default":""},"accepts":{"type":"string","default":""},"mode":{"type":"enum","values":["move","copy"],"default":"move"},"orientation":{"type":"enum","values":["vertical","horizontal"],"default":"vertical"},"label":{"type":"string","default":""},"preview":{"type":"enum","values":["silhouette","line"],"default":"silhouette"},"inserter-items":{"type":"string","default":""}},"values":{},"events":{"move":{"carries":{"item":"string","from":"string","to":"string","index":"number","mode":{"type":"enum","values":["move","copy"]}}},"state":{"carries":{"state":{"type":"enum","values":["picked","dropped","cancelled"]},"item":"string"},"own-verb":true},"insert":{"carries":{"index":{"type":"number","integer":true,"schema":{"minimum":0}},"item":"string","to":"string"},"cancelable":true,"own-verb":true}},"actions":{},"css-variables":{"--sf-sortable-dragging-opacity":{"type":"number","state":"dragging"},"--sf-sortable-ghost-opacity":{"type":"number","state":"dragging"},"--sf-sortable-ghost-z-index":{"type":"number","state":"dragging"},"--sf-sortable-indicator-color":{"type":"color","state":"dragging"},"--sf-sortable-placeholder-border-color":{"type":"color","state":"dragging"}}}');
 
 /***/ },
 

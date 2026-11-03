@@ -15,7 +15,7 @@
       "journal": "path-smart-buttons-to-button"
     },
     "cl-icon-buttons": {
-      "to": "cl-icon-button",
+      "to": "cl-button-icon",
       "since": "2026-10-27",
       "remove_after": "2026-12-01",
       "journal": "path-smart-icon-buttons-to-icon-button"
@@ -37,6 +37,126 @@
       "since": "2026-10-27",
       "remove_after": "2026-12-01",
       "journal": "path-smart-tags-to-tag"
+    },
+    "cl-close": {
+      "to": "cl-button-close",
+      "since": "2026-11-03",
+      "remove_after": "2027-01-01",
+      "journal": "path-smart-close-to-button-close"
+    },
+    "cl-avatars": {
+      "to": "cl-avatar-group",
+      "since": "2026-11-03",
+      "remove_after": "2027-01-01",
+      "journal": "path-smart-avatars-to-avatar-group"
+    },
+    "cl-page-header": {
+      "to": "cl-header-page",
+      "since": "2026-11-03",
+      "remove_after": "2027-01-01",
+      "journal": "path-smart-page-header-to-header-page"
+    },
+    "cl-site-header": {
+      "to": "cl-header-site",
+      "since": "2026-11-03",
+      "remove_after": "2027-01-01",
+      "journal": "path-smart-site-header-to-header-site"
+    },
+    "cl-inline-editor": {
+      "to": "cl-editor-inline",
+      "since": "2026-11-03",
+      "remove_after": "2027-01-01",
+      "journal": "path-smart-inline-editor-to-editor-inline"
+    },
+    "cl-copy-button": {
+      "to": "cl-button-copy",
+      "since": "2026-11-03",
+      "remove_after": "2027-01-01",
+      "journal": "path-smart-copy-button-to-button-copy"
+    },
+    "cl-lookup": {
+      "to": "cl-input-lookup",
+      "since": "2026-11-03",
+      "remove_after": "2027-01-01",
+      "journal": "path-smart-lookup-to-input-lookup"
+    },
+    "cl-code-input": {
+      "to": "cl-input-code",
+      "since": "2026-11-03",
+      "remove_after": "2027-01-01",
+      "journal": "path-smart-code-input-to-input-code"
+    },
+    "cl-download-file": {
+      "to": "cl-file-download",
+      "since": "2026-11-03",
+      "remove_after": "2027-01-01",
+      "journal": "path-smart-download-file-to-file-download"
+    },
+    "cl-image-field": {
+      "to": "cl-input-image",
+      "since": "2026-11-03",
+      "remove_after": "2027-01-01",
+      "journal": "path-smart-image-field-to-input-image"
+    },
+    "cl-composition-overlay": {
+      "to": "cl-editor-overlay",
+      "since": "2026-11-03",
+      "remove_after": "2027-01-01",
+      "journal": "path-smart-composition-overlay-to-editor-overlay"
+    },
+    "cl-rich-text": {
+      "to": "cl-input-rich",
+      "since": "2026-11-03",
+      "remove_after": "2027-01-01",
+      "journal": "path-smart-rich-text-to-input-rich"
+    },
+    "cl-range-slider": {
+      "to": "cl-slider-range",
+      "since": "2026-11-03",
+      "remove_after": "2027-01-01",
+      "journal": "path-smart-range-slider-to-slider-range"
+    },
+    "cl-datepicker": {
+      "to": "cl-input-date",
+      "since": "2026-11-03",
+      "remove_after": "2027-01-01",
+      "journal": "path-smart-datepicker-to-input-date"
+    },
+    "cl-color": {
+      "to": "cl-input-color",
+      "since": "2026-11-03",
+      "remove_after": "2027-01-01",
+      "journal": "path-smart-color-to-input-color"
+    },
+    "cl-country-code": {
+      "to": "cl-input-country",
+      "since": "2026-11-03",
+      "remove_after": "2027-01-01",
+      "journal": "path-smart-country-code-to-input-country"
+    },
+    "cl-quantity": {
+      "to": "cl-input-quantity",
+      "since": "2026-11-03",
+      "remove_after": "2027-01-01",
+      "journal": "path-smart-quantity-to-input-quantity"
+    },
+    "cl-textarea": {
+      "to": "cl-input-textarea",
+      "since": "2026-11-03",
+      "remove_after": "2027-01-01",
+      "journal": "path-smart-textarea-to-input-textarea"
+    },
+    "cl-context-menu": {
+      "to": "cl-menu-context",
+      "since": "2026-11-03",
+      "remove_after": "2027-01-01",
+      "journal": "path-smart-context-menu-to-menu-context"
+    },
+    "cl-icon-button": {
+      "to": "cl-button-icon",
+      "since": "2026-11-03",
+      "remove_after": "2027-01-01",
+      "journal": "path-smart-icon-button-to-button-icon"
     }
   }
 }

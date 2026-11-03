@@ -1,0 +1,15 @@
+{
+  "schema": "simai.smart-component-fixture.v2",
+  "id": "reference",
+  "component": "smart.header-page",
+  "title": "Page header reference",
+  "summary": "Deterministic reference fixture for sf-header-page.",
+  "locale": "ru",
+  "props": {
+    "heading": "Каталог решений",
+    "count": "448",
+    "star": false
+  },
+  "children": [],
+  "state": "default"
+}

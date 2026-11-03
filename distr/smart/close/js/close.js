@@ -7,130 +7,76 @@
 
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("deb1a4d61565");
-/* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5b7d7695b41b");
-/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("dc0533243b98");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("34e93754c62d");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("115952befbb6");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("a667d1e9805c");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("26ae43ae7965");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
-/* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
-
-
-
-
-
-
- // sf-close from its component.json (standard simai.smart-component 1.3.8 §3,
-// §4): the decorative cross of a close action. `size` is the attribute and
-// property core/js/element-manifest.js makes from the manifest; a value outside
-// the ladder reads as the default 1/3. The glyph is aria-hidden: the native
-// button it stands in owns the name, focus and the action.
-
-const CloseElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_3__, {
-  base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_5__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_6__
-  },
-  source: 'ru',
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_4__
-});
-
-class SfClose extends CloseElement {
-  templateContext() {
-    const props = this.getPropsContext();
-    return this.createTemplateContext({ ...props,
-      component: this,
-      size: this.size,
-      rootClass: this.getRootClass()
-    });
-  }
-
-  template() {
-    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_2__.renderCloseTemplate)(this.templateContext());
-  }
-
-}
-
-SfClose.define('sf-close');
-__webpack_async_result__();
-} catch(e) { __webpack_async_result__(e); } });
-
-/***/ },
-
-/***/ "dc0533243b98"
-(module, __webpack_exports__, __webpack_require__) {
-
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   renderCloseTemplate: () => (/* binding */ renderCloseTemplate)
-/* harmony export */ });
-/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__]);
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d3818183b14c");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__]);
 var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
-lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
-/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__);
+// The distribution path of sf-button-close (formerly sf-close) until 2027-01-01 (change
+// journal path-smart-close-to-button-close). The folder took the new tag's name: sf-button-close is
+// served from smart/button-close/ (js/button-close.js). A page or a doc that still names
+// smart/close/js/close.js keeps loading a working element, under either tag:
+//
+// - this bundle carries no element of its own (every bundle carries its own
+//   copy of the modules it imports, so a second class here would be a second
+//   class for one tag); it notes the old path in SF.deprecations and adds the
+//   script of smart/button-close/ beside its own, unless sf-button-close is defined or that
+//   script is already on the page;
+// - the Loader forwards the old bundle name, cl-close, to cl-button-close
+//   (src/core/contracts/smart-rule-forwards.v1.json) and never fetches this file.
+// Written by scripts/rename-smart-tag.mjs.
 
-function renderCloseTemplate(context) {
-  const classes = ['sf-close', `sf-close--size-${context.size || '1/3'}`, 'flex', 'justify-center', 'items-center', context.rootClass].filter(Boolean).join(' ');
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="${classes}" style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} aria-hidden="true"><span class="sf-close-icon"></span></span>`;
+const FROM = 'smart/close/';
+const TO = 'smart/button-close/';
+const OWN = /\/close\/js\/close(\.min)?\.js(?=$|[?#])/u;
+
+function forward() {
+  const doc = globalThis.document;
+  if (!doc || !globalThis.customElements) return;
+  (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__.noteDeprecated)({
+    component: 'sf-button-close',
+    kind: 'path',
+    from: FROM,
+    to: TO,
+    tag: 'sf-button-close',
+    since: '2026-11-03',
+    remove_after: '2027-01-01'
+  });
+  if (customElements.get('sf-button-close')) return; // The old path this file was loaded by: document.currentScript while a
+  // classic script runs, else the page's script element that names it (a
+  // module script has no currentScript).
+
+  const own = [doc.currentScript?.src || '', ...[...doc.querySelectorAll('script[src]')].map(script => script.src)].find(src => OWN.test(src)) || '';
+  let src = '';
+
+  if (OWN.test(own)) {
+    src = own.replace(OWN, '/button-close/js/button-close$1.js');
+  } else {
+    // Loaded as a module or by a script of the page: the smart root the
+    // Loader uses (sfSmartPath, else sfPath), as it composes <root>/smart/.
+    const root = String(globalThis.sfSmartPath || globalThis.sfPath || '').trim().replace(/\/+$/u, '');
+    if (!root) return;
+    src = `${root}/smart/button-close/js/button-close.js`;
+  }
+
+  const loaded = [...doc.querySelectorAll('script[src]')].some(script => /\/button-close\/js\/button-close(\.min)?\.js(?=$|[?#])/u.test(script.src));
+  if (loaded) return;
+  const script = doc.createElement('script');
+  script.src = src;
+  script.dataset.sfForwardedFrom = FROM;
+  (doc.currentScript?.parentNode || doc.head || doc.documentElement).appendChild(script);
 }
+
+forward();
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
 
 /***/ },
 
-/***/ "5b7d7695b41b"
+/***/ "d3818183b14c"
 (module) {
 
-module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("element-manifest", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("element-manifest", 1).then(resolve, reject), { once: true })));
-
-/***/ },
-
-/***/ "2a080a730149"
-(module) {
-
-module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("lit", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("lit", 1).then(resolve, reject), { once: true })));
-
-/***/ },
-
-/***/ "deb1a4d61565"
-(module) {
-
-module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("smart-base", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("smart-base", 1).then(resolve, reject), { once: true })));
-
-/***/ },
-
-/***/ "115952befbb6"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-close for the shim (stands/18-aliases-ci/alias.mjs, standard §16 item 20). mode: same-detail (the shim sends the new and the old name), split / detail-adds (a detail adapter, refused by the shim), attribute-and-property, method, property, manifest-only (the DOM name does not change), host-attribute (no shim), retired.","component":"sf-close","since":"2026-10-27","remove_after":"2026-12-01","aliases":[]}');
-
-/***/ },
-
-/***/ "34e93754c62d"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.close","tag":"sf-close","version":"1.0.3","kind":"leaf","settings":{"size":{"type":"enum","values":["1/4","1/3","1/2","1","2","3","4","5","6","7"],"default":"1/3"}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-close-color":{"type":"color","state":"default"},"--sf-close-background-color":{"type":"color","state":"default"},"--sf-close-glyph-size":{"type":"length","state":"default"},"--sf-close-padding-inline":{"type":"length","state":"default"},"--sf-close-padding-block":{"type":"length","state":"default"}}}');
-
-/***/ },
-
-/***/ "a667d1e9805c"
-(module) {
-
-module.exports = {"title":"Close"};
-
-/***/ },
-
-/***/ "26ae43ae7965"
-(module) {
-
-module.exports = {"title":"Закрытие"};
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("deprecations", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("deprecations", 1).then(resolve, reject), { once: true })));
 
 /***/ }
 

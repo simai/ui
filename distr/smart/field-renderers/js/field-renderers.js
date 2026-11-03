@@ -69,6 +69,316 @@ function normalizeBadgeContract({
 
 /***/ },
 
+/***/ "f28a9d913ce0"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Generated from the `tag` rows of src/smart/*/aliases.json by scripts/tag-alias-table.mjs; do not edit.
+// The Framework's dated tag aliases, read by core/js/tag-aliases.js.
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Object.freeze([Object.freeze({
+  from: 'sf-avatars',
+  to: 'sf-avatar-group',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-close',
+  to: 'sf-button-close',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-code-input',
+  to: 'sf-input-code',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-color',
+  to: 'sf-input-color',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-composition-overlay',
+  to: 'sf-editor-overlay',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-context-menu',
+  to: 'sf-menu-context',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-copy-button',
+  to: 'sf-button-copy',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-country-code',
+  to: 'sf-input-country',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-datepicker',
+  to: 'sf-input-date',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-download-file',
+  to: 'sf-file-download',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-icon-button',
+  to: 'sf-button-icon',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-image-field',
+  to: 'sf-input-image',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-inline-editor',
+  to: 'sf-editor-inline',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-lookup',
+  to: 'sf-input-lookup',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-page-header',
+  to: 'sf-header-page',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-quantity',
+  to: 'sf-input-quantity',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-range-slider',
+  to: 'sf-slider-range',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-rich-text',
+  to: 'sf-input-rich',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-site-header',
+  to: 'sf-header-site',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-textarea',
+  to: 'sf-input-textarea',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+})]));
+
+/***/ },
+
+/***/ "4a85acfb05c1"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   canonicalTag: () => (/* binding */ canonicalTag),
+/* harmony export */   defineTagAliases: () => (/* binding */ defineTagAliases),
+/* harmony export */   isTag: () => (/* binding */ isTag),
+/* harmony export */   listTagAliases: () => (/* binding */ listTagAliases),
+/* harmony export */   noteTagAlias: () => (/* binding */ noteTagAlias),
+/* harmony export */   registerTagAliases: () => (/* binding */ registerTagAliases),
+/* harmony export */   tagNames: () => (/* binding */ tagNames),
+/* harmony export */   tagSelector: () => (/* binding */ tagSelector)
+/* harmony export */ });
+/* harmony import */ var _deprecations_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d3818183b14c");
+/* harmony import */ var _alias_table_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5dcef5de40cf");
+/* harmony import */ var _tag_aliases_generated_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("f28a9d913ce0");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_deprecations_js__WEBPACK_IMPORTED_MODULE_0__, _alias_table_js__WEBPACK_IMPORTED_MODULE_1__]);
+([_deprecations_js__WEBPACK_IMPORTED_MODULE_0__, _alias_table_js__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _deprecations_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_deprecations_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _alias_table_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_alias_table_js__WEBPACK_IMPORTED_MODULE_1__);
+// Dated tag aliases (rename plan R0, ui-control RENAME-PLAN-2026-11-03; change
+// lifecycle: contracts/changes/journal.json, kind "tag"). When a Smart
+// component takes a new tag, the old tag keeps working until its
+// `remove_after` day:
+//
+// - Definition. defineTagAliases(Class, tag) defines each old tag as a trivial
+//   subclass of the class that defines the new one (the Smart base calls it
+//   from define()). The Loader's rule lists the old tag beside the new one, so
+//   markup with the old tag alone loads the bundle.
+// - Note. The first old-tag element a page connects is noted in
+//   SF.deprecations (kind "tag") and named once on the console with the new tag
+//   and the date, whatever the page opted into: an element name is the most
+//   visible thing a page writes, and the old one is going.
+// - Script. Code that finds a renamed element by name asks for both names
+//   through one helper instead of a literal:
+//
+//     import {tagSelector, isTag} from '../../core/js/smart-base';
+//     host.querySelector(`.sf-tag > ${tagSelector('sf-button-close')}`);
+//     if (isTag(node, 'sf-button-close')) ...
+//
+// - Sheets. A selector that names the new tag names the old one beside it in
+//   source, `:is(sf-button-close, sf-close)`, for as long as the alias lives
+//   (scripts/rename-smart-tag.mjs writes it, --sweep takes it out; the
+//   contract test tests/tag-aliases.contract.test.mjs holds both).
+//
+// The Framework's own aliases are a static table (tag-aliases.generated.js,
+// written from every component's aliases.json by scripts/tag-alias-table.mjs),
+// so a lookup finds an old tag before the renamed component's bundle has run.
+// A package's component adds its rows when it is defined. Every copy of this
+// module shares one state on the page (a global symbol); the Smart bundles
+// reach it through the shared runtime (smart-base re-exports it).
+
+
+
+const STATE = Symbol.for('simai.sf.tag-aliases');
+
+function state() {
+  if (!globalThis[STATE]) {
+    const shared = {
+      byOld: new Map(),
+      byNew: new Map(),
+      noted: new Set()
+    };
+    Object.defineProperty(globalThis, STATE, {
+      value: shared,
+      configurable: true
+    });
+
+    for (const row of _tag_aliases_generated_js__WEBPACK_IMPORTED_MODULE_2__["default"]) addRow(shared, row);
+  }
+
+  return globalThis[STATE];
+}
+
+function addRow(shared, row) {
+  if (shared.byOld.has(row.from)) return;
+  shared.byOld.set(row.from, row);
+  shared.byNew.set(row.to, [...(shared.byNew.get(row.to) ?? []), row.from]);
+} // Rows from a component's aliases.json (its `tag` rows); the Framework's are
+// already known, a package's are added here.
+
+
+function registerTagAliases(table, tag) {
+  const {
+    rows
+  } = (0,_alias_table_js__WEBPACK_IMPORTED_MODULE_1__.readTagAliases)(table, {
+    tag
+  });
+  const shared = state();
+
+  for (const row of rows) addRow(shared, row);
+
+  return rows;
+} // The open old names of a tag, its own first: ['sf-button-close', 'sf-close'].
+
+function tagNames(tag) {
+  const name = String(tag || '').toLowerCase();
+  return [name, ...(state().byNew.get(name) ?? [])];
+} // A selector for the tag that matches its old names too:
+// ':is(sf-button-close, sf-close)', or the tag itself when it has none.
+
+function tagSelector(tag) {
+  const names = tagNames(tag);
+  return names.length > 1 ? `:is(${names.join(', ')})` : names[0];
+} // Whether an element is the tag, under its own or an old name.
+
+function isTag(element, tag) {
+  const name = element?.localName;
+  return Boolean(name) && tagNames(tag).includes(name);
+} // The current name of a tag: 'sf-button-close' for 'sf-close'.
+
+function canonicalTag(tag) {
+  const name = String(tag || '').toLowerCase();
+  return state().byOld.get(name)?.to ?? name;
+} // Every open row: [{from, to, since, remove_after}].
+
+function listTagAliases() {
+  return [...state().byOld.values()].map(row => ({ ...row
+  }));
+} // The page met an element under an old name: once per old tag.
+
+function noteTagAlias(row) {
+  const shared = state();
+  const expired = (0,_alias_table_js__WEBPACK_IMPORTED_MODULE_1__.aliasExpired)(row);
+  (0,_deprecations_js__WEBPACK_IMPORTED_MODULE_0__.noteDeprecated)({
+    component: row.to,
+    kind: 'tag',
+    from: row.from,
+    to: row.to,
+    tag: row.to,
+    since: row.since,
+    remove_after: row.remove_after,
+    expired
+  });
+  if (shared.noted.has(row.from)) return;
+  shared.noted.add(row.from); // deprecations.js prints an expired name itself, and every name when the
+  // page opted in; the note here is for the rest.
+
+  const optedIn = globalThis.document?.documentElement?.dataset?.sfDeprecations === 'warn' || globalThis.SF?.deprecations?.warn === true;
+  if (expired || optedIn) return;
+  globalThis.console?.warn?.(`[SIMAI Framework] <${row.from}> is now <${row.to}>; the old tag works until ${row.remove_after}. Write <${row.to}>. See contracts/changes/journal.json.`);
+} // Defines each old tag of `tag` as a subclass of `Base` (the class that
+// defines `tag`), through `define(name, Class)`: the Smart base passes its
+// definition queue, so both names are defined in the same batch. Returns the
+// rows defined.
+
+function defineTagAliases(Base, tag, {
+  table = Base?.aliases,
+  define
+} = {}) {
+  if (table) registerTagAliases(table, tag);
+  const rows = (state().byNew.get(tag) ?? []).map(from => state().byOld.get(from));
+  const registry = globalThis.customElements;
+  const defined = [];
+
+  for (const row of rows) {
+    if (!registry || registry.get(row.from)) continue;
+
+    class TagAlias extends Base {
+      connectedCallback() {
+        noteTagAlias(row);
+        super.connectedCallback?.();
+      }
+
+    }
+
+    Object.defineProperty(TagAlias, 'sfTagAliasOf', {
+      value: row.to
+    });
+    (define ?? ((name, Class) => registry.define(name, Class)))(row.from, TagAlias);
+    defined.push(row);
+  }
+
+  return defined;
+}
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.SF = globalThis.SF || {}; // For scripts that are not Smart bundles (class components, a page):
+  // SF.tags.selector('sf-button-close').
+
+  if (!globalThis.SF.tags) {
+    globalThis.SF.tags = Object.freeze({
+      names: tagNames,
+      selector: tagSelector,
+      is: isTag,
+      canonical: canonicalTag,
+      list: listTagAliases
+    });
+  }
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
 /***/ "9ce1a42b2a85"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -190,10 +500,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   cleanHtml: () => (/* binding */ cleanHtml),
 /* harmony export */   htmlText: () => (/* binding */ htmlText)
 /* harmony export */ });
-/* harmony import */ var _rich_text_js_rich_text_html_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("9965a2e69ea0");
+/* harmony import */ var _input_rich_js_rich_text_html_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("4f56033a1eae");
 // Formatted text (property-view port 1.17.0, propertyType `html`; Larena,
-// 2026-10-30): a value that is an HTML string of sf-rich-text's subset. The
-// subset's rule is sf-rich-text's own module, not a second one written here:
+// 2026-10-30): a value that is an HTML string of sf-input-rich's subset. The
+// subset's rule is sf-input-rich's own module, not a second one written here:
 // what the editor writes and what a record shows are cleaned by the same
 // function, so the two cannot disagree about what a value may hold.
 //
@@ -213,7 +523,7 @@ const source = value => {
 
 function cleanHtml(value) {
   const html = source(value);
-  return html ? (0,_rich_text_js_rich_text_html_mjs__WEBPACK_IMPORTED_MODULE_0__.sanitizeRichText)(html, {
+  return html ? (0,_input_rich_js_rich_text_html_mjs__WEBPACK_IMPORTED_MODULE_0__.sanitizeRichText)(html, {
     mode: 'value'
   }) : '';
 }
@@ -221,7 +531,7 @@ function cleanHtml(value) {
 
 function htmlText(value) {
   const html = source(value);
-  return html ? (0,_rich_text_js_rich_text_html_mjs__WEBPACK_IMPORTED_MODULE_0__.plainText)(html).replace(/\s+/gu, ' ').trim() : '';
+  return html ? (0,_input_rich_js_rich_text_html_mjs__WEBPACK_IMPORTED_MODULE_0__.plainText)(html).replace(/\s+/gu, ' ').trim() : '';
 }
 
 /***/ },
@@ -233,7 +543,7 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   FILTER_RENDERERS: () => (/* binding */ FILTER_RENDERERS),
-/* harmony export */   PROPERTY_TYPES: () => (/* reexport safe */ _registry_js__WEBPACK_IMPORTED_MODULE_4__.PROPERTY_TYPES),
+/* harmony export */   PROPERTY_TYPES: () => (/* reexport safe */ _registry_js__WEBPACK_IMPORTED_MODULE_5__.PROPERTY_TYPES),
 /* harmony export */   propertyModes: () => (/* binding */ propertyModes),
 /* harmony export */   renderCellField: () => (/* binding */ renderCellField),
 /* harmony export */   renderEditField: () => (/* binding */ renderEditField),
@@ -244,15 +554,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("073f05ff1a81");
 /* harmony import */ var _helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("b30ec5bc0edb");
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("43090d1c8307");
-/* harmony import */ var _registry_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("fc654eb7fab0");
-/* harmony import */ var _datetime_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("9ce1a42b2a85");
-/* harmony import */ var _mask_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("dd6973f77245");
-/* harmony import */ var _html_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("01ae054f01b4");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__]);
-([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("4a85acfb05c1");
+/* harmony import */ var _registry_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("fc654eb7fab0");
+/* harmony import */ var _datetime_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("9ce1a42b2a85");
+/* harmony import */ var _mask_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("dd6973f77245");
+/* harmony import */ var _html_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("01ae054f01b4");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_4__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__);
+
 
 
 
@@ -327,7 +639,7 @@ function renderRangeFilterControl(field, host) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <div class="flex gap-1/3 flex-col">
             <div class="sf-filter-operator-range flex gap-1/3 items-cross-center">
-                <sf-range-slider
+                <sf-slider-range
                         id="smart-range-slider-single"
                         min="0"
                         label="tooltip"
@@ -341,7 +653,7 @@ function renderRangeFilterControl(field, host) {
       operator: selectedOperator
     });
   }}
-                ></sf-range-slider>
+                ></sf-slider-range>
             </div>
             <sf-dropdown
                     size=${filterSize(host)}
@@ -459,7 +771,7 @@ function renderDateFilterControl(field, host) {
   const dateValue = isBetween && Array.isArray(control.value) ? control.value : isBetween ? ['', ''] : control.value || '';
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <div class="flex flex-col gap-1/3">
-            <sf-datepicker
+            <sf-input-date
                     .value=${dateValue}
                     ?range=${isBetween}
                     name="sf_filter_${field.key || 'date'}"
@@ -470,7 +782,7 @@ function renderDateFilterControl(field, host) {
       operator: selectedOperator
     });
   }}
-            ></sf-datepicker>
+            ></sf-input-date>
             <sf-dropdown
                     size=${filterSize(host)}
                     appearance="outlined"
@@ -646,7 +958,7 @@ function renderFilterField(field = {}, host) {
 //   file                {value, label, mime?, href?} -- an icon from the mime
 //                       type and the label, a link when it may be opened
 //   choices             a list of option values; one tag per value on the line
-//   html                an HTML string of sf-rich-text's subset; its text, on one line
+//   html                an HTML string of sf-input-rich's subset; its text, on one line
 //
 // Every element here takes `line`, not `size`: a line element is the row's text
 // line, where a control height would make the row grow. That was measured --
@@ -696,8 +1008,8 @@ function renderColorCell(field, value) {
   // general part is for.
 
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-        <sf-color size="1/2" appearance="plain" value=${String(hex)}
-                  label=${field.label || field.key || ''} disabled></sf-color>
+        <sf-input-color size="1/2" appearance="plain" value=${String(hex)}
+                  label=${field.label || field.key || ''} disabled></sf-input-color>
     `;
 } // Reads what port 1.8.0 declares: `inherited` says a value comes from somewhere
 // else, `inheritedValue` says what it is. A view that drew the inherited colour as
@@ -710,14 +1022,14 @@ function renderColorView(field, value) {
   const inherited = field.inheritedValue ?? '';
   if (!hex && !inherited) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-        <sf-color
+        <sf-input-color
                 size="1"
                 appearance="plain"
                 value=${hex ? String(hex) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 inherited-value=${inherited ? String(inherited) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 label=${field.label || field.key || ''}
                 disabled
-        ></sf-color>
+        ></sf-input-color>
     `;
 }
 
@@ -725,7 +1037,7 @@ function renderColorEdit(field, value, host) {
   const hex = scalarValue(value);
   const inherited = field.inheritedValue ?? '';
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-        <sf-color
+        <sf-input-color
                 size=${EDIT_SIZE}
                 appearance="bordered"
                 name=${fieldName(field)}
@@ -736,7 +1048,7 @@ function renderColorEdit(field, value, host) {
                 ?disabled=${field.readonly === true}
                 label=${field.label || field.key || ''}
                 @change=${event => host.setFieldValue(field, event.detail?.value ?? '')}
-        ></sf-color>
+        ></sf-input-color>
     `;
 }
 
@@ -1006,7 +1318,7 @@ function renderLookupCell(field, value) {
 
 
 function renderHtmlCell(field, value) {
-  return (0,_html_js__WEBPACK_IMPORTED_MODULE_7__.htmlText)(value) || null;
+  return (0,_html_js__WEBPACK_IMPORTED_MODULE_8__.htmlText)(value) || null;
 } // What a cell should hold for a field, in the same shape a host would pass: a
 // string, an object with a component, or a list of those. Null means the value
 // is better off as itself. Returning the host's own shape is deliberate -- the
@@ -1079,7 +1391,7 @@ function fieldName(field) {
 
 function renderPhoneEdit(field, value, host) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-        <sf-country-code
+        <sf-input-country
                 size=${EDIT_SIZE}
                 name=${fieldName(field)}
                 value=${scalarValue(value) ?? ''}
@@ -1089,7 +1401,7 @@ function renderPhoneEdit(field, value, host) {
                 use-mask="true"
                 show-code="true"
                 @change=${event => host.setFieldValue(field, event.detail?.value ?? event.target?.value ?? '')}
-        ></sf-country-code>
+        ></sf-input-country>
     `;
 } // A password is a string the set never shows (owner, 2026-10-19; Larena's
 // storage settings). The host never sends one: the value of a `password`
@@ -1161,7 +1473,7 @@ function renderPasswordEdit(field, value, host) {
                     @input=${write}
                     @change=${write}
             ></sf-input>
-            <sf-icon-button
+            <sf-button-icon
                     size=${EDIT_SIZE}
                     appearance="link"
                     scheme="on-surface"
@@ -1169,7 +1481,7 @@ function renderPasswordEdit(field, value, host) {
                     aria-pressed="false"
                     aria-label=${setText(host, 'showPassword')}
                     @click=${togglePasswordShown}
-            ></sf-icon-button>
+            ></sf-button-icon>
         </span>
     `;
 }
@@ -1214,7 +1526,7 @@ function renderIncludeView(field, value) {
 
 function renderIncludeEdit(field, value, host) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-        <sf-textarea
+        <sf-input-textarea
                 size=${EDIT_SIZE}
                 appearance="bordered"
                 class="sf-field-include-edit"
@@ -1227,7 +1539,7 @@ function renderIncludeEdit(field, value, host) {
                 ?disabled=${field.readonly === true}
                 @change=${event => host.setFieldValue(field, event.target?.value ?? '')}
                 @input=${event => host.setFieldValue(field, event.target?.value ?? '')}
-        ></sf-textarea>
+        ></sf-input-textarea>
     `;
 }
 
@@ -1241,7 +1553,7 @@ function renderIncludeCell(field, value) {
 }
 
 function renderTextEdit(field, value, host) {
-  const mask = (0,_mask_js__WEBPACK_IMPORTED_MODULE_6__.maskPattern)(field);
+  const mask = (0,_mask_js__WEBPACK_IMPORTED_MODULE_7__.maskPattern)(field);
   if (String(field.variant ?? '') === 'phone') return renderPhoneEdit(field, value, host);
   if (isPasswordField(field)) return renderPasswordEdit(field, value, host);
   if (mask) return renderMaskedEdit(field, value, host, mask);
@@ -1295,7 +1607,7 @@ function renderMaskedEdit(field, value, host, mask) {
   const write = (event, left) => {
     const input = event.currentTarget;
     const text = String(input?.value ?? '');
-    const state = (0,_mask_js__WEBPACK_IMPORTED_MODULE_6__.maskState)(text, mask);
+    const state = (0,_mask_js__WEBPACK_IMPORTED_MODULE_7__.maskState)(text, mask);
 
     if (state === 'incomplete') {
       const message = setText(host, 'maskIncomplete');
@@ -1345,7 +1657,7 @@ function renderMaskedEdit(field, value, host, mask) {
 function renderTextAreaEdit(field, value, host) {
   value = scalarValue(value);
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-        <sf-textarea
+        <sf-input-textarea
                 size=${EDIT_SIZE}
                 appearance="bordered"
                 name=${fieldName(field)}
@@ -1355,12 +1667,12 @@ function renderTextAreaEdit(field, value, host) {
                 aria-label=${field.label || field.key || ''}
                 @input=${event => host.setFieldValue(field, event.target?.value ?? '')}
                 @change=${event => host.setFieldValue(field, event.target?.value ?? '')}
-        ></sf-textarea>
+        ></sf-input-textarea>
     `;
-} // Formatted text (property-view port 1.17.0): sf-rich-text, named as the
+} // Formatted text (property-view port 1.17.0): sf-input-rich, named as the
 // textarea is. The editor cleans its own value -- what it is given, every
 // paste and every edit -- so what it writes back is already the subset. The
-// value is read from the element the listener is on: sf-rich-text says input
+// value is read from the element the listener is on: sf-input-rich says input
 // and change from its editing surface inside it, which has no value of its own.
 
 
@@ -1370,7 +1682,7 @@ function renderHtmlEdit(field, value, host) {
   const write = event => host.setFieldValue(field, event.currentTarget?.value ?? '');
 
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-        <sf-rich-text
+        <sf-input-rich
                 size=${EDIT_SIZE}
                 appearance="bordered"
                 name=${fieldName(field)}
@@ -1381,10 +1693,10 @@ function renderHtmlEdit(field, value, host) {
                 aria-label=${field.label || field.key || ''}
                 @input=${write}
                 @change=${write}
-        ></sf-rich-text>
+        ></sf-input-rich>
     `;
 } // A number edited with steps (owner, 2026-10-25): an integer or a number whose
-// variant is `stepper` gets sf-quantity -- «−» and «+», the arrow keys, the
+// variant is `stepper` gets sf-input-quantity -- «−» and «+», the arrow keys, the
 // bounds the field names -- and every other number keeps the plain sf-input
 // below. The bounds, the step and (for a number) the digits are the field's
 // own keys, read by this variant alone: a renderer still does not enforce a
@@ -1416,7 +1728,7 @@ function renderStepperEdit(field, value, host) {
   const write = event => host.setFieldValue(field, event.detail?.value ?? null);
 
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-        <sf-quantity
+        <sf-input-quantity
                 size=${EDIT_SIZE}
                 name=${fieldName(field)}
                 value=${stepperNumber(scalarValue(value))}
@@ -1429,7 +1741,7 @@ function renderStepperEdit(field, value, host) {
                 ?disabled=${field.readonly === true}
                 @input=${write}
                 @change=${write}
-        ></sf-quantity>
+        ></sf-input-quantity>
     `;
 }
 
@@ -1456,7 +1768,7 @@ function renderNumberEdit(field, value, host) {
   }}
         ></sf-input>
     `;
-} // A date control has no clock. `sf-datepicker` declares a format and a date,
+} // A date control has no clock. `sf-input-date` declares a format and a date,
 // and its parser is anchored (`^\d{4}-\d{2}-\d{2}$`), so a datetime value
 // falls through to a loose digit scan that reads `2026-11-27T13:26:00` as day
 // 2026 of month 11 in year 27 -- an impossible date, which renders as an empty
@@ -1493,7 +1805,7 @@ function renderDateEdit(field, value, host) {
     suffix
   } = splitDateTime(value);
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-        <sf-datepicker
+        <sf-input-date
                 size=${EDIT_SIZE}
                 name=${fieldName(field)}
                 value=${date ?? ''}
@@ -1503,7 +1815,7 @@ function renderDateEdit(field, value, host) {
     const next = event.detail?.value ?? event.target?.value ?? null;
     host.setFieldValue(field, next && suffix ? `${next}${suffix}` : next);
   }}
-        ></sf-datepicker>
+        ></sf-input-date>
     `;
 } // A datetime is edited as what it is: a day and a time of day. The date
 // editor above edits the day alone and puts the record's clock back, so a new
@@ -1535,7 +1847,7 @@ function renderDateEdit(field, value, host) {
 let dateTimeSequence = 0;
 
 function renderDateTimeEdit(field, value, host) {
-  const stored = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_5__.splitDateTime)(value);
+  const stored = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_6__.splitDateTime)(value);
   const label = String(field.label || field.key || '');
   const name = fieldName(field);
   const messageId = `sf-field-datetime-message-${++dateTimeSequence}`;
@@ -1547,12 +1859,12 @@ function renderDateTimeEdit(field, value, host) {
     if (part === 'date' && event.target !== event.currentTarget) return;
     const group = event.currentTarget?.closest?.('.sf-field-datetime');
     if (!group) return;
-    const picker = group.querySelector('sf-datepicker'); // Not the datepicker's own field, which is an sf-input too.
+    const picker = group.querySelector((0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_4__.tagSelector)('sf-input-date')); // Not the datepicker's own field, which is an sf-input too.
 
     const clock = group.querySelector('sf-input.sf-field-datetime-time');
     const date = part === 'date' ? String(event.detail?.value ?? picker?.value ?? '') : String(picker?.value ?? '');
     const typed = String(clock?.value ?? '');
-    const result = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_5__.composeDateTime)(stored, {
+    const result = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_6__.composeDateTime)(stored, {
       date,
       time: typed
     });
@@ -1576,7 +1888,7 @@ function renderDateTimeEdit(field, value, host) {
     } // A time typed without the mask («930») shows as it is read («09:30»).
 
 
-    const time = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_5__.normalizeTime)(typed);
+    const time = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_6__.normalizeTime)(typed);
     if (clock && time && time !== typed) clock.value = time;
     const same = result.value === null ? stored.known && !stored.date : result.value === stored.raw;
     host.setFieldValue(field, same ? undefined : result.value);
@@ -1586,14 +1898,14 @@ function renderDateTimeEdit(field, value, host) {
         <div class="sf-field-datetime flex flex-col gap-1/4 min-w-0" role="group" aria-label=${label}
                 aria-describedby=${messageId} data-datetime=${field.key || 'value'}>
             <div class="flex flex-nowrap items-cross-center gap-1/3 min-w-0">
-                <sf-datepicker
+                <sf-input-date
                         size=${EDIT_SIZE}
                         name=${`${name}_date`}
                         .value=${stored.date}
                         aria-label=${named('dateTimeDate')}
                         ?required=${Boolean(field.required)}
                         @change=${event => commit(event, 'date')}
-                ></sf-datepicker>
+                ></sf-input-date>
                 <sf-input
                         class="sf-field-datetime-time"
                         size=${EDIT_SIZE}
@@ -2258,7 +2570,7 @@ function renderImageEdit(field, value, host) {
   const stored = storedFiles(value)[0] ?? null;
   const asList = Array.isArray(value);
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-        <sf-image-field
+        <sf-input-image
                 size=${EDIT_SIZE}
                 name=${fieldName(field)}
                 accept=${field.accept ? String(field.accept) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
@@ -2281,7 +2593,7 @@ function renderImageEdit(field, value, host) {
       }]);
     }
   }}
-        ></sf-image-field>
+        ></sf-input-image>
     `;
 }
 
@@ -2424,14 +2736,14 @@ function viewText(field, value, host) {
 function renderTextView(field, value, host) {
   const text = viewText(field, value, host);
   return text ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-field-view">${text}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
-} // Formatted text shown: the value cleaned by sf-rich-text's own rule first,
+} // Formatted text shown: the value cleaned by sf-input-rich's own rule first,
 // and only that cleaned string drawn as markup -- never the value as it came,
 // which a host may have stored from anywhere. What is left is the subset:
 // paragraphs, headings, emphasis, lists, quotes and links with a safe address.
 
 
 function renderHtmlView(field, value) {
-  const clean = (0,_html_js__WEBPACK_IMPORTED_MODULE_7__.cleanHtml)(value);
+  const clean = (0,_html_js__WEBPACK_IMPORTED_MODULE_8__.cleanHtml)(value);
   return clean ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-field-view sf-field-html">${(0,lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__.unsafeHTML)(clean)}</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
 } // A number carries its unit when the field declares one, and nothing when it
 // does not -- the set does not guess at a unit, and «42» with an invented «шт»
@@ -2605,7 +2917,7 @@ const VIEW_RENDERERS = {
 // date belongs. Null when the set has no view for that type.
 
 function propertyModes(type) {
-  return (0,_registry_js__WEBPACK_IMPORTED_MODULE_4__.modesOf)(type, {
+  return (0,_registry_js__WEBPACK_IMPORTED_MODULE_5__.modesOf)(type, {
     view: VIEW_RENDERERS,
     edit: EDIT_RENDERERS,
     cell: CELL_RENDERERS,
@@ -2647,12 +2959,12 @@ if (typeof window !== 'undefined') {
     // A datetime's value read and written back, for a host that draws its
     // own pair: split(value), compose(stored, {date, time}), normalizeTime(text).
     dateTime: {
-      split: _datetime_js__WEBPACK_IMPORTED_MODULE_5__.splitDateTime,
-      compose: _datetime_js__WEBPACK_IMPORTED_MODULE_5__.composeDateTime,
-      normalizeTime: _datetime_js__WEBPACK_IMPORTED_MODULE_5__.normalizeTime
+      split: _datetime_js__WEBPACK_IMPORTED_MODULE_6__.splitDateTime,
+      compose: _datetime_js__WEBPACK_IMPORTED_MODULE_6__.composeDateTime,
+      normalizeTime: _datetime_js__WEBPACK_IMPORTED_MODULE_6__.normalizeTime
     },
     // The universal properties, each with the modes the set draws for it.
-    registry: _registry_js__WEBPACK_IMPORTED_MODULE_4__.PROPERTY_TYPES.map(entry => ({ ...entry,
+    registry: _registry_js__WEBPACK_IMPORTED_MODULE_5__.PROPERTY_TYPES.map(entry => ({ ...entry,
       modes: propertyModes(entry.type)
     }))
   }; // SF.whenFieldRenderers() settles on this, whichever bundle published the set.
@@ -2845,7 +3157,7 @@ const PROPERTY_TYPES = Object.freeze([{
   variants: [],
   params: ['placeholder', 'required', 'readonly']
 }, // html (property-view port 1.17.0): formatted text, an HTML string of
-// sf-rich-text's subset. Edited with sf-rich-text, shown cleaned by that
+// sf-input-rich's subset. Edited with sf-input-rich, shown cleaned by that
 // component's own rule, a cell its text on one line, filtered as text.
 {
   type: 'html',
@@ -3103,6 +3415,20 @@ function optionBadgeProps(option = {}) {
 
 /***/ },
 
+/***/ "5dcef5de40cf"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("alias-table", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("alias-table", 1).then(resolve, reject), { once: true })));
+
+/***/ },
+
+/***/ "d3818183b14c"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("deprecations", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("deprecations", 1).then(resolve, reject), { once: true })));
+
+/***/ },
+
 /***/ "073f05ff1a81"
 (module) {
 
@@ -3202,7 +3528,7 @@ __webpack_require__.r(__webpack_exports__);
 // The module lives in the core runtime since content.html 1.0.0: the
 // Composition renderer sanitises a content.html block through it at render,
 // so a page that only renders a Document needs no Smart component.
-// src/smart/rich-text/js/rich-text-html.mjs re-exports it for sf-rich-text and
+// src/smart/input-rich/js/rich-text-html.mjs re-exports it for sf-rich-text and
 // the field renderers; there is one rule, here.
 
 const RICH_TEXT_ELEMENTS = Object.freeze(['p', 'h2', 'h3', 'h4', 'strong', 'em', 'a', 'ul', 'ol', 'li', 'blockquote', 'br']);
@@ -4010,7 +4336,7 @@ function richTextFromPlainText(text, {mode = 'value'} = {}) {
 
 /***/ },
 
-/***/ "9965a2e69ea0"
+/***/ "4f56033a1eae"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -4031,7 +4357,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   treeFromDom: () => (/* reexport safe */ _core_js_composition_html_subset_mjs__WEBPACK_IMPORTED_MODULE_0__.treeFromDom)
 /* harmony export */ });
 /* harmony import */ var _core_js_composition_html_subset_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("e19611ff78cb");
-// The html@1 subset of sf-rich-text. The rule moved to the core runtime with
+// The html@1 subset of sf-input-rich. The rule moved to the core runtime with
 // content.html 1.0.0, so the Composition renderer and this element share one
 // cleaner: src/core/js/composition/html-subset.mjs.
 

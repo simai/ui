@@ -1,0 +1,14 @@
+{
+  "schema": "simai.smart-component-fixture.v2",
+  "id": "reference",
+  "component": "smart.input-country",
+  "title": "Country Code reference",
+  "summary": "Deterministic reference fixture for sf-input-country.",
+  "locale": "ru",
+  "props": {
+    "label": "Телефон",
+    "value": "+7 999 123-45-67"
+  },
+  "children": [],
+  "state": "default"
+}

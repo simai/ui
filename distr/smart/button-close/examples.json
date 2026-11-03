@@ -1,0 +1,142 @@
+{
+  "examples": [
+    {
+      "name": "reference",
+      "title": "Размер 1",
+      "settings": {
+        "size": "1"
+      },
+      "expect": {
+        "size": "1"
+      },
+      "studio": {
+        "scenario": {}
+      }
+    },
+    {
+      "name": "default",
+      "title": "По умолчанию (1/3)",
+      "settings": {},
+      "expect": {
+        "size": "1/3"
+      }
+    },
+    {
+      "name": "smallest",
+      "title": "Самый малый",
+      "settings": {
+        "size": "1/4"
+      },
+      "expect": {
+        "size": "1/4"
+      }
+    },
+    {
+      "name": "largest",
+      "title": "Самый крупный",
+      "settings": {
+        "size": "7"
+      },
+      "expect": {
+        "size": "7"
+      }
+    },
+    {
+      "name": "in-icon-button",
+      "title": "В кнопке закрытия",
+      "markup": "<button type=\"button\" class=\"sf-icon-button sf-icon-button--close sf-icon-button--link sf-icon-button--on-surface sf-icon-button--size-1 flex items-cross-center\" aria-label=\"Закрыть уведомление\"><sf-button-close size=\"1\"></sf-button-close></button>",
+      "settings": {
+        "size": "1"
+      },
+      "expect": {
+        "size": "1"
+      }
+    }
+  ],
+  "pages": [
+    {
+      "name": "conformance",
+      "title": "sf-close against component.json (standard simai.smart-component 1.3.8 §12, gate 20)",
+      "page": {
+        "lang": "ru",
+        "body": [
+          "<main>",
+          "  <sf-button-close id=\"c-default\"></sf-button-close>",
+          "  <sf-button-close id=\"c-1\" size=\"1\"></sf-button-close>",
+          "  <sf-button-close id=\"c-bad\" size=\"9\"></sf-button-close>",
+          "  <button type=\"button\" id=\"b\" class=\"sf-icon-button sf-icon-button--close sf-icon-button--link sf-icon-button--on-surface sf-icon-button--size-1 flex items-cross-center\" aria-label=\"Закрыть уведомление\"><sf-button-close id=\"c-in\" size=\"1\"></sf-button-close></button>",
+          "</main>"
+        ]
+      },
+      "checks": [
+        {
+          "id": "p1-default-size",
+          "title": "without size it is 1/3, on the ladder's class",
+          "covers": "settings.size default",
+          "steps": [
+            {
+              "check": "document.querySelector('#c-default .sf-close').classList.contains('sf-close--size-1/3') && Boolean(document.querySelector('#c-default .sf-close-icon'))",
+              "expect": {
+                "values": {
+                  "#c-default.size": "1/3"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "p2-size",
+          "title": "size reaches the class list; a value off the ladder reads as the default",
+          "covers": "settings.size enum",
+          "steps": [
+            {
+              "check": "document.querySelector('#c-1 .sf-close').classList.contains('sf-close--size-1') && document.querySelector('#c-bad .sf-close').classList.contains('sf-close--size-1/3')",
+              "expect": {
+                "values": {
+                  "#c-1.size": "1",
+                  "#c-bad.size": "1/3"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "p3-size-property",
+          "title": "the size property writes the attribute and redraws",
+          "covers": "settings.size property",
+          "steps": [
+            {
+              "script": "document.querySelector('#c-1').size = '2'"
+            },
+            {
+              "check": "document.querySelector('#c-1').getAttribute('size') === '2' && document.querySelector('#c-1 .sf-close').classList.contains('sf-close--size-2')"
+            }
+          ]
+        },
+        {
+          "id": "p4-decorative",
+          "title": "the glyph is aria-hidden and never focusable; the button owns the name",
+          "covers": "accessibility.role none, accessibility.name none",
+          "steps": [
+            {
+              "check": "document.querySelector('#c-in .sf-close').getAttribute('aria-hidden') === 'true' && !document.querySelector('#c-in [tabindex]') && document.querySelector('#b').getAttribute('aria-label') === 'Закрыть уведомление'"
+            }
+          ]
+        },
+        {
+          "id": "p5-public-variable",
+          "title": "--sf-close-color recolours the cross",
+          "covers": "css-variables --sf-close-color",
+          "steps": [
+            {
+              "script": "document.querySelector('#c-1').style.setProperty('--sf-close-color', 'rgb(255, 0, 0)')"
+            },
+            {
+              "check": "getComputedStyle(document.querySelector('#c-1 .sf-close-icon')).backgroundColor === 'rgb(255, 0, 0)'"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

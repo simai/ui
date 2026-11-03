@@ -8,7 +8,7 @@
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d3818183b14c");
-/* harmony import */ var _icon_button_js_templates_default_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("14754418f961");
+/* harmony import */ var _button_icon_js_templates_default_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("a31bb12777e0");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__]);
 var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
@@ -26,6 +26,11 @@ _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependen
 //   defined or that script is already on the page;
 // - its sheet, css/icon-buttons.css, is sf-icon-button's sheet, built from the same
 //   sources as css/icon-button.css.
+//
+// Since 2026-11-03 sf-icon-button is a dated alias of sf-button-icon and
+// smart/icon-button/ is itself a forwarding path to smart/button-icon/
+// (path-smart-icon-button-to-button-icon); this file still leads to
+// smart/icon-button/, which leads on, so each record stays true.
 //
 // The Loader forwards the old bundle name, cl-icon-buttons, to cl-icon-button
 // (src/core/contracts/smart-rule-forwards.v1.json) and never fetches this file.
@@ -78,7 +83,7 @@ __webpack_async_result__();
 
 /***/ },
 
-/***/ "14754418f961"
+/***/ "a31bb12777e0"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);

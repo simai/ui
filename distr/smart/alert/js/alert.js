@@ -348,7 +348,7 @@ function renderAlertTemplate(context) {
       </div>
 
       ${context.closable ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-                  <sf-icon-button
+                  <sf-button-icon
                           kind="close"
                           size="1"
                           appearance="link"
@@ -356,7 +356,7 @@ function renderAlertTemplate(context) {
                           data-close
                           data-alert-close
                           aria-label=${context.closeLabel || 'Close alert'}
-                  ></sf-icon-button>
+                  ></sf-button-icon>
           ` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     </div>
   `;
@@ -397,7 +397,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-alert
 /***/ "e69facaaef5a"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.alert","tag":"sf-alert","version":"1.1.6","kind":"leaf","settings":{"status":{"type":"enum","values":["neutral","info","success","warning","error"],"default":"neutral"},"appearance":{"type":"enum","values":["default","outlined","flat"],"default":"default"},"icon":{"type":"icon","default":""},"heading":{"type":"string","default":""},"supporting-text":{"type":"string","default":""},"action-text":{"type":"string","default":""},"action":{"type":"string","default":"action"},"secondary-action-text":{"type":"string","default":""},"secondary-action":{"type":"string","default":"secondary"},"closable":{"type":"boolean","default":false},"close-label":{"type":"string","default-from":"runtime.close-label"}},"values":{},"events":{"action":{"carries":{"action":{"type":"string"}},"own-verb":true},"close":{"carries":{"reason":{"type":"enum","values":["close","api"]}},"cancelable":true}},"actions":{"close":{"emits":"close"}},"css-variables":{"--sf-alert-background-color":{"type":"color","state":"default"},"--sf-alert-border-color":{"type":"color","state":"default"},"--sf-alert-color":{"type":"color","state":"default"},"--sf-alert-border-width":{"type":"length","state":"default"},"--sf-alert-radius":{"type":"length","state":"default"},"--sf-alert-padding-inline":{"type":"length","state":"default"},"--sf-alert-padding-block":{"type":"length","state":"default"},"--sf-alert-gap":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.alert","tag":"sf-alert","version":"1.1.7","kind":"leaf","settings":{"status":{"type":"enum","values":["neutral","info","success","warning","error"],"default":"neutral"},"appearance":{"type":"enum","values":["default","outlined","flat"],"default":"default"},"icon":{"type":"icon","default":""},"heading":{"type":"string","default":""},"supporting-text":{"type":"string","default":""},"action-text":{"type":"string","default":""},"action":{"type":"string","default":"action"},"secondary-action-text":{"type":"string","default":""},"secondary-action":{"type":"string","default":"secondary"},"closable":{"type":"boolean","default":false},"close-label":{"type":"string","default-from":"runtime.close-label"}},"values":{},"events":{"action":{"carries":{"action":{"type":"string"}},"own-verb":true},"close":{"carries":{"reason":{"type":"enum","values":["close","api"]}},"cancelable":true}},"actions":{"close":{"emits":"close"}},"css-variables":{"--sf-alert-background-color":{"type":"color","state":"default"},"--sf-alert-border-color":{"type":"color","state":"default"},"--sf-alert-color":{"type":"color","state":"default"},"--sf-alert-border-width":{"type":"length","state":"default"},"--sf-alert-radius":{"type":"length","state":"default"},"--sf-alert-padding-inline":{"type":"length","state":"default"},"--sf-alert-padding-block":{"type":"length","state":"default"},"--sf-alert-gap":{"type":"length","state":"default"}}}');
 
 /***/ },
 

@@ -1,0 +1,909 @@
+/******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
+/******/ 	var __webpack_modules__ = ({
+
+/***/ "92b137c03f44"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   bindDownloadFile: () => (/* binding */ bindDownloadFile),
+/* harmony export */   initExistingDownloadFiles: () => (/* binding */ initExistingDownloadFiles),
+/* harmony export */   unbindDownloadFile: () => (/* binding */ unbindDownloadFile)
+/* harmony export */ });
+/* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d7f974466839");
+/* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("58661bec99a6");
+/* harmony import */ var _json_download_file_utility_json__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("8ea1dd3302c4");
+
+
+
+const DOWNLOAD_FILE_SELECTOR = '.sf-download-file';
+const DOWNLOAD_FILE_BOUND_FLAG = 'sfDownloadFileBound';
+
+function toBoolean(value, fallback = false) {
+  if (value === undefined || value === null || value === '') return fallback;
+  if (typeof value === 'boolean') return value;
+  return ['1', 'true', 'yes', 'on', 'disabled', 'download'].includes(String(value).toLowerCase());
+}
+
+function normalizeSize(value) {
+  const normalized = String(value || '').toLowerCase();
+  const supported = ['1/3', '1/2', '1', '2', '3'];
+  return supported.includes(normalized) ? normalized : '1';
+}
+
+function buildAnchorDownload(href, filename = '') {
+  if (!href) return;
+  const anchor = document.createElement('a');
+  anchor.href = href;
+
+  if (filename) {
+    anchor.download = filename;
+  }
+
+  anchor.target = '_blank';
+  anchor.rel = 'noopener noreferrer';
+  document.body.append(anchor);
+  anchor.click();
+  anchor.remove();
+}
+
+function formatFileSize(bytes) {
+  const size = Number(bytes);
+  if (!Number.isFinite(size) || size < 0) return '';
+  if (size < 1024) return `${size} B`;
+  const units = ['KB', 'MB', 'GB', 'TB'];
+  let value = size / 1024;
+  let unitIndex = 0;
+
+  while (value >= 1024 && unitIndex < units.length - 1) {
+    value /= 1024;
+    unitIndex += 1;
+  }
+
+  const formatted = value >= 10 ? value.toFixed(0) : value.toFixed(1);
+  return `${formatted}${units[unitIndex]}`;
+}
+
+async function resolveRemoteFileSize(href) {
+  if (!href) return '';
+
+  try {
+    const response = await fetch(href, {
+      method: 'HEAD',
+      credentials: 'same-origin'
+    });
+
+    if (!response.ok) {
+      return '';
+    }
+
+    const contentLength = response.headers.get('content-length');
+
+    if (!contentLength) {
+      return '';
+    }
+
+    return formatFileSize(contentLength);
+  } catch {
+    return '';
+  }
+}
+
+function getRootLink(root) {
+  if (!root || !(root instanceof HTMLElement)) return null;
+  return root.tagName.toLowerCase() === 'a' ? root : root.querySelector('a.sf-download-file');
+}
+
+function getSizeNode(root) {
+  return root?.querySelector?.('.sf-download-file-file-size') || null;
+}
+
+function getRootHref(root) {
+  const href = root?.getAttribute?.('href');
+  if (href) return href;
+  const link = getRootLink(root);
+  return link?.getAttribute?.('href') || '';
+}
+
+function isDisabledRoot(root) {
+  if (!root) return false;
+  return root.classList.contains('disabled') || root.hasAttribute('disabled') || root.getAttribute('aria-disabled') === 'true';
+}
+
+async function resolveAndApplyFileSize(root) {
+  if (!root || isDisabledRoot(root)) return;
+  const sizeNode = getSizeNode(root);
+  if (!sizeNode) return;
+  if (String(sizeNode.textContent || '').trim()) return;
+  const href = getRootHref(root);
+  if (!href) return;
+  const resolvedSize = await resolveRemoteFileSize(href);
+  if (!resolvedSize || !sizeNode.isConnected) return;
+  sizeNode.textContent = resolvedSize;
+}
+
+function emitDownloadFileClick(root, href, fileName, download) {
+  root?.dispatchEvent(new CustomEvent('sf-download-file:click', {
+    bubbles: true,
+    detail: {
+      href,
+      fileName,
+      download
+    }
+  }));
+} // `onActivate(detail)` takes the place of the class event: sf-download-file
+// sends its own cancelable `sf-download-file-download` (standard 1.3.8 §8,
+// vocabulary 1.1.5 §5.1), and the old `sf-download-file:click` follows it as a
+// dated alias. Answering false cancels the download.
+
+
+function bindDownloadFile(root, {
+  onActivate
+} = {}) {
+  if (!root || root.dataset[DOWNLOAD_FILE_BOUND_FLAG] === '1') return;
+
+  const handleClick = event => {
+    if (isDisabledRoot(root)) {
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
+
+    const href = getRootHref(root);
+    const fileName = root.getAttribute('download') || root.dataset.fileName || root.querySelector('.sf-download-file__name, .sf-download-file-file-name')?.textContent?.trim() || '';
+    const download = root.hasAttribute('download') || root.dataset.download === 'true';
+
+    if (typeof onActivate === 'function') {
+      if (onActivate({
+        href,
+        fileName,
+        download
+      }) === false) {
+        event.preventDefault();
+        return;
+      }
+    } else {
+      emitDownloadFileClick(root, href, fileName, download);
+    }
+
+    if (root.tagName.toLowerCase() === 'a') {
+      return;
+    }
+
+    if (!href) {
+      return;
+    }
+
+    event.preventDefault();
+    buildAnchorDownload(href, download ? fileName : '');
+  };
+
+  root.addEventListener('click', handleClick);
+  root.__sfDownloadFileClick = handleClick;
+  root.dataset[DOWNLOAD_FILE_BOUND_FLAG] = '1';
+  resolveAndApplyFileSize(root);
+}
+
+function unbindDownloadFile(root) {
+  if (!root || root.dataset[DOWNLOAD_FILE_BOUND_FLAG] !== '1') return;
+
+  if (root.__sfDownloadFileClick) {
+    root.removeEventListener('click', root.__sfDownloadFileClick);
+  }
+
+  delete root.__sfDownloadFileClick;
+  delete root.dataset[DOWNLOAD_FILE_BOUND_FLAG];
+}
+
+function initExistingDownloadFiles(target = document) {
+  target.querySelectorAll(DOWNLOAD_FILE_SELECTOR).forEach(bindDownloadFile);
+}
+
+class DownloadFile extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.ComponentObserver {
+  static componentName = 'DownloadFile';
+  static utilityMap = _json_download_file_utility_json__WEBPACK_IMPORTED_MODULE_2__;
+  html = null;
+
+  constructor(props) {
+    super(props);
+    const {
+      size = '1',
+      fileName = 'File.pdf',
+      fileSize = '36MB',
+      icon = 'download',
+      href = '',
+      download = false,
+      disabled = false,
+      target = '_blank'
+    } = this.params || {};
+    const className = this.attrs.class || this.attrs.className;
+    const isDisabled = toBoolean(disabled, false);
+    const canLink = Boolean(href) && !isDisabled;
+    const root = document.createElement(canLink ? 'a' : 'button');
+
+    if (this.id) {
+      root.id = this.id;
+    }
+
+    if (canLink) {
+      root.href = String(href);
+      root.target = String(target || '_blank');
+      root.rel = 'noopener noreferrer';
+
+      if (toBoolean(download, false)) {
+        root.download = String(fileName || '');
+      }
+    } else {
+      root.type = 'button';
+    } // Size 1 is the block's own rule; there is no --size-1 class to write, and
+    // writing one left a class no sheet answers.
+
+
+    root.classList.add('sf-download-file');
+    if (normalizeSize(size) !== '1') root.classList.add(`sf-download-file--size-${normalizeSize(size)}`);
+
+    if (!isDisabled) {
+      root.classList.add('cursor-pointer', 'transition');
+    } else {
+      root.classList.add('disabled');
+      root.setAttribute('aria-disabled', 'true');
+      root.tabIndex = -1;
+    }
+
+    if (className) {
+      root.classList.add(...String(className).split(' ').filter(Boolean));
+    }
+
+    const wrap = document.createElement('span');
+    wrap.classList.add('sf-download-file__body', 'sf-download-file-wrap');
+    const container = document.createElement('span');
+    container.classList.add('sf-download-file__main', 'sf-download-file-container');
+    const iconNode = document.createElement('i');
+    iconNode.classList.add('sf-download-file__icon', 'sf-icon');
+    iconNode.setAttribute('aria-hidden', 'true');
+    iconNode.textContent = String(icon || 'download');
+    const fileNameNode = document.createElement('span');
+    fileNameNode.classList.add('sf-download-file__name', 'sf-download-file-file-name');
+    fileNameNode.textContent = String(fileName || '');
+    container.append(iconNode, fileNameNode);
+    const fileSizeNode = document.createElement('span');
+    fileSizeNode.classList.add('sf-download-file__size', 'sf-download-file-file-size');
+    fileSizeNode.textContent = String(fileSize || '');
+    wrap.append(container, fileSizeNode);
+    root.append(wrap);
+    this.href = String(href || '');
+    this.download = toBoolean(download, false);
+    this.fileName = String(fileName || '');
+    this.fileSize = String(fileSize || '');
+    this.disabled = isDisabled;
+    this.fileSizeNode = fileSizeNode;
+    this.template = root;
+    this.applyLayoutUtilities(root, '.sf-download-file');
+    this.applyLayoutUtilities(wrap, '.sf-download-file .sf-download-file-wrap');
+  }
+
+  init() {
+    bindDownloadFile(this.template);
+  }
+
+  handleClick = event => {
+    if (this.disabled) {
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
+
+    if (this.template?.tagName?.toLowerCase() === 'a') {
+      this.template.dispatchEvent(new CustomEvent('sf-download-file:click', {
+        bubbles: true,
+        detail: {
+          href: this.href,
+          fileName: this.fileName,
+          download: this.download
+        }
+      }));
+      return;
+    }
+
+    if (this.href) {
+      event.preventDefault();
+      buildAnchorDownload(this.href, this.download ? this.fileName : '');
+    }
+
+    this.template?.dispatchEvent(new CustomEvent('sf-download-file:click', {
+      bubbles: true,
+      detail: {
+        href: this.href,
+        fileName: this.fileName,
+        download: this.download
+      }
+    }));
+  };
+
+  destroyInternal() {
+    unbindDownloadFile(this.template);
+  }
+
+}
+
+if (typeof document !== 'undefined') {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => initExistingDownloadFiles(), {
+      once: true
+    });
+  } else {
+    initExistingDownloadFiles();
+  }
+} // A public bind, as the other bound components have: markup added by a script
+// that the observer has not reached yet, or a root rebound after a change. The
+// binders were exported for bundles only, so a page had none.
+
+
+if (typeof window !== 'undefined') {
+  window.SF = window.SF || {};
+  window.SF.DownloadFile = window.SF.DownloadFile || {};
+  window.SF.DownloadFile.bind = bindDownloadFile;
+  window.SF.DownloadFile.unbind = unbindDownloadFile;
+  window.SF.DownloadFile.initAll = initExistingDownloadFiles;
+}
+
+
+(0,_register_helper__WEBPACK_IMPORTED_MODULE_1__["default"])('DownloadFile', DownloadFile);
+
+/***/ },
+
+/***/ "58661bec99a6"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   registerComponent: () => (/* binding */ registerComponent)
+/* harmony export */ });
+// Simple helper to register a component in one call.
+// Usage inside component bundle:
+//   import register from './register-helper';
+//   register('Buttons', Buttons);
+function registerComponent(name, cls) {
+  if (!name || !cls) return;
+
+  if (typeof window !== 'undefined' && typeof window.registerSfComponent === 'function') {
+    window.registerSfComponent(name, cls);
+    return;
+  }
+
+  if (typeof window !== 'undefined' && window.SF?.Loader?.registerComponent) {
+    window.SF.Loader.registerComponent(name, cls);
+    return;
+  }
+
+  if (typeof window !== 'undefined') {
+    const pending = window.SF_PENDING_COMPONENTS = window.SF_PENDING_COMPONENTS || [];
+    pending.push([name, cls]);
+  }
+}
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (registerComponent);
+
+/***/ },
+
+/***/ "d7f974466839"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   ComponentObserver: () => (/* binding */ ComponentObserver)
+/* harmony export */ });
+class ComponentObserver {
+  // Components name themselves with a static field (static componentName =
+  // 'Modal'), and the Loader writes the name on the prototype only when it
+  // registers the class; the lifecycle events read the instance, so an
+  // instance made before that announced itself as `undefined:render`. Not a
+  // getter: the Loader assigns the prototype property, and an accessor
+  // without a setter made that assignment throw.
+  lifecycleName() {
+    return this.componentName ?? this.constructor.componentName;
+  }
+
+  constructor(props) {
+    this.props = props;
+    this.id = props?.id;
+    this.params = props?.param;
+    this.attrs = props?.attrs || {};
+    this.template = null;
+    window.dispatchEvent(new CustomEvent(`${this.lifecycleName()}:beforeRender`, {
+      detail: this
+    }));
+  }
+
+  getUtilityMap() {
+    return this.constructor.utilityMap || null;
+  }
+
+  extractUtilityClasses(values) {
+    if (!Array.isArray(values)) {
+      return [];
+    }
+
+    const classes = new Set();
+    values.forEach(value => {
+      if (typeof value !== 'string') {
+        return;
+      }
+
+      const matches = value.match(/\(([^)]+)\)/g);
+
+      if (!matches) {
+        return;
+      }
+
+      matches.forEach(match => {
+        const raw = match.slice(1, -1);
+        raw.split(/\s+/).filter(Boolean).forEach(cls => {
+          // Only explicit (.class) annotations are classes; the
+          // parentheses in var(--token) are CSS values, not markup.
+          if (cls.startsWith('.') && cls.length > 1) classes.add(cls.slice(1));
+        });
+      });
+    });
+    return Array.from(classes);
+  }
+
+  applyLayoutUtilities(target, selector) {
+    if (!target || !selector) {
+      return;
+    }
+
+    const map = this.getUtilityMap();
+
+    if (!map || !map[selector]) {
+      return;
+    }
+
+    const classes = this.extractUtilityClasses(map[selector]);
+    classes.forEach(cls => target.classList.add(cls));
+  }
+
+  render() {
+    this.html = this.template;
+
+    if (typeof this.init === 'function') {
+      this.init();
+    }
+
+    if (this.html) {
+      window.dispatchEvent(new CustomEvent(`${this.lifecycleName()}:render`, {
+        detail: this
+      }));
+    }
+
+    return this.html;
+  }
+
+  destroy() {
+    this.destroyInternal?.();
+    this.props = null;
+    this.id = null;
+    this.params = null;
+    this.template = null;
+
+    if (this.html) {
+      this.html.remove();
+      this.html = null;
+    }
+
+    window.dispatchEvent(new CustomEvent(`${this.lifecycleName()}:destroy`, {
+      detail: this
+    }));
+  }
+
+  destroyInternal() {}
+
+}
+
+/***/ },
+
+/***/ "a811123e77b0"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _component_download_file_js_download_file__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("92b137c03f44");
+/* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("deb1a4d61565");
+/* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("5b7d7695b41b");
+/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("f61e7676b0d2");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("312445577dad");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("9288cedb5bb5");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("6da9b5d8b341");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("25a776704bf3");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__);
+
+
+
+
+
+
+
+ // sf-file-download from its component.json (standard simai.smart-component
+// 1.3.8 §3, §4, §8): the settings are the attributes and properties
+// core/js/element-manifest.js makes from the manifest. A press sends the
+// cancelable request sf-download-file-download {href, fileName, download}
+// (vocabulary 1.1.5 §5.1) on the host; the old sf-download-file:click follows
+// it as a dated alias (aliases.json), and a refused request stops the download.
+
+const DownloadFileElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_4__, {
+  base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default()),
+  lang: {
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_6__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_7__
+  },
+  source: 'ru',
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_5__
+});
+
+class SfDownloadFile extends DownloadFileElement {
+  constructor() {
+    super();
+    this._boundRoot = null;
+  }
+
+  get templateName() {
+    return this.getAttribute('template') || 'default';
+  }
+
+  templateContext() {
+    const props = this.getPropsContext();
+    return this.createTemplateContext({ ...props,
+      size: this.size,
+      ariaLabel: this.getAttribute('aria-label') || '',
+      component: this
+    });
+  }
+
+  template() {
+    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_3__.renderDownloadFileTemplate)(this.templateContext());
+  } // The class binder's activation, as the element's request: false when a
+  // listener refused it.
+
+
+  requestDownload = detail => this.sfEmit('download', detail, {
+    cancelable: true
+  });
+
+  afterRender() {
+    if (this._boundRoot) {
+      (0,_component_download_file_js_download_file__WEBPACK_IMPORTED_MODULE_0__.unbindDownloadFile)(this._boundRoot);
+      this._boundRoot = null;
+    }
+
+    this._boundRoot = this.querySelector('.sf-download-file');
+
+    if (this._boundRoot) {
+      // The class script binds every .sf-download-file it finds on the page; a
+      // root it reached first is bound again with the element's request.
+      (0,_component_download_file_js_download_file__WEBPACK_IMPORTED_MODULE_0__.unbindDownloadFile)(this._boundRoot);
+      (0,_component_download_file_js_download_file__WEBPACK_IMPORTED_MODULE_0__.bindDownloadFile)(this._boundRoot, {
+        onActivate: this.requestDownload
+      });
+    }
+  }
+
+  onDisconnected() {
+    if (this._boundRoot) {
+      (0,_component_download_file_js_download_file__WEBPACK_IMPORTED_MODULE_0__.unbindDownloadFile)(this._boundRoot);
+      this._boundRoot = null;
+    }
+  }
+
+}
+
+SfDownloadFile.define('sf-file-download');
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "f61e7676b0d2"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   renderDownloadFileTemplate: () => (/* binding */ renderDownloadFileTemplate)
+/* harmony export */ });
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+
+function renderDownloadFileTemplate(context) {
+  const {
+    size,
+    fileName,
+    fileSize,
+    icon,
+    href,
+    download,
+    disabled,
+    target,
+    ariaLabel
+  } = context;
+  const tagName = href && !disabled ? 'a' : 'button';
+  const rootClasses = ['sf-download-file', `sf-download-file--size-${size}`, context.rootClass, disabled ? 'disabled' : 'cursor-pointer transition'].filter(Boolean);
+  const content = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+    <span class="sf-download-file__body sf-download-file-wrap">
+      <span class="sf-download-file__main sf-download-file-container">
+        <i class="sf-download-file__icon sf-icon" aria-hidden="true">${icon}</i>
+        <span class="sf-download-file__name sf-download-file-file-name">${fileName}</span>
+      </span>
+      <span class="sf-download-file__size sf-download-file-file-size">${fileSize}</span>
+    </span>
+  `;
+
+  if (tagName === 'a') {
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+      <a
+        class=${rootClasses.join(' ')}
+        style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        href=${href}
+        target=${download ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : target}
+        rel=${download ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : 'noopener noreferrer'}
+        download=${download ? fileName || '' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        aria-label=${ariaLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      >
+        ${content}
+      </a>
+    `;
+  }
+
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+    <button
+      type="button"
+      class=${rootClasses.join(' ')}
+      style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      ?disabled=${disabled}
+      aria-disabled=${disabled ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      aria-label=${ariaLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    >
+      ${content}
+    </button>
+  `;
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "5b7d7695b41b"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("element-manifest", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("element-manifest", 1).then(resolve, reject), { once: true })));
+
+/***/ },
+
+/***/ "2a080a730149"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("lit", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("lit", 1).then(resolve, reject), { once: true })));
+
+/***/ },
+
+/***/ "deb1a4d61565"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("smart-base", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("smart-base", 1).then(resolve, reject), { once: true })));
+
+/***/ },
+
+/***/ "8ea1dd3302c4"
+(module) {
+
+module.exports = /*#__PURE__*/JSON.parse('{".sf-download-file":["display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","gap/var(--sf-e5)","justify-content/space-between (.justify-between)","align-items/center (.items-center)"],".sf-download-file .sf-download-file-wrap":["display/flex (.flex)","flex-direction/row (.flex-row)","flex-wrap/nowrap (.flex-nowrap)","gap/var(--sf-download-file-wrap--gap)","justify-content/flex-start (.justify-start)","align-items/center (.items-center)"]}');
+
+/***/ },
+
+/***/ "9288cedb5bb5"
+(module) {
+
+module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-file-download for the shim (stands/18-aliases-ci/alias.mjs, standard §16 item 20). mode: same-detail (the shim sends the new and the old name), split / detail-adds (a detail adapter, refused by the shim), attribute-and-property, method, property, manifest-only (the DOM name does not change), host-attribute (no shim), retired.","component":"sf-file-download","since":"2026-10-27","remove_after":"2026-12-01","aliases":[{"from":"aria-label","to":null,"kind":"attribute","component":"sf-file-download","since":"2026-10-27","remove_after":"2026-12-01","mode":"host-attribute","section":"§3.1","note":"stays a host attribute, read by the base (§3.1, §4.8); no shim"},{"from":"sf-download-file:click","to":"sf-download-file-download","kind":"event","component":"sf-file-download","since":"2026-10-27","remove_after":"2026-12-01","mode":"same-detail","cancelable":true,"manifest":{"from":"sf-download-file:click","to":"sf-download-file-download"},"section":"§8, vocabulary 1.1.5 §5.1","note":"the class event\'s name; bx-simai.main listens to it (vocabulary §9.2). The shim sends it after sf-download-file-download, one detail, one cancel"},{"from":"sf-download-file","to":"sf-file-download","kind":"tag","component":"sf-file-download","since":"2026-11-03","remove_after":"2027-01-01","section":"rename plan R0 (ui-control RENAME-PLAN-2026-11-03), naming decision 2026-11-02","note":"the element is sf-file-download; sf-download-file is a subclass defined beside it until the date"},{"from":"sf-download-file-download","to":"sf-file-download-download","kind":"event","component":"sf-file-download","since":"2026-11-03","remove_after":"2027-01-01","mode":"same-detail","section":"§8","note":"the event name carries the tag"}]}');
+
+/***/ },
+
+/***/ "312445577dad"
+(module) {
+
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.file-download","tag":"sf-file-download","version":"1.2.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"file-name":{"type":"string","default":"File.pdf"},"file-size":{"type":"string","default":""},"icon":{"type":"icon","default":"download"},"href":{"type":"string","default":""},"download":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"target":{"type":"string","default":"_blank"}},"values":{},"events":{"download":{"carries":{"href":"string","file-name":"string","download":"boolean"},"cancelable":true}},"actions":{},"css-variables":{"--sf-download-file-background-color":{"type":"color","state":"default"},"--sf-download-file-border-color":{"type":"color","state":"default"},"--sf-download-file-radius":{"type":"length","state":"default"},"--sf-download-file-padding":{"type":"length","state":"default"},"--sf-download-file-gap":{"type":"length","state":"default"},"--sf-download-file-icon-size":{"type":"length","state":"default"},"--sf-download-file-icon-color":{"type":"color","state":"default"}}}');
+
+/***/ },
+
+/***/ "6da9b5d8b341"
+(module) {
+
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Download File"}');
+
+/***/ },
+
+/***/ "25a776704bf3"
+(module) {
+
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Скачивание файла"}');
+
+/***/ }
+
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	const __webpack_module_cache__ = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		const cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		const module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		if (!(moduleId in __webpack_modules__)) {
+/******/ 			delete __webpack_module_cache__[moduleId];
+/******/ 			const e = new Error("Cannot find module '" + moduleId + "'");
+/******/ 			e.code = 'MODULE_NOT_FOUND';
+/******/ 			throw e;
+/******/ 		}
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/************************************************************************/
+/******/ 	/* webpack/runtime/async module */
+/******/ 	(() => {
+/******/ 		const hasSymbol = typeof Symbol === "function";
+/******/ 		const webpackQueues = hasSymbol ? Symbol("webpack queues") : "__webpack_queues__";
+/******/ 		const webpackExports = hasSymbol ? Symbol("webpack exports") : "__webpack_exports__";
+/******/ 		const webpackError = hasSymbol ? Symbol("webpack error") : "__webpack_error__";
+/******/
+/******/ 		const resolveQueue = (queue) => {
+/******/ 			if(queue?.d < 1) {
+/******/ 				queue.d = 1;
+/******/ 				queue.forEach((fn) => (fn.r--));
+/******/ 				queue.forEach((fn) => (fn.r-- ? fn.r++ : fn()));
+/******/ 			}
+/******/ 		}
+/******/ 		const wrapDeps = (deps) => (deps.map((dep) => {
+/******/ 			if(dep !== null && typeof dep === "object") {
+/******/
+/******/ 				if(dep[webpackQueues]) return dep;
+/******/ 				if(dep.then) {
+/******/ 					const queue = [];
+/******/ 					queue.d = 0;
+/******/ 					dep.then((r) => {
+/******/ 						obj[webpackExports] = r;
+/******/ 						resolveQueue(queue);
+/******/ 					}, (e) => {
+/******/ 						obj[webpackError] = e;
+/******/ 						resolveQueue(queue);
+/******/ 					});
+/******/ 					const obj = {};
+/******/
+/******/ 					obj[webpackQueues] = (fn) => (fn(queue));
+/******/ 					return obj;
+/******/ 				}
+/******/ 			}
+/******/ 			const ret = {};
+/******/ 			ret[webpackQueues] = x => {};
+/******/ 			ret[webpackExports] = dep;
+/******/ 			return ret;
+/******/ 		}));
+/******/ 		__webpack_require__.a = (module, body, hasAwait) => {
+/******/ 			let queue;
+/******/ 			hasAwait && ((queue = []).d = -1);
+/******/ 			const depQueues = new Set();
+/******/ 			const exports = module.exports;
+/******/ 			let currentDeps;
+/******/ 			let outerResolve;
+/******/ 			let reject;
+/******/ 			const promise = new Promise((resolve, rej) => {
+/******/ 				reject = rej;
+/******/ 				outerResolve = resolve;
+/******/ 			});
+/******/ 			promise[webpackExports] = exports;
+/******/ 			promise[webpackQueues] = (fn) => (queue && fn(queue), depQueues.forEach(fn), promise["catch"](x => {}));
+/******/ 			module.exports = promise;
+/******/ 			const handle = (deps) => {
+/******/ 				currentDeps = wrapDeps(deps);
+/******/ 				let fn;
+/******/ 				const getResult = () => (currentDeps.map((d) => {
+/******/
+/******/ 					if(d[webpackError]) throw d[webpackError];
+/******/ 					return d[webpackExports];
+/******/ 				}))
+/******/ 				const promise = new Promise((resolve) => {
+/******/ 					fn = () => (resolve(getResult));
+/******/ 					fn.r = 0;
+/******/ 					const fnQueue = (q) => (q !== queue && !depQueues.has(q) && (depQueues.add(q), q && !q.d && (fn.r++, q.push(fn))));
+/******/ 					currentDeps.map((dep) => (dep[webpackQueues](fnQueue)));
+/******/ 				});
+/******/ 				return fn.r ? promise : getResult();
+/******/ 			}
+/******/ 			const done = (err) => ((err ? reject(promise[webpackError] = err) : outerResolve(exports)), resolveQueue(queue))
+/******/ 			body(handle, done);
+/******/ 			queue?.d < 0 && (queue.d = 0);
+/******/ 		};
+/******/ 	})();
+/******/
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	(() => {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__webpack_require__.n = (module) => {
+/******/ 			const getter = module && module.__esModule ?
+/******/ 				() => (module['default']) :
+/******/ 				() => (module);
+/******/ 			__webpack_require__.d(getter, { a: getter });
+/******/ 			return getter;
+/******/ 		};
+/******/ 	})();
+/******/
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter/value functions for harmony exports
+/******/ 		__webpack_require__.d = (exports, definition) => {
+/******/ 			if(Array.isArray(definition)) {
+/******/ 				var i = 0;
+/******/ 				while(i < definition.length) {
+/******/ 					var key = definition[i++];
+/******/ 					var binding = definition[i++];
+/******/ 					if(!__webpack_require__.o(exports, key)) {
+/******/ 						if(binding === 0) {
+/******/ 							Object.defineProperty(exports, key, { enumerable: true, value: definition[i++] });
+/******/ 						} else {
+/******/ 							Object.defineProperty(exports, key, { enumerable: true, get: binding });
+/******/ 						}
+/******/ 					} else if(binding === 0) { i++; }
+/******/ 				}
+/******/ 			} else {
+/******/ 				for(var key in definition) {
+/******/ 					if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 						Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 					}
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = (exports) => {
+/******/ 			if(Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/
+/************************************************************************/
+/******/
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	// This entry module used 'module' so it can't be inlined
+/******/ 	let __webpack_exports__ = __webpack_require__("a811123e77b0");
+/******/
+/******/ })()
+;

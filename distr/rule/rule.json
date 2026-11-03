@@ -673,7 +673,7 @@
         "name": "buttons"
       },
       {
-        "name": "cl-icon-button"
+        "name": "cl-button-icon"
       },
       {
         "name": "cl-icon"
@@ -702,10 +702,10 @@
     "type": "smart"
   },
   {
-    "name": "cl-avatars",
+    "name": "cl-avatar-group",
     "js": true,
     "mode": "smart",
-    "regex": "/<sf-avatars\\b/i",
+    "regex": "/<sf-avatar-group\\b/i",
     "relation": [
       {
         "name": "avatars"
@@ -715,6 +715,7 @@
       }
     ],
     "tags": [
+      "sf-avatar-group",
       "sf-avatars"
     ],
     "type": "smart"
@@ -792,6 +793,43 @@
     "type": "smart"
   },
   {
+    "name": "cl-button-close",
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "close"
+      }
+    ],
+    "tags": [
+      "sf-button-close",
+      "sf-close"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-button-copy",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "cl-button"
+      },
+      {
+        "name": "cl-button-icon"
+      },
+      {
+        "name": "cl-icon"
+      }
+    ],
+    "tags": [
+      "sf-button-copy",
+      "sf-copy-button"
+    ],
+    "type": "smart"
+  },
+  {
     "name": "cl-button-group",
     "js": true,
     "mode": "smart",
@@ -816,6 +854,38 @@
     "type": "smart"
   },
   {
+    "name": "cl-button-icon",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "icon-buttons"
+      },
+      {
+        "name": "cl-icon"
+      },
+      {
+        "name": "cl-button-close"
+      },
+      {
+        "name": "pointer-events/default"
+      },
+      {
+        "name": "badges"
+      },
+      {
+        "lazy": true,
+        "name": "spinner"
+      }
+    ],
+    "tags": [
+      "sf-button-icon",
+      "sf-icon-button"
+    ],
+    "type": "smart"
+  },
+  {
     "name": "cl-checkbox",
     "css": true,
     "js": true,
@@ -834,77 +904,6 @@
     "type": "smart"
   },
   {
-    "name": "cl-close",
-    "js": true,
-    "mode": "smart",
-    "relation": [
-      {
-        "name": "close"
-      }
-    ],
-    "tags": [
-      "sf-close"
-    ],
-    "type": "smart"
-  },
-  {
-    "name": "cl-code-input",
-    "css": true,
-    "js": true,
-    "mode": "smart",
-    "relation": [
-      {
-        "name": "verification"
-      },
-      {
-        "name": "sr-only/default"
-      }
-    ],
-    "tags": [
-      "sf-code-input"
-    ],
-    "type": "smart"
-  },
-  {
-    "name": "cl-color",
-    "css": true,
-    "js": true,
-    "mode": "smart",
-    "relation": [
-      {
-        "name": "icons"
-      },
-      {
-        "name": "cl-icon-button"
-      }
-    ],
-    "tags": [
-      "sf-color"
-    ],
-    "type": "smart"
-  },
-  {
-    "name": "cl-composition-overlay",
-    "css": true,
-    "js": true,
-    "mode": "smart",
-    "relation": [
-      {
-        "name": "cl-sortable"
-      },
-      {
-        "name": "cl-icon-button"
-      },
-      {
-        "name": "cl-tooltip"
-      }
-    ],
-    "tags": [
-      "sf-composition-overlay"
-    ],
-    "type": "smart"
-  },
-  {
     "name": "cl-contents",
     "css": true,
     "js": true,
@@ -919,112 +918,6 @@
     ],
     "tags": [
       "sf-contents"
-    ],
-    "type": "smart"
-  },
-  {
-    "name": "cl-context-menu",
-    "js": true,
-    "mode": "smart",
-    "relation": [
-      {
-        "name": "context-menu"
-      },
-      {
-        "name": "cl-button"
-      },
-      {
-        "lazy": true,
-        "name": "cl-tabs"
-      },
-      {
-        "lazy": true,
-        "name": "cl-icon-button"
-      }
-    ],
-    "tags": [
-      "sf-context-menu"
-    ],
-    "type": "smart"
-  },
-  {
-    "name": "cl-copy-button",
-    "css": true,
-    "js": true,
-    "mode": "smart",
-    "relation": [
-      {
-        "name": "cl-button"
-      },
-      {
-        "name": "cl-icon-button"
-      },
-      {
-        "name": "cl-icon"
-      }
-    ],
-    "tags": [
-      "sf-copy-button"
-    ],
-    "type": "smart"
-  },
-  {
-    "name": "cl-country-code",
-    "js": true,
-    "mode": "smart",
-    "relation": [
-      {
-        "name": "country-code"
-      }
-    ],
-    "tags": [
-      "sf-country-code"
-    ],
-    "type": "smart"
-  },
-  {
-    "name": "cl-datepicker",
-    "js": true,
-    "mode": "smart",
-    "relation": [
-      {
-        "name": "datepicker"
-      },
-      {
-        "name": "cl-input"
-      },
-      {
-        "name": "cl-button"
-      },
-      {
-        "name": "cl-icon-button"
-      },
-      {
-        "name": "cl-icon"
-      }
-    ],
-    "tags": [
-      "sf-datepicker"
-    ],
-    "type": "smart"
-  },
-  {
-    "name": "cl-download-file",
-    "js": true,
-    "mode": "smart",
-    "relation": [
-      {
-        "name": "download-file"
-      },
-      {
-        "name": "icons"
-      },
-      {
-        "name": "cl-icon"
-      }
-    ],
-    "tags": [
-      "sf-download-file"
     ],
     "type": "smart"
   },
@@ -1068,11 +961,45 @@
         "name": "cl-input"
       },
       {
-        "name": "cl-icon-button"
+        "name": "cl-button-icon"
       }
     ],
     "tags": [
       "sf-dropdown"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-editor-inline",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [],
+    "tags": [
+      "sf-editor-inline",
+      "sf-inline-editor"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-editor-overlay",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "cl-sortable"
+      },
+      {
+        "name": "cl-button-icon"
+      },
+      {
+        "name": "cl-tooltip"
+      }
+    ],
+    "tags": [
+      "sf-editor-overlay",
+      "sf-composition-overlay"
     ],
     "type": "smart"
   },
@@ -1094,6 +1021,27 @@
     ],
     "tags": [
       "sf-empty-state"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-file-download",
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "download-file"
+      },
+      {
+        "name": "icons"
+      },
+      {
+        "name": "cl-icon"
+      }
+    ],
+    "tags": [
+      "sf-file-download",
+      "sf-download-file"
     ],
     "type": "smart"
   },
@@ -1160,13 +1108,54 @@
     "type": "smart"
   },
   {
+    "name": "cl-header-page",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "cl-badge"
+      },
+      {
+        "name": "cl-button-icon"
+      },
+      {
+        "name": "cl-icon"
+      }
+    ],
+    "tags": [
+      "sf-header-page",
+      "sf-page-header"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-header-site",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "cl-button-icon"
+      },
+      {
+        "name": "cl-icon"
+      }
+    ],
+    "tags": [
+      "sf-header-site",
+      "sf-site-header"
+    ],
+    "type": "smart"
+  },
+  {
     "name": "cl-help-mark",
     "css": true,
     "js": true,
     "mode": "smart",
     "relation": [
       {
-        "name": "cl-icon-button"
+        "name": "cl-button-icon"
       },
       {
         "name": "cl-icon"
@@ -1196,55 +1185,6 @@
     "type": "smart"
   },
   {
-    "name": "cl-icon-button",
-    "css": true,
-    "js": true,
-    "mode": "smart",
-    "relation": [
-      {
-        "name": "icon-buttons"
-      },
-      {
-        "name": "cl-icon"
-      },
-      {
-        "name": "cl-close"
-      },
-      {
-        "name": "pointer-events/default"
-      },
-      {
-        "name": "badges"
-      },
-      {
-        "lazy": true,
-        "name": "spinner"
-      }
-    ],
-    "tags": [
-      "sf-icon-button"
-    ],
-    "type": "smart"
-  },
-  {
-    "name": "cl-image-field",
-    "css": true,
-    "js": true,
-    "mode": "smart",
-    "relation": [
-      {
-        "name": "cl-button"
-      },
-      {
-        "name": "cl-icon"
-      }
-    ],
-    "tags": [
-      "sf-image-field"
-    ],
-    "type": "smart"
-  },
-  {
     "name": "cl-include",
     "css": true,
     "js": true,
@@ -1266,17 +1206,6 @@
     "type": "smart"
   },
   {
-    "name": "cl-inline-editor",
-    "css": true,
-    "js": true,
-    "mode": "smart",
-    "relation": [],
-    "tags": [
-      "sf-inline-editor"
-    ],
-    "type": "smart"
-  },
-  {
     "name": "cl-input",
     "css": true,
     "js": true,
@@ -1294,6 +1223,208 @@
     ],
     "tags": [
       "sf-input"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-input-code",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "verification"
+      },
+      {
+        "name": "sr-only/default"
+      }
+    ],
+    "tags": [
+      "sf-input-code",
+      "sf-code-input"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-input-color",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "icons"
+      },
+      {
+        "name": "cl-button-icon"
+      }
+    ],
+    "tags": [
+      "sf-input-color",
+      "sf-color"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-input-country",
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "country-code"
+      }
+    ],
+    "tags": [
+      "sf-input-country",
+      "sf-country-code"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-input-date",
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "datepicker"
+      },
+      {
+        "name": "cl-input"
+      },
+      {
+        "name": "cl-button"
+      },
+      {
+        "name": "cl-button-icon"
+      },
+      {
+        "name": "cl-icon"
+      }
+    ],
+    "tags": [
+      "sf-input-date",
+      "sf-datepicker"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-input-image",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "cl-button"
+      },
+      {
+        "name": "cl-icon"
+      }
+    ],
+    "tags": [
+      "sf-input-image",
+      "sf-image-field"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-input-lookup",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "cl-tag"
+      },
+      {
+        "name": "avatars"
+      },
+      {
+        "name": "icons"
+      },
+      {
+        "name": "cl-spinner"
+      },
+      {
+        "name": "cl-button"
+      },
+      {
+        "name": "icon-buttons"
+      }
+    ],
+    "tags": [
+      "sf-input-lookup",
+      "sf-lookup"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-input-quantity",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "quantity"
+      },
+      {
+        "name": "icons"
+      },
+      {
+        "name": "icon-buttons"
+      }
+    ],
+    "tags": [
+      "sf-input-quantity",
+      "sf-quantity"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-input-rich",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "icon-buttons"
+      },
+      {
+        "name": "icons"
+      },
+      {
+        "name": "cl-popover"
+      },
+      {
+        "name": "cl-input"
+      },
+      {
+        "name": "cl-button"
+      }
+    ],
+    "tags": [
+      "sf-input-rich",
+      "sf-rich-text"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-input-textarea",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "textarea"
+      },
+      {
+        "name": "icons"
+      },
+      {
+        "name": "icon-buttons"
+      }
+    ],
+    "tags": [
+      "sf-input-textarea",
+      "sf-textarea"
     ],
     "type": "smart"
   },
@@ -1324,36 +1455,6 @@
     "type": "smart"
   },
   {
-    "name": "cl-lookup",
-    "css": true,
-    "js": true,
-    "mode": "smart",
-    "relation": [
-      {
-        "name": "cl-tag"
-      },
-      {
-        "name": "avatars"
-      },
-      {
-        "name": "icons"
-      },
-      {
-        "name": "cl-spinner"
-      },
-      {
-        "name": "cl-button"
-      },
-      {
-        "name": "icon-buttons"
-      }
-    ],
-    "tags": [
-      "sf-lookup"
-    ],
-    "type": "smart"
-  },
-  {
     "name": "cl-menu",
     "css": true,
     "js": true,
@@ -1374,6 +1475,32 @@
     ],
     "tags": [
       "sf-menu"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-menu-context",
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "context-menu"
+      },
+      {
+        "name": "cl-button"
+      },
+      {
+        "lazy": true,
+        "name": "cl-tabs"
+      },
+      {
+        "lazy": true,
+        "name": "cl-button-icon"
+      }
+    ],
+    "tags": [
+      "sf-menu-context",
+      "sf-context-menu"
     ],
     "type": "smart"
   },
@@ -1399,27 +1526,6 @@
     "type": "smart"
   },
   {
-    "name": "cl-page-header",
-    "css": true,
-    "js": true,
-    "mode": "smart",
-    "relation": [
-      {
-        "name": "cl-badge"
-      },
-      {
-        "name": "cl-icon-button"
-      },
-      {
-        "name": "cl-icon"
-      }
-    ],
-    "tags": [
-      "sf-page-header"
-    ],
-    "type": "smart"
-  },
-  {
     "name": "cl-pager",
     "css": true,
     "js": true,
@@ -1429,7 +1535,7 @@
         "name": "cl-button"
       },
       {
-        "name": "cl-icon-button"
+        "name": "cl-button-icon"
       },
       {
         "name": "cl-icon"
@@ -1458,7 +1564,7 @@
         "name": "cl-dropdown"
       },
       {
-        "name": "cl-icon-button"
+        "name": "cl-button-icon"
       },
       {
         "name": "cl-input"
@@ -1547,27 +1653,6 @@
     "type": "smart"
   },
   {
-    "name": "cl-quantity",
-    "css": true,
-    "js": true,
-    "mode": "smart",
-    "relation": [
-      {
-        "name": "quantity"
-      },
-      {
-        "name": "icons"
-      },
-      {
-        "name": "icon-buttons"
-      }
-    ],
-    "tags": [
-      "sf-quantity"
-    ],
-    "type": "smart"
-  },
-  {
     "name": "cl-radio",
     "js": true,
     "mode": "smart",
@@ -1581,20 +1666,6 @@
     ],
     "tags": [
       "sf-radio"
-    ],
-    "type": "smart"
-  },
-  {
-    "name": "cl-range-slider",
-    "js": true,
-    "mode": "smart",
-    "relation": [
-      {
-        "name": "range-slider"
-      }
-    ],
-    "tags": [
-      "sf-range-slider"
     ],
     "type": "smart"
   },
@@ -1630,40 +1701,13 @@
     "type": "smart"
   },
   {
-    "name": "cl-rich-text",
-    "css": true,
-    "js": true,
-    "mode": "smart",
-    "relation": [
-      {
-        "name": "icon-buttons"
-      },
-      {
-        "name": "icons"
-      },
-      {
-        "name": "cl-popover"
-      },
-      {
-        "name": "cl-input"
-      },
-      {
-        "name": "cl-button"
-      }
-    ],
-    "tags": [
-      "sf-rich-text"
-    ],
-    "type": "smart"
-  },
-  {
     "name": "cl-search",
     "css": true,
     "js": true,
     "mode": "smart",
     "relation": [
       {
-        "name": "cl-icon-button"
+        "name": "cl-button-icon"
       },
       {
         "name": "icons"
@@ -1674,24 +1718,6 @@
     ],
     "tags": [
       "sf-search"
-    ],
-    "type": "smart"
-  },
-  {
-    "name": "cl-site-header",
-    "css": true,
-    "js": true,
-    "mode": "smart",
-    "relation": [
-      {
-        "name": "cl-icon-button"
-      },
-      {
-        "name": "cl-icon"
-      }
-    ],
-    "tags": [
-      "sf-site-header"
     ],
     "type": "smart"
   },
@@ -1718,11 +1744,26 @@
         "name": "slider"
       },
       {
-        "name": "cl-icon-button"
+        "name": "cl-button-icon"
       }
     ],
     "tags": [
       "sf-slider"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-slider-range",
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "range-slider"
+      }
+    ],
+    "tags": [
+      "sf-slider-range",
+      "sf-range-slider"
     ],
     "type": "smart"
   },
@@ -1742,7 +1783,7 @@
       },
       {
         "lazy": true,
-        "name": "cl-context-menu"
+        "name": "cl-menu-context"
       }
     ],
     "tags": [
@@ -1814,11 +1855,11 @@
         "name": "cl-button"
       },
       {
-        "name": "cl-icon-button"
+        "name": "cl-button-icon"
       },
       {
         "lazy": true,
-        "name": "cl-context-menu"
+        "name": "cl-menu-context"
       },
       {
         "lazy": true,
@@ -1853,32 +1894,11 @@
         "name": "dot"
       },
       {
-        "name": "cl-icon-button"
+        "name": "cl-button-icon"
       }
     ],
     "tags": [
       "sf-tag"
-    ],
-    "type": "smart"
-  },
-  {
-    "name": "cl-textarea",
-    "css": true,
-    "js": true,
-    "mode": "smart",
-    "relation": [
-      {
-        "name": "textarea"
-      },
-      {
-        "name": "icons"
-      },
-      {
-        "name": "icon-buttons"
-      }
-    ],
-    "tags": [
-      "sf-textarea"
     ],
     "type": "smart"
   },
@@ -1889,7 +1909,7 @@
     "mode": "smart",
     "relation": [
       {
-        "name": "cl-color"
+        "name": "cl-input-color"
       },
       {
         "name": "cl-input"
@@ -1898,7 +1918,7 @@
         "name": "cl-button"
       },
       {
-        "name": "cl-icon-button"
+        "name": "cl-button-icon"
       },
       {
         "name": "cl-icon"
@@ -1921,7 +1941,7 @@
         "name": "buttons"
       },
       {
-        "name": "cl-icon-button"
+        "name": "cl-button-icon"
       },
       {
         "name": "cl-icon"

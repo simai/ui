@@ -1,0 +1,14 @@
+{
+  "schema": "simai.smart-component-fixture.v2",
+  "id": "reference",
+  "component": "smart.button-icon",
+  "title": "Icon Buttons reference",
+  "summary": "Deterministic reference fixture for sf-button-icon.",
+  "locale": "ru",
+  "props": {
+    "icon": "settings",
+    "aria-label": "Настройки"
+  },
+  "children": [],
+  "state": "default"
+}

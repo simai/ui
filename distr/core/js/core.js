@@ -9,9 +9,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   ALIAS_KINDS: () => (/* binding */ ALIAS_KINDS),
 /* harmony export */   ALIAS_MODES: () => (/* binding */ ALIAS_MODES),
+/* harmony export */   TAG_ALIAS_KIND: () => (/* binding */ TAG_ALIAS_KIND),
 /* harmony export */   aliasExpired: () => (/* binding */ aliasExpired),
 /* harmony export */   propertyOf: () => (/* binding */ propertyOf),
-/* harmony export */   readAliasTable: () => (/* binding */ readAliasTable)
+/* harmony export */   readAliasTable: () => (/* binding */ readAliasTable),
+/* harmony export */   readTagAliases: () => (/* binding */ readTagAliases)
 /* harmony export */ });
 // The dated alias table of one component (standard simai.smart-component
 // 1.3.8 §16.20, vocabulary 1.1.5 §9): what the migration converter writes as
@@ -36,6 +38,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 // A row that does not hold is refused with a reason, never thrown: the rest of
 // the table still installs, and the refusals are reported.
+//
+// A `tag` row renames the element itself ({from: 'sf-close', to:
+// 'sf-button-close', kind: 'tag', since, remove_after}). It is not installed on
+// an element: the Smart base defines the old tag as a subclass when it defines
+// the new one (core/js/tag-aliases.js), so readAliasTable leaves it out and
+// readTagAliases reads it.
 const ALIAS_KINDS = Object.freeze(['event', 'setting', 'attribute', 'action', 'value']);
 const ALIAS_MODES = Object.freeze(['same-detail', 'detail-adds', 'split']);
 const DAY = 86400000;
@@ -60,6 +68,9 @@ function aliasExpired(row, now = Date.now()) {
 function propertyOf(attribute) {
   return String(attribute).replace(/-([a-z0-9])/gu, (_, letter) => letter.toUpperCase());
 }
+const TAG_ALIAS_KIND = 'tag'; // A custom element name of the Framework or of a package: lower case, a hyphen.
+
+const ELEMENT = /^[a-z][a-z0-9]*-[a-z0-9-]+$/u;
 
 function primitive(value) {
   return value === null || ['string', 'number', 'boolean'].includes(typeof value);
@@ -163,6 +174,7 @@ function readAliasTable(table, {
 
   const seen = new Map();
   list.forEach((row, index) => {
+    if (row?.kind === TAG_ALIAS_KIND) return;
     const reason = checkRow(row);
     if (reason) return refuse(index, row, reason);
     const one = normal(row, owner); // An attribute, a property or a method has one new name; an event's old
@@ -203,6 +215,56 @@ function readAliasTable(table, {
   return {
     tag: owner,
     rows: kept,
+    refused
+  };
+} // The `tag` rows of a table: -> {tag, rows: [{from, to, since, remove_after}],
+// refused: [{index, from, to, reason}]}. A row renames the table's own tag:
+// its `to` is that tag when the table names one.
+
+function readTagAliases(table, {
+  tag = ''
+} = {}) {
+  const list = Array.isArray(table) ? table : table?.aliases;
+  const owner = !Array.isArray(table) && typeof table?.component === 'string' && table.component || !Array.isArray(table) && typeof table?.tag === 'string' && table.tag || tag || '';
+  const rows = [];
+  const refused = [];
+  if (!Array.isArray(list)) return {
+    tag: owner,
+    rows,
+    refused
+  };
+  const seen = new Set();
+  list.forEach((row, index) => {
+    if (row?.kind !== TAG_ALIAS_KIND) return;
+
+    const refuse = reason => refused.push({
+      index,
+      from: row.from ?? null,
+      to: row.to ?? null,
+      reason
+    });
+
+    if (typeof row.from !== 'string' || !ELEMENT.test(row.from)) return refuse('bad-old-tag');
+    if (typeof row.to !== 'string' || !ELEMENT.test(row.to)) return refuse('bad-new-tag');
+    if (row.from === row.to) return refuse('same-name');
+    if (owner && row.to !== owner) return refuse('not-this-tag');
+    const start = dateOf(row.since);
+    const end = dateOf(row.remove_after);
+    if (Number.isNaN(start)) return refuse('bad-since');
+    if (Number.isNaN(end)) return refuse('bad-remove-after');
+    if (end < start) return refuse('remove-after-before-since');
+    if (seen.has(row.from)) return refuse('duplicate');
+    seen.add(row.from);
+    rows.push(Object.freeze({
+      from: row.from,
+      to: row.to,
+      since: row.since,
+      remove_after: row.remove_after
+    }));
+  });
+  return {
+    tag: owner,
+    rows,
     refused
   };
 }
@@ -446,37 +508,76 @@ function shareCancel(events) {
 // rows whose `when` matches, made from the same detail, or from the adapter's
 // detail for a split row. `own` is the component's own event when it sent an
 // old name: it is reused under that name.
+//
+// A name renamed twice is a chain: sf-image-field:select -> sf-image-field-attach
+// (2026-10-27), then sf-image-field-attach -> sf-input-image-attach with the
+// tag (2026-11-03). Each row keeps the `to` it was written with, and the old
+// names follow the new one nearest first: the attach of the former tag, then
+// the colon name before it, each from the detail of the name it follows.
 
 
 function oldEventsFor(state, element, newType, detail, flags, own) {
   const out = [];
-  const names = new Set();
+  const names = new Set([newType]);
+  const queue = [{
+    name: newType,
+    detail
+  }];
 
-  for (const row of state.byNew.get(newType) ?? []) {
-    if (names.has(row.from) || !matches(detail, row.when)) continue;
+  while (queue.length) {
     const {
-      expired,
-      usable
-    } = life(row);
-    if (!usable) continue;
-    let oldDetail = detail;
+      name,
+      detail: nameDetail
+    } = queue.shift();
 
-    if (row.mode === 'split') {
-      oldDetail = state.adapters[row.from]?.(detail, newType);
-      if (oldDetail === undefined) continue;
+    for (const row of state.byNew.get(name) ?? []) {
+      if (names.has(row.from) || !matches(nameDetail, row.when)) continue;
+      const {
+        expired,
+        usable
+      } = life(row);
+      if (!usable) continue;
+      let oldDetail = nameDetail;
+
+      if (row.mode === 'split') {
+        oldDetail = state.adapters[row.from]?.(nameDetail, name);
+        if (oldDetail === undefined) continue;
+      }
+
+      names.add(row.from);
+      const event = own && own.type === row.from && oldDetail === nameDetail ? own : makeEvent(element, row.from, oldDetail, flags);
+      out.push({
+        event,
+        row,
+        expired,
+        detail: oldDetail
+      });
+      queue.push({
+        name: row.from,
+        detail: oldDetail
+      });
     }
-
-    names.add(row.from);
-    const event = own && own.type === row.from && oldDetail === detail ? own : makeEvent(element, row.from, oldDetail, flags);
-    out.push({
-      event,
-      row,
-      expired,
-      detail: oldDetail
-    });
   }
 
   return out;
+} // The current name an old one leads to through plain same-detail rows: the
+// end of its chain, or null when a step is not plain or not one name.
+
+
+function currentNameOf(state, type) {
+  const seen = new Set([type]);
+  let name = type;
+
+  for (;;) {
+    const rows = state.byOld.get(name);
+    if (!rows) return name === type ? null : name;
+    const targets = new Set(rows.filter(row => row.mode === 'same-detail' && !row.when).map(row => row.to));
+    if (targets.size !== 1 || !rows.every(row => row.mode === 'same-detail' && !row.when)) return null;
+    const [to] = targets;
+    if (seen.has(to)) return null;
+    seen.add(to);
+    name = to;
+  }
 } // Sends the new event, then the old ones, with one cancel. The cancel is
 // shared first and the old events instrumented after, so a listener's
 // preventDefault() on an old name both cancels all and counts as a use.
@@ -502,9 +603,10 @@ function deliver(state, element, first, olds, alsoCancel = []) {
 function wrappedDispatch(state, element, event) {
   const native = state.native.dispatchEvent;
   if (!event || shared().ours.has(event)) return native.call(element, event);
-  const type = event.type;
+  const type = event.type; // A current name is never an old one; a name in the middle of a chain is
+  // both, and is old.
 
-  if (state.byNew.has(type)) {
+  if (state.byNew.has(type) && !state.byOld.has(type)) {
     const detail = detailOf(event);
     return deliver(state, element, event, oldEventsFor(state, element, type, detail, flagsOf(event), null));
   }
@@ -512,12 +614,12 @@ function wrappedDispatch(state, element, event) {
   const rows = state.byOld.get(type);
   if (!rows) return native.call(element, event);
   const detail = detailOf(event);
-  const flags = flagsOf(event); // An old name with one plain new name is promoted: the new name first.
+  const flags = flagsOf(event); // An old name with one plain new name is promoted: the current name first.
 
-  const targets = new Set(rows.filter(row => row.mode === 'same-detail' && !row.when).map(row => row.to));
+  const current = currentNameOf(state, type);
 
-  if (targets.size === 1 && rows.every(row => row.mode === 'same-detail' && !row.when)) {
-    const [to] = targets;
+  if (current) {
+    const to = current;
     const fresh = makeEvent(element, to, detail, flags);
     const olds = oldEventsFor(state, element, to, detail, flags, event); // A strict page whose old name expired still has the component's own
     // event in the cancel group, though it is not sent.
@@ -3010,13 +3112,13 @@ function overBackground(event, area) {
 let aboutMenu = null;
 let aboutAnchor = null;
 let aboutChoice = null;
-const MENU_TAG = 'sf-context-menu'; // Whether sf-context-menu is defined or can be loaded: when it can be
+const MENU_TAG = 'sf-menu-context'; // Whether sf-context-menu is defined or can be loaded: when it can be
 // neither, the browser keeps its own menu.
 
 function menuAvailable() {
   if (globalThis.customElements?.get(MENU_TAG)) return true;
   const loader = globalThis.SF?.Loader;
-  return Boolean(loader?.getCustomElementRules?.()?.[MENU_TAG] || loader?.findPlugins?.['cl-context-menu']);
+  return Boolean(loader?.getCustomElementRules?.()?.[MENU_TAG] || loader?.findPlugins?.['cl-menu-context']);
 }
 
 async function menuElement(document) {
@@ -3029,7 +3131,7 @@ async function menuElement(document) {
   const menu = document.createElement(MENU_TAG);
   menu.setAttribute('popup', '');
   menu.setAttribute('data-sf-effect-about', '');
-  menu.addEventListener('sf-context-menu-select', event => {
+  menu.addEventListener('sf-menu-context-select', event => {
     const id = event.detail?.id;
     const choice = aboutChoice;
 
@@ -3052,7 +3154,7 @@ async function menuElement(document) {
   menu.addEventListener('click', event => {
     if (event.target?.closest?.('a[data-sf-entry]')) event.preventDefault();
   });
-  menu.addEventListener('sf-context-menu-closed', () => {
+  menu.addEventListener('sf-menu-context-closed', () => {
     aboutAnchor?.remove();
     aboutAnchor = null;
     aboutChoice = null;
@@ -4842,30 +4944,34 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _internal_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("364eb185ca94");
 /* harmony import */ var _core_modules_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("6734a1a77ea7");
 /* harmony import */ var _aliases_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("28b603686dcc");
-/* harmony import */ var _rule__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("987c832cfe13");
-/* harmony import */ var _rule__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_rule__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _mask__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("9770341d4bfa");
-/* harmony import */ var _composition_index_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("32dfc4431a24");
-/* harmony import */ var _assembly_index_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("ff34a74152a4");
-/* harmony import */ var _position_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("2e9112dbdda9");
-/* harmony import */ var _preferences_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("51250bf01ab0");
-/* harmony import */ var _region_navigation_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("9edc14a11fec");
-/* harmony import */ var _workspace_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("0730c3d86f4b");
-/* harmony import */ var _effects_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("4f52f56c9555");
-/* harmony import */ var _on_view_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("43cada8855de");
-/* harmony import */ var _notify_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("b4bff8456ce0");
-/* harmony import */ var _sanitize_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("20db70d35f32");
-/* harmony import */ var _format_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__("5b8371b87515");
-/* harmony import */ var _breakpoints_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__("1373e294ec38");
-/* harmony import */ var _clipboard_js__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__("e081a020262e");
-/* harmony import */ var _ready_js__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__("5effd0d9c238");
-/* harmony import */ var _icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__("de1f3481c667");
-/* harmony import */ var _page_storage_js__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__("cda569e6042b");
-/* harmony import */ var _early_port_js__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__("55bd48f35b65");
-/* harmony import */ var _pending_tags_js__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__("3c79afd07eeb");
-/* harmony import */ var _preloader__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__("6c7f357fe960");
+/* harmony import */ var _tag_aliases_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("4a85acfb05c1");
+/* harmony import */ var _rule__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("987c832cfe13");
+/* harmony import */ var _rule__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_rule__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _mask__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("9770341d4bfa");
+/* harmony import */ var _composition_index_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("32dfc4431a24");
+/* harmony import */ var _assembly_index_mjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("ff34a74152a4");
+/* harmony import */ var _position_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("2e9112dbdda9");
+/* harmony import */ var _preferences_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("51250bf01ab0");
+/* harmony import */ var _region_navigation_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("9edc14a11fec");
+/* harmony import */ var _workspace_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("0730c3d86f4b");
+/* harmony import */ var _effects_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("4f52f56c9555");
+/* harmony import */ var _on_view_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("43cada8855de");
+/* harmony import */ var _notify_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("b4bff8456ce0");
+/* harmony import */ var _sanitize_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__("20db70d35f32");
+/* harmony import */ var _format_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__("5b8371b87515");
+/* harmony import */ var _breakpoints_js__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__("1373e294ec38");
+/* harmony import */ var _clipboard_js__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__("e081a020262e");
+/* harmony import */ var _ready_js__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__("5effd0d9c238");
+/* harmony import */ var _icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__("de1f3481c667");
+/* harmony import */ var _page_storage_js__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__("cda569e6042b");
+/* harmony import */ var _early_port_js__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__("55bd48f35b65");
+/* harmony import */ var _pending_tags_js__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__("3c79afd07eeb");
+/* harmony import */ var _preloader__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__("6c7f357fe960");
 
 
+
+ // Dated tag aliases: SF.tags answers for a renamed element's old names
+// from the first script on (core/js/tag-aliases.js).
 
 
 
@@ -4900,10 +5006,10 @@ if (typeof window !== 'undefined') {
   window.SF = window.SF || {};
   const SF = window.SF; // SF.ready, before the Loader chunk is even asked for (simai/ui-source#16).
 
-  (0,_ready_js__WEBPACK_IMPORTED_MODULE_19__.installReady)(window); // The ports declared on elements (data-sf-port islands): their first calls
+  (0,_ready_js__WEBPACK_IMPORTED_MODULE_20__.installReady)(window); // The ports declared on elements (data-sf-port islands): their first calls
   // leave now, while the components' code is still on its way (stand 27).
 
-  (0,_early_port_js__WEBPACK_IMPORTED_MODULE_22__.installEarlyPort)(window);
+  (0,_early_port_js__WEBPACK_IMPORTED_MODULE_23__.installEarlyPort)(window);
 
   if (!SF.loadRuntime) {
     let loading = null;
@@ -5025,10 +5131,10 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
 
   if (subsetEnabled && document.head) {
     try {
-      (0,_icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_20__.applyRememberedIconSubset)({
+      (0,_icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_21__.applyRememberedIconSubset)({
         win: window,
         doc: document,
-        storage: (0,_page_storage_js__WEBPACK_IMPORTED_MODULE_21__["default"])()
+        storage: (0,_page_storage_js__WEBPACK_IMPORTED_MODULE_22__["default"])()
       });
     } catch {
       /* Nothing remembered is nothing lost: the Loader asks as before. */
@@ -5134,8 +5240,8 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
       return;
     }
 
-    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_23__.installPendingTags)(window);
-    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_23__.holdUndefinedElements)(window);
+    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_24__.installPendingTags)(window);
+    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_24__.holdUndefinedElements)(window);
   };
 
   holdUndefinedUntilDefined();
@@ -5143,18 +5249,18 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
   const mountPreloader = () => {
     const cfg = {
       enabled: true,
-      background: (0,_preloader__WEBPACK_IMPORTED_MODULE_24__.getPreloaderBackground)(),
+      background: (0,_preloader__WEBPACK_IMPORTED_MODULE_25__.getPreloaderBackground)(),
       modifier: 'loader-default',
       tempStyles: 'inset: 0;position: fixed;width: 100%;height: 100vh;opacity: 1;z-index: 1000;background-color: var(--sf-color--surface-highest, var(--sf-surface-0, #fff));text-align: center;',
-      color: (0,_preloader__WEBPACK_IMPORTED_MODULE_24__.getPreloaderColor)(),
-      width: _preloader__WEBPACK_IMPORTED_MODULE_24__.DEFAULT_PRELOADER.width,
-      height: _preloader__WEBPACK_IMPORTED_MODULE_24__.DEFAULT_PRELOADER.height,
+      color: (0,_preloader__WEBPACK_IMPORTED_MODULE_25__.getPreloaderColor)(),
+      width: _preloader__WEBPACK_IMPORTED_MODULE_25__.DEFAULT_PRELOADER.width,
+      height: _preloader__WEBPACK_IMPORTED_MODULE_25__.DEFAULT_PRELOADER.height,
       content: '',
       delay: 300,
       ...(window.SF_BOOT_CONFIG?.preloader || {})
     };
     if (cfg.enabled === false || document.querySelector('.sf-loader')) return;
-    const svgContent = cfg.content || (0,_preloader__WEBPACK_IMPORTED_MODULE_24__.createPreloaderContent)(cfg);
+    const svgContent = cfg.content || (0,_preloader__WEBPACK_IMPORTED_MODULE_25__.createPreloaderContent)(cfg);
     let wrap = null;
     let preloaderWrap = null;
     let preloaderRun = false;
@@ -5168,7 +5274,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
 
     const stopAnimation = () => {
       if (preloaderWrap) {
-        (0,_preloader__WEBPACK_IMPORTED_MODULE_24__.stopPreloaderMotion)(preloaderWrap);
+        (0,_preloader__WEBPACK_IMPORTED_MODULE_25__.stopPreloaderMotion)(preloaderWrap);
       }
     };
 
@@ -5177,7 +5283,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
       // preloader over them (§5.4). Read when the preloader would show, after
       // its delay, when the server's markup has been parsed.
 
-      if ((0,_preloader__WEBPACK_IMPORTED_MODULE_24__.pageHasFirstPaint)(document)) return;
+      if ((0,_preloader__WEBPACK_IMPORTED_MODULE_25__.pageHasFirstPaint)(document)) return;
       wrap = document.createElement('div');
       const inner = document.createElement('div');
       wrap.classList.add('sf-loader', cfg.modifier);
@@ -5199,7 +5305,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
         wrap: wrap,
         preloaderActive: true
       };
-      (0,_preloader__WEBPACK_IMPORTED_MODULE_24__.startPreloaderMotion)(preloaderWrap, () => preloaderRun, cfg);
+      (0,_preloader__WEBPACK_IMPORTED_MODULE_25__.startPreloaderMotion)(preloaderWrap, () => preloaderRun, cfg);
     };
 
     const cancelBuild = () => {
@@ -5236,7 +5342,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
 
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', () => {
-        if (!(0,_preloader__WEBPACK_IMPORTED_MODULE_24__.pageHasFirstPaint)(document)) return;
+        if (!(0,_preloader__WEBPACK_IMPORTED_MODULE_25__.pageHasFirstPaint)(document)) return;
         cancelBuild();
         preloaderRun = false;
         stopAnimation();
@@ -6989,6 +7095,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   pageText: () => (/* binding */ pageText),
 /* harmony export */   pageWord: () => (/* binding */ pageWord)
 /* harmony export */ });
+/* harmony import */ var _tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("4a85acfb05c1");
 // What language a component speaks, and how a product adds one.
 //
 // The Framework speaks English by default and whatever the page says otherwise:
@@ -7023,6 +7130,8 @@ __webpack_require__.r(__webpack_exports__);
 // was published from core's copy, the table read its own, and registering a
 // language changed nothing on screen. Only a browser shows that, and it did
 // (2026-10-11).
+
+
 const STORE = (() => {
   const root = typeof globalThis !== 'undefined' ? globalThis : {};
   const key = '__sfPageLanguage';
@@ -7039,7 +7148,12 @@ const STORE = (() => {
 })();
 
 const LISTENERS = STORE.listeners;
-const REGISTERED = STORE.registered;
+const REGISTERED = STORE.registered; // Words are kept under a component's current tag: a product that registered
+// them for a renamed tag (sf-datepicker, now sf-input-date) keeps its words
+// while the old tag is a dated alias, whichever name the element was written
+// with (core/js/tag-aliases.js).
+
+const wordsOf = component => REGISTERED.get((0,_tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__.canonicalTag)(component));
 
 const normalise = value => String(value ?? '').trim().toLowerCase().replace('_', '-');
 /** The languages to try, most specific first, English last. */
@@ -7223,7 +7337,7 @@ function pageText(dictionary, key, node, component) {
 
 function localeText(dictionary, key, locale, component) {
   for (const candidate of chain(locale || 'en')) {
-    const added = component ? REGISTERED.get(component)?.get(candidate)?.[key] : undefined;
+    const added = component ? wordsOf(component)?.get(candidate)?.[key] : undefined;
     if (added !== undefined) return added;
     const shipped = dictionary?.[candidate]?.[key];
     if (shipped !== undefined) return shipped;
@@ -7295,7 +7409,7 @@ function pageWord(dictionary, key, node, {
   const formerKeys = former === undefined || former === null ? [] : [].concat(former);
 
   for (const candidate of order) {
-    const registered = owner ? REGISTERED.get(owner)?.get(candidate) : undefined;
+    const registered = owner ? wordsOf(owner)?.get(candidate) : undefined;
     let added = registered?.[key];
 
     if (added === undefined && registered) {
@@ -7376,7 +7490,7 @@ const language = {
    * restating the rest, and `null` removes what it added.
    */
   register(component, value, words) {
-    const name = String(component ?? '').toLowerCase();
+    const name = (0,_tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__.canonicalTag)(component ?? '');
     const code = normalise(value);
     if (!name || !code) throw new TypeError('a component and a language are required');
     if (!REGISTERED.has(name)) REGISTERED.set(name, new Map());
@@ -7388,7 +7502,7 @@ const language = {
     return this;
   },
 
-  /** One language across many components: `{ 'sf-datepicker': {...}, ... }`. */
+  /** One language across many components: `{ 'sf-input-date': {...}, ... }`. */
   registerAll(value, byComponent = {}) {
     for (const [component, words] of Object.entries(byComponent)) {
       this.register(component, value, words);
@@ -7399,8 +7513,7 @@ const language = {
 
   /** The languages something has registered words for. */
   known(component) {
-    const name = String(component ?? '').toLowerCase();
-    return [...(REGISTERED.get(name)?.keys() ?? [])];
+    return [...(wordsOf(component ?? '')?.keys() ?? [])];
   },
 
   /** Every component something has been registered for. */
@@ -9094,6 +9207,311 @@ if (typeof globalThis !== 'undefined') {
   globalThis.SF = globalThis.SF || {};
   if (!globalThis.SF.sanitizeHtml) globalThis.SF.sanitizeHtml = sanitizeHtml;
   if (!globalThis.SF.safeHref) globalThis.SF.safeHref = safeHref;
+}
+
+/***/ },
+
+/***/ "f28a9d913ce0"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Generated from the `tag` rows of src/smart/*/aliases.json by scripts/tag-alias-table.mjs; do not edit.
+// The Framework's dated tag aliases, read by core/js/tag-aliases.js.
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Object.freeze([Object.freeze({
+  from: 'sf-avatars',
+  to: 'sf-avatar-group',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-close',
+  to: 'sf-button-close',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-code-input',
+  to: 'sf-input-code',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-color',
+  to: 'sf-input-color',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-composition-overlay',
+  to: 'sf-editor-overlay',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-context-menu',
+  to: 'sf-menu-context',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-copy-button',
+  to: 'sf-button-copy',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-country-code',
+  to: 'sf-input-country',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-datepicker',
+  to: 'sf-input-date',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-download-file',
+  to: 'sf-file-download',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-icon-button',
+  to: 'sf-button-icon',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-image-field',
+  to: 'sf-input-image',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-inline-editor',
+  to: 'sf-editor-inline',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-lookup',
+  to: 'sf-input-lookup',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-page-header',
+  to: 'sf-header-page',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-quantity',
+  to: 'sf-input-quantity',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-range-slider',
+  to: 'sf-slider-range',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-rich-text',
+  to: 'sf-input-rich',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-site-header',
+  to: 'sf-header-site',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-textarea',
+  to: 'sf-input-textarea',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+})]));
+
+/***/ },
+
+/***/ "4a85acfb05c1"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   canonicalTag: () => (/* binding */ canonicalTag),
+/* harmony export */   defineTagAliases: () => (/* binding */ defineTagAliases),
+/* harmony export */   isTag: () => (/* binding */ isTag),
+/* harmony export */   listTagAliases: () => (/* binding */ listTagAliases),
+/* harmony export */   noteTagAlias: () => (/* binding */ noteTagAlias),
+/* harmony export */   registerTagAliases: () => (/* binding */ registerTagAliases),
+/* harmony export */   tagNames: () => (/* binding */ tagNames),
+/* harmony export */   tagSelector: () => (/* binding */ tagSelector)
+/* harmony export */ });
+/* harmony import */ var _deprecations_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("06e8cd089f28");
+/* harmony import */ var _alias_table_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("f49a716b86bd");
+/* harmony import */ var _tag_aliases_generated_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("f28a9d913ce0");
+// Dated tag aliases (rename plan R0, ui-control RENAME-PLAN-2026-11-03; change
+// lifecycle: contracts/changes/journal.json, kind "tag"). When a Smart
+// component takes a new tag, the old tag keeps working until its
+// `remove_after` day:
+//
+// - Definition. defineTagAliases(Class, tag) defines each old tag as a trivial
+//   subclass of the class that defines the new one (the Smart base calls it
+//   from define()). The Loader's rule lists the old tag beside the new one, so
+//   markup with the old tag alone loads the bundle.
+// - Note. The first old-tag element a page connects is noted in
+//   SF.deprecations (kind "tag") and named once on the console with the new tag
+//   and the date, whatever the page opted into: an element name is the most
+//   visible thing a page writes, and the old one is going.
+// - Script. Code that finds a renamed element by name asks for both names
+//   through one helper instead of a literal:
+//
+//     import {tagSelector, isTag} from '../../core/js/smart-base';
+//     host.querySelector(`.sf-tag > ${tagSelector('sf-button-close')}`);
+//     if (isTag(node, 'sf-button-close')) ...
+//
+// - Sheets. A selector that names the new tag names the old one beside it in
+//   source, `:is(sf-button-close, sf-close)`, for as long as the alias lives
+//   (scripts/rename-smart-tag.mjs writes it, --sweep takes it out; the
+//   contract test tests/tag-aliases.contract.test.mjs holds both).
+//
+// The Framework's own aliases are a static table (tag-aliases.generated.js,
+// written from every component's aliases.json by scripts/tag-alias-table.mjs),
+// so a lookup finds an old tag before the renamed component's bundle has run.
+// A package's component adds its rows when it is defined. Every copy of this
+// module shares one state on the page (a global symbol); the Smart bundles
+// reach it through the shared runtime (smart-base re-exports it).
+
+
+
+const STATE = Symbol.for('simai.sf.tag-aliases');
+
+function state() {
+  if (!globalThis[STATE]) {
+    const shared = {
+      byOld: new Map(),
+      byNew: new Map(),
+      noted: new Set()
+    };
+    Object.defineProperty(globalThis, STATE, {
+      value: shared,
+      configurable: true
+    });
+
+    for (const row of _tag_aliases_generated_js__WEBPACK_IMPORTED_MODULE_2__["default"]) addRow(shared, row);
+  }
+
+  return globalThis[STATE];
+}
+
+function addRow(shared, row) {
+  if (shared.byOld.has(row.from)) return;
+  shared.byOld.set(row.from, row);
+  shared.byNew.set(row.to, [...(shared.byNew.get(row.to) ?? []), row.from]);
+} // Rows from a component's aliases.json (its `tag` rows); the Framework's are
+// already known, a package's are added here.
+
+
+function registerTagAliases(table, tag) {
+  const {
+    rows
+  } = (0,_alias_table_js__WEBPACK_IMPORTED_MODULE_1__.readTagAliases)(table, {
+    tag
+  });
+  const shared = state();
+
+  for (const row of rows) addRow(shared, row);
+
+  return rows;
+} // The open old names of a tag, its own first: ['sf-button-close', 'sf-close'].
+
+function tagNames(tag) {
+  const name = String(tag || '').toLowerCase();
+  return [name, ...(state().byNew.get(name) ?? [])];
+} // A selector for the tag that matches its old names too:
+// ':is(sf-button-close, sf-close)', or the tag itself when it has none.
+
+function tagSelector(tag) {
+  const names = tagNames(tag);
+  return names.length > 1 ? `:is(${names.join(', ')})` : names[0];
+} // Whether an element is the tag, under its own or an old name.
+
+function isTag(element, tag) {
+  const name = element?.localName;
+  return Boolean(name) && tagNames(tag).includes(name);
+} // The current name of a tag: 'sf-button-close' for 'sf-close'.
+
+function canonicalTag(tag) {
+  const name = String(tag || '').toLowerCase();
+  return state().byOld.get(name)?.to ?? name;
+} // Every open row: [{from, to, since, remove_after}].
+
+function listTagAliases() {
+  return [...state().byOld.values()].map(row => ({ ...row
+  }));
+} // The page met an element under an old name: once per old tag.
+
+function noteTagAlias(row) {
+  const shared = state();
+  const expired = (0,_alias_table_js__WEBPACK_IMPORTED_MODULE_1__.aliasExpired)(row);
+  (0,_deprecations_js__WEBPACK_IMPORTED_MODULE_0__.noteDeprecated)({
+    component: row.to,
+    kind: 'tag',
+    from: row.from,
+    to: row.to,
+    tag: row.to,
+    since: row.since,
+    remove_after: row.remove_after,
+    expired
+  });
+  if (shared.noted.has(row.from)) return;
+  shared.noted.add(row.from); // deprecations.js prints an expired name itself, and every name when the
+  // page opted in; the note here is for the rest.
+
+  const optedIn = globalThis.document?.documentElement?.dataset?.sfDeprecations === 'warn' || globalThis.SF?.deprecations?.warn === true;
+  if (expired || optedIn) return;
+  globalThis.console?.warn?.(`[SIMAI Framework] <${row.from}> is now <${row.to}>; the old tag works until ${row.remove_after}. Write <${row.to}>. See contracts/changes/journal.json.`);
+} // Defines each old tag of `tag` as a subclass of `Base` (the class that
+// defines `tag`), through `define(name, Class)`: the Smart base passes its
+// definition queue, so both names are defined in the same batch. Returns the
+// rows defined.
+
+function defineTagAliases(Base, tag, {
+  table = Base?.aliases,
+  define
+} = {}) {
+  if (table) registerTagAliases(table, tag);
+  const rows = (state().byNew.get(tag) ?? []).map(from => state().byOld.get(from));
+  const registry = globalThis.customElements;
+  const defined = [];
+
+  for (const row of rows) {
+    if (!registry || registry.get(row.from)) continue;
+
+    class TagAlias extends Base {
+      connectedCallback() {
+        noteTagAlias(row);
+        super.connectedCallback?.();
+      }
+
+    }
+
+    Object.defineProperty(TagAlias, 'sfTagAliasOf', {
+      value: row.to
+    });
+    (define ?? ((name, Class) => registry.define(name, Class)))(row.from, TagAlias);
+    defined.push(row);
+  }
+
+  return defined;
+}
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.SF = globalThis.SF || {}; // For scripts that are not Smart bundles (class components, a page):
+  // SF.tags.selector('sf-button-close').
+
+  if (!globalThis.SF.tags) {
+    globalThis.SF.tags = Object.freeze({
+      names: tagNames,
+      selector: tagSelector,
+      is: isTag,
+      canonical: canonicalTag,
+      list: listTagAliases
+    });
+  }
 }
 
 /***/ },
@@ -16764,7 +17182,7 @@ __webpack_require__.r(__webpack_exports__);
 // The module lives in the core runtime since content.html 1.0.0: the
 // Composition renderer sanitises a content.html block through it at render,
 // so a page that only renders a Document needs no Smart component.
-// src/smart/rich-text/js/rich-text-html.mjs re-exports it for sf-rich-text and
+// src/smart/input-rich/js/rich-text-html.mjs re-exports it for sf-rich-text and
 // the field renderers; there is one rule, here.
 
 const RICH_TEXT_ELEMENTS = Object.freeze(['p', 'h2', 'h3', 'h4', 'strong', 'em', 'a', 'ul', 'ol', 'li', 'blockquote', 'br']);
@@ -17656,7 +18074,7 @@ __webpack_require__.r(__webpack_exports__);
 
 const DOCUMENT_SCHEMA = 'simai.composition.document.v1';
 
-// The editor surfaces (sf-composition-overlay, sf-sortable, sf-inline-editor)
+// The editor surfaces (sf-editor-overlay, sf-sortable, sf-editor-inline)
 // are Smart components loaded on demand, so pages that only render stay small.
 // startInlineEdit keeps its Core name and delegates to the loaded editor.
 function startInlineEdit(element, options) {
