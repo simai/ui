@@ -831,8 +831,18 @@ def load_package_references(ui_root: Path) -> list[dict[str, Any]]:
         if path.name != f"{reference['package']}.package.json" or not re.fullmatch(r"[a-z][a-z0-9-]*", reference["package"]):
             raise ContractError(f"package_reference_name_invalid:{path.name}")
         for item in reference["provides"]:
-            if set(item) != {"id", "element", "rule_name", "folder", "requires"}:
+            # element_aliases: the former tags of a renamed element, each dated
+            # (rename plan R2, ui-control control/RENAME-PLAN-2026-11-03.md).
+            if set(item) - {"element_aliases"} != {"id", "element", "rule_name", "folder", "requires"}:
                 raise ContractError(f"package_reference_entry_invalid:{reference['package']}")
+            for alias in item.get("element_aliases", []):
+                if (
+                    not isinstance(alias, dict)
+                    or not {"from", "since", "remove_after"} <= set(alias) <= {"from", "since", "remove_after", "journal"}
+                    or not re.fullmatch(r"sf-[a-z0-9]+(?:-[a-z0-9]+)*", str(alias["from"]))
+                    or alias["from"] == item["element"]
+                ):
+                    raise ContractError(f"package_reference_element_alias_invalid:{item['id']}")
             validate_public_id(item["id"], "smart-component")
             if not isinstance(item["requires"], list) or item["requires"] != sorted(set(item["requires"])):
                 raise ContractError(f"package_reference_requires_invalid:{item['id']}")

@@ -554,3 +554,34 @@ class FrameworkContractRegistryTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class PackageReferenceElementAliasTests(unittest.TestCase):
+    """A renamed package element carries its former tags, each dated."""
+
+    def write(self, root: Path, aliases: list[dict]) -> None:
+        directory = root / "distr/core/contracts/packages"
+        directory.mkdir(parents=True)
+        item = {"id": "smart.view-table", "element": "sf-view-table", "rule_name": "cl-view-table", "folder": "view-table", "requires": ["smart.button"]}
+        if aliases:
+            item["element_aliases"] = aliases
+        reference = {
+            "schema_id": "simai.framework.package-reference", "schema_version": 1, "package": "pro",
+            "title": "Pro", "summary": "Pro", "distribution": {}, "provides": [item],
+        }
+        (directory / "pro.package.json").write_text(json.dumps(reference))
+
+    def test_dated_former_tags_are_read(self) -> None:
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            self.write(root, [{"from": "sf-table", "since": "2026-11-03", "remove_after": "2027-01-01", "journal": "tag-sf-table-to-sf-view-table"}])
+            references = BUILDER.load_package_references(root)
+            self.assertEqual(references[0]["provides"][0]["element_aliases"][0]["from"], "sf-table")
+
+    def test_an_undated_or_self_alias_is_refused(self) -> None:
+        for alias in ({"from": "sf-table"}, {"from": "sf-view-table", "since": "2026-11-03", "remove_after": "2027-01-01"}, {"from": "table", "since": "2026-11-03", "remove_after": "2027-01-01"}):
+            with tempfile.TemporaryDirectory() as folder:
+                root = Path(folder)
+                self.write(root, [alias])
+                with self.assertRaisesRegex(BUILDER.ContractError, "package_reference_element_alias_invalid:smart.view-table"):
+                    BUILDER.load_package_references(root)
