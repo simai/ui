@@ -76,11 +76,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-// Generated from the `tag` rows of src/smart/*/aliases.json by scripts/tag-alias-table.mjs; do not edit.
-// The Framework's dated tag aliases, read by core/js/tag-aliases.js.
+// Generated from the `tag` rows of src/smart/*/aliases.json and the element_aliases of
+// src/core/contracts/packages/*.package.json by scripts/tag-alias-table.mjs; do not edit.
+// The dated tag aliases of the Framework and of its component packages, read by core/js/tag-aliases.js.
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Object.freeze([Object.freeze({
   from: 'sf-avatars',
   to: 'sf-avatar-group',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-change-confirm',
+  to: 'sf-confirm-change',
   since: '2026-11-03',
   remove_after: '2027-01-01'
 }), Object.freeze({
@@ -104,6 +110,11 @@ __webpack_require__.r(__webpack_exports__);
   since: '2026-11-03',
   remove_after: '2027-01-01'
 }), Object.freeze({
+  from: 'sf-content-editor',
+  to: 'sf-editor-content',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
   from: 'sf-context-menu',
   to: 'sf-menu-context',
   since: '2026-11-03',
@@ -116,6 +127,11 @@ __webpack_require__.r(__webpack_exports__);
 }), Object.freeze({
   from: 'sf-country-code',
   to: 'sf-input-country',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-data-view',
+  to: 'sf-view',
   since: '2026-11-03',
   remove_after: '2027-01-01'
 }), Object.freeze({
@@ -154,6 +170,11 @@ __webpack_require__.r(__webpack_exports__);
   since: '2026-11-03',
   remove_after: '2027-01-01'
 }), Object.freeze({
+  from: 'sf-property-view',
+  to: 'sf-view-properties',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
   from: 'sf-quantity',
   to: 'sf-input-quantity',
   since: '2026-11-03',
@@ -174,8 +195,18 @@ __webpack_require__.r(__webpack_exports__);
   since: '2026-11-03',
   remove_after: '2027-01-01'
 }), Object.freeze({
+  from: 'sf-table',
+  to: 'sf-view-table',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
   from: 'sf-textarea',
   to: 'sf-input-textarea',
+  since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-thread-list',
+  to: 'sf-chat-threads',
   since: '2026-11-03',
   remove_after: '2027-01-01'
 })]));
@@ -229,10 +260,13 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_dep
 //   (scripts/rename-smart-tag.mjs writes it, --sweep takes it out; the
 //   contract test tests/tag-aliases.contract.test.mjs holds both).
 //
-// The Framework's own aliases are a static table (tag-aliases.generated.js,
-// written from every component's aliases.json by scripts/tag-alias-table.mjs),
-// so a lookup finds an old tag before the renamed component's bundle has run.
-// A package's component adds its rows when it is defined. Every copy of this
+// The aliases are a static table (tag-aliases.generated.js, written by
+// scripts/tag-alias-table.mjs from every component's aliases.json and from the
+// element_aliases of the component package references,
+// contracts/packages/*.package.json), so a lookup finds an old tag before the
+// renamed component's bundle has run, a package's (sf-table, rename plan R2)
+// as well as the Framework's. A package's component adds its rows again when it
+// is defined, which matters only for a package the pair does not reference. Every copy of this
 // module shares one state on the page (a global symbol); the Smart bundles
 // reach it through the shared runtime (smart-base re-exports it).
 
@@ -293,11 +327,27 @@ function tagSelector(tag) {
 function isTag(element, tag) {
   const name = element?.localName;
   return Boolean(name) && tagNames(tag).includes(name);
-} // The current name of a tag: 'sf-button-close' for 'sf-close'.
+} // The current name of a tag: 'sf-button-close' for 'sf-close'. An old tag the
+// page still has as an element of its own stays itself: a component package
+// built before its rename (rules naming sf-table alone) beside a pair whose
+// table already knows the new name, where the new tag would never upgrade.
 
 function canonicalTag(tag) {
   const name = String(tag || '').toLowerCase();
-  return state().byOld.get(name)?.to ?? name;
+  const row = state().byOld.get(name);
+  if (!row) return name;
+  const own = globalThis.customElements?.get?.(name);
+  if (own && !own.sfTagAliasOf) return name;
+  let rules = null;
+
+  try {
+    rules = globalThis.SF?.Loader?.getCustomElementRules?.() ?? null;
+  } catch {
+    rules = null;
+  }
+
+  if (rules && rules[name] && !rules[row.to]) return name;
+  return row.to;
 } // Every open row: [{from, to, since, remove_after}].
 
 function listTagAliases() {
@@ -1188,7 +1238,7 @@ const CELL_RENDERERS = {
 }; // A consumer found this on their stand: the words were written into the set, so
 // an English admin saw «Да». The set must not decide what a value is called in
 // anyone's language. They come from the field, which is where the rest of the
-// Framework keeps its text -- sf-table declares fourteen such inputs -- and the
+// Framework keeps its text -- sf-view-table declares fourteen such inputs -- and the
 // Russian stays only as the fallback, so nothing already published changes.
 // The field's own words win, as they must: what «true» is called belongs to
 // whoever owns the interface. The fallback used to be Russian whatever the page
@@ -2698,7 +2748,7 @@ function renderEditField(field = {}, value, host, options = {}) {
 // It renders lit templates rather than the host-shaped values the cell template
 // returns, because its consumer is a record view rendering into its own layout,
 // exactly as the edit template's is. The cell template returns host shapes only
-// because sf-table already had a path for those.
+// because sf-view-table already had a path for those.
 //
 // `line` and not `size` for everything that sits beside a label on one text
 // line -- a badge, a tag, an avatar, a reference link. A size would give those a

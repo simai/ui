@@ -3893,7 +3893,7 @@ SFLoaderPlugin.prototype.getSmartElementRuleName = function (el) {
 
   return this.getCustomElementRules()[tagName] || '';
 }; // A portal root: a box a Smart element renders into from its own code, outside
-// its own render -- sf-table's window form, sf-drawer's panel at the end of the
+// its own render -- sf-view-table's window form, sf-drawer's panel at the end of the
 // body, a menu a component appends to the page. What is drawn there is the
 // owner's output, not source it still has to capture, so a Smart element in a
 // portal does not wait for an ancestor outside it (simai/ui-pro table,
@@ -3924,7 +3924,7 @@ SFLoaderPlugin.prototype.findNearestSmartParent = function (el) {
 // either. A parent defined over another base -- sf-sortable is a composition
 // host -- captures nothing and sends no sf-after-render, and its children used
 // to wait for ever: sf-checkbox in sf-tabs' settings list and sf-radio in
-// sf-table's template rows were loaded only because each was asked for by
+// sf-view-table's template rows were loaded only because each was asked for by
 // name. Such a parent holds nothing; one not defined yet is read again when
 // its definition arrives, whichever base it turns out to have.
 
@@ -4796,6 +4796,19 @@ SFLoaderPlugin.prototype.setExistCookie = function (name, output = null, output2
   }
 
   this.setModule(name);
+}; // The rule a former bundle name leads to (contracts/smart-rule-forwards.v1.json),
+// or null. The target may be a component package's rule (cl-table ->
+// cl-view-table, package pro): it resolves from the package once its rules are
+// registered. A package that registers the former name itself (a package built
+// before the rename) took the forward's place in findPlugins: its own rule is
+// used and the name is not forwarded.
+
+
+SFLoaderPlugin.prototype.forwardedRule = function (name) {
+  const to = name && this.ruleForwards?.[name];
+  if (!to) return null;
+  if (this.findPlugins?.[name]?.package !== undefined) return null;
+  return to;
 };
 
 SFLoaderPlugin.prototype.setRelation = function (relation, name, output, visited = new Set()) {
@@ -4805,8 +4818,8 @@ SFLoaderPlugin.prototype.setRelation = function (relation, name, output, visited
 
   visited.add(name);
   relation.forEach(named => {
-    const forwardTo = named?.name && this.ruleForwards?.[named.name];
-    const rel = forwardTo && this.findPlugins?.[named.name]?.package === undefined ? { ...named,
+    const forwardTo = named?.name && this.forwardedRule(named.name);
+    const rel = forwardTo ? { ...named,
       name: forwardTo
     } : named;
 
@@ -6913,7 +6926,7 @@ function normalizeWhenDefinedInput(input = []) {
   return Array.from(arguments).filter(Boolean);
 } // A short name the rules do not know yet may be a package's own element whose
 // rules have not loaded (acme-counter) or a Framework one (data-view ->
-// sf-data-view). It used to be read as the Framework's, and
+// sf-view). It used to be read as the Framework's, and
 // SF.whenDefined('acme-counter') waited forever for sf-acme-counter. Until the
 // rules say, whichever of the two is defined first is the element; a name with
 // no hyphen can only be the Framework's.
@@ -7163,7 +7176,7 @@ SFLoaderPlugin.prototype.styleSheetsOfRule = function (requested, visited = new 
   })) : [];
   [...(Array.isArray(rule.relation) ? rule.relation : []), ...drawnWith].forEach(relation => {
     if (!relation?.name || relation.lazy === true) return;
-    const target = this.ruleForwards?.[relation.name] || relation.name;
+    const target = this.forwardedRule(relation.name) || relation.name;
     sheets.push(...this.styleSheetsOfRule(target, visited));
   });
   return sheets;
@@ -8028,7 +8041,7 @@ __webpack_require__.r(__webpack_exports__);
 /***/ "8a67fe9caf0a"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"version":1,"$comment":"Former Smart bundle names the Loader still answers to. A forward is not a rule in the distribution (a rule of type smart is a Smart component to the registry, and a forward has no element); the Loader installs it at start as a rule with no tags, no assets and one relation, the new name, unless a rule of that name is already defined, and a relation that names a forward is taken as its target, so the element waits for the bundle itself. Each forward is dated and has a change journal record; remove it on remove_after.","forwards":{"cl-inputs":{"to":"cl-input","since":"2026-10-27","remove_after":"2026-12-01","journal":"path-smart-inputs-to-input"},"cl-buttons":{"to":"cl-button","since":"2026-10-27","remove_after":"2026-12-01","journal":"path-smart-buttons-to-button"},"cl-icon-buttons":{"to":"cl-button-icon","since":"2026-10-27","remove_after":"2026-12-01","journal":"path-smart-icon-buttons-to-icon-button"},"cl-icons":{"to":"cl-icon","since":"2026-10-27","remove_after":"2026-12-01","journal":"path-smart-icons-to-icon"},"cl-badges":{"to":"cl-badge","since":"2026-10-27","remove_after":"2026-12-01","journal":"path-smart-badges-to-badge"},"cl-tags":{"to":"cl-tag","since":"2026-10-27","remove_after":"2026-12-01","journal":"path-smart-tags-to-tag"},"cl-close":{"to":"cl-button-close","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-close-to-button-close"},"cl-avatars":{"to":"cl-avatar-group","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-avatars-to-avatar-group"},"cl-page-header":{"to":"cl-header-page","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-page-header-to-header-page"},"cl-site-header":{"to":"cl-header-site","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-site-header-to-header-site"},"cl-inline-editor":{"to":"cl-editor-inline","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-inline-editor-to-editor-inline"},"cl-copy-button":{"to":"cl-button-copy","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-copy-button-to-button-copy"},"cl-lookup":{"to":"cl-input-lookup","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-lookup-to-input-lookup"},"cl-code-input":{"to":"cl-input-code","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-code-input-to-input-code"},"cl-download-file":{"to":"cl-file-download","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-download-file-to-file-download"},"cl-image-field":{"to":"cl-input-image","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-image-field-to-input-image"},"cl-composition-overlay":{"to":"cl-editor-overlay","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-composition-overlay-to-editor-overlay"},"cl-rich-text":{"to":"cl-input-rich","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-rich-text-to-input-rich"},"cl-range-slider":{"to":"cl-slider-range","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-range-slider-to-slider-range"},"cl-datepicker":{"to":"cl-input-date","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-datepicker-to-input-date"},"cl-color":{"to":"cl-input-color","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-color-to-input-color"},"cl-country-code":{"to":"cl-input-country","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-country-code-to-input-country"},"cl-quantity":{"to":"cl-input-quantity","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-quantity-to-input-quantity"},"cl-textarea":{"to":"cl-input-textarea","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-textarea-to-input-textarea"},"cl-context-menu":{"to":"cl-menu-context","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-context-menu-to-menu-context"},"cl-icon-button":{"to":"cl-button-icon","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-icon-button-to-button-icon"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"version":1,"$comment":"Former Smart bundle names the Loader still answers to. A forward is not a rule in the distribution (a rule of type smart is a Smart component to the registry, and a forward has no element); the Loader installs it at start as a rule with no tags, no assets and one relation, the new name, unless a rule of that name is already defined, and a relation that names a forward is taken as its target, so the element waits for the bundle itself. Each forward is dated and has a change journal record; remove it on remove_after. A forward may lead to a component package\'s rule (cl-table -> cl-view-table, package pro, rename plan R2): the Loader follows it once the package\'s rules are registered, and a package that still registers the former name itself (one built before the rename) keeps its own rule, which the forward then leaves alone.","forwards":{"cl-inputs":{"to":"cl-input","since":"2026-10-27","remove_after":"2026-12-01","journal":"path-smart-inputs-to-input"},"cl-buttons":{"to":"cl-button","since":"2026-10-27","remove_after":"2026-12-01","journal":"path-smart-buttons-to-button"},"cl-icon-buttons":{"to":"cl-button-icon","since":"2026-10-27","remove_after":"2026-12-01","journal":"path-smart-icon-buttons-to-icon-button"},"cl-icons":{"to":"cl-icon","since":"2026-10-27","remove_after":"2026-12-01","journal":"path-smart-icons-to-icon"},"cl-badges":{"to":"cl-badge","since":"2026-10-27","remove_after":"2026-12-01","journal":"path-smart-badges-to-badge"},"cl-tags":{"to":"cl-tag","since":"2026-10-27","remove_after":"2026-12-01","journal":"path-smart-tags-to-tag"},"cl-close":{"to":"cl-button-close","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-close-to-button-close"},"cl-avatars":{"to":"cl-avatar-group","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-avatars-to-avatar-group"},"cl-page-header":{"to":"cl-header-page","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-page-header-to-header-page"},"cl-site-header":{"to":"cl-header-site","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-site-header-to-header-site"},"cl-inline-editor":{"to":"cl-editor-inline","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-inline-editor-to-editor-inline"},"cl-copy-button":{"to":"cl-button-copy","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-copy-button-to-button-copy"},"cl-lookup":{"to":"cl-input-lookup","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-lookup-to-input-lookup"},"cl-code-input":{"to":"cl-input-code","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-code-input-to-input-code"},"cl-download-file":{"to":"cl-file-download","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-download-file-to-file-download"},"cl-image-field":{"to":"cl-input-image","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-image-field-to-input-image"},"cl-composition-overlay":{"to":"cl-editor-overlay","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-composition-overlay-to-editor-overlay"},"cl-rich-text":{"to":"cl-input-rich","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-rich-text-to-input-rich"},"cl-range-slider":{"to":"cl-slider-range","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-range-slider-to-slider-range"},"cl-datepicker":{"to":"cl-input-date","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-datepicker-to-input-date"},"cl-color":{"to":"cl-input-color","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-color-to-input-color"},"cl-country-code":{"to":"cl-input-country","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-country-code-to-input-country"},"cl-quantity":{"to":"cl-input-quantity","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-quantity-to-input-quantity"},"cl-textarea":{"to":"cl-input-textarea","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-textarea-to-input-textarea"},"cl-context-menu":{"to":"cl-menu-context","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-context-menu-to-menu-context"},"cl-icon-button":{"to":"cl-button-icon","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-icon-button-to-button-icon"},"cl-data-view":{"to":"cl-view","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-data-view-to-view"},"cl-table":{"to":"cl-view-table","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-table-to-view-table"},"cl-property-view":{"to":"cl-view-properties","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-property-view-to-view-properties"},"cl-content-editor":{"to":"cl-editor-content","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-content-editor-to-editor-content"},"cl-thread-list":{"to":"cl-chat-threads","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-thread-list-to-chat-threads"},"cl-change-confirm":{"to":"cl-confirm-change","since":"2026-11-03","remove_after":"2027-01-01","journal":"path-smart-change-confirm-to-confirm-change"}}}');
 
 /***/ },
 
