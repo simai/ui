@@ -17,6 +17,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d7f974466839");
 /* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("58661bec99a6");
+/* harmony import */ var _core_js_clipboard_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e081a020262e");
+
 
 
 const COPY_SELECTOR = '.sf-clipboard, .btn-clipboard';
@@ -87,41 +89,15 @@ function resolveCopySource(button) {
   }
 
   throw new Error('missing_source');
-}
+} // The copy itself, with its fallback, is the core helper (core/js/clipboard.js,
+// reuse audit 2026-11-02 finding 11): sf-copy-button and this class wrote it
+// twice. Kept under its old name, which this module exports.
 
-function legacyWriteText(text, documentRef) {
-  const textarea = documentRef.createElement('textarea');
-  textarea.className = 'sf-clipboard-fallback';
-  textarea.value = text;
-  textarea.setAttribute('readonly', '');
-  documentRef.body.append(textarea);
-  textarea.select();
-  textarea.setSelectionRange(0, textarea.value.length);
-  let copied = false;
 
-  try {
-    copied = documentRef.execCommand('copy');
-  } finally {
-    textarea.remove();
-  }
-
-  if (!copied) throw new Error('copy_unsupported');
-}
-
-async function writeText(text, documentRef = document) {
-  if (window.isSecureContext && navigator.clipboard?.writeText) {
-    try {
-      await navigator.clipboard.writeText(text);
-      return 'native';
-    } catch {// A secure page whose clipboard permission is denied -- a policy, an
-      // embedded frame, a browser that asks and was answered no. The API being
-      // present was read as the API being allowed, so the fallback that exists
-      // for exactly this was never reached and the copy simply failed.
-    }
-  }
-
-  legacyWriteText(text, documentRef);
-  return 'legacy';
+function writeText(text, documentRef = document) {
+  return (0,_core_js_clipboard_js__WEBPACK_IMPORTED_MODULE_2__.copyText)(text, {
+    document: documentRef
+  });
 }
 
 function ensureStatus(button) {
@@ -470,6 +446,81 @@ class ComponentObserver {
   destroyInternal() {}
 
 }
+
+/***/ },
+
+/***/ "e081a020262e"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   copyText: () => (/* binding */ copyText),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Copying text, with the fallback (reuse audit 2026-11-02, finding 11). The
+// clipboard class component and sf-copy-button each wrote this, and
+// chat-message a third time; the order is theirs: the Clipboard API on a
+// secure page, and execCommand('copy') over a hidden field where the API is
+// absent or refused. A secure page whose clipboard permission is denied -- a
+// policy, an embedded frame, a browser that asked and was answered no -- has
+// the API and still refuses it; reading "present" as "allowed" left the
+// fallback that exists for exactly this unreached (component/clipboard,
+// 2026-10).
+
+/**
+ * Copies `text`. Settles with how it was copied, 'native' or 'legacy', or
+ * rejects: Error('copy_unsupported') when the fallback copied nothing, or the
+ * platform's own error (NotAllowedError, SecurityError) when it threw.
+ * `document` is the document whose body holds the fallback field: the
+ * element's own, for a component in another frame.
+ */
+async function copyText(text, {
+  document: documentRef = globalThis.document
+} = {}) {
+  const value = String(text ?? '');
+  const view = documentRef?.defaultView ?? globalThis;
+
+  if (view.isSecureContext && view.navigator?.clipboard?.writeText) {
+    try {
+      await view.navigator.clipboard.writeText(value);
+      return 'native';
+    } catch {// Refused: the fallback is for exactly this.
+    }
+  }
+
+  if (!documentRef?.body || typeof documentRef.execCommand !== 'function') throw new Error('copy_unsupported');
+  const area = documentRef.createElement('textarea'); // The class is the clipboard component's (its sheet hides it); the inline
+  // style keeps the field out of sight on a page without that sheet.
+
+  area.className = 'sf-clipboard-fallback';
+  area.value = value;
+  area.setAttribute('readonly', '');
+  area.setAttribute('aria-hidden', 'true');
+  area.style.cssText = 'position:fixed;inset-inline-start:-9999px;inset-block-start:0;opacity:0';
+  documentRef.body.append(area);
+  area.select(); // iOS selects nothing on select() alone.
+
+  area.setSelectionRange?.(0, value.length);
+  let copied = false;
+
+  try {
+    copied = documentRef.execCommand('copy');
+  } finally {
+    area.remove();
+  }
+
+  if (!copied) throw new Error('copy_unsupported');
+  return 'legacy';
+} // Core publishes the helper; component bundles that carry their own copy reuse
+// an already published one instead of replacing it. SF.Clipboard (capital C)
+// is the clipboard component's script API; this is the bare function.
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.SF = globalThis.SF || {};
+  if (!globalThis.SF.copyText) globalThis.SF.copyText = copyText;
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (copyText);
 
 /***/ },
 

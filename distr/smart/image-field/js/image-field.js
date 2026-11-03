@@ -191,6 +191,404 @@ __webpack_async_result__();
 
 /***/ },
 
+/***/ "5b8371b87515"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   FILE_SIZE_UNITS: () => (/* binding */ FILE_SIZE_UNITS),
+/* harmony export */   calendarDayOffset: () => (/* binding */ calendarDayOffset),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   fileSizeUnits: () => (/* binding */ fileSizeUnits),
+/* harmony export */   formatDate: () => (/* binding */ formatDate),
+/* harmony export */   formatFileSize: () => (/* binding */ formatFileSize),
+/* harmony export */   formatLocale: () => (/* binding */ formatLocale),
+/* harmony export */   formatNumber: () => (/* binding */ formatNumber),
+/* harmony export */   formatRelativeDay: () => (/* binding */ formatRelativeDay),
+/* harmony export */   formatRelativeTime: () => (/* binding */ formatRelativeTime),
+/* harmony export */   msUntilNextDay: () => (/* binding */ msUntilNextDay),
+/* harmony export */   numberOptions: () => (/* binding */ numberOptions),
+/* harmony export */   toDate: () => (/* binding */ toDate)
+/* harmony export */ });
+/* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("43090d1c8307");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_page_language_js__WEBPACK_IMPORTED_MODULE_0__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+_page_language_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_page_language_js__WEBPACK_IMPORTED_MODULE_0__);
+// Dates, days, numbers and file sizes as people read them, in the page's
+// language (reuse audit 2026-11-02, finding 7). About fourteen components
+// wrote these themselves -- three relative-day rules (thread-list, chat-window
+// with its own midnight refresh, mail-letters), file sizes in four places,
+// numbers in the chart and the quantity -- and they disagreed: «Вчера» in one
+// list, «вчера» in the next, «1.4MB» beside «1,4 МБ». One rule now, through
+// Intl only; the most complete copy was ui-chart's chart-core/format.js, whose
+// number words are kept as they were.
+//
+// The locale is the page's (page-language.js pageLocale): an explicit
+// `locale`, else the language of `node` -- the nearest [lang] above it, the
+// page's choice, <html lang>, English. Never a fixed ru-RU.
+//
+// Nothing here holds state of its own: the Intl formatters are kept on a
+// global shared by every copy of this module, which each bundle carries
+// (bundles each carry their own module copy; page-language.js says why).
+
+
+const STORE = (() => {
+  const root = typeof globalThis !== 'undefined' ? globalThis : {};
+  const key = '__sfFormat';
+  if (!root[key]) root[key] = {
+    formatters: new Map()
+  };
+  return root[key];
+})();
+
+const DAY_MS = 86400000;
+/** The locale a call formats in: the one it names, else its node's page language. */
+
+function formatLocale({
+  locale,
+  node
+} = {}) {
+  return String(locale || '').trim() || (0,_page_language_js__WEBPACK_IMPORTED_MODULE_0__.pageLocale)(node);
+} // One formatter per kind, locale and options. An unknown locale falls back to
+// the browser's, and options the platform refuses (an unknown unit or
+// currency) to a plain number, so a typo in a page never throws at a reader.
+
+function formatter(kind, locale, options) {
+  const key = `${kind}|${locale}|${JSON.stringify(options)}`;
+  const cache = STORE.formatters;
+  if (cache.has(key)) return cache.get(key);
+  const Make = Intl[kind];
+  let made;
+
+  try {
+    made = new Make(locale || undefined, options);
+  } catch {
+    try {
+      made = new Make(undefined, options);
+    } catch {
+      made = new Make(locale || undefined, kind === 'NumberFormat' ? {
+        maximumFractionDigits: 2
+      } : {});
+    }
+  } // A page that formats in many locales does not grow the cache for ever.
+
+
+  if (cache.size >= 256) cache.delete(cache.keys().next().value);
+  cache.set(key, made);
+  return made;
+}
+/** A Date from a Date, a time in milliseconds or a date string; null when it is none. */
+
+
+function toDate(value) {
+  if (value === null || value === undefined || value === '') return null;
+  const date = value instanceof Date ? new Date(value.getTime()) : new Date(typeof value === 'string' && /^\d+$/u.test(value) ? Number(value) : value);
+  return Number.isNaN(date.getTime()) ? null : date;
+} // The first letter in capitals, by the locale's rule («вчера» → «Вчера»).
+
+function capitalise(text, locale) {
+  const first = Array.from(text)[0] ?? '';
+  return first ? first.toLocaleUpperCase(locale || undefined) + text.slice(first.length) : text;
+} // ── dates ────────────────────────────────────────────────────────────────────
+
+
+const DATE_STYLES = new Set(['short', 'medium', 'long', 'full']);
+/**
+ * A date, a time or both in the locale.
+ *
+ *   formatDate(at)                          3 нояб. 2026 г.  /  Nov 3, 2026
+ *   formatDate(at, {date: 'short'})         03.11.2026       /  11/3/26
+ *   formatDate(at, {date: 'long'})          3 ноября 2026 г. /  November 3, 2026
+ *   formatDate(at, {time: 'short'})         3 нояб. 2026 г., 14:05
+ *   formatDate(at, {date: null, time: 'short'})   14:05   /  2:05 PM
+ *
+ * `date` and `time` are Intl styles (short, medium, long, full); `intl` gives
+ * Intl.DateTimeFormat options outright, for a form the styles do not name (a
+ * chart's tick, «14:05» with two-digit hours). Anything that is not a date is
+ * `gap`, '' by default.
+ */
+
+function formatDate(value, {
+  date = 'medium',
+  time = null,
+  intl = null,
+  gap = '',
+  ...where
+} = {}) {
+  const moment = toDate(value);
+  if (!moment) return gap;
+  let options = intl;
+
+  if (!options) {
+    options = {};
+    if (DATE_STYLES.has(date)) options.dateStyle = date;
+    if (DATE_STYLES.has(time)) options.timeStyle = time;
+    if (!options.dateStyle && !options.timeStyle) options.dateStyle = 'medium';
+  }
+
+  return formatter('DateTimeFormat', formatLocale(where), options).format(moment);
+} // ── days ─────────────────────────────────────────────────────────────────────
+
+/**
+ * Calendar days from `now` to the value in the reader's time zone: 0 today,
+ * -1 yesterday, 1 tomorrow; NaN when the value is no date. Counted on
+ * calendar dates, not 24-hour spans, so 23:59 yesterday is -1 at 00:01 and a
+ * day of a clock change is still one day.
+ */
+
+function calendarDayOffset(value, {
+  now = new Date()
+} = {}) {
+  const moment = toDate(value);
+  const today = toDate(now);
+  if (!moment || !today) return Number.NaN;
+  const day = Date.UTC(moment.getFullYear(), moment.getMonth(), moment.getDate());
+  const base = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+  return Math.round((day - base) / DAY_MS);
+}
+/**
+ * The day a moment fell on, as a list says it: «сегодня», «вчера», «завтра»,
+ * the weekday within the last week («понедельник»), else the date («3 ноября»,
+ * with the year when it is not this one). The words are the platform's for
+ * the locale (Intl.RelativeTimeFormat, numeric auto); a component that ships
+ * its own passes them (`today`, `yesterday`, `tomorrow`) and they win.
+ * `weekday: false` goes from yesterday straight to the date; `capital: true`
+ * starts the word with a capital, as a heading or a divider does.
+ *
+ * The answer changes at the reader's midnight: msUntilNextDay says when.
+ */
+
+function formatRelativeDay(value, {
+  now = new Date(),
+  today,
+  yesterday,
+  tomorrow,
+  weekday = true,
+  capital = false,
+  gap = '',
+  ...where
+} = {}) {
+  const moment = toDate(value);
+  if (!moment) return gap;
+  const locale = formatLocale(where);
+  const offset = calendarDayOffset(moment, {
+    now
+  });
+  const own = {
+    0: today,
+    [-1]: yesterday,
+    1: tomorrow
+  }[offset];
+  let text;
+
+  if (own) {
+    text = String(own);
+  } else if (offset >= -1 && offset <= 1) {
+    text = formatter('RelativeTimeFormat', locale, {
+      numeric: 'auto'
+    }).format(offset, 'day');
+  } else if (weekday && offset < -1 && offset > -7) {
+    text = formatter('DateTimeFormat', locale, {
+      weekday: 'long'
+    }).format(moment);
+  } else {
+    const year = moment.getFullYear() === toDate(now).getFullYear() ? {} : {
+      year: 'numeric'
+    };
+    text = formatter('DateTimeFormat', locale, {
+      day: 'numeric',
+      month: 'long',
+      ...year
+    }).format(moment);
+  }
+
+  return capital ? capitalise(text, locale) : text;
+}
+/**
+ * Milliseconds from `now` to the reader's next midnight, when every relative
+ * day on the screen moves by one. A component that shows them sets a timer
+ * for this long (plus a second's margin, so it wakes in the new day) and
+ * draws them again; «сегодня» said yesterday is wrong by morning.
+ */
+
+function msUntilNextDay(now = new Date()) {
+  const today = toDate(now) ?? new Date();
+  const next = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+  return next.getTime() - today.getTime();
+} // The largest unit a span reaches is the one it is said in (mail-letters'
+// steps, 2026-10): 90 seconds is «2 минуты назад», 40 days «в прошлом месяце».
+
+const RELATIVE_STEPS = [['year', 31536000], ['month', 2592000], ['week', 604800], ['day', 86400], ['hour', 3600], ['minute', 60]];
+/** «5 минут назад», «через 2 часа»: a moment from `now`, in the locale. */
+
+function formatRelativeTime(value, {
+  now = new Date(),
+  gap = '',
+  ...where
+} = {}) {
+  const moment = toDate(value);
+  const base = toDate(now);
+  if (!moment || !base) return gap;
+  const seconds = Math.round((moment.getTime() - base.getTime()) / 1000);
+  const format = formatter('RelativeTimeFormat', formatLocale(where), {
+    numeric: 'auto'
+  });
+
+  for (const [unit, size] of RELATIVE_STEPS) {
+    if (Math.abs(seconds) >= size) return format.format(Math.round(seconds / size), unit);
+  }
+
+  return format.format(seconds, 'second');
+} // ── numbers ──────────────────────────────────────────────────────────────────
+
+/**
+ * The Intl options of a number format word (ui-chart's words, kept so a page
+ * writes a format as an attribute):
+ *
+ *   number (default)  1 234,5   as many digits as `step` needs, at most 6; 2 without one
+ *   integer           1 235
+ *   decimal-<n>       n digits after the point, always (0 to 20)
+ *   percent           a share 0..1 as 12 %
+ *   compact           1,2 тыс.  /  1.2K
+ *   currency-<CODE>   1 234,50 ₽ (an ISO 4217 code)
+ *   unit-<unit>       45,3 ГБ (an Intl unit: gigabyte, megabit-per-second)
+ *
+ * Anything else reads as number.
+ */
+
+function numberOptions(format = 'number', step = 0) {
+  const word = String(format || 'number').trim();
+  if (word === 'integer') return {
+    maximumFractionDigits: 0
+  };
+  if (word === 'percent') return {
+    style: 'percent',
+    maximumFractionDigits: 1
+  };
+  if (word === 'compact') return {
+    notation: 'compact',
+    maximumFractionDigits: 1
+  };
+  const decimal = /^decimal-(\d{1,2})$/u.exec(word);
+
+  if (decimal) {
+    const digits = Math.min(20, Number(decimal[1]));
+    return {
+      minimumFractionDigits: digits,
+      maximumFractionDigits: digits
+    };
+  }
+
+  const unit = /^unit-([a-z]+(?:-per-[a-z]+)?)$/u.exec(word);
+  if (unit) return {
+    style: 'unit',
+    unit: unit[1],
+    unitDisplay: 'short',
+    maximumFractionDigits: 1
+  };
+  const currency = /^currency-([A-Z]{3})$/u.exec(word);
+  if (currency) return {
+    style: 'currency',
+    currency: currency[1]
+  };
+  const digits = step > 0 && step < 1 ? Math.min(6, Math.ceil(-Math.log10(step) - 1e-9)) : 2;
+  return {
+    maximumFractionDigits: digits
+  };
+}
+/**
+ * A number in the locale by a format word (numberOptions). `grouping: false`
+ * writes it without thousands marks («2026»), `step` sets the digits of
+ * `number`, and a value that is not a finite number is `gap`, '' by default
+ * (a chart passes '—').
+ */
+
+function formatNumber(value, format = 'number', {
+  step = 0,
+  gap = '',
+  grouping = true,
+  ...where
+} = {}) {
+  const number = typeof value === 'string' && value.trim() !== '' ? Number(value) : value;
+  if (typeof number !== 'number' || !Number.isFinite(number)) return gap;
+  const options = numberOptions(format, step);
+  if (grouping === false) options.useGrouping = false;
+  return formatter('NumberFormat', formatLocale(where), options).format(number);
+} // ── file sizes ───────────────────────────────────────────────────────────────
+// The four words of a size, in the languages the SIMAI Framework ships; any
+// other language reads the English words with its own digits. A component
+// with words of its own passes them as `units`.
+
+const FILE_SIZE_UNITS = Object.freeze({
+  en: Object.freeze(['B', 'KB', 'MB', 'GB']),
+  ru: Object.freeze(['Б', 'КБ', 'МБ', 'ГБ'])
+});
+/** The unit words for a locale: its language's, else English. */
+
+function fileSizeUnits(locale = 'en') {
+  const language = String(locale || 'en').toLowerCase().split('-')[0];
+  return Object.hasOwn(FILE_SIZE_UNITS, language) ? FILE_SIZE_UNITS[language] : FILE_SIZE_UNITS.en;
+}
+/**
+ * A size as people read it: «512 Б», «2 КБ», «1,4 МБ», «12 GB». Binary steps
+ * of 1024; one digit after the point under ten of a unit, none above it or in
+ * bytes. Text a host already formatted is returned as it came; anything that
+ * is not a size is ''.
+ *
+ *   formatFileSize(size, {node, units?, locale?})
+ *   formatFileSize(size, units, locale)   -- the form composition/file-size.mjs
+ *                                            and sf-image-field 1.x published
+ */
+
+function formatFileSize(size, options = {}, legacyLocale) {
+  const where = Array.isArray(options) ? {
+    units: options,
+    locale: legacyLocale ?? 'en'
+  } : options ?? {};
+  if (typeof size === 'string') return size;
+  const bytes = Number(size);
+  if (size === null || size === undefined || !Number.isFinite(bytes) || bytes < 0) return '';
+  const locale = formatLocale(where);
+  const units = where.units?.length ? where.units : fileSizeUnits(locale);
+  let amount = bytes;
+  let index = 0;
+
+  while (amount >= 1024 && index < units.length - 1) {
+    amount /= 1024;
+    index += 1;
+  }
+
+  const digits = index === 0 || amount >= 10 ? 0 : 1;
+  return `${formatter('NumberFormat', locale, {
+    maximumFractionDigits: digits
+  }).format(amount)} ${units[index]}`;
+}
+const Format = Object.freeze({
+  locale: formatLocale,
+  date: formatDate,
+  relativeDay: formatRelativeDay,
+  relativeTime: formatRelativeTime,
+  dayOffset: calendarDayOffset,
+  msUntilNextDay,
+  number: formatNumber,
+  numberOptions,
+  fileSize: formatFileSize
+}); // Core publishes the helper; component bundles that carry their own copy reuse
+// an already published one instead of replacing it.
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.SF = globalThis.SF || {};
+  if (!globalThis.SF.format) globalThis.SF.format = Format;
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Format);
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
 /***/ "38ea8d53f301"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -421,24 +819,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("deb1a4d61565");
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5b7d7695b41b");
-/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("43090d1c8307");
-/* harmony import */ var _core_js_instance_path__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("e92fd2d1a38c");
-/* harmony import */ var _component_field_contract__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("e138a730fd7c");
-/* harmony import */ var _component_field_size__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("e6d86f2cd058");
-/* harmony import */ var _helpers_form_field__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("38ea8d53f301");
-/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("4a9754c1c12d");
-/* harmony import */ var _value_mjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("c22743d41d10");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("dc26a735709e");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("fc6dfddd4b04");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("b06ddaec70c1");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("7e6798b6eac7");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("83b84a25c0f9");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_2__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_3__, _component_field_contract__WEBPACK_IMPORTED_MODULE_4__, _component_field_size__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default__WEBPACK_IMPORTED_MODULE_7__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_2__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_3__, _component_field_contract__WEBPACK_IMPORTED_MODULE_4__, _component_field_size__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default__WEBPACK_IMPORTED_MODULE_7__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e92fd2d1a38c");
+/* harmony import */ var _component_field_contract__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("e138a730fd7c");
+/* harmony import */ var _component_field_size__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("e6d86f2cd058");
+/* harmony import */ var _helpers_form_field__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("38ea8d53f301");
+/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("4a9754c1c12d");
+/* harmony import */ var _value_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("c22743d41d10");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("dc26a735709e");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("fc6dfddd4b04");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("b06ddaec70c1");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("7e6798b6eac7");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("83b84a25c0f9");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__, _component_field_contract__WEBPACK_IMPORTED_MODULE_3__, _component_field_size__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__, _value_mjs__WEBPACK_IMPORTED_MODULE_7__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__, _component_field_contract__WEBPACK_IMPORTED_MODULE_3__, _component_field_size__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__, _value_mjs__WEBPACK_IMPORTED_MODULE_7__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _core_js_instance_path__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_core_js_instance_path__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__);
 // sf-image-field: a form field that holds one image (simai/ui-source#27). It
 // shows the image as a thumbnail with its file name and size, offers
 // «Заменить…» and «Убрать», and takes a file dropped anywhere on it -- the image
@@ -468,12 +864,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
-
  // Every word this component says is lang/<locale>.json runtime (standard
 // 1.3.8 §11). `quoted` wraps a file name the way the language quotes: «…» in
 // Russian, “…” in English.
 
-const WORD_KEYS = Object.keys(_lang_en_json__WEBPACK_IMPORTED_MODULE_11__.runtime);
+const WORD_KEYS = Object.keys(_lang_en_json__WEBPACK_IMPORTED_MODULE_10__.runtime);
 
 const camel = key => key.replace(/-([a-z])/gu, (_, letter) => letter.toUpperCase());
 
@@ -486,14 +881,14 @@ const DEFAULT_ACCEPT = 'image/*'; // sf-image-field from its component.json (sta
 // names after them), and the host is the form control through
 // ElementInternals.
 
-const ImageFieldElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_9__, {
+const ImageFieldElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_8__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_11__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_12__
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_10__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__
   },
   source: 'ru',
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_10__,
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_9__,
   actions: {
     // Opens the platform's file dialog, as «Заменить…» and «Выбрать…» do.
     choose() {
@@ -544,7 +939,7 @@ const ImageFieldElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_
   }
 });
 
-class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.FormField)(ImageFieldElement) {
+class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.FormField)(ImageFieldElement) {
   static get props() {
     return { ...super.props,
       templateName: {
@@ -558,7 +953,7 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.F
       },
       size: {
         default: '1',
-        values: _component_field_size__WEBPACK_IMPORTED_MODULE_5__.FIELD_SIZES
+        values: _component_field_size__WEBPACK_IMPORTED_MODULE_4__.FIELD_SIZES
       },
       // The group's name when no label is drawn: a field renderer's panel
       // prints the label beside the field, and a second, visible one inside it
@@ -586,7 +981,7 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.F
     if (Object.prototype.hasOwnProperty.call(this, 'value')) {
       const early = this.value;
       delete this.value;
-      this._value = (0,_value_mjs__WEBPACK_IMPORTED_MODULE_8__.normaliseImageValue)(early);
+      this._value = (0,_value_mjs__WEBPACK_IMPORTED_MODULE_7__.normaliseImageValue)(early);
     }
 
     this._objectUrl = '';
@@ -608,7 +1003,7 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.F
   }
 
   get size() {
-    return (0,_component_field_size__WEBPACK_IMPORTED_MODULE_5__.fieldSize)(this.getAttribute('size') || '1', 'sf-image-field');
+    return (0,_component_field_size__WEBPACK_IMPORTED_MODULE_4__.fieldSize)(this.getAttribute('size') || '1', 'sf-image-field');
   }
 
   get accept() {
@@ -622,7 +1017,7 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.F
 
 
   get _id() {
-    return (0,_core_js_instance_path__WEBPACK_IMPORTED_MODULE_3__.partId)((0,_core_js_instance_path__WEBPACK_IMPORTED_MODULE_3__.instancePath)(this, {
+    return (0,_core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__.partId)((0,_core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__.instancePath)(this, {
       kind: 'sf-image-field'
     }));
   } // The image the field holds, in the file shape, or null when it is empty.
@@ -630,7 +1025,7 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.F
 
   get value() {
     if (this._value !== undefined) return this._value;
-    return (0,_value_mjs__WEBPACK_IMPORTED_MODULE_8__.normaliseImageValue)(this.getAttribute('value'));
+    return (0,_value_mjs__WEBPACK_IMPORTED_MODULE_7__.normaliseImageValue)(this.getAttribute('value'));
   } // Set from code, the value is not a change: no event, as for a native field.
 
 
@@ -639,7 +1034,7 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.F
   }
 
   setValue(next) {
-    const value = (0,_value_mjs__WEBPACK_IMPORTED_MODULE_8__.normaliseImageValue)(next);
+    const value = (0,_value_mjs__WEBPACK_IMPORTED_MODULE_7__.normaliseImageValue)(next);
     if (value?.href !== this._objectUrl) this._releaseObjectUrl();
     this._value = value;
     this.requestComponentUpdate('value');
@@ -693,7 +1088,10 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.F
 
   formatSize(size) {
     const units = ['bytes', 'kilobytes', 'megabytes', 'gigabytes'].map(key => this.text(key));
-    return (0,_value_mjs__WEBPACK_IMPORTED_MODULE_8__.formatFileSize)(size, units, (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_2__.pageLocale)(this));
+    return (0,_value_mjs__WEBPACK_IMPORTED_MODULE_7__.formatFileSize)(size, {
+      units,
+      node: this
+    });
   } // «450×300 · 2 КБ»: the image's own dimensions once it has loaded, then its
   // size. The host's `meta` replaces the line when it knows better.
 
@@ -722,7 +1120,7 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.F
     if (!file) return 'no-file';
     if (!this.interactive) return 'inactive';
 
-    if (!(0,_value_mjs__WEBPACK_IMPORTED_MODULE_8__.acceptsFile)(this.accept, file)) {
+    if (!(0,_value_mjs__WEBPACK_IMPORTED_MODULE_7__.acceptsFile)(this.accept, file)) {
       this.reject([file], source);
       return 'rejected';
     }
@@ -906,8 +1304,8 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.F
     if (!this.interactive || !files.length) return; // One image: the first file the field accepts. The rest are reported, as
     // sf-file-upload reports a drop the accept list leaves out.
 
-    const accepted = files.find(file => (0,_value_mjs__WEBPACK_IMPORTED_MODULE_8__.acceptsFile)(this.accept, file));
-    const rejected = files.filter(file => !(0,_value_mjs__WEBPACK_IMPORTED_MODULE_8__.acceptsFile)(this.accept, file));
+    const accepted = files.find(file => (0,_value_mjs__WEBPACK_IMPORTED_MODULE_7__.acceptsFile)(this.accept, file));
+    const rejected = files.filter(file => !(0,_value_mjs__WEBPACK_IMPORTED_MODULE_7__.acceptsFile)(this.accept, file));
     if (rejected.length) this.reject(rejected, 'drop');
     if (!accepted) return; // The native input holds the dropped file too, so a form that submits
     // this field sends it under `name` as it sends a picked one.
@@ -973,7 +1371,7 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.F
   templateContext() {
     const props = this.getPropsContext();
     const value = this.value;
-    const field = (0,_component_field_contract__WEBPACK_IMPORTED_MODULE_4__.createFieldContract)(this, {
+    const field = (0,_component_field_contract__WEBPACK_IMPORTED_MODULE_3__.createFieldContract)(this, {
       prefix: 'sf-image-field',
       required: this.required,
       // error is a dated alias of invalid (§17.2, aliases.json).
@@ -1015,7 +1413,7 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.F
   }
 
   template() {
-    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_7__.renderImageFieldTemplate)(this.templateContext());
+    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_6__.renderImageFieldTemplate)(this.templateContext());
   }
 
 }
@@ -1221,55 +1619,29 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ },
 
 /***/ "fb0bdf7719f0"
-(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
+__webpack_require__.a(__webpack_module__, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   FILE_SIZE_UNITS: () => (/* binding */ FILE_SIZE_UNITS),
+/* harmony export */   FILE_SIZE_UNITS: () => (/* reexport safe */ _format_js__WEBPACK_IMPORTED_MODULE_0__.FILE_SIZE_UNITS),
 /* harmony export */   fileNameFromAddress: () => (/* binding */ fileNameFromAddress),
-/* harmony export */   fileSizeUnits: () => (/* binding */ fileSizeUnits),
-/* harmony export */   formatFileSize: () => (/* binding */ formatFileSize)
+/* harmony export */   fileSizeUnits: () => (/* reexport safe */ _format_js__WEBPACK_IMPORTED_MODULE_0__.fileSizeUnits),
+/* harmony export */   formatFileSize: () => (/* reexport safe */ _format_js__WEBPACK_IMPORTED_MODULE_0__.formatFileSize)
 /* harmony export */ });
+/* harmony import */ var _format_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("5b8371b87515");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_format_js__WEBPACK_IMPORTED_MODULE_0__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+_format_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 // How a stored file reads to people: its size in the page's language and its
 // name when nobody gave it one. sf-image-field wrote these first (its
 // value.mjs re-exports them); the Composition renderer draws content.file with
 // the same rule, so a size reads the same in a field and on a page. No DOM.
 
-// The four words of a size, in the languages the SIMAI Framework ships; any
-// other language reads the English words with its own digits.
-const FILE_SIZE_UNITS = Object.freeze({
-  en: Object.freeze(['B', 'KB', 'MB', 'GB']),
-  ru: Object.freeze(['Б', 'КБ', 'МБ', 'ГБ']),
-});
+// The size rule is core's number format (core/js/format.js, reuse audit
+// 2026-11-02 finding 7), re-exported under the names this module published:
+// formatFileSize(size, units, locale) still reads as it did.
 
-/** The unit words for a locale: its language's, else English. */
-function fileSizeUnits(locale = 'en') {
-  const language = String(locale || 'en').toLowerCase().split('-')[0];
-  return Object.hasOwn(FILE_SIZE_UNITS, language) ? FILE_SIZE_UNITS[language] : FILE_SIZE_UNITS.en;
-}
-
-// A size as people read it: «2 КБ», «1,4 МБ». `units` are the four words in
-// the page's language, `locale` its formatting. Text the host already
-// formatted is returned as it came; anything that is not a size is ''.
-function formatFileSize(size, units = FILE_SIZE_UNITS.en, locale = 'en') {
-  if (typeof size === 'string') return size;
-  const bytes = Number(size);
-  if (size === null || size === undefined || !Number.isFinite(bytes) || bytes < 0) return '';
-  let amount = bytes;
-  let index = 0;
-  while (amount >= 1024 && index < units.length - 1) {
-    amount /= 1024;
-    index += 1;
-  }
-  const digits = index === 0 || amount >= 10 ? 0 : 1;
-  let number;
-  try {
-    number = new Intl.NumberFormat(locale, {maximumFractionDigits: digits}).format(amount);
-  } catch {
-    number = amount.toFixed(digits);
-  }
-  return `${number} ${units[index]}`;
-}
 
 // The last part of an address, decoded, without its query and fragment: the
 // name a file is shown under when it has no label.
@@ -1282,27 +1654,35 @@ function fileNameFromAddress(href) {
   }
 }
 
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ },
 
 /***/ "c22743d41d10"
-(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
+__webpack_require__.a(__webpack_module__, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   acceptsFile: () => (/* binding */ acceptsFile),
-/* harmony export */   formatFileSize: () => (/* reexport safe */ _core_js_composition_file_size_mjs__WEBPACK_IMPORTED_MODULE_0__.formatFileSize),
+/* harmony export */   formatFileSize: () => (/* reexport safe */ _core_js_format_js__WEBPACK_IMPORTED_MODULE_1__.formatFileSize),
 /* harmony export */   normaliseImageValue: () => (/* binding */ normaliseImageValue)
 /* harmony export */ });
 /* harmony import */ var _core_js_composition_file_size_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("fb0bdf7719f0");
+/* harmony import */ var _core_js_format_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5b8371b87515");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_composition_file_size_mjs__WEBPACK_IMPORTED_MODULE_0__, _core_js_format_js__WEBPACK_IMPORTED_MODULE_1__]);
+([_core_js_composition_file_size_mjs__WEBPACK_IMPORTED_MODULE_0__, _core_js_format_js__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 // The parts of sf-image-field that are about data, not the page: which files
 // the field accepts, the shape its value takes and how a size reads. Kept
 // apart from the element so the contract tests can run them in Node, as
 // sf-resizer's engine.mjs is.
 
-// The size and the name rules live in the core runtime
-// (composition/file-size.mjs), where the Composition renderer draws
-// content.file with them; this module re-exports the formatter it published.
+// The size rule is core's format module (core/js/format.js, SF.format.fileSize;
+// reuse audit 2026-11-02, finding 7) and the name rule the Composition
+// renderer's (composition/file-size.mjs), so a size reads the same in a field,
+// on a page and in a Pro list; this module re-exports the formatter.
+
 
 
 
@@ -1365,6 +1745,8 @@ function normaliseImageValue(input) {
   return value;
 }
 
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ },
 
@@ -1378,7 +1760,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shi
 /***/ "dc26a735709e"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.image-field","tag":"sf-image-field","version":"1.1.7","kind":"leaf","settings":{"name":{"type":"string","default":""},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"accept":{"type":"string","default":"image/*"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"meta":{"type":"string","default":""},"empty-text":{"type":"string","default":""},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""}},"values":{"value":{"type":"object","nullable":true,"default":null}},"events":{"change":{"carries":{"value":{"type":"object","nullable":true},"file":{"type":"object","nullable":true},"source":{"type":"enum","values":["input","drop","remove"]},"name":"string"}},"input":{"carries":{"value":{"type":"object","nullable":true},"file":{"type":"object","nullable":true},"source":{"type":"enum","values":["input","drop","remove"]},"name":"string"}},"attach":{"carries":{"files":"list","file":"object","source":{"type":"enum","values":["input","drop"]},"value":"object","name":"string"}},"detach":{"carries":{"value":"object","name":"string"}},"rejected":{"carries":{"files":"list","accept":"string","source":"string"}}},"actions":{"clear":{},"choose":{},"remove-image":{},"take-file":{"with":{"file":"object","source":{"type":"string","optional":true}}},"set-error":{"with":{"message":"string"}}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","custom-error"]},"host-states":{"data-dragged-over":"boolean"},"css-variables":{"--sf-image-field-background-color":{"type":"color","state":"rest"},"--sf-image-field-border-color":{"type":"color","state":"rest"},"--sf-image-field-border-width":{"type":"length"},"--sf-image-field-radius":{"type":"length"},"--sf-image-field-padding-inline":{"type":"length"},"--sf-image-field-padding-block":{"type":"length"},"--sf-image-field-gap":{"type":"length"},"--sf-image-field-thumbnail-size":{"type":"length"},"--sf-image-field-thumbnail-radius":{"type":"length"},"--sf-image-field-thumbnail-background-color":{"type":"color","state":"rest"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.image-field","tag":"sf-image-field","version":"1.1.8","kind":"leaf","settings":{"name":{"type":"string","default":""},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"accept":{"type":"string","default":"image/*"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"meta":{"type":"string","default":""},"empty-text":{"type":"string","default":""},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""}},"values":{"value":{"type":"object","nullable":true,"default":null}},"events":{"change":{"carries":{"value":{"type":"object","nullable":true},"file":{"type":"object","nullable":true},"source":{"type":"enum","values":["input","drop","remove"]},"name":"string"}},"input":{"carries":{"value":{"type":"object","nullable":true},"file":{"type":"object","nullable":true},"source":{"type":"enum","values":["input","drop","remove"]},"name":"string"}},"attach":{"carries":{"files":"list","file":"object","source":{"type":"enum","values":["input","drop"]},"value":"object","name":"string"}},"detach":{"carries":{"value":"object","name":"string"}},"rejected":{"carries":{"files":"list","accept":"string","source":"string"}}},"actions":{"clear":{},"choose":{},"remove-image":{},"take-file":{"with":{"file":"object","source":{"type":"string","optional":true}}},"set-error":{"with":{"message":"string"}}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","custom-error"]},"host-states":{"data-dragged-over":"boolean"},"css-variables":{"--sf-image-field-background-color":{"type":"color","state":"rest"},"--sf-image-field-border-color":{"type":"color","state":"rest"},"--sf-image-field-border-width":{"type":"length"},"--sf-image-field-radius":{"type":"length"},"--sf-image-field-padding-inline":{"type":"length"},"--sf-image-field-padding-block":{"type":"length"},"--sf-image-field-gap":{"type":"length"},"--sf-image-field-thumbnail-size":{"type":"length"},"--sf-image-field-thumbnail-radius":{"type":"length"},"--sf-image-field-thumbnail-background-color":{"type":"color","state":"rest"}}}');
 
 /***/ },
 

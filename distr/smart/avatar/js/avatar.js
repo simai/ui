@@ -889,24 +889,64 @@ __webpack_require__.r(__webpack_exports__);
 const INITIALS_SKIP_WORDS = new Set(["а", "без", "в", "во", "для", "до", "за", "из", "из-за", "из-под", "и", "к", "ко", "между", "на", "над", "о", "об", "от", "по", "под", "при", "про", "с", "со", "у", "через", "the", "a", "an", "and", "for", "from", "in", "of", "on", "to"]);
 function normalizeInitialsWords(value = "") {
   return String(value || "").trim().split(/[\s/|]+/).map(word => word.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, "")).filter(Boolean);
-}
-function getInitials(value = "", options = {}) {
-  const {
-    maxLetters = 2,
-    skipWords = INITIALS_SKIP_WORDS
-  } = options;
-  const words = normalizeInitialsWords(value);
-  const significantWords = words.filter((word, index) => index === 0 || !skipWords.has(String(word).toLowerCase()));
+} // The first character a reader sees: a whole grapheme, so a letter written
+// with a combining accent («E» + U+0301) or outside the basic plane keeps all
+// of its code points. Array.from alone splits surrogate pairs correctly but
+// not combining marks; Intl.Segmenter does both where the platform has it.
 
-  if (!significantWords.length) {
+function firstGrapheme(word) {
+  const Segmenter = globalThis.Intl?.Segmenter;
+
+  if (typeof Segmenter === "function") {
+    for (const {
+      segment
+    } of new Segmenter(undefined, {
+      granularity: "grapheme"
+    }).segment(word)) {
+      return segment;
+    }
+
     return "";
   }
 
-  if (significantWords.length > 1) {
-    return significantWords.slice(0, maxLetters).map(word => Array.from(word)[0] || "").join("").toUpperCase();
+  return Array.from(word)[0] || "";
+} // The one rule for initials (reuse audit 2026-11-02, finding 10): sf-avatar,
+// the context menu, the admin menu and the chat drew them by five rules that
+// disagreed on a hyphen, an empty name and a letter outside the basic plane.
+//
+//   «Анна Смирнова»        → «АС»   the first letters of the first two words
+//   «Отдел по работе»      → «ОР»   a preposition after the first word is skipped
+//   «Жан-Поль»             → «ЖП»   one hyphenated word reads as its parts
+//   «Анна-Мария Смирнова»  → «АС»   ...but a name of several words by its words
+//   «Анна»                 → «А»
+//   «»                     → ''     or `fallback`: '?' where text must stand
+//
+// `maxLetters` caps the letters (two), `skipWords` replaces the skipped words,
+// `locale` capitalises by a locale's rule.
+
+
+function getInitials(value = "", options = {}) {
+  const {
+    maxLetters = 2,
+    skipWords = INITIALS_SKIP_WORDS,
+    fallback = "",
+    locale
+  } = options;
+  const words = normalizeInitialsWords(value);
+  let significantWords = words.filter((word, index) => index === 0 || !skipWords.has(String(word).toLowerCase())); // One word written with a hyphen or a dash is a compound name: its parts
+  // are its words. Split before the skip list, «из-за» would be two words.
+
+  if (significantWords.length === 1) {
+    const parts = significantWords[0].split(/[-\u2010-\u2015]+/u).filter(Boolean);
+    if (parts.length > 1) significantWords = parts;
   }
 
-  return Array.from(significantWords[0]).slice(0, 1).join("").toUpperCase();
+  if (!significantWords.length) {
+    return String(fallback);
+  }
+
+  const letters = significantWords.length > 1 ? significantWords.slice(0, Math.max(1, maxLetters)).map(firstGrapheme).join("") : firstGrapheme(significantWords[0]);
+  return (locale ? letters.toLocaleUpperCase(locale) : letters.toUpperCase()) || String(fallback);
 }
 
 /***/ },
@@ -1006,7 +1046,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-avata
 /***/ "488a9707ea64"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.avatar","tag":"sf-avatar","version":"1.2.1","kind":"leaf","settings":{"size":{"type":"enum","values":["1/4","1/3","1/2","1","2","3"],"default":"1"},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"shape":{"type":"enum","values":["circle","square"],"default":"circle"},"image-url":{"type":"string","default":""},"image-alt":{"type":"string","default":""},"no-wrap":{"type":"boolean","default":false},"text":{"type":"string","default":""},"tone":{"type":"enum","values":["","auto","rose","amber","lime","green","teal","sky","indigo","violet"],"default":""},"status":{"type":"enum","values":["none","online","offline","company","verified"],"default":"none"},"heading":{"type":"string","default":""},"description":{"type":"string","default":""},"meta":{"type":"string","default":""},"meta-icon":{"type":"icon","default":""},"card-variant":{"type":"enum","values":["square","portrait"],"default":"square"},"disabled":{"type":"boolean","default":false},"badge-count":{"type":"string","default":""},"badge-dot":{"type":"boolean","default":false},"badge-cap":{"type":"number","integer":true,"min":1,"default":99},"badge-label":{"type":"string","default":""}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-avatar-background-color":{"type":"color","state":"default"},"--sf-avatar-color":{"type":"color","state":"default"},"--sf-avatar-border-color":{"type":"color","state":"default"},"--sf-avatar-border-width":{"type":"length","state":"default"},"--sf-avatar-radius":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.avatar","tag":"sf-avatar","version":"1.2.2","kind":"leaf","settings":{"size":{"type":"enum","values":["1/4","1/3","1/2","1","2","3"],"default":"1"},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"shape":{"type":"enum","values":["circle","square"],"default":"circle"},"image-url":{"type":"string","default":""},"image-alt":{"type":"string","default":""},"no-wrap":{"type":"boolean","default":false},"text":{"type":"string","default":""},"tone":{"type":"enum","values":["","auto","rose","amber","lime","green","teal","sky","indigo","violet"],"default":""},"status":{"type":"enum","values":["none","online","offline","company","verified"],"default":"none"},"heading":{"type":"string","default":""},"description":{"type":"string","default":""},"meta":{"type":"string","default":""},"meta-icon":{"type":"icon","default":""},"card-variant":{"type":"enum","values":["square","portrait"],"default":"square"},"disabled":{"type":"boolean","default":false},"badge-count":{"type":"string","default":""},"badge-dot":{"type":"boolean","default":false},"badge-cap":{"type":"number","integer":true,"min":1,"default":99},"badge-label":{"type":"string","default":""}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-avatar-background-color":{"type":"color","state":"default"},"--sf-avatar-color":{"type":"color","state":"default"},"--sf-avatar-border-color":{"type":"color","state":"default"},"--sf-avatar-border-width":{"type":"length","state":"default"},"--sf-avatar-radius":{"type":"length","state":"default"}}}');
 
 /***/ },
 

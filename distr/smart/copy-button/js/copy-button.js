@@ -2,6 +2,81 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "e081a020262e"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   copyText: () => (/* binding */ copyText),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+// Copying text, with the fallback (reuse audit 2026-11-02, finding 11). The
+// clipboard class component and sf-copy-button each wrote this, and
+// chat-message a third time; the order is theirs: the Clipboard API on a
+// secure page, and execCommand('copy') over a hidden field where the API is
+// absent or refused. A secure page whose clipboard permission is denied -- a
+// policy, an embedded frame, a browser that asked and was answered no -- has
+// the API and still refuses it; reading "present" as "allowed" left the
+// fallback that exists for exactly this unreached (component/clipboard,
+// 2026-10).
+
+/**
+ * Copies `text`. Settles with how it was copied, 'native' or 'legacy', or
+ * rejects: Error('copy_unsupported') when the fallback copied nothing, or the
+ * platform's own error (NotAllowedError, SecurityError) when it threw.
+ * `document` is the document whose body holds the fallback field: the
+ * element's own, for a component in another frame.
+ */
+async function copyText(text, {
+  document: documentRef = globalThis.document
+} = {}) {
+  const value = String(text ?? '');
+  const view = documentRef?.defaultView ?? globalThis;
+
+  if (view.isSecureContext && view.navigator?.clipboard?.writeText) {
+    try {
+      await view.navigator.clipboard.writeText(value);
+      return 'native';
+    } catch {// Refused: the fallback is for exactly this.
+    }
+  }
+
+  if (!documentRef?.body || typeof documentRef.execCommand !== 'function') throw new Error('copy_unsupported');
+  const area = documentRef.createElement('textarea'); // The class is the clipboard component's (its sheet hides it); the inline
+  // style keeps the field out of sight on a page without that sheet.
+
+  area.className = 'sf-clipboard-fallback';
+  area.value = value;
+  area.setAttribute('readonly', '');
+  area.setAttribute('aria-hidden', 'true');
+  area.style.cssText = 'position:fixed;inset-inline-start:-9999px;inset-block-start:0;opacity:0';
+  documentRef.body.append(area);
+  area.select(); // iOS selects nothing on select() alone.
+
+  area.setSelectionRange?.(0, value.length);
+  let copied = false;
+
+  try {
+    copied = documentRef.execCommand('copy');
+  } finally {
+    area.remove();
+  }
+
+  if (!copied) throw new Error('copy_unsupported');
+  return 'legacy';
+} // Core publishes the helper; component bundles that carry their own copy reuse
+// an already published one instead of replacing it. SF.Clipboard (capital C)
+// is the clipboard component's script API; this is the bare function.
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.SF = globalThis.SF || {};
+  if (!globalThis.SF.copyText) globalThis.SF.copyText = copyText;
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (copyText);
+
+/***/ },
+
 /***/ "a0843a0bdae3"
 (module, __webpack_exports__, __webpack_require__) {
 
@@ -9,14 +84,15 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("deb1a4d61565");
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5b7d7695b41b");
-/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("423d1f666e7a");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("54287badf298");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("0a7bdc3079d5");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("c41db2e7e67a");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("fbbe23a354f7");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("e147f64708ff");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_clipboard_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e081a020262e");
+/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("423d1f666e7a");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("54287badf298");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("0a7bdc3079d5");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("c41db2e7e67a");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("fbbe23a354f7");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("e147f64708ff");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
 // sf-copy-button: copies a value and says so (owner-approved assignment,
@@ -31,6 +107,9 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 // sf-copy-button-copy-failed, the old sf-copy and sf-copy-error their dated
 // aliases (aliases.json); the words are the language files'.
 
+ // The copy and its fallback are core's (core/js/clipboard.js, SF.copyText;
+// reuse audit 2026-11-02, finding 11), shared with the clipboard class.
+
 
 
 
@@ -41,47 +120,16 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 function isMac() {
   return /Mac|iPhone|iPad/u.test(globalThis.navigator?.platform ?? globalThis.navigator?.userAgent ?? '');
-} // The clipboard, and execCommand where the API is absent or refused; the
-// same order the clipboard class uses.
-
-
-async function writeText(text, documentRef) {
-  if (globalThis.isSecureContext && globalThis.navigator?.clipboard?.writeText) {
-    try {
-      await globalThis.navigator.clipboard.writeText(text);
-      return 'native';
-    } catch {
-      /* refused: the fallback is for exactly this */
-    }
-  }
-
-  const area = documentRef.createElement('textarea');
-  area.value = text;
-  area.setAttribute('readonly', '');
-  area.style.cssText = 'position:fixed;inset-inline-start:-9999px;opacity:0';
-  documentRef.body.append(area);
-  area.select();
-  let copied = false;
-
-  try {
-    copied = documentRef.execCommand('copy');
-  } catch {
-    copied = false;
-  }
-
-  area.remove();
-  if (!copied) throw new Error('denied');
-  return 'legacy';
 }
 
-const CopyButtonElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_3__, {
+const CopyButtonElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_4__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_5__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_6__
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_6__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_7__
   },
   source: 'ru',
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_4__,
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_5__,
   actions: {
     copy() {
       return this.runCopy();
@@ -190,7 +238,9 @@ class SfCopyButton extends CopyButtonElement {
     try {
       const text = this.source();
       if (!text) throw new Error('empty_source');
-      const method = await writeText(text, this.ownerDocument);
+      const method = await (0,_core_js_clipboard_js__WEBPACK_IMPORTED_MODULE_2__.copyText)(text, {
+        document: this.ownerDocument
+      });
       this.setPhase('success', this.successText || this.words('copied'));
       this.sfEmit('copied', {
         text,
@@ -275,7 +325,7 @@ class SfCopyButton extends CopyButtonElement {
   }
 
   template() {
-    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_2__.renderCopyButtonTemplate)(this.templateContext());
+    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_3__.renderCopyButtonTemplate)(this.templateContext());
   }
 
 }
@@ -372,7 +422,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-copy-
 /***/ "54287badf298"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.copy-button","tag":"sf-copy-button","version":"1.1.7","kind":"leaf","settings":{"value":{"type":"string","default":""},"target":{"type":"string","default":""},"text":{"type":"string","default":""},"label":{"type":"string","default":""},"size":{"type":"enum","values":["1/3","1/2","1","2"],"default":"1/2"},"appearance":{"type":"enum","values":["link","ghost","outline","tonal"],"default":"link"},"icon":{"type":"icon","default":"content_copy"},"success-icon":{"type":"icon","default":"check"},"success-text":{"type":"string","default":""},"error-text":{"type":"string","default":""},"duration":{"type":"number","integer":true,"min":0,"default":2000}},"values":{},"events":{"copied":{"carries":{"text":"string","method":{"type":"enum","values":["native","legacy"]}},"own-verb":true},"copy-failed":{"carries":{"code":{"type":"enum","values":["empty_source","missing_target","ambiguous_source","denied"]}},"own-verb":true}},"actions":{"copy":{"waits":true}},"css-variables":{"--sf-copy-button-display":{"type":"keyword","state":"default"},"--sf-copy-button-vertical-align":{"type":"keyword","state":"default"},"--sf-copy-button-pending-opacity":{"type":"number","state":"pending"},"--sf-copy-button-success-color":{"type":"color","state":"success"},"--sf-copy-button-error-color":{"type":"color","state":"error"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.copy-button","tag":"sf-copy-button","version":"1.1.8","kind":"leaf","settings":{"value":{"type":"string","default":""},"target":{"type":"string","default":""},"text":{"type":"string","default":""},"label":{"type":"string","default":""},"size":{"type":"enum","values":["1/3","1/2","1","2"],"default":"1/2"},"appearance":{"type":"enum","values":["link","ghost","outline","tonal"],"default":"link"},"icon":{"type":"icon","default":"content_copy"},"success-icon":{"type":"icon","default":"check"},"success-text":{"type":"string","default":""},"error-text":{"type":"string","default":""},"duration":{"type":"number","integer":true,"min":0,"default":2000}},"values":{},"events":{"copied":{"carries":{"text":"string","method":{"type":"enum","values":["native","legacy"]}},"own-verb":true},"copy-failed":{"carries":{"code":{"type":"enum","values":["empty_source","missing_target","ambiguous_source","denied"]}},"own-verb":true}},"actions":{"copy":{"waits":true}},"css-variables":{"--sf-copy-button-display":{"type":"keyword","state":"default"},"--sf-copy-button-vertical-align":{"type":"keyword","state":"default"},"--sf-copy-button-pending-opacity":{"type":"number","state":"pending"},"--sf-copy-button-success-color":{"type":"color","state":"success"},"--sf-copy-button-error-color":{"type":"color","state":"error"}}}');
 
 /***/ },
 

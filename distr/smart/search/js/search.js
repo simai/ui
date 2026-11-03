@@ -2,6 +2,92 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "1373e294ec38"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BREAKPOINTS: () => (/* binding */ BREAKPOINTS),
+/* harmony export */   breakpointMedia: () => (/* binding */ breakpointMedia),
+/* harmony export */   breakpointQuery: () => (/* binding */ breakpointQuery),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   matchesBreakpoint: () => (/* binding */ matchesBreakpoint)
+/* harmony export */ });
+// The Framework's breakpoints for scripts (reuse audit 2026-11-02, finding 6).
+// The sheets switch at the steps of core/scss/vars/_sf_var__breakpoint.scss;
+// a component that also decides in script (sf-contents, sf-site-header,
+// sf-search) had copied the steps by hand, word for word, and nine such
+// constants (48rem, 60rem, 1023px, 1024) had drifted apart elsewhere, so one
+// admin screen switched at two points. The same values here, and
+// tests/breakpoint-ladder.contract.test.mjs holds the two files equal.
+
+/** The ladder: each name is the width it starts at, in rem as the sheets write it. */
+const BREAKPOINTS = Object.freeze({
+  xs: '0rem',
+  sm: '32rem',
+  // g6, 512px
+  md: '44rem',
+  // h1, 704px
+  lg: '60rem',
+  // h5, 960px
+  xl: '72rem',
+  // h8, 1152px
+  xxl: '80rem' // i0, 1280px
+
+}); // The step under a threshold, as the sheets' media-breakpoint-down writes it:
+// one pixel less, in rem (_mix__breakpoint.scss breakpoint-max).
+
+const PIXEL_REM = 1 / 16;
+/**
+ * The media query of a breakpoint: from its width up, or with `below: true`
+ * the widths under it -- the two sides the sheets switch on. An unknown name
+ * is null, so a typo is not a query that always matches.
+ *
+ *   breakpointQuery('md')                  (min-width: 44rem)
+ *   breakpointQuery('md', {below: true})   (max-width: 43.9375rem)
+ */
+
+function breakpointQuery(name, {
+  below = false
+} = {}) {
+  if (!Object.hasOwn(BREAKPOINTS, name)) return null;
+  const rem = Number.parseFloat(BREAKPOINTS[name]);
+  if (below) return rem > 0 ? `(max-width: ${rem - PIXEL_REM}rem)` : 'not all';
+  return `(min-width: ${rem}rem)`;
+}
+/** The page's MediaQueryList for a breakpoint, to read and to follow; null without matchMedia or for an unknown name. */
+
+function breakpointMedia(name, {
+  below = false,
+  view = globalThis
+} = {}) {
+  const query = breakpointQuery(name, {
+    below
+  });
+  return query && typeof view?.matchMedia === 'function' ? view.matchMedia(query) : null;
+}
+/** Whether the page is at least as wide as the breakpoint now (or under it, with `below`). */
+
+function matchesBreakpoint(name, options = {}) {
+  return breakpointMedia(name, options)?.matches === true;
+}
+const Breakpoints = Object.freeze({
+  ladder: BREAKPOINTS,
+  query: breakpointQuery,
+  media: breakpointMedia,
+  matches: matchesBreakpoint
+}); // Core publishes the helper; component bundles that carry their own copy reuse
+// an already published one instead of replacing it.
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.SF = globalThis.SF || {};
+  if (!globalThis.SF.breakpoints) globalThis.SF.breakpoints = Breakpoints;
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Breakpoints);
+
+/***/ },
+
 /***/ "51250bf01ab0"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -282,19 +368,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("deb1a4d61565");
 /* harmony import */ var _core_js_preferences_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("51250bf01ab0");
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("5b7d7695b41b");
-/* harmony import */ var _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("18003344cff0");
-/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("3298a6643d1e");
-/* harmony import */ var _js_host__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("9e5c88241328");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("e264eb73f918");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("b6bee636c245");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("028000b98469");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("ce3ad881d0a0");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__, _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_5__]);
-([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__, _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("1373e294ec38");
+/* harmony import */ var _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("18003344cff0");
+/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("3298a6643d1e");
+/* harmony import */ var _js_host__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("9e5c88241328");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("e264eb73f918");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("b6bee636c245");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("028000b98469");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("ce3ad881d0a0");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__, _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__, _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_5__);
 // sf-search: the site search of a SIMAI site -- a window with a large rounded
 // field and a separate results card under it, over a light scrim; a
 // full-screen sheet on a phone. Variant 1 «Прожектор» of the owner's prototype
@@ -339,6 +426,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 
 
 
+
 const DEBOUNCE = 120;
 const OVERLAY_CONTAINER = '[data-sf-overlay-container], [data-sf-drawer-container]'; // The port's three answers (no revision travels here, so nothing conflicts).
 
@@ -359,10 +447,10 @@ const BLOCK_CAPABILITY = {
   popular: 'popular',
   actions: 'actions'
 }; // The step at which the card has room for the preview pane beside the list:
-// the Framework's lg (core/scss/vars/_sf_var__breakpoint.scss), as the sheet's
-// own media rule reads it.
+// the Framework's lg (core/js/breakpoints.js, the ladder the sheet's own media
+// rule reads; reuse audit 2026-11-02, finding 6).
 
-const PREVIEW_STEP = '60rem';
+const PREVIEW_STEP = 'lg';
 let sequence = 0;
 
 const applied = () => ({
@@ -450,11 +538,11 @@ function highlight(title, query) {
 
   return [title, '', ''];
 }
-const SearchElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_7__, {
+const SearchElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_8__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_8__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_9__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__
   },
   source: 'ru',
   actions: {
@@ -507,7 +595,7 @@ class SfSearch extends SearchElement {
     this._portRequested = false;
     this._querySequence = 0;
     this._previewSequence = 0;
-    this._previewMedia = typeof globalThis.matchMedia === 'function' ? globalThis.matchMedia(`(min-width: ${PREVIEW_STEP})`) : null;
+    this._previewMedia = (0,_core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_4__.breakpointMedia)(PREVIEW_STEP);
 
     this._onPreviewMedia = () => this.onPreviewRoomChange();
 
@@ -611,7 +699,7 @@ class SfSearch extends SearchElement {
     if (!hit) return;
     if (plainKey(hit) && editable(event.composedPath?.()[0] ?? event.target)) return; // An open window under another layer does not take the key.
 
-    if (this.isOpen && !(0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_4__.isTopLayer)(this)) return;
+    if (this.isOpen && !(0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_5__.isTopLayer)(this)) return;
     event.preventDefault();
     if (this.isOpen) this.focusField({
       select: true
@@ -633,7 +721,7 @@ class SfSearch extends SearchElement {
       cancelable: true
     })) return refused('prevented');
     this._returnTo = document.activeElement;
-    this._returnAncestors = (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_4__.landmarksAround)(this._returnTo);
+    this._returnAncestors = (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_5__.landmarksAround)(this._returnTo);
     this.isOpen = true;
     this.query = '';
     this.scope = '';
@@ -646,7 +734,7 @@ class SfSearch extends SearchElement {
     this.sfHostState('data-open', true);
     this.mountPortal();
     const contained = this._contained;
-    (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_4__.openLayer)(this, {
+    (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_5__.openLayer)(this, {
       kind: 'modal',
       // The stack's default page lock (lockPageScroll), the one every layer takes.
       locksPage: !contained,
@@ -705,14 +793,14 @@ class SfSearch extends SearchElement {
     this._controller?.abort();
     this._controller = null;
     this.sfHostState('data-open', false);
-    const wasTop = (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_4__.closeLayer)(this, {
+    const wasTop = (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_5__.closeLayer)(this, {
       restoreFocus: false
     });
     this.unmountPortal();
     this.syncTriggers(); // Focus goes back to what had it when the window opened (§19.2): the
     // trigger, or the page where the key was pressed.
 
-    if (restoreFocus) (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_4__.returnLayerFocus)(wasTop, this._returnTo, this._returnAncestors);
+    if (restoreFocus) (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_5__.returnLayerFocus)(wasTop, this._returnTo, this._returnAncestors);
     if (emit) this.sfEmit('closed', {
       reason
     });
@@ -727,7 +815,7 @@ class SfSearch extends SearchElement {
     portal.className = 'sf-search-portal';
     portal.setAttribute('data-sf-search-portal', this._id);
     home.append(portal);
-    (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_4__.carryLayerOrigin)(portal, this, {
+    (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_5__.carryLayerOrigin)(portal, this, {
       prefixes: ['--sf-search-']
     });
     this._portal = portal;
@@ -776,7 +864,7 @@ class SfSearch extends SearchElement {
 
 
   onEscape(event) {
-    if (event.defaultPrevented || !this.isOpen || !(0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_4__.isTopLayer)(this)) return false;
+    if (event.defaultPrevented || !this.isOpen || !(0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_5__.isTopLayer)(this)) return false;
 
     if (this.query) {
       this.setQuery('');
@@ -799,7 +887,7 @@ class SfSearch extends SearchElement {
   onTab(event) {
     if (!this.isOpen) return;
     const root = this.dialog();
-    const items = (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_4__.focusablesIn)(root);
+    const items = (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_5__.focusablesIn)(root);
     if (!items.length) return;
     const first = items[0];
     const last = items.at(-1);
@@ -1028,8 +1116,8 @@ class SfSearch extends SearchElement {
   onPortConnected(port) {
     const version = text(port?.version);
 
-    if (typeof port?.raise !== 'function' || !_js_host__WEBPACK_IMPORTED_MODULE_6__.SUPPORTED_PORT_VERSIONS.includes(version)) {
-      throw new TypeError(`sf-search speaks ${_js_host__WEBPACK_IMPORTED_MODULE_6__.PORT_ID} ${_js_host__WEBPACK_IMPORTED_MODULE_6__.SUPPORTED_PORT_VERSIONS.join(', ')}`);
+    if (typeof port?.raise !== 'function' || !_js_host__WEBPACK_IMPORTED_MODULE_7__.SUPPORTED_PORT_VERSIONS.includes(version)) {
+      throw new TypeError(`sf-search speaks ${_js_host__WEBPACK_IMPORTED_MODULE_7__.PORT_ID} ${_js_host__WEBPACK_IMPORTED_MODULE_7__.SUPPORTED_PORT_VERSIONS.join(', ')}`);
     }
 
     this.answer = null;
@@ -1064,15 +1152,15 @@ class SfSearch extends SearchElement {
     const key = text(this.recentKey).trim();
     const was = this._builtinFor;
     if (this._builtin && was && was.provider === provider && was.url === url && was.key === key) return this._builtin;
-    const recent = (0,_js_host__WEBPACK_IMPORTED_MODULE_6__.recentStore)({
+    const recent = (0,_js_host__WEBPACK_IMPORTED_MODULE_7__.recentStore)({
       key,
       preferences
     });
-    this._builtin = provider ? (0,_js_host__WEBPACK_IMPORTED_MODULE_6__.providerHost)(provider, {
+    this._builtin = provider ? (0,_js_host__WEBPACK_IMPORTED_MODULE_7__.providerHost)(provider, {
       recent
-    }) : url ? (0,_js_host__WEBPACK_IMPORTED_MODULE_6__.indexHost)(url, {
+    }) : url ? (0,_js_host__WEBPACK_IMPORTED_MODULE_7__.indexHost)(url, {
       recent
-    }) : (0,_js_host__WEBPACK_IMPORTED_MODULE_6__.builtinSearchHost)({
+    }) : (0,_js_host__WEBPACK_IMPORTED_MODULE_7__.builtinSearchHost)({
       recent
     });
     this._builtinFor = {
@@ -1228,7 +1316,7 @@ class SfSearch extends SearchElement {
       sequence: asked,
       query,
       scope: this.scope || null,
-      limit: _js_host__WEBPACK_IMPORTED_MODULE_6__.RESULT_LIMIT,
+      limit: _js_host__WEBPACK_IMPORTED_MODULE_7__.RESULT_LIMIT,
       offset: 0
     }, {
       signal: controller.signal,
@@ -1535,7 +1623,7 @@ class SfSearch extends SearchElement {
       keyClear: this.sfWord('key-clear-label'),
       keyClose: this.sfWord('key-close-label')
     };
-    (0,lit__WEBPACK_IMPORTED_MODULE_0__.render)((0,_js_templates_default__WEBPACK_IMPORTED_MODULE_5__.renderSearchWindow)({
+    (0,lit__WEBPACK_IMPORTED_MODULE_0__.render)((0,_js_templates_default__WEBPACK_IMPORTED_MODULE_6__.renderSearchWindow)({
       component: this,
       ids: {
         dialog: `${this._id}-dialog`,
@@ -1571,7 +1659,7 @@ class SfSearch extends SearchElement {
   }
 
   template() {
-    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_5__.renderSearchTemplate)(this.templateContext());
+    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_6__.renderSearchTemplate)(this.templateContext());
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -2199,7 +2287,7 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "e264eb73f918"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.search","tag":"sf-search","version":"1.2.0","kind":"leaf","settings":{"index":{"type":"string","default":""},"provider":{"type":"object","default":null},"for":{"type":"string","default":""},"shortcut":{"type":"string","default":"mod+k /"},"label":{"type":"string","default-from":"runtime.label"},"placeholder":{"type":"string","default-from":"runtime.placeholder"},"scopes":{"type":"boolean","default":true},"recent":{"type":"boolean","default":true},"recent-key":{"type":"string","default":"site"},"popular":{"type":"boolean","default":true},"actions":{"type":"boolean","default":true},"path":{"type":"boolean","default":true},"keys":{"type":"boolean","default":true}},"values":{},"events":{"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"navigate":{"carries":{"id":{"type":"string"},"href":{"type":"string"},"action":{"type":"string"},"query":{"type":"string"},"group":{"type":"string"}},"cancelable":true},"intent":{"carries":{"intent":{"type":"enum","values":["query.change","result.open","result.preview","action.run","recent.forget","recent.clear"]},"payload":{"type":"object"},"answer":{"type":"object"}}}},"actions":{"open":{},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"toggle":{}},"layer":{"kind":"modal","locks-page":true,"traps-focus":true},"port":{"id":"simai.search-port","version":"1.0.0","contract":"src/core/contracts/ports/simai.search-port/1.0.0/port.json"},"presentation":{"skeleton":{"late":[]}},"host-states":{"data-open":"boolean"},"css-variables":{"--sf-search-inline-size":{"type":"length","state":"open"},"--sf-search-inset-block-start":{"type":"length","state":"open"},"--sf-search-background":{"type":"color","state":"open"},"--sf-search-scrim-color":{"type":"color","state":"open"},"--sf-search-mark-color":{"type":"color","state":"open"},"--sf-search-radius":{"type":"length","state":"open"},"--sf-search-list-max-block-size":{"type":"length","state":"open"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.search","tag":"sf-search","version":"1.2.1","kind":"leaf","settings":{"index":{"type":"string","default":""},"provider":{"type":"object","default":null},"for":{"type":"string","default":""},"shortcut":{"type":"string","default":"mod+k /"},"label":{"type":"string","default-from":"runtime.label"},"placeholder":{"type":"string","default-from":"runtime.placeholder"},"scopes":{"type":"boolean","default":true},"recent":{"type":"boolean","default":true},"recent-key":{"type":"string","default":"site"},"popular":{"type":"boolean","default":true},"actions":{"type":"boolean","default":true},"path":{"type":"boolean","default":true},"keys":{"type":"boolean","default":true}},"values":{},"events":{"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"navigate":{"carries":{"id":{"type":"string"},"href":{"type":"string"},"action":{"type":"string"},"query":{"type":"string"},"group":{"type":"string"}},"cancelable":true},"intent":{"carries":{"intent":{"type":"enum","values":["query.change","result.open","result.preview","action.run","recent.forget","recent.clear"]},"payload":{"type":"object"},"answer":{"type":"object"}}}},"actions":{"open":{},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"toggle":{}},"layer":{"kind":"modal","locks-page":true,"traps-focus":true},"port":{"id":"simai.search-port","version":"1.0.0","contract":"src/core/contracts/ports/simai.search-port/1.0.0/port.json"},"presentation":{"skeleton":{"late":[]}},"host-states":{"data-open":"boolean"},"css-variables":{"--sf-search-inline-size":{"type":"length","state":"open"},"--sf-search-inset-block-start":{"type":"length","state":"open"},"--sf-search-background":{"type":"color","state":"open"},"--sf-search-scrim-color":{"type":"color","state":"open"},"--sf-search-mark-color":{"type":"color","state":"open"},"--sf-search-radius":{"type":"length","state":"open"},"--sf-search-list-max-block-size":{"type":"length","state":"open"}}}');
 
 /***/ },
 
