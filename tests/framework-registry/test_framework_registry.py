@@ -196,12 +196,12 @@ class FrameworkContractRegistryTest(unittest.TestCase):
         # The table the recipe places is Larena's (package larena): it is not a free
         # entry, so it is named, by package, in recipe_packages, and the walk
         # goes on through what its package reference says it needs.
-        self.assertNotIn("smart.data-view", closure)
+        self.assertNotIn("smart.view-table", closure)
         self.assertIn("smart.list-item", closure, "a dependency is in the closure even when it is not offered")
         self.assertIn("smart.tag", closure, "reached through the package table's requirements")
         self.assertEqual(
             self.registry["indexes"]["recipe_packages"]["recipe.admin.collection"],
-            {"pro": ["smart.data-view"]},
+            {"pro": ["smart.view-table"]},
         )
         self.assertEqual(
             self.registry["indexes"]["packages"],
@@ -210,22 +210,22 @@ class FrameworkContractRegistryTest(unittest.TestCase):
                     "owner": "simai/ui-pro",
                     "provides": [
                         "smart.admin-menu",
-                        "smart.change-confirm",
                         "smart.chat-composer",
                         "smart.chat-interlocutor",
                         "smart.chat-message",
+                        "smart.chat-threads",
                         "smart.chat-window",
-                        "smart.content-editor",
-                        "smart.data-view",
-                        "smart.data-view-composite",
+                        "smart.confirm-change",
+                        "smart.editor-content",
                         "smart.mail-canvas",
                         "smart.mail-inspector",
                         "smart.mail-letters",
                         "smart.mail-library",
                         "smart.mail-structure",
                         "smart.message-log",
-                        "smart.property-view",
-                        "smart.thread-list",
+                        "smart.view",
+                        "smart.view-properties",
+                        "smart.view-table",
                     ],
                 }
             },
@@ -250,8 +250,8 @@ class FrameworkContractRegistryTest(unittest.TestCase):
             self.by_id["recipe.admin.collection"]["requires"],
             [
                 "smart.button",
-                "smart.data-view",
                 "smart.pagination",
+                "smart.view-table",
                 "utility.display",
                 "utility.flex-direction",
                 "utility.gap",
@@ -330,7 +330,7 @@ class FrameworkContractRegistryTest(unittest.TestCase):
         self.assertIn("component.buttons", entities)
         self.assertIn("utility.display", entities)
         self.assertIn("smart.pagination", entities)
-        self.assertNotIn("smart.data-view", entities, "a Pro component is not documented as a free entity")
+        self.assertNotIn("smart.view-table", entities, "a Pro component is not documented as a free entity")
         self.assertIn("sf-button", entities["component.buttons"]["public_contract"]["classes"])
         self.assertIn("sf-button--primary", entities["component.buttons"]["public_contract"]["classes"])
         self.assertIn("--sf-button--radius", entities["component.buttons"]["public_contract"]["custom_properties"])
