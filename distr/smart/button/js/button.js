@@ -237,7 +237,16 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
-const COMPONENT_ATTRIBUTES = new Set(["template", "size", "appearance", "type", "scheme", "status", "text", "icon", "icon-start", "icon-end", "icon-left", "icon-right", "icon-position", "text-position", "spacing", "tightness", "radius", "root-class", "loading", "segment", "disabled", "native-type", "expanded", "pressed", "shortcut", "shortcut-listen", "aria-label", "class", "style", "id", "slot"]);
+const COMPONENT_ATTRIBUTES = new Set(["template", "size", "appearance", "type", "scheme", "status", "text", "icon", "icon-start", "icon-end", "icon-left", "icon-right", "icon-position", "text-position", "spacing", "tightness", "radius", "root-class", "loading", "segment", "disabled", "native-type", "href", "expanded", "pressed", "shortcut", "shortcut-listen", "aria-label", "class", "style", "id", "slot"]); // href (1.4.0) takes the addresses a link may follow: a relative one, a
+// fragment, http(s), mailto and tel. Any other scheme (javascript:, data:)
+// draws the button as a button.
+
+const SAFE_HREF = /^(?:[^:/?#]*(?:[/?#]|$)|https?:|mailto:|tel:)/iu;
+
+function linkAddress(value) {
+  const href = String(value || "").trim();
+  return href && SAFE_HREF.test(href) ? href : "";
+}
 
 function applyButtonAttributes(host, button) {
   host?.forwardHostAttributes(button, {
@@ -369,6 +378,7 @@ class SfButton extends ButtonElement {
       size: this.size,
       iconPosition: this.iconPosition,
       nativeType: this.nativeType,
+      href: linkAddress(this.getAttribute("href")),
       radius: this.radius,
       ariaLabel: this.getAttribute("aria-label") || "",
       expanded: this.expanded,
@@ -438,7 +448,7 @@ class SfButton extends ButtonElement {
     const target = event.composedPath?.()[0] ?? event.target;
     if (!(0,_js_shortcut__WEBPACK_IMPORTED_MODULE_5__.isCommandShortcut)(parsed) && (0,_js_shortcut__WEBPACK_IMPORTED_MODULE_5__.isEditableTarget)(target)) return;
     const button = this.querySelector(".sf-button");
-    if (!button || button.disabled || !button.getClientRects().length) return;
+    if (!button || button.disabled || button.getAttribute("aria-disabled") === "true" || !button.getClientRects().length) return;
     event.preventDefault();
     button.click();
   } // §8: a person's press of the native button, sent once as sf-button-press.
@@ -449,8 +459,9 @@ class SfButton extends ButtonElement {
 
   handlePress(event) {
     const button = this.querySelector(".sf-button");
-    if (!button || !(event.target instanceof Node) || !button.contains(event.target)) return;
-    if (button.disabled) return;
+    if (!button || !(event.target instanceof Node) || !button.contains(event.target)) return; // A link that is off (href, disabled or loading: 1.4.0) is not pressed either.
+
+    if (button.disabled || button.getAttribute("aria-disabled") === "true") return;
     this.sfEmit("press", {});
   }
 
@@ -501,6 +512,7 @@ class SfButton extends ButtonElement {
       loading: this.loading,
       disabled: this.disabled,
       nativeType: this.nativeType,
+      href: this.getAttribute("href") || "",
       shortcut: this.shortcut,
       shortcutListen: this.shortcutListen,
       ariaLabel: this.getAttribute("aria-label") || ""
@@ -877,6 +889,36 @@ function renderButtonTemplate(context) {
   spacing && spacing !== 'normal' ? `spacing-${spacing}` : '', radius ? `radius-${radius}` : '', rootClass, loading ? 'loading sf-button-state-loading' : '', // A toggle that is on wears the selected look the class sheet gives a
   // real two-state button (active with aria-pressed).
   context.pressed ? 'active' : ''].filter(Boolean);
+  const content = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+            ${overlayContent}
+            ${startContent}
+            ${textContent ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span
+                    class="sf-button-text-container text-${textPosition} pointer-event-none${fullText ? ' flex-1' : ''}">
+        ${textContent}
+      </span>` : ''}
+            ${endContent}${shortcutCaps.length ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<kbd class="sf-kbd--group sf-button-shortcut pointer-event-none" aria-hidden="true">${shortcutCaps.map(cap => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<kbd class=${cap.chars ? `sf-button-shortcut-key--chars-${cap.chars}` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>${cap.text}</kbd>`)}</kbd>` : ''}
+`; // href (1.4.0): a link with the button's look. The browser's own link
+  // follows it (Enter, the context menu, a new tab); a button's states that
+  // a link has no words for -- native-type, expanded, pressed -- do not
+  // apply. Disabled or loading, the link has no href, so it is not reached
+  // or followed, and says aria-disabled.
+
+  if (context.href) {
+    const inactive = Boolean(disabled || loading);
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <a
+                href=${inactive ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : context.href}
+                class=${rootClasses.join(' ')}
+                style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                role=${inactive ? 'link' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                aria-disabled=${inactive ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                aria-label=${ariaLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                aria-busy=${loading ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                aria-keyshortcuts=${context.ariaKeyShortcuts || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        >${content}</a>
+    `;
+  }
+
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <button
                 type=${nativeType}
@@ -888,15 +930,7 @@ function renderButtonTemplate(context) {
                 aria-expanded=${context.expanded === undefined ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : String(Boolean(context.expanded))}
                 aria-pressed=${context.pressed === undefined ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : String(Boolean(context.pressed))}
                 aria-keyshortcuts=${context.ariaKeyShortcuts || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-        >
-            ${overlayContent}
-            ${startContent}
-            ${textContent ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span
-                    class="sf-button-text-container text-${textPosition} pointer-event-none${fullText ? ' flex-1' : ''}">
-        ${textContent}
-      </span>` : ''}
-            ${endContent}${shortcutCaps.length ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<kbd class="sf-kbd--group sf-button-shortcut pointer-event-none" aria-hidden="true">${shortcutCaps.map(cap => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<kbd class=${cap.chars ? `sf-button-shortcut-key--chars-${cap.chars}` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>${cap.text}</kbd>`)}</kbd>` : ''}
-        </button>
+        >${content}</button>
     `;
 }
 __webpack_async_result__();
@@ -942,7 +976,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-butto
 /***/ "5bb33fb22db3"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button","tag":"sf-button","version":"1.3.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"appearance":{"type":"enum","values":["default","tonal","outline","link","surface"],"default":"default"},"scheme":{"type":"enum","values":["primary","secondary","on-surface","on-surface-variant"],"default":"primary"},"status":{"type":"enum","values":["","error"],"default":""},"text-position":{"type":"string","default":"center"},"text":{"type":"string","default":""},"segment":{"type":"string","default":""},"icon":{"type":"icon","default":""},"icon-start":{"type":"icon","default":""},"icon-end":{"type":"icon","default":""},"icon-position":{"type":"enum","values":["start","end"],"default":"start"},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"loading":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"native-type":{"type":"enum","values":["button","submit","reset"],"default":"button"},"shortcut":{"type":"string","default":""},"shortcut-listen":{"type":"boolean","default":false},"expanded":{"type":"boolean","optional":true},"pressed":{"type":"boolean","optional":true}},"values":{},"events":{"press":{"carries":{}}},"actions":{},"css-variables":{"--sf-button-background-color":{"type":"color","state":"default"},"--sf-button-color":{"type":"color","state":"default"},"--sf-button-border-color":{"type":"color","state":"default"},"--sf-button-border-width":{"type":"length","state":"default"},"--sf-button-radius":{"type":"length","state":"default"},"--sf-button-padding-inline":{"type":"length","state":"default"},"--sf-button-padding-block":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button","tag":"sf-button","version":"1.4.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"appearance":{"type":"enum","values":["default","tonal","outline","link","surface"],"default":"default"},"scheme":{"type":"enum","values":["primary","secondary","on-surface","on-surface-variant"],"default":"primary"},"status":{"type":"enum","values":["","error"],"default":""},"text-position":{"type":"string","default":"center"},"text":{"type":"string","default":""},"segment":{"type":"string","default":""},"icon":{"type":"icon","default":""},"icon-start":{"type":"icon","default":""},"icon-end":{"type":"icon","default":""},"icon-position":{"type":"enum","values":["start","end"],"default":"start"},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"loading":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"native-type":{"type":"enum","values":["button","submit","reset"],"default":"button"},"href":{"type":"string","default":""},"shortcut":{"type":"string","default":""},"shortcut-listen":{"type":"boolean","default":false},"expanded":{"type":"boolean","optional":true},"pressed":{"type":"boolean","optional":true}},"values":{},"events":{"press":{"carries":{}}},"actions":{},"css-variables":{"--sf-button-background-color":{"type":"color","state":"default"},"--sf-button-color":{"type":"color","state":"default"},"--sf-button-border-color":{"type":"color","state":"default"},"--sf-button-border-width":{"type":"length","state":"default"},"--sf-button-radius":{"type":"length","state":"default"},"--sf-button-padding-inline":{"type":"length","state":"default"},"--sf-button-padding-block":{"type":"length","state":"default"}}}');
 
 /***/ },
 

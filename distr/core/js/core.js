@@ -5280,10 +5280,14 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
       wrap: null,
       preloaderActive: false
     };
-  } // The page's spinner look (simai/ui-source#11): SF_BOOT_CONFIG.spinner names
+  } // The Loader is on the page (2026-11-04): the icons sheet then leaves the
+  // icons to the Loader's sf-icon-loaded; without it the sheet draws them
+  // once the font is in (component/icons, core.css's hold on unloaded icons).
+
+
+  if (document.documentElement) document.documentElement.setAttribute('data-sf-loader', ''); // The page's spinner look (simai/ui-source#11): SF_BOOT_CONFIG.spinner names
   // it as data-sf-spinner on html would, and is written there unless the page
   // has written its own. The spinner sheet does the rest.
-
 
   const spinnerLook = window.SF_BOOT_CONFIG.spinner;
 
@@ -9373,7 +9377,7 @@ __webpack_require__.r(__webpack_exports__);
 // core.runtime.json). A set's release says the lowest version it needs, and
 // the index lookup keeps the releases this Core satisfies. Moved by hand with
 // the passport; tests/component-set-loader.contract.test.mjs holds them equal.
-const CORE_RUNTIME = '1.25.0';
+const CORE_RUNTIME = '1.26.0';
 const SET_NAME = /^[a-z][a-z0-9-]*$/u;
 const SET_INDEX_FORMAT = 'simai.framework.set-index';
 const SET_INDEX_URL = 'https://cdn.jsdelivr.net/npm/@simai-studio/sets@1/index.json';
@@ -15526,6 +15530,20 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const SECTION_SETS = Object.freeze(['background', 'spacing', 'width', 'grid', 'alignment', 'breakout', 'visibility']);
+// A heading's and a paragraph's own parameters (2026-11-04): how the text lines
+// up and on which screens it shows, per screen.
+const TEXT_SETS = Object.freeze(['alignment', 'visibility']);
+// What a section prints when the Document leaves it unset (layout.section
+// 1.2.0, visual parity 2026-11-04, as the accepted prototype draws it): space
+// above and below (p-y-8) and the page container (width normal: frame
+// container m-inline-auto), so in the default theme no text touches the
+// page's edge. A section that sets its own values keeps them.
+const SECTION_DEFAULTS = Object.freeze({ width: 'normal', padding_y: 8 });
+// A layout grid stands in one column on the phone and three from the tablet.
+const GRID_DEFAULTS = Object.freeze({ columns: Object.freeze({ xs: 1, md: 3 }), gap: 4 });
+const CONTAINER_DEFAULTS = Object.freeze({ width: 'narrow' });
+const catalogueWord = (type) => `sf.composition.catalogue.type.${type.replace('.', '_').replaceAll('-', '_')}`;
+const variantWord = (type, id) => `sf.composition.catalogue.variant.${type.replace('.', '_').replaceAll('-', '_')}.${id.replaceAll('-', '_')}`;
 
 // Text runs, links of text runs, and since content.heading and
 // content.paragraph 1.1.0 the inline component atoms: one shape per declared
@@ -15655,6 +15673,40 @@ const CONTENT_ITEM_PARENTS = Object.freeze({
   'content.step': 'content.steps',
 });
 
+// A SIMAI Framework icon name (Material Symbols): what sf-icon draws.
+const iconName = { type: 'string', pattern: '^[a-z0-9][a-z0-9_]{0,63}$' };
+// A layout type of the one block editor: a ui-layout block with parameter sets.
+const layoutManifest = (type, fields) => ({
+  ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_2__.schemaFields)('simai.composition.type-manifest', 1),
+  type,
+  version: '1.0.0',
+  category: 'layout',
+  mode: 'composite',
+  profiles: ['ui-layout'],
+  data_schema: emptyObjectSchema,
+  props_schema: emptyObjectSchema,
+  presentation: { views: ['default'], presets: [], modifiers: [] },
+  renderer: { kind: 'builtin', name: type },
+  assets: [],
+  capabilities: ['html'],
+  ...fields,
+});
+// An element type: one smart element, printed from its inputs.
+const elementManifest = (type, asset, fields) => ({
+  ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_2__.schemaFields)('simai.composition.type-manifest', 1),
+  type,
+  version: '1.0.0',
+  category: 'smart',
+  mode: 'leaf',
+  profiles: ['ui-layout'],
+  presentation: { views: ['default'], presets: [], modifiers: [] },
+  slots: {},
+  renderer: { kind: 'builtin', name: type },
+  assets: [asset],
+  capabilities: ['html'],
+  ...fields,
+});
+
 const BUILTIN_TYPE_MANIFESTS = Object.freeze([
   {
     ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_2__.schemaFields)('simai.composition.type-manifest', 1),
@@ -15678,15 +15730,25 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
     type: 'layout.section',
     // 1.1.0 (2026-11-03): the parameter sets of the one block editor --
     // background, spacing, width, columns, alignment, edge to edge and
-    // visibility, all SIMAI Framework utilities (parameter-sets.mjs). A
-    // section without them draws as 1.0.0 did.
-    version: '1.1.0',
+    // visibility, all SIMAI Framework utilities (parameter-sets.mjs).
+    // 1.2.0 (2026-11-04): the section prints its spacing and width by default
+    // (parameter_defaults: p-y-8, the page container), and offers variants.
+    // A Document that sets them keeps its own values.
+    version: '1.2.0',
     category: 'layout',
     mode: 'composite',
     profiles: ['ui-layout'],
     data_schema: emptyObjectSchema,
     props_schema: emptyObjectSchema,
     parameter_sets: SECTION_SETS,
+    parameter_defaults: SECTION_DEFAULTS,
+    variants: [
+      { id: 'plain', label_key: variantWord('layout.section', 'plain') },
+      { id: 'soft', label_key: variantWord('layout.section', 'soft'), props: { background: 'container' } },
+      { id: 'accent', label_key: variantWord('layout.section', 'accent'), props: { background: 'primary' } },
+      { id: 'text', label_key: variantWord('layout.section', 'text'), props: { width: 'narrow' }, slots: { default: [{ id: 'area', type: 'layout.area' }] } },
+      { id: 'two-columns', label_key: variantWord('layout.section', 'two-columns'), props: { columns: { xs: 1, md: 2 }, gap: 6 } },
+    ],
     presentation: {
       views: ['default'],
       presets: ['surface', 'contrast'],
@@ -15729,7 +15791,9 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
   {
     ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_2__.schemaFields)('simai.composition.type-manifest', 1),
     type: 'content.heading',
-    version: '1.1.0',
+    // 1.2.0 (2026-11-04, visual parity): alignment and visibility per screen,
+    // the SIMAI Framework sets a section takes (text-*, hidden/block).
+    version: '1.2.0',
     category: 'content',
     mode: 'leaf',
     profiles: ['ui-layout', 'structured-content'],
@@ -15743,6 +15807,7 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
       },
     },
     props_schema: emptyObjectSchema,
+    parameter_sets: TEXT_SETS,
     presentation: { views: ['default'], presets: [], modifiers: [] },
     slots: {},
     renderer: { kind: 'builtin', name: 'content.heading' },
@@ -15752,7 +15817,8 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
   {
     ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_2__.schemaFields)('simai.composition.type-manifest', 1),
     type: 'content.paragraph',
-    version: '1.1.0',
+    // 1.3.0 (2026-11-04): alignment and visibility per screen, as the heading.
+    version: '1.3.0',
     category: 'content',
     mode: 'leaf',
     profiles: ['ui-layout', 'structured-content'],
@@ -15763,7 +15829,11 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
       properties: { content: inlineContentSchema },
     },
     props_schema: emptyObjectSchema,
-    presentation: { views: ['default'], presets: [], modifiers: ['lead', 'muted'] },
+    parameter_sets: TEXT_SETS,
+    // G-39 (1.2.0): the prototype's lead is 19/30 px in the variant ink; the
+    // SIMAI Framework's large body text role (20/28 px, 16/24 on the phone) in
+    // on-surface-variant. Muted is the variant ink alone.
+    presentation: { views: ['default'], presets: [], modifiers: ['lead', 'muted'], modifier_utilities: { lead: ['text-large', 'color-on-surface-variant'], muted: ['color-on-surface-variant'] } },
     slots: {},
     renderer: { kind: 'builtin', name: 'content.paragraph' },
     assets: [],
@@ -15883,6 +15953,97 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
     assets: [],
     capabilities: ['html', 'content-area'],
   },
+  // Layout types of the one block editor (visual parity, 2026-11-04; G-21):
+  // a container that holds part of a section in its own width, a grid of
+  // equal cells, and an empty space. Each prints SIMAI Framework utilities
+  // only, through its parameter sets and props.
+  layoutManifest('layout.container', {
+    parameter_sets: ['width', 'spacing', 'background', 'visibility'],
+    parameter_defaults: CONTAINER_DEFAULTS,
+    slots: { default: { min: 0, max: 500, categories: ['layout', 'content', 'smart'] } },
+    catalogue: { group: 'layout', icon: 'width_normal', label_key: catalogueWord('layout.container'), keywords: { en: ['container', 'width', 'wrapper'], ru: ['контейнер', 'ширина', 'обёртка'] }, order: 140 },
+    variants: [
+      { id: 'narrow', label_key: variantWord('layout.container', 'narrow') },
+      { id: 'normal', label_key: variantWord('layout.container', 'normal'), props: { width: 'normal' } },
+      { id: 'soft', label_key: variantWord('layout.container', 'soft'), props: { background: 'container', padding_y: 4, padding_x: 4 } },
+    ],
+  }),
+  layoutManifest('layout.grid', {
+    parameter_sets: ['grid', 'visibility'],
+    parameter_defaults: GRID_DEFAULTS,
+    slots: { default: { min: 0, max: 48, categories: ['layout', 'content', 'smart'] } },
+    catalogue: { group: 'layout', icon: 'grid_on', label_key: catalogueWord('layout.grid'), keywords: { en: ['grid', 'tiles', 'gallery', 'cells'], ru: ['сетка', 'плитка', 'галерея', 'ячейки'] }, order: 150 },
+    variants: [2, 3, 4].map((count) => ({
+      id: `cards-${count}`,
+      label_key: variantWord('layout.grid', `cards-${count}`),
+      props: { columns: { xs: 1, md: count } },
+      slots: { default: Array.from({ length: count }, (_, index) => ({ id: `card-${index + 1}`, type: 'content.card' })) },
+    })),
+  }),
+  layoutManifest('layout.spacer', {
+    mode: 'leaf',
+    props_schema: closed({
+      size: { type: 'integer', minimum: 1, maximum: 8, 'x-simai-utility': { class: 'p-top-{value}', responsive: true } },
+    }),
+    parameter_sets: ['visibility'],
+    parameter_defaults: { size: 6 },
+    slots: {},
+    catalogue: { group: 'layout', icon: 'height', label_key: catalogueWord('layout.spacer'), keywords: { en: ['spacer', 'space', 'gap'], ru: ['пустое место', 'отступ', 'промежуток'] }, order: 160 },
+  }),
+  // Elements (visual parity, 2026-11-04; G-20): the smart elements a block
+  // prints, each a type of its own so an author places it anywhere a block
+  // goes. Its parameters are the element's inputs (smart.manifest.json, held
+  // by elements.print); the type's defaults are the prototype's.
+  elementManifest('element.button', 'smart/button', {
+    // Unset, the button reads «Button» in the Document's language until the
+    // author writes. With an address it is a link with the button's look
+    // (sf-button 1.4.0 href); the Document's URL rule holds it.
+    data_schema: closed({ text: plainText(200), href: urlSchema }),
+    props_schema: closed({
+      appearance: { enum: ['default', 'tonal', 'outline', 'link', 'surface'], default: 'default' },
+      scheme: { enum: ['primary', 'secondary', 'on-surface', 'on-surface-variant'], default: 'primary' },
+      size: { enum: ['1/2', '1', '2'], default: '1' },
+      icon: iconName,
+      icon_position: { enum: ['start', 'end'], default: 'start' },
+    }),
+    catalogue: { group: 'elements', icon: 'smart_button', label_key: catalogueWord('element.button'), keywords: { en: ['button', 'link', 'call to action', 'cta'], ru: ['кнопка', 'ссылка', 'призыв'] }, order: 100 },
+    variants: [
+      { id: 'plain', label_key: variantWord('element.button', 'plain') },
+      { id: 'icon', label_key: variantWord('element.button', 'icon'), props: { icon: 'arrow_forward', icon_position: 'end' } },
+      { id: 'outline', label_key: variantWord('element.button', 'outline'), props: { appearance: 'outline' } },
+    ],
+  }),
+  elementManifest('element.button-icon', 'smart/button-icon', {
+    // The label is what a screen reader says: an icon button has no words.
+    // Unset, it says «Button» in the Document's language.
+    data_schema: closed({ label: plainText(120) }),
+    props_schema: closed({
+      icon: { ...iconName, default: 'favorite' },
+      appearance: { enum: ['default', 'tonal', 'outline', 'surface', 'ghost'], default: 'tonal' },
+      scheme: { enum: ['primary', 'secondary', 'on-surface', 'on-surface-variant'], default: 'primary' },
+      size: { enum: ['1/2', '1', '2'], default: '1' },
+    }),
+    catalogue: { group: 'elements', icon: 'add_circle', label_key: catalogueWord('element.button-icon'), keywords: { en: ['icon button', 'icon', 'button'], ru: ['кнопка-значок', 'значок', 'иконка', 'кнопка'] }, order: 110 },
+  }),
+  elementManifest('element.badge', 'smart/badge', {
+    data_schema: closed({ text: plainText(120) }),
+    props_schema: closed({
+      appearance: { enum: ['main', 'tonal', 'outline'], default: 'tonal' },
+      scheme: { enum: ['neutral', 'primary', 'secondary', 'tertiary'], default: 'primary' },
+      size: { enum: ['1/3', '1/2', '1'], default: '1/2' },
+      icon: iconName,
+    }),
+    catalogue: { group: 'elements', icon: 'label', label_key: catalogueWord('element.badge'), keywords: { en: ['badge', 'tag', 'status', 'label'], ru: ['метка', 'бейдж', 'тег', 'статус'] }, order: 120 },
+  }),
+  elementManifest('element.icon', 'smart/icon', {
+    // The label names the icon for a screen reader; without it the icon only decorates.
+    data_schema: closed({ label: plainText(120) }),
+    props_schema: closed({
+      icon: { ...iconName, default: 'star' },
+      size: { enum: ['1', '2', '3', '4', '5'], default: '2' },
+    }),
+    catalogue: { group: 'elements', icon: 'star', label_key: catalogueWord('element.icon'), keywords: { en: ['icon', 'symbol', 'pictogram'], ru: ['значок', 'иконка', 'пиктограмма'] }, order: 130 },
+  }),
   // The root of a structured-content Document: the page's blocks in order,
   // under the page's title (the accepted content editor prototype writes
   // this root).
@@ -16150,7 +16311,7 @@ const BUILTIN_EDITOR_MANIFESTS = Object.freeze([
   {
     ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_2__.schemaFields)('simai.composition.editor-manifest', 1),
     type: 'layout.section',
-    type_version: '1.1.0',
+    type_version: '1.2.0',
     fields: [
       {
         key: 'surface',
@@ -16168,8 +16329,9 @@ const BUILTIN_EDITOR_MANIFESTS = Object.freeze([
         permission_hints: ['composition.node.update'],
         owner: 'simai/framework',
       },
-      // 1.1.0: the fields of its parameter sets.
-      ...(0,_parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_3__.parameterSetFields)({ parameter_sets: SECTION_SETS }),
+      // 1.1.0: the fields of its parameter sets; 1.2.0: width and the space
+      // above and below default to what the section prints unset.
+      ...(0,_parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_3__.parameterSetFields)({ parameter_sets: SECTION_SETS, parameter_defaults: SECTION_DEFAULTS }),
     ],
   },
   {
@@ -16212,7 +16374,7 @@ const BUILTIN_EDITOR_MANIFESTS = Object.freeze([
   {
     ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_2__.schemaFields)('simai.composition.editor-manifest', 1),
     type: 'content.heading',
-    type_version: '1.1.0',
+    type_version: '1.2.0',
     fields: [
       {
         key: 'level',
@@ -16229,6 +16391,7 @@ const BUILTIN_EDITOR_MANIFESTS = Object.freeze([
         permission_hints: ['composition.node.update'],
         owner: 'simai/framework',
       },
+      ...(0,_parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_3__.parameterSetFields)({ parameter_sets: TEXT_SETS }),
     ],
   },  {
     ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_2__.schemaFields)('simai.composition.editor-manifest', 1),
@@ -16300,6 +16463,42 @@ const BUILTIN_EDITOR_MANIFESTS = Object.freeze([
   contentEditor('layout.area', [
     contentField('layout.area', 'padding', 'props', 'integer', { constraints: { min: 0, max: 8 } }),
     contentField('layout.area', 'hidden', 'props', 'toggle', { default: false }),
+  ]),
+  // The layout and element types of the one block editor (2026-11-04).
+  { ...contentEditor('content.paragraph', (0,_parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_3__.parameterSetFields)({ parameter_sets: TEXT_SETS })), type_version: '1.3.0' },
+  contentEditor('layout.container', (0,_parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_3__.parameterSetFields)({ parameter_sets: ['width', 'spacing', 'background', 'visibility'], parameter_defaults: CONTAINER_DEFAULTS })),
+  contentEditor('layout.grid', (0,_parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_3__.parameterSetFields)({ parameter_sets: ['grid', 'visibility'], parameter_defaults: GRID_DEFAULTS })),
+  contentEditor('layout.spacer', [
+    contentField('layout.spacer', 'size', 'props', 'integer', { constraints: { min: 1, max: 8 }, default: 6 }),
+    ...(0,_parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_3__.parameterSetFields)({ parameter_sets: ['visibility'] }),
+  ]),
+  contentEditor('element.button', [
+    contentField('element.button', 'text', 'data', 'text', { constraints: { min_length: 1, max_length: 200 } }),
+    contentField('element.button', 'href', 'data', 'text', { constraints: { min_length: 1, max_length: 2048 } }),
+    contentField('element.button', 'appearance', 'props', 'choice', { choices: ['default', 'tonal', 'outline', 'link', 'surface'], default: 'default' }),
+    contentField('element.button', 'size', 'props', 'choice', { choices: ['1/2', '1', '2'], default: '1' }),
+    contentField('element.button', 'icon', 'props', 'text', { constraints: { min_length: 1, max_length: 64 } }),
+    contentField('element.button', 'icon_position', 'props', 'choice', { choices: ['start', 'end'], default: 'start' }),
+    contentField('element.button', 'scheme', 'props', 'choice', { ...advanced, choices: ['primary', 'secondary'], default: 'primary' }),
+  ]),
+  contentEditor('element.button-icon', [
+    contentField('element.button-icon', 'icon', 'props', 'text', { constraints: { min_length: 1, max_length: 64 }, default: 'favorite' }),
+    contentField('element.button-icon', 'label', 'data', 'text', { constraints: { min_length: 1, max_length: 120 } }),
+    contentField('element.button-icon', 'appearance', 'props', 'choice', { choices: ['default', 'tonal', 'outline', 'surface', 'ghost'], default: 'tonal' }),
+    contentField('element.button-icon', 'size', 'props', 'choice', { choices: ['1/2', '1', '2'], default: '1' }),
+    contentField('element.button-icon', 'scheme', 'props', 'choice', { ...advanced, choices: ['primary', 'secondary'], default: 'primary' }),
+  ]),
+  contentEditor('element.badge', [
+    contentField('element.badge', 'text', 'data', 'text', { constraints: { min_length: 1, max_length: 120 } }),
+    contentField('element.badge', 'appearance', 'props', 'choice', { choices: ['main', 'tonal', 'outline'], default: 'tonal' }),
+    contentField('element.badge', 'scheme', 'props', 'choice', { choices: ['neutral', 'primary', 'secondary', 'tertiary'], default: 'primary' }),
+    contentField('element.badge', 'size', 'props', 'choice', { choices: ['1/3', '1/2', '1'], default: '1/2' }),
+    contentField('element.badge', 'icon', 'props', 'text', { ...advanced, constraints: { min_length: 1, max_length: 64 } }),
+  ]),
+  contentEditor('element.icon', [
+    contentField('element.icon', 'icon', 'props', 'text', { constraints: { min_length: 1, max_length: 64 }, default: 'star' }),
+    contentField('element.icon', 'size', 'props', 'choice', { choices: ['1', '2', '3', '4', '5'], default: '2' }),
+    contentField('element.icon', 'label', 'data', 'text', { ...advanced, constraints: { min_length: 1, max_length: 120 } }),
   ]),
   contentEditor('content.list', [
     contentField('content.list', 'ordered', 'props', 'toggle', { default: false }),
@@ -16411,11 +16610,15 @@ function stableStringify(value) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   BUILTIN_CATALOGUE: () => (/* binding */ BUILTIN_CATALOGUE),
+/* harmony export */   BUILTIN_CATALOGUE_ICONS: () => (/* binding */ BUILTIN_CATALOGUE_ICONS),
 /* harmony export */   CATALOGUE_GROUPS: () => (/* binding */ CATALOGUE_GROUPS),
+/* harmony export */   CATALOGUE_GROUP_ALIASES: () => (/* binding */ CATALOGUE_GROUP_ALIASES),
+/* harmony export */   CATALOGUE_GROUP_TABLE: () => (/* binding */ CATALOGUE_GROUP_TABLE),
 /* harmony export */   CATALOGUE_TABS: () => (/* binding */ CATALOGUE_TABS),
 /* harmony export */   SLOT_EXTRA_FIELDS: () => (/* binding */ SLOT_EXTRA_FIELDS),
 /* harmony export */   catalogue: () => (/* binding */ catalogue),
 /* harmony export */   catalogueEntry: () => (/* binding */ catalogueEntry),
+/* harmony export */   catalogueGroup: () => (/* binding */ catalogueGroup),
 /* harmony export */   groupAllowed: () => (/* binding */ groupAllowed),
 /* harmony export */   instantiateVariant: () => (/* binding */ instantiateVariant),
 /* harmony export */   slotAccepts: () => (/* binding */ slotAccepts),
@@ -16436,12 +16639,35 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-/** The fixed groups, in catalogue order. A product adds its own group by its namespace. */
-const CATALOGUE_GROUPS = Object.freeze(['text', 'media', 'structure', 'page-parts', 'marketing', 'data', 'forms']);
+/**
+ * The fixed groups, in catalogue order. A product adds its own group by its
+ * namespace. Since the visual parity pass (2026-11-04) Elements (smart
+ * elements a block prints) and Layout (sections, containers, grids) replace
+ * Structure, which said nothing to an author.
+ */
+const CATALOGUE_GROUPS = Object.freeze(['text', 'media', 'elements', 'layout', 'page-parts', 'marketing', 'data', 'forms']);
+/** Former group names a type may still give, and the group each now means (dated aliases). */
+const CATALOGUE_GROUP_ALIASES = Object.freeze({ structure: Object.freeze({ group: 'layout', until: '2027-01-01' }) });
+/**
+ * Each fixed group's icon (a SIMAI Framework icon name) and word
+ * (sf.composition.catalogue.group.<group>, editor-words.mjs): the catalogue's
+ * sections draw an icon and a name from here.
+ */
+const CATALOGUE_GROUP_TABLE = Object.freeze({
+  text: Object.freeze({ icon: 'notes', label_key: 'sf.composition.catalogue.group.text' }),
+  media: Object.freeze({ icon: 'image', label_key: 'sf.composition.catalogue.group.media' }),
+  elements: Object.freeze({ icon: 'interests', label_key: 'sf.composition.catalogue.group.elements' }),
+  layout: Object.freeze({ icon: 'view_quilt', label_key: 'sf.composition.catalogue.group.layout' }),
+  'page-parts': Object.freeze({ icon: 'web', label_key: 'sf.composition.catalogue.group.page_parts' }),
+  marketing: Object.freeze({ icon: 'campaign', label_key: 'sf.composition.catalogue.group.marketing' }),
+  data: Object.freeze({ icon: 'dataset', label_key: 'sf.composition.catalogue.group.data' }),
+  forms: Object.freeze({ icon: 'edit_square', label_key: 'sf.composition.catalogue.group.forms' }),
+});
 /** The two tabs the catalogue opens on: what is written into a text flow, and what a page is built from. */
 const CATALOGUE_TABS = Object.freeze(['text', 'blocks']);
 const TEXT_TAB_GROUPS = new Set(['text', 'media']);
-const CATALOGUE_FIELDS = new Set(['group', 'tab', 'label_key', 'help_key', 'keywords', 'preview', 'order']);
+const CATALOGUE_FIELDS = new Set(['group', 'tab', 'label_key', 'help_key', 'keywords', 'preview', 'order', 'icon']);
+const ICON_NAME = /^[a-z0-9][a-z0-9_]{0,63}$/u;
 const VARIANT_FIELDS = new Set(['id', 'label_key', 'preview', 'props', 'data', 'presentation', 'slots']);
 const SLOT_EXTRA_FIELDS = new Set(['label_key', 'empty_key', 'groups']);
 const STABLE_KEY = /^[a-z][a-z0-9_]*(?:\.[a-z][a-z0-9_]*)*$/u;
@@ -16453,9 +16679,12 @@ const NODE_ID = /^[A-Za-z0-9][A-Za-z0-9._:-]{0,119}$/u;
 // listed as null stands only inside its parent or as a root and is not offered.
 const BUILTIN_CATALOGUE = Object.freeze({
   'layout.page': null,
-  'layout.section': 'structure',
-  'layout.columns': 'structure',
-  'layout.area': 'structure',
+  'layout.section': 'layout',
+  'layout.columns': 'layout',
+  'layout.area': 'layout',
+  'layout.container': 'layout',
+  'layout.grid': 'layout',
+  'layout.spacer': 'layout',
   'layout.regions': null,
   'layout.region': null,
   'layout.scope': null,
@@ -16466,7 +16695,7 @@ const BUILTIN_CATALOGUE = Object.freeze({
   'content.list-item': null,
   'content.quote': 'text',
   'content.code': 'text',
-  'content.divider': 'text',
+  'content.divider': 'elements',
   'content.alert': 'text',
   'content.math': 'text',
   'content.table': 'data',
@@ -16475,14 +16704,52 @@ const BUILTIN_CATALOGUE = Object.freeze({
   'content.file': 'media',
   'content.html': 'media',
   'content.diagram': 'media',
-  'content.details': 'structure',
-  'content.tabs': 'structure',
+  'content.details': 'text',
+  'content.tabs': 'text',
   'content.tab': null,
-  'content.steps': 'structure',
+  'content.steps': 'text',
   'content.step': null,
-  'content.grid': 'structure',
-  'content.card': 'structure',
+  'content.grid': 'layout',
+  'content.card': 'elements',
   'content.outlet': null,
+  'element.button': 'elements',
+  'element.button-icon': 'elements',
+  'element.badge': 'elements',
+  'element.icon': 'elements',
+});
+
+// The icon of each offered built-in type (a SIMAI Framework icon name, as the
+// prototype draws the catalogue; a type's own catalogue.icon wins).
+const BUILTIN_CATALOGUE_ICONS = Object.freeze({
+  'layout.section': 'crop_landscape',
+  'layout.columns': 'view_column',
+  'layout.area': 'edit_note',
+  'layout.container': 'width_normal',
+  'layout.grid': 'grid_on',
+  'layout.spacer': 'height',
+  'content.heading': 'title',
+  'content.paragraph': 'notes',
+  'content.list': 'format_list_bulleted',
+  'content.quote': 'format_quote',
+  'content.code': 'code',
+  'content.divider': 'horizontal_rule',
+  'content.alert': 'info',
+  'content.math': 'function',
+  'content.table': 'table',
+  'content.figure': 'image',
+  'content.media': 'art_track',
+  'content.file': 'download',
+  'content.html': 'html',
+  'content.diagram': 'schema',
+  'content.details': 'expand_circle_down',
+  'content.tabs': 'tab',
+  'content.steps': 'format_list_numbered',
+  'content.grid': 'grid_view',
+  'content.card': 'crop_portrait',
+  'element.button': 'smart_button',
+  'element.button-icon': 'add_circle',
+  'element.badge': 'label',
+  'element.icon': 'star',
 });
 
 // Documents and manifests are JSON: a copy through JSON is a deep copy.
@@ -16492,12 +16759,17 @@ const namespaceOf = (type) => String(type || '').split('.')[0];
 
 /** Whether a group name may stand in a type's catalogue entry: a fixed group, or the type's own namespace. */
 function groupAllowed(group, type) {
-  return CATALOGUE_GROUPS.includes(group) || (typeof group === 'string' && group === namespaceOf(type));
+  return CATALOGUE_GROUPS.includes(group) || Object.hasOwn(CATALOGUE_GROUP_ALIASES, group) || (typeof group === 'string' && group === namespaceOf(type));
+}
+
+/** The group a name stands for now: a dated alias gives its new group. */
+function catalogueGroup(group) {
+  return typeof group === 'string' && Object.hasOwn(CATALOGUE_GROUP_ALIASES, group) ? CATALOGUE_GROUP_ALIASES[group].group : group;
 }
 
 /**
  * A type's catalogue entry, or null when the type is not offered:
- * {type, group, tab, label_key?, help_key?, keywords, preview?, order, variants}.
+ * {type, group, tab, icon?, label_key?, help_key?, keywords, preview?, order, variants}.
  * A product type without `catalogue` falls into its namespace's group.
  */
 function catalogueEntry(manifest) {
@@ -16509,12 +16781,15 @@ function catalogueEntry(manifest) {
     else group = namespaceOf(manifest.type);
   }
   if (!group) return null;
+  group = catalogueGroup(group);
+  const icon = own?.icon ?? BUILTIN_CATALOGUE_ICONS[manifest.type];
   const tab = own?.tab ?? (TEXT_TAB_GROUPS.has(group) ? 'text' : 'blocks');
   return (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.canonical)({
     type: manifest.type,
     version: manifest.version,
     group,
     tab,
+    ...(icon ? { icon } : {}),
     ...(own?.label_key ? { label_key: own.label_key } : {}),
     ...(own?.help_key ? { help_key: own.help_key } : {}),
     keywords: (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(own?.keywords) ? own.keywords : {},
@@ -16563,7 +16838,7 @@ function slotAccepts(registry, parentManifest, slotName, childType) {
   if (slot.categories && !slot.categories.includes(child.category)) return false;
   if (slot.groups) {
     const entry = catalogueEntry(child);
-    if (!entry || !slot.groups.includes(entry.group)) return false;
+    if (!entry || !slot.groups.map(catalogueGroup).includes(entry.group)) return false;
   }
   return true;
 }
@@ -16645,6 +16920,7 @@ function validateCatalogueFields(manifest) {
         diagnostics.push(diagnostic('catalogue_keywords_invalid', '$.catalogue.keywords', 'keywords are up to 20 words per locale'));
       }
       if (entry.order !== undefined && (!Number.isInteger(entry.order) || entry.order < 0 || entry.order > 1000)) diagnostics.push(diagnostic('catalogue_order_invalid', '$.catalogue.order', 'order is 0 to 1000'));
+      if (entry.icon !== undefined && (typeof entry.icon !== 'string' || !ICON_NAME.test(entry.icon))) diagnostics.push(diagnostic('catalogue_icon_invalid', '$.catalogue.icon', 'icon is a SIMAI Framework icon name'));
       if (entry.preview !== undefined && (typeof entry.preview !== 'string' || !entry.preview || entry.preview.length > 2048)) diagnostics.push(diagnostic('catalogue_preview_invalid', '$.catalogue.preview', 'preview is an image address'));
     }
   }
@@ -17528,12 +17804,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   EDITOR_FIELD_WORDS: () => (/* binding */ EDITOR_FIELD_WORDS),
 /* harmony export */   EDITOR_WORDS_OWNER: () => (/* binding */ EDITOR_WORDS_OWNER),
+/* harmony export */   catalogueWordKeys: () => (/* binding */ catalogueWordKeys),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
 /* harmony export */   editorFieldKeys: () => (/* binding */ editorFieldKeys),
 /* harmony export */   editorFieldMessages: () => (/* binding */ editorFieldMessages)
 /* harmony export */ });
 /* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("8489d1f5bab4");
 /* harmony import */ var _builtins_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("08e5033c490a");
+/* harmony import */ var _catalogue_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("76235de72516");
+
 
 
 
@@ -17760,6 +18039,118 @@ const EN = {
     label: 'Caption',
     label_help: 'The formula\'s name for screen readers',
   }),
+  // The layout and element types of the one block editor (2026-11-04).
+  ...words('layout_spacer', {
+    size: 'Height',
+    size_help: 'From 1 to 8 steps, per screen',
+  }),
+  ...words('element_button', {
+    text: 'Text',
+    text_help: 'The words on the button',
+    href: 'Link',
+    href_help: 'Where the button leads; empty, it is a button',
+    appearance: 'Look',
+    appearance_help: 'How the button stands out',
+    'appearance.default': 'Filled',
+    'appearance.tonal': 'Tonal',
+    'appearance.outline': 'Outlined',
+    'appearance.link': 'Link',
+    'appearance.surface': 'On the surface',
+    size: 'Size',
+    size_help: 'Small, regular or large',
+    icon: 'Icon',
+    icon_help: 'A SIMAI Framework icon name, such as arrow_forward',
+    icon_position: 'Icon side',
+    icon_position_help: 'Before or after the words',
+    'icon_position.start': 'Before',
+    'icon_position.end': 'After',
+    scheme: 'Colour',
+    scheme_help: 'The colour role of the button',
+    'scheme.primary': 'Primary',
+    'scheme.secondary': 'Secondary',
+  }),
+  ...words('element_button_icon', {
+    icon: 'Icon',
+    icon_help: 'A SIMAI Framework icon name, such as favorite',
+    label: 'Label for screen readers',
+    label_help: 'What the button does, said aloud',
+    appearance: 'Look',
+    appearance_help: 'How the button stands out',
+    'appearance.default': 'Filled',
+    'appearance.tonal': 'Tonal',
+    'appearance.outline': 'Outlined',
+    'appearance.surface': 'On the surface',
+    'appearance.ghost': 'No background',
+    size: 'Size',
+    size_help: 'Small, regular or large',
+    scheme: 'Colour',
+    scheme_help: 'The colour role of the button',
+    'scheme.primary': 'Primary',
+    'scheme.secondary': 'Secondary',
+  }),
+  ...words('element_badge', {
+    text: 'Text',
+    text_help: 'The words on the badge',
+    appearance: 'Look',
+    appearance_help: 'How the badge stands out',
+    'appearance.main': 'Filled',
+    'appearance.tonal': 'Tonal',
+    'appearance.outline': 'Outlined',
+    scheme: 'Colour',
+    scheme_help: 'The colour role of the badge',
+    'scheme.neutral': 'Neutral',
+    'scheme.primary': 'Primary',
+    'scheme.secondary': 'Secondary',
+    'scheme.tertiary': 'Tertiary',
+    size: 'Size',
+    size_help: 'From small to regular',
+    icon: 'Icon',
+    icon_help: 'A SIMAI Framework icon name before the words',
+  }),
+  ...words('element_icon', {
+    icon: 'Icon',
+    icon_help: 'A SIMAI Framework icon name, such as star',
+    size: 'Size',
+    size_help: 'A step of the size ladder',
+    label: 'Label for screen readers',
+    label_help: 'Leave empty when the icon only decorates',
+  }),
+  // The catalogue: groups, the built-in types that name themselves, variants.
+  ...words('catalogue.group', {
+    text: 'Text',
+    media: 'Media',
+    elements: 'Elements',
+    layout: 'Layout',
+    page_parts: 'Page parts',
+    marketing: 'Marketing',
+    data: 'Data',
+    forms: 'Forms',
+  }),
+  ...words('catalogue.type', {
+    layout_container: 'Container',
+    layout_grid: 'Grid',
+    layout_spacer: 'Empty space',
+    element_button: 'Button',
+    element_button_icon: 'Icon button',
+    element_badge: 'Badge',
+    element_icon: 'Icon',
+  }),
+  ...words('catalogue.variant', {
+    'layout_section.plain': 'Empty',
+    'layout_section.soft': 'On a soft background',
+    'layout_section.accent': 'On an accent background',
+    'layout_section.text': 'With a text area',
+    'layout_section.two_columns': 'Two columns',
+    'layout_container.narrow': 'Narrow, for text',
+    'layout_container.normal': 'Page width',
+    'layout_container.soft': 'On a soft background',
+    'layout_grid.cards_2': 'Two cards',
+    'layout_grid.cards_3': 'Three cards',
+    'layout_grid.cards_4': 'Four cards',
+    'element_button.plain': 'Button',
+    'element_button.icon': 'With an icon',
+    'element_button.outline': 'Outlined',
+  }),
 };
 
 const RU = {
@@ -17966,6 +18357,116 @@ const RU = {
     label: 'Подпись',
     label_help: 'Название формулы для программ чтения с экрана',
   }),
+  ...words('layout_spacer', {
+    size: 'Высота',
+    size_help: 'От 1 до 8 шагов, для каждого экрана',
+  }),
+  ...words('element_button', {
+    text: 'Текст',
+    text_help: 'Слова на кнопке',
+    href: 'Ссылка',
+    href_help: 'Куда ведёт кнопка; пусто — это просто кнопка',
+    appearance: 'Вид',
+    appearance_help: 'Насколько кнопка заметна',
+    'appearance.default': 'Заливка',
+    'appearance.tonal': 'Тональная',
+    'appearance.outline': 'Контур',
+    'appearance.link': 'Ссылка',
+    'appearance.surface': 'На поверхности',
+    size: 'Размер',
+    size_help: 'Маленькая, обычная или крупная',
+    icon: 'Значок',
+    icon_help: 'Имя значка SIMAI Framework, например arrow_forward',
+    icon_position: 'Где значок',
+    icon_position_help: 'До или после слов',
+    'icon_position.start': 'Слева',
+    'icon_position.end': 'Справа',
+    scheme: 'Цвет',
+    scheme_help: 'Цветовая роль кнопки',
+    'scheme.primary': 'Основной',
+    'scheme.secondary': 'Дополнительный',
+  }),
+  ...words('element_button_icon', {
+    icon: 'Значок',
+    icon_help: 'Имя значка SIMAI Framework, например favorite',
+    label: 'Подпись для экранного диктора',
+    label_help: 'Что делает кнопка, вслух',
+    appearance: 'Вид',
+    appearance_help: 'Насколько кнопка заметна',
+    'appearance.default': 'Заливка',
+    'appearance.tonal': 'Тональная',
+    'appearance.outline': 'Контур',
+    'appearance.surface': 'На поверхности',
+    'appearance.ghost': 'Без фона',
+    size: 'Размер',
+    size_help: 'Маленькая, обычная или крупная',
+    scheme: 'Цвет',
+    scheme_help: 'Цветовая роль кнопки',
+    'scheme.primary': 'Основной',
+    'scheme.secondary': 'Дополнительный',
+  }),
+  ...words('element_badge', {
+    text: 'Текст',
+    text_help: 'Слова на метке',
+    appearance: 'Вид',
+    appearance_help: 'Насколько метка заметна',
+    'appearance.main': 'Заливка',
+    'appearance.tonal': 'Тональная',
+    'appearance.outline': 'Контур',
+    scheme: 'Цвет',
+    scheme_help: 'Цветовая роль метки',
+    'scheme.neutral': 'Нейтральный',
+    'scheme.primary': 'Основной',
+    'scheme.secondary': 'Дополнительный',
+    'scheme.tertiary': 'Третий',
+    size: 'Размер',
+    size_help: 'От маленькой до обычной',
+    icon: 'Значок',
+    icon_help: 'Имя значка SIMAI Framework перед словами',
+  }),
+  ...words('element_icon', {
+    icon: 'Значок',
+    icon_help: 'Имя значка SIMAI Framework, например star',
+    size: 'Размер',
+    size_help: 'Шаг шкалы размеров',
+    label: 'Подпись для экранного диктора',
+    label_help: 'Оставьте пустой, если значок только украшает',
+  }),
+  ...words('catalogue.group', {
+    text: 'Текст',
+    media: 'Медиа',
+    elements: 'Элементы',
+    layout: 'Макет',
+    page_parts: 'Части страницы',
+    marketing: 'Маркетинг',
+    data: 'Данные',
+    forms: 'Формы',
+  }),
+  ...words('catalogue.type', {
+    layout_container: 'Контейнер',
+    layout_grid: 'Сетка',
+    layout_spacer: 'Пустое место',
+    element_button: 'Кнопка',
+    element_button_icon: 'Кнопка-значок',
+    element_badge: 'Метка',
+    element_icon: 'Значок',
+  }),
+  ...words('catalogue.variant', {
+    'layout_section.plain': 'Пустая',
+    'layout_section.soft': 'На мягком фоне',
+    'layout_section.accent': 'На акцентном фоне',
+    'layout_section.text': 'С областью текста',
+    'layout_section.two_columns': 'Две колонки',
+    'layout_container.narrow': 'Узкий, для текста',
+    'layout_container.normal': 'Шириной страницы',
+    'layout_container.soft': 'На мягком фоне',
+    'layout_grid.cards_2': 'Две карточки',
+    'layout_grid.cards_3': 'Три карточки',
+    'layout_grid.cards_4': 'Четыре карточки',
+    'element_button.plain': 'Кнопка',
+    'element_button.icon': 'Со значком',
+    'element_button.outline': 'Контурная',
+  }),
 };
 
 const EDITOR_FIELD_WORDS = Object.freeze({ en: Object.freeze(EN), ru: Object.freeze(RU) });
@@ -17973,6 +18474,16 @@ const EDITOR_FIELD_WORDS = Object.freeze({ en: Object.freeze(EN), ru: Object.fre
 const STABLE_SEGMENT = /^[a-z][a-z0-9_]*$/u;
 
 /** Every word key a field reads: its label, its help and its stable choices. */
+/** The keys of the catalogue's words: the fixed groups, and the built-in types and variants that name one. */
+function catalogueWordKeys() {
+  const keys = Object.values(_catalogue_mjs__WEBPACK_IMPORTED_MODULE_2__.CATALOGUE_GROUP_TABLE).map(({ label_key: key }) => key);
+  for (const manifest of _builtins_mjs__WEBPACK_IMPORTED_MODULE_1__.BUILTIN_TYPE_MANIFESTS) {
+    keys.push(...[manifest.catalogue?.label_key, manifest.catalogue?.help_key].filter(Boolean));
+    for (const variant of manifest.variants || []) if (variant.label_key) keys.push(variant.label_key);
+  }
+  return [...new Set(keys)];
+}
+
 function editorFieldKeys(field) {
   if (!field || typeof field.label_key !== 'string') return [];
   const keys = [field.label_key];
@@ -17997,10 +18508,13 @@ function editorFieldMessages(manifests, { node = null, locale } = {}) {
   const messages = {};
   // Without a manifest, the words of the built-in types' named places too
   // (a slot's label_key and empty_key; one block editor, 2026-11-03).
+  // And the catalogue's words (2026-11-04): each group's name, and the name
+  // of each built-in type and variant that gives a label_key.
   if (manifests === undefined) {
     for (const slot of _builtins_mjs__WEBPACK_IMPORTED_MODULE_1__.BUILTIN_TYPE_MANIFESTS.flatMap((manifest) => Object.values(manifest.slots || {}))) {
       for (const key of [slot.label_key, slot.empty_key].filter(Boolean)) messages[key] = (0,_page_language_js__WEBPACK_IMPORTED_MODULE_0__.localeText)(EDITOR_FIELD_WORDS, key, language, EDITOR_WORDS_OWNER);
     }
+    for (const key of catalogueWordKeys()) messages[key] = (0,_page_language_js__WEBPACK_IMPORTED_MODULE_0__.localeText)(EDITOR_FIELD_WORDS, key, language, EDITOR_WORDS_OWNER);
   }
   for (const manifest of list) {
     for (const field of manifest?.fields || []) {
@@ -18013,7 +18527,7 @@ function editorFieldMessages(manifests, { node = null, locale } = {}) {
   return messages;
 }
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ EDITOR_FIELD_WORDS, EDITOR_WORDS_OWNER, editorFieldKeys, editorFieldMessages });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ EDITOR_FIELD_WORDS, EDITOR_WORDS_OWNER, catalogueWordKeys, editorFieldKeys, editorFieldMessages });
 
 
 /***/ },
@@ -18421,6 +18935,10 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
           "default": false,
           "type": "boolean"
         },
+        "href": {
+          "default": "",
+          "type": "string"
+        },
         "icon": {
           "default": "",
           "type": "string"
@@ -18544,7 +19062,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.button",
-    "version": "1.3.0"
+    "version": "1.4.0"
   },
   "sf-button-icon": {
     "inputs": {
@@ -20408,11 +20926,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   BINDING_STATES: () => (/* reexport safe */ _data_mjs__WEBPACK_IMPORTED_MODULE_18__.BINDING_STATES),
 /* harmony export */   BUILTIN_CATALOGUE: () => (/* reexport safe */ _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.BUILTIN_CATALOGUE),
+/* harmony export */   BUILTIN_CATALOGUE_ICONS: () => (/* reexport safe */ _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.BUILTIN_CATALOGUE_ICONS),
 /* harmony export */   BUILTIN_EDITOR_MANIFESTS: () => (/* reexport safe */ _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_EDITOR_MANIFESTS),
 /* harmony export */   BUILTIN_FIELD_KINDS: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_7__.BUILTIN_FIELD_KINDS),
 /* harmony export */   BUILTIN_PORT_MANIFESTS: () => (/* reexport safe */ _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_PORT_MANIFESTS),
 /* harmony export */   BUILTIN_TYPE_MANIFESTS: () => (/* reexport safe */ _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_TYPE_MANIFESTS),
 /* harmony export */   CATALOGUE_GROUPS: () => (/* reexport safe */ _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.CATALOGUE_GROUPS),
+/* harmony export */   CATALOGUE_GROUP_ALIASES: () => (/* reexport safe */ _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.CATALOGUE_GROUP_ALIASES),
+/* harmony export */   CATALOGUE_GROUP_TABLE: () => (/* reexport safe */ _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.CATALOGUE_GROUP_TABLE),
 /* harmony export */   CATALOGUE_TABS: () => (/* reexport safe */ _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.CATALOGUE_TABS),
 /* harmony export */   COMPOSED_EXTENSION: () => (/* reexport safe */ _composed_mjs__WEBPACK_IMPORTED_MODULE_17__.COMPOSED_EXTENSION),
 /* harmony export */   Composition: () => (/* binding */ Composition),
@@ -20457,6 +20978,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   demoData: () => (/* reexport safe */ _data_mjs__WEBPACK_IMPORTED_MODULE_18__.demoData),
 /* harmony export */   describeRegions: () => (/* reexport safe */ _regions_mjs__WEBPACK_IMPORTED_MODULE_9__.describeRegions),
 /* harmony export */   editorFieldMessages: () => (/* reexport safe */ _editor_words_mjs__WEBPACK_IMPORTED_MODULE_1__.editorFieldMessages),
+/* harmony export */   effectiveProps: () => (/* reexport safe */ _parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_16__.effectiveProps),
 /* harmony export */   elementInputs: () => (/* reexport safe */ _elements_mjs__WEBPACK_IMPORTED_MODULE_15__.elementInputs),
 /* harmony export */   expandComposed: () => (/* reexport safe */ _composed_mjs__WEBPACK_IMPORTED_MODULE_17__.expandComposed),
 /* harmony export */   expandParameterSets: () => (/* reexport safe */ _parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_16__.expandParameterSets),
@@ -20739,6 +21261,9 @@ function validateContentRules(root, diagnostics) {
     for (const [content, contentPath] of inlineFields(node, path)) validateInlineContent(content, contentPath, diagnostics);
     if ((node.type === 'content.figure' || node.type === 'content.media') && typeof node.data?.src === 'string' && !validUrl(node.data.src)) {
       diagnostics.push(diagnostic('unsafe_url', `${path}.data.src`, 'Image source protocol is not allowed'));
+    }
+    if (node.type === 'element.button' && typeof node.data?.href === 'string' && !validUrl(node.data.href)) {
+      diagnostics.push(diagnostic('unsafe_url', `${path}.data.href`, 'Link protocol is not allowed'));
     }
     if (node.type === 'content.file' && typeof node.data?.href === 'string' && !validUrl(node.data.href)) {
       diagnostics.push(diagnostic('unsafe_url', `${path}.data.href`, 'File address protocol is not allowed'));
@@ -21122,13 +21647,47 @@ function renderMedia(node, slots) {
   return `<div class="grid grid-col-1 md:grid-col-2 gap-3 items-cross-center"${id(node)}>${parts}</div>`;
 }
 
+// The words an element prints until the author writes its own, in the
+// Document's language (English when there is none for it).
+const ELEMENT_PLACEHOLDERS = Object.freeze({ en: { button: 'Button', badge: 'Badge' }, ru: { button: 'Кнопка', badge: 'Метка' } });
+const placeholder = (locale, key) => (ELEMENT_PLACEHOLDERS[String(locale || 'en').toLowerCase().split('-')[0]] || ELEMENT_PLACEHOLDERS.en)[key];
+const defined = (inputs) => Object.fromEntries(Object.entries(inputs).filter(([, value]) => value !== undefined && value !== ''));
+// An element stands in a block of its own: the editor selects and the
+// utilities reach the block (sf-button's host is display: contents), the
+// element draws inside it. The block is a flex row, so an element keeps its
+// own width (the prototype's inline button) instead of the column's.
+const elementBlock = (node, html) => (html ? `<div class="flex"${id(node)}>${html}</div>` : '');
+
+// The space between the blocks of a section or a container (visual parity,
+// 2026-11-04): the prototype's 24 px at the desktop, space-3 of the SIMAI
+// Framework ladder (16 px on the phone). Blocks in a column stand one rhythm
+// apart (space-y-*, their own margins collapse into it); a gap the Document
+// sets is the rhythm, per screen. Columns make the content a grid, whose gap
+// the grid set prints: no rhythm then.
+const BLOCK_RHYTHM = 3;
+function rhythm(props) {
+  if (props.columns !== undefined) return '';
+  const values = (0,_utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.valuesByBreakpoint)(props.gap ?? BLOCK_RHYTHM);
+  const classes = [];
+  let previous;
+  _utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.UTILITY_BREAKPOINTS.forEach((breakpoint) => {
+    const value = values[breakpoint];
+    if (value !== previous && Number.isInteger(value)) classes.push(`${breakpoint === 'xs' ? '' : `${breakpoint}:`}space-y-${value}`);
+    previous = value;
+  });
+  return classes.length ? ` class="${classes.join(' ')}"` : '';
+}
+
 const BUILTIN_RENDERERS = {
   'layout.page': ({ node, slots }) => `<main data-sf-composition-id="${escapeHtml(node.id)}">${slots.default || ''}</main>`,
-  'layout.section': ({ node, slots }) => {
+  'layout.section': ({ node, slots, manifest }) => {
     // 1.1.0: a section given a width or columns draws the frame and content
-    // parts its parameter sets place classes on; one without draws as before.
-    const framed = ['width', 'columns', 'gap'].some((key) => node.props?.[key] !== undefined);
-    const inner = framed ? `<div data-sf-composition-part="frame"><div data-sf-composition-part="content">${slots.default || ''}</div></div>` : (slots.default || '');
+    // parts its parameter sets place classes on. 1.2.0: its width defaults to
+    // the page container (parameter_defaults), so a section draws them unless
+    // the Document sets its width full and gives no columns.
+    const props = (0,_parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_16__.effectiveProps)(node, manifest);
+    const framed = (props.width !== undefined && props.width !== 'full') || ['columns', 'gap'].some((key) => props[key] !== undefined);
+    const inner = framed ? `<div data-sf-composition-part="frame"><div${rhythm(props)} data-sf-composition-part="content">${slots.default || ''}</div></div>` : (slots.default || '');
     return `<section data-sf-composition-id="${escapeHtml(node.id)}">${inner}</section>`;
   },
   'layout.columns': ({ node, slots }) => {
@@ -21151,6 +21710,48 @@ const BUILTIN_RENDERERS = {
   },
   'layout.scope': ({ node, slots, routes }) => `<sf-composition-scope data-sf-composition-id="${escapeHtml(node.id)}" data-sf-routes="${escapeHtml((0,_routing_mjs__WEBPACK_IMPORTED_MODULE_11__.routesAttribute)(routes || []))}">${slots.default || ''}</sf-composition-scope>`,
   'layout.area': ({ node, slots }) => `<div data-sf-composition-area=""${id(node)}>${slots.default || ''}</div>`,
+  // The layout and element types of the one block editor (2026-11-04): the
+  // block's own element, its parts, and SIMAI Framework utilities only.
+  'layout.container': ({ node, slots, manifest }) => `<div${id(node)}><div data-sf-composition-part="frame"><div${rhythm((0,_parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_16__.effectiveProps)(node, manifest))} data-sf-composition-part="content">${slots.default || ''}</div></div></div>`,
+  'layout.grid': ({ node, slots }) => `<div${id(node)}><div class="grid" data-sf-composition-part="content">${(slots.defaultList || []).map((child) => `<div class="min-w-0">${child}</div>`).join('')}</div></div>`,
+  'layout.spacer': ({ node }) => `<div aria-hidden="true"${id(node)}></div>`,
+  'element.button': ({ node, elements, locale }) => {
+    const props = node.props || {};
+    return elementBlock(node, elements.print('sf-button', defined({
+      text: node.data?.text || placeholder(locale, 'button'),
+      // A button with an address is a link with the button's look (sf-button 1.4.0).
+      href: node.data?.href,
+      appearance: props.appearance,
+      scheme: props.scheme,
+      size: props.size,
+      icon: props.icon,
+      'icon-position': props.icon ? props.icon_position : undefined,
+    })));
+  },
+  'element.button-icon': ({ node, elements, locale }) => {
+    const props = node.props || {};
+    return elementBlock(node, elements.print('sf-button-icon', defined({
+      icon: props.icon ?? 'favorite',
+      'aria-label': node.data?.label || placeholder(locale, 'button'),
+      appearance: props.appearance ?? 'tonal',
+      scheme: props.scheme,
+      size: props.size,
+    })));
+  },
+  'element.badge': ({ node, elements, locale }) => {
+    const props = node.props || {};
+    return elementBlock(node, elements.print('sf-badge', defined({
+      text: node.data?.text || placeholder(locale, 'badge'),
+      appearance: props.appearance ?? 'tonal',
+      scheme: props.scheme ?? 'primary',
+      size: props.size ?? '1/2',
+      icon: props.icon,
+    })));
+  },
+  'element.icon': ({ node, elements }) => {
+    const props = node.props || {};
+    return elementBlock(node, elements.print('sf-icon', defined({ icon: props.icon ?? 'star', size: props.size ?? '2', label: node.data?.label })));
+  },
   'content.document': ({ node, slots }) => `<article${id(node)}>${node.data?.title ? `<h1>${escapeHtml(node.data.title)}</h1>` : ''}${slots.default || ''}</article>`,
   'content.list': ({ node, slots }) => {
     const ordered = node.props?.ordered === true;
@@ -21231,7 +21832,11 @@ async function render(document, context = {}) {
       diagnostics.push(...page.diagnostics.map((entry) => ({ ...entry, path: `$.content${entry.path.startsWith('$') ? entry.path.slice(1) : `:${entry.path}`}` })));
     }
   }
-  const renderNode = async (node, depth = 0) => {
+  // `inside`: an ancestor already stands in a centred container (its frame
+  // part prints `container`). A frame inside one takes container-flush, so a
+  // container in a section has no second gutter; a breakout leaves the
+  // container and its own frame keeps the gutter (2026-11-04).
+  const renderNode = async (node, depth = 0, inside = false) => {
     const manifest = registry.types.get(node.type);
     // A site block draws its type's current tree with the instance's values
     // and texts (composed.mjs); the instance stays one node of the Document.
@@ -21242,12 +21847,16 @@ async function render(document, context = {}) {
       for (const [id, entry] of inner.byNode) data.byNode.set(id, entry);
       data.links.push(...inner.links);
       diagnostics.push(...inner.diagnostics);
-      return renderNode(expanded, depth + 1);
+      return renderNode(expanded, depth + 1, inside);
     }
+    const byPart = (0,_utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.utilityPartClasses)(node, manifest);
+    const ownFrame = (byPart.frame || []).includes('container');
+    const outer = inside && !(byPart[''] || []).includes('container-breakout');
+    if (outer && ownFrame) byPart.frame.push('container-flush');
     const slots = {};
     for (const [name, children] of Object.entries(node.slots || {})) {
       const rendered = [];
-      for (const child of children) rendered.push(await renderNode(child, depth));
+      for (const child of children) rendered.push(await renderNode(child, depth, outer || ownFrame));
       slots[name] = rendered.join('');
       slots[`${name}List`] = rendered;
     }
@@ -21266,8 +21875,7 @@ async function render(document, context = {}) {
     // utilities on the block's element (utilities.mjs).
     const own = (0,_utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.modifierNotices)(node, { rules: context.options?.utilityRules });
     notices.push(...own.notices);
-    const byPart = (0,_utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.utilityPartClasses)(node, manifest);
-    const utilities = [...new Set([...(byPart[''] || []), ...own.kept])];
+    const utilities = [...new Set([...(byPart[''] || []), ...modifierUtilities(node, manifest), ...own.kept])];
     let renderer = registry.renderers.get(manifest.renderer.name) || BUILTIN_RENDERERS[manifest.renderer.name];
     if (!renderer && manifest.renderer.kind === 'custom-element' && manifest.renderer.name) {
       renderer = ({ node: current, slots: currentSlots, endpoint }) => {
@@ -21337,6 +21945,8 @@ function validateTypeManifest(manifest, registry = undefined, options = {}) {
   if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.isPlainObject)(manifest) || !(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_5__.isSchema)(manifest, 'simai.composition.type-manifest', 1)) return { valid: false, diagnostics: [diagnostic('composition_manifest_invalid', '$', 'A type manifest is simai.composition.type-manifest with schema_version 1')] };
   diagnostics.push(...(0,_catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.validateCatalogueFields)(manifest));
   diagnostics.push(...(0,_parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_16__.validateParameterSets)(manifest));
+  diagnostics.push(...(0,_parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_16__.validateParameterDefaults)(manifest, fits));
+  diagnostics.push(...validateModifierUtilities(manifest));
   diagnostics.push(...(0,_utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.validateUtilityDeclarations)((0,_parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_16__.expandParameterSets)(manifest)));
   diagnostics.push(...(0,_data_mjs__WEBPACK_IMPORTED_MODULE_18__.validateDataDeclarations)(manifest, options.shapes));
   let resolved = normalizeRegistry(registry);
@@ -21358,6 +21968,28 @@ function validateTypeManifest(manifest, registry = undefined, options = {}) {
     }
   }
   return { valid: diagnostics.length === 0, diagnostics };
+}
+
+// presentation.modifier_utilities (type manifest 1.5.0, G-39 2026-11-04): the
+// SIMAI Framework classes a declared modifier prints on the block's element. A
+// modifier with no entry prints nothing, as before.
+const MODIFIER_CLASS = /^[a-z0-9][a-z0-9:/_.-]{0,99}$/u;
+function modifierUtilities(node, manifest) {
+  const table = manifest?.presentation?.modifier_utilities;
+  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.isPlainObject)(table) || !Array.isArray(node?.presentation?.modifiers)) return [];
+  return node.presentation.modifiers.flatMap((modifier) => (Array.isArray(table[modifier]) ? table[modifier] : []));
+}
+function validateModifierUtilities(manifest) {
+  const table = manifest?.presentation?.modifier_utilities;
+  if (table === undefined) return [];
+  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.isPlainObject)(table)) return [diagnostic('modifier_utilities_invalid', '$.presentation.modifier_utilities', 'Modifier utilities are an object of class lists')];
+  const declared = manifest.presentation.modifiers || [];
+  const diagnostics = [];
+  for (const [modifier, classes] of Object.entries(table)) {
+    if (!declared.includes(modifier)) diagnostics.push(diagnostic('modifier_utilities_unknown', `$.presentation.modifier_utilities.${modifier}`, `Modifier ${modifier} is not declared`));
+    if (!Array.isArray(classes) || !classes.every((value) => typeof value === 'string' && MODIFIER_CLASS.test(value))) diagnostics.push(diagnostic('modifier_utilities_invalid', `$.presentation.modifier_utilities.${modifier}`, 'A modifier prints a list of classes'));
+  }
+  return diagnostics;
 }
 
 /** A site block's type manifest from what the block builder saved (composed.mjs). */
@@ -21468,7 +22100,10 @@ const Composition = Object.freeze({
   // modifiers, site blocks, named places and data.
   BINDING_STATES: _data_mjs__WEBPACK_IMPORTED_MODULE_18__.BINDING_STATES,
   BUILTIN_CATALOGUE: _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.BUILTIN_CATALOGUE,
+  BUILTIN_CATALOGUE_ICONS: _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.BUILTIN_CATALOGUE_ICONS,
   CATALOGUE_GROUPS: _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.CATALOGUE_GROUPS,
+  CATALOGUE_GROUP_ALIASES: _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.CATALOGUE_GROUP_ALIASES,
+  CATALOGUE_GROUP_TABLE: _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.CATALOGUE_GROUP_TABLE,
   CATALOGUE_TABS: _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.CATALOGUE_TABS,
   DATA_SHAPES: _data_mjs__WEBPACK_IMPORTED_MODULE_18__.DATA_SHAPES,
   SOURCE_PORT: _data_mjs__WEBPACK_IMPORTED_MODULE_18__.SOURCE_PORT,
@@ -21490,6 +22125,7 @@ const Composition = Object.freeze({
   PRINTED_ELEMENTS: _elements_mjs__WEBPACK_IMPORTED_MODULE_15__.PRINTED_ELEMENTS,
   checkPrintedElements,
   elementInputs: _elements_mjs__WEBPACK_IMPORTED_MODULE_15__.elementInputs,
+  effectiveProps: _parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_16__.effectiveProps,
   expandParameterSets: _parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_16__.expandParameterSets,
   parameterSetFields: _parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_16__.parameterSetFields,
   printElement,
@@ -21819,16 +22455,20 @@ function replaceRange(content, start, end, inserted) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   PARAMETER_DEFAULTS_FIELD: () => (/* binding */ PARAMETER_DEFAULTS_FIELD),
 /* harmony export */   PARAMETER_SETS: () => (/* binding */ PARAMETER_SETS),
 /* harmony export */   PARAMETER_SETS_FIELD: () => (/* binding */ PARAMETER_SETS_FIELD),
 /* harmony export */   PARAMETER_SET_NAMES: () => (/* binding */ PARAMETER_SET_NAMES),
 /* harmony export */   PARAMETER_SET_OWNER: () => (/* binding */ PARAMETER_SET_OWNER),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   effectiveProps: () => (/* binding */ effectiveProps),
 /* harmony export */   expandParameterSets: () => (/* binding */ expandParameterSets),
+/* harmony export */   parameterDefaultsOf: () => (/* binding */ parameterDefaultsOf),
 /* harmony export */   parameterSetFields: () => (/* binding */ parameterSetFields),
 /* harmony export */   parameterSetParts: () => (/* binding */ parameterSetParts),
 /* harmony export */   parameterSetTable: () => (/* binding */ parameterSetTable),
 /* harmony export */   parameterSetsOf: () => (/* binding */ parameterSetsOf),
+/* harmony export */   validateParameterDefaults: () => (/* binding */ validateParameterDefaults),
 /* harmony export */   validateParameterSets: () => (/* binding */ validateParameterSets),
 /* harmony export */   withParameterSetFields: () => (/* binding */ withParameterSetFields)
 /* harmony export */ });
@@ -21858,6 +22498,12 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const PARAMETER_SETS_FIELD = 'parameter_sets';
+// The values a type prints when a node does not set them (type manifest
+// 1.5.0, visual parity 2026-11-04): a section stands in the page container
+// with space above and below unless the Document says otherwise. Keyed by a
+// props_schema property that prints a utility (a set's or the type's own); a
+// node's own value, scalar or per screen, replaces it whole.
+const PARAMETER_DEFAULTS_FIELD = 'parameter_defaults';
 const PARAMETER_SET_OWNER = 'simai/framework';
 
 // A background is named by its role; the class is the role's container fill.
@@ -21963,6 +22609,19 @@ function parameterSetsOf(manifest) {
   return Array.isArray(names) ? names.filter((name) => typeof name === 'string') : [];
 }
 
+/** The values a type prints for the properties a node leaves unset (an empty object when none). */
+function parameterDefaultsOf(manifest) {
+  const defaults = manifest?.[PARAMETER_DEFAULTS_FIELD];
+  return (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(defaults) ? defaults : {};
+}
+
+/** A node's props with its type's parameter defaults under them: what the node prints. */
+function effectiveProps(node, manifest) {
+  const own = (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(node?.props) ? node.props : {};
+  const defaults = parameterDefaultsOf(manifest);
+  return Object.keys(defaults).length ? { ...defaults, ...own } : own;
+}
+
 /** The parts a type's renderer draws for its sets. */
 function parameterSetParts(manifest) {
   return [...new Set(parameterSetsOf(manifest).flatMap((name) => PARAMETER_SETS[name]?.parts || []))];
@@ -22023,7 +22682,17 @@ function validateParameterSets(manifest) {
   return diagnostics;
 }
 
-function setField(name, field) {
+// The field's default: the type's parameter default when it gives one (its
+// phone value when it differs per screen), else the set's.
+function fieldDefault(field, defaults) {
+  if (!Object.hasOwn(defaults, field.key)) return 'default' in field ? { default: field.default } : {};
+  const value = defaults[field.key];
+  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(value)) return { default: value };
+  if ('xs' in value) return { default: value.xs };
+  return 'default' in field ? { default: field.default } : {};
+}
+
+function setField(name, field, defaults = {}) {
   const property = field.kind === 'choice' ? { type: 'string', version: 2 }
     : field.kind === 'integer' ? { type: 'integer', version: 1 } : { type: 'boolean', version: 1 };
   const schema = PARAMETER_SETS[name].properties[field.key];
@@ -22038,7 +22707,7 @@ function setField(name, field) {
     group: 'basic',
     visibility: 'visible',
     ...(field.choices ? { choices: field.choices } : {}),
-    ...('default' in field ? { default: field.default } : {}),
+    ...fieldDefault(field, defaults),
     label_key: `sf.composition.set_${name}.${field.key}`,
     help_key: `sf.composition.set_${name}.${field.key}_help`,
     capability_hints: [`composition.props.${field.key}`],
@@ -22049,7 +22718,8 @@ function setField(name, field) {
 
 /** The editor fields of a type's sets, in set order. */
 function parameterSetFields(manifest) {
-  return parameterSetsOf(manifest).filter((name) => Object.hasOwn(PARAMETER_SETS, name)).flatMap((name) => PARAMETER_SETS[name].fields.map((field) => setField(name, field)));
+  const defaults = parameterDefaultsOf(manifest);
+  return parameterSetsOf(manifest).filter((name) => Object.hasOwn(PARAMETER_SETS, name)).flatMap((name) => PARAMETER_SETS[name].fields.map((field) => setField(name, field, defaults)));
 }
 
 /**
@@ -22073,6 +22743,26 @@ function parameterSetTable() {
     parts,
     fields: fields.map((field) => setField(name, field)),
   }]));
+}
+
+/**
+ * The problems of a type's `parameter_defaults`, read on the manifest with its
+ * sets expanded: each key a property that prints a utility, each value one it
+ * takes (`fits(value, schema)`), scalar or per screen.
+ */
+function validateParameterDefaults(manifest, fits = () => true) {
+  if (!(PARAMETER_DEFAULTS_FIELD in (manifest || {}))) return [];
+  const at = `$.${PARAMETER_DEFAULTS_FIELD}`;
+  const defaults = manifest[PARAMETER_DEFAULTS_FIELD];
+  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(defaults)) return [{ code: 'parameter_defaults_invalid', path: at, message: 'parameter_defaults is an object of property values' }];
+  const properties = (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(expandParameterSets(manifest)?.props_schema?.properties) ? expandParameterSets(manifest).props_schema.properties : {};
+  const diagnostics = [];
+  for (const [key, value] of Object.entries(defaults)) {
+    const schema = properties[key];
+    if (!schema || !schema['x-simai-utility']) diagnostics.push({ code: 'parameter_default_unknown', path: `${at}.${key}`, message: `${key} is no property of the type that prints a utility` });
+    else if (!fits(value, schema)) diagnostics.push({ code: 'parameter_default_invalid', path: `${at}.${key}`, message: `${key} does not take this value` });
+  }
+  return diagnostics;
 }
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ PARAMETER_SETS, expandParameterSets, parameterSetFields, validateParameterSets, withParameterSetFields });
@@ -23643,6 +24333,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   withPartClasses: () => (/* binding */ withPartClasses)
 /* harmony export */ });
 /* harmony import */ var _canonical_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("6f489cc65b77");
+/* harmony import */ var _parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("18b9c76994c9");
 // Layout parameters as SIMAI Framework modifiers, and a block's own modifiers
 // (one block editor, owner 2026-11-03; ui-control
 // control/ui-editor/UNIFIED-BLOCK-EDITOR.md, section 6).
@@ -23658,6 +24349,7 @@ __webpack_require__.r(__webpack_exports__);
 // field). They live in the node's extension `simai.composition:modifiers`,
 // are checked against the RuleLoader's utility rules, and a class no rule
 // knows is left out of the HTML and reported: a notice, never a refusal.
+
 
 
 
@@ -23743,15 +24435,18 @@ function utilityClass(declaration, value) {
  * The classes a node's layout parameters print, mobile first, by part: '' is
  * the block's own element, any other key an inner element the renderer marks
  * `data-sf-composition-part="<part>"`. At the phone a value equal to the
- * property's default prints nothing (the type draws its default without a
- * class); at a wider breakpoint a class is printed only where the value
+ * property's default prints nothing when no wider screen differs (the
+ * type draws its default without a class); once one differs the base is
+ * printed too; at a wider breakpoint a class is printed only where the value
  * differs from the narrower one. A value may become several classes.
  */
 function utilityPartClasses(node, manifest) {
   const parts = {};
   const properties = manifest?.props_schema?.properties;
   if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(properties)) return parts;
-  const props = (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(node?.props) ? node.props : {};
+  // A property the node leaves unset prints the type's parameter default
+  // (parameter_defaults, type manifest 1.5.0); the node's own value wins.
+  const props = (0,_parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_1__.effectiveProps)(node, manifest);
   for (const [key, schema] of Object.entries(properties)) {
     if (!(key in props)) continue;
     for (const declaration of declarationsOf(schema)) {
@@ -23764,10 +24459,15 @@ function utilityPartClasses(node, manifest) {
       // printed again.
       let previous;
       let effective = [];
+      // Mobile first: the phone's value is the base the wider screens change.
+      // Equal to the default it prints nothing only when every screen keeps
+      // it; once a wider screen differs, the base is printed too (G-36:
+      // {xs: 1, md: 2} printed md:grid-col-2 without grid-col-1).
+      const varies = UTILITY_BREAKPOINTS.some((breakpoint) => values[breakpoint] !== values[UTILITY_BREAKPOINTS[0]]);
       UTILITY_BREAKPOINTS.forEach((breakpoint, index) => {
         const value = values[breakpoint];
         if (index === 0) {
-          if (!('default' in schema && value === schema.default)) {
+          if (varies || !('default' in schema && value === schema.default)) {
             effective = tokens(utilityClass(declaration, value));
             classes.push(...prefixed('xs', effective.join(' ')));
           }
