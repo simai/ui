@@ -9377,7 +9377,7 @@ __webpack_require__.r(__webpack_exports__);
 // core.runtime.json). A set's release says the lowest version it needs, and
 // the index lookup keeps the releases this Core satisfies. Moved by hand with
 // the passport; tests/component-set-loader.contract.test.mjs holds them equal.
-const CORE_RUNTIME = '1.26.0';
+const CORE_RUNTIME = '1.26.1';
 const SET_NAME = /^[a-z][a-z0-9-]*$/u;
 const SET_INDEX_FORMAT = 'simai.framework.set-index';
 const SET_INDEX_URL = 'https://cdn.jsdelivr.net/npm/@simai-studio/sets@1/index.json';
@@ -9412,17 +9412,24 @@ function meetsMinimum(range, version = CORE_RUNTIME) {
   const order = compareVersions(version, match[1]);
   return order !== null && order >= 0;
 }
-const isVersion = value => typeof value === 'string' && VERSION.test(value); // One entry of SF_BOOT_CONFIG.packages, read: {base, rule, version, byIndex}
-// or null when it declares nothing usable. A version string is a version, any
-// other string a base; true, or {index: true}, is "by the index". An object
-// with none of base, version or index declares nothing (as before sets).
+const isVersion = value => typeof value === 'string' && VERSION.test(value); // One entry of SF_BOOT_CONFIG.packages, read: {base, rule, version, byIndex,
+// set} or null when it declares nothing usable. A version string is a version,
+// any other string a base; true, or {index: true}, is "by the index". An
+// object with none of base, version or index declares nothing (as before sets).
+//
+// `set` says the page named a component set, which carries a passport
+// (set.json) beside its base: every set form -- true, a version, a base string,
+// an object with a version or {index: true}. The component-package form,
+// {base} or {base, rule} with no version, is a plain package (the Pro package,
+// a product's own package): it has no passport and none is asked for.
 
 function readSetDeclaration(value) {
   if (value === true) return {
     base: '',
     rule: '',
     version: '',
-    byIndex: true
+    byIndex: true,
+    set: true
   };
 
   if (typeof value === 'string') {
@@ -9432,13 +9439,15 @@ function readSetDeclaration(value) {
       base: '',
       rule: '',
       version: text,
-      byIndex: false
+      byIndex: false,
+      set: true
     };
     return {
       base: trimSlash(text),
       rule: '',
       version: '',
-      byIndex: false
+      byIndex: false,
+      set: true
     };
   }
 
@@ -9452,7 +9461,8 @@ function readSetDeclaration(value) {
     base,
     rule,
     version,
-    byIndex
+    byIndex,
+    set: Boolean(version || byIndex)
   };
 } // The sets a data-sf-sets attribute names: "effects admin@1.2.0" ->
 // {effects: true, admin: '1.2.0'}. Names that are not set names are left out
