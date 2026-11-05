@@ -1,0 +1,72 @@
+{
+  "schema_id": "simai.framework.release-lock",
+  "schema_version": 2,
+  "compatibility_id": "ui-62b1d9b6dc8d",
+  "status": "bounded",
+  "profile": "plain-assets-v1",
+  "runtime_sources": {
+    "core": {
+      "owner": "simai/ui",
+      "tag": null,
+      "tag_object": null,
+      "revision": "62b1d9b6dc8d390837b7daa7c28a4543297521ad",
+      "commit": "62b1d9b6dc8d390837b7daa7c28a4543297521ad",
+      "tree": "1c8680acb41ee35fa539fce843b623974205fbf5",
+      "runtime_path": "distr",
+      "runtime_tree": "b7eca45f34efcc234c9981d65fde03130daf6e95",
+      "archive_sha256": "02d0f9fff774c6b8a645aa610f4a140a978ab80cf85d029f419052e06b0b8a22"
+    },
+    "smart": {
+      "owner": "simai/ui",
+      "tag": null,
+      "tag_object": null,
+      "revision": "62b1d9b6dc8d390837b7daa7c28a4543297521ad",
+      "commit": "62b1d9b6dc8d390837b7daa7c28a4543297521ad",
+      "tree": "1c8680acb41ee35fa539fce843b623974205fbf5",
+      "runtime_path": "distr/smart",
+      "runtime_tree": "97bf0aa235951b011633a0e070283fe46f107a2f",
+      "archive_sha256": "aa5c9d35c433ae124e3f264feb997c90cf27716f0aaf1557b09ff80829d39cf5"
+    }
+  },
+  "build_inputs": {
+    "source": {
+      "owner": "simai/ui-source",
+      "commit": "ec2f29dfa5df657a027887ec413150118740d28d",
+      "tree": "c34771703debad02c75ce7d8c6eb33b7844e17f5",
+      "archive_sha256": "656660814498cee185f4393eddcf5da26725d65bf897f3e45b4993802d420a40"
+    },
+    "builder": {
+      "owner": "simai/ui-builder",
+      "commit": "9c9c1b1510393b24adb98ea2ca523b26474cf0cf",
+      "tree": "51e456497c213ba5c9e0dc9ad0a6e7261f63a30d",
+      "archive_sha256": "9ed82d93fd64b82f49aca546fbea2d5ec9762fe918c3f7a610cb62d5c7a76dc2"
+    },
+    "legacy_compatibility": {
+      "required": false
+    }
+  },
+  "inventory": {
+    "utility_rules": 733,
+    "utility_families": 228,
+    "components": 66,
+    "smart_components": 71,
+    "recipes": 1
+  },
+  "exclusions": [],
+  "claims": {
+    "full_compatible": false,
+    "production_ready": false,
+    "all_items_ready": false
+  },
+  "unit_inventory": {
+    "schema": "simai.framework.unit-inventory",
+    "path": "contracts/releases/ui-62b1d9b6dc8d.inventory.json",
+    "sha256": "99d1bec70879d2df8a28416a8566fa402ff03efff53a9634c5beb130c6b679db",
+    "units": 394,
+    "change_report": {
+      "path": "contracts/releases/ui-62b1d9b6dc8d.changes.json",
+      "sha256": "aae12c0c61841bd7ee6a094e9d5dd58e5f401a757872c33784c31cfd73c7b6d5",
+      "from": "ui-c759b3cb3e31"
+    }
+  }
+}
