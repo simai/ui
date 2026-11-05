@@ -8,6 +8,8 @@
 
 ### Добавлено
 
+- The Loader reads a set passport (`set.json`) in debug mode only for component sets (`data-sf-sets`, the set index, a version or a base string), never for a plain package such as `pro` declared as `{base}`: such pages no longer request a missing `set.json` and log no 404. `core.runtime` 1.26.1.
+
 - Editor visual parity, Framework side (ui-editor brief 2026-11-04): `layout.section` 1.2.0 prints its spacing and width sets by default (`parameter_defaults`, type manifest schema 1.5.0; `{width: normal, padding_y: 8}`), so a page never draws text flush to the sheet's edge; a document's own values still win. Blocks inside a section or container stand `space-y-3` apart, a nested container takes `container-flush`, and the first and last block of a content part carry no outer margin (`core.styles` 1.2.0). Built-in types `element.button` (with `href`), `element.button-icon`, `element.badge`, `element.icon`, `layout.container`, `layout.grid`, `layout.spacer`; section variants plain, soft, accent, text, two-columns; catalogue groups `text, media, elements, layout, page-parts, marketing, data, forms` (`structure` stays an alias of `layout` until 2027-01-01). `content.heading` 1.2.0 and `content.paragraph` 1.3.0 take per-screen `align` and `hidden`; the paragraph's `lead` prints `text-large color-on-surface-variant` (`presentation.modifier_utilities`). `SF.Composition.effectiveProps`. `core.runtime` 1.26.0.
 - Composition utilities print the phone value as the base class whenever a wider screen differs, for any type: `{xs:1, md:2}` gives `grid-col-1 md:grid-col-2`.
 - `sf-button` 1.4.0 takes `href` and draws a link with the button's look (no `href` while disabled or loading; unsafe schemes draw a plain button).
