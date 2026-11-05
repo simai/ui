@@ -12,6 +12,9 @@
     "flex/default",
     "place-items/default"
   ],
+  "cl-alert-bar": [
+    "sr-only/default"
+  ],
   "cl-avatar": [
     "align-items/default",
     "background-color/default",
@@ -231,6 +234,17 @@
     "display/default",
     "flex-direction/default",
     "transition-property/default"
+  ],
+  "cl-list": [
+    "align-items/default",
+    "display/default",
+    "flex/default",
+    "justify-content/default",
+    "sr-only/default"
+  ],
+  "cl-list-feed": [
+    "display/default",
+    "sr-only/default"
   ],
   "cl-list-item": [
     "align-items/default",

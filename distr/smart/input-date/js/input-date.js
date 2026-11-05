@@ -346,20 +346,76 @@ function padDatePart(value) {
 
 function formatIsoDate(date) {
   return `${date.getFullYear()}-${padDatePart(date.getMonth() + 1)}-${padDatePart(date.getDate())}`;
-}
+} // A date, a time of day, or both, in the declared format. `minutes` is the
+// time of day as minutes after midnight (0-1439), null for none; HH and mm are
+// the hours (00-23) and the minutes (00-59).
 
-function formatDateValue(date, format = 'YYYY.MM.DD') {
-  if (!date) {
+
+function formatDateValue(date, format = 'YYYY.MM.DD', minutes = null) {
+  if (!date && minutes === null) {
     return '';
   }
 
-  const tokens = {
-    YYYY: String(date.getFullYear()),
-    YY: String(date.getFullYear()).slice(-2),
-    MM: padDatePart(date.getMonth() + 1),
-    DD: padDatePart(date.getDate())
+  const tokens = {};
+
+  if (date) {
+    Object.assign(tokens, {
+      YYYY: String(date.getFullYear()),
+      YY: String(date.getFullYear()).slice(-2),
+      MM: padDatePart(date.getMonth() + 1),
+      DD: padDatePart(date.getDate())
+    });
+  }
+
+  if (minutes !== null) {
+    Object.assign(tokens, {
+      HH: padDatePart(Math.floor(minutes / 60)),
+      mm: padDatePart(minutes % 60)
+    });
+  }
+
+  return String(format || 'YYYY.MM.DD').replace(/YYYY|YY|MM|DD|HH|mm/g, token => tokens[token] || token);
+} // The time of day (mode datetime and time). The value is the wall clock as the
+// host wrote it: hh:mm for a time, yyyy-mm-ddThh:mm for a date and a time.
+// Seconds, a fraction and a zone are read past (the host owns the time zone)
+// and a change writes the minute.
+
+
+const MODES = ['date', 'datetime', 'time'];
+const LAST_MINUTE = 24 * 60 - 1;
+const ISO_TIME_RE = /^(\d{1,2}):(\d{2})(?::\d{2}(?:\.\d+)?)?$/;
+const ISO_DATE_TIME_RE = /^(\d{4}-\d{2}-\d{2})(?:[T ](\d{2}):(\d{2})(?::\d{2}(?:\.\d+)?)?(?:Z|[+-]\d{2}:?\d{2})?)?$/;
+
+function minutesOf(hours, minutes) {
+  if (!Number.isInteger(hours) || hours < 0 || hours > 23) return null;
+  if (!Number.isInteger(minutes) || minutes < 0 || minutes > 59) return null;
+  return hours * 60 + minutes;
+}
+
+function parseIsoTime(value) {
+  const match = String(value ?? '').trim().match(ISO_TIME_RE);
+  return match ? minutesOf(Number(match[1]), Number(match[2])) : null;
+}
+
+function formatIsoTime(minutes) {
+  return `${padDatePart(Math.floor(minutes / 60))}:${padDatePart(minutes % 60)}`;
+} // {day, minutes} of an ISO date or date and time; minutes null for a day alone.
+
+
+function parseIsoDateTime(value) {
+  const match = String(value ?? '').trim().match(ISO_DATE_TIME_RE);
+  if (!match) return null;
+  const day = parseDate(match[1]);
+  if (!day) return null;
+  if (match[2] === undefined) return {
+    day,
+    minutes: null
   };
-  return String(format || 'YYYY.MM.DD').replace(/YYYY|YY|MM|DD/g, token => tokens[token] || token);
+  const minutes = minutesOf(Number(match[2]), Number(match[3]));
+  return minutes === null ? null : {
+    day,
+    minutes
+  };
 }
 
 function isValidDate(date) {
@@ -405,23 +461,36 @@ function parseDate(value) {
 // DD.MM.YYYY field. The whole text has to be one date: it read every run of
 // digits it found and took the first three, so two dates glued together, a
 // date with something after it or a five-digit year all made a date.
+// A format with a time (HH and mm, hours and minutes) also takes a colon
+// between its parts, so «05.11.2026 10:30» lands in DD.MM.YYYY HH:mm. Which
+// parts a format must hold depends on the mode: the date's three in date mode,
+// those and the time's two in datetime mode, the time's two alone in time mode.
 
 
-const FORMAT_TOKEN_RE = /YYYY|YY|MM|DD/g;
+const FORMAT_TOKEN_RE = /YYYY|YY|MM|DD|HH|mm/g;
+const TIME_TOKENS = ['HH', 'mm'];
 const formatPatterns = new Map();
 
-function formatPattern(format) {
-  const key = String(format || 'DD.MM.YYYY');
+function formatPattern(format, mode = 'date') {
+  const written = String(format || (mode === 'time' ? 'HH:mm' : 'DD.MM.YYYY'));
+  const key = `${mode}|${written}`;
   if (formatPatterns.has(key)) return formatPatterns.get(key);
-  const tokens = key.match(FORMAT_TOKEN_RE) || [];
+  const tokens = written.match(FORMAT_TOKEN_RE) || [];
+  const dateTokens = tokens.filter(token => !TIME_TOKENS.includes(token));
+  const timeTokens = tokens.filter(token => TIME_TOKENS.includes(token));
   const digits = {
     YYYY: '(\\d{4})',
     YY: '(\\d{2})',
     MM: '(\\d{1,2})',
-    DD: '(\\d{1,2})'
+    DD: '(\\d{1,2})',
+    HH: '(\\d{1,2})',
+    mm: '(\\d{2})'
   };
-  const source = key.split(FORMAT_TOKEN_RE).map(literal => literal ? '[\\s./,-]+' : '').reduce((pattern, literal, index) => pattern + literal + (index < tokens.length ? digits[tokens[index]] : ''), '');
-  const usable = tokens.length === 3 && tokens.includes('MM') && tokens.includes('DD') && (tokens.includes('YYYY') || tokens.includes('YY'));
+  const separator = timeTokens.length ? '[\\s./,:-]+' : '[\\s./,-]+';
+  const source = written.split(FORMAT_TOKEN_RE).map(literal => literal ? separator : '').reduce((pattern, literal, index) => pattern + literal + (index < tokens.length ? digits[tokens[index]] : ''), '');
+  const hasDate = dateTokens.length === 3 && dateTokens.includes('MM') && dateTokens.includes('DD') && (dateTokens.includes('YYYY') || dateTokens.includes('YY'));
+  const hasTime = timeTokens.length === 2 && timeTokens.includes('HH') && timeTokens.includes('mm');
+  const usable = mode === 'time' ? hasTime && !dateTokens.length : mode === 'datetime' ? hasDate && hasTime : hasDate && !timeTokens.length;
   const pattern = usable ? {
     re: new RegExp(`^${source}$`),
     tokens
@@ -458,6 +527,56 @@ function parseDateValue(value, format = 'DD.MM.YYYY') {
   });
   const year = values.YYYY ?? values.YY + 2000;
   return calendarDate(year, values.MM, values.DD);
+} // A value of any mode as {day, minutes}, or null when it is not one: the ISO
+// form first, then the declared format, the whole text one value. `typed`
+// asks for the whole of it -- a datetime typed without its time is not read
+// as midnight; a stored day alone is (the host wrote no time).
+
+
+function parseModeValue(value, format, mode = 'date', {
+  typed = false
+} = {}) {
+  if (mode === 'date') {
+    const day = parseDateValue(value, format);
+    return day ? {
+      day,
+      minutes: null
+    } : null;
+  }
+
+  const text = String(value ?? '').trim();
+  if (!text) return null;
+
+  if (mode === 'time') {
+    const iso = parseIsoTime(text);
+    if (iso !== null) return {
+      day: null,
+      minutes: iso
+    };
+  } else {
+    const iso = parseIsoDateTime(text);
+    if (iso && !(typed && iso.minutes === null)) return iso;
+    if (iso) return null;
+  }
+
+  const pattern = formatPattern(format, mode);
+  const match = pattern ? text.match(pattern.re) : null;
+  if (!match) return null;
+  const values = {};
+  pattern.tokens.forEach((token, index) => {
+    values[token] = Number(match[index + 1]);
+  });
+  const minutes = minutesOf(values.HH, values.mm);
+  if (minutes === null) return null;
+  if (mode === 'time') return {
+    day: null,
+    minutes
+  };
+  const day = calendarDate(values.YYYY ?? values.YY + 2000, values.MM, values.DD);
+  return day ? {
+    day,
+    minutes
+  } : null;
 }
 
 function normalizeMonth(value, fallback = 0) {
@@ -623,7 +742,7 @@ function presetTextKey(id) {
 const wordKey = key => String(key).replace(/_/gu, '-').replace(/[A-Z]/gu, letter => `-${letter.toLowerCase()}`);
 
 function getLabels(node) {
-  const keys = ['previousMonth', 'nextMonth', 'previousYears', 'nextYears', 'chooseMonth', 'chooseYear', 'presets', 'customRange'];
+  const keys = ['previousMonth', 'nextMonth', 'previousYears', 'nextYears', 'chooseMonth', 'chooseYear', 'presets', 'customRange', 'time', 'hours', 'minutes', 'earlierHour', 'laterHour', 'earlierMinute', 'laterMinute', 'timeNotSet'];
   return Object.fromEntries(keys.map(key => [key, node.sfWord(wordKey(key))]));
 } // sf-input-date from its component.json (standard simai.smart-component 1.3.8
 // §3, §4, §4.4, §7.1.1, §8, §11, §16.20, §17.1). It stays a leaf: the one
@@ -742,6 +861,24 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
       },
       minDate: {
         default: ''
+      },
+      // What is chosen: a date (the default), a date and a time, or a
+      // time of day alone; the window of the day and the minute step.
+      mode: {
+        default: 'date'
+      },
+      minTime: {
+        attribute: 'min-time',
+        default: ''
+      },
+      maxTime: {
+        attribute: 'max-time',
+        default: ''
+      },
+      minuteStep: {
+        type: Number,
+        attribute: 'minute-step',
+        default: 1
       },
       range: {
         type: Boolean,
@@ -922,10 +1059,130 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
 
   get templateName() {
     return this.getAttribute('template') || 'default';
+  } // date (the default), datetime or time. A range is a range of dates: it is
+  // read in date mode only.
+
+
+  get mode() {
+    return this.getEnumAttr('mode', MODES, 'date');
+  }
+
+  get hasTime() {
+    return this.mode !== 'date';
+  } // The stored value read in its mode, {day, minutes}, or null.
+
+
+  get selectedValue() {
+    return parseModeValue(this.date, this.format, this.mode);
   }
 
   get selectedDate() {
-    return parseDateValue(this.date, this.format);
+    if (this.mode === 'date') return parseDateValue(this.date, this.format);
+    return this.selectedValue?.day ?? null;
+  } // The chosen time of day in minutes after midnight, or null. A stored day
+  // without a time, in datetime mode, reads as midnight.
+
+
+  get selectedMinutes() {
+    if (!this.hasTime) return null;
+    const value = this.selectedValue;
+    if (!value) return null;
+    return value.minutes ?? (value.day ? 0 : null);
+  } // The time the panel shows: the value's, or one set on the panel before a
+  // day was chosen (datetime mode), or none.
+
+
+  get currentMinutes() {
+    return this.selectedMinutes ?? this._draftMinutes ?? null;
+  } // The value as the component writes it: yyyy-mm-dd, yyyy-mm-ddThh:mm or hh:mm.
+
+
+  isoOf(value) {
+    if (!value) return '';
+    if (this.mode === 'time') return value.minutes === null ? '' : formatIsoTime(value.minutes);
+    if (!value.day) return '';
+    if (this.mode === 'date') return formatIsoDate(value.day);
+    return `${formatIsoDate(value.day)}T${formatIsoTime(value.minutes ?? 0)}`;
+  }
+
+  get minuteStep() {
+    const step = this.getNumberAttr('minute-step', 1);
+    return Number.isInteger(step) && step >= 1 && step <= 60 ? step : 1;
+  }
+
+  get minTime() {
+    return this.getAttribute('min-time') || '';
+  }
+
+  get maxTime() {
+    return this.getAttribute('max-time') || '';
+  } // A bound (min-date, max-date) as {day, minutes}: in datetime mode it may
+  // carry a time, which holds on its own day.
+
+
+  readBound(text) {
+    if (!text || this.mode === 'time') return null;
+
+    if (this.mode === 'date') {
+      const day = parseDateValue(text, this.format);
+      return day ? {
+        day,
+        minutes: null
+      } : null;
+    }
+
+    return parseIsoDateTime(text) ?? parseModeValue(text, this.format, 'datetime');
+  } // The times a day allows, in minutes: min-time to max-time, narrowed on the
+  // day of a bound that carries a time.
+
+
+  timeWindow(day = null) {
+    let lo = parseIsoTime(this.minTime) ?? 0;
+    let hi = parseIsoTime(this.maxTime) ?? LAST_MINUTE;
+
+    if (this.mode === 'datetime' && day) {
+      const min = this.readBound(this.minDate);
+      const max = this.readBound(this.maxDate);
+      if (min?.minutes != null && sameDay(day, min.day)) lo = Math.max(lo, min.minutes);
+      if (max?.minutes != null && sameDay(day, max.day)) hi = Math.min(hi, max.minutes);
+    }
+
+    return {
+      lo,
+      hi
+    };
+  } // The allowed time nearest to `minutes` in the direction given: inside the
+  // day's window and on the minute step (counted from the hour). Null when
+  // the day allows none.
+
+
+  fitMinutes(minutes, day = null, direction = 1) {
+    const {
+      lo,
+      hi
+    } = this.timeWindow(day);
+    const step = this.minuteStep;
+
+    const onStep = value => value % 60 % step === 0;
+
+    const seek = (from, by) => {
+      for (let value = from; value >= lo && value <= hi; value += by) if (onStep(value)) return value;
+
+      return null;
+    };
+
+    if (minutes < lo) return seek(lo, 1);
+    if (minutes > hi) return seek(hi, -1);
+    const by = direction < 0 ? -1 : 1;
+    return seek(minutes, by) ?? seek(minutes, -by);
+  }
+
+  timeAllowed(minutes, day = null) {
+    const {
+      lo,
+      hi
+    } = this.timeWindow(day);
+    return minutes >= lo && minutes <= hi && minutes % 60 % this.minuteStep === 0;
   }
 
   get primaryDate() {
@@ -1044,7 +1301,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
 
 
   monthOf(value) {
-    const date = parseDateValue(value, this.format);
+    const date = this.mode === 'date' ? parseDateValue(value, this.format) : parseModeValue(value, this.format, this.mode)?.day;
     return date ? {
       year: date.getFullYear(),
       month: date.getMonth()
@@ -1104,7 +1361,9 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
   commitTypedText() {
     if (!this.typed || !this._input) return this;
     const text = String(this._input.value ?? '').trim();
-    if (!text || text === this.displayValue || !parseDateValue(text, this.format)) return this;
+    if (!text || text === this.displayValue || !parseModeValue(text, this.format, this.mode, {
+      typed: true
+    })) return this;
     this.handleInputChange({
       target: this._input
     });
@@ -1176,11 +1435,11 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
   }
 
   setMaxDate() {
-    return parseDateValue(this.maxDate, this.format);
+    return this.readBound(this.maxDate)?.day ?? null;
   }
 
   setMinDate() {
-    return parseDateValue(this.minDate, this.format);
+    return this.readBound(this.minDate)?.day ?? null;
   }
 
   get maxDate() {
@@ -1224,7 +1483,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
   }
 
   get range() {
-    return this.getBooleanAttr('range', false);
+    return this.mode === 'date' && this.getBooleanAttr('range', false);
   }
 
   get input() {
@@ -1278,7 +1537,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
     const empty = this.range ? !this.startValue : !this.date;
     return {
       valueMissing: this.required && !this.disabled && empty,
-      message: this.sfWord('value-missing'),
+      message: this.sfWord(this.hasTime ? `value-missing-${this.mode}` : 'value-missing'),
       anchor: this._input || null
     };
   } // form.reset(): the value as written, without events (§17.1 item 4).
@@ -1318,7 +1577,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
 
   get leftIcon() {
     if (this.hasAttribute('icon-start')) return this.getAttribute('icon-start');
-    return this.getAttribute('left-icon') || 'calendar_today';
+    return this.getAttribute('left-icon') || (this.mode === 'time' ? 'schedule' : 'calendar_today');
   }
 
   get iconStart() {
@@ -1401,10 +1660,17 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
 
   get locale() {
     return normalizeLocale(this.getAttribute('locale'), this);
-  }
+  } // The display format of the mode. A written format the mode cannot use is
+  // completed: datetime adds « HH:mm» to a date format, time takes HH:mm.
+
 
   get format() {
-    return this.getAttribute('format') || 'DD.MM.YYYY';
+    const written = this.getAttribute('format') || '';
+    const mode = this.mode;
+    if (mode === 'date') return written || 'DD.MM.YYYY';
+    if (mode === 'time') return written && formatPattern(written, 'time') ? written : 'HH:mm';
+    if (written && formatPattern(written, 'datetime')) return written;
+    return `${written && formatPattern(written, 'date') ? written : 'DD.MM.YYYY'} HH:mm`;
   } // The name for a field whose label is drawn outside it -- a record panel
   // prints the label itself, and passing it to the control printed it twice.
 
@@ -1432,7 +1698,10 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
   }
 
   get formattedValue() {
-    return formatDateValue(this.selectedDate, this.format);
+    if (!this.hasTime) return formatDateValue(this.selectedDate, this.format);
+    const minutes = this.selectedMinutes;
+    if (minutes === null || this.mode === 'datetime' && !this.selectedDate) return '';
+    return formatDateValue(this.mode === 'time' ? null : this.selectedDate, this.format, minutes);
   }
 
   get formattedStartValue() {
@@ -1755,11 +2024,17 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
 
     if (!text) {
       if (!this.date) return;
+      this._draftMinutes = null;
       this.setState({
         date: '',
         context: ''
       });
       this.emitChange();
+      return;
+    }
+
+    if (this.hasTime) {
+      this.commitTypedTime(text, restore);
       return;
     }
 
@@ -1788,6 +2063,43 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
     });
     this.set({
       activeDate: value
+    });
+    this.emitChange();
+  } // A date and a time, or a time, typed: the whole text in the format (or the
+  // ISO form), inside the bounds, the time inside min-time/max-time and on
+  // the minute step. Anything else puts the field back, as for a date.
+
+
+  commitTypedTime(text, restore) {
+    const read = parseModeValue(text, this.format, this.mode, {
+      typed: true
+    });
+    const minDate = this.setMinDate();
+    const maxDate = this.setMaxDate();
+    const dayOut = Boolean(read?.day) && (minDate && compareDates(read.day, minDate) < 0 || maxDate && compareDates(read.day, maxDate) > 0);
+
+    if (!read || dayOut || !this.timeAllowed(read.minutes, read.day)) {
+      restore();
+      return;
+    }
+
+    const value = this.isoOf(read);
+
+    if (value === this.isoOf(this.selectedValue)) {
+      restore();
+      return;
+    }
+
+    this._draftMinutes = null;
+    this.setState({ ...(read.day ? {
+        year: read.day.getFullYear(),
+        month: read.day.getMonth()
+      } : {}),
+      date: value,
+      context: ''
+    });
+    if (read.day) this.set({
+      activeDate: formatIsoDate(read.day)
     });
     this.emitChange();
   } // Typing is not a change: the value is read when the field says it changed,
@@ -2002,6 +2314,27 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
     if (this.range) {
       this.selectRangeDate(day);
       return this;
+    } // A date and a time: the day keeps the time shown (or takes the first
+    // the day allows) and the panel stays open on the time, which the
+    // focus moves to; Enter there closes it.
+
+
+    if (this.mode === 'datetime') {
+      const minutes = this.fitMinutes(this.currentMinutes ?? this.timeWindow(day.date).lo, day.date, 1);
+      if (minutes === null) return this;
+      this._draftMinutes = null;
+      this._focusTimeAfterRender = 'hours';
+      this.setState({
+        year: day.date.getFullYear(),
+        month: day.date.getMonth(),
+        date: `${day.value}T${formatIsoTime(minutes)}`,
+        context: ''
+      });
+      this.set({
+        activeDate: day.value
+      });
+      this.emitChange();
+      return this;
     }
 
     this.setState({
@@ -2175,6 +2508,180 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
     }
 
     return month;
+  } // The time set on the panel: the value in time mode; in datetime mode the
+  // value once a day is chosen, kept for the day until then.
+
+
+  setTime(minutes) {
+    if (this.mode === 'time') {
+      this.setState({
+        date: formatIsoTime(minutes)
+      });
+      this.emitChange();
+      return this;
+    }
+
+    const day = this.selectedDate;
+
+    if (!day) {
+      this._draftMinutes = minutes;
+      this.requestComponentUpdate('time');
+      return this;
+    }
+
+    this.setState({
+      date: `${formatIsoDate(day)}T${formatIsoTime(minutes)}`
+    });
+    this.emitChange();
+    return this;
+  } // The hours or the minutes one step up or down: an hour, or the minute
+  // step. Each wraps inside its own part (23 to 00, 55 to 00) as a native
+  // time field does, then lands on the nearest time the day allows. Without
+  // a time the first step takes the day's first allowed time (up) or its
+  // last (down).
+
+
+  stepTime(part, direction = 1) {
+    if (this.disabled) return this;
+    const day = this.mode === 'datetime' ? this.selectedDate : null;
+    const current = this.currentMinutes;
+    const {
+      lo,
+      hi
+    } = this.timeWindow(day);
+    let next;
+
+    if (current === null) {
+      next = direction > 0 ? lo : hi;
+    } else if (part === 'hours') {
+      next = (Math.floor(current / 60) + direction + 24) % 24 * 60 + current % 60;
+    } else {
+      const step = this.minuteStep;
+      const minute = current % 60;
+      let moved;
+
+      if (direction > 0) {
+        moved = (Math.floor(minute / step) + 1) * step;
+        if (moved > 59) moved = 0;
+      } else {
+        moved = minute % step ? Math.floor(minute / step) * step : minute - step;
+        if (moved < 0) moved = Math.floor(59 / step) * step;
+      }
+
+      next = Math.floor(current / 60) * 60 + moved;
+    }
+
+    const fitted = this.fitMinutes(next, day, direction);
+    if (fitted === null || fitted === current) return this;
+    return this.setTime(fitted);
+  } // Keys on a time part (an APG spinbutton): ArrowUp and ArrowDown step it,
+  // Home and End take its first and last allowed value, digits type it (two
+  // for the hours move on to the minutes), ArrowLeft and ArrowRight move
+  // between the parts (the row reads hh:mm left to right), Enter closes the panel.
+
+
+  handleTimeKeydown(event, part) {
+    if (this.disabled) return;
+    const key = event.key;
+    const day = this.mode === 'datetime' ? this.selectedDate : null;
+
+    if (key === 'ArrowUp' || key === 'ArrowDown') {
+      event.preventDefault();
+      this._typedTime = null;
+      const before = this.currentMinutes;
+      this._focusTimeAfterRender = part;
+      this.stepTime(part, key === 'ArrowUp' ? 1 : -1);
+      if (this.currentMinutes === before) this._focusTimeAfterRender = null;
+      return;
+    }
+
+    if (key === 'Home' || key === 'End') {
+      event.preventDefault();
+      this._typedTime = null;
+      const {
+        lo,
+        hi
+      } = this.timeWindow(day);
+      const current = this.currentMinutes ?? lo;
+      const hour = Math.floor(current / 60) * 60;
+      const target = part === 'hours' ? (key === 'Home' ? Math.floor(lo / 60) * 60 : Math.floor(hi / 60) * 60) + current % 60 : key === 'Home' ? hour : hour + 59;
+      const fitted = this.fitMinutes(target, day, key === 'Home' ? 1 : -1);
+
+      if (fitted !== null && fitted !== this.currentMinutes) {
+        this._focusTimeAfterRender = part;
+        this.setTime(fitted);
+      }
+
+      return;
+    }
+
+    if (key === 'ArrowLeft' || key === 'ArrowRight') {
+      event.preventDefault(); // The row is hh:mm left to right in every direction, as a clock reads.
+
+      this.focusTimePart(key === 'ArrowRight' ? 'minutes' : 'hours');
+      return;
+    }
+
+    if (key === 'Enter') {
+      event.preventDefault();
+      this._typedTime = null;
+      if (this.input) this._closePanel({
+        restoreFocus: true
+      });
+      return;
+    }
+
+    if (/^\d$/u.test(key)) {
+      event.preventDefault();
+      const now = Date.now();
+      const before = this._typedTime;
+      const text = `${before && before.part === part && now - before.at < 1000 ? before.text : ''}${key}`.slice(-2);
+      const limit = part === 'hours' ? 23 : 59;
+      const typed = Number(text) <= limit ? Number(text) : Number(key);
+      const complete = text.length === 2 || Number(text) * 10 > limit;
+      this._typedTime = complete ? null : {
+        part,
+        text,
+        at: now
+      };
+      const current = this.currentMinutes ?? this.timeWindow(day).lo;
+      const target = part === 'hours' ? typed * 60 + current % 60 : Math.floor(current / 60) * 60 + typed;
+      const fitted = this.fitMinutes(target, day, 1);
+      const focus = complete && part === 'hours' ? 'minutes' : part;
+
+      if (fitted !== null && fitted !== this.currentMinutes) {
+        this._focusTimeAfterRender = focus;
+        this.setTime(fitted);
+      } else if (focus !== part) {
+        this.focusTimePart(focus);
+      }
+    }
+  }
+
+  focusTimePart(part) {
+    this._focusTimeAfterRender = null;
+    this.querySelector(`.sf-datepicker-time-value[data-time-part="${part}"]`)?.focus?.();
+  } // What the time row shows: each part's number (null for none), the bounds
+  // a spinbutton says, and whether a step is possible.
+
+
+  get timeParts() {
+    if (!this.hasTime) return null;
+    const minutes = this.currentMinutes;
+    const day = this.mode === 'datetime' ? this.selectedDate : null;
+    const {
+      lo,
+      hi
+    } = this.timeWindow(day);
+    return {
+      set: minutes !== null,
+      hours: minutes === null ? null : Math.floor(minutes / 60),
+      minutes: minutes === null ? null : minutes % 60,
+      hoursMin: Math.floor(lo / 60),
+      hoursMax: Math.floor(hi / 60),
+      minutesMax: Math.floor(59 / this.minuteStep) * this.minuteStep,
+      empty: lo > hi
+    };
   }
 
   emitChange() {
@@ -2210,7 +2717,12 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
       formattedValue: this.formattedValue,
       isoValue: this.date,
       range: false,
-      format: this.format
+      format: this.format,
+      mode: this.mode,
+      // datetime and time: the time of day alone, hh:mm ('' for none).
+      ...(this.hasTime ? {
+        time: this.selectedMinutes === null ? '' : formatIsoTime(this.selectedMinutes)
+      } : {})
     }; // Once, under its native name, without the element in its detail (§8);
     // the shim sends sf-datepicker-change and sf-change after it with the
     // same detail (aliases.json).
@@ -2246,7 +2758,10 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
       nextIcon: this.isRtl ? 'chevron_left' : 'chevron_right',
       context: this.contextMode,
       locale: this.locale,
-      days: this.days,
+      // time mode draws no grid: the time row is the panel.
+      days: this.mode === 'time' ? [] : this.days,
+      mode: this.mode,
+      timeParts: this.timeParts,
       presetItems: this.presetItems,
       months: this.months,
       years: this.years,
@@ -2315,7 +2830,11 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
     requestAnimationFrame(() => {
       this.positionPanel();
 
-      if (this._focusCalendarOnOpen || this._focusDateAfterRender) {
+      if (this._focusTimeAfterRender || this._focusCalendarOnOpen && this.mode === 'time') {
+        this.focusTimePart(this._focusTimeAfterRender || 'hours');
+        this._focusCalendarOnOpen = false;
+        this._focusDateAfterRender = false;
+      } else if (this._focusCalendarOnOpen || this._focusDateAfterRender) {
         const active = this.querySelector(`.sf-datepicker-day[data-date="${formatIsoDate(this.activeDate)}"]`);
         active?.focus?.();
         this._focusCalendarOnOpen = false;
@@ -2346,6 +2865,10 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.F
       context: this.contextMode,
       maxDate: this.maxDate,
       minDate: this.minDate,
+      mode: this.mode,
+      minTime: this.minTime,
+      maxTime: this.maxTime,
+      minuteStep: this.minuteStep,
       locale: this.locale,
       input: this.input,
       open: this.open,
@@ -2524,13 +3047,75 @@ function renderPresets(context) {
                 type="button" ?disabled=${context.disabled} aria-pressed=${custom ? 'true' : 'false'} tabindex=${focusable || context.disabled ? '-1' : '0'} data-preset=""
                 @click=${() => context.component.chooseCustomRange()}>${context.labels.customRange}</button>
         </div>`;
+} // A stepper beside a time part: the class markup of an icon button at the
+// field's size 1, out of the tab order as the APG spinbutton has its buttons --
+// the arrow keys already do what it does. Still a real, named button.
+
+
+const TIME_STEPPER = 'sf-datepicker-time-step sf-icon-button sf-icon-button--size-1 sf-icon-button--icon sf-icon-button--link sf-icon-button--on-surface flex items-cross-center content-main-center';
+
+function renderTimeStepper(context, part, direction) {
+  const labels = context.labels;
+  const label = part === 'hours' ? direction < 0 ? labels.earlierHour : labels.laterHour : direction < 0 ? labels.earlierMinute : labels.laterMinute;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <button type="button" class=${TIME_STEPPER} tabindex="-1" aria-label=${label}
+            ?disabled=${context.disabled || context.timeParts.empty}
+            @click=${() => context.component.stepTime(part, direction)}
+        ><i class="sf-icon" aria-hidden="true">${direction < 0 ? 'remove' : 'add'}</i></button>`;
+}
+
+function renderTimePart(context, part) {
+  const parts = context.timeParts;
+  const value = parts[part];
+  const shown = value === null ? '--' : String(value).padStart(2, '0');
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <div class="sf-datepicker-time-part flex items-cross-center">
+            ${renderTimeStepper(context, part, -1)}
+            <span class="sf-datepicker-text sf-datepicker-time-value flex content-main-center items-cross-center"
+                role="spinbutton" data-time-part=${part}
+                tabindex=${context.disabled ? '-1' : '0'}
+                aria-label=${part === 'hours' ? context.labels.hours : context.labels.minutes}
+                aria-valuemin=${part === 'hours' ? parts.hoursMin : 0}
+                aria-valuemax=${part === 'hours' ? parts.hoursMax : parts.minutesMax}
+                aria-valuenow=${value === null ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : value}
+                aria-valuetext=${value === null ? context.labels.timeNotSet : shown}
+                aria-disabled=${context.disabled ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                @keydown=${event => context.component.handleTimeKeydown(event, part)}>${shown}</span>
+            ${renderTimeStepper(context, part, 1)}
+        </div>`;
+} // The time of day: hours and minutes, each a spinbutton between its two
+// steppers, on one row at the control height of size 1 -- under the grid in
+// datetime mode, the whole panel in time mode.
+
+
+function renderTime(context) {
+  if (!context.timeParts) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <div class="sf-datepicker-time flex content-main-center items-cross-center gap-1/4" role="group"
+            aria-label=${context.labels.time} dir="ltr">
+            ${renderTimePart(context, 'hours')}
+            <span class="sf-datepicker-time-separator" aria-hidden="true">:</span>
+            ${renderTimePart(context, 'minutes')}
+        </div>`;
 } // The weekday row lies in the main box with the days, so a month or year
 // choice covers both: above the box it labelled columns that were not there,
 // and the choice had a row less of height than the panel gives it.
 
 
 function renderDatepickerPanel(context) {
-  const rootClasses = joinClasses('sf-datepicker inline-flex', context.presetItems.length ? 'sf-datepicker--presets' : '', context.rootClass);
+  const rootClasses = joinClasses('sf-datepicker inline-flex', context.presetItems.length ? 'sf-datepicker--presets' : '', context.mode !== 'date' ? `sf-datepicker--${context.mode}` : '', context.rootClass);
+
+  if (context.mode === 'time') {
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+            <div ${(0,lit_directives_ref_js__WEBPACK_IMPORTED_MODULE_1__.ref)(context.component.refs.datePickerPanel)} id=${context.panelId}
+                class=${rootClasses} style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                role=${context.input ? 'dialog' : 'group'} aria-label=${context.labels.time}
+                aria-disabled=${context.disabled ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                @click=${event => context.component.handlePanelClick(event)}>
+                ${renderTime(context)}
+            </div>`;
+  }
+
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <div ${(0,lit_directives_ref_js__WEBPACK_IMPORTED_MODULE_1__.ref)(context.component.refs.datePickerPanel)} id=${context.panelId}
             class=${rootClasses} style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
@@ -2549,6 +3134,7 @@ function renderDatepickerPanel(context) {
                         ${context.days.map(day => renderDay(day, context))}
                     </div>
                 </div>
+                ${renderTime(context)}
             </div>
         </div>`;
 }
@@ -2640,21 +3226,21 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shi
 /***/ "d7180f8fbd98"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-date","tag":"sf-input-date","version":"1.3.0","kind":"leaf","settings":{"date":{"type":"string","default":""},"start-value":{"type":"string","default":""},"end-value":{"type":"string","default":""},"max-date":{"type":"string","default":""},"min-date":{"type":"string","default":""},"range":{"type":"boolean","default":false},"month":{"type":"number","optional":true,"integer":true,"min":0,"max":11},"year":{"type":"number","optional":true,"integer":true},"context":{"type":"enum","values":["","month","year"],"default":""},"week-start":{"type":"number","optional":true,"integer":true,"min":0,"max":6},"locale":{"type":"string","default":""},"format":{"type":"string","default":"DD.MM.YYYY"},"close-on-select":{"type":"boolean","default":true},"input":{"type":"boolean","default":true},"portal":{"type":"boolean","default":true},"input-type":{"type":"string","default":"bordered"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"input-size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"input-name":{"type":"string","default":""},"placeholder":{"type":"string","default":""},"label":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"required":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"hint":{"type":"string","default":""},"icon-start":{"type":"icon","default":"calendar_today"},"left-icon":{"type":"icon","default":"calendar_today"},"hint-icon":{"type":"icon","default":""},"input-root-class":{"type":"string","default":""},"mask":{"type":"boolean","default":false},"mask-pattern":{"type":"string","default":"00.00.0000"},"mask-lazy":{"type":"boolean","default":false},"mask-placeholder-char":{"type":"string","default":"_"},"mask-options":{"type":"string","default":""},"name":{"type":"string","default":""},"preset":{"type":"string","default":""},"readonly":{"type":"boolean","default":false},"presets":{"type":"list","default":[],"of":{"id":"id","label":{"type":"string","optional":true},"relative":{"type":"enum","values":["today","yesterday","last-7-days","last-30-days","this-week","this-month","last-month"],"optional":true},"range":{"type":"list","optional":true}}}},"values":{"value":{"type":"string","default":""},"open":{"type":"boolean","default":false}},"events":{"change":{"carries":{"value":"object","date":"string","start-value":"string","end-value":"string","formatted-value":"string","iso-value":"string","range":"boolean","format":"string","preset":"object"}}},"actions":{"open-panel":{"with":{"options":"object"}},"close-panel":{"with":{"options":"object"}},"toggle-panel":{},"choose-preset":{"with":{"item":"object"}},"choose-custom-range":{}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","custom-error"]},"layer":{"kind":"surface","traps-focus":false},"css-variables":{"--sf-datepicker-background-color":{"type":"color","state":"open"},"--sf-datepicker-day-color":{"type":"color","state":"rest"},"--sf-datepicker-selected-background-color":{"type":"color","state":"selected"},"--sf-datepicker-selected-color":{"type":"color","state":"selected"},"--sf-datepicker-range-background-color":{"type":"color","state":"in-range"},"--sf-datepicker-weekday-color":{"type":"color","state":"rest"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-date","tag":"sf-input-date","version":"1.4.0","kind":"leaf","settings":{"date":{"type":"string","default":""},"start-value":{"type":"string","default":""},"end-value":{"type":"string","default":""},"max-date":{"type":"string","default":""},"min-date":{"type":"string","default":""},"mode":{"type":"enum","values":["date","datetime","time"],"default":"date"},"min-time":{"type":"string","default":""},"max-time":{"type":"string","default":""},"minute-step":{"type":"number","default":1,"integer":true,"min":1,"max":60},"range":{"type":"boolean","default":false},"month":{"type":"number","optional":true,"integer":true,"min":0,"max":11},"year":{"type":"number","optional":true,"integer":true},"context":{"type":"enum","values":["","month","year"],"default":""},"week-start":{"type":"number","optional":true,"integer":true,"min":0,"max":6},"locale":{"type":"string","default":""},"format":{"type":"string","default":"DD.MM.YYYY"},"close-on-select":{"type":"boolean","default":true},"input":{"type":"boolean","default":true},"portal":{"type":"boolean","default":true},"input-type":{"type":"string","default":"bordered"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"input-size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"input-name":{"type":"string","default":""},"placeholder":{"type":"string","default":""},"label":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"required":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"hint":{"type":"string","default":""},"icon-start":{"type":"icon","default":"calendar_today"},"left-icon":{"type":"icon","default":"calendar_today"},"hint-icon":{"type":"icon","default":""},"input-root-class":{"type":"string","default":""},"mask":{"type":"boolean","default":false},"mask-pattern":{"type":"string","default":"00.00.0000"},"mask-lazy":{"type":"boolean","default":false},"mask-placeholder-char":{"type":"string","default":"_"},"mask-options":{"type":"string","default":""},"name":{"type":"string","default":""},"preset":{"type":"string","default":""},"readonly":{"type":"boolean","default":false},"presets":{"type":"list","default":[],"of":{"id":"id","label":{"type":"string","optional":true},"relative":{"type":"enum","values":["today","yesterday","last-7-days","last-30-days","this-week","this-month","last-month"],"optional":true},"range":{"type":"list","optional":true}}}},"values":{"value":{"type":"string","default":""},"open":{"type":"boolean","default":false}},"events":{"change":{"carries":{"value":"object","date":"string","start-value":"string","end-value":"string","formatted-value":"string","iso-value":"string","range":"boolean","format":"string","preset":"object","mode":"string","time":"string"}}},"actions":{"open-panel":{"with":{"options":"object"}},"close-panel":{"with":{"options":"object"}},"toggle-panel":{},"choose-preset":{"with":{"item":"object"}},"choose-custom-range":{}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","custom-error"]},"layer":{"kind":"surface","traps-focus":false},"css-variables":{"--sf-datepicker-background-color":{"type":"color","state":"open"},"--sf-datepicker-day-color":{"type":"color","state":"rest"},"--sf-datepicker-selected-background-color":{"type":"color","state":"selected"},"--sf-datepicker-selected-color":{"type":"color","state":"selected"},"--sf-datepicker-range-background-color":{"type":"color","state":"in-range"},"--sf-datepicker-weekday-color":{"type":"color","state":"rest"}}}');
 
 /***/ },
 
 /***/ "2fe06cbdeec6"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Datepicker","runtime":{"choose-month":"Choose a month","choose-year":"Choose a year","custom-range":"Custom range","next-month":"Next month","next-years":"Next years","preset-last-month":"Last month","preset-last30-days":"Last 30 days","preset-last7-days":"Last 7 days","preset-this-month":"This month","preset-this-week":"This week","preset-today":"Today","preset-yesterday":"Yesterday","presets":"Quick ranges","previous-month":"Previous month","previous-years":"Previous years","value-missing":"Choose a date."}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Datepicker","runtime":{"choose-month":"Choose a month","choose-year":"Choose a year","custom-range":"Custom range","earlier-hour":"Previous hour","earlier-minute":"Previous minutes","hours":"Hours","later-hour":"Next hour","later-minute":"Next minutes","minutes":"Minutes","next-month":"Next month","next-years":"Next years","preset-last-month":"Last month","preset-last30-days":"Last 30 days","preset-last7-days":"Last 7 days","preset-this-month":"This month","preset-this-week":"This week","preset-today":"Today","preset-yesterday":"Yesterday","presets":"Quick ranges","previous-month":"Previous month","previous-years":"Previous years","time":"Time","time-not-set":"Not set","value-missing":"Choose a date.","value-missing-datetime":"Choose a date and a time.","value-missing-time":"Choose a time."}}');
 
 /***/ },
 
 /***/ "8752f4d5d78e"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Календарь","runtime":{"choose-month":"Выберите месяц","choose-year":"Выберите год","custom-range":"Свой период","next-month":"Следующий месяц","next-years":"Следующие годы","preset-last-month":"Прошлый месяц","preset-last30-days":"Последние 30 дней","preset-last7-days":"Последние 7 дней","preset-this-month":"Этот месяц","preset-this-week":"Эта неделя","preset-today":"Сегодня","preset-yesterday":"Вчера","presets":"Быстрый выбор","previous-month":"Предыдущий месяц","previous-years":"Предыдущие годы","value-missing":"Выберите дату."}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Календарь","runtime":{"choose-month":"Выберите месяц","choose-year":"Выберите год","custom-range":"Свой период","earlier-hour":"Предыдущий час","earlier-minute":"Предыдущие минуты","hours":"Часы","later-hour":"Следующий час","later-minute":"Следующие минуты","minutes":"Минуты","next-month":"Следующий месяц","next-years":"Следующие годы","preset-last-month":"Прошлый месяц","preset-last30-days":"Последние 30 дней","preset-last7-days":"Последние 7 дней","preset-this-month":"Этот месяц","preset-this-week":"Эта неделя","preset-today":"Сегодня","preset-yesterday":"Вчера","presets":"Быстрый выбор","previous-month":"Предыдущий месяц","previous-years":"Предыдущие годы","time":"Время","time-not-set":"Не задано","value-missing":"Выберите дату.","value-missing-datetime":"Выберите дату и время.","value-missing-time":"Выберите время."}}');
 
 /***/ }
 

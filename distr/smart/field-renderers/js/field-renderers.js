@@ -69,390 +69,6 @@ function normalizeBadgeContract({
 
 /***/ },
 
-/***/ "f28a9d913ce0"
-(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-// Generated from the `tag` rows of src/smart/*/aliases.json and the element_aliases of
-// src/core/contracts/packages/*.package.json by scripts/tag-alias-table.mjs; do not edit.
-// The dated tag aliases of the Framework and of its component packages, read by core/js/tag-aliases.js.
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Object.freeze([Object.freeze({
-  from: 'sf-avatars',
-  to: 'sf-avatar-group',
-  since: '2026-11-03',
-  remove_after: '2027-01-01'
-}), Object.freeze({
-  from: 'sf-change-confirm',
-  to: 'sf-confirm-change',
-  since: '2026-11-03',
-  remove_after: '2027-01-01'
-}), Object.freeze({
-  from: 'sf-close',
-  to: 'sf-button-close',
-  since: '2026-11-03',
-  remove_after: '2027-01-01'
-}), Object.freeze({
-  from: 'sf-code-input',
-  to: 'sf-input-code',
-  since: '2026-11-03',
-  remove_after: '2027-01-01'
-}), Object.freeze({
-  from: 'sf-color',
-  to: 'sf-input-color',
-  since: '2026-11-03',
-  remove_after: '2027-01-01'
-}), Object.freeze({
-  from: 'sf-composition-overlay',
-  to: 'sf-editor-overlay',
-  since: '2026-11-03',
-  remove_after: '2027-01-01'
-}), Object.freeze({
-  from: 'sf-content-editor',
-  to: 'sf-editor-content',
-  since: '2026-11-03',
-  remove_after: '2027-01-01'
-}), Object.freeze({
-  from: 'sf-context-menu',
-  to: 'sf-menu-context',
-  since: '2026-11-03',
-  remove_after: '2027-01-01'
-}), Object.freeze({
-  from: 'sf-copy-button',
-  to: 'sf-button-copy',
-  since: '2026-11-03',
-  remove_after: '2027-01-01'
-}), Object.freeze({
-  from: 'sf-country-code',
-  to: 'sf-input-country',
-  since: '2026-11-03',
-  remove_after: '2027-01-01'
-}), Object.freeze({
-  from: 'sf-data-view',
-  to: 'sf-view',
-  since: '2026-11-03',
-  remove_after: '2027-01-01'
-}), Object.freeze({
-  from: 'sf-datepicker',
-  to: 'sf-input-date',
-  since: '2026-11-03',
-  remove_after: '2027-01-01'
-}), Object.freeze({
-  from: 'sf-download-file',
-  to: 'sf-file-download',
-  since: '2026-11-03',
-  remove_after: '2027-01-01'
-}), Object.freeze({
-  from: 'sf-icon-button',
-  to: 'sf-button-icon',
-  since: '2026-11-03',
-  remove_after: '2027-01-01'
-}), Object.freeze({
-  from: 'sf-image-field',
-  to: 'sf-input-image',
-  since: '2026-11-03',
-  remove_after: '2027-01-01'
-}), Object.freeze({
-  from: 'sf-inline-editor',
-  to: 'sf-editor-inline',
-  since: '2026-11-03',
-  remove_after: '2027-01-01'
-}), Object.freeze({
-  from: 'sf-lookup',
-  to: 'sf-input-lookup',
-  since: '2026-11-03',
-  remove_after: '2027-01-01'
-}), Object.freeze({
-  from: 'sf-page-header',
-  to: 'sf-header-page',
-  since: '2026-11-03',
-  remove_after: '2027-01-01'
-}), Object.freeze({
-  from: 'sf-property-view',
-  to: 'sf-view-properties',
-  since: '2026-11-03',
-  remove_after: '2027-01-01'
-}), Object.freeze({
-  from: 'sf-quantity',
-  to: 'sf-input-quantity',
-  since: '2026-11-03',
-  remove_after: '2027-01-01'
-}), Object.freeze({
-  from: 'sf-range-slider',
-  to: 'sf-slider-range',
-  since: '2026-11-03',
-  remove_after: '2027-01-01'
-}), Object.freeze({
-  from: 'sf-rich-text',
-  to: 'sf-input-rich',
-  since: '2026-11-03',
-  remove_after: '2027-01-01'
-}), Object.freeze({
-  from: 'sf-site-header',
-  to: 'sf-header-site',
-  since: '2026-11-03',
-  remove_after: '2027-01-01'
-}), Object.freeze({
-  from: 'sf-table',
-  to: 'sf-view-table',
-  since: '2026-11-03',
-  remove_after: '2027-01-01'
-}), Object.freeze({
-  from: 'sf-textarea',
-  to: 'sf-input-textarea',
-  since: '2026-11-03',
-  remove_after: '2027-01-01'
-}), Object.freeze({
-  from: 'sf-thread-list',
-  to: 'sf-chat-threads',
-  since: '2026-11-03',
-  remove_after: '2027-01-01'
-})]));
-
-/***/ },
-
-/***/ "4a85acfb05c1"
-(module, __webpack_exports__, __webpack_require__) {
-
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   canonicalTag: () => (/* binding */ canonicalTag),
-/* harmony export */   defineTagAliases: () => (/* binding */ defineTagAliases),
-/* harmony export */   isTag: () => (/* binding */ isTag),
-/* harmony export */   listTagAliases: () => (/* binding */ listTagAliases),
-/* harmony export */   noteTagAlias: () => (/* binding */ noteTagAlias),
-/* harmony export */   registerTagAliasRows: () => (/* binding */ registerTagAliasRows),
-/* harmony export */   registerTagAliases: () => (/* binding */ registerTagAliases),
-/* harmony export */   tagNames: () => (/* binding */ tagNames),
-/* harmony export */   tagSelector: () => (/* binding */ tagSelector)
-/* harmony export */ });
-/* harmony import */ var _deprecations_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d3818183b14c");
-/* harmony import */ var _alias_table_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5dcef5de40cf");
-/* harmony import */ var _tag_aliases_generated_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("f28a9d913ce0");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_deprecations_js__WEBPACK_IMPORTED_MODULE_0__, _alias_table_js__WEBPACK_IMPORTED_MODULE_1__]);
-([_deprecations_js__WEBPACK_IMPORTED_MODULE_0__, _alias_table_js__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
-/* harmony import */ var _deprecations_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_deprecations_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _alias_table_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_alias_table_js__WEBPACK_IMPORTED_MODULE_1__);
-// Dated tag aliases (rename plan R0, ui-control RENAME-PLAN-2026-11-03; change
-// lifecycle: contracts/changes/journal.json, kind "tag"). When a Smart
-// component takes a new tag, the old tag keeps working until its
-// `remove_after` day:
-//
-// - Definition. defineTagAliases(Class, tag) defines each old tag as a trivial
-//   subclass of the class that defines the new one (the Smart base calls it
-//   from define()). The Loader's rule lists the old tag beside the new one, so
-//   markup with the old tag alone loads the bundle.
-// - Note. The first old-tag element a page connects is noted in
-//   SF.deprecations (kind "tag") and named once on the console with the new tag
-//   and the date, whatever the page opted into: an element name is the most
-//   visible thing a page writes, and the old one is going.
-// - Script. Code that finds a renamed element by name asks for both names
-//   through one helper instead of a literal:
-//
-//     import {tagSelector, isTag} from '../../core/js/smart-base';
-//     host.querySelector(`.sf-tag > ${tagSelector('sf-button-close')}`);
-//     if (isTag(node, 'sf-button-close')) ...
-//
-// - Sheets. A selector that names the new tag names the old one beside it in
-//   source, `:is(sf-button-close, sf-close)`, for as long as the alias lives
-//   (scripts/rename-smart-tag.mjs writes it, --sweep takes it out; the
-//   contract test tests/tag-aliases.contract.test.mjs holds both).
-//
-// The aliases are a static table (tag-aliases.generated.js, written by
-// scripts/tag-alias-table.mjs from every component's aliases.json and from the
-// element_aliases of the component package references,
-// contracts/packages/*.package.json), so a lookup finds an old tag before the
-// renamed component's bundle has run, a package's (sf-table, rename plan R2)
-// as well as the Framework's. A package's component adds its rows again when it
-// is defined, which matters only for a package the pair does not reference. Every copy of this
-// module shares one state on the page (a global symbol); the Smart bundles
-// reach it through the shared runtime (smart-base re-exports it).
-
-
-
-const STATE = Symbol.for('simai.sf.tag-aliases');
-
-function state() {
-  if (!globalThis[STATE]) {
-    const shared = {
-      byOld: new Map(),
-      byNew: new Map(),
-      noted: new Set()
-    };
-    Object.defineProperty(globalThis, STATE, {
-      value: shared,
-      configurable: true
-    });
-
-    for (const row of _tag_aliases_generated_js__WEBPACK_IMPORTED_MODULE_2__["default"]) addRow(shared, row);
-  }
-
-  return globalThis[STATE];
-}
-
-function addRow(shared, row) {
-  if (shared.byOld.has(row.from)) return;
-  shared.byOld.set(row.from, row);
-  shared.byNew.set(row.to, [...(shared.byNew.get(row.to) ?? []), row.from]);
-} // Rows from a component's aliases.json (its `tag` rows); the Framework's are
-// already known, a package's are added here.
-
-
-function registerTagAliases(table, tag) {
-  const {
-    rows
-  } = (0,_alias_table_js__WEBPACK_IMPORTED_MODULE_1__.readTagAliases)(table, {
-    tag
-  });
-  const shared = state();
-
-  for (const row of rows) addRow(shared, row);
-
-  return rows;
-} // Rows a component set gives at runtime (SF.RuleLoader.registerPackage(name,
-// {aliases})): {from, to, since, remove_after}, the set's own former tags, so
-// SIMAI Framework needs no table row for a set it does not know. Answers the
-// rows taken; a row whose old tag is already known keeps the first.
-
-function registerTagAliasRows(rows) {
-  const shared = state();
-  const taken = [];
-
-  for (const row of Array.isArray(rows) ? rows : []) {
-    if (!row || typeof row.from !== 'string' || typeof row.to !== 'string') continue;
-    if (shared.byOld.has(row.from)) continue;
-    const clean = Object.freeze({
-      from: row.from,
-      to: row.to,
-      since: String(row.since ?? ''),
-      remove_after: String(row.remove_after ?? '')
-    });
-    addRow(shared, clean);
-    taken.push(clean);
-  }
-
-  return taken;
-} // The open old names of a tag, its own first: ['sf-button-close', 'sf-close'].
-
-function tagNames(tag) {
-  const name = String(tag || '').toLowerCase();
-  return [name, ...(state().byNew.get(name) ?? [])];
-} // A selector for the tag that matches its old names too:
-// ':is(sf-button-close, sf-close)', or the tag itself when it has none.
-
-function tagSelector(tag) {
-  const names = tagNames(tag);
-  return names.length > 1 ? `:is(${names.join(', ')})` : names[0];
-} // Whether an element is the tag, under its own or an old name.
-
-function isTag(element, tag) {
-  const name = element?.localName;
-  return Boolean(name) && tagNames(tag).includes(name);
-} // The current name of a tag: 'sf-button-close' for 'sf-close'. An old tag the
-// page still has as an element of its own stays itself: a component package
-// built before its rename (rules naming sf-table alone) beside a pair whose
-// table already knows the new name, where the new tag would never upgrade.
-
-function canonicalTag(tag) {
-  const name = String(tag || '').toLowerCase();
-  const row = state().byOld.get(name);
-  if (!row) return name;
-  const own = globalThis.customElements?.get?.(name);
-  if (own && !own.sfTagAliasOf) return name;
-  let rules = null;
-
-  try {
-    rules = globalThis.SF?.Loader?.getCustomElementRules?.() ?? null;
-  } catch {
-    rules = null;
-  }
-
-  if (rules && rules[name] && !rules[row.to]) return name;
-  return row.to;
-} // Every open row: [{from, to, since, remove_after}].
-
-function listTagAliases() {
-  return [...state().byOld.values()].map(row => ({ ...row
-  }));
-} // The page met an element under an old name: once per old tag.
-
-function noteTagAlias(row) {
-  const shared = state();
-  const expired = (0,_alias_table_js__WEBPACK_IMPORTED_MODULE_1__.aliasExpired)(row);
-  (0,_deprecations_js__WEBPACK_IMPORTED_MODULE_0__.noteDeprecated)({
-    component: row.to,
-    kind: 'tag',
-    from: row.from,
-    to: row.to,
-    tag: row.to,
-    since: row.since,
-    remove_after: row.remove_after,
-    expired
-  });
-  if (shared.noted.has(row.from)) return;
-  shared.noted.add(row.from); // deprecations.js prints an expired name itself, and every name when the
-  // page opted in; the note here is for the rest.
-
-  const optedIn = globalThis.document?.documentElement?.dataset?.sfDeprecations === 'warn' || globalThis.SF?.deprecations?.warn === true;
-  if (expired || optedIn) return;
-  globalThis.console?.warn?.(`[SIMAI Framework] <${row.from}> is now <${row.to}>; the old tag works until ${row.remove_after}. Write <${row.to}>. See contracts/changes/journal.json.`);
-} // Defines each old tag of `tag` as a subclass of `Base` (the class that
-// defines `tag`), through `define(name, Class)`: the Smart base passes its
-// definition queue, so both names are defined in the same batch. Returns the
-// rows defined.
-
-function defineTagAliases(Base, tag, {
-  table = Base?.aliases,
-  define
-} = {}) {
-  if (table) registerTagAliases(table, tag);
-  const rows = (state().byNew.get(tag) ?? []).map(from => state().byOld.get(from));
-  const registry = globalThis.customElements;
-  const defined = [];
-
-  for (const row of rows) {
-    if (!registry || registry.get(row.from)) continue;
-
-    class TagAlias extends Base {
-      connectedCallback() {
-        noteTagAlias(row);
-        super.connectedCallback?.();
-      }
-
-    }
-
-    Object.defineProperty(TagAlias, 'sfTagAliasOf', {
-      value: row.to
-    });
-    (define ?? ((name, Class) => registry.define(name, Class)))(row.from, TagAlias);
-    defined.push(row);
-  }
-
-  return defined;
-}
-
-if (typeof globalThis !== 'undefined') {
-  globalThis.SF = globalThis.SF || {}; // For scripts that are not Smart bundles (class components, a page):
-  // SF.tags.selector('sf-button-close').
-
-  if (!globalThis.SF.tags) {
-    globalThis.SF.tags = Object.freeze({
-      names: tagNames,
-      selector: tagSelector,
-      is: isTag,
-      canonical: canonicalTag,
-      list: listTagAliases
-    });
-  }
-}
-__webpack_async_result__();
-} catch(e) { __webpack_async_result__(e); } });
-
-/***/ },
-
 /***/ "9ce1a42b2a85"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -460,11 +76,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   DATE_TIME_RE: () => (/* binding */ DATE_TIME_RE),
 /* harmony export */   composeDateTime: () => (/* binding */ composeDateTime),
+/* harmony export */   composeTime: () => (/* binding */ composeTime),
 /* harmony export */   normalizeTime: () => (/* binding */ normalizeTime),
-/* harmony export */   splitDateTime: () => (/* binding */ splitDateTime)
+/* harmony export */   splitDateTime: () => (/* binding */ splitDateTime),
+/* harmony export */   splitTime: () => (/* binding */ splitTime)
 /* harmony export */ });
 // A datetime's value, read and written back: plain functions, no rendering.
-// The edit renderer (renderDateTimeEdit in index.js) uses them, the contract
+// The edit renderers (renderDateTimeEdit and renderTimeEdit in index.js) use them, the contract
 // test runs them without a DOM, and SF.fieldRenderers.dateTime publishes them
 // so a host that draws its own pair reads and writes the same way.
 //
@@ -562,6 +180,51 @@ function composeDateTime(original, draft) {
   return {
     value: `${date}T${time}${rest}${zone}`
   };
+} // A time of day as a host stores it: hh:mm, or with seconds and a fraction.
+
+const TIME_RE = /^(\d{2}):(\d{2})((?::\d{2})(?:\.\d+)?)?$/u; // What a stored time is made of, as splitDateTime says it for a datetime.
+
+function splitTime(value) {
+  const raw = rawValue(value);
+  if (raw === null || raw === undefined || raw === '') return {
+    raw: raw ?? null,
+    known: true,
+    time: '',
+    rest: ''
+  };
+  const match = typeof raw === 'string' ? raw.trim().match(TIME_RE) : null;
+  if (!match || normalizeTime(`${match[1]}:${match[2]}`) === null) return {
+    raw,
+    known: false,
+    time: '',
+    rest: ''
+  };
+  return {
+    raw,
+    known: true,
+    time: `${match[1]}:${match[2]}`,
+    rest: match[3] || ''
+  };
+} // The value to write for a time, against what the field held: {value} (null
+// clears) or {error: 'timeInvalid'}. The same minute writes back the very
+// text it read; a changed one keeps the stored shape (hh:mm:00 where the
+// host stores seconds), and a new one is hh:mm.
+
+function composeTime(original, text) {
+  const time = normalizeTime(text);
+  if (time === null) return {
+    error: 'timeInvalid'
+  };
+  if (!time) return {
+    value: null
+  };
+  const before = original?.known ? original : null;
+  if (before && before.time === time) return {
+    value: before.raw
+  };
+  return {
+    value: before?.rest ? `${time}:00` : time
+  };
 }
 
 /***/ },
@@ -617,7 +280,7 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   FILTER_RENDERERS: () => (/* binding */ FILTER_RENDERERS),
-/* harmony export */   PROPERTY_TYPES: () => (/* reexport safe */ _registry_js__WEBPACK_IMPORTED_MODULE_5__.PROPERTY_TYPES),
+/* harmony export */   PROPERTY_TYPES: () => (/* reexport safe */ _registry_js__WEBPACK_IMPORTED_MODULE_4__.PROPERTY_TYPES),
 /* harmony export */   propertyModes: () => (/* binding */ propertyModes),
 /* harmony export */   renderCellField: () => (/* binding */ renderCellField),
 /* harmony export */   renderEditField: () => (/* binding */ renderEditField),
@@ -628,17 +291,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("073f05ff1a81");
 /* harmony import */ var _helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("b30ec5bc0edb");
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("43090d1c8307");
-/* harmony import */ var _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("4a85acfb05c1");
-/* harmony import */ var _registry_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("fc654eb7fab0");
-/* harmony import */ var _datetime_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("9ce1a42b2a85");
-/* harmony import */ var _mask_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("dd6973f77245");
-/* harmony import */ var _html_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("01ae054f01b4");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_4__]);
-([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _registry_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("fc654eb7fab0");
+/* harmony import */ var _datetime_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("9ce1a42b2a85");
+/* harmony import */ var _mask_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("dd6973f77245");
+/* harmony import */ var _html_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("01ae054f01b4");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__);
-
 
 
 
@@ -1246,6 +907,7 @@ const CELL_RENDERERS = {
   // it has nothing to say.
   date: renderHostFormattedCell,
   datetime: renderHostFormattedCell,
+  time: renderHostFormattedCell,
   boolean: renderBooleanCell,
   choices: renderChoicesCell,
   file: renderFileCell,
@@ -1392,7 +1054,7 @@ function renderLookupCell(field, value) {
 
 
 function renderHtmlCell(field, value) {
-  return (0,_html_js__WEBPACK_IMPORTED_MODULE_8__.htmlText)(value) || null;
+  return (0,_html_js__WEBPACK_IMPORTED_MODULE_7__.htmlText)(value) || null;
 } // What a cell should hold for a field, in the same shape a host would pass: a
 // string, an object with a component, or a list of those. Null means the value
 // is better off as itself. Returning the host's own shape is deliberate -- the
@@ -1447,6 +1109,7 @@ const EDIT_RENDERERS = {
   number: renderNumberEdit,
   date: renderDateEdit,
   datetime: renderDateTimeEdit,
+  time: renderTimeEdit,
   boolean: renderBooleanEdit,
   choice: renderChoiceEdit,
   choices: renderChoicesEdit,
@@ -1627,7 +1290,7 @@ function renderIncludeCell(field, value) {
 }
 
 function renderTextEdit(field, value, host) {
-  const mask = (0,_mask_js__WEBPACK_IMPORTED_MODULE_7__.maskPattern)(field);
+  const mask = (0,_mask_js__WEBPACK_IMPORTED_MODULE_6__.maskPattern)(field);
   if (String(field.variant ?? '') === 'phone') return renderPhoneEdit(field, value, host);
   if (isPasswordField(field)) return renderPasswordEdit(field, value, host);
   if (mask) return renderMaskedEdit(field, value, host, mask);
@@ -1681,7 +1344,7 @@ function renderMaskedEdit(field, value, host, mask) {
   const write = (event, left) => {
     const input = event.currentTarget;
     const text = String(input?.value ?? '');
-    const state = (0,_mask_js__WEBPACK_IMPORTED_MODULE_7__.maskState)(text, mask);
+    const state = (0,_mask_js__WEBPACK_IMPORTED_MODULE_6__.maskState)(text, mask);
 
     if (state === 'incomplete') {
       const message = setText(host, 'maskIncomplete');
@@ -1894,112 +1557,95 @@ function renderDateEdit(field, value, host) {
 } // A datetime is edited as what it is: a day and a time of day. The date
 // editor above edits the day alone and puts the record's clock back, so a new
 // record could not get a time and «15.11.2026 10:30» typed nowhere was saved
-// as «15.11.2026» (Larena acceptance, 2026-10-22; ui-admin drew the pair
-// itself, and this is that design lifted into the set so the kit can switch).
-//
-// The day is sf-datepicker; the time is sf-input masked to hh:mm, because
-// sf-input has no time type (its types are text, email, password, search,
-// tel, url) and a raw <input type="time"> would be the one unstyled control
-// in a form. Both are drawn at the field's size, on one row, each named for
-// assistive technology («Начало: дата», «Начало: время») inside a group named
-// by the label.
+// as «15.11.2026» (Larena acceptance, 2026-10-22). The set then drew a pair --
+// sf-input-date for the day and an sf-input masked to hh:mm for the time --
+// because the picker had no clock, and sf-view-properties drew the same pair
+// itself (duplication audit A-14). sf-input-date has a time now (1.4.0,
+// mode="datetime"), so a datetime is one control: the calendar with the time
+// row under it, typed as «15.11.2026 10:30», at the field's size, named by the
+// label.
 //
 // The value round trip (datetime.js): ISO 8601 with the time; an untouched
-// field writes nothing; a changed day keeps the stored time and zone; a new
-// value has no zone (the host's local time); both cleared write null; coming
-// back to what was stored writes undefined -- no change. A day without a time,
-// a time without a day or a time that is not one is a field error: the
-// message stands under the row, the control at fault (the day or the time) is
-// marked invalid and loses the mark once it is put right, the host
-// hears it through the optional setFieldError(field, message) -- null once it
-// is put right -- and the change is withdrawn with undefined, so a save never
-// carries a value the person did not finish. The controls keep what was
-// typed: the day is bound as a property and nothing else is bound that a
-// host's re-render would put back.
+// field writes nothing; a changed day keeps the stored time below the minute
+// and the zone; a changed time keeps the zone; a new value has no zone (the
+// host's local time); a cleared field writes null; coming back to what was
+// stored writes undefined -- no change. The control writes only whole values
+// (a day always has a time, a typed text that is not one is put back), so no
+// partial entry reaches the host. The day is bound as a property, so a
+// re-render with the same value does not put back what the person cleared.
+//
+// min and max (an ISO date, or a date and a time) are the control's min-date
+// and max-date; step is its minute step (1 to 60).
 
 
-let dateTimeSequence = 0;
+function minuteStepOf(field) {
+  const step = Number(field.step);
+  return Number.isInteger(step) && step >= 1 && step <= 60 ? String(step) : '';
+}
 
 function renderDateTimeEdit(field, value, host) {
-  const stored = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_6__.splitDateTime)(value);
-  const label = String(field.label || field.key || '');
-  const name = fieldName(field);
-  const messageId = `sf-field-datetime-message-${++dateTimeSequence}`;
-
-  const named = key => setText(host, key).replace('{label}', label);
-
-  const commit = (event, part) => {
-    // The datepicker's own change, not a native one bubbling from its field.
-    if (part === 'date' && event.target !== event.currentTarget) return;
-    const group = event.currentTarget?.closest?.('.sf-field-datetime');
-    if (!group) return;
-    const picker = group.querySelector((0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_4__.tagSelector)('sf-input-date')); // Not the datepicker's own field, which is an sf-input too.
-
-    const clock = group.querySelector('sf-input.sf-field-datetime-time');
-    const date = part === 'date' ? String(event.detail?.value ?? picker?.value ?? '') : String(picker?.value ?? '');
-    const typed = String(clock?.value ?? '');
-    const result = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_6__.composeDateTime)(stored, {
+  const stored = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_5__.splitDateTime)(value);
+  const shown = stored.date ? `${stored.date}${stored.time ? `T${stored.time}` : ''}` : '';
+  const min = typeof field.min === 'string' ? field.min : '';
+  const max = typeof field.max === 'string' ? field.max : '';
+  const step = minuteStepOf(field);
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <sf-input-date
+                class="sf-field-datetime"
+                mode="datetime"
+                size=${EDIT_SIZE}
+                name=${fieldName(field)}
+                .value=${shown}
+                min-date=${min || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                max-date=${max || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                minute-step=${step || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                aria-label=${field.label || field.key || ''}
+                ?required=${Boolean(field.required)}
+                @change=${event => {
+    // The picker's own change, not a native one from its field.
+    if (event.target !== event.currentTarget) return;
+    const [date = '', time = ''] = String(event.detail?.value ?? '').split('T');
+    const result = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_5__.composeDateTime)(stored, {
       date,
-      time: typed
+      time
     });
-    const message = result.error ? setText(host, `dateTime_${result.error}`) : '';
-    const note = group.querySelector('.sf-field-datetime-message');
-
-    if (note) {
-      note.textContent = message;
-      note.hidden = !message;
-    }
-
-    group.toggleAttribute('data-invalid', Boolean(message));
-    const timeWrong = result.error === 'timeMissing' || result.error === 'timeInvalid';
-    clock?.toggleAttribute('invalid', timeWrong);
-    picker?.toggleAttribute('invalid', result.error === 'dateMissing' || result.error === 'dateInvalid');
-    host.setFieldError?.(field, message || null);
-
-    if (result.error) {
-      host.setFieldValue(field, undefined);
-      return;
-    } // A time typed without the mask («930») shows as it is read («09:30»).
-
-
-    const time = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_6__.normalizeTime)(typed);
-    if (clock && time && time !== typed) clock.value = time;
+    if (result.error) return;
     const same = result.value === null ? stored.known && !stored.date : result.value === stored.raw;
     host.setFieldValue(field, same ? undefined : result.value);
-  };
+  }}
+        ></sf-input-date>
+    `;
+} // A time of day (hh:mm, or hh:mm:ss as a host stores it) is sf-input-date in
+// time mode: the time row alone, typed as «10:30». An unchanged minute writes
+// nothing and keeps the stored seconds; min and max (hh:mm) are the control's
+// min-time and max-time; step is its minute step.
 
+
+function renderTimeEdit(field, value, host) {
+  const stored = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_5__.splitTime)(value);
+  const min = typeof field.min === 'string' ? field.min : '';
+  const max = typeof field.max === 'string' ? field.max : '';
+  const step = minuteStepOf(field);
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-        <div class="sf-field-datetime flex flex-col gap-1/4 min-w-0" role="group" aria-label=${label}
-                aria-describedby=${messageId} data-datetime=${field.key || 'value'}>
-            <div class="flex flex-nowrap items-cross-center gap-1/3 min-w-0">
-                <sf-input-date
-                        size=${EDIT_SIZE}
-                        name=${`${name}_date`}
-                        .value=${stored.date}
-                        aria-label=${named('dateTimeDate')}
-                        ?required=${Boolean(field.required)}
-                        @change=${event => commit(event, 'date')}
-                ></sf-input-date>
-                <sf-input
-                        class="sf-field-datetime-time"
-                        size=${EDIT_SIZE}
-                        appearance="bordered"
-                        root-style="flex: 0 0 6.5em; min-inline-size: 0"
-                        name=${`${name}_time`}
-                        value=${stored.time}
-                        inputmode="numeric"
-                        autocomplete="off"
-                        placeholder=${setText(host, 'dateTimePlaceholder')}
-                        mask
-                        mask-pattern="00:00"
-                        ?required=${Boolean(field.required)}
-                        aria-label=${named('dateTimeTime')}
-                        @change=${event => commit(event, 'time')}
-                ></sf-input>
-            </div>
-            <span id=${messageId} class=${`sf-field-datetime-message color-error text-${EDIT_SIZE === '1/2' ? '1/3' : '1/2'}`}
-                    aria-live="polite" hidden></span>
-        </div>
+        <sf-input-date
+                class="sf-field-time"
+                mode="time"
+                size=${EDIT_SIZE}
+                name=${fieldName(field)}
+                .value=${stored.time}
+                min-time=${min || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                max-time=${max || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                minute-step=${step || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                aria-label=${field.label || field.key || ''}
+                ?required=${Boolean(field.required)}
+                @change=${event => {
+    if (event.target !== event.currentTarget) return;
+    const result = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_5__.composeTime)(stored, String(event.detail?.value ?? ''));
+    if (result.error) return;
+    const same = result.value === null ? stored.known && !stored.time : result.value === stored.raw;
+    host.setFieldValue(field, same ? undefined : result.value);
+  }}
+        ></sf-input-date>
     `;
 } // A required boolean is a switch: two states are all it has. An optional one is
 // a pair of buttons with nothing chosen while the value is absent -- the
@@ -2297,13 +1943,6 @@ const SET_TEXT = {
     passwordUnset: 'Not set',
     passwordKeep: 'Set; type a new one to replace it',
     showPassword: 'Show password',
-    dateTimeDate: '{label}: date',
-    dateTimeTime: '{label}: time',
-    dateTimePlaceholder: 'hh:mm',
-    dateTime_dateMissing: 'Enter the date',
-    dateTime_dateInvalid: 'The date is not a calendar date',
-    dateTime_timeMissing: 'Enter the time',
-    dateTime_timeInvalid: 'Enter the time as hh:mm, from 00:00 to 23:59',
     maskIncomplete: 'Complete the field'
   },
   ru: {
@@ -2332,13 +1971,6 @@ const SET_TEXT = {
     passwordUnset: 'Не задан',
     passwordKeep: 'Задан; введите новый, чтобы заменить',
     showPassword: 'Показать пароль',
-    dateTimeDate: '{label}: дата',
-    dateTimeTime: '{label}: время',
-    dateTimePlaceholder: 'чч:мм',
-    dateTime_dateMissing: 'Укажите дату',
-    dateTime_dateInvalid: 'Дата указана неверно',
-    dateTime_timeMissing: 'Укажите время',
-    dateTime_timeInvalid: 'Укажите время в виде чч:мм, от 00:00 до 23:59',
     maskIncomplete: 'Заполните поле полностью'
   }
 }; // The host's word wins, as it always did; the set's own fallback now follows
@@ -2817,7 +2449,7 @@ function renderTextView(field, value, host) {
 
 
 function renderHtmlView(field, value) {
-  const clean = (0,_html_js__WEBPACK_IMPORTED_MODULE_8__.cleanHtml)(value);
+  const clean = (0,_html_js__WEBPACK_IMPORTED_MODULE_7__.cleanHtml)(value);
   return clean ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-field-view sf-field-html">${(0,lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__.unsafeHTML)(clean)}</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
 } // A number carries its unit when the field declares one, and nothing when it
 // does not -- the set does not guess at a unit, and «42» with an invented «шт»
@@ -2976,6 +2608,7 @@ const VIEW_RENDERERS = {
   number: renderNumberView,
   date: renderDateView,
   datetime: renderDateView,
+  time: renderDateView,
   boolean: renderBooleanView,
   choice: renderChoiceView,
   choices: renderChoicesView,
@@ -2991,7 +2624,7 @@ const VIEW_RENDERERS = {
 // date belongs. Null when the set has no view for that type.
 
 function propertyModes(type) {
-  return (0,_registry_js__WEBPACK_IMPORTED_MODULE_5__.modesOf)(type, {
+  return (0,_registry_js__WEBPACK_IMPORTED_MODULE_4__.modesOf)(type, {
     view: VIEW_RENDERERS,
     edit: EDIT_RENDERERS,
     cell: CELL_RENDERERS,
@@ -3031,14 +2664,18 @@ if (typeof window !== 'undefined') {
     renderViewField,
     FILTER_RENDERERS,
     // A datetime's value read and written back, for a host that draws its
-    // own pair: split(value), compose(stored, {date, time}), normalizeTime(text).
+    // own control: split(value), compose(stored, {date, time}),
+    // normalizeTime(text); and a time of day's: splitTime(value),
+    // composeTime(stored, text).
     dateTime: {
-      split: _datetime_js__WEBPACK_IMPORTED_MODULE_6__.splitDateTime,
-      compose: _datetime_js__WEBPACK_IMPORTED_MODULE_6__.composeDateTime,
-      normalizeTime: _datetime_js__WEBPACK_IMPORTED_MODULE_6__.normalizeTime
+      split: _datetime_js__WEBPACK_IMPORTED_MODULE_5__.splitDateTime,
+      compose: _datetime_js__WEBPACK_IMPORTED_MODULE_5__.composeDateTime,
+      normalizeTime: _datetime_js__WEBPACK_IMPORTED_MODULE_5__.normalizeTime,
+      splitTime: _datetime_js__WEBPACK_IMPORTED_MODULE_5__.splitTime,
+      composeTime: _datetime_js__WEBPACK_IMPORTED_MODULE_5__.composeTime
     },
     // The universal properties, each with the modes the set draws for it.
-    registry: _registry_js__WEBPACK_IMPORTED_MODULE_5__.PROPERTY_TYPES.map(entry => ({ ...entry,
+    registry: _registry_js__WEBPACK_IMPORTED_MODULE_4__.PROPERTY_TYPES.map(entry => ({ ...entry,
       modes: propertyModes(entry.type)
     }))
   }; // SF.whenFieldRenderers() settles on this, whichever bundle published the set.
@@ -3285,14 +2922,25 @@ const PROPERTY_TYPES = Object.freeze([{
   },
   variants: [],
   params: ['required', 'readonly']
-}, {
+}, // datetime and time: sf-input-date in mode datetime and time (1.4.0). min
+// and max bound the value -- an ISO date or date and time for a datetime,
+// hh:mm for a time -- and step is the minute step, 1 to 60.
+{
   type: 'datetime',
   label: {
     ru: 'Дата и время',
     en: 'Date and time'
   },
   variants: [],
-  params: ['required', 'readonly']
+  params: ['min', 'max', 'step', 'required', 'readonly']
+}, {
+  type: 'time',
+  label: {
+    ru: 'Время',
+    en: 'Time'
+  },
+  variants: [],
+  params: ['min', 'max', 'step', 'required', 'readonly']
 }, {
   type: 'boolean',
   label: {
@@ -3486,20 +3134,6 @@ function optionBadgeProps(option = {}) {
     rootStyle: ""
   };
 }
-
-/***/ },
-
-/***/ "5dcef5de40cf"
-(module) {
-
-module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("alias-table", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("alias-table", 1).then(resolve, reject), { once: true })));
-
-/***/ },
-
-/***/ "d3818183b14c"
-(module) {
-
-module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("deprecations", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("deprecations", 1).then(resolve, reject), { once: true })));
 
 /***/ },
 

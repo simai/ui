@@ -4350,55 +4350,184 @@ if (typeof window !== 'undefined') {
 
 /***/ },
 
-/***/ "5b8371b87515"
+/***/ "e577837dd70a"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   calendarDayOffset: () => (/* binding */ calendarDayOffset),
+/* harmony export */   formatDate: () => (/* binding */ formatDate),
+/* harmony export */   msUntilNextDay: () => (/* binding */ msUntilNextDay),
+/* harmony export */   toDate: () => (/* reexport safe */ _format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)
+/* harmony export */ });
+/* harmony import */ var _format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("15b4e93ff6ed");
+// Dates in the page's language: formatDate, the calendar day offset and the
+// next midnight, with no top-level side effects (format-intl.js). The same
+// functions as core/js/format.js and SF.format; relative days and times are
+// format-relative.js, so a bundle that writes a date does not carry them.
+
+
+const DAY_MS = 86400000;
+
+function hasDateStyle(style) {
+  return style === 'short' || style === 'medium' || style === 'long' || style === 'full';
+}
+/**
+ * A date, a time or both in the locale.
+ *
+ *   formatDate(at)                          3 нояб. 2026 г.  /  Nov 3, 2026
+ *   formatDate(at, {date: 'short'})         03.11.2026       /  11/3/26
+ *   formatDate(at, {date: 'long'})          3 ноября 2026 г. /  November 3, 2026
+ *   formatDate(at, {time: 'short'})         3 нояб. 2026 г., 14:05
+ *   formatDate(at, {date: null, time: 'short'})   14:05   /  2:05 PM
+ *
+ * `date` and `time` are Intl styles (short, medium, long, full); `intl` gives
+ * Intl.DateTimeFormat options outright, for a form the styles do not name (a
+ * chart's tick, «14:05» with two-digit hours). Anything that is not a date is
+ * `gap`, '' by default.
+ */
+
+
+function formatDate(value, {
+  date = 'medium',
+  time = null,
+  intl = null,
+  gap = '',
+  ...where
+} = {}) {
+  const moment = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(value);
+  if (!moment) return gap;
+  let options = intl;
+
+  if (!options) {
+    options = {};
+    if (hasDateStyle(date)) options.dateStyle = date;
+    if (hasDateStyle(time)) options.timeStyle = time;
+    if (!options.dateStyle && !options.timeStyle) options.dateStyle = 'medium';
+  }
+
+  return (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('DateTimeFormat', (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.formatLocale)(where), options).format(moment);
+}
+/**
+ * Calendar days from `now` to the value in the reader's time zone: 0 today,
+ * -1 yesterday, 1 tomorrow; NaN when the value is no date. Counted on
+ * calendar dates, not 24-hour spans, so 23:59 yesterday is -1 at 00:01 and a
+ * day of a clock change is still one day.
+ */
+
+function calendarDayOffset(value, {
+  now = new Date()
+} = {}) {
+  const moment = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(value);
+  const today = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(now);
+  if (!moment || !today) return Number.NaN;
+  const day = Date.UTC(moment.getFullYear(), moment.getMonth(), moment.getDate());
+  const base = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+  return Math.round((day - base) / DAY_MS);
+}
+/**
+ * Milliseconds from `now` to the reader's next midnight, when every relative
+ * day on the screen moves by one. A component that shows them sets a timer
+ * for this long (plus a second's margin, so it wakes in the new day) and
+ * draws them again; «сегодня» said yesterday is wrong by morning.
+ */
+
+function msUntilNextDay(now = new Date()) {
+  const today = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(now) ?? new Date();
+  const next = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+  return next.getTime() - today.getTime();
+}
+
+/***/ },
+
+/***/ "c016c43b1452"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   FILE_SIZE_UNITS: () => (/* binding */ FILE_SIZE_UNITS),
-/* harmony export */   calendarDayOffset: () => (/* binding */ calendarDayOffset),
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
 /* harmony export */   fileSizeUnits: () => (/* binding */ fileSizeUnits),
-/* harmony export */   formatDate: () => (/* binding */ formatDate),
-/* harmony export */   formatFileSize: () => (/* binding */ formatFileSize),
+/* harmony export */   formatFileSize: () => (/* binding */ formatFileSize)
+/* harmony export */ });
+/* harmony import */ var _format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("15b4e93ff6ed");
+// File sizes in the page's language («1,4 МБ»), with no top-level side
+// effects (format-intl.js). The same functions as core/js/format.js,
+// composition/file-size.mjs and SF.format.fileSize.
+ // The four words of a size, in the languages the SIMAI Framework ships; any
+// other language reads the English words with its own digits. A component
+// with words of its own passes them as `units`.
+
+const FILE_SIZE_UNITS = /* @__PURE__ */Object.freeze({
+  en: /* @__PURE__ */Object.freeze(['B', 'KB', 'MB', 'GB']),
+  ru: /* @__PURE__ */Object.freeze(['Б', 'КБ', 'МБ', 'ГБ'])
+});
+/** The unit words for a locale: its language's, else English. */
+
+function fileSizeUnits(locale = 'en') {
+  const language = String(locale || 'en').toLowerCase().split('-')[0];
+  return Object.hasOwn(FILE_SIZE_UNITS, language) ? FILE_SIZE_UNITS[language] : FILE_SIZE_UNITS.en;
+}
+/**
+ * A size as people read it: «512 Б», «2 КБ», «1,4 МБ», «12 GB». Binary steps
+ * of 1024; one digit after the point under ten of a unit, none above it or in
+ * bytes. Text a host already formatted is returned as it came; anything that
+ * is not a size is ''.
+ *
+ *   formatFileSize(size, {node, units?, locale?})
+ *   formatFileSize(size, units, locale)   -- the form composition/file-size.mjs
+ *                                            and sf-image-field 1.x published
+ */
+
+function formatFileSize(size, options = {}, legacyLocale) {
+  const where = Array.isArray(options) ? {
+    units: options,
+    locale: legacyLocale ?? 'en'
+  } : options ?? {};
+  if (typeof size === 'string') return size;
+  const bytes = Number(size);
+  if (size === null || size === undefined || !Number.isFinite(bytes) || bytes < 0) return '';
+  const locale = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.formatLocale)(where);
+  const units = where.units?.length ? where.units : fileSizeUnits(locale);
+  let amount = bytes;
+  let index = 0;
+
+  while (amount >= 1024 && index < units.length - 1) {
+    amount /= 1024;
+    index += 1;
+  }
+
+  const digits = index === 0 || amount >= 10 ? 0 : 1;
+  return `${(0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('NumberFormat', locale, {
+    maximumFractionDigits: digits
+  }).format(amount)} ${units[index]}`;
+}
+
+/***/ },
+
+/***/ "15b4e93ff6ed"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   formatLocale: () => (/* binding */ formatLocale),
-/* harmony export */   formatNumber: () => (/* binding */ formatNumber),
-/* harmony export */   formatRelativeDay: () => (/* binding */ formatRelativeDay),
-/* harmony export */   formatRelativeTime: () => (/* binding */ formatRelativeTime),
-/* harmony export */   msUntilNextDay: () => (/* binding */ msUntilNextDay),
-/* harmony export */   numberOptions: () => (/* binding */ numberOptions),
+/* harmony export */   intlFormatter: () => (/* binding */ intlFormatter),
 /* harmony export */   toDate: () => (/* binding */ toDate)
 /* harmony export */ });
 /* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("8489d1f5bab4");
-// Dates, days, numbers and file sizes as people read them, in the page's
-// language (reuse audit 2026-11-02, finding 7). About fourteen components
-// wrote these themselves -- three relative-day rules (thread-list, chat-window
-// with its own midnight refresh, mail-letters), file sizes in four places,
-// numbers in the chart and the quantity -- and they disagreed: «Вчера» in one
-// list, «вчера» in the next, «1.4MB» beside «1,4 МБ». One rule now, through
-// Intl only; the most complete copy was ui-chart's chart-core/format.js, whose
-// number words are kept as they were.
-//
-// The locale is the page's (page-language.js pageLocale): an explicit
-// `locale`, else the language of `node` -- the nearest [lang] above it, the
-// page's choice, <html lang>, English. Never a fixed ru-RU.
-//
-// Nothing here holds state of its own: the Intl formatters are kept on a
-// global shared by every copy of this module, which each bundle carries
+// The part every format module shares (core/js/format.js says what the
+// helpers are): the locale a call formats in, a Date from what a host gives,
+// and the Intl formatters, kept on a global every copy of these modules shares
 // (bundles each carry their own module copy; page-language.js says why).
+//
+// No top-level side effects, here or in format-number.js, format-date.js,
+// format-relative.js and format-file-size.js (ui-chart, 2026-11-05): a bundle
+// that imports one function carries that function and what it calls, nothing
+// else. The global is made on the first format, not on load, and SF.format is
+// published by core's entry (index.js, publishFormat in format.js).
 
-
-const STORE = (() => {
-  const root = typeof globalThis !== 'undefined' ? globalThis : {};
-  const key = '__sfFormat';
-  if (!root[key]) root[key] = {
-    formatters: new Map()
-  };
-  return root[key];
-})();
-
-const DAY_MS = 86400000;
 /** The locale a call formats in: the one it names, else its node's page language. */
 
 function formatLocale({
@@ -4406,13 +4535,29 @@ function formatLocale({
   node
 } = {}) {
   return String(locale || '').trim() || (0,_page_language_js__WEBPACK_IMPORTED_MODULE_0__.pageLocale)(node);
+}
+/** A Date from a Date, a time in milliseconds or a date string; null when it is none. */
+
+function toDate(value) {
+  if (value === null || value === undefined || value === '') return null;
+  const date = value instanceof Date ? new Date(value.getTime()) : new Date(typeof value === 'string' && /^\d+$/u.test(value) ? Number(value) : value);
+  return Number.isNaN(date.getTime()) ? null : date;
+} // The formatters every copy shares, made on the first call.
+
+function formatterCache() {
+  const root = typeof globalThis !== 'undefined' ? globalThis : {};
+  if (!root.__sfFormat) root.__sfFormat = {
+    formatters: new Map()
+  };
+  return root.__sfFormat.formatters;
 } // One formatter per kind, locale and options. An unknown locale falls back to
 // the browser's, and options the platform refuses (an unknown unit or
 // currency) to a plain number, so a typo in a page never throws at a reader.
 
-function formatter(kind, locale, options) {
+
+function intlFormatter(kind, locale, options) {
   const key = `${kind}|${locale}|${JSON.stringify(options)}`;
-  const cache = STORE.formatters;
+  const cache = formatterCache();
   if (cache.has(key)) return cache.get(key);
   const Make = Intl[kind];
   let made;
@@ -4434,169 +4579,23 @@ function formatter(kind, locale, options) {
   cache.set(key, made);
   return made;
 }
-/** A Date from a Date, a time in milliseconds or a date string; null when it is none. */
 
+/***/ },
 
-function toDate(value) {
-  if (value === null || value === undefined || value === '') return null;
-  const date = value instanceof Date ? new Date(value.getTime()) : new Date(typeof value === 'string' && /^\d+$/u.test(value) ? Number(value) : value);
-  return Number.isNaN(date.getTime()) ? null : date;
-} // The first letter in capitals, by the locale's rule («вчера» → «Вчера»).
+/***/ "c9ce0852ac73"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
-function capitalise(text, locale) {
-  const first = Array.from(text)[0] ?? '';
-  return first ? first.toLocaleUpperCase(locale || undefined) + text.slice(first.length) : text;
-} // ── dates ────────────────────────────────────────────────────────────────────
-
-
-const DATE_STYLES = new Set(['short', 'medium', 'long', 'full']);
-/**
- * A date, a time or both in the locale.
- *
- *   formatDate(at)                          3 нояб. 2026 г.  /  Nov 3, 2026
- *   formatDate(at, {date: 'short'})         03.11.2026       /  11/3/26
- *   formatDate(at, {date: 'long'})          3 ноября 2026 г. /  November 3, 2026
- *   formatDate(at, {time: 'short'})         3 нояб. 2026 г., 14:05
- *   formatDate(at, {date: null, time: 'short'})   14:05   /  2:05 PM
- *
- * `date` and `time` are Intl styles (short, medium, long, full); `intl` gives
- * Intl.DateTimeFormat options outright, for a form the styles do not name (a
- * chart's tick, «14:05» with two-digit hours). Anything that is not a date is
- * `gap`, '' by default.
- */
-
-function formatDate(value, {
-  date = 'medium',
-  time = null,
-  intl = null,
-  gap = '',
-  ...where
-} = {}) {
-  const moment = toDate(value);
-  if (!moment) return gap;
-  let options = intl;
-
-  if (!options) {
-    options = {};
-    if (DATE_STYLES.has(date)) options.dateStyle = date;
-    if (DATE_STYLES.has(time)) options.timeStyle = time;
-    if (!options.dateStyle && !options.timeStyle) options.dateStyle = 'medium';
-  }
-
-  return formatter('DateTimeFormat', formatLocale(where), options).format(moment);
-} // ── days ─────────────────────────────────────────────────────────────────────
-
-/**
- * Calendar days from `now` to the value in the reader's time zone: 0 today,
- * -1 yesterday, 1 tomorrow; NaN when the value is no date. Counted on
- * calendar dates, not 24-hour spans, so 23:59 yesterday is -1 at 00:01 and a
- * day of a clock change is still one day.
- */
-
-function calendarDayOffset(value, {
-  now = new Date()
-} = {}) {
-  const moment = toDate(value);
-  const today = toDate(now);
-  if (!moment || !today) return Number.NaN;
-  const day = Date.UTC(moment.getFullYear(), moment.getMonth(), moment.getDate());
-  const base = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
-  return Math.round((day - base) / DAY_MS);
-}
-/**
- * The day a moment fell on, as a list says it: «сегодня», «вчера», «завтра»,
- * the weekday within the last week («понедельник»), else the date («3 ноября»,
- * with the year when it is not this one). The words are the platform's for
- * the locale (Intl.RelativeTimeFormat, numeric auto); a component that ships
- * its own passes them (`today`, `yesterday`, `tomorrow`) and they win.
- * `weekday: false` goes from yesterday straight to the date; `capital: true`
- * starts the word with a capital, as a heading or a divider does.
- *
- * The answer changes at the reader's midnight: msUntilNextDay says when.
- */
-
-function formatRelativeDay(value, {
-  now = new Date(),
-  today,
-  yesterday,
-  tomorrow,
-  weekday = true,
-  capital = false,
-  gap = '',
-  ...where
-} = {}) {
-  const moment = toDate(value);
-  if (!moment) return gap;
-  const locale = formatLocale(where);
-  const offset = calendarDayOffset(moment, {
-    now
-  });
-  const own = {
-    0: today,
-    [-1]: yesterday,
-    1: tomorrow
-  }[offset];
-  let text;
-
-  if (own) {
-    text = String(own);
-  } else if (offset >= -1 && offset <= 1) {
-    text = formatter('RelativeTimeFormat', locale, {
-      numeric: 'auto'
-    }).format(offset, 'day');
-  } else if (weekday && offset < -1 && offset > -7) {
-    text = formatter('DateTimeFormat', locale, {
-      weekday: 'long'
-    }).format(moment);
-  } else {
-    const year = moment.getFullYear() === toDate(now).getFullYear() ? {} : {
-      year: 'numeric'
-    };
-    text = formatter('DateTimeFormat', locale, {
-      day: 'numeric',
-      month: 'long',
-      ...year
-    }).format(moment);
-  }
-
-  return capital ? capitalise(text, locale) : text;
-}
-/**
- * Milliseconds from `now` to the reader's next midnight, when every relative
- * day on the screen moves by one. A component that shows them sets a timer
- * for this long (plus a second's margin, so it wakes in the new day) and
- * draws them again; «сегодня» said yesterday is wrong by morning.
- */
-
-function msUntilNextDay(now = new Date()) {
-  const today = toDate(now) ?? new Date();
-  const next = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
-  return next.getTime() - today.getTime();
-} // The largest unit a span reaches is the one it is said in (mail-letters'
-// steps, 2026-10): 90 seconds is «2 минуты назад», 40 days «в прошлом месяце».
-
-const RELATIVE_STEPS = [['year', 31536000], ['month', 2592000], ['week', 604800], ['day', 86400], ['hour', 3600], ['minute', 60]];
-/** «5 минут назад», «через 2 часа»: a moment from `now`, in the locale. */
-
-function formatRelativeTime(value, {
-  now = new Date(),
-  gap = '',
-  ...where
-} = {}) {
-  const moment = toDate(value);
-  const base = toDate(now);
-  if (!moment || !base) return gap;
-  const seconds = Math.round((moment.getTime() - base.getTime()) / 1000);
-  const format = formatter('RelativeTimeFormat', formatLocale(where), {
-    numeric: 'auto'
-  });
-
-  for (const [unit, size] of RELATIVE_STEPS) {
-    if (Math.abs(seconds) >= size) return format.format(Math.round(seconds / size), unit);
-  }
-
-  return format.format(seconds, 'second');
-} // ── numbers ──────────────────────────────────────────────────────────────────
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   formatNumber: () => (/* binding */ formatNumber),
+/* harmony export */   numberOptions: () => (/* binding */ numberOptions)
+/* harmony export */ });
+/* harmony import */ var _format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("15b4e93ff6ed");
+// Numbers in the page's language by a format word: formatNumber and
+// numberOptions alone, with no top-level side effects (format-intl.js). The
+// same functions as core/js/format.js and SF.format.number; a bundle that
+// formats numbers only imports them from here.
 
 /**
  * The Intl options of a number format word (ui-chart's words, kept so a page
@@ -4670,74 +4669,201 @@ function formatNumber(value, format = 'number', {
   if (typeof number !== 'number' || !Number.isFinite(number)) return gap;
   const options = numberOptions(format, step);
   if (grouping === false) options.useGrouping = false;
-  return formatter('NumberFormat', formatLocale(where), options).format(number);
-} // ── file sizes ───────────────────────────────────────────────────────────────
-// The four words of a size, in the languages the SIMAI Framework ships; any
-// other language reads the English words with its own digits. A component
-// with words of its own passes them as `units`.
+  return (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('NumberFormat', (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.formatLocale)(where), options).format(number);
+}
 
-const FILE_SIZE_UNITS = Object.freeze({
-  en: Object.freeze(['B', 'KB', 'MB', 'GB']),
-  ru: Object.freeze(['Б', 'КБ', 'МБ', 'ГБ'])
-});
-/** The unit words for a locale: its language's, else English. */
+/***/ },
 
-function fileSizeUnits(locale = 'en') {
-  const language = String(locale || 'en').toLowerCase().split('-')[0];
-  return Object.hasOwn(FILE_SIZE_UNITS, language) ? FILE_SIZE_UNITS[language] : FILE_SIZE_UNITS.en;
+/***/ "ee5c3aad2640"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   formatRelativeDay: () => (/* binding */ formatRelativeDay),
+/* harmony export */   formatRelativeTime: () => (/* binding */ formatRelativeTime)
+/* harmony export */ });
+/* harmony import */ var _format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("15b4e93ff6ed");
+/* harmony import */ var _format_date_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("e577837dd70a");
+// Relative days and times in the page's language («вчера», «5 минут назад»),
+// with no top-level side effects (format-intl.js). The same functions as
+// core/js/format.js and SF.format.relativeDay / relativeTime.
+
+ // The first letter in capitals, by the locale's rule («вчера» → «Вчера»).
+
+function capitalise(text, locale) {
+  const first = Array.from(text)[0] ?? '';
+  return first ? first.toLocaleUpperCase(locale || undefined) + text.slice(first.length) : text;
 }
 /**
- * A size as people read it: «512 Б», «2 КБ», «1,4 МБ», «12 GB». Binary steps
- * of 1024; one digit after the point under ten of a unit, none above it or in
- * bytes. Text a host already formatted is returned as it came; anything that
- * is not a size is ''.
+ * The day a moment fell on, as a list says it: «сегодня», «вчера», «завтра»,
+ * the weekday within the last week («понедельник»), else the date («3 ноября»,
+ * with the year when it is not this one). The words are the platform's for
+ * the locale (Intl.RelativeTimeFormat, numeric auto); a component that ships
+ * its own passes them (`today`, `yesterday`, `tomorrow`) and they win.
+ * `weekday: false` goes from yesterday straight to the date; `capital: true`
+ * starts the word with a capital, as a heading or a divider does.
  *
- *   formatFileSize(size, {node, units?, locale?})
- *   formatFileSize(size, units, locale)   -- the form composition/file-size.mjs
- *                                            and sf-image-field 1.x published
+ * The answer changes at the reader's midnight: msUntilNextDay (format-date.js)
+ * says when.
  */
 
-function formatFileSize(size, options = {}, legacyLocale) {
-  const where = Array.isArray(options) ? {
-    units: options,
-    locale: legacyLocale ?? 'en'
-  } : options ?? {};
-  if (typeof size === 'string') return size;
-  const bytes = Number(size);
-  if (size === null || size === undefined || !Number.isFinite(bytes) || bytes < 0) return '';
-  const locale = formatLocale(where);
-  const units = where.units?.length ? where.units : fileSizeUnits(locale);
-  let amount = bytes;
-  let index = 0;
 
-  while (amount >= 1024 && index < units.length - 1) {
-    amount /= 1024;
-    index += 1;
+function formatRelativeDay(value, {
+  now = new Date(),
+  today,
+  yesterday,
+  tomorrow,
+  weekday = true,
+  capital = false,
+  gap = '',
+  ...where
+} = {}) {
+  const moment = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(value);
+  if (!moment) return gap;
+  const locale = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.formatLocale)(where);
+  const offset = (0,_format_date_js__WEBPACK_IMPORTED_MODULE_1__.calendarDayOffset)(moment, {
+    now
+  });
+  const own = {
+    0: today,
+    [-1]: yesterday,
+    1: tomorrow
+  }[offset];
+  let text;
+
+  if (own) {
+    text = String(own);
+  } else if (offset >= -1 && offset <= 1) {
+    text = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('RelativeTimeFormat', locale, {
+      numeric: 'auto'
+    }).format(offset, 'day');
+  } else if (weekday && offset < -1 && offset > -7) {
+    text = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('DateTimeFormat', locale, {
+      weekday: 'long'
+    }).format(moment);
+  } else {
+    const year = moment.getFullYear() === (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(now).getFullYear() ? {} : {
+      year: 'numeric'
+    };
+    text = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('DateTimeFormat', locale, {
+      day: 'numeric',
+      month: 'long',
+      ...year
+    }).format(moment);
   }
 
-  const digits = index === 0 || amount >= 10 ? 0 : 1;
-  return `${formatter('NumberFormat', locale, {
-    maximumFractionDigits: digits
-  }).format(amount)} ${units[index]}`;
-}
-const Format = Object.freeze({
-  locale: formatLocale,
-  date: formatDate,
-  relativeDay: formatRelativeDay,
-  relativeTime: formatRelativeTime,
-  dayOffset: calendarDayOffset,
-  msUntilNextDay,
-  number: formatNumber,
-  numberOptions,
-  fileSize: formatFileSize
-}); // Core publishes the helper; component bundles that carry their own copy reuse
-// an already published one instead of replacing it.
+  return capital ? capitalise(text, locale) : text;
+} // The largest unit a span reaches is the one it is said in (mail-letters'
+// steps, 2026-10): 90 seconds is «2 минуты назад», 40 days «в прошлом месяце».
 
-if (typeof globalThis !== 'undefined') {
-  globalThis.SF = globalThis.SF || {};
-  if (!globalThis.SF.format) globalThis.SF.format = Format;
+const RELATIVE_STEPS = [['year', 31536000], ['month', 2592000], ['week', 604800], ['day', 86400], ['hour', 3600], ['minute', 60]];
+/** «5 минут назад», «через 2 часа»: a moment from `now`, in the locale. */
+
+function formatRelativeTime(value, {
+  now = new Date(),
+  gap = '',
+  ...where
+} = {}) {
+  const moment = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(value);
+  const base = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(now);
+  if (!moment || !base) return gap;
+  const seconds = Math.round((moment.getTime() - base.getTime()) / 1000);
+  const format = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('RelativeTimeFormat', (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.formatLocale)(where), {
+    numeric: 'auto'
+  });
+
+  for (const [unit, size] of RELATIVE_STEPS) {
+    if (Math.abs(seconds) >= size) return format.format(Math.round(seconds / size), unit);
+  }
+
+  return format.format(seconds, 'second');
 }
 
+/***/ },
+
+/***/ "5b8371b87515"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   FILE_SIZE_UNITS: () => (/* reexport safe */ _format_file_size_js__WEBPACK_IMPORTED_MODULE_4__.FILE_SIZE_UNITS),
+/* harmony export */   calendarDayOffset: () => (/* reexport safe */ _format_date_js__WEBPACK_IMPORTED_MODULE_1__.calendarDayOffset),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   fileSizeUnits: () => (/* reexport safe */ _format_file_size_js__WEBPACK_IMPORTED_MODULE_4__.fileSizeUnits),
+/* harmony export */   formatDate: () => (/* reexport safe */ _format_date_js__WEBPACK_IMPORTED_MODULE_1__.formatDate),
+/* harmony export */   formatFileSize: () => (/* reexport safe */ _format_file_size_js__WEBPACK_IMPORTED_MODULE_4__.formatFileSize),
+/* harmony export */   formatLocale: () => (/* reexport safe */ _format_intl_js__WEBPACK_IMPORTED_MODULE_0__.formatLocale),
+/* harmony export */   formatNumber: () => (/* reexport safe */ _format_number_js__WEBPACK_IMPORTED_MODULE_3__.formatNumber),
+/* harmony export */   formatRelativeDay: () => (/* reexport safe */ _format_relative_js__WEBPACK_IMPORTED_MODULE_2__.formatRelativeDay),
+/* harmony export */   formatRelativeTime: () => (/* reexport safe */ _format_relative_js__WEBPACK_IMPORTED_MODULE_2__.formatRelativeTime),
+/* harmony export */   msUntilNextDay: () => (/* reexport safe */ _format_date_js__WEBPACK_IMPORTED_MODULE_1__.msUntilNextDay),
+/* harmony export */   numberOptions: () => (/* reexport safe */ _format_number_js__WEBPACK_IMPORTED_MODULE_3__.numberOptions),
+/* harmony export */   publishFormat: () => (/* binding */ publishFormat),
+/* harmony export */   toDate: () => (/* reexport safe */ _format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)
+/* harmony export */ });
+/* harmony import */ var _format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("15b4e93ff6ed");
+/* harmony import */ var _format_date_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("e577837dd70a");
+/* harmony import */ var _format_relative_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("ee5c3aad2640");
+/* harmony import */ var _format_number_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("c9ce0852ac73");
+/* harmony import */ var _format_file_size_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("c016c43b1452");
+// Dates, days, numbers and file sizes as people read them, in the page's
+// language (reuse audit 2026-11-02, finding 7). About fourteen components
+// wrote these themselves -- three relative-day rules (thread-list, chat-window
+// with its own midnight refresh, mail-letters), file sizes in four places,
+// numbers in the chart and the quantity -- and they disagreed: «Вчера» in one
+// list, «вчера» in the next, «1.4MB» beside «1,4 МБ». One rule now, through
+// Intl only; the most complete copy was ui-chart's chart-core/format.js, whose
+// number words are kept as they were.
+//
+// The locale is the page's (page-language.js pageLocale): an explicit
+// `locale`, else the language of `node` -- the nearest [lang] above it, the
+// page's choice, <html lang>, English. Never a fixed ru-RU.
+//
+// This module gathers the helpers and the SF.format object; the helpers live
+// in modules of their own with no top-level side effects (core.runtime 1.28.0;
+// ui-chart, 2026-11-05), and a bundle imports what it calls from those:
+//
+//   format-number.js     formatNumber, numberOptions
+//   format-date.js       formatDate, calendarDayOffset, msUntilNextDay, toDate
+//   format-relative.js   formatRelativeDay, formatRelativeTime
+//   format-file-size.js  formatFileSize, fileSizeUnits, FILE_SIZE_UNITS
+//   format-intl.js       formatLocale, toDate (and the shared Intl formatters)
+//
+// Until 1.28.0 this module published SF.format on load, from whichever bundle
+// ran it first; that kept every helper in every bundle that imported one (each
+// chart bundle grew by 1.3-1.4 KB gzip). Core's entry publishes it now
+// (index.js calls publishFormat), and importing this module changes nothing on
+// the page. Its exports are as they were.
+
+
+
+
+
+
+const Format = /* @__PURE__ */Object.freeze({
+  locale: _format_intl_js__WEBPACK_IMPORTED_MODULE_0__.formatLocale,
+  date: _format_date_js__WEBPACK_IMPORTED_MODULE_1__.formatDate,
+  relativeDay: _format_relative_js__WEBPACK_IMPORTED_MODULE_2__.formatRelativeDay,
+  relativeTime: _format_relative_js__WEBPACK_IMPORTED_MODULE_2__.formatRelativeTime,
+  dayOffset: _format_date_js__WEBPACK_IMPORTED_MODULE_1__.calendarDayOffset,
+  msUntilNextDay: _format_date_js__WEBPACK_IMPORTED_MODULE_1__.msUntilNextDay,
+  number: _format_number_js__WEBPACK_IMPORTED_MODULE_3__.formatNumber,
+  numberOptions: _format_number_js__WEBPACK_IMPORTED_MODULE_3__.numberOptions,
+  fileSize: _format_file_size_js__WEBPACK_IMPORTED_MODULE_4__.formatFileSize
+});
+/**
+ * Publishes SF.format on `root` (the page's global), unless something is there
+ * already: core's entry calls it once; a component bundle never does.
+ */
+
+function publishFormat(root = typeof globalThis !== 'undefined' ? globalThis : undefined) {
+  if (!root) return undefined;
+  root.SF = root.SF || {};
+  if (!root.SF.format) root.SF.format = Format;
+  return root.SF.format;
+}
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Format);
 
 /***/ },
@@ -5059,13 +5185,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _format_js__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__("5b8371b87515");
 /* harmony import */ var _breakpoints_js__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__("1373e294ec38");
 /* harmony import */ var _clipboard_js__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__("e081a020262e");
-/* harmony import */ var _icon_choices_js__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__("1b42c5117087");
-/* harmony import */ var _ready_js__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__("5effd0d9c238");
-/* harmony import */ var _icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__("de1f3481c667");
-/* harmony import */ var _page_storage_js__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__("cda569e6042b");
-/* harmony import */ var _early_port_js__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__("55bd48f35b65");
-/* harmony import */ var _pending_tags_js__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__("3c79afd07eeb");
-/* harmony import */ var _preloader__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__("6c7f357fe960");
+/* harmony import */ var _reading_position_js__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__("6978f1cc153b");
+/* harmony import */ var _icon_choices_js__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__("1b42c5117087");
+/* harmony import */ var _ready_js__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__("5effd0d9c238");
+/* harmony import */ var _icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__("de1f3481c667");
+/* harmony import */ var _page_storage_js__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__("cda569e6042b");
+/* harmony import */ var _early_port_js__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__("55bd48f35b65");
+/* harmony import */ var _pending_tags_js__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__("3c79afd07eeb");
+/* harmony import */ var _preloader__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__("6c7f357fe960");
 
 
 
@@ -5089,8 +5216,14 @@ __webpack_require__.r(__webpack_exports__);
 
  // What every set formats, switches and copies by one rule (reuse audit
 // 2026-11-02, findings 6, 7, 11): SF.format, SF.breakpoints, SF.copyText.
+// SF.format is published here, by core alone: the format modules have no
+// top-level side effects, so a bundle carries only the helpers it calls
+// (core.runtime 1.28.0).
 
 
+
+ // The reading position of a scrolling column (duplication audit 2026-11-03,
+// A-6): SF.readingPosition, which sf-list-feed and sf-list keep a place by.
 
  // The glyphs a person chooses from (duplication audit 2026-11-03, A-1):
 // SF.icons.choices.
@@ -5101,7 +5234,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
- // The shared Smart runtime: core/js/smart-base.js, a script of its own beside
+ // SF.format, before anything below can be asked to format.
+
+(0,_format_js__WEBPACK_IMPORTED_MODULE_18__.publishFormat)(); // The shared Smart runtime: core/js/smart-base.js, a script of its own beside
 // core.js, holding the modules the Smart bundles are built against (they carry
 // no lit or smart-base of their own). Asked for by the bundles and by the
 // Loader as soon as it queues a Smart element. A page that included the script
@@ -5111,10 +5246,10 @@ if (typeof window !== 'undefined') {
   window.SF = window.SF || {};
   const SF = window.SF; // SF.ready, before the Loader chunk is even asked for (simai/ui-source#16).
 
-  (0,_ready_js__WEBPACK_IMPORTED_MODULE_22__.installReady)(window); // The ports declared on elements (data-sf-port islands): their first calls
+  (0,_ready_js__WEBPACK_IMPORTED_MODULE_23__.installReady)(window); // The ports declared on elements (data-sf-port islands): their first calls
   // leave now, while the components' code is still on its way (stand 27).
 
-  (0,_early_port_js__WEBPACK_IMPORTED_MODULE_25__.installEarlyPort)(window);
+  (0,_early_port_js__WEBPACK_IMPORTED_MODULE_26__.installEarlyPort)(window);
 
   if (!SF.loadRuntime) {
     let loading = null;
@@ -5236,10 +5371,10 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
 
   if (subsetEnabled && document.head) {
     try {
-      (0,_icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_23__.applyRememberedIconSubset)({
+      (0,_icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_24__.applyRememberedIconSubset)({
         win: window,
         doc: document,
-        storage: (0,_page_storage_js__WEBPACK_IMPORTED_MODULE_24__["default"])()
+        storage: (0,_page_storage_js__WEBPACK_IMPORTED_MODULE_25__["default"])()
       });
     } catch {
       /* Nothing remembered is nothing lost: the Loader asks as before. */
@@ -5349,8 +5484,8 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
       return;
     }
 
-    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_26__.installPendingTags)(window);
-    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_26__.holdUndefinedElements)(window);
+    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_27__.installPendingTags)(window);
+    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_27__.holdUndefinedElements)(window);
   };
 
   holdUndefinedUntilDefined();
@@ -5358,18 +5493,18 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
   const mountPreloader = () => {
     const cfg = {
       enabled: true,
-      background: (0,_preloader__WEBPACK_IMPORTED_MODULE_27__.getPreloaderBackground)(),
+      background: (0,_preloader__WEBPACK_IMPORTED_MODULE_28__.getPreloaderBackground)(),
       modifier: 'loader-default',
       tempStyles: 'inset: 0;position: fixed;width: 100%;height: 100vh;opacity: 1;z-index: 1000;background-color: var(--sf-color--surface-highest, var(--sf-surface-0, #fff));text-align: center;',
-      color: (0,_preloader__WEBPACK_IMPORTED_MODULE_27__.getPreloaderColor)(),
-      width: _preloader__WEBPACK_IMPORTED_MODULE_27__.DEFAULT_PRELOADER.width,
-      height: _preloader__WEBPACK_IMPORTED_MODULE_27__.DEFAULT_PRELOADER.height,
+      color: (0,_preloader__WEBPACK_IMPORTED_MODULE_28__.getPreloaderColor)(),
+      width: _preloader__WEBPACK_IMPORTED_MODULE_28__.DEFAULT_PRELOADER.width,
+      height: _preloader__WEBPACK_IMPORTED_MODULE_28__.DEFAULT_PRELOADER.height,
       content: '',
       delay: 300,
       ...(window.SF_BOOT_CONFIG?.preloader || {})
     };
     if (cfg.enabled === false || document.querySelector('.sf-loader')) return;
-    const svgContent = cfg.content || (0,_preloader__WEBPACK_IMPORTED_MODULE_27__.createPreloaderContent)(cfg);
+    const svgContent = cfg.content || (0,_preloader__WEBPACK_IMPORTED_MODULE_28__.createPreloaderContent)(cfg);
     let wrap = null;
     let preloaderWrap = null;
     let preloaderRun = false;
@@ -5383,7 +5518,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
 
     const stopAnimation = () => {
       if (preloaderWrap) {
-        (0,_preloader__WEBPACK_IMPORTED_MODULE_27__.stopPreloaderMotion)(preloaderWrap);
+        (0,_preloader__WEBPACK_IMPORTED_MODULE_28__.stopPreloaderMotion)(preloaderWrap);
       }
     };
 
@@ -5392,7 +5527,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
       // preloader over them (§5.4). Read when the preloader would show, after
       // its delay, when the server's markup has been parsed.
 
-      if ((0,_preloader__WEBPACK_IMPORTED_MODULE_27__.pageHasFirstPaint)(document)) return;
+      if ((0,_preloader__WEBPACK_IMPORTED_MODULE_28__.pageHasFirstPaint)(document)) return;
       wrap = document.createElement('div');
       const inner = document.createElement('div');
       wrap.classList.add('sf-loader', cfg.modifier);
@@ -5414,7 +5549,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
         wrap: wrap,
         preloaderActive: true
       };
-      (0,_preloader__WEBPACK_IMPORTED_MODULE_27__.startPreloaderMotion)(preloaderWrap, () => preloaderRun, cfg);
+      (0,_preloader__WEBPACK_IMPORTED_MODULE_28__.startPreloaderMotion)(preloaderWrap, () => preloaderRun, cfg);
     };
 
     const cancelBuild = () => {
@@ -5451,7 +5586,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
 
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', () => {
-        if (!(0,_preloader__WEBPACK_IMPORTED_MODULE_27__.pageHasFirstPaint)(document)) return;
+        if (!(0,_preloader__WEBPACK_IMPORTED_MODULE_28__.pageHasFirstPaint)(document)) return;
         cancelBuild();
         preloaderRun = false;
         stopAnimation();
@@ -8649,6 +8784,218 @@ function startPreloaderMotion(container, isActive = () => true, options = {}) {
 
 /***/ },
 
+/***/ "6978f1cc153b"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   EDGE_MARGIN: () => (/* binding */ EDGE_MARGIN),
+/* harmony export */   NEAR_END: () => (/* binding */ NEAR_END),
+/* harmony export */   NEAR_START: () => (/* binding */ NEAR_START),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   readingPosition: () => (/* binding */ readingPosition),
+/* harmony export */   scrollerOf: () => (/* binding */ scrollerOf),
+/* harmony export */   watchEdge: () => (/* binding */ watchEdge)
+/* harmony export */ });
+// The reading position of a scrolling column (duplication audit 2026-11-03,
+// A-6): what a feed, a log, a conversation or a long list does to keep a
+// person's place while its content changes under them. It was written in
+// ui-pro's sf-message-log (keep the place while history is added above,
+// follow the end only when the reader is there, «to the latest», ask once
+// when the top is reached), and the end-of-list loading again in
+// sf-chat-threads and the ui-chat pilot. One rule now, for every column:
+//
+//   const position = readingPosition(scroller, {onStart: () => askEarlier()});
+//   position.keep(() => column.prepend(fragment));  // the place does not move
+//   const follow = position.atEnd();                  // before an append
+//   column.append(node);
+//   if (follow) position.toEnd();
+//   scroller.addEventListener('scroll', () => position.check());
+//
+//   const stop = watchEdge(sentinel, () => askMore()); // the end came into reach
+//
+// It owns no content and fetches nothing: it measures one element and says
+// when an edge is reached. The element is the scroller -- the box with
+// overflow that a person scrolls.
+//
+// Nothing here keeps state at module scope: each column gets its own
+// controller, so the copies of this module that every bundle carries cannot
+// disagree (bundles each carry their own module copy).
+// Within this distance of the end counts as being there. 96px is about two
+// lines of text and an entry's action row: closer than that, a person reading
+// the end of a column is reading the end.
+const NEAR_END = 96; // The start is "reached" a little before it is reached, so an earlier page is
+// usually there by the time the person scrolls into it.
+
+const NEAR_START = 240; // The end of a list asks for its next page this far before it is in view.
+
+const EDGE_MARGIN = '200px';
+
+const reducedMotion = () => globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+
+const frame = callback => typeof globalThis.requestAnimationFrame === 'function' ? globalThis.requestAnimationFrame(callback) : setTimeout(callback, 16);
+/**
+ * A controller of one scroller's reading position.
+ *
+ * options:
+ *   nearEnd    px from the end that count as being at it (NEAR_END);
+ *   nearStart  px from the start that count as reaching it (NEAR_START);
+ *   onStart    () => void, called from check() when the start is reached and
+ *              the position is not settling (an earlier page is wanted).
+ */
+
+
+function readingPosition(scroller, {
+  nearEnd = NEAR_END,
+  nearStart = NEAR_START,
+  onStart = null
+} = {}) {
+  let settling = false;
+  let element = scroller ?? null;
+  const controller = {
+    /** The scroller this controller measures; set it again when the box is drawn anew. */
+    get element() {
+      return element;
+    },
+
+    set element(next) {
+      element = next ?? null;
+    },
+
+    /** Is the end of the column in view (within nearEnd)? A column not drawn yet is at its end. */
+    atEnd() {
+      if (!element) return true;
+      return element.scrollHeight - element.scrollTop - element.clientHeight < nearEnd;
+    },
+
+    /** Is the start within reach (within nearStart)? */
+    atStart() {
+      if (!element) return false;
+      return element.scrollTop < nearStart;
+    },
+
+    /**
+     * Change the content above what is read without moving it: the distance
+     * from the end is measured before `mutate` and restored after. What was
+     * under the reader's eyes is the same distance from the end before and
+     * after the history above it grew.
+     */
+    keep(mutate) {
+      if (!element) return mutate?.();
+      const fromEnd = element.scrollHeight - element.scrollTop;
+      const result = mutate?.();
+      element.scrollTop = element.scrollHeight - fromEnd;
+      return result;
+    },
+
+    /**
+     * Go to the end in the next frame: smoothly, unless `instant` or the
+     * reader asked for reduced motion. `then` runs after the jump. With
+     * `settle`, reaching the start is not reported until the frame after:
+     * a column that opens at its start for one frame does not ask for a page
+     * nobody wanted.
+     */
+    toEnd({
+      instant = false,
+      settle = false,
+      then = null
+    } = {}) {
+      if (settle) settling = true;
+      frame(() => {
+        if (element) element.scrollTo({
+          top: element.scrollHeight,
+          behavior: instant || reducedMotion() ? 'instant' : 'smooth'
+        });
+        then?.();
+        if (settle) frame(() => {
+          settling = false;
+        });
+      });
+    },
+
+    /** Hold reports of the start (while a column is replaced). */
+    hold() {
+      settling = true;
+    },
+
+    release() {
+      settling = false;
+    },
+
+    get settling() {
+      return settling;
+    },
+
+    /** Call on scroll: reports onStart once the start is in reach and the position is not settling. */
+    check() {
+      if (settling || !onStart || !controller.atStart()) return false;
+      onStart();
+      return true;
+    }
+
+  };
+  return controller;
+}
+/**
+ * Report when `sentinel` comes within `margin` of the scroller it sits in --
+ * the end of a list in reach, the start of a feed. Never from a scroll handler
+ * that fires sixty times a second. `root` is the scroller; null (the default)
+ * is the viewport, which still sees the clipping of every scroller around the
+ * sentinel. Answers the way to stop watching. A watch that starts on an edge
+ * already in reach reports it at once.
+ */
+
+function watchEdge(sentinel, callback, {
+  root = null,
+  margin = EDGE_MARGIN
+} = {}) {
+  if (!sentinel || typeof callback !== 'function' || typeof globalThis.IntersectionObserver !== 'function') return () => {};
+  const observer = new globalThis.IntersectionObserver(entries => {
+    if (entries.some(entry => entry.isIntersecting)) callback();
+  }, {
+    root,
+    rootMargin: margin
+  });
+  observer.observe(sentinel);
+  return () => observer.disconnect();
+}
+/**
+ * The box that scrolls `node`: the nearest ancestor whose block overflow is
+ * auto or scroll, or null for the page. watchEdge takes it as `root`, so its
+ * margin reaches ahead inside that box; measured against the viewport, the
+ * margin would stop at the box's clipped edge.
+ */
+
+function scrollerOf(node) {
+  const view = node?.ownerDocument?.defaultView;
+
+  for (let at = node?.parentElement; at && view; at = at.parentElement) {
+    if (at === node.ownerDocument.documentElement || at === node.ownerDocument.body) return null;
+    if (/^(auto|scroll|overlay)$/u.test(view.getComputedStyle(at).overflowY)) return at;
+  }
+
+  return null;
+}
+const ReadingPosition = Object.freeze({
+  create: readingPosition,
+  watchEdge,
+  scrollerOf,
+  NEAR_END,
+  NEAR_START,
+  EDGE_MARGIN
+}); // Core publishes the helper; component bundles that carry their own copy reuse
+// an already published one instead of replacing it.
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.SF = globalThis.SF || {};
+  if (!globalThis.SF.readingPosition) globalThis.SF.readingPosition = ReadingPosition;
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (ReadingPosition);
+
+/***/ },
+
 /***/ "5effd0d9c238"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -9377,7 +9724,7 @@ __webpack_require__.r(__webpack_exports__);
 // core.runtime.json). A set's release says the lowest version it needs, and
 // the index lookup keeps the releases this Core satisfies. Moved by hand with
 // the passport; tests/component-set-loader.contract.test.mjs holds them equal.
-const CORE_RUNTIME = '1.27.1';
+const CORE_RUNTIME = '1.28.0';
 const SET_NAME = /^[a-z][a-z0-9-]*$/u;
 const SET_INDEX_FORMAT = 'simai.framework.set-index';
 const SET_INDEX_URL = 'https://cdn.jsdelivr.net/npm/@simai-studio/sets@1/index.json';
@@ -20741,7 +21088,11 @@ __webpack_require__.r(__webpack_exports__);
 
 // The size rule is core's number format (core/js/format.js, reuse audit
 // 2026-11-02 finding 7), re-exported under the names this module published:
-// formatFileSize(size, units, locale) still reads as it did.
+// formatFileSize(size, units, locale) still reads as it did. Imported through
+// format.js on purpose: the builder ships a source module's relative imports
+// beside it, and this import is what lays core/js/format.js and its parts
+// (format-*.js) in the distribution for products that import them. None of
+// them has a top-level side effect, so a bundle keeps only what it calls.
 
 
 // The last part of an address, decoded, without its query and fragment: the

@@ -231,24 +231,14 @@ function bindFormReset(input, synchronize) {
 
 /***/ },
 
-/***/ "5b8371b87515"
+/***/ "15b4e93ff6ed"
 (module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   FILE_SIZE_UNITS: () => (/* binding */ FILE_SIZE_UNITS),
-/* harmony export */   calendarDayOffset: () => (/* binding */ calendarDayOffset),
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
-/* harmony export */   fileSizeUnits: () => (/* binding */ fileSizeUnits),
-/* harmony export */   formatDate: () => (/* binding */ formatDate),
-/* harmony export */   formatFileSize: () => (/* binding */ formatFileSize),
 /* harmony export */   formatLocale: () => (/* binding */ formatLocale),
-/* harmony export */   formatNumber: () => (/* binding */ formatNumber),
-/* harmony export */   formatRelativeDay: () => (/* binding */ formatRelativeDay),
-/* harmony export */   formatRelativeTime: () => (/* binding */ formatRelativeTime),
-/* harmony export */   msUntilNextDay: () => (/* binding */ msUntilNextDay),
-/* harmony export */   numberOptions: () => (/* binding */ numberOptions),
+/* harmony export */   intlFormatter: () => (/* binding */ intlFormatter),
 /* harmony export */   toDate: () => (/* binding */ toDate)
 /* harmony export */ });
 /* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("43090d1c8307");
@@ -256,34 +246,17 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_pag
 var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 _page_language_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 /* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_page_language_js__WEBPACK_IMPORTED_MODULE_0__);
-// Dates, days, numbers and file sizes as people read them, in the page's
-// language (reuse audit 2026-11-02, finding 7). About fourteen components
-// wrote these themselves -- three relative-day rules (thread-list, chat-window
-// with its own midnight refresh, mail-letters), file sizes in four places,
-// numbers in the chart and the quantity -- and they disagreed: «Вчера» in one
-// list, «вчера» in the next, «1.4MB» beside «1,4 МБ». One rule now, through
-// Intl only; the most complete copy was ui-chart's chart-core/format.js, whose
-// number words are kept as they were.
-//
-// The locale is the page's (page-language.js pageLocale): an explicit
-// `locale`, else the language of `node` -- the nearest [lang] above it, the
-// page's choice, <html lang>, English. Never a fixed ru-RU.
-//
-// Nothing here holds state of its own: the Intl formatters are kept on a
-// global shared by every copy of this module, which each bundle carries
+// The part every format module shares (core/js/format.js says what the
+// helpers are): the locale a call formats in, a Date from what a host gives,
+// and the Intl formatters, kept on a global every copy of these modules shares
 // (bundles each carry their own module copy; page-language.js says why).
+//
+// No top-level side effects, here or in format-number.js, format-date.js,
+// format-relative.js and format-file-size.js (ui-chart, 2026-11-05): a bundle
+// that imports one function carries that function and what it calls, nothing
+// else. The global is made on the first format, not on load, and SF.format is
+// published by core's entry (index.js, publishFormat in format.js).
 
-
-const STORE = (() => {
-  const root = typeof globalThis !== 'undefined' ? globalThis : {};
-  const key = '__sfFormat';
-  if (!root[key]) root[key] = {
-    formatters: new Map()
-  };
-  return root[key];
-})();
-
-const DAY_MS = 86400000;
 /** The locale a call formats in: the one it names, else its node's page language. */
 
 function formatLocale({
@@ -291,13 +264,29 @@ function formatLocale({
   node
 } = {}) {
   return String(locale || '').trim() || (0,_page_language_js__WEBPACK_IMPORTED_MODULE_0__.pageLocale)(node);
+}
+/** A Date from a Date, a time in milliseconds or a date string; null when it is none. */
+
+function toDate(value) {
+  if (value === null || value === undefined || value === '') return null;
+  const date = value instanceof Date ? new Date(value.getTime()) : new Date(typeof value === 'string' && /^\d+$/u.test(value) ? Number(value) : value);
+  return Number.isNaN(date.getTime()) ? null : date;
+} // The formatters every copy shares, made on the first call.
+
+function formatterCache() {
+  const root = typeof globalThis !== 'undefined' ? globalThis : {};
+  if (!root.__sfFormat) root.__sfFormat = {
+    formatters: new Map()
+  };
+  return root.__sfFormat.formatters;
 } // One formatter per kind, locale and options. An unknown locale falls back to
 // the browser's, and options the platform refuses (an unknown unit or
 // currency) to a plain number, so a typo in a page never throws at a reader.
 
-function formatter(kind, locale, options) {
+
+function intlFormatter(kind, locale, options) {
   const key = `${kind}|${locale}|${JSON.stringify(options)}`;
-  const cache = STORE.formatters;
+  const cache = formatterCache();
   if (cache.has(key)) return cache.get(key);
   const Make = Intl[kind];
   let made;
@@ -319,169 +308,28 @@ function formatter(kind, locale, options) {
   cache.set(key, made);
   return made;
 }
-/** A Date from a Date, a time in milliseconds or a date string; null when it is none. */
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
+/***/ },
 
-function toDate(value) {
-  if (value === null || value === undefined || value === '') return null;
-  const date = value instanceof Date ? new Date(value.getTime()) : new Date(typeof value === 'string' && /^\d+$/u.test(value) ? Number(value) : value);
-  return Number.isNaN(date.getTime()) ? null : date;
-} // The first letter in capitals, by the locale's rule («вчера» → «Вчера»).
+/***/ "c9ce0852ac73"
+(module, __webpack_exports__, __webpack_require__) {
 
-function capitalise(text, locale) {
-  const first = Array.from(text)[0] ?? '';
-  return first ? first.toLocaleUpperCase(locale || undefined) + text.slice(first.length) : text;
-} // ── dates ────────────────────────────────────────────────────────────────────
-
-
-const DATE_STYLES = new Set(['short', 'medium', 'long', 'full']);
-/**
- * A date, a time or both in the locale.
- *
- *   formatDate(at)                          3 нояб. 2026 г.  /  Nov 3, 2026
- *   formatDate(at, {date: 'short'})         03.11.2026       /  11/3/26
- *   formatDate(at, {date: 'long'})          3 ноября 2026 г. /  November 3, 2026
- *   formatDate(at, {time: 'short'})         3 нояб. 2026 г., 14:05
- *   formatDate(at, {date: null, time: 'short'})   14:05   /  2:05 PM
- *
- * `date` and `time` are Intl styles (short, medium, long, full); `intl` gives
- * Intl.DateTimeFormat options outright, for a form the styles do not name (a
- * chart's tick, «14:05» with two-digit hours). Anything that is not a date is
- * `gap`, '' by default.
- */
-
-function formatDate(value, {
-  date = 'medium',
-  time = null,
-  intl = null,
-  gap = '',
-  ...where
-} = {}) {
-  const moment = toDate(value);
-  if (!moment) return gap;
-  let options = intl;
-
-  if (!options) {
-    options = {};
-    if (DATE_STYLES.has(date)) options.dateStyle = date;
-    if (DATE_STYLES.has(time)) options.timeStyle = time;
-    if (!options.dateStyle && !options.timeStyle) options.dateStyle = 'medium';
-  }
-
-  return formatter('DateTimeFormat', formatLocale(where), options).format(moment);
-} // ── days ─────────────────────────────────────────────────────────────────────
-
-/**
- * Calendar days from `now` to the value in the reader's time zone: 0 today,
- * -1 yesterday, 1 tomorrow; NaN when the value is no date. Counted on
- * calendar dates, not 24-hour spans, so 23:59 yesterday is -1 at 00:01 and a
- * day of a clock change is still one day.
- */
-
-function calendarDayOffset(value, {
-  now = new Date()
-} = {}) {
-  const moment = toDate(value);
-  const today = toDate(now);
-  if (!moment || !today) return Number.NaN;
-  const day = Date.UTC(moment.getFullYear(), moment.getMonth(), moment.getDate());
-  const base = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
-  return Math.round((day - base) / DAY_MS);
-}
-/**
- * The day a moment fell on, as a list says it: «сегодня», «вчера», «завтра»,
- * the weekday within the last week («понедельник»), else the date («3 ноября»,
- * with the year when it is not this one). The words are the platform's for
- * the locale (Intl.RelativeTimeFormat, numeric auto); a component that ships
- * its own passes them (`today`, `yesterday`, `tomorrow`) and they win.
- * `weekday: false` goes from yesterday straight to the date; `capital: true`
- * starts the word with a capital, as a heading or a divider does.
- *
- * The answer changes at the reader's midnight: msUntilNextDay says when.
- */
-
-function formatRelativeDay(value, {
-  now = new Date(),
-  today,
-  yesterday,
-  tomorrow,
-  weekday = true,
-  capital = false,
-  gap = '',
-  ...where
-} = {}) {
-  const moment = toDate(value);
-  if (!moment) return gap;
-  const locale = formatLocale(where);
-  const offset = calendarDayOffset(moment, {
-    now
-  });
-  const own = {
-    0: today,
-    [-1]: yesterday,
-    1: tomorrow
-  }[offset];
-  let text;
-
-  if (own) {
-    text = String(own);
-  } else if (offset >= -1 && offset <= 1) {
-    text = formatter('RelativeTimeFormat', locale, {
-      numeric: 'auto'
-    }).format(offset, 'day');
-  } else if (weekday && offset < -1 && offset > -7) {
-    text = formatter('DateTimeFormat', locale, {
-      weekday: 'long'
-    }).format(moment);
-  } else {
-    const year = moment.getFullYear() === toDate(now).getFullYear() ? {} : {
-      year: 'numeric'
-    };
-    text = formatter('DateTimeFormat', locale, {
-      day: 'numeric',
-      month: 'long',
-      ...year
-    }).format(moment);
-  }
-
-  return capital ? capitalise(text, locale) : text;
-}
-/**
- * Milliseconds from `now` to the reader's next midnight, when every relative
- * day on the screen moves by one. A component that shows them sets a timer
- * for this long (plus a second's margin, so it wakes in the new day) and
- * draws them again; «сегодня» said yesterday is wrong by morning.
- */
-
-function msUntilNextDay(now = new Date()) {
-  const today = toDate(now) ?? new Date();
-  const next = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
-  return next.getTime() - today.getTime();
-} // The largest unit a span reaches is the one it is said in (mail-letters'
-// steps, 2026-10): 90 seconds is «2 минуты назад», 40 days «в прошлом месяце».
-
-const RELATIVE_STEPS = [['year', 31536000], ['month', 2592000], ['week', 604800], ['day', 86400], ['hour', 3600], ['minute', 60]];
-/** «5 минут назад», «через 2 часа»: a moment from `now`, in the locale. */
-
-function formatRelativeTime(value, {
-  now = new Date(),
-  gap = '',
-  ...where
-} = {}) {
-  const moment = toDate(value);
-  const base = toDate(now);
-  if (!moment || !base) return gap;
-  const seconds = Math.round((moment.getTime() - base.getTime()) / 1000);
-  const format = formatter('RelativeTimeFormat', formatLocale(where), {
-    numeric: 'auto'
-  });
-
-  for (const [unit, size] of RELATIVE_STEPS) {
-    if (Math.abs(seconds) >= size) return format.format(Math.round(seconds / size), unit);
-  }
-
-  return format.format(seconds, 'second');
-} // ── numbers ──────────────────────────────────────────────────────────────────
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   formatNumber: () => (/* binding */ formatNumber),
+/* harmony export */   numberOptions: () => (/* binding */ numberOptions)
+/* harmony export */ });
+/* harmony import */ var _format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("15b4e93ff6ed");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_format_intl_js__WEBPACK_IMPORTED_MODULE_0__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+_format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+// Numbers in the page's language by a format word: formatNumber and
+// numberOptions alone, with no top-level side effects (format-intl.js). The
+// same functions as core/js/format.js and SF.format.number; a bundle that
+// formats numbers only imports them from here.
 
 /**
  * The Intl options of a number format word (ui-chart's words, kept so a page
@@ -555,75 +403,8 @@ function formatNumber(value, format = 'number', {
   if (typeof number !== 'number' || !Number.isFinite(number)) return gap;
   const options = numberOptions(format, step);
   if (grouping === false) options.useGrouping = false;
-  return formatter('NumberFormat', formatLocale(where), options).format(number);
-} // ── file sizes ───────────────────────────────────────────────────────────────
-// The four words of a size, in the languages the SIMAI Framework ships; any
-// other language reads the English words with its own digits. A component
-// with words of its own passes them as `units`.
-
-const FILE_SIZE_UNITS = Object.freeze({
-  en: Object.freeze(['B', 'KB', 'MB', 'GB']),
-  ru: Object.freeze(['Б', 'КБ', 'МБ', 'ГБ'])
-});
-/** The unit words for a locale: its language's, else English. */
-
-function fileSizeUnits(locale = 'en') {
-  const language = String(locale || 'en').toLowerCase().split('-')[0];
-  return Object.hasOwn(FILE_SIZE_UNITS, language) ? FILE_SIZE_UNITS[language] : FILE_SIZE_UNITS.en;
+  return (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('NumberFormat', (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.formatLocale)(where), options).format(number);
 }
-/**
- * A size as people read it: «512 Б», «2 КБ», «1,4 МБ», «12 GB». Binary steps
- * of 1024; one digit after the point under ten of a unit, none above it or in
- * bytes. Text a host already formatted is returned as it came; anything that
- * is not a size is ''.
- *
- *   formatFileSize(size, {node, units?, locale?})
- *   formatFileSize(size, units, locale)   -- the form composition/file-size.mjs
- *                                            and sf-image-field 1.x published
- */
-
-function formatFileSize(size, options = {}, legacyLocale) {
-  const where = Array.isArray(options) ? {
-    units: options,
-    locale: legacyLocale ?? 'en'
-  } : options ?? {};
-  if (typeof size === 'string') return size;
-  const bytes = Number(size);
-  if (size === null || size === undefined || !Number.isFinite(bytes) || bytes < 0) return '';
-  const locale = formatLocale(where);
-  const units = where.units?.length ? where.units : fileSizeUnits(locale);
-  let amount = bytes;
-  let index = 0;
-
-  while (amount >= 1024 && index < units.length - 1) {
-    amount /= 1024;
-    index += 1;
-  }
-
-  const digits = index === 0 || amount >= 10 ? 0 : 1;
-  return `${formatter('NumberFormat', locale, {
-    maximumFractionDigits: digits
-  }).format(amount)} ${units[index]}`;
-}
-const Format = Object.freeze({
-  locale: formatLocale,
-  date: formatDate,
-  relativeDay: formatRelativeDay,
-  relativeTime: formatRelativeTime,
-  dayOffset: calendarDayOffset,
-  msUntilNextDay,
-  number: formatNumber,
-  numberOptions,
-  fileSize: formatFileSize
-}); // Core publishes the helper; component bundles that carry their own copy reuse
-// an already published one instead of replacing it.
-
-if (typeof globalThis !== 'undefined') {
-  globalThis.SF = globalThis.SF || {};
-  if (!globalThis.SF.format) globalThis.SF.format = Format;
-}
-
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Format);
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
 
@@ -2129,10 +1910,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   roundTo: () => (/* binding */ roundTo),
 /* harmony export */   stepFrom: () => (/* binding */ stepFrom)
 /* harmony export */ });
-/* harmony import */ var _core_js_format_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("5b8371b87515");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_format_js__WEBPACK_IMPORTED_MODULE_0__]);
+/* harmony import */ var _core_js_format_number_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("c9ce0852ac73");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_format_number_js__WEBPACK_IMPORTED_MODULE_0__]);
 var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
-_core_js_format_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+_core_js_format_number_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 // The parts of sf-input-quantity that are about numbers, not the page: how typed text
 // reads in the page's language, how a value is written back, where a step
 // lands and where the bounds hold it. Kept apart from the element so the
@@ -2244,12 +2025,12 @@ function parseNumber(text, {locale, allowDecimal = false, allowNegative = false}
 }
 
 // A value as the page's language writes it, with the field's digits: core's
-// number format (core/js/format.js, decimal-<n>; reuse audit 2026-11-02,
+// number format (core/js/format-number.js, decimal-<n>; reuse audit 2026-11-02,
 // finding 7), so a quantity reads as the same number does in a table.
 function formatNumber(value, {locale, precision = 0, grouping = true} = {}) {
   if (typeof value !== 'number') return '';
   const digits = Math.min(20, Math.max(0, Number(precision) || 0));
-  return (0,_core_js_format_js__WEBPACK_IMPORTED_MODULE_0__.formatNumber)(value, `decimal-${digits}`, {locale, grouping});
+  return (0,_core_js_format_number_js__WEBPACK_IMPORTED_MODULE_0__.formatNumber)(value, `decimal-${digits}`, {locale, grouping});
 }
 
 // The value as a form submits it: a point, no grouping, the field's digits.
@@ -2286,7 +2067,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-input
 /***/ "bd1940663dd9"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-quantity","tag":"sf-input-quantity","version":"1.3.0","kind":"leaf","traits":["field-inherit@1"],"settings":{"name":{"type":"string","default":""},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"placeholder":{"type":"string","default":""},"min":{"type":"number","nullable":true},"max":{"type":"number","nullable":true},"step":{"type":"number","default":1},"page-step":{"type":"number","nullable":true},"precision":{"type":"number","integer":true,"min":0,"max":20,"nullable":true},"grouping":{"type":"boolean","default":true},"locale":{"type":"string","default":""},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"decrement-label":{"type":"string","default-from":"runtime.decrement"},"increment-label":{"type":"string","default-from":"runtime.increment"}},"values":{"value":{"type":"number","nullable":true}},"events":{"change":{"carries":"native"},"input":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{"clear":{},"step-up":{"with":{"count":{"type":"number","optional":true}}},"step-down":{"with":{"count":{"type":"number","optional":true}}},"set-error":{"with":{"message":{"type":"string"}}}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","range-underflow","range-overflow","step-mismatch","custom-error"]},"host-states":{"data-at-min":"boolean","data-at-max":"boolean","data-inherited":"boolean"},"css-variables":{"--sf-quantity-background-color":{"type":"color","state":"default"},"--sf-quantity-border-color":{"type":"color","state":"default"},"--sf-quantity-border-width":{"type":"length","state":"default"},"--sf-quantity-radius":{"type":"length","state":"default"},"--sf-quantity-color":{"type":"color","state":"default"},"--sf-quantity-padding-inline":{"type":"length","state":"default"},"--sf-quantity-padding-block":{"type":"length","state":"default"},"--sf-quantity-gap":{"type":"length","state":"default"},"--sf-quantity-stepper-radius":{"type":"length","state":"default"},"--sf-quantity-invalid-border-color":{"type":"color","state":"invalid"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-quantity","tag":"sf-input-quantity","version":"1.3.1","kind":"leaf","traits":["field-inherit@1"],"settings":{"name":{"type":"string","default":""},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"placeholder":{"type":"string","default":""},"min":{"type":"number","nullable":true},"max":{"type":"number","nullable":true},"step":{"type":"number","default":1},"page-step":{"type":"number","nullable":true},"precision":{"type":"number","integer":true,"min":0,"max":20,"nullable":true},"grouping":{"type":"boolean","default":true},"locale":{"type":"string","default":""},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"decrement-label":{"type":"string","default-from":"runtime.decrement"},"increment-label":{"type":"string","default-from":"runtime.increment"}},"values":{"value":{"type":"number","nullable":true}},"events":{"change":{"carries":"native"},"input":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{"clear":{},"step-up":{"with":{"count":{"type":"number","optional":true}}},"step-down":{"with":{"count":{"type":"number","optional":true}}},"set-error":{"with":{"message":{"type":"string"}}}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","range-underflow","range-overflow","step-mismatch","custom-error"]},"host-states":{"data-at-min":"boolean","data-at-max":"boolean","data-inherited":"boolean"},"css-variables":{"--sf-quantity-background-color":{"type":"color","state":"default"},"--sf-quantity-border-color":{"type":"color","state":"default"},"--sf-quantity-border-width":{"type":"length","state":"default"},"--sf-quantity-radius":{"type":"length","state":"default"},"--sf-quantity-color":{"type":"color","state":"default"},"--sf-quantity-padding-inline":{"type":"length","state":"default"},"--sf-quantity-padding-block":{"type":"length","state":"default"},"--sf-quantity-gap":{"type":"length","state":"default"},"--sf-quantity-stepper-radius":{"type":"length","state":"default"},"--sf-quantity-invalid-border-color":{"type":"color","state":"invalid"}}}');
 
 /***/ },
 
