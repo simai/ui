@@ -8,6 +8,8 @@
 
 ### Добавлено
 
+- The Pro package reference lists `sf-chat-message`'s relation to `sf-view-properties` (`smart.chat-message` requires `smart.view-properties`, in `pro.package.json` and its dated alias `larena.package.json`), so a Pro package with `sf-chat-message` 1.7.0 builds over the pair. `core.runtime` 1.27.1.
+
 - One block editor 1.2.0, Framework side (ui-editor visual parity, items 1, 4 and 5): `catalogue.also_in` (type manifest schema 1.6.0) lets a type stand in further groups besides its own (`element.button` and `content.divider` also in Text); built-in form types `form.form`, `form.input`, `form.textarea`, `form.checkbox`, `form.switch`, `form.select` and `form.button-submit`; the accent background (background set 1.1.0, `bg-primary color-on-primary`), which `layout.section` 1.3.0's accent variant sets and inside which `core.styles` 1.3.0 switches the on-surface roles to on-primary and a primary button inverts; `layout.grid` 1.1.0 keeps three columns on every screen. `card` 1.1.0: a heading inside `.sf-card` is the card's title at 16 on 22, semibold, at every width (public variables `--sf-card-title-size`, `--sf-card-title-weight`), and a narrow card's side space is 8 % of its column, up to `space-2`. `core.runtime` 1.27.0.
 
 - The Loader reads a set passport (`set.json`) in debug mode only for component sets (`data-sf-sets`, the set index, a version or a base string), never for a plain package such as `pro` declared as `{base}`: such pages no longer request a missing `set.json` and log no 404. `core.runtime` 1.26.1.
