@@ -9377,7 +9377,7 @@ __webpack_require__.r(__webpack_exports__);
 // core.runtime.json). A set's release says the lowest version it needs, and
 // the index lookup keeps the releases this Core satisfies. Moved by hand with
 // the passport; tests/component-set-loader.contract.test.mjs holds them equal.
-const CORE_RUNTIME = '1.26.1';
+const CORE_RUNTIME = '1.27.0';
 const SET_NAME = /^[a-z][a-z0-9-]*$/u;
 const SET_INDEX_FORMAT = 'simai.framework.set-index';
 const SET_INDEX_URL = 'https://cdn.jsdelivr.net/npm/@simai-studio/sets@1/index.json';
@@ -15549,8 +15549,11 @@ const TEXT_SETS = Object.freeze(['alignment', 'visibility']);
 // container m-inline-auto), so in the default theme no text touches the
 // page's edge. A section that sets its own values keeps them.
 const SECTION_DEFAULTS = Object.freeze({ width: 'normal', padding_y: 8 });
-// A layout grid stands in one column on the phone and three from the tablet.
-const GRID_DEFAULTS = Object.freeze({ columns: Object.freeze({ xs: 1, md: 3 }), gap: 4 });
+// A layout grid keeps its columns on every screen, as the accepted prototype's
+// features and cards grids do on the phone (layout.grid 1.1.0, 2026-11-04;
+// measured there at 380: three columns, gap 20, its gap m). A Document sets
+// the phone's own value where one column is wanted.
+const GRID_DEFAULTS = Object.freeze({ columns: 3, gap: 5 });
 const CONTAINER_DEFAULTS = Object.freeze({ width: 'narrow' });
 const catalogueWord = (type) => `sf.composition.catalogue.type.${type.replace('.', '_').replaceAll('-', '_')}`;
 const variantWord = (type, id) => `sf.composition.catalogue.variant.${type.replace('.', '_').replaceAll('-', '_')}.${id.replaceAll('-', '_')}`;
@@ -15685,6 +15688,8 @@ const CONTENT_ITEM_PARENTS = Object.freeze({
 
 // A SIMAI Framework icon name (Material Symbols): what sf-icon draws.
 const iconName = { type: 'string', pattern: '^[a-z0-9][a-z0-9_]{0,63}$' };
+// What a form field submits under: a form control name.
+const fieldName = { type: 'string', pattern: '^[A-Za-z_][A-Za-z0-9_.\\[\\]-]{0,63}$' };
 // A layout type of the one block editor: a ui-layout block with parameter sets.
 const layoutManifest = (type, fields) => ({
   ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_2__.schemaFields)('simai.composition.type-manifest', 1),
@@ -15744,7 +15749,10 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
     // 1.2.0 (2026-11-04): the section prints its spacing and width by default
     // (parameter_defaults: p-y-8, the page container), and offers variants.
     // A Document that sets them keeps its own values.
-    version: '1.2.0',
+    // 1.3.0 (2026-11-04): the accent variant is the primary role's own fill
+    // with on-primary text (background accent), as the prototype draws it,
+    // not the primary container's light tint.
+    version: '1.3.0',
     category: 'layout',
     mode: 'composite',
     profiles: ['ui-layout'],
@@ -15755,7 +15763,7 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
     variants: [
       { id: 'plain', label_key: variantWord('layout.section', 'plain') },
       { id: 'soft', label_key: variantWord('layout.section', 'soft'), props: { background: 'container' } },
-      { id: 'accent', label_key: variantWord('layout.section', 'accent'), props: { background: 'primary' } },
+      { id: 'accent', label_key: variantWord('layout.section', 'accent'), props: { background: 'accent' } },
       { id: 'text', label_key: variantWord('layout.section', 'text'), props: { width: 'narrow' }, slots: { default: [{ id: 'area', type: 'layout.area' }] } },
       { id: 'two-columns', label_key: variantWord('layout.section', 'two-columns'), props: { columns: { xs: 1, md: 2 }, gap: 6 } },
     ],
@@ -15979,6 +15987,9 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
     ],
   }),
   layoutManifest('layout.grid', {
+    // 1.1.0 (2026-11-04): its columns hold on the phone (three, gap 5), and
+    // its card variants keep theirs, as the prototype draws them at 380.
+    version: '1.1.0',
     parameter_sets: ['grid', 'visibility'],
     parameter_defaults: GRID_DEFAULTS,
     slots: { default: { min: 0, max: 48, categories: ['layout', 'content', 'smart'] } },
@@ -15986,7 +15997,7 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
     variants: [2, 3, 4].map((count) => ({
       id: `cards-${count}`,
       label_key: variantWord('layout.grid', `cards-${count}`),
-      props: { columns: { xs: 1, md: count } },
+      props: { columns: count },
       slots: { default: Array.from({ length: count }, (_, index) => ({ id: `card-${index + 1}`, type: 'content.card' })) },
     })),
   }),
@@ -16053,6 +16064,105 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
       size: { enum: ['1', '2', '3', '4', '5'], default: '2' },
     }),
     catalogue: { group: 'elements', icon: 'star', label_key: catalogueWord('element.icon'), keywords: { en: ['icon', 'symbol', 'pictogram'], ru: ['значок', 'иконка', 'пиктограмма'] }, order: 130 },
+  }),
+  // Forms (2026-11-04; the ui-editor host's G-20): a form and its fields,
+  // each field one SIMAI Framework Smart element printed from its inputs
+  // (sf-input, sf-input-textarea, sf-checkbox, sf-switch, sf-dropdown,
+  // sf-button with native-type submit). The form is a <form> around them;
+  // where it is sent is the host's (action), checked by the Document's URL
+  // rule. A field names what it submits (name); without a label, a field
+  // whose name is a common one (name, phone, email, message) reads its word
+  // in the Document's language, any other «Field»; so the variants carry
+  // names, not words of one language.
+  {
+    ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_2__.schemaFields)('simai.composition.type-manifest', 1),
+    type: 'form.form',
+    version: '1.0.0',
+    category: 'smart',
+    mode: 'composite',
+    profiles: ['ui-layout'],
+    data_schema: closed({ action: urlSchema }),
+    props_schema: closed({ method: { enum: ['post', 'get'], default: 'post' } }),
+    presentation: { views: ['default'], presets: [], modifiers: [] },
+    slots: { default: { min: 0, max: 50, categories: ['content', 'smart'] } },
+    renderer: { kind: 'builtin', name: 'form.form' },
+    assets: [],
+    capabilities: ['html'],
+    catalogue: { group: 'forms', icon: 'contact_mail', label_key: catalogueWord('form.form'), keywords: { en: ['form', 'request', 'contact', 'feedback'], ru: ['форма', 'заявка', 'обратная связь', 'контакты'] }, order: 100 },
+    variants: [
+      {
+        id: 'request',
+        label_key: variantWord('form.form', 'request'),
+        slots: { default: [
+          { id: 'name', type: 'form.input', data: { name: 'name' } },
+          { id: 'phone', type: 'form.input', data: { name: 'phone' }, props: { input_type: 'tel' } },
+          { id: 'send', type: 'form.button-submit' },
+        ] },
+      },
+      {
+        id: 'message',
+        label_key: variantWord('form.form', 'message'),
+        slots: { default: [
+          { id: 'name', type: 'form.input', data: { name: 'name' } },
+          { id: 'email', type: 'form.input', data: { name: 'email' }, props: { input_type: 'email' } },
+          { id: 'text', type: 'form.textarea', data: { name: 'message' } },
+          { id: 'send', type: 'form.button-submit' },
+        ] },
+      },
+    ],
+  },
+  elementManifest('form.input', 'smart/input', {
+    data_schema: closed({ label: plainText(200), placeholder: plainText(200), hint: plainText(300), name: fieldName }),
+    props_schema: closed({
+      input_type: { enum: ['text', 'email', 'tel', 'url'], default: 'text' },
+      required: { type: 'boolean', default: false },
+      size: { enum: ['1/2', '1', '2'], default: '1' },
+    }),
+    catalogue: { group: 'forms', icon: 'input', label_key: catalogueWord('form.input'), keywords: { en: ['field', 'input', 'text field', 'email', 'phone'], ru: ['поле', 'ввод', 'текстовое поле', 'почта', 'телефон'] }, order: 110 },
+  }),
+  elementManifest('form.textarea', 'smart/input-textarea', {
+    data_schema: closed({ label: plainText(200), placeholder: plainText(200), hint: plainText(300), name: fieldName }),
+    props_schema: closed({
+      rows: { type: 'integer', minimum: 2, maximum: 12, default: 3 },
+      required: { type: 'boolean', default: false },
+      size: { enum: ['1/2', '1', '2'], default: '1' },
+    }),
+    catalogue: { group: 'forms', icon: 'notes', label_key: catalogueWord('form.textarea'), keywords: { en: ['text area', 'message', 'comment', 'multiline'], ru: ['многострочное поле', 'сообщение', 'комментарий'] }, order: 120 },
+  }),
+  elementManifest('form.checkbox', 'smart/checkbox', {
+    data_schema: closed({ label: plainText(300), hint: plainText(300), name: fieldName }),
+    props_schema: closed({
+      checked: { type: 'boolean', default: false },
+      size: { enum: ['1/2', '1', '2'], default: '1' },
+    }),
+    catalogue: { group: 'forms', icon: 'check_box', label_key: catalogueWord('form.checkbox'), keywords: { en: ['checkbox', 'agree', 'consent', 'tick'], ru: ['флажок', 'галочка', 'согласие'] }, order: 130 },
+  }),
+  elementManifest('form.switch', 'smart/switch', {
+    data_schema: closed({ label: plainText(300), hint: plainText(300), name: fieldName }),
+    props_schema: closed({
+      checked: { type: 'boolean', default: false },
+      size: { enum: ['1/2', '1', '2'], default: '1' },
+    }),
+    catalogue: { group: 'forms', icon: 'toggle_on', label_key: catalogueWord('form.switch'), keywords: { en: ['switch', 'toggle', 'on off'], ru: ['переключатель', 'вкл выкл'] }, order: 140 },
+  }),
+  elementManifest('form.select', 'smart/dropdown', {
+    // The options are words, one after another, separated by commas: what an
+    // author writes in one field. Each option submits its own words.
+    data_schema: closed({ label: plainText(200), placeholder: plainText(200), options: plainText(2000), name: fieldName }),
+    props_schema: closed({
+      required: { type: 'boolean', default: false },
+      size: { enum: ['1/2', '1', '2'], default: '1' },
+    }),
+    catalogue: { group: 'forms', icon: 'arrow_drop_down_circle', label_key: catalogueWord('form.select'), keywords: { en: ['select', 'dropdown', 'choice', 'list'], ru: ['список', 'выбор', 'выпадающий список'] }, order: 150 },
+  }),
+  elementManifest('form.button-submit', 'smart/button', {
+    // Unset, it reads «Send» in the Document's language.
+    data_schema: closed({ text: plainText(200) }),
+    props_schema: closed({
+      appearance: { enum: ['default', 'tonal', 'outline'], default: 'default' },
+      size: { enum: ['1/2', '1', '2'], default: '1' },
+    }),
+    catalogue: { group: 'forms', icon: 'send', label_key: catalogueWord('form.button-submit'), keywords: { en: ['submit', 'send', 'button'], ru: ['отправить', 'кнопка отправки', 'кнопка'] }, order: 160 },
   }),
   // The root of a structured-content Document: the page's blocks in order,
   // under the page's title (the accepted content editor prototype writes
@@ -16321,7 +16431,7 @@ const BUILTIN_EDITOR_MANIFESTS = Object.freeze([
   {
     ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_2__.schemaFields)('simai.composition.editor-manifest', 1),
     type: 'layout.section',
-    type_version: '1.2.0',
+    type_version: '1.3.0',
     fields: [
       {
         key: 'surface',
@@ -16477,7 +16587,7 @@ const BUILTIN_EDITOR_MANIFESTS = Object.freeze([
   // The layout and element types of the one block editor (2026-11-04).
   { ...contentEditor('content.paragraph', (0,_parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_3__.parameterSetFields)({ parameter_sets: TEXT_SETS })), type_version: '1.3.0' },
   contentEditor('layout.container', (0,_parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_3__.parameterSetFields)({ parameter_sets: ['width', 'spacing', 'background', 'visibility'], parameter_defaults: CONTAINER_DEFAULTS })),
-  contentEditor('layout.grid', (0,_parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_3__.parameterSetFields)({ parameter_sets: ['grid', 'visibility'], parameter_defaults: GRID_DEFAULTS })),
+  { ...contentEditor('layout.grid', (0,_parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_3__.parameterSetFields)({ parameter_sets: ['grid', 'visibility'], parameter_defaults: GRID_DEFAULTS })), type_version: '1.1.0' },
   contentEditor('layout.spacer', [
     contentField('layout.spacer', 'size', 'props', 'integer', { constraints: { min: 1, max: 8 }, default: 6 }),
     ...(0,_parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_3__.parameterSetFields)({ parameter_sets: ['visibility'] }),
@@ -16509,6 +16619,56 @@ const BUILTIN_EDITOR_MANIFESTS = Object.freeze([
     contentField('element.icon', 'icon', 'props', 'text', { constraints: { min_length: 1, max_length: 64 }, default: 'star' }),
     contentField('element.icon', 'size', 'props', 'choice', { choices: ['1', '2', '3', '4', '5'], default: '2' }),
     contentField('element.icon', 'label', 'data', 'text', { ...advanced, constraints: { min_length: 1, max_length: 120 } }),
+  ]),
+  // Forms (2026-11-04).
+  contentEditor('form.form', [
+    contentField('form.form', 'action', 'data', 'text', { constraints: { min_length: 1, max_length: 2048 } }),
+    contentField('form.form', 'method', 'props', 'choice', { ...advanced, choices: ['post', 'get'], default: 'post' }),
+  ]),
+  contentEditor('form.input', [
+    contentField('form.input', 'label', 'data', 'text', { constraints: { min_length: 1, max_length: 200 } }),
+    contentField('form.input', 'placeholder', 'data', 'text', { constraints: { min_length: 1, max_length: 200 } }),
+    contentField('form.input', 'input_type', 'props', 'choice', { choices: ['text', 'email', 'tel', 'url'], default: 'text' }),
+    contentField('form.input', 'required', 'props', 'toggle', { default: false }),
+    contentField('form.input', 'hint', 'data', 'text', { ...advanced, constraints: { min_length: 1, max_length: 300 } }),
+    contentField('form.input', 'name', 'data', 'text', { ...advanced, constraints: { min_length: 1, max_length: 64 } }),
+    contentField('form.input', 'size', 'props', 'choice', { ...advanced, choices: ['1/2', '1', '2'], default: '1' }),
+  ]),
+  contentEditor('form.textarea', [
+    contentField('form.textarea', 'label', 'data', 'text', { constraints: { min_length: 1, max_length: 200 } }),
+    contentField('form.textarea', 'placeholder', 'data', 'text', { constraints: { min_length: 1, max_length: 200 } }),
+    contentField('form.textarea', 'rows', 'props', 'integer', { constraints: { min: 2, max: 12 }, default: 3 }),
+    contentField('form.textarea', 'required', 'props', 'toggle', { default: false }),
+    contentField('form.textarea', 'hint', 'data', 'text', { ...advanced, constraints: { min_length: 1, max_length: 300 } }),
+    contentField('form.textarea', 'name', 'data', 'text', { ...advanced, constraints: { min_length: 1, max_length: 64 } }),
+    contentField('form.textarea', 'size', 'props', 'choice', { ...advanced, choices: ['1/2', '1', '2'], default: '1' }),
+  ]),
+  contentEditor('form.checkbox', [
+    contentField('form.checkbox', 'label', 'data', 'text', { constraints: { min_length: 1, max_length: 300 } }),
+    contentField('form.checkbox', 'hint', 'data', 'text', { constraints: { min_length: 1, max_length: 300 } }),
+    contentField('form.checkbox', 'checked', 'props', 'toggle', { default: false }),
+    contentField('form.checkbox', 'name', 'data', 'text', { ...advanced, constraints: { min_length: 1, max_length: 64 } }),
+    contentField('form.checkbox', 'size', 'props', 'choice', { ...advanced, choices: ['1/2', '1', '2'], default: '1' }),
+  ]),
+  contentEditor('form.switch', [
+    contentField('form.switch', 'label', 'data', 'text', { constraints: { min_length: 1, max_length: 300 } }),
+    contentField('form.switch', 'hint', 'data', 'text', { constraints: { min_length: 1, max_length: 300 } }),
+    contentField('form.switch', 'checked', 'props', 'toggle', { default: false }),
+    contentField('form.switch', 'name', 'data', 'text', { ...advanced, constraints: { min_length: 1, max_length: 64 } }),
+    contentField('form.switch', 'size', 'props', 'choice', { ...advanced, choices: ['1/2', '1', '2'], default: '1' }),
+  ]),
+  contentEditor('form.select', [
+    contentField('form.select', 'label', 'data', 'text', { constraints: { min_length: 1, max_length: 200 } }),
+    contentField('form.select', 'options', 'data', 'text', { constraints: { min_length: 1, max_length: 2000 } }),
+    contentField('form.select', 'placeholder', 'data', 'text', { constraints: { min_length: 1, max_length: 200 } }),
+    contentField('form.select', 'required', 'props', 'toggle', { default: false }),
+    contentField('form.select', 'name', 'data', 'text', { ...advanced, constraints: { min_length: 1, max_length: 64 } }),
+    contentField('form.select', 'size', 'props', 'choice', { ...advanced, choices: ['1/2', '1', '2'], default: '1' }),
+  ]),
+  contentEditor('form.button-submit', [
+    contentField('form.button-submit', 'text', 'data', 'text', { constraints: { min_length: 1, max_length: 200 } }),
+    contentField('form.button-submit', 'appearance', 'props', 'choice', { choices: ['default', 'tonal', 'outline'], default: 'default' }),
+    contentField('form.button-submit', 'size', 'props', 'choice', { choices: ['1/2', '1', '2'], default: '1' }),
   ]),
   contentEditor('content.list', [
     contentField('content.list', 'ordered', 'props', 'toggle', { default: false }),
@@ -16620,6 +16780,7 @@ function stableStringify(value) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   BUILTIN_CATALOGUE: () => (/* binding */ BUILTIN_CATALOGUE),
+/* harmony export */   BUILTIN_CATALOGUE_ALSO_IN: () => (/* binding */ BUILTIN_CATALOGUE_ALSO_IN),
 /* harmony export */   BUILTIN_CATALOGUE_ICONS: () => (/* binding */ BUILTIN_CATALOGUE_ICONS),
 /* harmony export */   CATALOGUE_GROUPS: () => (/* binding */ CATALOGUE_GROUPS),
 /* harmony export */   CATALOGUE_GROUP_ALIASES: () => (/* binding */ CATALOGUE_GROUP_ALIASES),
@@ -16629,6 +16790,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   catalogue: () => (/* binding */ catalogue),
 /* harmony export */   catalogueEntry: () => (/* binding */ catalogueEntry),
 /* harmony export */   catalogueGroup: () => (/* binding */ catalogueGroup),
+/* harmony export */   entryGroups: () => (/* binding */ entryGroups),
 /* harmony export */   groupAllowed: () => (/* binding */ groupAllowed),
 /* harmony export */   instantiateVariant: () => (/* binding */ instantiateVariant),
 /* harmony export */   slotAccepts: () => (/* binding */ slotAccepts),
@@ -16676,7 +16838,8 @@ const CATALOGUE_GROUP_TABLE = Object.freeze({
 /** The two tabs the catalogue opens on: what is written into a text flow, and what a page is built from. */
 const CATALOGUE_TABS = Object.freeze(['text', 'blocks']);
 const TEXT_TAB_GROUPS = new Set(['text', 'media']);
-const CATALOGUE_FIELDS = new Set(['group', 'tab', 'label_key', 'help_key', 'keywords', 'preview', 'order', 'icon']);
+const CATALOGUE_FIELDS = new Set(['group', 'tab', 'label_key', 'help_key', 'keywords', 'preview', 'order', 'icon', 'also_in']);
+const ALSO_IN_LIMIT = 8;
 const ICON_NAME = /^[a-z0-9][a-z0-9_]{0,63}$/u;
 const VARIANT_FIELDS = new Set(['id', 'label_key', 'preview', 'props', 'data', 'presentation', 'slots']);
 const SLOT_EXTRA_FIELDS = new Set(['label_key', 'empty_key', 'groups']);
@@ -16726,6 +16889,13 @@ const BUILTIN_CATALOGUE = Object.freeze({
   'element.button-icon': 'elements',
   'element.badge': 'elements',
   'element.icon': 'elements',
+  'form.form': 'forms',
+  'form.input': 'forms',
+  'form.textarea': 'forms',
+  'form.checkbox': 'forms',
+  'form.switch': 'forms',
+  'form.select': 'forms',
+  'form.button-submit': 'forms',
 });
 
 // The icon of each offered built-in type (a SIMAI Framework icon name, as the
@@ -16760,6 +16930,23 @@ const BUILTIN_CATALOGUE_ICONS = Object.freeze({
   'element.button-icon': 'add_circle',
   'element.badge': 'label',
   'element.icon': 'star',
+  'form.form': 'contact_mail',
+  'form.input': 'input',
+  'form.textarea': 'notes',
+  'form.checkbox': 'check_box',
+  'form.switch': 'toggle_on',
+  'form.select': 'arrow_drop_down_circle',
+  'form.button-submit': 'send',
+});
+
+// The further sections a built-in type stands in beside its own (type
+// manifest 1.6.0, catalogue.also_in; the ui-editor host's G-20, 2026-11-04):
+// as the prototype offers them, a button and a divider are written into a
+// text flow as often as they are placed, so Text lists them too. A type's own
+// catalogue.also_in wins.
+const BUILTIN_CATALOGUE_ALSO_IN = Object.freeze({
+  'element.button': Object.freeze(['text']),
+  'content.divider': Object.freeze(['text']),
 });
 
 // Documents and manifests are JSON: a copy through JSON is a deep copy.
@@ -16779,8 +16966,10 @@ function catalogueGroup(group) {
 
 /**
  * A type's catalogue entry, or null when the type is not offered:
- * {type, group, tab, icon?, label_key?, help_key?, keywords, preview?, order, variants}.
+ * {type, group, also_in, tab, icon?, label_key?, help_key?, keywords, preview?, order, variants}.
  * A product type without `catalogue` falls into its namespace's group.
+ * also_in (type manifest 1.6.0) are the further groups it stands in, each
+ * once, never its own group; a dated alias gives its new group.
  */
 function catalogueEntry(manifest) {
   if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.isPlainObject)(manifest)) return null;
@@ -16794,10 +16983,13 @@ function catalogueEntry(manifest) {
   group = catalogueGroup(group);
   const icon = own?.icon ?? BUILTIN_CATALOGUE_ICONS[manifest.type];
   const tab = own?.tab ?? (TEXT_TAB_GROUPS.has(group) ? 'text' : 'blocks');
+  const also = Array.isArray(own?.also_in) ? own.also_in : BUILTIN_CATALOGUE_ALSO_IN[manifest.type] ?? [];
+  const alsoIn = [...new Set(also.filter((name) => typeof name === 'string').map(catalogueGroup))].filter((name) => name !== group && groupAllowed(name, manifest.type));
   return (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.canonical)({
     type: manifest.type,
     version: manifest.version,
     group,
+    also_in: alsoIn,
     tab,
     ...(icon ? { icon } : {}),
     ...(own?.label_key ? { label_key: own.label_key } : {}),
@@ -16813,10 +17005,22 @@ function catalogueEntry(manifest) {
   });
 }
 
+/** The groups a catalogue entry stands in: its own first, then also_in. */
+function entryGroups(entry) {
+  return entry ? [entry.group, ...(Array.isArray(entry.also_in) ? entry.also_in : [])] : [];
+}
+
 /**
  * The catalogue of a registry: every offered type, by tab and group, in order.
  * With `{parent, slot}` only the types that place accepts (hidden, not
  * greyed: a mail column accepts no video); a tab with nothing is left out.
+ *
+ * `sections` (type manifest 1.6.0) is the one list of the editor's library,
+ * the + and /: [{group, count, entries}], the fixed groups in their order,
+ * then a product's own; a type stands in its group and in each also_in
+ * group, so a section's count is the types it lists; a section with nothing
+ * is left out. `entries` keeps each type once (a search names it once, under
+ * its own group); `tabs` places it by its own group only.
  */
 function catalogue(registry, place = {}) {
   const types = registry?.types instanceof Map ? [...registry.types.values()] : [];
@@ -16828,11 +17032,18 @@ function catalogue(registry, place = {}) {
   if (place.profile) entries = entries.filter((entry) => registry.types.get(entry.type).profiles.includes(place.profile));
   entries.sort((left, right) => left.order - right.order || left.type.localeCompare(right.type));
   const tabs = {};
+  const byGroup = new Map();
   for (const entry of entries) {
     tabs[entry.tab] ||= {};
     (tabs[entry.tab][entry.group] ||= []).push(entry);
+    for (const group of entryGroups(entry)) {
+      if (!byGroup.has(group)) byGroup.set(group, []);
+      byGroup.get(group).push(entry);
+    }
   }
-  return { entries, tabs };
+  const order = [...CATALOGUE_GROUPS, ...[...byGroup.keys()].filter((group) => !CATALOGUE_GROUPS.includes(group))];
+  const sections = order.filter((group) => byGroup.has(group)).map((group) => ({ group, count: byGroup.get(group).length, entries: byGroup.get(group) }));
+  return { entries, tabs, sections };
 }
 
 /**
@@ -16847,8 +17058,11 @@ function slotAccepts(registry, parentManifest, slotName, childType) {
   if (slot.types && !slot.types.includes(childType)) return false;
   if (slot.categories && !slot.categories.includes(child.category)) return false;
   if (slot.groups) {
+    // A type stands in its group and its also_in groups: a slot that takes
+    // one of them takes it.
     const entry = catalogueEntry(child);
-    if (!entry || !slot.groups.map(catalogueGroup).includes(entry.group)) return false;
+    const wanted = slot.groups.map(catalogueGroup);
+    if (!entry || !entryGroups(entry).some((group) => wanted.includes(group))) return false;
   }
   return true;
 }
@@ -16932,6 +17146,14 @@ function validateCatalogueFields(manifest) {
       if (entry.order !== undefined && (!Number.isInteger(entry.order) || entry.order < 0 || entry.order > 1000)) diagnostics.push(diagnostic('catalogue_order_invalid', '$.catalogue.order', 'order is 0 to 1000'));
       if (entry.icon !== undefined && (typeof entry.icon !== 'string' || !ICON_NAME.test(entry.icon))) diagnostics.push(diagnostic('catalogue_icon_invalid', '$.catalogue.icon', 'icon is a SIMAI Framework icon name'));
       if (entry.preview !== undefined && (typeof entry.preview !== 'string' || !entry.preview || entry.preview.length > 2048)) diagnostics.push(diagnostic('catalogue_preview_invalid', '$.catalogue.preview', 'preview is an image address'));
+      if (entry.also_in !== undefined) {
+        const list = entry.also_in;
+        if (!Array.isArray(list) || !list.length || list.length > ALSO_IN_LIMIT || new Set(list).size !== list.length) diagnostics.push(diagnostic('catalogue_also_in_invalid', '$.catalogue.also_in', `also_in is a list of 1 to ${ALSO_IN_LIMIT} different groups`));
+        else list.forEach((group, index) => {
+          if (!groupAllowed(group, manifest.type)) diagnostics.push(diagnostic('catalogue_group_unknown', `$.catalogue.also_in[${index}]`, `A group is one of ${CATALOGUE_GROUPS.join(', ')}, or the type's namespace ${namespaceOf(manifest.type)}`));
+          else if (catalogueGroup(group) === catalogueGroup(entry.group)) diagnostics.push(diagnostic('catalogue_also_in_invalid', `$.catalogue.also_in[${index}]`, 'also_in names groups other than the type\'s own'));
+        });
+      }
     }
   }
   if (manifest.variants !== undefined) {
@@ -17866,6 +18088,7 @@ const EN = {
     'background.primary': 'Primary',
     'background.secondary': 'Secondary',
     'background.tertiary': 'Tertiary',
+    'background.accent': 'Accent',
   }),
   ...words('set_spacing', {
     padding_y: 'Space above and below',
@@ -18125,6 +18348,100 @@ const EN = {
     label: 'Label for screen readers',
     label_help: 'Leave empty when the icon only decorates',
   }),
+  // Forms (2026-11-04).
+  ...words('form_form', {
+    action: 'Where to send',
+    action_help: "The address the form is sent to; the host's",
+    method: 'Method',
+    method_help: 'How the form is sent',
+    'method.post': 'In the body (POST)',
+    'method.get': 'In the address (GET)',
+  }),
+  ...words('form_input', {
+    label: 'Label',
+    label_help: 'The words above the field',
+    placeholder: 'Placeholder',
+    placeholder_help: 'A hint inside the empty field',
+    input_type: 'Kind',
+    input_type_help: 'What the field takes',
+    'input_type.text': 'Text',
+    'input_type.email': 'Email',
+    'input_type.tel': 'Phone',
+    'input_type.url': 'Address',
+    required: 'Required',
+    required_help: 'The form is not sent without it',
+    hint: 'Hint',
+    hint_help: 'A line under the field',
+    name: 'Field name',
+    name_help: 'What the form sends the value under',
+    size: 'Size',
+    size_help: 'Small, regular or large',
+  }),
+  ...words('form_textarea', {
+    label: 'Label',
+    label_help: 'The words above the field',
+    placeholder: 'Placeholder',
+    placeholder_help: 'A hint inside the empty field',
+    rows: 'Rows',
+    rows_help: 'How many lines the field shows, from 2 to 12',
+    required: 'Required',
+    required_help: 'The form is not sent without it',
+    hint: 'Hint',
+    hint_help: 'A line under the field',
+    name: 'Field name',
+    name_help: 'What the form sends the value under',
+    size: 'Size',
+    size_help: 'Small, regular or large',
+  }),
+  ...words('form_checkbox', {
+    label: 'Label',
+    label_help: 'The words beside the box',
+    hint: 'Hint',
+    hint_help: 'A line under the label',
+    checked: 'On at first',
+    checked_help: 'Whether it starts ticked',
+    name: 'Field name',
+    name_help: 'What the form sends the value under',
+    size: 'Size',
+    size_help: 'Small, regular or large',
+  }),
+  ...words('form_switch', {
+    label: 'Label',
+    label_help: 'The words beside the box',
+    hint: 'Hint',
+    hint_help: 'A line under the label',
+    checked: 'On at first',
+    checked_help: 'Whether it starts ticked',
+    name: 'Field name',
+    name_help: 'What the form sends the value under',
+    size: 'Size',
+    size_help: 'Small, regular or large',
+  }),
+  ...words('form_select', {
+    label: 'Label',
+    label_help: 'The words above the field',
+    options: 'Options',
+    options_help: 'The choices, separated by commas',
+    placeholder: 'Placeholder',
+    placeholder_help: 'A hint inside the empty field',
+    required: 'Required',
+    required_help: 'The form is not sent without it',
+    name: 'Field name',
+    name_help: 'What the form sends the value under',
+    size: 'Size',
+    size_help: 'Small, regular or large',
+  }),
+  ...words('form_button_submit', {
+    text: 'Text',
+    text_help: 'The words on the button',
+    appearance: 'Look',
+    appearance_help: 'How the button stands out',
+    'appearance.default': 'Filled',
+    'appearance.tonal': 'Tonal',
+    'appearance.outline': 'Outlined',
+    size: 'Size',
+    size_help: 'Small, regular or large',
+  }),
   // The catalogue: groups, the built-in types that name themselves, variants.
   ...words('catalogue.group', {
     text: 'Text',
@@ -18144,6 +18461,13 @@ const EN = {
     element_button_icon: 'Icon button',
     element_badge: 'Badge',
     element_icon: 'Icon',
+    form_form: 'Form',
+    form_input: 'Field',
+    form_textarea: 'Text area',
+    form_checkbox: 'Checkbox',
+    form_switch: 'Switch',
+    form_select: 'List',
+    form_button_submit: 'Send button',
   }),
   ...words('catalogue.variant', {
     'layout_section.plain': 'Empty',
@@ -18160,6 +18484,8 @@ const EN = {
     'element_button.plain': 'Button',
     'element_button.icon': 'With an icon',
     'element_button.outline': 'Outlined',
+    'form_form.request': 'Request: name and phone',
+    'form_form.message': 'Message: name, email and text',
   }),
 };
 
@@ -18184,6 +18510,7 @@ const RU = {
     'background.primary': 'Основной',
     'background.secondary': 'Дополнительный',
     'background.tertiary': 'Третий',
+    'background.accent': 'Акцент',
   }),
   ...words('set_spacing', {
     padding_y: 'Отступ сверху и снизу',
@@ -18442,6 +18769,100 @@ const RU = {
     label: 'Подпись для экранного диктора',
     label_help: 'Оставьте пустой, если значок только украшает',
   }),
+  // Формы (2026-11-04).
+  ...words('form_form', {
+    action: 'Куда отправить',
+    action_help: 'Адрес, на который уходит форма; его даёт сайт',
+    method: 'Способ',
+    method_help: 'Как отправляется форма',
+    'method.post': 'В теле запроса (POST)',
+    'method.get': 'В адресе (GET)',
+  }),
+  ...words('form_input', {
+    label: 'Подпись',
+    label_help: 'Слова над полем',
+    placeholder: 'Подсказка в поле',
+    placeholder_help: 'Текст внутри пустого поля',
+    input_type: 'Вид',
+    input_type_help: 'Что поле принимает',
+    'input_type.text': 'Текст',
+    'input_type.email': 'Почта',
+    'input_type.tel': 'Телефон',
+    'input_type.url': 'Адрес',
+    required: 'Обязательное',
+    required_help: 'Без него форма не отправится',
+    hint: 'Пояснение',
+    hint_help: 'Строка под полем',
+    name: 'Имя поля',
+    name_help: 'Под каким именем форма отправит значение',
+    size: 'Размер',
+    size_help: 'Маленький, обычный или большой',
+  }),
+  ...words('form_textarea', {
+    label: 'Подпись',
+    label_help: 'Слова над полем',
+    placeholder: 'Подсказка в поле',
+    placeholder_help: 'Текст внутри пустого поля',
+    rows: 'Строк',
+    rows_help: 'Сколько строк видно, от 2 до 12',
+    required: 'Обязательное',
+    required_help: 'Без него форма не отправится',
+    hint: 'Пояснение',
+    hint_help: 'Строка под полем',
+    name: 'Имя поля',
+    name_help: 'Под каким именем форма отправит значение',
+    size: 'Размер',
+    size_help: 'Маленький, обычный или большой',
+  }),
+  ...words('form_checkbox', {
+    label: 'Подпись',
+    label_help: 'Слова рядом с флажком',
+    hint: 'Подсказка',
+    hint_help: 'Строка под подписью',
+    checked: 'Включено сразу',
+    checked_help: 'Отмечено ли с самого начала',
+    name: 'Имя поля',
+    name_help: 'Под каким именем форма отправит значение',
+    size: 'Размер',
+    size_help: 'Маленький, обычный или большой',
+  }),
+  ...words('form_switch', {
+    label: 'Подпись',
+    label_help: 'Слова рядом с флажком',
+    hint: 'Подсказка',
+    hint_help: 'Строка под подписью',
+    checked: 'Включено сразу',
+    checked_help: 'Отмечено ли с самого начала',
+    name: 'Имя поля',
+    name_help: 'Под каким именем форма отправит значение',
+    size: 'Размер',
+    size_help: 'Маленький, обычный или большой',
+  }),
+  ...words('form_select', {
+    label: 'Подпись',
+    label_help: 'Слова над полем',
+    options: 'Варианты',
+    options_help: 'Варианты через запятую',
+    placeholder: 'Подсказка в поле',
+    placeholder_help: 'Текст внутри пустого поля',
+    required: 'Обязательное',
+    required_help: 'Без него форма не отправится',
+    name: 'Имя поля',
+    name_help: 'Под каким именем форма отправит значение',
+    size: 'Размер',
+    size_help: 'Маленький, обычный или большой',
+  }),
+  ...words('form_button_submit', {
+    text: 'Текст',
+    text_help: 'Слова на кнопке',
+    appearance: 'Вид',
+    appearance_help: 'Как выделяется кнопка',
+    'appearance.default': 'Залитая',
+    'appearance.tonal': 'Тоновая',
+    'appearance.outline': 'Контурная',
+    size: 'Размер',
+    size_help: 'Маленький, обычный или большой',
+  }),
   ...words('catalogue.group', {
     text: 'Текст',
     media: 'Медиа',
@@ -18460,6 +18881,13 @@ const RU = {
     element_button_icon: 'Кнопка-значок',
     element_badge: 'Метка',
     element_icon: 'Значок',
+    form_form: 'Форма',
+    form_input: 'Поле',
+    form_textarea: 'Многострочное поле',
+    form_checkbox: 'Флажок',
+    form_switch: 'Переключатель',
+    form_select: 'Список',
+    form_button_submit: 'Кнопка отправки',
   }),
   ...words('catalogue.variant', {
     'layout_section.plain': 'Пустая',
@@ -18476,6 +18904,8 @@ const RU = {
     'element_button.plain': 'Кнопка',
     'element_button.icon': 'Со значком',
     'element_button.outline': 'Контурная',
+    'form_form.request': 'Заявка: имя и телефон',
+    'form_form.message': 'Сообщение: имя, почта и текст',
   }),
 };
 
@@ -19214,6 +19644,74 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     "manifest": "smart.button-icon",
     "version": "1.4.0"
   },
+  "sf-checkbox": {
+    "inputs": {
+      "additionalProperties": false,
+      "properties": {
+        "aria-label": {
+          "default": "",
+          "type": "string"
+        },
+        "checked": {
+          "default": false,
+          "type": "boolean"
+        },
+        "description": {
+          "default": "",
+          "type": "string"
+        },
+        "disabled": {
+          "default": false,
+          "type": "boolean"
+        },
+        "help": {
+          "default": "",
+          "type": "string"
+        },
+        "indeterminate": {
+          "default": false,
+          "type": "boolean"
+        },
+        "invalid": {
+          "default": false,
+          "type": "boolean"
+        },
+        "label": {
+          "default": "",
+          "type": "string"
+        },
+        "name": {
+          "default": "",
+          "type": "string"
+        },
+        "position": {
+          "default": "start",
+          "enum": [
+            "start",
+            "end"
+          ],
+          "type": "string"
+        },
+        "size": {
+          "default": "1",
+          "enum": [
+            "1/2",
+            "1",
+            "2"
+          ],
+          "type": "string"
+        },
+        "value": {
+          "default": "on",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "kind": "custom-element",
+    "manifest": "smart.checkbox",
+    "version": "1.1.6"
+  },
   "sf-divider": {
     "component": "component.content-divider",
     "inputs": {
@@ -19231,6 +19729,112 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
       "type": "object"
     },
     "kind": "class"
+  },
+  "sf-dropdown": {
+    "inputs": {
+      "additionalProperties": false,
+      "properties": {
+        "appearance": {
+          "default": "outlined",
+          "enum": [
+            "filled",
+            "outlined"
+          ],
+          "type": "string"
+        },
+        "aria-label": {
+          "default": "",
+          "type": "string"
+        },
+        "columns": {
+          "default": 6,
+          "type": "number"
+        },
+        "disabled": {
+          "default": false,
+          "type": "boolean"
+        },
+        "inherited-text": {
+          "default": "",
+          "type": "string"
+        },
+        "inherited-value": {
+          "default": "",
+          "type": "string"
+        },
+        "label": {
+          "default": "",
+          "type": "string"
+        },
+        "layout": {
+          "default": "list",
+          "enum": [
+            "list",
+            "grid"
+          ],
+          "type": "string"
+        },
+        "mode": {
+          "default": "select",
+          "enum": [
+            "tag",
+            "select"
+          ],
+          "type": "string"
+        },
+        "multiple": {
+          "default": false,
+          "type": "boolean"
+        },
+        "name": {
+          "default": "",
+          "type": "string"
+        },
+        "options": {
+          "type": "string"
+        },
+        "placeholder": {
+          "default": "",
+          "type": "string"
+        },
+        "portal": {
+          "default": true,
+          "type": "boolean"
+        },
+        "required": {
+          "default": false,
+          "type": "boolean"
+        },
+        "reset-label": {
+          "default": "",
+          "type": "string"
+        },
+        "search": {
+          "default": true,
+          "type": "boolean"
+        },
+        "search-placeholder": {
+          "type": "string"
+        },
+        "size": {
+          "default": "1",
+          "enum": [
+            "1/2",
+            "1",
+            "2"
+          ],
+          "type": "string"
+        },
+        "value": {
+          "default": "",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "kind": "custom-element",
+    "manifest": "smart.dropdown",
+    "version": "1.5.3"
   },
   "sf-icon": {
     "inputs": {
@@ -19316,6 +19920,379 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     "kind": "custom-element",
     "manifest": "smart.icon",
     "version": "1.1.5"
+  },
+  "sf-input": {
+    "inputs": {
+      "additionalProperties": false,
+      "properties": {
+        "appearance": {
+          "default": "bordered",
+          "enum": [
+            "bordered",
+            "filled",
+            "hidden"
+          ],
+          "type": "string"
+        },
+        "aria-label": {
+          "default": "",
+          "type": "string"
+        },
+        "autocomplete": {
+          "default": "",
+          "type": "string"
+        },
+        "default-value": {
+          "default": "",
+          "type": "string"
+        },
+        "disabled": {
+          "default": false,
+          "type": "boolean"
+        },
+        "error-message": {
+          "default": "",
+          "type": "string"
+        },
+        "hint": {
+          "default": "",
+          "type": "string"
+        },
+        "hint-icon": {
+          "default": "",
+          "type": "string"
+        },
+        "icon-start": {
+          "default": "",
+          "type": "string"
+        },
+        "inherited-text": {
+          "default": "",
+          "type": "string"
+        },
+        "inherited-value": {
+          "default": "",
+          "type": "string"
+        },
+        "input-type": {
+          "default": "text",
+          "enum": [
+            "text",
+            "email",
+            "password",
+            "search",
+            "tel",
+            "url"
+          ],
+          "type": "string"
+        },
+        "inputmode": {
+          "default": "",
+          "enum": [
+            "",
+            "none",
+            "text",
+            "tel",
+            "url",
+            "email",
+            "numeric",
+            "decimal",
+            "search"
+          ],
+          "type": "string"
+        },
+        "invalid": {
+          "default": false,
+          "type": "boolean"
+        },
+        "label": {
+          "default": "",
+          "type": "string"
+        },
+        "mask": {
+          "default": false,
+          "type": "boolean"
+        },
+        "mask-lazy": {
+          "default": "",
+          "type": "string"
+        },
+        "mask-options": {
+          "default": "",
+          "type": "string"
+        },
+        "mask-pattern": {
+          "default": "",
+          "type": "string"
+        },
+        "mask-placeholder-char": {
+          "default": "",
+          "type": "string"
+        },
+        "maxlength": {
+          "default": "",
+          "type": "string"
+        },
+        "minlength": {
+          "default": "",
+          "type": "string"
+        },
+        "name": {
+          "default": "",
+          "type": "string"
+        },
+        "pattern": {
+          "default": "",
+          "type": "string"
+        },
+        "placeholder": {
+          "default": "",
+          "type": "string"
+        },
+        "readonly": {
+          "default": false,
+          "type": "boolean"
+        },
+        "required": {
+          "default": false,
+          "type": "boolean"
+        },
+        "reset-label": {
+          "default": "",
+          "type": "string"
+        },
+        "size": {
+          "default": "1",
+          "enum": [
+            "1/2",
+            "1",
+            "2"
+          ],
+          "type": "string"
+        },
+        "text-end": {
+          "default": "",
+          "type": "string"
+        },
+        "value": {
+          "default": "",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "kind": "custom-element",
+    "manifest": "smart.input",
+    "version": "1.4.4"
+  },
+  "sf-input-textarea": {
+    "inputs": {
+      "additionalProperties": false,
+      "properties": {
+        "appearance": {
+          "default": "bordered",
+          "enum": [
+            "bordered",
+            "filled",
+            "flush"
+          ],
+          "type": "string"
+        },
+        "auto-grow": {
+          "default": false,
+          "type": "boolean"
+        },
+        "autocomplete": {
+          "default": "",
+          "type": "string"
+        },
+        "disabled": {
+          "default": false,
+          "type": "boolean"
+        },
+        "error-message": {
+          "default": "",
+          "type": "string"
+        },
+        "hint": {
+          "default": "",
+          "type": "string"
+        },
+        "inherited-text": {
+          "default": "",
+          "type": "string"
+        },
+        "inherited-value": {
+          "default": "",
+          "type": "string"
+        },
+        "inputmode": {
+          "default": "",
+          "enum": [
+            "",
+            "none",
+            "text",
+            "tel",
+            "url",
+            "email",
+            "numeric",
+            "decimal",
+            "search"
+          ],
+          "type": "string"
+        },
+        "invalid": {
+          "default": false,
+          "type": "boolean"
+        },
+        "label": {
+          "default": "",
+          "type": "string"
+        },
+        "mask": {
+          "default": false,
+          "type": "boolean"
+        },
+        "mask-options": {
+          "default": "",
+          "type": "string"
+        },
+        "mask-pattern": {
+          "default": "",
+          "type": "string"
+        },
+        "max-rows": {
+          "type": "number"
+        },
+        "maxlength": {
+          "type": "number"
+        },
+        "min-rows": {
+          "default": 1,
+          "type": "number"
+        },
+        "minlength": {
+          "type": "number"
+        },
+        "name": {
+          "default": "",
+          "type": "string"
+        },
+        "placeholder": {
+          "default": "",
+          "type": "string"
+        },
+        "readonly": {
+          "default": false,
+          "type": "boolean"
+        },
+        "required": {
+          "default": false,
+          "type": "boolean"
+        },
+        "reset-label": {
+          "default": "",
+          "type": "string"
+        },
+        "rows": {
+          "default": 3,
+          "type": "number"
+        },
+        "size": {
+          "default": "1",
+          "enum": [
+            "1/2",
+            "1",
+            "2"
+          ],
+          "type": "string"
+        },
+        "spell-check": {
+          "default": true,
+          "type": "boolean"
+        },
+        "value": {
+          "default": "",
+          "type": "string"
+        },
+        "wrap": {
+          "default": "soft",
+          "enum": [
+            "soft",
+            "hard"
+          ],
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "kind": "custom-element",
+    "manifest": "smart.input-textarea",
+    "version": "1.7.0"
+  },
+  "sf-switch": {
+    "inputs": {
+      "additionalProperties": false,
+      "properties": {
+        "aria-label": {
+          "default": "",
+          "type": "string"
+        },
+        "checked": {
+          "default": false,
+          "type": "boolean"
+        },
+        "description": {
+          "default": "",
+          "type": "string"
+        },
+        "disabled": {
+          "default": false,
+          "type": "boolean"
+        },
+        "help": {
+          "default": "",
+          "type": "string"
+        },
+        "inherited-text": {
+          "default": "",
+          "type": "string"
+        },
+        "inherited-value": {
+          "default": "",
+          "type": "string"
+        },
+        "label": {
+          "default": "",
+          "type": "string"
+        },
+        "name": {
+          "default": "",
+          "type": "string"
+        },
+        "reset-label": {
+          "default": "",
+          "type": "string"
+        },
+        "size": {
+          "default": "1",
+          "enum": [
+            "1/2",
+            "1",
+            "2"
+          ],
+          "type": "string"
+        },
+        "value": {
+          "default": "on",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "kind": "custom-element",
+    "manifest": "smart.switch",
+    "version": "1.2.3"
   }
 });
 
@@ -20936,6 +21913,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   BINDING_STATES: () => (/* reexport safe */ _data_mjs__WEBPACK_IMPORTED_MODULE_18__.BINDING_STATES),
 /* harmony export */   BUILTIN_CATALOGUE: () => (/* reexport safe */ _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.BUILTIN_CATALOGUE),
+/* harmony export */   BUILTIN_CATALOGUE_ALSO_IN: () => (/* reexport safe */ _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.BUILTIN_CATALOGUE_ALSO_IN),
 /* harmony export */   BUILTIN_CATALOGUE_ICONS: () => (/* reexport safe */ _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.BUILTIN_CATALOGUE_ICONS),
 /* harmony export */   BUILTIN_EDITOR_MANIFESTS: () => (/* reexport safe */ _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_EDITOR_MANIFESTS),
 /* harmony export */   BUILTIN_FIELD_KINDS: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_7__.BUILTIN_FIELD_KINDS),
@@ -20990,6 +21968,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   editorFieldMessages: () => (/* reexport safe */ _editor_words_mjs__WEBPACK_IMPORTED_MODULE_1__.editorFieldMessages),
 /* harmony export */   effectiveProps: () => (/* reexport safe */ _parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_16__.effectiveProps),
 /* harmony export */   elementInputs: () => (/* reexport safe */ _elements_mjs__WEBPACK_IMPORTED_MODULE_15__.elementInputs),
+/* harmony export */   entryGroups: () => (/* reexport safe */ _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.entryGroups),
 /* harmony export */   expandComposed: () => (/* reexport safe */ _composed_mjs__WEBPACK_IMPORTED_MODULE_17__.expandComposed),
 /* harmony export */   expandParameterSets: () => (/* reexport safe */ _parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_16__.expandParameterSets),
 /* harmony export */   extendRegistry: () => (/* binding */ extendRegistry),
@@ -21275,6 +22254,9 @@ function validateContentRules(root, diagnostics) {
     if (node.type === 'element.button' && typeof node.data?.href === 'string' && !validUrl(node.data.href)) {
       diagnostics.push(diagnostic('unsafe_url', `${path}.data.href`, 'Link protocol is not allowed'));
     }
+    if (node.type === 'form.form' && typeof node.data?.action === 'string' && !validUrl(node.data.action)) {
+      diagnostics.push(diagnostic('unsafe_url', `${path}.data.action`, 'Form address protocol is not allowed'));
+    }
     if (node.type === 'content.file' && typeof node.data?.href === 'string' && !validUrl(node.data.href)) {
       diagnostics.push(diagnostic('unsafe_url', `${path}.data.href`, 'File address protocol is not allowed'));
     }
@@ -21483,7 +22465,7 @@ function validate(document, registry = undefined, options = {}) {
         const childManifest = resolvedRegistry.types.get(child?.type);
         if (childManifest && slot.types && !slot.types.includes(child.type)) diagnostics.push(diagnostic('slot_child_type_forbidden', `${path}.slots.${slotName}[${index}]`, `${child.type} is not allowed in this slot`));
         if (childManifest && slot.categories && !slot.categories.includes(childManifest.category)) diagnostics.push(diagnostic('slot_child_category_forbidden', `${path}.slots.${slotName}[${index}]`, `${childManifest.category} is not allowed in this slot`));
-        if (childManifest && slot.groups && !slot.groups.includes((0,_catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.catalogueEntry)(childManifest)?.group)) diagnostics.push(diagnostic('slot_child_group_forbidden', `${path}.slots.${slotName}[${index}]`, `${child.type} is not in a group this place accepts (${slot.groups.join(', ')})`));
+        if (childManifest && slot.groups && !(0,_catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.entryGroups)((0,_catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.catalogueEntry)(childManifest)).some((group) => slot.groups.map(_catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.catalogueGroup).includes(group))) diagnostics.push(diagnostic('slot_child_group_forbidden', `${path}.slots.${slotName}[${index}]`, `${child.type} is not in a group this place accepts (${slot.groups.join(', ')})`));
         visit(child, `${path}.slots.${slotName}[${index}]`, depth + 1);
       });
     }
@@ -21659,7 +22641,17 @@ function renderMedia(node, slots) {
 
 // The words an element prints until the author writes its own, in the
 // Document's language (English when there is none for it).
-const ELEMENT_PLACEHOLDERS = Object.freeze({ en: { button: 'Button', badge: 'Badge' }, ru: { button: 'Кнопка', badge: 'Метка' } });
+const ELEMENT_PLACEHOLDERS = Object.freeze({
+  en: { button: 'Button', badge: 'Badge', send: 'Send', field: 'Field', option: 'Option', name: 'Name', phone: 'Phone', email: 'Email', message: 'Message' },
+  ru: { button: 'Кнопка', badge: 'Метка', send: 'Отправить', field: 'Поле', option: 'Вариант', name: 'Имя', phone: 'Телефон', email: 'Почта', message: 'Сообщение' },
+});
+// The fields whose name has a word of its own when they have no label (forms, 2026-11-04).
+const NAMED_FIELDS = new Set(['name', 'phone', 'email', 'message']);
+const fieldLabel = (node, locale) => node.data?.label || placeholder(locale, NAMED_FIELDS.has(node.data?.name) ? node.data.name : 'field');
+// A form field fills its column (a block, not the element block's flex row).
+const fieldBlock = (node, html) => (html ? `<div${id(node)}>${html}</div>` : '');
+// The options of a select: the words an author wrote, separated by commas.
+const optionList = (text) => [...new Set(String(text ?? '').split(',').map((word) => word.trim()).filter(Boolean))];
 const placeholder = (locale, key) => (ELEMENT_PLACEHOLDERS[String(locale || 'en').toLowerCase().split('-')[0]] || ELEMENT_PLACEHOLDERS.en)[key];
 const defined = (inputs) => Object.fromEntries(Object.entries(inputs).filter(([, value]) => value !== undefined && value !== ''));
 // An element stands in a block of its own: the editor selects and the
@@ -21761,6 +22753,78 @@ const BUILTIN_RENDERERS = {
   'element.icon': ({ node, elements }) => {
     const props = node.props || {};
     return elementBlock(node, elements.print('sf-icon', defined({ icon: props.icon ?? 'star', size: props.size ?? '2', label: node.data?.label })));
+  },
+  // Forms (2026-11-04): a <form> around its fields, its blocks one rhythm
+  // apart; each field one Smart element printed from its inputs.
+  'form.form': ({ node, slots }) => {
+    const action = node.data?.action ? ` action="${escapeHtml(node.data.action)}"` : '';
+    return `<form class="grid gap-4" method="${node.props?.method === 'get' ? 'get' : 'post'}"${action}${id(node)}>${slots.default || ''}</form>`;
+  },
+  'form.input': ({ node, elements, locale }) => {
+    const props = node.props || {};
+    return fieldBlock(node, elements.print('sf-input', defined({
+      label: fieldLabel(node, locale),
+      placeholder: node.data?.placeholder,
+      hint: node.data?.hint,
+      name: node.data?.name,
+      'input-type': props.input_type,
+      autocomplete: { email: 'email', tel: 'tel', url: 'url' }[props.input_type],
+      required: props.required === true || undefined,
+      size: props.size,
+    })));
+  },
+  'form.textarea': ({ node, elements, locale }) => {
+    const props = node.props || {};
+    return fieldBlock(node, elements.print('sf-input-textarea', defined({
+      label: fieldLabel(node, locale),
+      placeholder: node.data?.placeholder,
+      hint: node.data?.hint,
+      name: node.data?.name,
+      rows: props.rows,
+      required: props.required === true || undefined,
+      size: props.size,
+    })));
+  },
+  'form.checkbox': ({ node, elements, locale }) => {
+    const props = node.props || {};
+    return fieldBlock(node, elements.print('sf-checkbox', defined({
+      label: fieldLabel(node, locale),
+      description: node.data?.hint,
+      name: node.data?.name,
+      checked: props.checked === true || undefined,
+      size: props.size,
+    })));
+  },
+  'form.switch': ({ node, elements, locale }) => {
+    const props = node.props || {};
+    return fieldBlock(node, elements.print('sf-switch', defined({
+      label: fieldLabel(node, locale),
+      description: node.data?.hint,
+      name: node.data?.name,
+      checked: props.checked === true || undefined,
+      size: props.size,
+    })));
+  },
+  'form.select': ({ node, elements, locale }) => {
+    const props = node.props || {};
+    const options = optionList(node.data?.options);
+    return fieldBlock(node, elements.print('sf-dropdown', defined({
+      label: fieldLabel(node, locale),
+      placeholder: node.data?.placeholder,
+      name: node.data?.name,
+      options: JSON.stringify(options.length ? options : [placeholder(locale, 'option')]),
+      required: props.required === true || undefined,
+      size: props.size,
+    })));
+  },
+  'form.button-submit': ({ node, elements, locale }) => {
+    const props = node.props || {};
+    return elementBlock(node, elements.print('sf-button', defined({
+      text: node.data?.text || placeholder(locale, 'send'),
+      'native-type': 'submit',
+      appearance: props.appearance,
+      size: props.size,
+    })));
   },
   'content.document': ({ node, slots }) => `<article${id(node)}>${node.data?.title ? `<h1>${escapeHtml(node.data.title)}</h1>` : ''}${slots.default || ''}</article>`,
   'content.list': ({ node, slots }) => {
@@ -22110,6 +23174,7 @@ const Composition = Object.freeze({
   // modifiers, site blocks, named places and data.
   BINDING_STATES: _data_mjs__WEBPACK_IMPORTED_MODULE_18__.BINDING_STATES,
   BUILTIN_CATALOGUE: _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.BUILTIN_CATALOGUE,
+  BUILTIN_CATALOGUE_ALSO_IN: _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.BUILTIN_CATALOGUE_ALSO_IN,
   BUILTIN_CATALOGUE_ICONS: _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.BUILTIN_CATALOGUE_ICONS,
   CATALOGUE_GROUPS: _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.CATALOGUE_GROUPS,
   CATALOGUE_GROUP_ALIASES: _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.CATALOGUE_GROUP_ALIASES,
@@ -22121,6 +23186,7 @@ const Composition = Object.freeze({
   bindingSettings: _data_mjs__WEBPACK_IMPORTED_MODULE_18__.bindingSettings,
   catalogue: _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.catalogue,
   catalogueEntry: _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.catalogueEntry,
+  entryGroups: _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.entryGroups,
   checkModifiers: _utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.checkModifiers,
   checkSourceAnswer,
   composedEditorFields,
@@ -22517,12 +23583,18 @@ const PARAMETER_DEFAULTS_FIELD = 'parameter_defaults';
 const PARAMETER_SET_OWNER = 'simai/framework';
 
 // A background is named by its role; the class is the role's container fill.
+// accent (background 1.1.0, 2026-11-04) is the primary role's own fill with
+// its on-primary text, as the accepted prototype draws an accent section: the
+// text over it, and the dimmed text and icons the Framework draws in the
+// on-surface roles, read on it (the composition sheet switches those roles
+// inside it, as bg-surface-container switches on-surface-variant).
 const BACKGROUND_CLASSES = {
   surface: 'bg-surface',
   container: 'bg-surface-container',
   primary: 'bg-primary-container',
   secondary: 'bg-secondary-container',
   tertiary: 'bg-tertiary-container',
+  accent: 'bg-primary color-on-primary',
 };
 const BACKGROUNDS = Object.keys(BACKGROUND_CLASSES);
 const step = (maximum) => ({ type: 'integer', minimum: 0, maximum });
@@ -22534,7 +23606,7 @@ const step = (maximum) => ({ type: 'integer', minimum: 0, maximum });
  */
 const PARAMETER_SETS = Object.freeze({
   background: {
-    version: '1.0.0',
+    version: '1.1.0',
     summary: 'The block\'s fill: a surface or container colour role.',
     properties: {
       background: { type: 'string', enum: BACKGROUNDS, 'x-simai-utility': { values: BACKGROUND_CLASSES } },
