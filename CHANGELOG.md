@@ -8,6 +8,8 @@
 
 ### Добавлено
 
+- `simai.admin-navigation-port` 1.1.0, for `sf-admin-menu` 1.7.0 (Pro): `navigation.load` carries the page's address as `page` (path and query), and the answer may carry `context`, the menu of the object the page shows — `title`, `subtitle`, `status` (a string or `{text, status}`), `back` `{label, href}`, `groups` of link rows (`key`, `label`, `href`, `icon`, `badge` `{text, status}`) and `current`. Both optional: a 1.0.0 host is a 1.1.0 host with no object menus. The conformance kit is 1.0.0's 37 cases and two more.
+
 - Wave 2 of the shared parts (`core.runtime` 1.28.0): the format helpers in modules without side effects — `core/js/format-number.js`, `core/js/format-date.js`, `core/js/format-relative.js`, `core/js/format-file-size.js` and `core/js/format-intl.js` — import one alone and a bundle carries only it; `core/js/format.js` keeps every export, and `SF.format` is published by core's entry alone. `SF.readingPosition` (`core/js/reading-position.js`), the reading position of a scrolling column. New Smart components `sf-alert-bar` 1.0.0 (the page alert bar, family `alert`), `sf-list` 1.0.0 and `sf-list-feed` 1.0.0 (family `list`): 71 Smart components in the registry. `sf-input-date` 1.4.0 takes a time setting (`mode` `datetime` and `time`), and the field renderers 1.3.0 draw datetime and time fields with it. The name registry lists the set `view` as planned.
 
 - The Pro package reference lists `sf-chat-message`'s relation to `sf-view-properties` (`smart.chat-message` requires `smart.view-properties`, in `pro.package.json` and its dated alias `larena.package.json`), so a Pro package with `sf-chat-message` 1.7.0 builds over the pair. `core.runtime` 1.27.1.

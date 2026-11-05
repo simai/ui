@@ -1,0 +1,25 @@
+{
+  "schema": "simai.framework.unit-change-report",
+  "schema_version": 1,
+  "source": "simai/ui-source",
+  "from": {
+    "revision": "ec2f29dfa5df657a027887ec413150118740d28d",
+    "release": "ui-62b1d9b6dc8d"
+  },
+  "to": {
+    "revision": "a8ca29c354979afb2df3bd16e210cd3b4f52195b",
+    "release": "ui-4cd23cd8b490"
+  },
+  "added": [],
+  "removed": [],
+  "changed": [
+    {
+      "id": "port.simai.admin-navigation-port",
+      "from_version": "1.0.0",
+      "to_version": "1.1.0",
+      "step": "minor"
+    }
+  ],
+  "dependencies_changed": [],
+  "violations": []
+}
