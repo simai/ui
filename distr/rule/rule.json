@@ -1871,6 +1871,20 @@
     "type": "smart"
   },
   {
+    "name": "cl-settings",
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "cl-menu-context"
+      }
+    ],
+    "tags": [
+      "sf-settings"
+    ],
+    "type": "smart"
+  },
+  {
     "name": "cl-skeleton",
     "js": true,
     "mode": "smart",
