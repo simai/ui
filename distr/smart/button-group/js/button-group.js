@@ -340,6 +340,9 @@ function normalizeItems(items = []) {
       label: String(source.label ?? source.text ?? value),
       icon: String(source.icon || ''),
       ariaLabel: String(source.ariaLabel || source['aria-label'] || ''),
+      // The language the label is written in (a language picker names each
+      // language in itself): the segment carries it as lang.
+      lang: String(source.lang || '').trim(),
       // A number shown after the label in the segmented appearance; 0 is a
       // count, an absent or empty one is not.
       count: source.count === null || typeof source.count === 'undefined' ? '' : String(source.count).trim(),
@@ -690,6 +693,7 @@ function renderItem(item, index, context) {
       segment=${segmentFor(index, context.entries.length)}
       data-sf-button-group-value=${item.value}
       aria-label=${item.ariaLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      lang=${item.lang || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       class=${selected ? 'active' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       ?disabled=${disabled}
       ?loading=${item.loading}
@@ -725,6 +729,7 @@ function renderSegment(item, context) {
       class=${classes}
       data-sf-button-group-value=${item.value}
       aria-label=${ariaLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      lang=${item.lang || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       aria-busy=${item.loading ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       ?disabled=${disabled}
     >
@@ -1015,7 +1020,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shi
 /***/ "b4279d32e6ce"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button-group","tag":"sf-button-group","version":"1.1.5","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","value":"string","label":"string","icon":{"type":"icon","optional":true},"count":{"type":"string","optional":true},"icon-only":{"type":"boolean","optional":true},"loading":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true}}},"name":{"type":"string","default":""},"theme-switch":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"tightness":{"type":"enum","values":["","low","high","highest"],"default":""},"scheme":{"type":"enum","values":["primary","secondary","on-surface"],"default":"primary"},"appearance":{"type":"enum","values":["default","segmented"],"default":"default"},"plate":{"type":"enum","values":["scheme","raised"],"default":"scheme"},"full-width":{"type":"boolean","default":false},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"orientation":{"type":"enum","values":["horizontal","vertical"],"default":"horizontal"},"disabled":{"type":"boolean","default":false}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":{"previous":"string","value":{"type":"string"},"item":{"type":"object","nullable":true}}}},"actions":{"select":{"with":{"value":"string"}},"clear":{}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"css-variables":{"--sf-button-group-background-color":{"type":"color","state":"rest"},"--sf-button-group-padding":{"type":"length"},"--sf-button-group-radius":{"type":"length"},"--sf-button-group-color":{"type":"color","state":"rest"},"--sf-button-group-plate-background-color":{"type":"color","state":"selected"},"--sf-button-group-plate-color":{"type":"color","state":"selected"},"--sf-button-group-count-color":{"type":"color","state":"rest"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button-group","tag":"sf-button-group","version":"1.2.0","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","value":"string","label":"string","lang":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"count":{"type":"string","optional":true},"icon-only":{"type":"boolean","optional":true},"loading":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true}}},"name":{"type":"string","default":""},"theme-switch":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"tightness":{"type":"enum","values":["","low","high","highest"],"default":""},"scheme":{"type":"enum","values":["primary","secondary","on-surface"],"default":"primary"},"appearance":{"type":"enum","values":["default","segmented"],"default":"default"},"plate":{"type":"enum","values":["scheme","raised"],"default":"scheme"},"full-width":{"type":"boolean","default":false},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"orientation":{"type":"enum","values":["horizontal","vertical"],"default":"horizontal"},"disabled":{"type":"boolean","default":false}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":{"previous":"string","value":{"type":"string"},"item":{"type":"object","nullable":true}}}},"actions":{"select":{"with":{"value":"string"}},"clear":{}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"css-variables":{"--sf-button-group-background-color":{"type":"color","state":"rest"},"--sf-button-group-padding":{"type":"length"},"--sf-button-group-radius":{"type":"length"},"--sf-button-group-color":{"type":"color","state":"rest"},"--sf-button-group-plate-background-color":{"type":"color","state":"selected"},"--sf-button-group-plate-color":{"type":"color","state":"selected"},"--sf-button-group-count-color":{"type":"color","state":"rest"}}}');
 
 /***/ },
 

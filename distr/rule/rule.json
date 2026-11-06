@@ -1490,6 +1490,30 @@
     "type": "smart"
   },
   {
+    "name": "cl-language",
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "cl-button-group"
+      },
+      {
+        "name": "cl-button-icon"
+      },
+      {
+        "name": "cl-icon"
+      },
+      {
+        "lazy": true,
+        "name": "cl-menu-context"
+      }
+    ],
+    "tags": [
+      "sf-language"
+    ],
+    "type": "smart"
+  },
+  {
     "name": "cl-list",
     "css": true,
     "js": true,
