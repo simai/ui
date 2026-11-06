@@ -1,0 +1,35 @@
+{
+  "schema": "simai.framework.unit-change-report",
+  "schema_version": 1,
+  "source": "simai/ui-source",
+  "from": {
+    "revision": "5443d10d710be65429b296750b97a503de5d1d0b",
+    "release": "ui-e7b79c3a9e05"
+  },
+  "to": {
+    "revision": "f57ede30fa9c815dfdd5b63778471fcc304632b9",
+    "release": "ui-a5a11cc671f2"
+  },
+  "added": [],
+  "removed": [],
+  "changed": [
+    {
+      "id": "smart.list",
+      "from_version": "1.0.0",
+      "to_version": "1.1.0",
+      "step": "minor"
+    }
+  ],
+  "dependencies_changed": [
+    {
+      "id": "smart.list",
+      "added": [
+        "smart.avatar",
+        "smart.badge"
+      ],
+      "removed": [],
+      "moved": []
+    }
+  ],
+  "violations": []
+}
