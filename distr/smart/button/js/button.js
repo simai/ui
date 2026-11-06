@@ -634,13 +634,13 @@ const OTHER_CAPS = {
   ctrl: 'Ctrl',
   alt: 'Alt',
   shift: 'Shift'
-}; // A modifier's cap reads differently per platform (⌘ or Ctrl), but a server
-// prints one of them and the visitor's browser draws the other: the cap keeps
-// the box of its wider word on every platform, in characters of the keys'
-// monospace face, so the first paint does not move (sheet:
-// .sf-button-shortcut-key--chars-N).
+}; // A cap of one character -- a letter, ⌘, ⇧, ↵ -- is a square key; a cap of
+// several letters (Esc, Ctrl, Shift) hugs its word (sheet:
+// .sf-button-shortcut-key--square). A modifier's cap is the platform's own
+// word, so a page printed on a Mac and drawn on Windows widens by the
+// difference: the keys are true to their caps, not to the widest platform
+// (docs review R010, 2026-11-06).
 
-const MODIFIER_CHARS = Object.fromEntries(Object.keys(OTHER_CAPS).map(name => [name, Math.max(MAC_CAPS[name].length, OTHER_CAPS[name].length)]));
 const KEY_CAPS = {
   enter: '↵',
   return: '↵',
@@ -723,8 +723,8 @@ function parseShortcut(value) {
   };
 }
 /**
- * What the keys read, one cap per key in the platform's words: {text, chars},
- * chars the width a modifier's cap keeps on every platform (null for the key).
+ * What the keys read, one cap per key in the platform's words: {text, square},
+ * square when the cap is one character.
  */
 
 function shortcutCaps(parsed, apple = isApplePlatform()) {
@@ -735,18 +735,15 @@ function shortcutCaps(parsed, apple = isApplePlatform()) {
 
   for (const name of order.filter(one => parsed.modifiers.has(one))) {
     // On a Mac mod and meta are one key.
-    if (modifiers.some(cap => cap.text === caps[name])) continue;
-    modifiers.push({
-      text: caps[name],
-      chars: MODIFIER_CHARS[name]
-    });
+    if (modifiers.includes(caps[name])) continue;
+    modifiers.push(caps[name]);
   }
 
   const key = KEY_CAPS[parsed.key] ?? (parsed.key.length === 1 ? parsed.key.toUpperCase() : parsed.key.charAt(0).toUpperCase() + parsed.key.slice(1));
-  return [...modifiers, {
-    text: key,
-    chars: null
-  }];
+  return [...modifiers, key].map(text => ({
+    text,
+    square: [...text].length === 1
+  }));
 }
 /** The value of aria-keyshortcuts (WAI-ARIA 1.2): Meta+K, Control+K, /. */
 
@@ -896,7 +893,7 @@ function renderButtonTemplate(context) {
                     class="sf-button-text-container text-${textPosition} pointer-event-none${fullText ? ' flex-1' : ''}">
         ${textContent}
       </span>` : ''}
-            ${endContent}${shortcutCaps.length ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<kbd class="sf-kbd--group sf-button-shortcut pointer-event-none" aria-hidden="true">${shortcutCaps.map(cap => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<kbd class=${cap.chars ? `sf-button-shortcut-key--chars-${cap.chars}` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>${cap.text}</kbd>`)}</kbd>` : ''}
+            ${endContent}${shortcutCaps.length ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<kbd class="sf-kbd--group sf-button-shortcut pointer-event-none" aria-hidden="true">${shortcutCaps.map(cap => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<kbd class=${cap.square ? 'sf-button-shortcut-key--square' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>${cap.text}</kbd>`)}</kbd>` : ''}
 `; // href (1.4.0): a link with the button's look. The browser's own link
   // follows it (Enter, the context menu, a new tab); a button's states that
   // a link has no words for -- native-type, expanded, pressed -- do not
@@ -976,7 +973,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-butto
 /***/ "5bb33fb22db3"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button","tag":"sf-button","version":"1.4.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"appearance":{"type":"enum","values":["default","tonal","outline","link","surface"],"default":"default"},"scheme":{"type":"enum","values":["primary","secondary","on-surface","on-surface-variant"],"default":"primary"},"status":{"type":"enum","values":["","error"],"default":""},"text-position":{"type":"string","default":"center"},"text":{"type":"string","default":""},"segment":{"type":"string","default":""},"icon":{"type":"icon","default":""},"icon-start":{"type":"icon","default":""},"icon-end":{"type":"icon","default":""},"icon-position":{"type":"enum","values":["start","end"],"default":"start"},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"loading":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"native-type":{"type":"enum","values":["button","submit","reset"],"default":"button"},"href":{"type":"string","default":""},"shortcut":{"type":"string","default":""},"shortcut-listen":{"type":"boolean","default":false},"expanded":{"type":"boolean","optional":true},"pressed":{"type":"boolean","optional":true}},"values":{},"events":{"press":{"carries":{}}},"actions":{},"css-variables":{"--sf-button-background-color":{"type":"color","state":"default"},"--sf-button-color":{"type":"color","state":"default"},"--sf-button-border-color":{"type":"color","state":"default"},"--sf-button-border-width":{"type":"length","state":"default"},"--sf-button-radius":{"type":"length","state":"default"},"--sf-button-padding-inline":{"type":"length","state":"default"},"--sf-button-padding-block":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button","tag":"sf-button","version":"1.4.1","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"appearance":{"type":"enum","values":["default","tonal","outline","link","surface"],"default":"default"},"scheme":{"type":"enum","values":["primary","secondary","on-surface","on-surface-variant"],"default":"primary"},"status":{"type":"enum","values":["","error"],"default":""},"text-position":{"type":"string","default":"center"},"text":{"type":"string","default":""},"segment":{"type":"string","default":""},"icon":{"type":"icon","default":""},"icon-start":{"type":"icon","default":""},"icon-end":{"type":"icon","default":""},"icon-position":{"type":"enum","values":["start","end"],"default":"start"},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"loading":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"native-type":{"type":"enum","values":["button","submit","reset"],"default":"button"},"href":{"type":"string","default":""},"shortcut":{"type":"string","default":""},"shortcut-listen":{"type":"boolean","default":false},"expanded":{"type":"boolean","optional":true},"pressed":{"type":"boolean","optional":true}},"values":{},"events":{"press":{"carries":{}}},"actions":{},"css-variables":{"--sf-button-background-color":{"type":"color","state":"default"},"--sf-button-color":{"type":"color","state":"default"},"--sf-button-border-color":{"type":"color","state":"default"},"--sf-button-border-width":{"type":"length","state":"default"},"--sf-button-radius":{"type":"length","state":"default"},"--sf-button-padding-inline":{"type":"length","state":"default"},"--sf-button-padding-block":{"type":"length","state":"default"}}}');
 
 /***/ },
 

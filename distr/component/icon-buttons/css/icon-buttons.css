@@ -683,174 +683,85 @@
     --sf-icon-button--border-bottom-right-radius: var(--sf-radius-square);
     --sf-icon-button--border-inline-end-width: var(--sf-px);
   }
+  /* One line at a join, as on the button: the end edge of the segment
+     before it; a segment that follows another has no start edge (docs
+     review R003, 2026-11-06). */
   .sf-icon-button.segment-middle {
     --sf-icon-button--border-top-left-radius: var(--sf-radius-square);
     --sf-icon-button--border-top-right-radius: var(--sf-radius-square);
     --sf-icon-button--border-bottom-right-radius: var(--sf-radius-square);
     --sf-icon-button--border-bottom-left-radius: var(--sf-radius-square);
-    --sf-icon-button--border-inline-start-width: var(--sf-px);
+    --sf-icon-button--border-inline-start-width: 0;
     --sf-icon-button--border-inline-end-width: var(--sf-px);
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-icon-button.segment-end {
-    border-left-color: transparent;
-    border-left-color: var(--sf-white--alfa-24, transparent);
-  }
-  @supports not (border-inline-start-color: initial) {
-  html:not([dir="rtl"]) .sf-icon-button.segment-end {
-    border-left-color: transparent;
-    border-left-color: var(--sf-white--alfa-24, transparent);
-    }
-  }
-  .sf-icon-button.segment-end:where(:dir(ltr)) {
-    border-left-color: transparent;
-    border-left-color: var(--sf-white--alfa-24, transparent);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-icon-button.segment-end {
-    border-right-color: transparent;
-    border-right-color: var(--sf-white--alfa-24, transparent);
-  }
-  @supports not (border-inline-start-color: initial) {
-  [dir="rtl"] .sf-icon-button.segment-end {
-    border-right-color: transparent;
-    border-right-color: var(--sf-white--alfa-24, transparent);
-    }
-  }
-  .sf-icon-button.segment-end:where(:dir(rtl)) {
-    border-right-color: transparent;
-    border-right-color: var(--sf-white--alfa-24, transparent);
   }
   .sf-icon-button.segment-end {
     --sf-icon-button--border-top-left-radius: var(--sf-radius-square);
     --sf-icon-button--border-bottom-left-radius: var(--sf-radius-square);
-    border-inline-start-color: transparent;
-    border-inline-start-color: var(--sf-white--alfa-24, transparent);
-    --sf-icon-button--border-inline-start-width: var(--sf-px);
+    --sf-icon-button--border-inline-start-width: 0;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-icon-button:not(.sf-icon-button--outline).segment-end {
-    border-left-color: transparent;
-    border-left-color: var(--sf-white--alfa-24, transparent);
-  }
-  @supports not (border-inline-start-color: initial) {
-  html:not([dir="rtl"]) .sf-icon-button:not(.sf-icon-button--outline).segment-end {
-    border-left-color: transparent;
-    border-left-color: var(--sf-white--alfa-24, transparent);
-    }
-  }
-  .sf-icon-button:not(.sf-icon-button--outline).segment-end:where(:dir(ltr)) {
-    border-left-color: transparent;
-    border-left-color: var(--sf-white--alfa-24, transparent);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-icon-button:not(.sf-icon-button--outline).segment-end {
-    border-right-color: transparent;
-    border-right-color: var(--sf-white--alfa-24, transparent);
-  }
-  @supports not (border-inline-start-color: initial) {
-  [dir="rtl"] .sf-icon-button:not(.sf-icon-button--outline).segment-end {
-    border-right-color: transparent;
-    border-right-color: var(--sf-white--alfa-24, transparent);
-    }
-  }
-  .sf-icon-button:not(.sf-icon-button--outline).segment-end:where(:dir(rtl)) {
-    border-right-color: transparent;
-    border-right-color: var(--sf-white--alfa-24, transparent);
-  }
-  .sf-icon-button:not(.sf-icon-button--outline).segment-end {
-    border-inline-start-color: transparent;
-    border-inline-start-color: var(--sf-white--alfa-24, transparent);
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-icon-button:not(.sf-icon-button--outline).segment-start {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-icon-button.segment-start:not(.sf-icon-button--outline) {
     border-right-color: transparent;
     border-right-color: var(--sf-white--alfa-24, transparent);
   }
   @supports not (border-inline-end-color: initial) {
-  html:not([dir="rtl"]) .sf-icon-button:not(.sf-icon-button--outline).segment-start {
+  html:not([dir="rtl"]) .sf-icon-button.segment-start:not(.sf-icon-button--outline) {
     border-right-color: transparent;
     border-right-color: var(--sf-white--alfa-24, transparent);
     }
   }
-  .sf-icon-button:not(.sf-icon-button--outline).segment-start:where(:dir(ltr)) {
+  .sf-icon-button.segment-start:not(.sf-icon-button--outline):where(:dir(ltr)) {
     border-right-color: transparent;
     border-right-color: var(--sf-white--alfa-24, transparent);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-icon-button:not(.sf-icon-button--outline).segment-start {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-icon-button.segment-start:not(.sf-icon-button--outline) {
     border-left-color: transparent;
     border-left-color: var(--sf-white--alfa-24, transparent);
   }
   @supports not (border-inline-end-color: initial) {
-  [dir="rtl"] .sf-icon-button:not(.sf-icon-button--outline).segment-start {
+  [dir="rtl"] .sf-icon-button.segment-start:not(.sf-icon-button--outline) {
     border-left-color: transparent;
     border-left-color: var(--sf-white--alfa-24, transparent);
     }
   }
-  .sf-icon-button:not(.sf-icon-button--outline).segment-start:where(:dir(rtl)) {
+  .sf-icon-button.segment-start:not(.sf-icon-button--outline):where(:dir(rtl)) {
     border-left-color: transparent;
     border-left-color: var(--sf-white--alfa-24, transparent);
   }
-  .sf-icon-button:not(.sf-icon-button--outline).segment-start {
+  .sf-icon-button.segment-start:not(.sf-icon-button--outline) {
     border-inline-end-color: transparent;
     border-inline-end-color: var(--sf-white--alfa-24, transparent);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-icon-button:not(.sf-icon-button--outline).segment-middle {
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-icon-button.segment-middle:not(.sf-icon-button--outline) {
     border-right-color: transparent;
     border-right-color: var(--sf-white--alfa-24, transparent);
   }
   @supports not (border-inline-end-color: initial) {
-  html:not([dir="rtl"]) .sf-icon-button:not(.sf-icon-button--outline).segment-middle {
+  html:not([dir="rtl"]) .sf-icon-button.segment-middle:not(.sf-icon-button--outline) {
     border-right-color: transparent;
     border-right-color: var(--sf-white--alfa-24, transparent);
     }
   }
-  .sf-icon-button:not(.sf-icon-button--outline).segment-middle:where(:dir(ltr)) {
+  .sf-icon-button.segment-middle:not(.sf-icon-button--outline):where(:dir(ltr)) {
     border-right-color: transparent;
     border-right-color: var(--sf-white--alfa-24, transparent);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-icon-button:not(.sf-icon-button--outline).segment-middle {
+  _:-ms-input-placeholder, [dir="rtl"] .sf-icon-button.segment-middle:not(.sf-icon-button--outline) {
     border-left-color: transparent;
     border-left-color: var(--sf-white--alfa-24, transparent);
   }
   @supports not (border-inline-end-color: initial) {
-  [dir="rtl"] .sf-icon-button:not(.sf-icon-button--outline).segment-middle {
+  [dir="rtl"] .sf-icon-button.segment-middle:not(.sf-icon-button--outline) {
     border-left-color: transparent;
     border-left-color: var(--sf-white--alfa-24, transparent);
     }
   }
-  .sf-icon-button:not(.sf-icon-button--outline).segment-middle:where(:dir(rtl)) {
+  .sf-icon-button.segment-middle:not(.sf-icon-button--outline):where(:dir(rtl)) {
     border-left-color: transparent;
     border-left-color: var(--sf-white--alfa-24, transparent);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-icon-button:not(.sf-icon-button--outline).segment-middle {
-    border-left-color: transparent;
-    border-left-color: var(--sf-white--alfa-24, transparent);
-  }
-  @supports not (border-inline-start-color: initial) {
-  html:not([dir="rtl"]) .sf-icon-button:not(.sf-icon-button--outline).segment-middle {
-    border-left-color: transparent;
-    border-left-color: var(--sf-white--alfa-24, transparent);
-    }
-  }
-  .sf-icon-button:not(.sf-icon-button--outline).segment-middle:where(:dir(ltr)) {
-    border-left-color: transparent;
-    border-left-color: var(--sf-white--alfa-24, transparent);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-icon-button:not(.sf-icon-button--outline).segment-middle {
-    border-right-color: transparent;
-    border-right-color: var(--sf-white--alfa-24, transparent);
-  }
-  @supports not (border-inline-start-color: initial) {
-  [dir="rtl"] .sf-icon-button:not(.sf-icon-button--outline).segment-middle {
-    border-right-color: transparent;
-    border-right-color: var(--sf-white--alfa-24, transparent);
-    }
-  }
-  .sf-icon-button:not(.sf-icon-button--outline).segment-middle:where(:dir(rtl)) {
-    border-right-color: transparent;
-    border-right-color: var(--sf-white--alfa-24, transparent);
-  }
-  .sf-icon-button:not(.sf-icon-button--outline).segment-middle {
+  .sf-icon-button.segment-middle:not(.sf-icon-button--outline) {
     border-inline-end-color: transparent;
     border-inline-end-color: var(--sf-white--alfa-24, transparent);
-    border-inline-start-color: transparent;
-    border-inline-start-color: var(--sf-white--alfa-24, transparent);
   }
   /* Surface, built on the neutral alpha ramp. Same reading as on the button: not
      a colour of its own but a degree of contrast against whatever is behind it,
@@ -1423,100 +1334,235 @@
   }
 }
 @layer sf.override {
-  sf-button-icon:has(.sf-icon-button--outline[class*=segment-]) + sf-button-icon .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+  /* One line at a join (docs review R003, 2026-11-06), as on the button: a
+     segment that follows another has no start edge. Here, after surface has
+     written its four edges in sf.components. */
+  .sf-icon-button.segment-middle {
+    --sf-icon-button--border-inline-start-width: 0;
+  }
+  .sf-icon-button.segment-end {
+    --sf-icon-button--border-inline-start-width: 0;
+  }
+  /* Any other segment beside an outline one keeps the block edges of the
+     frame, so the control stands in one height. */
+  sf-button:has(> .sf-button--outline[class*=segment-]) + sf-button-icon > .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
     --sf-icon-button--border-top-width: var(--sf-px);
-    --sf-icon-button--border-inline-end-width: var(--sf-px);
     --sf-icon-button--border-bottom-width: var(--sf-px);
+  }
+  sf-button:has(> .sf-button--outline[class*=segment-]) + sf-icon-button > .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+  }
+  sf-button:has(> .sf-icon-button--outline[class*=segment-]) + sf-button-icon > .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+  }
+  sf-button:has(> .sf-icon-button--outline[class*=segment-]) + sf-icon-button > .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+  }
+  sf-button-icon:has(> .sf-button--outline[class*=segment-]) + sf-button-icon > .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+  }
+  sf-icon-button:has(> .sf-button--outline[class*=segment-]) + sf-button-icon > .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+  }
+  sf-button-icon:has(> .sf-button--outline[class*=segment-]) + sf-icon-button > .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+  }
+  sf-icon-button:has(> .sf-button--outline[class*=segment-]) + sf-icon-button > .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+  }
+  sf-button-icon:has(> .sf-icon-button--outline[class*=segment-]) + sf-button-icon > .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+  }
+  sf-icon-button:has(> .sf-icon-button--outline[class*=segment-]) + sf-button-icon > .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+  }
+  sf-button-icon:has(> .sf-icon-button--outline[class*=segment-]) + sf-icon-button > .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+  }
+  sf-icon-button:has(> .sf-icon-button--outline[class*=segment-]) + sf-icon-button > .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+  }
+  .sf-button--outline[class*=segment-] + .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+  }
+  .sf-icon-button--outline[class*=segment-] + .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+  }
+  sf-button-icon:has(+ sf-button > .sf-button--outline[class*=segment-]) > .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+  }
+  sf-button-icon:has(+ sf-button > .sf-icon-button--outline[class*=segment-]) > .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+  }
+  sf-button-icon:has(+ sf-button-icon > .sf-button--outline[class*=segment-]) > .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+  }
+  sf-button-icon:has(+ sf-icon-button > .sf-button--outline[class*=segment-]) > .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+  }
+  sf-button-icon:has(+ sf-button-icon > .sf-icon-button--outline[class*=segment-]) > .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+  }
+  sf-button-icon:has(+ sf-icon-button > .sf-icon-button--outline[class*=segment-]) > .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+  }
+  sf-icon-button:has(+ sf-button > .sf-button--outline[class*=segment-]) > .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+  }
+  sf-icon-button:has(+ sf-button > .sf-icon-button--outline[class*=segment-]) > .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+  }
+  sf-icon-button:has(+ sf-button-icon > .sf-button--outline[class*=segment-]) > .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+  }
+  sf-icon-button:has(+ sf-icon-button > .sf-button--outline[class*=segment-]) > .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+  }
+  sf-icon-button:has(+ sf-button-icon > .sf-icon-button--outline[class*=segment-]) > .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+  }
+  sf-icon-button:has(+ sf-icon-button > .sf-icon-button--outline[class*=segment-]) > .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+  }
+  .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline):has(+ .sf-button--outline[class*=segment-]) {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+  }
+  .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline):has(+ .sf-icon-button--outline[class*=segment-]) {
+    --sf-icon-button--border-top-width: var(--sf-px);
+    --sf-icon-button--border-bottom-width: var(--sf-px);
+  }
+  /* The outline segment owns both of its joins: the segment before it leaves
+     its end edge to it ... */
+  sf-button-icon:has(+ sf-button > .sf-button--outline[class*=segment-]) > .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-inline-end-width: 0;
+  }
+  sf-button-icon:has(+ sf-button > .sf-icon-button--outline[class*=segment-]) > .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-inline-end-width: 0;
+  }
+  sf-button-icon:has(+ sf-button-icon > .sf-button--outline[class*=segment-]) > .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-inline-end-width: 0;
+  }
+  sf-button-icon:has(+ sf-icon-button > .sf-button--outline[class*=segment-]) > .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-inline-end-width: 0;
+  }
+  sf-button-icon:has(+ sf-button-icon > .sf-icon-button--outline[class*=segment-]) > .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-inline-end-width: 0;
+  }
+  sf-button-icon:has(+ sf-icon-button > .sf-icon-button--outline[class*=segment-]) > .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-inline-end-width: 0;
+  }
+  sf-icon-button:has(+ sf-button > .sf-button--outline[class*=segment-]) > .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-inline-end-width: 0;
+  }
+  sf-icon-button:has(+ sf-button > .sf-icon-button--outline[class*=segment-]) > .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-inline-end-width: 0;
+  }
+  sf-icon-button:has(+ sf-button-icon > .sf-button--outline[class*=segment-]) > .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-inline-end-width: 0;
+  }
+  sf-icon-button:has(+ sf-icon-button > .sf-button--outline[class*=segment-]) > .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-inline-end-width: 0;
+  }
+  sf-icon-button:has(+ sf-button-icon > .sf-icon-button--outline[class*=segment-]) > .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-inline-end-width: 0;
+  }
+  sf-icon-button:has(+ sf-icon-button > .sf-icon-button--outline[class*=segment-]) > .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
+    --sf-icon-button--border-inline-end-width: 0;
+  }
+  .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline):has(+ .sf-button--outline[class*=segment-]) {
+    --sf-icon-button--border-inline-end-width: 0;
+  }
+  .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline):has(+ .sf-icon-button--outline[class*=segment-]) {
+    --sf-icon-button--border-inline-end-width: 0;
+  }
+  sf-button-icon:has(+ sf-button > .sf-button--outline[class*=segment-]) > .sf-icon-button.segment-start:not(.sf-icon-button--outline) {
     --sf-icon-button--border-inline-start-width: var(--sf-px);
   }
-  sf-button-icon:has(.sf-icon-button--outline[class*=segment-]) + sf-icon-button .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
-    --sf-icon-button--border-top-width: var(--sf-px);
-    --sf-icon-button--border-inline-end-width: var(--sf-px);
-    --sf-icon-button--border-bottom-width: var(--sf-px);
+  sf-button-icon:has(+ sf-button > .sf-icon-button--outline[class*=segment-]) > .sf-icon-button.segment-start:not(.sf-icon-button--outline) {
     --sf-icon-button--border-inline-start-width: var(--sf-px);
   }
-  sf-icon-button:has(.sf-icon-button--outline[class*=segment-]) + sf-button-icon .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
-    --sf-icon-button--border-top-width: var(--sf-px);
-    --sf-icon-button--border-inline-end-width: var(--sf-px);
-    --sf-icon-button--border-bottom-width: var(--sf-px);
+  sf-button-icon:has(+ sf-button-icon > .sf-button--outline[class*=segment-]) > .sf-icon-button.segment-start:not(.sf-icon-button--outline) {
     --sf-icon-button--border-inline-start-width: var(--sf-px);
   }
-  sf-icon-button:has(.sf-icon-button--outline[class*=segment-]) + sf-icon-button .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
-    --sf-icon-button--border-top-width: var(--sf-px);
-    --sf-icon-button--border-inline-end-width: var(--sf-px);
-    --sf-icon-button--border-bottom-width: var(--sf-px);
+  sf-button-icon:has(+ sf-icon-button > .sf-button--outline[class*=segment-]) > .sf-icon-button.segment-start:not(.sf-icon-button--outline) {
     --sf-icon-button--border-inline-start-width: var(--sf-px);
   }
-  .sf-icon-button.sf-icon-button--outline[class*=segment-] + .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
-    --sf-icon-button--border-top-width: var(--sf-px);
-    --sf-icon-button--border-inline-end-width: var(--sf-px);
-    --sf-icon-button--border-bottom-width: var(--sf-px);
+  sf-button-icon:has(+ sf-button-icon > .sf-icon-button--outline[class*=segment-]) > .sf-icon-button.segment-start:not(.sf-icon-button--outline) {
     --sf-icon-button--border-inline-start-width: var(--sf-px);
   }
-  sf-button-icon:has(.sf-icon-button--outline[class*=segment-]) + sf-button .sf-button[class*=segment-]:not(.sf-button--outline) {
-    --sf-button--border-top-width: var(--sf-px);
-    --sf-button--border-inline-end-width: var(--sf-px);
-    --sf-button--border-bottom-width: var(--sf-px);
-    --sf-button--border-inline-start-width: var(--sf-px);
-  }
-  sf-icon-button:has(.sf-icon-button--outline[class*=segment-]) + sf-button .sf-button[class*=segment-]:not(.sf-button--outline) {
-    --sf-button--border-top-width: var(--sf-px);
-    --sf-button--border-inline-end-width: var(--sf-px);
-    --sf-button--border-bottom-width: var(--sf-px);
-    --sf-button--border-inline-start-width: var(--sf-px);
-  }
-  .sf-icon-button.sf-icon-button--outline[class*=segment-] + .sf-button[class*=segment-]:not(.sf-button--outline) {
-    --sf-button--border-top-width: var(--sf-px);
-    --sf-button--border-inline-end-width: var(--sf-px);
-    --sf-button--border-bottom-width: var(--sf-px);
-    --sf-button--border-inline-start-width: var(--sf-px);
-  }
-  sf-button-icon:has(+ sf-button-icon .sf-icon-button--outline[class*=segment-]) .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
-    --sf-icon-button--border-top-width: var(--sf-px);
-    --sf-icon-button--border-inline-end-width: var(--sf-px);
-    --sf-icon-button--border-bottom-width: var(--sf-px);
+  sf-button-icon:has(+ sf-icon-button > .sf-icon-button--outline[class*=segment-]) > .sf-icon-button.segment-start:not(.sf-icon-button--outline) {
     --sf-icon-button--border-inline-start-width: var(--sf-px);
   }
-  sf-button-icon:has(+ sf-icon-button .sf-icon-button--outline[class*=segment-]) .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
-    --sf-icon-button--border-top-width: var(--sf-px);
-    --sf-icon-button--border-inline-end-width: var(--sf-px);
-    --sf-icon-button--border-bottom-width: var(--sf-px);
+  sf-icon-button:has(+ sf-button > .sf-button--outline[class*=segment-]) > .sf-icon-button.segment-start:not(.sf-icon-button--outline) {
     --sf-icon-button--border-inline-start-width: var(--sf-px);
   }
-  sf-icon-button:has(+ sf-button-icon .sf-icon-button--outline[class*=segment-]) .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
-    --sf-icon-button--border-top-width: var(--sf-px);
-    --sf-icon-button--border-inline-end-width: var(--sf-px);
-    --sf-icon-button--border-bottom-width: var(--sf-px);
+  sf-icon-button:has(+ sf-button > .sf-icon-button--outline[class*=segment-]) > .sf-icon-button.segment-start:not(.sf-icon-button--outline) {
     --sf-icon-button--border-inline-start-width: var(--sf-px);
   }
-  sf-icon-button:has(+ sf-icon-button .sf-icon-button--outline[class*=segment-]) .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
-    --sf-icon-button--border-top-width: var(--sf-px);
-    --sf-icon-button--border-inline-end-width: var(--sf-px);
-    --sf-icon-button--border-bottom-width: var(--sf-px);
+  sf-icon-button:has(+ sf-button-icon > .sf-button--outline[class*=segment-]) > .sf-icon-button.segment-start:not(.sf-icon-button--outline) {
     --sf-icon-button--border-inline-start-width: var(--sf-px);
   }
-  .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline):has(+ .sf-icon-button.sf-icon-button--outline[class*=segment-]) {
-    --sf-icon-button--border-top-width: var(--sf-px);
-    --sf-icon-button--border-inline-end-width: var(--sf-px);
-    --sf-icon-button--border-bottom-width: var(--sf-px);
+  sf-icon-button:has(+ sf-icon-button > .sf-button--outline[class*=segment-]) > .sf-icon-button.segment-start:not(.sf-icon-button--outline) {
     --sf-icon-button--border-inline-start-width: var(--sf-px);
   }
-  sf-button-icon:has(+ sf-button .sf-button--outline[class*=segment-]) .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
-    --sf-icon-button--border-top-width: var(--sf-px);
-    --sf-icon-button--border-inline-end-width: var(--sf-px);
-    --sf-icon-button--border-bottom-width: var(--sf-px);
+  sf-icon-button:has(+ sf-button-icon > .sf-icon-button--outline[class*=segment-]) > .sf-icon-button.segment-start:not(.sf-icon-button--outline) {
     --sf-icon-button--border-inline-start-width: var(--sf-px);
   }
-  sf-icon-button:has(+ sf-button .sf-button--outline[class*=segment-]) .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline) {
-    --sf-icon-button--border-top-width: var(--sf-px);
-    --sf-icon-button--border-inline-end-width: var(--sf-px);
-    --sf-icon-button--border-bottom-width: var(--sf-px);
+  sf-icon-button:has(+ sf-icon-button > .sf-icon-button--outline[class*=segment-]) > .sf-icon-button.segment-start:not(.sf-icon-button--outline) {
     --sf-icon-button--border-inline-start-width: var(--sf-px);
   }
-  .sf-icon-button[class*=segment-]:not(.sf-icon-button--outline):has(+ .sf-button.sf-button--outline[class*=segment-]) {
-    --sf-icon-button--border-top-width: var(--sf-px);
-    --sf-icon-button--border-inline-end-width: var(--sf-px);
-    --sf-icon-button--border-bottom-width: var(--sf-px);
+  .sf-icon-button.segment-start:not(.sf-icon-button--outline):has(+ .sf-button--outline[class*=segment-]) {
+    --sf-icon-button--border-inline-start-width: var(--sf-px);
+  }
+  .sf-icon-button.segment-start:not(.sf-icon-button--outline):has(+ .sf-icon-button--outline[class*=segment-]) {
+    --sf-icon-button--border-inline-start-width: var(--sf-px);
+  }
+  /* ... and draws its own start edge after one that is not an outline. */
+  sf-button:has(> [class*=segment-]:not(.sf-button--outline):not(.sf-icon-button--outline)) + sf-button-icon > .sf-icon-button.sf-icon-button--outline[class*=segment-] {
+    --sf-icon-button--border-inline-start-width: var(--sf-px);
+  }
+  sf-button:has(> [class*=segment-]:not(.sf-button--outline):not(.sf-icon-button--outline)) + sf-icon-button > .sf-icon-button.sf-icon-button--outline[class*=segment-] {
+    --sf-icon-button--border-inline-start-width: var(--sf-px);
+  }
+  sf-button-icon:has(> [class*=segment-]:not(.sf-button--outline):not(.sf-icon-button--outline)) + sf-button-icon > .sf-icon-button.sf-icon-button--outline[class*=segment-] {
+    --sf-icon-button--border-inline-start-width: var(--sf-px);
+  }
+  sf-icon-button:has(> [class*=segment-]:not(.sf-button--outline):not(.sf-icon-button--outline)) + sf-button-icon > .sf-icon-button.sf-icon-button--outline[class*=segment-] {
+    --sf-icon-button--border-inline-start-width: var(--sf-px);
+  }
+  sf-button-icon:has(> [class*=segment-]:not(.sf-button--outline):not(.sf-icon-button--outline)) + sf-icon-button > .sf-icon-button.sf-icon-button--outline[class*=segment-] {
+    --sf-icon-button--border-inline-start-width: var(--sf-px);
+  }
+  sf-icon-button:has(> [class*=segment-]:not(.sf-button--outline):not(.sf-icon-button--outline)) + sf-icon-button > .sf-icon-button.sf-icon-button--outline[class*=segment-] {
+    --sf-icon-button--border-inline-start-width: var(--sf-px);
+  }
+  [class*=segment-]:not(.sf-button--outline):not(.sf-icon-button--outline) + .sf-icon-button.sf-icon-button--outline[class*=segment-] {
     --sf-icon-button--border-inline-start-width: var(--sf-px);
   }
 }
