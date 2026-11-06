@@ -1508,6 +1508,12 @@
         "name": "cl-icon"
       },
       {
+        "name": "cl-avatar"
+      },
+      {
+        "name": "cl-badge"
+      },
+      {
         "name": "cl-button"
       },
       {

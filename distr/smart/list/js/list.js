@@ -787,13 +787,18 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 // variant, for a column a person reads.
 //
 // What a row *is* stays with the host. An item is data: an id, a text, and
-// optionally a supporting line, an icon, a date or a group key. The list draws
-// each one as the Framework's row, sf-list-item, and interprets none of it.
+// optionally a supporting line, an icon, a date or a group key, a picture
+// (avatar), a count, a badge and pinned. The list draws each one as the
+// Framework's row, sf-list-item, with the Framework's own parts in its leading
+// and trailing places -- sf-avatar, sf-badge -- and interprets none of it: it
+// has no renderer a host could hand it (1.1.0, owner decision q-3b313e2246,
+// 2026-11-06: sf-chat-threads becomes a thin wrapper of this list).
 //
 // It owns the arrangement and nothing else:
 //   - groups by the calendar day of each item's date in the reader's time
 //     zone («Сегодня», «Вчера», a weekday, the date -- core's
-//     formatRelativeDay), or by a key the host names, or none;
+//     formatRelativeDay), or by a key the host names, or none; pinned items
+//     lead, under their own heading «Закреплённые» when the list is grouped;
 //   - which row is open (`selected`), told by more than a tint;
 //   - one Tab stop for the whole list, arrows between rows, across groups
 //     (the row's own roving, sf-list-item);
@@ -836,7 +841,56 @@ const refused = reason => ({
 
 const normalItem = item => ({ ...item,
   id: String(item.id)
-}); // set-items(list, {hasMore}) or set-items({items, has-more}) (§4.4: one object
+});
+
+const word = value => typeof value === "string" ? value.trim() : "";
+
+const SHAPES = new Set(["circle", "square"]); // The badge's tone is a word of the Framework's status set
+// (contracts/public-api-axes.json status_vocabulary); neutral is no status.
+
+const TONES = new Set(["neutral", "info", "success", "warning", "error"]); // The largest count drawn as a number; a larger one reads «99+», as
+// sf-avatar's badge-cap does by default.
+
+const COUNT_CAP = 99;
+/**
+ * The item's picture, or null: {image-url?, text?, shape?, icon?}. A sign
+ * (icon without an image) is a glyph in the avatar's place -- a channel, an
+ * agent, a bot; an image or initials are sf-avatar's.
+ */
+
+function avatarOf(item) {
+  const avatar = item?.avatar;
+  if (!avatar || typeof avatar !== "object" || Array.isArray(avatar)) return null;
+  const imageUrl = word(avatar["image-url"]);
+  const icon = word(avatar.icon);
+  return {
+    kind: icon && !imageUrl ? "sign" : "avatar",
+    shape: SHAPES.has(avatar.shape) ? avatar.shape : "circle",
+    imageUrl,
+    text: word(avatar.text),
+    icon
+  };
+}
+/** The item's count as a whole number above 0, else 0. */
+
+
+function countOf(item) {
+  const count = Number(item?.count);
+  return Number.isFinite(count) && count >= 1 ? Math.floor(count) : 0;
+}
+/** The item's badge, {text, tone}, or null: a badge with no text draws nothing. */
+
+
+function badgeOf(item) {
+  const badge = item?.badge;
+  if (!badge || typeof badge !== "object" || Array.isArray(badge)) return null;
+  const text = word(badge.text);
+  if (!text) return null;
+  return {
+    text,
+    tone: TONES.has(badge.tone) ? badge.tone : "neutral"
+  };
+} // set-items(list, {hasMore}) or set-items({items, has-more}) (§4.4: one object
 // in declared order).
 
 
@@ -1135,19 +1189,27 @@ class SfList extends ListElement {
   // does not. By day, each item's calendar day in the reader's time zone, an
   // unreadable date its own last group; by key, the order of `groups`, then
   // any key it does not list.
+  //
+  // Pinned items lead, in the host's order: under their own heading
+  // («Закреплённые») before the day or key groups; ungrouped, first in the
+  // one list.
 
 
   arranged() {
     const by = this.groupBy;
+
+    const pinned = this._items.filter(item => item.pinned === true);
+
+    const rest = pinned.length ? this._items.filter(item => item.pinned !== true) : this._items;
     if (by !== "day" && by !== "key") return [{
       key: "all",
       heading: "",
-      items: this._items
+      items: [...pinned, ...rest]
     }];
     const groups = new Map();
     const now = new Date();
 
-    for (const item of this._items) {
+    for (const item of rest) {
       let key;
       let heading;
 
@@ -1193,7 +1255,24 @@ class SfList extends ListElement {
       if (undated >= 0) list.push(...list.splice(undated, 1));
     }
 
+    if (pinned.length) list.unshift({
+      key: "pinned",
+      heading: this.sfWord("pinned-text"),
+      items: pinned
+    });
     return list;
+  } // The leading place of the rows: none when no item has an avatar. When one
+  // has, every row keeps it, so the titles start at one line; a row without
+  // an avatar shows its icon there, or nothing. Its width is the avatar of a
+  // two-line row when any row of the list has a second line, else the row's
+  // line: a one-line row keeps its control height.
+
+
+  leading() {
+    if (!this._items.some(item => avatarOf(item))) return null;
+    return {
+      wide: this._items.some(item => Boolean(item.supporting))
+    };
   }
 
   templateContext() {
@@ -1206,6 +1285,14 @@ class SfList extends ListElement {
       headingLevel: this.headingLevel,
       size: this.size,
       sections: this.arranged(),
+      leading: this.leading(),
+      avatarOf,
+      countOf,
+      badgeOf,
+      countCap: COUNT_CAP,
+      countLabel: count => this.sfWord("count-label", {
+        count
+      }),
       grouped: this.groupBy === "day" || this.groupBy === "key",
       selected: this.selected,
       editing: this._editing,
@@ -1469,6 +1556,67 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 //
 // The rows are keyed by id, so a row that moves keeps its node and a redraw
 // does not take the focus from the row a person is on.
+//
+// A row's own parts (1.1.0) stand in sf-list-item's leading and trailing
+// places: the avatar (sf-avatar, or a sign -- a glyph in sf-avatar's class
+// markup, as sf-chat-window draws its members' signs), the badge and the
+// count (sf-badge). The row takes its slot elements once, when it connects,
+// and draws those very nodes in its own markup. So the slot elements are
+// fixed in the row's template and only what is inside them changes: a count
+// that comes and goes keeps the row, and the focus on it. A list that gains
+// its first avatar draws its rows from the other template, anew.
+// The steps of a row's parts beside a row of each size: a one-line row's
+// avatar takes the row's line, as its icon does, and a two-line row's avatar
+// the control height of the row's step (sf-avatar size) -- a one-line row
+// in that list keeps the line, centred in the wider place; the count and the
+// badge take the row's line (sf-badge line), so they never make a row taller.
+
+const BADGE_STATUS = {
+  neutral: lit__WEBPACK_IMPORTED_MODULE_0__.nothing,
+  info: "info",
+  success: "success",
+  warning: "warning",
+  error: "error"
+}; // tone auto picks the initials' tone from the row's title (sf-avatar reads its
+// aria-label), so a conversation keeps its colour whatever its initials.
+
+const leadContent = (context, item) => {
+  const avatar = context.avatarOf(item);
+  const size = context.size;
+  const wide = Boolean(context.leading?.wide) && Boolean(item.supporting);
+
+  if (avatar?.kind === "avatar") {
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-avatar
+                aria-hidden="true"
+                aria-label=${String(item.text ?? "") || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                tone="auto"
+                size=${wide ? size : "1"}
+                line=${wide ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : size}
+                shape=${avatar.shape}
+                image-url=${avatar.imageUrl || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                text=${avatar.text || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                ?disabled=${item.disabled === true}
+        ></sf-avatar>`;
+  }
+
+  if (avatar?.kind === "sign") {
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-list__sign sf-avatar ${wide ? `sf-avatar--size-${size}` : `sf-avatar--size-1 sf-avatar--line-${size}`} sf-avatar--placeholder ${avatar.shape === "square" ? "sf-avatar--square" : ""} inline-flex flex-none items-cross-center content-main-center"
+                          aria-hidden="true"><sf-icon icon=${avatar.icon} aria-hidden="true"></sf-icon></span>`;
+  }
+
+  const icon = typeof item.icon === "string" && item.icon.trim() ? item.icon.trim() : "";
+  return icon ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-icon class="sf-list__glyph" icon=${icon} aria-hidden="true"></sf-icon>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+};
+
+const metaContent = (context, item) => {
+  const count = context.countOf(item);
+  const badge = context.badgeOf(item);
+  const line = context.size;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${badge ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-badge class="sf-list__badge" line=${line} appearance="tonal"
+                         status=${BADGE_STATUS[badge.tone]} text=${badge.text}></sf-badge>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}${count ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-badge class="sf-list__count" line=${line} scheme="primary"
+                         text=${count > context.countCap ? `${context.countCap}+` : String(count)}
+                         aria-label=${context.countLabel(count)}></sf-badge>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}`;
+};
 
 const row = (context, item) => {
   const {
@@ -1508,10 +1656,20 @@ const row = (context, item) => {
         `;
   }
 
-  const menu = context.hasMenu(item);
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-        <li class="sf-list__row ${current ? "sf-list__row--current" : ""}" data-id=${item.id}>
-            <sf-list-item
+  const menu = context.hasMenu(item); // Two templates, with the leading place and without; the slot elements
+  // are the template's own, never a value of it (see above).
+
+  const listItem = context.leading ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-list-item
+                    interactive
+                    kind="icon"
+                    size=${context.size}
+                    value=${item.id}
+                    text=${text}
+                    supporting=${supporting || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                    ?selected=${current}
+                    ?disabled=${disabled}
+            ><span slot="leading" class="sf-list__lead">${leadContent(context, item)}</span><span
+                    slot="trailing" class="sf-list__meta">${metaContent(context, item)}</span></sf-list-item>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-list-item
                     interactive
                     kind=${icon ? "icon" : "text"}
                     icon=${icon || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
@@ -1521,7 +1679,10 @@ const row = (context, item) => {
                     supporting=${supporting || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                     ?selected=${current}
                     ?disabled=${disabled}
-            ></sf-list-item>
+            ><span slot="trailing" class="sf-list__meta">${metaContent(context, item)}</span></sf-list-item>`;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <li class="sf-list__row ${current ? "sf-list__row--current" : ""}" data-id=${item.id}>
+            ${listItem}
             ${menu ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<button
                         type="button"
                         class="sf-list__actions sf-icon-button sf-icon-button--icon sf-icon-button--link sf-icon-button--on-surface sf-icon-button--size-${context.size} flex items-cross-center content-main-center flex-none"
@@ -1546,7 +1707,7 @@ function renderListTemplate(context) {
     component
   } = context;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-        <div class="sf-list sf-list__frame sf-list--size-${context.size} ${context.empty ? "sf-list--empty" : ""}"
+        <div class="sf-list sf-list__frame sf-list--size-${context.size}${context.leading?.wide ? " sf-list--lead-wide" : ""} ${context.empty ? "sf-list--empty" : ""}"
              role=${context.grouped ? "group" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
              aria-label=${context.grouped ? context.label : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
              aria-busy=${context.loading ? "true" : "false"}>
@@ -1643,21 +1804,21 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "2677706b5ec9"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list","tag":"sf-list","version":"1.0.0","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","text":{"type":"string","optional":true},"supporting":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"date":{"type":"date","optional":true},"group":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"actions":{"type":"list","optional":true}},"entries":{"key":"id","changes":"content"}},"selected":{"type":"id","default":""},"group-by":{"type":"enum","values":["none","day","key"],"default":"none"},"groups":{"type":"list","default":[],"of":{"key":"string","text":"string"}},"actions":{"type":"list","default":[],"of":{"id":"id","text":"string","icon":{"type":"icon","optional":true},"destructive":{"type":"boolean","optional":true}}},"renamable":{"type":"boolean","default":false},"has-more":{"type":"boolean","default":false},"loading":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"label":{"type":"string","default-from":"runtime.label"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":3},"empty-text":{"type":"string","default-from":"runtime.empty-text"}},"values":{},"events":{"open":{"carries":{"id":"id","trigger":{"type":"enum","values":["pointer","keyboard"]}}},"apply":{"carries":{"action":"string","scope":{"type":"enum","values":["entry"]},"ids":{"type":"list","schema":{"items":{"type":"string"}}}}},"rename":{"carries":{"id":"id","text":{"type":"string","schema":{"minLength":1,"maxLength":200}}},"cancelable":true},"load-more":{"carries":{"direction":{"type":"enum","values":["after"]},"after":{"type":"id","nullable":true}},"cancelable":true}},"actions":{"set-items":{"with":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":["string","number"]},"text":{"type":"string"},"supporting":{"type":"string"},"icon":{"type":"string"},"date":{"type":"string"},"group":{"type":"string"},"disabled":{"type":"boolean"},"actions":{}},"required":["id"]}}},"options":{"type":"object","optional":true,"schema":{"properties":{"hasMore":{"type":"boolean","default":false}}}}}},"append-items":{"with":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":["string","number"]},"text":{"type":"string"},"supporting":{"type":"string"},"icon":{"type":"string"},"date":{"type":"string"},"group":{"type":"string"},"disabled":{"type":"boolean"},"actions":{}},"required":["id"]}}},"options":{"type":"object","optional":true,"schema":{"properties":{"hasMore":{"type":"boolean","default":false}}}}}},"upsert":{"with":{"item":{"type":"object","schema":{"type":"object","properties":{"id":{"type":["string","number"]},"text":{"type":"string"},"supporting":{"type":"string"},"icon":{"type":"string"},"date":{"type":"string"},"group":{"type":"string"},"disabled":{"type":"boolean"},"actions":{}},"required":["id"]}}}},"detach":{"with":{"id":"id"}},"rename":{"with":{"id":"id"}},"open-menu":{"with":{"id":"id"}},"request-more":{},"more-failed":{}},"presentation":{"skeleton":{"late":["items"]}},"host-states":{},"css-variables":{"--sf-list-gap":{"type":"length","state":"default"},"--sf-list-radius":{"type":"length","state":"default"},"--sf-list-hover-background-color":{"type":"color","state":"hover"},"--sf-list-current-background-color":{"type":"color","state":"selected"},"--sf-list-heading-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list","tag":"sf-list","version":"1.1.0","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","text":{"type":"string","optional":true},"supporting":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"avatar":{"type":"object","optional":true},"date":{"type":"date","optional":true},"group":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"actions":{"type":"list","optional":true},"count":{"type":"number","integer":true,"min":0,"optional":true},"badge":{"type":"object","optional":true},"pinned":{"type":"boolean","optional":true}},"entries":{"key":"id","changes":"content"}},"selected":{"type":"id","default":""},"group-by":{"type":"enum","values":["none","day","key"],"default":"none"},"groups":{"type":"list","default":[],"of":{"key":"string","text":"string"}},"actions":{"type":"list","default":[],"of":{"id":"id","text":"string","icon":{"type":"icon","optional":true},"destructive":{"type":"boolean","optional":true}}},"renamable":{"type":"boolean","default":false},"has-more":{"type":"boolean","default":false},"loading":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"label":{"type":"string","default-from":"runtime.label"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":3},"empty-text":{"type":"string","default-from":"runtime.empty-text"}},"values":{},"events":{"open":{"carries":{"id":"id","trigger":{"type":"enum","values":["pointer","keyboard"]}}},"apply":{"carries":{"action":"string","scope":{"type":"enum","values":["entry"]},"ids":{"type":"list","schema":{"items":{"type":"string"}}}}},"rename":{"carries":{"id":"id","text":{"type":"string","schema":{"minLength":1,"maxLength":200}}},"cancelable":true},"load-more":{"carries":{"direction":{"type":"enum","values":["after"]},"after":{"type":"id","nullable":true}},"cancelable":true}},"actions":{"set-items":{"with":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":["string","number"]},"text":{"type":"string"},"supporting":{"type":"string"},"icon":{"type":"string"},"date":{"type":"string"},"group":{"type":"string"},"disabled":{"type":"boolean"},"actions":{}},"required":["id"]}}},"options":{"type":"object","optional":true,"schema":{"properties":{"hasMore":{"type":"boolean","default":false}}}}}},"append-items":{"with":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":["string","number"]},"text":{"type":"string"},"supporting":{"type":"string"},"icon":{"type":"string"},"date":{"type":"string"},"group":{"type":"string"},"disabled":{"type":"boolean"},"actions":{}},"required":["id"]}}},"options":{"type":"object","optional":true,"schema":{"properties":{"hasMore":{"type":"boolean","default":false}}}}}},"upsert":{"with":{"item":{"type":"object","schema":{"type":"object","properties":{"id":{"type":["string","number"]},"text":{"type":"string"},"supporting":{"type":"string"},"icon":{"type":"string"},"date":{"type":"string"},"group":{"type":"string"},"disabled":{"type":"boolean"},"actions":{}},"required":["id"]}}}},"detach":{"with":{"id":"id"}},"rename":{"with":{"id":"id"}},"open-menu":{"with":{"id":"id"}},"request-more":{},"more-failed":{}},"presentation":{"skeleton":{"late":["items"]}},"host-states":{},"css-variables":{"--sf-list-gap":{"type":"length","state":"default"},"--sf-list-radius":{"type":"length","state":"default"},"--sf-list-hover-background-color":{"type":"color","state":"hover"},"--sf-list-current-background-color":{"type":"color","state":"selected"},"--sf-list-heading-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 
 /***/ "c1c5abcf20ed"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"List","runtime":{"actions-label":"Actions: {text}","empty-text":"Nothing here yet","label":"List","loading-more-text":"Loading…","loading-text":"Loading the list","more-text":"Show more","rename-label":"New name","rename-text":"Rename","undated-text":"No date","ungrouped-text":"Other","untitled-text":"Untitled"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"List","runtime":{"actions-label":"Actions: {text}","count-label":{"one":"{n} unread","other":"{n} unread"},"empty-text":"Nothing here yet","label":"List","loading-more-text":"Loading…","loading-text":"Loading the list","more-text":"Show more","pinned-text":"Pinned","rename-label":"New name","rename-text":"Rename","undated-text":"No date","ungrouped-text":"Other","untitled-text":"Untitled"}}');
 
 /***/ },
 
 /***/ "0c29db1e15d7"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Список","runtime":{"actions-label":"Действия: {text}","empty-text":"Здесь пока пусто","label":"Список","loading-more-text":"Загружаю…","loading-text":"Загружаю список","more-text":"Показать ещё","rename-label":"Новое название","rename-text":"Переименовать","undated-text":"Без даты","ungrouped-text":"Другое","untitled-text":"Без названия"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Список","runtime":{"actions-label":"Действия: {text}","count-label":{"one":"{n} непрочитанное","few":"{n} непрочитанных","many":"{n} непрочитанных","other":"{n} непрочитанного"},"empty-text":"Здесь пока пусто","label":"Список","loading-more-text":"Загружаю…","loading-text":"Загружаю список","more-text":"Показать ещё","pinned-text":"Закреплённые","rename-label":"Новое название","rename-text":"Переименовать","undated-text":"Без даты","ungrouped-text":"Другое","untitled-text":"Без названия"}}');
 
 /***/ }
 
