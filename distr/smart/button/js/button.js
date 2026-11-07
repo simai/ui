@@ -237,7 +237,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
-const COMPONENT_ATTRIBUTES = new Set(["template", "size", "appearance", "type", "scheme", "status", "text", "icon", "icon-start", "icon-end", "icon-left", "icon-right", "icon-position", "text-position", "spacing", "tightness", "radius", "root-class", "loading", "segment", "disabled", "native-type", "href", "expanded", "pressed", "shortcut", "shortcut-listen", "aria-label", "class", "style", "id", "slot"]); // href (1.4.0) takes the addresses a link may follow: a relative one, a
+const COMPONENT_ATTRIBUTES = new Set(["template", "size", "appearance", "type", "scheme", "status", "text", "icon", "icon-start", "icon-end", "icon-left", "icon-right", "icon-position", "text-position", "spacing", "tightness", "radius", "root-class", "loading", "segment", "disabled", "native-type", "form", "name", "value", "href", "expanded", "pressed", "shortcut", "shortcut-listen", "aria-label", "class", "style", "id", "slot"]); // href (1.4.0) takes the addresses a link may follow: a relative one, a
 // fragment, http(s), mailto and tel. Any other scheme (javascript:, data:)
 // draws the button as a button.
 
@@ -378,6 +378,11 @@ class SfButton extends ButtonElement {
       size: this.size,
       iconPosition: this.iconPosition,
       nativeType: this.nativeType,
+      // A native button's own words (1.5.0): the form it submits, and the
+      // name and value it submits under.
+      formId: this.getAttribute("form") || "",
+      submitName: this.getAttribute("name") || "",
+      submitValue: this.getAttribute("value") ?? "",
       href: linkAddress(this.getAttribute("href")),
       radius: this.radius,
       ariaLabel: this.getAttribute("aria-label") || "",
@@ -512,6 +517,9 @@ class SfButton extends ButtonElement {
       loading: this.loading,
       disabled: this.disabled,
       nativeType: this.nativeType,
+      form: this.getAttribute("form") || "",
+      name: this.getAttribute("name") || "",
+      value: this.getAttribute("value") || "",
       href: this.getAttribute("href") || "",
       shortcut: this.shortcut,
       shortcutListen: this.shortcutListen,
@@ -919,6 +927,9 @@ function renderButtonTemplate(context) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <button
                 type=${nativeType}
+                form=${context.formId || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                name=${context.submitName || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                value=${context.submitName || context.submitValue ? context.submitValue : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 class=${rootClasses.join(' ')}
                 style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 ?disabled=${disabled || loading}
@@ -973,7 +984,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-butto
 /***/ "5bb33fb22db3"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button","tag":"sf-button","version":"1.4.1","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"appearance":{"type":"enum","values":["default","tonal","outline","link","surface"],"default":"default"},"scheme":{"type":"enum","values":["primary","secondary","on-surface","on-surface-variant"],"default":"primary"},"status":{"type":"enum","values":["","error"],"default":""},"text-position":{"type":"string","default":"center"},"text":{"type":"string","default":""},"segment":{"type":"string","default":""},"icon":{"type":"icon","default":""},"icon-start":{"type":"icon","default":""},"icon-end":{"type":"icon","default":""},"icon-position":{"type":"enum","values":["start","end"],"default":"start"},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"loading":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"native-type":{"type":"enum","values":["button","submit","reset"],"default":"button"},"href":{"type":"string","default":""},"shortcut":{"type":"string","default":""},"shortcut-listen":{"type":"boolean","default":false},"expanded":{"type":"boolean","optional":true},"pressed":{"type":"boolean","optional":true}},"values":{},"events":{"press":{"carries":{}}},"actions":{},"css-variables":{"--sf-button-background-color":{"type":"color","state":"default"},"--sf-button-color":{"type":"color","state":"default"},"--sf-button-border-color":{"type":"color","state":"default"},"--sf-button-border-width":{"type":"length","state":"default"},"--sf-button-radius":{"type":"length","state":"default"},"--sf-button-padding-inline":{"type":"length","state":"default"},"--sf-button-padding-block":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button","tag":"sf-button","version":"1.5.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"appearance":{"type":"enum","values":["default","tonal","outline","link","surface"],"default":"default"},"scheme":{"type":"enum","values":["primary","secondary","on-surface","on-surface-variant"],"default":"primary"},"status":{"type":"enum","values":["","error"],"default":""},"text-position":{"type":"string","default":"center"},"text":{"type":"string","default":""},"segment":{"type":"string","default":""},"icon":{"type":"icon","default":""},"icon-start":{"type":"icon","default":""},"icon-end":{"type":"icon","default":""},"icon-position":{"type":"enum","values":["start","end"],"default":"start"},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"loading":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"native-type":{"type":"enum","values":["button","submit","reset"],"default":"button"},"form":{"type":"string","default":""},"name":{"type":"string","default":""},"value":{"type":"string","default":""},"href":{"type":"string","default":""},"shortcut":{"type":"string","default":""},"shortcut-listen":{"type":"boolean","default":false},"expanded":{"type":"boolean","optional":true},"pressed":{"type":"boolean","optional":true}},"values":{},"events":{"press":{"carries":{}}},"actions":{},"css-variables":{"--sf-button-background-color":{"type":"color","state":"default"},"--sf-button-color":{"type":"color","state":"default"},"--sf-button-border-color":{"type":"color","state":"default"},"--sf-button-border-width":{"type":"length","state":"default"},"--sf-button-radius":{"type":"length","state":"default"},"--sf-button-padding-inline":{"type":"length","state":"default"},"--sf-button-padding-block":{"type":"length","state":"default"}}}');
 
 /***/ },
 

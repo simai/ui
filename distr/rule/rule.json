@@ -2180,6 +2180,58 @@
     "type": "smart"
   },
   {
+    "name": "cl-wizard",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "cl-wizard-step"
+      },
+      {
+        "name": "cl-steps"
+      },
+      {
+        "name": "cl-button"
+      },
+      {
+        "name": "cl-progress-bar"
+      },
+      {
+        "name": "cl-alert"
+      },
+      {
+        "name": "cl-spinner"
+      },
+      {
+        "name": "cl-confirm"
+      },
+      {
+        "name": "cl-modal"
+      },
+      {
+        "name": "cl-icon"
+      },
+      {
+        "name": "scrollbar"
+      }
+    ],
+    "tags": [
+      "sf-wizard"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-wizard-step",
+    "js": true,
+    "mode": "smart",
+    "relation": [],
+    "tags": [
+      "sf-wizard-step"
+    ],
+    "type": "smart"
+  },
+  {
     "name": "clear/default",
     "regex": "/^(?:clear-(?:both|inline-(?:end|start)|none))(?![\\s\\S])/"
   },

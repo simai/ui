@@ -38,7 +38,10 @@ const StepsElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.e
   },
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_4__
-});
+}); // The states an item may carry itself (1.2.0); they win over the one its
+// place gives it.
+
+const STATES = ['completed', 'skipped', 'running', 'error'];
 
 function parseItems(items = '') {
   // The list as JSON in the attribute reads like the property.
@@ -59,9 +62,13 @@ function parseItems(items = '') {
     const [labelPart, flagsPart = ''] = entry.split('::');
     const label = labelPart.trim();
     const flags = flagsPart.split(',').map(flag => flag.trim().toLowerCase()).filter(Boolean);
+    const state = STATES.find(word => flags.includes(word));
     return {
       label,
-      disabled: flags.includes('disabled')
+      disabled: flags.includes('disabled'),
+      ...(state ? {
+        state
+      } : {})
     };
   });
 }
@@ -102,6 +109,12 @@ class SfSteps extends StepsElement {
         default: ''
       },
       errorLabel: {
+        default: ''
+      },
+      skippedLabel: {
+        default: ''
+      },
+      runningLabel: {
         default: ''
       },
       rootClass: {
@@ -159,9 +172,14 @@ class SfSteps extends StepsElement {
     const errorStep = this.errorStep;
     return this.items.map((item, index) => {
       const isError = errorStep === index;
-      let stage = 'default';
+      let stage = 'default'; // An item's own state wins; without one the place decides (before
+      // current: completed) and error-step marks its step.
 
-      if (isError) {
+      if (STATES.includes(item?.state)) {
+        stage = item.state;
+      } else if (item?.state === 'default') {
+        stage = isError ? 'error' : 'default';
+      } else if (isError) {
         stage = 'error';
       } else if (index < this.current) {
         stage = 'completed';
@@ -181,6 +199,8 @@ class SfSteps extends StepsElement {
       ariaLabel: this.getAttribute('aria-label') || this.sfWord('aria-label'),
       completedLabel: this.getAttribute('completed-label') || this.sfWord('completed-label'),
       errorLabel: this.getAttribute('error-label') || this.sfWord('error-label'),
+      skippedLabel: this.getAttribute('skipped-label') || this.sfWord('skipped-label'),
+      runningLabel: this.getAttribute('running-label') || this.sfWord('running-label'),
       component: this,
       rootClass: this.getRootClass(),
       items: this.computedItems
@@ -200,6 +220,8 @@ class SfSteps extends StepsElement {
       ariaLabel: this.getAttribute('aria-label') || this.sfWord('aria-label'),
       completedLabel: this.getAttribute('completed-label') || this.sfWord('completed-label'),
       errorLabel: this.getAttribute('error-label') || this.sfWord('error-label'),
+      skippedLabel: this.getAttribute('skipped-label') || this.sfWord('skipped-label'),
+      runningLabel: this.getAttribute('running-label') || this.sfWord('running-label'),
       items: this.items,
       rootClass: this.getRootClass()
     };
@@ -228,6 +250,10 @@ class SfSteps extends StepsElement {
 
           if (item?.disabled) {
             flags.push('disabled');
+          }
+
+          if (STATES.includes(item?.state)) {
+            flags.push(item.state);
           }
 
           return flags.length ? `${item.label}::${flags.join(',')}` : item.label;
@@ -354,12 +380,21 @@ lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 
 function joinClasses(...tokens) {
   return tokens.flat().filter(Boolean).join(' ');
-}
+} // A stage's glyph: completed and error keep their status colours, skipped and
+// running are the quiet on-surface-variant marks, running turning (1.2.0).
+
+
+const STAGE_ICONS = {
+  completed: 'check_circle',
+  error: 'error',
+  skipped: 'do_not_disturb_on',
+  running: 'progress_activity'
+};
 
 function renderStep(item, context) {
   const stepClasses = joinClasses('sf-step', `sf-step--size-${context.size}`, `sf-step--stage-${item.stage}`, 'flex', 'items-center', 'justify-center', item.selected ? 'selected' : '', item.disabled ? 'disabled' : 'cursor-pointer');
-  const iconName = item.stage === 'completed' ? 'check_circle' : item.stage === 'error' ? 'error' : '';
-  const statusLabel = item.stage === 'completed' ? context.completedLabel : item.stage === 'error' ? context.errorLabel : '';
+  const iconName = STAGE_ICONS[item.stage] || '';
+  const statusLabel = item.stage === 'completed' ? context.completedLabel : item.stage === 'error' ? context.errorLabel : item.stage === 'skipped' ? context.skippedLabel : item.stage === 'running' ? context.runningLabel : '';
   const accessibleLabel = statusLabel ? `${item.label}, ${statusLabel}` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
     <button
@@ -433,21 +468,21 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-steps
 /***/ "fce42b338f4d"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.steps","tag":"sf-steps","version":"1.1.5","kind":"leaf","settings":{"size":{"type":"enum","values":["1","1/2"],"default":"1"},"items":{"type":"list","default":[],"of":{"label":"string","disabled":{"type":"boolean","optional":true}}},"error-step":{"type":"number","integer":true,"min":0,"nullable":true,"default":null},"separator-icon":{"type":"icon","default":"chevron_right"},"completed-label":{"type":"string","default-from":"runtime.completed-label"},"error-label":{"type":"string","default-from":"runtime.error-label"}},"values":{"current":{"type":"number","integer":true,"min":0,"default":0}},"events":{"change":{"x-native":false,"carries":{"previous":"number","current":"number","item":"object","items":"list"}}},"actions":{"go-to-step":{"with":{"index":"number"}}},"css-variables":{"--sf-steps-gap":{"type":"length","state":"default"},"--sf-steps-separator-color":{"type":"color","state":"default"},"--sf-steps-step-color":{"type":"color","state":"default"},"--sf-steps-step-border-color":{"type":"color","state":"default"},"--sf-steps-step-radius":{"type":"length","state":"default"},"--sf-steps-current-border-color":{"type":"color","state":"current"},"--sf-steps-completed-icon-color":{"type":"color","state":"completed"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.steps","tag":"sf-steps","version":"1.2.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1","1/2"],"default":"1"},"items":{"type":"list","default":[],"of":{"label":"string","disabled":{"type":"boolean","optional":true},"state":{"type":"enum","values":["default","completed","skipped","running","error"],"optional":true}}},"error-step":{"type":"number","integer":true,"min":0,"nullable":true,"default":null},"separator-icon":{"type":"icon","default":"chevron_right"},"completed-label":{"type":"string","default-from":"runtime.completed-label"},"error-label":{"type":"string","default-from":"runtime.error-label"},"skipped-label":{"type":"string","default-from":"runtime.skipped-label"},"running-label":{"type":"string","default-from":"runtime.running-label"}},"values":{"current":{"type":"number","integer":true,"min":0,"default":0}},"events":{"change":{"x-native":false,"carries":{"previous":"number","current":"number","item":"object","items":"list"}}},"actions":{"go-to-step":{"with":{"index":"number"}}},"css-variables":{"--sf-steps-gap":{"type":"length","state":"default"},"--sf-steps-separator-color":{"type":"color","state":"default"},"--sf-steps-step-color":{"type":"color","state":"default"},"--sf-steps-step-border-color":{"type":"color","state":"default"},"--sf-steps-step-radius":{"type":"length","state":"default"},"--sf-steps-current-border-color":{"type":"color","state":"current"},"--sf-steps-completed-icon-color":{"type":"color","state":"completed"}}}');
 
 /***/ },
 
 /***/ "892d49d25ed0"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Steps","runtime":{"aria-label":"Steps","completed-label":"Completed","error-label":"Error"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Steps","runtime":{"aria-label":"Steps","completed-label":"Completed","error-label":"Error","skipped-label":"Skipped","running-label":"In progress"}}');
 
 /***/ },
 
 /***/ "1c14a9acc1b6"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Шаги","runtime":{"aria-label":"Шаги","completed-label":"Завершено","error-label":"Ошибка"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Шаги","runtime":{"aria-label":"Шаги","completed-label":"Завершено","error-label":"Ошибка","skipped-label":"Пропущен","running-label":"Выполняется"}}');
 
 /***/ }
 
