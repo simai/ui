@@ -1,0 +1,80 @@
+{
+  "schema": "simai.framework.unit-change-report",
+  "schema_version": 1,
+  "source": "simai/ui-source",
+  "from": {
+    "revision": "c8c78ffa6b2cbaf8b327a811cd2739d99315df57",
+    "release": "ui-98143c0a0728"
+  },
+  "to": {
+    "revision": "86ea7f0b23d6a9bcc5e02167a3c87056c891e124",
+    "release": "ui-6ba0c8ade60e"
+  },
+  "added": [],
+  "removed": [],
+  "changed": [
+    {
+      "id": "component.context-menu",
+      "from_version": "1.2.0",
+      "to_version": "1.2.1",
+      "step": "patch"
+    },
+    {
+      "id": "smart.menu-context",
+      "from_version": "1.7.0",
+      "to_version": "1.7.1",
+      "step": "patch"
+    }
+  ],
+  "dependencies_changed": [
+    {
+      "id": "smart.language",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "smart.menu-context"
+      ]
+    },
+    {
+      "id": "smart.list",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "smart.menu-context"
+      ]
+    },
+    {
+      "id": "smart.menu-context",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "component.context-menu"
+      ]
+    },
+    {
+      "id": "smart.settings",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "smart.menu-context"
+      ]
+    },
+    {
+      "id": "smart.sortable",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "smart.menu-context"
+      ]
+    },
+    {
+      "id": "smart.tabs",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "smart.menu-context"
+      ]
+    }
+  ],
+  "violations": []
+}
