@@ -2092,8 +2092,8 @@ function renderItems(items) {
         ${items.map(renderItem)}
     `;
 } // The standard menu: entries are data, not components. An item is a row with
-// an optional icon, a label and caption, and at its end a value, a shortcut, a
-// check or a submenu chevron; a separator is a rule; a heading names the group
+// an optional icon (or a check, on a row that is ticked), a label and caption,
+// and at its end a value, a shortcut or a submenu chevron; a separator is a rule; a heading names the group
 // of items under it. The row geometry is the profile menu's (owner, 2026-10-12):
 // as tall as a size-1/2 field, its content on the field's axis.
 
@@ -2106,15 +2106,20 @@ const ROLE = {
 function icon(name, className) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<i class="sf-icon ${className}" aria-hidden="true">${name}</i>`;
 } // What leads a row: an icon, or a picture of the thing itself -- a site's logo,
-// a person -- with its initials when there is no picture.
+// a person -- with its initials when there is no picture. A row ticked on and
+// off (kind: "check") leads with its check, in the column and at the width of
+// the icons: nothing is kept at the row's end for it (owner R016, 2026-11-07).
+// Unticked, it shows its own icon, if it has one.
 
 
 function renderLead(entry) {
+  if (entry.kind === "check" && entry.type !== "switch" && entry.checked) return icon("check", "sf-context-menu-item-check");
   if (entry.avatar) return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<img class="sf-context-menu-item-avatar" src=${entry.avatar} alt="">`;
   if (entry.initials) return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-context-menu-item-avatar" aria-hidden="true">${entry.initials}</span>`;
   return entry.icon ? icon(entry.icon, "sf-context-menu-item-icon") : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
 } // The leading column of the level: kept for every row once any row of it has
-// something to lead with, so the labels start on one line.
+// something to lead with -- an icon, a picture, or a check it may be given --
+// so the labels start on one line.
 
 
 function renderLeadPlace(entry, lead) {
@@ -2192,7 +2197,8 @@ function renderChoiceDrill(entry, path, lead) {
         ${icon("chevron_right", "sf-context-menu-item-chevron")}
     </button>`;
 } // The options of a drilled choice as the level's rows: each a menuitemradio of
-// the menu with a check mark on the chosen one, found by the row's own path and
+// the menu, the chosen one on the soft fill of a chosen row and no check mark
+// (owner R016, 2026-11-07: a pick-one list), found by the row's own path and
 // its place in the list, as an option of the quiet row is.
 
 
@@ -2207,7 +2213,7 @@ function renderLevelOptions(choice, context) {
   const shown = options.map((option, at) => [option, at]).filter(([option]) => !query || String(option.text ?? "").toLowerCase().includes(query));
   return shown.map(([option, at]) => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<button
             type="button"
-            class="sf-context-menu-item sf-context-menu-level-option"
+            class=${joinClasses("sf-context-menu-item", "sf-context-menu-level-option", option.checked ? "sf-context-menu-item--chosen" : "")}
             role="menuitemradio"
             data-sf-entry=${path}
             data-sf-option=${at}
@@ -2216,7 +2222,6 @@ function renderLevelOptions(choice, context) {
     >
         ${lead ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-context-menu-item-lead">${option.icon ? icon(option.icon, "sf-context-menu-item-icon") : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         ${renderItemText(option)}
-        <span class="sf-context-menu-item-check">${option.checked ? icon("check", "") : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</span>
     </button>`);
 }
 
@@ -2334,7 +2339,7 @@ function renderGroup(entry, path, context, query) {
         </div>`;
   }
 
-  const lead = items.some(([item]) => item.icon || item.avatar || item.initials);
+  const lead = items.some(([item]) => leads(item));
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-context-menu-group" role="group" aria-label=${name}>
         ${items.map(([item, index]) => renderEntry(item, `${path}/${index}`, lead, context, query))}
     </div>`;
@@ -2362,19 +2367,22 @@ function renderEntry(entry, path, lead, context, query) {
 
   const toggle = entry?.type === "switch";
   const role = toggle ? "menuitemcheckbox" : ROLE[entry.kind] ?? "menuitem";
-  const checkable = !toggle && role !== "menuitem";
+  const checkable = !toggle && role !== "menuitem"; // One of a pick-one list (kind: "radio") is marked by the soft fill of a
+  // chosen row, with no mark and no column kept for one, so the rows use the
+  // whole width (owner R016, 2026-11-07).
+
+  const chosen = role === "menuitemradio" && Boolean(entry.checked);
   const submenu = Array.isArray(entry.submenu) && entry.submenu.length > 0; // A drilling row shows its value under the name, where a long one is cut
   // instead of pushing the row's end about (owner, 2026-10-30).
 
   const under = context?.drill && submenu ? entry.value ?? "" : "";
-  const classes = joinClasses("sf-context-menu-item", toggle ? "sf-context-menu-item--switch" : "", entry.danger ? "sf-context-menu-item--danger" : "", entry.current ? "sf-context-menu-item--current" : "");
+  const classes = joinClasses("sf-context-menu-item", toggle ? "sf-context-menu-item--switch" : "", entry.danger ? "sf-context-menu-item--danger" : "", entry.current ? "sf-context-menu-item--current" : "", chosen ? "sf-context-menu-item--chosen" : "");
   const body = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         ${renderLeadPlace(entry, lead)}
         ${renderItemText(entry, under)}
         ${entry.value && !under && !toggle ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-context-menu-item-value">${entry.value}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         ${entry.shortcut ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<kbd class="sf-context-menu-item-shortcut">${entry.shortcut}</kbd>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         ${toggle ? renderSwitch() : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-        ${checkable ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-context-menu-item-check">${entry.checked ? icon("check", "") : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         ${submenu ? icon("chevron_right", "sf-context-menu-item-chevron") : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     `;
 
@@ -2401,7 +2409,13 @@ function renderEntry(entry, path, lead, context, query) {
 
 const BLOCKS = new Set(["separator", "heading", "header", "note"]);
 
-const ROWS = entry => entry && !BLOCKS.has(entry.type); // What a search narrows to: the rows whose label or caption holds the query. A
+const ROWS = entry => entry && !BLOCKS.has(entry.type); // A row that keeps the level's leading column: one with an icon or a picture,
+// and one that can be ticked, whose check stands there.
+
+
+function leads(entry) {
+  return Boolean(entry.icon || entry.avatar || entry.initials || entry.kind === "check" && entry.type !== "switch");
+} // What a search narrows to: the rows whose label or caption holds the query. A
 // group is kept while one of its own rows is: the block is where its rows live,
 // not a thing to be found on its own.
 
@@ -2456,7 +2470,7 @@ function renderEntries(context) {
     return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
             ${renderDrillHead(context)}
             ${context.search ? renderSearch(context) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-            ${renderLevelOptions(level.choice, context)}
+            ${searchList(context, renderLevelOptions(level.choice, context))}
         `;
   }
 
@@ -2466,7 +2480,7 @@ function renderEntries(context) {
   // item keeps the place, so the labels start on one line.
   // A group's rows keep a leading column of their own, inside the block.
 
-  const lead = entries.some(entry => ROWS(entry) && entry.type !== "group" && (entry.icon || entry.avatar || entry.initials)); // A search the host answers (search.remote) shows the entries as the host
+  const lead = entries.some(entry => ROWS(entry) && entry.type !== "group" && leads(entry)); // A search the host answers (search.remote) shows the entries as the host
   // set them for the query; a local one narrows them here.
 
   const remote = Boolean(context.search?.remote);
@@ -2474,9 +2488,20 @@ function renderEntries(context) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         ${level.depth > 0 ? renderDrillHead(context) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         ${context.search ? renderSearch(context) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-        ${shown.map(([entry, index]) => renderEntry(entry, `${prefix}${index}`, lead, context, remote ? "" : query))}
-        ${context.search && query && !shown.some(([entry]) => ROWS(entry)) ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<p class="sf-context-menu-note" role="status">${context.search.empty ?? ""}</p>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        ${searchList(context, (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+            ${shown.map(([entry, index]) => renderEntry(entry, `${prefix}${index}`, lead, context, remote ? "" : query))}
+            ${context.search && query && !shown.some(([entry]) => ROWS(entry)) ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<p class="sf-context-menu-note" role="status">${context.search.empty ?? ""}</p>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        `)}
     `;
+} // A menu with a search keeps the field (and a drilling level's head) where it
+// is and scrolls its rows alone, under it: the field scrolled away with the
+// list and the scrollbar ran beside it (owner R012, 2026-11-07). Without a
+// search the rows stay children of the content, as before; a panel with tabs
+// already scrolls its body alone under a head that stays.
+
+
+function searchList(context, rows) {
+  return context.search && !context.panel ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-context-menu-list">${rows}</div>` : rows;
 }
 
 function renderContent(context) {
@@ -2529,7 +2554,10 @@ function renderTooltip() {
 
 function renderContextMenuTemplate(context) {
   const rootClasses = joinClasses("sf-context-menu", context.position ? `sf-context-menu--position-${context.position}` : "", context.entries && context.entries.length ? "sf-context-menu--entries" : "", context.size === "1" ? "sf-context-menu--size-1" : "", context.panel ? "sf-context-menu--panel" : "", context.drill ? "sf-context-menu--drill" : "", "flex", context.rootClass);
-  const contentClasses = joinClasses("sf-context-menu-content", "flex", "flex-col", "flex-1", context.contentClass);
+  const contentClasses = joinClasses("sf-context-menu-content", "flex", "flex-col", "flex-1", // On the content, not the root: the root's class list is the one
+  // openFor() adds sf-context-menu--open to, and a level that draws a
+  // search changes the list while the menu is open.
+  context.search && context.entries && context.entries.length && !context.panel ? "sf-context-menu-content--search" : "", context.contentClass);
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <div
                 class=${rootClasses}
@@ -2612,7 +2640,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-menu-
 /***/ "4ff97a05802b"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.menu-context","tag":"sf-menu-context","version":"1.6.1","kind":"leaf","settings":{"position":{"type":"enum","values":["","inline-start","inline-start-top","inline-start-bottom","inline-end","inline-end-top","inline-end-bottom","top","top-inline-start","top-inline-end","bottom","bottom-inline-start","bottom-inline-end","start","end","top-start","top-end","bottom-start","bottom-end","left","left-top","left-bottom","right","right-top","right-bottom","top-left","top-center","top-right","bottom-left","bottom-center","bottom-right","left-start","left-end","right-start","right-end","inline-start-start","inline-start-end","inline-end-start","inline-end-end"],"default":""},"tooltip":{"type":"boolean","default":true},"text":{"type":"string","default":""},"items":{"type":"list","default":[],"of":{"text":"string","value":"string"}},"content-class":{"type":"string","default":""},"entries":{"type":"list","default":[],"of":{"id":"string","text":"string","caption":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"avatar":{"type":"string","optional":true},"initials":{"type":"string","optional":true},"shortcut":{"type":"string","optional":true},"kind":{"type":"string","optional":true},"type":{"type":"string","optional":true},"value":{"type":"string","optional":true},"lang":{"type":"string","optional":true},"keywords":{"type":"string","optional":true},"checked":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true},"danger":{"type":"boolean","optional":true},"current":{"type":"boolean","optional":true},"href":{"type":"string","optional":true},"keep-open":{"type":"boolean","optional":true},"submenu":{"type":"list","optional":true},"search":{"type":"object","optional":true},"options":{"type":"list","optional":true},"items":{"type":"list","optional":true},"min":{"type":"number","optional":true},"max":{"type":"number","optional":true},"step":{"type":"number","optional":true},"unit":{"type":"string","optional":true},"view":{"type":"string","optional":true}}},"popup":{"type":"boolean","default":false},"search":{"type":"object","optional":true},"submenu":{"type":"enum","values":["flyout","drill"],"default":"flyout"},"size":{"type":"enum","values":["1/2","1"],"default":"1/2"},"width":{"type":"string","default":"content"},"tabs":{"type":"string","default":""},"active-tab":{"type":"string","default":""},"closable":{"type":"boolean","default":false}},"values":{},"events":{"select":{"carries":{"id":{"type":"string","nullable":true},"entry":"object","checked":{"type":"boolean","nullable":true},"group":{"type":"string","nullable":true}},"cancelable":true},"change":{"x-native":false,"carries":{"id":{"type":"string","nullable":true},"value":{"type":"id"},"previous":{"type":"id"},"entry":"object"},"cancelable":true},"changed":{"x-native":false,"carries":{"id":{"type":"string","nullable":true},"value":{"type":"id"},"previous":{"type":"id"},"entry":"object"}},"reset":{"carries":{},"cancelable":true,"own-verb":true},"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"search":{"carries":{"query":"string"},"own-verb":true},"tab":{"carries":{"id":"string","index":"number"},"own-verb":true}},"actions":{"open-for":{"with":{"anchor":"object","options":{"type":"object","optional":true,"schema":{"properties":{"side":{"type":"string","default":"block-end"},"align":{"type":"string","default":"start"},"focus":{"type":"string","enum":["first","last","none"],"default":"first"}}}}},"waits":true,"emits":"open"},"toggle-for":{"with":{"anchor":"object","options":{"type":"object","optional":true}},"waits":true},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"emits":"close"},"choose-tab":{"with":{"index":"number"}},"request-close":{},"set-value":{"with":{"id":"string","value":{"type":"id"}}},"set-all":{"with":{"values":"object"}},"show":{"with":{"id":"string"}},"reset":{"emits":"reset"}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"css-variables":{"--sf-context-menu-background-color":{"type":"color","state":"default"},"--sf-context-menu-color":{"type":"color","state":"default"},"--sf-context-menu-border-color":{"type":"color","state":"default"},"--sf-context-menu-border-width":{"type":"length","state":"default"},"--sf-context-menu-radius":{"type":"length","state":"default"},"--sf-context-menu-padding-inline":{"type":"length","state":"default"},"--sf-context-menu-padding-block":{"type":"length","state":"default"},"--sf-context-menu-gap":{"type":"length","state":"default"},"--sf-context-menu-inline-size":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.menu-context","tag":"sf-menu-context","version":"1.7.0","kind":"leaf","settings":{"position":{"type":"enum","values":["","inline-start","inline-start-top","inline-start-bottom","inline-end","inline-end-top","inline-end-bottom","top","top-inline-start","top-inline-end","bottom","bottom-inline-start","bottom-inline-end","start","end","top-start","top-end","bottom-start","bottom-end","left","left-top","left-bottom","right","right-top","right-bottom","top-left","top-center","top-right","bottom-left","bottom-center","bottom-right","left-start","left-end","right-start","right-end","inline-start-start","inline-start-end","inline-end-start","inline-end-end"],"default":""},"tooltip":{"type":"boolean","default":true},"text":{"type":"string","default":""},"items":{"type":"list","default":[],"of":{"text":"string","value":"string"}},"content-class":{"type":"string","default":""},"entries":{"type":"list","default":[],"of":{"id":"string","text":"string","caption":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"avatar":{"type":"string","optional":true},"initials":{"type":"string","optional":true},"shortcut":{"type":"string","optional":true},"kind":{"type":"string","optional":true},"type":{"type":"string","optional":true},"value":{"type":"string","optional":true},"lang":{"type":"string","optional":true},"keywords":{"type":"string","optional":true},"checked":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true},"danger":{"type":"boolean","optional":true},"current":{"type":"boolean","optional":true},"href":{"type":"string","optional":true},"keep-open":{"type":"boolean","optional":true},"submenu":{"type":"list","optional":true},"search":{"type":"object","optional":true},"options":{"type":"list","optional":true},"items":{"type":"list","optional":true},"min":{"type":"number","optional":true},"max":{"type":"number","optional":true},"step":{"type":"number","optional":true},"unit":{"type":"string","optional":true},"view":{"type":"string","optional":true}}},"popup":{"type":"boolean","default":false},"search":{"type":"object","optional":true},"submenu":{"type":"enum","values":["flyout","drill"],"default":"flyout"},"size":{"type":"enum","values":["1/2","1"],"default":"1/2"},"width":{"type":"string","default":"content"},"tabs":{"type":"string","default":""},"active-tab":{"type":"string","default":""},"closable":{"type":"boolean","default":false}},"values":{},"events":{"select":{"carries":{"id":{"type":"string","nullable":true},"entry":"object","checked":{"type":"boolean","nullable":true},"group":{"type":"string","nullable":true}},"cancelable":true},"change":{"x-native":false,"carries":{"id":{"type":"string","nullable":true},"value":{"type":"id"},"previous":{"type":"id"},"entry":"object"},"cancelable":true},"changed":{"x-native":false,"carries":{"id":{"type":"string","nullable":true},"value":{"type":"id"},"previous":{"type":"id"},"entry":"object"}},"reset":{"carries":{},"cancelable":true,"own-verb":true},"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"search":{"carries":{"query":"string"},"own-verb":true},"tab":{"carries":{"id":"string","index":"number"},"own-verb":true}},"actions":{"open-for":{"with":{"anchor":"object","options":{"type":"object","optional":true,"schema":{"properties":{"side":{"type":"string","default":"block-end"},"align":{"type":"string","default":"start"},"focus":{"type":"string","enum":["first","last","none"],"default":"first"}}}}},"waits":true,"emits":"open"},"toggle-for":{"with":{"anchor":"object","options":{"type":"object","optional":true}},"waits":true},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"emits":"close"},"choose-tab":{"with":{"index":"number"}},"request-close":{},"set-value":{"with":{"id":"string","value":{"type":"id"}}},"set-all":{"with":{"values":"object"}},"show":{"with":{"id":"string"}},"reset":{"emits":"reset"}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"css-variables":{"--sf-context-menu-background-color":{"type":"color","state":"default"},"--sf-context-menu-color":{"type":"color","state":"default"},"--sf-context-menu-border-color":{"type":"color","state":"default"},"--sf-context-menu-border-width":{"type":"length","state":"default"},"--sf-context-menu-radius":{"type":"length","state":"default"},"--sf-context-menu-padding-inline":{"type":"length","state":"default"},"--sf-context-menu-padding-block":{"type":"length","state":"default"},"--sf-context-menu-gap":{"type":"length","state":"default"},"--sf-context-menu-inline-size":{"type":"length","state":"default"}}}');
 
 /***/ },
 
