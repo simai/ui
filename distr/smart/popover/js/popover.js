@@ -453,7 +453,10 @@ const PopoverElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__
 // through core (`core/js/open-surface-mark`) rather than written here.
 
 class SfPopover extends PopoverElement {
-  // The manifest's settings and value, and the base's template name.
+  // Its DOM updates are all it draws: the first one counts as its render
+  // (Smart base, simai/ui-source#70).
+  static rendersNoTemplate = true; // The manifest's settings and value, and the base's template name.
+
   static get props() {
     return { ...super.props,
       templateName: {
@@ -693,7 +696,9 @@ class SfPopover extends PopoverElement {
     if (!surface) return true;
     surface.setAttribute('role', this.surfaceRole);
     if (this.label) surface.setAttribute('aria-label', this.label);else surface.removeAttribute('aria-label');
-    surface.style.setProperty('--sf-popover--width', this.width || '');
+    surface.style.setProperty('--sf-popover--width', this.width || ''); // The gap to the trigger (#69), a margin on the trigger's side.
+
+    if (this.offset) surface.style.setProperty('--sf-popover--offset', this.offset);else surface.style.removeProperty('--sf-popover--offset');
     return true;
   }
 
@@ -813,7 +818,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-popov
 /***/ "fcb18992f3bb"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.popover","tag":"sf-popover","version":"1.1.6","kind":"leaf","settings":{"placement":{"type":"enum","values":["bottom-start","bottom-end","top-start","top-end","inline-start","inline-end"],"default":"bottom-end"},"label":{"type":"string","default":""},"width":{"type":"string","default":""},"dismissible":{"type":"boolean","default":true},"surface-role":{"type":"enum","values":["dialog","menu","listbox","group"],"default":"dialog"},"unsaved":{"type":"boolean","default":false}},"values":{"open":{"type":"boolean","default":false,"reflect":true}},"events":{"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}}},"actions":{"toggle":{"with":{"force":{"type":"boolean","optional":true}}},"show":{"emits":"open"},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"emits":"close"},"return-focus":{}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"css-variables":{"--sf-popover-background-color":{"type":"color","state":"default"},"--sf-popover-color":{"type":"color","state":"default"},"--sf-popover-radius":{"type":"length","state":"default"},"--sf-popover-shadow":{"type":"shadow","state":"default"},"--sf-popover-max-width":{"type":"length","state":"default"},"--sf-popover-max-height":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.popover","tag":"sf-popover","version":"1.2.0","kind":"leaf","settings":{"placement":{"type":"enum","values":["bottom-start","bottom-end","top-start","top-end","inline-start","inline-end"],"default":"bottom-end"},"label":{"type":"string","default":""},"width":{"type":"string","default":""},"offset":{"type":"string","default":""},"dismissible":{"type":"boolean","default":true},"surface-role":{"type":"enum","values":["dialog","menu","listbox","group"],"default":"dialog"},"unsaved":{"type":"boolean","default":false}},"values":{"open":{"type":"boolean","default":false,"reflect":true}},"events":{"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}}},"actions":{"toggle":{"with":{"force":{"type":"boolean","optional":true}}},"show":{"emits":"open"},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"emits":"close"},"return-focus":{}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"css-variables":{"--sf-popover-background-color":{"type":"color","state":"default"},"--sf-popover-color":{"type":"color","state":"default"},"--sf-popover-radius":{"type":"length","state":"default"},"--sf-popover-shadow":{"type":"shadow","state":"default"},"--sf-popover-max-width":{"type":"length","state":"default"},"--sf-popover-max-height":{"type":"length","state":"default"}}}');
 
 /***/ },
 

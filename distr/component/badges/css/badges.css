@@ -127,104 +127,104 @@
     border-top-right-radius: var(--sf-badge-radius, var(--sf-radius-circle));
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-badge {
-    padding-left: var(--sf-badge--padding-inline-start);
+    padding-left: max(var(--sf-a0), var(--sf-badge--padding-inline-start) - var(--sf-badge--border-inline-start-width));
   }
   @supports not (padding-inline-start: initial) {
   html:not([dir="rtl"]) .sf-badge {
-    padding-left: var(--sf-badge--padding-inline-start);
+    padding-left: max(var(--sf-a0), var(--sf-badge--padding-inline-start) - var(--sf-badge--border-inline-start-width));
     }
   }
   .sf-badge:where(:dir(ltr)) {
-    padding-left: var(--sf-badge--padding-inline-start);
+    padding-left: max(var(--sf-a0), var(--sf-badge--padding-inline-start) - var(--sf-badge--border-inline-start-width));
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-badge {
-    padding-right: var(--sf-badge--padding-inline-start);
+    padding-right: max(var(--sf-a0), var(--sf-badge--padding-inline-start) - var(--sf-badge--border-inline-start-width));
   }
   @supports not (padding-inline-start: initial) {
   [dir="rtl"] .sf-badge {
-    padding-right: var(--sf-badge--padding-inline-start);
+    padding-right: max(var(--sf-a0), var(--sf-badge--padding-inline-start) - var(--sf-badge--border-inline-start-width));
     }
   }
   .sf-badge:where(:dir(rtl)) {
-    padding-right: var(--sf-badge--padding-inline-start);
+    padding-right: max(var(--sf-a0), var(--sf-badge--padding-inline-start) - var(--sf-badge--border-inline-start-width));
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-badge {
-    padding-right: var(--sf-badge--padding-inline-end);
+    padding-right: max(var(--sf-a0), var(--sf-badge--padding-inline-end) - var(--sf-badge--border-inline-end-width));
   }
   @supports not (padding-inline-end: initial) {
   html:not([dir="rtl"]) .sf-badge {
-    padding-right: var(--sf-badge--padding-inline-end);
+    padding-right: max(var(--sf-a0), var(--sf-badge--padding-inline-end) - var(--sf-badge--border-inline-end-width));
     }
   }
   .sf-badge:where(:dir(ltr)) {
-    padding-right: var(--sf-badge--padding-inline-end);
+    padding-right: max(var(--sf-a0), var(--sf-badge--padding-inline-end) - var(--sf-badge--border-inline-end-width));
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-badge {
-    padding-left: var(--sf-badge--padding-inline-end);
+    padding-left: max(var(--sf-a0), var(--sf-badge--padding-inline-end) - var(--sf-badge--border-inline-end-width));
   }
   @supports not (padding-inline-end: initial) {
   [dir="rtl"] .sf-badge {
-    padding-left: var(--sf-badge--padding-inline-end);
+    padding-left: max(var(--sf-a0), var(--sf-badge--padding-inline-end) - var(--sf-badge--border-inline-end-width));
     }
   }
   .sf-badge:where(:dir(rtl)) {
-    padding-left: var(--sf-badge--padding-inline-end);
+    padding-left: max(var(--sf-a0), var(--sf-badge--padding-inline-end) - var(--sf-badge--border-inline-end-width));
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-badge {
-    border-left-width: 0;
-    border-left-width: var(--sf-badge--border-inline-start-width, 0);
+    border-left-width: var(--sf-a0);
+    border-left-width: var(--sf-badge--border-inline-start-width, var(--sf-a0));
   }
   @supports not (border-inline-start-width: initial) {
   html:not([dir="rtl"]) .sf-badge {
-    border-left-width: 0;
-    border-left-width: var(--sf-badge--border-inline-start-width, 0);
+    border-left-width: var(--sf-a0);
+    border-left-width: var(--sf-badge--border-inline-start-width, var(--sf-a0));
     }
   }
   .sf-badge:where(:dir(ltr)) {
-    border-left-width: 0;
-    border-left-width: var(--sf-badge--border-inline-start-width, 0);
+    border-left-width: var(--sf-a0);
+    border-left-width: var(--sf-badge--border-inline-start-width, var(--sf-a0));
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-badge {
-    border-right-width: 0;
-    border-right-width: var(--sf-badge--border-inline-start-width, 0);
+    border-right-width: var(--sf-a0);
+    border-right-width: var(--sf-badge--border-inline-start-width, var(--sf-a0));
   }
   @supports not (border-inline-start-width: initial) {
   [dir="rtl"] .sf-badge {
-    border-right-width: 0;
-    border-right-width: var(--sf-badge--border-inline-start-width, 0);
+    border-right-width: var(--sf-a0);
+    border-right-width: var(--sf-badge--border-inline-start-width, var(--sf-a0));
     }
   }
   .sf-badge:where(:dir(rtl)) {
-    border-right-width: 0;
-    border-right-width: var(--sf-badge--border-inline-start-width, 0);
+    border-right-width: var(--sf-a0);
+    border-right-width: var(--sf-badge--border-inline-start-width, var(--sf-a0));
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-badge {
-    border-right-width: 0;
-    border-right-width: var(--sf-badge--border-inline-end-width, 0);
+    border-right-width: var(--sf-a0);
+    border-right-width: var(--sf-badge--border-inline-end-width, var(--sf-a0));
   }
   @supports not (border-inline-end-width: initial) {
   html:not([dir="rtl"]) .sf-badge {
-    border-right-width: 0;
-    border-right-width: var(--sf-badge--border-inline-end-width, 0);
+    border-right-width: var(--sf-a0);
+    border-right-width: var(--sf-badge--border-inline-end-width, var(--sf-a0));
     }
   }
   .sf-badge:where(:dir(ltr)) {
-    border-right-width: 0;
-    border-right-width: var(--sf-badge--border-inline-end-width, 0);
+    border-right-width: var(--sf-a0);
+    border-right-width: var(--sf-badge--border-inline-end-width, var(--sf-a0));
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-badge {
-    border-left-width: 0;
-    border-left-width: var(--sf-badge--border-inline-end-width, 0);
+    border-left-width: var(--sf-a0);
+    border-left-width: var(--sf-badge--border-inline-end-width, var(--sf-a0));
   }
   @supports not (border-inline-end-width: initial) {
   [dir="rtl"] .sf-badge {
-    border-left-width: 0;
-    border-left-width: var(--sf-badge--border-inline-end-width, 0);
+    border-left-width: var(--sf-a0);
+    border-left-width: var(--sf-badge--border-inline-end-width, var(--sf-a0));
     }
   }
   .sf-badge:where(:dir(rtl)) {
-    border-left-width: 0;
-    border-left-width: var(--sf-badge--border-inline-end-width, 0);
+    border-left-width: var(--sf-a0);
+    border-left-width: var(--sf-badge--border-inline-end-width, var(--sf-a0));
   }
   .sf-badge {
     border-end-end-radius: var(--sf-radius-circle);
@@ -240,13 +240,20 @@
     box-sizing: border-box;
     gap: var(--sf-space-1\/4);
     gap: var(--sf-badge--gap, var(--sf-space-1\/4));
-    padding-top: var(--sf-badge--padding-block);
-    padding-bottom: var(--sf-badge--padding-block);
-    padding-block: var(--sf-badge--padding-block);
-    -webkit-padding-start: var(--sf-badge--padding-inline-start);
-            padding-inline-start: var(--sf-badge--padding-inline-start);
-    -webkit-padding-end: var(--sf-badge--padding-inline-end);
-            padding-inline-end: var(--sf-badge--padding-inline-end);
+    /* A border is drawn inside the badge's size (R019): each side's padding gives
+       up the border's width, so a tonal, a main and an outline badge of one size
+       stand equally high and wide. Where the padding is thinner than the border
+       (the line sizes have no block padding) the text line gives up the rest. */
+    padding-top: max(var(--sf-a0), var(--sf-badge--padding-block) - var(--sf-badge--border-top-width));
+    -webkit-padding-before: max(var(--sf-a0), var(--sf-badge--padding-block) - var(--sf-badge--border-top-width));
+            padding-block-start: max(var(--sf-a0), var(--sf-badge--padding-block) - var(--sf-badge--border-top-width));
+    padding-bottom: max(var(--sf-a0), var(--sf-badge--padding-block) - var(--sf-badge--border-bottom-width));
+    -webkit-padding-after: max(var(--sf-a0), var(--sf-badge--padding-block) - var(--sf-badge--border-bottom-width));
+            padding-block-end: max(var(--sf-a0), var(--sf-badge--padding-block) - var(--sf-badge--border-bottom-width));
+    -webkit-padding-start: max(var(--sf-a0), var(--sf-badge--padding-inline-start) - var(--sf-badge--border-inline-start-width));
+            padding-inline-start: max(var(--sf-a0), var(--sf-badge--padding-inline-start) - var(--sf-badge--border-inline-start-width));
+    -webkit-padding-end: max(var(--sf-a0), var(--sf-badge--padding-inline-end) - var(--sf-badge--border-inline-end-width));
+            padding-inline-end: max(var(--sf-a0), var(--sf-badge--padding-inline-end) - var(--sf-badge--border-inline-end-width));
     min-height: var(--sf-badge--min-size);
     min-block-size: var(--sf-badge--min-size);
     min-width: var(--sf-badge--min-size);
@@ -256,15 +263,15 @@
     background-color: var(--sf-badge--background-color);
     color: var(--sf-badge--color);
     font-size: var(--sf-badge--font-size);
-    line-height: var(--sf-badge--line-height);
-    border-top-width: 0;
-    border-top-width: var(--sf-badge--border-top-width, 0);
-    border-bottom-width: 0;
-    border-bottom-width: var(--sf-badge--border-bottom-width, 0);
-    border-inline-start-width: 0;
-    border-inline-start-width: var(--sf-badge--border-inline-start-width, 0);
-    border-inline-end-width: 0;
-    border-inline-end-width: var(--sf-badge--border-inline-end-width, 0);
+    line-height: var(--sf-badge--line-box);
+    border-top-width: var(--sf-a0);
+    border-top-width: var(--sf-badge--border-top-width, var(--sf-a0));
+    border-bottom-width: var(--sf-a0);
+    border-bottom-width: var(--sf-badge--border-bottom-width, var(--sf-a0));
+    border-inline-start-width: var(--sf-a0);
+    border-inline-start-width: var(--sf-badge--border-inline-start-width, var(--sf-a0));
+    border-inline-end-width: var(--sf-a0);
+    border-inline-end-width: var(--sf-badge--border-inline-end-width, var(--sf-a0));
     border-color: transparent;
     border-color: var(--sf-badge--border-color, transparent);
     border-style: solid;
@@ -276,9 +283,19 @@
     --sf-badge--font-size: var(--sf-text-size-1\/3);
     --sf-badge--line-height: var(--sf-text-height-1\/3);
     --sf-badge--padding-block: var(--sf-badge-padding-block, var(--sf-ui-1\/3--space-y-tightness-low));
-    --sf-badge--padding-inline-end: var(--sf-badge-padding-inline, var(--sf-ui-1\/3--text-space-x));
-    --sf-badge--padding-inline-start: var(--sf-badge-padding-inline, var(--sf-ui-1\/3--text-space-x));
+    /* Side room (R020, owner decision 2026-11-07): a badge's text sits
+       --sf-space-1/2 from its edges at every size; sf-badge--tight takes the
+       size's own text inset (--sf-ui-*--text-space-x), the room a badge had
+       before, for dense places -- a table, a counter, a chip in a row. Each size
+       and line names its tight room; the tight modifier swaps it in. */
+    --sf-badge--side-room: var(--sf-space-1\/2);
+    --sf-badge--side-tight: var(--sf-ui-1\/3--text-space-x);
+    --sf-badge--padding-inline-end: var(--sf-badge-padding-inline, var(--sf-badge--side-room));
+    --sf-badge--padding-inline-start: var(--sf-badge-padding-inline, var(--sf-badge--side-room));
+    /* The size is the text line and the block padding, whatever the look: the
+       border is inside it (see the padding above). */
     --sf-badge--min-size: calc(var(--sf-badge--line-height) + 2 * var(--sf-badge--padding-block));
+    --sf-badge--line-box: calc(var(--sf-badge--line-height) - max(var(--sf-a0), calc(var(--sf-badge--border-top-width) - var(--sf-badge--padding-block))) - max(var(--sf-a0), calc(var(--sf-badge--border-bottom-width) - var(--sf-badge--padding-block))));
     /* Public variables (core/contracts/public-variables.v1.json): names with a
        single dash after the block, never set by the Framework, read wherever a
        resting look is defined -- here, by size, by status -- and not by states,
@@ -286,10 +303,10 @@
        only through a fallback a place to take them. */
     --sf-badge--gap: var(--sf-badge-gap, var(--sf-space-1\/4));
     --sf-badge--border-color: var(--sf-badge-border-color, transparent);
-    --sf-badge--border-top-width: var(--sf-badge-border-width, 0);
-    --sf-badge--border-bottom-width: var(--sf-badge-border-width, 0);
-    --sf-badge--border-inline-start-width: var(--sf-badge-border-width, 0);
-    --sf-badge--border-inline-end-width: var(--sf-badge-border-width, 0);
+    --sf-badge--border-top-width: var(--sf-badge-border-width, var(--sf-a0));
+    --sf-badge--border-bottom-width: var(--sf-badge-border-width, var(--sf-a0));
+    --sf-badge--border-inline-start-width: var(--sf-badge-border-width, var(--sf-a0));
+    --sf-badge--border-inline-end-width: var(--sf-badge-border-width, var(--sf-a0));
   }
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) justify-content/center (.justify-center) align-items/center (.items-center) */
   .sf-badge .sf-badge-icon-container {
@@ -479,8 +496,7 @@
     --sf-badge--font-size: var(--sf-text-size-1);
     --sf-badge--line-height: var(--sf-text-height-1);
     --sf-badge--padding-block: var(--sf-badge-padding-block, var(--sf-ui-1--space-y-tightness-low));
-    --sf-badge--padding-inline-end: var(--sf-badge-padding-inline, var(--sf-ui-1--text-space-x));
-    --sf-badge--padding-inline-start: var(--sf-badge-padding-inline, var(--sf-ui-1--text-space-x));
+    --sf-badge--side-tight: var(--sf-ui-1--text-space-x);
   }
   .sf-badge.sf-badge--size-1 .sf-icon {
     --sf-icon--font-size: var(--sf-badge--font-size);
@@ -489,15 +505,14 @@
   }
   .sf-badge--size-1 .sf-badge-text, .sf-badge--size-1\/3 .sf-badge-text, .sf-badge--size-1\/2 .sf-badge-text {
     --sf-badge-text--font-size: var(--sf-badge--font-size);
-    --sf-badge-text--line-height: var(--sf-badge--line-height);
+    --sf-badge-text--line-height: var(--sf-badge--line-box);
   }
   .sf-badge--size-1\/3 {
     --sf-badge-spinner--size: var(--sf-text-size-1\/3);
     --sf-badge--font-size: var(--sf-text-size-1\/3);
     --sf-badge--line-height: var(--sf-text-height-1\/3);
     --sf-badge--padding-block: var(--sf-badge-padding-block, var(--sf-ui-1\/3--space-y-tightness-low));
-    --sf-badge--padding-inline-end: var(--sf-badge-padding-inline, var(--sf-ui-1\/3--text-space-x));
-    --sf-badge--padding-inline-start: var(--sf-badge-padding-inline, var(--sf-ui-1\/3--text-space-x));
+    --sf-badge--side-tight: var(--sf-ui-1\/3--text-space-x);
   }
   .sf-badge.sf-badge--size-1\/3 .sf-icon {
     --sf-icon--font-size: var(--sf-badge--font-size);
@@ -509,8 +524,7 @@
     --sf-badge--font-size: var(--sf-text-size-1\/2);
     --sf-badge--line-height: var(--sf-text-height-1\/2);
     --sf-badge--padding-block: var(--sf-badge-padding-block, var(--sf-ui-1\/2--space-y-tightness-low));
-    --sf-badge--padding-inline-end: var(--sf-badge-padding-inline, var(--sf-ui-1\/2--text-space-x));
-    --sf-badge--padding-inline-start: var(--sf-badge-padding-inline, var(--sf-ui-1\/2--text-space-x));
+    --sf-badge--side-tight: var(--sf-ui-1\/2--text-space-x);
   }
   .sf-badge.sf-badge--size-1\/2 .sf-icon {
     --sf-icon--font-size: var(--sf-badge--font-size);
@@ -534,22 +548,24 @@
     --sf-badge--font-size: var(--sf-text-size-1\/3);
     --sf-badge--line-height: var(--sf-text-height-1\/2);
     --sf-badge--padding-block: var(--sf-badge-padding-block, calc(var(--sf-px) * 0));
-    --sf-badge--padding-inline-start: var(--sf-badge-padding-inline, var(--sf-ui-1\/2--text-space-x));
-    --sf-badge--padding-inline-end: var(--sf-badge-padding-inline, var(--sf-ui-1\/2--text-space-x));
+    --sf-badge--side-tight: var(--sf-ui-1\/2--text-space-x);
   }
   .sf-badge.sf-badge--line-1 {
     --sf-badge--font-size: var(--sf-text-size-1\/2);
     --sf-badge--line-height: var(--sf-text-height-1);
     --sf-badge--padding-block: var(--sf-badge-padding-block, calc(var(--sf-px) * 0));
-    --sf-badge--padding-inline-start: var(--sf-badge-padding-inline, var(--sf-ui-1--text-space-x));
-    --sf-badge--padding-inline-end: var(--sf-badge-padding-inline, var(--sf-ui-1--text-space-x));
+    --sf-badge--side-tight: var(--sf-ui-1--text-space-x);
   }
   .sf-badge.sf-badge--line-2 {
     --sf-badge--font-size: var(--sf-text-size-1);
     --sf-badge--line-height: var(--sf-text-height-2);
     --sf-badge--padding-block: var(--sf-badge-padding-block, calc(var(--sf-px) * 0));
-    --sf-badge--padding-inline-start: var(--sf-badge-padding-inline, var(--sf-ui-2--text-space-x));
-    --sf-badge--padding-inline-end: var(--sf-badge-padding-inline, var(--sf-ui-2--text-space-x));
+    --sf-badge--side-tight: var(--sf-ui-2--text-space-x);
+  }
+  /* Tight: the size's own text inset, for dense places. Written after the size
+     and line rules. */
+  .sf-badge.sf-badge--tight {
+    --sf-badge--side-room: var(--sf-badge--side-tight);
   }
   /* Compact: the icon alone, the text a visually hidden copy that stays the name.
      The box closes to a square: its inline padding takes the block padding, and
@@ -557,6 +573,18 @@
   .sf-badge.sf-badge--compact {
     --sf-badge--padding-inline-start: var(--sf-badge-padding-inline, var(--sf-badge--padding-block));
     --sf-badge--padding-inline-end: var(--sf-badge-padding-inline, var(--sf-badge--padding-block));
+  }
+  /* A figure: one character, a single-figure count. It keeps the size's own
+     (tight) side room whatever the default, so the size's minimum makes it as
+     wide as it is high: round. sf-badge sets it. A counter written as class
+     markup (.sf-badge[data-count], which the badges runtime fills -- a menu
+     row's, an admin menu's) is dense by nature and takes the same room; an
+     anchored one keeps its own geometry. */
+  .sf-badge.sf-badge--figure {
+    --sf-badge--side-room: var(--sf-badge--side-tight);
+  }
+  .sf-badge[data-count] {
+    --sf-badge--side-room: var(--sf-badge--side-tight);
   }
 }
 @property --sf-badge--anchor-radius {

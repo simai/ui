@@ -3830,7 +3830,9 @@ function logicalSide(placement, rtl = false) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   anchor: () => (/* binding */ anchor),
+/* harmony export */   anchorReference: () => (/* binding */ anchorReference),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   referenceRect: () => (/* binding */ referenceRect),
 /* harmony export */   resolveLength: () => (/* binding */ resolveLength)
 /* harmony export */ });
 /* harmony import */ var _floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("6d338aa773af");
@@ -3858,6 +3860,50 @@ function resolveLength(value, context = document.body) {
   const pixels = parseFloat(getComputedStyle(probe).width) || 0;
   probe.remove();
   return pixels;
+} // A host that draws no box of its own -- every Smart element is
+// `display: contents`, sf-button-icon and sf-button among them -- measures as a
+// zero rectangle at 0,0, and a menu opened for it stood at the window's left
+// edge (simai/ui-source#68). Such a host is measured by what it draws: the
+// union of its children's boxes. The first of them stands in for it where an
+// element is needed (scroll ancestors, resize).
+
+function drawsNoBox(element) {
+  return element instanceof Element && getComputedStyle(element).display === 'contents';
+}
+
+function boxesOf(element, found = []) {
+  for (const child of element.children) {
+    if (drawsNoBox(child)) boxesOf(child, found);else if (child.getClientRects().length) found.push(child);
+  }
+
+  return found;
+}
+/** The rectangle a reference occupies: its own, or what it draws when it has none. */
+
+
+function referenceRect(element) {
+  if (!drawsNoBox(element)) return element.getBoundingClientRect();
+  const boxes = boxesOf(element).map(box => box.getBoundingClientRect());
+  if (!boxes.length) return element.getBoundingClientRect();
+  const left = Math.min(...boxes.map(box => box.left));
+  const top = Math.min(...boxes.map(box => box.top));
+  const right = Math.max(...boxes.map(box => box.right));
+  const bottom = Math.max(...boxes.map(box => box.bottom));
+  return new DOMRect(left, top, right - left, bottom - top);
+}
+/** The element positioning measures: the reference itself, or for a host that draws no box a stand-in that measures what it draws. */
+
+function anchorReference(element) {
+  if (!drawsNoBox(element)) return element;
+  return {
+    getBoundingClientRect: () => referenceRect(element),
+    getClientRects: () => [referenceRect(element)],
+
+    get contextElement() {
+      return boxesOf(element)[0] || element.parentElement || element;
+    }
+
+  };
 }
 /**
  * Keeps `floating` anchored to `reference`.
@@ -3869,8 +3915,10 @@ function resolveLength(value, context = document.body) {
 function anchor(reference, floating, options = {}) {
   if (!(reference instanceof Element) || !(floating instanceof HTMLElement)) {
     throw new TypeError('Anchored positioning needs a reference element and a floating element');
-  }
+  } // Measured through what it draws when the reference draws no box (#68).
 
+
+  const measured = anchorReference(reference);
   const settings = {
     side: 'block-end',
     align: 'start',
@@ -3929,7 +3977,7 @@ function anchor(reference, floating, options = {}) {
     // hanging past the field on the other side. The edge a field reaches is an
     // edge its own panel may reach too.
 
-    const box = reference.getBoundingClientRect();
+    const box = referenceRect(reference);
     const clientWidth = document.documentElement.clientWidth;
     const edges = {
       top: padding,
@@ -3979,7 +4027,7 @@ function anchor(reference, floating, options = {}) {
       }
 
     }));
-    const result = await (0,_floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.computePosition)(reference, floating, {
+    const result = await (0,_floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.computePosition)(measured, floating, {
       strategy: 'fixed',
       placement: (0,_position_placement_js__WEBPACK_IMPORTED_MODULE_1__.physicalPlacement)(settings.side, settings.align, rtl),
       middleware
@@ -4026,7 +4074,7 @@ function anchor(reference, floating, options = {}) {
     return running;
   };
 
-  const cleanup = settings.autoUpdate ? (0,_floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.autoUpdate)(reference, floating, controller.update) : null;
+  const cleanup = settings.autoUpdate ? (0,_floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.autoUpdate)(measured, floating, controller.update) : null;
 
   controller.stop = () => {
     controller.stopped = true;
@@ -4043,6 +4091,8 @@ function anchor(reference, floating, options = {}) {
 }
 const Position = Object.freeze({
   anchor,
+  anchorReference,
+  referenceRect,
   logicalSide: _position_placement_js__WEBPACK_IMPORTED_MODULE_1__.logicalSide,
   physicalPlacement: _position_placement_js__WEBPACK_IMPORTED_MODULE_1__.physicalPlacement,
   resolveLength
@@ -5363,7 +5413,21 @@ class SfBaseElement extends HTMLElement {
     const mode = this.hasBuiltInTemplate(this.componentTemplateName) && !this._externalTemplateModule ? this.resolveUpdateMode(changedAttributes) : "lit";
 
     if (mode === "dom" && this.updateDom(changedAttributes) !== false) {
+      // An element that never renders a template (static rendersNoTemplate:
+      // sf-popover keeps the page's own trigger and surface where they were
+      // written) is drawn by its first DOM update. It says so as a render
+      // does: the Loader reads the children it kept on sf-after-render, and
+      // without one the sf-dropdown in a popover's surface was never defined
+      // (simai/ui-source#70); whenRendered() settles too. Only such an
+      // element: one that patches a printed first paint by DOM before its
+      // first render (sf-progress-bar) still has that render to come, and it
+      // replaces the printed picture.
+      const first = !this._hasRendered && this.constructor.rendersNoTemplate === true;
+      if (first) this._hasRendered = true;
       this.afterUpdate(changedAttributes, mode);
+      if (first) this.emitComponentEvent("after-render", {
+        changedAttributes
+      });
       this.emitComponentEvent("updated", {
         changedAttributes,
         updateMode: mode
@@ -6888,7 +6952,15 @@ class SfBaseElement extends HTMLElement {
     }
 
     if (this.shouldClearLightDomBeforeFirstRender()) {
-      this.replaceChildren();
+      this.replaceChildren(); // A first render that drew and was then cut short -- the element was
+      // moved while it waited for its sheets, as sf-drawer moves its content
+      // into its portal -- never set _hasRendered, so the next one clears
+      // again. Lit's part on the host survived the clear with its markers
+      // gone, and committed nothing for the same values: a static sf-icon in
+      // a docked drawer stayed empty in 2 of 8 loads (simai/ui-source#56).
+      // The cleared host starts lit afresh.
+
+      if (this._$litPart$ !== undefined) this._$litPart$ = undefined;
       this.endFirstPaint();
       return;
     }

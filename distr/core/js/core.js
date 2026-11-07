@@ -8065,7 +8065,9 @@ function logicalSide(placement, rtl = false) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   anchor: () => (/* binding */ anchor),
+/* harmony export */   anchorReference: () => (/* binding */ anchorReference),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   referenceRect: () => (/* binding */ referenceRect),
 /* harmony export */   resolveLength: () => (/* binding */ resolveLength)
 /* harmony export */ });
 /* harmony import */ var _floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("6d338aa773af");
@@ -8093,6 +8095,50 @@ function resolveLength(value, context = document.body) {
   const pixels = parseFloat(getComputedStyle(probe).width) || 0;
   probe.remove();
   return pixels;
+} // A host that draws no box of its own -- every Smart element is
+// `display: contents`, sf-button-icon and sf-button among them -- measures as a
+// zero rectangle at 0,0, and a menu opened for it stood at the window's left
+// edge (simai/ui-source#68). Such a host is measured by what it draws: the
+// union of its children's boxes. The first of them stands in for it where an
+// element is needed (scroll ancestors, resize).
+
+function drawsNoBox(element) {
+  return element instanceof Element && getComputedStyle(element).display === 'contents';
+}
+
+function boxesOf(element, found = []) {
+  for (const child of element.children) {
+    if (drawsNoBox(child)) boxesOf(child, found);else if (child.getClientRects().length) found.push(child);
+  }
+
+  return found;
+}
+/** The rectangle a reference occupies: its own, or what it draws when it has none. */
+
+
+function referenceRect(element) {
+  if (!drawsNoBox(element)) return element.getBoundingClientRect();
+  const boxes = boxesOf(element).map(box => box.getBoundingClientRect());
+  if (!boxes.length) return element.getBoundingClientRect();
+  const left = Math.min(...boxes.map(box => box.left));
+  const top = Math.min(...boxes.map(box => box.top));
+  const right = Math.max(...boxes.map(box => box.right));
+  const bottom = Math.max(...boxes.map(box => box.bottom));
+  return new DOMRect(left, top, right - left, bottom - top);
+}
+/** The element positioning measures: the reference itself, or for a host that draws no box a stand-in that measures what it draws. */
+
+function anchorReference(element) {
+  if (!drawsNoBox(element)) return element;
+  return {
+    getBoundingClientRect: () => referenceRect(element),
+    getClientRects: () => [referenceRect(element)],
+
+    get contextElement() {
+      return boxesOf(element)[0] || element.parentElement || element;
+    }
+
+  };
 }
 /**
  * Keeps `floating` anchored to `reference`.
@@ -8104,8 +8150,10 @@ function resolveLength(value, context = document.body) {
 function anchor(reference, floating, options = {}) {
   if (!(reference instanceof Element) || !(floating instanceof HTMLElement)) {
     throw new TypeError('Anchored positioning needs a reference element and a floating element');
-  }
+  } // Measured through what it draws when the reference draws no box (#68).
 
+
+  const measured = anchorReference(reference);
   const settings = {
     side: 'block-end',
     align: 'start',
@@ -8164,7 +8212,7 @@ function anchor(reference, floating, options = {}) {
     // hanging past the field on the other side. The edge a field reaches is an
     // edge its own panel may reach too.
 
-    const box = reference.getBoundingClientRect();
+    const box = referenceRect(reference);
     const clientWidth = document.documentElement.clientWidth;
     const edges = {
       top: padding,
@@ -8214,7 +8262,7 @@ function anchor(reference, floating, options = {}) {
       }
 
     }));
-    const result = await (0,_floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.computePosition)(reference, floating, {
+    const result = await (0,_floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.computePosition)(measured, floating, {
       strategy: 'fixed',
       placement: (0,_position_placement_js__WEBPACK_IMPORTED_MODULE_1__.physicalPlacement)(settings.side, settings.align, rtl),
       middleware
@@ -8261,7 +8309,7 @@ function anchor(reference, floating, options = {}) {
     return running;
   };
 
-  const cleanup = settings.autoUpdate ? (0,_floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.autoUpdate)(reference, floating, controller.update) : null;
+  const cleanup = settings.autoUpdate ? (0,_floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.autoUpdate)(measured, floating, controller.update) : null;
 
   controller.stop = () => {
     controller.stopped = true;
@@ -8278,6 +8326,8 @@ function anchor(reference, floating, options = {}) {
 }
 const Position = Object.freeze({
   anchor,
+  anchorReference,
+  referenceRect,
   logicalSide: _position_placement_js__WEBPACK_IMPORTED_MODULE_1__.logicalSide,
   physicalPlacement: _position_placement_js__WEBPACK_IMPORTED_MODULE_1__.physicalPlacement,
   resolveLength
@@ -9736,7 +9786,7 @@ __webpack_require__.r(__webpack_exports__);
 // core.runtime.json). A set's release says the lowest version it needs, and
 // the index lookup keeps the releases this Core satisfies. Moved by hand with
 // the passport; tests/component-set-loader.contract.test.mjs holds them equal.
-const CORE_RUNTIME = '1.31.1';
+const CORE_RUNTIME = '1.32.0';
 const SET_NAME = /^[a-z][a-z0-9-]*$/u;
 const SET_INDEX_FORMAT = 'simai.framework.set-index';
 const SET_INDEX_URL = 'https://cdn.jsdelivr.net/npm/@simai-studio/sets@1/index.json';
@@ -15879,6 +15929,7 @@ function createWords(files = {}, source = null) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   BUILTIN_EDITOR_MANIFESTS: () => (/* binding */ BUILTIN_EDITOR_MANIFESTS),
+/* harmony export */   BUILTIN_PORT_ELEMENT_ALIASES: () => (/* reexport safe */ _routing_mjs__WEBPACK_IMPORTED_MODULE_4__.PORT_ELEMENT_ALIASES),
 /* harmony export */   BUILTIN_PORT_MANIFESTS: () => (/* binding */ BUILTIN_PORT_MANIFESTS),
 /* harmony export */   BUILTIN_TYPE_MANIFESTS: () => (/* binding */ BUILTIN_TYPE_MANIFESTS),
 /* harmony export */   CONTENT_ALERT_APPEARANCES: () => (/* binding */ CONTENT_ALERT_APPEARANCES),
@@ -15887,12 +15938,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   CONTENT_ITEM_PARENTS: () => (/* binding */ CONTENT_ITEM_PARENTS),
 /* harmony export */   CONTENT_RATIOS: () => (/* binding */ CONTENT_RATIOS),
 /* harmony export */   CONTENT_TABLE_HEADERS: () => (/* binding */ CONTENT_TABLE_HEADERS),
+/* harmony export */   PORT_MANIFEST_SF_TABLE_1_0_0: () => (/* binding */ PORT_MANIFEST_SF_TABLE_1_0_0),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _inline_model_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("e66d878fb4f8");
 /* harmony import */ var _regions_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("68efac8c1b57");
 /* harmony import */ var _schema_name_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("ac24888e7d3e");
 /* harmony import */ var _parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("18b9c76994c9");
+/* harmony import */ var _routing_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("4aea5d6d49c7");
 
 
 
@@ -16724,18 +16777,48 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
 // Published typed ports. Framework owns the element protocol; the product owns
 // what a request means, data access and authorization.
 //
-// sf-table answers this port and lives in the SIMAI Framework Pro package since
-// 2026-10-11 (the component folder in simai/ui-pro, package pro). The port stays
-// here: it is a public contract of the free Framework (composition-ports.v1.json,
-// the routing contract lock), and the package's tests read it from this file in
-// their overlay of ui-source.
+// The list port is answered by sf-view-table (formerly sf-table), which lives
+// in the SIMAI Framework Pro package since 2026-10-11 (the component folder in
+// simai/ui-pro, package pro). The port stays here: it is a public contract of
+// the free Framework (composition-ports.v1.json, the routing contract lock), and
+// the package's tests read it from this file in their overlay of ui-source.
+
+// The list port as the routing contract 1.0.0 published it, under the former
+// tag. Frozen: its bytes are pinned by the lock (port:sf-table@1.0.0), so a
+// consumer that pinned 1.0.0 stays valid. Not registered by default.
+const PORT_MANIFEST_SF_TABLE_1_0_0 = Object.freeze({
+  ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_2__.schemaFields)('simai.composition.port-manifest', 1),
+  element: 'sf-table',
+  version: '1.0.0',
+  component: 'smart.data-view',
+  component_version: '1.2.0',
+  outputs: {
+    selection: {
+      value: 'record-ids.v1',
+      summary: 'Explicit current-result selection of this instance, emitted once per change, including clearing.',
+    },
+  },
+  inputs: {
+    context: {
+      value: 'record-ids.v1',
+      effect: 'request',
+      summary: 'Restricts this collection to records related to the given identities. The table clears its selection, enters loading and emits sf-table-query-intent with the route sequence; the host resolves the relation and access and answers with applyQueryResult.',
+      request_event: 'sf-table-query-intent',
+      result_method: 'applyQueryResult',
+    },
+  },
+});
+
+// 1.1.0 (2026-11-07): the same ports under the element's own tag sf-view-table
+// (sf-view-table 1.14.0, rename plan R2) and its query event; values and
+// effects unchanged.
 const BUILTIN_PORT_MANIFESTS = Object.freeze([
   {
     ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_2__.schemaFields)('simai.composition.port-manifest', 1),
-    element: 'sf-table',
-    version: '1.0.0',
-    component: 'smart.data-view',
-    component_version: '1.2.0',
+    element: 'sf-view-table',
+    version: '1.1.0',
+    component: 'smart.view-table',
+    component_version: '1.14.0',
     outputs: {
       selection: {
         value: 'record-ids.v1',
@@ -16746,13 +16829,17 @@ const BUILTIN_PORT_MANIFESTS = Object.freeze([
       context: {
         value: 'record-ids.v1',
         effect: 'request',
-        summary: 'Restricts this collection to records related to the given identities. The table clears its selection, enters loading and emits sf-table-query-intent with the route sequence; the host resolves the relation and access and answers with applyQueryResult.',
-        request_event: 'sf-table-query-intent',
+        summary: 'Restricts this collection to records related to the given identities. The table clears its selection, enters loading and emits sf-view-table-query with the route sequence; the host resolves the relation and access and answers with applyQueryResult.',
+        request_event: 'sf-view-table-query',
         result_method: 'applyQueryResult',
       },
     },
   },
 ]);
+
+// Former port element names (routing.mjs PORT_ELEMENT_ALIASES): a binding to
+// sf-table finds the sf-view-table manifest until the record's remove_after.
+
 
 
 
@@ -21086,7 +21173,9 @@ function fieldKindRegistry() {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   FILE_ICONS: () => (/* binding */ FILE_ICONS),
 /* harmony export */   FILE_SIZE_UNITS: () => (/* reexport safe */ _format_js__WEBPACK_IMPORTED_MODULE_0__.FILE_SIZE_UNITS),
+/* harmony export */   fileIcon: () => (/* binding */ fileIcon),
 /* harmony export */   fileNameFromAddress: () => (/* binding */ fileNameFromAddress),
 /* harmony export */   fileSizeUnits: () => (/* reexport safe */ _format_js__WEBPACK_IMPORTED_MODULE_0__.fileSizeUnits),
 /* harmony export */   formatFileSize: () => (/* reexport safe */ _format_js__WEBPACK_IMPORTED_MODULE_0__.formatFileSize)
@@ -21115,6 +21204,28 @@ function fileNameFromAddress(href) {
   } catch {
     return tail;
   }
+}
+
+// The icon of a file's kind, by its media type: sf-download-file's own glyph
+// (download) when the type says nothing a reader would recognise. The
+// Composition renderer draws content.file with it; an editor that draws the
+// same row (sf-content-editor) imports it from here rather than keeping a copy.
+// Each entry is [pattern, icon]; the first pattern that matches wins.
+const FILE_ICONS = Object.freeze([
+  [/^application\/pdf$/u, 'picture_as_pdf'],
+  [/^image\//u, 'image'],
+  [/^video\//u, 'movie'],
+  [/^audio\//u, 'audio_file'],
+  [/^application\/(?:zip|x-zip-compressed|x-7z-compressed|x-rar-compressed|vnd\.rar|x-tar|gzip|x-gzip)$/u, 'folder_zip'],
+  [/^(?:text\/csv|application\/vnd\.ms-excel|application\/vnd\.openxmlformats-officedocument\.spreadsheetml\.[a-z.]+|application\/vnd\.oasis\.opendocument\.spreadsheet)$/u, 'table_chart'],
+  [/^(?:application\/vnd\.ms-powerpoint|application\/vnd\.openxmlformats-officedocument\.presentationml\.[a-z.]+|application\/vnd\.oasis\.opendocument\.presentation)$/u, 'slideshow'],
+  [/^(?:text\/|application\/msword$|application\/vnd\.openxmlformats-officedocument\.wordprocessingml\.[a-z.]+$|application\/vnd\.oasis\.opendocument\.text$|application\/rtf$)/u, 'description'],
+].map((entry) => Object.freeze(entry)));
+
+// The icon name for a media type; download when there is none or nothing matches.
+function fileIcon(mime) {
+  if (typeof mime !== 'string' || !mime) return 'download';
+  return FILE_ICONS.find(([pattern]) => pattern.test(mime))?.[1] ?? 'download';
 }
 
 
@@ -22564,6 +22675,17 @@ function validUrl(value) {
   }
 }
 
+// A picture the host keeps in the browser (IndexedDB, before a server store)
+// is shown from an object URL. Such an address is only ever one a host's
+// resolveSource gave at render (simai/ui-source#71), never one a Document
+// stores, and only of the page's own origin: a blob: address is the page's.
+function hostBlobUrl(value) {
+  const match = /^blob:(https?:\/\/[^/]+)\//u.exec(String(value));
+  if (!match) return false;
+  const origin = globalThis.location?.origin;
+  return !origin || origin === 'null' || origin === match[1];
+}
+
 function validateInlineContent(value, path, diagnostics) {
   if (!Array.isArray(value)) return;
   for (let index = 0; index < value.length; index += 1) {
@@ -22605,12 +22727,14 @@ function inlineFields(node, path) {
 // Content rules beyond a type's own schema: links and image sources follow the
 // Document's URL rule, an item type stands only in its own parent, and a
 // layout holds at most one outlet.
-function validateContentRules(root, diagnostics) {
+function validateContentRules(root, diagnostics, { hostSources = false } = {}) {
   let outlets = 0;
   const visit = (node, path, parentType) => {
     if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.isPlainObject)(node)) return;
     for (const [content, contentPath] of inlineFields(node, path)) validateInlineContent(content, contentPath, diagnostics);
-    if ((node.type === 'content.figure' || node.type === 'content.media') && typeof node.data?.src === 'string' && !validUrl(node.data.src)) {
+    // With a host source resolver the stored name is the host's (media:<id>),
+    // and the address it resolves to is checked where it is drawn.
+    if ((node.type === 'content.figure' || node.type === 'content.media') && typeof node.data?.src === 'string' && !hostSources && !validUrl(node.data.src)) {
       diagnostics.push(diagnostic('unsafe_url', `${path}.data.src`, 'Image source protocol is not allowed'));
     }
     if (node.type === 'element.button' && typeof node.data?.href === 'string' && !validUrl(node.data.href)) {
@@ -22717,6 +22841,19 @@ function compositionTypeFromSmartManifest(manifest) {
   };
 }
 
+// How a node of an unregistered type is met: 'refuse' (the default, type_unknown
+// makes the Document invalid) or 'placeholder' (G-32).
+const UNKNOWN_MODES = new Set(['refuse', 'placeholder']);
+function unknownAsPlaceholder(options) {
+  const mode = options?.unknown ?? 'refuse';
+  if (!UNKNOWN_MODES.has(mode)) throw new TypeError(`composition_unknown_mode_invalid:${String(mode)}`);
+  return mode === 'placeholder';
+}
+
+// The placeholder of a node whose type the host does not know: its type as
+// text, its id kept for the editor's selection, nothing of its data or slots.
+const unknownPlaceholder = (node) => `<div class="sf-composition-unknown" role="note" data-sf-composition-type="${escapeHtml(node.type)}" data-sf-composition-id="${escapeHtml(node.id)}">${escapeHtml(node.type)}</div>`;
+
 function validate(document, registry = undefined, options = {}) {
   const diagnostics = [];
   const notices = [];
@@ -22755,7 +22892,13 @@ function validate(document, registry = undefined, options = {}) {
     else ids.add(node.id);
     const manifest = resolvedRegistry.types.get(node.type);
     if (!manifest) {
-      diagnostics.push(diagnostic('type_unknown', `${path}.type`, `Unknown type ${node.type || ''}`));
+      // unknown: 'placeholder' (G-32, for an editor's canvas): a node of a
+      // type this host does not know is a notice, not a refusal; render draws
+      // it as a placeholder and the rest of the page. Its own data and slots
+      // are left unread. The default stays strict: a publishing host refuses.
+      const unknown = diagnostic('type_unknown', `${path}.type`, `Unknown type ${node.type || ''}`);
+      if (unknownAsPlaceholder(options) && typeof node.type === 'string' && node.type) notices.push(unknown);
+      else diagnostics.push(unknown);
       return;
     }
     if (!manifest.profiles.includes(document.profile)) diagnostics.push(diagnostic('type_profile_unsupported', `${path}.type`, `${node.type} does not support ${document.profile}`));
@@ -22839,7 +22982,7 @@ function validate(document, registry = undefined, options = {}) {
   if (nodeCount > limits.maxNodes) diagnostics.push(diagnostic('node_limit', '$.root', 'Composition has too many nodes'));
   else {
     (0,_regions_mjs__WEBPACK_IMPORTED_MODULE_9__.validateRegionRules)(document.root, resolvedRegistry, diagnostics);
-    validateContentRules(document.root, diagnostics);
+    validateContentRules(document.root, diagnostics, { hostSources: typeof options.resolveSource === 'function' });
     (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_11__.resolveRoutes)(document.root, resolvedRegistry, normalizePorts(options.ports), diagnostics);
     (0,_data_mjs__WEBPACK_IMPORTED_MODULE_18__.validateDataRules)(document.root, resolvedRegistry, options.shapes, diagnostics);
   }
@@ -22915,23 +23058,6 @@ function renderImage(data) {
   return `<img src="${escapeHtml(data.src)}" alt="${escapeHtml(data.alt)}"${size} loading="lazy" decoding="async">`;
 }
 
-// The icon of a file's kind, by its media type: sf-download-file's own glyph
-// when the type says nothing a reader would recognise.
-const FILE_ICONS = [
-  [/^application\/pdf$/u, 'picture_as_pdf'],
-  [/^image\//u, 'image'],
-  [/^video\//u, 'movie'],
-  [/^audio\//u, 'audio_file'],
-  [/^application\/(?:zip|x-zip-compressed|x-7z-compressed|x-rar-compressed|vnd\.rar|x-tar|gzip|x-gzip)$/u, 'folder_zip'],
-  [/^(?:text\/csv|application\/vnd\.ms-excel|application\/vnd\.openxmlformats-officedocument\.spreadsheetml\.[a-z.]+|application\/vnd\.oasis\.opendocument\.spreadsheet)$/u, 'table_chart'],
-  [/^(?:application\/vnd\.ms-powerpoint|application\/vnd\.openxmlformats-officedocument\.presentationml\.[a-z.]+|application\/vnd\.oasis\.opendocument\.presentation)$/u, 'slideshow'],
-  [/^(?:text\/|application\/msword$|application\/vnd\.openxmlformats-officedocument\.wordprocessingml\.[a-z.]+$|application\/vnd\.oasis\.opendocument\.text$|application\/rtf$)/u, 'description'],
-];
-function fileIcon(mime) {
-  if (typeof mime !== 'string' || !mime) return 'download';
-  return FILE_ICONS.find(([pattern]) => pattern.test(mime))?.[1] ?? 'download';
-}
-
 // sf-download-file's row, drawn as a plain link: it downloads with no script,
 // the name falls back to the address's last part, and the size reads in the
 // Document's language.
@@ -22941,7 +23067,7 @@ function renderFile(node, locale) {
   const type = mime ? ` type="${escapeHtml(mime)}"` : '';
   const sizeText = Number.isInteger(size) ? (0,_file_size_mjs__WEBPACK_IMPORTED_MODULE_3__.formatFileSize)(size, (0,_file_size_mjs__WEBPACK_IMPORTED_MODULE_3__.fileSizeUnits)(locale), locale) : '';
   const sizePart = sizeText ? `<span class="sf-download-file__size sf-download-file-file-size">${escapeHtml(sizeText)}</span>` : '';
-  return `<a class="sf-download-file" href="${escapeHtml(href)}" download${type}${id(node)}><span class="sf-download-file__body sf-download-file-wrap"><span class="sf-download-file__main sf-download-file-container"><i class="sf-download-file__icon sf-icon" aria-hidden="true">${fileIcon(mime)}</i><span class="sf-download-file__name sf-download-file-file-name">${escapeHtml(name)}</span></span>${sizePart}</span></a>`;
+  return `<a class="sf-download-file" href="${escapeHtml(href)}" download${type}${id(node)}><span class="sf-download-file__body sf-download-file-wrap"><span class="sf-download-file__main sf-download-file-container"><i class="sf-download-file__icon sf-icon" aria-hidden="true">${(0,_file_size_mjs__WEBPACK_IMPORTED_MODULE_3__.fileIcon)(mime)}</i><span class="sf-download-file__name sf-download-file-file-name">${escapeHtml(name)}</span></span>${sizePart}</span></a>`;
 }
 
 function renderTable(node) {
@@ -23240,9 +23366,17 @@ const BUILTIN_RENDERERS = {
   'content.outlet': ({ node, outlet }) => `<div data-sf-outlet=""${id(node)}>${outlet || ''}</div>`,
 };
 
+// context.resolveSource(src, {node}) → address: a host that keeps pictures
+// itself names them in content.figure and content.media (media:<id>) and gives
+// the address to draw at render, which may be a blob: address of the page's
+// origin (simai/ui-source#71). The address is held to the Document's URL rule
+// with that one addition; one that fails it draws nothing and is reported.
+const HOST_SOURCE_TYPES = new Set(['content.figure', 'content.media']);
+
 async function render(document, context = {}) {
   const registry = normalizeRegistry(context.registry);
-  const normalized = await normalize(document, registry, context.options || {});
+  const resolveSource = typeof context.resolveSource === 'function' ? context.resolveSource : null;
+  const normalized = await normalize(document, registry, { ...(context.options || {}), ...(resolveSource ? { resolveSource } : {}) });
   if (!normalized.document) return { html: '', assets: [], hydration: [], diagnostics: normalized.diagnostics, digest: null };
   const diagnostics = [];
   const notices = [...(normalized.notices || [])].filter((entry) => !entry.code.startsWith('modifier'));
@@ -23272,8 +23406,20 @@ async function render(document, context = {}) {
   // part prints `container`). A frame inside one takes container-flush, so a
   // container in a section has no second gutter; a breakout leaves the
   // container and its own frame keeps the gutter (2026-11-04).
-  const renderNode = async (node, depth = 0, inside = false) => {
+  const renderNode = async (given, depth = 0, inside = false) => {
+    let node = given;
+    if (resolveSource && HOST_SOURCE_TYPES.has(node.type) && typeof node.data?.src === 'string') {
+      const address = await resolveSource(node.data.src, { node });
+      if (typeof address !== 'string' || !(validUrl(address) || hostBlobUrl(address))) {
+        diagnostics.push(diagnostic('unsafe_url', `node:${node.id}.data.src`, 'The resolved image source is not allowed'));
+        return '';
+      }
+      node = { ...node, data: { ...node.data, src: address } };
+    }
     const manifest = registry.types.get(node.type);
+    // Only reached under unknown: 'placeholder' (validate's notice says
+    // which node); normalize refused the Document otherwise.
+    if (!manifest) return unknownPlaceholder(node);
     // A site block draws its type's current tree with the instance's values
     // and texts (composed.mjs); the instance stays one node of the Document.
     if ((0,_composed_mjs__WEBPACK_IMPORTED_MODULE_17__.isComposed)(manifest)) {
@@ -25030,6 +25176,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   CompositionRouteController: () => (/* binding */ CompositionRouteController),
 /* harmony export */   ENDPOINT_EXTENSION: () => (/* binding */ ENDPOINT_EXTENSION),
+/* harmony export */   PORT_ELEMENT_ALIASES: () => (/* binding */ PORT_ELEMENT_ALIASES),
 /* harmony export */   PORT_OUTPUT_EVENT: () => (/* binding */ PORT_OUTPUT_EVENT),
 /* harmony export */   ROUTE_STATE_EVENT: () => (/* binding */ ROUTE_STATE_EVENT),
 /* harmony export */   ROUTING_LIMITS: () => (/* binding */ ROUTING_LIMITS),
@@ -25040,6 +25187,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   defineCompositionScope: () => (/* binding */ defineCompositionScope),
 /* harmony export */   endpointName: () => (/* binding */ endpointName),
 /* harmony export */   parseRoutesAttribute: () => (/* binding */ parseRoutesAttribute),
+/* harmony export */   portManifestFor: () => (/* binding */ portManifestFor),
 /* harmony export */   portsForType: () => (/* binding */ portsForType),
 /* harmony export */   resolveRoutes: () => (/* binding */ resolveRoutes),
 /* harmony export */   routesAttribute: () => (/* binding */ routesAttribute),
@@ -25278,6 +25426,15 @@ function checkPortValue(valueType, value) {
   return checked;
 }
 
+// Former port element names, each read as its new name until remove_after
+// (change journal port-element-sf-table-to-sf-view-table, beside the tag
+// record tag-sf-table-to-sf-view-table): a binding to sf-table, or a type
+// drawn by the custom element sf-table, finds the sf-view-table manifest.
+// A registry given a manifest under the old name itself keeps that manifest.
+const PORT_ELEMENT_ALIASES = Object.freeze({
+  'sf-table': Object.freeze({ to: 'sf-view-table', journal: 'port-element-sf-table-to-sf-view-table', remove_after: '2027-01-01' }),
+});
+
 function createPortRegistry(manifests = [], options = {}) {
   const elements = new Map();
   for (const manifest of manifests) {
@@ -25289,18 +25446,29 @@ function createPortRegistry(manifests = [], options = {}) {
     }
     elements.set(manifest.element, (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_0__.canonical)(manifest));
   }
+  // An alias stands only where its new name is registered and its old name is not.
+  const aliases = new Map(Object.entries(options.aliases ?? PORT_ELEMENT_ALIASES)
+    .map(([from, entry]) => [from, typeof entry === 'string' ? entry : entry?.to])
+    .filter(([from, to]) => typeof to === 'string' && elements.has(to) && !elements.has(from)));
   const bindings = new Map(Object.entries(options.bindings || {}));
   for (const [type, element] of bindings) {
-    if (!elements.has(element)) throw new TypeError(`composition_port_binding_unknown:${type}`);
+    if (!elements.has(element) && !aliases.has(element)) throw new TypeError(`composition_port_binding_unknown:${type}`);
   }
-  return { elements, bindings };
+  return { elements, bindings, aliases };
+}
+
+// The manifest a port registry holds for an element name, a former name read
+// as its new one (PORT_ELEMENT_ALIASES).
+function portManifestFor(ports, element) {
+  if (!ports || typeof element !== 'string') return null;
+  return ports.elements.get(element) || ports.elements.get(ports.aliases?.get(element)) || null;
 }
 
 function portsForType(typeManifest, ports) {
   if (!typeManifest || !ports) return null;
   const bound = ports.bindings.get(typeManifest.type);
-  if (bound) return ports.elements.get(bound) || null;
-  if (typeManifest.renderer?.kind === 'custom-element') return ports.elements.get(typeManifest.renderer.name) || null;
+  if (bound) return portManifestFor(ports, bound);
+  if (typeManifest.renderer?.kind === 'custom-element') return portManifestFor(ports, typeManifest.renderer.name);
   return null;
 }
 

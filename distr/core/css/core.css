@@ -2886,6 +2886,34 @@ body {
     min-width: 0;
     min-inline-size: 0;
   }
+  .sf-composition-unknown {
+    display: block;
+    min-width: 0;
+    min-inline-size: 0;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    padding-block: 0.5rem;
+    padding-top: 0.5rem;
+    padding-top: var(--sf-space-2, 0.5rem);
+    padding-bottom: 0.5rem;
+    padding-bottom: var(--sf-space-2, 0.5rem);
+    padding-block: var(--sf-space-2, 0.5rem);
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    padding-inline: 0.75rem;
+    padding-left: 0.75rem;
+    padding-left: var(--sf-space-3, 0.75rem);
+    padding-right: 0.75rem;
+    padding-right: var(--sf-space-3, 0.75rem);
+    padding-inline: var(--sf-space-3, 0.75rem);
+    border: 1px dashed GrayText;
+    border: 1px dashed var(--sf-outline-variant, GrayText);
+    border-radius: 0.25rem;
+    border-radius: var(--sf-radius-1, 0.25rem);
+    color: CanvasText;
+    color: var(--sf-on-surface-variant, var(--sf-on-surface, CanvasText));
+    word-wrap: anywhere;
+  }
   .sf-composition-regions-grid > [data-sf-region-placement=block][data-sf-region-sticky] {
     position: sticky;
     top: 0;

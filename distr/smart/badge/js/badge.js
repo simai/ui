@@ -581,6 +581,7 @@ class SfBadge extends BadgeElement {
       status: this.status,
       activity: this.activity,
       compact: this.compact,
+      tight: this.tight,
       text: this.text,
       icon: this.icon,
       iconLeft: this.iconStart ?? '',
@@ -651,10 +652,14 @@ function renderBadgeTemplate(context) {
   const hasAccessibleLabel = String(context.ariaLabel || '').length > 0;
   const textContent = hasTextSlot ? context.component.getSlotContent('text') : context.drawnText; // Compact needs something to show: with no icon the text stays visible.
 
-  const isCompact = Boolean(context.compact) && (leftIconContent !== lit__WEBPACK_IMPORTED_MODULE_0__.nothing || rightIconContent !== lit__WEBPACK_IMPORTED_MODULE_0__.nothing);
+  const isCompact = Boolean(context.compact) && (leftIconContent !== lit__WEBPACK_IMPORTED_MODULE_0__.nothing || rightIconContent !== lit__WEBPACK_IMPORTED_MODULE_0__.nothing); // A figure -- one character and no icon, a single-figure count -- stays
+  // round in either side room: its side room is the block padding, so the
+  // size's height is its width.
+
+  const isFigure = !hasTextSlot && leftIconContent === lit__WEBPACK_IMPORTED_MODULE_0__.nothing && rightIconContent === lit__WEBPACK_IMPORTED_MODULE_0__.nothing && [...String(context.drawnText ?? '').trim()].length === 1;
   const classes = ['sf-badge', `sf-badge--${context.appearance ?? context.type}`, // One colour name, as the styles expect: the run state's role, the status
   // or the colour role (the component's paintedScheme).
-  `sf-badge--${context.paintedScheme}`, `sf-badge--size-${context.size}`, context.line ? `sf-badge--line-${context.line}` : '', isCompact ? 'sf-badge--compact' : '', // Inline: a badge is as wide as its text. As a block-level flex box it
+  `sf-badge--${context.paintedScheme}`, `sf-badge--size-${context.size}`, context.line ? `sf-badge--line-${context.line}` : '', isCompact ? 'sf-badge--compact' : '', context.tight ? 'sf-badge--tight' : '', isFigure ? 'sf-badge--figure' : '', // Inline: a badge is as wide as its text. As a block-level flex box it
   // filled whatever held it -- every status in a table cell was a bar the
   // width of the column.
   'inline-flex', 'flex-row', 'flex-nowrap', 'justify-center', 'items-center', context.rootClass].filter(Boolean);
@@ -721,7 +726,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-badge
 /***/ "55155acfa4cc"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.badge","tag":"sf-badge","version":"1.2.1","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1"],"default":"1/3"},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"appearance":{"type":"enum","values":["main","tonal","outline"],"default":"main"},"scheme":{"type":"enum","values":["neutral","primary","secondary","tertiary","on-surface"],"default":"neutral"},"status":{"type":"enum","values":["","info","success","warning","error"],"default":""},"activity":{"type":"enum","values":["","running","waiting","done","stopped","failed"],"default":""},"compact":{"type":"boolean","default":false},"text":{"type":"string","default":""},"icon":{"type":"icon","default":""},"icon-start":{"type":"icon","optional":true},"icon-end":{"type":"icon","optional":true},"icon-position":{"type":"enum","values":["start","end"],"default":"start"}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-badge-background-color":{"type":"color","state":"default"},"--sf-badge-color":{"type":"color","state":"default"},"--sf-badge-border-color":{"type":"color","state":"default"},"--sf-badge-border-width":{"type":"length","state":"default"},"--sf-badge-radius":{"type":"length","state":"default"},"--sf-badge-padding-inline":{"type":"length","state":"default"},"--sf-badge-padding-block":{"type":"length","state":"default"},"--sf-badge-gap":{"type":"length","state":"default"},"--sf-badge-ring-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.badge","tag":"sf-badge","version":"1.3.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1"],"default":"1/3"},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"appearance":{"type":"enum","values":["main","tonal","outline"],"default":"main"},"scheme":{"type":"enum","values":["neutral","primary","secondary","tertiary","on-surface"],"default":"neutral"},"status":{"type":"enum","values":["","info","success","warning","error"],"default":""},"activity":{"type":"enum","values":["","running","waiting","done","stopped","failed"],"default":""},"compact":{"type":"boolean","default":false},"tight":{"type":"boolean","default":false},"text":{"type":"string","default":""},"icon":{"type":"icon","default":""},"icon-start":{"type":"icon","optional":true},"icon-end":{"type":"icon","optional":true},"icon-position":{"type":"enum","values":["start","end"],"default":"start"}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-badge-background-color":{"type":"color","state":"default"},"--sf-badge-color":{"type":"color","state":"default"},"--sf-badge-border-color":{"type":"color","state":"default"},"--sf-badge-border-width":{"type":"length","state":"default"},"--sf-badge-radius":{"type":"length","state":"default"},"--sf-badge-padding-inline":{"type":"length","state":"default"},"--sf-badge-padding-block":{"type":"length","state":"default"},"--sf-badge-gap":{"type":"length","state":"default"},"--sf-badge-ring-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 

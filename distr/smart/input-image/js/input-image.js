@@ -1773,7 +1773,9 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 __webpack_require__.a(__webpack_module__, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   FILE_ICONS: () => (/* binding */ FILE_ICONS),
 /* harmony export */   FILE_SIZE_UNITS: () => (/* reexport safe */ _format_js__WEBPACK_IMPORTED_MODULE_0__.FILE_SIZE_UNITS),
+/* harmony export */   fileIcon: () => (/* binding */ fileIcon),
 /* harmony export */   fileNameFromAddress: () => (/* binding */ fileNameFromAddress),
 /* harmony export */   fileSizeUnits: () => (/* reexport safe */ _format_js__WEBPACK_IMPORTED_MODULE_0__.fileSizeUnits),
 /* harmony export */   formatFileSize: () => (/* reexport safe */ _format_js__WEBPACK_IMPORTED_MODULE_0__.formatFileSize)
@@ -1805,6 +1807,28 @@ function fileNameFromAddress(href) {
   } catch {
     return tail;
   }
+}
+
+// The icon of a file's kind, by its media type: sf-download-file's own glyph
+// (download) when the type says nothing a reader would recognise. The
+// Composition renderer draws content.file with it; an editor that draws the
+// same row (sf-content-editor) imports it from here rather than keeping a copy.
+// Each entry is [pattern, icon]; the first pattern that matches wins.
+const FILE_ICONS = Object.freeze([
+  [/^application\/pdf$/u, 'picture_as_pdf'],
+  [/^image\//u, 'image'],
+  [/^video\//u, 'movie'],
+  [/^audio\//u, 'audio_file'],
+  [/^application\/(?:zip|x-zip-compressed|x-7z-compressed|x-rar-compressed|vnd\.rar|x-tar|gzip|x-gzip)$/u, 'folder_zip'],
+  [/^(?:text\/csv|application\/vnd\.ms-excel|application\/vnd\.openxmlformats-officedocument\.spreadsheetml\.[a-z.]+|application\/vnd\.oasis\.opendocument\.spreadsheet)$/u, 'table_chart'],
+  [/^(?:application\/vnd\.ms-powerpoint|application\/vnd\.openxmlformats-officedocument\.presentationml\.[a-z.]+|application\/vnd\.oasis\.opendocument\.presentation)$/u, 'slideshow'],
+  [/^(?:text\/|application\/msword$|application\/vnd\.openxmlformats-officedocument\.wordprocessingml\.[a-z.]+$|application\/vnd\.oasis\.opendocument\.text$|application\/rtf$)/u, 'description'],
+].map((entry) => Object.freeze(entry)));
+
+// The icon name for a media type; download when there is none or nothing matches.
+function fileIcon(mime) {
+  if (typeof mime !== 'string' || !mime) return 'download';
+  return FILE_ICONS.find(([pattern]) => pattern.test(mime))?.[1] ?? 'download';
 }
 
 __webpack_async_result__();
@@ -1913,7 +1937,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shi
 /***/ "1a493783d3b8"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-image","tag":"sf-input-image","version":"1.2.1","kind":"leaf","settings":{"name":{"type":"string","default":""},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"accept":{"type":"string","default":"image/*"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"meta":{"type":"string","default":""},"empty-text":{"type":"string","default":""},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""}},"values":{"value":{"type":"object","nullable":true,"default":null}},"events":{"change":{"carries":{"value":{"type":"object","nullable":true},"file":{"type":"object","nullable":true},"source":{"type":"enum","values":["input","drop","remove"]},"name":"string"}},"input":{"carries":{"value":{"type":"object","nullable":true},"file":{"type":"object","nullable":true},"source":{"type":"enum","values":["input","drop","remove"]},"name":"string"}},"attach":{"carries":{"files":"list","file":"object","source":{"type":"enum","values":["input","drop"]},"value":"object","name":"string"}},"detach":{"carries":{"value":"object","name":"string"}},"rejected":{"carries":{"files":"list","accept":"string","source":"string"}}},"actions":{"clear":{},"choose":{},"remove-image":{},"take-file":{"with":{"file":"object","source":{"type":"string","optional":true}}},"set-error":{"with":{"message":"string"}}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","custom-error"]},"host-states":{"data-dragged-over":"boolean"},"css-variables":{"--sf-image-field-background-color":{"type":"color","state":"rest"},"--sf-image-field-border-color":{"type":"color","state":"rest"},"--sf-image-field-border-width":{"type":"length"},"--sf-image-field-radius":{"type":"length"},"--sf-image-field-padding-inline":{"type":"length"},"--sf-image-field-padding-block":{"type":"length"},"--sf-image-field-gap":{"type":"length"},"--sf-image-field-thumbnail-size":{"type":"length"},"--sf-image-field-thumbnail-radius":{"type":"length"},"--sf-image-field-thumbnail-background-color":{"type":"color","state":"rest"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-image","tag":"sf-input-image","version":"1.2.2","kind":"leaf","settings":{"name":{"type":"string","default":""},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"accept":{"type":"string","default":"image/*"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"meta":{"type":"string","default":""},"empty-text":{"type":"string","default":""},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""}},"values":{"value":{"type":"object","nullable":true,"default":null}},"events":{"change":{"carries":{"value":{"type":"object","nullable":true},"file":{"type":"object","nullable":true},"source":{"type":"enum","values":["input","drop","remove"]},"name":"string"}},"input":{"carries":{"value":{"type":"object","nullable":true},"file":{"type":"object","nullable":true},"source":{"type":"enum","values":["input","drop","remove"]},"name":"string"}},"attach":{"carries":{"files":"list","file":"object","source":{"type":"enum","values":["input","drop"]},"value":"object","name":"string"}},"detach":{"carries":{"value":"object","name":"string"}},"rejected":{"carries":{"files":"list","accept":"string","source":"string"}}},"actions":{"clear":{},"choose":{},"remove-image":{},"take-file":{"with":{"file":"object","source":{"type":"string","optional":true}}},"set-error":{"with":{"message":"string"}}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","custom-error"]},"host-states":{"data-dragged-over":"boolean"},"css-variables":{"--sf-image-field-background-color":{"type":"color","state":"rest"},"--sf-image-field-border-color":{"type":"color","state":"rest"},"--sf-image-field-border-width":{"type":"length"},"--sf-image-field-radius":{"type":"length"},"--sf-image-field-padding-inline":{"type":"length"},"--sf-image-field-padding-block":{"type":"length"},"--sf-image-field-gap":{"type":"length"},"--sf-image-field-thumbnail-size":{"type":"length"},"--sf-image-field-thumbnail-radius":{"type":"length"},"--sf-image-field-thumbnail-background-color":{"type":"color","state":"rest"}}}');
 
 /***/ },
 

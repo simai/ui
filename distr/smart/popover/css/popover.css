@@ -79,6 +79,13 @@
     left: 0;
   }
   sf-popover[data-placement=bottom-end] > [slot=content] {
+    margin-top: 0;
+    -webkit-margin-before: 0;
+            margin-block-start: 0;
+    margin-top: 0;
+    margin-top: var(--sf-popover--offset, 0);
+    -webkit-margin-before: var(--sf-popover--offset, 0);
+            margin-block-start: var(--sf-popover--offset, 0);
     top: 100%;
     inset-block-start: 100%;
     inset-inline-end: 0;
@@ -106,6 +113,13 @@
     right: 0;
   }
   sf-popover[data-placement=bottom-start] > [slot=content] {
+    margin-top: 0;
+    -webkit-margin-before: 0;
+            margin-block-start: 0;
+    margin-top: 0;
+    margin-top: var(--sf-popover--offset, 0);
+    -webkit-margin-before: var(--sf-popover--offset, 0);
+            margin-block-start: var(--sf-popover--offset, 0);
     top: 100%;
     inset-block-start: 100%;
     inset-inline-start: 0;
@@ -133,6 +147,13 @@
     left: 0;
   }
   sf-popover[data-placement=top-end] > [slot=content] {
+    margin-bottom: 0;
+    -webkit-margin-after: 0;
+            margin-block-end: 0;
+    margin-bottom: 0;
+    margin-bottom: var(--sf-popover--offset, 0);
+    -webkit-margin-after: var(--sf-popover--offset, 0);
+            margin-block-end: var(--sf-popover--offset, 0);
     bottom: 100%;
     inset-block-end: 100%;
     inset-inline-end: 0;
@@ -160,9 +181,44 @@
     right: 0;
   }
   sf-popover[data-placement=top-start] > [slot=content] {
+    margin-bottom: 0;
+    -webkit-margin-after: 0;
+            margin-block-end: 0;
+    margin-bottom: 0;
+    margin-bottom: var(--sf-popover--offset, 0);
+    -webkit-margin-after: var(--sf-popover--offset, 0);
+            margin-block-end: var(--sf-popover--offset, 0);
     bottom: 100%;
     inset-block-end: 100%;
     inset-inline-start: 0;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) sf-popover[data-placement=inline-end] > [slot=content]{
+    margin-left: 0;
+    margin-left: var(--sf-popover--offset, 0);
+  }
+  @supports not (margin-inline-start: initial){
+  html:not([dir="rtl"]) sf-popover[data-placement=inline-end] > [slot=content]{
+    margin-left: 0;
+    margin-left: var(--sf-popover--offset, 0);
+    }
+  }
+  sf-popover[data-placement=inline-end] > [slot=content]:where(:dir(ltr)){
+    margin-left: 0;
+    margin-left: var(--sf-popover--offset, 0);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] sf-popover[data-placement=inline-end] > [slot=content]{
+    margin-right: 0;
+    margin-right: var(--sf-popover--offset, 0);
+  }
+  @supports not (margin-inline-start: initial){
+  [dir="rtl"] sf-popover[data-placement=inline-end] > [slot=content]{
+    margin-right: 0;
+    margin-right: var(--sf-popover--offset, 0);
+    }
+  }
+  sf-popover[data-placement=inline-end] > [slot=content]:where(:dir(rtl)){
+    margin-right: 0;
+    margin-right: var(--sf-popover--offset, 0);
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) sf-popover[data-placement=inline-end] > [slot=content]{
     left: 100%;
@@ -187,9 +243,41 @@
     right: 100%;
   }
   sf-popover[data-placement=inline-end] > [slot=content] {
+    -webkit-margin-start: 0;
+            margin-inline-start: 0;
+    -webkit-margin-start: var(--sf-popover--offset, 0);
+            margin-inline-start: var(--sf-popover--offset, 0);
     top: 0;
     inset-block-start: 0;
     inset-inline-start: 100%;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) sf-popover[data-placement=inline-start] > [slot=content]{
+    margin-right: 0;
+    margin-right: var(--sf-popover--offset, 0);
+  }
+  @supports not (margin-inline-end: initial){
+  html:not([dir="rtl"]) sf-popover[data-placement=inline-start] > [slot=content]{
+    margin-right: 0;
+    margin-right: var(--sf-popover--offset, 0);
+    }
+  }
+  sf-popover[data-placement=inline-start] > [slot=content]:where(:dir(ltr)){
+    margin-right: 0;
+    margin-right: var(--sf-popover--offset, 0);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] sf-popover[data-placement=inline-start] > [slot=content]{
+    margin-left: 0;
+    margin-left: var(--sf-popover--offset, 0);
+  }
+  @supports not (margin-inline-end: initial){
+  [dir="rtl"] sf-popover[data-placement=inline-start] > [slot=content]{
+    margin-left: 0;
+    margin-left: var(--sf-popover--offset, 0);
+    }
+  }
+  sf-popover[data-placement=inline-start] > [slot=content]:where(:dir(rtl)){
+    margin-left: 0;
+    margin-left: var(--sf-popover--offset, 0);
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) sf-popover[data-placement=inline-start] > [slot=content]{
     right: 100%;
@@ -214,6 +302,10 @@
     left: 100%;
   }
   sf-popover[data-placement=inline-start] > [slot=content] {
+    -webkit-margin-end: 0;
+            margin-inline-end: 0;
+    -webkit-margin-end: var(--sf-popover--offset, 0);
+            margin-inline-end: var(--sf-popover--offset, 0);
     top: 0;
     inset-block-start: 0;
     inset-inline-end: 100%;

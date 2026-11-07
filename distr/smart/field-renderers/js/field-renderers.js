@@ -2490,10 +2490,13 @@ function renderChoiceView(field, value) {
   const options = field.options || field.filter?.options || field.constraints?.options;
   const option = Array.isArray(options) ? options.find(item => String(item?.value) === String(value)) : null;
   if (!option) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
-  const badge = (0,_helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_2__.optionBadgeProps)(option);
+  const badge = (0,_helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_2__.optionBadgeProps)(option); // A table cell is a dense place: the badge keeps the tight side room
+  // (sf-badge tight), as it had before sf-badge 1.3.0 widened the default.
+
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <sf-badge
                 line=${VIEW_LINE}
+                tight
                 appearance=${field.badgeAppearance ?? CELL_BADGE_APPEARANCE}
                 scheme=${badge.scheme}
                 style=${badge.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
