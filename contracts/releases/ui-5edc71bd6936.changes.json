@@ -1,0 +1,1881 @@
+{
+  "schema": "simai.framework.unit-change-report",
+  "schema_version": 1,
+  "source": "simai/ui-source",
+  "from": {
+    "revision": "4638e4ffb789fa3f57dbcf765eb230972bd1aec9",
+    "release": "ui-2a671352d67b"
+  },
+  "to": {
+    "revision": "8c0b5d2b93e77a30f33fb6ad0c03644b370e3160",
+    "release": "ui-5edc71bd6936"
+  },
+  "added": [
+    {
+      "id": "smart.list-attention",
+      "version": "1.0.0"
+    },
+    {
+      "id": "smart.progress-run",
+      "version": "1.0.0"
+    },
+    {
+      "id": "smart.tile-metric",
+      "version": "1.0.0"
+    }
+  ],
+  "removed": [],
+  "changed": [
+    {
+      "id": "component.buttons",
+      "from_version": "1.3.0",
+      "to_version": "1.5.0",
+      "step": "minor"
+    },
+    {
+      "id": "component.carousel",
+      "from_version": "1.0.0",
+      "to_version": "1.0.1",
+      "step": "patch"
+    },
+    {
+      "id": "component.context-menu",
+      "from_version": "1.3.0",
+      "to_version": "1.4.0",
+      "step": "minor"
+    },
+    {
+      "id": "component.highlight",
+      "from_version": "1.1.1",
+      "to_version": "1.1.2",
+      "step": "patch"
+    },
+    {
+      "id": "component.icon-buttons",
+      "from_version": "1.1.4",
+      "to_version": "1.3.0",
+      "step": "minor"
+    },
+    {
+      "id": "component.spinner",
+      "from_version": "1.0.0",
+      "to_version": "1.1.0",
+      "step": "minor"
+    },
+    {
+      "id": "component.theme",
+      "from_version": "1.1.1",
+      "to_version": "1.2.0",
+      "step": "minor"
+    },
+    {
+      "id": "core.runtime",
+      "from_version": "1.32.0",
+      "to_version": "1.37.0",
+      "step": "minor"
+    },
+    {
+      "id": "core.styles",
+      "from_version": "1.4.0",
+      "to_version": "1.5.0",
+      "step": "minor"
+    },
+    {
+      "id": "module.smart-field-renderers",
+      "from_version": "1.4.1",
+      "to_version": "1.4.2",
+      "step": "patch"
+    },
+    {
+      "id": "smart.badge",
+      "from_version": "1.3.0",
+      "to_version": "1.3.1",
+      "step": "patch"
+    },
+    {
+      "id": "smart.button",
+      "from_version": "1.5.0",
+      "to_version": "1.6.1",
+      "step": "minor"
+    },
+    {
+      "id": "smart.button-icon",
+      "from_version": "1.4.1",
+      "to_version": "1.5.1",
+      "step": "minor"
+    },
+    {
+      "id": "smart.empty-state",
+      "from_version": "1.1.6",
+      "to_version": "1.1.7",
+      "step": "patch"
+    },
+    {
+      "id": "smart.file-upload",
+      "from_version": "1.1.6",
+      "to_version": "1.1.7",
+      "step": "patch"
+    },
+    {
+      "id": "smart.header-page",
+      "from_version": "1.2.1",
+      "to_version": "1.2.2",
+      "step": "patch"
+    },
+    {
+      "id": "smart.input-date",
+      "from_version": "1.4.0",
+      "to_version": "1.4.1",
+      "step": "patch"
+    },
+    {
+      "id": "smart.menu-context",
+      "from_version": "1.8.0",
+      "to_version": "1.9.0",
+      "step": "minor"
+    },
+    {
+      "id": "smart.progress-bar",
+      "from_version": "1.1.3",
+      "to_version": "1.2.0",
+      "step": "minor"
+    },
+    {
+      "id": "smart.spinner",
+      "from_version": "1.2.3",
+      "to_version": "1.2.4",
+      "step": "patch"
+    },
+    {
+      "id": "smart.wizard",
+      "from_version": "1.0.0",
+      "to_version": "1.0.1",
+      "step": "patch"
+    },
+    {
+      "id": "tokens.size",
+      "from_version": "1.0.0",
+      "to_version": "1.0.1",
+      "step": "patch"
+    },
+    {
+      "id": "tokens.space",
+      "from_version": "1.0.0",
+      "to_version": "1.0.1",
+      "step": "patch"
+    },
+    {
+      "id": "tokens.typography",
+      "from_version": "1.1.0",
+      "to_version": "1.3.0",
+      "step": "minor"
+    }
+  ],
+  "dependencies_changed": [
+    {
+      "id": "component.accordion",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "component.admin-menu",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "component.alerts",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "component.avatars",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "component.badges",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "component.breadcrumbs",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "component.button-group",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "component.buttons",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "component.spinner",
+        "core.runtime",
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "component.card",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "component.carousel",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "tokens.size",
+        "tokens.space"
+      ]
+    },
+    {
+      "id": "component.checkbox",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "component.clipboard",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "component.buttons",
+        "component.icon-buttons",
+        "core.runtime",
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "component.close",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "component.content-divider",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "component.context-menu",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "component.country-code",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "component.datepicker",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "component.doc",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "component.dot",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "tokens.space"
+      ]
+    },
+    {
+      "id": "component.download-file",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "component.dropdown",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "component.icon-buttons",
+        "core.runtime",
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "component.emoji",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "component.fab",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "tokens.size",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "component.featured-icon",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "tokens.size",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "component.figure",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "component.file-preview",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "component.file-upload",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "component.flag",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "tokens.size"
+      ]
+    },
+    {
+      "id": "component.highlight",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "component.icon-buttons",
+        "core.runtime",
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "component.icon-buttons",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "component.spinner",
+        "core.runtime",
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "component.icons",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "tokens.size",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "component.inputs",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "component.kbd",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "component.link",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "component.menu",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "component.icon-buttons",
+        "core.runtime",
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "component.modal",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "component.icon-buttons",
+        "component.spinner",
+        "core.runtime",
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "component.outline",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "component.pagination",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "component.placeholder",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "component.procedure",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "component.progress-bar",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "component.progress-ring",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "tokens.size",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "component.progress-scale",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "component.quantity",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "component.icon-buttons",
+        "core.runtime",
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "component.radio",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "component.range-slider",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "component.reference-link",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "component.scrollbar",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime"
+      ]
+    },
+    {
+      "id": "component.skeleton",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "component.slider",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "tokens.size",
+        "tokens.space"
+      ]
+    },
+    {
+      "id": "component.spinner",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "component.step",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "component.swiper",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime"
+      ]
+    },
+    {
+      "id": "component.switch",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "component.tab",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime"
+      ]
+    },
+    {
+      "id": "component.tabs",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "component.tags",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "component.textarea",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "component.theme-palette",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime"
+      ]
+    },
+    {
+      "id": "component.toast",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "component.tooltip",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "component.tree",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "component.icon-buttons",
+        "core.runtime",
+        "tokens.size",
+        "tokens.space"
+      ]
+    },
+    {
+      "id": "component.tree-item",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "component.verification",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "core.runtime",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.styles",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "core.styles",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "module.component-shared",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "component.buttons",
+        "component.highlight",
+        "component.icon-buttons",
+        "core.runtime"
+      ]
+    },
+    {
+      "id": "module.sf-system",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime"
+      ]
+    },
+    {
+      "id": "module.smart-field-renderers",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime"
+      ]
+    },
+    {
+      "id": "module.smart-helpers",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "module.special",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "tokens.size"
+      ]
+    },
+    {
+      "id": "smart.accordion",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "smart.badge"
+      ]
+    },
+    {
+      "id": "smart.alert",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "component.buttons",
+        "core.runtime",
+        "smart.button-icon"
+      ]
+    },
+    {
+      "id": "smart.alert-bar",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "smart.badge",
+        "smart.button",
+        "smart.button-icon",
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "smart.avatar",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime"
+      ]
+    },
+    {
+      "id": "smart.avatar-group",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime"
+      ]
+    },
+    {
+      "id": "smart.badge",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "component.spinner",
+        "core.runtime"
+      ]
+    },
+    {
+      "id": "smart.breadcrumbs",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime"
+      ]
+    },
+    {
+      "id": "smart.button",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "component.buttons",
+        "component.spinner",
+        "core.runtime"
+      ]
+    },
+    {
+      "id": "smart.button-close",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime"
+      ]
+    },
+    {
+      "id": "smart.button-copy",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "smart.button",
+        "smart.button-icon",
+        "tokens.size"
+      ]
+    },
+    {
+      "id": "smart.button-group",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "component.spinner",
+        "core.runtime",
+        "smart.button"
+      ]
+    },
+    {
+      "id": "smart.button-icon",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "component.icon-buttons",
+        "component.spinner",
+        "core.runtime"
+      ]
+    },
+    {
+      "id": "smart.checkbox",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "smart.confirm",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "smart.button",
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "smart.confirm-change",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "smart.button",
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "smart.contents",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "smart.button",
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "smart.drawer",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "component.icon-buttons",
+        "core.runtime",
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "smart.dropdown",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "component.icon-buttons",
+        "core.runtime",
+        "smart.button-icon",
+        "tokens.size"
+      ]
+    },
+    {
+      "id": "smart.editor-inline",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "tokens.space"
+      ]
+    },
+    {
+      "id": "smart.editor-overlay",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "smart.button-icon",
+        "tokens.space"
+      ]
+    },
+    {
+      "id": "smart.empty-state",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "smart.button",
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "smart.file-download",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime"
+      ]
+    },
+    {
+      "id": "smart.file-preview",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "component.icon-buttons",
+        "core.runtime"
+      ]
+    },
+    {
+      "id": "smart.file-upload",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "component.icon-buttons",
+        "core.runtime",
+        "smart.progress-bar"
+      ]
+    },
+    {
+      "id": "smart.gallery",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "tokens.space"
+      ]
+    },
+    {
+      "id": "smart.header-page",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "smart.badge",
+        "smart.button-icon",
+        "tokens.size",
+        "tokens.space"
+      ]
+    },
+    {
+      "id": "smart.header-site",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "smart.button-icon",
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "smart.help-mark",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "smart.button-icon",
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "smart.icon",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime"
+      ]
+    },
+    {
+      "id": "smart.include",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "smart.button",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "smart.input",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "component.icon-buttons",
+        "core.runtime",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "smart.input-code",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "tokens.space"
+      ]
+    },
+    {
+      "id": "smart.input-color",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "smart.button-icon",
+        "tokens.size",
+        "tokens.space"
+      ]
+    },
+    {
+      "id": "smart.input-country",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime"
+      ]
+    },
+    {
+      "id": "smart.input-date",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "smart.button",
+        "smart.button-icon"
+      ]
+    },
+    {
+      "id": "smart.input-image",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "smart.button",
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "smart.input-lookup",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "component.icon-buttons",
+        "core.runtime",
+        "smart.button",
+        "smart.spinner",
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "smart.input-quantity",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "component.icon-buttons",
+        "core.runtime"
+      ]
+    },
+    {
+      "id": "smart.input-rich",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "component.icon-buttons",
+        "core.runtime",
+        "smart.button",
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "smart.input-textarea",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "component.icon-buttons",
+        "core.runtime"
+      ]
+    },
+    {
+      "id": "smart.language",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "smart.button-icon",
+        "smart.menu-context"
+      ]
+    },
+    {
+      "id": "smart.list",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "component.icon-buttons",
+        "core.runtime",
+        "smart.badge",
+        "smart.button",
+        "smart.empty-state",
+        "smart.menu-context",
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "smart.list-feed",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "smart.button",
+        "smart.button-icon",
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "smart.list-item",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime"
+      ]
+    },
+    {
+      "id": "smart.menu",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "component.icon-buttons",
+        "core.runtime",
+        "tokens.size",
+        "tokens.space"
+      ]
+    },
+    {
+      "id": "smart.menu-context",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "component.context-menu",
+        "core.runtime",
+        "smart.button",
+        "smart.button-icon"
+      ]
+    },
+    {
+      "id": "smart.modal",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "component.icon-buttons",
+        "component.spinner",
+        "core.runtime"
+      ]
+    },
+    {
+      "id": "smart.pager",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "smart.button",
+        "smart.button-icon",
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "smart.pagination",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "smart.button",
+        "smart.button-icon",
+        "smart.spinner"
+      ]
+    },
+    {
+      "id": "smart.popover",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime"
+      ]
+    },
+    {
+      "id": "smart.profile-picker",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "smart.button",
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "smart.progress-bar",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime"
+      ]
+    },
+    {
+      "id": "smart.progress-ring",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime"
+      ]
+    },
+    {
+      "id": "smart.progress-scale",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime"
+      ]
+    },
+    {
+      "id": "smart.radio",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime"
+      ]
+    },
+    {
+      "id": "smart.reference-link",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime"
+      ]
+    },
+    {
+      "id": "smart.resizer",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "tokens.size"
+      ]
+    },
+    {
+      "id": "smart.search",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "smart.button-icon",
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "smart.settings",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "smart.menu-context"
+      ]
+    },
+    {
+      "id": "smart.skeleton",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime"
+      ]
+    },
+    {
+      "id": "smart.slider",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "smart.button-icon"
+      ]
+    },
+    {
+      "id": "smart.slider-range",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime"
+      ]
+    },
+    {
+      "id": "smart.sortable",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "component.icon-buttons",
+        "core.runtime",
+        "smart.menu-context",
+        "tokens.size"
+      ]
+    },
+    {
+      "id": "smart.spinner",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "component.spinner",
+        "core.runtime"
+      ]
+    },
+    {
+      "id": "smart.steps",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime"
+      ]
+    },
+    {
+      "id": "smart.switch",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "component.icon-buttons",
+        "core.runtime"
+      ]
+    },
+    {
+      "id": "smart.tabs",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "smart.button",
+        "smart.button-icon",
+        "smart.menu-context"
+      ]
+    },
+    {
+      "id": "smart.tag",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "component.icon-buttons",
+        "core.runtime",
+        "smart.button-icon",
+        "tokens.size"
+      ]
+    },
+    {
+      "id": "smart.theme-generator",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "smart.button",
+        "smart.button-icon",
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "smart.toast",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "component.buttons",
+        "core.runtime",
+        "smart.button-icon"
+      ]
+    },
+    {
+      "id": "smart.tooltip",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime"
+      ]
+    },
+    {
+      "id": "smart.tree",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "component.icon-buttons",
+        "core.runtime"
+      ]
+    },
+    {
+      "id": "smart.tree-item",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "component.icon-buttons",
+        "core.runtime"
+      ]
+    },
+    {
+      "id": "smart.wizard",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime",
+        "smart.button",
+        "smart.progress-bar",
+        "smart.spinner",
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "smart.wizard-step",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.runtime"
+      ]
+    },
+    {
+      "id": "tokens.border",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "tokens.size"
+      ]
+    },
+    {
+      "id": "tokens.elevation",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "tokens.size"
+      ]
+    },
+    {
+      "id": "tokens.size",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "tokens.typography",
+      "added": [
+        "tokens.motion"
+      ],
+      "removed": [],
+      "moved": [
+        "tokens.size",
+        "tokens.space"
+      ]
+    },
+    {
+      "id": "utility.background-size-ext",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "tokens.size"
+      ]
+    },
+    {
+      "id": "utility.box-shadow-color",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "tokens.size"
+      ]
+    },
+    {
+      "id": "utility.container",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "tokens.space"
+      ]
+    },
+    {
+      "id": "utility.drop-shadow",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "tokens.size"
+      ]
+    },
+    {
+      "id": "utility.element-position-ext",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "tokens.size"
+      ]
+    },
+    {
+      "id": "utility.headers",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "core.styles",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "utility.height",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "tokens.size"
+      ]
+    },
+    {
+      "id": "utility.height-ext",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "tokens.size"
+      ]
+    },
+    {
+      "id": "utility.margin-ext",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "tokens.size"
+      ]
+    },
+    {
+      "id": "utility.max-height-ext",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "tokens.size"
+      ]
+    },
+    {
+      "id": "utility.max-width-ext",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "tokens.size"
+      ]
+    },
+    {
+      "id": "utility.padding-ext",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "tokens.size"
+      ]
+    },
+    {
+      "id": "utility.query-layout",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "tokens.space"
+      ]
+    },
+    {
+      "id": "utility.scroll-margin-ext",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "tokens.size"
+      ]
+    },
+    {
+      "id": "utility.scroll-padding-ext",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "tokens.size"
+      ]
+    },
+    {
+      "id": "utility.sr-only",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "tokens.size"
+      ]
+    },
+    {
+      "id": "utility.stripe",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "tokens.size"
+      ]
+    },
+    {
+      "id": "utility.table",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "utility.table-border",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "tokens.size"
+      ]
+    },
+    {
+      "id": "utility.table-frame",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "tokens.size",
+        "tokens.space",
+        "tokens.typography"
+      ]
+    },
+    {
+      "id": "utility.transform-translate-ext",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "tokens.size"
+      ]
+    },
+    {
+      "id": "utility.width",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "tokens.size"
+      ]
+    },
+    {
+      "id": "utility.width-ext",
+      "added": [],
+      "removed": [],
+      "moved": [
+        "tokens.size"
+      ]
+    }
+  ],
+  "violations": []
+}
