@@ -344,6 +344,11 @@
     max-height: var(--sf-context-menu-available-block-size, 100%);
     max-block-size: var(--sf-context-menu-available-block-size, 100%);
     overflow: auto;
+    /* A wheel turned past the end of the rows stays in the menu: it scrolled the
+       page or the table behind it (admin.simai.io profile language, 2026-11-07).
+       The same on the rows' area under a search and a panel's body. */
+    -ms-scroll-chaining: none;
+        overscroll-behavior: contain;
     scroll-behavior: auto;
   }
   /* A menu opened through openFor() is the platform's popover while open, and
@@ -1365,6 +1370,8 @@
     padding-inline: var(--sf-context-menu-content--padding-inline-start) var(--sf-context-menu-content--padding-inline-end);
     overflow-x: hidden;
     overflow-y: auto;
+    -ms-scroll-chaining: none;
+        overscroll-behavior: contain;
     scroll-behavior: auto;
   }
   .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-list > * {
@@ -1464,6 +1471,8 @@
     min-height: 0;
     min-block-size: 0;
     overflow: auto;
+    -ms-scroll-chaining: none;
+        overscroll-behavior: contain;
   }
   .sf-context-menu-footer {
     position: sticky;
