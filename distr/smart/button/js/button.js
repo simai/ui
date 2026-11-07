@@ -11,6 +11,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   SPINNER_DOTS: () => (/* binding */ SPINNER_DOTS),
 /* harmony export */   SPINNER_DOTS_FILLED: () => (/* binding */ SPINNER_DOTS_FILLED),
 /* harmony export */   SPINNER_GRID: () => (/* binding */ SPINNER_GRID),
+/* harmony export */   SPINNER_LIVE_AREA: () => (/* binding */ SPINNER_LIVE_AREA),
 /* harmony export */   SPINNER_LOOKS: () => (/* binding */ SPINNER_LOOKS),
 /* harmony export */   SPINNER_STROKE: () => (/* binding */ SPINNER_STROKE),
 /* harmony export */   createInlineSpinner: () => (/* binding */ createInlineSpinner),
@@ -30,6 +31,14 @@ __webpack_require__.r(__webpack_exports__);
 // them; a spinner on the same grid, scaled to the icon box of a step, strokes as
 // the icons of that step do, and needs no stroke of its own per step.
 //
+// The ring is drawn inside the icon's live area, not across its box (docs
+// review R027, owner decision C11, 2026-11-07): Material Symbols draw in 20 of
+// their 24 units and leave 2 of air on every side, so a ring that filled the
+// box stood larger than the icon beside it. On the grid the ring's outer edge
+// is the live area -- radius 9 at stroke 2, 20 units across -- and the box
+// stays the icon's box, so a control that swaps its icon for the spinner moves
+// nothing. The proportion is the grid's, the same at every step.
+//
 // The looks (simai/ui-source#11): every spinner carries the four looks on the
 // same ring -- the arc and the breathing arc (one circle, two motions), the
 // comet and the dots -- and the spinner sheet shows the one the page asks for:
@@ -40,6 +49,7 @@ __webpack_require__.r(__webpack_exports__);
 const SVG_NS = 'http://www.w3.org/2000/svg';
 const SPINNER_GRID = 24;
 const SPINNER_STROKE = 2;
+const SPINNER_LIVE_AREA = 20;
 const SPINNER_LOOKS = ['arc', 'breathing', 'comet', 'dots'];
 const SPINNER_DEFAULT_LOOK = 'arc'; // The dots look on the grid: a ring of dots as big as the stroke allows, so at
 // every step the dots are the step's and no attribute sizes them.
@@ -69,7 +79,8 @@ function createSvgNode(tagName, attributes = {}) {
 }
 
 const round = value => Math.round(value * 1000) / 1000; // The four looks in one drawing. On the ladder it is the 24-unit grid with
-// stroke 2; a spinner still drawn in pixels (the deprecated attributes) passes
+// stroke 2, every look on the ring of the live area (`inset` 2 units from the
+// edge of the box); a spinner still drawn in pixels (the deprecated attributes) passes
 // its own width, height and stroke. The circles carry presentation attributes
 // as well as their classes: the spinner sheet styles them (track colour, the
 // motion of each look, the still frame under reduced motion), and until that
@@ -87,11 +98,13 @@ function createSpinnerSvg({
   filled = SPINNER_DOTS_FILLED,
   dotRadius = null,
   direction = 'clockwise',
-  pixel = false
+  pixel = false,
+  inset = 0
 } = {}) {
   const cx = width / 2;
-  const cy = height / 2;
-  const half = Math.min(width, height) / 2;
+  const cy = height / 2; // The outer edge of every look: the track, the arc, the comet and the dots.
+
+  const half = Math.max(stroke, Math.min(width, height) / 2 - inset);
   const radius = Math.max(1, half - stroke / 2);
   const svg = createSvgNode('svg', {
     class: 'sf-loader-svg',
@@ -172,7 +185,8 @@ function createSpinnerSvg({
 
   svg.append(track, accent, comet, dotsGroup);
   return svg;
-} // The drawing on the icon grid, the one every spinner on the ladder uses.
+} // The drawing on the icon grid, the one every spinner on the ladder uses: the
+// ring in the icon's live area, 20 of the 24 units.
 
 function createLadderSpinnerSvg(options = {}) {
   return createSpinnerSvg({ ...options,
@@ -180,7 +194,8 @@ function createLadderSpinnerSvg(options = {}) {
     height: SPINNER_GRID,
     stroke: SPINNER_STROKE,
     dotRadius: null,
-    pixel: false
+    pixel: false,
+    inset: (SPINNER_GRID - SPINNER_LIVE_AREA) / 2
   });
 } // A spinner that stands in a control: endless, decorative (the control keeps
 // its label and says aria-busy), and marked bound so the spinner component,
@@ -237,7 +252,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
-const COMPONENT_ATTRIBUTES = new Set(["template", "size", "appearance", "type", "scheme", "status", "text", "icon", "icon-start", "icon-end", "icon-left", "icon-right", "icon-position", "text-position", "spacing", "tightness", "radius", "root-class", "loading", "segment", "disabled", "native-type", "form", "name", "value", "href", "expanded", "pressed", "shortcut", "shortcut-listen", "aria-label", "class", "style", "id", "slot"]); // href (1.4.0) takes the addresses a link may follow: a relative one, a
+const COMPONENT_ATTRIBUTES = new Set(["template", "size", "appearance", "type", "scheme", "status", "text", "icon", "icon-start", "icon-end", "icon-left", "icon-right", "icon-position", "text-position", "spacing", "tightness", "radius", "root-class", "loading", "segment", "disabled", "native-type", "form", "name", "value", "href", "expanded", "pressed", "text-pressed", "shortcut", "shortcut-listen", "aria-label", "class", "style", "id", "slot"]); // href (1.4.0) takes the addresses a link may follow: a relative one, a
 // fragment, http(s), mailto and tel. Any other scheme (javascript:, data:)
 // draws the button as a button.
 
@@ -388,6 +403,7 @@ class SfButton extends ButtonElement {
       ariaLabel: this.getAttribute("aria-label") || "",
       expanded: this.expanded,
       pressed: this.pressed,
+      textPressed: this.textPressed,
       // The shortcut's key caps and its aria-keyshortcuts, in this platform's
       // words (js/shortcut.js).
       shortcutCaps: (0,_js_shortcut__WEBPACK_IMPORTED_MODULE_5__.shortcutCaps)((0,_js_shortcut__WEBPACK_IMPORTED_MODULE_5__.parseShortcut)(this.shortcut)),
@@ -575,11 +591,14 @@ class SfButton extends ButtonElement {
     }
 
     return this;
-  }
+  } // A pressed toggle draws its icons filled (1.6.0, rule C12): the filled
+  // attribute, not the sheet's FILL alone, so the Loader's icon subset holds
+  // the filled glyph -- a FILL set by a rule drew the outlined one from it.
 
-  createIcon(name) {
+
+  createIcon(name, filled = false) {
     if (!name) return "";
-    return (0,lit__WEBPACK_IMPORTED_MODULE_3__.html)`<sf-icon icon="${name}" root-class="pointer-event-none" weight="400" aria-hidden="true"></sf-icon>`;
+    return (0,lit__WEBPACK_IMPORTED_MODULE_3__.html)`<sf-icon icon="${name}" ?filled=${filled} root-class="pointer-event-none" weight="400" aria-hidden="true"></sf-icon>`;
   }
 
   set value(nextValue) {
@@ -859,9 +878,15 @@ function renderButtonTemplate(context) {
   const leftIconName = context.iconStart ?? (iconLeft || (icon && !isIconEnd ? icon : ''));
   const rightIconName = context.iconEnd ?? (iconRight || (icon && isIconEnd ? icon : ''));
   const component = context.component;
-  const leftIconContent = component?.hasSlotContent?.('icon-start') ? component.getSlotContent('icon-start') : component?.hasSlotContent?.('icon-left') ? component.getSlotContent('icon-left') : component.createIcon(leftIconName);
-  const rightIconContent = component?.hasSlotContent?.('icon-end') ? component.getSlotContent('icon-end') : component?.hasSlotContent?.('icon-right') ? component.getSlotContent('icon-right') : component.createIcon(rightIconName);
-  const textContent = component?.hasSlotContent?.('text') ? component.getSlotContent('text') : text; // The shortcut's keys sit at the end; the label then takes the free room,
+  const leftIconContent = component?.hasSlotContent?.('icon-start') ? component.getSlotContent('icon-start') : component?.hasSlotContent?.('icon-left') ? component.getSlotContent('icon-left') : component.createIcon(leftIconName, context.pressed === true);
+  const rightIconContent = component?.hasSlotContent?.('icon-end') ? component.getSlotContent('icon-end') : component?.hasSlotContent?.('icon-right') ? component.getSlotContent('icon-right') : component.createIcon(rightIconName, context.pressed === true); // A toggle whose label changes (text-pressed, 1.6.0): «В избранное» at rest,
+  // «В избранном» while on. The label then says the state, so aria-pressed
+  // is not written as well (docs review R028, rule C12): a screen reader
+  // would hear «В избранном, нажата». The look follows pressed either way.
+
+  const pressedLabel = context.pressed === true && context.textPressed ? context.textPressed : '';
+  const announcesPressed = context.pressed !== undefined && !context.textPressed;
+  const textContent = component?.hasSlotContent?.('text') ? component.getSlotContent('text') : pressedLabel || text; // The shortcut's keys sit at the end; the label then takes the free room,
   // so a stretched button reads label ... keys and text-position places it.
 
   const shortcutCaps = context.shortcutCaps || [];
@@ -891,9 +916,9 @@ function renderButtonTemplate(context) {
   // classes, so every on-surface rule holds and one rule quietens it.
   !status && scheme === 'on-surface-variant' ? 'sf-button--on-surface' : '', 'flex', 'items-cross-center', segment ? `segment-${segment}` : '', // The spacing class, not its retired tightness name (journal
   // class-tightness-to-spacing; docs trial 4).
-  spacing && spacing !== 'normal' ? `spacing-${spacing}` : '', radius ? `radius-${radius}` : '', rootClass, loading ? 'loading sf-button-state-loading' : '', // A toggle that is on wears the selected look the class sheet gives a
-  // real two-state button (active with aria-pressed).
-  context.pressed ? 'active' : ''].filter(Boolean);
+  spacing && spacing !== 'normal' ? `spacing-${spacing}` : '', radius ? `radius-${radius}` : '', rootClass, loading ? 'loading sf-button-state-loading' : '', // A toggle that is on wears the pressed look (component.buttons 1.5.0,
+  // rule C12): the class carries it whether or not aria-pressed is said.
+  context.pressed ? 'sf-button--pressed' : ''].filter(Boolean);
   const content = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
             ${overlayContent}
             ${startContent}
@@ -936,7 +961,7 @@ function renderButtonTemplate(context) {
                 aria-label=${ariaLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 aria-busy=${loading ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 aria-expanded=${context.expanded === undefined ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : String(Boolean(context.expanded))}
-                aria-pressed=${context.pressed === undefined ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : String(Boolean(context.pressed))}
+                aria-pressed=${announcesPressed ? String(Boolean(context.pressed)) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 aria-keyshortcuts=${context.ariaKeyShortcuts || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         >${content}</button>
     `;
@@ -984,7 +1009,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-butto
 /***/ "5bb33fb22db3"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button","tag":"sf-button","version":"1.5.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"appearance":{"type":"enum","values":["default","tonal","outline","link","surface"],"default":"default"},"scheme":{"type":"enum","values":["primary","secondary","on-surface","on-surface-variant"],"default":"primary"},"status":{"type":"enum","values":["","error"],"default":""},"text-position":{"type":"string","default":"center"},"text":{"type":"string","default":""},"segment":{"type":"string","default":""},"icon":{"type":"icon","default":""},"icon-start":{"type":"icon","default":""},"icon-end":{"type":"icon","default":""},"icon-position":{"type":"enum","values":["start","end"],"default":"start"},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"loading":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"native-type":{"type":"enum","values":["button","submit","reset"],"default":"button"},"form":{"type":"string","default":""},"name":{"type":"string","default":""},"value":{"type":"string","default":""},"href":{"type":"string","default":""},"shortcut":{"type":"string","default":""},"shortcut-listen":{"type":"boolean","default":false},"expanded":{"type":"boolean","optional":true},"pressed":{"type":"boolean","optional":true}},"values":{},"events":{"press":{"carries":{}}},"actions":{},"css-variables":{"--sf-button-background-color":{"type":"color","state":"default"},"--sf-button-color":{"type":"color","state":"default"},"--sf-button-border-color":{"type":"color","state":"default"},"--sf-button-border-width":{"type":"length","state":"default"},"--sf-button-radius":{"type":"length","state":"default"},"--sf-button-padding-inline":{"type":"length","state":"default"},"--sf-button-padding-block":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button","tag":"sf-button","version":"1.6.1","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"appearance":{"type":"enum","values":["default","tonal","outline","link","surface"],"default":"default"},"scheme":{"type":"enum","values":["primary","secondary","on-surface","on-surface-variant"],"default":"primary"},"status":{"type":"enum","values":["","error"],"default":""},"text-position":{"type":"string","default":"center"},"text":{"type":"string","default":""},"segment":{"type":"string","default":""},"icon":{"type":"icon","default":""},"icon-start":{"type":"icon","default":""},"icon-end":{"type":"icon","default":""},"icon-position":{"type":"enum","values":["start","end"],"default":"start"},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"loading":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"native-type":{"type":"enum","values":["button","submit","reset"],"default":"button"},"form":{"type":"string","default":""},"name":{"type":"string","default":""},"value":{"type":"string","default":""},"href":{"type":"string","default":""},"shortcut":{"type":"string","default":""},"shortcut-listen":{"type":"boolean","default":false},"expanded":{"type":"boolean","optional":true},"pressed":{"type":"boolean","optional":true},"text-pressed":{"type":"string","default":""}},"values":{},"events":{"press":{"carries":{}}},"actions":{},"css-variables":{"--sf-button-background-color":{"type":"color","state":"default"},"--sf-button-color":{"type":"color","state":"default"},"--sf-button-border-color":{"type":"color","state":"default"},"--sf-button-border-width":{"type":"length","state":"default"},"--sf-button-radius":{"type":"length","state":"default"},"--sf-button-padding-inline":{"type":"length","state":"default"},"--sf-button-padding-block":{"type":"length","state":"default"},"--sf-button-pressed-background-color":{"type":"color","state":"pressed"},"--sf-button-pressed-color":{"type":"color","state":"pressed"}}}');
 
 /***/ },
 

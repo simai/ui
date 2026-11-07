@@ -147,11 +147,14 @@ function renderPageHeaderTemplate(context) {
       <h1 class="sf-page-header-heading sf-h-4 m-0 min-w-0 truncate">${heading}</h1>
       ${count !== '' && count !== null && count !== undefined ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-badge appearance="tonal" scheme="neutral" size="1/2" text=${String(count)}></sf-badge>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       ${level === 'install' ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-badge appearance="outline" scheme="tertiary" size="1/2" text=${text('all-sites')}></sf-badge>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-      ${star === true || star === false ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button-icon size="1/2" appearance="ghost" scheme="on-surface"
+      ${star === true || star === false // The star's name says what pressing it does («В избранное», «Убрать
+  // из избранного»), so it says the state too and carries no
+  // aria-pressed (1.2.2, rule C12): both at once read «Убрать из
+  // избранного, нажата». The filled glyph in its own colour shows it.
+  ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button-icon size="1/2" appearance="ghost" scheme="on-surface"
             class=${on ? 'sf-page-header-star sf-page-header-star--on' : 'sf-page-header-star'}
             icon="star"
             ?filled=${on}
-            pressed=${on ? '' : 'false'}
             aria-label=${on ? text('unstar') : text('star')}
             title=${on ? text('unstar') : text('star')}
             @click=${() => component.toggleStar()}></sf-button-icon>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
@@ -205,7 +208,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-heade
 /***/ "96b1e08482fd"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.header-page","tag":"sf-header-page","version":"1.2.1","kind":"leaf","settings":{"heading":{"type":"string","default":""},"count":{"type":"string","default":""},"level":{"type":"enum","values":["site","install"],"default":"site"},"star":{"type":"boolean","optional":true}},"values":{},"events":{"toggle":{"carries":{"on":"boolean"},"cancelable":true}},"actions":{},"css-variables":{"--sf-page-header-gap":{"type":"length","state":"default"},"--sf-page-header-line-gap":{"type":"length","state":"default"},"--sf-page-header-actions-gap":{"type":"length","state":"default"},"--sf-page-header-heading-color":{"type":"color","state":"default"},"--sf-page-header-star-color":{"type":"color","state":"on"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.header-page","tag":"sf-header-page","version":"1.2.2","kind":"leaf","settings":{"heading":{"type":"string","default":""},"count":{"type":"string","default":""},"level":{"type":"enum","values":["site","install"],"default":"site"},"star":{"type":"boolean","optional":true}},"values":{},"events":{"toggle":{"carries":{"on":"boolean"},"cancelable":true}},"actions":{},"css-variables":{"--sf-page-header-gap":{"type":"length","state":"default"},"--sf-page-header-line-gap":{"type":"length","state":"default"},"--sf-page-header-actions-gap":{"type":"length","state":"default"},"--sf-page-header-heading-color":{"type":"color","state":"default"},"--sf-page-header-star-color":{"type":"color","state":"on"}}}');
 
 /***/ },
 

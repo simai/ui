@@ -376,6 +376,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   SPINNER_DOTS: () => (/* binding */ SPINNER_DOTS),
 /* harmony export */   SPINNER_DOTS_FILLED: () => (/* binding */ SPINNER_DOTS_FILLED),
 /* harmony export */   SPINNER_GRID: () => (/* binding */ SPINNER_GRID),
+/* harmony export */   SPINNER_LIVE_AREA: () => (/* binding */ SPINNER_LIVE_AREA),
 /* harmony export */   SPINNER_LOOKS: () => (/* binding */ SPINNER_LOOKS),
 /* harmony export */   SPINNER_STROKE: () => (/* binding */ SPINNER_STROKE),
 /* harmony export */   createInlineSpinner: () => (/* binding */ createInlineSpinner),
@@ -395,6 +396,14 @@ __webpack_require__.r(__webpack_exports__);
 // them; a spinner on the same grid, scaled to the icon box of a step, strokes as
 // the icons of that step do, and needs no stroke of its own per step.
 //
+// The ring is drawn inside the icon's live area, not across its box (docs
+// review R027, owner decision C11, 2026-11-07): Material Symbols draw in 20 of
+// their 24 units and leave 2 of air on every side, so a ring that filled the
+// box stood larger than the icon beside it. On the grid the ring's outer edge
+// is the live area -- radius 9 at stroke 2, 20 units across -- and the box
+// stays the icon's box, so a control that swaps its icon for the spinner moves
+// nothing. The proportion is the grid's, the same at every step.
+//
 // The looks (simai/ui-source#11): every spinner carries the four looks on the
 // same ring -- the arc and the breathing arc (one circle, two motions), the
 // comet and the dots -- and the spinner sheet shows the one the page asks for:
@@ -405,6 +414,7 @@ __webpack_require__.r(__webpack_exports__);
 const SVG_NS = 'http://www.w3.org/2000/svg';
 const SPINNER_GRID = 24;
 const SPINNER_STROKE = 2;
+const SPINNER_LIVE_AREA = 20;
 const SPINNER_LOOKS = ['arc', 'breathing', 'comet', 'dots'];
 const SPINNER_DEFAULT_LOOK = 'arc'; // The dots look on the grid: a ring of dots as big as the stroke allows, so at
 // every step the dots are the step's and no attribute sizes them.
@@ -434,7 +444,8 @@ function createSvgNode(tagName, attributes = {}) {
 }
 
 const round = value => Math.round(value * 1000) / 1000; // The four looks in one drawing. On the ladder it is the 24-unit grid with
-// stroke 2; a spinner still drawn in pixels (the deprecated attributes) passes
+// stroke 2, every look on the ring of the live area (`inset` 2 units from the
+// edge of the box); a spinner still drawn in pixels (the deprecated attributes) passes
 // its own width, height and stroke. The circles carry presentation attributes
 // as well as their classes: the spinner sheet styles them (track colour, the
 // motion of each look, the still frame under reduced motion), and until that
@@ -452,11 +463,13 @@ function createSpinnerSvg({
   filled = SPINNER_DOTS_FILLED,
   dotRadius = null,
   direction = 'clockwise',
-  pixel = false
+  pixel = false,
+  inset = 0
 } = {}) {
   const cx = width / 2;
-  const cy = height / 2;
-  const half = Math.min(width, height) / 2;
+  const cy = height / 2; // The outer edge of every look: the track, the arc, the comet and the dots.
+
+  const half = Math.max(stroke, Math.min(width, height) / 2 - inset);
   const radius = Math.max(1, half - stroke / 2);
   const svg = createSvgNode('svg', {
     class: 'sf-loader-svg',
@@ -537,7 +550,8 @@ function createSpinnerSvg({
 
   svg.append(track, accent, comet, dotsGroup);
   return svg;
-} // The drawing on the icon grid, the one every spinner on the ladder uses.
+} // The drawing on the icon grid, the one every spinner on the ladder uses: the
+// ring in the icon's live area, 20 of the 24 units.
 
 function createLadderSpinnerSvg(options = {}) {
   return createSpinnerSvg({ ...options,
@@ -545,7 +559,8 @@ function createLadderSpinnerSvg(options = {}) {
     height: SPINNER_GRID,
     stroke: SPINNER_STROKE,
     dotRadius: null,
-    pixel: false
+    pixel: false,
+    inset: (SPINNER_GRID - SPINNER_LIVE_AREA) / 2
   });
 } // A spinner that stands in a control: endless, decorative (the control keeps
 // its label and says aria-busy), and marked bound so the spinner component,

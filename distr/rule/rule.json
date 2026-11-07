@@ -1557,6 +1557,30 @@
     "type": "smart"
   },
   {
+    "name": "cl-list-attention",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "cl-button"
+      },
+      {
+        "name": "cl-badge"
+      },
+      {
+        "name": "cl-icon"
+      },
+      {
+        "name": "sr-only/default"
+      }
+    ],
+    "tags": [
+      "sf-list-attention"
+    ],
+    "type": "smart"
+  },
+  {
     "name": "cl-list-feed",
     "css": true,
     "js": true,
@@ -1784,6 +1808,33 @@
     ],
     "tags": [
       "sf-progress-ring"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-progress-run",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "cl-button"
+      },
+      {
+        "name": "cl-button-icon"
+      },
+      {
+        "name": "cl-button-copy"
+      },
+      {
+        "name": "cl-icon"
+      },
+      {
+        "name": "sr-only/default"
+      }
+    ],
+    "tags": [
+      "sf-progress-run"
     ],
     "type": "smart"
   },
@@ -2089,6 +2140,30 @@
     ],
     "tags": [
       "sf-theme-generator"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-tile-metric",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "cl-progress-bar"
+      },
+      {
+        "name": "cl-badge"
+      },
+      {
+        "name": "cl-icon"
+      },
+      {
+        "name": "sr-only/default"
+      }
+    ],
+    "tags": [
+      "sf-tile-metric"
     ],
     "type": "smart"
   },
@@ -3330,7 +3405,7 @@
     "name": "highlight",
     "css": true,
     "js": true,
-    "regex": "/(?:class\\s*=\\s*[\"'][^\"']*language-[^\"']*[\"']|<pre\\b[^>]*>\\s*<code\\b[^>]*>)/i",
+    "regex": "/(?:class\\s*=\\s*[\"'](?:[^\"']*\\s)?language-[^\"']*[\"']|<pre\\b[^>]*>\\s*<code\\b[^>]*>)/i",
     "relation": [
       {
         "name": "clipboard"

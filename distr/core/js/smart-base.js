@@ -2356,6 +2356,47 @@ function installPortAction(proto) {
 
 /***/ },
 
+/***/ "79daf88681f1"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   HOST_RUNTIME_MARKS: () => (/* binding */ HOST_RUNTIME_MARKS),
+/* harmony export */   readHostDataAttributes: () => (/* binding */ readHostDataAttributes)
+/* harmony export */ });
+// The marks the runtime keeps on a Smart host -- SF.Assembly's part marks, the
+// first paint's, the Loader's and the style gate's. They are the runtime's,
+// not the author's: forwardHostAttributes leaves them on the host (the
+// Assembly and the Loader find the host by them), and element.dataAttributes
+// never reports them. The style gate's pair, data-sf-style-pending and
+// data-sf-style-ready, was missing here and came back from dataAttributes as
+// sfStylePending / sfStyleReady beside what the author wrote (docs review
+// R022, 2026-11-07).
+const HOST_RUNTIME_MARKS = new Set(["data-sf-role", "data-sf-instance", "data-sf-start", "data-sf-started", "data-sf-assembly", "data-sf-static", "data-sf-first-paint", "data-sf-held", "data-sf-skeleton", "data-sf-observer", "data-sf-style-pending", "data-sf-style-ready"]); // What the author wrote as data-* on a host, read the way dataset reads
+// (data-add -> add, data-row-id -> rowId), from the host's record of
+// attribute name -> value. The runtime's marks are left out even when an
+// older record holds them.
+
+function readHostDataAttributes(record) {
+  const read = {};
+
+  if (!record || !record.size) {
+    return read;
+  }
+
+  record.forEach((value, name) => {
+    if (HOST_RUNTIME_MARKS.has(name)) {
+      return;
+    }
+
+    const key = name.slice(5).replace(/-([a-z])/gu, (_, letter) => letter.toUpperCase());
+    read[key] = value;
+  });
+  return read;
+}
+
+/***/ },
+
 /***/ "695f21e50358"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -4264,11 +4305,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _aliases_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("28b603686dcc");
 /* harmony import */ var _tag_aliases_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("4a85acfb05c1");
 /* harmony import */ var _upgrade_properties_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("695761d67e81");
-/* harmony import */ var _host_port_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("f171c5ece4b4");
-/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("fef8077ac919");
-/* harmony import */ var lit_directives_ref_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("7fcbcc00731e");
-/* harmony import */ var lit_directive_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("69fcfee6f64b");
-/* harmony import */ var _page_language__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("8489d1f5bab4");
+/* harmony import */ var _host_runtime_marks_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("79daf88681f1");
+/* harmony import */ var _host_port_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("f171c5ece4b4");
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("fef8077ac919");
+/* harmony import */ var lit_directives_ref_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("7fcbcc00731e");
+/* harmony import */ var lit_directive_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("69fcfee6f64b");
+/* harmony import */ var _page_language__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("8489d1f5bab4");
 
 
 
@@ -4277,6 +4319,7 @@ __webpack_require__.r(__webpack_exports__);
 // element that is not a Smart base element (a package's composite that calls
 // customElements.define itself, sf-view) defines its old tags beside its own
 // with defineTagAliases.
+
 
 
 
@@ -4567,11 +4610,11 @@ function applySmartProps(element, props = {}, previous = null) {
 // anything in the table changed -- fourteen nodes a row, changed row or not,
 // taking the control a person was interacting with with them.
 
-class SmartElementDirective extends lit_directive_js__WEBPACK_IMPORTED_MODULE_8__.Directive {
+class SmartElementDirective extends lit_directive_js__WEBPACK_IMPORTED_MODULE_9__.Directive {
   constructor(partInfo) {
     super(partInfo);
 
-    if (partInfo.type !== lit_directive_js__WEBPACK_IMPORTED_MODULE_8__.PartType.CHILD) {
+    if (partInfo.type !== lit_directive_js__WEBPACK_IMPORTED_MODULE_9__.PartType.CHILD) {
       throw new Error("renderSmartElement belongs in a child position of a template");
     }
 
@@ -4595,10 +4638,8 @@ class SmartElementDirective extends lit_directive_js__WEBPACK_IMPORTED_MODULE_8_
 
 }
 
-const smartElement = (0,lit_directive_js__WEBPACK_IMPORTED_MODULE_8__.directive)(SmartElementDirective); // The marks the runtime keeps on a Smart host (SF.Assembly, the first paint,
-// the Loader): forwardHostAttributes leaves them on the host.
-
-const HOST_RUNTIME_MARKS = new Set(["data-sf-role", "data-sf-instance", "data-sf-start", "data-sf-started", "data-sf-assembly", "data-sf-static", "data-sf-first-paint", "data-sf-held", "data-sf-skeleton", "data-sf-observer"]); // The same element, outside a template. A caller that holds the element itself
+const smartElement = (0,lit_directive_js__WEBPACK_IMPORTED_MODULE_9__.directive)(SmartElementDirective); // The marks the runtime keeps on a Smart host: host-runtime-marks.js.
+// The same element, outside a template. A caller that holds the element itself
 // -- a portal, a measurement, a test -- gets a fresh one, because there is no
 // position to keep it in.
 
@@ -4834,12 +4875,12 @@ class SfBaseElement extends HTMLElement {
     // the shared rule itself -- sixteen subscriptions would be sixteen chances
     // to forget one (owner, 2026-10-11: «языков будет гораздо больше чем два»).
 
-    this.__sfLanguageOff = _page_language__WEBPACK_IMPORTED_MODULE_9__.language.onChange(() => {
+    this.__sfLanguageOff = _page_language__WEBPACK_IMPORTED_MODULE_10__.language.onChange(() => {
       if (this._isMounted) this.requestComponentUpdate("language");
     }); // A [lang] changed on the page redraws the elements under it (standard
     // 1.3.8 §11.1; simai/ui-source#45): one observer for the document.
 
-    this.__sfLanguageUnwatch = (0,_page_language__WEBPACK_IMPORTED_MODULE_9__.followLanguage)(this, () => {
+    this.__sfLanguageUnwatch = (0,_page_language__WEBPACK_IMPORTED_MODULE_10__.followLanguage)(this, () => {
       if (this._isMounted) this.requestComponentUpdate("language");
     });
     this.emitComponentEvent("connected");
@@ -4861,7 +4902,7 @@ class SfBaseElement extends HTMLElement {
 
 
   connectPort(port) {
-    return (0,_host_port_js__WEBPACK_IMPORTED_MODULE_5__.connectPort)(this, port, SfBaseElement.prototype.setHostPort);
+    return (0,_host_port_js__WEBPACK_IMPORTED_MODULE_6__.connectPort)(this, port, SfBaseElement.prototype.setHostPort);
   }
 
   setHostPort(port) {
@@ -4871,7 +4912,7 @@ class SfBaseElement extends HTMLElement {
 
 
   get sfPort() {
-    return (0,_host_port_js__WEBPACK_IMPORTED_MODULE_5__.portOf)(this);
+    return (0,_host_port_js__WEBPACK_IMPORTED_MODULE_6__.portOf)(this);
   }
 
   sfOpenScope() {
@@ -5022,7 +5063,7 @@ class SfBaseElement extends HTMLElement {
   }
 
   createRef() {
-    const ref = (0,lit_directives_ref_js__WEBPACK_IMPORTED_MODULE_7__.createRef)();
+    const ref = (0,lit_directives_ref_js__WEBPACK_IMPORTED_MODULE_8__.createRef)();
     ref.__sfOwner = this;
     return ref;
   }
@@ -5504,7 +5545,7 @@ class SfBaseElement extends HTMLElement {
     const printed = this._hasRendered ? [] : this.staticMarkup();
     this.prepareRenderContainer(changedAttributes);
     this.markStylePending(this);
-    (0,lit__WEBPACK_IMPORTED_MODULE_6__.render)(templateResult, this);
+    (0,lit__WEBPACK_IMPORTED_MODULE_7__.render)(templateResult, this);
 
     if (printed.length) {
       this.handOverStaticMarkup(printed); // Page children the first paint held out of view are placed now.
@@ -5789,7 +5830,7 @@ class SfBaseElement extends HTMLElement {
         return;
       }
 
-      if (HOST_RUNTIME_MARKS.has(name)) {
+      if (_host_runtime_marks_js__WEBPACK_IMPORTED_MODULE_5__.HOST_RUNTIME_MARKS.has(name)) {
         return;
       }
 
@@ -5829,18 +5870,7 @@ class SfBaseElement extends HTMLElement {
 
 
   get dataAttributes() {
-    const record = this.__sfHostDataAttributes;
-
-    if (!record || !record.size) {
-      return {};
-    }
-
-    const read = {};
-    record.forEach((value, name) => {
-      const key = name.slice(5).replace(/-([a-z])/gu, (_, letter) => letter.toUpperCase());
-      read[key] = value;
-    });
-    return read;
+    return (0,_host_runtime_marks_js__WEBPACK_IMPORTED_MODULE_5__.readHostDataAttributes)(this.__sfHostDataAttributes);
   } // Take a data-* off the host's record and off the control together. Removing
   // it from the control alone is undone on the next render, because the record
   // is what the control is given again.
@@ -6641,7 +6671,7 @@ class SfBaseElement extends HTMLElement {
     const slotContent = this._slotTemplates.get(name) || [];
 
     if (!slotContent.length) {
-      return lit__WEBPACK_IMPORTED_MODULE_6__.nothing;
+      return lit__WEBPACK_IMPORTED_MODULE_7__.nothing;
     }
 
     if (slotContent.length === 1) {
@@ -6725,7 +6755,7 @@ class SfBaseElement extends HTMLElement {
     const externalModule = await this.resolveExternalTemplateModule(templateName);
 
     if (!this._isMounted || renderToken !== this._renderToken || templateName !== this.componentTemplateName) {
-      return lit__WEBPACK_IMPORTED_MODULE_6__.nothing;
+      return lit__WEBPACK_IMPORTED_MODULE_7__.nothing;
     }
 
     if (externalModule !== this._externalTemplateModule) {
@@ -6741,8 +6771,8 @@ class SfBaseElement extends HTMLElement {
 
       if (renderFn) {
         return renderFn({
-          html: lit__WEBPACK_IMPORTED_MODULE_6__.html,
-          nothing: lit__WEBPACK_IMPORTED_MODULE_6__.nothing,
+          html: lit__WEBPACK_IMPORTED_MODULE_7__.html,
+          nothing: lit__WEBPACK_IMPORTED_MODULE_7__.nothing,
           context,
           component: this,
           changedAttributes
@@ -6763,8 +6793,8 @@ class SfBaseElement extends HTMLElement {
       return externalModule.mapContext({
         context,
         component: this,
-        html: lit__WEBPACK_IMPORTED_MODULE_6__.html,
-        nothing: lit__WEBPACK_IMPORTED_MODULE_6__.nothing
+        html: lit__WEBPACK_IMPORTED_MODULE_7__.html,
+        nothing: lit__WEBPACK_IMPORTED_MODULE_7__.nothing
       }) || context;
     }
 
@@ -6915,8 +6945,8 @@ class SfBaseElement extends HTMLElement {
       externalModule[hookName]({
         component: this,
         root: this,
-        html: lit__WEBPACK_IMPORTED_MODULE_6__.html,
-        nothing: lit__WEBPACK_IMPORTED_MODULE_6__.nothing,
+        html: lit__WEBPACK_IMPORTED_MODULE_7__.html,
+        nothing: lit__WEBPACK_IMPORTED_MODULE_7__.nothing,
         context: this.templateContext(),
         ...detail
       });
@@ -7036,7 +7066,7 @@ class SfBaseElement extends HTMLElement {
   }
 
   template() {
-    return lit__WEBPACK_IMPORTED_MODULE_6__.nothing;
+    return lit__WEBPACK_IMPORTED_MODULE_7__.nothing;
   }
 
   beforeRender() {}
@@ -7063,23 +7093,23 @@ class SfBaseElement extends HTMLElement {
 
 if (typeof window !== "undefined") {
   window.SfBaseElement = SfBaseElement;
-  window.html = lit__WEBPACK_IMPORTED_MODULE_6__.html;
-  window.nothing = lit__WEBPACK_IMPORTED_MODULE_6__.nothing;
-  window.render = lit__WEBPACK_IMPORTED_MODULE_6__.render;
+  window.html = lit__WEBPACK_IMPORTED_MODULE_7__.html;
+  window.nothing = lit__WEBPACK_IMPORTED_MODULE_7__.nothing;
+  window.render = lit__WEBPACK_IMPORTED_MODULE_7__.render;
 
   if (!window.SF) {
     window.SF = {};
   }
 
   window.SF.SfBaseElement = SfBaseElement;
-  window.SF.html = lit__WEBPACK_IMPORTED_MODULE_6__.html;
-  window.SF.nothing = lit__WEBPACK_IMPORTED_MODULE_6__.nothing;
-  window.SF.render = lit__WEBPACK_IMPORTED_MODULE_6__.render;
+  window.SF.html = lit__WEBPACK_IMPORTED_MODULE_7__.html;
+  window.SF.nothing = lit__WEBPACK_IMPORTED_MODULE_7__.nothing;
+  window.SF.render = lit__WEBPACK_IMPORTED_MODULE_7__.render;
   window.SF.smart = { ...(window.SF.smart || {}),
     SfBaseElement,
-    html: lit__WEBPACK_IMPORTED_MODULE_6__.html,
-    nothing: lit__WEBPACK_IMPORTED_MODULE_6__.nothing,
-    render: lit__WEBPACK_IMPORTED_MODULE_6__.render,
+    html: lit__WEBPACK_IMPORTED_MODULE_7__.html,
+    nothing: lit__WEBPACK_IMPORTED_MODULE_7__.nothing,
+    render: lit__WEBPACK_IMPORTED_MODULE_7__.render,
     toBoolean,
     toAttributeName,
     toNumber,

@@ -204,7 +204,10 @@ function renderInline(context) {
          role=${context.liveRole ?? lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
       <i class="sf-icon sf-empty-state-icon" aria-hidden="true">${context.shownIcon}</i>
       <span class="sf-empty-state-line">${context.shownLine}</span>
-      ${action ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button class="sf-empty-state-link" size=${size === '1' ? '1' : '1/2'} appearance="link" scheme="primary" spacing="compact"
+      ${action // The link is one size below the line (1.0.x: size 1 with compact
+  // spacing): density no longer changes a button's height (C01), so the
+  // smaller link is the next size down, as tall as it was.
+  ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button class="sf-empty-state-link" size=${size === '1' ? '1/2' : '1/3'} appearance="link" scheme="primary"
                  text=${action.text ?? ''} data-action=${String(action.id)}
                  @click=${() => context.component.act(action.id)}></sf-button>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     </div>
@@ -347,7 +350,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-empty
 /***/ "91caf1e1e58a"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.empty-state","tag":"sf-empty-state","version":"1.1.6","kind":"leaf","settings":{"kind":{"type":"enum","values":["no-data","nothing-found","no-access","error"],"default":"no-data"},"size":{"type":"enum","values":["1/3","1/2","1","2"],"default":"1"},"icon":{"type":"icon","default":""},"heading":{"type":"string","default":""},"text":{"type":"string","default":""},"heading-level":{"type":"number","default":3,"integer":true,"min":2,"max":6},"layout":{"type":"enum","values":["block","inline"],"default":"block"},"live":{"type":"enum","values":["auto","alert","off"],"default":"auto"},"actions":{"type":"list","of":{"id":"id","text":"string","appearance":"string"}}},"values":{},"events":{"action":{"carries":{"id":"string"},"own-verb":true}},"actions":{},"css-variables":{"--sf-empty-state-max-inline-size":{"type":"length","state":"default"},"--sf-empty-state-color":{"type":"color","state":"default"},"--sf-empty-state-text-color":{"type":"color","state":"default"},"--sf-empty-state-gap":{"type":"length","state":"default"},"--sf-empty-state-padding-block":{"type":"length","state":"default"},"--sf-empty-state-actions-gap":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.empty-state","tag":"sf-empty-state","version":"1.1.7","kind":"leaf","settings":{"kind":{"type":"enum","values":["no-data","nothing-found","no-access","error"],"default":"no-data"},"size":{"type":"enum","values":["1/3","1/2","1","2"],"default":"1"},"icon":{"type":"icon","default":""},"heading":{"type":"string","default":""},"text":{"type":"string","default":""},"heading-level":{"type":"number","default":3,"integer":true,"min":2,"max":6},"layout":{"type":"enum","values":["block","inline"],"default":"block"},"live":{"type":"enum","values":["auto","alert","off"],"default":"auto"},"actions":{"type":"list","of":{"id":"id","text":"string","appearance":"string"}}},"values":{},"events":{"action":{"carries":{"id":"string"},"own-verb":true}},"actions":{},"css-variables":{"--sf-empty-state-max-inline-size":{"type":"length","state":"default"},"--sf-empty-state-color":{"type":"color","state":"default"},"--sf-empty-state-text-color":{"type":"color","state":"default"},"--sf-empty-state-gap":{"type":"length","state":"default"},"--sf-empty-state-padding-block":{"type":"length","state":"default"},"--sf-empty-state-actions-gap":{"type":"length","state":"default"}}}');
 
 /***/ },
 

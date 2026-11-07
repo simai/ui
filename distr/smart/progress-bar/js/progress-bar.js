@@ -481,7 +481,9 @@ class ComponentObserver {
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   showChunk: () => (/* binding */ showChunk)
+/* harmony export */   effectiveStatus: () => (/* binding */ effectiveStatus),
+/* harmony export */   showChunk: () => (/* binding */ showChunk),
+/* harmony export */   thresholdStatus: () => (/* binding */ thresholdStatus)
 /* harmony export */ });
 /* harmony import */ var _component_progress_bar_js_progressbar__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("3b4e9ff2f1d2");
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("deb1a4d61565");
@@ -509,7 +511,8 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 // 1.3.8 §3, §4, §4.4): its settings are attributes and properties made by
 // core/js/element-manifest.js; a job's part arrives as the stream fact chunk
 // {done, total} (vocabulary 1.1.5 §5.2), which a rule hands to the action
-// chunk; tone and setProgress are dated aliases (aliases.json).
+// chunk; tone and setProgress are dated aliases (aliases.json). warning-at and
+// error-at (1.2.0) turn the bar a warning or an error by itself.
 
 const ProgressBarElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_5__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default()),
@@ -547,6 +550,25 @@ function showChunk(element, done, total) {
   return {
     outcome: 'applied'
   };
+} // The status the bar draws (1.2.0): the more serious of the page's status and
+// the threshold the value reached. The thresholds are the page's, in per cent
+// like the value; unset (null) is no threshold. neutral, info and success rank
+// below warning, warning below error.
+
+const RANK = {
+  warning: 1,
+  error: 2
+};
+function thresholdStatus(value, warningAt, errorAt) {
+  const number = Number(value);
+  if (!Number.isFinite(number)) return '';
+  if (Number.isFinite(errorAt) && number >= errorAt) return 'error';
+  if (Number.isFinite(warningAt) && number >= warningAt) return 'warning';
+  return '';
+}
+function effectiveStatus(status, value, warningAt, errorAt) {
+  const reached = thresholdStatus(value, warningAt, errorAt);
+  return (RANK[reached] ?? 0) > (RANK[status] ?? 0) ? reached : status;
 } // What retires without a new name (aliases.json rows with `to: null`): kept
 // until the date, and each call is noted with it.
 
@@ -585,6 +607,18 @@ class SfProgressBar extends ProgressBarElement {
 
   get status() {
     return this.getProp('status');
+  } // A threshold holds only where the page set it: an unset number reads 0.
+
+
+  threshold(attribute) {
+    if (!this.hasAttribute(attribute)) return null;
+    const number = Number(this.getAttribute(attribute));
+    return Number.isFinite(number) ? number : null;
+  } // The status drawn: the page's, or the threshold the value reached.
+
+
+  get drawnStatus() {
+    return effectiveStatus(this.status, this.value, this.threshold('warning-at'), this.threshold('error-at'));
   } // The accessible name: label, else the host's aria-label (§3.1, §4.8).
 
 
@@ -594,7 +628,10 @@ class SfProgressBar extends ProgressBarElement {
 
   templateContext() {
     const props = this.getPropsContext();
+    const status = this.drawnStatus;
+    this.sfHostState('data-status', status);
     return this.createTemplateContext({ ...props,
+      status,
       label: this.accessibleLabel,
       component: this
     });
@@ -610,6 +647,7 @@ class SfProgressBar extends ProgressBarElement {
       value: this.value,
       textPosition: this.textPosition,
       status: this.status,
+      drawnStatus: this.drawnStatus,
       label: this.label,
       valueText: this.valueText
     };
@@ -629,7 +667,7 @@ class SfProgressBar extends ProgressBarElement {
   }
 
   resolveUpdateMode(changedAttributes = []) {
-    const directPatchAttributes = ['value', 'text-position', 'status', 'tone', 'label', 'value-text', 'aria-label'];
+    const directPatchAttributes = ['value', 'text-position', 'status', 'tone', 'warning-at', 'error-at', 'label', 'value-text', 'aria-label'];
 
     if (changedAttributes.length > 0 && changedAttributes.every(attr => directPatchAttributes.includes(attr))) {
       return 'dom';
@@ -641,10 +679,12 @@ class SfProgressBar extends ProgressBarElement {
   updateDom() {
     const root = this.querySelector('.sf-progress-bar');
     if (!root) return false;
+    const status = this.drawnStatus;
+    this.sfHostState('data-status', status);
     return (0,_component_progress_bar_js_progressbar__WEBPACK_IMPORTED_MODULE_0__.setProgressBarState)(root, {
       value: this.value,
       textPosition: this.textPosition,
-      tone: this.status,
+      tone: status,
       label: this.accessibleLabel,
       valueText: this.valueText
     });
@@ -798,7 +838,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-progr
 /***/ "e023bc52f90d"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.progress-bar","tag":"sf-progress-bar","version":"1.1.3","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"value":{"type":"number","default":0,"min":0,"max":100},"text-position":{"type":"enum","values":["none","inline-end","bottom","right"],"default":"none"},"status":{"type":"enum","values":["neutral","info","success","warning","error"],"default":"neutral"},"label":{"type":"string","default":""},"value-text":{"type":"string","default":""}},"values":{},"events":{},"actions":{"chunk":{"with":{"done":"number","total":"number"}}},"css-variables":{"--sf-progress-bar-fill-color":{"type":"color","state":"default"},"--sf-progress-bar-track-color":{"type":"color","state":"default"},"--sf-progress-bar-height":{"type":"length","state":"default"},"--sf-progress-bar-radius":{"type":"length","state":"default"},"--sf-progress-bar-color":{"type":"color","state":"default"},"--sf-progress-bar-gap":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.progress-bar","tag":"sf-progress-bar","version":"1.2.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"value":{"type":"number","default":0,"min":0,"max":100},"text-position":{"type":"enum","values":["none","inline-end","bottom","right"],"default":"none"},"status":{"type":"enum","values":["neutral","info","success","warning","error"],"default":"neutral"},"warning-at":{"type":"number","optional":true,"min":0,"max":100},"error-at":{"type":"number","optional":true,"min":0,"max":100},"label":{"type":"string","default":""},"value-text":{"type":"string","default":""}},"values":{},"events":{},"actions":{"chunk":{"with":{"done":"number","total":"number"}}},"css-variables":{"--sf-progress-bar-fill-color":{"type":"color","state":"default"},"--sf-progress-bar-track-color":{"type":"color","state":"default"},"--sf-progress-bar-height":{"type":"length","state":"default"},"--sf-progress-bar-radius":{"type":"length","state":"default"},"--sf-progress-bar-color":{"type":"color","state":"default"},"--sf-progress-bar-gap":{"type":"length","state":"default"}},"host-states":{"data-status":"string"}}');
 
 /***/ },
 

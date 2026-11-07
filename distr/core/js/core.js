@@ -1234,6 +1234,283 @@ if (typeof globalThis !== 'undefined') {
 
 /***/ },
 
+/***/ "effedf2a2981"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   ATTRIBUTE: () => (/* binding */ ATTRIBUTE),
+/* harmony export */   TARGET: () => (/* binding */ TARGET),
+/* harmony export */   WORDS: () => (/* binding */ WORDS),
+/* harmony export */   copyCode: () => (/* binding */ copyCode),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   install: () => (/* binding */ install),
+/* harmony export */   isCopyable: () => (/* binding */ isCopyable),
+/* harmony export */   refresh: () => (/* binding */ refresh)
+/* harmony export */ });
+/* harmony import */ var _clipboard_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("e081a020262e");
+/* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("8489d1f5bab4");
+// Copy on click for code in running text (owner, 2026-11-07, docs review R024,
+// rule C10). Opt-in, never the default: a container that carries
+// data-sf-code-copy turns each word of code inside it into a copy control,
+// as the Yandex Cloud docs do. data-sf-code-copy="false" on a part inside
+// turns it off again for that part.
+//
+//   <article data-sf-code-copy>
+//     <p>The event <code>sf-button-press</code> comes after the press.</p>
+//   </article>
+//
+// Only the code the base sheet draws as code in running text is taken (the
+// same exclusions as _sf_css__typograpy.scss): a <code> in a block of code
+// (pre, the highlighter's surface), in kbd or samp, in a button, with an sf-
+// class of its own or under a parent that has one stays as it is.
+//
+// A taken code is a button for the keyboard and for assistive technology:
+// role=button, tabindex 0, an aria-label that says what is copied; Enter and
+// Space copy, as a click does. A click that ends a text selection inside the
+// code does not copy: the person was selecting.
+//
+// What sf-button-copy does, it does by the same means: the copy and its
+// fallback are core's copyText (core/js/clipboard.js), and the words are
+// sf-button-copy's, read through the page's language (page-language.js)
+// under that component's name, so a word a product registers for
+// sf-button-copy (SF.language.register) is said here too. Core cannot import
+// a Smart component's files (core is what the Smart units depend on), so the
+// three words it says are written here as sf-button-copy ships them;
+// tests/inline-code.contract.test.mjs holds them equal to its language files.
+// A refused copy selects the code and says which keys to press, as
+// sf-button-copy does.
+
+
+const ATTRIBUTE = 'data-sf-code-copy';
+const TARGET = 'data-sf-code-copy-target';
+const STATUS_CLASS = 'sf-code-copy-status';
+const WORDS = {
+  en: {
+    copy: 'Copy',
+    copied: 'Copied',
+    selected: 'Selected — press {keys}'
+  },
+  ru: {
+    copy: 'Копировать',
+    copied: 'Скопировано',
+    selected: 'Выделено — нажмите {keys}'
+  }
+}; // The status stays as long as sf-button-copy's does by default.
+
+const SHOWN_MS = 2000; // Where a word of code is part of something else (the base sheet's list).
+
+const NOT_PROSE = 'pre, kbd, samp, button, [role="button"], .sf-highlight, .sf-code-surface';
+
+const word = (key, node, vars) => (0,_page_language_js__WEBPACK_IMPORTED_MODULE_1__.pageWord)(WORDS, key, node, {
+  component: 'sf-button-copy',
+  source: 'ru',
+  vars
+});
+
+const classed = element => String(element?.getAttribute?.('class') ?? '').includes('sf-');
+/** Whether this <code> is a copy control: running text inside an opted-in container. */
+
+
+function isCopyable(code) {
+  if (!code || code.localName !== 'code') return false;
+  const box = code.closest(`[${ATTRIBUTE}]`);
+  if (!box || box.getAttribute(ATTRIBUTE) === 'false') return false;
+  const parent = code.parentElement;
+  if (!parent || classed(code) || classed(parent)) return false;
+  return !parent.closest(NOT_PROSE);
+}
+
+const keys = () => /Mac|iPhone|iPad/u.test(globalThis.navigator?.platform ?? globalThis.navigator?.userAgent ?? '') ? '⌘C' : 'Ctrl+C';
+
+function mark(code) {
+  code.setAttribute(TARGET, '');
+  if (!code.hasAttribute('role')) code.setAttribute('role', 'button');
+  if (!code.hasAttribute('tabindex')) code.setAttribute('tabindex', '0');
+  code.setAttribute('aria-label', `${word('copy', code)}: ${code.textContent ?? ''}`);
+}
+
+function unmark(code) {
+  code.removeAttribute(TARGET);
+  if (code.getAttribute('role') === 'button') code.removeAttribute('role');
+  if (code.getAttribute('tabindex') === '0') code.removeAttribute('tabindex');
+  code.removeAttribute('aria-label');
+}
+/** Marks the code under `root` that should copy and unmarks the code that no longer should. */
+
+
+function refresh(root = globalThis.document) {
+  if (!root?.querySelectorAll) return;
+  const codes = root.localName === 'code' ? [root] : [...root.querySelectorAll('code')];
+
+  for (const code of codes) {
+    const wanted = isCopyable(code);
+    if (wanted) mark(code);else if (code.hasAttribute(TARGET)) unmark(code);
+  }
+} // One status per host: the page, or the open dialog or popover the code is
+// in (a fixed element under <body> would be drawn under the top layer). It is
+// made before anything is said into it, so the polite announcement is heard.
+
+function statusFor(code) {
+  const host = code.closest('dialog[open], [popover]') ?? code.ownerDocument.body;
+  let status = [...host.children].find(child => child.classList?.contains(STATUS_CLASS));
+
+  if (!status) {
+    status = code.ownerDocument.createElement('span');
+    status.className = STATUS_CLASS;
+    status.setAttribute('role', 'status');
+    status.setAttribute('aria-live', 'polite');
+    host.append(status);
+  }
+
+  return status;
+} // Above the code, centred on it, or below it when there is no room above.
+// The sheet draws the box from its anchor point (translate -50% -100% and the
+// gap as a negative margin); it is measured again after placing, because
+// inside a transformed ancestor a fixed box is placed against that ancestor,
+// and the difference is what it moved by.
+
+
+function place(status, code) {
+  const target = code.getBoundingClientRect();
+  const centre = target.left + target.width / 2;
+  status.style.left = `${centre}px`;
+  status.style.top = `${target.top}px`;
+  status.removeAttribute('data-below');
+  let drawn = status.getBoundingClientRect();
+
+  if (drawn.top < 0) {
+    status.setAttribute('data-below', '');
+    status.style.top = `${target.bottom}px`;
+    drawn = status.getBoundingClientRect();
+  }
+
+  const gap = Math.abs(parseFloat(globalThis.getComputedStyle?.(status).marginTop) || 0);
+  const below = status.hasAttribute('data-below');
+  const dx = centre - (drawn.left + drawn.width / 2);
+  const dy = below ? target.bottom + gap - drawn.top : target.top - gap - drawn.bottom;
+  if (Math.abs(dx) > 0.5) status.style.left = `${parseFloat(status.style.left) + dx}px`;
+  if (Math.abs(dy) > 0.5) status.style.top = `${parseFloat(status.style.top) + dy}px`;
+}
+
+function say(code, text, state) {
+  const status = statusFor(code);
+  status.textContent = text;
+  status.dataset.state = state;
+  status.setAttribute('data-shown', '');
+  place(status, code);
+  clearTimeout(status._sfTimer);
+  status._sfTimer = setTimeout(() => {
+    status.removeAttribute('data-shown');
+    status.textContent = '';
+  }, SHOWN_MS);
+}
+
+function selectText(code) {
+  const selection = code.ownerDocument.defaultView?.getSelection?.();
+  if (!selection) return;
+  const range = code.ownerDocument.createRange();
+  range.selectNodeContents(code);
+  selection.removeAllRanges();
+  selection.addRange(range);
+}
+/** Copies one code's text and says so near it. Settles with true when copied. */
+
+
+async function copyCode(code) {
+  const text = code.textContent ?? '';
+
+  try {
+    await (0,_clipboard_js__WEBPACK_IMPORTED_MODULE_0__.copyText)(text, {
+      document: code.ownerDocument
+    });
+    say(code, word('copied', code), 'copied');
+    return true;
+  } catch {
+    // The browser refused: the text is selected, so Ctrl+C still copies it.
+    selectText(code);
+    say(code, word('selected', code, {
+      keys: keys()
+    }), 'selected');
+    return false;
+  }
+}
+
+const targetOf = event => {
+  const code = event.target?.closest?.(`code[${TARGET}]`);
+  return code && isCopyable(code) ? code : null;
+};
+
+function onClick(event) {
+  const code = targetOf(event);
+  if (!code || event.defaultPrevented) return; // A click that ends a selection made inside the code is a selection.
+
+  const selection = code.ownerDocument.defaultView?.getSelection?.();
+  if (selection && !selection.isCollapsed && code.contains(selection.anchorNode)) return;
+  copyCode(code);
+}
+
+function onKeydown(event) {
+  if (event.key !== 'Enter' && event.key !== ' ') return;
+  const code = targetOf(event);
+  if (!code || event.target !== code) return;
+  event.preventDefault();
+  copyCode(code);
+}
+/** Starts watching `doc`: marks what is there and follows what is added. Once per document. */
+
+
+function install(doc = globalThis.document) {
+  if (!doc?.documentElement || doc.__sfCodeCopy) return;
+  doc.__sfCodeCopy = true;
+  doc.addEventListener('click', onClick);
+  doc.addEventListener('keydown', onKeydown);
+
+  const start = () => {
+    refresh(doc);
+    const View = doc.defaultView?.MutationObserver ?? globalThis.MutationObserver;
+    if (!View) return;
+    new View(records => {
+      for (const record of records) {
+        if (record.type === 'attributes') {
+          refresh(record.target);
+          continue;
+        }
+
+        for (const node of record.addedNodes) {
+          if (node.nodeType !== 1) continue; // Only what lies in or holds an opted-in container is looked at.
+
+          if (node.closest(`[${ATTRIBUTE}]`) || node.querySelector(`[${ATTRIBUTE}]`)) refresh(node);
+        }
+      }
+    }).observe(doc.documentElement, {
+      subtree: true,
+      childList: true,
+      attributes: true,
+      attributeFilter: [ATTRIBUTE]
+    });
+  };
+
+  if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', start, {
+    once: true
+  });else start();
+}
+
+if (typeof globalThis !== 'undefined' && globalThis.document) {
+  globalThis.SF = globalThis.SF || {};
+  if (!globalThis.SF.codeCopy) globalThis.SF.codeCopy = {
+    refresh,
+    copy: copyCode,
+    isCopyable
+  };
+  install(globalThis.document);
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (install);
+
+/***/ },
+
 /***/ "6734a1a77ea7"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -5185,14 +5462,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _format_js__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__("5b8371b87515");
 /* harmony import */ var _breakpoints_js__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__("1373e294ec38");
 /* harmony import */ var _clipboard_js__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__("e081a020262e");
-/* harmony import */ var _reading_position_js__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__("6978f1cc153b");
-/* harmony import */ var _icon_choices_js__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__("1b42c5117087");
-/* harmony import */ var _ready_js__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__("5effd0d9c238");
-/* harmony import */ var _icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__("de1f3481c667");
-/* harmony import */ var _page_storage_js__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__("cda569e6042b");
-/* harmony import */ var _early_port_js__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__("55bd48f35b65");
-/* harmony import */ var _pending_tags_js__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__("3c79afd07eeb");
-/* harmony import */ var _preloader__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__("6c7f357fe960");
+/* harmony import */ var _code_copy_js__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__("effedf2a2981");
+/* harmony import */ var _reading_position_js__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__("6978f1cc153b");
+/* harmony import */ var _icon_choices_js__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__("1b42c5117087");
+/* harmony import */ var _ready_js__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__("5effd0d9c238");
+/* harmony import */ var _icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__("de1f3481c667");
+/* harmony import */ var _page_storage_js__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__("cda569e6042b");
+/* harmony import */ var _early_port_js__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__("55bd48f35b65");
+/* harmony import */ var _pending_tags_js__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__("3c79afd07eeb");
+/* harmony import */ var _preloader__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__("6c7f357fe960");
 
 
 
@@ -5222,6 +5500,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+ // Copy on click for code in running text, where a container opts in with
+// data-sf-code-copy (owner, 2026-11-07, R024): SF.codeCopy.
+
  // The reading position of a scrolling column (duplication audit 2026-11-03,
 // A-6): SF.readingPosition, which sf-list-feed and sf-list keep a place by.
 
@@ -5246,10 +5527,10 @@ if (typeof window !== 'undefined') {
   window.SF = window.SF || {};
   const SF = window.SF; // SF.ready, before the Loader chunk is even asked for (simai/ui-source#16).
 
-  (0,_ready_js__WEBPACK_IMPORTED_MODULE_23__.installReady)(window); // The ports declared on elements (data-sf-port islands): their first calls
+  (0,_ready_js__WEBPACK_IMPORTED_MODULE_24__.installReady)(window); // The ports declared on elements (data-sf-port islands): their first calls
   // leave now, while the components' code is still on its way (stand 27).
 
-  (0,_early_port_js__WEBPACK_IMPORTED_MODULE_26__.installEarlyPort)(window);
+  (0,_early_port_js__WEBPACK_IMPORTED_MODULE_27__.installEarlyPort)(window);
 
   if (!SF.loadRuntime) {
     let loading = null;
@@ -5371,10 +5652,10 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
 
   if (subsetEnabled && document.head) {
     try {
-      (0,_icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_24__.applyRememberedIconSubset)({
+      (0,_icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_25__.applyRememberedIconSubset)({
         win: window,
         doc: document,
-        storage: (0,_page_storage_js__WEBPACK_IMPORTED_MODULE_25__["default"])()
+        storage: (0,_page_storage_js__WEBPACK_IMPORTED_MODULE_26__["default"])()
       });
     } catch {
       /* Nothing remembered is nothing lost: the Loader asks as before. */
@@ -5484,8 +5765,8 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
       return;
     }
 
-    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_27__.installPendingTags)(window);
-    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_27__.holdUndefinedElements)(window);
+    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_28__.installPendingTags)(window);
+    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_28__.holdUndefinedElements)(window);
   };
 
   holdUndefinedUntilDefined();
@@ -5493,18 +5774,18 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
   const mountPreloader = () => {
     const cfg = {
       enabled: true,
-      background: (0,_preloader__WEBPACK_IMPORTED_MODULE_28__.getPreloaderBackground)(),
+      background: (0,_preloader__WEBPACK_IMPORTED_MODULE_29__.getPreloaderBackground)(),
       modifier: 'loader-default',
       tempStyles: 'inset: 0;position: fixed;width: 100%;height: 100vh;opacity: 1;z-index: 1000;background-color: var(--sf-color--surface-highest, var(--sf-surface-0, #fff));text-align: center;',
-      color: (0,_preloader__WEBPACK_IMPORTED_MODULE_28__.getPreloaderColor)(),
-      width: _preloader__WEBPACK_IMPORTED_MODULE_28__.DEFAULT_PRELOADER.width,
-      height: _preloader__WEBPACK_IMPORTED_MODULE_28__.DEFAULT_PRELOADER.height,
+      color: (0,_preloader__WEBPACK_IMPORTED_MODULE_29__.getPreloaderColor)(),
+      width: _preloader__WEBPACK_IMPORTED_MODULE_29__.DEFAULT_PRELOADER.width,
+      height: _preloader__WEBPACK_IMPORTED_MODULE_29__.DEFAULT_PRELOADER.height,
       content: '',
       delay: 300,
       ...(window.SF_BOOT_CONFIG?.preloader || {})
     };
     if (cfg.enabled === false || document.querySelector('.sf-loader')) return;
-    const svgContent = cfg.content || (0,_preloader__WEBPACK_IMPORTED_MODULE_28__.createPreloaderContent)(cfg);
+    const svgContent = cfg.content || (0,_preloader__WEBPACK_IMPORTED_MODULE_29__.createPreloaderContent)(cfg);
     let wrap = null;
     let preloaderWrap = null;
     let preloaderRun = false;
@@ -5518,7 +5799,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
 
     const stopAnimation = () => {
       if (preloaderWrap) {
-        (0,_preloader__WEBPACK_IMPORTED_MODULE_28__.stopPreloaderMotion)(preloaderWrap);
+        (0,_preloader__WEBPACK_IMPORTED_MODULE_29__.stopPreloaderMotion)(preloaderWrap);
       }
     };
 
@@ -5527,7 +5808,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
       // preloader over them (§5.4). Read when the preloader would show, after
       // its delay, when the server's markup has been parsed.
 
-      if ((0,_preloader__WEBPACK_IMPORTED_MODULE_28__.pageHasFirstPaint)(document)) return;
+      if ((0,_preloader__WEBPACK_IMPORTED_MODULE_29__.pageHasFirstPaint)(document)) return;
       wrap = document.createElement('div');
       const inner = document.createElement('div');
       wrap.classList.add('sf-loader', cfg.modifier);
@@ -5549,7 +5830,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
         wrap: wrap,
         preloaderActive: true
       };
-      (0,_preloader__WEBPACK_IMPORTED_MODULE_28__.startPreloaderMotion)(preloaderWrap, () => preloaderRun, cfg);
+      (0,_preloader__WEBPACK_IMPORTED_MODULE_29__.startPreloaderMotion)(preloaderWrap, () => preloaderRun, cfg);
     };
 
     const cancelBuild = () => {
@@ -5586,7 +5867,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
 
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', () => {
-        if (!(0,_preloader__WEBPACK_IMPORTED_MODULE_28__.pageHasFirstPaint)(document)) return;
+        if (!(0,_preloader__WEBPACK_IMPORTED_MODULE_29__.pageHasFirstPaint)(document)) return;
         cancelBuild();
         preloaderRun = false;
         stopAnimation();
@@ -9786,7 +10067,7 @@ __webpack_require__.r(__webpack_exports__);
 // core.runtime.json). A set's release says the lowest version it needs, and
 // the index lookup keeps the releases this Core satisfies. Moved by hand with
 // the passport; tests/component-set-loader.contract.test.mjs holds them equal.
-const CORE_RUNTIME = '1.32.0';
+const CORE_RUNTIME = '1.37.0';
 const SET_NAME = /^[a-z][a-z0-9-]*$/u;
 const SET_INDEX_FORMAT = 'simai.framework.set-index';
 const SET_INDEX_URL = 'https://cdn.jsdelivr.net/npm/@simai-studio/sets@1/index.json';
