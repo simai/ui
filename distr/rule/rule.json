@@ -807,7 +807,6 @@
         "name": "spinner"
       },
       {
-        "lazy": true,
         "name": "kbd"
       }
     ],
@@ -1721,6 +1720,9 @@
     "relation": [
       {
         "name": "context-menu"
+      },
+      {
+        "name": "kbd"
       },
       {
         "name": "cl-button"
@@ -3407,7 +3409,7 @@
   },
   {
     "name": "headers/default",
-    "regex": "/(h1|h2|h3|h4|h5|h6)/"
+    "regex": "/^(?:h[1-6])(?![\\s\\S])/"
   },
   {
     "name": "height-ext/default",

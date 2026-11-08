@@ -763,6 +763,18 @@ const ITEM = '[data-sf-sortable-item]';
 const HANDLE = '[data-sf-sortable-handle]';
 const INTERACTIVE = 'a[href],button,input,select,textarea,summary,[contenteditable]:not([contenteditable="false"])';
 const NAME = /^[a-z][a-z0-9-]{0,31}$/u;
+// The id of a list's instructions, which its items name in aria-describedby:
+// a page-wide count, kept on a shared global because every bundle that
+// carries this module has its own module scope. It used to be random base 36,
+// and one id in about twenty-five held "h1".."h6", which the headers utility's
+// rule (/(h1|h2|h3|h4|h5|h6)/, tested on every element's attributes) reads as a
+// heading: the Loader asked for utility/headers on some loads and not on
+// others, and the first-paint sheet lists moved from run to run.
+const HELP_IDS = Symbol.for('simai.sf.sortable.help-ids');
+function nextHelpId() {
+  globalThis[HELP_IDS] = (globalThis[HELP_IDS] ?? 0) + 1;
+  return `sf-sortable-help-${globalThis[HELP_IDS]}`;
+}
 const DRAG_THRESHOLD = 4;
 const EDGE = 32;
 
@@ -1081,7 +1093,7 @@ function defineSortable(registry = globalThis.customElements, { base = null } = 
         this.live.setAttribute('aria-live', 'polite');
         this.instructions = globalThis.document.createElement('div');
         this.instructions.className = 'sf-sortable-live';
-        this.instructions.id = `sf-sortable-help-${Math.random().toString(36).slice(2, 10)}`;
+        this.instructions.id = nextHelpId();
       }
       this.instructions.textContent = messages().instructions;
       this.append(this.live, this.instructions);
@@ -1607,7 +1619,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-sorta
 /***/ "34bb89f847b9"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.sortable","tag":"sf-sortable","version":"1.1.7","kind":"leaf","settings":{"group":{"type":"string","default":""},"accepts":{"type":"string","default":""},"mode":{"type":"enum","values":["move","copy"],"default":"move"},"orientation":{"type":"enum","values":["vertical","horizontal"],"default":"vertical"},"label":{"type":"string","default":""},"preview":{"type":"enum","values":["silhouette","line"],"default":"silhouette"},"inserter-items":{"type":"string","default":""}},"values":{},"events":{"move":{"carries":{"item":"string","from":"string","to":"string","index":"number","mode":{"type":"enum","values":["move","copy"]}}},"state":{"carries":{"state":{"type":"enum","values":["picked","dropped","cancelled"]},"item":"string"},"own-verb":true},"insert":{"carries":{"index":{"type":"number","integer":true,"schema":{"minimum":0}},"item":"string","to":"string"},"cancelable":true,"own-verb":true}},"actions":{},"css-variables":{"--sf-sortable-dragging-opacity":{"type":"number","state":"dragging"},"--sf-sortable-ghost-opacity":{"type":"number","state":"dragging"},"--sf-sortable-ghost-z-index":{"type":"number","state":"dragging"},"--sf-sortable-indicator-color":{"type":"color","state":"dragging"},"--sf-sortable-placeholder-border-color":{"type":"color","state":"dragging"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.sortable","tag":"sf-sortable","version":"1.1.8","kind":"leaf","settings":{"group":{"type":"string","default":""},"accepts":{"type":"string","default":""},"mode":{"type":"enum","values":["move","copy"],"default":"move"},"orientation":{"type":"enum","values":["vertical","horizontal"],"default":"vertical"},"label":{"type":"string","default":""},"preview":{"type":"enum","values":["silhouette","line"],"default":"silhouette"},"inserter-items":{"type":"string","default":""}},"values":{},"events":{"move":{"carries":{"item":"string","from":"string","to":"string","index":"number","mode":{"type":"enum","values":["move","copy"]}}},"state":{"carries":{"state":{"type":"enum","values":["picked","dropped","cancelled"]},"item":"string"},"own-verb":true},"insert":{"carries":{"index":{"type":"number","integer":true,"schema":{"minimum":0}},"item":"string","to":"string"},"cancelable":true,"own-verb":true}},"actions":{},"css-variables":{"--sf-sortable-dragging-opacity":{"type":"number","state":"dragging"},"--sf-sortable-ghost-opacity":{"type":"number","state":"dragging"},"--sf-sortable-ghost-z-index":{"type":"number","state":"dragging"},"--sf-sortable-indicator-color":{"type":"color","state":"dragging"},"--sf-sortable-placeholder-border-color":{"type":"color","state":"dragging"}}}');
 
 /***/ },
 

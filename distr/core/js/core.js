@@ -5469,8 +5469,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__("de1f3481c667");
 /* harmony import */ var _page_storage_js__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__("cda569e6042b");
 /* harmony import */ var _early_port_js__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__("55bd48f35b65");
-/* harmony import */ var _pending_tags_js__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__("3c79afd07eeb");
-/* harmony import */ var _preloader__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__("6c7f357fe960");
+/* harmony import */ var _package_modules_js__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__("2240d10a72cb");
+/* harmony import */ var _pending_tags_js__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__("3c79afd07eeb");
+/* harmony import */ var _preloader__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__("6c7f357fe960");
 
 
 
@@ -5508,6 +5509,7 @@ __webpack_require__.r(__webpack_exports__);
 
  // The glyphs a person chooses from (duplication audit 2026-11-03, A-1):
 // SF.icons.choices.
+
 
 
 
@@ -5586,14 +5588,23 @@ if (typeof window !== 'undefined') {
 
       if (!modules[id]) throw new Error(`SF runtime: no shared module "${id}"`);
       return modules[id];
-    }); // A page that already holds a Smart part (printed by the server, waiting
+    }); // A package module (`<package>/<module>`, core/js/package-modules.js) comes
+    // from the package's own core bundle, not from the runtime script: it is
+    // answered from the one registry on the shared global, waiting for the
+    // package's core when it has not run yet.
+
+
+    const coreLookup = SF.runtimeModule;
+
+    SF.runtimeModule = (id, abi) => (0,_package_modules_js__WEBPACK_IMPORTED_MODULE_28__.packageModuleId)(id) ? (0,_package_modules_js__WEBPACK_IMPORTED_MODULE_28__.packageModule)(id, abi) : coreLookup(id, abi);
+
+    (0,_package_modules_js__WEBPACK_IMPORTED_MODULE_28__.installPackageRegistration)(SF.runtimeModule, () => Object.keys(SF.__internal.runtimeModules || {})); // A page that already holds a Smart part (printed by the server, waiting
     // for its definition) preloads the runtime now, with Core, rather than
     // when the Loader's own chunk arrives and queues the part (stand 25): the
     // bytes are fetched early, the script runs when the Loader asks for it.
     // Running it early as well let the bundles define their elements before
     // the page's sheets arrived, and the first paint went unseen (first-paint
     // gate 24, admin-head and document-browser at 390 and 1280).
-
 
     const smartPartWaiting = () => {
       for (const element of document.querySelectorAll(':not(:defined)')) {
@@ -5765,8 +5776,8 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
       return;
     }
 
-    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_28__.installPendingTags)(window);
-    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_28__.holdUndefinedElements)(window);
+    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_29__.installPendingTags)(window);
+    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_29__.holdUndefinedElements)(window);
   };
 
   holdUndefinedUntilDefined();
@@ -5774,18 +5785,18 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
   const mountPreloader = () => {
     const cfg = {
       enabled: true,
-      background: (0,_preloader__WEBPACK_IMPORTED_MODULE_29__.getPreloaderBackground)(),
+      background: (0,_preloader__WEBPACK_IMPORTED_MODULE_30__.getPreloaderBackground)(),
       modifier: 'loader-default',
       tempStyles: 'inset: 0;position: fixed;width: 100%;height: 100vh;opacity: 1;z-index: 1000;background-color: var(--sf-color--surface-highest, var(--sf-surface-0, #fff));text-align: center;',
-      color: (0,_preloader__WEBPACK_IMPORTED_MODULE_29__.getPreloaderColor)(),
-      width: _preloader__WEBPACK_IMPORTED_MODULE_29__.DEFAULT_PRELOADER.width,
-      height: _preloader__WEBPACK_IMPORTED_MODULE_29__.DEFAULT_PRELOADER.height,
+      color: (0,_preloader__WEBPACK_IMPORTED_MODULE_30__.getPreloaderColor)(),
+      width: _preloader__WEBPACK_IMPORTED_MODULE_30__.DEFAULT_PRELOADER.width,
+      height: _preloader__WEBPACK_IMPORTED_MODULE_30__.DEFAULT_PRELOADER.height,
       content: '',
       delay: 300,
       ...(window.SF_BOOT_CONFIG?.preloader || {})
     };
     if (cfg.enabled === false || document.querySelector('.sf-loader')) return;
-    const svgContent = cfg.content || (0,_preloader__WEBPACK_IMPORTED_MODULE_29__.createPreloaderContent)(cfg);
+    const svgContent = cfg.content || (0,_preloader__WEBPACK_IMPORTED_MODULE_30__.createPreloaderContent)(cfg);
     let wrap = null;
     let preloaderWrap = null;
     let preloaderRun = false;
@@ -5799,7 +5810,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
 
     const stopAnimation = () => {
       if (preloaderWrap) {
-        (0,_preloader__WEBPACK_IMPORTED_MODULE_29__.stopPreloaderMotion)(preloaderWrap);
+        (0,_preloader__WEBPACK_IMPORTED_MODULE_30__.stopPreloaderMotion)(preloaderWrap);
       }
     };
 
@@ -5808,7 +5819,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
       // preloader over them (§5.4). Read when the preloader would show, after
       // its delay, when the server's markup has been parsed.
 
-      if ((0,_preloader__WEBPACK_IMPORTED_MODULE_29__.pageHasFirstPaint)(document)) return;
+      if ((0,_preloader__WEBPACK_IMPORTED_MODULE_30__.pageHasFirstPaint)(document)) return;
       wrap = document.createElement('div');
       const inner = document.createElement('div');
       wrap.classList.add('sf-loader', cfg.modifier);
@@ -5830,7 +5841,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
         wrap: wrap,
         preloaderActive: true
       };
-      (0,_preloader__WEBPACK_IMPORTED_MODULE_29__.startPreloaderMotion)(preloaderWrap, () => preloaderRun, cfg);
+      (0,_preloader__WEBPACK_IMPORTED_MODULE_30__.startPreloaderMotion)(preloaderWrap, () => preloaderRun, cfg);
     };
 
     const cancelBuild = () => {
@@ -5867,7 +5878,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
 
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', () => {
-        if (!(0,_preloader__WEBPACK_IMPORTED_MODULE_29__.pageHasFirstPaint)(document)) return;
+        if (!(0,_preloader__WEBPACK_IMPORTED_MODULE_30__.pageHasFirstPaint)(document)) return;
         cancelBuild();
         preloaderRun = false;
         stopAnimation();
@@ -7602,6 +7613,224 @@ function installOnView(win = globalThis) {
   return handle;
 }
 if (typeof window !== 'undefined') installOnView(window);
+
+/***/ },
+
+/***/ "2240d10a72cb"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   RESERVED_NAMESPACES: () => (/* binding */ RESERVED_NAMESPACES),
+/* harmony export */   installPackageRegistration: () => (/* binding */ installPackageRegistration),
+/* harmony export */   packageModule: () => (/* binding */ packageModule),
+/* harmony export */   packageModuleId: () => (/* binding */ packageModuleId),
+/* harmony export */   packageRegistry: () => (/* binding */ packageRegistry),
+/* harmony export */   registerPackageModules: () => (/* binding */ registerPackageModules)
+/* harmony export */ });
+// Package modules of the shared runtime (core.runtime 1.38.0): what a
+// component package shares between its own bundles. A package's shared core
+// (the scales, formats and data readers every chart of a chart set draws
+// with) is built once, as its own bundle, which registers its modules here;
+// the package's components take them by id, through SF.runtimeModule, instead
+// of each carrying a copy (ui-builder `simai.core` of the package's
+// package.json, docs/developer/component-packages.md "A package's shared core").
+//
+// A package module's id is `<package>/<module>`: `chart/scale`. The Framework
+// knows nothing of any package here; it keeps one registry and three rules:
+//
+// - a package module never shadows a Core one: the id may not be a runtime
+//   module's, and the package may not be named after a namespace the runtime
+//   uses itself (`lit`, for `lit/directive.js`);
+// - a package registers with one ABI, the version of its shared core's
+//   exports; a bundle asks with the ABI it was built against, and another
+//   ABI is refused loudly, as a Core module is (runtime.js checkRuntimeAbi);
+//   a second registration with another ABI is refused too -- two releases of
+//   one package's core on a page cannot both be the one copy;
+// - the registry lives on the shared global, never in module scope: Core,
+//   the runtime script and every package core bundle each carry their own
+//   copy of this file, and every copy must read and write the same registry.
+//
+// A component that asks before its core has run waits for it: the Loader
+// fetches the core first (the component's rule relates to the core's), but a
+// page that includes the bundles by hand may put them in any order.
+const REGISTRY = '__sfRuntimePackages'; // The first segments of the runtime's own module ids that hold a slash
+// (core/js/runtime.js RUNTIME_MODULES). A contract test keeps the two the same.
+
+const RESERVED_NAMESPACES = Object.freeze(['lit']);
+const PACKAGE_NAME = /^[a-z][a-z0-9-]*$/u;
+const MODULE_NAME = /^[a-z0-9][a-z0-9._-]*(?:\/[a-z0-9][a-z0-9._-]*)*$/u;
+function packageRegistry(root = globalThis) {
+  let registry = root[REGISTRY];
+
+  if (!registry || typeof registry !== 'object') {
+    registry = {
+      packages: Object.create(null),
+      waiting: Object.create(null)
+    };
+    Object.defineProperty(root, REGISTRY, {
+      value: registry,
+      configurable: true,
+      enumerable: false,
+      writable: false
+    });
+  }
+
+  return registry;
+} // `<package>/<module>` split, or null for an id that is not a package
+// module's (a Core id: `lit`, `smart-base`, `lit/directive.js`).
+
+function packageModuleId(id) {
+  const text = String(id ?? '');
+  const slash = text.indexOf('/');
+  if (slash < 1) return null;
+  const name = text.slice(0, slash);
+  const module = text.slice(slash + 1);
+  if (RESERVED_NAMESPACES.includes(name)) return null;
+  if (!PACKAGE_NAME.test(name) || !MODULE_NAME.test(module)) return null;
+  return {
+    name,
+    module
+  };
+}
+
+function refuse(message) {
+  const error = new Error(`SF runtime: ${message}`);
+  globalThis.console?.error?.(error);
+  return error;
+}
+
+function abiError(id, wanted, have) {
+  return refuse(`a bundle built for ABI ${wanted} of package "${id.split('/')[0]}" asks for "${id}"; this page's copy of the package is ABI ${have}. Serve the package's bundles from one build.`);
+}
+/**
+ * Register a package's shared modules: `modules` maps a module name (`scale`)
+ * to its namespace. Returns the ids registered. Throws (and says so on the
+ * console) for a name that is not a package's, an ABI that is not a positive
+ * integer, a module that would shadow a Core one, or a second registration
+ * with another ABI. A second registration with the same ABI keeps the
+ * modules already registered (one instance per page) and adds any new ones.
+ */
+
+
+function registerPackageModules(name, abi, modules, {
+  coreIds = [],
+  root = globalThis
+} = {}) {
+  const packageName = String(name ?? '');
+
+  if (!PACKAGE_NAME.test(packageName)) {
+    throw refuse(`"${packageName}" is not a package name (lower-case letters, digits and hyphens); its modules are not registered`);
+  }
+
+  if (RESERVED_NAMESPACES.includes(packageName)) {
+    throw refuse(`package "${packageName}" is named after a namespace of the runtime's own modules; its modules would shadow them and are not registered`);
+  }
+
+  if (!Number.isInteger(abi) || abi < 1) {
+    throw refuse(`package "${packageName}" registers its modules without an ABI (a positive integer); they are not registered`);
+  }
+
+  if (!modules || typeof modules !== 'object' || Array.isArray(modules)) {
+    throw refuse(`package "${packageName}" registers no modules object`);
+  }
+
+  const core = new Set(coreIds);
+  const entries = Object.entries(modules);
+
+  for (const [module, namespace] of entries) {
+    const id = `${packageName}/${module}`;
+    if (!MODULE_NAME.test(module)) throw refuse(`package "${packageName}": "${module}" is not a module name`);
+    if (core.has(id)) throw refuse(`package "${packageName}": "${id}" is a module of the runtime itself; a package module does not shadow it`);
+    if (!namespace || typeof namespace !== 'object') throw refuse(`package "${packageName}": "${id}" is not a module namespace`);
+  }
+
+  const registry = packageRegistry(root);
+  const current = registry.packages[packageName];
+
+  if (current && current.abi !== abi) {
+    throw refuse(`package "${packageName}" is already registered with ABI ${current.abi}; a copy with ABI ${abi} is refused. Serve the package's bundles from one build.`);
+  }
+
+  const entry = current || (registry.packages[packageName] = {
+    abi,
+    modules: Object.create(null)
+  });
+  const added = [];
+
+  for (const [module, namespace] of entries) {
+    if (entry.modules[module]) continue; // webpack reads a default import off an external as `.default` only when
+    // the value says it is an ES module (runtime.js asModule).
+
+    entry.modules[module] = Object.freeze({
+      __esModule: true,
+      ...namespace
+    });
+    added.push(`${packageName}/${module}`);
+  }
+
+  const waiting = registry.waiting[packageName] || [];
+  delete registry.waiting[packageName];
+
+  for (const wait of waiting) wait();
+
+  return added;
+}
+/**
+ * A promise of one package module by its id, asked with the ABI the bundle
+ * was built against. A package that has not registered yet is waited for.
+ */
+
+function packageModule(id, abi, {
+  root = globalThis
+} = {}) {
+  const parsed = packageModuleId(id);
+  if (!parsed) return Promise.reject(refuse(`"${id}" is not a package module id (<package>/<module>)`));
+  const registry = packageRegistry(root);
+
+  const answer = () => {
+    const entry = registry.packages[parsed.name];
+    if (abi !== undefined && abi !== null && abi !== entry.abi) throw abiError(id, abi, entry.abi);
+    const module = entry.modules[parsed.module];
+    if (!module) throw refuse(`package "${parsed.name}" has no shared module "${parsed.module}"`);
+    return module;
+  };
+
+  if (registry.packages[parsed.name]) {
+    try {
+      return Promise.resolve(answer());
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
+
+  return new Promise((resolve, reject) => {
+    (registry.waiting[parsed.name] ||= []).push(() => {
+      try {
+        resolve(answer());
+      } catch (error) {
+        reject(error);
+      }
+    });
+  });
+} // The registration hook a package core bundle calls:
+// SF.runtimeModule.register('<package>', <abi>, {<module>: namespace, ...}).
+// Installed on whichever SF.runtimeModule the page has (Core's, or the
+// runtime script's on a page without Core).
+
+function installPackageRegistration(runtimeModule, coreIds) {
+  if (typeof runtimeModule !== 'function') return runtimeModule;
+  Object.defineProperty(runtimeModule, 'register', {
+    configurable: true,
+    enumerable: false,
+    writable: false,
+    value: (name, abi, modules) => registerPackageModules(name, abi, modules, {
+      coreIds: coreIds()
+    })
+  });
+  return runtimeModule;
+}
 
 /***/ },
 
@@ -10118,7 +10347,7 @@ __webpack_require__.r(__webpack_exports__);
 // core.runtime.json). A set's release says the lowest version it needs, and
 // the index lookup keeps the releases this Core satisfies. Moved by hand with
 // the passport; tests/component-set-loader.contract.test.mjs holds them equal.
-const CORE_RUNTIME = '1.39.0';
+const CORE_RUNTIME = '1.40.0';
 const SET_NAME = /^[a-z][a-z0-9-]*$/u;
 const SET_INDEX_FORMAT = 'simai.framework.set-index';
 const SET_INDEX_URL = 'https://cdn.jsdelivr.net/npm/@simai-studio/sets@1/index.json';
@@ -20308,7 +20537,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.button",
-    "version": "1.7.0"
+    "version": "1.8.0"
   },
   "sf-button-icon": {
     "inputs": {
@@ -20643,7 +20872,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.dropdown",
-    "version": "1.7.0"
+    "version": "1.7.1"
   },
   "sf-icon": {
     "inputs": {
@@ -20905,7 +21134,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.input",
-    "version": "1.5.0"
+    "version": "1.5.1"
   },
   "sf-input-textarea": {
     "inputs": {
@@ -20918,6 +21147,14 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
             "filled",
             "flush"
           ],
+          "type": "string"
+        },
+        "aria-label": {
+          "default": "",
+          "type": "string"
+        },
+        "aria-labelledby": {
+          "default": "",
           "type": "string"
         },
         "auto-grow": {
@@ -21050,7 +21287,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.input-textarea",
-    "version": "1.7.0"
+    "version": "1.7.2"
   },
   "sf-switch": {
     "inputs": {
@@ -21114,7 +21351,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.switch",
-    "version": "1.3.0"
+    "version": "1.3.2"
   }
 });
 

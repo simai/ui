@@ -431,9 +431,6 @@
   .sf-search-row--selected .sf-search-go {
     visibility: visible;
   }
-  .sf-search-shortcut {
-    flex: none;
-  }
   .sf-search-remove {
     display: inline-flex;
     flex: none;

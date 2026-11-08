@@ -3826,12 +3826,10 @@ SF.RuleLoader['cl-button'] = {
   {
     name: 'spinner',
     lazy: true
-  }, // The keys of a shortcut: the button sheet draws their box from the kbd sheet's own
-  // variables with the same values as fallbacks, so the first paint is right before
-  // the kbd sheet, fetched after the page is ready, arrives.
+  }, // The keys of a shortcut are the kbd component's (soft caps inside a button):
+  // fetched with the button, so the first paint draws them as they stay.
   {
-    name: 'kbd',
-    lazy: true
+    name: 'kbd'
   }]
 }; // The bundle's former name cl-buttons (the folder was `buttons` until standard
 // 1.3.8 §3, §21 gave it the tag's name) is not a rule here: a rule of type
@@ -4676,6 +4674,9 @@ SF.RuleLoader['cl-menu-context'] = {
   js: true,
   relation: [{
     name: 'context-menu'
+  }, // An entry's shortcut is the kbd component's keys: plain glyphs in a menu.
+  {
+    name: 'kbd'
   }, {
     name: 'cl-button'
   }, // The tabs and the close button draw only a panel's head: fetched after the
@@ -7930,7 +7931,13 @@ SF.RuleLoader['grid-template-rows/xxl'] = new RegExp("^(?:xxl:grid-row-(?:1|2|3|
 /***/ "2038b6d4c317"
 () {
 
-SF.RuleLoader['headers/default'] = /(h1|h2|h3|h4|h5|h6)/;
+// A whole class token h1..h6, nothing else. The rule was /(h1|h2|h3|h4|h5|h6)/,
+// tested on every element's attribute string, so an id (sf-sortable-help-azkguh4a),
+// a modifier (sf-workspace--split-h2) or SVG path data (h16) pulled this sheet
+// in, and an <h2> without attributes never did. The sheet styles the h1..h6
+// tags with the heading tokens core.css already gives them; no Framework sheet
+// defines a heading class of its own beyond core's .sf-h-1..6.
+SF.RuleLoader['headers/default'] = new RegExp("^(?:h[1-6])(?![\\s\\S])");
 
 /***/ },
 

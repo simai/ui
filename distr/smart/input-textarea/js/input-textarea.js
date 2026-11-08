@@ -1227,11 +1227,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("43090d1c8307");
-/* harmony import */ var _inherited_value_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("c6c9dfe31af4");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_1__]);
-([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e92fd2d1a38c");
+/* harmony import */ var _inherited_value_css__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("c6c9dfe31af4");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_1__, _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_2__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_1__, _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_2__);
+
 
 
  // An inherited value, for every field of the input family (simai/ui-source#28).
@@ -1422,6 +1425,40 @@ const InheritedValueField = Base => class extends Base {
       control.removeAttribute('aria-description');
       this.__sfInheritedDescribed = null;
     }
+
+    this.syncInheritedNote(control, inherited);
+  } // A browser reads aria-describedby instead of aria-description, so a field
+  // that also has a hint, an error or a description (aria-describedby) would
+  // say those and drop the inherited sentence. While the inherited state
+  // applies and something else describes the control, the sentence is also a
+  // hidden note in the host that aria-describedby names after the ids already
+  // there. Written once here for the whole family (sf-input, sf-textarea,
+  // sf-quantity, sf-dropdown, sf-color, sf-switch); the id comes from the
+  // instance path, never a counter.
+
+
+  syncInheritedNote(control, inherited) {
+    let note = this.querySelector(':scope > [data-sf-inherited-note]');
+    const others = String(control.getAttribute('aria-describedby') || '').split(/\s+/u).filter(id => id && id !== note?.id);
+
+    if (inherited && others.length && this.isConnected) {
+      if (!note) {
+        note = document.createElement('span');
+        note.hidden = true;
+        note.setAttribute('data-sf-inherited-note', '');
+        this.append(note);
+      }
+
+      if (!note.id) note.id = (0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_2__.partId)((0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_2__.instancePath)(this, {
+        kind: this.localName
+      }), 'inherited');
+      note.textContent = this.inheritedDescription();
+      const ids = [...others, note.id].join(' ');
+      if (control.getAttribute('aria-describedby') !== ids) control.setAttribute('aria-describedby', ids);
+    } else if (note) {
+      note.remove();
+      if (others.length) control.setAttribute('aria-describedby', others.join(' '));else control.removeAttribute('aria-describedby');
+    }
   }
 
 };
@@ -1522,6 +1559,14 @@ class SfTextarea extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.For
       rootClass: {
         default: ''
       },
+      ariaLabel: {
+        attribute: 'aria-label',
+        default: ''
+      },
+      labelledBy: {
+        attribute: 'aria-labelledby',
+        default: ''
+      },
       // What the field falls back to while it holds nothing (simai/ui-source#28).
       inheritedValue: {
         attribute: 'inherited-value',
@@ -1555,6 +1600,19 @@ class SfTextarea extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.For
   get maxlength() {
     const value = this.getNumberAttr('maxlength', null);
     return Number.isInteger(value) && value >= 0 ? value : null;
+  } // A textarea whose label is drawn outside it -- a record panel prints it, a
+  // flush field in a card has none -- still owes a name. The host's aria-label
+  // and aria-labelledby reach the native textarea, which is what assistive
+  // technology reads; on the host they named nothing, because the host is not
+  // the control (simai/ui-source#30, as sf-input does).
+
+
+  get ariaLabel() {
+    return this.getProp('ariaLabel') || '';
+  }
+
+  get labelledBy() {
+    return this.getProp('labelledBy') || '';
   } // element.focus() on the host reaches the native textarea.
 
 
@@ -1645,6 +1703,8 @@ class SfTextarea extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.For
       inheritedValue: this.inheritedValue,
       inheritedText: this.inheritedText,
       resetLabel: this.resetLabel,
+      ariaLabel: this.ariaLabel,
+      labelledBy: this.labelledBy,
       component: this
     });
   }
@@ -1745,7 +1805,9 @@ function renderTextareaTemplate(context) {
     maskOptions,
     autoGrow,
     minRows,
-    maxRows
+    maxRows,
+    ariaLabel,
+    labelledBy
   } = context;
   const field = (0,_component_field_contract__WEBPACK_IMPORTED_MODULE_1__.createFieldContract)(context.component, {
     prefix: 'sf-textarea',
@@ -1762,7 +1824,13 @@ function renderTextareaTemplate(context) {
         <span class="sf-textarea-text">${label}</span>
         ${required ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-textarea-required">*</span>` : ''}
       ` // A label row with nothing but a star names nothing: see sf-input.
-  : '';
+  : ''; // The visible label names the textarea through the wrapping <label>; with no
+  // visible label the host's aria-label lands on the textarea, as in sf-input.
+  // The host's aria-labelledby is the author's explicit choice and always
+  // lands (simai/ui-source#30).
+
+  const accessibleName = !labelContent && ariaLabel ? ariaLabel : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  const accessibleLabelledBy = labelledBy || lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
     <label
       class=${rootClasses.join(' ')}
@@ -1794,6 +1862,8 @@ function renderTextareaTemplate(context) {
         ?disabled=${disabled}
         ?readonly=${readonly}
         ?required=${field.required}
+        aria-label=${accessibleName}
+        aria-labelledby=${accessibleLabelledBy}
         aria-invalid=${field.invalid ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         aria-describedby=${messageContent ? field.messageId : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         aria-errormessage=${field.invalid && errorContent ? field.messageId : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
@@ -1892,7 +1962,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-input
 /***/ "a105cae235ec"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-textarea","tag":"sf-input-textarea","version":"1.7.0","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"appearance":{"type":"enum","values":["bordered","filled","flush"],"default":"bordered"},"label":{"type":"string","default":""},"required":{"type":"boolean","default":false},"placeholder":{"type":"string","default":""},"autocomplete":{"type":"string","default":""},"inputmode":{"type":"enum","values":["","none","text","tel","url","email","numeric","decimal","search"],"default":""},"minlength":{"type":"number","optional":true},"maxlength":{"type":"number","optional":true},"spell-check":{"type":"boolean","default":true},"wrap":{"type":"enum","values":["soft","hard"],"default":"soft"},"hint":{"type":"string","default":""},"name":{"type":"string","default":""},"rows":{"type":"number","default":3},"auto-grow":{"type":"boolean","default":false},"min-rows":{"type":"number","default":1},"max-rows":{"type":"number","optional":true},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"mask":{"type":"boolean","default":false},"mask-pattern":{"type":"string","default":""},"mask-options":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":"native"},"input":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","too-short","too-long","custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-textarea-background-color":{"type":"color","state":"default"},"--sf-textarea-border-color":{"type":"color","state":"default"},"--sf-textarea-color":{"type":"color","state":"default"},"--sf-textarea-radius":{"type":"length","state":"default"},"--sf-textarea-padding-inline":{"type":"length","state":"default"},"--sf-textarea-padding-block":{"type":"length","state":"default"},"--sf-textarea-invalid-border-color":{"type":"color","state":"invalid"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-textarea","tag":"sf-input-textarea","version":"1.7.2","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"appearance":{"type":"enum","values":["bordered","filled","flush"],"default":"bordered"},"label":{"type":"string","default":""},"required":{"type":"boolean","default":false},"placeholder":{"type":"string","default":""},"autocomplete":{"type":"string","default":""},"inputmode":{"type":"enum","values":["","none","text","tel","url","email","numeric","decimal","search"],"default":""},"minlength":{"type":"number","optional":true},"maxlength":{"type":"number","optional":true},"spell-check":{"type":"boolean","default":true},"wrap":{"type":"enum","values":["soft","hard"],"default":"soft"},"hint":{"type":"string","default":""},"name":{"type":"string","default":""},"rows":{"type":"number","default":3},"auto-grow":{"type":"boolean","default":false},"min-rows":{"type":"number","default":1},"max-rows":{"type":"number","optional":true},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"mask":{"type":"boolean","default":false},"mask-pattern":{"type":"string","default":""},"mask-options":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":"native"},"input":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","too-short","too-long","custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-textarea-background-color":{"type":"color","state":"default"},"--sf-textarea-border-color":{"type":"color","state":"default"},"--sf-textarea-color":{"type":"color","state":"default"},"--sf-textarea-radius":{"type":"length","state":"default"},"--sf-textarea-padding-inline":{"type":"length","state":"default"},"--sf-textarea-padding-block":{"type":"length","state":"default"},"--sf-textarea-invalid-border-color":{"type":"color","state":"invalid"}}}');
 
 /***/ },
 
