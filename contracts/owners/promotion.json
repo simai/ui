@@ -65,7 +65,6 @@
     "smart.badge",
     "smart.breadcrumbs",
     "smart.button-copy",
-    "smart.button-group",
     "smart.drawer",
     "smart.editor-overlay",
     "smart.empty-state",
@@ -87,6 +86,7 @@
     "smart.radio",
     "smart.reference-link",
     "smart.resizer",
+    "smart.segmented",
     "smart.skeleton",
     "smart.slider",
     "smart.slider-range",
@@ -661,7 +661,7 @@
         "ui_admin": 5
       }
     },
-    "smart.button-group": {
+    "smart.segmented": {
       "docs": [
         "content/ru/smart-components/actions/button-group.md",
         "content/ru/smart-components/actions/segmented.md"
