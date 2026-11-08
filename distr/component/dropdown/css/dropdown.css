@@ -1038,17 +1038,37 @@
     --sf-list--background-color: var(--sf-dropdown-list-background-color, var(--sf-elevation-2--surface));
     --sf-on-surface-variant: var(--sf-on-elevation-2--variant);
     --sf-badge--surface: var(--sf-dropdown-list-background-color, var(--sf-elevation-2--surface));
-    /* The menu's inset (owner R017, 2026-11-07): rows and their fills stand
-       8px from the panel's edge, as a menu's and its search field's do. */
-    --sf-list--padding-top: var(--sf-space-1\/3);
-    --sf-list--padding-bottom: var(--sf-space-1\/3);
-    --sf-list--padding-left: var(--sf-space-1\/3);
-    --sf-list--padding-right: var(--sf-space-1\/3);
+    /* The inset (owner C05, docs review R029, 2026-11-07; it replaces R017's
+       1/3): a row's highlight stands --sf-space-1/4 from the panel's edge on
+       every side, as a context menu's does. The same inset is the scrollbar's
+       gap on either side of its thumb (C07) and, twice over, what a search
+       header adds to a row's height (C06). */
+    --sf-list--padding-top: var(--sf-space-1\/4);
+    --sf-list--padding-bottom: var(--sf-space-1\/4);
+    --sf-list--padding-left: var(--sf-space-1\/4);
+    --sf-list--padding-right: var(--sf-space-1\/4);
+    /* A row is as tall as a control of the list's size (C05); the list says
+       its size (sf-list--size-*), else size 1. */
+    --sf-list--row-height: var(--sf-ui-1--control-height);
+    --sf-list--line: var(--sf-text-height-1);
+    --sf-list--text: var(--sf-text-size-1);
     /* The lift goes through the variable the dropdown stylesheet reads. Its own
        rule set the variable only under .open, a class the script never puts
        on the root -- it writes sf-dropdown--open, and the portal context drops
        the open modifiers altogether -- so the list never had a shadow. */
     --sf-list--box-shadow: var(--sf-elevation-2--shadow);
+  }
+  .sf-dropdown .sf-list.sf-list--size-1\/2,
+  .sf-list--menu.sf-list--size-1\/2 {
+    --sf-list--row-height: var(--sf-ui-1\/2--control-height);
+    --sf-list--line: var(--sf-text-height-1\/2);
+    --sf-list--text: var(--sf-text-size-1\/2);
+  }
+  .sf-dropdown .sf-list.sf-list--size-2,
+  .sf-list--menu.sf-list--size-2 {
+    --sf-list--row-height: var(--sf-ui-2--control-height);
+    --sf-list--line: var(--sf-text-height-2);
+    --sf-list--text: var(--sf-text-size-2);
   }
   .sf-dropdown .sf-list .sf-list-item,
   .sf-list--menu .sf-list-item {
@@ -1057,6 +1077,284 @@
     display: flex;
     align-items: center;
     border-radius: var(--sf-radius--ui);
+  }
+  /* A row is as tall as a control of its own size (C05): its line and the
+     size's block space make that height, and a picture never makes it
+     shorter. */
+  .sf-dropdown .sf-list .sf-list-item.sf-list-item--size-1\/2,
+  .sf-list--menu .sf-list-item.sf-list-item--size-1\/2 {
+    min-height: var(--sf-ui-1\/2--control-height);
+    min-block-size: var(--sf-ui-1\/2--control-height);
+  }
+  .sf-dropdown .sf-list .sf-list-item.sf-list-item--size-1,
+  .sf-list--menu .sf-list-item.sf-list-item--size-1 {
+    min-height: var(--sf-ui-1--control-height);
+    min-block-size: var(--sf-ui-1--control-height);
+  }
+  .sf-dropdown .sf-list .sf-list-item.sf-list-item--size-2,
+  .sf-list--menu .sf-list-item.sf-list-item--size-2 {
+    min-height: var(--sf-ui-2--control-height);
+    min-block-size: var(--sf-ui-2--control-height);
+  }
+  /* A list with a scroll area of its own -- the dropdown's -- draws no
+     padding: the area that scrolls holds the inset on every side, so the rows
+     stand where they stand in any menu, and a search header sits on top across
+     the panel's whole width (C06). Only the rows scroll. */
+  .sf-dropdown .sf-list:has(> .sf-list-container-wrap),
+  .sf-list--menu:has(> .sf-list-container-wrap) {
+    gap: 0;
+    padding: 0;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-list > .sf-list-container-wrap,html:not([dir="rtl"])
+  .sf-list--menu > .sf-list-container-wrap{
+    padding-left: var(--sf-list--padding-left);
+  }
+  @supports not (padding-inline-start: initial){
+  html:not([dir="rtl"]) .sf-dropdown .sf-list > .sf-list-container-wrap,html:not([dir="rtl"])
+  .sf-list--menu > .sf-list-container-wrap{
+    padding-left: var(--sf-list--padding-left);
+    }
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-list > .sf-list-container-wrap,html:not([dir="rtl"])
+  .sf-list--menu > .sf-list-container-wrap{
+    padding-right: var(--sf-list--padding-right);
+  }
+  @supports not (padding-inline-end: initial){
+  html:not([dir="rtl"]) .sf-dropdown .sf-list > .sf-list-container-wrap,html:not([dir="rtl"])
+  .sf-list--menu > .sf-list-container-wrap{
+    padding-right: var(--sf-list--padding-right);
+    }
+  }
+  .sf-dropdown .sf-list > .sf-list-container-wrap:where(:dir(ltr)),
+  .sf-list--menu > .sf-list-container-wrap:where(:dir(ltr)){
+    padding-left: var(--sf-list--padding-left);
+    padding-right: var(--sf-list--padding-right);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-list > .sf-list-container-wrap,[dir="rtl"]
+  .sf-list--menu > .sf-list-container-wrap{
+    padding-right: var(--sf-list--padding-left);
+  }
+  @supports not (padding-inline-start: initial){
+  [dir="rtl"] .sf-dropdown .sf-list > .sf-list-container-wrap,[dir="rtl"]
+  .sf-list--menu > .sf-list-container-wrap{
+    padding-right: var(--sf-list--padding-left);
+    }
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-list > .sf-list-container-wrap,[dir="rtl"]
+  .sf-list--menu > .sf-list-container-wrap{
+    padding-left: var(--sf-list--padding-right);
+  }
+  @supports not (padding-inline-end: initial){
+  [dir="rtl"] .sf-dropdown .sf-list > .sf-list-container-wrap,[dir="rtl"]
+  .sf-list--menu > .sf-list-container-wrap{
+    padding-left: var(--sf-list--padding-right);
+    }
+  }
+  .sf-dropdown .sf-list > .sf-list-container-wrap:where(:dir(rtl)),
+  .sf-list--menu > .sf-list-container-wrap:where(:dir(rtl)){
+    padding-right: var(--sf-list--padding-left);
+    padding-left: var(--sf-list--padding-right);
+  }
+  .sf-dropdown .sf-list > .sf-list-container-wrap,
+  .sf-list--menu > .sf-list-container-wrap {
+    flex: 1 1 auto;
+    min-height: 0;
+    min-block-size: 0;
+    padding-top: var(--sf-list--padding-top);
+    padding-bottom: var(--sf-list--padding-bottom);
+    padding-block: var(--sf-list--padding-top) var(--sf-list--padding-bottom);
+    padding-inline: var(--sf-list--padding-left) var(--sf-list--padding-right);
+    -ms-scroll-chaining: none;
+        overscroll-behavior: contain;
+    --sf-list--track: calc(2 * var(--sf-list--padding-right) + var(--sf-space-1\/4));
+  }
+  .sf-dropdown .sf-list > .sf-list-container-wrap::-webkit-scrollbar,
+  .sf-list--menu > .sf-list-container-wrap::-webkit-scrollbar {
+    width: var(--sf-list--track);
+    height: var(--sf-list--track);
+  }
+  .sf-dropdown .sf-list > .sf-list-container-wrap::-webkit-scrollbar-track,
+  .sf-list--menu > .sf-list-container-wrap::-webkit-scrollbar-track {
+    border: 0;
+    background-color: transparent;
+  }
+  .sf-dropdown .sf-list > .sf-list-container-wrap::-webkit-scrollbar-thumb,
+  .sf-list--menu > .sf-list-container-wrap::-webkit-scrollbar-thumb {
+    min-height: var(--sf-list--row-height);
+    border: var(--sf-list--padding-right) solid transparent;
+    border-radius: var(--sf-list--track);
+    background-clip: padding-box;
+    background-color: var(--sf-scroll-bg-thumb);
+  }
+  @supports not selector(::-webkit-scrollbar) {
+    .sf-dropdown .sf-list > .sf-list-container-wrap,
+    .sf-list--menu > .sf-list-container-wrap {
+      scrollbar-width: thin;
+    }
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-list > .sf-list-container-wrap.sf-list-container-wrap--scrollbar,html:not([dir="rtl"])
+  .sf-list--menu > .sf-list-container-wrap.sf-list-container-wrap--scrollbar{
+    padding-right: 0;
+  }
+  @supports not (padding-inline-end: initial){
+  html:not([dir="rtl"]) .sf-dropdown .sf-list > .sf-list-container-wrap.sf-list-container-wrap--scrollbar,html:not([dir="rtl"])
+  .sf-list--menu > .sf-list-container-wrap.sf-list-container-wrap--scrollbar{
+    padding-right: 0;
+    }
+  }
+  .sf-dropdown .sf-list > .sf-list-container-wrap.sf-list-container-wrap--scrollbar:where(:dir(ltr)),
+  .sf-list--menu > .sf-list-container-wrap.sf-list-container-wrap--scrollbar:where(:dir(ltr)){
+    padding-right: 0;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-list > .sf-list-container-wrap.sf-list-container-wrap--scrollbar,[dir="rtl"]
+  .sf-list--menu > .sf-list-container-wrap.sf-list-container-wrap--scrollbar{
+    padding-left: 0;
+  }
+  @supports not (padding-inline-end: initial){
+  [dir="rtl"] .sf-dropdown .sf-list > .sf-list-container-wrap.sf-list-container-wrap--scrollbar,[dir="rtl"]
+  .sf-list--menu > .sf-list-container-wrap.sf-list-container-wrap--scrollbar{
+    padding-left: 0;
+    }
+  }
+  .sf-dropdown .sf-list > .sf-list-container-wrap.sf-list-container-wrap--scrollbar:where(:dir(rtl)),
+  .sf-list--menu > .sf-list-container-wrap.sf-list-container-wrap--scrollbar:where(:dir(rtl)){
+    padding-left: 0;
+  }
+  .sf-dropdown .sf-list > .sf-list-container-wrap.sf-list-container-wrap--scrollbar,
+  .sf-list--menu > .sf-list-container-wrap.sf-list-container-wrap--scrollbar {
+    -webkit-padding-end: 0;
+            padding-inline-end: 0;
+  }
+  /* The search is the panel's header, not a boxed field (owner C06, R029):
+     a search icon over the rows' icons, the text over their text, no frame, no
+     fill, a row's height and the inset above and below, a hairline across the
+     panel under it. */
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-list > .sf-list-search,html:not([dir="rtl"])
+  .sf-list--menu > .sf-list-search{
+    padding-left: calc(var(--sf-list--padding-left) + var(--sf-space-1\/2));
+  }
+  @supports not (padding-inline-start: initial){
+  html:not([dir="rtl"]) .sf-dropdown .sf-list > .sf-list-search,html:not([dir="rtl"])
+  .sf-list--menu > .sf-list-search{
+    padding-left: calc(var(--sf-list--padding-left) + var(--sf-space-1\/2));
+    }
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-list > .sf-list-search,html:not([dir="rtl"])
+  .sf-list--menu > .sf-list-search{
+    padding-right: calc(var(--sf-list--padding-right) + var(--sf-space-1\/2));
+  }
+  @supports not (padding-inline-end: initial){
+  html:not([dir="rtl"]) .sf-dropdown .sf-list > .sf-list-search,html:not([dir="rtl"])
+  .sf-list--menu > .sf-list-search{
+    padding-right: calc(var(--sf-list--padding-right) + var(--sf-space-1\/2));
+    }
+  }
+  .sf-dropdown .sf-list > .sf-list-search:where(:dir(ltr)),
+  .sf-list--menu > .sf-list-search:where(:dir(ltr)){
+    padding-left: calc(var(--sf-list--padding-left) + var(--sf-space-1\/2));
+    padding-right: calc(var(--sf-list--padding-right) + var(--sf-space-1\/2));
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-list > .sf-list-search,[dir="rtl"]
+  .sf-list--menu > .sf-list-search{
+    padding-right: calc(var(--sf-list--padding-left) + var(--sf-space-1\/2));
+  }
+  @supports not (padding-inline-start: initial){
+  [dir="rtl"] .sf-dropdown .sf-list > .sf-list-search,[dir="rtl"]
+  .sf-list--menu > .sf-list-search{
+    padding-right: calc(var(--sf-list--padding-left) + var(--sf-space-1\/2));
+    }
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-list > .sf-list-search,[dir="rtl"]
+  .sf-list--menu > .sf-list-search{
+    padding-left: calc(var(--sf-list--padding-right) + var(--sf-space-1\/2));
+  }
+  @supports not (padding-inline-end: initial){
+  [dir="rtl"] .sf-dropdown .sf-list > .sf-list-search,[dir="rtl"]
+  .sf-list--menu > .sf-list-search{
+    padding-left: calc(var(--sf-list--padding-right) + var(--sf-space-1\/2));
+    }
+  }
+  .sf-dropdown .sf-list > .sf-list-search:where(:dir(rtl)),
+  .sf-list--menu > .sf-list-search:where(:dir(rtl)){
+    padding-right: calc(var(--sf-list--padding-left) + var(--sf-space-1\/2));
+    padding-left: calc(var(--sf-list--padding-right) + var(--sf-space-1\/2));
+  }
+  .sf-dropdown .sf-list > .sf-list-search,
+  .sf-list--menu > .sf-list-search {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: var(--sf-space-1\/2);
+    min-height: calc(var(--sf-list--row-height) + var(--sf-list--padding-top) + var(--sf-list--padding-bottom));
+    min-block-size: calc(var(--sf-list--row-height) + var(--sf-list--padding-top) + var(--sf-list--padding-bottom));
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-block: 0;
+    padding-inline: calc(var(--sf-list--padding-left) + var(--sf-space-1\/2)) calc(var(--sf-list--padding-right) + var(--sf-space-1\/2));
+    border: 0;
+    border-bottom: var(--sf-px) solid var(--sf-outline-variant);
+    -webkit-border-after: var(--sf-px) solid var(--sf-outline-variant);
+            border-block-end: var(--sf-px) solid var(--sf-outline-variant);
+    font-size: var(--sf-list--text);
+    line-height: var(--sf-list--line);
+    font-family: var(--sf-text--family);
+    cursor: text;
+  }
+  .sf-dropdown .sf-list > .sf-list-search > .sf-list-search-icon,
+  .sf-list--menu > .sf-list-search > .sf-list-search-icon {
+    display: flex;
+    flex: none;
+    width: var(--sf-list--line);
+    inline-size: var(--sf-list--line);
+    overflow: hidden;
+    --sf-icon--color: var(--sf-on-surface-variant);
+    --sf-icon--font-size: var(--sf-list--line);
+    --sf-icon--height: var(--sf-list--line);
+    --sf-icon--width: var(--sf-list--line);
+  }
+  .sf-dropdown .sf-list > .sf-list-search > .sf-list-search-input,
+  .sf-list--menu > .sf-list-search > .sf-list-search-input {
+    flex: 1 1 auto;
+    min-width: 0;
+    min-inline-size: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    outline: none;
+    background-color: transparent;
+    color: var(--sf-on-surface);
+    font: inherit;
+    -webkit-appearance: none;
+       -moz-appearance: none;
+            appearance: none;
+    caret-color: var(--sf-primary);
+    /* The field is the header's whole height above the hairline, so a touch
+       window's larger font never changes how tall it is. */
+    height: calc(var(--sf-list--row-height) + var(--sf-list--padding-top) + var(--sf-list--padding-bottom) - var(--sf-px));
+    block-size: calc(var(--sf-list--row-height) + var(--sf-list--padding-top) + var(--sf-list--padding-bottom) - var(--sf-px));
+  }
+  .sf-dropdown .sf-list > .sf-list-search > .sf-list-search-input::-webkit-input-placeholder, .sf-list--menu > .sf-list-search > .sf-list-search-input::-webkit-input-placeholder {
+    color: var(--sf-on-surface-variant);
+  }
+  .sf-dropdown .sf-list > .sf-list-search > .sf-list-search-input::-moz-placeholder, .sf-list--menu > .sf-list-search > .sf-list-search-input::-moz-placeholder {
+    color: var(--sf-on-surface-variant);
+  }
+  .sf-dropdown .sf-list > .sf-list-search > .sf-list-search-input:-ms-input-placeholder, .sf-list--menu > .sf-list-search > .sf-list-search-input:-ms-input-placeholder {
+    color: var(--sf-on-surface-variant);
+  }
+  .sf-dropdown .sf-list > .sf-list-search > .sf-list-search-input::-ms-input-placeholder, .sf-list--menu > .sf-list-search > .sf-list-search-input::-ms-input-placeholder {
+    color: var(--sf-on-surface-variant);
+  }
+  .sf-dropdown .sf-list > .sf-list-search > .sf-list-search-input::placeholder,
+  .sf-list--menu > .sf-list-search > .sf-list-search-input::placeholder {
+    color: var(--sf-on-surface-variant);
+  }
+  /* A search field written as an sf-input (markup from before R029) keeps
+     its box, and stands the inset inside the panel. */
+  .sf-dropdown .sf-list:has(> .sf-list-container-wrap) > .sf-input,
+  .sf-list--menu:has(> .sf-list-container-wrap) > .sf-input {
+    margin: var(--sf-list--padding-top) var(--sf-list--padding-right) 0 var(--sf-list--padding-left);
   }
   .sf-dropdown .sf-list [role=option].sf-list-item:not(:disabled):not(.disabled):hover,
   .sf-list--menu [role=option].sf-list-item:not(:disabled):not(.disabled):hover {
@@ -1071,6 +1369,54 @@
   .sf-dropdown .sf-list,
   .sf-list--menu {
     border: var(--sf-px) solid CanvasText;
+  }
+}
+@layer sf.states {
+  /* The header has no frame to ring: the focus is the caret and the header's
+     line in the primary colour (C06). !important on the bare field only: a
+     page's unlayered :focus-visible outline beats any layered rule and drew a
+     frame inside the header (as on the field, owner 2026-11-01). */
+  .sf-dropdown .sf-list > .sf-list-search[focus-within],
+  .sf-list--menu > .sf-list-search[focus-within] {
+    border-bottom-color: var(--sf-primary);
+    border-block-end-color: var(--sf-primary);
+  }
+  .sf-dropdown .sf-list > .sf-list-search[focus-within],
+  .sf-list--menu > .sf-list-search[focus-within] {
+    border-bottom-color: var(--sf-primary);
+    border-bottom-color: var(--sf-primary);
+    border-block-end-color: var(--sf-primary);
+  }
+  .sf-dropdown .sf-list > .sf-list-search:focus-within,
+  .sf-list--menu > .sf-list-search:focus-within {
+    border-bottom-color: var(--sf-primary);
+    border-block-end-color: var(--sf-primary);
+  }
+  @media (forced-colors: active) {
+    .sf-dropdown .sf-list > .sf-list-search[focus-within],
+    .sf-list--menu > .sf-list-search[focus-within] {
+      border-bottom-color: Highlight;
+      border-block-end-color: Highlight;
+    }
+    .sf-dropdown .sf-list > .sf-list-search[focus-within],
+    .sf-list--menu > .sf-list-search[focus-within] {
+      border-bottom-color: Highlight;
+      border-bottom-color: Highlight;
+      border-block-end-color: Highlight;
+    }
+    .sf-dropdown .sf-list > .sf-list-search:focus-within,
+    .sf-list--menu > .sf-list-search:focus-within {
+      border-bottom-color: Highlight;
+      border-block-end-color: Highlight;
+    }
+  }
+  .sf-dropdown .sf-list > .sf-list-search > .sf-list-search-input.focus-visible,
+  .sf-list--menu > .sf-list-search > .sf-list-search-input.focus-visible {
+    outline: none !important;
+  }
+  .sf-dropdown .sf-list > .sf-list-search > .sf-list-search-input:focus-visible,
+  .sf-list--menu > .sf-list-search > .sf-list-search-input:focus-visible {
+    outline: none !important;
   }
 }
 /* A heading names the stretch of list under it. It is not an option: a pointer
@@ -2543,40 +2889,48 @@
   }
 }
 @layer sf.states {
-  /* The open list lines up with its field: a picture, a label and the check sit
-     on the same vertical axes as the picture, the value and the chevron above.
-     The list adds its own inset, so an option gives that much back from its
-     padding; the field adds its border, so the option adds that. Measured
-     before: every option picture sat 3px right of the field's. */
-  .sf-dropdown .sf-list .sf-list-item.sf-list-item--avatar.sf-list-item--size-1\/2 .sf-avatar-label-group {
-    --sf-avatar-label-group--gap: var(--sf-ui-1\/2--text-space-x);
+  /* An option is a row of the dropping panel (owner C05, docs review R029,
+     2026-11-07; the geometry is the context menu's, context-menu/scss/_panel):
+     its highlight stands the inset from the panel's edge (the list's scroll
+     area holds it), it is as tall as a control of its size and rounded as a
+     control is, and its picture or text stands --sf-space-1/2 inside it, the
+     picture --sf-space-1/2 before the text. Before R029 an option lined up with
+     its field instead: its padding gave the panel's inset back and added the
+     field's border. */
+  .sf-dropdown .sf-list .sf-list-item,
+  .sf-list--menu .sf-list-item {
+    --sf-list-item--padding-inline-start: var(--sf-space-1\/2);
+    --sf-list-item--padding-inline-end: var(--sf-space-1\/2);
   }
-  .sf-dropdown .sf-list .sf-list-item.sf-list-item--avatar.sf-list-item--size-1 .sf-avatar-label-group {
-    --sf-avatar-label-group--gap: var(--sf-ui-1--text-space-x);
+  .sf-dropdown .sf-list .sf-list-item .sf-list-item-wrap,
+  .sf-list--menu .sf-list-item .sf-list-item-wrap {
+    gap: var(--sf-space-1\/2);
   }
-  .sf-dropdown .sf-list .sf-list-item.sf-list-item--avatar.sf-list-item--size-2 .sf-avatar-label-group {
-    --sf-avatar-label-group--gap: var(--sf-ui-2--text-space-x);
+  .sf-dropdown .sf-list .sf-list-item .sf-list-item-container,
+  .sf-list--menu .sf-list-item .sf-list-item-container {
+    --sf-list-item-container--padding-inline-start: 0;
+    --sf-list-item-container--padding-inline-end: 0;
+  }
+  .sf-dropdown .sf-list .sf-list-item .sf-avatar-label-group,
+  .sf-list--menu .sf-list-item .sf-avatar-label-group {
+    --sf-avatar-label-group--gap: var(--sf-space-1\/2);
+  }
+  /* A colour option's swatch and name are a tag's: the row's padding is the
+     tag's, and the swatch stands --sf-space-1/2 before the name. */
+  .sf-dropdown .sf-list .sf-list-item .sf-list-item-wrap > .sf-tag,
+  .sf-list--menu .sf-list-item .sf-list-item-wrap > .sf-tag {
+    --sf-tag--inline-start: 0;
+    --sf-tag--inline-end: 0;
+    gap: var(--sf-space-1\/2);
   }
   .sf-dropdown .sf-list .sf-list-item .sf-avatar-label-group > .sf-avatar {
     flex-shrink: 0;
   }
-  .sf-dropdown .sf-list .sf-list-item.sf-list-item--size-1\/2 {
-    --sf-list-item--padding-inline-start: calc(var(--sf-ui-1\/2--space-x) + var(--sf-px) - var(--sf-list--padding-left, 0px));
-    --sf-list-item--padding-inline-end: calc(var(--sf-ui-1\/2--space-x) + var(--sf-px) - var(--sf-list--padding-right, 0px));
-  }
   .sf-dropdown .sf-list .sf-list-item.sf-list-item--size-1\/2 .sf-list-item-wrap > .sf-flag {
     --sf-flag--size: calc(var(--sf-text-height-1\/2) * 3 / 4);
   }
-  .sf-dropdown .sf-list .sf-list-item.sf-list-item--size-1 {
-    --sf-list-item--padding-inline-start: calc(var(--sf-ui-1--space-x) + var(--sf-px) - var(--sf-list--padding-left, 0px));
-    --sf-list-item--padding-inline-end: calc(var(--sf-ui-1--space-x) + var(--sf-px) - var(--sf-list--padding-right, 0px));
-  }
   .sf-dropdown .sf-list .sf-list-item.sf-list-item--size-1 .sf-list-item-wrap > .sf-flag {
     --sf-flag--size: calc(var(--sf-text-height-1) * 3 / 4);
-  }
-  .sf-dropdown .sf-list .sf-list-item.sf-list-item--size-2 {
-    --sf-list-item--padding-inline-start: calc(var(--sf-ui-2--space-x) + var(--sf-px) - var(--sf-list--padding-left, 0px));
-    --sf-list-item--padding-inline-end: calc(var(--sf-ui-2--space-x) + var(--sf-px) - var(--sf-list--padding-right, 0px));
   }
   .sf-dropdown .sf-list .sf-list-item.sf-list-item--size-2 .sf-list-item-wrap > .sf-flag {
     --sf-flag--size: calc(var(--sf-text-height-2) * 3 / 4);

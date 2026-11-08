@@ -265,7 +265,10 @@ class DownloadFile extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0
     iconNode.textContent = String(icon || 'download');
     const fileNameNode = document.createElement('span');
     fileNameNode.classList.add('sf-download-file__name', 'sf-download-file-file-name');
-    fileNameNode.textContent = String(fileName || '');
+    fileNameNode.textContent = String(fileName || ''); // The name is one line cut with an ellipsis (component.download-file
+    // 1.1.0): the title shows the whole of it.
+
+    if (fileName) fileNameNode.title = String(fileName);
     container.append(iconNode, fileNameNode);
     const fileSizeNode = document.createElement('span');
     fileSizeNode.classList.add('sf-download-file__size', 'sf-download-file-file-size');
@@ -638,7 +641,7 @@ function renderDownloadFileTemplate(context) {
     <span class="sf-download-file__body sf-download-file-wrap">
       <span class="sf-download-file__main sf-download-file-container">
         <i class="sf-download-file__icon sf-icon" aria-hidden="true">${icon}</i>
-        <span class="sf-download-file__name sf-download-file-file-name">${fileName}</span>
+        <span class="sf-download-file__name sf-download-file-file-name" title=${fileName || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>${fileName}</span>
       </span>
       <span class="sf-download-file__size sf-download-file-file-size">${fileSize}</span>
     </span>
@@ -716,7 +719,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-file-
 /***/ "312445577dad"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.file-download","tag":"sf-file-download","version":"1.2.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"file-name":{"type":"string","default":"File.pdf"},"file-size":{"type":"string","default":""},"icon":{"type":"icon","default":"download"},"href":{"type":"string","default":""},"download":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"target":{"type":"string","default":"_blank"}},"values":{},"events":{"download":{"carries":{"href":"string","file-name":"string","download":"boolean"},"cancelable":true}},"actions":{},"css-variables":{"--sf-download-file-background-color":{"type":"color","state":"default"},"--sf-download-file-border-color":{"type":"color","state":"default"},"--sf-download-file-radius":{"type":"length","state":"default"},"--sf-download-file-padding":{"type":"length","state":"default"},"--sf-download-file-gap":{"type":"length","state":"default"},"--sf-download-file-icon-size":{"type":"length","state":"default"},"--sf-download-file-icon-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.file-download","tag":"sf-file-download","version":"1.2.1","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"file-name":{"type":"string","default":"File.pdf"},"file-size":{"type":"string","default":""},"icon":{"type":"icon","default":"download"},"href":{"type":"string","default":""},"download":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"target":{"type":"string","default":"_blank"}},"values":{},"events":{"download":{"carries":{"href":"string","file-name":"string","download":"boolean"},"cancelable":true}},"actions":{},"css-variables":{"--sf-download-file-background-color":{"type":"color","state":"default"},"--sf-download-file-border-color":{"type":"color","state":"default"},"--sf-download-file-radius":{"type":"length","state":"default"},"--sf-download-file-padding":{"type":"length","state":"default"},"--sf-download-file-gap":{"type":"length","state":"default"},"--sf-download-file-icon-size":{"type":"length","state":"default"},"--sf-download-file-icon-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 

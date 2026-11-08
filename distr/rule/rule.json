@@ -1288,6 +1288,24 @@
     "type": "smart"
   },
   {
+    "name": "cl-input-choice",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "icons"
+      },
+      {
+        "name": "badges"
+      }
+    ],
+    "tags": [
+      "sf-input-choice"
+    ],
+    "type": "smart"
+  },
+  {
     "name": "cl-input-code",
     "css": true,
     "js": true,
@@ -1581,6 +1599,27 @@
     "type": "smart"
   },
   {
+    "name": "cl-list-description",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "cl-button-copy"
+      },
+      {
+        "name": "cl-icon"
+      },
+      {
+        "name": "sr-only/default"
+      }
+    ],
+    "tags": [
+      "sf-list-description"
+    ],
+    "type": "smart"
+  },
+  {
     "name": "cl-list-feed",
     "css": true,
     "js": true,
@@ -1628,6 +1667,27 @@
     "type": "smart"
   },
   {
+    "name": "cl-list-timeline",
+    "css": true,
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "cl-button"
+      },
+      {
+        "name": "cl-icon"
+      },
+      {
+        "name": "sr-only/default"
+      }
+    ],
+    "tags": [
+      "sf-list-timeline"
+    ],
+    "type": "smart"
+  },
+  {
     "name": "cl-menu",
     "css": true,
     "js": true,
@@ -1644,6 +1704,9 @@
       },
       {
         "name": "badges"
+      },
+      {
+        "name": "dot"
       }
     ],
     "tags": [

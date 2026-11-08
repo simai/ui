@@ -2,6 +2,76 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "cb6d39a52a42"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   PanelScrollbar: () => (/* binding */ PanelScrollbar),
+/* harmony export */   scrollbarTakesRoom: () => (/* binding */ scrollbarTakesRoom)
+/* harmony export */ });
+// The scrollbar of a dropping panel stands in the inline-end inset only while
+// it takes room (owner C07, docs review R029, 2026-11-07): the area that
+// scrolls the rows gives up its inline-end padding then, and keeps it beside an
+// overlay scrollbar or none. The sheets draw the track (the inset, the thumb,
+// the inset -- src/component/context-menu/scss/_panel.scss); this marks the
+// area with a class while its scrollbar takes room, read from offsetWidth -
+// clientWidth past the borders whenever the area is drawn or changes its size
+// (a narrowed search, a panel fitted to its room, a window made smaller).
+// Used by sf-menu-context, sf-dropdown's list, sf-input-lookup and
+// sf-profile-picker.
+function scrollbarTakesRoom(area) {
+  const style = getComputedStyle(area);
+  const borders = (parseFloat(style.borderLeftWidth) || 0) + (parseFloat(style.borderRightWidth) || 0);
+  return area.offsetWidth - area.clientWidth - borders > 0;
+}
+class PanelScrollbar {
+  constructor() {
+    this.area = null;
+    this.name = '';
+    this.observer = null;
+  } // Watch `area` (or nothing, given null) and mark it with `name`. A new area
+  // releases the old one and takes its mark off.
+
+
+  watch(area, name) {
+    if (area !== this.area || name !== this.name) {
+      this.observer?.disconnect();
+      if (this.area && this.name) this.area.classList.remove(this.name);
+      this.area = area ?? null;
+      this.name = name;
+
+      if (this.area && typeof ResizeObserver === 'function') {
+        // The mark moves the area's padding, so it is written on the next
+        // frame: written in the observer's own call it would resize what is
+        // observed while the observer delivers (a ResizeObserver loop).
+        this.observer ??= new ResizeObserver(() => requestAnimationFrame(() => this.mark()));
+        this.observer.observe(this.area);
+      }
+    }
+
+    this.mark();
+  }
+
+  mark() {
+    const area = this.area;
+    if (!area?.isConnected || !this.name) return;
+    const takesRoom = scrollbarTakesRoom(area);
+    if (area.classList.contains(this.name) !== takesRoom) area.classList.toggle(this.name, takesRoom);
+  }
+
+  disconnect() {
+    this.observer?.disconnect();
+    this.observer = null;
+    if (this.area && this.name) this.area.classList.remove(this.name);
+    this.area = null;
+    this.name = '';
+  }
+
+}
+
+/***/ },
+
 /***/ "f28a9d913ce0"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -470,10 +540,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("b8b80063ca9a");
 /* harmony import */ var _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("bf0cea966575");
 /* harmony import */ var _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("4a85acfb05c1");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("4ff97a05802b");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("68b68beb66a3");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("25e9776cb404");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("c19f070ad532");
+/* harmony import */ var _component_panel_scrollbar_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("cb6d39a52a42");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("4ff97a05802b");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("68b68beb66a3");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("25e9776cb404");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("c19f070ad532");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_4__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_4__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -489,19 +560,20 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+
  // sf-menu-context from its component.json (standard simai.smart-component 1.3.8
 // §3, §4, §8, §19): its settings are attributes and properties made by
 // core/js/element-manifest.js, its words are lang/<locale>.json, and its events
 // go out by their verbs through sfEmit. aria-label and role stay the host's.
 
-const ContextMenuElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_6__, {
+const ContextMenuElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_7__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_8__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_9__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__
   },
   source: "ru",
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_7__
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_8__
 }); // Prefer the helper Core published; a bundle loaded without core.js still
 // positions with its own copy.
 
@@ -810,37 +882,15 @@ class SfContextMenu extends ContextMenuElement {
 
   scrollArea() {
     return this.querySelector(".sf-context-menu-content--search > .sf-context-menu-list") ?? this.querySelector(":scope > .sf-context-menu:not(.sf-context-menu--panel) > .relative > .sf-context-menu-content");
-  }
+  } // The mark itself is shared with every dropping panel
+  // (src/component/panel-scrollbar.js).
+
 
   watchScrollbar() {
     const area = this.scrollArea();
+    this._scrollbar ??= new _component_panel_scrollbar_js__WEBPACK_IMPORTED_MODULE_6__.PanelScrollbar();
 
-    if (area !== this._scrollArea) {
-      this._scrollObserver?.disconnect();
-      this._scrollArea?.classList.remove("sf-context-menu-list--scrollbar", "sf-context-menu-content--scrollbar");
-      this._scrollArea = area;
-
-      if (area && typeof ResizeObserver === "function") {
-        // The mark moves the area's padding, so it is written on the next
-        // frame: written in the observer's own call it would resize what is
-        // observed while the observer delivers (a ResizeObserver loop).
-        this._scrollObserver ??= new ResizeObserver(() => requestAnimationFrame(() => this.markScrollbar()));
-
-        this._scrollObserver.observe(area);
-      }
-    }
-
-    this.markScrollbar();
-  }
-
-  markScrollbar() {
-    const area = this._scrollArea;
-    if (!area?.isConnected) return;
-    const style = getComputedStyle(area);
-    const borders = (parseFloat(style.borderLeftWidth) || 0) + (parseFloat(style.borderRightWidth) || 0);
-    const takesRoom = area.offsetWidth - area.clientWidth - borders > 0;
-    const name = area.classList.contains("sf-context-menu-list") ? "sf-context-menu-list--scrollbar" : "sf-context-menu-content--scrollbar";
-    if (area.classList.contains(name) !== takesRoom) area.classList.toggle(name, takesRoom);
+    this._scrollbar.watch(area, area?.classList.contains("sf-context-menu-list") ? "sf-context-menu-list--scrollbar" : "sf-context-menu-content--scrollbar");
   }
 
   disconnectedCallback() {
@@ -852,9 +902,7 @@ class SfContextMenu extends ContextMenuElement {
 
     this._itemObserver.disconnect();
 
-    this._scrollObserver?.disconnect();
-    this._scrollObserver = null;
-    this._scrollArea = null;
+    this._scrollbar?.disconnect();
 
     for (const item of this._itemAttributes.keys()) this.releaseItem(item);
 
@@ -1782,6 +1830,11 @@ class SfContextMenu extends ContextMenuElement {
     if (!this._owned) {
       const editing = event.target?.classList?.contains("sf-context-menu-range-input") || event.target === this.searchField();
 
+      if (event.key === "Enter" && event.target === this.searchField()) {
+        this.chooseFirstMatch(event);
+        return;
+      }
+
       if (this._drill?.length && (event.key === "Escape" || event.key === outward && !editing)) {
         event.preventDefault();
         event.stopPropagation();
@@ -1806,7 +1859,8 @@ class SfContextMenu extends ContextMenuElement {
       next?.focus();
       return;
     } // In the search field the letters and the side arrows are the field's;
-    // ArrowDown goes on to the rows, and Escape still closes.
+    // ArrowDown goes on to the rows, Enter chooses the first row the query
+    // left, as a combobox does (simai/ui-source#72), and Escape still closes.
 
 
     if (event.target === this.searchField() && event.key !== "Escape" && event.key !== "Tab") {
@@ -1816,6 +1870,7 @@ class SfContextMenu extends ContextMenuElement {
         this.availableMenuItems()[0]?.focus();
       }
 
+      if (event.key === "Enter") this.chooseFirstMatch(event);
       return;
     } // One level back before the menu closes: the way out of a drilling panel
     // is the way it came in. Escape at the top level closes it, as before.
@@ -1857,6 +1912,21 @@ class SfContextMenu extends ContextMenuElement {
     }
 
     if (event.key.length === 1 && event.key !== " ") this.typeahead(event);
+  } // Enter in the search field: the first row the query left is chosen, as a
+  // press on it would choose it -- a command row selects and closes, a
+  // submenu row opens, a drilling row goes a level in. A word still being
+  // composed (an input method) is the field's Enter, and a query that left no
+  // row does nothing. The key is taken (preventDefault) and still bubbles, so
+  // a host that once answered Enter itself can tell the menu did.
+
+
+  chooseFirstMatch(event) {
+    if (event.isComposing || event.keyCode === 229) return;
+    this.syncMenuItems();
+    const first = this.availableMenuItems()[0];
+    if (!first) return;
+    event.preventDefault();
+    first.click();
   }
 
   typeahead(event) {
@@ -2712,7 +2782,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-menu-
 /***/ "4ff97a05802b"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.menu-context","tag":"sf-menu-context","version":"1.9.0","kind":"leaf","settings":{"position":{"type":"enum","values":["","inline-start","inline-start-top","inline-start-bottom","inline-end","inline-end-top","inline-end-bottom","top","top-inline-start","top-inline-end","bottom","bottom-inline-start","bottom-inline-end","start","end","top-start","top-end","bottom-start","bottom-end","left","left-top","left-bottom","right","right-top","right-bottom","top-left","top-center","top-right","bottom-left","bottom-center","bottom-right","left-start","left-end","right-start","right-end","inline-start-start","inline-start-end","inline-end-start","inline-end-end"],"default":""},"tooltip":{"type":"boolean","default":true},"text":{"type":"string","default":""},"items":{"type":"list","default":[],"of":{"text":"string","value":"string"}},"content-class":{"type":"string","default":""},"entries":{"type":"list","default":[],"of":{"id":"string","text":"string","caption":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"avatar":{"type":"string","optional":true},"initials":{"type":"string","optional":true},"shortcut":{"type":"string","optional":true},"kind":{"type":"string","optional":true},"type":{"type":"string","optional":true},"value":{"type":"string","optional":true},"lang":{"type":"string","optional":true},"keywords":{"type":"string","optional":true},"checked":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true},"danger":{"type":"boolean","optional":true},"current":{"type":"boolean","optional":true},"href":{"type":"string","optional":true},"keep-open":{"type":"boolean","optional":true},"submenu":{"type":"list","optional":true},"search":{"type":"object","optional":true},"options":{"type":"list","optional":true},"items":{"type":"list","optional":true},"min":{"type":"number","optional":true},"max":{"type":"number","optional":true},"step":{"type":"number","optional":true},"unit":{"type":"string","optional":true},"view":{"type":"string","optional":true}}},"popup":{"type":"boolean","default":false},"search":{"type":"object","optional":true},"submenu":{"type":"enum","values":["flyout","drill"],"default":"flyout"},"size":{"type":"enum","values":["1/2","1"],"default":"1/2"},"width":{"type":"string","default":"content"},"tabs":{"type":"string","default":""},"active-tab":{"type":"string","default":""},"closable":{"type":"boolean","default":false}},"values":{},"events":{"select":{"carries":{"id":{"type":"string","nullable":true},"entry":"object","checked":{"type":"boolean","nullable":true},"group":{"type":"string","nullable":true}},"cancelable":true},"change":{"x-native":false,"carries":{"id":{"type":"string","nullable":true},"value":{"type":"id"},"previous":{"type":"id"},"entry":"object"},"cancelable":true},"changed":{"x-native":false,"carries":{"id":{"type":"string","nullable":true},"value":{"type":"id"},"previous":{"type":"id"},"entry":"object"}},"reset":{"carries":{},"cancelable":true,"own-verb":true},"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"search":{"carries":{"query":"string"},"own-verb":true},"tab":{"carries":{"id":"string","index":"number"},"own-verb":true}},"actions":{"open-for":{"with":{"anchor":"object","options":{"type":"object","optional":true,"schema":{"properties":{"side":{"type":"string","default":"block-end"},"align":{"type":"string","default":"start"},"focus":{"type":"string","enum":["first","last","none"],"default":"first"},"offset":{"type":"string"}}}}},"waits":true,"emits":"open"},"toggle-for":{"with":{"anchor":"object","options":{"type":"object","optional":true}},"waits":true},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"emits":"close"},"choose-tab":{"with":{"index":"number"}},"request-close":{},"set-value":{"with":{"id":"string","value":{"type":"id"}}},"set-all":{"with":{"values":"object"}},"show":{"with":{"id":"string"}},"reset":{"emits":"reset"}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"css-variables":{"--sf-context-menu-background-color":{"type":"color","state":"default"},"--sf-context-menu-color":{"type":"color","state":"default"},"--sf-context-menu-border-color":{"type":"color","state":"default"},"--sf-context-menu-border-width":{"type":"length","state":"default"},"--sf-context-menu-radius":{"type":"length","state":"default"},"--sf-context-menu-padding-inline":{"type":"length","state":"default"},"--sf-context-menu-padding-block":{"type":"length","state":"default"},"--sf-context-menu-gap":{"type":"length","state":"default"},"--sf-context-menu-inline-size":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.menu-context","tag":"sf-menu-context","version":"1.9.2","kind":"leaf","settings":{"position":{"type":"enum","values":["","inline-start","inline-start-top","inline-start-bottom","inline-end","inline-end-top","inline-end-bottom","top","top-inline-start","top-inline-end","bottom","bottom-inline-start","bottom-inline-end","start","end","top-start","top-end","bottom-start","bottom-end","left","left-top","left-bottom","right","right-top","right-bottom","top-left","top-center","top-right","bottom-left","bottom-center","bottom-right","left-start","left-end","right-start","right-end","inline-start-start","inline-start-end","inline-end-start","inline-end-end"],"default":""},"tooltip":{"type":"boolean","default":true},"text":{"type":"string","default":""},"items":{"type":"list","default":[],"of":{"text":"string","value":"string"}},"content-class":{"type":"string","default":""},"entries":{"type":"list","default":[],"of":{"id":"string","text":"string","caption":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"avatar":{"type":"string","optional":true},"initials":{"type":"string","optional":true},"shortcut":{"type":"string","optional":true},"kind":{"type":"string","optional":true},"type":{"type":"string","optional":true},"value":{"type":"string","optional":true},"lang":{"type":"string","optional":true},"keywords":{"type":"string","optional":true},"checked":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true},"danger":{"type":"boolean","optional":true},"current":{"type":"boolean","optional":true},"href":{"type":"string","optional":true},"keep-open":{"type":"boolean","optional":true},"submenu":{"type":"list","optional":true},"search":{"type":"object","optional":true},"options":{"type":"list","optional":true},"items":{"type":"list","optional":true},"min":{"type":"number","optional":true},"max":{"type":"number","optional":true},"step":{"type":"number","optional":true},"unit":{"type":"string","optional":true},"view":{"type":"string","optional":true}}},"popup":{"type":"boolean","default":false},"search":{"type":"object","optional":true},"submenu":{"type":"enum","values":["flyout","drill"],"default":"flyout"},"size":{"type":"enum","values":["1/2","1"],"default":"1/2"},"width":{"type":"string","default":"content"},"tabs":{"type":"string","default":""},"active-tab":{"type":"string","default":""},"closable":{"type":"boolean","default":false}},"values":{},"events":{"select":{"carries":{"id":{"type":"string","nullable":true},"entry":"object","checked":{"type":"boolean","nullable":true},"group":{"type":"string","nullable":true}},"cancelable":true},"change":{"x-native":false,"carries":{"id":{"type":"string","nullable":true},"value":{"type":"id"},"previous":{"type":"id"},"entry":"object"},"cancelable":true},"changed":{"x-native":false,"carries":{"id":{"type":"string","nullable":true},"value":{"type":"id"},"previous":{"type":"id"},"entry":"object"}},"reset":{"carries":{},"cancelable":true,"own-verb":true},"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"search":{"carries":{"query":"string"},"own-verb":true},"tab":{"carries":{"id":"string","index":"number"},"own-verb":true}},"actions":{"open-for":{"with":{"anchor":"object","options":{"type":"object","optional":true,"schema":{"properties":{"side":{"type":"string","default":"block-end"},"align":{"type":"string","default":"start"},"focus":{"type":"string","enum":["first","last","none"],"default":"first"},"offset":{"type":"string"}}}}},"waits":true,"emits":"open"},"toggle-for":{"with":{"anchor":"object","options":{"type":"object","optional":true}},"waits":true},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"emits":"close"},"choose-tab":{"with":{"index":"number"}},"request-close":{},"set-value":{"with":{"id":"string","value":{"type":"id"}}},"set-all":{"with":{"values":"object"}},"show":{"with":{"id":"string"}},"reset":{"emits":"reset"}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"css-variables":{"--sf-context-menu-background-color":{"type":"color","state":"default"},"--sf-context-menu-color":{"type":"color","state":"default"},"--sf-context-menu-border-color":{"type":"color","state":"default"},"--sf-context-menu-border-width":{"type":"length","state":"default"},"--sf-context-menu-radius":{"type":"length","state":"default"},"--sf-context-menu-padding-inline":{"type":"length","state":"default"},"--sf-context-menu-padding-block":{"type":"length","state":"default"},"--sf-context-menu-gap":{"type":"length","state":"default"},"--sf-context-menu-inline-size":{"type":"length","state":"default"}}}');
 
 /***/ },
 

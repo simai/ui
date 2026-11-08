@@ -1341,50 +1341,60 @@
     overflow: hidden;
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-search{
-    padding-left: calc(var(--sf-context-menu-content--padding-inline-start) + var(--sf-context-menu--row-padding));
+    padding-left: calc(var(--sf-context-menu-content--padding-inline-start) + var(--sf-space-1\/2));
   }
   @supports not (padding-inline-start: initial){
   html:not([dir="rtl"]) .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-search{
-    padding-left: calc(var(--sf-context-menu-content--padding-inline-start) + var(--sf-context-menu--row-padding));
+    padding-left: calc(var(--sf-context-menu-content--padding-inline-start) + var(--sf-space-1\/2));
     }
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-search{
-    padding-right: calc(var(--sf-context-menu-content--padding-inline-end) + var(--sf-context-menu--row-padding));
+    padding-right: calc(var(--sf-context-menu-content--padding-inline-end) + var(--sf-space-1\/2));
   }
   @supports not (padding-inline-end: initial){
   html:not([dir="rtl"]) .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-search{
-    padding-right: calc(var(--sf-context-menu-content--padding-inline-end) + var(--sf-context-menu--row-padding));
+    padding-right: calc(var(--sf-context-menu-content--padding-inline-end) + var(--sf-space-1\/2));
     }
   }
   .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-search:where(:dir(ltr)){
-    padding-left: calc(var(--sf-context-menu-content--padding-inline-start) + var(--sf-context-menu--row-padding));
-    padding-right: calc(var(--sf-context-menu-content--padding-inline-end) + var(--sf-context-menu--row-padding));
+    padding-left: calc(var(--sf-context-menu-content--padding-inline-start) + var(--sf-space-1\/2));
+    padding-right: calc(var(--sf-context-menu-content--padding-inline-end) + var(--sf-space-1\/2));
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-search{
-    padding-right: calc(var(--sf-context-menu-content--padding-inline-start) + var(--sf-context-menu--row-padding));
+    padding-right: calc(var(--sf-context-menu-content--padding-inline-start) + var(--sf-space-1\/2));
   }
   @supports not (padding-inline-start: initial){
   [dir="rtl"] .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-search{
-    padding-right: calc(var(--sf-context-menu-content--padding-inline-start) + var(--sf-context-menu--row-padding));
+    padding-right: calc(var(--sf-context-menu-content--padding-inline-start) + var(--sf-space-1\/2));
     }
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-search{
-    padding-left: calc(var(--sf-context-menu-content--padding-inline-end) + var(--sf-context-menu--row-padding));
+    padding-left: calc(var(--sf-context-menu-content--padding-inline-end) + var(--sf-space-1\/2));
   }
   @supports not (padding-inline-end: initial){
   [dir="rtl"] .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-search{
-    padding-left: calc(var(--sf-context-menu-content--padding-inline-end) + var(--sf-context-menu--row-padding));
+    padding-left: calc(var(--sf-context-menu-content--padding-inline-end) + var(--sf-space-1\/2));
     }
   }
   .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-search:where(:dir(rtl)){
-    padding-right: calc(var(--sf-context-menu-content--padding-inline-start) + var(--sf-context-menu--row-padding));
-    padding-left: calc(var(--sf-context-menu-content--padding-inline-end) + var(--sf-context-menu--row-padding));
+    padding-right: calc(var(--sf-context-menu-content--padding-inline-start) + var(--sf-space-1\/2));
+    padding-left: calc(var(--sf-context-menu-content--padding-inline-end) + var(--sf-space-1\/2));
   }
   .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-search {
+    display: flex;
     flex: none;
+    align-items: center;
+    gap: var(--sf-space-1\/2);
     min-height: calc(var(--sf-context-menu--row-height) + var(--sf-context-menu-content--padding-top) + var(--sf-context-menu-content--padding-bottom));
     min-block-size: calc(var(--sf-context-menu--row-height) + var(--sf-context-menu-content--padding-top) + var(--sf-context-menu-content--padding-bottom));
-    padding-inline: calc(var(--sf-context-menu-content--padding-inline-start) + var(--sf-context-menu--row-padding)) calc(var(--sf-context-menu-content--padding-inline-end) + var(--sf-context-menu--row-padding));
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-block: 0;
+    padding-inline: calc(var(--sf-context-menu-content--padding-inline-start) + var(--sf-space-1\/2)) calc(var(--sf-context-menu-content--padding-inline-end) + var(--sf-space-1\/2));
+    border: 0;
+    border-bottom: var(--sf-px) solid var(--sf-outline-variant);
+    -webkit-border-after: var(--sf-px) solid var(--sf-outline-variant);
+            border-block-end: var(--sf-px) solid var(--sf-outline-variant);
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-context-menu .sf-context-menu-content--search > .sf-context-menu-list{
     padding-left: var(--sf-context-menu-content--padding-inline-start);
@@ -1876,7 +1886,7 @@
 }
 @layer sf.states {
   /* The header has no frame to ring: the focus is the caret and the header's
-     line in the primary colour. */
+     line in the primary colour (Highlight in forced colours). */
   .sf-context-menu-search[focus-within] {
     border-bottom-color: var(--sf-primary);
     border-block-end-color: var(--sf-primary);
@@ -1889,6 +1899,21 @@
   .sf-context-menu-search:focus-within {
     border-bottom-color: var(--sf-primary);
     border-block-end-color: var(--sf-primary);
+  }
+  @media (forced-colors: active) {
+    .sf-context-menu-search[focus-within] {
+      border-bottom-color: Highlight;
+      border-block-end-color: Highlight;
+    }
+    .sf-context-menu-search[focus-within] {
+      border-bottom-color: Highlight;
+      border-bottom-color: Highlight;
+      border-block-end-color: Highlight;
+    }
+    .sf-context-menu-search:focus-within {
+      border-bottom-color: Highlight;
+      border-block-end-color: Highlight;
+    }
   }
   .sf-context-menu-item.focus-visible,
   .sf-context-menu-range-input.focus-visible {
@@ -1924,19 +1949,6 @@
 @media (forced-colors: active) {
   .sf-context-menu .sf-context-menu-content {
     border: var(--sf-px) solid CanvasText;
-  }
-  .sf-context-menu-search[focus-within] {
-    border-bottom-color: Highlight;
-    border-block-end-color: Highlight;
-  }
-  .sf-context-menu-search[focus-within] {
-    border-bottom-color: Highlight;
-    border-bottom-color: Highlight;
-    border-block-end-color: Highlight;
-  }
-  .sf-context-menu-search:focus-within {
-    border-bottom-color: Highlight;
-    border-block-end-color: Highlight;
   }
   /* A switch that is on and a tile that is on are told apart by the forced
      palette's own colours, not by a fill the mode throws away. */

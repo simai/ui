@@ -2,6 +2,76 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "cb6d39a52a42"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   PanelScrollbar: () => (/* binding */ PanelScrollbar),
+/* harmony export */   scrollbarTakesRoom: () => (/* binding */ scrollbarTakesRoom)
+/* harmony export */ });
+// The scrollbar of a dropping panel stands in the inline-end inset only while
+// it takes room (owner C07, docs review R029, 2026-11-07): the area that
+// scrolls the rows gives up its inline-end padding then, and keeps it beside an
+// overlay scrollbar or none. The sheets draw the track (the inset, the thumb,
+// the inset -- src/component/context-menu/scss/_panel.scss); this marks the
+// area with a class while its scrollbar takes room, read from offsetWidth -
+// clientWidth past the borders whenever the area is drawn or changes its size
+// (a narrowed search, a panel fitted to its room, a window made smaller).
+// Used by sf-menu-context, sf-dropdown's list, sf-input-lookup and
+// sf-profile-picker.
+function scrollbarTakesRoom(area) {
+  const style = getComputedStyle(area);
+  const borders = (parseFloat(style.borderLeftWidth) || 0) + (parseFloat(style.borderRightWidth) || 0);
+  return area.offsetWidth - area.clientWidth - borders > 0;
+}
+class PanelScrollbar {
+  constructor() {
+    this.area = null;
+    this.name = '';
+    this.observer = null;
+  } // Watch `area` (or nothing, given null) and mark it with `name`. A new area
+  // releases the old one and takes its mark off.
+
+
+  watch(area, name) {
+    if (area !== this.area || name !== this.name) {
+      this.observer?.disconnect();
+      if (this.area && this.name) this.area.classList.remove(this.name);
+      this.area = area ?? null;
+      this.name = name;
+
+      if (this.area && typeof ResizeObserver === 'function') {
+        // The mark moves the area's padding, so it is written on the next
+        // frame: written in the observer's own call it would resize what is
+        // observed while the observer delivers (a ResizeObserver loop).
+        this.observer ??= new ResizeObserver(() => requestAnimationFrame(() => this.mark()));
+        this.observer.observe(this.area);
+      }
+    }
+
+    this.mark();
+  }
+
+  mark() {
+    const area = this.area;
+    if (!area?.isConnected || !this.name) return;
+    const takesRoom = scrollbarTakesRoom(area);
+    if (area.classList.contains(this.name) !== takesRoom) area.classList.toggle(this.name, takesRoom);
+  }
+
+  disconnect() {
+    this.observer?.disconnect();
+    this.observer = null;
+    if (this.area && this.name) this.area.classList.remove(this.name);
+    this.area = null;
+    this.name = '';
+  }
+
+}
+
+/***/ },
+
 /***/ "ad5bbe113041"
 (module, __webpack_exports__, __webpack_require__) {
 
@@ -14,14 +84,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5b7d7695b41b");
 /* harmony import */ var _core_js_position_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("116963e5e31b");
 /* harmony import */ var _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("bf0cea966575");
-/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("4a548d247667");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("816c0ad0728a");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("9ad70024c464");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("ad1b3554788b");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("0c5af1be4f82");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("9b0fd2c3adba");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _component_panel_scrollbar__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("cb6d39a52a42");
+/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("4a548d247667");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("816c0ad0728a");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("9ad70024c464");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("ad1b3554788b");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("0c5af1be4f82");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("9b0fd2c3adba");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_5__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_position_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_position_js__WEBPACK_IMPORTED_MODULE_2__);
@@ -54,14 +125,15 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
-const ProfilePickerElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_5__, {
+
+const ProfilePickerElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_6__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_7__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_8__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__
   },
   source: 'ru',
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_6__
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_7__
 });
 
 const position = () => globalThis.SF?.Position || (_core_js_position_js__WEBPACK_IMPORTED_MODULE_2___default()); // The template names its words in camelCase; the language files in kebab-case.
@@ -212,10 +284,16 @@ class SfProfilePicker extends ProfilePickerElement {
       flip: true,
       shift: true,
       fitHeight: true
-    }); // The open panel owns Escape: the root says so, and a drawer or record
+    }); // The scrollbar stands in the panel's inline-end inset while it takes
+    // room (owner C07, docs review R029).
+
+    this._scrollbar ??= new _component_panel_scrollbar__WEBPACK_IMPORTED_MODULE_4__.PanelScrollbar();
+
+    this._scrollbar.watch(panel, 'sf-profile-picker-panel--scrollbar'); // The open panel owns Escape: the root says so, and a drawer or record
     // panel listening on the document stands back. A press outside the picker
     // and its panel closes it, heard through the layer stack's one listener
     // while it is the top layer (§19.3).
+
 
     (0,_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_3__.holdOpenSurfaceMark)(this, true, {
       root: () => this.panel(),
@@ -243,6 +321,7 @@ class SfProfilePicker extends ProfilePickerElement {
     };
     this._position?.stop();
     this._position = null;
+    this._scrollbar?.disconnect();
     (0,_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_3__.holdOpenSurfaceMark)(this, false);
     const panel = this.panel();
     if (panel?.matches?.(':popover-open')) panel.hidePopover();
@@ -411,7 +490,7 @@ class SfProfilePicker extends ProfilePickerElement {
   }
 
   template() {
-    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_4__.renderProfilePickerTemplate)(this.templateContext());
+    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_5__.renderProfilePickerTemplate)(this.templateContext());
   }
 
 }
@@ -657,7 +736,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-profi
 /***/ "816c0ad0728a"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.profile-picker","tag":"sf-profile-picker","version":"1.1.11","kind":"leaf","settings":{"label":{"type":"string","default-from":"runtime.label"},"size":{"type":"enum","values":["1/2","1"],"default":"1/2"},"resettable":{"type":"boolean","default":false},"message":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"profiles":{"type":"list","of":{"id":"id","label":"string","shared":"boolean","builtin":"boolean","editable":"boolean"}},"rights":{"type":"object"}},"values":{"current":{"type":"string","default":""}},"events":{"select":{"carries":{"id":"string","ids":"list"}},"create":{"carries":{"label":"string","shared":"boolean","from":"string","kind":{"type":"enum","values":["personal","shared"]}}},"rename":{"carries":{"id":"string","label":"string","title":"string"}},"delete":{"carries":{"id":"string","ids":"list"}},"reset":{"carries":{"id":"string"}}},"actions":{"open":{},"close":{},"toggle":{}},"presentation":{"skeleton":{"file":"skeleton.html","late":["profiles"]}},"css-variables":{"--sf-profile-picker-background-color":{"type":"color","state":"default"},"--sf-profile-picker-border-color":{"type":"color","state":"default"},"--sf-profile-picker-radius":{"type":"length","state":"default"},"--sf-profile-picker-color":{"type":"color","state":"default"},"--sf-profile-picker-panel-background-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.profile-picker","tag":"sf-profile-picker","version":"1.1.12","kind":"leaf","settings":{"label":{"type":"string","default-from":"runtime.label"},"size":{"type":"enum","values":["1/2","1"],"default":"1/2"},"resettable":{"type":"boolean","default":false},"message":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"profiles":{"type":"list","of":{"id":"id","label":"string","shared":"boolean","builtin":"boolean","editable":"boolean"}},"rights":{"type":"object"}},"values":{"current":{"type":"string","default":""}},"events":{"select":{"carries":{"id":"string","ids":"list"}},"create":{"carries":{"label":"string","shared":"boolean","from":"string","kind":{"type":"enum","values":["personal","shared"]}}},"rename":{"carries":{"id":"string","label":"string","title":"string"}},"delete":{"carries":{"id":"string","ids":"list"}},"reset":{"carries":{"id":"string"}}},"actions":{"open":{},"close":{},"toggle":{}},"presentation":{"skeleton":{"file":"skeleton.html","late":["profiles"]}},"css-variables":{"--sf-profile-picker-background-color":{"type":"color","state":"default"},"--sf-profile-picker-border-color":{"type":"color","state":"default"},"--sf-profile-picker-radius":{"type":"length","state":"default"},"--sf-profile-picker-color":{"type":"color","state":"default"},"--sf-profile-picker-panel-background-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 

@@ -2,6 +2,92 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "1373e294ec38"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BREAKPOINTS: () => (/* binding */ BREAKPOINTS),
+/* harmony export */   breakpointMedia: () => (/* binding */ breakpointMedia),
+/* harmony export */   breakpointQuery: () => (/* binding */ breakpointQuery),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   matchesBreakpoint: () => (/* binding */ matchesBreakpoint)
+/* harmony export */ });
+// The Framework's breakpoints for scripts (reuse audit 2026-11-02, finding 6).
+// The sheets switch at the steps of core/scss/vars/_sf_var__breakpoint.scss;
+// a component that also decides in script (sf-contents, sf-site-header,
+// sf-search) had copied the steps by hand, word for word, and nine such
+// constants (48rem, 60rem, 1023px, 1024) had drifted apart elsewhere, so one
+// admin screen switched at two points. The same values here, and
+// tests/breakpoint-ladder.contract.test.mjs holds the two files equal.
+
+/** The ladder: each name is the width it starts at, in rem as the sheets write it. */
+const BREAKPOINTS = Object.freeze({
+  xs: '0rem',
+  sm: '32rem',
+  // g6, 512px
+  md: '44rem',
+  // h1, 704px
+  lg: '60rem',
+  // h5, 960px
+  xl: '72rem',
+  // h8, 1152px
+  xxl: '80rem' // i0, 1280px
+
+}); // The step under a threshold, as the sheets' media-breakpoint-down writes it:
+// one pixel less, in rem (_mix__breakpoint.scss breakpoint-max).
+
+const PIXEL_REM = 1 / 16;
+/**
+ * The media query of a breakpoint: from its width up, or with `below: true`
+ * the widths under it -- the two sides the sheets switch on. An unknown name
+ * is null, so a typo is not a query that always matches.
+ *
+ *   breakpointQuery('md')                  (min-width: 44rem)
+ *   breakpointQuery('md', {below: true})   (max-width: 43.9375rem)
+ */
+
+function breakpointQuery(name, {
+  below = false
+} = {}) {
+  if (!Object.hasOwn(BREAKPOINTS, name)) return null;
+  const rem = Number.parseFloat(BREAKPOINTS[name]);
+  if (below) return rem > 0 ? `(max-width: ${rem - PIXEL_REM}rem)` : 'not all';
+  return `(min-width: ${rem}rem)`;
+}
+/** The page's MediaQueryList for a breakpoint, to read and to follow; null without matchMedia or for an unknown name. */
+
+function breakpointMedia(name, {
+  below = false,
+  view = globalThis
+} = {}) {
+  const query = breakpointQuery(name, {
+    below
+  });
+  return query && typeof view?.matchMedia === 'function' ? view.matchMedia(query) : null;
+}
+/** Whether the page is at least as wide as the breakpoint now (or under it, with `below`). */
+
+function matchesBreakpoint(name, options = {}) {
+  return breakpointMedia(name, options)?.matches === true;
+}
+const Breakpoints = Object.freeze({
+  ladder: BREAKPOINTS,
+  query: breakpointQuery,
+  media: breakpointMedia,
+  matches: matchesBreakpoint
+}); // Core publishes the helper; component bundles that carry their own copy reuse
+// an already published one instead of replacing it.
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.SF = globalThis.SF || {};
+  if (!globalThis.SF.breakpoints) globalThis.SF.breakpoints = Breakpoints;
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Breakpoints);
+
+/***/ },
+
 /***/ "3267d93fb0d3"
 (module, __webpack_exports__, __webpack_require__) {
 
@@ -15,15 +101,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e92fd2d1a38c");
 /* harmony import */ var _core_js_position_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("116963e5e31b");
 /* harmony import */ var _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("bf0cea966575");
-/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("e29406217b0b");
-/* harmony import */ var _items_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("7332c9a6d69c");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("831ef45545b2");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("e0fa46ed075f");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("97168578e30d");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("33262fd5308c");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("15d5a97ca4e8");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_3__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_5__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_3__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("1373e294ec38");
+/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("e29406217b0b");
+/* harmony import */ var _items_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("7332c9a6d69c");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("831ef45545b2");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("e0fa46ed075f");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("97168578e30d");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("33262fd5308c");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("15d5a97ca4e8");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_3__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_3__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__);
@@ -56,6 +143,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+
  // Prefer the helper Core published; an isolated bundle uses its own copy.
 
 const positioning = () => globalThis.SF?.Position || (_core_js_position_js__WEBPACK_IMPORTED_MODULE_3___default()); // From its component.json (standard simai.smart-component 1.3.8 §3, §4, §8,
@@ -65,14 +153,14 @@ const positioning = () => globalThis.SF?.Position || (_core_js_position_js__WEBP
 // sf-menu:toggle are dated aliases of sf-menu-navigate and sf-menu-toggle.
 
 
-const MenuElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_8__, {
+const MenuElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_9__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_10__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_11__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_12__
   },
   source: 'ru',
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_9__
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_10__
 }); // open('catalog') and open({id: 'catalog'}) both name an item (§4.4).
 
 const itemArgument = value => value && typeof value === 'object' ? value.id : value;
@@ -89,11 +177,11 @@ class SfSmartMenu extends MenuElement {
       },
       orientation: {
         default: 'vertical',
-        values: _items_mjs__WEBPACK_IMPORTED_MODULE_6__.MENU_ORIENTATIONS
+        values: _items_mjs__WEBPACK_IMPORTED_MODULE_7__.MENU_ORIENTATIONS
       },
       appearance: {
         default: 'default',
-        values: _items_mjs__WEBPACK_IMPORTED_MODULE_6__.MENU_APPEARANCES
+        values: _items_mjs__WEBPACK_IMPORTED_MODULE_7__.MENU_APPEARANCES
       },
       current: {
         default: ''
@@ -105,7 +193,7 @@ class SfSmartMenu extends MenuElement {
       },
       collapse: {
         default: 'auto',
-        values: _items_mjs__WEBPACK_IMPORTED_MODULE_6__.MENU_COLLAPSE
+        values: _items_mjs__WEBPACK_IMPORTED_MODULE_7__.MENU_COLLAPSE
       },
       label: {
         default: ''
@@ -113,6 +201,10 @@ class SfSmartMenu extends MenuElement {
       toggleLabel: {
         attribute: 'toggle-label',
         default: ''
+      },
+      sticky: {
+        type: Boolean,
+        default: false
       },
       rootClass: {
         default: ''
@@ -139,13 +231,15 @@ class SfSmartMenu extends MenuElement {
     this._domIds = new Map();
     this._anchors = new Map();
     this._holding = false;
-    this._escapeTaken = false; // A value set as a property before the element was defined is an own
+    this._escapeTaken = false; // Under the md breakpoint (a phone), for collapse narrow.
+
+    this._narrow = false; // A value set as a property before the element was defined is an own
     // property that would hide the accessor; it is taken through it.
 
     if (Object.prototype.hasOwnProperty.call(this, 'items')) {
       const early = this.items;
       delete this.items;
-      this._items = (0,_items_mjs__WEBPACK_IMPORTED_MODULE_6__.normaliseItems)(early);
+      this._items = (0,_items_mjs__WEBPACK_IMPORTED_MODULE_7__.normaliseItems)(early);
     }
 
     this.addEventListener('click', this.onClick);
@@ -175,7 +269,7 @@ class SfSmartMenu extends MenuElement {
     const nav = children.find(child => child.localName === 'nav');
     const list = children.find(child => child.localName === 'ul') || nav?.querySelector(':scope > ul');
     if (!list) return;
-    this._childItems = (0,_items_mjs__WEBPACK_IMPORTED_MODULE_6__.normaliseItems)((0,_items_mjs__WEBPACK_IMPORTED_MODULE_6__.itemsFromList)(list));
+    this._childItems = (0,_items_mjs__WEBPACK_IMPORTED_MODULE_7__.normaliseItems)((0,_items_mjs__WEBPACK_IMPORTED_MODULE_7__.itemsFromList)(list));
     this._childLabel = nav?.getAttribute('aria-label') || list.getAttribute('aria-label') || '';
     (list.parentElement === nav ? nav : list).remove();
   }
@@ -186,13 +280,29 @@ class SfSmartMenu extends MenuElement {
     };
 
     window.addEventListener('popstate', this._onLocation);
-    window.addEventListener('hashchange', this._onLocation);
+    window.addEventListener('hashchange', this._onLocation); // The phone's width, as the sheets switch on it (core/js/breakpoints).
+
+    this._narrowMedia = (0,_core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_5__.breakpointMedia)('md', {
+      below: true
+    });
+    this._narrow = this._narrowMedia?.matches === true;
+
+    this._onNarrow = () => {
+      const narrow = this._narrowMedia?.matches === true;
+      if (narrow === this._narrow) return;
+      this._narrow = narrow;
+      if (this.collapse === 'narrow') this.requestComponentUpdate('narrow');
+    };
+
+    this._narrowMedia?.addEventListener?.('change', this._onNarrow);
   }
 
   onDisconnected() {
     super.onDisconnected();
     window.removeEventListener('popstate', this._onLocation);
     window.removeEventListener('hashchange', this._onLocation);
+    this._narrowMedia?.removeEventListener?.('change', this._onNarrow);
+    this._narrowMedia = null;
     this._resizeObserver?.disconnect();
     this._resizeObserver = null;
     this._observed = null;
@@ -205,11 +315,11 @@ class SfSmartMenu extends MenuElement {
 
   get items() {
     if (this._items !== undefined) return this._items;
-    return (0,_items_mjs__WEBPACK_IMPORTED_MODULE_6__.normaliseItems)(this.getAttribute('items'));
+    return (0,_items_mjs__WEBPACK_IMPORTED_MODULE_7__.normaliseItems)(this.getAttribute('items'));
   }
 
   set items(next) {
-    this._items = (0,_items_mjs__WEBPACK_IMPORTED_MODULE_6__.normaliseItems)(next);
+    this._items = (0,_items_mjs__WEBPACK_IMPORTED_MODULE_7__.normaliseItems)(next);
     this._autoCollapsed = false;
     this.requestComponentUpdate('items');
   }
@@ -224,18 +334,25 @@ class SfSmartMenu extends MenuElement {
 
 
   get horizontal() {
-    return this.orientation === 'horizontal' && _items_mjs__WEBPACK_IMPORTED_MODULE_6__.ROW_APPEARANCES.includes(this.appearance);
+    return this.orientation === 'horizontal' && _items_mjs__WEBPACK_IMPORTED_MODULE_7__.ROW_APPEARANCES.includes(this.appearance);
   } // The row became a button that opens the same links as a column.
 
 
   get collapsed() {
     if (this.collapse === 'always') return true;
+    if (this.collapse === 'narrow') return this._narrow;
     return this.collapse === 'auto' && this.horizontal && this._autoCollapsed;
   } // Branches open as panels beside the row: a row that is shown as a row.
 
 
   get flyouts() {
     return this.horizontal && !this.collapsed;
+  } // Groups are drawn with their headings in a column; a row and the compact
+  // rail draw their items in the group's place.
+
+
+  get groupsDrawn() {
+    return !this.flyouts && this.appearance !== 'compact';
   }
 
   get panelOpen() {
@@ -245,9 +362,10 @@ class SfSmartMenu extends MenuElement {
 
   get currentId() {
     const here = globalThis.location;
-    return (0,_items_mjs__WEBPACK_IMPORTED_MODULE_6__.currentItemId)(this.menuItems, {
+    return (0,_items_mjs__WEBPACK_IMPORTED_MODULE_7__.currentItemId)(this.menuItems, {
       current: this.getProp('current'),
       pathname: here?.pathname || '',
+      hash: here?.hash || '',
       base: here?.href || '',
       fromLocation: this.currentFromLocation
     });
@@ -256,7 +374,7 @@ class SfSmartMenu extends MenuElement {
 
   get openIds() {
     this.syncMode();
-    return [...(0,_items_mjs__WEBPACK_IMPORTED_MODULE_6__.openBranches)(this.menuItems, this._openState, this.currentId, !this.flyouts)];
+    return [...(0,_items_mjs__WEBPACK_IMPORTED_MODULE_7__.openBranches)(this.menuItems, this._openState, this.currentId, !this.flyouts)];
   }
 
   isOpen(id) {
@@ -264,7 +382,7 @@ class SfSmartMenu extends MenuElement {
   }
 
   item(id) {
-    return (0,_items_mjs__WEBPACK_IMPORTED_MODULE_6__.findItem)(this.menuItems, id);
+    return (0,_items_mjs__WEBPACK_IMPORTED_MODULE_7__.findItem)(this.menuItems, id);
   } // The actions open, close and toggle {id} and close-all (§4.4): each
   // answers an outcome, applied or refused with a reason.
 
@@ -309,6 +427,12 @@ class SfSmartMenu extends MenuElement {
     if (this.appearance === 'compact') return {
       outcome: 'refused',
       reason: 'compact'
+    }; // A group that is not collapsible, or a group a row does not draw, stays
+    // as it is.
+
+    if (item.group && (!item.collapsible || !this.groupsDrawn)) return {
+      outcome: 'refused',
+      reason: 'fixed'
     };
     if (item.disabled && source === 'user') return {
       outcome: 'refused',
@@ -322,7 +446,7 @@ class SfSmartMenu extends MenuElement {
     const after = new Set(before);
 
     if (this.flyouts) {
-      const above = new Set((0,_items_mjs__WEBPACK_IMPORTED_MODULE_6__.pathTo)(this.menuItems, item.id) || []);
+      const above = new Set((0,_items_mjs__WEBPACK_IMPORTED_MODULE_7__.pathTo)(this.menuItems, item.id) || []);
 
       for (const other of before) if (!above.has(other)) after.delete(other);
 
@@ -349,7 +473,7 @@ class SfSmartMenu extends MenuElement {
 
   applyOpen(before, after, source, asked) {
     const changed = [];
-    (0,_items_mjs__WEBPACK_IMPORTED_MODULE_6__.walkItems)(this.menuItems, one => {
+    (0,_items_mjs__WEBPACK_IMPORTED_MODULE_7__.walkItems)(this.menuItems, one => {
       if (one.children.length && before.has(one.id) !== after.has(one.id)) changed.push(one);
     });
     if (!changed.length) return false;
@@ -358,7 +482,7 @@ class SfSmartMenu extends MenuElement {
 
     this.requestComponentUpdate('open'); // The branch asked for first, then the ones it closed, innermost first.
 
-    const depth = one => ((0,_items_mjs__WEBPACK_IMPORTED_MODULE_6__.pathTo)(this.menuItems, one.id) || []).length;
+    const depth = one => ((0,_items_mjs__WEBPACK_IMPORTED_MODULE_7__.pathTo)(this.menuItems, one.id) || []).length;
 
     changed.sort((a, b) => a.id === asked ? -1 : b.id === asked ? 1 : depth(b) - depth(a)); // sf-menu-toggle, then its old name sf-menu:toggle with the same detail
     // (aliases.json, until 2026-12-01).
@@ -533,7 +657,7 @@ class SfSmartMenu extends MenuElement {
     const open = new Set(this.openIds);
     if (!open.size) return null;
 
-    const depth = id => ((0,_items_mjs__WEBPACK_IMPORTED_MODULE_6__.pathTo)(this.menuItems, id) || []).length;
+    const depth = id => ((0,_items_mjs__WEBPACK_IMPORTED_MODULE_7__.pathTo)(this.menuItems, id) || []).length;
 
     const focused = document.activeElement;
     const ids = [...open].sort((a, b) => depth(b) - depth(a));
@@ -667,7 +791,10 @@ class SfSmartMenu extends MenuElement {
   templateContext() {
     const props = this.getPropsContext();
     this.syncMode();
-    const items = this.menuItems;
+    const all = this.menuItems;
+    const items = this.groupsDrawn ? all : (0,_items_mjs__WEBPACK_IMPORTED_MODULE_7__.withoutGroups)(all);
+    const currentId = this.currentId;
+    const selector = this.collapse === 'narrow' && this.collapsed;
     return this.createTemplateContext({ ...props,
       component: this,
       // The host's path id (§7.1.1, simai/ui-source#41): <path>--list and
@@ -677,7 +804,11 @@ class SfSmartMenu extends MenuElement {
       })),
       items,
       open: new Set(this.openIds),
-      currentId: this.currentId,
+      currentId,
+      // collapse narrow: the button is a selector showing the current item.
+      selector,
+      selectedItem: selector && currentId ? (0,_items_mjs__WEBPACK_IMPORTED_MODULE_7__.findItem)(all, currentId) : null,
+      statusWord: status => this.sfWord(`status-${status}`),
       flyouts: this.flyouts,
       collapsed: this.collapsed,
       panelOpen: this.panelOpen,
@@ -691,7 +822,7 @@ class SfSmartMenu extends MenuElement {
   }
 
   template() {
-    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_5__.renderMenuTemplate)(this.templateContext());
+    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_6__.renderMenuTemplate)(this.templateContext());
   }
 
 }
@@ -745,14 +876,22 @@ function renderBadge(item) {
   if (!item.badge) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
   const count = (0,_items_mjs__WEBPACK_IMPORTED_MODULE_2__.badgeCount)(item.badge);
   return count !== null ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-badge" data-count=${count}></span>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-badge sf-badge--tight">${item.badge}</span>`;
-} // What a row holds, in the class order: an icon, the words, a counter.
+} // An item's status: the class dot of its tone at the row's end, before the
+// counter, and its word in the link's name («Адрес, внимание»), out of sight.
 
 
-function renderWrapContent(item) {
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${item.icon ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<i class="sf-icon sf-menu-element-icon" aria-hidden="true">${item.icon}</i>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}<span class="sf-menu-element-text">${item.label}</span>${renderBadge(item)}`;
+function renderStatus(context, item) {
+  if (!item.status) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${`sf-dot sf-dot--size-1/2 sf-dot--${item.status}`} aria-hidden="true"><span class="sf-dot-item"></span></span><span class="sf-menu-element-status">${context.statusWord(item.status)}</span>`;
+} // What a row holds, in the class order: an icon, the words, a status dot and a
+// counter.
+
+
+function renderWrapContent(context, item) {
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${item.icon ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<i class="sf-icon sf-menu-element-icon" aria-hidden="true">${item.icon}</i>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}<span class="sf-menu-element-text">${item.label}</span>${renderStatus(context, item)}${renderBadge(item)}`;
 }
 
-const renderWrap = item => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-menu-element-wrap">${renderWrapContent(item)}</span>`; // The branch's disclosure glyph as the class draws it inside a button row: an
+const renderWrap = (context, item) => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-menu-element-wrap">${renderWrapContent(context, item)}</span>`; // The branch's disclosure glyph as the class draws it inside a button row: an
 // icon-button box hidden from assistive technology, the button being the row.
 
 
@@ -769,11 +908,11 @@ function renderRow(context, item, level, branch, open, submenuId) {
     // words in the row's place.
     if (linked) {
       return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<a class=${classes} href=${item.href} aria-current=${current ? 'page' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-                     data-sf-menu-link=${item.id}>${renderWrap(item)}</a>`;
+                     data-sf-menu-link=${item.id}>${renderWrap(context, item)}</a>`;
     }
 
-    if (item.disabled) return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<a class=${classes} aria-disabled="true">${renderWrap(item)}</a>`;
-    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${classes} aria-current=${current ? 'page' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>${renderWrap(item)}</span>`;
+    if (item.disabled) return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<a class=${classes} aria-disabled="true">${renderWrap(context, item)}</a>`;
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${classes} aria-current=${current ? 'page' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>${renderWrap(context, item)}</span>`;
   }
 
   const glyph = branchGlyph(context, level, open); // A branch that is also a destination: the link and the disclosure button
@@ -782,7 +921,7 @@ function renderRow(context, item, level, branch, open, submenuId) {
   if (item.href) {
     return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class=${classes}>
       ${linked ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<a class="sf-menu-element-wrap" href=${item.href} aria-current=${current ? 'page' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-                  data-sf-menu-link=${item.id}>${renderWrapContent(item)}</a>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<a class="sf-menu-element-wrap" aria-disabled="true">${renderWrapContent(item)}</a>`}
+                  data-sf-menu-link=${item.id}>${renderWrapContent(context, item)}</a>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<a class="sf-menu-element-wrap" aria-disabled="true">${renderWrapContent(context, item)}</a>`}
       <button class="sf-icon-button" type="button" aria-expanded=${open ? 'true' : 'false'} aria-controls=${submenuId}
               aria-label=${item.label} ?disabled=${item.disabled}
               data-sf-menu-toggle=${item.id}><span class="sf-icon" aria-hidden="true">${glyph}</span></button>
@@ -790,7 +929,7 @@ function renderRow(context, item, level, branch, open, submenuId) {
   }
 
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<button class=${classes} type="button" aria-expanded=${open ? 'true' : 'false'} aria-controls=${submenuId}
-                      ?disabled=${item.disabled} data-sf-menu-toggle=${item.id}>${renderWrap(item)}${renderTrailing(glyph)}</button>`;
+                      ?disabled=${item.disabled} data-sf-menu-toggle=${item.id}>${renderWrap(context, item)}${renderTrailing(glyph)}</button>`;
 }
 
 function renderItem(context, item, level) {
@@ -805,21 +944,50 @@ function renderItem(context, item, level) {
       ${branch ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<ul class="sf-menu" id=${submenuId} ?hidden=${!open}>${renderItems(context, item.children, level + 1)}</ul>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     </li>
   `;
+} // A group of a column: its heading -- words, or the button that opens and
+// closes it when it is collapsible -- over a list of first-level rows that the
+// heading names.
+
+
+function renderGroup(context, item) {
+  const open = context.open.has(item.id);
+  const listId = `${context.id}--menu-${context.domId(item.id)}`;
+  const headingId = `${listId}-heading`;
+  const heading = item.collapsible ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<button class="sf-menu-group-heading" type="button" id=${headingId}
+                   aria-expanded=${open ? 'true' : 'false'} aria-controls=${listId}
+                   ?disabled=${item.disabled} data-sf-menu-toggle=${item.id}>
+        <span class="sf-menu-group-label">${item.label}</span>${renderStatus(context, item)}${renderBadge(item)}
+        <span class="sf-icon" aria-hidden="true">${open ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}</span>
+      </button>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-menu-group-heading" id=${headingId}>
+        <span class="sf-menu-group-label">${item.label}</span>${renderStatus(context, item)}${renderBadge(item)}
+      </span>`;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+    <li class=${joinClasses('sf-menu-item', 'sf-menu-item--group', open ? 'open' : '')}
+        data-sf-menu-item=${item.id} data-sf-menu-group>
+      ${heading}
+      <ul class="sf-menu" id=${listId} aria-labelledby=${headingId} ?hidden=${!open}>${renderItems(context, item.children, 1)}</ul>
+    </li>
+  `;
 }
 
 function renderItems(context, items, level) {
-  return (0,lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__.repeat)(items, item => item.id, item => renderItem(context, item, level));
+  return (0,lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__.repeat)(items, item => item.id, item => item.group ? renderGroup(context, item) : renderItem(context, item, level));
 } // The button a row that does not fit becomes: a class menu row (a size 1
 // control, as every row), the menu glyph and its words, the disclosure glyph
 // at its end.
+// A selector (collapse narrow) shows the current item instead -- its icon and
+// words -- and is named by the menu and that item: «Разделы: Адрес».
 
 
 function renderPanelToggle(context) {
   const open = context.panelOpen;
+  const selected = context.selector ? context.selectedItem : null;
+  const icon = selected ? selected.icon : 'menu';
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<button class=${joinClasses('sf-menu-element', 'sf-menu-element--level-1', 'sf-menu-element--has-submenu', 'sf-smart-menu-toggle', open ? 'open' : '')}
                       type="button" aria-expanded=${open ? 'true' : 'false'} aria-controls=${`${context.id}--list`}
+                      aria-label=${selected ? `${context.label || context.toggleLabel}: ${selected.label}` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                       data-sf-menu-panel-toggle>
-    <span class="sf-menu-element-wrap"><i class="sf-icon sf-menu-element-icon" aria-hidden="true">menu</i><span class="sf-menu-element-text">${context.toggleLabel}</span></span>
+    <span class="sf-menu-element-wrap">${icon ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<i class="sf-icon sf-menu-element-icon" aria-hidden="true">${icon}</i>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}<span class="sf-menu-element-text">${selected ? selected.label : context.toggleLabel}</span></span>
     ${renderTrailing(open ? 'keyboard_arrow_up' : 'keyboard_arrow_down')}
   </button>`;
 } // The class markup inside a named <nav>: ul.sf-menu > li.sf-menu-item > the
@@ -915,6 +1083,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   MENU_APPEARANCES: () => (/* binding */ MENU_APPEARANCES),
 /* harmony export */   MENU_COLLAPSE: () => (/* binding */ MENU_COLLAPSE),
 /* harmony export */   MENU_ORIENTATIONS: () => (/* binding */ MENU_ORIENTATIONS),
+/* harmony export */   MENU_STATUSES: () => (/* binding */ MENU_STATUSES),
 /* harmony export */   ROW_APPEARANCES: () => (/* binding */ ROW_APPEARANCES),
 /* harmony export */   badgeCount: () => (/* binding */ badgeCount),
 /* harmony export */   currentItemId: () => (/* binding */ currentItemId),
@@ -925,7 +1094,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   normalisePath: () => (/* binding */ normalisePath),
 /* harmony export */   openBranches: () => (/* binding */ openBranches),
 /* harmony export */   pathTo: () => (/* binding */ pathTo),
-/* harmony export */   walkItems: () => (/* binding */ walkItems)
+/* harmony export */   walkItems: () => (/* binding */ walkItems),
+/* harmony export */   withoutGroups: () => (/* binding */ withoutGroups)
 /* harmony export */ });
 // The parts of sf-menu that are about data, not the page: the shape an item
 // takes, from the items a host gives or from the links written in the markup,
@@ -946,7 +1116,12 @@ const MENU_APPEARANCES = Object.freeze(['default', 'documentation-tree', 'compac
 const ROW_APPEARANCES = Object.freeze(['default', 'navigation']);
 // When a row of links that does not fit becomes a button that opens them as a
 // column: when it does not fit, always, or never.
-const MENU_COLLAPSE = Object.freeze(['auto', 'always', 'none']);
+// narrow: a column (or a row) that is shown as that button while the page is
+// narrower than the md breakpoint -- a phone -- whose words are then the
+// current item's, a compact selector of the sections.
+const MENU_COLLAPSE = Object.freeze(['auto', 'always', 'narrow', 'none']);
+// The tones of an item's status dot: the class dot's tones (src/component/dot).
+const MENU_STATUSES = Object.freeze(['success', 'warning', 'error', 'info', 'neutral']);
 // The class menu draws four levels; a deeper one is drawn as the fourth.
 const LEVEL_LIMIT = 4;
 
@@ -954,7 +1129,13 @@ const text = (value) => (value === null || value === undefined ? '' : String(val
 
 // One item, as the element draws it, with its children. `label` is text, never
 // markup; `badge` is a count (drawn by the class counter: capped at 99+,
-// hidden at 0, its phrase ends the link's name) or a short label.
+// hidden at 0, its phrase ends the link's name) or a short label, and `count`
+// the same count by its own name. `status` is a dot of one of the tones.
+//
+// A first-level item with `group: true` is a group: a heading over its items
+// (`children`, or `items` by the shape of a grouped navigation), never a
+// destination itself. Its items are first-level rows; a group is open unless
+// it says `open: false`, and only a `collapsible` one is opened and closed.
 function normaliseItem(item, index = 0, parentId = '', seen = new Set()) {
   if (typeof item === 'string') item = {label: item};
   if (!item || typeof item !== 'object' || Array.isArray(item)) return null;
@@ -962,22 +1143,31 @@ function normaliseItem(item, index = 0, parentId = '', seen = new Set()) {
   const id = own || (parentId ? `${parentId}-${index + 1}` : `item-${index + 1}`);
   if (seen.has(id)) return null;
   seen.add(id);
+  const group = !parentId && Boolean(item.group);
+  const nested = Array.isArray(item.children) ? item.children : group && Array.isArray(item.items) ? item.items : [];
   const children = [];
-  (Array.isArray(item.children) ? item.children : []).forEach((child, at) => {
+  nested.forEach((child, at) => {
     const normalised = normaliseItem(child, at, id, seen);
     if (normalised) children.push(normalised);
   });
-  return {
+  const status = text(item.status).trim();
+  const normalised = {
     id,
     label: text(item.label ?? item.text ?? item.title),
-    href: text(item.href).trim(),
+    href: group ? '' : text(item.href).trim(),
     icon: text(item.icon).trim(),
-    badge: text(item.badge).trim(),
-    current: Boolean(item.current),
+    badge: text(item.badge ?? item.count).trim(),
+    status: MENU_STATUSES.includes(status) ? status : '',
+    current: !group && Boolean(item.current),
     disabled: Boolean(item.disabled),
-    open: Boolean(item.open),
+    open: group ? item.open !== false : Boolean(item.open),
     children,
   };
+  if (group) {
+    normalised.group = true;
+    normalised.collapsible = Boolean(item.collapsible);
+  }
+  return normalised;
 }
 
 // The items from what a host gave: an array, or the same array as JSON in the
@@ -1048,9 +1238,10 @@ function normalisePath(path) {
 // else -- when the menu follows the location -- the item whose link leads to
 // this path (the first, depth first), else the first item marked current.
 // `base` resolves relative links, as the browser would.
-function currentItemId(items, {current = '', pathname = '', base = '', fromLocation = false} = {}) {
+function currentItemId(items, {current = '', pathname = '', hash = '', base = '', fromLocation = false} = {}) {
   const named = text(current).trim();
-  if (named && findItem(items, named)) return named;
+  const namedItem = named ? findItem(items, named) : null;
+  if (namedItem && !namedItem.group) return named;
   if (fromLocation && pathname) {
     const here = normalisePath(pathname);
     let found = null;
@@ -1063,6 +1254,9 @@ function currentItemId(items, {current = '', pathname = '', base = '', fromLocat
         return;
       }
       if (base && new globalThis.URL(base).origin !== target.origin) return;
+      // A link to a section of a page (#address) is that section only while
+      // the location names it: in-page panels, one hash each.
+      if (target.hash && target.hash !== text(hash)) return;
       if (normalisePath(target.pathname) === here) found = item.id;
     });
     if (found) return found;
@@ -1077,12 +1271,17 @@ function currentItemId(items, {current = '', pathname = '', base = '', fromLocat
 // Which branches are open: what the person or the host set, else -- in a
 // column -- what the item says, and the branches above the current page, so
 // it can be seen. A row's panels open only when asked: none is open when the
-// page starts.
+// page starts. A group that cannot be collapsed is always open; a row draws
+// no group (its items stand in the row), so none is open there.
 function openBranches(items, overrides = new Map(), currentId = null, inColumn = true) {
   const reveal = new Set(inColumn && currentId ? pathTo(items, currentId) || [] : []);
   const open = new Set();
   walkItems(items, (item) => {
     if (!item.children.length) return;
+    if (item.group && !item.collapsible) {
+      if (inColumn) open.add(item.id);
+      return;
+    }
     const fallback = inColumn && (item.open || reveal.has(item.id));
     const state = overrides.has(item.id) ? overrides.get(item.id) : fallback;
     if (state) open.add(item.id);
@@ -1093,7 +1292,8 @@ function openBranches(items, overrides = new Map(), currentId = null, inColumn =
 // A list written in the markup, read as items: each <li> is an item, its
 // direct <a> the link (href, aria-current, the label from its words), its
 // direct <ul> the children. data-id (or id), data-icon, data-badge,
-// data-open and data-disabled give the other fields; a row the class menu has
+// data-open, data-disabled, data-status, data-group and data-collapsible
+// give the other fields (data-open="false" closes a group at first); a row the class menu has
 // already drawn is read too (its .sf-menu-element-icon, .sf-menu-element-text
 // and counter). Icon glyphs, counters and what is hidden from assistive
 // technology are not words of the label. Works on any DOM-like node with
@@ -1135,10 +1335,22 @@ function itemsFromList(list) {
         badge: attr(li, 'data-badge') || attr(link, 'data-badge') || attr(drawnCount, 'data-count') || '',
         current: (currentAttr !== null && currentAttr !== 'false') || has(li, 'data-current'),
         disabled: has(li, 'data-disabled') || has(li, 'disabled') || attr(link, 'aria-disabled') === 'true',
-        open: has(li, 'data-open') || Boolean(li.classList?.contains?.('open')),
+        // A group is open unless data-open="false" says otherwise.
+        open: has(li, 'data-group')
+          ? attr(li, 'data-open') !== 'false'
+          : has(li, 'data-open') || Boolean(li.classList?.contains?.('open')),
+        group: has(li, 'data-group'),
+        collapsible: has(li, 'data-collapsible'),
+        status: attr(li, 'data-status') || '',
         children: nested ? itemsFromList(nested) : [],
       };
     });
+}
+
+// The items as a row or a compact rail draws them: a group gives its items
+// to the first level, in its place, and draws no heading.
+function withoutGroups(items) {
+  return items.flatMap((item) => (item.group ? item.children : [item]));
 }
 
 
@@ -1154,21 +1366,21 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-menu 
 /***/ "e0fa46ed075f"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.menu","tag":"sf-menu","version":"1.2.4","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","label":"string","href":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"badge":{"type":"string","optional":true},"current":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true},"open":{"type":"boolean","optional":true},"children":{"type":"list","optional":true}}},"orientation":{"type":"enum","values":["vertical","horizontal"],"default":"vertical"},"appearance":{"type":"enum","values":["default","documentation-tree","compact","navigation"],"default":"default"},"current-from-location":{"type":"boolean","default":false},"collapse":{"type":"enum","values":["auto","always","none"],"default":"auto"},"label":{"type":"string","default":""},"toggle-label":{"type":"string","default-from":"runtime.toggle-label"}},"values":{"current":{"type":"string","default":""}},"events":{"navigate":{"carries":{"id":"id","href":"string","item":"object"},"cancelable":true},"toggle":{"carries":{"id":{"type":"id","nullable":true},"open":"boolean","source":{"type":"enum","values":["user","method"]},"item":{"type":"object","nullable":true}}}},"actions":{"open":{"with":{"id":"id"}},"close":{"with":{"id":"id"}},"toggle":{"with":{"id":"id"}},"close-all":{}},"presentation":{"skeleton":{"late":["items"]}},"css-variables":{"--sf-menu-background-color":{"type":"color","state":"default"},"--sf-menu-gap":{"type":"length","state":"default"},"--sf-menu-item-color":{"type":"color","state":"default"},"--sf-menu-item-background-color":{"type":"color","state":"default"},"--sf-menu-item-border-color":{"type":"color","state":"default"},"--sf-menu-item-radius":{"type":"length","state":"default"},"--sf-menu-submenu-background-color":{"type":"color","state":"open"},"--sf-menu-submenu-border-color":{"type":"color","state":"open"},"--sf-menu-submenu-radius":{"type":"length","state":"open"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.menu","tag":"sf-menu","version":"1.3.0","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","label":"string","href":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"badge":{"type":"string","optional":true},"count":{"type":"number","optional":true},"status":{"type":"enum","values":["success","warning","error","info","neutral"],"optional":true},"current":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true},"open":{"type":"boolean","optional":true},"children":{"type":"list","optional":true},"group":{"type":"boolean","optional":true},"collapsible":{"type":"boolean","optional":true},"items":{"type":"list","optional":true}}},"orientation":{"type":"enum","values":["vertical","horizontal"],"default":"vertical"},"appearance":{"type":"enum","values":["default","documentation-tree","compact","navigation"],"default":"default"},"current-from-location":{"type":"boolean","default":false},"collapse":{"type":"enum","values":["auto","always","narrow","none"],"default":"auto"},"label":{"type":"string","default":""},"toggle-label":{"type":"string","default-from":"runtime.toggle-label"},"sticky":{"type":"boolean","default":false}},"values":{"current":{"type":"string","default":""}},"events":{"navigate":{"carries":{"id":"id","href":"string","item":"object"},"cancelable":true},"toggle":{"carries":{"id":{"type":"id","nullable":true},"open":"boolean","source":{"type":"enum","values":["user","method"]},"item":{"type":"object","nullable":true}}}},"actions":{"open":{"with":{"id":"id"}},"close":{"with":{"id":"id"}},"toggle":{"with":{"id":"id"}},"close-all":{}},"presentation":{"skeleton":{"late":["items"]}},"css-variables":{"--sf-menu-background-color":{"type":"color","state":"default"},"--sf-menu-gap":{"type":"length","state":"default"},"--sf-menu-item-color":{"type":"color","state":"default"},"--sf-menu-item-background-color":{"type":"color","state":"default"},"--sf-menu-item-border-color":{"type":"color","state":"default"},"--sf-menu-item-radius":{"type":"length","state":"default"},"--sf-menu-submenu-background-color":{"type":"color","state":"open"},"--sf-menu-submenu-border-color":{"type":"color","state":"open"},"--sf-menu-submenu-radius":{"type":"length","state":"open"},"--sf-menu-sticky-top":{"type":"length","state":"default"}}}');
 
 /***/ },
 
 /***/ "33262fd5308c"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Menu","runtime":{"toggle-label":"Menu"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Menu","runtime":{"toggle-label":"Menu","status-success":"all good","status-warning":"needs attention","status-error":"error","status-info":"something new","status-neutral":"no data"}}');
 
 /***/ },
 
 /***/ "15d5a97ca4e8"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Меню","runtime":{"toggle-label":"Меню"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Меню","runtime":{"toggle-label":"Меню","status-success":"в порядке","status-warning":"внимание","status-error":"ошибка","status-info":"есть новое","status-neutral":"нет данных"}}');
 
 /***/ }
 

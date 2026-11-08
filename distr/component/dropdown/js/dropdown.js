@@ -67,9 +67,11 @@ function createDropdownInteraction(root, adapter) {
 
   const trigger = () => field()?.querySelector(':scope > button') || field();
 
-  const input = () => field()?.querySelector('input:not([type="hidden"])');
+  const input = () => field()?.querySelector('input:not([type="hidden"])'); // The search header (.sf-list-search, since R029) or a search field written
+  // as an sf-input before it.
 
-  const search = () => adapter.getList()?.querySelector('.sf-input input');
+
+  const search = () => adapter.getList()?.querySelector('.sf-list-search-input, .sf-input input');
 
   const items = () => [...(adapter.getList()?.querySelectorAll('.sf-list-item') || [])];
 
@@ -394,7 +396,7 @@ function getList(root) {
 }
 
 function getSearchInput(root) {
-  return getList(root)?.querySelector(".sf-input input") || null;
+  return getList(root)?.querySelector(".sf-list-search-input, .sf-input input") || null;
 }
 
 function getTagContainer(root) {
@@ -686,9 +688,13 @@ function applyDropdownViewport(root, visibleItems = 4) {
   const containerStyle = window.getComputedStyle(container);
   const gap = Number.parseFloat(containerStyle.rowGap || "") || Number.parseFloat(containerStyle.gap || "") || 0;
   const paddingTop = Number.parseFloat(containerStyle.paddingTop || "") || 0;
-  const paddingBottom = Number.parseFloat(containerStyle.paddingBottom || "") || 0;
+  const paddingBottom = Number.parseFloat(containerStyle.paddingBottom || "") || 0; // The scroll area holds the panel's inset since R029 (C05-C07): its own
+  // padding is part of the height it shows.
+
+  const wrapStyle = window.getComputedStyle(wrap);
+  const wrapPadding = (Number.parseFloat(wrapStyle.paddingTop || "") || 0) + (Number.parseFloat(wrapStyle.paddingBottom || "") || 0);
   const visibleCount = Math.min(visibleItems, items.length);
-  const totalHeight = visibleCount * itemHeight + Math.max(visibleCount - 1, 0) * gap + paddingTop + paddingBottom;
+  const totalHeight = visibleCount * itemHeight + Math.max(visibleCount - 1, 0) * gap + paddingTop + paddingBottom + wrapPadding;
   wrap.style.maxHeight = `${Math.ceil(totalHeight)}px`;
   wrap.style.overflowY = items.length > visibleCount ? "auto" : "hidden";
   wrap.style.overflowX = "hidden";
@@ -897,7 +903,7 @@ function onRootClick(event) {
   const field = getField(root);
   const item = event.target.closest(".sf-list-item");
   const removeTagButton = event.target.closest('[data-role="remove-tag"]');
-  const searchWrap = event.target.closest(".sf-list .sf-input");
+  const searchWrap = event.target.closest(".sf-list .sf-list-search, .sf-list .sf-input");
   const optionCheckbox = event.target.closest(".sf-list-item .sf-checkbox");
 
   if (searchWrap && containsDropdownTarget(root, searchWrap)) {
@@ -1207,7 +1213,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   triggerOf: () => (/* binding */ triggerOf)
 /* harmony export */ });
 /* harmony import */ var _core_js_position_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2e9112dbdda9");
+/* harmony import */ var _panel_scrollbar_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("cb6d39a52a42");
 // One placement/lifecycle contract for native and body-projected panels.
+
  // Prefer the helper Core published; a bundle loaded without core.js (for
 // example an isolated documentation frame) still positions with its own copy.
 
@@ -1287,6 +1295,7 @@ function positionDropdownPortal(root, list) {
   }
 
   state.anchor.update();
+  state.scrollbar?.mark();
   return true;
 }
 function openDropdownPortal(root, list, onUnavailable) {
@@ -1350,7 +1359,13 @@ function openDropdownPortal(root, list, onUnavailable) {
     }
 
     window.visualViewport?.addEventListener('resize', state.schedule);
-    window.visualViewport?.addEventListener('scroll', state.schedule);
+    window.visualViewport?.addEventListener('scroll', state.schedule); // The rows' scroll area gives up its inline-end inset to a scrollbar that
+    // takes room (owner C07, docs review R029).
+
+    if (state.wrap) {
+      state.scrollbar = new _panel_scrollbar_js__WEBPACK_IMPORTED_MODULE_1__.PanelScrollbar();
+      state.scrollbar.watch(state.wrap, 'sf-list-container-wrap--scrollbar');
+    }
   }
 
   list.hidden = false;
@@ -1369,6 +1384,7 @@ function closeDropdownPortal(list) {
   state.resize?.disconnect();
   cancelAnimationFrame(state.frame);
   state.inheritance?.disconnect();
+  state.scrollbar?.disconnect();
   window.visualViewport?.removeEventListener('resize', state.schedule);
   window.visualViewport?.removeEventListener('scroll', state.schedule);
 
@@ -1508,6 +1524,76 @@ function bindFormReset(input, synchronize) {
   if (!callbacks) subscriptions.set(input, callbacks = new Set());
   callbacks.add(synchronize);
   return () => callbacks.delete(synchronize);
+}
+
+/***/ },
+
+/***/ "cb6d39a52a42"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   PanelScrollbar: () => (/* binding */ PanelScrollbar),
+/* harmony export */   scrollbarTakesRoom: () => (/* binding */ scrollbarTakesRoom)
+/* harmony export */ });
+// The scrollbar of a dropping panel stands in the inline-end inset only while
+// it takes room (owner C07, docs review R029, 2026-11-07): the area that
+// scrolls the rows gives up its inline-end padding then, and keeps it beside an
+// overlay scrollbar or none. The sheets draw the track (the inset, the thumb,
+// the inset -- src/component/context-menu/scss/_panel.scss); this marks the
+// area with a class while its scrollbar takes room, read from offsetWidth -
+// clientWidth past the borders whenever the area is drawn or changes its size
+// (a narrowed search, a panel fitted to its room, a window made smaller).
+// Used by sf-menu-context, sf-dropdown's list, sf-input-lookup and
+// sf-profile-picker.
+function scrollbarTakesRoom(area) {
+  const style = getComputedStyle(area);
+  const borders = (parseFloat(style.borderLeftWidth) || 0) + (parseFloat(style.borderRightWidth) || 0);
+  return area.offsetWidth - area.clientWidth - borders > 0;
+}
+class PanelScrollbar {
+  constructor() {
+    this.area = null;
+    this.name = '';
+    this.observer = null;
+  } // Watch `area` (or nothing, given null) and mark it with `name`. A new area
+  // releases the old one and takes its mark off.
+
+
+  watch(area, name) {
+    if (area !== this.area || name !== this.name) {
+      this.observer?.disconnect();
+      if (this.area && this.name) this.area.classList.remove(this.name);
+      this.area = area ?? null;
+      this.name = name;
+
+      if (this.area && typeof ResizeObserver === 'function') {
+        // The mark moves the area's padding, so it is written on the next
+        // frame: written in the observer's own call it would resize what is
+        // observed while the observer delivers (a ResizeObserver loop).
+        this.observer ??= new ResizeObserver(() => requestAnimationFrame(() => this.mark()));
+        this.observer.observe(this.area);
+      }
+    }
+
+    this.mark();
+  }
+
+  mark() {
+    const area = this.area;
+    if (!area?.isConnected || !this.name) return;
+    const takesRoom = scrollbarTakesRoom(area);
+    if (area.classList.contains(this.name) !== takesRoom) area.classList.toggle(this.name, takesRoom);
+  }
+
+  disconnect() {
+    this.observer?.disconnect();
+    this.observer = null;
+    if (this.area && this.name) this.area.classList.remove(this.name);
+    this.area = null;
+    this.name = '';
+  }
+
 }
 
 /***/ },
@@ -2530,6 +2616,48 @@ function boxesOf(element, found = []) {
   }
 
   return found;
+} // The box a fixed panel is placed in: the nearest ancestor that contains
+// fixed descendants -- a transform or one of its parts, a filter, will-change
+// naming one, contain: layout or paint (as [data-sf-overlay-container] has),
+// a container query box -- or the viewport. Floating UI asks the same
+// question but counts an element that draws no box: every Smart host is
+// display: contents, and the tooltip sheet gives a placed sf-tooltip its
+// translate. A box-less element contains nothing, so the browser placed the
+// panel in the overlay container while Floating UI measured from the host's
+// empty rectangle at 0,0 -- viewport coordinates, taken from the container:
+// sf-composition-overlay's tooltips stood 48px low under a 48px bar
+// (simai/ui-source#63).
+
+
+const CONTAINS_FIXED = /paint|layout|strict|content/u;
+const WILL_CONTAIN = /transform|translate|scale|rotate|perspective|filter/u;
+
+const given = value => Boolean(value) && value !== 'none';
+
+function containsFixed(element) {
+  const css = getComputedStyle(element);
+  if (css.display === 'contents') return false;
+  return given(css.transform) || given(css.translate) || given(css.scale) || given(css.rotate) || given(css.perspective) || given(css.filter) || given(css.backdropFilter) || WILL_CONTAIN.test(css.willChange || '') || CONTAINS_FIXED.test(css.contain || '') || Boolean(css.containerType) && css.containerType !== 'normal';
+}
+
+function inTopLayer(element) {
+  try {
+    return element.matches(':popover-open') || element.matches(':modal');
+  } catch {
+    return false;
+  }
+}
+
+function fixedContainingBlock(element) {
+  const view = element.ownerDocument.defaultView;
+  if (inTopLayer(element)) return view;
+
+  for (let node = element.parentElement; node && node !== node.ownerDocument.body && node !== node.ownerDocument.documentElement; node = node.parentElement) {
+    if (containsFixed(node)) return node;
+    if (inTopLayer(node)) return view;
+  }
+
+  return view;
 }
 /** The rectangle a reference occupies: its own, or what it draws when it has none. */
 
@@ -2616,6 +2744,11 @@ function anchor(reference, floating, options = {}) {
   let pending = false;
 
   const run = async () => {
+    // The panel is fixed before it is measured, so it is measured in the box
+    // it will be placed in: left absolute by the stylesheet (a tooltip in its
+    // anchor), its first position was taken from the anchor and written as
+    // the viewport's.
+    if (floating.style.position !== 'fixed') floating.style.position = 'fixed';
     const rtl = isRtl(reference);
     const gap = resolveLength(settings.offset, reference.parentElement);
     const padding = resolveLength(settings.padding, reference.parentElement); // Measure the natural size so flipping compares the real panel height.
@@ -2682,6 +2815,10 @@ function anchor(reference, floating, options = {}) {
     }));
     const result = await (0,_floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.computePosition)(measured, floating, {
       strategy: 'fixed',
+      // The panel is fixed: its offset parent is the box it is placed in.
+      platform: { ..._floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.platform,
+        getOffsetParent: (element, polyfill) => element === floating ? fixedContainingBlock(floating) : _floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.platform.getOffsetParent(element, polyfill)
+      },
       placement: (0,_position_placement_js__WEBPACK_IMPORTED_MODULE_1__.physicalPlacement)(settings.side, settings.align, rtl),
       middleware
     });

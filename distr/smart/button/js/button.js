@@ -252,7 +252,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
-const COMPONENT_ATTRIBUTES = new Set(["template", "size", "appearance", "type", "scheme", "status", "text", "icon", "icon-start", "icon-end", "icon-left", "icon-right", "icon-position", "text-position", "spacing", "tightness", "radius", "root-class", "loading", "segment", "disabled", "native-type", "form", "name", "value", "href", "expanded", "pressed", "text-pressed", "shortcut", "shortcut-listen", "aria-label", "class", "style", "id", "slot"]); // href (1.4.0) takes the addresses a link may follow: a relative one, a
+const COMPONENT_ATTRIBUTES = new Set(["template", "size", "appearance", "type", "scheme", "status", "text", "icon", "icon-start", "icon-end", "icon-left", "icon-right", "icon-position", "text-position", "spacing", "tightness", "radius", "root-class", "loading", "segment", "disabled", "native-type", "form", "name", "value", "href", "target", "rel", "expanded", "pressed", "text-pressed", "shortcut", "shortcut-listen", "aria-label", "class", "style", "id", "slot"]); // href (1.4.0) takes the addresses a link may follow: a relative one, a
 // fragment, http(s), mailto and tel. Any other scheme (javascript:, data:)
 // draws the button as a button.
 
@@ -261,6 +261,14 @@ const SAFE_HREF = /^(?:[^:/?#]*(?:[/?#]|$)|https?:|mailto:|tel:)/iu;
 function linkAddress(value) {
   const href = String(value || "").trim();
   return href && SAFE_HREF.test(href) ? href : "";
+} // A link that opens a new tab says noopener noreferrer unless the page wrote
+// its own rel (1.7.0): the opened page cannot reach window.opener.
+
+
+function linkRelation(target, rel) {
+  const own = String(rel || "").trim();
+  if (own) return own;
+  return String(target || "").trim().toLowerCase() === "_blank" ? "noopener noreferrer" : "";
 }
 
 function applyButtonAttributes(host, button) {
@@ -399,6 +407,10 @@ class SfButton extends ButtonElement {
       submitName: this.getAttribute("name") || "",
       submitValue: this.getAttribute("value") ?? "",
       href: linkAddress(this.getAttribute("href")),
+      // Where the link opens and its relation (1.7.0, Larena after sf-wizard):
+      // a new tab with no rel is noopener noreferrer.
+      linkTarget: this.getAttribute("target") || "",
+      linkRel: linkRelation(this.getAttribute("target"), this.getAttribute("rel")),
       radius: this.radius,
       ariaLabel: this.getAttribute("aria-label") || "",
       expanded: this.expanded,
@@ -537,6 +549,8 @@ class SfButton extends ButtonElement {
       name: this.getAttribute("name") || "",
       value: this.getAttribute("value") || "",
       href: this.getAttribute("href") || "",
+      target: this.getAttribute("target") || "",
+      rel: this.getAttribute("rel") || "",
       shortcut: this.shortcut,
       shortcutListen: this.shortcutListen,
       ariaLabel: this.getAttribute("aria-label") || ""
@@ -938,6 +952,8 @@ function renderButtonTemplate(context) {
     return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <a
                 href=${inactive ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : context.href}
+                target=${context.linkTarget || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                rel=${context.linkRel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 class=${rootClasses.join(' ')}
                 style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 role=${inactive ? 'link' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
@@ -1009,7 +1025,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-butto
 /***/ "5bb33fb22db3"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button","tag":"sf-button","version":"1.6.1","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"appearance":{"type":"enum","values":["default","tonal","outline","link","surface"],"default":"default"},"scheme":{"type":"enum","values":["primary","secondary","on-surface","on-surface-variant"],"default":"primary"},"status":{"type":"enum","values":["","error"],"default":""},"text-position":{"type":"string","default":"center"},"text":{"type":"string","default":""},"segment":{"type":"string","default":""},"icon":{"type":"icon","default":""},"icon-start":{"type":"icon","default":""},"icon-end":{"type":"icon","default":""},"icon-position":{"type":"enum","values":["start","end"],"default":"start"},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"loading":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"native-type":{"type":"enum","values":["button","submit","reset"],"default":"button"},"form":{"type":"string","default":""},"name":{"type":"string","default":""},"value":{"type":"string","default":""},"href":{"type":"string","default":""},"shortcut":{"type":"string","default":""},"shortcut-listen":{"type":"boolean","default":false},"expanded":{"type":"boolean","optional":true},"pressed":{"type":"boolean","optional":true},"text-pressed":{"type":"string","default":""}},"values":{},"events":{"press":{"carries":{}}},"actions":{},"css-variables":{"--sf-button-background-color":{"type":"color","state":"default"},"--sf-button-color":{"type":"color","state":"default"},"--sf-button-border-color":{"type":"color","state":"default"},"--sf-button-border-width":{"type":"length","state":"default"},"--sf-button-radius":{"type":"length","state":"default"},"--sf-button-padding-inline":{"type":"length","state":"default"},"--sf-button-padding-block":{"type":"length","state":"default"},"--sf-button-pressed-background-color":{"type":"color","state":"pressed"},"--sf-button-pressed-color":{"type":"color","state":"pressed"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button","tag":"sf-button","version":"1.7.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"appearance":{"type":"enum","values":["default","tonal","outline","link","surface"],"default":"default"},"scheme":{"type":"enum","values":["primary","secondary","on-surface","on-surface-variant"],"default":"primary"},"status":{"type":"enum","values":["","error"],"default":""},"text-position":{"type":"string","default":"center"},"text":{"type":"string","default":""},"segment":{"type":"string","default":""},"icon":{"type":"icon","default":""},"icon-start":{"type":"icon","default":""},"icon-end":{"type":"icon","default":""},"icon-position":{"type":"enum","values":["start","end"],"default":"start"},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"loading":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"native-type":{"type":"enum","values":["button","submit","reset"],"default":"button"},"form":{"type":"string","default":""},"name":{"type":"string","default":""},"value":{"type":"string","default":""},"href":{"type":"string","default":""},"target":{"type":"string","default":""},"rel":{"type":"string","default":""},"shortcut":{"type":"string","default":""},"shortcut-listen":{"type":"boolean","default":false},"expanded":{"type":"boolean","optional":true},"pressed":{"type":"boolean","optional":true},"text-pressed":{"type":"string","default":""}},"values":{},"events":{"press":{"carries":{}}},"actions":{},"css-variables":{"--sf-button-background-color":{"type":"color","state":"default"},"--sf-button-color":{"type":"color","state":"default"},"--sf-button-border-color":{"type":"color","state":"default"},"--sf-button-border-width":{"type":"length","state":"default"},"--sf-button-radius":{"type":"length","state":"default"},"--sf-button-padding-inline":{"type":"length","state":"default"},"--sf-button-padding-block":{"type":"length","state":"default"},"--sf-button-pressed-background-color":{"type":"color","state":"pressed"},"--sf-button-pressed-color":{"type":"color","state":"pressed"}}}');
 
 /***/ },
 

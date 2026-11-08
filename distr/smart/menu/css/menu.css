@@ -44,3 +44,23 @@
     }
   }
 }
+@layer sf.components {
+  sf-menu[sticky]:not([sticky=false]) {
+    position: sticky;
+    display: block;
+    align-self: flex-start;
+    top: var(--sf-0);
+    inset-block-start: var(--sf-0);
+    top: var(--sf-0);
+    top: var(--sf-menu-sticky-top, var(--sf-0));
+    inset-block-start: var(--sf-menu-sticky-top, var(--sf-0));
+    max-height: calc(100dvh - 0px);
+    max-block-size: calc(100dvh - 0px);
+    max-height: calc(100dvh - 0px);
+    max-height: calc(100dvh - var(--sf-menu-sticky-top, 0px));
+    max-block-size: calc(100dvh - var(--sf-menu-sticky-top, 0px));
+    overflow-y: auto;
+    -ms-scroll-chaining: none;
+        overscroll-behavior: contain;
+  }
+}

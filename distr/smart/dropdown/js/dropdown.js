@@ -72,9 +72,11 @@ function createDropdownInteraction(root, adapter) {
 
   const trigger = () => field()?.querySelector(':scope > button') || field();
 
-  const input = () => field()?.querySelector('input:not([type="hidden"])');
+  const input = () => field()?.querySelector('input:not([type="hidden"])'); // The search header (.sf-list-search, since R029) or a search field written
+  // as an sf-input before it.
 
-  const search = () => adapter.getList()?.querySelector('.sf-input input');
+
+  const search = () => adapter.getList()?.querySelector('.sf-list-search-input, .sf-input input');
 
   const items = () => [...(adapter.getList()?.querySelectorAll('.sf-list-item') || [])];
 
@@ -305,11 +307,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   triggerOf: () => (/* binding */ triggerOf)
 /* harmony export */ });
 /* harmony import */ var _core_js_position_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("116963e5e31b");
+/* harmony import */ var _panel_scrollbar_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("cb6d39a52a42");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_position_js__WEBPACK_IMPORTED_MODULE_0__]);
 var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 _core_js_position_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 /* harmony import */ var _core_js_position_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_position_js__WEBPACK_IMPORTED_MODULE_0__);
 // One placement/lifecycle contract for native and body-projected panels.
+
  // Prefer the helper Core published; a bundle loaded without core.js (for
 // example an isolated documentation frame) still positions with its own copy.
 
@@ -389,6 +393,7 @@ function positionDropdownPortal(root, list) {
   }
 
   state.anchor.update();
+  state.scrollbar?.mark();
   return true;
 }
 function openDropdownPortal(root, list, onUnavailable) {
@@ -452,7 +457,13 @@ function openDropdownPortal(root, list, onUnavailable) {
     }
 
     window.visualViewport?.addEventListener('resize', state.schedule);
-    window.visualViewport?.addEventListener('scroll', state.schedule);
+    window.visualViewport?.addEventListener('scroll', state.schedule); // The rows' scroll area gives up its inline-end inset to a scrollbar that
+    // takes room (owner C07, docs review R029).
+
+    if (state.wrap) {
+      state.scrollbar = new _panel_scrollbar_js__WEBPACK_IMPORTED_MODULE_1__.PanelScrollbar();
+      state.scrollbar.watch(state.wrap, 'sf-list-container-wrap--scrollbar');
+    }
   }
 
   list.hidden = false;
@@ -471,6 +482,7 @@ function closeDropdownPortal(list) {
   state.resize?.disconnect();
   cancelAnimationFrame(state.frame);
   state.inheritance?.disconnect();
+  state.scrollbar?.disconnect();
   window.visualViewport?.removeEventListener('resize', state.schedule);
   window.visualViewport?.removeEventListener('scroll', state.schedule);
 
@@ -623,6 +635,76 @@ function bindFormReset(input, synchronize) {
 
 /***/ },
 
+/***/ "cb6d39a52a42"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   PanelScrollbar: () => (/* binding */ PanelScrollbar),
+/* harmony export */   scrollbarTakesRoom: () => (/* binding */ scrollbarTakesRoom)
+/* harmony export */ });
+// The scrollbar of a dropping panel stands in the inline-end inset only while
+// it takes room (owner C07, docs review R029, 2026-11-07): the area that
+// scrolls the rows gives up its inline-end padding then, and keeps it beside an
+// overlay scrollbar or none. The sheets draw the track (the inset, the thumb,
+// the inset -- src/component/context-menu/scss/_panel.scss); this marks the
+// area with a class while its scrollbar takes room, read from offsetWidth -
+// clientWidth past the borders whenever the area is drawn or changes its size
+// (a narrowed search, a panel fitted to its room, a window made smaller).
+// Used by sf-menu-context, sf-dropdown's list, sf-input-lookup and
+// sf-profile-picker.
+function scrollbarTakesRoom(area) {
+  const style = getComputedStyle(area);
+  const borders = (parseFloat(style.borderLeftWidth) || 0) + (parseFloat(style.borderRightWidth) || 0);
+  return area.offsetWidth - area.clientWidth - borders > 0;
+}
+class PanelScrollbar {
+  constructor() {
+    this.area = null;
+    this.name = '';
+    this.observer = null;
+  } // Watch `area` (or nothing, given null) and mark it with `name`. A new area
+  // releases the old one and takes its mark off.
+
+
+  watch(area, name) {
+    if (area !== this.area || name !== this.name) {
+      this.observer?.disconnect();
+      if (this.area && this.name) this.area.classList.remove(this.name);
+      this.area = area ?? null;
+      this.name = name;
+
+      if (this.area && typeof ResizeObserver === 'function') {
+        // The mark moves the area's padding, so it is written on the next
+        // frame: written in the observer's own call it would resize what is
+        // observed while the observer delivers (a ResizeObserver loop).
+        this.observer ??= new ResizeObserver(() => requestAnimationFrame(() => this.mark()));
+        this.observer.observe(this.area);
+      }
+    }
+
+    this.mark();
+  }
+
+  mark() {
+    const area = this.area;
+    if (!area?.isConnected || !this.name) return;
+    const takesRoom = scrollbarTakesRoom(area);
+    if (area.classList.contains(this.name) !== takesRoom) area.classList.toggle(this.name, takesRoom);
+  }
+
+  disconnect() {
+    this.observer?.disconnect();
+    this.observer = null;
+    if (this.area && this.name) this.area.classList.remove(this.name);
+    this.area = null;
+    this.name = '';
+  }
+
+}
+
+/***/ },
+
 /***/ "50a1017ded91"
 (module, __webpack_exports__, __webpack_require__) {
 
@@ -636,16 +718,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _component_form_reset_helper__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("67eed2647f47");
 /* harmony import */ var _component_dropdown_portal__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("a0f23dca0b37");
 /* harmony import */ var _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("bf0cea966575");
-/* harmony import */ var _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("778671c79fa6");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("b4d28078de6f");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("f15c795f1055");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("ad680c489766");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("8b3dd54aeaa8");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_field_size__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _component_dropdown_interaction__WEBPACK_IMPORTED_MODULE_4__, _component_dropdown_portal__WEBPACK_IMPORTED_MODULE_6__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_7__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_8__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_field_size__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _component_dropdown_interaction__WEBPACK_IMPORTED_MODULE_4__, _component_dropdown_portal__WEBPACK_IMPORTED_MODULE_6__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_7__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_8__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _component_panel_scrollbar__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("cb6d39a52a42");
+/* harmony import */ var _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("778671c79fa6");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("b4d28078de6f");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("f15c795f1055");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("ad680c489766");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("8b3dd54aeaa8");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_field_size__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _component_dropdown_interaction__WEBPACK_IMPORTED_MODULE_4__, _component_dropdown_portal__WEBPACK_IMPORTED_MODULE_6__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_7__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_9__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_field_size__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _component_dropdown_interaction__WEBPACK_IMPORTED_MODULE_4__, _component_dropdown_portal__WEBPACK_IMPORTED_MODULE_6__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_7__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_9__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_7__);
+
 
 
 
@@ -665,14 +749,14 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 // through its hidden input (§16 item 11); the manifest keeps the form contract
 // as x-form until the field family's ElementInternals mixin takes it.
 
-const DropdownElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_9__, {
-  base: (0,_helpers_inherited_value__WEBPACK_IMPORTED_MODULE_8__.InheritedValueField)((_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default())),
+const DropdownElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_10__, {
+  base: (0,_helpers_inherited_value__WEBPACK_IMPORTED_MODULE_9__.InheritedValueField)((_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default())),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_11__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_12__
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_12__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_13__
   },
   source: 'ru',
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_10__
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_11__
 });
 
 function normalizeSize(value) {
@@ -1152,7 +1236,12 @@ class SfDropdown extends DropdownElement {
     this.syncDocumentListeners();
     this.syncPortalListeners();
     this.syncOpenSurfaceMark();
-    this.positionPortalList();
+    this.positionPortalList(); // An open list that stays in place (portal off) marks its rows' scroll
+    // area itself; a portalled one is marked by the portal (owner C07, R029).
+
+    this._scrollbar ??= new _component_panel_scrollbar__WEBPACK_IMPORTED_MODULE_8__.PanelScrollbar();
+
+    this._scrollbar.watch(this._open && !this.portal ? this._list?.querySelector('.sf-list-container-wrap') : null, 'sf-list-container-wrap--scrollbar');
 
     if (previousRoot !== this._dropdownRoot) {
       this._interaction?.release();
@@ -1198,6 +1287,7 @@ class SfDropdown extends DropdownElement {
   onDisconnected() {
     (0,_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_7__.holdOpenSurfaceMark)(this, false);
     (0,_component_dropdown_portal__WEBPACK_IMPORTED_MODULE_6__.closeDropdownPortal)(this._list);
+    this._scrollbar?.disconnect();
     this._releaseReset?.();
     this._releaseReset = null;
     this._resetControl = null;
@@ -1559,7 +1649,6 @@ function renderDropdownTemplate(context) {
   const rootClasses = ["sf-dropdown", context.rootClass, context.open ? "open" : "", context.open ? "sf-dropdown--open" : "", `sf-dropdown--size-${context.size}`, `sf-dropdown--${context.appearance ?? context.type}`, context.mode === "tag" ? "sf-dropdown--tag" : "", context.layout === "grid" ? "sf-dropdown--grid" : "", context.mode !== "tag" ? "sf-dropdown--text" : "", context.disabled ? "disabled" : "", "flex", "flex-col"].filter(Boolean);
   const fieldClasses = ["sf-dropdown-field", !context.disabled ? "cursor-pointer" : "", "items-cross-center", "relative", "transition", "flex"].filter(Boolean);
   const iconButtonSize = context.size === "1" || context.size === "1/2" ? "1/2" : context.size;
-  const listInputSize = context.size;
   const dropdownIcon = context.open ? "keyboard_arrow_up" : "keyboard_arrow_down";
 
   const renderTrigger = () => {
@@ -1669,27 +1758,26 @@ function renderDropdownTemplate(context) {
       ${renderTrigger()}
 
       <div
-        class=${`sf-list flex flex-col${context.component?.hasSlotContent?.('trigger') ? " sf-list--free-width" : ""}`}
+        class=${`sf-list sf-list--size-${context.size} flex flex-col${context.component?.hasSlotContent?.('trigger') ? " sf-list--free-width" : ""}`}
         style=${`--sf-list--cell: ${CELL[context.size] || CELL["1"]}`}
         ?hidden=${!context.open}
       >
-        ${context.search ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-              <label
-                class="sf-input sf-input--size-${listInputSize} sf-input--filled flex flex-col"
-              >
-                <span class="sf-input-field items-cross-center transition flex">
-                  <input
-                    placeholder=${context.searchPlaceholder}
-                    aria-label=${context.searchPlaceholder || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-                    type="text"
-                    .value=${context.searchValue || ""}
-                    ?disabled=${context.disabled}
-                    @input=${event => context.component.handleSearchInput(event)}
-                    @change=${event => event.stopPropagation()}
-                    @click=${event => event.stopPropagation()}
-                  />
-                  <i class="sf-icon sf-icon-hint" aria-hidden="true">search</i>
-                </span>
+        ${context.search // The search is the panel's header (owner C06, docs review R029):
+  // its icon over the rows' icons, its text over their text, no frame.
+  ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+              <label class="sf-list-search">
+                <i class="sf-icon sf-list-search-icon" aria-hidden="true">search</i>
+                <input
+                  class="sf-list-search-input"
+                  placeholder=${context.searchPlaceholder}
+                  aria-label=${context.searchPlaceholder || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                  type="text"
+                  .value=${context.searchValue || ""}
+                  ?disabled=${context.disabled}
+                  @input=${event => context.component.handleSearchInput(event)}
+                  @change=${event => event.stopPropagation()}
+                  @click=${event => event.stopPropagation()}
+                />
               </label>
             ` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         <div class="sf-list-container-wrap">
@@ -2280,7 +2368,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-dropd
 /***/ "b4d28078de6f"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.dropdown","tag":"sf-dropdown","version":"1.6.0","kind":"leaf","traits":["field-inherit@1"],"settings":{"appearance":{"type":"enum","values":["filled","outlined"],"default":"outlined"},"columns":{"type":"number","default":6},"disabled":{"type":"boolean","default":false},"label":{"type":"string","default":""},"layout":{"type":"enum","values":["list","grid"],"default":"list"},"mode":{"type":"enum","values":["tag","select"],"default":"select"},"multiple":{"type":"boolean","default":false},"name":{"type":"string","default":""},"options":{"type":"list","default":[],"of":{"value":"string","text":"string","icon":{"type":"icon","optional":true},"disabled":{"type":"boolean","optional":true},"group":{"type":"string","optional":true}}},"placeholder":{"type":"string","default-from":"runtime.empty"},"portal":{"type":"boolean","default":true},"required":{"type":"boolean","default":false},"search":{"type":"boolean","default":true},"search-placeholder":{"type":"string","default-from":"runtime.search"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{"open-dropdown":{},"close-dropdown":{},"toggle-dropdown":{}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-dropdown-background-color":{"type":"color","state":"default"},"--sf-dropdown-border-color":{"type":"color","state":"default"},"--sf-dropdown-radius":{"type":"length","state":"default"},"--sf-dropdown-gap":{"type":"length","state":"default"},"--sf-dropdown-list-background-color":{"type":"color","state":"open"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.dropdown","tag":"sf-dropdown","version":"1.7.0","kind":"leaf","traits":["field-inherit@1"],"settings":{"appearance":{"type":"enum","values":["filled","outlined"],"default":"outlined"},"columns":{"type":"number","default":6},"disabled":{"type":"boolean","default":false},"label":{"type":"string","default":""},"layout":{"type":"enum","values":["list","grid"],"default":"list"},"mode":{"type":"enum","values":["tag","select"],"default":"select"},"multiple":{"type":"boolean","default":false},"name":{"type":"string","default":""},"options":{"type":"list","default":[],"of":{"value":"string","text":"string","icon":{"type":"icon","optional":true},"disabled":{"type":"boolean","optional":true},"group":{"type":"string","optional":true}}},"placeholder":{"type":"string","default-from":"runtime.empty"},"portal":{"type":"boolean","default":true},"required":{"type":"boolean","default":false},"search":{"type":"boolean","default":true},"search-placeholder":{"type":"string","default-from":"runtime.search"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{"open-dropdown":{},"close-dropdown":{},"toggle-dropdown":{}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-dropdown-background-color":{"type":"color","state":"default"},"--sf-dropdown-border-color":{"type":"color","state":"default"},"--sf-dropdown-radius":{"type":"length","state":"default"},"--sf-dropdown-gap":{"type":"length","state":"default"},"--sf-dropdown-list-background-color":{"type":"color","state":"open"}}}');
 
 /***/ },
 

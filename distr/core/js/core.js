@@ -8393,6 +8393,48 @@ function boxesOf(element, found = []) {
   }
 
   return found;
+} // The box a fixed panel is placed in: the nearest ancestor that contains
+// fixed descendants -- a transform or one of its parts, a filter, will-change
+// naming one, contain: layout or paint (as [data-sf-overlay-container] has),
+// a container query box -- or the viewport. Floating UI asks the same
+// question but counts an element that draws no box: every Smart host is
+// display: contents, and the tooltip sheet gives a placed sf-tooltip its
+// translate. A box-less element contains nothing, so the browser placed the
+// panel in the overlay container while Floating UI measured from the host's
+// empty rectangle at 0,0 -- viewport coordinates, taken from the container:
+// sf-composition-overlay's tooltips stood 48px low under a 48px bar
+// (simai/ui-source#63).
+
+
+const CONTAINS_FIXED = /paint|layout|strict|content/u;
+const WILL_CONTAIN = /transform|translate|scale|rotate|perspective|filter/u;
+
+const given = value => Boolean(value) && value !== 'none';
+
+function containsFixed(element) {
+  const css = getComputedStyle(element);
+  if (css.display === 'contents') return false;
+  return given(css.transform) || given(css.translate) || given(css.scale) || given(css.rotate) || given(css.perspective) || given(css.filter) || given(css.backdropFilter) || WILL_CONTAIN.test(css.willChange || '') || CONTAINS_FIXED.test(css.contain || '') || Boolean(css.containerType) && css.containerType !== 'normal';
+}
+
+function inTopLayer(element) {
+  try {
+    return element.matches(':popover-open') || element.matches(':modal');
+  } catch {
+    return false;
+  }
+}
+
+function fixedContainingBlock(element) {
+  const view = element.ownerDocument.defaultView;
+  if (inTopLayer(element)) return view;
+
+  for (let node = element.parentElement; node && node !== node.ownerDocument.body && node !== node.ownerDocument.documentElement; node = node.parentElement) {
+    if (containsFixed(node)) return node;
+    if (inTopLayer(node)) return view;
+  }
+
+  return view;
 }
 /** The rectangle a reference occupies: its own, or what it draws when it has none. */
 
@@ -8479,6 +8521,11 @@ function anchor(reference, floating, options = {}) {
   let pending = false;
 
   const run = async () => {
+    // The panel is fixed before it is measured, so it is measured in the box
+    // it will be placed in: left absolute by the stylesheet (a tooltip in its
+    // anchor), its first position was taken from the anchor and written as
+    // the viewport's.
+    if (floating.style.position !== 'fixed') floating.style.position = 'fixed';
     const rtl = isRtl(reference);
     const gap = resolveLength(settings.offset, reference.parentElement);
     const padding = resolveLength(settings.padding, reference.parentElement); // Measure the natural size so flipping compares the real panel height.
@@ -8545,6 +8592,10 @@ function anchor(reference, floating, options = {}) {
     }));
     const result = await (0,_floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.computePosition)(measured, floating, {
       strategy: 'fixed',
+      // The panel is fixed: its offset parent is the box it is placed in.
+      platform: { ..._floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.platform,
+        getOffsetParent: (element, polyfill) => element === floating ? fixedContainingBlock(floating) : _floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.platform.getOffsetParent(element, polyfill)
+      },
       placement: (0,_position_placement_js__WEBPACK_IMPORTED_MODULE_1__.physicalPlacement)(settings.side, settings.align, rtl),
       middleware
     });
@@ -10067,7 +10118,7 @@ __webpack_require__.r(__webpack_exports__);
 // core.runtime.json). A set's release says the lowest version it needs, and
 // the index lookup keeps the releases this Core satisfies. Moved by hand with
 // the passport; tests/component-set-loader.contract.test.mjs holds them equal.
-const CORE_RUNTIME = '1.37.0';
+const CORE_RUNTIME = '1.39.0';
 const SET_NAME = /^[a-z][a-z0-9-]*$/u;
 const SET_INDEX_FORMAT = 'simai.framework.set-index';
 const SET_INDEX_URL = 'https://cdn.jsdelivr.net/npm/@simai-studio/sets@1/index.json';
@@ -20067,13 +20118,17 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
         "text": {
           "default": "",
           "type": "string"
+        },
+        "tight": {
+          "default": false,
+          "type": "boolean"
         }
       },
       "type": "object"
     },
     "kind": "custom-element",
     "manifest": "smart.badge",
-    "version": "1.2.1"
+    "version": "1.3.1"
   },
   "sf-button": {
     "inputs": {
@@ -20101,6 +20156,10 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
         "expanded": {
           "default": false,
           "type": "boolean"
+        },
+        "form": {
+          "default": "",
+          "type": "string"
         },
         "href": {
           "default": "",
@@ -20130,6 +20189,10 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
           "default": false,
           "type": "boolean"
         },
+        "name": {
+          "default": "",
+          "type": "string"
+        },
         "native-type": {
           "default": "button",
           "enum": [
@@ -20151,6 +20214,10 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
             "square",
             "rounded"
           ],
+          "type": "string"
+        },
+        "rel": {
+          "default": "",
           "type": "string"
         },
         "scheme": {
@@ -20210,6 +20277,10 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
           ],
           "type": "string"
         },
+        "target": {
+          "default": "",
+          "type": "string"
+        },
         "text": {
           "default": "",
           "type": "string"
@@ -20223,13 +20294,21 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
             "justify"
           ],
           "type": "string"
+        },
+        "text-pressed": {
+          "default": "",
+          "type": "string"
+        },
+        "value": {
+          "default": "",
+          "type": "string"
         }
       },
       "type": "object"
     },
     "kind": "custom-element",
     "manifest": "smart.button",
-    "version": "1.4.0"
+    "version": "1.7.0"
   },
   "sf-button-icon": {
     "inputs": {
@@ -20286,6 +20365,10 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
             "icon",
             "close"
           ],
+          "type": "string"
+        },
+        "label-pressed": {
+          "default": "",
           "type": "string"
         },
         "loading": {
@@ -20369,7 +20452,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.button-icon",
-    "version": "1.4.0"
+    "version": "1.5.2"
   },
   "sf-checkbox": {
     "inputs": {
@@ -20560,7 +20643,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.dropdown",
-    "version": "1.6.0"
+    "version": "1.7.0"
   },
   "sf-icon": {
     "inputs": {
@@ -20645,7 +20728,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.icon",
-    "version": "1.1.5"
+    "version": "1.1.6"
   },
   "sf-input": {
     "inputs": {
@@ -20708,7 +20791,8 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
             "password",
             "search",
             "tel",
-            "url"
+            "url",
+            "number"
           ],
           "type": "string"
         },
@@ -20755,7 +20839,15 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
           "default": "",
           "type": "string"
         },
+        "max": {
+          "default": "",
+          "type": "string"
+        },
         "maxlength": {
+          "default": "",
+          "type": "string"
+        },
+        "min": {
           "default": "",
           "type": "string"
         },
@@ -20796,6 +20888,10 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
           ],
           "type": "string"
         },
+        "step": {
+          "default": "",
+          "type": "string"
+        },
         "text-end": {
           "default": "",
           "type": "string"
@@ -20809,7 +20905,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.input",
-    "version": "1.4.4"
+    "version": "1.5.0"
   },
   "sf-input-textarea": {
     "inputs": {
@@ -21018,7 +21114,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.switch",
-    "version": "1.2.3"
+    "version": "1.3.0"
   }
 });
 
@@ -23131,6 +23227,17 @@ function unknownAsPlaceholder(options) {
   return mode === 'placeholder';
 }
 
+// options.embedded (simai/ui-source#60): the Document is drawn inside a host
+// page that holds its own main landmark -- an editor's canvas. layout.page and
+// a main layout.region are drawn as plain elements marked
+// data-sf-composition-landmark="main", so the page keeps one main. The default,
+// false, is what a publishing host keeps; anything but a boolean throws.
+function renderEmbedded(options) {
+  const embedded = options?.embedded === undefined ? false : options.embedded;
+  if (typeof embedded !== 'boolean') throw new TypeError(`composition_embedded_invalid:${String(embedded)}`);
+  return embedded;
+}
+
 // The placeholder of a node whose type the host does not know: its type as
 // text, its id kept for the editor's selection, nothing of its data or slots.
 const unknownPlaceholder = (node) => `<div class="sf-composition-unknown" role="note" data-sf-composition-type="${escapeHtml(node.type)}" data-sf-composition-id="${escapeHtml(node.id)}">${escapeHtml(node.type)}</div>`;
@@ -23450,7 +23557,12 @@ function rhythm(props) {
 }
 
 const BUILTIN_RENDERERS = {
-  'layout.page': ({ node, slots }) => `<main data-sf-composition-id="${escapeHtml(node.id)}">${slots.default || ''}</main>`,
+  // A page is the document's main landmark; drawn embedded (options.embedded,
+  // a host's canvas inside the host's own main) it is a plain element that
+  // names the landmark it stands for (simai/ui-source#60).
+  'layout.page': ({ node, slots, context }) => (renderEmbedded(context?.options)
+    ? `<div data-sf-composition-landmark="main" data-sf-composition-id="${escapeHtml(node.id)}">${slots.default || ''}</div>`
+    : `<main data-sf-composition-id="${escapeHtml(node.id)}">${slots.default || ''}</main>`),
   'layout.section': ({ node, slots, manifest }) => {
     // 1.1.0: a section given a width or columns draws the frame and content
     // parts its parameter sets place classes on. 1.2.0: its width defaults to
@@ -23472,12 +23584,15 @@ const BUILTIN_RENDERERS = {
   'content.heading': ({ node }) => `<h${node.data.level || 2} data-sf-composition-id="${escapeHtml(node.id)}">${renderInline(node.data.content)}</h${node.data.level || 2}>`,
   'content.paragraph': ({ node }) => `<p data-sf-composition-id="${escapeHtml(node.id)}">${renderInline(node.data.content)}</p>`,
   'layout.regions': ({ node, slots }) => `<div class="sf-composition-regions" data-sf-composition-id="${escapeHtml(node.id)}"><div class="sf-composition-regions-grid">${slots.regions || ''}</div></div>`,
-  'layout.region': ({ node, slots }) => {
+  'layout.region': ({ node, slots, context }) => {
     const props = node.props;
-    const element = _regions_mjs__WEBPACK_IMPORTED_MODULE_9__.REGION_ELEMENTS[props.landmark];
+    // Embedded, the main region is a plain element too: the host's page holds the one main.
+    const embeddedMain = props.landmark === 'main' && renderEmbedded(context?.options);
+    const element = embeddedMain ? 'div' : _regions_mjs__WEBPACK_IMPORTED_MODULE_9__.REGION_ELEMENTS[props.landmark];
+    const landmark = embeddedMain ? ' data-sf-composition-landmark="main"' : '';
     const sticky = props.sticky === true ? ' data-sf-region-sticky=""' : '';
     const label = props.label !== undefined ? ` aria-label="${escapeHtml(props.label)}"` : '';
-    return `<${element} class="sf-composition-region" data-sf-composition-id="${escapeHtml(node.id)}" data-sf-region="${escapeHtml(props.name)}" data-sf-region-placement="${escapeHtml(props.placement ?? 'block')}"${sticky}${label}>${slots.default || ''}</${element}>`;
+    return `<${element} class="sf-composition-region" data-sf-composition-id="${escapeHtml(node.id)}" data-sf-region="${escapeHtml(props.name)}" data-sf-region-placement="${escapeHtml(props.placement ?? 'block')}"${landmark}${sticky}${label}>${slots.default || ''}</${element}>`;
   },
   'layout.scope': ({ node, slots, routes }) => `<sf-composition-scope data-sf-composition-id="${escapeHtml(node.id)}" data-sf-routes="${escapeHtml((0,_routing_mjs__WEBPACK_IMPORTED_MODULE_11__.routesAttribute)(routes || []))}">${slots.default || ''}</sf-composition-scope>`,
   'layout.area': ({ node, slots }) => `<div data-sf-composition-area=""${id(node)}>${slots.default || ''}</div>`,
@@ -23656,6 +23771,7 @@ const HOST_SOURCE_TYPES = new Set(['content.figure', 'content.media']);
 
 async function render(document, context = {}) {
   const registry = normalizeRegistry(context.registry);
+  renderEmbedded(context.options);
   const resolveSource = typeof context.resolveSource === 'function' ? context.resolveSource : null;
   const normalized = await normalize(document, registry, { ...(context.options || {}), ...(resolveSource ? { resolveSource } : {}) });
   if (!normalized.document) return { html: '', assets: [], hydration: [], diagnostics: normalized.diagnostics, digest: null };

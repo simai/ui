@@ -265,7 +265,10 @@ class DownloadFile extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0
     iconNode.textContent = String(icon || 'download');
     const fileNameNode = document.createElement('span');
     fileNameNode.classList.add('sf-download-file__name', 'sf-download-file-file-name');
-    fileNameNode.textContent = String(fileName || '');
+    fileNameNode.textContent = String(fileName || ''); // The name is one line cut with an ellipsis (component.download-file
+    // 1.1.0): the title shows the whole of it.
+
+    if (fileName) fileNameNode.title = String(fileName);
     container.append(iconNode, fileNameNode);
     const fileSizeNode = document.createElement('span');
     fileSizeNode.classList.add('sf-download-file__size', 'sf-download-file-file-size');

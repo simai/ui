@@ -191,6 +191,76 @@ __webpack_async_result__();
 
 /***/ },
 
+/***/ "cb6d39a52a42"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   PanelScrollbar: () => (/* binding */ PanelScrollbar),
+/* harmony export */   scrollbarTakesRoom: () => (/* binding */ scrollbarTakesRoom)
+/* harmony export */ });
+// The scrollbar of a dropping panel stands in the inline-end inset only while
+// it takes room (owner C07, docs review R029, 2026-11-07): the area that
+// scrolls the rows gives up its inline-end padding then, and keeps it beside an
+// overlay scrollbar or none. The sheets draw the track (the inset, the thumb,
+// the inset -- src/component/context-menu/scss/_panel.scss); this marks the
+// area with a class while its scrollbar takes room, read from offsetWidth -
+// clientWidth past the borders whenever the area is drawn or changes its size
+// (a narrowed search, a panel fitted to its room, a window made smaller).
+// Used by sf-menu-context, sf-dropdown's list, sf-input-lookup and
+// sf-profile-picker.
+function scrollbarTakesRoom(area) {
+  const style = getComputedStyle(area);
+  const borders = (parseFloat(style.borderLeftWidth) || 0) + (parseFloat(style.borderRightWidth) || 0);
+  return area.offsetWidth - area.clientWidth - borders > 0;
+}
+class PanelScrollbar {
+  constructor() {
+    this.area = null;
+    this.name = '';
+    this.observer = null;
+  } // Watch `area` (or nothing, given null) and mark it with `name`. A new area
+  // releases the old one and takes its mark off.
+
+
+  watch(area, name) {
+    if (area !== this.area || name !== this.name) {
+      this.observer?.disconnect();
+      if (this.area && this.name) this.area.classList.remove(this.name);
+      this.area = area ?? null;
+      this.name = name;
+
+      if (this.area && typeof ResizeObserver === 'function') {
+        // The mark moves the area's padding, so it is written on the next
+        // frame: written in the observer's own call it would resize what is
+        // observed while the observer delivers (a ResizeObserver loop).
+        this.observer ??= new ResizeObserver(() => requestAnimationFrame(() => this.mark()));
+        this.observer.observe(this.area);
+      }
+    }
+
+    this.mark();
+  }
+
+  mark() {
+    const area = this.area;
+    if (!area?.isConnected || !this.name) return;
+    const takesRoom = scrollbarTakesRoom(area);
+    if (area.classList.contains(this.name) !== takesRoom) area.classList.toggle(this.name, takesRoom);
+  }
+
+  disconnect() {
+    this.observer?.disconnect();
+    this.observer = null;
+    if (this.area && this.name) this.area.classList.remove(this.name);
+    this.area = null;
+    this.name = '';
+  }
+
+}
+
+/***/ },
+
 /***/ "38ea8d53f301"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -425,20 +495,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("bf0cea966575");
 /* harmony import */ var _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("43090d1c8307");
 /* harmony import */ var _component_field_size__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("e6d86f2cd058");
-/* harmony import */ var _helpers_form_field__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("38ea8d53f301");
-/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("c4b543e9c79e");
-/* harmony import */ var _js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("91c9715ba00a");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("8bb18691f333");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("d94fcb6a8f59");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("ea441b000040");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("1cabccb560d5");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_3__, _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_4__, _component_field_size__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default__WEBPACK_IMPORTED_MODULE_7__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_3__, _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_4__, _component_field_size__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default__WEBPACK_IMPORTED_MODULE_7__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _component_panel_scrollbar__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("cb6d39a52a42");
+/* harmony import */ var _helpers_form_field__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("38ea8d53f301");
+/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("c4b543e9c79e");
+/* harmony import */ var _js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("91c9715ba00a");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("8bb18691f333");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("d94fcb6a8f59");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("ea441b000040");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("1cabccb560d5");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_3__, _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_4__, _component_field_size__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default__WEBPACK_IMPORTED_MODULE_8__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_3__, _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_4__, _component_field_size__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default__WEBPACK_IMPORTED_MODULE_8__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_position_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_position_js__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language_js__WEBPACK_IMPORTED_MODULE_4__);
+
 
 
 
@@ -468,11 +540,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 // an answer for an older call is dropped; {status: 'unavailable'} is the
 // neutral line, an error the line with Retry; nextCursor is Show more.
 
-const LookupElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_9__, {
+const LookupElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_10__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_10__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_11__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_12__
   },
   source: 'en'
 }); // Core publishes the helper; a bundle loaded without core.js positions with
@@ -480,7 +552,7 @@ const LookupElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.
 
 const position = () => globalThis.SF?.Position || (_core_js_position_js__WEBPACK_IMPORTED_MODULE_2___default());
 
-class SfLookup extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.FormField)(LookupElement) {
+class SfLookup extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.FormField)(LookupElement) {
   static get props() {
     return { ...super.props,
       rootClass: {
@@ -549,29 +621,29 @@ class SfLookup extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.FormF
   }
 
   _minLength() {
-    return (0,_js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_8__.wholeNumber)(this.minLength, _js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_8__.DEFAULTS.minLength);
+    return (0,_js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_9__.wholeNumber)(this.minLength, _js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_9__.DEFAULTS.minLength);
   }
 
   _maxResults() {
-    return (0,_js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_8__.wholeNumber)(this.maxResults, _js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_8__.DEFAULTS.maxResults, {
+    return (0,_js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_9__.wholeNumber)(this.maxResults, _js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_9__.DEFAULTS.maxResults, {
       min: 1
     });
   }
 
   _debounce() {
-    return (0,_js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_8__.wholeNumber)(this.debounce, _js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_8__.DEFAULTS.debounce);
+    return (0,_js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_9__.wholeNumber)(this.debounce, _js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_9__.DEFAULTS.debounce);
   }
 
   _maxItems() {
-    return this.multiple ? (0,_js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_8__.wholeNumber)(this.maxItems, 0) : 0;
+    return this.multiple ? (0,_js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_9__.wholeNumber)(this.maxItems, 0) : 0;
   }
 
   _options() {
-    return (0,_js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_8__.normaliseItems)(this.options);
+    return (0,_js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_9__.normaliseItems)(this.options);
   }
 
   _exclude() {
-    return (0,_js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_8__.excludedKeys)(this.exclude);
+    return (0,_js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_9__.excludedKeys)(this.exclude);
   }
 
   _provider() {
@@ -585,11 +657,11 @@ class SfLookup extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.FormF
 
   get value() {
     const options = this.options;
-    if (this._value !== undefined) return (0,_js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_8__.normaliseValue)(this._value, {
+    if (this._value !== undefined) return (0,_js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_9__.normaliseValue)(this._value, {
       multiple: Boolean(this.multiple),
       options
     });
-    return (0,_js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_8__.normaliseValue)(this.getAttribute('value'), {
+    return (0,_js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_9__.normaliseValue)(this.getAttribute('value'), {
       multiple: Boolean(this.multiple),
       options
     });
@@ -597,7 +669,7 @@ class SfLookup extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.FormF
 
 
   set value(next) {
-    this._value = next === undefined ? undefined : (0,_js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_8__.normaliseValue)(next, {
+    this._value = next === undefined ? undefined : (0,_js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_9__.normaliseValue)(next, {
       multiple: Boolean(this.multiple),
       options: this.options
     });
@@ -608,7 +680,7 @@ class SfLookup extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.FormF
   }
 
   isItemChosen(item) {
-    return (0,_js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_8__.isChosen)(this.value, item);
+    return (0,_js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_9__.isChosen)(this.value, item);
   }
 
   focusDelegate() {
@@ -620,7 +692,7 @@ class SfLookup extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.FormF
 
   sfFormValue() {
     if (this.effectiveDisabled) return null;
-    const entries = (0,_js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_8__.formEntries)(this.value);
+    const entries = (0,_js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_9__.formEntries)(this.value);
     if (!entries.length) return null;
     if (!this.multiple) return entries[0];
     const name = this.name || '';
@@ -633,7 +705,7 @@ class SfLookup extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.FormF
   }
 
   fieldValidity() {
-    const missing = Boolean(this.required) && !this.effectiveDisabled && (0,_js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_8__.formEntries)(this.value).length === 0;
+    const missing = Boolean(this.required) && !this.effectiveDisabled && (0,_js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_9__.formEntries)(this.value).length === 0;
     return {
       valueMissing: missing,
       message: missing ? this.sfWord('value-missing') : '',
@@ -659,7 +731,7 @@ class SfLookup extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.FormF
     let values = state;
     if (typeof FormData === 'function' && state instanceof FormData) values = state.getAll(this.name || '').map(String);
     if (values === null || values === undefined) return;
-    this._value = (0,_js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_8__.normaliseValue)(Array.isArray(values) ? values : [values].filter(one => one !== ''), {
+    this._value = (0,_js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_9__.normaliseValue)(Array.isArray(values) ? values : [values].filter(one => one !== ''), {
       multiple: Boolean(this.multiple),
       options: this.options
     });
@@ -669,7 +741,7 @@ class SfLookup extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.FormF
 
   templateContext() {
     const props = this.getPropsContext();
-    const chosen = (0,_js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_8__.chosenList)(this.value);
+    const chosen = (0,_js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_9__.chosenList)(this.value);
     const multiple = Boolean(this.multiple);
     return this.createTemplateContext({ ...props,
       size: this.size,
@@ -692,7 +764,7 @@ class SfLookup extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.FormF
       chosen,
       // A single field shows its chosen label while the person is not searching.
       queryText: !multiple && !this._dirty && chosen[0] ? String(chosen[0].label) : this._query,
-      queryMaxLength: (0,_js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_8__.wholeNumber)(this.maxlength, 0),
+      queryMaxLength: (0,_js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_9__.wholeNumber)(this.maxlength, 0),
       minChars: this._minLength(),
       listOpen: this._open,
       listState: this._state,
@@ -708,7 +780,7 @@ class SfLookup extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.FormF
   }
 
   template() {
-    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_7__.renderLookupTemplate)(this.templateContext());
+    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_8__.renderLookupTemplate)(this.templateContext());
   }
 
   afterRender() {
@@ -728,6 +800,7 @@ class SfLookup extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.FormF
       force: false
     });
 
+    this._scrollbar?.disconnect();
     super.onDisconnected?.();
   } // The panel is a manual popover in the top layer, anchored under the frame
   // at its width; it flips above when there is no room (SF.Position).
@@ -768,7 +841,13 @@ class SfLookup extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.FormF
         if (panel?.matches?.(':popover-open')) panel.hidePopover();
       } catch {// Nothing to hide.
       }
-    }
+    } // The scrollbar stands in the panel's inline-end inset while it takes
+    // room (owner C07, docs review R029).
+
+
+    this._scrollbar ??= new _component_panel_scrollbar__WEBPACK_IMPORTED_MODULE_6__.PanelScrollbar();
+
+    this._scrollbar.watch(open ? panel : null, 'sf-lookup-panel--scrollbar');
 
     (0,_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_3__.holdOpenSurfaceMark)(this, open);
   }
@@ -839,7 +918,7 @@ class SfLookup extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.FormF
 
     const options = this._options();
 
-    const plan = (0,_js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_8__.searchPlan)(query, {
+    const plan = (0,_js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_9__.searchPlan)(query, {
       minLength: this._minLength(),
       hasOptions: options.length > 0,
       hasProvider: Boolean(this._provider())
@@ -849,7 +928,7 @@ class SfLookup extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.FormF
     this._active = -1;
 
     if (plan === 'local') {
-      this._items = (0,_js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_8__.filterOptions)(options, query, {
+      this._items = (0,_js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_9__.filterOptions)(options, query, {
         exclude: this._exclude(),
         locale: (0,_core_js_page_language_js__WEBPACK_IMPORTED_MODULE_4__.pageLocale)(this)
       });
@@ -919,7 +998,7 @@ class SfLookup extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.FormF
       state: 'error',
       items: [],
       nextCursor: null
-    } : (0,_js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_8__.readAnswer)(answer, {
+    } : (0,_js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_9__.readAnswer)(answer, {
       exclude: this._exclude(),
       limit
     });
@@ -930,7 +1009,7 @@ class SfLookup extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.FormF
     } else if (read.state === 'error' || read.state === 'unavailable') {
       this._state = read.state;
     } else {
-      this._items = (0,_js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_8__.appendItems)(this._items, read.items);
+      this._items = (0,_js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_9__.appendItems)(this._items, read.items);
       this._state = this._items.length ? 'results' : 'empty';
     } // Retry repeats the call that failed; a good page moves on.
 
@@ -1006,7 +1085,7 @@ class SfLookup extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.FormF
     const item = this._items[index];
     if (!item || !this.editable) return false;
     const multiple = Boolean(this.multiple);
-    const result = (0,_js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_8__.choose)(this.value, item, {
+    const result = (0,_js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_9__.choose)(this.value, item, {
       multiple,
       maxItems: this._maxItems()
     });
@@ -1051,7 +1130,7 @@ class SfLookup extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.FormF
 
   _removeItem(item) {
     if (!this.editable) return false;
-    const next = (0,_js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_8__.removeChosen)(this.value, item.value, {
+    const next = (0,_js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_9__.removeChosen)(this.value, item.value, {
       multiple: Boolean(this.multiple)
     });
     this._refusal = '';
@@ -1100,7 +1179,7 @@ class SfLookup extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.FormF
         return;
       }
 
-      this._moveTo((0,_js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_8__.moveActive)(this._active, this._items.length, key));
+      this._moveTo((0,_js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_9__.moveActive)(this._active, this._items.length, key));
 
       return;
     }
@@ -1108,7 +1187,7 @@ class SfLookup extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.FormF
     if ((key === 'Home' || key === 'End') && this._open && this._items.length) {
       event.preventDefault();
 
-      this._moveTo((0,_js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_8__.moveActive)(this._active, this._items.length, key));
+      this._moveTo((0,_js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_9__.moveActive)(this._active, this._items.length, key));
 
       return;
     }
@@ -1147,7 +1226,7 @@ class SfLookup extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.FormF
     }
 
     if (key === 'Backspace' && this.multiple && !event.target?.value) {
-      const chosen = (0,_js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_8__.chosenList)(this.value);
+      const chosen = (0,_js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_9__.chosenList)(this.value);
 
       if (chosen.length) {
         event.preventDefault();
@@ -1211,7 +1290,7 @@ class SfLookup extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.FormF
 
   onClearClick(event) {
     event.preventDefault();
-    const chosen = (0,_js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_8__.chosenList)(this.value);
+    const chosen = (0,_js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_9__.chosenList)(this.value);
     if (!chosen.length || !this.editable) return;
 
     this._removeItem(chosen[0]);
@@ -1995,7 +2074,7 @@ function moveActive(index, count, key) {
 /***/ "8bb18691f333"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-lookup","tag":"sf-input-lookup","version":"1.2.1","kind":"leaf","settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"appearance":{"type":"enum","values":["bordered","filled"],"default":"bordered"},"label":{"type":"string","default":""},"placeholder":{"type":"string","default":""},"hint":{"type":"string","default":""},"name":{"type":"string","default":""},"multiple":{"type":"boolean","default":false},"max-items":{"type":"number","default":0},"min-length":{"type":"number","default":2},"max-results":{"type":"number","default":20},"debounce":{"type":"number","default":120},"maxlength":{"type":"number","default":0},"options":{"type":"list","default":[]},"exclude":{"type":"list","default":[]},"provider":{"type":"object","default":null},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""}},"values":{"value":{"type":"object","nullable":true,"default":null}},"events":{"input":{"carries":"native"},"change":{"carries":"native"}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","custom-error"]},"css-variables":{"--sf-lookup-background-color":{"type":"color","state":"default"},"--sf-lookup-border-color":{"type":"color","state":"default"},"--sf-lookup-color":{"type":"color","state":"default"},"--sf-lookup-radius":{"type":"length","state":"default"},"--sf-lookup-padding-inline":{"type":"length","state":"default"},"--sf-lookup-padding-block":{"type":"length","state":"default"},"--sf-lookup-invalid-border-color":{"type":"color","state":"invalid"},"--sf-lookup-list-background-color":{"type":"color","state":"open"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-lookup","tag":"sf-input-lookup","version":"1.2.2","kind":"leaf","settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"appearance":{"type":"enum","values":["bordered","filled"],"default":"bordered"},"label":{"type":"string","default":""},"placeholder":{"type":"string","default":""},"hint":{"type":"string","default":""},"name":{"type":"string","default":""},"multiple":{"type":"boolean","default":false},"max-items":{"type":"number","default":0},"min-length":{"type":"number","default":2},"max-results":{"type":"number","default":20},"debounce":{"type":"number","default":120},"maxlength":{"type":"number","default":0},"options":{"type":"list","default":[]},"exclude":{"type":"list","default":[]},"provider":{"type":"object","default":null},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""}},"values":{"value":{"type":"object","nullable":true,"default":null}},"events":{"input":{"carries":"native"},"change":{"carries":"native"}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","custom-error"]},"css-variables":{"--sf-lookup-background-color":{"type":"color","state":"default"},"--sf-lookup-border-color":{"type":"color","state":"default"},"--sf-lookup-color":{"type":"color","state":"default"},"--sf-lookup-radius":{"type":"length","state":"default"},"--sf-lookup-padding-inline":{"type":"length","state":"default"},"--sf-lookup-padding-block":{"type":"length","state":"default"},"--sf-lookup-invalid-border-color":{"type":"color","state":"invalid"},"--sf-lookup-list-background-color":{"type":"color","state":"open"}}}');
 
 /***/ },
 

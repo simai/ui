@@ -3406,6 +3406,48 @@ function boxesOf(element, found = []) {
   }
 
   return found;
+} // The box a fixed panel is placed in: the nearest ancestor that contains
+// fixed descendants -- a transform or one of its parts, a filter, will-change
+// naming one, contain: layout or paint (as [data-sf-overlay-container] has),
+// a container query box -- or the viewport. Floating UI asks the same
+// question but counts an element that draws no box: every Smart host is
+// display: contents, and the tooltip sheet gives a placed sf-tooltip its
+// translate. A box-less element contains nothing, so the browser placed the
+// panel in the overlay container while Floating UI measured from the host's
+// empty rectangle at 0,0 -- viewport coordinates, taken from the container:
+// sf-composition-overlay's tooltips stood 48px low under a 48px bar
+// (simai/ui-source#63).
+
+
+const CONTAINS_FIXED = /paint|layout|strict|content/u;
+const WILL_CONTAIN = /transform|translate|scale|rotate|perspective|filter/u;
+
+const given = value => Boolean(value) && value !== 'none';
+
+function containsFixed(element) {
+  const css = getComputedStyle(element);
+  if (css.display === 'contents') return false;
+  return given(css.transform) || given(css.translate) || given(css.scale) || given(css.rotate) || given(css.perspective) || given(css.filter) || given(css.backdropFilter) || WILL_CONTAIN.test(css.willChange || '') || CONTAINS_FIXED.test(css.contain || '') || Boolean(css.containerType) && css.containerType !== 'normal';
+}
+
+function inTopLayer(element) {
+  try {
+    return element.matches(':popover-open') || element.matches(':modal');
+  } catch {
+    return false;
+  }
+}
+
+function fixedContainingBlock(element) {
+  const view = element.ownerDocument.defaultView;
+  if (inTopLayer(element)) return view;
+
+  for (let node = element.parentElement; node && node !== node.ownerDocument.body && node !== node.ownerDocument.documentElement; node = node.parentElement) {
+    if (containsFixed(node)) return node;
+    if (inTopLayer(node)) return view;
+  }
+
+  return view;
 }
 /** The rectangle a reference occupies: its own, or what it draws when it has none. */
 
@@ -3492,6 +3534,11 @@ function anchor(reference, floating, options = {}) {
   let pending = false;
 
   const run = async () => {
+    // The panel is fixed before it is measured, so it is measured in the box
+    // it will be placed in: left absolute by the stylesheet (a tooltip in its
+    // anchor), its first position was taken from the anchor and written as
+    // the viewport's.
+    if (floating.style.position !== 'fixed') floating.style.position = 'fixed';
     const rtl = isRtl(reference);
     const gap = resolveLength(settings.offset, reference.parentElement);
     const padding = resolveLength(settings.padding, reference.parentElement); // Measure the natural size so flipping compares the real panel height.
@@ -3558,6 +3605,10 @@ function anchor(reference, floating, options = {}) {
     }));
     const result = await (0,_floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.computePosition)(measured, floating, {
       strategy: 'fixed',
+      // The panel is fixed: its offset parent is the box it is placed in.
+      platform: { ..._floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.platform,
+        getOffsetParent: (element, polyfill) => element === floating ? fixedContainingBlock(floating) : _floating_ui_dom__WEBPACK_IMPORTED_MODULE_0__.platform.getOffsetParent(element, polyfill)
+      },
       placement: (0,_position_placement_js__WEBPACK_IMPORTED_MODULE_1__.physicalPlacement)(settings.side, settings.align, rtl),
       middleware
     });

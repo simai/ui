@@ -771,6 +771,19 @@ function shortcutMatches(shortcut, event) {
 const NODE_KEYS = new Set(['id', 'kind', 'rect', 'element', 'label', 'parent', 'editable']);
 const finite = (value) => typeof value === 'number' && Number.isFinite(value);
 // Elements of the frame belong to another realm, so `instanceof Element` is false for them.
+// The overlay a pointer selected with last: with several on a page, a key on
+// the body is that one's (simai/ui-source#62).
+let pointerOwner = null;
+
+// An element a key types into: a text field, a select, an editable host.
+const TEXT_INPUTS = new Set(['', 'text', 'search', 'email', 'url', 'tel', 'password', 'number', 'date', 'datetime-local', 'month', 'time', 'week']);
+function takesText(element) {
+  const name = element.localName;
+  if (name === 'textarea' || name === 'select') return true;
+  if (name === 'input') return TEXT_INPUTS.has(String(element.getAttribute('type') || '').toLowerCase());
+  return Boolean(element.isContentEditable || element.closest?.('[contenteditable]:not([contenteditable="false"])'));
+}
+
 const isElement = (value) => Boolean(value) && typeof value === 'object' && value.nodeType === 1 && typeof value.getBoundingClientRect === 'function';
 
 /**
@@ -953,6 +966,9 @@ function defineCompositionOverlay(registry = globalThis.customElements, { base =
       this.actionParts = new Map();
       // The node a first click opened, so the double click it begins opens it once.
       this.openedByClick = null;
+      // Whether the selection was made by a pointer on a 'for' canvas: the
+      // action keys are then taken where the click left focus (#62).
+      this.pointerSelected = false;
     }
 
     // actions, messages and insertion-target are settings of the manifest
@@ -1132,9 +1148,16 @@ function defineCompositionOverlay(registry = globalThis.customElements, { base =
         this.canvas.addEventListener('pointerleave', () => this.onPointerGone(), passive);
         this.canvas.addEventListener('click', (event) => this.onCanvasClick(event), { ...options, capture: true });
         this.canvas.addEventListener('dblclick', (event) => this.onCanvasDoubleClick(event), options);
+        // A click on the canvas leaves focus where the browser puts it: on the
+        // scroller around the canvas, on the body, or on something focusable
+        // in a block. The action keys of a pointer selection are taken there,
+        // as a framed canvas takes them inside its frame (simai/ui-source#62).
+        globalThis.document?.addEventListener('keydown', (event) => this.onCanvasKey(event), options);
       }
       this.tree.addEventListener('keydown', (event) => this.onTreeKey(event), options);
       this.tree.addEventListener('focus', () => {
+        // The tree has the keys now; the canvas no longer takes them (#62).
+        this.pointerSelected = false;
         this.setAttribute('data-sf-overlay-focus', '');
         if (!this.selectedId && this.nodes.length && !this.isPassive()) this.select(this.nodes[0].id);
       }, options);
@@ -1240,6 +1263,8 @@ function defineCompositionOverlay(registry = globalThis.customElements, { base =
       this.unregisterDrop?.();
       this.unregisterDrop = null;
       this.moving = null;
+      this.pointerSelected = false;
+      if (pointerOwner === this) pointerOwner = null;
       this.connection?.abort();
       this.connection = null;
       this.resizeObserver?.disconnect();
@@ -1795,6 +1820,8 @@ function defineCompositionOverlay(registry = globalThis.customElements, { base =
     // it. The second click of a double click opens nothing: the double click
     // does, unless the first click already has.
     clickSelect(id, event, point) {
+      this.pointerSelected = true;
+      pointerOwner = this;
       if (id !== this.selectedId) {
         this.openedByClick = null;
         this.select(id);
@@ -1861,6 +1888,22 @@ function defineCompositionOverlay(registry = globalThis.customElements, { base =
       event.preventDefault();
       if (!action.disabled) this.sendRenamed('action', { action: action.id, scope: 'entry', ids: [this.selectedId] });
       return true;
+    }
+
+    // A key where a pointer selection on a 'for' canvas left focus: on the
+    // canvas or an element in it that types no text, or on an element holding
+    // the canvas (its scroller, the body). Only the selected node's action
+    // shortcuts are read there; the tree, the toolbar and a field in a block
+    // keep their own keys. Of several overlays, the one clicked last takes them.
+    onCanvasKey(event) {
+      if (event.defaultPrevented || this.isPassive() || !this.canvas || this.iframe) return;
+      if (!this.pointerSelected || pointerOwner !== this || !this.selectedId || this.moving || this.editing) return;
+      const target = event.target;
+      if (!isElement(target) || this.contains(target)) return;
+      const inside = this.canvas.contains(target);
+      if (!inside && !target.contains(this.canvas)) return;
+      if (inside && takesText(target)) return;
+      this.runShortcut(event);
     }
 
     onTreeKey(event) {
@@ -3512,7 +3555,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-edito
 /***/ "7e115d411c69"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.editor-overlay","tag":"sf-editor-overlay","version":"1.5.0","kind":"leaf","settings":{"for":{"type":"string","default":""},"frame":{"type":"string","default":""},"accepts":{"type":"string","default":""},"label":{"type":"string","default":""},"placement":{"type":"enum","values":["top","side"],"default":"top"},"passive":{"type":"boolean","default":false},"actions":{"type":"list","default":[],"of":{"id":"string","label":"string","icon":{"type":"string","optional":true},"shortcut":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"tone":{"type":"enum","values":["danger"],"optional":true}}},"messages":{"type":"object","default":{}},"insertion-target":{"type":"object","default":{}}},"values":{},"events":{"select":{"carries":{"ids":"list","id":{"type":"id","nullable":true},"node_id":{"type":"id","nullable":true}}},"apply":{"carries":{"action":"string","scope":{"type":"enum","values":["entry"]},"ids":{"type":"list","schema":{"items":{"type":"string"}}}}},"insert":{"carries":{"parent":"id","slot":"string","index":{"type":"number","integer":true},"item":{"type":"string","optional":true},"from":{"type":"string","optional":true},"mode":{"type":"enum","values":["move","copy"],"optional":true},"parent_id":{"type":"id"}},"own-verb":true},"move":{"carries":{"ids":"list","id":"id","parent":"id","position":"number","slot":"string","node_id":{"type":"id"},"parent_id":{"type":"id"},"index":{"type":"number","integer":true}}},"change":{"carries":{"id":"id","value":"string","previous":"string"},"cancelable":true,"x-native":false},"open":{"carries":{"ids":"list","id":"id","node":{"type":"id"},"point":{"type":"object","nullable":true},"trigger":{"type":"enum","values":["click","dblclick","enter"]}}}},"actions":{"attach":{"with":{"canvas":"object"}},"attach-frame":{"with":{"iframe":"object"}},"set-document":{"with":{"document":"object","options":"object"}},"set-nodes":{"with":{"nodes":{"type":"list","of":{"id":"id","kind":"string","label":"string","parent":"id","editable":"boolean","rect":"object","element":"object"}},"options":"object"}},"set-drop-filter":{"with":{"filter":{"type":"object"}}},"set-actions":{"with":{"actions":"list"}},"set-messages":{"with":{"messages":"object"}},"set-insertion-target":{"with":{"target":{"type":"object","nullable":true}}},"select":{"with":{"id":{"type":"id","nullable":true},"options":"object"}},"edit":{"with":{"id":"string"}},"refresh":{}},"css-variables":{"--sf-composition-overlay-frame-color":{"type":"color","state":"default"},"--sf-composition-overlay-z-index":{"type":"number","state":"default"},"--sf-composition-overlay-toolbar-background-color":{"type":"color","state":"selected"},"--sf-composition-overlay-toolbar-radius":{"type":"length","state":"selected"},"--sf-composition-overlay-toolbar-gap":{"type":"length","state":"selected"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.editor-overlay","tag":"sf-editor-overlay","version":"1.5.1","kind":"leaf","settings":{"for":{"type":"string","default":""},"frame":{"type":"string","default":""},"accepts":{"type":"string","default":""},"label":{"type":"string","default":""},"placement":{"type":"enum","values":["top","side"],"default":"top"},"passive":{"type":"boolean","default":false},"actions":{"type":"list","default":[],"of":{"id":"string","label":"string","icon":{"type":"string","optional":true},"shortcut":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"tone":{"type":"enum","values":["danger"],"optional":true}}},"messages":{"type":"object","default":{}},"insertion-target":{"type":"object","default":{}}},"values":{},"events":{"select":{"carries":{"ids":"list","id":{"type":"id","nullable":true},"node_id":{"type":"id","nullable":true}}},"apply":{"carries":{"action":"string","scope":{"type":"enum","values":["entry"]},"ids":{"type":"list","schema":{"items":{"type":"string"}}}}},"insert":{"carries":{"parent":"id","slot":"string","index":{"type":"number","integer":true},"item":{"type":"string","optional":true},"from":{"type":"string","optional":true},"mode":{"type":"enum","values":["move","copy"],"optional":true},"parent_id":{"type":"id"}},"own-verb":true},"move":{"carries":{"ids":"list","id":"id","parent":"id","position":"number","slot":"string","node_id":{"type":"id"},"parent_id":{"type":"id"},"index":{"type":"number","integer":true}}},"change":{"carries":{"id":"id","value":"string","previous":"string"},"cancelable":true,"x-native":false},"open":{"carries":{"ids":"list","id":"id","node":{"type":"id"},"point":{"type":"object","nullable":true},"trigger":{"type":"enum","values":["click","dblclick","enter"]}}}},"actions":{"attach":{"with":{"canvas":"object"}},"attach-frame":{"with":{"iframe":"object"}},"set-document":{"with":{"document":"object","options":"object"}},"set-nodes":{"with":{"nodes":{"type":"list","of":{"id":"id","kind":"string","label":"string","parent":"id","editable":"boolean","rect":"object","element":"object"}},"options":"object"}},"set-drop-filter":{"with":{"filter":{"type":"object"}}},"set-actions":{"with":{"actions":"list"}},"set-messages":{"with":{"messages":"object"}},"set-insertion-target":{"with":{"target":{"type":"object","nullable":true}}},"select":{"with":{"id":{"type":"id","nullable":true},"options":"object"}},"edit":{"with":{"id":"string"}},"refresh":{}},"css-variables":{"--sf-composition-overlay-frame-color":{"type":"color","state":"default"},"--sf-composition-overlay-z-index":{"type":"number","state":"default"},"--sf-composition-overlay-toolbar-background-color":{"type":"color","state":"selected"},"--sf-composition-overlay-toolbar-radius":{"type":"length","state":"selected"},"--sf-composition-overlay-toolbar-gap":{"type":"length","state":"selected"}}}');
 
 /***/ },
 

@@ -1705,6 +1705,9 @@ function renderInputTemplate(context) {
     minlength,
     maxlength,
     pattern,
+    min,
+    max,
+    step,
     hint,
     value,
     defaultValue,
@@ -1727,7 +1730,13 @@ function renderInputTemplate(context) {
     maskOptions,
     ariaLabel
   } = context;
-  const maskLazyValue = maskLazy === '' ? '' : String(maskLazy); // While the field holds nothing of its own, the inherited value is what the
+  const maskLazyValue = maskLazy === '' ? '' : String(maskLazy); // A number field (1.5.0) takes the native range and step; other types do
+  // not carry them.
+
+  const isNumber = inputType === 'number';
+  const numberMin = isNumber && min !== '' && min != null ? min : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  const numberMax = isNumber && max !== '' && max != null ? max : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  const numberStep = isNumber && step !== '' && step != null ? step : lit__WEBPACK_IMPORTED_MODULE_0__.nothing; // While the field holds nothing of its own, the inherited value is what the
   // empty field shows, in the placeholder's ink -- never as its value.
 
   const shownPlaceholder = context.inheritedValue || placeholder;
@@ -1810,6 +1819,9 @@ function renderInputTemplate(context) {
                 minlength=${minlength === '' ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : minlength}
                 maxlength=${maxlength === '' ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : maxlength}
                 pattern=${pattern || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                min=${numberMin}
+                max=${numberMax}
+                step=${numberStep}
                 placeholder=${shownPlaceholder}
                 .value=${value}
                 .defaultValue=${defaultValue}
@@ -1836,6 +1848,9 @@ function renderInputTemplate(context) {
                 minlength=${minlength === '' ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : minlength}
                 maxlength=${maxlength === '' ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : maxlength}
                 pattern=${pattern || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                min=${numberMin}
+                max=${numberMax}
+                step=${numberStep}
                 placeholder=${shownPlaceholder}
                 .defaultValue=${inputValue}
                 .value=${value}
@@ -1948,7 +1963,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-input
 /***/ "fc92d2bbc3ce"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input","tag":"sf-input","version":"1.4.4","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"appearance":{"type":"enum","values":["bordered","filled","hidden"],"default":"bordered"},"label":{"type":"string","default":""},"required":{"type":"boolean","default":false},"placeholder":{"type":"string","default":""},"input-type":{"type":"enum","values":["text","email","password","search","tel","url"],"default":"text"},"autocomplete":{"type":"string","default":""},"inputmode":{"type":"enum","values":["","none","text","tel","url","email","numeric","decimal","search"],"default":""},"minlength":{"type":"string","default":""},"maxlength":{"type":"string","default":""},"pattern":{"type":"string","default":""},"hint":{"type":"string","default":""},"default-value":{"type":"string","default":""},"name":{"type":"string","default":""},"icon-start":{"type":"icon","optional":true},"text-end":{"type":"string","optional":true},"hint-icon":{"type":"icon","default":""},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"mask":{"type":"boolean","default":false},"mask-pattern":{"type":"string","default":""},"mask-lazy":{"type":"string","default":""},"mask-placeholder-char":{"type":"string","default":""},"mask-options":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":"native"},"input":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","type-mismatch","pattern-mismatch","too-short","too-long","custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-input-background-color":{"type":"color","state":"default"},"--sf-input-border-color":{"type":"color","state":"default"},"--sf-input-color":{"type":"color","state":"default"},"--sf-input-radius":{"type":"length","state":"default"},"--sf-input-padding-inline":{"type":"length","state":"default"},"--sf-input-padding-block":{"type":"length","state":"default"},"--sf-input-invalid-border-color":{"type":"color","state":"invalid"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input","tag":"sf-input","version":"1.5.0","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"appearance":{"type":"enum","values":["bordered","filled","hidden"],"default":"bordered"},"label":{"type":"string","default":""},"required":{"type":"boolean","default":false},"placeholder":{"type":"string","default":""},"input-type":{"type":"enum","values":["text","email","password","search","tel","url","number"],"default":"text"},"autocomplete":{"type":"string","default":""},"inputmode":{"type":"enum","values":["","none","text","tel","url","email","numeric","decimal","search"],"default":""},"minlength":{"type":"string","default":""},"maxlength":{"type":"string","default":""},"pattern":{"type":"string","default":""},"min":{"type":"string","default":""},"max":{"type":"string","default":""},"step":{"type":"string","default":""},"hint":{"type":"string","default":""},"default-value":{"type":"string","default":""},"name":{"type":"string","default":""},"icon-start":{"type":"icon","optional":true},"text-end":{"type":"string","optional":true},"hint-icon":{"type":"icon","default":""},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"mask":{"type":"boolean","default":false},"mask-pattern":{"type":"string","default":""},"mask-lazy":{"type":"string","default":""},"mask-placeholder-char":{"type":"string","default":""},"mask-options":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":"native"},"input":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","type-mismatch","pattern-mismatch","too-short","too-long","custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-input-background-color":{"type":"color","state":"default"},"--sf-input-border-color":{"type":"color","state":"default"},"--sf-input-color":{"type":"color","state":"default"},"--sf-input-radius":{"type":"length","state":"default"},"--sf-input-padding-inline":{"type":"length","state":"default"},"--sf-input-padding-block":{"type":"length","state":"default"},"--sf-input-invalid-border-color":{"type":"color","state":"invalid"}}}');
 
 /***/ },
 
