@@ -112,10 +112,11 @@ class FrameworkContractRegistryTest(unittest.TestCase):
                 # 66 again when sf-toggle left and sf-include came; 71 with
                 # sf-alert-bar, sf-list and sf-list-feed; 72 with sf-language;
                 # 73 with sf-settings; 75 with sf-wizard and sf-wizard-step;
-                # 78 with sf-tile-metric, sf-list-attention and sf-progress-run.
-                "smart-component": 78,
+                # 78 with sf-tile-metric, sf-list-attention and sf-progress-run;
+                # 81 with sf-input-choice, sf-list-description and sf-list-timeline.
+                "smart-component": 81,
                 "recipe": 1,
-                "total": 373,
+                "total": 376,
             },
         )
         # The id names the runtimes it was built from; that is the claim, not
