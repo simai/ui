@@ -117,9 +117,12 @@ const THEME_RULES = Object.freeze({
     hue: source => (source.hue + 60) % 360,
     chroma: 40
   },
+  // The greys take the source's hue at chroma 5, or at the source's own chroma
+  // when that is lower (C16): a near-grey brand colour made teal or violet
+  // greys out of a hue it barely has.
   neutral: {
     hue: source => source.hue,
-    chroma: 5
+    chroma: source => Math.min(5, source.chroma)
   },
   error: {
     hue: 25,
@@ -185,7 +188,8 @@ const THEME_ALPHA = Object.freeze({
     90: [4, 8, 12, 24]
   },
   info: {
-    50: [12, 16, 20, 24, 28, 32]
+    50: [4, 8, 12, 16, 20, 24, 28, 32],
+    90: [4, 8, 12, 24]
   }
 });
 

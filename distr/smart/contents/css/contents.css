@@ -275,7 +275,7 @@
     margin-bottom: calc(var(--sf-space-1\/4) * -1);
     margin-block: calc(var(--sf-space-1\/4) * -1);
     background-color: var(--sf-surface-0);
-    background-color: var(--sf-contents-background, var(--sf-surface-0));
+    background-color: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-0)));
   }
   .sf-contents--layout-compact .sf-contents-head {
     display: flex;
@@ -332,7 +332,7 @@
         overscroll-behavior: contain;
     border-radius: var(--sf-radius--ui);
     background-color: var(--sf-elevation-2--surface);
-    background-color: var(--sf-contents-background, var(--sf-elevation-2--surface));
+    background-color: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-elevation-2--surface)));
     --sf-on-surface-variant: var(--sf-on-elevation-2--variant);
     box-shadow: var(--sf-elevation-2--shadow);
   }
@@ -467,7 +467,7 @@
     -webkit-border-after: var(--sf-px) solid var(--sf-contents--line);
             border-block-end: var(--sf-px) solid var(--sf-contents--line);
     background-color: var(--sf-surface-0);
-    background-color: var(--sf-contents-background, var(--sf-surface-0));
+    background-color: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-0)));
   }
   .sf-contents--layout-bar .sf-contents-item {
     flex: none;
@@ -640,7 +640,7 @@
       margin-bottom: calc(var(--sf-space-1\/4) * -1);
       margin-block: calc(var(--sf-space-1\/4) * -1);
       background-color: var(--sf-surface-0);
-      background-color: var(--sf-contents-background, var(--sf-surface-0));
+      background-color: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-0)));
     }
     .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-head {
       display: flex;
@@ -697,7 +697,7 @@
           overscroll-behavior: contain;
       border-radius: var(--sf-radius--ui);
       background-color: var(--sf-elevation-2--surface);
-      background-color: var(--sf-contents-background, var(--sf-elevation-2--surface));
+      background-color: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-elevation-2--surface)));
       --sf-on-surface-variant: var(--sf-on-elevation-2--variant);
       box-shadow: var(--sf-elevation-2--shadow);
     }
@@ -861,7 +861,7 @@
       margin-bottom: calc(var(--sf-space-1\/4) * -1);
       margin-block: calc(var(--sf-space-1\/4) * -1);
       background-color: var(--sf-surface-0);
-      background-color: var(--sf-contents-background, var(--sf-surface-0));
+      background-color: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-0)));
     }
     .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-head {
       display: flex;
@@ -918,7 +918,7 @@
           overscroll-behavior: contain;
       border-radius: var(--sf-radius--ui);
       background-color: var(--sf-elevation-2--surface);
-      background-color: var(--sf-contents-background, var(--sf-elevation-2--surface));
+      background-color: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-elevation-2--surface)));
       --sf-on-surface-variant: var(--sf-on-elevation-2--variant);
       box-shadow: var(--sf-elevation-2--shadow);
     }
@@ -1082,7 +1082,7 @@
       margin-bottom: calc(var(--sf-space-1\/4) * -1);
       margin-block: calc(var(--sf-space-1\/4) * -1);
       background-color: var(--sf-surface-0);
-      background-color: var(--sf-contents-background, var(--sf-surface-0));
+      background-color: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-0)));
     }
     .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-head {
       display: flex;
@@ -1139,7 +1139,7 @@
           overscroll-behavior: contain;
       border-radius: var(--sf-radius--ui);
       background-color: var(--sf-elevation-2--surface);
-      background-color: var(--sf-contents-background, var(--sf-elevation-2--surface));
+      background-color: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-elevation-2--surface)));
       --sf-on-surface-variant: var(--sf-on-elevation-2--variant);
       box-shadow: var(--sf-elevation-2--shadow);
     }
@@ -1303,7 +1303,7 @@
       margin-bottom: calc(var(--sf-space-1\/4) * -1);
       margin-block: calc(var(--sf-space-1\/4) * -1);
       background-color: var(--sf-surface-0);
-      background-color: var(--sf-contents-background, var(--sf-surface-0));
+      background-color: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-0)));
     }
     .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-head {
       display: flex;
@@ -1360,7 +1360,7 @@
           overscroll-behavior: contain;
       border-radius: var(--sf-radius--ui);
       background-color: var(--sf-elevation-2--surface);
-      background-color: var(--sf-contents-background, var(--sf-elevation-2--surface));
+      background-color: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-elevation-2--surface)));
       --sf-on-surface-variant: var(--sf-on-elevation-2--variant);
       box-shadow: var(--sf-elevation-2--shadow);
     }

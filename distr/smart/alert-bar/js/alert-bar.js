@@ -571,10 +571,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("528216f76e58");
 /* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("2a4d264285b5");
 /* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("ba9bcf2fbdc4");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_format__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_format__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("d3818183b14c");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_format__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_8__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_format__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_8__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations__WEBPACK_IMPORTED_MODULE_8__);
 // sf-alert-bar: the full-width bar above a page or admin header for the
 // conditions that need action now -- a disk nearly full, a failed backup, a
 // site that does not answer, an update. One bar for all of them:
@@ -584,10 +586,10 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 //       "action": {"label": "Открыть копии", "href": "/backups/"}}]}
 //   </script></sf-alert-bar>
 //
-// The items are sorted danger, warning, info, the newest first; the bar takes
+// The items are sorted error, warning, info, the newest first; the bar takes
 // the colour of the first and shows it. Several are paged «‹ 1 из N ›» and
 // listed under the bar with «Все N». A warning closes for a day, an info item
-// for good; a danger item is never closed, its button minimizes the bar to a
+// for good; an error item is never closed, its button minimizes the bar to a
 // strip that keeps the count.
 //
 // The bar stores nothing. A close, an acknowledge and an action link are
@@ -605,13 +607,16 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+
  // The list's id, one per bar on the page (the same on every render, so a
 // first-paint snapshot is stable).
 
-let sequence = 0;
-const LEVELS = ['danger', 'warning', 'info'];
+let sequence = 0; // The levels say what happened (decision C13, docs review R031): error is the
+// most serious, as on every message; danger is its former word here.
+
+const LEVELS = ['error', 'warning', 'info'];
 const RANK = {
-  danger: 0,
+  error: 0,
   warning: 1,
   info: 2
 }; // How a closed item is kept by the host: a warning for a day, info for good.
@@ -622,7 +627,7 @@ const HIDE = {
 }; // sf-alert's status icons, by the theme's status words.
 
 const ICONS = {
-  danger: 'error',
+  error: 'error',
   warning: 'warning',
   info: 'info'
 }; // Within a day a time reads «5 минут назад»; older, as a date and a time.
@@ -630,16 +635,30 @@ const ICONS = {
 const RELATIVE_SPAN = 86400000;
 
 const text = value => value === undefined || value === null ? '' : String(value).trim();
-/** An item's level: the owner's three words; error is read as danger, anything else as info. */
+/** An item's level: error, warning or info; the former danger is read as error (noted once), anything else as info. */
 
 
 function levelOf(value) {
   const word = text(value).toLowerCase();
-  if (word === 'error') return 'danger';
+
+  if (word === 'danger') {
+    (0,_core_js_deprecations__WEBPACK_IMPORTED_MODULE_8__.noteDeprecated)({
+      component: 'sf-alert-bar',
+      tag: 'sf-alert-bar',
+      kind: 'value',
+      attribute: 'items.level',
+      from: 'danger',
+      to: 'error',
+      since: '2026-11-08',
+      remove_after: '2027-01-01'
+    });
+    return 'error';
+  }
+
   return LEVELS.includes(word) ? word : 'info';
 }
 /**
- * The items as given, made safe and sorted: danger, warning, info; inside a
+ * The items as given, made safe and sorted: error, warning, info; inside a
  * level the newest first by time. An item without an id or a text is left
  * out; one without a readable time keeps the host's order after the timed
  * ones of its level.
@@ -675,8 +694,8 @@ function normalizeItems(value) {
       at: moment ? moment.getTime() : null,
       action,
       acknowledge,
-      // A danger item is never closed; the others unless the host says no.
-      dismissible: level !== 'danger' && item.dismissible !== false,
+      // An error item is never closed; the others unless the host says no.
+      dismissible: level !== 'error' && item.dismissible !== false,
       order
     });
   });
@@ -756,11 +775,11 @@ class SfAlertBar extends AlertBarElement {
 
   get level() {
     return this.list[0]?.level ?? '';
-  } // Only a danger bar is minimized.
+  } // Only an error bar is minimized.
 
 
   get isMinimized() {
-    return Boolean(this.minimized) && this.level === 'danger';
+    return Boolean(this.minimized) && this.level === 'error';
   } // A new list from the host: forget what was closed in the old one, find
   // what is new, keep the shown item in view when it is still there.
 
@@ -778,8 +797,8 @@ class SfAlertBar extends AlertBarElement {
 
     if (this._known) {
       const fresh = list.filter(item => !this._known.has(item.id));
-      const danger = fresh.filter(item => item.level === 'danger');
-      const other = fresh.filter(item => item.level !== 'danger'); // A new danger item is the one thing that is read out at once (role
+      const danger = fresh.filter(item => item.level === 'error');
+      const other = fresh.filter(item => item.level !== 'error'); // A new error item is the one thing that is read out at once (role
       // alert); the rest politely (role status). A minimized bar opens again
       // for it.
 
@@ -887,7 +906,9 @@ class SfAlertBar extends AlertBarElement {
 
   closeItem(id, reason = 'close') {
     const item = this.list.find(entry => entry.id === id);
-    if (!item) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('missing');
+    if (!item) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('missing'); // The reason keeps its former word: an outcome has no alias to carry a
+    // rename (change journal value-alert-bar-level-danger-to-error).
+
     if (!item.dismissible) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('danger');
     if (!this.sfEmit('close', {
       id: item.id,
@@ -957,7 +978,7 @@ class SfAlertBar extends AlertBarElement {
     this._shownId = current?.id;
     const level = list[0]?.level ?? ''; // The raw value stays under its own name; the template reads this one.
 
-    const isMinimized = Boolean(this.minimized) && level === 'danger';
+    const isMinimized = Boolean(this.minimized) && level === 'error';
 
     const word = (key, vars) => this.sfWord(key, vars ? {
       vars
@@ -1040,15 +1061,15 @@ lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
  // sf-alert-bar's markup (scss/ draws it on one rung of the ladder).
 //
 // - The root is a region named by label. Two visually hidden live regions
-//   inside it speak what appears after the first list: a new danger item in
+//   inside it speak what appears after the first list: a new error item in
 //   role alert, any other new item in role status. The bar itself is no live
 //   region, so a bar printed with the page is not read out.
-// - Minimized (a danger bar only): one button, the strip, that keeps the
+// - Minimized (an error bar only): one button, the strip, that keeps the
 //   colour, the icon and the count and expands the bar on a press.
 // - Otherwise one row: the shown item's icon, its text with source and time,
 //   its action link (sf-button href), acknowledge, the pager «‹ 1 из N ›» and
 //   «Все N» when there are several, and at the end close (a warning or an
-//   info item) or minimize (a danger item). With several items the list of
+//   info item) or minimize (an error item). With several items the list of
 //   all opens under the bar, each with its own action, acknowledge and close.
 //
 // The controls are sf-button and sf-button-icon of scheme on-surface: inside
@@ -1115,7 +1136,7 @@ function row(context) {
     const label = hideWord(context, item);
     end = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button-icon class="sf-alert-bar-close" icon="close" size=${size} appearance="ghost" scheme="on-surface"
       aria-label=${label} title=${label} @click=${() => component.closeItem(item.id)}></sf-button-icon>`;
-  } else if (item.level === 'danger') {
+  } else if (item.level === 'error') {
     end = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button-icon class="sf-alert-bar-minimize" icon="expand_less" size=${size} appearance="ghost" scheme="on-surface"
       aria-label=${words.minimize} title=${words.minimize} @click=${() => component.setMinimized(true)}></sf-button-icon>`;
   }
@@ -1154,7 +1175,7 @@ function listOfAll(context) {
   } = context;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<ul class="sf-alert-bar-list" id=${listId} aria-label=${words.list}>
     ${list.map(item => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<li class="sf-alert-bar-item" data-level=${item.level} data-id=${item.id}>
-      <sf-badge class="sf-alert-bar-badge" status=${item.level === 'danger' ? 'error' : item.level} appearance="tonal" size="1/3" text=${item.levelWord}></sf-badge>
+      <sf-badge class="sf-alert-bar-badge" status=${item.level} appearance="tonal" size="1/3" text=${item.levelWord}></sf-badge>
       <div class="sf-alert-bar-item-text">
         <span class="sf-alert-bar-item-message">${item.text}</span>
         ${meta(item, 'sf-alert-bar-item-meta')}
@@ -1200,6 +1221,13 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ },
 
+/***/ "d3818183b14c"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("deprecations", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("deprecations", 1).then(resolve, reject), { once: true })));
+
+/***/ },
+
 /***/ "5b7d7695b41b"
 (module) {
 
@@ -1231,21 +1259,21 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "677c9e2dc7c8"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.alert-bar","tag":"sf-alert-bar","version":"1.0.2","kind":"leaf","settings":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"level":{"type":"string","enum":["danger","warning","info"]},"text":{"type":"string"},"source":{"type":"string"},"time":{"type":"string"},"action":{"type":"object","properties":{"label":{"type":"string"},"href":{"type":"string"}}},"acknowledge":{"type":"object","properties":{"label":{"type":"string"}}},"dismissible":{"type":"boolean"}},"required":["id","level","text"]}},"default":[]},"size":{"type":"enum","values":["1/2","1"],"default":"1/2"},"label":{"type":"string","default-from":"runtime.label"}},"values":{"minimized":{"type":"boolean","default":false}},"events":{"navigate":{"carries":{"id":"string","level":"string","href":"string"},"cancelable":true},"acknowledge":{"carries":{"id":"string","level":"string"},"cancelable":true,"own-verb":true},"close":{"carries":{"id":"string","level":"string","hide":{"type":"enum","values":["day","always"]},"reason":{"type":"enum","values":["close","api"]}},"cancelable":true},"minimize":{"carries":{"minimized":"boolean"}}},"actions":{"close":{"with":{"id":"string"}}},"host-states":{"data-level":"string","data-minimized":"boolean","data-empty":"boolean"},"css-variables":{"--sf-alert-bar-danger-background":{"type":"color","state":"default"},"--sf-alert-bar-warning-background":{"type":"color","state":"default"},"--sf-alert-bar-info-background":{"type":"color","state":"default"},"--sf-alert-bar-padding-inline":{"type":"length","state":"default"},"--sf-alert-bar-list-background":{"type":"color","state":"default"},"--sf-alert-bar-gap":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.alert-bar","tag":"sf-alert-bar","version":"1.2.0","kind":"leaf","settings":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"level":{"type":"string","enum":["error","warning","info"]},"text":{"type":"string"},"source":{"type":"string"},"time":{"type":"string"},"action":{"type":"object","properties":{"label":{"type":"string"},"href":{"type":"string"}}},"acknowledge":{"type":"object","properties":{"label":{"type":"string"}}},"dismissible":{"type":"boolean"}},"required":["id","level","text"]}},"default":[]},"size":{"type":"enum","values":["1/2","1"],"default":"1/2"},"label":{"type":"string","default-from":"runtime.label"}},"values":{"minimized":{"type":"boolean","default":false}},"events":{"navigate":{"carries":{"id":"string","level":"string","href":"string"},"cancelable":true},"acknowledge":{"carries":{"id":"string","level":"string"},"cancelable":true,"own-verb":true},"close":{"carries":{"id":"string","level":"string","hide":{"type":"enum","values":["day","always"]},"reason":{"type":"enum","values":["close","api"]}},"cancelable":true},"minimize":{"carries":{"minimized":"boolean"}}},"actions":{"close":{"with":{"id":"string"}}},"host-states":{"data-level":"string","data-minimized":"boolean","data-empty":"boolean"},"css-variables":{"--sf-alert-bar-error-background-color":{"type":"color","state":"default"},"--sf-alert-bar-warning-background-color":{"type":"color","state":"default"},"--sf-alert-bar-info-background-color":{"type":"color","state":"default"},"--sf-alert-bar-padding-inline":{"type":"length","state":"default"},"--sf-alert-bar-list-background-color":{"type":"color","state":"default"},"--sf-alert-bar-gap":{"type":"length","state":"default"}}}');
 
 /***/ },
 
 /***/ "528216f76e58"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Alert bar","runtime":{"label":"Important notices","level-danger":"Danger","level-warning":"Warning","level-info":"Info","position":"{n} of {count}","prev":"Previous notice","next":"Next notice","all":"All {count}","collapse-list":"Hide the list","list":"All notices","hide-day":"Hide for a day","hide":"Hide","acknowledge":"Mark as seen","minimize":"Minimize the bar","expand":"expand","expand-label":"Expand the important notices","count":"Important notices: {count}"},"events":{"acknowledge":{"label":"Mark as seen"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Alert bar","runtime":{"label":"Important notices","level-error":"Error","level-warning":"Warning","level-info":"Info","position":"{n} of {count}","prev":"Previous notice","next":"Next notice","all":"All {count}","collapse-list":"Hide the list","list":"All notices","hide-day":"Hide for a day","hide":"Hide","acknowledge":"Mark as seen","minimize":"Minimize the bar","expand":"expand","expand-label":"Expand the important notices","count":"Important notices: {count}"},"events":{"acknowledge":{"label":"Mark as seen"}}}');
 
 /***/ },
 
 /***/ "2a4d264285b5"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Плашка уведомлений","runtime":{"label":"Важные уведомления","level-danger":"Опасность","level-warning":"Предупреждение","level-info":"Сведения","position":"{n} из {count}","prev":"Предыдущее уведомление","next":"Следующее уведомление","all":"Все {count}","collapse-list":"Свернуть список","list":"Все уведомления","hide-day":"Скрыть на сутки","hide":"Скрыть","acknowledge":"Отметить, что видели","minimize":"Свернуть плашку","expand":"развернуть","expand-label":"Развернуть важные уведомления","count":"Важных уведомлений: {count}"},"events":{"acknowledge":{"label":"Отметить, что видели"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Плашка уведомлений","runtime":{"label":"Важные уведомления","level-error":"Ошибка","level-warning":"Предупреждение","level-info":"Сведения","position":"{n} из {count}","prev":"Предыдущее уведомление","next":"Следующее уведомление","all":"Все {count}","collapse-list":"Свернуть список","list":"Все уведомления","hide-day":"Скрыть на сутки","hide":"Скрыть","acknowledge":"Отметить, что видели","minimize":"Свернуть плашку","expand":"развернуть","expand-label":"Развернуть важные уведомления","count":"Важных уведомлений: {count}"},"events":{"acknowledge":{"label":"Отметить, что видели"}}}');
 
 /***/ }
 

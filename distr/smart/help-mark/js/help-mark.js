@@ -254,7 +254,7 @@ function renderHelpMarkTemplate(context) {
   const panelId = `${context.id}-panel`;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
     <span class=${['sf-help-mark', context.rootClass].filter(Boolean).join(' ')}>
-      <sf-button-icon class="sf-help-mark-button" size=${context.size} appearance="link" scheme="on-surface"
+      <sf-button-icon class="sf-help-mark-button" size=${context.size} appearance="ghost" scheme="on-surface"
                       icon="help" aria-label=${context.name}
                       aria-expanded=${String(Boolean(context.open))} aria-controls=${panelId}
                       @click=${() => context.component.toggle()}></sf-button-icon>
@@ -332,7 +332,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-help-
 /***/ "cd1ae22812c1"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.help-mark","tag":"sf-help-mark","version":"1.1.8","kind":"leaf","settings":{"text":{"type":"string","default":""},"heading":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"},"size":{"type":"enum","values":["1/3","1/2","1"],"default":"1/2"},"placement":{"type":"enum","values":["auto","top","bottom","start","end"],"default":"auto"}},"values":{},"events":{"opened":{"carries":{}},"closed":{"carries":{}}},"actions":{"open":{"waits":true},"close":{}},"host-states":{"data-open":"boolean"},"css-variables":{"--sf-help-mark-background-color":{"type":"color","state":"open"},"--sf-help-mark-color":{"type":"color","state":"open"},"--sf-help-mark-border-color":{"type":"color","state":"open"},"--sf-help-mark-radius":{"type":"length","state":"default"},"--sf-help-mark-max-width":{"type":"length","state":"default"},"--sf-help-mark-padding-inline":{"type":"length","state":"default"},"--sf-help-mark-padding-block":{"type":"length","state":"default"},"--sf-help-mark-gap":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.help-mark","tag":"sf-help-mark","version":"1.1.10","kind":"leaf","settings":{"text":{"type":"string","default":""},"heading":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"},"size":{"type":"enum","values":["1/3","1/2","1"],"default":"1/2"},"placement":{"type":"enum","values":["auto","top","bottom","start","end"],"default":"auto"}},"values":{},"events":{"opened":{"carries":{}},"closed":{"carries":{}}},"actions":{"open":{"waits":true},"close":{}},"host-states":{"data-open":"boolean"},"css-variables":{"--sf-help-mark-background-color":{"type":"color","state":"open"},"--sf-help-mark-color":{"type":"color","state":"open"},"--sf-help-mark-border-color":{"type":"color","state":"open"},"--sf-help-mark-radius":{"type":"length","state":"default"},"--sf-help-mark-max-width":{"type":"length","state":"default"},"--sf-help-mark-padding-inline":{"type":"length","state":"default"},"--sf-help-mark-padding-block":{"type":"length","state":"default"},"--sf-help-mark-gap":{"type":"length","state":"default"}}}');
 
 /***/ },
 

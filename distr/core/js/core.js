@@ -10347,7 +10347,7 @@ __webpack_require__.r(__webpack_exports__);
 // core.runtime.json). A set's release says the lowest version it needs, and
 // the index lookup keeps the releases this Core satisfies. Moved by hand with
 // the passport; tests/component-set-loader.contract.test.mjs holds them equal.
-const CORE_RUNTIME = '1.40.0';
+const CORE_RUNTIME = '1.42.0';
 const SET_NAME = /^[a-z][a-z0-9-]*$/u;
 const SET_INDEX_FORMAT = 'simai.framework.set-index';
 const SET_INDEX_URL = 'https://cdn.jsdelivr.net/npm/@simai-studio/sets@1/index.json';
@@ -10588,6 +10588,11 @@ __webpack_require__.r(__webpack_exports__);
   from: 'sf-avatars',
   to: 'sf-avatar-group',
   since: '2026-11-03',
+  remove_after: '2027-01-01'
+}), Object.freeze({
+  from: 'sf-button-group',
+  to: 'sf-segmented',
+  since: '2026-11-08',
   remove_after: '2027-01-01'
 }), Object.freeze({
   from: 'sf-change-confirm',
@@ -20369,7 +20374,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
             "default",
             "tonal",
             "outline",
-            "link",
+            "ghost",
             "surface"
           ],
           "type": "string"
@@ -20502,7 +20507,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
           "default": "",
           "enum": [
             "",
-            "error"
+            "danger"
           ],
           "type": "string"
         },
@@ -20528,6 +20533,10 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
           "default": "",
           "type": "string"
         },
+        "theme-cycle": {
+          "default": "",
+          "type": "string"
+        },
         "value": {
           "default": "",
           "type": "string"
@@ -20537,7 +20546,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.button",
-    "version": "1.8.0"
+    "version": "1.9.0"
   },
   "sf-button-icon": {
     "inputs": {
@@ -20549,8 +20558,6 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
             "default",
             "tonal",
             "outline",
-            "link",
-            "surface",
             "ghost"
           ],
           "type": "string"
@@ -20631,7 +20638,6 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
           "default": "primary",
           "enum": [
             "primary",
-            "secondary",
             "on-surface",
             "on-surface-variant"
           ],
@@ -20672,8 +20678,16 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
           "default": "",
           "enum": [
             "",
-            "error"
+            "danger"
           ],
+          "type": "string"
+        },
+        "theme-cycle": {
+          "default": "",
+          "type": "string"
+        },
+        "value": {
+          "default": "",
           "type": "string"
         }
       },
@@ -20681,7 +20695,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.button-icon",
-    "version": "1.5.2"
+    "version": "1.7.0"
   },
   "sf-checkbox": {
     "inputs": {
@@ -20872,7 +20886,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.dropdown",
-    "version": "1.7.1"
+    "version": "1.7.3"
   },
   "sf-icon": {
     "inputs": {
@@ -21096,6 +21110,16 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
           "default": "",
           "type": "string"
         },
+        "radius": {
+          "default": "",
+          "enum": [
+            "",
+            "default",
+            "square",
+            "rounded"
+          ],
+          "type": "string"
+        },
         "readonly": {
           "default": false,
           "type": "boolean"
@@ -21111,9 +21135,11 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
         "size": {
           "default": "1",
           "enum": [
+            "1/3",
             "1/2",
             "1",
-            "2"
+            "2",
+            "3"
           ],
           "type": "string"
         },
@@ -21134,7 +21160,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.input",
-    "version": "1.5.1"
+    "version": "1.6.0"
   },
   "sf-input-textarea": {
     "inputs": {
@@ -21287,7 +21313,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.input-textarea",
-    "version": "1.7.2"
+    "version": "1.7.3"
   },
   "sf-switch": {
     "inputs": {
@@ -21351,7 +21377,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.switch",
-    "version": "1.3.2"
+    "version": "1.3.3"
   }
 });
 

@@ -2391,8 +2391,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _smart_badge_rule_js__WEBPACK_IMPORTED_MODULE_738___default = /*#__PURE__*/__webpack_require__.n(_smart_badge_rule_js__WEBPACK_IMPORTED_MODULE_738__);
 /* harmony import */ var _smart_breadcrumbs_rule_js__WEBPACK_IMPORTED_MODULE_739__ = __webpack_require__("a22c716ce769");
 /* harmony import */ var _smart_breadcrumbs_rule_js__WEBPACK_IMPORTED_MODULE_739___default = /*#__PURE__*/__webpack_require__.n(_smart_breadcrumbs_rule_js__WEBPACK_IMPORTED_MODULE_739__);
-/* harmony import */ var _smart_button_group_rule_js__WEBPACK_IMPORTED_MODULE_740__ = __webpack_require__("c160176ec1b1");
-/* harmony import */ var _smart_button_group_rule_js__WEBPACK_IMPORTED_MODULE_740___default = /*#__PURE__*/__webpack_require__.n(_smart_button_group_rule_js__WEBPACK_IMPORTED_MODULE_740__);
+/* harmony import */ var _smart_segmented_rule_js__WEBPACK_IMPORTED_MODULE_740__ = __webpack_require__("d070e4a045a3");
+/* harmony import */ var _smart_segmented_rule_js__WEBPACK_IMPORTED_MODULE_740___default = /*#__PURE__*/__webpack_require__.n(_smart_segmented_rule_js__WEBPACK_IMPORTED_MODULE_740__);
 /* harmony import */ var _smart_button_rule_js__WEBPACK_IMPORTED_MODULE_741__ = __webpack_require__("be716f2de823");
 /* harmony import */ var _smart_button_rule_js__WEBPACK_IMPORTED_MODULE_741___default = /*#__PURE__*/__webpack_require__.n(_smart_button_rule_js__WEBPACK_IMPORTED_MODULE_741__);
 /* harmony import */ var _smart_checkbox_rule_js__WEBPACK_IMPORTED_MODULE_742__ = __webpack_require__("3846103def0f");
@@ -3727,8 +3727,12 @@ SF.RuleLoader['cl-button-close'] = {
   type: 'smart',
   mode: 'smart',
   js: true,
+  css: true,
   relation: [{
     name: 'close'
+  }, // The box of the button: the icon button's size ladder and its focus ring.
+  {
+    name: 'icon-buttons'
   }]
 };
 
@@ -3750,30 +3754,6 @@ SF.RuleLoader['cl-button-copy'] = {
     name: 'cl-button-icon'
   }, {
     name: 'cl-icon'
-  }]
-};
-
-/***/ },
-
-/***/ "c160176ec1b1"
-() {
-
-// Generated from component.json by scripts/generate-component-files.mjs; do not edit.
-SF.RuleLoader['cl-button-group'] = {
-  tags: ['sf-button-group'],
-  type: 'smart',
-  mode: 'smart',
-  js: true,
-  relation: [{
-    name: 'button-group'
-  }, {
-    name: 'cl-button'
-  }, {
-    name: 'cl-icon'
-  }, // spinner: a loading item shows it, fetched after the page is ready.
-  {
-    name: 'spinner',
-    lazy: true
   }]
 };
 
@@ -4500,7 +4480,7 @@ SF.RuleLoader['cl-language'] = {
   mode: 'smart',
   js: true,
   relation: [{
-    name: 'cl-button-group'
+    name: 'cl-segmented'
   }, {
     name: 'cl-button-icon'
   }, {
@@ -4985,6 +4965,30 @@ SF.RuleLoader['cl-search'] = {
     name: 'icons'
   }, {
     name: 'kbd'
+  }]
+};
+
+/***/ },
+
+/***/ "d070e4a045a3"
+() {
+
+// Generated from component.json by scripts/generate-component-files.mjs; do not edit.
+SF.RuleLoader['cl-segmented'] = {
+  tags: ['sf-segmented', 'sf-button-group'],
+  type: 'smart',
+  mode: 'smart',
+  js: true,
+  relation: [{
+    name: 'button-group'
+  }, {
+    name: 'cl-button'
+  }, {
+    name: 'cl-icon'
+  }, // spinner: a loading item shows it, fetched after the page is ready.
+  {
+    name: 'spinner',
+    lazy: true
   }]
 };
 
@@ -5822,7 +5826,7 @@ SF.RuleLoader['background-color-brand/hover'] = new RegExp("^(?:hover:bg-(?:beha
 () {
 
 // Покрываем все варианты bg-*, включая hover:/active: и палитру с числовыми суффиксами
-SF.RuleLoader['background-color/default'] = new RegExp("^(?:(?:active:bg-(?:error(?:-(?:container|transparent))?|on-surface|primary(?:-(?:container|transparent))?|s(?:econdary(?:-(?:container|transparent))?|u(?:ccess(?:-(?:container|transparent))?|rface-(?:container|transparent)))|tertiary(?:-(?:container|transparent))?|warning(?:-(?:container|transparent))?)|bg-(?:bl(?:ack|ue(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|current|disable|error(?:-(?:container|transparent-(?:overlay|select)))?|gr(?:ay(?:-(?:0|1|2|3|4|5|6|7|8|9))?|een(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|o(?:n-surface(?:-variant)?|range(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|p(?:ink(?:-(?:0|1|2|3|4|5|6|7|8|9))?|rimary(?:-(?:container|transparent-(?:overlay|select)))?|urple(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|red(?:-(?:0|1|2|3|4|5|6|7|8|9))?|s(?:econdary(?:-(?:container|transparent-(?:overlay|select)))?|u(?:ccess(?:-(?:container|transparent-(?:overlay|select)))?|rface(?:-(?:0|1|2|3|4|container|inverse(?:-fixed)?|transparent-(?:overlay|select)))?))|t(?:ertiary(?:-(?:container|transparent-(?:overlay|select)))?|ransparent)|w(?:arning(?:-(?:container|transparent-(?:overlay|select)))?|hite)|yellow(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|hover:bg-(?:error(?:-(?:container|transparent))?|on-surface|primary(?:-(?:container|transparent))?|s(?:econdary(?:-(?:container|transparent))?|u(?:ccess(?:-(?:container|transparent))?|rface-(?:container|transparent)))|tertiary(?:-(?:container|transparent))?|warning(?:-(?:container|transparent))?)))(?![\\s\\S])");
+SF.RuleLoader['background-color/default'] = new RegExp("^(?:(?:active:bg-(?:error(?:-(?:container|state|transparent))?|info(?:-(?:container|state))?|on-surface|primary(?:-(?:container|state|transparent))?|s(?:econdary(?:-(?:container|state|transparent))?|u(?:ccess(?:-(?:container|state|transparent))?|rface-(?:container|state|transparent)))|tertiary(?:-(?:container|state|transparent))?|warning(?:-(?:container|state|transparent))?)|bg-(?:bl(?:ack|ue(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|current|disable|error(?:-(?:container(?:-strong)?|state-select|transparent-(?:overlay|select)))?|gr(?:ay(?:-(?:0|1|2|3|4|5|6|7|8|9))?|een(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|info(?:-(?:container(?:-strong)?|state-select))?|o(?:n-surface(?:-variant)?|range(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|p(?:ink(?:-(?:0|1|2|3|4|5|6|7|8|9))?|rimary(?:-(?:container(?:-strong)?|state-select|transparent-(?:overlay|select)))?|urple(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|red(?:-(?:0|1|2|3|4|5|6|7|8|9))?|s(?:econdary(?:-(?:container(?:-strong)?|state-select|transparent-(?:overlay|select)))?|u(?:ccess(?:-(?:container(?:-strong)?|state-select|transparent-(?:overlay|select)))?|rface(?:-(?:0|1|2|3|4|area|c(?:ard|ontainer(?:-strong)?)|disabled|inverse(?:-fixed)?|p(?:age|opup(?:-nested)?)|state-select|transparent-(?:overlay|select)|veil))?))|t(?:ertiary(?:-(?:container(?:-strong)?|state-select|transparent-(?:overlay|select)))?|ransparent)|w(?:arning(?:-(?:container(?:-strong)?|state-select|transparent-(?:overlay|select)))?|hite)|yellow(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|hover:bg-(?:error(?:-(?:container|state|transparent))?|info(?:-(?:container|state))?|on-surface|primary(?:-(?:container|state|transparent))?|s(?:econdary(?:-(?:container|state|transparent))?|u(?:ccess(?:-(?:container|state|transparent))?|rface-(?:container|state|transparent)))|tertiary(?:-(?:container|state|transparent))?|warning(?:-(?:container|state|transparent))?)))(?![\\s\\S])");
 
 /***/ },
 

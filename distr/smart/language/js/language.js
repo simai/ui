@@ -283,6 +283,11 @@ __webpack_require__.r(__webpack_exports__);
   since: '2026-11-03',
   remove_after: '2027-01-01'
 }), Object.freeze({
+  from: 'sf-button-group',
+  to: 'sf-segmented',
+  since: '2026-11-08',
+  remove_after: '2027-01-01'
+}), Object.freeze({
   from: 'sf-change-confirm',
   to: 'sf-confirm-change',
   since: '2026-11-03',
@@ -914,7 +919,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 // first paint is the site's (docs.md).
 //
 // It composes the Framework's parts and draws nothing of its own: the switch
-// is sf-button-group appearance="segmented", the trigger sf-button-icon with
+// is sf-segmented on its track, the trigger sf-button-icon with
 // the Material Symbols «translate» glyph, the list sf-menu-context with its
 // search. Their events stay inside: the page hears this element's change.
 //
@@ -1403,7 +1408,7 @@ lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 // already has, so the element has no sheet of its own.
 //
 // - none (one language or none): nothing at all.
-// - inline (two or three): sf-button-group appearance="segmented", a radio
+// - inline (two or three): sf-segmented on its track, a radio
 //   group named by label, one segment per language labelled with its own
 //   name (compact: its code, the name kept as the segment's accessible
 //   name), each segment in its own language (lang).
@@ -1423,9 +1428,9 @@ function renderInline(context) {
     ariaLabel: context.compact ? language.label : '',
     lang: language.code
   }));
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button-group
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-segmented
       class=${['sf-language', context.rootClass].filter(Boolean).join(' ')}
-      appearance="segmented"
+      appearance="track"
       size=${context.size}
       .items=${items}
       value=${context.value}
@@ -1433,14 +1438,14 @@ function renderInline(context) {
       ?disabled=${context.disabled}
       @change=${event => context.component.onGroupChange(event)}
       @sf-button-group-change=${stop}
-    ></sf-button-group>`;
+    ></sf-segmented>`;
 }
 
 function renderMenu(context) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button-icon
       class=${['sf-language', context.rootClass].filter(Boolean).join(' ')}
       icon="translate"
-      appearance="link"
+      appearance="ghost"
       scheme="on-surface"
       size=${context.size}
       aria-label=${context.triggerLabel}
@@ -1521,7 +1526,7 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "11b7e7a66992"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.language","tag":"sf-language","version":"1.0.1","kind":"leaf","settings":{"languages":{"type":"string","default":""},"items":{"type":"list","schema":{"items":{"type":"object","properties":{"code":{"type":"string"},"label":{"type":"string"},"short":{"type":"string"},"href":{"type":"string"}},"required":["code"]}},"default":[]},"href":{"type":"string","default":""},"mode":{"type":"enum","values":["auto","inline","menu","search"],"default":"auto"},"inline-max":{"type":"number","integer":true,"min":1,"default":3},"search-from":{"type":"number","integer":true,"min":2,"default":8},"compact":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"apply":{"type":"enum","values":["page","none"],"default":"page"},"remember":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"},"name":{"type":"string","default":""},"disabled":{"type":"boolean","default":false}},"values":{"value":{"type":"string","default":""},"look":{"type":"enum","values":["none","inline","menu","search"]}},"events":{"change":{"carries":{"value":{"type":"string"},"previous":{"type":"string"},"href":{"type":"string"},"dir":{"type":"enum","values":["ltr","rtl"]},"reason":{"type":"enum","values":["press","api"]}},"cancelable":true}},"actions":{"select":{"with":{"value":"string"}}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"host-states":{"data-look":"string"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.language","tag":"sf-language","version":"1.2.0","kind":"leaf","settings":{"languages":{"type":"string","default":""},"items":{"type":"list","schema":{"items":{"type":"object","properties":{"code":{"type":"string"},"label":{"type":"string"},"short":{"type":"string"},"href":{"type":"string"}},"required":["code"]}},"default":[]},"href":{"type":"string","default":""},"mode":{"type":"enum","values":["auto","inline","menu","search"],"default":"auto"},"inline-max":{"type":"number","integer":true,"min":1,"default":3},"search-from":{"type":"number","integer":true,"min":2,"default":8},"compact":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"apply":{"type":"enum","values":["page","none"],"default":"page"},"remember":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"},"name":{"type":"string","default":""},"disabled":{"type":"boolean","default":false}},"values":{"value":{"type":"string","default":""},"look":{"type":"enum","values":["none","inline","menu","search"]}},"events":{"change":{"carries":{"value":{"type":"string"},"previous":{"type":"string"},"href":{"type":"string"},"dir":{"type":"enum","values":["ltr","rtl"]},"reason":{"type":"enum","values":["press","api"]}},"cancelable":true}},"actions":{"select":{"with":{"value":"string"}}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"host-states":{"data-look":"string"}}');
 
 /***/ },
 

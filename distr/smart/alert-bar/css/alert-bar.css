@@ -12,10 +12,13 @@
      The public variables are read with the role token as their fallback and
      never set here. */
   .sf-alert-bar {
-    --sf-alert-bar--danger-background: var(--sf-alert-bar-danger-background, var(--sf-error));
-    --sf-alert-bar--warning-background: var(--sf-alert-bar-warning-background, var(--sf-warning));
-    --sf-alert-bar--info-background: var(--sf-alert-bar-info-background, var(--sf-info));
-    --sf-alert-bar--list-background: var(--sf-alert-bar-list-background, var(--sf-surface-1));
+    /* --sf-alert-bar-danger-background is the former name of the error fill
+       (change journal value-alert-bar-level-danger-to-error and
+       token-component-background-color-names); the new one wins. */
+    --sf-alert-bar--error-background: var(--sf-alert-bar-error-background-color, var(--sf-alert-bar-danger-background, var(--sf-error)));
+    --sf-alert-bar--warning-background: var(--sf-alert-bar-warning-background-color, var(--sf-alert-bar-warning-background, var(--sf-warning)));
+    --sf-alert-bar--info-background: var(--sf-alert-bar-info-background-color, var(--sf-alert-bar-info-background, var(--sf-info)));
+    --sf-alert-bar--list-background: var(--sf-alert-bar-list-background-color, var(--sf-alert-bar-list-background, var(--sf-surface-1)));
     /* The rung: 1/2. */
     --sf-alert-bar--line: var(--sf-text-height-1\/2);
     --sf-alert-bar--font-size: var(--sf-text-size-1\/2);
@@ -53,8 +56,12 @@
     --sf-alert-bar--strip-height: var(--sf-ui-1\/2--control-height);
   }
   /* The level's fill and its ink: the theme's status roles, light and dark. */
+  .sf-alert-bar.sf-alert-bar--error {
+    --sf-alert-bar--fill: var(--sf-alert-bar--error-background);
+    --sf-alert-bar--ink: var(--sf-on-error);
+  }
   .sf-alert-bar.sf-alert-bar--danger {
-    --sf-alert-bar--fill: var(--sf-alert-bar--danger-background);
+    --sf-alert-bar--fill: var(--sf-alert-bar--error-background);
     --sf-alert-bar--ink: var(--sf-on-error);
   }
   .sf-alert-bar.sf-alert-bar--warning {
@@ -73,7 +80,8 @@
   .sf-alert-bar-strip {
     --sf-on-surface: var(--sf-alert-bar--ink);
     --sf-on-surface-variant: var(--sf-alert-bar--ink);
-    --sf-on-surface-container--variant: var(--sf-alert-bar--ink);
+    --sf-on-surface-container-variant: var(--sf-alert-bar--ink);
+    --sf-on-surface-container--variant: var(--sf-on-surface-container-variant);
     --sf-on-surface-hover: var(--sf-alert-bar--ink);
     --sf-outline: var(--sf-alert-bar--ink);
     --sf-outline-variant: color-mix(in srgb, var(--sf-alert-bar--ink) 48%, transparent);

@@ -273,7 +273,7 @@
   },
   {
     "name": "background-color/default",
-    "regex": "/^(?:(?:active:bg-(?:error(?:-(?:container|transparent))?|on-surface|primary(?:-(?:container|transparent))?|s(?:econdary(?:-(?:container|transparent))?|u(?:ccess(?:-(?:container|transparent))?|rface-(?:container|transparent)))|tertiary(?:-(?:container|transparent))?|warning(?:-(?:container|transparent))?)|bg-(?:bl(?:ack|ue(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|current|disable|error(?:-(?:container|transparent-(?:overlay|select)))?|gr(?:ay(?:-(?:0|1|2|3|4|5|6|7|8|9))?|een(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|o(?:n-surface(?:-variant)?|range(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|p(?:ink(?:-(?:0|1|2|3|4|5|6|7|8|9))?|rimary(?:-(?:container|transparent-(?:overlay|select)))?|urple(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|red(?:-(?:0|1|2|3|4|5|6|7|8|9))?|s(?:econdary(?:-(?:container|transparent-(?:overlay|select)))?|u(?:ccess(?:-(?:container|transparent-(?:overlay|select)))?|rface(?:-(?:0|1|2|3|4|container|inverse(?:-fixed)?|transparent-(?:overlay|select)))?))|t(?:ertiary(?:-(?:container|transparent-(?:overlay|select)))?|ransparent)|w(?:arning(?:-(?:container|transparent-(?:overlay|select)))?|hite)|yellow(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|hover:bg-(?:error(?:-(?:container|transparent))?|on-surface|primary(?:-(?:container|transparent))?|s(?:econdary(?:-(?:container|transparent))?|u(?:ccess(?:-(?:container|transparent))?|rface-(?:container|transparent)))|tertiary(?:-(?:container|transparent))?|warning(?:-(?:container|transparent))?)))(?![\\s\\S])/"
+    "regex": "/^(?:(?:active:bg-(?:error(?:-(?:container|state|transparent))?|info(?:-(?:container|state))?|on-surface|primary(?:-(?:container|state|transparent))?|s(?:econdary(?:-(?:container|state|transparent))?|u(?:ccess(?:-(?:container|state|transparent))?|rface-(?:container|state|transparent)))|tertiary(?:-(?:container|state|transparent))?|warning(?:-(?:container|state|transparent))?)|bg-(?:bl(?:ack|ue(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|current|disable|error(?:-(?:container(?:-strong)?|state-select|transparent-(?:overlay|select)))?|gr(?:ay(?:-(?:0|1|2|3|4|5|6|7|8|9))?|een(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|info(?:-(?:container(?:-strong)?|state-select))?|o(?:n-surface(?:-variant)?|range(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|p(?:ink(?:-(?:0|1|2|3|4|5|6|7|8|9))?|rimary(?:-(?:container(?:-strong)?|state-select|transparent-(?:overlay|select)))?|urple(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|red(?:-(?:0|1|2|3|4|5|6|7|8|9))?|s(?:econdary(?:-(?:container(?:-strong)?|state-select|transparent-(?:overlay|select)))?|u(?:ccess(?:-(?:container(?:-strong)?|state-select|transparent-(?:overlay|select)))?|rface(?:-(?:0|1|2|3|4|area|c(?:ard|ontainer(?:-strong)?)|disabled|inverse(?:-fixed)?|p(?:age|opup(?:-nested)?)|state-select|transparent-(?:overlay|select)|veil))?))|t(?:ertiary(?:-(?:container(?:-strong)?|state-select|transparent-(?:overlay|select)))?|ransparent)|w(?:arning(?:-(?:container(?:-strong)?|state-select|transparent-(?:overlay|select)))?|hite)|yellow(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|hover:bg-(?:error(?:-(?:container|state|transparent))?|info(?:-(?:container|state))?|on-surface|primary(?:-(?:container|state|transparent))?|s(?:econdary(?:-(?:container|state|transparent))?|u(?:ccess(?:-(?:container|state|transparent))?|rface-(?:container|state|transparent)))|tertiary(?:-(?:container|state|transparent))?|warning(?:-(?:container|state|transparent))?)))(?![\\s\\S])/"
   },
   {
     "name": "background-gradient/default",
@@ -817,11 +817,15 @@
   },
   {
     "name": "cl-button-close",
+    "css": true,
     "js": true,
     "mode": "smart",
     "relation": [
       {
         "name": "close"
+      },
+      {
+        "name": "icon-buttons"
       }
     ],
     "tags": [
@@ -849,30 +853,6 @@
     "tags": [
       "sf-button-copy",
       "sf-copy-button"
-    ],
-    "type": "smart"
-  },
-  {
-    "name": "cl-button-group",
-    "js": true,
-    "mode": "smart",
-    "relation": [
-      {
-        "name": "button-group"
-      },
-      {
-        "name": "cl-button"
-      },
-      {
-        "name": "cl-icon"
-      },
-      {
-        "lazy": true,
-        "name": "spinner"
-      }
-    ],
-    "tags": [
-      "sf-button-group"
     ],
     "type": "smart"
   },
@@ -1512,7 +1492,7 @@
     "mode": "smart",
     "relation": [
       {
-        "name": "cl-button-group"
+        "name": "cl-segmented"
       },
       {
         "name": "cl-button-icon"
@@ -1983,6 +1963,31 @@
     ],
     "tags": [
       "sf-search"
+    ],
+    "type": "smart"
+  },
+  {
+    "name": "cl-segmented",
+    "js": true,
+    "mode": "smart",
+    "relation": [
+      {
+        "name": "button-group"
+      },
+      {
+        "name": "cl-button"
+      },
+      {
+        "name": "cl-icon"
+      },
+      {
+        "lazy": true,
+        "name": "spinner"
+      }
+    ],
+    "tags": [
+      "sf-segmented",
+      "sf-button-group"
     ],
     "type": "smart"
   },

@@ -292,11 +292,15 @@ const INHERITED_TEXT = {
 // The marker and the reset are one step down the ladder from the field they
 // sit in, so they fit inside its box: a size 1 field (40px) holds a size 1/2
 // button (32px) with the same inset on every side.
+// sf-input's outer steps: a 3 field holds a 2 button; 1/3 is the ladder's
+// foot, so its marker and reset stay at 1/3.
 
 const STEP_DOWN = Object.freeze({
+  '1/3': '1/3',
   '1/2': '1/3',
   '1': '1/2',
-  '2': '1'
+  '2': '1',
+  '3': '2'
 });
 const inheritedStepDown = size => STEP_DOWN[String(size)] || '1/2';
 /**
@@ -1072,7 +1076,7 @@ function renderColorTemplate(context) {
 
             ${context.clearable && isSet && !context.hasInheritedValue ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
                         <sf-button-icon
-                                appearance="link"
+                                appearance="ghost"
                                 size=${size}
                                 icon="restart_alt"
                                 data-action="clear"
@@ -1121,7 +1125,7 @@ function renderThemeTemplate(context) {
             ${context.hiddenName ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<input type="hidden" name=${context.hiddenName} .value=${context.value}>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
             ${context.clearable && isSet ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
                         <sf-button-icon
-                                appearance="link"
+                                appearance="ghost"
                                 size=${size}
                                 icon="restart_alt"
                                 data-action="clear"
@@ -1201,7 +1205,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shi
 /***/ "8a9b84fc1bd6"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-color","tag":"sf-input-color","version":"1.5.1","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"appearance":{"type":"enum","values":["bordered","outlined","plain"],"default":"bordered"},"variant":{"type":"enum","values":["field","theme"],"default":"field"},"swatches":{"type":"string","default":""},"clearable":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"name":{"type":"string","default":""},"label":{"type":"string","default":""},"choose-label":{"type":"string","default-from":"runtime.choose"},"clear-label":{"type":"string","default-from":"runtime.clear"}},"values":{"value":{"type":"string","default":""},"effective-value":{"type":"string"}},"events":{"change":{"carries":{"value":"string","name":"string"}},"input":{"carries":{"value":"string","name":"string"}},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{"clear":{}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-color-gap":{"type":"length"},"--sf-color-chip-radius":{"type":"length"},"--sf-color-chip-border-color":{"type":"color","state":"rest"},"--sf-color-swatches-gap":{"type":"length"},"--sf-color-inherited-color":{"type":"color","state":"inherited"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-color","tag":"sf-input-color","version":"1.5.2","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"appearance":{"type":"enum","values":["bordered","outlined","plain"],"default":"bordered"},"variant":{"type":"enum","values":["field","theme"],"default":"field"},"swatches":{"type":"string","default":""},"clearable":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"name":{"type":"string","default":""},"label":{"type":"string","default":""},"choose-label":{"type":"string","default-from":"runtime.choose"},"clear-label":{"type":"string","default-from":"runtime.clear"}},"values":{"value":{"type":"string","default":""},"effective-value":{"type":"string"}},"events":{"change":{"carries":{"value":"string","name":"string"}},"input":{"carries":{"value":"string","name":"string"}},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{"clear":{}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-color-gap":{"type":"length"},"--sf-color-chip-radius":{"type":"length"},"--sf-color-chip-border-color":{"type":"color","state":"rest"},"--sf-color-swatches-gap":{"type":"length"},"--sf-color-inherited-color":{"type":"color","state":"inherited"}}}');
 
 /***/ },
 

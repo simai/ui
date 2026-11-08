@@ -67,7 +67,7 @@
     border-radius: var(--sf-radius--surface);
     border-radius: var(--sf-tile-metric-radius, var(--sf-radius--surface));
     background: var(--sf-surface-0);
-    background: var(--sf-tile-metric-background, var(--sf-surface-0));
+    background: var(--sf-tile-metric-background-color, var(--sf-tile-metric-background, var(--sf-surface-0)));
     color: var(--sf-on-surface);
     font: inherit;
     font-family: var(--sf-text--family);
@@ -99,7 +99,7 @@
   @media (hover: hover) {
     .sf-tile-metric.sf-tile-metric--target:hover {
       background: var(--sf-surface-container-hover);
-      background: var(--sf-tile-metric-hover-background, var(--sf-surface-container-hover));
+      background: var(--sf-tile-metric-hover-background-color, var(--sf-tile-metric-hover-background, var(--sf-surface-container-hover)));
     }
   }
   .sf-tile-metric.sf-tile-metric--target.focus-visible {

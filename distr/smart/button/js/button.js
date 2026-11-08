@@ -490,10 +490,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("2a080a730149");
 /* harmony import */ var _core_js_control_spacing__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("9abcb852f1cf");
 /* harmony import */ var _component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("151a293c8c90");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("5bb33fb22db3");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("902a6f38915d");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("d7b6a56d1dd6");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("96bdb2ff5f5d");
+/* harmony import */ var _helpers_cycle__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("64feefebb417");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("5bb33fb22db3");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("902a6f38915d");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("d7b6a56d1dd6");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("96bdb2ff5f5d");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, lit__WEBPACK_IMPORTED_MODULE_3__, _core_js_control_spacing__WEBPACK_IMPORTED_MODULE_4__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, lit__WEBPACK_IMPORTED_MODULE_3__, _core_js_control_spacing__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -510,7 +511,8 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
-const COMPONENT_ATTRIBUTES = new Set(["template", "size", "appearance", "type", "scheme", "status", "text", "icon", "icon-start", "icon-end", "icon-left", "icon-right", "icon-position", "text-position", "spacing", "tightness", "radius", "root-class", "loading", "segment", "disabled", "native-type", "form", "name", "value", "href", "target", "rel", "expanded", "pressed", "text-pressed", "shortcut", "shortcut-listen", "aria-label", "class", "style", "id", "slot"]); // href (1.4.0) takes the addresses a link may follow: a relative one, a
+
+const COMPONENT_ATTRIBUTES = new Set(["template", "size", "appearance", "type", "scheme", "status", "text", "icon", "icon-start", "icon-end", "icon-left", "icon-right", "icon-position", "text-position", "spacing", "tightness", "radius", "root-class", "loading", "segment", "disabled", "native-type", "form", "name", "value", "href", "target", "rel", "expanded", "pressed", "text-pressed", "cycle", "theme-cycle", "shortcut", "shortcut-listen", "aria-label", "class", "style", "id", "slot"]); // href (1.4.0) takes the addresses a link may follow: a relative one, a
 // fragment, http(s), mailto and tel. Any other scheme (javascript:, data:)
 // draws the button as a button.
 
@@ -545,17 +547,54 @@ function applyButtonAttributes(host, button) {
 // notes the use, so a value outside a list reads as the default here.
 
 
-const ButtonElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_6__, {
+const ButtonElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_7__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_8__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_9__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__
   },
   source: "ru",
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_7__
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_8__
 });
 
 class SfButton extends ButtonElement {
+  static get props() {
+    return { ...super.props,
+      // The attribute takes JSON or value::label::flags|…; the property a list.
+      cycle: {
+        type: Array,
+        default: [],
+        parser: _helpers_cycle__WEBPACK_IMPORTED_MODULE_6__.parseCycle
+      }
+    };
+  } // cycle is a list setting (§4.2) whose attribute keeps its JSON form, as
+  // sf-segmented's items: a list set as a property stays the instance's own.
+
+
+  get cycle() {
+    return this.getProp("cycle");
+  }
+
+  set cycle(value) {
+    Object.defineProperty(this, "cycle", {
+      configurable: true,
+      enumerable: true,
+      writable: true,
+      value
+    });
+    this.requestComponentUpdate?.("cycle");
+  } // The cycle (D11d): null when the button is not one. Its name is the
+  // button's aria-label, or none: then the current label is the text and the name.
+
+
+  cycleState() {
+    if (!(0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_6__.hasCycle)(this)) return null;
+    return (0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_6__.cycleState)(this, {
+      base: this.getAttribute("aria-label") || "",
+      words: (key, options) => this.sfWord(key, options)
+    });
+  }
+
   constructor() {
     super();
     this._attributeObserver = null;
@@ -634,6 +673,8 @@ class SfButton extends ButtonElement {
 
 
   get pressed() {
+    // A cycle is not a toggle: pressed is ignored beside it.
+    if ((0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_6__.hasCycle)(this)) return undefined;
     return this.hasAttribute("pressed") ? super.pressed : undefined;
   }
 
@@ -645,6 +686,13 @@ class SfButton extends ButtonElement {
     // A child parsed after connectedCallback is still the label.
     this.captureTextChildren?.();
     const props = this.getPropsContext();
+    const cycle = this.cycleState();
+    if (cycle) (0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_6__.warnCycleToggle)(this, ["pressed", "text-pressed"]);
+    const announce = Boolean(cycle && this.__sfCycleAnnounce);
+    this.__sfCycleAnnounce = false; // A cycle with an icon shows the item's icon in place of the start icon;
+    // one without shows the item's label as its text.
+
+    const cycleIcon = cycle?.item.icon || "";
     return this.createTemplateContext({ ...props,
       // Through the getter: the props context knows only the text attribute,
       // and a button whose label is a text child has none.
@@ -663,17 +711,30 @@ class SfButton extends ButtonElement {
       // name and value it submits under.
       formId: this.getAttribute("form") || "",
       submitName: this.getAttribute("name") || "",
-      submitValue: this.getAttribute("value") ?? "",
+      submitValue: cycle && !cycle.theme ? cycle.item.value : this.getAttribute("value") ?? "",
       href: linkAddress(this.getAttribute("href")),
       // Where the link opens and its relation (1.7.0, Larena after sf-wizard):
       // a new tab with no rel is noopener noreferrer.
       linkTarget: this.getAttribute("target") || "",
       linkRel: linkRelation(this.getAttribute("target"), this.getAttribute("rel")),
       radius: this.radius,
-      ariaLabel: this.getAttribute("aria-label") || "",
+      // A cycle's name says its current value; without an aria-label the
+      // shown label is the name.
+      ariaLabel: cycle ? this.getAttribute("aria-label") || cycleIcon && !this.text ? cycle.name : "" : this.getAttribute("aria-label") || "",
       expanded: this.expanded,
-      pressed: this.pressed,
-      textPressed: this.textPressed,
+      pressed: cycle ? undefined : this.pressed,
+      textPressed: cycle ? "" : this.textPressed,
+      // The cycle's item: its icon in place of the start icon, or, without
+      // one, its label in place of the text.
+      // cycleView, not cycle: `cycle` is the setting (the list of items).
+      cycleView: cycle ? {
+        icon: cycleIcon,
+        label: cycleIcon ? '' : cycle.item.label,
+        pressedLook: cycle.item.pressed,
+        name: cycle.name,
+        tooltip: cycle.tooltip,
+        announcement: announce ? cycle.name : ""
+      } : null,
       // The shortcut's key caps and its aria-keyshortcuts, in this platform's
       // words (component/kbd/js/shortcut.js).
       shortcutCaps: (0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_5__.shortcutCaps)((0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_5__.parseShortcut)(this.shortcut)),
@@ -706,6 +767,14 @@ class SfButton extends ButtonElement {
     }
 
     this.syncShortcutListener();
+
+    if (!this._cycleTheme) {
+      // A theme cycle follows the theme wherever it was set.
+      this._cycleTheme = () => (0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_6__.themeCycleFollow)(this);
+
+      globalThis.addEventListener?.("sf-theme-change", this._cycleTheme);
+    }
+
     super.onConnected?.();
   }
 
@@ -756,12 +825,17 @@ class SfButton extends ButtonElement {
     if (!button || !(event.target instanceof Node) || !button.contains(event.target)) return; // A link that is off (href, disabled or loading: 1.4.0) is not pressed either.
 
     if (button.disabled || button.getAttribute("aria-disabled") === "true") return;
-    this.sfEmit("press", {});
+    this.sfEmit("press", {}); // A cycle moves to its next value after the press (D11d).
+
+    (0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_6__.pressCycle)(this, this.cycleState());
   }
 
   afterRender() {
     const button = this.querySelector(".sf-button");
-    applyButtonAttributes(this, button);
+    applyButtonAttributes(this, button); // The cycle's tooltip names the current and the next value.
+
+    const cycle = this.cycleState();
+    if (button && cycle) button.setAttribute("title", cycle.tooltip);
 
     if (!this._attributeObserver) {
       this._attributeObserver = this.observeForwardedHostAttributes(() => this.querySelector(".sf-button"), {
@@ -891,6 +965,11 @@ class SfButton extends ButtonElement {
       this._shortcutListener = null;
     }
 
+    if (this._cycleTheme) {
+      globalThis.removeEventListener?.("sf-theme-change", this._cycleTheme);
+      this._cycleTheme = null;
+    }
+
     this.disconnectForwardedHostAttributes();
     this._attributeObserver = null;
     super.onDisconnected?.();
@@ -944,10 +1023,10 @@ function renderButtonTemplate(context) {
   } = context;
   const normalizedIconPosition = String(iconPosition || 'start').toLowerCase();
   const isIconEnd = ['right', 'end'].includes(normalizedIconPosition);
-  const leftIconName = context.iconStart ?? (iconLeft || (icon && !isIconEnd ? icon : ''));
+  const leftIconName = context.cycleView?.icon || (context.iconStart ?? (iconLeft || (icon && !isIconEnd ? icon : '')));
   const rightIconName = context.iconEnd ?? (iconRight || (icon && isIconEnd ? icon : ''));
   const component = context.component;
-  const leftIconContent = component?.hasSlotContent?.('icon-start') ? component.getSlotContent('icon-start') : component?.hasSlotContent?.('icon-left') ? component.getSlotContent('icon-left') : component.createIcon(leftIconName, context.pressed === true);
+  const leftIconContent = component?.hasSlotContent?.('icon-start') ? component.getSlotContent('icon-start') : component?.hasSlotContent?.('icon-left') ? component.getSlotContent('icon-left') : component.createIcon(leftIconName, context.pressed === true || Boolean(context.cycleView?.pressedLook));
   const rightIconContent = component?.hasSlotContent?.('icon-end') ? component.getSlotContent('icon-end') : component?.hasSlotContent?.('icon-right') ? component.getSlotContent('icon-right') : component.createIcon(rightIconName, context.pressed === true); // A toggle whose label changes (text-pressed, 1.6.0): «В избранное» at rest,
   // «В избранном» while on. The label then says the state, so aria-pressed
   // is not written as well (docs review R028, rule C12): a screen reader
@@ -955,7 +1034,7 @@ function renderButtonTemplate(context) {
 
   const pressedLabel = context.pressed === true && context.textPressed ? context.textPressed : '';
   const announcesPressed = context.pressed !== undefined && !context.textPressed;
-  const textContent = component?.hasSlotContent?.('text') ? component.getSlotContent('text') : pressedLabel || text; // The shortcut's keys sit at the end; the label then takes the free room,
+  const textContent = component?.hasSlotContent?.('text') ? component.getSlotContent('text') : context.cycleView?.label || pressedLabel || text; // The shortcut's keys sit at the end; the label then takes the free room,
   // so a stretched button reads label ... keys and text-position places it.
   // The keys are the kbd component's (soft caps inside a button); the
   // wrapper only gives them the label's ink.
@@ -979,17 +1058,21 @@ function renderButtonTemplate(context) {
     if (leftIconContent) startContent = spinner(false);else if (rightIconContent) endContent = spinner(false);else overlayContent = spinner(true);
   }
 
-  const rootClasses = ['sf-button', `sf-button--size-${size}`, `sf-button--${appearance || type}`, // One colour name, as the styles expect: the status when one is set, the
+  const rootClasses = ['sf-button', `sf-button--size-${size}`, // ghost (C15) is drawn by the link class, the one the sheets and
+  // their consumers select; href, not the look, makes a link.
+  `sf-button--${(appearance || type) === 'ghost' ? 'link' : appearance || type}`, // One colour name, as the styles expect: the status when one is set, the
   // scheme otherwise. A status says what the control is about -- an error
   // for something destructive -- and a scheme says which colour family it
   // takes; they cannot both paint it.
-  `sf-button--${status || scheme}`, // on-surface-variant is the on-surface family one step quieter: both
+  // danger (C13) is drawn with the error roles: the danger class and the
+  // error one the sheets and their consumers also select.
+  ...(status === 'danger' || status === 'error' ? ['sf-button--danger', 'sf-button--error'] : [`sf-button--${scheme}`]), // on-surface-variant is the on-surface family one step quieter: both
   // classes, so every on-surface rule holds and one rule quietens it.
   !status && scheme === 'on-surface-variant' ? 'sf-button--on-surface' : '', 'flex', 'items-cross-center', segment ? `segment-${segment}` : '', // The spacing class, not its retired tightness name (journal
   // class-tightness-to-spacing; docs trial 4).
   spacing && spacing !== 'normal' ? `spacing-${spacing}` : '', radius ? `radius-${radius}` : '', rootClass, loading ? 'loading sf-button-state-loading' : '', // A toggle that is on wears the pressed look (component.buttons 1.5.0,
   // rule C12): the class carries it whether or not aria-pressed is said.
-  context.pressed ? 'sf-button--pressed' : ''].filter(Boolean);
+  context.pressed || context.cycleView?.pressedLook ? 'sf-button--pressed' : ''].filter(Boolean);
   const content = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
             ${overlayContent}
             ${startContent}
@@ -1036,11 +1119,304 @@ function renderButtonTemplate(context) {
                 aria-expanded=${context.expanded === undefined ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : String(Boolean(context.expanded))}
                 aria-pressed=${announcesPressed ? String(Boolean(context.pressed)) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 aria-keyshortcuts=${context.ariaKeyShortcuts || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-        >${content}</button>
+        >${content}</button>${context.cycleView ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-button-announce sr-only" role="status" aria-live="polite" aria-atomic="true">${context.cycleView.announcement}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     `;
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "64feefebb417"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   THEME_ICONS: () => (/* binding */ THEME_ICONS),
+/* harmony export */   cycleItems: () => (/* binding */ cycleItems),
+/* harmony export */   cycleState: () => (/* binding */ cycleState),
+/* harmony export */   hasCycle: () => (/* binding */ hasCycle),
+/* harmony export */   nextTheme: () => (/* binding */ nextTheme),
+/* harmony export */   parseCycle: () => (/* binding */ parseCycle),
+/* harmony export */   pressCycle: () => (/* binding */ pressCycle),
+/* harmony export */   themeCycleFollow: () => (/* binding */ themeCycleFollow),
+/* harmony export */   themeCycleValues: () => (/* binding */ themeCycleValues),
+/* harmony export */   themePreference: () => (/* binding */ themePreference),
+/* harmony export */   visibleTheme: () => (/* binding */ visibleTheme),
+/* harmony export */   warnCycleToggle: () => (/* binding */ warnCycleToggle)
+/* harmony export */ });
+// One button, several values (docs review R039, owner decision D11d;
+// research ui-control control/research/2026-11-08-cycle-button.md).
+//
+// sf-button and sf-button-icon share this: the `cycle` setting is a list of
+// items shaped like sf-segmented's items ({value, label, icon} and an
+// optional `pressed`, which draws the item with the pressed look), `value`
+// is the current item, and a press moves to the next item and wraps. The
+// `theme-cycle` setting draws a ready theme switch over SF.Loader's theme
+// (the same contract as sf-segmented's theme-switch: themePreference,
+// setTheme, sf-theme-change).
+//
+// The name and the icon say the current value («Тема: тёмная»), the tooltip
+// says the current and the next («Тема: тёмная. Нажмите — как в системе»),
+// and a polite live region says the new value after a press. A cycle is a
+// plain button: it carries no aria-pressed, so pressed, label-pressed and
+// text-pressed are ignored beside it (with one console warning).
+const THEME_VALUES = ['system', 'light', 'dark']; // «Как в системе» in a cycle is the half-dark, half-light circle (D11d): a
+// monitor alone does not say a theme.
+
+const THEME_ICONS = Object.freeze({
+  system: 'contrast',
+  light: 'light_mode',
+  dark: 'dark_mode'
+});
+
+function parseList(source) {
+  if (Array.isArray(source)) return source;
+  const text = String(source ?? '').trim();
+  if (!text) return [];
+
+  if (text.startsWith('[')) {
+    try {
+      const parsed = JSON.parse(text);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  } // value::label::flags|… as sf-segmented's items take it; a flag icon=<name>
+  // names the icon, pressed draws the pressed look.
+
+
+  return text.split('|').map(entry => {
+    const [value, label = value, flags = ''] = entry.split('::');
+    const list = flags.split(',').map(flag => flag.trim()).filter(Boolean);
+    const icon = list.find(flag => flag.startsWith('icon='));
+    return {
+      value: value.trim(),
+      label: label.trim(),
+      icon: icon ? icon.slice(5) : '',
+      pressed: list.includes('pressed')
+    };
+  });
+}
+/** The cycle's items, normalised: a value each, once, in the given order. */
+
+/** Reads the attribute's JSON or value::label::flags form; a list stays a list. */
+
+
+function parseCycle(value) {
+  return parseList(value);
+}
+function cycleItems(source) {
+  const seen = new Set();
+  return parseList(source).map((item, index) => {
+    const one = typeof item === 'string' ? {
+      value: item,
+      label: item
+    } : item;
+    if (!one || typeof one !== 'object') return null;
+    const value = String(one.value ?? one.id ?? index).trim();
+    if (!value || seen.has(value)) return null;
+    seen.add(value);
+    return {
+      value,
+      label: String(one.label ?? one.text ?? value),
+      icon: String(one.icon || ''),
+      lang: String(one.lang || '').trim(),
+      pressed: Boolean(one.pressed)
+    };
+  }).filter(Boolean);
+}
+/** The themes a theme-cycle offers: all three, or the two it names. */
+
+function themeCycleValues(attribute) {
+  const named = String(attribute ?? '').trim().toLowerCase().split(/[\s,]+/u).map(word => word === 'auto' ? 'system' : word).filter(word => THEME_VALUES.includes(word));
+  const unique = [...new Set(named)]; // Two themes without «as the system» flip the visible theme; anything else
+  // (empty, one word, all three) is the full cycle.
+
+  if (unique.length === 2 && !unique.includes('system')) return ['light', 'dark'];
+  return THEME_VALUES;
+}
+
+const opposite = theme => theme === 'dark' ? 'light' : 'dark';
+
+function loader() {
+  return globalThis.SF?.Loader;
+}
+/** The theme drawn now (light or dark), whatever the preference. */
+
+
+function visibleTheme() {
+  const theme = loader()?.theme;
+  if (theme === 'dark' || theme === 'light') return theme;
+  const root = globalThis.document?.documentElement;
+  if (root?.classList?.contains('theme-dark')) return 'dark';
+  if (root?.classList?.contains('theme-light')) return 'light';
+  return globalThis.matchMedia?.('(prefers-color-scheme: dark)')?.matches ? 'dark' : 'light';
+}
+/** What the person chose: system, light or dark. */
+
+function themePreference() {
+  const preference = loader()?.themePreference;
+  return THEME_VALUES.includes(preference) ? preference : 'system';
+}
+/**
+ * The owner's order (D11d): first the theme opposite to the visible one,
+ * then the other, then «as the system». It needs the value before the
+ * current one: from an explicit theme reached from the other explicit theme
+ * the next is system; from system, or from a theme the page loaded with, the
+ * opposite theme. Two themes: always the opposite of the visible theme.
+ */
+
+function nextTheme({
+  values,
+  current,
+  previous
+}) {
+  if (!values.includes('system')) return opposite(visibleTheme());
+  if (current === 'system') return opposite(visibleTheme());
+  if (previous && previous !== 'system' && previous === opposite(current)) return 'system';
+  return opposite(current);
+}
+/**
+ * The cycle state the template reads: {items, item, next, index, name,
+ * tooltip}. `words(key, vars)` gives the element's words; `base` is the
+ * button's own name (aria-label, or the text of an sf-button).
+ */
+
+function hasCycle(host) {
+  if (host.hasAttribute('theme-cycle')) return true;
+  const own = host.getProp?.('cycle');
+  return Boolean(host.hasAttribute('cycle') || Array.isArray(own) && own.length);
+}
+function cycleState(host, {
+  base = '',
+  words
+}) {
+  if (host.hasAttribute('theme-cycle')) {
+    const values = themeCycleValues(host.getAttribute('theme-cycle'));
+    const two = !values.includes('system');
+    const current = two ? visibleTheme() : themePreference();
+
+    const label = value => words(`theme-${value}`);
+
+    const items = values.map(value => ({
+      value,
+      label: label(value),
+      icon: THEME_ICONS[value],
+      lang: '',
+      pressed: false
+    }));
+    const item = items.find(one => one.value === current) ?? items[0];
+    const nextValue = nextTheme({
+      values,
+      current: item.value,
+      previous: host.__sfCyclePrevious
+    });
+    const next = items.find(one => one.value === nextValue) ?? items[0];
+    const title = base || words('theme');
+    const now = item.value === 'system' ? words('theme-system-now', {
+      vars: {
+        theme: label(visibleTheme())
+      }
+    }) : item.label;
+    const name = `${title}: ${now}`;
+    return {
+      theme: true,
+      items,
+      item,
+      next,
+      name,
+      tooltip: words('cycle-next', {
+        vars: {
+          name,
+          next: next.label
+        }
+      })
+    };
+  }
+
+  const items = cycleItems(host.getProp?.('cycle') ?? host.getAttribute('cycle'));
+  if (!items.length) return null;
+  const at = Math.max(0, items.findIndex(one => one.value === (host.getAttribute('value') ?? '')));
+  const item = items[at];
+  const next = items[(at + 1) % items.length];
+  const name = base ? `${base}: ${item.label}` : item.label;
+  return {
+    theme: false,
+    items,
+    item,
+    next,
+    name,
+    tooltip: words('cycle-next', {
+      vars: {
+        name,
+        next: next.label
+      }
+    })
+  };
+}
+/** A cycle beside a toggle's settings: the toggle's are ignored, said once. */
+
+function warnCycleToggle(host, names) {
+  const given = names.filter(name => host.hasAttribute(name));
+  if (!given.length || host.__sfCycleWarned) return;
+  host.__sfCycleWarned = true;
+  globalThis.console?.warn?.(`[SIMAI Framework] ${host.localName}: cycle and theme-cycle are not toggles; ${given.join(', ')} ignored.`);
+}
+/**
+ * A person's press of a cycle: the next value, the change event and the
+ * announcement. Answers true when it moved.
+ */
+
+function pressCycle(host, state) {
+  if (!state) return false;
+  const previous = state.item.value;
+  const value = state.next.value; // Said after the drawing that follows: the flag first, as the drawing may
+  // come at once.
+
+  const before = host.__sfCyclePrevious;
+  host.__sfCycleAnnounce = true;
+  host.__sfCyclePrevious = previous;
+
+  if (state.theme) {
+    // The Loader moves the page first, so a listener of change finds the
+    // page in the theme it chose; a Loader that cannot (absent, or the
+    // theme switched off) leaves the cycle where it is.
+    host.__sfCycleExpect = value;
+
+    if (loader()?.setTheme?.(value) !== true) {
+      host.__sfCycleAnnounce = false;
+      host.__sfCyclePrevious = before;
+      host.__sfCycleExpect = undefined;
+      return false;
+    }
+  } else {
+    host.setAttribute('value', value);
+  }
+
+  host.requestComponentUpdate?.('value');
+  const item = state.items.find(one => one.value === value) ?? null;
+  host.sfEmit('change', {
+    previous,
+    value,
+    item: item ? { ...item
+    } : null
+  });
+  return true;
+}
+/**
+ * sf-theme-change for a theme cycle: a theme set elsewhere (another switch,
+ * SF.Loader.setTheme) starts the order afresh from what is shown.
+ */
+
+function themeCycleFollow(host) {
+  if (!host.hasAttribute('theme-cycle')) return;
+  const values = themeCycleValues(host.getAttribute('theme-cycle'));
+  const now = values.includes('system') ? themePreference() : visibleTheme();
+  if (host.__sfCycleExpect !== now) host.__sfCyclePrevious = undefined;
+  host.__sfCycleExpect = undefined;
+  host.requestComponentUpdate?.('theme-cycle');
+}
 
 /***/ },
 
@@ -1075,28 +1451,28 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "902a6f38915d"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-button for the shim (stands/18-aliases-ci/alias.mjs, standard §16 item 20). mode: same-detail (the shim sends the new and the old name), split / detail-adds (a detail adapter, refused by the shim), attribute-and-property, method, property, manifest-only (the DOM name does not change), host-attribute (no shim), retired.","component":"sf-button","since":"2026-10-27","remove_after":"2026-12-01","aliases":[{"from":"aria-label","to":null,"kind":"attribute","component":"sf-button","since":"2026-10-27","remove_after":"2026-12-01","mode":"host-attribute","section":"§3.1","note":"stays a host attribute, read by the base (§3.1, §4.8); no shim"},{"from":"type","to":"appearance","kind":"setting","component":"sf-button","since":"2026-10-27","remove_after":"2026-12-01","section":"§16 item 20, contracts/public-api-axes.json","note":"the legacy axis name; the shim maps the attribute and the property"},{"from":"icon-left","to":"icon-start","kind":"setting","component":"sf-button","since":"2026-10-27","remove_after":"2026-12-01","section":"§16 item 20","note":"journal attribute-icon-left-right-to-start-end; icon-start wins when both are given"},{"from":"icon-right","to":"icon-end","kind":"setting","component":"sf-button","since":"2026-10-27","remove_after":"2026-12-01","section":"§16 item 20","note":"journal attribute-icon-left-right-to-start-end; icon-end wins when both are given"},{"from":"tightness","to":"spacing","kind":"setting","component":"sf-button","since":"2026-10-27","remove_after":"2026-12-01","section":"§16 item 20","note":"journal attribute-tightness-to-spacing; its words are spacing\'s value aliases below, spacing wins when both are given"},{"from":"ghost","to":"link","kind":"value","setting":"appearance","component":"sf-button","since":"2026-10-27","remove_after":"2026-12-01","section":"§16 item 20","note":"journal value-button-ghost-to-link"},{"from":"danger","to":"error","kind":"value","setting":"status","component":"sf-button","since":"2026-10-27","remove_after":"2026-12-01","section":"§16 item 20","note":"journal value-status-danger-critical-to-error"},{"from":"critical","to":"error","kind":"value","setting":"status","component":"sf-button","since":"2026-10-27","remove_after":"2026-12-01","section":"§16 item 20","note":"journal value-status-danger-critical-to-error"},{"from":"low","to":"compact","kind":"value","setting":"spacing","component":"sf-button","since":"2026-10-27","remove_after":"2026-12-01","section":"§16 item 20","note":"tightness\'s word, journal attribute-tightness-to-spacing"},{"from":"high","to":"comfortable","kind":"value","setting":"spacing","component":"sf-button","since":"2026-10-27","remove_after":"2026-12-01","section":"§16 item 20","note":"tightness\'s word, journal attribute-tightness-to-spacing"},{"from":"highest","to":"spacious","kind":"value","setting":"spacing","component":"sf-button","since":"2026-10-27","remove_after":"2026-12-01","section":"§16 item 20","note":"tightness\'s word, journal attribute-tightness-to-spacing"},{"from":"left","to":"start","kind":"value","setting":"icon-position","component":"sf-button","since":"2026-10-27","remove_after":"2026-12-01","section":"§16 item 20","note":"the physical name the template read as start"},{"from":"right","to":"end","kind":"value","setting":"icon-position","component":"sf-button","since":"2026-10-27","remove_after":"2026-12-01","section":"§16 item 20","note":"the physical name the template read as end"}]}');
+module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-button for the shim (stands/18-aliases-ci/alias.mjs, standard §16 item 20). mode: same-detail (the shim sends the new and the old name), split / detail-adds (a detail adapter, refused by the shim), attribute-and-property, method, property, manifest-only (the DOM name does not change), host-attribute (no shim), retired.","component":"sf-button","since":"2026-10-27","remove_after":"2026-12-01","aliases":[{"from":"aria-label","to":null,"kind":"attribute","component":"sf-button","since":"2026-10-27","remove_after":"2026-12-01","mode":"host-attribute","section":"§3.1","note":"stays a host attribute, read by the base (§3.1, §4.8); no shim"},{"from":"type","to":"appearance","kind":"setting","component":"sf-button","since":"2026-10-27","remove_after":"2026-12-01","section":"§16 item 20, contracts/public-api-axes.json","note":"the legacy axis name; the shim maps the attribute and the property"},{"from":"icon-left","to":"icon-start","kind":"setting","component":"sf-button","since":"2026-10-27","remove_after":"2026-12-01","section":"§16 item 20","note":"journal attribute-icon-left-right-to-start-end; icon-start wins when both are given"},{"from":"icon-right","to":"icon-end","kind":"setting","component":"sf-button","since":"2026-10-27","remove_after":"2026-12-01","section":"§16 item 20","note":"journal attribute-icon-left-right-to-start-end; icon-end wins when both are given"},{"from":"tightness","to":"spacing","kind":"setting","component":"sf-button","since":"2026-10-27","remove_after":"2026-12-01","section":"§16 item 20","note":"journal attribute-tightness-to-spacing; its words are spacing\'s value aliases below, spacing wins when both are given"},{"from":"link","to":"ghost","kind":"value","setting":"appearance","component":"sf-button","since":"2026-11-08","remove_after":"2027-01-01","section":"§16 item 20","note":"journal value-button-link-to-ghost (rule C15): ghost is the name, link its former one; the earlier ghost-to-link record stays in the journal"},{"from":"error","to":"danger","kind":"value","setting":"status","component":"sf-button","since":"2026-11-08","remove_after":"2027-01-01","section":"§16 item 20","note":"journal value-control-status-error-to-danger (rule C13): a control\'s destructive status is danger; messages keep error"},{"from":"critical","to":"danger","kind":"value","setting":"status","component":"sf-button","since":"2026-10-27","remove_after":"2026-12-01","section":"§16 item 20","note":"journal value-control-status-error-to-danger (rule C13); critical was an older word for the same"},{"from":"low","to":"compact","kind":"value","setting":"spacing","component":"sf-button","since":"2026-10-27","remove_after":"2026-12-01","section":"§16 item 20","note":"tightness\'s word, journal attribute-tightness-to-spacing"},{"from":"high","to":"comfortable","kind":"value","setting":"spacing","component":"sf-button","since":"2026-10-27","remove_after":"2026-12-01","section":"§16 item 20","note":"tightness\'s word, journal attribute-tightness-to-spacing"},{"from":"highest","to":"spacious","kind":"value","setting":"spacing","component":"sf-button","since":"2026-10-27","remove_after":"2026-12-01","section":"§16 item 20","note":"tightness\'s word, journal attribute-tightness-to-spacing"},{"from":"left","to":"start","kind":"value","setting":"icon-position","component":"sf-button","since":"2026-10-27","remove_after":"2026-12-01","section":"§16 item 20","note":"the physical name the template read as start"},{"from":"right","to":"end","kind":"value","setting":"icon-position","component":"sf-button","since":"2026-10-27","remove_after":"2026-12-01","section":"§16 item 20","note":"the physical name the template read as end"}]}');
 
 /***/ },
 
 /***/ "5bb33fb22db3"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button","tag":"sf-button","version":"1.8.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"appearance":{"type":"enum","values":["default","tonal","outline","link","surface"],"default":"default"},"scheme":{"type":"enum","values":["primary","secondary","on-surface","on-surface-variant"],"default":"primary"},"status":{"type":"enum","values":["","error"],"default":""},"text-position":{"type":"string","default":"center"},"text":{"type":"string","default":""},"segment":{"type":"string","default":""},"icon":{"type":"icon","default":""},"icon-start":{"type":"icon","default":""},"icon-end":{"type":"icon","default":""},"icon-position":{"type":"enum","values":["start","end"],"default":"start"},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"loading":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"native-type":{"type":"enum","values":["button","submit","reset"],"default":"button"},"form":{"type":"string","default":""},"name":{"type":"string","default":""},"value":{"type":"string","default":""},"href":{"type":"string","default":""},"target":{"type":"string","default":""},"rel":{"type":"string","default":""},"shortcut":{"type":"string","default":""},"shortcut-listen":{"type":"boolean","default":false},"expanded":{"type":"boolean","optional":true},"pressed":{"type":"boolean","optional":true},"text-pressed":{"type":"string","default":""}},"values":{},"events":{"press":{"carries":{}}},"actions":{},"css-variables":{"--sf-button-background-color":{"type":"color","state":"default"},"--sf-button-color":{"type":"color","state":"default"},"--sf-button-border-color":{"type":"color","state":"default"},"--sf-button-border-width":{"type":"length","state":"default"},"--sf-button-radius":{"type":"length","state":"default"},"--sf-button-padding-inline":{"type":"length","state":"default"},"--sf-button-padding-block":{"type":"length","state":"default"},"--sf-button-pressed-background-color":{"type":"color","state":"pressed"},"--sf-button-pressed-color":{"type":"color","state":"pressed"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button","tag":"sf-button","version":"1.9.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"appearance":{"type":"enum","values":["default","tonal","outline","ghost","surface"],"default":"default"},"scheme":{"type":"enum","values":["primary","secondary","on-surface","on-surface-variant"],"default":"primary"},"status":{"type":"enum","values":["","danger"],"default":""},"text-position":{"type":"string","default":"center"},"text":{"type":"string","default":""},"segment":{"type":"string","default":""},"icon":{"type":"icon","default":""},"icon-start":{"type":"icon","default":""},"icon-end":{"type":"icon","default":""},"icon-position":{"type":"enum","values":["start","end"],"default":"start"},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"loading":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"native-type":{"type":"enum","values":["button","submit","reset"],"default":"button"},"form":{"type":"string","default":""},"name":{"type":"string","default":""},"value":{"type":"string","default":""},"href":{"type":"string","default":""},"target":{"type":"string","default":""},"rel":{"type":"string","default":""},"shortcut":{"type":"string","default":""},"shortcut-listen":{"type":"boolean","default":false},"expanded":{"type":"boolean","optional":true},"pressed":{"type":"boolean","optional":true},"text-pressed":{"type":"string","default":""},"cycle":{"type":"list","default":[],"of":{"value":"string","label":"string","icon":{"type":"icon","optional":true},"lang":{"type":"string","optional":true},"pressed":{"type":"boolean","optional":true}}},"theme-cycle":{"type":"string","optional":true}},"values":{},"events":{"press":{"carries":{}},"change":{"carries":{"previous":"string","value":"string","item":{"type":"object","nullable":true}}}},"actions":{},"css-variables":{"--sf-button-background-color":{"type":"color","state":"default"},"--sf-button-color":{"type":"color","state":"default"},"--sf-button-border-color":{"type":"color","state":"default"},"--sf-button-border-width":{"type":"length","state":"default"},"--sf-button-radius":{"type":"length","state":"default"},"--sf-button-padding-inline":{"type":"length","state":"default"},"--sf-button-padding-block":{"type":"length","state":"default"},"--sf-button-pressed-background-color":{"type":"color","state":"pressed"},"--sf-button-pressed-color":{"type":"color","state":"pressed"}}}');
 
 /***/ },
 
 /***/ "d7b6a56d1dd6"
 (module) {
 
-module.exports = {"title":"Buttons"};
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Buttons","runtime":{"theme":"Theme","theme-system":"system","theme-light":"light","theme-dark":"dark","theme-system-now":"system (now {theme})","cycle-next":"{name}. Press for {next}"}}');
 
 /***/ },
 
 /***/ "96bdb2ff5f5d"
 (module) {
 
-module.exports = {"title":"Кнопки"};
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Кнопки","runtime":{"theme":"Тема","theme-system":"как в системе","theme-light":"светлая","theme-dark":"тёмная","theme-system-now":"как в системе (сейчас {theme})","cycle-next":"{name}. Нажмите — {next}"}}');
 
 /***/ }
 

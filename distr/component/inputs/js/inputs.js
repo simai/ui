@@ -114,8 +114,10 @@ function syncFieldContract(root, control, {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   FIELD_SIZES: () => (/* binding */ FIELD_SIZES),
+/* harmony export */   INPUT_SIZES: () => (/* binding */ INPUT_SIZES),
 /* harmony export */   RETIRED_FIELD_SIZES: () => (/* binding */ RETIRED_FIELD_SIZES),
 /* harmony export */   fieldSize: () => (/* binding */ fieldSize),
+/* harmony export */   inputSize: () => (/* binding */ inputSize),
 /* harmony export */   nearestFieldSize: () => (/* binding */ nearestFieldSize),
 /* harmony export */   retireFieldSizeClass: () => (/* binding */ retireFieldSizeClass)
 /* harmony export */ });
@@ -162,6 +164,15 @@ function fieldSize(value, component = 'field', fallback = '1') {
   }
 
   return fallback;
+} // A text field keeps the ladder's outer steps (actions block item 4,
+// 2026-11-08): a plain sf-input holds no pictures or tags, and a toolbar
+// search or a hero search stands beside buttons of 1/3 and 3. Every other
+// field keeps the three sizes.
+
+const INPUT_SIZES = Object.freeze(['1/3', ...FIELD_SIZES, '3']);
+function inputSize(value, fallback = '1') {
+  const size = String(value ?? '').trim().toLowerCase();
+  return INPUT_SIZES.includes(size) ? size : fieldSize(size, 'sf-input', fallback);
 } // Markup written by hand carries its size as a class, so the binder moves a
 // retired size class to the kept one before anything measures the field.
 
@@ -370,7 +381,7 @@ async function bindMask(root, input) {
 }
 
 function bindInput(root) {
-  (0,_field_size__WEBPACK_IMPORTED_MODULE_4__.retireFieldSizeClass)(root, 'sf-input');
+  // sf-input keeps 1/3 and 3 (field-size.js inputSize): no class to move.
   if (!root || root.dataset[INPUT_BOUND_FLAG] === '1') return;
   const input = getInputNode(root);
   if (!input) return; // Placeholder for shared behaviors (masking/validation hooks).
@@ -533,7 +544,7 @@ class Inputs extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Com
       maskOptions = ''
     } = this.params || {};
     const className = this.attrs.class || this.attrs.className;
-    const normalizedSize = (0,_field_size__WEBPACK_IMPORTED_MODULE_4__.fieldSize)(size, 'sf-input');
+    const normalizedSize = (0,_field_size__WEBPACK_IMPORTED_MODULE_4__.inputSize)(size);
     const normalizedVariant = boundedValue(type, INPUT_VARIANTS, 'bordered');
     this.template = document.createElement('label');
     if (this.id) this.template.id = this.id;

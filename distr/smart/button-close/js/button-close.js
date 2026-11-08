@@ -25,10 +25,18 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
  // sf-button-close from its component.json (standard simai.smart-component 1.3.8 §3,
-// §4): the decorative cross of a close action. `size` is the attribute and
-// property core/js/element-manifest.js makes from the manifest; a value outside
-// the ladder reads as the default 1/3. The glyph is aria-hidden: the native
-// button it stands in owns the name, focus and the action.
+// §4): the close button of the SIMAI Framework (owner decision C14, 1.2.0). The
+// settings are the attributes and properties core/js/element-manifest.js makes
+// from the manifest; a value outside an enum reads as its default.
+//
+// Standalone, the element draws a native <button type="button"> in the icon
+// button's box with the cross inside: it takes focus, Enter and Space press
+// it, and the page listens to its click. Its name is the host's aria-label,
+// else the runtime word close («Закрыть»).
+//
+// Inside a containing button -- sf-button-icon kind="close", a page's own
+// .sf-icon-button -- it stays the decorative cross of 1.1.x: aria-hidden, never
+// focusable; the containing button owns the name and the action.
 
 const CloseElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_3__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
@@ -38,20 +46,46 @@ const CloseElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.e
   },
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_4__
-});
+}); // A containing button: a native one, a role="button", or the icon button's
+// box that a page writes as plain markup.
+
+const CONTAINER = 'button, [role="button"], .sf-icon-button';
 
 class SfClose extends CloseElement {
+  // aria-label is the host's (§3.1), not a setting; it is watched so a name
+  // changed after the first drawing reaches the button.
+  static get observedAttributes() {
+    return [...new Set([...super.observedAttributes, 'aria-label'])];
+  }
+
+  get isGlyph() {
+    return Boolean(this.parentElement?.closest?.(CONTAINER));
+  }
+
   templateContext() {
     const props = this.getPropsContext();
     return this.createTemplateContext({ ...props,
       component: this,
+      glyph: this.isGlyph,
       size: this.size,
+      appearance: this.appearance,
+      scheme: this.scheme,
+      radius: this.radius,
+      backdrop: this.backdrop,
+      disabled: this.disabled,
+      label: this.getAttribute('aria-label') || this.sfWord('close'),
       rootClass: this.getRootClass()
     });
   }
 
   template() {
     return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_2__.renderCloseTemplate)(this.templateContext());
+  }
+
+  focus(options) {
+    const button = this.querySelector(':scope > button.sf-button-close');
+    if (button) button.focus(options);
+    return this;
   }
 
 }
@@ -68,20 +102,56 @@ __webpack_async_result__();
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   buttonSize: () => (/* binding */ buttonSize),
 /* harmony export */   renderCloseTemplate: () => (/* binding */ renderCloseTemplate)
 /* harmony export */ });
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
+/* harmony import */ var _default_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("2b70c9e3b752");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__]);
 var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
 
+ // The control ladder of the box (the icon button's sizes). A glyph-only size
+// draws a button at the nearest ladder step: 1/4 at 1/3, 4-7 at 3.
+
+const LADDER = new Set(['1/3', '1/2', '1', '2', '3']);
+function buttonSize(size) {
+  if (LADDER.has(size)) return size;
+  return size === '1/4' ? '1/3' : '3';
+}
+
+function renderCross(size, rootClass, rootStyle) {
+  const classes = ['sf-close', `sf-close--size-${size || '1/3'}`, 'flex', 'justify-center', 'items-center', rootClass].filter(Boolean).join(' ');
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="${classes}" style=${rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} aria-hidden="true"><span class="sf-close-icon"></span></span>`;
+} // The close button (owner decision C14): a native button in the icon button's
+// box, the cross inside it. Inside a containing button (context.glyph) the
+// element draws only the decorative cross, as it did before 1.2.0.
+
+
 function renderCloseTemplate(context) {
-  const classes = ['sf-close', `sf-close--size-${context.size || '1/3'}`, 'flex', 'justify-center', 'items-center', context.rootClass].filter(Boolean).join(' ');
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="${classes}" style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} aria-hidden="true"><span class="sf-close-icon"></span></span>`;
+  if (context.glyph) return renderCross(context.size, context.rootClass, context.rootStyle);
+  const size = buttonSize(context.size || '1/3');
+  const classes = ['sf-icon-button', `sf-icon-button--size-${size}`, 'sf-icon-button--close', 'sf-button-close', `sf-button-close--${context.appearance || 'ghost'}`, `sf-button-close--${context.scheme || 'on-surface'}`, context.backdrop === 'color' ? 'sf-button-close--backdrop-color' : '', context.radius === 'rounded' ? 'sf-button-close--radius-rounded' : '', 'flex', 'items-cross-center', context.rootClass].filter(Boolean).join(' ');
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<button
+    type="button"
+    class=${classes}
+    style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    aria-label=${context.label}
+    ?disabled=${context.disabled}
+  >${renderCross(size, 'pointer-event-none', '')}</button>`;
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "2b70c9e3b752"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
 
 /***/ },
 
@@ -116,21 +186,21 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-butto
 /***/ "02dfc60c5026"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button-close","tag":"sf-button-close","version":"1.1.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/4","1/3","1/2","1","2","3","4","5","6","7"],"default":"1/3"}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-close-color":{"type":"color","state":"default"},"--sf-close-background-color":{"type":"color","state":"default"},"--sf-close-glyph-size":{"type":"length","state":"default"},"--sf-close-padding-inline":{"type":"length","state":"default"},"--sf-close-padding-block":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button-close","tag":"sf-button-close","version":"1.2.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/4","1/3","1/2","1","2","3","4","5","6","7"],"default":"1/3"},"appearance":{"type":"enum","values":["ghost","plain","media"],"default":"ghost"},"radius":{"type":"enum","values":["default","rounded"],"default":"default"},"scheme":{"type":"enum","values":["on-surface","on-surface-variant"],"default":"on-surface"},"backdrop":{"type":"enum","values":["surface","color"],"default":"surface"},"disabled":{"type":"boolean","default":false}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-close-color":{"type":"color","state":"default"},"--sf-close-background-color":{"type":"color","state":"default"},"--sf-close-glyph-size":{"type":"length","state":"default"},"--sf-close-padding-inline":{"type":"length","state":"default"},"--sf-close-padding-block":{"type":"length","state":"default"}}}');
 
 /***/ },
 
 /***/ "7ca134cd1790"
 (module) {
 
-module.exports = {"title":"Close"};
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Close","runtime":{"close":"Close"}}');
 
 /***/ },
 
 /***/ "3e9ace110bb6"
 (module) {
 
-module.exports = {"title":"Закрытие"};
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Закрытие","runtime":{"close":"Закрыть"}}');
 
 /***/ }
 

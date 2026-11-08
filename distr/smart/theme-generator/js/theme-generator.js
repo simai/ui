@@ -68,9 +68,12 @@ const THEME_RULES = Object.freeze({
     hue: source => (source.hue + 60) % 360,
     chroma: 40
   },
+  // The greys take the source's hue at chroma 5, or at the source's own chroma
+  // when that is lower (C16): a near-grey brand colour made teal or violet
+  // greys out of a hue it barely has.
   neutral: {
     hue: source => source.hue,
-    chroma: 5
+    chroma: source => Math.min(5, source.chroma)
   },
   error: {
     hue: 25,
@@ -136,7 +139,8 @@ const THEME_ALPHA = Object.freeze({
     90: [4, 8, 12, 24]
   },
   info: {
-    50: [12, 16, 20, 24, 28, 32]
+    50: [4, 8, 12, 16, 20, 24, 28, 32],
+    90: [4, 8, 12, 24]
   }
 });
 
@@ -2715,7 +2719,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-theme
 /***/ "bc9a73b2d5a7"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.theme-generator","tag":"sf-theme-generator","version":"1.1.8","kind":"leaf","settings":{"value":{"type":"string","default":""},"hue":{"type":"number","nullable":true,"integer":true,"min":0,"max":360,"default":null},"chroma":{"type":"number","nullable":true,"integer":true,"min":0,"max":150,"default":null},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"swatches":{"type":"string","default":""},"apply":{"type":"boolean","default":false},"target":{"type":"string","default":""},"selector":{"type":"string","default":":root"}},"values":{"theme":{"type":"object"}},"events":{"change":{"carries":{"value":"string","hue":"number","chroma":"number","theme":"object","variables":"object","css":"string"}},"committed":{"carries":{"value":"string","hue":"number","chroma":"number","theme":"object","variables":"object","css":"string"},"own-verb":true}},"actions":{"reset":{}},"css-variables":{"--sf-theme-generator-gap":{"type":"length","state":"default"},"--sf-theme-generator-color":{"type":"color","state":"default"},"--sf-theme-generator-label-color":{"type":"color","state":"default"},"--sf-theme-generator-swatch-radius":{"type":"length","state":"default"},"--sf-theme-generator-swatch-border-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.theme-generator","tag":"sf-theme-generator","version":"1.1.9","kind":"leaf","settings":{"value":{"type":"string","default":""},"hue":{"type":"number","nullable":true,"integer":true,"min":0,"max":360,"default":null},"chroma":{"type":"number","nullable":true,"integer":true,"min":0,"max":150,"default":null},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"swatches":{"type":"string","default":""},"apply":{"type":"boolean","default":false},"target":{"type":"string","default":""},"selector":{"type":"string","default":":root"}},"values":{"theme":{"type":"object"}},"events":{"change":{"carries":{"value":"string","hue":"number","chroma":"number","theme":"object","variables":"object","css":"string"}},"committed":{"carries":{"value":"string","hue":"number","chroma":"number","theme":"object","variables":"object","css":"string"},"own-verb":true}},"actions":{"reset":{}},"css-variables":{"--sf-theme-generator-gap":{"type":"length","state":"default"},"--sf-theme-generator-color":{"type":"color","state":"default"},"--sf-theme-generator-label-color":{"type":"color","state":"default"},"--sf-theme-generator-swatch-radius":{"type":"length","state":"default"},"--sf-theme-generator-swatch-border-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 

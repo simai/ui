@@ -120,8 +120,101 @@
   .bg-success-transparent-overlay {
     background-color: var(--sf-success-transparent-overlay);
   }
+  .bg-info {
+    background-color: var(--sf-info);
+  }
+  .bg-info-container {
+    background-color: var(--sf-info-container);
+  }
+  .bg-info-state-select {
+    background-color: var(--sf-info-state-select);
+  }
+  .bg-info-container-strong {
+    background-color: var(--sf-info-container-strong);
+  }
+  .bg-surface-page {
+    background-color: var(--sf-surface-page);
+  }
+  .bg-surface-area {
+    background-color: var(--sf-surface-area);
+  }
+  .bg-surface-card {
+    background-color: var(--sf-surface-card);
+  }
+  .bg-surface-popup {
+    background-color: var(--sf-surface-popup);
+  }
+  .bg-surface-popup-nested {
+    background-color: var(--sf-surface-popup-nested);
+  }
+  .bg-surface-state-select {
+    background-color: var(--sf-surface-state-select);
+  }
+  .bg-surface-container-strong {
+    background-color: var(--sf-surface-container-strong);
+  }
+  .bg-surface-veil {
+    background-color: var(--sf-surface-veil);
+  }
+  .bg-surface-disabled {
+    background-color: var(--sf-surface-disabled);
+  }
+  .bg-primary-state-select {
+    background-color: var(--sf-primary-state-select);
+  }
+  .bg-primary-container-strong {
+    background-color: var(--sf-primary-container-strong);
+  }
+  .bg-secondary-state-select {
+    background-color: var(--sf-secondary-state-select);
+  }
+  .bg-secondary-container-strong {
+    background-color: var(--sf-secondary-container-strong);
+  }
+  .bg-tertiary-state-select {
+    background-color: var(--sf-tertiary-state-select);
+  }
+  .bg-tertiary-container-strong {
+    background-color: var(--sf-tertiary-container-strong);
+  }
+  .bg-error-state-select {
+    background-color: var(--sf-error-state-select);
+  }
+  .bg-error-container-strong {
+    background-color: var(--sf-error-container-strong);
+  }
+  .bg-warning-state-select {
+    background-color: var(--sf-warning-state-select);
+  }
+  .bg-warning-container-strong {
+    background-color: var(--sf-warning-container-strong);
+  }
+  .bg-success-state-select {
+    background-color: var(--sf-success-state-select);
+  }
+  .bg-success-container-strong {
+    background-color: var(--sf-success-container-strong);
+  }
   .bg-surface-container {
     --sf-on-surface-variant: var(--sf-on-surface-container--variant);
+  }
+  .bg-surface-page {
+    --sf-surface-place: var(--sf-surface-page);
+  }
+  .bg-surface-area {
+    --sf-surface-place: var(--sf-surface-area);
+  }
+  .bg-surface-card {
+    --sf-surface-place: var(--sf-surface-card);
+    --sf-on-surface-variant: var(--sf-on-surface-card-variant);
+  }
+  .bg-surface-popup {
+    --sf-surface-place: var(--sf-surface-popup);
+    --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
+  }
+  .bg-surface-popup-nested {
+    --sf-surface-place: var(--sf-surface-popup-nested);
+    --sf-on-surface-variant: var(--sf-on-surface-popup-nested-variant);
   }
   .active\:bg-surface-container:active {
     background-color: var(--sf-surface-container-active);
@@ -186,6 +279,36 @@
   .active\:bg-success-transparent:active {
     background-color: var(--sf-success-transparent-active);
   }
+  .active\:bg-info:active {
+    background-color: var(--sf-info-active);
+  }
+  .active\:bg-info-container:active {
+    background-color: var(--sf-info-container-active);
+  }
+  .active\:bg-info-state:active {
+    background-color: var(--sf-info-state-active);
+  }
+  .active\:bg-surface-state:active {
+    background-color: var(--sf-surface-state-active);
+  }
+  .active\:bg-primary-state:active {
+    background-color: var(--sf-primary-state-active);
+  }
+  .active\:bg-secondary-state:active {
+    background-color: var(--sf-secondary-state-active);
+  }
+  .active\:bg-tertiary-state:active {
+    background-color: var(--sf-tertiary-state-active);
+  }
+  .active\:bg-error-state:active {
+    background-color: var(--sf-error-state-active);
+  }
+  .active\:bg-warning-state:active {
+    background-color: var(--sf-warning-state-active);
+  }
+  .active\:bg-success-state:active {
+    background-color: var(--sf-success-state-active);
+  }
   .hover\:bg-surface-container:hover {
     background-color: var(--sf-surface-container-hover);
   }
@@ -248,6 +371,36 @@
   }
   .hover\:bg-success-transparent:hover {
     background-color: var(--sf-success-transparent-hover);
+  }
+  .hover\:bg-info:hover {
+    background-color: var(--sf-info-hover);
+  }
+  .hover\:bg-info-container:hover {
+    background-color: var(--sf-info-container-hover);
+  }
+  .hover\:bg-info-state:hover {
+    background-color: var(--sf-info-state-hover);
+  }
+  .hover\:bg-surface-state:hover {
+    background-color: var(--sf-surface-state-hover);
+  }
+  .hover\:bg-primary-state:hover {
+    background-color: var(--sf-primary-state-hover);
+  }
+  .hover\:bg-secondary-state:hover {
+    background-color: var(--sf-secondary-state-hover);
+  }
+  .hover\:bg-tertiary-state:hover {
+    background-color: var(--sf-tertiary-state-hover);
+  }
+  .hover\:bg-error-state:hover {
+    background-color: var(--sf-error-state-hover);
+  }
+  .hover\:bg-warning-state:hover {
+    background-color: var(--sf-warning-state-hover);
+  }
+  .hover\:bg-success-state:hover {
+    background-color: var(--sf-success-state-hover);
   }
   .bg-white {
     background-color: rgb(255, 255, 255);

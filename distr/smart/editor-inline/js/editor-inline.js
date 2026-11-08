@@ -18,6 +18,11 @@ __webpack_require__.r(__webpack_exports__);
   since: '2026-11-03',
   remove_after: '2027-01-01'
 }), Object.freeze({
+  from: 'sf-button-group',
+  to: 'sf-segmented',
+  since: '2026-11-08',
+  remove_after: '2027-01-01'
+}), Object.freeze({
   from: 'sf-change-confirm',
   to: 'sf-confirm-change',
   since: '2026-11-03',
