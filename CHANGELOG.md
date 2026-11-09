@@ -8,6 +8,18 @@
 
 ### Добавлено
 
+- C16 S3/S4 places: background values, places and coloured `bg-*` utilities (`bg-scrim` in the background loader rule); components stand on places and a selected pill's own colour is its ink (`component.card` 1.4.0, `component.tabs` 1.1.0, `core.styles` 1.9.3).
+- C17 static palette: hues with `hue=` and `.sf-hue-<name>` (former `tone=` and rose kept as aliases), warm/cool/diverging chart roles, tone-20 steps; a theme is 288 variables, and a strong place's ink reads the tone-20 steps (`tokens.colour` 1.7.0, `sf-avatar` 1.3.0, `sf-list` 1.3.2, `sf-toast` 1.1.11, `sf-theme-generator` 1.1.11).
+- C23 navigation current page: the current page of a navigation menu is a primary plate, a bar only where there is none (`sf-menu` 1.4.1, `component.menu` 1.4.1).
+- C27 button height and C19 icon heights: controls follow one height setting, non-controls read icon-size-3 (24), the 1/2 inherited reset keeps 24 in every field, compact never loosens the upload-progress icon padding (`component.buttons` 1.8.1, `module.smart-helpers` 1.3.2, `sf-segmented` 1.4.2).
+- Portals carry the variables their area sets for the parts inside; an icon button draws a new icon through its sf-icon, and a late icon takes its row's size (`sf-search` 1.7.2, `tokens.typography` 1.6.3, `component.icons` 1.1.1).
+- C28 choice layouts: `sf-input-choice` 1.1.0 draws list, tile and picture layouts; `sf-badge--disabled` with its public variables (`component.badges` 1.4.0).
+- `sf-header-site` 1.7.2: the collapsed site header fits a 390px phone.
+- The pro package and its larena alias list sf-avatar under cl-chat-window.
+- `sf-menu-context` 1.13.6: items set as a property draw again, and Escape closes the menu.
+- Six components follow a shared sheet that moved, one patch each (`sf-dropdown` 1.7.4, `sf-input` 1.6.1, `sf-input-color` 1.5.5, `sf-input-textarea` 1.7.4, `sf-switch` 1.3.4).
+- `core.runtime` 1.47.0 (one number above every branch's claim); 90 units changed against ui-cb287da78ab1.
+
 - C20 shadows and elevation levels: one rule (0 flat, 1 raised, 2-3 overlay, 4-5 modal), two black shadow steps and four place shadows (`tokens.elevation` 1.1.0, `utility.elevation`, `utility.box-shadow`, `utility.box-shadow-color`, `utility.drop-shadow`, `utility.drop-shadow-color` 1.1.0; `component.card` 1.3.0 and the surfaces that sit on a place).
 - C18 sizes and colours: raw lengths go to the size system under a strict dimension gate (`tokens.size` 1.0.3, `tokens.space` 1.0.3); raw colours go to palette roles and tokens with a colour policy (`tokens.colour` 1.5.1, `tokens.opacity` 1.0.1; avatar badges read colour roles, `component.avatars` 1.2.0, `sf-avatar` 1.2.3); the adaptive sizing contract is the single source again (contract 1.5.0, no value changes).
 - C21 heading ladder fixes: `tokens.typography` 1.6.0; `sf-empty-state` 1.1.10 reads heading-4, rung 2.
