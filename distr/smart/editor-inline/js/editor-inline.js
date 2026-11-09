@@ -431,7 +431,9 @@ globalThis.SF.InlineEditor = Object.freeze({
   renderInlineDom: _core_js_composition_inline_editor_mjs__WEBPACK_IMPORTED_MODULE_0__.renderInlineDom,
   startInlineEdit: _core_js_composition_inline_editor_mjs__WEBPACK_IMPORTED_MODULE_0__.startInlineEdit,
   textOffset: _core_js_composition_inline_editor_mjs__WEBPACK_IMPORTED_MODULE_0__.textOffset
-});
+}); // edit(element, options) takes its fields in order; the runtime gives it the
+// object form of §4.4 as well: edit({element, options}).
+
 (0,_core_js_composition_inline_editor_mjs__WEBPACK_IMPORTED_MODULE_0__.defineInlineEditor)(globalThis.customElements, {
   base: (0,_core_js_composition_manifest_host_mjs__WEBPACK_IMPORTED_MODULE_1__.manifestHost)(_component_json__WEBPACK_IMPORTED_MODULE_2__, {
     lang: {
@@ -439,7 +441,8 @@ globalThis.SF.InlineEditor = Object.freeze({
       ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_5__
     },
     source: 'ru',
-    aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_3__
+    aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_3__,
+    positional: ['edit']
   })
 });
 __webpack_async_result__();
@@ -1549,7 +1552,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-edito
 /***/ "243fec56a554"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.editor-inline","tag":"sf-editor-inline","version":"1.4.0","kind":"leaf","settings":{},"values":{},"events":{"input":{"carries":{"id":{"type":"string","nullable":true},"content":{"type":"list","of":{"type":"string","value":"string","marks":"list","href":"string"}}},"x-native":false},"change":{"carries":{"id":{"type":"string","nullable":true},"content":{"type":"list","of":{"type":"string","value":"string","marks":"list","href":"string"}}},"x-native":false},"cancel":{"carries":{"id":{"type":"string","nullable":true}}}},"actions":{"edit":{"with":{"element":"object","options":"object"}}},"css-variables":{"--sf-inline-editor-outline-color":{"type":"color","state":"editing"},"--sf-inline-editor-toolbar-background-color":{"type":"color","state":"editing"},"--sf-inline-editor-toolbar-radius":{"type":"length","state":"editing"},"--sf-inline-editor-toolbar-gap":{"type":"length","state":"editing"},"--sf-inline-editor-toolbar-padding":{"type":"length","state":"editing"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.editor-inline","tag":"sf-editor-inline","version":"1.5.3","kind":"leaf","settings":{},"values":{},"events":{"input":{"carries":{"id":{"type":"string","nullable":true},"content":{"type":"list","of":{"type":"string","value":"string","marks":"list","href":"string"}}},"x-native":false},"change":{"carries":{"id":{"type":"string","nullable":true},"content":{"type":"list","of":{"type":"string","value":"string","marks":"list","href":"string"}}},"x-native":false},"cancel":{"carries":{"id":{"type":"string","nullable":true}}}},"actions":{"edit":{"with":{"element":"object","options":"object"}}},"css-variables":{"--sf-inline-editor-outline-color":{"type":"color","state":"editing"},"--sf-inline-editor-toolbar-background-color":{"type":"color","state":"editing"},"--sf-inline-editor-toolbar-radius":{"type":"length","state":"editing"},"--sf-inline-editor-toolbar-gap":{"type":"length","state":"editing"},"--sf-inline-editor-toolbar-padding":{"type":"length","state":"editing"}}}');
 
 /***/ },
 

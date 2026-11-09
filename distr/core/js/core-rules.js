@@ -4019,6 +4019,13 @@ SF.RuleLoader['cl-file-download'] = {
     name: 'icons'
   }, {
     name: 'cl-icon'
+  }, // The notice under a file that could not be prepared (state error, decision C25).
+  {
+    name: 'cl-alert'
+  }, // The spinner in the sign's place while the file is prepared: its box is the class sheet's, the motion the spinner sheet's.
+  {
+    name: 'spinner',
+    lazy: true
   }]
 };
 
@@ -5280,6 +5287,9 @@ SF.RuleLoader['cl-tooltip'] = {
   js: true,
   relation: [{
     name: 'tooltip'
+  }, // The shortcut is the kbd component's keys: plain and quiet in a tooltip (C04).
+  {
+    name: 'kbd'
   }]
 };
 
@@ -6202,14 +6212,14 @@ SF.RuleLoader['box-shadow-color/hover'] = new RegExp("^(?:hover:shadow-(?:error|
 /***/ "2cfec5190bd4"
 () {
 
-SF.RuleLoader['box-shadow/default'] = new RegExp("^(?:shadow-(?:0|1|2|3|4|5))(?![\\s\\S])");
+SF.RuleLoader['box-shadow/default'] = new RegExp("^(?:shadow-(?:0|1|2|3|4|5|flat|modal|overlay|raised))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "fd16c679b7d3"
 () {
 
-SF.RuleLoader['box-shadow/hover'] = new RegExp("^(?:hover:shadow-(?:0|1|2|3|4|5))(?![\\s\\S])");
+SF.RuleLoader['box-shadow/hover'] = new RegExp("^(?:hover:shadow-(?:0|1|2|3|4|5|flat|modal|overlay|raised))(?![\\s\\S])");
 
 /***/ },
 
@@ -6636,14 +6646,14 @@ SF.RuleLoader['drop-shadow-color/hover'] = new RegExp("^(?:hover:drop-shadow-(?:
 /***/ "27f9f53fcc55"
 () {
 
-SF.RuleLoader['drop-shadow/default'] = new RegExp("^(?:drop-shadow-(?:0|1|2|3|4|5))(?![\\s\\S])");
+SF.RuleLoader['drop-shadow/default'] = new RegExp("^(?:drop-shadow-(?:0|1|2|3|4|5|flat|modal|overlay|raised))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "ff58765979b7"
 () {
 
-SF.RuleLoader['drop-shadow/hover'] = new RegExp("^(?:hover:drop-shadow-(?:0|1|2|3|4|5))(?![\\s\\S])");
+SF.RuleLoader['drop-shadow/hover'] = new RegExp("^(?:hover:drop-shadow-(?:0|1|2|3|4|5|flat|modal|overlay|raised))(?![\\s\\S])");
 
 /***/ },
 

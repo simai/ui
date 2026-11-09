@@ -331,10 +331,10 @@
     -ms-scroll-chaining: none;
         overscroll-behavior: contain;
     border-radius: var(--sf-radius--ui);
-    background-color: var(--sf-elevation-2--surface);
-    background-color: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-elevation-2--surface)));
-    --sf-on-surface-variant: var(--sf-on-elevation-2--variant);
-    box-shadow: var(--sf-elevation-2--shadow);
+    background-color: var(--sf-surface-popup);
+    background-color: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-popup)));
+    --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
+    box-shadow: var(--sf-shadow-overlay);
   }
   .sf-contents--layout-compact .sf-contents-link {
     display: flex;
@@ -427,9 +427,9 @@
     padding-right: var(--sf-space-1\/4);
     padding-inline: var(--sf-space-1\/4);
     border-radius: var(--sf-radius--ui);
-    background-color: var(--sf-elevation-2--surface);
-    --sf-on-surface-variant: var(--sf-on-elevation-2--variant);
-    box-shadow: var(--sf-elevation-2--shadow);
+    background-color: var(--sf-surface-popup);
+    --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
+    box-shadow: var(--sf-shadow-overlay);
     white-space: nowrap;
     opacity: 0;
     pointer-events: none;
@@ -696,10 +696,10 @@
       -ms-scroll-chaining: none;
           overscroll-behavior: contain;
       border-radius: var(--sf-radius--ui);
-      background-color: var(--sf-elevation-2--surface);
-      background-color: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-elevation-2--surface)));
-      --sf-on-surface-variant: var(--sf-on-elevation-2--variant);
-      box-shadow: var(--sf-elevation-2--shadow);
+      background-color: var(--sf-surface-popup);
+      background-color: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-popup)));
+      --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
+      box-shadow: var(--sf-shadow-overlay);
     }
     .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-link {
       display: flex;
@@ -917,10 +917,10 @@
       -ms-scroll-chaining: none;
           overscroll-behavior: contain;
       border-radius: var(--sf-radius--ui);
-      background-color: var(--sf-elevation-2--surface);
-      background-color: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-elevation-2--surface)));
-      --sf-on-surface-variant: var(--sf-on-elevation-2--variant);
-      box-shadow: var(--sf-elevation-2--shadow);
+      background-color: var(--sf-surface-popup);
+      background-color: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-popup)));
+      --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
+      box-shadow: var(--sf-shadow-overlay);
     }
     .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-link {
       display: flex;
@@ -1138,10 +1138,10 @@
       -ms-scroll-chaining: none;
           overscroll-behavior: contain;
       border-radius: var(--sf-radius--ui);
-      background-color: var(--sf-elevation-2--surface);
-      background-color: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-elevation-2--surface)));
-      --sf-on-surface-variant: var(--sf-on-elevation-2--variant);
-      box-shadow: var(--sf-elevation-2--shadow);
+      background-color: var(--sf-surface-popup);
+      background-color: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-popup)));
+      --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
+      box-shadow: var(--sf-shadow-overlay);
     }
     .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-link {
       display: flex;
@@ -1359,10 +1359,10 @@
       -ms-scroll-chaining: none;
           overscroll-behavior: contain;
       border-radius: var(--sf-radius--ui);
-      background-color: var(--sf-elevation-2--surface);
-      background-color: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-elevation-2--surface)));
-      --sf-on-surface-variant: var(--sf-on-elevation-2--variant);
-      box-shadow: var(--sf-elevation-2--shadow);
+      background-color: var(--sf-surface-popup);
+      background-color: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-popup)));
+      --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
+      box-shadow: var(--sf-shadow-overlay);
     }
     .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-link {
       display: flex;

@@ -35,11 +35,12 @@
     left: 0;
     inset: 0;
     pointer-events: none;
-    /* The shared scrim (core --sf-scrim-*), the drawer's own variables first. */
-    background: var(--sf-black);
-    background: var(--sf-drawer-overlay-background, var(--sf-scrim-color, var(--sf-black)));
-    opacity: var(--sf-opacity-60);
-    opacity: var(--sf-drawer-overlay-opacity, var(--sf-scrim-opacity, var(--sf-opacity-60)));
+    /* The shared scrim (core --sf-scrim-*, black at 64: C16, C20), the
+       drawer's own variables first. */
+    background: var(--sf-black--alfa-64);
+    background: var(--sf-drawer-overlay-background, var(--sf-scrim-color, var(--sf-black--alfa-64)));
+    opacity: 1;
+    opacity: var(--sf-drawer-overlay-opacity, var(--sf-scrim-opacity, 1));
     transition: opacity var(--sf-duration-normal) var(--sf-ease-exit);
   }
   .sf-drawer.is-open .sf-drawer-overlay {
@@ -93,8 +94,8 @@
     border-radius: var(--sf-drawer-radius, var(--sf-radius--surface));
     color: var(--sf-on-surface);
     color: var(--sf-drawer-color, var(--sf-on-surface));
-    box-shadow: var(--sf-elevation-4--shadow);
-    box-shadow: var(--sf-drawer-shadow, var(--sf-elevation-4--shadow));
+    box-shadow: var(--sf-shadow-modal);
+    box-shadow: var(--sf-drawer-shadow, var(--sf-shadow-modal));
     /* sf-focus-ring: none — the panel takes focus programmatically when it
        opens, so it draws no ring of its own; the ring belongs to the controls
        inside it. */
@@ -127,13 +128,13 @@
     overflow: hidden;
     scrollbar-gutter: stable both-edges;
   }
-  /* A floating panel stands on the raised surface, with its dimmed text; a
-     column of the page takes the page's (below). */
+  /* A floating panel is the modal place (C20): the popup surface, the modal
+     shadow, the scrim; a column of the page takes the page's (below). */
   .sf-drawer:not([data-sf-drawer-column=true]) .sf-drawer-panel {
-    background: var(--sf-elevation-4--surface);
-    background: var(--sf-drawer-background, var(--sf-elevation-4--surface));
-    --sf-badge--surface: var(--sf-drawer-background, var(--sf-elevation-4--surface));
-    --sf-on-surface-variant: var(--sf-on-elevation-4--variant);
+    background: var(--sf-surface-popup);
+    background: var(--sf-drawer-background, var(--sf-surface-popup));
+    --sf-badge--surface: var(--sf-drawer-background, var(--sf-surface-popup));
+    --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
   }
   /* The drawer is on the shared size ladder. The words small, large and medium
      are legacy values the component still accepts; it renders the step. */
@@ -606,7 +607,7 @@
     background: var(--sf-surface-0);
     background: var(--sf-drawer-background, var(--sf-surface-0));
     --sf-badge--surface: var(--sf-drawer-background, var(--sf-surface-0));
-    box-shadow: none;
+    box-shadow: var(--sf-shadow-flat);
   }
   /* The bottom sheet (placement="bottom", simai/ui-source#20): the whole
      width, from the bottom edge, rounded at the top, with a grab handle. It

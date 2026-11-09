@@ -76,6 +76,7 @@
     border: var(--sf-card-border-width, var(--sf-px)) solid var(--sf-card-border-color, var(--sf-outline-variant));
     border-radius: var(--sf-radius--surface);
     border-radius: var(--sf-card-radius, var(--sf-radius--surface));
+    box-shadow: var(--sf-shadow-flat);
     word-wrap: break-word;
     -webkit-hyphens: auto;
         -ms-hyphens: auto;
@@ -86,11 +87,35 @@
     margin-bottom: var(--sf-0);
     margin-block: var(--sf-0);
   }
+  a.sf-card[href]:not(.sf-card--plain) {
+    transition: box-shadow var(--sf-duration-fast) var(--sf-animation), background-color var(--sf-duration-fast) var(--sf-animation);
+  }
+  button.sf-card:not(.does-not-exist):not(.sf-card--plain) {
+    transition: box-shadow var(--sf-duration-fast) var(--sf-animation), background-color var(--sf-duration-fast) var(--sf-animation);
+  }
+  a.sf-card[href]:not(.sf-card--plain):hover {
+    background-color: var(--sf-surface-raised);
+    background-color: var(--sf-card-background-color, var(--sf-card-background, var(--sf-surface-raised)));
+    box-shadow: var(--sf-shadow-raised);
+  }
+  button.sf-card:not(.does-not-exist):not(.sf-card--plain):hover {
+    background-color: var(--sf-surface-raised);
+    background-color: var(--sf-card-background-color, var(--sf-card-background, var(--sf-surface-raised)));
+    box-shadow: var(--sf-shadow-raised);
+  }
   .sf-card--plain {
     padding: var(--sf-0);
     background-color: var(--sf-transparent);
     border-color: var(--sf-transparent);
     border-radius: var(--sf-0);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    a.sf-card[href]:not(.sf-card--plain) {
+      transition: none;
+    }
+    button.sf-card:not(.does-not-exist):not(.sf-card--plain) {
+      transition: none;
+    }
   }
   @media (forced-colors: active) {
     .sf-card:not(.sf-card--plain) {

@@ -230,7 +230,10 @@ function resolveDefaultFlagBase() {
   if (!root) return '';
 
   try {
-    return new URL('component/flag/flags/rect', root).href.replace(/\/$/, '');
+    // sfPath may be written without its closing slash ('/ui/distr'); a URL
+    // base without it drops the last segment, so the flags were asked for
+    // beside distr rather than inside it.
+    return new URL('component/flag/flags/rect', String(root).replace(/\/?$/u, '/')).href.replace(/\/$/, '');
   } catch {
     return String(root).replace(/\/$/, '') + '/component/flag/flags/rect';
   }

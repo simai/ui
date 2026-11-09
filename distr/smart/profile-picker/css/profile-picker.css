@@ -117,10 +117,10 @@
     padding: var(--sf-profile-picker--inset);
     border: var(--sf-px) solid var(--sf-outline-variant);
     border-radius: var(--sf-radius--surface);
-    background-color: var(--sf-elevation-3--surface);
-    background-color: var(--sf-profile-picker-panel-background-color, var(--sf-elevation-3--surface));
-    --sf-on-surface-variant: var(--sf-on-elevation-3--variant);
-    box-shadow: var(--sf-elevation-3--shadow);
+    background-color: var(--sf-surface-popup);
+    background-color: var(--sf-profile-picker-panel-background-color, var(--sf-surface-popup));
+    --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
+    box-shadow: var(--sf-shadow-overlay);
     color: var(--sf-on-surface);
     overflow: auto;
     -ms-scroll-chaining: none;
@@ -424,8 +424,8 @@
   .sf-profile-picker-skeleton-bar {
     display: inline-block;
     vertical-align: middle;
-    width: 8em;
-    inline-size: 8em;
+    width: var(--sf-e6);
+    inline-size: var(--sf-e6);
     max-width: 100%;
     max-inline-size: 100%;
     height: var(--sf-profile-picker--text);

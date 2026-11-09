@@ -52,6 +52,7 @@ function freezeModalContent(panel, focusPanel = false) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   focusModalInitial: () => (/* binding */ focusModalInitial),
 /* harmony export */   getModalTabStops: () => (/* binding */ getModalTabStops),
 /* harmony export */   syncModalFocusGuards: () => (/* binding */ syncModalFocusGuards),
 /* harmony export */   trapModalFocus: () => (/* binding */ trapModalFocus)
@@ -157,6 +158,32 @@ function trapModalFocus(panel, event) {
     event.preventDefault();
     destination.focus();
   }
+} // The first focus of an opened window (decision C25): the element the page
+// marked with the standard `autofocus` attribute, as a native <dialog> does --
+// in a dangerous question, the safe answer («Отмена»), so a stray Enter or
+// Space only closes the window. A marked element that is not focusable itself
+// (sf-button, whose host is display: contents) hands the focus to its first
+// tab stop. Without a mark, or with one that cannot take the focus, the panel
+// takes it, as before. Answers the element that took it.
+
+
+function focusModalInitial(panel) {
+  if (!panel) return null;
+  const marked = panel.querySelector('[autofocus]');
+
+  if (marked && !marked.closest('[inert]')) {
+    const target = marked.matches(FOCUSABLE_SELECTOR) && marked.tabIndex >= 0 && !marked.matches(':disabled') ? marked : getModalTabStops(marked)[0];
+
+    if (target) {
+      target.focus({
+        preventScroll: true
+      });
+      if (panel.ownerDocument.activeElement === target) return target;
+    }
+  }
+
+  panel.focus();
+  return panel;
 }
 
 
@@ -1252,7 +1279,7 @@ class SfModal extends ModalElement {
       this.prepareRenderContainer(changedAttributes);
     }
 
-    (0,lit__WEBPACK_IMPORTED_MODULE_0__.render)(templateResult, this.resolveRenderTarget());
+    this.drawInto(templateResult, this.resolveRenderTarget());
     this.afterRender(changedAttributes);
     this.runExternalHook("afterRender", {
       changedAttributes,
@@ -1284,10 +1311,15 @@ class SfModal extends ModalElement {
     // element does where it stands (standard 1.3.8 §19.1): lang, dir and the
     // theme of its area, and the values of the public variables its manifest
     // declares, by name: a prefix would also carry what an outer window sets
-    // on its own panel (--sf-modal-width) into a window opened from it.
+    // on its own panel (--sf-modal-width) into a window opened from it. And
+    // the variables of the area it stands in (simai/ui-source#46 item 1): a
+    // block's retuned roles and its parts' public variables reach the window
+    // and its content, but none of the window's own --sf-modal-* names.
 
     (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_16__.carryLayerOrigin)(this._portalRoot, this, {
-      variables: MODAL_VARIABLES
+      variables: MODAL_VARIABLES,
+      area: true,
+      except: ["--sf-modal-"]
     });
     this._renderTarget = this._portalRoot;
     return this._portalRoot;
@@ -1712,6 +1744,13 @@ class SfModal extends ModalElement {
     }
 
     if (this.hasAttribute("open") && !this._isOpen && this._modalState !== "closing") {
+      // A window put into the page already open remembers what had focus --
+      // the button that inserted it -- as open() does, so closing gives focus
+      // back there and not to the nearest landmark. A window open in the
+      // page's own markup has no opener.
+      const active = document.activeElement;
+      this._lastActive = active instanceof HTMLElement && active !== document.body && active !== document.documentElement && !this.contains(active) && !this._root()?.contains(active) ? active : null;
+      this._focusReturnAncestors = (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__.captureModalFocusAncestors)(this._lastActive);
       this._isOpen = true;
       this._modalState = "open";
 
@@ -1850,12 +1889,14 @@ class SfModal extends ModalElement {
 
     if (this.hiddenState) {
       return;
-    }
+    } // The page's [autofocus] inside the window first -- the safe answer of a
+    // dangerous question (decision C25) -- else the panel, as before.
+
 
     const panel = this._root()?.querySelector("[data-sf-modal-panel]");
 
     if (panel) {
-      panel.focus();
+      (0,_component_modal_js_focus__WEBPACK_IMPORTED_MODULE_7__.focusModalInitial)(panel);
     }
   }
 
@@ -2419,7 +2460,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-modal
 /***/ "afc57055d2cc"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.modal","tag":"sf-modal","version":"1.4.6","kind":"leaf","settings":{"modal-id":{"type":"id","default":""},"heading":{"type":"string","default-from":"runtime.title"},"text":{"type":"string","default":""},"autoload":{"type":"boolean","default":false},"minimizable":{"type":"boolean","default":false},"hide-modifier":{"type":"string","default":""},"overlay":{"type":"boolean","default":true},"show-header":{"type":"boolean","default":true},"show-close":{"type":"boolean","default":true},"show-footer":{"type":"boolean","default":true},"close-on-esc":{"type":"boolean","default":true},"close-on-overlay":{"type":"boolean","default":true},"preserve-scroll-gap":{"type":"boolean","default":true},"position":{"type":"enum","values":["center","left","right","inline-start","inline-end","top","bottom"],"default":"center"},"mode":{"type":"enum","values":["inline","ajax","iframe"],"default":"inline"},"display":{"type":"enum","values":["modal","inline"],"default":"modal"},"src":{"type":"string","default":""},"preload":{"type":"boolean","default":true},"fullscreen":{"type":"boolean","default":false},"width":{"type":"string","default":""},"height":{"type":"string","default":""},"backdrop-blur":{"type":"string","default":""},"blur-type":{"type":"enum","values":["none","small","medium","large"],"default":"medium"},"overlay-preset":{"type":"enum","values":["default","focus"],"default":"default"},"overlay-class":{"type":"string","default":""},"close-class":{"type":"string","default":""},"surface-class":{"type":"string","default":""},"surface-padding":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"header-class":{"type":"string","default":""},"body-class":{"type":"string","default":""},"content-class":{"type":"string","default":""},"footer-class":{"type":"string","default":""},"unsaved":{"type":"boolean","default":false},"dismissible":{"type":"boolean","default":true}},"values":{"open":{"type":"boolean","default":false,"reflect":true},"minimized":{"type":"boolean","default":false,"reflect":true}},"events":{"open":{"carries":{"modal-id":"string","phase":"string"},"cancelable":true},"opened":{"carries":{"modal-id":"string","phase":"string"}},"close":{"carries":{"modal-id":"string","phase":"string","reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"modal-id":"string","phase":"string","reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"accepted":"boolean"}},"minimize":{"carries":{"modal-id":"string","phase":"string"},"cancelable":true},"minimized":{"carries":{"modal-id":"string","phase":"string"}},"expand":{"carries":{"modal-id":"string","phase":"string"},"cancelable":true},"expanded":{"carries":{"modal-id":"string","phase":"string"}},"content-upload":{"carries":{"modal-id":"string","src":"string","remote":"object"},"own-verb":true},"content-uploaded":{"carries":{"modal-id":"string","src":"string","remote":"object"},"own-verb":true}},"actions":{"open":{"with":{"animate":{"type":"boolean","optional":true}},"emits":"open","x-answer":"asked by an assembly (ask, §19.4) it answers when the window closes, with value {accepted, reason, value}"},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"emits":"close"},"minimize":{"emits":"minimize"},"expand":{"emits":"expand"},"toggle":{},"reload-content":{},"confirm":{"with":{"value":{"type":"object","optional":true}}}},"layer":{"kind":"modal","locks-page":true,"traps-focus":true},"css-variables":{"--sf-modal-background-color":{"type":"color","state":"default"},"--sf-modal-border-color":{"type":"color","state":"default"},"--sf-modal-border-width":{"type":"length","state":"default"},"--sf-modal-radius":{"type":"length","state":"default"},"--sf-modal-padding-inline":{"type":"length","state":"default"},"--sf-modal-padding-block":{"type":"length","state":"default"},"--sf-modal-gap":{"type":"length","state":"default"},"--sf-modal-footer-gap":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.modal","tag":"sf-modal","version":"1.5.6","kind":"leaf","settings":{"modal-id":{"type":"id","default":""},"heading":{"type":"string","default-from":"runtime.title"},"text":{"type":"string","default":""},"autoload":{"type":"boolean","default":false},"minimizable":{"type":"boolean","default":false},"hide-modifier":{"type":"string","default":""},"overlay":{"type":"boolean","default":true},"show-header":{"type":"boolean","default":true},"show-close":{"type":"boolean","default":true},"show-footer":{"type":"boolean","default":true},"close-on-esc":{"type":"boolean","default":true},"close-on-overlay":{"type":"boolean","default":true},"preserve-scroll-gap":{"type":"boolean","default":true},"position":{"type":"enum","values":["center","left","right","inline-start","inline-end","top","bottom"],"default":"center"},"mode":{"type":"enum","values":["inline","ajax","iframe"],"default":"inline"},"display":{"type":"enum","values":["modal","inline"],"default":"modal"},"src":{"type":"string","default":""},"preload":{"type":"boolean","default":true},"fullscreen":{"type":"boolean","default":false},"width":{"type":"string","default":""},"height":{"type":"string","default":""},"backdrop-blur":{"type":"string","default":""},"blur-type":{"type":"enum","values":["none","small","medium","large"],"default":"medium"},"overlay-preset":{"type":"enum","values":["default","focus"],"default":"default"},"overlay-class":{"type":"string","default":""},"close-class":{"type":"string","default":""},"surface-class":{"type":"string","default":""},"surface-padding":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"header-class":{"type":"string","default":""},"body-class":{"type":"string","default":""},"content-class":{"type":"string","default":""},"footer-class":{"type":"string","default":""},"unsaved":{"type":"boolean","default":false},"dismissible":{"type":"boolean","default":true}},"values":{"open":{"type":"boolean","default":false,"reflect":true},"minimized":{"type":"boolean","default":false,"reflect":true}},"events":{"open":{"carries":{"modal-id":"string","phase":"string"},"cancelable":true},"opened":{"carries":{"modal-id":"string","phase":"string"}},"close":{"carries":{"modal-id":"string","phase":"string","reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"modal-id":"string","phase":"string","reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"accepted":"boolean"}},"minimize":{"carries":{"modal-id":"string","phase":"string"},"cancelable":true},"minimized":{"carries":{"modal-id":"string","phase":"string"}},"expand":{"carries":{"modal-id":"string","phase":"string"},"cancelable":true},"expanded":{"carries":{"modal-id":"string","phase":"string"}},"content-upload":{"carries":{"modal-id":"string","src":"string","remote":"object"},"own-verb":true},"content-uploaded":{"carries":{"modal-id":"string","src":"string","remote":"object"},"own-verb":true}},"actions":{"open":{"with":{"animate":{"type":"boolean","optional":true}},"emits":"open","x-answer":"asked by an assembly (ask, §19.4) it answers when the window closes, with value {accepted, reason, value}"},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"],"optional":true}},"emits":"close"},"minimize":{"emits":"minimize"},"expand":{"emits":"expand"},"toggle":{},"reload-content":{},"confirm":{"with":{"value":{"type":"object","optional":true}}}},"layer":{"kind":"modal","locks-page":true,"traps-focus":true},"css-variables":{"--sf-modal-background-color":{"type":"color","state":"default"},"--sf-modal-border-color":{"type":"color","state":"default"},"--sf-modal-border-width":{"type":"length","state":"default"},"--sf-modal-radius":{"type":"length","state":"default"},"--sf-modal-padding-inline":{"type":"length","state":"default"},"--sf-modal-padding-block":{"type":"length","state":"default"},"--sf-modal-gap":{"type":"length","state":"default"},"--sf-modal-footer-gap":{"type":"length","state":"default"}}}');
 
 /***/ },
 

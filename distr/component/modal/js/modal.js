@@ -52,6 +52,7 @@ function freezeModalContent(panel, focusPanel = false) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   focusModalInitial: () => (/* binding */ focusModalInitial),
 /* harmony export */   getModalTabStops: () => (/* binding */ getModalTabStops),
 /* harmony export */   syncModalFocusGuards: () => (/* binding */ syncModalFocusGuards),
 /* harmony export */   trapModalFocus: () => (/* binding */ trapModalFocus)
@@ -157,6 +158,32 @@ function trapModalFocus(panel, event) {
     event.preventDefault();
     destination.focus();
   }
+} // The first focus of an opened window (decision C25): the element the page
+// marked with the standard `autofocus` attribute, as a native <dialog> does --
+// in a dangerous question, the safe answer («Отмена»), so a stray Enter or
+// Space only closes the window. A marked element that is not focusable itself
+// (sf-button, whose host is display: contents) hands the focus to its first
+// tab stop. Without a mark, or with one that cannot take the focus, the panel
+// takes it, as before. Answers the element that took it.
+
+
+function focusModalInitial(panel) {
+  if (!panel) return null;
+  const marked = panel.querySelector('[autofocus]');
+
+  if (marked && !marked.closest('[inert]')) {
+    const target = marked.matches(FOCUSABLE_SELECTOR) && marked.tabIndex >= 0 && !marked.matches(':disabled') ? marked : getModalTabStops(marked)[0];
+
+    if (target) {
+      target.focus({
+        preventScroll: true
+      });
+      if (panel.ownerDocument.activeElement === target) return target;
+    }
+  }
+
+  panel.focus();
+  return panel;
 }
 
 
@@ -603,7 +630,7 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
     }
 
     const surface = document.createElement('div');
-    surface.className = joinClasses(isInline ? 'bg-surface border border-outline-variant radius-surface p-2 flex flex-col gap-1 min-w-0' : 'bg-surface border border-outline-variant radius-surface shadow-3 p-2 flex flex-col gap-1 min-w-0', params.surfaceClass);
+    surface.className = joinClasses(isInline ? 'bg-surface border border-outline-variant radius-surface p-2 flex flex-col gap-1 min-w-0' : 'bg-surface border border-outline-variant radius-surface shadow-modal p-2 flex flex-col gap-1 min-w-0', params.surfaceClass);
     surface.setAttribute('data-sf-modal-surface', '');
     const header = document.createElement('header');
     header.className = joinClasses('sf-modal-header flex items-start min-w-0 border-b border-outline-variant gap-1', params.headerClass);
@@ -1095,8 +1122,9 @@ class Modal extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Comp
       return;
     }
 
-    panel.setAttribute('tabindex', '-1');
-    panel.focus();
+    panel.setAttribute('tabindex', '-1'); // The page's [autofocus] inside the window first (decision C25), else the panel.
+
+    (0,_focus__WEBPACK_IMPORTED_MODULE_3__.focusModalInitial)(panel);
   }
 
   applyStackPosition(index = (0,_stack__WEBPACK_IMPORTED_MODULE_7__.getModalLayerIndex)(this)) {
@@ -2907,11 +2935,35 @@ const THEMES = ['theme-dark', 'theme-light'];
  * and the computed values of the host's variables that differ from those
  * where the portal stands -- `variables` by name, `prefixes` by the start of
  * the name. It looks and speaks as if it stood where its host stands.
+ *
+ * With `area`, every custom property whose value at the host differs from the
+ * portal's is carried as well (simai/ui-source#46 item 1): a block's retuned
+ * role (--sf-primary), a part's public variable (--sf-button-background-color)
+ * and a page's own name reach the layer's content. `except` names the layer's
+ * own prefixes (--sf-modal-) that the area does not carry: its public names
+ * still travel in `variables`, and the private ones an outer window sets on
+ * its panel never reach a window opened from it. A name carried before and no
+ * longer different is taken back, so a host moved to another area takes that
+ * area's values.
  */
+// The density a host stands in (C22; core/js/density.js says the same): the
+// nearest region's, or "normal" under an explicit size. Written here, not
+// imported: this module is loaded on its own (shared runtime, tests).
+
+function densityOf(from) {
+  for (let node = from; node?.nodeType === 1; node = node.parentElement) {
+    if (node.hasAttribute('data-sf-density')) return node.getAttribute('data-sf-density');
+    if (node.hasAttribute('size') && !node.hasAttribute('data-sf-size-relative') && !node.hasAttribute('data-sf-size-scale') && !/^(input|select|textarea)$/u.test(node.localName)) return 'normal';
+  }
+
+  return null;
+}
 
 function carryLayerOrigin(portal, host, {
   variables = [],
-  prefixes = []
+  prefixes = [],
+  area = false,
+  except = []
 } = {}) {
   if (!portal || !host?.isConnected) return;
   const doc = host.ownerDocument;
@@ -2922,7 +2974,11 @@ function carryLayerOrigin(portal, host, {
   // language. Only the first follows SF.language.use(), which the page language
   // does before it announces the change (simai/ui-source#55).
 
-  if (!nearest || nearest === doc.documentElement) portal.dataset.sfLayerLang = 'page';else delete portal.dataset.sfLayerLang;
+  if (!nearest || nearest === doc.documentElement) portal.dataset.sfLayerLang = 'page';else delete portal.dataset.sfLayerLang; // The density (C22): the ladder the host stands on, so a window or a drawer
+  // at the end of the body is as dense as the page region that opened it.
+
+  const density = densityOf(host);
+  if (density) portal.setAttribute('data-sf-density', density);else portal.removeAttribute('data-sf-density');
   const declared = host.closest('[dir]')?.getAttribute('dir');
   const dir = declared && declared !== 'auto' ? declared : view.getComputedStyle(host).direction;
   if (dir) portal.setAttribute('dir', dir); // The theme only when the host's differs from the portal's place: a page
@@ -2941,32 +2997,41 @@ function carryLayerOrigin(portal, host, {
   if (carried && carried !== wanted) portal.classList.remove(carried);
   if (wanted) portal.classList.add(wanted);
   if (wanted) portal.dataset.sfLayerTheme = wanted;else delete portal.dataset.sfLayerTheme;
-  if (!variables.length && !prefixes.length) return;
-  const own = view.getComputedStyle(host);
-  const there = parent ? view.getComputedStyle(parent) : null;
-  const names = new Set(variables);
+  const previous = (portal.dataset.sfLayerVariables || '').split(' ').filter(Boolean);
 
-  if (prefixes.length) {
-    for (const name of own) {
-      if (prefixes.some(prefix => name.startsWith(prefix))) names.add(name);
-    }
+  if (!variables.length && !prefixes.length && !area) {
+    for (const name of previous) portal.style.removeProperty(name);
+
+    delete portal.dataset.sfLayerVariables;
+    return;
   }
 
-  const previous = (portal.dataset.sfLayerVariables || '').split(' ').filter(Boolean);
+  const own = view.getComputedStyle(host);
+  const names = new Set(variables);
+
+  if (prefixes.length || area) {
+    for (const name of own) {
+      if (!name.startsWith('--')) continue;
+      if (prefixes.some(prefix => name.startsWith(prefix))) names.add(name);else if (area && !except.some(prefix => name.startsWith(prefix))) names.add(name);
+    }
+  } // Compared with the portal as it stands without what was carried before,
+  // its theme class already applied: what the theme gives it again is not
+  // written twice.
+
+
+  for (const name of previous) portal.style.removeProperty(name);
+
+  const there = view.getComputedStyle(portal);
   const kept = [];
 
   for (const name of names) {
     const value = own.getPropertyValue(name).trim();
-
-    if (value && value !== there?.getPropertyValue(name).trim()) {
-      portal.style.setProperty(name, value);
-      kept.push(name);
-    }
+    if (value && value !== there.getPropertyValue(name).trim()) kept.push([name, value]);
   }
 
-  for (const name of previous) if (!kept.includes(name)) portal.style.removeProperty(name);
+  for (const [name, value] of kept) portal.style.setProperty(name, value);
 
-  if (kept.length) portal.dataset.sfLayerVariables = kept.join(' ');else delete portal.dataset.sfLayerVariables;
+  if (kept.length) portal.dataset.sfLayerVariables = kept.map(([name]) => name).join(' ');else delete portal.dataset.sfLayerVariables;
 }
 
 /***/ },

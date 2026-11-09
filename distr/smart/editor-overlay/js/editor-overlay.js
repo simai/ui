@@ -428,7 +428,11 @@ globalThis.SF.CompositionOverlay = Object.freeze({
   checkOverlayActions: _core_js_composition_overlay_mjs__WEBPACK_IMPORTED_MODULE_0__.checkOverlayActions,
   checkOverlayNodes: _core_js_composition_overlay_mjs__WEBPACK_IMPORTED_MODULE_0__.checkOverlayNodes,
   overlayNodes: _core_js_composition_overlay_mjs__WEBPACK_IMPORTED_MODULE_0__.overlayNodes
-});
+}); // The overlay's methods take their fields in order (setNodes(nodes, options));
+// the runtime gives each the object form of §4.4 as well (setNodes({nodes,
+// options}), setMessages({messages})).
+
+const positional = ['attach', 'attach-frame', 'set-document', 'set-nodes', 'set-drop-filter', 'set-actions', 'set-messages', 'set-insertion-target', 'select', 'edit'];
 (0,_core_js_composition_overlay_mjs__WEBPACK_IMPORTED_MODULE_0__.defineCompositionOverlay)(globalThis.customElements, {
   base: (0,_core_js_composition_manifest_host_mjs__WEBPACK_IMPORTED_MODULE_1__.manifestHost)(_component_json__WEBPACK_IMPORTED_MODULE_2__, {
     lang: {
@@ -436,7 +440,8 @@ globalThis.SF.CompositionOverlay = Object.freeze({
       ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_5__
     },
     source: 'ru',
-    aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_3__
+    aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_3__,
+    positional
   })
 });
 __webpack_async_result__();
@@ -2042,7 +2047,8 @@ function defineCompositionOverlay(registry = globalThis.customElements, { base =
     }
 
     // With an icon: sf-icon-button at size 1/2, its label the name, and sf-tooltip
-    // holding the label and the shortcut. In the DOM from setActions on, so both
+    // holding the label and the shortcut (its shortcut setting: the kbd
+    // component's quiet keys). The tooltip is the plain one, its defaults. In the DOM from setActions on, so both
     // load before the first selection needs them.
     createAction(action) {
       const doc = globalThis.document;
@@ -2062,8 +2068,6 @@ function defineCompositionOverlay(registry = globalThis.customElements, { base =
       button.setAttribute('data-action', action.id);
       button.setAttribute('data-tooltip', '');
       const tooltip = doc.createElement('sf-tooltip');
-      tooltip.setAttribute('appearance', 'dark');
-      tooltip.setAttribute('size', '1/2');
       tooltip.setAttribute('arrow', 'bottom-center');
       tooltip.hidden = true;
       root.append(button, tooltip);
@@ -2082,7 +2086,9 @@ function defineCompositionOverlay(registry = globalThis.customElements, { base =
       }
       button.setAttribute('icon', action.icon);
       button.setAttribute('aria-label', action.label);
-      tooltip.setAttribute('text', action.shortcut ? `${action.label}  ${action.shortcut}` : action.label);
+      tooltip.setAttribute('text', action.label);
+      if (action.shortcut) tooltip.setAttribute('shortcut', action.shortcut);
+      else tooltip.removeAttribute('shortcut');
       root.toggleAttribute('data-sf-overlay-grip', action.icon === GRIP_ICON);
     }
 
@@ -3572,7 +3578,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-edito
 /***/ "7e115d411c69"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.editor-overlay","tag":"sf-editor-overlay","version":"1.5.3","kind":"leaf","settings":{"for":{"type":"string","default":""},"frame":{"type":"string","default":""},"accepts":{"type":"string","default":""},"label":{"type":"string","default":""},"placement":{"type":"enum","values":["top","side"],"default":"top"},"passive":{"type":"boolean","default":false},"actions":{"type":"list","default":[],"of":{"id":"string","label":"string","icon":{"type":"string","optional":true},"shortcut":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"tone":{"type":"enum","values":["danger"],"optional":true}}},"messages":{"type":"object","default":{}},"insertion-target":{"type":"object","default":{}}},"values":{},"events":{"select":{"carries":{"ids":"list","id":{"type":"id","nullable":true},"node_id":{"type":"id","nullable":true}}},"apply":{"carries":{"action":"string","scope":{"type":"enum","values":["entry"]},"ids":{"type":"list","schema":{"items":{"type":"string"}}}}},"insert":{"carries":{"parent":"id","slot":"string","index":{"type":"number","integer":true},"item":{"type":"string","optional":true},"from":{"type":"string","optional":true},"mode":{"type":"enum","values":["move","copy"],"optional":true},"parent_id":{"type":"id"}},"own-verb":true},"move":{"carries":{"ids":"list","id":"id","parent":"id","position":"number","slot":"string","node_id":{"type":"id"},"parent_id":{"type":"id"},"index":{"type":"number","integer":true}}},"change":{"carries":{"id":"id","value":"string","previous":"string"},"cancelable":true,"x-native":false},"open":{"carries":{"ids":"list","id":"id","node":{"type":"id"},"point":{"type":"object","nullable":true},"trigger":{"type":"enum","values":["click","dblclick","enter"]}}}},"actions":{"attach":{"with":{"canvas":"object"}},"attach-frame":{"with":{"iframe":"object"}},"set-document":{"with":{"document":"object","options":"object"}},"set-nodes":{"with":{"nodes":{"type":"list","of":{"id":"id","kind":"string","label":"string","parent":"id","editable":"boolean","rect":"object","element":"object"}},"options":"object"}},"set-drop-filter":{"with":{"filter":{"type":"object"}}},"set-actions":{"with":{"actions":"list"}},"set-messages":{"with":{"messages":"object"}},"set-insertion-target":{"with":{"target":{"type":"object","nullable":true}}},"select":{"with":{"id":{"type":"id","nullable":true},"options":"object"}},"edit":{"with":{"id":"string"}},"refresh":{}},"css-variables":{"--sf-composition-overlay-frame-color":{"type":"color","state":"default"},"--sf-composition-overlay-z-index":{"type":"number","state":"default"},"--sf-composition-overlay-toolbar-background-color":{"type":"color","state":"selected"},"--sf-composition-overlay-toolbar-radius":{"type":"length","state":"selected"},"--sf-composition-overlay-toolbar-gap":{"type":"length","state":"selected"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.editor-overlay","tag":"sf-editor-overlay","version":"1.6.4","kind":"leaf","settings":{"for":{"type":"string","default":""},"frame":{"type":"string","default":""},"accepts":{"type":"string","default":""},"label":{"type":"string","default":""},"placement":{"type":"enum","values":["top","side"],"default":"top"},"passive":{"type":"boolean","default":false},"actions":{"type":"list","default":[],"of":{"id":"string","label":"string","icon":{"type":"string","optional":true},"shortcut":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"tone":{"type":"enum","values":["danger"],"optional":true}}},"messages":{"type":"object","default":{}},"insertion-target":{"type":"object","default":{}}},"values":{},"events":{"select":{"carries":{"ids":"list","id":{"type":"id","nullable":true},"node_id":{"type":"id","nullable":true}}},"apply":{"carries":{"action":"string","scope":{"type":"enum","values":["entry"]},"ids":{"type":"list","schema":{"items":{"type":"string"}}}}},"insert":{"carries":{"parent":"id","slot":"string","index":{"type":"number","integer":true},"item":{"type":"string","optional":true},"from":{"type":"string","optional":true},"mode":{"type":"enum","values":["move","copy"],"optional":true},"parent_id":{"type":"id"}},"own-verb":true},"move":{"carries":{"ids":"list","id":"id","parent":"id","position":"number","slot":"string","node_id":{"type":"id"},"parent_id":{"type":"id"},"index":{"type":"number","integer":true}}},"change":{"carries":{"id":"id","value":"string","previous":"string"},"cancelable":true,"x-native":false},"open":{"carries":{"ids":"list","id":"id","node":{"type":"id"},"point":{"type":"object","nullable":true},"trigger":{"type":"enum","values":["click","dblclick","enter"]}}}},"actions":{"attach":{"with":{"canvas":"object"}},"attach-frame":{"with":{"iframe":"object"}},"set-document":{"with":{"document":"object","options":"object"}},"set-nodes":{"with":{"nodes":{"type":"list","of":{"id":"id","kind":"string","label":"string","parent":"id","editable":"boolean","rect":"object","element":"object"}},"options":"object"}},"set-drop-filter":{"with":{"filter":{"type":"object"}}},"set-actions":{"with":{"actions":"list"}},"set-messages":{"with":{"messages":"object"}},"set-insertion-target":{"with":{"target":{"type":"object","nullable":true}}},"select":{"with":{"id":{"type":"id","nullable":true},"options":"object"}},"edit":{"with":{"id":"string"}},"refresh":{}},"css-variables":{"--sf-composition-overlay-frame-color":{"type":"color","state":"default"},"--sf-composition-overlay-z-index":{"type":"number","state":"default"},"--sf-composition-overlay-toolbar-background-color":{"type":"color","state":"selected"},"--sf-composition-overlay-toolbar-radius":{"type":"length","state":"selected"},"--sf-composition-overlay-toolbar-gap":{"type":"length","state":"selected"}}}');
 
 /***/ },
 

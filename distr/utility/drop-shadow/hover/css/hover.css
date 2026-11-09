@@ -1,21 +1,53 @@
 @layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.utilities {
+  .hover\:drop-shadow-flat:hover {
+    box-shadow: none;
+    -webkit-filter: none;
+            filter: none;
+  }
+  .hover\:drop-shadow-raised:hover {
+    box-shadow: none;
+    -webkit-filter: drop-shadow(0 var(--sf-px) var(--sf-a2) var(--sf-shadow-key-color)) drop-shadow(0 var(--sf-a2) var(--sf-a8) var(--sf-shadow-ambient-color));
+            filter: drop-shadow(0 var(--sf-px) var(--sf-a2) var(--sf-shadow-key-color)) drop-shadow(0 var(--sf-a2) var(--sf-a8) var(--sf-shadow-ambient-color));
+  }
+  .hover\:drop-shadow-overlay:hover {
+    box-shadow: none;
+    -webkit-filter: drop-shadow(0 var(--sf-a2) var(--sf-a4) var(--sf-shadow-key-color)) drop-shadow(0 var(--sf-a8) var(--sf-b6) var(--sf-shadow-ambient-color));
+            filter: drop-shadow(0 var(--sf-a2) var(--sf-a4) var(--sf-shadow-key-color)) drop-shadow(0 var(--sf-a8) var(--sf-b6) var(--sf-shadow-ambient-color));
+  }
+  .hover\:drop-shadow-modal:hover {
+    box-shadow: none;
+    -webkit-filter: drop-shadow(0 var(--sf-a4) var(--sf-a8) var(--sf-shadow-key-color)) drop-shadow(0 var(--sf-b6) var(--sf-c6) var(--sf-shadow-ambient-color));
+            filter: drop-shadow(0 var(--sf-a4) var(--sf-a8) var(--sf-shadow-key-color)) drop-shadow(0 var(--sf-b6) var(--sf-c6) var(--sf-shadow-ambient-color));
+  }
   .hover\:drop-shadow-0:hover {
-    --sf-shadow--level-ratio: 0;
+    box-shadow: none;
+    -webkit-filter: none;
+            filter: none;
   }
   .hover\:drop-shadow-1:hover {
-    --sf-shadow--level-ratio: 1;
+    box-shadow: none;
+    -webkit-filter: drop-shadow(0 var(--sf-px) var(--sf-a2) var(--sf-shadow-key-color)) drop-shadow(0 var(--sf-a2) var(--sf-a8) var(--sf-shadow-ambient-color));
+            filter: drop-shadow(0 var(--sf-px) var(--sf-a2) var(--sf-shadow-key-color)) drop-shadow(0 var(--sf-a2) var(--sf-a8) var(--sf-shadow-ambient-color));
   }
   .hover\:drop-shadow-2:hover {
-    --sf-shadow--level-ratio: 2;
+    box-shadow: none;
+    -webkit-filter: drop-shadow(0 var(--sf-a2) var(--sf-a4) var(--sf-shadow-key-color)) drop-shadow(0 var(--sf-a8) var(--sf-b6) var(--sf-shadow-ambient-color));
+            filter: drop-shadow(0 var(--sf-a2) var(--sf-a4) var(--sf-shadow-key-color)) drop-shadow(0 var(--sf-a8) var(--sf-b6) var(--sf-shadow-ambient-color));
   }
   .hover\:drop-shadow-3:hover {
-    --sf-shadow--level-ratio: 4;
+    box-shadow: none;
+    -webkit-filter: drop-shadow(0 var(--sf-a2) var(--sf-a4) var(--sf-shadow-key-color)) drop-shadow(0 var(--sf-a8) var(--sf-b6) var(--sf-shadow-ambient-color));
+            filter: drop-shadow(0 var(--sf-a2) var(--sf-a4) var(--sf-shadow-key-color)) drop-shadow(0 var(--sf-a8) var(--sf-b6) var(--sf-shadow-ambient-color));
   }
   .hover\:drop-shadow-4:hover {
-    --sf-shadow--level-ratio: 8;
+    box-shadow: none;
+    -webkit-filter: drop-shadow(0 var(--sf-a4) var(--sf-a8) var(--sf-shadow-key-color)) drop-shadow(0 var(--sf-b6) var(--sf-c6) var(--sf-shadow-ambient-color));
+            filter: drop-shadow(0 var(--sf-a4) var(--sf-a8) var(--sf-shadow-key-color)) drop-shadow(0 var(--sf-b6) var(--sf-c6) var(--sf-shadow-ambient-color));
   }
   .hover\:drop-shadow-5:hover {
-    --sf-shadow--level-ratio: 16;
+    box-shadow: none;
+    -webkit-filter: drop-shadow(0 var(--sf-a4) var(--sf-a8) var(--sf-shadow-key-color)) drop-shadow(0 var(--sf-b6) var(--sf-c6) var(--sf-shadow-ambient-color));
+            filter: drop-shadow(0 var(--sf-a4) var(--sf-a8) var(--sf-shadow-key-color)) drop-shadow(0 var(--sf-b6) var(--sf-c6) var(--sf-shadow-ambient-color));
   }
 }

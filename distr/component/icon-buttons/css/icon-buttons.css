@@ -283,8 +283,8 @@
     border-inline-start-width: var(--sf-icon-button--border-inline-start-width, 0);
     border-style: solid;
     border-style: var(--sf-icon-button--border-style, solid);
-    box-shadow: 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0);
-    box-shadow: var(--sf-icon-button--focus-inset, 0 0 rgba(0, 0, 0, 0)), var(--sf-icon-button--box-shadow, 0 0 rgba(0, 0, 0, 0));
+    box-shadow: 0 0 var(--sf-transparent), 0 0 var(--sf-transparent);
+    box-shadow: var(--sf-icon-button--focus-inset, 0 0 var(--sf-transparent)), var(--sf-icon-button--box-shadow, 0 0 var(--sf-transparent));
   }
   .sf-icon-button .sf-close-icon {
     background-color: var(--sf-close-icon--background-color);

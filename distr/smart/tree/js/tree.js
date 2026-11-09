@@ -406,12 +406,28 @@ class SfTree extends TreeElement {
     if (this.selection === 'many') return Array.isArray(this.selectedIds) ? this.selectedIds.map(text) : [];
     const one = text(this.selected);
     return one ? [one] : [];
+  } // The selection as a set, kept while the value it is read from is the same
+  // array (or id): a row asks whether it is selected on every drawing, and a
+  // tree of 10 000 entries all checked scanned a 10 000-id list per row and
+  // per entry -- 73 ms a change (simai/ui-source#43, tests/browser/tree-scale).
+
+
+  selectionSet() {
+    const source = this.selection === 'many' ? this.selectedIds : text(this.selected);
+
+    if (this._selectionSource !== source || !this._selectionSet) {
+      this._selectionSource = source;
+      this._selectionSet = new Set(this.selectionIds());
+    }
+
+    return this._selectionSet;
   }
 
   writeSelection(ids, {
     quiet = true
   } = {}) {
-    const ordered = [...this._entries.keys()].filter(id => ids.includes(id));
+    const wanted = new Set(ids);
+    const ordered = [...this._entries.keys()].filter(id => wanted.has(id));
     this.__sfManifestData = this.__sfManifestData || {};
     this.__sfManifestData['selected-ids'] = ordered;
     const current = ids.at(-1) ?? '';
@@ -434,7 +450,7 @@ class SfTree extends TreeElement {
   }
 
   isSelected(id) {
-    return this.selection !== 'none' && this.selectionIds().includes(id);
+    return this.selection !== 'none' && this.selectionSet().has(id);
   }
 
   selectRow(row) {
@@ -1182,7 +1198,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-tree 
 /***/ "fb5cbd0ee7de"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tree","tag":"sf-tree","version":"2.0.8","kind":"leaf","settings":{"selection":{"type":"enum","values":["none","one","many"],"default":"none"},"items":{"type":"list","default":[],"of":{"id":"id","label":"string","href":"string","target":"string","rel":"string","kind":{"type":"enum","values":["folder","file"]},"value":"string","open":"boolean","selected":"boolean","active":"boolean","disabled":"boolean","icon":"boolean","open-icon":"icon","closed-icon":"icon","chevron-open-icon":"icon","chevron-closed-icon":"icon","open-label":"string","close-label":"string","revision":"string","children":"list"},"entries":{"key":"id","changes":"content"}},"accept-records":{"type":"boolean","default":false},"accept-files":{"type":"boolean","default":false}},"values":{"selected":{"type":"id","default":""},"selected-ids":{"type":"list","default":[],"of":{"id":"id"}}},"events":{"open":{"carries":{"id":"id","value":"string"}},"select":{"carries":{"ids":"list","id":"id","selected":"boolean"}},"toggle":{"carries":{"id":"id","open":"boolean","value":"string"}},"move":{"carries":{"ids":"list","parent":"id","before":{"type":"id","nullable":true},"source":"string"}},"attach":{"carries":{"files":"list","parent":"id"}},"window":{"carries":{"first":"number","last":"number"}}},"actions":{"expand":{"with":{"id":"id"}},"collapse":{"with":{"id":"id"}},"focus-entry":{"with":{"id":"id"}}},"presentation":{"skeleton":{"late":["items"]}},"css-variables":{"--sf-tree-gap":{"type":"length","state":"default"},"--sf-tree-padding-inline":{"type":"length","state":"default"},"--sf-tree-indent":{"type":"length","state":"default"},"--sf-tree-radius":{"type":"length","state":"default"},"--sf-tree-color":{"type":"color","state":"default"},"--sf-tree-selected-background-color":{"type":"color","state":"selected"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tree","tag":"sf-tree","version":"2.1.1","kind":"leaf","settings":{"selection":{"type":"enum","values":["none","one","many"],"default":"none"},"items":{"type":"list","default":[],"of":{"id":"id","label":"string","href":"string","target":"string","rel":"string","kind":{"type":"enum","values":["folder","file"]},"value":"string","open":"boolean","selected":"boolean","active":"boolean","disabled":"boolean","icon":"boolean","open-icon":"icon","closed-icon":"icon","chevron-open-icon":"icon","chevron-closed-icon":"icon","open-label":"string","close-label":"string","revision":"string","children":"list"},"entries":{"key":"id","changes":"content"}},"accept-records":{"type":"boolean","default":false},"accept-files":{"type":"boolean","default":false}},"values":{"selected":{"type":"id","default":""},"selected-ids":{"type":"list","default":[],"of":{"id":"id"}}},"events":{"open":{"carries":{"id":"id","value":"string"}},"select":{"carries":{"ids":"list","id":"id","selected":"boolean"}},"toggle":{"carries":{"id":"id","open":"boolean","value":"string"}},"move":{"carries":{"ids":"list","parent":"id","before":{"type":"id","nullable":true},"source":"string"}},"attach":{"carries":{"files":"list","parent":"id"}},"window":{"carries":{"first":"number","last":"number"}}},"actions":{"expand":{"with":{"id":"id"}},"collapse":{"with":{"id":"id"}},"focus-entry":{"with":{"id":"id"}}},"presentation":{"skeleton":{"late":["items"]}},"css-variables":{"--sf-tree-gap":{"type":"length","state":"default"},"--sf-tree-padding-inline":{"type":"length","state":"default"},"--sf-tree-indent":{"type":"length","state":"default"},"--sf-tree-radius":{"type":"length","state":"default"},"--sf-tree-color":{"type":"color","state":"default"},"--sf-tree-selected-background-color":{"type":"color","state":"selected"}}}');
 
 /***/ },
 

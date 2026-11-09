@@ -33,6 +33,52 @@ const OWNED_SELECTOR = '[data-sf-menu-owned]';
 
 function isOwned(element) {
   return Boolean(element?.closest?.(OWNED_SELECTOR));
+} // A group (component.menu 1.2.0; recognised by hand since 1.2.1) is styling
+// only: a heading over a list of first-level rows, the markup sf-menu draws
+// for a group --
+//
+//   li.sf-menu-item.sf-menu-item--group[data-sf-menu-group]
+//     span.sf-menu-group-heading > span.sf-menu-group-label
+//     ul.sf-menu[aria-labelledby the heading] > li.sf-menu-item ...
+//
+// A hand-written group is recognised by its class, its data-sf-menu-group or
+// its heading, and is left flat: no row element, no disclosure, its rows stay
+// on the first level. Only a collapsible group -- a button.sf-menu-group-heading
+// -- opens and closes, by that button.
+
+
+const GROUP_HEADING_SELECTOR = ':scope > .sf-menu-group-heading';
+
+function isGroup(element) {
+  return Boolean(element?.matches?.('.sf-menu-item') && (element.classList.contains('sf-menu-item--group') || element.hasAttribute('data-sf-menu-group') || element.querySelector(GROUP_HEADING_SELECTOR)));
+}
+
+function groupToggle(root) {
+  const heading = root.querySelector(GROUP_HEADING_SELECTOR);
+  return heading instanceof HTMLButtonElement ? heading : null;
+}
+
+function initGroup(root) {
+  const heading = root.querySelector(GROUP_HEADING_SELECTOR);
+  const list = root.querySelector(':scope > .sf-menu');
+  const toggle = groupToggle(root);
+  root.dataset[BOUND_FLAG] = 'true';
+  root.classList.add('sf-menu-item', 'sf-menu-item--group');
+  root.classList.remove('sf-menu-item--has-submenu');
+  if (!list) return; // A fixed group is always open; a collapsible one by its class or its
+  // button's aria-expanded, as it was written.
+
+  const open = toggle ? root.classList.contains('open') || toggle.getAttribute('aria-expanded') === 'true' : true;
+  root.classList.toggle('open', open);
+  list.hidden = !open;
+  if (heading?.id && !list.hasAttribute('aria-labelledby')) list.setAttribute('aria-labelledby', heading.id);
+
+  if (toggle) {
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-controls', ensureSubmenuId(list));
+    const icon = toggle.querySelector(':scope > .sf-icon');
+    if (icon) icon.textContent = open ? 'keyboard_arrow_up' : 'keyboard_arrow_down';
+  }
 }
 
 function isNativeInteractive(element) {
@@ -64,7 +110,7 @@ function getElementLevel(root) {
   while (currentMenu) {
     const parentItem = currentMenu.parentElement?.closest('.sf-menu-item');
     if (!parentItem) break;
-    level += 1;
+    if (!isGroup(parentItem)) level += 1;
     currentMenu = parentItem.parentElement?.closest('.sf-menu');
   }
 
@@ -88,6 +134,7 @@ function clearDirectTextNodes(root) {
 }
 
 function hasSubmenu(root) {
+  if (isGroup(root)) return false;
   const nestedMenu = root.querySelector(':scope > .sf-menu');
   return Boolean(nestedMenu);
 }
@@ -105,7 +152,7 @@ function getDisclosureController(root) {
 function closeHorizontalSiblings(root) {
   if (!isHorizontalTopLevel(root)) return;
   Array.from(root.parentElement.children).forEach(candidate => {
-    if (candidate === root || !candidate.matches('.sf-menu-item.open')) return;
+    if (candidate === root || !candidate.matches('.sf-menu-item.open') || isGroup(candidate)) return;
     setMenuItemOpen(candidate, false);
   });
 } // Closing any horizontal item closes (and releases the anchored flyouts of)
@@ -115,7 +162,7 @@ function closeHorizontalSiblings(root) {
 function closeHorizontalDescendants(root) {
   if (!root?.closest('.sf-menu.sf-menu--horizontal')) return;
   Array.from(root.querySelectorAll('.sf-menu-item.open')).reverse().forEach(candidate => {
-    setMenuItemOpen(candidate, false);
+    if (!isGroup(candidate)) setMenuItemOpen(candidate, false);
   });
 } // Horizontal flyouts use the shared Framework geometry: the first level opens
 // below its item, deeper levels to the inline end; both flip to the opposite
@@ -346,6 +393,16 @@ function setMenuItemOpen(root, nextOpen) {
 
   const nestedMenu = root.querySelector(':scope > .sf-menu');
   if (!nestedMenu) return false;
+
+  if (isGroup(root)) {
+    const toggle = groupToggle(root);
+    if (!toggle || toggle.disabled) return false;
+    root.classList.toggle('open', Boolean(nextOpen));
+    toggle.setAttribute('aria-expanded', String(Boolean(nextOpen)));
+    initGroup(root);
+    return true;
+  }
+
   if (nextOpen) closeHorizontalSiblings(root);
   const usesLegacyAriaState = root.hasAttribute('aria-expanded');
 
@@ -372,6 +429,12 @@ function toggleMenuItem(root) {
 
 function initMenuItem(root) {
   if (!root || isOwned(root)) return;
+
+  if (isGroup(root)) {
+    initGroup(root);
+    return;
+  }
+
   if (root.hasAttribute('expanded')) legacyExpandedOwners.add(root);
   const expanded = isExpanded(root);
   const isBranch = hasSubmenu(root);
@@ -475,6 +538,14 @@ function bindMenuEvents() {
       if (!isOwned(root) && !root.contains(target)) setMenuItemOpen(root, false);
     });
     if (isOwned(target)) return;
+    const groupHeading = target.closest('.sf-menu-item > button.sf-menu-group-heading');
+
+    if (groupHeading) {
+      const group = groupHeading.parentElement;
+      if (isGroup(group)) toggleMenuItem(group);
+      return;
+    }
+
     const button = target.closest('.sf-menu-item > .sf-menu-element > .sf-icon-button');
 
     if (button) {
@@ -684,6 +755,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   anchor: () => (/* binding */ anchor),
 /* harmony export */   anchorReference: () => (/* binding */ anchorReference),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   liftToTopLayer: () => (/* binding */ liftToTopLayer),
 /* harmony export */   referenceRect: () => (/* binding */ referenceRect),
 /* harmony export */   resolveLength: () => (/* binding */ resolveLength)
 /* harmony export */ });
@@ -750,7 +822,24 @@ const given = value => Boolean(value) && value !== 'none';
 function containsFixed(element) {
   const css = getComputedStyle(element);
   if (css.display === 'contents') return false;
-  return given(css.transform) || given(css.translate) || given(css.scale) || given(css.rotate) || given(css.perspective) || given(css.filter) || given(css.backdropFilter) || WILL_CONTAIN.test(css.willChange || '') || CONTAINS_FIXED.test(css.contain || '') || Boolean(css.containerType) && css.containerType !== 'normal';
+  if (given(css.transform) || given(css.translate) || given(css.scale) || given(css.rotate) || given(css.perspective) || given(css.filter) || given(css.backdropFilter) || WILL_CONTAIN.test(css.willChange || '') || CONTAINS_FIXED.test(css.contain || '')) return true; // A container query box is asked, not assumed. The containment it once
+  // implied made it the containing block of fixed descendants, and Floating UI
+  // still counts it so; current Chromium no longer does. Counting it placed
+  // every panel in the docs' content column (main.docara-content is
+  // container-type: inline-size) by the column's offset a second time: the
+  // calendar of a field at y 516 opened at y 1336 (docs pre-check DP-01,
+  // 2026-11-09). A fixed probe at 0,0 inside the box says which it is.
+
+  return Boolean(css.containerType) && css.containerType !== 'normal' && probesFixedOrigin(element);
+}
+
+function probesFixedOrigin(element) {
+  const probe = element.ownerDocument.createElement('span');
+  probe.style.cssText = 'position:fixed;left:0;top:0;inline-size:0;block-size:0;padding:0;border:0;margin:0;visibility:hidden;pointer-events:none';
+  element.append(probe);
+  const at = probe.getBoundingClientRect();
+  probe.remove();
+  return Math.abs(at.left) > 0.5 || Math.abs(at.top) > 0.5;
 }
 
 function inTopLayer(element) {
@@ -759,6 +848,85 @@ function inTopLayer(element) {
   } catch {
     return false;
   }
+} // A floating surface is lifted into the top layer while it is anchored (a
+// manual popover), so no ancestor can displace or clip it: a transform, a
+// filter, will-change, contain: layout or paint, an overflow box, a stacking
+// context under a sticky header. It stays where it is in the DOM, so it keeps
+// the host's variables, theme, lang, dir and density by plain inheritance --
+// what a body portal has to carry by hand (carryLayerOrigin). A surface the
+// component already lifted (sf-menu-context, sf-help-mark, sf-profile-picker,
+// sf-input-lookup, dropdown lists) or that stands in a modal dialog's top
+// layer is left as it is; a browser without popovers keeps the fixed panel in
+// place, placed against its containing block.
+//
+// The user-agent popover rule (inset 0, margin auto, a border, padding, Canvas
+// and CanvasText, overflow auto) is taken back by a rule of no specificity in
+// the lowest Framework layer, sf.reset, so the component's own sheet still
+// decides each of those: unlayered, the rule outranked every layered component
+// rule and took the calendar's fill, padding and border away.
+
+
+const LIFTED = 'data-sf-position-layer';
+const LIFTED_RULE = `@layer sf.reset{:where([${LIFTED}]){inset:auto;margin:0;padding:0;border:0 none;inline-size:auto;block-size:auto;overflow:visible;color:inherit;background-color:transparent}}`;
+const sheets = new WeakMap();
+
+function adoptLiftedRule(floating) {
+  const root = floating.getRootNode();
+  const target = root instanceof ShadowRoot ? root : floating.ownerDocument;
+  if (sheets.has(target)) return;
+  const view = floating.ownerDocument.defaultView;
+
+  try {
+    const sheet = new view.CSSStyleSheet();
+    sheet.replaceSync(LIFTED_RULE);
+    target.adoptedStyleSheets = [...target.adoptedStyleSheets, sheet];
+    sheets.set(target, sheet);
+  } catch {
+    const style = floating.ownerDocument.createElement('style');
+    style.dataset.sfPositionLayer = '';
+    style.textContent = LIFTED_RULE;
+    (target === floating.ownerDocument ? target.head || target.documentElement : target).append(style);
+    sheets.set(target, style);
+  }
+}
+
+function liftable(floating) {
+  if (typeof floating.showPopover !== 'function' || !floating.isConnected) return false;
+  if (floating.hasAttribute('popover') || inTopLayer(floating)) return false;
+
+  for (let node = floating.parentElement; node; node = node.parentElement) if (inTopLayer(node)) return false;
+
+  return true;
+}
+/** Lifts a floating surface into the top layer; returns a function that puts it back, or null. */
+
+
+function liftToTopLayer(floating) {
+  if (!liftable(floating)) return null;
+  adoptLiftedRule(floating);
+  floating.setAttribute(LIFTED, '');
+  floating.setAttribute('popover', 'manual');
+
+  try {
+    floating.showPopover();
+  } catch {
+    floating.removeAttribute('popover');
+    floating.removeAttribute(LIFTED);
+    return null;
+  }
+
+  return () => {
+    if (floating.hasAttribute(LIFTED)) {
+      try {
+        if (floating.matches(':popover-open')) floating.hidePopover();
+      } catch {
+        /* already gone from the document */
+      }
+
+      floating.removeAttribute('popover');
+      floating.removeAttribute(LIFTED);
+    }
+  };
 }
 
 function fixedContainingBlock(element) {
@@ -802,7 +970,9 @@ function anchorReference(element) {
 /**
  * Keeps `floating` anchored to `reference`.
  * options: {side, align, offset, alignmentOffset, padding, flip, shift,
- *           matchWidth, fitHeight, autoUpdate, onPosition({side, placement, x, y})}
+ *           matchWidth, fitHeight, autoUpdate, topLayer, onPosition({side, placement, x, y})}
+ * topLayer (default true) lifts the floating element into the top layer while
+ * it is anchored (see liftToTopLayer); false keeps it where it stands.
  * Returns {update(): Promise, stop(), side}.
  */
 
@@ -824,6 +994,7 @@ function anchor(reference, floating, options = {}) {
     matchWidth: false,
     fitHeight: true,
     autoUpdate: true,
+    topLayer: true,
     onPosition: null,
     ...options
   }; // Inline styles this helper writes are restored on stop(); the author's caps
@@ -838,7 +1009,9 @@ function anchor(reference, floating, options = {}) {
   // A percentage cap is kept as written by getComputedStyle; read as pixels,
   // max-inline-size: 100% made every tooltip 100px wide. The panel is fixed, so
   // a percentage is of the viewport.
+  // Lifted before its caps are read: the panel is measured where it is drawn.
 
+  const lower = settings.topLayer ? liftToTopLayer(floating) : null;
   const floatingStyle = getComputedStyle(floating);
 
   const cap = (value, whole) => {
@@ -983,6 +1156,7 @@ function anchor(reference, floating, options = {}) {
     controller.stopped = true;
     cleanup?.();
     delete floating.dataset.sfSide;
+    lower?.();
 
     for (const [name, value, priority] of saved) {
       if (value) floating.style.setProperty(name, value, priority);else floating.style.removeProperty(name);
@@ -996,6 +1170,7 @@ const Position = Object.freeze({
   anchor,
   anchorReference,
   referenceRect,
+  liftToTopLayer,
   logicalSide: _position_placement_js__WEBPACK_IMPORTED_MODULE_1__.logicalSide,
   physicalPlacement: _position_placement_js__WEBPACK_IMPORTED_MODULE_1__.physicalPlacement,
   resolveLength

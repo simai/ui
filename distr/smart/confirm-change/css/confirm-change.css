@@ -124,8 +124,10 @@
   .sf-change-confirm__status:focus-visible {
     outline-offset: var(--sf-space-1\/4);
   }
+  /* The outcome's ink is the success role on the card's surface (C16), not
+     the ink of a success container. */
   .sf-change-confirm--accepted .sf-change-confirm__status {
-    color: var(--sf-on-success-container);
+    color: var(--sf-success);
   }
   .sf-change-confirm__actions {
     display: flex;
@@ -138,7 +140,7 @@
      query and not a container query: containing the card's inline size would
      make a card that is as wide as its content (in a message bubble) collapse
      to nothing. */
-  @media (max-width: 479px) {
+  @media (max-width: 31.999rem) { /* below sm */
     .sf-change-confirm__actions {
       display: grid;
       grid-template-columns: 1fr 1fr;

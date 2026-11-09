@@ -417,10 +417,12 @@
   .sf-slider-dots.sf-slider-dots--primary.sf-slider-dots--framed.sf-slider-dots--dark {
     --sf-slider-dots-dot--color: var(--sf-on-primary-container);
   }
+  /* A framed plate of dots is the raised place (C20). It read --sf-blur-medium,
+     a length (4px), which is no shadow: the declaration was dropped. */
   .sf-slider-dots.sf-slider-dots--size-1.sf-slider-dots--clear.sf-slider-dots--framed.sf-slider-dots--dark {
     --sf-slider-dots--backdrop-filter: var(--sf-ui-blur-medium);
     --sf-slider-dots--background-color: var(--sf-surface-inverse);
-    --sf-slider-dots--box-shadow: var(--sf-blur-medium);
+    --sf-slider-dots--box-shadow: var(--sf-shadow-raised);
     --sf-slider-dots--padding-bottom: var(--sf-ui-1--space-y);
     --sf-slider-dots--padding-inline-end: var(--sf-ui-1--space-y);
     --sf-slider-dots--padding-inline-start: var(--sf-ui-1--space-y);
@@ -432,7 +434,7 @@
   .sf-slider-dots.sf-slider-dots--size-1.sf-slider-dots--clear.sf-slider-dots--framed.sf-slider-dots--light {
     --sf-slider-dots--backdrop-filter: var(--sf-ui-blur-medium);
     --sf-slider-dots--background-color: var(--sf-surface-container);
-    --sf-slider-dots--box-shadow: var(--sf-blur-medium);
+    --sf-slider-dots--box-shadow: var(--sf-shadow-raised);
     --sf-slider-dots--padding-bottom: var(--sf-ui-1--space-y);
     --sf-slider-dots--padding-inline-end: var(--sf-ui-1--space-y);
     --sf-slider-dots--padding-inline-start: var(--sf-ui-1--space-y);
@@ -458,7 +460,7 @@
   .sf-slider-dots.sf-slider-dots--size-2.sf-slider-dots--clear.sf-slider-dots--framed.sf-slider-dots--dark {
     --sf-slider-dots--backdrop-filter: var(--sf-ui-blur-medium);
     --sf-slider-dots--background-color: var(--sf-surface-inverse);
-    --sf-slider-dots--box-shadow: var(--sf-blur-medium);
+    --sf-slider-dots--box-shadow: var(--sf-shadow-raised);
     --sf-slider-dots--padding-bottom: var(--sf-ui-2--space-y);
     --sf-slider-dots--padding-inline-end: var(--sf-ui-2--space-y);
     --sf-slider-dots--padding-inline-start: var(--sf-ui-2--space-y);
@@ -467,7 +469,7 @@
   .sf-slider-dots.sf-slider-dots--size-2.sf-slider-dots--clear.sf-slider-dots--framed.sf-slider-dots--light {
     --sf-slider-dots--backdrop-filter: var(--sf-ui-blur-medium);
     --sf-slider-dots--background-color: var(--sf-surface-container);
-    --sf-slider-dots--box-shadow: var(--sf-blur-medium);
+    --sf-slider-dots--box-shadow: var(--sf-shadow-raised);
     --sf-slider-dots--padding-bottom: var(--sf-ui-2--space-y);
     --sf-slider-dots--padding-inline-end: var(--sf-ui-2--space-y);
     --sf-slider-dots--padding-inline-start: var(--sf-ui-2--space-y);
@@ -613,7 +615,9 @@
   }
   .sf-slider-arrows--light, .sf-slider-arrows--dark {
     --sf-slider-arrows--backdrop-filter: var(--sf-ui-blur-medium);
-    --sf-slider-arrows--box-shadow: var(--sf-blur-medium);
+    /* The raised place (C20). It read --sf-blur-medium, a length (4px), which
+       is no shadow: the declaration was dropped and the arrows had none. */
+    --sf-slider-arrows--box-shadow: var(--sf-shadow-raised);
   }
 }
 /*

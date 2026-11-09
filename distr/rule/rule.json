@@ -500,11 +500,11 @@
   },
   {
     "name": "box-shadow/default",
-    "regex": "/^(?:shadow-(?:0|1|2|3|4|5))(?![\\s\\S])/"
+    "regex": "/^(?:shadow-(?:0|1|2|3|4|5|flat|modal|overlay|raised))(?![\\s\\S])/"
   },
   {
     "name": "box-shadow/hover",
-    "regex": "/^(?:hover:shadow-(?:0|1|2|3|4|5))(?![\\s\\S])/"
+    "regex": "/^(?:hover:shadow-(?:0|1|2|3|4|5|flat|modal|overlay|raised))(?![\\s\\S])/"
   },
   {
     "name": "box-sizing/default",
@@ -1077,6 +1077,13 @@
       },
       {
         "name": "cl-icon"
+      },
+      {
+        "name": "cl-alert"
+      },
+      {
+        "lazy": true,
+        "name": "spinner"
       }
     ],
     "tags": [
@@ -2270,6 +2277,9 @@
     "relation": [
       {
         "name": "tooltip"
+      },
+      {
+        "name": "kbd"
       }
     ],
     "tags": [
@@ -2611,11 +2621,11 @@
   },
   {
     "name": "drop-shadow/default",
-    "regex": "/^(?:drop-shadow-(?:0|1|2|3|4|5))(?![\\s\\S])/"
+    "regex": "/^(?:drop-shadow-(?:0|1|2|3|4|5|flat|modal|overlay|raised))(?![\\s\\S])/"
   },
   {
     "name": "drop-shadow/hover",
-    "regex": "/^(?:hover:drop-shadow-(?:0|1|2|3|4|5))(?![\\s\\S])/"
+    "regex": "/^(?:hover:drop-shadow-(?:0|1|2|3|4|5|flat|modal|overlay|raised))(?![\\s\\S])/"
   },
   {
     "name": "dropdown",

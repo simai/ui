@@ -470,7 +470,11 @@ const ProgressRunElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE
 
     step(args = {}) {
       const id = text(args?.id);
-      if (!this.steps.some(step => text(step?.id) === id)) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('missing');
+      if (!this.steps.some(step => text(step?.id) === id)) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('missing'); // The changes belong to the host's current list: one the run has not
+      // read yet starts them afresh now, not at the next read (which dropped a
+      // change made before the first render).
+
+      this.syncStepsSource();
       const change = {};
 
       for (const key of ['state', 'text', 'started', 'finished', 'duration']) {
@@ -515,16 +519,19 @@ class SfProgressRun extends ProgressRunElement {
   onDisconnected() {
     super.onDisconnected?.();
     this.stopTimer();
+  } // A new list from the host clears the changes made over the old one.
+
+
+  syncStepsSource() {
+    if (this.steps === this._stepsSource) return;
+    this._stepsSource = this.steps;
+
+    this._changes.clear();
   } // The steps the run shows: the host's list with the step changes on it.
 
 
   get list() {
-    if (this.steps !== this._stepsSource) {
-      this._stepsSource = this.steps;
-
-      this._changes.clear();
-    }
-
+    this.syncStepsSource();
     const changed = (Array.isArray(this.steps) ? this.steps : []).map(step => {
       const change = step && typeof step === 'object' ? this._changes.get(text(step.id)) : null;
       return change ? { ...step,
@@ -853,7 +860,7 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "d092c5059e25"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.progress-run","tag":"sf-progress-run","version":"1.2.0","kind":"leaf","settings":{"label":{"type":"string","default":""},"steps":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"title":{"type":"string"},"state":{"type":"string","enum":["waiting","running","done","failed","skipped"]},"text":{"type":"string"},"started":{"type":"string"},"finished":{"type":"string"},"duration":{"type":"number"}},"required":["id","title"]}},"default":[]},"run-state":{"type":"enum","values":["auto","running","done","failed","cancelled"],"default":"auto"},"result-text":{"type":"string","default":""},"output":{"type":"string","default":""},"output-label":{"type":"string","default-from":"runtime.output-label"},"file-name":{"type":"string","default":"output.txt"},"cancelable":{"type":"boolean","default":false},"retryable":{"type":"boolean","default":false},"hideable":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1"],"default":"1"}},"values":{"output-open":{"type":"boolean","default":false}},"events":{"cancel":{"carries":{},"cancelable":true},"retry":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close"]}},"cancelable":true},"download":{"carries":{"file-name":"string"},"cancelable":true},"toggle":{"carries":{"open":"boolean"}}},"actions":{"chunk":{"with":{"text":"string"}},"clear":{"with":{}},"step":{"with":{"id":"string","state":"string","text":"string","started":"string","finished":"string","duration":"number"}}},"host-states":{"data-state":"string"},"css-variables":{"--sf-progress-run-background-color":{"type":"color","state":"default"},"--sf-progress-run-divider-color":{"type":"color","state":"default"},"--sf-progress-run-output-background-color":{"type":"color","state":"default"},"--sf-progress-run-output-color":{"type":"color","state":"default"},"--sf-progress-run-output-max-height":{"type":"length","state":"default"},"--sf-progress-run-padding-inline":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.progress-run","tag":"sf-progress-run","version":"1.2.2","kind":"leaf","settings":{"label":{"type":"string","default":""},"steps":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"title":{"type":"string"},"state":{"type":"string","enum":["waiting","running","done","failed","skipped"]},"text":{"type":"string"},"started":{"type":"string"},"finished":{"type":"string"},"duration":{"type":"number"}},"required":["id","title"]}},"default":[]},"run-state":{"type":"enum","values":["auto","running","done","failed","cancelled"],"default":"auto"},"result-text":{"type":"string","default":""},"output":{"type":"string","default":""},"output-label":{"type":"string","default-from":"runtime.output-label"},"file-name":{"type":"string","default":"output.txt"},"cancelable":{"type":"boolean","default":false},"retryable":{"type":"boolean","default":false},"hideable":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1"],"default":"1"}},"values":{"output-open":{"type":"boolean","default":false}},"events":{"cancel":{"carries":{},"cancelable":true},"retry":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close"]}},"cancelable":true},"download":{"carries":{"file-name":"string"},"cancelable":true},"toggle":{"carries":{"open":"boolean"}}},"actions":{"chunk":{"with":{"text":"string"}},"clear":{"with":{}},"step":{"with":{"id":"string","state":"string","text":"string","started":"string","finished":"string","duration":"number"}}},"host-states":{"data-state":"string"},"css-variables":{"--sf-progress-run-background-color":{"type":"color","state":"default"},"--sf-progress-run-divider-color":{"type":"color","state":"default"},"--sf-progress-run-output-background-color":{"type":"color","state":"default"},"--sf-progress-run-output-color":{"type":"color","state":"default"},"--sf-progress-run-output-max-height":{"type":"length","state":"default"},"--sf-progress-run-padding-inline":{"type":"length","state":"default"}}}');
 
 /***/ },
 

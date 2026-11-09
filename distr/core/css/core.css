@@ -323,9 +323,14 @@
        the same in both themes: black at 60 dims a dark page as it dims a light
        one. Each drew its own before, and they disagreed: black 60 in three
        places, a light neutral at 32 in the search window (reuse audit
-       2026-11-02). A component's own scrim variables still win over these. */
-    --sf-scrim-color: var(--sf-black);
-    --sf-scrim-opacity: var(--sf-opacity-60);
+       2026-11-02). A component's own scrim variables still win over these.
+       Since C16 and C20 (2026-11-08) the strength is in the colour: black at 64,
+       an ink step of the alpha scale (allowed as a fill for glass and the scrim
+       only), drawn at full opacity -- the window and the drawer stand off the
+       page by the scrim, not by a darker shadow. A page that sets
+       --sf-scrim-opacity still dims the colour further. */
+    --sf-scrim-color: var(--sf-black--alfa-64);
+    --sf-scrim-opacity: 1;
     --sf-surface-2: light-dark(var(--sf-neutral-95), var(--sf-neutral-15));
     --sf-surface-3: light-dark(var(--sf-neutral-90), var(--sf-neutral-20));
     --sf-surface-4: light-dark(var(--sf-neutral-85), var(--sf-neutral-25));
@@ -535,31 +540,55 @@
     --sf-link-active: light-dark(var(--sf-primary-30), var(--sf-primary-90));
     --sf-link-visited: light-dark(var(--sf-tertiary-40), var(--sf-tertiary-80));
     --sf-code: light-dark(var(--sf-tertiary-50--alfa-24), var(--sf-tertiary-90--alfa-24));
-    --sf-shadow--color-fill: var(--sf-black--alfa-12);
-    --sf-shadow--color-outline: var(--sf-black--alfa-8);
-    --sf-shadow--color-shading: var(--sf-black--alfa-4);
+    /* Shadows (C20, owner 2026-11-08; ui-control prototypes/shadows.html).
+       Two colours, both steps of the alpha scale: the key shadow, short and
+       sharp at the edge, black at 16 in the light theme and 28 in the dark (a
+       fill step, the dark one twelve higher as every fill is); and the ambient
+       shadow, wide and soft, black at 8 in the light theme and none in the
+       dark, where black on a near-black page shows nothing. Declared here, on
+       the theme root, beside the places that read them: built on :root, the
+       former --sf-ui-shadow-N read the core's colours (24/12/8) and never the
+       theme's (12/8/4). */
+    --sf-shadow-key-color: light-dark(var(--sf-black--alfa-16), var(--sf-black--alfa-28));
+    --sf-shadow-ambient-color: light-dark(var(--sf-black--alfa-8), var(--sf-transparent));
+    /* Four shadows, named by the place, not by a number. Offsets and blurs are
+       steps of the size ladder. A component reads one of these four and
+       nothing else: no rgb(), no color-mix, no level.
+         flat     the page, an area, a card at rest: no shadow, the edge is a
+                  line (--sf-outline-variant);
+         raised   a card under the pointer, a sticky bar while content runs
+                  under it, a handle, a plate;
+         overlay  what stands over the page without holding it: a dropdown, a
+                  menu, a popover, a tooltip, a toast;
+         modal    what holds the page: a window, a drawer, always over the
+                  scrim (black 64). */
+    --sf-shadow-flat: none;
+    /* raised: 0 1px 2px key, 0 2px 8px ambient; overlay: 0 2px 4px key, 0 8px
+       16px ambient; modal: 0 4px 8px key, 0 16px 32px ambient
+       (mix/_mix__shadow.scss). */
+    --sf-shadow-raised: 0 var(--sf-px) var(--sf-a2) var(--sf-shadow-key-color), 0 var(--sf-a2) var(--sf-a8) var(--sf-shadow-ambient-color);
+    --sf-shadow-overlay: 0 var(--sf-a2) var(--sf-a4) var(--sf-shadow-key-color), 0 var(--sf-a8) var(--sf-b6) var(--sf-shadow-ambient-color);
+    --sf-shadow-modal: 0 var(--sf-a4) var(--sf-a8) var(--sf-shadow-key-color), 0 var(--sf-b6) var(--sf-c6) var(--sf-shadow-ambient-color);
     /* Высота — это две вещи сразу: тень под элементом и поверхность под ним.
        В светлой теме работает тень, и поднятая поверхность остаётся обычной.
        В тёмной тень не работает вовсе: она чёрная, фон почти чёрный, и весь
        пятиступенчатый набор укладывался в три-семь единиц яркости из 255 —
        ниже порога, на котором человек замечает разницу. Там высоту несёт
-       ступень поверхности, которая в тёмной теме светлеет. */
+       ступень поверхности, которая в тёмной теме светлеет: карточка, поднятая,
+       всплывающая, вложенная всплывающая -- каждая на ступень светлее (C16,
+       C20). Окно и шторка стоят на всплывающей и отделяются затемнением. */
     --sf-surface-card: light-dark(var(--sf-surface-page), var(--sf-surface-2));
-    --sf-elevation-2--surface: light-dark(var(--sf-surface-page), var(--sf-surface-3));
+    --sf-surface-raised: light-dark(var(--sf-surface-page), var(--sf-surface-3));
     --sf-surface-popup: light-dark(var(--sf-surface-page), var(--sf-surface-4));
     --sf-surface-popup-nested: light-dark(var(--sf-surface-page), var(--sf-surface-5));
-    --sf-elevation-5--surface: light-dark(var(--sf-surface-page), var(--sf-surface-5));
-    /* The shadow of each step, beside its surface: a panel that floats takes
-       both, so a theme or a product retunes height in one place (a dark theme
-       may drop the shadow and keep the surface, or the reverse). The rim is a
-       last layer a theme may switch on to outline raised panels in the dark;
-       it is off: 0 0 0 0 transparent. */
-    --sf-shadow--rim: 0 0 0 0 transparent;
-    --sf-shadow-card: var(--sf-ui-shadow-1), var(--sf-shadow--rim);
-    --sf-elevation-2--shadow: var(--sf-ui-shadow-2), var(--sf-shadow--rim);
-    --sf-shadow-popup: var(--sf-ui-shadow-3), var(--sf-shadow--rim);
-    --sf-shadow-popup-nested: var(--sf-ui-shadow-4), var(--sf-shadow--rim);
-    --sf-elevation-5--shadow: var(--sf-ui-shadow-5), var(--sf-shadow--rim);
+    /* The C16 names of the shadows (2026-11-08) join the four places: a card's
+       shadow is the raised one, a popup's and a nested popup's the overlay.
+       Former names until the alias list's remove_after (token-aliases.v1.json,
+       shadows); --sf-elevation-1/3/4--shadow follow them through the C16
+       aliases. */
+    --sf-shadow-card: var(--sf-shadow-raised);
+    --sf-shadow-popup: var(--sf-shadow-overlay);
+    --sf-shadow-popup-nested: var(--sf-shadow-overlay);
     /* Приглушённый текст на поднятой поверхности. В светлой теме поднятая
        поверхность остаётся обычной, поэтому значение то же, что у
        --sf-on-surface-variant. В тёмной поверхность светлеет со ступенью, и
@@ -567,10 +596,9 @@
        ступени и 2.93 на четвёртой при требуемых WCAG 1.4.3 четырёх с половиной.
        Значений три, а не пять: роль меняется там, где перестаёт проходить. */
     --sf-on-surface-card-variant: light-dark(var(--sf-neutral-40), var(--sf-neutral-60));
-    --sf-on-elevation-2--variant: light-dark(var(--sf-neutral-40), var(--sf-neutral-70));
+    --sf-on-surface-raised-variant: light-dark(var(--sf-neutral-40), var(--sf-neutral-70));
     --sf-on-surface-popup-variant: light-dark(var(--sf-neutral-40), var(--sf-neutral-70));
     --sf-on-surface-popup-nested-variant: light-dark(var(--sf-neutral-40), var(--sf-neutral-80));
-    --sf-on-elevation-5--variant: light-dark(var(--sf-neutral-40), var(--sf-neutral-80));
     /* The neutral half of the alpha scale. The base branches per scheme — ink on
        a light surface, light on a dark one — so a component asks for a degree of
        contrast rather than for black or white, and every step above is one
@@ -597,7 +625,6 @@
     --sf-elevation-1--surface: var(--sf-surface-card);
     --sf-elevation-3--shadow: var(--sf-shadow-popup);
     --sf-elevation-3--surface: var(--sf-surface-popup);
-    --sf-elevation-4--shadow: var(--sf-shadow-popup-nested);
     --sf-elevation-4--surface: var(--sf-surface-popup-nested);
     --sf-error-transparent-active: var(--sf-error-state-active);
     --sf-error-transparent-hover: var(--sf-error-state-hover);
@@ -643,6 +670,27 @@
     --sf-warning-transparent-hover: var(--sf-warning-state-hover);
     --sf-warning-transparent-overlay: var(--sf-warning-container-strong);
     --sf-warning-transparent-select: var(--sf-warning-state-select);
+    /* The names before C20 (2026-11-08): the numbered levels, the layer
+       styles and the shadow colours, each var() of its place until the alias
+       list's remove_after (token-aliases.v1.json, shadows). */
+    --sf-elevation-2--shadow: var(--sf-shadow-overlay);
+    --sf-elevation-4--shadow: var(--sf-shadow-modal);
+    --sf-elevation-5--shadow: var(--sf-shadow-modal);
+    --sf-elevation-2--surface: var(--sf-surface-popup);
+    --sf-elevation-5--surface: var(--sf-surface-popup-nested);
+    --sf-on-elevation-2--variant: var(--sf-on-surface-popup-variant);
+    --sf-on-elevation-5--variant: var(--sf-on-surface-popup-nested-variant);
+    --sf-ui-shadow-1: var(--sf-shadow-raised);
+    --sf-ui-shadow-2: var(--sf-shadow-overlay);
+    --sf-ui-shadow-3: var(--sf-shadow-overlay);
+    --sf-ui-shadow-4: var(--sf-shadow-modal);
+    --sf-ui-shadow-5: var(--sf-shadow-modal);
+    --sf-ui-shadow-top: var(--sf-shadow-flat);
+    --sf-shadow--color-fill: var(--sf-shadow-key-color);
+    --sf-shadow--color-outline: var(--sf-shadow-key-color);
+    --sf-shadow--color-shading: var(--sf-shadow-ambient-color);
+    --sf-shadow--color-shade: var(--sf-shadow-ambient-color);
+    --sf-shadow--rim: 0 0 0 0 transparent;
   }
 }
 @layer sf.base {
@@ -674,7 +722,7 @@
 }
 /*
  * Generated from src/core/contracts/adaptive-sizing.v1.json.
- * contract-sha256: 855724522691bc6ab9a601389fb129518398f774eb553f6a8d560a150457f3fa
+ * contract-sha256: 9d8fb9a4ffb9ac8581e6e9e448babec1f752b139fea730e40968022907bed28c
  * Do not edit semantic values in this file directly.
  */
 @layer sf.base {
@@ -735,12 +783,6 @@
     --sf-ui-blur-large: blur(var(--sf-blur-large));
     --sf-ui-blur-surface-overlay: blur(var(--sf-surface-overlay--blur));
     --sf-ui-focus: 0 0 0 var(--sf-focus-outline-width) var(--sf-focus);
-    --sf-ui-shadow-1: 0 var(--sf-a2) var(--sf-a4) var(--sf-px) var(--sf-shadow--color-shading), 0 var(--sf-px) var(--sf-a3) 0 var(--sf-shadow--color-outline), 0 var(--sf-a2) var(--sf-a2) calc(-1 * var(--sf-px)) var(--sf-shadow--color-fill);
-    --sf-ui-shadow-2: 0 var(--sf-a4) var(--sf-a8) var(--sf-a2) var(--sf-shadow--color-shading), 0 var(--sf-a2) var(--sf-a6) 0 var(--sf-shadow--color-outline), 0 var(--sf-a4) var(--sf-a4) calc(-1 * var(--sf-a2)) var(--sf-shadow--color-fill);
-    --sf-ui-shadow-3: 0 var(--sf-a8) var(--sf-b6) var(--sf-a4) var(--sf-shadow--color-shading), 0 var(--sf-a4) var(--sf-b2) 0 var(--sf-shadow--color-outline), 0 var(--sf-a8) var(--sf-a8) calc(-1 * var(--sf-a4)) var(--sf-shadow--color-fill);
-    --sf-ui-shadow-4: 0 var(--sf-b6) var(--sf-c6) var(--sf-a4) var(--sf-shadow--color-shading), 0 var(--sf-a8) var(--sf-c2) 0 var(--sf-shadow--color-outline), 0 var(--sf-b6) var(--sf-b6) calc(-1 * var(--sf-a8)) var(--sf-shadow--color-fill);
-    --sf-ui-shadow-5: 0 var(--sf-c6) var(--sf-d6) var(--sf-a8) var(--sf-shadow--color-shading), 0 var(--sf-b6) var(--sf-d2) 0 var(--sf-shadow--color-outline), 0 var(--sf-c6) var(--sf-c6) calc(-1 * var(--sf-b6)) var(--sf-shadow--color-fill);
-    --sf-ui-shadow-top: 0 0 var(--sf-px) 0 var(--sf-shadow--color-fill), 0 calc(-1 * var(--sf-a4)) var(--sf-b0) var(--sf-a4) var(--sf-shadow--color-outline), 0 calc(-1 * var(--sf-a2)) var(--sf-a3) var(--sf-px) var(--sf-shadow--color-shading);
     --sf-ui-skeleton: linear-gradient(180deg, var(--sf-neutral-80--alfa-48) 0%, var(--sf-neutral-60--alfa-48) 100%);
   }
 }
@@ -957,7 +999,7 @@
     --sf-gradient--alfa-1: 1;
     --sf-gradient--alfa-2: 1;
     --sf-gradient--alfa-3: 1;
-    --sf-stripe--size: var(--sf-a1, 1px);
+    --sf-stripe--size: var(--sf-a1);
     --sf-accent--alfa: 1;
     --sf-caret--alfa: 1;
     --sf-scroll--alfa: 1;
@@ -995,6 +1037,11 @@
     --sf-black--alfa-4: rgba(0,0,0,0.03922);
     --sf-black--alfa-8: rgba(0,0,0,0.07843);
     --sf-black--alfa-12: rgba(0,0,0,0.12157);
+    /* Shadows (C20, 2026-11-08): the key shadow is black at 16 in the light
+       theme and 28 in the dark -- fill steps, the dark one twelve higher as
+       every fill is (--sf-shadow-key-color). */
+    --sf-black--alfa-16: rgba(0,0,0,0.16078);
+    --sf-black--alfa-28: rgba(0,0,0,0.27843);
     /* Glass over a photo or a video (C16 --sf-surface-media; C14 the media
        close button): black at 48 at rest, 64 under the pointer, 80 pressed.
        The ink family as a fill, which the alpha scale allows for glass and
@@ -1469,7 +1516,7 @@ body {
 }
 /*
  * Generated from src/core/contracts/adaptive-sizing.v1.json.
- * contract-sha256: 855724522691bc6ab9a601389fb129518398f774eb553f6a8d560a150457f3fa
+ * contract-sha256: 9d8fb9a4ffb9ac8581e6e9e448babec1f752b139fea730e40968022907bed28c
  * Do not edit semantic values in this file directly.
  */
 @layer sf.base {
@@ -1566,7 +1613,7 @@ body {
 }
 /*
  * Generated from src/core/contracts/adaptive-sizing.v1.json.
- * contract-sha256: 855724522691bc6ab9a601389fb129518398f774eb553f6a8d560a150457f3fa
+ * contract-sha256: 9d8fb9a4ffb9ac8581e6e9e448babec1f752b139fea730e40968022907bed28c
  * Do not edit semantic values in this file directly.
  */
 @layer sf.base {
@@ -1645,7 +1692,7 @@ body {
 }
 /*
  * Generated from src/core/contracts/adaptive-sizing.v1.json.
- * contract-sha256: 855724522691bc6ab9a601389fb129518398f774eb553f6a8d560a150457f3fa
+ * contract-sha256: 9d8fb9a4ffb9ac8581e6e9e448babec1f752b139fea730e40968022907bed28c
  * Do not edit semantic values in this file directly.
  */
 @layer sf.base {
@@ -1706,7 +1753,7 @@ body {
 }
 /*
  * Generated from src/core/contracts/adaptive-sizing.v1.json.
- * contract-sha256: 855724522691bc6ab9a601389fb129518398f774eb553f6a8d560a150457f3fa
+ * contract-sha256: 9d8fb9a4ffb9ac8581e6e9e448babec1f752b139fea730e40968022907bed28c
  * Do not edit semantic values in this file directly.
  */
 @layer sf.base {
@@ -1732,12 +1779,12 @@ body {
     --sf-heading-1--height: var(--sf-title--height-6);
     --sf-heading-2--size: var(--sf-text--size-5);
     --sf-heading-2--height: var(--sf-title--height-5);
-    --sf-heading-3--size: var(--sf-text--size-2);
-    --sf-heading-3--height: var(--sf-title--height-2);
-    --sf-heading-4--size: var(--sf-text--size-1);
-    --sf-heading-4--height: var(--sf-title--height-1);
-    --sf-heading-5--size: var(--sf-text--size-2);
-    --sf-heading-5--height: var(--sf-title--height-2);
+    --sf-heading-3--size: var(--sf-text--size-3);
+    --sf-heading-3--height: var(--sf-title--height-3);
+    --sf-heading-4--size: var(--sf-text--size-2);
+    --sf-heading-4--height: var(--sf-title--height-2);
+    --sf-heading-5--size: var(--sf-text--size-1);
+    --sf-heading-5--height: var(--sf-title--height-1);
     --sf-heading-6--size: var(--sf-text--size-1);
     --sf-heading-6--height: var(--sf-title--height-1);
     --sf-display-1--size: var(--sf-text--size-12);
@@ -1818,7 +1865,7 @@ body {
 }
 /*
  * Generated from src/core/contracts/adaptive-sizing.v1.json.
- * contract-sha256: 855724522691bc6ab9a601389fb129518398f774eb553f6a8d560a150457f3fa
+ * contract-sha256: 9d8fb9a4ffb9ac8581e6e9e448babec1f752b139fea730e40968022907bed28c
  * Do not edit semantic values in this file directly.
  */
 @layer sf.base {
@@ -1845,7 +1892,7 @@ body {
 }
 /*
  * Generated from src/core/contracts/adaptive-sizing.v1.json.
- * contract-sha256: 855724522691bc6ab9a601389fb129518398f774eb553f6a8d560a150457f3fa
+ * contract-sha256: 9d8fb9a4ffb9ac8581e6e9e448babec1f752b139fea730e40968022907bed28c
  * Do not edit semantic values in this file directly.
  */
 @layer sf.base {
@@ -1872,7 +1919,7 @@ body {
 }
 /*
  * Generated from src/core/contracts/adaptive-sizing.v1.json.
- * contract-sha256: 855724522691bc6ab9a601389fb129518398f774eb553f6a8d560a150457f3fa
+ * contract-sha256: 9d8fb9a4ffb9ac8581e6e9e448babec1f752b139fea730e40968022907bed28c
  * Do not edit semantic values in this file directly.
  */
 @layer sf.base {
@@ -1899,7 +1946,7 @@ body {
 }
 /*
  * Generated from src/core/contracts/adaptive-sizing.v1.json.
- * contract-sha256: 855724522691bc6ab9a601389fb129518398f774eb553f6a8d560a150457f3fa
+ * contract-sha256: 9d8fb9a4ffb9ac8581e6e9e448babec1f752b139fea730e40968022907bed28c
  * Do not edit semantic values in this file directly.
  */
 @layer sf.base {
@@ -1926,7 +1973,7 @@ body {
 }
 /*
  * Generated from src/core/contracts/adaptive-sizing.v1.json.
- * contract-sha256: 855724522691bc6ab9a601389fb129518398f774eb553f6a8d560a150457f3fa
+ * contract-sha256: 9d8fb9a4ffb9ac8581e6e9e448babec1f752b139fea730e40968022907bed28c
  * Do not edit semantic values in this file directly.
  */
 @layer sf.base {
@@ -2390,16 +2437,6 @@ body {
     -webkit-text-decoration-color: var(--sf-outline);
             text-decoration-color: var(--sf-outline);
   }
-  @media (min-width: 60rem) {
-    [data-sf-density=compact] {
-      --sf-text--size: var(--sf-text--size-1\/2);
-      --sf-text--height: var(--sf-text--height-1\/2);
-    }
-    [data-sf-density=compact]:not(:root) {
-      font-size: var(--sf-text--size);
-      line-height: var(--sf-text--height);
-    }
-  }
   p,
   table,
   ol,
@@ -2579,6 +2616,260 @@ body {
             margin-block-start: var(--sf-space-1\/4);
     -webkit-transform: translate(-50%, 0);
             transform: translate(-50%, 0);
+  }
+}
+/*
+ * Generated by scripts/generate-density.mjs from the ladder files in
+ * src/core/figma_variables (desktop blocks). Do not edit by hand.
+ * source-sha256: 7b9cef950235240f9534f8ee4dc3ce8c7c9decbc0d0873178d631342b6909e5d
+ *
+ * Density (owner decision C22): data-sf-density="compact" on the root or on
+ * a container moves every component one ladder step down -- height, padding,
+ * gap, icon and text together. Each step variable holds the value of the step
+ * below; components read their steps as always. An element with an explicit
+ * size (a page's size attribute) takes the normal ladder back under it;
+ * data-sf-density="normal" does the same for a region. Desktop only: below
+ * 60rem the phone ladder already is the dense one.
+ */
+@layer sf.base {
+  @media (min-width: 60rem) {
+    [data-sf-density=compact] {
+      --sf-text--size-1\/3: 0.75rem;
+      --sf-text--size-1\/3: var(--sf-b2);
+      --sf-text--size-1\/2: 0.75rem;
+      --sf-text--size-1\/2: var(--sf-b2);
+      --sf-text--size-1: var(--sf-b4);
+      --sf-text--size-2: var(--sf-b6);
+      --sf-text--size-3: var(--sf-c0);
+      --sf-text--height-1\/3: 1rem;
+      --sf-text--height-1\/3: var(--sf-b6);
+      --sf-text--height-1\/2: 1rem;
+      --sf-text--height-1\/2: var(--sf-b6);
+      --sf-text--height-1: var(--sf-c0);
+      --sf-text--height-2: var(--sf-c2);
+      --sf-text--height-3: var(--sf-c4);
+      --sf-ui-1\/3--space-y-tightness-default: 0.25rem;
+      --sf-ui-1\/3--space-y-tightness-default: var(--sf-a4);
+      --sf-ui-1\/2--space-y-tightness-default: 0.25rem;
+      --sf-ui-1\/2--space-y-tightness-default: var(--sf-a4);
+      --sf-ui-1--space-y-tightness-default: var(--sf-a6);
+      --sf-ui-2--space-y-tightness-default: var(--sf-a8);
+      --sf-ui-3--space-y-tightness-default: var(--sf-b0);
+      --sf-ui-1\/3--space-y-tightness-low: 0.25rem;
+      --sf-ui-1\/3--space-y-tightness-low: var(--sf-a4);
+      --sf-ui-1\/2--space-y-tightness-low: 0.25rem;
+      --sf-ui-1\/2--space-y-tightness-low: var(--sf-a4);
+      --sf-ui-1--space-y-tightness-low: var(--sf-a4);
+      --sf-ui-2--space-y-tightness-low: var(--sf-a4);
+      --sf-ui-3--space-y-tightness-low: var(--sf-a6);
+      --sf-ui-1\/3--space-y-tightness-high: 0.5rem;
+      --sf-ui-1\/3--space-y-tightness-high: var(--sf-a8);
+      --sf-ui-1\/2--space-y-tightness-high: 0.5rem;
+      --sf-ui-1\/2--space-y-tightness-high: var(--sf-a8);
+      --sf-ui-1--space-y-tightness-high: var(--sf-b0);
+      --sf-ui-2--space-y-tightness-high: var(--sf-b2);
+      --sf-ui-3--space-y-tightness-high: var(--sf-b4);
+      --sf-ui-1\/3--space-y-tightness-highest: 0.75rem;
+      --sf-ui-1\/3--space-y-tightness-highest: var(--sf-b2);
+      --sf-ui-1\/2--space-y-tightness-highest: 0.75rem;
+      --sf-ui-1\/2--space-y-tightness-highest: var(--sf-b2);
+      --sf-ui-1--space-y-tightness-highest: var(--sf-b4);
+      --sf-ui-2--space-y-tightness-highest: var(--sf-b6);
+      --sf-ui-3--space-y-tightness-highest: var(--sf-c0);
+      --sf-ui-1\/3--space-x: 0.75rem;
+      --sf-ui-1\/3--space-x: var(--sf-b2);
+      --sf-ui-1\/2--space-x: 0.75rem;
+      --sf-ui-1\/2--space-x: var(--sf-b2);
+      --sf-ui-1--space-x: var(--sf-b4);
+      --sf-ui-2--space-x: var(--sf-b6);
+      --sf-ui-3--space-x: var(--sf-c0);
+      --sf-ui-1\/3--text-space-x: 0.375rem;
+      --sf-ui-1\/3--text-space-x: var(--sf-a6);
+      --sf-ui-1\/2--text-space-x: 0.375rem;
+      --sf-ui-1\/2--text-space-x: var(--sf-a6);
+      --sf-ui-1--text-space-x: var(--sf-a7);
+      --sf-ui-2--text-space-x: var(--sf-a8);
+      --sf-ui-3--text-space-x: var(--sf-b0);
+      --sf-ui-1\/3--space-y: 0.375rem;
+      --sf-ui-1\/3--space-y: var(--sf-a6);
+      --sf-ui-1\/2--space-y: 0.375rem;
+      --sf-ui-1\/2--space-y: var(--sf-a6);
+      --sf-ui-1--space-y: var(--sf-a6);
+      --sf-ui-2--space-y: var(--sf-a8);
+      --sf-ui-3--space-y: var(--sf-b0);
+      --sf-icon-size-1\/3: 0.75rem;
+      --sf-icon-size-1\/3: var(--sf-b2);
+      --sf-icon-size-1\/2: 0.75rem;
+      --sf-icon-size-1\/2: var(--sf-b2);
+      --sf-icon-size-1: var(--sf-b4);
+      --sf-icon-size-2: var(--sf-b6);
+      --sf-icon-size-3: var(--sf-c0);
+      --sf-icon-size-4: var(--sf-c2);
+      --sf-icon-size-5: var(--sf-c4);
+      --sf-icon-size-6: var(--sf-c6);
+      --sf-icon-size-7: var(--sf-c8);
+      --sf-space-1\/4: 0.25rem;
+      --sf-space-1\/4: var(--sf-a4);
+      --sf-space-1\/3: 0.25rem;
+      --sf-space-1\/3: var(--sf-a4);
+      --sf-space-1\/2: 0.5rem;
+      --sf-space-1\/2: var(--sf-a8);
+      --sf-space-1: var(--sf-b2);
+      --sf-space-2: var(--sf-b6);
+      --sf-space-3: var(--sf-c0);
+      --sf-space-4: var(--sf-c2);
+      --sf-space-5: var(--sf-c6);
+      --sf-space-6: var(--sf-d0);
+      --sf-space-7: var(--sf-d2);
+      --sf-space-8: var(--sf-d6);
+      --sf-text-size-1\/3: var(--sf-text--size-1\/3);
+      --sf-text-size-1\/2: var(--sf-text--size-1\/2);
+      --sf-text-size-1: var(--sf-text--size-1);
+      --sf-text-size-2: var(--sf-text--size-2);
+      --sf-text-size-3: var(--sf-text--size-3);
+      --sf-text-height-1\/3: var(--sf-text--height-1\/3);
+      --sf-text-height-1\/2: var(--sf-text--height-1\/2);
+      --sf-text-height-1: var(--sf-text--height-1);
+      --sf-text-height-2: var(--sf-text--height-2);
+      --sf-text-height-3: var(--sf-text--height-3);
+      --sf-ui-1\/3--control-height: calc(var(--sf-text--height-1\/3) + 2 * var(--sf-ui-1\/3--space-y-tightness-default));
+      --sf-ui-1\/2--control-height: calc(var(--sf-text--height-1\/2) + 2 * var(--sf-ui-1\/2--space-y-tightness-default));
+      --sf-ui-1--control-height: calc(var(--sf-text--height-1) + 2 * var(--sf-ui-1--space-y-tightness-default));
+      --sf-ui-2--control-height: calc(var(--sf-text--height-2) + 2 * var(--sf-ui-2--space-y-tightness-default));
+      --sf-ui-3--control-height: calc(var(--sf-text--height-3) + 2 * var(--sf-ui-3--space-y-tightness-default));
+      --sf-text-small--size: var(--sf-text--size-1\/2);
+      --sf-text-small--height: var(--sf-text--height-1\/2);
+      --sf-text-medium--size: var(--sf-text--size-1);
+      --sf-text-medium--height: var(--sf-text--height-1);
+      --sf-text-large--size: var(--sf-text--size-2);
+      --sf-text-large--height: var(--sf-text--height-2);
+      --sf-text--size: var(--sf-text--size-1);
+      --sf-text--height: var(--sf-text--height-1);
+    }
+    [data-sf-density=compact] :not(input):not(select):not(textarea)[size]:not([data-sf-size-relative]):not([data-sf-size-scale]):not([data-sf-static] *),
+    [data-sf-density=normal] {
+      --sf-text--size-1\/3: 0.75rem;
+      --sf-text--size-1\/3: var(--sf-b2);
+      --sf-text--size-1\/2: 0.875rem;
+      --sf-text--size-1\/2: var(--sf-b4);
+      --sf-text--size-1: var(--sf-b6);
+      --sf-text--size-2: var(--sf-c0);
+      --sf-text--size-3: var(--sf-c2);
+      --sf-text--height-1\/3: 1rem;
+      --sf-text--height-1\/3: var(--sf-b6);
+      --sf-text--height-1\/2: 1.25rem;
+      --sf-text--height-1\/2: var(--sf-c0);
+      --sf-text--height-1: var(--sf-c2);
+      --sf-text--height-2: var(--sf-c4);
+      --sf-text--height-3: var(--sf-c8);
+      --sf-ui-1\/3--space-y-tightness-default: 0.25rem;
+      --sf-ui-1\/3--space-y-tightness-default: var(--sf-a4);
+      --sf-ui-1\/2--space-y-tightness-default: 0.375rem;
+      --sf-ui-1\/2--space-y-tightness-default: var(--sf-a6);
+      --sf-ui-1--space-y-tightness-default: var(--sf-a8);
+      --sf-ui-2--space-y-tightness-default: var(--sf-b0);
+      --sf-ui-3--space-y-tightness-default: var(--sf-b0);
+      --sf-ui-1\/3--space-y-tightness-low: 0.25rem;
+      --sf-ui-1\/3--space-y-tightness-low: var(--sf-a4);
+      --sf-ui-1\/2--space-y-tightness-low: 0.25rem;
+      --sf-ui-1\/2--space-y-tightness-low: var(--sf-a4);
+      --sf-ui-1--space-y-tightness-low: var(--sf-a4);
+      --sf-ui-2--space-y-tightness-low: var(--sf-a6);
+      --sf-ui-3--space-y-tightness-low: var(--sf-a6);
+      --sf-ui-1\/3--space-y-tightness-high: 0.5rem;
+      --sf-ui-1\/3--space-y-tightness-high: var(--sf-a8);
+      --sf-ui-1\/2--space-y-tightness-high: 0.625rem;
+      --sf-ui-1\/2--space-y-tightness-high: var(--sf-b0);
+      --sf-ui-1--space-y-tightness-high: var(--sf-b2);
+      --sf-ui-2--space-y-tightness-high: var(--sf-b4);
+      --sf-ui-3--space-y-tightness-high: var(--sf-b6);
+      --sf-ui-1\/3--space-y-tightness-highest: 0.75rem;
+      --sf-ui-1\/3--space-y-tightness-highest: var(--sf-b2);
+      --sf-ui-1\/2--space-y-tightness-highest: 0.875rem;
+      --sf-ui-1\/2--space-y-tightness-highest: var(--sf-b4);
+      --sf-ui-1--space-y-tightness-highest: var(--sf-b6);
+      --sf-ui-2--space-y-tightness-highest: var(--sf-c0);
+      --sf-ui-3--space-y-tightness-highest: var(--sf-c1);
+      --sf-ui-1\/3--space-x: 0.75rem;
+      --sf-ui-1\/3--space-x: var(--sf-b2);
+      --sf-ui-1\/2--space-x: 0.875rem;
+      --sf-ui-1\/2--space-x: var(--sf-b4);
+      --sf-ui-1--space-x: var(--sf-b6);
+      --sf-ui-2--space-x: var(--sf-c0);
+      --sf-ui-3--space-x: var(--sf-c2);
+      --sf-ui-1\/3--text-space-x: 0.375rem;
+      --sf-ui-1\/3--text-space-x: var(--sf-a6);
+      --sf-ui-1\/2--text-space-x: 0.4375rem;
+      --sf-ui-1\/2--text-space-x: var(--sf-a7);
+      --sf-ui-1--text-space-x: var(--sf-a8);
+      --sf-ui-2--text-space-x: var(--sf-b0);
+      --sf-ui-3--text-space-x: var(--sf-b2);
+      --sf-ui-1\/3--space-y: 0.375rem;
+      --sf-ui-1\/3--space-y: var(--sf-a6);
+      --sf-ui-1\/2--space-y: 0.375rem;
+      --sf-ui-1\/2--space-y: var(--sf-a6);
+      --sf-ui-1--space-y: var(--sf-a8);
+      --sf-ui-2--space-y: var(--sf-b0);
+      --sf-ui-3--space-y: var(--sf-b0);
+      --sf-icon-size-1\/3: 0.75rem;
+      --sf-icon-size-1\/3: var(--sf-b2);
+      --sf-icon-size-1\/2: 0.875rem;
+      --sf-icon-size-1\/2: var(--sf-b4);
+      --sf-icon-size-1: var(--sf-b6);
+      --sf-icon-size-2: var(--sf-c0);
+      --sf-icon-size-3: var(--sf-c2);
+      --sf-icon-size-4: var(--sf-c4);
+      --sf-icon-size-5: var(--sf-c6);
+      --sf-icon-size-6: var(--sf-c8);
+      --sf-icon-size-7: var(--sf-d0);
+      --sf-space-1\/4: 0.25rem;
+      --sf-space-1\/4: var(--sf-a4);
+      --sf-space-1\/3: 0.5rem;
+      --sf-space-1\/3: var(--sf-a8);
+      --sf-space-1\/2: 0.75rem;
+      --sf-space-1\/2: var(--sf-b2);
+      --sf-space-1: var(--sf-b6);
+      --sf-space-2: var(--sf-c0);
+      --sf-space-3: var(--sf-c2);
+      --sf-space-4: var(--sf-c6);
+      --sf-space-5: var(--sf-d0);
+      --sf-space-6: var(--sf-d2);
+      --sf-space-7: var(--sf-d6);
+      --sf-space-8: var(--sf-e0);
+      --sf-text-size-1\/3: var(--sf-text--size-1\/3);
+      --sf-text-size-1\/2: var(--sf-text--size-1\/2);
+      --sf-text-size-1: var(--sf-text--size-1);
+      --sf-text-size-2: var(--sf-text--size-2);
+      --sf-text-size-3: var(--sf-text--size-3);
+      --sf-text-height-1\/3: var(--sf-text--height-1\/3);
+      --sf-text-height-1\/2: var(--sf-text--height-1\/2);
+      --sf-text-height-1: var(--sf-text--height-1);
+      --sf-text-height-2: var(--sf-text--height-2);
+      --sf-text-height-3: var(--sf-text--height-3);
+      --sf-ui-1\/3--control-height: calc(var(--sf-text--height-1\/3) + 2 * var(--sf-ui-1\/3--space-y-tightness-default));
+      --sf-ui-1\/2--control-height: calc(var(--sf-text--height-1\/2) + 2 * var(--sf-ui-1\/2--space-y-tightness-default));
+      --sf-ui-1--control-height: calc(var(--sf-text--height-1) + 2 * var(--sf-ui-1--space-y-tightness-default));
+      --sf-ui-2--control-height: calc(var(--sf-text--height-2) + 2 * var(--sf-ui-2--space-y-tightness-default));
+      --sf-ui-3--control-height: calc(var(--sf-text--height-3) + 2 * var(--sf-ui-3--space-y-tightness-default));
+      --sf-text-small--size: var(--sf-text--size-1\/2);
+      --sf-text-small--height: var(--sf-text--height-1\/2);
+      --sf-text-medium--size: var(--sf-text--size-1);
+      --sf-text-medium--height: var(--sf-text--height-1);
+      --sf-text-large--size: var(--sf-text--size-2);
+      --sf-text-large--height: var(--sf-text--height-2);
+      --sf-text--size: var(--sf-text--size-1);
+      --sf-text--height: var(--sf-text--height-1);
+    }
+    /* On <html> the variables only, which body reads: a font-size on the
+       root element would move rem, and with it every step of the ladder.
+       An explicit size takes the normal body text back too, for the text a
+       component inherits rather than sizes. */
+    [data-sf-density=compact]:not(:root),
+    [data-sf-density=compact] :not(input):not(select):not(textarea)[size]:not([data-sf-size-relative]):not([data-sf-size-scale]):not([data-sf-static] *),
+    [data-sf-density=normal]:not(:root) {
+      font-size: var(--sf-text--size);
+      line-height: var(--sf-text--height);
+    }
   }
 }
 @layer sf.base {
@@ -2876,25 +3167,8 @@ body {
 }
 @layer sf.base {
   :root {
-    --sf-shadow--level-ratio: 1;
     --sf-shadow--alfa-fill: 24%;
-    --sf-shadow--alfa-outline: 12%;
     --sf-shadow--alfa-shade: 8%;
-    --sf-shadow--color-fill: color-mix(in srgb, var(--sf-transparent), var(--sf-shadow--color, var(--sf-black, #000)) var(--sf-shadow--alfa-fill));
-    --sf-shadow--color-outline: color-mix(in srgb, var(--sf-transparent), var(--sf-shadow--color, var(--sf-black, #000)) var(--sf-shadow--alfa-outline));
-    --sf-shadow--color-shading: color-mix(in srgb, var(--sf-transparent), var(--sf-shadow--color, var(--sf-black, #000)) var(--sf-shadow--alfa-shade));
-    --sf-shadow--color-shade: var(--sf-shadow--color-shading);
-  }
-  [class*=shadow] {
-    box-shadow: 0 calc(0.125rem * var(--sf-shadow--level-ratio)) calc(0.125rem * var(--sf-shadow--level-ratio)) calc(-1 * 0.0625rem * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill), 0 calc(0.0625rem * var(--sf-shadow--level-ratio)) calc(0.1875rem * var(--sf-shadow--level-ratio)) 0 var(--sf-shadow--color-outline), 0 calc(0.125rem * var(--sf-shadow--level-ratio)) calc(0.25rem * var(--sf-shadow--level-ratio)) calc(0.0625rem * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading);
-    box-shadow: 0 calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(-1 * var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill), 0 calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a3) * var(--sf-shadow--level-ratio)) 0 var(--sf-shadow--color-outline), 0 calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a4) * var(--sf-shadow--level-ratio)) calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading);
-  }
-  [class*=drop-shadow] {
-    box-shadow: none;
-    -webkit-filter: drop-shadow(0 calc(0.0625rem * var(--sf-shadow--level-ratio)) calc(0.0625rem * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill)) drop-shadow(0 calc(0.0625rem * var(--sf-shadow--level-ratio)) calc(0.1875rem * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-outline)) drop-shadow(0 calc(0.125rem * var(--sf-shadow--level-ratio)) calc(0.25rem * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading));
-            filter: drop-shadow(0 calc(0.0625rem * var(--sf-shadow--level-ratio)) calc(0.0625rem * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill)) drop-shadow(0 calc(0.0625rem * var(--sf-shadow--level-ratio)) calc(0.1875rem * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-outline)) drop-shadow(0 calc(0.125rem * var(--sf-shadow--level-ratio)) calc(0.25rem * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading));
-    -webkit-filter: drop-shadow(0 calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill)) drop-shadow(0 calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a3) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-outline)) drop-shadow(0 calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a4) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading));
-            filter: drop-shadow(0 calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-fill)) drop-shadow(0 calc(var(--sf-a1) * var(--sf-shadow--level-ratio)) calc(var(--sf-a3) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-outline)) drop-shadow(0 calc(var(--sf-a2) * var(--sf-shadow--level-ratio)) calc(var(--sf-a4) * var(--sf-shadow--level-ratio)) var(--sf-shadow--color-shading));
   }
 }
 @layer sf.base {
@@ -2917,28 +3191,25 @@ body {
   }
 }
 @layer sf.base {
-  .theme-light .sf-logo .sf-logo-1 {
-    color: #221F20;
+  /* The logo's two inks are the text roles (C18): the word on-surface, the
+     mark on-surface-variant, so the logo follows the theme like the text
+     beside it instead of a light/dark pair of its own. */
+  .sf-logo .sf-logo-1 {
+    color: var(--sf-on-surface);
   }
-  .theme-light .sf-logo .sf-logo-2 {
-    color: #969696;
-  }
-  .theme-dark .sf-logo .sf-logo-1 {
-    color: #F6F6F6;
-  }
-  .theme-dark .sf-logo .sf-logo-2 {
-    color: #969696;
+  .sf-logo .sf-logo-2 {
+    color: var(--sf-on-surface-variant);
   }
   .sf-logo svg {
     width: 100%;
     height: 100%;
     max-height: 1.5rem;
-    max-height: var(--sf-c2, 26px);
+    max-height: var(--sf-c2);
   }
   @media (min-width: 60rem) {
     .sf-logo svg {
       max-height: 1.75rem;
-      max-height: var(--sf-c4, 32px);
+      max-height: var(--sf-c4);
     }
   }
 }
@@ -3050,7 +3321,7 @@ body {
 @layer sf.components {
   .sf-composition-regions {
     --sf-composition-region-side: minmax(0, var(--sf-f6));
-    --sf-composition-region-gap: var(--sf-space-4, 1rem);
+    --sf-composition-region-gap: var(--sf-space-4);
     container-type: inline-size;
     display: block;
     min-width: 0;
@@ -3074,26 +3345,15 @@ body {
     display: block;
     min-width: 0;
     min-inline-size: 0;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
-    padding-block: 0.5rem;
-    padding-top: 0.5rem;
-    padding-top: var(--sf-space-2, 0.5rem);
-    padding-bottom: 0.5rem;
-    padding-bottom: var(--sf-space-2, 0.5rem);
-    padding-block: var(--sf-space-2, 0.5rem);
-    padding-left: 0.75rem;
-    padding-right: 0.75rem;
-    padding-inline: 0.75rem;
-    padding-left: 0.75rem;
-    padding-left: var(--sf-space-3, 0.75rem);
-    padding-right: 0.75rem;
-    padding-right: var(--sf-space-3, 0.75rem);
-    padding-inline: var(--sf-space-3, 0.75rem);
+    padding-top: var(--sf-space-2);
+    padding-bottom: var(--sf-space-2);
+    padding-block: var(--sf-space-2);
+    padding-left: var(--sf-space-3);
+    padding-right: var(--sf-space-3);
+    padding-inline: var(--sf-space-3);
     border: 1px dashed GrayText;
     border: 1px dashed var(--sf-outline-variant, GrayText);
-    border-radius: 0.25rem;
-    border-radius: var(--sf-radius-1, 0.25rem);
+    border-radius: var(--sf-radius-1);
     color: CanvasText;
     color: var(--sf-on-surface-variant, var(--sf-on-surface, CanvasText));
     word-wrap: anywhere;
@@ -3144,11 +3404,8 @@ body {
   :where(.sf-composition-columns) {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    grid-gap: 1rem;
-    gap: 1rem;
-    grid-gap: 1rem;
-    grid-gap: var(--sf-space-4, 1rem);
-    gap: var(--sf-space-4, 1rem);
+    grid-gap: var(--sf-space-4);
+    gap: var(--sf-space-4);
     min-width: 0;
     min-inline-size: 0;
   }
@@ -3260,11 +3517,8 @@ body {
 @layer sf.components {
   .sf-editor-field {
     display: grid;
-    grid-gap: 0.25rem;
-    gap: 0.25rem;
-    grid-gap: 0.25rem;
-    grid-gap: var(--sf-space-1, 0.25rem);
-    gap: var(--sf-space-1, 0.25rem);
+    grid-gap: var(--sf-space-1);
+    gap: var(--sf-space-1);
     min-width: 0;
     min-inline-size: 0;
     color: CanvasText;
@@ -3273,12 +3527,9 @@ body {
   .sf-editor-field[data-sf-field-kind=toggle] {
     grid-template-columns: auto minmax(0, 1fr);
     align-items: center;
-    -webkit-column-gap: 0.5rem;
-       -moz-column-gap: 0.5rem;
-            column-gap: 0.5rem;
-    -webkit-column-gap: var(--sf-space-2, 0.5rem);
-       -moz-column-gap: var(--sf-space-2, 0.5rem);
-            column-gap: var(--sf-space-2, 0.5rem);
+    -webkit-column-gap: var(--sf-space-2);
+       -moz-column-gap: var(--sf-space-2);
+            column-gap: var(--sf-space-2);
   }
   .sf-editor-field[data-sf-field-kind=toggle] > .sf-editor-field-help {
     grid-column: 1/-1;
@@ -3288,26 +3539,15 @@ body {
     min-inline-size: 0;
     max-width: 100%;
     max-inline-size: 100%;
-    padding-top: 0.25rem;
-    padding-bottom: 0.25rem;
-    padding-block: 0.25rem;
-    padding-top: 0.25rem;
-    padding-top: var(--sf-space-1, 0.25rem);
-    padding-bottom: 0.25rem;
-    padding-bottom: var(--sf-space-1, 0.25rem);
-    padding-block: var(--sf-space-1, 0.25rem);
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
-    padding-inline: 0.5rem;
-    padding-left: 0.5rem;
-    padding-left: var(--sf-space-2, 0.5rem);
-    padding-right: 0.5rem;
-    padding-right: var(--sf-space-2, 0.5rem);
-    padding-inline: var(--sf-space-2, 0.5rem);
+    padding-top: var(--sf-space-1);
+    padding-bottom: var(--sf-space-1);
+    padding-block: var(--sf-space-1);
+    padding-left: var(--sf-space-2);
+    padding-right: var(--sf-space-2);
+    padding-inline: var(--sf-space-2);
     border: 1px solid GrayText;
     border: 1px solid var(--sf-outline, GrayText);
-    border-radius: 0.25rem;
-    border-radius: var(--sf-radius-1, 0.25rem);
+    border-radius: var(--sf-radius-1);
     background: Canvas;
     background: var(--sf-surface-1, Canvas);
     color: CanvasText;
@@ -3317,8 +3557,14 @@ body {
   .sf-editor-field-control[type=checkbox] {
     width: 1.25rem;
     inline-size: 1.25rem;
+    width: 1.25rem;
+    width: var(--sf-c0);
+    inline-size: var(--sf-c0);
     height: 1.25rem;
     block-size: 1.25rem;
+    height: 1.25rem;
+    height: var(--sf-c0);
+    block-size: var(--sf-c0);
     margin: 0;
     accent-color: AccentColor;
     accent-color: var(--sf-primary, AccentColor);
@@ -3743,11 +3989,11 @@ body {
       position: absolute;
       z-index: 9000;
       z-index: var(--sf-z-index-layer, 9000);
-      background: var(--sf-elevation-4--surface);
-      background: var(--sf-workspace-drawer-background-color, var(--sf-workspace-drawer-background, var(--sf-elevation-4--surface)));
+      background: var(--sf-surface-popup);
+      background: var(--sf-workspace-drawer-background-color, var(--sf-workspace-drawer-background, var(--sf-surface-popup)));
       color: var(--sf-on-surface);
-      box-shadow: var(--sf-elevation-4--shadow), 0 0 0 100vmax color-mix(in srgb, var(--sf-black) var(--sf-opacity-60), transparent);
-      box-shadow: var(--sf-elevation-4--shadow), 0 0 0 100vmax color-mix(in srgb, var(--sf-scrim-color, var(--sf-black)) var(--sf-scrim-opacity, var(--sf-opacity-60)), transparent);
+      box-shadow: var(--sf-shadow-modal), 0 0 0 100vmax var(--sf-black--alfa-64);
+      box-shadow: var(--sf-shadow-modal), 0 0 0 100vmax var(--sf-scrim-color, var(--sf-black--alfa-64));
     }
     @media (prefers-reduced-motion: no-preference) {
       .sf-workspace.sf-workspace--wide-h4 > .sf-workspace-panel {
@@ -3777,21 +4023,21 @@ body {
       position: absolute;
       z-index: 9000;
       z-index: var(--sf-z-index-layer, 9000);
-      background: var(--sf-elevation-4--surface);
-      background: var(--sf-workspace-drawer-background-color, var(--sf-workspace-drawer-background, var(--sf-elevation-4--surface)));
+      background: var(--sf-surface-popup);
+      background: var(--sf-workspace-drawer-background-color, var(--sf-workspace-drawer-background, var(--sf-surface-popup)));
       color: var(--sf-on-surface);
-      box-shadow: var(--sf-elevation-4--shadow), 0 0 0 100vmax color-mix(in srgb, var(--sf-black) var(--sf-opacity-60), transparent);
-      box-shadow: var(--sf-elevation-4--shadow), 0 0 0 100vmax color-mix(in srgb, var(--sf-scrim-color, var(--sf-black)) var(--sf-scrim-opacity, var(--sf-opacity-60)), transparent);
+      box-shadow: var(--sf-shadow-modal), 0 0 0 100vmax var(--sf-black--alfa-64);
+      box-shadow: var(--sf-shadow-modal), 0 0 0 100vmax var(--sf-scrim-color, var(--sf-black--alfa-64));
     }
     .sf-workspace.sf-workspace--wide-h6 > .sf-workspace-panel {
       position: absolute;
       z-index: 9000;
       z-index: var(--sf-z-index-layer, 9000);
-      background: var(--sf-elevation-4--surface);
-      background: var(--sf-workspace-drawer-background-color, var(--sf-workspace-drawer-background, var(--sf-elevation-4--surface)));
+      background: var(--sf-surface-popup);
+      background: var(--sf-workspace-drawer-background-color, var(--sf-workspace-drawer-background, var(--sf-surface-popup)));
       color: var(--sf-on-surface);
-      box-shadow: var(--sf-elevation-4--shadow), 0 0 0 100vmax color-mix(in srgb, var(--sf-black) var(--sf-opacity-60), transparent);
-      box-shadow: var(--sf-elevation-4--shadow), 0 0 0 100vmax color-mix(in srgb, var(--sf-scrim-color, var(--sf-black)) var(--sf-scrim-opacity, var(--sf-opacity-60)), transparent);
+      box-shadow: var(--sf-shadow-modal), 0 0 0 100vmax var(--sf-black--alfa-64);
+      box-shadow: var(--sf-shadow-modal), 0 0 0 100vmax var(--sf-scrim-color, var(--sf-black--alfa-64));
     }
     @media (prefers-reduced-motion: no-preference) {
       .sf-workspace:not([class*=sf-workspace--wide-]) > .sf-workspace-panel {
@@ -3833,11 +4079,11 @@ body {
       position: absolute;
       z-index: 9000;
       z-index: var(--sf-z-index-layer, 9000);
-      background: var(--sf-elevation-4--surface);
-      background: var(--sf-workspace-drawer-background-color, var(--sf-workspace-drawer-background, var(--sf-elevation-4--surface)));
+      background: var(--sf-surface-popup);
+      background: var(--sf-workspace-drawer-background-color, var(--sf-workspace-drawer-background, var(--sf-surface-popup)));
       color: var(--sf-on-surface);
-      box-shadow: var(--sf-elevation-4--shadow), 0 0 0 100vmax color-mix(in srgb, var(--sf-black) var(--sf-opacity-60), transparent);
-      box-shadow: var(--sf-elevation-4--shadow), 0 0 0 100vmax color-mix(in srgb, var(--sf-scrim-color, var(--sf-black)) var(--sf-scrim-opacity, var(--sf-opacity-60)), transparent);
+      box-shadow: var(--sf-shadow-modal), 0 0 0 100vmax var(--sf-black--alfa-64);
+      box-shadow: var(--sf-shadow-modal), 0 0 0 100vmax var(--sf-scrim-color, var(--sf-black--alfa-64));
     }
     @media (prefers-reduced-motion: no-preference) {
       .sf-workspace.sf-workspace--wide-h8 > .sf-workspace-panel {
@@ -3867,11 +4113,11 @@ body {
       position: absolute;
       z-index: 9000;
       z-index: var(--sf-z-index-layer, 9000);
-      background: var(--sf-elevation-4--surface);
-      background: var(--sf-workspace-drawer-background-color, var(--sf-workspace-drawer-background, var(--sf-elevation-4--surface)));
+      background: var(--sf-surface-popup);
+      background: var(--sf-workspace-drawer-background-color, var(--sf-workspace-drawer-background, var(--sf-surface-popup)));
       color: var(--sf-on-surface);
-      box-shadow: var(--sf-elevation-4--shadow), 0 0 0 100vmax color-mix(in srgb, var(--sf-black) var(--sf-opacity-60), transparent);
-      box-shadow: var(--sf-elevation-4--shadow), 0 0 0 100vmax color-mix(in srgb, var(--sf-scrim-color, var(--sf-black)) var(--sf-scrim-opacity, var(--sf-opacity-60)), transparent);
+      box-shadow: var(--sf-shadow-modal), 0 0 0 100vmax var(--sf-black--alfa-64);
+      box-shadow: var(--sf-shadow-modal), 0 0 0 100vmax var(--sf-scrim-color, var(--sf-black--alfa-64));
     }
     @media (prefers-reduced-motion: no-preference) {
       .sf-workspace.sf-workspace--wide-i0 > .sf-workspace-panel {
@@ -3901,11 +4147,11 @@ body {
       position: absolute;
       z-index: 9000;
       z-index: var(--sf-z-index-layer, 9000);
-      background: var(--sf-elevation-4--surface);
-      background: var(--sf-workspace-drawer-background-color, var(--sf-workspace-drawer-background, var(--sf-elevation-4--surface)));
+      background: var(--sf-surface-popup);
+      background: var(--sf-workspace-drawer-background-color, var(--sf-workspace-drawer-background, var(--sf-surface-popup)));
       color: var(--sf-on-surface);
-      box-shadow: var(--sf-elevation-4--shadow), 0 0 0 100vmax color-mix(in srgb, var(--sf-black) var(--sf-opacity-60), transparent);
-      box-shadow: var(--sf-elevation-4--shadow), 0 0 0 100vmax color-mix(in srgb, var(--sf-scrim-color, var(--sf-black)) var(--sf-scrim-opacity, var(--sf-opacity-60)), transparent);
+      box-shadow: var(--sf-shadow-modal), 0 0 0 100vmax var(--sf-black--alfa-64);
+      box-shadow: var(--sf-shadow-modal), 0 0 0 100vmax var(--sf-scrim-color, var(--sf-black--alfa-64));
     }
     @media (prefers-reduced-motion: no-preference) {
       .sf-workspace.sf-workspace--wide-i2 > .sf-workspace-panel {
@@ -4007,6 +4253,57 @@ body {
       -webkit-animation: none;
               animation: none;
     }
+  }
+}
+@layer sf.base {
+  /* sf-language before it draws (Docara, 2026-11-07: the header tools moved
+     left by 40 px when the trigger appeared). The element knows its box before
+     its code does, from its attributes alone: one control of its size step
+     high (size, default 1), and for the menu and search looks -- an icon button
+     -- as wide as high. So until it marks its look (data-look, set as it draws)
+     it holds that box itself, and a page needs no placeholder of its own. The
+     switch (mode inline, or auto, whose look depends on how many languages it
+     is given) holds its height only: its width is its labels'. Static markup
+     printed inside (data-sf-static) is its own box, so nothing is reserved
+     then. Here, not in a sheet of the component's, because the element has no
+     sheet and core.css is the one sheet a page links before any code. */
+  :where(sf-language:not([data-look])) {
+    --sf-language--box: var(--sf-ui-1--control-height);
+  }
+  :where(sf-language[size="1/3"]:not([data-look])) {
+    --sf-language--box: var(--sf-ui-1\/3--control-height);
+  }
+  :where(sf-language[size="1/2"]:not([data-look])) {
+    --sf-language--box: var(--sf-ui-1\/2--control-height);
+  }
+  :where(sf-language[size="2"]:not([data-look])) {
+    --sf-language--box: var(--sf-ui-2--control-height);
+  }
+  :where(sf-language[size="3"]:not([data-look])) {
+    --sf-language--box: var(--sf-ui-3--control-height);
+  }
+  :where(sf-language:not([data-look])):not(:has(> [data-sf-static])) {
+    display: inline-block;
+    vertical-align: middle;
+    height: var(--sf-language--box);
+    block-size: var(--sf-language--box);
+  }
+  :where(sf-language[mode=menu]:not([data-look])):not(:has(> [data-sf-static])) {
+    width: var(--sf-language--box);
+    inline-size: var(--sf-language--box);
+  }
+  :where(sf-language[mode=search]:not([data-look])):not(:has(> [data-sf-static])) {
+    width: var(--sf-language--box);
+    inline-size: var(--sf-language--box);
+  }
+  /* Its menu waits for its own code in the parts the element drew: an empty
+     undefined sf-menu-context would stand in the row as one more item, a gap
+     wider than the trigger, until it upgrades into its popup. */
+  :where(sf-language .sf-language-parts > sf-menu-context[popup]:not(:defined)) {
+    display: none;
+  }
+  :where(sf-language .sf-language-parts > sf-context-menu[popup]:not(:defined)) {
+    display: none;
   }
 }
 @layer sf.base {

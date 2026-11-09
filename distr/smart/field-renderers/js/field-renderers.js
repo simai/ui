@@ -69,6 +69,102 @@ function normalizeBadgeContract({
 
 /***/ },
 
+/***/ "e577837dd70a"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   calendarDayOffset: () => (/* binding */ calendarDayOffset),
+/* harmony export */   formatDate: () => (/* binding */ formatDate),
+/* harmony export */   msUntilNextDay: () => (/* binding */ msUntilNextDay),
+/* harmony export */   toDate: () => (/* reexport safe */ _format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)
+/* harmony export */ });
+/* harmony import */ var _format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("15b4e93ff6ed");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_format_intl_js__WEBPACK_IMPORTED_MODULE_0__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+_format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+// Dates in the page's language: formatDate, the calendar day offset and the
+// next midnight, with no top-level side effects (format-intl.js). The same
+// functions as core/js/format.js and SF.format; relative days and times are
+// format-relative.js, so a bundle that writes a date does not carry them.
+
+
+const DAY_MS = 86400000;
+
+function hasDateStyle(style) {
+  return style === 'short' || style === 'medium' || style === 'long' || style === 'full';
+}
+/**
+ * A date, a time or both in the locale.
+ *
+ *   formatDate(at)                          3 нояб. 2026 г.  /  Nov 3, 2026
+ *   formatDate(at, {date: 'short'})         03.11.2026       /  11/3/26
+ *   formatDate(at, {date: 'long'})          3 ноября 2026 г. /  November 3, 2026
+ *   formatDate(at, {time: 'short'})         3 нояб. 2026 г., 14:05
+ *   formatDate(at, {date: null, time: 'short'})   14:05   /  2:05 PM
+ *
+ * `date` and `time` are Intl styles (short, medium, long, full); `intl` gives
+ * Intl.DateTimeFormat options outright, for a form the styles do not name (a
+ * chart's tick, «14:05» with two-digit hours). Anything that is not a date is
+ * `gap`, '' by default.
+ */
+
+
+function formatDate(value, {
+  date = 'medium',
+  time = null,
+  intl = null,
+  gap = '',
+  ...where
+} = {}) {
+  const moment = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(value);
+  if (!moment) return gap;
+  let options = intl;
+
+  if (!options) {
+    options = {};
+    if (hasDateStyle(date)) options.dateStyle = date;
+    if (hasDateStyle(time)) options.timeStyle = time;
+    if (!options.dateStyle && !options.timeStyle) options.dateStyle = 'medium';
+  }
+
+  return (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('DateTimeFormat', (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.formatLocale)(where), options).format(moment);
+}
+/**
+ * Calendar days from `now` to the value in the reader's time zone: 0 today,
+ * -1 yesterday, 1 tomorrow; NaN when the value is no date. Counted on
+ * calendar dates, not 24-hour spans, so 23:59 yesterday is -1 at 00:01 and a
+ * day of a clock change is still one day.
+ */
+
+function calendarDayOffset(value, {
+  now = new Date()
+} = {}) {
+  const moment = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(value);
+  const today = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(now);
+  if (!moment || !today) return Number.NaN;
+  const day = Date.UTC(moment.getFullYear(), moment.getMonth(), moment.getDate());
+  const base = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+  return Math.round((day - base) / DAY_MS);
+}
+/**
+ * Milliseconds from `now` to the reader's next midnight, when every relative
+ * day on the screen moves by one. A component that shows them sets a timer
+ * for this long (plus a second's margin, so it wakes in the new day) and
+ * draws them again; «сегодня» said yesterday is wrong by morning.
+ */
+
+function msUntilNextDay(now = new Date()) {
+  const today = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(now) ?? new Date();
+  const next = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+  return next.getTime() - today.getTime();
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
 /***/ "15b4e93ff6ed"
 (module, __webpack_exports__, __webpack_require__) {
 
@@ -529,7 +625,7 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   FILTER_RENDERERS: () => (/* binding */ FILTER_RENDERERS),
-/* harmony export */   PROPERTY_TYPES: () => (/* reexport safe */ _registry_js__WEBPACK_IMPORTED_MODULE_4__.PROPERTY_TYPES),
+/* harmony export */   PROPERTY_TYPES: () => (/* reexport safe */ _registry_js__WEBPACK_IMPORTED_MODULE_5__.PROPERTY_TYPES),
 /* harmony export */   propertyModes: () => (/* binding */ propertyModes),
 /* harmony export */   renderCellField: () => (/* binding */ renderCellField),
 /* harmony export */   renderEditField: () => (/* binding */ renderEditField),
@@ -540,16 +636,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("073f05ff1a81");
 /* harmony import */ var _helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("b30ec5bc0edb");
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("43090d1c8307");
-/* harmony import */ var _registry_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("fc654eb7fab0");
-/* harmony import */ var _datetime_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("9ce1a42b2a85");
-/* harmony import */ var _mask_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("dd6973f77245");
-/* harmony import */ var _html_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("01ae054f01b4");
-/* harmony import */ var _decimal_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("ab3947ea3647");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__, _decimal_js__WEBPACK_IMPORTED_MODULE_8__]);
-([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__, _decimal_js__WEBPACK_IMPORTED_MODULE_8__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_format_date_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("e577837dd70a");
+/* harmony import */ var _registry_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("fc654eb7fab0");
+/* harmony import */ var _datetime_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("9ce1a42b2a85");
+/* harmony import */ var _mask_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("dd6973f77245");
+/* harmony import */ var _html_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("01ae054f01b4");
+/* harmony import */ var _decimal_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("ab3947ea3647");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__, _core_js_format_date_js__WEBPACK_IMPORTED_MODULE_4__, _decimal_js__WEBPACK_IMPORTED_MODULE_9__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__, _core_js_format_date_js__WEBPACK_IMPORTED_MODULE_4__, _decimal_js__WEBPACK_IMPORTED_MODULE_9__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__);
+
 
 
 
@@ -1256,14 +1354,14 @@ function renderHostFormattedCell(field, value, host) {
 function renderMoneyCell(field, value, host) {
   const formatted = renderHostFormattedCell(field, value, host);
   if (formatted !== null) return formatted;
-  const text = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_8__.formatMoney)(scalarValue(value), field, (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null));
+  const text = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_9__.formatMoney)(scalarValue(value), field, (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null));
   return text || null;
 }
 
 function renderPercentCell(field, value, host) {
   const formatted = renderHostFormattedCell(field, value, host);
   if (formatted !== null) return formatted;
-  const text = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_8__.formatPercent)(scalarValue(value), (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null));
+  const text = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_9__.formatPercent)(scalarValue(value), (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null));
   return text || null;
 }
 
@@ -1358,7 +1456,7 @@ function renderLookupCell(field, value) {
 
 
 function renderHtmlCell(field, value) {
-  return (0,_html_js__WEBPACK_IMPORTED_MODULE_7__.htmlText)(value) || null;
+  return (0,_html_js__WEBPACK_IMPORTED_MODULE_8__.htmlText)(value) || null;
 } // What a cell should hold for a field, in the same shape a host would pass: a
 // string, an object with a component, or a list of those. Null means the value
 // is better off as itself. Returning the host's own shape is deliberate -- the
@@ -1597,7 +1695,7 @@ function renderIncludeCell(field, value) {
 }
 
 function renderTextEdit(field, value, host) {
-  const mask = (0,_mask_js__WEBPACK_IMPORTED_MODULE_6__.maskPattern)(field);
+  const mask = (0,_mask_js__WEBPACK_IMPORTED_MODULE_7__.maskPattern)(field);
   if (String(field.variant ?? '') === 'phone') return renderPhoneEdit(field, value, host);
   if (isPasswordField(field)) return renderPasswordEdit(field, value, host);
   if (mask) return renderMaskedEdit(field, value, host, mask);
@@ -1651,7 +1749,7 @@ function renderMaskedEdit(field, value, host, mask) {
   const write = (event, left) => {
     const input = event.currentTarget;
     const text = String(input?.value ?? '');
-    const state = (0,_mask_js__WEBPACK_IMPORTED_MODULE_6__.maskState)(text, mask);
+    const state = (0,_mask_js__WEBPACK_IMPORTED_MODULE_7__.maskState)(text, mask);
 
     if (state === 'incomplete') {
       const message = setText(host, 'maskIncomplete');
@@ -1834,9 +1932,9 @@ function renderNumberEdit(field, value, host) {
   const write = (event, left) => {
     const input = event.currentTarget ?? event.target;
     const text = String(input?.value ?? '');
-    const read = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_8__.readDecimal)(text);
+    const read = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_9__.readDecimal)(text);
     let message = null;
-    if (!read.ok) message = setText(host, 'notNumber');else if (read.value !== null && Number.isInteger(field.precision) && (0,_decimal_js__WEBPACK_IMPORTED_MODULE_8__.fractionDigits)(read.value) > field.precision) {
+    if (!read.ok) message = setText(host, 'notNumber');else if (read.value !== null && Number.isInteger(field.precision) && (0,_decimal_js__WEBPACK_IMPORTED_MODULE_9__.fractionDigits)(read.value) > field.precision) {
       message = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageWord)(SET_TEXT, 'precisionMax', host ?? null, {
         component: SET_NAME,
         count: field.precision
@@ -1960,7 +2058,7 @@ function minuteStepOf(field) {
 }
 
 function renderDateTimeEdit(field, value, host) {
-  const stored = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_5__.splitDateTime)(value);
+  const stored = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_6__.splitDateTime)(value);
   const shown = stored.date ? `${stored.date}${stored.time ? `T${stored.time}` : ''}` : '';
   const min = typeof field.min === 'string' ? field.min : '';
   const max = typeof field.max === 'string' ? field.max : '';
@@ -1981,7 +2079,7 @@ function renderDateTimeEdit(field, value, host) {
     // The picker's own change, not a native one from its field.
     if (event.target !== event.currentTarget) return;
     const [date = '', time = ''] = String(event.detail?.value ?? '').split('T');
-    const result = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_5__.composeDateTime)(stored, {
+    const result = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_6__.composeDateTime)(stored, {
       date,
       time
     });
@@ -1998,7 +2096,7 @@ function renderDateTimeEdit(field, value, host) {
 
 
 function renderTimeEdit(field, value, host) {
-  const stored = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_5__.splitTime)(value);
+  const stored = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_6__.splitTime)(value);
   const min = typeof field.min === 'string' ? field.min : '';
   const max = typeof field.max === 'string' ? field.max : '';
   const step = minuteStepOf(field);
@@ -2016,7 +2114,7 @@ function renderTimeEdit(field, value, host) {
                 ?required=${Boolean(field.required)}
                 @change=${event => {
     if (event.target !== event.currentTarget) return;
-    const result = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_5__.composeTime)(stored, String(event.detail?.value ?? ''));
+    const result = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_6__.composeTime)(stored, String(event.detail?.value ?? ''));
     if (result.error) return;
     const same = result.value === null ? stored.known && !stored.time : result.value === stored.raw;
     host.setFieldValue(field, same ? undefined : result.value);
@@ -2844,7 +2942,7 @@ function renderTextView(field, value, host) {
 
 
 function renderHtmlView(field, value) {
-  const clean = (0,_html_js__WEBPACK_IMPORTED_MODULE_7__.cleanHtml)(value);
+  const clean = (0,_html_js__WEBPACK_IMPORTED_MODULE_8__.cleanHtml)(value);
   return clean ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-field-view sf-field-html">${(0,lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__.unsafeHTML)(clean)}</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
 } // A number carries its unit when the field declares one, and nothing when it
 // does not -- the set does not guess at a unit, and «42» with an invented «шт»
@@ -2863,19 +2961,32 @@ function renderNumberView(field, value, host) {
 
   const text = viewText(field, value, host);
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-field-view">${field.unit ? `${text} ${field.unit}` : text}</span>`;
-} // A date is the host's to format first: formatFieldValue wins. Without it the
-// set used to print the stored form -- «2026-10-25T10:30:00+03:00» beside a
-// person's «25.10.2026 10:30» (simai/ui-source#34) -- so a host that formats
-// nothing now gets the page's reading of the day, and of the time of day for a
-// datetime, in the page's locale. The day and the clock are the record's own
-// (datetime.js reads them as written, in the host's zone): nothing is moved to
-// the reader's time zone, which would show a different day near midnight. A
-// value that is not a date at all is shown as it came, never guessed at.
+} // A date is the host's to format first: formatFieldValue wins, and so does a
+// value that carries its own text. Without it the set used to print the stored
+// form -- «2026-10-25T10:30:00+03:00» (simai/ui-source#34) -- so a host that
+// formats nothing gets the page's medium reading through core format-date:
+// «2 нояб. 2026 г.» / «Nov 2, 2026» for a date, «15 нояб. 2026 г., 10:30» /
+// «Nov 15, 2026, 10:30 AM» for a datetime, the form the View set's table
+// printed before the renderers formatted dates (C19: the set formats, the
+// table inherits). The day and the clock are the record's own (datetime.js
+// reads them as written, in the host's zone): nothing is moved to the reader's
+// time zone, which would show a different day near midnight. A value that is
+// not a date at all is shown as it came, never guessed at.
 
+
+const DATE_VIEW = {
+  dateStyle: 'medium',
+  timeZone: 'UTC'
+};
+const DATETIME_VIEW = {
+  dateStyle: 'medium',
+  timeStyle: 'short',
+  timeZone: 'UTC'
+};
 
 function defaultDateText(field, value, host) {
   if (carriesText(value)) return null;
-  const parts = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_5__.splitDateTime)(value);
+  const parts = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_6__.splitDateTime)(value);
   if (!parts.known || !parts.date) return null;
   const [year, month, day] = parts.date.split('-').map(Number);
   const locale = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null);
@@ -2883,22 +2994,17 @@ function defaultDateText(field, value, host) {
   try {
     const date = new Date(0);
     date.setUTCFullYear(year, month - 1, day);
-    const dayText = new Intl.DateTimeFormat(locale, {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      timeZone: 'UTC'
-    }).format(date);
     const type = field?.propertyType || field?.type || field?.dataType;
-    if (type !== 'datetime' || !parts.time) return dayText;
+    if (type !== 'datetime' || !parts.time) return (0,_core_js_format_date_js__WEBPACK_IMPORTED_MODULE_4__.formatDate)(date, {
+      intl: DATE_VIEW,
+      locale
+    }) || null;
     const [hours, minutes] = parts.time.split(':').map(Number);
     date.setUTCHours(hours, minutes, 0, 0);
-    const timeText = new Intl.DateTimeFormat(locale, {
-      hour: '2-digit',
-      minute: '2-digit',
-      timeZone: 'UTC'
-    }).format(date);
-    return `${dayText} ${timeText}`;
+    return (0,_core_js_format_date_js__WEBPACK_IMPORTED_MODULE_4__.formatDate)(date, {
+      intl: DATETIME_VIEW,
+      locale
+    }) || null;
   } catch {
     return null;
   }
@@ -3064,7 +3170,7 @@ const VIEW_RENDERERS = {
 // date belongs. Null when the set has no view for that type.
 
 function propertyModes(type) {
-  return (0,_registry_js__WEBPACK_IMPORTED_MODULE_4__.modesOf)(type, {
+  return (0,_registry_js__WEBPACK_IMPORTED_MODULE_5__.modesOf)(type, {
     view: VIEW_RENDERERS,
     edit: EDIT_RENDERERS,
     cell: CELL_RENDERERS,
@@ -3108,14 +3214,14 @@ if (typeof window !== 'undefined') {
     // normalizeTime(text); and a time of day's: splitTime(value),
     // composeTime(stored, text).
     dateTime: {
-      split: _datetime_js__WEBPACK_IMPORTED_MODULE_5__.splitDateTime,
-      compose: _datetime_js__WEBPACK_IMPORTED_MODULE_5__.composeDateTime,
-      normalizeTime: _datetime_js__WEBPACK_IMPORTED_MODULE_5__.normalizeTime,
-      splitTime: _datetime_js__WEBPACK_IMPORTED_MODULE_5__.splitTime,
-      composeTime: _datetime_js__WEBPACK_IMPORTED_MODULE_5__.composeTime
+      split: _datetime_js__WEBPACK_IMPORTED_MODULE_6__.splitDateTime,
+      compose: _datetime_js__WEBPACK_IMPORTED_MODULE_6__.composeDateTime,
+      normalizeTime: _datetime_js__WEBPACK_IMPORTED_MODULE_6__.normalizeTime,
+      splitTime: _datetime_js__WEBPACK_IMPORTED_MODULE_6__.splitTime,
+      composeTime: _datetime_js__WEBPACK_IMPORTED_MODULE_6__.composeTime
     },
     // The universal properties, each with the modes the set draws for it.
-    registry: _registry_js__WEBPACK_IMPORTED_MODULE_4__.PROPERTY_TYPES.map(entry => ({ ...entry,
+    registry: _registry_js__WEBPACK_IMPORTED_MODULE_5__.PROPERTY_TYPES.map(entry => ({ ...entry,
       modes: propertyModes(entry.type)
     }))
   }; // SF.whenFieldRenderers() settles on this, whichever bundle published the set.

@@ -170,7 +170,17 @@ function arrowPlacement(arrow, rtl) {
   }
 }
 
-const tooltipInstances = new WeakMap();
+const tooltipInstances = new WeakMap(); // Whether the focus shows (the platform's :focus-visible); where the selector
+// is unknown, the focus counts as shown, as before.
+
+function focusVisible(element) {
+  try {
+    return element?.matches?.(':focus-visible') !== false;
+  } catch {
+    return true;
+  }
+}
+
 const TRIGGER_SELECTOR = '[data-tooltip]';
 const SURFACE_SELECTOR = '.sf-tooltip, sf-tooltip';
 
@@ -195,6 +205,7 @@ class SfTooltipController {
     this.onPointerLeave = this.handlePointerLeave.bind(this);
     this.onFocusIn = this.handleFocusIn.bind(this);
     this.onFocusOut = this.handleFocusOut.bind(this);
+    this.onPress = this.handlePress.bind(this);
     this.onDocumentKeydown = this.handleDocumentKeydown.bind(this);
   }
 
@@ -246,6 +257,8 @@ class SfTooltipController {
     pointerRoot.addEventListener('pointerleave', this.onPointerLeave);
     this.trigger.addEventListener('focusin', this.onFocusIn);
     this.trigger.addEventListener('focusout', this.onFocusOut);
+    this.trigger.addEventListener('pointerdown', this.onPress);
+    this.trigger.addEventListener('click', this.onPress);
     tooltipInstances.set(this.trigger, this);
   }
 
@@ -257,6 +270,8 @@ class SfTooltipController {
     pointerRoot.removeEventListener('pointerleave', this.onPointerLeave);
     this.trigger.removeEventListener('focusin', this.onFocusIn);
     this.trigger.removeEventListener('focusout', this.onFocusOut);
+    this.trigger.removeEventListener('pointerdown', this.onPress);
+    this.trigger.removeEventListener('click', this.onPress);
     this.trigger.ownerDocument.removeEventListener('keydown', this.onDocumentKeydown);
 
     if (this.originalDescription === null) {
@@ -280,20 +295,36 @@ class SfTooltipController {
     if (event.pointerType === 'touch') return;
     this.pointerInside = true;
     if (!this.dismissed) this.open();
-  }
+  } // The pointer leaves: the tooltip goes unless keyboard focus holds it. A
+  // focus a press left (not :focus-visible) does not, and the next hover
+  // shows the tooltip again.
+
 
   handlePointerLeave() {
     this.pointerInside = false;
+    const active = this.trigger.ownerDocument.activeElement;
 
-    if (!this.focusInside) {
+    if (!this.focusInside || !focusVisible(active)) {
       this.dismissed = false;
       this.close();
     }
-  }
+  } // Keyboard focus only (:focus-visible): the focus a mouse press leaves on a
+  // button is not a reason to describe it, and a tooltip that rose after a
+  // click stayed over what the click opened (owner, 2026-11-09).
 
-  handleFocusIn() {
+
+  handleFocusIn(event) {
     this.focusInside = true;
-    if (!this.dismissed) this.open();
+    if (!this.dismissed && focusVisible(event?.target ?? this.trigger)) this.open();
+  } // A press on the trigger -- a pointer, or Enter or Space that click it --
+  // hides the tooltip; it stays hidden until the pointer leaves and the focus
+  // goes. A pointer press comes before the focus it gives, so that focus
+  // does not show it either.
+
+
+  handlePress() {
+    this.dismissed = true;
+    this.close();
   }
 
   handleFocusOut() {
@@ -314,6 +345,16 @@ class SfTooltipController {
   }
 
   open() {
+    // The surface was replaced or taken out after the link was made (a page
+    // that redrew the tooltip with new text): link the trigger again, so the
+    // new surface is the one shown and not the cached old one.
+    if (this.surface && !this.surface.isConnected) {
+      const trigger = this.trigger;
+      this.destroy();
+      relinkTrigger(trigger)?.open();
+      return;
+    }
+
     if (!this.surface || !this.surface.hidden) return;
     this.surface.hidden = false;
     this.surface.classList.add('active');
@@ -416,6 +457,34 @@ class SfTooltipController {
     this.trigger.ownerDocument.removeEventListener('keydown', this.onDocumentKeydown);
   }
 
+} // A trigger linked again: its old link (listeners, aria-describedby, the
+// cached surface) undone, and a new one made if it still names a surface.
+
+
+function relinkTrigger(trigger) {
+  tooltipInstances.get(trigger)?.destroy();
+  if (!trigger.isConnected || !trigger.hasAttribute('data-tooltip')) return null;
+  new SfTooltipController(trigger).init();
+  return tooltipInstances.get(trigger) || null;
+} // data-tooltip removed: the link goes -- no tooltip on hover or focus, the
+// listeners off, aria-describedby back to the page's own. Changed to name
+// another surface: the trigger is linked to that one, so the new text shows.
+// The controller writes the surface's id into data-tooltip itself; that
+// write, which names the surface already linked, changes nothing.
+
+
+function syncTooltipAttribute(trigger) {
+  if (!(trigger instanceof HTMLElement)) return;
+  const instance = tooltipInstances.get(trigger);
+
+  if (!trigger.hasAttribute('data-tooltip')) {
+    instance?.destroy();
+    return;
+  }
+
+  const reference = trigger.getAttribute('data-tooltip').trim();
+  if (instance && instance.surface?.isConnected && reference === instance.surface.id) return;
+  relinkTrigger(trigger);
 }
 
 function initTooltipTriggers(root = document) {
@@ -444,6 +513,11 @@ if (typeof MutationObserver !== 'undefined') {
   const observer = new MutationObserver(mutations => {
     let retryDocument = false;
     mutations.forEach(mutation => {
+      if (mutation.type === 'attributes') {
+        syncTooltipAttribute(mutation.target);
+        return;
+      }
+
       mutation.addedNodes.forEach(node => {
         if (!(node instanceof HTMLElement)) return;
         initTooltipTriggers(node);
@@ -457,7 +531,9 @@ if (typeof MutationObserver !== 'undefined') {
   });
   observer.observe(document.documentElement, {
     childList: true,
-    subtree: true
+    subtree: true,
+    attributes: true,
+    attributeFilter: ['data-tooltip']
   });
 }
 
@@ -619,6 +695,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   anchor: () => (/* binding */ anchor),
 /* harmony export */   anchorReference: () => (/* binding */ anchorReference),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   liftToTopLayer: () => (/* binding */ liftToTopLayer),
 /* harmony export */   referenceRect: () => (/* binding */ referenceRect),
 /* harmony export */   resolveLength: () => (/* binding */ resolveLength)
 /* harmony export */ });
@@ -685,7 +762,24 @@ const given = value => Boolean(value) && value !== 'none';
 function containsFixed(element) {
   const css = getComputedStyle(element);
   if (css.display === 'contents') return false;
-  return given(css.transform) || given(css.translate) || given(css.scale) || given(css.rotate) || given(css.perspective) || given(css.filter) || given(css.backdropFilter) || WILL_CONTAIN.test(css.willChange || '') || CONTAINS_FIXED.test(css.contain || '') || Boolean(css.containerType) && css.containerType !== 'normal';
+  if (given(css.transform) || given(css.translate) || given(css.scale) || given(css.rotate) || given(css.perspective) || given(css.filter) || given(css.backdropFilter) || WILL_CONTAIN.test(css.willChange || '') || CONTAINS_FIXED.test(css.contain || '')) return true; // A container query box is asked, not assumed. The containment it once
+  // implied made it the containing block of fixed descendants, and Floating UI
+  // still counts it so; current Chromium no longer does. Counting it placed
+  // every panel in the docs' content column (main.docara-content is
+  // container-type: inline-size) by the column's offset a second time: the
+  // calendar of a field at y 516 opened at y 1336 (docs pre-check DP-01,
+  // 2026-11-09). A fixed probe at 0,0 inside the box says which it is.
+
+  return Boolean(css.containerType) && css.containerType !== 'normal' && probesFixedOrigin(element);
+}
+
+function probesFixedOrigin(element) {
+  const probe = element.ownerDocument.createElement('span');
+  probe.style.cssText = 'position:fixed;left:0;top:0;inline-size:0;block-size:0;padding:0;border:0;margin:0;visibility:hidden;pointer-events:none';
+  element.append(probe);
+  const at = probe.getBoundingClientRect();
+  probe.remove();
+  return Math.abs(at.left) > 0.5 || Math.abs(at.top) > 0.5;
 }
 
 function inTopLayer(element) {
@@ -694,6 +788,85 @@ function inTopLayer(element) {
   } catch {
     return false;
   }
+} // A floating surface is lifted into the top layer while it is anchored (a
+// manual popover), so no ancestor can displace or clip it: a transform, a
+// filter, will-change, contain: layout or paint, an overflow box, a stacking
+// context under a sticky header. It stays where it is in the DOM, so it keeps
+// the host's variables, theme, lang, dir and density by plain inheritance --
+// what a body portal has to carry by hand (carryLayerOrigin). A surface the
+// component already lifted (sf-menu-context, sf-help-mark, sf-profile-picker,
+// sf-input-lookup, dropdown lists) or that stands in a modal dialog's top
+// layer is left as it is; a browser without popovers keeps the fixed panel in
+// place, placed against its containing block.
+//
+// The user-agent popover rule (inset 0, margin auto, a border, padding, Canvas
+// and CanvasText, overflow auto) is taken back by a rule of no specificity in
+// the lowest Framework layer, sf.reset, so the component's own sheet still
+// decides each of those: unlayered, the rule outranked every layered component
+// rule and took the calendar's fill, padding and border away.
+
+
+const LIFTED = 'data-sf-position-layer';
+const LIFTED_RULE = `@layer sf.reset{:where([${LIFTED}]){inset:auto;margin:0;padding:0;border:0 none;inline-size:auto;block-size:auto;overflow:visible;color:inherit;background-color:transparent}}`;
+const sheets = new WeakMap();
+
+function adoptLiftedRule(floating) {
+  const root = floating.getRootNode();
+  const target = root instanceof ShadowRoot ? root : floating.ownerDocument;
+  if (sheets.has(target)) return;
+  const view = floating.ownerDocument.defaultView;
+
+  try {
+    const sheet = new view.CSSStyleSheet();
+    sheet.replaceSync(LIFTED_RULE);
+    target.adoptedStyleSheets = [...target.adoptedStyleSheets, sheet];
+    sheets.set(target, sheet);
+  } catch {
+    const style = floating.ownerDocument.createElement('style');
+    style.dataset.sfPositionLayer = '';
+    style.textContent = LIFTED_RULE;
+    (target === floating.ownerDocument ? target.head || target.documentElement : target).append(style);
+    sheets.set(target, style);
+  }
+}
+
+function liftable(floating) {
+  if (typeof floating.showPopover !== 'function' || !floating.isConnected) return false;
+  if (floating.hasAttribute('popover') || inTopLayer(floating)) return false;
+
+  for (let node = floating.parentElement; node; node = node.parentElement) if (inTopLayer(node)) return false;
+
+  return true;
+}
+/** Lifts a floating surface into the top layer; returns a function that puts it back, or null. */
+
+
+function liftToTopLayer(floating) {
+  if (!liftable(floating)) return null;
+  adoptLiftedRule(floating);
+  floating.setAttribute(LIFTED, '');
+  floating.setAttribute('popover', 'manual');
+
+  try {
+    floating.showPopover();
+  } catch {
+    floating.removeAttribute('popover');
+    floating.removeAttribute(LIFTED);
+    return null;
+  }
+
+  return () => {
+    if (floating.hasAttribute(LIFTED)) {
+      try {
+        if (floating.matches(':popover-open')) floating.hidePopover();
+      } catch {
+        /* already gone from the document */
+      }
+
+      floating.removeAttribute('popover');
+      floating.removeAttribute(LIFTED);
+    }
+  };
 }
 
 function fixedContainingBlock(element) {
@@ -737,7 +910,9 @@ function anchorReference(element) {
 /**
  * Keeps `floating` anchored to `reference`.
  * options: {side, align, offset, alignmentOffset, padding, flip, shift,
- *           matchWidth, fitHeight, autoUpdate, onPosition({side, placement, x, y})}
+ *           matchWidth, fitHeight, autoUpdate, topLayer, onPosition({side, placement, x, y})}
+ * topLayer (default true) lifts the floating element into the top layer while
+ * it is anchored (see liftToTopLayer); false keeps it where it stands.
  * Returns {update(): Promise, stop(), side}.
  */
 
@@ -759,6 +934,7 @@ function anchor(reference, floating, options = {}) {
     matchWidth: false,
     fitHeight: true,
     autoUpdate: true,
+    topLayer: true,
     onPosition: null,
     ...options
   }; // Inline styles this helper writes are restored on stop(); the author's caps
@@ -773,7 +949,9 @@ function anchor(reference, floating, options = {}) {
   // A percentage cap is kept as written by getComputedStyle; read as pixels,
   // max-inline-size: 100% made every tooltip 100px wide. The panel is fixed, so
   // a percentage is of the viewport.
+  // Lifted before its caps are read: the panel is measured where it is drawn.
 
+  const lower = settings.topLayer ? liftToTopLayer(floating) : null;
   const floatingStyle = getComputedStyle(floating);
 
   const cap = (value, whole) => {
@@ -918,6 +1096,7 @@ function anchor(reference, floating, options = {}) {
     controller.stopped = true;
     cleanup?.();
     delete floating.dataset.sfSide;
+    lower?.();
 
     for (const [name, value, priority] of saved) {
       if (value) floating.style.setProperty(name, value, priority);else floating.style.removeProperty(name);
@@ -931,6 +1110,7 @@ const Position = Object.freeze({
   anchor,
   anchorReference,
   referenceRect,
+  liftToTopLayer,
   logicalSide: _position_placement_js__WEBPACK_IMPORTED_MODULE_1__.logicalSide,
   physicalPlacement: _position_placement_js__WEBPACK_IMPORTED_MODULE_1__.physicalPlacement,
   resolveLength

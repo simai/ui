@@ -515,9 +515,11 @@ function createSortableInserter(list) {
     surface.setAttribute('aria-label', listName(list) ? `${text('menu')}: ${listName(list)}` : text('menu'));
     surface.search = { placeholder: text('search'), empty: text('empty') };
     surface.entries = toEntries(list);
-    const opened = await surface.openFor(button, { side: 'block-end', align: 'start', focus: 'first' });
+    // openFor answers an outcome (sf-menu-context 1.12.2); a menu of an earlier
+    // pair answered a boolean. The inserter's own answer stays a boolean.
+    const answer = await surface.openFor(button, { side: 'block-end', align: 'start', focus: 'first' });
     place();
-    return opened;
+    return answer === true || answer?.outcome === 'applied';
   }
 
   // A choice is the host's to apply: it hears the place and the kind, and a
@@ -1619,7 +1621,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-sorta
 /***/ "34bb89f847b9"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.sortable","tag":"sf-sortable","version":"1.1.8","kind":"leaf","settings":{"group":{"type":"string","default":""},"accepts":{"type":"string","default":""},"mode":{"type":"enum","values":["move","copy"],"default":"move"},"orientation":{"type":"enum","values":["vertical","horizontal"],"default":"vertical"},"label":{"type":"string","default":""},"preview":{"type":"enum","values":["silhouette","line"],"default":"silhouette"},"inserter-items":{"type":"string","default":""}},"values":{},"events":{"move":{"carries":{"item":"string","from":"string","to":"string","index":"number","mode":{"type":"enum","values":["move","copy"]}}},"state":{"carries":{"state":{"type":"enum","values":["picked","dropped","cancelled"]},"item":"string"},"own-verb":true},"insert":{"carries":{"index":{"type":"number","integer":true,"schema":{"minimum":0}},"item":"string","to":"string"},"cancelable":true,"own-verb":true}},"actions":{},"css-variables":{"--sf-sortable-dragging-opacity":{"type":"number","state":"dragging"},"--sf-sortable-ghost-opacity":{"type":"number","state":"dragging"},"--sf-sortable-ghost-z-index":{"type":"number","state":"dragging"},"--sf-sortable-indicator-color":{"type":"color","state":"dragging"},"--sf-sortable-placeholder-border-color":{"type":"color","state":"dragging"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.sortable","tag":"sf-sortable","version":"1.2.1","kind":"leaf","settings":{"group":{"type":"string","default":""},"accepts":{"type":"string","default":""},"mode":{"type":"enum","values":["move","copy"],"default":"move"},"orientation":{"type":"enum","values":["vertical","horizontal"],"default":"vertical"},"label":{"type":"string","default":""},"preview":{"type":"enum","values":["silhouette","line"],"default":"silhouette"},"inserter-items":{"type":"string","default":""}},"values":{},"events":{"move":{"carries":{"item":"string","from":"string","to":"string","index":"number","mode":{"type":"enum","values":["move","copy"]}}},"state":{"carries":{"state":{"type":"enum","values":["picked","dropped","cancelled"]},"item":"string"},"own-verb":true},"insert":{"carries":{"index":{"type":"number","integer":true,"schema":{"minimum":0}},"item":"string","to":"string"},"cancelable":true,"own-verb":true}},"actions":{},"css-variables":{"--sf-sortable-dragging-opacity":{"type":"number","state":"dragging"},"--sf-sortable-ghost-opacity":{"type":"number","state":"dragging"},"--sf-sortable-ghost-z-index":{"type":"number","state":"dragging"},"--sf-sortable-indicator-color":{"type":"color","state":"dragging"},"--sf-sortable-placeholder-border-color":{"type":"color","state":"dragging"}}}');
 
 /***/ },
 

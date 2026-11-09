@@ -1,5 +1,19 @@
 @layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.components {
+  :root {
+    --sf-special-white: var(--sf-white);
+    --sf-on-special-white: var(--sf-black);
+    --sf-special-black: var(--sf-black);
+    --sf-on-special-black: var(--sf-white);
+    --sf-special-yellow: #FF0;
+    --sf-on-special-yellow: var(--sf-black);
+    --sf-special-blue: #9FD7FF;
+    --sf-on-special-blue: var(--sf-black);
+    --sf-special-green: var(--sf-black);
+    --sf-on-special-green: #A9DD38;
+  }
+}
+@layer sf.components {
   html.special.special-kerning-middle * {
     letter-spacing: calc(var(--sf-text--tracking-widest) * 1.5) !important;
   }
@@ -91,9 +105,9 @@
 }
 @layer sf.components {
   html.special .sf-special-white {
-    background-color: #FFF !important;
-    color: #000 !important;
-    border-color: #000 !important;
+    background-color: var(--sf-special-white) !important;
+    color: var(--sf-on-special-white) !important;
+    border-color: var(--sf-on-special-white) !important;
   }
   html.special .sf-special-white *:not(.special-panel):not([data-bg]),
   html.special .sf-special-white ::after, html.special .sf-special-white ::before {
@@ -108,30 +122,30 @@
   html.special .sf-special-white [class*="hover:bg-"]:not(.special-panel):not([data-bg]):hover,
   html.special .sf-special-white [class*="hover:bg-"]:not(.special-panel):not([data-bg]):hover::after,
   html.special .sf-special-white [class*="hover:bg-"]:not(.special-panel):not([data-bg]):hover::before {
-    background-color: #000 !important;
-    color: #FFF !important;
-    border-color: #FFF !important;
+    background-color: var(--sf-on-special-white) !important;
+    color: var(--sf-special-white) !important;
+    border-color: var(--sf-special-white) !important;
   }
   html.special .sf-special-white [class*="hover:color-"]:not(.special-panel):not([data-bg]):hover,
   html.special .sf-special-white [class*="hover:color-"]:not(.special-panel):not([data-bg]):hover::after,
   html.special .sf-special-white [class*="hover:color-"]:not(.special-panel):not([data-bg]):hover::before {
-    background-color: #000 !important;
-    color: #FFF !important;
-    border-color: #FFF !important;
+    background-color: var(--sf-on-special-white) !important;
+    color: var(--sf-special-white) !important;
+    border-color: var(--sf-special-white) !important;
   }
   html.special .sf-special-white [class*="hover:border-"]:not(.special-panel):not([data-bg]):hover,
   html.special .sf-special-white [class*="hover:border-"]:not(.special-panel):not([data-bg]):hover::after,
   html.special .sf-special-white [class*="hover:border-"]:not(.special-panel):not([data-bg]):hover::before {
-    background-color: #000 !important;
-    color: #FFF !important;
-    border-color: #FFF !important;
+    background-color: var(--sf-on-special-white) !important;
+    color: var(--sf-special-white) !important;
+    border-color: var(--sf-special-white) !important;
   }
 }
 @layer sf.components {
   html.special .sf-special-black {
-    background-color: #000 !important;
-    color: #FFF !important;
-    border-color: #FFF !important;
+    background-color: var(--sf-special-black) !important;
+    color: var(--sf-on-special-black) !important;
+    border-color: var(--sf-on-special-black) !important;
   }
   html.special .sf-special-black *:not(.special-panel):not([data-bg]),
   html.special .sf-special-black ::after, html.special .sf-special-black ::before {
@@ -146,30 +160,30 @@
   html.special .sf-special-black [class*="hover:bg-"]:not(.special-panel):not([data-bg]):hover,
   html.special .sf-special-black [class*="hover:bg-"]:not(.special-panel):not([data-bg]):hover::after,
   html.special .sf-special-black [class*="hover:bg-"]:not(.special-panel):not([data-bg]):hover::before {
-    background-color: #FFF !important;
-    color: #000 !important;
-    border-color: #000 !important;
+    background-color: var(--sf-on-special-black) !important;
+    color: var(--sf-special-black) !important;
+    border-color: var(--sf-special-black) !important;
   }
   html.special .sf-special-black [class*="hover:color-"]:not(.special-panel):not([data-bg]):hover,
   html.special .sf-special-black [class*="hover:color-"]:not(.special-panel):not([data-bg]):hover::after,
   html.special .sf-special-black [class*="hover:color-"]:not(.special-panel):not([data-bg]):hover::before {
-    background-color: #FFF !important;
-    color: #000 !important;
-    border-color: #000 !important;
+    background-color: var(--sf-on-special-black) !important;
+    color: var(--sf-special-black) !important;
+    border-color: var(--sf-special-black) !important;
   }
   html.special .sf-special-black [class*="hover:border-"]:not(.special-panel):not([data-bg]):hover,
   html.special .sf-special-black [class*="hover:border-"]:not(.special-panel):not([data-bg]):hover::after,
   html.special .sf-special-black [class*="hover:border-"]:not(.special-panel):not([data-bg]):hover::before {
-    background-color: #FFF !important;
-    color: #000 !important;
-    border-color: #000 !important;
+    background-color: var(--sf-on-special-black) !important;
+    color: var(--sf-special-black) !important;
+    border-color: var(--sf-special-black) !important;
   }
 }
 @layer sf.components {
   html.special .sf-special-yellow {
-    background-color: #FF0 !important;
-    color: #000 !important;
-    border-color: #000 !important;
+    background-color: var(--sf-special-yellow) !important;
+    color: var(--sf-on-special-yellow) !important;
+    border-color: var(--sf-on-special-yellow) !important;
   }
   html.special .sf-special-yellow *:not(.special-panel):not([data-bg]),
   html.special .sf-special-yellow ::after, html.special .sf-special-yellow ::before {
@@ -184,30 +198,30 @@
   html.special .sf-special-yellow [class*="hover:bg-"]:not(.special-panel):not([data-bg]):hover,
   html.special .sf-special-yellow [class*="hover:bg-"]:not(.special-panel):not([data-bg]):hover::after,
   html.special .sf-special-yellow [class*="hover:bg-"]:not(.special-panel):not([data-bg]):hover::before {
-    background-color: #000 !important;
-    color: #FF0 !important;
-    border-color: #FF0 !important;
+    background-color: var(--sf-on-special-yellow) !important;
+    color: var(--sf-special-yellow) !important;
+    border-color: var(--sf-special-yellow) !important;
   }
   html.special .sf-special-yellow [class*="hover:color-"]:not(.special-panel):not([data-bg]):hover,
   html.special .sf-special-yellow [class*="hover:color-"]:not(.special-panel):not([data-bg]):hover::after,
   html.special .sf-special-yellow [class*="hover:color-"]:not(.special-panel):not([data-bg]):hover::before {
-    background-color: #000 !important;
-    color: #FF0 !important;
-    border-color: #FF0 !important;
+    background-color: var(--sf-on-special-yellow) !important;
+    color: var(--sf-special-yellow) !important;
+    border-color: var(--sf-special-yellow) !important;
   }
   html.special .sf-special-yellow [class*="hover:border-"]:not(.special-panel):not([data-bg]):hover,
   html.special .sf-special-yellow [class*="hover:border-"]:not(.special-panel):not([data-bg]):hover::after,
   html.special .sf-special-yellow [class*="hover:border-"]:not(.special-panel):not([data-bg]):hover::before {
-    background-color: #000 !important;
-    color: #FF0 !important;
-    border-color: #FF0 !important;
+    background-color: var(--sf-on-special-yellow) !important;
+    color: var(--sf-special-yellow) !important;
+    border-color: var(--sf-special-yellow) !important;
   }
 }
 @layer sf.components {
   html.special .sf-special-blue {
-    background-color: #9FD7FF !important;
-    color: #000 !important;
-    border-color: #000 !important;
+    background-color: var(--sf-special-blue) !important;
+    color: var(--sf-on-special-blue) !important;
+    border-color: var(--sf-on-special-blue) !important;
   }
   html.special .sf-special-blue *:not(.special-panel):not([data-bg]),
   html.special .sf-special-blue ::after, html.special .sf-special-blue ::before {
@@ -221,52 +235,52 @@
   html.special .sf-special-blue [class*="hover:bg-"]:not(.special-panel):not([data-bg]):hover,
   html.special .sf-special-blue [class*="hover:bg-"]:not(.special-panel):not([data-bg]):hover::after,
   html.special .sf-special-blue [class*="hover:bg-"]:not(.special-panel):not([data-bg]):hover::before {
-    background-color: #000 !important;
-    color: #9FD7FF !important;
-    border-color: #9FD7FF !important;
+    background-color: var(--sf-on-special-blue) !important;
+    color: var(--sf-special-blue) !important;
+    border-color: var(--sf-special-blue) !important;
   }
   html.special .sf-special-blue [class*="hover:bg-"]:not(.special-panel):not([data-bg]):hover *,
   html.special .sf-special-blue [class*="hover:bg-"]:not(.special-panel):not([data-bg]):hover::after *,
   html.special .sf-special-blue [class*="hover:bg-"]:not(.special-panel):not([data-bg]):hover::before * {
-    background-color: #000 !important;
-    color: #9FD7FF !important;
-    border-color: #9FD7FF !important;
+    background-color: var(--sf-on-special-blue) !important;
+    color: var(--sf-special-blue) !important;
+    border-color: var(--sf-special-blue) !important;
     box-shadow: none !important;
   }
   html.special .sf-special-blue [class*="hover:color-"]:not(.special-panel):not([data-bg]):hover,
   html.special .sf-special-blue [class*="hover:color-"]:not(.special-panel):not([data-bg]):hover::after,
   html.special .sf-special-blue [class*="hover:color-"]:not(.special-panel):not([data-bg]):hover::before {
-    background-color: #000 !important;
-    color: #9FD7FF !important;
-    border-color: #9FD7FF !important;
+    background-color: var(--sf-on-special-blue) !important;
+    color: var(--sf-special-blue) !important;
+    border-color: var(--sf-special-blue) !important;
   }
   html.special .sf-special-blue [class*="hover:color-"]:not(.special-panel):not([data-bg]):hover *,
   html.special .sf-special-blue [class*="hover:color-"]:not(.special-panel):not([data-bg]):hover::after *,
   html.special .sf-special-blue [class*="hover:color-"]:not(.special-panel):not([data-bg]):hover::before * {
-    background-color: #000 !important;
-    color: #9FD7FF !important;
-    border-color: #9FD7FF !important;
+    background-color: var(--sf-on-special-blue) !important;
+    color: var(--sf-special-blue) !important;
+    border-color: var(--sf-special-blue) !important;
   }
   html.special .sf-special-blue [class*="hover:border-"]:not(.special-panel):not([data-bg]):hover,
   html.special .sf-special-blue [class*="hover:border-"]:not(.special-panel):not([data-bg]):hover::after,
   html.special .sf-special-blue [class*="hover:border-"]:not(.special-panel):not([data-bg]):hover::before {
-    background-color: #000 !important;
-    color: #9FD7FF !important;
-    border-color: #9FD7FF !important;
+    background-color: var(--sf-on-special-blue) !important;
+    color: var(--sf-special-blue) !important;
+    border-color: var(--sf-special-blue) !important;
   }
   html.special .sf-special-blue [class*="hover:border-"]:not(.special-panel):not([data-bg]):hover *,
   html.special .sf-special-blue [class*="hover:border-"]:not(.special-panel):not([data-bg]):hover::after *,
   html.special .sf-special-blue [class*="hover:border-"]:not(.special-panel):not([data-bg]):hover::before * {
-    background-color: #000 !important;
-    color: #9FD7FF !important;
-    border-color: #9FD7FF !important;
+    background-color: var(--sf-on-special-blue) !important;
+    color: var(--sf-special-blue) !important;
+    border-color: var(--sf-special-blue) !important;
   }
 }
 @layer sf.components {
   html.special .sf-special-green {
-    background-color: #000 !important;
-    color: #A9DD38 !important;
-    border-color: #A9DD38 !important;
+    background-color: var(--sf-special-green) !important;
+    color: var(--sf-on-special-green) !important;
+    border-color: var(--sf-on-special-green) !important;
   }
   html.special .sf-special-green *:not(.special-panel):not([data-bg]),
   html.special .sf-special-green ::after, html.special .sf-special-green ::before {
@@ -281,22 +295,22 @@
   html.special .sf-special-green [class*="hover:bg-"]:not(.special-panel):not([data-bg]):hover,
   html.special .sf-special-green [class*="hover:bg-"]:not(.special-panel):not([data-bg]):hover::after,
   html.special .sf-special-green [class*="hover:bg-"]:not(.special-panel):not([data-bg]):hover::before {
-    background-color: #A9DD38 !important;
-    color: #000 !important;
-    border-color: #000 !important;
+    background-color: var(--sf-on-special-green) !important;
+    color: var(--sf-special-green) !important;
+    border-color: var(--sf-special-green) !important;
   }
   html.special .sf-special-green [class*="hover:color-"]:not(.special-panel):not([data-bg]):hover,
   html.special .sf-special-green [class*="hover:color-"]:not(.special-panel):not([data-bg]):hover::after,
   html.special .sf-special-green [class*="hover:color-"]:not(.special-panel):not([data-bg]):hover::before {
-    background-color: #A9DD38 !important;
-    color: #000 !important;
-    border-color: #000 !important;
+    background-color: var(--sf-on-special-green) !important;
+    color: var(--sf-special-green) !important;
+    border-color: var(--sf-special-green) !important;
   }
   html.special .sf-special-green [class*="hover:border-"]:not(.special-panel):not([data-bg]):hover,
   html.special .sf-special-green [class*="hover:border-"]:not(.special-panel):not([data-bg]):hover::after,
   html.special .sf-special-green [class*="hover:border-"]:not(.special-panel):not([data-bg]):hover::before {
-    background-color: #A9DD38 !important;
-    color: #000 !important;
-    border-color: #000 !important;
+    background-color: var(--sf-on-special-green) !important;
+    color: var(--sf-special-green) !important;
+    border-color: var(--sf-special-green) !important;
   }
 }

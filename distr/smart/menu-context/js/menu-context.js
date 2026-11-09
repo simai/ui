@@ -330,6 +330,117 @@ class PanelScrollbar {
 
 /***/ },
 
+/***/ "1412c5875b4d"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   RELATIVE: () => (/* binding */ RELATIVE),
+/* harmony export */   densityOf: () => (/* binding */ densityOf),
+/* harmony export */   drawing: () => (/* binding */ drawing),
+/* harmony export */   followDensity: () => (/* binding */ followDensity),
+/* harmony export */   markRelativeSizes: () => (/* binding */ markRelativeSizes),
+/* harmony export */   noteAuthored: () => (/* binding */ noteAuthored),
+/* harmony export */   sizedBefore: () => (/* binding */ sizedBefore)
+/* harmony export */ });
+// Density (owner decision C22, 2026-11-09). data-sf-density="compact" on the
+// root or on a container moves every component one ladder step down; the CSS
+// does it (core/scss/_sf_css__density.scss): each step variable holds the step
+// below, and an element with an explicit size takes the normal ladder back.
+//
+// "Explicit" is a size the page gave. A size a component's template gives an
+// element it draws (sf-input's clear button, a pager's buttons, a submenu) is
+// relative to the component's own size: under a compact sf-input its button
+// has to come down with it, not stand at the normal ladder. Those are marked
+// data-sf-size-relative here, once the component has drawn; the CSS leaves
+// them in the region's ladder.
+//
+// What a component holds of the page's own (captured slot content, children
+// left in place) keeps its size explicit. The store is on the shared global:
+// every bundle carries its own copy of this module.
+const store = () => {
+  const SF = globalThis.SF = globalThis.SF || {};
+  const internal = SF.__internal || (SF.__internal = {});
+  return internal.density ||= {
+    authored: new WeakSet(),
+    depth: 0
+  };
+};
+
+const RELATIVE = 'data-sf-size-relative'; // Page content a component captured to place in its own drawing. Content a
+// template hands to a child while it draws is the template's, not the page's.
+
+function noteAuthored(nodes) {
+  const state = store();
+  if (state.depth > 0) return;
+
+  for (const node of nodes) if (node && typeof node === 'object') state.authored.add(node);
+}
+function drawing(callback) {
+  const state = store();
+  state.depth += 1;
+
+  try {
+    return callback();
+  } finally {
+    state.depth -= 1;
+  }
+} // The sized elements present before a host first draws are the page's.
+// A printed first-paint picture is the drawing's, not the page's.
+
+function sizedBefore(host) {
+  return new Set(Array.from(host.querySelectorAll?.('[size]') ?? []).filter(element => {
+    const picture = element.closest('[data-sf-static]');
+    return !picture || !host.contains(picture);
+  }));
+} // After a host drew: every sized element its drawing holds that is not the
+// page's is relative to the host.
+
+function markRelativeSizes(host, before = null) {
+  const {
+    authored
+  } = store();
+
+  for (const element of host.querySelectorAll?.('[size]') ?? []) {
+    if (element.hasAttribute(RELATIVE) || before?.has(element)) continue;
+    let node = element;
+    let page = false;
+
+    while (node && node !== host) {
+      if (authored.has(node)) {
+        page = true;
+        break;
+      }
+
+      node = node.parentNode;
+    }
+
+    if (!page) element.setAttribute(RELATIVE, '');
+  }
+} // A popup a component builds itself and places outside its own box (a menu on
+// <body>, in an open dialog): sized from the component, so relative, and in
+// the component's density, not the density of where it was placed.
+
+function followDensity(element, from) {
+  if (!element?.setAttribute) return element;
+  if (element.hasAttribute('size')) element.setAttribute(RELATIVE, '');
+  const density = densityOf(from);
+  if (density) element.setAttribute('data-sf-density', density);else element.removeAttribute('data-sf-density');
+  return element;
+} // The density an element stands in: the nearest region's, or "normal" under an
+// explicit size (where the ladder is the normal one again); null outside any.
+
+function densityOf(from) {
+  for (let node = from; node?.nodeType === 1; node = node.parentElement) {
+    if (node.hasAttribute('data-sf-density')) return node.getAttribute('data-sf-density');
+    if (node.hasAttribute('size') && !node.hasAttribute(RELATIVE) && !node.hasAttribute('data-sf-size-scale') && !/^(input|select|textarea)$/u.test(node.localName)) return 'normal';
+  }
+
+  return null;
+}
+
+/***/ },
+
 /***/ "f28a9d913ce0"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -798,22 +909,24 @@ function getInitials(value = "", options = {}) {
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("deb1a4d61565");
-/* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5b7d7695b41b");
-/* harmony import */ var _core_js_position_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("116963e5e31b");
-/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("b8b80063ca9a");
-/* harmony import */ var _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("bf0cea966575");
-/* harmony import */ var _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("4a85acfb05c1");
-/* harmony import */ var _component_panel_scrollbar_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("cb6d39a52a42");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("4ff97a05802b");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("68b68beb66a3");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("25e9776cb404");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("c19f070ad532");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_4__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_4__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_density_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("1412c5875b4d");
+/* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("5b7d7695b41b");
+/* harmony import */ var _core_js_position_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("116963e5e31b");
+/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("b8b80063ca9a");
+/* harmony import */ var _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("bf0cea966575");
+/* harmony import */ var _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("4a85acfb05c1");
+/* harmony import */ var _component_panel_scrollbar_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("cb6d39a52a42");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("4ff97a05802b");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("68b68beb66a3");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("25e9776cb404");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("c19f070ad532");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_5__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_6__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_5__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_6__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _core_js_position_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_position_js__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _core_js_position_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_core_js_position_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_5__);
+
 
 
 
@@ -829,18 +942,22 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 // core/js/element-manifest.js, its words are lang/<locale>.json, and its events
 // go out by their verbs through sfEmit. aria-label and role stay the host's.
 
-const ContextMenuElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_7__, {
+const ContextMenuElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_8__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_9__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_10__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__
   },
   source: "ru",
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_8__
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_9__,
+  // openFor(anchor, options), toggleFor(anchor, options) and chooseTab(index)
+  // take their fields in order; the runtime gives them the object form of
+  // §4.4 as well: openFor({anchor, options}), chooseTab({index}).
+  positional: ["open-for", "toggle-for", "choose-tab"]
 }); // Prefer the helper Core published; a bundle loaded without core.js still
 // positions with its own copy.
 
-const position = () => globalThis.SF?.Position || (_core_js_position_js__WEBPACK_IMPORTED_MODULE_2___default());
+const position = () => globalThis.SF?.Position || (_core_js_position_js__WEBPACK_IMPORTED_MODULE_3___default());
 
 const TYPEAHEAD_MS = 500; // ─── drilling (1.5.0) ────────────────────────────────────────────────────────
 // A row's path in the tree, the way the template writes it into the markup:
@@ -1111,7 +1228,7 @@ class SfContextMenu extends ContextMenuElement {
       }
     });
     this.addEventListener("sf-after-render", event => {
-      if (event.target !== this && event.target.closest((0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__.tagSelector)("sf-menu-context")) === this) {
+      if (event.target !== this && event.target.closest((0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_6__.tagSelector)("sf-menu-context")) === this) {
         this.syncMenuItems();
       }
     });
@@ -1151,7 +1268,7 @@ class SfContextMenu extends ContextMenuElement {
 
   watchScrollbar() {
     const area = this.scrollArea();
-    this._scrollbar ??= new _component_panel_scrollbar_js__WEBPACK_IMPORTED_MODULE_6__.PanelScrollbar();
+    this._scrollbar ??= new _component_panel_scrollbar_js__WEBPACK_IMPORTED_MODULE_7__.PanelScrollbar();
 
     this._scrollbar.watch(area, area?.classList.contains("sf-context-menu-list") ? "sf-context-menu-list--scrollbar" : "sf-context-menu-content--scrollbar");
   }
@@ -1804,12 +1921,22 @@ class SfContextMenu extends ContextMenuElement {
       }
     }, 120);
   } // ─── opening (the menu owns its lifecycle when opened through openFor) ────
+  // Both answer an outcome (§4.4): applied with `value`, whether the menu is
+  // open afterwards; refused {reason: prevented} when a listener kept it as it
+  // was, {reason: invalid} for an anchor that is not an element; unavailable
+  // when the menu has no surface to open.
 
 
   toggleFor(anchor, options = {}) {
     if (this._owned?.anchor === anchor) {
-      this.close();
-      return Promise.resolve(false);
+      const closed = this.close();
+      return Promise.resolve(closed ? {
+        outcome: "applied",
+        value: false
+      } : {
+        outcome: "refused",
+        reason: "prevented"
+      });
     }
 
     return this.openFor(anchor, options);
@@ -1836,7 +1963,10 @@ class SfContextMenu extends ContextMenuElement {
     offset = undefined,
     width = this.width
   } = {}) {
-    if (!(anchor instanceof Element)) throw new TypeError("A menu opens for an element");
+    if (!(anchor instanceof Element)) return {
+      outcome: "refused",
+      reason: "invalid"
+    };
     if (this._owned) this.close({
       restoreFocus: false,
       ask: false
@@ -1845,10 +1975,16 @@ class SfContextMenu extends ContextMenuElement {
 
     if (!this.sfEmit("open", {}, {
       cancelable: true
-    })) return false;
+    })) return {
+      outcome: "refused",
+      reason: "prevented"
+    };
     await this.whenRendered();
     const surface = this.surface();
-    if (!surface) return false; // Focus goes back where it was, or to the control that opened the menu
+    if (!surface) return {
+      outcome: "unavailable",
+      reason: "no-surface"
+    }; // Focus goes back where it was, or to the control that opened the menu
     // when it was nowhere -- a press on an sf-button leaves it on the body in
     // some browsers, and the menu returned it there. A host element is not
     // itself focusable; its native control is.
@@ -1864,9 +2000,18 @@ class SfContextMenu extends ContextMenuElement {
       haspopup: anchor.getAttribute("aria-haspopup")
     };
     anchor.setAttribute("aria-haspopup", "menu");
-    anchor.setAttribute("aria-expanded", "true"); // The top layer, where the platform has it: above every stacking context
+    anchor.setAttribute("aria-expanded", "true"); // The density of the control that opens it (C22): the panel is drawn
+    // where the menu element stands -- often on <body>, outside the compact
+    // region of the toolbar or table that opens it -- so two menus of one
+    // compact page drew at two sizes. A size the page gave the menu wins.
+
+    if (!this.hasAttribute("size") || this.hasAttribute(_core_js_density_js__WEBPACK_IMPORTED_MODULE_1__.RELATIVE)) {
+      this._owned.density = surface.getAttribute("data-sf-density");
+      surface.setAttribute("data-sf-density", (0,_core_js_density_js__WEBPACK_IMPORTED_MODULE_1__.densityOf)(anchor) ?? "normal");
+    } // The top layer, where the platform has it: above every stacking context
     // and every clipping box, so a menu in a scrolled card is never cut and
     // never under the table it belongs to.
+
 
     surface.classList.add("sf-context-menu--open");
 
@@ -1909,7 +2054,7 @@ class SfContextMenu extends ContextMenuElement {
     // listener and would otherwise close with it. The outside press comes from
     // the stack.
 
-    (0,_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_4__.holdOpenSurfaceMark)(this, true, {
+    (0,_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_5__.holdOpenSurfaceMark)(this, true, {
       onOutsidePress: this._onOutsidePress
     });
     this.sfEmit("opened", {});
@@ -1925,7 +2070,10 @@ class SfContextMenu extends ContextMenuElement {
       });
     }
 
-    return true;
+    return {
+      outcome: "applied",
+      value: true
+    };
   } // reason says why (standard 1.3.8 §19.3): escape, outside, close (the head's
   // close button) or api (a choice, Tab, a script). A listener that prevents
   // sf-menu-context-close keeps the menu open; `ask: false` closes without
@@ -1971,7 +2119,7 @@ class SfContextMenu extends ContextMenuElement {
       owned.sizedContent?.style.removeProperty(name);
     }
 
-    (0,_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_4__.holdOpenSurfaceMark)(this, false);
+    (0,_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_5__.holdOpenSurfaceMark)(this, false);
     const surface = this.surface();
 
     if (surface) {
@@ -1979,6 +2127,10 @@ class SfContextMenu extends ContextMenuElement {
       surface.removeAttribute("popover");
       surface.classList.remove("sf-context-menu--open");
       surface.style.removeProperty("z-index");
+
+      if (owned.density !== undefined) {
+        if (owned.density === null) surface.removeAttribute("data-sf-density");else surface.setAttribute("data-sf-density", owned.density);
+      }
     }
 
     const {
@@ -2047,7 +2199,9 @@ class SfContextMenu extends ContextMenuElement {
         this._submenu = null;
         child.remove();
       }
-    });
+    }); // In the density of the menu it opens from, wherever it is placed (C22).
+
+    (0,_core_js_density_js__WEBPACK_IMPORTED_MODULE_1__.followDensity)(child, this.surface() ?? this);
     (this.closest("dialog[open]") || document.body).append(child);
     this._submenu = child; // The submenu's first row stands level with the row that opened it: the
     // panel moves up by its own padding and border, which this menu shares.
@@ -2421,7 +2575,7 @@ class SfContextMenu extends ContextMenuElement {
   }
 
   template() {
-    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_3__.renderContextMenuTemplate)(this.templateContext());
+    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_4__.renderContextMenuTemplate)(this.templateContext());
   }
 
 }
@@ -3065,7 +3219,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-menu-
 /***/ "4ff97a05802b"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.menu-context","tag":"sf-menu-context","version":"1.12.0","kind":"leaf","settings":{"position":{"type":"enum","values":["","inline-start","inline-start-top","inline-start-bottom","inline-end","inline-end-top","inline-end-bottom","top","top-inline-start","top-inline-end","bottom","bottom-inline-start","bottom-inline-end","start","end","top-start","top-end","bottom-start","bottom-end","left","left-top","left-bottom","right","right-top","right-bottom","top-left","top-center","top-right","bottom-left","bottom-center","bottom-right","left-start","left-end","right-start","right-end","inline-start-start","inline-start-end","inline-end-start","inline-end-end"],"default":""},"tooltip":{"type":"boolean","default":true},"text":{"type":"string","default":""},"items":{"type":"list","default":[],"of":{"text":"string","value":"string"}},"content-class":{"type":"string","default":""},"entries":{"type":"list","default":[],"of":{"id":"string","text":"string","caption":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"avatar":{"type":"string","optional":true},"initials":{"type":"string","optional":true},"shortcut":{"type":"string","optional":true},"kind":{"type":"string","optional":true},"type":{"type":"string","optional":true},"value":{"type":"string","optional":true},"lang":{"type":"string","optional":true},"keywords":{"type":"string","optional":true},"checked":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true},"danger":{"type":"boolean","optional":true},"status":{"type":"string","optional":true},"current":{"type":"boolean","optional":true},"href":{"type":"string","optional":true},"keep-open":{"type":"boolean","optional":true},"submenu":{"type":"list","optional":true},"search":{"type":"object","optional":true},"options":{"type":"list","optional":true},"items":{"type":"list","optional":true},"min":{"type":"number","optional":true},"max":{"type":"number","optional":true},"step":{"type":"number","optional":true},"unit":{"type":"string","optional":true},"view":{"type":"string","optional":true}}},"popup":{"type":"boolean","default":false},"search":{"type":"object","optional":true},"submenu":{"type":"enum","values":["flyout","drill"],"default":"flyout"},"size":{"type":"enum","values":["1/2","1"],"default":"1/2"},"width":{"type":"string","default":"content"},"tabs":{"type":"string","default":""},"active-tab":{"type":"string","default":""},"closable":{"type":"boolean","default":false}},"values":{},"events":{"select":{"carries":{"id":{"type":"string","nullable":true},"entry":"object","checked":{"type":"boolean","nullable":true},"group":{"type":"string","nullable":true}},"cancelable":true},"change":{"x-native":false,"carries":{"id":{"type":"string","nullable":true},"value":{"type":"id"},"previous":{"type":"id"},"entry":"object"},"cancelable":true},"changed":{"x-native":false,"carries":{"id":{"type":"string","nullable":true},"value":{"type":"id"},"previous":{"type":"id"},"entry":"object"}},"reset":{"carries":{},"cancelable":true,"own-verb":true},"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"search":{"carries":{"query":"string"},"own-verb":true},"tab":{"carries":{"id":"string","index":"number"},"own-verb":true}},"actions":{"open-for":{"with":{"anchor":"object","options":{"type":"object","optional":true,"schema":{"properties":{"side":{"type":"string","default":"block-end"},"align":{"type":"string","default":"start"},"focus":{"type":"string","enum":["first","last","none"],"default":"first"},"offset":{"type":"string"}}}}},"waits":true,"emits":"open"},"toggle-for":{"with":{"anchor":"object","options":{"type":"object","optional":true}},"waits":true},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"emits":"close"},"choose-tab":{"with":{"index":"number"}},"request-close":{},"set-value":{"with":{"id":"string","value":{"type":"id"}}},"set-all":{"with":{"values":"object"}},"show":{"with":{"id":"string"}},"reset":{"emits":"reset"}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"css-variables":{"--sf-context-menu-background-color":{"type":"color","state":"default"},"--sf-context-menu-color":{"type":"color","state":"default"},"--sf-context-menu-border-color":{"type":"color","state":"default"},"--sf-context-menu-border-width":{"type":"length","state":"default"},"--sf-context-menu-radius":{"type":"length","state":"default"},"--sf-context-menu-padding-inline":{"type":"length","state":"default"},"--sf-context-menu-padding-block":{"type":"length","state":"default"},"--sf-context-menu-gap":{"type":"length","state":"default"},"--sf-context-menu-inline-size":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.menu-context","tag":"sf-menu-context","version":"1.13.4","kind":"leaf","settings":{"position":{"type":"enum","values":["","inline-start","inline-start-top","inline-start-bottom","inline-end","inline-end-top","inline-end-bottom","top","top-inline-start","top-inline-end","bottom","bottom-inline-start","bottom-inline-end","start","end","top-start","top-end","bottom-start","bottom-end","left","left-top","left-bottom","right","right-top","right-bottom","top-left","top-center","top-right","bottom-left","bottom-center","bottom-right","left-start","left-end","right-start","right-end","inline-start-start","inline-start-end","inline-end-start","inline-end-end"],"default":""},"tooltip":{"type":"boolean","default":true},"text":{"type":"string","default":""},"items":{"type":"list","default":[],"of":{"text":"string","value":"string"}},"content-class":{"type":"string","default":""},"entries":{"type":"list","default":[],"of":{"id":"string","text":"string","caption":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"avatar":{"type":"string","optional":true},"initials":{"type":"string","optional":true},"shortcut":{"type":"string","optional":true},"kind":{"type":"string","optional":true},"type":{"type":"string","optional":true},"value":{"type":"string","optional":true},"lang":{"type":"string","optional":true},"keywords":{"type":"string","optional":true},"checked":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true},"danger":{"type":"boolean","optional":true},"status":{"type":"string","optional":true},"current":{"type":"boolean","optional":true},"href":{"type":"string","optional":true},"keep-open":{"type":"boolean","optional":true},"submenu":{"type":"list","optional":true},"search":{"type":"object","optional":true},"options":{"type":"list","optional":true},"items":{"type":"list","optional":true},"min":{"type":"number","optional":true},"max":{"type":"number","optional":true},"step":{"type":"number","optional":true},"unit":{"type":"string","optional":true},"view":{"type":"string","optional":true}}},"popup":{"type":"boolean","default":false},"search":{"type":"object","optional":true},"submenu":{"type":"enum","values":["flyout","drill"],"default":"flyout"},"size":{"type":"enum","values":["1/2","1"],"default":"1/2"},"width":{"type":"string","default":"content"},"tabs":{"type":"string","default":""},"active-tab":{"type":"string","default":""},"closable":{"type":"boolean","default":false}},"values":{},"events":{"select":{"carries":{"id":{"type":"string","nullable":true},"entry":"object","checked":{"type":"boolean","nullable":true},"group":{"type":"string","nullable":true}},"cancelable":true},"change":{"x-native":false,"carries":{"id":{"type":"string","nullable":true},"value":{"type":"id"},"previous":{"type":"id"},"entry":"object"},"cancelable":true},"changed":{"x-native":false,"carries":{"id":{"type":"string","nullable":true},"value":{"type":"id"},"previous":{"type":"id"},"entry":"object"}},"reset":{"carries":{},"cancelable":true,"own-verb":true},"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"search":{"carries":{"query":"string"},"own-verb":true},"tab":{"carries":{"id":"string","index":"number"},"own-verb":true}},"actions":{"open-for":{"with":{"anchor":"object","options":{"type":"object","optional":true,"schema":{"properties":{"side":{"type":"string","default":"block-end"},"align":{"type":"string","default":"start"},"focus":{"type":"string","enum":["first","last","none"],"default":"first"},"offset":{"type":"string"}}}}},"waits":true,"emits":"open"},"toggle-for":{"with":{"anchor":"object","options":{"type":"object","optional":true}},"waits":true},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"emits":"close"},"choose-tab":{"with":{"index":"number"}},"request-close":{},"set-value":{"with":{"id":"string","value":{"type":"id"}}},"set-all":{"with":{"values":"object"}},"show":{"with":{"id":"string"}},"reset":{"emits":"reset"}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"css-variables":{"--sf-context-menu-background-color":{"type":"color","state":"default"},"--sf-context-menu-color":{"type":"color","state":"default"},"--sf-context-menu-border-color":{"type":"color","state":"default"},"--sf-context-menu-border-width":{"type":"length","state":"default"},"--sf-context-menu-radius":{"type":"length","state":"default"},"--sf-context-menu-padding-inline":{"type":"length","state":"default"},"--sf-context-menu-padding-block":{"type":"length","state":"default"},"--sf-context-menu-gap":{"type":"length","state":"default"},"--sf-context-menu-inline-size":{"type":"length","state":"default"}}}');
 
 /***/ },
 

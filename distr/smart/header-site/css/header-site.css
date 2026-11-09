@@ -39,6 +39,27 @@
     inset-block-start: 0;
     z-index: var(--sf-z-index-5);
     z-index: var(--sf-site-header-z-index, var(--sf-z-index-5));
+    /* The flat place at the top of the page; the raised one while content runs
+       under it (C20): the host says data-scrolled, the bar takes the raised
+       shadow and, in the dark theme, the raised surface, a step lighter. A
+       colour the page set for the bar stays. */
+    box-shadow: var(--sf-shadow-flat);
+    transition: box-shadow var(--sf-duration-fast) var(--sf-animation), background-color var(--sf-duration-fast) var(--sf-animation);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sf-site-header--sticky {
+      transition: none;
+    }
+  }
+  sf-header-site[data-scrolled=true] > .sf-site-header--sticky {
+    background: var(--sf-surface-raised);
+    background: var(--sf-site-header-background-color, var(--sf-site-header-background, var(--sf-surface-raised)));
+    box-shadow: var(--sf-shadow-raised);
+  }
+  sf-site-header[data-scrolled=true] > .sf-site-header--sticky {
+    background: var(--sf-surface-raised);
+    background: var(--sf-site-header-background-color, var(--sf-site-header-background, var(--sf-surface-raised)));
+    box-shadow: var(--sf-shadow-raised);
   }
   /* The row: brand · nav … actions · tools, on one centre line. */
   .sf-site-header-row {
@@ -200,11 +221,11 @@
     bottom: 0;
     left: 0;
     inset: 0;
-    /* The shared scrim (core --sf-scrim-*). */
-    background: var(--sf-black);
-    background: var(--sf-scrim-color, var(--sf-black));
-    opacity: var(--sf-opacity-60);
-    opacity: var(--sf-scrim-opacity, var(--sf-opacity-60));
+    /* The shared scrim (core --sf-scrim-*, black at 64: C16, C20). */
+    background: var(--sf-black--alfa-64);
+    background: var(--sf-scrim-color, var(--sf-black--alfa-64));
+    opacity: 1;
+    opacity: var(--sf-scrim-opacity, 1);
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-always.sf-site-header--open .sf-site-header-panel{
     left: 0;
@@ -247,10 +268,10 @@
     overflow: auto;
     -ms-scroll-chaining: none;
         overscroll-behavior: contain;
-    background: var(--sf-elevation-4--surface);
-    box-shadow: var(--sf-elevation-4--shadow);
+    background: var(--sf-surface-popup);
+    box-shadow: var(--sf-shadow-modal);
     color: var(--sf-on-surface);
-    --sf-on-surface-variant: var(--sf-on-elevation-4--variant);
+    --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-always.sf-site-header--open .sf-site-header-panel-head{
     padding-left: var(--sf-space-2);
@@ -388,11 +409,11 @@
       bottom: 0;
       left: 0;
       inset: 0;
-      /* The shared scrim (core --sf-scrim-*). */
-      background: var(--sf-black);
-      background: var(--sf-scrim-color, var(--sf-black));
-      opacity: var(--sf-opacity-60);
-      opacity: var(--sf-scrim-opacity, var(--sf-opacity-60));
+      /* The shared scrim (core --sf-scrim-*, black at 64: C16, C20). */
+      background: var(--sf-black--alfa-64);
+      background: var(--sf-scrim-color, var(--sf-black--alfa-64));
+      opacity: 1;
+      opacity: var(--sf-scrim-opacity, 1);
     }
     _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-sm.sf-site-header--open .sf-site-header-panel{
       left: 0;
@@ -435,10 +456,10 @@
       overflow: auto;
       -ms-scroll-chaining: none;
           overscroll-behavior: contain;
-      background: var(--sf-elevation-4--surface);
-      box-shadow: var(--sf-elevation-4--shadow);
+      background: var(--sf-surface-popup);
+      box-shadow: var(--sf-shadow-modal);
       color: var(--sf-on-surface);
-      --sf-on-surface-variant: var(--sf-on-elevation-4--variant);
+      --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
     }
     _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-sm.sf-site-header--open .sf-site-header-panel-head{
       padding-left: var(--sf-space-2);
@@ -577,11 +598,11 @@
       bottom: 0;
       left: 0;
       inset: 0;
-      /* The shared scrim (core --sf-scrim-*). */
-      background: var(--sf-black);
-      background: var(--sf-scrim-color, var(--sf-black));
-      opacity: var(--sf-opacity-60);
-      opacity: var(--sf-scrim-opacity, var(--sf-opacity-60));
+      /* The shared scrim (core --sf-scrim-*, black at 64: C16, C20). */
+      background: var(--sf-black--alfa-64);
+      background: var(--sf-scrim-color, var(--sf-black--alfa-64));
+      opacity: 1;
+      opacity: var(--sf-scrim-opacity, 1);
     }
     _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-md.sf-site-header--open .sf-site-header-panel{
       left: 0;
@@ -624,10 +645,10 @@
       overflow: auto;
       -ms-scroll-chaining: none;
           overscroll-behavior: contain;
-      background: var(--sf-elevation-4--surface);
-      box-shadow: var(--sf-elevation-4--shadow);
+      background: var(--sf-surface-popup);
+      box-shadow: var(--sf-shadow-modal);
       color: var(--sf-on-surface);
-      --sf-on-surface-variant: var(--sf-on-elevation-4--variant);
+      --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
     }
     _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-md.sf-site-header--open .sf-site-header-panel-head{
       padding-left: var(--sf-space-2);
@@ -766,11 +787,11 @@
       bottom: 0;
       left: 0;
       inset: 0;
-      /* The shared scrim (core --sf-scrim-*). */
-      background: var(--sf-black);
-      background: var(--sf-scrim-color, var(--sf-black));
-      opacity: var(--sf-opacity-60);
-      opacity: var(--sf-scrim-opacity, var(--sf-opacity-60));
+      /* The shared scrim (core --sf-scrim-*, black at 64: C16, C20). */
+      background: var(--sf-black--alfa-64);
+      background: var(--sf-scrim-color, var(--sf-black--alfa-64));
+      opacity: 1;
+      opacity: var(--sf-scrim-opacity, 1);
     }
     _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-lg.sf-site-header--open .sf-site-header-panel{
       left: 0;
@@ -813,10 +834,10 @@
       overflow: auto;
       -ms-scroll-chaining: none;
           overscroll-behavior: contain;
-      background: var(--sf-elevation-4--surface);
-      box-shadow: var(--sf-elevation-4--shadow);
+      background: var(--sf-surface-popup);
+      box-shadow: var(--sf-shadow-modal);
       color: var(--sf-on-surface);
-      --sf-on-surface-variant: var(--sf-on-elevation-4--variant);
+      --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
     }
     _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-lg.sf-site-header--open .sf-site-header-panel-head{
       padding-left: var(--sf-space-2);
@@ -955,11 +976,11 @@
       bottom: 0;
       left: 0;
       inset: 0;
-      /* The shared scrim (core --sf-scrim-*). */
-      background: var(--sf-black);
-      background: var(--sf-scrim-color, var(--sf-black));
-      opacity: var(--sf-opacity-60);
-      opacity: var(--sf-scrim-opacity, var(--sf-opacity-60));
+      /* The shared scrim (core --sf-scrim-*, black at 64: C16, C20). */
+      background: var(--sf-black--alfa-64);
+      background: var(--sf-scrim-color, var(--sf-black--alfa-64));
+      opacity: 1;
+      opacity: var(--sf-scrim-opacity, 1);
     }
     _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-xl.sf-site-header--open .sf-site-header-panel{
       left: 0;
@@ -1002,10 +1023,10 @@
       overflow: auto;
       -ms-scroll-chaining: none;
           overscroll-behavior: contain;
-      background: var(--sf-elevation-4--surface);
-      box-shadow: var(--sf-elevation-4--shadow);
+      background: var(--sf-surface-popup);
+      box-shadow: var(--sf-shadow-modal);
       color: var(--sf-on-surface);
-      --sf-on-surface-variant: var(--sf-on-elevation-4--variant);
+      --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
     }
     _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-xl.sf-site-header--open .sf-site-header-panel-head{
       padding-left: var(--sf-space-2);

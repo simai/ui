@@ -60,7 +60,7 @@
     color: var(--sf-on-surface-variant);
   }
   .sf-include-message {
-    flex: 1 1 12em;
+    flex: 1 1 var(--sf-f2);
     min-width: 0;
     min-inline-size: 0;
     font-size: var(--sf-text-size-1);

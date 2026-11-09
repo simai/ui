@@ -34,7 +34,7 @@
   .table {
     --sf-table-color: var(--sf-on-surface);
     --sf-table-border-color: var(--sf-outline-variant);
-    --sf-table-accent-bg: rgba(0, 0, 0, 0);
+    --sf-table-accent-bg: var(--sf-transparent);
     --sf-table-stripe-color: var(--sf-on-surface);
     --sf-table-stripe-bg: var(--sf-surface-transparent-select);
     --sf-table-active-color: var(--sf-on-surface);
@@ -52,7 +52,7 @@
     text-align: start;
   }
   .table > :not(caption) > * > * {
-    padding: 0.5rem 0.5rem;
+    padding: var(--sf-a8) var(--sf-a8);
     border-bottom-width: var(--sf-px);
     border-block-end-width: var(--sf-px);
     background-image: linear-gradient(var(--sf-table-accent-bg), var(--sf-table-accent-bg));
@@ -157,6 +157,6 @@
   }
   .table-sm > :not(caption) > * > *,
   .table-small > :not(caption) > * > * {
-    padding: 0.25rem 0.25rem;
+    padding: var(--sf-a4) var(--sf-a4);
   }
 }

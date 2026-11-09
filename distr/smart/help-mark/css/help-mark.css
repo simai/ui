@@ -47,10 +47,10 @@
     border: var(--sf-px) solid var(--sf-help-mark-border-color, var(--sf-outline-variant));
     border-radius: var(--sf-radius--surface);
     border-radius: var(--sf-help-mark-radius, var(--sf-radius--surface));
-    background-color: var(--sf-elevation-3--surface);
-    background-color: var(--sf-help-mark-background-color, var(--sf-elevation-3--surface));
-    --sf-on-surface-variant: var(--sf-on-elevation-3--variant);
-    box-shadow: var(--sf-elevation-3--shadow);
+    background-color: var(--sf-surface-popup);
+    background-color: var(--sf-help-mark-background-color, var(--sf-surface-popup));
+    --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
+    box-shadow: var(--sf-shadow-overlay);
     color: var(--sf-on-surface);
     color: var(--sf-help-mark-color, var(--sf-on-surface));
     font-size: var(--sf-text-size-1\/2);

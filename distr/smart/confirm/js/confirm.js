@@ -188,14 +188,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("deb1a4d61565");
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5b7d7695b41b");
 /* harmony import */ var _helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("adbddb2f4d35");
-/* harmony import */ var _js_templates_default_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("386ef0670247");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("f70b067ace85");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("2382ba7a3e18");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("f357767ed4d2");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default_js__WEBPACK_IMPORTED_MODULE_3__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default_js__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("d3818183b14c");
+/* harmony import */ var _js_templates_default_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("386ef0670247");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("f70b067ace85");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("2382ba7a3e18");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("f357767ed4d2");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default_js__WEBPACK_IMPORTED_MODULE_4__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default_js__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations__WEBPACK_IMPORTED_MODULE_3__);
 // A question put to a person in place, before something happens: a delete
 // asked in its row, a member removed from a conversation, a view reset to the
 // host's. What will happen, two answers, a pending state while the answer is
@@ -222,11 +224,12 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
-const ConfirmElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_4__, {
+
+const ConfirmElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_5__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_5__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_6__
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_6__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_7__
   },
   source: "ru"
 });
@@ -250,6 +253,31 @@ class SfConfirm extends ConfirmSurface {
     super();
 
     this._onKeydown = event => this.onKeydown(event);
+  } // What the acceptance does (decision C13): status="danger" for a delete or
+  // anything that cannot be undone. destructive is its former name: read as
+  // danger and noted once, until 2027-01-01 (change journal
+  // setting-confirm-destructive-to-status-danger).
+
+
+  get danger() {
+    if (this.getAttribute("status") === "danger") return true;
+    if (!this.getProp("destructive")) return false;
+
+    if (!this._destructiveNoted) {
+      this._destructiveNoted = true;
+      (0,_core_js_deprecations__WEBPACK_IMPORTED_MODULE_3__.noteDeprecated)({
+        component: "sf-confirm",
+        tag: "sf-confirm",
+        kind: "setting",
+        attribute: "destructive",
+        from: "destructive",
+        to: "status=\"danger\"",
+        since: "2026-11-09",
+        remove_after: "2027-01-01"
+      });
+    }
+
+    return true;
   }
 
   templateContext() {
@@ -258,17 +286,27 @@ class SfConfirm extends ConfirmSurface {
       question,
       questionLabel: this.sfWord("question-label"),
       appearance: this.getProp("appearance") === "card" ? "card" : "inline",
-      destructive: Boolean(this.getProp("destructive"))
+      danger: this.danger
     };
   }
 
   template() {
-    return (0,_js_templates_default_js__WEBPACK_IMPORTED_MODULE_3__.renderConfirmTemplate)(this.templateContext());
+    return (0,_js_templates_default_js__WEBPACK_IMPORTED_MODULE_4__.renderConfirmTemplate)(this.templateContext());
   }
 
   onConnected() {
     super.onConnected?.();
-    this.addEventListener("keydown", this._onKeydown);
+    this.addEventListener("keydown", this._onKeydown); // The question put in place of what was pressed (a row's delete): the
+    // pressed control is gone, so the focus fell to the page. It goes to
+    // the safe answer once the answers are drawn (decision C25). A
+    // question printed with the page, before the person did anything,
+    // takes nothing.
+
+    if (this.shownState === "open" && focusWasLost(this.ownerDocument)) {
+      this.whenRendered(() => {
+        if (focusWasLost(this.ownerDocument)) this.focusSafeAnswer();
+      });
+    }
   }
 
   onDisconnected() {
@@ -286,6 +324,14 @@ class SfConfirm extends ConfirmSurface {
     this.cancel();
   }
 
+} // The focus is nowhere -- on the page itself -- after the person has acted on
+// it: the control they pressed left the page.
+
+
+function focusWasLost(document) {
+  const active = document?.activeElement;
+  const nowhere = !active || active === document.body || active === document.documentElement;
+  return nowhere && globalThis.navigator?.userActivation?.hasBeenActive === true;
 }
 
 SfConfirm.define("sf-confirm");
@@ -319,8 +365,9 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 // says more when the question alone does not (what stays, what goes).
 //
 // The answers call the actions confirm and cancel, which a page reaches as
-// data-sf-action="<id>.confirm" and "<id>.cancel" (§8, §19.4). A destructive
-// acceptance wears the error status; both stay outlined and of one weight.
+// data-sf-action="<id>.confirm" and "<id>.cancel" (§8, §19.4). A dangerous
+// acceptance (status="danger") is a filled danger answer beside a quiet
+// declining one (decision C25); a plain question has two outlined answers.
 
 function renderConfirmTemplate(context) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
@@ -334,7 +381,7 @@ function renderConfirmTemplate(context) {
             ${context.question ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<p class="sf-confirm__question" id=${context.headingId}>${context.question}</p>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
             ${context.hasDescription ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-confirm__description">${context.descriptionContent}</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
             ${(0,_helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_2__.renderConfirmFooter)(context, "sf-confirm", {
-    acceptStatus: context.destructive ? "error" : ""
+    acceptStatus: context.danger ? "danger" : ""
   })}
         </section>
     `;
@@ -351,6 +398,7 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   CONFIRM_ICON: () => (/* binding */ CONFIRM_ICON),
+/* harmony export */   CONFIRM_SIZES: () => (/* binding */ CONFIRM_SIZES),
 /* harmony export */   CONFIRM_STATES: () => (/* binding */ CONFIRM_STATES),
 /* harmony export */   confirmSurface: () => (/* binding */ confirmSurface),
 /* harmony export */   renderConfirmFooter: () => (/* binding */ renderConfirmFooter)
@@ -364,9 +412,9 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__);
-// The behaviour of a question put to a person in place: two answers of equal
-// standing, a pending state while the answer is applied, the outcome, and an
-// optional time the offer runs out. sf-confirm (the plain question) and
+// The behaviour of a question put to a person in place: two answers, a
+// pending state while the answer is applied, the outcome, and an optional time
+// the offer runs out. sf-confirm (the plain question) and
 // sf-confirm-change (the same question over values as they were and as they
 // will be) are this one surface (duplication audit 2026-11-03, A-5): it was
 // written once in sf-confirm-change and five more times by hand in the chat
@@ -392,7 +440,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 const CONFIRM_STATES = Object.freeze(["open", "pending", "accepted", "declined", "expired"]); // A timer longer than this is not a timer setTimeout keeps: past 2^31-1 ms it
 // fires at once. An offer valid for longer than 24 days is checked again daily.
 
-const LONGEST_WAIT = 24 * 60 * 60 * 1000; // The glyph the status line shows beside its words, per state.
+const LONGEST_WAIT = 24 * 60 * 60 * 1000; // The steps of the control ladder the answers stand on (C22): the element's
+// size, else 1, the size of a field and a button beside it. Compactness is
+// the region's density (data-sf-density), never a smaller size by hand.
+
+const CONFIRM_SIZES = Object.freeze(["1/3", "1/2", "1", "2", "3"]); // The glyph the status line shows beside its words, per state.
 
 const CONFIRM_ICON = Object.freeze({
   open: "schedule",
@@ -504,7 +556,9 @@ function confirmSurface(Base, {
         pressed: shown === "pending" ? this._pressed : null,
         // Not named `disabled`: that is the setting, and this is more --
         // the setting, or any state but open.
-        answersLocked: this.getProp("disabled") || shown !== "open"
+        answersLocked: this.getProp("disabled") || shown !== "open",
+        // The step the answers stand on: a page's size, else 1 (C22).
+        size: CONFIRM_SIZES.includes(this.getAttribute("size")) ? this.getAttribute("size") : "1"
       };
     }
 
@@ -577,7 +631,14 @@ function confirmSurface(Base, {
       const {
         signal
       } = args[1] ?? {};
-      if (this.state !== "open") this.state = "open";
+      const reopened = this.state !== "open";
+      if (reopened) this.state = "open"; // The question is put to the person now: focus waits on the safe
+      // answer (decision C25), so a stray Enter or Space only takes the
+      // question back.
+
+      this.whenRendered(() => this.focusSafeAnswer(), {
+        next: reopened
+      });
       return signal ? this.waitForAnswer(signal) : (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.applied)();
     }
     /** The person's answer as a call: {accepted: true} confirms, false declines. */
@@ -675,22 +736,53 @@ function confirmSurface(Base, {
     focusStatus() {
       const target = this.querySelector(`.${block}__status`);
       if (!target) return;
-      const buttons = this.querySelector(`.${block}__actions:not([hidden])`);
-
-      if (buttons && this.state === "open") {
-        buttons.querySelector("button")?.focus();
-        return;
-      }
-
+      if (this.state === "open" && this.focusSafeAnswer()) return;
       target.focus({
         preventScroll: true
       });
+    } // The answer that changes nothing -- the declining one -- takes the
+    // focus whenever the question is put (decision C25, as Primer's
+    // ConfirmationDialog does for a dangerous one): Enter or Space pressed
+    // by habit closes the question, and the accepting answer needs a
+    // pointer or Tab. Answers false when there is no answer to focus.
+    // The surface's after-render can come before the answer can take the
+    // focus (its sf-button is drawn, or its region shown, a frame later):
+    // the focus then tries again for a few frames, unless the person has
+    // moved it meanwhile.
+
+
+    focusSafeAnswer(frames = 10) {
+      if (this.shownState !== "open" || this.getProp("disabled")) return false;
+      const host = this.querySelector(`.${block}__actions:not([hidden]) [data-action="decline"]`);
+      const button = host?.matches("button") ? host : host?.querySelector("button");
+      button?.focus({
+        preventScroll: true
+      });
+      const doc = this.ownerDocument;
+      if (button && doc.activeElement === button) return true;
+      const view = doc.defaultView;
+
+      if (host && frames > 0 && view?.requestAnimationFrame) {
+        view.requestAnimationFrame(() => {
+          const active = doc.activeElement;
+          if (!active || active === doc.body || this.contains(active)) this.focusSafeAnswer(frames - 1);
+        });
+      }
+
+      return false;
     }
 
   };
 } // The surface's footer, the same in every template: the status line, then the
-// two answers. `block` is the drawn surface's class; `acceptStatus` "error"
-// marks a destructive acceptance (a delete).
+// two answers. `block` is the drawn surface's class; `acceptStatus` "danger"
+// marks a destructive acceptance (a delete, decision C13).
+//
+// The answers (decision C25): a plain question offers two outlined answers of
+// one weight. A dangerous one fills the accepting answer with the danger
+// colour and leaves the declining one quiet (ghost, no frame), so the two are
+// told apart by more than the red of a word. Both stand on the element's size
+// (context.size, 1 unless the page gives one); a size a template gives is
+// relative, so a compact region (data-sf-density, C22) moves them down a step.
 
 function renderConfirmFooter(context, block, {
   acceptStatus = ""
@@ -698,6 +790,8 @@ function renderConfirmFooter(context, block, {
   const {
     component
   } = context;
+  const danger = acceptStatus === "danger" || acceptStatus === "error";
+  const size = context.size || "1";
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
             <footer class="${block}__footer">
                 <!-- Always in the page, empty while there is nothing to say: a live
@@ -712,10 +806,10 @@ function renderConfirmFooter(context, block, {
                      the person sees which answer is on its way. -->
                 <div class="${block}__actions" ?hidden=${!context.open && !context.pending}>
                     <sf-button
-                            appearance="outline"
+                            appearance=${danger ? "default" : "outline"}
                             scheme="primary"
-                            status=${acceptStatus || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-                            size="1/2"
+                            status=${danger ? "danger" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                            size=${size}
                             text=${context.acceptText}
                             data-action="accept"
                             ?loading=${context.pressed === true}
@@ -723,9 +817,9 @@ function renderConfirmFooter(context, block, {
                             @click=${() => component.confirm()}
                     ></sf-button>
                     <sf-button
-                            appearance="outline"
+                            appearance=${danger ? "ghost" : "outline"}
                             scheme="on-surface"
-                            size="1/2"
+                            size=${size}
                             text=${context.declineText}
                             data-action="decline"
                             ?loading=${context.pressed === false}
@@ -746,6 +840,13 @@ __webpack_async_result__();
 __webpack_require__.r(__webpack_exports__);
 // extracted by mini-css-extract-plugin
 
+
+/***/ },
+
+/***/ "d3818183b14c"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("deprecations", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("deprecations", 1).then(resolve, reject), { once: true })));
 
 /***/ },
 
@@ -787,7 +888,7 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "f70b067ace85"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.confirm","tag":"sf-confirm","version":"1.0.2","kind":"leaf","settings":{"question":{"type":"string","default":""},"state":{"type":"enum","values":["open","pending","accepted","declined","expired"],"default":"open"},"expires-at":{"type":"date","optional":true},"confirm-id":{"type":"id","default":""},"disabled":{"type":"boolean","default":false},"destructive":{"type":"boolean","default":false},"appearance":{"type":"enum","values":["inline","card"],"default":"inline"},"accept-text":{"type":"string","default-from":"runtime.accept-text"},"decline-text":{"type":"string","default-from":"runtime.decline-text"}},"values":{},"events":{"answer":{"carries":{"id":{"type":"id"},"accepted":"boolean"},"cancelable":true},"expired":{"carries":{"id":{"type":"id"}},"own-verb":true}},"actions":{"open":{},"answer":{"with":{"accepted":"boolean"},"emits":"answer"},"confirm":{},"cancel":{}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{},"css-variables":{"--sf-confirm-gap":{"type":"length","state":"default"},"--sf-confirm-inset":{"type":"length","state":"default"},"--sf-confirm-radius":{"type":"length","state":"default"},"--sf-confirm-background-color":{"type":"color","state":"default"},"--sf-confirm-border-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.confirm","tag":"sf-confirm","version":"1.1.1","kind":"leaf","settings":{"question":{"type":"string","default":""},"state":{"type":"enum","values":["open","pending","accepted","declined","expired"],"default":"open"},"expires-at":{"type":"date","optional":true},"confirm-id":{"type":"id","default":""},"disabled":{"type":"boolean","default":false},"status":{"type":"enum","values":["","danger"],"default":""},"destructive":{"type":"boolean","default":false},"appearance":{"type":"enum","values":["inline","card"],"default":"inline"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1","x-scale":"control"},"accept-text":{"type":"string","default-from":"runtime.accept-text"},"decline-text":{"type":"string","default-from":"runtime.decline-text"}},"values":{},"events":{"answer":{"carries":{"id":{"type":"id"},"accepted":"boolean"},"cancelable":true},"expired":{"carries":{"id":{"type":"id"}},"own-verb":true}},"actions":{"open":{},"answer":{"with":{"accepted":"boolean"},"emits":"answer"},"confirm":{},"cancel":{}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{},"css-variables":{"--sf-confirm-gap":{"type":"length","state":"default"},"--sf-confirm-inset":{"type":"length","state":"default"},"--sf-confirm-radius":{"type":"length","state":"default"},"--sf-confirm-background-color":{"type":"color","state":"default"},"--sf-confirm-border-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 

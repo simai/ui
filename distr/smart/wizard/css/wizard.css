@@ -177,14 +177,9 @@
     flex-wrap: nowrap;
     overflow-x: auto;
     scrollbar-width: thin;
-    padding-top: 2px;
-    padding-bottom: 2px;
-    padding-block: 2px;
-    padding-top: 2px;
-    padding-top: var(--sf-focus--width, 2px);
-    padding-bottom: 2px;
-    padding-bottom: var(--sf-focus--width, 2px);
-    padding-block: var(--sf-focus--width, 2px);
+    padding-top: var(--sf-focus--width);
+    padding-bottom: var(--sf-focus--width);
+    padding-block: var(--sf-focus--width);
   }
   /* The compact line: the step's label, «Все шаги» and the bar. Drawn in the
      count and column progress, and under 40rem always. */
@@ -449,7 +444,7 @@
             border-block-start: var(--sf-px) solid var(--sf-wizard--border-color);
   }
   .sf-wizard-plan > li > :first-child {
-    flex: 1 1 16rem;
+    flex: 1 1 var(--sf-f6);
     min-width: 0;
     min-inline-size: 0;
   }

@@ -182,8 +182,8 @@
             padding-inline-end: var(--sf-fab--padding-inline-end);
     padding-bottom: var(--sf-fab--padding-bottom);
     background-color: var(--sf-fab--background-color);
-    box-shadow: 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0);
-    box-shadow: var(--sf-fab--focus-inset, 0 0 rgba(0, 0, 0, 0)), var(--sf-fab--box-shadow, 0 0 rgba(0, 0, 0, 0));
+    box-shadow: 0 0 var(--sf-transparent), 0 0 var(--sf-transparent);
+    box-shadow: var(--sf-fab--focus-inset, 0 0 var(--sf-transparent)), var(--sf-fab--box-shadow, 0 0 var(--sf-transparent));
   }
   .sf-fab .sf-icon {
     color: var(--sf-on-surface-variant);

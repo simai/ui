@@ -1026,11 +1026,12 @@ class SfSettings extends SettingsElement {
       if (!anchor) return {
         outcome: 'unavailable',
         reason: 'no-trigger'
-      };
+      }; // An outcome since sf-menu-context 1.12.2; a boolean before.
+
       const opened = await menu.openFor(anchor, {
         focus: 'none'
       });
-      if (!opened) return {
+      if (opened !== true && opened?.outcome !== 'applied') return {
         outcome: 'cancelled'
       };
     }
@@ -1550,7 +1551,7 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 /***/ "72cabd0f91e5"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.settings","tag":"sf-settings","version":"1.0.3","kind":"leaf","settings":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"type":{"type":"string","enum":["switch","choice","range","heading","separator","group"]},"text":{"type":"string"},"caption":{"type":"string"},"icon":{"type":"string"},"value":{},"options":{"type":"array"},"min":{"type":"number"},"max":{"type":"number"},"step":{"type":"number"},"unit":{"type":"string"},"items":{"type":"array"},"tile":{"type":"boolean"},"disabled":{"type":"boolean"}},"required":["type"]}},"default":[]},"look":{"type":"enum","values":["drill","rows","tiles"],"default":"drill"},"size":{"type":"enum","values":["1/2","1"],"default":"1/2"},"for":{"type":"string","default":""},"remember":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"}},"values":{"values":{"type":"object"}},"events":{"change":{"x-native":false,"carries":{"id":{"type":"string"},"value":{"type":"id"},"previous":{"type":"id"},"item":{"type":"object"}},"cancelable":true},"changed":{"x-native":false,"carries":{"id":{"type":"string"},"value":{"type":"id"},"previous":{"type":"id"},"item":{"type":"object"}}},"reset":{"carries":{},"cancelable":true,"own-verb":true}},"actions":{"set-value":{"with":{"id":"string","value":{"type":"id"}}},"set-all":{"with":{"values":"object"}},"show":{"with":{"id":"string"},"waits":true},"reset":{"emits":"reset"}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{"data-look":"string"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.settings","tag":"sf-settings","version":"1.0.5","kind":"leaf","settings":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"type":{"type":"string","enum":["switch","choice","range","heading","separator","group"]},"text":{"type":"string"},"caption":{"type":"string"},"icon":{"type":"string"},"value":{},"options":{"type":"array"},"min":{"type":"number"},"max":{"type":"number"},"step":{"type":"number"},"unit":{"type":"string"},"items":{"type":"array"},"tile":{"type":"boolean"},"disabled":{"type":"boolean"}},"required":["type"]}},"default":[]},"look":{"type":"enum","values":["drill","rows","tiles"],"default":"drill"},"size":{"type":"enum","values":["1/2","1"],"default":"1/2"},"for":{"type":"string","default":""},"remember":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"}},"values":{"values":{"type":"object"}},"events":{"change":{"x-native":false,"carries":{"id":{"type":"string"},"value":{"type":"id"},"previous":{"type":"id"},"item":{"type":"object"}},"cancelable":true},"changed":{"x-native":false,"carries":{"id":{"type":"string"},"value":{"type":"id"},"previous":{"type":"id"},"item":{"type":"object"}}},"reset":{"carries":{},"cancelable":true,"own-verb":true}},"actions":{"set-value":{"with":{"id":"string","value":{"type":"id"}}},"set-all":{"with":{"values":"object"}},"show":{"with":{"id":"string"},"waits":true},"reset":{"emits":"reset"}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{"data-look":"string"}}');
 
 /***/ },
 

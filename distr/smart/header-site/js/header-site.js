@@ -183,6 +183,17 @@ class SfSiteHeader extends SiteHeaderElement {
     this._media = null;
 
     this._onMedia = () => this.syncCollapsed();
+
+    this._scrollFrame = 0;
+
+    this._onScroll = () => {
+      if (this._scrollFrame) return;
+      this._scrollFrame = globalThis.requestAnimationFrame?.(() => {
+        this._scrollFrame = 0;
+        this.syncScrolled();
+      }) ?? 0;
+      if (!this._scrollFrame) this.syncScrolled();
+    };
   } // The nav is the default slot (component.json): the children the page wrote
   // without a slot attribute, taken live like the named ones, never copied.
 
@@ -201,6 +212,7 @@ class SfSiteHeader extends SiteHeaderElement {
     }
 
     this.watchCollapse();
+    this.watchScroll();
   }
 
   disconnectedCallback() {
@@ -210,12 +222,14 @@ class SfSiteHeader extends SiteHeaderElement {
     });
     this._media?.removeEventListener?.('change', this._onMedia);
     this._media = null;
+    this.unwatchScroll();
     super.disconnectedCallback?.();
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
     super.attributeChangedCallback(name, oldValue, newValue);
     if (name === 'collapse' && oldValue !== newValue && this._isMounted) this.watchCollapse();
+    if (name === 'sticky' && oldValue !== newValue && this._isMounted) this.watchScroll();
   } // Whether the bar is collapsed now: the same answer as the sheet's media rule.
 
 
@@ -255,6 +269,40 @@ class SfSiteHeader extends SiteHeaderElement {
     if (!collapsed && this.isOpen) this.runClose({
       reason: 'api'
     });
+  } // A sticky bar is the flat place while the page is at its top and the raised
+  // one while content runs under it (shadow system C20): the host says so with
+  // data-scrolled, and the sheet draws the raised shadow from it. Only a
+  // sticky bar listens; a bar in the flow scrolls away with the page.
+
+
+  watchScroll() {
+    this.unwatchScroll();
+
+    if (!this.sticky || typeof globalThis.addEventListener !== 'function') {
+      this.sfHostState('data-scrolled', false);
+      return;
+    }
+
+    globalThis.addEventListener('scroll', this._onScroll, {
+      passive: true
+    });
+    this._watchingScroll = true;
+    this.syncScrolled();
+  }
+
+  unwatchScroll() {
+    if (this._watchingScroll) globalThis.removeEventListener?.('scroll', this._onScroll);
+    this._watchingScroll = false;
+    if (this._scrollFrame) globalThis.cancelAnimationFrame?.(this._scrollFrame);
+    this._scrollFrame = 0;
+  } // Content is under the bar when the page has scrolled and the bar stands
+  // stuck at the top of the window (its top at or above the sticky edge).
+
+
+  syncScrolled() {
+    const bar = this.header();
+    const scrolled = Boolean(bar) && (globalThis.scrollY ?? 0) > 0 && bar.getBoundingClientRect().top <= 0;
+    this.sfHostState('data-scrolled', scrolled);
   }
 
   navMenus() {
@@ -585,7 +633,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-heade
 /***/ "3b2d3ad548e5"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.header-site","tag":"sf-header-site","version":"1.5.0","kind":"leaf","settings":{"collapse":{"type":"enum","values":["none","sm","md","lg","xl","always"],"default":"lg"},"sticky":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1"],"default":"1"},"navigation-align":{"type":"enum","values":["start","center"],"default":"start"},"label":{"type":"string","default-from":"runtime.label"},"menu-label":{"type":"string","default-from":"runtime.menu-label"},"close-label":{"type":"string","default-from":"runtime.close-label"}},"values":{},"events":{"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}}},"actions":{"open":{},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"toggle":{}},"layer":{"kind":"panel","locks-page":true,"traps-focus":true},"host-states":{"data-open":"boolean","data-collapsed":"boolean"},"css-variables":{"--sf-site-header-background-color":{"type":"color","state":"default"},"--sf-site-header-color":{"type":"color","state":"default"},"--sf-site-header-border-color":{"type":"color","state":"default"},"--sf-site-header-block-size":{"type":"length","state":"default"},"--sf-site-header-gap":{"type":"length","state":"default"},"--sf-site-header-tools-gap":{"type":"length","state":"default"},"--sf-site-header-brand-size":{"type":"length","state":"default"},"--sf-site-header-sheet-inline-size":{"type":"length","state":"open"},"--sf-site-header-z-index":{"type":"number","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.header-site","tag":"sf-header-site","version":"1.6.1","kind":"leaf","settings":{"collapse":{"type":"enum","values":["none","sm","md","lg","xl","always"],"default":"lg"},"sticky":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1"],"default":"1"},"navigation-align":{"type":"enum","values":["start","center"],"default":"start"},"label":{"type":"string","default-from":"runtime.label"},"menu-label":{"type":"string","default-from":"runtime.menu-label"},"close-label":{"type":"string","default-from":"runtime.close-label"}},"values":{},"events":{"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}}},"actions":{"open":{},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"toggle":{}},"layer":{"kind":"panel","locks-page":true,"traps-focus":true},"host-states":{"data-open":"boolean","data-collapsed":"boolean","data-scrolled":"boolean"},"css-variables":{"--sf-site-header-background-color":{"type":"color","state":"default"},"--sf-site-header-color":{"type":"color","state":"default"},"--sf-site-header-border-color":{"type":"color","state":"default"},"--sf-site-header-block-size":{"type":"length","state":"default"},"--sf-site-header-gap":{"type":"length","state":"default"},"--sf-site-header-tools-gap":{"type":"length","state":"default"},"--sf-site-header-brand-size":{"type":"length","state":"default"},"--sf-site-header-sheet-inline-size":{"type":"length","state":"open"},"--sf-site-header-z-index":{"type":"number","state":"default"}}}');
 
 /***/ },
 

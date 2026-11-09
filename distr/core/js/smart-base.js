@@ -1124,6 +1124,117 @@ function resolveControlSpacing({
 
 /***/ },
 
+/***/ "1412c5875b4d"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   RELATIVE: () => (/* binding */ RELATIVE),
+/* harmony export */   densityOf: () => (/* binding */ densityOf),
+/* harmony export */   drawing: () => (/* binding */ drawing),
+/* harmony export */   followDensity: () => (/* binding */ followDensity),
+/* harmony export */   markRelativeSizes: () => (/* binding */ markRelativeSizes),
+/* harmony export */   noteAuthored: () => (/* binding */ noteAuthored),
+/* harmony export */   sizedBefore: () => (/* binding */ sizedBefore)
+/* harmony export */ });
+// Density (owner decision C22, 2026-11-09). data-sf-density="compact" on the
+// root or on a container moves every component one ladder step down; the CSS
+// does it (core/scss/_sf_css__density.scss): each step variable holds the step
+// below, and an element with an explicit size takes the normal ladder back.
+//
+// "Explicit" is a size the page gave. A size a component's template gives an
+// element it draws (sf-input's clear button, a pager's buttons, a submenu) is
+// relative to the component's own size: under a compact sf-input its button
+// has to come down with it, not stand at the normal ladder. Those are marked
+// data-sf-size-relative here, once the component has drawn; the CSS leaves
+// them in the region's ladder.
+//
+// What a component holds of the page's own (captured slot content, children
+// left in place) keeps its size explicit. The store is on the shared global:
+// every bundle carries its own copy of this module.
+const store = () => {
+  const SF = globalThis.SF = globalThis.SF || {};
+  const internal = SF.__internal || (SF.__internal = {});
+  return internal.density ||= {
+    authored: new WeakSet(),
+    depth: 0
+  };
+};
+
+const RELATIVE = 'data-sf-size-relative'; // Page content a component captured to place in its own drawing. Content a
+// template hands to a child while it draws is the template's, not the page's.
+
+function noteAuthored(nodes) {
+  const state = store();
+  if (state.depth > 0) return;
+
+  for (const node of nodes) if (node && typeof node === 'object') state.authored.add(node);
+}
+function drawing(callback) {
+  const state = store();
+  state.depth += 1;
+
+  try {
+    return callback();
+  } finally {
+    state.depth -= 1;
+  }
+} // The sized elements present before a host first draws are the page's.
+// A printed first-paint picture is the drawing's, not the page's.
+
+function sizedBefore(host) {
+  return new Set(Array.from(host.querySelectorAll?.('[size]') ?? []).filter(element => {
+    const picture = element.closest('[data-sf-static]');
+    return !picture || !host.contains(picture);
+  }));
+} // After a host drew: every sized element its drawing holds that is not the
+// page's is relative to the host.
+
+function markRelativeSizes(host, before = null) {
+  const {
+    authored
+  } = store();
+
+  for (const element of host.querySelectorAll?.('[size]') ?? []) {
+    if (element.hasAttribute(RELATIVE) || before?.has(element)) continue;
+    let node = element;
+    let page = false;
+
+    while (node && node !== host) {
+      if (authored.has(node)) {
+        page = true;
+        break;
+      }
+
+      node = node.parentNode;
+    }
+
+    if (!page) element.setAttribute(RELATIVE, '');
+  }
+} // A popup a component builds itself and places outside its own box (a menu on
+// <body>, in an open dialog): sized from the component, so relative, and in
+// the component's density, not the density of where it was placed.
+
+function followDensity(element, from) {
+  if (!element?.setAttribute) return element;
+  if (element.hasAttribute('size')) element.setAttribute(RELATIVE, '');
+  const density = densityOf(from);
+  if (density) element.setAttribute('data-sf-density', density);else element.removeAttribute('data-sf-density');
+  return element;
+} // The density an element stands in: the nearest region's, or "normal" under an
+// explicit size (where the ladder is the normal one again); null outside any.
+
+function densityOf(from) {
+  for (let node = from; node?.nodeType === 1; node = node.parentElement) {
+    if (node.hasAttribute('data-sf-density')) return node.getAttribute('data-sf-density');
+    if (node.hasAttribute('size') && !node.hasAttribute(RELATIVE) && !node.hasAttribute('data-sf-size-scale') && !/^(input|select|textarea)$/u.test(node.localName)) return 'normal';
+  }
+
+  return null;
+}
+
+/***/ },
+
 /***/ "06e8cd089f28"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -1795,7 +1906,10 @@ function defineMembers(target, members) {
 
     });
   }
-}
+} // The positional form (§4.4 "MAY") names only the parameters a call gave:
+// step(id, state) is {id, state}, not {id, state, text: undefined, ...}, so an
+// action that writes the fields it was given leaves the others alone.
+
 
 function parameters(action, args) {
   if (args.length === 1 && isPlainObject(args[0]) && (action.with.length !== 1 || Object.keys(args[0]).every(key => action.with.includes(key)))) {
@@ -1803,7 +1917,54 @@ function parameters(action, args) {
     };
   }
 
-  return Object.fromEntries(action.with.map((name, index) => [name, args[index]]));
+  return Object.fromEntries(action.with.slice(0, args.length).map((name, index) => [name, args[index]]).filter(([, value]) => value !== undefined));
+} // A class-written action whose method takes its `with` fields in declared
+// order (elementFromManifest's `positional`) also takes them as one object
+// (§4.4): a single plain object that names declared parameters only, at least
+// one, becomes the arguments in order. Anything else -- the fields in order,
+// an element, a list, an object of the action's own data -- goes through as
+// it came. The method's answer is left as the class gives it.
+
+
+const objectFormClasses = new WeakSet();
+
+function positionalArguments(names, args) {
+  if (args.length !== 1 || !isPlainObject(args[0]) || !names.length) return args;
+  const given = Object.keys(args[0]);
+  const camel = names.map(camelName);
+  if (!given.length || !given.every(key => names.includes(key) || camel.includes(key))) return args;
+  const ordered = names.map((name, index) => Object.prototype.hasOwnProperty.call(args[0], name) ? args[0][name] : args[0][camel[index]]);
+
+  while (ordered.length && ordered[ordered.length - 1] === undefined) ordered.pop();
+
+  return ordered;
+}
+
+function takeObjectForms(Class, baseProto, actions, positional) {
+  if (!positional.size || typeof Class !== 'function' || objectFormClasses.has(Class)) return;
+  objectFormClasses.add(Class);
+
+  for (const action of actions) {
+    if (!positional.has(action.name) || !action.with.length) continue;
+
+    for (let proto = Class.prototype; proto && proto !== baseProto; proto = Object.getPrototypeOf(proto)) {
+      const own = Object.getOwnPropertyDescriptor(proto, action.method);
+      if (!own) continue;
+      const run = own.value;
+      if (typeof run !== 'function' || run.sfObjectForm || !own.configurable) break;
+      const names = action.with;
+
+      const wrapped = function objectFormAction(...args) {
+        return run.apply(this, positionalArguments(names, args));
+      };
+
+      wrapped.sfObjectForm = true;
+      Object.defineProperty(proto, action.method, { ...own,
+        value: wrapped
+      });
+      break;
+    }
+  }
 }
 
 function defineActions(target, actions, implementations, events) {
@@ -1900,6 +2061,11 @@ function isShown(element) {
  *             camelCase keys before §11's language files). A word registered
  *             under an old key is said until the day, noted once in
  *             SF.deprecations.
+ *   positional
+ *             the actions whose method the class writes itself and takes the
+ *             `with` fields in declared order (`setData(data, reason)`): the
+ *             runtime gives each the object form too (§4.4), so
+ *             `setData({data, reason})` is the same call.
  */
 
 
@@ -1909,7 +2075,8 @@ function elementFromManifest(manifest, {
   source,
   aliases,
   actions = {},
-  formerWords
+  formerWords,
+  positional = []
 } = {}) {
   const Base = base || globalThis.SF?.smart?.SfBaseElement;
   if (typeof Base !== 'function') throw new TypeError('elementFromManifest: a base class is required');
@@ -1922,6 +2089,7 @@ function elementFromManifest(manifest, {
   }]));
   const sourceLanguage = source || Object.keys(words)[0] || '';
   const formerKeys = formerWords?.words || {};
+  const positionalActions = new Set([].concat(positional ?? []));
   const formAssociated = Boolean(read.form) && typeof globalThis.ElementInternals === 'function' && typeof globalThis.ElementInternals.prototype?.setFormValue === 'function';
 
   class ManifestElement extends Base {
@@ -1956,6 +2124,7 @@ function elementFromManifest(manifest, {
     constructor() {
       super();
       completeOwnAccessors(new.target, ManifestElement.prototype, read.members);
+      takeObjectForms(new.target, ManifestElement.prototype, read.actions, positionalActions);
       this.sfInternals = formAssociated && typeof this.attachInternals === 'function' ? this.attachInternals() : null;
     }
 
@@ -2372,7 +2541,11 @@ __webpack_require__.r(__webpack_exports__);
 // data-sf-style-ready, was missing here and came back from dataAttributes as
 // sfStylePending / sfStyleReady beside what the author wrote (docs review
 // R022, 2026-11-07).
-const HOST_RUNTIME_MARKS = new Set(["data-sf-role", "data-sf-instance", "data-sf-start", "data-sf-started", "data-sf-assembly", "data-sf-static", "data-sf-first-paint", "data-sf-held", "data-sf-skeleton", "data-sf-observer", "data-sf-style-pending", "data-sf-style-ready"]); // What the author wrote as data-* on a host, read the way dataset reads
+const HOST_RUNTIME_MARKS = new Set(["data-sf-role", "data-sf-instance", "data-sf-start", "data-sf-started", "data-sf-assembly", "data-sf-static", "data-sf-first-paint", "data-sf-held", "data-sf-skeleton", "data-sf-observer", "data-sf-style-pending", "data-sf-style-ready", // Density (C22): a size the parent's drawing gave is relative; the CSS reads
+// the mark on the host itself, so it stays there.
+"data-sf-size-relative", // ... and a size that is a width, not a ladder step (manifest x-scale).
+"data-sf-size-scale", // A density set on a host stays on it: what it draws inherits the ladder.
+"data-sf-density"]); // What the author wrote as data-* on a host, read the way dataset reads
 // (data-add -> add, data-row-id -> rowId), from the host's record of
 // attribute name -> value. The runtime's marks are left out even when an
 // older record holds them.
@@ -3107,11 +3280,35 @@ const THEMES = ['theme-dark', 'theme-light'];
  * and the computed values of the host's variables that differ from those
  * where the portal stands -- `variables` by name, `prefixes` by the start of
  * the name. It looks and speaks as if it stood where its host stands.
+ *
+ * With `area`, every custom property whose value at the host differs from the
+ * portal's is carried as well (simai/ui-source#46 item 1): a block's retuned
+ * role (--sf-primary), a part's public variable (--sf-button-background-color)
+ * and a page's own name reach the layer's content. `except` names the layer's
+ * own prefixes (--sf-modal-) that the area does not carry: its public names
+ * still travel in `variables`, and the private ones an outer window sets on
+ * its panel never reach a window opened from it. A name carried before and no
+ * longer different is taken back, so a host moved to another area takes that
+ * area's values.
  */
+// The density a host stands in (C22; core/js/density.js says the same): the
+// nearest region's, or "normal" under an explicit size. Written here, not
+// imported: this module is loaded on its own (shared runtime, tests).
+
+function densityOf(from) {
+  for (let node = from; node?.nodeType === 1; node = node.parentElement) {
+    if (node.hasAttribute('data-sf-density')) return node.getAttribute('data-sf-density');
+    if (node.hasAttribute('size') && !node.hasAttribute('data-sf-size-relative') && !node.hasAttribute('data-sf-size-scale') && !/^(input|select|textarea)$/u.test(node.localName)) return 'normal';
+  }
+
+  return null;
+}
 
 function carryLayerOrigin(portal, host, {
   variables = [],
-  prefixes = []
+  prefixes = [],
+  area = false,
+  except = []
 } = {}) {
   if (!portal || !host?.isConnected) return;
   const doc = host.ownerDocument;
@@ -3122,7 +3319,11 @@ function carryLayerOrigin(portal, host, {
   // language. Only the first follows SF.language.use(), which the page language
   // does before it announces the change (simai/ui-source#55).
 
-  if (!nearest || nearest === doc.documentElement) portal.dataset.sfLayerLang = 'page';else delete portal.dataset.sfLayerLang;
+  if (!nearest || nearest === doc.documentElement) portal.dataset.sfLayerLang = 'page';else delete portal.dataset.sfLayerLang; // The density (C22): the ladder the host stands on, so a window or a drawer
+  // at the end of the body is as dense as the page region that opened it.
+
+  const density = densityOf(host);
+  if (density) portal.setAttribute('data-sf-density', density);else portal.removeAttribute('data-sf-density');
   const declared = host.closest('[dir]')?.getAttribute('dir');
   const dir = declared && declared !== 'auto' ? declared : view.getComputedStyle(host).direction;
   if (dir) portal.setAttribute('dir', dir); // The theme only when the host's differs from the portal's place: a page
@@ -3141,32 +3342,41 @@ function carryLayerOrigin(portal, host, {
   if (carried && carried !== wanted) portal.classList.remove(carried);
   if (wanted) portal.classList.add(wanted);
   if (wanted) portal.dataset.sfLayerTheme = wanted;else delete portal.dataset.sfLayerTheme;
-  if (!variables.length && !prefixes.length) return;
-  const own = view.getComputedStyle(host);
-  const there = parent ? view.getComputedStyle(parent) : null;
-  const names = new Set(variables);
+  const previous = (portal.dataset.sfLayerVariables || '').split(' ').filter(Boolean);
 
-  if (prefixes.length) {
-    for (const name of own) {
-      if (prefixes.some(prefix => name.startsWith(prefix))) names.add(name);
-    }
+  if (!variables.length && !prefixes.length && !area) {
+    for (const name of previous) portal.style.removeProperty(name);
+
+    delete portal.dataset.sfLayerVariables;
+    return;
   }
 
-  const previous = (portal.dataset.sfLayerVariables || '').split(' ').filter(Boolean);
+  const own = view.getComputedStyle(host);
+  const names = new Set(variables);
+
+  if (prefixes.length || area) {
+    for (const name of own) {
+      if (!name.startsWith('--')) continue;
+      if (prefixes.some(prefix => name.startsWith(prefix))) names.add(name);else if (area && !except.some(prefix => name.startsWith(prefix))) names.add(name);
+    }
+  } // Compared with the portal as it stands without what was carried before,
+  // its theme class already applied: what the theme gives it again is not
+  // written twice.
+
+
+  for (const name of previous) portal.style.removeProperty(name);
+
+  const there = view.getComputedStyle(portal);
   const kept = [];
 
   for (const name of names) {
     const value = own.getPropertyValue(name).trim();
-
-    if (value && value !== there?.getPropertyValue(name).trim()) {
-      portal.style.setProperty(name, value);
-      kept.push(name);
-    }
+    if (value && value !== there.getPropertyValue(name).trim()) kept.push([name, value]);
   }
 
-  for (const name of previous) if (!kept.includes(name)) portal.style.removeProperty(name);
+  for (const [name, value] of kept) portal.style.setProperty(name, value);
 
-  if (kept.length) portal.dataset.sfLayerVariables = kept.join(' ');else delete portal.dataset.sfLayerVariables;
+  if (kept.length) portal.dataset.sfLayerVariables = kept.map(([name]) => name).join(' ');else delete portal.dataset.sfLayerVariables;
 }
 
 /***/ },
@@ -4090,6 +4300,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   anchor: () => (/* binding */ anchor),
 /* harmony export */   anchorReference: () => (/* binding */ anchorReference),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   liftToTopLayer: () => (/* binding */ liftToTopLayer),
 /* harmony export */   referenceRect: () => (/* binding */ referenceRect),
 /* harmony export */   resolveLength: () => (/* binding */ resolveLength)
 /* harmony export */ });
@@ -4156,7 +4367,24 @@ const given = value => Boolean(value) && value !== 'none';
 function containsFixed(element) {
   const css = getComputedStyle(element);
   if (css.display === 'contents') return false;
-  return given(css.transform) || given(css.translate) || given(css.scale) || given(css.rotate) || given(css.perspective) || given(css.filter) || given(css.backdropFilter) || WILL_CONTAIN.test(css.willChange || '') || CONTAINS_FIXED.test(css.contain || '') || Boolean(css.containerType) && css.containerType !== 'normal';
+  if (given(css.transform) || given(css.translate) || given(css.scale) || given(css.rotate) || given(css.perspective) || given(css.filter) || given(css.backdropFilter) || WILL_CONTAIN.test(css.willChange || '') || CONTAINS_FIXED.test(css.contain || '')) return true; // A container query box is asked, not assumed. The containment it once
+  // implied made it the containing block of fixed descendants, and Floating UI
+  // still counts it so; current Chromium no longer does. Counting it placed
+  // every panel in the docs' content column (main.docara-content is
+  // container-type: inline-size) by the column's offset a second time: the
+  // calendar of a field at y 516 opened at y 1336 (docs pre-check DP-01,
+  // 2026-11-09). A fixed probe at 0,0 inside the box says which it is.
+
+  return Boolean(css.containerType) && css.containerType !== 'normal' && probesFixedOrigin(element);
+}
+
+function probesFixedOrigin(element) {
+  const probe = element.ownerDocument.createElement('span');
+  probe.style.cssText = 'position:fixed;left:0;top:0;inline-size:0;block-size:0;padding:0;border:0;margin:0;visibility:hidden;pointer-events:none';
+  element.append(probe);
+  const at = probe.getBoundingClientRect();
+  probe.remove();
+  return Math.abs(at.left) > 0.5 || Math.abs(at.top) > 0.5;
 }
 
 function inTopLayer(element) {
@@ -4165,6 +4393,85 @@ function inTopLayer(element) {
   } catch {
     return false;
   }
+} // A floating surface is lifted into the top layer while it is anchored (a
+// manual popover), so no ancestor can displace or clip it: a transform, a
+// filter, will-change, contain: layout or paint, an overflow box, a stacking
+// context under a sticky header. It stays where it is in the DOM, so it keeps
+// the host's variables, theme, lang, dir and density by plain inheritance --
+// what a body portal has to carry by hand (carryLayerOrigin). A surface the
+// component already lifted (sf-menu-context, sf-help-mark, sf-profile-picker,
+// sf-input-lookup, dropdown lists) or that stands in a modal dialog's top
+// layer is left as it is; a browser without popovers keeps the fixed panel in
+// place, placed against its containing block.
+//
+// The user-agent popover rule (inset 0, margin auto, a border, padding, Canvas
+// and CanvasText, overflow auto) is taken back by a rule of no specificity in
+// the lowest Framework layer, sf.reset, so the component's own sheet still
+// decides each of those: unlayered, the rule outranked every layered component
+// rule and took the calendar's fill, padding and border away.
+
+
+const LIFTED = 'data-sf-position-layer';
+const LIFTED_RULE = `@layer sf.reset{:where([${LIFTED}]){inset:auto;margin:0;padding:0;border:0 none;inline-size:auto;block-size:auto;overflow:visible;color:inherit;background-color:transparent}}`;
+const sheets = new WeakMap();
+
+function adoptLiftedRule(floating) {
+  const root = floating.getRootNode();
+  const target = root instanceof ShadowRoot ? root : floating.ownerDocument;
+  if (sheets.has(target)) return;
+  const view = floating.ownerDocument.defaultView;
+
+  try {
+    const sheet = new view.CSSStyleSheet();
+    sheet.replaceSync(LIFTED_RULE);
+    target.adoptedStyleSheets = [...target.adoptedStyleSheets, sheet];
+    sheets.set(target, sheet);
+  } catch {
+    const style = floating.ownerDocument.createElement('style');
+    style.dataset.sfPositionLayer = '';
+    style.textContent = LIFTED_RULE;
+    (target === floating.ownerDocument ? target.head || target.documentElement : target).append(style);
+    sheets.set(target, style);
+  }
+}
+
+function liftable(floating) {
+  if (typeof floating.showPopover !== 'function' || !floating.isConnected) return false;
+  if (floating.hasAttribute('popover') || inTopLayer(floating)) return false;
+
+  for (let node = floating.parentElement; node; node = node.parentElement) if (inTopLayer(node)) return false;
+
+  return true;
+}
+/** Lifts a floating surface into the top layer; returns a function that puts it back, or null. */
+
+
+function liftToTopLayer(floating) {
+  if (!liftable(floating)) return null;
+  adoptLiftedRule(floating);
+  floating.setAttribute(LIFTED, '');
+  floating.setAttribute('popover', 'manual');
+
+  try {
+    floating.showPopover();
+  } catch {
+    floating.removeAttribute('popover');
+    floating.removeAttribute(LIFTED);
+    return null;
+  }
+
+  return () => {
+    if (floating.hasAttribute(LIFTED)) {
+      try {
+        if (floating.matches(':popover-open')) floating.hidePopover();
+      } catch {
+        /* already gone from the document */
+      }
+
+      floating.removeAttribute('popover');
+      floating.removeAttribute(LIFTED);
+    }
+  };
 }
 
 function fixedContainingBlock(element) {
@@ -4208,7 +4515,9 @@ function anchorReference(element) {
 /**
  * Keeps `floating` anchored to `reference`.
  * options: {side, align, offset, alignmentOffset, padding, flip, shift,
- *           matchWidth, fitHeight, autoUpdate, onPosition({side, placement, x, y})}
+ *           matchWidth, fitHeight, autoUpdate, topLayer, onPosition({side, placement, x, y})}
+ * topLayer (default true) lifts the floating element into the top layer while
+ * it is anchored (see liftToTopLayer); false keeps it where it stands.
  * Returns {update(): Promise, stop(), side}.
  */
 
@@ -4230,6 +4539,7 @@ function anchor(reference, floating, options = {}) {
     matchWidth: false,
     fitHeight: true,
     autoUpdate: true,
+    topLayer: true,
     onPosition: null,
     ...options
   }; // Inline styles this helper writes are restored on stop(); the author's caps
@@ -4244,7 +4554,9 @@ function anchor(reference, floating, options = {}) {
   // A percentage cap is kept as written by getComputedStyle; read as pixels,
   // max-inline-size: 100% made every tooltip 100px wide. The panel is fixed, so
   // a percentage is of the viewport.
+  // Lifted before its caps are read: the panel is measured where it is drawn.
 
+  const lower = settings.topLayer ? liftToTopLayer(floating) : null;
   const floatingStyle = getComputedStyle(floating);
 
   const cap = (value, whole) => {
@@ -4389,6 +4701,7 @@ function anchor(reference, floating, options = {}) {
     controller.stopped = true;
     cleanup?.();
     delete floating.dataset.sfSide;
+    lower?.();
 
     for (const [name, value, priority] of saved) {
       if (value) floating.style.setProperty(name, value, priority);else floating.style.removeProperty(name);
@@ -4402,6 +4715,7 @@ const Position = Object.freeze({
   anchor,
   anchorReference,
   referenceRect,
+  liftToTopLayer,
   logicalSide: _position_placement_js__WEBPACK_IMPORTED_MODULE_1__.logicalSide,
   physicalPlacement: _position_placement_js__WEBPACK_IMPORTED_MODULE_1__.physicalPlacement,
   resolveLength
@@ -4579,6 +4893,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var lit_directives_ref_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("7fcbcc00731e");
 /* harmony import */ var lit_directive_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("69fcfee6f64b");
 /* harmony import */ var _page_language__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("8489d1f5bab4");
+/* harmony import */ var _density_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("1412c5875b4d");
 
 
 
@@ -4587,6 +4902,7 @@ __webpack_require__.r(__webpack_exports__);
 // element that is not a Smart base element (a package's composite that calls
 // customElements.define itself, sf-view) defines its old tags beside its own
 // with defineTagAliases.
+
 
 
 
@@ -5113,8 +5429,13 @@ class SfBaseElement extends HTMLElement {
 
     this.constructor.ensureStyleReadinessCss();
     this.captureHostStyle();
-    this.applyHostDisplayStyle();
+    this.applyHostDisplayStyle(); // The sized elements the page put in this element are the page's (density,
+    // C22): taken before anything moves them (a drawer takes its content to
+    // its panel at the end of the body).
+
+    if (!this._sfSizedBefore) this._sfSizedBefore = (0,_density_js__WEBPACK_IMPORTED_MODULE_11__.sizedBefore)(this);
     this.captureSlotTemplates();
+    this.markSizeScale();
     this.__sfSourceCaptured = true;
     this._isMounted = true; // Dated aliases (standard 1.3.8 §16.20): the component's aliases.json,
     // installed once per element and kept while it is detached, so a page
@@ -5812,8 +6133,13 @@ class SfBaseElement extends HTMLElement {
 
     const printed = this._hasRendered ? [] : this.staticMarkup();
     this.prepareRenderContainer(changedAttributes);
-    this.markStylePending(this);
-    (0,lit__WEBPACK_IMPORTED_MODULE_7__.render)(templateResult, this);
+    this.markStylePending(this); // Sizes the page placed before the first drawing stay explicit; what the
+    // drawing adds is relative to this element (density, C22).
+
+    this.markSizeScale();
+    if (!this._sfSizedBefore) this._sfSizedBefore = (0,_density_js__WEBPACK_IMPORTED_MODULE_11__.sizedBefore)(this);
+    (0,_density_js__WEBPACK_IMPORTED_MODULE_11__.drawing)(() => this.renderTemplateResult(templateResult));
+    (0,_density_js__WEBPACK_IMPORTED_MODULE_11__.markRelativeSizes)(this, this._sfSizedBefore);
 
     if (printed.length) {
       this.handOverStaticMarkup(printed); // Page children the first paint held out of view are placed now.
@@ -6869,7 +7195,10 @@ class SfBaseElement extends HTMLElement {
         }
 
         Array.from(child.content?.childNodes || []).forEach(node => {
-          this._slotTemplates.get(slotName).push(node.cloneNode(true));
+          const copy = node.cloneNode(true);
+          (0,_density_js__WEBPACK_IMPORTED_MODULE_11__.noteAuthored)([copy]);
+
+          this._slotTemplates.get(slotName).push(copy);
         });
         child.remove();
         return;
@@ -6882,8 +7211,10 @@ class SfBaseElement extends HTMLElement {
       const shouldUnwrapSlotHost = child.getAttributeNames().length === 1 && child.hasAttribute("slot");
       const slotNodes = shouldUnwrapSlotHost ? Array.from(child.childNodes) : [child];
 
-      this._liveSlotNodes.get(slotName).push(...slotNodes);
+      this._liveSlotNodes.get(slotName).push(...slotNodes); // The page's content: a size it gives stays explicit (density, C22).
 
+
+      (0,_density_js__WEBPACK_IMPORTED_MODULE_11__.noteAuthored)(slotNodes);
       child.remove();
     });
   }
@@ -6910,6 +7241,7 @@ class SfBaseElement extends HTMLElement {
     }
 
     const templates = nodes.map(node => node.cloneNode(true));
+    (0,_density_js__WEBPACK_IMPORTED_MODULE_11__.noteAuthored)(templates);
     templates.forEach(node => {
       this._slotTemplates.get(name).push(node);
     });
@@ -6918,7 +7250,7 @@ class SfBaseElement extends HTMLElement {
       nodes.forEach(node => node.remove());
     }
 
-    return templates.map(node => node.cloneNode(true));
+    return templates.map(node => this.authoredCopy(node));
   }
 
   hasSlotContent(name) {
@@ -6943,10 +7275,41 @@ class SfBaseElement extends HTMLElement {
     }
 
     if (slotContent.length === 1) {
-      return slotContent[0].cloneNode(true);
+      return this.authoredCopy(slotContent[0]);
     }
 
-    return slotContent.map(node => node.cloneNode(true));
+    return slotContent.map(node => this.authoredCopy(node));
+  } // A size that is not a step of the control ladder (density, C22): a
+  // drawer's size is its width. The manifest says so on the setting
+  // (x-scale), or has no size setting at all; such a size does not take the
+  // normal ladder back under the element, so a compact region stays compact
+  // inside it. The CSS reads the mark.
+
+
+  markSizeScale() {
+    const manifest = this.constructor.manifest;
+    if (!manifest || !this.hasAttribute("size")) return;
+    const setting = manifest.settings?.size;
+    const scale = setting ? setting["x-scale"] : "none";
+    if (scale && scale !== "control") this.setAttribute("data-sf-size-scale", scale);else this.removeAttribute("data-sf-size-scale");
+  } // Draws a template into a container of the element's own outside it (a
+  // portal at the end of the body, a popup's body): the sizes the drawing
+  // gives are relative to the element, as in its own box (density, C22).
+
+
+  drawInto(result, container) {
+    if (!container) return;
+    (0,_density_js__WEBPACK_IMPORTED_MODULE_11__.drawing)(() => (0,lit__WEBPACK_IMPORTED_MODULE_7__.render)(result, container));
+    (0,_density_js__WEBPACK_IMPORTED_MODULE_11__.markRelativeSizes)(container, this._sfSizedBefore ??= (0,_density_js__WEBPACK_IMPORTED_MODULE_11__.sizedBefore)(this));
+  } // A copy of captured page content is the page's as well (density, C22): a
+  // size in it stays explicit.
+
+
+  authoredCopy(node) {
+    const copy = node.cloneNode(true);
+    const authored = globalThis.SF?.__internal?.density?.authored;
+    if (authored?.has(node)) authored.add(copy);
+    return copy;
   }
 
   setSlot(name, ...elements) {
@@ -6968,8 +7331,9 @@ class SfBaseElement extends HTMLElement {
     this._slotTemplates.delete(name); // Обновляем _liveSlotNodes (если есть — для совместимости с sf-modal)
 
 
-    this._liveSlotNodes.set(name, parsed); // Запрашиваем перерендер
+    this._liveSlotNodes.set(name, parsed);
 
+    (0,_density_js__WEBPACK_IMPORTED_MODULE_11__.noteAuthored)(parsed); // Запрашиваем перерендер
 
     this.requestComponentUpdate("slot-change");
     return this;
@@ -7225,6 +7589,25 @@ class SfBaseElement extends HTMLElement {
 
   updateDom() {
     return false;
+  } // Lit draws into the host and keeps markers in what it drew; code outside
+  // the element that rewrote that DOM (a parent's patch that set the glyph's
+  // textContent, as sf-button-icon's did) took them out, and the next commit
+  // into it threw "Cannot set properties of null (setting 'data')" once the
+  // element was moved and drew again. An element that owns its whole light
+  // DOM (clearLightDomBeforeFirstRender: sf-icon) then starts afresh -- the
+  // host cleared, lit's part on it dropped -- and draws its current values;
+  // a second failure is the element's own and is thrown.
+
+
+  renderTemplateResult(templateResult) {
+    try {
+      (0,lit__WEBPACK_IMPORTED_MODULE_7__.render)(templateResult, this);
+    } catch (error) {
+      if (!this.shouldClearLightDomBeforeFirstRender() || this._$litPart$ === undefined) throw error;
+      this.replaceChildren();
+      this._$litPart$ = undefined;
+      (0,lit__WEBPACK_IMPORTED_MODULE_7__.render)(templateResult, this);
+    }
   }
 
   shouldClearLightDomBeforeFirstRender() {

@@ -2,6 +2,117 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "1412c5875b4d"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   RELATIVE: () => (/* binding */ RELATIVE),
+/* harmony export */   densityOf: () => (/* binding */ densityOf),
+/* harmony export */   drawing: () => (/* binding */ drawing),
+/* harmony export */   followDensity: () => (/* binding */ followDensity),
+/* harmony export */   markRelativeSizes: () => (/* binding */ markRelativeSizes),
+/* harmony export */   noteAuthored: () => (/* binding */ noteAuthored),
+/* harmony export */   sizedBefore: () => (/* binding */ sizedBefore)
+/* harmony export */ });
+// Density (owner decision C22, 2026-11-09). data-sf-density="compact" on the
+// root or on a container moves every component one ladder step down; the CSS
+// does it (core/scss/_sf_css__density.scss): each step variable holds the step
+// below, and an element with an explicit size takes the normal ladder back.
+//
+// "Explicit" is a size the page gave. A size a component's template gives an
+// element it draws (sf-input's clear button, a pager's buttons, a submenu) is
+// relative to the component's own size: under a compact sf-input its button
+// has to come down with it, not stand at the normal ladder. Those are marked
+// data-sf-size-relative here, once the component has drawn; the CSS leaves
+// them in the region's ladder.
+//
+// What a component holds of the page's own (captured slot content, children
+// left in place) keeps its size explicit. The store is on the shared global:
+// every bundle carries its own copy of this module.
+const store = () => {
+  const SF = globalThis.SF = globalThis.SF || {};
+  const internal = SF.__internal || (SF.__internal = {});
+  return internal.density ||= {
+    authored: new WeakSet(),
+    depth: 0
+  };
+};
+
+const RELATIVE = 'data-sf-size-relative'; // Page content a component captured to place in its own drawing. Content a
+// template hands to a child while it draws is the template's, not the page's.
+
+function noteAuthored(nodes) {
+  const state = store();
+  if (state.depth > 0) return;
+
+  for (const node of nodes) if (node && typeof node === 'object') state.authored.add(node);
+}
+function drawing(callback) {
+  const state = store();
+  state.depth += 1;
+
+  try {
+    return callback();
+  } finally {
+    state.depth -= 1;
+  }
+} // The sized elements present before a host first draws are the page's.
+// A printed first-paint picture is the drawing's, not the page's.
+
+function sizedBefore(host) {
+  return new Set(Array.from(host.querySelectorAll?.('[size]') ?? []).filter(element => {
+    const picture = element.closest('[data-sf-static]');
+    return !picture || !host.contains(picture);
+  }));
+} // After a host drew: every sized element its drawing holds that is not the
+// page's is relative to the host.
+
+function markRelativeSizes(host, before = null) {
+  const {
+    authored
+  } = store();
+
+  for (const element of host.querySelectorAll?.('[size]') ?? []) {
+    if (element.hasAttribute(RELATIVE) || before?.has(element)) continue;
+    let node = element;
+    let page = false;
+
+    while (node && node !== host) {
+      if (authored.has(node)) {
+        page = true;
+        break;
+      }
+
+      node = node.parentNode;
+    }
+
+    if (!page) element.setAttribute(RELATIVE, '');
+  }
+} // A popup a component builds itself and places outside its own box (a menu on
+// <body>, in an open dialog): sized from the component, so relative, and in
+// the component's density, not the density of where it was placed.
+
+function followDensity(element, from) {
+  if (!element?.setAttribute) return element;
+  if (element.hasAttribute('size')) element.setAttribute(RELATIVE, '');
+  const density = densityOf(from);
+  if (density) element.setAttribute('data-sf-density', density);else element.removeAttribute('data-sf-density');
+  return element;
+} // The density an element stands in: the nearest region's, or "normal" under an
+// explicit size (where the ladder is the normal one again); null outside any.
+
+function densityOf(from) {
+  for (let node = from; node?.nodeType === 1; node = node.parentElement) {
+    if (node.hasAttribute('data-sf-density')) return node.getAttribute('data-sf-density');
+    if (node.hasAttribute('size') && !node.hasAttribute(RELATIVE) && !node.hasAttribute('data-sf-size-scale') && !/^(input|select|textarea)$/u.test(node.localName)) return 'normal';
+  }
+
+  return null;
+}
+
+/***/ },
+
 /***/ "f28a9d913ce0"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -401,17 +512,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("5b7d7695b41b");
 /* harmony import */ var _core_js_instance_path__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("e92fd2d1a38c");
 /* harmony import */ var _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("4a85acfb05c1");
-/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("795a53b0bbe9");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("84d032c55810");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("51b106697124");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("33cd7c3c3aca");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("90473944857f");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_3__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_5__]);
-([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_3__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_density_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("1412c5875b4d");
+/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("795a53b0bbe9");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("84d032c55810");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("51b106697124");
+/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("33cd7c3c3aca");
+/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("90473944857f");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_3__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_3__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _core_js_instance_path__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_core_js_instance_path__WEBPACK_IMPORTED_MODULE_3__);
+
 
 
 
@@ -427,14 +540,17 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 // actions answer outcomes, and the old event name sf-tab-change is a dated
 // alias of sf-tabs-change.
 
-const TabsElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_6__, {
+const TabsElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_7__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default()),
   lang: {
-    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_8__,
-    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__
+    en: _lang_en_json__WEBPACK_IMPORTED_MODULE_9__,
+    ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__
   },
   source: 'ru',
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_7__
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_8__,
+  // setData(data, reason) and setPanels(panels, reason) take their fields in
+  // order; the runtime gives them the object form of §4.4 as well.
+  positional: ['set-data', 'set-panels']
 }); // A page's or an assembly's own panels: direct children of the host
 // (§7.2.1 «A tab opens a part», §7.2.3 a panel per entry).
 
@@ -1163,6 +1279,7 @@ class SfTabs extends TabsElement {
     }));
     menu.setAttribute('aria-label', this.text('more'));
     menu.setAttribute('size', this.menuSize());
+    (0,_core_js_density_js__WEBPACK_IMPORTED_MODULE_5__.followDensity)(menu, this);
     menu.entries = entries;
     menu.toggleFor(anchor);
   }
@@ -1210,6 +1327,7 @@ class SfTabs extends TabsElement {
   async openSettings(anchor) {
     const menu = await this.settingsMenu();
     menu.setAttribute('size', this.menuSize());
+    (0,_core_js_density_js__WEBPACK_IMPORTED_MODULE_5__.followDensity)(menu, this);
     this.renderSettingsList();
     menu.toggleFor(anchor, {
       width: 'content'
@@ -1234,6 +1352,7 @@ class SfTabs extends TabsElement {
     reset.setAttribute('appearance', 'outline');
     reset.setAttribute('scheme', 'on-surface');
     reset.setAttribute('size', this.menuSize());
+    reset.setAttribute(_core_js_density_js__WEBPACK_IMPORTED_MODULE_5__.RELATIVE, '');
     reset.setAttribute('text', this.text('reset'));
     reset.addEventListener('click', () => this.resetSettings());
     menu.append(body, reset);
@@ -1278,7 +1397,7 @@ class SfTabs extends TabsElement {
       }, 'visibility');
     };
 
-    (0,lit__WEBPACK_IMPORTED_MODULE_0__.render)((0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+    this.drawInto((0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
       <sf-sortable class="sf-tabs-settings-list" group="sf-tabs-settings" label=${this.text('customize')}
                    @sf-sortable-move=${onIntent}>
         ${items.map(item => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
@@ -1311,7 +1430,7 @@ class SfTabs extends TabsElement {
   }
 
   template() {
-    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_5__.renderTabsTemplate)(this.templateContext());
+    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_6__.renderTabsTemplate)(this.templateContext());
   }
 
   get state() {
@@ -1797,7 +1916,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-tabs 
 /***/ "84d032c55810"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tabs","tag":"sf-tabs","version":"1.1.13","kind":"leaf","settings":{"type":{"type":"enum","values":["underline","pills","full","vertical"],"optional":true},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"variant":{"type":"string","default":"buttons"},"scheme":{"type":"string","default":"default"},"top-position":{"type":"string","default":"start"},"active-index":{"type":"number","integer":true,"min":0,"default":0},"items":{"type":"list","default":[],"of":{"id":"id","label":"string","icon":{"type":"icon","optional":true},"count":{"type":"number","optional":true},"href":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"pinned":{"type":"boolean","optional":true}}},"top-class":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"overflow":{"type":"enum","values":["scroll","wrap","more"],"default":"scroll"},"configurable":{"type":"boolean","default":false},"settings":{"type":"object"}},"values":{"selected":{"type":"id","default":""}},"events":{"change":{"x-native":false,"carries":{"selected":"id","previous":"number","current":"number","item":"object","items":"list"}},"settings-change":{"carries":{"order":{"type":"list","schema":{"items":{"type":"string"}}},"hidden":{"type":"list","schema":{"items":{"type":"string"}}},"reason":{"type":"enum","values":["order","visibility"],"optional":true}},"own-verb":true},"settings-reset":{"carries":{},"own-verb":true}},"actions":{"set-data":{"with":{"data":"object","reason":{"type":"string","optional":true}}},"set-panels":{"with":{"panels":"list","reason":{"type":"string","optional":true}}},"go-to":{"with":{"index":"number"}}},"css-variables":{"--sf-tabs-color":{"type":"color","state":"default"},"--sf-tabs-indicator-color":{"type":"color","state":"selected"},"--sf-tabs-indicator-width":{"type":"length","state":"selected"},"--sf-tabs-border-color":{"type":"color","state":"default"},"--sf-tabs-border-width":{"type":"length","state":"default"},"--sf-tabs-gap":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tabs","tag":"sf-tabs","version":"1.1.16","kind":"leaf","settings":{"type":{"type":"enum","values":["underline","pills","full","vertical"],"optional":true},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"variant":{"type":"string","default":"buttons"},"scheme":{"type":"string","default":"default"},"top-position":{"type":"string","default":"start"},"active-index":{"type":"number","integer":true,"min":0,"default":0},"items":{"type":"list","default":[],"of":{"id":"id","label":"string","icon":{"type":"icon","optional":true},"count":{"type":"number","optional":true},"href":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"pinned":{"type":"boolean","optional":true}}},"top-class":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"overflow":{"type":"enum","values":["scroll","wrap","more"],"default":"scroll"},"configurable":{"type":"boolean","default":false},"settings":{"type":"object"}},"values":{"selected":{"type":"id","default":""}},"events":{"change":{"x-native":false,"carries":{"selected":"id","previous":"number","current":"number","item":"object","items":"list"}},"settings-change":{"carries":{"order":{"type":"list","schema":{"items":{"type":"string"}}},"hidden":{"type":"list","schema":{"items":{"type":"string"}}},"reason":{"type":"enum","values":["order","visibility"],"optional":true}},"own-verb":true},"settings-reset":{"carries":{},"own-verb":true}},"actions":{"set-data":{"with":{"data":"object","reason":{"type":"string","optional":true}}},"set-panels":{"with":{"panels":"list","reason":{"type":"string","optional":true}}},"go-to":{"with":{"index":"number"}}},"css-variables":{"--sf-tabs-color":{"type":"color","state":"default"},"--sf-tabs-indicator-color":{"type":"color","state":"selected"},"--sf-tabs-indicator-width":{"type":"length","state":"selected"},"--sf-tabs-border-color":{"type":"color","state":"default"},"--sf-tabs-border-width":{"type":"length","state":"default"},"--sf-tabs-gap":{"type":"length","state":"default"}}}');
 
 /***/ },
 

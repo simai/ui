@@ -528,12 +528,12 @@
     border: var(--sf-px) solid var(--sf-menu-horizontal-submenu--border-color, var(--sf-menu-submenu-border-color, var(--sf-outline-variant)));
     border-radius: var(--sf-radius--ui);
     border-radius: var(--sf-menu-horizontal-submenu--radius, var(--sf-menu-submenu-radius, var(--sf-radius--ui)));
-    background: var(--sf-elevation-2--surface);
-    background: var(--sf-menu-horizontal-submenu--background-color, var(--sf-menu-submenu-background-color, var(--sf-elevation-2--surface)));
-    --sf-on-surface-variant: var(--sf-on-elevation-2--variant);
-    --sf-badge--surface: var(--sf-menu-horizontal-submenu--background-color, var(--sf-menu-submenu-background-color, var(--sf-elevation-2--surface)));
-    box-shadow: var(--sf-elevation-2--shadow);
-    box-shadow: var(--sf-menu-horizontal-submenu--box-shadow, var(--sf-elevation-2--shadow));
+    background: var(--sf-surface-popup);
+    background: var(--sf-menu-horizontal-submenu--background-color, var(--sf-menu-submenu-background-color, var(--sf-surface-popup)));
+    --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
+    --sf-badge--surface: var(--sf-menu-horizontal-submenu--background-color, var(--sf-menu-submenu-background-color, var(--sf-surface-popup)));
+    box-shadow: var(--sf-shadow-overlay);
+    box-shadow: var(--sf-menu-horizontal-submenu--box-shadow, var(--sf-shadow-overlay));
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--horizontal > .sf-menu-item > .sf-menu {
     left: 0;
