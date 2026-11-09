@@ -50,4 +50,9 @@
     border-color: color-mix(in srgb, transparent, var(--sf-outline-success) calc(1 * 100%));
     border-color: color-mix(in srgb, transparent, var(--sf-outline-success) calc(var(--sf-divider--alfa, 1) * 100%));
   }
+  .divider-info > :not([hidden]) ~ :not([hidden]),
+  .divide-info > :not([hidden]) ~ :not([hidden]) {
+    border-color: color-mix(in srgb, transparent, var(--sf-info-outline) calc(1 * 100%));
+    border-color: color-mix(in srgb, transparent, var(--sf-info-outline) calc(var(--sf-divider--alfa, 1) * 100%));
+  }
 }

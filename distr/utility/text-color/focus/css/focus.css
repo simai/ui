@@ -102,6 +102,18 @@
   .focus\:color-on-success-container-graphic:focus {
     color: var(--sf-on-success-container-graphic);
   }
+  .focus\:color-info:focus {
+    color: var(--sf-info);
+  }
+  .focus\:color-on-info:focus {
+    color: var(--sf-on-info);
+  }
+  .focus\:color-on-info-container:focus {
+    color: var(--sf-on-info-container);
+  }
+  .focus\:color-on-info-container-graphic:focus {
+    color: var(--sf-on-info-container-graphic);
+  }
   .focus\:color-transparent:focus {
     color: var(--sf-transparent);
   }

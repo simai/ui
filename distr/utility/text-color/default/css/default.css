@@ -102,274 +102,286 @@
   .color-on-success-container-graphic {
     color: var(--sf-on-success-container-graphic);
   }
+  .color-info {
+    color: var(--sf-info);
+  }
+  .color-on-info {
+    color: var(--sf-on-info);
+  }
+  .color-on-info-container {
+    color: var(--sf-on-info-container);
+  }
+  .color-on-info-container-graphic {
+    color: var(--sf-on-info-container-graphic);
+  }
   .color-white {
-    color: rgb(255, 255, 255);
+    color: var(--sf-white);
   }
   .color-black {
-    color: rgb(0, 0, 0);
+    color: var(--sf-black);
   }
   .color-gray {
-    color: rgb(106, 115, 125);
+    color: var(--sf-gray-50);
   }
   .color-gray-0 {
-    color: rgb(250, 251, 252);
+    color: var(--sf-gray-98);
   }
   .color-gray-1 {
-    color: rgb(246, 248, 250);
+    color: var(--sf-gray-98);
   }
   .color-gray-2 {
-    color: rgb(225, 228, 232);
+    color: var(--sf-gray-90);
   }
   .color-gray-3 {
-    color: rgb(209, 213, 218);
+    color: var(--sf-gray-85);
   }
   .color-gray-4 {
-    color: rgb(149, 157, 165);
+    color: var(--sf-gray-60);
   }
   .color-gray-5 {
-    color: rgb(106, 115, 125);
+    color: var(--sf-gray-50);
   }
   .color-gray-6 {
-    color: rgb(88, 96, 105);
+    color: var(--sf-gray-40);
   }
   .color-gray-7 {
-    color: rgb(68, 77, 86);
+    color: var(--sf-gray-30);
   }
   .color-gray-8 {
-    color: rgb(47, 54, 61);
+    color: var(--sf-gray-20);
   }
   .color-gray-9 {
-    color: rgb(36, 41, 46);
+    color: var(--sf-gray-15);
   }
   .color-red {
-    color: rgb(215, 58, 73);
+    color: var(--sf-red-50);
   }
   .color-red-0 {
-    color: rgb(255, 238, 240);
+    color: var(--sf-red-95);
   }
   .color-red-1 {
-    color: rgb(255, 220, 224);
+    color: var(--sf-red-90);
   }
   .color-red-2 {
-    color: rgb(253, 174, 183);
+    color: var(--sf-red-80);
   }
   .color-red-3 {
-    color: rgb(249, 117, 131);
+    color: var(--sf-red-70);
   }
   .color-red-4 {
-    color: rgb(234, 74, 90);
+    color: var(--sf-red-60);
   }
   .color-red-5 {
-    color: rgb(215, 58, 73);
+    color: var(--sf-red-50);
   }
   .color-red-6 {
-    color: rgb(203, 36, 49);
+    color: var(--sf-red-40);
   }
   .color-red-7 {
-    color: rgb(179, 29, 40);
+    color: var(--sf-red-40);
   }
   .color-red-8 {
-    color: rgb(158, 28, 35);
+    color: var(--sf-red-35);
   }
   .color-red-9 {
-    color: rgb(134, 24, 29);
+    color: var(--sf-red-30);
   }
   .color-orange {
-    color: rgb(246, 106, 10);
+    color: var(--sf-orange-60);
   }
   .color-orange-0 {
-    color: rgb(255, 248, 242);
+    color: var(--sf-orange-98);
   }
   .color-orange-1 {
-    color: rgb(255, 235, 218);
+    color: var(--sf-orange-95);
   }
   .color-orange-2 {
-    color: rgb(255, 209, 172);
+    color: var(--sf-orange-85);
   }
   .color-orange-3 {
-    color: rgb(255, 171, 112);
+    color: var(--sf-orange-80);
   }
   .color-orange-4 {
-    color: rgb(251, 133, 50);
+    color: var(--sf-orange-70);
   }
   .color-orange-5 {
-    color: rgb(246, 106, 10);
+    color: var(--sf-orange-60);
   }
   .color-orange-6 {
-    color: rgb(227, 98, 9);
+    color: var(--sf-orange-60);
   }
   .color-orange-7 {
-    color: rgb(209, 87, 4);
+    color: var(--sf-orange-50);
   }
   .color-orange-8 {
-    color: rgb(194, 78, 0);
+    color: var(--sf-orange-50);
   }
   .color-orange-9 {
-    color: rgb(160, 65, 0);
+    color: var(--sf-orange-40);
   }
   .color-yellow {
-    color: rgb(255, 211, 61);
+    color: var(--sf-yellow-85);
   }
   .color-yellow-0 {
-    color: rgb(255, 253, 239);
+    color: var(--sf-yellow-98);
   }
   .color-yellow-1 {
-    color: rgb(255, 251, 221);
+    color: var(--sf-yellow-98);
   }
   .color-yellow-2 {
-    color: rgb(255, 245, 177);
+    color: var(--sf-yellow-95);
   }
   .color-yellow-3 {
-    color: rgb(255, 234, 127);
+    color: var(--sf-yellow-90);
   }
   .color-yellow-4 {
-    color: rgb(255, 223, 93);
+    color: var(--sf-yellow-90);
   }
   .color-yellow-5 {
-    color: rgb(255, 211, 61);
+    color: var(--sf-yellow-85);
   }
   .color-yellow-6 {
-    color: rgb(249, 197, 19);
+    color: var(--sf-yellow-80);
   }
   .color-yellow-7 {
-    color: rgb(219, 171, 9);
+    color: var(--sf-yellow-70);
   }
   .color-yellow-8 {
-    color: rgb(176, 136, 0);
+    color: var(--sf-yellow-60);
   }
   .color-yellow-9 {
-    color: rgb(115, 92, 15);
+    color: var(--sf-yellow-40);
   }
   .color-green {
-    color: rgb(40, 167, 69);
+    color: var(--sf-green-60);
   }
   .color-green-0 {
-    color: rgb(240, 255, 244);
+    color: var(--sf-green-98);
   }
   .color-green-1 {
-    color: rgb(220, 255, 228);
+    color: var(--sf-green-98);
   }
   .color-green-2 {
-    color: rgb(190, 245, 203);
+    color: var(--sf-green-90);
   }
   .color-green-3 {
-    color: rgb(133, 232, 157);
+    color: var(--sf-green-85);
   }
   .color-green-4 {
-    color: rgb(52, 208, 88);
+    color: var(--sf-green-70);
   }
   .color-green-5 {
-    color: rgb(40, 167, 69);
+    color: var(--sf-green-60);
   }
   .color-green-6 {
-    color: rgb(34, 134, 58);
+    color: var(--sf-green-50);
   }
   .color-green-7 {
-    color: rgb(23, 111, 44);
+    color: var(--sf-green-40);
   }
   .color-green-8 {
-    color: rgb(22, 92, 38);
+    color: var(--sf-green-35);
   }
   .color-green-9 {
-    color: rgb(20, 70, 32);
+    color: var(--sf-green-25);
   }
   .color-blue {
-    color: rgb(3, 102, 214);
+    color: var(--sf-blue-40);
   }
   .color-blue-0 {
-    color: rgb(241, 248, 255);
+    color: var(--sf-blue-98);
   }
   .color-blue-1 {
-    color: rgb(219, 237, 255);
+    color: var(--sf-blue-95);
   }
   .color-blue-2 {
-    color: rgb(200, 225, 255);
+    color: var(--sf-blue-90);
   }
   .color-blue-3 {
-    color: rgb(121, 184, 255);
+    color: var(--sf-blue-70);
   }
   .color-blue-4 {
-    color: rgb(33, 136, 255);
+    color: var(--sf-blue-60);
   }
   .color-blue-5 {
-    color: rgb(3, 102, 214);
+    color: var(--sf-blue-40);
   }
   .color-blue-6 {
-    color: rgb(0, 92, 197);
+    color: var(--sf-blue-40);
   }
   .color-blue-7 {
-    color: rgb(4, 66, 137);
+    color: var(--sf-blue-30);
   }
   .color-blue-8 {
-    color: rgb(3, 47, 98);
+    color: var(--sf-blue-20);
   }
   .color-blue-9 {
-    color: rgb(5, 38, 76);
+    color: var(--sf-blue-15);
   }
   .color-purple {
-    color: rgb(111, 66, 193);
+    color: var(--sf-purple-40);
   }
   .color-purple-0 {
-    color: rgb(245, 240, 255);
+    color: var(--sf-purple-95);
   }
   .color-purple-1 {
-    color: rgb(230, 220, 253);
+    color: var(--sf-purple-90);
   }
   .color-purple-2 {
-    color: rgb(209, 188, 249);
+    color: var(--sf-purple-80);
   }
   .color-purple-3 {
-    color: rgb(179, 146, 240);
+    color: var(--sf-purple-70);
   }
   .color-purple-4 {
-    color: rgb(138, 99, 210);
+    color: var(--sf-purple-50);
   }
   .color-purple-5 {
-    color: rgb(111, 66, 193);
+    color: var(--sf-purple-40);
   }
   .color-purple-6 {
-    color: rgb(90, 50, 163);
+    color: var(--sf-purple-30);
   }
   .color-purple-7 {
-    color: rgb(76, 40, 136);
+    color: var(--sf-purple-25);
   }
   .color-purple-8 {
-    color: rgb(58, 29, 110);
+    color: var(--sf-purple-20);
   }
   .color-purple-9 {
-    color: rgb(41, 19, 78);
+    color: var(--sf-purple-15);
   }
   .color-pink {
-    color: rgb(234, 74, 170);
+    color: var(--sf-pink-60);
   }
   .color-pink-0 {
-    color: rgb(255, 238, 248);
+    color: var(--sf-pink-95);
   }
   .color-pink-1 {
-    color: rgb(254, 219, 240);
+    color: var(--sf-pink-90);
   }
   .color-pink-2 {
-    color: rgb(249, 179, 221);
+    color: var(--sf-pink-80);
   }
   .color-pink-3 {
-    color: rgb(246, 146, 206);
+    color: var(--sf-pink-70);
   }
   .color-pink-4 {
-    color: rgb(236, 108, 185);
+    color: var(--sf-pink-60);
   }
   .color-pink-5 {
-    color: rgb(234, 74, 170);
+    color: var(--sf-pink-60);
   }
   .color-pink-6 {
-    color: rgb(208, 53, 146);
+    color: var(--sf-pink-50);
   }
   .color-pink-7 {
-    color: rgb(185, 58, 134);
+    color: var(--sf-pink-50);
   }
   .color-pink-8 {
-    color: rgb(153, 48, 111);
+    color: var(--sf-pink-40);
   }
   .color-pink-9 {
-    color: rgb(109, 34, 79);
+    color: var(--sf-pink-25);
   }
 }

@@ -93,4 +93,16 @@
   .active\:color-on-success-container-graphic:active {
     color: var(--sf-on-success-container-graphic);
   }
+  .active\:color-info:active {
+    color: var(--sf-info);
+  }
+  .active\:color-on-info:active {
+    color: var(--sf-on-info);
+  }
+  .active\:color-on-info-container:active {
+    color: var(--sf-on-info-container);
+  }
+  .active\:color-on-info-container-graphic:active {
+    color: var(--sf-on-info-container-graphic);
+  }
 }

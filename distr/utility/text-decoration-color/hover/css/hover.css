@@ -36,4 +36,8 @@
     -webkit-text-decoration-color: var(--sf-outline-success);
             text-decoration-color: var(--sf-outline-success);
   }
+  .hover\:decoration-info:hover {
+    -webkit-text-decoration-color: var(--sf-info-outline);
+            text-decoration-color: var(--sf-info-outline);
+  }
 }

@@ -99,4 +99,7 @@
   .hover\:ring-info-container:hover {
     --sf-ring-color: var(--sf-info-container);
   }
+  .hover\:ring-info-container-strong:hover {
+    --sf-ring-color: var(--sf-info-container-strong);
+  }
 }

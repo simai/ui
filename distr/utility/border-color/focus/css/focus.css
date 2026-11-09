@@ -99,4 +99,7 @@
   .focus\:border-info-container:focus {
     border-color: var(--sf-info-container);
   }
+  .focus\:border-info-container-strong:focus {
+    border-color: var(--sf-info-container-strong);
+  }
 }

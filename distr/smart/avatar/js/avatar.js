@@ -416,18 +416,19 @@ class SfAvatar extends AvatarElement {
     }
 
     return (0,_helpers_text__WEBPACK_IMPORTED_MODULE_6__.getInitials)(this.heading || (this.hasAttribute("aria-label") ? this.ariaLabel : ""));
-  } // The tone the initials are drawn in: the named one, or for auto the one of
-  // the name, the words the initials stand for rather than the two letters, so
-  // two people with the same initials differ. Only initials take a tone: a
-  // picture covers the fill and the placeholder stays neutral.
+  } // The hue the initials are drawn in (C17): the named one, or for auto the
+  // one of the name, the words the initials stand for rather than the two
+  // letters, so two people with the same initials differ. Only initials take a
+  // hue: a picture covers the fill and the placeholder stays neutral. The
+  // former tone setting is read when hue is empty (rose is pink).
 
 
-  get resolvedTone() {
+  get resolvedHue() {
     if (!this.isText) {
       return "";
     }
 
-    return (0,_js_tone_mjs__WEBPACK_IMPORTED_MODULE_7__.resolveAvatarTone)(this.tone, this.heading || this.getAttribute("aria-label") || this.text);
+    return (0,_js_tone_mjs__WEBPACK_IMPORTED_MODULE_7__.resolveAvatarHue)(this.hue, this.heading || this.getAttribute("aria-label") || this.text, this.tone);
   }
 
   templateContext() {
@@ -448,7 +449,7 @@ class SfAvatar extends AvatarElement {
       component: this,
       isImage: this.isImage,
       isText: this.isText,
-      resolvedTone: this.resolvedTone,
+      resolvedHue: this.resolvedHue,
       text: this.displayText,
       rootClass: this.getRootClass(),
       rootStyle: this.getRootStyle()
@@ -504,6 +505,7 @@ class SfAvatar extends AvatarElement {
       imageUrl: this.imageUrl,
       imageAlt: this.imageAlt,
       text: this.text,
+      hue: this.hue,
       tone: this.tone,
       status: this.status,
       ariaLabel: this.ariaLabel,
@@ -718,10 +720,11 @@ function avatarClasses(context, options = {}) {
   }
 
   if (context.isText) {
-    classes.push("sf-avatar--text", "items-cross-center", "content-main-center");
+    classes.push("sf-avatar--text", "items-cross-center", "content-main-center"); // The hue's role set (core .sf-hue-<name>, C17); the class sheet
+    // draws the plate and the ink from it.
 
-    if (context.resolvedTone) {
-      classes.push(`sf-avatar--tone-${context.resolvedTone}`);
+    if (context.resolvedHue) {
+      classes.push(`sf-hue-${context.resolvedHue}`);
     }
   }
 
@@ -1002,15 +1005,27 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   AVATAR_HUES: () => (/* binding */ AVATAR_HUES),
 /* harmony export */   AVATAR_TONES: () => (/* binding */ AVATAR_TONES),
+/* harmony export */   STATIC_HUES: () => (/* binding */ STATIC_HUES),
+/* harmony export */   TONE_HUES: () => (/* binding */ TONE_HUES),
+/* harmony export */   avatarHue: () => (/* binding */ avatarHue),
 /* harmony export */   avatarTone: () => (/* binding */ avatarTone),
 /* harmony export */   avatarToneHash: () => (/* binding */ avatarToneHash),
+/* harmony export */   resolveAvatarHue: () => (/* binding */ resolveAvatarHue),
 /* harmony export */   resolveAvatarTone: () => (/* binding */ resolveAvatarTone)
 /* harmony export */ });
-// sf-avatar's tone from a name, without a document: a plain function of its
+// sf-avatar's hue from a name, without a document: a plain function of its
 // argument, so tests/avatar-tones.contract.test.mjs runs it in Node and a server
 // can print the same class in the first paint. docs/docs.md gives the algorithm
 // for a server in another language.
+//
+// Owner decision C17 (2026-11-08): avatars have no colours of their own. The
+// initials take a hue of the static palette (the hue setting, the class
+// sf-hue-<name>); the eight tones of initials are gone, and `auto` picks among
+// eight static hues in the old order, so a name keeps its slot: rose is pink,
+// the former violet (HCT hue 325) is purple, the other six keep their names.
+// A former tone moves at most 15 degrees (dispatcher, 2026-11-09).
 //
 // FNV-1a, 32 bits, over the UTF-8 bytes of the string exactly as given (no
 // trimming, no case folding, no normalisation), its high half folded onto the
@@ -1019,7 +1034,17 @@ __webpack_require__.r(__webpack_exports__);
 //
 // The list and its order are part of the algorithm: a name keeps its tone only
 // while they stay. A later named tone does not join `auto`.
+const AVATAR_HUES = Object.freeze(['pink', 'amber', 'lime', 'green', 'teal', 'sky', 'indigo', 'purple']);
+
+// Every hue a setting may name: the static palette (theme-palette.js
+// STATIC_HUES, tests/avatar-tones.contract.test.mjs holds the two equal).
+const STATIC_HUES = Object.freeze(['red', 'orange', 'amber', 'yellow', 'lime', 'green', 'teal', 'cyan', 'sky', 'blue', 'indigo', 'violet', 'purple', 'pink', 'brown', 'gray']);
+
+// The former tone setting and its names, until 2027-01-01 (journal
+// attribute-c17-avatar-tone-to-hue, value-c17-avatar-rose-to-pink, which
+// also carries violet to purple).
 const AVATAR_TONES = Object.freeze(['rose', 'amber', 'lime', 'green', 'teal', 'sky', 'indigo', 'violet']);
+const TONE_HUES = Object.freeze({rose: 'pink', violet: 'purple'});
 
 const FNV_OFFSET = 0x811c9dc5;
 const FNV_PRIME = 0x01000193;
@@ -1032,14 +1057,27 @@ function avatarToneHash(name) {
   return (hash ^ (hash >>> 16)) >>> 0;
 }
 
-// No name, no tone: the neutral look.
+// No name, no hue: the neutral look.
+function avatarHue(name) {
+  const text = name === undefined || name === null ? '' : String(name);
+  return text ? AVATAR_HUES[avatarToneHash(text) % AVATAR_HUES.length] : '';
+}
+
+// The hue a setting asks for: a named one as it is, auto the one of the name,
+// empty (or a name the palette does not have) the neutral look. The former
+// tone setting is read when hue is empty, its rose as pink and its violet as purple.
+function resolveAvatarHue(hue, name, tone = '') {
+  const setting = hue || TONE_HUES[tone] || tone || '';
+  if (setting === 'auto') return avatarHue(name);
+  return STATIC_HUES.includes(setting) ? setting : '';
+}
+
+// The former names (2027-01-01): the tone of a name in the old words.
 function avatarTone(name) {
   const text = name === undefined || name === null ? '' : String(name);
   return text ? AVATAR_TONES[avatarToneHash(text) % AVATAR_TONES.length] : '';
 }
 
-// The tone a setting asks for: a named one as it is, auto the one of the name,
-// empty the neutral look.
 function resolveAvatarTone(setting, name) {
   return setting === 'auto' ? avatarTone(name) : setting || '';
 }
@@ -1057,7 +1095,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-avata
 /***/ "488a9707ea64"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.avatar","tag":"sf-avatar","version":"1.2.3","kind":"leaf","settings":{"size":{"type":"enum","values":["1/4","1/3","1/2","1","2","3"],"default":"1"},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"shape":{"type":"enum","values":["circle","square"],"default":"circle"},"image-url":{"type":"string","default":""},"image-alt":{"type":"string","default":""},"no-wrap":{"type":"boolean","default":false},"text":{"type":"string","default":""},"tone":{"type":"enum","values":["","auto","rose","amber","lime","green","teal","sky","indigo","violet"],"default":""},"status":{"type":"enum","values":["none","online","offline","company","verified"],"default":"none"},"heading":{"type":"string","default":""},"description":{"type":"string","default":""},"meta":{"type":"string","default":""},"meta-icon":{"type":"icon","default":""},"card-variant":{"type":"enum","values":["square","portrait"],"default":"square"},"disabled":{"type":"boolean","default":false},"badge-count":{"type":"string","default":""},"badge-dot":{"type":"boolean","default":false},"badge-cap":{"type":"number","integer":true,"min":1,"default":99},"badge-label":{"type":"string","default":""}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-avatar-background-color":{"type":"color","state":"default"},"--sf-avatar-color":{"type":"color","state":"default"},"--sf-avatar-border-color":{"type":"color","state":"default"},"--sf-avatar-border-width":{"type":"length","state":"default"},"--sf-avatar-radius":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.avatar","tag":"sf-avatar","version":"1.3.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/4","1/3","1/2","1","2","3"],"default":"1"},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"shape":{"type":"enum","values":["circle","square"],"default":"circle"},"image-url":{"type":"string","default":""},"image-alt":{"type":"string","default":""},"no-wrap":{"type":"boolean","default":false},"text":{"type":"string","default":""},"hue":{"type":"enum","values":["","auto","red","orange","amber","yellow","lime","green","teal","cyan","sky","blue","indigo","violet","purple","pink","brown","gray"],"default":""},"tone":{"type":"enum","values":["","auto","rose","amber","lime","green","teal","sky","indigo","violet"],"default":""},"status":{"type":"enum","values":["none","online","offline","company","verified"],"default":"none"},"heading":{"type":"string","default":""},"description":{"type":"string","default":""},"meta":{"type":"string","default":""},"meta-icon":{"type":"icon","default":""},"card-variant":{"type":"enum","values":["square","portrait"],"default":"square"},"disabled":{"type":"boolean","default":false},"badge-count":{"type":"string","default":""},"badge-dot":{"type":"boolean","default":false},"badge-cap":{"type":"number","integer":true,"min":1,"default":99},"badge-label":{"type":"string","default":""}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-avatar-background-color":{"type":"color","state":"default"},"--sf-avatar-color":{"type":"color","state":"default"},"--sf-avatar-border-color":{"type":"color","state":"default"},"--sf-avatar-border-width":{"type":"length","state":"default"},"--sf-avatar-radius":{"type":"length","state":"default"}}}');
 
 /***/ },
 

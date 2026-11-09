@@ -30,4 +30,7 @@
   .active\:outline-success:active {
     outline-color: var(--sf-outline-success);
   }
+  .active\:outline-info:active {
+    outline-color: var(--sf-info-outline);
+  }
 }

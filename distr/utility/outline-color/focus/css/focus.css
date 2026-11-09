@@ -30,4 +30,7 @@
   .focus\:outline-success:focus {
     outline-color: var(--sf-outline-success);
   }
+  .focus\:outline-info:focus {
+    outline-color: var(--sf-info-outline);
+  }
 }

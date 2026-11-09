@@ -60,4 +60,10 @@
   .focus-visible\:outline-success:focus-visible {
     outline-color: var(--sf-outline-success);
   }
+  .focus-visible\:outline-info.focus-visible {
+    outline-color: var(--sf-info-outline);
+  }
+  .focus-visible\:outline-info:focus-visible {
+    outline-color: var(--sf-info-outline);
+  }
 }

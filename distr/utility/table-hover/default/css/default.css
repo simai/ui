@@ -4,4 +4,7 @@
     --sf-table-accent-bg: var(--sf-table-hover-bg);
     color: var(--sf-table-hover-color);
   }
+  .table-hover.table-stripe > tbody > tr:nth-of-type(odd):hover > * {
+    --sf-table-accent-bg: var(--sf-surface-state-select);
+  }
 }

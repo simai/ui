@@ -27,4 +27,7 @@
   .hover\:accent-success:hover {
     accent-color: var(--sf-success);
   }
+  .hover\:accent-info:hover {
+    accent-color: var(--sf-info);
+  }
 }

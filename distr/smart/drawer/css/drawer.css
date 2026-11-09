@@ -133,8 +133,26 @@
   .sf-drawer:not([data-sf-drawer-column=true]) .sf-drawer-panel {
     background: var(--sf-surface-popup);
     background: var(--sf-drawer-background, var(--sf-surface-popup));
-    --sf-badge--surface: var(--sf-drawer-background, var(--sf-surface-popup));
+    --sf-surface-place: var(--sf-drawer-background, var(--sf-surface-popup));
+    --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
     --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
+    --sf-on-surface-container-variant: light-dark(var(--sf-neutral-35), var(--sf-neutral-85));
+    --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
+    --sf-surface-state-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
+    --sf-surface-state-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-90--alfa-20));
+    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+    --sf-outline: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
+    --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+    --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    --sf-on-surface-disabled: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
+    --sf-disable: var(--sf-surface-disabled);
+    --sf-on-disable: var(--sf-on-surface-disabled);
+    --sf-on-surface-container--variant: var(--sf-on-surface-container-variant);
+    --sf-surface-transparent-active: var(--sf-surface-state-active);
+    --sf-surface-transparent-hover: var(--sf-surface-state-hover);
+    --sf-surface-transparent-select: var(--sf-surface-state-select);
   }
   /* The drawer is on the shared size ladder. The words small, large and medium
      are legacy values the component still accepts; it renders the step. */
@@ -597,16 +615,37 @@
     height: auto;
     border-radius: var(--sf-0);
   }
-  /* A docked drawer with the room is a column of the page, so it takes the
-     page's surface and no elevation: the raised step of a floating panel made
-     it the lightest plane of a dark screen, its fields black holes on it, and
-     hover and selection hard to tell apart (simai/ui-source#26, ui-mail P-02).
-     Its border divides it from the page. Without the room (a narrow host) it
-     floats over the page and keeps the raised surface and its shadow. */
+  /* A docked drawer with the room is a column of the page, so it takes no
+     elevation: the raised step of a floating panel made it the lightest plane
+     of a dark screen, and hover and selection hard to tell apart
+     (simai/ui-source#26, ui-mail P-02). Since C16 it is an area, the sunken
+     place of a sidebar (surfaces research 6.2): its fields are transparent
+     now, so they no longer show as holes in it. Its border divides it from
+     the page. Without the room (a narrow host) it floats over the page and
+     keeps the popup place and its shadow. */
   .sf-drawer[data-sf-drawer-column=true] .sf-drawer-panel {
-    background: var(--sf-surface-0);
-    background: var(--sf-drawer-background, var(--sf-surface-0));
-    --sf-badge--surface: var(--sf-drawer-background, var(--sf-surface-0));
+    background: var(--sf-surface-area);
+    background: var(--sf-drawer-background, var(--sf-surface-area));
+    --sf-surface-place: var(--sf-drawer-background, var(--sf-surface-area));
+    --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
+    --sf-on-surface-variant: light-dark(var(--sf-neutral-40), var(--sf-neutral-60));
+    --sf-on-surface-container-variant: light-dark(var(--sf-neutral-35), var(--sf-neutral-85));
+    --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
+    --sf-surface-state-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
+    --sf-surface-state-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-90--alfa-20));
+    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+    --sf-outline: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
+    --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+    --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    --sf-on-surface-disabled: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
+    --sf-disable: var(--sf-surface-disabled);
+    --sf-on-disable: var(--sf-on-surface-disabled);
+    --sf-on-surface-container--variant: var(--sf-on-surface-container-variant);
+    --sf-surface-transparent-active: var(--sf-surface-state-active);
+    --sf-surface-transparent-hover: var(--sf-surface-state-hover);
+    --sf-surface-transparent-select: var(--sf-surface-state-select);
     box-shadow: var(--sf-shadow-flat);
   }
   /* The bottom sheet (placement="bottom", simai/ui-source#20): the whole

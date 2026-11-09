@@ -227,8 +227,11 @@
   }
   .sf-tree .sf-tree-item.active > .sf-tree-item-container,
   .sf-tree .sf-tree-item[aria-selected=true] > .sf-tree-item-container {
-    background: var(--sf-surface-container-active);
-    background: var(--sf-tree-selected-background-color, var(--sf-surface-container-active));
+    /* The selected role (C16), with its ink. */
+    background: var(--sf-primary-container);
+    background: var(--sf-tree-selected-background-color, var(--sf-primary-container));
+    color: var(--sf-on-primary-container);
+    --sf-icon--color: var(--sf-on-primary-container);
   }
   .sf-tree .sf-tree-item.focus-visible > .sf-tree-item-container {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);

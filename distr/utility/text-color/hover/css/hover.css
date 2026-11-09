@@ -93,4 +93,16 @@
   .hover\:color-on-success-container-graphic:hover {
     color: var(--sf-on-success-container-graphic);
   }
+  .hover\:color-info:hover {
+    color: var(--sf-info);
+  }
+  .hover\:color-on-info:hover {
+    color: var(--sf-on-info);
+  }
+  .hover\:color-on-info-container:hover {
+    color: var(--sf-on-info-container);
+  }
+  .hover\:color-on-info-container-graphic:hover {
+    color: var(--sf-on-info-container-graphic);
+  }
 }

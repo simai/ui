@@ -195,7 +195,7 @@
     padding-right: var(--sf-switch-toggler--padding-inline-start);
   }
   .sf-switch .sf-switch-toggler {
-    --sf-switch-toggler--background-color: var(--sf-switch-background-color, var(--sf-surface-0));
+    --sf-switch-toggler--background-color: var(--sf-switch-background-color, var(--sf-surface-place));
     --sf-switch-toggler--border: var(--sf-px) solid;
     --sf-switch-toggler--border-color: var(--sf-switch-border-color, var(--sf-outline));
     --sf-switch-toggler--border-end-end-radius: var(--sf-switch-radius, var(--sf-radius-circle));

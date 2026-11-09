@@ -114,7 +114,7 @@
     transition-timing-function: var(--sf-animation);
   }
   .sf-lookup.sf-lookup--bordered .sf-lookup-frame {
-    --sf-lookup--background-color: var(--sf-lookup-background-color, var(--sf-surface-0));
+    --sf-lookup--background-color: var(--sf-lookup-background-color, var(--sf-transparent));
     --sf-lookup--border-color: var(--sf-lookup-border-color, var(--sf-outline));
   }
   .sf-lookup.sf-lookup--filled .sf-lookup-frame {
@@ -134,11 +134,11 @@
     --sf-lookup--border-color: var(--sf-outline);
   }
   .sf-lookup:not(.error).sf-lookup--filled:not(.sf-lookup--disabled):not(.sf-lookup--readonly)[focus-within] .sf-lookup-frame {
-    --sf-lookup--background-color: var(--sf-surface-0);
+    --sf-lookup--background-color: var(--sf-transparent);
     --sf-lookup--border-color: var(--sf-outline);
   }
   .sf-lookup:not(.error).sf-lookup--filled:not(.sf-lookup--disabled):not(.sf-lookup--readonly):focus-within .sf-lookup-frame {
-    --sf-lookup--background-color: var(--sf-surface-0);
+    --sf-lookup--background-color: var(--sf-transparent);
     --sf-lookup--border-color: var(--sf-outline);
   }
   /* The keyboard ring is the frame's; a click into it draws none, as on sf-input. */
@@ -168,8 +168,8 @@
     --sf-lookup--background-color: var(--sf-error-container);
   }
   .sf-lookup.sf-lookup--readonly.sf-lookup--bordered:not(.error) .sf-lookup-frame {
-    --sf-lookup--background-color: var(--sf-surface-container);
-    --sf-on-surface-variant: var(--sf-on-surface-container--variant);
+    --sf-lookup--background-color: var(--sf-transparent);
+    --sf-lookup--border-color: var(--sf-outline-variant);
   }
   .sf-lookup.sf-lookup--disabled .sf-lookup-frame {
     color: var(--sf-on-disable);
@@ -275,7 +275,26 @@
     border-radius: var(--sf-radius--surface);
     background-color: var(--sf-surface-popup);
     background-color: var(--sf-lookup-list-background-color, var(--sf-surface-popup));
+    --sf-surface-place: var(--sf-lookup-list-background-color, var(--sf-surface-popup));
+    --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
     --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
+    --sf-on-surface-container-variant: light-dark(var(--sf-neutral-35), var(--sf-neutral-85));
+    --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
+    --sf-surface-state-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
+    --sf-surface-state-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-90--alfa-20));
+    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+    --sf-outline: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
+    --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+    --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    --sf-on-surface-disabled: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
+    --sf-disable: var(--sf-surface-disabled);
+    --sf-on-disable: var(--sf-on-surface-disabled);
+    --sf-on-surface-container--variant: var(--sf-on-surface-container-variant);
+    --sf-surface-transparent-active: var(--sf-surface-state-active);
+    --sf-surface-transparent-hover: var(--sf-surface-state-hover);
+    --sf-surface-transparent-select: var(--sf-surface-state-select);
     box-shadow: var(--sf-shadow-overlay);
     color: var(--sf-on-surface);
     overflow: auto;

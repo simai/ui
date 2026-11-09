@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
   "id": "smart.tile-metric",
-  "version": "1.1.1",
+  "version": "1.2.1",
   "title": "Metric tile",
   "summary": "A metric tile: a label, a value with its unit, the change against a previous period said in words and by an arrow, a limit as a meter with thresholds, a status with a short hint, a slot for a chart, a skeleton while it loads, and the whole tile as one link or button. Tiles stand in a row that wraps (sf-tile-metric-grid).",
   "kind": "smart",
@@ -311,7 +311,7 @@
       },
       {
         "path": "src/smart/tile-metric/scss/_smart__tile-metric.scss",
-        "sha256": "3806333352414a5f753604bf4132a9836c9e2ec2ea2cb49fd896309984fe6125"
+        "sha256": "7e241488d976184093aaffa14d228231e47c168b72799fbb47ec72ded1541f2f"
       },
       {
         "path": "src/smart/tile-metric/rule.js",

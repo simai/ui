@@ -510,4 +510,64 @@
   .focus\:placeholder-on-success-container-graphic:focus::placeholder {
     color: var(--sf-on-success-container-graphic);
   }
+  .focus\:placeholder-info:focus::-webkit-input-placeholder {
+    color: var(--sf-info);
+  }
+  .focus\:placeholder-info:focus::-moz-placeholder {
+    color: var(--sf-info);
+  }
+  .focus\:placeholder-info:focus:-ms-input-placeholder {
+    color: var(--sf-info);
+  }
+  .focus\:placeholder-info:focus::-ms-input-placeholder {
+    color: var(--sf-info);
+  }
+  .focus\:placeholder-info:focus::placeholder {
+    color: var(--sf-info);
+  }
+  .focus\:placeholder-on-info:focus::-webkit-input-placeholder {
+    color: var(--sf-on-info);
+  }
+  .focus\:placeholder-on-info:focus::-moz-placeholder {
+    color: var(--sf-on-info);
+  }
+  .focus\:placeholder-on-info:focus:-ms-input-placeholder {
+    color: var(--sf-on-info);
+  }
+  .focus\:placeholder-on-info:focus::-ms-input-placeholder {
+    color: var(--sf-on-info);
+  }
+  .focus\:placeholder-on-info:focus::placeholder {
+    color: var(--sf-on-info);
+  }
+  .focus\:placeholder-on-info-container:focus::-webkit-input-placeholder {
+    color: var(--sf-on-info-container);
+  }
+  .focus\:placeholder-on-info-container:focus::-moz-placeholder {
+    color: var(--sf-on-info-container);
+  }
+  .focus\:placeholder-on-info-container:focus:-ms-input-placeholder {
+    color: var(--sf-on-info-container);
+  }
+  .focus\:placeholder-on-info-container:focus::-ms-input-placeholder {
+    color: var(--sf-on-info-container);
+  }
+  .focus\:placeholder-on-info-container:focus::placeholder {
+    color: var(--sf-on-info-container);
+  }
+  .focus\:placeholder-on-info-container-graphic:focus::-webkit-input-placeholder {
+    color: var(--sf-on-info-container-graphic);
+  }
+  .focus\:placeholder-on-info-container-graphic:focus::-moz-placeholder {
+    color: var(--sf-on-info-container-graphic);
+  }
+  .focus\:placeholder-on-info-container-graphic:focus:-ms-input-placeholder {
+    color: var(--sf-on-info-container-graphic);
+  }
+  .focus\:placeholder-on-info-container-graphic:focus::-ms-input-placeholder {
+    color: var(--sf-on-info-container-graphic);
+  }
+  .focus\:placeholder-on-info-container-graphic:focus::placeholder {
+    color: var(--sf-on-info-container-graphic);
+  }
 }

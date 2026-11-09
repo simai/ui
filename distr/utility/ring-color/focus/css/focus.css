@@ -99,4 +99,7 @@
   .focus\:ring-info-container:focus {
     --sf-ring-color: var(--sf-info-container);
   }
+  .focus\:ring-info-container-strong:focus {
+    --sf-ring-color: var(--sf-info-container-strong);
+  }
 }

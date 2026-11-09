@@ -30,4 +30,7 @@
   .hover\:outline-success:hover {
     outline-color: var(--sf-outline-success);
   }
+  .hover\:outline-info:hover {
+    outline-color: var(--sf-info-outline);
+  }
 }

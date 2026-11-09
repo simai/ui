@@ -32,6 +32,7 @@ class Buttons extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Co
       iconPosition = 'start',
       tightness,
       spacing,
+      height,
       radius,
       loading = false,
       disabled = false,
@@ -55,6 +56,12 @@ class Buttons extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Co
       this.button.classList.add(`spacing-${spacing}`);
     } else if (!hasSpacing && tightness) {
       this.button.classList.add(`tightness-${tightness}`);
+    } // The control height (1.8.0, decision C27): the size's tightness step;
+    // default needs no class.
+
+
+    if (['low', 'high', 'highest'].includes(height)) {
+      this.button.classList.add(`sf-button--height-${height}`);
     }
 
     if (radius) {

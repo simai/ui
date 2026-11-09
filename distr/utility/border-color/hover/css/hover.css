@@ -99,4 +99,7 @@
   .hover\:border-info-container:hover {
     border-color: var(--sf-info-container);
   }
+  .hover\:border-info-container-strong:hover {
+    border-color: var(--sf-info-container-strong);
+  }
 }

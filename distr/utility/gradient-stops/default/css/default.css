@@ -135,4 +135,13 @@
   .to-warning {
     --sf-gradient--color-3: var(--sf-warning);
   }
+  .from-info {
+    --sf-gradient--color-1: var(--sf-info);
+  }
+  .via-info {
+    --sf-gradient--color-2: var(--sf-info);
+  }
+  .to-info {
+    --sf-gradient--color-3: var(--sf-info);
+  }
 }

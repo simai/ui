@@ -510,4 +510,64 @@
   .hover\:placeholder-on-success-container-graphic:hover::placeholder {
     color: var(--sf-on-success-container-graphic);
   }
+  .hover\:placeholder-info:hover::-webkit-input-placeholder {
+    color: var(--sf-info);
+  }
+  .hover\:placeholder-info:hover::-moz-placeholder {
+    color: var(--sf-info);
+  }
+  .hover\:placeholder-info:hover:-ms-input-placeholder {
+    color: var(--sf-info);
+  }
+  .hover\:placeholder-info:hover::-ms-input-placeholder {
+    color: var(--sf-info);
+  }
+  .hover\:placeholder-info:hover::placeholder {
+    color: var(--sf-info);
+  }
+  .hover\:placeholder-on-info:hover::-webkit-input-placeholder {
+    color: var(--sf-on-info);
+  }
+  .hover\:placeholder-on-info:hover::-moz-placeholder {
+    color: var(--sf-on-info);
+  }
+  .hover\:placeholder-on-info:hover:-ms-input-placeholder {
+    color: var(--sf-on-info);
+  }
+  .hover\:placeholder-on-info:hover::-ms-input-placeholder {
+    color: var(--sf-on-info);
+  }
+  .hover\:placeholder-on-info:hover::placeholder {
+    color: var(--sf-on-info);
+  }
+  .hover\:placeholder-on-info-container:hover::-webkit-input-placeholder {
+    color: var(--sf-on-info-container);
+  }
+  .hover\:placeholder-on-info-container:hover::-moz-placeholder {
+    color: var(--sf-on-info-container);
+  }
+  .hover\:placeholder-on-info-container:hover:-ms-input-placeholder {
+    color: var(--sf-on-info-container);
+  }
+  .hover\:placeholder-on-info-container:hover::-ms-input-placeholder {
+    color: var(--sf-on-info-container);
+  }
+  .hover\:placeholder-on-info-container:hover::placeholder {
+    color: var(--sf-on-info-container);
+  }
+  .hover\:placeholder-on-info-container-graphic:hover::-webkit-input-placeholder {
+    color: var(--sf-on-info-container-graphic);
+  }
+  .hover\:placeholder-on-info-container-graphic:hover::-moz-placeholder {
+    color: var(--sf-on-info-container-graphic);
+  }
+  .hover\:placeholder-on-info-container-graphic:hover:-ms-input-placeholder {
+    color: var(--sf-on-info-container-graphic);
+  }
+  .hover\:placeholder-on-info-container-graphic:hover::-ms-input-placeholder {
+    color: var(--sf-on-info-container-graphic);
+  }
+  .hover\:placeholder-on-info-container-graphic:hover::placeholder {
+    color: var(--sf-on-info-container-graphic);
+  }
 }

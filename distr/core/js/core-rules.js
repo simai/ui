@@ -4208,13 +4208,22 @@ SF.RuleLoader['cl-input-choice'] = {
   mode: 'smart',
   js: true,
   css: true,
-  relation: [// An option's icon and the check of a chosen card in a multiple field.
+  relation: [// The single control on a card's name line is the class radio sf-radio draws
+  // (.sf-radio-button, size 1): its box is the name line.
+  {
+    name: 'radio'
+  }, // The multiple control is the class checkbox sf-checkbox draws (.sf-checkbox,
+  // size 1), its check the icon font's.
+  {
+    name: 'checkbox'
+  }, // An option's icon on the name line and the check of a chosen checkbox.
   {
     name: 'icons'
-  }, // An option's badge is the class badge (.sf-badge, tight, its default size) beside
-  // its title.
+  }, // An option's badge is sf-badge (tonal, primary, on the half line) beside its
+  // name, only when an option carries one.
   {
-    name: 'badges'
+    name: 'cl-badge',
+    lazy: true
   }]
 };
 
@@ -5399,14 +5408,14 @@ SF.RuleLoader['cl-wizard'] = {
 /***/ "d7094f52f675"
 () {
 
-SF.RuleLoader['accent-color/default'] = new RegExp("^(?:accent-(?:current|error|on-surface|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))(?![\\s\\S])");
+SF.RuleLoader['accent-color/default'] = new RegExp("^(?:accent-(?:current|error|info|on-surface|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "ec5fe49b9d71"
 () {
 
-SF.RuleLoader['accent-color/hover'] = new RegExp("^(?:hover:accent-(?:current|error|on-surface|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))(?![\\s\\S])");
+SF.RuleLoader['accent-color/hover'] = new RegExp("^(?:hover:accent-(?:current|error|info|on-surface|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))(?![\\s\\S])");
 
 /***/ },
 
@@ -5827,7 +5836,7 @@ SF.RuleLoader['background-color-brand/hover'] = new RegExp("^(?:hover:bg-(?:beha
 () {
 
 // Покрываем все варианты bg-*, включая hover:/active: и палитру с числовыми суффиксами
-SF.RuleLoader['background-color/default'] = new RegExp("^(?:(?:active:bg-(?:error(?:-(?:container|state|transparent))?|info(?:-(?:container|state))?|on-surface|primary(?:-(?:container|state|transparent))?|s(?:econdary(?:-(?:container|state|transparent))?|u(?:ccess(?:-(?:container|state|transparent))?|rface-(?:container|state|transparent)))|tertiary(?:-(?:container|state|transparent))?|warning(?:-(?:container|state|transparent))?)|bg-(?:bl(?:ack|ue(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|current|disable|error(?:-(?:container(?:-strong)?|state-select|transparent-(?:overlay|select)))?|gr(?:ay(?:-(?:0|1|2|3|4|5|6|7|8|9))?|een(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|info(?:-(?:container(?:-strong)?|state-select))?|o(?:n-surface(?:-variant)?|range(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|p(?:ink(?:-(?:0|1|2|3|4|5|6|7|8|9))?|rimary(?:-(?:container(?:-strong)?|state-select|transparent-(?:overlay|select)))?|urple(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|red(?:-(?:0|1|2|3|4|5|6|7|8|9))?|s(?:econdary(?:-(?:container(?:-strong)?|state-select|transparent-(?:overlay|select)))?|u(?:ccess(?:-(?:container(?:-strong)?|state-select|transparent-(?:overlay|select)))?|rface(?:-(?:0|1|2|3|4|area|c(?:ard|ontainer(?:-strong)?)|disabled|inverse(?:-fixed)?|p(?:age|opup(?:-nested)?)|state-select|transparent-(?:overlay|select)|veil))?))|t(?:ertiary(?:-(?:container(?:-strong)?|state-select|transparent-(?:overlay|select)))?|ransparent)|w(?:arning(?:-(?:container(?:-strong)?|state-select|transparent-(?:overlay|select)))?|hite)|yellow(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|hover:bg-(?:error(?:-(?:container|state|transparent))?|info(?:-(?:container|state))?|on-surface|primary(?:-(?:container|state|transparent))?|s(?:econdary(?:-(?:container|state|transparent))?|u(?:ccess(?:-(?:container|state|transparent))?|rface-(?:container|state|transparent)))|tertiary(?:-(?:container|state|transparent))?|warning(?:-(?:container|state|transparent))?)))(?![\\s\\S])");
+SF.RuleLoader['background-color/default'] = new RegExp("^(?:(?:active:bg-(?:error(?:-(?:container|state|transparent))?|info(?:-(?:container|state))?|on-surface|primary(?:-(?:container|state|transparent))?|s(?:econdary(?:-(?:container|state|transparent))?|u(?:ccess(?:-(?:container|state|transparent))?|rface-(?:container|state|transparent)))|tertiary(?:-(?:container|state|transparent))?|warning(?:-(?:container|state|transparent))?)|bg-(?:bl(?:ack|ue(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|current|disable|error(?:-(?:container(?:-strong)?|state-select|transparent-(?:overlay|select)))?|gr(?:ay(?:-(?:0|1|2|3|4|5|6|7|8|9))?|een(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|info(?:-(?:container(?:-strong)?|state-select))?|o(?:n-surface(?:-variant)?|range(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|p(?:ink(?:-(?:0|1|2|3|4|5|6|7|8|9))?|rimary(?:-(?:container(?:-strong)?|state-select|transparent-(?:overlay|select)))?|urple(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|red(?:-(?:0|1|2|3|4|5|6|7|8|9))?|s(?:crim|econdary(?:-(?:container(?:-strong)?|state-select|transparent-(?:overlay|select)))?|u(?:ccess(?:-(?:container(?:-strong)?|state-select|transparent-(?:overlay|select)))?|rface(?:-(?:0|1|2|3|4|area|c(?:ard|ontainer(?:-strong)?)|disabled|inverse(?:-fixed)?|p(?:age|opup(?:-nested)?)|state-select|transparent-(?:overlay|select)|veil))?))|t(?:ertiary(?:-(?:container(?:-strong)?|state-select|transparent-(?:overlay|select)))?|ransparent)|w(?:arning(?:-(?:container(?:-strong)?|state-select|transparent-(?:overlay|select)))?|hite)|yellow(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|hover:bg-(?:error(?:-(?:container|state|transparent))?|info(?:-(?:container|state))?|on-surface|primary(?:-(?:container|state|transparent))?|s(?:econdary(?:-(?:container|state|transparent))?|u(?:ccess(?:-(?:container|state|transparent))?|rface-(?:container|state|transparent)))|tertiary(?:-(?:container|state|transparent))?|warning(?:-(?:container|state|transparent))?)))(?![\\s\\S])");
 
 /***/ },
 
@@ -6058,28 +6067,28 @@ SF.RuleLoader['border-collapse/default'] = new RegExp("^(?:border-(?:collapse|se
 /***/ "36e0bd1477ff"
 () {
 
-SF.RuleLoader['border-color/active'] = new RegExp("^(?:active:border-(?:current|error(?:-(?:container|transparent-overlay))?|info(?:-container)?|o(?:n-surface(?:-variant)?|utline(?:-variant)?)|primary(?:-(?:container|transparent-overlay))?|s(?:econdary(?:-(?:container|transparent-overlay))?|u(?:ccess(?:-(?:container|transparent-overlay))?|rface(?:-(?:0|1|container|inverse|overlay|transparent-overlay))?))|t(?:ertiary(?:-(?:container|transparent-overlay))?|ransparent)|warning(?:-(?:container|transparent-overlay))?))(?![\\s\\S])");
+SF.RuleLoader['border-color/active'] = new RegExp("^(?:active:border-(?:current|error(?:-(?:container|transparent-overlay))?|info(?:-container(?:-strong)?)?|o(?:n-surface(?:-variant)?|utline(?:-variant)?)|primary(?:-(?:container|transparent-overlay))?|s(?:econdary(?:-(?:container|transparent-overlay))?|u(?:ccess(?:-(?:container|transparent-overlay))?|rface(?:-(?:0|1|container|inverse|overlay|transparent-overlay))?))|t(?:ertiary(?:-(?:container|transparent-overlay))?|ransparent)|warning(?:-(?:container|transparent-overlay))?))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "718923df5f47"
 () {
 
-SF.RuleLoader['border-color/default'] = new RegExp("^(?:border-(?:bl(?:ack|ue(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|current|error(?:-(?:container|transparent-overlay))?|gr(?:ay(?:-(?:0|1|2|3|4|5|6|7|8|9))?|een(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|info(?:-container)?|o(?:n-surface(?:-variant)?|range(?:-(?:0|1|2|3|4|5|6|7|8|9))?|utline(?:-variant)?)|p(?:ink(?:-(?:0|1|2|3|4|5|6|7|8|9))?|rimary(?:-(?:container|transparent-overlay))?|urple(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|red(?:-(?:0|1|2|3|4|5|6|7|8|9))?|s(?:econdary(?:-(?:container|transparent-overlay))?|u(?:ccess(?:-(?:container|transparent-overlay))?|rface(?:-(?:0|1|container|inverse|overlay|transparent-overlay))?))|t(?:ertiary(?:-(?:container|transparent-overlay))?|ransparent)|w(?:arning(?:-(?:container|transparent-overlay))?|hite)|yellow(?:-(?:0|1|2|3|4|5|6|7|8|9))?))(?![\\s\\S])");
+SF.RuleLoader['border-color/default'] = new RegExp("^(?:border-(?:bl(?:ack|ue(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|current|error(?:-(?:container|transparent-overlay))?|gr(?:ay(?:-(?:0|1|2|3|4|5|6|7|8|9))?|een(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|info(?:-container(?:-strong)?)?|o(?:n-surface(?:-variant)?|range(?:-(?:0|1|2|3|4|5|6|7|8|9))?|utline(?:-variant)?)|p(?:ink(?:-(?:0|1|2|3|4|5|6|7|8|9))?|rimary(?:-(?:container|transparent-overlay))?|urple(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|red(?:-(?:0|1|2|3|4|5|6|7|8|9))?|s(?:econdary(?:-(?:container|transparent-overlay))?|u(?:ccess(?:-(?:container|transparent-overlay))?|rface(?:-(?:0|1|container|inverse|overlay|transparent-overlay))?))|t(?:ertiary(?:-(?:container|transparent-overlay))?|ransparent)|w(?:arning(?:-(?:container|transparent-overlay))?|hite)|yellow(?:-(?:0|1|2|3|4|5|6|7|8|9))?))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "8031b8c62a64"
 () {
 
-SF.RuleLoader['border-color/focus'] = new RegExp("^(?:focus:border-(?:current|error(?:-(?:container|transparent-overlay))?|info(?:-container)?|o(?:n-surface(?:-variant)?|utline(?:-variant)?)|primary(?:-(?:container|transparent-overlay))?|s(?:econdary(?:-(?:container|transparent-overlay))?|u(?:ccess(?:-(?:container|transparent-overlay))?|rface(?:-(?:0|1|container|inverse|overlay|transparent-overlay))?))|t(?:ertiary(?:-(?:container|transparent-overlay))?|ransparent)|warning(?:-(?:container|transparent-overlay))?))(?![\\s\\S])");
+SF.RuleLoader['border-color/focus'] = new RegExp("^(?:focus:border-(?:current|error(?:-(?:container|transparent-overlay))?|info(?:-container(?:-strong)?)?|o(?:n-surface(?:-variant)?|utline(?:-variant)?)|primary(?:-(?:container|transparent-overlay))?|s(?:econdary(?:-(?:container|transparent-overlay))?|u(?:ccess(?:-(?:container|transparent-overlay))?|rface(?:-(?:0|1|container|inverse|overlay|transparent-overlay))?))|t(?:ertiary(?:-(?:container|transparent-overlay))?|ransparent)|warning(?:-(?:container|transparent-overlay))?))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "0ddce8aa6b73"
 () {
 
-SF.RuleLoader['border-color/hover'] = new RegExp("^(?:hover:border-(?:current|error(?:-(?:container|transparent-overlay))?|info(?:-container)?|o(?:n-surface(?:-variant)?|utline(?:-variant)?)|primary(?:-(?:container|transparent-overlay))?|s(?:econdary(?:-(?:container|transparent-overlay))?|u(?:ccess(?:-(?:container|transparent-overlay))?|rface(?:-(?:0|1|container|inverse|overlay|transparent-overlay))?))|t(?:ertiary(?:-(?:container|transparent-overlay))?|ransparent)|warning(?:-(?:container|transparent-overlay))?))(?![\\s\\S])");
+SF.RuleLoader['border-color/hover'] = new RegExp("^(?:hover:border-(?:current|error(?:-(?:container|transparent-overlay))?|info(?:-container(?:-strong)?)?|o(?:n-surface(?:-variant)?|utline(?:-variant)?)|primary(?:-(?:container|transparent-overlay))?|s(?:econdary(?:-(?:container|transparent-overlay))?|u(?:ccess(?:-(?:container|transparent-overlay))?|rface(?:-(?:0|1|container|inverse|overlay|transparent-overlay))?))|t(?:ertiary(?:-(?:container|transparent-overlay))?|ransparent)|warning(?:-(?:container|transparent-overlay))?))(?![\\s\\S])");
 
 /***/ },
 
@@ -6191,21 +6200,21 @@ SF.RuleLoader['box-decoration-break/default'] = new RegExp("^(?:box-(?:clone|sli
 /***/ "ed21a91577cf"
 () {
 
-SF.RuleLoader['box-shadow-color/active'] = new RegExp("^(?:active:shadow-(?:error|on-surface|primary|s(?:econdary|uccess)|tertiary|warning))(?![\\s\\S])");
+SF.RuleLoader['box-shadow-color/active'] = new RegExp("^(?:active:shadow-(?:error|info|on-surface|primary|s(?:econdary|uccess)|tertiary|warning))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "37f060fb0f15"
 () {
 
-SF.RuleLoader['box-shadow-color/default'] = new RegExp("^(?:shadow-(?:error|on-surface|primary|s(?:econdary|uccess)|tertiary|warning))(?![\\s\\S])");
+SF.RuleLoader['box-shadow-color/default'] = new RegExp("^(?:shadow-(?:error|info|on-surface|primary|s(?:econdary|uccess)|tertiary|warning))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "f84266ec1f06"
 () {
 
-SF.RuleLoader['box-shadow-color/hover'] = new RegExp("^(?:hover:shadow-(?:error|on-surface|primary|s(?:econdary|uccess)|tertiary|warning))(?![\\s\\S])");
+SF.RuleLoader['box-shadow-color/hover'] = new RegExp("^(?:hover:shadow-(?:error|info|on-surface|primary|s(?:econdary|uccess)|tertiary|warning))(?![\\s\\S])");
 
 /***/ },
 
@@ -6359,7 +6368,7 @@ SF.RuleLoader['break-inside/xxl'] = new RegExp("^(?:xxl:break-inside-a(?:uto|voi
 /***/ "c4153601d495"
 () {
 
-SF.RuleLoader['caret-color/default'] = new RegExp("^(?:caret-(?:current|error|on-surface|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))(?![\\s\\S])");
+SF.RuleLoader['caret-color/default'] = new RegExp("^(?:caret-(?:current|error|info|on-surface|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))(?![\\s\\S])");
 
 /***/ },
 
@@ -6597,14 +6606,14 @@ SF.RuleLoader["display/xxl"] = new RegExp("^(?:xxl:(?:block|content|display-tabl
 /***/ "b79df85183ef"
 () {
 
-SF.RuleLoader['divider-color/default'] = new RegExp("^(?:divide(?:-(?:current|error|outline(?:-variant)?|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning)|r-(?:current|error|outline(?:-variant)?|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning)))(?![\\s\\S])");
+SF.RuleLoader['divider-color/default'] = new RegExp("^(?:divide(?:-(?:current|error|info|outline(?:-variant)?|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning)|r-(?:current|error|info|outline(?:-variant)?|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning)))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "25d808e22e46"
 () {
 
-SF.RuleLoader['divider-color/hover'] = new RegExp("^(?:hover:divider-(?:current|error|outline(?:-variant)?|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))(?![\\s\\S])");
+SF.RuleLoader['divider-color/hover'] = new RegExp("^(?:hover:divider-(?:current|error|info|outline(?:-variant)?|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))(?![\\s\\S])");
 
 /***/ },
 
@@ -6632,14 +6641,14 @@ SF.RuleLoader['divider-width/default'] = new RegExp("^(?:divide(?:-(?:x-(?:0|1|2
 /***/ "890abb185f93"
 () {
 
-SF.RuleLoader['drop-shadow-color/default'] = new RegExp("^(?:drop-shadow-(?:current|error(?:-(?:container|transparent-(?:overlay|select)))?|on-surface(?:-variant)?|primary(?:-(?:container|transparent-(?:overlay|select)))?|s(?:econdary(?:-(?:container|transparent-(?:overlay|select)))?|u(?:ccess(?:-(?:container|transparent-(?:overlay|select)))?|rface(?:-(?:0|1|2|3|4|container|inverse(?:-fixed)?))?))|t(?:ertiary(?:-(?:container|transparent-(?:overlay|select)))?|ransparent)|warning(?:-(?:container|transparent-(?:overlay|select)))?))(?![\\s\\S])");
+SF.RuleLoader['drop-shadow-color/default'] = new RegExp("^(?:drop-shadow-(?:current|error(?:-(?:container|transparent-(?:overlay|select)))?|info(?:-(?:container(?:-strong)?|state-select))?|on-surface(?:-variant)?|primary(?:-(?:container|transparent-(?:overlay|select)))?|s(?:econdary(?:-(?:container|transparent-(?:overlay|select)))?|u(?:ccess(?:-(?:container|transparent-(?:overlay|select)))?|rface(?:-(?:0|1|2|3|4|container|inverse(?:-fixed)?))?))|t(?:ertiary(?:-(?:container|transparent-(?:overlay|select)))?|ransparent)|warning(?:-(?:container|transparent-(?:overlay|select)))?))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "4c79a0e82f89"
 () {
 
-SF.RuleLoader['drop-shadow-color/hover'] = new RegExp("^(?:hover:drop-shadow-(?:current|error(?:-(?:container|transparent-(?:overlay|select)))?|on-surface(?:-variant)?|primary(?:-(?:container|transparent-(?:overlay|select)))?|s(?:econdary(?:-(?:container|transparent-(?:overlay|select)))?|u(?:ccess(?:-(?:container|transparent-(?:overlay|select)))?|rface(?:-(?:0|1|2|3|4|container|inverse(?:-fixed)?))?))|t(?:ertiary(?:-(?:container|transparent-(?:overlay|select)))?|ransparent)|warning(?:-(?:container|transparent-(?:overlay|select)))?))(?![\\s\\S])");
+SF.RuleLoader['drop-shadow-color/hover'] = new RegExp("^(?:hover:drop-shadow-(?:current|error(?:-(?:container|transparent-(?:overlay|select)))?|info(?:-(?:container(?:-strong)?|state-select))?|on-surface(?:-variant)?|primary(?:-(?:container|transparent-(?:overlay|select)))?|s(?:econdary(?:-(?:container|transparent-(?:overlay|select)))?|u(?:ccess(?:-(?:container|transparent-(?:overlay|select)))?|rface(?:-(?:0|1|2|3|4|container|inverse(?:-fixed)?))?))|t(?:ertiary(?:-(?:container|transparent-(?:overlay|select)))?|ransparent)|warning(?:-(?:container|transparent-(?:overlay|select)))?))(?![\\s\\S])");
 
 /***/ },
 
@@ -6772,7 +6781,7 @@ SF.RuleLoader['fill-rule/default'] = new RegExp("^(?:fill-(?:evenodd|nonzero))(?
 /***/ "6b33db3eb963"
 () {
 
-SF.RuleLoader['fill/default'] = new RegExp("^(?:(?:fill-(?:current|disable|error(?:-(?:container|transparent-(?:overlay|select)))?|on-surface(?:-variant)?|primary(?:-(?:container|transparent-(?:overlay|select)))?|s(?:econdary(?:-(?:container|transparent-(?:overlay|select)))?|u(?:ccess(?:-(?:container|transparent-(?:overlay|select)))?|rface(?:-(?:0|1|2|3|4|container|inverse(?:-fixed)?|transparent-(?:overlay|select)))?))|t(?:ertiary(?:-(?:container|transparent-(?:overlay|select)))?|ransparent)|warning(?:-(?:container|transparent-(?:overlay|select)))?)|hover:fill-(?:error(?:-(?:container|transparent))?|on-surface|primary(?:-(?:container|transparent))?|s(?:econdary(?:-(?:container|transparent))?|u(?:ccess(?:-(?:container|transparent))?|rface-(?:container|transparent)))|tertiary(?:-(?:container|transparent))?|warning(?:-(?:container|transparent))?)))(?![\\s\\S])");
+SF.RuleLoader['fill/default'] = new RegExp("^(?:(?:fill-(?:current|disable|error(?:-(?:container|transparent-(?:overlay|select)))?|info(?:-(?:container(?:-strong)?|state-select))?|on-surface(?:-variant)?|primary(?:-(?:container|transparent-(?:overlay|select)))?|s(?:econdary(?:-(?:container|transparent-(?:overlay|select)))?|u(?:ccess(?:-(?:container|transparent-(?:overlay|select)))?|rface(?:-(?:0|1|2|3|4|container|inverse(?:-fixed)?|transparent-(?:overlay|select)))?))|t(?:ertiary(?:-(?:container|transparent-(?:overlay|select)))?|ransparent)|warning(?:-(?:container|transparent-(?:overlay|select)))?)|hover:fill-(?:error(?:-(?:container|transparent))?|info(?:-(?:container|state))?|on-surface|primary(?:-(?:container|transparent))?|s(?:econdary(?:-(?:container|transparent))?|u(?:ccess(?:-(?:container|transparent))?|rface-(?:container|transparent)))|tertiary(?:-(?:container|transparent))?|warning(?:-(?:container|transparent))?)))(?![\\s\\S])");
 
 /***/ },
 
@@ -7423,14 +7432,14 @@ SF.RuleLoader["gap/xxl"] = new RegExp("^(?:xxl:(?:col-gap-(?:0|1(?:\\/(?:2|3|4))
 /***/ "e293dde03445"
 () {
 
-SF.RuleLoader['gradient-color/default'] = new RegExp("^(?:gr(?:1-(?:current|inherit|on-surface|primary(?:-container)?|s(?:econdary(?:-container)?|u(?:ccess|rface-(?:0|1|2)))|t(?:ertiary(?:-container)?|ransparent)|warning)|2-(?:current|inherit|on-surface|primary(?:-container)?|s(?:econdary(?:-container)?|u(?:ccess|rface-(?:0|1|2)))|t(?:ertiary(?:-container)?|ransparent)|warning)|3-(?:current|inherit|on-surface|primary(?:-container)?|s(?:econdary(?:-container)?|u(?:ccess|rface-(?:0|1|2)))|t(?:ertiary(?:-container)?|ransparent)|warning)))(?![\\s\\S])");
+SF.RuleLoader['gradient-color/default'] = new RegExp("^(?:gr(?:1-(?:current|in(?:fo|herit)|on-surface|primary(?:-container)?|s(?:econdary(?:-container)?|u(?:ccess|rface-(?:0|1|2)))|t(?:ertiary(?:-container)?|ransparent)|warning)|2-(?:current|in(?:fo|herit)|on-surface|primary(?:-container)?|s(?:econdary(?:-container)?|u(?:ccess|rface-(?:0|1|2)))|t(?:ertiary(?:-container)?|ransparent)|warning)|3-(?:current|in(?:fo|herit)|on-surface|primary(?:-container)?|s(?:econdary(?:-container)?|u(?:ccess|rface-(?:0|1|2)))|t(?:ertiary(?:-container)?|ransparent)|warning)))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "e49d8383cb57"
 () {
 
-SF.RuleLoader['gradient-stops/default'] = new RegExp("^(?:(?:from-(?:current|inherit|on-surface|primary(?:-container)?|s(?:econdary(?:-container)?|u(?:ccess|rface-(?:0|1|2)))|t(?:ertiary(?:-container)?|ransparent)|warning)|to-(?:current|inherit|on-surface|primary(?:-container)?|s(?:econdary(?:-container)?|u(?:ccess|rface-(?:0|1|2)))|t(?:ertiary(?:-container)?|ransparent)|warning)|via-(?:current|inherit|on-surface|primary(?:-container)?|s(?:econdary(?:-container)?|u(?:ccess|rface-(?:0|1|2)))|t(?:ertiary(?:-container)?|ransparent)|warning)))(?![\\s\\S])");
+SF.RuleLoader['gradient-stops/default'] = new RegExp("^(?:(?:from-(?:current|in(?:fo|herit)|on-surface|primary(?:-container)?|s(?:econdary(?:-container)?|u(?:ccess|rface-(?:0|1|2)))|t(?:ertiary(?:-container)?|ransparent)|warning)|to-(?:current|in(?:fo|herit)|on-surface|primary(?:-container)?|s(?:econdary(?:-container)?|u(?:ccess|rface-(?:0|1|2)))|t(?:ertiary(?:-container)?|ransparent)|warning)|via-(?:current|in(?:fo|herit)|on-surface|primary(?:-container)?|s(?:econdary(?:-container)?|u(?:ccess|rface-(?:0|1|2)))|t(?:ertiary(?:-container)?|ransparent)|warning)))(?![\\s\\S])");
 
 /***/ },
 
@@ -8868,35 +8877,35 @@ SF.RuleLoader['order/xxl'] = new RegExp("^(?:xxl:order-(?:1(?:(?:0|1|2))?|2|3|4|
 /***/ "0f246054177f"
 () {
 
-SF.RuleLoader['outline-color/active'] = new RegExp("^(?:active:outline-(?:current|error|outline(?:-variant)?|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))(?![\\s\\S])");
+SF.RuleLoader['outline-color/active'] = new RegExp("^(?:active:outline-(?:current|error|info|outline(?:-variant)?|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "3acb3e5df245"
 () {
 
-SF.RuleLoader['outline-color/default'] = new RegExp("^(?:outline-(?:current|error|outline(?:-variant)?|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))(?![\\s\\S])");
+SF.RuleLoader['outline-color/default'] = new RegExp("^(?:outline-(?:current|error|info|outline(?:-variant)?|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "a8f57d842288"
 () {
 
-SF.RuleLoader['outline-color/focus-visible'] = new RegExp("^(?:focus-visible:outline-(?:current|error|outline(?:-variant)?|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))(?![\\s\\S])");
+SF.RuleLoader['outline-color/focus-visible'] = new RegExp("^(?:focus-visible:outline-(?:current|error|info|outline(?:-variant)?|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "7d1c628b6217"
 () {
 
-SF.RuleLoader['outline-color/focus'] = new RegExp("^(?:focus:outline-(?:current|error|outline(?:-variant)?|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))(?![\\s\\S])");
+SF.RuleLoader['outline-color/focus'] = new RegExp("^(?:focus:outline-(?:current|error|info|outline(?:-variant)?|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "3b9d0c28d14c"
 () {
 
-SF.RuleLoader['outline-color/hover'] = new RegExp("^(?:hover:outline-(?:current|error|outline(?:-variant)?|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))(?![\\s\\S])");
+SF.RuleLoader['outline-color/hover'] = new RegExp("^(?:hover:outline-(?:current|error|info|outline(?:-variant)?|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))(?![\\s\\S])");
 
 /***/ },
 
@@ -9239,21 +9248,21 @@ SF.RuleLoader['place-self/xxl'] = new RegExp("^(?:xxl:self-(?:auto|center|end|st
 /***/ "8e30737f508b"
 () {
 
-SF.RuleLoader['placeholder-color/default'] = new RegExp("^(?:placeholder-(?:current|disable|error|inherit|on-(?:disable|error(?:-container(?:-graphic)?)?|primary(?:-container(?:-graphic)?)?|s(?:econdary(?:-container(?:-graphic)?)?|u(?:ccess(?:-container(?:-graphic)?)?|rface(?:-(?:fixed|inverse(?:-fixed)?|variant))?))|tertiary(?:-container(?:-graphic)?)?|warning(?:-container(?:-graphic)?)?)|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))(?![\\s\\S])");
+SF.RuleLoader['placeholder-color/default'] = new RegExp("^(?:placeholder-(?:current|disable|error|in(?:fo|herit)|on-(?:disable|error(?:-container(?:-graphic)?)?|info(?:-container(?:-graphic)?)?|primary(?:-container(?:-graphic)?)?|s(?:econdary(?:-container(?:-graphic)?)?|u(?:ccess(?:-container(?:-graphic)?)?|rface(?:-(?:fixed|inverse(?:-fixed)?|variant))?))|tertiary(?:-container(?:-graphic)?)?|warning(?:-container(?:-graphic)?)?)|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "4441f3a5a54e"
 () {
 
-SF.RuleLoader['placeholder-color/focus'] = new RegExp("^(?:focus:placeholder-(?:current|disable|error|inherit|on-(?:disable|error(?:-container(?:-graphic)?)?|primary(?:-container(?:-graphic)?)?|s(?:econdary(?:-container(?:-graphic)?)?|u(?:ccess(?:-container(?:-graphic)?)?|rface(?:-(?:fixed|inverse(?:-fixed)?|variant))?))|tertiary(?:-container(?:-graphic)?)?|warning(?:-container(?:-graphic)?)?)|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))(?![\\s\\S])");
+SF.RuleLoader['placeholder-color/focus'] = new RegExp("^(?:focus:placeholder-(?:current|disable|error|in(?:fo|herit)|on-(?:disable|error(?:-container(?:-graphic)?)?|info(?:-container(?:-graphic)?)?|primary(?:-container(?:-graphic)?)?|s(?:econdary(?:-container(?:-graphic)?)?|u(?:ccess(?:-container(?:-graphic)?)?|rface(?:-(?:fixed|inverse(?:-fixed)?|variant))?))|tertiary(?:-container(?:-graphic)?)?|warning(?:-container(?:-graphic)?)?)|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "2df558f96345"
 () {
 
-SF.RuleLoader['placeholder-color/hover'] = new RegExp("^(?:hover:placeholder-(?:current|disable|error|inherit|on-(?:disable|error(?:-container(?:-graphic)?)?|primary(?:-container(?:-graphic)?)?|s(?:econdary(?:-container(?:-graphic)?)?|u(?:ccess(?:-container(?:-graphic)?)?|rface(?:-(?:fixed|inverse(?:-fixed)?|variant))?))|tertiary(?:-container(?:-graphic)?)?|warning(?:-container(?:-graphic)?)?)|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))(?![\\s\\S])");
+SF.RuleLoader['placeholder-color/hover'] = new RegExp("^(?:hover:placeholder-(?:current|disable|error|in(?:fo|herit)|on-(?:disable|error(?:-container(?:-graphic)?)?|info(?:-container(?:-graphic)?)?|primary(?:-container(?:-graphic)?)?|s(?:econdary(?:-container(?:-graphic)?)?|u(?:ccess(?:-container(?:-graphic)?)?|rface(?:-(?:fixed|inverse(?:-fixed)?|variant))?))|tertiary(?:-container(?:-graphic)?)?|warning(?:-container(?:-graphic)?)?)|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))(?![\\s\\S])");
 
 /***/ },
 
@@ -9353,28 +9362,28 @@ SF.RuleLoader['resize/default'] = new RegExp("^(?:resize(?:-(?:none|x|y))?)(?![\
 /***/ "23a614f4f892"
 () {
 
-SF.RuleLoader['ring-color/default'] = new RegExp("^(?:ring-(?:current|error(?:-(?:container|transparent-overlay))?|info(?:-container)?|o(?:n-surface(?:-variant)?|utline(?:-variant)?)|primary(?:-(?:container|transparent-overlay))?|s(?:econdary(?:-(?:container|transparent-overlay))?|u(?:ccess(?:-(?:container|transparent-overlay))?|rface(?:-(?:0|1|container|inverse|overlay|transparent-overlay))?))|t(?:ertiary(?:-(?:container|transparent-overlay))?|ransparent)|warning(?:-(?:container|transparent-overlay))?))(?![\\s\\S])");
+SF.RuleLoader['ring-color/default'] = new RegExp("^(?:ring-(?:current|error(?:-(?:container|transparent-overlay))?|info(?:-container(?:-strong)?)?|o(?:n-surface(?:-variant)?|utline(?:-variant)?)|primary(?:-(?:container|transparent-overlay))?|s(?:econdary(?:-(?:container|transparent-overlay))?|u(?:ccess(?:-(?:container|transparent-overlay))?|rface(?:-(?:0|1|container|inverse|overlay|transparent-overlay))?))|t(?:ertiary(?:-(?:container|transparent-overlay))?|ransparent)|warning(?:-(?:container|transparent-overlay))?))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "49452bca137a"
 () {
 
-SF.RuleLoader['ring-color/focus-visible'] = new RegExp("^(?:focus-visible:ring-(?:current|error(?:-(?:container|transparent-overlay))?|info(?:-container)?|o(?:n-surface(?:-variant)?|utline(?:-variant)?)|primary(?:-(?:container|transparent-overlay))?|s(?:econdary(?:-(?:container|transparent-overlay))?|u(?:ccess(?:-(?:container|transparent-overlay))?|rface(?:-(?:0|1|container|inverse|overlay|transparent-overlay))?))|t(?:ertiary(?:-(?:container|transparent-overlay))?|ransparent)|warning(?:-(?:container|transparent-overlay))?))(?![\\s\\S])");
+SF.RuleLoader['ring-color/focus-visible'] = new RegExp("^(?:focus-visible:ring-(?:current|error(?:-(?:container|transparent-overlay))?|info(?:-container(?:-strong)?)?|o(?:n-surface(?:-variant)?|utline(?:-variant)?)|primary(?:-(?:container|transparent-overlay))?|s(?:econdary(?:-(?:container|transparent-overlay))?|u(?:ccess(?:-(?:container|transparent-overlay))?|rface(?:-(?:0|1|container|inverse|overlay|transparent-overlay))?))|t(?:ertiary(?:-(?:container|transparent-overlay))?|ransparent)|warning(?:-(?:container|transparent-overlay))?))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "8139c518dfcb"
 () {
 
-SF.RuleLoader['ring-color/focus'] = new RegExp("^(?:focus:ring-(?:current|error(?:-(?:container|transparent-overlay))?|info(?:-container)?|o(?:n-surface(?:-variant)?|utline(?:-variant)?)|primary(?:-(?:container|transparent-overlay))?|s(?:econdary(?:-(?:container|transparent-overlay))?|u(?:ccess(?:-(?:container|transparent-overlay))?|rface(?:-(?:0|1|container|inverse|overlay|transparent-overlay))?))|t(?:ertiary(?:-(?:container|transparent-overlay))?|ransparent)|warning(?:-(?:container|transparent-overlay))?))(?![\\s\\S])");
+SF.RuleLoader['ring-color/focus'] = new RegExp("^(?:focus:ring-(?:current|error(?:-(?:container|transparent-overlay))?|info(?:-container(?:-strong)?)?|o(?:n-surface(?:-variant)?|utline(?:-variant)?)|primary(?:-(?:container|transparent-overlay))?|s(?:econdary(?:-(?:container|transparent-overlay))?|u(?:ccess(?:-(?:container|transparent-overlay))?|rface(?:-(?:0|1|container|inverse|overlay|transparent-overlay))?))|t(?:ertiary(?:-(?:container|transparent-overlay))?|ransparent)|warning(?:-(?:container|transparent-overlay))?))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "1731af7af8e6"
 () {
 
-SF.RuleLoader['ring-color/hover'] = new RegExp("^(?:hover:ring-(?:current|error(?:-(?:container|transparent-overlay))?|info(?:-container)?|o(?:n-surface(?:-variant)?|utline(?:-variant)?)|primary(?:-(?:container|transparent-overlay))?|s(?:econdary(?:-(?:container|transparent-overlay))?|u(?:ccess(?:-(?:container|transparent-overlay))?|rface(?:-(?:0|1|container|inverse|overlay|transparent-overlay))?))|t(?:ertiary(?:-(?:container|transparent-overlay))?|ransparent)|warning(?:-(?:container|transparent-overlay))?))(?![\\s\\S])");
+SF.RuleLoader['ring-color/hover'] = new RegExp("^(?:hover:ring-(?:current|error(?:-(?:container|transparent-overlay))?|info(?:-container(?:-strong)?)?|o(?:n-surface(?:-variant)?|utline(?:-variant)?)|primary(?:-(?:container|transparent-overlay))?|s(?:econdary(?:-(?:container|transparent-overlay))?|u(?:ccess(?:-(?:container|transparent-overlay))?|rface(?:-(?:0|1|container|inverse|overlay|transparent-overlay))?))|t(?:ertiary(?:-(?:container|transparent-overlay))?|ransparent)|warning(?:-(?:container|transparent-overlay))?))(?![\\s\\S])");
 
 /***/ },
 
@@ -9409,28 +9418,28 @@ SF.RuleLoader['ring-inset/hover'] = new RegExp("^(?:hover:ring-inset)(?![\\s\\S]
 /***/ "e7176d28e779"
 () {
 
-SF.RuleLoader['ring-offset-color/default'] = new RegExp("^(?:ring-offset-(?:current|error(?:-(?:container|transparent-overlay))?|info(?:-container)?|o(?:n-surface(?:-variant)?|utline(?:-variant)?)|primary(?:-(?:container|transparent-overlay))?|s(?:econdary(?:-(?:container|transparent-overlay))?|u(?:ccess(?:-(?:container|transparent-overlay))?|rface(?:-(?:0|1|container|inverse|overlay|transparent-overlay))?))|t(?:ertiary(?:-(?:container|transparent-overlay))?|ransparent)|warning(?:-(?:container|transparent-overlay))?))(?![\\s\\S])");
+SF.RuleLoader['ring-offset-color/default'] = new RegExp("^(?:ring-offset-(?:current|error(?:-(?:container|transparent-overlay))?|info(?:-container(?:-strong)?)?|o(?:n-surface(?:-variant)?|utline(?:-variant)?)|primary(?:-(?:container|transparent-overlay))?|s(?:econdary(?:-(?:container|transparent-overlay))?|u(?:ccess(?:-(?:container|transparent-overlay))?|rface(?:-(?:0|1|container|inverse|overlay|transparent-overlay))?))|t(?:ertiary(?:-(?:container|transparent-overlay))?|ransparent)|warning(?:-(?:container|transparent-overlay))?))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "b0ad32c34e0c"
 () {
 
-SF.RuleLoader['ring-offset-color/focus-visible'] = new RegExp("^(?:focus-visible:ring-offset-(?:current|error(?:-(?:container|transparent-overlay))?|info(?:-container)?|o(?:n-surface(?:-variant)?|utline(?:-variant)?)|primary(?:-(?:container|transparent-overlay))?|s(?:econdary(?:-(?:container|transparent-overlay))?|u(?:ccess(?:-(?:container|transparent-overlay))?|rface(?:-(?:0|1|container|inverse|overlay|transparent-overlay))?))|t(?:ertiary(?:-(?:container|transparent-overlay))?|ransparent)|warning(?:-(?:container|transparent-overlay))?))(?![\\s\\S])");
+SF.RuleLoader['ring-offset-color/focus-visible'] = new RegExp("^(?:focus-visible:ring-offset-(?:current|error(?:-(?:container|transparent-overlay))?|info(?:-container(?:-strong)?)?|o(?:n-surface(?:-variant)?|utline(?:-variant)?)|primary(?:-(?:container|transparent-overlay))?|s(?:econdary(?:-(?:container|transparent-overlay))?|u(?:ccess(?:-(?:container|transparent-overlay))?|rface(?:-(?:0|1|container|inverse|overlay|transparent-overlay))?))|t(?:ertiary(?:-(?:container|transparent-overlay))?|ransparent)|warning(?:-(?:container|transparent-overlay))?))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "74314d157aa4"
 () {
 
-SF.RuleLoader['ring-offset-color/focus'] = new RegExp("^(?:focus:ring-offset-(?:current|error(?:-(?:container|transparent-overlay))?|info(?:-container)?|o(?:n-surface(?:-variant)?|utline(?:-variant)?)|primary(?:-(?:container|transparent-overlay))?|s(?:econdary(?:-(?:container|transparent-overlay))?|u(?:ccess(?:-(?:container|transparent-overlay))?|rface(?:-(?:0|1|container|inverse|overlay|transparent-overlay))?))|t(?:ertiary(?:-(?:container|transparent-overlay))?|ransparent)|warning(?:-(?:container|transparent-overlay))?))(?![\\s\\S])");
+SF.RuleLoader['ring-offset-color/focus'] = new RegExp("^(?:focus:ring-offset-(?:current|error(?:-(?:container|transparent-overlay))?|info(?:-container(?:-strong)?)?|o(?:n-surface(?:-variant)?|utline(?:-variant)?)|primary(?:-(?:container|transparent-overlay))?|s(?:econdary(?:-(?:container|transparent-overlay))?|u(?:ccess(?:-(?:container|transparent-overlay))?|rface(?:-(?:0|1|container|inverse|overlay|transparent-overlay))?))|t(?:ertiary(?:-(?:container|transparent-overlay))?|ransparent)|warning(?:-(?:container|transparent-overlay))?))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "d696e61d9ce9"
 () {
 
-SF.RuleLoader['ring-offset-color/hover'] = new RegExp("^(?:hover:ring-offset-(?:current|error(?:-(?:container|transparent-overlay))?|info(?:-container)?|o(?:n-surface(?:-variant)?|utline(?:-variant)?)|primary(?:-(?:container|transparent-overlay))?|s(?:econdary(?:-(?:container|transparent-overlay))?|u(?:ccess(?:-(?:container|transparent-overlay))?|rface(?:-(?:0|1|container|inverse|overlay|transparent-overlay))?))|t(?:ertiary(?:-(?:container|transparent-overlay))?|ransparent)|warning(?:-(?:container|transparent-overlay))?))(?![\\s\\S])");
+SF.RuleLoader['ring-offset-color/hover'] = new RegExp("^(?:hover:ring-offset-(?:current|error(?:-(?:container|transparent-overlay))?|info(?:-container(?:-strong)?)?|o(?:n-surface(?:-variant)?|utline(?:-variant)?)|primary(?:-(?:container|transparent-overlay))?|s(?:econdary(?:-(?:container|transparent-overlay))?|u(?:ccess(?:-(?:container|transparent-overlay))?|rface(?:-(?:0|1|container|inverse|overlay|transparent-overlay))?))|t(?:ertiary(?:-(?:container|transparent-overlay))?|ransparent)|warning(?:-(?:container|transparent-overlay))?))(?![\\s\\S])");
 
 /***/ },
 
@@ -9521,7 +9530,7 @@ SF.RuleLoader['ring-width/hover'] = new RegExp("^(?:hover:ring-(?:0|1|2|3|4))(?!
 /***/ "ea66c5b3460b"
 () {
 
-SF.RuleLoader['scroll-backdrop-color/default'] = new RegExp("^(?:scroll-bg-(?:current|error|primary|s(?:econdary|u(?:ccess|rface))|t(?:ertiary|ransparent)|warning))(?![\\s\\S])");
+SF.RuleLoader['scroll-backdrop-color/default'] = new RegExp("^(?:scroll-bg-(?:current|error|info|primary|s(?:econdary|u(?:ccess|rface))|t(?:ertiary|ransparent)|warning))(?![\\s\\S])");
 
 /***/ },
 
@@ -9976,56 +9985,56 @@ SF.RuleLoader['text-align/xxl'] = new RegExp("^(?:xxl:text-(?:center|end|justify
 /***/ "7be57b836c52"
 () {
 
-SF.RuleLoader['text-color/active'] = new RegExp("^(?:active:color-(?:error|on-(?:disable|error(?:-container(?:-graphic)?)?|primary(?:-container(?:-graphic)?)?|s(?:econdary(?:-container(?:-graphic)?)?|u(?:ccess(?:-container(?:-graphic)?)?|rface(?:-(?:fixed|inverse(?:-fixed)?|variant))?))|tertiary(?:-container(?:-graphic)?)?|warning(?:-container(?:-graphic)?)?)|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))(?![\\s\\S])");
+SF.RuleLoader['text-color/active'] = new RegExp("^(?:active:color-(?:error|info|on-(?:disable|error(?:-container(?:-graphic)?)?|info(?:-container(?:-graphic)?)?|primary(?:-container(?:-graphic)?)?|s(?:econdary(?:-container(?:-graphic)?)?|u(?:ccess(?:-container(?:-graphic)?)?|rface(?:-(?:fixed|inverse(?:-fixed)?|variant))?))|tertiary(?:-container(?:-graphic)?)?|warning(?:-container(?:-graphic)?)?)|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "8cb04f95bd14"
 () {
 
-SF.RuleLoader['text-color/default'] = new RegExp("^(?:color-(?:bl(?:ack|ue(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|current|disable|error|gr(?:ay(?:-(?:0|1|2|3|4|5|6|7|8|9))?|een(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|inherit|o(?:n-(?:disable|error(?:-container(?:-graphic)?)?|primary(?:-container(?:-graphic)?)?|s(?:econdary(?:-container(?:-graphic)?)?|u(?:ccess(?:-container(?:-graphic)?)?|rface(?:-(?:fixed|inverse(?:-fixed)?|variant))?))|tertiary(?:-container(?:-graphic)?)?|warning(?:-container(?:-graphic)?)?)|range(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|p(?:ink(?:-(?:0|1|2|3|4|5|6|7|8|9))?|rimary|urple(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|red(?:-(?:0|1|2|3|4|5|6|7|8|9))?|s(?:econdary|uccess)|t(?:ertiary|ransparent)|w(?:arning|hite)|yellow(?:-(?:0|1|2|3|4|5|6|7|8|9))?))(?![\\s\\S])");
+SF.RuleLoader['text-color/default'] = new RegExp("^(?:color-(?:bl(?:ack|ue(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|current|disable|error|gr(?:ay(?:-(?:0|1|2|3|4|5|6|7|8|9))?|een(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|in(?:fo|herit)|o(?:n-(?:disable|error(?:-container(?:-graphic)?)?|info(?:-container(?:-graphic)?)?|primary(?:-container(?:-graphic)?)?|s(?:econdary(?:-container(?:-graphic)?)?|u(?:ccess(?:-container(?:-graphic)?)?|rface(?:-(?:fixed|inverse(?:-fixed)?|variant))?))|tertiary(?:-container(?:-graphic)?)?|warning(?:-container(?:-graphic)?)?)|range(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|p(?:ink(?:-(?:0|1|2|3|4|5|6|7|8|9))?|rimary|urple(?:-(?:0|1|2|3|4|5|6|7|8|9))?)|red(?:-(?:0|1|2|3|4|5|6|7|8|9))?|s(?:econdary|uccess)|t(?:ertiary|ransparent)|w(?:arning|hite)|yellow(?:-(?:0|1|2|3|4|5|6|7|8|9))?))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "e09cdf858dc0"
 () {
 
-SF.RuleLoader['text-color/focus'] = new RegExp("^(?:focus:color-(?:current|disable|error|inherit|on-(?:disable|error(?:-container(?:-graphic)?)?|primary(?:-container(?:-graphic)?)?|s(?:econdary(?:-container(?:-graphic)?)?|u(?:ccess(?:-container(?:-graphic)?)?|rface(?:-(?:fixed|inverse(?:-fixed)?|variant))?))|tertiary(?:-container(?:-graphic)?)?|warning(?:-container(?:-graphic)?)?)|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))(?![\\s\\S])");
+SF.RuleLoader['text-color/focus'] = new RegExp("^(?:focus:color-(?:current|disable|error|in(?:fo|herit)|on-(?:disable|error(?:-container(?:-graphic)?)?|info(?:-container(?:-graphic)?)?|primary(?:-container(?:-graphic)?)?|s(?:econdary(?:-container(?:-graphic)?)?|u(?:ccess(?:-container(?:-graphic)?)?|rface(?:-(?:fixed|inverse(?:-fixed)?|variant))?))|tertiary(?:-container(?:-graphic)?)?|warning(?:-container(?:-graphic)?)?)|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "2638cf5b46eb"
 () {
 
-SF.RuleLoader['text-color/hover'] = new RegExp("^(?:hover:color-(?:error|on-(?:disable|error(?:-container(?:-graphic)?)?|primary(?:-container(?:-graphic)?)?|s(?:econdary(?:-container(?:-graphic)?)?|u(?:ccess(?:-container(?:-graphic)?)?|rface(?:-(?:fixed|inverse(?:-fixed)?|variant))?))|tertiary(?:-container(?:-graphic)?)?|warning(?:-container(?:-graphic)?)?)|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))(?![\\s\\S])");
+SF.RuleLoader['text-color/hover'] = new RegExp("^(?:hover:color-(?:error|info|on-(?:disable|error(?:-container(?:-graphic)?)?|info(?:-container(?:-graphic)?)?|primary(?:-container(?:-graphic)?)?|s(?:econdary(?:-container(?:-graphic)?)?|u(?:ccess(?:-container(?:-graphic)?)?|rface(?:-(?:fixed|inverse(?:-fixed)?|variant))?))|tertiary(?:-container(?:-graphic)?)?|warning(?:-container(?:-graphic)?)?)|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "b6bd6cb6f5c2"
 () {
 
-SF.RuleLoader['text-decoration-color/active'] = new RegExp("^(?:active:decoration-(?:current|error|inherit|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))(?![\\s\\S])");
+SF.RuleLoader['text-decoration-color/active'] = new RegExp("^(?:active:decoration-(?:current|error|in(?:fo|herit)|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "d86aea619825"
 () {
 
-SF.RuleLoader['text-decoration-color/default'] = new RegExp("^(?:decoration-(?:current|error|inherit|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))(?![\\s\\S])");
+SF.RuleLoader['text-decoration-color/default'] = new RegExp("^(?:decoration-(?:current|error|in(?:fo|herit)|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "556e184bb1b4"
 () {
 
-SF.RuleLoader['text-decoration-color/focus'] = new RegExp("^(?:focus:decoration-(?:current|error|inherit|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))(?![\\s\\S])");
+SF.RuleLoader['text-decoration-color/focus'] = new RegExp("^(?:focus:decoration-(?:current|error|in(?:fo|herit)|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "d912678570f7"
 () {
 
-SF.RuleLoader['text-decoration-color/hover'] = new RegExp("^(?:hover:decoration-(?:current|error|inherit|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))(?![\\s\\S])");
+SF.RuleLoader['text-decoration-color/hover'] = new RegExp("^(?:hover:decoration-(?:current|error|in(?:fo|herit)|primary|s(?:econdary|uccess)|t(?:ertiary|ransparent)|warning))(?![\\s\\S])");
 
 /***/ },
 

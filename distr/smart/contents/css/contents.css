@@ -261,6 +261,8 @@
        is the host's own. */
     /* A row of the open list is a menu's row: the control height of the size,
        its inset, the panel's inset given back. */
+    /* The current section: the selected role every component takes (C16),
+       primary-container with its ink. */
   }
   .sf-contents--layout-compact.sf-contents--sticky {
     position: sticky;
@@ -333,7 +335,26 @@
     border-radius: var(--sf-radius--ui);
     background-color: var(--sf-surface-popup);
     background-color: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-popup)));
+    --sf-surface-place: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-popup)));
+    --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
     --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
+    --sf-on-surface-container-variant: light-dark(var(--sf-neutral-35), var(--sf-neutral-85));
+    --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
+    --sf-surface-state-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
+    --sf-surface-state-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-90--alfa-20));
+    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+    --sf-outline: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
+    --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+    --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    --sf-on-surface-disabled: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
+    --sf-disable: var(--sf-surface-disabled);
+    --sf-on-disable: var(--sf-on-surface-disabled);
+    --sf-on-surface-container--variant: var(--sf-on-surface-container-variant);
+    --sf-surface-transparent-active: var(--sf-surface-state-active);
+    --sf-surface-transparent-hover: var(--sf-surface-state-hover);
+    --sf-surface-transparent-select: var(--sf-surface-state-select);
     box-shadow: var(--sf-shadow-overlay);
   }
   .sf-contents--layout-compact .sf-contents-link {
@@ -353,8 +374,8 @@
     background-color: var(--sf-surface-container-hover);
   }
   .sf-contents--layout-compact .sf-contents-link[aria-current=location] {
-    background-color: var(--sf-secondary-container);
-    color: var(--sf-on-secondary-container);
+    background-color: var(--sf-primary-container);
+    color: var(--sf-on-primary-container);
   }
   .sf-contents--layout-rail.sf-contents--sticky {
     position: sticky;
@@ -428,7 +449,26 @@
     padding-inline: var(--sf-space-1\/4);
     border-radius: var(--sf-radius--ui);
     background-color: var(--sf-surface-popup);
+    --sf-surface-place: var(--sf-surface-popup);
+    --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
     --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
+    --sf-on-surface-container-variant: light-dark(var(--sf-neutral-35), var(--sf-neutral-85));
+    --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
+    --sf-surface-state-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
+    --sf-surface-state-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-90--alfa-20));
+    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+    --sf-outline: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
+    --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+    --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    --sf-on-surface-disabled: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
+    --sf-disable: var(--sf-surface-disabled);
+    --sf-on-disable: var(--sf-on-surface-disabled);
+    --sf-on-surface-container--variant: var(--sf-on-surface-container-variant);
+    --sf-surface-transparent-active: var(--sf-surface-state-active);
+    --sf-surface-transparent-hover: var(--sf-surface-state-hover);
+    --sf-surface-transparent-select: var(--sf-surface-state-select);
     box-shadow: var(--sf-shadow-overlay);
     white-space: nowrap;
     opacity: 0;
@@ -626,6 +666,8 @@
          is the host's own. */
       /* A row of the open list is a menu's row: the control height of the size,
          its inset, the panel's inset given back. */
+      /* The current section: the selected role every component takes (C16),
+         primary-container with its ink. */
     }
     .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--sticky {
       position: sticky;
@@ -698,7 +740,26 @@
       border-radius: var(--sf-radius--ui);
       background-color: var(--sf-surface-popup);
       background-color: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-popup)));
+      --sf-surface-place: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-popup)));
+      --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
       --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
+      --sf-on-surface-container-variant: light-dark(var(--sf-neutral-35), var(--sf-neutral-85));
+      --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
+      --sf-surface-state-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
+      --sf-surface-state-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+      --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+      --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-90--alfa-20));
+      --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+      --sf-outline: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
+      --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+      --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+      --sf-on-surface-disabled: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
+      --sf-disable: var(--sf-surface-disabled);
+      --sf-on-disable: var(--sf-on-surface-disabled);
+      --sf-on-surface-container--variant: var(--sf-on-surface-container-variant);
+      --sf-surface-transparent-active: var(--sf-surface-state-active);
+      --sf-surface-transparent-hover: var(--sf-surface-state-hover);
+      --sf-surface-transparent-select: var(--sf-surface-state-select);
       box-shadow: var(--sf-shadow-overlay);
     }
     .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-link {
@@ -718,8 +779,8 @@
       background-color: var(--sf-surface-container-hover);
     }
     .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-link[aria-current=location] {
-      background-color: var(--sf-secondary-container);
-      color: var(--sf-on-secondary-container);
+      background-color: var(--sf-primary-container);
+      color: var(--sf-on-primary-container);
     }
   }
   @media (min-width: 44rem) {
@@ -847,6 +908,8 @@
          is the host's own. */
       /* A row of the open list is a menu's row: the control height of the size,
          its inset, the panel's inset given back. */
+      /* The current section: the selected role every component takes (C16),
+         primary-container with its ink. */
     }
     .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--sticky {
       position: sticky;
@@ -919,7 +982,26 @@
       border-radius: var(--sf-radius--ui);
       background-color: var(--sf-surface-popup);
       background-color: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-popup)));
+      --sf-surface-place: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-popup)));
+      --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
       --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
+      --sf-on-surface-container-variant: light-dark(var(--sf-neutral-35), var(--sf-neutral-85));
+      --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
+      --sf-surface-state-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
+      --sf-surface-state-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+      --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+      --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-90--alfa-20));
+      --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+      --sf-outline: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
+      --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+      --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+      --sf-on-surface-disabled: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
+      --sf-disable: var(--sf-surface-disabled);
+      --sf-on-disable: var(--sf-on-surface-disabled);
+      --sf-on-surface-container--variant: var(--sf-on-surface-container-variant);
+      --sf-surface-transparent-active: var(--sf-surface-state-active);
+      --sf-surface-transparent-hover: var(--sf-surface-state-hover);
+      --sf-surface-transparent-select: var(--sf-surface-state-select);
       box-shadow: var(--sf-shadow-overlay);
     }
     .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-link {
@@ -939,8 +1021,8 @@
       background-color: var(--sf-surface-container-hover);
     }
     .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-link[aria-current=location] {
-      background-color: var(--sf-secondary-container);
-      color: var(--sf-on-secondary-container);
+      background-color: var(--sf-primary-container);
+      color: var(--sf-on-primary-container);
     }
   }
   @media (min-width: 60rem) {
@@ -1068,6 +1150,8 @@
          is the host's own. */
       /* A row of the open list is a menu's row: the control height of the size,
          its inset, the panel's inset given back. */
+      /* The current section: the selected role every component takes (C16),
+         primary-container with its ink. */
     }
     .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--sticky {
       position: sticky;
@@ -1140,7 +1224,26 @@
       border-radius: var(--sf-radius--ui);
       background-color: var(--sf-surface-popup);
       background-color: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-popup)));
+      --sf-surface-place: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-popup)));
+      --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
       --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
+      --sf-on-surface-container-variant: light-dark(var(--sf-neutral-35), var(--sf-neutral-85));
+      --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
+      --sf-surface-state-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
+      --sf-surface-state-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+      --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+      --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-90--alfa-20));
+      --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+      --sf-outline: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
+      --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+      --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+      --sf-on-surface-disabled: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
+      --sf-disable: var(--sf-surface-disabled);
+      --sf-on-disable: var(--sf-on-surface-disabled);
+      --sf-on-surface-container--variant: var(--sf-on-surface-container-variant);
+      --sf-surface-transparent-active: var(--sf-surface-state-active);
+      --sf-surface-transparent-hover: var(--sf-surface-state-hover);
+      --sf-surface-transparent-select: var(--sf-surface-state-select);
       box-shadow: var(--sf-shadow-overlay);
     }
     .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-link {
@@ -1160,8 +1263,8 @@
       background-color: var(--sf-surface-container-hover);
     }
     .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-link[aria-current=location] {
-      background-color: var(--sf-secondary-container);
-      color: var(--sf-on-secondary-container);
+      background-color: var(--sf-primary-container);
+      color: var(--sf-on-primary-container);
     }
   }
   @media (min-width: 72rem) {
@@ -1289,6 +1392,8 @@
          is the host's own. */
       /* A row of the open list is a menu's row: the control height of the size,
          its inset, the panel's inset given back. */
+      /* The current section: the selected role every component takes (C16),
+         primary-container with its ink. */
     }
     .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--sticky {
       position: sticky;
@@ -1361,7 +1466,26 @@
       border-radius: var(--sf-radius--ui);
       background-color: var(--sf-surface-popup);
       background-color: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-popup)));
+      --sf-surface-place: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-popup)));
+      --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
       --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
+      --sf-on-surface-container-variant: light-dark(var(--sf-neutral-35), var(--sf-neutral-85));
+      --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
+      --sf-surface-state-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
+      --sf-surface-state-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+      --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+      --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-90--alfa-20));
+      --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+      --sf-outline: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
+      --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+      --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+      --sf-on-surface-disabled: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
+      --sf-disable: var(--sf-surface-disabled);
+      --sf-on-disable: var(--sf-on-surface-disabled);
+      --sf-on-surface-container--variant: var(--sf-on-surface-container-variant);
+      --sf-surface-transparent-active: var(--sf-surface-state-active);
+      --sf-surface-transparent-hover: var(--sf-surface-state-hover);
+      --sf-surface-transparent-select: var(--sf-surface-state-select);
       box-shadow: var(--sf-shadow-overlay);
     }
     .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-link {
@@ -1381,8 +1505,8 @@
       background-color: var(--sf-surface-container-hover);
     }
     .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-link[aria-current=location] {
-      background-color: var(--sf-secondary-container);
-      color: var(--sf-on-secondary-container);
+      background-color: var(--sf-primary-container);
+      color: var(--sf-on-primary-container);
     }
   }
   @media (prefers-reduced-motion: reduce) {

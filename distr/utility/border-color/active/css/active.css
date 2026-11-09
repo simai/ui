@@ -99,4 +99,7 @@
   .active\:border-info-container:active {
     border-color: var(--sf-info-container);
   }
+  .active\:border-info-container-strong:active {
+    border-color: var(--sf-info-container-strong);
+  }
 }

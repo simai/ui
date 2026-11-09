@@ -27,4 +27,7 @@
   .accent-success {
     accent-color: var(--sf-success);
   }
+  .accent-info {
+    accent-color: var(--sf-info);
+  }
 }

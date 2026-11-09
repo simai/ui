@@ -30,4 +30,7 @@
   .hover\:divider-success:hover > :not([hidden]) ~ :not([hidden]) {
     border-color: var(--sf-outline-success);
   }
+  .hover\:divider-info:hover > :not([hidden]) ~ :not([hidden]) {
+    border-color: var(--sf-info-outline);
+  }
 }

@@ -724,10 +724,11 @@ function avatarClasses(context, options = {}) {
   }
 
   if (context.isText) {
-    classes.push("sf-avatar--text", "items-cross-center", "content-main-center");
+    classes.push("sf-avatar--text", "items-cross-center", "content-main-center"); // The hue's role set (core .sf-hue-<name>, C17); the class sheet
+    // draws the plate and the ink from it.
 
-    if (context.resolvedTone) {
-      classes.push(`sf-avatar--tone-${context.resolvedTone}`);
+    if (context.resolvedHue) {
+      classes.push(`sf-hue-${context.resolvedHue}`);
     }
   }
 

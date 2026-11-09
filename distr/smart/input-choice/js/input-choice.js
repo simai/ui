@@ -255,9 +255,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
  // sf-input-choice: a form field that picks one option, or several, from
-// cards -- a site's kind, a page type, a template, a backup target, a plan --
-// each with a title, a caption, an icon and a badge. Larena's request
-// msg-993e1e39 item 3 (choice cards).
+// cards -- a site's kind, a page type, a template, a backup target, a plan,
+// delivery or payment -- each with a title, a description, a badge, a price
+// and term, an icon or an image, in one of three layouts (list, tile,
+// picture; owner decision C28). Larena's request msg-993e1e39 item 3 (choice
+// cards).
 //
 // From its component.json (standard simai.smart-component 1.3.14 §3, §4, §8,
 // §17): the settings are made by core/js/element-manifest.js; the host is the
@@ -346,6 +348,11 @@ class SfInputChoice extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.
   get columnsValue() {
     const columns = String(this.columns ?? 'auto');
     return _js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_5__.CHOICE_COLUMNS.includes(columns) ? columns : 'auto';
+  }
+
+  get layoutValue() {
+    const layout = String(this.layout ?? 'tile');
+    return _js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_5__.CHOICE_LAYOUTS.includes(layout) ? layout : 'tile';
   }
   /** The chosen values, in the order of the options: one, or several when multiple. */
 
@@ -462,6 +469,7 @@ class SfInputChoice extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.
       chosen: new Set(this.selected),
       multiple: Boolean(this.multiple),
       columns: this.columnsValue,
+      layout: this.layoutValue,
       label: this.label || '',
       ariaLabel: this.getAttribute('aria-label') || '',
       hint: this.hint || '',
@@ -512,43 +520,95 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__);
 
- // sf-input-choice's markup: the label row, the grid of cards and the hint or
-// error line under it.
+ // sf-input-choice's markup: the label row, the cards and the hint or error
+// line under them (owner decision C28, prototype input-choice-world.html).
 //
-//   div.sf-choice
-//     span.sf-choice-label          names the group (aria-labelledby)
-//     div.sf-choice-grid            role radiogroup (single) or group (multiple)
-//       label.sf-choice-card        one per option
-//         input.sf-choice-input     the native radio or checkbox, over the card
-//         span.sf-choice-icon       the option's icon, when it has one
-//         span.sf-choice-body       its title (with a badge) and caption
-//         span.sf-choice-mark       the radio or check mark at the end
-//     span.sf-choice-message        the hint, or the error while invalid
+//   div.sf-choice[data-layout=list|tile|picture]
+//     span.sf-choice-label            names the group (aria-labelledby)
+//     div.sf-choice-grid              role radiogroup (single) or group (multiple)
+//       label.sf-choice-card          one per option; the whole card is the target
+//         span.sf-choice-media        picture: the image, to the card's edges
+//         span.sf-choice-head         the name line and what hangs from it
+//           span.sf-radio-button | span.sf-checkbox
+//                                     the class radio or checkbox sf-radio and
+//                                     sf-checkbox draw, size 1: its box is the
+//                                     name line; the native input is in it
+//           span.sf-choice-body       the name (icon, title, sf-badge) and the description
+//           span.sf-choice-meta       list: price and term, a column at the line's end
+//         span.sf-choice-rule         tile and picture with a price: the divider
+//         span.sf-choice-price        tile and picture: price and term at the foot
+//     span.sf-choice-message          the hint, or the error while invalid
 //
 // The native inputs are the control: the arrow keys move and choose in a
-// radio group, Space toggles a checkbox, and each is named by its title and
-// described by its caption. While the host is the form control they stay
-// out of the page's form (§17.1 item 6).
+// radio group, Space toggles a checkbox, and each is named by its title (and
+// badge; never the icon's ligature) and
+// described by its description, price and term. While the host is the form
+// control they stay out of the page's form (§17.1 item 6).
 
-const joinClasses = (...tokens) => tokens.flat().filter(Boolean).join(' ');
+const joinClasses = (...tokens) => tokens.flat().filter(Boolean).join(' '); // The control on the name line: the markup of the class radio or checkbox,
+// with the card's own native input in its box and the same utility classes
+// sf-radio and sf-checkbox write (the class sheets leave display to them). Invalid marks the control of a
+// card not chosen (C13: error).
+
+
+function renderControl(context, item, state) {
+  const {
+    checked,
+    disabled,
+    ids
+  } = state;
+  const described = [item.caption ? ids.caption : '', item.price || item.term ? ids.price : ''].filter(Boolean).join(' ');
+  const input = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<input class="sf-choice-input" type=${context.multiple ? 'checkbox' : 'radio'}
+           name=${context.controlName || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} form=${context.innerForm || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+           value=${item.value} .checked=${checked} ?disabled=${disabled}
+           aria-labelledby=${item.badge ? `${ids.title} ${ids.badge}` : ids.title} aria-describedby=${described || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+           aria-invalid=${context.invalid ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>`;
+  const error = context.invalid && !checked ? 'error' : ''; // sf-choice-mark: the 1.0 ring's class, a legacy alias of sf-choice-control
+  // until 2027-01-01 (change journal class-input-choice-mark-to-control).
+
+  const control = ['sf-choice-control', 'sf-choice-mark'];
+
+  if (context.multiple) {
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${joinClasses('sf-checkbox', 'sf-checkbox--size-1', 'flex', control, error)}><span class="sf-checkbox-box transition flex items-cross-center content-main-center">${input}${checked ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-icon" aria-hidden="true">check</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</span></span>`;
+  }
+
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${joinClasses('sf-radio-button', 'sf-radio-button--size-1', 'flex', control, error)}><span class="sf-radio-button-box transition flex items-cross-center content-main-center">${input}<span class="sf-radio-button-mark" aria-hidden="true"></span></span></span>`;
+}
+
+function renderPrice(item, id, kind) {
+  if (!item.price && !item.term) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${kind} id=${id}>${item.price ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-choice-price-value">${item.price}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}${item.term ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-choice-term">${item.term}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</span>`;
+}
 
 function renderCard(context, item, index) {
   const checked = context.chosen.has(item.value);
   const disabled = context.fieldDisabled || item.disabled;
-  const titleId = `${context.id}--title-${index + 1}`;
-  const captionId = `${context.id}--caption-${index + 1}`;
+  const n = index + 1;
+  const ids = {
+    title: `${context.id}--title-${n}`,
+    badge: `${context.id}--badge-${n}`,
+    caption: `${context.id}--caption-${n}`,
+    price: `${context.id}--price-${n}`
+  };
+  const list = context.layout === 'list';
+  const picture = context.layout === 'picture';
+  const foot = !list && (item.price || item.term);
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<label class=${joinClasses('sf-choice-card', checked ? 'sf-choice-card--checked' : '', disabled ? 'sf-choice-card--disabled' : '')}>
-    <input class="sf-choice-input" type=${context.multiple ? 'checkbox' : 'radio'}
-           name=${context.controlName || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} form=${context.innerForm || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-           value=${item.value} .checked=${checked} ?disabled=${disabled}
-           aria-labelledby=${titleId} aria-describedby=${item.caption ? captionId : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-           aria-invalid=${context.invalid ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
-    ${item.icon ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-choice-icon" aria-hidden="true"><span class="sf-icon">${item.icon}</span></span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-    <span class="sf-choice-body">
-      <span class="sf-choice-title" id=${titleId}><span class="sf-choice-title-text">${item.label}</span>${item.badge ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-badge sf-badge--tight">${item.badge}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</span>
-      ${item.caption ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-choice-caption" id=${captionId}>${item.caption}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    ${picture && item.image ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-choice-media" aria-hidden="true"><img src=${item.image} alt="" loading="lazy" decoding="async"></span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    <span class="sf-choice-head">
+      ${renderControl(context, item, {
+    checked,
+    disabled,
+    ids
+  })}
+      <span class="sf-choice-body">
+        <span class="sf-choice-title">${item.icon ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-icon sf-choice-icon" aria-hidden="true">${item.icon}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}<span class="sf-choice-title-text" id=${ids.title}>${item.label}</span>${item.badge ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-badge class="sf-choice-badge" id=${ids.badge} text=${item.badge} appearance="tonal" scheme="primary" line="1/2"
+                           root-class=${disabled ? 'sf-badge--disabled' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}></sf-badge>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</span>
+        ${item.caption ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-choice-caption" id=${ids.caption}>${item.caption}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      </span>
+      ${list ? renderPrice(item, ids.price, 'sf-choice-meta') : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     </span>
-    <span class="sf-choice-mark" aria-hidden="true">${checked && context.multiple ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-icon">check</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</span>
+    ${foot ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-choice-rule" aria-hidden="true"></span>${renderPrice(item, ids.price, 'sf-choice-price')}` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
   </label>`;
 }
 
@@ -557,7 +617,7 @@ function renderChoiceTemplate(context) {
   const messageId = `${context.id}--message`;
   const message = context.invalid && context.errorMessage ? context.errorMessage : context.hint;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class=${joinClasses('sf-choice', context.multiple ? 'sf-choice--multiple' : '', context.invalid ? 'sf-choice--invalid' : '', context.fieldDisabled ? 'sf-choice--disabled' : '', context.rootClass)}
-                   style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} data-columns=${context.columns}>
+                   style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} data-layout=${context.layout} data-columns=${context.columns}>
     ${context.label ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-choice-label" id=${labelId}>${context.label}${context.required ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-choice-required" aria-hidden="true">*</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     <div class="sf-choice-grid" role=${context.multiple ? 'group' : 'radiogroup'}
          aria-labelledby=${context.label ? labelId : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
@@ -626,6 +686,7 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   CHOICE_COLUMNS: () => (/* binding */ CHOICE_COLUMNS),
+/* harmony export */   CHOICE_LAYOUTS: () => (/* binding */ CHOICE_LAYOUTS),
 /* harmony export */   applyChoice: () => (/* binding */ applyChoice),
 /* harmony export */   formatValue: () => (/* binding */ formatValue),
 /* harmony export */   normaliseItems: () => (/* binding */ normaliseItems),
@@ -641,11 +702,19 @@ __webpack_require__.r(__webpack_exports__);
 // the most columns, fewer where they do not fit.
 const CHOICE_COLUMNS = Object.freeze(['auto', '1', '2', '3', '4']);
 
+// The arrangement of the cards (owner decision C28): list -- one frame of
+// rows divided by lines, the control at the start, price and term a column at
+// the end of the name line; tile -- cards in the grid, the control at the end
+// of the name line, the price at the foot; picture -- tiles whose image runs
+// to the edges, the caption under it (rows on a phone).
+const CHOICE_LAYOUTS = Object.freeze(['tile', 'list', 'picture']);
+
 const text = (value) => (value === null || value === undefined ? '' : String(value));
 
-// One option: {value, label, caption?, icon?, badge?, disabled?} -- the shape
-// of sf-input-lookup's options, with an icon and a badge. `title` is read as
-// the label; a missing label is the value. An option without a value, or repeating an earlier one, is left
+// One option: {value, label, caption?, icon?, badge?, price?, term?, image?,
+// disabled?} -- the shape of sf-input-lookup's options, with an icon, a badge,
+// a price with its term and an image. `title` is read as the label; a missing
+// label is the value. An option without a value, or repeating an earlier one, is left
 // out: one value names one card.
 function normaliseItems(items) {
   let list = items;
@@ -673,6 +742,9 @@ function normaliseItems(items) {
       caption: text(source.caption),
       icon: text(source.icon).trim(),
       badge: text(source.badge).trim(),
+      price: text(source.price).trim(),
+      term: text(source.term).trim(),
+      image: text(source.image).trim(),
       disabled: Boolean(source.disabled),
     });
   }
@@ -727,7 +799,7 @@ function applyChoice(values, items, value, checked, multiple = false) {
 /***/ "0c1826bbbeb3"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-choice","tag":"sf-input-choice","version":"1.0.2","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"value":"string","label":"string","caption":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"badge":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true}}},"multiple":{"type":"boolean","default":false},"columns":{"type":"enum","values":["auto","1","2","3","4"],"default":"auto"},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"name":{"type":"string","default":""},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"input":{"carries":"native"},"change":{"carries":"native"}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","validity":["value-missing","custom-error"]},"css-variables":{"--sf-choice-gap":{"type":"length","state":"default"},"--sf-choice-min-inline-size":{"type":"length","state":"default"},"--sf-choice-padding":{"type":"length","state":"default"},"--sf-choice-radius":{"type":"length","state":"default"},"--sf-choice-background-color":{"type":"color","state":"default"},"--sf-choice-border-color":{"type":"color","state":"default"},"--sf-choice-selected-background-color":{"type":"color","state":"selected"},"--sf-choice-selected-border-color":{"type":"color","state":"selected"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-choice","tag":"sf-input-choice","version":"1.1.0","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"value":"string","label":"string","caption":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"badge":{"type":"string","optional":true},"price":{"type":"string","optional":true},"term":{"type":"string","optional":true},"image":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true}}},"multiple":{"type":"boolean","default":false},"layout":{"type":"enum","values":["tile","list","picture"],"default":"tile"},"columns":{"type":"enum","values":["auto","1","2","3","4"],"default":"auto"},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"name":{"type":"string","default":""},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"input":{"carries":"native"},"change":{"carries":"native"}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","validity":["value-missing","custom-error"]},"css-variables":{"--sf-choice-gap":{"type":"length","state":"default"},"--sf-choice-min-inline-size":{"type":"length","state":"default"},"--sf-choice-padding":{"type":"length","state":"default"},"--sf-choice-radius":{"type":"length","state":"default"},"--sf-choice-background-color":{"type":"color","state":"default"},"--sf-choice-border-color":{"type":"color","state":"default"},"--sf-choice-selected-background-color":{"type":"color","state":"selected"},"--sf-choice-selected-border-color":{"type":"color","state":"selected"}}}');
 
 /***/ },
 

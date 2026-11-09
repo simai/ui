@@ -81,6 +81,14 @@
     min-width: 0;
     min-inline-size: 0;
   }
+  /* What the page puts in the brand may be narrower than its own width, so a
+     brand that gives way (the collapsed bar below) can close down to its text's
+     own ellipsis. :where keeps it at no weight: the page's markup stays in
+     charge. */
+  :where(.sf-site-header-brand > *) {
+    min-width: 0;
+    min-inline-size: 0;
+  }
   /* The brand's picture: the page's <img> or <svg>, one height. :where keeps the
      rule at no weight, so the page's own markup stays in charge of the rest. */
   .sf-site-header-brand :where(a) {
@@ -173,6 +181,9 @@
   .sf-site-header--collapse-always {
     /* A row again whatever navigation-align says: the nav is in the panel. */
     /* flex, as the icon button's own utility draws it. */
+    /* The brand gives way, the tools stay whole: a bar narrower than the menu
+       button, the brand and the tools shrinks the brand (its text ends in the
+       page's own ellipsis) instead of scrolling the page sideways. */
     /* The panel's head is as tall as the bar, its close button on the axis of
        the menu button. */
     /* A plain list of links in the nav stands as a column in the panel; an
@@ -209,6 +220,9 @@
   .sf-site-header--collapse-always .sf-site-header-tools {
     -webkit-margin-start: auto;
             margin-inline-start: auto;
+  }
+  .sf-site-header--collapse-always .sf-site-header-brand {
+    flex: 0 1 auto;
   }
   .sf-site-header--collapse-always .sf-site-header-panel {
     display: none;
@@ -270,8 +284,27 @@
         overscroll-behavior: contain;
     background: var(--sf-surface-popup);
     box-shadow: var(--sf-shadow-modal);
-    color: var(--sf-on-surface);
+    --sf-surface-place: var(--sf-surface-popup);
+    --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
     --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
+    --sf-on-surface-container-variant: light-dark(var(--sf-neutral-35), var(--sf-neutral-85));
+    --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
+    --sf-surface-state-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
+    --sf-surface-state-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-90--alfa-20));
+    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+    --sf-outline: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
+    --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+    --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    --sf-on-surface-disabled: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
+    --sf-disable: var(--sf-surface-disabled);
+    --sf-on-disable: var(--sf-on-surface-disabled);
+    --sf-on-surface-container--variant: var(--sf-on-surface-container-variant);
+    --sf-surface-transparent-active: var(--sf-surface-state-active);
+    --sf-surface-transparent-hover: var(--sf-surface-state-hover);
+    --sf-surface-transparent-select: var(--sf-surface-state-select);
+    color: var(--sf-on-surface);
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-always.sf-site-header--open .sf-site-header-panel-head{
     padding-left: var(--sf-space-2);
@@ -361,6 +394,9 @@
     .sf-site-header--collapse-sm {
       /* A row again whatever navigation-align says: the nav is in the panel. */
       /* flex, as the icon button's own utility draws it. */
+      /* The brand gives way, the tools stay whole: a bar narrower than the menu
+         button, the brand and the tools shrinks the brand (its text ends in the
+         page's own ellipsis) instead of scrolling the page sideways. */
       /* The panel's head is as tall as the bar, its close button on the axis of
          the menu button. */
       /* A plain list of links in the nav stands as a column in the panel; an
@@ -397,6 +433,9 @@
     .sf-site-header--collapse-sm .sf-site-header-tools {
       -webkit-margin-start: auto;
               margin-inline-start: auto;
+    }
+    .sf-site-header--collapse-sm .sf-site-header-brand {
+      flex: 0 1 auto;
     }
     .sf-site-header--collapse-sm .sf-site-header-panel {
       display: none;
@@ -458,8 +497,27 @@
           overscroll-behavior: contain;
       background: var(--sf-surface-popup);
       box-shadow: var(--sf-shadow-modal);
-      color: var(--sf-on-surface);
+      --sf-surface-place: var(--sf-surface-popup);
+      --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
       --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
+      --sf-on-surface-container-variant: light-dark(var(--sf-neutral-35), var(--sf-neutral-85));
+      --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
+      --sf-surface-state-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
+      --sf-surface-state-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+      --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+      --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-90--alfa-20));
+      --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+      --sf-outline: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
+      --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+      --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+      --sf-on-surface-disabled: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
+      --sf-disable: var(--sf-surface-disabled);
+      --sf-on-disable: var(--sf-on-surface-disabled);
+      --sf-on-surface-container--variant: var(--sf-on-surface-container-variant);
+      --sf-surface-transparent-active: var(--sf-surface-state-active);
+      --sf-surface-transparent-hover: var(--sf-surface-state-hover);
+      --sf-surface-transparent-select: var(--sf-surface-state-select);
+      color: var(--sf-on-surface);
     }
     _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-sm.sf-site-header--open .sf-site-header-panel-head{
       padding-left: var(--sf-space-2);
@@ -550,6 +608,9 @@
     .sf-site-header--collapse-md {
       /* A row again whatever navigation-align says: the nav is in the panel. */
       /* flex, as the icon button's own utility draws it. */
+      /* The brand gives way, the tools stay whole: a bar narrower than the menu
+         button, the brand and the tools shrinks the brand (its text ends in the
+         page's own ellipsis) instead of scrolling the page sideways. */
       /* The panel's head is as tall as the bar, its close button on the axis of
          the menu button. */
       /* A plain list of links in the nav stands as a column in the panel; an
@@ -586,6 +647,9 @@
     .sf-site-header--collapse-md .sf-site-header-tools {
       -webkit-margin-start: auto;
               margin-inline-start: auto;
+    }
+    .sf-site-header--collapse-md .sf-site-header-brand {
+      flex: 0 1 auto;
     }
     .sf-site-header--collapse-md .sf-site-header-panel {
       display: none;
@@ -647,8 +711,27 @@
           overscroll-behavior: contain;
       background: var(--sf-surface-popup);
       box-shadow: var(--sf-shadow-modal);
-      color: var(--sf-on-surface);
+      --sf-surface-place: var(--sf-surface-popup);
+      --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
       --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
+      --sf-on-surface-container-variant: light-dark(var(--sf-neutral-35), var(--sf-neutral-85));
+      --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
+      --sf-surface-state-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
+      --sf-surface-state-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+      --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+      --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-90--alfa-20));
+      --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+      --sf-outline: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
+      --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+      --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+      --sf-on-surface-disabled: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
+      --sf-disable: var(--sf-surface-disabled);
+      --sf-on-disable: var(--sf-on-surface-disabled);
+      --sf-on-surface-container--variant: var(--sf-on-surface-container-variant);
+      --sf-surface-transparent-active: var(--sf-surface-state-active);
+      --sf-surface-transparent-hover: var(--sf-surface-state-hover);
+      --sf-surface-transparent-select: var(--sf-surface-state-select);
+      color: var(--sf-on-surface);
     }
     _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-md.sf-site-header--open .sf-site-header-panel-head{
       padding-left: var(--sf-space-2);
@@ -739,6 +822,9 @@
     .sf-site-header--collapse-lg {
       /* A row again whatever navigation-align says: the nav is in the panel. */
       /* flex, as the icon button's own utility draws it. */
+      /* The brand gives way, the tools stay whole: a bar narrower than the menu
+         button, the brand and the tools shrinks the brand (its text ends in the
+         page's own ellipsis) instead of scrolling the page sideways. */
       /* The panel's head is as tall as the bar, its close button on the axis of
          the menu button. */
       /* A plain list of links in the nav stands as a column in the panel; an
@@ -775,6 +861,9 @@
     .sf-site-header--collapse-lg .sf-site-header-tools {
       -webkit-margin-start: auto;
               margin-inline-start: auto;
+    }
+    .sf-site-header--collapse-lg .sf-site-header-brand {
+      flex: 0 1 auto;
     }
     .sf-site-header--collapse-lg .sf-site-header-panel {
       display: none;
@@ -836,8 +925,27 @@
           overscroll-behavior: contain;
       background: var(--sf-surface-popup);
       box-shadow: var(--sf-shadow-modal);
-      color: var(--sf-on-surface);
+      --sf-surface-place: var(--sf-surface-popup);
+      --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
       --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
+      --sf-on-surface-container-variant: light-dark(var(--sf-neutral-35), var(--sf-neutral-85));
+      --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
+      --sf-surface-state-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
+      --sf-surface-state-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+      --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+      --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-90--alfa-20));
+      --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+      --sf-outline: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
+      --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+      --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+      --sf-on-surface-disabled: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
+      --sf-disable: var(--sf-surface-disabled);
+      --sf-on-disable: var(--sf-on-surface-disabled);
+      --sf-on-surface-container--variant: var(--sf-on-surface-container-variant);
+      --sf-surface-transparent-active: var(--sf-surface-state-active);
+      --sf-surface-transparent-hover: var(--sf-surface-state-hover);
+      --sf-surface-transparent-select: var(--sf-surface-state-select);
+      color: var(--sf-on-surface);
     }
     _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-lg.sf-site-header--open .sf-site-header-panel-head{
       padding-left: var(--sf-space-2);
@@ -928,6 +1036,9 @@
     .sf-site-header--collapse-xl {
       /* A row again whatever navigation-align says: the nav is in the panel. */
       /* flex, as the icon button's own utility draws it. */
+      /* The brand gives way, the tools stay whole: a bar narrower than the menu
+         button, the brand and the tools shrinks the brand (its text ends in the
+         page's own ellipsis) instead of scrolling the page sideways. */
       /* The panel's head is as tall as the bar, its close button on the axis of
          the menu button. */
       /* A plain list of links in the nav stands as a column in the panel; an
@@ -964,6 +1075,9 @@
     .sf-site-header--collapse-xl .sf-site-header-tools {
       -webkit-margin-start: auto;
               margin-inline-start: auto;
+    }
+    .sf-site-header--collapse-xl .sf-site-header-brand {
+      flex: 0 1 auto;
     }
     .sf-site-header--collapse-xl .sf-site-header-panel {
       display: none;
@@ -1025,8 +1139,27 @@
           overscroll-behavior: contain;
       background: var(--sf-surface-popup);
       box-shadow: var(--sf-shadow-modal);
-      color: var(--sf-on-surface);
+      --sf-surface-place: var(--sf-surface-popup);
+      --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
       --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
+      --sf-on-surface-container-variant: light-dark(var(--sf-neutral-35), var(--sf-neutral-85));
+      --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
+      --sf-surface-state-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
+      --sf-surface-state-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+      --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+      --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-90--alfa-20));
+      --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+      --sf-outline: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
+      --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+      --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+      --sf-on-surface-disabled: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
+      --sf-disable: var(--sf-surface-disabled);
+      --sf-on-disable: var(--sf-on-surface-disabled);
+      --sf-on-surface-container--variant: var(--sf-on-surface-container-variant);
+      --sf-surface-transparent-active: var(--sf-surface-state-active);
+      --sf-surface-transparent-hover: var(--sf-surface-state-hover);
+      --sf-surface-transparent-select: var(--sf-surface-state-select);
+      color: var(--sf-on-surface);
     }
     _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-site-header--collapse-xl.sf-site-header--open .sf-site-header-panel-head{
       padding-left: var(--sf-space-2);

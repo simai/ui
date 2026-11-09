@@ -36,11 +36,11 @@
     --sf-table-border-color: var(--sf-outline-variant);
     --sf-table-accent-bg: var(--sf-transparent);
     --sf-table-stripe-color: var(--sf-on-surface);
-    --sf-table-stripe-bg: var(--sf-surface-transparent-select);
+    --sf-table-stripe-bg: var(--sf-surface-state-hover);
     --sf-table-active-color: var(--sf-on-surface);
-    --sf-table-active-bg: var(--sf-surface-transparent-select);
+    --sf-table-active-bg: var(--sf-surface-state-select);
     --sf-table-hover-color: var(--sf-on-surface);
-    --sf-table-hover-bg: var(--sf-surface-transparent-hover);
+    --sf-table-hover-bg: var(--sf-surface-state-hover);
     width: 100%;
     inline-size: 100%;
     margin-bottom: var(--sf-b6);

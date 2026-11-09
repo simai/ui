@@ -45,6 +45,9 @@
   .gr1-warning {
     --sf-gradient--color-1: var(--sf-warning);
   }
+  .gr1-info {
+    --sf-gradient--color-1: var(--sf-info);
+  }
   .gr2-transparent {
     --sf-gradient--color-2: var(--sf-transparent);
   }
@@ -90,6 +93,9 @@
   .gr2-warning {
     --sf-gradient--color-2: var(--sf-warning);
   }
+  .gr2-info {
+    --sf-gradient--color-2: var(--sf-info);
+  }
   .gr3-transparent {
     --sf-gradient--color-3: var(--sf-transparent);
   }
@@ -134,5 +140,8 @@
   }
   .gr3-warning {
     --sf-gradient--color-3: var(--sf-warning);
+  }
+  .gr3-info {
+    --sf-gradient--color-3: var(--sf-info);
   }
 }

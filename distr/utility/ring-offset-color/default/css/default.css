@@ -99,4 +99,7 @@
   .ring-offset-info-container {
     --sf-ring-offset-color: var(--sf-info-container);
   }
+  .ring-offset-info-container-strong {
+    --sf-ring-offset-color: var(--sf-info-container-strong);
+  }
 }

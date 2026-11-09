@@ -1,2 +1,2 @@
 @layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
-@layer sf.utilities{.table-hover>tbody>tr:hover>*{--sf-table-accent-bg:var(--sf-table-hover-bg);color:var(--sf-table-hover-color)}}
+@layer sf.utilities{.table-hover>tbody>tr:hover>*{--sf-table-accent-bg:var(--sf-table-hover-bg);color:var(--sf-table-hover-color)}.table-hover.table-stripe>tbody>tr:nth-of-type(odd):hover>*{--sf-table-accent-bg:var(--sf-surface-state-select)}}

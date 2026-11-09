@@ -27,4 +27,7 @@
   .caret-success {
     caret-color: var(--sf-success);
   }
+  .caret-info {
+    caret-color: var(--sf-info);
+  }
 }

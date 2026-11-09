@@ -414,83 +414,128 @@
        over the brightest of them and stay well short of the primary role
        (effects-gallery theme audit and the ui-doc repin, 2026-10-19; issue
        simai/ui-source#3). A fill inside a fill -- an avatar in a tag -- is
-       darker still and takes the primary role. */
-    --sf-on-surface-container-variant: light-dark(var(--sf-neutral-35), var(--sf-neutral-80));
-    /* The tones of initials: a muted plate and the ink that reads on it over the
-       surfaces 0 to 3, in both themes (tests/browser/avatar-tones.browser.mjs
-       measures them). */
-    --sf-tone-rose-container: light-dark(var(--sf-tone-rose-50--alfa-20), var(--sf-tone-rose-50--alfa-32));
-    --sf-on-tone-rose-container: light-dark(var(--sf-tone-rose-30), var(--sf-tone-rose-85));
-    --sf-tone-amber-container: light-dark(var(--sf-tone-amber-50--alfa-20), var(--sf-tone-amber-50--alfa-32));
-    --sf-on-tone-amber-container: light-dark(var(--sf-tone-amber-30), var(--sf-tone-amber-85));
-    --sf-tone-lime-container: light-dark(var(--sf-tone-lime-50--alfa-20), var(--sf-tone-lime-50--alfa-32));
-    --sf-on-tone-lime-container: light-dark(var(--sf-tone-lime-30), var(--sf-tone-lime-85));
-    --sf-tone-green-container: light-dark(var(--sf-tone-green-50--alfa-20), var(--sf-tone-green-50--alfa-32));
-    --sf-on-tone-green-container: light-dark(var(--sf-tone-green-30), var(--sf-tone-green-85));
-    --sf-tone-teal-container: light-dark(var(--sf-tone-teal-50--alfa-20), var(--sf-tone-teal-50--alfa-32));
-    --sf-on-tone-teal-container: light-dark(var(--sf-tone-teal-30), var(--sf-tone-teal-85));
-    --sf-tone-sky-container: light-dark(var(--sf-tone-sky-50--alfa-20), var(--sf-tone-sky-50--alfa-32));
-    --sf-on-tone-sky-container: light-dark(var(--sf-tone-sky-30), var(--sf-tone-sky-85));
-    --sf-tone-indigo-container: light-dark(var(--sf-tone-indigo-50--alfa-20), var(--sf-tone-indigo-50--alfa-32));
-    --sf-on-tone-indigo-container: light-dark(var(--sf-tone-indigo-30), var(--sf-tone-indigo-85));
-    --sf-tone-violet-container: light-dark(var(--sf-tone-violet-50--alfa-20), var(--sf-tone-violet-50--alfa-32));
-    --sf-on-tone-violet-container: light-dark(var(--sf-tone-violet-30), var(--sf-tone-violet-85));
-    /* The series of a chart, in order: one hue per category, eight of them
-       (SIMAI Chart D4, parameters 8.3). The first is the primary graphic tone,
-       so a chart of one series is the brand colour and moves with a theme's
-       colour; the other seven are the fixed hues of the initials, which keep
-       their names under every theme. Indigo is left out, being the primary's
-       neighbour. Each holds 3:1 on surfaces 0 to 2 in both themes (WCAG
-       1.4.11); the first five stay apart under protanopia, deuteranopia and
-       tritanopia, where hue alone fails, by lightness too (tones 30 and 50
-       light, 60 and 85 dark); and each series stands far from the one before
-       it. tests/chart-colours.contract.test.mjs computes all of it rather
-       than trusting this comment. A series outside
-       the first five should not be told by colour alone. A project theme
-       overrides a role like any other.
+       darker still and takes the primary role. The same ink takes dim text
+       under a state layer (surfaces research 6.1). Dark neutral-85 since C16
+       (owner, 2026-11-08): on a resting fill over the popup's step
+       neutral-80 gave 4.30, neutral-85 gives 4.96. */
+    --sf-on-surface-container-variant: light-dark(var(--sf-neutral-35), var(--sf-neutral-85));
+    /* The former tones of initials (C17, 2026-11-08): sf-avatar names a hue of
+       the static palette now and draws its initials on the hue's container,
+       .sf-hue-<name> (core/scss/_sf_css__hue.scss). The former roles hold the
+       same values -- the plate 50 at 12 light and 24 dark, the ink 10 and 90 --
+       until the alias list's remove_after (token-aliases.v1.json,
+       palette_tokens); rose is pink. */
+    --sf-tone-rose-container: light-dark(var(--sf-pink-50--alfa-12), var(--sf-pink-50--alfa-24));
+    --sf-on-tone-rose-container: light-dark(var(--sf-pink-10), var(--sf-pink-90));
+    --sf-tone-amber-container: light-dark(var(--sf-amber-50--alfa-12), var(--sf-amber-50--alfa-24));
+    --sf-on-tone-amber-container: light-dark(var(--sf-amber-10), var(--sf-amber-90));
+    --sf-tone-lime-container: light-dark(var(--sf-lime-50--alfa-12), var(--sf-lime-50--alfa-24));
+    --sf-on-tone-lime-container: light-dark(var(--sf-lime-10), var(--sf-lime-90));
+    --sf-tone-green-container: light-dark(var(--sf-green-50--alfa-12), var(--sf-green-50--alfa-24));
+    --sf-on-tone-green-container: light-dark(var(--sf-green-10), var(--sf-green-90));
+    --sf-tone-teal-container: light-dark(var(--sf-teal-50--alfa-12), var(--sf-teal-50--alfa-24));
+    --sf-on-tone-teal-container: light-dark(var(--sf-teal-10), var(--sf-teal-90));
+    --sf-tone-sky-container: light-dark(var(--sf-sky-50--alfa-12), var(--sf-sky-50--alfa-24));
+    --sf-on-tone-sky-container: light-dark(var(--sf-sky-10), var(--sf-sky-90));
+    --sf-tone-indigo-container: light-dark(var(--sf-indigo-50--alfa-12), var(--sf-indigo-50--alfa-24));
+    --sf-on-tone-indigo-container: light-dark(var(--sf-indigo-10), var(--sf-indigo-90));
+    --sf-tone-violet-container: light-dark(var(--sf-purple-50--alfa-12), var(--sf-purple-50--alfa-24));
+    --sf-on-tone-violet-container: light-dark(var(--sf-purple-10), var(--sf-purple-90));
+    /* The series of a chart, in order (owner decision C17, 2026-11-08): eight
+       hues of the static palette in a fixed order -- blue, amber, teal, violet,
+       yellow, pink, green, red -- the same under every theme colour, so a
+       legend means the same on every site and no series turns into the brand
+       colour's twin. A chart of one series takes --sf-chart-brand, the theme
+       colour. Each holds 3:1 on surfaces 0 to 2 in both themes (WCAG 1.4.11);
+       the first five stay apart under protanopia, deuteranopia and tritanopia,
+       where hue alone fails, by lightness too: the order alternates tone 50 and
+       60 with tone 30 and 85, light and dark; and each series stands far from
+       the one before it (research control/research/2026-11-08-palette.md 3.5,
+       chosen by exhaustive search with series 1 fixed to blue).
+       tests/chart-colours.contract.test.mjs computes all of it under several
+       theme colours rather than trusting this comment. A series outside the
+       first five should not be told by colour alone. A project theme overrides
+       a role like any other.
 
        The fill is an area under a line or a band, on the fill family of the
        alpha scale and on tone 50 of the hue, as the containers of the
        families are: 12, 16 and 20 light, 24, 28 and 32 dark, for rest, hover
        and press. */
-    --sf-chart-1: light-dark(var(--sf-primary-50), var(--sf-primary-60));
-    --sf-chart-2: light-dark(var(--sf-tone-rose-50), var(--sf-tone-rose-60));
-    --sf-chart-3: light-dark(var(--sf-tone-green-30), var(--sf-tone-green-85));
-    --sf-chart-4: light-dark(var(--sf-tone-violet-30), var(--sf-tone-violet-85));
-    --sf-chart-5: light-dark(var(--sf-tone-lime-50), var(--sf-tone-lime-60));
-    --sf-chart-6: light-dark(var(--sf-tone-teal-50), var(--sf-tone-teal-60));
-    --sf-chart-7: light-dark(var(--sf-tone-amber-30), var(--sf-tone-amber-60));
-    --sf-chart-8: light-dark(var(--sf-tone-sky-30), var(--sf-tone-sky-85));
-    --sf-chart-1-fill: light-dark(var(--sf-primary-50--alfa-12), var(--sf-primary-50--alfa-24));
-    --sf-chart-1-fill-hover: light-dark(var(--sf-primary-50--alfa-16), var(--sf-primary-50--alfa-28));
-    --sf-chart-1-fill-active: light-dark(var(--sf-primary-50--alfa-20), var(--sf-primary-50--alfa-32));
-    --sf-chart-2-fill: light-dark(var(--sf-tone-rose-50--alfa-12), var(--sf-tone-rose-50--alfa-24));
-    --sf-chart-2-fill-hover: light-dark(var(--sf-tone-rose-50--alfa-16), var(--sf-tone-rose-50--alfa-28));
-    --sf-chart-2-fill-active: light-dark(var(--sf-tone-rose-50--alfa-20), var(--sf-tone-rose-50--alfa-32));
-    --sf-chart-3-fill: light-dark(var(--sf-tone-green-50--alfa-12), var(--sf-tone-green-50--alfa-24));
-    --sf-chart-3-fill-hover: light-dark(var(--sf-tone-green-50--alfa-16), var(--sf-tone-green-50--alfa-28));
-    --sf-chart-3-fill-active: light-dark(var(--sf-tone-green-50--alfa-20), var(--sf-tone-green-50--alfa-32));
-    --sf-chart-4-fill: light-dark(var(--sf-tone-violet-50--alfa-12), var(--sf-tone-violet-50--alfa-24));
-    --sf-chart-4-fill-hover: light-dark(var(--sf-tone-violet-50--alfa-16), var(--sf-tone-violet-50--alfa-28));
-    --sf-chart-4-fill-active: light-dark(var(--sf-tone-violet-50--alfa-20), var(--sf-tone-violet-50--alfa-32));
-    --sf-chart-5-fill: light-dark(var(--sf-tone-lime-50--alfa-12), var(--sf-tone-lime-50--alfa-24));
-    --sf-chart-5-fill-hover: light-dark(var(--sf-tone-lime-50--alfa-16), var(--sf-tone-lime-50--alfa-28));
-    --sf-chart-5-fill-active: light-dark(var(--sf-tone-lime-50--alfa-20), var(--sf-tone-lime-50--alfa-32));
-    --sf-chart-6-fill: light-dark(var(--sf-tone-teal-50--alfa-12), var(--sf-tone-teal-50--alfa-24));
-    --sf-chart-6-fill-hover: light-dark(var(--sf-tone-teal-50--alfa-16), var(--sf-tone-teal-50--alfa-28));
-    --sf-chart-6-fill-active: light-dark(var(--sf-tone-teal-50--alfa-20), var(--sf-tone-teal-50--alfa-32));
-    --sf-chart-7-fill: light-dark(var(--sf-tone-amber-50--alfa-12), var(--sf-tone-amber-50--alfa-24));
-    --sf-chart-7-fill-hover: light-dark(var(--sf-tone-amber-50--alfa-16), var(--sf-tone-amber-50--alfa-28));
-    --sf-chart-7-fill-active: light-dark(var(--sf-tone-amber-50--alfa-20), var(--sf-tone-amber-50--alfa-32));
-    --sf-chart-8-fill: light-dark(var(--sf-tone-sky-50--alfa-12), var(--sf-tone-sky-50--alfa-24));
-    --sf-chart-8-fill-hover: light-dark(var(--sf-tone-sky-50--alfa-16), var(--sf-tone-sky-50--alfa-28));
-    --sf-chart-8-fill-active: light-dark(var(--sf-tone-sky-50--alfa-20), var(--sf-tone-sky-50--alfa-32));
-    /* The middle of a diverging scale -- error to success for data with a
-       good and a bad side, primary to tertiary for data without -- where the
+    --sf-chart-1: light-dark(var(--sf-blue-50), var(--sf-blue-60));
+    --sf-chart-2: light-dark(var(--sf-amber-50), var(--sf-amber-60));
+    --sf-chart-3: light-dark(var(--sf-teal-30), var(--sf-teal-85));
+    --sf-chart-4: light-dark(var(--sf-violet-30), var(--sf-violet-85));
+    --sf-chart-5: light-dark(var(--sf-yellow-30), var(--sf-yellow-85));
+    --sf-chart-6: light-dark(var(--sf-pink-50), var(--sf-pink-60));
+    --sf-chart-7: light-dark(var(--sf-green-50), var(--sf-green-60));
+    --sf-chart-8: light-dark(var(--sf-red-30), var(--sf-red-85));
+    --sf-chart-brand: light-dark(var(--sf-primary-50), var(--sf-primary-60));
+    --sf-chart-1-fill: light-dark(var(--sf-blue-50--alfa-12), var(--sf-blue-50--alfa-24));
+    --sf-chart-1-fill-hover: light-dark(var(--sf-blue-50--alfa-16), var(--sf-blue-50--alfa-28));
+    --sf-chart-1-fill-active: light-dark(var(--sf-blue-50--alfa-20), var(--sf-blue-50--alfa-32));
+    --sf-chart-2-fill: light-dark(var(--sf-amber-50--alfa-12), var(--sf-amber-50--alfa-24));
+    --sf-chart-2-fill-hover: light-dark(var(--sf-amber-50--alfa-16), var(--sf-amber-50--alfa-28));
+    --sf-chart-2-fill-active: light-dark(var(--sf-amber-50--alfa-20), var(--sf-amber-50--alfa-32));
+    --sf-chart-3-fill: light-dark(var(--sf-teal-50--alfa-12), var(--sf-teal-50--alfa-24));
+    --sf-chart-3-fill-hover: light-dark(var(--sf-teal-50--alfa-16), var(--sf-teal-50--alfa-28));
+    --sf-chart-3-fill-active: light-dark(var(--sf-teal-50--alfa-20), var(--sf-teal-50--alfa-32));
+    --sf-chart-4-fill: light-dark(var(--sf-violet-50--alfa-12), var(--sf-violet-50--alfa-24));
+    --sf-chart-4-fill-hover: light-dark(var(--sf-violet-50--alfa-16), var(--sf-violet-50--alfa-28));
+    --sf-chart-4-fill-active: light-dark(var(--sf-violet-50--alfa-20), var(--sf-violet-50--alfa-32));
+    --sf-chart-5-fill: light-dark(var(--sf-yellow-50--alfa-12), var(--sf-yellow-50--alfa-24));
+    --sf-chart-5-fill-hover: light-dark(var(--sf-yellow-50--alfa-16), var(--sf-yellow-50--alfa-28));
+    --sf-chart-5-fill-active: light-dark(var(--sf-yellow-50--alfa-20), var(--sf-yellow-50--alfa-32));
+    --sf-chart-6-fill: light-dark(var(--sf-pink-50--alfa-12), var(--sf-pink-50--alfa-24));
+    --sf-chart-6-fill-hover: light-dark(var(--sf-pink-50--alfa-16), var(--sf-pink-50--alfa-28));
+    --sf-chart-6-fill-active: light-dark(var(--sf-pink-50--alfa-20), var(--sf-pink-50--alfa-32));
+    --sf-chart-7-fill: light-dark(var(--sf-green-50--alfa-12), var(--sf-green-50--alfa-24));
+    --sf-chart-7-fill-hover: light-dark(var(--sf-green-50--alfa-16), var(--sf-green-50--alfa-28));
+    --sf-chart-7-fill-active: light-dark(var(--sf-green-50--alfa-20), var(--sf-green-50--alfa-32));
+    --sf-chart-8-fill: light-dark(var(--sf-red-50--alfa-12), var(--sf-red-50--alfa-24));
+    --sf-chart-8-fill-hover: light-dark(var(--sf-red-50--alfa-16), var(--sf-red-50--alfa-28));
+    --sf-chart-8-fill-active: light-dark(var(--sf-red-50--alfa-20), var(--sf-red-50--alfa-32));
+    --sf-chart-brand-fill: light-dark(var(--sf-primary-50--alfa-12), var(--sf-primary-50--alfa-24));
+    --sf-chart-brand-fill-hover: light-dark(var(--sf-primary-50--alfa-16), var(--sf-primary-50--alfa-28));
+    --sf-chart-brand-fill-active: light-dark(var(--sf-primary-50--alfa-20), var(--sf-primary-50--alfa-32));
+    /* The warm and the cool series (C17; dispatcher 2026-11-09): the hue
+       orders of the research (2026-11-08-palette 4), the tones picked by
+       exhaustive search over the pairs 50/60, 30/85, 40/80 and 40/70 for the
+       best worst case of the categorical limits, 3:1 on surfaces 0-2 kept.
+       A family of six close hues cannot meet the eight series' distances:
+       warm series 1-5 under CVD 6.9, neighbours 12.5 light / 18.2 dark, any
+       two 10.3; cool 7.2 / 7.6, 31.3 / 30.5, 11.5 / 12.4
+       (tests/chart-colours.contract.test.mjs holds them as floors). Use
+       --sf-chart-1..8 when the series must be told apart. */
+    --sf-chart-warm-1: light-dark(var(--sf-red-30), var(--sf-red-85));
+    --sf-chart-warm-2: light-dark(var(--sf-orange-50), var(--sf-orange-60));
+    --sf-chart-warm-3: light-dark(var(--sf-amber-40), var(--sf-amber-80));
+    --sf-chart-warm-4: light-dark(var(--sf-pink-50), var(--sf-pink-60));
+    --sf-chart-warm-5: light-dark(var(--sf-brown-50), var(--sf-brown-60));
+    --sf-chart-warm-6: light-dark(var(--sf-yellow-50), var(--sf-yellow-60));
+    --sf-chart-cool-1: light-dark(var(--sf-blue-30), var(--sf-blue-85));
+    --sf-chart-cool-2: light-dark(var(--sf-teal-30), var(--sf-teal-85));
+    --sf-chart-cool-3: light-dark(var(--sf-violet-50), var(--sf-violet-60));
+    --sf-chart-cool-4: light-dark(var(--sf-cyan-50), var(--sf-cyan-60));
+    --sf-chart-cool-5: light-dark(var(--sf-indigo-40), var(--sf-indigo-70));
+    --sf-chart-cool-6: light-dark(var(--sf-green-50), var(--sf-green-60));
+    /* The ends of a diverging scale (C17): good and bad are blue and red,
+       not success and error (red and green fall together under protanopia and
+       deuteranopia, 8.8 and 6.9); a scale with no meaning runs purple to teal,
+       Carbon's pair. Tone 30 light, 80 dark, as the research measured: red-blue
+       42 / 45 / 52 / 55 light and 32 / 28 / 35 / 46 dark (normal, protan,
+       deutan, tritan), purple-teal 39 / 31 / 23 / 41 and 48 / 33 / 22 / 59.
+       A ladder between an end and --sf-chart-midpoint reads the hue's own
+       tones, --sf-<hue>-<tone>. */
+    --sf-chart-diverging-bad: light-dark(var(--sf-red-30), var(--sf-red-80));
+    --sf-chart-diverging-good: light-dark(var(--sf-blue-30), var(--sf-blue-80));
+    --sf-chart-diverging-low: light-dark(var(--sf-purple-30), var(--sf-purple-80));
+    --sf-chart-diverging-high: light-dark(var(--sf-teal-30), var(--sf-teal-80));
+    /* The middle of a diverging scale -- red to blue for data with a good
+       and a bad side, purple to teal for data without (C17) -- where the
        value is neither: the quietest neutral that still stands off surfaces 0
        to 2 (1.14:1 and 1.15:1 on surface-2), so a cell at the midpoint reads as
-       a cell and the two ends grow out of it (4.99:1 and 7.7:1 to their 40 and
-       80 steps). The same pair as surface-3, which a chart does not sit on. */
+       a cell and the two ends grow out of it (4.99:1 and 7.72:1 to their 40
+       and 80 steps). The same pair as surface-3, which a chart does not sit on. */
     --sf-chart-midpoint: light-dark(var(--sf-neutral-90), var(--sf-neutral-20));
     --sf-on-surface-muted: light-dark(var(--sf-neutral-60), var(--sf-neutral-40));
     --sf-on-surface-inverse: light-dark(var(--sf-neutral-90), var(--sf-neutral-10));
@@ -515,8 +560,13 @@
        Both halves are steps of the alpha scale now. The dark one, 64, is on
        the scale's own footing -- it climbs in fours -- and had simply never
        been generated, which is why this role used to be written as a
-       color-mix of its own (owner, 2026-10-08). */
-    --sf-outline: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-60--alfa-64));
+       color-mix of its own (owner, 2026-10-08).
+
+       The dark half is neutral-90 at 48 since C16 (owner, 2026-11-08): the
+       boundary takes the ink's tone, as the line does, and holds 3:1 from the
+       page to the popup's step (4.12 to 3.30), where neutral-60 at 64 gave
+       3.12 to 2.30. */
+    --sf-outline: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
     /* The edge of a region -- a panel, a card, a table, a row inside one.
        Nothing is found by it, so it is not held to 1.4.11: 1.34:1 and 1.92:1. */
     --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
@@ -534,7 +584,7 @@
        2026-10-08). */
     --sf-outline-disabled: light-dark(var(--sf-neutral-50--alfa-48), var(--sf-neutral-60--alfa-48));
     --sf-link: light-dark(var(--sf-primary-40), var(--sf-primary-80));
-    --sf-mark: light-dark(var(--sf-warning-50--alfa-24), var(--sf-warning-90--alfa-24));
+    --sf-mark: light-dark(var(--sf-yellow-50--alfa-24), var(--sf-yellow-90--alfa-24));
     --sf-focus: light-dark(var(--sf-primary-50), var(--sf-primary-90));
     --sf-link-hover: light-dark(var(--sf-primary-35), var(--sf-primary-85));
     --sf-link-active: light-dark(var(--sf-primary-30), var(--sf-primary-90));
@@ -699,6 +749,7 @@
     color: var(--sf-on-surface-media);
     -webkit-backdrop-filter: blur(var(--sf-blur-large));
             backdrop-filter: blur(var(--sf-blur-large));
+    --sf-surface-place: var(--sf-surface-media);
     --sf-on-surface: var(--sf-on-surface-media);
     --sf-on-surface-variant: var(--sf-white--alfa-80);
     --sf-on-surface-container-variant: var(--sf-white--alfa-80);
@@ -722,7 +773,7 @@
 }
 /*
  * Generated from src/core/contracts/adaptive-sizing.v1.json.
- * contract-sha256: 9d8fb9a4ffb9ac8581e6e9e448babec1f752b139fea730e40968022907bed28c
+ * contract-sha256: e67f7a53848281ea891dcb2ace865afd32a44f3cd9f9790649bd1b613612a8aa
  * Do not edit semantic values in this file directly.
  */
 @layer sf.base {
@@ -783,7 +834,11 @@
     --sf-ui-blur-large: blur(var(--sf-blur-large));
     --sf-ui-blur-surface-overlay: blur(var(--sf-surface-overlay--blur));
     --sf-ui-focus: 0 0 0 var(--sf-focus-outline-width) var(--sf-focus);
-    --sf-ui-skeleton: linear-gradient(180deg, var(--sf-neutral-80--alfa-48) 0%, var(--sf-neutral-60--alfa-48) 100%);
+    /* The skeleton is a control's fill since C16 (owner, 2026-11-08): 16, and
+       the wave's highlight 24 (--sf-surface-container-active). It was a
+       gradient of two ink steps (48), which the alpha scale keeps for what is
+       read; the Framework's skeletons read --sf-surface-container. */
+    --sf-ui-skeleton: var(--sf-surface-container);
   }
 }
 @layer sf.base {
@@ -851,6 +906,7 @@
     position: relative;
     white-space: pre-wrap;
     background-color: var(--sf-mark--color);
+    color: inherit;
     font-weight: inherit;
     font-style: inherit;
   }
@@ -1133,6 +1189,14 @@
     --sf-tertiary-30: #63356c;
     --sf-tertiary-25: #562960;
     --sf-tertiary-20: #4a1e54;
+    --sf-tertiary-20--alfa-4: rgba(74,30,84,0.03922);
+    --sf-tertiary-20--alfa-8: rgba(74,30,84,0.07843);
+    --sf-tertiary-20--alfa-12: rgba(74,30,84,0.12157);
+    --sf-tertiary-20--alfa-16: rgba(74,30,84,0.16078);
+    --sf-tertiary-20--alfa-20: rgba(74,30,84,0.2);
+    --sf-tertiary-20--alfa-24: rgba(74,30,84,0.23922);
+    --sf-tertiary-20--alfa-64: rgba(74,30,84,0.63922);
+    --sf-tertiary-20--alfa-80: rgba(74,30,84,0.8);
     --sf-tertiary-15: #3e1249;
     --sf-tertiary-10: #32053e;
     --sf-tertiary-5: #23002d;
@@ -1161,6 +1225,14 @@
     --sf-secondary-30: #3c475e;
     --sf-secondary-25: #303b52;
     --sf-secondary-20: #253047;
+    --sf-secondary-20--alfa-4: rgba(37,48,71,0.03922);
+    --sf-secondary-20--alfa-8: rgba(37,48,71,0.07843);
+    --sf-secondary-20--alfa-12: rgba(37,48,71,0.12157);
+    --sf-secondary-20--alfa-16: rgba(37,48,71,0.16078);
+    --sf-secondary-20--alfa-20: rgba(37,48,71,0.2);
+    --sf-secondary-20--alfa-24: rgba(37,48,71,0.23922);
+    --sf-secondary-20--alfa-64: rgba(37,48,71,0.63922);
+    --sf-secondary-20--alfa-80: rgba(37,48,71,0.8);
     --sf-secondary-15: #1a263b;
     --sf-secondary-10: #101b31;
     --sf-secondary-5: #051126;
@@ -1177,34 +1249,42 @@
        equal primary's, so the theme generator told information in red under a
        red brand colour. The owner approved this HCT tonal palette (hue 265.1,
        chroma 58.6) whole, and theme-palette.js writes the same one. */
-    --sf-info-98: #f9f9ff;
-    --sf-info-95: #edf0ff;
-    --sf-info-90: #d7e2ff;
-    --sf-info-90--alfa-4: rgba(215,226,255,0.03922);
-    --sf-info-90--alfa-8: rgba(215,226,255,0.07843);
-    --sf-info-90--alfa-12: rgba(215,226,255,0.12157);
-    --sf-info-90--alfa-24: rgba(215,226,255,0.23922);
-    --sf-info-85: #c2d4ff;
-    --sf-info-80: #acc7ff;
-    --sf-info-70: #7eabff;
-    --sf-info-60: #538ff5;
-    --sf-info-50: #3375d9;
-    --sf-info-50--alfa-4: rgba(51,117,217,0.03922);
-    --sf-info-50--alfa-8: rgba(51,117,217,0.07843);
-    --sf-info-50--alfa-12: rgba(51,117,217,0.12157);
-    --sf-info-50--alfa-16: rgba(51,117,217,0.16078);
-    --sf-info-50--alfa-20: rgba(51,117,217,0.2);
-    --sf-info-50--alfa-24: rgba(51,117,217,0.23922);
-    --sf-info-50--alfa-28: rgba(51,117,217,0.27843);
-    --sf-info-50--alfa-32: rgba(51,117,217,0.32157);
-    --sf-info-40: #005bbe;
-    --sf-info-35: #0050a8;
-    --sf-info-30: #004492;
-    --sf-info-25: #00397c;
-    --sf-info-20: #002f67;
-    --sf-info-15: #002453;
-    --sf-info-10: #001a40;
-    --sf-info-5: #00102c;
+    --sf-info-98: var(--sf-blue-98);
+    --sf-info-95: var(--sf-blue-95);
+    --sf-info-90: var(--sf-blue-90);
+    --sf-info-90--alfa-4: var(--sf-blue-90--alfa-4);
+    --sf-info-90--alfa-8: var(--sf-blue-90--alfa-8);
+    --sf-info-90--alfa-12: var(--sf-blue-90--alfa-12);
+    --sf-info-90--alfa-24: var(--sf-blue-90--alfa-24);
+    --sf-info-85: var(--sf-blue-85);
+    --sf-info-80: var(--sf-blue-80);
+    --sf-info-70: var(--sf-blue-70);
+    --sf-info-60: var(--sf-blue-60);
+    --sf-info-50: var(--sf-blue-50);
+    --sf-info-50--alfa-4: var(--sf-blue-50--alfa-4);
+    --sf-info-50--alfa-8: var(--sf-blue-50--alfa-8);
+    --sf-info-50--alfa-12: var(--sf-blue-50--alfa-12);
+    --sf-info-50--alfa-16: var(--sf-blue-50--alfa-16);
+    --sf-info-50--alfa-20: var(--sf-blue-50--alfa-20);
+    --sf-info-50--alfa-24: var(--sf-blue-50--alfa-24);
+    --sf-info-50--alfa-28: var(--sf-blue-50--alfa-28);
+    --sf-info-50--alfa-32: var(--sf-blue-50--alfa-32);
+    --sf-info-40: var(--sf-blue-40);
+    --sf-info-35: var(--sf-blue-35);
+    --sf-info-30: var(--sf-blue-30);
+    --sf-info-25: var(--sf-blue-25);
+    --sf-info-20: var(--sf-blue-20);
+    --sf-info-20--alfa-4: var(--sf-blue-20--alfa-4);
+    --sf-info-20--alfa-8: var(--sf-blue-20--alfa-8);
+    --sf-info-20--alfa-12: var(--sf-blue-20--alfa-12);
+    --sf-info-20--alfa-16: var(--sf-blue-20--alfa-16);
+    --sf-info-20--alfa-20: var(--sf-blue-20--alfa-20);
+    --sf-info-20--alfa-24: var(--sf-blue-20--alfa-24);
+    --sf-info-20--alfa-64: var(--sf-blue-20--alfa-64);
+    --sf-info-20--alfa-80: var(--sf-blue-20--alfa-80);
+    --sf-info-15: var(--sf-blue-15);
+    --sf-info-10: var(--sf-blue-10);
+    --sf-info-5: var(--sf-blue-5);
     --sf-primary-70: #7eabff;
     --sf-primary-60: #488fff;
     --sf-primary-50: #0073ed;
@@ -1222,178 +1302,994 @@
     --sf-primary-30: #004491;
     --sf-primary-25: #00397c;
     --sf-primary-20: #002f67;
+    --sf-primary-20--alfa-4: rgba(0,47,103,0.03922);
+    --sf-primary-20--alfa-8: rgba(0,47,103,0.07843);
+    --sf-primary-20--alfa-12: rgba(0,47,103,0.12157);
+    --sf-primary-20--alfa-16: rgba(0,47,103,0.16078);
+    --sf-primary-20--alfa-20: rgba(0,47,103,0.2);
+    --sf-primary-20--alfa-24: rgba(0,47,103,0.23922);
+    --sf-primary-20--alfa-64: rgba(0,47,103,0.63922);
+    --sf-primary-20--alfa-80: rgba(0,47,103,0.8);
     --sf-primary-15: #002453;
     --sf-primary-10: #001a40;
     --sf-primary-5: #00102c;
-    --sf-error-98: #fff8f7;
-    --sf-error-95: #ffedea;
-    --sf-error-90: #ffdad6;
-    --sf-error-90--alfa-4: rgba(255,218,214,0.03922);
-    --sf-error-90--alfa-8: rgba(255,218,214,0.07843);
-    --sf-error-90--alfa-12: rgba(255,218,214,0.12157);
-    --sf-error-90--alfa-24: rgba(255,218,214,0.23922);
-    --sf-error-85: #ffc7c0;
-    --sf-error-80: #ffb4ab;
-    --sf-error-70: #ff897d;
-    --sf-error-60: #ff5449;
-    --sf-error-50: #df362f;
+    --sf-error-98: var(--sf-red-98);
+    --sf-error-95: var(--sf-red-95);
+    --sf-error-90: var(--sf-red-90);
+    --sf-error-90--alfa-4: var(--sf-red-90--alfa-4);
+    --sf-error-90--alfa-8: var(--sf-red-90--alfa-8);
+    --sf-error-90--alfa-12: var(--sf-red-90--alfa-12);
+    --sf-error-90--alfa-24: var(--sf-red-90--alfa-24);
+    --sf-error-85: var(--sf-red-85);
+    --sf-error-80: var(--sf-red-80);
+    --sf-error-70: var(--sf-red-70);
+    --sf-error-60: var(--sf-red-60);
+    --sf-error-50: var(--sf-red-50);
     /* Ступени 4 % и 8 %: на них стоят слои наведения и выбора этой палитры. */
-    --sf-error-50--alfa-4: rgba(223,54,47,0.03922);
-    --sf-error-50--alfa-8: rgba(223,54,47,0.07843);
-    --sf-error-50--alfa-12: rgba(223,54,47,0.12157);
-    --sf-error-50--alfa-16: rgba(223,54,47,0.16078);
-    --sf-error-50--alfa-20: rgba(223,54,47,0.2);
-    --sf-error-50--alfa-24: rgba(223,54,47,0.23922);
-    --sf-error-50--alfa-28: rgba(223,54,47,0.27843);
-    --sf-error-50--alfa-32: rgba(223,54,47,0.32157);
-    --sf-error-40: #bb1919;
-    --sf-error-35: #a9040e;
-    --sf-error-30: #93000a;
-    --sf-error-25: #7e0007;
-    --sf-error-20: #690005;
-    --sf-error-15: #540003;
-    --sf-error-10: #410002;
-    --sf-error-5: #2d0001;
-    --sf-warning-98: #fff8f5;
-    --sf-warning-95: #ffeee2;
-    --sf-warning-90: #ffdcc1;
-    --sf-warning-90--alfa-4: rgba(255,220,193,0.03922);
-    --sf-warning-90--alfa-8: rgba(255,220,193,0.07843);
-    --sf-warning-90--alfa-12: rgba(255,220,193,0.12157);
-    --sf-warning-90--alfa-24: rgba(255,220,193,0.23922);
-    --sf-warning-85: #ffca9f;
-    --sf-warning-80: #ffb779;
-    --sf-warning-70: #fa911c;
-    --sf-warning-60: #d87900;
-    --sf-warning-50: #b26300;
+    --sf-error-50--alfa-4: var(--sf-red-50--alfa-4);
+    --sf-error-50--alfa-8: var(--sf-red-50--alfa-8);
+    --sf-error-50--alfa-12: var(--sf-red-50--alfa-12);
+    --sf-error-50--alfa-16: var(--sf-red-50--alfa-16);
+    --sf-error-50--alfa-20: var(--sf-red-50--alfa-20);
+    --sf-error-50--alfa-24: var(--sf-red-50--alfa-24);
+    --sf-error-50--alfa-28: var(--sf-red-50--alfa-28);
+    --sf-error-50--alfa-32: var(--sf-red-50--alfa-32);
+    --sf-error-40: var(--sf-red-40);
+    --sf-error-35: var(--sf-red-35);
+    --sf-error-30: var(--sf-red-30);
+    --sf-error-25: var(--sf-red-25);
+    --sf-error-20: var(--sf-red-20);
+    --sf-error-20--alfa-4: var(--sf-red-20--alfa-4);
+    --sf-error-20--alfa-8: var(--sf-red-20--alfa-8);
+    --sf-error-20--alfa-12: var(--sf-red-20--alfa-12);
+    --sf-error-20--alfa-16: var(--sf-red-20--alfa-16);
+    --sf-error-20--alfa-20: var(--sf-red-20--alfa-20);
+    --sf-error-20--alfa-24: var(--sf-red-20--alfa-24);
+    --sf-error-20--alfa-64: var(--sf-red-20--alfa-64);
+    --sf-error-20--alfa-80: var(--sf-red-20--alfa-80);
+    --sf-error-15: var(--sf-red-15);
+    --sf-error-10: var(--sf-red-10);
+    --sf-error-5: var(--sf-red-5);
+    --sf-warning-98: var(--sf-amber-98);
+    --sf-warning-95: var(--sf-amber-95);
+    --sf-warning-90: var(--sf-amber-90);
+    --sf-warning-90--alfa-4: var(--sf-amber-90--alfa-4);
+    --sf-warning-90--alfa-8: var(--sf-amber-90--alfa-8);
+    --sf-warning-90--alfa-12: var(--sf-amber-90--alfa-12);
+    --sf-warning-90--alfa-24: var(--sf-amber-90--alfa-24);
+    --sf-warning-85: var(--sf-amber-85);
+    --sf-warning-80: var(--sf-amber-80);
+    --sf-warning-70: var(--sf-amber-70);
+    --sf-warning-60: var(--sf-amber-60);
+    --sf-warning-50: var(--sf-amber-50);
     /* Ступени 4 % и 8 %: на них стоят слои наведения и выбора этой палитры. */
-    --sf-warning-50--alfa-4: rgba(178,99,0,0.03922);
-    --sf-warning-50--alfa-8: rgba(178,99,0,0.07843);
-    --sf-warning-50--alfa-12: rgba(178,99,0,0.12157);
-    --sf-warning-50--alfa-16: rgba(178,99,0,0.16078);
-    --sf-warning-50--alfa-20: rgba(178,99,0,0.2);
-    --sf-warning-50--alfa-24: rgba(178,99,0,0.23922);
-    --sf-warning-50--alfa-28: rgba(178,99,0,0.27843);
-    --sf-warning-50--alfa-32: rgba(178,99,0,0.32157);
-    --sf-warning-40: #8f4e00;
-    --sf-warning-35: #7d4400;
-    --sf-warning-30: #6c3a00;
-    --sf-warning-25: #5c3000;
-    --sf-warning-20: #4c2700;
-    --sf-warning-15: #3d1e00;
-    --sf-warning-10: #2e1500;
-    --sf-warning-5: #1f0c00;
-    --sf-success-98: #ecffe4;
-    --sf-success-95: #c9ffbe;
-    --sf-success-90: #8ffa88;
-    --sf-success-90--alfa-4: rgba(143,250,136,0.03922);
-    --sf-success-90--alfa-8: rgba(143,250,136,0.07843);
-    --sf-success-90--alfa-12: rgba(143,250,136,0.12157);
-    --sf-success-90--alfa-24: rgba(143,250,136,0.23922);
-    --sf-success-85: #81ec7c;
-    --sf-success-80: #74dd6f;
-    --sf-success-70: #58c157;
-    --sf-success-60: #3ba53f;
-    --sf-success-50: #198a27;
+    --sf-warning-50--alfa-4: var(--sf-amber-50--alfa-4);
+    --sf-warning-50--alfa-8: var(--sf-amber-50--alfa-8);
+    --sf-warning-50--alfa-12: var(--sf-amber-50--alfa-12);
+    --sf-warning-50--alfa-16: var(--sf-amber-50--alfa-16);
+    --sf-warning-50--alfa-20: var(--sf-amber-50--alfa-20);
+    --sf-warning-50--alfa-24: var(--sf-amber-50--alfa-24);
+    --sf-warning-50--alfa-28: var(--sf-amber-50--alfa-28);
+    --sf-warning-50--alfa-32: var(--sf-amber-50--alfa-32);
+    --sf-warning-40: var(--sf-amber-40);
+    --sf-warning-35: var(--sf-amber-35);
+    --sf-warning-30: var(--sf-amber-30);
+    --sf-warning-25: var(--sf-amber-25);
+    --sf-warning-20: var(--sf-amber-20);
+    --sf-warning-20--alfa-4: var(--sf-amber-20--alfa-4);
+    --sf-warning-20--alfa-8: var(--sf-amber-20--alfa-8);
+    --sf-warning-20--alfa-12: var(--sf-amber-20--alfa-12);
+    --sf-warning-20--alfa-16: var(--sf-amber-20--alfa-16);
+    --sf-warning-20--alfa-20: var(--sf-amber-20--alfa-20);
+    --sf-warning-20--alfa-24: var(--sf-amber-20--alfa-24);
+    --sf-warning-20--alfa-64: var(--sf-amber-20--alfa-64);
+    --sf-warning-20--alfa-80: var(--sf-amber-20--alfa-80);
+    --sf-warning-15: var(--sf-amber-15);
+    --sf-warning-10: var(--sf-amber-10);
+    --sf-warning-5: var(--sf-amber-5);
+    --sf-success-98: var(--sf-green-98);
+    --sf-success-95: var(--sf-green-95);
+    --sf-success-90: var(--sf-green-90);
+    --sf-success-90--alfa-4: var(--sf-green-90--alfa-4);
+    --sf-success-90--alfa-8: var(--sf-green-90--alfa-8);
+    --sf-success-90--alfa-12: var(--sf-green-90--alfa-12);
+    --sf-success-90--alfa-24: var(--sf-green-90--alfa-24);
+    --sf-success-85: var(--sf-green-85);
+    --sf-success-80: var(--sf-green-80);
+    --sf-success-70: var(--sf-green-70);
+    --sf-success-60: var(--sf-green-60);
+    --sf-success-50: var(--sf-green-50);
     /* Ступени 4 % и 8 %: на них стоят слои наведения и выбора этой палитры. */
-    --sf-success-50--alfa-4: rgba(25,138,39,0.03922);
-    --sf-success-50--alfa-8: rgba(25,138,39,0.07843);
-    --sf-success-50--alfa-12: rgba(25,138,39,0.12157);
-    --sf-success-50--alfa-16: rgba(25,138,39,0.16078);
-    --sf-success-50--alfa-20: rgba(25,138,39,0.2);
-    --sf-success-50--alfa-24: rgba(25,138,39,0.23922);
-    --sf-success-50--alfa-28: rgba(25,138,39,0.27843);
-    --sf-success-50--alfa-32: rgba(25,138,39,0.32157);
-    --sf-success-40: #006e17;
-    --sf-success-35: #006013;
-    --sf-success-30: #00530f;
-    --sf-success-25: #00460b;
-    --sf-success-20: #003908;
-    --sf-success-15: #002d05;
-    --sf-success-10: #002203;
-    --sf-success-5: #001501;
-    /* The tones of initials (sf-avatar tone): eight fixed hues, one palette
-       step per use. They are not status colours and not the brand: the status
-       ramps say something about the world, and primary, secondary and tertiary
-       move with a theme's colour, so a hue that must keep its name under every
-       theme has a set of its own (HCT chroma 48, hues 5 to 325, the generator's
-       tones, tests/avatar-tones.contract.test.mjs holds them). Tone 50 lays the
-       plate on the fill family of the alpha scale, 20 light and 32 dark; tone 30
-       and tone 85 are the ink.
-
-       The chart series take seven of the same hues rather than a set of their
-       own (--sf-chart-2 to -8 in the theme; SIMAI Chart D4): a solid step per
-       theme picked for 3:1 on the surfaces and for distance under colour-vision
-       deficiency, and the whole fill family on tone 50 for area fills, 12/16/20
-       light and 24/28/32 dark (tests/chart-colours.contract.test.mjs holds
-       them). Indigo sits beside the primary hue and is left out of the chart. */
-    --sf-tone-rose-50--alfa-12: rgba(184,88,113,0.12157);
-    --sf-tone-rose-50--alfa-16: rgba(184,88,113,0.16078);
-    --sf-tone-rose-50--alfa-20: rgba(184,88,113,0.2);
-    --sf-tone-rose-50--alfa-24: rgba(184,88,113,0.23922);
-    --sf-tone-rose-50--alfa-28: rgba(184,88,113,0.27843);
-    --sf-tone-rose-50--alfa-32: rgba(184,88,113,0.32157);
-    --sf-tone-rose-30: #7c2942;
-    --sf-tone-rose-50: #b85871;
-    --sf-tone-rose-60: #d7718b;
-    --sf-tone-rose-85: #ffc6d1;
-    --sf-tone-amber-50--alfa-12: rgba(172,103,4,0.12157);
-    --sf-tone-amber-50--alfa-16: rgba(172,103,4,0.16078);
-    --sf-tone-amber-50--alfa-20: rgba(172,103,4,0.2);
-    --sf-tone-amber-50--alfa-24: rgba(172,103,4,0.23922);
-    --sf-tone-amber-50--alfa-28: rgba(172,103,4,0.27843);
-    --sf-tone-amber-50--alfa-32: rgba(172,103,4,0.32157);
-    --sf-tone-amber-30: #693c00;
-    --sf-tone-amber-60: #cb8024;
-    --sf-tone-amber-85: #ffcb98;
-    --sf-tone-lime-50--alfa-12: rgba(125,123,0,0.12157);
-    --sf-tone-lime-50--alfa-16: rgba(125,123,0,0.16078);
-    --sf-tone-lime-50--alfa-20: rgba(125,123,0,0.2);
-    --sf-tone-lime-50--alfa-24: rgba(125,123,0,0.23922);
-    --sf-tone-lime-50--alfa-28: rgba(125,123,0,0.27843);
-    --sf-tone-lime-50--alfa-32: rgba(125,123,0,0.32157);
-    --sf-tone-lime-30: #4a4900;
-    --sf-tone-lime-50: #7d7b00;
-    --sf-tone-lime-60: #979523;
-    --sf-tone-lime-85: #dcda62;
-    --sf-tone-green-50--alfa-12: rgba(56,134,71,0.12157);
-    --sf-tone-green-50--alfa-16: rgba(56,134,71,0.16078);
-    --sf-tone-green-50--alfa-20: rgba(56,134,71,0.2);
-    --sf-tone-green-50--alfa-24: rgba(56,134,71,0.23922);
-    --sf-tone-green-50--alfa-28: rgba(56,134,71,0.27843);
-    --sf-tone-green-50--alfa-32: rgba(56,134,71,0.32157);
-    --sf-tone-green-30: #00531f;
-    --sf-tone-green-85: #95e79d;
-    --sf-tone-teal-50--alfa-12: rgba(0,133,126,0.12157);
-    --sf-tone-teal-50--alfa-16: rgba(0,133,126,0.16078);
-    --sf-tone-teal-50--alfa-20: rgba(0,133,126,0.2);
-    --sf-tone-teal-50--alfa-24: rgba(0,133,126,0.23922);
-    --sf-tone-teal-50--alfa-28: rgba(0,133,126,0.27843);
-    --sf-tone-teal-50--alfa-32: rgba(0,133,126,0.32157);
-    --sf-tone-teal-30: #00504b;
-    --sf-tone-teal-50: #00857e;
-    --sf-tone-teal-60: #00a299;
-    --sf-tone-teal-85: #61e9de;
-    --sf-tone-sky-50--alfa-12: rgba(21,125,185,0.12157);
-    --sf-tone-sky-50--alfa-16: rgba(21,125,185,0.16078);
-    --sf-tone-sky-50--alfa-20: rgba(21,125,185,0.2);
-    --sf-tone-sky-50--alfa-24: rgba(21,125,185,0.23922);
-    --sf-tone-sky-50--alfa-28: rgba(21,125,185,0.27843);
-    --sf-tone-sky-50--alfa-32: rgba(21,125,185,0.32157);
-    --sf-tone-sky-30: #004b72;
-    --sf-tone-sky-85: #afd9ff;
-    --sf-tone-indigo-50--alfa-20: rgba(109,110,196,0.2);
-    --sf-tone-indigo-50--alfa-32: rgba(109,110,196,0.32157);
-    --sf-tone-indigo-30: #3b3d8f;
-    --sf-tone-indigo-85: #d1d0ff;
-    --sf-tone-violet-50--alfa-12: rgba(158,95,170,0.12157);
-    --sf-tone-violet-50--alfa-16: rgba(158,95,170,0.16078);
-    --sf-tone-violet-50--alfa-20: rgba(158,95,170,0.2);
-    --sf-tone-violet-50--alfa-24: rgba(158,95,170,0.23922);
-    --sf-tone-violet-50--alfa-28: rgba(158,95,170,0.27843);
-    --sf-tone-violet-50--alfa-32: rgba(158,95,170,0.32157);
-    --sf-tone-violet-30: #682e76;
-    --sf-tone-violet-85: #f9c2ff;
+    --sf-success-50--alfa-4: var(--sf-green-50--alfa-4);
+    --sf-success-50--alfa-8: var(--sf-green-50--alfa-8);
+    --sf-success-50--alfa-12: var(--sf-green-50--alfa-12);
+    --sf-success-50--alfa-16: var(--sf-green-50--alfa-16);
+    --sf-success-50--alfa-20: var(--sf-green-50--alfa-20);
+    --sf-success-50--alfa-24: var(--sf-green-50--alfa-24);
+    --sf-success-50--alfa-28: var(--sf-green-50--alfa-28);
+    --sf-success-50--alfa-32: var(--sf-green-50--alfa-32);
+    --sf-success-40: var(--sf-green-40);
+    --sf-success-35: var(--sf-green-35);
+    --sf-success-30: var(--sf-green-30);
+    --sf-success-25: var(--sf-green-25);
+    --sf-success-20: var(--sf-green-20);
+    --sf-success-20--alfa-4: var(--sf-green-20--alfa-4);
+    --sf-success-20--alfa-8: var(--sf-green-20--alfa-8);
+    --sf-success-20--alfa-12: var(--sf-green-20--alfa-12);
+    --sf-success-20--alfa-16: var(--sf-green-20--alfa-16);
+    --sf-success-20--alfa-20: var(--sf-green-20--alfa-20);
+    --sf-success-20--alfa-24: var(--sf-green-20--alfa-24);
+    --sf-success-20--alfa-64: var(--sf-green-20--alfa-64);
+    --sf-success-20--alfa-80: var(--sf-green-20--alfa-80);
+    --sf-success-15: var(--sf-green-15);
+    --sf-success-10: var(--sf-green-10);
+    --sf-success-5: var(--sf-green-5);
+    /* The former tones of initials (sf-avatar tone, chroma 48 of their own),
+       retired by owner decision C17 (2026-11-08): avatars and charts have no
+       colours of their own, they name a hue of the static palette. Each former
+       primitive is var() of the static hue of its name -- rose is pink -- until
+       the alias list's remove_after (src/core/contracts/token-aliases.v1.json,
+       palette_tokens). The value moves with it: chroma 60 and the hue's own
+       angle (journal token-c17-tones-to-hues). */
+    --sf-tone-rose-50--alfa-12: var(--sf-pink-50--alfa-12);
+    --sf-tone-rose-50--alfa-16: var(--sf-pink-50--alfa-16);
+    --sf-tone-rose-50--alfa-20: var(--sf-pink-50--alfa-20);
+    --sf-tone-rose-50--alfa-24: var(--sf-pink-50--alfa-24);
+    --sf-tone-rose-50--alfa-28: var(--sf-pink-50--alfa-28);
+    --sf-tone-rose-50--alfa-32: var(--sf-pink-50--alfa-32);
+    --sf-tone-rose-30: var(--sf-pink-30);
+    --sf-tone-rose-50: var(--sf-pink-50);
+    --sf-tone-rose-60: var(--sf-pink-60);
+    --sf-tone-rose-85: var(--sf-pink-85);
+    --sf-tone-amber-50--alfa-12: var(--sf-amber-50--alfa-12);
+    --sf-tone-amber-50--alfa-16: var(--sf-amber-50--alfa-16);
+    --sf-tone-amber-50--alfa-20: var(--sf-amber-50--alfa-20);
+    --sf-tone-amber-50--alfa-24: var(--sf-amber-50--alfa-24);
+    --sf-tone-amber-50--alfa-28: var(--sf-amber-50--alfa-28);
+    --sf-tone-amber-50--alfa-32: var(--sf-amber-50--alfa-32);
+    --sf-tone-amber-30: var(--sf-amber-30);
+    --sf-tone-amber-60: var(--sf-amber-60);
+    --sf-tone-amber-85: var(--sf-amber-85);
+    --sf-tone-lime-50--alfa-12: var(--sf-lime-50--alfa-12);
+    --sf-tone-lime-50--alfa-16: var(--sf-lime-50--alfa-16);
+    --sf-tone-lime-50--alfa-20: var(--sf-lime-50--alfa-20);
+    --sf-tone-lime-50--alfa-24: var(--sf-lime-50--alfa-24);
+    --sf-tone-lime-50--alfa-28: var(--sf-lime-50--alfa-28);
+    --sf-tone-lime-50--alfa-32: var(--sf-lime-50--alfa-32);
+    --sf-tone-lime-30: var(--sf-lime-30);
+    --sf-tone-lime-50: var(--sf-lime-50);
+    --sf-tone-lime-60: var(--sf-lime-60);
+    --sf-tone-lime-85: var(--sf-lime-85);
+    --sf-tone-green-50--alfa-12: var(--sf-green-50--alfa-12);
+    --sf-tone-green-50--alfa-16: var(--sf-green-50--alfa-16);
+    --sf-tone-green-50--alfa-20: var(--sf-green-50--alfa-20);
+    --sf-tone-green-50--alfa-24: var(--sf-green-50--alfa-24);
+    --sf-tone-green-50--alfa-28: var(--sf-green-50--alfa-28);
+    --sf-tone-green-50--alfa-32: var(--sf-green-50--alfa-32);
+    --sf-tone-green-30: var(--sf-green-30);
+    --sf-tone-green-85: var(--sf-green-85);
+    --sf-tone-teal-50--alfa-12: var(--sf-teal-50--alfa-12);
+    --sf-tone-teal-50--alfa-16: var(--sf-teal-50--alfa-16);
+    --sf-tone-teal-50--alfa-20: var(--sf-teal-50--alfa-20);
+    --sf-tone-teal-50--alfa-24: var(--sf-teal-50--alfa-24);
+    --sf-tone-teal-50--alfa-28: var(--sf-teal-50--alfa-28);
+    --sf-tone-teal-50--alfa-32: var(--sf-teal-50--alfa-32);
+    --sf-tone-teal-30: var(--sf-teal-30);
+    --sf-tone-teal-50: var(--sf-teal-50);
+    --sf-tone-teal-60: var(--sf-teal-60);
+    --sf-tone-teal-85: var(--sf-teal-85);
+    --sf-tone-sky-50--alfa-12: var(--sf-sky-50--alfa-12);
+    --sf-tone-sky-50--alfa-16: var(--sf-sky-50--alfa-16);
+    --sf-tone-sky-50--alfa-20: var(--sf-sky-50--alfa-20);
+    --sf-tone-sky-50--alfa-24: var(--sf-sky-50--alfa-24);
+    --sf-tone-sky-50--alfa-28: var(--sf-sky-50--alfa-28);
+    --sf-tone-sky-50--alfa-32: var(--sf-sky-50--alfa-32);
+    --sf-tone-sky-30: var(--sf-sky-30);
+    --sf-tone-sky-85: var(--sf-sky-85);
+    --sf-tone-indigo-50--alfa-20: var(--sf-indigo-50--alfa-20);
+    --sf-tone-indigo-50--alfa-32: var(--sf-indigo-50--alfa-32);
+    --sf-tone-indigo-30: var(--sf-indigo-30);
+    --sf-tone-indigo-85: var(--sf-indigo-85);
+    --sf-tone-violet-50--alfa-12: var(--sf-purple-50--alfa-12);
+    --sf-tone-violet-50--alfa-16: var(--sf-purple-50--alfa-16);
+    --sf-tone-violet-50--alfa-20: var(--sf-purple-50--alfa-20);
+    --sf-tone-violet-50--alfa-24: var(--sf-purple-50--alfa-24);
+    --sf-tone-violet-50--alfa-28: var(--sf-purple-50--alfa-28);
+    --sf-tone-violet-50--alfa-32: var(--sf-purple-50--alfa-32);
+    --sf-tone-violet-30: var(--sf-purple-30);
+    --sf-tone-violet-85: var(--sf-purple-85);
+  }
+}
+@layer sf.base {
+  /* The static palette: sixteen fixed hues through the theme's own generator
+     (HCT TonalPalette), the same tones and translucent steps for every hue.
+     No theme colour moves them; a status primitive (--sf-error-<tone>,
+     --sf-warning-, --sf-success-, --sf-info-) is var() of its hue. */
+  :root {
+    /* red: HCT hue 25, chroma 85 */
+    --sf-red-98: #fff8f7;
+    --sf-red-95: #ffedea;
+    --sf-red-90: #ffdad6;
+    --sf-red-90--alfa-4: rgba(255,218,214,0.03922);
+    --sf-red-90--alfa-8: rgba(255,218,214,0.07843);
+    --sf-red-90--alfa-12: rgba(255,218,214,0.12157);
+    --sf-red-90--alfa-24: rgba(255,218,214,0.23922);
+    --sf-red-85: #ffc7c0;
+    --sf-red-80: #ffb4ab;
+    --sf-red-70: #ff897d;
+    --sf-red-60: #ff5449;
+    --sf-red-50: #df362f;
+    --sf-red-50--alfa-4: rgba(223,54,47,0.03922);
+    --sf-red-50--alfa-8: rgba(223,54,47,0.07843);
+    --sf-red-50--alfa-12: rgba(223,54,47,0.12157);
+    --sf-red-50--alfa-16: rgba(223,54,47,0.16078);
+    --sf-red-50--alfa-20: rgba(223,54,47,0.2);
+    --sf-red-50--alfa-24: rgba(223,54,47,0.23922);
+    --sf-red-50--alfa-28: rgba(223,54,47,0.27843);
+    --sf-red-50--alfa-32: rgba(223,54,47,0.32157);
+    --sf-red-40: #bb1919;
+    --sf-red-35: #a9040e;
+    --sf-red-30: #93000a;
+    --sf-red-25: #7e0007;
+    --sf-red-20: #690005;
+    --sf-red-20--alfa-4: rgba(105,0,5,0.03922);
+    --sf-red-20--alfa-8: rgba(105,0,5,0.07843);
+    --sf-red-20--alfa-12: rgba(105,0,5,0.12157);
+    --sf-red-20--alfa-16: rgba(105,0,5,0.16078);
+    --sf-red-20--alfa-20: rgba(105,0,5,0.2);
+    --sf-red-20--alfa-24: rgba(105,0,5,0.23922);
+    --sf-red-20--alfa-64: rgba(105,0,5,0.63922);
+    --sf-red-20--alfa-80: rgba(105,0,5,0.8);
+    --sf-red-15: #540003;
+    --sf-red-10: #410002;
+    --sf-red-5: #2d0001;
+    /* orange: HCT hue 45, chroma 60 */
+    --sf-orange-98: #fff8f6;
+    --sf-orange-95: #ffede6;
+    --sf-orange-90: #ffdbcb;
+    --sf-orange-90--alfa-4: rgba(255,219,203,0.03922);
+    --sf-orange-90--alfa-8: rgba(255,219,203,0.07843);
+    --sf-orange-90--alfa-12: rgba(255,219,203,0.12157);
+    --sf-orange-90--alfa-24: rgba(255,219,203,0.23922);
+    --sf-orange-85: #ffc9af;
+    --sf-orange-80: #ffb692;
+    --sf-orange-70: #ff8d4f;
+    --sf-orange-60: #e4702d;
+    --sf-orange-50: #c25713;
+    --sf-orange-50--alfa-4: rgba(194,87,19,0.03922);
+    --sf-orange-50--alfa-8: rgba(194,87,19,0.07843);
+    --sf-orange-50--alfa-12: rgba(194,87,19,0.12157);
+    --sf-orange-50--alfa-16: rgba(194,87,19,0.16078);
+    --sf-orange-50--alfa-20: rgba(194,87,19,0.2);
+    --sf-orange-50--alfa-24: rgba(194,87,19,0.23922);
+    --sf-orange-50--alfa-28: rgba(194,87,19,0.27843);
+    --sf-orange-50--alfa-32: rgba(194,87,19,0.32157);
+    --sf-orange-40: #9f4200;
+    --sf-orange-35: #8c3900;
+    --sf-orange-30: #793000;
+    --sf-orange-25: #672800;
+    --sf-orange-20: #562000;
+    --sf-orange-20--alfa-4: rgba(86,32,0,0.03922);
+    --sf-orange-20--alfa-8: rgba(86,32,0,0.07843);
+    --sf-orange-20--alfa-12: rgba(86,32,0,0.12157);
+    --sf-orange-20--alfa-16: rgba(86,32,0,0.16078);
+    --sf-orange-20--alfa-20: rgba(86,32,0,0.2);
+    --sf-orange-20--alfa-24: rgba(86,32,0,0.23922);
+    --sf-orange-20--alfa-64: rgba(86,32,0,0.63922);
+    --sf-orange-20--alfa-80: rgba(86,32,0,0.8);
+    --sf-orange-15: #451800;
+    --sf-orange-10: #341100;
+    --sf-orange-5: #230900;
+    /* amber: HCT hue 60, chroma 60 */
+    --sf-amber-98: #fff8f5;
+    --sf-amber-95: #ffeee2;
+    --sf-amber-90: #ffdcc1;
+    --sf-amber-90--alfa-4: rgba(255,220,193,0.03922);
+    --sf-amber-90--alfa-8: rgba(255,220,193,0.07843);
+    --sf-amber-90--alfa-12: rgba(255,220,193,0.12157);
+    --sf-amber-90--alfa-24: rgba(255,220,193,0.23922);
+    --sf-amber-85: #ffca9f;
+    --sf-amber-80: #ffb779;
+    --sf-amber-70: #fa911c;
+    --sf-amber-60: #d87900;
+    --sf-amber-50: #b26300;
+    --sf-amber-50--alfa-4: rgba(178,99,0,0.03922);
+    --sf-amber-50--alfa-8: rgba(178,99,0,0.07843);
+    --sf-amber-50--alfa-12: rgba(178,99,0,0.12157);
+    --sf-amber-50--alfa-16: rgba(178,99,0,0.16078);
+    --sf-amber-50--alfa-20: rgba(178,99,0,0.2);
+    --sf-amber-50--alfa-24: rgba(178,99,0,0.23922);
+    --sf-amber-50--alfa-28: rgba(178,99,0,0.27843);
+    --sf-amber-50--alfa-32: rgba(178,99,0,0.32157);
+    --sf-amber-40: #8f4e00;
+    --sf-amber-35: #7d4400;
+    --sf-amber-30: #6c3a00;
+    --sf-amber-25: #5c3000;
+    --sf-amber-20: #4c2700;
+    --sf-amber-20--alfa-4: rgba(76,39,0,0.03922);
+    --sf-amber-20--alfa-8: rgba(76,39,0,0.07843);
+    --sf-amber-20--alfa-12: rgba(76,39,0,0.12157);
+    --sf-amber-20--alfa-16: rgba(76,39,0,0.16078);
+    --sf-amber-20--alfa-20: rgba(76,39,0,0.2);
+    --sf-amber-20--alfa-24: rgba(76,39,0,0.23922);
+    --sf-amber-20--alfa-64: rgba(76,39,0,0.63922);
+    --sf-amber-20--alfa-80: rgba(76,39,0,0.8);
+    --sf-amber-15: #3d1e00;
+    --sf-amber-10: #2e1500;
+    --sf-amber-5: #1f0c00;
+    /* yellow: HCT hue 90, chroma 60 */
+    --sf-yellow-98: #fff8f1;
+    --sf-yellow-95: #ffefcf;
+    --sf-yellow-90: #ffdf92;
+    --sf-yellow-90--alfa-4: rgba(255,223,146,0.03922);
+    --sf-yellow-90--alfa-8: rgba(255,223,146,0.07843);
+    --sf-yellow-90--alfa-12: rgba(255,223,146,0.12157);
+    --sf-yellow-90--alfa-24: rgba(255,223,146,0.23922);
+    --sf-yellow-85: #ffce41;
+    --sf-yellow-80: #f4c002;
+    --sf-yellow-70: #d3a500;
+    --sf-yellow-60: #b28b00;
+    --sf-yellow-50: #937300;
+    --sf-yellow-50--alfa-4: rgba(147,115,0,0.03922);
+    --sf-yellow-50--alfa-8: rgba(147,115,0,0.07843);
+    --sf-yellow-50--alfa-12: rgba(147,115,0,0.12157);
+    --sf-yellow-50--alfa-16: rgba(147,115,0,0.16078);
+    --sf-yellow-50--alfa-20: rgba(147,115,0,0.2);
+    --sf-yellow-50--alfa-24: rgba(147,115,0,0.23922);
+    --sf-yellow-50--alfa-28: rgba(147,115,0,0.27843);
+    --sf-yellow-50--alfa-32: rgba(147,115,0,0.32157);
+    --sf-yellow-40: #755b00;
+    --sf-yellow-35: #674f00;
+    --sf-yellow-30: #594400;
+    --sf-yellow-25: #4b3900;
+    --sf-yellow-20: #3e2e00;
+    --sf-yellow-20--alfa-4: rgba(62,46,0,0.03922);
+    --sf-yellow-20--alfa-8: rgba(62,46,0,0.07843);
+    --sf-yellow-20--alfa-12: rgba(62,46,0,0.12157);
+    --sf-yellow-20--alfa-16: rgba(62,46,0,0.16078);
+    --sf-yellow-20--alfa-20: rgba(62,46,0,0.2);
+    --sf-yellow-20--alfa-24: rgba(62,46,0,0.23922);
+    --sf-yellow-20--alfa-64: rgba(62,46,0,0.63922);
+    --sf-yellow-20--alfa-80: rgba(62,46,0,0.8);
+    --sf-yellow-15: #312400;
+    --sf-yellow-10: #241a00;
+    --sf-yellow-5: #171000;
+    /* lime: HCT hue 120, chroma 60 */
+    --sf-lime-98: #f6ffc1;
+    --sf-lime-95: #e4fd68;
+    --sf-lime-90: #d6ee5b;
+    --sf-lime-90--alfa-4: rgba(214,238,91,0.03922);
+    --sf-lime-90--alfa-8: rgba(214,238,91,0.07843);
+    --sf-lime-90--alfa-12: rgba(214,238,91,0.12157);
+    --sf-lime-90--alfa-24: rgba(214,238,91,0.23922);
+    --sf-lime-85: #c8e04e;
+    --sf-lime-80: #bad241;
+    --sf-lime-70: #9fb526;
+    --sf-lime-60: #859a00;
+    --sf-lime-50: #6d7f00;
+    --sf-lime-50--alfa-4: rgba(109,127,0,0.03922);
+    --sf-lime-50--alfa-8: rgba(109,127,0,0.07843);
+    --sf-lime-50--alfa-12: rgba(109,127,0,0.12157);
+    --sf-lime-50--alfa-16: rgba(109,127,0,0.16078);
+    --sf-lime-50--alfa-20: rgba(109,127,0,0.2);
+    --sf-lime-50--alfa-24: rgba(109,127,0,0.23922);
+    --sf-lime-50--alfa-28: rgba(109,127,0,0.27843);
+    --sf-lime-50--alfa-32: rgba(109,127,0,0.32157);
+    --sf-lime-40: #566500;
+    --sf-lime-35: #4b5800;
+    --sf-lime-30: #404c00;
+    --sf-lime-25: #364000;
+    --sf-lime-20: #2c3400;
+    --sf-lime-20--alfa-4: rgba(44,52,0,0.03922);
+    --sf-lime-20--alfa-8: rgba(44,52,0,0.07843);
+    --sf-lime-20--alfa-12: rgba(44,52,0,0.12157);
+    --sf-lime-20--alfa-16: rgba(44,52,0,0.16078);
+    --sf-lime-20--alfa-20: rgba(44,52,0,0.2);
+    --sf-lime-20--alfa-24: rgba(44,52,0,0.23922);
+    --sf-lime-20--alfa-64: rgba(44,52,0,0.63922);
+    --sf-lime-20--alfa-80: rgba(44,52,0,0.8);
+    --sf-lime-15: #222900;
+    --sf-lime-10: #181e00;
+    --sf-lime-5: #0f1300;
+    /* green: HCT hue 145, chroma 65 */
+    --sf-green-98: #ecffe4;
+    --sf-green-95: #c9ffbe;
+    --sf-green-90: #8ffa88;
+    --sf-green-90--alfa-4: rgba(143,250,136,0.03922);
+    --sf-green-90--alfa-8: rgba(143,250,136,0.07843);
+    --sf-green-90--alfa-12: rgba(143,250,136,0.12157);
+    --sf-green-90--alfa-24: rgba(143,250,136,0.23922);
+    --sf-green-85: #81ec7c;
+    --sf-green-80: #74dd6f;
+    --sf-green-70: #58c157;
+    --sf-green-60: #3ba53f;
+    --sf-green-50: #198a27;
+    --sf-green-50--alfa-4: rgba(25,138,39,0.03922);
+    --sf-green-50--alfa-8: rgba(25,138,39,0.07843);
+    --sf-green-50--alfa-12: rgba(25,138,39,0.12157);
+    --sf-green-50--alfa-16: rgba(25,138,39,0.16078);
+    --sf-green-50--alfa-20: rgba(25,138,39,0.2);
+    --sf-green-50--alfa-24: rgba(25,138,39,0.23922);
+    --sf-green-50--alfa-28: rgba(25,138,39,0.27843);
+    --sf-green-50--alfa-32: rgba(25,138,39,0.32157);
+    --sf-green-40: #006e17;
+    --sf-green-35: #006013;
+    --sf-green-30: #00530f;
+    --sf-green-25: #00460b;
+    --sf-green-20: #003908;
+    --sf-green-20--alfa-4: rgba(0,57,8,0.03922);
+    --sf-green-20--alfa-8: rgba(0,57,8,0.07843);
+    --sf-green-20--alfa-12: rgba(0,57,8,0.12157);
+    --sf-green-20--alfa-16: rgba(0,57,8,0.16078);
+    --sf-green-20--alfa-20: rgba(0,57,8,0.2);
+    --sf-green-20--alfa-24: rgba(0,57,8,0.23922);
+    --sf-green-20--alfa-64: rgba(0,57,8,0.63922);
+    --sf-green-20--alfa-80: rgba(0,57,8,0.8);
+    --sf-green-15: #002d05;
+    --sf-green-10: #002203;
+    --sf-green-5: #001501;
+    /* teal: HCT hue 175, chroma 60 */
+    --sf-teal-98: #e6fff4;
+    --sf-teal-95: #b9ffe7;
+    --sf-teal-90: #3efed1;
+    --sf-teal-90--alfa-4: rgba(62,254,209,0.03922);
+    --sf-teal-90--alfa-8: rgba(62,254,209,0.07843);
+    --sf-teal-90--alfa-12: rgba(62,254,209,0.12157);
+    --sf-teal-90--alfa-24: rgba(62,254,209,0.23922);
+    --sf-teal-85: #20efc3;
+    --sf-teal-80: #00e0b6;
+    --sf-teal-70: #00c19d;
+    --sf-teal-60: #00a484;
+    --sf-teal-50: #00876d;
+    --sf-teal-50--alfa-4: rgba(0,135,109,0.03922);
+    --sf-teal-50--alfa-8: rgba(0,135,109,0.07843);
+    --sf-teal-50--alfa-12: rgba(0,135,109,0.12157);
+    --sf-teal-50--alfa-16: rgba(0,135,109,0.16078);
+    --sf-teal-50--alfa-20: rgba(0,135,109,0.2);
+    --sf-teal-50--alfa-24: rgba(0,135,109,0.23922);
+    --sf-teal-50--alfa-28: rgba(0,135,109,0.27843);
+    --sf-teal-50--alfa-32: rgba(0,135,109,0.32157);
+    --sf-teal-40: #006b56;
+    --sf-teal-35: #005e4b;
+    --sf-teal-30: #005140;
+    --sf-teal-25: #004436;
+    --sf-teal-20: #00382c;
+    --sf-teal-20--alfa-4: rgba(0,56,44,0.03922);
+    --sf-teal-20--alfa-8: rgba(0,56,44,0.07843);
+    --sf-teal-20--alfa-12: rgba(0,56,44,0.12157);
+    --sf-teal-20--alfa-16: rgba(0,56,44,0.16078);
+    --sf-teal-20--alfa-20: rgba(0,56,44,0.2);
+    --sf-teal-20--alfa-24: rgba(0,56,44,0.23922);
+    --sf-teal-20--alfa-64: rgba(0,56,44,0.63922);
+    --sf-teal-20--alfa-80: rgba(0,56,44,0.8);
+    --sf-teal-15: #002c22;
+    --sf-teal-10: #002018;
+    --sf-teal-5: #00150e;
+    /* cyan: HCT hue 205, chroma 60 */
+    --sf-cyan-98: #eafdff;
+    --sf-cyan-95: #c8faff;
+    --sf-cyan-90: #80f4ff;
+    --sf-cyan-90--alfa-4: rgba(128,244,255,0.03922);
+    --sf-cyan-90--alfa-8: rgba(128,244,255,0.07843);
+    --sf-cyan-90--alfa-12: rgba(128,244,255,0.12157);
+    --sf-cyan-90--alfa-24: rgba(128,244,255,0.23922);
+    --sf-cyan-85: #00eafa;
+    --sf-cyan-80: #00dbea;
+    --sf-cyan-70: #00bdca;
+    --sf-cyan-60: #00a0ab;
+    --sf-cyan-50: #00848d;
+    --sf-cyan-50--alfa-4: rgba(0,132,141,0.03922);
+    --sf-cyan-50--alfa-8: rgba(0,132,141,0.07843);
+    --sf-cyan-50--alfa-12: rgba(0,132,141,0.12157);
+    --sf-cyan-50--alfa-16: rgba(0,132,141,0.16078);
+    --sf-cyan-50--alfa-20: rgba(0,132,141,0.2);
+    --sf-cyan-50--alfa-24: rgba(0,132,141,0.23922);
+    --sf-cyan-50--alfa-28: rgba(0,132,141,0.27843);
+    --sf-cyan-50--alfa-32: rgba(0,132,141,0.32157);
+    --sf-cyan-40: #006970;
+    --sf-cyan-35: #005c62;
+    --sf-cyan-30: #004f55;
+    --sf-cyan-25: #004248;
+    --sf-cyan-20: #00363b;
+    --sf-cyan-20--alfa-4: rgba(0,54,59,0.03922);
+    --sf-cyan-20--alfa-8: rgba(0,54,59,0.07843);
+    --sf-cyan-20--alfa-12: rgba(0,54,59,0.12157);
+    --sf-cyan-20--alfa-16: rgba(0,54,59,0.16078);
+    --sf-cyan-20--alfa-20: rgba(0,54,59,0.2);
+    --sf-cyan-20--alfa-24: rgba(0,54,59,0.23922);
+    --sf-cyan-20--alfa-64: rgba(0,54,59,0.63922);
+    --sf-cyan-20--alfa-80: rgba(0,54,59,0.8);
+    --sf-cyan-15: #002b2e;
+    --sf-cyan-10: #002022;
+    --sf-cyan-5: #001416;
+    /* sky: HCT hue 235, chroma 60 */
+    --sf-sky-98: #f5faff;
+    --sf-sky-95: #e3f3ff;
+    --sf-sky-90: #c4e7ff;
+    --sf-sky-90--alfa-4: rgba(196,231,255,0.03922);
+    --sf-sky-90--alfa-8: rgba(196,231,255,0.07843);
+    --sf-sky-90--alfa-12: rgba(196,231,255,0.12157);
+    --sf-sky-90--alfa-24: rgba(196,231,255,0.23922);
+    --sf-sky-85: #a2dcff;
+    --sf-sky-80: #7cd0ff;
+    --sf-sky-70: #00b7f7;
+    --sf-sky-60: #009bd1;
+    --sf-sky-50: #0080ad;
+    --sf-sky-50--alfa-4: rgba(0,128,173,0.03922);
+    --sf-sky-50--alfa-8: rgba(0,128,173,0.07843);
+    --sf-sky-50--alfa-12: rgba(0,128,173,0.12157);
+    --sf-sky-50--alfa-16: rgba(0,128,173,0.16078);
+    --sf-sky-50--alfa-20: rgba(0,128,173,0.2);
+    --sf-sky-50--alfa-24: rgba(0,128,173,0.23922);
+    --sf-sky-50--alfa-28: rgba(0,128,173,0.27843);
+    --sf-sky-50--alfa-32: rgba(0,128,173,0.32157);
+    --sf-sky-40: #00668a;
+    --sf-sky-35: #005979;
+    --sf-sky-30: #004c69;
+    --sf-sky-25: #004059;
+    --sf-sky-20: #00344a;
+    --sf-sky-20--alfa-4: rgba(0,52,74,0.03922);
+    --sf-sky-20--alfa-8: rgba(0,52,74,0.07843);
+    --sf-sky-20--alfa-12: rgba(0,52,74,0.12157);
+    --sf-sky-20--alfa-16: rgba(0,52,74,0.16078);
+    --sf-sky-20--alfa-20: rgba(0,52,74,0.2);
+    --sf-sky-20--alfa-24: rgba(0,52,74,0.23922);
+    --sf-sky-20--alfa-64: rgba(0,52,74,0.63922);
+    --sf-sky-20--alfa-80: rgba(0,52,74,0.8);
+    --sf-sky-15: #00293b;
+    --sf-sky-10: #001e2c;
+    --sf-sky-5: #00131d;
+    /* blue: HCT hue 265.1, chroma 58.6 */
+    --sf-blue-98: #f9f9ff;
+    --sf-blue-95: #edf0ff;
+    --sf-blue-90: #d7e2ff;
+    --sf-blue-90--alfa-4: rgba(215,226,255,0.03922);
+    --sf-blue-90--alfa-8: rgba(215,226,255,0.07843);
+    --sf-blue-90--alfa-12: rgba(215,226,255,0.12157);
+    --sf-blue-90--alfa-24: rgba(215,226,255,0.23922);
+    --sf-blue-85: #c2d4ff;
+    --sf-blue-80: #acc7ff;
+    --sf-blue-70: #7eabff;
+    --sf-blue-60: #538ff5;
+    --sf-blue-50: #3375d9;
+    --sf-blue-50--alfa-4: rgba(51,117,217,0.03922);
+    --sf-blue-50--alfa-8: rgba(51,117,217,0.07843);
+    --sf-blue-50--alfa-12: rgba(51,117,217,0.12157);
+    --sf-blue-50--alfa-16: rgba(51,117,217,0.16078);
+    --sf-blue-50--alfa-20: rgba(51,117,217,0.2);
+    --sf-blue-50--alfa-24: rgba(51,117,217,0.23922);
+    --sf-blue-50--alfa-28: rgba(51,117,217,0.27843);
+    --sf-blue-50--alfa-32: rgba(51,117,217,0.32157);
+    --sf-blue-40: #005bbe;
+    --sf-blue-35: #0050a8;
+    --sf-blue-30: #004492;
+    --sf-blue-25: #00397c;
+    --sf-blue-20: #002f67;
+    --sf-blue-20--alfa-4: rgba(0,47,103,0.03922);
+    --sf-blue-20--alfa-8: rgba(0,47,103,0.07843);
+    --sf-blue-20--alfa-12: rgba(0,47,103,0.12157);
+    --sf-blue-20--alfa-16: rgba(0,47,103,0.16078);
+    --sf-blue-20--alfa-20: rgba(0,47,103,0.2);
+    --sf-blue-20--alfa-24: rgba(0,47,103,0.23922);
+    --sf-blue-20--alfa-64: rgba(0,47,103,0.63922);
+    --sf-blue-20--alfa-80: rgba(0,47,103,0.8);
+    --sf-blue-15: #002453;
+    --sf-blue-10: #001a40;
+    --sf-blue-5: #00102c;
+    /* indigo: HCT hue 285, chroma 60 */
+    --sf-indigo-98: #fcf8ff;
+    --sf-indigo-95: #f2efff;
+    --sf-indigo-90: #e1dfff;
+    --sf-indigo-90--alfa-4: rgba(225,223,255,0.03922);
+    --sf-indigo-90--alfa-8: rgba(225,223,255,0.07843);
+    --sf-indigo-90--alfa-12: rgba(225,223,255,0.12157);
+    --sf-indigo-90--alfa-24: rgba(225,223,255,0.23922);
+    --sf-indigo-85: #d1d0ff;
+    --sf-indigo-80: #c1c1ff;
+    --sf-indigo-70: #a1a2ff;
+    --sf-indigo-60: #8284fa;
+    --sf-indigo-50: #686ade;
+    --sf-indigo-50--alfa-4: rgba(104,106,222,0.03922);
+    --sf-indigo-50--alfa-8: rgba(104,106,222,0.07843);
+    --sf-indigo-50--alfa-12: rgba(104,106,222,0.12157);
+    --sf-indigo-50--alfa-16: rgba(104,106,222,0.16078);
+    --sf-indigo-50--alfa-20: rgba(104,106,222,0.2);
+    --sf-indigo-50--alfa-24: rgba(104,106,222,0.23922);
+    --sf-indigo-50--alfa-28: rgba(104,106,222,0.27843);
+    --sf-indigo-50--alfa-32: rgba(104,106,222,0.32157);
+    --sf-indigo-40: #4e50c3;
+    --sf-indigo-35: #4243b6;
+    --sf-indigo-30: #3535aa;
+    --sf-indigo-25: #29279e;
+    --sf-indigo-20: #1c1794;
+    --sf-indigo-20--alfa-4: rgba(28,23,148,0.03922);
+    --sf-indigo-20--alfa-8: rgba(28,23,148,0.07843);
+    --sf-indigo-20--alfa-12: rgba(28,23,148,0.12157);
+    --sf-indigo-20--alfa-16: rgba(28,23,148,0.16078);
+    --sf-indigo-20--alfa-20: rgba(28,23,148,0.2);
+    --sf-indigo-20--alfa-24: rgba(28,23,148,0.23922);
+    --sf-indigo-20--alfa-64: rgba(28,23,148,0.63922);
+    --sf-indigo-20--alfa-80: rgba(28,23,148,0.8);
+    --sf-indigo-15: #0d008a;
+    --sf-indigo-10: #08006c;
+    --sf-indigo-5: #04004c;
+    /* violet: HCT hue 305, chroma 60 */
+    --sf-violet-98: #fef7ff;
+    --sf-violet-95: #f8edff;
+    --sf-violet-90: #ecdcff;
+    --sf-violet-90--alfa-4: rgba(236,220,255,0.03922);
+    --sf-violet-90--alfa-8: rgba(236,220,255,0.07843);
+    --sf-violet-90--alfa-12: rgba(236,220,255,0.12157);
+    --sf-violet-90--alfa-24: rgba(236,220,255,0.23922);
+    --sf-violet-85: #e1cbff;
+    --sf-violet-80: #d6baff;
+    --sf-violet-70: #c098ff;
+    --sf-violet-60: #a779ee;
+    --sf-violet-50: #8c5fd2;
+    --sf-violet-50--alfa-4: rgba(140,95,210,0.03922);
+    --sf-violet-50--alfa-8: rgba(140,95,210,0.07843);
+    --sf-violet-50--alfa-12: rgba(140,95,210,0.12157);
+    --sf-violet-50--alfa-16: rgba(140,95,210,0.16078);
+    --sf-violet-50--alfa-20: rgba(140,95,210,0.2);
+    --sf-violet-50--alfa-24: rgba(140,95,210,0.23922);
+    --sf-violet-50--alfa-28: rgba(140,95,210,0.27843);
+    --sf-violet-50--alfa-32: rgba(140,95,210,0.32157);
+    --sf-violet-40: #7345b7;
+    --sf-violet-35: #6637aa;
+    --sf-violet-30: #5a2a9d;
+    --sf-violet-25: #4e1a91;
+    --sf-violet-20: #420486;
+    --sf-violet-20--alfa-4: rgba(66,4,134,0.03922);
+    --sf-violet-20--alfa-8: rgba(66,4,134,0.07843);
+    --sf-violet-20--alfa-12: rgba(66,4,134,0.12157);
+    --sf-violet-20--alfa-16: rgba(66,4,134,0.16078);
+    --sf-violet-20--alfa-20: rgba(66,4,134,0.2);
+    --sf-violet-20--alfa-24: rgba(66,4,134,0.23922);
+    --sf-violet-20--alfa-64: rgba(66,4,134,0.63922);
+    --sf-violet-20--alfa-80: rgba(66,4,134,0.8);
+    --sf-violet-15: #35006f;
+    --sf-violet-10: #280056;
+    --sf-violet-5: #1a003d;
+    /* purple: HCT hue 325, chroma 60 */
+    --sf-purple-98: #fff7fa;
+    --sf-purple-95: #ffebfd;
+    --sf-purple-90: #fdd6ff;
+    --sf-purple-90--alfa-4: rgba(253,214,255,0.03922);
+    --sf-purple-90--alfa-8: rgba(253,214,255,0.07843);
+    --sf-purple-90--alfa-12: rgba(253,214,255,0.12157);
+    --sf-purple-90--alfa-24: rgba(253,214,255,0.23922);
+    --sf-purple-85: #f9c2ff;
+    --sf-purple-80: #f4aeff;
+    --sf-purple-70: #e18af3;
+    --sf-purple-60: #c470d6;
+    --sf-purple-50: #a856ba;
+    --sf-purple-50--alfa-4: rgba(168,86,186,0.03922);
+    --sf-purple-50--alfa-8: rgba(168,86,186,0.07843);
+    --sf-purple-50--alfa-12: rgba(168,86,186,0.12157);
+    --sf-purple-50--alfa-16: rgba(168,86,186,0.16078);
+    --sf-purple-50--alfa-20: rgba(168,86,186,0.2);
+    --sf-purple-50--alfa-24: rgba(168,86,186,0.23922);
+    --sf-purple-50--alfa-28: rgba(168,86,186,0.27843);
+    --sf-purple-50--alfa-32: rgba(168,86,186,0.32157);
+    --sf-purple-40: #8c3c9f;
+    --sf-purple-35: #7e2e92;
+    --sf-purple-30: #712085;
+    --sf-purple-25: #641079;
+    --sf-purple-20: #55006a;
+    --sf-purple-20--alfa-4: rgba(85,0,106,0.03922);
+    --sf-purple-20--alfa-8: rgba(85,0,106,0.07843);
+    --sf-purple-20--alfa-12: rgba(85,0,106,0.12157);
+    --sf-purple-20--alfa-16: rgba(85,0,106,0.16078);
+    --sf-purple-20--alfa-20: rgba(85,0,106,0.2);
+    --sf-purple-20--alfa-24: rgba(85,0,106,0.23922);
+    --sf-purple-20--alfa-64: rgba(85,0,106,0.63922);
+    --sf-purple-20--alfa-80: rgba(85,0,106,0.8);
+    --sf-purple-15: #440056;
+    --sf-purple-10: #340042;
+    --sf-purple-5: #23002d;
+    /* pink: HCT hue 350, chroma 60 */
+    --sf-pink-98: #fff8f8;
+    --sf-pink-95: #ffecf2;
+    --sf-pink-90: #ffd8e8;
+    --sf-pink-90--alfa-4: rgba(255,216,232,0.03922);
+    --sf-pink-90--alfa-8: rgba(255,216,232,0.07843);
+    --sf-pink-90--alfa-12: rgba(255,216,232,0.12157);
+    --sf-pink-90--alfa-24: rgba(255,216,232,0.23922);
+    --sf-pink-85: #ffc4df;
+    --sf-pink-80: #ffafd6;
+    --sf-pink-70: #fd82c5;
+    --sf-pink-60: #dd68a9;
+    --sf-pink-50: #be4e8f;
+    --sf-pink-50--alfa-4: rgba(190,78,143,0.03922);
+    --sf-pink-50--alfa-8: rgba(190,78,143,0.07843);
+    --sf-pink-50--alfa-12: rgba(190,78,143,0.12157);
+    --sf-pink-50--alfa-16: rgba(190,78,143,0.16078);
+    --sf-pink-50--alfa-20: rgba(190,78,143,0.2);
+    --sf-pink-50--alfa-24: rgba(190,78,143,0.23922);
+    --sf-pink-50--alfa-28: rgba(190,78,143,0.27843);
+    --sf-pink-50--alfa-32: rgba(190,78,143,0.32157);
+    --sf-pink-40: #a03575;
+    --sf-pink-35: #902868;
+    --sf-pink-30: #811a5c;
+    --sf-pink-25: #730a50;
+    --sf-pink-20: #620043;
+    --sf-pink-20--alfa-4: rgba(98,0,67,0.03922);
+    --sf-pink-20--alfa-8: rgba(98,0,67,0.07843);
+    --sf-pink-20--alfa-12: rgba(98,0,67,0.12157);
+    --sf-pink-20--alfa-16: rgba(98,0,67,0.16078);
+    --sf-pink-20--alfa-20: rgba(98,0,67,0.2);
+    --sf-pink-20--alfa-24: rgba(98,0,67,0.23922);
+    --sf-pink-20--alfa-64: rgba(98,0,67,0.63922);
+    --sf-pink-20--alfa-80: rgba(98,0,67,0.8);
+    --sf-pink-15: #4f0035;
+    --sf-pink-10: #3c0028;
+    --sf-pink-5: #29001a;
+    /* brown: HCT hue 50, chroma 30 */
+    --sf-brown-98: #fff8f5;
+    --sf-brown-95: #ffede5;
+    --sf-brown-90: #ffdbc8;
+    --sf-brown-90--alfa-4: rgba(255,219,200,0.03922);
+    --sf-brown-90--alfa-8: rgba(255,219,200,0.07843);
+    --sf-brown-90--alfa-12: rgba(255,219,200,0.12157);
+    --sf-brown-90--alfa-24: rgba(255,219,200,0.23922);
+    --sf-brown-85: #ffc9aa;
+    --sf-brown-80: #fcb78f;
+    --sf-brown-70: #dd9d76;
+    --sf-brown-60: #c0835e;
+    --sf-brown-50: #a26a47;
+    --sf-brown-50--alfa-4: rgba(162,106,71,0.03922);
+    --sf-brown-50--alfa-8: rgba(162,106,71,0.07843);
+    --sf-brown-50--alfa-12: rgba(162,106,71,0.12157);
+    --sf-brown-50--alfa-16: rgba(162,106,71,0.16078);
+    --sf-brown-50--alfa-20: rgba(162,106,71,0.2);
+    --sf-brown-50--alfa-24: rgba(162,106,71,0.23922);
+    --sf-brown-50--alfa-28: rgba(162,106,71,0.27843);
+    --sf-brown-50--alfa-32: rgba(162,106,71,0.32157);
+    --sf-brown-40: #865231;
+    --sf-brown-35: #784626;
+    --sf-brown-30: #6a3b1c;
+    --sf-brown-25: #5c3011;
+    --sf-brown-20: #4f2507;
+    --sf-brown-20--alfa-4: rgba(79,37,7,0.03922);
+    --sf-brown-20--alfa-8: rgba(79,37,7,0.07843);
+    --sf-brown-20--alfa-12: rgba(79,37,7,0.12157);
+    --sf-brown-20--alfa-16: rgba(79,37,7,0.16078);
+    --sf-brown-20--alfa-20: rgba(79,37,7,0.2);
+    --sf-brown-20--alfa-24: rgba(79,37,7,0.23922);
+    --sf-brown-20--alfa-64: rgba(79,37,7,0.63922);
+    --sf-brown-20--alfa-80: rgba(79,37,7,0.8);
+    --sf-brown-15: #411b01;
+    --sf-brown-10: #321300;
+    --sf-brown-5: #220a00;
+    /* gray: HCT hue 265, chroma 0 */
+    --sf-gray-98: #f9f9f9;
+    --sf-gray-95: #f1f1f1;
+    --sf-gray-90: #e2e2e2;
+    --sf-gray-90--alfa-4: rgba(226,226,226,0.03922);
+    --sf-gray-90--alfa-8: rgba(226,226,226,0.07843);
+    --sf-gray-90--alfa-12: rgba(226,226,226,0.12157);
+    --sf-gray-90--alfa-24: rgba(226,226,226,0.23922);
+    --sf-gray-85: #d4d4d4;
+    --sf-gray-80: #c6c6c6;
+    --sf-gray-70: #ababab;
+    --sf-gray-60: #919191;
+    --sf-gray-50: #777777;
+    --sf-gray-50--alfa-4: rgba(119,119,119,0.03922);
+    --sf-gray-50--alfa-8: rgba(119,119,119,0.07843);
+    --sf-gray-50--alfa-12: rgba(119,119,119,0.12157);
+    --sf-gray-50--alfa-16: rgba(119,119,119,0.16078);
+    --sf-gray-50--alfa-20: rgba(119,119,119,0.2);
+    --sf-gray-50--alfa-24: rgba(119,119,119,0.23922);
+    --sf-gray-50--alfa-28: rgba(119,119,119,0.27843);
+    --sf-gray-50--alfa-32: rgba(119,119,119,0.32157);
+    --sf-gray-40: #5e5e5e;
+    --sf-gray-35: #525252;
+    --sf-gray-30: #474747;
+    --sf-gray-25: #3b3b3b;
+    --sf-gray-20: #303030;
+    --sf-gray-20--alfa-4: rgba(48,48,48,0.03922);
+    --sf-gray-20--alfa-8: rgba(48,48,48,0.07843);
+    --sf-gray-20--alfa-12: rgba(48,48,48,0.12157);
+    --sf-gray-20--alfa-16: rgba(48,48,48,0.16078);
+    --sf-gray-20--alfa-20: rgba(48,48,48,0.2);
+    --sf-gray-20--alfa-24: rgba(48,48,48,0.23922);
+    --sf-gray-20--alfa-64: rgba(48,48,48,0.63922);
+    --sf-gray-20--alfa-80: rgba(48,48,48,0.8);
+    --sf-gray-15: #262626;
+    --sf-gray-10: #1b1b1b;
+    --sf-gray-5: #111111;
+  }
+}
+@layer sf.base {
+  .sf-hue-red {
+    --sf-hue: light-dark(var(--sf-red-40), var(--sf-red-80));
+    --sf-on-hue: light-dark(var(--sf-white), var(--sf-red-20));
+    --sf-hue-container: light-dark(var(--sf-red-50--alfa-12), var(--sf-red-50--alfa-24));
+    --sf-hue-container-hover: light-dark(var(--sf-red-50--alfa-16), var(--sf-red-50--alfa-28));
+    --sf-hue-container-active: light-dark(var(--sf-red-50--alfa-20), var(--sf-red-50--alfa-32));
+    --sf-on-hue-container: light-dark(var(--sf-red-10), var(--sf-red-90));
+    --sf-on-hue-container-graphic: light-dark(var(--sf-red-50), var(--sf-red-60));
+    --sf-hue-outline: light-dark(var(--sf-red-50), var(--sf-red-60));
+  }
+  .sf-hue-orange {
+    --sf-hue: light-dark(var(--sf-orange-40), var(--sf-orange-80));
+    --sf-on-hue: light-dark(var(--sf-white), var(--sf-orange-20));
+    --sf-hue-container: light-dark(var(--sf-orange-50--alfa-12), var(--sf-orange-50--alfa-24));
+    --sf-hue-container-hover: light-dark(var(--sf-orange-50--alfa-16), var(--sf-orange-50--alfa-28));
+    --sf-hue-container-active: light-dark(var(--sf-orange-50--alfa-20), var(--sf-orange-50--alfa-32));
+    --sf-on-hue-container: light-dark(var(--sf-orange-10), var(--sf-orange-90));
+    --sf-on-hue-container-graphic: light-dark(var(--sf-orange-50), var(--sf-orange-60));
+    --sf-hue-outline: light-dark(var(--sf-orange-50), var(--sf-orange-60));
+  }
+  .sf-hue-amber {
+    --sf-hue: light-dark(var(--sf-amber-40), var(--sf-amber-80));
+    --sf-on-hue: light-dark(var(--sf-white), var(--sf-amber-20));
+    --sf-hue-container: light-dark(var(--sf-amber-50--alfa-12), var(--sf-amber-50--alfa-24));
+    --sf-hue-container-hover: light-dark(var(--sf-amber-50--alfa-16), var(--sf-amber-50--alfa-28));
+    --sf-hue-container-active: light-dark(var(--sf-amber-50--alfa-20), var(--sf-amber-50--alfa-32));
+    --sf-on-hue-container: light-dark(var(--sf-amber-10), var(--sf-amber-90));
+    --sf-on-hue-container-graphic: light-dark(var(--sf-amber-50), var(--sf-amber-60));
+    --sf-hue-outline: light-dark(var(--sf-amber-50), var(--sf-amber-60));
+  }
+  .sf-hue-yellow {
+    --sf-hue: light-dark(var(--sf-yellow-40), var(--sf-yellow-80));
+    --sf-on-hue: light-dark(var(--sf-white), var(--sf-yellow-20));
+    --sf-hue-container: light-dark(var(--sf-yellow-50--alfa-12), var(--sf-yellow-50--alfa-24));
+    --sf-hue-container-hover: light-dark(var(--sf-yellow-50--alfa-16), var(--sf-yellow-50--alfa-28));
+    --sf-hue-container-active: light-dark(var(--sf-yellow-50--alfa-20), var(--sf-yellow-50--alfa-32));
+    --sf-on-hue-container: light-dark(var(--sf-yellow-10), var(--sf-yellow-90));
+    --sf-on-hue-container-graphic: light-dark(var(--sf-yellow-50), var(--sf-yellow-60));
+    --sf-hue-outline: light-dark(var(--sf-yellow-50), var(--sf-yellow-60));
+  }
+  .sf-hue-lime {
+    --sf-hue: light-dark(var(--sf-lime-40), var(--sf-lime-80));
+    --sf-on-hue: light-dark(var(--sf-white), var(--sf-lime-20));
+    --sf-hue-container: light-dark(var(--sf-lime-50--alfa-12), var(--sf-lime-50--alfa-24));
+    --sf-hue-container-hover: light-dark(var(--sf-lime-50--alfa-16), var(--sf-lime-50--alfa-28));
+    --sf-hue-container-active: light-dark(var(--sf-lime-50--alfa-20), var(--sf-lime-50--alfa-32));
+    --sf-on-hue-container: light-dark(var(--sf-lime-10), var(--sf-lime-90));
+    --sf-on-hue-container-graphic: light-dark(var(--sf-lime-50), var(--sf-lime-60));
+    --sf-hue-outline: light-dark(var(--sf-lime-50), var(--sf-lime-60));
+  }
+  .sf-hue-green {
+    --sf-hue: light-dark(var(--sf-green-40), var(--sf-green-80));
+    --sf-on-hue: light-dark(var(--sf-white), var(--sf-green-20));
+    --sf-hue-container: light-dark(var(--sf-green-50--alfa-12), var(--sf-green-50--alfa-24));
+    --sf-hue-container-hover: light-dark(var(--sf-green-50--alfa-16), var(--sf-green-50--alfa-28));
+    --sf-hue-container-active: light-dark(var(--sf-green-50--alfa-20), var(--sf-green-50--alfa-32));
+    --sf-on-hue-container: light-dark(var(--sf-green-10), var(--sf-green-90));
+    --sf-on-hue-container-graphic: light-dark(var(--sf-green-50), var(--sf-green-60));
+    --sf-hue-outline: light-dark(var(--sf-green-50), var(--sf-green-60));
+  }
+  .sf-hue-teal {
+    --sf-hue: light-dark(var(--sf-teal-40), var(--sf-teal-80));
+    --sf-on-hue: light-dark(var(--sf-white), var(--sf-teal-20));
+    --sf-hue-container: light-dark(var(--sf-teal-50--alfa-12), var(--sf-teal-50--alfa-24));
+    --sf-hue-container-hover: light-dark(var(--sf-teal-50--alfa-16), var(--sf-teal-50--alfa-28));
+    --sf-hue-container-active: light-dark(var(--sf-teal-50--alfa-20), var(--sf-teal-50--alfa-32));
+    --sf-on-hue-container: light-dark(var(--sf-teal-10), var(--sf-teal-90));
+    --sf-on-hue-container-graphic: light-dark(var(--sf-teal-50), var(--sf-teal-60));
+    --sf-hue-outline: light-dark(var(--sf-teal-50), var(--sf-teal-60));
+  }
+  .sf-hue-cyan {
+    --sf-hue: light-dark(var(--sf-cyan-40), var(--sf-cyan-80));
+    --sf-on-hue: light-dark(var(--sf-white), var(--sf-cyan-20));
+    --sf-hue-container: light-dark(var(--sf-cyan-50--alfa-12), var(--sf-cyan-50--alfa-24));
+    --sf-hue-container-hover: light-dark(var(--sf-cyan-50--alfa-16), var(--sf-cyan-50--alfa-28));
+    --sf-hue-container-active: light-dark(var(--sf-cyan-50--alfa-20), var(--sf-cyan-50--alfa-32));
+    --sf-on-hue-container: light-dark(var(--sf-cyan-10), var(--sf-cyan-90));
+    --sf-on-hue-container-graphic: light-dark(var(--sf-cyan-50), var(--sf-cyan-60));
+    --sf-hue-outline: light-dark(var(--sf-cyan-50), var(--sf-cyan-60));
+  }
+  .sf-hue-sky {
+    --sf-hue: light-dark(var(--sf-sky-40), var(--sf-sky-80));
+    --sf-on-hue: light-dark(var(--sf-white), var(--sf-sky-20));
+    --sf-hue-container: light-dark(var(--sf-sky-50--alfa-12), var(--sf-sky-50--alfa-24));
+    --sf-hue-container-hover: light-dark(var(--sf-sky-50--alfa-16), var(--sf-sky-50--alfa-28));
+    --sf-hue-container-active: light-dark(var(--sf-sky-50--alfa-20), var(--sf-sky-50--alfa-32));
+    --sf-on-hue-container: light-dark(var(--sf-sky-10), var(--sf-sky-90));
+    --sf-on-hue-container-graphic: light-dark(var(--sf-sky-50), var(--sf-sky-60));
+    --sf-hue-outline: light-dark(var(--sf-sky-50), var(--sf-sky-60));
+  }
+  .sf-hue-blue {
+    --sf-hue: light-dark(var(--sf-blue-40), var(--sf-blue-80));
+    --sf-on-hue: light-dark(var(--sf-white), var(--sf-blue-20));
+    --sf-hue-container: light-dark(var(--sf-blue-50--alfa-12), var(--sf-blue-50--alfa-24));
+    --sf-hue-container-hover: light-dark(var(--sf-blue-50--alfa-16), var(--sf-blue-50--alfa-28));
+    --sf-hue-container-active: light-dark(var(--sf-blue-50--alfa-20), var(--sf-blue-50--alfa-32));
+    --sf-on-hue-container: light-dark(var(--sf-blue-10), var(--sf-blue-90));
+    --sf-on-hue-container-graphic: light-dark(var(--sf-blue-50), var(--sf-blue-60));
+    --sf-hue-outline: light-dark(var(--sf-blue-50), var(--sf-blue-60));
+  }
+  .sf-hue-indigo {
+    --sf-hue: light-dark(var(--sf-indigo-40), var(--sf-indigo-80));
+    --sf-on-hue: light-dark(var(--sf-white), var(--sf-indigo-20));
+    --sf-hue-container: light-dark(var(--sf-indigo-50--alfa-12), var(--sf-indigo-50--alfa-24));
+    --sf-hue-container-hover: light-dark(var(--sf-indigo-50--alfa-16), var(--sf-indigo-50--alfa-28));
+    --sf-hue-container-active: light-dark(var(--sf-indigo-50--alfa-20), var(--sf-indigo-50--alfa-32));
+    --sf-on-hue-container: light-dark(var(--sf-indigo-10), var(--sf-indigo-90));
+    --sf-on-hue-container-graphic: light-dark(var(--sf-indigo-50), var(--sf-indigo-60));
+    --sf-hue-outline: light-dark(var(--sf-indigo-50), var(--sf-indigo-60));
+  }
+  .sf-hue-violet {
+    --sf-hue: light-dark(var(--sf-violet-40), var(--sf-violet-80));
+    --sf-on-hue: light-dark(var(--sf-white), var(--sf-violet-20));
+    --sf-hue-container: light-dark(var(--sf-violet-50--alfa-12), var(--sf-violet-50--alfa-24));
+    --sf-hue-container-hover: light-dark(var(--sf-violet-50--alfa-16), var(--sf-violet-50--alfa-28));
+    --sf-hue-container-active: light-dark(var(--sf-violet-50--alfa-20), var(--sf-violet-50--alfa-32));
+    --sf-on-hue-container: light-dark(var(--sf-violet-10), var(--sf-violet-90));
+    --sf-on-hue-container-graphic: light-dark(var(--sf-violet-50), var(--sf-violet-60));
+    --sf-hue-outline: light-dark(var(--sf-violet-50), var(--sf-violet-60));
+  }
+  .sf-hue-purple {
+    --sf-hue: light-dark(var(--sf-purple-40), var(--sf-purple-80));
+    --sf-on-hue: light-dark(var(--sf-white), var(--sf-purple-20));
+    --sf-hue-container: light-dark(var(--sf-purple-50--alfa-12), var(--sf-purple-50--alfa-24));
+    --sf-hue-container-hover: light-dark(var(--sf-purple-50--alfa-16), var(--sf-purple-50--alfa-28));
+    --sf-hue-container-active: light-dark(var(--sf-purple-50--alfa-20), var(--sf-purple-50--alfa-32));
+    --sf-on-hue-container: light-dark(var(--sf-purple-10), var(--sf-purple-90));
+    --sf-on-hue-container-graphic: light-dark(var(--sf-purple-50), var(--sf-purple-60));
+    --sf-hue-outline: light-dark(var(--sf-purple-50), var(--sf-purple-60));
+  }
+  .sf-hue-pink {
+    --sf-hue: light-dark(var(--sf-pink-40), var(--sf-pink-80));
+    --sf-on-hue: light-dark(var(--sf-white), var(--sf-pink-20));
+    --sf-hue-container: light-dark(var(--sf-pink-50--alfa-12), var(--sf-pink-50--alfa-24));
+    --sf-hue-container-hover: light-dark(var(--sf-pink-50--alfa-16), var(--sf-pink-50--alfa-28));
+    --sf-hue-container-active: light-dark(var(--sf-pink-50--alfa-20), var(--sf-pink-50--alfa-32));
+    --sf-on-hue-container: light-dark(var(--sf-pink-10), var(--sf-pink-90));
+    --sf-on-hue-container-graphic: light-dark(var(--sf-pink-50), var(--sf-pink-60));
+    --sf-hue-outline: light-dark(var(--sf-pink-50), var(--sf-pink-60));
+  }
+  .sf-hue-brown {
+    --sf-hue: light-dark(var(--sf-brown-40), var(--sf-brown-80));
+    --sf-on-hue: light-dark(var(--sf-white), var(--sf-brown-20));
+    --sf-hue-container: light-dark(var(--sf-brown-50--alfa-12), var(--sf-brown-50--alfa-24));
+    --sf-hue-container-hover: light-dark(var(--sf-brown-50--alfa-16), var(--sf-brown-50--alfa-28));
+    --sf-hue-container-active: light-dark(var(--sf-brown-50--alfa-20), var(--sf-brown-50--alfa-32));
+    --sf-on-hue-container: light-dark(var(--sf-brown-10), var(--sf-brown-90));
+    --sf-on-hue-container-graphic: light-dark(var(--sf-brown-50), var(--sf-brown-60));
+    --sf-hue-outline: light-dark(var(--sf-brown-50), var(--sf-brown-60));
+  }
+  .sf-hue-gray {
+    --sf-hue: light-dark(var(--sf-gray-40), var(--sf-gray-80));
+    --sf-on-hue: light-dark(var(--sf-white), var(--sf-gray-20));
+    --sf-hue-container: light-dark(var(--sf-gray-50--alfa-12), var(--sf-gray-50--alfa-24));
+    --sf-hue-container-hover: light-dark(var(--sf-gray-50--alfa-16), var(--sf-gray-50--alfa-28));
+    --sf-hue-container-active: light-dark(var(--sf-gray-50--alfa-20), var(--sf-gray-50--alfa-32));
+    --sf-on-hue-container: light-dark(var(--sf-gray-10), var(--sf-gray-90));
+    --sf-on-hue-container-graphic: light-dark(var(--sf-gray-50), var(--sf-gray-60));
+    --sf-hue-outline: light-dark(var(--sf-gray-50), var(--sf-gray-60));
+  }
+  .sf-hue-primary {
+    --sf-hue: light-dark(var(--sf-primary-40), var(--sf-primary-80));
+    --sf-on-hue: light-dark(var(--sf-white), var(--sf-primary-20));
+    --sf-hue-container: light-dark(var(--sf-primary-50--alfa-12), var(--sf-primary-50--alfa-24));
+    --sf-hue-container-hover: light-dark(var(--sf-primary-50--alfa-16), var(--sf-primary-50--alfa-28));
+    --sf-hue-container-active: light-dark(var(--sf-primary-50--alfa-20), var(--sf-primary-50--alfa-32));
+    --sf-on-hue-container: light-dark(var(--sf-primary-10), var(--sf-primary-90));
+    --sf-on-hue-container-graphic: light-dark(var(--sf-primary-50), var(--sf-primary-60));
+    --sf-hue-outline: light-dark(var(--sf-primary-50), var(--sf-primary-60));
+  }
+  .sf-hue-secondary {
+    --sf-hue: light-dark(var(--sf-secondary-40), var(--sf-secondary-80));
+    --sf-on-hue: light-dark(var(--sf-white), var(--sf-secondary-20));
+    --sf-hue-container: light-dark(var(--sf-secondary-50--alfa-12), var(--sf-secondary-50--alfa-24));
+    --sf-hue-container-hover: light-dark(var(--sf-secondary-50--alfa-16), var(--sf-secondary-50--alfa-28));
+    --sf-hue-container-active: light-dark(var(--sf-secondary-50--alfa-20), var(--sf-secondary-50--alfa-32));
+    --sf-on-hue-container: light-dark(var(--sf-secondary-10), var(--sf-secondary-90));
+    --sf-on-hue-container-graphic: light-dark(var(--sf-secondary-50), var(--sf-secondary-60));
+    --sf-hue-outline: light-dark(var(--sf-secondary-50), var(--sf-secondary-60));
+  }
+  .sf-hue-tertiary {
+    --sf-hue: light-dark(var(--sf-tertiary-40), var(--sf-tertiary-80));
+    --sf-on-hue: light-dark(var(--sf-white), var(--sf-tertiary-20));
+    --sf-hue-container: light-dark(var(--sf-tertiary-50--alfa-12), var(--sf-tertiary-50--alfa-24));
+    --sf-hue-container-hover: light-dark(var(--sf-tertiary-50--alfa-16), var(--sf-tertiary-50--alfa-28));
+    --sf-hue-container-active: light-dark(var(--sf-tertiary-50--alfa-20), var(--sf-tertiary-50--alfa-32));
+    --sf-on-hue-container: light-dark(var(--sf-tertiary-10), var(--sf-tertiary-90));
+    --sf-on-hue-container-graphic: light-dark(var(--sf-tertiary-50), var(--sf-tertiary-60));
+    --sf-hue-outline: light-dark(var(--sf-tertiary-50), var(--sf-tertiary-60));
   }
 }
 body {
@@ -1407,7 +2303,7 @@ body {
   }
   * {
     --sf-scroll-bg-track: var(--sf-transparent);
-    --sf-scroll-bg-thumb: var(--sf-on-neutral-container-graphic);
+    --sf-scroll-bg-thumb: var(--sf-outline);
     --sf-scroll-bg-width: var(--sf-b4);
     --sf-scroll-thumb-size: var(--sf-a6);
     --sf-scroll-thumb-width: var(--sf-scroll-thumb-size);
@@ -1516,7 +2412,7 @@ body {
 }
 /*
  * Generated from src/core/contracts/adaptive-sizing.v1.json.
- * contract-sha256: 9d8fb9a4ffb9ac8581e6e9e448babec1f752b139fea730e40968022907bed28c
+ * contract-sha256: e67f7a53848281ea891dcb2ace865afd32a44f3cd9f9790649bd1b613612a8aa
  * Do not edit semantic values in this file directly.
  */
 @layer sf.base {
@@ -1613,7 +2509,7 @@ body {
 }
 /*
  * Generated from src/core/contracts/adaptive-sizing.v1.json.
- * contract-sha256: 9d8fb9a4ffb9ac8581e6e9e448babec1f752b139fea730e40968022907bed28c
+ * contract-sha256: e67f7a53848281ea891dcb2ace865afd32a44f3cd9f9790649bd1b613612a8aa
  * Do not edit semantic values in this file directly.
  */
 @layer sf.base {
@@ -1692,7 +2588,7 @@ body {
 }
 /*
  * Generated from src/core/contracts/adaptive-sizing.v1.json.
- * contract-sha256: 9d8fb9a4ffb9ac8581e6e9e448babec1f752b139fea730e40968022907bed28c
+ * contract-sha256: e67f7a53848281ea891dcb2ace865afd32a44f3cd9f9790649bd1b613612a8aa
  * Do not edit semantic values in this file directly.
  */
 @layer sf.base {
@@ -1753,7 +2649,7 @@ body {
 }
 /*
  * Generated from src/core/contracts/adaptive-sizing.v1.json.
- * contract-sha256: 9d8fb9a4ffb9ac8581e6e9e448babec1f752b139fea730e40968022907bed28c
+ * contract-sha256: e67f7a53848281ea891dcb2ace865afd32a44f3cd9f9790649bd1b613612a8aa
  * Do not edit semantic values in this file directly.
  */
 @layer sf.base {
@@ -1865,7 +2761,7 @@ body {
 }
 /*
  * Generated from src/core/contracts/adaptive-sizing.v1.json.
- * contract-sha256: 9d8fb9a4ffb9ac8581e6e9e448babec1f752b139fea730e40968022907bed28c
+ * contract-sha256: e67f7a53848281ea891dcb2ace865afd32a44f3cd9f9790649bd1b613612a8aa
  * Do not edit semantic values in this file directly.
  */
 @layer sf.base {
@@ -1880,8 +2776,8 @@ body {
   }
   @media (min-width: 60rem) {
     :root {
-      --sf-ui-1\/3--space-y-tightness-default: 0.25rem;
-      --sf-ui-1\/3--space-y-tightness-default: var(--sf-a4);
+      --sf-ui-1\/3--space-y-tightness-default: 0.375rem;
+      --sf-ui-1\/3--space-y-tightness-default: var(--sf-a6);
       --sf-ui-1\/2--space-y-tightness-default: 0.375rem;
       --sf-ui-1\/2--space-y-tightness-default: var(--sf-a6);
       --sf-ui-1--space-y-tightness-default: var(--sf-a8);
@@ -1892,7 +2788,7 @@ body {
 }
 /*
  * Generated from src/core/contracts/adaptive-sizing.v1.json.
- * contract-sha256: 9d8fb9a4ffb9ac8581e6e9e448babec1f752b139fea730e40968022907bed28c
+ * contract-sha256: e67f7a53848281ea891dcb2ace865afd32a44f3cd9f9790649bd1b613612a8aa
  * Do not edit semantic values in this file directly.
  */
 @layer sf.base {
@@ -1919,7 +2815,7 @@ body {
 }
 /*
  * Generated from src/core/contracts/adaptive-sizing.v1.json.
- * contract-sha256: 9d8fb9a4ffb9ac8581e6e9e448babec1f752b139fea730e40968022907bed28c
+ * contract-sha256: e67f7a53848281ea891dcb2ace865afd32a44f3cd9f9790649bd1b613612a8aa
  * Do not edit semantic values in this file directly.
  */
 @layer sf.base {
@@ -1946,7 +2842,7 @@ body {
 }
 /*
  * Generated from src/core/contracts/adaptive-sizing.v1.json.
- * contract-sha256: 9d8fb9a4ffb9ac8581e6e9e448babec1f752b139fea730e40968022907bed28c
+ * contract-sha256: e67f7a53848281ea891dcb2ace865afd32a44f3cd9f9790649bd1b613612a8aa
  * Do not edit semantic values in this file directly.
  */
 @layer sf.base {
@@ -1973,7 +2869,7 @@ body {
 }
 /*
  * Generated from src/core/contracts/adaptive-sizing.v1.json.
- * contract-sha256: 9d8fb9a4ffb9ac8581e6e9e448babec1f752b139fea730e40968022907bed28c
+ * contract-sha256: e67f7a53848281ea891dcb2ace865afd32a44f3cd9f9790649bd1b613612a8aa
  * Do not edit semantic values in this file directly.
  */
 @layer sf.base {
@@ -2352,7 +3248,15 @@ body {
   }
 }
 @layer sf.base {
-  body .sf-icon:not(.sf-icon-loaded) {
+  /* An icon waits at font-size 0 for the Loader's sf-icon-loaded mark -- on a
+     page the Loader runs on (data-sf-loader, set by core.js). Without it
+     nothing ever marks an icon, and the icons sheet draws each one once its
+     font is in; the hold then must not apply, or the sheet had to answer it
+     with an important size of its own, which beat every size a page, a
+     utility or the density gave the glyph (a late icon in a compact row drew
+     24px in a 16px box). Before core.js runs the sheet's rule already won,
+     so the first paint of every icon is the same. */
+  :root[data-sf-loader] body .sf-icon:not(.sf-icon-loaded) {
     font-size: 0 !important;
   }
   button {
@@ -2395,7 +3299,7 @@ body {
     --sf-display--weight: 300;
     --sf-text--style: inherit;
     --sf-text--tracking: inherit;
-    --sf-mark--color: var(--sf-warning-transparent-overlay);
+    --sf-mark--color: var(--sf-mark);
     --sf-code--color: var(--sf-on-surface);
     --sf-code--background: var(--sf-surface-container);
     --sf-code--font-family: var(--sf-mono);
@@ -2621,7 +3525,7 @@ body {
 /*
  * Generated by scripts/generate-density.mjs from the ladder files in
  * src/core/figma_variables (desktop blocks). Do not edit by hand.
- * source-sha256: 7b9cef950235240f9534f8ee4dc3ce8c7c9decbc0d0873178d631342b6909e5d
+ * source-sha256: df3d0b79b8101a8b601d73c5dd42bc5cee25f1ab9c9f79edda84d43430e43717
  *
  * Density (owner decision C22): data-sf-density="compact" on the root or on
  * a container moves every component one ladder step down -- height, padding,
@@ -2650,8 +3554,8 @@ body {
       --sf-text--height-3: var(--sf-c4);
       --sf-ui-1\/3--space-y-tightness-default: 0.25rem;
       --sf-ui-1\/3--space-y-tightness-default: var(--sf-a4);
-      --sf-ui-1\/2--space-y-tightness-default: 0.25rem;
-      --sf-ui-1\/2--space-y-tightness-default: var(--sf-a4);
+      --sf-ui-1\/2--space-y-tightness-default: 0.375rem;
+      --sf-ui-1\/2--space-y-tightness-default: var(--sf-a6);
       --sf-ui-1--space-y-tightness-default: var(--sf-a6);
       --sf-ui-2--space-y-tightness-default: var(--sf-a8);
       --sf-ui-3--space-y-tightness-default: var(--sf-b0);
@@ -2662,15 +3566,15 @@ body {
       --sf-ui-1--space-y-tightness-low: var(--sf-a4);
       --sf-ui-2--space-y-tightness-low: var(--sf-a4);
       --sf-ui-3--space-y-tightness-low: var(--sf-a6);
-      --sf-ui-1\/3--space-y-tightness-high: 0.5rem;
-      --sf-ui-1\/3--space-y-tightness-high: var(--sf-a8);
+      --sf-ui-1\/3--space-y-tightness-high: 0.375rem;
+      --sf-ui-1\/3--space-y-tightness-high: var(--sf-a6);
       --sf-ui-1\/2--space-y-tightness-high: 0.5rem;
       --sf-ui-1\/2--space-y-tightness-high: var(--sf-a8);
       --sf-ui-1--space-y-tightness-high: var(--sf-b0);
       --sf-ui-2--space-y-tightness-high: var(--sf-b2);
       --sf-ui-3--space-y-tightness-high: var(--sf-b4);
-      --sf-ui-1\/3--space-y-tightness-highest: 0.75rem;
-      --sf-ui-1\/3--space-y-tightness-highest: var(--sf-b2);
+      --sf-ui-1\/3--space-y-tightness-highest: 0.5rem;
+      --sf-ui-1\/3--space-y-tightness-highest: var(--sf-a8);
       --sf-ui-1\/2--space-y-tightness-highest: 0.75rem;
       --sf-ui-1\/2--space-y-tightness-highest: var(--sf-b2);
       --sf-ui-1--space-y-tightness-highest: var(--sf-b4);
@@ -2762,8 +3666,8 @@ body {
       --sf-text--height-1: var(--sf-c2);
       --sf-text--height-2: var(--sf-c4);
       --sf-text--height-3: var(--sf-c8);
-      --sf-ui-1\/3--space-y-tightness-default: 0.25rem;
-      --sf-ui-1\/3--space-y-tightness-default: var(--sf-a4);
+      --sf-ui-1\/3--space-y-tightness-default: 0.375rem;
+      --sf-ui-1\/3--space-y-tightness-default: var(--sf-a6);
       --sf-ui-1\/2--space-y-tightness-default: 0.375rem;
       --sf-ui-1\/2--space-y-tightness-default: var(--sf-a6);
       --sf-ui-1--space-y-tightness-default: var(--sf-a8);
@@ -3465,10 +4369,6 @@ body {
   }
 }
 @layer sf.components {
-  :where([data-sf-composition-id].bg-primary.color-on-primary) {
-    --sf-on-surface: var(--sf-on-primary);
-    --sf-on-surface-variant: var(--sf-on-primary);
-  }
   [data-sf-composition-id].bg-primary.color-on-primary .sf-button.sf-button--default.sf-button--primary {
     --sf-button--background-color: var(--sf-button-background-color, var(--sf-on-primary));
   }
@@ -4200,7 +5100,7 @@ body {
      The shape still names the kind for a manifest and a page; the room is the
      page's (it knows the loaded box) or the printed first paint's. */
   :where([data-sf-skeleton]):not(:defined):not(:has(> [data-sf-static])) {
-    --sf-skeleton-base: var(--sf-neutral-60--alfa-48);
+    --sf-skeleton-base: var(--sf-surface-container);
     --sf-skeleton-line: var(--sf-text-height-1);
     --sf-skeleton-bar: var(--sf-text-size-1);
     display: block;
@@ -4312,7 +5212,7 @@ body {
      rows -- in that region only; the shell around it stays as it is. The
      region keeps its size, so nothing below it moves while the answer comes. */
   [data-sf-region-loading] {
-    --sf-skeleton-base: var(--sf-neutral-60--alfa-48);
+    --sf-skeleton-base: var(--sf-surface-container);
     --sf-skeleton-row: calc(var(--sf-text-height-1) + 2 * var(--sf-space-1));
     background-repeat: no-repeat;
     background-image: linear-gradient(var(--sf-skeleton-base), var(--sf-skeleton-base)), repeating-linear-gradient(to bottom, transparent 0 calc((var(--sf-skeleton-row) - var(--sf-text-size-1)) / 2), var(--sf-skeleton-base) calc((var(--sf-skeleton-row) - var(--sf-text-size-1)) / 2) calc((var(--sf-skeleton-row) + var(--sf-text-size-1)) / 2), transparent calc((var(--sf-skeleton-row) + var(--sf-text-size-1)) / 2) var(--sf-skeleton-row)), repeating-linear-gradient(to bottom, transparent 0 calc((var(--sf-skeleton-row) - var(--sf-text-size-1)) / 2), var(--sf-skeleton-base) calc((var(--sf-skeleton-row) - var(--sf-text-size-1)) / 2) calc((var(--sf-skeleton-row) + var(--sf-text-size-1)) / 2), transparent calc((var(--sf-skeleton-row) + var(--sf-text-size-1)) / 2) var(--sf-skeleton-row));
@@ -4348,7 +5248,7 @@ body {
        picture already shows it, or the element does not show it yet. */
   .sf-first-paint-bar {
     color: transparent !important;
-    background-color: var(--sf-neutral-60--alfa-48);
+    background-color: var(--sf-surface-container);
     border-radius: var(--sf-radius--ui);
     -webkit-box-decoration-break: clone;
     box-decoration-break: clone;
@@ -4360,7 +5260,7 @@ body {
             animation: sf-placeholder-pulse calc(var(--sf-duration-slow) * 3) var(--sf-animation) infinite;
   }
   .sf-first-paint-fill {
-    background-color: var(--sf-neutral-60--alfa-48);
+    background-color: var(--sf-surface-container);
   }
   :where(:not(:defined), :has(> [data-sf-static])) > [data-sf-held] {
     display: none !important;

@@ -510,4 +510,64 @@
   .placeholder-on-success-container-graphic::placeholder {
     color: var(--sf-on-success-container-graphic);
   }
+  .placeholder-info::-webkit-input-placeholder {
+    color: var(--sf-info);
+  }
+  .placeholder-info::-moz-placeholder {
+    color: var(--sf-info);
+  }
+  .placeholder-info:-ms-input-placeholder {
+    color: var(--sf-info);
+  }
+  .placeholder-info::-ms-input-placeholder {
+    color: var(--sf-info);
+  }
+  .placeholder-info::placeholder {
+    color: var(--sf-info);
+  }
+  .placeholder-on-info::-webkit-input-placeholder {
+    color: var(--sf-on-info);
+  }
+  .placeholder-on-info::-moz-placeholder {
+    color: var(--sf-on-info);
+  }
+  .placeholder-on-info:-ms-input-placeholder {
+    color: var(--sf-on-info);
+  }
+  .placeholder-on-info::-ms-input-placeholder {
+    color: var(--sf-on-info);
+  }
+  .placeholder-on-info::placeholder {
+    color: var(--sf-on-info);
+  }
+  .placeholder-on-info-container::-webkit-input-placeholder {
+    color: var(--sf-on-info-container);
+  }
+  .placeholder-on-info-container::-moz-placeholder {
+    color: var(--sf-on-info-container);
+  }
+  .placeholder-on-info-container:-ms-input-placeholder {
+    color: var(--sf-on-info-container);
+  }
+  .placeholder-on-info-container::-ms-input-placeholder {
+    color: var(--sf-on-info-container);
+  }
+  .placeholder-on-info-container::placeholder {
+    color: var(--sf-on-info-container);
+  }
+  .placeholder-on-info-container-graphic::-webkit-input-placeholder {
+    color: var(--sf-on-info-container-graphic);
+  }
+  .placeholder-on-info-container-graphic::-moz-placeholder {
+    color: var(--sf-on-info-container-graphic);
+  }
+  .placeholder-on-info-container-graphic:-ms-input-placeholder {
+    color: var(--sf-on-info-container-graphic);
+  }
+  .placeholder-on-info-container-graphic::-ms-input-placeholder {
+    color: var(--sf-on-info-container-graphic);
+  }
+  .placeholder-on-info-container-graphic::placeholder {
+    color: var(--sf-on-info-container-graphic);
+  }
 }

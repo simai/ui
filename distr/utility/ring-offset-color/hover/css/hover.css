@@ -99,4 +99,7 @@
   .hover\:ring-offset-info-container:hover {
     --sf-ring-offset-color: var(--sf-info-container);
   }
+  .hover\:ring-offset-info-container-strong:hover {
+    --sf-ring-offset-color: var(--sf-info-container-strong);
+  }
 }

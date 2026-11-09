@@ -198,4 +198,10 @@
   .focus-visible\:ring-offset-info-container:focus-visible {
     --sf-ring-offset-color: var(--sf-info-container);
   }
+  .focus-visible\:ring-offset-info-container-strong.focus-visible {
+    --sf-ring-offset-color: var(--sf-info-container-strong);
+  }
+  .focus-visible\:ring-offset-info-container-strong:focus-visible {
+    --sf-ring-offset-color: var(--sf-info-container-strong);
+  }
 }

@@ -27,4 +27,7 @@
   .scroll-bg-success {
     --sf-scroll-bg-track: var(--sf-success-transparent-overlay);
   }
+  .scroll-bg-info {
+    --sf-scroll-bg-track: var(--sf-info-container-strong);
+  }
 }

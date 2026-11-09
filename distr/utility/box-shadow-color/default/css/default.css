@@ -24,6 +24,10 @@
     --sf-shadow-key-color: color-mix(in srgb, var(--sf-transparent), var(--sf-success) var(--sf-shadow--alfa-fill));
     --sf-shadow-ambient-color: color-mix(in srgb, var(--sf-transparent), var(--sf-success) var(--sf-shadow--alfa-shade));
   }
+  .shadow-info {
+    --sf-shadow-key-color: color-mix(in srgb, var(--sf-transparent), var(--sf-info) var(--sf-shadow--alfa-fill));
+    --sf-shadow-ambient-color: color-mix(in srgb, var(--sf-transparent), var(--sf-info) var(--sf-shadow--alfa-shade));
+  }
   .shadow-on-surface {
     --sf-shadow-key-color: color-mix(in srgb, var(--sf-transparent), var(--sf-on-surface) var(--sf-shadow--alfa-fill));
     --sf-shadow-ambient-color: color-mix(in srgb, var(--sf-transparent), var(--sf-on-surface) var(--sf-shadow--alfa-shade));

@@ -10491,7 +10491,7 @@ __webpack_require__.r(__webpack_exports__);
 // core.runtime.json). A set's release says the lowest version it needs, and
 // the index lookup keeps the releases this Core satisfies. Moved by hand with
 // the passport; tests/component-set-loader.contract.test.mjs holds them equal.
-const CORE_RUNTIME = '1.45.0';
+const CORE_RUNTIME = '1.47.0';
 const SET_NAME = /^[a-z][a-z0-9-]*$/u;
 const SET_INDEX_FORMAT = 'simai.framework.set-index';
 const SET_INDEX_URL = 'https://cdn.jsdelivr.net/npm/@simai-studio/sets@1/index.json';
@@ -20539,6 +20539,16 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
           "default": "",
           "type": "string"
         },
+        "height": {
+          "default": "default",
+          "enum": [
+            "low",
+            "default",
+            "high",
+            "highest"
+          ],
+          "type": "string"
+        },
         "href": {
           "default": "",
           "type": "string"
@@ -20690,7 +20700,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.button",
-    "version": "1.9.0"
+    "version": "1.10.0"
   },
   "sf-button-icon": {
     "inputs": {
@@ -21030,7 +21040,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.dropdown",
-    "version": "1.7.3"
+    "version": "1.7.4"
   },
   "sf-icon": {
     "inputs": {
@@ -21304,7 +21314,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.input",
-    "version": "1.6.0"
+    "version": "1.6.1"
   },
   "sf-input-textarea": {
     "inputs": {
@@ -21457,7 +21467,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.input-textarea",
-    "version": "1.7.3"
+    "version": "1.7.4"
   },
   "sf-switch": {
     "inputs": {
@@ -21521,7 +21531,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.switch",
-    "version": "1.3.3"
+    "version": "1.3.4"
   }
 });
 

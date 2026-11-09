@@ -144,6 +144,22 @@
     --sf-shadow-key-color: color-mix(in srgb, var(--sf-transparent), var(--sf-success-transparent-overlay) var(--sf-shadow--alfa-fill)) !important;
     --sf-shadow-ambient-color: color-mix(in srgb, var(--sf-transparent), var(--sf-success-transparent-overlay) var(--sf-shadow--alfa-shade)) !important;
   }
+  .hover\:drop-shadow-info:hover {
+    --sf-shadow-key-color: color-mix(in srgb, var(--sf-transparent), var(--sf-info) var(--sf-shadow--alfa-fill)) !important;
+    --sf-shadow-ambient-color: color-mix(in srgb, var(--sf-transparent), var(--sf-info) var(--sf-shadow--alfa-shade)) !important;
+  }
+  .hover\:drop-shadow-info-container:hover {
+    --sf-shadow-key-color: color-mix(in srgb, var(--sf-transparent), var(--sf-info-container) var(--sf-shadow--alfa-fill)) !important;
+    --sf-shadow-ambient-color: color-mix(in srgb, var(--sf-transparent), var(--sf-info-container) var(--sf-shadow--alfa-shade)) !important;
+  }
+  .hover\:drop-shadow-info-state-select:hover {
+    --sf-shadow-key-color: color-mix(in srgb, var(--sf-transparent), var(--sf-info-state-select) var(--sf-shadow--alfa-fill)) !important;
+    --sf-shadow-ambient-color: color-mix(in srgb, var(--sf-transparent), var(--sf-info-state-select) var(--sf-shadow--alfa-shade)) !important;
+  }
+  .hover\:drop-shadow-info-container-strong:hover {
+    --sf-shadow-key-color: color-mix(in srgb, var(--sf-transparent), var(--sf-info-container-strong) var(--sf-shadow--alfa-fill)) !important;
+    --sf-shadow-ambient-color: color-mix(in srgb, var(--sf-transparent), var(--sf-info-container-strong) var(--sf-shadow--alfa-shade)) !important;
+  }
   .hover\:drop-shadow-on-surface:hover {
     --sf-shadow-key-color: color-mix(in srgb, var(--sf-transparent), var(--sf-on-surface) var(--sf-shadow--alfa-fill)) !important;
     --sf-shadow-ambient-color: color-mix(in srgb, var(--sf-transparent), var(--sf-on-surface) var(--sf-shadow--alfa-shade)) !important;

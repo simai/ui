@@ -120,6 +120,18 @@
   .fill-success-transparent-overlay {
     fill: var(--sf-success-transparent-overlay);
   }
+  .fill-info {
+    fill: var(--sf-info);
+  }
+  .fill-info-container {
+    fill: var(--sf-info-container);
+  }
+  .fill-info-state-select {
+    fill: var(--sf-info-state-select);
+  }
+  .fill-info-container-strong {
+    fill: var(--sf-info-container-strong);
+  }
   .hover\:fill-surface-container:hover {
     fill: var(--sf-surface-container-hover);
   }
@@ -182,5 +194,14 @@
   }
   .hover\:fill-success-transparent:hover {
     fill: var(--sf-success-transparent-hover);
+  }
+  .hover\:fill-info:hover {
+    fill: var(--sf-info-hover);
+  }
+  .hover\:fill-info-container:hover {
+    fill: var(--sf-info-container-hover);
+  }
+  .hover\:fill-info-state:hover {
+    fill: var(--sf-info-state-hover);
   }
 }

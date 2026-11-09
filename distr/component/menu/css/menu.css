@@ -530,8 +530,26 @@
     border-radius: var(--sf-menu-horizontal-submenu--radius, var(--sf-menu-submenu-radius, var(--sf-radius--ui)));
     background: var(--sf-surface-popup);
     background: var(--sf-menu-horizontal-submenu--background-color, var(--sf-menu-submenu-background-color, var(--sf-surface-popup)));
+    --sf-surface-place: var(--sf-menu-horizontal-submenu--background-color, var(--sf-menu-submenu-background-color, var(--sf-surface-popup)));
+    --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
     --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
-    --sf-badge--surface: var(--sf-menu-horizontal-submenu--background-color, var(--sf-menu-submenu-background-color, var(--sf-surface-popup)));
+    --sf-on-surface-container-variant: light-dark(var(--sf-neutral-35), var(--sf-neutral-85));
+    --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
+    --sf-surface-state-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
+    --sf-surface-state-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-90--alfa-20));
+    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+    --sf-outline: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
+    --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+    --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    --sf-on-surface-disabled: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
+    --sf-disable: var(--sf-surface-disabled);
+    --sf-on-disable: var(--sf-on-surface-disabled);
+    --sf-on-surface-container--variant: var(--sf-on-surface-container-variant);
+    --sf-surface-transparent-active: var(--sf-surface-state-active);
+    --sf-surface-transparent-hover: var(--sf-surface-state-hover);
+    --sf-surface-transparent-select: var(--sf-surface-state-select);
     box-shadow: var(--sf-shadow-overlay);
     box-shadow: var(--sf-menu-horizontal-submenu--box-shadow, var(--sf-shadow-overlay));
   }
@@ -599,13 +617,18 @@
   /* Header navigation (sf-menu appearance navigation): the site's sections in
      a header row -- and the same rows as a column, in a side panel or a sidebar.
      A row has no frame and no fill at rest; a pointer lays the state family of
-     the alpha scale over it (4 hover, 12 press), an open branch takes the select
-     step (8), and the current page is a plate of the fill family
-     (--sf-surface-container-active, 24 in both themes on the theme's neutral
-     tone). Height, padding, type, radius and the focus ring stay the class
-     row's: the size 1 control height, space-1 at the sides, text size 1, the
-     ui radius. The current page's plate does not change under the pointer, so
-     it is never lighter than at rest. */
+     the alpha scale over it (4 hover, 12 press). An open branch is not filled:
+     its open list says it is open (C23). The current page (C23, owner
+     2026-11-09) is a primary plate of the fill family,
+     --sf-primary-container-active (primary at 20 in the light theme, 32 in the
+     dark one), with on-primary-container words and icon and a medium label --
+     the weight is the second cue besides the colour; no bar. The plate does not
+     change under the pointer, so it is never lighter than at rest. Where there
+     is no plate the current page is shown by a bar of primary, 3 by 16 at the
+     row's inline start: on a closed branch that holds the current page, in a
+     column (the menu mixin below). Height, padding, size of type, radius and
+     the focus ring stay the class row's: the size 1 control height, space-1 at
+     the sides, text size 1, the ui radius. */
   .sf-menu.sf-menu--navigation {
     --sf-menu--gap: var(--sf-menu-gap, var(--sf-space-1\/4));
   }
@@ -623,25 +646,441 @@
   .sf-menu.sf-menu--navigation .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]):active {
     --sf-menu-element--background-color: var(--sf-surface-transparent-active);
   }
-  .sf-menu.sf-menu--navigation .sf-menu-element.open:not(:disabled):not(.disabled):not([aria-disabled=true]) {
-    --sf-menu-element--background-color: var(--sf-surface-transparent-select);
-    --sf-menu-element--border-color: var(--sf-transparent);
-  }
-  .sf-menu.sf-menu--navigation .sf-menu-element[aria-expanded=true]:not(:disabled):not(.disabled):not([aria-disabled=true]) {
-    --sf-menu-element--background-color: var(--sf-surface-transparent-select);
-    --sf-menu-element--border-color: var(--sf-transparent);
-  }
   .sf-menu.sf-menu--navigation .sf-menu-element[aria-current=page]:not(:disabled):not(.disabled):not([aria-disabled=true]) {
-    --sf-menu-element--background-color: var(--sf-surface-container-active);
+    --sf-menu-element--background-color: var(--sf-primary-container-active);
     --sf-menu-element--border-color: var(--sf-transparent);
+    --sf-menu-element--color: var(--sf-on-primary-container);
+    --sf-menu-element--font-weight: var(--sf-font-weight-medium);
   }
   .sf-menu.sf-menu--navigation .sf-menu-element[aria-current=true]:not(:disabled):not(.disabled):not([aria-disabled=true]) {
-    --sf-menu-element--background-color: var(--sf-surface-container-active);
+    --sf-menu-element--background-color: var(--sf-primary-container-active);
     --sf-menu-element--border-color: var(--sf-transparent);
+    --sf-menu-element--color: var(--sf-on-primary-container);
+    --sf-menu-element--font-weight: var(--sf-font-weight-medium);
   }
   .sf-menu.sf-menu--navigation .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]):has(> [aria-current=page], > [aria-current=true]) {
-    --sf-menu-element--background-color: var(--sf-surface-container-active);
+    --sf-menu-element--background-color: var(--sf-primary-container-active);
     --sf-menu-element--border-color: var(--sf-transparent);
+    --sf-menu-element--color: var(--sf-on-primary-container);
+    --sf-menu-element--font-weight: var(--sf-font-weight-medium);
+  }
+  .sf-menu.sf-menu--navigation .sf-menu-element[aria-current=page] .sf-menu-element-icon {
+    --sf-icon--color: var(--sf-on-primary-container);
+  }
+  .sf-menu.sf-menu--navigation .sf-menu-element[aria-current=true] .sf-menu-element-icon {
+    --sf-icon--color: var(--sf-on-primary-container);
+  }
+  .sf-menu.sf-menu--navigation .sf-menu-element:has(> [aria-current=page], > [aria-current=true]) .sf-menu-element-icon {
+    --sf-icon--color: var(--sf-on-primary-container);
+  }
+  /* The bar: a closed branch of a column that holds the current page. A
+     header row's first level opens panels, not a column, and draws no bar. */
+  .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current]) {
+    position: relative;
+  }
+  .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current]) {
+    position: relative;
+  }
+  .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-element.sf-menu-element--holds-current:not([aria-current]) {
+    position: relative;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    left: var(--sf-0);
+  }
+  @supports not (inset-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    left: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before:where(:dir(ltr)) {
+    left: var(--sf-0);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    right: var(--sf-0);
+  }
+  @supports not (inset-inline-start: initial) {
+  [dir="rtl"] .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    right: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before:where(:dir(rtl)) {
+    right: var(--sf-0);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    border-top-left-radius: var(--sf-0);
+  }
+  @supports not (border-start-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    border-top-left-radius: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before:where(:dir(ltr)) {
+    border-top-left-radius: var(--sf-0);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    border-top-right-radius: var(--sf-0);
+  }
+  @supports not (border-start-start-radius: initial) {
+  [dir="rtl"] .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    border-top-right-radius: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before:where(:dir(rtl)) {
+    border-top-right-radius: var(--sf-0);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    border-bottom-left-radius: var(--sf-0);
+  }
+  @supports not (border-end-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    border-bottom-left-radius: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before:where(:dir(ltr)) {
+    border-bottom-left-radius: var(--sf-0);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    border-bottom-right-radius: var(--sf-0);
+  }
+  @supports not (border-end-start-radius: initial) {
+  [dir="rtl"] .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    border-bottom-right-radius: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before:where(:dir(rtl)) {
+    border-bottom-right-radius: var(--sf-0);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    border-top-right-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-start-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    border-top-right-radius: var(--sf-radius--ui);
+    }
+  }
+  .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before:where(:dir(ltr)) {
+    border-top-right-radius: var(--sf-radius--ui);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    border-top-left-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-start-end-radius: initial) {
+  [dir="rtl"] .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    border-top-left-radius: var(--sf-radius--ui);
+    }
+  }
+  .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before:where(:dir(rtl)) {
+    border-top-left-radius: var(--sf-radius--ui);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    border-bottom-right-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-end-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    border-bottom-right-radius: var(--sf-radius--ui);
+    }
+  }
+  .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before:where(:dir(ltr)) {
+    border-bottom-right-radius: var(--sf-radius--ui);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    border-bottom-left-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-end-end-radius: initial) {
+  [dir="rtl"] .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    border-bottom-left-radius: var(--sf-radius--ui);
+    }
+  }
+  .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before:where(:dir(rtl)) {
+    border-bottom-left-radius: var(--sf-radius--ui);
+  }
+  .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    inset-block-start: 50%;
+    inset-inline-start: var(--sf-0);
+    width: var(--sf-a3);
+    inline-size: var(--sf-a3);
+    height: var(--sf-icon-size-1);
+    block-size: var(--sf-icon-size-1);
+    translate: 0 -50%;
+    border-start-start-radius: var(--sf-0);
+    border-end-start-radius: var(--sf-0);
+    border-start-end-radius: var(--sf-radius--ui);
+    border-end-end-radius: var(--sf-radius--ui);
+    background-color: var(--sf-primary);
+    pointer-events: none;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    left: var(--sf-0);
+  }
+  @supports not (inset-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    left: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before:where(:dir(ltr)) {
+    left: var(--sf-0);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    right: var(--sf-0);
+  }
+  @supports not (inset-inline-start: initial) {
+  [dir="rtl"] .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    right: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before:where(:dir(rtl)) {
+    right: var(--sf-0);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    border-top-left-radius: var(--sf-0);
+  }
+  @supports not (border-start-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    border-top-left-radius: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before:where(:dir(ltr)) {
+    border-top-left-radius: var(--sf-0);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    border-top-right-radius: var(--sf-0);
+  }
+  @supports not (border-start-start-radius: initial) {
+  [dir="rtl"] .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    border-top-right-radius: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before:where(:dir(rtl)) {
+    border-top-right-radius: var(--sf-0);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    border-bottom-left-radius: var(--sf-0);
+  }
+  @supports not (border-end-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    border-bottom-left-radius: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before:where(:dir(ltr)) {
+    border-bottom-left-radius: var(--sf-0);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    border-bottom-right-radius: var(--sf-0);
+  }
+  @supports not (border-end-start-radius: initial) {
+  [dir="rtl"] .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    border-bottom-right-radius: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before:where(:dir(rtl)) {
+    border-bottom-right-radius: var(--sf-0);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    border-top-right-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-start-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    border-top-right-radius: var(--sf-radius--ui);
+    }
+  }
+  .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before:where(:dir(ltr)) {
+    border-top-right-radius: var(--sf-radius--ui);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    border-top-left-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-start-end-radius: initial) {
+  [dir="rtl"] .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    border-top-left-radius: var(--sf-radius--ui);
+    }
+  }
+  .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before:where(:dir(rtl)) {
+    border-top-left-radius: var(--sf-radius--ui);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    border-bottom-right-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-end-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    border-bottom-right-radius: var(--sf-radius--ui);
+    }
+  }
+  .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before:where(:dir(ltr)) {
+    border-bottom-right-radius: var(--sf-radius--ui);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    border-bottom-left-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-end-end-radius: initial) {
+  [dir="rtl"] .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    border-bottom-left-radius: var(--sf-radius--ui);
+    }
+  }
+  .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before:where(:dir(rtl)) {
+    border-bottom-left-radius: var(--sf-radius--ui);
+  }
+  .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    inset-block-start: 50%;
+    inset-inline-start: var(--sf-0);
+    width: var(--sf-a3);
+    inline-size: var(--sf-a3);
+    height: var(--sf-icon-size-1);
+    block-size: var(--sf-icon-size-1);
+    translate: 0 -50%;
+    border-start-start-radius: var(--sf-0);
+    border-end-start-radius: var(--sf-0);
+    border-start-end-radius: var(--sf-radius--ui);
+    border-end-end-radius: var(--sf-radius--ui);
+    background-color: var(--sf-primary);
+    pointer-events: none;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    left: var(--sf-0);
+  }
+  @supports not (inset-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    left: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before:where(:dir(ltr)) {
+    left: var(--sf-0);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    right: var(--sf-0);
+  }
+  @supports not (inset-inline-start: initial) {
+  [dir="rtl"] .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    right: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before:where(:dir(rtl)) {
+    right: var(--sf-0);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    border-top-left-radius: var(--sf-0);
+  }
+  @supports not (border-start-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    border-top-left-radius: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before:where(:dir(ltr)) {
+    border-top-left-radius: var(--sf-0);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    border-top-right-radius: var(--sf-0);
+  }
+  @supports not (border-start-start-radius: initial) {
+  [dir="rtl"] .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    border-top-right-radius: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before:where(:dir(rtl)) {
+    border-top-right-radius: var(--sf-0);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    border-bottom-left-radius: var(--sf-0);
+  }
+  @supports not (border-end-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    border-bottom-left-radius: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before:where(:dir(ltr)) {
+    border-bottom-left-radius: var(--sf-0);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    border-bottom-right-radius: var(--sf-0);
+  }
+  @supports not (border-end-start-radius: initial) {
+  [dir="rtl"] .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    border-bottom-right-radius: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before:where(:dir(rtl)) {
+    border-bottom-right-radius: var(--sf-0);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    border-top-right-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-start-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    border-top-right-radius: var(--sf-radius--ui);
+    }
+  }
+  .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before:where(:dir(ltr)) {
+    border-top-right-radius: var(--sf-radius--ui);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    border-top-left-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-start-end-radius: initial) {
+  [dir="rtl"] .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    border-top-left-radius: var(--sf-radius--ui);
+    }
+  }
+  .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before:where(:dir(rtl)) {
+    border-top-left-radius: var(--sf-radius--ui);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    border-bottom-right-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-end-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    border-bottom-right-radius: var(--sf-radius--ui);
+    }
+  }
+  .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before:where(:dir(ltr)) {
+    border-bottom-right-radius: var(--sf-radius--ui);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    border-bottom-left-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-end-end-radius: initial) {
+  [dir="rtl"] .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    border-bottom-left-radius: var(--sf-radius--ui);
+    }
+  }
+  .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before:where(:dir(rtl)) {
+    border-bottom-left-radius: var(--sf-radius--ui);
+  }
+  .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    inset-block-start: 50%;
+    inset-inline-start: var(--sf-0);
+    width: var(--sf-a3);
+    inline-size: var(--sf-a3);
+    height: var(--sf-icon-size-1);
+    block-size: var(--sf-icon-size-1);
+    translate: 0 -50%;
+    border-start-start-radius: var(--sf-0);
+    border-end-start-radius: var(--sf-0);
+    border-start-end-radius: var(--sf-radius--ui);
+    border-end-end-radius: var(--sf-radius--ui);
+    background-color: var(--sf-primary);
+    pointer-events: none;
+  }
+  @media (forced-colors: active) {
+    .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+      forced-color-adjust: none;
+      background-color: Highlight;
+    }
+    .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+      forced-color-adjust: none;
+      background-color: Highlight;
+    }
+    .sf-menu.sf-menu--navigation:not(.sf-menu--horizontal) .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+      forced-color-adjust: none;
+      background-color: Highlight;
+    }
   }
   .sf-menu.sf-menu--navigation .sf-menu-element:disabled,
   .sf-menu.sf-menu--navigation .sf-menu-element.disabled,
@@ -650,7 +1089,7 @@
   }
   /* Forced colours drop the plates: the current page keeps a frame of the
      system's text colour instead, and the padding gives up its width as it does
-     for the default row. */
+     for the default row. The bar keeps its place in the system's highlight. */
   @media (forced-colors: active) {
     .sf-menu.sf-menu--navigation .sf-menu-element[aria-current=page] {
       --sf-menu-element--border-width: var(--sf-px);
@@ -702,10 +1141,431 @@
   .sf-menu.sf-menu--documentation-tree .sf-menu-element--level-4 {
     --sf-menu-element--padding-inline-start: var(--sf-space-3);
   }
+  /* The documentation tree marks its current page as navigation does (C23): the
+     primary plate, on-primary-container words, a medium label; an open branch
+     is not filled, and a closed branch that holds the current page takes the
+     bar. */
   .sf-menu.sf-menu--documentation-tree [aria-current=page] {
-    background: var(--sf-surface-container-active);
-    color: var(--sf-on-surface);
+    background: var(--sf-primary-container-active);
+    color: var(--sf-on-primary-container);
     font-weight: var(--sf-font-weight-medium);
+    --sf-icon--color: var(--sf-on-primary-container);
+  }
+  .sf-menu.sf-menu--documentation-tree [aria-current=page] .sf-menu-element-icon {
+    --sf-icon--color: var(--sf-on-primary-container);
+  }
+  .sf-menu.sf-menu--documentation-tree .sf-menu-element.open {
+    --sf-menu-element--background-color: var(--sf-transparent);
+  }
+  .sf-menu.sf-menu--documentation-tree .sf-menu-element[aria-expanded=true] {
+    --sf-menu-element--background-color: var(--sf-transparent);
+  }
+  .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current]) {
+    position: relative;
+  }
+  .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current]) {
+    position: relative;
+  }
+  .sf-menu.sf-menu--documentation-tree .sf-menu-element.sf-menu-element--holds-current:not([aria-current]) {
+    position: relative;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    left: var(--sf-0);
+  }
+  @supports not (inset-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    left: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before:where(:dir(ltr)) {
+    left: var(--sf-0);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    right: var(--sf-0);
+  }
+  @supports not (inset-inline-start: initial) {
+  [dir="rtl"] .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    right: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before:where(:dir(rtl)) {
+    right: var(--sf-0);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    border-top-left-radius: var(--sf-0);
+  }
+  @supports not (border-start-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    border-top-left-radius: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before:where(:dir(ltr)) {
+    border-top-left-radius: var(--sf-0);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    border-top-right-radius: var(--sf-0);
+  }
+  @supports not (border-start-start-radius: initial) {
+  [dir="rtl"] .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    border-top-right-radius: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before:where(:dir(rtl)) {
+    border-top-right-radius: var(--sf-0);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    border-bottom-left-radius: var(--sf-0);
+  }
+  @supports not (border-end-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    border-bottom-left-radius: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before:where(:dir(ltr)) {
+    border-bottom-left-radius: var(--sf-0);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    border-bottom-right-radius: var(--sf-0);
+  }
+  @supports not (border-end-start-radius: initial) {
+  [dir="rtl"] .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    border-bottom-right-radius: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before:where(:dir(rtl)) {
+    border-bottom-right-radius: var(--sf-0);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    border-top-right-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-start-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    border-top-right-radius: var(--sf-radius--ui);
+    }
+  }
+  .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before:where(:dir(ltr)) {
+    border-top-right-radius: var(--sf-radius--ui);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    border-top-left-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-start-end-radius: initial) {
+  [dir="rtl"] .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    border-top-left-radius: var(--sf-radius--ui);
+    }
+  }
+  .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before:where(:dir(rtl)) {
+    border-top-left-radius: var(--sf-radius--ui);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    border-bottom-right-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-end-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    border-bottom-right-radius: var(--sf-radius--ui);
+    }
+  }
+  .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before:where(:dir(ltr)) {
+    border-bottom-right-radius: var(--sf-radius--ui);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    border-bottom-left-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-end-end-radius: initial) {
+  [dir="rtl"] .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    border-bottom-left-radius: var(--sf-radius--ui);
+    }
+  }
+  .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before:where(:dir(rtl)) {
+    border-bottom-left-radius: var(--sf-radius--ui);
+  }
+  .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    inset-block-start: 50%;
+    inset-inline-start: var(--sf-0);
+    width: var(--sf-a3);
+    inline-size: var(--sf-a3);
+    height: var(--sf-icon-size-1);
+    block-size: var(--sf-icon-size-1);
+    translate: 0 -50%;
+    border-start-start-radius: var(--sf-0);
+    border-end-start-radius: var(--sf-0);
+    border-start-end-radius: var(--sf-radius--ui);
+    border-end-end-radius: var(--sf-radius--ui);
+    background-color: var(--sf-primary);
+    pointer-events: none;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    left: var(--sf-0);
+  }
+  @supports not (inset-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    left: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before:where(:dir(ltr)) {
+    left: var(--sf-0);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    right: var(--sf-0);
+  }
+  @supports not (inset-inline-start: initial) {
+  [dir="rtl"] .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    right: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before:where(:dir(rtl)) {
+    right: var(--sf-0);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    border-top-left-radius: var(--sf-0);
+  }
+  @supports not (border-start-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    border-top-left-radius: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before:where(:dir(ltr)) {
+    border-top-left-radius: var(--sf-0);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    border-top-right-radius: var(--sf-0);
+  }
+  @supports not (border-start-start-radius: initial) {
+  [dir="rtl"] .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    border-top-right-radius: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before:where(:dir(rtl)) {
+    border-top-right-radius: var(--sf-0);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    border-bottom-left-radius: var(--sf-0);
+  }
+  @supports not (border-end-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    border-bottom-left-radius: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before:where(:dir(ltr)) {
+    border-bottom-left-radius: var(--sf-0);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    border-bottom-right-radius: var(--sf-0);
+  }
+  @supports not (border-end-start-radius: initial) {
+  [dir="rtl"] .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    border-bottom-right-radius: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before:where(:dir(rtl)) {
+    border-bottom-right-radius: var(--sf-0);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    border-top-right-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-start-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    border-top-right-radius: var(--sf-radius--ui);
+    }
+  }
+  .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before:where(:dir(ltr)) {
+    border-top-right-radius: var(--sf-radius--ui);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    border-top-left-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-start-end-radius: initial) {
+  [dir="rtl"] .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    border-top-left-radius: var(--sf-radius--ui);
+    }
+  }
+  .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before:where(:dir(rtl)) {
+    border-top-left-radius: var(--sf-radius--ui);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    border-bottom-right-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-end-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    border-bottom-right-radius: var(--sf-radius--ui);
+    }
+  }
+  .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before:where(:dir(ltr)) {
+    border-bottom-right-radius: var(--sf-radius--ui);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    border-bottom-left-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-end-end-radius: initial) {
+  [dir="rtl"] .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    border-bottom-left-radius: var(--sf-radius--ui);
+    }
+  }
+  .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before:where(:dir(rtl)) {
+    border-bottom-left-radius: var(--sf-radius--ui);
+  }
+  .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    inset-block-start: 50%;
+    inset-inline-start: var(--sf-0);
+    width: var(--sf-a3);
+    inline-size: var(--sf-a3);
+    height: var(--sf-icon-size-1);
+    block-size: var(--sf-icon-size-1);
+    translate: 0 -50%;
+    border-start-start-radius: var(--sf-0);
+    border-end-start-radius: var(--sf-0);
+    border-start-end-radius: var(--sf-radius--ui);
+    border-end-end-radius: var(--sf-radius--ui);
+    background-color: var(--sf-primary);
+    pointer-events: none;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--documentation-tree .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    left: var(--sf-0);
+  }
+  @supports not (inset-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-menu.sf-menu--documentation-tree .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    left: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--documentation-tree .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before:where(:dir(ltr)) {
+    left: var(--sf-0);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--documentation-tree .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    right: var(--sf-0);
+  }
+  @supports not (inset-inline-start: initial) {
+  [dir="rtl"] .sf-menu.sf-menu--documentation-tree .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    right: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--documentation-tree .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before:where(:dir(rtl)) {
+    right: var(--sf-0);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--documentation-tree .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    border-top-left-radius: var(--sf-0);
+  }
+  @supports not (border-start-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-menu.sf-menu--documentation-tree .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    border-top-left-radius: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--documentation-tree .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before:where(:dir(ltr)) {
+    border-top-left-radius: var(--sf-0);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--documentation-tree .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    border-top-right-radius: var(--sf-0);
+  }
+  @supports not (border-start-start-radius: initial) {
+  [dir="rtl"] .sf-menu.sf-menu--documentation-tree .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    border-top-right-radius: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--documentation-tree .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before:where(:dir(rtl)) {
+    border-top-right-radius: var(--sf-0);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--documentation-tree .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    border-bottom-left-radius: var(--sf-0);
+  }
+  @supports not (border-end-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-menu.sf-menu--documentation-tree .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    border-bottom-left-radius: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--documentation-tree .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before:where(:dir(ltr)) {
+    border-bottom-left-radius: var(--sf-0);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--documentation-tree .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    border-bottom-right-radius: var(--sf-0);
+  }
+  @supports not (border-end-start-radius: initial) {
+  [dir="rtl"] .sf-menu.sf-menu--documentation-tree .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    border-bottom-right-radius: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--documentation-tree .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before:where(:dir(rtl)) {
+    border-bottom-right-radius: var(--sf-0);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--documentation-tree .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    border-top-right-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-start-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-menu.sf-menu--documentation-tree .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    border-top-right-radius: var(--sf-radius--ui);
+    }
+  }
+  .sf-menu.sf-menu--documentation-tree .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before:where(:dir(ltr)) {
+    border-top-right-radius: var(--sf-radius--ui);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--documentation-tree .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    border-top-left-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-start-end-radius: initial) {
+  [dir="rtl"] .sf-menu.sf-menu--documentation-tree .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    border-top-left-radius: var(--sf-radius--ui);
+    }
+  }
+  .sf-menu.sf-menu--documentation-tree .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before:where(:dir(rtl)) {
+    border-top-left-radius: var(--sf-radius--ui);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--documentation-tree .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    border-bottom-right-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-end-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-menu.sf-menu--documentation-tree .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    border-bottom-right-radius: var(--sf-radius--ui);
+    }
+  }
+  .sf-menu.sf-menu--documentation-tree .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before:where(:dir(ltr)) {
+    border-bottom-right-radius: var(--sf-radius--ui);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--documentation-tree .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    border-bottom-left-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-end-end-radius: initial) {
+  [dir="rtl"] .sf-menu.sf-menu--documentation-tree .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    border-bottom-left-radius: var(--sf-radius--ui);
+    }
+  }
+  .sf-menu.sf-menu--documentation-tree .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before:where(:dir(rtl)) {
+    border-bottom-left-radius: var(--sf-radius--ui);
+  }
+  .sf-menu.sf-menu--documentation-tree .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    inset-block-start: 50%;
+    inset-inline-start: var(--sf-0);
+    width: var(--sf-a3);
+    inline-size: var(--sf-a3);
+    height: var(--sf-icon-size-1);
+    block-size: var(--sf-icon-size-1);
+    translate: 0 -50%;
+    border-start-start-radius: var(--sf-0);
+    border-end-start-radius: var(--sf-0);
+    border-start-end-radius: var(--sf-radius--ui);
+    border-end-end-radius: var(--sf-radius--ui);
+    background-color: var(--sf-primary);
+    pointer-events: none;
+  }
+  @media (forced-colors: active) {
+    .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+      forced-color-adjust: none;
+      background-color: Highlight;
+    }
+    .sf-menu.sf-menu--documentation-tree .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+      forced-color-adjust: none;
+      background-color: Highlight;
+    }
+    .sf-menu.sf-menu--documentation-tree .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+      forced-color-adjust: none;
+      background-color: Highlight;
+    }
   }
   .sf-menu.sf-menu--documentation-tree .sf-menu-element-wrap.focus-visible {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
@@ -842,7 +1702,7 @@
     --sf-badge--anchored-size: var(--sf-badge--anchored-count);
     --sf-badge--anchored-max: none;
     --sf-badge--anchored-inset: calc(min(var(--sf-badge--anchor-radius), 50% + var(--sf-badge--anchor-border)) * 0.29289);
-    --sf-badge--ring: var(--sf-badge-ring-color, var(--sf-badge--surface, var(--sf-surface-0)));
+    --sf-badge--ring: var(--sf-badge-ring-color, var(--sf-badge--surface, var(--sf-surface-place)));
     --sf-badge--background-color: var(--sf-badge-background-color, var(--sf-error));
     --sf-badge--color: var(--sf-badge-color, var(--sf-on-error));
     position: absolute;
@@ -889,6 +1749,440 @@
       color: HighlightText;
       box-shadow: none;
       outline: var(--sf-badge--ring-width) solid Canvas;
+    }
+  }
+  .sf-menu.sf-menu--compact .sf-menu-element[aria-current=page]:not(:disabled):not(.disabled):not([aria-disabled=true]) {
+    --sf-menu-element--background-color: var(--sf-primary-container-active);
+    --sf-menu-element--border-color: var(--sf-transparent);
+    --sf-menu-element--color: var(--sf-on-primary-container);
+    --sf-menu-element--font-weight: var(--sf-font-weight-medium);
+  }
+  .sf-menu.sf-menu--compact .sf-menu-element[aria-current=true]:not(:disabled):not(.disabled):not([aria-disabled=true]) {
+    --sf-menu-element--background-color: var(--sf-primary-container-active);
+    --sf-menu-element--border-color: var(--sf-transparent);
+    --sf-menu-element--color: var(--sf-on-primary-container);
+    --sf-menu-element--font-weight: var(--sf-font-weight-medium);
+  }
+  .sf-menu.sf-menu--compact .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]):has(> [aria-current=page], > [aria-current=true]) {
+    --sf-menu-element--background-color: var(--sf-primary-container-active);
+    --sf-menu-element--border-color: var(--sf-transparent);
+    --sf-menu-element--color: var(--sf-on-primary-container);
+    --sf-menu-element--font-weight: var(--sf-font-weight-medium);
+  }
+  .sf-menu.sf-menu--compact .sf-menu-element[aria-current=page] .sf-menu-element-icon {
+    --sf-icon--color: var(--sf-on-primary-container);
+  }
+  .sf-menu.sf-menu--compact .sf-menu-element[aria-current=true] .sf-menu-element-icon {
+    --sf-icon--color: var(--sf-on-primary-container);
+  }
+  .sf-menu.sf-menu--compact .sf-menu-element:has(> [aria-current=page], > [aria-current=true]) .sf-menu-element-icon {
+    --sf-icon--color: var(--sf-on-primary-container);
+  }
+  .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current]) {
+    position: relative;
+  }
+  .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current]) {
+    position: relative;
+  }
+  .sf-menu.sf-menu--compact .sf-menu-element.sf-menu-element--holds-current:not([aria-current]) {
+    position: relative;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    left: var(--sf-0);
+  }
+  @supports not (inset-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    left: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before:where(:dir(ltr)) {
+    left: var(--sf-0);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    right: var(--sf-0);
+  }
+  @supports not (inset-inline-start: initial) {
+  [dir="rtl"] .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    right: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before:where(:dir(rtl)) {
+    right: var(--sf-0);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    border-top-left-radius: var(--sf-0);
+  }
+  @supports not (border-start-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    border-top-left-radius: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before:where(:dir(ltr)) {
+    border-top-left-radius: var(--sf-0);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    border-top-right-radius: var(--sf-0);
+  }
+  @supports not (border-start-start-radius: initial) {
+  [dir="rtl"] .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    border-top-right-radius: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before:where(:dir(rtl)) {
+    border-top-right-radius: var(--sf-0);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    border-bottom-left-radius: var(--sf-0);
+  }
+  @supports not (border-end-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    border-bottom-left-radius: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before:where(:dir(ltr)) {
+    border-bottom-left-radius: var(--sf-0);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    border-bottom-right-radius: var(--sf-0);
+  }
+  @supports not (border-end-start-radius: initial) {
+  [dir="rtl"] .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    border-bottom-right-radius: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before:where(:dir(rtl)) {
+    border-bottom-right-radius: var(--sf-0);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    border-top-right-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-start-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    border-top-right-radius: var(--sf-radius--ui);
+    }
+  }
+  .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before:where(:dir(ltr)) {
+    border-top-right-radius: var(--sf-radius--ui);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    border-top-left-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-start-end-radius: initial) {
+  [dir="rtl"] .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    border-top-left-radius: var(--sf-radius--ui);
+    }
+  }
+  .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before:where(:dir(rtl)) {
+    border-top-left-radius: var(--sf-radius--ui);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    border-bottom-right-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-end-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    border-bottom-right-radius: var(--sf-radius--ui);
+    }
+  }
+  .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before:where(:dir(ltr)) {
+    border-bottom-right-radius: var(--sf-radius--ui);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    border-bottom-left-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-end-end-radius: initial) {
+  [dir="rtl"] .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    border-bottom-left-radius: var(--sf-radius--ui);
+    }
+  }
+  .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before:where(:dir(rtl)) {
+    border-bottom-left-radius: var(--sf-radius--ui);
+  }
+  .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    inset-block-start: 50%;
+    inset-inline-start: var(--sf-0);
+    width: var(--sf-a3);
+    inline-size: var(--sf-a3);
+    height: var(--sf-icon-size-1);
+    block-size: var(--sf-icon-size-1);
+    translate: 0 -50%;
+    border-start-start-radius: var(--sf-0);
+    border-end-start-radius: var(--sf-0);
+    border-start-end-radius: var(--sf-radius--ui);
+    border-end-end-radius: var(--sf-radius--ui);
+    background-color: var(--sf-primary);
+    pointer-events: none;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    left: var(--sf-0);
+  }
+  @supports not (inset-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    left: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before:where(:dir(ltr)) {
+    left: var(--sf-0);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    right: var(--sf-0);
+  }
+  @supports not (inset-inline-start: initial) {
+  [dir="rtl"] .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    right: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before:where(:dir(rtl)) {
+    right: var(--sf-0);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    border-top-left-radius: var(--sf-0);
+  }
+  @supports not (border-start-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    border-top-left-radius: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before:where(:dir(ltr)) {
+    border-top-left-radius: var(--sf-0);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    border-top-right-radius: var(--sf-0);
+  }
+  @supports not (border-start-start-radius: initial) {
+  [dir="rtl"] .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    border-top-right-radius: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before:where(:dir(rtl)) {
+    border-top-right-radius: var(--sf-0);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    border-bottom-left-radius: var(--sf-0);
+  }
+  @supports not (border-end-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    border-bottom-left-radius: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before:where(:dir(ltr)) {
+    border-bottom-left-radius: var(--sf-0);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    border-bottom-right-radius: var(--sf-0);
+  }
+  @supports not (border-end-start-radius: initial) {
+  [dir="rtl"] .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    border-bottom-right-radius: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before:where(:dir(rtl)) {
+    border-bottom-right-radius: var(--sf-0);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    border-top-right-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-start-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    border-top-right-radius: var(--sf-radius--ui);
+    }
+  }
+  .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before:where(:dir(ltr)) {
+    border-top-right-radius: var(--sf-radius--ui);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    border-top-left-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-start-end-radius: initial) {
+  [dir="rtl"] .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    border-top-left-radius: var(--sf-radius--ui);
+    }
+  }
+  .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before:where(:dir(rtl)) {
+    border-top-left-radius: var(--sf-radius--ui);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    border-bottom-right-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-end-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    border-bottom-right-radius: var(--sf-radius--ui);
+    }
+  }
+  .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before:where(:dir(ltr)) {
+    border-bottom-right-radius: var(--sf-radius--ui);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    border-bottom-left-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-end-end-radius: initial) {
+  [dir="rtl"] .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    border-bottom-left-radius: var(--sf-radius--ui);
+    }
+  }
+  .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before:where(:dir(rtl)) {
+    border-bottom-left-radius: var(--sf-radius--ui);
+  }
+  .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    inset-block-start: 50%;
+    inset-inline-start: var(--sf-0);
+    width: var(--sf-a3);
+    inline-size: var(--sf-a3);
+    height: var(--sf-icon-size-1);
+    block-size: var(--sf-icon-size-1);
+    translate: 0 -50%;
+    border-start-start-radius: var(--sf-0);
+    border-end-start-radius: var(--sf-0);
+    border-start-end-radius: var(--sf-radius--ui);
+    border-end-end-radius: var(--sf-radius--ui);
+    background-color: var(--sf-primary);
+    pointer-events: none;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--compact .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    left: var(--sf-0);
+  }
+  @supports not (inset-inline-start: initial) {
+  html:not([dir="rtl"]) .sf-menu.sf-menu--compact .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    left: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--compact .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before:where(:dir(ltr)) {
+    left: var(--sf-0);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--compact .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    right: var(--sf-0);
+  }
+  @supports not (inset-inline-start: initial) {
+  [dir="rtl"] .sf-menu.sf-menu--compact .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    right: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--compact .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before:where(:dir(rtl)) {
+    right: var(--sf-0);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--compact .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    border-top-left-radius: var(--sf-0);
+  }
+  @supports not (border-start-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-menu.sf-menu--compact .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    border-top-left-radius: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--compact .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before:where(:dir(ltr)) {
+    border-top-left-radius: var(--sf-0);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--compact .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    border-top-right-radius: var(--sf-0);
+  }
+  @supports not (border-start-start-radius: initial) {
+  [dir="rtl"] .sf-menu.sf-menu--compact .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    border-top-right-radius: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--compact .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before:where(:dir(rtl)) {
+    border-top-right-radius: var(--sf-0);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--compact .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    border-bottom-left-radius: var(--sf-0);
+  }
+  @supports not (border-end-start-radius: initial) {
+  html:not([dir="rtl"]) .sf-menu.sf-menu--compact .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    border-bottom-left-radius: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--compact .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before:where(:dir(ltr)) {
+    border-bottom-left-radius: var(--sf-0);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--compact .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    border-bottom-right-radius: var(--sf-0);
+  }
+  @supports not (border-end-start-radius: initial) {
+  [dir="rtl"] .sf-menu.sf-menu--compact .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    border-bottom-right-radius: var(--sf-0);
+    }
+  }
+  .sf-menu.sf-menu--compact .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before:where(:dir(rtl)) {
+    border-bottom-right-radius: var(--sf-0);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--compact .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    border-top-right-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-start-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-menu.sf-menu--compact .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    border-top-right-radius: var(--sf-radius--ui);
+    }
+  }
+  .sf-menu.sf-menu--compact .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before:where(:dir(ltr)) {
+    border-top-right-radius: var(--sf-radius--ui);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--compact .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    border-top-left-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-start-end-radius: initial) {
+  [dir="rtl"] .sf-menu.sf-menu--compact .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    border-top-left-radius: var(--sf-radius--ui);
+    }
+  }
+  .sf-menu.sf-menu--compact .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before:where(:dir(rtl)) {
+    border-top-left-radius: var(--sf-radius--ui);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--compact .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    border-bottom-right-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-end-end-radius: initial) {
+  html:not([dir="rtl"]) .sf-menu.sf-menu--compact .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    border-bottom-right-radius: var(--sf-radius--ui);
+    }
+  }
+  .sf-menu.sf-menu--compact .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before:where(:dir(ltr)) {
+    border-bottom-right-radius: var(--sf-radius--ui);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-menu.sf-menu--compact .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    border-bottom-left-radius: var(--sf-radius--ui);
+  }
+  @supports not (border-end-end-radius: initial) {
+  [dir="rtl"] .sf-menu.sf-menu--compact .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    border-bottom-left-radius: var(--sf-radius--ui);
+    }
+  }
+  .sf-menu.sf-menu--compact .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before:where(:dir(rtl)) {
+    border-bottom-left-radius: var(--sf-radius--ui);
+  }
+  .sf-menu.sf-menu--compact .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    inset-block-start: 50%;
+    inset-inline-start: var(--sf-0);
+    width: var(--sf-a3);
+    inline-size: var(--sf-a3);
+    height: var(--sf-icon-size-1);
+    block-size: var(--sf-icon-size-1);
+    translate: 0 -50%;
+    border-start-start-radius: var(--sf-0);
+    border-end-start-radius: var(--sf-0);
+    border-start-end-radius: var(--sf-radius--ui);
+    border-end-end-radius: var(--sf-radius--ui);
+    background-color: var(--sf-primary);
+    pointer-events: none;
+  }
+  @media (forced-colors: active) {
+    .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current])::before {
+      forced-color-adjust: none;
+      background-color: Highlight;
+    }
+    .sf-menu.sf-menu--compact .sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current])::before {
+      forced-color-adjust: none;
+      background-color: Highlight;
+    }
+    .sf-menu.sf-menu--compact .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+      forced-color-adjust: none;
+      background-color: Highlight;
     }
   }
   .sf-menu.sf-menu--compact .sf-menu-element-wrap:has(> .sf-avatar:not(.sf-avatar--square)) > .sf-badge {

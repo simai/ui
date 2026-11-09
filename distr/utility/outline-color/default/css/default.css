@@ -30,4 +30,7 @@
   .outline-success {
     outline-color: var(--sf-outline-success);
   }
+  .outline-info {
+    outline-color: var(--sf-info-outline);
+  }
 }

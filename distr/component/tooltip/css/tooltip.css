@@ -1062,7 +1062,9 @@
     --sf-tooltip-supporting-text--color: var(--sf-tooltip-color, var(--sf-on-surface-inverse));
   }
   .sf-tooltip.sf-tooltip--light .sf-tooltip-tail {
-    --sf-tooltip-tail--background-color: var(--sf-tooltip-background-color, var(--sf-surface-1));
+    /* The tail is the content's own place (it was the area while the content
+       stood on the popup step since C20). */
+    --sf-tooltip-tail--background-color: var(--sf-tooltip-background-color, var(--sf-surface-popup));
   }
   .sf-tooltip.sf-tooltip--light .sf-tooltip-supporting-text {
     --sf-tooltip-supporting-text--color: var(--sf-tooltip-color, var(--sf-on-surface));
@@ -1145,7 +1147,26 @@
     /* A light tooltip is a raised surface, like every floating one: the plain
        surface-1 with no border or shadow vanished into a light page. */
     --sf-tooltip-content--background-color: var(--sf-tooltip-background-color, var(--sf-surface-popup));
+    --sf-surface-place: var(--sf-tooltip-background-color, var(--sf-surface-popup));
+    --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
     --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
+    --sf-on-surface-container-variant: light-dark(var(--sf-neutral-35), var(--sf-neutral-85));
+    --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
+    --sf-surface-state-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
+    --sf-surface-state-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-90--alfa-20));
+    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+    --sf-outline: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
+    --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+    --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    --sf-on-surface-disabled: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
+    --sf-disable: var(--sf-surface-disabled);
+    --sf-on-disable: var(--sf-on-surface-disabled);
+    --sf-on-surface-container--variant: var(--sf-on-surface-container-variant);
+    --sf-surface-transparent-active: var(--sf-surface-state-active);
+    --sf-surface-transparent-hover: var(--sf-surface-state-hover);
+    --sf-surface-transparent-select: var(--sf-surface-state-select);
     box-shadow: var(--sf-shadow-overlay);
     border: var(--sf-px) solid var(--sf-outline-variant);
     border: var(--sf-tooltip-border-width, var(--sf-px)) solid var(--sf-tooltip-border-color, var(--sf-outline-variant));

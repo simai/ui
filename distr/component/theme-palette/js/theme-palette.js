@@ -57,6 +57,10 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   DEFAULT_THEME_COLOR: () => (/* binding */ DEFAULT_THEME_COLOR),
+/* harmony export */   STATIC_ALPHA: () => (/* binding */ STATIC_ALPHA),
+/* harmony export */   STATIC_HUES: () => (/* binding */ STATIC_HUES),
+/* harmony export */   STATIC_HUE_NAMES: () => (/* binding */ STATIC_HUE_NAMES),
+/* harmony export */   STATUS_HUES: () => (/* binding */ STATUS_HUES),
 /* harmony export */   THEME_ALPHA: () => (/* binding */ THEME_ALPHA),
 /* harmony export */   THEME_PALETTES: () => (/* binding */ THEME_PALETTES),
 /* harmony export */   THEME_RULES: () => (/* binding */ THEME_RULES),
@@ -65,6 +69,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   applyTheme: () => (/* binding */ applyTheme),
 /* harmony export */   colorToHct: () => (/* binding */ colorToHct),
 /* harmony export */   isThemeColor: () => (/* binding */ isThemeColor),
+/* harmony export */   staticPalette: () => (/* binding */ staticPalette),
+/* harmony export */   staticVariables: () => (/* binding */ staticVariables),
 /* harmony export */   themeFromColor: () => (/* binding */ themeFromColor),
 /* harmony export */   themeFromHct: () => (/* binding */ themeFromHct),
 /* harmony export */   themeToCss: () => (/* binding */ themeToCss),
@@ -101,7 +107,118 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const THEME_TONES = Object.freeze([98, 95, 90, 85, 80, 70, 60, 50, 40, 35, 30, 25, 20, 15, 10, 5]); // The generator's defaults. `hue` and `chroma` are either a number or a
+const THEME_TONES = Object.freeze([98, 95, 90, 85, 80, 70, 60, 50, 40, 35, 30, 25, 20, 15, 10, 5]); // The static palette (owner decision C17, 2026-11-08; research
+// control/research/2026-11-08-palette.md 3.2): sixteen fixed hues run through
+// the same generator as the theme, so every hue has the same sixteen tones and
+// the same translucent steps, and no theme colour moves them. Every colour in
+// the product comes from this palette or from the dynamic one the theme makes
+// (C18). The four status hues keep their numbers, byte for byte: red is error,
+// amber warning, green success, blue info. Information is a status, not the
+// brand (owner, 2026-10-21, simai/ui-source#14): blue is the fixed palette of
+// #005bbe, HCT hue 265.1 at chroma 58.6 -- the nearest tenth above #005bbe's
+// own 58.5, the one that puts tone 40 on #005bbe itself. Every added hue is
+// chroma 60, brown 30 and gray 0. No hue is shifted toward the theme colour
+// (research 3.3): a hue keeps its name on every site.
+//
+// The order is the order of the hue circle, gray last; the CSS primitives
+// --sf-<hue>-<tone> are written from it by scripts/generate-static-palette.mjs
+// into src/core/scss/_sf_static_palette.scss.
+
+const STATIC_HUES = Object.freeze({
+  red: Object.freeze({
+    hue: 25,
+    chroma: 85
+  }),
+  orange: Object.freeze({
+    hue: 45,
+    chroma: 60
+  }),
+  amber: Object.freeze({
+    hue: 60,
+    chroma: 60
+  }),
+  yellow: Object.freeze({
+    hue: 90,
+    chroma: 60
+  }),
+  lime: Object.freeze({
+    hue: 120,
+    chroma: 60
+  }),
+  green: Object.freeze({
+    hue: 145,
+    chroma: 65
+  }),
+  teal: Object.freeze({
+    hue: 175,
+    chroma: 60
+  }),
+  cyan: Object.freeze({
+    hue: 205,
+    chroma: 60
+  }),
+  sky: Object.freeze({
+    hue: 235,
+    chroma: 60
+  }),
+  blue: Object.freeze({
+    hue: 265.1,
+    chroma: 58.6
+  }),
+  indigo: Object.freeze({
+    hue: 285,
+    chroma: 60
+  }),
+  violet: Object.freeze({
+    hue: 305,
+    chroma: 60
+  }),
+  purple: Object.freeze({
+    hue: 325,
+    chroma: 60
+  }),
+  pink: Object.freeze({
+    hue: 350,
+    chroma: 60
+  }),
+  brown: Object.freeze({
+    hue: 50,
+    chroma: 30
+  }),
+  gray: Object.freeze({
+    hue: 265,
+    chroma: 0
+  })
+});
+const STATIC_HUE_NAMES = Object.freeze(Object.keys(STATIC_HUES)); // The hue each status is.
+
+const STATUS_HUES = Object.freeze({
+  error: 'red',
+  warning: 'amber',
+  success: 'green',
+  info: 'blue'
+});
+
+function statusRule(status) {
+  const {
+    hue,
+    chroma
+  } = STATIC_HUES[STATUS_HUES[status]];
+  return {
+    hue,
+    chroma
+  };
+} // The translucent steps of every static hue: the status steps, tone 50 at the
+// state and fill families (4 to 32), tone 90 at 4, 8, 12 and 24, and tone 20
+// at the state and fill families and the ink steps 64 and 80 -- the dark ink of
+// a coloured place (C16, research 2026-11-08-surfaces 4.3; dispatcher 2026-11-09).
+
+
+const STATIC_ALPHA = Object.freeze({
+  20: Object.freeze([4, 8, 12, 16, 20, 24, 64, 80]),
+  50: Object.freeze([4, 8, 12, 16, 20, 24, 28, 32]),
+  90: Object.freeze([4, 8, 12, 24])
+}); // The generator's defaults. `hue` and `chroma` are either a number or a
 // function of the primary's; a caller may override any of them.
 
 const THEME_RULES = Object.freeze({
@@ -124,29 +241,14 @@ const THEME_RULES = Object.freeze({
     hue: source => source.hue,
     chroma: source => Math.min(5, source.chroma)
   },
-  error: {
-    hue: 25,
-    chroma: 85
-  },
-  warning: {
-    hue: 60,
-    chroma: 60
-  },
-  success: {
-    hue: 145,
-    chroma: 65
-  },
-  // Information is a status, not the brand (owner, 2026-10-21,
-  // simai/ui-source#14): told in the brand's own colour, info turned red under
-  // a red primary and read as danger. It is its own fixed palette of #005bbe,
-  // like error, warning and success. #005bbe is HCT hue 265.1, chroma 58.5;
-  // the chroma here is the nearest tenth above, the one whose palette is the
-  // owner-approved list byte for byte -- it puts tone 40 on #005bbe itself,
-  // where 58.5 lands a unit away on #015bbe.
-  info: {
-    hue: 265.1,
-    chroma: 58.6
-  }
+  // The four statuses are four hues of the static palette (C17): error is red,
+  // warning amber, success green and info blue, by the same numbers, so a
+  // status and its hue are one palette. A theme may still override a status
+  // here; the hue it was made from stays as it is.
+  error: statusRule('error'),
+  warning: statusRule('warning'),
+  success: statusRule('success'),
+  info: statusRule('info')
 });
 const THEME_PALETTES = Object.freeze(Object.keys(THEME_RULES)); // The translucent steps core defines on a tone: --sf-<palette>-<tone>--alfa-<n>,
 // the tone with n% opacity (the alpha scale: state 4/8/12, fill 12-32, ink
@@ -158,14 +260,17 @@ const THEME_PALETTES = Object.freeze(Object.keys(THEME_RULES)); // The transluce
 
 const THEME_ALPHA = Object.freeze({
   primary: {
+    20: [4, 8, 12, 16, 20, 24, 64, 80],
     50: [4, 8, 12, 16, 20, 24, 28, 32],
     90: [4, 8, 12, 24]
   },
   secondary: {
+    20: [4, 8, 12, 16, 20, 24, 64, 80],
     50: [4, 8, 12, 16, 20, 24, 28, 32],
     90: [4, 8, 12, 24]
   },
   tertiary: {
+    20: [4, 8, 12, 16, 20, 24, 64, 80],
     50: [4, 8, 12, 16, 20, 24, 28, 32],
     90: [4, 8, 12, 24]
   },
@@ -176,18 +281,22 @@ const THEME_ALPHA = Object.freeze({
     90: [4, 8, 12, 16, 20, 24, 32, 48]
   },
   error: {
+    20: [4, 8, 12, 16, 20, 24, 64, 80],
     50: [4, 8, 12, 16, 20, 24, 28, 32],
     90: [4, 8, 12, 24]
   },
   warning: {
+    20: [4, 8, 12, 16, 20, 24, 64, 80],
     50: [4, 8, 12, 16, 20, 24, 28, 32],
     90: [4, 8, 12, 24]
   },
   success: {
+    20: [4, 8, 12, 16, 20, 24, 64, 80],
     50: [4, 8, 12, 16, 20, 24, 28, 32],
     90: [4, 8, 12, 24]
   },
   info: {
+    20: [4, 8, 12, 16, 20, 24, 64, 80],
     50: [4, 8, 12, 16, 20, 24, 28, 32],
     90: [4, 8, 12, 24]
   }
@@ -301,6 +410,44 @@ function themeVariables(theme) {
 
   return variables;
 }
+/**
+ * The static palette: for every hue its HCT numbers and its sixteen tones,
+ * {name: {hue, chroma, tones}}. The same TonalPalette as the theme's, so a
+ * status palette the theme makes is the static hue it names, byte for byte.
+ */
+
+function staticPalette() {
+  const palettes = {};
+
+  for (const [name, {
+    hue,
+    chroma
+  }] of Object.entries(STATIC_HUES)) {
+    const palette = _vendor_material_color_utilities_palettes_tonal_palette_js__WEBPACK_IMPORTED_MODULE_1__.TonalPalette.fromHueAndChroma(hue, chroma);
+    palettes[name] = {
+      hue,
+      chroma,
+      tones: Object.fromEntries(THEME_TONES.map(tone => [tone, (0,_vendor_material_color_utilities_utils_string_utils_js__WEBPACK_IMPORTED_MODULE_2__.hexFromArgb)(palette.tone(tone))]))
+    };
+  }
+
+  return palettes;
+}
+/** The static palette's CSS custom properties, {name: value}: --sf-<hue>-<tone> and --sf-<hue>-<tone>--alfa-<n>. */
+
+function staticVariables(palettes = staticPalette()) {
+  const variables = {};
+
+  for (const [name, palette] of Object.entries(palettes)) {
+    for (const tone of THEME_TONES) {
+      variables[`--sf-${name}-${tone}`] = palette.tones[tone];
+
+      for (const step of STATIC_ALPHA[tone] ?? []) variables[`--sf-${name}-${tone}--alfa-${step}`] = `${palette.tones[tone]}${alphaHex(step)}`;
+    }
+  }
+
+  return variables;
+}
 /** The theme as a stylesheet rule, for a page's or a site's own CSS. */
 
 function themeToCss(theme, selector = ':root') {
@@ -336,9 +483,15 @@ if (typeof window !== 'undefined') {
     themeVariables,
     applyTheme,
     isThemeColor,
+    staticPalette,
+    staticVariables,
     THEME_TONES,
     THEME_PALETTES,
     THEME_ALPHA,
+    STATIC_HUES,
+    STATIC_HUE_NAMES,
+    STATUS_HUES,
+    STATIC_ALPHA,
     DEFAULT_THEME_COLOR
   });
 }

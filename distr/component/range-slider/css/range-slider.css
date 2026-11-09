@@ -9,8 +9,8 @@
 */
 @layer sf.components {
   .sf-range-slider {
-    min-height: var(--sf-ui-1\/3--control-height);
-    min-height: var(--sf-thumb-handle--height, var(--sf-ui-1\/3--control-height));
+    min-height: var(--sf-icon-size-3);
+    min-height: var(--sf-thumb-handle--height, var(--sf-icon-size-3));
     position: relative;
     touch-action: none;
     -webkit-user-select: none;
@@ -19,8 +19,8 @@
             user-select: none;
   }
   .sf-range-slider .sf-range-slider-base {
-    height: var(--sf-ui-1\/3--control-height);
-    height: var(--sf-thumb-handle--height, var(--sf-ui-1\/3--control-height));
+    height: var(--sf-icon-size-3);
+    height: var(--sf-thumb-handle--height, var(--sf-icon-size-3));
     position: relative;
     width: 100%;
   }
@@ -67,13 +67,13 @@
     box-shadow: none;
     cursor: -webkit-grab;
     cursor: grab;
-    height: var(--sf-ui-1\/3--control-height);
-    height: var(--sf-thumb-handle--height, var(--sf-ui-1\/3--control-height));
+    height: var(--sf-icon-size-3);
+    height: var(--sf-thumb-handle--height, var(--sf-icon-size-3));
     outline: none;
     position: absolute;
     top: 0;
-    width: var(--sf-ui-1\/3--control-height);
-    width: var(--sf-thumb-handle--width, var(--sf-ui-1\/3--control-height));
+    width: var(--sf-icon-size-3);
+    width: var(--sf-thumb-handle--width, var(--sf-icon-size-3));
     z-index: 2;
   }
   .sf-range-slider .sf-range-slider-touch-area {
@@ -146,71 +146,71 @@
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-range-slider .sf-range-slider-handle-lower,html:not([dir="rtl"])
   .sf-range-slider .sf-range-slider-handle-upper {
-    left: calc(var(--sf-ui-1\/3--control-height) / -2);
-    left: calc(var(--sf-thumb-handle--width, var(--sf-ui-1\/3--control-height)) / -2);
+    left: calc(var(--sf-icon-size-3) / -2);
+    left: calc(var(--sf-thumb-handle--width, var(--sf-icon-size-3)) / -2);
   }
   @supports not (inset-inline-start: initial) {
   html:not([dir="rtl"]) .sf-range-slider .sf-range-slider-handle-lower,html:not([dir="rtl"])
   .sf-range-slider .sf-range-slider-handle-upper {
-    left: calc(var(--sf-ui-1\/3--control-height) / -2);
-    left: calc(var(--sf-thumb-handle--width, var(--sf-ui-1\/3--control-height)) / -2);
+    left: calc(var(--sf-icon-size-3) / -2);
+    left: calc(var(--sf-thumb-handle--width, var(--sf-icon-size-3)) / -2);
     }
   }
   .sf-range-slider .sf-range-slider-handle-lower:where(:dir(ltr)),
   .sf-range-slider .sf-range-slider-handle-upper:where(:dir(ltr)) {
-    left: calc(var(--sf-ui-1\/3--control-height) / -2);
-    left: calc(var(--sf-thumb-handle--width, var(--sf-ui-1\/3--control-height)) / -2);
+    left: calc(var(--sf-icon-size-3) / -2);
+    left: calc(var(--sf-thumb-handle--width, var(--sf-icon-size-3)) / -2);
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-range-slider .sf-range-slider-handle-lower,[dir="rtl"]
   .sf-range-slider .sf-range-slider-handle-upper {
-    right: calc(var(--sf-ui-1\/3--control-height) / -2);
-    right: calc(var(--sf-thumb-handle--width, var(--sf-ui-1\/3--control-height)) / -2);
+    right: calc(var(--sf-icon-size-3) / -2);
+    right: calc(var(--sf-thumb-handle--width, var(--sf-icon-size-3)) / -2);
   }
   @supports not (inset-inline-start: initial) {
   [dir="rtl"] .sf-range-slider .sf-range-slider-handle-lower,[dir="rtl"]
   .sf-range-slider .sf-range-slider-handle-upper {
-    right: calc(var(--sf-ui-1\/3--control-height) / -2);
-    right: calc(var(--sf-thumb-handle--width, var(--sf-ui-1\/3--control-height)) / -2);
+    right: calc(var(--sf-icon-size-3) / -2);
+    right: calc(var(--sf-thumb-handle--width, var(--sf-icon-size-3)) / -2);
     }
   }
   .sf-range-slider .sf-range-slider-handle-lower:where(:dir(rtl)),
   .sf-range-slider .sf-range-slider-handle-upper:where(:dir(rtl)) {
-    right: calc(var(--sf-ui-1\/3--control-height) / -2);
-    right: calc(var(--sf-thumb-handle--width, var(--sf-ui-1\/3--control-height)) / -2);
+    right: calc(var(--sf-icon-size-3) / -2);
+    right: calc(var(--sf-thumb-handle--width, var(--sf-icon-size-3)) / -2);
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-range-slider .sf-range-slider-handle-lower,html:not([dir="rtl"])
   .sf-range-slider .sf-range-slider-handle-upper {
-    left: calc(var(--sf-ui-1\/3--control-height) / -2);
+    left: calc(var(--sf-icon-size-3) / -2);
   }
   @supports not (inset-inline-start: initial) {
   html:not([dir="rtl"]) .sf-range-slider .sf-range-slider-handle-lower,html:not([dir="rtl"])
   .sf-range-slider .sf-range-slider-handle-upper {
-    left: calc(var(--sf-ui-1\/3--control-height) / -2);
+    left: calc(var(--sf-icon-size-3) / -2);
     }
   }
   .sf-range-slider .sf-range-slider-handle-lower:where(:dir(ltr)),
   .sf-range-slider .sf-range-slider-handle-upper:where(:dir(ltr)) {
-    left: calc(var(--sf-ui-1\/3--control-height) / -2);
+    left: calc(var(--sf-icon-size-3) / -2);
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-range-slider .sf-range-slider-handle-lower,[dir="rtl"]
   .sf-range-slider .sf-range-slider-handle-upper {
-    right: calc(var(--sf-ui-1\/3--control-height) / -2);
+    right: calc(var(--sf-icon-size-3) / -2);
   }
   @supports not (inset-inline-start: initial) {
   [dir="rtl"] .sf-range-slider .sf-range-slider-handle-lower,[dir="rtl"]
   .sf-range-slider .sf-range-slider-handle-upper {
-    right: calc(var(--sf-ui-1\/3--control-height) / -2);
+    right: calc(var(--sf-icon-size-3) / -2);
     }
   }
   .sf-range-slider .sf-range-slider-handle-lower:where(:dir(rtl)),
   .sf-range-slider .sf-range-slider-handle-upper:where(:dir(rtl)) {
-    right: calc(var(--sf-ui-1\/3--control-height) / -2);
+    right: calc(var(--sf-icon-size-3) / -2);
   }
   .sf-range-slider .sf-range-slider-handle-lower,
   .sf-range-slider .sf-range-slider-handle-upper {
     inset-inline-end: auto;
-    inset-inline-start: calc(var(--sf-ui-1\/3--control-height) / -2);
-    inset-inline-start: calc(var(--sf-thumb-handle--width, var(--sf-ui-1\/3--control-height)) / -2);
+    inset-inline-start: calc(var(--sf-icon-size-3) / -2);
+    inset-inline-start: calc(var(--sf-thumb-handle--width, var(--sf-icon-size-3)) / -2);
   }
   .sf-range-slider .sf-range-slider-visual {
     left: 50%;
@@ -251,11 +251,11 @@
     gap: var(--sf-space-1\/4);
   }
   .sf-range-slider .sf-range-slider-labels.sf-thumb--label-tooltip {
-    min-height: calc(var(--sf-text-height-1\/3) + 2 * var(--sf-ui-1\/3--space-y-tightness-default) + 2 * var(--sf-px));
-    min-block-size: calc(var(--sf-text-height-1\/3) + 2 * var(--sf-ui-1\/3--space-y-tightness-default) + 2 * var(--sf-px));
-    min-height: calc(var(--sf-text-height-1\/3) + 2 * var(--sf-ui-1\/3--space-y-tightness-default) + 2 * var(--sf-px));
-    min-height: calc(var(--sf-text-height-1\/3) + 2 * var(--sf-tooltip-padding-block, var(--sf-ui-1\/3--space-y-tightness-default)) + 2 * var(--sf-tooltip-border-width, var(--sf-px)));
-    min-block-size: calc(var(--sf-text-height-1\/3) + 2 * var(--sf-tooltip-padding-block, var(--sf-ui-1\/3--space-y-tightness-default)) + 2 * var(--sf-tooltip-border-width, var(--sf-px)));
+    min-height: calc(var(--sf-text-height-1\/3) + 2 * var(--sf-space-1\/4) + 2 * var(--sf-px));
+    min-block-size: calc(var(--sf-text-height-1\/3) + 2 * var(--sf-space-1\/4) + 2 * var(--sf-px));
+    min-height: calc(var(--sf-text-height-1\/3) + 2 * var(--sf-space-1\/4) + 2 * var(--sf-px));
+    min-height: calc(var(--sf-text-height-1\/3) + 2 * var(--sf-tooltip-padding-block, var(--sf-space-1\/4)) + 2 * var(--sf-tooltip-border-width, var(--sf-px)));
+    min-block-size: calc(var(--sf-text-height-1\/3) + 2 * var(--sf-tooltip-padding-block, var(--sf-space-1\/4)) + 2 * var(--sf-tooltip-border-width, var(--sf-px)));
   }
   .sf-range-slider .sf-range-slider-labels--top {
     margin-bottom: var(--sf-space-1\/4);
@@ -424,15 +424,15 @@
     border-start-end-radius: var(--sf-thumb-handle--border-start-end-radius, var(--sf-radius-circle));
     border-start-start-radius: var(--sf-radius-circle);
     border-start-start-radius: var(--sf-thumb-handle--border-start-start-radius, var(--sf-radius-circle));
-    box-shadow: 0 0 0 0px var(--sf-surface-0), var(--sf-shadow-raised);
-    box-shadow: var(--sf-thumb-handle--box-shadow, 0 0 0 var(--sf-thumb-handle--ring-width, 0px) var(--sf-thumb-handle--ring-color, var(--sf-surface-0)), var(--sf-shadow-raised));
-    height: var(--sf-ui-1\/3--control-height);
-    height: var(--sf-thumb-handle--height, var(--sf-ui-1\/3--control-height));
+    box-shadow: 0 0 0 0px var(--sf-surface-place), var(--sf-shadow-raised);
+    box-shadow: var(--sf-thumb-handle--box-shadow, 0 0 0 var(--sf-thumb-handle--ring-width, 0px) var(--sf-thumb-handle--ring-color, var(--sf-surface-place)), var(--sf-shadow-raised));
+    height: var(--sf-icon-size-3);
+    height: var(--sf-thumb-handle--height, var(--sf-icon-size-3));
     transition-duration: var(--sf-duration-fast);
     transition-property: background-color, box-shadow;
     transition-timing-function: var(--sf-animation);
-    width: var(--sf-ui-1\/3--control-height);
-    width: var(--sf-thumb-handle--width, var(--sf-ui-1\/3--control-height));
+    width: var(--sf-icon-size-3);
+    width: var(--sf-thumb-handle--width, var(--sf-icon-size-3));
   }
   .sf-thumb .sf-thumb-inner {
     background-color: transparent;
@@ -494,12 +494,12 @@
   .sf-thumb:not(:disabled):not([disabled]):not(.disabled):not([disabled] *):not(.disabled *):hover .sf-thumb-handle {
     background-color: var(--sf-primary-hover);
     background-color: var(--sf-thumb-handle--hover-background-color, var(--sf-primary-hover));
-    box-shadow: 0 0 0 0px var(--sf-surface-0), 0 0 0 var(--sf-a8) var(--sf-primary-transparent-select), var(--sf-shadow-raised);
-    box-shadow: 0 0 0 var(--sf-thumb-handle--ring-width, 0px) var(--sf-thumb-handle--ring-color, var(--sf-surface-0)), 0 0 0 var(--sf-a8) var(--sf-primary-transparent-select), var(--sf-shadow-raised);
+    box-shadow: 0 0 0 0px var(--sf-surface-place), 0 0 0 var(--sf-a8) var(--sf-primary-transparent-select), var(--sf-shadow-raised);
+    box-shadow: 0 0 0 var(--sf-thumb-handle--ring-width, 0px) var(--sf-thumb-handle--ring-color, var(--sf-surface-place)), 0 0 0 var(--sf-a8) var(--sf-primary-transparent-select), var(--sf-shadow-raised);
   }
   .sf-thumb:not(:disabled):not([disabled]):not(.disabled):not([disabled] *):not(.disabled *):active .sf-thumb-handle {
-    box-shadow: 0 0 0 0px var(--sf-surface-0), 0 0 0 var(--sf-a8) var(--sf-primary-transparent-active), var(--sf-shadow-raised);
-    box-shadow: 0 0 0 var(--sf-thumb-handle--ring-width, 0px) var(--sf-thumb-handle--ring-color, var(--sf-surface-0)), 0 0 0 var(--sf-a8) var(--sf-primary-transparent-active), var(--sf-shadow-raised);
+    box-shadow: 0 0 0 0px var(--sf-surface-place), 0 0 0 var(--sf-a8) var(--sf-primary-transparent-active), var(--sf-shadow-raised);
+    box-shadow: 0 0 0 var(--sf-thumb-handle--ring-width, 0px) var(--sf-thumb-handle--ring-color, var(--sf-surface-place)), 0 0 0 var(--sf-a8) var(--sf-primary-transparent-active), var(--sf-shadow-raised);
   }
   .sf-thumb:not(:disabled):not([disabled]):not(.disabled):not([disabled] *):not(.disabled *):hover .sf-thumb-inner {
     height: 75%;
@@ -508,16 +508,16 @@
     width: var(--sf-thumb-inner--width, 75%);
   }
   .sf-range-slider[disabled] .sf-thumb-handle {
-    background: linear-gradient(var(--sf-on-disable), var(--sf-on-disable)) var(--sf-surface-0);
-    background: linear-gradient(var(--sf-on-disable), var(--sf-on-disable)) var(--sf-thumb-handle--ring-color, var(--sf-surface-0));
-    box-shadow: 0 0 0 0px var(--sf-surface-0);
-    box-shadow: 0 0 0 var(--sf-thumb-handle--ring-width, 0px) var(--sf-thumb-handle--ring-color, var(--sf-surface-0));
+    background: linear-gradient(var(--sf-on-disable), var(--sf-on-disable)) var(--sf-surface-place);
+    background: linear-gradient(var(--sf-on-disable), var(--sf-on-disable)) var(--sf-thumb-handle--ring-color, var(--sf-surface-place));
+    box-shadow: 0 0 0 0px var(--sf-surface-place);
+    box-shadow: 0 0 0 var(--sf-thumb-handle--ring-width, 0px) var(--sf-thumb-handle--ring-color, var(--sf-surface-place));
   }
   .sf-range-slider.disabled .sf-thumb-handle {
-    background: linear-gradient(var(--sf-on-disable), var(--sf-on-disable)) var(--sf-surface-0);
-    background: linear-gradient(var(--sf-on-disable), var(--sf-on-disable)) var(--sf-thumb-handle--ring-color, var(--sf-surface-0));
-    box-shadow: 0 0 0 0px var(--sf-surface-0);
-    box-shadow: 0 0 0 var(--sf-thumb-handle--ring-width, 0px) var(--sf-thumb-handle--ring-color, var(--sf-surface-0));
+    background: linear-gradient(var(--sf-on-disable), var(--sf-on-disable)) var(--sf-surface-place);
+    background: linear-gradient(var(--sf-on-disable), var(--sf-on-disable)) var(--sf-thumb-handle--ring-color, var(--sf-surface-place));
+    box-shadow: 0 0 0 0px var(--sf-surface-place);
+    box-shadow: 0 0 0 var(--sf-thumb-handle--ring-width, 0px) var(--sf-thumb-handle--ring-color, var(--sf-surface-place));
   }
   .sf-range-slider[disabled] .sf-thumb-inner {
     background-color: transparent;

@@ -714,9 +714,9 @@ window.addEventListener('sf-loader-ready', () => {
     overbox: '[sf-overbox]'
   }, {
     init: '[sf-modal]',
-    overlay: 'fixed w-full h-full top-0 right-0 bottom-0 left-0 items-cross-center content-main-center bg-surface-transparent-overlay',
+    overlay: 'fixed w-full h-full top-0 right-0 bottom-0 left-0 items-cross-center content-main-center bg-scrim',
     area: 'relative w-10/12 sm:w-10/12 w-2/3 lg:w-1/2 xl:w-1/2',
-    content: 'overflow-hidden border-0 radius-surface p-2 bg-surface-1',
+    content: 'overflow-hidden border-0 radius-surface p-2 bg-surface-popup',
     close: {
       active: true,
       modifier: 'sf-close transition'
@@ -1095,12 +1095,12 @@ function Search(e = {
     // Основная область страницы для blur
     container: '.sf-modal-container',
     // Модификаторы подложки модального окна
-    overlay: 'sf-modal-overlay fixed w-full h-full top-0 inline-end-0 bottom-0 inline-start-0 items-cross-center content-main-center bg-surface-transparent-overlay',
+    overlay: 'sf-modal-overlay fixed w-full h-full top-0 inline-end-0 bottom-0 inline-start-0 items-cross-center content-main-center bg-scrim',
     'overlay-close': false,
     area: 'sf-modal-area relative w-10/12 sm:w-10/12 w-2/3 lg:w-1/2 xl:w-1/2',
     // Модификаторы контейнера контентной части
     // Модификаторы контентной части
-    content: 'sf-modal-content overflow-auto border-0 bg-surface-1 p-6',
+    content: 'sf-modal-content overflow-auto border-0 bg-surface-popup p-6',
     html: false,
     beforeCreateWindow: function () {},
     // Перед созданием
